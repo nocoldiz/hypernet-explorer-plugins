@@ -1,0 +1,2962 @@
+{
+  "1": {
+    "name": "Detox Googles",
+    "description": "Street-smart fabric laced with antitoxin microfibers."
+  },
+  "2": {
+    "name": "ClearBlood Shield",
+    "description": "Subdermal Shield that scrubs your bloodstream clean."
+  },
+  "3": {
+    "name": "Fate Scrambler Chip",
+    "description": "Probability-bending implant that rewrites bad luck."
+  },
+  "4": {
+    "name": "Clarity Jack",
+    "description": "Neural plug that filters mental static and fog."
+  },
+  "5": {
+    "name": "Willbreaker Null",
+    "description": "Black-ops wetware that makes your mind a fortress."
+  },
+  "6": {
+    "name": "Concrete Prophet",
+    "description": "Sixth-sense augment that reads the city's rhythm."
+  },
+  "7": {
+    "name": "Fortune's Whisper",
+    "description": "Enhanced intuition that guides you to opportunity."
+  },
+  "8": {
+    "name": "Threat Weave",
+    "description": "Jacket embedded with proximity sensors."
+  },
+  "9": {
+    "name": "Echo Battery",
+    "description": "Kinetic storage unit worn against the spine."
+  },
+  "10": {
+    "name": "Rush Catalyst",
+    "description": "Gland modifier that supercharges your adrenal system."
+  },
+  "11": {
+    "name": "Spell Siphon Core",
+    "description": "Arcane recycler that captures wasted magical energy."
+  },
+  "12": {
+    "name": "Chameleon Shell",
+    "description": "Smart-fabric that reads environmental threats."
+  },
+  "13": {
+    "name": "Killshot Monocle",
+    "description": "Fashion-forward targeting computer for one eye."
+  },
+  "14": {
+    "name": "Symbiote Shroud",
+    "description": "Living clothing that feeds on damage."
+  },
+  "15": {
+    "name": "Storm Loom Jacket",
+    "description": "Quantum-threaded coat that crackles with potential."
+  },
+  "16": {
+    "name": "Ghost Drape",
+    "description": "Photon-bending tactical suit that warps light."
+  },
+  "17": {
+    "name": "Street Titan Frame",
+    "description": "Power armor disguised as designer streetwear."
+  },
+  "18": {
+    "name": "Thought Accelerator Crown",
+    "description": "Quantum processor woven into a headpiece."
+  },
+  "19": {
+    "name": "Weather Tyrant Helm",
+    "description": "Helmet that commands local atmospheric pressure."
+  },
+  "20": {
+    "name": "Brainstem Rider",
+    "description": "Direct neural interface built into reinforced headgear."
+  },
+  "21": {
+    "name": "Void Pocket Belt",
+    "description": "Dimensional storage wrapped around your waist."
+  },
+  "22": {
+    "name": "Luck Inverter Field",
+    "description": "Wrist-mounted probability manipulator."
+  },
+  "23": {
+    "name": "Phantom Shift Aegis",
+    "description": "Shield that exists partially in another dimension."
+  },
+  "24": {
+    "name": "Static Vulture",
+    "description": "Shoulder-worn energy scavenger."
+  },
+  "25": {
+    "name": "Swarm Cloth",
+    "description": "Hoodie infused with microscopic repair drones."
+  },
+  "26": {
+    "name": "Reactive Shell Coat",
+    "description": "Liquid crystal armor that crystallizes on impact."
+  },
+  "27": {
+    "name": "Psychic Backlash Suit",
+    "description": "Bio-responsive fabric that mirrors mental attacks."
+  },
+  "28": {
+    "name": "Worn Grey Tee",
+    "description": "Basic cotton shirt, three washes from falling apart."
+  },
+  "29": {
+    "name": "Faded Denim Shell",
+    "description": "Classic jacket that's seen better decades."
+  },
+  "30": {
+    "name": "Parkour Runner's Kit",
+    "description": "Flexible urban exploration gear with reinforced knees."
+  },
+  "31": {
+    "name": "Road Warrior Leather",
+    "description": "Impact-padded motorcycle jacket with attitude."
+  },
+  "32": {
+    "name": "Patrol-Grade Harness",
+    "description": "Kevlar-plated tactical vest in security black."
+  },
+  "33": {
+    "name": "Hypebeast Armor",
+    "description": "Designer streetwear with hidden ballistic panels."
+  },
+  "34": {
+    "name": "Performance Flex Suit",
+    "description": "Moisture-wicking athletic wear with carbon fiber threading."
+  },
+  "35": {
+    "name": "Rebel's Second Skin",
+    "description": "Distressed leather jacket with military-grade stitching."
+  },
+  "36": {
+    "name": "Deceiver's Blazer",
+    "description": "Corporate-looking jacket with full kevlar lining."
+  },
+  "37": {
+    "name": "Adrenaline Shell",
+    "description": "Extreme sports gear rated for concrete impacts."
+  },
+  "38": {
+    "name": "Carbon Weave Bomber",
+    "description": "Aerospace-grade fiber jacket that weighs nothing."
+  },
+  "39": {
+    "name": "Asphalt Warden Rig",
+    "description": "Top-tier urban combat suit with ballistic plating."
+  },
+  "40": {
+    "name": "Siege Breaker Armor",
+    "description": "Heavy reinforced tactical gear for hostile zones."
+  },
+  "41": {
+    "name": "Rent-a-Cop Special",
+    "description": "Standard issue security uniform with basic padding."
+  },
+  "42": {
+    "name": "Crowd Crusher Vest",
+    "description": "Multilayered riot gear built for chaos control."
+  },
+  "43": {
+    "name": "Composite War Shell",
+    "description": "Advanced body armor with ceramic-titanium blend."
+  },
+  "44": {
+    "name": "Fortress Protocol Suit",
+    "description": "Full-spectrum combat armor with trauma plating."
+  },
+  "45": {
+    "name": "Netrunner's Utility Rig",
+    "description": "Multi-pocket harness for tech specialists."
+  },
+  "46": {
+    "name": "Coder's Comfort Hood",
+    "description": "Soft hoodie with built-in cable management."
+  },
+  "47": {
+    "name": "Signal Ghost Jacket",
+    "description": "EMF-shielded coat with hidden device compartments."
+  },
+  "48": {
+    "name": "Data Whisperer's Coat",
+    "description": "Analyst trench coat with AR interface threading."
+  },
+  "49": {
+    "name": "Chrome Integration Suit",
+    "description": "Cybernetic-compatible clothing with active cooling."
+  },
+  "50": {
+    "name": "Technomancer's Vestment",
+    "description": "Holographic-ready suit with integrated computer cores."
+  },
+  "51": {
+    "name": "Scrap Metal Plates",
+    "description": "Crude steel armor bolted to whatever you're wearing."
+  },
+  "52": {
+    "name": "Street Barricade Kit",
+    "description": "Assorted defensive gear salvaged from urban conflict."
+  },
+  "53": {
+    "name": "Close Quarter Barrier",
+    "description": "Compact collapsible shield for tight spaces."
+  },
+  "54": {
+    "name": "Featherweight Bulwark",
+    "description": "Carbon fiber riot shield that weighs almost nothing."
+  },
+  "55": {
+    "name": "Voltage Deterrent",
+    "description": "Shield with built-in taser functionality."
+  },
+  "56": {
+    "name": "Kinetic Diffuser",
+    "description": "Smart-material shield that spreads impact force."
+  },
+  "57": {
+    "name": "Counterstrike Guardian",
+    "description": "Active defense system that predicts attacks."
+  },
+  "58": {
+    "name": "Mall Cop Standard",
+    "description": "Basic polycarbonate shield for low-threat environments."
+  },
+  "59": {
+    "name": "Parking Lot Defender",
+    "description": "Entry-level security shield with foam padding."
+  },
+  "60": {
+    "name": "Mass Control Barrier",
+    "description": "Industrial-strength crowd management shield."
+  },
+  "61": {
+    "name": "Ballistic Vision Port",
+    "description": "Bullet-resistant shield with reinforced viewing window."
+  },
+  "62": {
+    "name": "Tactical Brain Shield",
+    "description": "Computer-enhanced barrier with threat assessment."
+  },
+  "63": {
+    "name": "Adaptive Bastion",
+    "description": "Reactive armor plating that hardens under fire."
+  },
+  "64": {
+    "name": "Firewall Accessories",
+    "description": "Digital protection suite for the paranoid urbanite."
+  },
+  "65": {
+    "name": "Script Kiddie Blocker",
+    "description": "Entry-level wearable that deflects basic malware."
+  },
+  "66": {
+    "name": "Privacy Bracelet",
+    "description": "Wrist-mounted encryption device."
+  },
+  "67": {
+    "name": "Personal ICE Unit",
+    "description": "Active firewall worn like a watch."
+  },
+  "68": {
+    "name": "Digital Bubble Generator",
+    "description": "Creates a zone of electromagnetic protection."
+  },
+  "69": {
+    "name": "Quantum Ghost Protocol",
+    "description": "Military-grade encryption that uses quantum entanglement."
+  },
+  "70": {
+    "name": "Street Crown Collection",
+    "description": "Modern head protection that doesn't scream 'amateur.'"
+  },
+  "71": {
+    "name": "Executive's Dome",
+    "description": "Classic bowler hat for those who profit from chaos."
+  },
+  "72": {
+    "name": "Sweat Trapper",
+    "description": "Simple cloth band that absorbs everything."
+  },
+  "73": {
+    "name": "Dust Filter Wrap",
+    "description": "Bandana that makes you look cool in pollution."
+  },
+  "74": {
+    "name": "Brim Shield",
+    "description": "Fashionable cap with hidden impact padding."
+  },
+  "75": {
+    "name": "Kevlar Comfort Cap",
+    "description": "Wool beanie with armor threading."
+  },
+  "76": {
+    "name": "Runway Hardhat",
+    "description": "Designer headwear concealing safety features."
+  },
+  "77": {
+    "name": "Motion Defense Hat",
+    "description": "Lightweight protective gear for active lifestyles."
+  },
+  "78": {
+    "name": "Commuter Shell",
+    "description": "Standard bicycle helmet in safety-regulation yellow."
+  },
+  "79": {
+    "name": "Concrete Kisser",
+    "description": "Impact-rated helmet loved by ramp athletes."
+  },
+  "80": {
+    "name": "Extreme Protection Pod",
+    "description": "Multi-impact sports helmet for dangerous hobbies."
+  },
+  "81": {
+    "name": "Road Commander",
+    "description": "Premium motorcycle helmet with integrated comms."
+  },
+  "82": {
+    "name": "Aerospace Skull Cap",
+    "description": "Carbon fiber shell lighter than your phone."
+  },
+  "83": {
+    "name": "Urban Fortress Helm",
+    "description": "Maximum protection with shock-dispersing layers."
+  },
+  "84": {
+    "name": "Bunker-Grade Headgear",
+    "description": "Industrial protection for extreme threat environments."
+  },
+  "85": {
+    "name": "Construction Standard",
+    "description": "Basic OSHA-compliant hard hat in safety orange."
+  },
+  "86": {
+    "name": "Guard Dome",
+    "description": "Reinforced tactical helmet in authority black."
+  },
+  "87": {
+    "name": "Crowd Control Crown",
+    "description": "Face-shielded helmet built for civil unrest."
+  },
+  "88": {
+    "name": "Operator's Command Shell",
+    "description": "Communications-integrated tactical headgear."
+  },
+  "89": {
+    "name": "War Zone Sentinel",
+    "description": "Military ballistic helmet with trauma padding."
+  },
+  "90": {
+    "name": "Digital Crown Series",
+    "description": "Tech-enhanced headgear for information warriors."
+  },
+  "91": {
+    "name": "Reality Overlay Visor",
+    "description": "Augmented reality headset with tactical overlays."
+  },
+  "92": {
+    "name": "Synaptic Band",
+    "description": "Computing-enhanced headband that thinks with you."
+  },
+  "93": {
+    "name": "Information Crown",
+    "description": "Data-crunching headset for analysts and strategists."
+  },
+  "94": {
+    "name": "Elite AR Interface",
+    "description": "Premium augmented reality with predictive AI."
+  },
+  "95": {
+    "name": "Hologram Command Hub",
+    "description": "AI-assisted holographic interface system."
+  },
+  "96": {
+    "name": "Transcendence Circlet",
+    "description": "Neural interface crown that merges mind and machine."
+  },
+  "97": {
+    "name": "Knuckle Phone",
+    "description": "Reinforced case that doubles as brass knuckles."
+  },
+  "98": {
+    "name": "Survivor's Toolkit",
+    "description": "Essential accessories for navigating urban chaos."
+  },
+  "99": {
+    "name": "Impact Device Shield",
+    "description": "Phone protection that protects you too."
+  },
+  "100": {
+    "name": "Awareness Loop",
+    "description": "Smart ring that pulses when threats approach."
+  },
+  "101": {
+    "name": "Titan's Grip Band",
+    "description": "Servo-assisted wristband that multiplies your strength."
+  },
+  "102": {
+    "name": "Muscle Memory Ring",
+    "description": "Biometric enhancer that optimizes fiber performance."
+  },
+  "103": {
+    "name": "Twitch Optimizer",
+    "description": "Neural accelerator worn at the wrist."
+  },
+  "104": {
+    "name": "Velocity Kicks",
+    "description": "Kinetic-assist footwear with micro-propulsion."
+  },
+  "105": {
+    "name": "Rabbit's Foot 2.0",
+    "description": "Digital probability charm that tilts odds slightly."
+  },
+  "106": {
+    "name": "Fortune's Algorithm",
+    "description": "Quantum predictor that calculates favorable outcomes."
+  },
+  "107": {
+    "name": "Synapse Accelerator",
+    "description": "Pendant that overclocks your cognitive processing."
+  },
+  "108": {
+    "name": "Mind Overclock",
+    "description": "Cortical enhancer that expands mental bandwidth."
+  },
+  "109": {
+    "name": "Urban Precision Frames",
+    "description": "Tactical eyewear with micro-targeting overlays."
+  },
+  "110": {
+    "name": "Killshot Spectacles",
+    "description": "Designer glasses hiding military targeting AI."
+  },
+  "111": {
+    "name": "Conservation Node",
+    "description": "Efficiency chip that reduces power drain by 20%."
+  },
+  "112": {
+    "name": "Perfect Efficiency Core",
+    "description": "Advanced regulator cutting energy waste in half."
+  },
+  "113": {
+    "name": "Wellness Kit",
+    "description": "Medical accessories for staying alive longer."
+  },
+  "114": {
+    "name": "Ley Surge Hoodie",
+    "description": "Garment threaded with earth's magical currents."
+  },
+  "115": {
+    "name": "Rune-Stitched Bomber",
+    "description": "Street jacket with ancient symbols in the lining."
+  },
+  "116": {
+    "name": "Zephyr Threads",
+    "description": "Flowing streetwear that channels wind itself."
+  },
+  "117": {
+    "name": "Void Drinker Hood",
+    "description": "Shadow-black hoodie that absorbs light and curses."
+  },
+  "118": {
+    "name": "Hex-Proof Ensemble",
+    "description": "Enchanted modern clothing that deflects magic and metal."
+  },
+  "119": {
+    "name": "Collective Consciousness Wear",
+    "description": "Urban outfit drawing power from city souls."
+  },
+  "120": {
+    "name": "Wyrm Spirit Vest",
+    "description": "Contemporary armor infused with dragon essence."
+  },
+  "121": {
+    "name": "Mystic Crown Collection",
+    "description": "Enchanted headgear for urban sorcerers."
+  },
+  "122": {
+    "name": "Psychic Sight Beanie",
+    "description": "Knit cap opening your third eye wider."
+  },
+  "123": {
+    "name": "Clarity Sigil Cap",
+    "description": "Hat carved with focus-enhancing symbols."
+  },
+  "124": {
+    "name": "Starlight Circlet",
+    "description": "Ornate band channeling celestial power."
+  },
+  "125": {
+    "name": "Probability Bender Hat",
+    "description": "Fashionable headwear warping reality subtly."
+  },
+  "126": {
+    "name": "Spell Barrier Arsenal",
+    "description": "Mystical shields for deflecting supernatural threats."
+  },
+  "127": {
+    "name": "Force Ward Bracer",
+    "description": "Ornate armband projecting walls of pure magic."
+  },
+  "128": {
+    "name": "Living Grimoire Guard",
+    "description": "Ancient book bound in protective enchantments."
+  },
+  "129": {
+    "name": "Null Crystal Pendant",
+    "description": "Crystalline charm absorbing hostile energies."
+  },
+  "130": {
+    "name": "Sentinel Spirit Aegis",
+    "description": "Shield housing a bound protective entity."
+  },
+  "131": {
+    "name": "Arcane Augments",
+    "description": "Mystical jewelry for practicing urban wizards."
+  },
+  "132": {
+    "name": "Inferno Signet",
+    "description": "Ring with fire-enchanted gemstone core."
+  },
+  "133": {
+    "name": "Current Conductor",
+    "description": "Necklace tapping into ley line networks."
+  },
+  "134": {
+    "name": "Element Circuit Ink",
+    "description": "Magical tattoo enhancing elemental affinity."
+  },
+  "135": {
+    "name": "Relic Bangle",
+    "description": "Ancient artifact disguised as trendy jewelry."
+  },
+  "136": {
+    "name": "Magitech Hybrid Gear",
+    "description": "Equipment fusing circuits and spells seamlessly."
+  },
+  "137": {
+    "name": "Spell-Circuit Plate",
+    "description": "Armor running on magic and electricity equally."
+  },
+  "138": {
+    "name": "Matrix Weave Coat",
+    "description": "Jacket embedding spell formulas in tech fabric."
+  },
+  "139": {
+    "name": "Mana-Tech Barrier",
+    "description": "Cybernetic projector powered by raw magic."
+  },
+  "140": {
+    "name": "Cortex Spell Booster",
+    "description": "Neural headset amplifying magical output."
+  },
+  "141": {
+    "name": "Temporal Flux Watch",
+    "description": "Smartwatch channeling chronological manipulation."
+  },
+  "142": {
+    "name": "Between-Worlds Fashion",
+    "description": "Clothing existing in multiple dimensions."
+  },
+  "143": {
+    "name": "Phase Shifter Coat",
+    "description": "Jacket flickering between parallel universes."
+  },
+  "144": {
+    "name": "Dimension Sight Goggles",
+    "description": "Eyewear piercing the veil between realities."
+  },
+  "145": {
+    "name": "Multiverse Anchor",
+    "description": "Shield rooted in alternate dimensions."
+  },
+  "146": {
+    "name": "Otherworld Shard Ring",
+    "description": "Ring containing crystallized alien reality."
+  },
+  "147": {
+    "name": "Elemental Fusion Gear",
+    "description": "Equipment infused with primal forces."
+  },
+  "148": {
+    "name": "Living Flame Plate",
+    "description": "Armor housing captured fire essence."
+  },
+  "149": {
+    "name": "Storm Caller's Mantle",
+    "description": "Flowing cloak channeling tempest fury."
+  },
+  "150": {
+    "name": "Earthbound Aegis",
+    "description": "Shield forged from solidified stone magic."
+  },
+  "151": {
+    "name": "Spirit Tide Helm",
+    "description": "Helmet containing bound water elemental."
+  },
+  "152": {
+    "name": "Dumpster Dive Deluxe",
+    "description": "Bottom-barrel garbage pretending to be gear."
+  },
+  "153": {
+    "name": "Landfill Special",
+    "description": "Questionable protection from questionable sources."
+  },
+  "154": {
+    "name": "Moth Buffet Tee",
+    "description": "White shirt already preparing to become holes."
+  },
+  "155": {
+    "name": "Unraveling Dream",
+    "description": "Hoodie held together by hope and loose threads."
+  },
+  "156": {
+    "name": "Rain Invitation",
+    "description": "Poncho that welcomes water through every seam."
+  },
+  "157": {
+    "name": "Cracking Fake Leather",
+    "description": "Pleather jacket aging in dog years."
+  },
+  "158": {
+    "name": "Cosplay Cop Vest",
+    "description": "Cotton vest with badge nobody believes."
+  },
+  "159": {
+    "name": "Sweatshop Survivor",
+    "description": "Athletic wear made by sadness and exploitation."
+  },
+  "160": {
+    "name": "Bootleg Team Spirit",
+    "description": "Sports jersey fading into abstract art."
+  },
+  "161": {
+    "name": "Mystery Stain Special",
+    "description": "Secondhand jacket with concerning brown spots."
+  },
+  "162": {
+    "name": "Newspaper Armor",
+    "description": "Vest stuffed with yesterday's headlines."
+  },
+  "163": {
+    "name": "Halloween Authority",
+    "description": "Polyester police costume from Spirit Halloween."
+  },
+  "164": {
+    "name": "Duct Tape Delusion",
+    "description": "Football pads held together by silver hope."
+  },
+  "165": {
+    "name": "Cardboard Cosplay",
+    "description": "Tactical vest that dissolves in light rain."
+  },
+  "166": {
+    "name": "Comfort Disaster",
+    "description": "Bathrobe mapping every breakfast you've eaten."
+  },
+  "167": {
+    "name": "Clearance Rack Wizard",
+    "description": "Purple polyester robe from Party City's shame pile."
+  },
+  "168": {
+    "name": "Diploma Day Disaster",
+    "description": "Thin graduation gown that tears when folded."
+  },
+  "169": {
+    "name": "Skull Protection Theater",
+    "description": "Head coverings offering psychological comfort only."
+  },
+  "170": {
+    "name": "Soggy Celebration",
+    "description": "Party hat that becomes mush near moisture."
+  },
+  "171": {
+    "name": "Bootleg Brand Cap",
+    "description": "Baseball cap with logo peeling off like skin."
+  },
+  "172": {
+    "name": "Skull Cracker Special",
+    "description": "Bike helmet designed to fail first impact."
+  },
+  "173": {
+    "name": "Playground Pretend",
+    "description": "Plastic construction hat from toy aisle."
+  },
+  "174": {
+    "name": "Concussion Memory",
+    "description": "Dented helmet with suspicious red stains inside."
+  },
+  "175": {
+    "name": "Conspiracy Theorist Crown",
+    "description": "Aluminum foil hat blocking imaginary signals."
+  },
+  "176": {
+    "name": "Plastic Princess",
+    "description": "Dollar store headband with fake gem already loose."
+  },
+  "177": {
+    "name": "Garbage Defense Kit",
+    "description": "Shields scraped from literal trash."
+  },
+  "178": {
+    "name": "Alley Defender",
+    "description": "Trash lid with duct tape arm straps."
+  },
+  "179": {
+    "name": "Grease Shield",
+    "description": "Folded pizza box with improvised handle."
+  },
+  "180": {
+    "name": "Toy Aisle Special",
+    "description": "Plastic shield that bends under finger pressure."
+  },
+  "181": {
+    "name": "Convention Prop",
+    "description": "Cardboard shield wrapped in aluminum foil."
+  },
+  "182": {
+    "name": "Cracked Screen Security",
+    "description": "Broken tablet claimed to have firewall apps."
+  },
+  "183": {
+    "name": "Wishful Thinking Kit",
+    "description": "Accessories providing hope instead of help."
+  },
+  "184": {
+    "name": "Quarter Royalty",
+    "description": "Vending machine ring with plastic gemstone."
+  },
+  "185": {
+    "name": "Unraveling Friendship",
+    "description": "String bracelet coming apart at both ends."
+  },
+  "186": {
+    "name": "Happy Meal Hero",
+    "description": "Plastic wristband from kids' fast food toy."
+  },
+  "187": {
+    "name": "Schrödinger's Watch",
+    "description": "Timepiece that works only when unwatched."
+  },
+  "188": {
+    "name": "Green Skin Guarantee",
+    "description": "Cheap chain that oxidizes against flesh."
+  },
+  "189": {
+    "name": "Expired Life Alert",
+    "description": "Outdated medical bracelet from garage sale."
+  },
+  "190": {
+    "name": "Wobbly Vision Frames",
+    "description": "Glasses with loose screws and no prescription."
+  },
+  "191": {
+    "name": "Placebo Power Items",
+    "description": "Fake magic for people desperate to believe."
+  },
+  "192": {
+    "name": "Crystal Mall Scam",
+    "description": "Quartz on string sold with mystical promises."
+  },
+  "193": {
+    "name": "Plastic Mystic Stick",
+    "description": "Toy wand with dying LED star tip."
+  },
+  "194": {
+    "name": "Snake Oil Bracelet",
+    "description": "Copper band claiming to balance your energy."
+  },
+  "195": {
+    "name": "Paranormal Compass",
+    "description": "Broken compass detecting only gullibility."
+  },
+  "196": {
+    "name": "Nonsense Grimoire",
+    "description": "Old book filled with random scribbles."
+  },
+  "197": {
+    "name": "Literal Garbage",
+    "description": "Items rescued from dumpsters and regret."
+  },
+  "198": {
+    "name": "Dumpster Designer",
+    "description": "Filthy jacket found behind restaurant."
+  },
+  "199": {
+    "name": "Mystery Sauce Shirt",
+    "description": "Stained tee with unidentifiable food crimes."
+  },
+  "200": {
+    "name": "Construction Site Castoff",
+    "description": "Torn work vest from demolition dumpster."
+  },
+  "201": {
+    "name": "Public Bin Crown",
+    "description": "Someone's discarded hat fished from trash."
+  },
+  "202": {
+    "name": "Skeleton Umbrella",
+    "description": "Broken umbrella functioning as pathetic shield."
+  },
+  "203": {
+    "name": "Urban Wilderness Kit",
+    "description": "Gear for explorers who blur city and nature."
+  },
+  "204": {
+    "name": "Storm-Proof Shell",
+    "description": "Multi-pocket weather jacket with ventilation ports."
+  },
+  "205": {
+    "name": "Trail Warrior Pants",
+    "description": "Reinforced hiking pants built for punishment."
+  },
+  "206": {
+    "name": "Scout's Loadout Vest",
+    "description": "Breathable multi-pouch vest for organization."
+  },
+  "207": {
+    "name": "BioCLimate Jacket",
+    "description": "Self-regulating jacket with heating and cooling."
+  },
+  "208": {
+    "name": "Moisture Banisher",
+    "description": "Performance base layer managing sweat and temp."
+  },
+  "209": {
+    "name": "Vertical Hunter Gear",
+    "description": "Reinforced climbing outerwear for rock faces."
+  },
+  "210": {
+    "name": "Polar Expedition Shell",
+    "description": "Thermal-insulated waterproof suit for frozen hell."
+  },
+  "211": {
+    "name": "Speed Trail Kit",
+    "description": "Lightweight running gear with enhanced mobility."
+  },
+  "212": {
+    "name": "Extreme Conditions Armor",
+    "description": "Heavy-duty gear rated for hostile environments."
+  },
+  "213": {
+    "name": "Inferno Response Suit",
+    "description": "Wildland firefighter protection against flames."
+  },
+  "214": {
+    "name": "Alpine Rescue Rig",
+    "description": "Professional mountain rescue equipment."
+  },
+  "215": {
+    "name": "Impact Defiance Wear",
+    "description": "Armor-grade clothing for extreme sports."
+  },
+  "216": {
+    "name": "Connected Wilderness Suit",
+    "description": "GPS-enabled smart clothing with tech integration."
+  },
+  "217": {
+    "name": "Survival Skull Protection",
+    "description": "Specialized outdoor headgear for harsh conditions."
+  },
+  "218": {
+    "name": "Horizon Brim",
+    "description": "Wide-brimmed hat blocking sun and rain equally."
+  },
+  "219": {
+    "name": "Arctic Skull Wrap",
+    "description": "Insulated beanie covering ears completely."
+  },
+  "220": {
+    "name": "Adaptive Neck Shield",
+    "description": "Multi-configuration gaiter becoming various covers."
+  },
+  "221": {
+    "name": "Beacon Safety Shell",
+    "description": "Trail helmet with integrated light and comms."
+  },
+  "222": {
+    "name": "Vertical Ascent Pod",
+    "description": "Lightweight climbing helmet for mountaineers."
+  },
+  "223": {
+    "name": "Weather Fortress Helm",
+    "description": "Face-shielded headgear for extreme conditions."
+  },
+  "224": {
+    "name": "Rapids Survivor",
+    "description": "Professional whitewater protection helmet."
+  },
+  "225": {
+    "name": "Gravity Defier",
+    "description": "Full-face downhill MTB protection."
+  },
+  "226": {
+    "name": "Navigator's Crown",
+    "description": "GPS helmet with heads-up display overlays."
+  },
+  "227": {
+    "name": "Wilderness Essentials",
+    "description": "Critical accessories for outdoor survival."
+  },
+  "228": {
+    "name": "Terrain Dominators",
+    "description": "Touch-compatible grip gloves for all surfaces."
+  },
+  "229": {
+    "name": "Mud Rejectors",
+    "description": "Water-resistant leg gaiters protecting boots."
+  },
+  "230": {
+    "name": "Instant Dry Cloth",
+    "description": "Microfiber towel packing tiny, drying fast."
+  },
+  "231": {
+    "name": "Wilderness Swiss Army",
+    "description": "Multi-function survival tool for emergencies."
+  },
+  "232": {
+    "name": "Sun Harvest Battery",
+    "description": "Solar charger extending your connected life."
+  },
+  "233": {
+    "name": "Hands-Free Beacon",
+    "description": "Headlamp illuminating darkness effortlessly."
+  },
+  "234": {
+    "name": "Expedition Command",
+    "description": "Multi-sensor watch with altitude and GPS."
+  },
+  "235": {
+    "name": "Journey Carriers",
+    "description": "Backpack systems for extended exploration."
+  },
+  "236": {
+    "name": "Day Mission Pack",
+    "description": "Hydration-integrated pack with ventilated back."
+  },
+  "237": {
+    "name": "City Nomad Pack",
+    "description": "Weatherproof urban bag with theft protection."
+  },
+  "238": {
+    "name": "Long Haul Fortress",
+    "description": "Modular expedition backpack for extended trips."
+  },
+  "239": {
+    "name": "Vertical Hauler",
+    "description": "Technical climbing pack with gear loops."
+  },
+  "240": {
+    "name": "Combat Wilderness Rig",
+    "description": "MOLLE tactical pack for hostile environments."
+  },
+  "241": {
+    "name": "Terrain Footwear",
+    "description": "Specialized boots and shoes for varied ground."
+  },
+  "242": {
+    "name": "Mountain Stompers",
+    "description": "Waterproof hiking boots with ankle support."
+  },
+  "243": {
+    "name": "Speed Trail Shoes",
+    "description": "Lightweight runners with rock plate protection."
+  },
+  "244": {
+    "name": "Approach Hybrids",
+    "description": "Technical shoes with climbing toe zones."
+  },
+  "245": {
+    "name": "Frozen Wasteland Boots",
+    "description": "Extreme-cold insulated waterproof boots."
+  },
+  "246": {
+    "name": "Alpine Assault Boots",
+    "description": "Technical mountaineering boots for crampons."
+  },
+  "247": {
+    "name": "Emergency Arsenal",
+    "description": "Survival and navigation gear for disasters."
+  },
+  "248": {
+    "name": "Emergency Cocoon",
+    "description": "Compact shelter for unexpected night stays."
+  },
+  "249": {
+    "name": "Heat Reflector Sheet",
+    "description": "Lightweight emergency blanket trapping warmth."
+  },
+  "250": {
+    "name": "Backcountry Trauma Kit",
+    "description": "Comprehensive wilderness first aid supplies."
+  },
+  "251": {
+    "name": "Universal Purifier",
+    "description": "Portable water filter making anything drinkable."
+  },
+  "252": {
+    "name": "Distress Screamer",
+    "description": "Emergency whistle with extreme volume output."
+  },
+  "253": {
+    "name": "Navigator's Tool",
+    "description": "Professional compass with mirror and adjustment."
+  },
+  "254": {
+    "name": "Weather-Proof Igniter",
+    "description": "Reliable fire starter for wet conditions."
+  },
+  "255": {
+    "name": "Vertical Ascent Gear",
+    "description": "Equipment for climbing rock and ice faces."
+  },
+  "256": {
+    "name": "Safety Harness",
+    "description": "Climbing harness for mountaineering routes."
+  },
+  "257": {
+    "name": "Friction Controller",
+    "description": "Belay device ensuring climbing safety."
+  },
+  "258": {
+    "name": "Route Security Kit",
+    "description": "Protection device set for setting routes."
+  },
+  "259": {
+    "name": "Ice Wall Fangs",
+    "description": "Technical ice axes for vertical climbing."
+  },
+  "260": {
+    "name": "Ice Claws",
+    "description": "Crampon spikes attaching to boots."
+  },
+  "261": {
+    "name": "Aquatic Adventure Kit",
+    "description": "Equipment for water-based exploration."
+  },
+  "262": {
+    "name": "Professional Float Vest",
+    "description": "Multi-adjustment life vest for serious water."
+  },
+  "263": {
+    "name": "Cold Water Fortress",
+    "description": "Waterproof dry suit for freezing immersion."
+  },
+  "264": {
+    "name": "Wave Rider Skin",
+    "description": "Neoprene wetsuit for surf and water sports."
+  },
+  "265": {
+    "name": "Waterproof Hauler",
+    "description": "Sealed backpack for kayaking and rafting."
+  },
+  "266": {
+    "name": "Floating Eye Saver",
+    "description": "Buoyant eyewear retainer for water sports."
+  },
+  "267": {
+    "name": "Winter Warfare Gear",
+    "description": "Equipment for snow sports and frozen adventures."
+  },
+  "268": {
+    "name": "Slope Protection Pod",
+    "description": "Ski and snowboard specific helmet."
+  },
+  "269": {
+    "name": "Snow Vision Shield",
+    "description": "Anti-fog winter sport goggles."
+  },
+  "270": {
+    "name": "Thermal Slope Pants",
+    "description": "Insulated waterproof snow pants with armor."
+  },
+  "271": {
+    "name": "Slide Safety Shell",
+    "description": "Ski jacket with avalanche gear pockets."
+  },
+  "272": {
+    "name": "Burial Locator",
+    "description": "Avalanche victim detection beacon."
+  },
+  "273": {
+    "name": "Snow Depth Poker",
+    "description": "Telescoping avalanche probe pole."
+  },
+  "274": {
+    "name": "Emergency Excavator",
+    "description": "Portable avalanche rescue shovel."
+  },
+  "275": {
+    "name": "Effect Over Defense",
+    "description": "Fashionable clothes trading armor for buffs."
+  },
+  "276": {
+    "name": "Social Dominance Shirt",
+    "description": "Designer clothing amplifying your presence."
+  },
+  "277": {
+    "name": "Intimidation Couture",
+    "description": "High-end jacket projecting dominance."
+  },
+  "278": {
+    "name": "Conflict Avoidance Wear",
+    "description": "Elegant evening attire deflecting aggression."
+  },
+  "279": {
+    "name": "Pheromone Confusion",
+    "description": "Luxury outfit releasing subtle disorientation."
+  },
+  "280": {
+    "name": "Stubborn Elegance",
+    "description": "Vintage ensemble resisting persuasion attempts."
+  },
+  "281": {
+    "name": "Stamina Conservation",
+    "description": "Trendy activewear reducing exertion costs."
+  },
+  "282": {
+    "name": "Response Time Fashion",
+    "description": "Limited streetwear accelerating reactions."
+  },
+  "283": {
+    "name": "Misdirection Ensemble",
+    "description": "Flashy outfit making you harder to hit."
+  },
+  "284": {
+    "name": "Affliction Shield Wear",
+    "description": "Bold pattern clothing resisting status effects."
+  },
+  "285": {
+    "name": "Genius Garments",
+    "description": "Avant-garde attire boosting mental capacity."
+  },
+  "286": {
+    "name": "Serendipity Suit",
+    "description": "Eccentric outfit attracting rare discoveries."
+  },
+  "287": {
+    "name": "Arcane Recovery Robes",
+    "description": "Fashion-forward clothing accelerating mana regen."
+  },
+  "288": {
+    "name": "Style Buff Headwear",
+    "description": "Fashionable hats providing effects over armor."
+  },
+  "289": {
+    "name": "Perception Trendy Cap",
+    "description": "Hip hat enhancing observational skills."
+  },
+  "290": {
+    "name": "Celebrity Authority Shades",
+    "description": "Influencer sunglasses boosting social power."
+  },
+  "291": {
+    "name": "Inspiration Crown",
+    "description": "Artistic headwear unlocking creative genius."
+  },
+  "292": {
+    "name": "Mental Focus Circlet",
+    "description": "Designer tiara sharpening cognitive clarity."
+  },
+  "293": {
+    "name": "Aesthetic Protection Pod",
+    "description": "Sleek helmet prioritizing looks over safety."
+  },
+  "294": {
+    "name": "Utility Fashion Items",
+    "description": "Stylish accessories providing effects not armor."
+  },
+  "295": {
+    "name": "Perfect Moment Watch",
+    "description": "Designer timepiece optimizing combat timing."
+  },
+  "296": {
+    "name": "Silver Tongue Bracelet",
+    "description": "Luxury band enhancing persuasive ability."
+  },
+  "297": {
+    "name": "Authority Symbol",
+    "description": "Status necklace intimidating weaker opponents."
+  },
+  "298": {
+    "name": "Sound Clarity Studs",
+    "description": "Fashion earrings sharpening hearing perception."
+  },
+  "299": {
+    "name": "Agility Bands",
+    "description": "Trendy rings improving fine motor control."
+  },
+  "300": {
+    "name": "Perfect Form Belt",
+    "description": "Designer belt optimizing posture and movement."
+  },
+  "301": {
+    "name": "Concentration Amulet",
+    "description": "Mystical pendant sharpening mental focus."
+  },
+  "302": {
+    "name": "Mind Rest Charm",
+    "description": "Elegant accessory reducing cognitive fatigue."
+  },
+  "303": {
+    "name": "Effect Footwear",
+    "description": "Designer shoes trading protection for abilities."
+  },
+  "304": {
+    "name": "Velocity Dress Shoes",
+    "description": "Impractical luxury footwear boosting speed."
+  },
+  "305": {
+    "name": "Social Elevation Boots",
+    "description": "Designer boots raising your status visibly."
+  },
+  "306": {
+    "name": "Freerun Sneakers",
+    "description": "Trendy athletic shoes enhancing jumps and landings."
+  },
+  "307": {
+    "name": "Wall Walker Fashion",
+    "description": "Fashion-forward climbing shoes for urban scaling."
+  },
+  "308": {
+    "name": "Exclusive Collaborations",
+    "description": "Limited release pieces with unique properties."
+  },
+  "309": {
+    "name": "Artist Collab Intimidator",
+    "description": "Exclusive artist jacket projecting threat."
+  },
+  "310": {
+    "name": "Celebrity Confidence Set",
+    "description": "Star-endorsed outfit boosting self-assurance."
+  },
+  "311": {
+    "name": "Zen Designer Collection",
+    "description": "Limited meditation wear for mental clarity."
+  },
+  "312": {
+    "name": "Elite Performance Collab",
+    "description": "Exclusive sports brand with enhanced capability."
+  },
+  "313": {
+    "name": "Temporal Fashion",
+    "description": "Seasonal items with time-sensitive effects."
+  },
+  "314": {
+    "name": "Heat Wave Collection",
+    "description": "Summer wear maintaining coolness in heat."
+  },
+  "315": {
+    "name": "Frost Elegance",
+    "description": "Winter fashion protecting from cold stylishly."
+  },
+  "316": {
+    "name": "Rebirth Attire",
+    "description": "Spring clothing enhancing recovery and energy."
+  },
+  "317": {
+    "name": "Harvest Awareness",
+    "description": "Fall fashion sharpening perception."
+  },
+  "318": {
+    "name": "Regional Fashion",
+    "description": "Cultural clothing with location-based benefits."
+  },
+  "319": {
+    "name": "Eastern Focus Wear",
+    "description": "Asian-inspired fashion enhancing meditation."
+  },
+  "320": {
+    "name": "Frontier Reaction Gear",
+    "description": "Western-inspired fashion improving reflexes."
+  },
+  "321": {
+    "name": "Frost Heritage",
+    "description": "Nordic-inspired fashion with cold resistance."
+  },
+  "322": {
+    "name": "Island Heat Style",
+    "description": "Tropical-inspired fashion resisting heat."
+  },
+  "323": {
+    "name": "Social Warfare Attire",
+    "description": "Formal wear providing social advantages."
+  },
+  "324": {
+    "name": "Power Tuxedo",
+    "description": "Elegant formal wear boosting persuasion."
+  },
+  "325": {
+    "name": "Attention Magnet Gown",
+    "description": "Designer evening gown demanding focus."
+  },
+  "326": {
+    "name": "Deal Closer Suit",
+    "description": "Business attire enhancing negotiation skills."
+  },
+  "327": {
+    "name": "Authority Projectors",
+    "description": "Formal accessories broadcasting dominance."
+  },
+  "328": {
+    "name": "Chromatic Chaos Coat",
+    "description": "Jacket with shifting rainbow colors."
+  },
+  "329": {
+    "name": "Reality Flicker Tee",
+    "description": "Shirt phasing between visible and invisible."
+  },
+  "330": {
+    "name": "Kaleidoscope Bomber",
+    "description": "Color-shifting jacket confusing observers."
+  },
+  "331": {
+    "name": "Physics Denial Pants",
+    "description": "Trousers making legs clip through solid matter."
+  },
+  "332": {
+    "name": "Lag Spike Activewear",
+    "description": "Athletic wear randomizing movement speed."
+  },
+  "333": {
+    "name": "Polygon Distortion Suit",
+    "description": "Outfit stretching your body's textures bizarrely."
+  },
+  "334": {
+    "name": "Neon Nostalgia Robe",
+    "description": "Graffiti and slap bracelet covered garment."
+  },
+  "335": {
+    "name": "Disco Floor Kicks",
+    "description": "Light-blinking boots from roller rink era."
+  },
+  "336": {
+    "name": "Saturday Morning Cap",
+    "description": "Colorful snapback radiating toon force."
+  },
+  "337": {
+    "name": "Sports Fan Foam",
+    "description": "Helmet styled like giant foam finger."
+  },
+  "338": {
+    "name": "Mall Culture Hat",
+    "description": "Patch-covered hat from retail nostalgia."
+  },
+  "339": {
+    "name": "Audio Assault Cap",
+    "description": "Speaker-equipped hat blasting pop hits."
+  },
+  "340": {
+    "name": "Temperature Vision Visor",
+    "description": "Color-changing visor like Hypercolor shirts."
+  },
+  "341": {
+    "name": "Butterfly Clip Kit",
+    "description": "Jelly bracelets and clips collection."
+  },
+  "342": {
+    "name": "Time Distortion Watch",
+    "description": "Kaleidoscope face warping temporal flow."
+  },
+  "343": {
+    "name": "Emotion Display Ring",
+    "description": "Color-shifting mood ring revealing feelings."
+  },
+  "344": {
+    "name": "Reality Stretch Band",
+    "description": "Bracelet warping and duplicating."
+  },
+  "345": {
+    "name": "Sitcom Break Necklace",
+    "description": "Jewelry triggering spontaneous dance moves."
+  },
+  "346": {
+    "name": "Toy Chest Chaos",
+    "description": "Outfit combining snacks and toys aesthetically."
+  },
+  "347": {
+    "name": "Teleport Tag Uniform",
+    "description": "Laser tag styled outfit enabling teleportation."
+  },
+  "348": {
+    "name": "Pixel Sprite Plate",
+    "description": "Armor decorated with arcade graphics."
+  },
+  "349": {
+    "name": "Carpet Pattern Robe",
+    "description": "Arcade floor pattern causing random swaps."
+  },
+  "350": {
+    "name": "Phase-Through Shield",
+    "description": "Decorated shield occasionally letting attacks pass."
+  },
+  "351": {
+    "name": "Band Merch Powers",
+    "description": "Garage band accessories with strange abilities."
+  },
+  "352": {
+    "name": "Effect Flip Denim",
+    "description": "Patch jacket reversing status effects."
+  },
+  "353": {
+    "name": "Effect Scrambler",
+    "description": "Bright tracksuit switching buffs randomly."
+  },
+  "354": {
+    "name": "Nature Battery Robe",
+    "description": "Garment trading mana costs for life energy."
+  },
+  "355": {
+    "name": "Cartoon Reality Glasses",
+    "description": "Eyewear making enemies look animated."
+  },
+  "356": {
+    "name": "Pixel Corruption Outfit",
+    "description": "Arcade graphic clothing that glitches visually."
+  },
+  "357": {
+    "name": "Infinite Rainbow Tee",
+    "description": "Lisa Frank patterns stretching endlessly."
+  },
+  "358": {
+    "name": "Low-Poly Distortion Vest",
+    "description": "Vest warping body into jagged polygon shapes."
+  },
+  "359": {
+    "name": "Face Sticker Hat",
+    "description": "Cap occasionally covering vision with stickers."
+  },
+  "360": {
+    "name": "Gak Phase Gloves",
+    "description": "Gloves feeling like Gak, slipping through matter."
+  },
+  "361": {
+    "name": "Rollerblade Shield",
+    "description": "Shield from skate parts."
+  },
+  "362": {
+    "name": "Wrong Stats Display",
+    "description": "Toy walkie-talkie headset showing false data."
+  },
+  "363": {
+    "name": "Recess Trade Band",
+    "description": "Wristband scrambling abilities randomly."
+  },
+  "364": {
+    "name": "Chaos Badge",
+    "description": "Pog badge changing interface options."
+  },
+  "365": {
+    "name": "Virtual Pet Earpiece",
+    "description": "Tamagotchi-sounding device giving garbled orders."
+  },
+  "366": {
+    "name": "Prize Mystery Box",
+    "description": "Random items from claw machines and cereals."
+  },
+  "367": {
+    "name": "Slogan Jacket",
+    "description": "Iron-on decal jacket with random phrases."
+  },
+  "368": {
+    "name": "Promotion Patchwork",
+    "description": "Outfit from cereal boxes and toy promotions."
+  },
+  "369": {
+    "name": "Commercial Beanie",
+    "description": "Hat embroidered with TV ad slogans."
+  },
+  "370": {
+    "name": "Boombox Board Shield",
+    "description": "Shield from skateboards and speakers."
+  },
+  "371": {
+    "name": "Debug Teleport Boots",
+    "description": "Boots marked for removal, teleporting randomly."
+  },
+  "372": {
+    "name": "Meta Awareness Gear",
+    "description": "Equipment breaking the fourth wall deliberately."
+  },
+  "373": {
+    "name": "Damage Formula Tee",
+    "description": "Shirt displaying changing combat calculations."
+  },
+  "374": {
+    "name": "Developer Commentary Hat",
+    "description": "Headwear showing creator notes about you."
+  },
+  "375": {
+    "name": "Variable Vision Glasses",
+    "description": "Eyewear revealing hidden game flags."
+  },
+  "376": {
+    "name": "Source Code Band",
+    "description": "Wristband showing randomized reality code."
+  },
+  "377": {
+    "name": "PSI Shield Choker",
+    "description": "Elegant neck piece blocking psychic attacks."
+  },
+  "378": {
+    "name": "Knight's Arsenal",
+    "description": "Traditional medieval armor for warriors."
+  },
+  "379": {
+    "name": "Crusader's Full Plate",
+    "description": "Complete plate armor for elite knights."
+  },
+  "380": {
+    "name": "Gold-Trimmed Plate",
+    "description": "Masterwork armor with royal accents."
+  },
+  "381": {
+    "name": "Gothic Half-Plate",
+    "description": "Flexible half-plate balancing defense and movement."
+  },
+  "382": {
+    "name": "Ring Mail Coat",
+    "description": "Interlocking metal rings forming flexible armor."
+  },
+  "383": {
+    "name": "Plated Chainmail",
+    "description": "Reinforced chain with vital area plating."
+  },
+  "384": {
+    "name": "Swift Chain",
+    "description": "Lightweight chainmail for mobile fighters."
+  },
+  "385": {
+    "name": "Stud-Reinforced Leather",
+    "description": "Hardened leather with metal stud reinforcement."
+  },
+  "386": {
+    "name": "Hardened Leather Cuirass",
+    "description": "Boiled leather offering weight-efficient protection."
+  },
+  "387": {
+    "name": "Common Soldier's Gambeson",
+    "description": "Simple padded armor for infantry."
+  },
+  "388": {
+    "name": "Medieval Helms",
+    "description": "Protective medieval headgear variants."
+  },
+  "389": {
+    "name": "Fortress Helm",
+    "description": "Fully enclosed helmet maximizing protection."
+  },
+  "390": {
+    "name": "Noble's Bascinet",
+    "description": "Elegant helmet with raisable visor."
+  },
+  "391": {
+    "name": "Open-Face Sallet",
+    "description": "Helmet prioritizing vision over coverage."
+  },
+  "392": {
+    "name": "Infantry Kettle Hat",
+    "description": "Simple metal cap for basic protection."
+  },
+  "393": {
+    "name": "Under-Helmet Cap",
+    "description": "Padded cap worn beneath helms."
+  },
+  "394": {
+    "name": "Medieval Barriers",
+    "description": "Protective shields from medieval warfare."
+  },
+  "395": {
+    "name": "Fortress Tower Shield",
+    "description": "Massive shield trading mobility for protection."
+  },
+  "396": {
+    "name": "Heater Battle Shield",
+    "description": "Classic knight's shield shape."
+  },
+  "397": {
+    "name": "Balanced Round Shield",
+    "description": "Circular shield offering versatile defense."
+  },
+  "398": {
+    "name": "Duelist's Buckler",
+    "description": "Small forearm shield allowing weapon use."
+  },
+  "399": {
+    "name": "Arcane Vestments",
+    "description": "Specialized armor for magical practitioners."
+  },
+  "400": {
+    "name": "Archmagister's Regalia",
+    "description": "Opulent robes infused with magical power."
+  },
+  "401": {
+    "name": "Spell Weaver's Robes",
+    "description": "Enchanted robes amplifying magical prowess."
+  },
+  "402": {
+    "name": "Novice Mage Robes",
+    "description": "Basic robes for magic students."
+  },
+  "403": {
+    "name": "Focus Crown",
+    "description": "Ornate headpiece sharpening magical concentration."
+  },
+  "404": {
+    "name": "Academic's Cap",
+    "description": "Scholarly headwear for mages and researchers."
+  },
+  "405": {
+    "name": "Holy Warrior Armor",
+    "description": "Religious armor for faithful combatants."
+  },
+  "406": {
+    "name": "Sanctified Plate",
+    "description": "Gleaming armor blessed by high clerics."
+  },
+  "407": {
+    "name": "Holy Chainmail",
+    "description": "Chain blessed against unholy forces."
+  },
+  "408": {
+    "name": "Grand Cleric Vestments",
+    "description": "Ceremonial robes for church leadership."
+  },
+  "409": {
+    "name": "Sacred Symbol Shield",
+    "description": "Shield emblazoned with holy markings."
+  },
+  "410": {
+    "name": "Archer's Arsenal",
+    "description": "Specialized gear for ranged specialists."
+  },
+  "411": {
+    "name": "Elite Bowman's Leather",
+    "description": "Flexible armor for master archers."
+  },
+  "412": {
+    "name": "Woodland Scout Garb",
+    "description": "Light forest armor for stealth and speed."
+  },
+  "413": {
+    "name": "Precision Draw Gloves",
+    "description": "Special gloves improving archery accuracy."
+  },
+  "414": {
+    "name": "Bow Arm Guard",
+    "description": "Protective bracer for drawing arms."
+  },
+  "415": {
+    "name": "Concealment Cloak",
+    "description": "Hooded cloak hiding the wearer effectively."
+  },
+  "416": {
+    "name": "Shadow Operative Gear",
+    "description": "Armor for assassins and thieves."
+  },
+  "417": {
+    "name": "Guild Shadow Leathers",
+    "description": "Darkened leather for stealth operations."
+  },
+  "418": {
+    "name": "Silent Hunter Garb",
+    "description": "Tight-fitting clothing minimizing noise."
+  },
+  "419": {
+    "name": "Identity Eraser Cowl",
+    "description": "Mask concealing identity and breath sounds."
+  },
+  "420": {
+    "name": "Whisper Step Boots",
+    "description": "Specially designed soundless footwear."
+  },
+  "421": {
+    "name": "Aristocratic Armor",
+    "description": "Royal garments balancing protection and status."
+  },
+  "422": {
+    "name": "King's War Regalia",
+    "description": "Ceremonial armor for royal combat."
+  },
+  "423": {
+    "name": "Nobility's Finery",
+    "description": "Luxurious clothing displaying high status."
+  },
+  "424": {
+    "name": "Sovereign's Crown",
+    "description": "Elegant crown symbolizing absolute authority."
+  },
+  "425": {
+    "name": "Status Cape",
+    "description": "Ceremonial cape denoting noble rank."
+  },
+  "426": {
+    "name": "Mythical Armaments",
+    "description": "Armor from rare and legendary materials."
+  },
+  "427": {
+    "name": "Wyrm Scale Armor",
+    "description": "Legendary armor forged from dragon hides."
+  },
+  "428": {
+    "name": "Elven Moonweave",
+    "description": "Enchanted armor moving like second skin."
+  },
+  "429": {
+    "name": "Cosmic Archmage Robes",
+    "description": "Mystical robes woven with stellar energies."
+  },
+  "430": {
+    "name": "Ancient Aegis",
+    "description": "Legendary shield deflecting impossible blows."
+  },
+  "431": {
+    "name": "War Deity Helm",
+    "description": "Helmet allegedly worn by a war god."
+  },
+  "432": {
+    "name": "Common Folk Clothing",
+    "description": "Simple medieval peasant garments."
+  },
+  "433": {
+    "name": "Peasant's Tunic",
+    "description": "Simple tunic for commoners everywhere."
+  },
+  "434": {
+    "name": "Guild Witch Hat",
+    "description": "Official pointed hat for Guild witches."
+  },
+  "435": {
+    "name": "Guild Mage Robes",
+    "description": "Official robes of the Mages Guild."
+  },
+  "436": {
+    "name": "",
+    "description": ""
+  },
+  "437": {
+    "name": "",
+    "description": ""
+  },
+  "438": {
+    "name": "",
+    "description": ""
+  },
+  "439": {
+    "name": "",
+    "description": ""
+  },
+  "440": {
+    "name": "",
+    "description": ""
+  },
+  "441": {
+    "name": "",
+    "description": ""
+  },
+  "442": {
+    "name": "",
+    "description": ""
+  },
+  "443": {
+    "name": "",
+    "description": ""
+  },
+  "444": {
+    "name": "",
+    "description": ""
+  },
+  "445": {
+    "name": "",
+    "description": ""
+  },
+  "446": {
+    "name": "",
+    "description": ""
+  },
+  "447": {
+    "name": "",
+    "description": ""
+  },
+  "448": {
+    "name": "",
+    "description": ""
+  },
+  "449": {
+    "name": "",
+    "description": ""
+  },
+  "450": {
+    "name": "",
+    "description": ""
+  },
+  "451": {
+    "name": "Modern Combat Arsenal",
+    "description": "Advanced tactical gear for urban warfare."
+  },
+  "452": {
+    "name": "Ceramic Trauma Carrier",
+    "description": "Military-grade armor with ceramic plates."
+  },
+  "453": {
+    "name": "Life Support Combat Suit",
+    "description": "Full combat gear with integrated survival systems."
+  },
+  "454": {
+    "name": "Spec Ops Polymer Armor",
+    "description": "Lightweight polymer favored by special forces."
+  },
+  "455": {
+    "name": "Nuclear Hazmat Suit",
+    "description": "Advanced radiation shielding hazmat gear."
+  },
+  "456": {
+    "name": "Tactical Head Systems",
+    "description": "Specialized combat headgear with tech integration."
+  },
+  "457": {
+    "name": "HUD Battle Helmet",
+    "description": "Combat helmet with integrated display overlay."
+  },
+  "458": {
+    "name": "Night Ops Helmet",
+    "description": "Tactical headgear with night vision mounting."
+  },
+  "459": {
+    "name": "Hazard Zone Helmet",
+    "description": "Protective headgear for toxic environments."
+  },
+  "460": {
+    "name": "Crowd Control Arsenal",
+    "description": "Protective shields for riot management."
+  },
+  "461": {
+    "name": "Clear Barrier Shield",
+    "description": "Transparent polycarbonate crowd control."
+  },
+  "462": {
+    "name": "Shock Deterrent Shield",
+    "description": "Electrified barrier delivering non-lethal voltage."
+  },
+  "463": {
+    "name": "Medical Crisis Gear",
+    "description": "Specialized protection for medical personnel."
+  },
+  "464": {
+    "name": "Sterile Crisis Suit",
+    "description": "Sealed protective wear for medical emergencies."
+  },
+  "465": {
+    "name": "Advanced Respirator",
+    "description": "Medical mask with superior filtration."
+  },
+  "466": {
+    "name": "State Ceremony Armor",
+    "description": "Ceremonial armor for official functions."
+  },
+  "467": {
+    "name": "Diplomatic Regalia",
+    "description": "Ornate uniform for high-ranking officials."
+  },
+  "468": {
+    "name": "Military Dress Formal",
+    "description": "Ceremonial military wear with honors."
+  },
+  "469": {
+    "name": "Extreme Climate Suits",
+    "description": "Environmental protection for hostile weather."
+  },
+  "470": {
+    "name": "Arctic Research Armor",
+    "description": "Insulated suit for polar exploration."
+  },
+  "471": {
+    "name": "Volcano Proximity Suit",
+    "description": "Heat-resistant gear for volcanic research."
+  },
+  "472": {
+    "name": "Deep Ocean Equipment",
+    "description": "Specialized gear for underwater exploration."
+  },
+  "473": {
+    "name": "Pressure Resistance Suit",
+    "description": "Pressurized diving gear for extreme depths."
+  },
+  "474": {
+    "name": "Robotic Dive Suit",
+    "description": "Atmospheric diving armor with mechanical assists."
+  },
+  "475": {
+    "name": "Zero Gravity Gear",
+    "description": "Space-grade equipment for vacuum conditions."
+  },
+  "476": {
+    "name": "EVA Life Support Suit",
+    "description": "Full environmental space protection."
+  },
+  "477": {
+    "name": "Vacuum Comm Helmet",
+    "description": "Pressurized helmet with integrated communications."
+  },
+  "478": {
+    "name": "Pickaxe",
+    "description": "Specialized gear for cave systems."
+  },
+  "479": {
+    "name": "Cave System Coveralls",
+    "description": "Reinforced suit for underground exploration."
+  },
+  "480": {
+    "name": "LED Mining Helmet",
+    "description": "Powerful lighting integrated into headgear."
+  },
+  "481": {
+    "name": "Worker Safety Arsenal",
+    "description": "Protective gear for industrial environments."
+  },
+  "482": {
+    "name": "Reflective Safety Vest",
+    "description": "High-visibility vest with reflective strips."
+  },
+  "483": {
+    "name": "Reinforced Work Boots",
+    "description": "Steel-toed construction footwear."
+  },
+  "484": {
+    "name": "Fire Response Equipment",
+    "description": "Specialized gear for firefighting operations."
+  },
+  "485": {
+    "name": "Structure Fire Armor",
+    "description": "Heat-resistant suit for building fires."
+  },
+  "486": {
+    "name": "Extreme Heat Suit",
+    "description": "Reflective armor for proximity to fire."
+  },
+  "487": {
+    "name": "Smoke Survival Helmet",
+    "description": "Self-contained breathing apparatus helmet."
+  },
+  "488": {
+    "name": "Law Enforcement Arsenal",
+    "description": "Protective gear for police operations."
+  },
+  "489": {
+    "name": "Trauma Plate Vest",
+    "description": "Bulletproof vest with plate inserts."
+  },
+  "490": {
+    "name": "Full Riot Protection",
+    "description": "Complete riot gear with face shield."
+  },
+  "491": {
+    "name": "Adrenaline Sport Gear",
+    "description": "Specialized clothing for extreme enthusiasts."
+  },
+  "492": {
+    "name": "Wingsuit Jump Armor",
+    "description": "Padded suit for base jumping operations."
+  },
+  "493": {
+    "name": "Track Racing Leathers",
+    "description": "Reinforced motorcycle boots."
+  },
+  "494": {
+    "name": "Practice Gi",
+    "description": "Classical martial arts practice equipment."
+  },
+  "495": {
+    "name": "Karate Uniform",
+    "description": "Classic gi for training and competition."
+  },
+  "496": {
+    "name": "Sparring Armor",
+    "description": "Protective sparring gear for martial training."
+  },
+  "497": {
+    "name": "Ancient Civilization Armor",
+    "description": "Ceremonial protection from lost empires."
+  },
+  "498": {
+    "name": "Greek Warrior Bronze",
+    "description": "Bronze cuirass from ancient Greece."
+  },
+  "499": {
+    "name": "Roman Legion Segmentata",
+    "description": "Segmented armor from Roman legionnaires."
+  },
+  "500": {
+    "name": "Legion Tower Shield",
+    "description": "Large rectangular Roman legion shield."
+  },
+  "501": {
+    "name": "Modern Arcane Arsenal",
+    "description": "Advanced magical gear for contemporary spellcasters."
+  },
+  "502": {
+    "name": "Circuit-Woven Robes",
+    "description": "Flowing robes with integrated circuit patterns."
+  },
+  "503": {
+    "name": "Holo-Matrix Robes",
+    "description": "Sleek robes projecting holographic spell matrices."
+  },
+  "504": {
+    "name": "Warded Lab Coat",
+    "description": "Enchanted research coat with protective wards."
+  },
+  "505": {
+    "name": "Spell Cache Hat",
+    "description": "Modern wizard hat storing prepared spells."
+  },
+  "506": {
+    "name": "Energy Focus Circlet",
+    "description": "Crystalline headpiece channeling magical energy."
+  },
+  "507": {
+    "name": "Formula Display Visor",
+    "description": "High-tech visor showing spell calculations."
+  },
+  "508": {
+    "name": "Mana Channel Gloves",
+    "description": "Gloves woven with conductive magical fibers."
+  },
+  "509": {
+    "name": "Backup Power Amulet",
+    "description": "Emergency magical energy reservoir."
+  },
+  "510": {
+    "name": "Grimoire Tablet",
+    "description": "Enchanted staff disguised as modern tablet."
+  },
+  "511": {
+    "name": "Elite Social Armor",
+    "description": "Elegant formal wear for high-society events."
+  },
+  "512": {
+    "name": "Bulletproof Tuxedo",
+    "description": "Perfectly tailored formal wear with hidden armor."
+  },
+  "513": {
+    "name": "Warded Evening Gown",
+    "description": "Elegant gown with concealed protective magic."
+  },
+  "514": {
+    "name": "Authority Power Suit",
+    "description": "Three-piece suit enhancing commanding presence."
+  },
+  "515": {
+    "name": "Decorated Dress Uniform",
+    "description": "Formal military wear with ceremonial honors."
+  },
+  "516": {
+    "name": "Negotiator's Formal Wear",
+    "description": "Diplomatic attire boosting negotiation skills."
+  },
+  "517": {
+    "name": "Elite Cocktail Dress",
+    "description": "Sophisticated dress for social warfare."
+  },
+  "518": {
+    "name": "Micro-Warded Bow Tie",
+    "description": "Classic formal tie with subtle enchantments."
+  },
+  "519": {
+    "name": "Elegance Gloves",
+    "description": "Formal gloves enhancing social grace."
+  },
+  "520": {
+    "name": "Corporate Warfare Attire",
+    "description": "Professional business wear for office combat."
+  },
+  "521": {
+    "name": "Boardroom Dominator",
+    "description": "Sharp business suit commanding respect."
+  },
+  "522": {
+    "name": "Confidence Blazer",
+    "description": "Professional jacket amplifying self-assurance."
+  },
+  "523": {
+    "name": "Executive Presence Dress",
+    "description": "Business dress enhancing professional authority."
+  },
+  "524": {
+    "name": "Productivity Shirt",
+    "description": "Crisp dress shirt with efficiency-enhancing threads."
+  },
+  "525": {
+    "name": "Leadership Tie",
+    "description": "Professional tie amplifying command qualities."
+  },
+  "526": {
+    "name": "Focus Briefcase",
+    "description": "Business case organizing thoughts mentally."
+  },
+  "527": {
+    "name": "Efficiency Timepiece",
+    "description": "Professional watch improving time management."
+  },
+  "528": {
+    "name": "Authority Step Shoes",
+    "description": "Business footwear projecting dominance."
+  },
+  "529": {
+    "name": "Analysis Spectacles",
+    "description": "Professional glasses enhancing analytical thought."
+  },
+  "530": {
+    "name": "Network Catalyst Blazer",
+    "description": "Corporate jacket enhancing connections."
+  },
+  "531": {
+    "name": "Pre-Squishing Technology",
+    "description": "Y2K-era equipment resisting temporal loops."
+  },
+  "532": {
+    "name": "Indestructible Phone",
+    "description": "Legendary Anoki 3310 repelling dimensional rifts."
+  },
+  "533": {
+    "name": "TTD Blocker Hat",
+    "description": "Aluminum-lined headgear blocking thought diseases."
+  },
+  "534": {
+    "name": "Loop-Proof Coveralls",
+    "description": "EHI industrial wear surviving temporal resets."
+  },
+  "535": {
+    "name": "Archive Foundation Kit",
+    "description": "Information warfare equipment."
+  },
+  "536": {
+    "name": "Data Warrior Vest",
+    "description": "Tactical vest with integrated information storage."
+  },
+  "537": {
+    "name": "Transparency Visor",
+    "description": "Eyewear displaying all data as public domain."
+  },
+  "538": {
+    "name": "Decryption Touch Gloves",
+    "description": "Gloves breaking encryption through contact."
+  },
+  "539": {
+    "name": "Hypercapitalist Gear",
+    "description": "High-performance equipment from the Collective."
+  },
+  "540": {
+    "name": "Bio-Wheel Boots",
+    "description": "Boots with integrated wheels for perpetual motion."
+  },
+  "541": {
+    "name": "Time Trading Suit",
+    "description": "Business wear generating temporal arbitrage profits."
+  },
+  "542": {
+    "name": "Dimensional Portfolio",
+    "description": "Briefcase trading currencies across realities."
+  },
+  "543": {
+    "name": "Guild Traditional Robes",
+    "description": "Classic Mages Guild ceremonial wear."
+  },
+  "544": {
+    "name": "Thatcher Loyalist Robes",
+    "description": "Ceremonial robes of Thatcher's faction."
+  },
+  "545": {
+    "name": "Crowley Chaos Robes",
+    "description": "Chaotic robes for Crowley disciples."
+  },
+  "546": {
+    "name": "Post-Apocalypse Grimoire",
+    "description": "Spellbook bound in Squishing-proof materials."
+  },
+  "547": {
+    "name": "Spell Format Hat",
+    "description": "Hat auto-formatting spells in CamelCase."
+  },
+  "548": {
+    "name": "New Pantheon Shield",
+    "description": "Divine relics from returned gods."
+  },
+  "549": {
+    "name": "Discord Queen's Crown",
+    "description": "Eris's crown of divine discord."
+  },
+  "550": {
+    "name": "Dead God Fragment",
+    "description": "Amulet containing slain YHWH's essence."
+  },
+  "551": {
+    "name": "Deicide Memory Spear",
+    "description": "Spear forged from god-killing memories."
+  },
+  "552": {
+    "name": "Sentient Oil Gear",
+    "description": "Equipment contaminated by thinking petroleum."
+  },
+  "553": {
+    "name": "Petrodemon Hazmat",
+    "description": "Suit protecting from sentient oil exposure."
+  },
+  "554": {
+    "name": "Oil Possession Ward",
+    "description": "Charm resisting petroleum-based possession."
+  },
+  "555": {
+    "name": "Perpetual Road Gear",
+    "description": "Rugged equipment for endless highway life."
+  },
+  "556": {
+    "name": "Loop Escape Jacket",
+    "description": "Legendary trucker's coat from the eternal road."
+  },
+  "557": {
+    "name": "Bubba's Miracle Parts",
+    "description": "Impossible mechanical salvage components."
+  },
+  "558": {
+    "name": "Temporal Flow Speedometer",
+    "description": "Gauge tracking speed relative to time itself."
+  },
+  "559": {
+    "name": "Dimensional Corruption Gear",
+    "description": "Items warped by leyline anomalies."
+  },
+  "560": {
+    "name": "Raw Chaos Robe",
+    "description": "Garment channeling unpredictable leyline power."
+  },
+  "561": {
+    "name": "Reality Weak Point Compass",
+    "description": "Navigation tool finding dimensional tears."
+  },
+  "562": {
+    "name": "Factory Incident Remnants",
+    "description": "Equipment from notorious Loca-Cola disaster."
+  },
+  "563": {
+    "name": "Cola Substance Hazmat",
+    "description": "Protective wear for mysterious beverage exposure."
+  },
+  "564": {
+    "name": "Not-Cola Mystery",
+    "description": "Bottle of substance produced by rogue machinery."
+  },
+  "565": {
+    "name": "Underground Faction Gear",
+    "description": "Ceremonial equipment from goblin tribes."
+  },
+  "566": {
+    "name": "Naguka War Armor",
+    "description": "Battle gear for violent goblin warriors."
+  },
+  "567": {
+    "name": "Verden Peace Robes",
+    "description": "Simple mystic robes from peaceful goblins."
+  },
+  "568": {
+    "name": "Death Metal Headphones",
+    "description": "Audio weapon blasting Norwegian metal."
+  },
+  "569": {
+    "name": "Time-Frozen Artifacts",
+    "description": "Items from Welsh village where time stopped."
+  },
+  "570": {
+    "name": "Eternal Midnight Watch",
+    "description": "Timepiece frozen at 1999's last moment."
+  },
+  "571": {
+    "name": "Ageless Stasis Clothing",
+    "description": "Garments immune to aging and decay."
+  },
+  "572": {
+    "name": "Reverse Thames Equipment",
+    "description": "Gear from backwards-flowing river zone."
+  },
+  "573": {
+    "name": "Causality Reverse Vest",
+    "description": "Life jacket floating against reality's current."
+  },
+  "574": {
+    "name": "Time Upstream Boots",
+    "description": "Footwear walking backwards through time."
+  },
+  "575": {
+    "name": "Tower Crash Debris",
+    "description": "Mysterious gear from Omega Tower site."
+  },
+  "576": {
+    "name": "Stratosphere Fragment Helm",
+    "description": "Helmet forged from fallen tower materials."
+  },
+  "577": {
+    "name": "Cosmic Cleanup Suit",
+    "description": "Protection for Kessler Syndrome\nto debris workers."
+  },
+  "578": {
+    "name": "Gravity Anomaly Meter",
+    "description": "Device measuring gravitational distortions."
+  },
+  "579": {
+    "name": "Mythical Journey Gear",
+    "description": "Equipment for dangerous Beagle expedition."
+  },
+  "580": {
+    "name": "Shifting Road Boots",
+    "description": "Footwear for paths changing destinations."
+  },
+  "581": {
+    "name": "Goblin Fury Arsenal",
+    "description": "Crude gear from scrap and pure rage."
+  },
+  "582": {
+    "name": "Rusty Plate Shoulders",
+    "description": "Jagged metal strapped with wire."
+  },
+  "583": {
+    "name": "Drum Skull Helmet",
+    "description": "Dented oil drum with crude vision holes."
+  },
+  "584": {
+    "name": "Automotive Rage Vest",
+    "description": "Car parts held together by anger."
+  },
+  "585": {
+    "name": "Spite-Reinforced Boots",
+    "description": "Leather boots with bottle cap armor."
+  },
+  "586": {
+    "name": "Nail Lid Shield",
+    "description": "Trash lid with sharpened rusty edges."
+  },
+  "587": {
+    "name": "Pull-Tab Chainmail",
+    "description": "Armor woven from discarded can tabs."
+  },
+  "588": {
+    "name": "Malice Can Gauntlets",
+    "description": "Tin cans welded into violent gloves."
+  },
+  "589": {
+    "name": "Trophy Tooth Cloth",
+    "description": "Ragged garment displaying enemy teeth."
+  },
+  "590": {
+    "name": "Tire Determination Armor",
+    "description": "Rubber patches held by stubbornness."
+  },
+  "591": {
+    "name": "Traffic Sign Spear",
+    "description": "Stop sign sharpened by pure hatred."
+  },
+  "592": {
+    "name": "Hubcap Fury Shield",
+    "description": "Car part beaten into defensive shape."
+  },
+  "593": {
+    "name": "Motor Oil Paint",
+    "description": "War decoration from oil and beetles."
+  },
+  "594": {
+    "name": "Cart Wire Desperation",
+    "description": "Shopping cart armor from necessity."
+  },
+  "595": {
+    "name": "Aggressive Colander",
+    "description": "Kitchen item modified with violence."
+  },
+  "596": {
+    "name": "Glass Bone Necklace",
+    "description": "Broken shards and small skeletons."
+  },
+  "597": {
+    "name": "Pizza Pan Defense",
+    "description": "Rusty cooking surface as buckler."
+  },
+  "598": {
+    "name": "Wire-Wrapped Clubs",
+    "description": "Crude weapons bound in barbed malice."
+  },
+  "599": {
+    "name": "Tribal Rag Vest",
+    "description": "Torn fabric marked with clan symbols."
+  },
+  "600": {
+    "name": "Tire Stubbornness Boots",
+    "description": "Oversized footwear from automotive rubber."
+  },
+  "601": {
+    "name": "Chainsaw Crown",
+    "description": "Rusty blade worn as menacing headband."
+  },
+  "602": {
+    "name": "Promise Breaker Club",
+    "description": "Wooden club studded with nails and betrayal."
+  },
+  "603": {
+    "name": "Spite Tape Suit",
+    "description": "Torn jumpsuit held by duct tape and anger."
+  },
+  "604": {
+    "name": "Crushed Can Bracers",
+    "description": "Crude arm guards from flattened soda cans."
+  },
+  "605": {
+    "name": "Jug Terror Mask",
+    "description": "Plastic milk container carved into fear."
+  },
+  "606": {
+    "name": "Road Rage Plate",
+    "description": "Armor from traffic signs and fury."
+  },
+  "607": {
+    "name": "Cone Glass Mace",
+    "description": "Traffic cone improvised into morning star."
+  },
+  "608": {
+    "name": "Industrial Mohawk",
+    "description": "Steel wool wig bonded with adhesive."
+  },
+  "609": {
+    "name": "Broken Dream Belt",
+    "description": "Bicycle chains woven with disappointment."
+  },
+  "610": {
+    "name": "Kitchen Rebar Axes",
+    "description": "Throwing weapons from knives and metal bars."
+  },
+  "611": {
+    "name": "Millennium Fashion",
+    "description": "Y2K-era clothing now considered vintage."
+  },
+  "612": {
+    "name": "Rhinestone Denim",
+    "description": "Low-rise bootcut jeans with sparkle details."
+  },
+  "613": {
+    "name": "Metallic Crop Tee",
+    "description": "Baby tee with silver print and short cut."
+  },
+  "614": {
+    "name": "Pre-Faded Denim Shell",
+    "description": "Artificially aged jacket with fake wear."
+  },
+  "615": {
+    "name": "Lucite Platform Sandals",
+    "description": "Chunky clear plastic platform footwear."
+  },
+  "616": {
+    "name": "Rhinestone Velour Set",
+    "description": "Bright pink tracksuit with sparkle trim."
+  },
+  "617": {
+    "name": "Sequin Spaghetti Top",
+    "description": "Cropped top with thin straps and sparkles."
+  },
+  "618": {
+    "name": "Chain Cargo Pants",
+    "description": "Baggy pants with pockets and decorative chains."
+  },
+  "619": {
+    "name": "Charm Hoop Earrings",
+    "description": "Oversized hoops with dangling decorations."
+  },
+  "620": {
+    "name": "Studded Plastic Choker",
+    "description": "Black plastic necklace with silver studs."
+  },
+  "621": {
+    "name": "Useless Micro Bag",
+    "description": "Tiny purse fitting only lip gloss."
+  },
+  "622": {
+    "name": "Contrast Bucket Hat",
+    "description": "Denim headwear with visible stitching."
+  },
+  "623": {
+    "name": "Mesh Bralette Layer",
+    "description": "Sheer mesh over colored undergarment."
+  },
+  "624": {
+    "name": "Flower Pocket Flares",
+    "description": "Flared jeans with embroidered details."
+  },
+  "625": {
+    "name": "Tied Bandana Halter",
+    "description": "Bandana repurposed as tied top."
+  },
+  "626": {
+    "name": "Multi-Color Dad Sneakers",
+    "description": "Chunky thick-soled athletic shoes."
+  },
+  "627": {
+    "name": "Temperature Mood Ring",
+    "description": "Color-changing ring reading body heat."
+  },
+  "628": {
+    "name": "Bright Butterfly Clips",
+    "description": "Colorful hair accessories with wing designs."
+  },
+  "629": {
+    "name": "Shimmer Application",
+    "description": "Body sparkle for arms and chest."
+  },
+  "630": {
+    "name": "Tinted Rectangle Frames",
+    "description": "Thin-framed colored lens glasses."
+  },
+  "631": {
+    "name": "Elastic Peasant Blouse",
+    "description": "Puffy-sleeved top with gathered neckline."
+  },
+  "632": {
+    "name": "Uniform Pleated Skirt",
+    "description": "School-style mini skirt in pleats."
+  },
+  "633": {
+    "name": "Ironic Mesh Trucker",
+    "description": "Mesh-back cap with vintage logo."
+  },
+  "634": {
+    "name": "Fitted Popcorn Texture",
+    "description": "Textured fabric shirt in tight cut."
+  },
+  "635": {
+    "name": "T-Shirt Slip Layer",
+    "description": "Slip dress over fitted tee combo."
+  },
+  "636": {
+    "name": "Frost Glitter Eyeshadow",
+    "description": "Shimmery eye makeup with bold application."
+  },
+  "637": {
+    "name": "Contrast Blonde Chunks",
+    "description": "Chunky highlights in dramatic streaks."
+  },
+  "638": {
+    "name": "Club Face Gems",
+    "description": "Adhesive rhinestones around eyes."
+  },
+  "639": {
+    "name": "Extreme Gloss Shine",
+    "description": "Clear or nude lip product with blinding finish."
+  },
+  "640": {
+    "name": "Oversized Jersey Casual",
+    "description": "Sports jersey worn large as streetwear."
+  },
+  "641": {
+    "name": "Bondage Urban Armor",
+    "description": "Fetish leather repurposed for street protection."
+  },
+  "642": {
+    "name": "Dominance Harness",
+    "description": "Black leather straps worn over clothing."
+  },
+  "643": {
+    "name": "Authority Stud Collar",
+    "description": "Studded leather neckwear projecting power."
+  },
+  "644": {
+    "name": "Reinforced Leather Corset",
+    "description": "Armored torso piece with imposing shape."
+  },
+  "645": {
+    "name": "Steel Thigh Dominance",
+    "description": "Thigh-high boots with reinforced toes."
+  },
+  "646": {
+    "name": "Studded Combat Gloves",
+    "description": "Fingerless leather with metal studs."
+  },
+  "647": {
+    "name": "Leather Threat Mask",
+    "description": "Upper face covering with aggressive design."
+  },
+  "648": {
+    "name": "Minimal Chain Bikini",
+    "description": "Metal mesh offering psychological protection."
+  },
+  "649": {
+    "name": "Defensive Lash Weapon",
+    "description": "Leather whip as tool and deterrent."
+  },
+  "650": {
+    "name": "Repurposed Restraint Cuffs",
+    "description": "Wrist and ankle protection from subculture."
+  },
+  "651": {
+    "name": "Spike Threat Bracelet",
+    "description": "Spiked leather wrist intimidation."
+  },
+  "652": {
+    "name": "Full Leather Combat Suit",
+    "description": "Complete body coverage in tactical leather."
+  },
+  "653": {
+    "name": "Utility Ring Choker",
+    "description": "Leather neckwear with functional D-ring."
+  },
+  "654": {
+    "name": "Padded Restraint Guards",
+    "description": "Arm protection from repurposed gear."
+  },
+  "655": {
+    "name": "Combat Leather Mouthguard",
+    "description": "Repurposed gag as protective equipment."
+  },
+  "656": {
+    "name": "Intimidation Leather Hood",
+    "description": "Head covering providing fear and protection."
+  },
+  "657": {
+    "name": "Aggressive Stud Vest",
+    "description": "Studded leather torso protection."
+  },
+  "658": {
+    "name": "Reinforced Threat Pants",
+    "description": "Leather leg armor with aggressive styling."
+  },
+  "659": {
+    "name": "Repurposed Crop Baton",
+    "description": "Riding crop as disciplinary tool."
+  },
+  "660": {
+    "name": "Tactical Eye Cover",
+    "description": "Blindfold repurposed as eye protection."
+  },
+  "661": {
+    "name": "Dark Romance Collection",
+    "description": "Gothic clothing for dramatic aesthetics."
+  },
+  "662": {
+    "name": "Victorian Shadow Coat",
+    "description": "Long black coat with dramatic collar."
+  },
+  "663": {
+    "name": "Lace Gothic Gown",
+    "description": "Flowing black dress with corseted bodice."
+  },
+  "664": {
+    "name": "Ornate Velvet Blazer",
+    "description": "Black velvet with elaborate silver details."
+  },
+  "665": {
+    "name": "Destroyed Lace Hosiery",
+    "description": "Ripped black stockings with patterns."
+  },
+  "666": {
+    "name": "Chain Platform Stompers",
+    "description": "Buckled boots with steel reinforcement."
+  },
+  "667": {
+    "name": "Victorian Lace Fingers",
+    "description": "Fingerless gloves extending past wrist."
+  },
+  "668": {
+    "name": "Ribbon Feather Hat",
+    "description": "Wide-brimmed black headwear with trails."
+  },
+  "669": {
+    "name": "Velvet Cross Pendant",
+    "description": "Ornate silver cross on black ribbon."
+  },
+  "670": {
+    "name": "Cameo Lace Necklace",
+    "description": "Black lace with silver cameo center."
+  },
+  "671": {
+    "name": "Silk Lined Cape",
+    "description": "Dramatic black cape with red interior."
+  },
+  "672": {
+    "name": "Boned Lace Corset",
+    "description": "Steel-structured with elaborate lacing."
+  },
+  "673": {
+    "name": "Fishnet Overlay Top",
+    "description": "Black mesh worn as outer layer."
+  },
+  "674": {
+    "name": "D-Ring Lace Pants",
+    "description": "Tight black with side lacing details."
+  },
+  "675": {
+    "name": "Shadow Drama Makeup",
+    "description": "Deep black and purple eye cosmetics."
+  },
+  "676": {
+    "name": "Embroidered Tailcoat",
+    "description": "Long black coat with aristocratic styling."
+  },
+  "677": {
+    "name": "Gothic Nail Design",
+    "description": "Black polish with silver accents."
+  },
+  "678": {
+    "name": "Occult Symbol Rings",
+    "description": "Silver jewelry with mystical symbols."
+  },
+  "679": {
+    "name": "Mourning Veil",
+    "description": "Black lace attached to ornate comb."
+  },
+  "680": {
+    "name": "Romantic Silk Poet",
+    "description": "Black shirt with puffy sleeves and lace."
+  },
+  "681": {
+    "name": "Long-Haul Trucker Kit",
+    "description": "Practical gear for highway warriors."
+  },
+  "682": {
+    "name": "Patch Collection Jacket",
+    "description": "Denim covered in truck stop memories."
+  },
+  "683": {
+    "name": "Classic Road Flannel",
+    "description": "Red and black checkered work shirt."
+  },
+  "684": {
+    "name": "Road Warrior Boots",
+    "description": "Steel-toed non-slip work footwear."
+  },
+  "685": {
+    "name": "Company Logo Trucker",
+    "description": "Mesh-back cap with employer branding."
+  },
+  "686": {
+    "name": "Reinforced Cargo Denim",
+    "description": "Work jeans with tool pockets and armor."
+  },
+  "687": {
+    "name": "Grip Dot Work Gloves",
+    "description": "Reinforced leather with palm traction."
+  },
+  "688": {
+    "name": "Endless Coffee Thermos",
+    "description": "Insulated container for hot liquid fuel."
+  },
+  "689": {
+    "name": "Roadside Reflective Vest",
+    "description": "High-visibility work protection."
+  },
+  "690": {
+    "name": "CB Communication Headset",
+    "description": "Radio gear for driver communication."
+  },
+  "691": {
+    "name": "Multi-Pocket Overalls",
+    "description": "Durable work wear with storage everywhere."
+  },
+  "692": {
+    "name": "Cold Weather Trucker Shell",
+    "description": "Insulated jacket for winter driving."
+  },
+  "693": {
+    "name": "Highway Glare Blockers",
+    "description": "Wraparound sunglasses for driving."
+  },
+  "694": {
+    "name": "Emergency Tool Belt",
+    "description": "Belt with pouches for roadside repairs."
+  },
+  "695": {
+    "name": "Comfort Seat Cushion",
+    "description": "Padded cover for marathon driving."
+  },
+  "696": {
+    "name": "Storm Loading Gear",
+    "description": "Weather-resistant suit for wet work."
+  },
+  "697": {
+    "name": "Road Dust Bandana",
+    "description": "Fabric for dust and sweat management."
+  },
+  "698": {
+    "name": "Labor Suspenders",
+    "description": "Heavy-duty straps keeping pants secure."
+  },
+  "699": {
+    "name": "Hours Tracking Organizer",
+    "description": "Logbook holder for DOT compliance."
+  },
+  "700": {
+    "name": "Breakdown Flare Kit",
+    "description": "Emergency signaling for roadside stops."
+  },
+  "701": {
+    "name": "Organic Horror Collection",
+    "description": "Disturbing living tissue clothing and biomatter."
+  },
+  "702": {
+    "name": "Cultured Skin Shell",
+    "description": "Jacket from living skin cells that breathes."
+  },
+  "703": {
+    "name": "Muscle Fiber Vest",
+    "description": "Living muscle tissue contracting for support."
+  },
+  "704": {
+    "name": "Skeletal Growth Boots",
+    "description": "Hardened cartilage with bone reinforcement."
+  },
+  "705": {
+    "name": "Nerve Sense Gloves",
+    "description": "Living nerve tissue enhancing touch."
+  },
+  "706": {
+    "name": "Skull Fragment Cap",
+    "description": "Hat from cranial bone providing mental shield."
+  },
+  "707": {
+    "name": "Living Intestine Belt",
+    "description": "Digestive tissue belt processing toxins."
+  },
+  "708": {
+    "name": "Hair Follicle Regulator",
+    "description": "Shirt growing hair for temperature control."
+  },
+  "709": {
+    "name": "Circulatory System Pants",
+    "description": "Pants with living blood vessels integrated."
+  },
+  "710": {
+    "name": "Lung Tissue Filter",
+    "description": "Mask from respiratory tissue filtering air."
+  },
+  "711": {
+    "name": "Vertebrae Reflex Chain",
+    "description": "Spinal bone necklace enhancing reactions."
+  },
+  "712": {
+    "name": "Calcium Deposit Armor",
+    "description": "Plating from bone matrix and minerals."
+  },
+  "713": {
+    "name": "Toenail Grip Socks",
+    "description": "Foot covers growing claws for traction."
+  },
+  "714": {
+    "name": "Retinal Vision Patch",
+    "description": "Eyepatch from living eye tissue."
+  },
+  "715": {
+    "name": "Bladder Underwear",
+    "description": "Undergarments from organ lining."
+  },
+  "716": {
+    "name": "Shedding Camouflage Shell",
+    "description": "Coat continuously molting skin cells."
+  },
+  "717": {
+    "name": "Cartilage Audio Enhancers",
+    "description": "Earrings from ear tissue boosting hearing."
+  },
+  "718": {
+    "name": "Throat Tissue Scarf",
+    "description": "Living vocal cord scarf speaking independently."
+  },
+  "719": {
+    "name": "Enamel Nerve Ring",
+    "description": "Tooth ring with embedded nerve endings."
+  },
+  "720": {
+    "name": "Secondary Heartbeat Suit",
+    "description": "Full bodysuit pulsing with extra heart."
+  },
+  "721": {
+    "name": "Tourist Xenotech",
+    "description": "Strange equipment from enigmatic Tourist species."
+  },
+  "722": {
+    "name": "Probability Distortion Suit",
+    "description": "Shimmering gear bending probability fields."
+  },
+  "723": {
+    "name": "PSI Sensor Helmet",
+    "description": "Translucent headgear with unknown detection."
+  },
+  "724": {
+    "name": "Cosmic Radiation Filter",
+    "description": "Breathing apparatus filtering background radiation."
+  },
+  "725": {
+    "name": "Silent Phase Boots",
+    "description": "Footwear leaving no trace on any surface."
+  },
+  "726": {
+    "name": "Solid Phase Gloves",
+    "description": "Hands passing through matter at will."
+  },
+  "727": {
+    "name": "Physics-Defying Robe",
+    "description": "Casual wear ignoring fashion and reality."
+  },
+  "728": {
+    "name": "Pocket Dimension Belt",
+    "description": "Waist storage containing impossible space."
+  },
+  "729": {
+    "name": "Universal Surface Sandals",
+    "description": "Footwear walking on anything, physics optional."
+  },
+  "730": {
+    "name": "Impossible Language Cap",
+    "description": "Hat translating languages that don't exist."
+  },
+  "731": {
+    "name": "Mood Culture Shirt",
+    "description": "Garment matching emotions and local customs."
+  },
+  "732": {
+    "name": "Perfect Climate Underwear",
+    "description": "Undergarments regulating temperature perfectly."
+  },
+  "733": {
+    "name": "Multi-Reality Timepiece",
+    "description": "Watch displaying time across dimensions."
+  },
+  "734": {
+    "name": "Universal Fascination Pendant",
+    "description": "Necklace making wearer interesting to all species."
+  },
+  "735": {
+    "name": "Truth Revealing Lenses",
+    "description": "Sunglasses showing phenomena's true nature."
+  },
+  "736": {
+    "name": "Massless Storage Pack",
+    "description": "Backpack weighing nothing regardless of contents."
+  },
+  "737": {
+    "name": "Social Repulsion Jacket",
+    "description": "Coat deflecting unwanted attention automatically."
+  },
+  "738": {
+    "name": "Surface Rejection Socks",
+    "description": "Footwear preventing contact with unpleasantness."
+  },
+  "739": {
+    "name": "Novice Luck Ring",
+    "description": "Jewelry granting extraordinary beginner's fortune."
+  },
+  "740": {
+    "name": "Anthropological Observer Suit",
+    "description": "Environmental gear for studying primitive cultures."
+  }
+}

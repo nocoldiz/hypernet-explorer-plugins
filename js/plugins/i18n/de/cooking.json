@@ -1,0 +1,58 @@
+{
+  "cooking": {
+    "adjectives": {
+      "positive": [
+        "Well-Cooked",
+        "Delicious",
+        "Gourmet",
+        "Masterful",
+        "Mystic",
+        "Divine",
+        "Perfect",
+        "Succulent",
+        "Extraordinary",
+        "Magical"
+      ],
+      "neutral": [
+        "Plain",
+        "Simple",
+        "Ordinary",
+        "Basic",
+        "Standard",
+        "Regular",
+        "Common",
+        "Modest",
+        "Unassuming",
+        "Everyday"
+      ],
+      "negative": [
+        "Charred",
+        "Ruined",
+        "Overcooked",
+        "Burnt",
+        "Spoiled",
+        "Questionable",
+        "Dubious",
+        "Suspicious",
+        "Failed",
+        "Disastrous"
+      ]
+    },
+    "messages": {
+      "prepared": "You prepared {name}!",
+      "sameItemPositive": "\nIt turned out exceptionally well!",
+      "sameItemNeutral": "\nIt's nothing special, but edible.",
+      "sameItemNegative": "\nPerhaps you shouldn't have tried that...",
+      "recoveredHunger": "\nRecovered {percent}% Hunger per member",
+      "splitAmong": " (split among {count} members)"
+    },
+    "ui": {
+      "selectFirstIngredient": "Select first ingredient to cook",
+      "selectSecondIngredient": "Select second ingredient to cook with {name}",
+      "confirmCook": "Cook {item1} and {item2} into {result}?",
+      "cookButton": "Cook",
+      "cancelButton": "Cancel",
+      "menuLabel": "Cooking"
+    }
+  }
+}

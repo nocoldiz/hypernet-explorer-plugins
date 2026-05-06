@@ -1,0 +1,4230 @@
+{
+  "1": {
+    "name": "Bell Goblin",
+    "description": "Rings its bell to summon a random enemy in battle."
+  },
+  "2": {
+    "name": "Goblin Warrior",
+    "description": "A battle-hardened goblin swinging its axe with ruthless precision."
+  },
+  "3": {
+    "name": "Goblin Shaman",
+    "description": "Chants curses that warp flesh and mind."
+  },
+  "4": {
+    "name": "Goblin Chieftain",
+    "description": "Leads its horde with brutal authority."
+  },
+  "5": {
+    "name": "Forest Treant",
+    "description": "An animated oak that smashes foes with gnarled limbs."
+  },
+  "6": {
+    "name": "Dodger Imp",
+    "description": "A twisted little demon crackling with embers, it scorches flesh with gleeful malice."
+  },
+  "7": {
+    "name": "Frost Elemental",
+    "description": "A living shard of ice whose chilling touch shatters bone and freezes blood in an instant."
+  },
+  "8": {
+    "name": "Desert Scorpion",
+    "description": "A hulking arachnid with crystalline pincers, its venom burns like acid and paralyzes on contact."
+  },
+  "9": {
+    "name": "Compressed air",
+    "description": "A howling vortex given shape, it slices throats with razor winds and vanishes in a gust."
+  },
+  "10": {
+    "name": "Sewers slime",
+    "description": "A filthy ooze that oozes through grates, dissolving flesh and machinery alike in its wake. Almosts immune to magic"
+  },
+  "11": {
+    "name": "Thunder Sprite",
+    "description": "A crackling wisp of storm energy, it jolts its prey with lightning strikes faster than the eye can follow."
+  },
+  "12": {
+    "name": "Crimson Sucker",
+    "description": "A blood-thirsty bird with razor teeth, it drains humors with uncanny speed and leaves corpses pale."
+  },
+  "13": {
+    "name": "Sand Golem",
+    "description": "A hulking construct of stone and sand, it smashes skulls with each seismic punch."
+  },
+  "14": {
+    "name": "Shadow Wraith",
+    "description": "A drifting specter of pure darkness, it rends souls with ethereal claws and fades before retaliation."
+  },
+  "15": {
+    "name": "Water Nymph",
+    "description": "A beguiling spirit, she drags victims beneath the waves to drown in the depths."
+  },
+  "16": {
+    "name": "Royal Knight",
+    "description": "A gleaming warrior in cursed plate."
+  },
+  "17": {
+    "name": "Dark Mage",
+    "description": "A gaunt sorcerer with sunken eyes, it warps reality with forbidden incantations and curses."
+  },
+  "18": {
+    "name": "Frog Monk",
+    "description": "A scaled ascetic whose fists blaze like embers, it shatters ribs with a single breath-charged blow."
+  },
+  "19": {
+    "name": "Phantom Archer",
+    "description": "A ghostly marksman loosed from the veil, its spectral arrows pass through flesh to pierce the heart."
+  },
+  "20": {
+    "name": "Shadow Thief",
+    "description": "A wraith in human guise, it steals coin and life force alike without a whisper of warning."
+  },
+  "21": {
+    "name": "Fiery Sleep Demon",
+    "description": "A yawning fiend swathed in nightmares, it lulls victims with hypnotic embers before incinerating them."
+  },
+  "22": {
+    "name": "Frost Dragon",
+    "description": "A colossal wyrm of glacial scales, its icy roar freezes the landscapes."
+  },
+  "23": {
+    "name": "Void Sorcerer",
+    "description": "An eldritch conduit to nothingness, its void-fire blasts unravel flesh and sanity in equal measure."
+  },
+  "24": {
+    "name": "Royal Champion",
+    "description": "A towering blade-warden in gilded armor, it lays waste to armies with disciplined fury."
+  },
+  "25": {
+    "name": "Ancient Lich",
+    "description": "A decrepit sovereign of bones, it weaves death magic that corrodes flesh and curses the soul."
+  },
+  "26": {
+    "name": "Mi-go Brain Harvester",
+    "description": "Lovecraftian fungoid alien that collects brains"
+  },
+  "27": {
+    "name": "Deep One Hybrid",
+    "description": "Lovecraftian fish-human hybrid from Innsmouth"
+  },
+  "28": {
+    "name": "Yog-Sothoth Spawn",
+    "description": "Lesser manifestation of the Outer God of time and space"
+  },
+  "29": {
+    "name": "Nephilim Remnant",
+    "description": "Ancient half-angel being from forgotten texts"
+  },
+  "30": {
+    "name": "Aiwass Messenger",
+    "description": "Crowley's Holy Guardian Angel entity"
+  },
+  "31": {
+    "name": "Choronzon",
+    "description": "Crowley's demon of dispersion and ego dissolution"
+  },
+  "32": {
+    "name": "Grey Zeta Reticulan",
+    "description": "Interdimensional alien entity from Zeta Reticuli system"
+  },
+  "33": {
+    "name": "Nyarlathotep Avatar",
+    "description": "Manifestation of the Crawling Chaos"
+  },
+  "34": {
+    "name": "Babalon Priestess",
+    "description": "Crowley's scarlet woman archetype"
+  },
+  "35": {
+    "name": "Annunaki Overlord",
+    "description": "Ancient alien ruler from Sumerian mythology"
+  },
+  "36": {
+    "name": "Shoggoth",
+    "description": "Lovecraftian protoplasmic shapeshifter"
+  },
+  "37": {
+    "name": "Elder Thing",
+    "description": "Ancient alien race from Lovecraft's At the Mountains of Madness"
+  },
+  "38": {
+    "name": "Beast 666",
+    "description": "Crowley's great beast persona made manifest"
+  },
+  "39": {
+    "name": "Yellow King",
+    "description": "Entity from Chambers' The King in Yellow"
+  },
+  "40": {
+    "name": "Azathoth Fragment",
+    "description": "Manifestation of the blind idiot god at the center of the universe"
+  },
+  "41": {
+    "name": "Cybernetic Tank",
+    "description": "Advanced tank with mechanical augmentations"
+  },
+  "42": {
+    "name": "Quantum Fluctuation",
+    "description": "Unstable entity from between realities"
+  },
+  "43": {
+    "name": "Mr. Inadequate",
+    "description": "The most pathetically weak enemy you'll ever face"
+  },
+  "44": {
+    "name": "Talking Door",
+    "description": "Sentient doorway that somehow walks and speaks"
+  },
+  "45": {
+    "name": "Bureaucratic Nightmare",
+    "description": "Living embodiment of red tape and paperwork"
+  },
+  "46": {
+    "name": "Sentient Traffic Cone",
+    "description": "Somehow gained consciousness and a taste for violence"
+  },
+  "47": {
+    "name": "Eternal Intern",
+    "description": "Office worker trapped in endless internship limbo"
+  },
+  "48": {
+    "name": "Recursive Paradox",
+    "description": "Entity caught in an eternal logical loop"
+  },
+  "49": {
+    "name": "Corporate Ninja",
+    "description": "Stealthy assassin working for mega-corporations"
+  },
+  "50": {
+    "name": "Mianni",
+    "description": "Animated Crayona that ignores physical laws"
+  },
+  "51": {
+    "name": "Celestial Tyrannosaurus",
+    "description": "Dinosaur from space with cosmic powers"
+  },
+  "52": {
+    "name": "Motivational Fungoid",
+    "description": "Terrifyingly positive entity that can inspire even foes"
+  },
+  "53": {
+    "name": "Disco Revenant",
+    "description": "Undead entity stuck in the 1970s"
+  },
+  "54": {
+    "name": "Interdimensional Tourist",
+    "description": "Visitor from another dimension who got lost"
+  },
+  "55": {
+    "name": "Hyperdimensional Grimorie",
+    "description": "Fourth-dimensional grimorie that defies physical perception"
+  },
+  "56": {
+    "name": "Sentient Meme",
+    "description": "Giant enemy meme that gained consciousness and physical form <Char:$Virus"
+  },
+  "57": {
+    "name": "Rotating Sawblade",
+    "description": "Television personality with reality-warping powers"
+  },
+  "58": {
+    "name": "Iron Horse",
+    "description": "Rogue AI that has manifested a physical form"
+  },
+  "59": {
+    "name": "Philosophical Zombie",
+    "description": "Undead entity that debates existentialism while fighting"
+  },
+  "60": {
+    "name": "Glitch Entity",
+    "description": "Digital anomaly that crossed into the physical world"
+  },
+  "61": {
+    "name": "Quantum Supersoldier",
+    "description": "Warrior from the future who exists in multiple states"
+  },
+  "62": {
+    "name": "Chronovore",
+    "description": "Bear entity that feeds on time itself"
+  },
+  "63": {
+    "name": "Advertisement Badger",
+    "description": "Advertisement that gained sentience and aggression"
+  },
+  "64": {
+    "name": "Living Theorem",
+    "description": "Sentient equation that warps reality around it"
+  },
+  "65": {
+    "name": "Slime Knight",
+    "description": "A sentient slime creature that has formed armor and wields a weapon."
+  },
+  "66": {
+    "name": "Forest Witch",
+    "description": "A mystical witch of the forest who uses nature and sleep magic."
+  },
+  "67": {
+    "name": "Mechanical Golem",
+    "description": "An ancient mechanical construct with earth-shattering capabilities."
+  },
+  "68": {
+    "name": "Storm Banshee",
+    "description": "A spectral being born from thunderstorms, capable of electric devastation."
+  },
+  "69": {
+    "name": "Crystal Siren",
+    "description": "A mesmerizing crystal being that can charm and silence enemies."
+  },
+  "70": {
+    "name": "Forest Rat",
+    "description": "A common woodland rodent, slightly larger and more aggressive than normal."
+  },
+  "71": {
+    "name": "Street Punk",
+    "description": "A low-level urban troublemaker with basic fighting skills."
+  },
+  "72": {
+    "name": "Drake Drone",
+    "description": "A small, mass-produced security or surveillance robot."
+  },
+  "73": {
+    "name": "Zombie Villager",
+    "description": "A recently turned undead, slow but persistent."
+  },
+  "74": {
+    "name": "Space Zebra",
+    "description": "A novice space explorer with basic combat training."
+  },
+  "75": {
+    "name": "Mutant Bug",
+    "description": "A small, aggressive insectoid creature with sharp claws."
+  },
+  "76": {
+    "name": "Goblin Scout",
+    "description": "A nimble little goblin skilled in quick, precise strikes."
+  },
+  "77": {
+    "name": "Cultist Acolyte",
+    "description": "A low-ranking member of a mysterious and sinister cult."
+  },
+  "78": {
+    "name": "Chronos, Time Titan",
+    "description": "An ancient being that embodies the raw power of time itself, capable of rewriting reality."
+  },
+  "79": {
+    "name": "Void Empress",
+    "description": "A cosmic entity that manipulates darkness and incomprehensible truths beyond mortal understanding."
+  },
+  "80": {
+    "name": "Primordial Golem",
+    "description": "An ancient living construct of stone and earth, older than civilization itself."
+  },
+  "81": {
+    "name": "Quantum Archon",
+    "description": "A multidimensional being that exists simultaneously across infinite possible realities."
+  },
+  "82": {
+    "name": "Celestial Avatar",
+    "description": "A manifestation of divine power, bridging the gap between mortal comprehension and cosmic forces."
+  },
+  "83": {
+    "name": "Entropy Wyrm",
+    "description": "A cosmic serpent that consumes and distorts arcane energy, threatening the very fabric of existence."
+  },
+  "84": {
+    "name": "Master Chen",
+    "description": "A legendary Karate master with decades of combat experience and unparalleled technique."
+  },
+  "85": {
+    "name": "Diego 'Jaguar' Rodriguez",
+    "description": "A world-renowned Capoeira fighter known for his fluid, dance-like combat style and devastating kicks."
+  },
+  "86": {
+    "name": "Viktor 'Iron Fist' Volkov",
+    "description": "A former boxing champion with devastating punching power and an unbreakable spirit."
+  },
+  "87": {
+    "name": "Akira Tanaka",
+    "description": "A Wing Chun grandmaster with extraordinary defensive skills and lightning-fast counter-attacks."
+  },
+  "88": {
+    "name": "Rashid Al-Sayf",
+    "description": "A legendary Muay Thai fighter renowned for his devastating knee and elbow techniques."
+  },
+  "89": {
+    "name": "Elena 'Shadow' Rodriguez",
+    "description": "A PSI master with unparalleled fluid combat movements and psychological warfare techniques."
+  },
+  "90": {
+    "name": "Morgana the Bloodweaver",
+    "description": "A dark sorceress who manipulates blood magic and harvests life essence from her victims."
+  },
+  "91": {
+    "name": "Lilith the Corruptor",
+    "description": "A master of psychological manipulation who breaks minds as easily as casting spells."
+  },
+  "92": {
+    "name": "Ravenna the Shadowbinder",
+    "description": "A witch who manipulates perceptions and traps souls in nightmarish alternate realities."
+  },
+  "93": {
+    "name": "Hecate the Plague Mistress",
+    "description": "A witch who commands plagues, poisons, and can silence her enemies with deadly magic."
+  },
+  "94": {
+    "name": "Esmeralda the Dream Weaver",
+    "description": "A mystic who can trap victims in recursive dreams and unravel their sanity."
+  },
+  "95": {
+    "name": "Selene the Void Witch",
+    "description": "A witch who channels the raw, destructive power of the void, warping reality itself."
+  },
+  "96": {
+    "name": "Magma Titan",
+    "description": "A colossal elemental construct of living magma, encased in volcanic rock armor."
+  },
+  "97": {
+    "name": "Frost Colossus",
+    "description": "A massive elemental being of living ice, its body a fortress of frozen crystal and unbreakable frost."
+  },
+  "98": {
+    "name": "Storm Behemoth",
+    "description": "A thunderous elemental giant, crackling with electrical energy and armored in lightning-forged plates."
+  },
+  "99": {
+    "name": "Tsunami Guardian",
+    "description": "A colossal water elemental, its body a living current of crushing hydraulic pressure."
+  },
+  "100": {
+    "name": "Earth Sentinel",
+    "description": "A mountain-like elemental construct of living stone, immovable and devastatingly powerful."
+  },
+  "101": {
+    "name": "Wind Leviathan",
+    "description": "A massive elemental composed of swirling hurricane winds, its form a living tempest of destruction."
+  },
+  "102": {
+    "name": "Golden Mimic",
+    "description": "A rare shapeshifting creature that appears as a treasure chest, packed with valuable loot."
+  },
+  "103": {
+    "name": "Merchant's Nightmare",
+    "description": "A mysterious entity that seems to carry the accumulated wealth of multiple merchants."
+  },
+  "104": {
+    "name": "Crystal Hoarder",
+    "description": "A crystalline being that has accumulated treasures from countless adventurers throughout centuries."
+  },
+  "105": {
+    "name": "Treasure Golem",
+    "description": "An animated construct made entirely of treasure, protecting its accumulated wealth."
+  },
+  "106": {
+    "name": "Luck Elemental",
+    "description": "A rare ethereal being that embodies fortune itself, materializing valuable treasures."
+  },
+  "107": {
+    "name": "Skull Keeper",
+    "description": "A multidimensional entity that guards treasures from across multiple realities."
+  },
+  "108": {
+    "name": "Sewer Rat",
+    "description": "A common sewer rat. Fast but weak, it can occasionally blind its opponents with dirt or create small nuisance magic."
+  },
+  "109": {
+    "name": "Forest Archer",
+    "description": "A skilled archer who blends into forest environments for ambush attacks"
+  },
+  "110": {
+    "name": "Gorgon Queen",
+    "description": "Serpent-haired woman with a petrifying gaze"
+  },
+  "111": {
+    "name": "Corrupted Knight",
+    "description": "Once a noble warrior now consumed by darkness"
+  },
+  "112": {
+    "name": "Flame Elemental",
+    "description": "Living manifestation of fire with a volatile temperament"
+  },
+  "113": {
+    "name": "Aquatic Elemental",
+    "description": "Fluid being composed of living water that can change shape at will"
+  },
+  "114": {
+    "name": "Earth Elemental",
+    "description": "Living stone creature with tremendous strength and endurance"
+  },
+  "115": {
+    "name": "Air Elemental",
+    "description": "Barely visible entity of swirling winds with great speed and agility"
+  },
+  "116": {
+    "name": "Vampire Lord",
+    "description": "Ancient undead noble who feeds on blood and commands the night"
+  },
+  "117": {
+    "name": "Abyssal Fiend",
+    "description": "Demonic entity summoned from the darkest depths of the underworld"
+  },
+  "118": {
+    "name": "Multi-Headed Hydra",
+    "description": "Reptilian monster with multiple heads that grow back when severed"
+  },
+  "119": {
+    "name": "Labyrinth Guardian",
+    "description": "Bull-headed humanoid with immense strength and a battle axe"
+  },
+  "120": {
+    "name": "Luminous Jellyfish",
+    "description": "Bioluminescent creature that can control minds with hypnotic light patterns"
+  },
+  "121": {
+    "name": "Military Cyborg",
+    "description": "Half-human, half-machine warrior with advanced combat capabilities"
+  },
+  "122": {
+    "name": "Combat Drone",
+    "description": "Autonomous flying machine equipped with advanced weaponry"
+  },
+  "123": {
+    "name": "Battle Mech",
+    "description": "Heavy combat robot with powerful ranged and melee capabilities"
+  },
+  "124": {
+    "name": "Sacred Phoenix",
+    "description": "Legendary fire bird that rises from its own ashes when defeated"
+  },
+  "125": {
+    "name": "Ancient Dragon",
+    "description": "Powerful winged reptile with devastating breath weapons and ancient knowledge"
+  },
+  "126": {
+    "name": "Spectral Wisp",
+    "description": "Ghostly ball of light that leads travelers astray and drains life force"
+  },
+  "127": {
+    "name": "Mountain Ogre",
+    "description": "Massive, strong humanoid with thick skin and primitive but devastating attacks"
+  },
+  "128": {
+    "name": "Taxidoggo",
+    "description": "A common woodland rodent, slightly larger and more aggressive than normal."
+  },
+  "129": {
+    "name": "Gray Wolf",
+    "description": "A common predator that hunts in packs. Swift and dangerous when hungry."
+  },
+  "130": {
+    "name": "Brown Bear",
+    "description": "A powerful forest predator with immense strength and thick fur."
+  },
+  "131": {
+    "name": "Venomous Snake",
+    "description": "A deadly reptile with potent venom that can blind and poison its prey."
+  },
+  "132": {
+    "name": "Wild Boar",
+    "description": "An aggressive forest dweller with sharp tusks and a bad temper."
+  },
+  "133": {
+    "name": "Black Panther",
+    "description": "A stealthy jungle predator with incredible agility and sharp claws."
+  },
+  "134": {
+    "name": "Mountain Eagle",
+    "description": "A majestic bird of prey with razor-sharp talons and exceptional vision."
+  },
+  "135": {
+    "name": "Tree Monkey",
+    "description": "A mischievous forest dweller that throws objects and can temporarily blind enemies."
+  },
+  "136": {
+    "name": "Giant Scorpion",
+    "description": "A dangerous desert arachnid with a venomous stinger and powerful pincers."
+  },
+  "137": {
+    "name": "Striped Tiger",
+    "description": "A powerful jungle predator with incredible strength and sharp fangs."
+  },
+  "138": {
+    "name": "Vampire Bat",
+    "description": "A nocturnal flying mammal that can drain small amounts of blood from its victims."
+  },
+  "139": {
+    "name": "Forest Stag",
+    "description": "A proud forest herbivore with impressive antlers that can deliver powerful charges."
+  },
+  "140": {
+    "name": "Golden Lion",
+    "description": "The king of beasts with devastating attacks and a terrifying roar."
+  },
+  "141": {
+    "name": "Giant Spider",
+    "description": "A massive arachnid that hunts with poisonous fangs and sticky webs."
+  },
+  "142": {
+    "name": "Swamp Crocodile",
+    "description": "An ancient reptilian predator with powerful jaws and armored skin."
+  },
+  "143": {
+    "name": "Red Fox",
+    "description": "A cunning forest predator known for its speed and intelligence."
+  },
+  "144": {
+    "name": "Armored Rhinoceros",
+    "description": "A massive herbivore with thick skin and a dangerous horn used for charging."
+  },
+  "145": {
+    "name": "Giant Jellyfish",
+    "description": "A translucent sea creature with paralyzing tentacles."
+  },
+  "146": {
+    "name": "Giant Vulture",
+    "description": "A massive scavenger bird with powerful wings that can create gusts of wind."
+  },
+  "147": {
+    "name": "Wildcat",
+    "description": "A fierce feline predator that can deliver multiple attacks in quick succession."
+  },
+  "148": {
+    "name": "Komodo Dragon",
+    "description": "A massive predatory lizard with venomous saliva and razor-sharp teeth."
+  },
+  "149": {
+    "name": "Peregrine Falcon",
+    "description": "The fastest animal alive, capable of diving at incredible speeds to strike prey."
+  },
+  "150": {
+    "name": "Panda",
+    "description": "An enormous and aggressive bear with incredible strength and resilience."
+  },
+  "151": {
+    "name": "Monitor Lizard",
+    "description": "A large predatory reptile with a powerful tail and sharp claws."
+  },
+  "152": {
+    "name": "Tarantula",
+    "description": "A hairy spider with potent venom and aggressive hunting behavior."
+  },
+  "153": {
+    "name": "Alpha Dire Wolf",
+    "description": "The massive leader of a dire wolf pack. Twice the size of normal wolves with unnaturally sharp fangs and a devastating howl that terrifies prey."
+  },
+  "154": {
+    "name": "Hellfire Mammoth",
+    "description": "An enormous prehistoric elephant with tusks wreathed in supernatural flames. Its hide is nearly impenetrable and its charge unstoppable."
+  },
+  "155": {
+    "name": "Titan Anaconda",
+    "description": "A colossal serpent capable of crushing even the largest prey. Its venom causes paralysis and its constriction can shatter bone."
+  },
+  "156": {
+    "name": "Megalodon",
+    "description": "A prehistoric shark of colossal size, thought extinct until now. Its jaws can snap ships in half and its presence causes tidal waves."
+  },
+  "157": {
+    "name": "Sabertooth Alpha",
+    "description": "A nightmarish predator with fangs longer than swords. Its roar alone can cause paralysis and its speed defies comprehension."
+  },
+  "158": {
+    "name": "Emperor Deathstalker",
+    "description": "A mutated scorpion of terrifying proportions. Its venom is the most potent neurotoxin known, and its armored exoskeleton deflects most attacks."
+  },
+  "159": {
+    "name": "Volcanic Wyvern",
+    "description": "A draconic beast that nests in active volcanoes. Its scales are forged in magma, and its breath can melt stone in seconds."
+  },
+  "160": {
+    "name": "Blood Leech Colossus",
+    "description": "An abominable mutation that has grown to the size of a house. Capable of draining a human dry in seconds through multiple feeding tubes."
+  },
+  "161": {
+    "name": "Tyrant Crocodilian",
+    "description": "An ancient reptile the size of a ship with jaws that can crush steel. It has survived since prehistoric times and developed terrifying intelligence."
+  },
+  "162": {
+    "name": "Thunderwing Roc",
+    "description": "A titanic bird of prey that creates storms with its wings. Its talons can lift adult elephants, and its cry shatters eardrums."
+  },
+  "163": {
+    "name": "Abyssal Hallucigenia",
+    "description": "A nightmarish arachnid from the deepest caverns. Its webs are stronger than steel cables, and its venom liquefies organs instantly."
+  },
+  "164": {
+    "name": "Behemoth Gorilla",
+    "description": "A primeval great ape standing twenty feet tall. Its fists can level buildings, and its territorial rage is unstoppable."
+  },
+  "165": {
+    "name": "Kraken Leviathan",
+    "description": "A monstrous cephalopod with hundreds of tentacles. Legend claims it can drag entire ships to the ocean floor with ease."
+  },
+  "166": {
+    "name": "Demon Bear",
+    "description": "A corrupted bear of monstrous proportions with blood-red fur. Its roar induces terror, and its claws can shred steel like paper."
+  },
+  "167": {
+    "name": "Vampiric Nightwing",
+    "description": "A massive bat with a 30-foot wingspan. It has evolved to drain more than blood, it can absorb life force directly, leaving withered husks behind."
+  },
+  "168": {
+    "name": "Ghost Tiger",
+    "description": "An ethereal predator that appears only during blood moons. Its fangs can pierce spiritual defenses, and it can move through solid objects."
+  },
+  "169": {
+    "name": "Titanothere Alpha",
+    "description": "A prehistoric rhinoceros-like beast standing 25 feet tall at the shoulder. Its charge can level forests, and its hide is nearly impenetrable."
+  },
+  "170": {
+    "name": "World Serpent",
+    "description": "A mythical serpent so vast its body could encircle mountains. Ancient texts speak of it sleeping beneath the world, its movements causing earthquakes."
+  },
+  "171": {
+    "name": "Abyssal Sea Dragon",
+    "description": "A hybrid creature combining elements of sea serpents and ancient dragons. It can create whirlpools with its movement and breathe both ice and pressurized water."
+  },
+  "172": {
+    "name": "Primordial Behemoth",
+    "description": "One of the first beasts to walk the earth, preserved through unknown means. Its footsteps cause earthquakes, and its primal magic warps reality around it."
+  },
+  "173": {
+    "name": "Shock Slime",
+    "description": "A living capacitor of raw electricity, it surges through veins and machinery with crackling delight."
+  },
+  "174": {
+    "name": "Ancient Dragon :EP",
+    "description": "A terrifyingly powerful dragon that has lived for millennia. It has mastered temporal magic, allowing it to manipulate time itself."
+  },
+  "175": {
+    "name": "Crimson Vampire :EP",
+    "description": "An ancient vampire lord who has mastered blood magic. Can drain life, summon minions, and inflict deadly status effects."
+  },
+  "176": {
+    "name": "Yog-Sothoth Spawn :EP",
+    "description": "A cosmic horror that exists partially outside reality. It creates reality distortions that cause random status effects each turn."
+  },
+  "177": {
+    "name": "Dragon Monk :EP",
+    "description": "A martial arts master who has merged with dragon essence, gaining immense power. Uses devastating combo attacks that hit multiple times."
+  },
+  "178": {
+    "name": "Motivational Speaker :EP",
+    "description": "A charismatic entity that can manipulate reality through words alone."
+  },
+  "179": {
+    "name": "Entropy Wyrm :EP",
+    "description": "A cosmic serpent that consumes energy and magic."
+  },
+  "180": {
+    "name": "Battle Mech :EP",
+    "description": "An advanced war machine with adaptive defense systems."
+  },
+  "181": {
+    "name": "Hyperdimensional Grimorie :EP",
+    "description": "A fourth-dimensional entity that phases in and out of reality."
+  },
+  "182": {
+    "name": "Celestial Avatar :EP",
+    "description": "A divine manifestation that channels cosmic forces."
+  },
+  "183": {
+    "name": "Blood Countess :EP",
+    "description": "An ancient vampire queen who has mastered blood magic."
+  },
+  "184": {
+    "name": "Diamond Mimic :EP",
+    "description": "A legendary treasure chest mimic with an almost impenetrable shell. Can absorb and copy the most powerful ability used against it."
+  },
+  "185": {
+    "name": "Quantum Fluctuation :EP",
+    "description": "An unstable entity that exists simultaneously in multiple states."
+  },
+  "186": {
+    "name": "Maggot Slail",
+    "description": "A bloated grub crawling in carrion, it devours rot and breeds in the stench of decay."
+  },
+  "187": {
+    "name": "Plaguebro Rattus",
+    "description": "The bloated king of the sewer rats, Plaguelord Rattus commands disease and vermin. Resistant to ice but weak to poison."
+  },
+  "188": {
+    "name": "Reaganite",
+    "description": "A fragment of the shattered soul of Ronald Reagan"
+  },
+  "189": {
+    "name": "Tanko",
+    "description": "The most serene homemade battle tank"
+  },
+  "190": {
+    "name": "Bi Human",
+    "description": ""
+  },
+  "191": {
+    "name": "Double Singer",
+    "description": ""
+  },
+  "192": {
+    "name": "Cautious Opossum ",
+    "description": "asd"
+  },
+  "193": {
+    "name": "Desperate Pufferfish",
+    "description": "asd"
+  },
+  "194": {
+    "name": "Griphon",
+    "description": "asd"
+  },
+  "195": {
+    "name": "Blood Mosquito",
+    "description": "asd"
+  },
+  "196": {
+    "name": "Insect Swarm",
+    "description": "asd"
+  },
+  "197": {
+    "name": "Thor",
+    "description": ""
+  },
+  "198": {
+    "name": "Brain Swarmer",
+    "description": ""
+  },
+  "199": {
+    "name": "Orc Captain",
+    "description": "asd"
+  },
+  "200": {
+    "name": "Pastoral Sheep",
+    "description": ""
+  },
+  "201": {
+    "name": "Kangaroo",
+    "description": "asd"
+  },
+  "202": {
+    "name": "Dread Knight",
+    "description": "A warrior clad in cursed armor that feeds on fear and drains courage"
+  },
+  "203": {
+    "name": "Basilisk",
+    "description": "A massive reptile with hypnotic eyes and a powerful tail strike"
+  },
+  "204": {
+    "name": "Nightmare Mage",
+    "description": "A sorcerer who specializes in sleep magic and manipulating dreams"
+  },
+  "205": {
+    "name": "Alpha Warg",
+    "description": "Leader of a wolf pack that can summon reinforcements and strike fear with its howl"
+  },
+  "206": {
+    "name": "Kraken Spawn",
+    "description": "The offspring of an ancient sea monster, with powerful tentacles and water control"
+  },
+  "207": {
+    "name": "Permafrost Dragon",
+    "description": "A dragon adapted to extreme cold, capable of freezing entire areas with its breath"
+  },
+  "208": {
+    "name": "War Hyppotaur",
+    "description": "A battle-scarred minotaur equipped with heavy armor and a massive battle axe"
+  },
+  "209": {
+    "name": "Harpy Banshee",
+    "description": "A winged humanoid with a sonic scream that can confuse and disorient enemies"
+  },
+  "210": {
+    "name": "Platinum Mimic",
+    "description": "A rare treasure chest mimic with valuable contents but extremely dangerous teeth"
+  },
+  "211": {
+    "name": "Mountain Titan",
+    "description": "A massive humanoid of living stone that can cause earthquakes with its footsteps"
+  },
+  "212": {
+    "name": "Blood Countess",
+    "description": "An elegant vampiress who drains life force and can dominate weak-willed victims"
+  },
+  "213": {
+    "name": "War Idol",
+    "description": "An ancient statue brought to life by the spirits of fallen warriors, thirsting for battle"
+  },
+  "214": {
+    "name": "Noble Guardian",
+    "description": "A heavily armed mechanical soldier with advanced weaponry and auto-repair systems"
+  },
+  "215": {
+    "name": "Mind Flayer",
+    "description": "A tentacled humanoid that feeds on thoughts and can drain life force from a distance"
+  },
+  "216": {
+    "name": "Storm Elemental",
+    "description": "A powerful air spirit that can transform into a miniature tornado"
+  },
+  "217": {
+    "name": "Jungle Constrictor",
+    "description": "A massive snake with potent venom and crushing coils"
+  },
+  "218": {
+    "name": "Coral Enchantress",
+    "description": "A beautiful sea creature that lures victims with hypnotic songs and blinding lights"
+  },
+  "219": {
+    "name": "Infernal Warmonger",
+    "description": "A powerful demon wearing molten armor and wielding flames as weapons"
+  },
+  "220": {
+    "name": "Abyssal Hydromancer",
+    "description": "A water mage that can manipulate ocean currents and create high-pressure water jets"
+  },
+  "221": {
+    "name": "Mystic Panther",
+    "description": "A large feline with exceptional stealth abilities and berserker rage when cornered"
+  },
+  "222": {
+    "name": "Siege Automation",
+    "description": "A massive war machine with an energy shield and powerful beam weapons"
+  },
+  "223": {
+    "name": "Reality Warper",
+    "description": "A mage who can bend perception and create illusions that confuse and disorient"
+  },
+  "224": {
+    "name": "Abyssal Serpent",
+    "description": "A SeaBed creature with venomous fangs and hypnotic patterns along its scales"
+  },
+  "225": {
+    "name": "Moss Viper",
+    "description": "A forest predator that can camouflage itself among vegetation and strike with deadly precision"
+  },
+  "226": {
+    "name": "Living Armor",
+    "description": "A suit of enchanted armor that moves on its own, using sharp claws to attack intruders"
+  },
+  "227": {
+    "name": "Brine Wisp",
+    "description": "A water elemental infused with salt and oceanic minerals, capable of high-pressure water jets"
+  },
+  "228": {
+    "name": "Deer Sprite",
+    "description": "A mischievous fire elemental that darts about quickly, setting surroundings ablaze"
+  },
+  "229": {
+    "name": "Terra Golem",
+    "description": "A creature of living stone and soil that can reshape its body and create tremors"
+  },
+  "230": {
+    "name": "Zephyr Djinn",
+    "description": "A wind elemental that can turn nearly invisible and attack with razor-sharp air currents"
+  },
+  "231": {
+    "name": "Siren Sniper",
+    "description": "A beautiful but deadly creature whose mesmerizing songs lure victims to their doom"
+  },
+  "232": {
+    "name": "Crimson Analizer",
+    "description": "A large, vampiric samurai that drains life force from its victims to heal itself"
+  },
+  "233": {
+    "name": "Sorrow Specter",
+    "description": "A ghostly entity that feeds on grief and can paralyze victims with overwhelming sadness"
+  },
+  "234": {
+    "name": "Dream Weaver",
+    "description": "A mystic that can trap enemies in recursive nightmares, manipulating their perceptions"
+  },
+  "235": {
+    "name": "Desert Commander",
+    "description": "A skilled tactical leader who can boost allies' morale while misleading enemies"
+  },
+  "236": {
+    "name": "Electro Arachnid",
+    "description": "A giant spider that has evolved the ability to generate electricity in its silk glands"
+  },
+  "237": {
+    "name": "Toxic Ooze",
+    "description": "A gelatinous creature composed of acidic slime that can paralyze on contact"
+  },
+  "238": {
+    "name": "Rogue Sentinel",
+    "description": "A malfunctioning security robot with advanced weapons systems and toxic gas deployment"
+  },
+  "239": {
+    "name": "Frost Enchantress",
+    "description": "A powerful sorceress who specializes in ice magic and mind control"
+  },
+  "240": {
+    "name": "Venomous Dragonfly",
+    "description": "A giant dragonfly with enhanced venom that causes multiple status effects"
+  },
+  "241": {
+    "name": "Abyssal Tentacler",
+    "description": "A deep-sea creature with multiple tentacles that can blind and entangle prey"
+  },
+  "242": {
+    "name": "Young Magma Drake",
+    "description": "A juvenile fire dragon whose scales are still forming, leaving some vulnerable spots"
+  },
+  "243": {
+    "name": "Juvenile Ice Wyrm",
+    "description": "A young ice dragon that can create blizzards and freeze enemies solid"
+  },
+  "244": {
+    "name": "Shadow Blade",
+    "description": "An elite assassin who strikes from darkness and can steal valuable items"
+  },
+  "245": {
+    "name": "Emerald Stalker",
+    "description": "A cunning predator that blends perfectly with jungle foliage, striking with venomous fangs when prey least expects it"
+  },
+  "246": {
+    "name": "Cursed Grimorie",
+    "description": "A capricious air spirit that can turn nearly invisible and create disorienting whirlwinds around its targets"
+  },
+  "247": {
+    "name": "Caustic Slime",
+    "description": "A highly acidic ooze that can dissolve armor on contact and split into smaller entities when attacked"
+  },
+  "248": {
+    "name": "Crimson Harvester",
+    "description": "A blood-drinking warrior who gains strength and speed with each successful strike, becoming more dangerous as the battle progresses"
+  },
+  "249": {
+    "name": "Guardian Vindicator",
+    "description": "A holy warrior sworn to protect sacred lands, wielding divine magic that purges darkness and reinforces allies"
+  },
+  "250": {
+    "name": "Frost Weaver",
+    "description": "A sorcerer who manipulates cold energies to slow enemies and create ice barriers, gradually freezing the battlefield"
+  },
+  "251": {
+    "name": "Fossil Sentinel",
+    "description": "An ancient construct of animated bones and stone that guards forgotten tombs, immune to fear and mind effects"
+  },
+  "252": {
+    "name": "Normal pig",
+    "description": "Just a normal pig"
+  },
+  "253": {
+    "name": "Cinder Weaver",
+    "description": "A spider mutated by volcanic energies, spinning webs of burning silk that ignite on contact with oxygen"
+  },
+  "254": {
+    "name": "Nightveil Assassin",
+    "description": "A master of shadow magic who can teleport short distances and coat weapons in paralyzing venom"
+  },
+  "255": {
+    "name": "Crumbling Colossus",
+    "description": "A massive earth elemental whose body constantly reforms, hurling boulders and causing localized earthquakes"
+  },
+  "256": {
+    "name": "Wrath Dolphin",
+    "description": "A dolphin"
+  },
+  "257": {
+    "name": "Infernal Cerberus",
+    "description": "A volatile fire spirit that explodes into multiple flame jets when threatened, setting all nearby combustibles ablaze"
+  },
+  "258": {
+    "name": "Animated Arsenal",
+    "description": "A possessed suit of armor that can detach its weapons to attack from multiple angles simultaneously"
+  },
+  "259": {
+    "name": "Seafoam Enchantress",
+    "description": "A mesmerizing aquatic sorceress who commands currents and marine life while clouding the minds of her foes"
+  },
+  "260": {
+    "name": "Mind Sculptor",
+    "description": "A psychic prodigy who can reshape perceptions and extract memories, turning allies against each other"
+  },
+  "261": {
+    "name": "Abyssal Hunter",
+    "description": "Fisher frog"
+  },
+  "262": {
+    "name": "Molten Dragon",
+    "description": "A deformed fire dragon whose scales still drip with magma, setting the ground ablaze where it walks"
+  },
+  "263": {
+    "name": "Glacier Serpent",
+    "description": "A serpentine ice drake that can burrow through frozen ground and emerge with explosive force"
+  },
+  "264": {
+    "name": "Toxic Ghost",
+    "description": "A venomous arachnid that can inject eggs which hatch inside victims, causing devastating internal damage"
+  },
+  "265": {
+    "name": "Shadow Blade",
+    "description": "An elite assassin trained in the forbidden arts, capable of momentarily becoming incorporeal to evade attacks"
+  },
+  "266": {
+    "name": "Animated Gravestalker",
+    "description": "A collection of bones animated by dark magic that absorbs life energy from nearby living creatures"
+  },
+  "267": {
+    "name": "Parrot",
+    "description": "A bird"
+  },
+  "268": {
+    "name": "Winter's Harbinger",
+    "description": "A powerful ice mage who can create blizzard conditions even in warm environments, freezing enemies solid"
+  },
+  "269": {
+    "name": "Consecrated Guardian",
+    "description": "A divine protector blessed by celestial powers, capable of healing allies and smiting undead with holy light"
+  },
+  "270": {
+    "name": "Tempest Pegasus",
+    "description": "A pegasus that can form multiple miniature tornadoes to attack from all directions while remaining elusive"
+  },
+  "271": {
+    "name": "Anguish Phantom",
+    "description": "A tormented spirit that feeds on emotional pain, inducing despair and draining vitality from those who succumb"
+  },
+  "272": {
+    "name": "Reality Bender",
+    "description": "A mystic who can manipulate perceptions, creating illusions so convincing they can cause physical harm"
+  },
+  "273": {
+    "name": "Virulent Slimefiend",
+    "description": "A highly evolved ooze with multiple nuclei that can divide and reform, each part capable of autonomous action"
+  },
+  "274": {
+    "name": "Scarecrow Sentinel",
+    "description": "A magically animated suit of armor that can reform itself after taking damage, wielding enchanted weapons"
+  },
+  "275": {
+    "name": "Living Monolith",
+    "description": "A sentient rock formation that can reshape its body at will, lashing out with stone tendrils and crushing pressure"
+  },
+  "276": {
+    "name": "Jungle Stalker",
+    "description": "A venomous predator that can trigger hallucinations in its prey, making escape nearly impossible"
+  },
+  "277": {
+    "name": "Bloodthirsty Crusader",
+    "description": "A fallen holy warrior who now feeds on life essence, wielding corrupted divine power alongside vampiric abilities"
+  },
+  "278": {
+    "name": "Ethereal Devourer",
+    "description": "An incorporeal entity that consumes memories and emotions, leaving victims as empty husks"
+  },
+  "279": {
+    "name": "Ocean Warlock",
+    "description": "A masterful water mage who commands fierce currents and can draw the moisture from living bodies"
+  },
+  "280": {
+    "name": "Mountain Crusher",
+    "description": "A stone giant whose footsteps cause minor earthquakes and who can weaponize boulders with devastating force"
+  },
+  "281": {
+    "name": "Mind Manipulator",
+    "description": "A powerful telepath who can implant false memories and turn companions against each other"
+  },
+  "282": {
+    "name": "Proto Turret",
+    "description": "An ancient mechanical guardian with rotating armor plates that adapt to different types of attacks"
+  },
+  "283": {
+    "name": "Toxic Amalgam",
+    "description": "A fusion of multiple slimes that can separate and recombine at will, each component possessing different toxins"
+  },
+  "284": {
+    "name": "Permafrost Conjurer",
+    "description": "An ice mage who can create weapons and shields from frost, manipulating them with precise telekinetic control"
+  },
+  "285": {
+    "name": "Infernal Prodigy",
+    "description": "A young fire elemental with unusually developed powers, capable of creating precise flame constructs"
+  },
+  "286": {
+    "name": "Necrotic Champion",
+    "description": "A warrior who died in battle but refused to pass on, now fighting with supernatural strength and resilience"
+  },
+  "287": {
+    "name": "Devoted Templar",
+    "description": "A holy warrior whose faith manifests as powerful defensive auras and smiting attacks against the unholy"
+  },
+  "288": {
+    "name": "Venom Lord",
+    "description": "A master of poisons who has transformed his own body into a toxic vessel, exuding deadly vapors"
+  },
+  "289": {
+    "name": "Midnight Hunter",
+    "description": "A specialized assassin who hunts magical creatures, using enchanted weapons that disrupt arcane abilities"
+  },
+  "290": {
+    "name": "Cloud Giant",
+    "description": "An air elemental that can compress itself into devastating wind blades or expand to create widespread chaos"
+  },
+  "291": {
+    "name": "Scorched Tyrant",
+    "description": "A fire-breathing reptilian beast with scale plates that radiate intense heat, setting nearby objects aflame"
+  },
+  "292": {
+    "name": "Coral Enchantress",
+    "description": "A sea witch who commands aquatic creatures and can temporarily transform opponents into marine life"
+  },
+  "293": {
+    "name": "Nervous System",
+    "description": "A phantasmal entity that can manifest victims' deepest fears as temporary physical constructs"
+  },
+  "294": {
+    "name": "Forest's Vengeance",
+    "description": "A plant-animal hybrid that can rapidly grow thorny vines to entangle prey before injecting neurotoxins"
+  },
+  "295": {
+    "name": "Void Manipulator",
+    "description": "A cloaked spellcaster who can open brief portals to the void, unleashing chaotic energies that distort reality"
+  },
+  "296": {
+    "name": "Primal Sloth",
+    "description": "An ancient forest protector with bark-like skin that can command plants and vines to restrain intruders"
+  },
+  "297": {
+    "name": "Divine Arbiter",
+    "description": "A celestial enforcer who judges the worthy and unworthy, wielding blinding light that can stun opponents"
+  },
+  "298": {
+    "name": "Paralytic Slug",
+    "description": "A stealthy predator with barbed stingers that inject a potent neurotoxin, immobilizing prey for easy consumption"
+  },
+  "299": {
+    "name": "Molten Juggernaut",
+    "description": "A massive elemental fusion of fire and earth that can hurl flaming boulders and create waves of scorching heat"
+  },
+  "300": {
+    "name": "Crimson Harbinger",
+    "description": "A winged demonic entity that breathes streams of wildfire and leaves a trail of burning embers in its wake"
+  },
+  "301": {
+    "name": "Fey Enchantress",
+    "description": "A woodland fairy with powerful charm magic who can turn nature itself against intruders in her domain"
+  },
+  "302": {
+    "name": "Tide Sculptor",
+    "description": "A master of water magic who can form precise aquatic constructs and control the moisture in the air"
+  },
+  "303": {
+    "name": "Goblin head",
+    "description": "A severed goblin head"
+  },
+  "304": {
+    "name": "Star Caller",
+    "description": "A celestial mystic who can channel cosmic energy to create miniature stars that orbit and protect them"
+  },
+  "305": {
+    "name": "Essence Leech",
+    "description": "A vampiric entity that drains not just blood but life force itself, growing stronger and faster with each successful attack"
+  },
+  "306": {
+    "name": "Bone Commander",
+    "description": "A skeletal warlord who can command lesser undead and whose ancient weapons cause wounds that resist magical healing"
+  },
+  "307": {
+    "name": "Winter's Herald",
+    "description": "A powerful frost mage who summons ice storms and can create temporary duplicates of themselves from snow"
+  },
+  "308": {
+    "name": "Venomfang Archer",
+    "description": "A reptilian hunter who coats arrows with a fast-acting paralytic toxin harvested from rare jungle plants"
+  },
+  "309": {
+    "name": "Thought Weaver",
+    "description": "A psychic who can implant false memories and create realistic illusions by manipulating neural pathways"
+  },
+  "310": {
+    "name": "Luminous Defender",
+    "description": "A holy knight whose armor channels divine energy, creating barriers of light that repel unholy creatures"
+  },
+  "311": {
+    "name": "Jungle Predator",
+    "description": "A carnivorous plant-beast hybrid that uses pheromones to lure prey before striking with poisonous thorns"
+  },
+  "312": {
+    "name": "Ember Centipede",
+    "description": "A massive centipede with scales that burn like hot coals, capable of spitting streams of liquid fire"
+  },
+  "313": {
+    "name": "Mystic Prodigy",
+    "description": "A young but extraordinarily gifted mage who can manipulate multiple elements simultaneously with instinctive precision"
+  },
+  "314": {
+    "name": "Gilded Guardian",
+    "description": "A magical construct of animated gold and precious metals that becomes harder to damage as the battle progresses"
+  },
+  "315": {
+    "name": "Infernal Devastator",
+    "description": "A demonic entity wreathed in perpetual flames that can unleash concentrated fire blasts that melt stone"
+  },
+  "316": {
+    "name": "Mountain Giant",
+    "description": "A massive stone giant whose footsteps cause minor tremors and who can hurl boulders with devastating accuracy"
+  },
+  "317": {
+    "name": "Ethereal Tactician",
+    "description": "A spectral commander who can analyze and counter enemy strategies while creating illusory duplicates"
+  },
+  "318": {
+    "name": "Frost Archmagus",
+    "description": "A master of ice magic who can summon blizzards and create crystalline constructs that fight autonomously"
+  },
+  "319": {
+    "name": "Mutated Goblin",
+    "description": "A mutated goblin"
+  },
+  "320": {
+    "name": "Shadow Executioner",
+    "description": "An elite assassin who can teleport through shadows and deliver strikes that cause lingering wounds"
+  },
+  "321": {
+    "name": "Maelstrom Sovereign",
+    "description": "A powerful water beast that can create whirlpools and control multiple water tendrils simultaneously"
+  },
+  "322": {
+    "name": "Nightmare Bacteria",
+    "description": "A powerful dream entity that can manifest victims' deepest fears as temporary physical constructs"
+  },
+  "323": {
+    "name": "Crimson Patriarch",
+    "description": "An ancient vampire who can command lesser undead and transform into a cloud of mist to avoid damage"
+  },
+  "324": {
+    "name": "Crag Behemoth",
+    "description": "A giant elemental fusion of stone and crystal that can redirect magical attacks and absorb minerals to heal"
+  },
+  "325": {
+    "name": "Abyssal Horror",
+    "description": "A shapeless entity from the depths that can engulf victims whole and digest them within its amorphous body"
+  },
+  "326": {
+    "name": "Astral Sentinel",
+    "description": "A radiant celestial guardian that can teleport instantly between locations and manipulate light as a weapon"
+  },
+  "327": {
+    "name": "Accursed Stonefish",
+    "description": "A stonefish"
+  },
+  "328": {
+    "name": "Radiant Justicar",
+    "description": "A divine champion who channels pure light energy, creating weapons and shields of solidified radiance"
+  },
+  "329": {
+    "name": "Mind Overlord",
+    "description": "A powerful psychic who can dominate multiple minds simultaneously and create devastating telekinetic force waves"
+  },
+  "330": {
+    "name": "Skulmire Slime",
+    "description": "A monstrous slime that spins webs of pure shadow that drain life force and restrict movement"
+  },
+  "331": {
+    "name": "Mountain Devastator",
+    "description": "A colossal earth elemental that can reshape terrain at will and cause localized earthquakes with each step"
+  },
+  "332": {
+    "name": "Infernal Monarch",
+    "description": "An ancient fire dragon whose mere presence causes flammable materials to ignite and metal to warp from heat"
+  },
+  "333": {
+    "name": "Mercury Dragon",
+    "description": "A massive ice dragon whose breath can instantly freeze living creatures solid and shatter them with a touch"
+  },
+  "334": {
+    "name": "Forest Sovereign",
+    "description": "A master archer infused with nature magic who can control plant life and fire arrows that split into multiple projectiles"
+  },
+  "335": {
+    "name": "Stone Shifter",
+    "description": "A small earth elemental that can camouflage itself among rocks and surprise unwary travelers"
+  },
+  "336": {
+    "name": "Ember Imp",
+    "description": "A mischievous fire sprite that enjoys startling travelers with small flame bursts"
+  },
+  "337": {
+    "name": "Hand Crawler",
+    "description": "A crawling hand"
+  },
+  "338": {
+    "name": "Bone Sentinel",
+    "description": "A skeletal guardian animated by minor necromantic magic, tasked with protecting ancient burial sites"
+  },
+  "339": {
+    "name": "Shadow Stalker",
+    "description": "A stealthy predator that blends with darkness and strikes from behind with surprising speed"
+  },
+  "340": {
+    "name": "Flying pig",
+    "description": "A flying pig"
+  },
+  "341": {
+    "name": "Novice Paladin",
+    "description": "A young holy warrior still learning to channel divine magic, but devoted to vanquishing evil"
+  },
+  "342": {
+    "name": "Frost Apprentice",
+    "description": "A novice ice mage who can create small ice shards and cool the surrounding air"
+  },
+  "343": {
+    "name": "Lizard Sniper",
+    "description": "A lizard sniper"
+  },
+  "344": {
+    "name": "Rat King",
+    "description": "A rat king"
+  },
+  "345": {
+    "name": "Novice Illusionist",
+    "description": "A beginning magic user specialized in creating minor illusions to confuse opponents"
+  },
+  "346": {
+    "name": "Stone Guardian",
+    "description": "A magically animated stone construct that follows simple commands to protect an area"
+  },
+  "347": {
+    "name": "Fear Siphon",
+    "description": "A shadowy entity that feeds on fear and can cause momentary panic in its victims"
+  },
+  "348": {
+    "name": "Flame Frake",
+    "description": "A small fire drake"
+  },
+  "349": {
+    "name": "Wandering Archer",
+    "description": "A heavily armored archer who roams the land seeking to prove their combat prowess"
+  },
+  "350": {
+    "name": "Zephyr Wizard",
+    "description": "A wizard that can create gusts of wind and small whirlwinds"
+  },
+  "351": {
+    "name": "Siren Apprentice",
+    "description": "A young aquatic humanoid learning to use enchanting songs to influence the minds of others"
+  },
+  "352": {
+    "name": "Blood Initiate",
+    "description": "A novice practitioner of blood magic who can inflict minor wounds at a distance"
+  },
+  "353": {
+    "name": "Webweaver",
+    "description": "A large spider that spins sticky webs to trap prey and can deliver mildly paralytic bites"
+  },
+  "354": {
+    "name": "Stealthy Operative",
+    "description": "A stealthy operative who uses throwing knives coated with mild sleep-inducing toxins"
+  },
+  "355": {
+    "name": "Magma Overlord",
+    "description": "A colossal dragon-like beast that lives in volcanic chambers, its body constantly oozing molten rock that instantly incinerates anything it touches"
+  },
+  "356": {
+    "name": "Nightmare Sovereign",
+    "description": "A terrifying entity born from collective fears, able to manifest nightmares into reality and trap victims in endless cycles of their deepest terrors"
+  },
+  "357": {
+    "name": "Soul Harvester",
+    "description": "A horrific reaper whose scythe severs the connection between body and soul, collecting spirits to power its forbidden magic"
+  },
+  "358": {
+    "name": "Mountain Devastator",
+    "description": "An ancient stone titan that has slumbered beneath mountains for millennia, now awakened and enraged, able to cause devastating earthquakes with each step"
+  },
+  "359": {
+    "name": "Crimson Tyrant",
+    "description": "A monstrous vampire lord who has transcended death itself, capable of draining entire villages in a single night and controlling blood like a living weapon"
+  },
+  "360": {
+    "name": "War Colossus",
+    "description": "An enormous battle construct forged by ancient smiths using forbidden metallurgy and the souls of a thousand warriors, wielding weapons larger than most buildings"
+  },
+  "361": {
+    "name": "Obsidian Dreadnought",
+    "description": "A towering golem crafted from volcanic glass that absorbs magical energy, growing stronger with each spell cast in its vicinity"
+  },
+  "362": {
+    "name": "Abyssal Devourer",
+    "description": "A massive amorphous horror from the ocean depths that can dissolve almost any material on contact and absorb the properties of what it consumes"
+  },
+  "363": {
+    "name": "Maelstrom Leviathan",
+    "description": "A colossal sea serpent that creates massive whirlpools capable of dragging entire ships into the depths, its scales constantly shifting and flowing like liquid"
+  },
+  "364": {
+    "name": "Glacial Titan",
+    "description": "An ancient ice elemental so powerful that the air freezes solid around it, creating crystal sculptures of anything that approaches too closely"
+  },
+  "365": {
+    "name": "Shadow Assassin",
+    "description": "A legendary killer who has mastered forbidden shadow magic, able to move between dimensions and strike from impossible angles"
+  },
+  "366": {
+    "name": "Mind Tyrant",
+    "description": "A psionicist of devastating power who can control multiple minds simultaneously and reshape reality itself with pure thought"
+  },
+  "367": {
+    "name": "Celestial Arbiter",
+    "description": "A divine enforcer sent to eradicate corruption, wielding weapons of pure holy light that can cleave through any defense"
+  },
+  "368": {
+    "name": "Infernal Annihilator",
+    "description": "A demonic engine of destruction whose body is a gateway to the elemental plane of fire, surrounding everything nearby in an inescapable inferno"
+  },
+  "369": {
+    "name": "Flower Behemoth",
+    "description": "A massive mutated flower whose every pore seeps deadly toxins, creating clouds of poison that kill all life for miles around"
+  },
+  "370": {
+    "name": "Void Weaver",
+    "description": "A cosmic horror that exists half in our reality and half beyond, spinning webs of anti-matter that erase anything they touch from existence"
+  },
+  "371": {
+    "name": "Storm Harbinger",
+    "description": "A primordial air bird capable of creating hurricanes at will, its body a swirling vortex of lightning and wind that tears apart anything in its path"
+  },
+  "372": {
+    "name": "Frost Monarch",
+    "description": "The undisputed ruler of winter, an ancient dragon whose frigid breath can instantly freeze an entire army solid and shatter them with a gesture"
+  },
+  "373": {
+    "name": "Mountain King",
+    "description": "An ancient earth elemental of unimaginable power that has become one with an entire mountain range, causing tectonic shifts with its movements"
+  },
+  "374": {
+    "name": "Bloodlord Supreme",
+    "description": "The progenitor of all vampires, an ancient evil that can command oceans of blood and drain the life force from entire regions with a mere thought"
+  },
+  "375": {
+    "name": "Hobgoblin Runt",
+    "description": "A scrawny, underfed goblin that barely knows how to hold a weapon"
+  },
+  "376": {
+    "name": "Hobgoblin Scout",
+    "description": "A quick-footed goblin that serves as the eyes and ears of its tribe"
+  },
+  "377": {
+    "name": "Hobgoblin Archer",
+    "description": "A goblin that has developed some skill with crude bows and poisoned arrows"
+  },
+  "378": {
+    "name": "Hobgoblin Shaman",
+    "description": "A goblin with limited magical abilities, often serving as a spiritual leader for small tribes"
+  },
+  "379": {
+    "name": "Hobgoblin Warrior",
+    "description": "A battle-hardened goblin with some actual combat training and better equipment"
+  },
+  "380": {
+    "name": "Hobgoblin Firestarter",
+    "description": "A pyromaniac goblin that has learned rudimentary fire magic and delights in burning things"
+  },
+  "381": {
+    "name": "Goblin Mounted Archer",
+    "description": "A goblin archer that rides atop a trained wolf, allowing for hit-and-run tactics"
+  },
+  "382": {
+    "name": "Goblin Cavalry",
+    "description": "An elite goblin mounted on a large wolf, trained in coordinated pack tactics"
+  },
+  "383": {
+    "name": "Goblin Witch Doctor",
+    "description": "A powerful goblin spellcaster who has mastered curses and crude but effective dark magic"
+  },
+  "384": {
+    "name": "Goblin Elite Guard",
+    "description": "A goblin warrior with exceptional combat training and equipment, often serving as personal guards to tribal leaders"
+  },
+  "385": {
+    "name": "Goblin Master Sniper",
+    "description": "A goblin marksman of extraordinary skill who can hit targets with uncanny accuracy at extreme ranges"
+  },
+  "386": {
+    "name": "Goblin Necromancer",
+    "description": "A goblin who has dedicated their life to mastering fire magic, capable of creating devastating firestorms"
+  },
+  "387": {
+    "name": "Goblin War Chief",
+    "description": "A goblin of exceptional physical prowess and tactical intelligence who leads large war bands"
+  },
+  "388": {
+    "name": "Goblin Shadow Sorcerer",
+    "description": "A goblin who has delved into forbidden magic, making pacts with dark entities to gain tremendous arcane power"
+  },
+  "389": {
+    "name": "Goblin King",
+    "description": "A legendary goblin warrior of immense size and strength who has united multiple tribes under their brutal rule"
+  },
+  "390": {
+    "name": "Young Ogre",
+    "description": "A juvenile ogre that hasn't reached full size but is still dangerous and unpredictable"
+  },
+  "391": {
+    "name": "Ogre Brute",
+    "description": "A fully grown ogre that relies on brute strength and simple tactics to overpower opponents"
+  },
+  "392": {
+    "name": "Ogre Mystic",
+    "description": "A rare ogre with innate magical abilities, often feared and respected within ogre communities"
+  },
+  "393": {
+    "name": "Orc Bruiser",
+    "description": "A battle-hardened ogre that has learned to use its massive strength with tactical efficiency"
+  },
+  "394": {
+    "name": "Ogre Fire Shaman",
+    "description": "An ogre that has developed control over fire magic, using it to enhance their tribe's weapons and intimidate enemies"
+  },
+  "395": {
+    "name": "Ogre Crusher",
+    "description": "A massive ogre that wields oversized weapons designed to pulverize heavily armored opponents"
+  },
+  "396": {
+    "name": "Ogre Elemental Adept",
+    "description": "An ogre spellcaster who has mastered both fire and ice magics, using them in devastating combinations"
+  },
+  "397": {
+    "name": "Ogre Warlord",
+    "description": "A veteran ogre commander who leads raiding parties and has learned advanced combat techniques"
+  },
+  "398": {
+    "name": "Ogre Archmage",
+    "description": "A highly intelligent ogre who has dedicated their life to arcane studies, mastering multiple schools of magic"
+  },
+  "399": {
+    "name": "Ogre Champion",
+    "description": "An ogre of legendary size and strength who has never been defeated in combat, adorned with trophies from countless battles"
+  },
+  "400": {
+    "name": "Ogre Warlock King",
+    "description": "A colossal ogre whose mastery of forbidden magics has granted them supreme power over their kind and terrible supernatural abilities"
+  },
+  "401": {
+    "name": "Tiamat, Mother of Chaos",
+    "description": "The primordial dragon goddess of salt water, chaos and creation. Her five heads command all elements simultaneously, and her mere presence warps reality"
+  },
+  "402": {
+    "name": "Dragon of the Underworld Kur",
+    "description": "The first mountain and primordial dragon who rules the underworld. His scales are made of bedrock, and his roar causes catastrophic earthquakes"
+  },
+  "403": {
+    "name": "Primal Ocean Dragon Abzu",
+    "description": "The ancient dragon of the primordial freshwater ocean. He commands all water in existence and can flood entire continents with a thought"
+  },
+  "404": {
+    "name": "Storm Dragon King Enlil",
+    "description": "The supreme dragon of air, storms and winds. He can create apocalyptic blizzards and freeze entire kingdoms in eternal ice"
+  },
+  "405": {
+    "name": "Dragon of Wisdom Enki ",
+    "description": "The all-knowing cosmic dragon of wisdom and creation. His mind-bending powers can control thoughts across dimensions and reshape reality"
+  },
+  "406": {
+    "name": "Dragon of Death Nergal",
+    "description": "The immortal dragon lord of death and disease. His breath drains life force and corrupts souls, and his gaze alone can end existence"
+  },
+  "407": {
+    "name": "Celestial Dragon Anshar",
+    "description": "The primordial sky dragon whose wings span galaxies. He controls cosmic forces and can summon meteors or bend starlight to his will"
+  },
+  "408": {
+    "name": "Supreme Dragon God Usumgallu",
+    "description": "The ultimate dragon deity of all creation, whose body contains every element and force in existence. A being of incomprehensible cosmic power"
+  },
+  "409": {
+    "name": "Decaying Corpse",
+    "description": "A freshly risen corpse that shambles mindlessly, still wearing tattered burial clothes"
+  },
+  "410": {
+    "name": "Rotting Skeleton",
+    "description": "A brittle skeleton animated by weak necromantic magic, wielding remains of rusted weapons"
+  },
+  "411": {
+    "name": "Ghost Wisp",
+    "description": "A minor spirit that failed to pass on, barely able to materialize enough to affect the physical world"
+  },
+  "412": {
+    "name": "Graveyard Shambler",
+    "description": "A zombie that has climbed from its grave, still covered in soil and moving with awkward, jerky motions"
+  },
+  "413": {
+    "name": "Bone Warrior",
+    "description": "A skeletal soldier that retains fragmentary combat training from its former life"
+  },
+  "414": {
+    "name": "Minor Shade",
+    "description": "A shadowy echo of a departed soul that can briefly drain life force from the living"
+  },
+  "415": {
+    "name": "Plague Carrier",
+    "description": "A zombie that spreads minor disease through scratches and bites, its flesh covered in pustules"
+  },
+  "416": {
+    "name": "Ancient Skeleton",
+    "description": "A skeleton animated from ancient remains, crumbling but still dangerous"
+  },
+  "417": {
+    "name": "Apprentice's Remains",
+    "description": "The reanimated body of a novice magic user who retains some minor spell capability"
+  },
+  "418": {
+    "name": "Fallen Warrior",
+    "description": "The zombie of a slain fighter who still clutches a rusted weapon and moves with a soldier's gait"
+  },
+  "419": {
+    "name": "Undead Archer",
+    "description": "A skeletal archer that retains enough muscle memory to loose arrows with modest accuracy"
+  },
+  "420": {
+    "name": "Lingering Spirit",
+    "description": "The ghost of a person who died with unfinished business, able to manifest more strongly than lesser spirits"
+  },
+  "421": {
+    "name": "Festering Corpse",
+    "description": "A zombie whose decomposing flesh hosts various infections that can weaken those it wounds"
+  },
+  "422": {
+    "name": "Forgotten Acolyte",
+    "description": "The remains of a temple servant who can still call upon minor divine powers"
+  },
+  "423": {
+    "name": "Armored Remains",
+    "description": "A skeleton still clad in partial armor that provides some protection against physical attacks"
+  },
+  "424": {
+    "name": "Graveyard Haunt",
+    "description": "A ghost bound to a cemetery who can induce fear and drain vitality from trespassers"
+  },
+  "425": {
+    "name": "Reanimated Guard",
+    "description": "A zombie that once served as a watchman or soldier, still instinctively patrolling and attacking intruders"
+  },
+  "426": {
+    "name": "Boneyard Hunter",
+    "description": "A skeletal predator that stalks graveyards and catacombs, moving with surprising speed and coordination"
+  },
+  "427": {
+    "name": "Abandoned Novice",
+    "description": "The ghost of a magic apprentice who died during a failed spell, retaining access to minor arcane abilities"
+  },
+  "428": {
+    "name": "Tomb Guardian",
+    "description": "A larger, more dangerous zombie charged with protecting ancient burial sites, its flesh preserved through dark magic"
+  },
+  "429": {
+    "name": "Elven Scout",
+    "description": "A forest guardian who patrols elven territories, skilled in stealth and precise archery"
+  },
+  "430": {
+    "name": "Elven Swordmaster",
+    "description": "A disciplined warrior trained in the ancient elven blade arts, striking with elegant precision"
+  },
+  "431": {
+    "name": "Elven Frost Mage",
+    "description": "A spellcaster who channels the winter aspects of nature, able to create freezing mists and ice shards"
+  },
+  "432": {
+    "name": "Elven Sharpshooter",
+    "description": "An elite archer who can target vital points with uncanny precision and coat arrows with paralyzing tree sap"
+  },
+  "433": {
+    "name": "Elven Bladesinger",
+    "description": "A warrior who combines martial prowess with magical song, weaving spells through elegant battle movements"
+  },
+  "434": {
+    "name": "Elven Flame Weaver",
+    "description": "A mage who specializes in controlling fire with delicate precision, creating beautiful but deadly flame patterns"
+  },
+  "435": {
+    "name": "Elven Mystic",
+    "description": "A spiritual elf who can commune with natural energies and drain vitality from opponents"
+  },
+  "436": {
+    "name": "Elven Ranger Captain",
+    "description": "A veteran forest protector who leads scouting bands and has mastered advanced archery techniques"
+  },
+  "437": {
+    "name": "Elven Geomancer",
+    "description": "A specialist who manipulates earth and stone, causing roots to entangle enemies or stones to rise from the ground"
+  },
+  "438": {
+    "name": "Elven Royal Guard",
+    "description": "An elite warrior charged with protecting elven nobility, equipped with ancient enchanted weapons and armor"
+  },
+  "439": {
+    "name": "Elven High Mage",
+    "description": "A powerful spellcaster who has studied magic for centuries, able to weave multiple spells simultaneously"
+  },
+  "440": {
+    "name": "Bandit Grunt",
+    "description": "A common thug who relies on brute force and intimidation to rob travelers on lonely roads"
+  },
+  "441": {
+    "name": "Bandit Archer",
+    "description": "A skilled marksman who prefers to strike from a distance before enemies can close in"
+  },
+  "442": {
+    "name": "Bandit Rogue",
+    "description": "A swift and nimble cutpurse who specializes in quick strikes and stealing valuables"
+  },
+  "443": {
+    "name": "Bandit Mage",
+    "description": "A renegade spellcaster who uses destructive magic to support the band's ambushes"
+  },
+  "444": {
+    "name": "Bandit Assassin",
+    "description": "A deadly killer who specializes in eliminating high-value targets with poisoned weapons"
+  },
+  "445": {
+    "name": "Bandit Bard",
+    "description": "A charismatic musician who uses performances to gather information and bolster allies"
+  },
+  "446": {
+    "name": "Bandit Pyromancer",
+    "description": "A dangerous fire mage who delights in using devastating flames to create panic and destruction"
+  },
+  "447": {
+    "name": "Bandit Scout",
+    "description": "A stealthy tracker who specializes in reconnaissance and setting up ambush points"
+  },
+  "448": {
+    "name": "Bandit Crossbowman",
+    "description": "A specialized ranged fighter who uses heavy crossbows capable of piercing light armor"
+  },
+  "449": {
+    "name": "Bandit Chief",
+    "description": "The ruthless leader of the bandit gang, feared for both strategic cunning and combat prowess"
+  },
+  "450": {
+    "name": "Bandit Cleric",
+    "description": "A fallen priest who now uses divine magic to heal fellow bandits and curse their victims"
+  },
+  "451": {
+    "name": "The Surgeon",
+    "description": "A methodical killer who dissects victims with surgical precision and collects specific organs as trophies"
+  },
+  "452": {
+    "name": "The Viper",
+    "description": "A sinister poisoner who targets the wealthy and powerful, using exotic venoms that leave no trace"
+  },
+  "453": {
+    "name": "The Puppeteer",
+    "description": "A deranged illusionist who mentally breaks victims before manipulating them into harming others or themselves"
+  },
+  "454": {
+    "name": "The Cremator",
+    "description": "A pyromaniac who burns victims alive and collects charred remains as mementos of the 'purification'<Char:$FlameMagus"
+  },
+  "455": {
+    "name": "The Scarlet Judge",
+    "description": "A self-appointed executioner who targets those he deems 'impure,' leaving elaborate religious symbolism at crime scenes"
+  },
+  "456": {
+    "name": "The Phantom",
+    "description": "A silent killer who appears out of nowhere, never leaving evidence or witnesses behind"
+  },
+  "457": {
+    "name": "The Frozen Lady",
+    "description": "A beautiful sorceress who freezes victims solid before shattering them into artistic arrangements"
+  },
+  "458": {
+    "name": "The Dreamweaver",
+    "description": "A psychic murderer who enters victims' dreams, causing fatal terror as nightmares manifest in reality"
+  },
+  "459": {
+    "name": "The Taxidermist",
+    "description": "A collector who preserves victims in lifelike poses, creating a macabre gallery of the deceased"
+  },
+  "460": {
+    "name": "The Blood Countess",
+    "description": "A noblewoman who bathes in victims' blood, believing it preserves her youth and beauty"
+  },
+  "461": {
+    "name": "Acid Bombardier",
+    "description": "A massive ant that can spray concentrated acid capable of dissolving armor and flesh alike"
+  },
+  "462": {
+    "name": "Engorged Tick Swarm",
+    "description": "A writhing mass of bloodsucking parasites that drain vitality with each bite, growing larger as they feed"
+  },
+  "463": {
+    "name": "Assassin Wasp",
+    "description": "A predatory wasp with precision stingers that target vital points, causing paralysis before injecting eggs into still-living hosts"
+  },
+  "464": {
+    "name": "Hivemind Termite",
+    "description": "A colony of termites that function as a single entity, capable of rearranging into humanoid shapes and communicating telepathically"
+  },
+  "465": {
+    "name": "Aquatic Mantis",
+    "description": "A massive mantis adapted to underwater hunting, using hypnotic patterns on its wings to mesmerize prey before striking"
+  },
+  "466": {
+    "name": "Blood Widow",
+    "description": "A giant spider that spins webs infused with a psychotropic toxin, causing nightmarish hallucinations before it consumes its victims"
+  },
+  "467": {
+    "name": "Frost Scarab",
+    "description": "An ancient beetle with a crystalline carapace that generates an aura of extreme cold, freezing everything in its vicinity"
+  },
+  "468": {
+    "name": "Magma Centipede",
+    "description": "A segmented predator that burrows through volcanic rock, its body glowing with internal heat that melts metal on contact"
+  },
+  "469": {
+    "name": "Mind Flayer Moth",
+    "description": "A massive moth whose wing patterns induce psychic paralysis, allowing it to feed on the thoughts and memories of its victims"
+  },
+  "470": {
+    "name": "Luminous Locust King",
+    "description": "The intelligent ruler of a devastating locust swarm, capable of coordinating complex attacks and emitting blinding pulses of light"
+  },
+  "471": {
+    "name": "Field Mouse",
+    "description": "A tiny rodent scurrying through the underbrush, more startled by adventurers than dangerous"
+  },
+  "472": {
+    "name": "Garden Frog",
+    "description": "A small amphibian that hops away from danger, occasionally letting out a startling croak"
+  },
+  "473": {
+    "name": "Curious Rabbit",
+    "description": "A timid rabbit with twitching ears that flees at the first sign of danger"
+  },
+  "474": {
+    "name": "Lazy Cat",
+    "description": "A domesticated feline that seems more interested in napping than fighting"
+  },
+  "475": {
+    "name": "Tiny Chick",
+    "description": "A fluffy baby bird that chirps loudly when approached"
+  },
+  "476": {
+    "name": "Buzzing Bumblebee",
+    "description": "A plump bee buzzing from flower to flower, only stinging when truly threatened"
+  },
+  "477": {
+    "name": "Slow Turtle",
+    "description": "A peaceful reptile that withdraws into its shell when disturbed"
+  },
+  "478": {
+    "name": "Ladybug",
+    "description": "A small spotted beetle that crawls on plants and occasionally takes flight"
+  },
+  "479": {
+    "name": "Squirrel",
+    "description": "A quick, nimble rodent that gathers nuts and scurries up trees at the first sign of trouble"
+  },
+  "480": {
+    "name": "Earthworm",
+    "description": "A harmless wriggling worm that burrows through soil, beneficial for gardens but not much else"
+  },
+  "481": {
+    "name": "Quacking Duck",
+    "description": "A waddling waterfowl that makes a noisy fuss when approached"
+  },
+  "482": {
+    "name": "Mole",
+    "description": "A burrowing mammal with poor eyesight that rarely emerges from its underground tunnels"
+  },
+  "483": {
+    "name": "Blue Jay",
+    "description": "A colorful bird known for its sharp calls and territorial displays"
+  },
+  "484": {
+    "name": "Skunk",
+    "description": "A small mammal with distinctive black and white markings, known for its powerful odor defense"
+  },
+  "485": {
+    "name": "Grasshopper",
+    "description": "A jumping insect that blends into grassy areas and makes chirping sounds"
+  },
+  "486": {
+    "name": "Trickster Imp",
+    "description": "A mischievous minor demon that distracts enemies with illusions while stealing their belongings"
+  },
+  "487": {
+    "name": "Shadow Stalker",
+    "description": "A demonic entity that can merge with shadows and strike from unexpected angles"
+  },
+  "488": {
+    "name": "Frost Succubus",
+    "description": "A seductive demoness who drains life force through a kiss while gradually freezing victims solid"
+  },
+  "489": {
+    "name": "Nightmare Weaver",
+    "description": "A demon that infiltrates dreams and manifests fears as temporary physical entities"
+  },
+  "490": {
+    "name": "Ember Fiend",
+    "description": "A minor fire demon that can ignite its own body, detonating in a burst of flame when defeated"
+  },
+  "491": {
+    "name": "Mind Leech",
+    "description": "A parasitic demon that attaches to a host's head, feeding on memories and implanting false ones"
+  },
+  "492": {
+    "name": "Blood Mimic",
+    "description": "A shapeshifting demon that impersonates wounded allies to lure in rescuers before attacking"
+  },
+  "493": {
+    "name": "Venom Devil",
+    "description": "A toxic demon whose strikes inject venom that initially boosts strength before causing paralysis"
+  },
+  "494": {
+    "name": "Soul Merchant",
+    "description": "A cunning demonic trader who offers tempting deals that always come with hidden, terrible costs"
+  },
+  "495": {
+    "name": "Mirror Fiend",
+    "description": "A demon that can copy the appearance and one ability of any opponent it faces"
+  },
+  "496": {
+    "name": "Frost Deciever",
+    "description": "A demonic entity that appears helpless and wounded until approached, then unleashes freezing magic"
+  },
+  "497": {
+    "name": "Gravel Imp",
+    "description": "A earth demon that can burrow through solid stone and create sinkholes to trap unwary adventurers"
+  },
+  "498": {
+    "name": "Discord Demon",
+    "description": "A manipulative fiend that creates illusions to turn allies against each other through misunderstandings"
+  },
+  "499": {
+    "name": "Soul Harvester",
+    "description": "A calculating demon that lures adventurers into traps using the voices of their lost loved ones"
+  },
+  "500": {
+    "name": "Iron Sentinel",
+    "description": "A heavily armored knight who specializes in shield techniques and defensive formations"
+  },
+  "501": {
+    "name": "Radiant Defender",
+    "description": "A holy knight whose blessed armor shines with divine light, resistant to dark magic and corruption"
+  },
+  "502": {
+    "name": "Royal Justicar",
+    "description": "An elite knight who serves as judge, jury, and executioner, wielding a massive blade of judgment"
+  },
+  "503": {
+    "name": "Frost Knight",
+    "description": "A knight whose armor is permanently frozen, creating an aura of extreme cold that slows attackers"
+  },
+  "504": {
+    "name": "Molten Guardian",
+    "description": "A knight whose armor is supernaturally heated, burning anything that comes in contact with it"
+  },
+  "505": {
+    "name": "Tidal Warden",
+    "description": "A knight whose enchanted armor constantly flows with water, making physical attacks slide off its surface"
+  },
+  "506": {
+    "name": "Stone Bulwark",
+    "description": "A knight whose armor is fused with solid stone, making it nearly impervious to physical attacks"
+  },
+  "507": {
+    "name": "Celestial Protector",
+    "description": "A knight blessed by celestial powers, whose armor reflects both physical and magical attacks"
+  },
+  "508": {
+    "name": "Mind Shield",
+    "description": "A knight trained to resist mental intrusion, whose armor has been enchanted to repel psychic attacks"
+  },
+  "509": {
+    "name": "Dusk Commander",
+    "description": "A legendary knight commander whose ancient armor is resistant to all forms of damage through forgotten enchantments"
+  },
+  "510": {
+    "name": "Tide Crab",
+    "description": "A small but tenacious crustacean with powerful pincers that can cut through fishing nets"
+  },
+  "511": {
+    "name": "Coral Guardian",
+    "description": "A humanoid creature covered in sharp coral growths that can regenerate damaged parts of its body"
+  },
+  "512": {
+    "name": "Trident Hunter",
+    "description": "A mer-warrior who wields a barbed trident that can pierce even the thickest scales"
+  },
+  "513": {
+    "name": "Deep Frost Eel",
+    "description": "A massive eel from the coldest ocean depths that can freeze water around itself to create protective barriers"
+  },
+  "514": {
+    "name": "Abyssal Horror",
+    "description": "A shapeless entity from the ocean depths that can engulf victims whole and digest them within its amorphous body"
+  },
+  "515": {
+    "name": "Siren Enchantress",
+    "description": "A beautiful yet deadly sea witch whose hypnotic songs can control the minds of even the strongest-willed sailors"
+  },
+  "516": {
+    "name": "Luminous Angler",
+    "description": "A massive deep-sea fish whose bioluminescent lure contains potent light magic that can blind or disorient prey"
+  },
+  "517": {
+    "name": "Swordfish Sovereign",
+    "description": "A powerful swordfish that can create whirlpools and control multiple water tendrils simultaneously"
+  },
+  "518": {
+    "name": "Volcanic Shark",
+    "description": "An ancient shark that dwells near underwater volcanoes, breathing scalding steam and magma"
+  },
+  "519": {
+    "name": "Sacred Kraken",
+    "description": "A colossal octopus worshipped as a deity by Beach tribes, possessing divine magic in its sacred tentacles"
+  },
+  "520": {
+    "name": "Deep One Monarch",
+    "description": "The ancient ruler of a forgotten underwater civilization who commands both ice and water magic with unparalleled mastery"
+  },
+  "521": {
+    "name": "Bubble Squid",
+    "description": "A small squid that can rapidly expel water to create disorienting bubble clouds for escape or ambush"
+  },
+  "522": {
+    "name": "Toxic Anemone",
+    "description": "A seemingly beautiful sea anemone whose colorful tentacles contain a potent neurotoxin that paralyzes prey"
+  },
+  "523": {
+    "name": "Drowned Revenant",
+    "description": "The vengeful spirit of a drowned sailor that emerges from the depths to drag the living down to watery graves"
+  },
+  "524": {
+    "name": "Nightmare Shark",
+    "description": "A massive jellyfish whose translucent body pulses with hypnotic patterns that induce terrible hallucinations"
+  },
+  "525": {
+    "name": "Mischievous Sprite",
+    "description": "A tiny nature spirit that plays pranks on travelers, hiding their possessions and leading them astray"
+  },
+  "526": {
+    "name": "Flower Pixie",
+    "description": "A diminutive flower fairy whose pollen dust can cause drowsiness or minor hallucinations"
+  },
+  "527": {
+    "name": "Glimmer Shrimp",
+    "description": "A luminous shrimp that appears as a ball of dancing light, leading travelers toward magical places or dangerous terrain"
+  },
+  "528": {
+    "name": "Frost Sylph",
+    "description": "An elegant ice fairy who dances on winter winds, freezing surfaces with each step and creating intricate frost patterns"
+  },
+  "529": {
+    "name": "Ember Sprite",
+    "description": "A temperamental fire fairy that flits between candle flames and can ignite flammable objects with a touch"
+  },
+  "530": {
+    "name": "Dream Weaver",
+    "description": "A secretive fae being that can enter dreams, altering them or planting suggestions that persist into waking life"
+  },
+  "531": {
+    "name": "Zombie Whale",
+    "description": "A zombified whale"
+  },
+  "532": {
+    "name": "Dryad Protector",
+    "description": "A forest guardian bound to ancient trees, wielding nature magic and commanding plants to ensnare intruders"
+  },
+  "533": {
+    "name": "Twilight Satyr",
+    "description": "A dark satyr being that makes bargains with mortals, exchanging favors for prices that are always more than they appear"
+  },
+  "534": {
+    "name": "Cave Gnome",
+    "description": "A stocky earth fae who guards underground treasures and can manipulate stone and precious metals"
+  },
+  "535": {
+    "name": "Forest Centaur",
+    "description": "A noble fae creature with the upper body of an elf and lower body of a deer, skilled with bow and possessing deep woodland magic"
+  },
+  "536": {
+    "name": "Radiant Unicorn",
+    "description": "A pure-hearted fae horse with a spiraling horn of light magic that can heal wounds or pierce through the darkest corruption"
+  },
+  "537": {
+    "name": "Poison Pooka",
+    "description": "A malevolent shapeshifting fae that can take the form of a black horse, luring riders to their doom in toxic marshlands"
+  },
+  "538": {
+    "name": "Winter Court Knight",
+    "description": "An elite warrior of the Unseelie Court, clad in enchanted ice armor and wielding a blade of eternal frost"
+  },
+  "539": {
+    "name": "Summer Court Archon",
+    "description": "A noble commander of the Seelie Court, radiating golden light and capable of commanding the forces of growth and renewal"
+  },
+  "540": {
+    "name": "Fae Queen",
+    "description": "The ancient and powerful ruler of a hidden fae realm, possessing the ability to alter reality within her domain and command all lesser fae"
+  },
+  "541": {
+    "name": "Surveillance Drone",
+    "description": "A small hovering drone equipped with cameras and sensors that alerts other machines to intruders"
+  },
+  "542": {
+    "name": "Security Bot",
+    "description": "A basic security robot equipped with a stun baton and basic threat recognition protocols"
+  },
+  "543": {
+    "name": "Flame Turret",
+    "description": "An automated defense turret that fires concentrated heat beams at unauthorized personnel"
+  },
+  "544": {
+    "name": "Cryo Drone",
+    "description": "A specialized robot that can rapidly lower temperatures to freeze targets or create barriers of ice"
+  },
+  "545": {
+    "name": "Holographic Decoy",
+    "description": "An advanced projection system that creates solid-light copies to confuse and misdirect enemies"
+  },
+  "546": {
+    "name": "Assault Mech",
+    "description": "A humanoid combat robot equipped with targeting systems and reinforced armor plating"
+  },
+  "547": {
+    "name": "Toxic Sprayer",
+    "description": "A specialized robot designed to neutralize biological threats by dispensing corrosive chemicals"
+  },
+  "548": {
+    "name": "Photon Defender",
+    "description": "A guardian robot that can generate hardlight shields and focused energy beams"
+  },
+  "549": {
+    "name": "Neural Interface",
+    "description": "A sophisticated AI system that can connect to and manipulate the minds of those nearby"
+  },
+  "550": {
+    "name": "Hydrokinetic Engine",
+    "description": "A machine that can control water at the molecular level, creating high-pressure jets or drawing moisture from the air"
+  },
+  "551": {
+    "name": "Seismic Tunneler",
+    "description": "A massive drilling machine capable of causing localized earthquakes and burrowing through solid rock"
+  },
+  "552": {
+    "name": "Plasma Juggernaut",
+    "description": "A towering war machine equipped with plasma cannons and reinforced heat-resistant plating"
+  },
+  "553": {
+    "name": "Radiant Colossus",
+    "description": "A holy-infused automaton powered by divine technology, able to channel sacred energy into devastating attacks"
+  },
+  "554": {
+    "name": "Quantum Intellect",
+    "description": "A superintelligent AI system housed in a heavily defended mainframe, capable of calculating and exploiting the probabilities of multiple futures"
+  },
+  "555": {
+    "name": "Swamp Rat",
+    "description": "A buff rodent with bristled fur, its bite festers wounds in moments."
+  },
+  "556": {
+    "name": "Bog Leech",
+    "description": "A bloated parasite that clamps on flesh, draining blood until victims black out."
+  },
+  "557": {
+    "name": "Swamp Scorpion",
+    "description": "A crusted arachnid whose tail injects neurotoxin, paralyzing prey with a single sting."
+  },
+  "558": {
+    "name": "Marsh Wraith",
+    "description": "A hungering specter of mist and rot, it drags victims beneath fetid water"
+  },
+  "559": {
+    "name": "Bog Elemental",
+    "description": "A shifting mass of muck and roots, it engulfs intruders in sticky, suffocating grasp."
+  },
+  "560": {
+    "name": "Bog Behemoth",
+    "description": "A hulking reptile caked in living mud that shakes the mire itself."
+  },
+  "561": {
+    "name": "Miasma Lantern",
+    "description": "A floating green flame that whispers lullabies of decay."
+  },
+  "562": {
+    "name": "Fungal Snapjaw",
+    "description": "An alligator whose hide sprouts luminosporic fungus."
+  },
+  "563": {
+    "name": "Swamp Gas Elemental",
+    "description": "A sentient haze of methane and spores that suffocates adventurers."
+  },
+  "564": {
+    "name": "Laughing Mire Idol",
+    "description": "A grinning stone effigy that booms with laughter and shatters the swamp floor."
+  },
+  "565": {
+    "name": "Grave Monarch",
+    "description": "Sovereign of forgotten catacombs whose sceptre delivers instant death."
+  },
+  "566": {
+    "name": "Marrow Archmage",
+    "description": "A skeletal sorcerer who bends mortality and time alike."
+  },
+  "567": {
+    "name": "Ossuary Colossus",
+    "description": "A dragon-sized pile of fused bones that smashes foes with cathedral-sized limbs."
+  },
+  "568": {
+    "name": "Phylactery Guardian",
+    "description": "Stands eternal vigil over its lich master’s soul-jar, striking with cursed halberd."
+  },
+  "569": {
+    "name": "Eternal Lich-King",
+    "description": "Undying sovereign of ossified empires, wielding apocalyptic necromancy."
+  },
+  "570": {
+    "name": "Gale Sentinel",
+    "description": "A vigilant warden formed of razor winds that circle the mountaintops."
+  },
+  "571": {
+    "name": "Tempest Djinn",
+    "description": "A capricious spirit that commands thunder-charged cyclones."
+  },
+  "572": {
+    "name": "Storm Roc",
+    "description": "A colossal bird whose wingbeats birth sand-laced cyclones."
+  },
+  "573": {
+    "name": "Sky Serpent",
+    "description": "A lightning-veined dragon that coils through jet streams with terrifying speed."
+  },
+  "574": {
+    "name": "Stratos Sovereign",
+    "description": "Ruler of the highest jet-stream kingdoms, able to summon cataclysmic windstorms."
+  },
+  "575": {
+    "name": "Reef Guppy",
+    "description": "A tiny, brightly-striped fish that nibbles on algae and bolts at the first sign of danger."
+  },
+  "576": {
+    "name": "Sardine School",
+    "description": "A swirling shoal whose mirrored scales create blinding flashes when they turn in unison."
+  },
+  "577": {
+    "name": "Parrotfish Grazer",
+    "description": "Crunches coral with a beak-like mouth, leaving behind trails of sand as it feeds."
+  },
+  "578": {
+    "name": "Reef Shark",
+    "description": "A streamlined predator that darts through coral canyons with lightning-quick bite combos."
+  },
+  "579": {
+    "name": "Hammerhead Enforcer",
+    "description": "A broad-headed shark whose electro-receptors let it strike unseen prey with brutal force."
+  },
+  "580": {
+    "name": "Abyssal Pixie",
+    "description": "A wing-torn pixie steeped in nightmare essence; its laughter erodes sanity."
+  },
+  "581": {
+    "name": "Hellthorn Dryad",
+    "description": "Vines ooze brim-sap that melts armour; flowers burst into flame on contact."
+  },
+  "582": {
+    "name": "Blight Sylph",
+    "description": "Carries plague spores on burning gales; its giggle sounds like crackling wood."
+  },
+  "583": {
+    "name": "Inferno Pooka",
+    "description": "A shapeshifting steed wreathed in balefire; hoofbeats leave glassed earth."
+  },
+  "584": {
+    "name": "Nether Court Duchess",
+    "description": "Matriarch of the Unseelie host; her whisper remakes reality as a cruel jest."
+  },
+  "585": {
+    "name": "Flame-Touched Hellhound",
+    "description": "A mangy black hound wreathed in flickering embers and permanently smouldering breath."
+  },
+  "586": {
+    "name": "Cindermaw Hound",
+    "description": "Emits choking sparks with every bark; its bite brands flesh and armour alike."
+  },
+  "587": {
+    "name": "Infernal Warhound",
+    "description": "A hulking siege-hound clad in cracked brimstone plates that howls pure flame."
+  },
+  "588": {
+    "name": "Cerberus Sentinel",
+    "description": "Twin-headed guardian of the lower vaults; each maw spews molten tar."
+  },
+  "589": {
+    "name": "Brimstone Behemutt",
+    "description": "A colossal, vaguely canine fiend whose very footsteps ignite the ground."
+  },
+  "590": {
+    "name": "Rubber Reality Blob",
+    "description": "A quivering lump of protoplasm that warps colours and sounds around it."
+  },
+  "591": {
+    "name": "Wandering Eyeball",
+    "description": "A single flying eye that blinks so loudly it startles prey."
+  },
+  "592": {
+    "name": "Inside-Out Critter",
+    "description": "A small beast whose organs are on the outside, and still throbbing."
+  },
+  "593": {
+    "name": "Squeaky Turnip Fiend",
+    "description": "A vegetable with tiny legs that emits rubber-duck noises when struck."
+  },
+  "594": {
+    "name": "Pocket-Dimension Imp",
+    "description": "A mischievous demonlet that pops in and out of invisible doors."
+  },
+  "595": {
+    "name": "Fluxling Furret",
+    "description": "A darting mote of prismatic energy that flickers in and out of phase with reality."
+  },
+  "596": {
+    "name": "Gloomwurm",
+    "description": "A titanic, sightless worm that exudes shadowy miasma as it burrows beneath battlefields."
+  },
+  "597": {
+    "name": "Shardmaw",
+    "description": "A quadrupedal predator with a jaw of razor crystal that fractures into fresh blades with every bite."
+  },
+  "598": {
+    "name": "Spineshade",
+    "description": "A lurking horror wreathed in bone needles; every strike implants barbs that fester with dark magic."
+  },
+  "599": {
+    "name": "Velocicorn",
+    "description": "A lightning-swift ungulate crowned with a spiralled horn whose charge rips the air itself."
+  },
+  "600": {
+    "name": "Savage Berserker",
+    "description": "A frenzied barbarian who fights with reckless abandon"
+  },
+  "601": {
+    "name": "Bloodaxe Raider",
+    "description": "Wields twin axes in a whirlwind of gore-splattered blows"
+  },
+  "602": {
+    "name": "Furyhowl Barbarian",
+    "description": "Howls to unnerve foes, then strikes their weak points with brutal precision"
+  },
+  "603": {
+    "name": "Skullcrusher Brute",
+    "description": "A towering mauler who smashes helmets, and skulls, with bone-splintering uppercuts"
+  },
+  "604": {
+    "name": "Warborn Chieftain",
+    "description": "Veteran war-leader who directs the tribe’s fury while carving foes in a sweeping whirlwind"
+  },
+  "605": {
+    "name": "Trashling",
+    "description": "A quivering glob of alley refuse that lashes out with oily pseudopods."
+  },
+  "606": {
+    "name": "Junkrat",
+    "description": "A scab-covered rat swollen by toxic scraps; its bite carries disease."
+  },
+  "607": {
+    "name": "Rubbler",
+    "description": "An animate heap of broken crates and rusted iron that hurls jagged debris."
+  },
+  "608": {
+    "name": "Filth Fiend",
+    "description": "A demon spawned from sewer sludge; it belches clouds of noxious decay."
+  },
+  "609": {
+    "name": "Landfill Leviathan",
+    "description": "A towering mass of compressed junk and bone fragments held together by foul sorcery."
+  },
+  "610": {
+    "name": "Rotvulture",
+    "description": "A scavenger bird swollen on rotting refuse; its foul breath carries disease."
+  },
+  "611": {
+    "name": "Scrapforged",
+    "description": "A hulking golem cobbled together from rusted armour and discarded engines."
+  },
+  "612": {
+    "name": "Dumpster Head",
+    "description": "A head"
+  },
+  "613": {
+    "name": "Plague Heap",
+    "description": "A towering mass of rotted meat, bones and refuse held together by pestilent fumes."
+  },
+  "614": {
+    "name": "Chicchan Serpent Shaman",
+    "description": "A feathered snake priest wielding venomous rituals that warp flesh and summon storms."
+  },
+  "615": {
+    "name": "Obsidian Visionary",
+    "description": "A crystal-eyed seer whose dark prophecies rain shards of volcanic glass."
+  },
+  "616": {
+    "name": "Dream Serpent High Priest",
+    "description": "A colossal ophidian cloaked in phantom light, it twists minds with hypnotic whispers."
+  },
+  "617": {
+    "name": "Xibalba Glyphweaver ",
+    "description": "A rune-carved wraith that scribes death runes midair, erasing souls stroke by stroke."
+  },
+  "618": {
+    "name": "Tomekeeper of the Sunstone",
+    "description": "A wizened archivist whose living grimoire burns heretics with solar glyphs."
+  },
+  "619": {
+    "name": "Quetzalcoatl Channeler",
+    "description": "A winged serpent-mage that calls down lightning feathers to incinerate the impure."
+  },
+  "620": {
+    "name": "Whispering Wraith",
+    "description": "A silent apparition whose presence unravels reality around it"
+  },
+  "621": {
+    "name": "Veiled Phantasm",
+    "description": "A shifting silhouette that cloaks itself in silence and spores"
+  },
+  "622": {
+    "name": "Somnolent Apparition",
+    "description": "An elusive entity that lulls the world into unsettling reverie"
+  },
+  "623": {
+    "name": "Baby Bunny",
+    "description": "A deceptively cute leveret whose razor-sharp teeth and frantic hops shred clothing and bone alike."
+  },
+  "624": {
+    "name": "Wild Rabbit",
+    "description": "A fleet-footed fugitive that darts through underbrush, evading traps with uncanny intelligence."
+  },
+  "625": {
+    "name": "Dire Rabbit",
+    "description": "A hulking hare with matted fur, its powerful legs crush skulls like eggshells."
+  },
+  "626": {
+    "name": "Rabid Jackrabbit",
+    "description": "A frenzied hopper foaming at the mouth, its leaps deliver poison-tipped kicks."
+  },
+  "627": {
+    "name": "Totemic Sprout",
+    "description": "A fledgling plant spirit learning basic rituals"
+  },
+  "628": {
+    "name": "Totem Initiate",
+    "description": "A novice totem keeper honing rituals of nature’s will"
+  },
+  "629": {
+    "name": "Totem Guardian",
+    "description": "A stout treant imbued with ancestral rites, defending sacred groves"
+  },
+  "630": {
+    "name": "Ritual Sentinel",
+    "description": "An ancient totem animated through elaborate rites, blessing allies and smiting foes"
+  },
+  "631": {
+    "name": "Totem Adept",
+    "description": "A seasoned totem caster balancing offense and protection"
+  },
+  "632": {
+    "name": "Totemic Protector",
+    "description": "Guardian totem channeling holy wrath and shields"
+  },
+  "633": {
+    "name": "Totemic Titan",
+    "description": "Colossal totem infused with primeval ritual energy"
+  },
+  "634": {
+    "name": "Totemic Overlord",
+    "description": "Supreme totem lord wielding ultimate holy archetypes"
+  },
+  "635": {
+    "name": "Fire Dragonling",
+    "description": "A tiny wyrm wreathed in embers, it breathes spurts of flame that blister skin."
+  },
+  "636": {
+    "name": "Ice Dragonling",
+    "description": "A frost-bound hatchling exhaling crystalline shards that freeze prey in mid-scream."
+  },
+  "637": {
+    "name": "Storm Dragonling",
+    "description": "A tempest in reptilian form, it crackles with electricity and hurls thunderbolts."
+  },
+  "638": {
+    "name": "Thunder Dragonling",
+    "description": "A squat drake roaring with sonic booms that burst eardrums and shatter bone."
+  },
+  "639": {
+    "name": "Cultist of Cthulhu",
+    "description": "Human cultist devoted to Cthulhu and the Great Old Ones"
+  },
+  "640": {
+    "name": "Cultist of Nyarlathotep",
+    "description": "Human cultist channeling the Crawling Chaos"
+  },
+  "641": {
+    "name": "Cultist of Yog-Sothoth",
+    "description": "Human cultist seeking the gate of countless dimensions"
+  },
+  "642": {
+    "name": "Cultist of Shub-Niggurath",
+    "description": "Human cultist of the Black Goat of the Woods"
+  },
+  "643": {
+    "name": "Gnome Peasant",
+    "description": "A humble gnome laborer from rural villages, adept at gathering wild resources."
+  },
+  "644": {
+    "name": "Gnome Scout",
+    "description": "A watchful gnome scout, skilled in swift reconnaissance and silent movement."
+  },
+  "645": {
+    "name": "Gnome Tinkerer",
+    "description": "An inventive gnome tinkerer, fond of quirky gadgets and crude mechanical traps."
+  },
+  "646": {
+    "name": "Gnome Trickster",
+    "description": "A mischievous gnome trickster, using cunning feints and hidden pitfalls."
+  },
+  "647": {
+    "name": "Gnome Miner",
+    "description": "A sturdy gnome miner, experienced in delving into tunnels and handling heavy tools."
+  },
+  "648": {
+    "name": "Gnome Herbalist",
+    "description": "A knowledgeable gnome herbalist, versed in local flora and natural remedies."
+  },
+  "649": {
+    "name": "Gnome Engineer",
+    "description": "A resourceful gnome engineer, creating complex devices with limited means."
+  },
+  "650": {
+    "name": "Gnome Bombardier",
+    "description": "A demolition gnome bombardier, specializing in makeshift explosives."
+  },
+  "651": {
+    "name": "Gnome Alchemist",
+    "description": "A curious gnome alchemist, experimenting with potent concoctions and catalysts."
+  },
+  "652": {
+    "name": "Gnome Warlock",
+    "description": "A dark gnome warlock, channeling arcane energies from forbidden tomes."
+  },
+  "653": {
+    "name": "Gnome Shaman",
+    "description": "A spiritual gnome shaman, communing with elemental spirits of the earth."
+  },
+  "654": {
+    "name": "Gnome Artificer",
+    "description": "A skilled gnome artificer, weaving magic into crafted constructs."
+  },
+  "655": {
+    "name": "Feral Alley Cat",
+    "description": "A scrappy feral cat prowling the back alleys with sharpened instincts."
+  },
+  "656": {
+    "name": "Catfish",
+    "description": "A bizarre catfish hybrid that splashes water with a playful hiss."
+  },
+  "657": {
+    "name": "Catican",
+    "description": "A strange bird-cat fusion, feathered paws peck and scratch in equal measure."
+  },
+  "658": {
+    "name": "Catizard",
+    "description": "A reptilian cat hybrid whose poisonous tail lash can cripple foes."
+  },
+  "659": {
+    "name": "Cobalt-footed Rex",
+    "description": "A towering dino-cat hybrid whose meows shakes the earth."
+  },
+  "660": {
+    "name": "Umbra Panthera",
+    "description": "A shadowy panther-cat that melds into darkness before striking."
+  },
+  "661": {
+    "name": "Emberclaw Bear",
+    "description": "A flaming ursine glass cannon whose claws burn with unrelenting fury."
+  },
+  "662": {
+    "name": "Thundermaw Ursine",
+    "description": "A crackling storm bear that unleashes deafening roars laced with lightning."
+  },
+  "663": {
+    "name": "Frostfang Bear",
+    "description": "An ice-bound predator whose pouncing strikes freeze flesh on impact."
+  },
+  "664": {
+    "name": "Void Howler",
+    "description": "A shadowy bear warped by void energy, unleashing tendrils of pure darkness."
+  },
+  "665": {
+    "name": "Phantom Chloroblade",
+    "description": "A spectral plant whose ebony blades drip with hallucinogenic sap, slicing reality as easily as flesh"
+  },
+  "666": {
+    "name": "Xylomanti Florous ",
+    "description": "A cunning vine that weaves itself into grotesque knots, exuding spores that induce paralysis"
+  },
+  "667": {
+    "name": "Nepenthe Mycoastrum",
+    "description": "A wandering spore-fairy whose pollen dust lulls enemies into forgetfulness before dissolving them"
+  },
+  "668": {
+    "name": "Rattus Sapscream",
+    "description": "A venomous rat-fern that hisses with sap like screams, its fangs dripping corrosive essence"
+  },
+  "669": {
+    "name": "Eldergloom Sporemantle",
+    "description": "A colossal fungus whose umbrella cap rains acidic spores, wilting flesh in minutes"
+  },
+  "670": {
+    "name": "Creeping Luminspore",
+    "description": "A bioluminescent creeper that stalks in darkness, detonating its spores in blinding bursts"
+  },
+  "671": {
+    "name": "Crystalline Shardbeast",
+    "description": "A monstrous mass of crystallized stone shards that reform into living facets with razor edges."
+  },
+  "672": {
+    "name": "Obsidian Burrower",
+    "description": "A sleek obsidian golem that tunnels unseen, collapsing tunnels underfoot with seismic fury."
+  },
+  "673": {
+    "name": "Geode Hydra",
+    "description": "A serpentine golem sprouting geode heads, each crackling with earth-rending tremors."
+  },
+  "674": {
+    "name": "Petrified Enforcer",
+    "description": "An ancient sentinel turned to stone, its visage unchanging as it crushes intruders."
+  },
+  "675": {
+    "name": "Quake-Maw Titan",
+    "description": "A gargantuan golem whose thunderous steps summon chasms and shake the earth itself."
+  },
+  "676": {
+    "name": "Doped Chimp",
+    "description": "A chimp subjected to experiments"
+  },
+  "677": {
+    "name": "Fiery Deity",
+    "description": "A fiery minor deity"
+  },
+  "678": {
+    "name": "Cogwork Bulwark",
+    "description": "A hulking bulwark automaton whose layered cogwork plating absorbs and redistributes kinetic force"
+  },
+  "679": {
+    "name": "Iron Bastion Automaton",
+    "description": "A fortress-class automaton whose dense iron husk refines steam into a layered energy barrier"
+  },
+  "680": {
+    "name": "Brass Sentinel Mk. IV",
+    "description": "The fourth-generation sentinel, reinforced with molten brass plating and emergency valve dampeners for ultimate resilience"
+  },
+  "681": {
+    "name": "Novice Boxer",
+    "description": "A novice boxer honing their skills in local gyms, eager but inexperienced."
+  },
+  "682": {
+    "name": "Amateur Pugilist",
+    "description": "An amateur pugilist testing their speed and strength in underground rings."
+  },
+  "683": {
+    "name": "Street Brawler",
+    "description": "A rough street brawler who learned to fight in back-alley bouts."
+  },
+  "684": {
+    "name": "Professional Boxer",
+    "description": "A seasoned professional fighting in prestigious arenas."
+  },
+  "685": {
+    "name": "Champion Contender",
+    "description": "A rising contender in world-class championships, combining speed and precision."
+  },
+  "686": {
+    "name": "Elite Boxing Champion",
+    "description": "The reigning champion, feared for their flawless combination of power and technique."
+  },
+  "687": {
+    "name": "Data Drone",
+    "description": "Autonomous data-processing drone infected by rogue code."
+  },
+  "688": {
+    "name": "Security Sentinel",
+    "description": "A security robot repurposed by rogue AI to hunt intruders."
+  },
+  "689": {
+    "name": "Network Overlord",
+    "description": "A powerful AI core broadcasting its control over lesser machines."
+  },
+  "690": {
+    "name": "Cognitive Bacteria",
+    "description": "A superintelligent AI core shielded by advanced mirror protocols."
+  },
+  "691": {
+    "name": "Singularity Prime",
+    "description": "The ultimate form of rogue AI, a singularity that transcends physical limits."
+  },
+  "692": {
+    "name": "Sandstrider Varanus",
+    "description": "A slender desert monitor that weaves through dunes on silent feet, its scales glinting like glass."
+  },
+  "693": {
+    "name": "Marshjaw Heloderma",
+    "description": "A venomous Gila monster lurking in misty marshes, its powerful jaws dripping with toxin."
+  },
+  "694": {
+    "name": "Crystalback Sceloporus",
+    "description": "A rock-dwelling fence lizard encrusted with crystalline growths that snap at prey."
+  },
+  "695": {
+    "name": "Mossscale Amphibolurus",
+    "description": "A forest-dwelling dragon lizard covered in mossy fronds that cloak it from predators."
+  },
+  "696": {
+    "name": "Spinescale Pogona",
+    "description": "A bearded dragon variant bristling with bone spines that impale unwary foes."
+  },
+  "697": {
+    "name": "Cinderthroat Varanus",
+    "description": "A volcanic monitor whose throat glows with ember-hot fire, exhaling ash-laden roars."
+  },
+  "698": {
+    "name": "Murkwallow Ghoul",
+    "description": "A carrion crawler slathered in swamp sludge, its claws tear muscle like paper."
+  },
+  "699": {
+    "name": "Gravebound Revenant",
+    "description": "A reanimated knight in tarnished armor, its blade drips with cursed ichor."
+  },
+  "700": {
+    "name": "Corpsecarver Knight",
+    "description": "A butcher of the fallen, it dismembers allies to fuel its unholy strength."
+  },
+  "701": {
+    "name": "Cryptborn Shrieker",
+    "description": "A skeletal beast whose ear-splitting cry fractures spirit and skull alike."
+  },
+  "702": {
+    "name": "Bonechewer Devourer",
+    "description": "A skeletal monstrosity gnawing on marrow, it spits shards of fractured bone."
+  },
+  "703": {
+    "name": "Dominant Taskmaster",
+    "description": "A strict dominator who wields raw willpower and chains to subdue victims"
+  },
+  "704": {
+    "name": "Pain Enthusiast",
+    "description": "A demon obsessed with amplifying agony through arcane rituals and cruel implements"
+  },
+  "705": {
+    "name": "Chainbound Fury",
+    "description": "A cruel arachnid that uses chains and webbing to bind and break prey"
+  },
+  "706": {
+    "name": "Silken Enchantress",
+    "description": "A temptress who lures victims into silk traps and indulges in exquisite pain"
+  },
+  "707": {
+    "name": "Blinding Sadist",
+    "description": "A sadist who revels in momentary torment, blinding victims before inflicting excruciating pain"
+  },
+  "708": {
+    "name": "Goblin Mosh Lord",
+    "description": "A frenzy leader who commands the pit with brutal riffs and thunderous beats"
+  },
+  "709": {
+    "name": "Goblin Shrieker",
+    "description": "A shrieking fanatic whose ear-splitting screams can shatter courage"
+  },
+  "710": {
+    "name": "Goblin Head",
+    "description": "A raging head who headbangs with bone-crushing force"
+  },
+  "711": {
+    "name": "Goblin Riot Caster",
+    "description": "A sonic sorcerer who unleashes chaotic blasts to fuel the uprising"
+  },
+  "712": {
+    "name": "Goblin Metal Warlord",
+    "description": "The ultimate warlord who leads the black metal horde with iron resolve"
+  },
+  "713": {
+    "name": "Shellbreaker Bulwark",
+    "description": "A hulking turtle whose shell is so dense it can shatter weapons on impact"
+  },
+  "714": {
+    "name": "Coralic Warcaster",
+    "description": "A sea turtle infused with storm magic, calling down crushing waves and vortexes"
+  },
+  "715": {
+    "name": "Acidic Tidecaller",
+    "description": "A toxic turtle that spews corrosive bile and blinds foes in its miasma"
+  },
+  "716": {
+    "name": "Gilded Zapback",
+    "description": "A golden-hued turtle crackling with stored lightning energy"
+  },
+  "717": {
+    "name": "CrystalCarapace Sentinel",
+    "description": "A turtle whose shell has crystallized into jagged facets, able to summon razor winds"
+  },
+  "718": {
+    "name": "Tempest Wyvern",
+    "description": "A winged serpent that commands storms and deluges the battlefield with torrential fury"
+  },
+  "719": {
+    "name": "Infernal Pyromancer",
+    "description": "A hellspawn sorcerer who bathes foes in unquenchable flames and searing ash"
+  },
+  "720": {
+    "name": "Crystal Giant",
+    "description": "An arcane construct of living crystal, its shield shatters armor and its visor blinds attackers"
+  },
+  "721": {
+    "name": "Obsidian Wraith",
+    "description": "A shadowy specter clad in volcanic glass, it ensnares minds and silences all hope"
+  },
+  "722": {
+    "name": "Earthen Colossus",
+    "description": "A gargantuan golem of bedrock and ore, it quakes the earth and sends razor shards flying"
+  },
+  "723": {
+    "name": "Chrono Consumer",
+    "description": "A ravenous voidspawn that feeds on the flow of time itself, warping reality around its prey"
+  },
+  "724": {
+    "name": "Inferno Archivist",
+    "description": "A demonic scribe who channels searing flames into forbidden tomes, incinerating knowledge and flesh alike"
+  },
+  "725": {
+    "name": "Mechanized Harbinger",
+    "description": "A relentless automaton built for riot control, deploying non-lethal and brutal measures with mechanical precision"
+  },
+  "726": {
+    "name": "Abyssal Siren",
+    "description": "A haunting merfolk whose mournful song drags victims into oblivion beneath the waves"
+  },
+  "727": {
+    "name": "Ember Warder",
+    "description": "A molten sentinel forged in rock and flame, protecting sacred forges with impenetrable stone plating"
+  },
+  "728": {
+    "name": "Ember Caster",
+    "description": "Apprentice of flames"
+  },
+  "729": {
+    "name": "Frost Weaver",
+    "description": "Master of ice and frost"
+  },
+  "730": {
+    "name": "Storm Caller",
+    "description": "Bringer of thunder and lightning"
+  },
+  "731": {
+    "name": "Tide Sorcerer",
+    "description": "Master of the ocean’s fury"
+  },
+  "732": {
+    "name": "Arcane Archmage",
+    "description": "Grandmaster of all schools of magic"
+  },
+  "733": {
+    "name": "Halo Acolyte",
+    "description": "A novice of the divine light, wielding basic prayers and protective auras"
+  },
+  "734": {
+    "name": "Luminous Deacon",
+    "description": "A devoted cleric who shapes light into shields and healing prayers"
+  },
+  "735": {
+    "name": "Seraphic Emissary",
+    "description": "A celestial envoy whose wings shine with righteous fire and judgment"
+  },
+  "736": {
+    "name": "Radiant Archpriest",
+    "description": "The supreme conduit of divine power, weaving life, death, and judgment in equal measure"
+  },
+  "737": {
+    "name": "Prismatic Polychromus",
+    "description": "A living sculpture of kaleidoscopic crystal shards that refract reality itself."
+  },
+  "738": {
+    "name": "Mimic shaped box",
+    "description": "A warped canvas inhabited by chaotic pigments that twist forms into nightmarish parodies."
+  },
+  "739": {
+    "name": "Chromatic Manticore",
+    "description": "A legendary beast whose mane and tail spin with chaotic hues, its roar warping reality in a spectrum of fear."
+  },
+  "740": {
+    "name": "Palette Phantom",
+    "description": "A spectral cat that drapes the battlefield in haunting hues, leaving foes lost in its colorful illusions."
+  },
+  "741": {
+    "name": "Sculptor's Sorrow",
+    "description": "Once a masterpiece, now a forlorn statue that weeps obsidian tears capable of corroding the soul."
+  },
+  "742": {
+    "name": "Luminescent Mycelian",
+    "description": "A towering fungal colossus whose glowing spores entangle and poison all who draw near."
+  },
+  "743": {
+    "name": "Aether Splicer",
+    "description": "A fractured automaton fused with aetheric energies, slicing foes with electric arcs and draining their vigor."
+  },
+  "744": {
+    "name": "Gloomscale Basilisk",
+    "description": "A subterranean serpent with scales of shadow and venom so potent it petrifies flesh on contact."
+  },
+  "745": {
+    "name": "Cinderheart Scion",
+    "description": "A demonspawn mage born of volcanic fury, its molten heart unleashes searing infernos and ash storms."
+  },
+  "746": {
+    "name": "Echo Wisp",
+    "description": "A restless spirit of sound and shadow, its haunting echoes disorient enemies and sap their will."
+  },
+  "747": {
+    "name": "Arctic Wolf",
+    "description": "A fierce pack predator of the frozen north, tearing through prey with razor-sharp fangs."
+  },
+  "748": {
+    "name": "Scavenging Coyote",
+    "description": "A cunning scavenger that strikes weakened prey and slips away into the brush."
+  },
+  "749": {
+    "name": "Mad Boar",
+    "description": "A hulking boar driven into a frenzy, trampling anything in its path with deadly tusks."
+  },
+  "750": {
+    "name": "Kodiak Bear",
+    "description": "A massive ursine apex predator, swiping and mauling foes with bone-crushing strength."
+  },
+  "751": {
+    "name": "Rummaging Opossum",
+    "description": "A nocturnal scavenger that feigns death to avoid attackers before striking with surprising ferocity."
+  },
+  "752": {
+    "name": "Rhinobeetle",
+    "description": "A burly beetle armored in horned chitin, goring foes with its razor-sharp mandibles."
+  },
+  "753": {
+    "name": "Spikey Porcupine",
+    "description": "A stout rodent bristling with quills, spraying foes with barbed spines when threatened."
+  },
+  "754": {
+    "name": "Stomping Elephant",
+    "description": "A titanic pachyderm whose thunderous steps crush bone and shatter shields alike."
+  },
+  "755": {
+    "name": "Shadow Bat",
+    "description": "A nocturnal flier emitting a disorienting screech that blinds prey before the kill."
+  },
+  "756": {
+    "name": "Tunneling Mole",
+    "description": "A feral digger that bursts from below, tripping foes with a seismic charge."
+  },
+  "757": {
+    "name": "Sand Cobra",
+    "description": "A venomous serpent of the dunes, striking with deadly precision and injecting potent toxins."
+  },
+  "758": {
+    "name": "Polar Bear",
+    "description": "A massive bear of the frozen wastes, its crushing paws and icy breath punish any who dare approach."
+  },
+  "759": {
+    "name": "Rancorous Bull",
+    "description": "A furious bull with iron-hard horns, goring and trampling its foes in a relentless charge."
+  },
+  "760": {
+    "name": "Ominous Raven",
+    "description": "A sleek black bird whose chilling cry foretells doom; it blinds prey with a cloud of enchanted dust."
+  },
+  "761": {
+    "name": "Bald Eagle",
+    "description": "A regal raptor that dives at break-neck speed, shredding armor with its talons and piercing cry."
+  },
+  "762": {
+    "name": "Dune Fang",
+    "description": "A venom-soaked serpent of the dunes, its fangs drip a paralytic toxin that cripples prey."
+  },
+  "763": {
+    "name": "Frostback Ursid",
+    "description": "A massive cave bear whose icy fur shields it from harm as it rends flesh with chilling mauls."
+  },
+  "764": {
+    "name": "Ironhoof Charger",
+    "description": "A furious bull with iron-like horns, battering foes senseless in a brutal charge."
+  },
+  "765": {
+    "name": "Nightwisp",
+    "description": "A shadowy raven whose piercing screech blinds prey before a silent, deadly descent."
+  },
+  "766": {
+    "name": "Carrion Stalker",
+    "description": "A scavenging beast drawn to death’s scent, pouncing upon carrion with razor-sharp claws."
+  },
+  "767": {
+    "name": "Psionic Fenbeast",
+    "description": "A warped creature of twisted thought, it shatters minds with psychic assaults and hallucinatory dust."
+  },
+  "768": {
+    "name": "Chromatic Tick",
+    "description": "Its iridescent shell oozes a contagion that jumps targets, while its neon flurry blinds foes in a blink."
+  },
+  "769": {
+    "name": "Guttural Maggotus",
+    "description": "This bloated burrower erupts in writhing swarms of spores, leaving victims wracked with confusion and rot."
+  },
+  "770": {
+    "name": "Sporeburst Myconid",
+    "description": "A towering fungus whose rupturing cap spews clouds of hallucinogenic spores, fracturing reality for all."
+  },
+  "771": {
+    "name": "Sonic Molten Drakebat",
+    "description": "A hellish flyer forged in magma and sound, its screech ignites the air before it engulfs prey in molten shards."
+  },
+  "772": {
+    "name": "Moonlit Wendigo",
+    "description": "A gaunt forest spirit that stalks under moonlight, its hollow eyes striking terror into any who cross its path."
+  },
+  "773": {
+    "name": "Rotwood Entangler",
+    "description": "A warped tree guardian whose gnarled roots lash out to ensnare unwary travelers in the undergrowth."
+  },
+  "774": {
+    "name": "Bloodbell Cow",
+    "description": "A once-docile farm beast twisted by dark magics, its mournful bell heralding doom rather than dawn."
+  },
+  "775": {
+    "name": "Marsh Murkweb",
+    "description": "A colossal swamp spider that drapes its webs across the treeline, ensnaring prey in murky waters."
+  },
+  "776": {
+    "name": "Rabid Coyote",
+    "description": "A coyote driven mad by hunger, it swarms foes with claw and fang in savage frenzy."
+  },
+  "777": {
+    "name": "Mothshade Stalker",
+    "description": "A nocturnal winged horror whose hypnotic flutter lulls victims before draining their life essence."
+  },
+  "778": {
+    "name": "Chupacabra Fiend",
+    "description": "A bloodthirsty predator that preys on livestock, leaving only drained husks in its wake."
+  },
+  "779": {
+    "name": "Lake Lurker Serpent",
+    "description": "A serpentine cryptid that drags unwary swimmers beneath dark waters with crushing coils."
+  },
+  "780": {
+    "name": "Gatorghast Horror",
+    "description": "A swamp-dwelling leviathan with bone-crushing jaws and a hunger for flesh."
+  },
+  "781": {
+    "name": "Flatwood Sentinel",
+    "description": "A towering tree-like guardian of the woods, it ensnares intruders with gnarled limbs."
+  },
+  "782": {
+    "name": "Barbed Manticore",
+    "description": "A fearsome cryptid with the body of a lion and a venomous, barbed tail strike that rends armor and flesh alike."
+  },
+  "783": {
+    "name": "Petrifying Gorgon",
+    "description": "A serpentine matriarch whose gaze turns flesh to stone, and whose venomous hair lashes strike with uncanny precision."
+  },
+  "784": {
+    "name": "Abyssal Leviathan",
+    "description": "A gargantuan sea serpent from the deepest trenches, it crushes hulls with its coils and unleashes crushing tidal blasts."
+  },
+  "785": {
+    "name": "Timeworn Owlbear",
+    "description": "An ageless ursine beast with barbed feathers and echoing screeches that distort the flow of time around its prey."
+  },
+  "786": {
+    "name": "Majestic Griffon",
+    "description": "A noble sky-king with razor talons and a deafening roar that summons storm winds to buffet its foes."
+  },
+  "787": {
+    "name": "Haunting Scarecrow",
+    "description": "An eldritch scarecrow animated by restless spirits, its stitched brim unleashes poltergeist gusts that shred flesh."
+  },
+  "788": {
+    "name": "Spectral Wardstone",
+    "description": "A rune-carved stone imbued with a trapped spirit; its spectral lantern beams disorient foes and summon invisible hands."
+  },
+  "789": {
+    "name": "Phantom Marionette",
+    "description": "A marionette of splintered wood haunted by a child’s laughter, strings weaving phantom limbs to choke the living."
+  },
+  "790": {
+    "name": "Rattling Remains",
+    "description": "Bones of the long-dead animated by malevolent force, each joint’s rattle echoes as spectral claws rip at flesh."
+  },
+  "791": {
+    "name": "Will-O-’-Wisp Lamp",
+    "description": "An abandoned oil lamp possessed by a wandering spirit, its ghostly glow guides victims into deadly illusions."
+  },
+  "792": {
+    "name": "Terraclaw Tortoise",
+    "description": "A hulking tortoise whose shell hardens like stone, crushing foes with earth-shaking stomps."
+  },
+  "793": {
+    "name": "Pyroshell Tortoise",
+    "description": "A magma-infused tortoise whose blazing shell immolates anything that dares approach."
+  },
+  "794": {
+    "name": "Frostback Tortoise",
+    "description": "An ice-clad tortoise whose frozen shell shatters bones with glacial force."
+  },
+  "795": {
+    "name": "Stormshell Tortoise",
+    "description": "A storm-charged tortoise crackling with lightning, unleashing thunderous shell strikes."
+  },
+  "796": {
+    "name": "Tidalcarapace Tortoise",
+    "description": "A tidal tortoise commanding ocean currents, flooding foes with wave-crushing shell bashes."
+  },
+  "797": {
+    "name": "Steelshell Tortoise",
+    "description": "A living steel tortoise whose indestructible shell bombards enemies with metallic quakes."
+  },
+  "798": {
+    "name": "Galeshell Tortoise",
+    "description": "A wind-swept tortoise riding gale-force gusts, striking with cyclonic shell assaults."
+  },
+  "799": {
+    "name": "Dawnshell Tortoise",
+    "description": "A holy tortoise blessed by dawn’s light, its divine shell smites evil with radiant force."
+  },
+  "800": {
+    "name": "Nightcurse Tortoise",
+    "description": "A blighted tortoise imbued with dark curses, its malevolent shell drains life with each blow."
+  },
+  "801": {
+    "name": "Giant Rat",
+    "description": "A common vermin with sharp teeth and twitchy reflexes, often found scavenging in sewers."
+  },
+  "802": {
+    "name": "Goblin Grunt",
+    "description": "A crude footsoldier of goblin tribes, wielding makeshift weapons and eager for easy prey."
+  },
+  "803": {
+    "name": "Goblin Marksman",
+    "description": "A nimble goblin marksman, picking off foes from a distance with poisoned arrows."
+  },
+  "804": {
+    "name": "Acid Ant",
+    "description": "A small insect that sprays a virulent acid from its mandibles, dissolving armor."
+  },
+  "805": {
+    "name": "Death Axolotl",
+    "description": "Azolotl that strikes with corrosive slime and can knock foes off balance."
+  },
+  "806": {
+    "name": "Magma Ant",
+    "description": "A volcanic insect whose molten mandibles weld flesh to armor in a single bite."
+  },
+  "807": {
+    "name": "Fire Centipede",
+    "description": "A scuttling inferno with dozens of burning legs, it scorches tunnels in its path."
+  },
+  "808": {
+    "name": "Molten Efreeti",
+    "description": ": A blazing elemental lord that hurls lava bolts and turns terrain to slag."
+  },
+  "809": {
+    "name": "Blazing Inferno Elemental",
+    "description": "A towering conflagration given sentience, it sears all in its path."
+  },
+  "810": {
+    "name": "Obsidian Hellhound",
+    "description": "A fiendish canine wreathed in molten obsidian, its snarls ignite the air."
+  },
+  "811": {
+    "name": "Crimson Magma Drake",
+    "description": "A feral dragon born of magma flows, its molten breath can melt steel."
+  },
+  "812": {
+    "name": "Searing Magma Wyrm",
+    "description": "A lithe draconian serpent wreathed in molten rock, its fiery maw incinerates all in its path."
+  },
+  "813": {
+    "name": "Basaltstone Golem",
+    "description": "A hulking construct of fused basalt and brimstone, it slams the earth with cataclysmic force."
+  },
+  "814": {
+    "name": "Emberback Hellscorpion",
+    "description": "A vicious arachnid whose molten carapace and venomous sting unleash waves of scorching pain."
+  },
+  "815": {
+    "name": "Pyroclast Phoenix",
+    "description": "A legendary avian wreathed in perpetual flame, reborn in eruptions of pure fire and ash."
+  },
+  "816": {
+    "name": "Ophanim Judicator",
+    "description": "A wheel of divine retribution, its many eyes judge souls with unwavering gaze."
+  },
+  "817": {
+    "name": "Seraph of the Seventh Veil",
+    "description": "A six-winged blaze of righteous fury, veiled in searing light and veined with judgment."
+  },
+  "818": {
+    "name": "Cherubic Host-Alpha",
+    "description": "A chorus of infant mouths and eyes, their hymns can fell the unworthy in a storm of holiness."
+  },
+  "819": {
+    "name": "Dominion of the Flame",
+    "description": "A tribunal of living embers, their righteous flames purify evil with scalding decree."
+  },
+  "820": {
+    "name": "Archangel Mortifier",
+    "description": "The harbinger of divine extinction, its mere presence unravels corruption in holy radiance."
+  },
+  "821": {
+    "name": "Novice Shaolin Acolyte",
+    "description": "A novice monk refining basic strikes and stances with unwavering focus."
+  },
+  "822": {
+    "name": "Iron Palm Disciple",
+    "description": "A dedicated disciple whose iron-clad palms shatter defenses and deliver thunderous blows."
+  },
+  "823": {
+    "name": "Zen Fist Master",
+    "description": "A serene master channeling inner calm into devastating Dragon Fist strikes and impenetrable defense."
+  },
+  "824": {
+    "name": "Bogscale Hunter",
+    "description": "A stealthy lizardfolk stalking the misty bogs, its razor-sharp claws and toxic spit making it a deadly ambush predator."
+  },
+  "825": {
+    "name": "Marshjaw Stalker",
+    "description": "A hulking lizardfolk with mottled green scales, it prowls marsh edges and ambushes prey with its venom-laced fangs."
+  },
+  "826": {
+    "name": "Fenclaw Brute",
+    "description": "A towering lizardfolk warlord commanding swamp tribes, its massive claws rend armor and its toxin-coated hide wards off attackers."
+  },
+  "827": {
+    "name": "Haunted Mannequin",
+    "description": "A life‐size wooden dummy possessed by an unseen force, its joints creak as it advances on prey."
+  },
+  "828": {
+    "name": "Twisted Marionette",
+    "description": "A porcelain doll rigged with sinewy strings, its broad grin hides rows of serrated teeth."
+  },
+  "829": {
+    "name": "Stringbound Abomination",
+    "description": "A towering horror of splintered limbs and tangled cords, able to ensnare victims in unbreakable bonds."
+  },
+  "830": {
+    "name": "Bioluminescent Caveworm",
+    "description": "A phosphorescent earthworm that illuminates caverns before crushing intruders under its bulk."
+  },
+  "831": {
+    "name": "Crystalline Skulker",
+    "description": "A glass-encrusted stalker whose prismatic hide refracts light into lethal lasers."
+  },
+  "832": {
+    "name": "Echo Maw",
+    "description": "A cavernous beast whose gaping throat emits concussive screams that shatter stone."
+  },
+  "833": {
+    "name": "Bog Hatchling",
+    "description": "A tiny croaking amphibian barely bigger than a pebble<br"
+  },
+  "834": {
+    "name": "Marsh Skulk",
+    "description": "A warty humanoid that skulks among reeds"
+  },
+  "835": {
+    "name": "Quagmire Creeper",
+    "description": "A leech-like wretch that drags victims into sludge"
+  },
+  "836": {
+    "name": "Mire Spider",
+    "description": "A venomous arachnid weaving webs across murky pools"
+  },
+  "837": {
+    "name": "Bog Mutant",
+    "description": "A twisted mass of moss and bone, oozing toxic slime"
+  },
+  "838": {
+    "name": "Swamp Leech Queen",
+    "description": "A colossal leech that can drain life in a single bite"
+  },
+  "839": {
+    "name": "Velociraptor",
+    "description": "A velociraptor"
+  },
+  "840": {
+    "name": "Mire Hydra",
+    "description": "A multi-headed beast spewing venomous mist"
+  },
+  "841": {
+    "name": "Bog Golem",
+    "description": "An animated construct of mud and bone"
+  },
+  "842": {
+    "name": "Swamp Leviathan",
+    "description": "A colossal monstrosity that shakes the marsh with each step"
+  },
+  "843": {
+    "name": "Mire Dragon",
+    "description": "The apex predator of the swamp, breathing corrosive fog"
+  },
+  "844": {
+    "name": "Wooden Flower",
+    "description": "A tiny sapling animated by forest magic, it lashes out with thorny tendrils"
+  },
+  "845": {
+    "name": "Barkhide Bruiser",
+    "description": "A young arboreal warrior whose bark-encrusted hide absorbs blows"
+  },
+  "846": {
+    "name": "Timberwood Shaman",
+    "description": "A forest mystic who channels wood spirits to curse and bind foes"
+  },
+  "847": {
+    "name": "Sylvan Barkstalker",
+    "description": "A silent hunter of the undergrowth, its bark-patterned skin makes it nearly invisible"
+  },
+  "848": {
+    "name": "Elderwood Guardian",
+    "description": "An ancient treant whose gnarled limbs crush intruders and whose branches summon vines"
+  },
+  "849": {
+    "name": "Armored Beaver",
+    "description": "A river rodent in iron-like pelt, it rams foes with sod-burrowing ferocity."
+  },
+  "850": {
+    "name": "Primal Kangaroo",
+    "description": "A savage hopper with sinewy legs, it delivers bone-crushing kicks and pummels with gnashing jaws."
+  },
+  "851": {
+    "name": "Night Raccoon",
+    "description": "A bandit-masked scavenger that raids camps under moonlight, pilfering treasures and spreading plague."
+  },
+  "852": {
+    "name": "Giant Penguin",
+    "description": "A penguin"
+  },
+  "853": {
+    "name": "Spiny Sprinter",
+    "description": "A swift burrower whose burst of spines deters any would-be attacker."
+  },
+  "854": {
+    "name": "Sea Turtle",
+    "description": "Encased in an impenetrable shell, it rams foes with surprising force."
+  },
+  "855": {
+    "name": "Soldier Ant Colony",
+    "description": "A swarming mass that overwhelms foes with coordinated pincers."
+  },
+  "856": {
+    "name": "Umber Moth Swarm",
+    "description": "A cloud of fluttering wings that disorients with hallucinogenic dust."
+  },
+  "857": {
+    "name": "Wise Owl",
+    "description": "A silent flier that strikes from above with talons honed by moonlight."
+  },
+  "858": {
+    "name": "Ominous Raven Murder",
+    "description": "A cadre of dark-feathered hunters that dive in unison, sowing panic."
+  },
+  "859": {
+    "name": "Giant Slithering Snail",
+    "description": "A lumbering behemoth that leaves an acidic trail and withstands any blow."
+  },
+  "860": {
+    "name": "Ochre Jelly Swarm",
+    "description": "A shifting mass of stinging pseudopods that engulfs any who draw near."
+  },
+  "861": {
+    "name": "Mannequin",
+    "description": "Immortal test mannequin <Char:$Manichinocrashtest"
+  },
+  "862": {
+    "name": "Emerald Ooze",
+    "description": "A verdant slime that secretes toxins, slowly dissolving anything it touches."
+  },
+  "863": {
+    "name": "Azure Slime",
+    "description": "A watery blob that absorbs moisture from foes, leaving them parched and weak."
+  },
+  "864": {
+    "name": "Crimson Jelly",
+    "description": "A blood-red ooze that feeds on life force, growing stronger with each victim."
+  },
+  "865": {
+    "name": "Golden Pudding",
+    "description": "A rare metallic slime that gleams with inner light and deflects most attacks."
+  },
+  "866": {
+    "name": "Void Gel",
+    "description": "A shadowy mass that absorbs light and drains the essence of reality itself."
+  },
+  "867": {
+    "name": "Molten Slag",
+    "description": "A superheated blob of magma that melts armor and sears flesh on contact."
+  },
+  "868": {
+    "name": "Frost Slime",
+    "description": "A frozen mass that chills to the bone, slowing movement with icy touch."
+  },
+  "869": {
+    "name": "Thunder Blob",
+    "description": "An electrically charged ooze that sparks and crackles, stunning prey with lightning."
+  },
+  "870": {
+    "name": "King Slime",
+    "description": "A colossal slime monarch that commands lesser oozes and splits when damaged."
+  },
+  "871": {
+    "name": "Toxic Sludge",
+    "description": "A noxious puddle that emits poisonous fumes, corroding everything nearby."
+  },
+  "872": {
+    "name": "Rainbow Slime",
+    "description": "A prismatic ooze that shifts between elements, adapting to any threat."
+  },
+  "873": {
+    "name": "Sand Slime",
+    "description": "A grainy mass that blinds foes with sand particles and desiccates on touch."
+  },
+  "874": {
+    "name": "Seeing Slime",
+    "description": "An ocular ooze with dozens of eyes that paralyzes prey with its terrifying gaze."
+  },
+  "875": {
+    "name": "Mud Slime",
+    "description": "A muddy blob that slows movement and hardens into crushing weight."
+  },
+  "876": {
+    "name": "Pumpkin Slime",
+    "description": "A festive gourd-shaped ooze that terrorizes with jack-o'-lantern grins and fiery breath."
+  },
+  "877": {
+    "name": "Pink Slime",
+    "description": "A sweet-smelling blob that lulls victims into complacency before dissolving them."
+  },
+  "878": {
+    "name": "Grotesque Slime",
+    "description": "A nightmarish amalgamation of absorbed victims, writhing with half-digested remains."
+  },
+  "879": {
+    "name": "Green Slime",
+    "description": "A common forest slime that feeds on vegetation and unwary travelers."
+  },
+  "880": {
+    "name": "Grass Slime",
+    "description": "A camouflaged meadow dweller that entangles prey with grassy pseudopods."
+  },
+  "881": {
+    "name": "Shadow Bat",
+    "description": "A vampiric bat fused with dark slime, draining life force while spreading shadowy corruption."
+  },
+  "882": {
+    "name": "Crimson Fish",
+    "description": "A massive fish mutated by blood magic, its pincers can crush armor and drain vitality."
+  },
+  "883": {
+    "name": "Corrupted Bioslave",
+    "description": "A twisted amalgamation of plant and flesh, enslaved by dark magic to serve as a toxic guardian."
+  },
+  "884": {
+    "name": "Spectral Songbird",
+    "description": "A ghostly avian that lures victims with haunting melodies before draining their sanity."
+  },
+  "885": {
+    "name": "Flying Pig",
+    "description": "A swarm of scavenger birds that attack in coordinated dives, pecking eyes and exposed flesh."
+  },
+  "886": {
+    "name": "Dust Devil Bird",
+    "description": "Desert scavengers that create blinding sandstorms with their wings while pecking at disoriented prey."
+  },
+  "887": {
+    "name": "Shadow Crawler",
+    "description": "A shadowy insect that phases in and out of darkness, striking from blind spots."
+  },
+  "888": {
+    "name": "Cursed Candle",
+    "description": "A possessed candelabra that burns with unholy flame, spreading fear and burning souls."
+  },
+  "889": {
+    "name": "Void Parasite Plant",
+    "description": "A carnivorous plant infected by void energy, consuming both flesh and magical essence."
+  },
+  "890": {
+    "name": "Abyssal Crab",
+    "description": "A deep-sea crustacean touched by the abyss, its shell absorbs light and hope."
+  },
+  "891": {
+    "name": "Grasping Shadow",
+    "description": "A disembodied hand of pure darkness that emerges from shadows to strangle the unwary."
+  },
+  "892": {
+    "name": "Umbral Basilisk",
+    "description": "A spectral jellyfish that drifts through air as if swimming, paralyzing victims with ghostly tentacles."
+  },
+  "893": {
+    "name": "Death's Head",
+    "description": "A floating skull wreathed in dark energy, cursing those who meet its hollow gaze."
+  },
+  "894": {
+    "name": "Void Desolator",
+    "description": "A minotaur corrupted by void energy, absorbing light and slowly draining life from anything it touches."
+  },
+  "895": {
+    "name": "Shadow Tortoise",
+    "description": "A tortoise whose shell has absorbed centuries of darkness, reflecting curses back at attackers."
+  },
+  "896": {
+    "name": "Creeping Shade",
+    "description": "A shadow-infused turtle that creeps through darkness, ambushing prey with surprising speed."
+  },
+  "897": {
+    "name": "Hollow Goat",
+    "description": "A humanoid goat with a turtle-like shell, empty inside but filled with malevolent intent."
+  },
+  "898": {
+    "name": "Tonno Dimensionale",
+    "description": "A being that exists between dimensions, phasing in and out of reality to strike."
+  },
+  "899": {
+    "name": "Blank Emergence",
+    "description": "An entity from the void that shouldn't exist, its presence alone causes reality to fracture."
+  },
+  "900": {
+    "name": "Blick",
+    "description": "A cyclopean horror with a single eye that fires beams of pure entropy."
+  },
+  "901": {
+    "name": "Em",
+    "description": "A skeletal beast whose ear-splitting cry fractures spirit and skull alike."
+  },
+  "902": {
+    "name": "Bubba",
+    "description": "A humanoid shadow creature with a turtle-like shell, empty inside but filled with malevolent intent."
+  },
+  "903": {
+    "name": "Bloated Whale",
+    "description": "asd"
+  },
+  "904": {
+    "name": "Overworked Villager",
+    "description": "asd"
+  },
+  "905": {
+    "name": "Meat Puppet Theater",
+    "description": "A grotesque marionette made from sewn-together flesh of previous victims, performing eternal nightmares."
+  },
+  "906": {
+    "name": "Whispering Door",
+    "description": "A stone door embedded with the faces of the tormented, each mouth whispering different madness."
+  },
+  "907": {
+    "name": "Memory Leech",
+    "description": "A parasitic slug that feeds on memories, leaving victims with only their worst experiences."
+  },
+  "908": {
+    "name": "Bone Orchestra",
+    "description": "Multiple skeletons fused together, playing haunting melodies on instruments made from their own ribs."
+  },
+  "909": {
+    "name": "Womb of Nightmares",
+    "description": "A bloated mass that births twisted horrors from its many orifices, each spawn more disturbing than the last."
+  },
+  "910": {
+    "name": "Inverted Angel",
+    "description": "A celestial being turned inside-out, its wings are exposed sinew and its halo drips black ichor."
+  },
+  "911": {
+    "name": "Foul Gouger",
+    "description": "A sentient mass of despair that whispers the final thoughts of the damned, spreading existential dread."
+  },
+  "912": {
+    "name": "Backwards Doll",
+    "description": "A porcelain doll that ages backwards, speaking in reverse about futures that should never come to pass."
+  },
+  "913": {
+    "name": "Fleshweaver Spider",
+    "description": "A spider-human hybrid that weaves tapestries from living skin, keeping victims conscious during the process."
+  },
+  "914": {
+    "name": "Totem of Sins",
+    "description": "A reflective surface that shows victims their worst moments, driving them to self-destruction through guilt."
+  },
+  "915": {
+    "name": "Hollow Mother",
+    "description": "A maternal zombie whose chest cavity houses a swarm of infant undead that burst forth to attack."
+  },
+  "916": {
+    "name": "Badass Pigeon",
+    "description": "A pigeon"
+  },
+  "917": {
+    "name": "Bleeding Statue",
+    "description": "A stone effigy that weeps blood from every pore, the tears burning like acid and spreading plague."
+  },
+  "918": {
+    "name": "Surgeon of Souls",
+    "description": "A skeletal figure that performs 'operations' on living victims, claiming to cure their humanity."
+  },
+  "919": {
+    "name": "Crying Tree",
+    "description": "An ancient tree whose bark bears the faces of absorbed victims, all weeping tears of sap eternally."
+  },
+  "920": {
+    "name": "Umbilical Strangler",
+    "description": "A serpentine horror that connects to victims via fleshy tendrils, slowly draining their life essence."
+  },
+  "921": {
+    "name": "Grief Collector",
+    "description": "A floating mass of eyes that feeds on sorrow, each eye showing the final moments of loved ones."
+  },
+  "922": {
+    "name": "Maternity Ward",
+    "description": "A monstrous entity that mimics pregnant women, birthing abominations that call victims 'parent'."
+  },
+  "923": {
+    "name": "Screaming Jar",
+    "description": "A glass container filled with the anguished voices of the dead, their screams driving listeners insane."
+  },
+  "924": {
+    "name": "Hunger Incarnate",
+    "description": "A writhing mass of mouths and stomachs that can never be satisfied, consuming everything including itself."
+  },
+  "925": {
+    "name": "Temporal Hornet",
+    "description": "A hornet that feeds on time itself, aging victims rapidly while remaining eternally young."
+  },
+  "926": {
+    "name": "Baptism Font",
+    "description": "A holy font filled with acidic tears that baptizes victims into eternal suffering."
+  },
+  "927": {
+    "name": "Identity Thief",
+    "description": "A shapeshifter that steals not just appearance but memories, leaving victims as empty shells."
+  },
+  "928": {
+    "name": "Orphanage Warden",
+    "description": "A bureaucratic nightmare that adopts victims into eternal childhood, never letting them grow or leave."
+  },
+  "929": {
+    "name": "Lullaby Wraith",
+    "description": "A ghostly caretaker that sings victims to sleep, then harvests their dreams for sustenance."
+  },
+  "930": {
+    "name": "Puppet Master's Corpse",
+    "description": "A deceased puppeteer whose strings still control his rotting body, seeking new marionettes from the living."
+  },
+  "931": {
+    "name": "Feast of Famine",
+    "description": "A massive entity that appears as a banquet table, but the food is made from its own constantly regenerating flesh."
+  },
+  "932": {
+    "name": "Abortion Mimic",
+    "description": "A medical facility mimic that offers false hope before consuming both mother and unborn child."
+  },
+  "933": {
+    "name": "Childhood's End",
+    "description": "A doll that forces adults to relive their most traumatic childhood memories until they break completely."
+  },
+  "934": {
+    "name": "Emotional Leech",
+    "description": "A parasitic slug that feeds exclusively on happiness, leaving victims in permanent despair."
+  },
+  "935": {
+    "name": "Horseshoe Crab",
+    "description": "A horseshoe crab"
+  },
+  "936": {
+    "name": "Geometry Devourer",
+    "description": "A shapeshifting mass that exists in seventeen dimensions simultaneously, consuming angles and vertices."
+  },
+  "937": {
+    "name": "Inverted Hunger",
+    "description": "A creature that feeds by being consumed, growing larger the more it is devoured."
+  },
+  "938": {
+    "name": "Temporal Barnacle",
+    "description": "A crystalline parasite that attaches to moments instead of hosts, feeding on causality itself."
+  },
+  "939": {
+    "name": "Probability Spider",
+    "description": "An arachnid that weaves webs from quantum uncertainty, trapping victims in potential realities."
+  },
+  "940": {
+    "name": "Breathing Building",
+    "description": "An architectural entity whose walls inhale visitors and whose rooms digest them slowly over centuries."
+  },
+  "941": {
+    "name": "Mathematics Eater",
+    "description": "A spherical paradox that consumes abstract concepts, leaving gaps in reality where numbers once existed."
+  },
+  "942": {
+    "name": "Inside-Out Whale",
+    "description": "A cetacean with its organs on the outside and void where its interior should be, swimming through solid matter."
+  },
+  "943": {
+    "name": "Mirror Basher",
+    "description": "A reflective knight that shows infinite reflections of itself, each reflection slightly more wrong than the last."
+  },
+  "944": {
+    "name": "Gravity Worm",
+    "description": "A serpentine entity that tunnels through spacetime itself, leaving holes in reality behind it."
+  },
+  "945": {
+    "name": "Color Out of Sound",
+    "description": "A living synesthesia that exists as both wavelength and frequency, seen by the deaf and heard by the blind."
+  },
+  "946": {
+    "name": "Flesh Calculator",
+    "description": "A biological computer made of interwoven muscles that processes emotions as mathematical equations."
+  },
+  "947": {
+    "name": "Backwards Tree",
+    "description": "A tree that grows downward into the sky, its roots in clouds and branches burrowing through earth."
+  },
+  "948": {
+    "name": "Thought Parasite",
+    "description": "An invisible tick that feeds on synapses, becoming more real the more it's thought about."
+  },
+  "949": {
+    "name": "Sentient Wound",
+    "description": "A living injury that exists independently of any body, seeking hosts to inhabit and expand within."
+  },
+  "950": {
+    "name": "Non-Euclidean Crab",
+    "description": "A crustacean whose geometry defies comprehension, with claws that pinch through folded space."
+  },
+  "951": {
+    "name": "Vorthak the Membrane-Ripper",
+    "description": "The Weaver of Dimensional Wounds - An alien god that tears holes between realities with its crystalline appendages."
+  },
+  "952": {
+    "name": "Yith'oghra the Consensus-Breaker",
+    "description": "The Unraveler of Truth - A deity that destroys shared reality by making contradictions simultaneously true."
+  },
+  "953": {
+    "name": "Mor'dun the Flesh-Architect",
+    "description": "The Constructor of Living Cities - An ancient god that builds sentient metropolises from the bones of civilizations."
+  },
+  "954": {
+    "name": "Qel'thuzad the Memory-Eater",
+    "description": "The Librarian of Forgotten Names - A psychic parasite god that devours entire histories, leaving only vague impressions."
+  },
+  "955": {
+    "name": "Nyth'aggoth the Concept-Corruptor",
+    "description": "The Defiler of Pure Ideas - A cosmic entity that infects abstract concepts with malignant paradoxes."
+  },
+  "956": {
+    "name": "Shal'thyss the Void-Surgeon",
+    "description": "The Harvester of Soul-Essence - A seductive deity that performs spiritual vivisection on willing victims."
+  },
+  "957": {
+    "name": "Gul'magoth the Time-Weaver",
+    "description": "The Chronarch of Paradox - A temporal deity that knits impossible loops in causality's fabric."
+  },
+  "958": {
+    "name": "Xoth'nagal the Dream-Plague",
+    "description": "The Contagion of Sleeping Minds - A nightmare deity that spreads through collective unconscious, infecting dreams across worlds."
+  },
+  "959": {
+    "name": "Vel'korthak the Reality-Breeder",
+    "description": "The Spawner of Alternate Truths - A reality-manipulating god that births new universes from contradictions."
+  },
+  "960": {
+    "name": "Zhoth'aggur the Silence-Weaver",
+    "description": "The Architect of Absolute Quiet - The supreme void-god that devours sound, meaning, and existence itself, leaving only perfect emptiness."
+  },
+  "961": {
+    "name": "Primordial Terror Rex",
+    "description": "The apex predator of ancient epochs, a colossal tyrant whose roar splits mountains and whose jaws crush adamantine."
+  },
+  "962": {
+    "name": "Colossal Mammoth King",
+    "description": "An ice age patriarch whose tusks pierce the earth's crust and whose trumpeting summons primordial storms."
+  },
+  "963": {
+    "name": "Titanic Cave Bear",
+    "description": "A monstrous ursine giant whose claws carve stone and whose hibernation shakes continents awake."
+  },
+  "964": {
+    "name": "Megalodon Prime",
+    "description": "The ultimate oceanic predator, a prehistoric shark whose bite force reshapes coastlines and devours whales whole."
+  },
+  "965": {
+    "name": "Thunder Lizard Colossus",
+    "description": "A dragon of impossible proportions whose footsteps trigger earthquakes and whose tail sweeps forests bare."
+  },
+  "966": {
+    "name": "Dire Saber-tooth Alpha",
+    "description": "The pack leader of ice age killers, whose sabers pierce dragon scales and whose hunting cry freezes prey in terror."
+  },
+  "967": {
+    "name": "Armored Rex Lord",
+    "description": "A three-horned fortress of bone and muscle whose charge levels mountains and whose hide deflects meteor strikes."
+  },
+  "968": {
+    "name": "Giant Terror Bird",
+    "description": "A flightless nightmare whose beak shatters armor like glass and whose talons rake trenches in bedrock."
+  },
+  "969": {
+    "name": "Primordial Dragon Turtle",
+    "description": "An ancient leviathan whose shell is forged from glacier ice and whose breath flash-freezes entire armies."
+  },
+  "970": {
+    "name": "Crawling Hand",
+    "description": "A severed hand that skitters on its fingers, leaving bloody prints wherever it crawls."
+  },
+  "971": {
+    "name": "Eyeball Slug",
+    "description": "A gastropod with a giant unblinking eyeball for a head. Its gaze induces nausea."
+  },
+  "972": {
+    "name": "Tooth Ratkin",
+    "description": "A hairless rodent whose body is entirely covered in human molars instead of fur."
+  },
+  "973": {
+    "name": "Backwards Bird",
+    "description": "A raven with its head twisted completely backward. It flies in reverse and caws prophecies of the past."
+  },
+  "974": {
+    "name": "Skin Balloon",
+    "description": "An inflated sphere of stretched human skin that floats and deflates to attack with noxious gas."
+  },
+  "975": {
+    "name": "Draconic Dragonfly",
+    "description": "A dragonfly"
+  },
+  "976": {
+    "name": "Giggling Skull",
+    "description": "A disembodied skull that floats and laughs maniacally at inappropriate moments."
+  },
+  "977": {
+    "name": "Finger Worm",
+    "description": "A serpentine creature composed entirely of stitched-together human fingers that wiggle independently."
+  },
+  "978": {
+    "name": "Weeping Mask",
+    "description": "A floating theatrical mask that constantly drips tears of black ichor from its eye holes."
+  },
+  "979": {
+    "name": "Tongue Leech",
+    "description": "A parasitic slug that resembles a human tongue. It whispers disturbing secrets as it feeds."
+  },
+  "980": {
+    "name": "Pocket Watch Scarab",
+    "description": "A mechanical beetle with clock gears for a body. It steals seconds from those it touches."
+  },
+  "981": {
+    "name": "Wild ripper",
+    "description": "A gnoll"
+  },
+  "982": {
+    "name": "Baby Doll Head",
+    "description": "A porcelain doll head that rolls on the ground, crying real tears and calling for its mother."
+  },
+  "983": {
+    "name": "Tooth Fairy",
+    "description": "A twisted fae creature that collects teeth by force, using pliers made of bone."
+  },
+  "984": {
+    "name": "Rib Cage Crab",
+    "description": "A crustacean that wears a human ribcage as its shell. The heart inside still beats faintly."
+  },
+  "985": {
+    "name": "Eyeless Bat",
+    "description": "A bat with smooth skin where its eyes should be. It navigates by screaming victims' names."
+  },
+  "986": {
+    "name": "Cone Mimic",
+    "description": "A mimic that disguises itself as a traffic cone. It digests prey from the inside out."
+  },
+  "987": {
+    "name": "Whisper Wisp",
+    "description": "A floating orb of pale light that speaks the last words of the deceased in their exact voices."
+  },
+  "988": {
+    "name": "Hair Ball",
+    "description": "A tangled mass of human hair from hundreds of different people. It moves like a tumbling tumbleweed."
+  },
+  "989": {
+    "name": "Organ Grinder Monkey",
+    "description": "A circus monkey that plays music on an instrument made from human organs. The melody induces vertigo."
+  },
+  "990": {
+    "name": "Ink Blot Child",
+    "description": "A shadowy child-shaped figure that appears to be drawn in dripping ink. It leaves stains that never wash out."
+  },
+  "991": {
+    "name": "Razorback Boar",
+    "description": "A massive wild boar with blade-like bristles along its spine. Its tusks can gore through iron."
+  },
+  "992": {
+    "name": "Feral Hyena Pack",
+    "description": "A cackling pack hunter with bone-crushing jaws. They laugh maniacally while tearing prey apart."
+  },
+  "993": {
+    "name": "Spined Lizard",
+    "description": "A desert reptile covered in venomous spines. Its tail whip can shatter bone."
+  },
+  "994": {
+    "name": "Maned Terror Wolf",
+    "description": "A wolf with a mane of razor-sharp quills. Its howl paralyzes smaller creatures with primal fear."
+  },
+  "995": {
+    "name": "Horned Bear",
+    "description": "A massive ursine with twisted horns growing from its skull. Its roar causes avalanches."
+  },
+  "996": {
+    "name": "Saber Cat",
+    "description": "A sleek predator with elongated fangs. It stalks silently and strikes with lethal precision."
+  },
+  "997": {
+    "name": "Armored Purcupine",
+    "description": "A beast covered in blade-like scales. When threatened, it curls into a spinning death ball."
+  },
+  "998": {
+    "name": "Crushing Boa",
+    "description": "A serpent thick as a tree trunk. Its coils crush steel armor and its scales deflect blades."
+  },
+  "999": {
+    "name": "Bull Wyvern",
+    "description": "A muscular wyvern with horns like battering rams. Its charge can topple stone walls."
+  },
+  "1000": {
+    "name": "Monstrous Badger",
+    "description": "A ferocious burrowing beast with iron claws. It never retreats and fights to the death."
+  },
+  "1001": {
+    "name": "Maleficent Ape",
+    "description": "The pack leader of jungle primates. Its deafening screech disorients prey and rallies its troop."
+  },
+  "1002": {
+    "name": "Dire Pig",
+    "description": "A relentless predator with teeth that never stop growing. It can bring down prey ten times its size."
+  },
+  "1003": {
+    "name": "Frost Raccoon",
+    "description": "A raccoon with razor-sharp icicle teeth. Its kicks leave frostbite."
+  },
+  "1004": {
+    "name": "Snow Werewolf",
+    "description": "A pale werewolf that burrows through snow."
+  },
+  "1005": {
+    "name": "Ice Lemming",
+    "description": "A small rodent that explodes into freezing shards when cornered. They travel in suicidal swarms."
+  },
+  "1006": {
+    "name": "Tundra Crow",
+    "description": "A black bird with frost-covered feathers. It pecks out the eyes of frozen corpses."
+  },
+  "1007": {
+    "name": "Arctic Fox",
+    "description": "A cunning white-furred predator with crystalline claws. It hunts silently across ice fields."
+  },
+  "1008": {
+    "name": "Frozen Bat",
+    "description": "A bat encased in permafrost that somehow still lives. Its bite drains body heat."
+  },
+  "1009": {
+    "name": "Ice Wolf Pup",
+    "description": "A young wolf with frost forming on its breath. Even as pups, they hunt in coordinated packs."
+  },
+  "1010": {
+    "name": "Permafrost Beetle",
+    "description": "An insect with an ice-armored carapace. It freezes anything it touches."
+  },
+  "1011": {
+    "name": "Seal Pup",
+    "description": "A young arctic seal with sharp teeth. Surprisingly aggressive when defending territory."
+  },
+  "1012": {
+    "name": "Blizzard Owl",
+    "description": "A snow-white predatory bird with talons that radiate cold. It hunts during whiteouts."
+  },
+  "1013": {
+    "name": "Glacier Crab",
+    "description": "A crustacean with a shell of blue ice. Its claws can snap frozen wood."
+  },
+  "1014": {
+    "name": "Frost Spider",
+    "description": "An arachnid that weaves webs from frozen moisture. Prey freezes solid upon contact."
+  },
+  "1015": {
+    "name": "Young Yeti",
+    "description": "A juvenile snow ape with ice-covered fur. Even young, it possesses terrible strength."
+  },
+  "1016": {
+    "name": "Ice Kangaroo",
+    "description": "A translucent kangaroo made of living ice. Its punches injects freezing venom that crystallizes blood."
+  },
+  "1017": {
+    "name": "Tundra Mammoth Calf",
+    "description": "A young woolly mammoth with tusks beginning to grow. Its protective mother is never far."
+  },
+  "1018": {
+    "name": "Reflective Tiger",
+    "description": "A spotted feline predator perfectly adapted to frozen mountains. It strikes from blinding snowdrifts."
+  },
+  "1019": {
+    "name": "Boxing Elemental",
+    "description": "A living shard of ice whose chilling touch shatters bone and freezes blood in an instant."
+  },
+  "1020": {
+    "name": "Free Lobster",
+    "description": "A small but tenacious crustacean with powerful pincers that can cut through fishing nets"
+  },
+  "1021": {
+    "name": "Thirsty Camel",
+    "description": "asd"
+  },
+  "1022": {
+    "name": "Rabid Hyena",
+    "description": "asd"
+  },
+  "1023": {
+    "name": "Disco Beetle",
+    "description": "A groovy insect with a mirrored carapace that confuses predators with dazzling light reflections."
+  },
+  "1024": {
+    "name": "Bubble Squid",
+    "description": "A tiny cephalopod that blows soap-like bubbles filled with mild paralytic toxin."
+  },
+  "1025": {
+    "name": "Origami Crane",
+    "description": "A magical paper bird that somehow gained life, its edges sharp enough to cause paper cuts."
+  },
+  "1026": {
+    "name": "Cotton Fox",
+    "description": "A fluffy fox that spins sticky sweet webs. Attracts prey with sugary scent."
+  },
+  "1027": {
+    "name": "Kazoo Imp",
+    "description": "A mischievous creature that attacks with annoying kazoo sounds that somehow cause actual damage."
+  },
+  "1028": {
+    "name": "Rubber Familiar",
+    "description": "An enchanted bath toy that squeaks menacingly and shoots tiny water jets."
+  },
+  "1029": {
+    "name": "Glitter Goblin",
+    "description": "A sparkly menace that throws handfuls of craft glitter that gets everywhere and never comes off."
+  },
+  "1030": {
+    "name": "Meme Ghost",
+    "description": "A spirit that died while scrolling social media and now haunts by showing outdated memes."
+  },
+  "1031": {
+    "name": "Sushi Snail",
+    "description": "A gelatinous creature that smells like soy sauce and wasabi. Leaves rice trails."
+  },
+  "1032": {
+    "name": "Electromagnetic Ghoul",
+    "description": "An electromagnetic ghoul that causes connection issues and drains phone batteries."
+  },
+  "1033": {
+    "name": "Karaoke Banshee",
+    "description": "A tone-deaf spirit that tortures victims with off-key pop songs from the 90s."
+  },
+  "1034": {
+    "name": "Pillow Guardian",
+    "description": "A golem made entirely of couch cushions and blankets. Surprisingly sturdy."
+  },
+  "1035": {
+    "name": "Vegetal Vampire",
+    "description": "A confused bat that only drinks tomato juice. Still bites but feels guilty about it."
+  },
+  "1036": {
+    "name": "Expired Ooze",
+    "description": "A sentient dairy product gone bad. Smells terrible and causes nausea on contact."
+  },
+  "1037": {
+    "name": "Fidget Sprite",
+    "description": "A hyperactive elemental that spins constantly, creating small but annoying whirlwinds."
+  },
+  "1038": {
+    "name": "Anxiety Elemental",
+    "description": "A manifestation of pure worry that makes you remember embarrassing things from years ago."
+  },
+  "1039": {
+    "name": "Flamingo Sentinel",
+    "description": "A plastic yard decoration animated by suburban dark magic. Stands on one leg menacingly."
+  },
+  "1040": {
+    "name": "Caffeinated Squirrel",
+    "description": "A jittery rodent that found someone's espresso. Moves erratically at triple speed."
+  },
+  "1041": {
+    "name": "Tax Collector",
+    "description": "A bureaucratic spirit that drains your gold with endless paperwork attacks."
+  },
+  "1042": {
+    "name": "Tourist Skeleton",
+    "description": "An undead tourist who died taking the perfect photo. Still trying to get good angles."
+  },
+  "1043": {
+    "name": "Pregnant Seahorse",
+    "description": "A desperate vagrant who haunts the city underbelly, surviving on refuse and ambushing the unwary"
+  },
+  "1044": {
+    "name": "Golden Seahorse",
+    "description": "A seahorse"
+  },
+  "1045": {
+    "name": "Apprentice Pyromancer",
+    "description": "A student mage who accidentally burned down their academy and now wanders the wastes"
+  },
+  "1046": {
+    "name": "Frost-Touched Thrall",
+    "description": "A frozen corpse animated by ice magic, leaving trails of frost with each shambling step"
+  },
+  "1047": {
+    "name": "Desert Raider",
+    "description": "A sun-scorched bandit who attacks travelers for their water supplies"
+  },
+  "1048": {
+    "name": "Lost Memory",
+    "description": "A fragment of forgotten thoughts that gained sentience, feeding on nostalgia"
+  },
+  "1049": {
+    "name": "Pit Fighter",
+    "description": "A young warrior forced to fight for entertainment in underground arenas"
+  },
+  "1050": {
+    "name": "Swamp Witch Novice",
+    "description": "A hermit who practices forbidden bog magic, brewing curses from marsh water"
+  },
+  "1051": {
+    "name": "Sky Bard",
+    "description": "A lowly airship crew member who fell from grace and raids floating settlements"
+  },
+  "1052": {
+    "name": "Crypt Sentinel",
+    "description": "An ancient guardian whose flesh has long rotted away, still bound to protect forgotten tombs"
+  },
+  "1053": {
+    "name": "Spore Wanderer",
+    "description": "A corpse overtaken by fungal growth, spreading toxic clouds with every movement"
+  },
+  "1054": {
+    "name": "Forest Poacher",
+    "description": "An outlaw hunter who sets cruel traps and shoots anything that moves"
+  },
+  "1055": {
+    "name": "Young Fake Hydra",
+    "description": "A parasitic entity that invades sleeping minds to feast on nightmares"
+  },
+  "1056": {
+    "name": "Mine Slave",
+    "description": "A broken laborer who escaped the crystal mines with stolen pickaxe in hand"
+  },
+  "1057": {
+    "name": "Wasteland Beaver",
+    "description": "A survivor of the apocalypseing"
+  }
+}

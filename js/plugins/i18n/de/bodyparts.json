@@ -1,0 +1,124 @@
+{
+  "bodyparts": {
+    "head": {
+      "name": "Head",
+      "damage_msg": "skull was fractured"
+    },
+    "brain": {
+      "name": "Brain",
+      "damage_msg": "brain was concussed"
+    },
+    "left_eye": {
+      "name": "Left Eye",
+      "damage_msg": "left eye was swollen shut"
+    },
+    "right_eye": {
+      "name": "Right Eye",
+      "damage_msg": "right eye was swollen shut"
+    },
+    "nose": {
+      "name": "Nose",
+      "damage_msg": "nose was broken"
+    },
+    "left_ear": {
+      "name": "Left Ear",
+      "damage_msg": "left ear is ringing"
+    },
+    "right_ear": {
+      "name": "Right Ear",
+      "damage_msg": "right ear is ringing"
+    },
+    "mouth": {
+      "name": "Mouth",
+      "damage_msg": "jaw was dislocated"
+    },
+    "teeth": {
+      "name": "Teeth",
+      "damage_msg": "teeth were knocked out"
+    },
+    "genitals": {
+      "name": "Genitals",
+      "damage_msg": "genitals damaged"
+    },
+    "torso": {
+      "name": "Torso",
+      "damage_msg": "ribs were broken"
+    },
+    "heart": {
+      "name": "Heart",
+      "damage_msg": "heart was damaged"
+    },
+    "left_lung": {
+      "name": "Left Lung",
+      "damage_msg": "left lung collapsed"
+    },
+    "right_lung": {
+      "name": "Right Lung",
+      "damage_msg": "right lung collapsed"
+    },
+    "liver": {
+      "name": "Liver",
+      "damage_msg": "liver was lacerated"
+    },
+    "stomach": {
+      "name": "Stomach",
+      "damage_msg": "stomach was ruptured"
+    },
+    "spleen": {
+      "name": "Spleen",
+      "damage_msg": "spleen was ruptured"
+    },
+    "intestines": {
+      "name": "Intestines",
+      "damage_msg": "intestines were perforated"
+    },
+    "left_arm": {
+      "name": "Left Arm",
+      "damage_msg": "left arm was damaged"
+    },
+    "left_hand": {
+      "name": "Left Hand",
+      "damage_msg": "left hand was mangled"
+    },
+    "left_fingers": {
+      "name": "Left Fingers",
+      "damage_msg": "left fingers were broken"
+    },
+    "right_arm": {
+      "name": "Right Arm",
+      "damage_msg": "right arm was damaged"
+    },
+    "right_hand": {
+      "name": "Right Hand",
+      "damage_msg": "right hand was mangled"
+    },
+    "right_fingers": {
+      "name": "Right Fingers",
+      "damage_msg": "right fingers were broken"
+    },
+    "left_leg": {
+      "name": "Left Leg",
+      "damage_msg": "left leg was damaged"
+    },
+    "left_foot": {
+      "name": "Left Foot",
+      "damage_msg": "left foot was damaged"
+    },
+    "left_toes": {
+      "name": "Left Toes",
+      "damage_msg": "left toes were crushed"
+    },
+    "right_leg": {
+      "name": "Right Leg",
+      "damage_msg": "right leg was damaged"
+    },
+    "right_foot": {
+      "name": "Right Foot",
+      "damage_msg": "right foot was damaged"
+    },
+    "right_toes": {
+      "name": "Right Toes",
+      "damage_msg": "right toes were crushed"
+    }
+  }
+}

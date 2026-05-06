@@ -1,0 +1,52 @@
+{
+  "supercluster": {
+    "virgo_supercluster": {
+      "name": "Virgo Supercluster"
+    },
+    "hydra-centaurus_supercluster": {
+      "name": "Hydra-Centaurus Supercluster"
+    },
+    "pavo-indus_supercluster": {
+      "name": "Pavo-Indus Supercluster"
+    },
+    "southern_supercluster": {
+      "name": "Southern Supercluster"
+    },
+    "antlia_supercluster": {
+      "name": "Antlia Supercluster"
+    },
+    "centaurus_supercluster": {
+      "name": "Centaurus Supercluster"
+    },
+    "hydra_supercluster": {
+      "name": "Hydra Supercluster"
+    },
+    "fornax_supercluster": {
+      "name": "Fornax Supercluster"
+    },
+    "norma_supercluster": {
+      "name": "Norma Supercluster"
+    },
+    "great_attractor": {
+      "name": "Great Attractor"
+    },
+    "perseus-pisces_supercluster": {
+      "name": "Perseus-Pisces Supercluster"
+    },
+    "coma_supercluster": {
+      "name": "Coma Supercluster"
+    },
+    "hercules_superclusters": {
+      "name": "Hercules Superclusters"
+    },
+    "shapley_supercluster": {
+      "name": "Shapley Supercluster"
+    },
+    "sculptor_supercluster": {
+      "name": "Sculptor Supercluster"
+    },
+    "bootes_supercluster": {
+      "name": "Bootes Supercluster"
+    }
+  }
+}

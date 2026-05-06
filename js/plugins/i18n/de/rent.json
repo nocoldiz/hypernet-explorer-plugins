@@ -1,0 +1,21 @@
+{
+  "rent": {
+    "rent_question": "Rent",
+    "free_access": "Free access",
+    "already_rented": "You have already rented this room",
+    "for_24h_rent": "for 24h rent",
+    "cancel": "Cancel",
+    "free_access_granted": "Free access granted to",
+    "access_restored": "Access restored to",
+    "rented_for_24h": "Enjoy your stay!",
+    "for_24_hours": "for 24 hours!",
+    "not_enough_gold": "Not enough euro!",
+    "error_event_id": "Error: Cannot determine event ID",
+    "rented": "Rented",
+    "expired": "Expired",
+    "available_rooms": "Available Rooms",
+    "hours_remaining": "hours remaining",
+    "rent_now": "Rent Now",
+    "no_rooms": "No rooms available"
+  }
+}

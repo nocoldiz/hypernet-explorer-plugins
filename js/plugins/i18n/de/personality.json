@@ -1,0 +1,104 @@
+{
+  "personality": {
+    "nervous": {
+      "name": "Nervous",
+      "description": "Prone to anxiety and high stress."
+    },
+    "calm": {
+      "name": "Calm",
+      "description": "Resistant to stress, thinks clearly."
+    },
+    "aggressive": {
+      "name": "Aggressive",
+      "description": "Quick to anger, high physical drive."
+    },
+    "melancholic": {
+      "name": "Melancholic",
+      "description": "Prone to sadness and introspection."
+    },
+    "sanguine": {
+      "name": "Sanguine",
+      "description": "Energetic, optimistic, and social."
+    },
+    "cautious": {
+      "name": "Cautious",
+      "description": "Thinks before acting, analyzes risk."
+    },
+    "impulsive": {
+      "name": "Impulsive",
+      "description": "Acts on instinct, low self-control."
+    },
+    "stoic": {
+      "name": "Stoic",
+      "description": "Endures hardship without complaint."
+    },
+    "paranoid": {
+      "name": "Paranoid",
+      "description": "Distrustful and suspicious of others."
+    },
+    "empathetic": {
+      "name": "Empathetic",
+      "description": "Highly sensitive to the emotions of others."
+    },
+    "authoritative": {
+      "name": "Authoritative",
+      "description": "A natural leader, decisive and commanding."
+    },
+    "scholarly": {
+      "name": "Scholarly",
+      "description": "Intellect-driven, curious, and analytical."
+    },
+    "artistic": {
+      "name": "Artistic",
+      "description": "Sensitive, creative, and perceptive."
+    },
+    "adventurous": {
+      "name": "Adventurous",
+      "description": "Seeks novelty and thrills, high-risk."
+    },
+    "nurturing": {
+      "name": "Nurturing",
+      "description": "Caring, protective, and compassionate."
+    },
+    "mischievous": {
+      "name": "Mischievous",
+      "description": "Playful, clever, and enjoys chaos."
+    },
+    "cynical": {
+      "name": "Cynical",
+      "description": "Distrustful of human sincerity or integrity."
+    },
+    "disciplined": {
+      "name": "Disciplined",
+      "description": "High self-control, follows a strict code."
+    },
+    "fatalistic": {
+      "name": "Fatalistic",
+      "description": "Believes all events are predetermined."
+    },
+    "grumpy": {
+      "name": "Grumpy",
+      "description": "Chronically irritable and bad-tempered."
+    },
+    "loyal": {
+      "name": "Loyal",
+      "description": "Steadfast and devoted to allies."
+    },
+    "brave": {
+      "name": "Brave",
+      "description": "Faces danger with low fear response."
+    },
+    "timid": {
+      "name": "Timid",
+      "description": "Easily frightened, avoidant of conflict."
+    },
+    "hedonistic": {
+      "name": "Hedonistic",
+      "description": "Believes the pursuit of pleasure is the highest good."
+    },
+    "apathetic": {
+      "name": "Apathetic",
+      "description": "Lacking interest, enthusiasm, or concern."
+    }
+  }
+}

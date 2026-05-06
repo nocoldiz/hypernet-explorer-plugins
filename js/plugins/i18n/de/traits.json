@@ -1,0 +1,808 @@
+{
+  "traits": {
+    "obese": {
+      "name": "Obese",
+      "description": "Carries extra weight"
+    },
+    "underweight": {
+      "name": "Underweight",
+      "description": "Lighter than average"
+    },
+    "claustrophobic": {
+      "name": "Claustrophobic",
+      "description": "Fears enclosed spaces"
+    },
+    "trigger_happy": {
+      "name": "Trigger Happy",
+      "description": "Quick to attack"
+    },
+    "paranoid": {
+      "name": "Paranoid",
+      "description": "Always on edge"
+    },
+    "athletic": {
+      "name": "Athletic",
+      "description": "Physically fit"
+    },
+    "genius": {
+      "name": "Genius",
+      "description": "Intellectually gifted"
+    },
+    "lucky": {
+      "name": "Lucky",
+      "description": "Fortune favors you"
+    },
+    "narcoleptic": {
+      "name": "Narcoleptic",
+      "description": "Falls asleep randomly"
+    },
+    "hot-headed": {
+      "name": "Hot-headed",
+      "description": "Quick to anger"
+    },
+    "defensive": {
+      "name": "Defensive",
+      "description": "Prefers protection"
+    },
+    "marksman": {
+      "name": "Marksman",
+      "description": "Expert with ranged weapons"
+    },
+    "nearsighted": {
+      "name": "Nearsighted",
+      "description": "Poor vision without glasses"
+    },
+    "lombrosian_physiognomy": {
+      "name": "Lombrosian Physiognomy",
+      "description": "Suspicious appearance increases crime detection"
+    },
+    "hydrophobic": {
+      "name": "Hydrophobic",
+      "description": "Cannot swim, fears water"
+    },
+    "silvertongue": {
+      "name": "Silvertongue",
+      "description": "Master of persuasion and speech"
+    },
+    "vegan": {
+      "name": "Vegan",
+      "description": "Cannot consume animal products"
+    },
+    "vegetarian": {
+      "name": "Vegetarian",
+      "description": "Cannot consume meat"
+    },
+    "impostor_syndrome": {
+      "name": "Impostor Syndrome",
+      "description": "Doubts own abilities constantly"
+    },
+    "vampire": {
+      "name": "Vampire",
+      "description": "Undead creature of the night"
+    },
+    "insomniac": {
+      "name": "Insomniac",
+      "description": "Cannot sleep properly"
+    },
+    "alcoholic": {
+      "name": "Alcoholic",
+      "description": "Dependent on alcohol"
+    },
+    "germaphobe": {
+      "name": "Germaphobe",
+      "description": "Fears contamination and disease"
+    },
+    "adrenaline_junkie": {
+      "name": "Adrenaline Junkie",
+      "description": "Thrives on danger and excitement"
+    },
+    "pacifist": {
+      "name": "Pacifist",
+      "description": "Abhors violence"
+    },
+    "pyromaniac": {
+      "name": "Pyromaniac",
+      "description": "Obsessed with fire"
+    },
+    "hoarder": {
+      "name": "Hoarder",
+      "description": "Cannot let go of items"
+    },
+    "minimalist": {
+      "name": "Minimalist",
+      "description": "Prefers simplicity and few possessions"
+    },
+    "compulsive_liar": {
+      "name": "Compulsive Liar",
+      "description": "Cannot help but deceive"
+    },
+    "perfectionist": {
+      "name": "Perfectionist",
+      "description": "Everything must be flawless"
+    },
+    "masochist": {
+      "name": "Masochist",
+      "description": "Finds strength in pain"
+    },
+    "sociopath": {
+      "name": "Sociopath",
+      "description": "Lacks empathy and remorse"
+    },
+    "empath": {
+      "name": "Empath",
+      "description": "Feels others' emotions deeply"
+    },
+    "technophobe": {
+      "name": "Technophobe",
+      "description": "Fears modern technology"
+    },
+    "tech_savvy": {
+      "name": "Tech Savvy",
+      "description": "Master of modern technology"
+    },
+    "superstitious": {
+      "name": "Superstitious",
+      "description": "Believes in omens and signs"
+    },
+    "skeptic": {
+      "name": "Skeptic",
+      "description": "Questions everything"
+    },
+    "night_owl": {
+      "name": "Night Owl",
+      "description": "More active at night"
+    },
+    "early_bird": {
+      "name": "Early Bird",
+      "description": "More active in morning"
+    },
+    "workaholic": {
+      "name": "Workaholic",
+      "description": "Obsessed with productivity"
+    },
+    "photographic_memory": {
+      "name": "Photographic Memory",
+      "description": "Remembers everything in perfect detail"
+    },
+    "colorblind": {
+      "name": "Colorblind",
+      "description": "Cannot distinguish certain colors"
+    },
+    "ambidextrous": {
+      "name": "Ambidextrous",
+      "description": "Skilled with both hands equally"
+    },
+    "blind": {
+      "name": "Blind",
+      "description": "Cannot see, relies on other senses"
+    },
+    "deaf": {
+      "name": "Deaf",
+      "description": "Cannot hear sounds"
+    },
+    "agoraphobic": {
+      "name": "Agoraphobic",
+      "description": "Fears open or crowded spaces"
+    },
+    "sadist": {
+      "name": "Sadist",
+      "description": "Derives pleasure from others' pain"
+    },
+    "hemophobic": {
+      "name": "Hemophobic",
+      "description": "Fears blood and injury"
+    },
+    "kleptomaniac": {
+      "name": "Kleptomaniac",
+      "description": "Compulsively steals items"
+    },
+    "ascetic": {
+      "name": "Ascetic",
+      "description": "Practices extreme self-discipline"
+    },
+    "acrophobic": {
+      "name": "Acrophobic",
+      "description": "Fears heights"
+    },
+    "synesthete": {
+      "name": "Synesthete",
+      "description": "Experiences crossed sensory perceptions"
+    },
+    "berserker": {
+      "name": "Berserker",
+      "description": "Enters uncontrollable rage in combat"
+    },
+    "coward": {
+      "name": "Coward",
+      "description": "Quick to flee from danger"
+    },
+    "xenophobic": {
+      "name": "Xenophobic",
+      "description": "Fears foreigners and outsiders"
+    },
+    "hypochondriac": {
+      "name": "Hypochondriac",
+      "description": "Obsessively worried about illness"
+    },
+    "eidetic_reader": {
+      "name": "Eidetic Reader",
+      "description": "Can recall any text perfectly"
+    },
+    "amblyopic": {
+      "name": "Amblyopic",
+      "description": "Has lazy eye condition"
+    },
+    "prosopagnosic": {
+      "name": "Prosopagnosic",
+      "description": "Cannot recognize faces"
+    },
+    "megalomaniac": {
+      "name": "Megalomaniac",
+      "description": "Delusions of grandeur and power"
+    },
+    "albinism": {
+      "name": "Albinism",
+      "description": "Lacks melanin pigmentation"
+    },
+    "gigantism": {
+      "name": "Gigantism",
+      "description": "Excessive growth hormone production"
+    },
+    "dwarfism": {
+      "name": "Dwarfism",
+      "description": "Genetic short stature"
+    },
+    "hemophilia": {
+      "name": "Hemophilia",
+      "description": "Blood doesn't clot properly"
+    },
+    "marfan_syndrome": {
+      "name": "Marfan Syndrome",
+      "description": "Connective tissue disorder"
+    },
+    "hypermobility": {
+      "name": "Hypermobility",
+      "description": "Joints extend beyond normal range"
+    },
+    "polydactyly": {
+      "name": "Polydactyly",
+      "description": "Born with extra fingers or toes"
+    },
+    "hypertrichosis": {
+      "name": "Hypertrichosis",
+      "description": "Excessive body hair growth"
+    },
+    "thalassemia": {
+      "name": "Thalassemia",
+      "description": "Inherited blood disorder"
+    },
+    "heterochromia": {
+      "name": "Heterochromia",
+      "description": "Eyes of different colors"
+    },
+    "sensitive": {
+      "name": "Sensitive",
+      "description": "Sensitive to PSI forces"
+    },
+    "sickle_cell_trait": {
+      "name": "Sickle Cell Trait",
+      "description": "Altered red blood cell shape"
+    },
+    "ehlers-danlos": {
+      "name": "Ehlers-Danlos",
+      "description": "Affects connective tissues"
+    },
+    "congenital_analgesia": {
+      "name": "Congenital Analgesia",
+      "description": "Cannot feel physical pain"
+    },
+    "savant_syndrome": {
+      "name": "Savant Syndrome",
+      "description": "Exceptional ability in specific area"
+    },
+    "asthmatic": {
+      "name": "Asthmatic",
+      "description": "Difficulty breathing under stress"
+    },
+    "adhd": {
+      "name": "ADHD",
+      "description": "Attention deficit, hyperactive impulses"
+    },
+    "ocd": {
+      "name": "OCD",
+      "description": "Obsessive compulsive patterns"
+    },
+    "dyslexic": {
+      "name": "Dyslexic",
+      "description": "Difficulty processing written language"
+    },
+    "dyscalculic": {
+      "name": "Dyscalculic",
+      "description": "Difficulty with numbers and math"
+    },
+    "charismatic": {
+      "name": "Charismatic",
+      "description": "Natural charm and influence"
+    },
+    "extrovert": {
+      "name": "Extrovert",
+      "description": "Energized by social interaction"
+    },
+    "introvert": {
+      "name": "Introvert",
+      "description": "Drained by social interaction"
+    },
+    "chronic_pain": {
+      "name": "Chronic Pain",
+      "description": "Constant physical discomfort"
+    },
+    "ambitious": {
+      "name": "Ambitious",
+      "description": "Driven to achieve greatness"
+    },
+    "slothful": {
+      "name": "Slothful",
+      "description": "Prefers minimal effort"
+    },
+    "greedy": {
+      "name": "Greedy",
+      "description": "Obsessed with wealth and possessions"
+    },
+    "generous": {
+      "name": "Generous",
+      "description": "Freely gives to others"
+    },
+    "loyal": {
+      "name": "Loyal",
+      "description": "Unwavering devotion to allies"
+    },
+    "treacherous": {
+      "name": "Treacherous",
+      "description": "Cannot be trusted"
+    },
+    "proud": {
+      "name": "Proud",
+      "description": "Excessive self-regard"
+    },
+    "humble": {
+      "name": "Humble",
+      "description": "Modest and unassuming"
+    },
+    "gluttonous": {
+      "name": "Gluttonous",
+      "description": "Excessive consumption of food"
+    },
+    "hedonist": {
+      "name": "Hedonist",
+      "description": "Seeks pleasure above all"
+    },
+    "stoic": {
+      "name": "Stoic",
+      "description": "Endures pain without complaint"
+    },
+    "tracker": {
+      "name": "Tracker",
+      "description": "Expert at following trails"
+    },
+    "survivalist": {
+      "name": "Survivalist",
+      "description": "Thrives in harsh environments"
+    },
+    "tactician": {
+      "name": "Tactician",
+      "description": "Master of strategy and planning"
+    },
+    "cursed": {
+      "name": "Cursed",
+      "description": "Bearer of supernatural misfortune"
+    },
+    "blessed": {
+      "name": "Blessed",
+      "description": "Touched by divine favor"
+    },
+    "caffeine_dependent": {
+      "name": "Caffeine Dependent",
+      "description": "Requires caffeine to function normally"
+    },
+    "nicotine_addict": {
+      "name": "Nicotine Addict",
+      "description": "Dependent on tobacco products"
+    },
+    "gambling_addict": {
+      "name": "Gambling Addict",
+      "description": "Compulsively gambles resources"
+    },
+    "drug_dependent": {
+      "name": "Drug Dependent",
+      "description": "Relies on substances to cope"
+    },
+    "restrictive_eating": {
+      "name": "Restrictive Eating",
+      "description": "Severely limits food intake"
+    },
+    "binge_eating": {
+      "name": "Binge Eating",
+      "description": "Episodes of uncontrolled eating"
+    },
+    "nyctophobic": {
+      "name": "Nyctophobic",
+      "description": "Fears darkness"
+    },
+    "thanatophobic": {
+      "name": "Thanatophobic",
+      "description": "Fears death intensely"
+    },
+    "entomophobic": {
+      "name": "Entomophobic",
+      "description": "Fears insects and bugs"
+    },
+    "ophidiophobic": {
+      "name": "Ophidiophobic",
+      "description": "Fears snakes"
+    },
+    "cynophobic": {
+      "name": "Cynophobic",
+      "description": "Fears dogs"
+    },
+    "pyrophobic": {
+      "name": "Pyrophobic",
+      "description": "Fears fire"
+    },
+    "trypophobic": {
+      "name": "Trypophobic",
+      "description": "Fears clustered holes or patterns"
+    },
+    "atychiphobic": {
+      "name": "Atychiphobic",
+      "description": "Fears failure"
+    },
+    "autophobic": {
+      "name": "Autophobic",
+      "description": "Fears being alone"
+    },
+    "devout": {
+      "name": "Devout",
+      "description": "Deeply religious and faithful"
+    },
+    "atheist": {
+      "name": "Atheist",
+      "description": "Rejects religious beliefs"
+    },
+    "heretic": {
+      "name": "Heretic",
+      "description": "Branded as religious outcast"
+    },
+    "pilgrim": {
+      "name": "Pilgrim",
+      "description": "Journeys for spiritual purpose"
+    },
+    "excommunicated": {
+      "name": "Excommunicated",
+      "description": "Expelled from religious community"
+    },
+    "monk-trained": {
+      "name": "Monk-Trained",
+      "description": "Disciplined in monastic ways"
+    },
+    "prophetic": {
+      "name": "Prophetic",
+      "description": "Experiences visions of future"
+    },
+    "noble": {
+      "name": "Noble",
+      "description": "Born into aristocracy"
+    },
+    "street_urchin": {
+      "name": "Street Urchin",
+      "description": "Grew up in poverty"
+    },
+    "orphan": {
+      "name": "Orphan",
+      "description": "No living parents"
+    },
+    "bastard": {
+      "name": "Bastard",
+      "description": "Born outside of wedlock"
+    },
+    "heir": {
+      "name": "Heir",
+      "description": "Destined to inherit wealth"
+    },
+    "twin": {
+      "name": "Twin",
+      "description": "Has an identical sibling"
+    },
+    "exiled": {
+      "name": "Exiled",
+      "description": "Banished from homeland"
+    },
+    "slave-born": {
+      "name": "Slave-Born",
+      "description": "Born into servitude"
+    },
+    "wealthy": {
+      "name": "Wealthy",
+      "description": "Born with financial privilege"
+    },
+    "scholar": {
+      "name": "Scholar",
+      "description": "Dedicated to learning"
+    },
+    "merchant": {
+      "name": "Merchant",
+      "description": "Skilled in trade and commerce"
+    },
+    "criminal": {
+      "name": "Criminal",
+      "description": "Background in illegal activities"
+    },
+    "illiterate": {
+      "name": "Illiterate",
+      "description": "Cannot read or write"
+    },
+    "veteran": {
+      "name": "Veteran",
+      "description": "Experienced soldier"
+    },
+    "farmer": {
+      "name": "Farmer",
+      "description": "Rural agricultural background"
+    },
+    "herbalist": {
+      "name": "Herbalist",
+      "description": "Expert in medicinal plants"
+    },
+    "alchemist": {
+      "name": "Alchemist",
+      "description": "Practices transmutation arts"
+    },
+    "navigator": {
+      "name": "Navigator",
+      "description": "Expert in travel and wayfinding"
+    },
+    "blacksmith": {
+      "name": "Blacksmith",
+      "description": "Skilled metalworker"
+    },
+    "thief": {
+      "name": "Thief",
+      "description": "Expert at stealing"
+    },
+    "bard": {
+      "name": "Bard",
+      "description": "Musician and storyteller"
+    },
+    "beautiful": {
+      "name": "Beautiful",
+      "description": "Exceptionally attractive"
+    },
+    "scarred": {
+      "name": "Scarred",
+      "description": "Marked by visible wounds"
+    },
+    "tall": {
+      "name": "Tall",
+      "description": "Above average height"
+    },
+    "short": {
+      "name": "Short",
+      "description": "Below average height"
+    },
+    "muscular": {
+      "name": "Muscular",
+      "description": "Exceptional physical strength"
+    },
+    "frail": {
+      "name": "Frail",
+      "description": "Weak constitution"
+    },
+    "left-handed": {
+      "name": "Left-Handed",
+      "description": "Dominant left hand"
+    },
+    "quick_reflexes": {
+      "name": "Quick Reflexes",
+      "description": "Lightning-fast reactions"
+    },
+    "duelist": {
+      "name": "Duelist",
+      "description": "Master of one-on-one combat"
+    },
+    "brawler": {
+      "name": "Brawler",
+      "description": "Street fighting expert"
+    },
+    "archer": {
+      "name": "Archer",
+      "description": "Skilled with bow and arrow"
+    },
+    "shield_master": {
+      "name": "Shield Master",
+      "description": "Expert in defensive tactics"
+    },
+    "assassin": {
+      "name": "Assassin",
+      "description": "Trained to kill silently"
+    },
+    "berserker_rage": {
+      "name": "Berserker Rage",
+      "description": "Channels battle fury"
+    },
+    "mounted_combat": {
+      "name": "Mounted Combat",
+      "description": "Expert cavalry fighter"
+    },
+    "martial_artist": {
+      "name": "Martial Artist",
+      "description": "Unarmed combat master"
+    },
+    "optimist": {
+      "name": "Optimist",
+      "description": "Always sees the bright side"
+    },
+    "pessimist": {
+      "name": "Pessimist",
+      "description": "Expects the worst outcome"
+    },
+    "nihilist": {
+      "name": "Nihilist",
+      "description": "Believes life has no meaning"
+    },
+    "idealist": {
+      "name": "Idealist",
+      "description": "Pursues lofty principles"
+    },
+    "pragmatist": {
+      "name": "Pragmatist",
+      "description": "Practical and realistic"
+    },
+    "romantic": {
+      "name": "Romantic",
+      "description": "Led by heart over mind"
+    },
+    "cynic": {
+      "name": "Cynic",
+      "description": "Distrusts others' motives"
+    },
+    "vengeful": {
+      "name": "Vengeful",
+      "description": "Never forgives a slight"
+    },
+    "forgiving": {
+      "name": "Forgiving",
+      "description": "Quick to pardon transgressions"
+    },
+    "jealous": {
+      "name": "Jealous",
+      "description": "Envies others constantly"
+    },
+    "spiteful": {
+      "name": "Spiteful",
+      "description": "Petty and vindictive"
+    },
+    "honest": {
+      "name": "Honest",
+      "description": "Cannot tell lies"
+    },
+    "blunt": {
+      "name": "Blunt",
+      "description": "Speaks without tact"
+    },
+    "famous": {
+      "name": "Famous",
+      "description": "Widely recognized and celebrated"
+    },
+    "infamous": {
+      "name": "Infamous",
+      "description": "Known for terrible deeds"
+    },
+    "anonymous": {
+      "name": "Anonymous",
+      "description": "Unknown and unremarkable"
+    },
+    "wanted": {
+      "name": "Wanted",
+      "description": "Hunted by authorities"
+    },
+    "hero": {
+      "name": "Hero",
+      "description": "Celebrated savior of people"
+    },
+    "disgraced": {
+      "name": "Disgraced",
+      "description": "Fallen from former honor"
+    },
+    "cold-blooded": {
+      "name": "Cold-Blooded",
+      "description": "Adapted to cold climates"
+    },
+    "heat-adapted": {
+      "name": "Heat-Adapted",
+      "description": "Thrives in hot environments"
+    },
+    "mountain-born": {
+      "name": "Mountain-Born",
+      "description": "High altitude endurance"
+    },
+    "island-raised": {
+      "name": "Island-Raised",
+      "description": "Maritime survival skills"
+    },
+    "desert_dweller": {
+      "name": "Desert Dweller",
+      "description": "Survives arid wastelands"
+    },
+    "cave_dweller": {
+      "name": "Cave Dweller",
+      "description": "Adapted to underground life"
+    },
+    "animal_handler": {
+      "name": "Animal Handler",
+      "description": "Bonds easily with creatures"
+    },
+    "beast_whisperer": {
+      "name": "Beast Whisperer",
+      "description": "Communicates with animals"
+    },
+    "nature_attuned": {
+      "name": "Nature Attuned",
+      "description": "Deep connection to wilderness"
+    },
+    "urban_native": {
+      "name": "Urban Native",
+      "description": "Thrives only in cities"
+    },
+    "feral": {
+      "name": "Feral",
+      "description": "Raised in wilderness"
+    },
+    "magically_gifted": {
+      "name": "Magically Gifted",
+      "description": "Natural arcane talent"
+    },
+    "mana-starved": {
+      "name": "Mana-Starved",
+      "description": "Cannot channel magical energy"
+    },
+    "spell-scarred": {
+      "name": "Spell-Scarred",
+      "description": "Marked by magical mishap"
+    },
+    "witch-marked": {
+      "name": "Witch-Marked",
+      "description": "Bears supernatural curse mark"
+    },
+    "possessed": {
+      "name": "Possessed",
+      "description": "Shares body with spirit"
+    },
+    "lycanthrope": {
+      "name": "Lycanthrope",
+      "description": "Transforms under moon"
+    },
+    "clairvoyant": {
+      "name": "Clairvoyant",
+      "description": "Sees beyond normal perception"
+    },
+    "booming_voice": {
+      "name": "Booming Voice",
+      "description": "Naturally loud and commanding"
+    },
+    "soft-spoken": {
+      "name": "Soft-Spoken",
+      "description": "Quiet and gentle voice"
+    },
+    "mute": {
+      "name": "Mute",
+      "description": "Cannot speak"
+    },
+    "polyglot": {
+      "name": "Polyglot",
+      "description": "Speaks many languages"
+    },
+    "prosopometamorphopsia": {
+      "name": "Prosopometamorphopsia",
+      "description": "See demon faces"
+    }
+  }
+}

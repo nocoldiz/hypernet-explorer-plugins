@@ -1,0 +1,124 @@
+{
+  "planets": {
+    "sub_mercurian": {
+      "description": "Bare‐bones rocky world, thinner crust, minimal atmosphere."
+    },
+    "mercurian": {
+      "description": "Mercury‐like, airless, cratered, iron‐rich."
+    },
+    "sub_earth": {
+      "description": "Smaller than Earth but still geologically active."
+    },
+    "earth_like": {
+      "description": "Rocky with plate tectonics, liquid water, breathable air."
+    },
+    "super_earth": {
+      "description": "Large rocky world; higher gravity, thicker atmosphere."
+    },
+    "mini_neptune": {
+      "description": "Small ice‐rich envelope over a rocky core."
+    },
+    "ice": {
+      "description": "Frozen surface; possible subsurface ocean."
+    },
+    "ocean": {
+      "description": "Global liquid ocean, minimal landmasses."
+    },
+    "lava_ocean": {
+      "description": "Partially molten surface, steam atmosphere."
+    },
+    "desert": {
+      "description": "Dry world, sparse vegetation or none at all."
+    },
+    "rainforest": {
+      "description": "Thick jungles, heavy precipitation, high biomass."
+    },
+    "tundra": {
+      "description": "Cold, limited plant life, permafrost‐dominated."
+    },
+    "acid_ocean": {
+      "description": "Sulfuric or hydrochloric acid seas, corrosive skies."
+    },
+    "gas_giant": {
+      "description": "Massive hydrogen‐helium envelope, no solid surface."
+    },
+    "hot_jupiter": {
+      "description": "Orbits extremely close to its star, blistering temperatures."
+    },
+    "warm_jupiter": {
+      "description": "Closer in than Jupiter but farther than a hot‐Jupiter."
+    },
+    "cold_jupiter": {
+      "description": "Far from its star, deep cold atmosphere."
+    },
+    "ice_giant": {
+      "description": "Rich in volatiles like water, ammonia; thick icy mantle."
+    },
+    "ringed_gas_giant": {
+      "description": "Prominent rings, dozens of moons."
+    },
+    "puffy": {
+      "description": "Extremely low density, bloated by stellar heating."
+    },
+    "chthonian": {
+      "description": "Stripped gas giant core, volcanic, metal‐rich."
+    },
+    "mega_iron": {
+      "description": "Almost pure iron/nickel, high density, magnetic."
+    },
+    "carbon": {
+      "description": "Graphite and hydrocarbons dominate; tar‐like seas."
+    },
+    "diamond": {
+      "description": "High pressure turns carbon shell into diamond layer."
+    },
+    "magma_planet": {
+      "description": "Surface is a global magma bath, constant eruptions."
+    },
+    "plasma": {
+      "description": "Ionized atmosphere, glows under stellar wind."
+    },
+    "magnetar": {
+      "description": "Ultra‐magnetic field, exotic radiation environment."
+    },
+    "quark_planet": {
+      "description": "Hypothetical strange matter core, super‐dense."
+    },
+    "rogue": {
+      "description": "Free‐floating, cold, no host star."
+    },
+    "habitable": {
+      "description": "Within habitable zone, stable climate, liquid water."
+    },
+    "dwarf": {
+      "description": "Small icy/rocky body, like Pluto or Ceres."
+    },
+    "centaur": {
+      "description": "Icy‐rock hybrid between Jupiter and Neptune orbits."
+    },
+    "planetesimal": {
+      "description": "Building block of planets, tiny rock/ice clump."
+    },
+    "c_type_asteroid": {
+      "description": "Carbonaceous, dark, primitive composition."
+    },
+    "s_type_asteroid": {
+      "description": "Silicate and nickel‐iron, brighter surface."
+    },
+    "m_type_asteroid": {
+      "description": "Metallic, mostly nickel‐iron core fragments."
+    },
+    "trojan_asteroid": {
+      "description": "Co‐orbiting in Lagrange points of a larger planet."
+    },
+    "comet": {
+      "description": "Dirty snowball: ice, dust, develops tail near star."
+    },
+    "short_period_comet": {
+      "description": "Orbits under 200 years, frequent visitor."
+    },
+    "long_period_comet": {
+      "description": "Orbits over 200 years, from distant Oort cloud."
+    }
+  }
+}

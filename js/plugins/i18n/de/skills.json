@@ -1,0 +1,5120 @@
+{
+  "1": {
+    "name": "Attack",
+    "description": "Basic attack",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "2": {
+    "name": "Guard",
+    "description": "Basic guard",
+    "message1": "%1 guards.",
+    "message2": ""
+  },
+  "3": {
+    "name": "Mimic",
+    "description": "Uses a random skill from the enemy or party",
+    "message1": "",
+    "message2": ""
+  },
+  "4": {
+    "name": "PSI Blast",
+    "description": "Performs a series of attacks\non an enemy.",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "5": {
+    "name": "BurnSOUL",
+    "description": "Convoke a entity by burning SOUL shares",
+    "message1": "",
+    "message2": ""
+  },
+  "6": {
+    "name": "Train Skill",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "7": {
+    "name": "Astral Projection",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "8": {
+    "name": "SummonSOUL",
+    "description": "Gain one temporary SOUL share",
+    "message1": "",
+    "message2": ""
+  },
+  "9": {
+    "name": "Pathfind",
+    "description": "Show the name of were you are.",
+    "message1": "",
+    "message2": ""
+  },
+  "10": {
+    "name": "Improvise",
+    "description": "Uses a random skill or magic.",
+    "message1": "",
+    "message2": ""
+  },
+  "11": {
+    "name": "Convoke",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "12": {
+    "name": "Dual Attack",
+    "description": "Performs a series of attacks\non an enemy.",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "13": {
+    "name": "Double Attack",
+    "description": "Performs a double attack on a\nrandom enemy.",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "14": {
+    "name": "Triple Attack",
+    "description": "Performs a triple attack on a\nrandom enemy.",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "15": {
+    "name": "Escape",
+    "description": "The user flees from battle.",
+    "message1": "%1 flees.",
+    "message2": ""
+  },
+  "16": {
+    "name": "Wait and see",
+    "description": "Wait and see what happens.",
+    "message1": "%1 is waiting.",
+    "message2": ""
+  },
+  "17": {
+    "name": "Blood Suck",
+    "description": "Absorbs HP from an enemy.",
+    "message1": "%1 sucks blood!",
+    "message2": ""
+  },
+  "18": {
+    "name": "Meditate",
+    "description": "Restores the user’s HP.",
+    "message1": "%1 meditates!",
+    "message2": ""
+  },
+  "19": {
+    "name": "Tranquilizer",
+    "description": "Stabs an enemy with paralyzing\nneedles.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "20": {
+    "name": "Bodyslam",
+    "description": "Inflicts damage and causes\nan enemy to lose balance.",
+    "message1": "%1 does bodyslam!",
+    "message2": ""
+  },
+  "21": {
+    "name": "Shock",
+    "description": "Inflicts Thunder-type damage\nand Paralysis state.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "22": {
+    "name": "Slime",
+    "description": "Covers an enemy in\nslime and lowers their DEX.",
+    "message1": "%1 shoots out slime!",
+    "message2": ""
+  },
+  "23": {
+    "name": "Venom",
+    "description": "Sprays an enemy with\nvenom and inflicts poison state.",
+    "message1": "%1 sprays venom!",
+    "message2": ""
+  },
+  "24": {
+    "name": "Shout",
+    "description": "Rouses the user’s fighting spirit and fortifies\ntheir abilities.",
+    "message1": "%1 rouses their fighting spirit!",
+    "message2": ""
+  },
+  "25": {
+    "name": "Bizarre Dance",
+    "description": "Absorbs MP from an enemy.",
+    "message1": "%1 dances bizarrely!",
+    "message2": ""
+  },
+  "26": {
+    "name": "Petrify",
+    "description": "Glares at an enemy and\nparalyzes them.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "27": {
+    "name": "Eye Gouge",
+    "description": "A quick jab aimed at an enemy's eyes, \npotentially causing blindness.",
+    "message1": "%1 gouges %2 eyes!",
+    "message2": ""
+  },
+  "28": {
+    "name": "Sandstorm",
+    "description": "Blinds all enemies.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "29": {
+    "name": "Flash",
+    "description": "Blinds all enemies.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "30": {
+    "name": "Toxic Fog",
+    "description": "Poisons all enemies.",
+    "message1": "%1 releases a toxic fog!",
+    "message2": ""
+  },
+  "31": {
+    "name": "Lullaby",
+    "description": "Puts all enemies to sleep.",
+    "message1": "%1 sings a lullaby!",
+    "message2": ""
+  },
+  "32": {
+    "name": "Alluring Melody",
+    "description": "Charms all enemies.",
+    "message1": "%1 sings an alluring melody!",
+    "message2": ""
+  },
+  "33": {
+    "name": "Song of Silence",
+    "description": "Seals all enemies’ magic.",
+    "message1": "%1 sings a song of silence!",
+    "message2": ""
+  },
+  "34": {
+    "name": "Sonic Wave",
+    "description": "Confuses all enemies.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "35": {
+    "name": "Stone Throw",
+    "description": "Inflicts Earth-type damage\non all enemies.",
+    "message1": "%1 throws stones!",
+    "message2": ""
+  },
+  "36": {
+    "name": "Dust Devil",
+    "description": "Throws slicing sand to the enemy.",
+    "message1": "%1 throws slicing sand!",
+    "message2": ""
+  },
+  "37": {
+    "name": "Fire Breath",
+    "description": "Inflicts Fire-type damage\non all enemies.",
+    "message1": "%1 breathes fire!",
+    "message2": ""
+  },
+  "38": {
+    "name": "Ice Breath",
+    "description": "Inflicts Ice-type damage\non all enemies.",
+    "message1": "%1 breathes ice!",
+    "message2": ""
+  },
+  "39": {
+    "name": "Earthquake",
+    "description": "Stomps the ground and inflict Petro-type\ndamage to all enemies.",
+    "message1": "%1 causes an earthquake!",
+    "message2": ""
+  },
+  "40": {
+    "name": "Tsunami",
+    "description": "Inflicts Water-type damage\non all enemies.",
+    "message1": "%1 causes a tsunami!",
+    "message2": ""
+  },
+  "41": {
+    "name": "Scratch",
+    "description": "Inflicts damage on an enemy.",
+    "message1": "%1 does a painful scratch!",
+    "message2": ""
+  },
+  "42": {
+    "name": "Rapid Fist",
+    "description": "A rapid punching technique that\nstrikes the enemy multiple times.",
+    "message1": "%1 unleashes a flurry of punches!",
+    "message2": ""
+  },
+  "43": {
+    "name": "Suplex",
+    "description": "A powerful overhead throw technique that\nslams the enemy to the ground.",
+    "message1": "%1 performs a suplex!",
+    "message2": ""
+  },
+  "44": {
+    "name": "Pressure Point",
+    "description": "A precise strike targeting the\nenemy's pressure points, may cause paralysis.",
+    "message1": "%1 strikes a pressure point!",
+    "message2": ""
+  },
+  "45": {
+    "name": "Submission Hold",
+    "description": "A grappling technique that holds the\nenemy in place and gradually drains HP.",
+    "message1": "%1 applies a submission hold!",
+    "message2": ""
+  },
+  "46": {
+    "name": "Tornado Kick",
+    "description": "A devastating spinning kick\nthat targets all enemies.",
+    "message1": "%1 performs a spinning tornado kick!",
+    "message2": ""
+  },
+  "47": {
+    "name": "Defensive Stance",
+    "description": "A defensive stance that increases PSI\nand counter rate for 3 turns.",
+    "message1": "%1 assumes a defensive stance!",
+    "message2": ""
+  },
+  "48": {
+    "name": "Zen Meditation",
+    "description": "A meditation technique that restores the\nuser's HP and clears negative status effects.",
+    "message1": "%1 performs deep meditation!",
+    "message2": ""
+  },
+  "49": {
+    "name": "Piledriver",
+    "description": "Drops the enemyon their head,\nmay cause instant KO.",
+    "message1": "%1 performs a piledriver!",
+    "message2": ""
+  },
+  "50": {
+    "name": "Hurricane Kicks",
+    "description": "A rapid series of kicks\nthat hits all enemies multiple times.",
+    "message1": "%1 unleashes a flurry of kicks!",
+    "message2": ""
+  },
+  "51": {
+    "name": "-----MartialArtsTechniques",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "52": {
+    "name": "Dragon Fist",
+    "description": "The ultimate martial arts technique that\nunleashes devastating damage the enemy.",
+    "message1": "%1 uses their ultimate technique!",
+    "message2": ""
+  },
+  "53": {
+    "name": "Drunken Fist",
+    "description": "A confusing martial dance\nthat leaves enemies disoriented.",
+    "message1": "%1 performs a drunken stance!",
+    "message2": ""
+  },
+  "54": {
+    "name": "Chi Focus",
+    "description": "Focuses inner energy to dramatically increase\nAttack and Critical Rate for 3 turns.",
+    "message1": "%1 focuses their chi!",
+    "message2": ""
+  },
+  "55": {
+    "name": "German Suplex Combo",
+    "description": "A wrestling move that slams the\nenemy into the ground multiple times.",
+    "message1": "%1 performs a series of suplexes!",
+    "message2": ""
+  },
+  "56": {
+    "name": "Thunder Palm",
+    "description": "A lightning-fast palm strike\nthat may paralyze the enemy.",
+    "message1": "%1 strikes with shocking force!",
+    "message2": ""
+  },
+  "57": {
+    "name": "Rising Dragon Kick",
+    "description": "A powerful upward kick that\nlaunches enemies into the air.",
+    "message1": "%1 performs a rising dragon kick!",
+    "message2": ""
+  },
+  "58": {
+    "name": "Figure-Four Leg Lock",
+    "description": "A wrestling move that catches the\nenemy in a painful leg lock.",
+    "message1": "%1 applies a figure-four leg lock!",
+    "message2": ""
+  },
+  "59": {
+    "name": "Chair Shot",
+    "description": "A wrestling move that hits the\nenemy with a chair. Ignores some COS.",
+    "message1": "%1 uses a steel chair!",
+    "message2": ""
+  },
+  "60": {
+    "name": "Water Flow Stance",
+    "description": "A martial arts technique that\nincreases PSI dramatically for 3 turns.",
+    "message1": "%1 enters a fluid stance!",
+    "message2": ""
+  },
+  "61": {
+    "name": "One-Inch Punch",
+    "description": "A lethal martial arts technique that focuses\nall energy into a single devastating strike.",
+    "message1": "%1 unleashes a one-inch punch!",
+    "message2": ""
+  },
+  "62": {
+    "name": "Counter Stance",
+    "description": "A martial arts counterstrike that activates\nwhen attacked, with increased critical chance.",
+    "message1": "%1 prepares to counter!",
+    "message2": ""
+  },
+  "63": {
+    "name": "Guard Breaker",
+    "description": "A grappling technique that breaks the\nenemy's guard and reduces their COS.",
+    "message1": "%1 breaks the enemy's guard!",
+    "message2": ""
+  },
+  "64": {
+    "name": "Combination Strike",
+    "description": "A powerful combination of punches\nand kicks that hits multiple times.",
+    "message1": "%1 executes a combo attack!",
+    "message2": ""
+  },
+  "65": {
+    "name": "Wrestling Finisher",
+    "description": "A devastating wrestling finisher move that\ncan instantly KO a weakened opponent.",
+    "message1": "%1 performs their finishing move!",
+    "message2": ""
+  },
+  "66": {
+    "name": "Elbow Fury",
+    "description": "A rapid series of elbow\nstrikes that can break through COSs.",
+    "message1": "%1 unleashes a flurry of elbows!",
+    "message2": ""
+  },
+  "67": {
+    "name": "Flying Knee",
+    "description": "A powerful jumping knee strike\nthat can stun the enemy.",
+    "message1": "%1 delivers a flying knee!",
+    "message2": ""
+  },
+  "68": {
+    "name": "Vital Point Strike",
+    "description": "A powerful martial arts technique that\ntargets vital points, ignoring some COS.",
+    "message1": "%1 strikes a vital point!",
+    "message2": ""
+  },
+  "69": {
+    "name": "Lariat",
+    "description": "A powerful clothesline attack\nthat can hit multiple enemies.",
+    "message1": "%1 performs a lariat!",
+    "message2": ""
+  },
+  "70": {
+    "name": "Flame Fist",
+    "description": "A martial arts technique that ignites fists\nwith inner energy for a fiery attack.",
+    "message1": "%1 fists blaze with fire!",
+    "message2": ""
+  },
+  "71": {
+    "name": "Frost Palm",
+    "description": "A martial arts technique that channels\ncold energy for an icy attack.",
+    "message1": "%1 palms radiate cold!",
+    "message2": ""
+  },
+  "72": {
+    "name": "Sleeping Fist",
+    "description": "A hypnotic martial arts technique\nthat may put enemies to sleep.",
+    "message1": "%1 performs a hypnotic technique!",
+    "message2": ""
+  },
+  "73": {
+    "name": "Powerbomb",
+    "description": "A wrestling move that throws the enemy into\nthe air and catches them with devastating impact.",
+    "message1": "%1 performs a powerbomb!",
+    "message2": ""
+  },
+  "74": {
+    "name": "DDT",
+    "description": "A wrestling move that slams\nthe enemy's head into the ground.",
+    "message1": "%1 performs a DDT!",
+    "message2": ""
+  },
+  "75": {
+    "name": "Armbar",
+    "description": "A wrestling move that targets the\nenemy's arm, potentially lowering their attack.",
+    "message1": "%1 applies an armbar!",
+    "message2": ""
+  },
+  "76": {
+    "name": "Reversal Stance ",
+    "description": "Adopt a specialized posture that turns enemy\nstrikes against them.",
+    "message1": "%1 prepares to counter attacks!",
+    "message2": ""
+  },
+  "77": {
+    "name": "Top Rope Splash",
+    "description": "A wrestling move that jumps from\nthe ropes to hit all enemies.",
+    "message1": "%1 jumps from the top rope!",
+    "message2": ""
+  },
+  "78": {
+    "name": "Chi Healing",
+    "description": "A martial arts technique that\nheals wounds through rapid chi manipulation.",
+    "message1": "%1 channels healing chi!",
+    "message2": ""
+  },
+  "79": {
+    "name": "Power Stance",
+    "description": "A martial arts technique that\ndramatically increases Attack for 3 turns.",
+    "message1": "%1 powers up!",
+    "message2": ""
+  },
+  "80": {
+    "name": "Crippling Strike",
+    "description": "A martial arts technique that dramatically\nreduces an enemy's DEX for 3 turns.",
+    "message1": "%1 targets pressure points!",
+    "message2": ""
+  },
+  "81": {
+    "name": "Spirit Cannon",
+    "description": "A devastating martial arts ultimate\ntechnique that draws from inner power.",
+    "message1": "%1 unleashes %2!",
+    "message2": ""
+  },
+  "82": {
+    "name": "Expose Weakness",
+    "description": "Reveals hidden truths and enemy weaknesses.",
+    "message1": "%1 probes for the truth!",
+    "message2": ""
+  },
+  "83": {
+    "name": "Scandalous Headline",
+    "description": "Uses a powerful report to confuse and demoralize all enemies.",
+    "message1": "%1 publishes a scathing report!",
+    "message2": ""
+  },
+  "84": {
+    "name": "HealAlly",
+    "description": "Restores an ally’s HP.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "85": {
+    "name": "BigCure",
+    "description": "Restores an ally’s HP.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "86": {
+    "name": "Regenega",
+    "description": "Restores an ally’s HP.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "87": {
+    "name": "LifeShower",
+    "description": "Restores all allies’ HP.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "88": {
+    "name": "RestoreHumors",
+    "description": "Restores all allies’ HP.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "89": {
+    "name": "HealParty",
+    "description": "Restores all allies’ HP.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "90": {
+    "name": "Detoxify",
+    "description": "Cures an ally’s Poison,\nParalysis, or Sleep state.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "91": {
+    "name": "Normalize",
+    "description": "Cures an ally’s status\nailments other than Dead.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "92": {
+    "name": "NormalizerAll",
+    "description": "Cures all allies’ status ailments\nother than Dead.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "93": {
+    "name": "Resurrect",
+    "description": "Raises an ally from the dead.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "94": {
+    "name": "Revivify",
+    "description": "Raises an ally from the dead and greatly restores\ntheir HP.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "95": {
+    "name": "Poison",
+    "description": "Poisons all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "96": {
+    "name": "Blind",
+    "description": "Blinds all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "97": {
+    "name": "Confuse",
+    "description": "Confuses all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "98": {
+    "name": "Silence",
+    "description": "Seals all enemies’ magic.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "99": {
+    "name": "Sleep",
+    "description": "Puts all enemies to sleep.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "100": {
+    "name": "Paralyze",
+    "description": "Paralyzes all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "101": {
+    "name": "WeaponBless",
+    "description": "Increases an ally’s STR.\nUsable up to 2 times in a row.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "102": {
+    "name": "WeaponCurse",
+    "description": "Decreases all enemies’ STR.\nUsable up to 2 times in a row.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "103": {
+    "name": "ArmorBless",
+    "description": "Increases an ally’s COS.\nUsable up to 2 times in a row.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "104": {
+    "name": "ArmorCurse",
+    "description": "Decreases all enemies’ COS.\nUsable up to 2 times in a row.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "105": {
+    "name": "SpiritBless",
+    "description": "Increases an ally’s INT.\nUsable up to 2 times in a row.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "106": {
+    "name": "SpiritCurse",
+    "description": "Decreases all enemies’ INT.\nUsable up to 2 times in a row.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "107": {
+    "name": "DivineBless",
+    "description": "Increases an ally’s SAG.\nUsable up to 2 times in a row.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "108": {
+    "name": "DivineCurse",
+    "description": "Decreases all enemies’ SAG.\nUsable up to 2 times in a row.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "109": {
+    "name": "QuickenMovement",
+    "description": "Increases an ally’s DEX.\nUsable up to 2 times in a row.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "110": {
+    "name": "SlowMovement",
+    "description": "Decreases all enemies’ DEX.\nUsable up to 2 times in a row.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "111": {
+    "name": "LifeDrain",
+    "description": "Absorbs HP from an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "112": {
+    "name": "ManaDrain",
+    "description": "Absorbs MP from an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "113": {
+    "name": "GenericFireball",
+    "description": "Inflicts Fire-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "114": {
+    "name": "InfernoIgnition",
+    "description": "Inflicts Fire-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "115": {
+    "name": "Pyroxis",
+    "description": "Inflicts Fire-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "116": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "117": {
+    "name": "FlameJet",
+    "description": "Inflicts Fire-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "118": {
+    "name": "MagmaMorph",
+    "description": "Inflicts Fire-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "119": {
+    "name": "Daybreaker",
+    "description": "Inflicts Fire-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "120": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "121": {
+    "name": "IceDart",
+    "description": "Inflicts Ice-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "122": {
+    "name": "ChillChomp",
+    "description": "Inflicts Ice-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "123": {
+    "name": "GlacialGrinder",
+    "description": "Inflicts Ice-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "124": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "125": {
+    "name": "BlizzardI",
+    "description": "Inflicts Ice-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "126": {
+    "name": "LiquidFreeze",
+    "description": "Inflicts Ice-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "127": {
+    "name": "GlacialPrison",
+    "description": "Inflicts Ice-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "128": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "129": {
+    "name": "StaticSnap",
+    "description": "Inflicts Thunder-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "130": {
+    "name": "VoltVandal",
+    "description": "Inflicts Thunder-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "131": {
+    "name": "ThunderTremor",
+    "description": "Inflicts Thunder-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "132": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "133": {
+    "name": "ThunderClap",
+    "description": "Inflicts Thunder-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "134": {
+    "name": "ElectroDoom",
+    "description": "Inflicts Thunder-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "135": {
+    "name": "GlobularOrb",
+    "description": "Inflicts Thunder-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "136": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "137": {
+    "name": "Bubble",
+    "description": "Inflicts Water-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "138": {
+    "name": "Torrent",
+    "description": "Inflicts Water-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "139": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "140": {
+    "name": "DripDrop",
+    "description": "Inflicts Water-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "141": {
+    "name": "FloorAqua",
+    "description": "Inflicts Water-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "142": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "143": {
+    "name": "BoulderBonk",
+    "description": "Inflicts Earth-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "144": {
+    "name": "StoneFaced",
+    "description": "Inflicts Earth-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "145": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "146": {
+    "name": "WideTremor",
+    "description": "Inflicts Earth-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "147": {
+    "name": "VarleniaFault",
+    "description": "Inflicts Earth-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "148": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "149": {
+    "name": "TwirlySwirly",
+    "description": "Inflicts Wind-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "150": {
+    "name": "GustGusher",
+    "description": "Inflicts Wind-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "151": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "152": {
+    "name": "Tornado",
+    "description": "Inflicts Wind-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "153": {
+    "name": "Soulnado",
+    "description": "Inflicts Wind-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "154": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "155": {
+    "name": "Sanctify",
+    "description": "Inflicts Light-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "156": {
+    "name": "LuminousCascade",
+    "description": "Inflicts Light-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "157": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "158": {
+    "name": "Doom",
+    "description": "Inflicts Light-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "159": {
+    "name": "Demiurgis",
+    "description": "Inflicts Light-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "160": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "161": {
+    "name": "VoidDart",
+    "description": "Inflicts Darkness-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "162": {
+    "name": "VoidEmbrace",
+    "description": "Inflicts Darkness-type damage\non an enemy.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "163": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "164": {
+    "name": "BlackestHole",
+    "description": "Inflicts Darkness-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "165": {
+    "name": "emTomb",
+    "description": "Inflicts Darkness-type damage\non all enemies.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "166": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "167": {
+    "name": "ArcaneDart",
+    "description": "Inflicts damage on an\nenemy regardless of COS.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "168": {
+    "name": "ArcanePiercer",
+    "description": "Inflicts damage on an\nenemy regardless of COS.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "169": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "170": {
+    "name": "Fusion",
+    "description": "Inflicts damage on all\nenemies regardless of COS.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "171": {
+    "name": "NuclearBlast",
+    "description": "Inflicts damage on all\nenemies regardless of COS.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "172": {
+    "name": "Strong Attack",
+    "description": "Performs a powerful\nattack on an enemy.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "173": {
+    "name": "Slash",
+    "description": "Attacks all enemies.",
+    "message1": "%1 mows down the enemy!",
+    "message2": ""
+  },
+  "174": {
+    "name": "Bi-strike",
+    "description": "Deliver two perfectly synchronized \nblows that target an enemy's weak points.",
+    "message1": "%1 dual attacks!",
+    "message2": ""
+  },
+  "175": {
+    "name": "Willpower",
+    "description": "Rouses the user’s fighting spirit and increases\nAttack. Usable up to 2 times in a row.",
+    "message1": "%1 uses %2!",
+    "message2": ""
+  },
+  "176": {
+    "name": "First Aid",
+    "description": "Restores an ally’s HP.",
+    "message1": "%1 performs %2!",
+    "message2": ""
+  },
+  "177": {
+    "name": "Maiden’s Stance",
+    "description": "Performs a super powerful\nattack on an enemy.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "178": {
+    "name": "Spin Crash",
+    "description": "Performs a powerful\nattack on all enemies.",
+    "message1": "%1 mows down the enemy!",
+    "message2": ""
+  },
+  "179": {
+    "name": "Reverse Bomb",
+    "description": "A wrestling move that lifts and\nslams the enemy onto their back.",
+    "message1": "%1 performs a body slam!",
+    "message2": ""
+  },
+  "180": {
+    "name": "Dropkick",
+    "description": "A wrestling move that\ndropkicks multiple enemies at once.",
+    "message1": "%1 performs a dropkick!",
+    "message2": ""
+  },
+  "181": {
+    "name": "Karate Chop",
+    "description": "A martial arts move that targets\nthe enemy's neck with a powerful chop.",
+    "message1": "%1 delivers a karate chop!",
+    "message2": ""
+  },
+  "182": {
+    "name": "Leg Sweep",
+    "description": "A rapid series of low kicks\ntargeting the enemy's legs to reduce mobility.",
+    "message1": "%1 aims for the legs!",
+    "message2": ""
+  },
+  "183": {
+    "name": "Lightning Strike",
+    "description": "A martial arts technique that strikes\nwith lightning speed, hard to evade.",
+    "message1": "%1 strikes like lightning!",
+    "message2": ""
+  },
+  "184": {
+    "name": "Roundhouse Kick",
+    "description": "A powerful martial arts kick that\ndeals massive damage to a single target.",
+    "message1": "%1 performs a devastating kick!",
+    "message2": ""
+  },
+  "185": {
+    "name": "-----Priest&SorcererSkills",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "186": {
+    "name": "MagicBarrier",
+    "description": "Increases all allies’ COS and SAG.\nUsable up to 2 times in a row.",
+    "message1": "%1 offered a prayer!",
+    "message2": ""
+  },
+  "187": {
+    "name": "ArcaneQuill",
+    "description": "Greatly increases the user’s\nINT for 5 turns.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "188": {
+    "name": "Yell",
+    "description": "Rouses all allies’ fighting spirit and increases\nAttack. Usable up to 2 times in a row.",
+    "message1": "%1 gave encouragement!",
+    "message2": ""
+  },
+  "189": {
+    "name": "Meteor",
+    "description": "Inflicts damage on all\nenemies regardless of COS.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "190": {
+    "name": "FireSnap",
+    "description": "Bestows Fire-type\nfor 5 turns.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "191": {
+    "name": "Icify",
+    "description": "Bestows Ice-type for 5 turns.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "192": {
+    "name": "ThunderWeapon",
+    "description": "Bestows Thunder-type\nfor 5 turns.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "193": {
+    "name": "MagicMirror",
+    "description": "Reflects spells aimed at\nthe user for 5 turns.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "194": {
+    "name": "BreakingMirror",
+    "description": "Reflects spells aimed at\nthe party for 5 turns.",
+    "message1": "%1 casts %2!",
+    "message2": ""
+  },
+  "195": {
+    "name": "-----Knight Skills",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "196": {
+    "name": "Protect",
+    "description": "Automatically protects allies with\nlow HP for 1 turn.",
+    "message1": "%1 protects team.",
+    "message2": ""
+  },
+  "197": {
+    "name": "Falcon Thrust",
+    "description": "Performs an attack on an \nenemy faster than anyone can see.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "198": {
+    "name": "Double Thrust",
+    "description": "Performs an attack\non an enemy twice.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "199": {
+    "name": "Armor Piercer",
+    "description": "Inflicts damage on all\nenemies regardless of COS.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "200": {
+    "name": "Battle Cry",
+    "description": "Rouses all allies’ fighting spirit and increases\nAttack.",
+    "message1": "%1 made a battle cry!",
+    "message2": ""
+  },
+  "201": {
+    "name": "Windmill",
+    "description": "Rotating attack.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "202": {
+    "name": "Clear Mind",
+    "description": "Slightly increases\nthe user’s TP.",
+    "message1": "%1 cleared their mind!",
+    "message2": ""
+  },
+  "203": {
+    "name": "Wild Thrust",
+    "description": "Randomly performs 4\nattacks on 4 enemies.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "204": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "205": {
+    "name": "-----Bandit Skills",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "206": {
+    "name": "Eye Poke",
+    "description": "Blinds an enemy.",
+    "message1": "%1 pokes the eye of the enemy!",
+    "message2": ""
+  },
+  "207": {
+    "name": "Warm-up",
+    "description": "Increases the user’s DEX.",
+    "message1": "%1 started warming up!",
+    "message2": ""
+  },
+  "208": {
+    "name": "Blinding Flare",
+    "description": "Blinds all enemies.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "209": {
+    "name": "Watchful Eye",
+    "description": "Increases items and money gained from battle for\na while.",
+    "message1": "%1 is observing their surroundings carefully.",
+    "message2": ""
+  },
+  "210": {
+    "name": "WindCall",
+    "description": "Inflicts Wind-type damage\non all enemies.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "211": {
+    "name": "Hide",
+    "description": "Makes the user\nharder to target.",
+    "message1": "%1 hid.",
+    "message2": ""
+  },
+  "212": {
+    "name": "Invisibility",
+    "description": "Makes the user invisible.",
+    "message1": "%1 uses %2!",
+    "message2": ""
+  },
+  "213": {
+    "name": "Golden Pie",
+    "description": "Bakes a golden pie that restores HP \nto one ally and smells amazing.",
+    "message1": "%1 serves a golden pie!",
+    "message2": ""
+  },
+  "214": {
+    "name": "Quick Snack",
+    "description": "Prepares an energizing snack that \nboosts DEX for 3 turns.",
+    "message1": "%1 munches on a quick snack!",
+    "message2": ""
+  },
+  "215": {
+    "name": "Spoiled Dish",
+    "description": "Cooks a cursed dish and tosses it \nat an enemy, reducing their COS.",
+    "message1": "%1 throws a cursed dish!",
+    "message2": ""
+  },
+  "216": {
+    "name": "Sweep",
+    "description": "Inflicts damage and causes\nall enemies to lose balance.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "217": {
+    "name": "Qigong",
+    "description": "Cures the user\nfrom being weakened.",
+    "message1": "%1 uses %2!",
+    "message2": ""
+  },
+  "218": {
+    "name": "Circular kick",
+    "description": "Inflicts huge damage\non all enemies.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "219": {
+    "name": "Tiger Dance",
+    "description": "Inflicts damage on an\nenemy regardless of COS.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "220": {
+    "name": "Hearty Stew",
+    "description": "Cook a hearty stew that restores\na small amount of HP to all allies.",
+    "message1": "%1 serves warm stew!",
+    "message2": ""
+  },
+  "221": {
+    "name": "Flaming Oil",
+    "description": "Throws flaming oil at all enemies. \nInflicts fire-type damage.",
+    "message1": "%1 throws flaming oil!",
+    "message2": ""
+  },
+  "222": {
+    "name": "Sweet Relief",
+    "description": "Prepares a luxurious dessert \nthat removes one negative state from all allies.",
+    "message1": "%1 presents a lavish dessert!",
+    "message2": ""
+  },
+  "223": {
+    "name": "Boiling Broth",
+    "description": "Splashes scalding soup at one enemy, \ndealing water-type damage.",
+    "message1": "%1 splashes scalding soup!",
+    "message2": ""
+  },
+  "224": {
+    "name": "Focus Tea",
+    "description": "Prepares a focus tea that boosts INT for 3 turns.",
+    "message1": "%1 sips focus tea!",
+    "message2": ""
+  },
+  "225": {
+    "name": "Chop & Heal",
+    "description": "Chops ingredients at high speed\nto recover some HP.",
+    "message1": "%1 chops rapidly!",
+    "message2": ""
+  },
+  "226": {
+    "name": "Point Shot",
+    "description": "Decreases an enemy’s ATK and COS.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "227": {
+    "name": "Stun Shot",
+    "description": "Shoots at the footing of all enemies and causes them\nto lose balance.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "228": {
+    "name": "Team Shot",
+    "description": "Inflicts damage on\nan enemy 5 times.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "229": {
+    "name": "Rain Shot",
+    "description": "Inflicts damage on\nall enemies 2 times.",
+    "message1": "%1 does %2!",
+    "message2": ""
+  },
+  "230": {
+    "name": "Lightning Jab",
+    "description": "A devastating boxing jab that\nhits with lightning speed and precision.",
+    "message1": "%1 delivers a lightning jab!",
+    "message2": ""
+  },
+  "231": {
+    "name": "Knockout Uppercut",
+    "description": "A powerful boxing uppercut\nthat can send enemies flying.",
+    "message1": "%1 launches a devastating uppercut!",
+    "message2": ""
+  },
+  "232": {
+    "name": "Punch Flurry",
+    "description": "A rapid series of boxing\npunches that overwhelm the enemy's COSs.",
+    "message1": "%1 unleashes a flurry of punches!",
+    "message2": ""
+  },
+  "233": {
+    "name": "Haymaker",
+    "description": "A powerful boxing\nhaymaker with knockout potential.",
+    "message1": "%1 throws a massive haymaker!",
+    "message2": ""
+  },
+  "234": {
+    "name": "Peek-a-boo Stance",
+    "description": "Takes a defensive boxing stance\nthat increases PSI and counter capabilities.",
+    "message1": "%1 assumes a peek-a-boo stance!",
+    "message2": ""
+  },
+  "235": {
+    "name": "Body Blows",
+    "description": "Targets the opponent's body with\nprecision punches, lowering their stamina.",
+    "message1": "%1 delivers body blows!",
+    "message2": ""
+  },
+  "236": {
+    "name": "Precision Strike",
+    "description": "A boxing technique that targets the\nopponent's weak spots for maximum damage.",
+    "message1": "%1 finds the weak spot!",
+    "message2": ""
+  },
+  "237": {
+    "name": "Read Opponent",
+    "description": "Studies the opponent's patterns, increasing\naccuracy and critical hit rate.",
+    "message1": "%1 studies their opponent!",
+    "message2": ""
+  },
+  "238": {
+    "name": "Taekwondo Kick Combo",
+    "description": "A Taekwondo technique that\ndelivers multiple high-speed kicks.",
+    "message1": "%1 unleashes a flurry of kicks!",
+    "message2": ""
+  },
+  "239": {
+    "name": "Spinning Hook Kick",
+    "description": "A spinning Taekwondo kick\nthat hits all enemies.",
+    "message1": "%1 performs a spinning hook kick!",
+    "message2": ""
+  },
+  "240": {
+    "name": "Axe Kick",
+    "description": "A powerful Taekwondo axe kick\nthat can break through COSs.",
+    "message1": "%1 delivers an axe kick!",
+    "message2": ""
+  },
+  "241": {
+    "name": "Capoeira Roda",
+    "description": "A Brazilian Capoeira technique that combines\ndance-like movements with a powerful kick.",
+    "message1": "%1 performs a Capoeira attack!",
+    "message2": ""
+  },
+  "242": {
+    "name": "Armada",
+    "description": "A Brazilian Capoeira spinning\nkick that hits all enemies.",
+    "message1": "%1 performs an Armada!",
+    "message2": ""
+  },
+  "243": {
+    "name": "Ginga",
+    "description": "A Capoeira evasive movement\nthat increases DEX and PSI.",
+    "message1": "%1 performs the Ginga!",
+    "message2": ""
+  },
+  "244": {
+    "name": "Sok Trong",
+    "description": "A traditional Muay Thai forward\nelbow strike that deals heavy damage.",
+    "message1": "%1 delivers a Sok Trong!",
+    "message2": ""
+  },
+  "245": {
+    "name": "Kao Loi",
+    "description": "A powerful Muay Thai knee\nstrike that can stun opponents.",
+    "message1": "%1 delivers a flying knee!",
+    "message2": ""
+  },
+  "246": {
+    "name": "Tae Chiang",
+    "description": "A devastating Muay Thai round kick\ntargeting the legs to reduce mobility.",
+    "message1": "%1 delivers a leg kick!",
+    "message2": ""
+  },
+  "247": {
+    "name": "Plum Khao",
+    "description": "A Muay Thai clinch with multiple\nknee strikes that deals massive damage.",
+    "message1": "%1 establishes the clinch!",
+    "message2": ""
+  },
+  "248": {
+    "name": "Tsuki",
+    "description": "A Japanese Karate straight punch\ndelivered with perfect form and timing.",
+    "message1": "%1 executes a perfect Tsuki!",
+    "message2": ""
+  },
+  "249": {
+    "name": "Mae Geri",
+    "description": "A powerful Karate front\nkick aimed at vital points.",
+    "message1": "%1 performs Mae Geri!",
+    "message2": ""
+  },
+  "250": {
+    "name": "Seiken",
+    "description": "A devastating Karate punch\nthat can penetrate COSs.",
+    "message1": "%1 delivers a powerful Seiken!",
+    "message2": ""
+  },
+  "251": {
+    "name": "Chain Punches",
+    "description": "A Chinese Wing Chun technique\nthat delivers rapid chain punches.",
+    "message1": "%1 unleashes Chain Punches!",
+    "message2": ""
+  },
+  "252": {
+    "name": "Siu Nim Tau",
+    "description": "A Wing Chun defensive stance\nthat increases counter attack rate.",
+    "message1": "%1 assumes the Wing Chun stance!",
+    "message2": ""
+  },
+  "253": {
+    "name": "Chi Sao",
+    "description": "A Wing Chun technique that redirects\nan opponent's energy back at them.",
+    "message1": "%1 redirects the attack!",
+    "message2": ""
+  },
+  "254": {
+    "name": "Sambo Joint Lock",
+    "description": "A Russian Sambo submission\ntechnique that can immobilize opponents.",
+    "message1": "%1 applies a joint lock!",
+    "message2": ""
+  },
+  "255": {
+    "name": "Sambo Throw",
+    "description": "A powerful Sambo throwing technique that\nslams the opponent to the ground.",
+    "message1": "%1 executes a perfect throw!",
+    "message2": ""
+  },
+  "256": {
+    "name": "Krav Maga Strike",
+    "description": "A devastating Krav Maga strike\ntargeting vital points for maximum damage.",
+    "message1": "%1 targets a vital point!",
+    "message2": ""
+  },
+  "257": {
+    "name": "Krav Maga Counter",
+    "description": "A Krav Maga defensive counterattack that\nturns an enemy's STR against them.",
+    "message1": "%1 turns COS into offense!",
+    "message2": ""
+  },
+  "258": {
+    "name": "Krav Maga Burst",
+    "description": "A rapid series of Krav\nMaga strikes targeting multiple enemies.",
+    "message1": "%1 unleashes a barrage of strikes!",
+    "message2": ""
+  },
+  "259": {
+    "name": "Champion's Combination",
+    "description": "The ultimate boxing combination that\ncan potentially knock out any opponent.",
+    "message1": "%1 unleashes the perfect combo!",
+    "message2": ""
+  },
+  "260": {
+    "name": "Ippon Seoi Nage",
+    "description": "A powerful Judo throw that\nuses the opponent's weight against them.",
+    "message1": "%1 executes a perfect Ippon Seoi Nage!",
+    "message2": ""
+  },
+  "261": {
+    "name": "Osoto Gari",
+    "description": "A sweeping Judo technique that\ndrops opponents to the ground.",
+    "message1": "%1 performs Osoto Gari!",
+    "message2": ""
+  },
+  "262": {
+    "name": "Uki Goshi",
+    "description": "A hip throw Judo technique\nthat flips the opponent over.",
+    "message1": "%1 executes Uki Goshi!",
+    "message2": ""
+  },
+  "263": {
+    "name": "Baguazhang Palm",
+    "description": "A Chinese Kung Fu\ntechnique using powerful palm strikes.",
+    "message1": "%1 strikes with Baguazhang palm!",
+    "message2": ""
+  },
+  "264": {
+    "name": "Bagua Circle Walking",
+    "description": "A circular Kung Fu technique that\nhits multiple times in rapid succession.",
+    "message1": "%1 performs Bagua Circle Walking!",
+    "message2": ""
+  },
+  "265": {
+    "name": "Five Animals Fist",
+    "description": "A powerful Kung Fu technique\nthat can hit all enemies.",
+    "message1": "%1 unleashes Kung Fu strikes!",
+    "message2": ""
+  },
+  "266": {
+    "name": "Tai Chi Form",
+    "description": "A Tai Chi stance that\nincreases COS and enables counterattacks.",
+    "message1": "%1 assumes Tai Chi stance!",
+    "message2": ""
+  },
+  "267": {
+    "name": "Tai Chi Push Hands",
+    "description": "A Tai Chi technique that redirects\nan opponent's energy back at them.",
+    "message1": "%1 redirects energy!",
+    "message2": ""
+  },
+  "268": {
+    "name": "Tai Chi Healing",
+    "description": "A Tai Chi healing technique\nthat restores HP through chi manipulation.",
+    "message1": "%1 channels healing chi!",
+    "message2": ""
+  },
+  "269": {
+    "name": "Eskrima Strike",
+    "description": "A traditional Filipino\nmartial arts stick strike.",
+    "message1": "%1 performs Eskrima strike!",
+    "message2": ""
+  },
+  "270": {
+    "name": "Eskrima Combo",
+    "description": "A rapid series of\nEskrima strikes targeting multiple points.",
+    "message1": "%1 performs Eskrima combinations!",
+    "message2": ""
+  },
+  "271": {
+    "name": "Eskrima Disarm",
+    "description": "A Filipino martial arts\ntechnique that can disarm opponents.",
+    "message1": "%1 performs a disarming technique!",
+    "message2": ""
+  },
+  "272": {
+    "name": "Power Slam",
+    "description": "A powerful wrestling move that\nlifts and slams the opponent.",
+    "message1": "%1 performs a devastating slam!",
+    "message2": ""
+  },
+  "273": {
+    "name": "High-Flying Dive",
+    "description": "A high-flying professional wrestling technique\nthat crashes down on opponents.",
+    "message1": "%1 flies from the top rope!",
+    "message2": ""
+  },
+  "274": {
+    "name": "Sharpshooter",
+    "description": "A professional wrestling submission hold\nthat drains the opponent's energy.",
+    "message1": "%1 applies a submission hold!",
+    "message2": ""
+  },
+  "275": {
+    "name": "Systema Pressure Point",
+    "description": "A Systema combat technique\nthat targets pressure points.",
+    "message1": "%1 strikes nerve centers!",
+    "message2": ""
+  },
+  "276": {
+    "name": "Systema Flow",
+    "description": "A Russian Systema combat technique\nfocusing on fluid, efficient strikes.",
+    "message1": "%1 moves with fluid efficiency!",
+    "message2": ""
+  },
+  "277": {
+    "name": "Systema Breathing",
+    "description": "A Systema breathing technique\nthat restores stamina and focus.",
+    "message1": "%1 performs deep breathing!",
+    "message2": ""
+  },
+  "278": {
+    "name": "Silat Joint Attack",
+    "description": "A Silat martial arts\ntechnique targeting vulnerable joints.",
+    "message1": "%1 targets weak joints!",
+    "message2": ""
+  },
+  "279": {
+    "name": "Silat Sapuan",
+    "description": "A sweeping Indonesian Silat technique\nthat can hit multiple targets.",
+    "message1": "%1 performs Silat sweeps!",
+    "message2": ""
+  },
+  "280": {
+    "name": "Silat Combo",
+    "description": "A fast Silat combination\nattack with multiple strikes.",
+    "message1": "%1 unleashes Silat combinations!",
+    "message2": ""
+  },
+  "281": {
+    "name": "Savate Chasse",
+    "description": "A Savate French kickboxing\ntechnique delivering a precise kick.",
+    "message1": "%1 performs a Savate kick!",
+    "message2": ""
+  },
+  "282": {
+    "name": "Savate Fouette",
+    "description": "A powerful Savate technique\ncombining footwork with devastating kicks.",
+    "message1": "%1 executes expert Savate!",
+    "message2": ""
+  },
+  "283": {
+    "name": "Savate Combination",
+    "description": "A Savate combination technique hitting\nmultiple targets with precise kicks.",
+    "message1": "%1 delivers Savate combinations!",
+    "message2": ""
+  },
+  "284": {
+    "name": "Aikido Throw",
+    "description": "A powerful Aikido throw\nthat redirects an opponent's energy.",
+    "message1": "%1 performs Aikido redirection!",
+    "message2": ""
+  },
+  "285": {
+    "name": "Aikido Flow",
+    "description": "An Aikido technique that increases\nPSI by flowing with attacks.",
+    "message1": "%1 flows like water!",
+    "message2": ""
+  },
+  "286": {
+    "name": "Aikido Joint Lock",
+    "description": "An Aikido joint lock\ntechnique that immobilizes opponents.",
+    "message1": "%1 applies an Aikido lock!",
+    "message2": ""
+  },
+  "287": {
+    "name": "Sumo Tsuppari",
+    "description": "A Sumo technique with\npowerful thrusting palm strikes.",
+    "message1": "%1 delivers a Sumo palm thrust!",
+    "message2": ""
+  },
+  "288": {
+    "name": "Sumo Yorikiri",
+    "description": "A powerful Sumo technique that\nforces opponents out of position.",
+    "message1": "%1 performs a Sumo push out!",
+    "message2": ""
+  },
+  "289": {
+    "name": "Sumo Shiko",
+    "description": "A Sumo technique that\ndramatically increases COS and attack.",
+    "message1": "%1 stomps with authority!",
+    "message2": ""
+  },
+  "290": {
+    "name": "Grand Master's Secret",
+    "description": "The ultimate martial arts technique\ncombining power, speed, and precision.",
+    "message1": "%1 unleashes their ultimate technique!",
+    "message2": ""
+  },
+  "291": {
+    "name": "T-Bone Suplex",
+    "description": "A wrestling move where you grab the opponent's\narm and leg and roll them onto their back.",
+    "message1": "%1 performs a T-Bone Suplex!",
+    "message2": ""
+  },
+  "292": {
+    "name": "Sunset Flip",
+    "description": "A wrestling move where you flip over a\nbent-over opponent, grabbing them on the way down.",
+    "message1": "%1 delivers a Sunset Flip!",
+    "message2": ""
+  },
+  "293": {
+    "name": "Flying Forearm Smash",
+    "description": "A wrestling move where you jump off the\nropes and hit your opponent with both forearms.",
+    "message1": "%1 delivers a Flying Forearm Smash!",
+    "message2": ""
+  },
+  "294": {
+    "name": "JC",
+    "description": "A wrestling move where you lift the opponent onto\nyour shoulders and drop backwards",
+    "message1": "%1 executes an Attitude Adjustment!",
+    "message2": ""
+  },
+  "295": {
+    "name": "Body Scissors",
+    "description": "A submission wrestling move where you wrap\nyour legs around the opponent's waist and squeeze.",
+    "message1": "%1 applies the Body Scissors!",
+    "message2": ""
+  },
+  "296": {
+    "name": "Stunner",
+    "description": "A wrestling move where you grab the opponent's head and\ndrop to a sitting position, driving their jaw into your shoulder.",
+    "message1": "%1 performs a Stunner!",
+    "message2": ""
+  },
+  "297": {
+    "name": "Spinebuster",
+    "description": "A wrestling move where you place your head between\nthe opponent's legs, lift them up, and slam them down.",
+    "message1": "%1 delivers a Spinebuster!",
+    "message2": ""
+  },
+  "298": {
+    "name": "Pedigree",
+    "description": "A wrestling move where you put the opponent in a\nfront headlock, then flip forward driving their head into the ground.",
+    "message1": "%1 delivers a Pedigree!",
+    "message2": ""
+  },
+  "299": {
+    "name": "Skull-Crushing Finale",
+    "description": "A devastating wrestling move where you trap the opponent's arm\nand head, lift them, and spin them before slamming them down.",
+    "message1": "%1 executes a Skull-Crushing Finale!",
+    "message2": ""
+  },
+  "300": {
+    "name": "Flying Elbow Drop",
+    "description": "A wrestling move where you jump off the\nropes and land with your elbow on the opponent.",
+    "message1": "%1 delivers a Flying Elbow Drop!",
+    "message2": ""
+  },
+  "301": {
+    "name": "Frog Splash",
+    "description": "A wrestling move where you dive from\na high position onto a prone opponent.",
+    "message1": "%1 performs a Frog Splash!",
+    "message2": ""
+  },
+  "302": {
+    "name": "Lineage Crusher",
+    "description": "A wrestling move where you kick the opponent in the\nmidsection, hook their arms, and drive their head into the ground.",
+    "message1": "%1 delivers a Pedigree!",
+    "message2": ""
+  },
+  "303": {
+    "name": "Ultimate Finisher",
+    "description": "The ultimate wrestling finisher move\nthat combines devastating power and technique.",
+    "message1": "%1 unleashes their finishing move!",
+    "message2": ""
+  },
+  "304": {
+    "name": "Final Heaven",
+    "description": "The ultimate limit break technique that\nunleashes devastating damage on a single enemy.",
+    "message1": "%1 unleashes final heaven!",
+    "message2": ""
+  },
+  "305": {
+    "name": "Hyperslash",
+    "description": "A devastating hyper-slash technique that\nstrikes a single enemy multiple times.",
+    "message1": "%1 performs omnislash!",
+    "message2": ""
+  },
+  "306": {
+    "name": "Assassinate",
+    "description": "Instantly kills normal enemies\nwith a high success rate.",
+    "message1": "%1 delivers a fatal strike!",
+    "message2": ""
+  },
+  "307": {
+    "name": "AbsoluteBarrier",
+    "description": "Creates an impenetrable barrier around an\nally that nullifies the next attack.",
+    "message1": "%1 casts absolute barrier!",
+    "message2": ""
+  },
+  "308": {
+    "name": "GrimReaper",
+    "description": "Summons an avatar of death that\ninflicts devastating darkness damage on all enemies.",
+    "message1": "%1 summons the grim reaper!",
+    "message2": ""
+  },
+  "309": {
+    "name": "DivineAegis",
+    "description": "Creates a divine aegis that heals all\nallies and removes all negative status effects.",
+    "message1": "%1 creates a divine aegis!",
+    "message2": ""
+  },
+  "310": {
+    "name": "DragonBreath",
+    "description": "Breathes a massive stream of dragon fire\nthat inflicts severe damage to all enemies.",
+    "message1": "%1 unleashes dragon's breath!",
+    "message2": ""
+  },
+  "311": {
+    "name": "Limit Break",
+    "description": "A devastating sword technique that concentrates\nall energy into a single strike.",
+    "message1": "%1 performs a limit break!",
+    "message2": ""
+  },
+  "312": {
+    "name": "Special Ammo Barrage",
+    "description": "Fires a barrage of specialized ammunition\nthat can hit all enemies multiple times.",
+    "message1": "%1 unleashes a special ammunition barrage!",
+    "message2": ""
+  },
+  "313": {
+    "name": "Limit Release",
+    "description": "Taps into hidden potential to dramatically\nincrease all stats for 3 turns.",
+    "message1": "%1 unleashes hidden potential!",
+    "message2": ""
+  },
+  "314": {
+    "name": "PlasmaLetting",
+    "description": "Drains a significant amount of HP from\nan enemy and shares it with all allies.",
+    "message1": "%1 casts bloodletting!",
+    "message2": ""
+  },
+  "315": {
+    "name": "ManaSiphon",
+    "description": "Drains MP from an enemy\nand restores it to the caster.",
+    "message1": "%1 drains magical energy!",
+    "message2": ""
+  },
+  "316": {
+    "name": "Spirit Breaking Strike",
+    "description": "A devastating martial arts technique\nthat combines physical and spiritual energy.",
+    "message1": "%1 performs a spirit breaking strike!",
+    "message2": ""
+  },
+  "317": {
+    "name": "DeadlyToxin",
+    "description": "Applies a potent poison to all\nenemies that causes damage over time.",
+    "message1": "%1 releases deadly toxin!",
+    "message2": ""
+  },
+  "318": {
+    "name": "ChaosField",
+    "description": "Creates a field of disruptive energy that\nconfuses all enemies and lowers their accuracy.",
+    "message1": "%1 creates a chaos field!",
+    "message2": ""
+  },
+  "319": {
+    "name": "ParalysisWave",
+    "description": "Paralyzes all enemies with\na wave of electrical energy.",
+    "message1": "%1 casts paralysis wave!",
+    "message2": ""
+  },
+  "320": {
+    "name": "Enfeeble",
+    "description": "Reduces all enemies to a weakened\nstate, lowering all their stats simultaneously.",
+    "message1": "%1 casts enfeeble!",
+    "message2": ""
+  },
+  "321": {
+    "name": "HeroicInspiration",
+    "description": "Enhances all allies with\nimproved stats across the board.",
+    "message1": "%1 casts heroic inspiration!",
+    "message2": ""
+  },
+  "322": {
+    "name": "Silence Field",
+    "description": "Creates a field of silence that\nprevents all enemies from using magical skills.",
+    "message1": "%1 casts silence field!",
+    "message2": ""
+  },
+  "323": {
+    "name": "Deep Slumber",
+    "description": "A soothing melody that puts all enemies\nto sleep with a high success rate.",
+    "message1": "%1 performs a soothing lullaby!",
+    "message2": ""
+  },
+  "324": {
+    "name": "Ultimate Combo",
+    "description": "A devastating combination of martial arts\ntechniques delivering multiple strikes at lightning speed.",
+    "message1": "%1 unleashes the ultimate combo!",
+    "message2": ""
+  },
+  "325": {
+    "name": "Dragon Spirit Strike",
+    "description": "Summons the spirit of a dragon\nto enhance a single devastating attack.",
+    "message1": "%1 channels the dragon spirit!",
+    "message2": ""
+  },
+  "326": {
+    "name": "ShadowVeil",
+    "description": "Dramatically increases the PSI rate\nand DEX of all allies.",
+    "message1": "%1 casts shadow veil!",
+    "message2": ""
+  },
+  "327": {
+    "name": "GuardianSpirit",
+    "description": "Summons an ancient guardian spirit that significantly\nboosts COS for all allies for 3 turns.",
+    "message1": "%1 summons guardian spirit!",
+    "message2": ""
+  },
+  "328": {
+    "name": "NightmareFog",
+    "description": "Places all enemies in a\ndeep sleep while also poisoning them.",
+    "message1": "%1 casts nightmare fog!",
+    "message2": ""
+  },
+  "329": {
+    "name": "VeilofDarkness",
+    "description": "Blinds all enemies while\nalso lowering their accuracy.",
+    "message1": "%1 casts veil of darkness!",
+    "message2": ""
+  },
+  "330": {
+    "name": "HealingField",
+    "description": "Creates a continuous healing field that\nrestores HP to all allies over time.",
+    "message1": "%1 creates a healing field!",
+    "message2": ""
+  },
+  "331": {
+    "name": "ArcaneDevastation",
+    "description": "Channels both magical and physical energy\ninto a devastating blast that ignores COS.",
+    "message1": "%1 casts arcane devastation!",
+    "message2": ""
+  },
+  "332": {
+    "name": "Life-Binding Strike",
+    "description": "The user sacrifices HP to perform\nan ultimate attack with devastating power.",
+    "message1": "%1 performs a life-risking strike!",
+    "message2": ""
+  },
+  "333": {
+    "name": "Life Transfer",
+    "description": "Channels life force  to resurrect a fallen ally\nwith nearly full HP.",
+    "message1": "%1 transfers life force!",
+    "message2": ""
+  },
+  "334": {
+    "name": "SpellReflection",
+    "description": "Creates a magical barrier that reflects magical\nattacks back at the caster for 3 turns.",
+    "message1": "%1 casts spell reflection!",
+    "message2": ""
+  },
+  "335": {
+    "name": "Death Touch",
+    "description": "A devastating martial arts technique that has\na chance to instantly defeat an opponent.",
+    "message1": "%1 unleashes the death touch!",
+    "message2": ""
+  },
+  "336": {
+    "name": "Cyclone Strikes",
+    "description": "Strikes all enemies with\na flurry of lightning-fast kicks.",
+    "message1": "%1 performs hurricane kicks!",
+    "message2": ""
+  },
+  "337": {
+    "name": "Precision Laser",
+    "description": "Fires a concentrated beam of\nenergy that pierces through COSs.",
+    "message1": "%1 fires a laser beam!",
+    "message2": ""
+  },
+  "338": {
+    "name": "Bullet Barrage",
+    "description": "Fires a barrage of shots\nat all enemies with increased accuracy.",
+    "message1": "%1 unleashes a bullet barrage!",
+    "message2": ""
+  },
+  "339": {
+    "name": "Berserker Mode",
+    "description": "Dramatically increases the user's Attack and\nguarantees critical hits for 3 turns.",
+    "message1": "%1 enters berserker mode!",
+    "message2": ""
+  },
+  "340": {
+    "name": "Life Force Healing",
+    "description": "Taps into inner life force to restore a significant\namount of HP and remove all negative status effects.",
+    "message1": "%1 activates life force healing!",
+    "message2": ""
+  },
+  "341": {
+    "name": "FlameInfusion",
+    "description": "Infuses the party's weapons with\nelemental fire, increasing damage dealt.",
+    "message1": "%1 infuses weapons with fire!",
+    "message2": ""
+  },
+  "342": {
+    "name": "FrostInfusion",
+    "description": "Infuses the party's weapons with\nelemental ice, increasing damage dealt.",
+    "message1": "%1 infuses weapons with ice!",
+    "message2": ""
+  },
+  "343": {
+    "name": "ThunderInfusion",
+    "description": "Infuses the party's weapons with\nelemental lightning, increasing damage dealt.",
+    "message1": "%1 infuses weapons with lightning!",
+    "message2": ""
+  },
+  "344": {
+    "name": "WeakeningCurse",
+    "description": "Dramatically decreases the Attack, COS,\nand DEX of all enemies.",
+    "message1": "%1 casts weakening curse!",
+    "message2": ""
+  },
+  "345": {
+    "name": "Final Reckoning",
+    "description": "The ultimate wrestling finisher move\nthat combines devastating power and technique.",
+    "message1": "%1 unleashes their finishing move!",
+    "message2": ""
+  },
+  "346": {
+    "name": "DanteInferno",
+    "description": "Summons a blistering inferno that devastates\na single enemy with heat and miasma.",
+    "message1": "%1 summons dragon's inferno!",
+    "message2": ""
+  },
+  "347": {
+    "name": "MeteorShower",
+    "description": "Calls down a rain of\nmeteoric flames that damage all enemies.",
+    "message1": "%1 calls down a meteor shower!",
+    "message2": ""
+  },
+  "348": {
+    "name": "AbsoluteZero",
+    "description": "Encases all enemies in absolute\nzero temperature, causing massive ice damage.",
+    "message1": "%1 unleashes absolute zero!",
+    "message2": ""
+  },
+  "349": {
+    "name": "IceBarrier",
+    "description": "Creates a barrier of ice around an\nally that decreases damage taken and can counterattack.",
+    "message1": "%1 creates an ice barrier!",
+    "message2": ""
+  },
+  "350": {
+    "name": "Thunderstorm",
+    "description": "Calls down a massive lightning storm\nthat strikes all enemies multiple times.",
+    "message1": "%1 summons a devastating storm!",
+    "message2": ""
+  },
+  "351": {
+    "name": "ElectricOverload",
+    "description": "Channels lightning directly into a target's nervous\nsystem, causing damage based on their max HP.",
+    "message1": "%1 channels electric overload!",
+    "message2": ""
+  },
+  "352": {
+    "name": "RagingFlood",
+    "description": "Submerges the battlefield in raging waters that\ndamage all enemies and slow their movements.",
+    "message1": "%1 unleashes a raging flood!",
+    "message2": ""
+  },
+  "353": {
+    "name": "AquaAbsorption",
+    "description": "Drains vitality from an enemy through water\nmagic and transfers it to the caster.",
+    "message1": "%1 casts aqua absorption!",
+    "message2": ""
+  },
+  "354": {
+    "name": "TectonicShift",
+    "description": "Causes a massive earthquake that deals\nheavy Petro-type damage to all enemies.",
+    "message1": "%1 triggers a tectonic shift!",
+    "message2": ""
+  },
+  "355": {
+    "name": "StoneSpikes",
+    "description": "Creates razor-sharp stone spikes that\npierce through an enemy's COSs.",
+    "message1": "%1 creates stone spikes!",
+    "message2": ""
+  },
+  "356": {
+    "name": "HurricaneForce",
+    "description": "Summons a devastating cyclone that tears\nthrough all enemies with extreme wind damage.",
+    "message1": "%1 unleashes a devastating cyclone!",
+    "message2": ""
+  },
+  "357": {
+    "name": "Windshield",
+    "description": "Creates a shield of swirling wind\nthat greatly increases PSI for all allies.",
+    "message1": "%1 creates a wind barrier!",
+    "message2": ""
+  },
+  "358": {
+    "name": "DivineJudgment",
+    "description": "Calls down divine judgment that causes\nmassive holy damage to all enemies.",
+    "message1": "%1 calls down divine judgment!",
+    "message2": ""
+  },
+  "359": {
+    "name": "DivineBlessing",
+    "description": "Channels divine energy to restore a\nlarge amount of HP to all allies.",
+    "message1": "%1 channels divine healing!",
+    "message2": ""
+  },
+  "360": {
+    "name": "VoidRift",
+    "description": "Channels the power of the void to cause \ndevastating Cursed-type damage to all enemies.",
+    "message1": "%1 opens the void!",
+    "message2": ""
+  },
+  "361": {
+    "name": "SoulDrain",
+    "description": "Drains the life force of an\nenemy, dealing damage while healing the caster.",
+    "message1": "%1 drains life force!",
+    "message2": ""
+  },
+  "362": {
+    "name": "ArcaneAnnihilation",
+    "description": "Channels unimaginable arcane power to inflict\ndevastating non-elemental damage on all enemies.",
+    "message1": "%1 unleashes arcane annihilation!",
+    "message2": ""
+  },
+  "363": {
+    "name": "Fusion Blast",
+    "description": "Combines physical and magical energy into\na devastating blast that ignores COS.",
+    "message1": "%1 creates a fusion blast!",
+    "message2": ""
+  },
+  "364": {
+    "name": "Full Restoration",
+    "description": "Completely restores an ally to full\nHP and removes all negative status effects.",
+    "message1": "%1 casts full restoration!",
+    "message2": ""
+  },
+  "365": {
+    "name": "Group Healing",
+    "description": "Channels healing energy that restores a\nmoderate amount of HP to all allies.",
+    "message1": "%1 casts group healing!",
+    "message2": ""
+  },
+  "366": {
+    "name": "BattleEnhancement",
+    "description": "Dramatically increases the Attack, COS,\nand SAG of all allies.",
+    "message1": "%1 casts battle enhancement!",
+    "message2": ""
+  },
+  "367": {
+    "name": "WeakeningCurse",
+    "description": "Dramatically decreases the Attack, COS,\nand DEX of all enemies.",
+    "message1": "%1 casts weakening curse!",
+    "message2": ""
+  },
+  "368": {
+    "name": "Auto-Turret",
+    "description": "Deploys an automated turret that\nattacks all enemies with technological precision.",
+    "message1": "%1 deploys an auto-turret!",
+    "message2": ""
+  },
+  "369": {
+    "name": "Circuit Overload",
+    "description": "Overloads nearby electrical circuits to\ncreate a devastating lightning explosion.",
+    "message1": "%1 causes a circuit overload!",
+    "message2": ""
+  },
+  "370": {
+    "name": "Nano Enhancement",
+    "description": "Deploys nano-machines that enhance\nan ally's speed and PSI.",
+    "message1": "%1 deploys nano-boosters!",
+    "message2": ""
+  },
+  "371": {
+    "name": "Hyper Ray",
+    "description": "Focuses energy into a powerful\nbeam that ignores enemy COSs.",
+    "message1": "%1 fires a hyper beam!",
+    "message2": ""
+  },
+  "372": {
+    "name": "Energy Wave",
+    "description": "Generates a powerful energy\nwave that damages all enemies.",
+    "message1": "%1 generates an energy wave!",
+    "message2": ""
+  },
+  "373": {
+    "name": "Nano-Repair",
+    "description": "Uses nanomachines to rapidly\nheal wounds and repair damage.",
+    "message1": "%1 activates nano-repair!",
+    "message2": ""
+  },
+  "374": {
+    "name": "Toxic Deployment",
+    "description": "Deploys a toxic gas\nthat poisons all enemies.",
+    "message1": "%1 deploys toxic gas!",
+    "message2": ""
+  },
+  "375": {
+    "name": "Energy Shield",
+    "description": "Creates an energy shield\nthat significantly reduces damage taken.",
+    "message1": "%1 activates an energy shield!",
+    "message2": ""
+  },
+  "376": {
+    "name": "Sniper Shot",
+    "description": "A specialized sniper shot that deals\nmassive damage to a single target.",
+    "message1": "%1 takes a sniper shot!",
+    "message2": ""
+  },
+  "377": {
+    "name": "Rapid Fire",
+    "description": "Fires a rapid burst\nof shots at all enemies.",
+    "message1": "%1 fires a rapid burst!",
+    "message2": ""
+  },
+  "378": {
+    "name": "Weak Point Shot",
+    "description": "A precise shot that targets an\nenemy's weak point, causing massive critical damage.",
+    "message1": "%1 targets a weak point!",
+    "message2": ""
+  },
+  "379": {
+    "name": "Armor-Piercing Shot",
+    "description": "A specialized shot\nthat pierces through COSs.",
+    "message1": "%1 fires an armor-piercing shot!",
+    "message2": ""
+  },
+  "380": {
+    "name": "Explosive Round",
+    "description": "Fires an explosive round\nthat damages multiple enemies.",
+    "message1": "%1 fires an explosive round!",
+    "message2": ""
+  },
+  "381": {
+    "name": "Tranquilizer Shot",
+    "description": "Loads a tranquilizer round that\nputs an enemy to sleep.",
+    "message1": "%1 fires a tranquilizer dart!",
+    "message2": ""
+  },
+  "382": {
+    "name": "Full Clip Discharge",
+    "description": "A devastating shot that unleashes all\nammo at once for massive damage.",
+    "message1": "%1 uses full clip discharge!",
+    "message2": ""
+  },
+  "383": {
+    "name": "Chemical Analysis",
+    "description": "A chemist's analysis that reveals\nenemy weaknesses and lowers their COS.",
+    "message1": "%1 performs chemical analysis!",
+    "message2": ""
+  },
+  "384": {
+    "name": "Toxic Mixture",
+    "description": "Throws a toxic mixture that poisons\nan enemy and lowers their attack.",
+    "message1": "%1 throws a toxic mixture!",
+    "message2": ""
+  },
+  "385": {
+    "name": "Healing Potion",
+    "description": "Creates a healing potion that\nrestores HP to an ally.",
+    "message1": "%1 administers a healing potion!",
+    "message2": ""
+  },
+  "386": {
+    "name": "Panacea",
+    "description": "Creates an elixir that cures\nall status ailments for an ally.",
+    "message1": "%1 administers a panacea!",
+    "message2": ""
+  },
+  "387": {
+    "name": "Drain Solution",
+    "description": "Creates a mixture that drains HP\nfrom an enemy and heals the user.",
+    "message1": "%1 uses a draining solution!",
+    "message2": ""
+  },
+  "388": {
+    "name": "STRening Compound",
+    "description": "Creates a STRening compound that\nboosts an ally's attack power.",
+    "message1": "%1 administers a STRening compound!",
+    "message2": ""
+  },
+  "389": {
+    "name": "Defensive Compound",
+    "description": "Creates a defensive compound\nthat boosts an ally's COS.",
+    "message1": "%1 administers a defensive compound!",
+    "message2": ""
+  },
+  "390": {
+    "name": "Blinding Powder",
+    "description": "Creates a blinding powder\nthat blinds an enemy.",
+    "message1": "%1 throws blinding powder!",
+    "message2": ""
+  },
+  "391": {
+    "name": "Paralytic Agent",
+    "description": "Creates a paralytic agent\nthat paralyzes an enemy.",
+    "message1": "%1 applies a paralytic agent!",
+    "message2": ""
+  },
+  "392": {
+    "name": "Explosive Compound",
+    "description": "Throws an unstable compound that creates\na massive explosion affecting all enemies.",
+    "message1": "%1 throws an explosive compound!",
+    "message2": ""
+  },
+  "393": {
+    "name": "Ultimate Potion",
+    "description": "The ultimate healing mixture that restores\nhalf of an ally's maximum HP.",
+    "message1": "%1 administers an ultimate potion!",
+    "message2": ""
+  },
+  "394": {
+    "name": "Snatch Strike",
+    "description": "A thief's skill that deals damage and\nhas a chance to steal an item.",
+    "message1": "%1 performs a snatch strike!",
+    "message2": ""
+  },
+  "395": {
+    "name": "Mug",
+    "description": "Attempts to steal an item from\nthe target with increased success rate.",
+    "message1": "%1 attempts to steal!",
+    "message2": ""
+  },
+  "396": {
+    "name": "Stealth",
+    "description": "Makes the user harder to detect, increasing\nPSI and chance to escape from battle.",
+    "message1": "%1 becomes stealthy!",
+    "message2": ""
+  },
+  "397": {
+    "name": "Vital Strike",
+    "description": "A precise strike targeting\nan enemy's weak points.",
+    "message1": "%1 targets a weak point!",
+    "message2": ""
+  },
+  "398": {
+    "name": "Rapid Strikes",
+    "description": "Performs a series of\nrapid strikes on multiple enemies.",
+    "message1": "%1 performs rapid strikes!",
+    "message2": ""
+  },
+  "399": {
+    "name": "Sand Toss",
+    "description": "Throws sand to blind all\nenemies and decrease their accuracy.",
+    "message1": "%1 throws sand!",
+    "message2": ""
+  },
+  "400": {
+    "name": "Lockpicking",
+    "description": "Opens locked doors and\nchests during battle.",
+    "message1": "%1 picks the lock!",
+    "message2": ""
+  },
+  "401": {
+    "name": "Transfusion Strike",
+    "description": "A specialized attack that\ndrains an enemy's HP.",
+    "message1": "%1 performs an assassin's strike!",
+    "message2": ""
+  },
+  "402": {
+    "name": "Killing Blow",
+    "description": "A powerful strike with a\nhigh chance of instant death.",
+    "message1": "%1 performs a killing blow!",
+    "message2": ""
+  },
+  "403": {
+    "name": "Trap Detection",
+    "description": "Allows the party to detect\ntraps and hidden items in dungeons.",
+    "message1": "%1 searches for traps!",
+    "message2": ""
+  },
+  "404": {
+    "name": "Swift Escape",
+    "description": "Dramatically increases chances\nof escaping from battle.",
+    "message1": "%1 makes a swift escape!",
+    "message2": ""
+  },
+  "405": {
+    "name": "Master Theft",
+    "description": "The ultimate thief technique that deals massive damage and\nhas a high chance to steal a rare item.",
+    "message1": "%1 performs a master theft!",
+    "message2": ""
+  },
+  "406": {
+    "name": "Inspiring Speech",
+    "description": "Delivers an inspiring speech that boosts\nthe morale and Attack of all allies.",
+    "message1": "%1 delivers an inspiring speech!",
+    "message2": ""
+  },
+  "407": {
+    "name": "Sow Discord",
+    "description": "Uses confusion tactics on all\nenemies, making them attack each other.",
+    "message1": "%1 sows discord among enemies!",
+    "message2": ""
+  },
+  "408": {
+    "name": "Unity Formation",
+    "description": "Creates unity among all allies,\ndramatically increasing all their defensive stats.",
+    "message1": "%1 creates unity among allies!",
+    "message2": ""
+  },
+  "409": {
+    "name": "Seductive Charm",
+    "description": "Charms an enemy with a seductive smile,\ncausing them to temporarily join your side.",
+    "message1": "%1 uses seductive charm!",
+    "message2": ""
+  },
+  "410": {
+    "name": "Critical Insights",
+    "description": "Provides tactical insights that greatly increase\nthe critical hit rate for all allies.",
+    "message1": "%1 shares critical insights!",
+    "message2": ""
+  },
+  "411": {
+    "name": "Negotiated Truce",
+    "description": "Negotiates with an enemy, making them\nless likely to attack your weakest ally.",
+    "message1": "%1 negotiates a truce!",
+    "message2": ""
+  },
+  "412": {
+    "name": "Taunt Diversion",
+    "description": "Creates a diversion that makes all\nenemies target you instead of allies.",
+    "message1": "%1 creates a diversion!",
+    "message2": ""
+  },
+  "413": {
+    "name": "Morale Boost",
+    "description": "Boosts an ally's morale, healing\ntheir HP and increasing their Attack.",
+    "message1": "%1 boosts morale!",
+    "message2": ""
+  },
+  "414": {
+    "name": "Heroic Rally",
+    "description": "Passionately rallies all allies, \nmassively increasing all their stats.",
+    "message1": "%1 delivers a heroic rally!",
+    "message2": ""
+  },
+  "415": {
+    "name": "Crushing Demoralization",
+    "description": "Delivers a devastating speech that\nmassively decreases all stats.",
+    "message1": "%1 delivers a demoralizing speech!",
+    "message2": ""
+  },
+  "416": {
+    "name": "Tactical Advice",
+    "description": "Shares tactical knowledge that increases\nthe DEX of all allies.",
+    "message1": "%1 shares tactical knowledge!",
+    "message2": ""
+  },
+  "417": {
+    "name": "Team Coordination",
+    "description": "Boosts team coordination, increasing\nthe DEX of all allies.",
+    "message1": "%1 coordinates the team!",
+    "message2": ""
+  },
+  "418": {
+    "name": "Defensive Tactics",
+    "description": "Shares defensive strategies that increase\nthe COS of all allies.",
+    "message1": "%1 shares defensive strategies!",
+    "message2": ""
+  },
+  "419": {
+    "name": "Self-Actualization",
+    "description": "Focuses inner potential, dramatically increasing\nall personal stats for 3 turns.",
+    "message1": "%1 focuses their potential!",
+    "message2": ""
+  },
+  "420": {
+    "name": "Motivational Speech",
+    "description": "Delivers a motivational speech that\nincreases all stats for all allies.",
+    "message1": "%1 gives a motivational speech!",
+    "message2": ""
+  },
+  "421": {
+    "name": "Intimidation",
+    "description": "Uses intimidation to decrease\nan enemy's Attack and COS.",
+    "message1": "%1 intimidates the enemy!",
+    "message2": ""
+  },
+  "422": {
+    "name": "Mental Disruption",
+    "description": "Uses mental disruption techniques to decrease\nall enemies' INT and SAG.",
+    "message1": "%1 disrupts concentration!",
+    "message2": ""
+  },
+  "423": {
+    "name": "Provocation",
+    "description": "Taunts enemies to decrease\ntheir DEX and PSI",
+    "message1": "%1 taunts the enemies!",
+    "message2": ""
+  },
+  "424": {
+    "name": "Psychological Warfare",
+    "description": "Uses psychological techniques to decrease\nall stats of an enemy.",
+    "message1": "%1 uses psychological warfare!",
+    "message2": ""
+  },
+  "425": {
+    "name": "Confusing Compliment",
+    "description": "Unexpectedly compliments an enemy, increasing\ntheir Attack but lowering their COS.",
+    "message1": "%1 gives a confusing compliment!",
+    "message2": ""
+  },
+  "426": {
+    "name": "Overconfidence",
+    "description": "Boosts an enemy's confidence but makes them\nreckless.",
+    "message1": "%1 makes the enemy overconfident!",
+    "message2": ""
+  },
+  "427": {
+    "name": "Defensive Overcaution",
+    "description": "Shares tactical advice with an enemy,\nincreasing their COS but slowing their DEX.",
+    "message1": "%1 causes defensive overcaution!",
+    "message2": ""
+  },
+  "428": {
+    "name": "Reverse psychology",
+    "description": "Uses reverse psychology to confuse an\nenemy but increase their STR.",
+    "message1": "%1 uses careful aiming suggestion!",
+    "message2": ""
+  },
+  "429": {
+    "name": "Genuine Encouragement",
+    "description": "Genuinely encourages an enemy,\nboosting all their stats slightly.",
+    "message1": "%1 genuinely encourages the enemy!",
+    "message2": ""
+  },
+  "430": {
+    "name": "Temporary Alliance",
+    "description": "Forms a temporary alliance with an\nenemy, increasing their COS and SAG.",
+    "message1": "%1 proposes a temporary alliance!",
+    "message2": ""
+  },
+  "431": {
+    "name": "Mixed Tactics",
+    "description": "Shares tactical knowledge with all enemies,\nincreasing their COS but decreasing their DEX.",
+    "message1": "%1 offers tactical knowledge to enemies!",
+    "message2": ""
+  },
+  "432": {
+    "name": "Deceptive Lullaby",
+    "description": "Sings a calming song that increases all\nenemies' SAG but puts them to sleep.",
+    "message1": "%1 sings a lullaby!",
+    "message2": ""
+  },
+  "433": {
+    "name": "Berserk Encouragement",
+    "description": "Dramatically increases the Attack and INT of\nan ally but decreases their COS and SAG.",
+    "message1": "%1 activates berserk mode!",
+    "message2": ""
+  },
+  "434": {
+    "name": "Precision Focus",
+    "description": "Dramatically increases an ally's Accuracy\nand PSI but decreases their Attack.",
+    "message1": "%1 activates precise mode!",
+    "message2": ""
+  },
+  "435": {
+    "name": "Predator's Bite",
+    "description": "A powerful bite attack\nthat deals physical damage.",
+    "message1": "%1 unleashes a ferocious bite!",
+    "message2": ""
+  },
+  "436": {
+    "name": "Razor Claws",
+    "description": "Sharp claws tear into\nthe enemy, causing bleeding damage.",
+    "message1": "%1 slashes with razor claws!",
+    "message2": ""
+  },
+  "437": {
+    "name": "Hind Kick",
+    "description": "Rapid kicks that hit\nan enemy multiple times.",
+    "message1": "%1 delivers powerful kicks!",
+    "message2": ""
+  },
+  "438": {
+    "name": "Gore Attack",
+    "description": "A crushing attack using\nmassive horns or antlers.",
+    "message1": "%1 gores with mighty horns!",
+    "message2": ""
+  },
+  "439": {
+    "name": "Charging Tackle",
+    "description": "Charges at full speed\nto deliver a powerful impact.",
+    "message1": "%1 charges at full speed!",
+    "message2": ""
+  },
+  "440": {
+    "name": "Blinding Screen",
+    "description": "Temporarily blinds enemies by kicking up\ndirt or creating a cloud of ink.",
+    "message1": "%1 creates a blinding cloud!",
+    "message2": ""
+  },
+  "441": {
+    "name": "Toxic Venom",
+    "description": "Sprays or secretes a\ntoxic substance that poisons enemies.",
+    "message1": "%1 sprays toxic venom!",
+    "message2": ""
+  },
+  "442": {
+    "name": "Sonic Disorientation",
+    "description": "Emits a disorienting\nsound that confuses enemies.",
+    "message1": "%1 emits a disorienting sound!",
+    "message2": ""
+  },
+  "443": {
+    "name": "Paralyzing Sting",
+    "description": "Paralyzes prey with a\nstinger or electric shock.",
+    "message1": "%1 delivers a paralyzing sting!",
+    "message2": ""
+  },
+  "444": {
+    "name": "Life Drain",
+    "description": "Drains blood or life energy\nfrom a target to restore HP.",
+    "message1": "%1 drains life energy!",
+    "message2": ""
+  },
+  "445": {
+    "name": "Entangle",
+    "description": "Entangles the opponent in webbing,\nvines, or tentacles, restricting movement.",
+    "message1": "%1 entangles the target!",
+    "message2": ""
+  },
+  "446": {
+    "name": "Wing Gust",
+    "description": "Rapidly flaps wings to create powerful\ngusts of wind that damage enemies.",
+    "message1": "%1 creates powerful wind gusts!",
+    "message2": ""
+  },
+  "447": {
+    "name": "Hypnotic Mesmerize",
+    "description": "Mesmerizes the target with a hypnotic\npattern or sound, putting them to sleep.",
+    "message1": "%1 uses hypnotic mesmerization!",
+    "message2": ""
+  },
+  "448": {
+    "name": "Venomous Strike",
+    "description": "Strikes with a venomous\nbarb, causing damage and poison.",
+    "message1": "%1 strikes with a venomous tail!",
+    "message2": ""
+  },
+  "449": {
+    "name": "Electric Shock",
+    "description": "Unleashes a powerful electric shock\nthat may paralyze the target.",
+    "message1": "%1 delivers an electric shock!",
+    "message2": ""
+  },
+  "450": {
+    "name": "Inferno Breath",
+    "description": "Unleash a devastating stream of \nconcentrated flame that ignites enemies",
+    "message1": "%1 breathes fire!",
+    "message2": ""
+  },
+  "451": {
+    "name": "Frost Breath",
+    "description": "Breathes a freezing blast\nthat damages and slows enemies.",
+    "message1": "%1 breathes frost!",
+    "message2": ""
+  },
+  "452": {
+    "name": "Tail Smash",
+    "description": "Delivers a crushing blow\nwith a powerful tail.",
+    "message1": "%1 smashes with its tail!",
+    "message2": ""
+  },
+  "453": {
+    "name": "Tentacle Barrage",
+    "description": "Attacks with multiple tentacles,\nhitting the target several times.",
+    "message1": "%1 attacks with tentacles!",
+    "message2": ""
+  },
+  "454": {
+    "name": "Pressurized Jet",
+    "description": "Shoots a powerful jet\nof water at high pressure.",
+    "message1": "%1 fires a water jet!",
+    "message2": ""
+  },
+  "455": {
+    "name": "Earthquake Stomp",
+    "description": "Causes the ground to\nshake, damaging all enemies.",
+    "message1": "%1 creates an earthquake!",
+    "message2": ""
+  },
+  "456": {
+    "name": "Ambush Pounce",
+    "description": "Suddenly pounces on prey\nwith incredible speed and power.",
+    "message1": "%1 pounces with lightning speed!",
+    "message2": ""
+  },
+  "457": {
+    "name": "Terrifying Roar",
+    "description": "A devastating roar that\ndamages and intimidates all enemies.",
+    "message1": "%1 lets out a devastating roar!",
+    "message2": ""
+  },
+  "458": {
+    "name": "Sonic Screech",
+    "description": "Emits a high-frequency screech\nthat damages and disables enemies.",
+    "message1": "%1 emits a piercing screech!",
+    "message2": ""
+  },
+  "459": {
+    "name": "Healing Secretion",
+    "description": "Secretes a healing substance\nthat cures status ailments.",
+    "message1": "%1 secretes healing enzymes!",
+    "message2": ""
+  },
+  "460": {
+    "name": "Camouflage",
+    "description": "Changes color or form to\nblend with surroundings, increasing PSI.",
+    "message1": "%1 camouflages itself!",
+    "message2": ""
+  },
+  "461": {
+    "name": "Berserk Frenzy",
+    "description": "A furious frenzy of\nattacks when cornered or threatened.",
+    "message1": "%1 enters a frenzied state!",
+    "message2": ""
+  },
+  "462": {
+    "name": "Pack Call",
+    "description": "Calls nearby allies of the\nsame species to join the fight.",
+    "message1": "%1 calls for reinforcements!",
+    "message2": ""
+  },
+  "463": {
+    "name": "Apex Predator Strike",
+    "description": "The ultimate predator attack that deals\nmassive damage to a single target.",
+    "message1": "%1 unleashes a deadly strike!",
+    "message2": ""
+  },
+  "464": {
+    "name": "Throat Bite",
+    "description": "A vicious attack that targets\nthe throat of an enemy.",
+    "message1": "%1 attacks the throat!",
+    "message2": ""
+  },
+  "465": {
+    "name": "VoidTendrils",
+    "description": "Summons shadowy tendrils from another dimension\nthat grasp and damage the target.",
+    "message1": "%1 summons void tendrils!",
+    "message2": ""
+  },
+  "466": {
+    "name": "StarfallFragment",
+    "description": "Manifests a fragment of a\nstar that explodes with cosmic light.",
+    "message1": "%1 creates a star fragment!",
+    "message2": ""
+  },
+  "467": {
+    "name": "RealityDistortion",
+    "description": "Creates a prismatic field that\ndistorts reality, causing unpredictable damage.",
+    "message1": "%1 distorts reality!",
+    "message2": ""
+  },
+  "468": {
+    "name": "DevouringRift",
+    "description": "Opens a small rift that devours\na quarter of the target's life force.",
+    "message1": "%1 opens a devouring rift!",
+    "message2": ""
+  },
+  "469": {
+    "name": "SensoryInversion",
+    "description": "Inverts the target's senses,\ncausing confusion and stat reversal.",
+    "message1": "%1 inverts senses!",
+    "message2": ""
+  },
+  "470": {
+    "name": "FractalGeometry",
+    "description": "Creates a perfect geometric pattern\nthat shatters reality around the target.",
+    "message1": "%1 creates a fractal pattern!",
+    "message2": ""
+  },
+  "471": {
+    "name": "TemporalReversion",
+    "description": "Reverses the flow of time around a\nwound, healing it as if it never existed.",
+    "message1": "%1 reverses time!",
+    "message2": ""
+  },
+  "472": {
+    "name": "ThousandEyedGaze",
+    "description": "Summons countless eyes from the void\nthat gaze upon enemies, causing psychic damage.",
+    "message1": "%1 summons watching eyes!",
+    "message2": ""
+  },
+  "473": {
+    "name": "Revelations",
+    "description": "Forces the target to witness an\nunknowable truth, potentially driving them mad.",
+    "message1": "%1 reveals an unknowable truth!",
+    "message2": ""
+  },
+  "474": {
+    "name": "QuantumDuplication",
+    "description": "Splits the caster into multiple\nquantum versions that exist simultaneously.",
+    "message1": "%1 creates quantum duplicates!",
+    "message2": ""
+  },
+  "475": {
+    "name": "Reality-Warping Melody",
+    "description": "Creates discordant music that makes\nreality itself unstable around enemies.",
+    "message1": "%1 plays discordant notes!",
+    "message2": ""
+  },
+  "476": {
+    "name": "PainTransmutation",
+    "description": "Channels pain into power, dealing damage\nbased on the caster's missing HP.",
+    "message1": "%1 channels pain into power!",
+    "message2": ""
+  },
+  "477": {
+    "name": "IdentityTransference",
+    "description": "Swaps positions and some aspects\nof identity between caster and target.",
+    "message1": "%1 performs identity transference!",
+    "message2": ""
+  },
+  "478": {
+    "name": "ProbabilityManipulation",
+    "description": "Creates a field where probability itself\nis manipulated in the caster's favor.",
+    "message1": "%1 manipulates probability!",
+    "message2": ""
+  },
+  "479": {
+    "name": "Non-Euclidean Fluid",
+    "description": "Summons a liquid that flows\nagainst gravity and dissolves reality.",
+    "message1": "%1 summons non-euclidean fluid!",
+    "message2": ""
+  },
+  "480": {
+    "name": "UnutterablePhonemes",
+    "description": "Speaks in a language that reality\nitself cannot comprehend.",
+    "message1": "%1 speaks the unutterable!",
+    "message2": ""
+  },
+  "481": {
+    "name": "Concept Drain",
+    "description": "Drains concepts and ideas from the\ntarget's mind.",
+    "message1": "%1 drains concepts!",
+    "message2": ""
+  },
+  "482": {
+    "name": "MetamorphicAbsurdity",
+    "description": "Temporarily transforms the target\ninto a bizarre, non-functional form.",
+    "message1": "%1 causes surreal transformation!",
+    "message2": ""
+  },
+  "483": {
+    "name": "Colors Out Of Space",
+    "description": "Creates a whirling vortex of impossible\ncolors that damage the mind and body.",
+    "message1": "%1 creates impossible colors!",
+    "message2": ""
+  },
+  "484": {
+    "name": "Recursive Dreamscape",
+    "description": "Plunges the target into a dream within a\ndream, causing deep sleep and confusion upon waking.",
+    "message1": "%1 creates recursive dreams!",
+    "message2": ""
+  },
+  "485": {
+    "name": "MultiversalMortality",
+    "description": "Causes the target to experience their\nown death in all possible timelines simultaneously.",
+    "message1": "%1 reveals all possible deaths!",
+    "message2": ""
+  },
+  "486": {
+    "name": "TemporalParadox",
+    "description": "Creates a paradoxical loop in\ntime that confuses and traps enemies.",
+    "message1": "%1 creates a temporal paradox!",
+    "message2": ""
+  },
+  "487": {
+    "name": "Perceptual Inversion",
+    "description": "Reverses the target's perceptions so they\nsee allies as enemies and vice versa.",
+    "message1": "%1 inverts perceptions!",
+    "message2": ""
+  },
+  "488": {
+    "name": "TheOutsider",
+    "description": "Summons an impossible entity from outside\nreality that annihilates everything it touches.",
+    "message1": "%1 summons an impossible entity!",
+    "message2": ""
+  },
+  "489": {
+    "name": "SpatialDissonance",
+    "description": "Causes the target to experience\nbeing everywhere and nowhere simultaneously.",
+    "message1": "%1 creates spatial dissonance!",
+    "message2": ""
+  },
+  "490": {
+    "name": "RealityFailure",
+    "description": "Creates a cascading failure in the fabric\nof reality, causing damage based on all stats.",
+    "message1": "%1 causes a reality cascade!",
+    "message2": ""
+  },
+  "491": {
+    "name": "TinyFlame",
+    "description": "Creates a tiny flame\nthat barely singes the target.",
+    "message1": "%1 creates a tiny flame!",
+    "message2": ""
+  },
+  "492": {
+    "name": "Snowflake",
+    "description": "Forms a single snowflake that\nmelts on contact with the target.",
+    "message1": "%1 creates a snowflake!",
+    "message2": ""
+  },
+  "493": {
+    "name": "StaticZap",
+    "description": "Creates a small static shock\nthat barely affects the target.",
+    "message1": "%1 causes static electricity!",
+    "message2": ""
+  },
+  "494": {
+    "name": "WaterDroplet",
+    "description": "Conjures a few drops of\nwater that splash the target.",
+    "message1": "%1 splashes water!",
+    "message2": ""
+  },
+  "495": {
+    "name": "PebbleToss",
+    "description": "Throws a tiny\npebble at the target.",
+    "message1": "%1 throws a pebble!",
+    "message2": ""
+  },
+  "496": {
+    "name": "GentleBreeze",
+    "description": "Creates a small breeze that\nbarely moves the target's hair.",
+    "message1": "%1 creates a small breeze!",
+    "message2": ""
+  },
+  "497": {
+    "name": "LightSparkle",
+    "description": "Creates a tiny sparkle of\nlight that's more pretty than damaging.",
+    "message1": "%1 creates a sparkle!",
+    "message2": ""
+  },
+  "498": {
+    "name": "ShadowWisp",
+    "description": "Creates a small shadow that\nbriefly passes over the target.",
+    "message1": "%1 creates a tiny shadow!",
+    "message2": ""
+  },
+  "499": {
+    "name": "PaperHeal",
+    "description": "Heals a minuscule amount\nof HP, barely noticeable.",
+    "message1": "%1 casts minor healing!",
+    "message2": ""
+  },
+  "500": {
+    "name": "Questionable Antidote",
+    "description": "Has a very small chance to\ncure poison, but usually does nothing.",
+    "message1": "%1 attempts to cure poison!",
+    "message2": ""
+  },
+  "501": {
+    "name": "Minimal Encouragement",
+    "description": "Slightly increases the target's Attack,\nbut the effect is barely noticeable.",
+    "message1": "%1 provides minimal encouragement!",
+    "message2": ""
+  },
+  "502": {
+    "name": "Whispered Advice",
+    "description": "Slightly increases the target's COS,\nbut the effect is barely noticeable.",
+    "message1": "%1 whispers defensive advice!",
+    "message2": ""
+  },
+  "503": {
+    "name": "Weak Insult",
+    "description": "Attempts to decrease an enemy's\nAttack, but the effect is minimal.",
+    "message1": "%1 makes a weak insult!",
+    "message2": ""
+  },
+  "504": {
+    "name": "LifeDrain",
+    "description": "Drains a tiny amount\nof HP from the target.",
+    "message1": "%1 drains a speck of life!",
+    "message2": ""
+  },
+  "505": {
+    "name": "ManaSiphon",
+    "description": "Drains a minimal amount\nof MP from the target.",
+    "message1": "%1 siphons a drop of mana!",
+    "message2": ""
+  },
+  "506": {
+    "name": "MagicalPuff",
+    "description": "Creates a very minor magical\neffect that deals minimal damage.",
+    "message1": "%1 creates a magical puff!",
+    "message2": ""
+  },
+  "507": {
+    "name": "WeaponWarming",
+    "description": "Attempts to imbue a weapon with\nfire, but only makes it slightly warm.",
+    "message1": "%1 slightly warms a weapon!",
+    "message2": ""
+  },
+  "508": {
+    "name": "UselessFog",
+    "description": "Creates a light fog that\nhas no tactical advantage whatsoever.",
+    "message1": "%1 creates a useless fog!",
+    "message2": ""
+  },
+  "509": {
+    "name": "MinorShift",
+    "description": "Makes the target see slightly\naltered colors for a few seconds.",
+    "message1": "%1 alters color perception!",
+    "message2": ""
+  },
+  "510": {
+    "name": "Simple Tune",
+    "description": "Creates a slightly pleasant melody\nthat has no combat effect.",
+    "message1": "%1 plays a simple tune!",
+    "message2": ""
+  },
+  "511": {
+    "name": "Precision Thrust",
+    "description": "A swift, precise stab targeting vital\nareas with a blade or pointed weapon.",
+    "message1": "%1 executes a precise thrust!",
+    "message2": ""
+  },
+  "512": {
+    "name": "Wide Swing",
+    "description": "A powerful horizontal sweep\nthat can hit multiple enemies.",
+    "message1": "%1 performs a wide swing!",
+    "message2": ""
+  },
+  "513": {
+    "name": "Overhead Smash",
+    "description": "A powerful downward strike\nwith full force behind it.",
+    "message1": "%1 delivers an overhead smash!",
+    "message2": ""
+  },
+  "514": {
+    "name": "Strike Flurry",
+    "description": "Performs a flurry of quick\nstrikes that hit multiple times.",
+    "message1": "%1 unleashes a flurry of strikes!",
+    "message2": ""
+  },
+  "515": {
+    "name": "Uppercut Strike",
+    "description": "A powerful upward strike\nthat can break through COS",
+    "message1": "%1 performs an uppercut strike!",
+    "message2": ""
+  },
+  "516": {
+    "name": "Weak Point Strike",
+    "description": "A precise strike targeting a\nweak point in the enemy's COSs.",
+    "message1": "%1 strikes a weak point!",
+    "message2": ""
+  },
+  "517": {
+    "name": "Whirlwind Slash",
+    "description": "A spinning attack that\nhits all enemies around you.",
+    "message1": "%1 performs a spinning attack!",
+    "message2": ""
+  },
+  "518": {
+    "name": "Laceration Strike",
+    "description": "A brutal attack that can\ncause bleeding damage over time.",
+    "message1": "%1 performs a laceration strike!",
+    "message2": ""
+  },
+  "519": {
+    "name": "Ground Slam",
+    "description": "A crushing blow that slams\nthe enemy to the ground.",
+    "message1": "%1 performs a slam attack!",
+    "message2": ""
+  },
+  "520": {
+    "name": "Swift Strike",
+    "description": "A sudden, lightning-fast strike\nthat's difficult to evade.",
+    "message1": "%1 delivers a swift strike!",
+    "message2": ""
+  },
+  "521": {
+    "name": "Rapid Thrust",
+    "description": "A series of rapid\nthrusts with a pointed weapon.",
+    "message1": "%1 delivers multiple thrusts!",
+    "message2": ""
+  },
+  "522": {
+    "name": "Pommel Strike",
+    "description": "A heavy blow with the pommel or\nhilt of a weapon, potentially stunning the target.",
+    "message1": "%1 delivers a pommel strike!",
+    "message2": ""
+  },
+  "523": {
+    "name": "Ground Sweep",
+    "description": "A slash that targets the\nlegs to slow enemy movement.",
+    "message1": "%1 performs a leg sweep!",
+    "message2": ""
+  },
+  "524": {
+    "name": "Flat Strike",
+    "description": "A crushing blow with the flat\nside of a weapon, potentially causing stunning.",
+    "message1": "%1 delivers a flat strike!",
+    "message2": ""
+  },
+  "525": {
+    "name": "Guard Strike",
+    "description": "A powerful blow using the guard\nor hilt to strike at close range.",
+    "message1": "%1 performs a guard strike!",
+    "message2": ""
+  },
+  "526": {
+    "name": "Diagonal Slash",
+    "description": "A powerful diagonal slash\nthat's difficult to block.",
+    "message1": "%1 performs a diagonal slash!",
+    "message2": ""
+  },
+  "527": {
+    "name": "Cross Slash",
+    "description": "A series of cuts that form\nan X pattern on the target.",
+    "message1": "%1 performs cross slashes!",
+    "message2": ""
+  },
+  "528": {
+    "name": "Circular Slash",
+    "description": "A series of quick, circular\nslashes that can hit multiple enemies.",
+    "message1": "%1 performs circular slashes!",
+    "message2": ""
+  },
+  "529": {
+    "name": "Opportunity Strike",
+    "description": "A calculated strike at the\nexact moment the enemy is vulnerable.",
+    "message1": "%1 finds the perfect opening!",
+    "message2": ""
+  },
+  "530": {
+    "name": "Power Lunge",
+    "description": "A devastating lunge that puts\nall power into a single strike.",
+    "message1": "%1 performs a power lunge!",
+    "message2": ""
+  },
+  "531": {
+    "name": "Master's Technique",
+    "description": "The ultimate melee technique combining\nmultiple movements into one devastating attack.",
+    "message1": "%1 performs the ultimate technique!",
+    "message2": ""
+  },
+  "532": {
+    "name": "StellarImpact",
+    "description": "Summons a falling star that crashes into enemies,\ncausing massive light damage to all targets.",
+    "message1": "%1 calls down a stellar impact!",
+    "message2": ""
+  },
+  "533": {
+    "name": "XylomancerJungle",
+    "description": "Commands plants and wooden objects to attack,\ndealing Petro-type damage to enemies.",
+    "message1": "%1 commands the wood!",
+    "message2": ""
+  },
+  "534": {
+    "name": "YearningVoid",
+    "description": "Channels the emptiness of the void, creating a\nsense of longing that drains enemies' will to fight.",
+    "message1": "%1 channels the yearning void!",
+    "message2": ""
+  },
+  "535": {
+    "name": "BioticHarmony",
+    "description": "Harmonizes with the natural life energy of allies,\nhealing and removing negative status effects.",
+    "message1": "%1 creates biotic harmony!",
+    "message2": ""
+  },
+  "536": {
+    "name": "DecompositionRay",
+    "description": "Fires a beam that accelerates decomposition,\ncausing damage and lowering COS.",
+    "message1": "%1 fires a decomposition ray!",
+    "message2": ""
+  },
+  "537": {
+    "name": "EclipseBurst",
+    "description": "Creates a sudden burst of shadow energy during\nan eclipse, damaging all enemies.",
+    "message1": "%1 channels eclipse energy!",
+    "message2": ""
+  },
+  "538": {
+    "name": "FracturedTimeline",
+    "description": "Branches the timeline, creating alternate versions\nof allies that can absorb damage for them.",
+    "message1": "%1 fractures the timeline!",
+    "message2": ""
+  },
+  "539": {
+    "name": "GlyphicEmpowerment",
+    "description": "Empowers allies with ancient glyphs,\nproviding significant stat boosts.",
+    "message1": "%1 activates ancient glyphs!",
+    "message2": ""
+  },
+  "540": {
+    "name": "Harmonic Dissonance",
+    "description": "Creates painfully dissonant tones that damage\nenemies and disrupt spellcasting.",
+    "message1": "%1 creates harmonic dissonance!",
+    "message2": ""
+  },
+  "541": {
+    "name": "IceBarrage",
+    "description": "Fires a barrage of ice shards that\nhit all enemies multiple times.",
+    "message1": "%1 unleashes ice shards!",
+    "message2": ""
+  },
+  "542": {
+    "name": "JuxtapositionField",
+    "description": "Creates a field where opposites coexist,\ncausing confusion and disorientation.",
+    "message1": "%1 creates a juxtaposition field!",
+    "message2": ""
+  },
+  "543": {
+    "name": "KaleidoscopicVision",
+    "description": "Distorts visual perception with kaleidoscopic patterns,\ncausing confusion and lowering accuracy.",
+    "message1": "%1 creates kaleidoscopic patterns!",
+    "message2": ""
+  },
+  "544": {
+    "name": "LuminousTransfiguration",
+    "description": "Transforms an ally's body into luminous energy,\ngreatly increasing all stats.",
+    "message1": "%1 transforms into luminous energy!",
+    "message2": ""
+  },
+  "545": {
+    "name": "MagneticDisruption",
+    "description": "Disrupts enemies' magnetic fields, causing\nnausea and lowering various stats.",
+    "message1": "%1 disrupts magnetic fields!",
+    "message2": ""
+  },
+  "546": {
+    "name": "NecromanticRitual",
+    "description": "Performs a dark ritual that sacrifices some of the\ncaster's HP to damage all enemies.",
+    "message1": "%1 performs a necromantic ritual!",
+    "message2": ""
+  },
+  "547": {
+    "name": "Orbital Strike",
+    "description": "Calls down a powerful beam from orbit\nthat devastates a single target.",
+    "message1": "%1 calls down an orbital strike!",
+    "message2": ""
+  },
+  "548": {
+    "name": "PhantasmalLure",
+    "description": "Creates an illusion that lures enemies to\nattack a phantom target instead of allies.",
+    "message1": "%1 creates a phantasmal lure!",
+    "message2": ""
+  },
+  "549": {
+    "name": "QuintessenceManipulation",
+    "description": "Manipulates the fundamental essence of all things,\nrestoring HP, MP, and increasing all stats.",
+    "message1": "%1 manipulates quintessence!",
+    "message2": ""
+  },
+  "550": {
+    "name": "ResonanceShock",
+    "description": "Creates a shock wave of resonant energy that\ndamages enemies and disables magical abilities.",
+    "message1": "%1 creates a resonance shock!",
+    "message2": ""
+  },
+  "551": {
+    "name": "SoulMirror",
+    "description": "Creates a mirror reflection of the target's soul,\nrevealing and potentially reversing status effects.",
+    "message1": "%1 creates a soul mirror!",
+    "message2": ""
+  },
+  "552": {
+    "name": "TemperatureInversion",
+    "description": "Rapidly alternates between extreme heat and cold,\nshattering enemy COSs.",
+    "message1": "%1 inverts temperature!",
+    "message2": ""
+  },
+  "553": {
+    "name": "UnderworldPortal",
+    "description": "Opens a portal to the underworld that damages\nenemies and potentially causes instant death.",
+    "message1": "%1 opens an underworld portal!",
+    "message2": ""
+  },
+  "554": {
+    "name": "VortexCompression",
+    "description": "Compresses a vortex of energy into a tiny space,\ncreating an explosion that damages all enemies.",
+    "message1": "%1 compresses a vortex!",
+    "message2": ""
+  },
+  "555": {
+    "name": "WillowispSwarm",
+    "description": "Summons a swarm of ethereal lights that confuse\nand distract enemies while causing damage.",
+    "message1": "%1 summons wisp swarms!",
+    "message2": ""
+  },
+  "556": {
+    "name": "NovaFlash",
+    "description": "Creates a sudden, blinding flash of light that\ndamages and potentially blinds all enemies.",
+    "message1": "%1 creates a nova flash!",
+    "message2": ""
+  },
+  "557": {
+    "name": "DreamHarvester",
+    "description": "Harvests dream energy from sleeping targets,\ndealing damage and restoring MP to the caster.",
+    "message1": "%1 harvests dream energy!",
+    "message2": ""
+  },
+  "558": {
+    "name": "SerpentineInferno",
+    "description": "Summons a serpent made of\nliving flame that coils around\nenemies and burns them.",
+    "message1": "%1 summons a serpent of flame!",
+    "message2": ""
+  },
+  "559": {
+    "name": "ThunderstormCascade",
+    "description": "Calls down a massive storm of\nlightning that bounces between\nmultiple targets.",
+    "message1": "%1 creates a lightning cascade!",
+    "message2": ""
+  },
+  "560": {
+    "name": "CorrosiveMarstrom",
+    "description": "Creates a whirlpool of caustic\nliquid that rapidly dissolves\nenemy COSs.",
+    "message1": "%1 conjures a corrosive whirlpool!",
+    "message2": ""
+  },
+  "561": {
+    "name": "GlacialDaggerstorm",
+    "description": "Summons countless daggers of\nice that rain down from above.",
+    "message1": "%1 calls down a rain of ice daggers!",
+    "message2": ""
+  },
+  "562": {
+    "name": "VoidSiphon",
+    "description": "Unleashes shadow tendrils that \nemerge from the void to siphon life from enemies.",
+    "message1": "%1 summons shadow tendrils!",
+    "message2": ""
+  },
+  "563": {
+    "name": "ChaoticConvergence",
+    "description": "Unleashes the raw power of chaos, \ncausing unpredictable but devastating damage.",
+    "message1": "%1 unleashes chaotic energy!",
+    "message2": ""
+  },
+  "564": {
+    "name": "CrystallineSpire",
+    "description": "Raises massive crystalline\nspires from the ground that\nimpale enemies and shatter.",
+    "message1": "%1 raises crystal spires!",
+    "message2": ""
+  },
+  "565": {
+    "name": "RazorwindCyclone",
+    "description": "Creates a devastating cyclone\nthat tears enemies apart with\nrazor-sharp wind blades.",
+    "message1": "%1 unleashes a blade cyclone!",
+    "message2": ""
+  },
+  "566": {
+    "name": "SolarNova",
+    "description": "Channels the power of a\ndistant sun.",
+    "message1": "%1 creates a solar flare!",
+    "message2": ""
+  },
+  "567": {
+    "name": "NeuralSurge",
+    "description": "Creates a field of electromagnetic \nenergy that overloads nervous systems.",
+    "message1": "%1 creates a neural overload field!",
+    "message2": ""
+  },
+  "568": {
+    "name": "VolcanicHeart",
+    "description": "Summons the core of a volcano to\nerupt beneath enemies, causing massive damage.",
+    "message1": "%1 triggers a volcanic eruption!",
+    "message2": ""
+  },
+  "569": {
+    "name": "ElementalBurst",
+    "description": "Fuses opposing elements into a\nvolatile mixture.",
+    "message1": "%1 creates an elemental fusion blast!",
+    "message2": ""
+  },
+  "570": {
+    "name": "CelestialConvergence",
+    "description": "Concentrates celestial energy\ninto a beam of light.",
+    "message1": "%1 focuses a celestial beam!",
+    "message2": ""
+  },
+  "571": {
+    "name": "NightmareGateway",
+    "description": "Opens a gateway to a dimension\nof nightmares.",
+    "message1": "%1 opens a nightmare dimension!",
+    "message2": ""
+  },
+  "572": {
+    "name": "VoidEntity",
+    "description": "Summons an interdimensional entity \nthat devours the life force of enemies.",
+    "message1": "%1 summons a devouring entity!",
+    "message2": ""
+  },
+  "573": {
+    "name": "ToxicMaelstrom",
+    "description": "Creates a vortex of caustic\ngases that corrode enemies\nfrom the inside out.",
+    "message1": "%1 creates a toxic vortex!",
+    "message2": ""
+  },
+  "574": {
+    "name": "CorrosiveDeluge",
+    "description": "Transforms water into a highly\nacidic compound that dissolves\nenemy armor and flesh.",
+    "message1": "%1 creates a tide of acid!",
+    "message2": ""
+  },
+  "575": {
+    "name": "ShardCascade",
+    "description": "Showers enemies with\nrazor-sharp obsidian shards\nthat cause bleeding wounds.",
+    "message1": "%1 unleashes obsidian shards!",
+    "message2": ""
+  },
+  "576": {
+    "name": "AbsoluteField",
+    "description": "Creates a field of absolute\nzero temperature.",
+    "message1": "%1 creates an absolute zero field!",
+    "message2": ""
+  },
+  "577": {
+    "name": "SupernovaImplosion",
+    "description": "Summons the heart of a dying\nstar to create a devastating\nexplosion of heat and light.",
+    "message1": "%1 creates a supernova blast!",
+    "message2": ""
+  },
+  "578": {
+    "name": "CataclysmicTornado",
+    "description": "Creates a howling vortex of atmosphere \nthat tears enemies to shreds with debris.",
+    "message1": "%1 summons a devastating tornado!",
+    "message2": ""
+  },
+  "579": {
+    "name": "ThunderstrikeSanction",
+    "description": "Calls down a massive bolt of\ndivine lightning that smites\nenemies with heavenly wrath.",
+    "message1": "%1 calls down divine lightning!",
+    "message2": ""
+  },
+  "580": {
+    "name": "RealityRift",
+    "description": "Tears open a rift in reality\nthat fragments enemies across\nmultiple dimensions.",
+    "message1": "%1 creates a reality fracture!",
+    "message2": ""
+  },
+  "581": {
+    "name": "Virulent Contagion",
+    "description": "Infects enemies with a\nvirulent toxin.",
+    "message1": "%1 unleashes contagious toxin!",
+    "message2": ""
+  },
+  "582": {
+    "name": "ScintillatingBlindness",
+    "description": "Creates a dense cloud of\nsparkling dust.",
+    "message1": "%1 creates a scintillating dust cloud!",
+    "message2": ""
+  },
+  "583": {
+    "name": "MindFracture",
+    "description": "Projects disturbing illusions that \noverwhelm enemies' minds, causing severe confusion.",
+    "message1": "%1 projects maddening illusions!",
+    "message2": ""
+  },
+  "584": {
+    "name": "Enchanted Song",
+    "description": "Lulls enemies into a deep\nsleep with an irresistible song",
+    "message1": "%1 sings an enchanted lullaby!",
+    "message2": ""
+  },
+  "585": {
+    "name": "AbsoluteVeil",
+    "description": "Wraps enemies in a veil of\nmagical silence.",
+    "message1": "%1 creates an arcane silence!",
+    "message2": ""
+  },
+  "586": {
+    "name": "NeuralSurge",
+    "description": "Sends a pulse of electrical\nenergy that locks up enemies' limbs",
+    "message1": "%1 creates a neural lockdown!",
+    "message2": ""
+  },
+  "587": {
+    "name": "IrresistibleEnchantment",
+    "description": "Creates an overwhelming sense\nof infatuation.",
+    "message1": "%1 creates irresistible enchantment!",
+    "message2": ""
+  },
+  "588": {
+    "name": "GravitationalDisruption",
+    "description": "Creates a gravity pulse that\nknocks enemies off balance,\nalmost guaranteeing knockdown.",
+    "message1": "%1 creates a gravity pulse!",
+    "message2": ""
+  },
+  "589": {
+    "name": "FatalityConjuration",
+    "description": "Calls upon the inevitable\nforce of mortality,\npotentially causing instant\ndeath.",
+    "message1": "%1 summons the force of mortality!",
+    "message2": ""
+  },
+  "590": {
+    "name": "HallucinogenicCloud",
+    "description": "Creates a cloud of\nhallucinogenic spores that\ninduce both blindness and\nconfusion.",
+    "message1": "%1 releases hallucinogenic spores!",
+    "message2": ""
+  },
+  "591": {
+    "name": "NeuralSuppression",
+    "description": "Delivers a neural shock that\nparalyzes enemies while\nrendering them mute.",
+    "message1": "%1 delivers a neural shock!",
+    "message2": ""
+  },
+  "592": {
+    "name": "Venomous Injection",
+    "description": "Injects a potent neurotoxin\nthat severely poisons enemies\nand slows their movement.",
+    "message1": "%1 injects paralyzing neurotoxin!",
+    "message2": ""
+  },
+  "593": {
+    "name": "HypnoticTrance",
+    "description": "Projects a hypnotic pattern that \nlulls enemies to sleep and charm them",
+    "message1": "%1 creates a hypnotic pattern!",
+    "message2": ""
+  },
+  "594": {
+    "name": "GravitySilencer",
+    "description": "Creates a localized\ngravitational anomaly.",
+    "message1": "%1 creates a gravitational anomaly!",
+    "message2": ""
+  },
+  "595": {
+    "name": "NeuralCascade",
+    "description": "Overloads the nervous system,\ncausing paralysis.",
+    "message1": "%1 overloads neural pathways!",
+    "message2": ""
+  },
+  "596": {
+    "name": "NightmareVision",
+    "description": "Invokes nightmarish visions\nthat cause confusion while\ndraining victims' life force.",
+    "message1": "%1 conjures nightmarish visions!",
+    "message2": ""
+  },
+  "597": {
+    "name": "OcularFlare",
+    "description": "Emits a blinding flash that\nseverely impairs enemies'\nvision and accuracy.",
+    "message1": "%1 creates a blinding flash!",
+    "message2": ""
+  },
+  "598": {
+    "name": "MagneticCloud",
+    "description": "Summons a cloud of\ndisorienting magnetic\nparticles that inflict\nconfusion and lower accuracy.",
+    "message1": "%1 creates magnetic disorientation!",
+    "message2": ""
+  },
+  "599": {
+    "name": "TemporalNexus",
+    "description": "Creates a temporal anomaly\nthat causes severe\ndisorientation and confusion\nin enemies.",
+    "message1": "%1 creates a temporal distortion!",
+    "message2": ""
+  },
+  "600": {
+    "name": "CascadingNexus",
+    "description": "The ultimate status magic that\ninflicts multiple debilitating\nconditions on all enemies.",
+    "message1": "%1 unleashes cascading malediction!",
+    "message2": ""
+  },
+  "601": {
+    "name": "NecromanticContagion",
+    "description": "Infects enemies with a curse that \nspreads to allies when they die, potentially causing instant death.",
+    "message1": "%1 unleashes a necromantic plague!",
+    "message2": ""
+  },
+  "602": {
+    "name": "NeuralCurse",
+    "description": "Completely locks down the target's\nnervous system.",
+    "message1": "%1 induces terminal paralysis!",
+    "message2": ""
+  },
+  "603": {
+    "name": "Incurable Affliction",
+    "description": "Infects enemies with a toxin\nthat continuously drains their HP",
+    "message1": "%1 unleashes an incurable toxin!",
+    "message2": ""
+  },
+  "604": {
+    "name": "EternalMalediction",
+    "description": "Permanently silences the\ntarget, preventing any spell\nuse for the remainder of the\nbattle.",
+    "message1": "%1 permanently seals magical abilities!",
+    "message2": ""
+  },
+  "605": {
+    "name": "ManaAnnihilation",
+    "description": "Creates a field that drains\nall magical energy from\nenemies, reducing MP to zero\nand preventing recovery.",
+    "message1": "%1 creates a mana void!",
+    "message2": ""
+  },
+  "606": {
+    "name": "HealingParadox",
+    "description": "Reverses time for the target,\ncausing all healing to damage\nthem instead for several\nturns.",
+    "message1": "%1 reverses the flow of life!",
+    "message2": ""
+  },
+  "607": {
+    "name": "SelfHex",
+    "description": "Inflicts a curse that causes\ntargets to take damage when\nusing abilities or items.",
+    "message1": "%1 inflicts a self-harming curse!",
+    "message2": ""
+  },
+  "608": {
+    "name": "BlessingField",
+    "description": "Completely nullifies all\npositive status effects on\ntargets and prevents new ones\nfrom being applied.",
+    "message1": "%1 creates a blessing void!",
+    "message2": ""
+  },
+  "609": {
+    "name": "SpiritVortex",
+    "description": "Creates a gravitational\nanomaly that continually\ndrains TP from enemies,\npreventing special moves.",
+    "message1": "%1 creates a spirit-draining field!",
+    "message2": ""
+  },
+  "610": {
+    "name": "IrreversibleCurse",
+    "description": "Forces enemies to attack their\nallies against their will and\nmakes them immune to charm\ncures.",
+    "message1": "%1 induces permanent madness!",
+    "message2": ""
+  },
+  "611": {
+    "name": "FatalSyndrome",
+    "description": "Puts targets into an endless\nnightmare that damages them\neach turn until they die or\nthe battle ends.",
+    "message1": "%1 induces a fatal nightmare!",
+    "message2": ""
+  },
+  "612": {
+    "name": "InexorableCountdown",
+    "description": "Marks targets with a death counter that kills \nthem after three turns regardless of protections.",
+    "message1": "%1 sets a death countdown!",
+    "message2": ""
+  },
+  "613": {
+    "name": "VitaContract",
+    "description": "Forces enemies to sacrifice their own HP\nto perform actions,",
+    "message1": "%1 creates a life-draining contract!",
+    "message2": ""
+  },
+  "614": {
+    "name": "PermanentDrain",
+    "description": "Drains all stat boosts from enemies\nand permanently reduces their base stats.",
+    "message1": "%1 drains enemy potential!",
+    "message2": ""
+  },
+  "615": {
+    "name": "TotalDisruption",
+    "description": "Renders enemies completely blind\nand confused while inverting their movement controls.",
+    "message1": "%1 creates total sensory disruption!",
+    "message2": ""
+  },
+  "616": {
+    "name": "OmnimaledictionCataclysm",
+    "description": "The ultimate forbidden spell that \ninflicts every negative status effect.",
+    "message1": "%1 unleashes total annihilation!",
+    "message2": ""
+  },
+  "617": {
+    "name": "PSI Shockwave",
+    "description": "Channels PSI energy to create electrical d\nischarges that strike enemies with uncanny accuracy.",
+    "message1": "%1 unleashes a psychic shock!",
+    "message2": ""
+  },
+  "618": {
+    "name": "PSI KineticTempest",
+    "description": "Creates a telekinetic windstorm by \nmanipulating air molecules with PSI energy.",
+    "message1": "%1 generates a telekinetic windstorm!",
+    "message2": ""
+  },
+  "619": {
+    "name": "PSI Combustion",
+    "description": "Ignites the air around enemies through intense \nPSI focus, creating spontaneous flames.",
+    "message1": "%1 ignites the air with mind power!",
+    "message2": ""
+  },
+  "620": {
+    "name": "PSI Cryo Freezing",
+    "description": "Slows molecular movement with PSI energy\nfreezing enemies and their surroundings.",
+    "message1": "%1 slows molecular movement!",
+    "message2": ""
+  },
+  "621": {
+    "name": "PSI Metabolic Regen",
+    "description": "Uses PSI energy to accelerate natural\nhealing within the target's body.",
+    "message1": "%1 accelerates natural healing!",
+    "message2": ""
+  },
+  "622": {
+    "name": "PSI IllusionProjection",
+    "description": "Creates illusions using PSI \nenergy that confuse enemies.",
+    "message1": "%1 creates psychic illusions!",
+    "message2": ""
+  },
+  "623": {
+    "name": "PSI Gravitokinetic Crush",
+    "description": "Manipulates gravitational forces\nusing PSI energy to crush opponents.",
+    "message1": "%1 manipulates gravity!",
+    "message2": ""
+  },
+  "624": {
+    "name": "PSI Accel",
+    "description": "Enhances reflexes and reaction time \nwith PSI energy, greatly increasing PSI.",
+    "message1": "%1 accelerates neural responses!",
+    "message2": ""
+  },
+  "625": {
+    "name": "PSI NeuroParalysis",
+    "description": "Disables neural pathways using PSI energy,\ncompletely paralyzing the target.",
+    "message1": "%1 disrupts neural pathways!",
+    "message2": ""
+  },
+  "626": {
+    "name": "PSI HypnoSuggestion",
+    "description": "Projects calming mental\npatterns using PSI energy,\ninducing sleep in targets.",
+    "message1": "%1 induces neural relaxation!",
+    "message2": ""
+  },
+  "627": {
+    "name": "PSI Precognitive Strike",
+    "description": "Temporarily boosts combat intuition \nusing PSI energy, greatly increasing critical hit rate.",
+    "message1": "%1 enhances combat intuition!",
+    "message2": ""
+  },
+  "628": {
+    "name": "PSI Kinetic Barrier",
+    "description": "Creates a protective PSI barrier \nthat absorbs physical and magical damage.",
+    "message1": "%1 creates a psi barrier!",
+    "message2": ""
+  },
+  "629": {
+    "name": "PSI Sonic Disruption",
+    "description": "Projects painful thoughts\ndirectly into the target's\nmind, causing psychic damage.",
+    "message1": "%1 projects painful thoughts!",
+    "message2": ""
+  },
+  "630": {
+    "name": "PSI KineticBlindness",
+    "description": "Disrupts visual processing in target's brain using PSI energy, \ncausing blindness.",
+    "message1": "%1 disrupts visual processing!",
+    "message2": ""
+  },
+  "631": {
+    "name": "PSI MetabolicVampirism",
+    "description": "Establishes a PSI link that\ndrains life energy.",
+    "message1": "%1 establishes a psi-drain link!",
+    "message2": ""
+  },
+  "632": {
+    "name": "PSI KineticSuppression",
+    "description": "Blocks the target's ability to\ncast spells or use special abilities.",
+    "message1": "%1 creates a psi-interference field!",
+    "message2": ""
+  },
+  "633": {
+    "name": "PSI PrecognitiveCounter",
+    "description": "Reads the target's mind to predict\nand counter their next move with PSI precision.",
+    "message1": "%1 reads the enemy's intentions!",
+    "message2": ""
+  },
+  "634": {
+    "name": "PSI Enfeeblement",
+    "description": "Uses PSI energy to severely weaken \nthe target's physical capabilities.",
+    "message1": "%1 weakens physical capabilities!",
+    "message2": ""
+  },
+  "635": {
+    "name": "PSI KinetoMetabolic",
+    "description": "Uses PSI energy to cleanse and \nrepair mental imbalances, removing status ailments.",
+    "message1": "%1 stabilizes mental patterns!",
+    "message2": ""
+  },
+  "636": {
+    "name": "PSI EnergyBlast",
+    "description": "Unleashes a devastating blast\nof raw PSI energy that damages\nmultiple targets.",
+    "message1": "%1 unleashes pure psi energy!",
+    "message2": ""
+  },
+  "637": {
+    "name": "PSI EnergyTransfer",
+    "description": "Transfers a portion of the user's PSI \nenergy to restore an ally's TP.",
+    "message1": "%1 transfers psi energy!",
+    "message2": ""
+  },
+  "638": {
+    "name": "PSI MetabolicAmplif.",
+    "description": "Dramatically enhances all mental \ncapabilities using PSI energy.",
+    "message1": "%1 supercharges mental capabilities!",
+    "message2": ""
+  },
+  "639": {
+    "name": "PSI Overload",
+    "description": "Channels negative PSI energy to\npotentially cause instant death through ",
+    "message1": "%1 induces neural shutdown!",
+    "message2": ""
+  },
+  "640": {
+    "name": "PSI Manifestation",
+    "description": "The ultimate PSI technique\nthat unleashes the full PSIchic power",
+    "message1": "%1 unleashes ultimate psi potential!",
+    "message2": ""
+  },
+  "641": {
+    "name": "PowerDrain",
+    "description": "Creates an enchanted field that dramatically\nreduces enemy Attack and COS.",
+    "message1": "%1 creates a weakening field!",
+    "message2": ""
+  },
+  "642": {
+    "name": "RustShackle",
+    "description": "Surrounds enemies with rusted chains that severely\nlimit movement and reduce DEX.",
+    "message1": "%1 conjures rusted chains!",
+    "message2": ""
+  },
+  "643": {
+    "name": "BlindMist",
+    "description": "Creates a blinding mist that severely\nreduces enemy Accuracy and PSI.",
+    "message1": "%1 creates a blinding mist!",
+    "message2": ""
+  },
+  "644": {
+    "name": "PSI MindFog",
+    "description": "Clouds the mind of an enemy, massively\nreducing INT and SAG.",
+    "message1": "%1 clouds the enemy's mind!",
+    "message2": ""
+  },
+  "645": {
+    "name": "TotalWeaken",
+    "description": "Creates a field that severely weakens\nall enemy stats simultaneously.",
+    "message1": "%1 creates a crippling field!",
+    "message2": ""
+  },
+  "646": {
+    "name": "MightAura",
+    "description": "Dramatically increases ally's Attack and COS\nat the cost of reduced DEX.",
+    "message1": "%1 creates physical enhancement!",
+    "message2": ""
+  },
+  "647": {
+    "name": "SwiftAura",
+    "description": "Greatly increases ally's DEX and PSI\nat the cost of reduced COS.",
+    "message1": "%1 enhances mobility!",
+    "message2": ""
+  },
+  "648": {
+    "name": "MindAura",
+    "description": "Dramatically boosts ally's INT and SAG\nat the cost of reduced Attack.",
+    "message1": "%1 enhances mental capacity!",
+    "message2": ""
+  },
+  "649": {
+    "name": "FumbleHex",
+    "description": "Causes an enemy to lose control,\ndramatically reducing their Accuracy.",
+    "message1": "%1 disrupts coordination!",
+    "message2": ""
+  },
+  "650": {
+    "name": "PhaseShift",
+    "description": "Grants an ally supernatural reflexes,\ndramatically boosting PSI.",
+    "message1": "%1 grants supernatural reflexes!",
+    "message2": ""
+  },
+  "651": {
+    "name": "Assisted aim",
+    "description": "Grants an ally supernatural precision,\ndramatically boosting Accuracy.",
+    "message1": "%1 grants supernatural precision!",
+    "message2": ""
+  },
+  "652": {
+    "name": "OmniBuff",
+    "description": "Dramatically increases all stats of a single ally\nfor a limited number of turns.",
+    "message1": "%1 creates perfect enhancement!",
+    "message2": ""
+  },
+  "653": {
+    "name": "OmniDrain",
+    "description": "Robs an enemy of all enhanced stats and\nfurther reduces their base capabilities.",
+    "message1": "%1 steals enemy potential!",
+    "message2": ""
+  },
+  "654": {
+    "name": "RageTrance",
+    "description": "Dramatically increases ally's STR and critical\nhit rate while reducing their COS.",
+    "message1": "%1 induces a berserker state!",
+    "message2": ""
+  },
+  "655": {
+    "name": "IronShell",
+    "description": "Dramatically increases ally's COS and SAG\nwhile reducing their Attack and INT.",
+    "message1": "%1 creates a defensive shell!",
+    "message2": ""
+  },
+  "656": {
+    "name": "StatFlux",
+    "description": "Causes extreme disorientation in an enemy,\nreversing the effect of their stat enhancements.",
+    "message1": "%1 reverses enhancements!",
+    "message2": ""
+  },
+  "657": {
+    "name": "TimeWarp",
+    "description": "Enables an ally to move with incredible speed,\ndramatically increasing action frequency.",
+    "message1": "%1 grants exceptional speed!",
+    "message2": ""
+  },
+  "658": {
+    "name": "IceSlow",
+    "description": "Creates a zero energy field that severely diminishes the target's\nspeed, practically freezing them in time.",
+    "message1": "%1 slows the flow of time!",
+    "message2": ""
+  },
+  "659": {
+    "name": "StoneSkin",
+    "description": "Dramatically increases an ally's COS\nat the cost of immobilizing them.",
+    "message1": "%1 creates an immobile fortress!",
+    "message2": ""
+  },
+  "660": {
+    "name": "DivinePerfection",
+    "description": "The ultimate enhancement spell that maximizes\nall stats of the entire party for a short time.",
+    "message1": "%1 unleashes ultimate enhancement!",
+    "message2": ""
+  },
+  "661": {
+    "name": "AbsoluteNullification",
+    "description": "The ultimate debilitation spell that minimizes\nall stats of all enemies for a short time.",
+    "message1": "%1 unleashes absolute reduction!",
+    "message2": ""
+  },
+  "662": {
+    "name": "ChaosImpetus",
+    "description": "A chaotic spell of raw magical energy that causes\nunpredictable elemental damage and random status effects.",
+    "message1": "%1 invokes chaotic magic!",
+    "message2": ""
+  },
+  "663": {
+    "name": "VoidusConsumere",
+    "description": "Summons the void between worlds to consume enemies,\ncausing various debilitating effects and possible instant death.",
+    "message1": "%1 summons the void between worlds!",
+    "message2": ""
+  },
+  "664": {
+    "name": "TemporisDistortio",
+    "description": "Distorts the fabric of time around enemies, causing\nrandom temporal effects and possible stat inversions.",
+    "message1": "%1 distorts the flow of time!",
+    "message2": ""
+  },
+  "665": {
+    "name": "TempestasOmnium",
+    "description": "Summons a chaotic tempest that randomly damages,\nheals, debuffs, or empowers both allies and enemies.",
+    "message1": "%1 summons a chaotic tempest!",
+    "message2": ""
+  },
+  "666": {
+    "name": "NumerusBestia",
+    "description": "Invokes the number of the beast to cause arcane devastation,\ndraining a third of enemies' HP and causing chaotic status effects.",
+    "message1": "%1 invokes forbidden numerology!",
+    "message2": ""
+  },
+  "667": {
+    "name": "FulmenChaos",
+    "description": "Calls down chaotic lightning that jumps unpredictably\nbetween targets, causing damage and paralysis.",
+    "message1": "%1 summons chaotic lightning!",
+    "message2": ""
+  },
+  "668": {
+    "name": "UltimumJudicium",
+    "description": "Invokes the final judgment, randomly causing instant death,\nmassive damage, or complete stat reduction on all enemies.",
+    "message1": "%1 invokes final judgment!",
+    "message2": ""
+  },
+  "669": {
+    "name": "IgnisViventis",
+    "description": "Infuses the caster's body with chaotic fire that both\nburns enemies and randomly alters everyone's stats.",
+    "message1": "%1 becomes living chaos flame!",
+    "message2": ""
+  },
+  "670": {
+    "name": "AquaPrimordialis",
+    "description": "Creates a pool of chaotic primordial water that randomly\nheals allies or damages enemies with unpredictable effects.",
+    "message1": "%1 summons primordial waters!",
+    "message2": ""
+  },
+  "671": {
+    "name": "TerraFractus",
+    "description": "Tears the earth open beneath enemies, causing damage\nand randomly swapping their locations and stats.",
+    "message1": "%1 tears the earth asunder!",
+    "message2": ""
+  },
+  "672": {
+    "name": "LuxDivinus",
+    "description": "Calls down divine light that judges all creatures,\nrandomly blessing allies or smiting enemies.",
+    "message1": "%1 calls divine judgment!",
+    "message2": ""
+  },
+  "673": {
+    "name": "InversioNaturae",
+    "description": "Creates a field of chaotic energy that randomly\nreverses all status effects in the battlefield.",
+    "message1": "%1 inverts the natural order!",
+    "message2": ""
+  },
+  "674": {
+    "name": "SalutisProhibitum",
+    "description": "A forbidden healing spell that fully restores an ally\nbut causes random chaotic effects to all others.",
+    "message1": "%1 invokes forbidden healing!",
+    "message2": ""
+  },
+  "675": {
+    "name": "VenenumChaos",
+    "description": "Infects enemies with chaotic magical poison that\nrandomly transforms into different status ailments.",
+    "message1": "%1 releases metamorphic toxin!",
+    "message2": ""
+  },
+  "676": {
+    "name": "VitaFurtivus",
+    "description": "Drains life force from enemies while randomly transferring\ntheir status effects to the caster or other enemies.",
+    "message1": "%1 drains chaotic life force!",
+    "message2": ""
+  },
+  "677": {
+    "name": "PotentiaIncertus",
+    "description": "Surrounds an ally with chaotic magical energy that randomly\nenhances some stats while reducing others each turn.",
+    "message1": "%1 invokes chaotic enhancement!",
+    "message2": ""
+  },
+  "678": {
+    "name": "ChaosUltimatum",
+    "description": "The ultimate chaotic spell that creates a maelstrom of\nall magical energies with completely unpredictable effects.",
+    "message1": "%1 unleashes absolute chaos!",
+    "message2": ""
+  },
+  "679": {
+    "name": "Nozh'Krathek",
+    "description": "Ng'tleth vruk'nath shar'goleth...\nK'thul mordiggian s'otheq nglui...",
+    "message1": "%1 chants: 'Vruk'nath shar'goleth!'",
+    "message2": ""
+  },
+  "680": {
+    "name": "Xhul'Morketh",
+    "description": "Ghz'reth malkur vy'heem k'goth...\nShub'xhul nyar thol'eth naglui...",
+    "message1": "%1 whispers: 'Malkur vy'heem k'goth...'",
+    "message2": ""
+  },
+  "681": {
+    "name": "Thezom'Vrux",
+    "description": "Vyr'zhul naqu'eth fha'gon thez...\nGl'burtok shub'niggurath mogthol...",
+    "message1": "%1 screams: 'VYR'ZHUL NAQU'ETH FHA'GON!'",
+    "message2": ""
+  },
+  "682": {
+    "name": "Vril'Nazoketh",
+    "description": "Kl'yex nazog'eth vril'qux nathrak...\nThoz'oth n'ghatal yr'kith ghatanothoa...",
+    "message1": "%1 howls: 'Kl'yex nazog'eth vril'qux!'",
+    "message2": ""
+  },
+  "683": {
+    "name": "Fhor'Qithor",
+    "description": "Zhul'thrak nyg'lathotep fhor'qith...\nYib'ghul nogthul m'xathul krithek...",
+    "message1": "%1 intones: 'Zhul'thrak nyg'lathotep...'",
+    "message2": ""
+  },
+  "684": {
+    "name": "Ur'Akimoth",
+    "description": "Nith'drux vhal'qor zhoth'nax ur'akim...\nGrah'nul sothoth nyog'sothep t'yogsoth...",
+    "message1": "%1 speaks backwards: 'Htoysgoy'T pehtos'goyn...'",
+    "message2": ""
+  },
+  "685": {
+    "name": "Zin'Tharaq",
+    "description": "Quhl'nek zin'thrak volguth sh'nagrath...\nXhul'tharaq n'gathog ul'gynoth vhol'tek...",
+    "message1": "%1 voice echoes: 'Quhl'nek zin'thrak volguth...'",
+    "message2": ""
+  },
+  "686": {
+    "name": "Yog'Thulex",
+    "description": "Yth'nax zhul'guroth naq'thel bro'khazad...\nGl'uthok yogsothoth krith'nex tha'nex...",
+    "message1": "%1 blood boils: 'YTH'NAX ZHUL'GUROTH NAQ'THEL!'",
+    "message2": ""
+  },
+  "687": {
+    "name": "Nil'Zhothep",
+    "description": "Nith'ghuloth shar'thrak y'golnax zhot'grul...\nXha'kul nyarlathotep shub'ygoth nith'zhol...",
+    "message1": "%1 eyes bleed: 'Nith'ghuloth shar'thrak...'",
+    "message2": ""
+  },
+  "688": {
+    "name": "Azath'Othep",
+    "description": "KTHUL'ZHOTEP NITH'GHULOQ YOG'XHUL NAK'THOTH...\nAZA'THOGUA FTAGN CTHULHU R'LYEH...",
+    "message1": "%1 shatters reality: 'KTHUL'ZHOTEP NITH'GHULOQ YOG'XHUL!'",
+    "message2": ""
+  },
+  "689": {
+    "name": "PurifyingBlaze",
+    "description": "Ignites your own body in purifying flames,\nburning away 20% of your maximum HP.",
+    "message1": "%1 ignites in purifying flames!",
+    "message2": ""
+  },
+  "690": {
+    "name": "FleshConsumption",
+    "description": "Consumes your own flesh with magical fire,\ninflicting severe burns and reducing STR.",
+    "message1": "%1 burns with consuming flames!",
+    "message2": ""
+  },
+  "691": {
+    "name": "ChaosSacrifice",
+    "description": "Sacrifices HP and mental stability to chaotic forces,\ncausing confusion and severe magical vulnerability.",
+    "message1": "%1 makes a chaotic sacrifice!",
+    "message2": ""
+  },
+  "692": {
+    "name": "VitalDrain",
+    "description": "Drains your own life force into nothingness,\ncausing bleeding and severe physical weakness.",
+    "message1": "%1 drains their own life force!",
+    "message2": ""
+  },
+  "693": {
+    "name": "SelfElectrocution",
+    "description": "Channels lightning through your own body,\nparalyzing yourself and reducing DEX.",
+    "message1": "%1 electrocutes themself!",
+    "message2": ""
+  },
+  "694": {
+    "name": "BloodFreezing",
+    "description": "Freezes your own blood with dark ice magic,\nslowing movement and reducing combat capabilities.",
+    "message1": "%1 freezes their own blood!",
+    "message2": ""
+  },
+  "695": {
+    "name": "MagicSeverance",
+    "description": "Severs your connection to magical energies,\nsilencing yourself and depleting MP.",
+    "message1": "%1 severs their magical connection!",
+    "message2": ""
+  },
+  "696": {
+    "name": "DeathSlumber",
+    "description": "Puts yourself into a deep slumber while draining\nlife energy, causing prolonged unconsciousness.",
+    "message1": "%1 falls into a death-like slumber!",
+    "message2": ""
+  },
+  "697": {
+    "name": "SoulCorruption",
+    "description": "Invites darkness into your soul, causing\nsevere spiritual damage and vulnerability.",
+    "message1": "%1 invites darkness into their soul!",
+    "message2": ""
+  },
+  "698": {
+    "name": "BoneCrushing",
+    "description": "Crushes your own bones with earth magic,\ncausing knockdown and severe physical weakness.",
+    "message1": "%1 crushes their own bones!",
+    "message2": ""
+  },
+  "699": {
+    "name": "DespairingSacrifice",
+    "description": "Sacrifices nearly half your life force\nwhile inflicting multiple debilitating conditions.",
+    "message1": "%1 makes a terrible life sacrifice!",
+    "message2": ""
+  },
+  "700": {
+    "name": "TotalDestruction",
+    "description": "The ultimate self-destruction spell that nearly\nkills the caster while destroying their capabilities.",
+    "message1": "%1 completely self-destructs!",
+    "message2": ""
+  },
+  "701": {
+    "name": "PSI MemoryLoop",
+    "description": "Forces the target to experience their worst memory\non endless loop while their mind slowly unravels.",
+    "message1": "%1 traps the enemy in their worst memory!",
+    "message2": ""
+  },
+  "702": {
+    "name": "ParasiteNest",
+    "description": "Causes thousands of invisible insects to burrow\nunder the target's skin, eating them from within.",
+    "message1": "%1 summons flesh-burrowing parasites!",
+    "message2": ""
+  },
+  "703": {
+    "name": "ShadowSeverance",
+    "description": "Rips the shadow from the target's body, causing\ntheir form to decay as their reflection murders them.",
+    "message1": "%1 tears away the enemy's shadow!",
+    "message2": ""
+  },
+  "704": {
+    "name": "ReverseAging",
+    "description": "Traps the target in a pocket dimension where time\npasses backward, aging them until only dust remains.",
+    "message1": "%1 creates a backward time pocket!",
+    "message2": ""
+  },
+  "705": {
+    "name": "ThousandDeaths",
+    "description": "Makes the target experience their own death in\nevery possible way simultaneously through nightmares.",
+    "message1": "%1 forces a thousand death visions!",
+    "message2": ""
+  },
+  "706": {
+    "name": "PainAmplification",
+    "description": "Rewires the target's nervous system so their pain\nreceptors interpret all sensations as excruciating agony.",
+    "message1": "%1 amplifies all pain receptors!",
+    "message2": ""
+  },
+  "707": {
+    "name": "VoidGaze",
+    "description": "Replaces the target's eyes with windows to the void,\nforcing them to witness horrors beyond comprehension.",
+    "message1": "%1 replaces the enemy's eyes with void windows!",
+    "message2": ""
+  },
+  "708": {
+    "name": "SoulExtraction",
+    "description": "Splits the target's soul from their body\nas you destroy their physical form.",
+    "message1": "%1 performs soul extraction!",
+    "message2": ""
+  },
+  "709": {
+    "name": "ExistentialErasure",
+    "description": "Temporarily erases the target from existence, forcing\nthem to experience the horror of nonbeing.",
+    "message1": "%1 temporarily erases the enemy from existence!",
+    "message2": ""
+  },
+  "710": {
+    "name": "GlassBones",
+    "description": "Turns the target's bones into glass that shatters\nwith their every movement, filling them with shards.",
+    "message1": "%1 transforms bones into shattering glass!",
+    "message2": ""
+  },
+  "711": {
+    "name": "ElectricBlood",
+    "description": "Replaces the target's blood with liquid electricity,\nfrying their organs and nervous system from within.",
+    "message1": "%1 fills the enemy's veins with electricity!",
+    "message2": ""
+  },
+  "712": {
+    "name": "PSI Trauma Cascade",
+    "description": "Forces the target to relive every painful moment in\ntheir life simultaneously in an endless mental loop.",
+    "message1": "%1 creates a trauma cascade!",
+    "message2": ""
+  },
+  "713": {
+    "name": "ExistentialObliteration",
+    "description": "The ultimate horror spell that unmakes the target\nfrom reality itself, erasing their entire existence.",
+    "message1": "%1 erases the enemy from all of existence!",
+    "message2": ""
+  },
+  "714": {
+    "name": "PSI Combat Focus",
+    "description": "Focus your mind on combat techniques,\nslightly increasing Attack power.",
+    "message1": "%1 focuses on combat techniques!",
+    "message2": ""
+  },
+  "715": {
+    "name": "Muscle Guard",
+    "description": "Tense your muscles in preparation for impact,\nslightly increasing COS.",
+    "message1": "%1 tenses their muscles!",
+    "message2": ""
+  },
+  "716": {
+    "name": "Dynamic Stretch",
+    "description": "Perform dynamic stretching exercises,\nslightly increasing DEX.",
+    "message1": "%1 performs dynamic stretches!",
+    "message2": ""
+  },
+  "717": {
+    "name": "Stance Training",
+    "description": "Improve your stance and footwork,\nslightly increasing PSI.",
+    "message1": "%1 improves their stance!",
+    "message2": ""
+  },
+  "718": {
+    "name": "Precision Drill",
+    "description": "Practice precision striking techniques,\nslightly increasing Accuracy.",
+    "message1": "%1 practices precision strikes!",
+    "message2": ""
+  },
+  "719": {
+    "name": "Breath Control",
+    "description": "Perform a quick breathing exercise that\nslightly increases Energy and restores TP.",
+    "message1": "%1 performs breathing exercises!",
+    "message2": ""
+  },
+  "720": {
+    "name": "Combat Analysis",
+    "description": "Analyze your opponent's movements,\nslightly increasing critical hit rate.",
+    "message1": "%1 analyzes their opponent!",
+    "message2": ""
+  },
+  "721": {
+    "name": "Over Break",
+    "description": "Push your body beyond normal limits,\nslightly increasing Attack and DEX.",
+    "message1": "%1 pushes beyond normal limits!",
+    "message2": ""
+  },
+  "722": {
+    "name": "Core Training",
+    "description": "STRen your core muscles,\nslightly increasing COS and SAG.",
+    "message1": "%1 STRens their core!",
+    "message2": ""
+  },
+  "723": {
+    "name": "Vita lTargeting",
+    "description": "Focus your aim on vital points,\nslightly increasing Accuracy and critical rate.",
+    "message1": "%1 targets vital points!",
+    "message2": ""
+  },
+  "724": {
+    "name": "Defensive Drill",
+    "description": "Practice dodging and parrying techniques,\nslightly increasing PSI and COS.",
+    "message1": "%1 practices defensive maneuvers!",
+    "message2": ""
+  },
+  "725": {
+    "name": "Energy Restoration",
+    "description": "Perform a restoration exercise that\nfreshens the mind and body, restoring HP and TP.",
+    "message1": "%1 performs restorative exercises!",
+    "message2": ""
+  },
+  "726": {
+    "name": "Combat Readiness",
+    "description": "Enter a state of heightened focus,\nslightly increasing all combat abilities.",
+    "message1": "%1 enters a state of heightened focus!",
+    "message2": ""
+  },
+  "727": {
+    "name": "Rapid Conditioning",
+    "description": "Perform intense rapid training that\nproduces quick results but is physically taxing.",
+    "message1": "%1 performs intense rapid training!",
+    "message2": ""
+  },
+  "728": {
+    "name": "Defensive Conditioning",
+    "description": "Focus completely on defensive techniques,\nmoderately increasing COS but reducing Attack.",
+    "message1": "%1 focuses on defensive techniques!",
+    "message2": ""
+  },
+  "729": {
+    "name": "Offensive Conditioning",
+    "description": "Focus completely on offensive techniques,\nmoderately increasing Attack but reducing COS.",
+    "message1": "%1 focuses on offensive techniques!",
+    "message2": ""
+  },
+  "730": {
+    "name": "Battle Training",
+    "description": "Undergo extensive combat training that\nmoderately improves all physical capabilities.",
+    "message1": "%1 completes battle training!",
+    "message2": ""
+  },
+  "731": {
+    "name": "RadiantLight",
+    "description": "Calls down a column of holy light that heals allies\nand damages enemies with divine judgment.",
+    "message1": "%1 calls down radiant light!",
+    "message2": ""
+  },
+  "732": {
+    "name": "DivineBarrier",
+    "description": "Summons a divine barrier that turns an enemy's\nnegative energy back on themselves.",
+    "message1": "%1 creates a divine barrier!",
+    "message2": ""
+  },
+  "733": {
+    "name": "HeavenlyJudgment",
+    "description": "Calls upon heavenly justice to punish the wicked\nwith searing columns of holy fire.",
+    "message1": "%1 unleashes heavenly judgment!",
+    "message2": ""
+  },
+  "734": {
+    "name": "DivineHealing",
+    "description": "Heal wounds through divine intervention,\nrestoring a moderate amount of HP to one ally.",
+    "message1": "%1 prays for healing!",
+    "message2": ""
+  },
+  "735": {
+    "name": "HealingScripture",
+    "description": "Recite holy scripture that heals wounds\nfor all allies with divine light.",
+    "message1": "%1 recites healing scripture!",
+    "message2": ""
+  },
+  "736": {
+    "name": "BlessingProtection",
+    "description": "Bless an ally with holy protection,\nincreasing their COS and SAG.",
+    "message1": "%1 bestows a blessing of protection!",
+    "message2": ""
+  },
+  "737": {
+    "name": "DivineEmpowerment",
+    "description": "Pray for divine light to empower an ally,\nincreasing their STR and INT.",
+    "message1": "%1 prays for divine STR!",
+    "message2": ""
+  },
+  "738": {
+    "name": "PurifyingPrayer",
+    "description": "Cleanse an ally of negative status effects\nthrough the power of holy prayer.",
+    "message1": "%1 performs ritual cleansing!",
+    "message2": ""
+  },
+  "739": {
+    "name": "MassPurification",
+    "description": "Perform a ritual that cleanses all allies\nof negative status effects.",
+    "message1": "%1 performs a mass purification!",
+    "message2": ""
+  },
+  "740": {
+    "name": "Resurrection",
+    "description": "Resurrect a fallen ally with a fraction\nof their HP restored.",
+    "message1": "%1 performs a resurrection prayer!",
+    "message2": ""
+  },
+  "741": {
+    "name": "HolyCircle",
+    "description": "Create a circle of holy light that damages\nall enemies with divine power.",
+    "message1": "%1 creates a circle of holy light!",
+    "message2": ""
+  },
+  "742": {
+    "name": "DivineHammer",
+    "description": "Call down a divine hammer of light that\nstrikes a single enemy with immense force.",
+    "message1": "%1 summons a divine hammer!",
+    "message2": ""
+  },
+  "743": {
+    "name": "HolyPillars",
+    "description": "Creates pillars of holy fire that erupt from\nthe ground beneath multiple enemies.",
+    "message1": "%1 summons pillars of holy fire!",
+    "message2": ""
+  },
+  "744": {
+    "name": "DivineShield",
+    "description": "Create a divine shield around all allies\nthat reduces incoming damage.",
+    "message1": "%1 creates a divine shield!",
+    "message2": ""
+  },
+  "745": {
+    "name": "MiraculousHealing",
+    "description": "Channel miraculous healing energy that\nfully restores an ally's HP.",
+    "message1": "%1 performs a miraculous healing!",
+    "message2": ""
+  },
+  "746": {
+    "name": "DivineResurrection",
+    "description": "Bless a fallen ally with divine energy,\nresurrecting them with full HP.",
+    "message1": "%1 performs a divine resurrection!",
+    "message2": ""
+  },
+  "747": {
+    "name": "MassHealing",
+    "description": "Pray for miraculous healing energy that\nrestores HP to all allies.",
+    "message1": "%1 prays for mass healing!",
+    "message2": ""
+  },
+  "748": {
+    "name": "DivineOrb",
+    "description": "Channel divine wrath into an orb of holy energy\nthat explodes on contact with an enemy.",
+    "message1": "%1 creates an orb of divine wrath!",
+    "message2": ""
+  },
+  "749": {
+    "name": "RegenerativeBlessing",
+    "description": "Cast a divine blessing on an ally that restores\na small amount of HP each turn.",
+    "message1": "%1 casts regenerative blessing!",
+    "message2": ""
+  },
+  "750": {
+    "name": "AngelJudgment",
+    "description": "Summon an angel of judgment that delivers\ndivine punishment to all enemies.",
+    "message1": "%1 summons an angel of judgment!",
+    "message2": ""
+  },
+  "751": {
+    "name": "DivineAnnihilation",
+    "description": "Channel the ultimate divine power that annihilates\nevil with overwhelming holy light.",
+    "message1": "%1 unleashes divine annihilation!",
+    "message2": ""
+  },
+  "752": {
+    "name": "DivineInsight",
+    "description": "Pray for divine insight, slightly\nincreasing INT and MP recovery.",
+    "message1": "%1 prays for divine insight!",
+    "message2": ""
+  },
+  "753": {
+    "name": "DivineResilience",
+    "description": "Pray for divine resilience, slightly\nincreasing SAG and HP recovery.",
+    "message1": "%1 prays for divine resilience!",
+    "message2": ""
+  },
+  "754": {
+    "name": "ScripturalMeditation",
+    "description": "Meditate on holy scriptures, restoring\na moderate amount of MP.",
+    "message1": "%1 meditates on holy scriptures!",
+    "message2": ""
+  },
+  "755": {
+    "name": "HolyChant",
+    "description": "Recite a holy chant that incrasees your\nspiritual connection.",
+    "message1": "%1 recites a holy chant!",
+    "message2": ""
+  },
+  "756": {
+    "name": "SacredVow",
+    "description": "Take a sacred vow that creates\na divine shield in front of you.",
+    "message1": "%1 takes a sacred vow!",
+    "message2": ""
+  },
+  "757": {
+    "name": "Spiritual Training",
+    "description": "Undergo spiritual training that significantly\nimproves SAG and INT.",
+    "message1": "%1 undergoes spiritual training!",
+    "message2": ""
+  },
+  "758": {
+    "name": "Divine Communion",
+    "description": "Enter a state of divine communion, greatly\nenhancing your magical abilities.",
+    "message1": "%1 enters divine communion!",
+    "message2": ""
+  },
+  "759": {
+    "name": "MaliceBlades",
+    "description": "Call upon dark powers to lacerate the target's\nflesh with invisible blades of malice.",
+    "message1": "%1 summons blades of malice!",
+    "message2": ""
+  },
+  "760": {
+    "name": "BloodCorruption",
+    "description": "Infuse the target's blood with a corrupting agent\nthat gnaws at their flesh from within.",
+    "message1": "%1 performs a blood corruption ritual!",
+    "message2": ""
+  },
+  "761": {
+    "name": "SoulRitual",
+    "description": "Invoke a dark binding that drains the target's\nlife force while empowering the caster.",
+    "message1": "%1 performs a soul-draining ritual!",
+    "message2": ""
+  },
+  "762": {
+    "name": "ShadowPack",
+    "description": "Summon a pack of shadow hounds that tear at\nthe flesh of all enemies with infernal teeth.",
+    "message1": "%1 summons shadow hounds!",
+    "message2": ""
+  },
+  "763": {
+    "name": "CorruptionVortex",
+    "description": "Create a vortex of corrupting energy that\ngradually decays the target's body and mind.",
+    "message1": "%1 creates a corruption vortex!",
+    "message2": ""
+  },
+  "764": {
+    "name": "DamnationMark",
+    "description": "Place a mark of damnation on the target that\ncauses their skin to bubble and melt.",
+    "message1": "%1 places the mark of damnation!",
+    "message2": ""
+  },
+  "765": {
+    "name": "ScreamingSummon",
+    "description": "Summon screaming skulls that circle around all\nenemies, causing terror and spiritual damage.",
+    "message1": "%1 summons screaming skulls!",
+    "message2": ""
+  },
+  "766": {
+    "name": "LifeDrain",
+    "description": "Drain life energy from the target and\nuse it to restore the caster's own vitality.",
+    "message1": "%1 performs a life drain ritual!",
+    "message2": ""
+  },
+  "767": {
+    "name": "ManaVampirism",
+    "description": "Draw magical energy from the target,\nrestoring the caster's MP.",
+    "message1": "%1 drains magical essence!",
+    "message2": ""
+  },
+  "768": {
+    "name": "BloodSacrifice",
+    "description": "Invoke a forbidden ritual that sacrifices a portion\nof your HP to unleash devastating dark power.",
+    "message1": "%1 performs a blood sacrifice ritual!",
+    "message2": ""
+  },
+  "769": {
+    "name": "VenomousPlague",
+    "description": "Unleash a plague of locusts with venomous bites\nthat swarm and attack all enemies.",
+    "message1": "%1 unleashes a plague of locusts!",
+    "message2": ""
+  },
+  "770": {
+    "name": "AbyssalTentacles",
+    "description": "Open a portal to the abyss that releases\nwrithing tentacles to crush a single enemy.",
+    "message1": "%1 opens a portal to the abyss!",
+    "message2": ""
+  },
+  "771": {
+    "name": "BloodBarrier",
+    "description": "Sacrifice blood to create a protective barrier that\nreduces damage and reflects a portion back to attackers.",
+    "message1": "%1 creates a blood barrier!",
+    "message2": ""
+  },
+  "772": {
+    "name": "DarkRitual",
+    "description": "Create a pact with dark entities that enhances\nyour DEX and attack power.",
+    "message1": "%1 forms a dark pact!",
+    "message2": ""
+  },
+  "773": {
+    "name": "CurseRitual",
+    "description": "Transfer curses and status ailments from yourself\nto an enemy, while stealing their positive effects.",
+    "message1": "%1 performs a curse transfer ritual!",
+    "message2": ""
+  },
+  "774": {
+    "name": "AbilityCircle",
+    "description": "Create a circle of arcane symbols that\nsteals the abilities of enemies.",
+    "message1": "%1 creates an ability theft circle!",
+    "message2": ""
+  },
+  "775": {
+    "name": "ForbiddenResurrection",
+    "description": "Sacrifice HP to resurrect a fallen ally\nwith a portion of their HP and MP.",
+    "message1": "%1 performs a forbidden resurrection!",
+    "message2": ""
+  },
+  "776": {
+    "name": "BlueStorm",
+    "description": "Create a storm of spell locking \nblades that slice with unholy precision.",
+    "message1": "%1 summons a crimson blade storm!",
+    "message2": ""
+  },
+  "777": {
+    "name": "DemonicCatastrophe",
+    "description": "Invoke the name of an ancient demonic entity\nto unleash catastrophic destruction on all enemies.",
+    "message1": "%1 invokes an ancient demonic name!",
+    "message2": ""
+  },
+  "778": {
+    "name": "DarknessPower",
+    "description": "Draw power from dark entities to enhance\nyour DEX and accuracy.",
+    "message1": "%1 draws power from the darkness!",
+    "message2": ""
+  },
+  "779": {
+    "name": "Malicious Focus",
+    "description": "Focus your mind on evil intentions,\nincreasing your critical hit rate.",
+    "message1": "%1 focuses on evil intentions!",
+    "message2": ""
+  },
+  "780": {
+    "name": "MinorSacrifice",
+    "description": "Cut your palm to draw power from your own blood,\nrestoring TP but sacrificing some HP.",
+    "message1": "%1 performs a minor blood sacrifice!",
+    "message2": ""
+  },
+  "781": {
+    "name": "DarkChannel",
+    "description": "Channel dark energy into your limbs,\nincreasing STR and PSI.",
+    "message1": "%1 channels dark energy!",
+    "message2": ""
+  },
+  "782": {
+    "name": "DarkTrance",
+    "description": "Enter a trance state that allows you to\nmove with supernatural quickness.",
+    "message1": "%1 enters a dark trance!",
+    "message2": ""
+  },
+  "783": {
+    "name": "MajorSacrifice",
+    "description": "Make a significant blood sacrifice that greatly\nenhances all physical capabilities but drains HP.",
+    "message1": "%1 makes a significant blood sacrifice!",
+    "message2": ""
+  },
+  "784": {
+    "name": "ShadowPact",
+    "description": "Form a pact with shadows that greatly improves\nstealth and PSI abilities.",
+    "message1": "%1 forms a pact with shadows!",
+    "message2": ""
+  },
+  "785": {
+    "name": "UnholyTransformation",
+    "description": "Undergo an unholy\ntransformation.",
+    "message1": "%1 undergoes an unholy transformation!",
+    "message2": ""
+  },
+  "786": {
+    "name": "Executive Order",
+    "description": "Overloads the opponent's mental circuits\nwith an authoritative shout.",
+    "message1": "%1 shouts with command!",
+    "message2": ""
+  },
+  "787": {
+    "name": "Market Domination",
+    "description": "Unleashes corporate psychic pressure\non all opponents.",
+    "message1": "%1 exerts psychic dominance!",
+    "message2": ""
+  },
+  "788": {
+    "name": "Synergy Surge",
+    "description": "Raises team morale and productivity,\nboosting INT and SAG.",
+    "message1": "%1 issues a corporate pep talk!",
+    "message2": ""
+  },
+  "789": {
+    "name": "PSI Quarterly Blast",
+    "description": "Fires a focused stream of psychokinetic\nenergy at a single target.",
+    "message1": "%1 focuses psychic fire!",
+    "message2": ""
+  },
+  "790": {
+    "name": "PSI Cognitive Dissonance",
+    "description": "Clouds the mind of an enemy,\ncausing confusion.",
+    "message1": "%1 disrupts %2's thoughts!",
+    "message2": ""
+  },
+  "791": {
+    "name": "Streamline Protocol",
+    "description": "Streamlines all processes,\nincreasing DEX and PSI of party.",
+    "message1": "%1 optimizes team workflows!",
+    "message2": ""
+  },
+  "792": {
+    "name": "Delegation Matrix",
+    "description": "Assigns clear roles and goals,\nboosting DEF and MDF for all allies.",
+    "message1": "%1 initiates task delegation!",
+    "message2": ""
+  },
+  "793": {
+    "name": "Coffee Break",
+    "description": "Restores 5 TP to the user\nand grants temporary speed boost.",
+    "message1": "%1 drinks a productivity espresso!",
+    "message2": ""
+  },
+  "794": {
+    "name": "Efficiency Surge",
+    "description": "Hastens a single ally’s mind,\ngranting extra action this turn.",
+    "message1": "%1 boosts productivity to max!",
+    "message2": ""
+  },
+  "795": {
+    "name": "Termination Beam",
+    "description": "Punishes inefficiency with a mental shock\nthat deals damage and lowers target’s MAT.",
+    "message1": "%1 fires someone psychically!",
+    "message2": ""
+  },
+  "796": {
+    "name": "Encore",
+    "description": "Plays an energizing melody\nthat restores 10 TP to all allies.",
+    "message1": "%1 plays a rousing tune!",
+    "message2": ""
+  },
+  "797": {
+    "name": "Stage Presence",
+    "description": "A mesmerizing performance that\nhas a chance to charm all enemies.",
+    "message1": "%1 charms the audience!",
+    "message2": ""
+  },
+  "798": {
+    "name": "Solo Break",
+    "description": "Improvised solo increases\nuser's ATK and MAT for 3 turns.",
+    "message1": "%1 riffs a wicked solo!",
+    "message2": ""
+  },
+  "799": {
+    "name": "Nocturne",
+    "description": "A haunting melody that may\ninflict sleep on all enemies.",
+    "message1": "%1 hums a lullaby...",
+    "message2": ""
+  },
+  "800": {
+    "name": "Feedback Blast",
+    "description": "Generates a wall of sound\nthat damages and deafens a single enemy.",
+    "message1": "%1 unleashes sonic feedback!",
+    "message2": ""
+  },
+  "801": {
+    "name": "Water Cannon",
+    "description": "Blasts enemies with high-pressure water,\ncausing water-type damage to all foes.",
+    "message1": "%1 activates the water cannon!",
+    "message2": ""
+  },
+  "802": {
+    "name": "Suppressive Spray",
+    "description": "Douses a single enemy with an impact\nof water. Slightly lowers its STR.",
+    "message1": "%1 sprays target with foam!",
+    "message2": ""
+  },
+  "803": {
+    "name": "Burn Treatment",
+    "description": "Applies burn ointment to all allies,\nrestoring HP moderately.",
+    "message1": "%1 distributes first aid supplies!",
+    "message2": ""
+  },
+  "804": {
+    "name": "Rescue Axe",
+    "description": "Breaks down debris in the way,\nremoving stun and paralysis from allies.",
+    "message1": "%1 clears the path!",
+    "message2": ""
+  },
+  "805": {
+    "name": "Emergency Exit",
+    "description": "Forces open sealed exits,\nallowing all allies to escape from battle.",
+    "message1": "%1 forces an emergency evacuation!",
+    "message2": ""
+  },
+  "806": {
+    "name": "Flood Protocol",
+    "description": "Summons a deluge to douse fires\nand harm all Fire-type enemies.",
+    "message1": "%1 unleashes the deluge!",
+    "message2": ""
+  },
+  "807": {
+    "name": "Foam Barrier",
+    "description": "A quick shot of foam reduces incoming\nfire damage for 3 turns.",
+    "message1": "%1 coats %2 with foam!",
+    "message2": ""
+  },
+  "808": {
+    "name": "Field Treatment",
+    "description": "Provides a burst of first aid,\nhealing a single ally and curing burns.",
+    "message1": "%1 administers aid!",
+    "message2": ""
+  },
+  "809": {
+    "name": "Ventilate",
+    "description": "Clears smoke and debris,\nboosting accuracy and PSI of allies.",
+    "message1": "%1 clears the vision!",
+    "message2": ""
+  },
+  "810": {
+    "name": "Firebreaker Charge",
+    "description": "Charges through flames with protective gear,\ndamaging and stunning one enemy.",
+    "message1": "%1 smashes through the flames!",
+    "message2": ""
+  },
+  "811": {
+    "name": "Baton Strike",
+    "description": "Strikes with a baton, potentially\nstunning the target.",
+    "message1": "%1 strikes with firm control!",
+    "message2": ""
+  },
+  "812": {
+    "name": "Freeze Command",
+    "description": "Orders a target to freeze,\ninflicting silence.",
+    "message1": "%1 shouts: Freeze!",
+    "message2": ""
+  },
+  "813": {
+    "name": "Psychic Cuffs",
+    "description": "Restrains a foe with psychic handcuffs,\ninflicting bind.",
+    "message1": "%1 attempts a psychic arrest!",
+    "message2": ""
+  },
+  "814": {
+    "name": "Tactical Fog",
+    "description": "Releases non-lethal suppression gas\nthat causes confusion.",
+    "message1": "%1 uses suppression gas!",
+    "message2": ""
+  },
+  "815": {
+    "name": "Stun Round",
+    "description": "Fires a stun shot that deals damage\nand may paralyze the target.",
+    "message1": "%1 fires a stun shot!",
+    "message2": ""
+  },
+  "816": {
+    "name": "Commanding Voice",
+    "description": "Shouts with authority, lowering\nSTR and SAG of all enemies.",
+    "message1": "%1 commands: Disperse now!",
+    "message2": ""
+  },
+  "817": {
+    "name": "Riot Bash",
+    "description": "Charges with a riot shield,\ndamaging and knocking back the foe.",
+    "message1": "%1 charges in with the shield!",
+    "message2": ""
+  },
+  "818": {
+    "name": "De-Escalate",
+    "description": "Absorbs enemy aggression,\nrestoring some TP to the user.",
+    "message1": "%1 defuses the encounter!",
+    "message2": ""
+  },
+  "819": {
+    "name": "Flashbang",
+    "description": "Uses flashbang to lower accuracy\nof all enemies.",
+    "message1": "%1 hurls a flashbang!",
+    "message2": ""
+  },
+  "820": {
+    "name": "Tactical Regroup",
+    "description": "Quickly regains posture and composure,\nremoving confusion or fear.",
+    "message1": "%1 regroups quickly!",
+    "message2": ""
+  },
+  "821": {
+    "name": "VineLash",
+    "description": "Strikes a single foe with whipping vines.",
+    "message1": "%1 lashes vines at %2!",
+    "message2": ""
+  },
+  "822": {
+    "name": "EntanglingRoots",
+    "description": "Immobilizes a foe with entangling roots.",
+    "message1": "%1 ensnares %2 in roots!",
+    "message2": ""
+  },
+  "823": {
+    "name": "SporeCloud",
+    "description": "Releases a cloud of toxic spores\nthat poisons all enemies.",
+    "message1": "%1 releases a spore cloud!",
+    "message2": ""
+  },
+  "824": {
+    "name": "ThornArmor",
+    "description": "Envelops self in thorny armor\nthat damages attackers.",
+    "message1": "%1 surrounds itself with thorns!",
+    "message2": ""
+  },
+  "825": {
+    "name": "VampireSeed",
+    "description": "Drains HP from a foe over time.",
+    "message1": "%1 injects a leech seed!",
+    "message2": ""
+  },
+  "826": {
+    "name": "Regrowth",
+    "description": "Regenerates the user’s HP.",
+    "message1": "%1 draws life from the earth!",
+    "message2": ""
+  },
+  "827": {
+    "name": "LeafStorm",
+    "description": "Whips up a fierce storm of leaves\nthat hits every enemy.",
+    "message1": "%1 unleashes a leaf storm!",
+    "message2": ""
+  },
+  "828": {
+    "name": "SeedGranade",
+    "description": "Hurls a hardened seed at one enemy.",
+    "message1": "%1 throws a seed bomb at %2!",
+    "message2": ""
+  },
+  "829": {
+    "name": "TreeSummon",
+    "description": "Summons a lesser treant to fight\nalongside you.",
+    "message1": "%1 calls forth a treant ally!",
+    "message2": ""
+  },
+  "830": {
+    "name": "Photosynthesis",
+    "description": "Channels sunlight to restore own HP.",
+    "message1": "%1 absorbs sunlight!",
+    "message2": ""
+  },
+  "831": {
+    "name": "Barkskin",
+    "description": "Hardens bark, boosting defense.",
+    "message1": "%1 hardens its bark!",
+    "message2": ""
+  },
+  "832": {
+    "name": "SeedSprawl",
+    "description": "Bombards all foes with exploding seeds.",
+    "message1": "%1 scatters explosive seeds!",
+    "message2": ""
+  },
+  "833": {
+    "name": "RottingSpores",
+    "description": "Creates a cloud that poisons all foes.",
+    "message1": "%1 summons poisonous rot!",
+    "message2": ""
+  },
+  "834": {
+    "name": "VineSurge",
+    "description": "Rapid vines strike random foes multiple times.",
+    "message1": "Vines lash out at random targets!",
+    "message2": ""
+  },
+  "835": {
+    "name": "ForestEmbrace",
+    "description": "Heals all allies with forest energy.",
+    "message1": "Forest's embrace restores HP!",
+    "message2": ""
+  },
+  "836": {
+    "name": "Talk",
+    "description": "Basic attack",
+    "message1": "%1 talks to the enemy!",
+    "message2": ""
+  },
+  "837": {
+    "name": "Spit",
+    "description": "Basic attack",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "838": {
+    "name": "Push",
+    "description": "Basic attack",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "839": {
+    "name": "Check",
+    "description": "Check the enemy.",
+    "message1": "%1 checks the enemy!",
+    "message2": ""
+  },
+  "840": {
+    "name": "DEX Attack",
+    "description": "Basic dex attack",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "841": {
+    "name": "MIX Attack",
+    "description": "Basic str dex attack",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "842": {
+    "name": "PSI Attack",
+    "description": "Basic PSI attack",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "843": {
+    "name": "INT Attack",
+    "description": "Basic INT attack",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "844": {
+    "name": "CON Attack",
+    "description": "Basic CON attack",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "845": {
+    "name": "SAG Attack",
+    "description": "Basic SAG attack",
+    "message1": "%1 attacks!",
+    "message2": ""
+  },
+  "846": {
+    "name": "Dodge",
+    "description": "Basic guard",
+    "message1": "%1 guards.",
+    "message2": ""
+  },
+  "847": {
+    "name": "Assist",
+    "description": "Use a skill from another party member, ad\nreduced cost if primary or secondary.",
+    "message1": "",
+    "message2": ""
+  },
+  "848": {
+    "name": "Fly",
+    "description": "Use wings or levitation to fly in world map.",
+    "message1": "",
+    "message2": ""
+  },
+  "849": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "850": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "851": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "852": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  },
+  "853": {
+    "name": "",
+    "description": "",
+    "message1": "",
+    "message2": ""
+  }
+}

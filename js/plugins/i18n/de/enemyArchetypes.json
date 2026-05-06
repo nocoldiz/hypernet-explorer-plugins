@@ -1,0 +1,2322 @@
+{
+  "enemyArchetypes": {
+    "humanoid": {
+      "name": "Humanoid",
+      "head": {
+        "name": "Head"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Torso crushed!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left Arm ripped off!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right Arm ripped off!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg cut off!"
+      },
+      "brain": {
+        "name": "Brain",
+        "msg": "Brain concussed!"
+      },
+      "left_eye": {
+        "name": "Left Eye",
+        "msg": "Left eye swollen shut!"
+      },
+      "right_eye": {
+        "name": "Right Eye",
+        "msg": "Right eye swollen shut!"
+      },
+      "nose": {
+        "name": "Nose",
+        "msg": "Nose broken!"
+      },
+      "left_ear": {
+        "name": "Left Ear",
+        "msg": "Left ear ringing!"
+      },
+      "right_ear": {
+        "name": "Right Ear",
+        "msg": "Right ear ringing!"
+      },
+      "mouth": {
+        "name": "Mouth",
+        "msg": "Jaw dislocated!"
+      },
+      "teeth": {
+        "name": "Teeth",
+        "msg": "Teeth knocked out!"
+      },
+      "genitals": {
+        "name": "Genitals",
+        "msg": "Genitals damaged!"
+      },
+      "heart": {
+        "name": "Heart",
+        "msg": "Heart damaged!"
+      },
+      "left_lung": {
+        "name": "Left Lung",
+        "msg": "Left lung collapsed!"
+      },
+      "right_lung": {
+        "name": "Right Lung",
+        "msg": "Right lung collapsed!"
+      },
+      "liver": {
+        "name": "Liver",
+        "msg": "Liver lacerated!"
+      },
+      "stomach": {
+        "name": "Stomach",
+        "msg": "Stomach ruptured!"
+      },
+      "spleen": {
+        "name": "Spleen",
+        "msg": "Spleen ruptured!"
+      },
+      "intestines": {
+        "name": "Intestines",
+        "msg": "Intestines perforated!"
+      },
+      "left_hand": {
+        "name": "Left Hand",
+        "msg": "Left hand mangled!"
+      },
+      "left_fingers": {
+        "name": "Left Fingers",
+        "msg": "Left fingers broken!"
+      },
+      "right_hand": {
+        "name": "Right Hand",
+        "msg": "Right hand mangled!"
+      },
+      "right_fingers": {
+        "name": "Right Fingers",
+        "msg": "Right fingers broken!"
+      },
+      "left_foot": {
+        "name": "Left Foot",
+        "msg": "Left foot damaged!"
+      },
+      "left_toes": {
+        "name": "Left Toes",
+        "msg": "Left toes crushed!"
+      },
+      "right_foot": {
+        "name": "Right Foot",
+        "msg": "Right foot damaged!"
+      },
+      "right_toes": {
+        "name": "Right Toes",
+        "msg": "Right toes crushed!"
+      }
+    },
+    "beast": {
+      "name": "Beast",
+      "head": {
+        "name": "Head"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body crushed!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg cut off!"
+      },
+      "rear_left_leg": {
+        "name": "Rear Left Leg",
+        "msg": "Rear Left Leg cut off!"
+      },
+      "rear_right_leg": {
+        "name": "Rear Right Leg",
+        "msg": "Rear Right Leg cut off!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail hacked off!"
+      }
+    },
+    "insectoid": {
+      "head": {
+        "name": "Head"
+      },
+      "thorax": {
+        "name": "Thorax",
+        "msg": "Thorax punctured!"
+      },
+      "abdomen": {
+        "name": "Abdomen",
+        "msg": "Abdomen burst open!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg cut off!"
+      },
+      "middle_left_leg": {
+        "name": "Middle Left Leg",
+        "msg": "Middle Left Leg cut off!"
+      },
+      "middle_right_leg": {
+        "name": "Middle Right Leg",
+        "msg": "Middle Right Leg cut off!"
+      },
+      "rear_left_leg": {
+        "name": "Rear Left Leg",
+        "msg": "Rear Left Leg cut off!"
+      },
+      "rear_right_leg": {
+        "name": "Rear Right Leg",
+        "msg": "Rear Right Leg cut off!"
+      },
+      "mandibles": {
+        "name": "Mandibles",
+        "msg": "Mandibles pulverized!"
+      },
+      "name": "Insectoid"
+    },
+    "frog": {
+      "head": {
+        "name": "Head",
+        "msg": "Head cracked!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body crushed!"
+      },
+      "tongue": {
+        "name": "Tongue",
+        "msg": "Tongue severed!"
+      },
+      "vocal_sac": {
+        "name": "Vocal Sac",
+        "msg": "Vocal sac ruptured!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg cut off!"
+      },
+      "hind_left_leg": {
+        "name": "Hind Left Leg",
+        "msg": "Hind Left Leg cut off!"
+      },
+      "hind_right_leg": {
+        "name": "Hind Right Leg",
+        "msg": "Hind Right Leg cut off!"
+      },
+      "name": "Frog"
+    },
+    "dragon": {
+      "name": "Dragon",
+      "head": {
+        "name": "Head"
+      },
+      "fire_breath_organ": {
+        "name": "Fire Breath Organ",
+        "msg": "Fire Breath Organ burst into gore!"
+      },
+      "neck": {
+        "name": "Neck",
+        "msg": "Neck twisted till it snapped!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body crushed!"
+      },
+      "left_wing": {
+        "name": "Left Wing",
+        "msg": "Left Wing torn to ribbons!"
+      },
+      "right_wing": {
+        "name": "Right Wing",
+        "msg": "Right Wing torn to ribbons!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg cut off!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail hacked off!"
+      }
+    },
+    "skeleton": {
+      "name": "Skeleton",
+      "head": {
+        "name": "Head",
+        "msg": "Skull shattered into splinters!"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Ribcage collapsed into dust!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left arm bone snapped off!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right arm bone snapped off!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left leg shattered!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right leg shattered!"
+      }
+    },
+    "fairy": {
+      "head": {
+        "name": "Head",
+        "msg": "Head cracked!"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Torso crushed into glittering dust!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left Arm torn off!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right Arm torn off!"
+      },
+      "left_wing": {
+        "name": "Left Wing",
+        "msg": "Left Wing shredded!"
+      },
+      "right_wing": {
+        "name": "Right Wing",
+        "msg": "Right Wing shredded!"
+      },
+      "pixie_dust_sac": {
+        "name": "Pixie Dust Sac",
+        "msg": "Dust sac ruptured!"
+      },
+      "name": "Fairy"
+    },
+    "slime": {
+      "name": "Slime",
+      "core": {
+        "name": "Core",
+        "msg": "Core violently collapsed!"
+      },
+      "upper_body": {
+        "name": "Upper Body",
+        "msg": "Upper Body crushed!"
+      },
+      "lower_body": {
+        "name": "Lower Body",
+        "msg": "Lower Body crushed!"
+      },
+      "pseudopod_1": {
+        "name": "Pseudopod 1",
+        "msg": "Pseudopod 1 melted into sludge!"
+      },
+      "pseudopod_2": {
+        "name": "Pseudopod 2",
+        "msg": "Pseudopod 2 melted into sludge!"
+      }
+    },
+    "undead": {
+      "skull": {
+        "name": "Skull",
+        "msg": "Skull obliterated!"
+      },
+      "ribcage": {
+        "name": "Ribcage",
+        "msg": "Ribcage caved into gore!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left Arm ripped off!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right Arm ripped off!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg cut off!"
+      },
+      "name": "Undead"
+    },
+    "scorpion": {
+      "head": {
+        "name": "Head"
+      },
+      "cephalothorax": {
+        "name": "Cephalothorax",
+        "msg": "Cephalothorax crushed!"
+      },
+      "abdomen": {
+        "name": "Abdomen",
+        "msg": "Abdomen burst open!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail severed!"
+      },
+      "stinger": {
+        "name": "Stinger",
+        "msg": "Stinger snapped off!"
+      },
+      "pincer_left": {
+        "name": "Left Pincer",
+        "msg": "Left Pincer crushed!"
+      },
+      "pincer_right": {
+        "name": "Right Pincer",
+        "msg": "Right Pincer crushed!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg cut off!"
+      },
+      "mid_left_leg": {
+        "name": "Mid-Front Left Leg",
+        "msg": "Mid-Front Left Leg cut off!"
+      },
+      "mid_right_leg": {
+        "name": "Mid-Front Right Leg",
+        "msg": "Mid-Front Right Leg cut off!"
+      },
+      "mid_rear_left_leg": {
+        "name": "Mid-Rear Left Leg",
+        "msg": "Mid-Rear Left Leg cut off!"
+      },
+      "mid_rear_right_leg": {
+        "name": "Mid-Rear Right Leg",
+        "msg": "Mid-Rear Right Leg cut off!"
+      },
+      "rear_left_leg": {
+        "name": "Rear Left Leg",
+        "msg": "Rear Left Leg cut off!"
+      },
+      "rear_right_leg": {
+        "name": "Rear Right Leg",
+        "msg": "Rear Right Leg cut off!"
+      },
+      "name": "Scorpion"
+    },
+    "spider": {
+      "head": {
+        "name": "Head"
+      },
+      "cephalothorax": {
+        "name": "Cephalothorax",
+        "msg": "Cephalothorax cracked open!"
+      },
+      "abdomen": {
+        "name": "Abdomen",
+        "msg": "Abdomen ruptured!"
+      },
+      "fangs": {
+        "name": "Fangs",
+        "msg": "Fangs shattered!"
+      },
+      "spinnerets": {
+        "name": "Spinnerets",
+        "msg": "Spinnerets severed!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg cut off!"
+      },
+      "mid_left_leg": {
+        "name": "Mid-Front Left Leg",
+        "msg": "Mid-Front Left Leg cut off!"
+      },
+      "mid_right_leg": {
+        "name": "Mid-Front Right Leg",
+        "msg": "Mid-Front Right Leg cut off!"
+      },
+      "mid_rear_left_leg": {
+        "name": "Mid-Rear Left Leg",
+        "msg": "Mid-Rear Left Leg cut off!"
+      },
+      "mid_rear_right_leg": {
+        "name": "Mid-Rear Right Leg",
+        "msg": "Mid-Rear Right Leg cut off!"
+      },
+      "rear_left_leg": {
+        "name": "Rear Left Leg",
+        "msg": "Rear Left Leg cut off!"
+      },
+      "rear_right_leg": {
+        "name": "Rear Right Leg",
+        "msg": "Rear Right Leg cut off!"
+      },
+      "name": "Spider"
+    },
+    "plant": {
+      "name": "Plant",
+      "flower": {
+        "name": "Flower",
+        "msg": "Flower withered to rot!"
+      },
+      "stem": {
+        "name": "Stem",
+        "msg": "Stem twisted till it split!"
+      },
+      "roots": {
+        "name": "Roots",
+        "msg": "Roots ripped out!"
+      },
+      "vine_1": {
+        "name": "Vine 1",
+        "msg": "Vine 1 ripped into gore!"
+      },
+      "vine_2": {
+        "name": "Vine 2",
+        "msg": "Vine 2 ripped into gore!"
+      }
+    },
+    "elemental": {
+      "core": {
+        "name": "Core",
+        "msg": "Core violently collapsed!"
+      },
+      "upper_form": {
+        "name": "Upper Form",
+        "msg": "Upper Form unraveled!"
+      },
+      "lower_form": {
+        "name": "Lower Form",
+        "msg": "Lower Form unraveled!"
+      },
+      "left_appendage": {
+        "name": "Left Appendage",
+        "msg": "Left Appendage liquefied on impact!"
+      },
+      "right_appendage": {
+        "name": "Right Appendage",
+        "msg": "Right Appendage liquefied on impact!"
+      },
+      "name": "Elemental"
+    },
+    "aquaticfish": {
+      "head": {
+        "name": "Head"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body crushed!"
+      },
+      "tail_fin": {
+        "name": "Tail Fin",
+        "msg": "Tail Fin sliced off!"
+      },
+      "dorsal_fin": {
+        "name": "Dorsal Fin",
+        "msg": "Dorsal Fin ripped into gore!"
+      },
+      "left_pectoral_fin": {
+        "name": "Left Pectoral Fin",
+        "msg": "Left Pectoral Fin torn to ribbons!"
+      },
+      "right_pectoral_fin": {
+        "name": "Right Pectoral Fin",
+        "msg": "Right Pectoral Fin torn to ribbons!"
+      },
+      "name": "Aquatic Fish"
+    },
+    "octopus": {
+      "head": {
+        "name": "Head"
+      },
+      "mantle": {
+        "name": "Mantle",
+        "msg": "Mantle crushed!"
+      },
+      "tentacle_1": {
+        "name": "Tentacle 1",
+        "msg": "Tentacle 1 ripped off!"
+      },
+      "tentacle_2": {
+        "name": "Tentacle 2",
+        "msg": "Tentacle 2 ripped off!"
+      },
+      "tentacle_3": {
+        "name": "Tentacle 3",
+        "msg": "Tentacle 3 ripped off!"
+      },
+      "tentacle_4": {
+        "name": "Tentacle 4",
+        "msg": "Tentacle 4 ripped off!"
+      },
+      "name": "Octopus"
+    },
+    "robot": {
+      "head": {
+        "name": "Head"
+      },
+      "core": {
+        "name": "Core",
+        "msg": "Core violently collapsed!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left Arm detached!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right Arm detached!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg cut off!"
+      },
+      "name": "Robot"
+    },
+    "bird": {
+      "name": "Bird",
+      "head": {
+        "name": "Head"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body crushed!"
+      },
+      "beak": {
+        "name": "Beak",
+        "msg": "Beak obliterated!"
+      },
+      "left_wing": {
+        "name": "Left Wing",
+        "msg": "Left Wing torn to ribbons!"
+      },
+      "right_wing": {
+        "name": "Right Wing",
+        "msg": "Right Wing torn to ribbons!"
+      },
+      "talons": {
+        "name": "Talons",
+        "msg": "Talons ripped off!"
+      }
+    },
+    "reptilian": {
+      "head": {
+        "name": "Head"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Torso crushed!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left Arm ripped off!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right Arm ripped off!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg cut off!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail hacked off!"
+      },
+      "name": "Reptilian"
+    },
+    "mushroom": {
+      "cap": {
+        "name": "Cap",
+        "msg": "Cap ripped into gore!"
+      },
+      "stalk": {
+        "name": "Stalk",
+        "msg": "Stalk twisted till it snapped!"
+      },
+      "roots": {
+        "name": "Roots",
+        "msg": "Roots ripped out!"
+      },
+      "spore_sacs": {
+        "name": "Spore Sacs",
+        "msg": "Spore Sacs have burst open!"
+      },
+      "name": "Mushroom"
+    },
+    "tree": {
+      "name": "Tree",
+      "crown": {
+        "name": "Crown",
+        "msg": "Crown ripped into gore!"
+      },
+      "trunk": {
+        "name": "Trunk",
+        "msg": "Trunk cleaved brutally!"
+      },
+      "roots": {
+        "name": "Roots",
+        "msg": "Roots ripped out!"
+      },
+      "branch_1": {
+        "name": "Branch 1",
+        "msg": "Branch 1 broken off!"
+      },
+      "branch_2": {
+        "name": "Branch 2",
+        "msg": "Branch 2 broken off!"
+      }
+    },
+    "bacterial": {
+      "nucleus": {
+        "name": "Nucleus",
+        "msg": "Nucleus burst open!"
+      },
+      "membrane": {
+        "name": "Membrane",
+        "msg": "Membrane melted into sludge!"
+      },
+      "flagellum": {
+        "name": "Flagellum",
+        "msg": "Flagellum torn to ribbons!"
+      },
+      "toxin_sacs": {
+        "name": "Toxin Sacs",
+        "msg": "Toxin Sacs have burst!"
+      },
+      "name": "Bacterial"
+    },
+    "doubleheadedhumanoid": {
+      "head_left": {
+        "name": "Head Left",
+        "msg": "Head Left torn apart!"
+      },
+      "head_right": {
+        "name": "Head Right",
+        "msg": "Head Right torn apart!"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Torso crushed!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left Arm ripped off!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right Arm ripped off!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg cut off!"
+      },
+      "name": "Double-Headed Humanoid"
+    },
+    "serpent": {
+      "head": {
+        "name": "Head"
+      },
+      "fangs": {
+        "name": "Fangs",
+        "msg": "Fangs shattered!"
+      },
+      "body_segment_1": {
+        "name": "Body Segment 1",
+        "msg": "Body Segment 1 ruptured!"
+      },
+      "body_segment_2": {
+        "name": "Body Segment 2",
+        "msg": "Body Segment 2 ruptured!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail hacked off!"
+      },
+      "name": "Serpent"
+    },
+    "golem": {
+      "core": {
+        "name": "Core",
+        "msg": "Core cracked and collapsed!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left Arm crumbled!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right Arm crumbled!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg fractured!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg fractured!"
+      },
+      "name": "Golem"
+    },
+    "demon": {
+      "name": "Demon",
+      "head": {
+        "name": "Head"
+      },
+      "horns": {
+        "name": "Horns",
+        "msg": "Horns shattered!"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Torso crushed!"
+      },
+      "left_wing": {
+        "name": "Left Wing",
+        "msg": "Left Wing shredded!"
+      },
+      "right_wing": {
+        "name": "Right Wing",
+        "msg": "Right Wing shredded!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail severed!"
+      }
+    },
+    "ghost": {
+      "face": {
+        "name": "Face",
+        "msg": "Face disintegrated into vapor!"
+      },
+      "core": {
+        "name": "Essence Core",
+        "msg": "Essence Core unraveled!"
+      },
+      "left_wisp": {
+        "name": "Left Wisp",
+        "msg": "Left Wisp dispersed!"
+      },
+      "right_wisp": {
+        "name": "Right Wisp",
+        "msg": "Right Wisp dispersed!"
+      },
+      "name": "Ghost"
+    },
+    "drone": {
+      "sensor_array": {
+        "name": "Sensor Array",
+        "msg": "Sensor Array wrecked completely!"
+      },
+      "chassis": {
+        "name": "Chassis",
+        "msg": "Chassis crushed!"
+      },
+      "left_prop": {
+        "name": "Left Propeller",
+        "msg": "Left Propeller smashed into wreckage!"
+      },
+      "right_prop": {
+        "name": "Right Propeller",
+        "msg": "Right Propeller smashed into wreckage!"
+      },
+      "name": "Drone"
+    },
+    "voidspawn": {
+      "abyssal_eye": {
+        "name": "Abyssal Eye",
+        "msg": "Abyssal Eye pierced!"
+      },
+      "maw": {
+        "name": "Maw",
+        "msg": "Maw split open!"
+      },
+      "void_tendril_1": {
+        "name": "Void Tendril 1",
+        "msg": "Void Tendril 1 withered!"
+      },
+      "void_tendril_2": {
+        "name": "Void Tendril 2",
+        "msg": "Void Tendril 2 withered!"
+      },
+      "core": {
+        "name": "Core Shard",
+        "msg": "Core Shard fractured!"
+      },
+      "name": "Voidspawn"
+    },
+    "mutant": {
+      "head": {
+        "name": "Head"
+      },
+      "mass": {
+        "name": "Shifting Mass",
+        "msg": "Shifting Mass unraveled!"
+      },
+      "extra_limb_1": {
+        "name": "Extra Limb 1",
+        "msg": "Extra Limb 1 fallen off!"
+      },
+      "extra_limb_2": {
+        "name": "Extra Limb 2",
+        "msg": "Extra Limb 2 fallen off!"
+      },
+      "eye_cluster": {
+        "name": "Eye Cluster",
+        "msg": "Eye Cluster burst!"
+      },
+      "tail_spike": {
+        "name": "Tail Spike",
+        "msg": "Tail Spike wrenched free!"
+      },
+      "name": "Mutant"
+    },
+    "crystalentity": {
+      "core": {
+        "name": "Crystal Core",
+        "msg": "Crystal Core cracked!"
+      },
+      "left_spire": {
+        "name": "Left Spire",
+        "msg": "Left Spire obliterated!"
+      },
+      "right_spire": {
+        "name": "Right Spire",
+        "msg": "Right Spire obliterated!"
+      },
+      "focus_gem": {
+        "name": "Focus Gem",
+        "msg": "Focus Gem snuffed out!"
+      },
+      "shield_crystal": {
+        "name": "Shield Crystal",
+        "msg": "Shield Crystal shattered to shards!"
+      },
+      "name": "Crystal Entity"
+    },
+    "amphibian": {
+      "head": {
+        "name": "Head"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Torso crushed!"
+      },
+      "tongue": {
+        "name": "Tongue",
+        "msg": "Tongue ripped off!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg cut off!"
+      },
+      "name": "Amphibian"
+    },
+    "constructedundead": {
+      "head": {
+        "name": "Head"
+      },
+      "torso": {
+        "name": "Stitched Torso",
+        "msg": "Stitched Torso torn down the middle!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left Arm torn loose!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right Arm torn loose!"
+      },
+      "power_stitch": {
+        "name": "Power Stitch",
+        "msg": "Power Stitch erupted messily!"
+      },
+      "name": "Constructed Undead"
+    },
+    "minotaur": {
+      "head": {
+        "name": "Head"
+      },
+      "horns": {
+        "name": "Horns",
+        "msg": "Horns shattered!"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Torso crushed!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left Arm ripped off!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right Arm ripped off!"
+      },
+      "left_leg": {
+        "name": "Left Bull Leg",
+        "msg": "Left Bull Leg cut off!"
+      },
+      "right_leg": {
+        "name": "Right Bull Leg",
+        "msg": "Right Bull Leg cut off!"
+      },
+      "name": "Minotaur"
+    },
+    "goblin": {
+      "brain": {
+        "name": "Brain",
+        "msg": "Brain destroyed!"
+      },
+      "skull": {
+        "name": "Skull",
+        "msg": "Skull fractured!"
+      },
+      "cervical_vertebrae": {
+        "name": "Cervical Vertebrae",
+        "msg": "Neck vertebrae snapped!"
+      },
+      "thoracic_vertebrae": {
+        "name": "Thoracic Vertebrae",
+        "msg": "Upper spine cracked!"
+      },
+      "lumbar_vertebrae": {
+        "name": "Lumbar Vertebrae",
+        "msg": "Lower spine collapsed!"
+      },
+      "ribcage": {
+        "name": "Rib Cage",
+        "msg": "Rib cage shattered!"
+      },
+      "pelvis": {
+        "name": "Pelvis",
+        "msg": "Pelvis crushed!"
+      },
+      "heart": {
+        "name": "Heart",
+        "msg": "Heart punctured!"
+      },
+      "lungs": {
+        "name": "Lungs",
+        "msg": "Lungs collapsed!"
+      },
+      "liver": {
+        "name": "Liver",
+        "msg": "Liver ruptured!"
+      },
+      "kidneys": {
+        "name": "Kidneys",
+        "msg": "Kidneys destroyed!"
+      },
+      "stomach": {
+        "name": "Stomach",
+        "msg": "Stomach ruptured!"
+      },
+      "small_intestine": {
+        "name": "Small Intestine",
+        "msg": "Small intestine torn!"
+      },
+      "large_intestine": {
+        "name": "Large Intestine",
+        "msg": "Large intestine burst!"
+      },
+      "pancreas": {
+        "name": "Pancreas",
+        "msg": "Pancreas obliterated!"
+      },
+      "spleen": {
+        "name": "Spleen",
+        "msg": "Spleen ruptured!"
+      },
+      "eye_left": {
+        "name": "Left Eye",
+        "msg": "Left eye gouged out!"
+      },
+      "eye_right": {
+        "name": "Right Eye",
+        "msg": "Right eye gouged out!"
+      },
+      "ear_left": {
+        "name": "Left Ear",
+        "msg": "Left ear torn off!"
+      },
+      "ear_right": {
+        "name": "Right Ear",
+        "msg": "Right ear torn off!"
+      },
+      "tongue": {
+        "name": "Tongue",
+        "msg": "Tongue removed!"
+      },
+      "left_upper_arm": {
+        "name": "Left Upper Arm",
+        "msg": "Left upper arm severed!"
+      },
+      "left_forearm": {
+        "name": "Left Forearm",
+        "msg": "Left forearm fractured!"
+      },
+      "left_hand": {
+        "name": "Left Hand",
+        "msg": "Left hand dismembered!"
+      },
+      "right_upper_arm": {
+        "name": "Right Upper Arm",
+        "msg": "Right upper arm severed!"
+      },
+      "right_forearm": {
+        "name": "Right Forearm",
+        "msg": "Right forearm fractured!"
+      },
+      "right_hand": {
+        "name": "Right Hand",
+        "msg": "Right hand dismembered!"
+      },
+      "left_thigh": {
+        "name": "Left Thigh",
+        "msg": "Left thigh shattered!"
+      },
+      "left_shin": {
+        "name": "Left Shin",
+        "msg": "Left shin broken!"
+      },
+      "left_foot": {
+        "name": "Left Foot",
+        "msg": "Left foot detached!"
+      },
+      "right_thigh": {
+        "name": "Right Thigh",
+        "msg": "Right thigh shattered!"
+      },
+      "right_shin": {
+        "name": "Right Shin",
+        "msg": "Right shin broken!"
+      },
+      "right_foot": {
+        "name": "Right Foot",
+        "msg": "Right foot detached!"
+      },
+      "name": "Goblin"
+    },
+    "crustacean": {
+      "claw_left": {
+        "name": "Left Claw",
+        "msg": "Left claw shattered!"
+      },
+      "claw_right": {
+        "name": "Right Claw",
+        "msg": "Right claw smashed!"
+      },
+      "carapace": {
+        "name": "Carapace",
+        "msg": "Carapace cracked wide open!"
+      },
+      "abdomen": {
+        "name": "Abdomen",
+        "msg": "Abdomen ruptured!"
+      },
+      "front_leg": {
+        "name": "Front Leg",
+        "msg": "Front leg severed!"
+      },
+      "rear_leg": {
+        "name": "Rear Leg",
+        "msg": "Rear leg hacked off!"
+      },
+      "antennae": {
+        "name": "Antennae",
+        "msg": "Antennae crushed!"
+      },
+      "name": "Crustacean"
+    },
+    "spherical": {
+      "core": {
+        "name": "Core",
+        "msg": "Core integrity compromised!"
+      },
+      "shell": {
+        "name": "Outer Shell",
+        "msg": "Shell fractured!"
+      },
+      "sensor_array": {
+        "name": "Sensor Array",
+        "msg": "Sensor array knocked offline!"
+      },
+      "spin_spines": {
+        "name": "Spin Spines",
+        "msg": "Spin spines sheared off!"
+      },
+      "aux_drives": {
+        "name": "Auxiliary Drives",
+        "msg": "Auxiliary drives have failed!"
+      },
+      "name": "Spherical"
+    },
+    "turtle": {
+      "shell": {
+        "name": "Shell",
+        "msg": "Shell cracked open!"
+      },
+      "head": {
+        "name": "Head",
+        "msg": "Head battered!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front left leg broken!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front right leg snapped!"
+      },
+      "rear_left_leg": {
+        "name": "Rear Left Leg",
+        "msg": "Rear left leg severed!"
+      },
+      "rear_right_leg": {
+        "name": "Rear Right Leg",
+        "msg": "Rear right leg hacked off!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail clipped!"
+      },
+      "name": "Turtle"
+    },
+    "manticore": {
+      "brain": {
+        "name": "Brain",
+        "msg": "Brain destroyed!"
+      },
+      "skull": {
+        "name": "Skull",
+        "msg": "Skull cracked!"
+      },
+      "spine": {
+        "name": "Spine",
+        "msg": "Spine severed!"
+      },
+      "ribcage": {
+        "name": "Rib Cage",
+        "msg": "Rib cage punctured!"
+      },
+      "front_left_paw": {
+        "name": "Front Left Paw",
+        "msg": "Front left paw shredded!"
+      },
+      "front_right_paw": {
+        "name": "Front Right Paw",
+        "msg": "Front right paw shredded!"
+      },
+      "rear_left_leg": {
+        "name": "Rear Left Leg",
+        "msg": "Rear left leg mangled!"
+      },
+      "rear_right_leg": {
+        "name": "Rear Right Leg",
+        "msg": "Rear right leg mangled!"
+      },
+      "left_eye": {
+        "name": "Left Eye",
+        "msg": "Left Eye gouged!"
+      },
+      "right_eye": {
+        "name": "Right Eye",
+        "msg": "Right Eye gouged!"
+      },
+      "left_wing": {
+        "name": "Left Wing",
+        "msg": "Left Wing torn!"
+      },
+      "right_wing": {
+        "name": "Right Wing",
+        "msg": "Right Wing torn!"
+      },
+      "left_lung": {
+        "name": "Left Lung",
+        "msg": "Left Lung punctured!"
+      },
+      "right_lung": {
+        "name": "Right Lung",
+        "msg": "Right Lung punctured!"
+      },
+      "name": "Manticore"
+    },
+    "chestmimic": {
+      "core": {
+        "name": "Squishy Core",
+        "msg": "Core ruptured!"
+      },
+      "lid": {
+        "name": "Chest Lid",
+        "msg": "Lid pried!"
+      },
+      "teeth": {
+        "name": "Jagged Teeth",
+        "msg": "Teeth knocked out!"
+      },
+      "tongue": {
+        "name": "Slime Tongue",
+        "msg": "Tongue severed!"
+      },
+      "feet": {
+        "name": "Stubby Feet",
+        "msg": "Feet smashed!"
+      },
+      "name": "Chest Mimic"
+    },
+    "phoenix": {
+      "core": {
+        "name": "Ash Core",
+        "msg": "Ash Core obliterated!"
+      },
+      "feathers": {
+        "name": "Flaming Feathers",
+        "msg": "Feathers singed!"
+      },
+      "beak": {
+        "name": "Beak",
+        "msg": "Beak cracked!"
+      },
+      "talons": {
+        "name": "Talons",
+        "msg": "Talons shattered!"
+      },
+      "left_wing": {
+        "name": "Left Wing",
+        "msg": "Left Wing extinguished!"
+      },
+      "right_wing": {
+        "name": "Right Wing",
+        "msg": "Right Wing extinguished!"
+      },
+      "left_eye": {
+        "name": "Left Ember Eye",
+        "msg": "Left Eye dim!"
+      },
+      "right_eye": {
+        "name": "Right Ember Eye",
+        "msg": "Right Eye dim!"
+      },
+      "name": "Phoenix"
+    },
+    "ogre": {
+      "head": {
+        "name": "Head",
+        "msg": "Head smashed!"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Torso battered!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left arm broken!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right arm snapped!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left leg crippled!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right leg maimed!"
+      },
+      "name": "Ogre"
+    },
+    "scarecrow": {
+      "head": {
+        "name": "Head",
+        "msg": "Head smashed!"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Torso torn!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left arm ripped!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right arm torn!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left leg snapped!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right leg broken!"
+      },
+      "name": "Scarecrow"
+    },
+    "segmentworm": {
+      "head": {
+        "name": "Head",
+        "msg": "Head crushed!"
+      },
+      "heart_segment": {
+        "name": "Heart Segment",
+        "msg": "Heart segment ruptured!"
+      },
+      "body_segment": {
+        "name": "Body Segment",
+        "msg": "Body segment severed!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail sliced off!"
+      },
+      "name": "Segment Worm"
+    },
+    "mineral": {
+      "core": {
+        "name": "Core",
+        "msg": "Core shattered!"
+      },
+      "shell": {
+        "name": "Shell",
+        "msg": "Shell cracked!"
+      },
+      "crystals": {
+        "name": "Crystals",
+        "msg": "Crystals shattered!"
+      },
+      "veins": {
+        "name": "Veins",
+        "msg": "Veins disrupted!"
+      },
+      "name": "Mineral"
+    },
+    "hydra": {
+      "head_one": {
+        "name": "Left Head",
+        "msg": "Left head severed!"
+      },
+      "head_two": {
+        "name": "Center Head",
+        "msg": "Center head decapitated!"
+      },
+      "head_three": {
+        "name": "Right Head",
+        "msg": "Right head chopped!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body crushed!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail severed!"
+      },
+      "name": "Hydra"
+    },
+    "vampire": {
+      "head": {
+        "name": "Head",
+        "msg": "Head struck!"
+      },
+      "heart": {
+        "name": "Heart",
+        "msg": "Heart pierced!"
+      },
+      "fangs": {
+        "name": "Fangs",
+        "msg": "Fangs shattered!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left arm broken!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right arm shattered!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg crippled!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg crippled!"
+      },
+      "name": "Vampire"
+    },
+    "bat": {
+      "head": {
+        "name": "Head",
+        "msg": "Head stunned!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body battered!"
+      },
+      "left_wing": {
+        "name": "Left Wing",
+        "msg": "Left wing torn!"
+      },
+      "right_wing": {
+        "name": "Right Wing",
+        "msg": "Right wing shredded!"
+      },
+      "fangs": {
+        "name": "Fangs",
+        "msg": "Fangs blunted!"
+      },
+      "name": "Bat"
+    },
+    "rabbit": {
+      "head": {
+        "name": "Head",
+        "msg": "Head stunned!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body battered!"
+      },
+      "ears": {
+        "name": "Ears",
+        "msg": "Ears torn!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg broken!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg broken!"
+      },
+      "rear_left_leg": {
+        "name": "Rear Left Leg",
+        "msg": "Rear Left Leg crippled!"
+      },
+      "rear_right_leg": {
+        "name": "Rear Right Leg",
+        "msg": "Rear Right Leg crippled!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail snapped!"
+      },
+      "name": "Rabbit"
+    },
+    "armoredknight": {
+      "helmet": {
+        "name": "Helmet",
+        "msg": "Helmet removed!"
+      },
+      "chestplate": {
+        "name": "Chestplate",
+        "msg": "Chestplate cracked!"
+      },
+      "pauldron_left": {
+        "name": "Left Pauldron",
+        "msg": "Left pauldron shattered!"
+      },
+      "pauldron_right": {
+        "name": "Right Pauldron",
+        "msg": "Right pauldron shattered!"
+      },
+      "greaves_left": {
+        "name": "Left Greaves",
+        "msg": "Left greaves buckled!"
+      },
+      "greaves_right": {
+        "name": "Right Greaves",
+        "msg": "Right greaves buckled!"
+      },
+      "name": "Armored Knight"
+    },
+    "centaur": {
+      "head": {
+        "name": "Head",
+        "msg": "Head caved in!"
+      },
+      "torso": {
+        "name": "Human Torso",
+        "msg": "Human torso crushed!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left arm ripped off!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right arm ripped off!"
+      },
+      "body": {
+        "name": "Equine Body",
+        "msg": "Equine body buckles!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front left leg severed!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front right leg severed!"
+      },
+      "rear_left_leg": {
+        "name": "Rear Left Leg",
+        "msg": "Rear left leg hacked off!"
+      },
+      "rear_right_leg": {
+        "name": "Rear Right Leg",
+        "msg": "Rear right leg hacked off!"
+      },
+      "name": "Centaur"
+    },
+    "insectswarm": {
+      "mandibles": {
+        "name": "Mandibles Cluster",
+        "msg": "Mandibles cluster shattered!"
+      },
+      "wings": {
+        "name": "Wings Swarm",
+        "msg": "Wings swarm dispersed!"
+      },
+      "legs": {
+        "name": "Legs Cluster",
+        "msg": "Legs cluster incapacitated!"
+      },
+      "abdomen": {
+        "name": "Abdomens Cluster",
+        "msg": "Abdomens cluster destroyed!"
+      },
+      "stingers": {
+        "name": "Stingers Swarm",
+        "msg": "Stingers swarm neutralized!"
+      },
+      "name": "Insect Swarm"
+    },
+    "roboticdefender": {
+      "head": {
+        "name": "Head",
+        "msg": "Head disabled!"
+      },
+      "arm_cannon": {
+        "name": "Arm Cannon",
+        "msg": "Arm cannon destroyed!"
+      },
+      "torso": {
+        "name": "Torso",
+        "msg": "Torso breached!"
+      },
+      "leg_joints": {
+        "name": "Leg Joints",
+        "msg": "Leg joints jammed!"
+      },
+      "sensors": {
+        "name": "Sensors",
+        "msg": "Sensors offline!"
+      },
+      "name": "Robotic Defender"
+    },
+    "turret": {
+      "core": {
+        "name": "Core",
+        "msg": "Core deactivated!"
+      },
+      "gun_barrel": {
+        "name": "Gun Barrel",
+        "msg": "Gun barrel destroyed!"
+      },
+      "sensor_array": {
+        "name": "Sensor Array",
+        "msg": "Sensors offline!"
+      },
+      "rotation_mech": {
+        "name": "Rotation Mechanism",
+        "msg": "Rotation jammed!"
+      },
+      "ammo_chamber": {
+        "name": "Ammo Chamber",
+        "msg": "Ammo chamber ruptured!"
+      },
+      "name": "Turret"
+    },
+    "gorgon": {
+      "name": "Gorgon",
+      "eyes": {
+        "name": "Eyes",
+        "msg": "Eyes blinded!"
+      },
+      "snake_hair": {
+        "name": "Snake Hair",
+        "msg": "Snake hair severed!"
+      },
+      "upper_body": {
+        "name": "Upper Body",
+        "msg": "Upper body petrified!"
+      },
+      "lower_body": {
+        "name": "Lower Body",
+        "msg": "Lower body shattered!"
+      }
+    },
+    "abyssalleviathan": {
+      "eye": {
+        "name": "Giant Eye",
+        "msg": "Eye blinded!"
+      },
+      "maw": {
+        "name": "Maw",
+        "msg": "Maw crushed!"
+      },
+      "dorsal_plates": {
+        "name": "Dorsal Plates",
+        "msg": "Dorsal plates cracked!"
+      },
+      "tentacles": {
+        "name": "Tentacles",
+        "msg": "Tentacles severed!"
+      },
+      "heart_chamber": {
+        "name": "Heart Chamber",
+        "msg": "Heart chamber ruptured!"
+      },
+      "name": "Abyssal Leviathan"
+    },
+    "snail": {
+      "shell": {
+        "name": "Shell",
+        "msg": "Shell shattered!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body crushed!"
+      },
+      "tentacle_1": {
+        "name": "Tentacle 1",
+        "msg": "Tentacle 1 severed!"
+      },
+      "tentacle_2": {
+        "name": "Tentacle 2",
+        "msg": "Tentacle 2 severed!"
+      },
+      "eye": {
+        "name": "Eye",
+        "msg": "Eye blinded!"
+      },
+      "foot": {
+        "name": "Foot",
+        "msg": "Foot crushed!"
+      },
+      "name": "Snail"
+    },
+    "waterelemental": {
+      "core": {
+        "name": "Core",
+        "msg": "Core collapsed into mist!"
+      },
+      "body": {
+        "name": "Water Body",
+        "msg": "Water Body dispersed!"
+      },
+      "water_arms": {
+        "name": "Water Arms",
+        "msg": "Water Arms torn apart!"
+      },
+      "left_water_leg": {
+        "name": "Left Water Leg",
+        "msg": "Left Water Leg evaporated!"
+      },
+      "right_water_leg": {
+        "name": "Right Water Leg",
+        "msg": "Right Water Leg evaporated!"
+      },
+      "name": "Water Elemental"
+    },
+    "thunderelemental": {
+      "core": {
+        "name": "Core",
+        "msg": "Core shattered by lightning!"
+      },
+      "body": {
+        "name": "Electric Body",
+        "msg": "Electric Body short‑circuited!"
+      },
+      "left_electric_arm": {
+        "name": "Left Electric Arm",
+        "msg": "Left Electric Arm lost power!"
+      },
+      "right_electric_arm": {
+        "name": "Right Electric Arm",
+        "msg": "Right Electric Arm lost power!"
+      },
+      "left_electric_leg": {
+        "name": "Left Electric Leg",
+        "msg": "Left Electric Leg grounded out!"
+      },
+      "right_electric_leg": {
+        "name": "Right Electric Leg",
+        "msg": "Right Electric Leg grounded out!"
+      },
+      "name": "Thunder Elemental"
+    },
+    "stormelemental": {
+      "core": {
+        "name": "Core",
+        "msg": "Core dissipated in gale!"
+      },
+      "body": {
+        "name": "Wind Body",
+        "msg": "Wind Body scattered!"
+      },
+      "left_rain_arm": {
+        "name": "Left Rain Arm",
+        "msg": "Left Rain Arm washed away!"
+      },
+      "right_rain_arm": {
+        "name": "Right Rain Arm",
+        "msg": "Right Rain Arm washed away!"
+      },
+      "left_thunder_leg": {
+        "name": "Left Thunder Leg",
+        "msg": "Left Thunder Leg struck down!"
+      },
+      "right_thunder_leg": {
+        "name": "Right Thunder Leg",
+        "msg": "Right Thunder Leg struck down!"
+      },
+      "name": "Storm Elemental"
+    },
+    "fireelemental": {
+      "core": {
+        "name": "Core",
+        "msg": "Core incinerated!"
+      },
+      "body": {
+        "name": "Flame Body",
+        "msg": "Flame Body extinguished!"
+      },
+      "ember_arms": {
+        "name": "Ember Arms",
+        "msg": "Ember Arms have cooled off!"
+      },
+      "ash_legs": {
+        "name": "Ash Legs",
+        "msg": "Ash Legs have crumbled!"
+      },
+      "name": "Fire Elemental"
+    },
+    "metalelemental": {
+      "core": {
+        "name": "Core",
+        "msg": "Core warped!"
+      },
+      "plate_armor": {
+        "name": "Plate Armor",
+        "msg": "Plate Armor cracked!"
+      },
+      "spike_arms": {
+        "name": "Spike Arms",
+        "msg": "Spike Arms dulled!"
+      },
+      "gear_legs": {
+        "name": "Gear Legs",
+        "msg": "Gear Legs have jammed!"
+      },
+      "name": "Metal Elemental"
+    },
+    "darkelemental": {
+      "core": {
+        "name": "Core",
+        "msg": "Core consumed by shadows!"
+      },
+      "body": {
+        "name": "Shadow Body",
+        "msg": "Shadow Body withered!"
+      },
+      "left_arm": {
+        "name": "Left Wraith Arm",
+        "msg": "Left Wraith Arm faded!"
+      },
+      "right_arm": {
+        "name": "Right Wraith Arm",
+        "msg": "Right Wraith Arm faded!"
+      },
+      "left_leg": {
+        "name": "Left Curse Leg",
+        "msg": "Left Curse Leg collapsed!"
+      },
+      "right_leg": {
+        "name": "Right Curse Leg",
+        "msg": "Right Curse Leg collapsed!"
+      },
+      "name": "Dark Elemental"
+    },
+    "sacredelemental": {
+      "core": {
+        "name": "Core",
+        "msg": "Core sanctified away!"
+      },
+      "body": {
+        "name": "Light Body",
+        "msg": "Light Body blazed out!"
+      },
+      "left_arm": {
+        "name": "Left Radiant Arm",
+        "msg": "Left Radiant Arm dimmed!"
+      },
+      "right_arm": {
+        "name": "Right Radiant Arm",
+        "msg": "Right Radiant Arm dimmed!"
+      },
+      "left_leg": {
+        "name": "Left Aura Leg",
+        "msg": "Left Aura Leg lost form!"
+      },
+      "right_leg": {
+        "name": "Right Aura Leg",
+        "msg": "Right Aura Leg lost form!"
+      },
+      "name": "Sacred Elemental"
+    },
+    "totem": {
+      "core": {
+        "name": "Spirit Core",
+        "msg": "Core shattered!"
+      },
+      "left_arm": {
+        "name": "Left Arm",
+        "msg": "Left arm splintered!"
+      },
+      "right_arm": {
+        "name": "Right Arm",
+        "msg": "Right arm splintered!"
+      },
+      "eyes": {
+        "name": "Totem Eyes",
+        "msg": "Eyes shattered!"
+      },
+      "base": {
+        "name": "Base",
+        "msg": "Base cracked!"
+      },
+      "name": "Totem"
+    },
+    "ophanim": {
+      "wheel_one": {
+        "name": "Wheel One",
+        "msg": "Wheel one destroyed!"
+      },
+      "wheel_two": {
+        "name": "Wheel Two",
+        "msg": "Wheel two destroyed!"
+      },
+      "wheel_three": {
+        "name": "Wheel Three",
+        "msg": "Wheel three destroyed!"
+      },
+      "wheel_four": {
+        "name": "Wheel Four",
+        "msg": "Wheel four destroyed!"
+      },
+      "eye_ring": {
+        "name": "Eye Ring",
+        "msg": "Eye ring blinded!"
+      },
+      "name": "Ophanim"
+    },
+    "angel": {
+      "left_wing": {
+        "name": "Left Wing",
+        "msg": "Left wing clipped!"
+      },
+      "right_wing": {
+        "name": "Right Wing",
+        "msg": "Right wing clipped!"
+      },
+      "halo": {
+        "name": "Halo",
+        "msg": "Halo shattered!"
+      },
+      "core": {
+        "name": "Heart Core",
+        "msg": "Core pierced!"
+      },
+      "robe": {
+        "name": "Robe",
+        "msg": "Robe torn!"
+      },
+      "left_foot": {
+        "name": "Left Foot",
+        "msg": "Left foot broken!"
+      },
+      "right_foot": {
+        "name": "Right Foot",
+        "msg": "Right foot broken!"
+      },
+      "name": "Angel"
+    },
+    "elven": {
+      "head": {
+        "name": "Head",
+        "msg": "Head struck!"
+      },
+      "heart": {
+        "name": "Heart",
+        "msg": "Heart ruptured!"
+      },
+      "bow": {
+        "name": "Bow",
+        "msg": "Bow snapped!"
+      },
+      "robe": {
+        "name": "Robe",
+        "msg": "Robe torn!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg crippled!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg crippled!"
+      },
+      "name": "Elven"
+    },
+    "gnome": {
+      "head": {
+        "name": "Head",
+        "msg": "Head bumped!"
+      },
+      "beard": {
+        "name": "Beard",
+        "msg": "Beard torn!"
+      },
+      "hat": {
+        "name": "Hat",
+        "msg": "Hat knocked off!"
+      },
+      "heart": {
+        "name": "Heart",
+        "msg": "Heart squeezed!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg buckled!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg buckled!"
+      },
+      "name": "Gnome"
+    },
+    "elephant": {
+      "head": {
+        "name": "Head",
+        "msg": "Head bashed!"
+      },
+      "trunk": {
+        "name": "Trunk",
+        "msg": "Trunk severed!"
+      },
+      "tusks": {
+        "name": "Tusks",
+        "msg": "Tusks broken!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body bruised!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg crippled!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg crippled!"
+      },
+      "hind_left_leg": {
+        "name": "Hind Left Leg",
+        "msg": "Hind Left Leg crippled!"
+      },
+      "hind_right_leg": {
+        "name": "Hind Right Leg",
+        "msg": "Hind Right Leg crippled!"
+      },
+      "name": "Elephant"
+    },
+    "tentacledcreature": {
+      "eye": {
+        "name": "Central Eye",
+        "msg": "Eye shattered!"
+      },
+      "tentacle_one": {
+        "name": "Tentacle One",
+        "msg": "Tentacle one severed!"
+      },
+      "tentacle_two": {
+        "name": "Tentacle Two",
+        "msg": "Tentacle two severed!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body battered!"
+      },
+      "name": "Tentacled Creature"
+    },
+    "spiderhumanhybrid": {
+      "body": {
+        "name": "Spider Body",
+        "msg": "Spider body destroyed!"
+      },
+      "torso": {
+        "name": "Human Torso",
+        "msg": "Human torso crushed!"
+      },
+      "head": {
+        "name": "Human Head",
+        "msg": "Human head severed!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front left leg dismantled!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front right leg dismantled!"
+      },
+      "middle_left_leg": {
+        "name": "Middle Left Leg",
+        "msg": "Middle left leg dismantled!"
+      },
+      "middle_right_leg": {
+        "name": "Middle Right Leg",
+        "msg": "Middle right leg dismantled!"
+      },
+      "rear_left_leg": {
+        "name": "Rear Left Leg",
+        "msg": "Rear left leg dismantled!"
+      },
+      "rear_right_leg": {
+        "name": "Rear Right Leg",
+        "msg": "Rear right leg dismantled!"
+      },
+      "name": "Spider-Human Hybrid"
+    },
+    "spikymonster": {
+      "spikes": {
+        "name": "Spikes",
+        "msg": "Spikes shattered!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body stunned!"
+      },
+      "eyes": {
+        "name": "Eyes",
+        "msg": "Eyes blinded!"
+      },
+      "left_leg": {
+        "name": "Left Leg",
+        "msg": "Left Leg crippled!"
+      },
+      "right_leg": {
+        "name": "Right Leg",
+        "msg": "Right Leg crippled!"
+      },
+      "name": "Spiky Monster"
+    },
+    "horse": {
+      "head": {
+        "name": "Head",
+        "msg": "Head stunned!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body bruised!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg crippled!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg crippled!"
+      },
+      "hind_left_leg": {
+        "name": "Hind Left Leg",
+        "msg": "Hind Left Leg crippled!"
+      },
+      "hind_right_leg": {
+        "name": "Hind Right Leg",
+        "msg": "Hind Right Leg crippled!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail snapped!"
+      },
+      "name": "Horse"
+    },
+    "unicorn": {
+      "horn": {
+        "name": "Horn",
+        "msg": "Horn shattered!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body wounded!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg crippled!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg crippled!"
+      },
+      "hind_left_leg": {
+        "name": "Hind Left Leg",
+        "msg": "Hind Left Leg crippled!"
+      },
+      "hind_right_leg": {
+        "name": "Hind Right Leg",
+        "msg": "Hind Right Leg crippled!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail clipped!"
+      },
+      "name": "Unicorno"
+    },
+    "hellhound": {
+      "head": {
+        "name": "Head",
+        "msg": "Head scorched!"
+      },
+      "collar": {
+        "name": "Collar",
+        "msg": "Collar broken!"
+      },
+      "body": {
+        "name": "Body",
+        "msg": "Body burned!"
+      },
+      "left_leg": {
+        "name": "Front Left Leg",
+        "msg": "Front Left Leg incapacitated!"
+      },
+      "right_leg": {
+        "name": "Front Right Leg",
+        "msg": "Front Right Leg incapacitated!"
+      },
+      "hind_left_leg": {
+        "name": "Hind Left Leg",
+        "msg": "Hind Left Leg incapacitated!"
+      },
+      "hind_right_leg": {
+        "name": "Hind Right Leg",
+        "msg": "Hind Right Leg incapacitated!"
+      },
+      "name": "Hellhound"
+    },
+    "wingeddemon": {
+      "head": {
+        "name": "Head",
+        "msg": "Head cursed!"
+      },
+      "left_wing": {
+        "name": "Left Wing",
+        "msg": "Left wing scorched!"
+      },
+      "right_wing": {
+        "name": "Right Wing",
+        "msg": "Right wing scorched!"
+      },
+      "tail": {
+        "name": "Tail",
+        "msg": "Tail severed!"
+      },
+      "core": {
+        "name": "Infernal Core",
+        "msg": "Core extinguished!"
+      },
+      "claws": {
+        "name": "Claws",
+        "msg": "Claws shattered!"
+      },
+      "name": "Winged Demon"
+    },
+    "trashcreature": {
+      "trash_pile": {
+        "name": "Trash Pile",
+        "msg": "Trash pile scattered!"
+      },
+      "limbs": {
+        "name": "Limbs",
+        "msg": "Limbs removed!"
+      },
+      "eyes": {
+        "name": "Eyes",
+        "msg": "Eyes blocked!"
+      },
+      "heart": {
+        "name": "Heart",
+        "msg": "Heart crushed!"
+      },
+      "name": "Trash Creature"
+    }
+  }
+}

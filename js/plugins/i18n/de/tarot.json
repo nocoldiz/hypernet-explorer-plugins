@@ -1,0 +1,345 @@
+{
+  "ui": {
+    "title": "Tarot Reading",
+    "past": "Past",
+    "present": "Present",
+    "future": "Future",
+    "instruction": "Click on a card to reveal its meaning",
+    "complete": "Your reading is complete. Press ESC to exit.",
+    "upright": "Upright",
+    "reversed": "Reversed",
+    "npcTitle": "Reading Tarot for %1"
+  },
+  "cards": {
+    "The Fool": {
+      "name": "The Fool",
+      "upright": [
+        "New beginnings await you with childlike wonder and endless possibilities.",
+        "Take a leap of faith and trust in the journey ahead of you.",
+        "Embrace spontaneity and let your free spirit guide your path.",
+        "Adventure calls to you, urging you to step into the unknown."
+      ],
+      "reversed": [
+        "Recklessness clouds your judgment and leads to poor decisions.",
+        "Fear of taking necessary risks holds you back from growth.",
+        "Naivety may cause you to overlook important warning signs.",
+        "Chaos and lack of direction create unnecessary obstacles."
+      ]
+    },
+    "The Magician": {
+      "name": "The Magician",
+      "upright": [
+        "You possess all the tools needed to manifest your desires.",
+        "Your willpower and determination create powerful transformations.",
+        "Focus your energy to turn dreams into tangible reality.",
+        "Mastery of your skills brings success within reach."
+      ],
+      "reversed": [
+        "Manipulation and deceit may be present in your surroundings.",
+        "Your talents remain untapped due to lack of confidence.",
+        "Illusions and trickery cloud the truth from your vision.",
+        "Poor planning prevents your goals from materializing."
+      ]
+    },
+    "The High Priestess": {
+      "name": "The High Priestess",
+      "upright": [
+        "Trust your intuition as it guides you toward hidden truths.",
+        "Sacred knowledge reveals itself through quiet contemplation.",
+        "The subconscious mind holds answers to your deepest questions.",
+        "Mystery and feminine wisdom illuminate your spiritual path."
+      ],
+      "reversed": [
+        "Disconnection from your inner voice creates confusion.",
+        "Secrets and hidden agendas may disrupt your peace.",
+        "Ignoring your intuition leads you away from truth.",
+        "Surface-level thinking prevents deeper understanding."
+      ]
+    },
+    "The Empress": {
+      "name": "The Empress",
+      "upright": [
+        "Abundance flows naturally into all areas of your life.",
+        "Creative energy blossoms and brings new projects to fruition.",
+        "Nurturing relationships provide comfort and emotional fulfillment.",
+        "Natural beauty and sensuality enhance your personal magnetism."
+      ],
+      "reversed": [
+        "Creative blocks stifle your self-expression and growth.",
+        "Neglecting self-care depletes your energy reserves.",
+        "Codependency creates imbalance in your relationships.",
+        "Material concerns overshadow emotional needs."
+      ]
+    },
+    "The Emperor": {
+      "name": "The Emperor",
+      "upright": [
+        "Leadership and authority position you for greater success.",
+        "Structure and discipline create a solid foundation for growth.",
+        "Your protective nature shields loved ones from harm.",
+        "Strategic thinking leads to long-term achievements."
+      ],
+      "reversed": [
+        "Tyrannical behavior damages important relationships.",
+        "Rigidity prevents adaptation to changing circumstances.",
+        "Abuse of power creates resistance and rebellion.",
+        "Lack of self-discipline undermines your authority."
+      ]
+    },
+    "The Hierophant": {
+      "name": "The Hierophant",
+      "upright": [
+        "Traditional wisdom provides guidance for current challenges.",
+        "Spiritual teachings deepen your understanding of life's purpose.",
+        "Conformity to established systems brings acceptance and belonging.",
+        "Mentorship accelerates your learning and personal development."
+      ],
+      "reversed": [
+        "Rebellion against tradition opens new paths of understanding.",
+        "Dogmatic thinking limits your perspective and growth.",
+        "Question authority to discover your authentic truth.",
+        "Unconventional approaches yield surprising results."
+      ]
+    },
+    "The Lovers": {
+      "name": "The Lovers",
+      "upright": [
+        "Deep connections and meaningful relationships enrich your life.",
+        "Important choices align with your values and desires.",
+        "Harmony between opposites creates perfect balance.",
+        "Love in all forms elevates your consciousness."
+      ],
+      "reversed": [
+        "Disharmony in relationships requires honest communication.",
+        "Inner conflicts prevent you from making clear decisions.",
+        "Temptation leads you away from your true path.",
+        "Imbalanced partnerships drain your emotional energy."
+      ]
+    },
+    "The Chariot": {
+      "name": "The Chariot",
+      "upright": [
+        "Determination and willpower drive you toward victory.",
+        "Opposing forces unite under your skilled direction.",
+        "Self-discipline propels you past any obstacle.",
+        "Triumphant progress rewards your focused efforts."
+      ],
+      "reversed": [
+        "Lack of direction scatters your energy ineffectively.",
+        "Aggression and force create unnecessary conflict.",
+        "Loss of control derails your carefully laid plans.",
+        "Opposition seems insurmountable without proper strategy."
+      ]
+    },
+    "Strength": {
+      "name": "Strength",
+      "upright": [
+        "Inner strength and courage overcome external challenges.",
+        "Gentle persistence tames the wildest aspects of life.",
+        "Compassion transforms potential enemies into allies.",
+        "Patient endurance leads to eventual triumph."
+      ],
+      "reversed": [
+        "Self-doubt weakens your resolve and personal power.",
+        "Raw emotions overpower logical thinking and planning.",
+        "Insecurity manifests as either aggression or timidity.",
+        "Inner beasts require acknowledgment and integration."
+      ]
+    },
+    "The Hermit": {
+      "name": "The Hermit",
+      "upright": [
+        "Solitude brings profound insights and self-discovery.",
+        "Inner wisdom illuminates the path forward.",
+        "Spiritual searching leads to meaningful revelations.",
+        "Withdrawal from chaos allows deep contemplation."
+      ],
+      "reversed": [
+        "Isolation becomes loneliness without purpose or growth.",
+        "Excessive withdrawal creates disconnection from reality.",
+        "Fear of examination prevents necessary self-reflection.",
+        "Stubborn reclusiveness blocks helpful connections."
+      ]
+    },
+    "Wheel of Fortune": {
+      "name": "Wheel of Fortune",
+      "upright": [
+        "Destiny turns in your favor bringing unexpected opportunities.",
+        "Cycles of change usher in new phases of existence.",
+        "Good fortune smiles upon your current endeavors.",
+        "Universal forces align to support your highest good."
+      ],
+      "reversed": [
+        "Misfortune temporarily disrupts your planned trajectory.",
+        "Resistance to change prolongs difficult circumstances.",
+        "External forces seem to work against your desires.",
+        "Breaking negative cycles requires conscious effort."
+      ]
+    },
+    "Justice": {
+      "name": "Justice",
+      "upright": [
+        "Truth and fairness prevail in all matters at hand.",
+        "Karmic balance restores order to chaotic situations.",
+        "Legal matters resolve in alignment with highest justice.",
+        "Accountability for actions brings appropriate consequences."
+      ],
+      "reversed": [
+        "Injustice and unfairness cloud current circumstances.",
+        "Dishonesty complicates legal or ethical matters.",
+        "Avoiding accountability delays inevitable reckoning.",
+        "Bias prevents clear and balanced judgment."
+      ]
+    },
+    "The Hanged Man": {
+      "name": "The Hanged Man",
+      "upright": [
+        "Surrender and release bring unexpected enlightenment.",
+        "New perspectives emerge from letting go of control.",
+        "Sacrifice now leads to greater gains later.",
+        "Suspension of action allows wisdom to surface."
+      ],
+      "reversed": [
+        "Stubborn resistance prolongs unnecessary suffering.",
+        "Martyrdom without purpose drains vital energy.",
+        "Stagnation results from fear of necessary change.",
+        "Indecision paralyzes forward movement."
+      ]
+    },
+    "Death": {
+      "name": "Death",
+      "upright": [
+        "Transformation clears space for powerful rebirth.",
+        "Endings create opportunities for new beginnings.",
+        "Release of the old makes room for fresh growth.",
+        "Profound change reshapes your entire existence."
+      ],
+      "reversed": [
+        "Resistance to endings prolongs decay and stagnation.",
+        "Fear of change keeps you trapped in limiting patterns.",
+        "Clinging to the past prevents forward evolution.",
+        "Incomplete transitions leave you between worlds."
+      ]
+    },
+    "Temperance": {
+      "name": "Temperance",
+      "upright": [
+        "Perfect balance creates harmony in all life areas.",
+        "Patience and moderation lead to lasting success.",
+        "Blending opposites creates powerful alchemy.",
+        "Divine timing orchestrates perfect outcomes."
+      ],
+      "reversed": [
+        "Imbalance and excess disrupt your equilibrium.",
+        "Impatience rushes processes requiring careful timing.",
+        "Conflicting desires create internal discord.",
+        "Lack of moderation leads to unfortunate extremes."
+      ]
+    },
+    "The Devil": {
+      "name": "The Devil",
+      "upright": [
+        "Material desires and earthly pleasures demand examination.",
+        "Shadow aspects require acknowledgment and integration.",
+        "Bondage to unhealthy patterns becomes apparent.",
+        "Temptation tests your commitment to growth."
+      ],
+      "reversed": [
+        "Liberation from limiting beliefs sets you free.",
+        "Breaking unhealthy patterns restores personal power.",
+        "Recognition of illusions dispels their influence.",
+        "Release from bondage opens new possibilities."
+      ]
+    },
+    "The Tower": {
+      "name": "The Tower",
+      "upright": [
+        "Sudden upheaval destroys false foundations.",
+        "Breakthrough moments shatter limiting illusions.",
+        "Chaos precedes necessary reconstruction.",
+        "Divine intervention redirects your life path."
+      ],
+      "reversed": [
+        "Avoiding necessary destruction prolongs instability.",
+        "Fear of change maintains crumbling structures.",
+        "Gradual transformation replaces sudden upheaval.",
+        "Disaster narrowly avoided teaches important lessons."
+      ]
+    },
+    "The Star": {
+      "name": "The Star",
+      "upright": [
+        "Hope illuminates even the darkest moments.",
+        "Spiritual renewal restores faith and optimism.",
+        "Divine inspiration guides your creative expression.",
+        "Healing waters wash away past wounds."
+      ],
+      "reversed": [
+        "Despair clouds your vision of future possibilities.",
+        "Disconnection from faith creates spiritual emptiness.",
+        "Creative blocks stifle inspired expression.",
+        "Pessimism prevents recognition of blessings."
+      ]
+    },
+    "The Moon": {
+      "name": "The Moon",
+      "upright": [
+        "Illusions and deceptions require careful navigation.",
+        "Intuitive wisdom emerges from subconscious depths.",
+        "Dreams and visions carry important messages.",
+        "Hidden fears surface for healing and release."
+      ],
+      "reversed": [
+        "Confusion lifts as clarity returns to your vision.",
+        "Deceptions revealed allow truth to emerge.",
+        "Repressed emotions demand conscious attention.",
+        "Mental fog clears revealing the path ahead."
+      ]
+    },
+    "The Sun": {
+      "name": "The Sun",
+      "upright": [
+        "Joy and vitality infuse every aspect of existence.",
+        "Success and recognition reward your authentic expression.",
+        "Childlike wonder reveals life's simple pleasures.",
+        "Radiant energy attracts abundance and blessings."
+      ],
+      "reversed": [
+        "Temporary clouds obscure your inner radiance.",
+        "Ego inflation distorts genuine accomplishments.",
+        "Forced positivity masks underlying issues.",
+        "Delayed success tests your patience and faith."
+      ]
+    },
+    "Judgement": {
+      "name": "Judgement",
+      "upright": [
+        "Spiritual awakening transforms your entire being.",
+        "Past actions receive fair and final evaluation.",
+        "Rebirth follows honest self-assessment.",
+        "Higher calling demands courageous response."
+      ],
+      "reversed": [
+        "Self-judgment blocks forgiveness and growth.",
+        "Avoiding inner calling creates persistent dissatisfaction.",
+        "Past mistakes haunt present circumstances.",
+        "Fear of judgment paralyzes decisive action."
+      ]
+    },
+    "The World": {
+      "name": "The World",
+      "upright": [
+        "Completion of major cycles brings deep satisfaction.",
+        "Wholeness and integration create perfect harmony.",
+        "Worldly success reflects inner accomplishment.",
+        "Universal consciousness expands your awareness."
+      ],
+      "reversed": [
+        "Incomplete ventures require additional effort.",
+        "External success feels empty without inner fulfillment.",
+        "Shortcuts prevent genuine accomplishment.",
+        "Limited perspective restricts full potential."
+      ]
+    }
+  }
+}

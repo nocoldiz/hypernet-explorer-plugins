@@ -1,0 +1,2162 @@
+{
+  "1": {
+    "name": "Short Sword",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "2": {
+    "name": "Long Sword",
+    "description": "A long battle sword boasting a sharp cut."
+  },
+  "3": {
+    "name": "Falchion",
+    "description": "A wide sword with a curved blade."
+  },
+  "4": {
+    "name": "Mithril Sword",
+    "description": "A long sword forged with mithril."
+  },
+  "5": {
+    "name": "Dragon Blade",
+    "description": "A sword forged from the fangs of a dragon."
+  },
+  "6": {
+    "name": "Vector gun",
+    "description": "A gnome forged handgun with control over\nvectors, press SHIFT to recoil jump."
+  },
+  "7": {
+    "name": "Wooden Staff",
+    "description": "An inexpensive and widely-used staff."
+  },
+  "8": {
+    "name": "Magic Wand",
+    "description": "A wand that slightly increases its wielder's \nmagical powers."
+  },
+  "9": {
+    "name": "Force Wand",
+    "description": "A silver wand that increases its wielder's magical\npowers."
+  },
+  "10": {
+    "name": "Mithril Rod",
+    "description": "A mithril rod that increases its wielder's magical\npowers."
+  },
+  "11": {
+    "name": "Dragon Staff",
+    "description": "A dragon staff that increases its wielder's \nmagical powers."
+  },
+  "12": {
+    "name": "Bubba'sShotgun",
+    "description": "A pump-action shotgun with devastating close-range\npower."
+  },
+  "13": {
+    "name": "Stone Flail",
+    "description": "A flail with a stone head attached to its handle \nwith a chain."
+  },
+  "14": {
+    "name": "Bronze Flail",
+    "description": "A flail with a bronze head attached to its handle \nwith a chain."
+  },
+  "15": {
+    "name": "Morning Star",
+    "description": "A flail that has been strengthened with steel."
+  },
+  "16": {
+    "name": "Mithril Flail",
+    "description": "A flail that has been strengthened with mithril."
+  },
+  "17": {
+    "name": "Dragon Flail",
+    "description": "A flail that has been strengthened using fangs of \na dragon."
+  },
+  "18": {
+    "name": "",
+    "description": ""
+  },
+  "19": {
+    "name": "Hand Axe",
+    "description": "A small axe used for logging trees."
+  },
+  "20": {
+    "name": "Battle Axe",
+    "description": "A double-edged axe made for battle."
+  },
+  "21": {
+    "name": "Bardiche",
+    "description": "A battle axe with a crescent-shaped blade."
+  },
+  "22": {
+    "name": "Mithril Axe",
+    "description": "A battle axe forged with mithril."
+  },
+  "23": {
+    "name": "Dragon Axe",
+    "description": "A battle axe forged from the fangs of a dragon."
+  },
+  "24": {
+    "name": "",
+    "description": ""
+  },
+  "25": {
+    "name": "Short Spear",
+    "description": "A short spear specialized for thrusting."
+  },
+  "26": {
+    "name": "Long Spear",
+    "description": "A spear with the longest handle possible."
+  },
+  "27": {
+    "name": "Halberd",
+    "description": "A spear with an axe-head at its tip."
+  },
+  "28": {
+    "name": "Mithril Spear",
+    "description": "A spear forged with mithril."
+  },
+  "29": {
+    "name": "Dragon Spear",
+    "description": "A spear forged from the fangs of a dragon."
+  },
+  "30": {
+    "name": "",
+    "description": ""
+  },
+  "31": {
+    "name": "Cestus",
+    "description": "A battle glove with spikes attached to its \nknuckles."
+  },
+  "32": {
+    "name": "Bagh Naka",
+    "description": "A combat weapon with 4 short claws attached."
+  },
+  "33": {
+    "name": "Iron Claw",
+    "description": "A combat weapon with iron talons attached."
+  },
+  "34": {
+    "name": "Mithril Claw",
+    "description": "A combat weapon with mithril talons attached."
+  },
+  "35": {
+    "name": "Dragon Claw",
+    "description": "A combat weapon with dragon talons attached."
+  },
+  "36": {
+    "name": "",
+    "description": ""
+  },
+  "37": {
+    "name": "Short Bow",
+    "description": "A short bow made for hunting."
+  },
+  "38": {
+    "name": "Long Bow",
+    "description": "A long bow for battle with superior power."
+  },
+  "39": {
+    "name": "Crossbow",
+    "description": "A crossbow that shoots arrows with powerful \nsprings."
+  },
+  "40": {
+    "name": "Mithril Bow",
+    "description": "A crossbow that shoots mithril arrows with \npowerful springs."
+  },
+  "41": {
+    "name": "Dragon Bow",
+    "description": "A long bow for battle made with dragon's whiskers."
+  },
+  "42": {
+    "name": "",
+    "description": ""
+  },
+  "43": {
+    "name": "Knife",
+    "description": "A knife used for day-to-day tasks."
+  },
+  "44": {
+    "name": "Daggar",
+    "description": "A short blade used in close combat."
+  },
+  "45": {
+    "name": "Machete",
+    "description": "A dagger with a thicker, sturdier blade."
+  },
+  "46": {
+    "name": "Mithril Daggar",
+    "description": "A dagger forged with mithril."
+  },
+  "47": {
+    "name": "Dragon Daggar",
+    "description": "A dagger forged from the fangs of a dragon."
+  },
+  "48": {
+    "name": "",
+    "description": ""
+  },
+  "49": {
+    "name": "",
+    "description": ""
+  },
+  "50": {
+    "name": "",
+    "description": ""
+  },
+  "51": {
+    "name": "Bronze Age Sword",
+    "description": "An ancient bronze sword from early civilizations."
+  },
+  "52": {
+    "name": "Scimitar",
+    "description": "A curved blade used by desert warriors."
+  },
+  "53": {
+    "name": "Zweihander",
+    "description": "A massive two-handed greatsword."
+  },
+  "54": {
+    "name": "Rapier",
+    "description": "An elegant blade with excellent balance."
+  },
+  "55": {
+    "name": "Katana",
+    "description": "A traditional Japanese sword with exceptional \ncutting power."
+  },
+  "56": {
+    "name": "Runic Blade",
+    "description": "A blade infused with ancient runes that glow with \npower."
+  },
+  "57": {
+    "name": "Shadowsteel Sword",
+    "description": "A blade that absorbs light, becoming almost \ninvisible when swung."
+  },
+  "58": {
+    "name": "Pistol",
+    "description": "A basic handgun with moderate stopping power."
+  },
+  "59": {
+    "name": "Shotgun",
+    "description": "A pump-action shotgun with devastating close-range\npower."
+  },
+  "60": {
+    "name": "Assault Rifle",
+    "description": "A military-grade automatic rifle with excellent \naccuracy."
+  },
+  "61": {
+    "name": "Sniper Rifle",
+    "description": "A high-powered rifle for extreme long-range \nprecision."
+  },
+  "62": {
+    "name": "SMG",
+    "description": "A compact submachine gun with high rate of fire."
+  },
+  "63": {
+    "name": "Boomerang",
+    "description": "A curved throwing stick that returns to the \nthrower."
+  },
+  "64": {
+    "name": "Sling",
+    "description": "A sling used to hurl stones with deadly force."
+  },
+  "65": {
+    "name": "Dory Spear",
+    "description": "A bronze-tipped spear from ancient Greece."
+  },
+  "66": {
+    "name": "War Club",
+    "description": "A wooden club reinforced with bronze spikes."
+  },
+  "67": {
+    "name": "Khopesh",
+    "description": "A curved Egyptian sword-like weapon."
+  },
+  "68": {
+    "name": "War Hammer",
+    "description": "A heavy war hammer capable of crushing armor."
+  },
+  "69": {
+    "name": "Poleaxe",
+    "description": "A long polearm with an axe blade and spike."
+  },
+  "70": {
+    "name": "Flail",
+    "description": "A spiked ball on a chain attached to a handle."
+  },
+  "71": {
+    "name": "Gladiator Net",
+    "description": "A weighted net used to entangle opponents."
+  },
+  "72": {
+    "name": "Katar",
+    "description": "A set of bladed tonfa-like weapons."
+  },
+  "73": {
+    "name": "Combat Knife",
+    "description": "A compact tactical knife for close quarters."
+  },
+  "74": {
+    "name": "Compound Bow",
+    "description": "A special forces carbon fiber composite bow."
+  },
+  "75": {
+    "name": "Heavy Machine Gun",
+    "description": "A military-grade .50 caliber machine gun."
+  },
+  "76": {
+    "name": "RPG",
+    "description": "A portable shoulder-mounted rocket launcher."
+  },
+  "77": {
+    "name": "Brass Knuckles",
+    "description": "A set of brass knuckles for hand-to-hand combat."
+  },
+  "78": {
+    "name": "Plasma Rifle",
+    "description": "An energy-based firearm that fires plasma bolts."
+  },
+  "79": {
+    "name": "Energy Blade",
+    "description": "A sword with an energy blade that can cut through \nalmost anything."
+  },
+  "80": {
+    "name": "Sonic Gauntlet",
+    "description": "A gauntlet that generates sonic shockwaves."
+  },
+  "81": {
+    "name": "Laser Rifle",
+    "description": "A rifle that fires concentrated beams of light."
+  },
+  "82": {
+    "name": "Gravity Crusher",
+    "description": "A launcher that creates miniature gravity wells to\ncrush targets."
+  },
+  "83": {
+    "name": "Flamesong Blade",
+    "description": "A shortsword that bursts into flames when drawn."
+  },
+  "84": {
+    "name": "Void Edge",
+    "description": "A massive sword carved from a single piece of \nobsidian."
+  },
+  "85": {
+    "name": "World Tree Staff",
+    "description": "A staff made from the World Tree, resonating with \nnature."
+  },
+  "86": {
+    "name": "Aetherial Bow",
+    "description": "A bow that forms arrows from pure magical energy."
+  },
+  "87": {
+    "name": "Thornwhip",
+    "description": "A whip made from enchanted thorns that drain life \nforce."
+  },
+  "88": {
+    "name": "Flying Ring Chain",
+    "description": "A chain of razor-sharp rings that can be thrown or\nused as a whip."
+  },
+  "89": {
+    "name": "Urumi",
+    "description": "A flexible sword made of connected segments."
+  },
+  "90": {
+    "name": "Three-Section Staff",
+    "description": "A three-sectioned staff connected by chains."
+  },
+  "91": {
+    "name": "Deer Horn Knives",
+    "description": "A pair of crescent-shaped blades with handles."
+  },
+  "92": {
+    "name": "Poison Blowpipe",
+    "description": "A blowgun that fires poison-tipped darts."
+  },
+  "93": {
+    "name": "Cyberarm Cannon",
+    "description": "An implanted arm cannon that fires concussive \nenergy blasts."
+  },
+  "94": {
+    "name": "Neural Claws",
+    "description": "Retractable titanium claws embedded in cybernetic \nhands."
+  },
+  "95": {
+    "name": "Micro-Missile Array",
+    "description": "A shoulder-mounted targeting system firing guided \nmini-rockets."
+  },
+  "96": {
+    "name": "Polymorphic Arsenal",
+    "description": "A neural-linked weapon that morphs between blade \nand gun modes."
+  },
+  "97": {
+    "name": "Optical Beam System",
+    "description": "Ocular implants that fire focused energy beams."
+  },
+  "98": {
+    "name": "Thundercaller Staff",
+    "description": "A staff that summons and controls lightning \nstrikes."
+  },
+  "99": {
+    "name": "Eternal Flame Sword",
+    "description": "A blade forged in dragon fire that never cools."
+  },
+  "100": {
+    "name": "Frostbite Bow",
+    "description": "A bow that fires arrows of pure ice that freeze on\nimpact."
+  },
+  "101": {
+    "name": "Earthshaker Maul",
+    "description": "A hammer infused with the power of earthquakes."
+  },
+  "102": {
+    "name": "Tempest Trident",
+    "description": "A trident that commands the power of raging \nstorms."
+  },
+  "103": {
+    "name": "Excalibur",
+    "description": "The mythical sword of King Arthur, glowing with \nholy power."
+  },
+  "104": {
+    "name": "Mjölnir",
+    "description": "The mighty hammer of the thunder god, which \nreturns when thrown."
+  },
+  "105": {
+    "name": "Dimensional Cutter",
+    "description": "A mysterious blade said to be able to cut through \ndimensions."
+  },
+  "106": {
+    "name": "Divine Talons",
+    "description": "A pair of golden claws said to be worn by a god of\nwar."
+  },
+  "107": {
+    "name": "Staff of Eternity",
+    "description": "A staff holding the wisdom of the ages and \nlimitless magical power."
+  },
+  "108": {
+    "name": "Volt Edge",
+    "description": "An ancient sword constantly surrounded by \ncrackling electricity."
+  },
+  "109": {
+    "name": "Explosive Crossbow",
+    "description": "A crossbow that fires bolts with explosive tips."
+  },
+  "110": {
+    "name": "Luminous Kukris",
+    "description": "A pair of enchanted curved daggers that leave \ntrails of light."
+  },
+  "111": {
+    "name": "Dragon Scale Blade",
+    "description": "A sword with a serrated edge made from dragon \nscales."
+  },
+  "112": {
+    "name": "Paralyzer",
+    "description": "A dart gun that fires needles coated with \nparalyzing toxin."
+  },
+  "113": {
+    "name": "Yggdrasil Branch",
+    "description": "A staff carved from a branch of the ancient World \nTree."
+  },
+  "114": {
+    "name": "Astral Saber",
+    "description": "A curved blade that glows with the light of a \ndistant star."
+  },
+  "115": {
+    "name": "Adamantine Fists",
+    "description": "A pair of heavy steel gauntlets reinforced with \nadamantine."
+  },
+  "116": {
+    "name": "Splitting Shuriken",
+    "description": "A throwing blade that splits into multiple \nprojectiles in flight."
+  },
+  "117": {
+    "name": "Iron Tonfa",
+    "description": "A pair of arm-mounted iron tonfa used in various \nmartial arts."
+  },
+  "118": {
+    "name": "Training Nunchaku",
+    "description": "Wooden training nunchaku connected by a short \nchain."
+  },
+  "119": {
+    "name": "Steel Nunchaku",
+    "description": "Steel nunchaku with reinforced links and spiked \nends."
+  },
+  "120": {
+    "name": "Four-Section Staff",
+    "description": "A four-sectioned staff connected by chains for \ncomplex techniques."
+  },
+  "121": {
+    "name": "Iron Knuckles",
+    "description": "Reinforced fighting gloves with iron plates over \nthe knuckles."
+  },
+  "122": {
+    "name": "Mithril Strike Gloves",
+    "description": "Lightweight gloves with mithril-enhanced striking \nsurfaces."
+  },
+  "123": {
+    "name": "Master's Gauntlets",
+    "description": "Ancient gauntlets said to be worn by a legendary \nmartial artist."
+  },
+  "124": {
+    "name": "Steel Chair",
+    "description": "A steel folding chair used as an improvised \nweapon."
+  },
+  "125": {
+    "name": "Breakaway Table",
+    "description": "A wooden table that breaks on impact for \ndevastating damage."
+  },
+  "126": {
+    "name": "Heavy Chain",
+    "description": "A length of chain used to strike and bind \nopponents."
+  },
+  "127": {
+    "name": "Ring Bell",
+    "description": "A ring bell that creates a disorienting sound when\nstruck."
+  },
+  "128": {
+    "name": "Steel Ladder",
+    "description": "A reinforced ladder that can be climbed or used as\na weapon."
+  },
+  "129": {
+    "name": "Champion's Belt",
+    "description": "A championship belt that grants confidence and \nfighting power."
+  },
+  "130": {
+    "name": "Shinai",
+    "description": "A kendo bamboo practice sword used for precise \nstrikes."
+  },
+  "131": {
+    "name": "Twin Sai",
+    "description": "A pair of sai - three-pronged metal batons for \nblocking and striking."
+  },
+  "132": {
+    "name": "Flexible Staff",
+    "description": "Hardened bamboo poles bound together into a \nflexible staff."
+  },
+  "133": {
+    "name": "Arm Bracers",
+    "description": "Metal bands wrapped around forearms for blocking \nand striking."
+  },
+  "134": {
+    "name": "Knife Hand",
+    "description": "A fighting style that uses the edge of the hand as\na weapon."
+  },
+  "135": {
+    "name": "Flying Kicks",
+    "description": "Special training that allows kicks of devastating \npower."
+  },
+  "136": {
+    "name": "Metal Man",
+    "description": "A metal kendo mask that can be used offensively."
+  },
+  "137": {
+    "name": "Kendo Bokken",
+    "description": "A long wooden paddle reinforced with metal for \nstriking."
+  },
+  "138": {
+    "name": "Tekko-kagi",
+    "description": "Special metal claws that extend from a hand guard."
+  },
+  "139": {
+    "name": "Rope and Hook",
+    "description": "A rope with a grappling hook that can pull \nopponents closer."
+  },
+  "140": {
+    "name": "Trash Can Lid",
+    "description": "A steel trash can lid used as both a shield and \nweapon."
+  },
+  "141": {
+    "name": "Flintlock Pistol",
+    "description": "An antique flintlock pistol with ornate \nengravings."
+  },
+  "142": {
+    "name": "Musket",
+    "description": "A single-shot musket with a long barrel for \nimproved accuracy."
+  },
+  "143": {
+    "name": "Percussion Revolver",
+    "description": "A percussion cap revolver with a rotating \ncylinder."
+  },
+  "144": {
+    "name": "Lever Action Rifle",
+    "description": "A lever-action rifle that can fire multiple shots \nquickly."
+  },
+  "145": {
+    "name": "Double-Barrel Shotgun",
+    "description": "A double-barreled shotgun that can fire two shells\nin quick succession."
+  },
+  "146": {
+    "name": "Gatling Gun",
+    "description": "A Gatling gun with multiple rotating barrels for \nsustained fire."
+  },
+  "147": {
+    "name": "Blunderbuss",
+    "description": "An old-fashioned blunderbuss with a wide spread."
+  },
+  "148": {
+    "name": "Dueling Pistol",
+    "description": "An elegant dueling pistol with precision \ncraftsmanship."
+  },
+  "149": {
+    "name": "Bolt-Action Rifle",
+    "description": "A bolt-action rifle known for its reliability and \naccuracy."
+  },
+  "150": {
+    "name": "Six-Shooter",
+    "description": "A classic six-shooter revolver from the Old West."
+  },
+  "151": {
+    "name": "9mm Pistol",
+    "description": "A standard semi-automatic 9mm handgun."
+  },
+  "152": {
+    "name": "Compact SMG",
+    "description": "A compact submachine gun with a folding stock."
+  },
+  "153": {
+    "name": "Magnum Revolver",
+    "description": "A high-caliber revolver with tremendous stopping \npower."
+  },
+  "154": {
+    "name": "Combat Shotgun",
+    "description": "A tactical shotgun with a drum magazine for \nincreased capacity."
+  },
+  "155": {
+    "name": "Bullpup Rifle",
+    "description": "A bullpup-design assault rifle with excellent \nbalance."
+  },
+  "156": {
+    "name": "DMR",
+    "description": "A designated marksman rifle with enhanced optics."
+  },
+  "157": {
+    "name": "LMG",
+    "description": "A light machine gun designed for sustained \nsuppressive fire."
+  },
+  "158": {
+    "name": "PDW",
+    "description": "A compact personal defense weapon using \nspecialized ammunition."
+  },
+  "159": {
+    "name": "Anti-Material Rifle",
+    "description": "A powerful anti-material rifle capable of \npenetrating armor."
+  },
+  "160": {
+    "name": "Disposable Rocket",
+    "description": "A disposable single-shot rocket launcher."
+  },
+  "161": {
+    "name": "Match Grade Pistol",
+    "description": "A customized marksman pistol with extended barrel."
+  },
+  "162": {
+    "name": "Smart Grenade Launcher",
+    "description": "A high-tech grenade launcher with programmable \ndetonation."
+  },
+  "163": {
+    "name": "Tactical Shotgun",
+    "description": "A compact bullpup shotgun with devastating \nclose-range power."
+  },
+  "164": {
+    "name": "Precision Rifle",
+    "description": "A precision bolt-action rifle with match-grade \nbarrel."
+  },
+  "165": {
+    "name": "HMG",
+    "description": "A heavy machine gun mounted on a bipod for \nstability."
+  },
+  "166": {
+    "name": "Minigun",
+    "description": "A minigun with multiple rotating barrels for \nextreme rate of fire."
+  },
+  "167": {
+    "name": "Double-Barrel Pistol",
+    "description": "A dual-barrel pistol that fires both barrels \nsimultaneously."
+  },
+  "168": {
+    "name": "Tactical Carbine",
+    "description": "A modern carbine rifle with modular attachments."
+  },
+  "169": {
+    "name": "Heavy Sniper",
+    "description": "A semi-automatic .50 caliber sniper rifle."
+  },
+  "170": {
+    "name": "Tactical Crossbow",
+    "description": "A modern crossbow with a scope and carbon fiber \nlimbs."
+  },
+  "171": {
+    "name": "Stone Axe",
+    "description": "A primitive stone axe made from flint bound to a \nwooden handle."
+  },
+  "172": {
+    "name": "Wooden Club",
+    "description": "A simple wooden club, the earliest of human \nweapons."
+  },
+  "173": {
+    "name": "Bone Dagger",
+    "description": "A sharpened animal bone used as a primitive \nstabbing weapon."
+  },
+  "174": {
+    "name": "Throwing Stick",
+    "description": "A primitive throwing stick used for hunting by \nancient cultures."
+  },
+  "175": {
+    "name": "Javelin",
+    "description": "A simple throwing spear used by early humans for \nhunting."
+  },
+  "176": {
+    "name": "Obsidian Blade",
+    "description": "A sharpened obsidian blade attached to a wooden \nhandle."
+  },
+  "177": {
+    "name": "Retiarius Net",
+    "description": "A weighted net used by ancient gladiators to \nentangle opponents."
+  },
+  "178": {
+    "name": "Mesopotamian Sword",
+    "description": "A bronze sword from ancient Mesopotamian \ncivilizations."
+  },
+  "179": {
+    "name": "Sumerian Spear",
+    "description": "A Sumerian copper spear with a leaf-shaped blade."
+  },
+  "180": {
+    "name": "Egyptian Axe",
+    "description": "An ancient Egyptian axe with a crescent-shaped \nblade."
+  },
+  "181": {
+    "name": "Atlatl Dart",
+    "description": "A lightweight throwing dart propelled by an atlatl\nfor greater distance."
+  },
+  "182": {
+    "name": "Fiber Sling",
+    "description": "A primitive sling made from woven plant fibers for\nhurling stones."
+  },
+  "183": {
+    "name": "Stone-Studded Club",
+    "description": "A long wooden club studded with sharp stones."
+  },
+  "184": {
+    "name": "Shark Tooth Club",
+    "description": "A Polynesian war club carved from hardwood with \nshark teeth edges."
+  },
+  "185": {
+    "name": "Macuahuitl",
+    "description": "An Aztec macuahuitl - a wooden club embedded with \nobsidian blades."
+  },
+  "186": {
+    "name": "Bola",
+    "description": "A bola made of stone weights connected by cord, \nused to entangle prey."
+  },
+  "187": {
+    "name": "Mere Club",
+    "description": "A traditional Māori club carved from wood or \nwhalebone."
+  },
+  "188": {
+    "name": "Gladius",
+    "description": "A Roman gladius - a short sword designed for \nstabbing in close formation."
+  },
+  "189": {
+    "name": "Pilum",
+    "description": "A Roman pilum - a heavy javelin designed to bend \non impact."
+  },
+  "190": {
+    "name": "Shamshir",
+    "description": "A curved Middle Eastern scimitar with a \nsingle-edged blade."
+  },
+  "191": {
+    "name": "Composite Bow",
+    "description": "A recurve bow from the Eurasian steppes used by \nhorse archers."
+  },
+  "192": {
+    "name": "Medieval Flail",
+    "description": "A spiked ball attached to a handle by a chain."
+  },
+  "193": {
+    "name": "Blackjack",
+    "description": "A wooden stick with a leather-wrapped lead weight \nat the end."
+  },
+  "194": {
+    "name": "Longsword",
+    "description": "A European longsword designed for two-handed use."
+  },
+  "195": {
+    "name": "Claymore",
+    "description": "A Scottish claymore with a two-edged blade and \ndistinctive crossguard."
+  },
+  "196": {
+    "name": "Halberd",
+    "description": "A European polearm with an axe blade and a spike."
+  },
+  "197": {
+    "name": "Lucerne Hammer",
+    "description": "A Swiss war hammer with a spike for puncturing \narmor."
+  },
+  "198": {
+    "name": "Chu-Ko-Nu",
+    "description": "A Chinese repeating crossbow capable of rapid \nfire."
+  },
+  "199": {
+    "name": "Naginata",
+    "description": "A Japanese naginata - a pole weapon with a curved \nblade."
+  },
+  "200": {
+    "name": "Knuckle Dusters",
+    "description": "A set of iron knuckle dusters with spikes for \ndevastating punches."
+  },
+  "201": {
+    "name": "Rope Dart",
+    "description": "A Chinese rope dart - a weighted metal dart on a \nrope."
+  },
+  "202": {
+    "name": "Bagh Nakh",
+    "description": "A pair of steel claws worn on the hands in Indian \nmartial arts."
+  },
+  "203": {
+    "name": "Estoc",
+    "description": "A European estoc - a rigid, narrow sword designed \nfor thrusting into armor joints."
+  },
+  "204": {
+    "name": "Flanged Mace",
+    "description": "A European mace with flanged head for crushing \narmor."
+  },
+  "205": {
+    "name": "Bamboo Blowgun",
+    "description": "A primitive bamboo blowgun used to fire poisoned \ndarts."
+  },
+  "206": {
+    "name": "Kukri",
+    "description": "A steel Kukri knife with an inwardly curved blade."
+  },
+  "207": {
+    "name": "Iklwa",
+    "description": "A Zulu short spear with a long blade, designed for\nclose combat."
+  },
+  "208": {
+    "name": "Matchlock Musket",
+    "description": "A matchlock musket - an early firearm with a lit \nmatch to fire."
+  },
+  "209": {
+    "name": "Wheellock Pistol",
+    "description": "A wheellock pistol - an early firearm using a \nspinning wheel to create sparks."
+  },
+  "210": {
+    "name": "Urumi Whip Sword",
+    "description": "An Indian flexible sword made of connected metal \nsegments."
+  },
+  "211": {
+    "name": "Bullwhip",
+    "description": "A whip made from braided leather strips."
+  },
+  "212": {
+    "name": "Patag",
+    "description": "A Tibetan sword with a straight, single-edged \nblade."
+  },
+  "213": {
+    "name": "Katar",
+    "description": "A metal push dagger with a T-shaped handle for \npunching."
+  },
+  "214": {
+    "name": "Shongo",
+    "description": "A long, heavy African throwing knife with multiple\nblades."
+  },
+  "215": {
+    "name": "Hand Cannon",
+    "description": "An early Chinese hand cannon made of cast iron."
+  },
+  "216": {
+    "name": "Iron Grenade",
+    "description": "A primitive grenade made from a cast iron shell \nfilled with gunpowder."
+  },
+  "217": {
+    "name": "Flintlock Blunderbuss",
+    "description": "A blunderbuss with a flared muzzle for firing shot\nor scrap."
+  },
+  "218": {
+    "name": "Pepperbox Revolver",
+    "description": "A pepperbox revolver with multiple barrels that \nrotate."
+  },
+  "219": {
+    "name": "Rifle Bayonet",
+    "description": "A bayonet attached to a rifle for close combat."
+  },
+  "220": {
+    "name": "Rifled Musket",
+    "description": "A Civil War era rifled musket with improved \naccuracy."
+  },
+  "221": {
+    "name": "Gatling Gun",
+    "description": "An early machine gun with hand-cranked operation."
+  },
+  "222": {
+    "name": "Breech-Loading Rifle",
+    "description": "A single-shot breech-loading rifle from the late \n1800s."
+  },
+  "223": {
+    "name": "Military Bolt-Action",
+    "description": "A World War I era bolt-action rifle with stripper \nclip loading."
+  },
+  "224": {
+    "name": "Tommy Gun",
+    "description": "A compact pistol-caliber submachine gun from the \n1920s."
+  },
+  "225": {
+    "name": "M1 Garand",
+    "description": "A World War II era M1 Garand semi-automatic rifle."
+  },
+  "226": {
+    "name": "Flamethrower",
+    "description": "A handheld flamethrower that sprays burning fuel."
+  },
+  "227": {
+    "name": "MP40",
+    "description": "A German MP40 submachine gun from World War II."
+  },
+  "228": {
+    "name": "Grenade Launcher",
+    "description": "A break-action grenade launcher firing 40mm \nexplosive rounds."
+  },
+  "229": {
+    "name": "M14 Battle Rifle",
+    "description": "A Vietnam-era battle rifle with select-fire \ncapability."
+  },
+  "230": {
+    "name": "AKS-74U",
+    "description": "A compact modern assault rifle with folding stock."
+  },
+  "231": {
+    "name": "Marksman Rifle",
+    "description": "A modern designated marksman rifle with \nmatch-grade barrel."
+  },
+  "232": {
+    "name": "Anti-Material Rifle",
+    "description": "A high-caliber anti-material rifle for long-range \nprecision."
+  },
+  "233": {
+    "name": "MANPADS",
+    "description": "A portable surface-to-air missile launcher."
+  },
+  "234": {
+    "name": "Railgun Prototype",
+    "description": "A high-powered electromagnetic railgun prototype."
+  },
+  "235": {
+    "name": "Coilgun",
+    "description": "A portable coilgun that accelerates projectiles \nwith electromagnetic coils."
+  },
+  "236": {
+    "name": "Active Denial System",
+    "description": "A directed energy weapon that emits a concentrated\nbeam of microwaves."
+  },
+  "237": {
+    "name": "Sonic Staff",
+    "description": "A staff that creates powerful soundwaves to \ndisorient and damage."
+  },
+  "238": {
+    "name": "Air Pistol",
+    "description": "A pistol that fires compressed air capsules for \nnon-lethal takedowns."
+  },
+  "239": {
+    "name": "Foam Projector",
+    "description": "An experimental weapon that fires sticky foam to \nimmobilize targets."
+  },
+  "240": {
+    "name": "Electro-Net Launcher",
+    "description": "A weapon that fires electrified nets to capture \ntargets."
+  },
+  "241": {
+    "name": "Golden Varlenia Blade",
+    "description": "A golden longsword forged with legendary Varlenia \nsteel, glowing with arcane energy."
+  },
+  "242": {
+    "name": "Varlenia Twinblades",
+    "description": "Twin golden daggers made of Varlenia steel that \nleave traces of arcane light when swung."
+  },
+  "243": {
+    "name": "Varlenia Arcane Staff",
+    "description": "A golden staff forged from Varlenia steel that \namplifies magical energies."
+  },
+  "244": {
+    "name": "Varlenia Energy Bow",
+    "description": "A golden bow made of flexible Varlenia steel that \nmaterializes arrows of pure energy."
+  },
+  "245": {
+    "name": "Varlenia Fist",
+    "description": "Golden gauntlets made of Varlenia steel that \nchannel arcane power into devastating punches."
+  },
+  "246": {
+    "name": "Varlenia Returning Spear",
+    "description": "A golden spear made of Varlenia steel that can be \nthrown and magically returns to its wielder."
+  },
+  "247": {
+    "name": "Varlenia Cleaver",
+    "description": "A massive golden axe forged from Varlenia steel \nthat crackles with elemental energy."
+  },
+  "248": {
+    "name": "Varlenia Beam Rifle",
+    "description": "A golden rifle made from Varlenia steel that fires\nconcentrated beams of arcane energy."
+  },
+  "249": {
+    "name": "Varlenia Chain Whip",
+    "description": "A chain whip made with golden Varlenia steel links\nthat can extend to great lengths."
+  },
+  "250": {
+    "name": "Varlenia War Fan",
+    "description": "A folding war fan made of razor-sharp Varlenia \nsteel blades."
+  },
+  "251": {
+    "name": "Stone Darts",
+    "description": "Primitive stone-tipped darts used by ancient \ncultures."
+  },
+  "252": {
+    "name": "Wooden Nunchaku",
+    "description": "A flexible wooden weapon with segments connected \nby cord or chain."
+  },
+  "253": {
+    "name": "Quarterstaff",
+    "description": "A staff with weighted ends used in martial arts."
+  },
+  "254": {
+    "name": "Escrima Sticks",
+    "description": "A pair of short metal batons used for \nclose-quarters fighting."
+  },
+  "255": {
+    "name": "Chakram",
+    "description": "A chakram - a throwing weapon with a circular \nblade."
+  },
+  "256": {
+    "name": "Meteor Hammer",
+    "description": "A meteor hammer - a weighted head on a rope for \nswinging attacks."
+  },
+  "257": {
+    "name": "Tessen",
+    "description": "A Japanese war fan with metal ribs that can be \nused as a weapon."
+  },
+  "258": {
+    "name": "Volley Gun",
+    "description": "A hand-cranked volley gun with multiple barrels \nthat fire simultaneously."
+  },
+  "259": {
+    "name": "Riot Gun",
+    "description": "A weapon that fires hardened rubber or plastic \nprojectiles for crowd control."
+  },
+  "260": {
+    "name": "Gas Launcher",
+    "description": "A launcher that fires tear gas or smoke grenades."
+  },
+  "261": {
+    "name": "Wooden Stake",
+    "description": "A sharpened wooden stake used against supernatural\ncreatures."
+  },
+  "262": {
+    "name": "Blessed Silver Sword",
+    "description": "A blessed silver sword effective against undead \nand supernatural foes."
+  },
+  "263": {
+    "name": "Fire Lance",
+    "description": "Ancient Chinese rockets attached to spears, \ncreating an early missile weapon."
+  },
+  "264": {
+    "name": "Wind Staff",
+    "description": "A simple wooden staff that creates powerful gusts \nof wind."
+  },
+  "265": {
+    "name": "Net Crossbow",
+    "description": "A crossbow that fires specialized bolts that \nexplode into entangling nets."
+  },
+  "266": {
+    "name": "Venom Claws",
+    "description": "Metal claws infused with paralyzing poison."
+  },
+  "267": {
+    "name": "Petrified Staff",
+    "description": "A staff made from fossilized ancient wood with \nearth magic properties."
+  },
+  "268": {
+    "name": "Aerodynamic Blade",
+    "description": "A curved blade that slices through the air with \nminimal resistance."
+  },
+  "269": {
+    "name": "Advanced Compound Bow",
+    "description": "A modern compound bow with advanced pulley system \nfor power and accuracy."
+  },
+  "270": {
+    "name": "Water Jet Cutter",
+    "description": "A handheld weapon that fires a jet of pressurized \nwater."
+  },
+  "271": {
+    "name": "Frost Whip",
+    "description": "A whip made from crystallized ice that never \nmelts."
+  },
+  "272": {
+    "name": "Obsidian Sword",
+    "description": "A sword with a blade made of hardened volcanic \nglass."
+  },
+  "273": {
+    "name": "Tranquilizer Rifle",
+    "description": "A rifle that fires darts filled with potent \ntranquilizers."
+  },
+  "274": {
+    "name": "Seismic Hammer",
+    "description": "A massive two-handed hammer that creates \nshockwaves on impact."
+  },
+  "275": {
+    "name": "Lightning-Struck Staff",
+    "description": "A staff made from the branch of a tree struck by \nlightning."
+  },
+  "276": {
+    "name": "Disc Launcher",
+    "description": "A weapon that launches sharp discs with cutting \nedges."
+  },
+  "277": {
+    "name": "Vibro Blade",
+    "description": "A sword with a blade that vibrates at ultrasonic \nfrequencies."
+  },
+  "278": {
+    "name": "Heat Ray",
+    "description": "A weapon that generates intense heat to melt \nthrough objects."
+  },
+  "279": {
+    "name": "Shock Gauntlets",
+    "description": "Gauntlets that deliver powerful electric shocks on\nimpact."
+  },
+  "280": {
+    "name": "Starmetal Blade",
+    "description": "A sword forged from star metal that fell from the \nsky, giving it magical properties."
+  },
+  "281": {
+    "name": "Eye of Insight Staff",
+    "description": "A staff crowned with a living, sentient eye that \ncan see invisible things."
+  },
+  "282": {
+    "name": "Dragonbone Bow",
+    "description": "A bow carved from ancient dragonbone that never \nmisses its target."
+  },
+  "283": {
+    "name": "Shadowsteel Blade",
+    "description": "A sword with a blade made of solidified shadow \nthat passes through armor."
+  },
+  "284": {
+    "name": "Volcanic Greataxe",
+    "description": "An axe forged in the heart of a volcano, eternally\nburning with magical flame."
+  },
+  "285": {
+    "name": "Leviathan Fang Spear",
+    "description": "A spear made from the fang of a legendary sea \nserpent that controls water."
+  },
+  "286": {
+    "name": "Thunder Lizard Gauntlets",
+    "description": "Gauntlets made from the scales of an ancient \nthunder lizard, crackling with electricity."
+  },
+  "287": {
+    "name": "Arcane Crossbow",
+    "description": "A crossbow that fires bolts of pure magical \nenergy."
+  },
+  "288": {
+    "name": "Soul Drain Flail",
+    "description": "A flail with a head made of crystallized soul \nenergy that drains life force."
+  },
+  "289": {
+    "name": "Morphblade",
+    "description": "A magical sword that can change its size from \ndagger to greatsword at will."
+  },
+  "290": {
+    "name": "Banshee's Wail",
+    "description": "A whip made from the hair of a banshee that \nscreams when used."
+  },
+  "291": {
+    "name": "Celestial Hammer",
+    "description": "A hammer forged from a fragment of a fallen star, \nglowing with celestial energy."
+  },
+  "292": {
+    "name": "Frost Dragon Claws",
+    "description": "Claws carved from the teeth of an ancient frost \ndragon, emanating bitter cold."
+  },
+  "293": {
+    "name": "World Tree Branch",
+    "description": "A staff made from a branch of the World Tree, \ncontaining ancient nature magic."
+  },
+  "294": {
+    "name": "Soulstring Bow",
+    "description": "A magical bow that forms arrows from the wielder's\nown life force."
+  },
+  "295": {
+    "name": "Hero's Legacy",
+    "description": "A sword that contains the trapped soul of an \nancient hero, granting wisdom in battle."
+  },
+  "296": {
+    "name": "Bloodthirster",
+    "description": "A sword that becomes lighter and sharper with each\nkill, feeding on blood."
+  },
+  "297": {
+    "name": "Earthshaker Mace",
+    "description": "A mace made from a chunk of elemental earth, \ncausing tremors on impact."
+  },
+  "298": {
+    "name": "Dimension Blade",
+    "description": "A sword that can cut through the fabric of reality\nto create dimensional portals."
+  },
+  "299": {
+    "name": "Infinite Quiver",
+    "description": "A magical crossbow that never needs to be \nreloaded, materializing bolts from thin air."
+  },
+  "300": {
+    "name": "Lightning Elemental Fists",
+    "description": "Gauntlets made from the essence of a lightning \nelemental, striking with electric fury."
+  },
+  "301": {
+    "name": "Chronomancer's Staff",
+    "description": "A staff crafted from crystallized time, allowing \nthe wielder to slow enemies."
+  },
+  "302": {
+    "name": "Twilight Edge",
+    "description": "A sword forged from the essence of twilight, \nexisting between light and shadow."
+  },
+  "303": {
+    "name": "Moonlight Bow",
+    "description": "A bow carved from moonlight that fires arrows of \npure lunar energy."
+  },
+  "304": {
+    "name": "Bound Elemental Axe",
+    "description": "An axe that contains a bound fire elemental, \nconstantly ablaze with magical flames."
+  },
+  "305": {
+    "name": "Phoenix Intestines",
+    "description": "A whip made from the intestines of a phoenix, \nburning with eternal fire."
+  },
+  "306": {
+    "name": "Nightmare Gauntlets",
+    "description": "Gauntlets crafted from the solidified essence of \nnightmares, causing fear on contact."
+  },
+  "307": {
+    "name": "Spellbreaker Blade",
+    "description": "A magical crystalline sword that absorbs spells \ncast at its wielder."
+  },
+  "308": {
+    "name": "Unicorn Horn Staff",
+    "description": "A staff made from the horn of a legendary unicorn,\nwith powerful healing magic."
+  },
+  "309": {
+    "name": "T-Pillar Blade",
+    "description": "An impossibly precise stone blade from Göbekli \nTepe, carved with animal pictographs."
+  },
+  "310": {
+    "name": "Vulture Totem Staff",
+    "description": "A staff topped with the carved vulture of Göbekli \nTepe, allowing communion with ancient spirits."
+  },
+  "311": {
+    "name": "Fox Spirit Fists",
+    "description": "Stone gauntlets carved with the fox symbols of \nGöbekli Tepe, granting supernatural speed and cunning."
+  },
+  "312": {
+    "name": "Stellar Sling",
+    "description": "A mysterious sling from Göbekli Tepe that turns \nordinary stones into devastating projectiles of stellar energy."
+  },
+  "313": {
+    "name": "Boar Totem Hammer",
+    "description": "A massive stone hammer carved with the boar \nsymbols from Göbekli Tepe, channeling primal strength."
+  },
+  "314": {
+    "name": "Serpent Caller",
+    "description": "A spear tipped with a stone carving from Göbekli \nTepe that summons serpent spirits when thrown."
+  },
+  "315": {
+    "name": "Cosmic Pendulum",
+    "description": "A mysterious flail from Göbekli Tepe with \nastronomical carvings that distorts space around it."
+  },
+  "316": {
+    "name": "Soul Cleaver",
+    "description": "A ceremonial axe from Göbekli Tepe that cuts \nthrough both physical matter and spiritual energy."
+  },
+  "317": {
+    "name": "Crane Talons",
+    "description": "Ritual claws from Göbekli Tepe that allow the \nwearer to assume aspects of the sacred crane."
+  },
+  "318": {
+    "name": "Bull Totem Bow",
+    "description": "A bow carved from impossible stone, adorned with \nthe bull carvings of Göbekli Tepe."
+  },
+  "319": {
+    "name": "Star Cutter",
+    "description": "A curved blade from Göbekli Tepe inscribed with \nforgotten constellation patterns."
+  },
+  "320": {
+    "name": "Portal Disc",
+    "description": "A strange circular weapon from Göbekli Tepe that \ncreates portals when thrown, returning to the wielder."
+  },
+  "321": {
+    "name": "Knowledge Seeker",
+    "description": "A mysterious dagger from Göbekli Tepe that reveals\nhidden knowledge when blood touches its blade."
+  },
+  "322": {
+    "name": "Celestial Alignment Rod",
+    "description": "A staff from Göbekli Tepe crowned with carvings of\nthe sun and moon, controlling celestial energies."
+  },
+  "323": {
+    "name": "Gravity Spear",
+    "description": "A primitive-looking but technologically advanced \nspear from Göbekli Tepe that can control gravity."
+  },
+  "324": {
+    "name": "Skystone Greatsword",
+    "description": "A massive stone sword from Göbekli Tepe that's \nimpossibly light, inscribed with lost astronomical knowledge."
+  },
+  "325": {
+    "name": "Phasing Touch",
+    "description": "Gauntlets from Göbekli Tepe that phase through \nmatter, allowing the wearer to reach into objects."
+  },
+  "326": {
+    "name": "Liquid Stone Whip",
+    "description": "A mysterious whip from Göbekli Tepe made of \nimpossible stone links that moves like liquid."
+  },
+  "327": {
+    "name": "Planar Divider",
+    "description": "A ceremonial axe from Göbekli Tepe that can cut \nthrough the barriers between worlds."
+  },
+  "328": {
+    "name": "Thought Projector",
+    "description": "A stone-carved launcher from Göbekli Tepe that \nfires energy bolts powered by thoughts."
+  },
+  "329": {
+    "name": "Timeflow Manipulator",
+    "description": "A bizarre Göbekli Tepe artifact that warps time \naround the wielder, increasing their speed."
+  },
+  "330": {
+    "name": "EHI Crude Projector",
+    "description": "An industrial cannon that fires pressurized crude \noil. Devastating but extremely unstable and may ignite the wielder."
+  },
+  "331": {
+    "name": "EHI Petroleum Edge",
+    "description": "A chainsaw sword dripping with oil that constantly\ncorrodes its wielder's armor."
+  },
+  "332": {
+    "name": "EHI Toxic Amplifier",
+    "description": "A staff containing volatile petroleum derivatives \nthat amplifies magic but damages the user's health with toxic fumes."
+  },
+  "333": {
+    "name": "EHI Petrochem Injectors",
+    "description": "Gauntlets that inject oil-based performance \nenhancers, greatly increasing strength but causing severe organ damage."
+  },
+  "334": {
+    "name": "EHI Knowledge Injector",
+    "description": "A crossbow that fires bolts containing \nencyclopedic knowledge."
+  },
+  "335": {
+    "name": "EHI Compression Maul",
+    "description": "A massive hammer containing compressed oil that \ncreates devastating shockwaves but severely slows the wielder."
+  },
+  "336": {
+    "name": "EHI Omniscient Binder",
+    "description": "A whip made from living encyclopedia pages that \nbind enemies with knowledge but confuse the wielder with constant whispers."
+  },
+  "337": {
+    "name": "EHI Memetic Rifle",
+    "description": "A rifle that fires knowledge crystallized into \nbullets, devastating to enemies but causing memory loss in the user."
+  },
+  "338": {
+    "name": "EHI Omniscience Edge",
+    "description": "A sword with a blade made of encyclopedia pages \ncompressed to diamond hardness, cutting through defenses but driving its wielder insane."
+  },
+  "339": {
+    "name": "EHI Combustion Lance",
+    "description": "A spear tipped with crystallized oil that ignites \non impact, creating massive explosions but severely burning the user."
+  },
+  "340": {
+    "name": "EHI Forbidden Codex",
+    "description": "A staff containing the complete knowledge of \nancient civilizations, granting immense magical power but rapidly aging the user."
+  },
+  "341": {
+    "name": "EHI Psychoactive Talons",
+    "description": "Claws infused with a mixture of rare oils and \nencyclopedic knowledge, granting unnatural speed but causing hallucinations."
+  },
+  "342": {
+    "name": "EHI Identity Eraser",
+    "description": "A bow that fires arrows containing concentrated \nknowledge, shattering minds but causing the user to forget their own identity."
+  },
+  "343": {
+    "name": "EHI Petrocorruptor",
+    "description": "An axe with a blade made of hyper-compressed oil \nthat cuts through anything but slowly corrupts the wielder's body."
+  },
+  "344": {
+    "name": "EHI Headache Inducer",
+    "description": "A pistol that fires bullets containing compressed \nencyclopedic knowledge, overwhelming targets but causing crippling migraines."
+  },
+  "345": {
+    "name": "EHI Suicide Bomber",
+    "description": "A flail with heads containing volatile oil that \nexplodes on impact, damaging everyone"
+  },
+  "346": {
+    "name": "EHI Flesh Dissolver",
+    "description": "A dagger with a blade made of shimmering oil that \nphases through armor but slowly dissolves the wielder's flesh."
+  },
+  "347": {
+    "name": "EHI Brain Hemorrhager",
+    "description": "A launcher that fires projectiles containing the \ndistilled essence of an entire library, overwhelming enemies with knowledge but causing cerebral hemorrhaging in the user."
+  },
+  "348": {
+    "name": "EHI Apocalypse Fists",
+    "description": "Gauntlets containing all the world's oil reserves \nin compressed form, granting godlike strength but causing rapid cellular degeneration."
+  },
+  "349": {
+    "name": "EHI Petroleum Omniscience",
+    "description": "A staff containing the complete oil-based \nknowledge of the universe."
+  },
+  "350": {
+    "name": "Mind Projector Staff",
+    "description": "A staff that amplifies psychic abilities, allowing\nthe wielder to project mental attacks directly into enemies' minds."
+  },
+  "351": {
+    "name": "Telekinetic Gauntlets",
+    "description": "Gauntlets that amplify telekinetic abilities, \nallowing the wielder to strike enemies from a distance with psychic force."
+  },
+  "352": {
+    "name": "Psionic Edge",
+    "description": "A crystal blade that channels psychic energy, \ncutting through mental defenses and physical armor alike."
+  },
+  "353": {
+    "name": "Mind Arrow Bow",
+    "description": "A bow that fires arrows of pure mental energy, \nbypassing physical defenses to damage the target's psyche."
+  },
+  "354": {
+    "name": "Psychic Crown",
+    "description": "A bracelet that focuses mental energy into \ndevastating psychic attacks against all nearby enemies."
+  },
+  "355": {
+    "name": "Brainwave Amplifier",
+    "description": "A device that amplifies and focuses brainwaves \ninto concentrated beams of destructive mental energy."
+  },
+  "356": {
+    "name": "Force Crush Gloves",
+    "description": "Gloves embedded with crystals that channel \ntelekinetic force to crush opponents from within."
+  },
+  "357": {
+    "name": "Memory Thief",
+    "description": "A dagger that absorbs the thoughts and memories of\nthose it cuts, transferring knowledge to the wielder."
+  },
+  "358": {
+    "name": "Mind Shield Staff",
+    "description": "A stafgf that creates powerful force fields to \nprotect allies while reflecting PSI damage."
+  },
+  "359": {
+    "name": "Spell Absorber",
+    "description": "A staff wrapped in magical wards that absorbs \nhostile spells and stores their energy for later use."
+  },
+  "360": {
+    "name": "Wardbreaker Blade",
+    "description": "A sword crafted with enchantments specifically \ndesigned to cut through magical protections and wards."
+  },
+  "361": {
+    "name": "Spellbreaker Crossbow",
+    "description": "A crossbow enchanted to fire bolts that disrupt \nmagical energy, temporarily nullifying a target's magical abilities."
+  },
+  "362": {
+    "name": "Spellcrusher Maul",
+    "description": "A hammer infused with anti-magic properties that \nshatters magical constructs and barriers with ease."
+  },
+  "363": {
+    "name": "Barrier Staff",
+    "description": "A staff that creates powerful barriers of magical \nenergy to protect the wielder and allies from harm."
+  },
+  "364": {
+    "name": "Arcane Blade",
+    "description": "A sword with a blade of pure magical energy that \ncauses devastating arcane damage."
+  },
+  "365": {
+    "name": "Spellseeker Bow",
+    "description": "A bow that fires arrows of concentrated magical \nenergy that seek out and strike their targets."
+  },
+  "366": {
+    "name": "Arcane Shield Gauntlets",
+    "description": "Gauntlets that create shields of pure magical \nenergy to protect against physical and magical attacks."
+  },
+  "367": {
+    "name": "Elemental Warden Staff",
+    "description": "A staff imbued with protection magic that can \ncreate barriers against specific elemental attacks."
+  },
+  "368": {
+    "name": "Divine Smiter",
+    "description": "A golden sword that channels divine magic to smite\nevil and undead with holy power."
+  },
+  "369": {
+    "name": "Warding Spear",
+    "description": "A spear wrapped in protective enchantments that \ncreate fields of defensive magic around the wielder."
+  },
+  "370": {
+    "name": "Arcane Sphere",
+    "description": "A magical orb that surrounds the wielder with \nprotective energy while launching arcane attacks."
+  },
+  "371": {
+    "name": "Spelldrainer Edge",
+    "description": "A black blade that absorbs magical attacks and \nconverts them into additional cutting power."
+  },
+  "372": {
+    "name": "Psychic Amplifier Crown",
+    "description": "A circlet that projects the wearer's thoughts as \npsychic attacks while providing mental shields."
+  },
+  "373": {
+    "name": "Mind Piercer",
+    "description": "A rifle that fires bullets of concentrated psychic\nenergy that penetrate mental defenses."
+  },
+  "374": {
+    "name": "Mind Ripper Claws",
+    "description": "Crystal claws that channel psychic energy to tear \nthrough both physical armor and mental barriers."
+  },
+  "375": {
+    "name": "Mindlash Whip",
+    "description": "A whip made of concentrated thought energy that \nlashes both body and mind."
+  },
+  "376": {
+    "name": "Thought Crusher",
+    "description": "A hammer that shatters not only physical forms but\nthe very thoughts of its targets."
+  },
+  "377": {
+    "name": "Mind Manipulator Gloves",
+    "description": "Gloves that allow the wearer to reach directly \ninto the minds of enemies, extracting or altering thoughts."
+  },
+  "378": {
+    "name": "Neural Disruptor",
+    "description": "A weapon that fires concentrated bolts of mental \nenergy directly into the target's mind."
+  },
+  "379": {
+    "name": "Mental Fortress Staff",
+    "description": "A staff that creates impenetrable barriers of pure\nmental energy."
+  },
+  "380": {
+    "name": "Scrap Metal Shiv",
+    "description": "A crude blade made from sharpened scrap metal \nbound to a pipe with electrical tape."
+  },
+  "381": {
+    "name": "Nail Bat",
+    "description": "A baseball bat wrapped in barbed wire and rusty \nnails for extra damage."
+  },
+  "382": {
+    "name": "Pipe Wrench Mace",
+    "description": "A length of pipe with a heavy valve attached to \none end as a makeshift mace."
+  },
+  "383": {
+    "name": "Junk Slingshot",
+    "description": "A homemade slingshot made from a forked tree \nbranch and rubber cut from old tires."
+  },
+  "384": {
+    "name": "Broom Spear",
+    "description": "A rough spear made from a broom handle with a \nkitchen knife duct-taped to the end."
+  },
+  "385": {
+    "name": "Hubcap Axe",
+    "description": "A crude axe made from a sharpened car part \nattached to a wooden handle."
+  },
+  "386": {
+    "name": "PVC Bow",
+    "description": "A makeshift bow constructed from PVC pipe with \nstring made from unraveled rope."
+  },
+  "387": {
+    "name": "Glass Knuckles",
+    "description": "Gloves with broken glass and metal fragments \nembedded for devastating punches."
+  },
+  "388": {
+    "name": "Bike Chain Flail",
+    "description": "A chain made from bike parts with a padlock \nattached to the end as a flail."
+  },
+  "389": {
+    "name": "Junk Crossbow",
+    "description": "A homemade crossbow made from scavenged lumber, \nsprings, and metal parts."
+  },
+  "390": {
+    "name": "Concrete Sledge",
+    "description": "A sledgehammer with chunks of concrete still \nattached to its head for extra weight."
+  },
+  "391": {
+    "name": "Razor Disc Claws",
+    "description": "Razor blades and broken CD shards attached to \nfingerless gloves for slashing attacks."
+  },
+  "392": {
+    "name": "Garden Sprayer Flamer",
+    "description": "A crude flamethrower made from a garden sprayer, \nlighter, and gasoline."
+  },
+  "393": {
+    "name": "Nail Mop Staff",
+    "description": "A short staff made from an old mop handle with \nnails driven through the end."
+  },
+  "394": {
+    "name": "Pipe Gun",
+    "description": "A makeshift gun pieced together from pipes, wood, \nand springs that fires small metal scraps."
+  },
+  "395": {
+    "name": "Stop Sign Cleaver",
+    "description": "A jagged blade fashioned from a broken stop sign \nattached to a wooden handle."
+  },
+  "396": {
+    "name": "Cord Whip",
+    "description": "A whip made from electrical cords and extension \ncables tied together."
+  },
+  "397": {
+    "name": "Leaf Spring Machete",
+    "description": "A crude sword fashioned from a car's leaf spring, \nsharpened along one edge."
+  },
+  "398": {
+    "name": "Pressure Gun",
+    "description": "A homemade harpoon gun made from a pressure \nwasher, with metal rods as ammunition."
+  },
+  "399": {
+    "name": "Rubble Launcher",
+    "description": "A makeshift launcher that fires chunks of concrete\nwith elastic surgical tubing."
+  },
+  "400": {
+    "name": "Nail Board",
+    "description": "A bunch of rusty nails secured to the end of a \ntable leg with wire and duct tape."
+  },
+  "401": {
+    "name": "Car Panel Claws",
+    "description": "Strips of metal from a car's chassis, sharpened \nand attached to gardening gloves."
+  },
+  "402": {
+    "name": "Saw Blade Sword",
+    "description": "A wooden plank with rusted saw blades attached to \ncreate a crude sword."
+  },
+  "403": {
+    "name": "Bike Pump Air Gun",
+    "description": "A makeshift air gun made from PVC pipe and a \nbicycle pump to fire small projectiles."
+  },
+  "404": {
+    "name": "Rebar Club",
+    "description": "A length of rebar with a concrete chunk still \nattached at one end."
+  },
+  "405": {
+    "name": "Mirror Shard Fist",
+    "description": "Shards of mirror glass attached to duct tape \nwrapped around the hands."
+  },
+  "406": {
+    "name": "Modified Wrench",
+    "description": "A large wrench with nuts and bolts welded to it \nfor additional damage."
+  },
+  "407": {
+    "name": "Razor Fire Axe",
+    "description": "An old fire axe with razor blades attached to the \nstriking edge with electrical tape."
+  },
+  "408": {
+    "name": "Pipe Slingshot",
+    "description": "An elastic slingshot made from a forked metal pipe\nand inner tube rubber."
+  },
+  "409": {
+    "name": "Razor Mop",
+    "description": "A mop with razor wire wrapped around its head for \nslashing attacks."
+  },
+  "410": {
+    "name": "Antenna Rapier",
+    "description": "A car antenna reinforced with tape and a sharpened\ntip for quick thrusting attacks."
+  },
+  "411": {
+    "name": "Trusty Frying Pan",
+    "description": "A frying pan with the handle reinforced by duct \ntape, simple but effective."
+  },
+  "412": {
+    "name": "Staple Shooter",
+    "description": "A modified staple gun that fires metal scraps at \nsurprising velocity."
+  },
+  "413": {
+    "name": "Barbed Hockey Stick",
+    "description": "A hockey stick with the blade wrapped in barbed \nwire and metal scraps."
+  },
+  "414": {
+    "name": "Golf Tee Glove",
+    "description": "A golf glove with golf tees sewn through it, \npoints outward, for punching."
+  },
+  "415": {
+    "name": "Deadly Plunger",
+    "description": "A toilet plunger modified with sharpened metal \naffixed to the rubber cup."
+  },
+  "416": {
+    "name": "Hairspray Torch",
+    "description": "A can of hairspray with a lighter taped to it, \ncreating a small flamethrower."
+  },
+  "417": {
+    "name": "Ruler Shiv",
+    "description": "A wooden ruler reinforced with metal strips and \nsharpened to a point."
+  },
+  "418": {
+    "name": "Sign Post",
+    "description": "A street sign post pulled from the ground, still \nwith concrete at the base."
+  },
+  "419": {
+    "name": "Sand-Filled Hose",
+    "description": "A length of garden hose filled with sand and \nsealed at both ends."
+  },
+  "420": {
+    "name": "Broken Bottle",
+    "description": "A broken bottle with the jagged end wrapped in \ncloth for a handle."
+  },
+  "421": {
+    "name": "Shower Rod Bow",
+    "description": "A simple bow made from a bent shower curtain rod \nand paracord."
+  },
+  "422": {
+    "name": "Mower Blade Axe",
+    "description": "A lawn mower blade attached to a wooden handle \nwith bolts and wire."
+  },
+  "423": {
+    "name": "Key Knuckles",
+    "description": "Keys jammed between fingers with tape to secure \nthem in place."
+  },
+  "424": {
+    "name": "Hanger Slingshot",
+    "description": "A simple slingshot made from a wire coat hanger \nand rubber bands."
+  },
+  "425": {
+    "name": "Kitchen Cleaver",
+    "description": "A meat cleaver with its handle wrapped in grip \ntape for better control."
+  },
+  "426": {
+    "name": "Spiked Crutch",
+    "description": "A crutch with nails driven through the top and \nreinforced with duct tape."
+  },
+  "427": {
+    "name": "Spike Umbrella",
+    "description": "An umbrella with sharpened ends on the tips of the\nribs."
+  },
+  "428": {
+    "name": "Modified Cap Gun",
+    "description": "A toy cap gun modified to shoot small metal \nprojectiles."
+  },
+  "429": {
+    "name": "Garden Shear Claws",
+    "description": "Gardening shears attached to gloves to create \nmakeshift claws."
+  },
+  "430": {
+    "name": "Sharpened Shovel",
+    "description": "A shovel sharpened along the edge to create a \ncrude cutting tool."
+  },
+  "431": {
+    "name": "Skewer Dart Gun",
+    "description": "A toy dart gun reinforced and modified to fire \nsharpened skewers."
+  },
+  "432": {
+    "name": "Sharpened Pool Cue",
+    "description": "A pool cue with one end sharpened to a point for \nthrusting attacks."
+  },
+  "433": {
+    "name": "Chain Rolling Pin",
+    "description": "A wooden rolling pin wrapped with chains for added\nimpact damage."
+  },
+  "434": {
+    "name": "Combat Fishing Rod",
+    "description": "A fishing rod modified to cast small spiked \nweights as weapons."
+  },
+  "435": {
+    "name": "Combat Scissors",
+    "description": "A pair of scissors with the handles wrapped in \ntape for better grip."
+  },
+  "436": {
+    "name": "Toolbox Flail",
+    "description": "An old toolbox filled with heavy objects and \nattached to a chain."
+  },
+  "437": {
+    "name": "Kitchen Knife",
+    "description": "A steak knife with the handle wrapped in cloth \nstrips for better grip."
+  },
+  "438": {
+    "name": "Potato Cannon",
+    "description": "A potato gun built from PVC pipes, capable of \nfiring small, hard projectiles."
+  },
+  "439": {
+    "name": "Heavy Buckle Belt",
+    "description": "A belt with its buckle reinforced to be used as a \nquick striking weapon."
+  },
+  "440": {
+    "name": "Cheap Sword",
+    "description": "A poorly forged sword with a dull edge and weak \nmetal that chips easily."
+  },
+  "441": {
+    "name": "Budget Axe",
+    "description": "A mass-produced axe with a loose head that wobbles\nwhen swung."
+  },
+  "442": {
+    "name": "Apprentice Staff",
+    "description": "A flimsy staff made from green wood that bends \nwhen struck with force."
+  },
+  "443": {
+    "name": "Flimsy Bow",
+    "description": "A crude bow made from a weak, knotted wood that \nmight snap at any moment."
+  },
+  "444": {
+    "name": "Crude Spear",
+    "description": "A simple spear with a dull iron tip that bends on \nimpact."
+  },
+  "445": {
+    "name": "Shoddy Knuckles",
+    "description": "Poorly tanned leather gloves with small metal \nstuds that come loose easily."
+  },
+  "446": {
+    "name": "Bargain Knife",
+    "description": "A poorly balanced knife with a handle that comes \nloose from the blade."
+  },
+  "447": {
+    "name": "Pot Metal Mace",
+    "description": "A mace with a head made from weak pot metal that \ndents easily."
+  },
+  "448": {
+    "name": "Unreliable Crossbow",
+    "description": "A crossbow with a weak firing mechanism that often\nfails to launch bolts properly."
+  },
+  "449": {
+    "name": "Dull Claws",
+    "description": "Poorly crafted claws made from weak metal that \ndulls quickly."
+  },
+  "450": {
+    "name": "Unreliable Pistol",
+    "description": "A pistol made from substandard parts that \nfrequently jams and misfires."
+  },
+  "451": {
+    "name": "Unwieldy Hammer",
+    "description": "A giant hammer that's too heavy for its poorly \nmade handle."
+  },
+  "452": {
+    "name": "Cracked Whip",
+    "description": "A whip made from poorly tanned leather that cracks\nand splits easily."
+  },
+  "453": {
+    "name": "Training Sword",
+    "description": "A worn-out training sword with a blunted edge and \nsplintering handle."
+  },
+  "454": {
+    "name": "Rusty Rifle",
+    "description": "An ancient rifle with a rusty barrel and worn \nfiring mechanism."
+  },
+  "455": {
+    "name": "Dented Pan",
+    "description": "A dented frying pan pressed into service as a \nmakeshift weapon."
+  },
+  "456": {
+    "name": "Stretchy Sling",
+    "description": "A sling made from poor quality leather that \nstretches unpredictably."
+  },
+  "457": {
+    "name": "Splintered Club",
+    "description": "A wooden club with splits and cracks running \nthrough it."
+  },
+  "458": {
+    "name": "Walking Stick",
+    "description": "A walking stick repurposed as a weapon, with a \nweak shaft that flexes too much."
+  },
+  "459": {
+    "name": "Leaky Blowgun",
+    "description": "A blow dart tube made from a cracked reed that \nleaks air."
+  },
+  "460": {
+    "name": "Practice Axe",
+    "description": "A wooden practice axe with a dulled edge for \ntraining purposes."
+  },
+  "461": {
+    "name": "Warped Arrows",
+    "description": "Cheap arrows with warped shafts and poorly \nattached fletching."
+  },
+  "462": {
+    "name": "Makeshift Boxing Gloves",
+    "description": "Thin leather gloves with small iron nuggets sewn \nin that shift position."
+  },
+  "463": {
+    "name": "Decorative Sword",
+    "description": "A mass-produced ceremonial sword with no edge, \nmeant for display only."
+  },
+  "464": {
+    "name": "Loose-headed Spear",
+    "description": "A spear with a head attached by loose bindings \nthat might come undone."
+  },
+  "465": {
+    "name": "Tin Claws",
+    "description": "Metal claws fashioned from cheap tin that bend out\nof shape easily."
+  },
+  "466": {
+    "name": "Novice Wand",
+    "description": "A wand made from poor quality wood with minimal \nmagical conductivity."
+  },
+  "467": {
+    "name": "Uneven Slingshot",
+    "description": "A handmade slingshot with an uneven fork and weak \nelastic."
+  },
+  "468": {
+    "name": "Rusty Sickle",
+    "description": "A farming sickle repurposed as a weapon, with a \nloose handle and spotted rust."
+  },
+  "469": {
+    "name": "Wooden Flail",
+    "description": "A flail with a lightweight wooden head that causes\nminimal damage."
+  },
+  "470": {
+    "name": "Misaligned Hand Crossbow",
+    "description": "A pistol crossbow made from weak wood that \nfrequently needs realignment."
+  },
+  "471": {
+    "name": "Unbalanced Throwing Knife",
+    "description": "A poorly balanced throwing knife that wobbles in \nflight."
+  },
+  "472": {
+    "name": "Beginner's Hand Wraps",
+    "description": "Flimsy leather hand wraps with small metal bits \nfor striking."
+  },
+  "473": {
+    "name": "Toy Bow",
+    "description": "A toy bow made from flexible plastic with weak \nelastic string."
+  },
+  "474": {
+    "name": "Wooden Play Sword",
+    "description": "A wooden sword used by children for playtime \nbattles."
+  },
+  "475": {
+    "name": "Carved Stick",
+    "description": "A stick with crude carvings meant to resemble a \nmagical staff."
+  },
+  "476": {
+    "name": "Suction Cup Dart Gun",
+    "description": "A dart gun that uses suction cups instead of \npointed tips."
+  },
+  "477": {
+    "name": "Foam Toy Axe",
+    "description": "A plastic toy axe with soft foam edges for safety."
+  },
+  "478": {
+    "name": "Fly Swatter",
+    "description": "A swatter typically used for insects, made from \nlightweight plastic."
+  },
+  "479": {
+    "name": "Stale Baguette",
+    "description": "A stick of bread that's gone stale and hard as a \nrock."
+  },
+  "480": {
+    "name": "Sarcastic Pillow",
+    "description": "A sentient pillow that smacks enemies with \nsurprising force and occasionally whispers insults at them."
+  },
+  "481": {
+    "name": "Spud Launcher Deluxe",
+    "description": "A potato gun that fires genetically modified \nexploding potatoes that detonate on impact."
+  },
+  "482": {
+    "name": "Phantom Tickle Gloves",
+    "description": "Gloves that summon ghostly hands to tickle enemies\ninto submission, causing uncontrollable laughter."
+  },
+  "483": {
+    "name": "Number One Fan",
+    "description": "A giant foam finger that somehow hits with the \nforce of a sledgehammer while making cartoon sound effects."
+  },
+  "484": {
+    "name": "Extreme T-Shirt Cannon",
+    "description": "A modified t-shirt cannon that fires shirts so \nhard they can knock down castle walls."
+  },
+  "485": {
+    "name": "Combatant Angler",
+    "description": "A fishing rod that catches and weaponizes random \nsea creatures to fight for you."
+  },
+  "486": {
+    "name": "Master Flipper",
+    "description": "A spatula that flips enemies as easily as \npancakes, temporarily reversing their controls."
+  },
+  "487": {
+    "name": "Peppermint Scepter",
+    "description": "A staff made from a giant candy cane that shoots \npeppermint beams and makes enemies smell delicious."
+  },
+  "488": {
+    "name": "Bounce Bubble Blower",
+    "description": "A bubble wand that creates unbreakable bubbles \nthat trap enemies and bounce them around the battlefield."
+  },
+  "489": {
+    "name": "Honking Mallet Duo",
+    "description": "A pair of squeaky toy hammers that create \nshockwaves when squeaked together."
+  },
+  "490": {
+    "name": "EMP Disruptor",
+    "description": "A handheld electromagnetic pulse device that \ndisables electronic systems and cybernetic implants."
+  },
+  "491": {
+    "name": "Pepper Spray Cannon",
+    "description": "A spray canister that fires concentrated capsaicin \nfor non-lethal crowd control."
+  },
+  "492": {
+    "name": "Taser Rifle",
+    "description": "A weapon that fires electroshock darts to \nincapacitate targets non-lethally."
+  },
+  "493": {
+    "name": "Drone Swarm Launcher",
+    "description": "A shoulder-mounted device that launches small \nautonomous attack drones."
+  },
+  "494": {
+    "name": "Spiked Battle Shield",
+    "description": "A reinforced shield with spikes and a razor edge \nthat can be used for devastating shield bashes."
+  },
+  "495": {
+    "name": "War Pick",
+    "description": "A military hammer with a pick on the reverse side \nfor penetrating armor."
+  },
+  "496": {
+    "name": "Naval Cutlass",
+    "description": "A curved naval sword designed for close-quarters \ncombat on ships."
+  },
+  "497": {
+    "name": "Boarding Pike",
+    "description": "A long pike designed for repelling boarders on \nships."
+  },
+  "498": {
+    "name": "Naval Dirk",
+    "description": "A short dagger used by sailors for shipboard \ncombat and utility work."
+  },
+  "499": {
+    "name": "Sword Breaker",
+    "description": "A specialized sword designed to catch and break \nenemy blades."
+  },
+  "500": {
+    "name": "Francisca",
+    "description": "A Frankish throwing axe designed for both melee \nand ranged combat."
+  },
+  "501": {
+    "name": "Glaive",
+    "description": "A polearm with a curved blade, effective against \ncavalry."
+  },
+  "502": {
+    "name": "Flanged War Mace",
+    "description": "A heavy mace with flanged head designed to crush \narmor."
+  },
+  "503": {
+    "name": "Steel Cable Whip",
+    "description": "A whip made from braided steel cable that can \nslice through armor."
+  },
+  "504": {
+    "name": "Neural Scrambler",
+    "description": "A device that generates a localized electromagnetic \nfield to disrupt neural activity."
+  },
+  "505": {
+    "name": "Phase Blade",
+    "description": "A sword that exists partially in another dimension,\nallowing it to phase through defenses."
+  },
+  "506": {
+    "name": "Symbiotic Blade",
+    "description": "A living weapon that bonds with its wielder, \ngrowing stronger over time."
+  },
+  "507": {
+    "name": "Chronos Hammer",
+    "description": "A weapon that slows time around targets when it \nstrikes."
+  },
+  "508": {
+    "name": "Metamorphic Gauntlets",
+    "description": "Gauntlets that can transform into various weapon \nforms at will."
+  },
+  "509": {
+    "name": "Modular Combat Rifle",
+    "description": "A rifle with interchangeable barrels and modular \ncomponents for different combat situations."
+  },
+  "510": {
+    "name": "Multi-Bolt Crossbow",
+    "description": "A crossbow that fires different types of \nspecialized bolts for various effects."
+  },
+  "511": {
+    "name": "Cyber Warfare Device",
+    "description": "A device that hacks into enemy systems and turns \nthem against their allies."
+  },
+  "512": {
+    "name": "Variable Chain Hammer",
+    "description": "A meteor hammer with extendable chain length for \nvariable range attacks."
+  },
+  "513": {
+    "name": "Infinite Quiver Bow",
+    "description": "A bow that creates arrows from ambient energy, \nnever running out of ammunition."
+  },
+  "514": {
+    "name": "Returning Discus",
+    "description": "A circular blade weapon that returns to the \nthrower after striking targets."
+  },
+  "515": {
+    "name": "Energy Lash",
+    "description": "A whip made from pure energy that can extend to \ngreat lengths."
+  },
+  "516": {
+    "name": "Timed Explosive Launcher",
+    "description": "A launcher that fires timed explosive charges with\nadjustable detonation delays."
+  },
+  "517": {
+    "name": "Siege Breaker",
+    "description": "A massive two-handed mace designed to shatter \nfortifications."
+  },
+  "518": {
+    "name": "Life Drain Claws",
+    "description": "Claws that drain the life force of targets and \ntransfer it to the wielder."
+  },
+  "519": {
+    "name": "Gravity Manipulation Staff",
+    "description": "A staff that manipulates gravitational fields to \ncrush or lift enemies."
+  },
+  "520": {
+    "name": "Smart Tracking Rifle",
+    "description": "A sniper rifle with smart ammunition that tracks \nand adjusts its trajectory mid-flight."
+  },
+  "521": {
+    "name": "Dimensional Cleaver",
+    "description": "An axe that cleaves through multiple dimensions, \nhitting enemies in parallel realities."
+  },
+  "522": {
+    "name": "Temporal Echo Whip",
+    "description": "A whip that exists in multiple timelines \nsimultaneously, striking the same target multiple times."
+  },
+  "523": {
+    "name": "Adaptive Combat AI",
+    "description": "A weapon system that learns from combat and adapts\nits tactics and ammunition type."
+  },
+  "524": {
+    "name": "Molecular Manipulator Gloves",
+    "description": "Gauntlets that allow the wearer to manipulate \nmatter at the molecular level."
+  },
+  "525": {
+    "name": "Quantum Superposition Blade",
+    "description": "A sword that exists in a state of quantum \nsuperposition, striking all possible targets simultaneously."
+  },
+  "526": {
+    "name": "Universal Force Staff",
+    "description": "A staff that channels the fundamental forces of \nthe universe itself."
+  },
+  "527": {
+    "name": "Reality Distortion Cannon",
+    "description": "A reality-warping weapon that can rewrite the \nlaws of physics in a localized area."
+  },
+  "528": {
+    "name": "Omniadaptive Combat System",
+    "description": "The ultimate expression of combat technology, \ncapable of adapting to any threat."
+  },
+  "529": {
+    "name": "Seed Dagger",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "530": {
+    "name": "Seed Sword",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "531": {
+    "name": "Seed Mace",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "532": {
+    "name": "Seed Axe",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "533": {
+    "name": "Seed Whip",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "534": {
+    "name": "Seed Staff",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "535": {
+    "name": "Seed Bow",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "536": {
+    "name": "Seed Grimorie",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "537": {
+    "name": "Seed Gun",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "538": {
+    "name": "Seed Claw",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "539": {
+    "name": "Seed Glove",
+    "description": "A light and easy-to-wield short-bladed sword."
+  },
+  "540": {
+    "name": "Seed Spear",
+    "description": "A light and easy-to-wield short-bladed sword."
+  }
+}

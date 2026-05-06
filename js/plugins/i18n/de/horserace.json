@@ -1,0 +1,51 @@
+{
+  "helpText": "Horse Race - Select a horse to bet on!",
+  "raceStarted": "And they're off! The race has begun!",
+  "selectHorseFirst": "Please select a horse first!",
+  "noTokens": "You don't have any tokens.",
+  "notEnoughTokens": "Not enough {tokenName}! You have {current}, need {needed}",
+  "selectHorse": "↑/↓: Select Horse",
+  "changeBet1": "←/→: Change Bet (±1)",
+  "changeBet10": "Shift+←/→: (±10)",
+  "confirmSelection": "Enter: Confirm & Start",
+  "startRace": "Space: Start Race!",
+  "exitGame": "Esc: Exit",
+  "newRace": "Enter: New Race",
+  "playerFallback": "Player",
+  "tokens": "Tokens",
+  "bet": "Bet",
+  "selected": "Selected",
+  "potentialWin": "Potential Win",
+  "odds": "Odds",
+  "raceInProgress": "RACE IN PROGRESS",
+  "raceResults": "RACE RESULTS",
+  "winner": "Winner",
+  "youWon": "YOU WON!",
+  "youLost": "You Lost",
+  "profit": "Profit",
+  "lost": "Lost",
+  "won": "Won",
+  "winMessage": "🎉 {horseName} wins! You won {amount} tokens! 🎉",
+  "loseMessage": "{horseName} wins! Better luck next time!",
+  "continuePrompt": " Press Enter for new race or Esc to exit.",
+  "normalPrefixes": [
+    "Thunder", "Lightning", "Storm", "Midnight", "Shadow", "Spirit", "Blaze", "Flash",
+    "Star", "Diamond", "Ruby", "Sapphire", "Gold", "Silver", "Champion", "Victory",
+    "Phoenix", "Eagle", "Falcon", "Arrow", "Bullet", "Rocket", "Comet", "Meteor",
+    "Wind", "Fire", "Ice", "Steel", "Crimson", "Azure", "Emerald", "Onyx"
+  ],
+  "normalSuffixes": [
+    "Runner", "Rider", "Dash", "Bolt", "Strike", "Wing", "Heart", "Soul",
+    "Storm", "Blaze", "Flash", "Star", "Moon", "Sun", "Wind", "Fire"
+  ],
+  "weirdPrefixes": [
+    "Sir Wiggles", "Captain Snort", "Professor Trot", "Doctor Neigh", "Mister Gallop",
+    "Lady Hooves", "Baron Clip-Clop", "Duke Whinny", "Count Mane", "Princess Tails",
+    "Admiral Chomp", "General Bounce", "Colonel Stumble", "Major Wobble", "Sergeant Giggle"
+  ],
+  "weirdSuffixes": [
+    "the Magnificent", "the Confused", "the Sleepy", "the Dramatic", "the Mysterious",
+    "the Hungry", "the Dancing", "the Singing", "the Backwards", "the Sideways",
+    "the Dizzy", "the Bouncy", "the Fluffy", "the Sparkly", "the Wobbly"
+  ]
+}

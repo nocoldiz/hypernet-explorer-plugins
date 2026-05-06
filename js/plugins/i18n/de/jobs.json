@@ -1,0 +1,174 @@
+{
+  "jobs": {
+    "1": {
+      "name": "Warehouse Worker",
+      "description": "Load and unload cargo in the warehouse district."
+    },
+    "category": {
+      "labor": "Labor",
+      "social": "Social",
+      "technical": "Technical",
+      "magical": "Magical",
+      "combat": "Combat",
+      "criminal": "Criminal",
+      "general": "General",
+      "faction": "Faction"
+    },
+    "2": {
+      "name": "Farm Hand",
+      "description": "Work the fields, tend to crops and livestock."
+    },
+    "3": {
+      "name": "Bartender",
+      "description": "Serve drinks and manage patrons at the tavern."
+    },
+    "4": {
+      "name": "Street Performer",
+      "description": "Entertain crowds with performances for tips."
+    },
+    "5": {
+      "name": "Blacksmith Assistant",
+      "description": "Help the blacksmith forge weapons and tools."
+    },
+    "6": {
+      "name": "Spell Component Gatherer",
+      "description": "Collect rare magical ingredients in dangerous areas."
+    },
+    "7": {
+      "name": "Alchemist's Assistant",
+      "description": "Mix potions and manage the alchemist's laboratory."
+    },
+    "8": {
+      "name": "Magical Artifact Restorer",
+      "description": "Repair and restore damaged magical items."
+    },
+    "9": {
+      "name": "Caravan Guard",
+      "description": "Protect merchant caravans from bandits and monsters."
+    },
+    "10": {
+      "name": "Arena Fighter",
+      "description": "Fight in the arena for prize money and glory."
+    },
+    "11": {
+      "name": "Monster Exterminator",
+      "description": "Clear out monster infestations from civilian areas."
+    },
+    "12": {
+      "name": "Pickpocketing",
+      "description": "Steal from unsuspecting marks in crowded areas."
+    },
+    "13": {
+      "name": "Smuggling Run",
+      "description": "Transport illegal goods across checkpoints."
+    },
+    "14": {
+      "name": "Burglary",
+      "description": "Break into a building and steal valuables."
+    },
+    "15": {
+      "name": "Mechanic",
+      "description": "Repair vehicles and machinery."
+    },
+    "16": {
+      "name": "Locksmith",
+      "description": "Create and repair locks for clients."
+    },
+    "17": {
+      "name": "Clockmaker",
+      "description": "Craft and repair intricate timepieces."
+    },
+    "18": {
+      "name": "Diplomat",
+      "description": "Negotiate deals and resolve disputes."
+    },
+    "19": {
+      "name": "Fortune Teller",
+      "description": "Read fortunes for paying customers."
+    },
+    "20": {
+      "name": "Courier",
+      "description": "Deliver packages and messages across the city."
+    },
+    "100": {
+      "name": "Permit Inspector",
+      "description": "Inspect magical practitioners for proper permits and licensing."
+    },
+    "101": {
+      "name": "Ritual Supervisor",
+      "description": "Ensure magical rituals follow Guild protocols exactly."
+    },
+    "102": {
+      "name": "Anti-Technology Enforcer",
+      "description": "Seek out and destroy illegal techno-magical fusion devices."
+    },
+    "103": {
+      "name": "Magitech Engineer",
+      "description": "Develop experimental fusion of magic and machinery."
+    },
+    "104": {
+      "name": "Spell Categorization Clerk",
+      "description": "Meticulously categorize spells into the 92 distinct schools."
+    },
+    "105": {
+      "name": "Document Redactor",
+      "description": "Remove dangerous knowledge from historical texts."
+    },
+    "106": {
+      "name": "Artifact Thief",
+      "description": "Steal historical artifacts for the Foundation's collection."
+    },
+    "107": {
+      "name": "Silent Librarian",
+      "description": "Maintain the archives and permanently silence noisy patrons."
+    },
+    "108": {
+      "name": "Propaganda Writer",
+      "description": "Craft convincing misinformation for public consumption."
+    },
+    "109": {
+      "name": "Internal Investigator",
+      "description": "Root out information leaks within the Foundation."
+    },
+    "110": {
+      "name": "Market Manipulator",
+      "description": "Manipulate markets for profit through any means necessary."
+    },
+    "111": {
+      "name": "Oil Extraction Overseer",
+      "description": "Maximize oil extraction efficiency through infernal optimization."
+    },
+    "112": {
+      "name": "High-Speed Courier",
+      "description": "Deliver packages at breakneck speeds, worshipping velocity."
+    },
+    "113": {
+      "name": "Fuel Monopoly Enforcer",
+      "description": "Ensure the Seven Sisters maintain total fuel market control."
+    },
+    "114": {
+      "name": "Divine Chaos Agent",
+      "description": "Spread discord and disruption in the name of the Goddess of Chaos."
+    },
+    "124": {
+      "name": "Vatican Scribe",
+      "description": "Transcribe and maintain sacred texts and church documents."
+    },
+    "127": {
+      "name": "Battle Nun Trainee",
+      "description": "Train in both scripture and combat as a Vatican special forces operative."
+    },
+    "128": {
+      "name": "Night Watchman",
+      "description": "Guard property through the dangerous night hours."
+    },
+    "129": {
+      "name": "Fisherman",
+      "description": "Catch fish for sale at the market."
+    },
+    "130": {
+      "name": "Street Cleaner",
+      "description": "Clean the filthy city streets."
+    }
+  }
+}

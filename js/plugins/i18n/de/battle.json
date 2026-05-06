@@ -1,0 +1,22 @@
+{
+  "battle": {
+    "dangerWarning": {
+      "party": [
+        "This enemy is too dangerous!\nWe should flee!",
+        "This enemy is too powerful!\nWe need to run!",
+        "We're outmatched!\nWe should retreat!",
+        "This foe is beyond us!\nWe must escape!",
+        "We can't handle this enemy!\nLet's get out of here!",
+        "This creature is too strong!\nWe should run away!"
+      ],
+      "single": [
+        "This enemy is too dangerous!\nI should flee!",
+        "This enemy is too powerful!\nI need to run!",
+        "I'm outmatched!\nI should retreat!",
+        "This foe is beyond me!\nI must escape!",
+        "I can't handle this enemy!\nI need to get out of here!",
+        "This creature is too strong!\nI should run away!"
+      ]
+    }
+  }
+}

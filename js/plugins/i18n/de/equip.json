@@ -1,0 +1,16 @@
+{
+  "arcane": "Arcane",
+  "substance": "Substance",
+  "stealth": "Stealth",
+  "intimidation": "Intimidation",
+  "scale": "ATK",
+  "str": "STR",
+  "dex": "DEX",
+  "mix": "MIX",
+  "psi": "PSI",
+  "int": "INT",
+  "con": "CON",
+  "wis": "WIS",
+  "random": "Random",
+  "clear": "Unequip."
+}

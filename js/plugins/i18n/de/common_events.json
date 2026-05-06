@@ -1,0 +1,967 @@
+{
+  "1": {
+    "val": "1",
+    "excluded": "",
+    "name": ""
+  },
+  "2": {
+    "val": "2",
+    "excluded": "",
+    "name": ""
+  },
+  "3": {
+    "val": "3",
+    "excluded": "",
+    "name": ""
+  },
+  "4": {
+    "val": "4",
+    "excluded": "",
+    "name": ""
+  },
+  "5": {
+    "val": "5",
+    "excluded": "",
+    "name": ""
+  },
+  "6": {
+    "val": "6",
+    "excluded": "",
+    "name": ""
+  },
+  "10": {
+    "val": "10",
+    "excluded": "",
+    "name": ""
+  },
+  "20": {
+    "val": "20",
+    "excluded": "",
+    "name": ""
+  },
+  "30": {
+    "val": "30",
+    "excluded": "",
+    "name": ""
+  },
+  "40": {
+    "val": "40",
+    "excluded": "",
+    "name": ""
+  },
+  "50": {
+    "val": "50",
+    "excluded": "",
+    "name": ""
+  },
+  "60": {
+    "val": "60",
+    "excluded": "",
+    "name": ""
+  },
+  "70": {
+    "val": "70",
+    "excluded": "",
+    "name": ""
+  },
+  "80": {
+    "val": "80",
+    "excluded": "",
+    "name": ""
+  },
+  "90": {
+    "val": "90",
+    "excluded": "",
+    "name": ""
+  },
+  "99": {
+    "val": "99",
+    "excluded": "",
+    "name": ""
+  },
+  "AHAH YOU WISH.": {
+    "val": "AHAH YOU WISH.",
+    "excluded": "",
+    "name": ""
+  },
+  "YOU ARE NOT WORTHY": {
+    "val": "YOU ARE NOT WORTHY",
+    "excluded": "",
+    "name": ""
+  },
+  "ddd": {
+    "val": "ddd",
+    "excluded": "",
+    "name": ""
+  },
+  "Surf the Hypernet": {
+    "val": "Surf the Hypernet",
+    "excluded": "",
+    "name": ""
+  },
+  "Shopping": {
+    "val": "Shopping",
+    "excluded": "",
+    "name": ""
+  },
+  "Latest news": {
+    "val": "Latest news",
+    "excluded": "",
+    "name": ""
+  },
+  "Euro Market": {
+    "val": "Euro Market",
+    "excluded": "",
+    "name": ""
+  },
+  "Job offers": {
+    "val": "Job offers",
+    "excluded": "",
+    "name": ""
+  },
+  "Cancel": {
+    "val": "Cancel",
+    "excluded": "",
+    "name": ""
+  },
+  "Stock options": {
+    "val": "Stock options",
+    "excluded": "",
+    "name": ""
+  },
+  "Buy real estate": {
+    "val": "Buy real estate",
+    "excluded": "",
+    "name": ""
+  },
+  "Use": {
+    "val": "Use",
+    "excluded": "",
+    "name": ""
+  },
+  "Vomit": {
+    "val": "Vomit",
+    "excluded": "",
+    "name": ""
+  },
+  "Cook": {
+    "val": "Cook",
+    "excluded": "",
+    "name": ""
+  },
+  "Sleep by the fire": {
+    "val": "Sleep by the fire",
+    "excluded": "",
+    "name": ""
+  },
+  "Save": {
+    "val": "Save",
+    "excluded": "",
+    "name": ""
+  },
+  "Retire from adventuring": {
+    "val": "Retire from adventuring",
+    "excluded": "",
+    "name": ""
+  },
+  "Put out fire": {
+    "val": "Put out fire",
+    "excluded": "",
+    "name": ""
+  },
+  "You need to disconnect from the room before\nbeing able to save.": {
+    "val": "You need to disconnect from the room before\nbeing able to save.",
+    "excluded": "",
+    "name": ""
+  },
+  "Do you really want to retire from adventuring\nand return home?": {
+    "val": "Do you really want to retire from adventuring\nand return home?",
+    "excluded": "",
+    "name": ""
+  },
+  "No": {
+    "val": "No",
+    "excluded": "",
+    "name": ""
+  },
+  "Yes": {
+    "val": "Yes",
+    "excluded": "",
+    "name": ""
+  },
+  "Sleep": {
+    "val": "Sleep",
+    "excluded": "",
+    "name": ""
+  },
+  "Set respawn point": {
+    "val": "Set respawn point",
+    "excluded": "",
+    "name": ""
+  },
+  "Manage party": {
+    "val": "Manage party",
+    "excluded": "",
+    "name": ""
+  },
+  "How much do you want to sleep?": {
+    "val": "How much do you want to sleep?",
+    "excluded": "",
+    "name": ""
+  },
+  "8 Hours": {
+    "val": "8 Hours",
+    "excluded": "",
+    "name": ""
+  },
+  "7 Hours": {
+    "val": "7 Hours",
+    "excluded": "",
+    "name": ""
+  },
+  "6 Hours": {
+    "val": "6 Hours",
+    "excluded": "",
+    "name": ""
+  },
+  "5 Hours": {
+    "val": "5 Hours",
+    "excluded": "",
+    "name": ""
+  },
+  "4 Hours": {
+    "val": "4 Hours",
+    "excluded": "",
+    "name": ""
+  },
+  "Wake up": {
+    "val": "Wake up",
+    "excluded": "",
+    "name": ""
+  },
+  "Dream": {
+    "val": "Dream",
+    "excluded": "",
+    "name": ""
+  },
+  "Keep sleeping": {
+    "val": "Keep sleeping",
+    "excluded": "",
+    "name": ""
+  },
+  "Kick out \\N[2]": {
+    "val": "Kick out \\N[2]",
+    "excluded": "",
+    "name": ""
+  },
+  "Kick out \\N[3]": {
+    "val": "Kick out \\N[3]",
+    "excluded": "",
+    "name": ""
+  },
+  "Are you sure?": {
+    "val": "Are you sure?",
+    "excluded": "",
+    "name": ""
+  },
+  "UNUSED EVENT": {
+    "val": "UNUSED EVENT",
+    "excluded": "",
+    "name": ""
+  },
+  "Clean your clothes?": {
+    "val": "Clean your clothes?",
+    "excluded": "",
+    "name": ""
+  },
+  "Wash your hands": {
+    "val": "Wash your hands",
+    "excluded": "",
+    "name": ""
+  },
+  "Wash your face": {
+    "val": "Wash your face",
+    "excluded": "",
+    "name": ""
+  },
+  "Drink": {
+    "val": "Drink",
+    "excluded": "",
+    "name": ""
+  },
+  "Do experiment": {
+    "val": "Do experiment",
+    "excluded": "",
+    "name": ""
+  },
+  "Take a shower": {
+    "val": "Take a shower",
+    "excluded": "",
+    "name": ""
+  },
+  "Show map name": {
+    "val": "Show map name",
+    "excluded": "",
+    "name": ""
+  },
+  "Show coordinates": {
+    "val": "Show coordinates",
+    "excluded": "",
+    "name": ""
+  },
+  "The egg is empty.": {
+    "val": "The egg is empty.",
+    "excluded": "",
+    "name": ""
+  },
+  "This bed is not yours.": {
+    "val": "This bed is not yours.",
+    "excluded": "",
+    "name": ""
+  },
+  "Do nothing": {
+    "val": "Do nothing",
+    "excluded": "",
+    "name": ""
+  },
+  "Sleep anyway": {
+    "val": "Sleep anyway",
+    "excluded": "",
+    "name": ""
+  },
+  "Take a seat": {
+    "val": "Take a seat",
+    "excluded": "",
+    "name": ""
+  },
+  "Your party is full.": {
+    "val": "Your party is full.",
+    "excluded": "",
+    "name": ""
+  },
+  "Set up camp": {
+    "val": "Set up camp",
+    "excluded": "",
+    "name": ""
+  },
+  "Stop camping": {
+    "val": "Stop camping",
+    "excluded": "",
+    "name": ""
+  },
+  "Archive your journey": {
+    "val": "Archive your journey",
+    "excluded": "",
+    "name": ""
+  },
+  "Yes?": {
+    "val": "Yes?",
+    "excluded": "",
+    "name": ""
+  },
+  "Do you have any questions?": {
+    "val": "Do you have any questions?",
+    "excluded": "",
+    "name": ""
+  },
+  "I'm here to help": {
+    "val": "I'm here to help",
+    "excluded": "",
+    "name": ""
+  },
+  "What is this place?": {
+    "val": "What is this place?",
+    "excluded": "",
+    "name": ""
+  },
+  "Where is the dungeon entrance?": {
+    "val": "Where is the dungeon entrance?",
+    "excluded": "",
+    "name": ""
+  },
+  "Where i can find companions?": {
+    "val": "Where i can find companions?",
+    "excluded": "",
+    "name": ""
+  },
+  "Where i can go shopping?": {
+    "val": "Where i can go shopping?",
+    "excluded": "",
+    "name": ""
+  },
+  "I have other questions...": {
+    "val": "I have other questions...",
+    "excluded": "",
+    "name": ""
+  },
+  "We call this place Omega Tower\nNo one's quite sure what it used to be.": {
+    "val": "We call this place Omega Tower\nNo one's quite sure what it used to be.",
+    "excluded": "",
+    "name": ""
+  },
+  "It’s massive: it extends into the clouds and \nburrows deep down into the bowels of earth. ": {
+    "val": "It’s massive: it extends into the clouds and \nburrows deep down into the bowels of earth. ",
+    "excluded": "",
+    "name": ""
+  },
+  "Most likely a failed arcology project built \non anomalous and thaumaturgical principles. ": {
+    "val": "Most likely a failed arcology project built \non anomalous and thaumaturgical principles. ",
+    "excluded": "",
+    "name": ""
+  },
+  "We've deployed probes for over a\nthousand floors in both directions. \nNo confirmed top...or bottom.": {
+    "val": "We've deployed probes for over a\nthousand floors in both directions. \nNo confirmed top...or bottom.",
+    "excluded": "",
+    "name": ""
+  },
+  "The entrance is at the Hypernet Point. \nTake the elevator to Floor 0 then go to the\ndoor to the left.": {
+    "val": "The entrance is at the Hypernet Point. \nTake the elevator to Floor 0 then go to the\ndoor to the left.",
+    "excluded": "",
+    "name": ""
+  },
+  "Once inside take the big central staircase\nand you can start exploring freely, just \nremember to stock up before an expedition.": {
+    "val": "Once inside take the big central staircase\nand you can start exploring freely, just \nremember to stock up before an expedition.",
+    "excluded": "",
+    "name": ""
+  },
+  "Do you want me to take you there?": {
+    "val": "Do you want me to take you there?",
+    "excluded": "",
+    "name": ""
+  },
+  "Ok, please follow me.": {
+    "val": "Ok, please follow me.",
+    "excluded": "",
+    "name": ""
+  },
+  "Like everywere in the tower!\nAlmost every person here is a": {
+    "val": "Like everywere in the tower!\nAlmost every person here is a",
+    "excluded": "",
+    "name": ""
+  },
+  "Some of them are willing to team up if your goals align.": {
+    "val": "Some of them are willing to team up if your goals align.",
+    "excluded": "",
+    "name": ""
+  },
+  "Its' dangerous to go alone!": {
+    "val": "Its' dangerous to go alone!",
+    "excluded": "",
+    "name": ""
+  },
+  "Sometimes, when you’re exploring a floor or returning \nto base, you’ll run into other explorers and archivists.": {
+    "val": "Sometimes, when you’re exploring a floor or returning \nto base, you’ll run into other explorers and archivists.",
+    "excluded": "",
+    "name": ""
+  },
+  "If you want allies, talk to people around here. \nShare what you’ve found. \nThey’re more likely to trust someone who actually\ncontributes to the Archive. ": {
+    "val": "If you want allies, talk to people around here. \nShare what you’ve found. \nThey’re more likely to trust someone who actually\ncontributes to the Archive. ",
+    "excluded": "",
+    "name": ""
+  },
+  "How the elevator works?": {
+    "val": "How the elevator works?",
+    "excluded": "",
+    "name": ""
+  },
+  "Why everybody talks so weird?": {
+    "val": "Why everybody talks so weird?",
+    "excluded": "",
+    "name": ""
+  },
+  "The Hypernet": {
+    "val": "The Hypernet",
+    "excluded": "",
+    "name": ""
+  },
+  "The Squishing": {
+    "val": "The Squishing",
+    "excluded": "",
+    "name": ""
+  },
+  "It’s an anomalous construct, probably alive. ": {
+    "val": "It’s an anomalous construct, probably alive. ",
+    "excluded": "",
+    "name": ""
+  },
+  "Maybe even self-aware, though it won’t say\nanything directly.": {
+    "val": "Maybe even self-aware, though it won’t say\nanything directly.",
+    "excluded": "",
+    "name": ""
+  },
+  "Here’s the tricky part. The elevator won’t take you\nsomewhere you haven’t been on foot.": {
+    "val": "Here’s the tricky part. The elevator won’t take you\nsomewhere you haven’t been on foot.",
+    "excluded": "",
+    "name": ""
+  },
+  "If you want to reach a floor via elevator, \nyou’ve got to earn it first. ": {
+    "val": "If you want to reach a floor via elevator, \nyou’ve got to earn it first. ",
+    "excluded": "",
+    "name": ""
+  },
+  "Strangely enough, a few high floors are unlocked right \nfrom the start. No one knows why. \nMight be just a design feature or it just wants to show off.": {
+    "val": "Strangely enough, a few high floors are unlocked right \nfrom the start. No one knows why. \nMight be just a design feature or it just wants to show off.",
+    "excluded": "",
+    "name": ""
+  },
+  "It's called DungeonSpeak!": {
+    "val": "It's called DungeonSpeak!",
+    "excluded": "",
+    "name": ""
+  },
+  "It's a neolanguage based on the deconstruction\nand recostruction of English,": {
+    "val": "It's a neolanguage based on the deconstruction\nand recostruction of English,",
+    "excluded": "",
+    "name": ""
+  },
+  "The Hypernet isn’t what it used to be.": {
+    "val": "The Hypernet isn’t what it used to be.",
+    "excluded": "",
+    "name": ""
+  },
+  "It was destroyed during the Y2K Event, \nwhen something, something not from here, breached \ninto our layer of reality. We call it Omni-Lex.": {
+    "val": "It was destroyed during the Y2K Event, \nwhen something, something not from here, breached \ninto our layer of reality. We call it Omni-Lex.",
+    "excluded": "",
+    "name": ""
+  },
+  "An extradimensional intelligence that decrypted \nevery password, breached every firewall, \nand made everything public.": {
+    "val": "An extradimensional intelligence that decrypted \nevery password, breached every firewall, \nand made everything public.",
+    "excluded": "",
+    "name": ""
+  },
+  "The Hypernet couldn’t survive full transparency.": {
+    "val": "The Hypernet couldn’t survive full transparency.",
+    "excluded": "",
+    "name": ""
+  },
+  "In the aftermath, the Foundation did what \nit always does, salvage and rebuild.": {
+    "val": "In the aftermath, the Foundation did what \nit always does, salvage and rebuild.",
+    "excluded": "",
+    "name": ""
+  },
+  "What’s left of the Hypernet now is fragile, patchy, \nand deeply weird. We’re trying to reconstruct \nit from recovered HTML files, old hard drives, \nforgotten caches. ": {
+    "val": "What’s left of the Hypernet now is fragile, patchy, \nand deeply weird. We’re trying to reconstruct \nit from recovered HTML files, old hard drives, \nforgotten caches. ",
+    "excluded": "",
+    "name": ""
+  },
+  "Most links are broken. Images are missing. \nHexScript's practically radioactive. But sometimes, \nburied in the markup, we find data worth keeping.": {
+    "val": "Most links are broken. Images are missing. \nHexScript's practically radioactive. But sometimes, \nburied in the markup, we find data worth keeping.",
+    "excluded": "",
+    "name": ""
+  },
+  "You’ll be browsing fragments and static pages once \nhosted by people long gone.": {
+    "val": "You’ll be browsing fragments and static pages once \nhosted by people long gone.",
+    "excluded": "",
+    "name": ""
+  },
+  "Keep your expectations low, and your firewall strong.": {
+    "val": "Keep your expectations low, and your firewall strong.",
+    "excluded": "",
+    "name": ""
+  },
+  "Yound the remains of an adventurer, what do you want\nto do?": {
+    "val": "Yound the remains of an adventurer, what do you want\nto do?",
+    "excluded": "",
+    "name": ""
+  },
+  "Loot the body": {
+    "val": "Loot the body",
+    "excluded": "",
+    "name": ""
+  },
+  "Resurrect him": {
+    "val": "Resurrect him",
+    "excluded": "",
+    "name": ""
+  },
+  "Desacrate the grave": {
+    "val": "Desacrate the grave",
+    "excluded": "",
+    "name": ""
+  },
+  "Ignore it": {
+    "val": "Ignore it",
+    "excluded": "",
+    "name": ""
+  },
+  "Select your destination": {
+    "val": "Select your destination",
+    "excluded": "",
+    "name": ""
+  },
+  "Bologna": {
+    "val": "Bologna",
+    "excluded": "",
+    "name": ""
+  },
+  "Omega Tower": {
+    "val": "Omega Tower",
+    "excluded": "",
+    "name": ""
+  },
+  "Green Witch Space Center": {
+    "val": "Green Witch Space Center",
+    "excluded": "",
+    "name": ""
+  },
+  "Teleport": {
+    "val": "Teleport",
+    "excluded": "",
+    "name": ""
+  },
+  "Add level": {
+    "val": "Add level",
+    "excluded": "",
+    "name": ""
+  },
+  "3d MODE": {
+    "val": "3d MODE",
+    "excluded": "",
+    "name": ""
+  },
+  "Initialize": {
+    "val": "Initialize",
+    "excluded": "",
+    "name": ""
+  },
+  "Add items/Money": {
+    "val": "Add items/Money",
+    "excluded": "",
+    "name": ""
+  },
+  "Other": {
+    "val": "Other",
+    "excluded": "",
+    "name": ""
+  },
+  "Go down": {
+    "val": "Go down",
+    "excluded": "",
+    "name": ""
+  },
+  "Base set": {
+    "val": "Base set",
+    "excluded": "",
+    "name": ""
+  },
+  "Materials": {
+    "val": "Materials",
+    "excluded": "",
+    "name": ""
+  },
+  "Money": {
+    "val": "Money",
+    "excluded": "",
+    "name": ""
+  },
+  "Teleport to vehicle": {
+    "val": "Teleport to vehicle",
+    "excluded": "",
+    "name": ""
+  },
+  "Spawn vehicle": {
+    "val": "Spawn vehicle",
+    "excluded": "",
+    "name": ""
+  },
+  "Death": {
+    "val": "Death",
+    "excluded": "",
+    "name": ""
+  },
+  "Test battle": {
+    "val": "Test battle",
+    "excluded": "",
+    "name": ""
+  },
+  "Camper": {
+    "val": "Camper",
+    "excluded": "",
+    "name": ""
+  },
+  "Car": {
+    "val": "Car",
+    "excluded": "",
+    "name": ""
+  },
+  "Inn": {
+    "val": "Inn",
+    "excluded": "",
+    "name": ""
+  },
+  "Campfire": {
+    "val": "Campfire",
+    "excluded": "",
+    "name": ""
+  },
+  "Advance time": {
+    "val": "Advance time",
+    "excluded": "",
+    "name": ""
+  },
+  "Set player speed": {
+    "val": "Set player speed",
+    "excluded": "",
+    "name": ""
+  },
+  "Buy troops": {
+    "val": "Buy troops",
+    "excluded": "",
+    "name": ""
+  },
+  "Change Weather": {
+    "val": "Change Weather",
+    "excluded": "",
+    "name": ""
+  },
+  "Surgery": {
+    "val": "Surgery",
+    "excluded": "",
+    "name": ""
+  },
+  "Make a coffee": {
+    "val": "Make a coffee",
+    "excluded": "",
+    "name": ""
+  },
+  "Play Locktris": {
+    "val": "Play Locktris",
+    "excluded": "",
+    "name": ""
+  },
+  "Select difficulty:": {
+    "val": "Select difficulty:",
+    "excluded": "",
+    "name": ""
+  },
+  "Walk in the park": {
+    "val": "Walk in the park",
+    "excluded": "",
+    "name": ""
+  },
+  "Easy": {
+    "val": "Easy",
+    "excluded": "",
+    "name": ""
+  },
+  "Medium": {
+    "val": "Medium",
+    "excluded": "",
+    "name": ""
+  },
+  "Hard": {
+    "val": "Hard",
+    "excluded": "",
+    "name": ""
+  },
+  "Hyperhard": {
+    "val": "Hyperhard",
+    "excluded": "",
+    "name": ""
+  },
+  "Stop working": {
+    "val": "Stop working",
+    "excluded": "",
+    "name": ""
+  },
+  "Change role": {
+    "val": "Change role",
+    "excluded": "",
+    "name": ""
+  },
+  "Manager": {
+    "val": "Manager",
+    "excluded": "",
+    "name": ""
+  },
+  "Producer": {
+    "val": "Producer",
+    "excluded": "",
+    "name": ""
+  },
+  "Rider": {
+    "val": "Rider",
+    "excluded": "",
+    "name": ""
+  },
+  "Start working": {
+    "val": "Start working",
+    "excluded": "",
+    "name": ""
+  },
+  "Select your role": {
+    "val": "Select your role",
+    "excluded": "",
+    "name": ""
+  },
+  "You are in\n\\V[63] \\V[64] \\V[68]": {
+    "val": "You are in\n\\V[63] \\V[64] \\V[68]",
+    "excluded": "",
+    "name": ""
+  },
+  "No gas pump near": {
+    "val": "No gas pump near",
+    "excluded": "",
+    "name": ""
+  },
+  "Repairing...": {
+    "val": "Repairing...",
+    "excluded": "",
+    "name": ""
+  },
+  "Where you want to go?": {
+    "val": "Where you want to go?",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypernet Point": {
+    "val": "Hypernet Point",
+    "excluded": "",
+    "name": ""
+  },
+  "Outside the tower": {
+    "val": "Outside the tower",
+    "excluded": "",
+    "name": ""
+  },
+  "Shopping mall": {
+    "val": "Shopping mall",
+    "excluded": "",
+    "name": ""
+  },
+  "Pay the bounty": {
+    "val": "Pay the bounty",
+    "excluded": "",
+    "name": ""
+  },
+  "Go to trial": {
+    "val": "Go to trial",
+    "excluded": "",
+    "name": ""
+  },
+  "See crime list": {
+    "val": "See crime list",
+    "excluded": "",
+    "name": ""
+  },
+  "Resist arrest": {
+    "val": "Resist arrest",
+    "excluded": "",
+    "name": ""
+  },
+  "Go to jail": {
+    "val": "Go to jail",
+    "excluded": "",
+    "name": ""
+  },
+  "You don't have any money to clear\nyour bounty.": {
+    "val": "You don't have any money to clear\nyour bounty.",
+    "excluded": "",
+    "name": ""
+  },
+  "Steal": {
+    "val": "Steal",
+    "excluded": "",
+    "name": ""
+  },
+  "You don't have any bounties.": {
+    "val": "You don't have any bounties.",
+    "excluded": "",
+    "name": ""
+  },
+  "Talk": {
+    "val": "Talk",
+    "excluded": "",
+    "name": ""
+  },
+  "Turn yourself in": {
+    "val": "Turn yourself in",
+    "excluded": "",
+    "name": ""
+  },
+  "Ask directions": {
+    "val": "Ask directions",
+    "excluded": "",
+    "name": ""
+  },
+  "50€ was added to your account.": {
+    "val": "50€ was added to your account.",
+    "excluded": "",
+    "name": ""
+  },
+  "You can fly only in the world map.": {
+    "val": "You can fly only in the world map.",
+    "excluded": "",
+    "name": ""
+  },
+  "TO DO": {
+    "val": "TO DO",
+    "excluded": "",
+    "name": ""
+  },
+  "You look at yourself in the mirror.": {
+    "val": "You look at yourself in the mirror.",
+    "excluded": "",
+    "name": ""
+  },
+  "Shop": {
+    "val": "Shop",
+    "excluded": "",
+    "name": ""
+  },
+  "Rent room": {
+    "val": "Rent room",
+    "excluded": "",
+    "name": ""
+  },
+  "Recruit troops": {
+    "val": "Recruit troops",
+    "excluded": "",
+    "name": ""
+  },
+  "Fight": {
+    "val": "Fight",
+    "excluded": "",
+    "name": ""
+  },
+  "Open star map": {
+    "val": "Open star map",
+    "excluded": "",
+    "name": ""
+  },
+  "Land": {
+    "val": "Land",
+    "excluded": "",
+    "name": ""
+  },
+  "Refuel": {
+    "val": "Refuel",
+    "excluded": "",
+    "name": ""
+  },
+  "Repair": {
+    "val": "Repair",
+    "excluded": "",
+    "name": ""
+  },
+  "Greenwitch space center": {
+    "val": "Greenwitch space center",
+    "excluded": "",
+    "name": ""
+  },
+  "Apulia Spaceport": {
+    "val": "Apulia Spaceport",
+    "excluded": "",
+    "name": ""
+  },
+  "Jump in the trash": {
+    "val": "Jump in the trash",
+    "excluded": "",
+    "name": ""
+  },
+  "You donated sperm \\V[102] times and you have\ngiven birth to \\V[103] children.": {
+    "val": "You donated sperm \\V[102] times and you have\ngiven birth to \\V[103] children.",
+    "excluded": "",
+    "name": ""
+  }
+}

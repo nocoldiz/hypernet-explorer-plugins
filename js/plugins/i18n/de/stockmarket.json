@@ -1,0 +1,40 @@
+{
+  "stockmarket": {
+    "info": {
+      "money": "Money: {value}",
+      "oilPrice": "OIL Price: {value}",
+      "oilShares": "OIL Shares: {value}",
+      "oilValue": "OIL Value: {value}",
+      "netWorth": "Net Worth: {value}",
+      "soulPrice": "SOUL Price: {value}",
+      "soulShares": "SOUL Shares: {value}",
+      "soulValue": "SOUL Value: {value}"
+    },
+    "graph": {
+      "oilLabel": "Oil",
+      "soulLabel": "Souls",
+      "oilCurrent": "Oil: {value}",
+      "soulCurrent": "Souls: {value}"
+    },
+    "commands": {
+      "buy": "Buy",
+      "sell": "Sell",
+      "oil": "Oil",
+      "souls": "Souls",
+      "cancel": "Cancel",
+      "sellAll": "Sell All",
+      "share": "Share",
+      "shares": "Shares"
+    },
+    "titles": {
+      "buyWhich": "Buy Which Stock?",
+      "sellWhich": "Sell Which Stock?",
+      "buyHowMany": "Buy How Many {stock} Shares?",
+      "sellHowMany": "Sell How Many {stock} Shares?"
+    },
+    "stockNames": {
+      "oil": "Oil",
+      "souls": "Souls"
+    }
+  }
+}

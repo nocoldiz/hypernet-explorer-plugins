@@ -1,0 +1,85 @@
+{
+  "galaxy": {
+    "milky_way": {
+      "name": "Milky Way"
+    },
+    "andromeda_m31": {
+      "name": "Andromeda (M31)"
+    },
+    "triangulum_m33": {
+      "name": "Triangulum (M33)"
+    },
+    "large_magellanic_cloud": {
+      "name": "Large Magellanic Cloud"
+    },
+    "small_magellanic_cloud": {
+      "name": "Small Magellanic Cloud"
+    },
+    "m32": {
+      "name": "M32"
+    },
+    "m110_ngc_205": {
+      "name": "M110 (NGC 205)"
+    },
+    "ngc_6822": {
+      "name": "NGC 6822"
+    },
+    "ic_10": {
+      "name": "IC 10"
+    },
+    "sagittarius_dwarf": {
+      "name": "Sagittarius Dwarf"
+    },
+    "fornax_dwarf": {
+      "name": "Fornax Dwarf"
+    },
+    "sculptor_dwarf": {
+      "name": "Sculptor Dwarf"
+    },
+    "leo_i": {
+      "name": "Leo I"
+    },
+    "leo_ii": {
+      "name": "Leo II"
+    },
+    "ursa_minor_dwarf": {
+      "name": "Ursa Minor Dwarf"
+    },
+    "draco_dwarf": {
+      "name": "Draco Dwarf"
+    },
+    "carina_dwarf": {
+      "name": "Carina Dwarf"
+    },
+    "sextans_dwarf": {
+      "name": "Sextans Dwarf"
+    },
+    "ic_1613": {
+      "name": "IC 1613"
+    },
+    "wlm": {
+      "name": "WLM"
+    },
+    "phoenix_dwarf": {
+      "name": "Phoenix Dwarf"
+    },
+    "ngc_3109": {
+      "name": "NGC 3109"
+    },
+    "antlia_dwarf": {
+      "name": "Antlia Dwarf"
+    },
+    "leo_a": {
+      "name": "Leo A"
+    },
+    "aquarius_dwarf": {
+      "name": "Aquarius Dwarf"
+    },
+    "tucana_dwarf": {
+      "name": "Tucana Dwarf"
+    },
+    "pegasus_dwarf": {
+      "name": "Pegasus Dwarf"
+    }
+  }
+}

@@ -1,0 +1,2802 @@
+{
+  "1": {
+    "name": "Cellphone",
+    "description": "A sturdy Aokin portable phone."
+  },
+  "2": {
+    "name": "Backpack",
+    "description": "A comfortable backpack"
+  },
+  "3": {
+    "name": "Wristwatch",
+    "description": "A reliable wristwatch that \ntells time \naccurately."
+  },
+  "4": {
+    "name": "Umbrella",
+    "description": "A retractable umbrella that \nkeeps you dry in the rain"
+  },
+  "5": {
+    "name": "Insulated Water Bottle",
+    "description": "A reusable water bottle that \nkeeps drinks cold or hot"
+  },
+  "6": {
+    "name": "Multi-tool",
+    "description": "Multi-tool with various functions."
+  },
+  "7": {
+    "name": "Energy Drink",
+    "description": "Restores HP by 500 points."
+  },
+  "8": {
+    "name": "Gender Shake",
+    "description": "Restores HP by 1500 points."
+  },
+  "9": {
+    "name": "Energy Gel",
+    "description": "Completely restores HP."
+  },
+  "10": {
+    "name": "Mana Tonic",
+    "description": "Restores MP by 100 points."
+  },
+  "11": {
+    "name": "Smelling Salts",
+    "description": "Revives a knocked-out fighter."
+  },
+  "12": {
+    "name": "Medical Spray",
+    "description": "Removes all status ailments."
+  },
+  "13": {
+    "name": "Muscle Relaxant",
+    "description": "Cures Paralysis state."
+  },
+  "14": {
+    "name": "Fighter's Booster",
+    "description": "Restores HP and MP by half."
+  },
+  "15": {
+    "name": "Champion's Essence",
+    "description": "Completely restores HP and MP."
+  },
+  "16": {
+    "name": "Portable Charger",
+    "description": "A portable battery pack for \ncharging electronic devices"
+  },
+  "17": {
+    "name": "Ballpoint Pen",
+    "description": "A quality ballpoint pen."
+  },
+  "18": {
+    "name": "Grip Powder",
+    "description": "Reduces enemy DEX."
+  },
+  "19": {
+    "name": "Focus Bandana",
+    "description": "Increases critical hit rate."
+  },
+  "20": {
+    "name": "Flashbang",
+    "description": "A blinding flash stuns all enemies."
+  },
+  "21": {
+    "name": "Body Slam EP:",
+    "description": "Convoke a powerful body slam."
+  },
+  "22": {
+    "name": "Pocket Notebook",
+    "description": "A small pocket notebook for \nquick notes."
+  },
+  "23": {
+    "name": "Endurance Injection",
+    "description": "Increases max HP by 50 points."
+  },
+  "24": {
+    "name": "Mental Focus Training",
+    "description": "Increases max MP by 10 points."
+  },
+  "25": {
+    "name": "Steroids",
+    "description": "Increases STR by 3 points."
+  },
+  "26": {
+    "name": "Ironskin Steroid",
+    "description": "Increases CON by 3 points."
+  },
+  "27": {
+    "name": "Chi Training",
+    "description": "Increases INT by 3 points."
+  },
+  "28": {
+    "name": "Practical Training",
+    "description": "Increases WIS by 3 points."
+  },
+  "29": {
+    "name": "Speed Training",
+    "description": "Footwork drills to increases \nDEX by 3 points.\n"
+  },
+  "30": {
+    "name": "Psionic Training",
+    "description": "Increases PSI by 3 points."
+  },
+  "31": {
+    "name": "Wireless Earbuds",
+    "description": "Noise-cancelling earbuds with \nexcellent sound cancellation"
+  },
+  "32": {
+    "name": "Vital Strike EP:",
+    "description": "Convoke a powerful combo of \nstrikes targeting vital points."
+  },
+  "33": {
+    "name": "Freezing Moon EP:",
+    "description": "Convoke a rapid flurry of \nice-cold fists."
+  },
+  "34": {
+    "name": "Blazing Kick EP:",
+    "description": "Convoke a spinning whirlwind \nkick that strikes all enemies."
+  },
+  "35": {
+    "name": "Guard Breaker",
+    "description": "A devastating bomb that can \nbreak through defenses."
+  },
+  "36": {
+    "name": "LED Flashlight",
+    "description": "A compact flashlight with \nadjustable light level."
+  },
+  "37": {
+    "name": "Pro Statusguard",
+    "description": "Prevents status ailments for 5\nturns."
+  },
+  "38": {
+    "name": "Perfect Block EP:",
+    "description": "Convoke a temporary shield."
+  },
+  "39": {
+    "name": "Fighter's Focus",
+    "description": "Stimulant that can make the \nuser enter in a focused trance."
+  },
+  "40": {
+    "name": "Starlit Tape",
+    "description": "Grants MP regeneration."
+  },
+  "41": {
+    "name": "Coffee Cup",
+    "description": "A refreshing cup of coffee \nthat boosts energy. "
+  },
+  "42": {
+    "name": "Master's Gloves",
+    "description": "Legendary gloves that fuses \nwith the user,\nincreasing STR by 1"
+  },
+  "43": {
+    "name": "Thunder Dragon Boots",
+    "description": "Ancient footwear that channels\nthunder \nenergy, they break and fuse with the user."
+  },
+  "44": {
+    "name": "Imperial Jing",
+    "description": "Legendary medicine that \npermanently increases HP \nby 200."
+  },
+  "45": {
+    "name": "Forbidden Scroll",
+    "description": "Secret technique scroll."
+  },
+  "46": {
+    "name": "Rose",
+    "description": "A purple rose"
+  },
+  "47": {
+    "name": "Tournament Stimulant",
+    "description": "Restores 25% HP,"
+  },
+  "48": {
+    "name": "Corner Cutman Kit",
+    "description": "Reduces swelling and treats \nminor injuries"
+  },
+  "49": {
+    "name": "Speed Spray",
+    "description": "Increases DEX for five turns."
+  },
+  "50": {
+    "name": "Defensive Stance Pill",
+    "description": "Increases CON but reduces DEX."
+  },
+  "51": {
+    "name": "Wireless Headphones",
+    "description": "Comfortable wireless \nheadphones with long battery \nlife."
+  },
+  "52": {
+    "name": "Keys Knuckles",
+    "description": "Improvised weapon for street \nfights."
+  },
+  "53": {
+    "name": "Steel Pipe",
+    "description": "Blunt improvised weapon for \nstreet fights that can stun enemy."
+  },
+  "54": {
+    "name": "Pocket Sand",
+    "description": "POCKET SAND!"
+  },
+  "55": {
+    "name": "Molotov Cocktail",
+    "description": "Improvised incendiary device."
+  },
+  "56": {
+    "name": "Karate Combo EP:",
+    "description": "Convoke a striking technique \nfrom Karate."
+  },
+  "57": {
+    "name": "Judo Throw EP:",
+    "description": "COnvoke a grappling technique \nfrom Judo."
+  },
+  "58": {
+    "name": "Taekwondo Kicks EP:",
+    "description": "Convoke a kicking technique from \nTaekwondo."
+  },
+  "59": {
+    "name": "Granola Bar",
+    "description": "A nutritious granola bar for a\nquick energy \nboost."
+  },
+  "60": {
+    "name": "Penta Protein Program",
+    "description": "Increases max HP by 100 \npoints."
+  },
+  "61": {
+    "name": "Power Enhancer",
+    "description": "Increases STR and CON by 5 \npoints each."
+  },
+  "62": {
+    "name": "Reflex Enhancer",
+    "description": "Increases DEX by 8 points."
+  },
+  "63": {
+    "name": "Ultimate Booster",
+    "description": "Temporarily increases all \nstats for 5 turns."
+  },
+  "64": {
+    "name": "Compact Umbrella",
+    "description": "A lightweight, folding umbrella\nthat fits in your backpack."
+  },
+  "65": {
+    "name": "Flowing Water EP:",
+    "description": "Convoke a legendary counter technique. "
+  },
+  "66": {
+    "name": "Dragon Eye Elixir",
+    "description": "Creates a temporary state of \nheightened senses."
+  },
+  "67": {
+    "name": "Ki Strike EP:",
+    "description": "Convoke a technique that channels \ninner energy into a close range strike."
+  },
+  "68": {
+    "name": "Pocket Parasol",
+    "description": "Blocks both rain and sun."
+  },
+  "69": {
+    "name": "Crystal Running Shoes",
+    "description": "A crystalline pair of running \nshoes that breaks after 10 turns. "
+  },
+  "70": {
+    "name": "Holy See's Remedy",
+    "description": "Instantly cures most negative \nstatus effects."
+  },
+  "71": {
+    "name": "Berserker Amulet",
+    "description": "Can trigger a berserk state."
+  },
+  "72": {
+    "name": "Broken Cryocell",
+    "description": "Burst and freezes on the \nminimal touch."
+  },
+  "73": {
+    "name": "Floating skull",
+    "description": "Makes you immune to critical \nhits."
+  },
+  "74": {
+    "name": "Spirit Parasite",
+    "description": "Restores 50 AP instantly but \nconsumes all MP."
+  },
+  "75": {
+    "name": "Bottled Water",
+    "description": "A refreshing bottle of water \nto stay \nhydrated."
+  },
+  "76": {
+    "name": "Iron Strike EP:",
+    "description": "Convoke a piercing attack."
+  },
+  "77": {
+    "name": "Eight Pillars EP:",
+    "description": "Convoke a legendary technique that \ntemporarily boosts all stats for 4 turns"
+  },
+  "78": {
+    "name": "Morphine",
+    "description": "Pain blocker."
+  },
+  "79": {
+    "name": "Red Cocaine",
+    "description": "Evil cocaine, originating from\nhell."
+  },
+  "80": {
+    "name": "Angel Dust",
+    "description": "Psionic substance that \nincreases PSI."
+  },
+  "81": {
+    "name": "Tryptocaine",
+    "description": "Extremely dangerous drug"
+  },
+  "82": {
+    "name": "Speed",
+    "description": "Stimulant that increases your \nDEX for 6 turns."
+  },
+  "83": {
+    "name": "Crank",
+    "description": "Addictive substance that \nincreases ATK and \nSAG."
+  },
+  "84": {
+    "name": "Black Market Cocktail",
+    "description": "Corrosive drug that boosts all\nstats."
+  },
+  "85": {
+    "name": "Tranquilizer",
+    "description": "Substance that dulls pain."
+  },
+  "86": {
+    "name": "Sword Keychain",
+    "description": "A durable keychain with space \nfor all your keys."
+  },
+  "87": {
+    "name": "Omega Stimulant",
+    "description": "Extremely dangerous combat \ndrug."
+  },
+  "88": {
+    "name": "UV Sunglasses",
+    "description": "A pair of versatile sunglasses\nwith UV \nprotection."
+  },
+  "89": {
+    "name": "Championship Belt",
+    "description": "A gold championship belt from \nthe MAX fighting tournament."
+  },
+  "90": {
+    "name": "Signed Gloves",
+    "description": "Autographed gloves from a \nlegendary fighter."
+  },
+  "91": {
+    "name": "Tournament Trophy",
+    "description": "Trophy from a local martial \narts competition."
+  },
+  "92": {
+    "name": "Ancient Fighting Coin",
+    "description": "A rare coin depicting ancient \nmartial arts."
+  },
+  "93": {
+    "name": "Vintage Fight Poster",
+    "description": "Vintage poster from a famous \nunderground fight arena"
+  },
+  "94": {
+    "name": "Fighter's Medallion",
+    "description": "A medallion awarded to \nexceptional fighters."
+  },
+  "95": {
+    "name": "Champion's Tooth",
+    "description": "A tooth knocked out from a \nfamous fighter."
+  },
+  "96": {
+    "name": "Historic Ring Canvas",
+    "description": "A piece of the ring mat from a\nlegendary \nfight."
+  },
+  "97": {
+    "name": "Fighter Action Figure",
+    "description": "Rare action figure of a famous\nfighter."
+  },
+  "98": {
+    "name": "Dandelion",
+    "description": "A wild dandelion."
+  },
+  "99": {
+    "name": "Golden Hand Statue",
+    "description": "A gold-plated replica of a \nlegendary fighter's fist."
+  },
+  "100": {
+    "name": "Ancient Scroll",
+    "description": "Ancient scroll containing \nillustrations of fight skills."
+  },
+  "101": {
+    "name": "Antique Weight",
+    "description": "A perfectly preserved ancient \ntraining weight."
+  },
+  "102": {
+    "name": "Historic Match Gloves",
+    "description": "Genuine boxing gloves worn in \nthe legendary MAX fight."
+  },
+  "103": {
+    "name": "Diamond Fist",
+    "description": "A large diamond crafted in the\nshape of a fist."
+  },
+  "104": {
+    "name": "Hand Sanitizer",
+    "description": "A small tube of hand sanitizer\nto keep germs away."
+  },
+  "105": {
+    "name": "Torn Gloves",
+    "description": "A broken pair of fighting \ngloves."
+  },
+  "106": {
+    "name": "Old Gym Nameplate",
+    "description": "A dented metal locker \nnameplate from a gym."
+  },
+  "107": {
+    "name": "Used Hand Wraps",
+    "description": "Used wrappings from a \nfighter's hands."
+  },
+  "108": {
+    "name": "Fight Ticket Stubs",
+    "description": "A collection of various ticket\nstubs from fighting competitions."
+  },
+  "109": {
+    "name": "Cracked Mouthguard",
+    "description": "A broken mouthguard from a \nstreet fight."
+  },
+  "110": {
+    "name": "Utensil Set",
+    "description": "A set of basic eating utensils: \na fork, knife, and spork."
+  },
+  "111": {
+    "name": "Local Map",
+    "description": "A simple map local map slightly faded."
+  },
+  "112": {
+    "name": "Empty Flask",
+    "description": "A basic water flask made of \nleather and metal."
+  },
+  "113": {
+    "name": "Climbing Rope",
+    "description": "A simple rope, useful for \nclimbing."
+  },
+  "114": {
+    "name": "Rubbish",
+    "description": "Some rubbish"
+  },
+  "115": {
+    "name": "Whetstone",
+    "description": "A simple whetstone for \nsharpening blades and swords."
+  },
+  "116": {
+    "name": "Sewing Kit",
+    "description": "A basic sewing kit for \nrepairing clothes and gear."
+  },
+  "117": {
+    "name": "Candle",
+    "description": "A simple candle in a glass \nholder, providing dim light."
+  },
+  "118": {
+    "name": "Fishing Rod",
+    "description": "A basic fishing hook and line \nfor catching small fish."
+  },
+  "119": {
+    "name": "Clay Pot",
+    "description": "A simple clay pot for storing \nwater or other liquids."
+  },
+  "120": {
+    "name": "Travel Journal",
+    "description": "A basic leather journal for \nrecording thoughts."
+  },
+  "121": {
+    "name": "Walking Stick",
+    "description": "A simple wooden walking stick,\nhelpful for long journeys"
+  },
+  "122": {
+    "name": "Plastic Bowl Set",
+    "description": "A basic set of a single use \nplastic utensils set"
+  },
+  "123": {
+    "name": "Wooden Chair",
+    "description": "A simple wooden chair."
+  },
+  "124": {
+    "name": "Lantern",
+    "description": "A basic lantern that provides \na soft, warm light."
+  },
+  "125": {
+    "name": "Travel Backpack",
+    "description": "A worn leather backpack with \nmultiple pockets"
+  },
+  "126": {
+    "name": "Bedroll",
+    "description": "A simple bedroll for sleeping \noutdoors or in basic\naccommodations."
+  },
+  "127": {
+    "name": "Cooking Pot",
+    "description": "A basic cooking pot for \npreparing meals over a fire"
+  },
+  "128": {
+    "name": "Utensil Set",
+    "description": "A set of basic eating \nutensils including a spork."
+  },
+  "129": {
+    "name": "Acetaminophen Tablets",
+    "description": "Pain reliever and fever \nreducer."
+  },
+  "130": {
+    "name": "Ibuprofen Capsules",
+    "description": "Anti-inflammatory medication \nthat reduces pain and swelling."
+  },
+  "131": {
+    "name": "Calcium Antacid",
+    "description": "Antacid tablet that \nneutralizes stomach acid "
+  },
+  "132": {
+    "name": "Cetirizine Relief",
+    "description": "Antihistamine that provides \nrelief from allergy."
+  },
+  "133": {
+    "name": "Dextromethorphan",
+    "description": "Cough suppressant that helps \ncalm persistent cough"
+  },
+  "134": {
+    "name": "Pseudoephedrine Tabs",
+    "description": "Decongestant that helps clear \nnasal passages and mucus."
+  },
+  "135": {
+    "name": "Simethicone Drops",
+    "description": "Digestive aid that helps \nreduce gas and bloating."
+  },
+  "136": {
+    "name": "Bisacodyl Tablets",
+    "description": "Laxative that provides relief \nfrom occasional \nconstipation."
+  },
+  "137": {
+    "name": "Bacitracin Ointment",
+    "description": "Topical antibiotic ointment \nfor minor cuts and wounds"
+  },
+  "138": {
+    "name": "Loperamide Capsules",
+    "description": "Antidiarrheal medication that \nprovides quick relief."
+  },
+  "139": {
+    "name": "Hydrocortisone Cream",
+    "description": "Lotion that soothes and \nprotects minor skin cuts."
+  },
+  "140": {
+    "name": "Electrolyte Powder",
+    "description": "Oral rehydration salts to \nreplenish electrolytes."
+  },
+  "141": {
+    "name": "Menthol Drops",
+    "description": "Throat lozenges that provide \nrelief from sore troath."
+  },
+  "142": {
+    "name": "Methyl Salicylate",
+    "description": "Medicated cream for muscle and\njoint pain relief."
+  },
+  "143": {
+    "name": "Clotrimazole",
+    "description": "Antifungal cream for treating \nvarious skin fungal infections."
+  },
+  "144": {
+    "name": "Saline Nasal Spray",
+    "description": "Nasal spray that provides \ntemporary relief from obstruction"
+  },
+  "145": {
+    "name": "Minimum Vitality Tincture",
+    "description": "Ultra-diluted herbal remedy \nsaid to balance inner \nenergy and provide minimal restoration."
+  },
+  "146": {
+    "name": "Healing Droplets",
+    "description": "Delicate herbal essence \nbelieved to stimulate the body"
+  },
+  "147": {
+    "name": "Quantum Elixir",
+    "description": "Infinitesimal dilution of \nbotanical extracts, \nclaimed to provide microscopic energetic support."
+  },
+  "148": {
+    "name": "Ethereal Solution",
+    "description": "A barely perceptible remedy \nmeant to harmonize the humors."
+  },
+  "149": {
+    "name": "Vitality Essence",
+    "description": "A microscopic infusion \ndesigned to gently nudge health."
+  },
+  "150": {
+    "name": "Resonance Mist",
+    "description": "A whisper-light preparation \nclaimed to stimulate senses."
+  },
+  "151": {
+    "name": "Vibrational Serum",
+    "description": "An ultra-diluted mixture \npurported to activate the\nbody's most subtle self-healing mechanisms."
+  },
+  "152": {
+    "name": "Alignment Drops",
+    "description": "A gossamer-thin liquid said to\nrealign the body's \nenergetic pathways with minimal intervention."
+  },
+  "153": {
+    "name": "Regeneration Nanites",
+    "description": "Nanite-infused regenerative \nserum that completely \nrestores health and temporarily boosts all stats by 100%."
+  },
+  "154": {
+    "name": "Genome Optimator",
+    "description": "Genetic reprogramming \ninjection that permanently \nincreases all base stats by 50 points and removes all negative status effects."
+  },
+  "155": {
+    "name": "Chronos Elixir",
+    "description": "Experimental time-flux \nstimulant that grants immortality"
+  },
+  "156": {
+    "name": "Overdrive Implant",
+    "description": "Hyper-advanced cybernetic \nenhancement that \ninstantly transforms the user into a superhuman combat machine."
+  },
+  "157": {
+    "name": "Neuro-Quantum Amplifier",
+    "description": "Psychic amplification drug \nthat grants total mind control"
+  },
+  "158": {
+    "name": "Quantum Resurrection Protocol",
+    "description": "Experimental matter \nreconstruction serum."
+  },
+  "159": {
+    "name": "Potential Catalyst",
+    "description": "Interdimensional energy \ninfusion that grants extreme luck"
+  },
+  "160": {
+    "name": "Omega Singularity Serum",
+    "description": "Forbidden bio-engineering \nmarvel that transforms \nthe user into an ultimate weapon, consuming their very essence for power."
+  },
+  "161": {
+    "name": "Comfort Sleeping Bag",
+    "description": "A cozy, portable sleeping bag \nthat instantly make you sleep"
+  },
+  "162": {
+    "name": "Mood-Enhancing Feast",
+    "description": "A portable complete 3 person meal that completely\nsatisfies hunger "
+  },
+  "163": {
+    "name": "Relaxation Bath Kit",
+    "description": "A one time use bubble bath."
+  },
+  "164": {
+    "name": "Social Connection Game",
+    "description": "An hypercapitalistic board game where\nyou exploit real secrets of players."
+  },
+  "165": {
+    "name": "Home Fitness System",
+    "description": "A comprehensive portable and \nsingle use workout station."
+  },
+  "166": {
+    "name": "Immersive Entertainment Hub",
+    "description": "A cutting-edge entertainment \nsystem VR visor"
+  },
+  "167": {
+    "name": "Romantic Encounter Kit",
+    "description": "A portable romantic setup that\ninstantly improves mating chanches"
+  },
+  "168": {
+    "name": "Career Package",
+    "description": "A comprehensive career \ndevelopment cassette."
+  },
+  "169": {
+    "name": "Stress Relief Program",
+    "description": "A zen meditation program that \ncompletely removes stress."
+  },
+  "170": {
+    "name": "Pocket Bonsai",
+    "description": "A compact, portable indoor \nplant."
+  },
+  "171": {
+    "name": "Cigarette Pack",
+    "description": "A pack of cigarettes."
+  },
+  "172": {
+    "name": "Nun Beer",
+    "description": "A bottle of trappist beer produced at\nNorthpoint monastery."
+  },
+  "173": {
+    "name": "Hexphone Communicator",
+    "description": "A modern hexphone."
+  },
+  "174": {
+    "name": "Extended Life Batteries",
+    "description": "A pack of long-lasting \nbatteries for various days."
+  },
+  "175": {
+    "name": "Premium Whiskey",
+    "description": "A bottle of premium whiskey."
+  },
+  "176": {
+    "name": "Portable Caffeinator",
+    "description": "A portable coffee maker"
+  },
+  "177": {
+    "name": "Pocket Sound System",
+    "description": "A compact bluetooth speaker."
+  },
+  "178": {
+    "name": "Extreme Energy Pack",
+    "description": "A pack of energy drinks."
+  },
+  "179": {
+    "name": "Immersive Sound Cancellers",
+    "description": "A pair of noise-cancelling \nheadphones."
+  },
+  "180": {
+    "name": "Digital Music Player",
+    "description": "A cutting-edge MP3 player."
+  },
+  "181": {
+    "name": "EHI Pilot PDA",
+    "description": "A E.H.I. personal digital \nassistant with\nHypernet connection"
+  },
+  "182": {
+    "name": "CD Case",
+    "description": "A revolutionary portable CD \nplayer."
+  },
+  "183": {
+    "name": "Digital Camera",
+    "description": "A bulky digital camera that \ncan store up to 20 photos"
+  },
+  "184": {
+    "name": "Color Flip Mobile Phone",
+    "description": "A cutting-edge flip phone with\nlimited internet connection."
+  },
+  "185": {
+    "name": "Handheld Gaming Console",
+    "description": "A portable gaming device with \na black and white colors."
+  },
+  "186": {
+    "name": "Portable GPS Navigator",
+    "description": "A portable GPS navigation \ndevice that can pinpoint\nyour location with revolutionary accuracy."
+  },
+  "187": {
+    "name": "Massive Storage Drive",
+    "description": "A revolutionary external hard \ndrive with massive 512MB data storage."
+  },
+  "188": {
+    "name": "Pocket Video Recorder",
+    "description": "A portable digital video recorder \nthat can capture unreality-"
+  },
+  "189": {
+    "name": "Pocket Translator",
+    "description": "A portable language translator."
+  },
+  "190": {
+    "name": "Escape kit",
+    "description": "Let you escape to the internet\ncafe."
+  },
+  "191": {
+    "name": "Health Potion",
+    "description": "A mystical red potion that \ninstantly restores health."
+  },
+  "192": {
+    "name": "Mana Potion",
+    "description": "A shimmering blue elixir that \nrestores magical energy."
+  },
+  "193": {
+    "name": "Phoenix Pepper",
+    "description": "A golden pepper that can \nrevive fallen allies."
+  },
+  "194": {
+    "name": "Elixir of Varlenia",
+    "description": "A universal antidote that \ncures all poisoning and ailments."
+  },
+  "195": {
+    "name": "Giant's Potion",
+    "description": "A potion that temporarily \nincreases STR."
+  },
+  "196": {
+    "name": "Swift Wind Elixir",
+    "description": "A green potion that grants \nincreased DEX."
+  },
+  "197": {
+    "name": "Dragon Scale Barrier",
+    "description": "A potion that creates an \ninvisible barrier around the user."
+  },
+  "198": {
+    "name": "Archmage's Elixir",
+    "description": "A potion that temporarily \nenhances magical abilities."
+  },
+  "199": {
+    "name": "Fireball Scroll",
+    "description": "A magical scroll that \nunleashes a devastating fireball."
+  },
+  "200": {
+    "name": "Lightning Bolt Scroll",
+    "description": "A magical scroll that calls \ndown bolts of lightning."
+  },
+  "201": {
+    "name": "Shield Scroll",
+    "description": "A scroll that creates a \nmagical protective barrier."
+  },
+  "202": {
+    "name": "Invisibility Scroll",
+    "description": "A scroll that temporarily \nturns the user invisible."
+  },
+  "203": {
+    "name": "Elven Waybread",
+    "description": "A magical bread that never \ngoes stale and is remarkably filling."
+  },
+  "204": {
+    "name": "Elven Rope",
+    "description": "A rope made from enchanted \nelven hair, incredibly strong and lightweight."
+  },
+  "205": {
+    "name": "Fairy Lantern",
+    "description": "A lantern containing a captured fairy \nthat provides bright, magical light."
+  },
+  "206": {
+    "name": "Skeleton Key",
+    "description": "A small black key that can \nunlock any mundane lock."
+  },
+  "207": {
+    "name": "Philosopher's Elixir",
+    "description": "A legendary elixir that fully \nrestores health and mana."
+  },
+  "208": {
+    "name": "Thunder Crystal",
+    "description": "A delicate crystal with a \ntrapped lightning sprite inside."
+  },
+  "209": {
+    "name": "Enchanted Quill",
+    "description": "A magical quill that never \nruns out of ink and can write on any surface."
+  },
+  "210": {
+    "name": "Dream Dust",
+    "description": "A small bag filled with magical \ndust that can charm creatures."
+  },
+  "211": {
+    "name": "Golden Apple",
+    "description": "A magical fruit that \npermanently increases HP."
+  },
+  "212": {
+    "name": "Mage's Crystal",
+    "description": "A magical gem that permanently\nincreases INT when consumed."
+  },
+  "213": {
+    "name": "Dragon Scale Amulet",
+    "description": "A magical item that summons\na random item."
+  },
+  "214": {
+    "name": "Frostwarding Ring",
+    "description": "A magical ring that grants \nresistance to ice damage."
+  },
+  "215": {
+    "name": "Cloak of Shadows",
+    "description": "A magical cloak that helps the\nwearer blend into shadows."
+  },
+  "216": {
+    "name": "Pathfinder's Compass",
+    "description": "A magical compass that always \npoints toward the user's desired destination."
+  },
+  "217": {
+    "name": "Bag of Things",
+    "description": "A magnificent bag that's \nbigger on the inside than the outside."
+  },
+  "218": {
+    "name": "Chains of Swiftness",
+    "description": "Chains enchanted with powerful \nair magic."
+  },
+  "219": {
+    "name": "Gauntlets of Might",
+    "description": "A magical gauntlet that \nenhances the wearer's strength."
+  },
+  "220": {
+    "name": "Throwing Knife",
+    "description": "A perfectly balanced throwing \nknife with a razor-sharp edge."
+  },
+  "221": {
+    "name": "Shuriken",
+    "description": "A set of weighted metal stars \nwith razor-sharp points."
+  },
+  "222": {
+    "name": "Fire Pot",
+    "description": "A clay pot filled with \nalchemical fire that shatters on impact."
+  },
+  "223": {
+    "name": "Caltrops",
+    "description": "A small pouch filled with \ncaltrops that scatter across the ground."
+  },
+  "224": {
+    "name": "Frost Bomb",
+    "description": "A glass vial filled with \nfreezing liquid that explodes on impact."
+  },
+  "225": {
+    "name": "Vial of Miasma",
+    "description": "A small flask containing \ncorrupt, poisonous miasma."
+  },
+  "226": {
+    "name": "Throwing Axe",
+    "description": "A heavy axe designed \nspecifically for throwing in combat."
+  },
+  "227": {
+    "name": "Hunting Net",
+    "description": "A weighted net designed to \nentangle opponents."
+  },
+  "228": {
+    "name": "Sunburst Crystal",
+    "description": "A magical crystal that creates\na blinding flash of light."
+  },
+  "229": {
+    "name": "Warning Amulet",
+    "description": "A magical amulet that glows \nwhen danger is near."
+  },
+  "230": {
+    "name": "Lens of Revelation",
+    "description": "A magical lens that reveals \ninvisible objects and creatures."
+  },
+  "231": {
+    "name": "Regeneration Herb",
+    "description": "When consumed,it rapidly \naccelerates MP regeneration"
+  },
+  "232": {
+    "name": "Scroll of Destruction",
+    "description": "A powerful scroll containing a\nspell of destruction."
+  },
+  "233": {
+    "name": "Circlet Mastery",
+    "description": "A crown of enchanted silver \nand mythril that enhances mental abilities."
+  },
+  "234": {
+    "name": "Feather of Levitation",
+    "description": "A magical feather that grants \nthe ability to float temporarily."
+  },
+  "235": {
+    "name": "One time use jetpack",
+    "description": "A magical feather that grants \nthe ability to float temporarily."
+  },
+  "236": {
+    "name": "Dragon's Blood Elixir",
+    "description": "An incredibly rare elixir \ncontaining the essence of dragon's blood."
+  },
+  "237": {
+    "name": "Fruit of Yggdrasil",
+    "description": "A divine fruit from the World \nTree that blooms once a millennium."
+  },
+  "238": {
+    "name": "Sorcerer's Soul Crystal",
+    "description": "A legendary artifact containing the \ntrapped soul of an ancient archmage."
+  },
+  "239": {
+    "name": "Ambrosia",
+    "description": "A blessed golden nectar said \nto be the drink of the gods."
+  },
+  "240": {
+    "name": "Wish-Granting Orb",
+    "description": "An artifact of unimaginable \npower that grants a wish to its user."
+  },
+  "241": {
+    "name": "Forbidden War EP:",
+    "description": "Convoke memories of a censored war.\nSomewhat reusable, that's unusual for a EP:"
+  },
+  "242": {
+    "name": "Chronos Hourglass",
+    "description": "A magical hourglass containing\ntime itself."
+  },
+  "243": {
+    "name": "Miracle Elixir",
+    "description": "A mystical mixture crafted \nfrom phoenix feathers and unicorn tears."
+  },
+  "244": {
+    "name": "World Tree Seed",
+    "description": "A legendary seed that \ninstantly grows into a temporary shelter."
+  },
+  "245": {
+    "name": "Scroll of Outer entities",
+    "description": "A powerful scroll bearing the \ntrue name of an elder god."
+  },
+  "246": {
+    "name": "Scroll of Elder Names",
+    "description": "A powerful scroll bearing the \ntrue name of an elder god."
+  },
+  "247": {
+    "name": "Fraudulent Healing Potion",
+    "description": "A potion that appears magical \nbut just tastes like fruit juice."
+  },
+  "248": {
+    "name": "Fake Crystal Ball",
+    "description": "A mysterious orb that \nsupposedly reveals the future."
+  },
+  "249": {
+    "name": "Toy Magic Wand",
+    "description": "A wand with a star on the end \nthat makes sparkles and plays music."
+  },
+  "250": {
+    "name": "Empty Spellbook",
+    "description": "A book bound in ornate cover \nwith blank pages inside."
+  },
+  "251": {
+    "name": "Useless Charm",
+    "description": "A talisman claimed to ward off\nevil spirits."
+  },
+  "252": {
+    "name": "Potion of Mild Translucence",
+    "description": "A potion that claims to make \nthe drinker invisible."
+  },
+  "253": {
+    "name": "Empty Demon Container",
+    "description": "An ornate box that supposedly \ncontains a trapped demon."
+  },
+  "254": {
+    "name": "Fake Treasure Map",
+    "description": "A map that supposedly leads to\na legendary treasure."
+  },
+  "255": {
+    "name": "Mundane Glowing Stone",
+    "description": "A stone claimed to be from \nanother dimension."
+  },
+  "256": {
+    "name": "False Immortality",
+    "description": "A potion that supposedly \ngrants immortality."
+  },
+  "257": {
+    "name": "Pet Rock",
+    "description": "A perfectly ordinary rock with\ngoogly eyes glued to it."
+  },
+  "258": {
+    "name": "Beast Tongue Elixir",
+    "description": "A potion that supposedly \ngrants the ability to talk to animals."
+  },
+  "259": {
+    "name": "Not-So-Magic Bean",
+    "description": "A seed that supposedly grows \ninto a beanstalk reaching the clouds."
+  },
+  "260": {
+    "name": "Non-Flying Cape",
+    "description": "A cloak that supposedly makes \nyou fly."
+  },
+  "261": {
+    "name": "Ring of Minor Acoustics",
+    "description": "A ring that supposedly grants \nwishes."
+  },
+  "262": {
+    "name": "Dragon's Belch Potion",
+    "description": "A fizzy drink that supposedly \ngrants fire breathing abilities."
+  },
+  "263": {
+    "name": "Counterfeit Phoenix Feather",
+    "description": "A mystical-looking feather \nsaid to come from a phoenix."
+  },
+  "264": {
+    "name": "Fake Dragon Egg",
+    "description": "A mysterious egg that \nsupposedly hatches into a magical creature."
+  },
+  "265": {
+    "name": "Potion of Mild Tinting",
+    "description": "A potion that supposedly lets \nyou see through walls."
+  },
+  "266": {
+    "name": "Fake Transmutation Powder",
+    "description": "A powder that supposedly turns\nwater into wine."
+  },
+  "267": {
+    "name": "Fool's Alchemy Dust ",
+    "description": "A convincing imitation of \nmagical dust"
+  },
+  "268": {
+    "name": "Craftsman's Backpack",
+    "description": "A masterfully crafted leather \nbackpack with multiple compartments."
+  },
+  "269": {
+    "name": "Artisan's Throwing Knife Set",
+    "description": "A set of finely balanced \nthrowing knives in a leather holster."
+  },
+  "270": {
+    "name": "Navigator's Compass",
+    "description": "A masterfully crafted compass \nof brass and silver with intricate engravings."
+  },
+  "271": {
+    "name": "Cobbler's Boots",
+    "description": "Hand-stitched boots made from \npremium leather with reinforced soles."
+  },
+  "272": {
+    "name": "Weaver's Cloak",
+    "description": "A beautifully woven cloak of \nthe finest wool and silk blend."
+  },
+  "273": {
+    "name": "Clockmaker's Timepiece",
+    "description": "A precision-crafted timepiece \nwith intricate gears and mechanisms."
+  },
+  "274": {
+    "name": "Scribe's Quill",
+    "description": "A beautifully crafted quill \npen with a perfectly cut nib."
+  },
+  "275": {
+    "name": "Toolmaker's Multi-tool",
+    "description": "A meticulously crafted \nmulti-tool with dozens of functions."
+  },
+  "276": {
+    "name": "Bowyer's Bow",
+    "description": "A perfectly balanced bow \ncarved from a single piece of rare yew."
+  },
+  "277": {
+    "name": "Optician's Lens",
+    "description": "A finely crafted glass lens in\na polished brass housing."
+  },
+  "278": {
+    "name": "Cheesemaker's Wheel",
+    "description": "A finely aged cheese created \nby a master cheesemaker."
+  },
+  "279": {
+    "name": "Perfect Bread",
+    "description": "A loaf of perfectly baked \nbread using ancient techniques."
+  },
+  "280": {
+    "name": "Brewer's Coffee",
+    "description": "A flavorful brew of exceptional \nquality made from rare beans."
+  },
+  "281": {
+    "name": "Herbalist's Salve",
+    "description": "A handcrafted medicinal salve \nusing rare herbs and precise formulation."
+  },
+  "282": {
+    "name": "Bladesmith's Dagger",
+    "description": "A perfectly balanced dagger \nwith an ornate handle and razor-sharp blade."
+  },
+  "283": {
+    "name": "Glover's Handwear",
+    "description": "A set of custom-fitted gloves \nmade from the finest leather."
+  },
+  "284": {
+    "name": "Magician's Flute",
+    "description": "A beautifully crafted wooden \nflute with perfect intonation."
+  },
+  "285": {
+    "name": "Varlenia's Wine",
+    "description": "A perfectly aged wine from \nrare grapes using ancient techniques."
+  },
+  "286": {
+    "name": "Bestiary",
+    "description": "A finely crafted leather-bound\nbestiary with high-quality parchment."
+  },
+  "287": {
+    "name": "Woodcarver's Staff",
+    "description": "A perfectly balanced staff \ncarved from rare aged wood."
+  },
+  "288": {
+    "name": "Pixie Dust Vial",
+    "description": "A small vial of luminescent \ndust that glimmers with otherworldly light."
+  },
+  "289": {
+    "name": "Twilight Dewdrop",
+    "description": "A crystallized dewdrop from \nthe Garden of Twilight."
+  },
+  "290": {
+    "name": "Whisperwood Acorn Ring",
+    "description": "A perfect acorn cap that, when\nworn as a ring, allows the wearer\nto understand the whispers of trees and forest creatures."
+  },
+  "291": {
+    "name": "Fae Bell of Summoning",
+    "description": "A tiny bell that makes no \nsound when shaken by mortals,\nbut summons invisible helpers when in true need."
+  },
+  "292": {
+    "name": "Everbloom Rose",
+    "description": "A rose that never dies, \ncultivated in the Queen of Summer's garden."
+  },
+  "293": {
+    "name": "Quickgrowth Seed",
+    "description": "A mysterious seed that sprouts\ninstantly when planted."
+  },
+  "294": {
+    "name": "Truth-seeing Glass",
+    "description": "A mirror fashioned from polished \nmoonstone that reveals secrets,"
+  },
+  "295": {
+    "name": "Fungi Chalice",
+    "description": "A goblet carved from a single \nmushroom cap that refills with sweet nectar\nonce per day."
+  },
+  "296": {
+    "name": "Faesoil Pouch",
+    "description": "A small pouch of enchanted \nsoil from the heart of the Fae realm."
+  },
+  "297": {
+    "name": "Memory Amber",
+    "description": "A butterfly preserved in amber\nthat, when crushed, releases memories."
+  },
+  "298": {
+    "name": "Seer's Thimble",
+    "description": "A small silver thimble filled \nwith rainwater."
+  },
+  "299": {
+    "name": "Moonflower Crown",
+    "description": "A delicate crown woven from \nmoonflowers that bloom only\nat midnight."
+  },
+  "300": {
+    "name": "Alchemist's Catalyst",
+    "description": "A vial of catalyst created by \na master alchemist."
+  },
+  "301": {
+    "name": "Scribe's Prismatic Ink",
+    "description": "A specialty ink made from rare\nminerals and creatures."
+  },
+  "302": {
+    "name": "Astronomer's Astrolabe",
+    "description": "A precision instrument used by\nastronomers to calculate celestial positions."
+  },
+  "303": {
+    "name": "Physician's Instrument Set",
+    "description": "A set of masterfully crafted \nsurgical tools."
+  },
+  "304": {
+    "name": "Jeweler's Loupe",
+    "description": "A specialized lens crafted by \na master jeweler."
+  },
+  "305": {
+    "name": "Blacksmith's Flux",
+    "description": "A complex mixture of herbs and\nminerals used by blacksmiths."
+  },
+  "306": {
+    "name": "Botanist's Seed Collection",
+    "description": "A leather pouch containing \nvarious seeds from rare and magical plants."
+  },
+  "307": {
+    "name": "Scholar's Legal Tome",
+    "description": "A large book containing common\nlaws and legal precedents."
+  },
+  "308": {
+    "name": "Potter's Enchanted Clay",
+    "description": "A specially prepared clay used\nby potters."
+  },
+  "309": {
+    "name": "Leatherworker's Travel Pack",
+    "description": "A finely crafted backpack with\nnumerous secret compartments."
+  },
+  "310": {
+    "name": "Bladesmith's Eternal Whetstone",
+    "description": "An exceptional whetstone that \nnever wears down."
+  },
+  "311": {
+    "name": "Chef's Spice Blend",
+    "description": "A collection of rare spices \nand herbs prepared by a master chef."
+  },
+  "312": {
+    "name": "Painter's Arcane Palette",
+    "description": "A otherwordly crafted set of \nbrushes and pigments."
+  },
+  "313": {
+    "name": "Polar Blubber Oil",
+    "description": "A vial of oil rendered from \nthe blubber of arctic mammals."
+  },
+  "314": {
+    "name": "Glacial Heart Crystal",
+    "description": "A crystal formed from ancient \nglacial ice that never melts."
+  },
+  "315": {
+    "name": "Frostseeker's Lens",
+    "description": "A carefully constructed lens \nmade from perfectly clear ice."
+  },
+  "316": {
+    "name": "Snow Moss Tea",
+    "description": "A rare moss that grows beneath\nthe snow in the far north."
+  },
+  "317": {
+    "name": "Frost Bear Talisman",
+    "description": "A tooth from the fearsome \nnorthern frost bear."
+  },
+  "318": {
+    "name": "Northern Pemmican",
+    "description": "A preserved mixture of dried \narctic berries high in nutrients."
+  },
+  "319": {
+    "name": "Snowhare Weave",
+    "description": "A thin but incredibly warm \nfabric woven from the fur of arctic hares."
+  },
+  "320": {
+    "name": "Aurora Essence",
+    "description": "A luminescent liquid that \nflows beneath the polar ice."
+  },
+  "321": {
+    "name": "Wayfinder's Drum",
+    "description": "A traditional drum made from \nstretched human skin."
+  },
+  "322": {
+    "name": "Igloo Building Blocks",
+    "description": "Specialized snow used by \nnorthern tribes to build emergency shelters."
+  },
+  "323": {
+    "name": "Perfect Snowflake",
+    "description": "A single snowflake preserved \nin its perfect crystalline form."
+  },
+  "324": {
+    "name": "Frost Nomad's Map",
+    "description": "A map inscribed on cured \nsealskin showing passages through the arctic."
+  },
+  "325": {
+    "name": "Hearty Arctic Stew",
+    "description": "A specially prepared meal from\nAlaska that generates internal heat."
+  },
+  "326": {
+    "name": "Monarch Toxin Wing",
+    "description": "A vibrant butterfly wing with \nnatural toxins."
+  },
+  "327": {
+    "name": "Jaguar Musk Gland",
+    "description": "The powerful musk gland from a\njungle predator."
+  },
+  "328": {
+    "name": "Titan Beetle Carapace",
+    "description": "A sturdy shell from a giant \njungle beetle."
+  },
+  "329": {
+    "name": "Emerald Viper Venom",
+    "description": "Concentrated venom from a rare\njungle snake."
+  },
+  "330": {
+    "name": "Heart of the Jungle",
+    "description": "A strange fruit that grows \nonly in the deepest jungle."
+  },
+  "331": {
+    "name": "Paradise Feather",
+    "description": "The iridescent feather from a \nrare tropical bird."
+  },
+  "332": {
+    "name": "Banyan Sap",
+    "description": "The sap of an ancient tree \nthat absorbs ambient magical energy."
+  },
+  "333": {
+    "name": "Alpha Panther Claw",
+    "description": "A claw from the mighty jungle \napex predator."
+  },
+  "334": {
+    "name": "Luminous Spores",
+    "description": "Spores collected from \nluminescent fungi that grow in dark jungle caves."
+  },
+  "335": {
+    "name": "Golden Vocal Sac",
+    "description": "The vocal sac from a rare \nspecies of tree frog."
+  },
+  "336": {
+    "name": "Royal Meat Honey",
+    "description": "A specialized honey produced \nfrom carnivourous plants"
+  },
+  "337": {
+    "name": "Serpent Gastrolith",
+    "description": "A peculiar stone found in the \nstomach of an ancient snake."
+  },
+  "338": {
+    "name": "Moonphase Tree Resin",
+    "description": "Rare resin that drips from \ntrees only during specific lunar phases."
+  },
+  "339": {
+    "name": "Nightstalker's Eye",
+    "description": "The eye of a jungle predator \nthat hunts in complete darkness."
+  },
+  "340": {
+    "name": "Journalist's Endless Notepad",
+    "description": "A high-quality notepad with \nspecial paper that never runs out."
+  },
+  "341": {
+    "name": "Deadline Coffee",
+    "description": "A premium blend of coffee that\nkeeps the mind sharp and alert."
+  },
+  "342": {
+    "name": "Investigator's Camera",
+    "description": "A compact camera with \nexceptional clarity and zoom capabilities."
+  },
+  "343": {
+    "name": "Truth-Revealing Solution",
+    "description": "A set of specialized chemicals\nthat reveal hidden text and fingerprints."
+  },
+  "344": {
+    "name": "Press Badge Collection",
+    "description": "A collection of press \ncredentials from various organizations."
+  },
+  "345": {
+    "name": "Invisible Ink Pen",
+    "description": "A specially formulated ink \nthat renders writing temporarily invisible."
+  },
+  "346": {
+    "name": "Covert Recorder",
+    "description": "A compact audio recorder with \nenhanced sensitivity and noise filtering."
+  },
+  "347": {
+    "name": "Orator's Elixir",
+    "description": "A specialized tonic that \nheightens mental acuity and verbal eloquence."
+  },
+  "348": {
+    "name": "Informant Network Directory",
+    "description": "A network of contacts in \nvarious sectors of society."
+  },
+  "349": {
+    "name": "Undercover Disguise Kit",
+    "description": "A small kit containing \ndisguise materials and quick-change accessories."
+  },
+  "350": {
+    "name": "Calming Tea",
+    "description": "A specially crafted herbal tea\nthat calms nerves and restores focus."
+  },
+  "351": {
+    "name": "Field Analysis Kit",
+    "description": "A portable device that can \ndetect and analyze various substances."
+  },
+  "352": {
+    "name": "Memory Sage",
+    "description": "A rare herb that enhances \nmemory and helps organize thoughts."
+  },
+  "353": {
+    "name": "Investigative Laptop",
+    "description": "A compact, durable laptop with\nspecialized software for investigations."
+  },
+  "354": {
+    "name": "Precision Digital Scale",
+    "description": "A digital scale with perfect \naccuracy and tamper-proof calibration."
+  },
+  "355": {
+    "name": "Discrete Packaging Kit",
+    "description": "A collection of small, \nunmarked packaging materials."
+  },
+  "356": {
+    "name": "Street Network Contacts",
+    "description": "A network of reliable street \ninformants who provide crucial intelligence."
+  },
+  "357": {
+    "name": "Underground Energy Drink",
+    "description": "A synthetically enhanced \nenergy beverage that keeps you alert and focused."
+  },
+  "358": {
+    "name": "Encrypted Burner Phone",
+    "description": "A specially modified \nsmartphone with encryption and secure messaging."
+  },
+  "359": {
+    "name": "Trace Removal Powder",
+    "description": "A specialized powder that \neliminates fingerprints and DNA traces."
+  },
+  "360": {
+    "name": "False Identity Kit",
+    "description": "A collection of fake IDs, \nlicenses, and credentials."
+  },
+  "361": {
+    "name": "Negotiator's Manual",
+    "description": "Convinces the enemy to leave you alone."
+  },
+  "362": {
+    "name": "Secure Transport Case",
+    "description": "A reinforced briefcase with \nhidden compartments and alarm features."
+  },
+  "363": {
+    "name": "Premium Samples",
+    "description": "A collection of premium perfume\nsamples used to showcase product quality."
+  },
+  "364": {
+    "name": "Encrypted Ledger",
+    "description": "A notebook containing coded \nrecords of transactions and clients."
+  },
+  "365": {
+    "name": "Street Blend",
+    "description": "A potent chemical mixture that \nheightens awareness and reflexes."
+  },
+  "366": {
+    "name": "Routes Map",
+    "description": "A collection of routes and\nsafe houses throughout the Omega tower."
+  },
+  "367": {
+    "name": "Product Testing Kit",
+    "description": "A specialized kit for testing \nproduct purity and composition."
+  },
+  "368": {
+    "name": "Hearty Stew",
+    "description": "A hearty stew with chunks of \nmeat and vegetables."
+  },
+  "369": {
+    "name": "Fresh Bread",
+    "description": "A freshly baked loaf of \nbread.\nSimple but satisfying."
+  },
+  "370": {
+    "name": "Crisp Apple",
+    "description": "A juicy apple that's perfectly\nripe."
+  },
+  "371": {
+    "name": "Cheese Wheel",
+    "description": "A wheel of cheese made from \nfarm-fresh milk.\nRich and filling."
+  },
+  "372": {
+    "name": "Grilled Fish",
+    "description": "Grilled fish caught from local\nwaters."
+  },
+  "373": {
+    "name": "Wild Honey",
+    "description": "A bottle of sweet honey \nharvested from forest hives."
+  },
+  "374": {
+    "name": "Mixed Nuts",
+    "description": "Crunchy nuts gathered from \nancient trees."
+  },
+  "375": {
+    "name": "Fruit Pastry",
+    "description": "A sweet pastry filled with \nfruit jam."
+  },
+  "376": {
+    "name": "Herbal Tea",
+    "description": "A refreshing medicinal tea \nmade from rare herbs."
+  },
+  "377": {
+    "name": "Spicy Curry",
+    "description": "A spicy dish that sets the \ntaste buds on fire."
+  },
+  "378": {
+    "name": "Wild Berries",
+    "description": "A handful of berries picked \nfrom mountain bushes."
+  },
+  "379": {
+    "name": "Wisdom Elixir",
+    "description": "A ceremonial drink brewed from\nancient recipes."
+  },
+  "380": {
+    "name": "Roasted Vegetables",
+    "description": "A roasted vegetable dish with \nsavory herbs."
+  },
+  "381": {
+    "name": "Gourmet Chocolate",
+    "description": "A luxurious chocolate dessert \nmade by master confectioners."
+  },
+  "382": {
+    "name": "Meat Pie",
+    "description": "A hearty meat pie with flaky \ncrust."
+  },
+  "383": {
+    "name": "Spring Water",
+    "description": "Clear, refreshing water from a\nmountain spring."
+  },
+  "384": {
+    "name": "Berry Punch",
+    "description": "A sweet and tangy fruit punch \nmade from local berries."
+  },
+  "385": {
+    "name": "Fresh Milk",
+    "description": "A thick, creamy milk from \ngrass-fed cows."
+  },
+  "386": {
+    "name": "Mint Tea",
+    "description": "A soothing herbal tea with \nminty undertones."
+  },
+  "387": {
+    "name": "Fresh Lemonade",
+    "description": "A bright, citrusy lemonade \nmade from fresh lemons."
+  },
+  "388": {
+    "name": "Strong Coffee",
+    "description": "A rich, caffeinated brew that \nawakens the senses."
+  },
+  "389": {
+    "name": "Coconut Smoothie",
+    "description": "A sweet coconut milk drink \nwith tropical flavors."
+  },
+  "390": {
+    "name": "Hot Chocolate",
+    "description": "A hot chocolate drink with \nwhipped cream on top."
+  },
+  "391": {
+    "name": "Strong Ale",
+    "description": "A strong, amber ale brewed by \nlocal craftsmen."
+  },
+  "392": {
+    "name": "Aged Wine",
+    "description": "A fine wine aged in oak \nbarrels."
+  },
+  "393": {
+    "name": "Potent Whiskey",
+    "description": "A potent spirit distilled from\nfermented grain."
+  },
+  "394": {
+    "name": "Honey Mead",
+    "description": "A light, bubbly mead made from\nhoney."
+  },
+  "395": {
+    "name": "Dragon's Breath Cocktail",
+    "description": "A fiery, colorful cocktail \nwith exotic spices."
+  },
+  "396": {
+    "name": "Berserker's Brew",
+    "description": "An ancient brew said to be \nfavored by berserkers."
+  },
+  "397": {
+    "name": "Fizzy Soda",
+    "description": "A fizzy, carbonated drink with\nsweet fruit flavors."
+  },
+  "398": {
+    "name": "Spaghetti Bolognese",
+    "description": "Classic pasta with rich tomato\nsauce and herbs."
+  },
+  "399": {
+    "name": "Pizza Margherita",
+    "description": "Fresh pizza topped with \nmozzarella and basil."
+  },
+  "400": {
+    "name": "Mushroom Risotto",
+    "description": "Creamy rice dish cooked with \nmushrooms and Parmesan."
+  },
+  "401": {
+    "name": "Beef Carpaccio",
+    "description": "Thin slices of beef topped \nwith arugula and Parmesan."
+  },
+  "402": {
+    "name": "Arancini",
+    "description": "Fried rice balls stuffed with \ncheese and meat."
+  },
+  "403": {
+    "name": "Lasagna",
+    "description": "Rich layers of pasta, sauce, \nand cheese."
+  },
+  "404": {
+    "name": "Bruschetta",
+    "description": "Crispy bread topped with \ntomatoes and olive oil."
+  },
+  "405": {
+    "name": "Panna Cotta",
+    "description": "Sweet custard dessert with \ncaramelized sugar."
+  },
+  "406": {
+    "name": "Tiramisu",
+    "description": "Coffee-flavored dessert with \nlayers of mascarpone."
+  },
+  "407": {
+    "name": "Pasta con le sarde",
+    "description": "Tipical sicilian dish"
+  },
+  "408": {
+    "name": "Prosciutto e Melone",
+    "description": "Thin slices of cured ham with \nmelon."
+  },
+  "409": {
+    "name": "Fritto Misto",
+    "description": "Crispy seafood and vegetable \nfritters."
+  },
+  "410": {
+    "name": "Osso Buco",
+    "description": "Slowly cooked veal shanks with\ngremolata."
+  },
+  "411": {
+    "name": "Spaghetti Carbonara",
+    "description": "Pasta with egg, cheese, \npancetta, and pepper."
+  },
+  "412": {
+    "name": "Struffoli",
+    "description": "Crispy fried bread dough \ndrizzled with honey."
+  },
+  "413": {
+    "name": "Wagyu Steak",
+    "description": "A masterfully prepared steak \nwith truffle butter."
+  },
+  "414": {
+    "name": "Beluga Caviar",
+    "description": "Delicate fish eggs with subtle\nbriny flavor."
+  },
+  "415": {
+    "name": "Black Truffle Risotto",
+    "description": "Black truffles elegantly \nfolded into creamy risotto."
+  },
+  "416": {
+    "name": "Foie Gras Cognac Jelly",
+    "description": "Decadent duck liver pâté with \ncognac jelly."
+  },
+  "417": {
+    "name": "Butter-Poached Lobster",
+    "description": "Perfectly tender lobster in \nrich butter sauce."
+  },
+  "418": {
+    "name": "Sautéed Matsutake Mushrooms",
+    "description": "Rare mushrooms sautéed with \nherbs and garlic."
+  },
+  "419": {
+    "name": "Saffron Bouillabaisse",
+    "description": "Exquisite saffron-infused \nseafood stew."
+  },
+  "420": {
+    "name": "Gold-Flecked Soufflé",
+    "description": "A perfect chocolate dessert \nwith gold leaf."
+  },
+  "421": {
+    "name": "Garden Inspiration Salad",
+    "description": "A symphony of flavors with \nedible flowers."
+  },
+  "422": {
+    "name": "Sous Vide Rib",
+    "description": "Premium beef slow-cooked to \nperfection."
+  },
+  "423": {
+    "name": "Exotic Fruit Sculpture",
+    "description": "Exotic fruits sculpted into an\nedible masterpiece."
+  },
+  "424": {
+    "name": "Cardamom Rose Macarons",
+    "description": "Delicate sweet with an \nextraordinary flavor profile."
+  },
+  "425": {
+    "name": "Smoke-Infused Illusion",
+    "description": "A masterpiece of molecular \ngastronomy with smoke."
+  },
+  "426": {
+    "name": "Cherry-Glazed Duck",
+    "description": "Tender duck glazed with cherry\nand star anise."
+  },
+  "427": {
+    "name": "Gold Reserve",
+    "description": "The rarest coffee beans, \nperfectly prepared."
+  },
+  "428": {
+    "name": "Deluxe Cheeseburger",
+    "description": "A juicy burger with cheese, \nlettuce, and special sauce."
+  },
+  "429": {
+    "name": "Crispy French Fries",
+    "description": "Crispy, golden fries with salt\nand ketchup."
+  },
+  "430": {
+    "name": "Bucket o' Chicken",
+    "description": "Fried chicken pieces with a \ncrunchy coating."
+  },
+  "431": {
+    "name": "Jumbo Cola",
+    "description": "A large, sweet carbonated \ndrink."
+  },
+  "432": {
+    "name": "Pepperoni Pizza Slice",
+    "description": "Thin-crust pizza with \npepperoni and extra cheese."
+  },
+  "433": {
+    "name": "Cheese Pretzel",
+    "description": "A soft, warm pretzel with salt\nand cheese dip."
+  },
+  "434": {
+    "name": "Spicy Chicken Sandwich",
+    "description": "Deep-fried spicy chicken in a \nsoft bun with sauce."
+  },
+  "435": {
+    "name": "Onion Rings",
+    "description": "Crispy onion rings battered \nand deep-fried."
+  },
+  "436": {
+    "name": "Chocolate Shake",
+    "description": "A frozen sweet treat with \nchocolate syrup."
+  },
+  "437": {
+    "name": "Beef Taco",
+    "description": "A soft-shell taco with \nseasoned meat and cheese."
+  },
+  "438": {
+    "name": "Mozzarella Sticks",
+    "description": "Deep-fried mozzarella sticks \nwith marinara sauce."
+  },
+  "439": {
+    "name": "Glazed Donut",
+    "description": "A sugary pastry with colorful \nsprinkles."
+  },
+  "440": {
+    "name": "Triple Burger Meal",
+    "description": "A fully loaded meal deal with \nburger, fries, and drink."
+  },
+  "441": {
+    "name": "Breakfast Sandwich",
+    "description": "A breakfast sandwich with egg,\ncheese, and bacon."
+  },
+  "442": {
+    "name": "Hot Fudge Sundae",
+    "description": "A sweet, rich ice cream sundae\nwith toppings."
+  },
+  "443": {
+    "name": "Rock-Hard Bread",
+    "description": "A stale, hardened bread that \nmight break teeth."
+  },
+  "444": {
+    "name": "Mystery Meat",
+    "description": "A strange meat of dubious \norigin."
+  },
+  "445": {
+    "name": "Leftover Gruel",
+    "description": "Yesterday's leftovers mixed \ninto an unidentifiable slop."
+  },
+  "446": {
+    "name": "Suspicious Soup",
+    "description": "Watery broth with floating \nbits of something..."
+  },
+  "447": {
+    "name": "Expired Cheese",
+    "description": "Moldy cheese that should have \nbeen thrown away."
+  },
+  "448": {
+    "name": "Burnt Beans",
+    "description": "Beans burnt beyond \nrecognition.\nCrunchy in all the wrong ways."
+  },
+  "449": {
+    "name": "Day-Old Fish",
+    "description": "Fish that's been sitting out \ntoo long."
+  },
+  "450": {
+    "name": "Lumpy Porridge",
+    "description": "Tasteless mush with lumps \nthroughout."
+  },
+  "451": {
+    "name": "Watery Vegetable Soup",
+    "description": "Water with a few questionable \nvegetables floating in it."
+  },
+  "452": {
+    "name": "Sprouting Potato",
+    "description": "A sad-looking potato that's \nbeen sitting around."
+  },
+  "453": {
+    "name": "Bruised Apple",
+    "description": "A mushy apple with brown spots\nthroughout."
+  },
+  "454": {
+    "name": "Charred Toast",
+    "description": "Burned beyond recognition, but\nstill edible."
+  },
+  "455": {
+    "name": "Cheap Protein Bar",
+    "description": "The cheapest meat substitute \nimaginable."
+  },
+  "456": {
+    "name": "Moldy Risotto",
+    "description": "Has a greenish tint and smells\nlike feet."
+  },
+  "457": {
+    "name": "Unholy Food Abomination",
+    "description": "The absolute worst food \nimaginable."
+  },
+  "458": {
+    "name": "Canned Processed Meat",
+    "description": "Mass-produced canned meat with\npreservatives."
+  },
+  "459": {
+    "name": "Cheese-Flavored Crisps",
+    "description": "Cheese-flavored snack with \nartificial coloring."
+  },
+  "460": {
+    "name": "Instant Noodle Pack",
+    "description": "Pre-packaged noodles with \nflavor packet."
+  },
+  "461": {
+    "name": "Vigor tonic",
+    "description": "Artificially colored sugar \nwater with preservatives."
+  },
+  "462": {
+    "name": "Nutrient-Fortified Bar",
+    "description": "Compressed nutrition bar with \nsynthetic vitamins."
+  },
+  "463": {
+    "name": "Colorful Sugar Cereal",
+    "description": "A breakfast cereal with \nartificial colors and flavors."
+  },
+  "464": {
+    "name": "Cream Snack Cake",
+    "description": "A pastry that never seems to \nexpire."
+  },
+  "465": {
+    "name": "Microwaved Meat Patty",
+    "description": "Pre-cooked, frozen, and \nreheated meat patty."
+  },
+  "466": {
+    "name": "Canned Vegetables",
+    "description": "Vegetables preserved in salt \nand chemicals."
+  },
+  "467": {
+    "name": "Colorful Gelatin Dessert",
+    "description": "Fruit-flavored gelatin with \nartificial colors."
+  },
+  "468": {
+    "name": "Potato Crisps",
+    "description": "Reconstituted potato substance\nformed into chips."
+  },
+  "469": {
+    "name": "Microwave Dinner",
+    "description": "A frozen meal heated in \nminutes."
+  },
+  "470": {
+    "name": "Meat Substitute Patty",
+    "description": "Synthetic meat alternative \nmade from soy protein."
+  },
+  "471": {
+    "name": "Chocolate-Flavored Bar",
+    "description": "Chocolate-like substance that \ndoesn't quite melt."
+  },
+  "472": {
+    "name": "Tactical Field Ration",
+    "description": "Military-grade long-lasting \ncomplete meal."
+  },
+  "473": {
+    "name": "Luminous Stardrop",
+    "description": "A shimmering blue fruit with \ncrystalline flesh."
+  },
+  "474": {
+    "name": "Moonberry",
+    "description": "A rare fruit that grows only \nin moonlight."
+  },
+  "475": {
+    "name": "Spiralberry",
+    "description": "A spiral-shaped purple fruit \nwith hypnotic patterns."
+  },
+  "476": {
+    "name": "Dragon's Breath Fruit",
+    "description": "A fiery red fruit that \nsparkles with energy."
+  },
+  "477": {
+    "name": "Golden Sunfruit",
+    "description": "A golden fruit from the \nhighest mountains."
+  },
+  "478": {
+    "name": "Crystal Nectar Fruit",
+    "description": "A translucent fruit filled \nwith rainbow nectar."
+  },
+  "479": {
+    "name": "Mana Pomegranate",
+    "description": "A multi-chambered fruit with \npulsing blue membranes."
+  },
+  "480": {
+    "name": "Void Starfruit",
+    "description": "A black, star-shaped fruit \nwith tiny pinpoints of light."
+  },
+  "481": {
+    "name": "Cloudberry Puff",
+    "description": "A floating, airy fruit that \ndefies gravity."
+  },
+  "482": {
+    "name": "Prismatic Shimmerberry",
+    "description": "A shimmering fruit that \nchanges colors as it ripens."
+  },
+  "483": {
+    "name": "Abyssal Glowfruit",
+    "description": "A fruit from the deepest ocean\ntrenches."
+  },
+  "484": {
+    "name": "Fae's Enchantberry",
+    "description": "A mythical fruit said to grow \nonly in fairy realms."
+  },
+  "485": {
+    "name": "Ember Pepper Berry",
+    "description": "A tiny, vibrant fruit that \ngrows in volcanic soil."
+  },
+  "486": {
+    "name": "Eclipse Fruit",
+    "description": "A legendary fruit that appears\nonly during eclipses."
+  },
+  "487": {
+    "name": "Midnight Whispermelon",
+    "description": "A fruit that only ripens at \nthe stroke of midnight."
+  },
+  "488": {
+    "name": "Premium Sashimi",
+    "description": "A rare delicacy of raw fish \nand seasoned rice."
+  },
+  "489": {
+    "name": "Spiced Biryani",
+    "description": "Fragrant rice cooked with \nspices and vegetables."
+  },
+  "490": {
+    "name": "Dim Sum Assortment",
+    "description": "Small steamed dumplings filled\nwith exotic ingredients."
+  },
+  "491": {
+    "name": "Moroccan Tagine",
+    "description": "Slow-cooked meat stew with \nolives and preserved lemons."
+  },
+  "492": {
+    "name": "Spicy Kimchi",
+    "description": "Fermented cabbage with a spicy\nkick.\nTangy and invigorating."
+  },
+  "493": {
+    "name": "Spiced Kebab",
+    "description": "Grilled meat skewers with \nexotic spices."
+  },
+  "494": {
+    "name": "Turkish Ice Cream",
+    "description": "Sweet, stretchy ice cream with\nunique texture."
+  },
+  "495": {
+    "name": "Honey Baklava",
+    "description": "Thin pastry layered with nuts \nand honey."
+  },
+  "496": {
+    "name": "Tom Kha Soup",
+    "description": "Spicy soup with coconut milk \nand exotic herbs."
+  },
+  "497": {
+    "name": "Stuffed Paratha",
+    "description": "Flatbread stuffed with spiced \npotatoes and vegetables."
+  },
+  "498": {
+    "name": "Tropical Fruit Salad",
+    "description": "Assorted tropical fruits with \na hint of lime and spice."
+  },
+  "499": {
+    "name": "Leaf-Wrapped Fish",
+    "description": "Grilled fish wrapped in banana\nleaves with herbs."
+  },
+  "500": {
+    "name": "Seafood Gumbo",
+    "description": "A rich stew of okra, \nvegetables, and shrimp."
+  },
+  "501": {
+    "name": "Fresh Spring Rolls",
+    "description": "Fresh vegetables and herbs \nrolled in rice paper."
+  },
+  "502": {
+    "name": "Varlenia's Coffee",
+    "description": "The world's most expensive \ncoffee with unique flavor."
+  },
+  "503": {
+    "name": "Beef Pho",
+    "description": "Tender slices of beef in a \nsavory broth with noodles."
+  },
+  "504": {
+    "name": "Mango Sticky Rice",
+    "description": "Sticky rice with sweet mango \nand coconut cream."
+  },
+  "505": {
+    "name": "Xiao Long Bao",
+    "description": "Bite-sized pork dumplings with\na savory filling."
+  },
+  "506": {
+    "name": "Salmon Nigiri",
+    "description": "Thinly sliced raw fish served \non seasoned rice."
+  },
+  "507": {
+    "name": "Pad Thai",
+    "description": "Stir-fried noodles with \nvegetables and protein."
+  },
+  "508": {
+    "name": "Bibimbap",
+    "description": "Hot stone bowl with rice, \nvegetables, and egg."
+  },
+  "509": {
+    "name": "Shabu-Shabu",
+    "description": "Thinly-sliced beef and \nvegetables served with sauce."
+  },
+  "510": {
+    "name": "Sundubu Jjigae",
+    "description": "Soft tofu in a spicy, bubbling\nstew with seafood."
+  },
+  "511": {
+    "name": "Peking Duck",
+    "description": "Crispy duck with thin pancakes\nand hoisin sauce."
+  },
+  "512": {
+    "name": "Tteok in Red Bean Soup",
+    "description": "Chewy rice cakes in a sweet \nred bean soup."
+  },
+  "513": {
+    "name": "Gua Bao",
+    "description": "Crispy meats and vegetables \nwith a tangy sauce."
+  },
+  "514": {
+    "name": "Okonomiyaki",
+    "description": "Savory pancakes filled with \nseafood and vegetables."
+  },
+  "515": {
+    "name": "Tom Yum Goong",
+    "description": "A sour and spicy soup with \nprawns and lemongrass."
+  },
+  "516": {
+    "name": "Red Bean Baozi",
+    "description": "Bite-sized steamed buns with a\nsweet filling."
+  },
+  "517": {
+    "name": "Five-Spice Braised Pork",
+    "description": "Slow-cooked meat with aromatic\nfive-spice blend."
+  },
+  "518": {
+    "name": "Roasted Boar Haunch",
+    "description": "A massive roasted leg of wild \nboar."
+  },
+  "519": {
+    "name": "Pheasant in Wine Sauce",
+    "description": "Game birds slow-cooked in rich\nwine sauce."
+  },
+  "520": {
+    "name": "Venison Pottage",
+    "description": "Tender venison stewed with \nroot vegetables."
+  },
+  "521": {
+    "name": "Venison Pasty",
+    "description": "Meat sealed in pastry with \nspices and gravy."
+  },
+  "522": {
+    "name": "Huntsman's Stew",
+    "description": "A rich mixture of game meats \nstewed together."
+  },
+  "523": {
+    "name": "Roasted Hare",
+    "description": "Rabbit meat slow-roasted with \nherbs and bacon."
+  },
+  "524": {
+    "name": "Bacon-Wrapped Squab",
+    "description": "Pigeon wrapped in bacon and \nroasted to perfection."
+  },
+  "525": {
+    "name": "Salted Bear Meat",
+    "description": "A rare delicacy of bear meat \npreserved in salt."
+  },
+  "526": {
+    "name": "Roast Hart",
+    "description": "Meat from the prized forest \nstag, spit-roasted."
+  },
+  "527": {
+    "name": "Roasted Venison Heart",
+    "description": "Tender deer heart, considered \na trophy by hunters."
+  },
+  "528": {
+    "name": "Braised Mountain Goat",
+    "description": "Wild mountain goat slowly \nsimmered until tender."
+  },
+  "529": {
+    "name": "Blood Sausage",
+    "description": "Intestines stuffed with minced\nmeat and herbs."
+  },
+  "530": {
+    "name": "Venison Jerky",
+    "description": "Meat dried in strips with salt\nand spices."
+  },
+  "531": {
+    "name": "Smoked Boar Neck",
+    "description": "The fatty neck meat of a \nforest boar, smoked."
+  },
+  "532": {
+    "name": "Royal Swan Roast",
+    "description": "A royal dish of swan prepared \nfor feasts."
+  },
+  "533": {
+    "name": "Dragon Fang",
+    "description": "A massive fang from a dragon's\nmaw."
+  },
+  "534": {
+    "name": "Elemental Water Scales",
+    "description": "Shimmering scales from a water\nelemental."
+  },
+  "535": {
+    "name": "Golem Core",
+    "description": "A pulsing orb harvested from a\nfallen golem."
+  },
+  "536": {
+    "name": "Pixie Wings",
+    "description": "The translucent wings of a \nfairy creature."
+  },
+  "537": {
+    "name": "Unicorn Horn",
+    "description": "A horn from the legendary \nunicorn."
+  },
+  "538": {
+    "name": "Banshee Tears",
+    "description": "Crystalized tears from a \nbanshee."
+  },
+  "539": {
+    "name": "Werewolf Claw",
+    "description": "The claw of a savage werewolf."
+  },
+  "540": {
+    "name": "Vampiric Wood Splinter",
+    "description": "A piece of a vampire's coffin."
+  },
+  "541": {
+    "name": "Beholder Eyestalk",
+    "description": "The eye of a beholder \ncreature."
+  },
+  "542": {
+    "name": "Eldritch Tentacle",
+    "description": "Tentacle from a cosmic horror."
+  },
+  "543": {
+    "name": "Sentinel CPU",
+    "description": "A circuit board from a \nmechanical sentinel."
+  },
+  "544": {
+    "name": "Void Plasma",
+    "description": "A gel-like substance from a \ndimensional rift."
+  },
+  "545": {
+    "name": "Spectral Shroud",
+    "description": "The tattered shroud of a \nvengeful ghost."
+  },
+  "546": {
+    "name": "Alien Alloy Fragment",
+    "description": "A metal chunk from a fallen \nalien exoskeleton."
+  },
+  "547": {
+    "name": "Zombie Hand",
+    "description": "The severed hand of a \nreanimated corpse."
+  },
+  "548": {
+    "name": "Crystalized Ooze",
+    "description": "Hardened slime from an acidic \nooze creature."
+  },
+  "549": {
+    "name": "Griffin Egg",
+    "description": "A strange egg from a mythical \ngriffin."
+  },
+  "550": {
+    "name": "Gigant Beetle Carapace",
+    "description": "A segment of exoskeleton from \na giant insect."
+  },
+  "551": {
+    "name": "Manticore Tail",
+    "description": "Tail of a manticore, complete \nwith poisonous barbs."
+  },
+  "552": {
+    "name": "Frozen Dragon Breath",
+    "description": "Crystallized breath from an \nice drake."
+  },
+  "553": {
+    "name": "Shadow Essence",
+    "description": "Remains of a shadow creature \nthat slipped between dimensions."
+  },
+  "554": {
+    "name": "Dryad Blossom",
+    "description": "A small, bud-like growth from \na sentient plant creature."
+  },
+  "555": {
+    "name": "Abyssal Light Organ",
+    "description": "A pulsing organ from a strange\ndeep sea creature."
+  },
+  "556": {
+    "name": "Cyborg Memory Core",
+    "description": "A small storage drive from a \ncybernetic organism."
+  },
+  "557": {
+    "name": "Nightmare Talon",
+    "description": "The elongated finger of a \nnightmare creature."
+  },
+  "558": {
+    "name": "Meteorite Core Fragment",
+    "description": "A strange rock that fell from \na meteor beast."
+  },
+  "559": {
+    "name": "Scorpion Venom Sac",
+    "description": "A small flask containing the \nvenom of a giant scorpion."
+  },
+  "560": {
+    "name": "Interdimensional Relic",
+    "description": "A strange bone-like structure \nfrom another dimension."
+  },
+  "561": {
+    "name": "Ancient Wyrm Scale",
+    "description": "A single scale from an ancient\nwyrm."
+  },
+  "562": {
+    "name": "Gargoyle Heart",
+    "description": "The beating heart of a stone \ngargoyle."
+  },
+  "563": {
+    "name": "Unidentified Item",
+    "description": ""
+  },
+  "564": {
+    "name": "Lockpick",
+    "description": "Unlocks a door"
+  },
+  "565": {
+    "name": "Steel ingot",
+    "description": "Crafting material"
+  },
+  "566": {
+    "name": "Titanium ingot",
+    "description": "Crafting material"
+  },
+  "567": {
+    "name": "Varlenia Ingot",
+    "description": "Crafting material"
+  },
+  "568": {
+    "name": "Crystal",
+    "description": "Crafting material"
+  },
+  "569": {
+    "name": "Glass",
+    "description": "Crafting material"
+  },
+  "570": {
+    "name": "Wood",
+    "description": "Crafting material"
+  },
+  "571": {
+    "name": "Leather",
+    "description": "Crafting material"
+  },
+  "572": {
+    "name": "Cloth",
+    "description": "Crafting material"
+  },
+  "573": {
+    "name": "Bone",
+    "description": "Crafting material"
+  },
+  "574": {
+    "name": "Meat",
+    "description": "Crafting material"
+  },
+  "575": {
+    "name": "Plant matter",
+    "description": "Crafting material"
+  },
+  "576": {
+    "name": "Herb extract",
+    "description": "Crafting material"
+  },
+  "577": {
+    "name": "Oil Flask",
+    "description": "Crafting material"
+  },
+  "578": {
+    "name": "Acidic Solution",
+    "description": "Crafting material"
+  },
+  "579": {
+    "name": "Arcane Essence ",
+    "description": "Crafting material"
+  },
+  "580": {
+    "name": "Ethereal Shard ",
+    "description": "Crafting material"
+  },
+  "581": {
+    "name": "Quantum Core ",
+    "description": "Crafting material"
+  },
+  "582": {
+    "name": "Circuit Board ",
+    "description": "Crafting material"
+  },
+  "583": {
+    "name": "Microchip ",
+    "description": "Crafting material"
+  },
+  "584": {
+    "name": "Battery Cell ",
+    "description": "Crafting material"
+  },
+  "585": {
+    "name": "Plastic Polymer ",
+    "description": "Crafting material"
+  },
+  "586": {
+    "name": "Composite Resin",
+    "description": "Crafting material"
+  },
+  "587": {
+    "name": "Nanotube Module",
+    "description": "Crafting material"
+  },
+  "588": {
+    "name": "Newspaper",
+    "description": "The latest news from Europe."
+  },
+  "589": {
+    "name": "Liminal cuffs",
+    "description": ""
+  },
+  "590": {
+    "name": "Arcade Token",
+    "description": "Used in arcade machines"
+  },
+  "591": {
+    "name": "Invitation letter",
+    "description": "Phamplet produced by the Archive Foundation."
+  },
+  "592": {
+    "name": "Fuel tank",
+    "description": "Contains 25L of fuel"
+  },
+  "593": {
+    "name": "Dungeon key",
+    "description": "Open a door in a dungeon"
+  },
+  "594": {
+    "name": "Stratch and curse",
+    "description": "Gratta e vinci esoterico\n"
+  },
+  "595": {
+    "name": "Stratch and profit",
+    "description": "Gratta e vinci corporativo\n"
+  },
+  "596": {
+    "name": "Stratch and accumulate",
+    "description": "Gratta e vinci hypercapitalista\n"
+  },
+  "597": {
+    "name": "Stratch and relax",
+    "description": "Gratta e vinci a tema vacanziero\n"
+  },
+  "598": {
+    "name": "Utilitarian car",
+    "description": "Enchanted keys that summons a car"
+  },
+  "599": {
+    "name": "Blade seed",
+    "description": "Contains a blade spirit, the binding\nprocess is irreversible."
+  },
+  "600": {
+    "name": "Digital bestiary",
+    "description": "A finely crafted leather-bound\nbestiary with high-quality parchment."
+  },
+  "601": {
+    "name": "Fertilizer bag",
+    "description": "Industrial grade fertilizer."
+  },
+  "602": {
+    "name": "Human sperm sample",
+    "description": "Makes you pregnant."
+  },
+  "603": {
+    "name": "Gestation Accelerator",
+    "description": "Nanites that accelerate the fetus development."
+  },
+  "604": {
+    "name": "Goblin sperm sample",
+    "description": "Makes you pregnant."
+  },
+  "605": {
+    "name": "Elven sperm sample",
+    "description": "Makes you pregnant."
+  },
+  "606": {
+    "name": "Dwarven sperm sample",
+    "description": "Makes you pregnant."
+  },
+  "607": {
+    "name": "Unknown sperm sample",
+    "description": "Makes you pregnant."
+  },
+  "608": {
+    "name": "Divine comedy - Purgatory",
+    "description": "A printed copy of Purgatory from Dante Alighieri"
+  },
+  "609": {
+    "name": "Divine comedy - Purgatory",
+    "description": "A printed copy of Purgatory from Dante Alighieri"
+  },
+  "610": {
+    "name": "",
+    "description": ""
+  },
+  "611": {
+    "name": "",
+    "description": ""
+  },
+  "612": {
+    "name": "",
+    "description": ""
+  },
+  "613": {
+    "name": "",
+    "description": ""
+  },
+  "614": {
+    "name": "",
+    "description": ""
+  },
+  "615": {
+    "name": "",
+    "description": ""
+  },
+  "616": {
+    "name": "",
+    "description": ""
+  },
+  "617": {
+    "name": "Telescope",
+    "description": "A portable telescope"
+  },
+  "618": {
+    "name": "Star map",
+    "description": "A portable star map"
+  },
+  "619": {
+    "name": "Shovel",
+    "description": "Digs a tunnel undeground."
+  },
+  "620": {
+    "name": "Resonance Scanner",
+    "description": "Find undeground chambers."
+  },
+  "621": {
+    "name": "Raman probe",
+    "description": "Do a spectroscopy analysis"
+  },
+  "622": {
+    "name": "",
+    "description": ""
+  },
+  "623": {
+    "name": "",
+    "description": ""
+  },
+  "624": {
+    "name": "",
+    "description": ""
+  },
+  "625": {
+    "name": "",
+    "description": ""
+  },
+  "626": {
+    "name": "",
+    "description": ""
+  },
+  "627": {
+    "name": "",
+    "description": ""
+  },
+  "628": {
+    "name": "",
+    "description": ""
+  },
+  "629": {
+    "name": "",
+    "description": ""
+  },
+  "630": {
+    "name": "",
+    "description": ""
+  },
+  "631": {
+    "name": "",
+    "description": ""
+  },
+  "632": {
+    "name": "",
+    "description": ""
+  },
+  "633": {
+    "name": "",
+    "description": ""
+  },
+  "634": {
+    "name": "",
+    "description": ""
+  },
+  "635": {
+    "name": "",
+    "description": ""
+  },
+  "636": {
+    "name": "",
+    "description": ""
+  },
+  "637": {
+    "name": "",
+    "description": ""
+  },
+  "638": {
+    "name": "",
+    "description": ""
+  },
+  "639": {
+    "name": "",
+    "description": ""
+  },
+  "640": {
+    "name": "Book - 120 Days of Sodom",
+    "description": "A printed copy of The 120 Days of Sodom by Marquis de Sade"
+  },
+  "641": {
+    "name": "Book - 1 Samuel",
+    "description": "A printed copy of The First Book of Samuel (Bible)"
+  },
+  "642": {
+    "name": "Book - Fragment 2",
+    "description": "A printed copy of an illegible fragment"
+  },
+  "643": {
+    "name": "Book - Fragment 3",
+    "description": "A printed copy of an illegible fragment"
+  },
+  "644": {
+    "name": "Book - Best Made Plans",
+    "description": "A printed copy of The Best Made Plans by Everett B. Cole"
+  },
+  "645": {
+    "name": "Book - The Blazing World",
+    "description": "A printed copy of The Blazing World by Margaret Cavendish"
+  },
+  "646": {
+    "name": "Book - The Carpenter",
+    "description": "A printed copy of The Carpenter by William D. O'Connor"
+  },
+  "647": {
+    "name": "Book - Center of the Earth I",
+    "description": "A printed copy of Journey to the Center of the Earth (Vol 1) by Jules Verne"
+  },
+  "648": {
+    "name": "Book - Center of the Earth II",
+    "description": "A printed copy of Journey to the Center of the Earth (Vol 2) by Jules Verne"
+  },
+  "649": {
+    "name": "Book - Decameron I",
+    "description": "A printed copy of The Decameron (Vol 1) by Giovanni Boccaccio"
+  },
+  "650": {
+    "name": "Book - Decameron II",
+    "description": "A printed copy of The Decameron (Vol 2) by Giovanni Boccaccio"
+  },
+  "651": {
+    "name": "Book - Inferno",
+    "description": "A printed copy of Divine Comedy: Inferno by Dante Alighieri"
+  },
+  "652": {
+    "name": "Book - Paradiso",
+    "description": "A printed copy of Divine Comedy: Paradiso by Dante Alighieri"
+  },
+  "653": {
+    "name": "Book - Etiquette",
+    "description": "A printed copy of Etiquette by Emily Post"
+  },
+  "654": {
+    "name": "Book - Exodus",
+    "description": "A printed copy of The Book of Exodus (Bible)"
+  },
+  "655": {
+    "name": "Book - Phaedo",
+    "description": "A printed copy of Phaedo by Plato"
+  },
+  "656": {
+    "name": "Book - The Fat and the Thin I",
+    "description": "A printed copy of The Fat and the Thin (Vol 1) by Émile Zola"
+  },
+  "657": {
+    "name": "Book - The Fat and the Thin II",
+    "description": "A printed copy of The Fat and the Thin (Vol 2) by Émile Zola"
+  },
+  "658": {
+    "name": "Book - Genesis",
+    "description": "A printed copy of The Book of Genesis (Bible)"
+  },
+  "659": {
+    "name": "Book - Gnomes",
+    "description": "A printed copy of a treatise on Gnomes \n(Unknown Author)"
+  },
+  "660": {
+    "name": "Book - The Golden Bowl",
+    "description": "A printed copy of The Golden Bowl by Henry James"
+  },
+  "661": {
+    "name": "Book - Heart of Darkness",
+    "description": "A printed copy of Heart of Darkness by Joseph Conrad"
+  },
+  "662": {
+    "name": "Book - Henry IV",
+    "description": "A printed copy of Henry IV by William Shakespeare"
+  },
+  "663": {
+    "name": "Book - Lorem Ipsum",
+    "description": "A printed copy of De finibus bonorum et malorum by Cicero"
+  },
+  "664": {
+    "name": "Book - Marquis of Lossie",
+    "description": "A printed copy of The Marquis of Lossie by George MacDonald"
+  },
+  "665": {
+    "name": "Book - Mayflower Documents",
+    "description": "A printed copy of The Mayflower Compact (History)"
+  },
+  "666": {
+    "name": "Book - The Metal Monster",
+    "description": "A printed copy of The Metal Monster by Abraham Merritt"
+  },
+  "667": {
+    "name": "Book - Pauper of Park Lane",
+    "description": "A printed copy of The Pauper of Park Lane by William Le Queux"
+  },
+  "668": {
+    "name": "Book - The Purple Cloud",
+    "description": "A printed copy of The Purple Cloud by M. P. Shiel"
+  },
+  "669": {
+    "name": "Book - Ruth",
+    "description": "A printed copy of The Book of Ruth (Bible)"
+  },
+  "670": {
+    "name": "Book - Seats of the Mighty",
+    "description": "A printed copy of The Seats of the Mighty by Gilbert Parker"
+  },
+  "671": {
+    "name": "Book - Test",
+    "description": "A printed copy of a Test Book"
+  },
+  "672": {
+    "name": "Book - War of the Worlds I",
+    "description": "A printed copy of The War of the Worlds (Vol 1) by H. G. Wells"
+  },
+  "673": {
+    "name": "Book - War of the Worlds II",
+    "description": "A printed copy of The War of the Worlds (Vol 2) by H. G. Wells"
+  },
+  "674": {
+    "name": "Book - War of the Worlds III",
+    "description": "A printed copy of The War of the Worlds (Vol 3) by H. G. Wells"
+  },
+  "675": {
+    "name": "",
+    "description": ""
+  },
+  "676": {
+    "name": "",
+    "description": ""
+  },
+  "677": {
+    "name": "",
+    "description": ""
+  },
+  "678": {
+    "name": "",
+    "description": ""
+  },
+  "679": {
+    "name": "",
+    "description": ""
+  },
+  "680": {
+    "name": "",
+    "description": ""
+  },
+  "681": {
+    "name": "",
+    "description": ""
+  },
+  "682": {
+    "name": "",
+    "description": ""
+  },
+  "683": {
+    "name": "",
+    "description": ""
+  },
+  "684": {
+    "name": "",
+    "description": ""
+  },
+  "685": {
+    "name": "",
+    "description": ""
+  },
+  "686": {
+    "name": "",
+    "description": ""
+  },
+  "687": {
+    "name": "",
+    "description": ""
+  },
+  "688": {
+    "name": "",
+    "description": ""
+  },
+  "689": {
+    "name": "",
+    "description": ""
+  },
+  "690": {
+    "name": "",
+    "description": ""
+  },
+  "691": {
+    "name": "",
+    "description": ""
+  },
+  "692": {
+    "name": "",
+    "description": ""
+  },
+  "693": {
+    "name": "",
+    "description": ""
+  },
+  "694": {
+    "name": "",
+    "description": ""
+  },
+  "695": {
+    "name": "",
+    "description": ""
+  },
+  "696": {
+    "name": "",
+    "description": ""
+  },
+  "697": {
+    "name": "",
+    "description": ""
+  },
+  "698": {
+    "name": "",
+    "description": ""
+  },
+  "699": {
+    "name": "",
+    "description": ""
+  },
+  "700": {
+    "name": "",
+    "description": ""
+  }
+}

@@ -1,0 +1,352 @@
+{
+  "1": {
+    "name": "Dead",
+    "message1": "%1 has fallen!",
+    "message2": "%1 is slain!",
+    "message3": "",
+    "message4": "%1 revives!"
+  },
+  "2": {
+    "name": "Guard",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "3": {
+    "name": "Immortal",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "4": {
+    "name": "Poison",
+    "message1": "%1 is poisoned!",
+    "message2": "%1 is poisoned!",
+    "message3": "",
+    "message4": "%1 is no longer poisoned!"
+  },
+  "5": {
+    "name": "Blind",
+    "message1": "%1 is blinded!",
+    "message2": "%1 is blinded!",
+    "message3": "",
+    "message4": "%1 is no longer blinded!"
+  },
+  "6": {
+    "name": "Silence",
+    "message1": "%1 is silenced!",
+    "message2": "%1 is silenced!",
+    "message3": "",
+    "message4": "%1 is no longer silenced!"
+  },
+  "7": {
+    "name": "Rage",
+    "message1": "%1 is enraged!",
+    "message2": "%1 is enraged!",
+    "message3": "",
+    "message4": "%1 is no longer enraged!"
+  },
+  "8": {
+    "name": "Confusion",
+    "message1": "%1 is confused!",
+    "message2": "%1 is confused!",
+    "message3": "",
+    "message4": "%1 is no longer confused!"
+  },
+  "9": {
+    "name": "Charm",
+    "message1": "%1 is charmed!",
+    "message2": "%1 is charmed!",
+    "message3": "",
+    "message4": "%1 is no longer charmed!"
+  },
+  "10": {
+    "name": "Sleep",
+    "message1": "%1 falls asleep!",
+    "message2": "%1 falls asleep!",
+    "message3": "%1 is sleeping.",
+    "message4": "%1 wakes up!"
+  },
+  "11": {
+    "name": "Freeze",
+    "message1": "%1 is freezed solid and can’t move!",
+    "message2": "%1 is freezed solid!",
+    "message3": "%1 is freezed and can’t move!",
+    "message4": "%1 is no longer freezed!"
+  },
+  "12": {
+    "name": "Paralysis",
+    "message1": "%1 is paralyzed and can’t move!",
+    "message2": "%1 is paralyzed!",
+    "message3": "%1 is paralyzed and can’t move!",
+    "message4": "%1 is no longer paralyzed!"
+  },
+  "13": {
+    "name": "Stun",
+    "message1": "%1 lost balance!",
+    "message2": "%1 lost balance!",
+    "message3": "%1 is still off-balance...",
+    "message4": "%1 has regained balance!"
+  },
+  "14": {
+    "name": "Locked on",
+    "message1": "%1 is locked on!",
+    "message2": "%1 is locked on",
+    "message3": "%1 is locked on!",
+    "message4": "%1's focus subsides!"
+  },
+  "15": {
+    "name": "HP Regeneration",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "16": {
+    "name": "MP Regeneration",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "17": {
+    "name": "AP Regeneration",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "18": {
+    "name": "Magic Reflection",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "19": {
+    "name": "Protect",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "20": {
+    "name": "Provoke",
+    "message1": "%1 became easier to hit!",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "21": {
+    "name": "Hide",
+    "message1": "%1 became harder to hit!",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "22": {
+    "name": "Counter Attack",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "23": {
+    "name": "Status Ailment Block",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "24": {
+    "name": "Inspired",
+    "message1": "%1 is now inspired!",
+    "message2": "",
+    "message3": "",
+    "message4": "%1 is no longer inspired!"
+  },
+  "25": {
+    "name": "Hot",
+    "message1": "%1 is now enveloped in an aura of fire.",
+    "message2": "%1 is now enveloped in an aura of fire.",
+    "message3": "",
+    "message4": ""
+  },
+  "26": {
+    "name": "Cold",
+    "message1": "%1 is now enveloped in an freezing aura.",
+    "message2": "%1 is now enveloped in an freezing aura.",
+    "message3": "",
+    "message4": ""
+  },
+  "27": {
+    "name": "Static",
+    "message1": "%1 is now enveloped in a static aura.",
+    "message2": "%1 is now enveloped in a static aura.",
+    "message3": "",
+    "message4": "%1 is now grounded."
+  },
+  "28": {
+    "name": "Wet",
+    "message1": "%1 is now wet.",
+    "message2": "%1 is now wet.",
+    "message3": "",
+    "message4": "%1 is dry."
+  },
+  "29": {
+    "name": "Half Encounters",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "30": {
+    "name": "Double Money/Items",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "31": {
+    "name": "Berserk",
+    "message1": "%1 is berserked!",
+    "message2": "%1 is berserked!",
+    "message3": "%1 is consumed by bloodlust!",
+    "message4": "%1's bloodlust subsides!"
+  },
+  "32": {
+    "name": "Divine Shield",
+    "message1": "%1 is blessed with divine protection!",
+    "message2": "%1 is blessed with divine protection!",
+    "message3": "",
+    "message4": "The divine protection around %1 fades away."
+  },
+  "33": {
+    "name": "Death Mark",
+    "message1": "%1 is marked for death!",
+    "message2": "%1 is marked for death!",
+    "message3": "Death's mark lingers on %1...",
+    "message4": "The mark of death on %1 disappears."
+  },
+  "34": {
+    "name": "Perfect Focus",
+    "message1": "%1 is in a state of perfect focus!",
+    "message2": "%1 is in a state of perfect focus!",
+    "message3": "%1 maintains perfect focus...",
+    "message4": "%1's focus returns to normal."
+  },
+  "35": {
+    "name": "Shadow Veil",
+    "message1": "%1 is engulfed in shadow!",
+    "message2": "%1 is engulfed in shadow!",
+    "message3": "Shadows continue to swirl around %1...",
+    "message4": "The shadows surrounding %1 dissipate."
+  },
+  "36": {
+    "name": "Arcane Surge",
+    "message1": "%1 is burning with arcane power!",
+    "message2": "%1 is burning with arcane power!",
+    "message3": "Arcane energy surges through %1...",
+    "message4": "The arcane energy within %1 fades away."
+  },
+  "37": {
+    "name": "Ethereal",
+    "message1": "%1 is now ethereal!",
+    "message2": "%1 is now ethereal!",
+    "message3": "%1 remains in ethereal form...",
+    "message4": "%1 returns to normal form."
+  },
+  "38": {
+    "name": "Unbalanced",
+    "message1": "%1 is unbalanced!",
+    "message2": "%1 is unbalanced!",
+    "message3": "%1 struggles to maintain balance...",
+    "message4": "%1 regains proper balance."
+  },
+  "39": {
+    "name": "Life Link",
+    "message1": "%1 is linked to the party's life force!",
+    "message2": "%1 is linked to the party's life force!",
+    "message3": "%1 maintains the life link...",
+    "message4": "The life link with %1 is severed."
+  },
+  "40": {
+    "name": "Vulnerability",
+    "message1": "%1 is cursed with vulnerability!",
+    "message2": "%1 is cursed with vulnerability!",
+    "message3": "The curse of vulnerability persists on %1...",
+    "message4": "The vulnerability curse on %1 is lifted."
+  },
+  "41": {
+    "name": "Nausea",
+    "message1": "%1 is nauseated!",
+    "message2": "%1 is nauseated!",
+    "message3": "",
+    "message4": "%1 is no longer nauseated!"
+  },
+  "42": {
+    "name": "Drunk",
+    "message1": "%1 is drunk!",
+    "message2": "%1 is drunk!",
+    "message3": "",
+    "message4": "%1 has sobered up!"
+  },
+  "43": {
+    "name": "Burned",
+    "message1": "%1 is burned!",
+    "message2": "%1 is burned!",
+    "message3": "",
+    "message4": "%1 is no longer poisoned!"
+  },
+  "44": {
+    "name": "Infected",
+    "message1": "%1 is infected!",
+    "message2": "%1 is infected!",
+    "message3": "",
+    "message4": "%1 is no longer infected!"
+  },
+  "45": {
+    "name": "Floating",
+    "message1": "%1 is floating!",
+    "message2": "%1 is floating!",
+    "message3": "",
+    "message4": ""
+  },
+  "46": {
+    "name": "Invisible",
+    "message1": "%1 is invisible!",
+    "message2": "%1 is invisible!",
+    "message3": "",
+    "message4": "%1 is no longer invisible!"
+  },
+  "47": {
+    "name": "Oily",
+    "message1": "%1 is now covered in oil",
+    "message2": "%1 is now covered il oil",
+    "message3": "",
+    "message4": ""
+  },
+  "48": {
+    "name": "Bleeding",
+    "message1": "%1 is bleeding!",
+    "message2": "%1 is bleeding!",
+    "message3": "",
+    "message4": "%1 is no longer bleeding!"
+  },
+  "49": {
+    "name": "Dodge",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "50": {
+    "name": "",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  }
+}
