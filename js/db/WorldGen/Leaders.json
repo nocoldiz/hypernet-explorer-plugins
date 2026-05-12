@@ -1,0 +1,2790 @@
+{
+  "archmage_eldrin": {
+    "name": "Archmage Eldrin",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.cautious"
+  },
+  "magister_lyra": {
+    "name": "Magister Lyra",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.authoritative"
+  },
+  "councilor_theron": {
+    "name": "Councilor Theron",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.mischievous"
+  },
+  "spellweaver_mira": {
+    "name": "Spellweaver Mira",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.authoritative"
+  },
+  "enchanter_kael": {
+    "name": "Enchanter Kael",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.calm"
+  },
+  "wizard_lord_varen": {
+    "name": "Wizard Lord Varen",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.scholarly"
+  },
+  "sage_celeste": {
+    "name": "Sage Celeste",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.stoic"
+  },
+  "grand_magus_dorian": {
+    "name": "Grand Magus Dorian",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.impulsive"
+  },
+  "curator_magnus": {
+    "name": "Curator Magnus",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.adventurous"
+  },
+  "archivist_vera": {
+    "name": "Archivist Vera",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.nurturing"
+  },
+  "keeper_silas": {
+    "name": "Keeper Silas",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.sanguine"
+  },
+  "librarian_octavia": {
+    "name": "Librarian Octavia",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.calm"
+  },
+  "scribe_matthias": {
+    "name": "Scribe Matthias",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.nervous"
+  },
+  "record_master_elena": {
+    "name": "Record Master Elena",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.melancholic"
+  },
+  "chronicle_guard_dorian": {
+    "name": "Chronicle Guard Dorian",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.calm"
+  },
+  "vault_warden_iris": {
+    "name": "Vault Warden Iris",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.hedonistic"
+  },
+  "ceo_marcellus": {
+    "name": "CEO Marcellus",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.loyal"
+  },
+  "tycoon_victoria": {
+    "name": "Tycoon Victoria",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.melancholic"
+  },
+  "mogul_cassius": {
+    "name": "Mogul Cassius",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.stoic"
+  },
+  "trader_supreme_ada": {
+    "name": "Trader Supreme Ada",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.loyal"
+  },
+  "market_lord_felix": {
+    "name": "Market Lord Felix",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.brave"
+  },
+  "commerce_king_sophia": {
+    "name": "Commerce King Sophia",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.nurturing"
+  },
+  "merchant_prince_julian": {
+    "name": "Merchant Prince Julian",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.cautious"
+  },
+  "corp_director_lydia": {
+    "name": "Corp Director Lydia",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "years": [
+      1900,
+      2012
+    ],
+    "personality": "personalities.stoic"
+  },
+  "loyalist_magus_tiberius": {
+    "name": "Loyalist Magus Tiberius",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Artistic"
+  },
+  "devoted_enchanter_aria": {
+    "name": "Devoted Enchanter Aria",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Apathetic"
+  },
+  "true_mage_cornelius": {
+    "name": "True Mage Cornelius",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Fatalistic"
+  },
+  "faithful_sage_meredith": {
+    "name": "Faithful Sage Meredith",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Paranoid"
+  },
+  "orthodox_wizard_quinn": {
+    "name": "Orthodox Wizard Quinn",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Nurturing"
+  },
+  "decree_keeper_thalia": {
+    "name": "Decree Keeper Thalia",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Adventurous"
+  },
+  "guild_champion_marcus": {
+    "name": "Guild Champion Marcus",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Grumpy"
+  },
+  "sacred_spellcaster_nora": {
+    "name": "Sacred Spellcaster Nora",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Empathetic"
+  },
+  "traditional_mage_lucius": {
+    "name": "Traditional Mage Lucius",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Empathetic"
+  },
+  "pure_magic_scholar_elara": {
+    "name": "Pure Magic Scholar Elara",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Sanguine"
+  },
+  "purist_elder_cassius": {
+    "name": "Purist Elder Cassius",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Paranoid"
+  },
+  "hermetic_master_isolde": {
+    "name": "Hermetic Master Isolde",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Empathetic"
+  },
+  "ancient_scholar_regulus": {
+    "name": "Ancient Scholar Regulus",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Fatalistic"
+  },
+  "traditionalist_sage_vivian": {
+    "name": "Traditionalist Sage Vivian",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Mischievous"
+  },
+  "orthodox_keeper_gaius": {
+    "name": "Orthodox Keeper Gaius",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Brave"
+  },
+  "pure_magus_helena": {
+    "name": "Pure Magus Helena",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Melancholic"
+  },
+  "esoteric_lord_flavius": {
+    "name": "Esoteric Lord Flavius",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Adventurous"
+  },
+  "sacred_scholar_portia": {
+    "name": "Sacred Scholar Portia",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Nurturing"
+  },
+  "classical_wizard_maximus": {
+    "name": "Classical Wizard Maximus",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Scholarly"
+  },
+  "original_doctrine_keeper_diana": {
+    "name": "Original Doctrine Keeper Diana",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Grumpy"
+  },
+  "tech_mage_orion": {
+    "name": "Tech-Mage Orion",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Authoritative"
+  },
+  "inventor_sage_lyanna": {
+    "name": "Inventor Sage Lyanna",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Brave"
+  },
+  "gear_scholar_tobias": {
+    "name": "Gear Scholar Tobias",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Adventurous"
+  },
+  "steam_wizard_isadora": {
+    "name": "Steam Wizard Isadora",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Brave"
+  },
+  "arcane_engineer_cyrus": {
+    "name": "Arcane Engineer Cyrus",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Nurturing"
+  },
+  "magitek_master_freya": {
+    "name": "Magitek Master Freya",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Empathetic"
+  },
+  "innovation_lord_kane": {
+    "name": "Innovation Lord Kane",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Impulsive"
+  },
+  "progress_mage_selene": {
+    "name": "Progress Mage Selene",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Grumpy"
+  },
+  "mechanical_sage_viktor": {
+    "name": "Mechanical Sage Viktor",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Calm"
+  },
+  "future_spellcrafter_zara": {
+    "name": "Future Spellcrafter Zara",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Loyal"
+  },
+  "headmaster_aurelius": {
+    "name": "Headmaster Aurelius",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Impulsive"
+  },
+  "school_dean_ophelia": {
+    "name": "School Dean Ophelia",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Brave"
+  },
+  "master_teacher_lucan": {
+    "name": "Master Teacher Lucan",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Artistic"
+  },
+  "polymath_sage_rowena": {
+    "name": "Polymath Sage Rowena",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Disciplined"
+  },
+  "academy_lord_cedric": {
+    "name": "Academy Lord Cedric",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Adventurous"
+  },
+  "pedagogue_mage_astrid": {
+    "name": "Pedagogue Mage Astrid",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Empathetic"
+  },
+  "professor_supreme_hadrian": {
+    "name": "Professor Supreme Hadrian",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Adventurous"
+  },
+  "scholar_leader_beatrice": {
+    "name": "Scholar Leader Beatrice",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Hedonistic"
+  },
+  "educational_master_darius": {
+    "name": "Educational Master Darius",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Stoic"
+  },
+  "mentor_archmage_evangeline": {
+    "name": "Mentor Archmage Evangeline",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Cautious"
+  },
+  "high_priest_nihilus": {
+    "name": "High Priest Nihilus",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Calm"
+  },
+  "chaos_oracle_morgana": {
+    "name": "Chaos Oracle Morgana",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Nurturing"
+  },
+  "entropy_lord_xander": {
+    "name": "Entropy Lord Xander",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Sanguine"
+  },
+  "discord_sage_lilith": {
+    "name": "Discord Sage Lilith",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Nurturing"
+  },
+  "void_master_balthazar": {
+    "name": "Void Master Balthazar",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Nervous"
+  },
+  "anarchy_champion_raven": {
+    "name": "Anarchy Champion Raven",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Nervous"
+  },
+  "disorder_keeper_malachi": {
+    "name": "Disorder Keeper Malachi",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Melancholic"
+  },
+  "chaos_weaver_seraphina": {
+    "name": "Chaos Weaver Seraphina",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Hedonistic"
+  },
+  "swamp_chief_gorrok": {
+    "name": "Swamp Chief Gorrok",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Adventurous"
+  },
+  "poison_shaman_zzara": {
+    "name": "Poison Shaman Zzara",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Nervous"
+  },
+  "bog_warrior_thrax": {
+    "name": "Bog Warrior Thrax",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Cynical"
+  },
+  "venom_elder_nyx": {
+    "name": "Venom Elder Nyx",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Impulsive"
+  },
+  "marsh_lord_kreth": {
+    "name": "Marsh Lord Kreth",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Cautious"
+  },
+  "toxic_oracle_sssara": {
+    "name": "Toxic Oracle Sssara",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Timid"
+  },
+  "wetland_guardian_brognak": {
+    "name": "Wetland Guardian Brognak",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Scholarly"
+  },
+  "plague_keeper_vyx": {
+    "name": "Plague Keeper Vyx",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Stoic"
+  },
+  "mire_champion_grax": {
+    "name": "Mire Champion Grax",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Empathetic"
+  },
+  "fungal_sage_mycellia": {
+    "name": "Fungal Sage Mycellia",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Impulsive"
+  },
+  "forest_elder_sylvara": {
+    "name": "Forest Elder Sylvara",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Mischievous"
+  },
+  "grove_guardian_thorne": {
+    "name": "Grove Guardian Thorne",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Scholarly"
+  },
+  "leaf_sage_verdant": {
+    "name": "Leaf Sage Verdant",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Melancholic"
+  },
+  "tree_keeper_fauna": {
+    "name": "Tree Keeper Fauna",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Authoritative"
+  },
+  "woodland_champion_ash": {
+    "name": "Woodland Champion Ash",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Aggressive"
+  },
+  "nature_oracle_moss": {
+    "name": "Nature Oracle Moss",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Empathetic"
+  },
+  "branch_warrior_rowan": {
+    "name": "Branch Warrior Rowan",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Adventurous"
+  },
+  "vine_master_flora": {
+    "name": "Vine Master Flora",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Grumpy"
+  },
+  "root_defender_oakley": {
+    "name": "Root Defender Oakley",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Hedonistic"
+  },
+  "wildwood_sage_ivy": {
+    "name": "Wildwood Sage Ivy",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Brave"
+  },
+  "road_king_diesel": {
+    "name": "Road King Diesel",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Melancholic"
+  },
+  "highway_boss_cassie": {
+    "name": "Highway Boss Cassie",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Cynical"
+  },
+  "convoy_master_hank": {
+    "name": "Convoy Master Hank",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Empathetic"
+  },
+  "trucker_chief_rita": {
+    "name": "Trucker Chief Rita",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Cautious"
+  },
+  "route_lord_duke": {
+    "name": "Route Lord Duke",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Sanguine"
+  },
+  "wheeler_commander_sarah": {
+    "name": "Wheeler Commander Sarah",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Nurturing"
+  },
+  "freight_captain_buck": {
+    "name": "Freight Captain Buck",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Fatalistic"
+  },
+  "road_warrior_maxine": {
+    "name": "Road Warrior Maxine",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Melancholic"
+  },
+  "factory_baron_forge": {
+    "name": "Factory Baron Forge",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Cautious"
+  },
+  "steel_mistress_clara": {
+    "name": "Steel Mistress Clara",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Artistic"
+  },
+  "industry_lord_marcus": {
+    "name": "Industry Lord Marcus",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Impulsive"
+  },
+  "production_chief_ingrid": {
+    "name": "Production Chief Ingrid",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Loyal"
+  },
+  "machine_master_viktor": {
+    "name": "Machine Master Viktor",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Empathetic"
+  },
+  "foundry_king_brutus": {
+    "name": "Foundry King Brutus",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Authoritative"
+  },
+  "assembly_boss_natasha": {
+    "name": "Assembly Boss Natasha",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Scholarly"
+  },
+  "metal_warlord_rex": {
+    "name": "Metal Warlord Rex",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Impulsive"
+  },
+  "king_harald": {
+    "name": "King Harald",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Melancholic"
+  },
+  "queen_astrid": {
+    "name": "Queen Astrid",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Calm"
+  },
+  "jarl_magnus": {
+    "name": "Jarl Magnus",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Sanguine"
+  },
+  "shield_maiden_sigrid": {
+    "name": "Shield-Maiden Sigrid",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Scholarly"
+  },
+  "frost_lord_erik": {
+    "name": "Frost Lord Erik",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Cynical"
+  },
+  "ice_queen_freya": {
+    "name": "Ice Queen Freya",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Nervous"
+  },
+  "snow_king_olaf": {
+    "name": "Snow King Olaf",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Disciplined"
+  },
+  "winter_matriarch_brunhilde": {
+    "name": "Winter Matriarch Brunhilde",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Loyal"
+  },
+  "crime_boss_vito": {
+    "name": "Crime Boss Vito",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Timid"
+  },
+  "shadow_matriarch_carmilla": {
+    "name": "Shadow Matriarch Carmilla",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Hedonistic"
+  },
+  "syndicate_don_marco": {
+    "name": "Syndicate Don Marco",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Timid"
+  },
+  "night_queen_selena": {
+    "name": "Night Queen Selena",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Grumpy"
+  },
+  "dark_lord_vincent": {
+    "name": "Dark Lord Vincent",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Disciplined"
+  },
+  "underground_empress_rosa": {
+    "name": "Underground Empress Rosa",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Cautious"
+  },
+  "twilight_king_luca": {
+    "name": "Twilight King Luca",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Timid"
+  },
+  "noir_mistress_angelica": {
+    "name": "Noir Mistress Angelica",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Authoritative"
+  },
+  "hive_mind_alpha": {
+    "name": "Hive Mind Alpha",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Paranoid"
+  },
+  "unity_leader_sigma": {
+    "name": "Unity Leader Sigma",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Cautious"
+  },
+  "collective_prime_delta": {
+    "name": "Collective Prime Delta",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Loyal"
+  },
+  "harmony_master_omega": {
+    "name": "Harmony Master Omega",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Scholarly"
+  },
+  "synergy_lord_epsilon": {
+    "name": "Synergy Lord Epsilon",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Mischievous"
+  },
+  "group_consciousness_theta": {
+    "name": "Group Consciousness Theta",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Scholarly"
+  },
+  "network_queen_phi": {
+    "name": "Network Queen Phi",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Disciplined"
+  },
+  "shared_mind_king_psi": {
+    "name": "Shared Mind King Psi",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Adventurous"
+  },
+  "demon_lord_azaroth": {
+    "name": "Demon Lord Azaroth",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Cynical"
+  },
+  "infernal_queen_lilith": {
+    "name": "Infernal Queen Lilith",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Sanguine"
+  },
+  "hell_king_baal": {
+    "name": "Hell King Baal",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Timid"
+  },
+  "abyss_mistress_morrigan": {
+    "name": "Abyss Mistress Morrigan",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Brave"
+  },
+  "chaos_demon_xalvador": {
+    "name": "Chaos Demon Xalvador",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Aggressive"
+  },
+  "shadow_lord_beleth": {
+    "name": "Shadow Lord Beleth",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Mischievous"
+  },
+  "nether_queen_astarte": {
+    "name": "Nether Queen Astarte",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Cynical"
+  },
+  "void_king_mammon": {
+    "name": "Void King Mammon",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Apathetic"
+  },
+  "high_seraph_gabriel": {
+    "name": "High Seraph Gabriel",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Disciplined"
+  },
+  "divine_empress_aurora": {
+    "name": "Divine Empress Aurora",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Authoritative"
+  },
+  "celestial_king_raphael": {
+    "name": "Celestial King Raphael",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Stoic"
+  },
+  "holy_matriarch_seraphina": {
+    "name": "Holy Matriarch Seraphina",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Artistic"
+  },
+  "light_lord_michael": {
+    "name": "Light Lord Michael",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Nervous"
+  },
+  "sacred_queen_uriel": {
+    "name": "Sacred Queen Uriel",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Timid"
+  },
+  "heaven_s_champion_azrael": {
+    "name": "Heaven's Champion Azrael",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Melancholic"
+  },
+  "radiant_mistress_cassiel": {
+    "name": "Radiant Mistress Cassiel",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Loyal"
+  },
+  "void_emperor_nihil": {
+    "name": "Void Emperor Nihil",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Melancholic"
+  },
+  "entropy_empress_umbra": {
+    "name": "Entropy Empress Umbra",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Aggressive"
+  },
+  "null_king_vacuus": {
+    "name": "Null King Vacuus",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Nurturing"
+  },
+  "oblivion_queen_tenebris": {
+    "name": "Oblivion Queen Tenebris",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Brave"
+  },
+  "emptiness_lord_khaos": {
+    "name": "Emptiness Lord Khaos",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Cautious"
+  },
+  "nothingness_sovereign_erebus": {
+    "name": "Nothingness Sovereign Erebus",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Timid"
+  },
+  "abyss_ruler_nyx": {
+    "name": "Abyss Ruler Nyx",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Timid"
+  },
+  "dark_matter_monarch_styx": {
+    "name": "Dark Matter Monarch Styx",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Authoritative"
+  },
+  "zeus_the_thunderer": {
+    "name": "Zeus the Thunderer",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Authoritative"
+  },
+  "athena_the_wise": {
+    "name": "Athena the Wise",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Scholarly"
+  },
+  "ares_the_warmonger": {
+    "name": "Ares the Warmonger",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Aggressive"
+  },
+  "hades_the_indifferent": {
+    "name": "Hades the Indifferent",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Melancholic"
+  },
+  "artemis_the_hunter": {
+    "name": "Artemis the Hunter",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Adventurous"
+  },
+  "dionysus_the_reveler": {
+    "name": "Dionysus the Reveler",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Hedonistic"
+  },
+  "apollo_the_radiant": {
+    "name": "Apollo the Radiant",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Artistic"
+  },
+  "hera_the_jealous": {
+    "name": "Hera the Jealous",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Possessive"
+  },
+  "high_archivist_mnemosyne": {
+    "name": "High Archivist Mnemosyne",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Scholarly"
+  },
+  "elder_erasmus": {
+    "name": "Elder Erasmus",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Cautious"
+  },
+  "truth_keeper_alexandria": {
+    "name": "Truth-Keeper Alexandria",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Authoritative"
+  },
+  "curator_oblivion": {
+    "name": "Curator Oblivion",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Cynical"
+  },
+  "spymaster_cipher": {
+    "name": "Spymaster Cipher",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Paranoid"
+  },
+  "agent_codex": {
+    "name": "Agent Codex",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Mischievous"
+  },
+  "director_shadow": {
+    "name": "Director Shadow",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Cautious"
+  },
+  "operative_raven": {
+    "name": "Operative Raven",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Adventurous"
+  },
+  "chief_librarian_silence": {
+    "name": "Chief Librarian Silence",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Disciplined"
+  },
+  "conservator_grimoire": {
+    "name": "Conservator Grimoire",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Scholarly"
+  },
+  "keeper_codex": {
+    "name": "Keeper Codex",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Grumpy"
+  },
+  "archivist_quietus": {
+    "name": "Archivist Quietus",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Timid"
+  },
+  "director_doubletalk": {
+    "name": "Director Doubletalk",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Mischievous"
+  },
+  "minister_redact": {
+    "name": "Minister Redact",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Cynical"
+  },
+  "chief_spin_doctor_orwell": {
+    "name": "Chief Spin Doctor Orwell",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Authoritative"
+  },
+  "propagandist_in_chief_pravda": {
+    "name": "Propagandist-in-Chief Pravda",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Hedonistic"
+  },
+  "grand_inquisitor_loyalty": {
+    "name": "Grand Inquisitor Loyalty",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Paranoid"
+  },
+  "director_compliance": {
+    "name": "Director Compliance",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Disciplined"
+  },
+  "chief_enforcer_ironhand": {
+    "name": "Chief Enforcer Ironhand",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Authoritative"
+  },
+  "watchmaster_vigilance": {
+    "name": "Watchmaster Vigilance",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Cautious"
+  },
+  "ayn_rand_the_divine": {
+    "name": "Ayn Rand the Divine",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Cynical"
+  },
+  "adam_smith_ascended": {
+    "name": "Adam Smith Ascended",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Scholarly"
+  },
+  "invisible_hand": {
+    "name": "Invisible Hand",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Mischievous"
+  },
+  "sovereign_of_self": {
+    "name": "Sovereign of Self",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Brave"
+  },
+  "hive_alpha_griknak": {
+    "name": "Hive Alpha Griknak",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Nervous"
+  },
+  "psychic_prime_skizzik": {
+    "name": "Psychic Prime Skizzik",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Mischievous"
+  },
+  "collective_one_gribblik": {
+    "name": "Collective One Gribblik",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Chaotic"
+  },
+  "mind_unity_zogwort": {
+    "name": "Mind-Unity Zogwort",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Empathetic"
+  },
+  "ambassador_zyx_7": {
+    "name": "Ambassador Zyx-7",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Calm"
+  },
+  "overseer_qel_9": {
+    "name": "Overseer Qel-9",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Scholarly"
+  },
+  "tourist_director_vrax_3": {
+    "name": "Tourist Director Vrax-3",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Hedonistic"
+  },
+  "observer_prime_klix_5": {
+    "name": "Observer Prime Klix-5",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Cautious"
+  },
+  "pope_benedict_xvii": {
+    "name": "Pope Benedict XVII",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "years": [
+      2005,
+      2012
+    ],
+    "personality": "personalities.authoritative"
+  },
+  "cardinal_secretary_lorenzo": {
+    "name": "Cardinal Secretary Lorenzo",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "years": [
+      1990,
+      2012
+    ],
+    "personality": "personalities.scholarly"
+  },
+  "archbishop_militaris": {
+    "name": "Archbishop Militaris",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "years": [
+      1980,
+      2010
+    ],
+    "personality": "personalities.brave"
+  },
+  "mother_superior_magdalena": {
+    "name": "Mother Superior Magdalena",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "years": [
+      1970,
+      2012
+    ],
+    "personality": "personalities.disciplined"
+  },
+  "papal_chamberlain_dante": {
+    "name": "Papal Chamberlain Dante",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "years": [
+      1995,
+      2012
+    ],
+    "personality": "personalities.loyal"
+  },
+  "cardinal_defender_maximus": {
+    "name": "Cardinal Defender Maximus",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "years": [
+      2000,
+      2012
+    ],
+    "personality": "personalities.aggressive"
+  },
+  "pope_leo_xiii": {
+    "name": "Pope Leo XIII",
+    "ideology": "ideology.theocratic",
+    "years": [
+      1900,
+      1903
+    ]
+  },
+  "pope_pius_x": {
+    "name": "Pope Pius X",
+    "ideology": "ideology.conservative_theocratic",
+    "years": [
+      1903,
+      1914
+    ]
+  },
+  "pope_benedict_xv": {
+    "name": "Pope Benedict XV",
+    "ideology": "ideology.pacifist_theocratic",
+    "years": [
+      1914,
+      1922
+    ]
+  },
+  "benito_mussolini": {
+    "name": "Benito Mussolini",
+    "ideology": "ideology.fascist_theocratic",
+    "years": [
+      1922,
+      1945
+    ]
+  },
+  "antonio_gramsci": {
+    "name": "Antonio Gramsci",
+    "ideology": "ideology.socialist",
+    "years": [
+      1922,
+      1937
+    ]
+  },
+  "pope_pius_xii": {
+    "name": "Pope Pius XII",
+    "ideology": "ideology.diplomatic_theocratic",
+    "years": [
+      1939,
+      1958
+    ]
+  },
+  "aldo_moro": {
+    "name": "Aldo Moro",
+    "ideology": "ideology.christian_democratic",
+    "years": [
+      1960,
+      1978
+    ]
+  },
+  "giulio_andreotti": {
+    "name": "Giulio Andreotti",
+    "ideology": "ideology.machiavellian",
+    "years": [
+      1972,
+      2013
+    ]
+  },
+  "pope_john_paul_ii": {
+    "name": "Pope John Paul II",
+    "ideology": "ideology.anti_communist",
+    "years": [
+      1978,
+      2005
+    ]
+  },
+  "silvio_berlusconi": {
+    "name": "Silvio Berlusconi",
+    "ideology": "ideology.media_theocrat",
+    "years": [
+      1994,
+      2023
+    ]
+  },
+  "cardinal_prefect_giovanni": {
+    "name": "Cardinal Prefect Giovanni",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Scholarly"
+  },
+  "prince_cardinal_alessandro": {
+    "name": "Prince-Cardinal Alessandro",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Authoritative"
+  },
+  "cardinal_secretary_bernardo": {
+    "name": "Cardinal Secretary Bernardo",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Cynical"
+  },
+  "dean_of_cardinals_francesco": {
+    "name": "Dean of Cardinals Francesco",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Cautious"
+  },
+  "president_calvi_ii": {
+    "name": "President Calvi II",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Paranoid"
+  },
+  "director_marcinkus_iii": {
+    "name": "Director Marcinkus III",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Cynical"
+  },
+  "treasurer_monsignor_luciano": {
+    "name": "Treasurer Monsignor Luciano",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Greedy"
+  },
+  "auditor_bishop_santoro": {
+    "name": "Auditor Bishop Santoro",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Cautious"
+  },
+  "abbess_militant_catherine": {
+    "name": "Abbess Militant Catherine",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Disciplined"
+  },
+  "sister_commander_maria": {
+    "name": "Sister Commander Maria",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Brave"
+  },
+  "mother_warrior_theresa": {
+    "name": "Mother Warrior Theresa",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Aggressive"
+  },
+  "prioress_joanna": {
+    "name": "Prioress Joanna",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Loyal"
+  },
+  "chief_hexorcist_raphael": {
+    "name": "Chief Hexorcist Raphael",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Scholarly"
+  },
+  "tech_bishop_alan_turing": {
+    "name": "Tech-Bishop Alan Turing",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Nervous"
+  },
+  "cyber_cardinal_neo": {
+    "name": "Cyber-Cardinal Neo",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Disciplined"
+  },
+  "digital_prelate_morpheus": {
+    "name": "Digital Prelate Morpheus",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Cautious"
+  },
+  "father_sebastian": {
+    "name": "Father Sebastian",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Empathetic"
+  },
+  "monsignor_gabriel": {
+    "name": "Monsignor Gabriel",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Nurturing"
+  },
+  "cardinal_advocate_antonio": {
+    "name": "Cardinal Advocate Antonio",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Brave"
+  },
+  "bishop_reformer_matteo": {
+    "name": "Bishop Reformer Matteo",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Loyal"
+  },
+  "prelate_josemar_a_ii": {
+    "name": "Prelate Josemaría II",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Authoritative"
+  },
+  "director_escriv_iii": {
+    "name": "Director Escrivá III",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Disciplined"
+  },
+  "numerary_superior_ricardo": {
+    "name": "Numerary Superior Ricardo",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Paranoid"
+  },
+  "vicar_general_felipe": {
+    "name": "Vicar General Felipe",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Cautious"
+  },
+  "commandant_wilhelm_tell_iii": {
+    "name": "Commandant Wilhelm Tell III",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Brave"
+  },
+  "colonel_hans_pfyffer": {
+    "name": "Colonel Hans Pfyffer",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Disciplined"
+  },
+  "captain_kaspar_von_silenen": {
+    "name": "Captain Kaspar von Silenen",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Loyal"
+  },
+  "lieutenant_urs_graf": {
+    "name": "Lieutenant Urs Graf",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Aggressive"
+  },
+  "marshal_zhukov": {
+    "name": "Marshal Zhukov",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Cynical"
+  },
+  "general_rokossovsky": {
+    "name": "General Rokossovsky",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Apathetic"
+  },
+  "marshal_konev": {
+    "name": "Marshal Konev",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Calm"
+  },
+  "general_chuikov": {
+    "name": "General Chuikov",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Brave"
+  },
+  "admiral_kuznetsov": {
+    "name": "Admiral Kuznetsov",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Cautious"
+  },
+  "general_vasilevsky": {
+    "name": "General Vasilevsky",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Calm"
+  },
+  "marshal_timoshenko": {
+    "name": "Marshal Timoshenko",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Brave"
+  },
+  "general_malinovsky": {
+    "name": "General Malinovsky",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Apathetic"
+  },
+  "colonel_petrov": {
+    "name": "Colonel Petrov",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Timid"
+  },
+  "major_ivanov": {
+    "name": "Major Ivanov",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Empathetic"
+  },
+  "captain_sokolov": {
+    "name": "Captain Sokolov",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Apathetic"
+  },
+  "lieutenant_kozlov": {
+    "name": "Lieutenant Kozlov",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Nervous"
+  },
+  "sergeant_volkov": {
+    "name": "Sergeant Volkov",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Grumpy"
+  },
+  "hero_popov": {
+    "name": "Hero Popov",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Loyal"
+  },
+  "general_lebedev": {
+    "name": "General Lebedev",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Empathetic"
+  },
+  "marshal_fedorov": {
+    "name": "Marshal Fedorov",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Calm"
+  },
+  "commander_smirnov": {
+    "name": "Commander Smirnov",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Timid"
+  },
+  "hero_morozov": {
+    "name": "Hero Morozov",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Scholarly"
+  },
+  "tank_general_katukov": {
+    "name": "Tank General Katukov",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Hedonistic"
+  },
+  "colonel_rotmistrov": {
+    "name": "Colonel Rotmistrov",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Melancholic"
+  },
+  "ace_commander_lavrinenko": {
+    "name": "Ace Commander Lavrinenko",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Grumpy"
+  },
+  "major_burda": {
+    "name": "Major Burda",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Melancholic"
+  },
+  "hero_kolobanov": {
+    "name": "Hero Kolobanov",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Mischievous"
+  },
+  "brigade_leader_getman": {
+    "name": "Brigade Leader Getman",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Cautious"
+  },
+  "general_rybalko": {
+    "name": "General Rybalko",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Brave"
+  },
+  "tank_marshal_bogdanov": {
+    "name": "Tank Marshal Bogdanov",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Empathetic"
+  },
+  "commander_baryatinsky": {
+    "name": "Commander Baryatinsky",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Adventurous"
+  },
+  "ace_oskin": {
+    "name": "Ace Oskin",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Artistic"
+  },
+  "colonel_gorbatov": {
+    "name": "Colonel Gorbatov",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Timid"
+  },
+  "major_shumilov": {
+    "name": "Major Shumilov",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Loyal"
+  },
+  "captain_rodimtsev": {
+    "name": "Captain Rodimtsev",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Apathetic"
+  },
+  "sniper_zaitsev": {
+    "name": "Sniper Zaitsev",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Brave"
+  },
+  "hero_pavlichenko": {
+    "name": "Hero Pavlichenko",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Aggressive"
+  },
+  "general_govorov": {
+    "name": "General Govorov",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Paranoid"
+  },
+  "commander_batov": {
+    "name": "Commander Batov",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Nurturing"
+  },
+  "marshal_meretskov": {
+    "name": "Marshal Meretskov",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Fatalistic"
+  },
+  "hero_gromov": {
+    "name": "Hero Gromov",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Nurturing"
+  },
+  "sergeant_pavlov": {
+    "name": "Sergeant Pavlov",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Scholarly"
+  },
+  "general_glagolev": {
+    "name": "General Glagolev",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Grumpy"
+  },
+  "colonel_margelov": {
+    "name": "Colonel Margelov",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Paranoid"
+  },
+  "major_levashov": {
+    "name": "Major Levashov",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Authoritative"
+  },
+  "captain_denisov": {
+    "name": "Captain Denisov",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Disciplined"
+  },
+  "jump_hero_yegorov": {
+    "name": "Jump Hero Yegorov",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Calm"
+  },
+  "airborne_ace_kantaria": {
+    "name": "Airborne Ace Kantaria",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Cautious"
+  },
+  "commander_belov": {
+    "name": "Commander Belov",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Melancholic"
+  },
+  "marshal_shaposhnikov": {
+    "name": "Marshal Shaposhnikov",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Cynical"
+  },
+  "hero_krylov": {
+    "name": "Hero Krylov",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Impulsive"
+  },
+  "elite_trooper_nesterov": {
+    "name": "Elite Trooper Nesterov",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Adventurous"
+  },
+  "artillery_marshal_voronov": {
+    "name": "Artillery Marshal Voronov",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Grumpy"
+  },
+  "general_kazakov": {
+    "name": "General Kazakov",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Artistic"
+  },
+  "colonel_nedelin": {
+    "name": "Colonel Nedelin",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Melancholic"
+  },
+  "major_kurchevsky": {
+    "name": "Major Kurchevsky",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Melancholic"
+  },
+  "rocket_hero_tukhachevsky": {
+    "name": "Rocket Hero Tukhachevsky",
+    "spritename": "Actor2",
+    "spriteindex": 4,
+    "personality": "Nervous"
+  },
+  "katyusha_ace_kostikov": {
+    "name": "Katyusha Ace Kostikov",
+    "spritename": "Actor3",
+    "spriteindex": 5,
+    "personality": "Sanguine"
+  },
+  "commander_yakovlev": {
+    "name": "Commander Yakovlev",
+    "spritename": "Actor1",
+    "spriteindex": 6,
+    "personality": "Impulsive"
+  },
+  "marshal_kulik": {
+    "name": "Marshal Kulik",
+    "spritename": "Actor2",
+    "spriteindex": 7,
+    "personality": "Nervous"
+  },
+  "general_petrov": {
+    "name": "General Petrov",
+    "spritename": "Actor3",
+    "spriteindex": 0,
+    "personality": "Hedonistic"
+  },
+  "hero_grabin": {
+    "name": "Hero Grabin",
+    "spritename": "Actor1",
+    "spriteindex": 1,
+    "personality": "Impulsive"
+  },
+  "sultan_osman_vi": {
+    "name": "Sultan Osman VI",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Authoritative"
+  },
+  "grand_vizier_ahmet": {
+    "name": "Grand Vizier Ahmet",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Disciplined"
+  },
+  "marshal_fevzi_pasha": {
+    "name": "Marshal Fevzi Pasha",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Brave"
+  },
+  "admiral_barbaros_iii": {
+    "name": "Admiral Barbaros III",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Adventurous"
+  },
+  "grand_bureaucrat_midhat_pasha": {
+    "name": "Grand Bureaucrat Midhat Pasha",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Scholarly"
+  },
+  "reform_minister_ali_pasha": {
+    "name": "Reform Minister Ali Pasha",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Cautious"
+  },
+  "chief_administrator_fuad_effendi": {
+    "name": "Chief Administrator Fuad Effendi",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Disciplined"
+  },
+  "inspector_general_reshid_bey": {
+    "name": "Inspector General Reshid Bey",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Cynical"
+  },
+  "captain_reis_murat": {
+    "name": "Captain Reis Murat",
+    "spritename": "Actor1",
+    "spriteindex": 4,
+    "personality": "Cautious"
+  },
+  "admiral_salih": {
+    "name": "Admiral Salih",
+    "spritename": "Actor2",
+    "spriteindex": 5,
+    "personality": "Calm"
+  },
+  "spymaster_hakan_the_silent": {
+    "name": "Spymaster Hakan the Silent",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Paranoid"
+  },
+  "intelligence_chief_mehmed_bey": {
+    "name": "Intelligence Chief Mehmed Bey",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Cautious"
+  },
+  "assassin_master_selim_the_shadow": {
+    "name": "Assassin Master Selim the Shadow",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Mischievous"
+  },
+  "director_of_secrets_kemal_pasha": {
+    "name": "Director of Secrets Kemal Pasha",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Cynical"
+  },
+  "grand_a_a_suleiman": {
+    "name": "Grand Ağa Suleiman",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Brave"
+  },
+  "koruma_commander_mustafa": {
+    "name": "Koruma Commander Mustafa",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Disciplined"
+  },
+  "elite_captain_ibrahim": {
+    "name": "Elite Captain Ibrahim",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Loyal"
+  },
+  "first_guard_osman": {
+    "name": "First Guard Osman",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Aggressive"
+  },
+  "king_george_ix": {
+    "name": "King George IX",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Disciplined"
+  },
+  "field_marshal_montgomery_ii": {
+    "name": "Field Marshal Montgomery II",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Brave"
+  },
+  "admiral_nelson_iv": {
+    "name": "Admiral Nelson IV",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Adventurous"
+  },
+  "commander_victoria": {
+    "name": "Commander Victoria",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Authoritative"
+  },
+  "admiral_drake_iv": {
+    "name": "Admiral Drake IV",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Adventurous"
+  },
+  "commodore_hawkins": {
+    "name": "Commodore Hawkins",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Brave"
+  },
+  "captain_beatty": {
+    "name": "Captain Beatty",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Disciplined"
+  },
+  "fleet_admiral_hood": {
+    "name": "Fleet Admiral Hood",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Authoritative"
+  },
+  "regiment_commander_stirling": {
+    "name": "Regiment Commander Stirling",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Brave"
+  },
+  "sbs_director_laycock": {
+    "name": "SBS Director Laycock",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Cautious"
+  },
+  "sas_captain_price": {
+    "name": "SAS Captain Price",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Disciplined"
+  },
+  "squadron_leader_macleod": {
+    "name": "Squadron Leader MacLeod",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Adventurous"
+  },
+  "m_director_general": {
+    "name": "M (Director General)",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Paranoid"
+  },
+  "q_technical_director": {
+    "name": "Q (Technical Director)",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Scholarly"
+  },
+  "c_chief_of_station": {
+    "name": "C (Chief of Station)",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Cautious"
+  },
+  "agent_007_field_director": {
+    "name": "Agent 007 (Field Director)",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Brave"
+  },
+  "director_hawking_iii": {
+    "name": "Director Hawking III",
+    "spritename": "Actor1",
+    "spriteindex": 0,
+    "personality": "Scholarly"
+  },
+  "chief_engineer_tesla_iv": {
+    "name": "Chief Engineer Tesla IV",
+    "spritename": "Actor2",
+    "spriteindex": 1,
+    "personality": "Artistic"
+  },
+  "general_turing": {
+    "name": "General Turing",
+    "spritename": "Actor3",
+    "spriteindex": 2,
+    "personality": "Disciplined"
+  },
+  "professor_faraday_v": {
+    "name": "Professor Faraday V",
+    "spritename": "Actor1",
+    "spriteindex": 3,
+    "personality": "Nervous"
+  },
+  "victor_emmanuel_iii": {
+    "name": "Victor Emmanuel III",
+    "ideology": "ideology.imperial_monarchist",
+    "years": [
+      1900,
+      1947
+    ]
+  },
+  "giovanni_giolitti": {
+    "name": "Giovanni Giolitti",
+    "ideology": "ideology.liberal_clientelist",
+    "years": [
+      1900,
+      1928
+    ]
+  },
+  "alcide_de_gasperi": {
+    "name": "Alcide De Gasperi",
+    "ideology": "ideology.christian_democratic",
+    "years": [
+      1945,
+      1954
+    ]
+  },
+  "enrico_mattei": {
+    "name": "Enrico Mattei",
+    "ideology": "ideology.petro_nationalist",
+    "years": [
+      1945,
+      1962
+    ]
+  },
+  "romano_prodi": {
+    "name": "Romano Prodi",
+    "ideology": "ideology.center_left_technocrat",
+    "years": [
+      1996,
+      2012
+    ]
+  },
+  "mario_monti": {
+    "name": "Mario Monti",
+    "ideology": "ideology.technocratic",
+    "years": [
+      2011,
+      2012
+    ]
+  },
+  "mario_draghi": {
+    "name": "Mario Draghi",
+    "ideology": "ideology.technocratic_liberal",
+    "years": [
+      2021,
+      2012
+    ]
+  },
+  "queen_victoria": {
+    "name": "Queen Victoria",
+    "ideology": "ideology.imperial_monarchist",
+    "years": [
+      1837,
+      1901
+    ]
+  },
+  "edward_vii": {
+    "name": "Edward VII",
+    "ideology": "ideology.diplomatic_monarchist",
+    "years": [
+      1901,
+      1910
+    ]
+  },
+  "george_v": {
+    "name": "George V",
+    "ideology": "ideology.conservative_monarchist",
+    "years": [
+      1910,
+      1936
+    ]
+  },
+  "edward_viii": {
+    "name": "Edward VIII",
+    "ideology": "ideology.scandalous_monarchist",
+    "years": [
+      1936,
+      1972
+    ]
+  },
+  "george_vi": {
+    "name": "George VI",
+    "ideology": "ideology.duty_bound_monarchist",
+    "years": [
+      1936,
+      1952
+    ]
+  },
+  "winston_churchill": {
+    "name": "Winston Churchill",
+    "ideology": "ideology.imperial_democrat",
+    "years": [
+      1940,
+      1965
+    ]
+  },
+  "clement_attlee": {
+    "name": "Clement Attlee",
+    "ideology": "ideology.socialist",
+    "years": [
+      1945,
+      1967
+    ]
+  },
+  "elizabeth_ii": {
+    "name": "Elizabeth II",
+    "ideology": "ideology.constitutional_monarchist",
+    "years": [
+      1952,
+      2022
+    ]
+  },
+  "margaret_thatcher": {
+    "name": "Margaret Thatcher",
+    "ideology": "ideology.traditionalist_witch",
+    "years": [
+      1979,
+      2013
+    ]
+  },
+  "tony_blair": {
+    "name": "Tony Blair",
+    "ideology": "ideology.new_labour",
+    "years": [
+      1997,
+      2012
+    ]
+  },
+  "harold_macmillan": {
+    "name": "Harold Macmillan",
+    "ideology": "ideology.paternalistic_conservative",
+    "years": [
+      1957,
+      1986
+    ]
+  },
+  "harold_wilson": {
+    "name": "Harold Wilson",
+    "ideology": "ideology.social_democrat",
+    "years": [
+      1964,
+      1995
+    ]
+  },
+  "david_cameron": {
+    "name": "David Cameron",
+    "ideology": "ideology.austerity_conservative",
+    "years": [
+      2010,
+      2012
+    ]
+  },
+  "boris_johnson": {
+    "name": "Boris Johnson",
+    "ideology": "ideology.populist_conservative",
+    "years": [
+      2019,
+      2012
+    ]
+  },
+  "rishi_sunak": {
+    "name": "Rishi Sunak",
+    "ideology": "ideology.fiscal_conservative",
+    "years": [
+      2022,
+      2012
+    ]
+  },
+  "keir_starmer": {
+    "name": "Keir Starmer",
+    "ideology": "ideology.pragmatic_labour",
+    "years": [
+      2012,
+      2012
+    ]
+  },
+  "nicholas_ii": {
+    "name": "Nicholas II",
+    "ideology": "ideology.autocrat",
+    "years": [
+      1894,
+      1918
+    ]
+  },
+  "vladimir_lenin": {
+    "name": "Vladimir Lenin",
+    "ideology": "ideology.communist_revolutionary",
+    "years": [
+      1917,
+      1924
+    ]
+  },
+  "leon_trotsky": {
+    "name": "Leon Trotsky",
+    "ideology": "ideology.internationalist_communist",
+    "years": [
+      1917,
+      1940
+    ]
+  },
+  "joseph_stalin": {
+    "name": "Joseph Stalin",
+    "ideology": "ideology.totalitarian_communist",
+    "years": [
+      1924,
+      1953
+    ]
+  },
+  "nikita_khrushchev": {
+    "name": "Nikita Khrushchev",
+    "ideology": "ideology.reform_communist",
+    "years": [
+      1953,
+      1971
+    ]
+  },
+  "leonid_brezhnev": {
+    "name": "Leonid Brezhnev",
+    "ideology": "ideology.stagnation_communist",
+    "years": [
+      1964,
+      1982
+    ]
+  },
+  "mikhail_gorbachev": {
+    "name": "Mikhail Gorbachev",
+    "ideology": "ideology.reform_socialist",
+    "years": [
+      1985,
+      2022
+    ]
+  },
+  "boris_yeltsin": {
+    "name": "Boris Yeltsin",
+    "ideology": "ideology.democratic_capitalist",
+    "years": [
+      1991,
+      2007
+    ]
+  },
+  "vladimir_putin": {
+    "name": "Vladimir Putin",
+    "ideology": "ideology.authoritarian",
+    "years": [
+      1999,
+      2012
+    ]
+  },
+  "alexander_kerensky": {
+    "name": "Alexander Kerensky",
+    "ideology": "ideology.democratic_socialist",
+    "years": [
+      1917,
+      1970
+    ]
+  },
+  "georgy_malenkov": {
+    "name": "Georgy Malenkov",
+    "ideology": "ideology.transitional_communist",
+    "years": [
+      1953,
+      1988
+    ]
+  },
+  "yuri_andropov": {
+    "name": "Yuri Andropov",
+    "ideology": "ideology.disciplinarian_communist",
+    "years": [
+      1982,
+      1984
+    ]
+  },
+  "konstantin_chernenko": {
+    "name": "Konstantin Chernenko",
+    "ideology": "ideology.orthodox_communist",
+    "years": [
+      1984,
+      1985
+    ]
+  },
+  "dmitry_medvedev": {
+    "name": "Dmitry Medvedev",
+    "ideology": "ideology.managed_democrat",
+    "years": [
+      2008,
+      2012
+    ]
+  },
+  "abdul_hamid_ii": {
+    "name": "Abdul Hamid II",
+    "ideology": "ideology.islamic_autocrat",
+    "years": [
+      1876,
+      1918
+    ]
+  },
+  "mehmed_v": {
+    "name": "Mehmed V",
+    "ideology": "ideology.constitutional_sultan",
+    "years": [
+      1909,
+      1918
+    ]
+  },
+  "enver_pasha": {
+    "name": "Enver Pasha",
+    "ideology": "ideology.young_turk_nationalist",
+    "years": [
+      1913,
+      1922
+    ]
+  },
+  "mustafa_kemal_atat_rk": {
+    "name": "Mustafa Kemal Atatürk",
+    "ideology": "ideology.secular_nationalist",
+    "years": [
+      1923,
+      1938
+    ]
+  },
+  "i_smet_i_n_n": {
+    "name": "İsmet İnönü",
+    "ideology": "ideology.kemalist",
+    "years": [
+      1938,
+      1973
+    ]
+  },
+  "adnan_menderes": {
+    "name": "Adnan Menderes",
+    "ideology": "ideology.conservative_democrat",
+    "years": [
+      1950,
+      1961
+    ]
+  },
+  "s_leyman_demirel": {
+    "name": "Süleyman Demirel",
+    "ideology": "ideology.center_right",
+    "years": [
+      1965,
+      2015
+    ]
+  },
+  "turgut_zal": {
+    "name": "Turgut Özal",
+    "ideology": "ideology.liberal_conservative",
+    "years": [
+      1983,
+      1993
+    ]
+  },
+  "tansu_iller": {
+    "name": "Tansu Çiller",
+    "ideology": "ideology.center_right",
+    "years": [
+      1993,
+      2012
+    ]
+  },
+  "necmettin_erbakan": {
+    "name": "Necmettin Erbakan",
+    "ideology": "ideology.islamist",
+    "years": [
+      1996,
+      2011
+    ]
+  },
+  "b_lent_ecevit": {
+    "name": "Bülent Ecevit",
+    "ideology": "ideology.social_democrat",
+    "years": [
+      1999,
+      2006
+    ]
+  },
+  "cel_l_bayar": {
+    "name": "Celâl Bayar",
+    "ideology": "ideology.conservative_democrat",
+    "years": [
+      1950,
+      1986
+    ]
+  },
+  "cemal_g_rsel": {
+    "name": "Cemal Gürsel",
+    "ideology": "ideology.military_secularist",
+    "years": [
+      1960,
+      1966
+    ]
+  },
+  "cevdet_sunay": {
+    "name": "Cevdet Sunay",
+    "ideology": "ideology.military_nationalist",
+    "years": [
+      1966,
+      1982
+    ]
+  },
+  "kenan_evren": {
+    "name": "Kenan Evren",
+    "ideology": "ideology.military_nationalist",
+    "years": [
+      1980,
+      2015
+    ]
+  },
+  "ahmet_necdet_sezer": {
+    "name": "Ahmet Necdet Sezer",
+    "ideology": "ideology.constitutionalist",
+    "years": [
+      2000,
+      2012
+    ]
+  },
+  "abdullah_g_l": {
+    "name": "Abdullah Gül",
+    "ideology": "ideology.moderate_islamist",
+    "years": [
+      2007,
+      2012
+    ]
+  },
+  "recep_tayyip_erdo_an": {
+    "name": "Recep Tayyip Erdoğan",
+    "ideology": "ideology.neo_ottoman_islamist",
+    "years": [
+      2003,
+      2012
+    ]
+  },
+  "the_great_goblin": {
+    "name": "The Great Goblin",
+    "ideology": "ideology.stone_age_primal",
+    "years": [
+      1970,
+      2012
+    ]
+  },
+  "griznak": {
+    "name": "Griznak",
+    "ideology": "ideology.rowdy_horde",
+    "years": [
+      1905,
+      1925
+    ]
+  },
+  "krazz": {
+    "name": "Krazz",
+    "ideology": "ideology.violent_marauders",
+    "years": [
+      1908,
+      1928
+    ]
+  },
+  "zog": {
+    "name": "Zog",
+    "ideology": "ideology.rowdy_horde",
+    "years": [
+      1924,
+      1943
+    ]
+  },
+  "droop": {
+    "name": "Droop",
+    "ideology": "ideology.violent_marauders",
+    "years": [
+      1945,
+      1987
+    ]
+  },
+  "skab": {
+    "name": "Skab",
+    "ideology": "ideology.rowdy_horde",
+    "years": [
+      1965,
+      2005
+    ]
+  },
+  "blight": {
+    "name": "Blight",
+    "ideology": "ideology.violent_marauders",
+    "years": [
+      1971,
+      1983
+    ]
+  },
+  "snarl": {
+    "name": "Snarl",
+    "ideology": "ideology.rowdy_horde",
+    "years": [
+      1976,
+      2018
+    ]
+  },
+  "grub": {
+    "name": "Grub",
+    "ideology": "ideology.violent_marauders",
+    "years": [
+      1981,
+      2021
+    ]
+  },
+  "grizelda": {
+    "name": "Grizelda",
+    "ideology": "ideology.rowdy_horde",
+    "years": [
+      1981,
+      2012
+    ]
+  },
+  "krix": {
+    "name": "Krix",
+    "ideology": "ideology.death_metal_inner_circle",
+    "years": [
+      1997,
+      2012
+    ]
+  },
+  "grum": {
+    "name": "Grum",
+    "ideology": "ideology.death_metal_inner_circle",
+    "years": [
+      2000,
+      2012
+    ]
+  },
+  "snot": {
+    "name": "Snot",
+    "ideology": "ideology.death_metal_inner_circle",
+    "years": [
+      2013,
+      2012
+    ]
+  },
+  "vile": {
+    "name": "Vile",
+    "ideology": "ideology.death_metal_inner_circle",
+    "years": [
+      2021,
+      2012
+    ]
+  },
+  "aleister_crowley": {
+    "name": "Aleister Crowley",
+    "ideology": "ideology.thelemic_magus",
+    "years": [
+      1901,
+      1947
+    ]
+  },
+  "dion_fortune": {
+    "name": "Dion Fortune",
+    "ideology": "ideology.esoteric_psychologist",
+    "years": [
+      1920,
+      1946
+    ]
+  },
+  "em": {
+    "name": "Em",
+    "ideology": "ideology.sacrificial_sorceress",
+    "years": [
+      2001,
+      2012
+    ]
+  },
+  "brewster_kahle": {
+    "name": "Brewster Kahle",
+    "ideology": "ideology.universal_librarian",
+    "years": [
+      1996,
+      2012
+    ]
+  },
+  "julian_assange": {
+    "name": "Julian Assange",
+    "ideology": "ideology.information_leaker",
+    "years": [
+      2001,
+      2012
+    ]
+  },
+  "the_pyramid_overlord": {
+    "name": "The Pyramid Overlord",
+    "ideology": "ideology.speed_profit_prophet",
+    "years": [
+      1990,
+      2012
+    ]
+  },
+  "the_shadow_ceo": {
+    "name": "The Shadow CEO",
+    "ideology": "ideology.high_frequency_trader",
+    "years": [
+      1990,
+      2012
+    ]
+  },
+  "yhwh": {
+    "name": "YHWH",
+    "ideology": "ideology.abramic_father",
+    "years": [
+      0,
+      1999
+    ]
+  },
+  "eris": {
+    "name": "Eris",
+    "ideology": "ideology.discordian_chaos",
+    "years": [
+      1999,
+      2012
+    ]
+  },
+  "malal": {
+    "name": "Malal",
+    "ideology": "ideology.chaos_renegade",
+    "years": [
+      1990,
+      2012
+    ]
+  }
+}

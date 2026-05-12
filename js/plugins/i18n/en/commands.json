@@ -7,6 +7,10 @@
         "keyboard": "W",
         "gamepad": "UP"
     },
+    "MENU": {
+        "keyboard": "ESC",
+        "gamepad": "Y"
+    },
     "RIGHT": {
         "keyboard": "D",
         "gamepad": "RIGHT"

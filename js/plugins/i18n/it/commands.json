@@ -26,5 +26,9 @@
     "SHIFT": {
         "keyboard": "L",
         "gamepad": "Button6"
+    },
+    "MENU": {
+        "keyboard": "ESC",
+        "gamepad": "Y"
     }
 }

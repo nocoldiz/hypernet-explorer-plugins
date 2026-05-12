@@ -1,0 +1,169 @@
+{
+  "hyperpowers": {
+    "Holy Vatican Empire": {
+      "military": 100,
+      "economy": 150,
+      "population": 80,
+      "information": 50,
+      "arcane": 100,
+      "leaders": [
+        "pope_leo_xiii",
+        "pope_pius_x",
+        "pope_benedict_xv",
+        "benito_mussolini",
+        "antonio_gramsci",
+        "pope_pius_xii",
+        "aldo_moro",
+        "giulio_andreotti",
+        "pope_john_paul_ii",
+        "silvio_berlusconi",
+        "victor_emmanuel_iii",
+        "giovanni_giolitti",
+        "alcide_de_gasperi",
+        "enrico_mattei",
+        "romano_prodi",
+        "mario_monti",
+        "mario_draghi"
+      ]
+    },
+    "Britannia": {
+      "military": 120,
+      "economy": 100,
+      "population": 70,
+      "information": 60,
+      "arcane": 80,
+      "leaders": [
+        "queen_victoria",
+        "edward_vii",
+        "george_v",
+        "edward_viii",
+        "george_vi",
+        "winston_churchill",
+        "clement_attlee",
+        "elizabeth_ii",
+        "margaret_thatcher",
+        "tony_blair",
+        "harold_macmillan",
+        "harold_wilson",
+        "david_cameron",
+        "boris_johnson",
+        "rishi_sunak",
+        "keir_starmer"
+      ]
+    },
+    "Soviet Union": {
+      "military": 150,
+      "economy": 80,
+      "population": 150,
+      "information": 70,
+      "arcane": 20,
+      "leaders": [
+        "nicholas_ii",
+        "vladimir_lenin",
+        "leon_trotsky",
+        "joseph_stalin",
+        "nikita_khrushchev",
+        "leonid_brezhnev",
+        "mikhail_gorbachev",
+        "boris_yeltsin",
+        "vladimir_putin",
+        "alexander_kerensky",
+        "georgy_malenkov",
+        "yuri_andropov",
+        "konstantin_chernenko",
+        "dmitry_medvedev"
+      ]
+    },
+    "Ottoman Empire": {
+      "military": 80,
+      "economy": 60,
+      "population": 90,
+      "information": 40,
+      "arcane": 30,
+      "leaders": [
+        "abdul_hamid_ii",
+        "mehmed_v",
+        "enver_pasha",
+        "mustafa_kemal_atat_rk",
+        "i_smet_i_n_n",
+        "adnan_menderes",
+        "s_leyman_demirel",
+        "turgut_zal",
+        "tansu_iller",
+        "necmettin_erbakan",
+        "b_lent_ecevit",
+        "cel_l_bayar",
+        "cemal_g_rsel",
+        "cevdet_sunay",
+        "kenan_evren",
+        "ahmet_necdet_sezer",
+        "abdullah_g_l",
+        "recep_tayyip_erdo_an"
+      ]
+    },
+    "Goblin Horde": {
+      "military": 200,
+      "economy": 20,
+      "population": 300,
+      "information": 10,
+      "arcane": 5,
+      "leaders": [
+        "the_great_goblin",
+        "griznak",
+        "krazz",
+        "zog",
+        "droop",
+        "skab",
+        "blight",
+        "snarl",
+        "grub",
+        "grizelda",
+        "krix",
+        "grum",
+        "snot",
+        "vile"
+      ]
+    }
+  },
+  "factions": {
+    "Mages Guild": {
+      "arcane": 85,
+      "velocity": 40,
+      "information": 60,
+      "leaders": [
+        "aleister_crowley",
+        "dion_fortune",
+        "margaret_thatcher",
+        "em"
+      ]
+    },
+    "Archive Foundation": {
+      "arcane": 30,
+      "velocity": 30,
+      "information": 100,
+      "leaders": [
+        "brewster_kahle",
+        "julian_assange"
+      ]
+    },
+    "Hypercapitalist Collective": {
+      "arcane": 40,
+      "velocity": 120,
+      "information": 70,
+      "leaders": [
+        "the_pyramid_overlord",
+        "the_shadow_ceo"
+      ]
+    },
+    "The Gods": {
+      "arcane": 100,
+      "velocity": 80,
+      "information": 50,
+      "leaders": [
+        "yhwh",
+        "eris",
+        "malal"
+      ]
+    }
+  }
+}

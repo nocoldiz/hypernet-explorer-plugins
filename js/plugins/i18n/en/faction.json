@@ -40,32 +40,6 @@
         "grandmasterwizard": {
           "name": "Grandmaster Wizard"
         }
-      },
-      "leaders": {
-        "archmageeldrin": {
-          "name": "Archmage Eldrin"
-        },
-        "magisterlyra": {
-          "name": "Magister Lyra"
-        },
-        "councilortheron": {
-          "name": "Councilor Theron"
-        },
-        "spellweavermira": {
-          "name": "Spellweaver Mira"
-        },
-        "enchanterkael": {
-          "name": "Enchanter Kael"
-        },
-        "wizardlordvaren": {
-          "name": "Wizard Lord Varen"
-        },
-        "sageceleste": {
-          "name": "Sage Celeste"
-        },
-        "grandmagusdorian": {
-          "name": "Grand Magus Dorian"
-        }
       }
     },
     "archivefoundation": {
@@ -101,32 +75,6 @@
         },
         "masterlibrarian": {
           "name": "Master Librarian"
-        }
-      },
-      "leaders": {
-        "curatormagnus": {
-          "name": "Curator Magnus"
-        },
-        "archivistvera": {
-          "name": "Archivist Vera"
-        },
-        "keepersilas": {
-          "name": "Keeper Silas"
-        },
-        "librarianoctavia": {
-          "name": "Librarian Octavia"
-        },
-        "scribematthias": {
-          "name": "Scribe Matthias"
-        },
-        "recordmasterelena": {
-          "name": "Record Master Elena"
-        },
-        "chronicleguarddorian": {
-          "name": "Chronicle Guard Dorian"
-        },
-        "vaultwardeniris": {
-          "name": "Vault Warden Iris"
         }
       }
     },
@@ -164,32 +112,6 @@
         "corporateassassin": {
           "name": "Corporate Assassin"
         }
-      },
-      "leaders": {
-        "ceomarcellus": {
-          "name": "CEO Marcellus"
-        },
-        "tycoonvictoria": {
-          "name": "Tycoon Victoria"
-        },
-        "mogulcassius": {
-          "name": "Mogul Cassius"
-        },
-        "tradersupremeada": {
-          "name": "Trader Supreme Ada"
-        },
-        "marketlordfelix": {
-          "name": "Market Lord Felix"
-        },
-        "commercekingsophia": {
-          "name": "Commerce King Sophia"
-        },
-        "merchantprincejulian": {
-          "name": "Merchant Prince Julian"
-        },
-        "corpdirectorlydia": {
-          "name": "Corp Director Lydia"
-        }
       }
     },
     "loyalists": {
@@ -211,38 +133,6 @@
         "grandmasterschampion": {
           "name": "Grandmaster's Champion"
         }
-      },
-      "leaders": {
-        "loyalistmagustiberius": {
-          "name": "Loyalist Magus Tiberius"
-        },
-        "devotedenchanteraria": {
-          "name": "Devoted Enchanter Aria"
-        },
-        "truemagecornelius": {
-          "name": "True Mage Cornelius"
-        },
-        "faithfulsagemeredith": {
-          "name": "Faithful Sage Meredith"
-        },
-        "orthodoxwizardquinn": {
-          "name": "Orthodox Wizard Quinn"
-        },
-        "decreekeeperthalia": {
-          "name": "Decree Keeper Thalia"
-        },
-        "guildchampionmarcus": {
-          "name": "Guild Champion Marcus"
-        },
-        "sacredspellcasternora": {
-          "name": "Sacred Spellcaster Nora"
-        },
-        "traditionalmagelucius": {
-          "name": "Traditional Mage Lucius"
-        },
-        "puremagicscholarelara": {
-          "name": "Pure Magic Scholar Elara"
-        }
       }
     },
     "traditionalists": {
@@ -263,38 +153,6 @@
         },
         "ancientsage": {
           "name": "Ancient Sage"
-        }
-      },
-      "leaders": {
-        "puristeldercassius": {
-          "name": "Purist Elder Cassius"
-        },
-        "hermeticmasterisolde": {
-          "name": "Hermetic Master Isolde"
-        },
-        "ancientscholarregulus": {
-          "name": "Ancient Scholar Regulus"
-        },
-        "traditionalistsagevivian": {
-          "name": "Traditionalist Sage Vivian"
-        },
-        "orthodoxkeepergaius": {
-          "name": "Orthodox Keeper Gaius"
-        },
-        "puremagushelena": {
-          "name": "Pure Magus Helena"
-        },
-        "esotericlordflavius": {
-          "name": "Esoteric Lord Flavius"
-        },
-        "sacredscholarportia": {
-          "name": "Sacred Scholar Portia"
-        },
-        "classicalwizardmaximus": {
-          "name": "Classical Wizard Maximus"
-        },
-        "originaldoctrinekeeperdiana": {
-          "name": "Original Doctrine Keeper Diana"
         }
       }
     },
@@ -320,38 +178,6 @@
         "magitekspecialist": {
           "name": "Magitek Specialist"
         }
-      },
-      "leaders": {
-        "techmageorion": {
-          "name": "Tech-Mage Orion"
-        },
-        "inventorsagelyanna": {
-          "name": "Inventor Sage Lyanna"
-        },
-        "gearscholartobias": {
-          "name": "Gear Scholar Tobias"
-        },
-        "steamwizardisadora": {
-          "name": "Steam Wizard Isadora"
-        },
-        "arcaneengineercyrus": {
-          "name": "Arcane Engineer Cyrus"
-        },
-        "magitekmasterfreya": {
-          "name": "Magitek Master Freya"
-        },
-        "innovationlordkane": {
-          "name": "Innovation Lord Kane"
-        },
-        "progressmageselene": {
-          "name": "Progress Mage Selene"
-        },
-        "mechanicalsageviktor": {
-          "name": "Mechanical Sage Viktor"
-        },
-        "futurespellcrafterzara": {
-          "name": "Future Spellcrafter Zara"
-        }
       }
     },
     "92schoolsbranch": {
@@ -372,38 +198,6 @@
         },
         "polymathmage": {
           "name": "Polymath Mage"
-        }
-      },
-      "leaders": {
-        "headmasteraurelius": {
-          "name": "Headmaster Aurelius"
-        },
-        "schooldeanophelia": {
-          "name": "School Dean Ophelia"
-        },
-        "masterteacherlucan": {
-          "name": "Master Teacher Lucan"
-        },
-        "polymathsagerowena": {
-          "name": "Polymath Sage Rowena"
-        },
-        "academylordcedric": {
-          "name": "Academy Lord Cedric"
-        },
-        "pedagoguemageastrid": {
-          "name": "Pedagogue Mage Astrid"
-        },
-        "professorsupremehadrian": {
-          "name": "Professor Supreme Hadrian"
-        },
-        "scholarleaderbeatrice": {
-          "name": "Scholar Leader Beatrice"
-        },
-        "educationalmasterdarius": {
-          "name": "Educational Master Darius"
-        },
-        "mentorarchmageevangeline": {
-          "name": "Mentor Archmage Evangeline"
         }
       }
     },
@@ -429,32 +223,6 @@
         "avatarofdiscord": {
           "name": "Avatar of Discord"
         }
-      },
-      "leaders": {
-        "highpriestnihilus": {
-          "name": "High Priest Nihilus"
-        },
-        "chaosoraclemorgana": {
-          "name": "Chaos Oracle Morgana"
-        },
-        "entropylordxander": {
-          "name": "Entropy Lord Xander"
-        },
-        "discordsagelilith": {
-          "name": "Discord Sage Lilith"
-        },
-        "voidmasterbalthazar": {
-          "name": "Void Master Balthazar"
-        },
-        "anarchychampionraven": {
-          "name": "Anarchy Champion Raven"
-        },
-        "disorderkeepermalachi": {
-          "name": "Disorder Keeper Malachi"
-        },
-        "chaosweaverseraphina": {
-          "name": "Chaos Weaver Seraphina"
-        }
       }
     },
     "naguka": {
@@ -479,38 +247,6 @@
         "nagukashaman": {
           "name": "Naguka Shaman"
         }
-      },
-      "leaders": {
-        "swampchiefgorrok": {
-          "name": "Swamp Chief Gorrok"
-        },
-        "poisonshamanzzara": {
-          "name": "Poison Shaman Zzara"
-        },
-        "bogwarriorthrax": {
-          "name": "Bog Warrior Thrax"
-        },
-        "venomeldernyx": {
-          "name": "Venom Elder Nyx"
-        },
-        "marshlordkreth": {
-          "name": "Marsh Lord Kreth"
-        },
-        "toxicoraclesssara": {
-          "name": "Toxic Oracle Sssara"
-        },
-        "wetlandguardianbrognak": {
-          "name": "Wetland Guardian Brognak"
-        },
-        "plaguekeepervyx": {
-          "name": "Plague Keeper Vyx"
-        },
-        "mirechampiongrax": {
-          "name": "Mire Champion Grax"
-        },
-        "fungalsagemycellia": {
-          "name": "Fungal Sage Mycellia"
-        }
       }
     },
     "verden": {
@@ -534,38 +270,6 @@
         },
         "forestchampion": {
           "name": "Forest Champion"
-        }
-      },
-      "leaders": {
-        "foresteldersylvara": {
-          "name": "Forest Elder Sylvara"
-        },
-        "groveguardianthorne": {
-          "name": "Grove Guardian Thorne"
-        },
-        "leafsageverdant": {
-          "name": "Leaf Sage Verdant"
-        },
-        "treekeeperfauna": {
-          "name": "Tree Keeper Fauna"
-        },
-        "woodlandchampionash": {
-          "name": "Woodland Champion Ash"
-        },
-        "natureoraclemoss": {
-          "name": "Nature Oracle Moss"
-        },
-        "branchwarriorrowan": {
-          "name": "Branch Warrior Rowan"
-        },
-        "vinemasterflora": {
-          "name": "Vine Master Flora"
-        },
-        "rootdefenderoakley": {
-          "name": "Root Defender Oakley"
-        },
-        "wildwoodsageivy": {
-          "name": "Wildwood Sage Ivy"
         }
       }
     },
@@ -593,32 +297,6 @@
         },
         "roadmaster": {
           "name": "Road Master"
-        }
-      },
-      "leaders": {
-        "roadkingdiesel": {
-          "name": "Road King Diesel"
-        },
-        "highwaybosscassie": {
-          "name": "Highway Boss Cassie"
-        },
-        "convoymasterhank": {
-          "name": "Convoy Master Hank"
-        },
-        "truckerchiefrita": {
-          "name": "Trucker Chief Rita"
-        },
-        "routelordduke": {
-          "name": "Route Lord Duke"
-        },
-        "wheelercommandersarah": {
-          "name": "Wheeler Commander Sarah"
-        },
-        "freightcaptainbuck": {
-          "name": "Freight Captain Buck"
-        },
-        "roadwarriormaxine": {
-          "name": "Road Warrior Maxine"
         }
       }
     },
@@ -652,32 +330,6 @@
         },
         "industrialoverlord": {
           "name": "Industrial Overlord"
-        }
-      },
-      "leaders": {
-        "factorybaronforge": {
-          "name": "Factory Baron Forge"
-        },
-        "steelmistressclara": {
-          "name": "Steel Mistress Clara"
-        },
-        "industrylordmarcus": {
-          "name": "Industry Lord Marcus"
-        },
-        "productionchiefingrid": {
-          "name": "Production Chief Ingrid"
-        },
-        "machinemasterviktor": {
-          "name": "Machine Master Viktor"
-        },
-        "foundrykingbrutus": {
-          "name": "Foundry King Brutus"
-        },
-        "assemblybossnatasha": {
-          "name": "Assembly Boss Natasha"
-        },
-        "metalwarlordrex": {
-          "name": "Metal Warlord Rex"
         }
       }
     },
@@ -715,32 +367,6 @@
         "marshalofthefrost": {
           "name": "Marshal of the Frost"
         }
-      },
-      "leaders": {
-        "kingharald": {
-          "name": "King Harald"
-        },
-        "queenastrid": {
-          "name": "Queen Astrid"
-        },
-        "jarlmagnus": {
-          "name": "Jarl Magnus"
-        },
-        "shieldmaidensigrid": {
-          "name": "Shield-Maiden Sigrid"
-        },
-        "frostlorderik": {
-          "name": "Frost Lord Erik"
-        },
-        "icequeenfreya": {
-          "name": "Ice Queen Freya"
-        },
-        "snowkingolaf": {
-          "name": "Snow King Olaf"
-        },
-        "wintermatriarchbrunhilde": {
-          "name": "Winter Matriarch Brunhilde"
-        }
       }
     },
     "invertedcitadel": {
@@ -773,32 +399,6 @@
         },
         "citadelmaster": {
           "name": "Citadel Master"
-        }
-      },
-      "leaders": {
-        "crimebossvito": {
-          "name": "Crime Boss Vito"
-        },
-        "shadowmatriarchcarmilla": {
-          "name": "Shadow Matriarch Carmilla"
-        },
-        "syndicatedonmarco": {
-          "name": "Syndicate Don Marco"
-        },
-        "nightqueenselena": {
-          "name": "Night Queen Selena"
-        },
-        "darklordvincent": {
-          "name": "Dark Lord Vincent"
-        },
-        "undergroundempressrosa": {
-          "name": "Underground Empress Rosa"
-        },
-        "twilightkingluca": {
-          "name": "Twilight King Luca"
-        },
-        "noirmistressangelica": {
-          "name": "Noir Mistress Angelica"
         }
       }
     },
@@ -833,32 +433,6 @@
         "archdevilofoil": {
           "name": "Archdevil of Oil"
         }
-      },
-      "leaders": {
-        "hivemindalpha": {
-          "name": "Hive Mind Alpha"
-        },
-        "unityleadersigma": {
-          "name": "Unity Leader Sigma"
-        },
-        "collectiveprimedelta": {
-          "name": "Collective Prime Delta"
-        },
-        "harmonymasteromega": {
-          "name": "Harmony Master Omega"
-        },
-        "synergylordepsilon": {
-          "name": "Synergy Lord Epsilon"
-        },
-        "groupconsciousnesstheta": {
-          "name": "Group Consciousness Theta"
-        },
-        "networkqueenphi": {
-          "name": "Network Queen Phi"
-        },
-        "sharedmindkingpsi": {
-          "name": "Shared Mind King Psi"
-        }
       }
     },
     "petromanagers": {
@@ -876,32 +450,6 @@
         },
         "infernalexecutive": {
           "name": "Infernal Executive"
-        }
-      },
-      "leaders": {
-        "demonlordazaroth": {
-          "name": "Demon Lord Azaroth"
-        },
-        "infernalqueenlilith": {
-          "name": "Infernal Queen Lilith"
-        },
-        "hellkingbaal": {
-          "name": "Hell King Baal"
-        },
-        "abyssmistressmorrigan": {
-          "name": "Abyss Mistress Morrigan"
-        },
-        "chaosdemonxalvador": {
-          "name": "Chaos Demon Xalvador"
-        },
-        "shadowlordbeleth": {
-          "name": "Shadow Lord Beleth"
-        },
-        "netherqueenastarte": {
-          "name": "Nether Queen Astarte"
-        },
-        "voidkingmammon": {
-          "name": "Void King Mammon"
         }
       }
     },
@@ -921,32 +469,6 @@
         "sonicdemon": {
           "name": "Sonic Demon"
         }
-      },
-      "leaders": {
-        "highseraphgabriel": {
-          "name": "High Seraph Gabriel"
-        },
-        "divineempressaurora": {
-          "name": "Divine Empress Aurora"
-        },
-        "celestialkingraphael": {
-          "name": "Celestial King Raphael"
-        },
-        "holymatriarchseraphina": {
-          "name": "Holy Matriarch Seraphina"
-        },
-        "lightlordmichael": {
-          "name": "Light Lord Michael"
-        },
-        "sacredqueenuriel": {
-          "name": "Sacred Queen Uriel"
-        },
-        "heavenschampionazrael": {
-          "name": "Heaven's Champion Azrael"
-        },
-        "radiantmistresscassiel": {
-          "name": "Radiant Mistress Cassiel"
-        }
       }
     },
     "sevensisters": {
@@ -964,32 +486,6 @@
         },
         "heiressassassin": {
           "name": "Heiress Assassin"
-        }
-      },
-      "leaders": {
-        "voidemperornihil": {
-          "name": "Void Emperor Nihil"
-        },
-        "entropyempressumbra": {
-          "name": "Entropy Empress Umbra"
-        },
-        "nullkingvacuus": {
-          "name": "Null King Vacuus"
-        },
-        "oblivionqueentenebris": {
-          "name": "Oblivion Queen Tenebris"
-        },
-        "emptinesslordkhaos": {
-          "name": "Emptiness Lord Khaos"
-        },
-        "nothingnesssovereignerebus": {
-          "name": "Nothingness Sovereign Erebus"
-        },
-        "abyssrulernyx": {
-          "name": "Abyss Ruler Nyx"
-        },
-        "darkmattermonarchstyx": {
-          "name": "Dark Matter Monarch Styx"
         }
       }
     },
@@ -1021,32 +517,6 @@
         "demigodavatar": {
           "name": "Demigod Avatar"
         }
-      },
-      "leaders": {
-        "zeusthethunderer": {
-          "name": "Zeus the Thunderer"
-        },
-        "athenathewise": {
-          "name": "Athena the Wise"
-        },
-        "aresthewarmonger": {
-          "name": "Ares the Warmonger"
-        },
-        "hadestheindifferent": {
-          "name": "Hades the Indifferent"
-        },
-        "artemisthehunter": {
-          "name": "Artemis the Hunter"
-        },
-        "dionysusthereveler": {
-          "name": "Dionysus the Reveler"
-        },
-        "apollotheradiant": {
-          "name": "Apollo the Radiant"
-        },
-        "herathejealous": {
-          "name": "Hera the Jealous"
-        }
       }
     },
     "supremearchivistcouncil": {
@@ -1061,20 +531,6 @@
         },
         "councilelder": {
           "name": "Council Elder"
-        }
-      },
-      "leaders": {
-        "higharchivistmnemosyne": {
-          "name": "High Archivist Mnemosyne"
-        },
-        "eldererasmus": {
-          "name": "Elder Erasmus"
-        },
-        "truthkeeperalexandria": {
-          "name": "Truth-Keeper Alexandria"
-        },
-        "curatoroblivion": {
-          "name": "Curator Oblivion"
         }
       }
     },
@@ -1091,20 +547,6 @@
         "eliteinfiltrator": {
           "name": "Elite Infiltrator"
         }
-      },
-      "leaders": {
-        "spymastercipher": {
-          "name": "Spymaster Cipher"
-        },
-        "agentcodex": {
-          "name": "Agent Codex"
-        },
-        "directorshadow": {
-          "name": "Director Shadow"
-        },
-        "operativeraven": {
-          "name": "Operative Raven"
-        }
       }
     },
     "knowledgepreservationdivision": {
@@ -1119,20 +561,6 @@
         },
         "masterconservator": {
           "name": "Master Conservator"
-        }
-      },
-      "leaders": {
-        "chieflibrariansilence": {
-          "name": "Chief Librarian Silence"
-        },
-        "conservatorgrimoire": {
-          "name": "Conservator Grimoire"
-        },
-        "keepercodex": {
-          "name": "Keeper Codex"
-        },
-        "archivistquietus": {
-          "name": "Archivist Quietus"
         }
       }
     },
@@ -1149,20 +577,6 @@
         "misinformationmaster": {
           "name": "Misinformation Master"
         }
-      },
-      "leaders": {
-        "directordoubletalk": {
-          "name": "Director Doubletalk"
-        },
-        "ministerredact": {
-          "name": "Minister Redact"
-        },
-        "chiefspindoctororwell": {
-          "name": "Chief Spin Doctor Orwell"
-        },
-        "propagandistinchiefpravda": {
-          "name": "Propagandist-in-Chief Pravda"
-        }
       }
     },
     "internalcomplianceunit": {
@@ -1178,20 +592,6 @@
         "internalinquisitor": {
           "name": "Internal Inquisitor"
         }
-      },
-      "leaders": {
-        "grandinquisitorloyalty": {
-          "name": "Grand Inquisitor Loyalty"
-        },
-        "directorcompliance": {
-          "name": "Director Compliance"
-        },
-        "chiefenforcerironhand": {
-          "name": "Chief Enforcer Ironhand"
-        },
-        "watchmastervigilance": {
-          "name": "Watchmaster Vigilance"
-        }
       }
     },
     "libertariangods": {
@@ -1206,20 +606,6 @@
         },
         "sovereignspirit": {
           "name": "Sovereign Spirit"
-        }
-      },
-      "leaders": {
-        "aynrandthedivine": {
-          "name": "Ayn Rand the Divine"
-        },
-        "adamsmithascended": {
-          "name": "Adam Smith Ascended"
-        },
-        "invisiblehand": {
-          "name": "Invisible Hand"
-        },
-        "sovereignofself": {
-          "name": "Sovereign of Self"
         }
       }
     },
@@ -1247,20 +633,6 @@
         },
         "ancestralecho": {
           "name": "Ancestral Echo"
-        }
-      },
-      "leaders": {
-        "hivealphagriknak": {
-          "name": "Hive Alpha Griknak"
-        },
-        "psychicprimeskizzik": {
-          "name": "Psychic Prime Skizzik"
-        },
-        "collectiveonegribblik": {
-          "name": "Collective One Gribblik"
-        },
-        "mindunityzogwort": {
-          "name": "Mind-Unity Zogwort"
         }
       }
     },
@@ -1291,20 +663,6 @@
         },
         "zetanoverseer": {
           "name": "Zetan Overseer"
-        }
-      },
-      "leaders": {
-        "ambassadorzyx7": {
-          "name": "Ambassador Zyx-7"
-        },
-        "overseerqel9": {
-          "name": "Overseer Qel-9"
-        },
-        "touristdirectorvrax3": {
-          "name": "Tourist Director Vrax-3"
-        },
-        "observerprimeklix5": {
-          "name": "Observer Prime Klix-5"
         }
       }
     },
@@ -1339,26 +697,6 @@
         "cardinaltemplar": {
           "name": "Cardinal Templar"
         }
-      },
-      "leaders": {
-        "popebenedictxvii": {
-          "name": "Pope Benedict XVII"
-        },
-        "cardinalsecretarylorenzo": {
-          "name": "Cardinal Secretary Lorenzo"
-        },
-        "archbishopmilitaris": {
-          "name": "Archbishop Militaris"
-        },
-        "mothersuperiormagdalena": {
-          "name": "Mother Superior Magdalena"
-        },
-        "papalchamberlaindante": {
-          "name": "Papal Chamberlain Dante"
-        },
-        "cardinaldefendermaximus": {
-          "name": "Cardinal Defender Maximus"
-        }
       }
     },
     "cardinalscouncil": {
@@ -1373,20 +711,6 @@
         },
         "princeofthechurch": {
           "name": "Prince of the Church"
-        }
-      },
-      "leaders": {
-        "cardinalprefectgiovanni": {
-          "name": "Cardinal Prefect Giovanni"
-        },
-        "princecardinalalessandro": {
-          "name": "Prince-Cardinal Alessandro"
-        },
-        "cardinalsecretarybernardo": {
-          "name": "Cardinal Secretary Bernardo"
-        },
-        "deanofcardinalsfrancesco": {
-          "name": "Dean of Cardinals Francesco"
         }
       }
     },
@@ -1406,20 +730,6 @@
         "holybanker": {
           "name": "Holy Banker"
         }
-      },
-      "leaders": {
-        "presidentcalviii": {
-          "name": "President Calvi II"
-        },
-        "directormarcinkusiii": {
-          "name": "Director Marcinkus III"
-        },
-        "treasurermonsignorluciano": {
-          "name": "Treasurer Monsignor Luciano"
-        },
-        "auditorbishopsantoro": {
-          "name": "Auditor Bishop Santoro"
-        }
       }
     },
     "battlenuns": {
@@ -1437,20 +747,6 @@
         },
         "mothersuperior": {
           "name": "Mother Superior"
-        }
-      },
-      "leaders": {
-        "abbessmilitantcatherine": {
-          "name": "Abbess Militant Catherine"
-        },
-        "sistercommandermaria": {
-          "name": "Sister Commander Maria"
-        },
-        "motherwarriortheresa": {
-          "name": "Mother Warrior Theresa"
-        },
-        "prioressjoanna": {
-          "name": "Prioress Joanna"
         }
       }
     },
@@ -1470,20 +766,6 @@
         "masterhexorcist": {
           "name": "Master Hexorcist"
         }
-      },
-      "leaders": {
-        "chiefhexorcistraphael": {
-          "name": "Chief Hexorcist Raphael"
-        },
-        "techbishopalanturing": {
-          "name": "Tech-Bishop Alan Turing"
-        },
-        "cybercardinalneo": {
-          "name": "Cyber-Cardinal Neo"
-        },
-        "digitalprelatemorpheus": {
-          "name": "Digital Prelate Morpheus"
-        }
       }
     },
     "gaylobby": {
@@ -1498,20 +780,6 @@
         },
         "shadowdiplomat": {
           "name": "Shadow Diplomat"
-        }
-      },
-      "leaders": {
-        "fathersebastian": {
-          "name": "Father Sebastian"
-        },
-        "monsignorgabriel": {
-          "name": "Monsignor Gabriel"
-        },
-        "cardinaladvocateantonio": {
-          "name": "Cardinal Advocate Antonio"
-        },
-        "bishopreformermatteo": {
-          "name": "Bishop Reformer Matteo"
         }
       }
     },
@@ -1531,20 +799,6 @@
         "supernumeraryelite": {
           "name": "Supernumerary Elite"
         }
-      },
-      "leaders": {
-        "prelatejosemaraii": {
-          "name": "Prelate Josemar\u00eda II"
-        },
-        "directorescriviii": {
-          "name": "Director Escriv\u00e1 III"
-        },
-        "numerarysuperiorricardo": {
-          "name": "Numerary Superior Ricardo"
-        },
-        "vicargeneralfelipe": {
-          "name": "Vicar General Felipe"
-        }
       }
     },
     "swissguards": {
@@ -1562,20 +816,6 @@
         },
         "swisscommander": {
           "name": "Swiss Commander"
-        }
-      },
-      "leaders": {
-        "commandantwilhelmtelliii": {
-          "name": "Commandant Wilhelm Tell III"
-        },
-        "colonelhanspfyffer": {
-          "name": "Colonel Hans Pfyffer"
-        },
-        "captainkasparvonsilenen": {
-          "name": "Captain Kaspar von Silenen"
-        },
-        "lieutenantursgraf": {
-          "name": "Lieutenant Urs Graf"
         }
       }
     },
@@ -1607,32 +847,6 @@
         "sovietcommander": {
           "name": "Soviet Commander"
         }
-      },
-      "leaders": {
-        "marshalzhukov": {
-          "name": "Marshal Zhukov"
-        },
-        "generalrokossovsky": {
-          "name": "General Rokossovsky"
-        },
-        "marshalkonev": {
-          "name": "Marshal Konev"
-        },
-        "generalchuikov": {
-          "name": "General Chuikov"
-        },
-        "admiralkuznetsov": {
-          "name": "Admiral Kuznetsov"
-        },
-        "generalvasilevsky": {
-          "name": "General Vasilevsky"
-        },
-        "marshaltimoshenko": {
-          "name": "Marshal Timoshenko"
-        },
-        "generalmalinovsky": {
-          "name": "General Malinovsky"
-        }
       }
     },
     "guardsdivision": {
@@ -1656,38 +870,6 @@
         },
         "guardsmajor": {
           "name": "Guards Major"
-        }
-      },
-      "leaders": {
-        "colonelpetrov": {
-          "name": "Colonel Petrov"
-        },
-        "majorivanov": {
-          "name": "Major Ivanov"
-        },
-        "captainsokolov": {
-          "name": "Captain Sokolov"
-        },
-        "lieutenantkozlov": {
-          "name": "Lieutenant Kozlov"
-        },
-        "sergeantvolkov": {
-          "name": "Sergeant Volkov"
-        },
-        "heropopov": {
-          "name": "Hero Popov"
-        },
-        "generallebedev": {
-          "name": "General Lebedev"
-        },
-        "marshalfedorov": {
-          "name": "Marshal Fedorov"
-        },
-        "commandersmirnov": {
-          "name": "Commander Smirnov"
-        },
-        "heromorozov": {
-          "name": "Hero Morozov"
         }
       }
     },
@@ -1713,38 +895,6 @@
         "armoredbrigadeleader": {
           "name": "Armored Brigade Leader"
         }
-      },
-      "leaders": {
-        "tankgeneralkatukov": {
-          "name": "Tank General Katukov"
-        },
-        "colonelrotmistrov": {
-          "name": "Colonel Rotmistrov"
-        },
-        "acecommanderlavrinenko": {
-          "name": "Ace Commander Lavrinenko"
-        },
-        "majorburda": {
-          "name": "Major Burda"
-        },
-        "herokolobanov": {
-          "name": "Hero Kolobanov"
-        },
-        "brigadeleadergetman": {
-          "name": "Brigade Leader Getman"
-        },
-        "generalrybalko": {
-          "name": "General Rybalko"
-        },
-        "tankmarshalbogdanov": {
-          "name": "Tank Marshal Bogdanov"
-        },
-        "commanderbaryatinsky": {
-          "name": "Commander Baryatinsky"
-        },
-        "aceoskin": {
-          "name": "Ace Oskin"
-        }
       }
     },
     "rifledivision": {
@@ -1768,38 +918,6 @@
         },
         "elitemarksman": {
           "name": "Elite Marksman"
-        }
-      },
-      "leaders": {
-        "colonelgorbatov": {
-          "name": "Colonel Gorbatov"
-        },
-        "majorshumilov": {
-          "name": "Major Shumilov"
-        },
-        "captainrodimtsev": {
-          "name": "Captain Rodimtsev"
-        },
-        "sniperzaitsev": {
-          "name": "Sniper Zaitsev"
-        },
-        "heropavlichenko": {
-          "name": "Hero Pavlichenko"
-        },
-        "generalgovorov": {
-          "name": "General Govorov"
-        },
-        "commanderbatov": {
-          "name": "Commander Batov"
-        },
-        "marshalmeretskov": {
-          "name": "Marshal Meretskov"
-        },
-        "herogromov": {
-          "name": "Hero Gromov"
-        },
-        "sergeantpavlov": {
-          "name": "Sergeant Pavlov"
         }
       }
     },
@@ -1825,38 +943,6 @@
         "spetsnazparatrooper": {
           "name": "Spetsnaz Paratrooper"
         }
-      },
-      "leaders": {
-        "generalglagolev": {
-          "name": "General Glagolev"
-        },
-        "colonelmargelov": {
-          "name": "Colonel Margelov"
-        },
-        "majorlevashov": {
-          "name": "Major Levashov"
-        },
-        "captaindenisov": {
-          "name": "Captain Denisov"
-        },
-        "jumpheroyegorov": {
-          "name": "Jump Hero Yegorov"
-        },
-        "airborneacekantaria": {
-          "name": "Airborne Ace Kantaria"
-        },
-        "commanderbelov": {
-          "name": "Commander Belov"
-        },
-        "marshalshaposhnikov": {
-          "name": "Marshal Shaposhnikov"
-        },
-        "herokrylov": {
-          "name": "Hero Krylov"
-        },
-        "elitetroopernesterov": {
-          "name": "Elite Trooper Nesterov"
-        }
       }
     },
     "artillerydivision": {
@@ -1880,38 +966,6 @@
         },
         "rocketartillerymaster": {
           "name": "Rocket Artillery Master"
-        }
-      },
-      "leaders": {
-        "artillerymarshalvoronov": {
-          "name": "Artillery Marshal Voronov"
-        },
-        "generalkazakov": {
-          "name": "General Kazakov"
-        },
-        "colonelnedelin": {
-          "name": "Colonel Nedelin"
-        },
-        "majorkurchevsky": {
-          "name": "Major Kurchevsky"
-        },
-        "rocketherotukhachevsky": {
-          "name": "Rocket Hero Tukhachevsky"
-        },
-        "katyushaacekostikov": {
-          "name": "Katyusha Ace Kostikov"
-        },
-        "commanderyakovlev": {
-          "name": "Commander Yakovlev"
-        },
-        "marshalkulik": {
-          "name": "Marshal Kulik"
-        },
-        "generalpetrov": {
-          "name": "General Petrov"
-        },
-        "herograbin": {
-          "name": "Hero Grabin"
         }
       }
     },
@@ -1943,20 +997,6 @@
         "grandvizierselite": {
           "name": "Grand Vizier's Elite"
         }
-      },
-      "leaders": {
-        "sultanosmanvi": {
-          "name": "Sultan Osman VI"
-        },
-        "grandvizierahmet": {
-          "name": "Grand Vizier Ahmet"
-        },
-        "marshalfevzipasha": {
-          "name": "Marshal Fevzi Pasha"
-        },
-        "admiralbarbarosiii": {
-          "name": "Admiral Barbaros III"
-        }
       }
     },
     "tanzimatbureaucracy": {
@@ -1967,27 +1007,13 @@
           "name": "Registry Clerk"
         },
         "mfettiinspector": {
-          "name": "M\u00fcfetti\u015f (Inspector)"
+          "name": "Müfettiş (Inspector)"
         },
         "viziersdiplomat": {
           "name": "Vizier's Diplomat"
         },
         "emineffendihighofficial": {
           "name": "Emin Effendi (High Official)"
-        }
-      },
-      "leaders": {
-        "grandbureaucratmidhatpasha": {
-          "name": "Grand Bureaucrat Midhat Pasha"
-        },
-        "reformministeralipasha": {
-          "name": "Reform Minister Ali Pasha"
-        },
-        "chiefadministratorfuadeffendi": {
-          "name": "Chief Administrator Fuad Effendi"
-        },
-        "inspectorgeneralreshidbey": {
-          "name": "Inspector General Reshid Bey"
         }
       }
     },
@@ -2007,14 +1033,6 @@
         "submarinecommander": {
           "name": "Submarine Commander"
         }
-      },
-      "leaders": {
-        "captainreismurat": {
-          "name": "Captain Reis Murat"
-        },
-        "admiralsalih": {
-          "name": "Admiral Salih"
-        }
       }
     },
     "talonofthecaliph": {
@@ -2033,20 +1051,6 @@
         "grandintelligencer": {
           "name": "Grand Intelligencer"
         }
-      },
-      "leaders": {
-        "spymasterhakanthesilent": {
-          "name": "Spymaster Hakan the Silent"
-        },
-        "intelligencechiefmehmedbey": {
-          "name": "Intelligence Chief Mehmed Bey"
-        },
-        "assassinmasterselimtheshadow": {
-          "name": "Assassin Master Selim the Shadow"
-        },
-        "directorofsecretskemalpasha": {
-          "name": "Director of Secrets Kemal Pasha"
-        }
       }
     },
     "janissaryguard": {
@@ -2063,21 +1067,7 @@
           "name": "Janissary Captain"
         },
         "aaofthekoruma": {
-          "name": "A\u011fa of the Koruma"
-        }
-      },
-      "leaders": {
-        "grandaasuleiman": {
-          "name": "Grand A\u011fa Suleiman"
-        },
-        "korumacommandermustafa": {
-          "name": "Koruma Commander Mustafa"
-        },
-        "elitecaptainibrahim": {
-          "name": "Elite Captain Ibrahim"
-        },
-        "firstguardosman": {
-          "name": "First Guard Osman"
+          "name": "Ağa of the Koruma"
         }
       }
     },
@@ -2109,20 +1099,6 @@
         "guardcommander": {
           "name": "Guard Commander"
         }
-      },
-      "leaders": {
-        "kinggeorgeix": {
-          "name": "King George IX"
-        },
-        "fieldmarshalmontgomeryii": {
-          "name": "Field Marshal Montgomery II"
-        },
-        "admiralnelsoniv": {
-          "name": "Admiral Nelson IV"
-        },
-        "commandervictoria": {
-          "name": "Commander Victoria"
-        }
       }
     },
     "royalnavytaskforce": {
@@ -2144,20 +1120,6 @@
         "fleetcommander": {
           "name": "Fleet Commander"
         }
-      },
-      "leaders": {
-        "admiraldrakeiv": {
-          "name": "Admiral Drake IV"
-        },
-        "commodorehawkins": {
-          "name": "Commodore Hawkins"
-        },
-        "captainbeatty": {
-          "name": "Captain Beatty"
-        },
-        "fleetadmiralhood": {
-          "name": "Fleet Admiral Hood"
-        }
       }
     },
     "sassbscommandos": {
@@ -2175,20 +1137,6 @@
         },
         "sascounterterrorist": {
           "name": "SAS Counter-Terrorist"
-        }
-      },
-      "leaders": {
-        "regimentcommanderstirling": {
-          "name": "Regiment Commander Stirling"
-        },
-        "sbsdirectorlaycock": {
-          "name": "SBS Director Laycock"
-        },
-        "sascaptainprice": {
-          "name": "SAS Captain Price"
-        },
-        "squadronleadermacleod": {
-          "name": "Squadron Leader MacLeod"
         }
       }
     },
@@ -2208,20 +1156,6 @@
         "sectionchiefthecontroller": {
           "name": "Section Chief (The Controller)"
         }
-      },
-      "leaders": {
-        "mdirectorgeneral": {
-          "name": "M (Director General)"
-        },
-        "qtechnicaldirector": {
-          "name": "Q (Technical Director)"
-        },
-        "cchiefofstation": {
-          "name": "C (Chief of Station)"
-        },
-        "agent007fielddirector": {
-          "name": "Agent 007 (Field Director)"
-        }
       }
     },
     "sciencecommand": {
@@ -2240,67 +1174,7 @@
         "chiefscientistkineticist": {
           "name": "Chief Scientist (Kineticist)"
         }
-      },
-      "leaders": {
-        "directorhawkingiii": {
-          "name": "Director Hawking III"
-        },
-        "chiefengineerteslaiv": {
-          "name": "Chief Engineer Tesla IV"
-        },
-        "generalturing": {
-          "name": "General Turing"
-        },
-        "professorfaradayv": {
-          "name": "Professor Faraday V"
-        }
       }
     }
-  },
-  "formations": {
-    "circle": "Circle",
-    "box": "Box",
-    "phalanx": "Phalanx",
-    "double": "Double",
-    "wedge": "Wedge",
-    "line": "Line",
-    "crescent": "Crescent",
-    "column": "Column",
-    "scattered": "Scattered"
-  },
-  "roles": {
-    "support": "support",
-    "closequarters": "close quarters",
-    "ranged": "ranged"
-  },
-  "personalities": {
-    "cautious": "Cautious",
-    "authoritative": "Authoritative",
-    "mischievous": "Mischievous",
-    "calm": "Calm",
-    "scholarly": "Scholarly",
-    "stoic": "Stoic",
-    "impulsive": "Impulsive",
-    "adventurous": "Adventurous",
-    "nurturing": "Nurturing",
-    "sanguine": "Sanguine",
-    "nervous": "Nervous",
-    "melancholic": "Melancholic",
-    "hedonistic": "Hedonistic",
-    "loyal": "Loyal",
-    "brave": "Brave",
-    "artistic": "Artistic",
-    "apathetic": "Apathetic",
-    "fatalistic": "Fatalistic",
-    "paranoid": "Paranoid",
-    "grumpy": "Grumpy",
-    "empathetic": "Empathetic",
-    "disciplined": "Disciplined",
-    "cynical": "Cynical",
-    "timid": "Timid",
-    "aggressive": "Aggressive",
-    "possessive": "Possessive",
-    "chaotic": "Chaotic",
-    "greedy": "Greedy"
   }
 }

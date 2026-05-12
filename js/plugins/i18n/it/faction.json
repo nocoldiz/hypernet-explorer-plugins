@@ -194,7 +194,7 @@
     },
     "loyalists": {
       "name": "Lealisti",
-      "description": "Coloro che aderiscono rigorosamente ai decreti del Gran Maestro, favorendo la stabilit\u00e0 politica rispetto all'innovazione magica.",
+      "description": "Coloro che aderiscono rigorosamente ai decreti del Gran Maestro, favorendo la stabilità politica rispetto all'innovazione magica.",
       "troops": {
         "loyalacolyte": {
           "name": "Accolito Leale"
@@ -459,7 +459,7 @@
     },
     "naguka": {
       "name": "Naguka",
-      "description": "Una trib\u00f9 di spazzini delle paludi noti per la loro resistenza alle tossine industriali.",
+      "description": "Una tribù di spazzini delle paludi noti per la loro resistenza alle tossine industriali.",
       "troops": {
         "swampscavenger": {
           "name": "Spazzino della Palude"
@@ -570,7 +570,7 @@
       }
     },
     "truckerssociety": {
-      "name": "Societ\u00e0 dei Camionisti",
+      "name": "Società dei Camionisti",
       "description": "Le anime coraggiose che trasportano merci attraverso le terre desolate. Sono la linfa vitale dell'economia e non obbediscono a nessun codice della strada.",
       "troops": {
         "rookietrucker": {
@@ -683,7 +683,7 @@
     },
     "northpointarmy": {
       "name": "Esercito di North Point",
-      "description": "Una forza militare disciplinata che protegge i confini settentrionali da ci\u00f2 che si nasconde nelle distese ghiacciate.",
+      "description": "Una forza militare disciplinata che protegge i confini settentrionali da ciò che si nasconde nelle distese ghiacciate.",
       "troops": {
         "recruit": {
           "name": "Recluta"
@@ -763,7 +763,7 @@
           "name": "Studioso delle Ombre"
         },
         "darknesssniper": {
-          "name": "Cecchino dell'Oscurit\u00e0"
+          "name": "Cecchino dell'Oscurità"
         },
         "umbralwarlock": {
           "name": "Warlock Umbratile"
@@ -804,7 +804,7 @@
     },
     "petrodemons": {
       "name": "Petrodemoni",
-      "description": "Entit\u00e0 nate dai depositi di petrolio delle profondit\u00e0; carburante vivente che brucia con malizia.",
+      "description": "Entità nate dai depositi di petrolio delle profondità; carburante vivente che brucia con malizia.",
       "troops": {
         "oilimp": {
           "name": "Diavoletto del Petrolio"
@@ -906,17 +906,17 @@
       }
     },
     "speeddemons": {
-      "name": "Demoni della Velocit\u00e0",
-      "description": "Drogati di adrenalina e corrieri che venerano la velocit\u00e0 e il carburante ad alto numero di ottani.",
+      "name": "Demoni della Velocità",
+      "description": "Drogati di adrenalina e corrieri che venerano la velocità e il carburante ad alto numero di ottani.",
       "troops": {
         "speedfreak": {
-          "name": "Maniaco della Velocit\u00e0"
+          "name": "Maniaco della Velocità"
         },
         "nitrocourier": {
           "name": "Corriere Nitro"
         },
         "velocitycultist": {
-          "name": "Cultista della Velocit\u00e0"
+          "name": "Cultista della Velocità"
         },
         "sonicdemon": {
           "name": "Demone Sonico"
@@ -1051,13 +1051,13 @@
     },
     "supremearchivistcouncil": {
       "name": "Consiglio Supremo",
-      "description": "Gli anziani che decidono quali verit\u00e0 vengono ricordate e quali cancellate per sempre.",
+      "description": "Gli anziani che decidono quali verità vengono ricordate e quali cancellate per sempre.",
       "troops": {
         "councilscribe": {
           "name": "Scriba del Consiglio"
         },
         "truthkeeper": {
-          "name": "Custode della Verit\u00e0"
+          "name": "Custode della Verità"
         },
         "councilelder": {
           "name": "Anziano del Consiglio"
@@ -1109,7 +1109,7 @@
     },
     "knowledgepreservationdivision": {
       "name": "Div. Preservazione Conoscenza",
-      "description": "Bibliotecari che mantengono l'integrit\u00e0 fisica dei libri e zittiscono i visitatori rumorosi... permanentemente.",
+      "description": "Bibliotecari che mantengono l'integrità fisica dei libri e zittiscono i visitatori rumorosi... permanentemente.",
       "troops": {
         "silentlibrarian": {
           "name": "Bibliotecario Silenzioso"
@@ -1137,8 +1137,8 @@
       }
     },
     "publictransparencyunit": {
-      "name": "Unit\u00e0 Trasparenza Pubblica",
-      "description": "L'ala della propaganda. Il loro nome \u00e8 ironico; sono specializzati in censure e disinformazione.",
+      "name": "Unità Trasparenza Pubblica",
+      "description": "L'ala della propaganda. Il loro nome è ironico; sono specializzati in censure e disinformazione.",
       "troops": {
         "propagandist": {
           "name": "Propagandista"
@@ -1166,11 +1166,11 @@
       }
     },
     "internalcomplianceunit": {
-      "name": "Unit\u00e0 Conformit\u00e0 Interna",
+      "name": "Unità Conformità Interna",
       "description": "La polizia segreta che assicura che nessun Archivista divulghi dati al mondo esterno.",
       "troops": {
         "complianceofficer": {
-          "name": "Ufficiale di Conformit\u00e0"
+          "name": "Ufficiale di Conformità"
         },
         "secretenforcer": {
           "name": "Esecutore Segreto"
@@ -1196,7 +1196,7 @@
     },
     "libertariangods": {
       "name": "Dei Libertari",
-      "description": "Divinit\u00e0 minori che non richiedono adorazione, ma solo transazioni reciprocamente vantaggiose.",
+      "description": "Divinità minori che non richiedono adorazione, ma solo transazioni reciprocamente vantaggiose.",
       "troops": {
         "freemarketangel": {
           "name": "Angelo del Libero Mercato"
@@ -1281,7 +1281,7 @@
           "name": "Cecchino a Raggi"
         },
         "realitymanipulator": {
-          "name": "Manipolatore della Realt\u00e0"
+          "name": "Manipolatore della Realtà"
         },
         "enforcerconstruct": {
           "name": "Costrutto Esecutore"
@@ -1310,7 +1310,7 @@
     },
     "holyvaticanempire": {
       "name": "Sacro Vaticano Impero",
-      "description": "L'antica sede del Papato, una citt\u00e0-stato che esercita un immenso potere spirituale e temporale. Opera sulla base della fede, della tradizione e di operazioni clandestine.",
+      "description": "L'antica sede del Papato, una città-stato che esercita un immenso potere spirituale e temporale. Opera sulla base della fede, della tradizione e di operazioni clandestine.",
       "troops": {
         "altarserver": {
           "name": "Chierichetto"
@@ -1456,7 +1456,7 @@
     },
     "hexorcistscorp": {
       "name": "Corpo degli Esorcisti",
-      "description": "Un'unit\u00e0 specializzata di tecno-preti che combattono codice demoniaco, IA corrotte e altre eresie digitali.",
+      "description": "Un'unità specializzata di tecno-preti che combattono codice demoniaco, IA corrotte e altre eresie digitali.",
       "troops": {
         "cyberacolyte": {
           "name": "Accolito Cyber"
@@ -1517,7 +1517,7 @@
     },
     "opusdei": {
       "name": "Opus Dei",
-      "description": "Un'organizzazione laica profondamente conservatrice e segreta, nota per l'incrollabile devozione e l'influenza dei suoi membri nella societ\u00e0 secolare.",
+      "description": "Un'organizzazione laica profondamente conservatrice e segreta, nota per l'incrollabile devozione e l'influenza dei suoi membri nella società secolare.",
       "troops": {
         "devotednumerary": {
           "name": "Numerario Devoto"
@@ -1534,10 +1534,10 @@
       },
       "leaders": {
         "prelatejosemaraii": {
-          "name": "Prelate Josemar\u00eda II"
+          "name": "Prelate Josemaría II"
         },
         "directorescriviii": {
-          "name": "Director Escriv\u00e1 III"
+          "name": "Director Escrivá III"
         },
         "numerarysuperiorricardo": {
           "name": "Numerary Superior Ricardo"
@@ -1549,7 +1549,7 @@
     },
     "swissguards": {
       "name": "Guardie Svizzere",
-      "description": "I mercenari d'\u00e9lite vestiti in modo colorato ma letali, che hanno giurato di proteggere il Papa, brandendo sia alabarde che fucili al plasma avanzati.",
+      "description": "I mercenari d'élite vestiti in modo colorato ma letali, che hanno giurato di proteggere il Papa, brandendo sia alabarde che fucili al plasma avanzati.",
       "troops": {
         "swissrecruit": {
           "name": "Recluta Svizzera"
@@ -1637,7 +1637,7 @@
     },
     "guardsdivision": {
       "name": "Divisione delle Guardie",
-      "description": "Unit\u00e0 sovietiche d'\u00e9lite che si sono distinte in battaglia, portando il prestigioso titolo di 'Guardie'.",
+      "description": "Unità sovietiche d'élite che si sono distinte in battaglia, portando il prestigioso titolo di 'Guardie'.",
       "troops": {
         "guardsprivate": {
           "name": "Soldato delle Guardie"
@@ -1749,7 +1749,7 @@
     },
     "rifledivision": {
       "name": "Divisione Fucilieri",
-      "description": "La spina dorsale dell'Armata Rossa, coraggiosi fucilieri che tengono la linea contro ogni probabilit\u00e0.",
+      "description": "La spina dorsale dell'Armata Rossa, coraggiosi fucilieri che tengono la linea contro ogni probabilità.",
       "troops": {
         "rifleman": {
           "name": "Fuciliere"
@@ -1805,7 +1805,7 @@
     },
     "airbornedivision": {
       "name": "Divisione Aviotrasportata",
-      "description": "Paracadutisti d'\u00e9lite e forze aviotrasportate, che colpiscono dai cieli dietro le linee nemiche.",
+      "description": "Paracadutisti d'élite e forze aviotrasportate, che colpiscono dai cieli dietro le linee nemiche.",
       "troops": {
         "paratrooper": {
           "name": "Paracadutista"
@@ -1917,7 +1917,7 @@
     },
     "ottomanempire": {
       "name": "Impero Ottomano",
-      "description": "Il Grande Impero che non \u00e8 mai caduto. Una vasta potenza multietnica che governa da Istanbul, fondendo tradizioni secolari con tecnologia militare e segreta moderna. \u00c8 guidato dal Sultano-Califfo.",
+      "description": "Il Grande Impero che non è mai caduto. Una vasta potenza multietnica che governa da Istanbul, fondendo tradizioni secolari con tecnologia militare e segreta moderna. È guidato dal Sultano-Califfo.",
       "troops": {
         "sipahicavalry": {
           "name": "Cavalleria Sipahi"
@@ -1935,13 +1935,13 @@
           "name": "Mercenario Bashi-Bazouk"
         },
         "pashasadvisor": {
-          "name": "Consigliere del Pasci\u00e0"
+          "name": "Consigliere del Pascià"
         },
         "ottomanguard": {
           "name": "Guardia Ottomana"
         },
         "grandvizierselite": {
-          "name": "\u00c9lite del Gran Visir"
+          "name": "Élite del Gran Visir"
         }
       },
       "leaders": {
@@ -1967,7 +1967,7 @@
           "name": "Impiegato del Registro"
         },
         "mfettiinspector": {
-          "name": "M\u00fcfetti\u015f (Ispettore)"
+          "name": "Müfettiş (Ispettore)"
         },
         "viziersdiplomat": {
           "name": "Diplomatico del Visir"
@@ -2051,7 +2051,7 @@
     },
     "janissaryguard": {
       "name": "Giannizzeri",
-      "description": "Un piccolo distaccamento altamente addestrato di Giannizzeri moderni che fungono da guardia personale del Sultano-Califfo e da truppe d'assalto d'\u00e9lite.",
+      "description": "Un piccolo distaccamento altamente addestrato di Giannizzeri moderni che fungono da guardia personale del Sultano-Califfo e da truppe d'assalto d'élite.",
       "troops": {
         "janissarynovice": {
           "name": "Novizio Giannizzero"
@@ -2063,12 +2063,12 @@
           "name": "Capitano Giannizzero"
         },
         "aaofthekoruma": {
-          "name": "A\u011fa del Koruma"
+          "name": "Ağa del Koruma"
         }
       },
       "leaders": {
         "grandaasuleiman": {
-          "name": "Grand A\u011fa Suleiman"
+          "name": "Grand Ağa Suleiman"
         },
         "korumacommandermustafa": {
           "name": "Koruma Commander Mustafa"
@@ -2083,7 +2083,7 @@
     },
     "britannia": {
       "name": "Britannia",
-      "description": "Il successore dell'Impero Britannico, una potenza globale definita dalla sua superiorit\u00e0 tecnologica, dalle vaste risorse del Commonwealth e da un esercito disciplinato. Governato da una moderna Monarchia Costituzionale.",
+      "description": "Il successore dell'Impero Britannico, una potenza globale definita dalla sua superiorità tecnologica, dalle vaste risorse del Commonwealth e da un esercito disciplinato. Governato da una moderna Monarchia Costituzionale.",
       "troops": {
         "commonwealthtrooper": {
           "name": "Fante del Commonwealth"
@@ -2194,7 +2194,7 @@
     },
     "mi6blackarchive": {
       "name": "Archivio Nero MI6",
-      "description": "La divisione di intelligence pi\u00f9 clandestina di Britannia, che si occupa di spionaggio tecnologico di alto livello, guerra psicologica e manipolazione politica globale.",
+      "description": "La divisione di intelligence più clandestina di Britannia, che si occupa di spionaggio tecnologico di alto livello, guerra psicologica e manipolazione politica globale.",
       "troops": {
         "analysthandler": {
           "name": "Analista/Gestore"
@@ -2256,51 +2256,5 @@
         }
       }
     }
-  },
-  "formations": {
-    "circle": "Cerchio",
-    "box": "Quadrato",
-    "phalanx": "Falange",
-    "double": "Doppia",
-    "wedge": "Cuneo",
-    "line": "Linea",
-    "crescent": "Mezzaluna",
-    "column": "Colonna",
-    "scattered": "Sparsa"
-  },
-  "roles": {
-    "support": "supporto",
-    "closequarters": "close quarters",
-    "ranged": "a distanza"
-  },
-  "personalities": {
-    "cautious": "Cautious",
-    "authoritative": "Authoritative",
-    "mischievous": "Mischievous",
-    "calm": "Calm",
-    "scholarly": "Scholarly",
-    "stoic": "Stoic",
-    "impulsive": "Impulsive",
-    "adventurous": "Adventurous",
-    "nurturing": "Nurturing",
-    "sanguine": "Sanguine",
-    "nervous": "Nervous",
-    "melancholic": "Melancholic",
-    "hedonistic": "Hedonistic",
-    "loyal": "Loyal",
-    "brave": "Brave",
-    "artistic": "Artistic",
-    "apathetic": "Apathetic",
-    "fatalistic": "Fatalistic",
-    "paranoid": "Paranoid",
-    "grumpy": "Grumpy",
-    "empathetic": "Empathetic",
-    "disciplined": "Disciplined",
-    "cynical": "Cynical",
-    "timid": "Timid",
-    "aggressive": "Aggressive",
-    "possessive": "Possessive",
-    "chaotic": "Chaotic",
-    "greedy": "Greedy"
   }
 }
