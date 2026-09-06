@@ -1266,6 +1266,7 @@
                 commands.push({ label: T('RealEstate.ui.investigateMarketNews'), action: "info", secondary: true });
             }
 
+            const sref = this.sceneRef();
             const commandsHTML = commands.map((cmd, cIdx) => {
                 const isSel = cIdx === this._dndCommandIndex && this._dndFocusSection === 'commands';
                 const mod = cmd.danger ? ' inspect-btn--danger' : (cmd.secondary ? ' inspect-btn--secondary' : '');
@@ -1546,6 +1547,7 @@
             }
             if (this._companyCommandIndex >= cmds.length) this._companyCommandIndex = Math.max(0, cmds.length - 1);
 
+            const sref = this.sceneRef();
             const commandsHTML = cmds.map((cmd, cIdx) => {
                 const isSel = cIdx === this._companyCommandIndex && this._dndFocusSection === 'commands';
                 const mod = cmd.danger ? ' inspect-btn--danger' : '';
