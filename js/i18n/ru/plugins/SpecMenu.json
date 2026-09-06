@@ -1,12 +1,26 @@
 {
   "ui": {
     "back": "Назад",
-    "specializations": "",
-    "trained": "",
-    "noneTrained": "",
-    "untrained": "",
-    "noneSelected": "",
-    "towards": "",
-    "governingStat": ""
-  }
+    "specializations": "Специализации",
+    "searchPlaceholder": "Поиск специализаций…",
+    "trained": "Изученные",
+    "all": "Все",
+    "noneTrained": "Специализации ещё не изучены.",
+    "noMatches": "По этому названию ничего не найдено.",
+    "untrained": "Не изучено",
+    "noneSelected": "Специализация не выбрана.",
+    "towards": "К уровню {level}",
+    "pointsToNext": "До уровня «{level}» осталось очков: {points}",
+    "mastered": "Полностью изучено. Больше нечему учиться.",
+    "governingStat": "Основной параметр: {stat}",
+    "category": "Категория",
+    "tier": "Уровень {n}"
+  },
+  "rankNames": [
+    "Не изучено",
+    "Новичок (+1)",
+    "Ученик (+2)",
+    "Эксперт (+3)",
+    "Мастер (+4)"
+  ]
 }

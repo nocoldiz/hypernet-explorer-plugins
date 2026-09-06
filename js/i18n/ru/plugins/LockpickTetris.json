@@ -5,5 +5,15 @@
   "lockJammed": "",
   "timeUp": "",
   "usedSkeletonKey": "",
-  "noLockpicks": ""
+  "noLockpicks": "",
+  "title": "",
+  "timeLabel": "",
+  "nextLabel": "",
+  "tensionLabel": "",
+  "seized": "",
+  "abandoned": "",
+  "craftOffer": "",
+  "craftYes": "",
+  "craftNo": "",
+  "craftedOne": ""
 }

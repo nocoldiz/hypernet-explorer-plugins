@@ -1,15 +1,583 @@
 {
-  "title": "",
-  "status": "",
-  "noSignal": "",
-  "endOfTransmission": "",
-  "narrator": "",
-  "format": "",
-  "tone": "",
-  "cast": "",
-  "watch": "",
-  "programs": "",
-  "noPrograms": "",
-  "transmission": "",
-  "tuneInHint": ""
+  "title": "TV Guide",
+  "status": "Каналов: {channels}  |  Карта студии {map}  |  Ежедневных слотов: {slots}",
+  "noSignal": "Нет сигнала передачи. (RandomTVTransmissionGenerator не загружен?)",
+  "endOfTransmission": "— конец передачи —",
+  "narrator": "Диктор",
+  "format": "Формат:",
+  "tone": "Тон:",
+  "cast": "В ролях:",
+  "watch": "▶ Смотреть",
+  "programs": "Программы",
+  "noPrograms": "Программ не запланировано.",
+  "transmission": "Передача",
+  "tuneInHint": "Выберите программу выше, чтобы настроиться.",
+  "channel": {
+    "history": {
+      "name": "Канал «История эпох»"
+    },
+    "news": {
+      "name": "Темпоральные новости 24/7"
+    },
+    "chaos": {
+      "name": "Компания хаотического вещания"
+    },
+    "kitchen": {
+      "name": "Алхимическая кухня"
+    },
+    "kids": {
+      "name": "Театр «Аллея памяти»"
+    },
+    "latenight": {
+      "name": "Полночь на дороге"
+    },
+    "faith": {
+      "name": "Час веры Аноки"
+    },
+    "shopping": {
+      "name": "Гиперкапиталистическая торговая сеть"
+    },
+    "mediahex": {
+      "name": "Медиахекс"
+    }
+  },
+  "program": {
+    "history": {
+      "chronicles": {
+        "title": ""
+      },
+      "great_debates": {
+        "title": ""
+      },
+      "in_memoriam": {
+        "title": ""
+      },
+      "this_week_in_history": {
+        "title": ""
+      },
+      "before_the_tower": {
+        "title": ""
+      },
+      "ninety_two": {
+        "title": ""
+      },
+      "kola_file": {
+        "title": ""
+      },
+      "pillars": {
+        "title": ""
+      },
+      "deicide_hour": {
+        "title": ""
+      },
+      "falklands": {
+        "title": ""
+      },
+      "road_of_ages": {
+        "title": ""
+      },
+      "archive_reading": {
+        "title": ""
+      },
+      "footnotes": {
+        "title": ""
+      },
+      "y2k_retrospective": {
+        "title": ""
+      },
+      "ask_the_archive": {
+        "title": ""
+      },
+      "long_reconstruction": {
+        "title": ""
+      },
+      "voices_from_the_loop": {
+        "title": ""
+      },
+      "kola_tapes": {
+        "title": ""
+      },
+      "old_world_court": {
+        "title": ""
+      },
+      "ledger_of_empires": {
+        "title": ""
+      },
+      "antiques_parish": {
+        "title": ""
+      }
+    },
+    "news": {
+      "evening_desk": {
+        "title": ""
+      },
+      "breaking": {
+        "title": ""
+      },
+      "forecast": {
+        "title": ""
+      },
+      "morning_brief": {
+        "title": ""
+      },
+      "boundary_watch": {
+        "title": ""
+      },
+      "road_report": {
+        "title": ""
+      },
+      "closing_bell": {
+        "title": ""
+      },
+      "docket": {
+        "title": ""
+      },
+      "above_the_cloud": {
+        "title": ""
+      },
+      "your_call": {
+        "title": ""
+      },
+      "civil_advisory": {
+        "title": ""
+      },
+      "goblin_ball": {
+        "title": ""
+      },
+      "correspondents": {
+        "title": ""
+      },
+      "night_desk": {
+        "title": ""
+      },
+      "weekend_review": {
+        "title": ""
+      },
+      "foreign_desk": {
+        "title": ""
+      },
+      "ministerial": {
+        "title": ""
+      },
+      "late_bulletin": {
+        "title": ""
+      },
+      "obituaries": {
+        "title": ""
+      },
+      "signal_check": {
+        "title": ""
+      },
+      "consumer_corner": {
+        "title": ""
+      }
+    },
+    "chaos": {
+      "wheel": {
+        "title": ""
+      },
+      "static_hour": {
+        "title": ""
+      },
+      "prophecy_corner": {
+        "title": ""
+      },
+      "panic_at_six": {
+        "title": ""
+      },
+      "bubble_house": {
+        "title": ""
+      },
+      "who_remembers": {
+        "title": ""
+      },
+      "signal_bleed": {
+        "title": ""
+      },
+      "carrier_wave": {
+        "title": ""
+      },
+      "corpse_paint_countdown": {
+        "title": ""
+      },
+      "the_reckoning": {
+        "title": ""
+      },
+      "flatmates": {
+        "title": ""
+      },
+      "dead_air": {
+        "title": ""
+      },
+      "spin_again": {
+        "title": ""
+      },
+      "open_lines": {
+        "title": ""
+      },
+      "unofficial_emergency": {
+        "title": ""
+      },
+      "weather_probably": {
+        "title": ""
+      },
+      "chef_chaos": {
+        "title": ""
+      },
+      "sermon_of_static": {
+        "title": ""
+      },
+      "chaos_docket": {
+        "title": ""
+      },
+      "playtime_for_adults": {
+        "title": ""
+      }
+    },
+    "kitchen": {
+      "frugal": {
+        "title": ""
+      },
+      "tavern_rescue": {
+        "title": ""
+      },
+      "pixie_dust": {
+        "title": ""
+      },
+      "one_loop_meals": {
+        "title": ""
+      },
+      "verden_table": {
+        "title": ""
+      },
+      "broken_leyline_bakes": {
+        "title": ""
+      },
+      "pantry_politics": {
+        "title": ""
+      },
+      "field_rations": {
+        "title": ""
+      },
+      "kitchen_calls": {
+        "title": ""
+      },
+      "front_of_house": {
+        "title": ""
+      },
+      "sunday_roast": {
+        "title": ""
+      },
+      "cellar_hour": {
+        "title": ""
+      },
+      "market_morning": {
+        "title": ""
+      },
+      "larder_run": {
+        "title": ""
+      },
+      "kitchen_court": {
+        "title": ""
+      },
+      "beagle_confidential": {
+        "title": ""
+      },
+      "recipe_emergency": {
+        "title": ""
+      },
+      "sermon_roast": {
+        "title": ""
+      },
+      "allotment_hour": {
+        "title": ""
+      },
+      "two_rooms_ladder": {
+        "title": ""
+      }
+    },
+    "kids": {
+      "tommy": {
+        "title": ""
+      },
+      "rangers": {
+        "title": ""
+      },
+      "camelcase": {
+        "title": ""
+      },
+      "sockington": {
+        "title": ""
+      },
+      "eighty_song": {
+        "title": ""
+      },
+      "first_spell": {
+        "title": ""
+      },
+      "goblin_friends": {
+        "title": ""
+      },
+      "leyline_lessons": {
+        "title": ""
+      },
+      "puppet_court": {
+        "title": ""
+      },
+      "storytime": {
+        "title": ""
+      },
+      "tower_tour": {
+        "title": ""
+      },
+      "pip_lost": {
+        "title": ""
+      },
+      "cadet_lines": {
+        "title": ""
+      },
+      "very_small_news": {
+        "title": ""
+      },
+      "songs_from_the_road": {
+        "title": ""
+      },
+      "sports_day": {
+        "title": ""
+      },
+      "pets_people": {
+        "title": ""
+      }
+    },
+    "latenight": {
+      "insomnia": {
+        "title": ""
+      },
+      "witching_hour": {
+        "title": ""
+      },
+      "after_dark": {
+        "title": ""
+      },
+      "long_haul_lines": {
+        "title": ""
+      },
+      "third_shift": {
+        "title": ""
+      },
+      "under_the_asphalt": {
+        "title": ""
+      },
+      "who_owns_the_dark": {
+        "title": ""
+      },
+      "night_convoy": {
+        "title": ""
+      },
+      "the_estate": {
+        "title": ""
+      },
+      "small_hours_music": {
+        "title": ""
+      },
+      "sign_off": {
+        "title": ""
+      },
+      "unaired": {
+        "title": ""
+      },
+      "night_kitchen": {
+        "title": ""
+      },
+      "small_hours_desk": {
+        "title": ""
+      },
+      "nightschool": {
+        "title": ""
+      },
+      "overnight_docket": {
+        "title": ""
+      },
+      "cold_kitchen": {
+        "title": ""
+      },
+      "three_am_weather": {
+        "title": ""
+      },
+      "repeats": {
+        "title": ""
+      },
+      "late_quiz": {
+        "title": ""
+      },
+      "night_bus": {
+        "title": ""
+      }
+    },
+    "faith": {
+      "gospel": {
+        "title": ""
+      },
+      "infinite_loops": {
+        "title": ""
+      },
+      "testimony": {
+        "title": ""
+      },
+      "ringtone_vespers": {
+        "title": ""
+      },
+      "the_stone_gods": {
+        "title": ""
+      },
+      "from_the_citadel": {
+        "title": ""
+      },
+      "the_widow_maat": {
+        "title": ""
+      },
+      "discord_docket": {
+        "title": ""
+      },
+      "open_line_to_heaven": {
+        "title": ""
+      },
+      "seven_artefacts": {
+        "title": ""
+      },
+      "catechism": {
+        "title": ""
+      },
+      "the_signal_is_the_message": {
+        "title": ""
+      },
+      "faithful_line": {
+        "title": ""
+      },
+      "sacred_science": {
+        "title": ""
+      },
+      "reduced_miracle": {
+        "title": ""
+      },
+      "quiet_heaven": {
+        "title": ""
+      },
+      "parish_notices": {
+        "title": ""
+      },
+      "the_vigil": {
+        "title": ""
+      }
+    },
+    "shopping": {
+      "midnight_deals": {
+        "title": ""
+      },
+      "as_seen": {
+        "title": ""
+      },
+      "fire_sale": {
+        "title": ""
+      },
+      "loop_escape_hour": {
+        "title": ""
+      },
+      "warehouse_appears": {
+        "title": ""
+      },
+      "the_ticker": {
+        "title": ""
+      },
+      "pyramid_hour": {
+        "title": ""
+      },
+      "bid_your_memories": {
+        "title": ""
+      },
+      "customer_lines": {
+        "title": ""
+      },
+      "unboxing_the_tower": {
+        "title": ""
+      },
+      "clearance": {
+        "title": ""
+      },
+      "brand_devotional": {
+        "title": ""
+      },
+      "depot_report": {
+        "title": ""
+      },
+      "unclaimed_auction": {
+        "title": ""
+      },
+      "complaints_line": {
+        "title": ""
+      },
+      "warehouse_live": {
+        "title": ""
+      },
+      "sponsored_weather": {
+        "title": ""
+      },
+      "before_the_boundary": {
+        "title": ""
+      },
+      "car_boot": {
+        "title": ""
+      }
+    },
+    "mediahex": {
+      "slither_news": {
+        "title": ""
+      },
+      "wheel_fortunes": {
+        "title": ""
+      },
+      "price_correct": {
+        "title": ""
+      },
+      "papperissima": {
+        "title": ""
+      },
+      "sarabander": {
+        "title": ""
+      },
+      "not_the_rye": {
+        "title": ""
+      },
+      "costanza_show": {
+        "title": ""
+      },
+      "forum_hex": {
+        "title": ""
+      },
+      "lunch_served": {
+        "title": ""
+      },
+      "telemick": {
+        "title": ""
+      },
+      "studio_open": {
+        "title": ""
+      },
+      "beautifool": {
+        "title": ""
+      },
+      "bim_bum_bang": {
+        "title": ""
+      },
+      "superchart": {
+        "title": ""
+      },
+      "coalpo_grosso": {
+        "title": ""
+      },
+      "know_the_latest": {
+        "title": ""
+      }
+    }
+  }
 }

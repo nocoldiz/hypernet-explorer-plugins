@@ -117,5 +117,45 @@
     "psi": "ПСИ"
   },
   "surgeryFee": "",
-  "availableFunds": ""
+  "availableFunds": "",
+  "vitalBadge": "",
+  "grantsSkill": "",
+  "chooseSurgeon": "",
+  "chooseSurgeonDesc": "",
+  "surgerySpec": "",
+  "surgerySpecShort": "",
+  "operatingOnSelf": "",
+  "venueLabel": "",
+  "weatherLabel": "",
+  "venue": {
+    "interior": "",
+    "cavern": "",
+    "exterior": ""
+  },
+  "weather": {
+    "none": "",
+    "rain": "",
+    "storm": "",
+    "snow": ""
+  },
+  "successChance": "",
+  "failureWarning": "",
+  "fieldTheatre": "",
+  "fieldTheatreDesc": "",
+  "installFromInventory": "",
+  "removeAugment": "",
+  "fieldAugmentRemovalDesc": "",
+  "oddsSurgery": "",
+  "oddsVenue": "",
+  "oddsWeather": "",
+  "oddsSelf": "",
+  "surgeryFailed": "",
+  "surgeryFailedWound": "",
+  "surgeryFailedPartLost": "",
+  "needsBareArm": "",
+  "needsBareLimb": "",
+  "attachmentPoint": "",
+  "chooseAttachmentPoint": "",
+  "attachTo": "",
+  "attachedTo": ""
 }

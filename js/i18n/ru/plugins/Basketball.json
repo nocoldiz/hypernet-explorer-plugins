@@ -7,5 +7,8 @@
   "swish": "ЧИСТЫЙ БРОСОК!",
   "score": "ОЧКО!",
   "miss": "МИМО",
-  "finalScore": "Игрок: {player}  {opponent}: {opponentScore}"
+  "finalScore": "Игрок: {player}  {opponent}: {opponentScore}",
+  "aimPrompt": "",
+  "powerPrompt": "",
+  "setTouch": ""
 }

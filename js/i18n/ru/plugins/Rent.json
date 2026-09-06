@@ -3,5 +3,12 @@
   "ui": {
     "rooms": "",
     "hint": ""
+  },
+  "bookedBy": "",
+  "someoneElse": "",
+  "toast": {
+    "rented": "",
+    "notEnough": "",
+    "room": ""
   }
 }

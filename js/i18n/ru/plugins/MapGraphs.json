@@ -15,5 +15,6 @@
   "status": "Статус",
   "visited": "",
   "notVisited": "",
-  "connections": ""
+  "connections": "",
+  "mapStats": ""
 }

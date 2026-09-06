@@ -1,0 +1,17 @@
+{
+  "drivingTag": "",
+  "tookWheel": "",
+  "allTired": "",
+  "woke": {
+    "crash": ""
+  },
+  "aboard": {
+    "hunger": "",
+    "sleep": "",
+    "hygiene": "",
+    "social": "",
+    "leisure": "",
+    "meal": "",
+    "noFood": ""
+  }
+}

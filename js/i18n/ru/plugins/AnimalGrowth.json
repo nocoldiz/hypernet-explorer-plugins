@@ -16,5 +16,51 @@
     "other": "Молодой \\c[14]{animal}\\c[0]. Вырастет примерно через {count} дн."
   },
   "pleased": "\\c[14]{animal}\\c[0] рад тебя видеть.",
-  "nothingReady": "У \\c[14]{animal}\\c[0] пока ничего не готово."
+  "nothingReady": "У \\c[14]{animal}\\c[0] пока ничего не готово.",
+  "company": "",
+  "age": {
+    "years": {
+      "one": "",
+      "other": ""
+    },
+    "days": {
+      "one": "",
+      "other": ""
+    }
+  },
+  "panel": {
+    "title": "",
+    "breed": "",
+    "age": "",
+    "growth": "",
+    "grownAlready": "",
+    "daysToAdult": {
+      "one": "",
+      "other": ""
+    },
+    "nutrition": "",
+    "hungry": "",
+    "company": "",
+    "produce": "",
+    "producesNothing": "",
+    "yield": "",
+    "ready": "",
+    "readyIn": {
+      "one": "",
+      "other": ""
+    },
+    "notYetAdult": ""
+  },
+  "actionCollect": "",
+  "actionPet": "",
+  "actionEmpathize": "",
+  "actionCancel": "",
+  "fed": "",
+  "notHungry": "",
+  "tooHungryToProduce": "",
+  "farmerOf": "",
+  "owner": "",
+  "wildAnimal": "",
+  "actionConvince": "",
+  "actionJoinPet": ""
 }

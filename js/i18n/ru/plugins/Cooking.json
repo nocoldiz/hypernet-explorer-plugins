@@ -44,7 +44,8 @@
     "sameItemNegative": "\nЛучше это не есть...",
     "recoveredHunger": "\nВосстановлено {percent}% голода каждому члену группы",
     "splitAmong": " (разделить на {count} персон)",
-    "ate": "Вы съели {name} сырым."
+    "ate": "Вы съели {name} сырым.",
+    "cannotCombine": ""
   },
   "ui": {
     "selectFirstIngredient": "Выберите первый ингридиент для готовки",
@@ -79,5 +80,19 @@
     "calories": "Калории",
     "protein": "Белки",
     "fat": ""
+  },
+  "names": {
+    "meaty": "",
+    "vegetarian": ""
+  },
+  "nutritionShort": {
+    "calories": "",
+    "protein": "",
+    "fat": ""
+  },
+  "roll": {
+    "masterpiece": "",
+    "scorched": "",
+    "delicious": ""
   }
 }

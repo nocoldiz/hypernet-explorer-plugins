@@ -1,14 +1,14 @@
 {
-  "myComputer": "",
-  "myDocuments": "",
-  "desktop": "",
+  "myComputer": "Мой компьютер",
+  "myDocuments": "Мои документы",
+  "desktop": "Рабочий стол",
   "back": "Назад",
-  "address": "",
-  "go": "",
-  "systemTasks": "",
-  "vfsError": "",
-  "dirInvalid": "",
-  "cannotOpen": "",
-  "unsupportedType": "",
-  "dirNotFound": ""
+  "address": "Адрес:",
+  "go": "Перейти",
+  "systemTasks": "Системные задачи",
+  "vfsError": "Ошибка VFS: файловая система недоступна",
+  "dirInvalid": "Каталог «{path}» недействителен или пуст.",
+  "cannotOpen": "Проводник: не удалось открыть «{file}». Блокнот отсутствует.",
+  "unsupportedType": "Проводник: этот тип файла не поддерживается.",
+  "dirNotFound": "Адресная строка: каталог «{path}» не найден."
 }

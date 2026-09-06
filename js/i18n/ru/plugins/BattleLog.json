@@ -8,8 +8,33 @@
   "listLast": ", и ",
   "hitsFor": " атакует ",
   "damageSuffix": ", нанося %1 урона!",
-  "recoverySuffix": ", восстанавливая %1 HP!",
+  "recoverySuffix": ", восстанавливая %1 ХП!",
   "noDamageSuffix": ", не нанося урона.",
   "uses": " использует ",
-  "and": "и"
+  "and": "и",
+  "skillNamesOption": "",
+  "skillName": "",
+  "skillAction": "",
+  "pronouns": {
+    "he": {
+      "subject": "",
+      "object": "",
+      "possessive": ""
+    },
+    "she": {
+      "subject": "",
+      "object": "",
+      "possessive": ""
+    },
+    "they": {
+      "subject": "",
+      "object": "",
+      "possessive": ""
+    },
+    "it": {
+      "subject": "",
+      "object": "",
+      "possessive": ""
+    }
+  }
 }

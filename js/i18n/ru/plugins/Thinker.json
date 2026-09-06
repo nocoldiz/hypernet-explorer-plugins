@@ -45,6 +45,25 @@
     "Trash": "Мусор",
     "Weapons": "Оружие",
     "Armor": "Доспех",
-    "Misc": ""
-  }
+    "Misc": "",
+    "Books": "",
+    "Farming": "",
+    "Tools": "",
+    "Vehicles": ""
+  },
+  "filterLearned": "",
+  "filterAll": "",
+  "tradeLabel": "",
+  "knownBySkill": "",
+  "revealHint": "",
+  "reclaimChance": "",
+  "reclaimed": "",
+  "tierLabel": "",
+  "starterRecipe": "",
+  "botchRisk": "",
+  "needFabrication": "",
+  "botchTitle": "",
+  "botchNote": "",
+  "botched": "",
+  "searchPlaceholder": ""
 }

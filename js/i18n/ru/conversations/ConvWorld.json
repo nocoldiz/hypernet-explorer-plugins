@@ -5,9 +5,11 @@
       "",
       "",
       "",
+      "",
       ""
     ],
     "boom": [
+      "",
       "",
       "",
       "",
@@ -19,15 +21,18 @@
       "",
       "",
       "",
+      "",
       ""
     ],
     "festival": [
       "",
       "",
       "",
+      "",
       ""
     ],
     "epidemic": [
+      "",
       "",
       "",
       "",
@@ -41,14 +46,229 @@
     "outlaw": [
       "",
       "",
+      "",
       ""
     ],
     "market": {
       "bullish": [
         "",
+        "",
         ""
       ],
       "bearish": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "earthDestroyed": {
+      "Nervous": [
+        "",
+        ""
+      ],
+      "Calm": [
+        "",
+        ""
+      ],
+      "Aggressive": [
+        "",
+        ""
+      ],
+      "Melancholic": [
+        "",
+        ""
+      ],
+      "Sanguine": [
+        "",
+        ""
+      ],
+      "Cautious": [
+        "",
+        ""
+      ],
+      "Impulsive": [
+        "",
+        ""
+      ],
+      "Stoic": [
+        "",
+        ""
+      ],
+      "Paranoid": [
+        "",
+        ""
+      ],
+      "Empathetic": [
+        "",
+        ""
+      ],
+      "Authoritative": [
+        "",
+        ""
+      ],
+      "Scholarly": [
+        "",
+        ""
+      ],
+      "Artistic": [
+        "",
+        ""
+      ],
+      "Adventurous": [
+        "",
+        ""
+      ],
+      "Nurturing": [
+        "",
+        ""
+      ],
+      "Mischievous": [
+        "",
+        ""
+      ],
+      "Cynical": [
+        "",
+        ""
+      ],
+      "Disciplined": [
+        "",
+        ""
+      ],
+      "Fatalistic": [
+        "",
+        ""
+      ],
+      "Grumpy": [
+        "",
+        ""
+      ],
+      "Loyal": [
+        "",
+        ""
+      ],
+      "Brave": [
+        "",
+        ""
+      ],
+      "Timid": [
+        "",
+        ""
+      ],
+      "Hedonistic": [
+        "",
+        ""
+      ],
+      "Apathetic": [
+        "",
+        ""
+      ],
+      "default": [
+        "",
+        ""
+      ]
+    },
+    "earthSaved": {
+      "Nervous": [
+        "",
+        ""
+      ],
+      "Calm": [
+        "",
+        ""
+      ],
+      "Aggressive": [
+        "",
+        ""
+      ],
+      "Melancholic": [
+        "",
+        ""
+      ],
+      "Sanguine": [
+        "",
+        ""
+      ],
+      "Cautious": [
+        "",
+        ""
+      ],
+      "Impulsive": [
+        "",
+        ""
+      ],
+      "Stoic": [
+        "",
+        ""
+      ],
+      "Paranoid": [
+        "",
+        ""
+      ],
+      "Empathetic": [
+        "",
+        ""
+      ],
+      "Authoritative": [
+        "",
+        ""
+      ],
+      "Scholarly": [
+        "",
+        ""
+      ],
+      "Artistic": [
+        "",
+        ""
+      ],
+      "Adventurous": [
+        "",
+        ""
+      ],
+      "Nurturing": [
+        "",
+        ""
+      ],
+      "Mischievous": [
+        "",
+        ""
+      ],
+      "Cynical": [
+        "",
+        ""
+      ],
+      "Disciplined": [
+        "",
+        ""
+      ],
+      "Fatalistic": [
+        "",
+        ""
+      ],
+      "Grumpy": [
+        "",
+        ""
+      ],
+      "Loyal": [
+        "",
+        ""
+      ],
+      "Brave": [
+        "",
+        ""
+      ],
+      "Timid": [
+        "",
+        ""
+      ],
+      "Hedonistic": [
+        "",
+        ""
+      ],
+      "Apathetic": [
+        "",
+        ""
+      ],
+      "default": [
         "",
         ""
       ]

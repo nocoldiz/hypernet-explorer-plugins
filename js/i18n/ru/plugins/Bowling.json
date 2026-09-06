@@ -6,5 +6,10 @@
   "defeat": "",
   "draw": "",
   "finalScore": "",
-  "frame": ""
+  "frame": "",
+  "aimPrompt": "",
+  "powerPrompt": "",
+  "hookPrompt": "",
+  "player2": "",
+  "cpu": ""
 }

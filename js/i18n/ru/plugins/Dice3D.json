@@ -1,0 +1,33 @@
+{
+  "check": {
+    "default": "",
+    "percentage": ""
+  },
+  "outcome": {
+    "success": "",
+    "failure": "",
+    "critSuccess": "",
+    "critFailure": ""
+  },
+  "card": {
+    "rolledLabel": "",
+    "neededLabel": "",
+    "anyTarget": "",
+    "breakdown": "",
+    "breakdownFlat": ""
+  },
+  "toast": {
+    "line": "",
+    "versus": ""
+  },
+  "prompt": {
+    "title": "",
+    "titleFlat": "",
+    "who": "",
+    "target": "",
+    "formula": "",
+    "formulaFlat": "",
+    "try": "",
+    "cancel": ""
+  }
+}

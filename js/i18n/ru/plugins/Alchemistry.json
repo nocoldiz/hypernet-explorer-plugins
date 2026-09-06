@@ -27,5 +27,36 @@
   },
   "projectName": "Проект {n}",
   "successCreated": "Алхимия удалась! Создано: {item}",
-  "failed": "Алхимия не удалась! Неверные шаги или реагенты."
+  "failed": "Алхимия не удалась! Неверные шаги или реагенты.",
+  "tabReady": "",
+  "tabMissing": "",
+  "tabBenches": "",
+  "requiredSkills": "",
+  "successChance": "",
+  "yieldLabel": "",
+  "duration": "",
+  "guaranteed": "",
+  "failChance": "",
+  "yieldCount": "",
+  "copyToBench": "",
+  "repeatOn": "",
+  "repeatOff": "",
+  "benchEmpty": "",
+  "benchBusy": "",
+  "selectBench": "",
+  "time": {
+    "m": "",
+    "h": "",
+    "hm": ""
+  },
+  "toast": {
+    "started": "",
+    "restarted": "",
+    "repeatStopped": "",
+    "noReagents": "",
+    "completed": "",
+    "completedPlain": "",
+    "ruined": "",
+    "failed": ""
+  }
 }

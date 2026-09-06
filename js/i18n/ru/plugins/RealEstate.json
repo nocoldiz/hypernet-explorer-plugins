@@ -48,7 +48,13 @@
     "totalShares": "",
     "available2": "Доступна",
     "evicted": "",
-    "appName": ""
+    "appName": "",
+    "taken": "",
+    "buy1000": "",
+    "buy10000": "",
+    "sell100": "",
+    "sell1000": "",
+    "sell10000": ""
   },
   "company": {
     "lemoncorp": {
@@ -74,6 +80,9 @@
     },
     "aetherlogistics": {
       "description": "Поезда, автобусы, вертолёты и расписания, что их связывают. Возит людей и грузы по всей карте."
+    },
+    "limecorp": {
+      "description": ""
     }
   },
   "sector": {

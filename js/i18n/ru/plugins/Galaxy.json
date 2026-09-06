@@ -22,7 +22,9 @@
     "european": "",
     "chinese": "",
     "hint": "",
-    "hintPad": ""
+    "hintPad": "",
+    "center": "",
+    "zodiac": ""
   },
   "cluster": {
     "virgo": "",
@@ -34,7 +36,9 @@
     "yourDestination": "",
     "arrivedAt": "",
     "timeToArrival": "",
-    "lyRemaining": ""
+    "lyRemaining": "",
+    "refuelling": "",
+    "harvesting": ""
   },
   "bodyType": {
     "Dark + emission nebula": "",
@@ -91,7 +95,18 @@
     "moons": "",
     "oreBody": "",
     "units": "",
-    "condition": ""
+    "condition": "",
+    "gravity": "",
+    "gValue": "",
+    "dayLength": "",
+    "tidallyLocked": "",
+    "hoursValue": "",
+    "daysValue": "",
+    "noDayNight": "",
+    "lockedToStar": "",
+    "lockedToPlanet": "",
+    "traceSigns": "",
+    "bioReading": ""
   },
   "unnamedGalaxy": "",
   "unit": {
@@ -160,7 +175,18 @@
     "stopRefuel": "",
     "harvestSchrDingerite": "",
     "serviceEverythingAffordable": "",
-    "critical": ""
+    "critical": "",
+    "closeMap": "",
+    "closeMapTooltip": "",
+    "eta": "",
+    "liminalWalk": "",
+    "grandTour": "",
+    "grandTourTooltip": "",
+    "bookmarkAdd": "",
+    "bookmarkRemove": "",
+    "bookmarked": "",
+    "bookmark": "",
+    "harvestRunning": ""
   },
   "hubblePart": {
     "DF-224 Computer": {
@@ -267,7 +293,8 @@
     "cluster": "",
     "web": "",
     "outer": "",
-    "modeLine": ""
+    "modeLine": "",
+    "grandTour": ""
   },
   "hintPad": {
     "cockpit": "",
@@ -278,7 +305,8 @@
     "cluster": "",
     "web": "",
     "outer": "",
-    "modeLine": ""
+    "modeLine": "",
+    "grandTour": ""
   },
   "service": {
     "hubbleName": "",
@@ -313,7 +341,12 @@
     "companion": "",
     "donor": "",
     "life": "",
-    "moonOf": ""
+    "moonOf": "",
+    "moons": {
+      "one": "",
+      "other": ""
+    },
+    "traceLife": ""
   },
   "tab": {
     "current": "",
@@ -337,7 +370,9 @@
     "landingSites": "",
     "patrons": "",
     "patronsEmpty": "",
-    "patronWorlds": ""
+    "patronWorlds": "",
+    "farSystems": "",
+    "traceSignatures": ""
   },
   "scan": {
     "worldsFound": {
@@ -346,7 +381,11 @@
     },
     "hubbleOnline": "",
     "newCount": "",
-    "loggedInCatalog": ""
+    "loggedInCatalog": "",
+    "traceCount": {
+      "one": "",
+      "other": ""
+    }
   },
   "refuel": {
     "refuel": "Заправиться",
@@ -360,6 +399,49 @@
     "inSystem": "",
     "nearest": "",
     "mayBeOutOfRange": "",
-    "noneInRange": ""
+    "noneInRange": "",
+    "harvesting": "",
+    "eta": "",
+    "harvested": ""
+  },
+  "fridayMoons": {
+    "reseated": ""
+  },
+  "nibiru": {
+    "impactRow": "",
+    "countdownYears": "",
+    "countdownDays": "",
+    "countdownNow": "",
+    "noteFar": "",
+    "noteNear": "",
+    "saturnNote": "",
+    "towerNote": "",
+    "towerLanding": "",
+    "entered": "",
+    "hitSaturn": "",
+    "hitEarth": ""
+  },
+  "bio": {
+    "weak": "",
+    "strong": "",
+    "hyper": ""
+  },
+  "bodyNote": {
+    "2060chiron": "",
+    "3753cruithne": "",
+    "433eros": "",
+    "antichthon": "",
+    "earth": "",
+    "hubblespacetelescope": "",
+    "moon2": "",
+    "moon3": "",
+    "pioneer10": "",
+    "pioneer11": "",
+    "russellsteapot": "",
+    "titania": "",
+    "tma2": "",
+    "voyager1": "",
+    "voyager2": "",
+    "vulcan": ""
   }
 }

@@ -173,5 +173,15 @@
       "name": "",
       "subname": ""
     }
-  }
+  },
+  "title": "",
+  "identLine": "",
+  "readout": "",
+  "rangeLine": "",
+  "hintZoom": "",
+  "choices": [
+    "",
+    "",
+    ""
+  ]
 }

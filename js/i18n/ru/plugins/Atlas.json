@@ -1,0 +1,71 @@
+{
+  "title": "",
+  "back": "",
+  "noData": "",
+  "selectPrompt": "",
+  "countLabel": "",
+  "unaligned": "",
+  "here": "",
+  "fragment": "",
+  "noClimate": "",
+  "mode": {
+    "power": "",
+    "region": "",
+    "climate": ""
+  },
+  "region": {
+    "europe": "",
+    "asia": "",
+    "middleEast": "",
+    "northAmerica": "",
+    "southAmerica": "",
+    "africa": "",
+    "oceania": ""
+  },
+  "continent": {
+    "canadafrica": ""
+  },
+  "season": {
+    "winter": "",
+    "spring": "",
+    "summer": "",
+    "autumn": ""
+  },
+  "field": {
+    "region": "",
+    "faction": "",
+    "controller": "",
+    "climate": "",
+    "heldIn": "",
+    "changedHands": ""
+  },
+  "climate": {
+    "dayTemp": "",
+    "nightTemp": "",
+    "precipitation": "",
+    "wind": "",
+    "cloud": "",
+    "humidity": "",
+    "daylight": ""
+  },
+  "units": {
+    "temp": "",
+    "mm": "",
+    "speed": "",
+    "percent": ""
+  },
+  "climateScale": [
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "today": "",
+  "openArticle": "",
+  "era": {
+    "before": "",
+    "during": "",
+    "after": ""
+  }
+}

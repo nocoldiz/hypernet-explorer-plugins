@@ -63,6 +63,21 @@
         "...",
         ""
       ]
-    }
+    },
+    "yield": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  "visitor": {
+    "talk": "",
+    "empathize": "",
+    "cancel": "",
+    "silent": "",
+    "otherParty": "",
+    "readOnly": ""
   }
 }

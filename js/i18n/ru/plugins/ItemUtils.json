@@ -18,5 +18,14 @@
     "Rare": "Редкая",
     "Epic": "",
     "Legendary": "Легенды"
+  },
+  "encumbrance": {
+    "title": "",
+    "load": ""
+  },
+  "addiction": {
+    "all": "",
+    "label": "",
+    "feeds": ""
   }
 }

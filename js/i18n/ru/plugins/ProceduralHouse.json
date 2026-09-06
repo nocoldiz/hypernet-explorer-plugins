@@ -9,5 +9,6 @@
   "groundFloor": "",
   "floorNumbered": "",
   "noElevator": "",
-  "selectFloor": ""
+  "selectFloor": "",
+  "doorHeld": ""
 }

@@ -5,5 +5,16 @@
   "usedSkeletonKey": "",
   "needLockpick": "",
   "lockStuck": "",
-  "hotwired": ""
+  "hotwired": "",
+  "ranOver": "",
+  "ranOverInjured": "",
+  "ramKilled": "",
+  "ramAngered": "",
+  "vehicleScuffed": "",
+  "vehicleCrashed": "",
+  "emptyWorldUnlocked": "",
+  "driverSave": {
+    "nearMiss": "",
+    "failed": ""
+  }
 }

@@ -36,5 +36,9 @@
     "questUpdated": "",
     "questComplete": "",
     "questFailed": ""
-  }
+  },
+  "moveToInProgress": "",
+  "moveToToDo": "",
+  "boardHint": "",
+  "mapMarker": ""
 }

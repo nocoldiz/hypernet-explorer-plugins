@@ -1,0 +1,92 @@
+{
+  "kinsey": {
+    "0": "",
+    "1": "",
+    "2": "",
+    "3": "",
+    "4": "",
+    "5": "",
+    "6": "",
+    "X": ""
+  },
+  "sexual": {
+    "heterosexual": {
+      "name": "",
+      "desc": ""
+    },
+    "bisexual": {
+      "name": "",
+      "desc": ""
+    },
+    "homosexual": {
+      "name": "",
+      "desc": ""
+    },
+    "pansexual": {
+      "name": "",
+      "desc": ""
+    },
+    "asexual": {
+      "name": "",
+      "desc": ""
+    },
+    "demisexual": {
+      "name": "",
+      "desc": ""
+    },
+    "queer": {
+      "name": "",
+      "desc": ""
+    },
+    "digisexual": {
+      "name": "",
+      "desc": ""
+    },
+    "dendrosexual": {
+      "name": "",
+      "desc": ""
+    }
+  },
+  "romantic": {
+    "heteroromantic": {
+      "name": "",
+      "desc": ""
+    },
+    "bubbaromantic": {
+      "name": "",
+      "desc": ""
+    },
+    "biromantic": {
+      "name": "",
+      "desc": ""
+    },
+    "aromantic": {
+      "name": "",
+      "desc": ""
+    },
+    "homoromantic": {
+      "name": "",
+      "desc": ""
+    },
+    "panromantic": {
+      "name": "",
+      "desc": ""
+    },
+    "demiromantic": {
+      "name": "",
+      "desc": ""
+    },
+    "sapioromantic": {
+      "name": "",
+      "desc": ""
+    },
+    "botromantic": {
+      "name": "",
+      "desc": ""
+    },
+    "dendroromantic": {
+      "name": "",
+      "desc": ""
+    }
+  }
+}

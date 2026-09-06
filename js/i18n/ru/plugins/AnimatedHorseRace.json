@@ -113,5 +113,41 @@
     "Пушистый",
     "Искристый",
     "Шаткий"
-  ]
+  ],
+  "subtitle": "",
+  "leadingOut": "",
+  "parading": "",
+  "theyreOff": "",
+  "leading": "",
+  "finalFurlong": "",
+  "surge": "",
+  "pastThePost": "",
+  "photoFinish": "",
+  "photoTag": "",
+  "runningOrder": "",
+  "toRun": "",
+  "lengths": "",
+  "nose": "",
+  "inFront": "",
+  "frame": "",
+  "controlsSelect": "",
+  "controlsRace": "",
+  "controlsResults": "",
+  "placeOrdinal": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "runnerKind": {
+    "horse": "",
+    "unicorn": "",
+    "hellhound": "",
+    "beast": "",
+    "rabbit": "",
+    "elephant": "",
+    "centaur": ""
+  }
 }

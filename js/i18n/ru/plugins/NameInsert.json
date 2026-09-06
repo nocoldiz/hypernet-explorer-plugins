@@ -1,17 +1,17 @@
 {
-  "placeholder": "",
+  "placeholder": "Введите имя...",
   "ui": {
-    "soulIndex": "",
-    "cognition": "",
-    "matrix": "",
-    "stable": "",
-    "synchronizeIdentity": "",
-    "uppercase": "",
-    "lowercase": "",
-    "symbols": "",
-    "abort": "",
-    "default": "",
-    "confirm": "",
-    "backspace": ""
+    "soulIndex": "ИНДЕКС ДУШИ",
+    "cognition": "СОЗНАНИЕ",
+    "matrix": "МАТРИЦА",
+    "stable": "СТАБИЛЬНОСТЬ",
+    "synchronizeIdentity": "СИНХРОНИЗИРОВАТЬ ЛИЧНОСТЬ",
+    "uppercase": "ВЕРХНИЙ РЕГИСТР",
+    "lowercase": "нижний регистр",
+    "symbols": "СИМВОЛЫ",
+    "abort": "ОТМЕНА",
+    "default": "ПО УМОЛЧАНИЮ",
+    "confirm": "ПОДТВЕРДИТЬ",
+    "backspace": "BACKSPACE"
   }
 }

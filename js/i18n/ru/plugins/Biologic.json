@@ -253,7 +253,8 @@
     "leyVeins": "Лей-вены",
     "brain": "Активность мозга",
     "reproduction": "Размножение",
-    "augments": "Аугментации"
+    "augments": "Аугментации",
+    "diseases": ""
   },
   "reproductionType": [
     "Семенники (мужской)",
@@ -619,5 +620,112 @@
   "unit": {
     "breathsPerMinute": "{n} вд/мин",
     "millionPerDay": "{n} млн/сут"
+  },
+  "noneDetected": "",
+  "bloodTypes": {
+    "o_pos": {
+      "name": "",
+      "desc": ""
+    },
+    "a_pos": {
+      "name": "",
+      "desc": ""
+    },
+    "b_pos": {
+      "name": "",
+      "desc": ""
+    },
+    "ab_pos": {
+      "name": "",
+      "desc": ""
+    },
+    "o_neg": {
+      "name": "",
+      "desc": ""
+    },
+    "a_neg": {
+      "name": "",
+      "desc": ""
+    },
+    "b_neg": {
+      "name": "",
+      "desc": ""
+    },
+    "ab_neg": {
+      "name": "",
+      "desc": ""
+    },
+    "synth_delta": {
+      "name": "",
+      "desc": ""
+    },
+    "synth_psi": {
+      "name": "",
+      "desc": ""
+    },
+    "azure_hemocyanin": {
+      "name": "",
+      "desc": ""
+    },
+    "chlorocruorin": {
+      "name": "",
+      "desc": ""
+    },
+    "rh_null": {
+      "name": "",
+      "desc": ""
+    },
+    "bombay_hh": {
+      "name": "",
+      "desc": ""
+    },
+    "duffy_neg": {
+      "name": "",
+      "desc": ""
+    },
+    "diego_b_neg": {
+      "name": "",
+      "desc": ""
+    },
+    "kidd_b_neg": {
+      "name": "",
+      "desc": ""
+    },
+    "colton_neg": {
+      "name": "",
+      "desc": ""
+    },
+    "lutheran_neg": {
+      "name": "",
+      "desc": ""
+    }
+  },
+  "genderShifted": "",
+  "masculinity": "",
+  "femininity": "",
+  "estrogenShotDelivered": "",
+  "androgenGlandOutput": "",
+  "estrogenAutoinjectorOutput": "",
+  "augmentGrantsSkill": "",
+  "infect": {
+    "prompt": "",
+    "cancel": "",
+    "source": "",
+    "already": ""
+  },
+  "diagnose": {
+    "rowUnknown": "",
+    "rowKnown": "",
+    "knownTag": "",
+    "empty": "",
+    "tooExpensive": "",
+    "revealed": ""
+  },
+  "cure": {
+    "rowLine": "",
+    "stockedTag": "",
+    "empty": "",
+    "tooExpensive": "",
+    "bought": ""
   }
 }

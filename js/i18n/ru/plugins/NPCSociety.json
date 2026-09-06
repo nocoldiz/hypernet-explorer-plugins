@@ -10,7 +10,12 @@
       "tries": "",
       "has": "",
       "answers": "",
-      "born": ""
+      "born": "",
+      "wasChild": "",
+      "remembers": "",
+      "grewUp": "",
+      "saw": "",
+      "had": ""
     },
     "1": {
       "sub": "",
@@ -22,7 +27,12 @@
       "tries": "",
       "has": "",
       "answers": "",
-      "born": ""
+      "born": "",
+      "wasChild": "",
+      "remembers": "",
+      "grewUp": "",
+      "saw": "",
+      "had": ""
     },
     "2": {
       "sub": "",
@@ -34,7 +44,12 @@
       "tries": "",
       "has": "",
       "answers": "",
-      "born": ""
+      "born": "",
+      "wasChild": "",
+      "remembers": "",
+      "grewUp": "",
+      "saw": "",
+      "had": ""
     },
     "3": {
       "sub": "",
@@ -46,7 +61,12 @@
       "tries": "",
       "has": "",
       "answers": "",
-      "born": ""
+      "born": "",
+      "wasChild": "",
+      "remembers": "",
+      "grewUp": "",
+      "saw": "",
+      "had": ""
     }
   },
   "adjective": [
@@ -59,19 +79,83 @@
   "bio": {
     "uncertainTimes": "",
     "wildsNear": "",
-    "later": "",
+    "later": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
     "moral": {
-      "high": "",
-      "good": "",
-      "weary": "",
-      "loose": "",
-      "lawless": ""
+      "high": [
+        "",
+        "",
+        ""
+      ],
+      "good": [
+        "",
+        "",
+        ""
+      ],
+      "weary": [
+        "",
+        "",
+        ""
+      ],
+      "loose": [
+        "",
+        "",
+        ""
+      ],
+      "lawless": [
+        "",
+        "",
+        ""
+      ]
     },
-    "creature": "",
-    "turbulent": "",
-    "warYears": "",
-    "postwar": "",
-    "modern": "",
-    "bornMeta": ""
+    "creature": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "turbulent": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "warYears": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "postwar": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "modern": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "bornMeta": "",
+    "inCountry": "",
+    "inTown": "",
+    "placeIn": {
+      "unitedkingdom": "",
+      "uk": "",
+      "netherlands": "",
+      "philippines": "",
+      "czechrepublic": "",
+      "unitedarabemirates": "",
+      "unitedstatesfreestatesofmidwest": "",
+      "cascadiaprotectorate": "",
+      "easternseaboard": ""
+    }
   }
 }

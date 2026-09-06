@@ -18,7 +18,8 @@
     "stoneThrown": "",
     "petSuccess": "",
     "petFail": "",
-    "petRefuse": ""
+    "petRefuse": "",
+    "unrecruitable": ""
   },
   "choices": [
     "Чат",
@@ -41,5 +42,9 @@
     "follower": "",
     "pet": "",
     "joined": ""
+  },
+  "menu": {
+    "header": "",
+    "row": ""
   }
 }

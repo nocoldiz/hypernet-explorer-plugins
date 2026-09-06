@@ -16,5 +16,8 @@
   "swim": "",
   "drinkSaltWater": "",
   "drinkWater": "",
-  "cannotSwimHere": ""
+  "cannotSwimHere": "",
+  "drinkSaltWaterChoice": "",
+  "drankSaltWater": "",
+  "drankWater": ""
 }

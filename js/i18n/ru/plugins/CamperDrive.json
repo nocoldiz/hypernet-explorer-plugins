@@ -27,7 +27,25 @@
     "cond": "",
     "trip": "",
     "camperStuck": "",
-    "pressRToRespawn": ""
+    "pressRToRespawn": "",
+    "cmdDrive": "",
+    "cmdWalk": "",
+    "cmdTalk": "",
+    "cmdRun": "",
+    "cmdJump": "",
+    "cmdFly": "",
+    "cmdCrouch": "",
+    "cmdSwim": "",
+    "cmdMenu": "",
+    "cmdExitWalk": "",
+    "cmdTurbo": "",
+    "cmdDoor": "",
+    "cmdView": "",
+    "cmdExit": "",
+    "cmdVehicle": "",
+    "cmdHelp": "",
+    "controllerHintWalk": "",
+    "swim": ""
   },
   "viewMode": {
     "fpdrive": "",
@@ -40,6 +58,48 @@
     "road": "",
     "air": "",
     "water": "",
-    "underwater": ""
-  }
+    "underwater": "",
+    "land": "",
+    "cave": ""
+  },
+  "freeWalk": "",
+  "prompt": {
+    "key": "",
+    "talk": "",
+    "loot": "",
+    "board": "",
+    "fish": "",
+    "chest": {
+      "item": "",
+      "armor": "",
+      "weapon": ""
+    }
+  },
+  "enemy": {
+    "level": ""
+  },
+  "npc": {
+    "approach": "",
+    "talk": "",
+    "empathize": "",
+    "leave": "",
+    "nothingToSay": ""
+  },
+  "place": {
+    "visit": "",
+    "keepGoing": ""
+  },
+  "shop": {
+    "greeting": "",
+    "browse": "",
+    "generic": ""
+  },
+  "openRoad": "",
+  "weapon": "",
+  "driverSave": {
+    "avoided": "",
+    "failed": ""
+  },
+  "maintenance": "",
+  "refuel": ""
 }

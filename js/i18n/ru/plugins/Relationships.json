@@ -1,0 +1,154 @@
+{
+  "style": {
+    "monogamous": {
+      "name": "",
+      "desc": ""
+    },
+    "civil_union": {
+      "name": "",
+      "desc": ""
+    },
+    "long_distance": {
+      "name": "",
+      "desc": ""
+    },
+    "open_relationship": {
+      "name": "",
+      "desc": ""
+    },
+    "polyamorous": {
+      "name": "",
+      "desc": ""
+    },
+    "companionate": {
+      "name": "",
+      "desc": ""
+    },
+    "throuple": {
+      "name": "",
+      "desc": ""
+    },
+    "arranged_marriage": {
+      "name": "",
+      "desc": ""
+    },
+    "portland_polycule": {
+      "name": "",
+      "desc": ""
+    },
+    "serial_monogamy": {
+      "name": "",
+      "desc": ""
+    },
+    "single_content": {
+      "name": "",
+      "desc": ""
+    },
+    "situationship": {
+      "name": "",
+      "desc": ""
+    },
+    "friends_with_benefits": {
+      "name": "",
+      "desc": ""
+    },
+    "queerplatonic": {
+      "name": "",
+      "desc": ""
+    },
+    "aromantic_solo": {
+      "name": "",
+      "desc": ""
+    }
+  },
+  "bond": {
+    "none": {
+      "name": "",
+      "desc": ""
+    },
+    "acquaintances": {
+      "name": "",
+      "desc": ""
+    },
+    "friends": {
+      "name": "",
+      "desc": ""
+    },
+    "best_friends": {
+      "name": "",
+      "desc": ""
+    },
+    "childhood_friends": {
+      "name": "",
+      "desc": ""
+    },
+    "comrades": {
+      "name": "",
+      "desc": ""
+    },
+    "partners": {
+      "name": "",
+      "desc": ""
+    },
+    "spouses": {
+      "name": "",
+      "desc": ""
+    },
+    "engaged": {
+      "name": "",
+      "desc": ""
+    },
+    "lovers": {
+      "name": "",
+      "desc": ""
+    },
+    "situationship": {
+      "name": "",
+      "desc": ""
+    },
+    "exes": {
+      "name": "",
+      "desc": ""
+    },
+    "unrequited": {
+      "name": "",
+      "desc": ""
+    },
+    "unaware": {
+      "name": "",
+      "desc": ""
+    },
+    "siblings": {
+      "name": "",
+      "desc": ""
+    },
+    "twins": {
+      "name": "",
+      "desc": ""
+    },
+    "parent": {
+      "name": "",
+      "desc": ""
+    },
+    "child": {
+      "name": "",
+      "desc": ""
+    },
+    "cousins": {
+      "name": "",
+      "desc": ""
+    },
+    "mentor": {
+      "name": "",
+      "desc": ""
+    },
+    "student": {
+      "name": "",
+      "desc": ""
+    },
+    "rivals": {
+      "name": "",
+      "desc": ""
+    }
+  }
+}

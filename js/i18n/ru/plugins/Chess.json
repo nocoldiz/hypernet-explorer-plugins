@@ -27,7 +27,28 @@
     "stew": "",
     "jug": "",
     "candle": "",
-    "soda": ""
+    "soda": "",
+    "mimic": "",
+    "cone": "",
+    "door": "",
+    "snail": "",
+    "burger": "",
+    "turnip": "",
+    "hairball": "",
+    "dumpster": "",
+    "paperwork": "",
+    "meme": "",
+    "kazoo": "",
+    "taxi": "",
+    "badger": "",
+    "trash": "",
+    "pillow": "",
+    "crane": "",
+    "beetle": "",
+    "marionette": "",
+    "scarecrow": "",
+    "tourist": "",
+    "villager": ""
   },
   "taunt": {
     "colorChange": [
@@ -79,5 +100,57 @@
       "",
       ""
     ]
+  },
+  "ui": {
+    "record": "",
+    "chatter": "",
+    "cheat": "",
+    "ready": "",
+    "white": "",
+    "black": "",
+    "check": "",
+    "finished": "",
+    "level": "",
+    "material": "",
+    "yourMove": "",
+    "opponentThinking": "",
+    "chooseMode": "",
+    "chooseModeHint": "",
+    "promote": "",
+    "promoteHint": "",
+    "victory": "",
+    "defeat": "",
+    "drawn": "",
+    "pressToLeave": "",
+    "noThree": ""
+  },
+  "san": {
+    "1": "",
+    "2": "",
+    "3": "",
+    "4": "",
+    "5": "",
+    "6": "",
+    "chaos": "",
+    "castleShort": "",
+    "castleLong": ""
+  },
+  "pieceName": {
+    "1": "",
+    "2": "",
+    "3": "",
+    "4": "",
+    "5": "",
+    "6": "",
+    "7": ""
+  },
+  "end": {
+    "checkmate": "",
+    "stalemate": "",
+    "fiftyMove": "",
+    "repetition": "",
+    "material": "",
+    "whiteWiped": "",
+    "blackWiped": ""
   }
 }

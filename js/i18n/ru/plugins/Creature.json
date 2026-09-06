@@ -12,6 +12,11 @@
   "skillFallback": "",
   "ui": {
     "primaryBadge": "",
-    "secondaryBadge": ""
-  }
+    "secondaryBadge": "",
+    "weaponSlots": "",
+    "weaponSlotsOne": "",
+    "weaponSlotsMouth": "",
+    "noWeaponSlots": ""
+  },
+  "selectSecondaryArchetypeGoblin": ""
 }

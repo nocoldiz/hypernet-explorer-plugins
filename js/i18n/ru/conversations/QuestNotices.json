@@ -2951,5 +2951,513 @@
       "",
       ""
     ]
+  },
+  "hyperpowerVoices": {
+    "Holy Vatican Empire": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Britannia": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Soviet Union": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Ottoman Empire": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Goblin Horde": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Free States of Midwest": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Cascadia Protectorate": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Eastern Seaboard": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Mages Guild": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Archive Foundation": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "transform": "",
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Hypercapitalist Collective": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "The Gods": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "transform": "",
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "The Tourists": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "The Dargos": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Kukulkan Ascendancy": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Democratic People's Republic of Korea": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Dharma Directorate": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Illuminated Khanate": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Solomonic Republic": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Petro Kingdom of Arabia": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Sanatana Rashtra": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Long Chile": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Imperial State of Persia": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    },
+    "Northpoint Army": {
+      "family": "",
+      "titlePrefix": [
+        "",
+        "",
+        ""
+      ],
+      "openers": [
+        "",
+        "",
+        ""
+      ],
+      "caveats": [
+        "",
+        ""
+      ],
+      "signoffs": [
+        "",
+        ""
+      ]
+    }
   }
 }

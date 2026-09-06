@@ -7,5 +7,26 @@
   "databaseMissing": "",
   "allDatabases": "",
   "combined": "",
-  "seeded": ""
+  "seeded": "",
+  "llm": {
+    "off": "",
+    "place": "",
+    "withNpc": "",
+    "actionTalk": "",
+    "actionSay": "",
+    "actionListen": "",
+    "loading": "",
+    "ready": "",
+    "fetchingRuntime": "",
+    "gotRuntime": "",
+    "noRuntime": "",
+    "thinking": "",
+    "thinkingNpc": "",
+    "chatSystem": "",
+    "chatAbout": "",
+    "chatPlace": "",
+    "chatFlavour": "",
+    "chatStyle": "",
+    "chatOpen": ""
+  }
 }

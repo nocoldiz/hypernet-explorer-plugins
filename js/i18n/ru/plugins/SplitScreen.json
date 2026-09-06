@@ -37,5 +37,6 @@
   "keyboardWasd": "",
   "p2Input": "",
   "activeSession": "",
-  "terminateSession": ""
+  "terminateSession": "",
+  "p2TakesOver": ""
 }

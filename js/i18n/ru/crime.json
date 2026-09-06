@@ -254,6 +254,18 @@
     },
     "illegalconstruction": {
       "name": "Незаконное строительство"
+    },
+    "graverobbing": {
+      "name": "Осквернение могил"
+    },
+    "abandonchild": {
+      "name": "Оставление ребёнка"
+    },
+    "abandonpet": {
+      "name": "Оставление питомца"
+    },
+    "bioterrorism": {
+      "name": "Биотерроризм"
     }
   }
 }

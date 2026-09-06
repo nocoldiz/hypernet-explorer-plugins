@@ -1,4 +1,125 @@
 {
   "optionName": "Автоисследователь",
-  "badge": "АВТО И2"
+  "badge": "АВТО И2",
+  "lead": {
+    "toast": ""
+  },
+  "loose": {
+    "thought": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "greet": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "reply": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "look": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "recall": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "rest": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "need": {
+      "hunger": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "sleep": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "hygiene": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "social": [
+        "",
+        "",
+        ""
+      ],
+      "leisure": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "toastRent": "",
+    "toastEat": "",
+    "toastOpinion": "",
+    "toastPartyTalk": ""
+  },
+  "corpse": {
+    "prompt": "",
+    "choiceLoot": "",
+    "choiceCommemorate": "",
+    "choicePray": "",
+    "choiceDissect": "",
+    "choiceBury": "",
+    "choiceCancel": "",
+    "looted": "",
+    "nothingToLoot": "",
+    "examined": "",
+    "buried": ""
+  },
+  "grave": {
+    "prompt": "",
+    "choiceRead": "",
+    "choiceDesecrate": "",
+    "choiceDismantle": "",
+    "choiceCancel": "",
+    "epitaph": "",
+    "bornUnknown": "",
+    "desecrated": "",
+    "dismantled": ""
+  },
+  "succession": {
+    "takesCommand": ""
+  }
 }

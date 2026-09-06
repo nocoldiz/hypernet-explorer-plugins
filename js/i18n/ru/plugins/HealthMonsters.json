@@ -34,5 +34,108 @@
   "weakToLabel": "",
   "statesLabel": "",
   "bodyParts": "",
-  "none": "Нет"
+  "none": "Нет",
+  "partBroken": "",
+  "panel": {
+    "check": "",
+    "aim": "",
+    "hitChance": "",
+    "hp": "",
+    "vital": "",
+    "severable": "",
+    "regenerates": "",
+    "destroyed": "",
+    "broken": ""
+  },
+  "aim": {
+    "menu": {
+      "partRow": "",
+      "partRowCurrent": "",
+      "more": "",
+      "clear": "",
+      "back": "",
+      "noParts": ""
+    },
+    "log": {
+      "missed": "",
+      "moved": ""
+    }
+  },
+  "wrestle": {
+    "menu": {
+      "myLimb": "",
+      "theirLimb": "",
+      "limbRow": "",
+      "limbRowCurrent": "",
+      "noLimb": "",
+      "noTarget": "",
+      "back": "",
+      "more": "",
+      "holdRow": "",
+      "holdBlocked": "",
+      "blocked": {
+        "limb": "",
+        "part": "",
+        "hold": ""
+      },
+      "finishers": "",
+      "finisherRow": "",
+      "noFinisher": ""
+    },
+    "limbs": {
+      "helpMine": "",
+      "helpMineNone": "",
+      "helpTheirs": "",
+      "note": {
+        "vital": "",
+        "awkward": "",
+        "plain": ""
+      }
+    },
+    "hold": {
+      "grapple": {
+        "name": "",
+        "hit": "",
+        "miss": ""
+      },
+      "strike": {
+        "name": "",
+        "hit": "",
+        "miss": ""
+      },
+      "lock": {
+        "name": "",
+        "hit": "",
+        "miss": ""
+      },
+      "wrench": {
+        "name": "",
+        "hit": "",
+        "miss": ""
+      },
+      "slam": {
+        "name": "",
+        "hit": "",
+        "miss": ""
+      },
+      "choke": {
+        "name": "",
+        "hit": "",
+        "miss": ""
+      },
+      "rip": {
+        "name": "",
+        "hit": "",
+        "miss": ""
+      }
+    },
+    "log": {
+      "ripped": "",
+      "ripHeld": "",
+      "reversal": "",
+      "noLimb": "",
+      "finisherHit": "",
+      "finisherMiss": ""
+    }
+  }
 }

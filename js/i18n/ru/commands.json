@@ -1,34 +1,34 @@
 {
-    "LEFT": {
-        "keyboard": "A",
-        "gamepad": "LEFT"
-    },
-    "UP": {
-        "keyboard": "W",
-        "gamepad": "UP"
-    },
-    "MENU": {
-        "keyboard": "ESC",
-        "gamepad": "Y"
-    },
-    "RIGHT": {
-        "keyboard": "D",
-        "gamepad": "RIGHT"
-    },
-    "DOWN": {
-        "keyboard": "S",
-        "gamepad": "DOWN"
-    },
-    "OK": {
-        "keyboard": "E",
-        "gamepad": "A"
-    },
-    "CANCEL": {
-        "keyboard": "Q",
-        "gamepad": "B"
-    },
-    "SHIFT": {
-        "keyboard": "L",
-        "gamepad": "Button6"
-    }
+  "LEFT": {
+    "keyboard": "A",
+    "gamepad": "LEFT"
+  },
+  "UP": {
+    "keyboard": "W",
+    "gamepad": "UP"
+  },
+  "MENU": {
+    "keyboard": "ESC",
+    "gamepad": "Y"
+  },
+  "RIGHT": {
+    "keyboard": "D",
+    "gamepad": "RIGHT"
+  },
+  "DOWN": {
+    "keyboard": "S",
+    "gamepad": "DOWN"
+  },
+  "OK": {
+    "keyboard": "E",
+    "gamepad": "A"
+  },
+  "CANCEL": {
+    "keyboard": "Q",
+    "gamepad": "B"
+  },
+  "SHIFT": {
+    "keyboard": "L",
+    "gamepad": "Button6"
+  }
 }

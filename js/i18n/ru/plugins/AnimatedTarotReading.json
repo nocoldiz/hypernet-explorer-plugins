@@ -12,7 +12,9 @@
     "layout": "РАСКЛАД",
     "readingDone": "РАСКЛАД ЗАВЕРШЁН",
     "faceDown": "[ рубашкой вверх ]",
-    "unclearNumbered": "Значение неясно... ({n})"
+    "unclearNumbered": "Значение неясно... ({n})",
+    "chooseSpread": "",
+    "readingComplete": ""
   },
   "cards": {
     "The Fool": {

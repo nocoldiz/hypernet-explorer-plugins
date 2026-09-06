@@ -65,6 +65,78 @@
       "partyKind": "",
       "electorTitle": "",
       "electorTitlePlural": ""
+    },
+    "thetourists": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": "",
+      "electorTitle": "",
+      "electorTitlePlural": ""
+    },
+    "thedargos": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": ""
+    },
+    "kukulkanascendancy": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": ""
+    },
+    "democraticpeoplesrepublicofkorea": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": ""
+    },
+    "dharmadirectorate": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": "",
+      "electorTitle": "",
+      "electorTitlePlural": ""
+    },
+    "illuminatedkhanate": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": "",
+      "electorTitle": "",
+      "electorTitlePlural": ""
+    },
+    "solomonicrepublic": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": ""
+    },
+    "petrokingdomofarabia": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": ""
+    },
+    "sanatanarashtra": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": ""
+    },
+    "longchile": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": ""
+    },
+    "imperialstateofpersia": {
+      "govType": "",
+      "headTitle": "",
+      "legislature": "",
+      "partyKind": ""
     }
   },
   "election": {

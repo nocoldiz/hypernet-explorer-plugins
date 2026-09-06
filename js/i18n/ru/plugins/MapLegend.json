@@ -1,0 +1,212 @@
+{
+  "controlsHeading": "",
+  "foldHint": "",
+  "unfoldHint": "",
+  "controls": {
+    "up": "",
+    "down": "",
+    "left": "",
+    "right": "",
+    "action": "",
+    "stopTravel": "",
+    "wait": "",
+    "run": "",
+    "menu": "",
+    "leftClick": "",
+    "scrollWheel": "",
+    "holdShift": "",
+    "openMap": "",
+    "hotbarCycle": "",
+    "hotbarUse": "",
+    "build": "",
+    "inventory": "",
+    "quests": "",
+    "zoom": "",
+    "interact": "",
+    "returnToWorld": "",
+    "moveMouse": "",
+    "holdLeftClick": "",
+    "voxWalk": "",
+    "voxLook": "",
+    "voxJump": "",
+    "voxRun": "",
+    "voxDig": "",
+    "voxPlace": "",
+    "voxBar": "",
+    "voxSlot": "",
+    "voxInteract": "",
+    "voxMap": ""
+  },
+  "areas": {
+    "tutorialVillage": {
+      "title": "",
+      "text": ""
+    },
+    "tutorialWaterfall": {
+      "title": "",
+      "text": ""
+    },
+    "m1006_zone": {
+      "title": "",
+      "text": ""
+    },
+    "m1006_zone2": {
+      "title": "",
+      "text": ""
+    },
+    "m1006_zone3": {
+      "title": "",
+      "text": ""
+    },
+    "m1006_zone4": {
+      "title": "",
+      "text": ""
+    },
+    "m1023_zone": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone2": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone3": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone4": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone5": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone6": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone7": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone8": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone10": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone11": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone9": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone12": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone2": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone3": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone4": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone5": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone6": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone7": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone8": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone9": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone11": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone12": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone13": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone14": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone15": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone16": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone17": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone19": {
+      "title": "",
+      "text": ""
+    },
+    "m1416_zone10": {
+      "title": "",
+      "text": ""
+    }
+  },
+  "tips": {
+    "findTheInn": {
+      "title": "",
+      "text": ""
+    },
+    "seeTheDoctor": {
+      "title": "",
+      "text": ""
+    },
+    "searchTheWagons": {
+      "title": "",
+      "text": ""
+    },
+    "intoTheCaves": {
+      "title": "",
+      "text": ""
+    },
+    "headOutside": {
+      "title": "",
+      "text": ""
+    }
+  }
+}

@@ -15,5 +15,12 @@
   ],
   "vitalOrganDestroyed": "",
   "partDestroyed": "",
-  "partDamagedFallback": "{part} повреждено!"
+  "partDamagedFallback": "{part} повреждено!",
+  "statusBroken": "",
+  "statusDestroyed": "",
+  "statusCutOff": "",
+  "partRuined": "",
+  "partBroken": "",
+  "augmentLost": "",
+  "limbCopy": ""
 }

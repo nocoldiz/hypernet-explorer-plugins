@@ -2828,5 +2828,25 @@
     "val": "Клиника",
     "excluded": "",
     "name": ""
+  },
+  "Green Witch": {
+    "val": "Зелёная Ведьма",
+    "excluded": "",
+    "name": ""
+  },
+  "Green Witch Space Center": {
+    "val": "Космический центр Зелёной Ведьмы",
+    "excluded": "",
+    "name": ""
+  },
+  "Super Sacred Shrine": {
+    "val": "Сверхсвященное святилище",
+    "excluded": "",
+    "name": ""
+  },
+  "Dark Tower": {
+    "val": "Тёмная башня",
+    "excluded": "",
+    "name": ""
   }
 }

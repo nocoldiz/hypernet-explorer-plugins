@@ -1,3 +1,27 @@
 {
-  "optionName": ""
+  "optionName": "Интерфейс отряда",
+  "fuel": "ТОПЛИВО",
+  "statChip": "{stat} ×{rate}",
+  "alert": {
+    "dead": "Повержен",
+    "hp": "Ранен",
+    "hpCritical": "При смерти",
+    "hunger": "Голоден",
+    "hungerCritical": "Голодает",
+    "sleep": "Устал",
+    "sleepCritical": "Истощён",
+    "hygiene": "Не умылся",
+    "hygieneCritical": "Грязный",
+    "social": "Одинок",
+    "socialCritical": "Изолирован",
+    "leisure": "Скучает",
+    "leisureCritical": "Несчастен",
+    "craving": "Тянет к: {substance}",
+    "ill": "{disease}",
+    "illUntreated": "{disease} (без лечения)"
+  },
+  "gear": {
+    "held": "[{list}]",
+    "separator": ", "
+  }
 }

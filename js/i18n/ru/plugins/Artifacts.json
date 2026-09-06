@@ -568,5 +568,15 @@
     "armor2": "Незаурядный защитный предмет легендарной славы.",
     "armor3": "Божественная броня, дарующая непревзойдённую защиту."
   },
-  "articleDefault": "Тот самый "
+  "articleDefault": "Тот самый ",
+  "sacrifice": {
+    "blockedInBattle": "",
+    "noEligible": "",
+    "prompt": "",
+    "cancel": "",
+    "noSlots": "",
+    "namePattern": "",
+    "descLine": "",
+    "result": ""
+  }
 }

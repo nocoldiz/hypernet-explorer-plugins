@@ -54,5 +54,13 @@
   "noDescription": "Описание отсутствует",
   "msg": {
     "noEnemiesInBracket": "В этой уровневой ступени не нашлось подходящих врагов."
-  }
+  },
+  "bossRush": "",
+  "faceEveryAuthoredBoss": "",
+  "bossRush2": "",
+  "faceEveryBossInLevel": "",
+  "yourPartyIsSetToEach": "",
+  "defeatEndsTheRush": "",
+  "beginTheRush": "",
+  "bossRushHasEnded": ""
 }

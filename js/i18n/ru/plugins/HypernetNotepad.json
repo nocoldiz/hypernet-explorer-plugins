@@ -1,13 +1,13 @@
 {
-  "appName": "",
-  "untitled": "",
-  "windowTitle": "",
-  "menuFileTail": "",
-  "menuEdit": "",
-  "menuFormat": "",
-  "menuHelp": "",
-  "save": "Сохраниться",
-  "exit": "Выход",
-  "savePrompt": "",
-  "writeError": ""
+  "appName": "Notepad",
+  "untitled": "Безымянный",
+  "windowTitle": "Notepad - {file}",
+  "menuFileTail": "айл",
+  "menuEdit": "<u>П</u>равка",
+  "menuFormat": "<u>Ф</u>ормат",
+  "menuHelp": "<u>С</u>правка",
+  "save": "Сохранить",
+  "exit": "Выйти",
+  "savePrompt": "Введите имя файла для сохранения в C:/Documents:",
+  "writeError": "Системная ошибка: не удалось записать данные в виртуальную файловую систему."
 }

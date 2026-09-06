@@ -328,7 +328,8 @@
     "mirrorShatters": "Зеркальный образ {actor} разбивается!",
     "gunFuFollowThrough": "{actor} добивает - Ган-фу!",
     "divineBloodSurges": "Божественная кровь {target} вскипает!",
-    "comboSlip": "{target} уходит от удара! Комбо x{combo}"
+    "comboSlip": "{target} уходит от удара! Комбо x{combo}",
+    "chamberedMana": ""
   },
   "chip": {
     "next": "Далее",

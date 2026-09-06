@@ -24,5 +24,17 @@
   "signShop": "Магазин",
   "signInn": "Гостиница",
   "needPickaxe": "",
-  "statue": ""
+  "statue": "",
+  "rummage": "",
+  "sit": "",
+  "graffiti": "",
+  "poster": "",
+  "signStop": "",
+  "signDanger": "",
+  "signHelipad": "",
+  "feature": {
+    "statue": "",
+    "library": "",
+    "book": ""
+  }
 }

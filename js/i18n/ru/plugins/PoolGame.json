@@ -5,5 +5,26 @@
   "cpuThinking": "",
   "power": "",
   "youWin": "",
-  "cpuWins": ""
+  "cpuWins": "",
+  "noThree": "",
+  "aimPrompt": "",
+  "powerPrompt": "",
+  "englishPrompt": "",
+  "liningUp": "",
+  "potted": "",
+  "nothingDown": "",
+  "scratch": "",
+  "eightGood": "",
+  "eightEarly": "",
+  "victory": "",
+  "defeat": "",
+  "draw": "",
+  "finalScore": "",
+  "pressAnyKey": "",
+  "hud": {
+    "title": "",
+    "power": "",
+    "english": "",
+    "onTable": ""
+  }
 }

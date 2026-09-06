@@ -42,6 +42,117 @@
   },
   "ui": {
     "oilTether": "",
-    "soulCrystal": ""
+    "soulCrystal": "",
+    "assetCount": "",
+    "category": "",
+    "volatility": "",
+    "float": "",
+    "ownership": ""
+  },
+  "assets": {
+    "oil": {
+      "name": "",
+      "description": ""
+    },
+    "souls": {
+      "name": "",
+      "description": ""
+    }
+  },
+  "sectors": {
+    "commodities": "",
+    "arcane": ""
+  },
+  "news": {
+    "justNow": "",
+    "minutesAgo": "",
+    "moveNote": ""
+  },
+  "errors": {
+    "noFloat": ""
+  },
+  "headlines": {
+    "oil": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "souls": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "company": {
+      "limecorp": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "lemoncorp": [
+        "",
+        "",
+        ""
+      ],
+      "petrodyne": [
+        "",
+        "",
+        ""
+      ],
+      "soulforge": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "sector": {
+      "consumertech": [
+        "",
+        "",
+        ""
+      ],
+      "energy": [
+        "",
+        "",
+        ""
+      ],
+      "occult": [
+        "",
+        "",
+        ""
+      ],
+      "telecom": [
+        "",
+        "",
+        ""
+      ],
+      "industrial": [
+        "",
+        "",
+        ""
+      ],
+      "agriculture": [
+        "",
+        "",
+        ""
+      ],
+      "finance": [
+        "",
+        "",
+        ""
+      ],
+      "transport": [
+        "",
+        "",
+        ""
+      ],
+      "misc": [
+        "",
+        "",
+        ""
+      ]
+    }
   }
 }

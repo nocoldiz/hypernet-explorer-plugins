@@ -78,5 +78,102 @@
   },
   "forgeBlurb": "",
   "kpMultiplier3x": "",
-  "kpMultiplier15x": ""
+  "kpMultiplier15x": "",
+  "teachPupil": "",
+  "foreignSchool": "",
+  "magicSystem": {
+    "tabLabel": "",
+    "title": "",
+    "hint": "",
+    "empty": "",
+    "classesHeading": "",
+    "noClasses": "",
+    "spellsHeading": "",
+    "noSpells": "",
+    "knownFraction": "",
+    "yourSystem": "",
+    "systems": {
+      "Arcane": {
+        "name": "",
+        "desc": ""
+      },
+      "Sacred": {
+        "name": "",
+        "desc": ""
+      },
+      "Sympathetic": {
+        "name": "",
+        "desc": ""
+      },
+      "Dimensional": {
+        "name": "",
+        "desc": ""
+      },
+      "Psionics": {
+        "name": "",
+        "desc": ""
+      },
+      "Technomagic": {
+        "name": "",
+        "desc": ""
+      },
+      "Pataphysic": {
+        "name": "",
+        "desc": ""
+      },
+      "Natural": {
+        "name": "",
+        "desc": ""
+      },
+      "Thermodynamics": {
+        "name": "",
+        "desc": ""
+      },
+      "Ritual": {
+        "name": "",
+        "desc": ""
+      }
+    }
+  },
+  "graph": {
+    "legendLearned": "",
+    "legendOpen": "",
+    "legendLocked": "",
+    "locked": "",
+    "lockedBy": "",
+    "lockedByCount": "",
+    "lockedHint": "",
+    "lockedBySchool": "",
+    "lockedToast": ""
+  },
+  "atlas": {
+    "progress": "",
+    "hint": "",
+    "kp": "",
+    "schoolOf": "",
+    "held": ""
+  },
+  "tag": {
+    "esoteric": "",
+    "forbidden": ""
+  },
+  "carry": {
+    "take": "",
+    "drop": "",
+    "locked": "",
+    "full": "",
+    "takenToast": "",
+    "droppedToast": "",
+    "fullToast": "",
+    "lockedToast": ""
+  },
+  "fusion": {
+    "rename": "",
+    "delete": "",
+    "confirm": "",
+    "confirmDelete": "",
+    "deleted": ""
+  },
+  "fusionCritical": "",
+  "fusionFailed": ""
 }

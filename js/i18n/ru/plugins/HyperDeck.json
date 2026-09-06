@@ -1,0 +1,219 @@
+{
+  "case": {
+    "slab": "",
+    "wedge": "",
+    "book": "",
+    "brick": "",
+    "palmtop": "",
+    "dualhinge": ""
+  },
+  "kind": {
+    "cpu": "",
+    "ram": "",
+    "storage": "",
+    "gpu": "",
+    "display": "",
+    "battery": "",
+    "modem": "",
+    "cooling": "",
+    "sound": "",
+    "sensor": ""
+  },
+  "specs": {
+    "heading": "",
+    "processor": "",
+    "memory": "",
+    "storage": "",
+    "graphics": "",
+    "battery": "",
+    "draw": "",
+    "slots": "",
+    "caseLabel": "",
+    "endurance": ""
+  },
+  "unit": {
+    "mhz": "",
+    "mb": "",
+    "gb": "",
+    "mah": "",
+    "watt": "",
+    "cells": "",
+    "grid": ""
+  },
+  "value": {
+    "none": "",
+    "infinite": "",
+    "integrated": "",
+    "index": "",
+    "passive": "",
+    "cooled": "",
+    "hours": "",
+    "beeper": ""
+  },
+  "required": {
+    "heading": ""
+  },
+  "rail": {
+    "heading": "",
+    "empty": "",
+    "count": ""
+  },
+  "hint": {
+    "idle": "",
+    "edit": ""
+  },
+  "boot": {
+    "banner": "",
+    "copyright": "",
+    "firmware": "",
+    "processor": "",
+    "memory": "",
+    "memoryInfinite": "",
+    "quantum": "",
+    "storage": "",
+    "cell": "",
+    "detectMaster": "",
+    "detectBioslave": "",
+    "detectNeural": "",
+    "detectMana": "",
+    "detectUplink": "",
+    "detectNoUplink": "",
+    "loadingFiles": "",
+    "driverKernel": "",
+    "driverMagic": "",
+    "driverLink": "",
+    "driverLine": "",
+    "protocols": "",
+    "manaFlow": "",
+    "ethereal": "",
+    "loading": "",
+    "ready": "",
+    "quantumShared": ""
+  },
+  "post": {
+    "failHeading": "",
+    "failLine": "",
+    "failFooter": "",
+    "overdrawHeading": "",
+    "overdrawLine": ""
+  },
+  "tool": {
+    "auto": "",
+    "case": "",
+    "finish": "",
+    "bios": "",
+    "face": "",
+    "clear": "",
+    "chip": "",
+    "boot": ""
+  },
+  "face": {
+    "keyboard": "",
+    "handheld": "",
+    "phone": ""
+  },
+  "caseWarning": "",
+  "fault": {
+    "missing": "",
+    "power": "",
+    "heat": "",
+    "uplink": "",
+    "memory": "",
+    "integrated": ""
+  },
+  "chip": {
+    "heading": "",
+    "hint": "",
+    "tile": {
+      "wire": "",
+      "source": "",
+      "torch": "",
+      "repeater": "",
+      "gate": "",
+      "bridge": "",
+      "in": "",
+      "out": "",
+      "clock": "",
+      "lamp": "",
+      "chip": ""
+    },
+    "gate": {
+      "and": "",
+      "or": "",
+      "xor": "",
+      "nand": "",
+      "nor": "",
+      "xnor": "",
+      "not": ""
+    },
+    "dir": {
+      "0": "",
+      "1": "",
+      "2": "",
+      "3": ""
+    },
+    "delay": "",
+    "period": "",
+    "pin": "",
+    "facing": "",
+    "variant": "",
+    "rotate": "",
+    "run": "",
+    "pause": "",
+    "step": "",
+    "speed": "",
+    "wipe": "",
+    "fabricate": "",
+    "done": "",
+    "gates": "",
+    "tiles": "",
+    "rating": "",
+    "cost": "",
+    "pins": "",
+    "scrap": "",
+    "dieName": "",
+    "dieDesc": "",
+    "made": "",
+    "needScrap": "",
+    "fail": {
+      "noGates": "",
+      "noSlot": "",
+      "noLab": ""
+    },
+    "gateGroup": "",
+    "preset": {
+      "inverter": "",
+      "latch": "",
+      "clock": "",
+      "halfadder": "",
+      "toggle": "",
+      "counter": "",
+      "cpu8066": "",
+      "fulladder": "",
+      "adder4": ""
+    },
+    "presetGroup": "",
+    "stamped": "",
+    "rom": {
+      "counter": "",
+      "fib": "",
+      "strcpy": "",
+      "muldiv": ""
+    },
+    "bus": "",
+    "instr": "",
+    "presetHeading": "",
+    "presetHint": "",
+    "placing": ""
+  },
+  "bios": {
+    "heading": "",
+    "tabMain": "",
+    "tabHealth": "",
+    "noFaults": "",
+    "willBoot": "",
+    "willNotBoot": "",
+    "boot": "",
+    "exit": ""
+  }
+}

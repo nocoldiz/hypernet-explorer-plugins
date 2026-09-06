@@ -13,5 +13,19 @@
   "stake": "",
   "topPrize": "",
   "serial": "",
-  "noRenderer": ""
+  "noRenderer": "",
+  "select": {
+    "title": "",
+    "wallet": "",
+    "terms": "",
+    "back": "",
+    "backDesc": "",
+    "needMoney": "",
+    "desc": {
+      "esoteric": "",
+      "corporate": "",
+      "vacation": "",
+      "hypercapitalist": ""
+    }
+  }
 }

@@ -69,5 +69,9 @@
   "ui": {
     "selectWeaponType": "",
     "weaponTag": ""
-  }
+  },
+  "bindNotice": "",
+  "appearance": "",
+  "lookCount": "",
+  "elementLabel": ""
 }

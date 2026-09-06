@@ -1,16 +1,18 @@
 {
   "trackNone": "Нет",
-  "trackRandom": "Случайно",
-  "trackMap": "",
-  "battleMusic": "",
-  "noMusic": "",
+  "trackRandom": "Случайный трек",
+  "trackBiome": "Биом",
+  "trackMap": "Продолжить музыку карты",
+  "battleMusic": "Музыка боя",
+  "noMusic": "Во время боёв музыка не звучит.",
   "randomEachBattle": "В начале каждого боя выбирается другой трек.",
-  "continueMap": "",
-  "playingAsBattle": "",
-  "composer": "",
-  "currentSelection": "",
-  "hint": "",
+  "biomeEachPlace": "У каждого биома своя тема, поэтому музыка боя соответствует месту сражения.",
+  "continueMap": "Продолжать текущую музыку карты (BGM).",
+  "playingAsBattle": "Воспроизводится как боевая музыка.",
+  "composer": "Композитор",
+  "currentSelection": "✓ Текущий выбор",
+  "hint": "Нажмите OK, чтобы выбрать музыку боя",
   "ui": {
-    "pressOkHint": ""
+    "pressOkHint": "Нажмите OK, чтобы установить как музыку боя"
   }
 }

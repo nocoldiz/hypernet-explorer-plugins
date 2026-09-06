@@ -1,22 +1,22 @@
 {
   "genre": {
-    "Auto": "",
-    "Battle": "",
+    "Auto": "Авто",
+    "Battle": "Бой",
     "Dungeon": "Подземелье",
-    "Exploration": "",
-    "Village": "",
-    "City": "",
-    "Cave": "",
-    "Desert": "",
+    "Exploration": "Исследование",
+    "Village": "Деревня",
+    "City": "Город",
+    "Cave": "Пещера",
+    "Desert": "Пустыня",
     "Ice": "Лёд",
-    "Digital": "",
-    "Eldritch": "",
-    "Industrial": "",
-    "Ethereal": ""
+    "Digital": "Цифровая",
+    "Eldritch": "Потусторонняя",
+    "Industrial": "Индустриальная",
+    "Ethereal": "Эфирная"
   },
-  "play": "",
-  "pause": "",
-  "stop": "",
-  "procSynth": "",
-  "playing": ""
+  "play": "▶ ВОСПРОИЗВЕСТИ",
+  "pause": "▮▮ ПАУЗА",
+  "stop": "■ СТОП",
+  "procSynth": "ПРОЦЕДУРНЫЙ СИНТЕЗ",
+  "playing": "Воспроизводится"
 }

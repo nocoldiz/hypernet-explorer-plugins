@@ -79,6 +79,14 @@
     "noOutstandingLoan": "У вас нет непогашенных займов!",
     "transactionDone": "Вы {action} €{amount}.",
     "navHint": "Q/E: смена вкладок | Esc: закрыть банк",
-    "ratePerDays": "{rate}% / {days} дн."
+    "ratePerDays": "{rate}% / {days} дн.",
+    "daysCount": "",
+    "overdue": "",
+    "adjustKeys": "",
+    "actionDeposited": "",
+    "actionWithdrew": "",
+    "actionBorrowed": "",
+    "actionRepaid": "",
+    "noOneLeft": ""
   }
 }
