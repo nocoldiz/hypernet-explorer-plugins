@@ -70,9 +70,9 @@
                     <div style="background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%); padding:11px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0">
                         <div>
                             <div style="color:var(--xp-gold); font-weight:bold; font-size:17px; letter-spacing:2px">${T('TokenExchange.banner')}</div>
-                            <div style="color:#cfe6ff; font-size:13px; margin-top:2px">${T('TokenExchange.tagline')}</div>
+                            <div style="color:var(--xp-sky-4); font-size:13px; margin-top:2px">${T('TokenExchange.tagline')}</div>
                         </div>
-                        <div style="margin-left:auto; text-align:right; color:#cfe6ff; font-size:13px; line-height:1.5">
+                        <div style="margin-left:auto; text-align:right; color:var(--xp-sky-4); font-size:13px; line-height:1.5">
                             ${T('TokenExchange.rate', { price: TOKEN_PRICE_EURO.toFixed(2) })}<br>${T('TokenExchange.atPar')}
                         </div>
                     </div>

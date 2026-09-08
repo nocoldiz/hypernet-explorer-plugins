@@ -11,6 +11,7 @@
     "preferences": "Preferences",
     "mods": "Mods",
     "music": "Music",
+    "musicRandom": "Random",
     "exit": "Exit",
     "continue": "Continue",
     "quickContinue": "Continue"
@@ -138,7 +139,7 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.6.7a"
+    "text": "0.6.8a"
   },
   "language": {
     "label": "✦ LANG"

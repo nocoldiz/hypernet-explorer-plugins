@@ -877,17 +877,27 @@
     return rightEdge - cmdWidth + xOffset;
   };
 
-  // In split-screen, place the command menu on the active player's side:
-  // Player 1 on the left, Player 2 on the right (the regular position).
+  // Mirror of the right-edge placement, the same margin in from the left.
+  Scene_Battle.prototype._bseCommandLeftX = function () {
+    const leftEdge = -Math.floor((Graphics.width - Graphics.boxWidth) / 2);
+    return leftEdge + 30;
+  };
+
+  // Which side the commands stand on. The battle log takes a side of its own
+  // (Options > Battle Log Position), so when the player sends the log to the
+  // right the command list moves over to the left and the two never share an
+  // edge. In split-screen the active player's side wins: Player 1 on the left,
+  // Player 2 on the right.
   Scene_Battle.prototype._bseCommandX = function (cmdWidth) {
     const rightX = this._bseCommandRightX(cmdWidth);
     const split  = window.$gameSplitScreen && window.$gameSplitScreen.active;
     const actor  = BattleManager.actor();
-    const onLeft = split && actor && actor.multiplayerPlayerId && actor.multiplayerPlayerId() === 1;
-    if (!onLeft) return rightX;
-    // Pin Player 1's menu near the left edge, mirroring the right margin.
-    const xOffset = -30;
-    return -xOffset;
+    if (split) {
+      const onLeft = actor && actor.multiplayerPlayerId && actor.multiplayerPlayerId() === 1;
+      return onLeft ? this._bseCommandLeftX() : rightX;
+    }
+    const logOnRight = ConfigManager && ConfigManager.battleLogPosition === 1;
+    return logOnRight ? this._bseCommandLeftX() : rightX;
   };
 
   // The bottom line the command list stands on. It is the bottom edge of the

@@ -486,7 +486,11 @@
         this._lastMouseY = e.clientY;
       });
 
-      window.addEventListener('mousemove', (e) => {
+      // Kept as fields so destroy() can take them off the window again: these
+      // are global handlers, and an anonymous one would outlive the scene and
+      // go on reading the cursor for the rest of the session, once more for
+      // every time the graph had ever been opened.
+      this._onMouseMove = (e) => {
         if (!this._isDragging) {
           this.checkNodeHover(e.clientX, e.clientY);
           return;
@@ -498,9 +502,11 @@
         this._rotX = Math.max(-1.5, Math.min(1.5, this._rotX));
         this._lastMouseX = e.clientX;
         this._lastMouseY = e.clientY;
-      });
+      };
+      window.addEventListener('mousemove', this._onMouseMove);
 
-      window.addEventListener('mouseup', () => this._isDragging = false);
+      this._onMouseUp = () => this._isDragging = false;
+      window.addEventListener('mouseup', this._onMouseUp);
 
       this._canvas.addEventListener('wheel', (e) => {
         e.preventDefault();
@@ -817,6 +823,9 @@
     destroy() {
       if (window.CCNav) window.CCNav.detach(this);
       if (this._onResize) window.removeEventListener('resize', this._onResize);
+      if (this._onMouseMove) window.removeEventListener('mousemove', this._onMouseMove);
+      if (this._onMouseUp) window.removeEventListener('mouseup', this._onMouseUp);
+      this._onResize = this._onMouseMove = this._onMouseUp = null;
       if (this._overlay && this._overlay.parentNode) {
         this._overlay.parentNode.removeChild(this._overlay);
       }

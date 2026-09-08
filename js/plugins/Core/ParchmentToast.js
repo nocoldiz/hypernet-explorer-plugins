@@ -173,8 +173,12 @@
     }
     syncPosition();
     const now = Date.now();
+    // A transient toast raised on the map does not follow the party into a
+    // fight: once a battle is running it comes down at once, so it never sits
+    // over the enemy bars. A standing notification is left alone.
+    const fighting = typeof $gameParty !== "undefined" && !!$gameParty && $gameParty.inBattle();
     for (const [key, toast] of _live) {
-      if (!toast.fading && now >= toast.hideAt) {
+      if (!toast.fading && (now >= toast.hideAt || (fighting && !toast.persist))) {
         toast.fading = true;
         toast.el.style.opacity = "0";
         toast.fadeTimer = setTimeout(() => {

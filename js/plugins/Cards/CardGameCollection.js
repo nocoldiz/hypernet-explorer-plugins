@@ -981,9 +981,9 @@
           <div style="background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%); padding:10px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0">
             <div>
               <div style="color:var(--xp-gold); font-weight:bold; font-size:17px; letter-spacing:2px">${escapeHtml(T("CardGame.trader.banner"))}</div>
-              <div style="color:#cfe6ff; font-size:13px; margin-top:2px">${escapeHtml(T("CardGame.trader.tagline"))}</div>
+              <div style="color:var(--xp-sky-4); font-size:13px; margin-top:2px">${escapeHtml(T("CardGame.trader.tagline"))}</div>
             </div>
-            <div style="margin-left:auto; text-align:right; color:#cfe6ff; font-size:13px; line-height:1.5">
+            <div style="margin-left:auto; text-align:right; color:var(--xp-sky-4); font-size:13px; line-height:1.5">
               <div>${escapeHtml(T("CardGame.trader.wallet"))}</div>
               <div id="ct-wallet" style="color:var(--xp-gold); font-weight:bold; font-size:16px">&nbsp;</div>
             </div>

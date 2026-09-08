@@ -12,7 +12,7 @@
   "materialsRequired": "Matériaux requis",
   "requires": "Nécessite",
   "permanentBuffs": "Bonus permanents de l'équipe",
-  "yieldLabel": "Rendement",
+  "rewardLabel": "Récompense",
   "exp": "EXP",
   "gold": "Or",
   "complete": "Terminer",

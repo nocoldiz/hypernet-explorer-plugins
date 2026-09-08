@@ -436,15 +436,13 @@
             }
 
             // Reward + payout
-            // The yield is read at a glance, so it is two lines and no more:
-            // one for the currencies, one for everything the node hands over.
+            // The whole reward is read at a glance, so it is ONE line: the two
+            // currencies and every good the node hands over, side by side.
             const rw = PTT.nodeRewards(node);
-            let rewardHTML = `<div class="tt-section">${T('TechTree.yieldLabel')}</div>` +
-                `<div class="tt-inline-line">` +
-                `<span class="tt-inline-chip"><span class="tt-mat-name">${T('TechTree.exp')}</span>` +
+            let payout = `<span class="tt-inline-chip"><span class="tt-mat-name">${T('TechTree.exp')}</span>` +
                 `<span class="tt-mat-count">${rw.exp}</span></span>` +
                 `<span class="tt-inline-chip"><span class="tt-mat-name">${T('TechTree.gold')}</span>` +
-                `<span class="tt-mat-count">€${(rw.gold / 100).toFixed(2)}</span></span></div>`;
+                `<span class="tt-mat-count">€${(rw.gold / 100).toFixed(2)}</span></span>`;
             let goods = '';
             if (state !== 'done') {
                 goods += PTT.materialPayout(node, tree.id).map(m => {
@@ -463,7 +461,8 @@
                         `<span class="tt-mat-count">x${node.reward.qty || 1}</span></span>`;
                 }
             }
-            if (goods) rewardHTML += `<div class="tt-inline-line">${goods}</div>`;
+            const rewardHTML = `<div class="tt-section">${T('TechTree.rewardLabel')}</div>` +
+                `<div class="tt-inline-line tt-inline-line--one">${payout}${goods}</div>`;
 
             // Action button
             let btn = '';

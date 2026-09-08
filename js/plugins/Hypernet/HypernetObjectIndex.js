@@ -345,15 +345,24 @@
                 search.addEventListener('keydown', (e) => {
                     if (e.key !== 'Escape') e.stopPropagation();
                 });
+                // Rebuilding the list is the expensive half of the app, so it
+                // waits for the player to stop typing rather than running once
+                // per character.
+                const relist = window.MenuSearchBar && window.MenuSearchBar.debounce
+                    ? window.MenuSearchBar.debounce(() => this.renderList(), 120)
+                    : () => this.renderList();
+                this._relist = relist;
                 search.addEventListener('input', () => {
                     this.filter = String(search.value || '').toLowerCase();
-                    this.renderList();
+                    relist();
                 });
             }
 
             // The window survives close/reopen as a fresh node, so drop our
             // reference and any preview state when it goes away.
             win.addEventListener('hypernet-closed', () => {
+                if (this._relist && this._relist.cancel) this._relist.cancel();
+                this._relist = null;
                 this.win = null;
                 this.reseed = 0;
                 this.rerolls = 0;
@@ -377,22 +386,62 @@
             this.selectedId = id;
             this.reseed = 0;      // a new object starts from its canonical text
             this.rerolls = 0;
-            this.renderList();
+            this.paintSelection();
             this.render();
         },
 
         // --- Catalogue list -------------------------------------------------
 
+        // The highlight is two rows changing colour, not a reason to rebuild the
+        // list: moving the selection used to re-create every row on file.
+        paintSelection: function() {
+            if (!this.alive()) return;
+            const list = this.win.querySelector('#oi-list');
+            if (!list) return;
+            const prev = list.querySelector('.oi-row--on');
+            if (prev) {
+                prev.classList.remove('oi-row--on');
+                prev.style.background = '';
+                prev.style.color = '';
+                prev.style.borderLeftColor = 'transparent';
+            }
+            const row = list.querySelector('#oi-item-' + this.selectedId);
+            if (!row) return;
+            row.classList.add('oi-row--on');
+            row.style.background = 'var(--xp-blue-tab)';
+            row.style.color = 'var(--xp-white)';
+            row.style.borderLeftColor = '#1d3f7a';
+        },
+
         renderList: function() {
             if (!this.alive()) return;
             const list = this.win.querySelector('#oi-list');
             if (!list) return;
-            list.innerHTML = '';
+
+            // One listener for the whole list rather than one per row: the
+            // catalogue runs to the better part of two thousand objects, and
+            // that many closures were built again on every keystroke.
+            if (!list._oiDelegated) {
+                list._oiDelegated = true;
+                list.addEventListener('click', (e) => {
+                    const row = e.target && e.target.closest
+                        ? e.target.closest('[data-oi-id]') : null;
+                    if (!row) return;
+                    e.stopPropagation();
+                    this.select(Number(row.dataset.oiId));
+                });
+            }
 
             const cat = catalogue();
             const filter = this.filter;
             let shown = 0;
 
+            // One flat run of lines - group headings and rows alike - so the
+            // windowed renderer can hand out whichever slice the scroller is
+            // actually over. Nothing else in the app knows the list is not
+            // whole: rows carry their object id, so a click, the focus ring and
+            // the highlight all still address an object rather than a position.
+            const lines = [];
             cat.groups.forEach(group => {
                 const matches = group.items.filter(item =>
                     !filter ||
@@ -400,43 +449,50 @@
                     categoryOf(item).toLowerCase().indexOf(filter) !== -1
                 );
                 if (!matches.length) return;
-
-                const head = document.createElement('div');
-                head.style.cssText = S.groupHead;
-                head.textContent = group.name + ' (' + matches.length + ')';
-                list.appendChild(head);
-
+                lines.push({ head: group.name + ' (' + matches.length + ')' });
                 matches.forEach(item => {
                     shown++;
-                    const row = document.createElement('div');
-                    row.className = 'focusable';
-                    row.tabIndex = 0;
-                    // Stable id so the OS focus ring re-acquires the row after
-                    // this list is rebuilt by a search keystroke.
-                    row.id = 'oi-item-' + item.id;
-                    row.style.cssText = S.row;
-                    if (item.id === this.selectedId) {
-                        row.style.background = '#316ac5';
-                        row.style.color = '#fff';
-                        row.style.borderLeftColor = '#1d3f7a';
-                    }
-                    row.innerHTML =
-                        '<span style="flex-shrink:0">' + iconHTML(item.iconIndex, 16) + '</span>' +
-                        '<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' +
-                        escapeHtml(nameOf(item)) + '</span>';
-                    row.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        this.select(item.id);
-                    });
-                    list.appendChild(row);
+                    lines.push({ item });
                 });
             });
+            this._lines = lines;
 
-            if (!shown) {
-                const none = document.createElement('div');
-                none.style.cssText = S.empty;
-                none.textContent = T('ObjectIndex.noMatch');
-                list.appendChild(none);
+            const rowHTML = (idx) => {
+                const line = lines[idx];
+                if (!line) return '';
+                if (line.head) {
+                    return '<div style="' + S.groupHead + '">'
+                        + escapeHtml(line.head) + '</div>';
+                }
+                const item = line.item;
+                const on = item.id === this.selectedId;
+                // Stable id so the OS focus ring re-acquires the row after the
+                // list is rebuilt by a search keystroke or a window swap.
+                return '<div class="focusable' + (on ? ' oi-row--on' : '') + '"'
+                    + ' tabindex="0" id="oi-item-' + item.id + '"'
+                    + ' data-oi-id="' + item.id + '"'
+                    + ' style="' + S.row + (on
+                        ? 'background:var(--xp-blue-tab); color:var(--xp-white); border-left-color:#1d3f7a;' : '')
+                    + '">'
+                    + '<span style="flex-shrink:0">' + iconHTML(item.iconIndex, 16) + '</span>'
+                    + '<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap">'
+                    + escapeHtml(nameOf(item)) + '</span>'
+                    + '</div>';
+            };
+
+            if (window.MenuVirtualList) {
+                window.MenuVirtualList.render(list, {
+                    key: 'oi|' + filter,
+                    count: lines.length,
+                    renderItem: rowHTML,
+                    emptyHTML: '<div style="' + S.empty + '">'
+                        + escapeHtml(T('ObjectIndex.noMatch')) + '</div>'
+                });
+            } else {
+                let html = '';
+                for (let i = 0; i < lines.length; i++) html += rowHTML(i);
+                list.innerHTML = html || '<div style="' + S.empty + '">'
+                    + escapeHtml(T('ObjectIndex.noMatch')) + '</div>';
             }
 
             const status = this.win.querySelector('#oi-status');

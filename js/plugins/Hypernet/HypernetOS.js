@@ -1784,9 +1784,16 @@
             if (seen.has(el)) return;
             seen.add(el);
             if (el.disabled) return;
+            // The cheap rejects run first. A rect is the expensive read here -
+            // it allocates and forces the browser to settle the geometry - and
+            // an app showing a long list can put hundreds of candidates through
+            // this on every press of an arrow key. offsetWidth/offsetHeight
+            // answer "is this collapsed" without one, and offsetParent answers
+            // "is this displayed" without one either.
+            if (!el.offsetParent && el.style.position !== 'fixed') return;
+            if (el.offsetWidth <= 0 && el.offsetHeight <= 0) return;
             const r = el.getBoundingClientRect();
             if (r.width <= 0 || r.height <= 0) return;          // hidden / collapsed
-            if (!el.offsetParent && el.style.position !== 'fixed') return;
             // Skip elements scrolled fully off-screen.
             if (r.bottom < 0 || r.top > window.innerHeight ||
                 r.right < 0 || r.left > window.innerWidth) return;
@@ -5549,7 +5556,7 @@
                 ${pane('languages', `
                     <div class="xp-group"><div class="xp-group-title">${T_('inputLangs')}</div>
                         <div class="xp-note">${T_('inputLangsText')}</div>
-                        <div class="xp-list">${T.list(XK('intl.inputLangs')).map((l, i) => `<div class="xp-regedit-row"><span>${esc(l)}</span><span>${i === 0 ? T_('defaultInput') : ''}</span></div>`).join('')}</div>
+                        <div class="xp-list">${T.list(XK('intl.inputLangsList')).map((l, i) => `<div class="xp-regedit-row"><span>${esc(l)}</span><span>${i === 0 ? T_('defaultInput') : ''}</span></div>`).join('')}</div>
                         <div class="xp-row-right">${btn('intl-details', T_('details'))}</div>
                     </div>
                     <div class="xp-group"><div class="xp-group-title">${T_('supplemental')}</div>
@@ -5562,7 +5569,7 @@
                         <select class="xp-select" id="intl-ansi">${codes.map((c, i) => `<option value="${c}" ${c === XP.reg('nonUnicodeLang', chosen) ? 'selected' : ''}>${esc(locales[i] || c)}</option>`).join('')}</select>
                     </div>
                     <div class="xp-group"><div class="xp-group-title">${T_('codePages')}</div>
-                        <div class="xp-list">${T.list(XK('intl.codePages')).map(c => `<label class="xp-check-row"><input type="checkbox" checked disabled> ${esc(c)}</label>`).join('')}</div>
+                        <div class="xp-list">${T.list(XK('intl.codePagesList')).map(c => `<label class="xp-check-row"><input type="checkbox" checked disabled> ${esc(c)}</label>`).join('')}</div>
                     </div>`)}
                 <div class="xp-row-right">${btn('intl-ok', T('HypernetOS.xp.dialog.ok'), 'default')}${btn('intl-cancel', T('HypernetOS.xp.dialog.cancel'))}${btn('intl-apply', T_('apply'))}</div>
             </div>`;
@@ -5857,7 +5864,7 @@
         const freq = n => n >= 10 ? T_('freqOften') : n >= 3 ? T_('freqSometimes') : T_('freqRarely');
         const listable = () => Object.values(window.HypernetOS._apps).filter(a => !/^sys-|^my-|^control-panel$|^app-run$|^app-recycle$/.test(a.id))
             .sort((a, b) => String(a.name).localeCompare(String(b.name)));
-        const components = T.list(XK('appwiz.components'));
+        const components = T.list(XK('appwiz.componentsList'));
         const compOff = XP.reg('componentsOff', []) || [];
         const render = (tab) => {
             const u = usage();

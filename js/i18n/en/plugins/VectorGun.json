@@ -7,7 +7,7 @@
     "modes": "Operating modes",
     "spell": "Bound spell",
     "element": "Element",
-    "form": "Weapon form"
+    "form": "Form and element"
   },
   "slots": "{used} of {max} modes running",
   "state": {
@@ -288,5 +288,9 @@
     "footer": "Frame at level {level}: +{damage}% a shot, +{atk} ATK and AGI, +{rounds} rounds",
     "label": "Growth",
     "desc": "The weapon's stats scale with Em's level."
+  },
+  "section": {
+    "forms": "Weapon forms",
+    "elements": "Elements"
   }
 }

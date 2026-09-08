@@ -160,9 +160,6 @@
     const CRAVING_WARN = 80;
     const CRAVING_CRIT = 95;
 
-    // A stat has to move by more than this before it earns a chip, so a rounding
-    // wobble on a big number never puts one up.
-    const STAT_CHIP_EPSILON = 0.05;
 
     //=========================================================================
     // Where the party is standing
@@ -329,37 +326,13 @@
     //=========================================================================
     // Stat changes (battle only)
     //=========================================================================
-    // What every buff, debuff, state and severed limb between them have made of
-    // a member's stats, as the multiplier standing on each one right now. Read
-    // against the member's own unbuffed value, so a chip means "this is what the
-    // fight has done to you", not "this is what your gear says".
-    // Monsters get no such column anywhere: theirs is called out in the battle
-    // log as it happens, which is where a change belongs rather than as a
-    // standing list under a monster it is describing.
-    const statChipsFor = (actor) => {
-        const out = [];
-        if (!actor) return out;
-        for (let id = 2; id <= 7; id++) {
-            const current = actor.param(id);
-            const base = (typeof actor.paramWithoutStatesAndBuffs === 'function'
-                ? actor.paramWithoutStatesAndBuffs(id)
-                : actor.paramBase(id)) || 1;
-            const rate = current / base;
-            if (Math.abs(rate - 1) <= STAT_CHIP_EPSILON) continue;
-            out.push({
-                key: 'stat:' + id,
-                text: T('PartyHud.statChip', {
-                    stat: TextManager.param(id),
-                    rate: Number(rate.toFixed(1))
-                }),
-                // The stat's own name reads white on the chip; only the
-                // multiplier carries the green or red of the change.
-                nameText: TextManager.param(id),
-                down: rate < 1
-            });
-        }
-        return out;
-    };
+    // Nothing stands here any more. A card used to carry one chip per changed
+    // stat, written as a multiplier ("INT 0.8x"), which said that something had
+    // happened without ever saying how much: 0.8x of a number the player cannot
+    // see is not a figure they can plan around. Every change is now reported in
+    // the battle log, in points, at the moment it lands, for the party and for
+    // the enemy alike (Core/MPP_SmoothBattleLog2.js). The card keeps its class
+    // gimmick chips, which are counts rather than rates.
 
     // The live class-gimmick chips (Wrestler pins, Boxer combo, chi, decoys,
     // souls, ...). The class logic stays in BattleSystemPassiveSkills; the HUD
@@ -915,9 +888,9 @@
             this._writeChips(card.alerts, 'alertsKey', card,
                 battle ? [] : urgentAlertsFor(actor, needs), 'phud-need');
             this._writeChips(card.stats, 'statsKey', card,
-                battle ? statChipsFor(actor).concat(classChipsFor(actor).map(c => ({
+                battle ? classChipsFor(actor).map(c => ({
                     key: 'class:' + c.label, text: c.label, color: c.color
-                }))) : [], 'phud-stat');
+                })) : [], 'phud-stat');
             this._writeChips(card.states, 'statesKey', card,
                 MAX_STATES > 0 ? stateLabelsFor(actor).map(s => ({
                     key: s.key, text: s.text, down: s.debuff

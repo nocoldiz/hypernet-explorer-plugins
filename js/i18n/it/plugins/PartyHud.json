@@ -1,27 +1,26 @@
 {
- "optionName": "HUD del gruppo",
- "fuel": "CARB.",
- "statChip": "{stat} {rate}x",
- "alert": {
-  "dead": "A terra",
-  "hp": "Ferito",
-  "hpCritical": "In fin di vita",
-  "hunger": "Affamato",
-  "hungerCritical": "Denutrito",
-  "sleep": "Stanco",
-  "sleepCritical": "Sfinito",
-  "hygiene": "Sporco",
-  "hygieneCritical": "Lurido",
-  "social": "Solo",
-  "socialCritical": "Isolato",
-  "leisure": "Annoiato",
-  "leisureCritical": "Avvilito",
-  "craving": "Astinenza da {substance}",
-  "ill": "{disease}",
-  "illUntreated": "{disease} (senza cure)"
- },
- "gear": {
-  "held": "[{list}]",
-  "separator": ", "
- }
+  "optionName": "HUD del gruppo",
+  "fuel": "CARB.",
+  "alert": {
+    "dead": "A terra",
+    "hp": "Ferito",
+    "hpCritical": "In fin di vita",
+    "hunger": "Affamato",
+    "hungerCritical": "Denutrito",
+    "sleep": "Stanco",
+    "sleepCritical": "Sfinito",
+    "hygiene": "Sporco",
+    "hygieneCritical": "Lurido",
+    "social": "Solo",
+    "socialCritical": "Isolato",
+    "leisure": "Annoiato",
+    "leisureCritical": "Avvilito",
+    "craving": "Astinenza da {substance}",
+    "ill": "{disease}",
+    "illUntreated": "{disease} (senza cure)"
+  },
+  "gear": {
+    "held": "[{list}]",
+    "separator": ", "
+  }
 }

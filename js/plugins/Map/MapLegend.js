@@ -316,7 +316,6 @@
     build: "MainMenu.cmd.build",
     help: "MainMenu.cmd.archive",
     training: "MainMenu.cmd.training",
-    sandbox: "MainMenu.cmd.sandbox",
     thinker: "MainMenu.cmd.thinker",
   };
 

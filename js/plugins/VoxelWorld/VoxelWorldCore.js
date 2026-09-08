@@ -1920,7 +1920,12 @@
                 side: THREE.DoubleSide, depthWrite: true, fog: true
             });
             this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(this.h * 0.66, this.h), this.mat);
-            this.mesh.frustumCulled = false;
+            // Every figure in the world is a card of its own, and a town square
+            // deals out a dozen and a half of them: left uncullable they were
+            // all drawn, the ones behind the camera included. The plane is
+            // centred on its own origin and only ever turns about Y, so its
+            // bounding sphere is true whichever way the card is facing and the
+            // renderer can be trusted to leave out the ones nobody can see.
             this.mesh.visible = false;      // nothing shows a blank card
             this._wantVisible = true;       // ...and nothing shows one put away
             // The card, and where the feet are on it. Both are re-worked from
@@ -1948,8 +1953,13 @@
             this.mesh.visible = !!v && this._sized;
         }
 
+        // Called for every figure on every frame, though the hour it answers to
+        // moves once a minute: writing the colour dirties the material, so it is
+        // only written when the light has actually changed.
         setDaylight(df) {
             const v = 0.42 + 0.58 * Math.max(0, Math.min(1, df));
+            if (this._df === v) return;
+            this._df = v;
             this.mat.color.setRGB(v, v, v);
         }
 

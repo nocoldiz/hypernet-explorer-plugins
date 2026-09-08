@@ -7,7 +7,7 @@
     "modes": "Modalita operative",
     "spell": "Incantesimo caricato",
     "element": "Elemento",
-    "form": "Forma"
+    "form": "Forma ed elemento"
   },
   "slots": "{used} di {max} modalita attive",
   "state": {
@@ -288,5 +288,9 @@
     "footer": "Telaio al livello {level}: +{damage}% a colpo, +{atk} ATT e AGI, +{rounds} munizioni",
     "label": "Crescita",
     "desc": "Le statistiche dell'arma scalano col livello di Em."
+  },
+  "section": {
+    "forms": "Forme dell'arma",
+    "elements": "Elementi"
   }
 }

@@ -194,17 +194,12 @@
         { id: 1, amount: 3 },   // Potion x3
         { id: 21, amount: 3 },  // Mana Tonic x3
         // The Ritual took her spells, not her library. What she walks out with
-        // is a shelf of unread grimoires (ForgottenGrimoire: each one is five
-        // offers, one kept), so the story mode starts with her magic still
-        // ahead of her rather than gone.
+        // is two unread grimoires (ForgottenGrimoire: each one is five
+        // offers, one kept) and the book she carries, so the story mode starts
+        // with her magic still ahead of her rather than gone.
         { id: 1406, amount: 1 }, // Arcanism Grimoire
         { id: 1405, amount: 1 }, // Astral Magic Grimoire
-        { id: 1407, amount: 1 }, // Meta Magic Grimoire
-        { id: 1417, amount: 1 }, // Oneiromancy Grimoire
-        { id: 1412, amount: 1 }, // Augury Grimoire
-        { id: 1415, amount: 1 }, // Illusion Grimoire
-        { id: 1413, amount: 1 }, // Chronomancy Grimoire
-        { id: 1402, amount: 1 }, // Void Magic Grimoire
+        { id: 1832, amount: 1 }, // The Book of the Law
       ],
       weapons: [{ id: 525, amount: 1 }], // Vector gun
       // A witch who buys her robes off a market stall and a shooting glove for

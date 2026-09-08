@@ -103,6 +103,7 @@
     --xp-sky: #2a8fd8;
     --xp-sky-2: #4a90d9;
     --xp-sky-3: #6fb6e8;
+    --xp-sky-4: #cfe6ff;
     --xp-green-7: #0c2f24;
     /* Sci-fi / NameInsert theme */
     --sci-cyan: #00f0ff;
@@ -1175,7 +1176,7 @@
     border-radius: 8px;
     border: 1px solid var(--shadow-primary-hover-translucent-5);
     padding: 8px 15px;
-    transition: all 0.3s ease;
+    transition: 0.3s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 .input-wrapper:focus-within {
     border-color: var(--sci-cyan-translucent-60);
@@ -1225,7 +1226,7 @@
     padding: 6px 16px;
     cursor: pointer;
     border-radius: 6px;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     outline: none;
 }
 .kbd-tab:hover {
@@ -1260,7 +1261,7 @@
     font-weight: 700;
     height: 38px;
     cursor: pointer;
-    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: 0.15s cubic-bezier(0.16, 1, 0.3, 1); transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     user-select: none;
     outline: none;
     box-shadow: 0 2px 4px var(--shadow-black-translucent-30);
@@ -1308,7 +1309,7 @@
     font-size: 1.08rem;
     letter-spacing: 2px;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1); transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     outline: none;
     text-transform: uppercase;
 }
@@ -1769,24 +1770,32 @@
     font-family: 'Tahoma', sans-serif !important;
     box-sizing: border-box;
 }
-#job-offers-content .cc-pockets-spread {
+/* The board is a book spread: two pages, a paper texture, a spine and a
+   scale-in. Inside the window chrome that reads as a second frame, so it is
+   flattened, exactly as the registry's spread is. The spread also sizes itself
+   from --ui-panel-w/h, which is the VIEWPORT rather than this window: left at
+   that it lays out wider and taller than the frame and the right page runs off
+   the edge. Both axes are put back to the window here. */
+#job-offers-content .book-spread {
     display: flex;
     flex-direction: row;
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
     border: none;
     box-shadow: none;
     background: var(--xp-bg);
+    background-image: none;
     padding: 8px;
     gap: 8px;
     animation: none;
     outline: none;
     position: relative;
     box-sizing: border-box;
+    font-size: 1rem;
 }
-#job-offers-content .cc-pockets-spread::before,
-#job-offers-content .cc-pockets-spread::after,
-#job-offers-content .cc-pockets-spread > div[style*="linear-gradient"] {
+#job-offers-content .book-spread::before,
+#job-offers-content .book-spread::after,
+#job-offers-content .book-spread > div[style*="linear-gradient"] {
     display: none !important;
 }
 /* The jobs scene tags its DOM root id="menu-container", which globally means
@@ -1807,23 +1816,42 @@
     z-index: auto !important;
     overflow: hidden !important;
 }
-#job-offers-content .cc-page {
+/* The panel inside a #menu-container is zoomed to fit the VIEWPORT; in a window
+   it has to be the window instead. */
+#job-offers-content #menu-container > * {
+    zoom: 1 !important;
+}
+#job-offers-content .left-page,
+#job-offers-content .right-page {
     background: var(--text-pure-white);
+    background-image: none;
     border: 1px solid var(--xp-border);
     padding: 10px !important;
     display: flex;
     flex-direction: column;
+    /* The parchment pages carry their own percentage widths; the flex basis
+       below is the one that decides here. */
+    width: auto !important;
+    min-width: 0;
     min-height: 0;
     height: 100%;
+    box-shadow: none;
+    animation: none;
     box-sizing: border-box;
 }
-#job-offers-content .cc-page-left {
-    width: 40% !important;
+#job-offers-content .left-page {
+    flex: 0 0 40%;
 }
-#job-offers-content .cc-page-right {
-    width: 60% !important;
+#job-offers-content .right-page {
+    flex: 1 1 60%;
 }
-#job-offers-content .cc-header-gothic {
+#job-offers-content .page-header-bar {
+    display: block;
+    margin: 0 0 8px 0;
+    padding: 0;
+    border: none;
+}
+#job-offers-content .title {
     font-size: 14px !important;
     font-weight: bold !important;
     color: var(--xp-blue-dark) !important;
@@ -1859,7 +1887,7 @@
     border-left: 3px solid var(--xp-blue) !important;
 }
 #job-offers-content .back-button,
-#job-offers-content .action-button {
+#job-offers-content .inspect-btn {
     background: var(--xp-border-light) !important;
     border: 1px solid var(--xp-border) !important;
     color: var(--text-pure-black) !important;
@@ -1875,17 +1903,22 @@
     transition: none;
 }
 #job-offers-content .back-button:hover,
-#job-offers-content .action-button:hover {
+#job-offers-content .inspect-btn:hover {
     background: var(--xp-link-hover) !important;
     border-color: var(--xp-blue) !important;
 }
-#job-offers-content .action-button {
+#job-offers-content .inspect-btn {
     background: var(--xp-blue) !important;
     color: var(--text-pure-white) !important;
     border-color: var(--xp-blue) !important;
 }
-#job-offers-content .action-button:hover {
+#job-offers-content .inspect-btn:hover {
     background: var(--xp-blue-hover) !important;
+}
+#job-offers-content .inspect-btn--secondary {
+    background: var(--xp-border-light) !important;
+    color: var(--text-pure-black) !important;
+    border-color: var(--xp-border) !important;
 }
 #job-offers-content .roster-item {
     background: var(--xp-input) !important;
@@ -2148,6 +2181,32 @@
 #news-history-content .news-subheader {
     text-align: left !important;
     letter-spacing: 0 !important;
+}
+#news-history-content .news-search-row {
+    margin-bottom: 6px;
+    gap: 6px;
+}
+#news-history-content .news-search-input {
+    font-size: 14px;
+    padding: 3px 6px;
+    color: var(--text-pure-black) !important;
+    background: var(--xp-input) !important;
+    border: 1px solid var(--xp-border) !important;
+    border-radius: 3px;
+}
+#news-history-content .news-search-input:focus {
+    border-color: var(--xp-blue) !important;
+}
+#news-history-content .news-search-clear {
+    background: var(--xp-border-light);
+    border: 1px solid var(--xp-border);
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-size: 12px;
+}
+#news-history-content .news-search-clear:hover {
+    background: var(--xp-link-hover);
+    border-color: var(--xp-blue);
 }
 #news-history-content .news-month-nav {
     font-size: 14px;

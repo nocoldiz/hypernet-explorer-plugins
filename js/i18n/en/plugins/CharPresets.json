@@ -195,7 +195,8 @@
     "35": "Support specialist whose enduring songs empower the whole party with buffs to damage, defense, and magic.",
     "12": "Tactical hexer who weakens groups with curses, strips away armor, and drains enemy spellcasters of their mana.",
     "5": "Mystic summoner who calls forth independent spirits to fight alongside the party and overwhelm enemy ranks.",
-    "3": "Dedicated healer who restores party health, removes harmful ailments, and repels dark foes with holy light."
+    "3": "Dedicated healer who restores party health, removes harmful ailments, and repels dark foes with holy light.",
+    "36": "Illusionist: a caster who fights the mind rather than the body, blinding, silencing and unravelling what the enemy believes it knows before a single blow is struck."
   },
   "storyModeSkill": {
     "778": "Calls up the familiar bound to the caster: it goes through the whole enemy line twice, clawing, and often leaves them bleeding.",
@@ -247,7 +248,10 @@
     "815": "Fouls the footing of every enemy on the field, so they reach and swing a beat later than they meant to.",
     "572": "Blessed vision that grants the entire party guaranteed critical hits.",
     "566": "A fall of light across the whole enemy line that burns as holy fire, lands before anything else in the round, and can leave them unable to see.",
-    "536": "Mends one ally with borrowed grace, closing wounds that ordinary medicine would need days to work on."
+    "536": "Mends one ally with borrowed grace, closing wounds that ordinary medicine would need days to work on.",
+    "954": "Tears an idea loose from the target's mind, draining magic points and leaving its spellcasting weaker for the rest of the fight.",
+    "1327": "Clouds the target's sight, so its physical attacks miss far more often until the blindness wears off.",
+    "1328": "Seals the target's voice, blocking every spell it would otherwise cast until the silence is lifted."
   },
   "dossierJoined": "{name} joins the party.",
   "dossierJoinedInactive": "{name} signs on, and waits with the inactive members."

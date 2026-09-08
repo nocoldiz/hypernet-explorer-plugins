@@ -22,6 +22,8 @@
     "standard": "Disciplina ordinaria"
   },
   "section": {
+    "info": "Info",
+    "incantation": "Incantesimo",
     "damage": "Danno",
     "skillEffects": "Effetti dell'abilità",
     "classifications": "Classificazioni",

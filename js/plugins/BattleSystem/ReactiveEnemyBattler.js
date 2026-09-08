@@ -1653,8 +1653,7 @@
     // the text is remembered and handed to the DOM node on the first update.
     Sprite_Damage.prototype.createMiss = function() {
         this._domMiss = true;
-        this._domText = (typeof TextManager !== 'undefined' && TextManager.basic)
-            ? String(TextManager.basic(0) || 'Miss') : 'Miss';
+        this._domText = window.T ? String(window.T('Battle.popup.miss')) : '';
     };
 
     Sprite_Damage.prototype.createDigits = function(value) {

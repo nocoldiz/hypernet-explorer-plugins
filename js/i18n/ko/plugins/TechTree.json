@@ -12,7 +12,7 @@
   "materialsRequired": "필요 재료",
   "requires": "필요 조건",
   "permanentBuffs": "영구 파티 강화",
-  "yieldLabel": "산출",
+  "rewardLabel": "보상",
   "exp": "EXP",
   "gold": "골드",
   "complete": "완료",

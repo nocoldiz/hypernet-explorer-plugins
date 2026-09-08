@@ -11,6 +11,7 @@
     "preferences": "Preferenze",
     "mods": "Mods",
     "music": "Musica",
+    "musicRandom": "Casuale",
     "exit": "Esci",
     "continue": "Continua",
     "quickContinue": "Continua"
@@ -138,7 +139,7 @@
     "curvature": "CURVATURA SPAZIALE RILEVATA"
   },
   "version": {
-    "text": "0.6.7a"
+    "text": "0.6.8a"
   },
   "language": {
     "label": "✦ LINGUA"

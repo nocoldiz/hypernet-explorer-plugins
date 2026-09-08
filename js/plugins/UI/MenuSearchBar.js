@@ -105,7 +105,16 @@
     // few menus that still keep a search field of their own (the backpack, the
     // build panel, the sandbox) wear exactly the same handle as the ones on
     // this strip.
+    // A search field is a keyboard control. On a pad there is no way to type a
+    // query into one, so the handle is not drawn: not shown, not focusable, and
+    // in no menu's focus ring, rather than sitting there as a control that
+    // cannot be used. window.PadUI answers which device is in hand.
+    function padOnly() {
+        return !!(window.PadUI && window.PadUI.active && window.PadUI.active());
+    }
+
     function toggleHTML(onclick, expanded) {
+        if (padOnly()) return '';
         const title = expanded ? T('MenuSearch.close') : T('MenuSearch.open');
         return `<div class="msb-toggle focusable${expanded ? ' open' : ''}" tabindex="0"
                     title="${escapeHtml(title)}"
@@ -202,6 +211,7 @@
             },
 
             fieldHTML() {
+                if (padOnly()) return '';
                 const open = this.isFieldOpen();
                 const handle = toggleHTML(call('toggleField', ''), open);
                 const field = open ? `
@@ -534,6 +544,7 @@
             if (String(e.key).toLowerCase() !== SEARCH_KEY) return;
             if (e.altKey || e.metaKey) return;
             if (isTyping()) return;
+            if (padOnly()) return;
             const bar = lastId ? bars.get(lastId) : null;
             // Only while a strip is actually on screen: the same key means
             // nothing on a map or in a battle.
@@ -544,9 +555,49 @@
         });
     }
 
+    // A search field fires once per character typed, and a menu that answers it
+    // by rebuilding its list pays that rebuild five times over for a five letter
+    // word. Every such field routes its handler through this instead: the work
+    // runs once, after the player stops typing. `flush` is there for a caller
+    // that has to have the answer now (a test, or a field being emptied on
+    // close), and `cancel` for a menu tearing itself down.
+    function debounce(fn, wait) {
+        const delay = wait == null ? 120 : wait;
+        let timer = null;
+        let lastArgs = null;
+        let lastThis = null;
+        const run = () => {
+            timer = null;
+            const args = lastArgs || [];
+            const self = lastThis;
+            lastArgs = null;
+            lastThis = null;
+            fn.apply(self, args);
+        };
+        const wrapped = function (...args) {
+            lastArgs = args;
+            lastThis = this;
+            if (timer !== null) clearTimeout(timer);
+            timer = setTimeout(run, delay);
+        };
+        wrapped.flush = () => {
+            if (timer === null) return;
+            clearTimeout(timer);
+            run();
+        };
+        wrapped.cancel = () => {
+            if (timer !== null) clearTimeout(timer);
+            timer = null;
+            lastArgs = null;
+            lastThis = null;
+        };
+        return wrapped;
+    }
+
     window.MenuSearchBar = {
         create,
         isTyping,
+        debounce,
         toggleHTML,
         // Pull every loose field up onto its page header, for a host that builds
         // its page in one synchronous pass and wants the shape before paint.

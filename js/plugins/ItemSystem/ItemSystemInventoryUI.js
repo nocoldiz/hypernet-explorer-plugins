@@ -912,12 +912,12 @@
 
       if (isUseable) {
         const isFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
-        actionBtnsHTML += `<div class="inspect-btn ${isFocused}" onclick="SceneManager._scene.triggerUIItemAction('use')">${T('Inventory.ui.useItem')}</div>`;
+        actionBtnsHTML += `<div class="inspect-btn ${isFocused}" data-pad="use" onclick="SceneManager._scene.triggerUIItemAction('use')">${T('Inventory.ui.useItem')}</div>`;
         this._dndActionsList.push('use'); btnIdx++;
       }
       if (isEquippable) {
         const isFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
-        actionBtnsHTML += `<div class="inspect-btn ${isFocused}" onclick="SceneManager._scene.triggerUIItemAction('equip')">${T('Inventory.ui.equip')}</div>`;
+        actionBtnsHTML += `<div class="inspect-btn ${isFocused}" data-pad="confirm" onclick="SceneManager._scene.triggerUIItemAction('equip')">${T('Inventory.ui.equip')}</div>`;
         this._dndActionsList.push('equip'); btnIdx++;
       }
 
@@ -940,13 +940,13 @@
       if (this.canFavoriteItem(selectedItem)) {
         const isFavFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
         const isFav = this.isItemFavorited(selectedItem);
-        actionBtnsHTML += `<div class="inspect-btn ${isFav ? 'active ' : ''}${isFavFocused}" title="${T('Inventory.hotbar.starHint')}" onclick="SceneManager._scene.triggerUIItemAction('favorite')">${T(isFav ? 'Inventory.ui.unfavorite' : 'Inventory.ui.favorite')}</div>`;
+        actionBtnsHTML += `<div class="inspect-btn ${isFav ? 'active ' : ''}${isFavFocused}" data-pad="favorite" title="${T('Inventory.hotbar.starHint')}" onclick="SceneManager._scene.triggerUIItemAction('favorite')">${T(isFav ? 'Inventory.ui.unfavorite' : 'Inventory.ui.favorite')}</div>`;
         this._dndActionsList.push('favorite'); btnIdx++;
       }
 
       if (!isBoundGear) {
         const isDiscardFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
-        actionBtnsHTML += `<div class="inspect-btn inspect-btn--danger ${isDiscardFocused}" onclick="SceneManager._scene.triggerUIItemAction('discard')">${T('Inventory.ui.discard')}</div>`;
+        actionBtnsHTML += `<div class="inspect-btn inspect-btn--danger ${isDiscardFocused}" data-pad="discard" onclick="SceneManager._scene.triggerUIItemAction('discard')">${T('Inventory.ui.discard')}</div>`;
         this._dndActionsList.push('discard'); btnIdx++;
       }
 
@@ -1561,6 +1561,22 @@
         for (let n = 1; n <= 9; n++) {
           if (Input.isTriggered(String(n))) { this.handleSlotAssign(n - 1); return; }
         }
+      }
+
+      // Y (Input 'menu') throws the piece under the cursor away, which is the
+      // one verb on the card a player reaches for again and again and the only
+      // one that had no button of its own. It opens the same confirmation the
+      // Discard button opens, so nothing is lost to a mis-press, and it is
+      // refused for a piece that cannot be discarded rather than buzzing at a
+      // list with nothing selected.
+      if (Input.isTriggered('menu')) {
+        const item = scene._dndSelectedItem;
+        if (item && scene._dndActionsList && scene._dndActionsList.indexOf('discard') >= 0) {
+          scene.triggerUIItemAction('discard');
+        } else {
+          SoundManager.playBuzzer();
+        }
+        return;
       }
 
       // Shift walks the sort strip: the same three tags the mouse clicks, in

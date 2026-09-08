@@ -195,7 +195,8 @@
     "35": "Specialista di supporto i cui canti potenziano l'intero gruppo con bonus a danno, difesa e magia.",
     "12": "Incantatore tattico che indebolisce i nemici con maledizioni, distrugge le armature e prosciuga il mana degli avversari.",
     "5": "Evocatore mistico che chiama spiriti indipendenti per combattere al fianco del gruppo e travolgere i nemici.",
-    "3": "Guaritrice devota che ripristina la salute del gruppo, rimuove alterazioni di stato e respinge i nemici oscuri con la luce sacra."
+    "3": "Guaritrice devota che ripristina la salute del gruppo, rimuove alterazioni di stato e respinge i nemici oscuri con la luce sacra.",
+    "36": "Illusionista: un incantatore che combatte la mente invece del corpo, acceca, zittisce e smonta cio che il nemico crede di sapere prima ancora del primo colpo."
   },
   "storyModeSkill": {
     "778": "Richiama il famiglio legato a chi lancia: attraversa due volte l'intera linea nemica ad artigliate e spesso la lascia sanguinante.",
@@ -247,7 +248,10 @@
     "815": "Guasta l'appoggio di ogni nemico sul campo, così che allunghino il braccio e colpiscano un battito più tardi del previsto.",
     "572": "Visione benedetta che garantisce colpi critici all'intero gruppo.",
     "566": "Una cascata di luce su tutta la linea nemica che brucia come fuoco sacro, cade prima di ogni altra cosa nel turno e può lasciarli ciechi.",
-    "536": "Ricuce un alleato con una grazia presa in prestito, chiudendo ferite su cui la medicina ordinaria lavorerebbe per giorni."
+    "536": "Ricuce un alleato con una grazia presa in prestito, chiudendo ferite su cui la medicina ordinaria lavorerebbe per giorni.",
+    "954": "Strappa un'idea dalla mente del bersaglio, prosciugando punti magia e indebolendone gli incantesimi per il resto dello scontro.",
+    "1327": "Offusca la vista del bersaglio: i suoi attacchi fisici mancano molto piu spesso finche la cecita non svanisce.",
+    "1328": "Sigilla la voce del bersaglio, impedendogli di lanciare qualsiasi incantesimo finche il silenzio non viene rimosso."
   },
   "dossierJoined": "{name} si unisce al gruppo.",
   "dossierJoinedInactive": "{name} si arruola e attende tra i membri inattivi."

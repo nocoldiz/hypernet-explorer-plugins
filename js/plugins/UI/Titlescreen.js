@@ -1887,9 +1887,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         scanTitleMusic().filter(t =>
             !TITLE_MUSIC_DEFAULTS.some(d => d.value === t.value)));
 
-    // Nothing is picked yet on a fresh config: the game always opens on the
-    // New World Symphony.
-    const TITLE_MUSIC_DEFAULT = TITLE_MUSIC_DEFAULTS[0].value;
+    // First on the dial is Random: the title picks a different piece of the
+    // repertoire every time it is shown, and it is what a fresh config opens on.
+    const TITLE_MUSIC_RANDOM = '__random__';   // i18n-ignore  sentinel value
+    TITLE_MUSIC.unshift({ name: null, value: TITLE_MUSIC_RANDOM });
+
+    const TITLE_MUSIC_DEFAULT = TITLE_MUSIC_RANDOM;
 
     Object.defineProperty(ConfigManager, 'titleMusicName', {
         get() {
@@ -1921,18 +1924,33 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return fallback < 0 ? 0 : fallback;
     }
 
+    function titleMusicTrackName(track) {
+        return track.value === TITLE_MUSIC_RANDOM
+            ? T('Titlescreen.menu.musicRandom') : track.name;
+    }
+
     function titleMusicLabel(overlay) {
         const track = TITLE_MUSIC[titleMusicIndex()];
         const label = T(overlay ? 'Titlescreen.menuOverlay.music' : 'Titlescreen.menu.music');
-        const name = overlay ? track.name.toUpperCase() : track.name;
+        const raw = titleMusicTrackName(track);
+        const name = overlay ? raw.toUpperCase() : raw;
         return label + ': ' + name;
+    }
+
+    // Random draws afresh on every play, so returning to the title is a new piece.
+    function titleMusicValue() {
+        const track = TITLE_MUSIC[titleMusicIndex()];
+        if (track.value !== TITLE_MUSIC_RANDOM) return track.value;
+        const pool = TITLE_MUSIC.filter(t => t.value !== TITLE_MUSIC_RANDOM);
+        if (!pool.length) return TITLE_MUSIC_DEFAULTS[0].value;
+        return pool[Math.floor(Math.random() * pool.length)].value;
     }
 
     // The title BGM is whichever of the three is currently picked, so the choice
     // is heard the moment it is made and again on every return to the title.
     Scene_Title.prototype.playTitleBgm = function () {
         AudioManager.playBgm({
-            name: TITLE_MUSIC[titleMusicIndex()].value,
+            name: titleMusicValue(),
             volume: 55, pitch: 100, pan: 0
         });
         AudioManager.stopBgs();
@@ -6302,7 +6320,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     Scene_Title.prototype.refreshMusicSwitchLabel = function () {
         if (!this._musicSwitchLabel) return;
         this._musicSwitchLabel.textContent =
-            T('Titlescreen.music.label') + TITLE_MUSIC[titleMusicIndex()].name.toUpperCase();
+            T('Titlescreen.music.label') +
+            titleMusicTrackName(TITLE_MUSIC[titleMusicIndex()]).toUpperCase();
     };
 
     Scene_Title.prototype.cycleTitleMusic = function (dir) {

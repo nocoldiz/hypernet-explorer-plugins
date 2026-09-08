@@ -64,41 +64,49 @@
     }
 
     const Base = window.Battler3D.Base;
+    // Photo sheets the painted skins draw their grain from, shared across
+    // every canine and rodent built this session.
+    const _FF8_IMG_CACHE = new Map();
+    // Painted sheets, shared across every creature of one species wearing one
+    // colour: a troop of four rats paints its coat once. Keyed the way the
+    // core's skin cache is (quantised HSL), plus the pattern and the sheet.
+    const _FF8_SHEET_CACHE = new Map();
+    const FF8_SHEET_CACHE_MAX = 256;
     const debugLog = window.Battler3D.debugLog || function () {};
 
     // variant + which models face the camera (front) vs the angled 3/4 view,
     // plus per-id HSL colour ranges and a themed texture pool.
     const B_PROFILES = {
         bear:     { variant: 'bear',     front: false, scale: 2.9, texturePool: 'fur',   bodyColor: 0x6b4a2e, accent: 0x2a1810, hue: [0.07, 0.04], sat: [0.45, 0.15], lit: [0.30, 0.10] },
-        wolf:     { variant: 'wolf',     front: false, scale: 2.5, texturePool: 'fur',   bodyColor: 0x7c7d82, accent: 0xffcc44, hue: [0.62, 0.10], sat: [0.10, 0.10], lit: [0.42, 0.14] },
+        wolf:     { pattern: 'saddle', variant: 'wolf',     front: false, scale: 2.5, texturePool: 'fur',   bodyColor: 0x7c7d82, accent: 0xffcc44, hue: [0.62, 0.10], sat: [0.10, 0.10], lit: [0.42, 0.14] },
         bigcat:   { variant: 'bigcat',   front: false, scale: 2.5, texturePool: 'fur',   bodyColor: 0xc8a24a, accent: 0x9be000, hue: [0.10, 0.05], sat: [0.50, 0.15], lit: [0.48, 0.10] },
         boar:     { variant: 'boar',     front: false, scale: 2.5, texturePool: 'fur',   bodyColor: 0x4a3b30, accent: 0x140d0a, hue: [0.07, 0.04], sat: [0.35, 0.12], lit: [0.26, 0.08] },
-        rodent:   { variant: 'rodent',   front: false, scale: 1.9, texturePool: 'fur',   bodyColor: 0x8a7256, accent: 0x1a1410, hue: [0.08, 0.06], sat: [0.28, 0.14], lit: [0.40, 0.14] },
+        rodent:   { pattern: 'saddle', variant: 'rodent',   front: false, scale: 1.9, texturePool: 'fur',   bodyColor: 0x8a7256, accent: 0x1a1410, hue: [0.08, 0.06], sat: [0.28, 0.14], lit: [0.40, 0.14] },
         // ── Rodent one-offs: each former generic `rodent` name gets a bespoke body ──
-        armoredbeaver:       { variant: 'armoredbeaver',       front: false, scale: 2.2,  texturePool: 'fur', bodyColor: 0x6b5640, accent: 0xc4c9d2, hue: [0.08, 0.04], sat: [0.30, 0.10], lit: [0.36, 0.10] },
-        wastelandbeaver:     { variant: 'wastelandbeaver',     front: false, scale: 2.1,  texturePool: 'fur', bodyColor: 0x5a4d3a, accent: 0x8a8270, hue: [0.09, 0.05], sat: [0.22, 0.10], lit: [0.34, 0.10] },
-        armoredporcupine:    { variant: 'armoredporcupine',    front: false, scale: 2.2,  texturePool: 'fur', bodyColor: 0x3a3530, accent: 0xbfc6cc, hue: [0.08, 0.04], sat: [0.10, 0.08], lit: [0.26, 0.08] },
-        spikeyporcupine:     { variant: 'spikeyporcupine',     front: false, scale: 2.0,  texturePool: 'fur', bodyColor: 0x5a4632, accent: 0x241a12, hue: [0.08, 0.05], sat: [0.32, 0.12], lit: [0.32, 0.10] },
-        caffeinatedsquirrel: { variant: 'caffeinatedsquirrel', front: false, scale: 1.9,  texturePool: 'fur', bodyColor: 0x8a5a32, accent: 0x3a2410, hue: [0.07, 0.04], sat: [0.45, 0.12], lit: [0.40, 0.10] },
-        woodsquirrel:        { variant: 'woodsquirrel',        front: false, scale: 1.85, texturePool: 'fur', bodyColor: 0x9a6336, accent: 0x3a2410, hue: [0.07, 0.04], sat: [0.45, 0.12], lit: [0.42, 0.10] },
-        fieldmouse:          { variant: 'fieldmouse',          front: false, scale: 1.6,  texturePool: 'fur', bodyColor: 0x9a8868, accent: 0xffb0a0, hue: [0.09, 0.05], sat: [0.24, 0.10], lit: [0.50, 0.12] },
-        forestrat:           { variant: 'forestrat',           front: false, scale: 1.85, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.09, 0.05], sat: [0.32, 0.12], lit: [0.36, 0.10] },
-        giantrat:            { variant: 'giantrat',            front: false, scale: 2.2,  texturePool: 'fur', bodyColor: 0x7a6a52, accent: 0x1a1410, hue: [0.08, 0.05], sat: [0.28, 0.12], lit: [0.40, 0.12] },
-        sewerrat:            { variant: 'sewerrat',            front: false, scale: 1.9,  texturePool: 'fur', bodyColor: 0x55503e, accent: 0x2a2a1a, hue: [0.12, 0.06], sat: [0.20, 0.10], lit: [0.32, 0.10] },
-        swamprat:            { variant: 'swamprat',            front: false, scale: 2.05, texturePool: 'fur', bodyColor: 0x4e5538, accent: 0x88aa44, hue: [0.22, 0.08], sat: [0.30, 0.12], lit: [0.32, 0.10] },
-        plaguerattus:        { variant: 'plaguerattus',        front: false, scale: 2.6,  texturePool: 'fur', bodyColor: 0x6a6248, accent: 0x9bd34a, hue: [0.18, 0.08], sat: [0.30, 0.12], lit: [0.38, 0.10] },
-        ratking:             { variant: 'ratking',             front: false, scale: 2.7,  texturePool: 'fur', bodyColor: 0x5a4e3a, accent: 0xb8932e, hue: [0.09, 0.05], sat: [0.30, 0.12], lit: [0.34, 0.10] },
-        frostraccoon:        { variant: 'frostraccoon',        front: false, scale: 2.0,  texturePool: 'fur', bodyColor: 0x9aa6b4, accent: 0xaaf0ff, hue: [0.56, 0.08], sat: [0.16, 0.10], lit: [0.56, 0.10] },
-        nightraccoon:        { variant: 'nightraccoon',        front: false, scale: 2.0,  texturePool: 'fur', bodyColor: 0x4a4a52, accent: 0xf0f0f0, hue: [0.62, 0.06], sat: [0.10, 0.08], lit: [0.34, 0.10] },
-        molerodent:          { variant: 'molerodent',          front: false, scale: 1.8,  texturePool: 'fur', bodyColor: 0x3a3330, accent: 0xff9a9a, hue: [0.06, 0.04], sat: [0.12, 0.08], lit: [0.24, 0.08] },
-        tunnelingmole:       { variant: 'tunnelingmole',       front: false, scale: 2.3,  texturePool: 'fur', bodyColor: 0x423a32, accent: 0xffaa99, hue: [0.07, 0.04], sat: [0.16, 0.08], lit: [0.26, 0.08] },
-        icelemming:          { variant: 'icelemming',          front: false, scale: 1.7,  texturePool: 'fur', bodyColor: 0xcfe0ec, accent: 0x66ccff, hue: [0.56, 0.06], sat: [0.20, 0.10], lit: [0.72, 0.10] },
+        armoredbeaver:       { pattern: 'patch', variant: 'armoredbeaver',       front: false, scale: 2.2,  texturePool: 'fur', bodyColor: 0x6b5640, accent: 0xc4c9d2, hue: [0.08, 0.04], sat: [0.30, 0.10], lit: [0.36, 0.10] },
+        wastelandbeaver:     { pattern: 'mottle', variant: 'wastelandbeaver',     front: false, scale: 2.1,  texturePool: 'fur', bodyColor: 0x5a4d3a, accent: 0x8a8270, hue: [0.09, 0.05], sat: [0.22, 0.10], lit: [0.34, 0.10] },
+        armoredporcupine:    { pattern: 'stripe', variant: 'armoredporcupine',    front: false, scale: 2.2,  texturePool: 'fur', bodyColor: 0x3a3530, accent: 0xbfc6cc, hue: [0.08, 0.04], sat: [0.10, 0.08], lit: [0.26, 0.08] },
+        spikeyporcupine:     { pattern: 'brindle', variant: 'spikeyporcupine',     front: false, scale: 2.0,  texturePool: 'fur', bodyColor: 0x5a4632, accent: 0x241a12, hue: [0.08, 0.05], sat: [0.32, 0.12], lit: [0.32, 0.10] },
+        caffeinatedsquirrel: { pattern: 'saddle', variant: 'caffeinatedsquirrel', front: false, scale: 1.9,  texturePool: 'fur', bodyColor: 0x8a5a32, accent: 0x3a2410, hue: [0.07, 0.04], sat: [0.45, 0.12], lit: [0.40, 0.10] },
+        woodsquirrel:        { pattern: 'saddle', variant: 'woodsquirrel',        front: false, scale: 1.85, texturePool: 'fur', bodyColor: 0x9a6336, accent: 0x3a2410, hue: [0.07, 0.04], sat: [0.45, 0.12], lit: [0.42, 0.10] },
+        fieldmouse:          { pattern: 'plain', variant: 'fieldmouse',          front: false, scale: 1.6,  texturePool: 'fur', bodyColor: 0x9a8868, accent: 0xffb0a0, hue: [0.09, 0.05], sat: [0.24, 0.10], lit: [0.50, 0.12] },
+        forestrat:           { pattern: 'saddle', variant: 'forestrat',           front: false, scale: 1.85, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.09, 0.05], sat: [0.32, 0.12], lit: [0.36, 0.10] },
+        giantrat:            { pattern: 'patch', variant: 'giantrat',            front: false, scale: 2.2,  texturePool: 'fur', bodyColor: 0x7a6a52, accent: 0x1a1410, hue: [0.08, 0.05], sat: [0.28, 0.12], lit: [0.40, 0.12] },
+        sewerrat:            { pattern: 'mottle', variant: 'sewerrat',            front: false, scale: 1.9,  texturePool: 'fur', bodyColor: 0x55503e, accent: 0x2a2a1a, hue: [0.12, 0.06], sat: [0.20, 0.10], lit: [0.32, 0.10] },
+        swamprat:            { pattern: 'brindle', variant: 'swamprat',            front: false, scale: 2.05, texturePool: 'fur', bodyColor: 0x4e5538, accent: 0x88aa44, hue: [0.22, 0.08], sat: [0.30, 0.12], lit: [0.32, 0.10] },
+        plaguerattus:        { pattern: 'spots', variant: 'plaguerattus',        front: false, scale: 2.6,  texturePool: 'fur', bodyColor: 0x6a6248, accent: 0x9bd34a, hue: [0.18, 0.08], sat: [0.30, 0.12], lit: [0.38, 0.10] },
+        ratking:             { pattern: 'patch', variant: 'ratking',             front: false, scale: 2.7,  texturePool: 'fur', bodyColor: 0x5a4e3a, accent: 0xb8932e, hue: [0.09, 0.05], sat: [0.30, 0.12], lit: [0.34, 0.10] },
+        frostraccoon:        { pattern: 'bands', variant: 'frostraccoon',        front: false, scale: 2.0,  texturePool: 'fur', bodyColor: 0x9aa6b4, accent: 0xaaf0ff, hue: [0.56, 0.08], sat: [0.16, 0.10], lit: [0.56, 0.10] },
+        nightraccoon:        { pattern: 'bands', variant: 'nightraccoon',        front: false, scale: 2.0,  texturePool: 'fur', bodyColor: 0x4a4a52, accent: 0xf0f0f0, hue: [0.62, 0.06], sat: [0.10, 0.08], lit: [0.34, 0.10] },
+        molerodent:          { pattern: 'plain', variant: 'molerodent',          front: false, scale: 1.8,  texturePool: 'fur', bodyColor: 0x3a3330, accent: 0xff9a9a, hue: [0.06, 0.04], sat: [0.12, 0.08], lit: [0.24, 0.08] },
+        tunnelingmole:       { pattern: 'mottle', variant: 'tunnelingmole',       front: false, scale: 2.3,  texturePool: 'fur', bodyColor: 0x423a32, accent: 0xffaa99, hue: [0.07, 0.04], sat: [0.16, 0.08], lit: [0.26, 0.08] },
+        icelemming:          { pattern: 'spots', variant: 'icelemming',          front: false, scale: 1.7,  texturePool: 'fur', bodyColor: 0xcfe0ec, accent: 0x66ccff, hue: [0.56, 0.06], sat: [0.20, 0.10], lit: [0.72, 0.10] },
         ungulate: { variant: 'ungulate', front: false, scale: 2.9, texturePool: 'fur',   bodyColor: 0x8a6b45, accent: 0x141414, hue: [0.08, 0.05], sat: [0.40, 0.15], lit: [0.36, 0.12] },
         ape:      { variant: 'ape',      front: true,  scale: 2.7, texturePool: 'fur',   bodyColor: 0x36302c, accent: 0xb89878, hue: [0.07, 0.05], sat: [0.18, 0.10], lit: [0.24, 0.10] },
         chromaticmanticore: { variant: 'chromaticmanticore', front: false, scale: 2.8, texturePool: 'fur', bodyColor: 0x9a3b2e, accent: 0xff4488, hue: [0.95, 0.30], sat: [0.70, 0.20], lit: [0.50, 0.10] },
-        chupacabra:  { variant: 'chupacabra',  front: false, scale: 2.3, texturePool: 'fur', bodyColor: 0x4a4640, accent: 0x88ff44, hue: [0.30, 0.10], sat: [0.20, 0.12], lit: [0.28, 0.08] },
+        chupacabra:  { pattern: 'mottle', variant: 'chupacabra',  front: false, scale: 2.3, texturePool: 'fur', bodyColor: 0x4a4640, accent: 0x88ff44, hue: [0.30, 0.10], sat: [0.20, 0.12], lit: [0.28, 0.08] },
         giantsnail:  { variant: 'giantsnail',  front: false, scale: 3.0, texturePool: 'fur', bodyColor: 0x7a8a5a, accent: 0xaad36a, hue: [0.25, 0.08], sat: [0.35, 0.12], lit: [0.42, 0.10] },
-        infernalcerberus: { variant: 'infernalcerberus', front: false, scale: 2.7, texturePool: 'fur', bodyColor: 0x201a18, accent: 0xff5510, hue: [0.04, 0.03], sat: [0.55, 0.15], lit: [0.18, 0.06] },
+        infernalcerberus: { pattern: 'brindle', variant: 'infernalcerberus', front: false, scale: 2.7, texturePool: 'fur', bodyColor: 0x201a18, accent: 0xff5510, hue: [0.04, 0.03], sat: [0.55, 0.15], lit: [0.18, 0.06] },
         junglepredator: { variant: 'junglepredator', front: false, scale: 2.6, texturePool: 'fur', bodyColor: 0x2f5a2a, accent: 0xff44aa, hue: [0.32, 0.08], sat: [0.55, 0.15], lit: [0.34, 0.10] },
         mianni:      { variant: 'mianni',      front: true,  scale: 2.4, texturePool: 'fur', bodyColor: 0xff5599, accent: 0x44ddff, hue: [0.0, 1.0], sat: [0.85, 0.10], lit: [0.55, 0.10] },
         palettephantom:  { variant: 'palettephantom',  front: false, scale: 2.4, texturePool: 'fur', bodyColor: 0x8855cc, accent: 0xff66dd, hue: [0.0, 1.0], sat: [0.70, 0.15], lit: [0.55, 0.10] },
@@ -110,51 +118,51 @@
         velocicorn:      { variant: 'velocicorn',      front: false, scale: 2.6, texturePool: 'fur', bodyColor: 0x3a4a6a, accent: 0xffee44, hue: [0.62, 0.06], sat: [0.40, 0.12], lit: [0.34, 0.10] },
         swampleviathan:  { variant: 'swampleviathan',  front: false, scale: 3.4, texturePool: 'fur', bodyColor: 0x3a4a30, accent: 0x6a8a3a, hue: [0.28, 0.06], sat: [0.40, 0.12], lit: [0.24, 0.08] },
         invertedhunger:  { variant: 'invertedhunger',  front: true,  scale: 2.6, texturePool: 'fur', bodyColor: 0x8a2a3a, accent: 0xff5566, hue: [0.97, 0.04], sat: [0.55, 0.15], lit: [0.34, 0.10] },
-        voidhowler:      { variant: 'voidhowler',      front: false, scale: 2.9, texturePool: 'fur', bodyColor: 0x16121f, accent: 0x9944ff, hue: [0.74, 0.08], sat: [0.55, 0.15], lit: [0.12, 0.06] },
+        voidhowler:      { pattern: 'patch', variant: 'voidhowler',      front: false, scale: 2.9, texturePool: 'fur', bodyColor: 0x16121f, accent: 0x9944ff, hue: [0.74, 0.08], sat: [0.55, 0.15], lit: [0.12, 0.06] },
         feastoffamine:   { variant: 'feastoffamine',   front: true,  scale: 3.0, texturePool: 'fur', bodyColor: 0x6a3a28, accent: 0xff8866, hue: [0.06, 0.04], sat: [0.35, 0.12], lit: [0.30, 0.10] },
         maternityward:   { variant: 'maternityward',   front: true,  scale: 2.8, texturePool: 'fur', bodyColor: 0xc89a8a, accent: 0xff99aa, hue: [0.02, 0.04], sat: [0.30, 0.10], lit: [0.55, 0.10] },
         starvingsabercat:{ variant: 'starvingsabercat',front: false, scale: 2.6, texturePool: 'fur', bodyColor: 0x9a8a5a, accent: 0xffd24a, hue: [0.11, 0.05], sat: [0.35, 0.12], lit: [0.40, 0.10] },
-        ashenprowler:    { variant: 'ashenprowler',    front: false, scale: 2.5, texturePool: 'fur', bodyColor: 0x6a6a66, accent: 0xff5544, hue: [0.0, 0.05], sat: [0.06, 0.06], lit: [0.40, 0.12] },
-        gauntsnapper:    { variant: 'gauntsnapper',    front: false, scale: 2.5, texturePool: 'fur', bodyColor: 0x4a463e, accent: 0x88ff66, hue: [0.10, 0.06], sat: [0.18, 0.10], lit: [0.26, 0.08] },
+        ashenprowler:    { pattern: 'mottle', variant: 'ashenprowler',    front: false, scale: 2.5, texturePool: 'fur', bodyColor: 0x6a6a66, accent: 0xff5544, hue: [0.0, 0.05], sat: [0.06, 0.06], lit: [0.40, 0.12] },
+        gauntsnapper:    { pattern: 'brindle', variant: 'gauntsnapper',    front: false, scale: 2.5, texturePool: 'fur', bodyColor: 0x4a463e, accent: 0x88ff66, hue: [0.10, 0.06], sat: [0.18, 0.10], lit: [0.26, 0.08] },
         holloweyedboar:  { variant: 'holloweyedboar',  front: false, scale: 2.5, texturePool: 'fur', bodyColor: 0x3a2e26, accent: 0x66ff88, hue: [0.07, 0.04], sat: [0.30, 0.12], lit: [0.22, 0.08] },
         ferallynx:       { variant: 'ferallynx',       front: false, scale: 2.3, texturePool: 'fur', bodyColor: 0xb09060, accent: 0xff4444, hue: [0.09, 0.05], sat: [0.32, 0.12], lit: [0.46, 0.10] },
-        diregnasher:     { variant: 'diregnasher',     front: false, scale: 2.6, texturePool: 'fur', bodyColor: 0x5a4a3e, accent: 0xffcc44, hue: [0.08, 0.05], sat: [0.20, 0.10], lit: [0.32, 0.10] },
-        gauntclawrunner: { variant: 'gauntclawrunner', front: false, scale: 2.5, texturePool: 'fur', bodyColor: 0x46566e, accent: 0x88ccff, hue: [0.60, 0.06], sat: [0.30, 0.12], lit: [0.34, 0.10] },
-        bloodmawdirewolf:{ variant: 'bloodmawdirewolf',front: false, scale: 2.8, texturePool: 'fur', bodyColor: 0x6a6258, accent: 0xcc1818, hue: [0.07, 0.05], sat: [0.14, 0.10], lit: [0.36, 0.12] },
+        diregnasher:     { pattern: 'stripe', variant: 'diregnasher',     front: false, scale: 2.6, texturePool: 'fur', bodyColor: 0x5a4a3e, accent: 0xffcc44, hue: [0.08, 0.05], sat: [0.20, 0.10], lit: [0.32, 0.10] },
+        gauntclawrunner: { pattern: 'stripe', variant: 'gauntclawrunner', front: false, scale: 2.5, texturePool: 'fur', bodyColor: 0x46566e, accent: 0x88ccff, hue: [0.60, 0.06], sat: [0.30, 0.12], lit: [0.34, 0.10] },
+        bloodmawdirewolf:{ pattern: 'saddle', variant: 'bloodmawdirewolf',front: false, scale: 2.8, texturePool: 'fur', bodyColor: 0x6a6258, accent: 0xcc1818, hue: [0.07, 0.05], sat: [0.14, 0.10], lit: [0.36, 0.12] },
         gauntlynx:       { variant: 'gauntlynx',       front: false, scale: 2.3, texturePool: 'fur', bodyColor: 0xa89058, accent: 0xffd24a, hue: [0.10, 0.05], sat: [0.30, 0.12], lit: [0.42, 0.10] },
         feralbadger:     { variant: 'feralbadger',     front: false, scale: 2.2, texturePool: 'fur', bodyColor: 0x4a463e, accent: 0xf0ece0, hue: [0.10, 0.04], sat: [0.14, 0.08], lit: [0.28, 0.08] },
-        starvinggnasher: { variant: 'starvinggnasher', front: false, scale: 2.6, texturePool: 'fur', bodyColor: 0x5a4e40, accent: 0xffaa44, hue: [0.08, 0.05], sat: [0.22, 0.10], lit: [0.30, 0.10] },
-        feralridgeback:  { variant: 'feralridgeback',  front: false, scale: 2.5, texturePool: 'fur', bodyColor: 0x4e423a, accent: 0xff6644, hue: [0.07, 0.04], sat: [0.24, 0.10], lit: [0.30, 0.10] },
+        starvinggnasher: { pattern: 'brindle', variant: 'starvinggnasher', front: false, scale: 2.6, texturePool: 'fur', bodyColor: 0x5a4e40, accent: 0xffaa44, hue: [0.08, 0.05], sat: [0.22, 0.10], lit: [0.30, 0.10] },
+        feralridgeback:  { pattern: 'saddle', variant: 'feralridgeback',  front: false, scale: 2.5, texturePool: 'fur', bodyColor: 0x4e423a, accent: 0xff6644, hue: [0.07, 0.04], sat: [0.24, 0.10], lit: [0.30, 0.10] },
         bf_packboar: { variant: 'boar', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_packripper: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_packripper: { pattern: 'brindle', variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_stormgnasher: { variant: 'boar', scale: 2.5, texturePool: 'fur', bodyColor: 0x46566e, accent: 0x88ccff, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_lonejackal: { variant: 'wolf', scale: 2.4, texturePool: 'fur', bodyColor: 0x6a6660, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_lonejackal: { pattern: 'saddle', variant: 'wolf', scale: 2.4, texturePool: 'fur', bodyColor: 0x6a6660, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_rabidlynx: { variant: 'bigcat', scale: 2.3, texturePool: 'fur', bodyColor: 0x7a6a52, accent: 0xff4444, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_threetailedlynx: { variant: 'bigcat', scale: 2.3, texturePool: 'fur', bodyColor: 0x6a5a4a, accent: 0xff8844, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_rabidbadger: { variant: 'boar', scale: 2.2, texturePool: 'fur', bodyColor: 0x7a6a52, accent: 0xff4444, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_mangyridgeback: { variant: 'boar', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a44, accent: 0x8a6a3a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_mudcakedgnasher: { variant: 'boar', scale: 2.5, texturePool: 'fur', bodyColor: 0x4a4636, accent: 0x6a7a3a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_mudcakedprowler: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x4a4636, accent: 0x6a7a3a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_mudcakedprowler: { pattern: 'mottle', variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x4a4636, accent: 0x6a7a3a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_threetailedhornbeast: { variant: 'boar', scale: 2.6, texturePool: 'fur', bodyColor: 0x6a5a4a, accent: 0xff8844, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_feralprowler: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a44, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_feralprowler: { pattern: 'stripe', variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a44, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_frosthornbeast: { variant: 'boar', scale: 2.6, texturePool: 'fur', bodyColor: 0x9ac0d8, accent: 0xaaf0ff, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_ironfangeddirewolf: { variant: 'wolf', scale: 2.7, texturePool: 'fur', bodyColor: 0x4a423a, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_mangyhowler: { variant: 'wolf', scale: 2.6, texturePool: 'fur', bodyColor: 0x6a5a44, accent: 0x8a6a3a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_ashendirewolf: { variant: 'wolf', scale: 2.7, texturePool: 'fur', bodyColor: 0x4a423a, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_ironfangedmawhound: { variant: 'wolf', scale: 2.6, texturePool: 'fur', bodyColor: 0x6a6e74, accent: 0xff4422, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_ironfangeddirewolf: { pattern: 'saddle', variant: 'wolf', scale: 2.7, texturePool: 'fur', bodyColor: 0x4a423a, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_mangyhowler: { pattern: 'mottle', variant: 'wolf', scale: 2.6, texturePool: 'fur', bodyColor: 0x6a5a44, accent: 0x8a6a3a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_ashendirewolf: { pattern: 'patch', variant: 'wolf', scale: 2.7, texturePool: 'fur', bodyColor: 0x4a423a, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_ironfangedmawhound: { pattern: 'brindle', variant: 'wolf', scale: 2.6, texturePool: 'fur', bodyColor: 0x6a6e74, accent: 0xff4422, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_packridgeback: { variant: 'boar', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_cinderthornhide: { variant: 'boar', scale: 2.5, texturePool: 'fur', bodyColor: 0x3a3330, accent: 0xff6633, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_packclawrunner: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_packclawrunner: { pattern: 'stripe', variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_packhornbeast: { variant: 'boar', scale: 2.6, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_gauntripper: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x8a8270, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_bloodmawmawhound: { variant: 'wolf', scale: 2.6, texturePool: 'fur', bodyColor: 0x5a4a42, accent: 0xcc1818, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_gauntripper: { pattern: 'brindle', variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x8a8270, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_bloodmawmawhound: { pattern: 'patch', variant: 'wolf', scale: 2.6, texturePool: 'fur', bodyColor: 0x5a4a42, accent: 0xcc1818, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_threetailedboar: { variant: 'boar', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a4a, accent: 0xff8844, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_mudcakedripper: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x4a4636, accent: 0x6a7a3a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_cinderdirewolf: { variant: 'wolf', scale: 2.7, texturePool: 'fur', bodyColor: 0x3a3330, accent: 0xff6633, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_direclawrunner: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x4a423a, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_packjackal: { variant: 'wolf', scale: 2.4, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_stormhowler: { variant: 'wolf', scale: 2.6, texturePool: 'fur', bodyColor: 0x46566e, accent: 0x88ccff, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
-        bf_starvingclawrunner: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x9a8a5a, accent: 0xffd24a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_mudcakedripper: { pattern: 'mottle', variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x4a4636, accent: 0x6a7a3a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_cinderdirewolf: { pattern: 'stripe', variant: 'wolf', scale: 2.7, texturePool: 'fur', bodyColor: 0x3a3330, accent: 0xff6633, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_direclawrunner: { pattern: 'saddle', variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x4a423a, accent: 0xffcc44, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_packjackal: { pattern: 'brindle', variant: 'wolf', scale: 2.4, texturePool: 'fur', bodyColor: 0x6a5a3e, accent: 0x2a1f14, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_stormhowler: { pattern: 'patch', variant: 'wolf', scale: 2.6, texturePool: 'fur', bodyColor: 0x46566e, accent: 0x88ccff, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
+        bf_starvingclawrunner: { pattern: 'stripe', variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x9a8a5a, accent: 0xffd24a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_scarredclawrunner: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a6258, accent: 0xff6644, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_mangystalkhound: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x6a5a44, accent: 0x8a6a3a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
         bf_mudcakedclawrunner: { variant: 'wolf', scale: 2.5, texturePool: 'fur', bodyColor: 0x4a4636, accent: 0x6a7a3a, hue: [0.08,0.05], sat: [0.3,0.12], lit: [0.4,0.12] },
@@ -647,7 +655,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // ── Wolf: lean canine with long snout, hackles, bushy tail ───────────
         _buildWolf(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -779,7 +786,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // ── Rodent: small upright critter, big incisors, round ears, long tail ─
         _buildRodent(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -820,8 +826,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // A held-up rodent forepaw: a small pad with four fingers curled in
-        // front of the chest, which is the pose everyone pictures for a rat.
         _rodentPaw(mat, x, y, z, r) {
             const g = new THREE.Group();
             const pad = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 8), mat); pad.scale.set(0.9, 1.0, 1.1); g.add(pad);
@@ -836,7 +840,6 @@
             }
             g.position.set(x, y, z); this.bodyGroup.add(g); return g;
         }
-        // A folded haunch foot: a long sole flat on the ground with toes.
         _rodentFoot(mat, x, y, z, r) {
             const g = new THREE.Group();
             const sole = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 8), mat); sole.scale.set(0.8, 0.6, 1.7); g.add(sole);
@@ -847,12 +850,6 @@
             g.position.set(x, y, z); this.bodyGroup.add(g); return g;
         }
 
-        // ── Parameterised rodent core, reused by the bespoke rodent one-offs ──
-        // Builds body+head+paws+tail and wires the quad cascade. Options:
-        //   sx/sy/sz body scale · bodyR · bodyY · headR · headY
-        //   ears ('round'|'big'|'tuft'|'tiny'|'none') · teeth(false hides) ·
-        //   teethLen · teethColor · nose · eye · eyeGlow ·
-        //   tail ('long'|'bushy'|'paddle'|'stub') · tailColor
         _rodentBase(fur, o) {
             o = o || {};
             const p = this.profile;
@@ -938,7 +935,7 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
         // Spine-following Y for back decoration: upright vs quad layouts.
-        _backY() { return this._quad ? 0.80 : 0.86; }
+        _backY() { return this._ff8Back != null ? this._ff8Back : (this._quad ? 0.80 : 0.86); }
         // Attach a decoration mesh so it fades on death and vanishes if the core is lost.
         _deco(mesh) { this.bodyGroup.add(mesh); if (this._cascadeRules && this._cascadeRules[0]) this._cascadeRules[0].hide.push(mesh); return mesh; }
 
@@ -1037,16 +1034,25 @@
             const offs = this._quad
                 ? [[-0.38, 0.66, 0.2, -0.6], [0.4, 0.7, -0.05, 0.6], [-0.05, 0.92, -0.35, Math.PI]]
                 : [[-0.34, 1.0, 0.18, -0.5], [0.36, 1.04, 0.1, 0.6], [-0.12, 1.32, -0.16, 0.0]];
+            // Each extra head is a faceted wedge in the same painted coat, with
+            // its own incisors: the tangle reads as rats, not as beads.
+            const coat = this._coat;
+            const toothMat = this._ff8Solid(0xfff4d0, 0.35);
             for (const [x, y, z, ry] of offs) {
                 const h = new THREE.Group();
-                h.add(new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), fur));
-                const mz = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 10), fur); mz.position.set(0, -0.05, 0.15); h.add(mz);
-                for (const ex of [-0.14, 0.14]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 10), fur); e.position.set(ex, 0.17, 0); e.scale.set(1, 1, 0.3); h.add(e); }
-                this._eye(h, -0.09, 0.04, 0.16, 0.04, p.accent, true); this._eye(h, 0.09, 0.04, 0.16, 0.04, p.accent, true);
+                h.add(this._ff8Ball(coat.dorsal, 0.2, 0, 0, 0, 1.05, 0.92, 1.25));
+                h.add(this._ff8Ball(coat.belly, 0.16, 0, -0.06, 0.07, 1.15, 0.7, 1.0));
+                const mz = this._ff8Tube(coat.muzzle, 0.06, 0.1, 0.17, 0, -0.04, 0.17, Math.PI / 2, 0, 6); h.add(mz);
+                h.add(this._ff8Slab(this._ff8Solid(p.accent, 0.4), 0.06, 0.045, 0.04, 0, -0.03, 0.26));
+                for (const ix of [-0.03, 0.03]) { const t = this._ff8Slab(toothMat, 0.04, 0.07, 0.025, ix, -0.13, 0.22); t.rotation.x = 0.15; h.add(t); }
+                for (const ex of [-0.14, 0.14]) { const e = this._ff8Ball(coat.dorsal, 0.1, ex, 0.17, 0, 1, 1, 0.3); e.rotation.y = ex > 0 ? -0.4 : 0.4; h.add(e); const inner = this._ff8Ball(coat.ear, 0.066, ex * 0.94, 0.17, 0.035, 1, 1, 0.22); inner.rotation.y = ex > 0 ? -0.4 : 0.4; h.add(inner); }
+                for (const ex of [-0.09, 0.09]) { h.add(this._ff8Ball(this._ff8Solid(p.accent, 0.2, p.accent), 0.04, ex, 0.04, 0.16, 1, 0.9, 1)); }
                 h.position.set(x, y, z); h.rotation.y = ry; this._deco(h); this._extraHeads.push(h);
             }
-            // Knotted extra tails trailing behind.
-            for (const tx of [-0.18, 0.18]) { const tl = this._tail(fur, this._quad ? 0.5 : 0.56, this._quad ? -0.7 : -0.32, 5, 0.85, this._quad ? -0.1 : 0.7); tl.position.x = tx; tl.rotation.z = tx > 0 ? -0.4 : 0.4; if (this._cascadeRules && this._cascadeRules[0]) this._cascadeRules[0].hide.push(tl); }
+            // Knotted extra tails trailing behind, whips like the first.
+            // Shorter than the first and fanned out sideways, so the knot reads
+            // as a tangle behind the rump rather than as stilts.
+            for (const tx of [-0.18, 0.18]) { const tl = this._ff8Tail(coat, this._quad ? 0.5 : 0.56, this._quad ? -0.66 : -0.32, 'naked', 0.6); tl.position.x = tx; tl.rotation.y = tx > 0 ? -0.55 : 0.55; tl.rotation.z = tx > 0 ? -0.15 : 0.15; if (!this._quad) tl.rotation.x = 0.9; if (this._cascadeRules && this._cascadeRules[0]) this._cascadeRules[0].hide.push(tl); }
         }
         // ── Frost Raccoon: ringed tail, mask, icicle teeth (quadrupedal) ─────
         _buildFrostraccoon(fur) {
@@ -1239,9 +1245,6 @@
         // BESPOKE SPLITS: parametrised cores reused across similar members.
         //=====================================================================
 
-        // ── Canid core: lean dog body. Options control the silhouette ────────
-        //   sizeBody · slope (rump lower than shoulders) · ear ('prick'|'round'|'bat')
-        //   tail ('bush'|'plume'|'thin') · hackles (spine cones) · eyeGlow · legLen
         _canidBase(fur, o) {
             o = o || {};
             const p = this.profile;
@@ -1677,7 +1680,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // ── Chupacabra: gaunt spined predator, fangs, hunched back ───────────
         _buildChupacabra(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -1732,7 +1734,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // ── Infernal Cerberus: three-headed hellhound wreathed in flame ──────
         _buildInfernalcerberus(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -2088,7 +2089,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // ── Void Howler: shadow bear leaking tendrils of pure darkness ───────
         _buildVoidhowler(fur) {
             const p = this.profile;
             const voidMat = this._mat(p.bodyColor, 0.92, 0.4, 0x1a0a2a);
@@ -2186,7 +2186,6 @@
             this._felineBase(fur, { sizeBody: 0.95, slim: 0.82, fangs: 0.34, fangColor: 0xe8e0c8, ear: 'tuft', eyeGlow: true, legLen: 0.92, ribs: true });
         }
 
-        // ── Ashen Prowler: ash-grey feral canine, slung-low stalking gait ────
         _buildAshenprowler(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -2213,7 +2212,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // ── Gaunt Snapper: hollow-eyed emaciated beast, oversized snapping jaws ─
         _buildGauntsnapper(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -2275,7 +2273,6 @@
             this._felineBase(fur, { sizeBody: 0.9, ear: 'tuft', tuftMat: this._mat(0x140d0a, 1.0, 0.9), eyeGlow: true, legLen: 0.88, tail: 'bob', scar: true });
         }
 
-        // ── Dire Gnasher: pack predator with a huge teeth-crammed gnashing jaw ─
         _buildDiregnasher(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -2303,7 +2300,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // ── Gaunt Clawrunner: lean sprinter, huge raking foreclaws, leyline static ─
         _buildGauntclawrunner(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -2332,7 +2328,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // ── Bloodmaw Direwolf: huge mangy wolf, blood-soaked maw, bushy tail ─
         _buildBloodmawdirewolf(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -2401,7 +2396,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // ── Starving Gnasher: ribby three-tailed pack hunter, oversized jaw ──
         _buildStarvinggnasher(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -2432,7 +2426,6 @@
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
-        // ── Feral Ridgeback: starving stalk-hound with a raised bristle spine ─
         _buildFeralridgeback(fur) {
             const p = this.profile;
             this.body = new THREE.Group();
@@ -2459,6 +2452,779 @@
             this.tail = this._tail(fur, 0.94, -0.62, 5, 0.8, -0.5);
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
+
+        //=====================================================================
+        // THE FF8 REMAKE: canines and rodents
+        //=====================================================================
+        // Final Fantasy VIII drew its monsters as a few hundred hard-edged
+        // polygons wearing a PAINTED skin: the polygons are the silhouette and
+        // the paint does everything else. A Glacial Eye is a lump; the turquoise
+        // and gold patches, the dark seams and the highlights painted onto it
+        // are what make it read as a creature. This file used to do the
+        // opposite for its canines and rodents: sixty smooth primitives with one
+        // flat-tinted material each, which reads as toys.
+        //
+        // Every canine and rodent below is now built the FF8 way:
+        //   - low segment counts and flat shading, so every facet catches its
+        //     own light and the body reads as chiselled rather than blown up
+        //   - a small number of large forms (a chest slab, a rump wedge, a boxy
+        //     muzzle, a jaw that hangs open on a row of teeth) instead of many
+        //     small ones
+        //   - three or four PAINTED skins per creature: a dorsal skin carrying
+        //     the pattern, a paler belly skin, a limb skin, and the muzzle. The
+        //     paint is composited on a canvas: base tint, a pattern (stripes,
+        //     blotches, brindle, saddle, mask, bands), dark seams along the
+        //     pattern edges, a photo grain from img/textures multiplied over the
+        //     lot, a second photo soft-lit across the highlights, and a burnt
+        //     rim so every UV island darkens toward its edges the way a
+        //     hand-painted texture sheet does
+        // The dismemberment cascade, the hit flash and every field the gait
+        // reads (body, head, the four legs, tail, _extraHeads) are exactly as
+        // they were, so nothing downstream changes.
+
+        // ── Painted skins ────────────────────────────────────────────────────
+        // A palette derived from the per-id body colour: the pattern colour is
+        // the body colour pushed darker and shifted a little around the wheel,
+        // the belly is the body colour lifted and desaturated, the highlight is
+        // a warm lift. `o.pattern2` on the profile overrides the pattern ink.
+        _ff8Palette() {
+            if (this._ff8Pal) return this._ff8Pal;
+            const p = this.profile;
+            const base = this.color.clone();
+            const hsl = {}; base.getHSL(hsl);
+            const ink = p.pattern2 != null ? new THREE.Color(p.pattern2)
+                : new THREE.Color().setHSL((hsl.h + 0.04 * (this.idRand() < 0.5 ? -1 : 1) + 1) % 1, Math.min(1, hsl.s * 1.1 + 0.08), Math.max(0.06, hsl.l * 0.42));
+            const belly = new THREE.Color().setHSL((hsl.h + 0.02) % 1, Math.max(0.05, hsl.s * 0.55), Math.min(0.92, hsl.l * 1.35 + 0.16));
+            const hi = new THREE.Color().setHSL((hsl.h + 0.06) % 1, Math.max(0.1, hsl.s * 0.8), Math.min(0.95, hsl.l * 1.2 + 0.28));
+            const seam = new THREE.Color().setHSL(hsl.h, Math.min(1, hsl.s * 0.9), Math.max(0.03, hsl.l * 0.22));
+            this._ff8Pal = { base, ink, belly, hi, seam };
+            return this._ff8Pal;
+        }
+
+        // The photo used for grain. Two are drawn: the per-id pool pick as the
+        // multiply grain, and a second, lighter sheet for the soft-light lift.
+        _ff8Grain() {
+            if (this._ff8GrainFiles) return this._ff8GrainFiles;
+            const POOLS = window.Battler3D.TEXTURE_POOLS || {};
+            const lift = POOLS.pale || POOLS.all || [];
+            this._ff8GrainFiles = {
+                grain: this.skinTextureFile || null,
+                lift: lift.length ? lift[Math.floor(this.idRand() * lift.length)] : null
+            };
+            return this._ff8GrainFiles;
+        }
+
+        // Draw one pattern onto ctx in ink, seeded so the same id always gets
+        // the same coat. Every pattern is painted with hard edges and a dark
+        // seam, which is what makes it read as brushwork and not as a filter.
+        _ff8PaintPattern(ctx, SZ, kind, ink, seam, rnd, density) {
+            const d = density == null ? 1 : density;
+            ctx.lineCap = 'round';
+            const stroke = (x0, y0, x1, y1, w) => {
+                ctx.strokeStyle = seam; ctx.lineWidth = w + 3;
+                ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+                ctx.strokeStyle = ink; ctx.lineWidth = w;
+                ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+            };
+            const blob = (x, y, rx, ry, rot) => {
+                ctx.save(); ctx.translate(x, y); ctx.rotate(rot || 0);
+                ctx.fillStyle = seam; ctx.beginPath(); ctx.ellipse(0, 0, rx + 2, ry + 2, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = ink; ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            };
+            switch (kind) {
+                case 'stripe': {
+                    // Tiger bars: tall wavering strokes that taper, in pairs.
+                    const n = Math.round(7 * d);
+                    for (let i = 0; i < n; i++) {
+                        const x = (i + 0.5) / n * SZ + (rnd() - 0.5) * 6;
+                        const top = rnd() * SZ * 0.18, bot = SZ - rnd() * SZ * 0.22;
+                        const bend = (rnd() - 0.5) * 12;
+                        const w = 5 + rnd() * 5;
+                        stroke(x, top, x + bend, (top + bot) / 2, w);
+                        stroke(x + bend, (top + bot) / 2, x - bend * 0.4, bot, w * 0.7);
+                        if (rnd() < 0.5) stroke(x + 9, top + 10, x + 9 + bend * 0.5, top + 10 + (bot - top) * 0.45, w * 0.5);
+                    }
+                    break;
+                }
+                case 'spots': {
+                    // Leopard rosettes: a ring of ink around a bare centre.
+                    const n = Math.round(14 * d);
+                    for (let i = 0; i < n; i++) {
+                        const x = rnd() * SZ, y = rnd() * SZ, r = 6 + rnd() * 6;
+                        ctx.strokeStyle = seam; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+                        ctx.strokeStyle = ink; ctx.lineWidth = 3.2; ctx.beginPath(); ctx.arc(x, y, r, rnd() * 2, rnd() * 2 + 4.2); ctx.stroke();
+                        if (rnd() < 0.6) blob(x + (rnd() - 0.5) * 4, y + (rnd() - 0.5) * 4, 2.2, 2.2);
+                    }
+                    break;
+                }
+                case 'patch': {
+                    // FF8's own favourite: big irregular patches, few and bold.
+                    const n = Math.round(4 * d);
+                    for (let i = 0; i < n; i++) {
+                        const x = rnd() * SZ, y = rnd() * SZ;
+                        ctx.fillStyle = seam;
+                        ctx.beginPath();
+                        for (let k = 0; k < 7; k++) { const a = k / 7 * Math.PI * 2; const r = 14 + rnd() * 16; ctx.lineTo(x + Math.cos(a) * r + 2, y + Math.sin(a) * r * 0.8 + 2); }
+                        ctx.closePath(); ctx.fill();
+                        ctx.fillStyle = ink;
+                        ctx.beginPath();
+                        for (let k = 0; k < 7; k++) { const a = k / 7 * Math.PI * 2; const r = 12 + rnd() * 16; ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r * 0.8); }
+                        ctx.closePath(); ctx.fill();
+                    }
+                    break;
+                }
+                case 'brindle': {
+                    // Hyena / mongrel brindling: short tight diagonal ticks.
+                    const n = Math.round(60 * d);
+                    for (let i = 0; i < n; i++) {
+                        const x = rnd() * SZ, y = rnd() * SZ, l = 5 + rnd() * 9;
+                        stroke(x, y, x + l * 0.6, y + l, 2 + rnd() * 2);
+                    }
+                    break;
+                }
+                case 'saddle': {
+                    // A dark saddle over the back with a ragged lower edge, the
+                    // dorsal skin of a wolf or a rat.
+                    ctx.fillStyle = seam; ctx.fillRect(0, 0, SZ, SZ * 0.5 + 3);
+                    ctx.fillStyle = ink; ctx.fillRect(0, 0, SZ, SZ * 0.46);
+                    for (let x = 0; x < SZ; x += 6) blob(x + 3, SZ * 0.46 + rnd() * 10, 5, 4 + rnd() * 6);
+                    break;
+                }
+                case 'bands': {
+                    // Raccoon tail rings and mask bars.
+                    const n = Math.round(5 * d);
+                    for (let i = 0; i < n; i++) {
+                        const y = (i + 0.5) / n * SZ;
+                        ctx.fillStyle = seam; ctx.fillRect(0, y - 8, SZ, 16);
+                        ctx.fillStyle = ink; ctx.fillRect(0, y - 6, SZ, 12);
+                    }
+                    break;
+                }
+                case 'scales': {
+                    // Overlapping crescents for a tail or a shell.
+                    const step = 9;
+                    for (let y = 0; y < SZ + step; y += step) {
+                        for (let x = ((y / step) % 2) * step * 0.5; x < SZ + step; x += step) {
+                            ctx.strokeStyle = seam; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, step * 0.55, 0.15, Math.PI - 0.15); ctx.stroke();
+                            ctx.strokeStyle = ink; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, step * 0.55, 0.15, Math.PI - 0.15); ctx.stroke();
+                        }
+                    }
+                    break;
+                }
+                case 'mottle': {
+                    // Soft mud-and-mange mottling: many small overlapping blobs.
+                    const n = Math.round(40 * d);
+                    for (let i = 0; i < n; i++) blob(rnd() * SZ, rnd() * SZ, 3 + rnd() * 6, 2 + rnd() * 5, rnd() * 3);
+                    break;
+                }
+                default: break; // 'plain'
+            }
+        }
+
+        // One painted sheet. kind: dorsal | belly | limb | muzzle | tail | ear.
+        // The pattern lives on the dorsal and limb sheets; the belly is pale
+        // and bare; the muzzle is the base darkened toward the nose; the tail
+        // takes the pattern denser. Cached per creature per sheet, and the
+        // photo grain is drawn in when it arrives (the tint and pattern show
+        // at once, so a late image never leaves a bare model).
+        _ff8Skin(kind, opts) {
+            opts = opts || {};
+            this._ff8Skins = this._ff8Skins || {};
+            const rep = opts.rep || null;
+            const cacheKey = kind + '|' + (opts.pattern || '') + '|' + (opts.density || 1) + '|' + (rep ? rep[0] + 'x' + rep[1] : '1');
+            if (this._ff8Skins[cacheKey]) return this._ff8Skins[cacheKey];
+            // The species-wide copy, when one exists.
+            const hsl = {}; this.color.getHSL(hsl);
+            const files = this._ff8Grain();
+            const shared = (this.profile.variant || '') + '|' + cacheKey + '|' +
+                (hsl.h * 24 | 0) + '|' + (hsl.s * 12 | 0) + '|' + (hsl.l * 12 | 0) + '|' +
+                (files.grain || '') + '|' + (files.lift || '') + '|' + (this.profile.pattern2 || '');
+            const hit = _FF8_SHEET_CACHE.get(shared);
+            if (hit) { this._ff8Skins[cacheKey] = hit; return hit; }
+
+            const pal = this._ff8Palette();
+            const SZ = 128;
+            const canvas = document.createElement('canvas');
+            canvas.width = SZ; canvas.height = SZ;
+            const ctx = canvas.getContext('2d');
+            // A seeded stream of its own, so the paint does not shift the
+            // per-id proportions that idRand drives.
+            let s = (this.skinSeed || 1) * 0.001 + kind.length * 0.37;
+            const rnd = () => { s = Math.abs(Math.sin(s * 9301.7 + 0.7)); return s; };
+
+            const css = (c, a) => 'rgba(' + ((c.r * 255) | 0) + ',' + ((c.g * 255) | 0) + ',' + ((c.b * 255) | 0) + ',' + (a == null ? 1 : a) + ')';
+            let base = pal.base, ink = pal.ink;
+            if (kind === 'belly') { base = pal.belly; ink = pal.base; }
+            if (kind === 'muzzle') { base = pal.base.clone().lerp(pal.seam, 0.2); }
+            if (kind === 'ear') { base = pal.belly.clone().lerp(new THREE.Color(0xd08a8a), 0.45); }
+
+            // 1. base coat, with a broad top-to-bottom shading so the sheet is
+            //    never one flat value (a painter never leaves it flat either)
+            const grad = ctx.createLinearGradient(0, 0, 0, SZ);
+            grad.addColorStop(0, css(base.clone().lerp(pal.hi, 0.22)));
+            grad.addColorStop(0.55, css(base));
+            grad.addColorStop(1, css(base.clone().lerp(pal.seam, 0.35)));
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, SZ, SZ);
+
+            // 2. the pattern
+            const pattern = opts.pattern || 'plain';
+            if (kind === 'dorsal' || kind === 'limb' || kind === 'tail') {
+                const dens = (opts.density || 1) * (kind === 'tail' ? 1.4 : (kind === 'limb' ? 0.7 : 1));
+                this._ff8PaintPattern(ctx, SZ, pattern, css(ink), css(pal.seam), rnd, dens);
+            } else if (kind === 'belly') {
+                // a faint echo of the pattern, so the two sheets belong together
+                ctx.globalAlpha = 0.18;
+                this._ff8PaintPattern(ctx, SZ, pattern === 'plain' ? 'mottle' : pattern, css(pal.base), css(pal.base), rnd, 0.5);
+                ctx.globalAlpha = 1;
+            } else if (kind === 'muzzle') {
+                // darker toward the nose end (top of the sheet), a lip line
+                const g2 = ctx.createLinearGradient(0, 0, 0, SZ);
+                g2.addColorStop(0, css(pal.seam, 0.55)); g2.addColorStop(0.5, css(pal.seam, 0));
+                ctx.fillStyle = g2; ctx.fillRect(0, 0, SZ, SZ);
+                ctx.strokeStyle = css(pal.seam, 0.9); ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(0, SZ * 0.62); ctx.quadraticCurveTo(SZ * 0.5, SZ * 0.7, SZ, SZ * 0.62); ctx.stroke();
+            }
+
+            // 3. painted highlights: a few broad pale strokes across the upper
+            //    third, the "light from above" a texture artist bakes in
+            ctx.globalAlpha = 0.28;
+            ctx.strokeStyle = css(pal.hi); ctx.lineWidth = 7; ctx.lineCap = 'round';
+            for (let i = 0; i < 4; i++) {
+                const y = rnd() * SZ * 0.35 + 4;
+                ctx.beginPath(); ctx.moveTo(rnd() * SZ * 0.4, y); ctx.lineTo(SZ * 0.5 + rnd() * SZ * 0.5, y + (rnd() - 0.5) * 10); ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+
+            // 4. the burnt rim: every island of a painted sheet darkens toward
+            //    its edge, which is most of why it reads as paint
+            const rim = ctx.createRadialGradient(SZ / 2, SZ / 2, SZ * 0.32, SZ / 2, SZ / 2, SZ * 0.72);
+            rim.addColorStop(0, css(pal.seam, 0)); rim.addColorStop(1, css(pal.seam, 0.5));
+            ctx.fillStyle = rim; ctx.fillRect(0, 0, SZ, SZ);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+            // The tiling is part of the sheet, so a limb sheet and a back sheet
+            // are two cached textures rather than one texture cloned per limb
+            // (a clone per creature is a GPU texture the disposer never frees).
+            if (rep) tex.repeat.set(rep[0], rep[1]);
+            // Never disposed with a model: it is the species' sheet, not the
+            // creature's. The core's disposer skips anything carrying this mark.
+            tex.userData = tex.userData || {}; tex.userData._ff8Shared = true;
+            this._ff8Skins[cacheKey] = tex;
+            _FF8_SHEET_CACHE.set(shared, tex);
+            if (_FF8_SHEET_CACHE.size > FF8_SHEET_CACHE_MAX) {
+                const oldest = _FF8_SHEET_CACHE.keys().next().value;
+                const victim = _FF8_SHEET_CACHE.get(oldest);
+                _FF8_SHEET_CACHE.delete(oldest);
+                if (victim && victim.dispose) victim.dispose();
+            }
+
+            // 5. photo grain, multiplied, then a second sheet soft-lit over the
+            //    top: the grain is what stops the flat fills reading as vector
+            const draw = (file, op, alpha) => {
+                if (!file) return;
+                const apply = (img) => {
+                    ctx.globalCompositeOperation = op; ctx.globalAlpha = alpha;
+                    ctx.drawImage(img, 0, 0, SZ, SZ);
+                    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+                    tex.needsUpdate = true;
+                };
+                let img = _FF8_IMG_CACHE.get(file);
+                if (img && img.complete && img.naturalWidth) { apply(img); return; }
+                if (!img) { img = new Image(); img.src = 'img/textures/' + file; _FF8_IMG_CACHE.set(file, img); }
+                img.addEventListener('load', () => apply(img), { once: true });
+                img.addEventListener('error', () => {}, { once: true });
+            };
+            draw(files.grain, 'multiply', 0.55);
+            draw(files.lift, 'soft-light', 0.5);
+            return tex;
+        }
+
+        // A flat-shaded material wearing one painted sheet. rep tiles the sheet
+        // so stripes wrap a limb tighter than they cross a back.
+        _ff8Mat(kind, opts) {
+            opts = opts || {};
+            const p = this.profile;
+            const m = new THREE.MeshStandardMaterial({
+                color: 0xffffff, map: this._ff8Skin(kind, opts),
+                roughness: opts.rough != null ? opts.rough : 0.92, metalness: 0,
+                flatShading: true, transparent: true,
+                emissive: new THREE.Color(p.emissive || 0x000000), emissiveIntensity: p.emissive ? 0.3 : 0
+            });
+            this._materials.push(m);
+            return m;
+        }
+
+        // The full set of sheets one creature wears. `pattern` comes from the
+        // profile (or the builder), so the same rig paints a striped hyena and
+        // a saddled wolf.
+        _ff8Coat(pattern, o) {
+            o = o || {};
+            const pat = pattern || this.profile.pattern || 'plain';
+            return {
+                dorsal: this._ff8Mat('dorsal', { pattern: pat, density: o.density }),
+                belly:  this._ff8Mat('belly',  { pattern: pat }),
+                limb:   this._ff8Mat('limb',   { pattern: pat, rep: [1.6, 1.0] }),
+                muzzle: this._ff8Mat('muzzle', { pattern: pat, rough: 0.8 }),
+                tail:   this._ff8Mat('tail',   { pattern: o.tailPattern || pat, rep: [1, 2.2] }),
+                ear:    this._ff8Mat('ear',    { pattern: pat, rough: 0.85 })
+            };
+        }
+
+        // Flat-shaded helpers for teeth, horn, eyes: hard little wedges.
+        _ff8Solid(color, rough, emissive, opacity) {
+            const m = new THREE.MeshStandardMaterial({
+                color, roughness: rough == null ? 0.5 : rough, metalness: 0, flatShading: true,
+                emissive: new THREE.Color(emissive || 0x000000), emissiveIntensity: emissive ? 0.7 : 0,
+                transparent: true, opacity: opacity == null ? 1 : opacity
+            });
+            this._materials.push(m);
+            return m;
+        }
+
+        // ── Chunky primitives ────────────────────────────────────────────────
+        // Every form here is a low-segment solid: eight-sided cylinders, six
+        // by five spheres, cones of five. With flat shading each face is its
+        // own plane, which is the whole polygonal look.
+        _ff8Slab(mat, w, h, d, x, y, z) {
+            const g = new THREE.BoxGeometry(w, h, d, 1, 1, 1);
+            const m = new THREE.Mesh(g, mat); m.position.set(x || 0, y || 0, z || 0); return m;
+        }
+        _ff8Ball(mat, r, x, y, z, sx, sy, sz) {
+            const m = new THREE.Mesh(new THREE.SphereGeometry(r, 7, 5), mat);
+            m.position.set(x || 0, y || 0, z || 0); m.scale.set(sx || 1, sy || 1, sz || 1); return m;
+        }
+        _ff8Tube(mat, rTop, rBot, len, x, y, z, rotX, rotZ, seg) {
+            const m = new THREE.Mesh(new THREE.CylinderGeometry(rTop, rBot, len, seg || 7), mat);
+            m.position.set(x || 0, y || 0, z || 0); m.rotation.x = rotX || 0; m.rotation.z = rotZ || 0; return m;
+        }
+        _ff8Wedge(mat, r, len, x, y, z, rotX, rotZ, seg) {
+            const m = new THREE.Mesh(new THREE.ConeGeometry(r, len, seg || 4), mat);
+            m.position.set(x || 0, y || 0, z || 0); m.rotation.x = rotX || 0; m.rotation.z = rotZ || 0; return m;
+        }
+
+        // Three fat claw wedges on the front of a foot: FF8 feet end in claws
+        // you could count from across the field.
+        _ff8Claws(parent, count, len, w, color) {
+            const m = this._ff8Solid(color || 0xe9dfc4, 0.35);
+            const n = count || 3;
+            for (let i = 0; i < n; i++) {
+                const cx = (i - (n - 1) / 2) * 0.075 * w;
+                const c = this._ff8Wedge(m, 0.03 * w, len, cx, -0.045 * w, 0.16 * w, 1.85, 0, 4);
+                c.rotation.y = (i - (n - 1) / 2) * 0.18;
+                parent.add(c);
+            }
+        }
+
+        // A heavy jointed leg: a thigh slab, a knee knuckle, a shin that sits
+        // back under the hip, and a broad paw with a raised heel and claws.
+        // Forelegs are heavier than hind legs on a predator (o.heavy), which is
+        // the shoulder mass FF8 gave every beast.
+        _ff8Leg(coat, x, z, hipY, len, o) {
+            o = o || {};
+            const w = o.thick || 1.0;
+            const g = new THREE.Group();
+            const limb = coat.limb;
+            const thigh = this._ff8Tube(limb, 0.15 * w, 0.1 * w, len * 0.5, 0, -len * 0.25, 0.02 * len, -0.08, 0, 7);
+            g.add(thigh);
+            if (o.heavy) { const shoulder = this._ff8Ball(limb, 0.17 * w, 0, -len * 0.06, 0.02, 1.1, 1.0, 1.15); g.add(shoulder); }
+            const knee = this._ff8Ball(limb, 0.095 * w, 0, -len * 0.5, -0.01 * len, 1, 0.9, 1.1); g.add(knee);
+            const shin = this._ff8Tube(limb, 0.085 * w, 0.06 * w, len * 0.46, 0, -len * 0.73, -0.03 * len, 0.1, 0, 7);
+            g.add(shin);
+            const f = new THREE.Group();
+            const sole = this._ff8Ball(coat.belly, 0.11 * w, 0, 0, 0.02, 1.2, 0.55, 1.6); f.add(sole);
+            const heel = this._ff8Ball(limb, 0.075 * w, 0, 0.03, -0.09 * w, 1, 0.9, 1); f.add(heel);
+            for (const tx of [-0.07, 0, 0.07]) { const toe = this._ff8Ball(limb, 0.042 * w, tx * w, -0.01, 0.15 * w, 1, 0.8, 1.3); f.add(toe); }
+            this._ff8Claws(f, 3, o.clawLen || 0.12, w, o.clawColor);
+            f.position.set(0, -len * 0.95, -0.02 * len); g.add(f);
+            g.position.set(x, hipY, z); this.bodyGroup.add(g); return g;
+        }
+
+        // A tail of faceted cones, thick at the root: bushy (wolf), thin
+        // (hyena / coyote), naked (rat), paddle (beaver).
+        _ff8Tail(coat, baseY, baseZ, style, len) {
+            const g = new THREE.Group();
+            const L = len || 1;
+            if (style === 'paddle') {
+                const pad = this._ff8Slab(this._ff8Mat('tail', { pattern: 'scales' }), 0.36, 0.52 * L, 0.07, 0, -0.2 * L, 0);
+                g.add(pad); g.rotation.x = 0.7;
+            } else if (style === 'naked') {
+                // A rat's tail: one continuous whip of tapered struts, laid
+                // back and drooping, each joined to the last (a chain of
+                // tilted tubes read as a dashed line).
+                const mat = this._ff8Mat('tail', { pattern: 'bands', density: 2, rough: 0.6 });
+                let r = 0.055, prev = new THREE.Vector3(0, 0, 0);
+                for (let i = 0; i < 8; i++) {
+                    const a = -0.25 - i * 0.16;                       // droops as it goes
+                    const next = new THREE.Vector3(0, prev.y + Math.sin(a) * 0.16 * L, prev.z - Math.cos(a) * 0.16 * L);
+                    this.addStrut(g, mat, prev, next, r, r * 0.86, 6);
+                    const knuckle = this._ff8Ball(mat, r * 0.95, next.x, next.y, next.z); g.add(knuckle);
+                    prev = next; r *= 0.86;
+                }
+            } else if (style === 'stub') {
+                g.add(this._ff8Ball(coat.tail, 0.09, 0, 0, 0, 1, 1, 1.3));
+            } else {
+                // Carried back off the rump and drooping toward the tip: a
+                // wolf's brush, or a hyena's thin whip.
+                const bushy = style !== 'thin';
+                let py = 0, pz = 0, r = bushy ? 0.13 : 0.075;
+                for (let i = 0; i < 5; i++) {
+                    const a = -0.15 - i * 0.22;
+                    const seg = this._ff8Ball(coat.tail, r, 0, py, pz, 1, 1.05, 1.35);
+                    g.add(seg);
+                    if (bushy) { const tuft = this._ff8Wedge(coat.tail, r * 0.9, r * 2.4, 0, py + Math.sin(a) * r * 0.8, pz - Math.cos(a) * r * 1.1, Math.PI / 2 + a, 0, 5); g.add(tuft); }
+                    py += Math.sin(a) * 0.15 * L; pz -= Math.cos(a) * 0.15 * L; r *= bushy ? 0.9 : 0.86;
+                }
+            }
+            g.position.set(0, baseY, baseZ); this.bodyGroup.add(g); return g;
+        }
+
+        // ── The canine rig ───────────────────────────────────────────────────
+        // Options (every old _buildWolf / _canidBase option still works):
+        //   sizeBody  overall mass         slim     <1 gaunt, >1 heavy
+        //   slope     hyena drop to the rump (0..1)
+        //   snout     muzzle length         jaw      'open' | 'shut' (default open)
+        //   ear       'prick' | 'round' | 'bat' | 'torn'
+        //   tail      'bush' | 'plume' | 'thin' | 'naked' | 'stub'
+        //   hackles   raised spine ridge    hackleMat
+        //   ruff      neck ruff (default on)
+        //   legLen    eyeGlow  eye         pattern (overrides profile)
+        //   teeth     count per side (default 3)   fangLen
+        //   heads     1 or 3 (cerberus)
+        //   clawColor clawLen ribs (visible rib rings)
+        _ff8CanidBase(fur, o) {
+            o = o || {};
+            const p = this.profile;
+            const b = o.sizeBody || 1.0, sl = o.slim || 1.0;
+            const coat = this._ff8Coat(o.pattern, { density: o.density, tailPattern: o.tailPattern });
+            this._coat = coat;
+            const slope = o.slope || 0;
+
+            // Body: a deep chest slab, a keel under it, a waist that tucks and a
+            // rump wedge, with the pale belly sheet on the underside.
+            this.body = new THREE.Group();
+            const chest = this._ff8Ball(coat.dorsal, 0.34 * b, 0, 0.02 + slope * 0.1, 0.44 * b, 1.0 * sl, 1.15, 1.05); this.body.add(chest);
+            const keel = this._ff8Ball(coat.belly, 0.27 * b, 0, -0.16, 0.36 * b, 0.85 * sl, 0.7, 1.2); this.body.add(keel);
+            const back = this._ff8Tube(coat.dorsal, 0.27 * b, 0.23 * b, 0.9 * b, 0, 0.04 + slope * 0.02, -0.06 * b, Math.PI / 2 - slope * 0.12, 0, 8); this.body.add(back);
+            const waist = this._ff8Ball(coat.belly, 0.2 * b, 0, -0.1, -0.16 * b, 0.9 * sl, 0.7, 1.1); this.body.add(waist);
+            const rump = this._ff8Ball(coat.dorsal, 0.27 * b, 0, -slope * 0.14, -0.5 * b, 1.0 * sl, 0.95, 1.0); this.body.add(rump);
+            const haunch = this._ff8Wedge(coat.dorsal, 0.24 * b, 0.4 * b, 0, -0.08 - slope * 0.14, -0.62 * b, -1.2, 0, 5); this.body.add(haunch);
+            // Raised only when asked for, as the old rig did: a fox has none.
+            if (o.hackles) {
+                const hm = o.hackleMat || coat.dorsal;
+                const n = 6;
+                for (let i = 0; i < n; i++) {
+                    const t = i / (n - 1);
+                    const h = 0.16 + Math.sin(t * Math.PI) * 0.12;
+                    const sp = this._ff8Wedge(hm, 0.06 * b, h, 0, 0.26 * b + slope * (0.05 - t * 0.14), 0.42 * b - i * 0.18 * b, -0.35, 0, 4);
+                    this.body.add(sp);
+                }
+            }
+            if (o.ribs) {
+                const ribMat = this._ff8Solid(o.ribColor || 0xc8c0a8, 0.5);
+                for (let i = 0; i < 4; i++) { const rib = new THREE.Mesh(new THREE.TorusGeometry(0.2 * b, 0.022, 4, 8), ribMat); rib.rotation.y = Math.PI / 2; rib.position.set(0, -0.02, 0.3 * b - i * 0.15 * b); this.body.add(rib); }
+            }
+            this.body.position.set(0, 1.05 * b, 0); this.bodyGroup.add(this.body);
+
+            // Head(s): a boxy skull, heavy brow, a long faceted muzzle with the
+            // lower jaw hung open on a row of teeth, a nose block, ears cupped
+            // with the pale inner sheet, and a thick neck ruff into the body.
+            const headCount = o.heads === 3 ? 3 : 1;
+            this.head = new THREE.Group();
+            const snoutLen = (o.snout || 0.42) * b;
+            const buildOne = (parent) => {
+                const neck = this._ff8Tube(coat.dorsal, 0.17 * b, 0.23 * b, 0.46 * b, 0, 0.0, -0.08 * b, 0.75, 0, 7); parent.add(neck);
+                if (o.ruff !== false) this._ff8Ruff(parent, coat, 0.2 * b, 0.06 * b, -0.02 * b, 9, 0.22 * b);
+                const skull = this._ff8Ball(coat.dorsal, 0.21 * b, 0, 0.25 * b, 0.16 * b, 0.95, 0.85, 1.05); parent.add(skull);
+                const brow = this._ff8Slab(coat.dorsal, 0.34 * b, 0.1 * b, 0.22 * b, 0, 0.35 * b, 0.26 * b); brow.rotation.x = 0.25; parent.add(brow);
+                for (const cx of [-0.2, 0.2]) { const cheek = this._ff8Ball(coat.dorsal, 0.1 * b, cx * b, 0.2 * b, 0.16 * b, 0.8, 1.1, 0.95); parent.add(cheek); }
+                // Muzzle: a tapered eight-sided block, not a cone.
+                const muzzle = this._ff8Tube(coat.muzzle, 0.085 * b, 0.145 * b, snoutLen, 0, 0.22 * b, 0.28 * b + snoutLen * 0.5, Math.PI / 2, 0, 6); parent.add(muzzle);
+                const bridge = this._ff8Slab(coat.dorsal, 0.16 * b, 0.07 * b, snoutLen * 0.8, 0, 0.29 * b, 0.3 * b + snoutLen * 0.45); parent.add(bridge);
+                const nose = this._ff8Slab(this._ff8Solid(0x100b09, 0.3), 0.11 * b, 0.08 * b, 0.08 * b, 0, 0.22 * b, 0.3 * b + snoutLen); parent.add(nose);
+                // Lower jaw, dropped open on the attack pose FF8 loved.
+                const open = o.jaw !== 'shut';
+                const jaw = new THREE.Group();
+                const jawBone = this._ff8Tube(coat.muzzle, 0.07 * b, 0.11 * b, snoutLen * 0.92, 0, 0, snoutLen * 0.46, Math.PI / 2, 0, 6); jaw.add(jawBone);
+                const gum = this._ff8Ball(this._ff8Solid(0x5a1c1c, 0.6, 0x200000), 0.06 * b, 0, 0.03 * b, snoutLen * 0.55, 1.2, 0.5, 1.4); jaw.add(gum);
+                const toothMat = this._ff8Solid(0xf3ecd8, 0.3);
+                const perSide = o.teeth != null ? o.teeth : 3;
+                for (let i = 0; i < perSide; i++) {
+                    const tz = snoutLen * (0.25 + i * 0.22);
+                    for (const s of [-1, 1]) {
+                        const lower = this._ff8Wedge(toothMat, 0.02 * b, (i === 0 ? 0.09 : 0.05) * b, s * 0.055 * b, 0.05 * b, tz, 0, 0, 4); jaw.add(lower);
+                        const upper = this._ff8Wedge(toothMat, 0.02 * b, (i === 0 ? (o.fangLen || 0.1) : 0.055) * b, s * 0.06 * b, 0.15 * b, tz + 0.02, Math.PI, 0, 4); parent.add(upper);
+                    }
+                }
+                jaw.position.set(0, 0.14 * b, 0.28 * b); jaw.rotation.x = open ? 0.42 : 0.05; parent.add(jaw);
+                parent._jaw = jaw;
+                // Ears
+                const ear = o.ear || 'prick';
+                for (const ex of [-0.12, 0.12]) {
+                    let e, inner;
+                    if (ear === 'round') { e = this._ff8Ball(coat.dorsal, 0.09 * b, ex * b, 0.44 * b, 0.06 * b, 1, 1, 0.45); inner = this._ff8Ball(coat.ear, 0.06 * b, ex * b * 0.95, 0.44 * b, 0.09 * b, 1, 1, 0.3); }
+                    else if (ear === 'bat') { e = this._ff8Wedge(coat.dorsal, 0.1 * b, 0.32 * b, ex * b, 0.52 * b, 0.05 * b, 0.1, ex > 0 ? -0.3 : 0.3, 4); inner = this._ff8Wedge(coat.ear, 0.06 * b, 0.22 * b, ex * b, 0.5 * b, 0.09 * b, 0.1, ex > 0 ? -0.3 : 0.3, 4); }
+                    else if (ear === 'torn') { e = this._ff8Wedge(coat.dorsal, 0.08 * b, 0.22 * b, ex * b, 0.47 * b, 0.06 * b, 0.15, ex > 0 ? -0.5 : 0.2, 3); inner = this._ff8Wedge(coat.ear, 0.045 * b, 0.14 * b, ex * b, 0.46 * b, 0.1 * b, 0.15, ex > 0 ? -0.5 : 0.2, 3); }
+                    else { e = this._ff8Wedge(coat.dorsal, 0.085 * b, 0.26 * b, ex * b, 0.49 * b, 0.06 * b, 0.1, ex > 0 ? -0.16 : 0.16, 4); inner = this._ff8Wedge(coat.ear, 0.05 * b, 0.17 * b, ex * b, 0.48 * b, 0.1 * b, 0.1, ex > 0 ? -0.16 : 0.16, 4); }
+                    parent.add(e); parent.add(inner);
+                }
+                // Eyes: a faceted bead with a hard catchlight, under the brow.
+                const eyeCol = o.eye || p.accent;
+                for (const ex of [-0.105, 0.105]) {
+                    const eye = this._ff8Ball(this._ff8Solid(eyeCol, 0.2, o.eyeGlow !== false ? eyeCol : 0), 0.045 * b, ex * b, 0.29 * b, 0.32 * b, 1, 0.75, 1); parent.add(eye);
+                    const glint = this._ff8Ball(this._ff8Solid(0xffffff, 0.1, 0xffffff), 0.013 * b, ex * b - 0.012, 0.305 * b, 0.36 * b); parent.add(glint);
+                }
+            };
+            if (headCount === 3) {
+                for (const hx of [-0.3, 0, 0.3]) {
+                    const sub = new THREE.Group();
+                    buildOne(sub);
+                    sub.position.set(hx * b, hx === 0 ? 0.04 : -0.02, hx === 0 ? 0.06 : 0); sub.rotation.y = hx * 0.7; sub.scale.setScalar(0.88);
+                    this.head.add(sub);
+                }
+            } else buildOne(this.head);
+            this.head.position.set(0, 1.2 * b, 0.55 * b); this.bodyGroup.add(this.head);
+
+            // Legs: forelegs heavy at the shoulder, hind legs longer in the
+            // shin, the way a dog stands.
+            const len = (o.legLen || 1.0) * b;
+            const lx = 0.22 * b;
+            // Girth follows the body, so a direwolf stands on a direwolf's legs
+            // and not on a wolf's stilts; a gaunt build (slim) thins them.
+            const th = b * (0.7 + sl * 0.3);
+            this.frontLeft  = this._ff8Leg(coat, -lx, 0.4 * b, 0.98 * b, len, { heavy: true, clawLen: o.clawLen, clawColor: o.clawColor, thick: 1.1 * th });
+            this.frontRight = this._ff8Leg(coat, lx, 0.4 * b, 0.98 * b, len, { heavy: true, clawLen: o.clawLen, clawColor: o.clawColor, thick: 1.1 * th });
+            this.rearLeft   = this._ff8Leg(coat, -lx, -0.44 * b, 0.98 * b - slope * 0.12, len * 0.98, { clawLen: o.clawLen, clawColor: o.clawColor, thick: 0.98 * th });
+            this.rearRight  = this._ff8Leg(coat, lx, -0.44 * b, 0.98 * b - slope * 0.12, len * 0.98, { clawLen: o.clawLen, clawColor: o.clawColor, thick: 0.98 * th });
+
+            const tt = o.tail || 'bush';
+            this.tail = this._ff8Tail(coat, 1.06 * b - slope * 0.1, -0.66 * b, tt === 'plume' ? 'bush' : tt, tt === 'plume' ? 1.25 : 1);
+            this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // A neck ruff of fat wedges in the pale sheet, the mass FF8 gave every
+        // predator's shoulders.
+        _ff8Ruff(parent, coat, r, y, z, count, len) {
+            for (let i = 0; i < count; i++) {
+                const a = (i / count) * Math.PI * 2;
+                const tuft = this._ff8Wedge(i % 2 ? coat.belly : coat.dorsal, len * 0.42, len, Math.cos(a) * r, y + Math.sin(a) * r, z, Math.PI / 2 * 0.6, -a + Math.PI / 2, 4);
+                parent.add(tuft);
+            }
+        }
+
+        // ── The rodent rig ───────────────────────────────────────────────────
+        // Every old _rodentBase option still works (quad, sx/sy/sz, bodyR,
+        // bodyY, headR, headY, ears, teeth, teethLen, teethColor, nose, eye,
+        // eyeGlow, tail, tailColor, whiskers, whiskerColor, earInner), plus
+        // pattern (overrides the profile) and hunch (upright crouch amount).
+        _ff8RodentBase(fur, o) {
+            o = o || {};
+            const p = this.profile;
+            const quad = !!o.quad; this._quad = quad;
+            const coat = this._ff8Coat(o.pattern, { tailPattern: 'bands' });
+            this._coat = coat;
+            const br = o.bodyR || 0.34, hr = o.headR || 0.26;
+            const sx = o.sx || 1.0, sy = o.sy || (quad ? 1.0 : 1.2), sz = o.sz || 1.0;
+            const by = quad ? 0.52 : (o.bodyY != null ? o.bodyY : 0.66);
+            const hy = o.headY != null ? o.headY : 1.08;
+
+            // Body: a pear (upright) or a loaf (quad), the back sheet over it
+            // like a saddle, the belly sheet under it, a hunch at the shoulders.
+            this.body = new THREE.Group();
+            if (quad) {
+                const loaf = this._ff8Ball(coat.dorsal, br, 0, 0, 0, sx, 0.82, sz * 1.7); this.body.add(loaf);
+                const under = this._ff8Ball(coat.belly, br * 0.92, 0, -br * 0.22, 0, sx * 0.95, 0.6, sz * 1.55); this.body.add(under);
+                const hunch = this._ff8Ball(coat.dorsal, br * 0.7, 0, br * 0.3, br * sz * 0.85, sx * 0.9, 0.8, 0.9); this.body.add(hunch);
+            } else {
+                const pear = this._ff8Ball(coat.dorsal, br, 0, 0, 0, sx, sy, sz); this.body.add(pear);
+                const paunch = this._ff8Ball(coat.belly, br * 0.86, 0, -br * 0.3, br * 0.32, sx * 0.9, sy * 0.85, sz * 0.9); this.body.add(paunch);
+                const hunch = this._ff8Ball(coat.dorsal, br * 0.66, 0, br * sy * 0.62, -br * 0.28, sx * 0.9, 0.75, 0.9); this.body.add(hunch);
+            }
+            this.body.position.set(0, by, 0.02); this.bodyGroup.add(this.body);
+            // Where the spine actually is, for the one-offs that dress the back.
+            this._ff8Back = quad ? by + br * 0.82 * 0.9 - 0.02 : by + br * sy * 0.6;
+
+            // Head: a big faceted wedge of a skull, a boxy muzzle, and the two
+            // incisors FF8 would have drawn a head around.
+            this.head = new THREE.Group();
+            const skull = this._ff8Ball(coat.dorsal, hr, 0, 0, 0, 1.05, 0.92, 1.25); this.head.add(skull);
+            const cheeks = this._ff8Ball(coat.belly, hr * 0.8, 0, -hr * 0.3, hr * 0.35, 1.15, 0.7, 1.0); this.head.add(cheeks);
+            const muzzle = this._ff8Tube(coat.muzzle, hr * 0.28, hr * 0.5, hr * 0.85, 0, -hr * 0.2, hr * 0.85, Math.PI / 2, 0, 6); this.head.add(muzzle);
+            const nose = this._ff8Slab(this._ff8Solid(o.nose || p.accent, 0.4), hr * 0.3, hr * 0.22, hr * 0.2, 0, -hr * 0.16, hr * 1.28); this.head.add(nose);
+            if (o.teeth !== false) {
+                const tm = this._ff8Solid(o.teethColor || 0xfff4d0, 0.35);
+                const tl = o.teethLen || 0.1;
+                for (const ix of [-0.05, 0.05]) { const t = this._ff8Slab(tm, hr * 0.2, tl, hr * 0.12, ix, -hr * 0.5 - tl * 0.4, hr * 1.12); t.rotation.x = 0.15; this.head.add(t); }
+                const lip = this._ff8Ball(this._ff8Solid(0x5a1c1c, 0.6), hr * 0.16, 0, -hr * 0.42, hr * 1.06, 1.6, 0.45, 0.7); this.head.add(lip);
+            }
+            const ear = o.ears || 'round';
+            if (ear === 'tuft') {
+                for (const ex of [-0.14, 0.14]) { const e = this._ff8Wedge(coat.dorsal, 0.075, 0.2, ex, hr * 1.05, 0, 0.1, ex > 0 ? -0.25 : 0.25, 4); this.head.add(e); }
+            } else if (ear !== 'none') {
+                const er = ear === 'big' ? 0.17 : (ear === 'tiny' ? 0.06 : 0.12);
+                const ey = ear === 'big' ? hr * 1.0 : hr * 0.85;
+                for (const ex of [-0.18, 0.18]) {
+                    const e = this._ff8Ball(coat.dorsal, er, ex, ey, 0, 1, 1, 0.3); e.rotation.y = ex > 0 ? -0.4 : 0.4; this.head.add(e);
+                    const inner = this._ff8Ball(o.earInner ? this._ff8Solid(o.earInner, 0.75) : coat.ear, er * 0.66, ex * 0.94, ey, 0.035, 1, 1, 0.22); inner.rotation.y = ex > 0 ? -0.4 : 0.4; this.head.add(inner);
+                }
+            }
+            if (o.whiskers !== false) {
+                const wm = this._ff8Solid(o.whiskerColor || 0xe6ddcc, 0.3, 0, 0.8);
+                for (const s of [-1, 1]) for (let i = 0; i < 3; i++) {
+                    const wk = this._ff8Tube(wm, 0.004, 0.003, hr * 1.1, s * hr * 0.7, -hr * 0.2 + i * 0.035, hr * 0.95, 0.1, s * (1.15 + i * 0.18), 3);
+                    this.head.add(wk);
+                }
+            }
+            const eyeCol = o.eye || 0x120c08;
+            for (const ex of [-0.12, 0.12]) {
+                const eye = this._ff8Ball(this._ff8Solid(eyeCol, 0.2, o.eyeGlow ? eyeCol : 0), 0.05, ex, hr * 0.25, hr * 0.78, 1, 0.9, 1); this.head.add(eye);
+                const glint = this._ff8Ball(this._ff8Solid(0xffffff, 0.1, 0xffffff), 0.014, ex - 0.012, hr * 0.27, hr * 0.83); this.head.add(glint);
+            }
+            if (quad) { this.head.position.set(0, by + 0.08, br * sz * 1.5 + hr * 0.3); this.head.rotation.x = 0.14; this.head.scale.setScalar(1.18); }
+            else { this.head.position.set(0, hy, 0.06); this.head.rotation.x = 0.1; }
+            this.bodyGroup.add(this.head);
+
+            if (quad) {
+                const lz = br * sz * 0.95, lx = br * sx * 0.8 + 0.03, len = by + 0.04;
+                this.frontLeft  = this._ff8Leg(coat, -lx, lz, by, len, { thick: 0.8, clawLen: 0.08 });
+                this.frontRight = this._ff8Leg(coat, lx, lz, by, len, { thick: 0.8, clawLen: 0.08 });
+                this.rearLeft   = this._ff8Leg(coat, -lx, -lz, by, len, { thick: 0.9, clawLen: 0.08 });
+                this.rearRight  = this._ff8Leg(coat, lx, -lz, by, len, { thick: 0.9, clawLen: 0.08 });
+            } else {
+                this.frontLeft  = this._ff8RodentPaw(coat, -0.15, by, 0.26, 0.085);
+                this.frontRight = this._ff8RodentPaw(coat, 0.15, by, 0.26, 0.085);
+                this.rearLeft   = this._ff8RodentFoot(coat, -0.22, 0.32, 0.06, 0.13);
+                this.rearRight  = this._ff8RodentFoot(coat, 0.22, 0.32, 0.06, 0.13);
+            }
+
+            const tt = o.tail || 'long';
+            const tBaseY = quad ? by : 0.5, tBaseZ = quad ? -(br * sz * 1.5) : -0.34;
+            if (tt === 'paddle') {
+                this.tail = this._ff8Tail(coat, tBaseY, tBaseZ, 'paddle', 1);
+                if (o.tailColor != null) this.tail.children.forEach(c => { c.material = this._ff8Solid(o.tailColor, 0.6); });
+                this.tail.rotation.x = quad ? 0.9 : 0.55;
+            } else if (tt === 'bushy') {
+                this.tail = this._ff8Tail(coat, quad ? by + 0.06 : 0.52, tBaseZ, 'bush', 1.1);
+                this.tail.rotation.x = quad ? -0.5 : -2.6;
+            } else if (tt === 'stub') {
+                this.tail = this._ff8Tail(coat, quad ? by : 0.52, quad ? tBaseZ : -0.3, 'stub', 1);
+            } else {
+                this.tail = this._ff8Tail(coat, quad ? by + 0.02 : 0.58, quad ? tBaseZ : -0.3, 'naked', 1.05);
+                if (!quad) this.tail.rotation.x = 0.9;   // upright: the tail lies along the ground behind
+            }
+            this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // A held-up forepaw: a knuckle and four faceted fingers with nails.
+        _ff8RodentPaw(coat, x, y, z, r) {
+            const g = new THREE.Group();
+            g.add(this._ff8Ball(coat.limb, r, 0, 0, 0, 0.9, 1.0, 1.1));
+            const arm = this._ff8Tube(coat.limb, r * 0.7, r * 0.9, r * 2.6, 0, r * 0.9, -r * 0.9, -0.5, 0, 6); g.add(arm);
+            const nail = this._ff8Solid(0xe6dccb, 0.4);
+            for (let i = 0; i < 4; i++) {
+                const f = this._ff8Tube(coat.belly, r * 0.18, r * 0.14, r * 0.95, (i - 1.5) * r * 0.44, -r * 0.35, r * 0.75, 1.15, 0, 4); g.add(f);
+                const n = this._ff8Wedge(nail, r * 0.12, r * 0.36, (i - 1.5) * r * 0.44, -r * 0.62, r * 1.1, 1.6, 0, 3); g.add(n);
+            }
+            g.position.set(x, y, z); this.bodyGroup.add(g); return g;
+        }
+        // A folded haunch foot: a long faceted sole flat on the ground.
+        _ff8RodentFoot(coat, x, y, z, r) {
+            const g = new THREE.Group();
+            g.add(this._ff8Ball(coat.limb, r * 1.3, 0, r * 0.9, -r * 0.6, 0.9, 0.9, 1.0));
+            g.add(this._ff8Ball(coat.belly, r, 0, 0, 0, 0.8, 0.55, 1.8));
+            for (let i = 0; i < 4; i++) { const t = this._ff8Ball(coat.belly, r * 0.24, (i - 1.5) * r * 0.42, -r * 0.14, r * 1.6, 1, 0.8, 1.4); g.add(t); }
+            this._ff8Claws(g, 4, r * 0.7, r * 6, 0xe6dccb);
+            g.position.set(x, y, z); this.bodyGroup.add(g); return g;
+        }
+
+        // ── Canine builders, every one on the one rig ────────────────────────
+        _buildWolf(fur) {
+            this._ff8CanidBase(fur, { pattern: this.profile.pattern || 'saddle', hackles: true, ear: 'prick', tail: 'bush', snout: 0.44 });
+        }
+        _canidBase(fur, o) { this._ff8CanidBase(fur, o); }
+
+        // ── Chupacabra: gaunt, spined, a lizard's jaw on a dog ───────────────
+        _buildChupacabra(fur) {
+            const p = this.profile;
+            this._ff8CanidBase(fur, { pattern: 'mottle', sizeBody: 0.9, slim: 0.8, snout: 0.36, ear: 'bat', tail: 'naked', teeth: 4, fangLen: 0.16, hackles: false, ruff: false, legLen: 1.0, clawColor: 0x2a2620 });
+            const spineMat = this._ff8Solid(p.accent, 0.5, p.accent);
+            for (let i = 0; i < 7; i++) { const sp = this._ff8Wedge(spineMat, 0.05, 0.28 - i * 0.02, 0, 0.24 + Math.sin(i / 6 * Math.PI) * 0.12, 0.42 - i * 0.13, -0.3, 0, 4); this.body.add(sp); }
+        }
+
+        // ── Infernal Cerberus: three heads, a spine of flame ─────────────────
+        _buildInfernalcerberus(fur) {
+            const p = this.profile;
+            this._ff8CanidBase(fur, { pattern: 'brindle', sizeBody: 1.15, heads: 3, ear: 'prick', tail: 'thin', teeth: 3, fangLen: 0.13, hackles: false, ruff: false, clawColor: 0x2a1a10 });
+            const flame = this._ff8Solid(p.accent, 0.4, p.accent, 0.9);
+            for (let i = 0; i < 5; i++) { const fl = this._ff8Wedge(flame, 0.08, 0.32, 0, 0.36, 0.44 - i * 0.22, -0.2, 0, 4); this.body.add(fl); }
+            this.tail.children.forEach(c => { c.material = flame; });
+        }
+
+        // ── Void Howler: a hole in the shape of a dog ────────────────────────
+        _buildVoidhowler(fur) {
+            const p = this.profile;
+            this._ff8CanidBase(fur, { pattern: 'patch', sizeBody: 1.25, snout: 0.34, ear: 'torn', tail: 'thin', teeth: 3, hackles: false, eye: p.accent });
+            const tendrilMat = this._ff8Solid(p.accent, 0.2, p.accent, 0.85);
+            for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; const td = this._ff8Wedge(tendrilMat, 0.05, 0.6, Math.cos(a) * 0.32, 0.34, -0.05 + Math.sin(a) * 0.22, Math.sin(a) * 0.8, Math.cos(a) * 0.8, 4); this.body.add(td); }
+            const maw = this._ff8Ball(this._ff8Solid(p.accent, 0.3, p.accent), 0.09, 0, 0.16, 0.6); this.head.add(maw);
+            this.tail.children.forEach(c => { c.material = tendrilMat; });
+        }
+
+        // ── Ashen Prowler: a wolf gone grey with soot, motes in its coat ─────
+        _buildAshenprowler(fur) {
+            this._ff8CanidBase(fur, { pattern: 'mottle', sizeBody: 0.95, slim: 0.9, snout: 0.4, ear: 'prick', tail: 'thin', jaw: 'shut', hackles: true, legLen: 0.95 });
+            const ash = this._ff8Solid(0xd8d4cc, 0.9, 0, 0.7);
+            for (let i = 0; i < 6; i++) { const m = this._ff8Ball(ash, 0.035, Math.sin(i * 1.7) * 0.2, 0.26 + i * 0.02, 0.4 - i * 0.18); this.body.add(m); }
+        }
+
+        // ── Gaunt Snapper: ribs showing, a jaw too big for the skull ─────────
+        _buildGauntsnapper(fur) {
+            this._ff8CanidBase(fur, { pattern: 'brindle', sizeBody: 0.95, slim: 0.72, snout: 0.5, ear: 'torn', tail: 'naked', teeth: 5, fangLen: 0.14, ribs: true, hackles: false, ruff: false, legLen: 0.96 });
+        }
+
+        // ── Dire Gnasher: the pack's heavy, all shoulder and jaw ─────────────
+        _buildDiregnasher(fur) {
+            this._ff8CanidBase(fur, { pattern: 'stripe', sizeBody: 1.1, slim: 1.1, snout: 0.5, ear: 'round', tail: 'thin', teeth: 6, fangLen: 0.15, hackles: true, legLen: 0.96 });
+        }
+
+        // ── Gaunt Clawrunner: a sprinter with raking blades for forefeet ─────
+        _buildGauntclawrunner(fur) {
+            const p = this.profile;
+            this._ff8CanidBase(fur, { pattern: 'stripe', sizeBody: 0.95, slim: 0.8, snout: 0.4, ear: 'prick', tail: 'thin', teeth: 3, hackles: false, legLen: 1.08, clawLen: 0.26, clawColor: 0xe8ecf0 });
+            const arc = this._ff8Solid(p.accent, 0.4, p.accent, 0.8);
+            for (let i = 0; i < 6; i++) { const a = this._ff8Wedge(arc, 0.03, 0.2, Math.sin(i * 1.9) * 0.05, 0.24, 0.45 - i * 0.16, -0.4, 0, 3); this.body.add(a); }
+        }
+
+        // ── Bloodmaw Direwolf: mange, hackles and a mouth that drips ─────────
+        _buildBloodmawdirewolf(fur) {
+            const p = this.profile;
+            this._ff8CanidBase(fur, { pattern: 'saddle', sizeBody: 1.3, snout: 0.52, ear: 'torn', tail: 'bush', teeth: 4, fangLen: 0.17, hackles: true, legLen: 1.05 });
+            const blood = this._ff8Solid(p.accent, 0.3, 0x440000);
+            const maw = this._ff8Ball(blood, 0.11, 0, 0.1, 0.78, 1.1, 0.6, 1.3); this.head.add(maw);
+            for (let i = 0; i < 3; i++) { const drip = this._ff8Ball(blood, 0.035, -0.06 + i * 0.06, -0.02 - i * 0.05, 0.76); this.head.add(drip); }
+        }
+
+        // ── Starving Gnasher: ribs, three whip tails, a mouth of needles ─────
+        _buildStarvinggnasher(fur) {
+            this._ff8CanidBase(fur, { pattern: 'brindle', sizeBody: 0.95, slim: 0.75, snout: 0.48, ear: 'torn', tail: 'thin', teeth: 6, fangLen: 0.13, ribs: true, hackles: false, ruff: false });
+            // Two more thin tails beside the first.
+            const coat = this._coat;
+            for (const tx of [-0.12, 0.12]) { const t = this._ff8Tail(coat, 0.96, -0.66, 'thin', 0.95); t.position.x = tx; t.rotation.x = -0.6; t.rotation.z = tx > 0 ? -0.35 : 0.35; if (this._cascadeRules && this._cascadeRules[0]) this._cascadeRules[0].hide.push(t); }
+        }
+
+        // ── Feral Ridgeback: a stalk-hound with a bristle spine ──────────────
+        _buildFeralridgeback(fur) {
+            this._ff8CanidBase(fur, { pattern: 'saddle', sizeBody: 0.95, slim: 0.85, snout: 0.44, ear: 'prick', tail: 'thin', teeth: 3, hackles: true, hackleMat: this._ff8Solid(0x2a221c, 0.9), legLen: 0.95 });
+        }
+
+        // ── Rodent builders ──────────────────────────────────────────────────
+        _buildRodent(fur) {
+            this._ff8RodentBase(fur, { pattern: this.profile.pattern || 'saddle' });
+        }
+        _rodentBase(fur, o) { this._ff8RodentBase(fur, o); }
+        _rodentPaw(mat, x, y, z, r) { return this._ff8RodentPaw(this._coat || this._ff8Coat(), x, y, z, r); }
+        _rodentFoot(mat, x, y, z, r) { return this._ff8RodentFoot(this._coat || this._ff8Coat(), x, y, z, r); }
 
         animatePose(deltaTime) {
             if (this._baseY === null) this._baseY = this.model.position.y;

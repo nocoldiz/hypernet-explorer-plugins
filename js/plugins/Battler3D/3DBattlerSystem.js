@@ -1437,10 +1437,25 @@
                     if (m && m.visible && m.material) { mesh = m; break; }
                 }
             }
-            if (!mesh || !mesh.visible || !mesh.material) return;
-            // If the mesh uses multiple materials, store them all.
-            // Save the original colors so we can restore them when the flash ends.
-            const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+            if (!mesh || !mesh.visible) return;
+            // A part is very often a GROUP (a whole leg, a head with its ears
+            // and teeth) rather than one mesh: every quadruped family maps its
+            // limbs that way. A group has no material of its own, so the flash
+            // used to fall through here and nothing lit up when a beast was
+            // hit. Flash every material under it instead, and hand each back.
+            let mats;
+            if (mesh.material) mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+            else {
+                mats = [];
+                const seen = new Set();
+                mesh.traverse(o => {
+                    if (!o.isMesh || !o.material) return;
+                    for (const mt of (Array.isArray(o.material) ? o.material : [o.material])) {
+                        if (mt && mt.color && !seen.has(mt)) { seen.add(mt); mats.push(mt); }
+                    }
+                });
+                if (!mats.length) return;
+            }
             // A highlighted part is currently painted yellow, and that yellow is
             // not the body's colour: take the real one off the highlight, or the
             // flash would restore the part lit even after the aim moved on.
@@ -2108,6 +2123,257 @@
         async load(/* physicsWorld, startX, startY, startZ */) { this.loaded = true; }
         animatePose(/* deltaTime */) {}
         deathPose(/* deltaTime */) {}
+    }
+
+    //=============================================================================
+    // Draw-call reduction for a built battler
+    //=============================================================================
+    // A procedural battler is assembled from dozens of small primitives, each of
+    // which was its own draw call with its own material and uniform upload. The
+    // measured average was 32 meshes and 14 materials per creature, with the
+    // worst carrying 251 meshes and one (a hairball) carrying 88 materials for
+    // its 88 meshes: a six-strong troop was asking the driver for two hundred
+    // draws before a single effect was on screen.
+    //
+    // Two passes fix that, in this order, because the second only groups meshes
+    // that already share a material and most families give every primitive one
+    // of its own:
+    //
+    //   1. materials that are identical in every respect become one material
+    //   2. meshes that never move relative to each other and now share that
+    //      material are baked into one buffer
+    //
+    // What must NOT be touched, and why:
+    //   - anything in _partMeshMap, and anything a cascade rule hides: those are
+    //     the body parts, and the hit flash and dismemberment reach them by
+    //     reference and repaint their materials one at a time
+    //   - anything a family holds in a field of its own: every animation poses
+    //     limbs through those references
+    //   - anything carrying children, or animation data in userData
+    // A protected mesh keeps its own mesh AND its own material, so no flash and
+    // no severing can ever reach a neighbour through shared state.
+
+    // Fields whose contents are scanned for Object3D references. The model root
+    // and its body group are the scene graph itself and are walked separately.
+    const _OPTIMISE_SKIP_FIELDS = new Set(['model', 'bodyGroup', 'battler', 'profile', 'physicsWorld']);
+
+    // Every Object3D a family can still reach by name after load().
+    function collectReferencedNodes(battlerModel, out) {
+        const seen = new Set();
+        const visit = (value, depth) => {
+            if (!value || depth > 3 || typeof value !== 'object') return;
+            if (seen.has(value)) return;
+            seen.add(value);
+            if (value.isObject3D) { out.add(value); return; }
+            if (Array.isArray(value)) { for (const v of value) visit(v, depth + 1); return; }
+            if (value instanceof Map) { value.forEach(v => visit(v, depth + 1)); return; }
+            if (value instanceof Set) { value.forEach(v => visit(v, depth + 1)); return; }
+            // A plain bag of parts (this.limbs = { left: mesh }) is worth one
+            // more level; anything with a prototype of its own is not ours.
+            const proto = Object.getPrototypeOf(value);
+            if (proto !== Object.prototype && proto !== null) return;
+            for (const k in value) visit(value[k], depth + 1);
+        };
+        for (const key in battlerModel) {
+            if (_OPTIMISE_SKIP_FIELDS.has(key)) continue;
+            visit(battlerModel[key], 0);
+        }
+        return out;
+    }
+
+    // The meshes the flash, the dismemberment cascade and the family's own
+    // animations reach by reference.
+    function collectProtectedMeshes(battlerModel) {
+        const out = new Set();
+        const map = battlerModel._partMeshMap || {};
+        for (const k in map) if (map[k]) out.add(map[k]);
+        for (const rule of (battlerModel._cascadeRules || [])) {
+            for (const m of (rule.hide || [])) if (m) out.add(m);
+        }
+        collectReferencedNodes(battlerModel, out);
+        // Each of those nodes is protected in ITSELF, and not down its subtree,
+        // because nothing here needs its descendants to stay loose:
+        //   - the hit flash repaints _partMeshMap[key].material by reference, so
+        //     only that node has to survive as itself
+        //   - a cascade rule hides its targets with visible = false, which the
+        //     whole subtree follows anyway
+        //   - an animation poses a group, and a group whose loose leaves have
+        //     been baked into one child poses exactly as it did
+        // Protecting the subtrees as well marked every mesh in the model (a wolf
+        // is 82 meshes and all 82 sit under one part or another) and left the
+        // passes below nothing to do at all.
+        return out;
+    }
+
+    function hasAnimationData(obj) {
+        const ud = obj && obj.userData;
+        if (!ud) return false;
+        for (const k in ud) if (ud[k] !== undefined && ud[k] !== null) return true;
+        return false;
+    }
+
+    // Two materials are interchangeable when everything the renderer reads off
+    // them agrees. Anything with a custom program or a per-instance uniform is
+    // excluded by giving it no key at all.
+    const _MAT_NUMERIC_KEYS = ['roughness', 'metalness', 'opacity', 'shininess', 'reflectivity',
+        'emissiveIntensity', 'clearcoat', 'transmission', 'ior', 'bumpScale', 'displacementScale'];
+    function materialKey(mat) {
+        if (!mat || mat.isShaderMaterial) return null;
+        if (THREE.Material && mat.onBeforeCompile !== THREE.Material.prototype.onBeforeCompile) return null;
+        if (mat.userData && mat.userData._noShare) return null;
+        const parts = [mat.type];
+        parts.push(mat.color ? mat.color.getHexString() : '-');
+        parts.push(mat.emissive ? mat.emissive.getHexString() : '-');
+        parts.push(mat.specular ? mat.specular.getHexString() : '-');
+        for (const k of _MAT_NUMERIC_KEYS) parts.push(mat[k] === undefined ? '-' : String(mat[k]));
+        parts.push(mat.transparent ? 't' : 'o', String(mat.side), mat.flatShading ? 'f' : 's',
+            mat.wireframe ? 'w' : '-', mat.depthWrite ? 'd' : '-', mat.depthTest ? 'z' : '-',
+            String(mat.blending), mat.vertexColors ? 'vc' : '-', mat.fog ? 'fg' : '-',
+            mat.toneMapped ? 'tm' : '-', String(mat.alphaTest));
+        for (const slot of ['map', 'normalMap', 'emissiveMap', 'roughnessMap', 'metalnessMap',
+            'alphaMap', 'aoMap', 'bumpMap', 'envMap', 'lightMap', 'displacementMap', 'specularMap']) {
+            parts.push(mat[slot] ? mat[slot].uuid : '-');
+        }
+        return parts.join('|');
+    }
+
+    // Pass 1: one material instance per distinct look, among the meshes nothing
+    // repaints individually.
+    function shareIdenticalMaterials(root, protectedMeshes) {
+        const byKey = new Map();
+        let saved = 0;
+        root.traverse(obj => {
+            if (!obj.isMesh || !obj.material || Array.isArray(obj.material)) return;
+            if (protectedMeshes.has(obj)) return;
+            const key = materialKey(obj.material);
+            if (!key) return;
+            const first = byKey.get(key);
+            if (!first) { byKey.set(key, obj.material); return; }
+            if (first === obj.material) return;
+            const dead = obj.material;
+            obj.material = first;
+            saved++;
+            if (typeof dead.dispose === 'function') dead.dispose();
+        });
+        return saved;
+    }
+
+    // Concatenates non-indexed geometries carrying position (plus normal and uv
+    // where every part has them). Written out because the three this game ships
+    // has no BufferGeometryUtils; the weapon overlay carries the same helper.
+    function concatGeometries(geometries) {
+        if (!geometries.length) return null;
+        const wantNormal = geometries.every(g => g.attributes.normal);
+        const wantUv = geometries.every(g => g.attributes.uv);
+        let total = 0;
+        for (const g of geometries) {
+            if (!g.attributes.position) return null;
+            total += g.attributes.position.count;
+        }
+        const position = new Float32Array(total * 3);
+        const normal = wantNormal ? new Float32Array(total * 3) : null;
+        const uv = wantUv ? new Float32Array(total * 2) : null;
+        let v = 0;
+        for (const g of geometries) {
+            const p = g.attributes.position;
+            position.set(p.array.subarray(0, p.count * 3), v * 3);
+            if (normal) normal.set(g.attributes.normal.array.subarray(0, p.count * 3), v * 3);
+            if (uv) uv.set(g.attributes.uv.array.subarray(0, p.count * 2), v * 2);
+            v += p.count;
+        }
+        const out = new THREE.BufferGeometry();
+        out.setAttribute('position', new THREE.BufferAttribute(position, 3));
+        if (normal) out.setAttribute('normal', new THREE.BufferAttribute(normal, 3));
+        if (uv) out.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+        return out;
+    }
+
+    // Pass 2: bake the unprotected leaves of each anchor into one buffer per
+    // material. An anchor is the model root or any node the animations move, so
+    // the decoration on a moving limb still collapses; it just collapses into
+    // that limb rather than into the creature around it.
+    function mergeStaticDecor(root, protectedMeshes) {
+        if (!root || typeof THREE === 'undefined' || !THREE.BufferGeometry) return 0;
+        root.updateMatrixWorld(true);
+
+        const isAnchor = (obj) => obj === root || protectedMeshes.has(obj) || hasAnimationData(obj);
+        const anchorOf = (obj) => {
+            let node = obj;
+            while (node) {
+                if (isAnchor(node)) return node;
+                node = node.parent;
+            }
+            return root;
+        };
+        const anchors = [root];
+        root.traverse(obj => { if (obj !== root && isAnchor(obj)) anchors.push(obj); });
+
+        const removals = [];
+        const inverse = new THREE.Matrix4();
+        const local = new THREE.Matrix4();
+        let merged = 0;
+
+        for (const anchor of anchors) {
+            const buckets = new Map();
+            anchor.traverse(obj => {
+                if (obj === anchor) return;
+                if (!obj.isMesh || !obj.geometry || !obj.material) return;
+                if (Array.isArray(obj.material)) return;
+                if (protectedMeshes.has(obj) || hasAnimationData(obj)) return;
+                if (obj.children.length) return;
+                if (obj.geometry.morphAttributes && Object.keys(obj.geometry.morphAttributes).length) return;
+                if (!obj.visible) return;
+                if (anchorOf(obj.parent) !== anchor) return;
+                const key = obj.material.uuid;
+                if (!buckets.has(key)) buckets.set(key, { material: obj.material, meshes: [] });
+                buckets.get(key).meshes.push(obj);
+            });
+
+            inverse.copy(anchor.matrixWorld).invert();
+            for (const bucket of buckets.values()) {
+                if (bucket.meshes.length < 2) continue;
+                const parts = [];
+                for (const mesh of bucket.meshes) {
+                    const geo = mesh.geometry.index ? mesh.geometry.toNonIndexed() : mesh.geometry.clone();
+                    local.multiplyMatrices(inverse, mesh.matrixWorld);
+                    geo.applyMatrix4(local);
+                    parts.push(geo);
+                    removals.push(mesh);
+                }
+                const geometry = concatGeometries(parts);
+                for (const g of parts) g.dispose();
+                if (!geometry) continue;
+                const mesh = new THREE.Mesh(geometry, bucket.material);
+                mesh.castShadow = bucket.meshes[0].castShadow;
+                mesh.receiveShadow = bucket.meshes[0].receiveShadow;
+                mesh.userData._merged = true;
+                anchor.add(mesh);
+                merged += bucket.meshes.length - 1;
+            }
+        }
+
+        for (const mesh of removals) {
+            if (mesh.parent) mesh.parent.remove(mesh);
+            if (mesh.geometry && typeof mesh.geometry.dispose === 'function') mesh.geometry.dispose();
+        }
+        return merged;
+    }
+
+    // Run both passes over a battler that has finished load(). Safe to call more
+    // than once: the second call finds nothing left to do.
+    function optimiseBattlerModel(battlerModel) {
+        const root = battlerModel && battlerModel.model;
+        if (!root || battlerModel._optimised) return null;
+        battlerModel._optimised = true;
+        try {
+            const protectedMeshes = collectProtectedMeshes(battlerModel);
+            const materials = shareIdenticalMaterials(root, protectedMeshes);
+            const meshes = mergeStaticDecor(root, protectedMeshes);
+            return { materials, meshes };
+        } catch (e) {
+            console.warn('[3D Battler] draw-call pass failed, model left as built', e);
+            return null;
+        }
     }
 
     //=============================================================================
@@ -2793,6 +3059,12 @@
                     battlerModel.model.add(inner);
                 }
 
+                // Before anything else reads the tree: fewer materials and
+                // fewer meshes means less for the retro pass, the tint and the
+                // shadow marker to walk, and far fewer draws once it is on
+                // screen. Body parts and animated limbs are left untouched.
+                optimiseBattlerModel(battlerModel);
+
                 battlerModel.model.position.set(x, actualY, z);
                 const _retro = window.RetroShader ? window.RetroShader.active() : window.PSXShader;
                 if (_retro) _retro.applyToObject(battlerModel.model);
@@ -2921,6 +3193,8 @@
     window.Battler3D.Base = ProceduralBattler3D;
     window.Battler3D.registerArchetype = registerArchetype;
     window.Battler3D.registerNamed = registerNamed;
+    // Exposed for the headless draw-call harness (test/test_battle_3d_perf.js).
+    window.Battler3D.optimiseModel = optimiseBattlerModel;
     window.Battler3D.debugLog = debugLog;
     // Shared with the first person weapon overlay, which runs its own scene in
     // its own context but must be lit by the same sun. See DayNightRig.

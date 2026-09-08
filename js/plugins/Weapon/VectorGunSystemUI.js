@@ -4,27 +4,35 @@
 
 /*:
  * @target MZ
- * @plugindesc The vector gun's screen: the modes as a list of buttons, the gun in 3D
+ * @plugindesc The vector gun's screen: the modes as a grid of cards, the gun in 3D
  * @author Assistant
  * @requires VectorGunSystem.js
  *
  * @help
  * Scene_VectorGun, the screen the main menu opens in story mode.
  *
- * Shape A of docs/task/ui_fixing.md on the shared kit, printing the backpack's
- * own vocabulary and nothing of its own: one .book-spread, a .page-header-bar
- * carrying the one .back-button, a .backpack-tabs strip of three pages, an
- * .item-slot list on the left page and a .ui-detail on the right. The gun
- * itself stands at the top of the right page on the shared 3D weapon viewer
- * (window.Weapon3DPreview), and gives up its height to the facts under it.
+ * The shared kit and nothing of its own: one .book-spread, a .page-header-bar
+ * carrying the one .back-button, a .backpack-tabs strip of THREE pages, and a
+ * .backpack-grid of .item-slot cards on the left page, written exactly as the
+ * skills menu writes a skill (a stripe, an icon, a name, a cost or a state).
+ * The right page is the gun on the shared 3D viewer (window.Weapon3DPreview)
+ * with the card for the row under the cursor beneath it, and the three bays the
+ * gun is running along the bottom.
  *
- * The list is the control: every row is a button. Confirming a mode LOADS it
+ * The three pages:
+ *   modes  - the twenty odd operating modes, three across
+ *   form   - the shapes the gun folds into AND the element it carries, one
+ *            page because both are "what the weapon is" rather than what it
+ *            is running
+ *   spell  - the bound spell, written like the skills menu writes one
+ *
+ * The grid is the control: every card is a button. Confirming a mode LOADS it
  * into the first free bay of the three the gun runs, and with all three taken
  * it pushes out the oldest (VectorGun.fitMode) rather than refusing. Confirming
  * a mode that is already running unloads it.
  *
- * Up / Down walk the rows, Left / Right and L1 / R1 turn the three pages,
- * Confirm works the row under the cursor and Cancel leaves by the back button.
+ * Up / Down walk the grid a row at a time, Left / Right a card at a time, L1 /
+ * R1 turn the pages, Confirm works the card under the cursor and Cancel leaves.
  *
  * Must be placed AFTER VectorGunSystem.js in the plugin list.
  */
@@ -38,7 +46,6 @@
   const MODE_KEYS = VG.MODE_KEYS;
   const MAX_MODES = VG.MAX_MODES;
   const modes = VG.modes;
-  const hasMode = VG.hasMode;
   const boundSpellId = VG.boundSpellId;
   const setBoundSpell = VG.setBoundSpell;
   const spellChoices = VG.spellChoices;
@@ -47,13 +54,20 @@
   const elementId = VG.elementId;
   const setElement = VG.setElement;
   const ELEMENT_IDS = VG.ELEMENT_IDS;
+  const FORM_CHOICES = VG.FORM_CHOICES;
+  const GUN_FORM = VG.GUN_FORM;
 
-  const TABS = ['modes', 'form', 'spell', 'element'];
+  // The shapes and the element are one page: both answer "what is this weapon",
+  // where the modes answer "what is it doing" and the spell "what rides on it".
+  const TABS = ['modes', 'form', 'spell'];
+  // How many cards a line of the grid holds. Must match .vg-grid's
+  // grid-template-columns in css/theme.css, the way every other grid scene
+  // keeps its own COLS in step with the sheet.
+  const COLS = 3;
+
   // How far back the stand's camera rests before the piece has been measured.
-  // The viewer's own default is framed for a narrow card in a list; this stand
-  // is half the page, so the piece is held closer. Once the model exists the
-  // distance is measured off its own bounds (_fitZoom) so every shape fills
-  // the stand instead of every shape sharing one guessed distance.
+  // Once the model exists the distance is measured off its own bounds
+  // (_fitZoom) so every shape fills the stand.
   const STAND_ZOOM = 2.05;
   // How much of the stand is left empty around the piece once it is fitted.
   const STAND_MARGIN = 0.94;
@@ -61,20 +75,16 @@
   // shape: the morph is the thing being watched, so it is watched from near.
   const MORPH_ZOOM = 1.35;
   // The stand holds one of two things: the pistol, or "the other shape",
-  // whichever one the cursor is on. Naming the second half rather than a shape
-  // key is what keeps a cursor step from folding the gun over and over.
+  // whichever one the cursor is on.
   const ALT_STAND = 'alt';
-  const FORM_CHOICES = VG.FORM_CHOICES;
-  const GUN_FORM = VG.GUN_FORM;
 
   /** The bank a row's words come from: the shapes have one of their own. */
   const shapeText = (key, part) => T('VectorGun.shape.' + key + '.' + part);
 
-  // The IconSet face each row wears. Skills carry their own iconIndex; the
+  // The IconSet face each card wears. Skills carry their own iconIndex; the
   // modes and the elements do not exist in the database at all, so the two
   // tables below are the only place their faces are named. The element table is
-  // the game's own (UI/CustomSceneStatus.js, CharacterCreationPickers.js),
-  // indexed by element id.
+  // the game's own (UI/CustomSceneStatus.js), indexed by element id.
   const ELEMENT_ICONS = [0, 96, 64, 65, 66, 67, 68, 69, 70, 71];
   const MODE_ICONS = {
     mana: 245,          // Blue Orb: the round that is thought
@@ -105,7 +115,7 @@
     deepMagazine: 445,  // Skill Card: Earth II
   };
 
-  // The shapes wear the face of the weapon type they are, so the rack reads as
+  // The shapes wear the face of the weapon type they are, so the page reads as
   // a rack of weapons rather than a list of words.
   const SHAPE_ICONS = {
     gun: 115,           // SMG: the pistol's own face, off the weapon row
@@ -121,13 +131,28 @@
     baphomet: 292,      // Claw
     kia: 143,           // Gauntlets of Might
     longinus: 381,      // Fire Lance
+    solomon: 187,       // Book: the grimoire that is read instead of swung
   };
+
+  // The stripe down the left edge of a card, the one thing that says at a
+  // glance whether the card is doing anything. Gold when it is fitted, the
+  // element's own colour on the element cards, nothing at all otherwise.
+  const STRIPE_ON = 'var(--text-primary, #f0c674)';
+  const STRIPE_OFF = 'transparent';
+  const ELEMENT_COLORS = [
+    '', '#c9c2b4', '#e2703a', '#7ec8e3', '#e8d04a', '#4a90d9',
+    '#a9814f', '#8fd18c', '#f2e6b0', '#8c6bb1',
+  ];
+
+  const esc = (text) => String(text == null ? '' : text)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 
   /** One IconSet cell, drawn the way every other menu draws one. */
   function iconHTML(index) {
     const i = Number(index) || 0;
-    if (i <= 0) return '';
-    return `<span class="item-icon vg-icon" style="background:url('img/system/IconSet.png') ` +
+    if (i <= 0) return '<span class="item-slot-icon vg-icon"></span>';
+    return `<span class="item-slot-icon vg-icon" style="background:url('img/system/IconSet.png') ` +
       `-${(i % 16) * 32}px -${Math.floor(i / 16) * 32}px no-repeat;"></span>`;
   }
 
@@ -162,17 +187,14 @@
       this._stand = GUN_FORM;
       this._switching = false;
       // The overlay is the shared one every screen the main menu opens uses
-      // (#menu-container, UI/CustomMainMenuLayout.js createUIMenuDOM): it is
-      // visible by default and only the first open fades up, said with
-      // .menu-entering.
+      // (#menu-container, UI/CustomMainMenuLayout.js createUIMenuDOM).
       this._el = document.createElement('div');
       this._el.id = 'menu-container';
       this._el.classList.add('menu-entering');
       document.body.appendChild(this._el);
 
       // A right click anywhere on the overlay is a cancel: the DOM layer sits
-      // over the game canvas, so TouchInput never hears the button and the
-      // screen could only be left with the pad or the Back stamp. The 3D
+      // over the game canvas, so TouchInput never hears the button. The 3D
       // viewer keeps its own right drag, so the weapon is excluded.
       this._el.addEventListener('contextmenu', (e) => {
         e.preventDefault();
@@ -182,11 +204,10 @@
 
       // RPG Maker preventDefaults wheel on the document, which kills native
       // scrolling inside a DOM overlay: scroll the region under the pointer
-      // ourselves, as the faction register does. The viewer's own canvas keeps
-      // the wheel for its zoom.
+      // ourselves. The viewer's own canvas keeps the wheel for its zoom.
       this._el.addEventListener('wheel', (e) => {
         if (e.target && e.target.tagName === 'CANVAS') return;
-        const box = e.target.closest('.ui-list, .ui-scroll, .ui-detail-scroll, .right-page');
+        const box = e.target.closest('.vg-grid, .vg-detail, .ui-detail-scroll');
         if (box) box.scrollTop += e.deltaY;
         e.stopPropagation();
         e.preventDefault();
@@ -210,33 +231,62 @@
       super.terminate();
     }
 
+    //------------------------------------------------------------------------
+    // What the open page holds
+    //------------------------------------------------------------------------
+
     /**
-     * The rows of the open page, ALWAYS in the order their names read in: the
-     * list is one column and a reader looks a name up alphabetically, not by
-     * whatever order the table happens to declare. The spell page keeps its
-     * "none" row first, since that one is a clearing and not a choice.
+     * The cards of the open page, ALWAYS in the order their names read in: a
+     * reader looks a name up alphabetically, not by whatever order the table
+     * happens to declare. Every entry is one of four kinds, so the form page
+     * can hold both the shapes and the element without either half guessing
+     * what the other is.
+     *
+     * A `head` entry is a heading spanning the whole grid line and is never
+     * landed on by the cursor.
      */
     rows() {
       const byName = (list, name) => list.slice().sort(
         (a, b) => String(name(a)).localeCompare(String(name(b))));
       if (this._tab === 'modes') {
-        return byName(MODE_KEYS, (key) => T('VectorGun.mode.' + key + '.name'));
+        return byName(MODE_KEYS, (key) => T('VectorGun.mode.' + key + '.name'))
+          .map((key) => ({ kind: 'mode', key: key }));
       }
-      if (this._tab === 'form') return byName(FORM_CHOICES, (key) => shapeText(key, 'name'));
-      if (this._tab === 'element') return byName(ELEMENT_IDS, elementName);
-      return [0].concat(byName(spellChoices().map((skill) => skill.id),
-        (id) => ($dataSkills[id] ? $dataSkills[id].name : '')));
+      if (this._tab === 'form') {
+        return [{ kind: 'head', text: T('VectorGun.section.forms') }]
+          .concat(byName(FORM_CHOICES, (key) => shapeText(key, 'name'))
+            .map((key) => ({ kind: 'form', key: key })))
+          .concat([{ kind: 'head', text: T('VectorGun.section.elements') }])
+          .concat(byName(ELEMENT_IDS, elementName)
+            .map((id) => ({ kind: 'element', id: id })));
+      }
+      return [{ kind: 'spell', id: 0 }].concat(
+        byName(spellChoices().map((skill) => skill.id),
+          (id) => ($dataSkills[id] ? $dataSkills[id].name : ''))
+          .map((id) => ({ kind: 'spell', id: id })));
     }
 
+    /** The cards a cursor can actually land on, in grid order. */
+    pickable() {
+      return this.rows().filter((row) => row.kind !== 'head');
+    }
+
+    current() {
+      return this.pickable()[this._index];
+    }
+
+    //------------------------------------------------------------------------
+    // The stand
+    //------------------------------------------------------------------------
+
     /**
-     * The shape drawn beside the pistol: whatever the cursor is on while the
-     * form page is open, and the fitted one everywhere else, so the two models
-     * on the right page always answer the row being read.
+     * The shape drawn on the stand beside the pistol: whatever shape the cursor
+     * is on while the form page is open, and the fitted one everywhere else.
      */
     shownShape() {
-      if (this._tab === 'form') {
-        const row = this.rows()[this._index];
-        if (row !== undefined) return row === GUN_FORM ? VG.SNIPER_FORM : row;
+      const row = this._tab === 'form' ? this.current() : null;
+      if (row && row.kind === 'form') {
+        return row.key === GUN_FORM ? VG.SNIPER_FORM : row.key;
       }
       const fitted = VG.fittedForm();
       return fitted === GUN_FORM ? VG.SNIPER_FORM : fitted;
@@ -247,36 +297,33 @@
       return this._stand === GUN_FORM ? GUN_FORM : this.shownShape();
     }
 
-    /** Brings the stand to whatever the open page asks for. */
+    /**
+     * The shape the stand should be holding for the page that is open: a shape
+     * card is the one place the other shape is being chosen, so that is the one
+     * place the gun stands as it.
+     */
+    standTarget() {
+      const row = this._tab === 'form' ? this.current() : null;
+      return (row && row.kind === 'form') ? ALT_STAND : GUN_FORM;
+    }
+
+    /** Brings the stand to whatever the cursor asks for. */
     _syncStand() {
       const want = this.standTarget();
       if (want !== this._stand) this.morphStand(want);
-      else if (this._tab === 'form') this._mountPreview();
-    }
-
-    /**
-     * The shape the stand should be holding for the page that is open: the
-     * form page is the one place the other shape is being chosen, so that is
-     * the one place the gun stands as it. Every other page is about the pistol
-     * and its running gear, so the pistol is what stands there.
-     */
-    standTarget() {
-      return this._tab === 'form' ? ALT_STAND : GUN_FORM;
+      else this._mountPreview();
     }
 
     /**
      * Folds the piece on the bench into `form` and raises it again, exactly as
      * it does in a battler's hand (VectorGun.playSwitchOn). Nothing is fitted
-     * by it: it is the screen looking at the other half of the same weapon,
-     * played rather than cut to, and it is the page turn that asks for it.
+     * by it: it is the screen looking at the other half of the same weapon.
      */
     morphStand(form) {
       if (this._switching || !this._el || this._stand === form) return;
       this._switching = true;
       const entry = this._previews[0];
       const fold = VG.playSwitchOn(entry ? entry.model : null, 'fold') || 0;
-      // The camera comes in while the piece is coming apart: the reconstruction
-      // is the thing worth looking at, so the screen looks at it.
       this._zoomStand(MORPH_ZOOM, fold);
       setTimeout(() => {
         if (!this._el) { this._switching = false; return; }
@@ -286,22 +333,17 @@
           this._previews[0] ? this._previews[0].model : null, 'rise') || 0;
         this._switching = false;
         // The new shape is measured only once it has finished rising: while its
-        // parts are still flying in the bounds are the whole flight, and the
-        // stand would settle far enough back to hold that instead of the gun.
+        // parts are still flying in the bounds are the whole flight.
         setTimeout(() => { if (this._el) this._fitStand(280); }, rise + 60);
       }, fold);
     }
 
     //------------------------------------------------------------------------
-    // The cursor, the one thing the screen owns
+    // The cursor
     //------------------------------------------------------------------------
 
     update() {
       super.update();
-      // The right mouse button closes the screen the way the pad's cancel does.
-      // TouchInput only sees it when nothing swallowed the event first, so the
-      // overlay's own listener below is what actually reports it; this is the
-      // canvas half of the same gesture.
       if (Input.isTriggered('cancel') || Input.isTriggered('escape') ||
           TouchInput.isCancelled() || this._closeRequested) {
         SoundManager.playCancel();
@@ -312,44 +354,50 @@
         this.turnTab(Input.isTriggered('pageup') ? -1 : 1);
         return;
       }
-      const last = this.rows().length - 1;
+      const last = this.pickable().length - 1;
       if (last < 0) return;
-      if (Input.isRepeated('down') && this._index < last) {
-        this._index++; SoundManager.playCursor(); this._paintSelection();
-      } else if (Input.isRepeated('up') && this._index > 0) {
-        this._index--; SoundManager.playCursor(); this._paintSelection();
-      } else if (Input.isRepeated('right') || Input.isRepeated('left')) {
-        // Left walks the pages backwards, right forwards: turning both ways on
-        // the same key left the third page unreachable in one direction.
-        this.turnTab(Input.isRepeated('left') ? -1 : 1);
-      } else if (Input.isTriggered('ok')) {
-        this.confirmRow(this._index);
-      }
+      // The page is a grid: up and down step a whole line, left and right one
+      // card. The pages are turned with L1 / R1 and the tab strip only.
+      if (Input.isRepeated('down')) this.moveCursor(COLS);
+      else if (Input.isRepeated('up')) this.moveCursor(-COLS);
+      else if (Input.isRepeated('right')) this.moveCursor(1);
+      else if (Input.isRepeated('left')) this.moveCursor(-1);
+      else if (Input.isTriggered('ok')) this.confirmRow(this._index);
+    }
+
+    moveCursor(step) {
+      const last = this.pickable().length - 1;
+      const next = Math.max(0, Math.min(last, this._index + step));
+      if (next === this._index) return;
+      this._index = next;
+      SoundManager.playCursor();
+      this._paintSelection();
     }
 
     /**
-     * Works the row under the cursor: a mode is loaded into a bay (pushing the
-     * oldest out when all three are taken) or unloaded, a spell is bound, an
-     * element is set.
+     * Works the card under the cursor: a mode is loaded into a bay (pushing the
+     * oldest out when all three are taken) or unloaded, a shape or an element is
+     * fitted, a spell is bound.
      */
     confirmRow(index) {
       this._index = index;
-      const row = this.rows()[index];
-      if (row === undefined) return;
-      if (this._tab === 'modes') this._fit(row);
-      else if (this._tab === 'form') {
-        VG.setForm(row);
+      const row = this.current();
+      if (!row) return;
+      if (row.kind === 'mode') this._fit(row.key);
+      else if (row.kind === 'form') {
+        VG.setForm(row.key);
         SoundManager.playOk();
-        this._toast(T('VectorGun.toast.form', { form: shapeText(row, 'name') }), 'vgform');
-      } else if (this._tab === 'element') {
-        setElement(row);
+        this._toast(T('VectorGun.toast.form', { form: shapeText(row.key, 'name') }), 'vgform');
+      } else if (row.kind === 'element') {
+        setElement(row.id);
         SoundManager.playOk();
-        this._toast(T('VectorGun.toast.element', { element: elementName(row) }), 'vgelement');
+        this._toast(T('VectorGun.toast.element', { element: elementName(row.id) }), 'vgelement');
       } else {
-        setBoundSpell(row);
+        setBoundSpell(row.id);
         SoundManager.playOk();
-        const skill = $dataSkills[row];
-        this._toast(skill ? T('VectorGun.toast.bound', { spell: skill.name }) : T('VectorGun.toast.cleared'), 'vgspell');
+        const skill = $dataSkills[row.id];
+        this._toast(skill ? T('VectorGun.toast.bound', { spell: skill.name })
+          : T('VectorGun.toast.cleared'), 'vgspell');
       }
       this._paint();
     }
@@ -381,6 +429,10 @@
       this._syncStand();
     }
 
+    //------------------------------------------------------------------------
+    // The stand's camera
+    //------------------------------------------------------------------------
+
     /**
      * The distance at which the piece on the stand exactly fills the viewport,
      * measured off the model's own bounds against the camera's frustum in both
@@ -394,8 +446,7 @@
       const box = new THREE.Box3().setFromObject(model);
       if (box.isEmpty()) return STAND_ZOOM;
       const size = box.getSize(new THREE.Vector3());
-      // The piece turns on the stand, so the depth counts as width too: the
-      // radius of what it sweeps is what has to fit, not the pose it is in.
+      // The piece turns on the stand, so the depth counts as width too.
       const half = Math.max(size.x, size.z) / 2;
       const tan = Math.tan((camera.fov * Math.PI / 180) / 2);
       const need = Math.max(half / (tan * (camera.aspect || 1)), (size.y / 2) / tan);
@@ -419,11 +470,7 @@
       this._zoomStand(this._fitZoom(), ms);
     }
 
-    /**
-     * Walks the stand's camera to `z` over `ms`. The viewer owns the camera and
-     * publishes it on its record (window.Weapon3DPreview), so nothing here has
-     * to know how the viewport is built.
-     */
+    /** Walks the stand's camera to `z` over `ms`. */
     _zoomStand(z, ms) {
       const entry = this._previews[0];
       const camera = entry && entry.camera;
@@ -451,13 +498,11 @@
     // The shell is drawn ONCE. The 3D viewer holds a WebGL context of its own
     // and an animation loop with it, so rewriting the whole spread on a cursor
     // step would tear the gun down and build it again several times a second:
-    // only the list, the footer and the detail card are repainted.
+    // only the grid, the status strip and the detail card are repainted.
 
     _buildShell() {
       // The gun is turned on the ground the party is standing on, the same
-      // battleground the equip screen's bench stands on
-      // (ItemSystem/ItemSystemEquipmentUI.js, BattleSystem/
-      // AnimatedBattleBackgrounds.js), not in a grey box.
+      // battleground the equip screen's bench stands on.
       const groundImg = (typeof window.getMapBattlebackImage === 'function')
         ? window.getMapBattlebackImage() : null;
       const groundStyle = groundImg
@@ -465,214 +510,235 @@
 
       const tabsHTML = TABS.map((tab) => `
         <div class="backpack-tab focusable" data-tab="${tab}"
-             onclick="SceneManager._scene.turnTab('${tab}')">${T('VectorGun.tab.' + tab)}</div>`).join('');
+             onclick="SceneManager._scene.turnTab('${tab}')">${esc(T('VectorGun.tab.' + tab))}</div>`).join('');
 
       this._el.innerHTML = `
         <div class="book-spread vg-book">
           <div class="left-page">
             <div class="page-header-bar">
-              <div class="back-button focusable" onclick="SceneManager._scene.popScene()">${T('VectorGun.back')}</div>
-              <h2 class="title">${T('VectorGun.title')}</h2>
+              <div class="back-button focusable" onclick="SceneManager._scene.popScene()">${esc(T('VectorGun.back'))}</div>
+              <h2 class="title">${esc(T('VectorGun.title'))}</h2>
             </div>
-            <div class="backpack-tabs">${tabsHTML}</div>
-            <div class="ui-list ui-scroll"></div>
-            <div class="ui-footer"></div>
+            <div class="backpack-tabs vg-tabs">${tabsHTML}</div>
+            <div class="vg-status"></div>
+            <div class="backpack-grid vg-grid"></div>
           </div>
-          <div class="right-page vg-spread">
-            <div class="vg-middle">
-              <div class="vg-active"></div>
-              <div class="ui-detail"></div>
-            </div>
+          <div class="right-page vg-page">
             <div class="vg-stage weapon-previews-container">
               <div class="weapon-preview-card"${groundStyle}>
                 <canvas class="vg-canvas"></canvas>
                 <span class="vg-preview-label"></span>
               </div>
             </div>
+            <div class="vg-detail ui-detail"></div>
+            <div class="vg-bays"></div>
           </div>
         </div>`;
     }
 
     _paint() {
       if (!this._el) return;
-      const rows = this.rows();
-      if (this._index >= rows.length) this._index = Math.max(0, rows.length - 1);
+      const last = this.pickable().length - 1;
+      if (this._index > last) this._index = Math.max(0, last);
 
       this._el.querySelectorAll('.backpack-tab').forEach((tab) => {
         tab.classList.toggle('active', tab.dataset.tab === this._tab);
       });
-      this._el.querySelector('.ui-list').innerHTML = this._listHTML();
-      // The frame keeps up with the hand holding it, so what it has grown into
-      // is stated on the sheet next to what it is running (VectorGunSystem.js
-      // is the one place the growth is worked out).
-      const grown = VG.growthParams();
-      this._el.querySelector('.ui-footer').innerHTML = `
-        <span class="inspect-spec-value">${T('VectorGun.slots', { used: modes().length, max: MAX_MODES })}</span>
-        <span class="inspect-spec-value">${T('VectorGun.growth.footer', {
-          level: VG.gunLevel(),
-          damage: Math.round((VG.growthRate() - 1) * 100),
-          atk: grown.atk, rounds: VG.growthRounds(),
-        })}</span>
-        <span class="inspect-spec-label">${shapeText(VG.fittedForm(), 'name')}</span>`;
-      this._el.querySelector('.vg-active').innerHTML = this._activeHTML();
-      this._el.querySelector('.ui-detail').innerHTML = this._detailHTML();
+      this._el.querySelector('.vg-grid').innerHTML = this._gridHTML();
+      this._el.querySelector('.vg-status').innerHTML = this._statusHTML();
+      this._el.querySelector('.vg-bays').innerHTML = this._baysHTML();
+      this._el.querySelector('.vg-detail').innerHTML = this._detailHTML();
       this._scrollToSelection();
       this._mountPreview();
     }
 
     /**
-     * Walking the list moves a class and rewrites the detail card. Rebuilding
+     * Walking the grid moves a class and rewrites the detail card. Rebuilding
      * the spread for a cursor step is what made the screen flicker.
      */
     _paintSelection() {
       if (!this._el) return;
-      this._el.querySelectorAll('.ui-list .item-slot')
+      this._el.querySelectorAll('.vg-grid .item-slot')
         .forEach((slot, i) => slot.classList.toggle('selected', i === this._index));
-      this._el.querySelector('.ui-detail').innerHTML = this._detailHTML();
+      this._el.querySelector('.vg-detail').innerHTML = this._detailHTML();
       this._scrollToSelection();
-      // Walking the form page turns the shape on the right hand stand with the
-      // cursor; on every other page the stand is already what it should be.
       if (this._tab === 'form') this._syncStand();
     }
 
     _scrollToSelection() {
-      const selected = this._el ? this._el.querySelector('.item-slot.selected') : null;
+      const selected = this._el ? this._el.querySelector('.vg-grid .item-slot.selected') : null;
       if (selected && selected.scrollIntoView) selected.scrollIntoView({ block: 'nearest' });
     }
 
+    /**
+     * The one line over the grid: how many bays are taken, what the frame has
+     * grown into and what shape it is fitted as. It sat in a footer under the
+     * list before, where it fought the list for the last inch of the page.
+     */
+    _statusHTML() {
+      const grown = VG.growthParams();
+      const chips = [
+        T('VectorGun.slots', { used: modes().length, max: MAX_MODES }),
+        shapeText(VG.fittedForm(), 'name'),
+        elementName(elementId()),
+        T('VectorGun.growth.footer', {
+          level: VG.gunLevel(),
+          damage: Math.round((VG.growthRate() - 1) * 100),
+          atk: grown.atk, rounds: VG.growthRounds(),
+        }),
+      ];
+      return chips.map((chip) => `<span class="vg-status-chip">${esc(chip)}</span>`).join('');
+    }
+
     //------------------------------------------------------------------------
-    // The left page: one row per choice, and every row is a button
+    // The left page: a grid of cards, written the way a skill card is written
     //------------------------------------------------------------------------
 
-    _listHTML() {
+    _gridHTML() {
       const rows = this.rows();
       if (this._tab === 'spell' && !spellChoices().length && rows.length <= 1) {
-        return `<div class="ui-empty-note">${T('VectorGun.spell.empty')}</div>`;
+        return `<div class="item-grid-empty">${esc(T('VectorGun.spell.empty'))}</div>`;
       }
-      // ONE choice per row, read down: the left page is a narrow column of
-      // names beside the picture, and a name cut in half is worth nothing.
-      const cells = rows.map((row, i) => {
-        const cell = this._tab === 'modes' ? this._modeCell(row)
-          : this._tab === 'form' ? this._formCell(row)
-          : this._tab === 'element' ? this._elementCell(row)
-          : this._spellCell(row);
+      let pick = -1;
+      return rows.map((row) => {
+        if (row.kind === 'head') {
+          return `<div class="vg-grid-head">${esc(row.text)}</div>`;
+        }
+        pick++;
+        const card = row.kind === 'mode' ? this._modeCard(row.key)
+          : row.kind === 'form' ? this._formCard(row.key)
+          : row.kind === 'element' ? this._elementCard(row.id)
+          : this._spellCard(row.id);
+        const index = pick;
         return `
-          <div class="item-slot focusable${i === this._index ? ' selected' : ''}"
-               onclick="SceneManager._scene.confirmRow(${i})">
-            ${iconHTML(cell.icon)}
+          <div class="item-slot focusable${index === this._index ? ' selected' : ''}${card.on ? ' vg-on' : ''}"
+               onclick="SceneManager._scene.confirmRow(${index})">
+            <div class="item-rarity-bar" style="background:${card.stripe};"></div>
+            ${iconHTML(card.icon)}
             <div class="item-slot-info">
-              <span class="item-slot-name">${cell.name}</span>
-              <span class="item-slot-meta">
-                ${cell.chips.map((chip) => `<span class="item-slot-count">${chip}</span>`).join('')}
-              </span>
+              <div class="item-slot-name">${esc(card.name)}</div>
+              <div class="item-slot-meta">
+                <span>${esc(card.meta || '')}</span>
+                ${card.chip ? `<span class="item-slot-count">${esc(card.chip)}</span>` : ''}
+              </div>
             </div>
           </div>`;
       }).join('');
-      return `<div class="vg-grid">${cells}</div>`;
     }
 
-    _modeCell(key) {
+    _modeCard(key) {
       const bay = modes().indexOf(key);
       return {
         name: T('VectorGun.mode.' + key + '.name'),
         icon: MODE_ICONS[key] || 0,
-        chips: bay >= 0
-          ? [T('VectorGun.bay.loaded', { n: bay + 1 }), T('VectorGun.state.on')]
-          : [T('VectorGun.state.off')],
+        // The one line under the name is what the mode DOES: a page of cards
+        // all saying "Idle" says nothing at all.
+        meta: line('VectorGun.mode.' + key + '.desc'),
+        chip: bay >= 0 ? T('VectorGun.bay.loaded', { n: bay + 1 }) : '',
+        stripe: bay >= 0 ? STRIPE_ON : STRIPE_OFF,
+        on: bay >= 0,
       };
     }
 
-    _formCell(key) {
+    _formCard(key) {
       const fitted = VG.fittedForm() === key;
       return {
         name: shapeText(key, 'name'),
         icon: SHAPE_ICONS[key] || 0,
-        chips: fitted ? [T('VectorGun.form.fitted')] : [],
+        meta: line('VectorGun.shape.' + key + '.desc'),
+        chip: fitted ? T('VectorGun.form.fitted') : '',
+        stripe: fitted ? STRIPE_ON : STRIPE_OFF,
+        on: fitted,
       };
     }
 
-    _elementCell(id) {
+    _elementCard(id) {
+      const on = elementId() === id;
       return {
         name: elementName(id),
         icon: ELEMENT_ICONS[id] || 0,
-        chips: elementId() === id ? [T('VectorGun.state.on')] : [],
+        meta: line('VectorGun.element.desc.' + id),
+        chip: on ? T('VectorGun.state.on') : '',
+        stripe: on ? STRIPE_ON : (ELEMENT_COLORS[id] || STRIPE_OFF),
+        on: on,
       };
     }
 
-    _spellCell(skillId) {
+    /** A bound spell reads exactly as it reads in the skills menu. */
+    _spellCard(skillId) {
       const skill = $dataSkills[skillId];
       const actor = wielder() || emActor();
       const cost = skill && actor ? VG.spellCost(actor, skill) : 0;
-      const chips = [];
-      if (skill) chips.push(T('VectorGun.spell.fired', { cost: cost }));
-      if (boundSpellId() === skillId) chips.push(T('VectorGun.state.on'));
+      const on = boundSpellId() === skillId;
       return {
         name: skill ? skill.name : T('VectorGun.spell.none'),
         icon: skill ? skill.iconIndex : 0,
-        chips: chips,
+        meta: skill ? T('VectorGun.spell.fired', { cost: cost }) : '',
+        chip: on ? T('VectorGun.state.on') : '',
+        stripe: on ? STRIPE_ON : STRIPE_OFF,
+        on: on,
       };
     }
 
     //------------------------------------------------------------------------
-    // The right page: the gun above, the card for the row under the cursor
+    // The right page: the gun, the card under the cursor, the three bays
     //------------------------------------------------------------------------
 
     _detailHTML() {
-      const row = this.rows()[this._index];
-      if (row === undefined) return '';
-      const card = this._tab === 'modes' ? this._modeDetail(row)
-        : this._tab === 'form' ? this._formDetail(row)
-        : this._tab === 'element' ? this._elementDetail(row)
-        : this._spellDetail(row);
+      const row = this.current();
+      if (!row) return '';
+      const card = row.kind === 'mode' ? this._modeDetail(row.key)
+        : row.kind === 'form' ? this._formDetail(row.key)
+        : row.kind === 'element' ? this._elementDetail(row.id)
+        : this._spellDetail(row.id);
       return `
         <div class="ui-detail-head">
           <div class="ui-detail-titles">
-            <h3 class="inspect-name">${card.name}</h3>
-            <div class="inspect-rarity">${card.kind}</div>
+            <h3 class="inspect-name">${esc(card.name)}</h3>
+            <div class="inspect-rarity">${esc(card.kind)}</div>
           </div>
         </div>
         <div class="ui-detail-scroll">
           ${card.prose ? `<div class="ui-prose">${card.prose}</div>` : ''}
-          <div class="inspect-spec-grid">
+          ${card.specs.length ? `<div class="inspect-spec-grid">
             ${card.specs.map(([label, value]) => `
               <div class="inspect-spec-row">
-                <span class="inspect-spec-label">${label}</span>
-                <span class="inspect-spec-value">${value}</span>
+                <span class="inspect-spec-label">${esc(label)}</span>
+                <span class="inspect-spec-value">${esc(value)}</span>
               </div>`).join('')}
-          </div>
+          </div>` : ''}
         </div>`;
     }
 
     /**
-     * The middle column: everything the gun is actually doing, bay by bay, with
-     * the effect each loaded mode is having spelled out. The detail card under
-     * it answers the cursor; this answers the gun.
+     * The three bays along the bottom of the right page: what the gun is
+     * actually running, in order, with the empty ones drawn as empty. The
+     * detail card answers the cursor; this answers the gun.
      */
-    _activeHTML() {
+    _baysHTML() {
       const fitted = modes();
-      const head = `<h4 class="inspect-section-title">${T('VectorGun.detail.fitted')}</h4>`;
-      if (!fitted.length) {
-        return `${head}<div class="ui-empty-note">${T('VectorGun.state.off')}</div>`;
+      const bays = [];
+      for (let i = 0; i < MAX_MODES; i++) {
+        const key = fitted[i];
+        bays.push(`
+          <div class="vg-bay${key ? ' vg-bay-on' : ''}">
+            ${key ? iconHTML(MODE_ICONS[key] || 0) : '<span class="item-slot-icon vg-icon"></span>'}
+            <div class="item-slot-info">
+              <div class="item-slot-name">${esc(key ? T('VectorGun.mode.' + key + '.name')
+                : T('VectorGun.bay.empty'))}</div>
+              <div class="item-slot-meta">${esc(T('VectorGun.bay.slot', { n: i + 1 }))}</div>
+            </div>
+          </div>`);
       }
-      const rows = fitted.map((key, i) => `
-        <div class="vg-active-row">
-          ${iconHTML(MODE_ICONS[key] || 0)}
-          <div class="item-slot-info">
-            <span class="item-slot-name">${T('VectorGun.mode.' + key + '.name')}</span>
-            <span class="item-slot-count">${T('VectorGun.bay.loaded', { n: i + 1 })}</span>
-            <div class="ui-prose">${line('VectorGun.mode.' + key + '.effect')}</div>
-          </div>
-        </div>`).join('');
-      return `${head}<div class="vg-active-list">${rows}</div>`;
+      return bays.join('');
     }
 
     _modeDetail(key) {
       return {
         name: T('VectorGun.mode.' + key + '.name'),
         kind: T('VectorGun.detail.modesTitle'),
-        prose: line('VectorGun.mode.' + key + '.desc'),
-        // What state it is in is already on the row itself, so the card says
-        // only what the row cannot: what the thing does.
+        // The card is the long form: the grid already carries the short one.
+        prose: line('VectorGun.mode.' + key + '.effect'),
         specs: [],
       };
     }
@@ -689,9 +755,6 @@
       const baseBullets = gun ? (/<Bullets:\s*(\d+)>/i.exec(gun.note || '') || [0, 1])[1] : 1;
       const bonus = Math.round((VG.FORM_DAMAGE_BONUS || 0) * 100);
       const specs = [];
-      // The two numbers a shape is actually chosen on. Every shape has a reach,
-      // which is what the battle map is given (MapBattleMode.weaponRange); only
-      // the ones that shoot have a magazine to print.
       VG.withForm(folded, () => {
         specs.push([T('VectorGun.detail.range'), String(VG.weaponReach(Number(baseRange)))]);
         if (!VG.inMeleeForm()) {
@@ -702,7 +765,7 @@
       return {
         name: shapeText(key, 'name'),
         kind: T('VectorGun.detail.formTitle'),
-        prose: line('VectorGun.shape.' + key + '.desc') + '<br><br>' +
+        prose: line('VectorGun.shape.' + key + '.effect') + '<br><br>' +
           T(key === GUN_FORM ? 'VectorGun.form.gunGain' : 'VectorGun.form.gain', {
             bonus: bonus, element: elementName(VG.elementId()),
           }),
@@ -714,9 +777,7 @@
       return {
         name: elementName(id),
         kind: T('VectorGun.detail.elementTitle'),
-        // The element is a choice, not a thing to read about: the name is all
-        // the card has to say.
-        prose: '',
+        prose: line('VectorGun.element.desc.' + id) + '<br><br>' + line('VectorGun.element.hint'),
         specs: [],
       };
     }
@@ -738,20 +799,10 @@
     //------------------------------------------------------------------------
     // The gun in 3D
     //------------------------------------------------------------------------
-    // The viewer is the shared one (ItemSystem/ItemSystemEquipmentUI.js), so the
-    // piece turns, zooms and ticks its own moving parts exactly as it does on a
-    // shop counter. It is rebuilt only when the gun itself changes shape: the
-    // Blade of Thelema and the element are both in the model's key.
 
-    /**
-     * ONE shape on the stand, as big as the right page allows, and SWITCH under
-     * it for the other. A weapon that is one object in two shapes reads best
-     * when the change between them is played rather than laid side by side.
-     */
     _mountPreview(force) {
       // A page turn repaints before it morphs, so the shape the new page wants
-      // must not be cut straight in: while the stand still owes a fold, only
-      // the morph itself is allowed to change the piece standing on it.
+      // must not be cut straight in.
       if (!force && this.standTarget() !== this._stand) return;
       const form = this.standShape();
       const key = VG.withForm(form, () => VG.modelKey());

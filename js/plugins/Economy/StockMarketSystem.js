@@ -1930,19 +1930,19 @@
           <div style="display:flex; align-items:center; gap:12px">
             <span style="font-size:18px; font-weight:bold; letter-spacing:1px; color:var(--xp-gold)">STOCK MARKET</span>
             <span style="background:var(--xp-green); color:var(--xp-white); font-size:10px; font-weight:bold; padding:2px 8px; border-radius:10px">● LIVE MARKET OPEN</span>
-            <span style="font-size:12px; color:#cfe6ff">Session Ticks: ${sm._updateCounter}</span>
+            <span style="font-size:12px; color:var(--xp-sky-4)">Session Ticks: ${sm._updateCounter}</span>
           </div>
           <div style="display:flex; gap:10px">
             <div class="sm-stat-pill">
-              <span style="font-size:10px; color:#cfe6ff">LIQUID GOLD</span>
+              <span style="font-size:10px; color:var(--xp-sky-4)">LIQUID GOLD</span>
               <span style="font-size:14px; font-weight:bold; color:var(--xp-white)">${goldToEurosForDisplay(playerGold)}</span>
             </div>
             <div class="sm-stat-pill">
-              <span style="font-size:10px; color:#cfe6ff">PORTFOLIO STOCKS</span>
+              <span style="font-size:10px; color:var(--xp-sky-4)">PORTFOLIO STOCKS</span>
               <span style="font-size:14px; font-weight:bold; color:var(--xp-gold)">${formatMoney(sm.getTotalStockValue())}</span>
             </div>
             <div class="sm-stat-pill">
-              <span style="font-size:10px; color:#cfe6ff">NET WORTH</span>
+              <span style="font-size:10px; color:var(--xp-sky-4)">NET WORTH</span>
               <span style="font-size:14px; font-weight:bold; color:#2ecc71">${sm.getNetWorthFormatted()}</span>
             </div>
           </div>

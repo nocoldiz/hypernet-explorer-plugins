@@ -70,7 +70,14 @@
     "enUs": "it-IT",
     "aDOrChange": "A/D o ←/→: Cambia mese | W/S o ↑/↓: Naviga notizie",
     "otherNewsScrollText": "← →: Altra notizia | ↑ ↓: Scorri testo | ESC: Chiudi",
-    "appTitle": "Notizie"
+    "appTitle": "Notizie",
+    "searchPlaceholder": "Cerca nell'archivio...",
+    "clearSearch": "PULISCI",
+    "searchResults": {
+      "one": "{count} RISULTATO",
+      "other": "{count} RISULTATI"
+    },
+    "noMatches": "Nulla nell'archivio corrisponde a \"{query}\"."
   },
   "specialLocations": [
     "Città del Vaticano",

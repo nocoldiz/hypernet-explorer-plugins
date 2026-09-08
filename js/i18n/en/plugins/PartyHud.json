@@ -1,27 +1,26 @@
 {
- "optionName": "Party HUD",
- "fuel": "FUEL",
- "statChip": "{stat} {rate}x",
- "alert": {
-  "dead": "Down",
-  "hp": "Wounded",
-  "hpCritical": "Dying",
-  "hunger": "Hungry",
-  "hungerCritical": "Starving",
-  "sleep": "Tired",
-  "sleepCritical": "Exhausted",
-  "hygiene": "Unwashed",
-  "hygieneCritical": "Filthy",
-  "social": "Lonely",
-  "socialCritical": "Isolated",
-  "leisure": "Bored",
-  "leisureCritical": "Miserable",
-  "craving": "Craving {substance}",
-  "ill": "{disease}",
-  "illUntreated": "{disease} (untreated)"
- },
- "gear": {
-  "held": "[{list}]",
-  "separator": ", "
- }
+  "optionName": "Party HUD",
+  "fuel": "FUEL",
+  "alert": {
+    "dead": "Down",
+    "hp": "Wounded",
+    "hpCritical": "Dying",
+    "hunger": "Hungry",
+    "hungerCritical": "Starving",
+    "sleep": "Tired",
+    "sleepCritical": "Exhausted",
+    "hygiene": "Unwashed",
+    "hygieneCritical": "Filthy",
+    "social": "Lonely",
+    "socialCritical": "Isolated",
+    "leisure": "Bored",
+    "leisureCritical": "Miserable",
+    "craving": "Craving {substance}",
+    "ill": "{disease}",
+    "illUntreated": "{disease} (untreated)"
+  },
+  "gear": {
+    "held": "[{list}]",
+    "separator": ", "
+  }
 }

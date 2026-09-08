@@ -12,7 +12,7 @@
   "materialsRequired": "MATERIALS REQUIRED",
   "requires": "REQUIRES",
   "permanentBuffs": "PERMANENT PARTY BUFFS",
-  "yieldLabel": "YIELD",
+  "rewardLabel": "REWARD",
   "exp": "EXP",
   "gold": "GOLD",
   "complete": "COMPLETE",

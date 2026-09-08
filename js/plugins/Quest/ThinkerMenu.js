@@ -837,7 +837,7 @@
     // trade makes laid out on the right. A piece is picked up off that grid and
     // examined on its own, in a window over the board, which is where every
     // choice about it (its look, its name, how many) is made.
-    const GRID_COLS = 3;
+    const GRID_COLS = 4;
 
     function bench() {
         return window.ThinkerBench || null;

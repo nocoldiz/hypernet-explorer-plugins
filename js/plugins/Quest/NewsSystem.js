@@ -113,6 +113,14 @@
 
 
     // --- Helper Function to Get Current Game Date as JavaScript Date ---
+    // The reader's own words are written back into the markup (the search box
+    // value, the "nothing matched" line), so they are escaped on the way in.
+    function escapeNewsHTML(text) {
+        return String(text == null ? '' : text)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
     function getGameDateAsJSDate() {
         const gameDate = getGameDateFromVariable();
         return new Date(gameDate.year, gameDate.month, gameDate.day, gameDate.hours, gameDate.minutes, 0);
@@ -1184,6 +1192,8 @@
             const newsList = this._newsWindow._data || [];
             const selectedIndex = this._newsWindow.index();
             const selectedNews = newsList[selectedIndex] || null;
+            const query = this._newsWindow._searchQuery || '';
+            const searching = !!query;
 
             // In OS app mode the active RMMZ scene is Scene_HypernetOS (which has
             // none of these handlers), so inline onclicks must target the live news
@@ -1200,7 +1210,9 @@
             if (newsList.length === 0) {
                 headlinesHTML = `
                     <div class="news-empty">
-                        ${T('NewsSystem.ui.noChroniclesRegisteredIn')}
+                        ${searching
+                            ? T('NewsSystem.ui.noMatches', { query: escapeNewsHTML(query) })
+                            : T('NewsSystem.ui.noChroniclesRegisteredIn')}
                     </div>
                 `;
             } else {
@@ -1208,6 +1220,9 @@
                     const isSelected = idx === selectedIndex;
                     const newsDate = new Date(news.timestamp);
                     const day = String(newsDate.getDate()).padStart(2, '0');
+                    // Search results span the whole archive, so each line names
+                    // its own month rather than the one the navigator is on.
+                    const itemMonth = monthNames[newsDate.getMonth()] || monthName;
                     const timeStr = news.scheduledTime || newsDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                     // The category is a class, not a colour: .news-cat--* below
@@ -1225,7 +1240,7 @@
                     headlinesHTML += `
                         <div class="newspaper-headline-item news-cat--${categoryKind} focusable ${selectedClass}" data-focus-key="news-item-${idx}" onclick="${sref}.selectNewspaperItem(${idx})">
                             <div class="news-headline-meta">
-                                <span>${day} ${monthName.substring(0, 3).toUpperCase()} • ${timeStr}</span>
+                                <span>${day} ${itemMonth.substring(0, 3).toUpperCase()} • ${timeStr}</span>
                                 <span class="news-headline-cat">${categoryLabel}</span>
                             </div>
                             <div class="news-headline-text">
@@ -1329,11 +1344,27 @@
                                 </h2>
                             </div>
 
+                            <!-- The archive search. A query reaches every month,
+                                 so the navigator gives way to a result count
+                                 while one is running. -->
+                            <div class="news-search-row kb-only">
+                                <input type="text" id="newspaper-search" class="news-search-input focusable"
+                                       placeholder="${T('NewsSystem.ui.searchPlaceholder')}"
+                                       aria-label="${T('NewsSystem.ui.searchPlaceholder')}"
+                                       value="${escapeNewsHTML(query)}">
+                                <div class="newspaper-nav-btn news-search-clear focusable${searching ? '' : ' disabled'}"
+                                     onclick="${sref}.clearNewspaperSearch()">${T('NewsSystem.ui.clearSearch')}</div>
+                            </div>
+
                             <!-- Month navigator -->
                             <div class="news-month-nav">
+                                ${searching ? `
+                                <span class="news-month-label news-search-label">${T.n('NewsSystem.ui.searchResults', newsList.length, { count: newsList.length })}</span>
+                                ` : `
                                 <div class="newspaper-nav-btn focusable" onclick="${sref}.changeNewspaperMonth(-1)">${T('News.ui.prev')}</div>
                                 <span class="news-month-label">${monthName.toUpperCase()} 2001</span>
                                 <div class="newspaper-nav-btn focusable" onclick="${sref}.changeNewspaperMonth(1)">${T('News.ui.next')}</div>
+                                `}
                             </div>
 
                             <!-- Scrollable headlines list -->
@@ -1358,6 +1389,8 @@
                 </div>
             `;
 
+            this.bindNewspaperSearch();
+
             setTimeout(() => {
                 if (this._dndContainer) {
                     const listEl = this._dndContainer.querySelector('#newspaper-headlines-list');
@@ -1371,8 +1404,49 @@
             }, 50);
         }
 
+        // Every keystroke repaints the whole spread, which throws the box away
+        // and takes the caret with it. The box is rebuilt with the query already
+        // in it, so all that is left is to put the reader back where they were.
+        bindNewspaperSearch() {
+            if (!this._dndContainer) return;
+            const input = this._dndContainer.querySelector('#newspaper-search');
+            if (!input) return;
+
+            input.addEventListener('input', () => this.onNewspaperSearch(input.value));
+            // The map, the scene and the desktop's focus ring all read the
+            // keyboard: while the reader is typing a headline into the box,
+            // none of them should hear it.
+            ['keydown', 'keyup', 'keypress'].forEach(type =>
+                input.addEventListener(type, (e) => e.stopPropagation()));
+
+            if (this._searchFocused) {
+                input.focus();
+                const at = this._searchCaret == null ? input.value.length : this._searchCaret;
+                try { input.setSelectionRange(at, at); } catch (e) { /* not a text input */ }
+            }
+        }
+
+        onNewspaperSearch(value) {
+            if (!this._newsWindow) return;
+            const input = this._dndContainer && this._dndContainer.querySelector('#newspaper-search');
+            this._searchFocused = true;
+            this._searchCaret = input ? input.selectionStart : null;
+            if (this._newsWindow.setSearchQuery(value)) this.refreshUINewspaperDOM();
+        }
+
+        clearNewspaperSearch() {
+            if (!this._newsWindow) return;
+            this._searchFocused = false;
+            this._searchCaret = null;
+            if (this._newsWindow.setSearchQuery('')) {
+                SoundManager.playCancel();
+                this.refreshUINewspaperDOM();
+            }
+        }
+
         selectNewspaperItem(index) {
             if (this._newsWindow) {
+                this._searchFocused = false;
                 this._newsWindow.select(index);
                 SoundManager.playOk();
                 this.refreshUINewspaperDOM();
@@ -1426,8 +1500,15 @@
                 }
 
                 if (Input.isTriggered('cancel') || Input.isTriggered('escape')) {
-                    SoundManager.playCancel();
-                    this.popScene();
+                    // Cancel takes the query off first and the screen down
+                    // second, which is what the Clear button beside the field
+                    // does and the only way to reach it without a mouse.
+                    if (this._newsWindow._searchQuery) {
+                        this.clearNewspaperSearch();
+                    } else {
+                        SoundManager.playCancel();
+                        this.popScene();
+                    }
                 }
 
                 if (moved) {
@@ -1505,6 +1586,9 @@
             this._currentMonth = gameDate.month;
             this._currentYear = gameDate.year;
             this._monthHeaderWindow = null;
+            // A search reads the whole archive rather than the month on show:
+            // an empty query is what makes the month navigator the filter.
+            this._searchQuery = '';
             this.refresh();
             this.select(0);
         }
@@ -1627,6 +1711,35 @@
             this.select(0);
         }
 
+        setSearchQuery(query) {
+            const next = String(query || '').trim();
+            if (next === this._searchQuery) return false;
+            this._searchQuery = next;
+            this.refresh();
+            this.select(0);
+            return true;
+        }
+
+        isSearching() {
+            return !!this._searchQuery;
+        }
+
+        // Every word has to appear somewhere in the entry, in any order and in
+        // any of its fields: a reader looking for "athens eurozone" should not
+        // have to remember which half the headline put first.
+        matchesSearch(news) {
+            if (!this._searchQuery) return true;
+            const hay = [
+                news.text, news.fullText, news.location,
+                news.isRealNews ? T('NewsSystem.ui.global') : T('NewsSystem.ui.' + (
+                    news.category === 'positive' ? 'bullish' :
+                    news.category === 'negative' ? 'bearish' :
+                    news.category === 'surreal' ? 'surreal' : 'chronicle'))
+            ].filter(Boolean).join(' ').toLowerCase();
+            return this._searchQuery.toLowerCase().split(/\s+/)
+                .every(word => hay.includes(word));
+        }
+
         item() {
             return this.maxItems() > 0 ? this._data[this.index()] : null;
         }
@@ -1635,17 +1748,20 @@
             ensureNewsManager();
             const allNews = $newsManager ? $newsManager.newsHistory : [];
 
-            // Filter news by current month and year
-            const monthNews = allNews.filter(news => {
-                const newsDate = new Date(news.timestamp);
-                return newsDate.getMonth() === this._currentMonth &&
-                    newsDate.getFullYear() === this._currentYear;
-            });
+            // A search reaches across the whole archive; without one the month
+            // navigator is the filter, as it always was.
+            const inScope = this._searchQuery
+                ? allNews.filter(news => this.matchesSearch(news))
+                : allNews.filter(news => {
+                    const newsDate = new Date(news.timestamp);
+                    return newsDate.getMonth() === this._currentMonth &&
+                        newsDate.getFullYear() === this._currentYear;
+                });
 
             if (this._locationFilter) {
-                this._data = monthNews.filter(news => news.location === this._locationFilter);
+                this._data = inScope.filter(news => news.location === this._locationFilter);
             } else {
-                this._data = monthNews;
+                this._data = inScope;
             }
 
             // Sort by timestamp (most recent first), but if same day, sort by time

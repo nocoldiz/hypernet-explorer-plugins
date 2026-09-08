@@ -70,7 +70,14 @@
     "enUs": "en-US",
     "aDOrChange": "A/D or ←/→: Change month | W/S or ↑/↓: Navigate news",
     "otherNewsScrollText": "← →: Other news | ↑ ↓: Scroll text | ESC: Close",
-    "appTitle": "News"
+    "appTitle": "News",
+    "searchPlaceholder": "Search the archive...",
+    "clearSearch": "CLEAR",
+    "searchResults": {
+      "one": "{count} MATCH",
+      "other": "{count} MATCHES"
+    },
+    "noMatches": "Nothing in the archive answers to \"{query}\"."
   },
   "specialLocations": [
     "Vatican City",

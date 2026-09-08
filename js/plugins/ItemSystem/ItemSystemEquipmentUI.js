@@ -1276,6 +1276,20 @@
                 this.switchToPreviousCharacter();
             } else if (enableSwitching && isRight) {
                 this.switchToNextCharacter();
+            } else if (Input.isTriggered('menu')) {
+                // Y takes the piece out of the slot under the cursor, the same
+                // verb the backpack's Y throws one away with: the page's third
+                // button is always the one that removes something. Taking a
+                // slot's piece off used to mean opening its list and picking
+                // the Remove row at the top of it.
+                const worn = this._actor.equips()[this._slotIndex];
+                if (worn) {
+                    SoundManager.playEquip();
+                    this._actor.changeEquip(this._slotIndex, null);
+                    this._refreshDOM();
+                } else {
+                    SoundManager.playBuzzer();
+                }
             } else if (isOk) {
                 SoundManager.playOk();
                 this.openInventorySelection();

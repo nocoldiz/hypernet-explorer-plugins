@@ -2321,6 +2321,10 @@
   function ccIsUnstuckTile(x, y) {
     if (!$gameMap.isValid(x, y)) return false;
     if (ccBlockingEventAt(x, y)) return false;
+    // A floor that hurts is never a landing, however open it is: the relaxed
+    // pass is there to get the party out of the rock, not to set them down on
+    // lava because the tidy pass found nowhere better.
+    if ($gameMap.isDamageFloor(x, y)) return false;
     return CC_LANDING_DIRS.some((d) => ccCanStepOff(x, y, d));
   }
 

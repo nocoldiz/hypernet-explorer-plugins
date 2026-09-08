@@ -613,7 +613,8 @@
       "longDate": "Data estesa:",
       "location": "Localita'",
       "locationText": "Per ricevere informazioni locali, come notizie e meteo, selezionare la localita' corrente:",
-      "inputLangs": [
+      "inputLangs": "Servizi installati",
+      "inputLangsList": [
         "EN Inglese (Regno Unito) - Tastiera: Regno Unito",
         "IT Italiano (Italia) - Tastiera: Italiano",
         "GB Goblinese - Tastiera: Morsicata"
@@ -627,7 +628,8 @@
       "eastAsian": "Installa i file per le lingue dell'Asia orientale",
       "nonUnicode": "Lingua per i programmi non Unicode",
       "nonUnicodeText": "Questa impostazione consente ai programmi non Unicode di visualizzare menu e finestre nella lingua originale.",
-      "codePages": [
+      "codePages": "Tabelle di conversione tabella codici",
+      "codePagesList": [
         "1252 (ANSI - Latino I)",
         "437 (OEM - Stati Uniti)",
         "850 (OEM - Latino I multilingue)",
@@ -870,7 +872,8 @@
       "appName": "Installazione applicazioni",
       "changeRemove": "Cambia/Rimuovi programmi",
       "addNew": "Aggiungi nuovi programmi",
-      "components": [
+      "components": "Installa/Rimuovi componenti di Windows",
+      "componentsList": [
         "Accessori e utilita'",
         "Servizi fax",
         "Servizio di indicizzazione",

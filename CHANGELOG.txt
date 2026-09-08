@@ -1,3 +1,23 @@
+0.6.7a
+
+- faster UI: windowed object index, debounced search, culled voxel figures
+- reworked vector gun UI
+- skill card: Damage beside Info, lore under Incantation
+- vehicles page: bigger icons, two cards per row
+- cooking ingredient list drawn as the item grid with nutrients
+- title screen music is random again
+- menu search bar replaced by a Find entry in Game
+- map toasts notificaion no longer stay on screen during battle
+- Em starts with two grimoires and the Book of the Law
+- currency labels say Euros instead of Gold
+- workshop and tech tree: unframed rows, larger type, one reward line
+- removed sandbox binding
+- a dodged blow prints miss  instead of rank 
+- reworked canine and rodent models
+- remade controller UI
+- fixed some hypernet apps
+
+
 0.6.6a
 
 - updater marks the version you are running in gold and locks it, no install or compare on your own build

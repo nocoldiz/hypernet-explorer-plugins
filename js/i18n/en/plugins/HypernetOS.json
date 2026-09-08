@@ -613,7 +613,8 @@
       "longDate": "Long date:",
       "location": "Location",
       "locationText": "To help services provide you with local information, such as news and weather, select your present location:",
-      "inputLangs": [
+      "inputLangs": "Installed services",
+      "inputLangsList": [
         "EN English (United Kingdom) - Keyboard: United Kingdom",
         "IT Italian (Italy) - Keyboard: Italian",
         "GB Goblinese - Keyboard: Bitten"
@@ -627,7 +628,8 @@
       "eastAsian": "Install files for East Asian languages",
       "nonUnicode": "Language for non-Unicode programs",
       "nonUnicodeText": "This system setting enables non-Unicode programs to display menus and dialogs in their native language.",
-      "codePages": [
+      "codePages": "Code page conversion tables",
+      "codePagesList": [
         "1252 (ANSI - Latin I)",
         "437 (OEM - United States)",
         "850 (OEM - Multilingual Latin I)",
@@ -870,7 +872,8 @@
       "appName": "Add or Remove Programs",
       "changeRemove": "Change or Remove Programs",
       "addNew": "Add New Programs",
-      "components": [
+      "components": "Add/Remove Windows Components",
+      "componentsList": [
         "Accessories and Utilities",
         "Fax Services",
         "Indexing Service",

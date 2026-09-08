@@ -139,7 +139,6 @@
         { symbol: "build",       key: "B", code: 66 },
         { symbol: "help",        key: "H", code: 72 },
         { symbol: "training",    key: "N", code: 78 },
-        { symbol: "sandbox",     key: "G", code: 71 },
         // Digits stay the favourites hotbar on the map (ItemSystem/
         // ItemSystemInventory.js already maps 1-9 to it, Skyrim-style), so these
         // one only listens on the symbol that plugin defines and is reachable
@@ -175,6 +174,7 @@
         vector_gun: 115,
         sleep_menu: 205,
         save: 121,
+        search: 79,
         cooking: 219,
         thinker: 290,
         alchemistry: 180,
@@ -189,7 +189,6 @@
         factions: 132,
         biologics: 84,
         augments: 143,
-        search: 247,
         help: 186,
         options: 83,
         tools: 216,
@@ -2649,7 +2648,7 @@
                          onclick="SceneManager._scene?.selectUIVehicle?.('${v.key}')"
                          title="${escapeHtml(T('MainMenu.vehicles.show'))}">
                         <div class="vehicle-card-head">
-                            <canvas id="vehicle-canvas-${v.key}" class="vehicle-row-sprite" width="48" height="48"></canvas>
+                            <canvas id="vehicle-canvas-${v.key}" class="vehicle-row-sprite" width="96" height="96"></canvas>
                             <span class="entity-name">${escapeHtml(v.name)}</span>
                         </div>
                         <div class="vehicle-card-line">
@@ -2770,9 +2769,7 @@
                 <div class="page-header-bar">
                     <div class="back-button" onclick="SceneManager._scene?.uiBackOut?.()">${T('MainMenu.dynamics.back')}</div>
                     <h2 class="tools-title">${T('MainMenu.page.main')}</h2>
-                    <div class="menu-top-header-main">
-                        ${window.MenuSearch ? window.MenuSearch.barHTML() : ''}
-                    </div>
+                    <div class="menu-top-header-main"></div>
                 </div>
             `;
 
@@ -2820,7 +2817,6 @@
                         this.generateUICommandItemHTML(T('MainMenu.cmd.bestiary'), "bestiary"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.cards'), "cards"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.archive'), "help"),
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.search'), "search"),
                         atlasHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.factions'), "factions"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),
@@ -2836,6 +2832,7 @@
                     ],
                     // System: meta / out-of-world
                     [
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.find'), "search"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.save'), "save"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.multiplayer'), "multiplayer"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.preferences'), "options"),
@@ -3307,14 +3304,11 @@
                     }
                     break;
                 case "search":
-                    // Stays on this page, but opens the results over it: the
-                    // tile shows everything the party has, unfiltered, and the
-                    // field at the head of that page narrows it from there
-                    // (CustomMainMenuSearch.js).
-                    if (window.MenuSearch) {
+                    // The Find entry in the Game group: the search bar itself no
+                    // longer sits in the header, so this command is the way onto
+                    // the search page.
+                    if (window.MenuSearch && window.MenuSearch.open) {
                         window.MenuSearch.open();
-                    } else {
-                        console.warn("MenuSearch is not defined!");
                     }
                     break;
                 case "sandbox":

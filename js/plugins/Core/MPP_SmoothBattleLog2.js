@@ -49,7 +49,7 @@
  * @param Message Speed
  * @desc Battle log display speed, in frames held per line (higher = slower)
  * @type number
- * @default 14
+ * @default 24
  * 
  * @param View Duration
  * @desc Battle log display time
@@ -90,7 +90,7 @@
  * @type number
  * @min 0
  * @max 100
- * @default 0
+ * @default 50
  *
  */
 
@@ -104,14 +104,14 @@
     const CONFIG = {
         logType: params['Log Type'] || '1-line',
         maxLines: 4,
-        messageSpeed: Number(params['Message Speed'] || 14),
+        messageSpeed: Number(params['Message Speed'] || 24),
         fontSize: Number(params['Font Size'] || 18),
         viewDuration: -1,
         waitNewLine: params['Wait New Line?'] === 'true',
         startMessagesOnLog: params['Start Messages On Log?'] === 'true',
         logCommand: params['Log Command'] || '',
         animationSpeed: Number(params['Animation Speed'] || 8),
-        battleLogBgOpacity: Number(params['Battle Log BG Opacity'] ?? 0),
+        battleLogBgOpacity: Number(params['Battle Log BG Opacity'] ?? 50),
         colors: {
             actor: 1,   // Bright gold for actors
             actor2: 4,  // Bright gold for Actor 2
@@ -708,7 +708,10 @@
         configurable: true
     });
 
-    // 0 = Centered (top center of the screen, default), 1 = Classic (under the party HUD)
+    // Which side the log stands on: 0 = bottom left (default), 1 = bottom right.
+    // It always hangs from the floor of the screen and grows upward, so the
+    // newest line is the one nearest the hotbar. A save written before the log
+    // moved carries 0 (which used to mean centred) and reads as the left.
     Object.defineProperty(ConfigManager, 'battleLogPosition', {
         get: function() {
             return this._battleLogPosition !== undefined ? this._battleLogPosition : 0;
@@ -742,8 +745,8 @@
 
     function _battleLogPositionText(value) {
         return value === 1
-            ? (T('BattleLog.positionClassic') || 'Classic')
-            : (T('BattleLog.positionCentered') || 'Centered');
+            ? (T('BattleLog.positionRight') || 'Right')
+            : (T('BattleLog.positionLeft') || 'Left');
     }
 
     if (window.GameOptions) {
@@ -1583,35 +1586,42 @@
             const sc = _msgGetScale();
             const root = this._htmlBattleLogRoot;
             const hotbarReserve = (window.BattleHotbar && window.BattleHotbar.reservedHeight) || 75;
-            // Centered (default) hangs the log from the top centre of the screen, in the free
-            // lane between the party HUD on the left and the enemy bars on the right. Classic
-            // keeps the old left aligned column under the party HUD cards.
-            const centered = ConfigManager.battleLogPosition !== 1;
+            // The log stands on the floor of the screen, above the hotbar, and
+            // grows upward: the newest line is always in the same place, at the
+            // bottom, whichever side the player put it on. Left is the default;
+            // Right hands its own side to the log and moves the command list
+            // over to the left (BattleSystemEnhanchedCommands reads the same
+            // setting through window.BattleLogSide).
+            const onRight = ConfigManager.battleLogPosition === 1;
             const maxW = Math.round(Graphics.width * 0.52);
             const logW = Math.min(this.width, maxW);
-            const leftPx = centered
-                ? sc.ox + Math.floor((Graphics.width - logW) / 2) * sc.sx
-                : sc.ox + this.x * sc.sx;
-            const topPx = centered
-                ? sc.oy + (yOffset + 8) * sc.sy
-                : sc.oy + (this.y + yOffset) * sc.sy;
+            const margin = 8;
+            const leftPx = onRight
+                ? sc.ox + (Graphics.width - logW - margin) * sc.sx
+                : sc.ox + margin * sc.sx;
+            // The floor: everything the hotbar reserves is left free under it.
+            const bottomPx = Math.round((hotbarReserve + margin) * sc.sy);
             _setStyleIfChanged(root, 'left', leftPx + 'px');
+            _setStyleIfChanged(root, 'right', 'auto');
 
-            // Available room is bounded by the hotbar below.
-            const room = Math.max(60, (Graphics.height - hotbarReserve) * sc.sy - topPx - 6);
+            // Available room is everything between the top of the screen and
+            // the floor the log stands on.
+            const room = Math.max(60, (Graphics.height * sc.sy) - bottomPx - sc.oy - 6);
 
-            _setStyleIfChanged(root, 'top', topPx + 'px');
-            _setStyleIfChanged(root, 'width', ((centered ? logW : this.width) * sc.sx) + 'px');
+            _setStyleIfChanged(root, 'top', 'auto');
+            _setStyleIfChanged(root, 'bottom', bottomPx + 'px');
+            _setStyleIfChanged(root, 'width', (logW * sc.sx) + 'px');
             _setStyleIfChanged(root, 'maxWidth', Math.round(maxW * sc.sx) + 'px');
-            _setStyleIfChanged(root, 'textAlign', centered ? 'center' : 'left');
+            _setStyleIfChanged(root, 'textAlign', onRight ? 'right' : 'left');
             _setStyleIfChanged(root, 'maxHeight', room + 'px');
             _setStyleIfChanged(root, 'height', 'auto');
             _setStyleIfChanged(root, 'padding', Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px');
             _setStyleIfChanged(root, 'display',
                 (this.visible && this._lines && this._lines.length > 0) ? 'flex' : 'none');
             _setStyleIfChanged(root, 'flexDirection', 'column');
-            _setStyleIfChanged(root, 'justifyContent', 'flex-start');
-            _setStyleIfChanged(root, 'alignItems', centered ? 'center' : 'flex-start');
+            // Growing upward off the floor: the column is packed at its end.
+            _setStyleIfChanged(root, 'justifyContent', 'flex-end');
+            _setStyleIfChanged(root, 'alignItems', onRight ? 'flex-end' : 'flex-start');
             _setStyleIfChanged(root, 'overflowY', 'hidden');
             _setStyleIfChanged(root, 'overflowX', 'visible');
 
@@ -1960,20 +1970,79 @@
         return params.slice(0, -1).join(', ') + T('BattleLog.listLast') + params[params.length - 1];
     };
 
+    //-------------------------------------------------------------------------
+    // Stat changes, in points
+    //-------------------------------------------------------------------------
+    // A buff used to be reported as a direction ("INT increased!") and stood on
+    // the party HUD as a multiplier ("INT 0.8x"). Neither says what the player
+    // needs to know, which is how many points moved: 0.8x of a number nobody is
+    // shown is not something to plan around. So the log states the arithmetic
+    // instead, for the party and for the enemy alike, and the HUD carries no
+    // stat chips at all (UI/PartyHud.js).
+    //
+    // The figure is measured, not derived from the buff's rate: every param is
+    // read off the battler either side of the action, so a change that came
+    // from a state, a severed limb or a passive counts exactly as much as one
+    // that came from a buff, and a stat that ended where it started is never
+    // announced.
+    const STAT_PARAMS = [2, 3, 4, 5, 6, 7];
+
+    function readStatParams(battler) {
+        if (!battler || typeof battler.param !== 'function') return null;
+        const out = {};
+        for (const id of STAT_PARAMS) out[id] = battler.param(id);
+        return out;
+    }
+
+    const _MPP_GameAction_apply = Game_Action.prototype.apply;
+    Game_Action.prototype.apply = function(target) {
+        const before = readStatParams(target);
+        _MPP_GameAction_apply.call(this, target);
+        if (!before) return;
+        const deltas = [];
+        for (const id of STAT_PARAMS) {
+            const moved = target.param(id) - before[id];
+            if (moved !== 0) deltas.push({ id, points: moved });
+        }
+        const result = target.result();
+        if (result) result.paramDeltas = deltas;
+    };
+
+    // A fresh result carries no measurement of its own.
+    const _MPP_ActionResult_clear = Game_ActionResult.prototype.clear;
+    Game_ActionResult.prototype.clear = function() {
+        _MPP_ActionResult_clear.call(this);
+        this.paramDeltas = [];
+    };
+
+    // "INT +4", coloured green up and red down, the sign always written so a
+    // gain and a loss read the same way round.
+    Window_BattleLog.prototype._statDeltaText = function(id, points) {
+        const color = points > 0 ? 23 : 24;
+        return `\\c[${color}]` + T('BattleLog.statDelta', {
+            stat: TextManager.param(id),
+            points: (points > 0 ? '+' : '') + points
+        }) + `\\c[0]`;
+    };
+
     Window_BattleLog.prototype.displayChangedBuffs = function(target) {
         const result = target.result();
-        const isIt = ConfigManager.language === 'it';
-        if (result.addedBuffs.length > 0) {
-            const paramStr = this._formatParamList(result.addedBuffs.map(id => `\\c[23]${TextManager.param(id)}\\c[0]`));
-            this.push('appendToActionLine', isIt ? paramStr + ' aumentati!' : paramStr + ' increased!');
+        const deltas = result.paramDeltas || [];
+        if (deltas.length > 0) {
+            this.push('appendToActionLine', this._formatParamList(
+                deltas.map(d => this._statDeltaText(d.id, d.points))));
+            return;
         }
-        if (result.addedDebuffs.length > 0) {
-            const paramStr = this._formatParamList(result.addedDebuffs.map(id => `\\c[24]${TextManager.param(id)}\\c[0]`));
-            this.push('appendToActionLine', isIt ? paramStr + ' diminuiti!' : paramStr + ' decreased!');
-        }
-        if (result.removedBuffs.length > 0) {
-            const paramStr = this._formatParamList(result.removedBuffs.map(id => TextManager.param(id)));
-            this.push('appendToActionLine', isIt ? paramStr + ' normalizzati!' : paramStr + ' restored!');
+        // Nothing moved on the sheet, but a buff was still put on or taken off
+        // (a stat already at its floor, a rate that rounds to the same number).
+        // That is worth one line, without a figure it cannot state.
+        const named = [];
+        for (const id of result.addedBuffs) named.push(`\\c[23]${TextManager.param(id)}\\c[0]`);
+        for (const id of result.addedDebuffs) named.push(`\\c[24]${TextManager.param(id)}\\c[0]`);
+        for (const id of result.removedBuffs) named.push(TextManager.param(id));
+        if (named.length > 0) {
+            this.push('appendToActionLine',
+                T('BattleLog.statUnchanged', { stats: this._formatParamList(named) }));
         }
     };
 

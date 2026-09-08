@@ -297,7 +297,7 @@
     font-size: var(--fs-chip);
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+    transition: 0.2s cubic-bezier(0.2, 0, 0, 1); transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-shadow: inset 0 1px 0 var(--border-parchment-10);
     margin-bottom: -1px;
 }
@@ -629,7 +629,7 @@
     font-weight: 600;
     cursor: pointer;
     text-align: center;
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .cc-compact-toggle-btn.active {
@@ -671,7 +671,7 @@
     color: var(--text-text-alt-4);
     cursor: pointer;
     text-align: center;
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     white-space: nowrap;
     user-select: none;
 }
@@ -927,7 +927,7 @@
     font-weight: bold;
     margin-left: 8px;
     flex-shrink: 0;
-    transition: all 0.25s ease;
+    transition: 0.25s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     border: 1px solid var(--border-gold-amber-30);
     background: transparent;
     color: transparent;
@@ -1026,7 +1026,7 @@
     font-size: var(--fs-title);
     color: var(--text-primary-hover);
     outline: none;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .cc-name-text-input:focus {
@@ -1041,7 +1041,7 @@
     color: var(--text-primary-hover);
     font-size: var(--fs-title);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3224,7 +3224,7 @@
     border-radius: 50% 50% 12px 12px;
     position: relative;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: 0.3s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -3243,7 +3243,7 @@
     width: 100%;
     height: 60%;
     background: var(--gradient-10);
-    transition: all 0.3s ease;
+    transition: 0.3s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     z-index: 1;
 }
 
@@ -3399,7 +3399,7 @@
     justify-content: center;
     background: var(--shadow-primary-hover-translucent-5);
     position: relative;
-    transition: all 0.3s ease;
+    transition: 0.3s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .cc-binding-slot.active {
@@ -3545,7 +3545,7 @@
     border-radius: 4px;
     color: var(--accent-gold-pure);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-shadow: 0 4px 10px var(--shadow-primary-hover-translucent-5);
     position: relative;
     outline: none;
@@ -3902,7 +3902,7 @@
     padding: 6px 9px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.22s ease;
+    transition: 0.22s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     border: 1px solid transparent;
     position: relative;
     background: transparent;
@@ -4008,7 +4008,7 @@
     background: transparent;
     border: 1px solid transparent;
     border-radius: 6px;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     cursor: pointer;
     gap: 8px;
 }
@@ -4109,7 +4109,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .cc-spec-btn:hover:not(:disabled) {
@@ -4383,7 +4383,7 @@
     color: var(--text-card-dark);
     font-size: var(--fs-body);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .cc-bio-chip:hover {
@@ -4516,7 +4516,7 @@
     border: 1px solid transparent;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.18s ease;
+    transition: 0.18s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     text-align: center;
     position: relative;
     box-sizing: border-box;
@@ -4632,7 +4632,7 @@
     font-weight: bold;
     flex: 1 1 0;
     text-align: center;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .cc-pet-trait-toggle:hover {
@@ -4746,7 +4746,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .cc-stat-box:hover,
@@ -5798,7 +5798,7 @@
 
 /* Interactive Companion Portraits in Character Page with elastic pops */
 .companion-portrait {
-    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .companion-portrait:hover {
@@ -5846,7 +5846,7 @@
        frame. */
     border: 1px solid transparent;
     border-radius: 2px;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     background: transparent;
     font-weight: bold;
 }
@@ -5969,7 +5969,7 @@
     align-items: center;
     cursor: pointer;
     position: relative;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-sizing: border-box;
     min-width: 0;
 }
@@ -6378,7 +6378,7 @@
     cursor: pointer;
     user-select: none;
     font-weight: bold;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     background: transparent;
     color: var(--text-text-alt-4);
 }
@@ -6656,7 +6656,7 @@
     color: var(--text-primary-hover);
     background: transparent;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .backpack-mode-btn:hover,
@@ -6823,7 +6823,7 @@
     padding: 6px 12px;
     margin-top: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     font-weight: bold;
     box-shadow: 0 2px 4px var(--shadow-primary-hover-translucent-5);
 }
@@ -6861,7 +6861,7 @@
     margin-bottom: 5px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     border: 1px solid transparent;
 }
 
@@ -7022,7 +7022,7 @@
     border: 1.5px solid var(--text-primary-hover);
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 /* The diplomatic accords: one line per hyperpower, which is more lines than the
@@ -7055,7 +7055,7 @@
     border: 1px solid transparent;
     color: var(--text-text-alt-4);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     border-radius: 4px;
 }
 
@@ -7084,7 +7084,7 @@
     margin-bottom: 6px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     border: 1px solid transparent;
 }
 
@@ -7163,7 +7163,7 @@
     padding: 12px 16px;
     box-shadow: 0 4px 10px var(--shadow-primary-hover-translucent-5);
     position: relative;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-sizing: border-box;
 }
 
@@ -7756,15 +7756,23 @@
 #thinker-container .left-page,
 #blacksmith-container .left-page {
     border-right: 1px solid var(--border-secondary-hover-translucent-15);
+    /* The trade list is a column of short labels, so it takes only the width
+       those labels need and the shelf of pieces takes the rest of the spread.
+       The crease is moved to the same seam below, so nothing sits under it. */
+    flex: 0 0 30%;
 }
 
 #thinker-container .right-page,
 #blacksmith-container .right-page {
-    /* The pages split at 50% but the painted binding crease runs from 54% to 62%
-       of the spread, so the right page has to start past it or its rows, rules and
-       buttons are drawn under the shadow. Percentage padding resolves against the
-       spread width, so this holds at any resolution. */
-    padding-left: 14%;
+    flex: 1;
+    /* The right page starts just past the painted crease. Percentage padding
+       resolves against the spread width, so this holds at any resolution. */
+    padding-left: 2.5%;
+}
+
+#thinker-container .book-spread::before,
+#blacksmith-container .book-spread::before {
+    left: 30%;
 }
 
 /* Dynamic Craft Mode Tabs, styled like the backpack category bookmark tabs */
@@ -7788,7 +7796,7 @@
     border-radius: 3px;
     color: var(--text-primary-hover);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .tab-btn:hover {
@@ -7840,7 +7848,7 @@
     border: 1px solid var(--border-secondary-hover-translucent-15);
     background: var(--bg-primary-hover-translucent-35);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .category-row:hover {
@@ -7906,7 +7914,7 @@
     border: 1px solid var(--border-secondary-hover-translucent-15);
     background: var(--bg-primary-hover-translucent-35);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .blueprint-row:hover {
@@ -8235,9 +8243,25 @@
    backpack rather than like a board of boxes. */
 .forge-grid-row {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 4px 12px;
-    margin-bottom: 2px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2px 10px;
+    margin-bottom: 1px;
+}
+
+/* No frame around a piece: the shelf is a list, not a board of boxes. The one
+   card in hand is marked by the gold hairline every other menu uses. */
+.forge-slot {
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 4px 10px;
+}
+
+.forge-slot:hover,
+.forge-slot.selected,
+.forge-slot.focused {
+    border-color: var(--border-focus-hover);
+    background: transparent;
+    box-shadow: none;
 }
 .forge-slot.locked {
     opacity: 0.55;
@@ -8528,7 +8552,7 @@
     border-radius: 6px;
     cursor: pointer;
     box-sizing: border-box;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-shadow: 0 4px 10px var(--shadow-primary-hover-translucent-5);
 }
 
@@ -8663,11 +8687,24 @@
     }
 }
 
+/* The pantry is the backpack's pocket grid: three across, same slot, with the
+   nutrition line where an item prints its weight. */
 .pantry-list {
     flex: 1;
     overflow-y: auto;
     padding-right: 10px;
     margin-top: 10px;
+}
+
+.pantry-list .item-icon {
+    margin-right: 0;
+}
+
+.pantry-list .cook-nutrition-line {
+    margin-top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .pantry-list::-webkit-scrollbar {
@@ -8708,7 +8745,7 @@
     margin-left: 10px;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     user-select: none;
 }
 
@@ -8791,7 +8828,7 @@
     border: 1px solid var(--border-muted-focus);
     cursor: pointer;
     text-align: center;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     background: var(--bg-backdrop);
     color: var(--text-muted-hover);
 }
@@ -8914,7 +8951,7 @@
     padding: 6px 14px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     position: absolute;
     left: 0;
     top: 50%;
@@ -8961,7 +8998,7 @@
     border: 1px solid var(--border-secondary-hover-translucent-15);
     background: var(--bg-primary-hover-translucent-35);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .monster-card:hover {
@@ -9349,7 +9386,7 @@
     font-family: var(--font-ui);
     font-size: 0.964em;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: 0.2s; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     color: var(--text-success-active);
 }
 
@@ -9415,7 +9452,7 @@
     cursor: pointer;
     color: var(--text-success-active);
     opacity: 0.7;
-    transition: all 0.2s;
+    transition: 0.2s; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     padding: 2px 8px;
     border-radius: 3px;
 }
@@ -9472,7 +9509,7 @@
     border-radius: 4px;
     background: var(--bg-primary-hover-translucent-35);
     cursor: pointer;
-    transition: all 0.15s;
+    transition: 0.15s; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .cryo-field.selected {
@@ -9859,7 +9896,7 @@
     padding: 12px 16px;
     margin-bottom: 10px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     display: flex;
     flex-direction: column;
 }
@@ -9930,7 +9967,7 @@
     padding: 6px 2px;
     cursor: pointer;
     text-align: center;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -9979,7 +10016,7 @@
     cursor: pointer;
     color: var(--text-inverse);
     border-bottom: 2px solid transparent;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .roster-tab.active {
@@ -10858,7 +10895,7 @@
     margin-bottom: 3px;
     border-radius: 4px;
     border: 1px solid transparent;
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     cursor: pointer;
     user-select: none;
 }
@@ -10967,7 +11004,7 @@
     background: transparent;
     border: 1px solid var(--text-primary-hover);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 /* Picked out by its own ring, not by a plate: the page shows through. */
@@ -11130,7 +11167,7 @@
     padding: 4px 10px;
     cursor: pointer;
     user-select: none;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .band-btn:hover,
@@ -11477,7 +11514,7 @@
     font-weight: bold;
     font-family: var(--font-ui);
     font-size: 0.964em;
-    transition: all 0.3s ease;
+    transition: 0.3s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .toggle-switch.active {
@@ -11500,7 +11537,7 @@
     background: var(--text-highlight-active);
     border: 2px solid var(--border-muted-focus);
     border-radius: 50%;
-    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-shadow: 0 2px 5px var(--shadow-primary-hover-translucent-5);
 }
 
@@ -11532,7 +11569,7 @@
     color: var(--text-primary-hover);
     white-space: nowrap;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .tab-item:hover,
@@ -11818,7 +11855,7 @@
     cursor: pointer;
     border-radius: 4px;
     border-left: 3px solid transparent;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     user-select: none;
 }
 
@@ -11856,7 +11893,7 @@
     cursor: pointer;
     border-radius: 4px 4px 0 0;
     border-bottom: 2px solid transparent;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     user-select: none;
     white-space: nowrap;
 }
@@ -12113,7 +12150,7 @@
     padding: 8px 20px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     font-weight: bold;
     box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
     box-sizing: border-box;
@@ -12260,7 +12297,7 @@
     border-radius: 6px;
     padding: 8px 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     user-select: none;
     position: relative;
 }
@@ -12499,7 +12536,7 @@
     background: transparent;
     cursor: pointer;
     position: relative;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-sizing: border-box;
     overflow: hidden;
 }
@@ -12699,7 +12736,7 @@
     background: var(--bg-primary-hover-translucent-35);
     cursor: pointer;
     position: relative;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-sizing: border-box;
     overflow: hidden;
     min-width: 0;
@@ -13486,7 +13523,7 @@
     box-shadow: 0 2px 5px var(--shadow-glow-active-translucent-40);
     cursor: pointer;
     z-index: 10;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 /* The SHAPE of a pin says what kind of place it is, from the entry's own "type"
@@ -13654,7 +13691,7 @@
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 4px 8px var(--shadow-glow-active-translucent-40);
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .travel-zoom-btn:hover {
@@ -13686,7 +13723,7 @@
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 2px 6px var(--border-subtle-translucent-25);
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .travel-edit-btn:hover {
@@ -13807,7 +13844,7 @@
     padding: 4px 10px;
     cursor: pointer;
     color: var(--text-secondary-active);
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     user-select: none;
     line-height: 1.2;
 }
@@ -13834,7 +13871,7 @@
     padding: 6px 4px;
     cursor: pointer;
     color: var(--text-inverse);
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .shop-tab.active {
@@ -13980,7 +14017,7 @@
     color: var(--text-primary-hover);
     border: 1px solid var(--border-gold-amber-30);
     box-sizing: border-box;
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .sell-qty-step:hover {
@@ -14071,7 +14108,7 @@
     cursor: pointer;
     background: transparent;
     border: none;
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .shop-cat-header:first-child {
@@ -14372,7 +14409,7 @@
     font-weight: bold;
     font-size: 1.238em;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .qty-arrow:hover {
@@ -14545,7 +14582,7 @@
     font-family: var(--font-ui);
     font-size: 0.928em;
     color: var(--text-success-active);
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-sizing: border-box;
     text-align: left;
 }
@@ -14743,7 +14780,7 @@
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 2px 5px var(--shadow-primary-hover-translucent-5);
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-sizing: border-box;
 }
 
@@ -15537,7 +15574,7 @@
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     flex: 0 1 auto;
     font-weight: bold;
     text-align: center;
@@ -16495,7 +16532,7 @@
     text-align: center;
     color: var(--text-disabled);
     background: var(--bg-warm-cream-25);
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -20110,7 +20147,7 @@ padding: 2px 10px;
     color: var(--text-text-alt-4);
     font-size: 0.928em;
     cursor: pointer;
-    transition: all 0.18s ease;
+    transition: 0.18s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     user-select: none;
 }
 .tt-tab:hover { color: var(--text-primary-hover); }
@@ -20133,6 +20170,9 @@ padding: 2px 10px;
     flex: 1 1 auto;
     min-width: 0;
     font-weight: bold;
+    /* The rail reads in the workshop's hand: a discipline is named at the same
+       size a production method is (.category-name). */
+    font-size: 1.238em;
     line-height: 1.15;
     overflow-wrap: break-word;
 }
@@ -20228,17 +20268,20 @@ padding: 2px 10px;
     /* The nodes of a row share the page width instead of each taking a fixed
        slice of the viewport: a row of two spreads, a row of five packs, and
        the tree stops hugging the left half of an empty page. */
-    flex: 1 1 clamp(120px, 11vw, 210px);
-    min-width: clamp(120px, 11vw, 210px);
-    max-width: clamp(190px, 17vw, 300px);
+    flex: 1 1 clamp(150px, 13vw, 250px);
+    min-width: clamp(150px, 13vw, 250px);
+    max-width: clamp(220px, 19vw, 340px);
     min-height: clamp(30px, 4.6vh, 52px);
     padding: clamp(5px, 0.7vh, 10px) clamp(7px, 0.6vw, 12px);
-    border: 1.5px solid var(--border-muted-focus);
+    /* A node is drawn like an entry of the rail beside it: no plate, no frame
+       and no shadow, only its own ink. The hairline is kept transparent so the
+       one in hand can take the gold without the row moving. */
+    border: 1.5px solid transparent;
     border-radius: 6px;
-    background: var(--bg-panel);
+    background: none;
     cursor: pointer;
-    transition: all 0.15s ease;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
+    box-shadow: none;
 }
 .tt-node-glyph {
     flex-shrink: 0;
@@ -20253,7 +20296,9 @@ padding: 2px 10px;
 /* Absolute floor and ceiling on top of the em: the container's own size is
    already viewport-scaled, and 0.74 of it drops under 10px on a Steam Deck. */
 .tt-node-name {
-    font-size: clamp(10px, 0.78em, 15px);
+    /* The same reading size the workshop gives a row name, floored and capped
+       so a Steam Deck's smaller container cannot drop it under 12px. */
+    font-size: clamp(12px, 1.05em, 20px);
     font-weight: bold;
     line-height: 1.2;
     color: var(--text-primary-hover);
@@ -20262,28 +20307,27 @@ padding: 2px 10px;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
-.tt-node-badge { font-size: clamp(8px, 0.62em, 12px); color: var(--text-text-alt-4); }
+.tt-node-badge { font-size: clamp(10px, 0.78em, 15px); color: var(--text-text-alt-4); }
 
-.tt-node--done { border-color: var(--text-text-alt-11); }
+.tt-node--done { border-color: transparent; }
 .tt-node--done .tt-node-glyph { color: var(--text-text-alt-11); }
 .tt-node--done .tt-node-name { color: var(--text-text-alt-11); }
-.tt-node--ready { border-color: var(--text-primary-hover); }
+.tt-node--ready { border-color: transparent; }
+.tt-node--ready .tt-node-name { color: var(--text-text-alt-14-hover); }
 .tt-node--ready .tt-node-glyph { color: var(--text-text-alt-14-hover); }
-.tt-node--open { border-color: var(--border-muted-focus); opacity: 0.92; }
+.tt-node--open { border-color: transparent; opacity: 0.92; }
 .tt-node--locked { opacity: 0.5; }
 .tt-node--locked .tt-node-name { color: var(--text-text-alt-4); }
-.tt-node--fringe { border-style: none; }
 .tt-node--fringe .tt-node-name { font-style: normal; color: var(--text-text-alt-4); }
-.tt-node--proc { border-style: none; }
 .tt-node--proc .tt-node-name { color: var(--text-text-alt-8); }
 
+/* Hover and selection are the one gold hairline the rest of the game draws:
+   no plate behind it, no glow and no lift. */
 .tt-node:hover { border-color: var(--border-focus-hover); }
 .tt-node.selected {
-    border-color: var(--text-primary-hover);
-    outline: 2px solid var(--border-focus-hover);
-    outline-offset: 1px;
-    box-shadow: 0 0 12px rgba(255, 204, 102, 0.4);
-    transform: translateY(-1px);
+    border-color: var(--border-focus-hover);
+    outline: none;
+    box-shadow: none;
 }
 
 /* ── Right page: detail ──────────────────────────────────── */
@@ -20354,6 +20398,14 @@ padding: 2px 10px;
     gap: 4px 14px;
     font-size: 0.928em;
 }
+/* The reward is one line and stays one line: every chip on it shrinks a little
+   rather than dropping the goods onto a second row. */
+.tt-inline-line--one {
+    flex-wrap: nowrap;
+    gap: 4px 10px;
+    overflow: hidden;
+}
+
 .tt-inline-chip {
     display: inline-flex;
     align-items: center;
@@ -20434,7 +20486,7 @@ padding: 2px 10px;
     border-radius: 6px;
     background: var(--bg-primary-hover-translucent-35);
     cursor: pointer;
-    transition: all 0.18s ease;
+    transition: 0.18s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     user-select: none;
 }
 .tt-research-btn:hover,
@@ -20464,7 +20516,7 @@ padding: 2px 10px;
     border-radius: 6px;
     background: transparent;
     cursor: pointer;
-    transition: all 0.18s ease;
+    transition: 0.18s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     user-select: none;
 }
 .tt-project-btn:hover { background: rgba(255, 255, 255, 0.06); }
@@ -21754,7 +21806,7 @@ body.ascii-ui-active #title-menu-container {
     background: var(--shadow-black-translucent-80);
     border: 1px solid var(--accent-gold-pure-translucent-30);
     border-radius: 0;
-    transition: all 0.15s ease;
+    transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     color: var(--accent-orange);
     font-size: calc(22px * var(--ts-ui-scale, 1));
     font-weight: normal; /* Square only ships a 400 weight; 700 leaves it unrendered in NW.js */
@@ -25018,7 +25070,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #gsv-root .gsv-tab { pointer-events:auto; cursor:pointer; padding:6px 16px; margin:0; border-radius:4px 4px 0 0;
   background:transparent; border:1px solid transparent;
   color:var(--text-text-alt-12); font-size:17px; letter-spacing:0.4px; font-weight:600;
-  transition:all .15s ease; white-space:nowrap; user-select:none; }
+  transition: .15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom; white-space:nowrap; user-select:none; }
 #gsv-root .gsv-tab:hover { background:var(--border-gold-amber-30); color:var(--text-pure-white); }
 #gsv-root .gsv-tab.gsv-active { color:#1a1206; background:var(--accent-gold-pure);
   box-shadow:0 4px 10px var(--shadow-black-translucent-55); }
@@ -25642,7 +25694,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     cursor: pointer;
     user-select: none;
     box-sizing: border-box;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .save-modal-btn.danger {
@@ -25677,7 +25729,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-family:var(--font-ui); cursor:pointer; border-radius:5px;
     border:1.5px solid var(--border-primary-hover-translucent-15);
     background:var(--bg-card-translucent-5);
-    transition:all .15s ease; color:var(--text-primary-hover);
+    transition: .15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom; color:var(--text-primary-hover);
 }
 #menu-container .grim-actor { padding:8px 12px; display:flex; justify-content:space-between; align-items:center; }
 #menu-container .grim-card  { padding:10px 14px; display:flex; flex-direction:column; gap:4px; }
@@ -26047,7 +26099,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-family:var(--font-ui); cursor:pointer; border-radius:5px;
     border:1.5px solid var(--border-primary-hover-translucent-15);
     background:var(--bg-card-translucent-5);
-    transition:all .15s ease; color:var(--text-primary-hover);
+    transition: .15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom; color:var(--text-primary-hover);
 }
 #menu-container .teach-actor { padding:8px 12px; display:flex; justify-content:space-between; align-items:center; }
 #menu-container .teach-card  { padding:10px 14px; display:flex; flex-direction:column; gap:4px; }
@@ -26394,7 +26446,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     padding: 8px 20px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
     box-sizing: border-box;
     user-select: none;
@@ -26574,6 +26626,50 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     margin-bottom: 16px;
 }
 
+/* The archive search. It sits above the month navigator because a query
+   overrules it: the navigator picks a month, the box reaches every one. */
+.news-search-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.news-search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: var(--font-ui);
+    font-size: 1.208rem;
+    color: var(--text-primary-hover);
+    background: var(--bg-subtle-translucent-5);
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 4px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+}
+
+.news-search-input::placeholder {
+    color: var(--text-card-medium);
+    opacity: 1;
+}
+
+.news-search-input:focus {
+    outline: none;
+    border-color: var(--text-primary-hover);
+}
+
+.news-search-clear.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.news-search-label {
+    width: 100%;
+    text-align: center;
+}
+
 /* Month navigator */
 .news-month-nav {
     display: flex;
@@ -26629,7 +26725,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     border-bottom: none;
     border-left: 3px solid transparent;
     background: transparent;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     box-sizing: border-box;
 }
 
@@ -27121,7 +27217,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-family: var(--font-ui);
     font-size: 1.208rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .work-44 {
@@ -27136,7 +27232,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     text-transform: uppercase;
     font-family: var(--font-ui);
     font-size: 1.08rem;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 /* ==========================================================================
@@ -27671,7 +27767,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     cursor: pointer;
     text-transform: uppercase;
     font-family: var(--font-ui);
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .bank-55 {
@@ -27698,7 +27794,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-family: var(--font-ui);
     font-size: 1.208rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .bank-57 {
@@ -27713,7 +27809,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     text-transform: uppercase;
     font-family: var(--font-ui);
     font-size: 1.08rem;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .bank-58 {
@@ -28033,7 +28129,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     background: transparent;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 /* Focus, hover and selection are one appearance: a gold hairline and nothing
@@ -28908,7 +29004,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-size: 1.15rem;
     font-weight: bold;
     color: var(--text-disabled);
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     text-align: center;
 }
 
@@ -28929,7 +29025,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     text-align: center;
     border: 1px solid var(--border-subtle);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 /* The job offers terminal root, which the OS window restyles in hypernet.css. */
@@ -30380,7 +30476,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.22s ease;
+    transition: 0.22s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     border: 1px solid transparent;
     background: transparent;
     font-family: var(--font-ui);
@@ -30544,7 +30640,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     gap: 6px;
     min-height: 62px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     border-radius: 4px;
     border: 1px solid var(--border-primary-hover-translucent-10);
 }
@@ -30658,7 +30754,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     justify-content: space-between;
     margin-bottom: 5px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     border-radius: 4px;
 }
 
@@ -30722,7 +30818,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     gap: 8px;
     margin-bottom: 3px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     border-radius: 4px;
 }
 
@@ -31701,7 +31797,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    transition: all 0.2s ease;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     cursor: pointer;
 }
 
@@ -31760,8 +31856,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 .vehicle-row-sprite {
-    width: 48px;
-    height: 48px;
+    width: 96px;
+    height: 96px;
     flex: 0 0 auto;
 }
 
@@ -31781,7 +31877,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    condition and the parts that are worn before anything has been clicked. */
 .vehicles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--sp-4);
     align-content: start;
     align-items: start;
@@ -31790,8 +31886,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .vehicle-card {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 8px 10px;
+    gap: 6px;
+    padding: 12px 14px;
     border: 1px solid var(--border-subtle);
     border-radius: 4px;
     cursor: pointer;
@@ -31816,7 +31912,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 .vehicle-card-head .entity-name {
-    font-size: var(--fs-body);
+    font-size: var(--fs-heading);
     font-weight: bold;
     color: var(--text-primary-hover);
     margin-bottom: 0;
@@ -33742,6 +33838,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 /* The controls checklist: its own window down the left edge, grown up from the
    floor so the party HUD keeps the top left corner to itself. */
+/* Compact with it: the checklist is a long list and it stands over the map, so
+   it is written a size down and a line tighter than the notice beside it. */
 #map-legend-controls {
     right: auto;
     left: var(--mlg-left, 16px);
@@ -33749,18 +33847,11 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     bottom: var(--mlg-bottom, 16px);
     transform-origin: 0 100%;
     width: auto;
-    min-width: 232px;
-    max-width: 300px;
-    max-height: 78vh;
-    overflow: hidden;
-}
-
-/* Compact: the checklist is a long list and it stands over the map, so it is
-   written a size down and a line tighter than the notice beside it. */
-#map-legend-controls {
     padding: var(--sp-2) var(--sp-3);
     min-width: 196px;
     max-width: 256px;
+    max-height: 78vh;
+    overflow: hidden;
 }
 
 #map-legend-controls .mlg-heading {
@@ -37073,114 +37164,83 @@ select option:hover {
 
 /* =========================================================================
    Vector gun (Weapon/VectorGunSystemUI.js)
-   The screen owns nothing but the stand the gun turns on: the rows, the tabs,
-   the footer and the detail card are the backpack's own. The portrait rule of
-   docs/task/ui_fixing.md applies, so the picture gives up its height to the
-   facts under it and never the other way round.
+   The screen owns nothing but the stand the gun turns on and the three bays
+   under it: the cards, the tabs and the detail card are the backpack's and the
+   skills menu's own. Left page, a grid of cards read three across; right page,
+   the gun over the card for the card under the cursor.
    ========================================================================= */
-/* Three columns across the spread: the names on the left page, what the gun is
-   doing in the middle, the two stands stacked one over the other on the right.
-   Nothing here scrolls sideways. */
-.right-page.vg-spread {
-    display: flex;
-    flex-direction: row;
-    gap: var(--sp-4);
-    overflow: hidden;
-}
-
-.vg-middle {
-    flex: 1 1 45%;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    min-height: 0;
-    overflow-y: auto;
-}
-
-.vg-spread > .vg-stage {
-    flex: 0 0 50%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-3);
-    min-width: 0;
-    min-height: 0;
-}
-
-.vg-spread > .vg-stage .weapon-preview-card {
-    flex: 1 1 0;
-    min-height: 0;
-}
-
-/* Every running mode, with the effect it is having, one under the other. */
-.vg-active-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-2);
-    margin-bottom: var(--sp-4);
-}
-
-.vg-active-row {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--sp-2);
-}
-
-.vg-active-row .item-slot-info {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-/* The card is the bench: it carries the map's battleback the same way the
-   equip screen's preview does, so the gun turns on the ground the party is
-   standing on. */
-.vg-stage .weapon-preview-card {
-    background-size: cover;
-    background-position: center;
-}
-
-/* The left page is ONE column of cards read down, in name order: the shapes the
-   gun folds into are all "Athame of ...", "Scourge of ...", and any packing
-   wider than this cut every one of those names short. */
-/* The name under each of the two stands: which shape is being looked at, said
-   on the picture rather than only in the card below it. */
-.vg-preview-label {
-    position: relative;
-    z-index: 2;
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--text-primary-hover);
-    text-shadow: 0 1px 2px var(--shadow-black-translucent-50);
-    padding-bottom: 2px;
-}
-
-.vg-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--sp-2);
-}
-
-/* The vector gun gives most of the spread to the two stands: the left page
-   carries names only, so it is cut back and the pictures grow into the room. */
 .book-spread.vg-book > .left-page {
-    width: 27%;
-    padding-right: 20px;
+    width: 58%;
+    padding-right: 22px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .book-spread.vg-book > .right-page {
-    width: 73%;
+    width: 42%;
     padding-left: 24px;
 }
 
 .book-spread.vg-book::before {
-    left: 27%;
+    left: 58%;
 }
 
-.vg-grid .item-slot {
+/* The three pages sit on ONE line. Four names wrapped onto a second line and
+   the strip stopped reading as a strip. */
+.vg-tabs {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+/* What the gun is, said in one line over the grid rather than in a footer
+   fighting the grid for the last inch of the page. */
+.vg-status {
     display: flex;
-    align-items: center;
-    gap: var(--sp-2);
+    flex-wrap: wrap;
+    gap: var(--sp-1) var(--sp-3);
+    margin: 4px 0 8px 0;
+    flex: 0 0 auto;
+}
+
+.vg-status-chip {
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--text-secondary, #b9ac92);
+}
+
+.vg-status-chip:first-child {
+    color: var(--text-primary, #f0c674);
+}
+
+/* Three cards across, the skills menu's own roll. */
+.vg-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-bottom: 0;
+}
+
+/* The one heading the grid carries: the form page holds the shapes and the
+   element, and the line between them spans the whole roll. */
+.vg-grid-head {
+    grid-column: 1 / -1;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-primary, #f0c674);
+    opacity: 0.75;
+    margin: 8px 0 2px 0;
+}
+
+.vg-grid-head:first-child {
+    margin-top: 0;
+}
+
+/* A card that is doing something writes its name in gold, the way a synced
+   skill does, instead of spending a line on the word "running". */
+.vg-grid .item-slot.vg-on .item-slot-name {
+    color: var(--text-primary, #f0c674);
 }
 
 .vg-icon {
@@ -37189,33 +37249,95 @@ select option:hover {
     flex: 0 0 32px;
 }
 
-/* What the gun is fitted with, said once on every card. */
-.vg-fitted {
+/* The right page: the gun on top, the card under it, the bays at the foot. */
+.right-page.vg-page {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-2);
+    flex-direction: column;
+    gap: var(--sp-3);
+    overflow: hidden;
 }
 
-.vg-fitted-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sp-1);
-    color: var(--text-primary, #f0e6d2);
+.vg-page > .vg-stage {
+    flex: 1 1 auto;
+    display: flex;
+    min-height: 0;
 }
 
-.vg-fitted-chip .vg-icon {
-    margin-right: 0;
-}
-
-.right-page > .ui-detail {
+.vg-page > .vg-stage .weapon-preview-card {
     flex: 1 1 auto;
     min-height: 0;
+    /* The card is the bench: it carries the map's battleback the same way the
+       equip screen's preview does. */
+    background-size: cover;
+    background-position: center;
+}
+
+.vg-page > .vg-detail {
+    flex: 0 1 40%;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.vg-page > .vg-detail .ui-detail-scroll {
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* The three bays, side by side, always all three: an empty bay is worth
+   drawing, since it is the thing the next mode goes into. */
+.vg-bays {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-2);
+    flex: 0 0 auto;
+}
+
+.vg-bay {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-width: 0;
+    opacity: 0.45;
+}
+
+.vg-bay-on {
+    opacity: 1;
+}
+
+.vg-bay .item-slot-info {
+    min-width: 0;
+}
+
+.vg-bay .item-slot-name {
+    font-size: 13px;
+}
+
+.vg-bay .item-slot-meta {
+    font-size: 11px;
+    color: var(--text-secondary, #b9ac92);
+}
+
+/* The name of the shape being looked at, said on the picture itself. */
+.vg-preview-label {
+    position: relative;
+    z-index: 2;
+    align-self: flex-end;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-primary-hover);
+    text-shadow: 0 1px 2px var(--shadow-black-translucent-50);
+    padding-bottom: 2px;
 }
 
 /* The piece is turned in the hand with the mouse, as on a shop counter. */
 .vg-canvas {
     cursor: grab;
 }
+
+
 
 
 /* ==========================================================================
@@ -37375,4 +37497,101 @@ select option:hover {
     --fs-label: 1.17rem;
     --fs-chip: 1.15rem;
     --fs-caption: 1.06rem;
+}
+
+/* ===========================================================================
+   The controller face of a menu (window.PadUI, Core/MouseControls.js)
+   ===========================================================================
+   A badge is the physical button that works the control it sits in, stamped
+   there only while a pad is the device in hand. It is written in the same
+   monospace face as the keyboard hotkey badge beside the main menu's entries,
+   so the two read as one family, and it never takes a line of its own: it
+   rides inside the button it belongs to. */
+.pad-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    margin-left: 6px;
+    padding: 0 4px;
+    flex-shrink: 0;
+    font-family: monospace;
+    font-size: var(--fs-caption);
+    line-height: 1.4;
+    color: var(--text-primary-hover);
+    background: var(--shadow-primary-hover-translucent-5);
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+/* On the Back button the face comes first: the button IS that control, so the
+   letter reads as the label's opening rather than as a note after it. */
+.back-button .pad-badge {
+    margin-left: 0;
+    margin-right: 6px;
+}
+
+/* L2 and R2 over the pane they scroll. The layer is fixed and inert: it hangs
+   over whatever menu is open without being part of any of them, which is why
+   no page's layout changes when a pad is plugged in. */
+#pad-rails {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 12000;
+}
+
+#pad-rails .pad-rail-chip {
+    position: absolute;
+    left: var(--ui-at-x, 0);
+    top: var(--ui-at-y, 0);
+    transform: translateX(-100%);
+    padding: 0 4px;
+    font-family: monospace;
+    font-size: var(--fs-caption);
+    line-height: 1.3;
+    color: var(--text-primary-hover);
+    background: var(--shadow-primary-hover-translucent-5);
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 3px;
+}
+
+/* A trigger with nowhere left to go that way is dimmed rather than taken away,
+   so the pair does not flicker in and out at the ends of a list. */
+#pad-rails .pad-rail-chip.spent {
+    opacity: 0.35;
+}
+
+/* The search field is a keyboard control: there is no way to type a query on a
+   pad, so its handle is neither shown nor walked to while one is in hand
+   (window.PadUI marks the document). */
+body.pad-input .msb-toggle,
+body.pad-input .msb-field,
+body.pad-input .kb-only {
+    display: none !important;
+}
+
+/* Skill inspect card: Info and Damage stand side by side, two short columns
+   read in one glance instead of one long scroll. */
+.skill-detail-columns {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.skill-detail-columns > .skill-detail-col {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.skill-detail-columns > .skill-detail-col:empty {
+    display: none;
+}
+
+.skill-detail-columns .inspect-spec-row {
+    max-width: none;
 }

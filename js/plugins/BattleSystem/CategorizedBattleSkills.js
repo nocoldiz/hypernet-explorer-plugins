@@ -228,8 +228,8 @@
                 if (skill.occasion !== undefined) specs.push({ label: T("Inventory.spec.label.occasion"), val: occasionName(skill.occasion) });
                 if (skill.scope !== undefined && skill.scope !== 0) specs.push({ label: T("Inventory.spec.label.target"), val: scopeName(skill.scope) });
 
-                const costText = costTextOf(skill);
-                if (costText) specs.push({ label: T("Inventory.spec.label.useCost"), val: costText });
+                // The cost is already read off the header gauges, so it is not
+                // repeated as a row here.
 
                 const scaleData = scaleOf(skill);
                 if (scaleData) specs.push({ label: T("Equip.scale"), val: `${scaleData.stat} (${scaleData.grade})` });
@@ -482,8 +482,13 @@
                 // (.inspect-section-title / .inspect-spec-row / .inspect-bullet-item),
                 // so a skill read here is laid out and inked exactly as an item
                 // read on the backpack's right page.
-                if (combat.length) html += section(T("Inventory.section.combatApplication"), specRows(combat));
-                if (damage.length) html += section(T("SkillsMenu.section.damage"), specRows(damage));
+                // Info on the left, Damage on the right: two short columns read
+                // in one glance rather than one long scroll.
+                if (combat.length || damage.length) {
+                    const left = combat.length ? section(T("SkillsMenu.section.info"), specRows(combat)) : "";
+                    const right = damage.length ? section(T("SkillsMenu.section.damage"), specRows(damage)) : "";
+                    html += `<div class="skill-detail-columns"><div class="skill-detail-col">${left}</div><div class="skill-detail-col">${right}</div></div>`;
+                }
 
                 if (effects.length) {
                     html += section(T("SkillsMenu.section.skillEffects"), effects.map(desc =>
@@ -497,7 +502,7 @@
                 // an item's does on the backpack page: flavour is read last.
                 const lore = (window.ItemSystemUtils && window.ItemSystemUtils.loreFor)
                     ? window.ItemSystemUtils.loreFor(skill) : "";
-                if (lore) html += `<div class="inspect-flavour">${esc(lore)}</div>`;
+                if (lore) html += section(T("SkillsMenu.section.incantation"), `<div class="inspect-flavour">${esc(lore)}</div>`);
                 return html;
             }
 

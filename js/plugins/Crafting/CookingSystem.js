@@ -1390,6 +1390,7 @@
 
                         <div class="inspect-actions">
                             <div class="inspect-btn" id="cook-btn"></div>
+                            <div class="inspect-btn inspect-btn--secondary focusable" id="eat-raw-btn">${_ci18n('ui.eatButton')}</div>
                         </div>
                     </div>
                 </div>
@@ -1460,13 +1461,13 @@
                     </div>
                 `;
             } else {
-                pantryHTML = `<div class="ui-list pantry-list">`;
+                pantryHTML = `<div class="backpack-grid pantry-list">`;
                 itemsList.forEach((item, idx) => {
                     const isSelected = item === item1 || item === item2;
                     const isFocused = this._activeArea === "pantry" && this._pantryIndex === idx;
                     const isEnabled = this._itemListWindow ? this._itemListWindow.isEnabled(item) : true;
 
-                    let finalClass = "item-slot item-slot--compact pantry-row";
+                    let finalClass = "item-slot pantry-row";
                     if (isSelected) finalClass += " selected-ingredient";
                     if (isFocused) finalClass += " selected";
                     if (!isEnabled) finalClass += " unusable";
@@ -1477,15 +1478,16 @@
 
                     pantryHTML += `
                         <div class="${finalClass}" data-idx="${idx}">
-                            <div class="item-icon" style="${iconStyle}"></div>
+                            <div class="item-slot-icon">
+                                <div class="item-icon" style="${iconStyle}"></div>
+                            </div>
                             <div class="item-slot-info">
                                 <div class="item-slot-name">${window.translateText ? window.translateText(item.name) : item.name}</div>
-                                <div class="cook-nutrition-line">
-                                    ${_ci18n('nutritionShort.calories')}: ${nut.hunger} | ${_ci18n('nutritionShort.protein')}: ${nut.tp} | ${_ci18n('nutritionShort.fat')}: ${nut.mp}
+                                <div class="item-slot-meta">
+                                    <span class="cook-nutrition-line">${_ci18n('nutritionShort.calories')}: ${nut.hunger} | ${_ci18n('nutritionShort.protein')}: ${nut.tp} | ${_ci18n('nutritionShort.fat')}: ${nut.mp}</span>
+                                    <span class="item-slot-count">x${$gameParty.numItems(item)}</span>
                                 </div>
                             </div>
-                            <span class="item-slot-count">x${$gameParty.numItems(item)}</span>
-                            <div class="inspect-btn inspect-btn--secondary focusable eat-raw-btn" data-eat-idx="${idx}" title="${_ci18n('ui.eatButton')}">${_ci18n('ui.eatButton')}</div>
                         </div>
                     `;
                 });
@@ -1529,20 +1531,26 @@
                     });
                 });
 
-                // Bind "Eat Raw" buttons (eat a single ingredient, split across party)
-                const eatNodes = pantryListContainer.querySelectorAll(".eat-raw-btn");
-                eatNodes.forEach(node => {
-                    node.addEventListener("click", (e) => {
-                        e.stopPropagation();
-                        const idx = parseInt(node.getAttribute("data-eat-idx"), 10);
-                        const eatItem = itemsList[idx];
-                        if (CookingSystem.eatSingleItem(eatItem)) {
-                            CookingSystem.clearSelectedItems();
-                            this.popScene();
-                        }
-                    });
-                });
             }
+        }
+
+        // The "Eat Raw" order sits with Cook on the right page, so a pantry row
+        // stays the same pocket the backpack draws. It eats whatever ingredient
+        // the list is focused on, split across the party.
+        const eatBtn = container.querySelector("#eat-raw-btn");
+        if (eatBtn) {
+            const focusedItem = itemsList[this._pantryIndex];
+            eatBtn.className = "inspect-btn inspect-btn--secondary focusable" + (focusedItem ? "" : " unusable");
+            const newEatBtn = eatBtn.cloneNode(true);
+            eatBtn.parentNode.replaceChild(newEatBtn, eatBtn);
+            newEatBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                if (!focusedItem) { SoundManager.playBuzzer(); return; }
+                if (CookingSystem.eatSingleItem(focusedItem)) {
+                    CookingSystem.clearSelectedItems();
+                    this.popScene();
+                }
+            });
         }
 
         // 2. Render Slots
@@ -1721,28 +1729,30 @@
                 return;
             }
 
+            // The pantry is drawn three across, like the backpack's pockets, so
+            // the cursor walks columns sideways and rows up and down.
+            const COLS = 3;   // matches .backpack-grid grid-template-columns
+            const moveCursor = (delta) => {
+                const len = itemsList.length;
+                this._pantryIndex = ((this._pantryIndex + delta) % len + len) % len;
+                SoundManager.playCursor();
+                this.refreshUICooking();
+                const container = document.getElementById("cooking-container");
+                if (container) {
+                    const activeRow = container.querySelector(".pantry-row.selected");
+                    if (activeRow) activeRow.scrollIntoView({ block: "nearest" });
+                }
+            };
+
             if (Input.isRepeated('down')) {
-                this._pantryIndex = (this._pantryIndex + 1) % itemsList.length;
-                SoundManager.playCursor();
-                this.refreshUICooking();
-
-                // Adjust scroll position dynamically
-                const container = document.getElementById("cooking-container");
-                if (container) {
-                    const activeRow = container.querySelector(".pantry-row.selected");
-                    if (activeRow) activeRow.scrollIntoView({ block: "nearest" });
-                }
+                moveCursor(COLS);
             } else if (Input.isRepeated('up')) {
-                this._pantryIndex = (this._pantryIndex - 1 + itemsList.length) % itemsList.length;
-                SoundManager.playCursor();
-                this.refreshUICooking();
-
-                // Adjust scroll position dynamically
-                const container = document.getElementById("cooking-container");
-                if (container) {
-                    const activeRow = container.querySelector(".pantry-row.selected");
-                    if (activeRow) activeRow.scrollIntoView({ block: "nearest" });
-                }
+                moveCursor(-COLS);
+            } else if (Input.isRepeated('left') && this._pantryIndex % COLS !== 0) {
+                moveCursor(-1);
+            } else if (Input.isRepeated('right') && this._pantryIndex % COLS !== COLS - 1
+                       && this._pantryIndex + 1 < itemsList.length) {
+                moveCursor(1);
             } else if (Input.isTriggered('right') && item1 && item2) {
                 this._activeArea = "confirm";
                 this._confirmIndex = 0;
