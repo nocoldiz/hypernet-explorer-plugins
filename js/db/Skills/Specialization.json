@@ -31,7 +31,8 @@
       "name": "3D Modeling and Printing",
       "description": "Building objects as digital meshes and producing them on an additive printer.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 1,
@@ -39,6 +40,7 @@
       "description": "Keeping and interpreting financial records: ledgers, statements and reconciliation.",
       "stat": "INT",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "CEO": 3,
         "Shopkeeper": 2
@@ -56,7 +58,8 @@
       "name": "Acoustics",
       "description": "The behaviour of sound in a space, and shaping rooms and materials to control it.",
       "stat": "INT",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 2,
@@ -64,6 +67,7 @@
       "description": "Controlled tumbling, vaulting and balance work in motion.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Acrobat": 3
       }
@@ -74,6 +78,7 @@
       "description": "Portraying a character convincingly for an audience or a camera.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Pro Wrestler": 2,
         "Entertainer": 3,
@@ -86,6 +91,7 @@
       "description": "Pricing risk with statistics: mortality, claims and long-term liabilities.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "CEO": 2,
         "Academic": 2
@@ -97,6 +103,7 @@
       "description": "Climbing, wrapping and dropping on suspended fabric.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Acrobat": 2
       }
@@ -106,21 +113,24 @@
       "name": "Aerobics",
       "description": "Sustained rhythmic exercise that trains the heart and lungs.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 4,
       "name": "Aerodynamics Theory",
       "description": "How air behaves around a moving body: lift, drag and flow separation.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 307,
       "name": "Agroforestry",
       "description": "Growing crops and livestock among managed trees on the same land.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 6,
@@ -128,6 +138,7 @@
       "description": "A Japanese art of redirecting an attacker's force into throws and joint locks.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Martial Artist": 2
       }
@@ -137,14 +148,16 @@
       "name": "Air Traffic Control",
       "description": "Sequencing and separating aircraft by radio and radar.",
       "stat": "INT",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 8,
       "name": "Aircraft Piloting",
       "description": "Flying a fixed-wing aircraft, from preflight checks to landing.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 309,
@@ -152,6 +165,7 @@
       "description": "The pre-chemical art of transmutation, distillation and the tria prima.",
       "stat": "INT",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Witch": 2
       },
@@ -165,6 +179,7 @@
       "description": "Absorbing drink without losing coordination or judgement.",
       "stat": "CON",
       "category": "Athletics",
+      "sentient": false,
       "traitStart": {
         "alcoholic": 3
       }
@@ -175,6 +190,7 @@
       "description": "Choosing ground, concealment and timing to strike first.",
       "stat": "WIS",
       "category": "Crime",
+      "sentient": false,
       "classStart": {
         "Commander": 2,
         "Beast": 2,
@@ -191,7 +207,8 @@
       "name": "Ammunition Handloading",
       "description": "Assembling cartridges from primer, powder, case and projectile.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 11,
@@ -199,6 +216,7 @@
       "description": "The structure of the body: bones, muscles, vessels and organs, and where they lie.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Combat Medic": 2,
         "Necromancer": 2,
@@ -211,6 +229,7 @@
       "description": "Breeding, feeding and keeping livestock in health.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Farmer": 2
       }
@@ -221,6 +240,7 @@
       "description": "Conditioning an animal to work with cues, reward and repetition.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "traitStart": {
         "animal_handler": 3,
         "beast_whisperer": 2
@@ -231,14 +251,16 @@
       "name": "Animation",
       "description": "Making drawn or modelled figures move frame by frame.",
       "stat": "INT",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 14,
       "name": "Animism",
       "description": "Reading the world as populated by spirits, and treating with them.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": false
     },
     {
       "id": 15,
@@ -246,6 +268,7 @@
       "description": "The comparative study of human cultures, kinship and material life.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "classStart": {
         "Archaeologist": 3
       }
@@ -255,14 +278,16 @@
       "name": "Antique Gunsmithing",
       "description": "Repairing and restoring pre-modern firearms and their actions.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 725,
       "name": "Antique Restoration",
       "description": "Returning old objects to sound condition without erasing their age.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 16,
@@ -270,6 +295,7 @@
       "description": "Turning established theory into working method and apparatus.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Scientist": 2
       }
@@ -280,6 +306,7 @@
       "description": "Judging what an object is worth, and why.",
       "stat": "WIS",
       "category": "Commerce",
+      "sentient": true,
       "traitStart": {
         "hoarder": 2
       }
@@ -289,14 +316,16 @@
       "name": "Aquaponics",
       "description": "Growing plants and fish in one loop, the fish waste feeding the crop.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 18,
       "name": "Architecture",
       "description": "Designing buildings that stand, function and can actually be built.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 19,
@@ -304,6 +333,7 @@
       "description": "Beating another arm across a table with leverage and grip.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {}
     },
     {
@@ -311,7 +341,8 @@
       "name": "Armor Piercing",
       "description": "Defeating armour: angles, penetrators and the weak seams.",
       "stat": "DEX",
-      "category": "Combat"
+      "category": "Combat",
+      "sentient": true
     },
     {
       "id": 20,
@@ -319,6 +350,7 @@
       "description": "Forming, fitting and articulating plate and mail.",
       "stat": "INT",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Knight": 2
       }
@@ -328,42 +360,48 @@
       "name": "Art Forgery",
       "description": "Reproducing another artist's hand, materials and provenance.",
       "stat": "DEX",
-      "category": "Crime"
+      "category": "Crime",
+      "sentient": true
     },
     {
       "id": 21,
       "name": "Art History",
       "description": "Placing works in period, school and context.",
       "stat": "INT",
-      "category": "Academia"
+      "category": "Academia",
+      "sentient": true
     },
     {
       "id": 499,
       "name": "Art Restoration",
       "description": "Cleaning, consolidating and retouching damaged works.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 313,
       "name": "Asbestos Removal",
       "description": "Stripping friable insulation without releasing fibre.",
       "stat": "CON",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 860,
       "name": "Astral Projection",
       "description": "Separating awareness from the body and travelling without it.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": false
     },
     {
       "id": 835,
       "name": "Astrobiology",
       "description": "The search for, and study of, life beyond Earth and its conditions.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 22,
@@ -371,6 +409,7 @@
       "description": "Reading character and event from the positions of the planets.",
       "stat": "PSI",
       "category": "Occult",
+      "sentient": true,
       "classStart": {
         "Archmage": 2,
         "Oracle": 2,
@@ -387,6 +426,7 @@
       "description": "Observing and interpreting the sky: bodies, motions and distances.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Physicist": 2,
         "Meteorologist": 2,
@@ -398,7 +438,8 @@
       "name": "Astrophotography",
       "description": "Photographing faint sky objects through long exposure and tracking.",
       "stat": "INT",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 24,
@@ -406,6 +447,7 @@
       "description": "General running, jumping and throwing ability under exertion.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Freelancer": 2,
         "Boxer": 2,
@@ -423,6 +465,7 @@
       "description": "Running a sale: chant, bid spotting and closing the lot.",
       "stat": "PSI",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "Shopkeeper": 2
       }
@@ -432,7 +475,8 @@
       "name": "Audiology",
       "description": "Testing hearing and fitting the aids that correct it.",
       "stat": "INT",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 502,
@@ -440,6 +484,7 @@
       "description": "Checking accounts and processes against evidence and rule.",
       "stat": "INT",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "CEO": 2
       }
@@ -450,6 +495,7 @@
       "description": "Restoring a vehicle's finish inside and out.",
       "stat": "DEX",
       "category": "Vehicles",
+      "sentient": true,
       "classStart": {
         "Mechanic": 2
       }
@@ -459,7 +505,8 @@
       "name": "Avionics Repair",
       "description": "Diagnosing and fixing aircraft electronics and instruments.",
       "stat": "INT",
-      "category": "Technology"
+      "category": "Technology",
+      "sentient": true
     },
     {
       "id": 891,
@@ -467,6 +514,7 @@
       "description": "Fighting with hand axes and their weight-forward chopping arcs.",
       "stat": "STR",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 4,
       "classStart": {
         "Freelancer": 3,
@@ -500,21 +548,24 @@
       "name": "Axe Throwing",
       "description": "Throwing an axe for rotation and stick at a set distance.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 504,
       "name": "Baggage Handling",
       "description": "Moving and sorting luggage at load without damage or delay.",
       "stat": "STR",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 505,
       "name": "Bail Bonding",
       "description": "Posting surety for a defendant and recovering the risk.",
       "stat": "PSI",
-      "category": "Crime"
+      "category": "Crime",
+      "sentient": true
     },
     {
       "id": 26,
@@ -522,6 +573,7 @@
       "description": "Working dough and batter: hydration, proof and oven heat.",
       "stat": "WIS",
       "category": "Culinary",
+      "sentient": true,
       "classStart": {
         "Chef": 2
       }
@@ -531,35 +583,40 @@
       "name": "Ballet",
       "description": "Classical dance technique of turnout, line and set positions.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 28,
       "name": "Ballistics",
       "description": "The flight of a projectile, and what it does at the far end.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 506,
       "name": "Balloon Sculpting",
       "description": "Twisting inflated balloons into recognisable figures.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 316,
       "name": "Banjo Playing",
       "description": "Playing the five-string banjo, rolls and clawhammer.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 317,
       "name": "Barrel Making",
       "description": "Coopering staves and hoops into watertight casks.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 178,
@@ -567,6 +624,7 @@
       "description": "Mixing drinks to spec and running a bar under pressure.",
       "stat": "DEX",
       "category": "Culinary",
+      "sentient": true,
       "classStart": {
         "Chef": 2
       },
@@ -580,6 +638,7 @@
       "description": "Trading goods for goods, without money changing hands.",
       "stat": "PSI",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "Freelancer": 2,
         "Mercenary": 2,
@@ -595,7 +654,8 @@
       "name": "Base Building",
       "description": "Laying out a defensible, workable settlement or camp.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 32,
@@ -603,6 +663,7 @@
       "description": "Parachuting from a fixed object with almost no altitude to spare.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "traitStart": {
         "adrenaline_junkie": 2
       }
@@ -612,49 +673,56 @@
       "name": "Baseball",
       "description": "Batting, fielding and pitching in the nine-inning game.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 319,
       "name": "Basket Weaving",
       "description": "Weaving prepared fibre or cane into vessels and containers.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 34,
       "name": "Basketball",
       "description": "Shooting, passing and defending on the court.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 507,
       "name": "Baton Twirling",
       "description": "Spinning and tossing a metal baton in routine.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 854,
       "name": "Beach Combing",
       "description": "Working a shoreline for what the tide has left.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": false
     },
     {
       "id": 35,
       "name": "Beatboxing",
       "description": "Producing percussion and bass with the voice alone.",
       "stat": "PSI",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 36,
       "name": "Beekeeping",
       "description": "Keeping hives in health and taking honey without losing the colony.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 509,
@@ -662,6 +730,7 @@
       "description": "Truing, adjusting and rebuilding a bicycle's mechanisms.",
       "stat": "INT",
       "category": "Vehicles",
+      "sentient": true,
       "classStart": {
         "Mechanic": 2
       }
@@ -671,7 +740,8 @@
       "name": "Billiards",
       "description": "Cue control, angles and position play on the table.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 510,
@@ -679,6 +749,7 @@
       "description": "Holding a spirit, creature or force to a set of terms.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Cultist": 2,
         "Warlock": 2
@@ -689,7 +760,8 @@
       "name": "Bio-Juice Extraction",
       "description": "Rendering biological matter down to usable fluid.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 511,
@@ -697,6 +769,7 @@
       "description": "Designing processes that use living systems at industrial scale.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Scientist": 2
       }
@@ -706,7 +779,8 @@
       "name": "Biokinesis",
       "description": "Steering living tissue by will: growth, healing, change.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": false
     },
     {
       "id": 39,
@@ -714,6 +788,7 @@
       "description": "Magic worked directly on flesh and its processes.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Witch": 2
       }
@@ -723,7 +798,8 @@
       "name": "Biometric Security",
       "description": "Identity systems built on fingerprints, irises and gait.",
       "stat": "INT",
-      "category": "Technology"
+      "category": "Technology",
+      "sentient": true
     },
     {
       "id": 512,
@@ -731,6 +807,7 @@
       "description": "Fitting powered prosthetics and implants to living tissue.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Mana Cyborg": 2
       }
@@ -740,7 +817,8 @@
       "name": "Bird Watching",
       "description": "Identifying birds by sight, call and behaviour in the field.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 40,
@@ -748,6 +826,7 @@
       "description": "Forging and shaping hot iron and steel at the anvil.",
       "stat": "STR",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Enchanter": 2
       },
@@ -760,7 +839,8 @@
       "name": "Bladesmithing",
       "description": "Forging, grinding and heat-treating edged blades.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 514,
@@ -768,6 +848,7 @@
       "description": "Writing regularly for an audience that arrives on its own.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Journalist": 2
       }
@@ -778,6 +859,7 @@
       "description": "Working with blood as the price and the medium.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Vampire": 2,
         "Convoker": 2
@@ -789,6 +871,7 @@
       "description": "Reading position, tempo and odds across the board.",
       "stat": "INT",
       "category": "Athletics",
+      "sentient": true,
       "traitStart": {
         "tactician": 2
       }
@@ -798,28 +881,32 @@
       "name": "Boat Building",
       "description": "Building hulls from frame and plank, or from moulded shell.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 42,
       "name": "Boat Piloting",
       "description": "Handling a powered boat in traffic, current and weather.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 517,
       "name": "Bobsledding",
       "description": "Driving a sled down an iced track at speed.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 864,
       "name": "Bocce",
       "description": "Rolling weighted balls to the jack on an uneven court.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 43,
@@ -827,6 +914,7 @@
       "description": "Training and diet aimed at muscular size and definition.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Berserker": 2,
         "Boxer": 2,
@@ -845,42 +933,48 @@
       "name": "Bonsai Cultivation",
       "description": "Keeping a tree small, healthy and shaped over years.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 518,
       "name": "Bookbinding",
       "description": "Sewing, gluing and casing pages into a durable book.",
       "stat": "DEX",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": true
     },
     {
       "id": 323,
       "name": "Boomerang Crafting",
       "description": "Carving an airfoil that comes back.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 519,
       "name": "Boomerang Throwing",
       "description": "Throwing for the return, reading wind and layover.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 44,
       "name": "Botany",
       "description": "The classification, structure and life of plants.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 324,
       "name": "Bouldering",
       "description": "Short, hard climbing without rope, close to the ground.",
       "stat": "STR",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": false
     },
     {
       "id": 894,
@@ -888,6 +982,7 @@
       "description": "Shooting a bow: draw, anchor, release and range estimation.",
       "stat": "DEX",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 7,
       "classStart": {
         "Freelancer": 3,
@@ -926,6 +1021,7 @@
       "description": "Punching, guard and footwork under the boxing rules.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Brawler": 2,
         "Boxer": 3
@@ -940,6 +1036,7 @@
       "description": "Operating inside the skull without taking the person with it.",
       "stat": "DEX",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Combat Medic": 2,
         "Doctor": 2
@@ -951,6 +1048,7 @@
       "description": "Breaking down and rebuilding what somebody believes.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Cultist": 3
       }
@@ -960,28 +1058,32 @@
       "name": "Brass Catching",
       "description": "Recovering spent casings before they hit the ground.",
       "stat": "DEX",
-      "category": "Combat"
+      "category": "Combat",
+      "sentient": true
     },
     {
       "id": 48,
       "name": "Breath Holding",
       "description": "Extending apnoea by tolerance, technique and calm.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 49,
       "name": "Brewing",
       "description": "Mashing, boiling and fermenting grain into beer.",
       "stat": "INT",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 524,
       "name": "Brewing Potions",
       "description": "Compounding liquid preparations that carry a magical effect.",
       "stat": "INT",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 50,
@@ -989,6 +1091,7 @@
       "description": "Laying brick to line, level and bond with sound mortar joints.",
       "stat": "STR",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Construction Worker": 3
       }
@@ -998,7 +1101,8 @@
       "name": "Brickmaking",
       "description": "Forming and firing clay into bricks of even size and hardness.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 525,
@@ -1006,6 +1110,7 @@
       "description": "Reporting to camera and microphone against a deadline.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Journalist": 2
       }
@@ -1015,56 +1120,64 @@
       "name": "Bull Riding",
       "description": "Staying on a bucking bull for the eight seconds.",
       "stat": "STR",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 326,
       "name": "Bungee Cord Testing",
       "description": "Load-testing elastic cord to the point it must not fail.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 51,
       "name": "Bungee Jumping",
       "description": "Jumping on a measured cord and surviving the rebound.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 52,
       "name": "Butchery",
       "description": "Breaking a carcass down into named cuts with minimal waste.",
       "stat": "STR",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 53,
       "name": "Cabinetry",
       "description": "Fine joinery: cases, drawers and doors that stay square.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 327,
       "name": "Cable Splicing",
       "description": "Joining cable so the join carries load or signal as well as the run.",
       "stat": "DEX",
-      "category": "Technology"
+      "category": "Technology",
+      "sentient": true
     },
     {
       "id": 528,
       "name": "Calisthenics",
       "description": "Strength training with body weight alone.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 527,
       "name": "Call Center Operations",
       "description": "Handling queued calls to script, target and temper.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 54,
@@ -1072,6 +1185,7 @@
       "description": "Writing letterforms as a controlled, deliberate hand.",
       "stat": "DEX",
       "category": "Arts",
+      "sentient": true,
       "classStart": {
         "Enchanter": 2,
         "Samurai": 2
@@ -1082,14 +1196,16 @@
       "name": "Campfire Cooking",
       "description": "Cooking on open fire and coals, with what is carried.",
       "stat": "WIS",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 55,
       "name": "Canoeing",
       "description": "Paddling and reading water from an open boat.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 529,
@@ -1097,6 +1213,7 @@
       "description": "A Brazilian art of kicks, sweeps and evasion set to rhythm.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Martial Artist": 2
       }
@@ -1107,6 +1224,7 @@
       "description": "Handling a road car: control, traffic sense and hazard reading.",
       "stat": "DEX",
       "category": "Vehicles",
+      "sentient": true,
       "classStart": {
         "Freelancer": 2
       }
@@ -1117,6 +1235,7 @@
       "description": "Tracking the remaining deck to know when the odds turn.",
       "stat": "INT",
       "category": "Athletics",
+      "sentient": true,
       "traitStart": {
         "gambling_addict": 2
       }
@@ -1127,6 +1246,7 @@
       "description": "Cutting and joining timber into structure and fitting.",
       "stat": "INT",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Construction Worker": 2
       }
@@ -1136,7 +1256,8 @@
       "name": "Carpet Laying",
       "description": "Fitting, stretching and seaming floor covering.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 59,
@@ -1144,6 +1265,7 @@
       "description": "Surveying and drawing maps that can be navigated by.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "classStart": {
         "Archaeologist": 2
       }
@@ -1153,7 +1275,8 @@
       "name": "Cave Diving",
       "description": "Diving in flooded passage, on line, with no way straight up.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 331,
@@ -1161,6 +1284,7 @@
       "description": "Moving safely through cave systems: rigging, squeezes and route.",
       "stat": "CON",
       "category": "Survival",
+      "sentient": false,
       "traitStart": {
         "cave_dweller": 2
       }
@@ -1171,6 +1295,7 @@
       "description": "Fixing position from sun, stars and the horizon.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Ranger": 2,
         "Scout": 2,
@@ -1186,7 +1311,8 @@
       "name": "Chainmail Weaving",
       "description": "Riveting and closing rings into mail of even weave.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 532,
@@ -1194,6 +1320,7 @@
       "description": "Felling and bucking with a saw without binding or kickback.",
       "stat": "STR",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Firefighter": 2,
         "Lumberjack": 3
@@ -1204,7 +1331,8 @@
       "name": "Chalk Art",
       "description": "Drawing in chalk at scale, knowing it will be washed away.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 533,
@@ -1212,6 +1340,7 @@
       "description": "Curing, salting and fermenting meat for keeping.",
       "stat": "WIS",
       "category": "Culinary",
+      "sentient": true,
       "classStart": {
         "Chef": 2
       }
@@ -1221,7 +1350,8 @@
       "name": "Cheese Making",
       "description": "Setting curd, pressing and ageing milk into cheese.",
       "stat": "WIS",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 61,
@@ -1229,6 +1359,7 @@
       "description": "The composition and reactions of substances, and how to run them.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Scientist": 3
       },
@@ -1242,6 +1373,7 @@
       "description": "Opening, middlegame and endgame play on the sixty-four squares.",
       "stat": "INT",
       "category": "Athletics",
+      "sentient": true,
       "traitStart": {
         "genius": 2
       }
@@ -1251,21 +1383,24 @@
       "name": "Childcare",
       "description": "Keeping children safe, fed and occupied over long hours.",
       "stat": "WIS",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 63,
       "name": "Chiropractic",
       "description": "Manual adjustment of the spine and joints.",
       "stat": "INT",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 873,
       "name": "Chocolate Tempering",
       "description": "Working couverture through its crystal curve for snap and shine.",
       "stat": "DEX",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 535,
@@ -1273,6 +1408,7 @@
       "description": "Singing a part in tune and blend with other voices.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Nun": 2,
         "Cleric": 2,
@@ -1286,6 +1422,7 @@
       "description": "Splitting and felling with axe or maul, efficiently and repeatedly.",
       "stat": "STR",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Lumberjack": 3
       }
@@ -1295,14 +1432,16 @@
       "name": "Chronokinesis",
       "description": "Bending the local rate of time by will.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": false
     },
     {
       "id": 536,
       "name": "Cinematography",
       "description": "Lighting and framing a scene for the camera.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 66,
@@ -1310,6 +1449,7 @@
       "description": "Perceiving what is distant or hidden without the senses.",
       "stat": "PSI",
       "category": "Occult",
+      "sentient": true,
       "classStart": {
         "Oracle": 2
       },
@@ -1323,6 +1463,7 @@
       "description": "Fighting with hand claws and their close, tearing range.",
       "stat": "DEX",
       "category": "Weapons",
+      "sentient": false,
       "wtypeId": 10,
       "classStart": {
         "Freelancer": 3,
@@ -1358,14 +1499,16 @@
       "name": "Clay Shooting",
       "description": "Breaking flying clay targets on a swinging lead.",
       "stat": "DEX",
-      "category": "Combat"
+      "category": "Combat",
+      "sentient": true
     },
     {
       "id": 538,
       "name": "Clock and Watchmaking",
       "description": "Building and servicing mechanical timepieces.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 539,
@@ -1373,6 +1516,7 @@
       "description": "Forecasting the coming hours from cloud form and movement.",
       "stat": "WIS",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Meteorologist": 2
       }
@@ -1383,6 +1527,7 @@
       "description": "Programming and running computer-controlled cutting machines.",
       "stat": "INT",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Mechanic": 2
       }
@@ -1392,14 +1537,16 @@
       "name": "Cob Building",
       "description": "Building walls from clay, sand and straw, layer by layer.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 874,
       "name": "Coffee Roasting",
       "description": "Taking green coffee through first crack to a chosen profile.",
       "stat": "INT",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 68,
@@ -1407,6 +1554,7 @@
       "description": "Producing accurate-sounding detail from cues and probability.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Illusionist": 2,
         "Psychologist": 2,
@@ -1423,6 +1571,7 @@
       "description": "Working and thinking clearly in cold that would stop others.",
       "stat": "CON",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Vampire": 2
       }
@@ -1433,6 +1582,7 @@
       "description": "Advanced formal mathematics past routine calculation.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Archmage": 2,
         "Sage": 2,
@@ -1449,6 +1599,7 @@
       "description": "Rotting organic waste down into usable soil at the right heat.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Farmer": 2
       }
@@ -1459,6 +1610,7 @@
       "description": "Operating, configuring and troubleshooting computer systems.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "traitStart": {
         "tech_savvy": 3
       }
@@ -1469,6 +1621,7 @@
       "description": "Batching cement, aggregate and water to a workable, sound mix.",
       "stat": "STR",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Construction Worker": 2
       }
@@ -1479,6 +1632,7 @@
       "description": "Assembling scattered facts into a hidden pattern that holds together.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "classStart": {
         "Cultist": 2,
         "Sage": 2
@@ -1489,7 +1643,8 @@
       "name": "Contact Juggling",
       "description": "Rolling and isolating a sphere across hands and body.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 74,
@@ -1497,6 +1652,7 @@
       "description": "Extreme controlled flexibility of the spine and joints.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Acrobat": 2
       },
@@ -1513,6 +1669,7 @@
       "description": "Preparing meals: heat, seasoning, timing and what goes with what.",
       "stat": "WIS",
       "category": "Culinary",
+      "sentient": true,
       "classStart": {
         "Freelancer": 2,
         "Chef": 3
@@ -1524,6 +1681,7 @@
       "description": "Writing text that sells, in the fewest words that work.",
       "stat": "INT",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Journalist": 2
       }
@@ -1533,7 +1691,8 @@
       "name": "Coral Reef Restoration",
       "description": "Propagating and replanting coral on damaged reef.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 547,
@@ -1541,6 +1700,7 @@
       "description": "Dismembering a body cleanly, whatever the reason.",
       "stat": "WIS",
       "category": "Culinary",
+      "sentient": false,
       "classStart": {
         "Necromancer": 2,
         "Monster": 2
@@ -1551,21 +1711,24 @@
       "name": "Cosplay",
       "description": "Building and wearing accurate costume of a known character.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 881,
       "name": "Counterfeiting",
       "description": "Producing forged currency or documents that pass inspection.",
       "stat": "DEX",
-      "category": "Crime"
+      "category": "Crime",
+      "sentient": true
     },
     {
       "id": 548,
       "name": "Couponing",
       "description": "Stacking offers and discounts to strip a bill down.",
       "stat": "INT",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 549,
@@ -1573,6 +1736,7 @@
       "description": "Lifting and placing loads by crane within sight and signal.",
       "stat": "DEX",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Construction Worker": 2
       }
@@ -1583,6 +1747,7 @@
       "description": "Writing fiction, verse and narrative with intent.",
       "stat": "INT",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Journalist": 2
       },
@@ -1595,7 +1760,8 @@
       "name": "Cricket",
       "description": "Batting, bowling and fielding across the innings.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 552,
@@ -1603,6 +1769,7 @@
       "description": "Recording, preserving and lifting evidence from a scene.",
       "stat": "INT",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Police Officer": 2
       }
@@ -1613,6 +1780,7 @@
       "description": "The study of crime, offenders and what actually deters them.",
       "stat": "INT",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Police Officer": 2
       }
@@ -1622,7 +1790,8 @@
       "name": "Crocheting",
       "description": "Making fabric from a single hooked loop of yarn.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 553,
@@ -1630,6 +1799,7 @@
       "description": "Sequencing crops across fields to keep soil in heart.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Farmer": 2
       }
@@ -1639,7 +1809,8 @@
       "name": "Crossfit",
       "description": "High-intensity mixed training against the clock.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 520,
@@ -1647,6 +1818,7 @@
       "description": "Moving and holding a crowd without it turning.",
       "stat": "STR",
       "category": "Combat",
+      "sentient": false,
       "classStart": {
         "Guardian": 2
       }
@@ -1656,14 +1828,16 @@
       "name": "Crowd Reading",
       "description": "Judging mood, intent and the dangerous edge of a crowd.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 555,
       "name": "Crowd Surfing",
       "description": "Being carried across raised hands without going down.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 80,
@@ -1671,6 +1845,7 @@
       "description": "Drawing heat out of matter by will.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Elementalist": 2,
         "Ice Mage": 3,
@@ -1682,28 +1857,32 @@
       "name": "Cryptography",
       "description": "Encrypting, key handling and breaking weak ciphers.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 340,
       "name": "Cryptozoology",
       "description": "Pursuing animals that are reported but not catalogued.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 823,
       "name": "Crystallography",
       "description": "Determining structure from how crystals diffract.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 556,
       "name": "Curling",
       "description": "Delivering and sweeping stones to the house.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 557,
@@ -1711,6 +1890,7 @@
       "description": "Handling people, complaints and returns without losing either side.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Freelancer": 2,
         "Shopkeeper": 2
@@ -1722,6 +1902,7 @@
       "description": "Control and feedback in machines and living systems, and the joins between.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Mana Cyborg": 3
       }
@@ -1731,7 +1912,8 @@
       "name": "Cycling",
       "description": "Riding a bicycle with efficiency, balance and traffic sense.",
       "stat": "CON",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 559,
@@ -1739,6 +1921,7 @@
       "description": "Milking, handling and processing milk at scale and in hygiene.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Farmer": 2
       }
@@ -1748,7 +1931,8 @@
       "name": "Damascus Steel Forging",
       "description": "Forge-welding layered steel into patterned billets.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 82,
@@ -1756,6 +1940,7 @@
       "description": "Moving in time and shape to music, alone or led.",
       "stat": "DEX",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Entertainer": 2
       }
@@ -1766,6 +1951,7 @@
       "description": "Cleaning, summarising and drawing defensible conclusions from data.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Scientist": 2,
         "Meteorologist": 2
@@ -1779,14 +1965,16 @@
       "name": "Debt Collection",
       "description": "Recovering money owed, legally and persistently.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 562,
       "name": "Decathlon",
       "description": "Ten track and field events, scored as one.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 84,
@@ -1794,6 +1982,7 @@
       "description": "Lying convincingly, in word and in bearing.",
       "stat": "PSI",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Warlock": 2,
         "Illusionist": 2,
@@ -1811,21 +2000,24 @@
       "name": "Deep Sea Diving",
       "description": "Working at depth on mixed gas, with decompression discipline.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 85,
       "name": "Demolitions",
       "description": "Placing charges to bring structure down where it is meant to fall.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 86,
       "name": "Dentistry",
       "description": "Diagnosing and treating teeth, gums and the bite.",
       "stat": "INT",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 563,
@@ -1833,6 +2025,7 @@
       "description": "Teaching an accent until it survives improvisation.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Bard": 2
       }
@@ -1842,7 +2035,8 @@
       "name": "Digital Marketing",
       "description": "Reaching an audience through search, mail and metrics.",
       "stat": "INT",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 88,
@@ -1850,6 +2044,7 @@
       "description": "Negotiating between parties who would rather not agree.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "traitStart": {
         "pacifist": 2,
         "empath": 2,
@@ -1862,7 +2057,8 @@
       "name": "Directing",
       "description": "Shaping performance, staging and cut into one intended whole.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 565,
@@ -1870,6 +2066,7 @@
       "description": "Knowing where north, the exit and the way back are.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": false,
       "classStart": {
         "Scout": 2
       }
@@ -1880,6 +2077,7 @@
       "description": "Coordinating response, triage and supply after catastrophe.",
       "stat": "INT",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Firefighter": 2
       }
@@ -1889,14 +2087,16 @@
       "name": "Disc Golf",
       "description": "Throwing discs to the basket in the fewest strokes.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 569,
       "name": "Dishwashing",
       "description": "Clearing a service's worth of plates fast and clean.",
       "stat": "CON",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 570,
@@ -1904,6 +2104,7 @@
       "description": "Separating spirit from wash by heat, and cutting heads from hearts.",
       "stat": "INT",
       "category": "Culinary",
+      "sentient": true,
       "classStart": {
         "Chef": 2
       }
@@ -1914,6 +2115,7 @@
       "description": "Reading answers out of lots, cards, entrails or smoke.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Witch": 2,
         "Oracle": 2
@@ -1925,6 +2127,7 @@
       "description": "Beatmatching and sequencing records to hold a floor.",
       "stat": "DEX",
       "category": "Arts",
+      "sentient": true,
       "traitStart": {
         "night_owl": 2
       }
@@ -1935,6 +2138,7 @@
       "description": "Reading an incoming attack early enough to not be there.",
       "stat": "DEX",
       "category": "Combat",
+      "sentient": false,
       "traitStart": {
         "quick_reflexes": 3,
         "gun_fu": 2,
@@ -1946,42 +2150,48 @@
       "name": "Dog Sledding",
       "description": "Driving and handling a working dog team over snow.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 572,
       "name": "Dog Walking",
       "description": "Managing several dogs on lead without incident.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 573,
       "name": "Doll Making",
       "description": "Building jointed figures, from armature to face.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 574,
       "name": "Drafting",
       "description": "Producing dimensioned technical drawings others can build from.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 92,
       "name": "Drawing",
       "description": "Rendering what is seen or imagined in line and tone.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 575,
       "name": "Dressage",
       "description": "Riding a horse through precise schooled movements.",
       "stat": "WIS",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 576,
@@ -1989,6 +2199,7 @@
       "description": "Flying a remote aircraft by line of sight or camera.",
       "stat": "DEX",
       "category": "Vehicles",
+      "sentient": true,
       "classStart": {
         "Mechanic": 2
       }
@@ -1999,6 +2210,7 @@
       "description": "Old practice bound to trees, seasons and the land's own law.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Witch": 2
       }
@@ -2008,14 +2220,16 @@
       "name": "Drum Making",
       "description": "Building shells and heading drums to tone.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 345,
       "name": "Dry-stone Walling",
       "description": "Building walls that stand on fit and gravity, without mortar.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 577,
@@ -2023,6 +2237,7 @@
       "description": "Hanging, taping and finishing plasterboard flat.",
       "stat": "STR",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Construction Worker": 2
       }
@@ -2033,6 +2248,7 @@
       "description": "Running an online shop: listings, stock, payment and returns.",
       "stat": "INT",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "Shopkeeper": 2
       }
@@ -2042,14 +2258,16 @@
       "name": "Earthquake Survival",
       "description": "Acting correctly in the shaking and in the hours after.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 94,
       "name": "Earthshaping",
       "description": "Moving and reforming earth and stone by will.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": false
     },
     {
       "id": 95,
@@ -2057,6 +2275,7 @@
       "description": "Recalling detail exactly, long after seeing it once.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "traitStart": {
         "photographic_memory": 3
       }
@@ -2066,7 +2285,8 @@
       "name": "Electrical Engineering",
       "description": "Designing circuits, power systems and the machines they drive.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 96,
@@ -2074,6 +2294,7 @@
       "description": "Running, terminating and testing domestic and industrial wiring.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Mechanic": 2
       }
@@ -2084,6 +2305,7 @@
       "description": "Directing electric current by will.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Elementalist": 2
       }
@@ -2093,7 +2315,8 @@
       "name": "Electron Microscopy",
       "description": "Imaging matter below the wavelength of light.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 98,
@@ -2101,6 +2324,7 @@
       "description": "Reading, building and repairing circuits at component level.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Mana Cyborg": 3
       }
@@ -2110,42 +2334,48 @@
       "name": "Elephant Handling",
       "description": "Working with elephants safely, by voice, hook and habit.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 579,
       "name": "Elevator Repair",
       "description": "Servicing lift machinery, controls and safeties.",
       "stat": "INT",
-      "category": "Technology"
+      "category": "Technology",
+      "sentient": true
     },
     {
       "id": 99,
       "name": "Embroidery",
       "description": "Stitching decoration onto cloth by hand or frame.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 348,
       "name": "EMP Device Crafting",
       "description": "Building pulse devices that kill electronics without a bang.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 843,
       "name": "Endocrinology",
       "description": "The hormone systems, and what happens when they misfire.",
       "stat": "INT",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 580,
       "name": "Engraving",
       "description": "Cutting line into metal, glass or stone.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 581,
@@ -2153,6 +2383,7 @@
       "description": "The study of insects: identification, life cycles and control.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Scientist": 2
       }
@@ -2162,7 +2393,8 @@
       "name": "Epigraphy",
       "description": "Reading and dating inscriptions cut in hard material.",
       "stat": "INT",
-      "category": "Academia"
+      "category": "Academia",
+      "sentient": true
     },
     {
       "id": 582,
@@ -2170,6 +2402,7 @@
       "description": "Getting out of ropes, cuffs and boxes, quickly.",
       "stat": "DEX",
       "category": "Crime",
+      "sentient": false,
       "classStart": {
         "Vampire": 2,
         "Rogue": 2
@@ -2181,6 +2414,7 @@
       "description": "Collecting protected information without being identified.",
       "stat": "PSI",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Rogue": 2,
         "Mercenary": 2
@@ -2192,6 +2426,7 @@
       "description": "Competitive videogame play at trained, timed level.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "traitStart": {
         "adhd": 2
       }
@@ -2202,6 +2437,7 @@
       "description": "Knowing the expected form in any room, and using it.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "traitStart": {
         "noble": 2
       }
@@ -2211,35 +2447,40 @@
       "name": "Evangelism",
       "description": "Preaching a conviction to people who did not ask.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 461,
       "name": "Evasion and Escape Training",
       "description": "Breaking contact, moving unseen and getting back.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 101,
       "name": "Event Planning",
       "description": "Running an event's logistics, budget and schedule.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 87,
       "name": "Excavation",
       "description": "Digging a site in controlled layers, recording as you go.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 587,
       "name": "Excavator Operation",
       "description": "Working a tracked excavator with precision and stability.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 588,
@@ -2247,6 +2488,7 @@
       "description": "Driving out a possessing spirit by rite and will.",
       "stat": "PSI",
       "category": "Occult",
+      "sentient": true,
       "classStart": {
         "Priest": 2,
         "Cleric": 2,
@@ -2259,14 +2501,16 @@
       "name": "Extreme Ironing",
       "description": "Pressing laundry somewhere it has no business being pressed.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 102,
       "name": "Fabrication",
       "description": "Cutting, forming and welding raw stock into finished parts.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 103,
@@ -2274,6 +2518,7 @@
       "description": "Training and hunting with birds of prey.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Ranger": 2
       },
@@ -2286,7 +2531,8 @@
       "name": "Fanfiction Writing",
       "description": "Writing new stories inside somebody else's world.",
       "stat": "INT",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 104,
@@ -2294,6 +2540,7 @@
       "description": "Working land and stock through the season: sowing, tending, harvest.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Farmer": 3
       },
@@ -2307,6 +2554,7 @@
       "description": "Going without food deliberately, and staying functional.",
       "stat": "CON",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Monk": 2
       },
@@ -2319,35 +2567,40 @@
       "name": "Fence Building",
       "description": "Setting posts and straining wire or rail to a true line.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 592,
       "name": "Feng Shui",
       "description": "Arranging a space so the flow through it is favourable.",
       "stat": "WIS",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 107,
       "name": "Fermentation",
       "description": "Culturing food and drink under controlled spoilage.",
       "stat": "WIS",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 108,
       "name": "Figure Skating",
       "description": "Jumps, spins and edge work on ice.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 594,
       "name": "Film Criticism",
       "description": "Analysing film in terms of craft, form and intent.",
       "stat": "INT",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 595,
@@ -2355,6 +2608,7 @@
       "description": "Mapping income, risk and time into a plan somebody can keep.",
       "stat": "INT",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "CEO": 2
       }
@@ -2365,6 +2619,7 @@
       "description": "Performing with lit poi, staff or fans.",
       "stat": "DEX",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Fire Mage": 2
       }
@@ -2375,6 +2630,7 @@
       "description": "Juggling burning props without dropping them.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Fire Mage": 2
       }
@@ -2385,6 +2641,7 @@
       "description": "Getting flame from spark, friction or lens in poor conditions.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "traitStart": {
         "pyromaniac": 3
       }
@@ -2394,7 +2651,8 @@
       "name": "Firearms Cleaning",
       "description": "Stripping, cleaning and reassembling a weapon to function.",
       "stat": "INT",
-      "category": "Combat"
+      "category": "Combat",
+      "sentient": true
     },
     {
       "id": 354,
@@ -2402,6 +2660,7 @@
       "description": "Crossing hot coals on the physics of contact time.",
       "stat": "CON",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Firefighter": 2
       }
@@ -2411,7 +2670,8 @@
       "name": "Firmware Reverse Engineering",
       "description": "Pulling apart embedded code to find what it really does.",
       "stat": "INT",
-      "category": "Technology"
+      "category": "Technology",
+      "sentient": true
     },
     {
       "id": 110,
@@ -2419,6 +2679,7 @@
       "description": "Keeping the injured alive and stable until better help arrives.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Doctor": 2,
         "Nun": 2,
@@ -2435,6 +2696,7 @@
       "description": "Taking clean fillets off a fish with minimal waste.",
       "stat": "DEX",
       "category": "Culinary",
+      "sentient": true,
       "classStart": {
         "Hunter-Gatherer": 2
       }
@@ -2445,6 +2707,7 @@
       "description": "Taking fish by rod, line, net or trap.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Hunter-Gatherer": 2
       }
@@ -2454,7 +2717,8 @@
       "name": "Flag Identification",
       "description": "Naming a nation or a signal from its flag.",
       "stat": "INT",
-      "category": "Academia"
+      "category": "Academia",
+      "sentient": true
     },
     {
       "id": 598,
@@ -2462,6 +2726,7 @@
       "description": "Keeping a fleet of vehicles serviced, insured and moving.",
       "stat": "INT",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "Commander": 2
       }
@@ -2471,7 +2736,8 @@
       "name": "Flint Knapping",
       "description": "Striking stone into edges and points by controlled fracture.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 114,
@@ -2479,6 +2745,7 @@
       "description": "Signalling interest without committing to it.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "traitStart": {
         "extrovert": 2,
         "beautiful": 2,
@@ -2490,21 +2757,24 @@
       "name": "Floral Arrangement",
       "description": "Composing cut flowers by line, mass and lasting order.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 828,
       "name": "Fluid Dynamics",
       "description": "How liquids and gases move: flow, turbulence and pressure.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 601,
       "name": "Foley Sound Design",
       "description": "Making a scene's sounds by hand in a studio.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 115,
@@ -2512,6 +2782,7 @@
       "description": "Finding and identifying edible wild food safely.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": false,
       "classStart": {
         "Hunter-Gatherer": 3,
         "Wretch": 2
@@ -2526,6 +2797,7 @@
       "description": "Raising a barrier of pure force.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Elementalist": 2,
         "Battlemage": 2,
@@ -2538,6 +2810,7 @@
       "description": "Managing woodland: planting, thinning, felling and yield.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Lumberjack": 2
       }
@@ -2547,7 +2820,8 @@
       "name": "Forklift Operation",
       "description": "Lifting, stacking and manoeuvring loads on the truck.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 116,
@@ -2555,6 +2829,7 @@
       "description": "Telling a client their future in terms they will accept.",
       "stat": "PSI",
       "category": "Occult",
+      "sentient": true,
       "classStart": {
         "Witch": 2,
         "Oracle": 3
@@ -2569,28 +2844,32 @@
       "name": "Franchise Management",
       "description": "Running outlets to a brand's standard and margin.",
       "stat": "INT",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 117,
       "name": "Freediving",
       "description": "Diving deep on one breath and coming back up.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 360,
       "name": "Fungal Resistance",
       "description": "The body's tolerance of spores, rot and fungal toxins.",
       "stat": "CON",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": false
     },
     {
       "id": 606,
       "name": "Game Design",
       "description": "Designing rules and systems that stay interesting to play.",
       "stat": "INT",
-      "category": "Technology"
+      "category": "Technology",
+      "sentient": true
     },
     {
       "id": 118,
@@ -2598,6 +2877,7 @@
       "description": "Growing and maintaining ornamental and kitchen plants.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Farmer": 2
       }
@@ -2608,6 +2888,7 @@
       "description": "Faceting rough stone for light return and symmetry.",
       "stat": "DEX",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Enchanter": 2
       }
@@ -2618,6 +2899,7 @@
       "description": "Identifying, grading and valuing gemstones.",
       "stat": "INT",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Enchanter": 2
       }
@@ -2628,6 +2910,7 @@
       "description": "Tracing descent through records and their gaps.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "classStart": {
         "Academic": 2
       }
@@ -2637,7 +2920,8 @@
       "name": "Genome Sequencing",
       "description": "Reading a genome and assembling it into a usable sequence.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 362,
@@ -2645,6 +2929,7 @@
       "description": "Finding hidden caches by coordinate and clue.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Scout": 2,
         "Archaeologist": 2
@@ -2655,14 +2940,16 @@
       "name": "Geography",
       "description": "Land, climate, population, and how they distribute.",
       "stat": "INT",
-      "category": "Academia"
+      "category": "Academia",
+      "sentient": true
     },
     {
       "id": 844,
       "name": "Gerontology",
       "description": "The medicine and care of the ageing body and mind.",
       "stat": "WIS",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 363,
@@ -2670,6 +2957,7 @@
       "description": "The study of ice sheets, glaciers and their movement.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Ice Mage": 2,
         "Meteorologist": 2
@@ -2680,21 +2968,24 @@
       "name": "Glass Cutting",
       "description": "Scoring and breaking glass to a clean intended line.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 849,
       "name": "Glass Etching",
       "description": "Frosting and cutting pattern into glass by acid or abrasive.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 121,
       "name": "Glassblowing",
       "description": "Gathering, inflating and shaping hot glass at the pipe.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 898,
@@ -2702,6 +2993,7 @@
       "description": "Fighting with gloved fists at close punching range.",
       "stat": "STR",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 11,
       "classStart": {
         "Freelancer": 3,
@@ -2748,14 +3040,16 @@
       "name": "Go Strategy",
       "description": "Territory, life and death on the nineteen-line board.",
       "stat": "INT",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 364,
       "name": "Gold Panning",
       "description": "Washing gravel down to what is heavy and yellow.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 609,
@@ -2763,6 +3057,7 @@
       "description": "Making an inert body and setting it to work.",
       "stat": "INT",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Enchanter": 2,
         "Necromancer": 2
@@ -2773,21 +3068,24 @@
       "name": "Golf",
       "description": "Driving, approach and putting across a course.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 877,
       "name": "Grant Writing",
       "description": "Writing applications that actually get funded.",
       "stat": "INT",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 611,
       "name": "Graphic Design",
       "description": "Arranging type, image and space to communicate.",
       "stat": "INT",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 124,
@@ -2795,6 +3093,7 @@
       "description": "Controlling a body at close quarters: holds, throws and locks.",
       "stat": "STR",
       "category": "Combat",
+      "sentient": false,
       "classStart": {}
     },
     {
@@ -2803,6 +3102,7 @@
       "description": "Opening and closing graves to depth, in any ground.",
       "stat": "STR",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Wretch": 2
       }
@@ -2813,6 +3113,7 @@
       "description": "Running heat, humidity and light under glass.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Farmer": 2
       }
@@ -2822,7 +3123,8 @@
       "name": "Grocery Shopping",
       "description": "Provisioning well against a list, a budget and a use-by date.",
       "stat": "INT",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 615,
@@ -2830,6 +3132,7 @@
       "description": "Fighting a stronger force by raid, terrain and withdrawal.",
       "stat": "WIS",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Commander": 2
       }
@@ -2840,6 +3143,7 @@
       "description": "Handling and shooting firearms accurately under pressure.",
       "stat": "DEX",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 9,
       "classStart": {
         "Freelancer": 3,
@@ -2893,7 +3197,8 @@
       "name": "Gunpowder Milling",
       "description": "Milling and corning black powder without setting it off.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 616,
@@ -2901,6 +3206,7 @@
       "description": "Building, fitting and repairing firearms.",
       "stat": "INT",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Mercenary": 2
       }
@@ -2911,6 +3217,7 @@
       "description": "Strength and control on floor and apparatus.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Acrobat": 2
       },
@@ -2923,7 +3230,8 @@
       "name": "Habitat Restoration",
       "description": "Rebuilding a damaged habitat until it holds its own species.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 126,
@@ -2931,6 +3239,7 @@
       "description": "Getting into systems by flaw, misconfiguration, or the person using them.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Mana Cyborg": 2
       },
@@ -2944,6 +3253,7 @@
       "description": "Talking a price down without killing the deal.",
       "stat": "PSI",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "Shopkeeper": 2
       }
@@ -2953,35 +3263,40 @@
       "name": "Hairdressing",
       "description": "Cutting, colouring and setting hair to a plan.",
       "stat": "DEX",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 617,
       "name": "Hammer Throw",
       "description": "Throwing the weighted wire hammer for distance.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 365,
       "name": "Handwriting Analysis",
       "description": "Reading a hand for authorship, forgery or state of mind.",
       "stat": "INT",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 130,
       "name": "Hang Gliding",
       "description": "Flying an unpowered wing on lift and terrain.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 368,
       "name": "Harpsichord Playing",
       "description": "Playing plucked-string keyboard, where touch cannot change volume.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 131,
@@ -2989,6 +3304,7 @@
       "description": "Working in heat that would put others down.",
       "stat": "CON",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Firefighter": 3
       },
@@ -3004,6 +3320,7 @@
       "description": "Fighting with heavy two-handed weapons and their committed swings.",
       "stat": "STR",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 3,
       "classStart": {
         "Freelancer": 3,
@@ -3041,6 +3358,7 @@
       "description": "Moving, fighting and lasting in full plate and load.",
       "stat": "STR",
       "category": "Combat",
+      "sentient": true,
       "classStart": {
         "Guardian": 2
       }
@@ -3051,6 +3369,7 @@
       "description": "Running large plant safely on a working site.",
       "stat": "DEX",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Construction Worker": 2
       }
@@ -3060,14 +3379,16 @@
       "name": "Helicopter Mechanics",
       "description": "Maintaining rotor systems, gearboxes and turbines.",
       "stat": "INT",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 133,
       "name": "Helicopter Piloting",
       "description": "Flying rotorcraft, including hover and autorotation.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 370,
@@ -3075,6 +3396,7 @@
       "description": "Preparing herb dressings that draw, soothe or close.",
       "stat": "WIS",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Witch": 2
       }
@@ -3085,6 +3407,7 @@
       "description": "Identifying and preparing plants for medicine.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Witch": 3
       },
@@ -3099,28 +3422,32 @@
       "name": "Herpetology",
       "description": "The study of reptiles and amphibians.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 383,
       "name": "Hide Tanning",
       "description": "Turning raw hide into leather that will not rot.",
       "stat": "WIS",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 622,
       "name": "High Jump",
       "description": "Clearing a raised bar from a running approach.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 371,
       "name": "High-Altitude Acclimatization",
       "description": "Adapting to thin air without falling ill.",
       "stat": "CON",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": false
     },
     {
       "id": 621,
@@ -3128,6 +3455,7 @@
       "description": "Fighting from the surviving European fencing manuals.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Berserker": 2,
         "Paladin": 2,
@@ -3144,6 +3472,7 @@
       "description": "What happened, in what order, and on what evidence.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "classStart": {
         "Commander": 2,
         "Sage": 3,
@@ -3159,7 +3488,8 @@
       "name": "Home Staging",
       "description": "Dressing a property so it shows and sells.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 100,
@@ -3167,6 +3497,7 @@
       "description": "Riding and controlling a horse at all paces.",
       "stat": "WIS",
       "category": "Vehicles",
+      "sentient": true,
       "classStart": {
         "Knight": 2,
         "Samurai": 2
@@ -3180,35 +3511,40 @@
       "name": "Hostage Negotiation",
       "description": "Talking a barricaded situation down without a body.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 625,
       "name": "Hot Air Ballooning",
       "description": "Flying a balloon on burner, ballast and the wind you choose.",
       "stat": "WIS",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 868,
       "name": "Hovercraft Piloting",
       "description": "Handling an air-cushion craft over land and water.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 372,
       "name": "Hula Dancing",
       "description": "Hawaiian dance where the hands carry the story.",
       "stat": "DEX",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 626,
       "name": "Hula Hooping",
       "description": "Keeping hoops turning on body and limbs.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 627,
@@ -3216,6 +3552,7 @@
       "description": "Hiring, contracts, grievance, and the paperwork of people.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "CEO": 2
       }
@@ -3226,6 +3563,7 @@
       "description": "Tracking, stalking and taking game cleanly.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": false,
       "classStart": {
         "Ranger": 2
       }
@@ -3235,7 +3573,8 @@
       "name": "HVAC Repair",
       "description": "Servicing heating, ventilation and cooling plant.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 373,
@@ -3243,6 +3582,7 @@
       "description": "Groundwater: where it is, how it moves and what it carries.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Meteorologist": 2
       }
@@ -3253,6 +3593,7 @@
       "description": "Growing crops in nutrient solution without soil.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Farmer": 2
       }
@@ -3263,6 +3604,7 @@
       "description": "Inducing suggestible trance and working within it.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Vampire": 2,
         "Cultist": 2,
@@ -3278,6 +3620,7 @@
       "description": "Finding the worst plausible explanation for any symptom.",
       "stat": "WIS",
       "category": "Medicine",
+      "sentient": true,
       "traitStart": {
         "hypochondriac": 2
       }
@@ -3287,21 +3630,24 @@
       "name": "Ice Climbing",
       "description": "Climbing frozen falls and ice on tools and crampons.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 855,
       "name": "Ice Core Drilling",
       "description": "Extracting and logging cores that hold the old climate.",
       "stat": "CON",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 374,
       "name": "Ice Fishing",
       "description": "Fishing through cut ice, and reading the ice first.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 631,
@@ -3309,6 +3655,7 @@
       "description": "Carving blocks of ice against a melting clock.",
       "stat": "DEX",
       "category": "Arts",
+      "sentient": true,
       "classStart": {
         "Ice Mage": 2
       }
@@ -3318,21 +3665,24 @@
       "name": "Ice Skating",
       "description": "Edges, balance and speed on blades.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 832,
       "name": "Ichthyology",
       "description": "The study of fish: species, anatomy and stocks.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 375,
       "name": "Igloo Building",
       "description": "Cutting and laying snow blocks into a spiral shelter.",
       "stat": "WIS",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 632,
@@ -3340,6 +3690,7 @@
       "description": "Making the senses report what is not there.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Witch": 2,
         "Illusionist": 2
@@ -3351,6 +3702,7 @@
       "description": "The immune system, its defences and its mistakes.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Doctor": 2,
         "Scientist": 2,
@@ -3363,6 +3715,7 @@
       "description": "Building a scene live, from nothing, with other people.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Entertainer": 2
       }
@@ -3373,6 +3726,7 @@
       "description": "Making charges out of what is to hand, and surviving them.",
       "stat": "INT",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Mercenary": 2
       }
@@ -3382,14 +3736,16 @@
       "name": "Industrial Arts",
       "description": "Shop work across metal, wood and machine.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 636,
       "name": "Injection Molding",
       "description": "Running moulds, gates and cycles for cast plastic parts.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 184,
@@ -3397,6 +3753,7 @@
       "description": "Navigating on instruments alone, without outside reference.",
       "stat": "INT",
       "category": "Survival",
+      "sentient": true,
       "traitStart": {
         "navigator": 3
       }
@@ -3407,6 +3764,7 @@
       "description": "Deciding what to cover, on what terms, at what premium.",
       "stat": "INT",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "CEO": 2
       }
@@ -3416,21 +3774,24 @@
       "name": "Intelligence Gathering",
       "description": "Collecting, sorting and weighting information into usable fact.",
       "stat": "PSI",
-      "category": "Crime"
+      "category": "Crime",
+      "sentient": true
     },
     {
       "id": 797,
       "name": "Interface Design",
       "description": "Laying out controls so people can use them without being told.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 141,
       "name": "Interior Design",
       "description": "Planning a room's function, light, colour and furniture.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 139,
@@ -3438,6 +3799,7 @@
       "description": "Getting truthful information out of someone unwilling.",
       "stat": "PSI",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Police Officer": 3,
         "Psychologist": 2
@@ -3449,6 +3811,7 @@
       "description": "Making someone believe the consequences of refusing.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Vampire": 2,
         "Berserker": 2,
@@ -3475,6 +3838,7 @@
       "description": "Digging out a story somebody is keeping.",
       "stat": "INT",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Journalist": 2
       }
@@ -3485,6 +3849,7 @@
       "description": "Raising capital, pricing deals and taking a cut.",
       "stat": "INT",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "CEO": 2
       }
@@ -3494,7 +3859,8 @@
       "name": "Ironing",
       "description": "Pressing cloth flat without scorching or shining it.",
       "stat": "DEX",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 537,
@@ -3502,6 +3868,7 @@
       "description": "Keeping a building clean, stocked and safe overnight.",
       "stat": "CON",
       "category": "Commerce",
+      "sentient": true,
       "traitStart": {
         "germaphobe": 2
       }
@@ -3511,28 +3878,32 @@
       "name": "Javelin Throw",
       "description": "Throwing the javelin for distance on a legal release.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 642,
       "name": "Jet Skiing",
       "description": "Handling a personal watercraft at speed and in chop.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 643,
       "name": "Jewelry Making",
       "description": "Fabricating and setting jewellery from metal and stone.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 644,
       "name": "Jigsaw Puzzles",
       "description": "Assembling cut pictures by edge, colour and shape.",
       "stat": "INT",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 70,
@@ -3540,6 +3911,7 @@
       "description": "Timing, setup and delivery that lands the punchline.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Entertainer": 2
       }
@@ -3550,6 +3922,7 @@
       "description": "Reporting: sourcing, checking, and writing it straight.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Journalist": 3
       }
@@ -3560,6 +3933,7 @@
       "description": "Riding at another rider with a lance and staying seated.",
       "stat": "STR",
       "category": "Combat",
+      "sentient": true,
       "classStart": {
         "Knight": 3,
         "Paladin": 2
@@ -3571,6 +3945,7 @@
       "description": "Throws, holds and chokes from the Japanese grappling art.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Martial Artist": 2
       }
@@ -3581,6 +3956,7 @@
       "description": "Keeping objects in the air in pattern.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "traitStart": {
         "ambidextrous": 2
       }
@@ -3591,6 +3967,7 @@
       "description": "Striking art of blocks, punches and kicks from set forms.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Martial Artist": 2
       },
@@ -3603,21 +3980,24 @@
       "name": "Kart Racing",
       "description": "Racing light karts on line, brake and momentum.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 146,
       "name": "Kayaking",
       "description": "Paddling a closed boat, including roll and rough water.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 380,
       "name": "Kelp Farming",
       "description": "Growing and harvesting kelp on line at sea.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 148,
@@ -3625,6 +4005,7 @@
       "description": "Japanese fencing with the shinai, in armour and rule.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Samurai": 3
       }
@@ -3634,35 +4015,40 @@
       "name": "Kickboxing",
       "description": "Punching and kicking under the full-contact rules.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 381,
       "name": "Kintsugi Repair",
       "description": "Rejoining broken pottery in gold, leaving the break visible.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 647,
       "name": "Kite Flying",
       "description": "Launching, flying and landing kites in changing wind.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 150,
       "name": "Knitting",
       "description": "Making fabric on needles from continuous yarn.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 151,
       "name": "Knot Tying",
       "description": "Choosing and tying the knot that will hold, and untie after.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 152,
@@ -3670,6 +4056,7 @@
       "description": "Practical Israeli close combat aimed at ending it fast.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Martial Artist": 2,
         "Brawler": 2
@@ -3680,63 +4067,72 @@
       "name": "Labyrinth Navigation",
       "description": "Keeping orientation and route inside a deliberate maze.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": false
     },
     {
       "id": 649,
       "name": "Lacrosse",
       "description": "Cradling, passing and shooting with the netted stick.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 153,
       "name": "Landscaping",
       "description": "Grading, planting and hard landscaping to a design.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 650,
       "name": "Laser Tag",
       "description": "Infrared skirmish play: cover, angles and hit avoidance.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 651,
       "name": "Lassoing",
       "description": "Throwing and closing a rope loop on a moving target.",
       "stat": "DEX",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 652,
       "name": "Laundry Management",
       "description": "Sorting, washing and turning around volume laundry.",
       "stat": "CON",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 155,
       "name": "Law",
       "description": "The statutes, procedure and argument that decide a case.",
       "stat": "INT",
-      "category": "Academia"
+      "category": "Academia",
+      "sentient": true
     },
     {
       "id": 521,
       "name": "Lawn Bowls",
       "description": "Rolling biased bowls to the jack across the green.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 653,
       "name": "Lawn Care",
       "description": "Mowing, feeding and repairing turf through the year.",
       "stat": "CON",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 156,
@@ -3744,6 +4140,7 @@
       "description": "Getting a group to act together, and keep acting.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Knight": 2,
         "Paladin": 2,
@@ -3765,14 +4162,16 @@
       "name": "Leatherworking",
       "description": "Cutting, stitching and finishing leather goods.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 654,
       "name": "Lifeguarding",
       "description": "Watching water, spotting trouble early and getting people out.",
       "stat": "WIS",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 888,
@@ -3780,6 +4179,7 @@
       "description": "Fighting with light, quick weapons that trade reach for speed.",
       "stat": "DEX",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 1,
       "classStart": {
         "Freelancer": 3,
@@ -3826,35 +4226,40 @@
       "name": "Light Armor Training",
       "description": "Fighting in light armour and keeping the mobility it is for.",
       "stat": "DEX",
-      "category": "Combat"
+      "category": "Combat",
+      "sentient": true
     },
     {
       "id": 158,
       "name": "Lightfooted",
       "description": "Moving quietly and lightly, leaving little to hear or track.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 656,
       "name": "Lighting Design",
       "description": "Lighting a stage or set for mood, focus and visibility.",
       "stat": "INT",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 833,
       "name": "Limnology",
       "description": "The study of lakes, rivers and their inland ecology.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 657,
       "name": "Line Dancing",
       "description": "Dancing set choreographed steps in formation.",
       "stat": "DEX",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 159,
@@ -3862,6 +4267,7 @@
       "description": "The structure of language: sound, grammar and change.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "classStart": {
         "Sage": 2,
         "Academic": 2,
@@ -3876,7 +4282,8 @@
       "name": "Lip Reading",
       "description": "Reading speech from the mouth without hearing it.",
       "stat": "WIS",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 161,
@@ -3884,6 +4291,7 @@
       "description": "Opening locks by tension and feel, without the key.",
       "stat": "DEX",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Rogue": 2
       },
@@ -3897,21 +4305,24 @@
       "name": "Log Rolling",
       "description": "Staying upright on a spinning floating log.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 384,
       "name": "Loom Weaving",
       "description": "Warping and weaving cloth on a loom.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 164,
       "name": "Lucid Dreaming",
       "description": "Becoming aware inside a dream and acting deliberately in it.",
       "stat": "PSI",
-      "category": "Occult"
+      "category": "Occult",
+      "sentient": true
     },
     {
       "id": 659,
@@ -3919,6 +4330,7 @@
       "description": "Felling, limbing and moving timber in the woods.",
       "stat": "STR",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Lumberjack": 3
       }
@@ -3928,7 +4340,8 @@
       "name": "Lye Making",
       "description": "Leaching wood ash into caustic lye, safely.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 385,
@@ -3936,6 +4349,7 @@
       "description": "Training statistical models to do a task from data.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Mana Cyborg": 2
       }
@@ -3945,7 +4359,8 @@
       "name": "Macrame",
       "description": "Knotting cord into patterned textile without needle or loom.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 165,
@@ -3953,6 +4368,7 @@
       "description": "The formal principles under a working: correspondence, cost and limit.",
       "stat": "INT",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Enchanter": 3,
         "Fire Mage": 2,
@@ -3975,7 +4391,8 @@
       "name": "Magus",
       "description": "The full practice of a trained magician, not one school of it.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": true
     },
     {
       "id": 167,
@@ -3983,6 +4400,7 @@
       "description": "Keeping a building or machine running through routine care.",
       "stat": "INT",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Mechanic": 2
       }
@@ -3992,56 +4410,64 @@
       "name": "Makeup Artistry",
       "description": "Painting a face for camera, stage or effect.",
       "stat": "DEX",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 663,
       "name": "Mantra Chanting",
       "description": "Sustained repetition of a formula for effect on mind or world.",
       "stat": "CON",
-      "category": "Occult"
+      "category": "Occult",
+      "sentient": true
     },
     {
       "id": 387,
       "name": "Manual Tooling",
       "description": "Working a lathe, mill and file by hand to a tolerance.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 664,
       "name": "Map Reading",
       "description": "Turning a map and terrain into a route and a position.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 388,
       "name": "Maple Syruping",
       "description": "Tapping, collecting and boiling sap to syrup.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 169,
       "name": "Marathon Running",
       "description": "Running the distance on pace, fuel and pacing discipline.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 170,
       "name": "Marine Biology",
       "description": "The life of the sea, from plankton to reef and whale.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 389,
       "name": "Marine Navigation",
       "description": "Charting and holding a course at sea by fix and dead reckoning.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 795,
@@ -4049,6 +4475,7 @@
       "description": "Acrobatic kicks and flips performed as display.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Acrobat": 2
       }
@@ -4059,6 +4486,7 @@
       "description": "Cutting and laying stone into wall, arch and course.",
       "stat": "STR",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Construction Worker": 2
       }
@@ -4068,35 +4496,40 @@
       "name": "Mass Spectrometry",
       "description": "Identifying substances by ionising them and weighing the fragments.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 172,
       "name": "Massage Therapy",
       "description": "Working soft tissue for pain, mobility and circulation.",
       "stat": "WIS",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 390,
       "name": "Matchmaking",
       "description": "Introducing two people who will actually suit each other.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 391,
       "name": "Meat Curing",
       "description": "Preserving meat with salt, smoke, nitrate and time.",
       "stat": "WIS",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 666,
       "name": "Mechanical Engineering",
       "description": "Designing machines, mechanisms and the loads they carry.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 173,
@@ -4104,6 +4537,7 @@
       "description": "Diagnosing and repairing engines and drivetrains.",
       "stat": "INT",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Mechanic": 3
       }
@@ -4114,6 +4548,7 @@
       "description": "Bringing two sides to an agreement neither dictated.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Psychologist": 2
       }
@@ -4124,6 +4559,7 @@
       "description": "Coding treatment and getting it paid.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Nurse": 2
       }
@@ -4134,6 +4570,7 @@
       "description": "Sustained attention practice, and the settling that follows.",
       "stat": "WIS",
       "category": "Occult",
+      "sentient": true,
       "classStart": {
         "Nun": 2,
         "Monk": 3,
@@ -4155,6 +4592,7 @@
       "description": "Calculating accurately in the head, quickly.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "traitStart": {
         "savant_syndrome": 3
       }
@@ -4164,21 +4602,24 @@
       "name": "Metal Detecting",
       "description": "Sweeping ground and reading signal before digging.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 176,
       "name": "Metalworking",
       "description": "Cutting, forming and joining metal stock.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 393,
       "name": "Meteorite Hunting",
       "description": "Finding and recognising fallen space rock in the field.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 177,
@@ -4186,6 +4627,7 @@
       "description": "Reading and forecasting weather from data and sky.",
       "stat": "WIS",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Meteorologist": 3
       }
@@ -4196,6 +4638,7 @@
       "description": "The study of bacteria, viruses and what they do to a host.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Scientist": 2
       }
@@ -4205,35 +4648,40 @@
       "name": "Mime",
       "description": "Telling a story in gesture and body alone.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 395,
       "name": "Miniature Golf",
       "description": "Putting through obstacles on a short built course.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 673,
       "name": "Miniature Painting",
       "description": "Painting small figures at high detail.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 674,
       "name": "Mining",
       "description": "Extracting ore and stone, and knowing what is worth extracting.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 675,
       "name": "Model Rocketry",
       "description": "Building and flying small rockets on recovery and stability.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 396,
@@ -4241,6 +4689,7 @@
       "description": "Cooking on chemistry: gels, foams and phase changes.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Chef": 2
       }
@@ -4250,42 +4699,48 @@
       "name": "Money Laundering",
       "description": "Passing dirty money through clean books.",
       "stat": "INT",
-      "category": "Crime"
+      "category": "Crime",
+      "sentient": true
     },
     {
       "id": 867,
       "name": "Monorail Operation",
       "description": "Driving and dispatching a monorail on schedule.",
       "stat": "INT",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 179,
       "name": "Morse Code",
       "description": "Sending and reading code by key, light or sound.",
       "stat": "INT",
-      "category": "Technology"
+      "category": "Technology",
+      "sentient": true
     },
     {
       "id": 397,
       "name": "Mosaics",
       "description": "Setting tesserae into image and pattern.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 676,
       "name": "Motocross",
       "description": "Racing motorcycles over dirt, jumps and ruts.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 180,
       "name": "Motorcycle Riding",
       "description": "Riding and controlling a motorcycle on road and lean.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 181,
@@ -4293,6 +4748,7 @@
       "description": "Climbing high ground with route, weather and altitude judgement.",
       "stat": "CON",
       "category": "Survival",
+      "sentient": true,
       "traitStart": {
         "mountain-born": 3
       }
@@ -4303,6 +4759,7 @@
       "description": "Thai striking with fists, elbows, knees and shins.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Martial Artist": 2
       }
@@ -4312,14 +4769,16 @@
       "name": "Mural Painting",
       "description": "Painting at architectural scale, on a wall that stays.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 398,
       "name": "Mushroom Cultivation",
       "description": "Growing edible fungi on prepared substrate.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 183,
@@ -4327,6 +4786,7 @@
       "description": "Writing music: line, harmony and structure.",
       "stat": "INT",
       "category": "Arts",
+      "sentient": true,
       "traitStart": {
         "synesthete": 2
       }
@@ -4336,21 +4796,24 @@
       "name": "Mutagen Crafting",
       "description": "Compounding agents that rewrite living tissue.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 678,
       "name": "Mutational Adaptation",
       "description": "Surviving change to your own body and turning it to use.",
       "stat": "CON",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": false
     },
     {
       "id": 830,
       "name": "Mycology",
       "description": "The study of fungi: identification, ecology and toxicity.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 400,
@@ -4358,6 +4821,7 @@
       "description": "Engineering matter at the scale of molecules.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Mana Cyborg": 2
       }
@@ -4368,6 +4832,7 @@
       "description": "Treating illness with diet, herbs and regimen.",
       "stat": "WIS",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Nun": 2,
         "Cleric": 2
@@ -4379,6 +4844,7 @@
       "description": "Reaching terms both sides will sign and keep.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "CEO": 2
       },
@@ -4391,28 +4857,32 @@
       "name": "Neon Sign Making",
       "description": "Bending and filling glass tube into lit sign.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 680,
       "name": "Netmaking",
       "description": "Knotting and repairing nets to gauge.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 681,
       "name": "Network Administration",
       "description": "Running networks: routing, addressing, uptime and access.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 402,
       "name": "Neurohacking",
       "description": "Intervening directly in a nervous system to change how it runs.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 682,
@@ -4420,6 +4890,7 @@
       "description": "The nervous system, its diseases and their diagnosis.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Doctor": 2
       }
@@ -4429,7 +4900,8 @@
       "name": "Nimble",
       "description": "Quickness of hand and foot in tight, awkward moments.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 683,
@@ -4437,6 +4909,7 @@
       "description": "The nucleus: decay, fission, fusion and cross-sections.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Scientist": 2,
         "Physicist": 2
@@ -4447,7 +4920,8 @@
       "name": "Numismatics",
       "description": "The study and collecting of coins and their issue.",
       "stat": "INT",
-      "category": "Academia"
+      "category": "Academia",
+      "sentient": true
     },
     {
       "id": 188,
@@ -4455,6 +4929,7 @@
       "description": "Bedside care, observation and the practical side of medicine.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Nurse": 3
       }
@@ -4465,6 +4940,7 @@
       "description": "What food does in the body, and what a diet lacks.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Chef": 2
       },
@@ -4478,28 +4954,32 @@
       "name": "Oboe Playing",
       "description": "Playing the oboe, reed making included.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 684,
       "name": "Obstacle Course Racing",
       "description": "Running a course of climbs, carries and crawls.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 405,
       "name": "Oceanography",
       "description": "The physics, chemistry and circulation of the sea.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 685,
       "name": "Oil Drilling",
       "description": "Drilling, casing and controlling a well.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 686,
@@ -4507,6 +4987,7 @@
       "description": "Singing trained classical repertoire without amplification.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Bard": 2
       }
@@ -4517,6 +4998,7 @@
       "description": "Testing sight and prescribing correction.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Doctor": 2
       }
@@ -4527,6 +5009,7 @@
       "description": "Racing between control points on map and compass.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "traitStart": {
         "pilgrim": 2
       }
@@ -4536,14 +5019,16 @@
       "name": "Origami",
       "description": "Folding paper into form without cutting.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 688,
       "name": "Packing",
       "description": "Fitting what is needed into what will actually carry.",
       "stat": "STR",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 191,
@@ -4551,6 +5036,7 @@
       "description": "Staying functional through pain that would stop others.",
       "stat": "CON",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Berserker": 2,
         "Brawler": 2,
@@ -4572,7 +5058,8 @@
       "name": "Paintball",
       "description": "Marker skirmish: cover, angles and suppression.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 192,
@@ -4580,6 +5067,7 @@
       "description": "Working in paint: colour, value and surface.",
       "stat": "DEX",
       "category": "Arts",
+      "sentient": true,
       "traitStart": {
         "synesthete": 2
       }
@@ -4590,6 +5078,7 @@
       "description": "Fossil plants, and the climates they record.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Archaeologist": 2
       }
@@ -4600,6 +5089,7 @@
       "description": "Excavating and interpreting fossils and the life they came from.",
       "stat": "INT",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Archaeologist": 2
       }
@@ -4609,42 +5099,48 @@
       "name": "Pankration",
       "description": "Ancient Greek all-in fighting: striking and grappling together.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 408,
       "name": "Paper Mache",
       "description": "Building form from paste and layered paper.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 691,
       "name": "Paper Making",
       "description": "Pulping, forming and drying sheets by hand.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 880,
       "name": "Papyrology",
       "description": "Reading and conserving texts written on papyrus.",
       "stat": "INT",
-      "category": "Academia"
+      "category": "Academia",
+      "sentient": true
     },
     {
       "id": 194,
       "name": "Parachuting",
       "description": "Jumping, canopy control and landing.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 692,
       "name": "Paragliding",
       "description": "Flying a foot-launched canopy on thermals and ridge lift.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 409,
@@ -4652,6 +5148,7 @@
       "description": "Emergency medicine in the field, before hospital.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Combat Medic": 2
       }
@@ -4661,21 +5158,24 @@
       "name": "Parkour",
       "description": "Moving through built terrain by vault, climb and drop.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 410,
       "name": "Parquet Flooring",
       "description": "Laying patterned wood flooring true and tight.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 826,
       "name": "Particle Physics",
       "description": "The fundamental particles and the forces between them.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 693,
@@ -4683,6 +5183,7 @@
       "description": "Laminating, piping and baking fine pastry.",
       "stat": "DEX",
       "category": "Culinary",
+      "sentient": true,
       "classStart": {
         "Chef": 2
       }
@@ -4692,42 +5193,48 @@
       "name": "Pearl Diving",
       "description": "Diving for oysters on breath, and shucking for pearl.",
       "stat": "CON",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 196,
       "name": "Pen Spinning",
       "description": "Rotating a pen through the fingers in patterns.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 412,
       "name": "Perfumery",
       "description": "Blending top, heart and base notes into a scent that lasts.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 853,
       "name": "Permaculture Design",
       "description": "Designing a growing system that mostly maintains itself.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 696,
       "name": "Pest Control",
       "description": "Identifying, excluding and eliminating infestation.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 413,
       "name": "Pewter Casting",
       "description": "Melting and casting pewter into moulds.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 197,
@@ -4735,6 +5242,7 @@
       "description": "What drugs do, at what dose, and what they do together.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Doctor": 2,
         "Nurse": 2
@@ -4745,7 +5253,8 @@
       "name": "Pharmacy Dispensing",
       "description": "Filling prescriptions accurately and checking interactions.",
       "stat": "INT",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 199,
@@ -4753,6 +5262,7 @@
       "description": "Argument about knowledge, being, ethics and mind.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "classStart": {
         "Sage": 2
       },
@@ -4768,6 +5278,7 @@
       "description": "Drawing blood cleanly and labelling it correctly.",
       "stat": "DEX",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Nurse": 2
       }
@@ -4778,6 +5289,7 @@
       "description": "Exposure, focus and composition, in camera.",
       "stat": "DEX",
       "category": "Arts",
+      "sentient": true,
       "classStart": {
         "Journalist": 2
       }
@@ -4788,6 +5300,7 @@
       "description": "Bending and generating light by will.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Elementalist": 2
       }
@@ -4798,6 +5311,7 @@
       "description": "Reading character from the bumps of the skull, as the old books had it.",
       "stat": "INT",
       "category": "Occult",
+      "sentient": true,
       "classStart": {
         "Cultist": 2,
         "Warlock": 2
@@ -4809,6 +5323,7 @@
       "description": "Matter, energy, motion and the laws they obey.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Scientist": 2,
         "Physicist": 3
@@ -4819,14 +5334,16 @@
       "name": "Phytoremediation",
       "description": "Cleaning contaminated ground with plants that take up the poison.",
       "stat": "INT",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 698,
       "name": "Pickleball",
       "description": "Paddle play on a short court with a perforated ball.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 203,
@@ -4834,6 +5351,7 @@
       "description": "Lifting from a person without them registering it.",
       "stat": "DEX",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Rogue": 2
       },
@@ -4848,49 +5366,56 @@
       "name": "Picture Framing",
       "description": "Cutting, mounting and glazing work for display.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 700,
       "name": "Pigeon Racing",
       "description": "Breeding, training and timing homing pigeons.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 205,
       "name": "Pilates",
       "description": "Controlled core conditioning through set movement.",
       "stat": "WIS",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 701,
       "name": "Pipe Bending",
       "description": "Bending pipe and conduit to angle without kinking it.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 417,
       "name": "Pipelaying",
       "description": "Laying, jointing and bedding pipe to fall.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 702,
       "name": "Pixel Art",
       "description": "Drawing at the level of the individual pixel.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 418,
       "name": "Planetarium Operation",
       "description": "Running a dome projector and the show that goes with it.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 419,
@@ -4898,6 +5423,7 @@
       "description": "Floating and finishing plaster flat and hard.",
       "stat": "DEX",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Construction Worker": 2
       }
@@ -4907,14 +5433,16 @@
       "name": "Playing Bass",
       "description": "Holding the low end in time with the drums.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 207,
       "name": "Playing Drums",
       "description": "Keeping and shaping time on a kit.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 208,
@@ -4922,6 +5450,7 @@
       "description": "Playing guitar: chords, lead and tone.",
       "stat": "DEX",
       "category": "Arts",
+      "sentient": true,
       "classStart": {
         "Bard": 2
       },
@@ -4935,6 +5464,7 @@
       "description": "Playing piano with both hands, reading or by ear.",
       "stat": "DEX",
       "category": "Arts",
+      "sentient": true,
       "traitStart": {
         "polydactyly": 2
       }
@@ -4944,21 +5474,24 @@
       "name": "Playing Violin",
       "description": "Bowing and stopping the violin in tune.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 211,
       "name": "Plumbing",
       "description": "Running, jointing and testing water and waste.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 845,
       "name": "Podiatry",
       "description": "Treating feet, gait and the problems they cause upstream.",
       "stat": "DEX",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 212,
@@ -4966,6 +5499,7 @@
       "description": "Writing verse that earns its line breaks.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Bard": 2
       },
@@ -4979,6 +5513,7 @@
       "description": "A body that has learned to survive doses that should not be survived.",
       "stat": "CON",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Vampire": 2
       }
@@ -4989,6 +5524,7 @@
       "description": "Betting, reading and folding across the hand.",
       "stat": "PSI",
       "category": "Athletics",
+      "sentient": true,
       "traitStart": {
         "lucky": 2,
         "gambling_addict": 2
@@ -4999,21 +5535,24 @@
       "name": "Poker Face",
       "description": "Giving nothing away in the face, under pressure.",
       "stat": "PSI",
-      "category": "Crime"
+      "category": "Crime",
+      "sentient": true
     },
     {
       "id": 704,
       "name": "Pole Vaulting",
       "description": "Clearing a bar on a planted, loaded pole.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 705,
       "name": "Police Sketching",
       "description": "Drawing a usable likeness from a witness description.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 706,
@@ -5021,6 +5560,7 @@
       "description": "How power, institutions and voting actually behave.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "classStart": {
         "Sage": 2
       }
@@ -5031,6 +5571,7 @@
       "description": "Running and interpreting a polygraph, for what that is worth.",
       "stat": "INT",
       "category": "Occult",
+      "sentient": true,
       "classStart": {
         "Police Officer": 2
       }
@@ -5040,21 +5581,24 @@
       "name": "Pool Cleaning",
       "description": "Keeping a pool balanced, filtered and clear.",
       "stat": "CON",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 215,
       "name": "Pottery",
       "description": "Throwing, trimming and firing clay vessels.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 278,
       "name": "Power Throwing",
       "description": "Throwing heavy objects hard, with the whole body behind it.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 216,
@@ -5062,6 +5606,7 @@
       "description": "Maximal strength in the squat, bench and deadlift.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {},
       "traitStart": {
         "gigantism": 2,
@@ -5073,21 +5618,24 @@
       "name": "Precision Throwing",
       "description": "Hitting a small target with a thrown object at range.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 710,
       "name": "Primitive Fire Making",
       "description": "Making fire by friction alone, with prepared materials.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 217,
       "name": "Programming",
       "description": "Writing, structuring and debugging code.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 711,
@@ -5095,6 +5643,7 @@
       "description": "Scope, schedule and people, held together to delivery.",
       "stat": "INT",
       "category": "Commerce",
+      "sentient": true,
       "traitStart": {
         "workaholic": 2
       }
@@ -5105,6 +5654,7 @@
       "description": "Fighting with thrown and launched weapons at range.",
       "stat": "DEX",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 8,
       "classStart": {
         "Freelancer": 3,
@@ -5137,14 +5687,16 @@
       "name": "Prop Making",
       "description": "Building convincing objects for stage or camera.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 425,
       "name": "Prosthetics Design",
       "description": "Designing limbs and devices that a body can actually use.",
       "stat": "INT",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 713,
@@ -5152,6 +5704,7 @@
       "description": "Diagnosing and treating mental illness, medication included.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Psychologist": 2
       }
@@ -5162,6 +5715,7 @@
       "description": "Reading the unconscious through talk, dream and slip.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Psychologist": 3
       },
@@ -5175,14 +5729,16 @@
       "name": "Psychology",
       "description": "How people think, learn and behave, and how that is tested.",
       "stat": "INT",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 709,
       "name": "Public Relations",
       "description": "Managing what is said about a client, and by whom.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 218,
@@ -5190,6 +5746,7 @@
       "description": "Holding a room from the front, with structure and voice.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Nun": 2,
         "CEO": 2,
@@ -5215,7 +5772,8 @@
       "name": "Puppetry",
       "description": "Giving a puppet weight, focus and life.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 219,
@@ -5223,6 +5781,7 @@
       "description": "Igniting and steering fire by will.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Elementalist": 2,
         "Fire Mage": 3
@@ -5234,6 +5793,7 @@
       "description": "Coordinated posture, breath and intent as a practice.",
       "stat": "WIS",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Monk": 2
       }
@@ -5244,6 +5804,7 @@
       "description": "Testing to find the failure before the customer does.",
       "stat": "INT",
       "category": "Commerce",
+      "sentient": true,
       "traitStart": {
         "perfectionist": 2,
         "ocd": 2
@@ -5255,6 +5816,7 @@
       "description": "Computing on superposition and interference rather than bits alone.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Physicist": 2
       }
@@ -5264,35 +5826,40 @@
       "name": "Quantum Cryptography",
       "description": "Key exchange that a measurement would give away.",
       "stat": "INT",
-      "category": "Technology"
+      "category": "Technology",
+      "sentient": true
     },
     {
       "id": 428,
       "name": "Quilling",
       "description": "Rolling and shaping paper strips into relief design.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 718,
       "name": "Quilting",
       "description": "Piecing and stitching layered cloth into quilts.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 719,
       "name": "Racquetball",
       "description": "Fast enclosed-court play off every wall.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 720,
       "name": "Radiation Management",
       "description": "Working with sources safely: shielding, dose and time.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 429,
@@ -5300,6 +5867,7 @@
       "description": "Observing the sky at radio wavelengths.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Physicist": 2
       }
@@ -5309,42 +5877,48 @@
       "name": "Radio Operation",
       "description": "Working a radio set: bands, procedure and traffic.",
       "stat": "INT",
-      "category": "Technology"
+      "category": "Technology",
+      "sentient": true
     },
     {
       "id": 721,
       "name": "Radio Scavenging",
       "description": "Pulling working parts and signal out of dead equipment.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 842,
       "name": "Radiology",
       "description": "Producing and reading medical images.",
       "stat": "INT",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 821,
       "name": "Raman Spectroscopy",
       "description": "Identifying substances by how they scatter laser light.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 221,
       "name": "Rapping",
       "description": "Writing and delivering rhymed verse in time.",
       "stat": "PSI",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 430,
       "name": "Raptor Rehabilitation",
       "description": "Treating and releasing injured birds of prey.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 431,
@@ -5352,6 +5926,7 @@
       "description": "Catching the expression that shows before it is controlled.",
       "stat": "PSI",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Psychologist": 2
       }
@@ -5361,28 +5936,32 @@
       "name": "Real Estate Appraisal",
       "description": "Valuing property against comparables and condition.",
       "stat": "INT",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 432,
       "name": "Redsmithing",
       "description": "Working copper and its alloys at the bench.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 723,
       "name": "Refereeing",
       "description": "Officiating a game consistently, and being obeyed.",
       "stat": "WIS",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 724,
       "name": "Resin Casting",
       "description": "Mixing and casting resin without bubbles or heat damage.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 338,
@@ -5390,6 +5969,7 @@
       "description": "Restarting breathing and circulation.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Nurse": 2
       }
@@ -5400,6 +5980,7 @@
       "description": "Running a shop floor: stock, staff and takings.",
       "stat": "PSI",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "Shopkeeper": 2
       }
@@ -5409,7 +5990,8 @@
       "name": "Rhythmic Gymnastics",
       "description": "Apparatus work with ribbon, hoop, ball and clubs.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 728,
@@ -5417,6 +5999,7 @@
       "description": "Building machines that sense, decide and move.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Mechanic": 2,
         "Mana Cyborg": 2
@@ -5428,6 +6011,7 @@
       "description": "Roped climbing on rock: technique, protection and rope work.",
       "stat": "STR",
       "category": "Survival",
+      "sentient": false,
       "classStart": {
         "Firefighter": 2,
         "Lumberjack": 2,
@@ -5443,6 +6027,7 @@
       "description": "Blocking, jamming and skating in a pack.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Pro Wrestler": 2
       }
@@ -5452,42 +6037,48 @@
       "name": "Roller Skating",
       "description": "Balance, speed and stops on wheels.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 226,
       "name": "Roofing",
       "description": "Covering and flashing a roof so it stays watertight.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 729,
       "name": "Rope Making",
       "description": "Laying fibre into rope of even twist and strength.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 730,
       "name": "Rowing",
       "description": "Driving a boat with oars, in rhythm and in crew.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 228,
       "name": "Rugby",
       "description": "Contact, handling and set piece in the running game.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 610,
       "name": "Rumormongering",
       "description": "Starting a story that will travel and stick.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 731,
@@ -5495,6 +6086,7 @@
       "description": "Cutting and charging runes so they hold what is put in them.",
       "stat": "INT",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Archmage": 2,
         "Elementalist": 2,
@@ -5507,6 +6099,7 @@
       "description": "Reading runic inscription and knowing which futhark it is.",
       "stat": "INT",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Enchanter": 2,
         "Archmage": 2
@@ -5517,21 +6110,24 @@
       "name": "RV Driving",
       "description": "Driving a large motorhome: length, height and weight.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 883,
       "name": "Safecracking",
       "description": "Opening a safe by manipulation, drilling or the owner's habits.",
       "stat": "DEX",
-      "category": "Crime"
+      "category": "Crime",
+      "sentient": true
     },
     {
       "id": 434,
       "name": "Sail Rigging",
       "description": "Setting up standing and running rigging correctly.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 229,
@@ -5539,6 +6135,7 @@
       "description": "Working a boat under sail on wind, tide and trim.",
       "stat": "WIS",
       "category": "Vehicles",
+      "sentient": true,
       "traitStart": {
         "navigator": 2,
         "island-raised": 2
@@ -5549,7 +6146,8 @@
       "name": "Sailmaking",
       "description": "Cutting and sewing sails that hold their shape.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 733,
@@ -5557,6 +6155,7 @@
       "description": "Finding the need, matching it and closing.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Shopkeeper": 2
       }
@@ -5566,28 +6165,32 @@
       "name": "Sand Sculpture",
       "description": "Packing and carving sand into form before it dries.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 734,
       "name": "Sandblasting",
       "description": "Stripping and texturing surfaces with abrasive under pressure.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 838,
       "name": "Satellite Uplink Operation",
       "description": "Aligning a dish and holding a link to a satellite.",
       "stat": "INT",
-      "category": "Technology"
+      "category": "Technology",
+      "sentient": true
     },
     {
       "id": 820,
       "name": "Saxophone",
       "description": "Playing the saxophone: reed, breath and phrasing.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 735,
@@ -5595,6 +6198,7 @@
       "description": "Erecting and tying scaffold that will take the load.",
       "stat": "STR",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Construction Worker": 2
       }
@@ -5604,14 +6208,16 @@
       "name": "Scrapbooking",
       "description": "Composing photographs and ephemera into kept pages.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 439,
       "name": "Scrimshaw",
       "description": "Engraving and inking designs into bone or ivory.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 737,
@@ -5619,6 +6225,7 @@
       "description": "Writing a working onto a scroll so it will fire when read.",
       "stat": "DEX",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Enchanter": 2,
         "Archmage": 2
@@ -5629,14 +6236,16 @@
       "name": "Scuba Diving",
       "description": "Diving on compressed air with buoyancy and gas discipline.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 440,
       "name": "Scythe Mowing",
       "description": "Mowing standing grass with a scythe, and peening the blade.",
       "stat": "STR",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 441,
@@ -5644,6 +6253,7 @@
       "description": "Finding missing people and getting them out alive.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": true,
       "classStart": {
         "Scout": 2,
         "Firefighter": 2
@@ -5654,7 +6264,8 @@
       "name": "Search Engine Optimization",
       "description": "Getting a page to rank on what people actually search.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 231,
@@ -5662,6 +6273,7 @@
       "description": "Drawing someone in deliberately, and knowing when it is working.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Vampire": 3
       },
@@ -5675,6 +6287,7 @@
       "description": "Recording and interpreting ground movement and earthquakes.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Physicist": 2,
         "Meteorologist": 2
@@ -5685,63 +6298,72 @@
       "name": "Sewing",
       "description": "Joining cloth by hand or machine to a seam that holds.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 740,
       "name": "Sheep Shearing",
       "description": "Taking a fleece off in one piece without cutting the sheep.",
       "stat": "DEX",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 741,
       "name": "Shelter Building",
       "description": "Building shelter from terrain and materials at hand.",
       "stat": "WIS",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 444,
       "name": "Shepherding",
       "description": "Moving, grazing and guarding a flock.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 742,
       "name": "Shipping",
       "description": "Freight, manifests, customs and getting cargo there.",
       "stat": "INT",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 234,
       "name": "Shoemaking",
       "description": "Lasting, sewing and soling footwear.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 746,
       "name": "Show Jumping",
       "description": "Riding a course of fences clear and inside the time.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 865,
       "name": "Shuffleboard",
       "description": "Sliding weighted discs to scoring zones.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 887,
       "name": "Siege Engineering",
       "description": "Building and using engines that take fortifications down.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 238,
@@ -5749,6 +6371,7 @@
       "description": "Signed conversation, with its own grammar and space.",
       "stat": "DEX",
       "category": "Social",
+      "sentient": true,
       "traitStart": {
         "deaf": 3,
         "mute": 3
@@ -5759,21 +6382,24 @@
       "name": "Sign Spinning",
       "description": "Throwing and spinning an advertising board for attention.",
       "stat": "DEX",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 448,
       "name": "Silkworm Breeding",
       "description": "Raising silkworms and reeling their cocoons.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 239,
       "name": "Silversmithing",
       "description": "Raising, soldering and finishing silver.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 240,
@@ -5781,6 +6407,7 @@
       "description": "Pitch, breath and tone with the trained voice.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Bard": 3,
         "Entertainer": 2
@@ -5795,7 +6422,8 @@
       "name": "Skateboarding",
       "description": "Riding, balance and tricks on a board.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 748,
@@ -5803,6 +6431,7 @@
       "description": "Freefall stability, canopy and landing.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "traitStart": {
         "adrenaline_junkie": 2
       }
@@ -5812,21 +6441,24 @@
       "name": "Slacklining",
       "description": "Balancing and walking flat webbing under tension.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 750,
       "name": "Sledding",
       "description": "Steering and braking a sled downhill.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 242,
       "name": "Sleep Deprivation",
       "description": "Functioning after the sleep the body was owed.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 243,
@@ -5834,6 +6466,7 @@
       "description": "Doing something with the hands nobody sees.",
       "stat": "DEX",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Rogue": 2,
         "Illusionist": 2,
@@ -5851,6 +6484,7 @@
       "description": "Handling snakes, venomous ones included, without being bitten.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": false,
       "classStart": {
         "Beast": 2
       }
@@ -5860,49 +6494,56 @@
       "name": "Snorkeling",
       "description": "Surface diving and swimming on mask and snorkel.",
       "stat": "WIS",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 246,
       "name": "Snowboarding",
       "description": "Edges, carving and terrain on a board.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 752,
       "name": "Snowmobiling",
       "description": "Riding a snowmobile over deep snow and ice.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 451,
       "name": "Snowplow Operation",
       "description": "Clearing roads of snow without taking the road with it.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 753,
       "name": "Snowshoeing",
       "description": "Travelling over deep snow without sinking.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 754,
       "name": "Soap Making",
       "description": "Saponifying fat with lye into cured soap.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 247,
       "name": "Soccer",
       "description": "Ball control, passing and shooting in the eleven-a-side game.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 248,
@@ -5910,6 +6551,7 @@
       "description": "How societies, classes and institutions actually behave.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "classStart": {
         "Academic": 2
       }
@@ -5919,42 +6561,48 @@
       "name": "Softball",
       "description": "Batting, pitching and fielding in the underhand game.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 757,
       "name": "Software Testing",
       "description": "Designing tests that find real defects, not just pass.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 834,
       "name": "Soil Science",
       "description": "Soil structure, chemistry and fertility.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 249,
       "name": "Soldering",
       "description": "Joining metal and electronics with filler and controlled heat.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 250,
       "name": "Sound Engineering",
       "description": "Recording, mixing and reinforcing sound.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 901,
       "name": "Spacecraft Piloting",
       "description": "Handling a ship in space: burns, orbit and setting down.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 251,
@@ -5962,6 +6610,7 @@
       "description": "Folding distance and volume by will.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Elementalist": 2
       }
@@ -5972,6 +6621,7 @@
       "description": "Fighting with the spear: reach, thrust and set.",
       "stat": "DEX",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 12,
       "classStart": {
         "Freelancer": 3,
@@ -6006,7 +6656,8 @@
       "name": "Spearfishing",
       "description": "Taking fish underwater with sling or gun on breath.",
       "stat": "DEX",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": false
     },
     {
       "id": 253,
@@ -6014,6 +6665,7 @@
       "description": "Reading fast without losing what was on the page.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "traitStart": {
         "eidetic_reader": 3
       }
@@ -6023,28 +6675,32 @@
       "name": "Speed Skating",
       "description": "Long, low blade work at racing pace.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 453,
       "name": "Speed Stacking",
       "description": "Stacking and unstacking cups against the clock.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 227,
       "name": "Speedcubing",
       "description": "Solving twisty puzzles by algorithm at speed.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 254,
       "name": "Speedrunning",
       "description": "Completing a game by the fastest route known, and finding faster ones.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 73,
@@ -6052,6 +6708,7 @@
       "description": "Holding a working together while being hit, moved or distracted.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Elementalist": 3,
         "Fire Mage": 2,
@@ -6067,6 +6724,7 @@
       "description": "Constructing and casting a spell from its components.",
       "stat": "INT",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Archmage": 2
       }
@@ -6076,7 +6734,8 @@
       "name": "Spinning Yarn",
       "description": "Drafting and twisting fibre into yarn on wheel or spindle.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 106,
@@ -6084,6 +6743,7 @@
       "description": "Foil, epee and sabre under competition rules.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Knight": 2,
         "Spellblade": 2
@@ -6098,28 +6758,32 @@
       "name": "Sports Coaching",
       "description": "Training athletes, and getting a team to play as one.",
       "stat": "PSI",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 847,
       "name": "Sports Medicine",
       "description": "Treating and preventing the injuries sport causes.",
       "stat": "WIS",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 257,
       "name": "Sprinting",
       "description": "Maximum speed over short distance, from the start.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 762,
       "name": "Squash",
       "description": "Fast enclosed-court racquet play off the front wall.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 893,
@@ -6127,6 +6791,7 @@
       "description": "Fighting with the staff and its two-ended leverage.",
       "stat": "INT",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 6,
       "classStart": {
         "Freelancer": 3,
@@ -6168,14 +6833,16 @@
       "name": "Stained Glass Making",
       "description": "Cutting, leading and soldering coloured glass into panel.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 764,
       "name": "Stand-up Paddleboarding",
       "description": "Standing and paddling a board on open water.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 258,
@@ -6183,6 +6850,7 @@
       "description": "Sampling, inference and knowing what a number does not say.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Academic": 2,
         "Meteorologist": 2
@@ -6196,7 +6864,8 @@
       "name": "Steadicam Operation",
       "description": "Carrying a stabilised camera and walking a shot smooth.",
       "stat": "CON",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 765,
@@ -6204,6 +6873,7 @@
       "description": "Ending a fight before it starts, from behind.",
       "stat": "DEX",
       "category": "Combat",
+      "sentient": false,
       "classStart": {
         "Rogue": 2
       }
@@ -6214,6 +6884,7 @@
       "description": "Moving unseen and unheard past attention.",
       "stat": "DEX",
       "category": "Crime",
+      "sentient": false,
       "classStart": {
         "Rogue": 3,
         "Scout": 2
@@ -6232,14 +6903,16 @@
       "name": "Stenography",
       "description": "Taking speech down verbatim at speaking speed.",
       "stat": "DEX",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 457,
       "name": "Stilt Walking",
       "description": "Walking, turning and working at height on stilts.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 259,
@@ -6247,6 +6920,7 @@
       "description": "Buying and selling securities on analysis and nerve.",
       "stat": "INT",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "CEO": 2
       },
@@ -6260,21 +6934,24 @@
       "name": "Stone Cutting",
       "description": "Splitting and dressing stone to dimension.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 458,
       "name": "Stone Skipping",
       "description": "Throwing a flat stone for the maximum number of bounces.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 260,
       "name": "Stormshaping",
       "description": "Calling and steering weather by will.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": false
     },
     {
       "id": 459,
@@ -6282,6 +6959,7 @@
       "description": "Close-up conjuring with no stage and no angles.",
       "stat": "DEX",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Vampire": 2,
         "Rogue": 2,
@@ -6294,7 +6972,8 @@
       "name": "Street Sweeping",
       "description": "Clearing streets by machine and by hand.",
       "stat": "CON",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 261,
@@ -6302,6 +6981,7 @@
       "description": "Reading a city's rules: who to ask, where not to go.",
       "stat": "WIS",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Freelancer": 2,
         "Police Officer": 2,
@@ -6322,6 +7002,7 @@
       "description": "Sizing structure so it carries load and stays standing.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Construction Worker": 2
       }
@@ -6331,14 +7012,16 @@
       "name": "Stunt Driving",
       "description": "Slides, jumps and precision driving on a mark.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 769,
       "name": "Submarine Piloting",
       "description": "Handling a submersible on trim, depth and ballast.",
       "stat": "INT",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 263,
@@ -6346,6 +7029,7 @@
       "description": "Driving an opponent out of the ring, or down inside it.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Pro Wrestler": 2,
         "Gladiator": 2
@@ -6357,6 +7041,7 @@
       "description": "Keeping parts and stock moving from supplier to shelf.",
       "stat": "INT",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "Commander": 2
       }
@@ -6366,7 +7051,8 @@
       "name": "Surfing",
       "description": "Reading, catching and riding a wave.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 265,
@@ -6374,6 +7060,7 @@
       "description": "Operating: opening, repairing and closing a living body.",
       "stat": "DEX",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Combat Medic": 2,
         "Doctor": 2
@@ -6385,6 +7072,7 @@
       "description": "Measuring land and setting out levels and boundaries.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Archaeologist": 2
       }
@@ -6395,6 +7083,7 @@
       "description": "Staying alive outdoors: water, shelter, fire, food.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": false,
       "classStart": {
         "Ranger": 2,
         "Scout": 2,
@@ -6413,7 +7102,8 @@
       "name": "Sushi Preparation",
       "description": "Rice, cutting and handling raw fish to standard.",
       "stat": "DEX",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 267,
@@ -6421,6 +7111,7 @@
       "description": "Efficient strokes and staying safe in open water.",
       "stat": "CON",
       "category": "Athletics",
+      "sentient": false,
       "traitStart": {
         "island-raised": 2
       }
@@ -6431,6 +7122,7 @@
       "description": "Fighting with the sword: guard, cut and thrust.",
       "stat": "STR",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 2,
       "classStart": {
         "Freelancer": 3,
@@ -6466,21 +7158,24 @@
       "name": "Sword Swallowing",
       "description": "Passing a blade down the throat without injury.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 772,
       "name": "Synchronized Swimming",
       "description": "Figures and lifts performed in time, mostly underwater.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 773,
       "name": "Table Tennis",
       "description": "Spin, placement and speed across the table.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 268,
@@ -6488,6 +7183,7 @@
       "description": "Korean striking art built on fast, high kicks.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Martial Artist": 2
       }
@@ -6498,6 +7194,7 @@
       "description": "Slow internal form practised for balance, health and structure.",
       "stat": "WIS",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Monk": 2
       }
@@ -6507,28 +7204,32 @@
       "name": "Tailgating",
       "description": "Running a car-park party properly, food and all.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 269,
       "name": "Tailoring",
       "description": "Cutting and fitting garments to a body.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 776,
       "name": "Tallow Rendering",
       "description": "Rendering animal fat clean for candles, soap and cooking.",
       "stat": "WIS",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 270,
       "name": "Tango",
       "description": "Close partner dance of lead, pause and walk.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 271,
@@ -6536,6 +7237,7 @@
       "description": "Laying and interpreting the cards for a querent.",
       "stat": "PSI",
       "category": "Occult",
+      "sentient": true,
       "classStart": {
         "Witch": 2,
         "Oracle": 2
@@ -6546,35 +7248,40 @@
       "name": "Tattoo Artistry",
       "description": "Putting ink in skin: line, shade and healing.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 272,
       "name": "Taxidermy",
       "description": "Skinning, mounting and posing an animal to look alive.",
       "stat": "WIS",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 463,
       "name": "Tea Leaf Reading",
       "description": "Reading the shapes left in the cup.",
       "stat": "PSI",
-      "category": "Occult"
+      "category": "Occult",
+      "sentient": true
     },
     {
       "id": 779,
       "name": "Tear Gas Tolerance",
       "description": "Keeping working in gas that is designed to stop you.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": false
     },
     {
       "id": 273,
       "name": "Technomancy",
       "description": "Working magic through machines and code.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": true
     },
     {
       "id": 274,
@@ -6582,6 +7289,7 @@
       "description": "Moving objects at a distance by will.",
       "stat": "PSI",
       "category": "Arcana",
+      "sentient": false,
       "classStart": {
         "Elementalist": 2
       }
@@ -6591,42 +7299,48 @@
       "name": "Telemarketing",
       "description": "Selling by telephone to people who did not call.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 275,
       "name": "Telepathy",
       "description": "Reading and sending thought without speech.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": false
     },
     {
       "id": 781,
       "name": "Teleportation",
       "description": "Moving from one place to another without crossing the gap.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": false
     },
     {
       "id": 464,
       "name": "Telescope Making",
       "description": "Grinding, figuring and mounting optics that hold a star.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 276,
       "name": "Tennis",
       "description": "Serve, groundstrokes and court movement.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 45,
       "name": "Tenpin Bowling",
       "description": "Line, hook and spare shooting on the lanes.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 465,
@@ -6634,6 +7348,7 @@
       "description": "The study of malformation: what goes wrong in development, and how.",
       "stat": "INT",
       "category": "Science",
+      "sentient": true,
       "classStart": {
         "Necromancer": 2
       }
@@ -6643,14 +7358,16 @@
       "name": "Terrarium Building",
       "description": "Building a closed planted vessel that keeps itself.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 782,
       "name": "Thatching",
       "description": "Roofing in reed or straw so it sheds water for decades.",
       "stat": "WIS",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 277,
@@ -6658,6 +7375,7 @@
       "description": "Doctrine, scripture and the arguments inside a faith.",
       "stat": "INT",
       "category": "Occult",
+      "sentient": true,
       "classStart": {
         "Nun": 3,
         "Cultist": 2,
@@ -6677,21 +7395,24 @@
       "name": "Thermite Crafting",
       "description": "Mixing metal oxide and fuel into a charge that cuts steel.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 827,
       "name": "Thermodynamics",
       "description": "Heat, work and what cannot be got back.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 871,
       "name": "Throat Singing",
       "description": "Producing two or more tones at once with one voice.",
       "stat": "PSI",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 783,
@@ -6699,6 +7420,7 @@
       "description": "Crossing a tensioned wire on balance alone.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Acrobat": 2
       }
@@ -6708,21 +7430,24 @@
       "name": "Tiling",
       "description": "Setting, spacing and grouting tile flat and level.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 470,
       "name": "Tinsmithing",
       "description": "Cutting, forming and seaming sheet tin.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 471,
       "name": "Topiary",
       "description": "Clipping living shrubs into held shapes.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 280,
@@ -6730,6 +7455,7 @@
       "description": "Inflicting pain to a purpose, and what that is actually worth.",
       "stat": "PSI",
       "category": "Crime",
+      "sentient": true,
       "classStart": {
         "Cultist": 2,
         "Warlock": 2,
@@ -6746,6 +7472,7 @@
       "description": "Typing accurately at speed without looking.",
       "stat": "DEX",
       "category": "Technology",
+      "sentient": true,
       "classStart": {
         "Freelancer": 2
       }
@@ -6755,7 +7482,8 @@
       "name": "Tour Guiding",
       "description": "Leading a group and holding their attention while walking.",
       "stat": "PSI",
-      "category": "Social"
+      "category": "Social",
+      "sentient": true
     },
     {
       "id": 788,
@@ -6763,6 +7491,7 @@
       "description": "Poisons: dose, effect, detection and antidote.",
       "stat": "INT",
       "category": "Medicine",
+      "sentient": true,
       "classStart": {
         "Combat Medic": 2,
         "Doctor": 2
@@ -6774,6 +7503,7 @@
       "description": "Following sign left by people and animals.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": false,
       "classStart": {
         "Ranger": 2,
         "Scout": 3,
@@ -6790,14 +7520,16 @@
       "name": "Tractor Driving",
       "description": "Driving and operating a tractor and its implements.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 790,
       "name": "Train Conducting",
       "description": "Running a train's schedule, signals and passengers.",
       "stat": "INT",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 791,
@@ -6805,6 +7537,7 @@
       "description": "Height, shape and control off the bed.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Acrobat": 2
       }
@@ -6815,6 +7548,7 @@
       "description": "Carrying meaning between languages, not just words.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "traitStart": {
         "polyglot": 2
       }
@@ -6825,6 +7559,7 @@
       "description": "Setting, placing and checking traps for game.",
       "stat": "WIS",
       "category": "Survival",
+      "sentient": false,
       "classStart": {
         "Ranger": 2,
         "Hunter-Gatherer": 2
@@ -6836,6 +7571,7 @@
       "description": "Working a collection round: route, lift and load.",
       "stat": "STR",
       "category": "Commerce",
+      "sentient": true,
       "classStart": {
         "Wretch": 2
       }
@@ -6846,6 +7582,7 @@
       "description": "Ascending trees on rope and spurs, safely.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Beast": 2
       }
@@ -6855,42 +7592,48 @@
       "name": "Trench Warfare Tactics",
       "description": "Holding, raiding and living in fixed lines.",
       "stat": "WIS",
-      "category": "Combat"
+      "category": "Combat",
+      "sentient": true
     },
     {
       "id": 794,
       "name": "Triathlon",
       "description": "Swim, bike and run, with the transitions between.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 796,
       "name": "Triple Jump",
       "description": "Hop, step and jump off a single run-up.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 285,
       "name": "Truck Driving",
       "description": "Driving heavy goods vehicles: load, brakes and hours.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 472,
       "name": "Truffle Hunting",
       "description": "Finding truffles with a trained dog and a good nose.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": false
     },
     {
       "id": 473,
       "name": "Typography",
       "description": "Setting type: face, size, spacing and rhythm.",
       "stat": "INT",
-      "category": "Academia"
+      "category": "Academia",
+      "sentient": true
     },
     {
       "id": 474,
@@ -6898,6 +7641,7 @@
       "description": "Collecting and assessing reports of unidentified craft.",
       "stat": "INT",
       "category": "Academia",
+      "sentient": true,
       "classStart": {
         "Cultist": 2
       }
@@ -6907,7 +7651,8 @@
       "name": "Ultimate Frisbee",
       "description": "Disc handling, cuts and defence in the running game.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 286,
@@ -6915,6 +7660,7 @@
       "description": "Fighting with the body alone: strikes, clinch and control.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Martial Artist": 3,
         "Monk": 2,
@@ -6931,42 +7677,48 @@
       "name": "Underwater Welding",
       "description": "Welding at depth, where electricity and water meet.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 799,
       "name": "Unicycling",
       "description": "Riding, turning and idling on one wheel.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 287,
       "name": "Upholstery",
       "description": "Stripping, padding and covering furniture frames.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 476,
       "name": "Urban Exploration",
       "description": "Getting into disused structures, and back out.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 288,
       "name": "Urban Planning",
       "description": "Zoning, transport and how a city grows or chokes.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 787,
       "name": "Vehicle Towing",
       "description": "Recovering and towing vehicles safely and legally.",
       "stat": "STR",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 800,
@@ -6974,6 +7726,7 @@
       "description": "Speaking without visible movement, and placing the voice.",
       "stat": "DEX",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Illusionist": 2,
         "Entertainer": 2,
@@ -6985,21 +7738,24 @@
       "name": "Veterinary Medicine",
       "description": "Diagnosing and treating animals that cannot say where it hurts.",
       "stat": "INT",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 478,
       "name": "Viaduct Engineering",
       "description": "Designing and building long elevated spans.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 289,
       "name": "Video Editing",
       "description": "Cutting footage into sequence, pace and sense.",
       "stat": "INT",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 290,
@@ -7007,6 +7763,7 @@
       "description": "Playing videogames well: reflex, systems and pattern.",
       "stat": "DEX",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Freelancer": 2
       }
@@ -7016,14 +7773,16 @@
       "name": "Vintage Car Restoration",
       "description": "Rebuilding an old car to running, original condition.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 850,
       "name": "Violin Making",
       "description": "Carving, graduating and varnishing violins.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 803,
@@ -7031,6 +7790,7 @@
       "description": "Acting with the voice alone, to picture or page.",
       "stat": "PSI",
       "category": "Social",
+      "sentient": true,
       "classStart": {
         "Entertainer": 2
       }
@@ -7040,21 +7800,24 @@
       "name": "Volcanology",
       "description": "Volcanoes: their behaviour, warning signs and products.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 804,
       "name": "Volleyball",
       "description": "Serve, set, spike and block over the net.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 292,
       "name": "Wakeboarding",
       "description": "Riding and jumping the wake behind a boat.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 805,
@@ -7062,6 +7825,7 @@
       "description": "Selecting, turning and pairing wood into a working wand.",
       "stat": "INT",
       "category": "Arcana",
+      "sentient": true,
       "classStart": {
         "Fire Mage": 2,
         "Ice Mage": 2,
@@ -7073,21 +7837,24 @@
       "name": "Water Dowsing",
       "description": "Finding water with a rod, and the confidence to dig there.",
       "stat": "PSI",
-      "category": "Occult"
+      "category": "Occult",
+      "sentient": true
     },
     {
       "id": 806,
       "name": "Water Polo",
       "description": "Swimming, holding position and shooting in the water game.",
       "stat": "CON",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 294,
       "name": "Water Skiing",
       "description": "Riding skis behind a boat, on a wake and across it.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 222,
@@ -7095,6 +7862,7 @@
       "description": "Reloading fast and correctly, without looking at it.",
       "stat": "DEX",
       "category": "Combat",
+      "sentient": true,
       "traitStart": {
         "trigger_happy": 2
       }
@@ -7104,14 +7872,16 @@
       "name": "Weaponsmithing",
       "description": "Making weapons that balance, hold an edge and take use.",
       "stat": "INT",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 809,
       "name": "Web Development",
       "description": "Building sites and web applications, front and back.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 295,
@@ -7119,6 +7889,7 @@
       "description": "The snatch and the clean and jerk, done technically.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Berserker": 2,
         "Barbarian": 2
@@ -7130,6 +7901,7 @@
       "description": "Fusing metal with a sound, load-bearing bead.",
       "stat": "INT",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Mechanic": 2
       }
@@ -7139,14 +7911,16 @@
       "name": "Well Digging",
       "description": "Sinking and lining a well to reliable water.",
       "stat": "STR",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 811,
       "name": "Wheelchair Racing",
       "description": "Racing a track chair on push technique and line.",
       "stat": "STR",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 892,
@@ -7154,6 +7928,7 @@
       "description": "Fighting with the whip: reach, crack and entanglement.",
       "stat": "DEX",
       "category": "Weapons",
+      "sentient": true,
       "wtypeId": 5,
       "classStart": {
         "Freelancer": 3,
@@ -7187,70 +7962,80 @@
       "name": "Whittling",
       "description": "Cutting small objects from wood with a knife alone.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 482,
       "name": "Wig Making",
       "description": "Ventilating and dressing hair into wigs that pass.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 859,
       "name": "Wild Shape Attunement",
       "description": "Holding a borrowed animal form without losing yourself in it.",
       "stat": "PSI",
-      "category": "Arcana"
+      "category": "Arcana",
+      "sentient": false
     },
     {
       "id": 852,
       "name": "Wilderness First Response",
       "description": "Emergency medicine hours from any road.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 483,
       "name": "Wind Turbine Repair",
       "description": "Servicing turbines up-tower, in the weather.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     },
     {
       "id": 812,
       "name": "Window Washing",
       "description": "Cleaning glass streak-free, at height if needed.",
       "stat": "DEX",
-      "category": "Commerce"
+      "category": "Commerce",
+      "sentient": true
     },
     {
       "id": 298,
       "name": "Windsurfing",
       "description": "Sailing a board on rig, trim and stance.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 758,
       "name": "Wine Tasting",
       "description": "Assessing wine by sight, nose and palate, and naming it.",
       "stat": "WIS",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 299,
       "name": "Winemaking",
       "description": "Crushing, fermenting and ageing grapes into wine.",
       "stat": "INT",
-      "category": "Culinary"
+      "category": "Culinary",
+      "sentient": true
     },
     {
       "id": 484,
       "name": "Wire Making",
       "description": "Drawing metal down into wire of even gauge.",
       "stat": "DEX",
-      "category": "Crafting"
+      "category": "Crafting",
+      "sentient": true
     },
     {
       "id": 300,
@@ -7258,6 +8043,7 @@
       "description": "Cutting figure and relief into wood with chisel and gouge.",
       "stat": "DEX",
       "category": "Crafting",
+      "sentient": true,
       "classStart": {
         "Lumberjack": 2
       }
@@ -7268,6 +8054,7 @@
       "description": "Takedowns, control and pins on the mat.",
       "stat": "STR",
       "category": "Athletics",
+      "sentient": false,
       "classStart": {
         "Brawler": 2,
         "Pro Wrestler": 3,
@@ -7279,28 +8066,32 @@
       "name": "X-Ray Operation",
       "description": "Positioning, exposing and shielding for a usable radiograph.",
       "stat": "INT",
-      "category": "Medicine"
+      "category": "Medicine",
+      "sentient": true
     },
     {
       "id": 485,
       "name": "Xylophone Playing",
       "description": "Playing tuned bars with mallets, in time.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 304,
       "name": "Yo-Yo",
       "description": "String tricks, sleep and return on the yo-yo.",
       "stat": "DEX",
-      "category": "Athletics"
+      "category": "Athletics",
+      "sentient": true
     },
     {
       "id": 487,
       "name": "Yodeling",
       "description": "Singing across the break between chest and head voice, fast.",
       "stat": "PSI",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 303,
@@ -7308,6 +8099,7 @@
       "description": "Postures, breath and attention held together.",
       "stat": "WIS",
       "category": "Athletics",
+      "sentient": true,
       "classStart": {
         "Monk": 2
       }
@@ -7317,35 +8109,40 @@
       "name": "Zamboni Operation",
       "description": "Resurfacing ice evenly, in one pass, before the next period.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 866,
       "name": "Zeppelin Piloting",
       "description": "Flying a rigid airship on ballast, trim and slow decisions.",
       "stat": "DEX",
-      "category": "Vehicles"
+      "category": "Vehicles",
+      "sentient": true
     },
     {
       "id": 818,
       "name": "Zine Making",
       "description": "Writing, laying out and photocopying a small self-published magazine.",
       "stat": "DEX",
-      "category": "Arts"
+      "category": "Arts",
+      "sentient": true
     },
     {
       "id": 819,
       "name": "Zookeeping",
       "description": "Feeding, enriching and managing captive animals.",
       "stat": "WIS",
-      "category": "Survival"
+      "category": "Survival",
+      "sentient": true
     },
     {
       "id": 305,
       "name": "Zoology",
       "description": "The study of animals: classification, anatomy and behaviour.",
       "stat": "INT",
-      "category": "Science"
+      "category": "Science",
+      "sentient": true
     }
   ]
 }

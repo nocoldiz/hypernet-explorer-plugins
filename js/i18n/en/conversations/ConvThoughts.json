@@ -288,5 +288,63 @@
       "There is a {race|game|hand} running right now without me in it.",
       "I am going to the shop. I {have already decided|decided long ago|decided hours ago}."
     ]
+  },
+  "season": {
+    "SPRING": [
+      "Everything is {coming back|waking up|green again} and I still {feel like winter|have not thawed|am half asleep}.",
+      "The {thaw|first warm week|mud} makes {work|everything|the whole day} twice as long.",
+      "{Lambs|Calves|Chicks} and rent, {lambs|noise|mess} and rent. {That is spring|Spring, in two words|Every year the same}.",
+      "First {blossom|green|warm morning} of the year. I {always notice|never miss it|mark the day}.",
+      "Everyone is {in love|foolish|out of doors} in spring and half of them will {regret it by autumn|be sorry by autumn|pay for it later}.",
+      "{Planting weather|Sowing weather|Good ground} at last. {My back knows it|My hands know it|The ache starts today}."
+    ],
+    "SUMMER": [
+      "{Too hot|Far too hot|Unbearable} to think, and thinking is {the easy part|all I have to do|most of my work}.",
+      "The {well|water butt|cistern} is {low|lower than last year|nearly down to mud} again.",
+      "{Long days|These long evenings|The light} are the {only|one|single} thing that makes the season worth it.",
+      "Everything {smells|goes off|turns} by noon in this heat. {I have stopped buying meat|Nothing keeps|Nothing lasts}.",
+      "{Festival season|Market season|The travelling season}. {Strangers everywhere|Half of them are strangers|The street is full of strangers}.",
+      "{Cool water|Shade|A cellar} and {an hour to myself|nothing to do|no one asking me anything}. That is all I want."
+    ],
+    "AUTUMN": [
+      "{Harvest is in|The harvest is done|We got it in} and it {will not be enough|is thinner than last year|barely covers the year}.",
+      "The {light goes|dark comes|day ends} earlier every day, and it does something to {people|the mood on this street|everybody}.",
+      "{Storing|Salting|Putting by} for winter. {Half of it will spoil|Some of it always spoils|It never lasts as long as you hope}.",
+      "{Good sleeping weather|Fine weather for sleeping|The best month for sleeping}, {at least|if nothing else|if nothing more}.",
+      "{Everything smells of|The whole street smells of|The air smells of} {smoke|woodsmoke|rot and smoke} now.",
+      "{Debts|Rents|Accounts} come due in autumn. {They always do|They always have|Somebody arranged it that way}."
+    ],
+    "WINTER": [
+      "{Firewood|Fuel|Coal} costs {more|more than the food|twice what it did} and I burn it faster than I earn it.",
+      "{Nobody|Not a soul|No one} calls in winter. {It suits me|Suits me fine|I do not mind it as much as I should}.",
+      "The cold gets into {the joints|my hands|the old break} and {stays|does not leave|sits there until spring}.",
+      "{Long nights|These nights|The dark} for {thinking|remembering|going over old ground}, whether I want them or not.",
+      "{One more month|Two more months|A few more weeks} of this and then {the light comes back|it turns|the days grow}.",
+      "{Soup|Broth|Something hot} and a {closed door|shut door|banked fire}. {That is the whole plan|The whole plan|Nothing more ambitious than that}."
+    ]
+  },
+  "wealth": {
+    "poor": [
+      "{Rent|The rent|What I owe} first, then {food|eating|the rest}, and there is never a then.",
+      "I have {counted this money|counted it|been through the purse} three times and it {counts the same|will not grow|says the same thing}.",
+      "{One bad week|A single bad week|One quiet week} and I am {out on the street|finished|done}.",
+      "{They call it|People call it|The word for it is} being careful. {It is not|It is not that|It has another name}.",
+      "I could {work double|take another shift|not sleep at all} and it would come to {the same|the same money|nothing much}.",
+      "{Somebody|Someone|A man} always {gets paid before me|is paid first|comes before me in the queue}."
+    ],
+    "comfortable": [
+      "{Enough|It is enough|Enough for now}, and I know exactly how {quickly|fast|easily} that changes.",
+      "{Put something by|Something set aside|A little put by} for {the bad month|a bad month|when it turns}.",
+      "I {remember|have not forgotten|still remember} being {hungry|short|down to nothing}. {It keeps me honest|That is what keeps me careful|It is why I count}.",
+      "{Nothing grand|Nothing showy|No luxuries}, but the {roof holds|door shuts|fire is lit}.",
+      "One {good year|solid year|steady year} and I could {buy the shop|take the lease|do it properly}."
+    ],
+    "rich": [
+      "{Money|It|The money} makes itself now. {That is the part nobody warns you about|Nobody warns you about that part|That is the strange part}.",
+      "{Everyone|Every one of them|Half this street} is {friendly|very friendly|charming} to me and I have stopped {believing it|taking it personally|being flattered}.",
+      "I could {buy this street|buy half of this|have it all bought} and I would still {sleep badly|wake at four|worry about the same thing}.",
+      "{The trick|The whole trick|The only trick} is {looking like you are not counting|never appearing to count|counting where nobody sees it}.",
+      "{Somebody|Someone|A cousin} wants {a favour|money|an introduction}. {There is always somebody|There always is|There is one every week}."
+    ]
   }
 }

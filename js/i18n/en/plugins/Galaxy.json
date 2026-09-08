@@ -16,7 +16,8 @@
     "proceduralGalaxy": "procedural galaxy",
     "starSystem": "Star System",
     "milkyWay": "Milky Way Galaxy",
-    "near": "near {name}"
+    "near": "near {name}",
+    "cockpit": "Cockpit"
   },
   "sky": {
     "european": "European",
@@ -130,7 +131,8 @@
     "mly": "{n} Mly",
     "thousandLy": "{n},000 ly",
     "billionStars": "~{n} billion",
-    "galaxies": "~{n} galaxies"
+    "galaxies": "~{n} galaxies",
+    "gly": "{n} Gly"
   },
   "hud": {
     "centreTheViewOnYour": "Centre the view on your ship, wherever it is",
@@ -182,8 +184,11 @@
     "repair": "Repair",
     "close": "Close",
     "refuelTooltip": "Refuel here, or plot a course to the nearest star that can refuel the ship",
-    "orbitHint": "drag rotate · wheel zoom · click select · Esc exit",
     "nothingCatalogued": "Nothing catalogued.",
+    "nothingInView": "Nothing catalogued is in view. Point the camera elsewhere, or show the whole catalog.",
+    "catalogInView": "In view",
+    "catalogAll": "All",
+    "catalogViewTooltip": "Show only what the camera has in frame, or the whole catalog",
     "rechargesIn": "Recharges in",
     "nominal": "Nominal",
     "mineProgress": "{mined} / {capacity} units · ~{eta}s to depletion",
@@ -192,6 +197,8 @@
     "grandTour": "Grand Tour",
     "grandTourTooltip": "A scenic, hands-off flythrough of every body in this system",
     "sbBridge": "SB-Bridge",
+    "bridge": "Bridge",
+    "bridgeTooltip": "Take the helm and fly the ship yourself",
     "setCourse": "Set course",
     "parkInOrbit": "Park in Orbit",
     "stopRefuel": "Stop Refuel",
@@ -202,7 +209,8 @@
     "bookmarkRemove": "Remove bookmark",
     "bookmarked": "Bookmarked",
     "bookmark": "Bookmark",
-    "harvestRunning": "Harvest flyby under way"
+    "harvestRunning": "Harvest flyby under way",
+    "flyby": "Flyby"
   },
   "hubblePart": {
     "DF-224 Computer": {
@@ -299,30 +307,6 @@
     "alreadyRefuelling": "Already refuelling from {star}.",
     "tankFull": "Hyperflux tank is already full.",
     "noStarInRange": "No star able to refuel the ship within range."
-  },
-  "hint": {
-    "grandTour": "<b>Grand Tour</b> &nbsp;·&nbsp; Esc exit",
-    "cockpit": "<b>Cockpit</b> &nbsp;·&nbsp; WASD thrust · Space/C up·down · Shift boost · mouse look · F orbit · Esc exit",
-    "planet": "click the star or zoom out to leave",
-    "system": "click a planet to zoom in · click it again to close in",
-    "galaxy": "click a star to target it · click it again to zoom to it",
-    "galaxyFocus": "zoom out to leave",
-    "cluster": "click a galaxy to target it · click it again to enter it",
-    "web": "click any node · click it again to zoom into its cluster",
-    "outer": "click a galaxy to target it · click it again to enter it",
-    "modeLine": "<b>{scale}</b> &nbsp;·&nbsp; drag rotate · wheel zoom · Tab pick · {tail} · Space zoom to target · F cockpit · Esc exit"
-  },
-  "hintPad": {
-    "grandTour": "<b>Grand Tour</b> &nbsp;·&nbsp; [B] exit",
-    "cockpit": "<b>Cockpit</b> &nbsp;·&nbsp; [LS] thrust · [RS] look · [RT]/[LT] climb·dive · [X] boost · [B] exit",
-    "planet": "[B] or zoom out to leave",
-    "system": "[LB]/[RB] pick a body · zoom in on it to move in",
-    "galaxy": "[LB]/[RB] pick a star · zoom in on it to enter",
-    "galaxyFocus": "zoom out to leave",
-    "cluster": "[LB]/[RB] pick a galaxy · zoom in on it to enter",
-    "web": "[LB]/[RB] pick a node · zoom in on it to enter its cluster",
-    "outer": "[LB]/[RB] pick a galaxy · zoom in on it to enter",
-    "modeLine": "<b>{scale}</b> &nbsp;·&nbsp; [RS] rotate · [LT]/[RT] zoom · {tail} · [A] zoom to target · [Y] catalog · [L3] toolbar · [X] cockpit · [B] exit"
   },
   "service": {
     "hubbleName": "Hubble Space Telescope",

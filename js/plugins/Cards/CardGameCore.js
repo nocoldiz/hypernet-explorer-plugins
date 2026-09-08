@@ -32,6 +32,11 @@
  * against ONE frozen snapshot of the board, and every death is applied
  * together. One round, no cascade.
  *
+ * THE MARKET is one price list: a card's rarity band sets what it is worth
+ * and its printed stats move it, the day adds a small drift, and what a dealer
+ * pays back is a fraction of what it asks. Cadd Trader (CardGameCollection.js)
+ * draws that and nothing of its own.
+ *
  * Storage lives on $gameSystem (the binary save), so a collection belongs to
  * the party rather than to any member and is NOT shared with the world folder.
  */
@@ -827,6 +832,126 @@
   }
 
   //===========================================================================
+  // The market: what a card is worth, and what is on sale today
+  //===========================================================================
+  // Cards are traded on the Hypernet rather than face to face, and the site
+  // (Cards/CardGameCollection.js draws it) lists a SMALL set of lots that is
+  // rolled fresh every game day and sells out for good once it is gone. A
+  // price follows what the card actually is: its rarity band sets the figure
+  // and its printed stats move it, so a legendary with nothing behind it is
+  // worth less than the best common on the shelf. What a dealer PAYS is a
+  // fraction of what it asks, because the spread is the shop's living.
+  //
+  // Everything here is in gold, which is euros with two implied decimals
+  // everywhere in the game.
+  const MARKET_LOTS = 6;                        // lots listed in a day
+  const MARKET_BASE = [900, 2600, 7000, 18000]; // the asking price by rarity
+  const MARKET_SPREAD = 0.45;                   // of the asking price, what a seller is paid
+  const MARKET_SWING = 0.18;                    // how far a day's price drifts either way
+  const MARKET_MAX_QTY = 3;                     // copies in one lot
+
+  // What a card is worth before the day's drift: its band, moved by its stats.
+  function cardValue(key) {
+    if (!dataOf(key) && !isEffect(key)) return 0;
+    const base = MARKET_BASE[rarityOf(key)] || MARKET_BASE[0];
+    const scale = 0.55 + 0.9 * (statTotal(key) / (STAT_MAX * STATS.length));
+    return Math.max(100, Math.round(base * scale));
+  }
+
+  // The same card, quoted on one day. The drift is seeded on the card and the
+  // day, so every screen quotes the same figure and tomorrow is a new price.
+  function askingPrice(key, day) {
+    const d = day == null ? dayIndex() : day;
+    const rng = makeRng((hashString("cardmarket:" + key) ^ worldSeed() ^ Math.imul(d + 1, 2654435761)) >>> 0);
+    return Math.max(100, Math.round(cardValue(key) * (1 + (rng() * 2 - 1) * MARKET_SWING)));
+  }
+
+  // What the site pays for a card of the party's own.
+  function sellPrice(key) {
+    return Math.max(50, Math.round(cardValue(key) * MARKET_SPREAD));
+  }
+
+  // The lots on sale on a given day. Pure: the same day always rolls the same
+  // shelf, so nothing has to be stored but what has been bought out of it.
+  function marketLots(day) {
+    const d = day == null ? dayIndex() : day;
+    const seed = (hashString("cardmarket:day") ^ worldSeed() ^ Math.imul(d + 1, 2246822519)) >>> 0;
+    const keys = rollBooster(MARKET_LOTS, { seed });
+    const rng = makeRng((seed ^ 0x9e3779b9) >>> 0);
+    const out = [];
+    for (const key of keys) {
+      // A rare lot is a thinner one: one copy of the good stuff, a handful of
+      // the ordinary.
+      const room = Math.max(1, MARKET_MAX_QTY - rarityOf(key));
+      out.push({ key, price: askingPrice(key, d), qty: 1 + Math.floor(rng() * room) });
+    }
+    return out;
+  }
+
+  function marketState() {
+    const s = sys();
+    if (!s) return { day: 0, bought: {} };
+    const today = dayIndex();
+    if (!s._cardMarket || s._cardMarket.day !== today) s._cardMarket = { day: today, bought: {} };
+    return s._cardMarket;
+  }
+
+  // Today's shelf with what the party has already taken off it.
+  function marketToday() {
+    const state = marketState();
+    return marketLots(state.day).map((lot, i) => {
+      const taken = state.bought[i] || 0;
+      return { index: i, key: lot.key, price: lot.price, qty: lot.qty, taken, left: Math.max(0, lot.qty - taken) };
+    });
+  }
+
+  // Buy one copy out of a lot. The refusals are the reasons a UI prints.
+  function buyLot(index) {
+    const lots = marketToday();
+    const lot = lots[index];
+    if (!lot) return { ok: false, reason: "gone" };
+    if (lot.left <= 0) return { ok: false, reason: "soldOut" };
+    if (typeof $gameParty === "undefined" || $gameParty.gold() < lot.price) return { ok: false, reason: "poor", price: lot.price };
+    $gameParty.loseGold(lot.price);
+    addCard(lot.key, 1);
+    const state = marketState();
+    state.bought[index] = (state.bought[index] || 0) + 1;
+    return { ok: true, key: lot.key, price: lot.price, left: lot.left - 1 };
+  }
+
+  // Sell one copy. Effect cards are the party's own vocabulary rather than
+  // stock, and nothing else is held back: a copy sold out from under a deck is
+  // trimmed out of every deck that listed it, so no deck is left illegal.
+  function sellCard(key) {
+    if (isEffect(key)) return { ok: false, reason: "notForSale" };
+    if (countOf(key) <= 0) return { ok: false, reason: "notOwned" };
+    const price = sellPrice(key);
+    removeCard(key, 1);
+    trimDecks(key);
+    if (typeof $gameParty !== "undefined") $gameParty.gainGold(price);
+    return { ok: true, key, price };
+  }
+
+  // Every deck listing more copies of a card than the party still owns loses
+  // the extra ones, oldest entry first.
+  function trimDecks(key) {
+    for (const deck of decks()) {
+      if (!deck || !Array.isArray(deck.cards)) continue;
+      let allowed = countOf(key);
+      deck.cards = deck.cards.filter((k) => k !== key || allowed-- > 0);
+    }
+  }
+
+  // The copies the party can put up for sale: everything owned, minus the
+  // effect cards, dearest first.
+  function sellableCards() {
+    return ownedKeys()
+      .filter((key) => !isEffect(key))
+      .map((key) => ({ key, count: countOf(key), price: sellPrice(key) }))
+      .sort((a, b) => b.price - a.price || a.key.localeCompare(b.key));
+  }
+
+  //===========================================================================
   // Daily duel gate and the streak
   //===========================================================================
 
@@ -1015,6 +1140,10 @@
 
     // clash
     neighboursOf, scorePair, resolveClash,
+
+    // the market
+    cardValue, askingPrice, sellPrice, marketLots, marketToday, marketState,
+    buyLot, sellCard, sellableCards, MARKET_LOTS,
 
     // daily gate and streak
     dayIndex, hasDuelledToday, markDuelled, hasTradedToday, markTraded,

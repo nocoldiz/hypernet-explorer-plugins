@@ -1,12 +1,52 @@
 [
-  { "id": "Arcane", "color": "#9b6bd8" },
-  { "id": "Sacred", "color": "#e3c05b" },
-  { "id": "Sympathetic", "color": "#6bbf6b" },
-  { "id": "Dimensional", "color": "#5b7fe3" },
-  { "id": "Psionics", "color": "#d868b0" },
-  { "id": "Technomagic", "color": "#4fc3c9" },
-  { "id": "Pataphysic", "color": "#e08a3c" },
-  { "id": "Natural", "color": "#7a9c4a" },
-  { "id": "Thermodynamics", "color": "#d9533c" },
-  { "id": "Ritual", "color": "#8c2f39" }
+  {
+    "id": "Arcane",
+    "color": "#9b6bd8",
+    "rigor": "hard"
+  },
+  {
+    "id": "Sacred",
+    "color": "#e3c05b",
+    "rigor": "soft"
+  },
+  {
+    "id": "Sympathetic",
+    "color": "#6bbf6b",
+    "rigor": "hard"
+  },
+  {
+    "id": "Dimensional",
+    "color": "#5b7fe3",
+    "rigor": "hard"
+  },
+  {
+    "id": "Psionics",
+    "color": "#d868b0",
+    "rigor": "soft"
+  },
+  {
+    "id": "Technomagic",
+    "color": "#4fc3c9",
+    "rigor": "hard"
+  },
+  {
+    "id": "Pataphysic",
+    "color": "#e08a3c",
+    "rigor": "soft"
+  },
+  {
+    "id": "Natural",
+    "color": "#7a9c4a",
+    "rigor": "soft"
+  },
+  {
+    "id": "Thermodynamics",
+    "color": "#d9533c",
+    "rigor": "hard"
+  },
+  {
+    "id": "Ritual",
+    "color": "#8c2f39",
+    "rigor": "hard"
+  }
 ]

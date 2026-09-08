@@ -196,8 +196,45 @@
         if (!mayContainAsset(text)) {
             return text;
         }
+        text = rewriteAbsolute(text);
         return text.replace(ASSET_URL_RE, function (all, dots, rel) {
             var resolved = normalize((baseDir ? baseDir + "/" : "") + dots + rel);
+            if (!resolved) {
+                return all;
+            }
+            return blobUrlFor(resolved) || all;
+        });
+    }
+
+    // The same reference, handed over already absolute. window.UIPanel.assetUrl
+    // (and CCArt.url, which mirrors it) resolve every path against
+    // document.baseURI before it goes into a custom property, because a
+    // relative url() inside one resolves against the stylesheet that reads it
+    // back rather than the page that wrote it. The relative form above cannot
+    // see those, so every bust, sprite, portrait and icon painted that way
+    // asked for a plain file that an encrypted build does not have. Only urls
+    // under the game's own base are touched.
+    var ABS_ASSET_URL_RE =
+        /[A-Za-z][A-Za-z0-9+.-]*:\/\/[^"'()<>\?#\s]*?(?:img|audio)\/[^"'()<>\?#\s]+?\.(?:png|jpe?g|ogg|m4a)(?![A-Za-z0-9_])/gi;
+
+    function baseUrlDir() {
+        try {
+            return document.baseURI.replace(/[^/]*$/, "");
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function rewriteAbsolute(text) {
+        var base = baseUrlDir();
+        if (!base) {
+            return text;
+        }
+        return text.replace(ABS_ASSET_URL_RE, function (all) {
+            if (all.lastIndexOf(base, 0) !== 0) {
+                return all;
+            }
+            var resolved = normalize(all.slice(base.length));
             if (!resolved) {
                 return all;
             }

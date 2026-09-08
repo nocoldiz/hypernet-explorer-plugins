@@ -1,4 +1,5 @@
 /*:
+ * @target MZ
  * @plugindesc [Add-on] Prosthetic shop (Refactored UI - Full Screen Steps)
  * @author Omni-Lex 
  * @help
@@ -263,6 +264,25 @@
     return parts;
   }
 
+  // "TrashCreature" is a key, not a name: the screen prints it spaced.
+  function archetypeLabel(key) {
+    return String(key || "").replace(/([A-Z])/g, " $1").trim();
+  }
+
+  // The augment fitted in a socket, in the player's language, or "" for none.
+  function implantName(prostheticKey) {
+    const ProstheticTypes = getProstheticTypes();
+    const prosthetic = prostheticKey && ProstheticTypes ? ProstheticTypes[prostheticKey] : null;
+    if (!prosthetic) return "";
+    return ConfigManager.language === "it" ? prosthetic.name_it : prosthetic.name_en;
+  }
+
+  // A Surgery tier as its name rather than its number, where the ladder is up.
+  function specLevelName(level) {
+    return (window.Specializations && window.Specializations.ready)
+      ? window.Specializations.levelName(level) : String(level);
+  }
+
   // ===========================================================================
   // Field surgery
   // ---------------------------------------------------------------------------
@@ -345,7 +365,7 @@
     const share = 0.3 + Math.min(0.6, Math.max(0, margin) / 100);
     const amount = Math.max(1, Math.round((part.maxHp || 10) * share));
     const dealt = (window.HealthCore && window.HealthCore.injureBodyPart)
-      ? window.HealthCore.injureBodyPart(patient, partKey, amount) : 0;
+      ? window.HealthCore.injureBodyPart(patient, partKey, amount, { cut: true }) : 0;
     return { partKey, partName: part.name || partKey, dealt, lost: !patient._bodyParts[partKey] };
   }
 
@@ -1702,18 +1722,37 @@
       this.actionIndex = 0;
       this.mode = 'list'; // 'list' or 'actions'
       this.active = false;
-      this.cols = 1;
     }
 
-    static activate(cols = 1) {
+    // The ring walks every control on the page in reading order, the one Back
+    // stamp at the top of it included. Only some of them are rows of the list,
+    // so a row says which entry it is with data-row rather than by its place in
+    // the ring.
+    static activate() {
       this.activeElements = Array.from(this.container.querySelectorAll('.focusable'));
       this.actionElements = Array.from(this.container.querySelectorAll('.action-focusable'));
-      this.focusIndex = 0;
+      this.focusIndex = Math.max(0, this.activeElements.findIndex((el) => el.dataset.row !== undefined));
       this.actionIndex = 0;
       this.mode = 'list';
-      this.cols = cols;
       this.active = true;
       this.updateFocus();
+    }
+
+    // Which entry of _activeListItems the element stands for, or -1 for a
+    // control that is not a row.
+    static rowOf(el) {
+      const raw = el && el.dataset ? el.dataset.row : undefined;
+      return raw === undefined ? -1 : parseInt(raw, 10);
+    }
+
+    static focusedRow() {
+      return this.rowOf(this.activeElements[this.focusIndex]);
+    }
+
+    // Put the cursor on one entry of the list, wherever it sits in the ring.
+    static focusRow(row) {
+      const idx = this.activeElements.findIndex((el) => this.rowOf(el) === row);
+      if (idx >= 0) this.focusIndex = idx;
     }
 
     static deactivate() {
@@ -1748,54 +1787,12 @@
       let moved = false;
       const len = this.activeElements.length;
 
-      if (this.cols > 1) {
-        if (Input.isTriggered('down') || Input.isRepeated('down')) {
-          if (this.focusIndex + this.cols < len) {
-            this.focusIndex += this.cols;
-          } else {
-            this.focusIndex = this.focusIndex % this.cols;
-          }
-          moved = true;
-        } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
-          if (this.focusIndex - this.cols >= 0) {
-            this.focusIndex -= this.cols;
-          } else {
-            let target = Math.floor((len - 1) / this.cols) * this.cols + (this.focusIndex % this.cols);
-            if (target >= len) target -= this.cols;
-            this.focusIndex = target >= 0 ? target : 0;
-          }
-          moved = true;
-        } else if (Input.isTriggered('right') || Input.isRepeated('right')) {
-          if (this.focusIndex + 1 < len) {
-            this.focusIndex += 1;
-          } else {
-            this.focusIndex = 0;
-          }
-          moved = true;
-        } else if (Input.isTriggered('left') || Input.isRepeated('left')) {
-          if (this.focusIndex - 1 >= 0) {
-            this.focusIndex -= 1;
-          } else {
-            this.focusIndex = len - 1;
-          }
-          moved = true;
-        }
-      } else {
-        if (Input.isTriggered('down') || Input.isRepeated('down')) {
-          if (this.focusIndex + 1 < len) {
-            this.focusIndex += 1;
-          } else {
-            this.focusIndex = 0;
-          }
-          moved = true;
-        } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
-          if (this.focusIndex - 1 >= 0) {
-            this.focusIndex -= 1;
-          } else {
-            this.focusIndex = len - 1;
-          }
-          moved = true;
-        }
+      if (Input.isTriggered('down') || Input.isRepeated('down')) {
+        this.focusIndex = (this.focusIndex + 1) % len;
+        moved = true;
+      } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
+        this.focusIndex = (this.focusIndex - 1 + len) % len;
+        moved = true;
       }
 
       if (Input.isTriggered('ok')) {
@@ -1816,7 +1813,7 @@
       if (moved) {
         SoundManager.playCursor();
         this.updateFocus();
-        this.scene.onUIFocusChange(this.focusIndex);
+        this.scene.onUIFocusChange(this.focusedRow());
       }
     }
 
@@ -1846,6 +1843,12 @@
       } else if (Input.isTriggered('ok')) {
         const el = this.actionElements[this.actionIndex];
         if (el) {
+          // A greyed out button is refused here too: the keyboard must not be
+          // a way around a price the mouse is stopped by.
+          if (el.classList.contains('disabled')) {
+            SoundManager.playBuzzer();
+            return;
+          }
           el.click();
         }
         return;
@@ -1987,8 +1990,7 @@
     this._activeListItems = [];
     this._notification = null;
     this._notificationTimeout = null;
-    this._lastDrawnActor = null;
-    this._forceRightPageRedraw = false;
+    this._focusedRow = -1;
     this._dailyArchetypes = null;
     // Field surgery: the plugin command sets the flag, and the scene keeps it
     // for its whole life. Nothing is bought here and no augment goes in.
@@ -2055,874 +2057,434 @@
     UIShopInputManager.update();
   };
 
+  // A transient line about what just happened on the table. The game has one
+  // notification service (Core/ParchmentToast.js) and this screen does not
+  // draw a second one of its own.
   Scene_ProstheticShop.prototype.showClinicNotification = function (msg) {
-    this._notification = msg;
-    const notifContainer = document.getElementById("clinic-notification-container");
-    if (notifContainer) {
-      notifContainer.innerHTML = msg
-        ? `<div class="clinic-notification">${msg}</div>`
-        : "";
-    }
-
-    if (this._notificationTimeout) clearTimeout(this._notificationTimeout);
-    this._notificationTimeout = setTimeout(() => {
-      this._notification = null;
-      if (notifContainer) {
-        notifContainer.innerHTML = "";
-      }
-    }, 2800);
+    if (!msg) return;
+    if (window.ParchmentToast) window.ParchmentToast.show(msg);
   };
 
-  Scene_ProstheticShop.prototype.refreshUIShopDOM = function () {
-    if (!this._dndContainer) return;
+  // ==========================================================================
+  // The page as data
+  //
+  // Everything from here down decides WHAT the screen says. The markup that
+  // says it lives in Health_ProstheticShopUI.js (docs/task/ui_fixing.md, "The
+  // plugin split"): this file builds no tag and names no colour.
+  // ==========================================================================
 
-    if (!document.getElementById("left-page-content")) {
-      this._dndContainer.innerHTML = `
-        <div id="clinic-notification-container"></div>
-        <div class="book-spread">
-            <div class="left-page">
-                <h2 id="left-title" class="title pros-01"></h2>
-                <p class="pros-02" id="left-desc"></p>
-                <div class="pros-03" id="left-page-content"></div>
-            </div>
-            <div class="right-page" id="right-page-content">
-            </div>
-        </div>
-      `;
+  // The heading, the brief under it, and this._activeListItems, for whichever
+  // step of the flow the scene is standing on. The rows carry data only; how a
+  // row is drawn is the UI module's business.
+  Scene_ProstheticShop.prototype.buildPage = function () {
+    this._activeListItems = [];
+    const builder = {
+      party: this.pageParty,
+      surgeon_select: this.pageSurgeon,
+      command: this.pageCommand,
+      install_archetype: this.pageArchetypes,
+      install_part: this.pageArchetypeParts,
+      install_inventory: this.pageInventoryParts,
+      remove_part: this.pageRemovable,
+      replace_part: this.pageReplaceable,
+      replace_archetype: this.pageReplacements,
+      socket_select: this.pageSockets,
+      implant_select_part: this.pageImplantSockets,
+      implant_select_prosthetic: this.pageImplants
+    }[this._viewState];
+    const page = builder ? builder.call(this) : { title: "", brief: "" };
+    page.kind = this._viewState;
+    return page;
+  };
 
-      this._dndContainer.addEventListener("wheel", (e) => {
-        e.preventDefault();
-        const scroll = document.getElementById("clinic-parts-scroll");
-        if (scroll) scroll.scrollTop += e.deltaY;
-      }, { passive: false });
-    }
+  Scene_ProstheticShop.prototype.pageParty = function () {
+    return {
+      title: T('Prosthetics.hospitalRegister'),
+      brief: T('Prosthetics.selectAPatientToInspectVitalSystemsPerformBi')
+    };
+  };
 
-    let leftPageHTML = "";
-    let leftTitle = "";
-    let leftDesc = "";
-    let cols = 1;
-
-    if (this._viewState === 'party') {
-      leftTitle = T('Prosthetics.hospitalRegister');
-      leftDesc = T('Prosthetics.selectAPatientToInspectVitalSystemsPerformBi');
-
-      const activeMembers = $gameParty.members();
-      leftPageHTML += '<div class="shop-scroll">';
-      activeMembers.forEach((actor, idx) => {
-        leftPageHTML += `
-          <div class="patient-card focusable pros-04" onclick="SceneManager._scene.selectActor(${idx})">
-              <div class="portrait-frame pros-05">
-                  <canvas class="pros-06" id="actor-canvas-left-${idx}" width="48" height="48"></canvas>
-              </div>
-              <div class="pros-07">
-                  <h4 class="pros-08">${actor.name()}</h4>
-                  <p class="pros-09">
-                      ${actor.currentClass() ? actor.currentClass().name : T('Prosthetics.classless')} (${T('Prosthetics.levelShort', { level: actor.level })})
-                  </p>
-              </div>
-          </div>
-        `;
+  Scene_ProstheticShop.prototype.pageSurgeon = function () {
+    $gameParty.members().forEach((actor) => {
+      const odds = surgeryOdds(actor, this._selectedActor);
+      this._activeListItems.push({
+        isSurgeon: true, actor, odds, levelName: specLevelName(odds.level)
       });
-      leftPageHTML += '</div>';
+    });
+    return {
+      title: T('Prosthetics.chooseSurgeon'),
+      brief: T('Prosthetics.chooseSurgeonDesc', { p1: this._selectedActor ? this._selectedActor.name() : "" })
+    };
+  };
 
-    } else if (this._viewState === 'surgeon_select') {
-      leftTitle = T('Prosthetics.chooseSurgeon');
-      leftDesc = T('Prosthetics.chooseSurgeonDesc', { p1: this._selectedActor ? this._selectedActor.name() : "" });
-
-      this._activeListItems = [];
-      leftPageHTML += '<div class="shop-scroll">';
-      $gameParty.members().forEach((actor, idx) => {
-        const odds = surgeryOdds(actor, this._selectedActor);
-        const levelName = window.Specializations && window.Specializations.ready
-          ? window.Specializations.levelName(odds.level) : String(odds.level);
-        this._activeListItems.push({ isSurgeon: true, actor, odds });
-        leftPageHTML += `
-          <div class="patient-card focusable pros-04" onclick="SceneManager._scene.selectSurgeon(${idx})">
-              <div class="pros-07">
-                  <h4 class="pros-10">${actor.name()}</h4>
-                  <p class="pros-11">
-                      ${T('Prosthetics.surgerySpec', { level: levelName })}${odds.self ? ` | ${T('Prosthetics.operatingOnSelf')}` : ""}
-                  </p>
-              </div>
-              <div class="pros-12">
-                  ${odds.chance}%
-              </div>
-          </div>
-        `;
-      });
-      leftPageHTML += '</div>';
-
-    } else if (this._viewState === 'command') {
-      leftTitle = this._fieldMode ? T('Prosthetics.fieldTheatre') : T('Prosthetics.biologicLaboratory');
-      leftDesc = this._fieldMode
+  Scene_ProstheticShop.prototype.pageCommand = function () {
+    // In the field only what is already in the pack can be fitted, an augment
+    // may be taken out but never seated, and nothing is for sale.
+    const commands = this._fieldMode
+      ? [
+          { cmd: 'inventory', icon: 176, label: T('Prosthetics.installFromInventory') },
+          { cmd: 'remove', icon: 196, label: T('Prosthetics.removeBodypart') },
+          { cmd: 'implant', icon: 128, label: T('Prosthetics.removeAugment') }
+        ]
+      : [
+          { cmd: 'install', icon: 189, label: T('Prosthetics.installBodypart') },
+          { cmd: 'inventory', icon: 176, label: T('Prosthetics.installFromInventory') },
+          { cmd: 'remove', icon: 196, label: T('Prosthetics.removeBodypart') },
+          { cmd: 'replace', icon: 180, label: T('Prosthetics.replaceBodypart') },
+          { cmd: 'implant', icon: 128, label: T('Prosthetics.installImplant') }
+        ];
+    return {
+      title: this._fieldMode ? T('Prosthetics.fieldTheatre') : T('Prosthetics.biologicLaboratory'),
+      brief: this._fieldMode
         ? T('Prosthetics.fieldTheatreDesc', {
             p1: this._selectedActor ? this._selectedActor.name() : "",
             p2: this._surgeon ? this._surgeon.name() : "",
             p3: this.currentOdds().chance
           })
-        : T('Prosthetics.performHeavyIndustryLimbConfigurationsOrMicr', { p1: this._selectedActor ? this._selectedActor.name() : "" });
-
-      // In the field only what is already in the pack can be fitted, an augment
-      // may be taken out but never seated, and nothing is for sale.
-      const commands = this._fieldMode
-        ? [
-            { cmd: 'inventory', icon: 176, label: T('Prosthetics.installFromInventory') },
-            { cmd: 'remove', icon: 196, label: T('Prosthetics.removeBodypart') },
-            { cmd: 'implant', icon: 128, label: T('Prosthetics.removeAugment') },
-            { cmd: 'cancel', icon: 16, label: T('Prosthetics.cancel') }
-          ]
-        : [
-            { cmd: 'install', icon: 189, label: T('Prosthetics.installBodypart') },
-            { cmd: 'inventory', icon: 176, label: T('Prosthetics.installFromInventory') },
-            { cmd: 'remove', icon: 196, label: T('Prosthetics.removeBodypart') },
-            { cmd: 'replace', icon: 180, label: T('Prosthetics.replaceBodypart') },
-            { cmd: 'implant', icon: 128, label: T('Prosthetics.installImplant') },
-            { cmd: 'cancel', icon: 16, label: T('Prosthetics.cancel') }
-          ];
-
-      leftPageHTML += `
-        <div class="shop-scroll pros-13">
-            ${commands.map(c => `
-            <div class="command-item focusable" onclick="SceneManager._scene.chooseCommand('${c.cmd}')">
-                <span class="icon pros-14" style="background:url('img/system/IconSet.png') -${(c.icon % 16) * 32}px -${Math.floor(c.icon / 16) * 32}px no-repeat"></span>
-                <span>${c.label}</span>
-            </div>`).join("")}
-        </div>
-      `;
-
-    } else if (this._viewState === 'install_archetype') {
-      leftTitle = T('Prosthetics.archetypeDissect');
-      const _dailyCount = this._dailyArchetypes ? this._dailyArchetypes.length : null;
-      leftDesc = T('Prosthetics.chooseArchetypeCode') +
-        (_dailyCount ? T('Prosthetics.suppliersAvailable', { count: _dailyCount }) : "");
-
-      const Archetypes = getArchetypes();
-      const _archetypeKeys = (this._dailyArchetypes && Archetypes)
-        ? this._dailyArchetypes.filter(k => Archetypes[k])
-        : (Archetypes ? Object.keys(Archetypes) : []);
-      leftPageHTML += '<div class="shop-scroll pros-15">';
-      cols = 2;
-      leftPageHTML += `
-        <div class="command-item focusable pros-16" onclick="SceneManager._scene.chooseArchetype('__INVENTORY__')">
-            <span>${T('Prosthetics.inventoryOwnedParts')}</span>
-        </div>
-      `;
-      for (const key of _archetypeKeys) {
-        const label = key.replace(/([A-Z])/g, " $1").trim();
-        leftPageHTML += `
-          <div class="command-item focusable pros-17" onclick="SceneManager._scene.chooseArchetype('${key}')">
-              <span>${label}</span>
-          </div>
-        `;
-      }
-      leftPageHTML += '</div>';
-
-    } else if (this._viewState === 'install_part') {
-      leftTitle = T('Prosthetics.surgicalCatalog');
-      leftDesc = T('Prosthetics.selectALimbOrOrganToGraftFromTheSource', { p1: this._selectedArchetypeKey ? this._selectedArchetypeKey.replace(/([A-Z])/g, " $1").trim() : "" });
-
-      this._activeListItems = [];
-      const Archetypes = getArchetypes();
-      if (this._selectedArchetypeKey && Archetypes) {
-        const archetype = Archetypes[this._selectedArchetypeKey];
-        if (archetype && archetype.parts) {
-          for (const partKey of Object.keys(archetype.parts)) {
-            const part = archetype.parts[partKey];
-            if (part.vital) continue;
-            const keyLower = partKey.toLowerCase();
-            const nameLower = (part.name || "").toLowerCase();
-            if (keyLower.includes("core") || keyLower.includes("body") ||
-              nameLower.includes("core") || nameLower.includes("body") ||
-              nameLower.includes("head") || nameLower.includes("head")) continue;
-
-            const partName = getTranslated(part, "name").toLowerCase();
-            let alreadyOwned = !!(this._selectedActor && this._selectedActor._bodyParts && this._selectedActor._bodyParts[partKey]);
-            if (!alreadyOwned && this._selectedActor && this._selectedActor._bodyParts) {
-              for (const existingKey in this._selectedActor._bodyParts) {
-                const existingName = (this._selectedActor._bodyParts[existingKey].name || "").toLowerCase();
-                if (existingName && partName.includes(existingName)) { alreadyOwned = true; break; }
-              }
-            }
-            // A party with a surgeon in it pays for the parts, not for the theatre.
-      const surgeonRate = window.SpecializationXP
-        ? window.SpecializationXP.discount("Surgery", 0.06, 0.7) : 1;
-      const cost = Math.round((part.hpPercent * 1000 +
-        Math.abs((part.statEffect && part.statEffect.amount) || 0) * 10000) * surgeonRate);
-            const statBonus = computeStatBonus(part.statEffect);
-
-            this._activeListItems.push({
-              isArchetypePart: true,
-              partKey,
-              blockedReason: graftBlockedReason(this._selectedActor, partKey),
-              archetypeKey: this._selectedArchetypeKey,
-              name: getTranslated(part, "name"),
-              hpPercent: part.hpPercent,
-              vital: part.vital,
-              statEffect: part.statEffect || null,
-              statBonus,
-              skillId: part.skillId || 0,
-              cost,
-              alreadyOwned,
-              archPart: part
-            });
-          }
-        }
-      }
-
-      leftPageHTML += '<div class="shop-scroll">';
-      this._activeListItems.forEach((item, idx) => {
-        const opacity = (item.alreadyOwned || item.blockedReason) ? "opacity: 0.55;" : "";
-        leftPageHTML += `
-          <div class="patient-card focusable" style="${opacity} position:relative" onclick="SceneManager._scene.selectListItem(${idx})">
-              <div class="pros-07">
-                  <h4 class="pros-10">${item.name}</h4>
-                  <p class="pros-11">
-                      ${item.statEffect ? `${getParamName(item.statEffect.param)} +${item.statBonus}` : ""}
-                      ${skillNames(item.skillId) ? ` | ★ ${skillNames(item.skillId)}` : ""}
-                  </p>
-              </div>
-              <div class="pros-12">
-                  ${item.alreadyOwned ? T('Prosthetics.owned')
-                    : item.blockedReason ? item.blockedReason
-                    : formatPriceInEuros(item.cost)}
-              </div>
-          </div>
-        `;
-      });
-      leftPageHTML += '</div>';
-
-    } else if (this._viewState === 'install_inventory') {
-      leftTitle = T('Prosthetics.inventoryParts');
-      leftDesc = T('Prosthetics.installBodyPartsYouAlreadyOwnInstallationFee', { p1: formatPriceInEuros(INSTALLATION_FEE) });
-
-      this._activeListItems = getInventoryBodyParts(this._selectedActor);
-      if (this._selectedActor && this._selectedActor._bodyParts) {
-        this._activeListItems.forEach(entry => {
-          entry.alreadyOwned = !!this._selectedActor._bodyParts[entry.partKey];
-        });
-      }
-
-      leftPageHTML += '<div class="shop-scroll">';
-      if (this._activeListItems.length === 0) {
-        leftPageHTML += `<p class="pros-18">${T('Prosthetics.noBodyPartItemsInInventory')}</p>`;
-      } else {
-        this._activeListItems.forEach((entry, idx) => {
-          const opacity = entry.alreadyOwned ? "opacity:0.55;" : "";
-          const archLabel = entry.archetypeKey.replace(/([A-Z])/g, " $1").trim();
-          leftPageHTML += `
-            <div class="patient-card focusable" style="${opacity} position:relative" onclick="SceneManager._scene.selectListItem(${idx})">
-                <div class="pros-07">
-                    <h4 class="pros-10">${entry.name}</h4>
-                    <p class="pros-11">
-                        [${archLabel}]${entry.statEffect ? ` | ${getParamName(entry.statEffect.param)} +${entry.statBonus}` : ""}
-                        ${skillNames(entry.skillId) ? ` | ★ ${skillNames(entry.skillId)}` : ""}
-                    </p>
-                </div>
-                <div class="pros-12">
-                    ${entry.alreadyOwned ? T('Prosthetics.installed2') : formatPriceInEuros(entry.cost)}
-                </div>
-            </div>
-          `;
-        });
-      }
-      leftPageHTML += '</div>';
-
-    } else if (this._viewState === 'remove_part') {
-      leftTitle = T('Prosthetics.extractSystems');
-      leftDesc = T('Prosthetics.chooseAnActiveLimbOrOrganToRemoveVitalOrgans');
-
-      this._activeListItems = [];
-      if (this._selectedActor && this._selectedActor._bodyParts) {
-        for (const partKey of Object.keys(this._selectedActor._bodyParts)) {
-          const part = this._selectedActor._bodyParts[partKey];
-          const hasImplant = !!(this._selectedActor._prosthetics && this._selectedActor._prosthetics[partKey]);
-          const hpPercent = inferHpPercent(part, this._selectedActor);
-          const cost = hpPercent * 100;
-          const statEffect = lookupStatEffect(partKey, part, this._selectedActor);
-          const statBonus = computeStatBonus(statEffect);
-
-          this._activeListItems.push({
-            isRemoveBodypart: true,
-            partKey,
-            name: part.name || partKey,
-            vital: isPartVital(this._selectedActor, partKey, part),
-            hasImplant,
-            hpPercent,
-            cost,
-            statEffect,
-            statBonus,
-            skillId: part.skillId || 0
-          });
-        }
-      }
-
-      leftPageHTML += '<div class="shop-scroll">';
-      this._activeListItems.forEach((item, idx) => {
-        const opacity = item.vital ? "opacity: 0.55;" : "";
-        leftPageHTML += `
-          <div class="patient-card focusable" style="${opacity} position:relative" onclick="SceneManager._scene.selectListItem(${idx})">
-              <div class="pros-07">
-                  <h4 class="pros-10">${item.name} ${item.hasImplant ? " *" : ""}</h4>
-                  <p class="pros-11">
-                      ${item.statEffect && item.statBonus > 0 ? T('Prosthetics.loses', { p1: getParamName(item.statEffect.param), p2: item.statBonus }) : ""}
-                  </p>
-              </div>
-              <div class="pros-19">
-                  ${item.vital ? T('Prosthetics.vitalBadge') : formatPriceInEuros(item.cost)}
-              </div>
-          </div>
-        `;
-      });
-      leftPageHTML += '</div>';
-
-    } else if (this._viewState === 'replace_part') {
-      leftTitle = T('Prosthetics.replaceSystem');
-      leftDesc = T('Prosthetics.chooseAnActiveBiologicalPartToReplaceWithAnA');
-
-      this._activeListItems = [];
-      const Archetypes = getArchetypes();
-      if (this._selectedActor && this._selectedActor._bodyParts) {
-        for (const partKey of Object.keys(this._selectedActor._bodyParts)) {
-          const part = this._selectedActor._bodyParts[partKey];
-          const hpPercent = inferHpPercent(part, this._selectedActor);
-          const removalFee = hpPercent * 100;
-          const statEffect = lookupStatEffect(partKey, part, this._selectedActor);
-          const statBonus = computeStatBonus(statEffect);
-
-          let hasReplacement = false;
-          if (Archetypes) {
-            for (const archKey of Object.keys(Archetypes)) {
-              const arch = Archetypes[archKey];
-              if (arch && arch.parts && arch.parts[partKey]) { hasReplacement = true; break; }
-            }
-          }
-          if (!hasReplacement) continue;
-
-          this._activeListItems.push({
-            isReplaceSelectPart: true,
-            partKey,
-            name: part.name || partKey,
-            vital: part.vital,
-            hpPercent,
-            removalFee,
-            statEffect,
-            statBonus
-          });
-        }
-      }
-
-      leftPageHTML += '<div class="shop-scroll">';
-      this._activeListItems.forEach((item, idx) => {
-        leftPageHTML += `
-          <div class="patient-card focusable pros-04" onclick="SceneManager._scene.selectListItem(${idx})">
-              <div class="pros-07">
-                  <h4 class="pros-10">${item.name}</h4>
-                  <p class="pros-11">
-                      ${item.vital ? T('Prosthetics.vitalBadge') : `${T('Prosthetics.removalFee2')} ${formatPriceInEuros(item.removalFee)}`}
-                  </p>
-              </div>
-          </div>
-        `;
-      });
-      leftPageHTML += '</div>';
-
-    } else if (this._viewState === 'replace_archetype') {
-      leftTitle = T('Prosthetics.selectReplacement');
-      leftDesc = T('Prosthetics.chooseAReplacementDeviceModelToInstallOntoPa', { p1: this._selectedPartKey || "" });
-
-      this._activeListItems = [];
-      const Archetypes = getArchetypes();
-      const _replaceArchKeys = (this._dailyArchetypes && Archetypes)
-        ? this._dailyArchetypes.filter(k => Archetypes[k])
-        : (Archetypes ? Object.keys(Archetypes) : []);
-      if (this._selectedPartKey && _replaceArchKeys.length > 0) {
-        for (const archKey of _replaceArchKeys) {
-          const archetype = Archetypes[archKey];
-          if (!archetype || !archetype.parts) continue;
-          const part = archetype.parts[this._selectedPartKey];
-          if (!part) continue;
-
-          const installCost = part.hpPercent * 1000 + Math.abs((part.statEffect && part.statEffect.amount) || 0) * 10000;
-          const totalCost = installCost + this._removalFee;
-          const statBonus = computeStatBonus(part.statEffect);
-          const partName = getTranslated(part, "name");
-          const archLabel = archKey.replace(/([A-Z])/g, " $1").trim();
-
-          this._activeListItems.push({
-            isReplacePart: true,
-            partKey: this._selectedPartKey,
-            archetypeKey: archKey,
-            archetypeLabel: archLabel,
-            name: partName,
-            hpPercent: part.hpPercent,
-            vital: part.vital,
-            statEffect: part.statEffect || null,
-            statBonus,
-            skillId: part.skillId || 0,
-            installCost,
-            removalFee: this._removalFee,
-            cost: totalCost,
-            archPart: part
-          });
-        }
-      }
-
-      leftPageHTML += '<div class="shop-scroll">';
-      this._activeListItems.forEach((item, idx) => {
-        leftPageHTML += `
-          <div class="patient-card focusable pros-04" onclick="SceneManager._scene.selectListItem(${idx})">
-              <div class="pros-07">
-                  <h4 class="pros-10">${item.name}</h4>
-                  <p class="pros-11">
-                      [${item.archetypeLabel}] ${item.statEffect ? ` | ${getParamName(item.statEffect.param)} +${item.statBonus}` : ""}
-                  </p>
-              </div>
-              <div class="pros-12">
-                  ${formatPriceInEuros(item.cost)}
-              </div>
-          </div>
-        `;
-      });
-      leftPageHTML += '</div>';
-
-    } else if (this._viewState === 'socket_select') {
-      // A hand or a foot has to go somewhere, and with more than one bare limb
-      // going the patient says which. Sides mean nothing here: the list is
-      // every arm and leg with a free end, and any of them takes either.
-      const pendingGraft = this._pendingGraft;
-      leftTitle = T('Prosthetics.attachmentPoint');
-      leftDesc = T('Prosthetics.chooseAttachmentPoint', { p1: (pendingGraft && pendingGraft.item.name) || "" });
-
-      const socketHC = window.HealthCore;
-      const sockets = (socketHC && socketHC.openLimbSockets)
-        ? socketHC.openLimbSockets(this._selectedActor) : [];
-      this._activeListItems = sockets.map(partKey => {
-        const part = this._selectedActor._bodyParts[partKey];
-        return { isSocket: true, partKey, name: (part && part.name) || partKey, cost: 0 };
-      });
-
-      leftPageHTML += '<div class="shop-scroll">';
-      this._activeListItems.forEach((entry, idx) => {
-        leftPageHTML += `
-          <div class="patient-card focusable pros-04" onclick="SceneManager._scene.selectListItem(${idx})">
-              <div class="pros-07">
-                  <h4 class="pros-10">${entry.name}</h4>
-              </div>
-              <div class="pros-12">
-                  ${T('Prosthetics.attachTo')}
-              </div>
-          </div>
-        `;
-      });
-      leftPageHTML += '</div>';
-
-    } else if (this._viewState === 'implant_select_part') {
-      leftTitle = T('Prosthetics.chooseSocket');
-      leftDesc = T('Prosthetics.chooseAnImplantCompatibleBiologicalOrCyberne');
-
-      this._activeListItems = [];
-      for (const partKey of implantablePartKeys(this._selectedActor)) {
-        const part = this._selectedActor._bodyParts[partKey];
-        const currentProstheticKey = this._selectedActor._prosthetics ? this._selectedActor._prosthetics[partKey] : null;
-
-        this._activeListItems.push({
-          partKey,
-          name: part.name,
-          currentProstheticKey
-        });
-      }
-
-      leftPageHTML += '<div class="shop-scroll">';
-      this._activeListItems.forEach((item, idx) => {
-        let statusText = T('Prosthetics.original');
-        const ProstheticTypes = getProstheticTypes();
-        if (item.currentProstheticKey && ProstheticTypes && ProstheticTypes[item.currentProstheticKey]) {
-          const prosthetic = ProstheticTypes[item.currentProstheticKey];
-          statusText = ConfigManager.language === "it" ? prosthetic.name_it : prosthetic.name_en;
-        }
-        leftPageHTML += `
-          <div class="patient-card focusable pros-04" onclick="SceneManager._scene.selectListItem(${idx})">
-              <div class="pros-07">
-                  <h4 class="pros-10">${item.name}</h4>
-                  <p class="pros-20" style="color:${item.currentProstheticKey ? 'var(--text-text-alt-11)' : 'var(--text-disabled)'}">
-                      ${statusText}
-                  </p>
-              </div>
-          </div>
-        `;
-      });
-      leftPageHTML += '</div>';
-
-    } else if (this._viewState === 'implant_select_prosthetic') {
-      leftTitle = this._fieldMode ? T('Prosthetics.removeAugment') : T('Prosthetics.prostheticsList');
-      leftDesc = this._fieldMode
-        ? T('Prosthetics.fieldAugmentRemovalDesc')
-        : T('Prosthetics.selectAnAdvancedMicroChipOrProstheticImplant', { p1: this._selectedPartKey || "" });
-
-      this._activeListItems = [];
-      if (this._selectedPartKey && this._selectedActor) {
-        const currentProstheticKey = this._selectedActor._prosthetics ? this._selectedActor._prosthetics[this._selectedPartKey] : null;
-
-        this._activeListItems.push({
-          isRemoveOption: true,
-          name: T('Prosthetics.removeCurrentProsthetic'),
-          canRemove: !!currentProstheticKey,
-          currentProsthetic: currentProstheticKey
-        });
-
-        const ProstheticTypes = getProstheticTypes();
-        // Nothing new goes in out here: a field kit can take an augment out,
-        // but seating one needs a bench nobody is carrying.
-        const compatibleProsthetics = this._fieldMode ? [] : implantsForPart(this._selectedPartKey);
-        for (var i = 0; i < compatibleProsthetics.length; i++) {
-          const prostheticKey = compatibleProsthetics[i];
-          const prosthetic = ProstheticTypes ? ProstheticTypes[prostheticKey] : null;
-          if (!prosthetic) continue;
-          this._activeListItems.push({
-            isProsthetic: true,
-            partKey: this._selectedPartKey,
-            prostheticKey,
-            prosthetic,
-            name: ConfigManager.language === "it" ? prosthetic.name_it : prosthetic.name_en,
-            cost: prosthetic.cost,
-            isCurrentlyInstalled: currentProstheticKey === prostheticKey
-          });
-        }
-      }
-
-      leftPageHTML += '<div class="shop-scroll">';
-      this._activeListItems.forEach((item, idx) => {
-        const opacity = item.isCurrentlyInstalled ? "opacity: 0.55;" : "";
-        leftPageHTML += `
-          <div class="patient-card focusable" style="${opacity} position:relative" onclick="SceneManager._scene.selectListItem(${idx})">
-              <div class="pros-07">
-                  <h4 class="pros-10">${item.name}</h4>
-                  <p class="pros-11">
-                      ${item.isRemoveOption ? (item.currentProsthetic ? T('Prosthetics.uninstallActiveDevice') : T('Prosthetics.limbHasOriginalPart')) : ""}
-                      ${item.isProsthetic ? implantEffectText(item.prosthetic).join(" | ") : ""}
-                  </p>
-              </div>
-              <div class="pros-12">
-                  ${item.isRemoveOption ? "" : (item.isCurrentlyInstalled ? T('Prosthetics.installed') : formatPriceInEuros(item.cost))}
-              </div>
-          </div>
-        `;
-      });
-      leftPageHTML += '</div>';
-    }
-
-    document.getElementById("left-title").innerHTML = leftTitle;
-    document.getElementById("left-desc").innerHTML = `"${leftDesc}"`;
-    document.getElementById("left-page-content").innerHTML = leftPageHTML;
-
-    const actorChanged = (this._selectedActor !== this._lastDrawnActor);
-    if (actorChanged || this._forceRightPageRedraw) {
-      this._forceRightPageRedraw = false;
-      this._lastDrawnActor = this._selectedActor;
-      document.getElementById("right-page-content").innerHTML = this.generateRightPageCharacterSheet(this._selectedActor);
-
-      if (this._selectedActor) {
-        this.drawUIActorPortrait(this._selectedActor, `actor-canvas`);
-      }
-    }
-
-    UIShopInputManager.activate(cols);
-
-    if (this._viewState === 'party') {
-      const activeMembers = $gameParty.members();
-      activeMembers.forEach((actor, idx) => {
-        this.drawUIActorPortrait(actor, `actor-canvas-left-${idx}`);
-      });
-    }
-
-    if (this._activeListItems.length > 0) {
-      this.refreshRightPageSurgeryPreview(0);
-    }
-  };
-
-  Scene_ProstheticShop.prototype.generateRightPageCharacterSheet = function (actor) {
-    if (!actor) {
-      return `
-        <div class="pros-21">
-            <span class="pros-22"></span>
-            <h3 class="pros-23">${T('Prosthetics.dossierTitle')}</h3>
-            <p class="pros-24">${T('Prosthetics.dossierPrompt')}</p>
-        </div>
-      `;
-    }
-
-    const members = $gameParty.members();
-    let companionTabsHTML = "";
-    members.forEach((mem, idx) => {
-      const isSelected = mem === actor ? "selected" : "";
-      companionTabsHTML += `<div class="companion-tab ${isSelected}" onclick="SceneManager._scene.switchSelectedActor(${idx})">${mem.name()}</div>`;
-    });
-    const companionsHTML = `<div class="companion-switcher pros-25">${window.CharSwitcher.inner(
-      `<div class="companion-tabs-row pros-26">${companionTabsHTML}</div>`, members.length
-    )}</div>`;
-
-    const str = actor.param(2);
-    const con = actor.param(3);
-    const dex = actor.param(6);
-    const intVal = actor.param(4);
-    const wis = actor.param(5);
-    const psi = actor.param(7);
-
-    const getModText = (val) => {
-      const m = Math.floor((val - 10) / 2);
-      return m >= 0 ? "+" + m : String(m);
+        : T('Prosthetics.performHeavyIndustryLimbConfigurationsOrMicr', { p1: this._selectedActor ? this._selectedActor.name() : "" }),
+      commands
     };
+  };
 
-    const repName = getReproductionName(actor);
-    const genderName = getGenderName(actor);
+  // The archetypes a supplier has on the shelf today.
+  Scene_ProstheticShop.prototype.archetypeKeys = function () {
+    const Archetypes = getArchetypes();
+    if (!Archetypes) return [];
+    return this._dailyArchetypes
+      ? this._dailyArchetypes.filter((k) => Archetypes[k])
+      : Object.keys(Archetypes);
+  };
 
-    let partsHTML = "";
-    if (actor._bodyParts) {
-      partsHTML += '<div class="pros-27" id="clinic-parts-scroll">';
-      partsHTML += `<h4 class="pros-28">${T('Prosthetics.biologicalSystemsStatus')}</h4>`;
-      for (const partKey of Object.keys(actor._bodyParts)) {
-        const part = actor._bodyParts[partKey];
-        const hasImplant = actor._prosthetics && actor._prosthetics[partKey];
-        let implantName = "";
-        if (hasImplant) {
-          const ProstheticTypes = getProstheticTypes();
-          const prosthetic = ProstheticTypes ? ProstheticTypes[actor._prosthetics[partKey]] : null;
-          if (prosthetic) {
-            implantName = ` [${ConfigManager.language === "it" ? prosthetic.name_it : prosthetic.name_en}]`;
+  Scene_ProstheticShop.prototype.pageArchetypes = function () {
+    const count = this._dailyArchetypes ? this._dailyArchetypes.length : 0;
+    this._activeListItems.push({
+      isArchetypeChoice: true, key: '__INVENTORY__', name: T('Prosthetics.inventoryOwnedParts')
+    });
+    for (const key of this.archetypeKeys()) {
+      this._activeListItems.push({ isArchetypeChoice: true, key, name: archetypeLabel(key) });
+    }
+    return {
+      title: T('Prosthetics.archetypeDissect'),
+      brief: T('Prosthetics.chooseArchetypeCode') + (count ? T('Prosthetics.suppliersAvailable', { count }) : "")
+    };
+  };
+
+  Scene_ProstheticShop.prototype.pageArchetypeParts = function () {
+    const Archetypes = getArchetypes();
+    const archetype = (this._selectedArchetypeKey && Archetypes) ? Archetypes[this._selectedArchetypeKey] : null;
+    if (archetype && archetype.parts) {
+      // A party with a surgeon in it pays for the parts, not for the theatre.
+      const surgeonRate = window.SpecializationXP
+        ? window.SpecializationXP.discount(SURGERY_SPEC, 0.06, 0.7) : 1;
+      for (const partKey of Object.keys(archetype.parts)) {
+        const part = archetype.parts[partKey];
+        if (part.vital) continue;
+        const keyLower = partKey.toLowerCase();
+        const nameLower = (part.name || "").toLowerCase();
+        if (keyLower.includes("core") || keyLower.includes("body") ||
+          nameLower.includes("core") || nameLower.includes("body") ||
+          nameLower.includes("head")) continue;
+
+        const partName = getTranslated(part, "name").toLowerCase();
+        let alreadyOwned = !!(this._selectedActor && this._selectedActor._bodyParts && this._selectedActor._bodyParts[partKey]);
+        if (!alreadyOwned && this._selectedActor && this._selectedActor._bodyParts) {
+          for (const existingKey in this._selectedActor._bodyParts) {
+            const existingName = (this._selectedActor._bodyParts[existingKey].name || "").toLowerCase();
+            if (existingName && partName.includes(existingName)) { alreadyOwned = true; break; }
           }
         }
-        partsHTML += `
-          <div class="pros-29">
-            <span>${part.name || partKey}</span>
-            <span style="color:${hasImplant ? 'var(--text-text-alt-11)' : 'var(--text-disabled)'}; font-weight:${hasImplant ? 'bold' : 'normal'}">${hasImplant ? `Implant:${implantName}` : T('Prosthetics.original')}</span>
-          </div>
-        `;
-      }
-      partsHTML += '</div>';
-    }
+        const cost = Math.round((part.hpPercent * 1000 +
+          Math.abs((part.statEffect && part.statEffect.amount) || 0) * 10000) * surgeonRate);
 
-    return `
-      ${companionsHTML}
-      <div class="bio-row pros-30">
-          <div class="portrait-frame">
-              <canvas id="actor-canvas" width="48" height="48"></canvas>
-          </div>
-          <div class="bio-text">
-              <h3 class="char-name">${actor.name()}</h3>
-              <p class="char-class">${actor.currentClass() ? actor.currentClass().name : T('Prosthetics.classless')} (${T('Prosthetics.levelShort', { level: actor.level })})</p>
-              <p class="pros-31">${T('Prosthetics.genderReprLine', { gender: genderName, repr: repName })}</p>
-          </div>
-      </div>
-
-      <div class="ability-container pros-32">
-          <div class="ability-card pros-33">
-              <span class="ability-label pros-34">${T('Prosthetics.ability.str')}</span>
-              <span class="ability-value pros-35">${str}</span>
-              <span class="ability-mod pros-34">${getModText(str)}</span>
-          </div>
-          <div class="ability-card pros-33">
-              <span class="ability-label pros-34">${T('Prosthetics.ability.con')}</span>
-              <span class="ability-value pros-35">${con}</span>
-              <span class="ability-mod pros-34">${getModText(con)}</span>
-          </div>
-          <div class="ability-card pros-33">
-              <span class="ability-label pros-34">${T('Prosthetics.ability.dex')}</span>
-              <span class="ability-value pros-35">${dex}</span>
-              <span class="ability-mod pros-34">${getModText(dex)}</span>
-          </div>
-          <div class="ability-card pros-33">
-              <span class="ability-label pros-34">${T('Prosthetics.ability.int')}</span>
-              <span class="ability-value pros-35">${intVal}</span>
-              <span class="ability-mod pros-34">${getModText(intVal)}</span>
-          </div>
-          <div class="ability-card pros-33">
-              <span class="ability-label pros-34">${T('Prosthetics.ability.wis')}</span>
-              <span class="ability-value pros-35">${wis}</span>
-              <span class="ability-mod pros-34">${getModText(wis)}</span>
-          </div>
-          <div class="ability-card pros-33">
-              <span class="ability-label pros-34">${T('Prosthetics.ability.psi')}</span>
-              <span class="ability-value pros-35">${psi}</span>
-              <span class="ability-mod pros-34">${getModText(psi)}</span>
-          </div>
-      </div>
-
-      <div class="vitals-box pros-36">
-          <div class="vital-row pros-37">
-              <span class="vital-lbl pros-38">${T('Prosthetics.vital.hp')}</span>
-              <div class="flask-container pros-39">
-                  <div class="flask-fill hp-fill" style="width:${Math.floor(actor.hpRate() * 100)}%"></div>
-              </div>
-              <span class="vital-vals pros-40">${actor.hp}/${actor.mhp}</span>
-          </div>
-          <div class="vital-row">
-              <span class="vital-lbl pros-38">${T('Prosthetics.vital.mp')}</span>
-              <div class="flask-container pros-39">
-                  <div class="flask-fill mp-fill" style="width:${Math.floor(actor.mpRate() * 100)}%"></div>
-              </div>
-              <span class="vital-vals pros-40">${actor.mp}/${actor.mmp}</span>
-          </div>
-      </div>
-
-      ${partsHTML}
-
-      <!-- Surgery preview will overlay dynamically in this container for catalog lists -->
-      <div class="surgery-briefing-container"></div>
-    `;
-  };
-
-  Scene_ProstheticShop.prototype.onUIFocusChange = function (focusIndex) {
-    this.refreshRightPageSurgeryPreview(focusIndex);
-  };
-
-  // What this pair of hands is worth, spelled out before anybody is opened up.
-  Scene_ProstheticShop.prototype.surgeonBriefingHTML = function (item) {
-    if (!item || !item.isSurgeon) return "";
-    const odds = item.odds;
-    const levelName = window.Specializations && window.Specializations.ready
-      ? window.Specializations.levelName(odds.level) : String(odds.level);
-    const signed = (n) => (n >= 0 ? "+" + n : String(n));
-    const rows = [
-      [T('Prosthetics.surgerySpecShort'), `${levelName} (${odds.base}%)`],
-      [T('Prosthetics.venueLabel'), `${T('Prosthetics.venue.' + odds.venue)} ${signed(odds.venueMod)}`],
-      [T('Prosthetics.weatherLabel'), `${T('Prosthetics.weather.' + odds.weather)} ${signed(odds.weatherMod)}`]
-    ];
-    if (odds.self) rows.push([T('Prosthetics.operatingOnSelf'), signed(odds.selfMod)]);
-    return `
-      <div class="surgery-blueprint pros-41">
-          <h4 class="pros-42">${item.actor.name()}</h4>
-          ${rows.map(([label, value]) => `
-          <div class="pros-43">
-              <span>${label}</span><span>${value}</span>
-          </div>`).join("")}
-          <div class="pros-44">
-              <span>${T('Prosthetics.successChance')}</span><span>${odds.chance}%</span>
-          </div>
-          <p class="pros-45">${T('Prosthetics.failureWarning')}</p>
-      </div>
-    `;
-  };
-
-  Scene_ProstheticShop.prototype.refreshRightPageSurgeryPreview = function (focusIndex) {
-    const previewContainer = this._dndContainer.querySelector(".surgery-briefing-container");
-    if (!previewContainer) return;
-
-    const item = this._activeListItems[focusIndex];
-    if (!item) {
-      previewContainer.innerHTML = "";
-      return;
-    }
-
-    // Picking a surgeon is not an operation: the facing page reads as their
-    // dossier, and there is nothing on it to press.
-    if (this._viewState === 'surgeon_select') {
-      previewContainer.innerHTML = this.surgeonBriefingHTML(item);
-      UIShopInputManager.actionElements = [];
-      return;
-    }
-
-    // Nor is picking the limb: the card itself is the choice, and the operation
-    // goes ahead the moment it is made.
-    if (this._viewState === 'socket_select') {
-      const fitting = this._pendingGraft ? this._pendingGraft.item.name : "";
-      previewContainer.innerHTML = `
-        <div class="surgery-blueprint pros-41">
-            <h4 class="pros-46">${T('Prosthetics.attachmentPoint')}</h4>
-            <p class="pros-47">${T('Prosthetics.attachedTo', { p1: item.name })}</p>
-            <p class="pros-48">${fitting}</p>
-        </div>
-      `;
-      UIShopInputManager.actionElements = [];
-      return;
-    }
-
-    const actor = this._selectedActor;
-    const isAffordable = $gameParty.gold() >= this.priceOf(item.cost);
-    const costClass = isAffordable ? "cost--ok" : "cost--short";
-
-    let title = "";
-    let costText = "";
-    let descText = "";
-    let actionBtnLabel = "";
-    let actionSymbol = "";
-
-    if (this._viewState === 'install_part' || this._viewState === 'install_inventory') {
-      title = T('Prosthetics.surgicalBlueprint');
-      costText = formatPriceInEuros(item.cost);
-      descText = T('Prosthetics.thisSurgeryWillPermanentlyGraftANewOntoSBiol', { p1: item.name, p2: actor.name() });
-      actionBtnLabel = T('Prosthetics.graftLimb');
-      actionSymbol = "install";
-    } else if (this._viewState === 'remove_part') {
-      title = T('Prosthetics.amputationProtocol');
-      costText = formatPriceInEuros(item.cost);
-      let warnText = "";
-      if (item.hasImplant) {
-        warnText = T('Prosthetics.strongStyleColor822d2dBrWarningInstalledImpl');
-      }
-      descText = item.vital
-        ? T('Prosthetics.criticalVitalPartsCannotBeAmputatedWithoutCa')
-        : T('Prosthetics.surgicallyAmputatingWillRemoveAllItsStatBonu', { p1: item.name, p2: warnText });
-      actionBtnLabel = T('Prosthetics.amputate');
-      actionSymbol = "remove";
-    } else if (this._viewState === 'replace_archetype') {
-      title = T('Prosthetics.upgradeProtocol');
-      costText = formatPriceInEuros(item.cost);
-      descText = T('Prosthetics.performFullSwapOfTheCurrentLimbForACustomize', { p1: item.name });
-      actionBtnLabel = T('Prosthetics.replaceSystem2');
-      actionSymbol = "replace";
-    } else if (this._viewState === 'implant_select_prosthetic') {
-      if (item.isRemoveOption) {
-        title = T('Prosthetics.reconfigurationProtocol');
-        costText = "FREE";
-        descText = T('Prosthetics.uninstallTheCurrentlyEquippedProstheticDevic');
-        actionBtnLabel = T('Prosthetics.uninstall');
-        actionSymbol = "remove_implant";
-      } else {
-        title = T('Prosthetics.implantProtocol');
-        costText = formatPriceInEuros(item.cost);
-        descText = T('Prosthetics.installTheAdvancedProstheticMicroDeviceInsid', { p1: item.name });
-        actionBtnLabel = T('Prosthetics.installImplant2');
-        actionSymbol = "install_implant";
+        this._activeListItems.push({
+          isArchetypePart: true,
+          partKey,
+          blockedReason: graftBlockedReason(this._selectedActor, partKey),
+          archetypeKey: this._selectedArchetypeKey,
+          name: getTranslated(part, "name"),
+          hpPercent: part.hpPercent,
+          vital: part.vital,
+          statEffect: part.statEffect || null,
+          statBonus: computeStatBonus(part.statEffect),
+          skillId: part.skillId || 0,
+          cost,
+          alreadyOwned,
+          archPart: part
+        });
       }
     }
+    return {
+      title: T('Prosthetics.surgicalCatalog'),
+      brief: T('Prosthetics.selectALimbOrOrganToGraftFromTheSource', { p1: archetypeLabel(this._selectedArchetypeKey) })
+    };
+  };
 
-    let isOkEnabled = true;
-    if (this._viewState === 'remove_part' && item.vital) isOkEnabled = false;
-    if (this._viewState === 'implant_select_prosthetic' && item.isRemoveOption && !item.canRemove) isOkEnabled = false;
-    if ((this._viewState === 'install_part' || this._viewState === 'install_inventory') && item.alreadyOwned) isOkEnabled = false;
-    // A hand with no bare arm to go on, and anything else the body cannot take.
-    if (item.blockedReason) isOkEnabled = false;
-    if (!isAffordable && actionSymbol !== "remove_implant" && !(this._viewState === 'implant_select_prosthetic' && item.isRemoveOption)) isOkEnabled = false;
+  Scene_ProstheticShop.prototype.pageInventoryParts = function () {
+    this._activeListItems = getInventoryBodyParts(this._selectedActor);
+    this._activeListItems.forEach((entry) => {
+      entry.alreadyOwned = !!(this._selectedActor && this._selectedActor._bodyParts &&
+        this._selectedActor._bodyParts[entry.partKey]);
+      entry.archetypeLabel = archetypeLabel(entry.archetypeKey);
+    });
+    return {
+      title: T('Prosthetics.inventoryParts'),
+      brief: T('Prosthetics.installBodyPartsYouAlreadyOwnInstallationFee', { p1: formatPriceInEuros(INSTALLATION_FEE) })
+    };
+  };
 
-    const ledgerHTML = this._fieldMode
-      ? `<div class="pros-49">
-              <div class="pros-50">
-                  <span>${T('Prosthetics.successChance')}</span>
-                  <strong class="pros-51">${this.currentOdds().chance}%</strong>
-              </div>
-              <div class="pros-52">${this.oddsBreakdownText()}</div>
-          </div>`
-      : `<div class="pros-53">
-              <span>${T('Prosthetics.surgeryFee')} <strong class="${costClass}">${costText}</strong></span>
-              <span>${T('Prosthetics.availableFunds')} <strong class="pros-54">${formatPriceInEuros($gameParty.gold())}</strong></span>
-          </div>`;
+  Scene_ProstheticShop.prototype.pageRemovable = function () {
+    if (this._selectedActor && this._selectedActor._bodyParts) {
+      for (const partKey of Object.keys(this._selectedActor._bodyParts)) {
+        const part = this._selectedActor._bodyParts[partKey];
+        const hpPercent = inferHpPercent(part, this._selectedActor);
+        const statEffect = lookupStatEffect(partKey, part, this._selectedActor);
+        this._activeListItems.push({
+          isRemoveBodypart: true,
+          partKey,
+          name: part.name || partKey,
+          vital: isPartVital(this._selectedActor, partKey, part),
+          hasImplant: !!(this._selectedActor._prosthetics && this._selectedActor._prosthetics[partKey]),
+          hpPercent,
+          cost: hpPercent * 100,
+          statEffect,
+          statBonus: computeStatBonus(statEffect),
+          skillId: part.skillId || 0
+        });
+      }
+    }
+    return {
+      title: T('Prosthetics.extractSystems'),
+      brief: T('Prosthetics.chooseAnActiveLimbOrOrganToRemoveVitalOrgans')
+    };
+  };
 
-    previewContainer.innerHTML = `
-      <div class="surgery-blueprint pros-41">
-          <h4 class="pros-55">${title}</h4>
-          <p class="pros-56">${descText}</p>
-          ${ledgerHTML}
-          
-          <div class="pros-57">
-              <button class="action-btn action-focusable ${!isOkEnabled ? 'disabled' : ''} pros-58" onclick="SceneManager._scene.executeSurgeryAction('${actionSymbol}')">${actionBtnLabel}</button>
-              <button class="action-btn action-focusable pros-58" onclick="SceneManager._scene.cancelSurgeryAction()">${T('Prosthetics.cancel')}</button>
-          </div>
-      </div>
-    `;
+  Scene_ProstheticShop.prototype.pageReplaceable = function () {
+    const Archetypes = getArchetypes();
+    if (this._selectedActor && this._selectedActor._bodyParts) {
+      for (const partKey of Object.keys(this._selectedActor._bodyParts)) {
+        const part = this._selectedActor._bodyParts[partKey];
+        let hasReplacement = false;
+        if (Archetypes) {
+          for (const archKey of Object.keys(Archetypes)) {
+            const arch = Archetypes[archKey];
+            if (arch && arch.parts && arch.parts[partKey]) { hasReplacement = true; break; }
+          }
+        }
+        if (!hasReplacement) continue;
 
-    UIShopInputManager.actionElements = Array.from(previewContainer.querySelectorAll('.action-focusable'));
-    UIShopInputManager.actionIndex = 0;
-    UIShopInputManager.updateFocus();
+        const hpPercent = inferHpPercent(part, this._selectedActor);
+        const statEffect = lookupStatEffect(partKey, part, this._selectedActor);
+        this._activeListItems.push({
+          isReplaceSelectPart: true,
+          partKey,
+          name: part.name || partKey,
+          vital: part.vital,
+          hpPercent,
+          removalFee: hpPercent * 100,
+          statEffect,
+          statBonus: computeStatBonus(statEffect)
+        });
+      }
+    }
+    return {
+      title: T('Prosthetics.replaceSystem'),
+      brief: T('Prosthetics.chooseAnActiveBiologicalPartToReplaceWithAnA')
+    };
+  };
+
+  Scene_ProstheticShop.prototype.pageReplacements = function () {
+    const Archetypes = getArchetypes();
+    if (this._selectedPartKey && Archetypes) {
+      for (const archKey of this.archetypeKeys()) {
+        const archetype = Archetypes[archKey];
+        if (!archetype || !archetype.parts) continue;
+        const part = archetype.parts[this._selectedPartKey];
+        if (!part) continue;
+
+        const installCost = part.hpPercent * 1000 + Math.abs((part.statEffect && part.statEffect.amount) || 0) * 10000;
+        this._activeListItems.push({
+          isReplacePart: true,
+          partKey: this._selectedPartKey,
+          archetypeKey: archKey,
+          archetypeLabel: archetypeLabel(archKey),
+          name: getTranslated(part, "name"),
+          hpPercent: part.hpPercent,
+          vital: part.vital,
+          statEffect: part.statEffect || null,
+          statBonus: computeStatBonus(part.statEffect),
+          skillId: part.skillId || 0,
+          installCost,
+          removalFee: this._removalFee,
+          cost: installCost + this._removalFee,
+          archPart: part
+        });
+      }
+    }
+    return {
+      title: T('Prosthetics.selectReplacement'),
+      brief: T('Prosthetics.chooseAReplacementDeviceModelToInstallOntoPa', { p1: this._selectedPartKey || "" })
+    };
+  };
+
+  // A hand or a foot has to go somewhere, and with more than one bare limb
+  // going the patient says which. Sides mean nothing here: the list is every
+  // arm and leg with a free end, and any of them takes either.
+  Scene_ProstheticShop.prototype.pageSockets = function () {
+    const HC = window.HealthCore;
+    const sockets = (HC && HC.openLimbSockets) ? HC.openLimbSockets(this._selectedActor) : [];
+    sockets.forEach((partKey) => {
+      const part = this._selectedActor._bodyParts[partKey];
+      this._activeListItems.push({ isSocket: true, partKey, name: (part && part.name) || partKey, cost: 0 });
+    });
+    const pending = this._pendingGraft;
+    return {
+      title: T('Prosthetics.attachmentPoint'),
+      brief: T('Prosthetics.chooseAttachmentPoint', { p1: (pending && pending.item.name) || "" })
+    };
+  };
+
+  Scene_ProstheticShop.prototype.pageImplantSockets = function () {
+    for (const partKey of implantablePartKeys(this._selectedActor)) {
+      const part = this._selectedActor._bodyParts[partKey];
+      const currentProstheticKey = this._selectedActor._prosthetics ? this._selectedActor._prosthetics[partKey] : null;
+      this._activeListItems.push({
+        isImplantSocket: true,
+        partKey,
+        name: part.name,
+        currentProstheticKey,
+        currentProstheticName: implantName(currentProstheticKey) || T('Prosthetics.original')
+      });
+    }
+    return {
+      title: T('Prosthetics.chooseSocket'),
+      brief: T('Prosthetics.chooseAnImplantCompatibleBiologicalOrCyberne')
+    };
+  };
+
+  Scene_ProstheticShop.prototype.pageImplants = function () {
+    if (this._selectedPartKey && this._selectedActor) {
+      const currentProstheticKey = this._selectedActor._prosthetics ? this._selectedActor._prosthetics[this._selectedPartKey] : null;
+      this._activeListItems.push({
+        isRemoveOption: true,
+        name: T('Prosthetics.removeCurrentProsthetic'),
+        canRemove: !!currentProstheticKey,
+        currentProsthetic: currentProstheticKey,
+        note: currentProstheticKey ? T('Prosthetics.uninstallActiveDevice') : T('Prosthetics.limbHasOriginalPart')
+      });
+
+      const ProstheticTypes = getProstheticTypes();
+      // Nothing new goes in out here: a field kit can take an augment out, but
+      // seating one needs a bench nobody is carrying.
+      const compatible = this._fieldMode ? [] : implantsForPart(this._selectedPartKey);
+      for (const prostheticKey of compatible) {
+        const prosthetic = ProstheticTypes ? ProstheticTypes[prostheticKey] : null;
+        if (!prosthetic) continue;
+        this._activeListItems.push({
+          isProsthetic: true,
+          partKey: this._selectedPartKey,
+          prostheticKey,
+          prosthetic,
+          name: implantName(prostheticKey),
+          note: implantEffectText(prosthetic).join(" | "),
+          cost: prosthetic.cost,
+          isCurrentlyInstalled: currentProstheticKey === prostheticKey
+        });
+      }
+    }
+    return {
+      title: this._fieldMode ? T('Prosthetics.removeAugment') : T('Prosthetics.prostheticsList'),
+      brief: this._fieldMode
+        ? T('Prosthetics.fieldAugmentRemovalDesc')
+        : T('Prosthetics.selectAnAdvancedMicroChipOrProstheticImplant', { p1: this._selectedPartKey || "" })
+    };
+  };
+
+  // The facing page for the row in hand: a dossier for a surgeon, a note for a
+  // socket, and for anything that is an operation, its price and its button.
+  Scene_ProstheticShop.prototype.previewModel = function (item) {
+    if (!item) return null;
+
+    if (item.isSurgeon) {
+      return { kind: 'surgeon', name: item.actor.name(), odds: item.odds, levelName: item.levelName };
+    }
+    if (item.isSocket) {
+      return {
+        kind: 'socket',
+        socketName: item.name,
+        fitting: this._pendingGraft ? this._pendingGraft.item.name : ""
+      };
+    }
+    if (item.isArchetypeChoice || item.isImplantSocket || item.isReplaceSelectPart) return null;
+
+    const state = this._viewState;
+    let model = null;
+    if (state === 'install_part' || state === 'install_inventory') {
+      model = {
+        title: T('Prosthetics.surgicalBlueprint'),
+        desc: T('Prosthetics.thisSurgeryWillPermanentlyGraftANewOntoSBiol', { p1: item.name, p2: this._selectedActor.name() }),
+        actionLabel: T('Prosthetics.graftLimb'),
+        actionSymbol: "install"
+      };
+    } else if (state === 'remove_part') {
+      model = {
+        title: T('Prosthetics.amputationProtocol'),
+        desc: item.vital
+          ? T('Prosthetics.criticalVitalPartsCannotBeAmputatedWithoutCa')
+          : T('Prosthetics.surgicallyAmputatingWillRemoveAllItsStatBonu', { p1: item.name }),
+        warning: (!item.vital && item.hasImplant) ? T('Prosthetics.implantWarning') : "",
+        actionLabel: T('Prosthetics.amputate'),
+        actionSymbol: "remove"
+      };
+    } else if (state === 'replace_archetype') {
+      model = {
+        title: T('Prosthetics.upgradeProtocol'),
+        desc: T('Prosthetics.performFullSwapOfTheCurrentLimbForACustomize', { p1: item.name }),
+        actionLabel: T('Prosthetics.replaceSystem2'),
+        actionSymbol: "replace"
+      };
+    } else if (state === 'implant_select_prosthetic') {
+      model = item.isRemoveOption
+        ? {
+            title: T('Prosthetics.reconfigurationProtocol'),
+            desc: T('Prosthetics.uninstallTheCurrentlyEquippedProstheticDevic'),
+            actionLabel: T('Prosthetics.uninstall'),
+            actionSymbol: "remove_implant",
+            free: true
+          }
+        : {
+            title: T('Prosthetics.implantProtocol'),
+            desc: T('Prosthetics.installTheAdvancedProstheticMicroDeviceInsid', { p1: item.name }),
+            actionLabel: T('Prosthetics.installImplant2'),
+            actionSymbol: "install_implant"
+          };
+    }
+    if (!model) return null;
+
+    model.kind = 'operation';
+    model.cost = model.free ? 0 : this.priceOf(item.cost);
+    model.costText = model.free ? T('Prosthetics.free') : formatPriceInEuros(model.cost);
+    model.enabled = this.canPerformAction(model.actionSymbol, item);
+    model.ledger = this._fieldMode
+      ? { field: true, chance: this.currentOdds().chance, breakdown: this.oddsBreakdownText() }
+      : { field: false, affordable: $gameParty.gold() >= model.cost, funds: formatPriceInEuros($gameParty.gold()) };
+    return model;
+  };
+
+  Scene_ProstheticShop.prototype.refreshUIShopDOM = function () {
+    if (!this._dndContainer) return;
+    this._page = this.buildPage();
+    window.ProstheticShopUI.render(this);
+  };
+
+  // The row the ring is standing on changed: the facing page follows it.
+  Scene_ProstheticShop.prototype.onUIFocusChange = function (rowIndex) {
+    this._focusedRow = rowIndex;
+    this.refreshRightPageSurgeryPreview(rowIndex);
+  };
+
+  Scene_ProstheticShop.prototype.refreshRightPageSurgeryPreview = function (rowIndex) {
+    const item = rowIndex >= 0 ? this._activeListItems[rowIndex] : null;
+    window.ProstheticShopUI.renderPreview(this, this.previewModel(item), item);
   };
 
   Scene_ProstheticShop.prototype.onUICancel = function () {
@@ -3057,7 +2619,6 @@
     } else {
       this.showClinicNotification(T('Prosthetics.surgeryFailed'));
     }
-    this._forceRightPageRedraw = true;
     this.refreshUIShopDOM();
     return false;
   };
@@ -3138,7 +2699,8 @@
     } else if (this._viewState === 'socket_select') {
       this.chooseGraftSocket(idx);
     } else {
-      UIShopInputManager.focusIndex = idx;
+      UIShopInputManager.focusRow(idx);
+      this._focusedRow = idx;
       UIShopInputManager.mode = 'actions';
       UIShopInputManager.actionIndex = 0;
       UIShopInputManager.updateFocus();
@@ -3173,10 +2735,29 @@
     }
   };
 
+  /**
+   * Whether this operation may go ahead at all: the same answer the greyed out
+   * button is drawn from, asked again where the money actually changes hands so
+   * no input route can walk past it.
+   */
+  Scene_ProstheticShop.prototype.canPerformAction = function (action, item) {
+    if (!item) return false;
+    if (action === "remove" && item.vital) return false;
+    if (action === "remove_implant") return !item.isRemoveOption || item.canRemove !== false;
+    if (item.blockedReason) return false;
+    if (item.alreadyOwned && (action === "install")) return false;
+    const price = this.priceOf(item.isInventoryPart && action === "install" ? INSTALLATION_FEE : item.cost);
+    return $gameParty.gold() >= price;
+  };
+
   Scene_ProstheticShop.prototype.executeSurgeryAction = async function (action, itemOverride) {
-    const focusIndex = UIShopInputManager.focusIndex;
-    const item = itemOverride || this._activeListItems[focusIndex];
+    const item = itemOverride || this._activeListItems[this._focusedRow];
     if (!item) return;
+
+    if (!this.canPerformAction(action, item)) {
+      SoundManager.playBuzzer();
+      return;
+    }
 
     const actor = this._selectedActor;
 
@@ -3190,7 +2771,6 @@
       return;
     }
 
-    this._forceRightPageRedraw = true;
 
     // A field operation or self-surgery is rolled: a failure costs the patient a wound
     // and nothing changes hands, not even the part that was going to go in.
@@ -3324,35 +2904,24 @@
     UIShopInputManager.updateFocus();
   };
 
-  Scene_ProstheticShop.prototype.drawUIActorPortrait = function (actor, canvasId) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-
-    const bitmap = ImageManager.loadCharacter(actor.characterName());
-    const drawPortrait = () => {
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      ctx.imageSmoothingEnabled = false;
-
-      const isBig = ImageManager.isBigCharacter(actor.characterName());
-      const pw = bitmap.width / (isBig ? 3 : 12);
-      const ph = bitmap.height / (isBig ? 4 : 8);
-
-      const charIndex = actor.characterIndex();
-      const sx = ((charIndex % 4) * 3 + 1) * pw;
-      const sy = (Math.floor(charIndex / 4) * 4) * ph;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(bitmap.canvas, sx, sy, pw, ph, 0, 0, canvas.width, canvas.height);
-    };
-
-    if (bitmap.isReady()) {
-      drawPortrait();
-    } else {
-      bitmap.addLoadListener(drawPortrait);
-    }
+  // ==========================================================================
+  // What the UI module is allowed to ask this file
+  //
+  // The drawing lives next door and needs the same words and the same prices
+  // the logic works in. It reads them through here rather than keeping a
+  // second copy of any of them.
+  // ==========================================================================
+  window.ProstheticShop.ring = UIShopInputManager;
+  window.ProstheticShop.text = {
+    price: formatPriceInEuros,
+    paramName: getParamName,
+    skillNames,
+    archetypeLabel,
+    implantName,
+    genderName: getGenderName,
+    reproductionName: getReproductionName
   };
+
   // ===========================================================================
   // Game_Actor.prototype.param  – prosthetic + body-part stat bonuses
   // ===========================================================================
@@ -3417,7 +2986,7 @@
   if (Utils.RPGMAKER_NAME === "MZ") {
     PluginManager.registerCommand("Health_ProstheticShop", "OpenProstheticShop", () => {
       $gameSystem.autoAssignProsthetic();
-      const _ev = $gameMap.event($gameMap._interpreter.eventId());
+      const _ev = $gameMap && $gameMap._interpreter ? $gameMap.event($gameMap._interpreter.eventId()) : null;
       if (_ev) $gameTemp._prostheticShopSeedData = { mapId: $gameMap.mapId(), x: _ev.x, y: _ev.y };
       SceneManager.push(Scene_ProstheticShop);
     });
@@ -3430,7 +2999,6 @@
     $gameTemp._fieldSurgeryMode = true;
     SceneManager.push(Scene_ProstheticShop);
   };
-  PluginManager.registerCommand("Health/Health_ProstheticShop", "FieldSurgery", openFieldSurgery);
   PluginManager.registerCommand("Health_ProstheticShop", "FieldSurgery", openFieldSurgery);
 
   const _Game_Interpreter_pluginCommand_fieldSurgery = Game_Interpreter.prototype.pluginCommand;

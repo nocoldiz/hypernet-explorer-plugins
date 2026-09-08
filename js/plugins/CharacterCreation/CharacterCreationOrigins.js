@@ -173,7 +173,7 @@
   //
   // Handed out once, from markFirstCreationComplete (the end-of-creation hook),
   // so it lands after every class / trait / preset step no matter which path
-  // the player took (full, normal, quick, random, creature, tutorial, preset). Doing it
+  // the player took (full, normal, quick, random, creature, story mode, preset). Doing it
   // here instead of at class confirmation also means the preset step's gold
   // wipe can no longer swallow it.
   // The class bonus is the raw <Money:> value: it used to be tripled (with a
@@ -639,7 +639,7 @@
   //                         writes the anchor as it lands them (ccAnchorStart).
   //
   // captureStartAnchor over in the encounter plugin stays as the net under all
-  // of it (a preset dossier, the tutorial, a save whose origin predates this),
+  // of it (a preset dossier, the story mode, a save whose origin predates this),
   // and it never overwrites an anchor that is already set.
   function anchorAt(x, y) {
     const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
@@ -1663,7 +1663,17 @@
   }
 
   function grantOriginLoadout(symbol) {
+    // The Vehicles tab may already have handed over the very keys this origin
+    // deals (the camper, car and bike starts each list one), so a vehicle item
+    // the party is holding is not dealt a second time.
+    const CCV = window.CCStartVehicles;
+    const vehicleItemIds = CCV && CCV.itemIds ? CCV.itemIds() : [];
     for (const entry of resolveOriginLoadout(symbol)) {
+      if ((entry.kind || "item") === "item" && vehicleItemIds.indexOf(entry.id) >= 0) {
+        const owned = (typeof $dataItems !== "undefined" && $dataItems[entry.id])
+          ? $gameParty.hasItem($dataItems[entry.id]) : false;
+        if (owned) continue;
+      }
       const data = loadoutEntryData(entry);
       if (data) {
         $gameParty.gainItem(data, entry.qty);
@@ -2082,6 +2092,8 @@
       const upkeep = $gameArmy.getTotalWeeklyCost() * 2; // 2 weeks of upkeep
       if (upkeep > 0) $gameParty.gainGold(upkeep);
     }
+    // This path returned out of _finishOriginChoice before its cull ran.
+    cullStartingOverload();
     startWorldMapPickerOrigin();
   }
 
@@ -2131,8 +2143,69 @@
     });
   }
 
+  // --- Starting encumbrance ----------------------------------------------
+  // A scenario's loadout is written for its story, not for the party's back:
+  // between the staples, the spare gear and a heavy origin kit a fresh party
+  // could begin over its carrying weight and crawl out of the first map. Once
+  // every grant of the origin step has run, the pack is trimmed from the top
+  // down (heaviest unequipped stack first, one unit at a time) until the load
+  // sits at CC_START_LOAD_TARGET of the party's capacity. Equipped gear is
+  // never touched, and neither is anything weightless.
+  const CC_START_LOAD_TARGET = 0.8;
+
+  // Every unequipped stack the party is holding, as {data, count, weight},
+  // heaviest single unit first.
+  function unequippedStacks(utils) {
+    const stacks = [];
+    const add = (data, count) => {
+      if (!data || count <= 0) return;
+      const weight = utils.getItemWeight(data);
+      if (weight > 0) stacks.push({ data: data, count: count, weight: weight });
+    };
+    $gameParty.items().forEach((item) => add(item, $gameParty.numItems(item)));
+
+    const weapons = Object.assign({}, $gameParty._weapons);
+    const armors = Object.assign({}, $gameParty._armors);
+    $gameParty.members().forEach((actor) => {
+      actor.equips().forEach((equip) => {
+        if (!equip) return;
+        if (DataManager.isWeapon(equip) && weapons[equip.id]) weapons[equip.id]--;
+        else if (DataManager.isArmor(equip) && armors[equip.id]) armors[equip.id]--;
+      });
+    });
+    Object.keys(weapons).forEach((id) => add($dataWeapons[id], weapons[id]));
+    Object.keys(armors).forEach((id) => add($dataArmors[id], armors[id]));
+
+    stacks.sort((a, b) => b.weight - a.weight);
+    return stacks;
+  }
+
+  function cullStartingOverload() {
+    const utils = window.ItemSystemUtils;
+    if (!utils || !$gameParty || $gameParty.members().length === 0) return;
+
+    const target = utils.calculateMaxCarryWeight() * CC_START_LOAD_TARGET;
+    if (target <= 0) return;
+    utils.invalidateWeightCache();
+    if (utils.calculateTotalWeight() <= target) return;
+
+    let load = utils.calculateTotalWeight();
+    const stacks = unequippedStacks(utils);
+    for (const stack of stacks) {
+      while (stack.count > 0 && load > target) {
+        $gameParty.loseItem(stack.data, 1);
+        stack.count--;
+        load -= stack.weight;
+      }
+      if (load <= target) break;
+    }
+    utils.invalidateWeightCache();
+  }
+
   window.CCOrigins = {
     giveStartingSupplies,
+    CC_START_LOAD_TARGET,
+    cullStartingOverload,
     CC_BASE_START_GOLD,
     classStartingMoney,
     selectedTraitObjects,

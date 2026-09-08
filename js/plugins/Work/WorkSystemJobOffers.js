@@ -172,7 +172,7 @@
           icon: 244,
           width: 950,
           height: 600,
-          contentHTML: '<div class="joboffer-01" id="job-offers-content"></div>'
+          contentHTML: '<div class="job-offers-host" id="job-offers-content"></div>'
         });
 
         this.appInstance = new Scene_JobOffers();
@@ -279,9 +279,7 @@
       if (!this._isAppMode) super.terminate();
       if (this._dndContainer) {
         const container = this._dndContainer;
-        container.style.transition = "opacity 0.2s ease-out";
-        container.style.opacity = "0";
-        container.style.pointerEvents = "none";
+        container.classList.add("joboffers-leaving");
         setTimeout(() => {
           if (container && container.parentNode) {
             container.parentNode.removeChild(container);
@@ -304,15 +302,9 @@
         }
       }
 
-      // Fallback for non-app mode
-      this._dndContainer.style.position = 'absolute';
-      this._dndContainer.style.top = '0';
-      this._dndContainer.style.left = '0';
-      this._dndContainer.style.zIndex = '1000';
-      this._dndContainer.style.background = 'radial-gradient(circle, rgba(18, 10, 5, 0.93) 0%, rgba(5, 3, 1, 0.98) 100%)';
-      this._dndContainer.style.display = 'flex';
-      this._dndContainer.style.justifyContent = 'center';
-      this._dndContainer.style.alignItems = 'center';
+      // Standalone the board IS the screen; in a Hypernet window it fills the
+      // window. Both looks are in the stylesheet, off one class.
+      this._dndContainer.classList.add('joboffers-standalone');
       document.body.appendChild(this._dndContainer);
     }
 
@@ -324,182 +316,102 @@
       const selectedJob = jobs[selectedIndex] || null;
 
       const actors = $gameParty.members();
-      const selectedActorIndex = this._dndActorIndex;
-      const selectedActor = actors[selectedActorIndex] || actors[0];
+      const selectedActor = actors[this._dndActorIndex] || actors[0];
 
-      let leftPageHTML = "";
-      let rightPageHTML = "";
+      // One markup, both modes. The left page always lists the offers; the
+      // right page reads the contract, or the roster once a job is being
+      // filled. The two pages of the screen are the tab strip.
+      const rightPageHTML = this._dndFocusSection === 'actors'
+        ? this.getActorSelectionHTML(actors, this._dndActorIndex, selectedJob)
+        : this.getJobOfferContractHTML(selectedJob, selectedActor);
 
-      if (this._dndFocusSection === 'list') {
-        leftPageHTML = this.getJobsOffersBoardHTML(jobs, selectedIndex);
-        rightPageHTML = this.getJobOfferContractHTML(selectedJob, selectedActor);
-      } else {
-        leftPageHTML = this.getJobOfferContractHTML(selectedJob, selectedActor);
-        rightPageHTML = this.getActorSelectionHTML(actors, selectedActorIndex, selectedJob);
-      }
-
-      // App mode embeds the spread in a Hypernet OS window, so it fills that
-      // window. Standalone it IS the screen, and takes its size from the shared
-      // full-bleed .cc-pockets-spread rule in theme.css, so it must not pin
-      // itself to the old 1400x900 design box here.
-      const spreadSize = this._isAppMode ? "width: 100%; height: 100%" : "";
-
-      if (this._isAppMode) {
-        this._dndContainer.innerHTML = `
-          <div class="cc-pockets-spread joboffer-02">
-            <!-- Left Page -->
-            <div class="cc-page cc-page-left">
-              ${leftPageHTML}
-            </div>
-
-            <!-- Right Page -->
-            <div class="cc-page cc-page-right">
-              ${rightPageHTML}
-            </div>
+      this._dndContainer.innerHTML = `
+        <div class="book-spread joboffers-spread">
+          <div class="left-page">
+            ${this.getJobsOffersBoardHTML(jobs, selectedIndex)}
           </div>
-        `;
-      } else {
-        this._dndContainer.innerHTML = `
-          <div class="cc-pockets-spread" style="${spreadSize}">
-            <!-- Spine Shading -->
-            <div class="joboffer-03"></div>
-
-            <!-- Left Page -->
-            <div class="cc-page cc-page-left joboffer-04">
-              ${leftPageHTML}
-            </div>
-
-            <!-- Right Page -->
-            <div class="cc-page cc-page-right joboffer-04">
-              ${rightPageHTML}
-            </div>
+          <div class="right-page">
+            ${rightPageHTML}
           </div>
-        `;
-      }
+        </div>`;
 
-      // Scroll selected list items into view
+      this.applyActorFaces();
+
+      // Scroll whatever the cursor is on into view.
       setTimeout(() => {
-        if (this._dndContainer) {
-          const listEl = this._dndContainer.querySelector('#jobs-list');
-          if (listEl) {
-            const selectedEl = listEl.querySelector(this._isAppMode ? '.selected' : '[style*="background: rgba(74, 29, 15, 0.08)"]');
-            if (selectedEl) {
-              selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-            }
-          }
-
-          const rosterEl = this._dndContainer.querySelector('#roster-list');
-          if (rosterEl) {
-            const selectedEl = rosterEl.querySelector('.selected');
-            if (selectedEl) {
-              selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-            }
-          }
-        }
+        if (!this._dndContainer) return;
+        ['#jobs-list', '#roster-list'].forEach(sel => {
+          const listEl = this._dndContainer.querySelector(sel);
+          if (!listEl) return;
+          const selectedEl = listEl.querySelector('.selected');
+          if (selectedEl) selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        });
       }, 50);
     }
 
-    getJobsOffersBoardHTML(jobs, selectedIndex) {
-      const title =T('WorkSystem.jobBoardOffers');
-      // In OS app mode the active RMMZ scene is Scene_HypernetOS (no job handlers),
-      // so inline onclicks must target the live app instance instead.
-      const sref = this._isAppMode ? 'window.HypernetJobsApp.appInstance' : 'SceneManager._scene';
-
-      if (this._isAppMode) {
-        let listHTML = "";
-        if (jobs.length === 0) {
-          listHTML = `
-              <div class="joboffer-05">
-                ${T('WorkSystem.noJobOffersCurrentlyAvailable')}
-              </div>
-            `;
-        } else {
-          jobs.forEach((job, idx) => {
-            const isSelected = idx === selectedIndex && this._dndFocusSection === 'list';
-            const jobName = window.WorkSystem.jobName(job);
-            const hourlyPay = Math.round(job.basePay / job.duration);
-
-            listHTML += `
-                <div class="job-item focusable" tabindex="0" data-focus-key="job-${idx}" onclick="${sref}.selectJobItem(${idx})">  <!-- i18n-ignore  inline handler -->
-                  <div class="joboffer-06">
-                    <span class="joboffer-07">
-                      ${jobName}
-                    </span>
-                    <span class="joboffer-08">
-                      ${window.WorkSystem.jobCategoryLabel(job)} • ${job.duration}h ${this.getRemoteTagHTML(job)}
-                    </span>
-                  </div>
-                  <div class="joboffer-09">
-                    <span class="joboffer-10">
-                      ${(hourlyPay / 100).toFixed(2)}€/hr
-                    </span>
-                  </div>
-                </div>
-              `;
-          });
+    // A candidate's portrait is data (a file name and a size), so it is handed
+    // to the stylesheet as custom properties rather than written into markup.
+    applyActorFaces() {
+      if (!this._dndContainer) return;
+      this._dndContainer.querySelectorAll('.job-face[data-size]').forEach(el => {
+        el.style.setProperty('--job-face-size', el.dataset.size + 'px');
+        if (el.dataset.face) {
+          el.style.setProperty('--job-face-img', window.UIPanel.assetUrl(`img/busts/${el.dataset.face}.png`));
         }
+      });
+    }
 
-        return `
-            <h2 class="cc-header-gothic">
-              ${title}
-            </h2>
-            <div class="joboffer-11" id="jobs-list">
-              ${listHTML}
-            </div>
-            <div class="joboffer-12">
-              <div class="back-button focusable joboffer-13" tabindex="0" data-focus-key="back-btn" onclick="${sref}.popScene()">
-                ${T('WorkSystem.dismiss')}
-              </div>
-            </div>
-          `;
-      }
+    // The two pages of this screen, as the shared tab strip.
+    getSectionTabsHTML(sref, hasJob) {
+      const tab = (key, label, on) =>
+        `<div class="backpack-tab focusable${on ? ' selected' : ''}" tabindex="0"` +
+        ` data-focus-key="tab-${key}" onclick="${sref}.showSection('${key}')">${label}</div>`;
+      return `<div class="backpack-tabs">
+        ${tab('list', T('WorkSystem.jobBoardOffers'), this._dndFocusSection === 'list')}
+        ${hasJob ? tab('actors', T('WorkSystem.candidateRoster'), this._dndFocusSection === 'actors') : ''}
+      </div>`;
+    }
+
+    showSection(key) {
+      if (key === this._dndFocusSection) return;
+      if (key === 'actors') { this.openCandidateRoster(); return; }
+      this.retractActorSelection();
+    }
+
+    getJobsOffersBoardHTML(jobs, selectedIndex) {
+      // In OS app mode the active RMMZ scene is Scene_HypernetOS (no job
+      // handlers), so inline onclicks must target the live app instance.
+      const sref = this._isAppMode ? 'window.HypernetJobsApp.appInstance' : 'SceneManager._scene';
 
       let listHTML = "";
       if (jobs.length === 0) {
-        listHTML = `
-            <div class="joboffer-14">
-              ${T('WorkSystem.noJobOffersCurrentlyAvailable')}
-            </div>
-          `;
+        listHTML = `<div class="ui-empty"><div class="ui-empty-text">${T('WorkSystem.noJobOffersCurrentlyAvailable')}</div></div>`;
       } else {
         jobs.forEach((job, idx) => {
-          const isSelected = idx === selectedIndex && this._dndFocusSection === 'list';
+          const isSelected = idx === selectedIndex;
           const jobName = window.WorkSystem.jobName(job);
           const hourlyPay = Math.round(job.basePay / job.duration);
-
           listHTML += `
-              <div class="job-item ${isSelected ? 'selected' : ''}" onclick="${sref}.selectJobItem(${idx})">
-                <div class="joboffer-06">
-                  <span class="joboffer-15" style="font-weight:${isSelected ? 'bold' : 'normal'}">
-                    ${jobName}
-                  </span>
-                  <span class="joboffer-16">
-                    ${window.WorkSystem.jobCategoryLabel(job)} • ${job.duration}h ${this.getRemoteTagHTML(job)}
-                  </span>
-                </div>
-                <div class="joboffer-09">
-                  <span class="joboffer-17">
-                    ${(hourlyPay / 100).toFixed(2)}€/hr
-                  </span>
-                </div>
+            <div class="item-slot job-item focusable ${isSelected ? 'selected' : ''}" tabindex="0"
+                 data-focus-key="job-${idx}" onclick="${sref}.selectJobItem(${idx})">
+              <div class="job-item-info">
+                <span class="job-item-name">${jobName}</span>
+                <span class="job-item-meta">${window.WorkSystem.jobCategoryLabel(job)} &middot; ${job.duration}h ${this.getRemoteTagHTML(job)}</span>
               </div>
-            `;
+              <div class="job-item-pay">${(hourlyPay / 100).toFixed(2)}&euro;/hr</div>
+            </div>`;
         });
       }
 
       return `
-          <h2 class="cc-header-gothic joboffer-18">
-            ${title}
-          </h2>
-          <div class="joboffer-11" id="jobs-list">
-            ${listHTML}
+        <div class="page-header-bar">
+          <div class="back-button focusable" tabindex="0" data-focus-key="back-btn" onclick="${sref}.popScene()">
+            ${T('WorkSystem.dismiss')}
           </div>
-          <div class="joboffer-19">
-            <div class="back-button focusable joboffer-20" onclick="${sref}.popScene()">
-              ${T('WorkSystem.dismiss')}
-            </div>
-          </div>
-        `;
+          <h2 class="title">${T('WorkSystem.jobBoardOffers')}</h2>
+        </div>
+        ${this.getSectionTabsHTML(sref, !!jobs[selectedIndex])}
+        <div class="ui-list ui-scroll" id="jobs-list">${listHTML}</div>`;
     }
 
     getLocationName(mapId) {
@@ -508,242 +420,93 @@
 
     getJobOfferContractHTML(job, actor) {
       if (!job) {
-        if (this._isAppMode) {
-          return `
-              <div class="joboffer-21">
-                ${T('WorkSystem.selectAJobOfferTo')}
-              </div>
-            `;
-        }
-        return `
-            <div class="joboffer-22">
-              ${T('WorkSystem.selectAJobOfferTo')}
-            </div>
-          `;
+        return `<div class="ui-empty"><div class="ui-empty-text">${T('WorkSystem.selectAJobOfferTo')}</div></div>`;
       }
 
       const jobName = window.WorkSystem.jobName(job);
       const description = window.WorkSystem.jobDescription(job);
 
       const reqCheck = window.WorkSystem.meetsRequirements(actor, job);
-      const successChance = window.WorkSystem.calculateSuccessChance(actor, job);
-      const chancePercent = Math.floor(successChance * 100);
-
+      const chancePercent = Math.floor(window.WorkSystem.calculateSuccessChance(actor, job) * 100);
       const chanceClass = chancePercent >= 70 ? "chance--good"
         : chancePercent >= 40 ? "chance--fair" : "chance--poor";
 
       const statKeyMapping = window.WorkSystem && window.WorkSystem.statKeyMapping ? window.WorkSystem.statKeyMapping : {};
       const _si18n = window.WorkSystem && window.WorkSystem.si18n ? window.WorkSystem.si18n : (k) => k;
 
-      if (this._isAppMode) {
-        let requirementsHTML = "";
-        for (const [stat, required] of Object.entries(job.requirements)) {
-          const actorValue = window.WorkSystem.getActorStat(actor, stat);
-          const meetsReq = actorValue >= required;
-          const mappedName = statKeyMapping[stat] || stat;
-          const statLabel = _si18n(mappedName);
-
-          requirementsHTML += `
-              <div class="joboffer-23" style="color:${meetsReq ? 'var(--text-text-alt-3)' : 'var(--text-blood-red)'}; font-weight:${meetsReq ? 'normal' : 'bold'}">
-                <span>${statLabel}</span>
-                <span>${actorValue} / ${required}</span>
-              </div>
-            `;
-        }
-
-        let locationsHTML = "";
-        if (job.locations && job.locations.length > 0) {
-          locationsHTML += `
-              <div class="joboffer-24">
-                <strong class="joboffer-25">${T('WorkSystem.availableLocations')}:</strong>
-                <div class="joboffer-26">
-                  ${job.locations.map(loc => `<span class="joboffer-27">${this.getLocationName(loc)}</span>`).join('')}
-                </div>
-              </div>
-            `;
-        }
-
-        let factionHTML = "";
-        if (job.factionId !== undefined && job.factionId !== null) {
-          const factionName = this._detailWindow.getFactionName(job.factionId);
-          factionHTML = `
-              <div class="joboffer-23">
-                <strong class="joboffer-28">${T('WorkSystem.faction')}:</strong>
-                <span class="joboffer-29">${factionName}</span>
-              </div>
-            `;
-        }
-
-        return `
-            <h2 class="cc-header-gothic joboffer-30">
-              ${T('WorkSystem.proposalContract')}
-            </h2>
-
-            <div class="joboffer-31">
-              <div class="joboffer-32">
-                <div class="joboffer-33">
-                  ${jobName}
-                </div>
-
-                <div class="joboffer-34">
-                  "${description}"
-                </div>
-
-                <div class="joboffer-35">
-                  <div class="joboffer-36">
-                    <strong class="joboffer-28">${T('WorkSystem.categoryLabel')}:</strong>
-                    <span>${window.WorkSystem.jobCategoryLabel(job)}</span>
-                  </div>
-                  <div class="joboffer-36">
-                    <strong class="joboffer-28">${T('WorkSystem.duration')}:</strong>
-                    <span>${T('WorkSystem.hoursValue', { hours: job.duration })}</span>
-                  </div>
-                  <div class="joboffer-36">
-                    <strong class="joboffer-28">${T('WorkSystem.hourlyRate')}:</strong>
-                    <span>€${(job.basePay / job.duration / 100).toFixed(2)}</span>
-                  </div>
-                  <div class="joboffer-37">
-                    <span>${T('WorkSystem.totalReward')}:</span>
-                    <span>€${(job.basePay / 100).toFixed(2)}</span>
-                  </div>
-                  <div class="joboffer-36">
-                    <strong class="joboffer-28">${T('WorkSystem.remoteWorkLabel')}:</strong>
-                    <span class="joboffer-38" style="color:${this.isRemoteJob(job) ? 'var(--text-text-alt-3)' : 'var(--text-blood-red)'}">
-                      ${this.isRemoteJob(job) ? T('WorkSystem.remoteAvailable') : T('WorkSystem.remoteOnSiteOnly')}
-                    </span>
-                  </div>
-                  ${factionHTML}
-                </div>
-
-                ${locationsHTML}
-
-                <div class="joboffer-39">
-                  <strong class="joboffer-25">${T('WorkSystem.requiredStats')} (${actor.name()}):</strong>
-                  <div class="joboffer-40">
-                    ${requirementsHTML}
-                  </div>
-                </div>
-
-                <div class="joboffer-41">
-                  <span class="joboffer-28">${T('WorkSystem.estimatedSuccessRate')}:</span>
-                  <span class="joboffer-42 ${chanceClass}">${chancePercent}%</span>
-                </div>
-
-                ${!reqCheck.meets ? `
-                <div class="joboffer-43">
-                  Deficits detected! Undertaking this contract will carry higher hazards of failure and injury.
-                </div>
-                ` : ''}
-              </div>
-
-              ${this.getChooseCandidateButtonHTML()}
-            </div>
-          `;
-      }
-
       let requirementsHTML = "";
       for (const [stat, required] of Object.entries(job.requirements)) {
         const actorValue = window.WorkSystem.getActorStat(actor, stat);
         const meetsReq = actorValue >= required;
         const mappedName = statKeyMapping[stat] || stat;
-        const statLabel = _si18n(mappedName);
-
         requirementsHTML += `
-            <div class="joboffer-44" style="color:${meetsReq ? 'var(--text-text-alt-18)' : 'var(--text-settings-active)'}; font-weight:${meetsReq ? 'normal' : 'bold'}">
-              <span>${statLabel}</span>
-              <span>${actorValue} / ${required}</span>
-            </div>
-          `;
+          <div class="inspect-spec-row job-req ${meetsReq ? 'req--met' : 'req--unmet'}">
+            <span class="inspect-spec-label">${_si18n(mappedName)}</span>
+            <span class="inspect-spec-value">${actorValue} / ${required}</span>
+          </div>`;
       }
 
-      let locationsHTML = "";
-      if (job.locations && job.locations.length > 0) {
-        locationsHTML += `
-            <div class="joboffer-45">
-              <strong class="joboffer-46">${T('WorkSystem.availableLocations')}:</strong>
-              <div class="joboffer-47">
-                ${job.locations.map(loc => `<span class="joboffer-48">${this.getLocationName(loc)}</span>`).join('')}
-              </div>
-            </div>
-          `;
-      }
+      const locationsHTML = (job.locations && job.locations.length > 0)
+        ? `<div class="inspect-section-title">${T('WorkSystem.availableLocations')}</div>
+           <div class="ui-chip-row">
+             ${job.locations.map(loc => `<span class="ui-chip">${this.getLocationName(loc)}</span>`).join('')}
+           </div>`
+        : "";
 
-      let factionHTML = "";
-      if (job.factionId !== undefined && job.factionId !== null) {
-        const factionName = this._detailWindow.getFactionName(job.factionId);
-        factionHTML = `
-            <div class="joboffer-44">
-              <strong class="joboffer-49">${T('WorkSystem.faction')}:</strong>
-              <span class="joboffer-50">${factionName}</span>
-            </div>
-          `;
-      }
+      const factionRow = (job.factionId !== undefined && job.factionId !== null)
+        ? `<div class="inspect-spec-row">
+             <span class="inspect-spec-label">${T('WorkSystem.faction')}</span>
+             <span class="inspect-spec-value">${this._detailWindow.getFactionName(job.factionId)}</span>
+           </div>`
+        : "";
 
       return `
-          <h2 class="cc-header-gothic joboffer-51">
-            ${T('WorkSystem.proposalContract')}
-          </h2>
-
-          <div class="joboffer-52">
-            <div class="joboffer-53">
-              <div class="joboffer-54">
-                ${jobName}
-              </div>
-
-              <div class="joboffer-55">
-                "${description}"
-              </div>
-
-              <div class="joboffer-56">
-                <div class="joboffer-44">
-                  <strong class="joboffer-49">${T('WorkSystem.categoryLabel')}:</strong>
-                  <span>${window.WorkSystem.jobCategoryLabel(job)}</span>
-                </div>
-                <div class="joboffer-44">
-                  <strong class="joboffer-49">${T('WorkSystem.duration')}:</strong>
-                  <span>${T('WorkSystem.hoursValue', { hours: job.duration })}</span>
-                </div>
-                <div class="joboffer-44">
-                  <strong class="joboffer-49">${T('WorkSystem.hourlyRate')}:</strong>
-                  <span>€${(job.basePay / job.duration / 100).toFixed(2)}</span>
-                </div>
-                <div class="joboffer-57">
-                  <span>${T('WorkSystem.totalReward')}:</span>
-                  <span>€${(job.basePay / 100).toFixed(2)}</span>
-                </div>
-                <div class="joboffer-44">
-                  <strong class="joboffer-49">${T('WorkSystem.remoteWorkLabel')}:</strong>
-                  <span class="joboffer-38" style="color:${this.isRemoteJob(job) ? 'var(--text-text-alt-18)' : 'var(--text-settings-active)'}">
-                    ${this.isRemoteJob(job) ? T('WorkSystem.remoteAvailable') : T('WorkSystem.remoteOnSiteOnly')}
-                  </span>
-                </div>
-                ${factionHTML}
-              </div>
-
-              ${locationsHTML}
-
-              <div class="joboffer-58">
-                <strong class="joboffer-46">${T('WorkSystem.requiredStats')} (${actor.name()}):</strong>
-                <div class="joboffer-59">
-                  ${requirementsHTML}
-                </div>
-              </div>
-
-              <div class="joboffer-60">
-                <span class="joboffer-49">${T('WorkSystem.estimatedSuccessRate')}:</span>
-                <span class="joboffer-61 ${chanceClass}">${chancePercent}%</span>
-              </div>
-
-              ${!reqCheck.meets ? `
-              <div class="joboffer-62">
-                Deficits detected! Undertaking this contract will carry higher hazards of failure and injury.
-              </div>
-              ` : ''}
+        <div class="ui-detail job-contract">
+          <div class="ui-detail-head">
+            <div class="ui-detail-titles">
+              <h3 class="job-contract-title">${jobName}</h3>
+              <div class="job-contract-kicker">${T('WorkSystem.proposalContract')}</div>
             </div>
-
-            ${this.getChooseCandidateButtonHTML()}
           </div>
-        `;
+          <div class="ui-detail-scroll ui-scroll">
+            <div class="ui-prose job-contract-brief">${description}</div>
+            <div class="inspect-spec-grid">
+              <div class="inspect-spec-row">
+                <span class="inspect-spec-label">${T('WorkSystem.categoryLabel')}</span>
+                <span class="inspect-spec-value">${window.WorkSystem.jobCategoryLabel(job)}</span>
+              </div>
+              <div class="inspect-spec-row">
+                <span class="inspect-spec-label">${T('WorkSystem.duration')}</span>
+                <span class="inspect-spec-value">${T('WorkSystem.hoursValue', { hours: job.duration })}</span>
+              </div>
+              <div class="inspect-spec-row">
+                <span class="inspect-spec-label">${T('WorkSystem.hourlyRate')}</span>
+                <span class="inspect-spec-value">&euro;${(job.basePay / job.duration / 100).toFixed(2)}</span>
+              </div>
+              <div class="inspect-spec-row">
+                <span class="inspect-spec-label">${T('WorkSystem.totalReward')}</span>
+                <span class="inspect-spec-value job-reward">&euro;${(job.basePay / 100).toFixed(2)}</span>
+              </div>
+              <div class="inspect-spec-row">
+                <span class="inspect-spec-label">${T('WorkSystem.remoteWorkLabel')}</span>
+                <span class="inspect-spec-value ${this.isRemoteJob(job) ? 'req--met' : 'req--unmet'}">
+                  ${this.isRemoteJob(job) ? T('WorkSystem.remoteAvailable') : T('WorkSystem.remoteOnSiteOnly')}
+                </span>
+              </div>
+              ${factionRow}
+            </div>
+            ${locationsHTML}
+            <div class="inspect-section-title">${T('WorkSystem.requiredStats')} (${actor.name()})</div>
+            <div class="inspect-spec-grid">${requirementsHTML}</div>
+            <div class="inspect-spec-row">
+              <span class="inspect-spec-label">${T('WorkSystem.estimatedSuccessRate')}</span>
+              <span class="inspect-spec-value ${chanceClass}">${chancePercent}%</span>
+            </div>
+            ${!reqCheck.meets
+              ? `<div class="ui-prose job-deficit">${T('WorkSystem.deficitWarning')}</div>` : ''}
+          </div>
+          ${this.getChooseCandidateButtonHTML()}
+        </div>`;
     }
 
     // The way off the contract page and onto the roster, where a job is
@@ -752,20 +515,11 @@
     // only input, and it has nothing to press until this button exists.
     getChooseCandidateButtonHTML() {
       if (this._dndFocusSection !== 'list') return '';
-
-      if (this._isAppMode) {
-        return `
-            <div class="action-button focusable joboffer-63" onclick="window.HypernetJobsApp.appInstance.openCandidateRoster()">
-              ${T('WorkSystem.chooseCandidate')}
-            </div>
-          `;
-      }
-
-      return `
-          <div class="action-button focusable joboffer-64" onclick="SceneManager._scene.openCandidateRoster()">
-            ${T('WorkSystem.chooseCandidate')}
-          </div>
-        `;
+      const sref = this._isAppMode ? 'window.HypernetJobsApp.appInstance' : 'SceneManager._scene';
+      return `<div class="inspect-actions">
+        <div class="inspect-btn focusable" tabindex="0" data-focus-key="choose-btn"
+             onclick="${sref}.openCandidateRoster()">${T('WorkSystem.chooseCandidate')}</div>
+      </div>`;
     }
 
     // A job that can be done down the wire gets a second way to take it: the
@@ -777,20 +531,8 @@
 
     getRemoteWorkButtonHTML(job, sref) {
       if (!this.isRemoteJob(job)) return '';
-
-      if (this._isAppMode) {
-        return `
-            <div class="action-button focusable joboffer-65" onclick="${sref}.confirmRemoteWork()">
-              ${T('WorkSystem.remoteWork')}
-            </div>
-          `;
-      }
-
-      return `
-          <div class="action-button focusable joboffer-66" onclick="${sref}.confirmRemoteWork()">
-            ${T('WorkSystem.remoteWork')}
-          </div>
-        `;
+      return `<div class="inspect-btn focusable" tabindex="0" data-focus-key="remote-btn"
+                   onclick="${sref}.confirmRemoteWork()">${T('WorkSystem.remoteWork')}</div>`;
     }
 
     // Small "remote" chip for the board listing, so the offers that can be
@@ -804,12 +546,9 @@
     getActorFaceHTML(actor, size = 64) {
       const faceName = actor.faceName();
       if (!faceName) {
-        return `<div class="joboffer-67 job-face" style="width:${size}px; height:${size}px">${actor.name().charAt(0)}</div>`;
+        return `<div class="job-face job-face--initial" data-size="${size}">${actor.name().charAt(0)}</div>`;
       }
-
-      return `
-          <div class="joboffer-68 job-face" style="width:${size}px; height:${size}px; background-image:url('img/busts/${faceName}.png')"></div>
-        `;
+      return `<div class="job-face" data-size="${size}" data-face="${faceName}"></div>`;
     }
 
     getActorRequirementDetailHTML(actor, job) {
@@ -824,11 +563,10 @@
         const statLabel = _si18n(mappedName);
 
         html += `
-            <div class="joboffer-69 ${isMet ? 'req--met' : 'req--unmet'}">
-              <span>${statLabel}</span>
-              <span>${actorValue} / ${required}</span>
-            </div>
-          `;
+          <div class="job-req-mini ${isMet ? 'req--met' : 'req--unmet'}">
+            <span>${statLabel}</span>
+            <span>${actorValue} / ${required}</span>
+          </div>`;
       }
       return html;
     }
@@ -836,111 +574,41 @@
     getActorSelectionHTML(actors, selectedActorIndex, selectedJob) {
       const sref = this._isAppMode ? 'window.HypernetJobsApp.appInstance' : 'SceneManager._scene';
 
-      if (this._isAppMode) {
-        let listHTML = "";
-        actors.forEach((actor, idx) => {
-          const isSelected = idx === selectedActorIndex;
-          const isFocused = isSelected && this._dndFocusSection === 'actors';
-
-          const successChance = window.WorkSystem.calculateSuccessChance(actor, selectedJob);
-          const chancePercent = Math.floor(successChance * 100);
-          const chanceClass = chancePercent >= 70 ? "chance--good"
-            : chancePercent >= 40 ? "chance--fair" : "chance--poor";
-
-          listHTML += `
-              <div class="roster-item focusable ${isSelected ? 'selected' : ''}" tabindex="0" data-focus-key="actor-${idx}" onclick="${sref}.selectActorItem(${idx})">  <!-- i18n-ignore  inline handler -->
-                ${this.getActorFaceHTML(actor, 44)}
-                <div class="joboffer-70">
-                  <div class="joboffer-71">
-                    <strong class="joboffer-72">
-                      ${actor.name()}
-                    </strong>
-                    <span class="joboffer-73 ${chanceClass}">
-                      ${chancePercent}% SUCCESS
-                    </span>
-                  </div>
-                  <div class="joboffer-74">
-                    ${this.getActorRequirementDetailHTML(actor, selectedJob)}
-                  </div>
-                </div>
-              </div>
-            `;
-        });
-
-        return `
-            <h2 class="cc-header-gothic">
-              ${T('WorkSystem.candidateRoster')}
-            </h2>
-
-            <div class="joboffer-75" id="roster-list">
-              ${listHTML}
-            </div>
-
-            <div class="joboffer-76">
-              <div class="action-button focusable joboffer-63" tabindex="0" data-focus-key="accept-btn" onclick="${sref}.confirmActorSelection()">
-                ${T('WorkSystem.acceptJobOffer')}
-              </div>
-
-              ${this.getRemoteWorkButtonHTML(selectedJob, sref)}
-
-              <div class="action-button focusable joboffer-77" onclick="${sref}.retractActorSelection()">
-                ${T('WorkSystem.retractCandidate')}
-              </div>
-            </div>
-          `;
-      }
-
-      let listHTML = "";
-      actors.forEach((actor, idx) => {
+      const listHTML = actors.map((actor, idx) => {
         const isSelected = idx === selectedActorIndex;
-        const isFocused = isSelected && this._dndFocusSection === 'actors';
-
-        const successChance = window.WorkSystem.calculateSuccessChance(actor, selectedJob);
-        const chancePercent = Math.floor(successChance * 100);
+        const chancePercent = Math.floor(window.WorkSystem.calculateSuccessChance(actor, selectedJob) * 100);
         const chanceClass = chancePercent >= 70 ? "chance--good"
           : chancePercent >= 40 ? "chance--fair" : "chance--poor";
-
-        listHTML += `
-            <div class="roster-item focusable ${isSelected ? 'selected' : ''} ${isFocused ? 'focused' : ''}" onclick="${sref}.selectActorItem(${idx})">
-              ${this.getActorFaceHTML(actor, 54)}
-              <div class="joboffer-70">
-                <div class="joboffer-71">
-                  <strong class="joboffer-15">
-                    ${actor.name()}
-                  </strong>
-                  <span class="joboffer-78 ${chanceClass}">
-                    ${chancePercent}% SUCCESS
-                  </span>
-                </div>
-                <div class="joboffer-79">
-                  ${this.getActorRequirementDetailHTML(actor, selectedJob)}
-                </div>
+        return `
+          <div class="item-slot roster-item focusable ${isSelected ? 'selected' : ''}" tabindex="0"
+               data-focus-key="actor-${idx}" onclick="${sref}.selectActorItem(${idx})">
+            ${this.getActorFaceHTML(actor, 44)}
+            <div class="roster-item-info">
+              <div class="roster-item-head">
+                <strong class="roster-item-name">${actor.name()}</strong>
+                <span class="roster-item-chance ${chanceClass}">${T('WorkSystem.successRatePct', { pct: chancePercent })}</span>
               </div>
+              <div class="roster-item-reqs">${this.getActorRequirementDetailHTML(actor, selectedJob)}</div>
             </div>
-          `;
-      });
+          </div>`;
+      }).join('');
 
       return `
-          <h2 class="cc-header-gothic joboffer-18">
-            ${T('WorkSystem.candidateRoster')}
-          </h2>
-
-          <div class="joboffer-75" id="roster-list">
-            ${listHTML}
-          </div>
-
-          <div class="joboffer-80">
-            <div class="action-button focusable joboffer-64" onclick="${sref}.confirmActorSelection()">
-              ${T('WorkSystem.acceptJobOffer')}
+        <div class="ui-detail job-roster">
+          <div class="ui-detail-head">
+            <div class="ui-detail-titles">
+              <h3 class="job-contract-title">${T('WorkSystem.candidateRoster')}</h3>
             </div>
-
+          </div>
+          <div class="ui-detail-scroll ui-scroll" id="roster-list">${listHTML}</div>
+          <div class="inspect-actions">
+            <div class="inspect-btn focusable" tabindex="0" data-focus-key="accept-btn"
+                 onclick="${sref}.confirmActorSelection()">${T('WorkSystem.acceptJobOffer')}</div>
             ${this.getRemoteWorkButtonHTML(selectedJob, sref)}
-
-            <div class="action-button focusable joboffer-81" onclick="${sref}.retractActorSelection()">
-              ${T('WorkSystem.retractCandidate')}
-            </div>
+            <div class="inspect-btn inspect-btn--secondary focusable" tabindex="0"
+                 onclick="${sref}.retractActorSelection()">${T('WorkSystem.retractCandidate')}</div>
           </div>
-        `;
+        </div>`;
     }
 
     selectJobItem(index) {
@@ -1059,6 +727,11 @@
             // button, so remote work answers to Shift on the roster page.
             this.confirmRemoteWork();
           }
+        }
+
+        if (Input.isTriggered('pagedown') || Input.isTriggered('pageup')) {
+          this.showSection(this._dndFocusSection === 'list' ? 'actors' : 'list');
+          return;
         }
 
         if (Input.isTriggered('cancel') || Input.isTriggered('escape')) {

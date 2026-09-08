@@ -721,6 +721,17 @@
   // where the elections still mean something.
   const REAL_CANDIDATE_CHANCE = 0.72;
 
+  // A hyperpower is not a parish council: the seat of a bloc is where the
+  // century's written-down names actually stood, so a power reaches into the
+  // book far more readily than one of its nations does. A nation keeps the old
+  // odds, which is what leaves room for anybody the world invented.
+  const REAL_CANDIDATE_CHANCE_POWER = 0.93;
+
+  function realCandidateChance(power) {
+    return (power && power.kind === "nation")
+      ? REAL_CANDIDATE_CHANCE : REAL_CANDIDATE_CHANCE_POWER;
+  }
+
   // Everyone the book of leaders (Leaders.json, through HistorySimulator) has
   // standing for this polity right now: somebody of one of its nations, whose
   // years cover the date, who is not already seated here, and who does not hold
@@ -750,7 +761,7 @@
     const age = opts.age ?? rng.int(34, 72);
 
     let record = null;
-    if (opts.historical !== false && rng.next() < REAL_CANDIDATE_CHANCE) {
+    if (opts.historical !== false && rng.next() < realCandidateChance(power)) {
       const pool = historicalCandidates(power, nowMinute);
       if (pool.length) record = pool[rng.int(0, pool.length - 1)];
     }
@@ -791,6 +802,9 @@
       approval:  record ? rng.int(45, 75) : rng.int(35, 65),
       scandals:  0,
       alive:     true,
+      // The illness that will kill them, once one has been diagnosed:
+      // { diseaseId, diseaseName, sinceMinute, untilMinute }.
+      illness:   null,
       office:    null,
       // Which of the two this is, and the book entry behind them when there is
       // one: the wiki files a written-down leader under Leaders and an invented
@@ -844,6 +858,48 @@
 
   function spawnIndependent(power, rng, minute, spread = 45) {
     return makePolitician(power, rng, minute, { spread, partyId: null });
+  }
+
+  // ---- terminal illness ----------------------------------------------------
+  // A politician does not only get shot or get old: some of them are told they
+  // are dying and then govern anyway until it takes them. Only a MORTAL illness
+  // is ever handed out - the disease table's own `lethal` band, or a case
+  // fatality ratio a tenth of the sick and worse - because a head of state with
+  // a cold is not history. The diagnosis is announced the day it is made, and
+  // the illness runs for months before the death it ends in, so the world reads
+  // about a dying leader before it reads about a dead one.
+  const ILLNESS_DAY_AT_50 = 0.000012;   // daily odds at fifty
+  const ILLNESS_AGE_SCALE = 12;         // years of age per doubling
+  const ILLNESS_MIN_AGE = 30;
+  const ILLNESS_MIN_DAYS = 60;
+  const ILLNESS_MAX_DAYS = 900;
+
+  let _mortalDiseases = null;
+  function mortalDiseases() {
+    if (_mortalDiseases) return _mortalDiseases;
+    const DS = window.DiseaseSystem;
+    const all = (DS && typeof DS.all === "function" && DS.all()) ||
+      ((window.Health && window.Health.Diseases && window.Health.Diseases.diseases) || []);
+    _mortalDiseases = all.filter(d => d && d.id && !d.stageOnly &&
+      (d.severity === "lethal" || (typeof d.cfr === "number" && d.cfr >= 0.1)));
+    return _mortalDiseases;
+  }
+
+  // The world's chronicle is told about a dying head of state, and about the
+  // death itself, in the same words HistorySimulator writes them in - a leader
+  // the book never named still belongs in the century's record.
+  function recordIllnessInHistory(descKey, power, pol, disease, minute, extra) {
+    const HM = window.HistoryManager;
+    if (!HM || typeof HM.recordEvent !== "function") return;
+    const params = Object.assign({
+      leader: pol.name, place: power.name,
+      disease: (typeof HM.diseaseRef === "function")
+        ? HM.diseaseRef(disease.id, disease.name) : disease.name,
+    }, extra || {});
+    HM.recordEvent({
+      date: dateStrOf(minute), category: "political", type: "diagnosis",
+      descKey, descParams: params,
+    });
   }
 
   // Single place every politician death goes through, so the wiki can always
@@ -1523,6 +1579,76 @@
 
   // resolveElection, builds the record, dispatches to the engine, applies
   // aftermath (grudges among losing voters), and logs the event.
+  // ==========================================================================
+  // WRITTEN-DOWN HEADS OF STATE
+  // ==========================================================================
+  // Some offices are not up for election in any sense the simulation can
+  // model: the book names who holds them and for how long, and one name
+  // follows another the way the century actually ran. Leaders.json says so with
+  // `headOfState: true`, and the `years` on the same record are the term. North
+  // Korea is the whole of this list - three Kims, 1966 to the end of the world's
+  // calendar - and every other polity elects, deposes and buries its own heads
+  // exactly as before.
+  function canonHeadRecord(power, minute) {
+    const HM = window.HistoryManager;
+    if (!HM || typeof HM.listLeaderRecords !== "function") return null;
+    const nations = new Set();
+    if (power.kind === "nation") nations.add(power.name);
+    else if (power.homeNation) nations.add(power.homeNation);
+    if (!nations.size) return null;
+    const year = yearOf(minute);
+    return HM.listLeaderRecords().find(rec =>
+      rec && rec.headOfState && rec.country && nations.has(rec.country) &&
+      Array.isArray(rec.years) && year >= rec.years[0] && year <= rec.years[1]) || null;
+  }
+
+  // Seats the person the book names, whatever the ballot said. The outgoing
+  // holder is not merely retired: these are offices nobody leaves alive, so a
+  // canon head whose term has run out dies the way they did.
+  function enforceCanonHead(state, power, minute, record) {
+    const canon = canonHeadRecord(power, minute);
+    if (!canon) return null;
+    const held = power.politicians[power.headId];
+    if (held && held.name === canon.name) return held;
+
+    if (held && held.canonHead && held.alive) {
+      held.protected = false;
+      killPolitician(power, held, minute,
+        { key: "Politics.death.naturalCauses", params: { age: politicianAge(held, minute) } });
+      pushPowerEvent(power, minute, "death", "Politics.event.headDies",
+        { name: held.name, age: politicianAge(held, minute), power: power.name,
+          title: powerLabel(power, "headTitle") });
+    } else if (held && held.office === power.headTitle) {
+      held.office = null;
+    }
+
+    const rng = new PolRng(worldSeed() ^ nameHash("canonhead:" + canon.name));
+    let head = Object.values(power.politicians).find(pol => pol.name === canon.name);
+    if (!head) {
+      const rulingParty = partyById(power, power.rulingPartyId) || power.parties[0];
+      head = makePolitician(power, rng, minute, {
+        historical: false, spread: 8,
+        ideology: rulingParty ? rulingParty.platform : power.baseline,
+        partyId: rulingParty ? rulingParty.id : null,
+      });
+      head.name = canon.name;
+      head.real = true;
+      head.leaderId = canon.id || null;
+      head.approval = 72;
+      if (rulingParty) rulingParty.leaderId = head.id;
+    }
+    head.alive = true;
+    head.illness = null;
+    // The book already says when they leave; nothing else may take them first.
+    head.canonHead = true;
+    head.protected = true;
+    head.office = power.headTitle;
+    power.headId = head.id;
+    recordHead(power, minute, head, "succession");
+    if (record) record.head = head.name;
+    return head;
+  }
+
   function resolveElection(state, power, minute, rngOuter, opts = {}) {
     // No bench, no ballot. A polity whose nation stands no parties at all
     // (a modded power, a country left out of Parties.json) simply holds no
@@ -1540,6 +1666,8 @@
     };
     const engine = ElectionEngines[power.system] || ElectionEngines.parliamentary;
     engine.call(ElectionEngines, state, power, minute, rng, record);
+    // Whoever the book names holds the office however the vote went.
+    enforceCanonHead(state, power, minute, record);
     pushElection(power, record);
     if (!opts.historical) {
       pushPowerEvent(power, minute, "election",
@@ -1748,6 +1876,56 @@
     for (const pol of Object.values(power.politicians)) {
       if (!pol.alive || pol.protected) continue;
       const age = politicianAge(pol, nowChunkEnd);
+
+      // Whoever is already dying dies on the day the diagnosis gave them, and
+      // is never rolled for anything else in the meantime.
+      if (pol.illness) {
+        if (nowChunkEnd < pol.illness.untilMinute) continue;
+        const at = evMinute();
+        const disease = { id: pol.illness.diseaseId, name: pol.illness.diseaseName };
+        killPolitician(power, pol, at,
+          { key: "Politics.death.illness", params: { disease: pol.illness.diseaseName } });
+        const wasHeadIll = pol.id === power.headId;
+        pushPowerEvent(power, at, "death", "Politics.event.diesOfIllness",
+          { name: pol.name, disease: pol.illness.diseaseName, power: power.name,
+            title: powerLabel(power, "headTitle") });
+        if (wasHeadIll) {
+          recordIllnessInHistory("History.internal.diedOfIllness", power, pol, disease, at);
+        }
+        pol.illness = null;
+        const illParty = partyById(power, pol.partyId);
+        if (illParty && illParty.leaderId === pol.id) {
+          illParty.leaderId = makePolitician(power, rng, nowChunkEnd,
+            { ideology: illParty.platform, spread: 20, partyId: illParty.id }).id;
+        }
+        if (wasHeadIll) { pol.office = null; snapElection = true; }
+        continue;
+      }
+
+      // A new diagnosis, on the same curve age itself runs on.
+      if (age >= ILLNESS_MIN_AGE) {
+        const iDay = ILLNESS_DAY_AT_50 * Math.exp(Math.max(0, age - 50) / ILLNESS_AGE_SCALE);
+        if (sampleCount(rng, iDay * days) > 0) {
+          const pool = mortalDiseases();
+          if (pool.length) {
+            const disease = pool[rng.int(0, pool.length - 1)];
+            const at = evMinute();
+            const runDays = rng.int(ILLNESS_MIN_DAYS, ILLNESS_MAX_DAYS);
+            pol.illness = {
+              diseaseId: disease.id, diseaseName: disease.name,
+              sinceMinute: at, untilMinute: at + runDays * MINUTES_PER_DAY,
+            };
+            pushPowerEvent(power, at, "diagnosis", "Politics.event.diagnosed",
+              { name: pol.name, disease: disease.name, power: power.name,
+                title: powerLabel(power, "headTitle") });
+            if (pol.id === power.headId) {
+              recordIllnessInHistory("History.internal.diagnosed", power, pol, disease, at);
+            }
+            continue;
+          }
+        }
+      }
+
       const pDay = 0.00002 * Math.exp(Math.max(0, age - 50) / 12);
       if (sampleCount(rng, pDay * days) > 0) {
         const at = evMinute();
@@ -1774,6 +1952,10 @@
       resolveElection(state, power, nowChunkEnd, rng, { label: "snap" });
       power.nextElectionMinute = nowChunkEnd + power.termDays * MINUTES_PER_DAY;
     }
+
+    // A written-down succession does not wait for a ballot: the day one term
+    // in the book ends is the day the next name is in office.
+    enforceCanonHead(state, power, nowChunkEnd, null);
   }
 
   // ==========================================================================
@@ -1965,7 +2147,14 @@
       if (typeof profile.wealthTierBase === "number") ideology.econ = clamp(Math.round(ideology.econ + (profile.wealthTierBase - 2) * 12), -100, 100);
     }
 
-    const partyId = nearestPartyId(power, ideology, polity.country);
+    // A character the player built declares for a party only if the player
+    // said so on the detailed sheet: nobody is born card-carrying. Everybody
+    // else drifts to the party nearest their own creed, as before.
+    const partyId = profile && profile.playerCreated
+      ? (profile.declaredPartyName
+          ? (ballotFor(power, polity.country).find(p => p.name === profile.declaredPartyName)?.id ?? null)
+          : null)
+      : nearestPartyId(power, ideology, polity.country);
 
     const identity = {
       power: polity.power, country: polity.country, group: groupName ?? null,
@@ -2451,8 +2640,48 @@
   // PUBLIC API
   // ==========================================================================
 
+  // ── Policy positions: what a platform actually DOES ─────────────────────────
+  //
+  // A platform is five numbers between -100 and 100, which says nothing to a
+  // reader. js/db/WorldGen/Policies.json turns each of them into the policy a
+  // government on that number would enact ("Conscription state", "Chartered
+  // orders"), and every article that used to print a bar prints the policy.
+  //
+  // Four of the five fields read an axis of the platform directly. SCIENCE has
+  // no axis in the simulation and is not going to get one - nobody votes on an
+  // axis - so it is derived from the three that decide how a government treats
+  // inquiry: mysticism and tradition both pull against it, a planned economy
+  // pulls slightly toward the research state. It is a reading of the platform,
+  // not a new number stored anywhere.
+  function policyAxes(platform) {
+    const p = platform || {};
+    const n = v => (Number.isFinite(Number(v)) ? Number(v) : 0);
+    const sci = Math.max(-100, Math.min(100,
+      Math.round(-0.55 * n(p.myst) - 0.35 * n(p.trad) - 0.10 * n(p.econ))));
+    return { econ: n(p.econ), trad: n(p.trad), mil: n(p.mil), myst: n(p.myst), sci };
+  }
+
+  function policyFields() {
+    const book = window.WorldGen && window.WorldGen.Policies;
+    return (book && Array.isArray(book.fields)) ? book.fields : [];
+  }
+
+  // The policies a platform amounts to, one per field, in book order. Each
+  // entry is { fieldId, fieldName, icon, value, policy } where `policy` is the
+  // Policies.json band the value falls in (null for a field with no band).
+  function policiesFor(platform) {
+    const axes = policyAxes(platform);
+    return policyFields().map(field => {
+      const value = axes[field.axis] ?? 0;
+      const band = (field.bands || []).find(b => value >= b.min && value <= b.max) || null;
+      return { fieldId: field.id, fieldName: field.name, icon: field.icon || 0, value, policy: band };
+    });
+  }
+
   window.NPCPolitics = {
     catchUp,
+    policyAxes,
+    policiesFor,
     listPowers() { return Object.keys($gameSystem?._npcPolitics?.powers || {}); },
     getPower(name) { return $gameSystem?._npcPolitics?.powers?.[canonicalFaction(name)] ?? null; },
     getIdentity(npcName) { return $gameSystem?._npcPolitics?.identities?.[npcName] ?? null; },
@@ -2474,6 +2703,35 @@
       if (!state || !groupName) return null;
       try { return resolveGroupPolity(state, groupName).country || null; }
       catch (_) { return null; }
+    },
+    // The nation a hometown (a Destinations.json / map-group key) stands in,
+    // answerable before any political state exists: character creation asks
+    // this to know which national ballot a made character could join.
+    countryOfHometown(town) {
+      if (!town) return null;
+      const declared = window.WorkSystem?.destinationCountry?.(town)?.country;
+      if (declared) return declared;
+      const match = getCountries().find(c => norm(c.country) === norm(town));
+      return match ? match.country : null;
+    },
+    // The parties of `country` a character holding `ideologyId` could plausibly
+    // declare for, nearest creed first. Parties standing on that very creed
+    // come first; the list is filled out with the closest platforms after them
+    // so a nation with no exact match still offers a ballot.
+    partyChoicesFor(country, ideologyId, limit = 12) {
+      const roster = nationalParties(country);
+      if (!roster.length) return [];
+      const creed = ideologyById(ideologyId);
+      const axes = creed && creed.axes ? creed.axes : null;
+      const scored = roster.map(entry => ({
+        name: entry.name,
+        ideologyId: entry.ideologyId || null,
+        exact: !!(ideologyId && entry.ideologyId === ideologyId),
+        distance: axes ? ideologyDistance(axes, (ideologyById(entry.ideologyId) || {}).axes) : 0,
+      }));
+      scored.sort((a, b) => (b.exact - a.exact) || (a.distance - b.distance)
+        || a.name.localeCompare(b.name));
+      return scored.slice(0, limit);
     },
     getSettlement(groupName) { return $gameSystem?._npcPolitics?.settlements?.[groupName] ?? null; },
     opinionModifier,

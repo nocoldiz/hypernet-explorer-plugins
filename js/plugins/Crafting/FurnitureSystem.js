@@ -977,7 +977,7 @@
     // The current build mode, read from the active Scene_Map build session.
     function currentBuildMode() {
         const s = SceneManager._scene;
-        return (s && s._fbBuildMode === 'purchase') ? 'purchase' : 'construct';
+        return (s && s._fbBuildMode === 'construct') ? 'construct' : 'purchase';
     }
 
     // Mode-aware affordability used by every UI/placement path: gold in purchase
@@ -1000,6 +1000,24 @@
         } else {
             consumeFurnitureMaterials(furniture);
         }
+    }
+
+    // Refused placement: the piece costs more than the party has. Says which
+    // currency ran out, since the two modes spend different ones. Keyed so a
+    // held paint stroke raises one toast, not one per tile.
+    function warnCannotAfford(furniture) {
+        SoundManager.playBuzzer();
+        if (!window.ParchmentToast) return;
+        const purchasing = currentBuildMode() === 'purchase' ||
+            (furniture && furniture.__placeKind === 'animal');
+        const text = purchasing
+            ? T('Furniture.cannotAfford.gold').replace('%1', formatEuros(getFurniturePrice(furniture)))
+            : T('Furniture.cannotAfford.materials');
+        window.ParchmentToast.show(text, {
+            severity: 'warning',
+            duration: 180,
+            key: 'furniture-cannot-afford'
+        });
     }
 
     // Every price in the build panel is shown in euros: the party's gold is
@@ -1359,6 +1377,19 @@
             !$gameMap.isPassable(x, y, 8);
     }
 
+    // A tile that reads as a wall for building purposes: the wall terrain tag,
+    // region ID 4 (hand-marked wall strips), or a fully impassable tile.
+    function isWallLikeTile(x, y) {
+        if (!$gameMap || !$gameMap.isValid(x, y)) return false;
+        if ($gameMap.terrainTag(x, y) === 4) return true;
+        if ($gameMap.regionId(x, y) === 4) return true;
+        if (isTileWall(x, y)) return true;
+        // A wall the party built itself counts too, whatever the tileset flags
+        // of the autotile it painted say.
+        const rec = findPlacedTileRecordAt(x, y);
+        return !!(rec && rec.kind === 'wall');
+    }
+
     // Find valid furniture placement positions
     // Furniture should be placed south of walls (on passable tiles north of walls)
     // or north of walls (on passable tiles south of walls)
@@ -1403,9 +1434,12 @@
                 if (!$gameMap.isValid(checkX, checkY)) return false;
 
                 const terrainTag = $gameMap.terrainTag(checkX, checkY);
+                // Anything may be placed over a plain passable tile: a walkable
+                // tile never fails a terrain rule, whatever the category.
+                const tilePassable = $gameMap.isPassable(checkX, checkY, 2);
 
-                // Terrain tag 7 always blocks furniture placement
-                if (terrainTag === 7) return false;
+                // Terrain tag 7 blocks furniture placement, unless walkable
+                if (terrainTag === 7 && !tilePassable) return false;
 
                 // Does THIS tile become impassable once placed? Only blocking
                 // tiles are restricted to real floor; passable upper tiles may
@@ -1417,20 +1451,18 @@
                     case 'lower2': tileBlocks = (fy >= height - 2); break;
                 }
 
-                if (cat === CAT_DECORATIONS) {
-                    // Placeable anywhere - no terrain restriction.
+                if (cat === CAT_DECORATIONS || tilePassable) {
+                    // Decorations go anywhere, and a passable tile accepts any
+                    // piece: carpets, wall decor and solids alike.
                 } else if (cat === CAT_CARPETS) {
-                    // Floor decor: every tile must be a walkable floor, never a wall.
-                    if (terrainTag === 4) return false;
-                    if (!$gameMap.isPassable(checkX, checkY, 2)) return false;
+                    // Floor decor on a non-walkable tile is never allowed.
+                    return false;
                 } else if (isWallPiece) {
-                    // Wall decor: every tile must sit on a wall (terrain tag 4).
-                    if (terrainTag !== 4) return false;
+                    // Wall decor on a non-walkable tile must sit on a wall.
+                    if (!isWallLikeTile(checkX, checkY)) return false;
                 } else if (tileBlocks) {
-                    // Blocking (lower) tiles cannot sit on a wall and need floor;
-                    // passable (upper) tiles above them may overlap walls.
-                    if (terrainTag === 4) return false;
-                    if (!$gameMap.isPassable(checkX, checkY, 2)) return false;
+                    // Blocking (lower) tiles need real floor.
+                    return false;
                 }
             }
         }
@@ -2255,10 +2287,12 @@
         return !!(rec && (rec.kind === 'wall' || rec.kind === 'terrain'));
     }
 
+    // Doors belong in a wall: only wall tiles (terrain tag 4, region ID 4 or a
+    // fully impassable tile) take one.
     function canPlaceDoorAt(x, y) {
         if (!$gameMap || !$gameMap.isValid(x, y)) return false;
         if ($gameMap.eventIdXy(x, y) > 0) return false;
-        return $gameMap.isPassable(x, y, 2);
+        return isWallLikeTile(x, y);
     }
 
     // ── Feature catalog (from the current map's tileset, via ProcGenUtils) ─────
@@ -2377,6 +2411,340 @@
         return catalog;
     }
 
+    // ── Prefab catalogue (the authored pieces of the current biome) ─────
+    // Every biome names its own prefab pool in js/db/WorldGen/Biomes.json, and
+    // the generator scatters those pieces over its squares. The party can buy
+    // one outright and stand it where it likes: the piece is written into the
+    // square's tile data and stamped again every time that square is generated,
+    // so from then on it is part of the land. An authored map has no picture of
+    // itself, so the card is its name and its footprint and nothing else.
+    const PREFAB_PRICE_PER_TILE = 90;
+    const PREFAB_WOOD_PER_TILE = 0.5;
+
+    function procMapIdForBuild() {
+        const WMT = window.WorldMapTransfer;
+        return (WMT && WMT.procMapId) || 636;
+    }
+
+    function currentProcBiomeName() {
+        const pg = $gameSystem && $gameSystem._procGenData;
+        return (pg && pg.currentBiome) || null;
+    }
+
+    // Cached per biome: the sizes come from the prefab maps themselves, which
+    // are read once and kept by ProceduralMapPrefabs' own cache.
+    let _prefabCatalogCache = null;
+    let _prefabCatalogBiome = null;
+    function getPrefabCatalog() {
+        const biomeName = currentProcBiomeName();
+        // A prefab belongs to a procedural square: an authored map is already
+        // architecture and has nothing for one to be stamped into.
+        if (!biomeName || !$gameMap || $gameMap.mapId() !== procMapIdForBuild()) return {};
+        if (_prefabCatalogBiome === biomeName && _prefabCatalogCache) return _prefabCatalogCache;
+        const sys = window.ProceduralMapPrefabs;
+        const biomes = (window.WorldGen && window.WorldGen.Biomes) || [];
+        const biome = biomes.find(b => b && b.name === biomeName);
+        const catalog = {};
+        if (sys && typeof sys.loadPrefabSync === 'function' && biome && Array.isArray(biome.prefabs)) {
+            for (const mapId of biome.prefabs.flat()) {
+                if (catalog[mapId]) continue;
+                let data = null;
+                try { data = sys.loadPrefabSync(mapId); } catch (e) { data = null; }
+                if (!data || !data.width || !data.height) continue;
+                const info = ($dataMapInfos && $dataMapInfos[mapId]) ? $dataMapInfos[mapId] : null;
+                const area = data.width * data.height;
+                catalog[mapId] = {
+                    mapId, width: data.width, height: data.height,
+                    name: (info && info.name) ? info.name : String(mapId),
+                    // Fixed by footprint: a piece costs what its ground costs,
+                    // in money or in the wood it takes to raise it.
+                    price: Math.round(area * PREFAB_PRICE_PER_TILE),
+                    materialCost: { [WOOD_ITEM_ID]: Math.max(1, Math.round(area * PREFAB_WOOD_PER_TILE)) }
+                };
+            }
+        }
+        _prefabCatalogBiome = biomeName;
+        _prefabCatalogCache = catalog;
+        return catalog;
+    }
+
+    // A prefab needs its whole footprint inside the square and clear of any
+    // other prefab the party already put down. It brings its own walls, so
+    // nothing about the ground under it is asked.
+    function canPlacePrefabAt(x, y, info) {
+        if (!$gameMap || !$dataMap) return false;
+        const w = info.width || 1, h = info.height || 1;
+        if (x < 0 || y < 0 || x + w > $dataMap.width || y + h > $dataMap.height) return false;
+        for (const rec of $gameSystem.getMapTiles(furnitureMapKey())) {
+            if (rec.kind !== 'prefab') continue;
+            const rw = rec.width || 1, rh = rec.height || 1;
+            if (x < rec.x + rw && x + w > rec.x && y < rec.y + rh && y + h > rec.y) return false;
+        }
+        return true;
+    }
+
+    // Writes one stored prefab into the live map data. Called both the moment
+    // it is bought and on every later load of the square, which is what makes a
+    // bought prefab generate with the land from then on.
+    function stampPrefabRecord(rec) {
+        const sys = window.ProceduralMapPrefabs;
+        if (!sys || !$dataMap || !$dataMap.data) return;
+        let prefabMap = null;
+        try { prefabMap = sys.loadPrefabSync(rec.prefabMapId); } catch (e) { return; }
+        if (!prefabMap || !prefabMap.data) return;
+        // A procedural square only allocates tile layers 0-3; a prefab is an
+        // authored map and carries shadow-pen data on layer 4.
+        const need = $dataMap.width * $dataMap.height * 5;
+        if ($dataMap.data.length < need) {
+            for (let i = $dataMap.data.length; i < need; i++) $dataMap.data[i] = 0;
+        }
+        sys.placePrefab($dataMap.data, prefabMap, { x: rec.x, y: rec.y }, [], null);
+    }
+
+    //=========================================================================
+    // Founding a town (window.TownFounding)
+    //=========================================================================
+    // Three houses standing on one square of the world are enough for the place
+    // to be called something. A founded town belongs to the WORLD, not to the
+    // savegame that founded it (save/worlds/<name>/towns.json), so every party
+    // playing that world finds it on the map and in the travel book. It fills up
+    // on its own afterwards: people move into the houses, a keeper stands behind
+    // every shop counter, and all of them pay their rent to the party that put
+    // the roofs over their heads.
+    const TOWN_FILE = 'towns';                 // i18n-ignore: world data file key
+    const TOWN_MIN_HOUSES = 3;
+    // One newcomer every other day, until the buildings are as full as they go.
+    const TOWN_DAYS_PER_RESIDENT = 2;
+    const TOWN_RESIDENTS_PER_HOUSE = 2;
+    const TOWN_RESIDENTS_PER_SHOP = 1;
+    // A tenant pays a twentieth of what the roof over their head cost each
+    // month, which over thirty days is what a day of it is worth.
+    const TOWN_RENT_RATE = 1 / (20 * 30);
+    // The doors the generator itself puts down, read off the live tileset the
+    // same way the NPC settlement pass reads them.
+    const TOWN_DOOR_FEATURES = {
+        DoorHouse: 'house', DoorSkyscraper: 'house', DoorInn: 'shop', DoorShop: 'shop'
+    };
+
+    function townWorldName() {
+        const wm = window.WorldManager;
+        return (wm && wm.activeWorldName) || null;
+    }
+
+    function townFile() {
+        const wm = window.WorldManager;
+        const world = townWorldName();
+        let data = null;
+        if (wm && world && wm.readWorldFile) data = wm.readWorldFile(world, TOWN_FILE);
+        if (!data || !Array.isArray(data.towns)) data = { towns: [] };
+        return data;
+    }
+
+    function saveTownFile(data) {
+        const wm = window.WorldManager;
+        const world = townWorldName();
+        if (!wm || !world || !wm.writeWorldFile) return false;
+        return wm.writeWorldFile(world, TOWN_FILE, data);
+    }
+
+    // The world's own calendar, in whole days. Everything a town does over time
+    // is counted in these rather than in frames.
+    function townDay() {
+        const tds = window.TimeDateSystem;
+        const minutes = (tds && tds.getGameTimeMinutes) ? tds.getGameTimeMinutes() : 0;
+        return Math.floor((minutes || 0) / 1440);
+    }
+
+    function townSquareHere() {
+        const WMT = window.WorldMapTransfer;
+        if (!WMT || !WMT.currentWorldCoords) return null;
+        const c = WMT.currentWorldCoords();
+        if (!c) return null;
+        const planet = (WMT.currentPlanet && WMT.currentPlanet()) || '';
+        return { x: c.x, y: c.y, planet };
+    }
+
+    // Every house standing on the square the party is on. Both kinds count: the
+    // ones the party raised themselves (a door of their own placing) and the
+    // ones the generator left there (a door tile of the tileset's own).
+    function townHouseTally() {
+        let houses = 0, shops = 0, value = 0;
+        const placed = ($gameSystem && $gameMap) ? $gameSystem.getMapTiles(furnitureMapKey()) : [];
+        const taken = new Set();
+        for (const rec of placed) {
+            if (rec.kind !== 'door') continue;
+            taken.add(rec.x + ',' + rec.y);
+            const entry = getHouseCatalog()[rec.houseMapId];
+            if (rec.poolName === 'shops' || rec.poolName === 'inns') shops++; else houses++;
+            value += entry ? entry.price : HOUSE_PRICE_BASE;
+        }
+        const U = window.ProcGenUtils;
+        if ($gameMap && $dataMap && U && U.Cache && U.createTileToFeatureMap && U.getFeatureNameFromTileId) {
+            const tileset = $gameMap.tileset();
+            const lookup = tileset ? U.createTileToFeatureMap(U.Cache.getTilesetFeatures(tileset.id)) : null;
+            if (lookup) {
+                for (let y = 0; y < $gameMap.height(); y++) {
+                    for (let x = 0; x < $gameMap.width(); x++) {
+                        if (taken.has(x + ',' + y)) continue;
+                        for (const z of [2, 3]) {
+                            const tileId = $gameMap.tileId(x, y, z);
+                            if (!tileId) continue;
+                            const kind = TOWN_DOOR_FEATURES[U.getFeatureNameFromTileId(tileId, lookup)];
+                            if (!kind) continue;
+                            if (kind === 'shop') shops++; else houses++;
+                            value += HOUSE_PRICE_BASE;
+                            taken.add(x + ',' + y);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return { houses, shops, value };
+    }
+
+    function findTownAt(worldX, worldY, planet) {
+        const pl = planet || '';
+        return townFile().towns.find(t => t.worldX === worldX && t.worldY === worldY &&
+            (t.planet || '') === pl) || null;
+    }
+
+    // Why the party may not found one here, or nothing at all when they may.
+    function canFoundTownHere() {
+        const sq = townSquareHere();
+        if (!sq || !$gameMap || $gameMap.mapId() !== procMapIdForBuild()) {
+            return { ok: false, reason: 'notHere', square: sq };
+        }
+        const tally = townHouseTally();
+        // Only Earth has a gazetteer of named places; on another world every
+        // square is open ground.
+        if (!sq.planet) {
+            const claimed = (window.WorldGen && window.WorldGen.HardcodedBiomeNames || {})[sq.x + ',' + sq.y];
+            if (claimed) {
+                const place = (window.WorkSystem && window.WorkSystem.destinationName)
+                    ? window.WorkSystem.destinationName(claimed) : claimed;
+                return { ok: false, reason: 'claimed', place, square: sq, tally };
+            }
+        }
+        if (findTownAt(sq.x, sq.y, sq.planet)) {
+            return { ok: false, reason: 'exists', square: sq, tally };
+        }
+        if (tally.houses < TOWN_MIN_HOUSES) {
+            return { ok: false, reason: 'houses', square: sq, tally };
+        }
+        return { ok: true, square: sq, tally };
+    }
+
+    function foundTown(name) {
+        const clean = String(name || '').trim().slice(0, 32);
+        if (!clean) return { ok: false, reason: 'noName' };
+        const check = canFoundTownHere();
+        if (!check.ok) return check;
+        const file = townFile();
+        if (file.towns.some(t => t.name.toLowerCase() === clean.toLowerCase())) {
+            return { ok: false, reason: 'duplicate' };
+        }
+        const day = townDay();
+        file.towns.push({
+            name: clean,
+            worldX: check.square.x, worldY: check.square.y, planet: check.square.planet || '',
+            biome: currentProcBiomeName() || '',
+            foundedDay: day, lastRentDay: day,
+            houses: check.tally.houses, shops: check.tally.shops, houseValue: check.tally.value
+        });
+        saveTownFile(file);
+        onTownsChanged();
+        return { ok: true, name: clean };
+    }
+
+    // A town keeps counting the buildings that stand on it, so a house raised
+    // after the founding brings its own tenants and its own rent. Called
+    // whenever the party is standing on one of their own squares.
+    function syncTownHere() {
+        const sq = townSquareHere();
+        if (!sq || !$gameMap || $gameMap.mapId() !== procMapIdForBuild()) return null;
+        const file = townFile();
+        const town = file.towns.find(t => t.worldX === sq.x && t.worldY === sq.y &&
+            (t.planet || '') === (sq.planet || ''));
+        if (!town) return null;
+        const tally = townHouseTally();
+        if (town.houses === tally.houses && town.shops === tally.shops &&
+            town.houseValue === tally.value) return town;
+        town.houses = tally.houses;
+        town.shops = tally.shops;
+        town.houseValue = tally.value;
+        saveTownFile(file);
+        return town;
+    }
+
+    function townCapacity(town) {
+        return Math.max(1, (town.houses || 0) * TOWN_RESIDENTS_PER_HOUSE +
+            (town.shops || 0) * TOWN_RESIDENTS_PER_SHOP);
+    }
+
+    function townResidents(town) {
+        const days = Math.max(0, townDay() - (town.foundedDay || 0));
+        return Math.min(townCapacity(town), Math.floor(days / TOWN_DAYS_PER_RESIDENT));
+    }
+
+    // What every resident of the town hands over in a day, taken from what the
+    // roofs they live under are worth.
+    function townRentPerDay(town) {
+        const perHead = (town.houseValue || 0) / townCapacity(town);
+        return Math.round(perHead * TOWN_RENT_RATE * townResidents(town));
+    }
+
+    function townRentDue(town) {
+        const days = Math.max(0, townDay() - (town.lastRentDay || 0));
+        return days * townRentPerDay(town);
+    }
+
+    // Collects everything owed across every town of this world at once, and
+    // pays it into the party's purse.
+    function collectTownRent() {
+        const file = townFile();
+        const day = townDay();
+        let total = 0;
+        for (const town of file.towns) {
+            total += townRentDue(town);
+            town.lastRentDay = day;
+        }
+        if (total > 0) {
+            saveTownFile(file);
+            if ($gameParty) $gameParty.gainGold(total);
+        }
+        return total;
+    }
+
+    // Everything that has to hear about a new town: the travel book keeps a
+    // cache of its pins, and the world map draws its name.
+    function onTownsChanged() {
+        if (window.FastTravelSystem && window.FastTravelSystem.refreshDestinations) {
+            window.FastTravelSystem.refreshDestinations();
+        }
+        if (window.WorldMapView && window.WorldMapView.refreshLabels) {
+            window.WorldMapView.refreshLabels();
+        }
+    }
+
+    window.TownFounding = {
+        MIN_HOUSES: TOWN_MIN_HOUSES,
+        list: () => townFile().towns,
+        findAt: findTownAt,
+        squareHere: townSquareHere,
+        houseTally: townHouseTally,
+        canFoundHere: canFoundTownHere,
+        found: foundTown,
+        syncHere: syncTownHere,
+        capacity: townCapacity,
+        residents: townResidents,
+        rentPerDay: townRentPerDay,
+        rentDue: townRentDue,
+        collectRent: collectTownRent,
+        day: townDay,
+        formatMoney: (v) => formatEuros(v)
+    };
+
     // ── Animal catalog (livestock bought from AnimalGrowthSystem) ────────────
     // Animals are the one placeable that is always paid for in money: they are
     // bought, not built, so the Construct/Purchase toggle never applies to them.
@@ -2396,7 +2764,7 @@
         for (const [animalId, def] of Object.entries(ags.ANIMAL_DB)) {
             const stages = def.hasBaby ? ['baby', 'adult'] : ['adult'];
             for (const stage of stages) {
-                const skins = stage === 'baby' ? def.babySkins : def.adultSkins;
+                const skins = stage === 'baby' ? def.babySprites : def.adultSprites;
                 if (!skins || skins.length === 0) continue;
                 entries[`animal:${animalId}:${stage}`] = { // i18n-ignore: placeable id
                     animalId, stage, def,
@@ -2405,7 +2773,10 @@
                 };
             }
         }
-        _animalCatalogCache = entries;
+        // The wardrobe the breeds are read from may not be loaded on the
+        // first call: an empty answer is never cached, or the Animals tab
+        // would stay empty for the rest of the session.
+        if (Object.keys(entries).length) _animalCatalogCache = entries;
         return entries;
     }
 
@@ -2451,6 +2822,17 @@
                 __imageId: doorImageId(entry.doorType)
             };
         }
+        if (id.startsWith('prefab:')) {
+            const mapId = Number(id.split(':')[1]);
+            const entry = getPrefabCatalog()[mapId];
+            if (!entry) return null;
+            return {
+                id, name: entry.name, width: entry.width, height: entry.height,
+                category: 'Prefab', rotatable: false,   // i18n-ignore: category id
+                __specialCost: entry.materialCost, __specialGoldPrice: entry.price,
+                __placeKind: 'prefab', __prefabMapId: entry.mapId, __noPreview: true
+            };
+        }
         if (id.startsWith('animal:')) {
             const entry = getAnimalCatalog()[id];
             if (!entry) return null;
@@ -2476,6 +2858,11 @@
         if (!list.length) return;
         const w = $dataMap.width, h = $dataMap.height;
         const inBounds = (rx, ry) => rx >= 0 && ry >= 0 && rx < w && ry < h;
+        // Prefabs first: they are whole authored maps, so anything the party
+        // painted afterwards has to sit on top of one, not under it.
+        for (const rec of list) {
+            if (rec.kind === 'prefab') stampPrefabRecord(rec);
+        }
         // Pass 1: lay every tile down at a base id so every neighbour a shape
         // needs to read is already present before pass 2 blends them.
         for (const rec of list) {
@@ -2721,17 +3108,6 @@
             .join(' ');
     }
 
-    // The label for a subcategory folder, read the same way as a category's and
-    // with the same fallback, so a folder no bank lists still reads.
-    function titleCaseSubcategory(symbol) {
-        const key = 'Furniture.subcategory.' + symbol;
-        if (T.has(key)) return T(key);
-        return String(symbol)
-            .split(/[_\s]+/)
-            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-            .join(' ');
-    }
-
     // A piece's own name and blurb. Every entry in Furniture.json already
     // carries `name_int`, the i18n path holding its copy ("furniture.<id>.name"),
     // but nothing was reading it, so the build menu drew the English `name`
@@ -2750,6 +3126,25 @@
     // player can actually build with their current materials (all pieces while
     // free-building). It is the default view when the build menu opens.
     const BUILDABLE_SYMBOL = '__buildable__';
+
+    // The cover art of a folder: the first piece filed under it, read in the
+    // same order the grid would read it, so a folder card shows what is inside
+    // rather than a word on its own. Cached, since the catalogue is static and
+    // the gallery is rebuilt on every render.
+    const _coverCache = new Map();
+    function folderCoverId(category, subcategory) {
+        const key = category + ' ' + (subcategory || '');
+        if (_coverCache.has(key)) return _coverCache.get(key);
+        let best = null, bestName = null;
+        for (const [id, f] of Object.entries(Furniture)) {
+            if (f.category !== category) continue;
+            if (subcategory && f.subcategory !== subcategory) continue;
+            const n = furnitureName(id, f);
+            if (bestName === null || n.localeCompare(bestName) < 0) { best = id; bestName = n; }
+        }
+        _coverCache.set(key, best);
+        return best;
+    }
 
     function getBuildCategories() {
         const seen = new Set();
@@ -2778,7 +3173,9 @@
         { key: 'terrain', nameKey: 'Furniture.tab.terrain' },
         { key: 'houses', nameKey: 'Furniture.tab.houses' },
         { key: 'features', nameKey: 'Furniture.tab.features' },
-        { key: 'animals', nameKey: 'Furniture.tab.animals' }
+        { key: 'animals', nameKey: 'Furniture.tab.animals' },
+        { key: 'prefabs', nameKey: 'Furniture.tab.prefabs' },
+        { key: 'town', nameKey: 'Furniture.tab.town' }
     ];
 
     // IconSet.png indices used for the panel's own labels and badges (names as
@@ -3010,11 +3407,9 @@
     class FurnitureBuildUI {
         constructor(scene) {
             this.scene = scene;
-            const _cats = getBuildCategories();
-            this.category = (_cats[0] || { symbol: '' }).symbol;
-            // null = the category's subcategory list is showing; a string = that
-            // subcategory's item grid is showing.
-            this.subcategory = null;
+            // null = the category list itself is showing (the Buildables tab
+            // opens on the gallery of folders, not on a dropdown).
+            this.category = null;
             this.topTab = 'buildables';
             this.search = '';
             // The field lives behind a handle, like every other search in the
@@ -3026,15 +3421,22 @@
 
             this.container.addEventListener('pointerenter', () => { this.scene._fbOverPanel = true; });
             this.container.addEventListener('pointerleave', () => { this.scene._fbOverPanel = false; });
-            this.container.addEventListener('pointerdown', e => {
-                e.stopPropagation();
-                // Close the category dropdown when clicking anywhere outside it.
-                if (!e.target.closest('.fbuild-dropdown')) {
-                    const openDd = this.container.querySelector('.fbuild-dropdown.open');
-                    if (openDd) openDd.classList.remove('open');
-                }
-            });
+            this.container.addEventListener('pointerdown', e => { e.stopPropagation(); });
             this.container.addEventListener('contextmenu', e => { e.preventDefault(); });
+
+            // A typed letter belongs to the field, not to the map: WASD are
+            // bound as directions and would otherwise walk the picker instead
+            // of being written. Caught before anything else sees the key.
+            this._keyGuard = (e) => {
+                const el = document.activeElement;
+                if (!el || !this.container || !this.container.contains(el)) return;
+                if (el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') return;
+                e.stopPropagation();
+                if (e.key === 'Escape') { el.blur(); e.preventDefault(); }
+            };
+            window.addEventListener('keydown', this._keyGuard, true);
+            window.addEventListener('keyup', this._keyGuard, true);
+            window.addEventListener('keypress', this._keyGuard, true);
 
             // RPG Maker attaches a document-level wheel listener that preventDefaults,
             // killing native scrolling inside the panel. Intercept the wheel here,
@@ -3051,7 +3453,7 @@
                     e.preventDefault();
                     return;
                 }
-                const scrollable = e.target.closest('.fbuild-grid, .fbuild-materials, .fbuild-dd-list');
+                const scrollable = e.target.closest('.fbuild-grid, .fbuild-materials');
                 if (scrollable) scrollable.scrollTop += e.deltaY;
                 e.stopPropagation();
                 e.preventDefault();
@@ -3060,9 +3462,44 @@
             this.render();
         }
 
+        // The founding charter: what stands on this square, whether it may be
+        // called something, and the field that names it.
+        townPageHTML() {
+            const TF = window.TownFounding;
+            if (!TF) return '';
+            const check = TF.canFoundHere();
+            const tally = check.tally || { houses: 0, shops: 0 };
+            const sq = check.square;
+            const existing = sq ? TF.findAt(sq.x, sq.y, sq.planet) : null;
+            const whereText = sq
+                ? T('Towns.deeds.square', { x: sq.x, y: sq.y }) +
+                  (sq.planet ? ' ' + T('Towns.deeds.onPlanet', { planet: sq.planet }) : '')
+                : '';
+            const rows = [];
+            if (whereText) rows.push(`<div class="fbuild-town-line">${T('Towns.found.here', { place: whereText })}</div>`);
+            rows.push(`<div class="fbuild-town-line ${tally.houses >= TF.MIN_HOUSES ? 'ok' : 'bad'}">
+                ${T('Towns.found.requirement', { have: tally.houses, need: TF.MIN_HOUSES })}</div>`);
+            if (existing) {
+                rows.push(`<div class="fbuild-town-line ok">${T('Towns.found.founded', { name: existing.name })}</div>`);
+            } else if (!check.ok) {
+                rows.push(`<div class="fbuild-town-line bad">${T('Towns.found.reason.' + check.reason,
+                    { place: check.place || '' })}</div>`);
+            } else {
+                const value = String(this.townName || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); // i18n-ignore: HTML entity escaping
+                rows.push(`<label class="fbuild-town-line">${T('Towns.found.nameLabel')}</label>
+                    <input class="fbuild-town-name" type="text" maxlength="32"
+                        placeholder="${T('Towns.found.namePlaceholder')}" value="${value}">
+                    <button class="fbuild-town-found" type="button">${T('Towns.found.button')}</button>`);
+            }
+            return `<div class="fbuild-town">
+                <div class="fbuild-town-title">${iconHTML(UI_ICONS.hammer, 18)} ${T('Towns.found.title')}</div>
+                ${rows.join('')}
+            </div>`;
+        }
+
         render() {
             const free = isFreeBuild();
-            const mode = this.scene._fbBuildMode === 'purchase' ? 'purchase' : 'construct';
+            const mode = this.scene._fbBuildMode === 'construct' ? 'construct' : 'purchase';
             const purchasing = mode === 'purchase';
             const topTab = this.topTab || 'buildables';
             const affordFn = (item) => {
@@ -3099,7 +3536,8 @@
                 terrain: terrainAutotileKinds().length,
                 houses: Object.keys(getHouseCatalog()).length,
                 features: Object.keys(getFeatureCatalog()).length,
-                animals: Object.keys(getAnimalCatalog()).length
+                animals: Object.keys(getAnimalCatalog()).length,
+                prefabs: Object.keys(getPrefabCatalog()).length
             };
 
             const query = (this.search || '').trim().toLowerCase();
@@ -3115,12 +3553,9 @@
                     } else if (this.category === BUILDABLE_SYMBOL) {
                         if (affordFn(f)) items.push({ id, ...f });
                     } else if (f.category === this.category) {
-                        // Inside a real category the grid only fills once a
-                        // subcategory has been picked; until then the panel shows
-                        // the subcategory list instead (see subcatsHTML below).
-                        if (this.subcategory && f.subcategory === this.subcategory) {
-                            items.push({ id, ...f });
-                        }
+                        // A category is one flat list of pieces: there is no
+                        // subcategory level to walk through.
+                        items.push({ id, ...f });
                     }
                 }
                 // One card per recolour family, everywhere the grid is a real list
@@ -3166,6 +3601,12 @@
                 }
                 // Cheapest first, so a starting farm reads top-down.
                 items.sort((a, b) => (a.__specialGoldPrice || 0) - (b.__specialGoldPrice || 0));
+            } else if (topTab === 'prefabs') {
+                for (const mapId of Object.keys(getPrefabCatalog())) {
+                    const info = resolvePlaceable('prefab:' + mapId);
+                    if (info) items.push(info);
+                }
+                items.sort((a, b) => (a.__specialGoldPrice || 0) - (b.__specialGoldPrice || 0));
             }
 
             // Cap the Buildable view: when free-building (or holding vast stock)
@@ -3191,28 +3632,16 @@
             // Collapsed until the handle is clicked; a live query keeps it open.
             const searchOpen = !!this.searchOpen || !!this.search;
             if (topTab === 'buildables') {
+                // No dropdown: the folders are the gallery itself, and this bar
+                // only says where in it the player stands and how to walk back.
                 const currentCat = categories.find(c => c.symbol === this.category);
-                const currentName = currentCat ? currentCat.name : T('Furniture.categoryLabel');
-                const currentCount = catCounts[this.category] || 0;
-                const ddOptionsHTML = categories.map(c => {
-                    const n = catCounts[c.symbol] || 0;
-                    return `<div class="fbuild-dd-opt ${c.symbol === this.category ? 'active' : ''}" data-cat="${c.symbol}">
-                        <span class="fbuild-dd-opt-name">${c.name}</span>
-                        <span class="fbuild-dd-opt-count">${n}</span>
-                    </div>`;
-                }).join('');
+                const crumb = this.category === null
+                    ? `<span class="fbuild-crumb">${T('Furniture.categoryLabel')}</span>`
+                    : `<button class="fbuild-subback" type="button" title="${T('Furniture.tip.backToCategories')}">
+                        ${T('Furniture.backToCategories')}</button>
+                        <span class="fbuild-crumb">${currentCat ? currentCat.name : ''}</span>`;
                 catBarHTML = `<div class="fbuild-catbar">
-                    <span class="fbuild-cat-label">${T('Furniture.categoryLabel')}</span>
-                    <div class="fbuild-dropdown">
-                        <button class="fbuild-dd-trigger" type="button">
-                            <span class="fbuild-dd-current">${currentName} (${currentCount})</span>
-                            <span class="fbuild-dd-caret">▾</span>
-                        </button>
-                        <div class="fbuild-dd-list">${ddOptionsHTML}</div>
-                    </div>
-                    ${this.subcategory ? `<button class="fbuild-subback" type="button" title="${T('Furniture.tip.backToSubcategories')}">
-                        ${T('Furniture.backToSubcategories')}</button>
-                        <span class="fbuild-crumb">${titleCaseSubcategory(this.subcategory)}</span>` : ''}
+                    ${crumb}
                     ${searchOpen ? `<input class="fbuild-search" type="search" placeholder="${T('Furniture.searchPlaceholder')}"
                         value="${searchValue}">` : ''}
                     ${window.MenuSearchBar ? window.MenuSearchBar.toggleHTML('', searchOpen) : ''}
@@ -3235,27 +3664,26 @@
                 }).join('');
             }
 
-            // Inside a real category, the first thing shown is its subcategory
-            // list; the item grid comes after one is picked. A live search skips
-            // the drilldown entirely and searches every category at once.
-            const inRealCategory = topTab === 'buildables' && this.category !== BUILDABLE_SYMBOL && !query;
-            const showingSubcats = inRealCategory && !this.subcategory;
+            // The Buildables tab is two levels deep and no more: the gallery of
+            // folders, then the pieces of the folder that was picked. A live
+            // search skips the gallery and searches every category at once.
+            const showingCats = topTab === 'buildables' && this.category === null && !query;
             let subcatsHTML = '';
-            if (showingSubcats) {
-                const counts = {};
-                for (const f of Object.values(Furniture)) {
-                    if (f.category !== this.category || !f.subcategory) continue;
-                    counts[f.subcategory] = (counts[f.subcategory] || 0) + 1;
-                }
-                const subs = Object.keys(counts)
-                    .map(sym => ({ sym, name: titleCaseSubcategory(sym), n: counts[sym] }))
-                    .sort((a, b) => a.name.localeCompare(b.name));
-                subcatsHTML = subs.length
-                    ? subs.map(sc => `<div class="fbuild-subcat" data-sub="${sc.sym}">
-                        <span class="fbuild-subcat-name">${sc.name}</span>
-                        <span class="fbuild-subcat-count">${sc.n}</span>
-                    </div>`).join('')
-                    : `<div class="fbuild-empty">${T('Furniture.empty.category')}</div>`;
+            if (showingCats) {
+                // One card per folder, wearing the first piece filed under it.
+                subcatsHTML = categories.map(c => {
+                    const n = catCounts[c.symbol] || 0;
+                    const coverId = c.symbol === BUILDABLE_SYMBOL ? null : folderCoverId(c.symbol);
+                    const src = coverId ? furnitureImageSrc(coverId) : null;
+                    return `<div class="fbuild-folder" data-cat="${c.symbol}">
+                        <div class="fbuild-folder-img${src ? '' : ' noimg'}">
+                            ${src ? `<img loading="lazy" src="${src}" onerror="this.style.display='none'; this.parentElement.classList.add('noimg');">` : ''}
+                            ${placeholderIconHTML(28)}
+                        </div>
+                        <div class="fbuild-folder-name">${c.name}</div>
+                        <div class="fbuild-folder-count">${n}</div>
+                    </div>`;
+                }).join('');
             }
 
             // Cards
@@ -3267,6 +3695,7 @@
                     : topTab === 'houses' ? T('Furniture.empty.houses')
                     : topTab === 'features' ? T('Furniture.empty.features')
                     : topTab === 'animals' ? T('Furniture.empty.animals')
+                    : topTab === 'prefabs' ? T('Furniture.empty.prefabs')
                     : query ? T('Furniture.empty.search')
                     : (this.category === BUILDABLE_SYMBOL
                         ? (purchasing
@@ -3305,7 +3734,12 @@
                     // when there is no image at all, or by the img onerror).
                     let imgCellClass = 'fbuild-card-img';
                     let imgCellHTML;
-                    if (isAutotilePiece) {
+                    if (item.__noPreview) {
+                        // An authored map has no portrait of itself: the card is
+                        // the name and the footprint, and the cell stays blank.
+                        imgCellClass += ' noimg';
+                        imgCellHTML = '';
+                    } else if (isAutotilePiece) {
                         imgCellHTML = `<canvas class="fbuild-wt-preview" data-kind="${item.__autoKind}" width="48" height="48"></canvas>`;
                     } else if (isMoneyOnly) {
                         // Animals live on character sheets, not in the furniture
@@ -3341,74 +3775,77 @@
                     cardsHTML += `<div class="fbuild-empty">${T('Furniture.truncated', { shown: BUILDABLE_MAX, more: buildableTruncated })}</div>`;
                 }
             }
+            // The Town tab is not a picker: it is the founding charter, so it
+            // takes the grid's place whole.
+            if (topTab === 'town') cardsHTML = this.townPageHTML();
 
-            // Footer: when a piece is armed, show its live status + controls;
-            // otherwise show the generic how-to hint.
-            let footerHTML;
+            // The selection column: what is in hand, read as a card. No key
+            // names anywhere on it (ui_fixing rule 8), only its state.
+            let asideHTML;
             const armed = armedId ? resolvePlaceable(armedId) : null;
             if (armed) {
                 const armedSrc = furnitureImageSrc(armed.__imageId || armedId);
                 const armedAfford = free || this.scene.isArmedAffordable();
-                footerHTML = `<div class="fbuild-armed-bar">
-                    <div class="fbuild-armed-thumb${armedSrc ? '' : ' noimg'}">
-                        ${armedSrc
-                            ? `<img src="${armedSrc}" onerror="this.style.display='none'; this.parentElement.classList.add('noimg');">${placeholderIconHTML(24)}`
-                            : placeholderIconHTML(24)}
-                    </div>
-                    <div class="fbuild-armed-info">
-                        <div class="fbuild-armed-name">${furnitureName(armedId, armed)}</div>
-                        <div class="fbuild-armed-sub ${armedAfford ? 'ok' : 'bad'}">
-                            ${armedAfford ? T('Furniture.hint.placeSweep') : T('Furniture.hint.cannotAfford')}
-                            &nbsp;·&nbsp; ${T('Furniture.help.armed')}
+                asideHTML = `<div class="fbuild-armed-card">
+                    <div class="fbuild-armed-head">
+                        <div class="fbuild-armed-thumb${armedSrc ? '' : ' noimg'}">
+                            ${armedSrc
+                                ? `<img src="${armedSrc}" onerror="this.style.display='none'; this.parentElement.classList.add('noimg');">${placeholderIconHTML(24)}`
+                                : placeholderIconHTML(24)}
+                        </div>
+                        <div class="fbuild-armed-info">
+                            <div class="fbuild-armed-name">${furnitureName(armedId, armed)}</div>
+                            <div class="fbuild-armed-sub ${armedAfford ? 'ok' : 'bad'}">
+                                ${armedAfford ? T('Furniture.status.ready') : T('Furniture.status.cannotAfford')}
+                            </div>
                         </div>
                     </div>
                 </div>`;
             } else {
-                footerHTML = `<div class="fbuild-hint">
-                    ${T('Furniture.help.mouse')}<br>
-                    ${T('Furniture.help.pad')}
-                </div>`;
+                asideHTML = `<div class="fbuild-armed-empty">${T('Furniture.status.idle')}</div>`;
             }
 
             const goldAmount = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.gold() : 0;
             const tabsHTML = TOP_TABS.map(t => {
                 const n = tabCounts[t.key];
-                const countLabel = (t.key === 'buildables' || n == null) ? '' : ` (${n})`;
-                return `<button class="fbuild-toptab-opt ${topTab === t.key ? 'active' : ''}" data-tab="${t.key}" type="button">${T(t.nameKey)}${countLabel}</button>`;
+                const countLabel = (t.key === 'buildables' || n == null) ? '' : `<span class="fbuild-toptab-count">${n}</span>`;
+                return `<button class="fbuild-toptab-opt ${topTab === t.key ? 'active' : ''}" data-tab="${t.key}" type="button"><span>${T(t.nameKey)}</span>${countLabel}</button>`;
             }).join('');
             const materialsLabel = T('Furniture.materials');
             this.container.innerHTML = `
                 <div class="fbuild-header">
+                    <span class="fbuild-title">${iconHTML(UI_ICONS.hammer, 22)} ${T('Furniture.buildMode')}</span>
+                    ${free ? `<span class="fbuild-free">${T('Furniture.freeBadge')}</span>` : ''}
+                    <div class="fbuild-modeswitch" role="tablist">
+                        <button class="fbuild-mode-opt ${purchasing ? 'active' : ''}" data-mode="purchase" type="button"
+                            title="${T('Furniture.tip.purchase')}">${iconHTML(UI_ICONS.wallet, 16)} ${T('Furniture.mode.purchase')}</button>
+                        <button class="fbuild-mode-opt ${!purchasing ? 'active' : ''}" data-mode="construct" type="button"
+                            title="${T('Furniture.tip.construct')}">${iconHTML(UI_ICONS.hammer, 16)} ${T('Furniture.mode.construct')}</button>
+                    </div>
+                    <span class="fbuild-gold" title="${T('Furniture.tip.money')}">${iconHTML(UI_ICONS.money, 16)} ${formatEuros(goldAmount)}</span>
+                    <span class="fbuild-header-spacer"></span>
+                    <span class="fbuild-count" title="${T('Furniture.piecesShown')}">${items.length}</span>
                     <button class="fbuild-clear-all ${this._confirmClearArmed ? 'armed' : ''}"
                         title="${this._confirmClearArmed ? T('Furniture.tip.clearAllConfirm') : T('Furniture.tip.clearAll')}">
                         ${this._confirmClearArmed
                             ? `${iconHTML(UI_ICONS.warn, 16)} ${T('Furniture.confirmQ')}`
                             : iconHTML(UI_ICONS.demolish, 18)}
                     </button>
-                    <span class="fbuild-title">${iconHTML(UI_ICONS.hammer, 22)} ${T('Furniture.buildMode')}</span>
-                    ${free ? `<span class="fbuild-free">${T('Furniture.freeBadge')}</span>` : ''}
-                    <span class="fbuild-count" title="${T('Furniture.piecesShown')}">${items.length}</span>
-                    <button class="fbuild-close" title="${T('Furniture.closeEsc')}">✕</button>
+                    <button class="fbuild-close" title="${T('Furniture.closeEsc')}">\u2715</button>
                 </div>
-                <div class="fbuild-modebar">
-                    <div class="fbuild-modeswitch" role="tablist">
-                        <button class="fbuild-mode-opt ${!purchasing ? 'active' : ''}" data-mode="construct" type="button"
-                            title="${T('Furniture.tip.construct')}">${iconHTML(UI_ICONS.hammer, 16)} ${T('Furniture.mode.construct')}</button>
-                        <button class="fbuild-mode-opt ${purchasing ? 'active' : ''}" data-mode="purchase" type="button"
-                            title="${T('Furniture.tip.purchase')}">${iconHTML(UI_ICONS.wallet, 16)} ${T('Furniture.mode.purchase')}</button>
-                    </div>
-                    <span class="fbuild-gold" title="${T('Furniture.tip.money')}">${iconHTML(UI_ICONS.money, 16)} ${formatEuros(goldAmount)}</span>
-                </div>
-                <div class="fbuild-toptabs" role="tablist">${tabsHTML}</div>
-                ${!purchasing ? `
-                <div class="fbuild-section-label">${materialsLabel}</div>
-                <div class="fbuild-materials">${materialsHTML}</div>
-                ` : ''}
-                ${catBarHTML}
-                <div class="fbuild-body">
+                <div class="fbuild-dock">
+                    <div class="fbuild-rail" role="tablist">${tabsHTML}</div>
                     <div class="fbuild-right">
-                        <div class="fbuild-grid${showingSubcats ? ' subcats' : ''}">${showingSubcats ? subcatsHTML : cardsHTML}</div>
-                        ${footerHTML}
+                        ${catBarHTML}
+                        <div class="fbuild-grid${showingCats ? ' subcats' : ''}">${showingCats ? subcatsHTML : cardsHTML}</div>
+                    </div>
+                    <div class="fbuild-aside">
+                        <div class="fbuild-section-label">${T('Furniture.selection')}</div>
+                        ${asideHTML}
+                        ${!purchasing ? `
+                        <div class="fbuild-section-label">${materialsLabel}</div>
+                        <div class="fbuild-materials">${materialsHTML}</div>
+                        ` : ''}
                     </div>
                 </div>
             `;
@@ -3440,8 +3877,10 @@
                     matTip.textContent = el.dataset.name || '';
                     const r = el.getBoundingClientRect();
                     const pr = this.container.getBoundingClientRect();
-                    matTip.style.left = (r.left - pr.left + r.width / 2) + 'px';
-                    matTip.style.top = (r.bottom - pr.top + 6) + 'px';
+                    // A measured position is a custom property, not a style:
+                    // the stylesheet still decides how the tip is drawn.
+                    matTip.style.setProperty('--tip-x', (r.left - pr.left + r.width / 2) + 'px');
+                    matTip.style.setProperty('--tip-y', (r.bottom - pr.top + 6) + 'px');
                     matTip.classList.add('show');
                 });
                 el.addEventListener('pointerleave', () => matTip.classList.remove('show'));
@@ -3497,43 +3936,50 @@
                     const tab = btn.dataset.tab;
                     if ((this.topTab || 'buildables') === tab) return;
                     this.topTab = tab;
-                    this.subcategory = null;
                     this.search = ''; // switching tabs clears an active search
                     this.searchOpen = false;
                     SoundManager.playCursor();
                     this.render();
                 });
             });
-            const dropdown = this.container.querySelector('.fbuild-dropdown');
-            if (dropdown) {
-                const trigger = dropdown.querySelector('.fbuild-dd-trigger');
-                const list = dropdown.querySelector('.fbuild-dd-list');
-                trigger.addEventListener('pointerdown', e => {
+            // The founding charter: the name is kept on the panel as it is
+            // typed (a re-render would take the caret with it), and the button
+            // reads it back. Keys are stopped so the engine never sees them.
+            const townInput = this.container.querySelector('.fbuild-town-name');
+            if (townInput) {
+                townInput.addEventListener('pointerdown', e => { e.stopPropagation(); townInput.focus(); });
+                townInput.addEventListener('input', () => { this.townName = townInput.value; });
+                townInput.addEventListener('keydown', e => e.stopPropagation());
+                townInput.addEventListener('keyup', e => e.stopPropagation());
+            }
+            const townButton = this.container.querySelector('.fbuild-town-found');
+            if (townButton) {
+                townButton.addEventListener('pointerdown', e => {
                     e.stopPropagation();
-                    const open = dropdown.classList.toggle('open');
-                    if (open) {
-                        // Stretch the list down to the bottom of the panel instead
-                        // of capping at a fixed height, so it uses all available space.
-                        const panelRect = this.container.getBoundingClientRect();
-                        const triggerRect = trigger.getBoundingClientRect();
-                        const available = panelRect.bottom - triggerRect.bottom - 12;
-                        list.style.maxHeight = Math.max(120, available) + 'px';
-                        const act = list.querySelector('.fbuild-dd-opt.active');
-                        if (act) act.scrollIntoView({ block: 'nearest' });
+                    const result = window.TownFounding.found(this.townName);
+                    if (result.ok) {
+                        this.townName = '';
+                        SoundManager.playOk();
+                        window.ParchmentToast?.show?.(T('Towns.found.success', { name: result.name }));
+                    } else {
+                        SoundManager.playBuzzer();
+                        window.ParchmentToast?.show?.(T('Towns.found.reason.' + result.reason,
+                            { place: result.place || '' }));
                     }
-                });
-                list.querySelectorAll('.fbuild-dd-opt').forEach(opt => {
-                    opt.addEventListener('pointerdown', e => {
-                        e.stopPropagation();
-                        this.category = opt.dataset.cat;
-                        this.subcategory = null;  // a new category opens on its subcategory list
-                        this.search = '';   // picking a category clears an active search
-                        this.searchOpen = false;
-                        SoundManager.playCursor();
-                        this.render();
-                    });
+                    this.render();
                 });
             }
+            // Folder cards: picking one opens that category's pieces.
+            this.container.querySelectorAll('.fbuild-folder[data-cat]').forEach(el => {
+                el.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    this.category = el.dataset.cat;
+                    this.search = '';   // picking a category clears an active search
+                    this.searchOpen = false;
+                    SoundManager.playCursor();
+                    this.render();
+                });
+            });
             // Search box: filters item names live. render() rebuilds the panel,
             // so we stash the caret position and re-focus the recreated input at
             // the end of render(). Key events are stopped so typed keys don't reach
@@ -3569,21 +4015,12 @@
                     this.render();
                 });
             }
-            this.container.querySelectorAll('.fbuild-subcat').forEach(el => {
-                el.addEventListener('pointerdown', e => {
-                    e.stopPropagation();
-                    this.subcategory = el.dataset.sub;
-                    SoundManager.playCursor();
-                    this.render();
-                    const first = this.container.querySelector('.fbuild-card');
-                    if (first) this.selectCardById(first.dataset.id, true);
-                });
-            });
             const subBack = this.container.querySelector('.fbuild-subback');
             if (subBack) {
                 subBack.addEventListener('pointerdown', e => {
                     e.stopPropagation();
-                    this.subcategory = null;
+                    // Back out of a category returns to the folder gallery.
+                    this.category = null;
                     this._selId = null;
                     SoundManager.playCancel();
                     this.render();
@@ -3614,9 +4051,14 @@
 
             // Restore focus + caret to the search box after an input-driven render
             // so the player can keep typing without the field losing focus.
-            if (this._restoreSearchCaret != null && searchInput) {
+            // While the field is open it always holds the caret: the panel is
+            // rebuilt wholesale on every keystroke, and the map underneath is a
+            // canvas that takes focus back the moment the field loses it, which
+            // is why typing looked as though it did nothing.
+            if (searchInput) {
+                const pos = this._restoreSearchCaret != null
+                    ? this._restoreSearchCaret : searchInput.value.length;
                 searchInput.focus();
-                const pos = this._restoreSearchCaret;
                 try { searchInput.setSelectionRange(pos, pos); } catch (e) { /* type=search quirk */ }
                 this._restoreSearchCaret = null;
             }
@@ -3650,7 +4092,46 @@
         // Grid move by geometry so it works with whatever column count the
         // responsive layout settles on. Horizontal walks the flat order;
         // vertical jumps to the nearest card on the adjacent row.
+        // The folder gallery walks with the same
+        // keys as the piece grid, so a pad is never stranded on it.
+        folderEls() {
+            return Array.from(this.container.querySelectorAll('.fbuild-folder'));
+        }
+
+        moveFolderSelection(step) {
+            const els = this.folderEls();
+            if (!els.length) return;
+            const cols = Math.max(1, Math.round(this.container.querySelector('.fbuild-grid').clientWidth
+                / Math.max(1, els[0].offsetWidth)));
+            const cur = els.findIndex(el => el.classList.contains('fbcursor'));
+            const target = cur < 0 ? 0 : Math.max(0, Math.min(els.length - 1, cur + step));
+            els.forEach(el => el.classList.remove('fbcursor'));
+            const pick = els[target];
+            pick.classList.add('fbcursor');
+            pick.scrollIntoView({ block: 'nearest' });
+            this._folderCols = cols;
+            SoundManager.playCursor();
+        }
+
+        // OK on a highlighted folder walks into it. Returns true when it did.
+        enterSelectedFolder() {
+            const el = this.container.querySelector('.fbuild-folder.fbcursor')
+                || this.container.querySelector('.fbuild-folder');
+            if (!el) return false;
+            if (el.dataset.cat) this.category = el.dataset.cat;
+            else return false;
+            SoundManager.playOk();
+            this.render();
+            return true;
+        }
+
         moveSelection(dx, dy) {
+            const folders = this.folderEls();
+            if (folders.length) {
+                const cols = this._folderCols || 4;
+                this.moveFolderSelection(dx !== 0 ? dx : dy * cols);
+                return;
+            }
             const cards = Array.from(this.container.querySelectorAll('.fbuild-card'));
             if (!cards.length) return;
             let idx = cards.findIndex(c => c.dataset.id === this._selId);
@@ -3740,9 +4221,9 @@
         }
 
         updateArmedFooter() {
-            const right = this.container.querySelector('.fbuild-right');
-            if (!right) return;
-            const old = right.querySelector('.fbuild-armed-bar, .fbuild-hint');
+            const aside = this.container.querySelector('.fbuild-aside');
+            if (!aside) return;
+            const old = aside.querySelector('.fbuild-armed-card, .fbuild-armed-empty');
             if (!old) return;
             const armedId = this.scene._fbArmedId;
             const armed = armedId ? resolvePlaceable(armedId) : null;
@@ -3750,22 +4231,24 @@
             if (armed) {
                 const armedSrc = furnitureImageSrc(armedId);
                 const afford = isFreeBuild() || this.scene.isArmedAffordable();
-                wrap.innerHTML = `<div class="fbuild-armed-bar">
-                    <div class="fbuild-armed-thumb${armedSrc ? '' : ' noimg'}">
-                        ${armedSrc
-                            ? `<img src="${armedSrc}" onerror="this.style.display='none'; this.parentElement.classList.add('noimg');">${placeholderIconHTML(24)}`
-                            : placeholderIconHTML(24)}
-                    </div>
-                    <div class="fbuild-armed-info">
-                        <div class="fbuild-armed-name">${furnitureName(armedId, armed)}</div>
-                        <div class="fbuild-armed-sub ${afford ? 'ok' : 'bad'}">
-                            ${afford ? T('Furniture.hint.place') : (armed.__specialGoldPrice != null ? T('Furniture.hint.noMoney') : T('Furniture.hint.noMaterials'))}
-                            &nbsp;·&nbsp; ${T('Furniture.help.armed')}
+                wrap.innerHTML = `<div class="fbuild-armed-card">
+                    <div class="fbuild-armed-head">
+                        <div class="fbuild-armed-thumb${armedSrc ? '' : ' noimg'}">
+                            ${armedSrc
+                                ? `<img src="${armedSrc}" onerror="this.style.display='none'; this.parentElement.classList.add('noimg');">${placeholderIconHTML(24)}`
+                                : placeholderIconHTML(24)}
+                        </div>
+                        <div class="fbuild-armed-info">
+                            <div class="fbuild-armed-name">${furnitureName(armedId, armed)}</div>
+                            <div class="fbuild-armed-sub ${afford ? 'ok' : 'bad'}">
+                                ${afford ? T('Furniture.status.ready')
+                                    : (armed.__specialGoldPrice != null ? T('Furniture.status.noMoney') : T('Furniture.status.noMaterials'))}
+                            </div>
                         </div>
                     </div>
                 </div>`;
             } else {
-                wrap.innerHTML = `<div class="fbuild-hint">${T('Furniture.help.idle')}</div>`;
+                wrap.innerHTML = `<div class="fbuild-armed-empty">${T('Furniture.status.idle')}</div>`;
             }
             old.replaceWith(wrap.firstElementChild);
         }
@@ -3780,6 +4263,12 @@
 
         destroy() {
             clearTimeout(this._confirmClearTimeout);
+            if (this._keyGuard) {
+                window.removeEventListener('keydown', this._keyGuard, true);
+                window.removeEventListener('keyup', this._keyGuard, true);
+                window.removeEventListener('keypress', this._keyGuard, true);
+                this._keyGuard = null;
+            }
             if (this.container && this.container.parentNode) {
                 this.container.parentNode.removeChild(this.container);
             }
@@ -3807,9 +4296,10 @@
         illegalBuildPending = 0;
         if (isIllegalBuildHere()) warnIllegalBuild();
         this._fbActive = true;
-        // Build mode: 'construct' (spend materials) or 'purchase' (buy with gold).
-        // Persisted across builds within a session so the last choice sticks.
-        if (this._fbBuildMode !== 'purchase') this._fbBuildMode = 'construct';
+        // Build mode: 'purchase' (buy with gold, the default) or 'construct'
+        // (spend materials). Persisted across builds within a session so the
+        // last choice sticks.
+        if (this._fbBuildMode !== 'construct') this._fbBuildMode = 'purchase';
         this._fbArmedId = null;
         this._fbPreview = null;
         this._fbOverPanel = false;
@@ -3981,6 +4471,7 @@
             return canPlaceTileAt(x, y, info.__placeKind);
         }
         if (info.__placeKind === 'door') return canPlaceDoorAt(x, y);
+        if (info.__placeKind === 'prefab') return canPlacePrefabAt(x, y, info);
         if (info.__placeKind === 'animal') {
             const ags = animalSystem();
             return !!ags && ags.canPlaceAnimalAt(x, y);
@@ -4023,13 +4514,17 @@
             this.placeArmedDoor(x, y, info);
             return;
         }
+        if (info.__placeKind === 'prefab') {
+            this.placeArmedPrefab(x, y, info);
+            return;
+        }
         if (info.__placeKind === 'animal') {
             this.placeArmedAnimal(x, y, info);
             return;
         }
         const f = info;
         if (!canObtainFurniture(f)) {
-            SoundManager.playBuzzer();
+            warnCannotAfford(f);
             return;
         }
         payForFurniture(f);
@@ -4063,7 +4558,7 @@
             !($gameMap && $gameMap.isValid(x, y + 1))) {
             SoundManager.playBuzzer(); return;
         }
-        if (!canObtainFurniture(info)) { SoundManager.playBuzzer(); return; }
+        if (!canObtainFurniture(info)) { warnCannotAfford(info); return; }
         payForFurniture(info);
         chargeIllegalBuild(info);
         const mapKey = furnitureMapKey();
@@ -4104,7 +4599,7 @@
         if (!canPlaceDoorAt(x, y)) { SoundManager.playBuzzer(); return; }
         // Dual cost, same as ordinary furniture: materials in Construct mode,
         // gold in Purchase mode.
-        if (!canObtainFurniture(info)) { SoundManager.playBuzzer(); return; }
+        if (!canObtainFurniture(info)) { warnCannotAfford(info); return; }
         payForFurniture(info);
         chargeIllegalBuild(info);
         const mapKey = furnitureMapKey();
@@ -4123,6 +4618,29 @@
         if (this._fbUI) this._fbUI.refresh();
     };
 
+    // Stands a whole authored prefab on the square: pays for it, remembers it
+    // against this world coordinate and writes it into the tile data at once.
+    // The stored record is stamped again on every later load, so the piece is
+    // generated with the land from now on.
+    Scene_Map.prototype.placeArmedPrefab = function (x, y, info) {
+        if (!canPlacePrefabAt(x, y, info)) { SoundManager.playBuzzer(); return; }
+        if (!canObtainFurniture(info)) { warnCannotAfford(info); return; }
+        payForFurniture(info);
+        chargeIllegalBuild(info);
+        const rec = $gameSystem.placeMapTile(furnitureMapKey(), {
+            kind: 'prefab', x, y, prefabMapId: info.__prefabMapId,
+            width: info.width, height: info.height, name: info.name,
+            cost: getFurnitureCost(info)
+        });
+        stampPrefabRecord(rec);
+        if ($gameMap) $gameMap.requestRefresh();
+        if (window.Diary) window.Diary.onBuilt(info.name);
+        this._fbPlaceCacheKey = null;
+        this.disarmFurniture();
+        SoundManager.playOk();
+        if (this._fbUI) this._fbUI.refresh();
+    };
+
     // Buys a live animal and stands it on the tile. Payment is always money
     // (never materials) and ownership is handed to AnimalGrowthSystem, which
     // stores it against the current map key so it is still there next visit -
@@ -4132,7 +4650,7 @@
     Scene_Map.prototype.placeArmedAnimal = function (x, y, info) {
         const ags = animalSystem();
         if (!ags || !ags.canPlaceAnimalAt(x, y)) { SoundManager.playBuzzer(); return; }
-        if (!isFreeBuild() && !canPurchaseFurniture(info)) { SoundManager.playBuzzer(); return; }
+        if (!isFreeBuild() && !canPurchaseFurniture(info)) { warnCannotAfford(info); return; }
         if (!isFreeBuild() && $gameParty) $gameParty.loseGold(getFurniturePrice(info));
         const rec = ags.placeAnimal(info.__animalId, info.__animalStage, x, y);
         if (!rec) { SoundManager.playBuzzer(); return; }
@@ -4346,6 +4864,8 @@
         else if (Input.isRepeated('up'))    this._fbUI.moveSelection(0, -1);
         else if (Input.isRepeated('down'))  this._fbUI.moveSelection(0, 1);
         if (Input.isTriggered('ok')) {
+            // On the folder gallery OK walks in rather than arming anything.
+            if (this._fbUI.folderEls().length) return this._fbUI.enterSelectedFolder();
             const id = this._fbUI.getSelectedId();
             if (id && resolvePlaceable(id)) {
                 SoundManager.playOk();
@@ -4404,10 +4924,11 @@
             else this.closeFurnitureBuildMode();
             return;
         }
-        // Cancel steps back out of a subcategory first, so the pad can leave the
-        // drilldown without having to reach the Back button with the mouse.
-        if (Input.isTriggered('cancel') && this._fbUI && this._fbUI.subcategory && this._fbFocus === 'panel') {
-            this._fbUI.subcategory = null;
+        // Cancel steps back out of a category first, so the pad can leave the
+        // gallery without having to reach the Back button with the mouse.
+        if (Input.isTriggered('cancel') && this._fbUI && this._fbFocus === 'panel'
+            && this._fbUI.category) {
+            this._fbUI.category = null;
             this._fbUI._selId = null;
             SoundManager.playCancel();
             this._fbUI.render();
@@ -4488,13 +5009,22 @@
             // fences and floor tiles go down in one stroke instead of one click
             // per tile. Only a stroke that STARTED on the map paints, otherwise
             // dragging a piece out of the picker would smear it across the map.
-            const painting = this.updateFurniturePaintStroke(okPressed, usePad, x, y);
-            if (okPressed || painting) {
+            const painted = this.updateFurniturePaintStroke(okPressed, usePad, x, y);
+            if (okPressed) {
                 if (placeable && affordable) this.placeArmedFurniture(x, y);
                 // A stroke crossing a wall or a tile you cannot afford just skips
                 // it; only a deliberate single press buzzes.
-                else if (okPressed) SoundManager.playBuzzer();
+                else SoundManager.playBuzzer();
             }
+            // Every tile the stroke crossed since the last frame, so a fast drag
+            // draws an unbroken line the way the RPG Maker tile brush does.
+            for (const t of painted) {
+                if (this.isFurnitureBuildPlacementValid(this._fbArmedId, t.x, t.y) &&
+                    this.isArmedAffordable()) {
+                    this.placeArmedFurniture(t.x, t.y);
+                }
+            }
+            if (painted.length) this._fbPlaceCacheKey = null;
         } else {
             // Removal mode: target a placed piece to take it back. Sweeping with
             // the button held clears a run, mirroring paint-placement.
@@ -4508,36 +5038,64 @@
                 y = $gameMap.canvasToMapY(TouchInput.y);
                 pressed = !overPanel && TouchInput.isTriggered();
             }
-            const painting = this.updateFurniturePaintStroke(pressed, usePad, x, y);
-            if (pressed || painting) this.removeFurnitureAtTile(x, y);
+            const painted = this.updateFurniturePaintStroke(pressed, usePad, x, y);
+            if (pressed) this.removeFurnitureAtTile(x, y);
+            for (const t of painted) this.removeFurnitureAtTile(t.x, t.y);
         }
     };
 
     // Tracks a held-button "paint" stroke across tiles.
     //
-    // Returns true on the frames where the stroke has moved onto a NEW tile and
-    // the caller should apply its action again. The stroke only arms on a press
-    // that begins over the map (started), and disarms as soon as the button is
-    // released, so a panel-to-map drag-and-drop still places exactly one piece.
+    // Returns the list of NEW tiles the stroke has crossed since the last frame,
+    // in order, and empty on every other frame. The cursor can jump several
+    // tiles in one frame during a fast drag, so the gap between the last painted
+    // tile and this one is filled in (Bresenham) and the stroke draws an
+    // unbroken line, like the RPG Maker editor's tile brush.
+    //
+    // The stroke only arms on a press that begins over the map (started), and
+    // disarms as soon as the button is released, so a panel-to-map
+    // drag-and-drop still places exactly one piece.
+    const NO_PAINT = [];
     Scene_Map.prototype.updateFurniturePaintStroke = function (started, usePad, x, y) {
         // Livestock is never painted in a sweep: each animal is a separate
         // purchase, so a stray drag must not empty the player's wallet.
-        if (this._fbArmedKind === 'animal') return false;
+        if (this._fbArmedKind === 'animal') return NO_PAINT;
         const held = usePad ? Input.isPressed('ok') : TouchInput.isPressed();
         if (started) this._fbPaintArmed = true;
         if (!held) {
             this._fbPaintArmed = false;
             this._fbPaintTile = null;
-            return false;
+            return NO_PAINT;
         }
-        if (!this._fbPaintArmed) return false;
+        if (!this._fbPaintArmed) return NO_PAINT;
 
         const tile = x + ',' + y;
-        if (started) { this._fbPaintTile = tile; return false; }
-        if (tile === this._fbPaintTile) return false;
-        this._fbPaintTile = tile;
-        return true;
+        if (started) { this._fbPaintTile = { x, y }; return NO_PAINT; }
+        const last = this._fbPaintTile;
+        if (last && last.x === x && last.y === y) return NO_PAINT;
+        const trail = last ? tilesBetween(last.x, last.y, x, y) : [{ x, y }];
+        this._fbPaintTile = { x, y };
+        return trail;
     };
+
+    // Every tile on the line from (x0,y0) to (x1,y1), the start excluded.
+    function tilesBetween(x0, y0, x1, y1) {
+        const out = [];
+        let cx = x0, cy = y0;
+        const dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+        const dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+        let err = dx + dy;
+        // A wild cursor jump (a scene scroll, a teleport) is not a brush stroke.
+        let guard = 256;
+        while (guard-- > 0) {
+            if (cx === x1 && cy === y1) break;
+            const e2 = 2 * err;
+            if (e2 >= dy) { err += dy; cx += sx; }
+            if (e2 <= dx) { err += dx; cy += sy; }
+            out.push({ x: cx, y: cy });
+        }
+        return out;
+    }
 
     const _Scene_Map_update_fbuild = Scene_Map.prototype.update;
     Scene_Map.prototype.update = function () {

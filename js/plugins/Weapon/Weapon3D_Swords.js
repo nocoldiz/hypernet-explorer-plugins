@@ -2906,12 +2906,15 @@
           blade.position.set(s * 0.018, 0.03, s * 0.007);
           blade.rotation.z = -s * 0.15;
           group.add(blade);
-          // Pierced tracery down each blade.
+          // Pierced tracery down each blade. The eyelets hang off the blade
+          // itself so they follow its tilt, and stay below where it starts
+          // tapering: on a straight line in group space the upper ones sat
+          // beside the metal rather than through it.
           if (this.wantsTrim()) {
             for (let i = 0; i < 4; i++) {
               const eyelet = new THREE.Mesh(new THREE.TorusGeometry(0.007, 0.002, this.seg(4, 3), this.seg(8, 5)), deep);
-              eyelet.position.set(s * 0.018, 0.1 + i * 0.09, s * 0.007);
-              group.add(eyelet);
+              eyelet.position.set(0.004, 0.06 + i * 0.047, 0);
+              blade.add(eyelet);
             }
           }
         }

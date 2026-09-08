@@ -21,6 +21,12 @@
  * @default 4
  * @desc Size of each unit dot in pixels.
  *
+ * @param unitHeight
+ * @text Unit Sprite Height
+ * @type number
+ * @default 24
+ * @desc On field height in pixels of a troop's character sprite.
+ *
  * @param advanceSpeed
  * @text Army Advance Speed
  * @type number
@@ -85,6 +91,7 @@ ArmyBattleView.Params = PluginManager.parameters("ArmyBattleView");
 ArmyBattleView.Params.battleWidth = Number(ArmyBattleView.Params.battleWidth || 1200);
 ArmyBattleView.Params.battleHeight = Number(ArmyBattleView.Params.battleHeight || 800);
 ArmyBattleView.Params.dotSize = Number(ArmyBattleView.Params.dotSize || 4);
+ArmyBattleView.Params.unitHeight = Number(ArmyBattleView.Params.unitHeight || 24);
 ArmyBattleView.Params.advanceSpeed = Number(ArmyBattleView.Params.advanceSpeed || 0.5);
 ArmyBattleView.Params.attackRange = Number(ArmyBattleView.Params.attackRange || 30);
 ArmyBattleView.Params.injuryChance = Number(ArmyBattleView.Params.injuryChance || 50);
@@ -187,6 +194,7 @@ Scene_ArmyBattle.prototype.update = function () {
     SoundManager.playCancel();
     $gameTemp._battleEnemyArmy = null;
     $gameTemp._battleArmyEventId = null;
+    $gameTemp._armyPracticeBattle = false;
     this.safePop();
     return;
   }
@@ -231,6 +239,7 @@ Scene_ArmyBattle.prototype.endBattle = function () {
     // Clean up temp data
     $gameTemp._battleEnemyArmy = null;
     $gameTemp._battleArmyEventId = null;
+    $gameTemp._armyPracticeBattle = false;
 
     // Return to map (guarded so a manual cancel during the wait cannot pop twice)
     this.safePop();
@@ -265,6 +274,10 @@ ArmyBattleField.prototype.constructor = ArmyBattleField;
 ArmyBattleField.prototype.initialize = function () {
   PIXI.Container.call(this);
 
+  // A practice muster: the company splits in two and drills against itself.
+  // Nobody dies, nobody is injured and no army data is written back.
+  this._practice = !!$gameTemp._armyPracticeBattle;
+
   // Calculate battlefield size based on troop counts
   this._calculateBattlefieldSize();
 
@@ -288,7 +301,9 @@ ArmyBattleField.prototype.initialize = function () {
 
 ArmyBattleField.prototype._calculateBattlefieldSize = function () {
   // Count total troops
-  const playerTroopCount = $gameParty.members().length + $gameArmy.getTroopCount();
+  const playerTroopCount = this._practice
+    ? $gameArmy.getTroopCount()
+    : $gameParty.members().length + $gameArmy.getTroopCount();
   const enemyArmy = $gameTemp._battleEnemyArmy;
   const enemyTroopCount = enemyArmy ? enemyArmy.getTroopCount() : 0;
   const totalTroops = playerTroopCount + enemyTroopCount;
@@ -554,8 +569,12 @@ ArmyBattleField.prototype._createInfoScreen = function () {
 };
 
 ArmyBattleField.prototype.startBattle = function () {
-  this._setupPlayerArmy();
-  this._setupEnemyArmy();
+  if (this._practice) {
+    this._setupPracticeArmies();
+  } else {
+    this._setupPlayerArmy();
+    this._setupEnemyArmy();
+  }
   this._countAliveUnits();
   this._updateCounters();
 
@@ -564,6 +583,41 @@ ArmyBattleField.prototype.startBattle = function () {
 
   // Start battle loop
   this._battleActive = true;
+};
+
+// Splits the company down the middle and deploys the two halves against each
+// other. Scientists stay in the workshop here as they do in a real battle.
+ArmyBattleField.prototype._setupPracticeArmies = function () {
+  const width = this._battleWidth;
+  const height = this._battleHeight;
+
+  const roster = $gameArmy.getTroops().filter(t => !/scientist/i.test(String(t.role || "")));  // i18n-ignore  troop db id
+  const sides = [[], []];
+  roster.forEach((troop, i) => {
+    // Drill copies: the real roster entry is never handed to the combat code.
+    sides[i % 2].push({
+      ...troop,
+      id: "drill_" + i,  // i18n-ignore  internal id
+      currentHp: troop.hp,
+      isLeader: false,
+      role: String(troop.role || "close quarters").toLowerCase(),  // i18n-ignore  troop db id
+      formation: troop.formation || "Line"  // i18n-ignore  troop db id
+    });
+  });
+
+  const deploy = (troops, isPlayer, color) => {
+    const squads = Object.values(this._groupBy(troops, 'name'));
+    const zoneStart = isPlayer ? Math.floor(height * 0.55) : 100;
+    const zoneEnd = isPlayer ? height - 100 : Math.floor(height * 0.45);
+    const spacing = squads.length > 1 ? (zoneEnd - zoneStart) / (squads.length - 1) : 0;
+    squads.forEach((squad, index) => {
+      const yPos = isPlayer ? zoneEnd - (index * spacing) : zoneStart + (index * spacing);
+      this._applyTacticalFormation(squad, width / 2, yPos, color, isPlayer, squad[0].formation);
+    });
+  };
+
+  deploy(sides[0], true, 0xFFFF00);
+  deploy(sides[1], false, 0x66CCFF);
 };
 
 ArmyBattleField.prototype._setupPlayerArmy = function () {
@@ -667,7 +721,8 @@ ArmyBattleField.prototype._setupEnemyArmy = function () {
 
 };
 ArmyBattleField.prototype._applyTacticalFormation = function (troops, centerX, centerY, color, isPlayer, type) {
-  const spacing = 10;
+  // Sprites take more room on the field than the old dots did.
+  const spacing = 18;
   const count = troops.length;
 
   troops.forEach((troop, i) => {
@@ -745,29 +800,119 @@ ArmyBattleField.prototype._applyTacticalFormation = function (troops, centerX, c
   });
 };
 
+//=============================================================================
+// ArmyUnitSprite - a troop drawn with its own Skab character sheet
+//
+// Troops carry a `spritename` ("Skab/!$Name") straight from Factions.json, so
+// the battlefield shows the same people the roster hired instead of a field of
+// coloured dots. The sheet is walked frame by frame while the unit moves and
+// faced along its velocity.
+//=============================================================================
+
+function ArmyUnitSprite() {
+  this.initialize(...arguments);
+}
+
+ArmyUnitSprite.prototype = Object.create(Sprite.prototype);
+ArmyUnitSprite.prototype.constructor = ArmyUnitSprite;
+
+// A troop with no sheet of its own still needs a body: pick one off the
+// fallback list by role so the field never shows a blank square.
+ArmyUnitSprite.FALLBACK = {
+  ranged: "Skab/!$Hunter",  // i18n-ignore  asset path
+  support: "Skab/!$Medic",  // i18n-ignore  asset path
+  melee: "Skab/!$FootSoldier"  // i18n-ignore  asset path
+};
+
+ArmyUnitSprite.prototype.initialize = function (troop, role, color) {
+  Sprite.prototype.initialize.call(this);
+  this._sheetIndex = Number(troop.spriteindex || 0);
+  this._pattern = 1;
+  this._direction = 2;
+  this._animCount = 0;
+  this._frameReady = false;
+  this.anchor.set(0.5, 1);
+
+  const sheet = ArmyUnitSprite.resolveSheet(troop, role);
+  this.bitmap = ImageManager.loadCharacter(sheet);
+  this.bitmap.addLoadListener(() => this._setupFrame());
+
+  // The team ring under the feet: which side a unit is on has to stay readable
+  // once every troop wears its own colours.
+  const ring = new PIXI.Graphics();
+  ring.lineStyle(1, color, 0.9);
+  ring.drawEllipse(0, 0, 6, 2.5);
+  this.addChild(ring);
+};
+
+ArmyUnitSprite.resolveSheet = function (troop, role) {
+  const named = troop && troop.spritename;
+  if (named) return named;
+  const r = String(role || "");  // i18n-ignore  troop db id
+  if (r.includes("ranged")) return ArmyUnitSprite.FALLBACK.ranged;  // i18n-ignore  troop db id
+  if (r.includes("support")) return ArmyUnitSprite.FALLBACK.support;  // i18n-ignore  troop db id
+  return ArmyUnitSprite.FALLBACK.melee;
+};
+
+ArmyUnitSprite.prototype._setupFrame = function () {
+  const bitmap = this.bitmap;
+  if (!bitmap || !bitmap.width) return;
+  const file = String(bitmap.url || "").split("/").pop();
+  const big = /^[!$]*\$/.test(file);
+  this._cw = bitmap.width / (big ? 3 : 12);
+  this._ch = bitmap.height / (big ? 4 : 8);
+  this._blockX = big ? 0 : (this._sheetIndex % 4) * 3 * this._cw;
+  this._blockY = big ? 0 : Math.floor(this._sheetIndex / 4) * 4 * this._ch;
+  this._frameReady = true;
+
+  // Every sheet is a different height, so scale to a fixed field height
+  // instead of trusting the art to be uniform.
+  const target = ArmyBattleView.Params.unitHeight;
+  const scale = this._ch > 0 ? target / this._ch : 1;
+  this.scale.set(scale, scale);
+  this._refreshFrame();
+};
+
+ArmyUnitSprite.prototype._refreshFrame = function () {
+  if (!this._frameReady) return;
+  const row = (this._direction - 2) / 2;
+  this.setFrame(
+    this._blockX + this._pattern * this._cw,
+    this._blockY + row * this._ch,
+    this._cw,
+    this._ch
+  );
+};
+
+// Face along the movement and walk the sheet while there is movement to walk.
+ArmyUnitSprite.prototype.stepAnimation = function (vx, vy) {
+  const moving = Math.abs(vx) > 0.01 || Math.abs(vy) > 0.01;
+  let dir = this._direction;
+  if (moving) {
+    if (Math.abs(vx) > Math.abs(vy)) dir = vx > 0 ? 6 : 4;
+    else dir = vy > 0 ? 2 : 8;
+  }
+  let pattern = this._pattern;
+  if (moving) {
+    this._animCount += 1;
+    if (this._animCount >= 10) {
+      this._animCount = 0;
+      pattern = (this._pattern + 1) % 4;
+    }
+  } else if (this._pattern !== 1) {
+    pattern = 1;
+  }
+  if (dir !== this._direction || pattern !== this._pattern) {
+    this._direction = dir;
+    this._pattern = pattern === 3 ? 1 : pattern;
+    this._refreshFrame();
+  }
+};
+
 ArmyBattleField.prototype._createUnit = function (troop, x, y, color, isPlayer) {
-  const dotSize = ArmyBattleView.Params.dotSize;
   const role = (troop.role || "close quarters").toLowerCase();  // i18n-ignore  troop db id
 
-  const sprite = new PIXI.Graphics();
-  sprite.beginFill(color);
-
-  // Different shapes based on role
-  if (role.includes("ranged") || role.includes("archer") || role.includes("gunner")) {
-    // Triangle for ranged
-    sprite.moveTo(0, -dotSize);
-    sprite.lineTo(dotSize, dotSize);
-    sprite.lineTo(-dotSize, dotSize);
-    sprite.closePath();
-  } else if (role.includes("support") || role.includes("healer") || role.includes("medic")) {
-    // Square for support
-    sprite.drawRect(-dotSize, -dotSize, dotSize * 2, dotSize * 2);
-  } else {
-    // Circle for close quarters (default)
-    sprite.drawCircle(0, 0, dotSize);
-  }
-
-  sprite.endFill();
+  const sprite = new ArmyUnitSprite(troop, role, color);
   sprite.x = x;
   sprite.y = y;
 
@@ -783,7 +928,7 @@ ArmyBattleField.prototype._createUnit = function (troop, x, y, color, isPlayer) 
   });
   nameLabel.anchor.set(0.5, 1); // Center horizontally, bottom of text at anchor
   nameLabel.x = x;
-  nameLabel.y = y - dotSize - 2; // Position above unit
+  nameLabel.y = y - ArmyBattleView.Params.unitHeight - 2; // Position above unit
 
   return {
     sprite: sprite,
@@ -802,7 +947,9 @@ ArmyBattleField.prototype._createUnit = function (troop, x, y, color, isPlayer) 
     velocityX: 0,
     velocityY: 0,
     isCharging: false,
-    isRouting: false
+    isRouting: false,
+    lastX: x,
+    lastY: y
   };
 };
 
@@ -1068,6 +1215,24 @@ ArmyBattleField.prototype._updateUnits = function () {
     // Clamp position to battlefield boundaries
     this._clampUnitPosition(unit);
   }
+
+  this._stepUnitAnimations();
+};
+
+// One pass over every unit turning the frame's real displacement into a facing
+// and a walk frame, so units that were pushed, routed or held still all read
+// correctly rather than only the ones that took the charge branch.
+ArmyBattleField.prototype._stepUnitAnimations = function () {
+  const step = (unit) => {
+    if (!unit.isAlive || !unit.sprite.stepAnimation) return;
+    const dx = unit.sprite.x - unit.lastX;
+    const dy = unit.sprite.y - unit.lastY;
+    unit.lastX = unit.sprite.x;
+    unit.lastY = unit.sprite.y;
+    unit.sprite.stepAnimation(dx, dy);
+  };
+  for (const unit of this._playerUnits) step(unit);
+  for (const unit of this._enemyUnits) step(unit);
 };
 
 ArmyBattleField.prototype._clampUnitPosition = function (unit) {
@@ -1219,7 +1384,7 @@ ArmyBattleField.prototype._attackEnemy = function (attacker, defender) {
   if (defender.morale < 0) defender.morale = 0;
 
   // Check if morale broken (route at 20% morale)
-  if (defender.morale < 20 && Math.random() < 0.3) {
+  if (!this._practice && defender.morale < 20 && Math.random() < 0.3) {
     defender.isRouting = true;
   }
 
@@ -1233,6 +1398,14 @@ ArmyBattleField.prototype._attackEnemy = function (attacker, defender) {
 };
 
 ArmyBattleField.prototype._killUnit = function (unit) {
+  if (this._practice) {
+    // A drill has no casualties: the unit is patched up and sent back in.
+    unit.troop.currentHp = unit.troop.hp;
+    unit.morale = 100;
+    unit.isRouting = false;
+    unit.sprite.tint = 0xFFFFFF;
+    return;
+  }
   const injuryChance = ArmyBattleView.Params.injuryChance;
   const isInjured = Math.random() * 100 < injuryChance;
 
@@ -1294,6 +1467,7 @@ ArmyBattleField.prototype._updateCounters = function () {
 };
 
 ArmyBattleField.prototype._checkBattleEnd = function () {
+  if (this._practice) return; // the drill runs until the player leaves it
   if (this._playerAliveCount === 0) {
     this._endBattle("defeat");
   } else if (this._enemyAliveCount === 0) {

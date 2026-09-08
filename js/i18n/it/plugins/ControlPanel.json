@@ -38,5 +38,18 @@
   "endurance": "Autonomia:",
   "uplink": "Collegamento:",
   "audio": "Audio:",
-  "board": "Scheda:"
+  "board": "Scheda:",
+  "tabApplets": "Applet",
+  "cpuLine": "{name} ({mhz})",
+  "ramLine": "{total} MB RAM, {free} MB liberi",
+  "gpuIntegrated": "{name} (condivide {mb} MB di memoria principale)",
+  "hddLine": "Disco fisso da {size}, {used} usati",
+  "psuDesktop": "Alimentatore ATX 250W, rete elettrica",
+  "maker": "Produttore:",
+  "caseRow": "Case:",
+  "serial": "Seriale:",
+  "runningOn": "In esecuzione su {machine} ({host})",
+  "openSysdm": "Proprieta' del sistema...",
+  "openDevmgmt": "Gestione periferiche...",
+  "openDesk": "Proprieta' dello schermo..."
 }

@@ -14,7 +14,6 @@
   "skills": "SKILLS",
   "mastered": "MASTERED",
   "magic": "MAGIC",
-  "pupil": "Pupil:",
   "fuseSpells": "✦ Fuse Spells",
   "fuseSpellsShiftX": "Fuse Spells (SHIFT / X)",
   "selectASkill": "SELECT A SKILL",
@@ -32,6 +31,7 @@
   "recessiveSpellOrSkill": "Recessive (Spell or Skill)",
   "spellOrSkillSetsThe": "spell or skill · sets the result type",
   "skill": "SKILL",
+  "emptySlot": "Empty",
   "emptyPressToChoose": "empty · press to choose",
   "default": "default",
   "animation": "Animation",
@@ -80,7 +80,7 @@
   "forgeBlurb": "Fuse a dominant spell with a recessive spell or skill from {actor}; a skill recessive makes a skill. Costs the components' MP and AP combined, plus Knowledge to forge, and both are forgotten. You hold {knowledge} KP.",
   "kpMultiplier3x": "3.0X KP",
   "kpMultiplier15x": "1.5X KP",
-  "foreignSchool": "SELF-TAUGHT (3x cost)",
+  "foreignSchool": "Self-taught",
   "magicSystem": {
     "tabLabel": "Magical Systems",
     "title": "Magical Systems",
@@ -95,45 +95,62 @@
     "systems": {
       "Arcane": {
         "name": "Arcane",
-        "desc": "Old magic, learned from books and formulae."
+        "desc": "Old magic, learned from books and formulae.",
+        "lore": "Every arcane working is written down before it is spoken. A sigil has a stated cost in breath and blood, a stated range, a stated hour, and a practitioner who alters one term of the formula gets a different result rather than a stronger one. Two magi in two centuries reading the same page will burn the same candle and get the same fire, which is why the colleges could ever teach at all."
       },
       "Sacred": {
         "name": "Sacred",
-        "desc": "Power drawn down from higher orders."
+        "desc": "Power drawn down from higher orders.",
+        "lore": "Sacred power is asked for, never taken. The rite is fixed but the answer is not: the same prayer said with the same voice on the same morning may raise the dead, heal a stranger three towns away, or do nothing at all for a year. The devout do not speak of costs or limits, only of worthiness, and no two saints have ever agreed on what makes a petition heard."
       },
       "Sympathetic": {
         "name": "Sympathetic",
-        "desc": "Like calls to like: object bound to object."
+        "desc": "Like calls to like: object bound to object.",
+        "lore": "Like calls to like, and the correspondence tables say precisely how loudly. A hair binds tighter than a coat, a coat tighter than a name; distance halves the pull, and a broken link ends the working outright rather than weakening it. A sympathetic witch keeps ledgers of what belongs to whom, because in this craft the strength of a tie can be measured before the knife falls."
       },
       "Dimensional": {
         "name": "Dimensional",
-        "desc": "Magic that bends space, time and probability."
+        "desc": "Magic that bends space, time and probability.",
+        "lore": "Space, time and probability are treated as materials with a grain and a tolerance. A fold has a measured span, a debt in duration and a failure mode: overreach it and the practitioner arrives somewhere real, just not where they meant. The mathematics are ugly and unforgiving, which is exactly why the survivors of this school are so precise about their numbers."
       },
       "Psionics": {
         "name": "Psionics",
-        "desc": "Power projected from the mind alone."
+        "desc": "Power projected from the mind alone.",
+        "lore": "There is nothing to read and nothing to buy. A psion pushes, and the world moves as far as their conviction carries it, which is further on some days than on others and nobody has ever charted why. Talent arrives unearned, deepens without practice, and abandons its holders mid-sentence. What one mind can do says nothing about what the next one will manage."
       },
       "Technomagic": {
         "name": "Technomagic",
-        "desc": "The occult fused with the machine."
+        "desc": "The occult fused with the machine.",
+        "lore": "The occult was taken apart on a bench and put back together with tolerances. A technomagical rig lists its draw in watts and its yield in effect, it fails when its supply fails, and a second rig built to the same schematic performs the same to within a margin the builders will argue about for hours. Magic here is an engineering discipline with worse safety standards."
       },
       "Pataphysic": {
         "name": "Pataphysic",
-        "desc": "Magic that answers to no consistent law."
+        "desc": "Magic that answers to no consistent law.",
+        "lore": "The pataphysician studies the laws governing exceptions, and the field returns the courtesy by having none. A working that opened a door on Tuesday makes a door open the pataphysician on Thursday. Notes are kept, and they are always about a magic that no longer exists. Practitioners describe it as a joke told by something with no sense of humour and infinite patience."
       },
       "Natural": {
         "name": "Natural",
-        "desc": "Power drawn from plant, beast and earth."
+        "desc": "Power drawn from plant, beast and earth.",
+        "lore": "Green power comes on its own terms. A grove gives what it is minded to give, in a season it chooses, to a supplicant it has decided about for reasons no herbalist has managed to write down. Bargains hold until they do not. Every practitioner has a story about the year the river simply stopped answering, and none has an explanation worth repeating."
       },
       "Thermodynamics": {
         "name": "Thermodynamics",
-        "desc": "Magic that lives in heat, cold and current."
+        "desc": "Magic that lives in heat, cold and current.",
+        "lore": "Heat is moved, never made. Warm a room and something nearby goes cold by exactly as much; the practitioner who forgets the ledger balances it with their own body. Currents run where resistance is least, gradients equalise on a schedule that can be calculated in advance, and the whole discipline is really a very hostile branch of physics performed without instruments."
       },
       "Ritual": {
         "name": "Ritual",
-        "desc": "Power bought with rite, blood or bargain."
+        "desc": "Power bought with rite, blood or bargain.",
+        "lore": "The price is set before the working begins. So many hours, so much blood, so many voices in the circle, and the effect follows in proportion; halve the offering and you halve the result, break the circle and you get nothing rather than something wild. The bargains are written in terms both parties can enforce, and the oldest rites are the ones whose terms have never had to change."
       }
-    }
+    },
+    "rigor": {
+      "hard": "Hard Magic",
+      "soft": "Soft Magic",
+      "hardHint": "Fixed laws, stated costs",
+      "softHint": "Unbound, unexplained"
+    },
+    "loreHeading": "Lore"
   },
   "graph": {
     "legendLearned": "Learned",
@@ -143,15 +160,17 @@
     "lockedBy": "Unlocked by: {skills}",
     "lockedByCount": "Needs {need} more of: {skills}",
     "lockedHint": "Nothing you know borders this skill yet.",
-    "lockedBySchool": "Sealed in the heart of the circle. The whole school must be known first; still missing: {skills}",
+    "lockedBySchool": "You need to know the rest of the school first, missing {kind}: {count}",
+    "lockedKindSkills": "skills",
+    "lockedKindSpells": "spells",
     "lockedToast": "{skill} does not border anything this pupil knows."
   },
   "atlas": {
     "progress": "{learned} of {total} learned",
-    "hint": "Drag to turn · Wheel to zoom · Shift for the whole school",
     "kp": "{kp} KP",
     "schoolOf": "{index} / {total}",
-    "held": "You hold {knowledge} KP"
+    "held": "You hold {knowledge} KP",
+    "hint": "Drag to pan, wheel to zoom"
   },
   "tag": {
     "esoteric": "Esoteric",
@@ -175,5 +194,12 @@
     "deleted": "{skill} is unmade."
   },
   "fusionCritical": "★ NAT 20 CRITICAL SUCCESS! ★\n{result}\nEmpowered with -20% MP cost and +25% potency!",
-  "fusionFailed": "☠ ARCANE FUSION FAILED (DC {dc}) ☠\nThe spell fusion destabilised in a violent magical backlash!\nThe component spells ({components}) were destroyed!"
+  "fusionFailed": "☠ ARCANE FUSION FAILED (DC {dc}) ☠\nThe spell fusion destabilised in a violent magical backlash!\nThe component spells ({components}) were destroyed!",
+  "primarySchool": "Primary",
+  "secondarySchool": "Secondary",
+  "rename": "Rename",
+  "dissolve": "Dissolve",
+  "renamePrompt": "Enter a new name for this spell:",
+  "dissolveConfirm": "Dissolve {name} back into knowledge?",
+  "pupil": "Pupil"
 }

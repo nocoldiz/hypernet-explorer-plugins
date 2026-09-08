@@ -18,7 +18,7 @@
         "luk": 14,
         "hiringCost": 8400,
         "weeklyCost": 1680,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ExoticGod",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -35,7 +35,7 @@
         "luk": 18,
         "hiringCost": 25200,
         "weeklyCost": 5040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DrillSergeant7",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -52,7 +52,7 @@
         "luk": 20,
         "hiringCost": 49000,
         "weeklyCost": 9800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BotMage",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -69,7 +69,7 @@
         "luk": 18,
         "hiringCost": 67200,
         "weeklyCost": 13440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenKnight",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -86,7 +86,7 @@
         "luk": 28,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenEnchantress",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -103,7 +103,7 @@
         "luk": 21,
         "hiringCost": 7560,
         "weeklyCost": 1510,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -120,7 +120,7 @@
         "luk": 12,
         "hiringCost": 7000,
         "weeklyCost": 1400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Paleontologist",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -137,7 +137,7 @@
         "luk": 20,
         "hiringCost": 44800,
         "weeklyCost": 8960,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Guardian",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -154,7 +154,7 @@
         "luk": 25,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TribePunk",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -171,7 +171,7 @@
         "luk": 23,
         "hiringCost": 6300,
         "weeklyCost": 1260,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BotScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -196,7 +196,7 @@
         "luk": 16,
         "hiringCost": 9800,
         "weeklyCost": 1960,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$SpecialForces",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -213,7 +213,7 @@
         "luk": 20,
         "hiringCost": 28000,
         "weeklyCost": 5600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CityMage",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -230,7 +230,7 @@
         "luk": 18,
         "hiringCost": 39200,
         "weeklyCost": 7840,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ArchivistGuard",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -247,7 +247,7 @@
         "luk": 25,
         "hiringCost": 56000,
         "weeklyCost": 11200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TicketMaster",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -264,7 +264,7 @@
         "luk": 32,
         "hiringCost": 119000,
         "weeklyCost": 23800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$AncientWitch",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -281,7 +281,7 @@
         "luk": 23,
         "hiringCost": 8820,
         "weeklyCost": 1760,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$RitaLeviMontalciniScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -298,7 +298,7 @@
         "luk": 15,
         "hiringCost": 16800,
         "weeklyCost": 3500,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Astronaut1",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -315,7 +315,7 @@
         "luk": 20,
         "hiringCost": 49000,
         "weeklyCost": 9800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Inquisitor",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -332,7 +332,7 @@
         "luk": 28,
         "hiringCost": 112000,
         "weeklyCost": 22400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenArchmage",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -357,7 +357,7 @@
         "luk": 18,
         "hiringCost": 12600,
         "weeklyCost": 2520,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ReptilianMonk",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -374,7 +374,7 @@
         "luk": 20,
         "hiringCost": 30800,
         "weeklyCost": 6160,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Employee",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -391,7 +391,7 @@
         "luk": 18,
         "hiringCost": 47600,
         "weeklyCost": 9520,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenBrawler",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -408,7 +408,7 @@
         "luk": 22,
         "hiringCost": 58800,
         "weeklyCost": 11760,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Engineer",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -425,7 +425,7 @@
         "luk": 25,
         "hiringCost": 81200,
         "weeklyCost": 16240,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CyborgActivist",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -442,7 +442,7 @@
         "luk": 28,
         "hiringCost": 112000,
         "weeklyCost": 22400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$VoidHorror",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -459,7 +459,7 @@
         "luk": 23,
         "hiringCost": 11340,
         "weeklyCost": 2270,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Scientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -476,7 +476,7 @@
         "luk": 16,
         "hiringCost": 28000,
         "weeklyCost": 5600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Billionaire",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -493,7 +493,7 @@
         "luk": 25,
         "hiringCost": 53200,
         "weeklyCost": 10640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$HypernetExplorer",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -510,7 +510,7 @@
         "luk": 32,
         "hiringCost": 133000,
         "weeklyCost": 26600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CyberNinja",
         "spriteindex": 0,
         "role": "roles.ranged"
       }
@@ -535,7 +535,7 @@
         "luk": 20,
         "hiringCost": 10500,
         "weeklyCost": 2100,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$SchoolTeacher",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -552,7 +552,7 @@
         "luk": 24,
         "hiringCost": 29400,
         "weeklyCost": 5880,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Survivor",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -569,7 +569,7 @@
         "luk": 22,
         "hiringCost": 44800,
         "weeklyCost": 8960,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$SchoolTeacher",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -586,7 +586,7 @@
         "luk": 28,
         "hiringCost": 63000,
         "weeklyCost": 12600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$SchoolTeacher",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -603,7 +603,7 @@
         "luk": 35,
         "hiringCost": 133000,
         "weeklyCost": 26600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Mage",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -620,7 +620,7 @@
         "luk": 27,
         "hiringCost": 9450,
         "weeklyCost": 1890,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$SpacerScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -637,7 +637,7 @@
         "luk": 18,
         "hiringCost": 35000,
         "weeklyCost": 7000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$AndreottiPope",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -654,7 +654,7 @@
         "luk": 22,
         "hiringCost": 70000,
         "weeklyCost": 14000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Innkeeper",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -671,7 +671,7 @@
         "luk": 35,
         "hiringCost": 210000,
         "weeklyCost": 42000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Mannequin",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -698,7 +698,7 @@
         "luk": 40,
         "hiringCost": 9800,
         "weeklyCost": 1960,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Cultist",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -715,7 +715,7 @@
         "luk": 45,
         "hiringCost": 21000,
         "weeklyCost": 4200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OrcBrawler",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -732,7 +732,7 @@
         "luk": 50,
         "hiringCost": 26600,
         "weeklyCost": 5320,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$FieldAgent",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -749,7 +749,7 @@
         "luk": 60,
         "hiringCost": 53200,
         "weeklyCost": 10640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GnomeArtist",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -766,7 +766,7 @@
         "luk": 65,
         "hiringCost": 72800,
         "weeklyCost": 14560,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OrcBerserker",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -783,7 +783,7 @@
         "luk": 80,
         "hiringCost": 105000,
         "weeklyCost": 21000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$MercenarySoldier",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -800,7 +800,7 @@
         "luk": 60,
         "hiringCost": 8820,
         "weeklyCost": 1760,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -817,7 +817,7 @@
         "luk": 70,
         "hiringCost": 42000,
         "weeklyCost": 8400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenTraveler",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -834,7 +834,7 @@
         "luk": 80,
         "hiringCost": 91000,
         "weeklyCost": 18200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Inventor",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -851,7 +851,7 @@
         "luk": 90,
         "hiringCost": 168000,
         "weeklyCost": 33600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Slime",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -868,7 +868,7 @@
         "luk": 100,
         "hiringCost": 294000,
         "weeklyCost": 58800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ExoticTrader",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -885,7 +885,7 @@
         "luk": 91,
         "hiringCost": 37800,
         "weeklyCost": 7560,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -909,7 +909,7 @@
         "luk": 18,
         "hiringCost": 7700,
         "weeklyCost": 1540,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ArchivistScavenger",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -926,7 +926,7 @@
         "luk": 22,
         "hiringCost": 15400,
         "weeklyCost": 3080,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Hunter",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -943,7 +943,7 @@
         "luk": 20,
         "hiringCost": 21000,
         "weeklyCost": 4200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioWarrior",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -960,7 +960,7 @@
         "luk": 28,
         "hiringCost": 33600,
         "weeklyCost": 6720,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ReptilianCommando",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -977,7 +977,7 @@
         "luk": 22,
         "hiringCost": 44800,
         "weeklyCost": 8960,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OrcVeteran",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -994,7 +994,7 @@
         "luk": 35,
         "hiringCost": 77000,
         "weeklyCost": 15400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Guerrilla",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1011,7 +1011,7 @@
         "luk": 25,
         "hiringCost": 6930,
         "weeklyCost": 1390,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -1035,7 +1035,7 @@
         "luk": 25,
         "hiringCost": 7000,
         "weeklyCost": 1400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ForestIdiot",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1052,7 +1052,7 @@
         "luk": 20,
         "hiringCost": 13300,
         "weeklyCost": 2660,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$RoyalJester",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1069,7 +1069,7 @@
         "luk": 30,
         "hiringCost": 19600,
         "weeklyCost": 3920,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Adept",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1086,7 +1086,7 @@
         "luk": 35,
         "hiringCost": 39200,
         "weeklyCost": 7840,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Selene",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1103,7 +1103,7 @@
         "luk": 32,
         "hiringCost": 58800,
         "weeklyCost": 11760,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenRecruit",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1120,7 +1120,7 @@
         "luk": 45,
         "hiringCost": 77000,
         "weeklyCost": 15400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ForestRanger",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1137,7 +1137,7 @@
         "luk": 33,
         "hiringCost": 6300,
         "weeklyCost": 1260,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -1163,7 +1163,7 @@
         "luk": 22,
         "hiringCost": 9800,
         "weeklyCost": 1960,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$AlienTrucker",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1180,7 +1180,7 @@
         "luk": 28,
         "hiringCost": 18200,
         "weeklyCost": 3640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Paramedic2",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1197,7 +1197,7 @@
         "luk": 25,
         "hiringCost": 25200,
         "weeklyCost": 5040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DevilWarrior",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1214,7 +1214,7 @@
         "luk": 35,
         "hiringCost": 39200,
         "weeklyCost": 7840,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$AugmentedSniper",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1231,7 +1231,7 @@
         "luk": 30,
         "hiringCost": 49000,
         "weeklyCost": 9800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenVeteran",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1248,7 +1248,7 @@
         "luk": 35,
         "hiringCost": 67200,
         "weeklyCost": 13440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CombatMedic",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1265,7 +1265,7 @@
         "luk": 38,
         "hiringCost": 91000,
         "weeklyCost": 18200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TicketMaster",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1282,7 +1282,7 @@
         "luk": 32,
         "hiringCost": 8820,
         "weeklyCost": 1760,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Mechanic",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -1308,7 +1308,7 @@
         "luk": 15,
         "hiringCost": 9100,
         "weeklyCost": 1820,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$FactoryWorker",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1325,7 +1325,7 @@
         "luk": 18,
         "hiringCost": 23800,
         "weeklyCost": 4760,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Selene",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1342,7 +1342,7 @@
         "luk": 22,
         "hiringCost": 36400,
         "weeklyCost": 7280,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$FactoryWorker",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1359,7 +1359,7 @@
         "luk": 20,
         "hiringCost": 47600,
         "weeklyCost": 9520,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GymInstructor",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1376,7 +1376,7 @@
         "luk": 28,
         "hiringCost": 67200,
         "weeklyCost": 13440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$WarEngineer",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1393,7 +1393,7 @@
         "luk": 22,
         "hiringCost": 86800,
         "weeklyCost": 17360,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$SpacerOldman",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1410,7 +1410,7 @@
         "luk": 25,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Scavenger",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1427,7 +1427,7 @@
         "luk": 35,
         "hiringCost": 133000,
         "weeklyCost": 26600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GnomeSniper",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1444,7 +1444,7 @@
         "luk": 30,
         "hiringCost": 182000,
         "weeklyCost": 36400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$AndroidVoid",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1461,7 +1461,7 @@
         "luk": 25,
         "hiringCost": 8190,
         "weeklyCost": 1640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -1487,7 +1487,7 @@
         "luk": 15,
         "hiringCost": 8400,
         "weeklyCost": 1680,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ArchivistRecruit",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1504,7 +1504,7 @@
         "luk": 18,
         "hiringCost": 21000,
         "weeklyCost": 4200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$EggSoldier",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1521,7 +1521,7 @@
         "luk": 20,
         "hiringCost": 30800,
         "weeklyCost": 6160,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Archer",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1538,7 +1538,7 @@
         "luk": 22,
         "hiringCost": 42000,
         "weeklyCost": 8400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Ranger",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1555,7 +1555,7 @@
         "luk": 30,
         "hiringCost": 56000,
         "weeklyCost": 11200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenCleric",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1572,7 +1572,7 @@
         "luk": 25,
         "hiringCost": 70000,
         "weeklyCost": 14000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CastleGuard",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1589,7 +1589,7 @@
         "luk": 28,
         "hiringCost": 95200,
         "weeklyCost": 19040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DrugDealer",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1606,7 +1606,7 @@
         "luk": 30,
         "hiringCost": 119000,
         "weeklyCost": 23800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DogKnight",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1623,7 +1623,7 @@
         "luk": 40,
         "hiringCost": 154000,
         "weeklyCost": 30800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ArchPriest",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1640,7 +1640,7 @@
         "luk": 35,
         "hiringCost": 196000,
         "weeklyCost": 39200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$LazyKnight",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1657,7 +1657,7 @@
         "luk": 28,
         "hiringCost": 7560,
         "weeklyCost": 1510,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$MilitaryAdvisor",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -1683,7 +1683,7 @@
         "luk": 20,
         "hiringCost": 7700,
         "weeklyCost": 1540,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CityBackpacker",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1700,7 +1700,7 @@
         "luk": 25,
         "hiringCost": 15400,
         "weeklyCost": 3080,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenArcher",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1717,7 +1717,7 @@
         "luk": 25,
         "hiringCost": 20300,
         "weeklyCost": 4060,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DarkPriestess",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1734,7 +1734,7 @@
         "luk": 28,
         "hiringCost": 35000,
         "weeklyCost": 7000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$MotherNun",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1751,7 +1751,7 @@
         "luk": 30,
         "hiringCost": 42000,
         "weeklyCost": 8400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GeorgeWBush",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1768,7 +1768,7 @@
         "luk": 35,
         "hiringCost": 67200,
         "weeklyCost": 13440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Sniper",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1785,7 +1785,7 @@
         "luk": 35,
         "hiringCost": 84000,
         "weeklyCost": 16800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenWarlock",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1802,7 +1802,7 @@
         "luk": 38,
         "hiringCost": 126000,
         "weeklyCost": 25200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GoblinPeaesant",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1819,7 +1819,7 @@
         "luk": 42,
         "hiringCost": 154000,
         "weeklyCost": 30800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TicketMaster",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1836,7 +1836,7 @@
         "luk": 32,
         "hiringCost": 6930,
         "weeklyCost": 1390,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -1861,7 +1861,7 @@
         "luk": 28,
         "hiringCost": 11200,
         "weeklyCost": 2240,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Queen",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1878,7 +1878,7 @@
         "luk": 32,
         "hiringCost": 21000,
         "weeklyCost": 4200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DwarvenWarrior",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1895,7 +1895,7 @@
         "luk": 32,
         "hiringCost": 28000,
         "weeklyCost": 5600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$MoonCadet",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1912,7 +1912,7 @@
         "luk": 38,
         "hiringCost": 56000,
         "weeklyCost": 11200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$MoonCadet",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1929,7 +1929,7 @@
         "luk": 42,
         "hiringCost": 81200,
         "weeklyCost": 16240,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TribeArcher",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1946,7 +1946,7 @@
         "luk": 45,
         "hiringCost": 105000,
         "weeklyCost": 21000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Trucker",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -1963,7 +1963,7 @@
         "luk": 40,
         "hiringCost": 147000,
         "weeklyCost": 29400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElephantKnight",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -1980,7 +1980,7 @@
         "luk": 55,
         "hiringCost": 182000,
         "weeklyCost": 36400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/49",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -1997,7 +1997,7 @@
         "luk": 55,
         "hiringCost": 210000,
         "weeklyCost": 42000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Vestal",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -2014,7 +2014,7 @@
         "luk": 43,
         "hiringCost": 10080,
         "weeklyCost": 2020,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -2039,7 +2039,9 @@
         "agi": 28,
         "luk": 30,
         "hiringCost": 12600,
-        "weeklyCost": 2520
+        "weeklyCost": 2520,
+        "spritename": "Skab/!$Manager",
+        "spriteindex": 0
       },
       {
         "name": "factions.petromanagers.troops.efficiencyanalyst.name",
@@ -2053,7 +2055,9 @@
         "agi": 32,
         "luk": 35,
         "hiringCost": 30800,
-        "weeklyCost": 6160
+        "weeklyCost": 6160,
+        "spritename": "Skab/!$DataAnalyst",
+        "spriteindex": 0
       },
       {
         "name": "factions.petromanagers.troops.seniorpetromanager.name",
@@ -2067,7 +2071,9 @@
         "agi": 38,
         "luk": 40,
         "hiringCost": 63000,
-        "weeklyCost": 12600
+        "weeklyCost": 12600,
+        "spritename": "Skab/!$SpecialForces",
+        "spriteindex": 0
       },
       {
         "name": "factions.petromanagers.troops.infernalexecutive.name",
@@ -2081,7 +2087,9 @@
         "agi": 45,
         "luk": 50,
         "hiringCost": 119000,
-        "weeklyCost": 23800
+        "weeklyCost": 23800,
+        "spritename": "Skab/!$AndreottiPope",
+        "spriteindex": 0
       },
       {
         "name": "factions.petromanagers.troops.scientist.name",
@@ -2096,7 +2104,7 @@
         "luk": 41,
         "hiringCost": 11340,
         "weeklyCost": 2270,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -2113,7 +2121,7 @@
         "luk": 25,
         "hiringCost": 11200,
         "weeklyCost": 2240,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BrainSurgeon",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -2130,7 +2138,7 @@
         "luk": 22,
         "hiringCost": 44800,
         "weeklyCost": 8960,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$UndeadSkeleton",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -2147,7 +2155,7 @@
         "luk": 40,
         "hiringCost": 91000,
         "weeklyCost": 18200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Mafia",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -2164,7 +2172,7 @@
         "luk": 45,
         "hiringCost": 168000,
         "weeklyCost": 33600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OldChef",
         "spriteindex": 0,
         "role": "roles.ranged"
       }
@@ -2189,7 +2197,9 @@
         "agi": 65,
         "luk": 35,
         "hiringCost": 11900,
-        "weeklyCost": 2380
+        "weeklyCost": 2380,
+        "spritename": "Skab/!$EggSoldier",
+        "spriteindex": 0
       },
       {
         "name": "factions.speeddemons.troops.nitrocourier.name",
@@ -2203,7 +2213,9 @@
         "agi": 82,
         "luk": 42,
         "hiringCost": 29400,
-        "weeklyCost": 5880
+        "weeklyCost": 5880,
+        "spritename": "Skab/!$CatCourier",
+        "spriteindex": 0
       },
       {
         "name": "factions.speeddemons.troops.velocitycultist.name",
@@ -2217,7 +2229,9 @@
         "agi": 100,
         "luk": 50,
         "hiringCost": 58800,
-        "weeklyCost": 11760
+        "weeklyCost": 11760,
+        "spritename": "Skab/!$MoonCultist",
+        "spriteindex": 0
       },
       {
         "name": "factions.speeddemons.troops.sonicdemon.name",
@@ -2231,7 +2245,9 @@
         "agi": 120,
         "luk": 60,
         "hiringCost": 112000,
-        "weeklyCost": 22400
+        "weeklyCost": 22400,
+        "spritename": "Skab/!$GnomeExplorer",
+        "spriteindex": 0
       },
       {
         "name": "factions.speeddemons.troops.scientist.name",
@@ -2246,7 +2262,7 @@
         "luk": 49,
         "hiringCost": 10710,
         "weeklyCost": 2140,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -2263,7 +2279,7 @@
         "luk": 20,
         "hiringCost": 28000,
         "weeklyCost": 5600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Spiritist",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -2280,7 +2296,7 @@
         "luk": 35,
         "hiringCost": 53200,
         "weeklyCost": 10640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DogNoble",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -2297,7 +2313,7 @@
         "luk": 30,
         "hiringCost": 105000,
         "weeklyCost": 21000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$NobleSinger",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -2314,7 +2330,7 @@
         "luk": 32,
         "hiringCost": 10080,
         "weeklyCost": 2020,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -2339,7 +2355,9 @@
         "agi": 35,
         "luk": 28,
         "hiringCost": 25200,
-        "weeklyCost": 5040
+        "weeklyCost": 5040,
+        "spritename": "Skab/!$BioWarrior",
+        "spriteindex": 0
       },
       {
         "name": "factions.sevensisters.troops.oilbaronguard.name",
@@ -2353,7 +2371,9 @@
         "agi": 40,
         "luk": 32,
         "hiringCost": 53200,
-        "weeklyCost": 10640
+        "weeklyCost": 10640,
+        "spritename": "Skab/!$CatGuard",
+        "spriteindex": 0
       },
       {
         "name": "factions.sevensisters.troops.familychampion.name",
@@ -2367,7 +2387,9 @@
         "agi": 48,
         "luk": 38,
         "hiringCost": 98000,
-        "weeklyCost": 19600
+        "weeklyCost": 19600,
+        "spritename": "Skab/!$ElvenScout",
+        "spriteindex": 0
       },
       {
         "name": "factions.sevensisters.troops.heiressassassin.name",
@@ -2381,7 +2403,9 @@
         "agi": 75,
         "luk": 55,
         "hiringCost": 168000,
-        "weeklyCost": 33600
+        "weeklyCost": 33600,
+        "spritename": "Skab/!$KoboldAssassin",
+        "spriteindex": 0
       },
       {
         "name": "factions.sevensisters.troops.scientist.name",
@@ -2396,7 +2420,7 @@
         "luk": 40,
         "hiringCost": 22680,
         "weeklyCost": 4540,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -2413,7 +2437,7 @@
         "luk": 28,
         "hiringCost": 36400,
         "weeklyCost": 7280,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GnomeSniper",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -2430,7 +2454,7 @@
         "luk": 25,
         "hiringCost": 70000,
         "weeklyCost": 14000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Hairdresser",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -2447,7 +2471,7 @@
         "luk": 38,
         "hiringCost": 126000,
         "weeklyCost": 25200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Catman",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -2471,7 +2495,9 @@
         "agi": 18,
         "luk": 30,
         "hiringCost": 21000,
-        "weeklyCost": 4200
+        "weeklyCost": 4200,
+        "spritename": "Skab/!$Rebreather",
+        "spriteindex": 0
       },
       {
         "name": "factions.supremearchivistcouncil.troops.truthkeeper.name",
@@ -2485,7 +2511,9 @@
         "agi": 22,
         "luk": 38,
         "hiringCost": 49000,
-        "weeklyCost": 9800
+        "weeklyCost": 9800,
+        "spritename": "Skab/!$MargheritaHackSpace",
+        "spriteindex": 0
       },
       {
         "name": "factions.supremearchivistcouncil.troops.councilelder.name",
@@ -2499,7 +2527,9 @@
         "agi": 28,
         "luk": 50,
         "hiringCost": 105000,
-        "weeklyCost": 21000
+        "weeklyCost": 21000,
+        "spritename": "Skab/!$Exoticerson",
+        "spriteindex": 0
       },
       {
         "name": "factions.supremearchivistcouncil.troops.scientist.name",
@@ -2514,7 +2544,7 @@
         "luk": 41,
         "hiringCost": 18900,
         "weeklyCost": 3780,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$Archivist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -2531,7 +2561,7 @@
         "luk": 18,
         "hiringCost": 8400,
         "weeklyCost": 1680,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DwarvenValkirie",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -2548,7 +2578,7 @@
         "luk": 20,
         "hiringCost": 56000,
         "weeklyCost": 11200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$FootSoldier",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -2565,7 +2595,7 @@
         "luk": 26,
         "hiringCost": 7560,
         "weeklyCost": 1510,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ArchivistArmorer",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -2589,7 +2619,9 @@
         "agi": 48,
         "luk": 35,
         "hiringCost": 22400,
-        "weeklyCost": 4480
+        "weeklyCost": 4480,
+        "spritename": "Skab/!$FieldAgent",
+        "spriteindex": 0
       },
       {
         "name": "factions.dataacquisitiondepartment.troops.acquisitionspy.name",
@@ -2603,7 +2635,9 @@
         "agi": 62,
         "luk": 45,
         "hiringCost": 44800,
-        "weeklyCost": 8960
+        "weeklyCost": 8960,
+        "spritename": "Skab/!$ElephantKnight",
+        "spriteindex": 0
       },
       {
         "name": "factions.dataacquisitiondepartment.troops.eliteinfiltrator.name",
@@ -2617,7 +2651,9 @@
         "agi": 78,
         "luk": 60,
         "hiringCost": 91000,
-        "weeklyCost": 18200
+        "weeklyCost": 18200,
+        "spritename": "Skab/!$Infiltrator",
+        "spriteindex": 0
       },
       {
         "name": "factions.dataacquisitiondepartment.troops.scientist.name",
@@ -2632,7 +2668,7 @@
         "luk": 49,
         "hiringCost": 20160,
         "weeklyCost": 4030,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$DataAnalyst",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -2649,7 +2685,7 @@
         "luk": 20,
         "hiringCost": 19600,
         "weeklyCost": 3920,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$VillageTavernkeeper",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -2666,7 +2702,7 @@
         "luk": 30,
         "hiringCost": 77000,
         "weeklyCost": 15400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Trainer",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -2690,7 +2726,9 @@
         "agi": 25,
         "luk": 28,
         "hiringCost": 19600,
-        "weeklyCost": 3920
+        "weeklyCost": 3920,
+        "spritename": "Skab/!$ArchivistLibrarian",
+        "spriteindex": 0
       },
       {
         "name": "factions.knowledgepreservationdivision.troops.preservationguard.name",
@@ -2704,7 +2742,9 @@
         "agi": 30,
         "luk": 32,
         "hiringCost": 44800,
-        "weeklyCost": 8960
+        "weeklyCost": 8960,
+        "spritename": "Skab/!$DecrepitGuard",
+        "spriteindex": 0
       },
       {
         "name": "factions.knowledgepreservationdivision.troops.masterconservator.name",
@@ -2718,7 +2758,9 @@
         "agi": 35,
         "luk": 40,
         "hiringCost": 98000,
-        "weeklyCost": 19600
+        "weeklyCost": 19600,
+        "spritename": "Skab/!$TicketMaster",
+        "spriteindex": 0
       },
       {
         "name": "factions.knowledgepreservationdivision.troops.scientist.name",
@@ -2733,7 +2775,7 @@
         "luk": 35,
         "hiringCost": 17640,
         "weeklyCost": 3530,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -2750,7 +2792,7 @@
         "luk": 18,
         "hiringCost": 30800,
         "weeklyCost": 6160,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Farmacist",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -2767,7 +2809,7 @@
         "luk": 24,
         "hiringCost": 100800,
         "weeklyCost": 20160,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DwarvenThinkerer",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -2791,7 +2833,9 @@
         "agi": 30,
         "luk": 42,
         "hiringCost": 18200,
-        "weeklyCost": 3640
+        "weeklyCost": 3640,
+        "spritename": "Skab/!$OldCommander",
+        "spriteindex": 0
       },
       {
         "name": "factions.publictransparencyunit.troops.spindoctor.name",
@@ -2805,7 +2849,9 @@
         "agi": 38,
         "luk": 55,
         "hiringCost": 40600,
-        "weeklyCost": 8120
+        "weeklyCost": 8120,
+        "spritename": "Skab/!$ArchivistDoctor",
+        "spriteindex": 0
       },
       {
         "name": "factions.publictransparencyunit.troops.misinformationmaster.name",
@@ -2819,7 +2865,9 @@
         "agi": 45,
         "luk": 70,
         "hiringCost": 91000,
-        "weeklyCost": 18200
+        "weeklyCost": 18200,
+        "spritename": "Skab/!$TicketMaster",
+        "spriteindex": 0
       },
       {
         "name": "factions.publictransparencyunit.troops.scientist.name",
@@ -2834,7 +2882,7 @@
         "luk": 58,
         "hiringCost": 16380,
         "weeklyCost": 3280,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -2851,7 +2899,7 @@
         "luk": 25,
         "hiringCost": 39200,
         "weeklyCost": 7840,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$VoidHorror",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -2868,7 +2916,7 @@
         "luk": 35,
         "hiringCost": 112000,
         "weeklyCost": 22400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$RitaLeviMontalciniScientist",
         "spriteindex": 0,
         "role": "roles.ranged"
       }
@@ -2892,7 +2940,9 @@
         "agi": 38,
         "luk": 30,
         "hiringCost": 23800,
-        "weeklyCost": 4760
+        "weeklyCost": 4760,
+        "spritename": "Skab/!$Nun",
+        "spriteindex": 0
       },
       {
         "name": "factions.internalcomplianceunit.troops.secretenforcer.name",
@@ -2906,7 +2956,9 @@
         "agi": 48,
         "luk": 35,
         "hiringCost": 53200,
-        "weeklyCost": 10640
+        "weeklyCost": 10640,
+        "spritename": "Skab/!$DarkPriestess",
+        "spriteindex": 0
       },
       {
         "name": "factions.internalcomplianceunit.troops.internalinquisitor.name",
@@ -2920,7 +2972,9 @@
         "agi": 55,
         "luk": 42,
         "hiringCost": 112000,
-        "weeklyCost": 22400
+        "weeklyCost": 22400,
+        "spritename": "Skab/!$AndroidInquisitor",
+        "spriteindex": 0
       },
       {
         "name": "factions.internalcomplianceunit.troops.scientist.name",
@@ -2935,7 +2989,7 @@
         "luk": 37,
         "hiringCost": 21420,
         "weeklyCost": 4280,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -2952,7 +3006,7 @@
         "luk": 22,
         "hiringCost": 47600,
         "weeklyCost": 9520,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DesertMonk",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -2969,7 +3023,7 @@
         "luk": 35,
         "hiringCost": 126000,
         "weeklyCost": 25200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CyberPaesant",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -2994,7 +3048,9 @@
         "agi": 55,
         "luk": 65,
         "hiringCost": 39200,
-        "weeklyCost": 7840
+        "weeklyCost": 7840,
+        "spritename": "Skab/!$VillageIdiot",
+        "spriteindex": 0
       },
       {
         "name": "factions.libertariangods.troops.contractenforcer.name",
@@ -3008,7 +3064,9 @@
         "agi": 62,
         "luk": 75,
         "hiringCost": 84000,
-        "weeklyCost": 16800
+        "weeklyCost": 16800,
+        "spritename": "Skab/!$AvianNoble",
+        "spriteindex": 0
       },
       {
         "name": "factions.libertariangods.troops.sovereignspirit.name",
@@ -3022,7 +3080,9 @@
         "agi": 70,
         "luk": 90,
         "hiringCost": 154000,
-        "weeklyCost": 30800
+        "weeklyCost": 30800,
+        "spritename": "Skab/!$Jogger",
+        "spriteindex": 0
       },
       {
         "name": "factions.libertariangods.troops.scientist.name",
@@ -3037,7 +3097,7 @@
         "luk": 81,
         "hiringCost": 35280,
         "weeklyCost": 7060,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -3054,7 +3114,7 @@
         "luk": 75,
         "hiringCost": 70000,
         "weeklyCost": 14000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BotAssistant",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -3071,7 +3131,7 @@
         "luk": 85,
         "hiringCost": 133000,
         "weeklyCost": 26600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ReptilianCommando",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -3088,7 +3148,7 @@
         "luk": 95,
         "hiringCost": 238000,
         "weeklyCost": 47600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OrcTrader",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -3105,7 +3165,7 @@
         "luk": 100,
         "hiringCost": 350000,
         "weeklyCost": 70000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$InsectoidSpacer",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -3131,7 +3191,7 @@
         "luk": 40,
         "hiringCost": 12600,
         "weeklyCost": 2520,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GoblinArchmage",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -3148,7 +3208,7 @@
         "luk": 45,
         "hiringCost": 23800,
         "weeklyCost": 4760,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Horse",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -3165,7 +3225,7 @@
         "luk": 50,
         "hiringCost": 30800,
         "weeklyCost": 6160,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GuerrillaWarrior",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -3182,7 +3242,7 @@
         "luk": 52,
         "hiringCost": 47600,
         "weeklyCost": 9520,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DesertMonk",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -3199,7 +3259,7 @@
         "luk": 65,
         "hiringCost": 67200,
         "weeklyCost": 13440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$VoidWorm",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -3216,7 +3276,7 @@
         "luk": 70,
         "hiringCost": 100800,
         "weeklyCost": 20160,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$WarSniper",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -3233,7 +3293,7 @@
         "luk": 85,
         "hiringCost": 133000,
         "weeklyCost": 26600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GoblinNoblewoman",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -3250,7 +3310,7 @@
         "luk": 61,
         "hiringCost": 11340,
         "weeklyCost": 2270,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -3275,7 +3335,9 @@
         "agi": 25,
         "luk": 35,
         "hiringCost": 25200,
-        "weeklyCost": 5040
+        "weeklyCost": 5040,
+        "spritename": "Skab/!$Berlusconi",
+        "spriteindex": 0
       },
       {
         "name": "factions.cardinalscouncil.troops.cardinaladvisor.name",
@@ -3289,7 +3351,9 @@
         "agi": 32,
         "luk": 48,
         "hiringCost": 63000,
-        "weeklyCost": 12600
+        "weeklyCost": 12600,
+        "spritename": "Skab/!$Cardinal",
+        "spriteindex": 0
       },
       {
         "name": "factions.cardinalscouncil.troops.princeofthechurch.name",
@@ -3303,7 +3367,9 @@
         "agi": 38,
         "luk": 65,
         "hiringCost": 140000,
-        "weeklyCost": 28000
+        "weeklyCost": 28000,
+        "spritename": "Skab/!$CharmingPrince",
+        "spriteindex": 0
       },
       {
         "name": "factions.cardinalscouncil.troops.scientist.name",
@@ -3318,7 +3384,7 @@
         "luk": 52,
         "hiringCost": 22680,
         "weeklyCost": 4540,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -3335,7 +3401,7 @@
         "luk": 25,
         "hiringCost": 9100,
         "weeklyCost": 1820,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenRecruit",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -3352,7 +3418,7 @@
         "luk": 55,
         "hiringCost": 182000,
         "weeklyCost": 36400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ScubaDiver",
         "spriteindex": 0,
         "role": "roles.ranged"
       }
@@ -3377,7 +3443,9 @@
         "agi": 28,
         "luk": 50,
         "hiringCost": 16800,
-        "weeklyCost": 3360
+        "weeklyCost": 3360,
+        "spritename": "Skab/!$DogNoble",
+        "spriteindex": 0
       },
       {
         "name": "factions.ior.troops.financialanalyst.name",
@@ -3391,7 +3459,9 @@
         "agi": 35,
         "luk": 65,
         "hiringCost": 39200,
-        "weeklyCost": 7840
+        "weeklyCost": 7840,
+        "spritename": "Skab/!$DataAnalyst",
+        "spriteindex": 0
       },
       {
         "name": "factions.ior.troops.iorenforcer.name",
@@ -3405,7 +3475,9 @@
         "agi": 42,
         "luk": 70,
         "hiringCost": 77000,
-        "weeklyCost": 15400
+        "weeklyCost": 15400,
+        "spritename": "Skab/!$DwarvenExplorer",
+        "spriteindex": 0
       },
       {
         "name": "factions.ior.troops.holybanker.name",
@@ -3419,7 +3491,9 @@
         "agi": 48,
         "luk": 85,
         "hiringCost": 133000,
-        "weeklyCost": 26600
+        "weeklyCost": 26600,
+        "spritename": "Skab/!$Banker",
+        "spriteindex": 0
       },
       {
         "name": "factions.ior.troops.scientist.name",
@@ -3434,7 +3508,7 @@
         "luk": 71,
         "hiringCost": 15120,
         "weeklyCost": 3020,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -3451,7 +3525,7 @@
         "luk": 30,
         "hiringCost": 25200,
         "weeklyCost": 5040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Journalist",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -3468,7 +3542,7 @@
         "luk": 60,
         "hiringCost": 210000,
         "weeklyCost": 42000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BanditLeader",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -3492,7 +3566,9 @@
         "agi": 35,
         "luk": 28,
         "hiringCost": 19600,
-        "weeklyCost": 3920
+        "weeklyCost": 3920,
+        "spritename": "Skab/!$ElvenScout",
+        "spriteindex": 0
       },
       {
         "name": "factions.battlenuns.troops.battlesister.name",
@@ -3506,7 +3582,9 @@
         "agi": 48,
         "luk": 35,
         "hiringCost": 49000,
-        "weeklyCost": 9800
+        "weeklyCost": 9800,
+        "spritename": "Skab/!$Madman",
+        "spriteindex": 0
       },
       {
         "name": "factions.battlenuns.troops.sistersuperior.name",
@@ -3520,7 +3598,9 @@
         "agi": 58,
         "luk": 42,
         "hiringCost": 98000,
-        "weeklyCost": 19600
+        "weeklyCost": 19600,
+        "spritename": "Skab/!$GoblinShogun",
+        "spriteindex": 0
       },
       {
         "name": "factions.battlenuns.troops.mothersuperior.name",
@@ -3534,7 +3614,9 @@
         "agi": 68,
         "luk": 52,
         "hiringCost": 182000,
-        "weeklyCost": 36400
+        "weeklyCost": 36400,
+        "spritename": "Skab/!$MotherNun",
+        "spriteindex": 0
       },
       {
         "name": "factions.battlenuns.troops.scientist.name",
@@ -3549,7 +3631,7 @@
         "luk": 41,
         "hiringCost": 17640,
         "weeklyCost": 3530,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -3566,7 +3648,7 @@
         "luk": 32,
         "hiringCost": 39200,
         "weeklyCost": 7840,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$StreetInventor",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -3583,7 +3665,7 @@
         "luk": 45,
         "hiringCost": 8190,
         "weeklyCost": 1640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -3607,7 +3689,9 @@
         "agi": 45,
         "luk": 38,
         "hiringCost": 22400,
-        "weeklyCost": 4480
+        "weeklyCost": 4480,
+        "spritename": "Skab/!$CyberSamurai",
+        "spriteindex": 0
       },
       {
         "name": "factions.hexorcistscorp.troops.techpriest.name",
@@ -3621,7 +3705,9 @@
         "agi": 52,
         "luk": 45,
         "hiringCost": 53200,
-        "weeklyCost": 10640
+        "weeklyCost": 10640,
+        "spritename": "Skab/!$Priest",
+        "spriteindex": 0
       },
       {
         "name": "factions.hexorcistscorp.troops.digitalexorcist.name",
@@ -3635,7 +3721,9 @@
         "agi": 60,
         "luk": 55,
         "hiringCost": 105000,
-        "weeklyCost": 21000
+        "weeklyCost": 21000,
+        "spritename": "Skab/!$WarGeneral",
+        "spriteindex": 0
       },
       {
         "name": "factions.hexorcistscorp.troops.masterhexorcist.name",
@@ -3649,7 +3737,9 @@
         "agi": 70,
         "luk": 68,
         "hiringCost": 196000,
-        "weeklyCost": 39200
+        "weeklyCost": 39200,
+        "spritename": "Skab/!$TicketMaster",
+        "spriteindex": 0
       },
       {
         "name": "factions.hexorcistscorp.troops.scientist.name",
@@ -3664,7 +3754,7 @@
         "luk": 54,
         "hiringCost": 20160,
         "weeklyCost": 4030,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -3681,7 +3771,7 @@
         "luk": 38,
         "hiringCost": 56000,
         "weeklyCost": 11200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Bubba",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -3706,7 +3796,9 @@
         "agi": 38,
         "luk": 45,
         "hiringCost": 18200,
-        "weeklyCost": 3640
+        "weeklyCost": 3640,
+        "spritename": "Skab/!$ArchPriest",
+        "spriteindex": 0
       },
       {
         "name": "factions.gaylobby.troops.reformadvocate.name",
@@ -3720,7 +3812,9 @@
         "agi": 48,
         "luk": 60,
         "hiringCost": 43400,
-        "weeklyCost": 8680
+        "weeklyCost": 8680,
+        "spritename": "Skab/!$KillerBot",
+        "spriteindex": 0
       },
       {
         "name": "factions.gaylobby.troops.shadowdiplomat.name",
@@ -3734,7 +3828,9 @@
         "agi": 58,
         "luk": 80,
         "hiringCost": 95200,
-        "weeklyCost": 19040
+        "weeklyCost": 19040,
+        "spritename": "Skab/!$ElvenDiplomat1",
+        "spriteindex": 0
       },
       {
         "name": "factions.gaylobby.troops.scientist.name",
@@ -3749,7 +3845,7 @@
         "luk": 65,
         "hiringCost": 16380,
         "weeklyCost": 3280,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -3766,7 +3862,7 @@
         "luk": 42,
         "hiringCost": 81200,
         "weeklyCost": 16240,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GymInstructor",
         "spriteindex": 0,
         "role": "roles.ranged"
       }
@@ -3790,7 +3886,9 @@
         "agi": 32,
         "luk": 35,
         "hiringCost": 21000,
-        "weeklyCost": 4200
+        "weeklyCost": 4200,
+        "spritename": "Skab/!$ElvenTrader",
+        "spriteindex": 0
       },
       {
         "name": "factions.opusdei.troops.secularagent.name",
@@ -3804,7 +3902,9 @@
         "agi": 40,
         "luk": 42,
         "hiringCost": 50400,
-        "weeklyCost": 10080
+        "weeklyCost": 10080,
+        "spritename": "Skab/!$FieldAgent",
+        "spriteindex": 0
       },
       {
         "name": "factions.opusdei.troops.opusdeizealot.name",
@@ -3818,7 +3918,9 @@
         "agi": 48,
         "luk": 50,
         "hiringCost": 100800,
-        "weeklyCost": 20160
+        "weeklyCost": 20160,
+        "spritename": "Skab/!$VillageSpiritist",
+        "spriteindex": 0
       },
       {
         "name": "factions.opusdei.troops.supernumeraryelite.name",
@@ -3832,7 +3934,9 @@
         "agi": 55,
         "luk": 62,
         "hiringCost": 189000,
-        "weeklyCost": 37800
+        "weeklyCost": 37800,
+        "spritename": "Skab/!$Biker",
+        "spriteindex": 0
       },
       {
         "name": "factions.opusdei.troops.scientist.name",
@@ -3847,7 +3951,7 @@
         "luk": 50,
         "hiringCost": 18900,
         "weeklyCost": 3780,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -3864,7 +3968,7 @@
         "luk": 48,
         "hiringCost": 112000,
         "weeklyCost": 22400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CreepyJester",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -3888,7 +3992,9 @@
         "agi": 38,
         "luk": 30,
         "hiringCost": 25200,
-        "weeklyCost": 5040
+        "weeklyCost": 5040,
+        "spritename": "Skab/!$GoblinRecruit",
+        "spriteindex": 0
       },
       {
         "name": "factions.swissguards.troops.halberdier.name",
@@ -3902,7 +4008,9 @@
         "agi": 45,
         "luk": 35,
         "hiringCost": 58800,
-        "weeklyCost": 11760
+        "weeklyCost": 11760,
+        "spritename": "Skab/!$TowerController",
+        "spriteindex": 0
       },
       {
         "name": "factions.swissguards.troops.plasmaguard.name",
@@ -3916,7 +4024,9 @@
         "agi": 52,
         "luk": 42,
         "hiringCost": 119000,
-        "weeklyCost": 23800
+        "weeklyCost": 23800,
+        "spritename": "Skab/!$DesertGuard",
+        "spriteindex": 0
       },
       {
         "name": "factions.swissguards.troops.swisscommander.name",
@@ -3930,7 +4040,9 @@
         "agi": 60,
         "luk": 52,
         "hiringCost": 224000,
-        "weeklyCost": 44800
+        "weeklyCost": 44800,
+        "spritename": "Skab/!$OldCommander",
+        "spriteindex": 0
       },
       {
         "name": "factions.swissguards.troops.scientist.name",
@@ -3945,7 +4057,7 @@
         "luk": 42,
         "hiringCost": 22680,
         "weeklyCost": 4540,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -3962,7 +4074,7 @@
         "luk": 58,
         "hiringCost": 147000,
         "weeklyCost": 29400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OrcNomad",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -3987,7 +4099,7 @@
         "luk": 28,
         "hiringCost": 28000,
         "weeklyCost": 5600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$VoidAstronaut",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4004,7 +4116,7 @@
         "luk": 32,
         "hiringCost": 50400,
         "weeklyCost": 10080,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DrillSergeant",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4021,7 +4133,7 @@
         "luk": 38,
         "hiringCost": 67200,
         "weeklyCost": 13440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$WarEngineer",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4038,7 +4150,7 @@
         "luk": 40,
         "hiringCost": 89600,
         "weeklyCost": 17920,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Trainer",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4055,7 +4167,7 @@
         "luk": 35,
         "hiringCost": 123200,
         "weeklyCost": 24640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$VRExplorer",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4072,7 +4184,7 @@
         "luk": 48,
         "hiringCost": 168000,
         "weeklyCost": 33600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DwarvenMajor",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4089,7 +4201,7 @@
         "luk": 39,
         "hiringCost": 25200,
         "weeklyCost": 5040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -4106,7 +4218,7 @@
         "luk": 18,
         "hiringCost": 9800,
         "weeklyCost": 1960,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ArchivistLibrarian",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4123,7 +4235,7 @@
         "luk": 35,
         "hiringCost": 67200,
         "weeklyCost": 13440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$RichardBenson",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -4148,7 +4260,7 @@
         "luk": 25,
         "hiringCost": 30800,
         "weeklyCost": 6160,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ToxicScavenger",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4165,7 +4277,7 @@
         "luk": 28,
         "hiringCost": 56000,
         "weeklyCost": 11200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TaxiDriver",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4182,7 +4294,7 @@
         "luk": 35,
         "hiringCost": 78400,
         "weeklyCost": 15680,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OldCommander",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4199,7 +4311,7 @@
         "luk": 30,
         "hiringCost": 112000,
         "weeklyCost": 22400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Operator",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4216,7 +4328,7 @@
         "luk": 38,
         "hiringCost": 151200,
         "weeklyCost": 30240,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CatMonk",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4233,7 +4345,7 @@
         "luk": 42,
         "hiringCost": 196000,
         "weeklyCost": 39200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BanditLeader",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4250,7 +4362,7 @@
         "luk": 35,
         "hiringCost": 27720,
         "weeklyCost": 5540,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -4267,7 +4379,7 @@
         "luk": 20,
         "hiringCost": 18200,
         "weeklyCost": 3640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$VRExplorer",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4284,7 +4396,7 @@
         "luk": 30,
         "hiringCost": 95200,
         "weeklyCost": 19040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioWarrior",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -4309,7 +4421,7 @@
         "luk": 22,
         "hiringCost": 16800,
         "weeklyCost": 3360,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GoblinPeasant",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4326,7 +4438,7 @@
         "luk": 25,
         "hiringCost": 33600,
         "weeklyCost": 6720,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$WarVeteran",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4343,7 +4455,7 @@
         "luk": 30,
         "hiringCost": 50400,
         "weeklyCost": 10080,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BanditLeader",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4360,7 +4472,7 @@
         "luk": 35,
         "hiringCost": 67200,
         "weeklyCost": 13440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Slime",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4377,7 +4489,7 @@
         "luk": 38,
         "hiringCost": 95200,
         "weeklyCost": 19040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OldCommander",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4394,7 +4506,7 @@
         "luk": 42,
         "hiringCost": 134400,
         "weeklyCost": 26880,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Inventor",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4411,7 +4523,7 @@
         "luk": 34,
         "hiringCost": 15120,
         "weeklyCost": 3020,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -4428,7 +4540,7 @@
         "luk": 30,
         "hiringCost": 25200,
         "weeklyCost": 5040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Jeweler",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4445,7 +4557,7 @@
         "luk": 40,
         "hiringCost": 140000,
         "weeklyCost": 28000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Botanist",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -4470,7 +4582,7 @@
         "luk": 32,
         "hiringCost": 36400,
         "weeklyCost": 7280,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Paratrooper",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4487,7 +4599,7 @@
         "luk": 35,
         "hiringCost": 61600,
         "weeklyCost": 12320,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenBotanic",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4504,7 +4616,7 @@
         "luk": 40,
         "hiringCost": 84000,
         "weeklyCost": 16800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TicketMaster",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4521,7 +4633,7 @@
         "luk": 45,
         "hiringCost": 117600,
         "weeklyCost": 23520,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$AugmentedSniper",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4538,7 +4650,7 @@
         "luk": 48,
         "hiringCost": 162400,
         "weeklyCost": 32480,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OldCommander",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4555,7 +4667,7 @@
         "luk": 52,
         "hiringCost": 224000,
         "weeklyCost": 44800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Paratrooper",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4572,7 +4684,7 @@
         "luk": 44,
         "hiringCost": 32760,
         "weeklyCost": 6550,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -4589,7 +4701,7 @@
         "luk": 25,
         "hiringCost": 39200,
         "weeklyCost": 7840,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$NordicWarrior",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4606,7 +4718,7 @@
         "luk": 30,
         "hiringCost": 8820,
         "weeklyCost": 1760,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -4631,7 +4743,7 @@
         "luk": 25,
         "hiringCost": 28000,
         "weeklyCost": 5600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Rebreather",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4648,7 +4760,7 @@
         "luk": 28,
         "hiringCost": 50400,
         "weeklyCost": 10080,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Crew",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4665,7 +4777,7 @@
         "luk": 32,
         "hiringCost": 75600,
         "weeklyCost": 15120,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Operator",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4682,7 +4794,7 @@
         "luk": 40,
         "hiringCost": 84000,
         "weeklyCost": 16800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BikerSkull",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4699,7 +4811,7 @@
         "luk": 38,
         "hiringCost": 123200,
         "weeklyCost": 24640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OldCommander",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4716,7 +4828,7 @@
         "luk": 42,
         "hiringCost": 184800,
         "weeklyCost": 36960,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TicketMaster",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4733,7 +4845,7 @@
         "luk": 36,
         "hiringCost": 25200,
         "weeklyCost": 5040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -4750,7 +4862,7 @@
         "luk": 32,
         "hiringCost": 50400,
         "weeklyCost": 10080,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DrillSergeant",
         "spriteindex": 0,
         "role": "roles.ranged"
       }
@@ -4774,7 +4886,9 @@
         "agi": 30,
         "luk": 40,
         "hiringCost": 14700,
-        "weeklyCost": 2940
+        "weeklyCost": 2940,
+        "spritename": "Skab/!$Noblewoman",
+        "spriteindex": 0
       },
       {
         "name": "factions.tanzimatbureaucracy.troops.mfettiinspector.name",
@@ -4788,7 +4902,9 @@
         "agi": 35,
         "luk": 55,
         "hiringCost": 36400,
-        "weeklyCost": 7280
+        "weeklyCost": 7280,
+        "spritename": "Skab/!$OrcWarrior",
+        "spriteindex": 0
       },
       {
         "name": "factions.tanzimatbureaucracy.troops.viziersdiplomat.name",
@@ -4802,7 +4918,9 @@
         "agi": 40,
         "luk": 70,
         "hiringCost": 70000,
-        "weeklyCost": 14000
+        "weeklyCost": 14000,
+        "spritename": "Skab/!$ElvenDiplomat2",
+        "spriteindex": 0
       },
       {
         "name": "factions.tanzimatbureaucracy.troops.emineffendihighofficial.name",
@@ -4816,7 +4934,9 @@
         "agi": 45,
         "luk": 85,
         "hiringCost": 133000,
-        "weeklyCost": 26600
+        "weeklyCost": 26600,
+        "spritename": "Skab/!$HighCommand",
+        "spriteindex": 0
       },
       {
         "name": "factions.tanzimatbureaucracy.troops.scientist.name",
@@ -4831,7 +4951,7 @@
         "luk": 66,
         "hiringCost": 13230,
         "weeklyCost": 2650,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -4848,7 +4968,7 @@
         "luk": 25,
         "hiringCost": 18900,
         "weeklyCost": 3780,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Trainer",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -4865,7 +4985,7 @@
         "luk": 28,
         "hiringCost": 88200,
         "weeklyCost": 17640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DivingSuiteMoving",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4882,7 +5002,7 @@
         "luk": 40,
         "hiringCost": 17010,
         "weeklyCost": 3400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -4907,7 +5027,7 @@
         "luk": 38,
         "hiringCost": 28000,
         "weeklyCost": 5600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioCadet",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4924,7 +5044,7 @@
         "luk": 50,
         "hiringCost": 50400,
         "weeklyCost": 10080,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DesertGuard",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -4941,7 +5061,7 @@
         "luk": 45,
         "hiringCost": 81200,
         "weeklyCost": 16240,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Operator",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4958,7 +5078,7 @@
         "luk": 60,
         "hiringCost": 134400,
         "weeklyCost": 26880,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OldCommander",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -4975,7 +5095,7 @@
         "luk": 51,
         "hiringCost": 25200,
         "weeklyCost": 5040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -4992,7 +5112,7 @@
         "luk": 30,
         "hiringCost": 32200,
         "weeklyCost": 6440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$AnarchistSamurai",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5009,7 +5129,7 @@
         "luk": 50,
         "hiringCost": 115500,
         "weeklyCost": 23100,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ArchivistScout",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -5034,7 +5154,7 @@
         "luk": 60,
         "hiringCost": 16800,
         "weeklyCost": 3360,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CityScavenger",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5051,7 +5171,7 @@
         "luk": 75,
         "hiringCost": 53200,
         "weeklyCost": 10640,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$VillageInventor",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5068,7 +5188,7 @@
         "luk": 90,
         "hiringCost": 100800,
         "weeklyCost": 20160,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$WastelandPilot",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -5085,7 +5205,7 @@
         "luk": 105,
         "hiringCost": 175000,
         "weeklyCost": 35000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$VykingRaider",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5102,7 +5222,7 @@
         "luk": 87,
         "hiringCost": 15120,
         "weeklyCost": 3020,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -5119,7 +5239,7 @@
         "luk": 35,
         "hiringCost": 45500,
         "weeklyCost": 9100,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$LabRat",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5136,7 +5256,7 @@
         "luk": 45,
         "hiringCost": 147000,
         "weeklyCost": 29400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$MonkeyDoctor",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -5161,7 +5281,7 @@
         "luk": 35,
         "hiringCost": 44800,
         "weeklyCost": 8960,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Anarchist",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5178,7 +5298,7 @@
         "luk": 40,
         "hiringCost": 89600,
         "weeklyCost": 17920,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$SpacerTrooper",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5195,7 +5315,7 @@
         "luk": 48,
         "hiringCost": 168000,
         "weeklyCost": 33600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BotLCD",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5212,7 +5332,7 @@
         "luk": 55,
         "hiringCost": 280000,
         "weeklyCost": 56000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TaxiDriver2",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5229,7 +5349,7 @@
         "luk": 47,
         "hiringCost": 40320,
         "weeklyCost": 8060,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -5246,7 +5366,7 @@
         "luk": 40,
         "hiringCost": 67200,
         "weeklyCost": 13440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DogTail",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5263,7 +5383,7 @@
         "luk": 55,
         "hiringCost": 210000,
         "weeklyCost": 42000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$AlienDargos",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -5288,7 +5408,7 @@
         "luk": 25,
         "hiringCost": 25200,
         "weeklyCost": 5040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Recruit",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5305,7 +5425,7 @@
         "luk": 30,
         "hiringCost": 47600,
         "weeklyCost": 9520,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$RevolutionaryCommando",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5322,7 +5442,7 @@
         "luk": 40,
         "hiringCost": 67200,
         "weeklyCost": 13440,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Reporter",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5339,7 +5459,7 @@
         "luk": 35,
         "hiringCost": 100800,
         "weeklyCost": 20160,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Exoticerson",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5356,7 +5476,7 @@
         "luk": 50,
         "hiringCost": 154000,
         "weeklyCost": 30800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$OldCommander",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5373,7 +5493,7 @@
         "luk": 38,
         "hiringCost": 22680,
         "weeklyCost": 4540,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -5390,7 +5510,7 @@
         "luk": 22,
         "hiringCost": 11200,
         "weeklyCost": 2240,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TowerController",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5407,7 +5527,7 @@
         "luk": 38,
         "hiringCost": 72800,
         "weeklyCost": 14560,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Porcupine",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -5424,7 +5544,7 @@
         "luk": 38,
         "hiringCost": 10080,
         "weeklyCost": 2020,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -5449,7 +5569,7 @@
         "luk": 65,
         "hiringCost": 42000,
         "weeklyCost": 8400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Recon",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -5466,7 +5586,7 @@
         "luk": 70,
         "hiringCost": 77000,
         "weeklyCost": 15400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$FieldAgent",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5483,7 +5603,7 @@
         "luk": 75,
         "hiringCost": 119000,
         "weeklyCost": 23800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ArchivistGuard",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5500,7 +5620,7 @@
         "luk": 85,
         "hiringCost": 182000,
         "weeklyCost": 36400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$SewerExplorer",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -5517,7 +5637,7 @@
         "luk": 77,
         "hiringCost": 37800,
         "weeklyCost": 7560,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -5534,7 +5654,7 @@
         "luk": 28,
         "hiringCost": 28000,
         "weeklyCost": 5600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CyclopBrute",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -5551,7 +5671,7 @@
         "luk": 45,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$RabbitWizard",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -5577,7 +5697,7 @@
         "luk": 60,
         "hiringCost": 28000,
         "weeklyCost": 5600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$DataAnalyst",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5594,7 +5714,7 @@
         "luk": 75,
         "hiringCost": 63000,
         "weeklyCost": 12600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$FieldAgent",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5611,7 +5731,7 @@
         "luk": 90,
         "hiringCost": 112000,
         "weeklyCost": 22400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElvenBrawler",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5628,7 +5748,7 @@
         "luk": 100,
         "hiringCost": 175000,
         "weeklyCost": 35000,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$TowerController",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5645,7 +5765,7 @@
         "luk": 85,
         "hiringCost": 25200,
         "weeklyCost": 5040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -5662,7 +5782,7 @@
         "luk": 35,
         "hiringCost": 39200,
         "weeklyCost": 7840,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$AndroidFailure",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5679,7 +5799,7 @@
         "luk": 40,
         "hiringCost": 134400,
         "weeklyCost": 26880,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Ranger",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -5704,7 +5824,7 @@
         "luk": 45,
         "hiringCost": 22400,
         "weeklyCost": 4480,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/emtest2",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5721,7 +5841,7 @@
         "luk": 55,
         "hiringCost": 61600,
         "weeklyCost": 12320,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Engineer",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -5738,7 +5858,7 @@
         "luk": 40,
         "hiringCost": 119000,
         "weeklyCost": 23800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ArmorDiver",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5755,7 +5875,7 @@
         "luk": 65,
         "hiringCost": 189000,
         "weeklyCost": 37800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -5772,7 +5892,7 @@
         "luk": 54,
         "hiringCost": 20160,
         "weeklyCost": 4030,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -5789,7 +5909,7 @@
         "luk": 30,
         "hiringCost": 56000,
         "weeklyCost": 11200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$VillageSpritist",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5806,7 +5926,7 @@
         "luk": 52,
         "hiringCost": 182000,
         "weeklyCost": 36400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$CyclopBrute",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -5833,7 +5953,7 @@
         "luk": 78,
         "hiringCost": 26600,
         "weeklyCost": 5320,
-        "spritename": "Skab/!$AlienGrey",
+        "spritename": "Skab/!$ArchivistArmorer",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5850,7 +5970,7 @@
         "luk": 82,
         "hiringCost": 47600,
         "weeklyCost": 9520,
-        "spritename": "Skab/!$AlienGrey",
+        "spritename": "Skab/!$AlpineGuide",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5867,7 +5987,7 @@
         "luk": 96,
         "hiringCost": 72800,
         "weeklyCost": 14560,
-        "spritename": "Skab/!$AlienGrey",
+        "spritename": "Skab/!$Hunter",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -5884,7 +6004,7 @@
         "luk": 105,
         "hiringCost": 128800,
         "weeklyCost": 25760,
-        "spritename": "Skab/!$AlienGrey",
+        "spritename": "Skab/!$Enchantress",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5901,7 +6021,7 @@
         "luk": 50,
         "hiringCost": 28000,
         "weeklyCost": 5600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BotMage",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -5918,7 +6038,7 @@
         "luk": 75,
         "hiringCost": 95200,
         "weeklyCost": 19040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BotIlluminated",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -5935,7 +6055,7 @@
         "luk": 95,
         "hiringCost": 231000,
         "weeklyCost": 46200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$ElonMusk",
         "spriteindex": 0,
         "role": "roles.ranged"
       }
@@ -5962,7 +6082,7 @@
         "luk": 52,
         "hiringCost": 30800,
         "weeklyCost": 6160,
-        "spritename": "Skab/!$AlienXori",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -5979,7 +6099,7 @@
         "luk": 58,
         "hiringCost": 63000,
         "weeklyCost": 12600,
-        "spritename": "Skab/!$AlienXori",
+        "spritename": "Skab/!$Surgeon",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -5996,7 +6116,7 @@
         "luk": 62,
         "hiringCost": 117600,
         "weeklyCost": 23520,
-        "spritename": "Skab/!$AlienXori",
+        "spritename": "Skab/!$PunkCultist",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6013,7 +6133,7 @@
         "luk": 74,
         "hiringCost": 218400,
         "weeklyCost": 43680,
-        "spritename": "Skab/!$AlienXori",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       },
@@ -6030,7 +6150,7 @@
         "luk": 58,
         "hiringCost": 49000,
         "weeklyCost": 9800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Ninja",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -6047,7 +6167,7 @@
         "luk": 80,
         "hiringCost": 126000,
         "weeklyCost": 25200,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$GnomeExplorer",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6064,7 +6184,7 @@
         "luk": 100,
         "hiringCost": 252000,
         "weeklyCost": 50400,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$InsectoidScavenger",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -6091,7 +6211,7 @@
         "luk": 84,
         "hiringCost": 33600,
         "weeklyCost": 6720,
-        "spritename": "Skab/!$AlienMindmaster",
+        "spritename": "Skab/!$ElvenCommando",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6108,7 +6228,7 @@
         "luk": 92,
         "hiringCost": 69300,
         "weeklyCost": 13860,
-        "spritename": "Skab/!$AlienMindmaster",
+        "spritename": "Skab/!$CatGuard",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6125,7 +6245,7 @@
         "luk": 104,
         "hiringCost": 134400,
         "weeklyCost": 26880,
-        "spritename": "Skab/!$AlienMindmaster",
+        "spritename": "Skab/!$SpaceCadet",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -6142,7 +6262,7 @@
         "luk": 122,
         "hiringCost": 243600,
         "weeklyCost": 48720,
-        "spritename": "Skab/!$AlienMindmaster",
+        "spritename": "Skab/!$ArchPriest",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6159,7 +6279,7 @@
         "luk": 65,
         "hiringCost": 63000,
         "weeklyCost": 12600,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$NordicArtist",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6176,7 +6296,7 @@
         "luk": 85,
         "hiringCost": 189000,
         "weeklyCost": 37800,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$Ninja",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6193,7 +6313,7 @@
         "luk": 80,
         "hiringCost": 25200,
         "weeklyCost": 5040,
-        "spritename": "NPCs/!$UniversityStudent1",
+        "spritename": "Skab/!$BioScientist",
         "spriteindex": 0,
         "role": "roles.scientist"
       }
@@ -6220,7 +6340,7 @@
         "luk": 118,
         "hiringCost": 35000,
         "weeklyCost": 7000,
-        "spritename": "Skab/!$AlienDargos",
+        "spritename": "Skab/!$LeatherDaddy",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6237,7 +6357,7 @@
         "luk": 140,
         "hiringCost": 71400,
         "weeklyCost": 14280,
-        "spritename": "Skab/!$AlienDargos",
+        "spritename": "Skab/!$OrcJester",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -6254,7 +6374,7 @@
         "luk": 165,
         "hiringCost": 176400,
         "weeklyCost": 35280,
-        "spritename": "Skab/!$AlienDargos",
+        "spritename": "Skab/!$Regent",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -6280,7 +6400,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$Monk1",
+        "spritename": "Skab/!$Genetist",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6297,7 +6417,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$Monk1",
+        "spritename": "Skab/!$DesertScout",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6314,7 +6434,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$Monk1",
+        "spritename": "Skab/!$DwarvenGuard",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6331,7 +6451,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$Monk1",
+        "spritename": "Skab/!$Adept",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6348,7 +6468,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$Monk1",
+        "spritename": "Skab/!$ElvenSpacer",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6365,7 +6485,7 @@
         "luk": 30,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "NPCs/!$Monk1",
+        "spritename": "Skab/!$ArmorDiver",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -6391,7 +6511,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$TribeArcher2",
+        "spritename": "Skab/!$StreetShopkeeper",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -6408,7 +6528,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$TribeArcher2",
+        "spritename": "Skab/!$PizzaRider",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -6425,7 +6545,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$TribeArcher2",
+        "spritename": "Skab/!$NordicSergeant",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6442,7 +6562,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$TribeArcher2",
+        "spritename": "Skab/!$ElvenGuard",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6459,7 +6579,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$TribeArcher2",
+        "spritename": "Skab/!$CityMage",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -6476,7 +6596,7 @@
         "luk": 30,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "NPCs/!$TribeArcher2",
+        "spritename": "Skab/!$DwarvenWarrior",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -6502,7 +6622,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$WanderingSwordsman",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6519,7 +6639,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$ArmorDiver",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6536,7 +6656,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$ArchivistPilot",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -6553,7 +6673,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$SpacerTrooper",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6570,7 +6690,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$GnomeGuard",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6587,7 +6707,7 @@
         "luk": 30,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "NPCs/!$WarSniper1",
+        "spritename": "Skab/!$Operator",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -6613,7 +6733,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$Mage2",
+        "spritename": "Skab/!$Rebreather",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6630,7 +6750,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$Mage2",
+        "spritename": "Skab/!$GoblinGuard",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6647,7 +6767,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$Mage2",
+        "spritename": "Skab/!$RogueBlacksmith",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6664,7 +6784,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$Mage2",
+        "spritename": "Skab/!$TicketMaster",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6681,7 +6801,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$Mage2",
+        "spritename": "Skab/!$StoicGuard",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -6707,7 +6827,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$Trucker1",
+        "spritename": "Skab/!$MageSage",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6724,7 +6844,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$Trucker1",
+        "spritename": "Skab/!$RoyalGuard",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -6741,7 +6861,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$Trucker1",
+        "spritename": "Skab/!$Sergeant",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6758,7 +6878,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$Trucker1",
+        "spritename": "Skab/!$Towner",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6775,7 +6895,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$Trucker1",
+        "spritename": "Skab/!$ExoticHorror",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6792,7 +6912,7 @@
         "luk": 30,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "NPCs/!$Trucker1",
+        "spritename": "Skab/!$AugmentedSniper",
         "spriteindex": 0,
         "role": "roles.ranged"
       }
@@ -6818,7 +6938,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$PetroDemon1",
+        "spritename": "Skab/!$ElvenDiplomat1",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6835,7 +6955,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$PetroDemon1",
+        "spritename": "Skab/!$CityDJ",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6852,7 +6972,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$PetroDemon1",
+        "spritename": "Skab/!$Exoticstronaut",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6869,7 +6989,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$PetroDemon1",
+        "spritename": "Skab/!$DeepOne",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -6886,7 +7006,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$PetroDemon1",
+        "spritename": "Skab/!$ExoticTrader",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -6912,7 +7032,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$Soldier1",
+        "spritename": "Skab/!$Volunteer",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6929,7 +7049,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$Soldier1",
+        "spritename": "Skab/!$DogNoble",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -6946,7 +7066,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$Soldier1",
+        "spritename": "Skab/!$GoblinShogun",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -6963,7 +7083,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$Soldier1",
+        "spritename": "Skab/!$ElvenBotanic",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -6980,7 +7100,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$Soldier1",
+        "spritename": "Skab/!$OldCommander",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -7006,7 +7126,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$Librarian1",
+        "spritename": "Skab/!$CarPilot",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -7023,7 +7143,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$Librarian1",
+        "spritename": "Skab/!$DesertMonk",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -7040,7 +7160,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$Librarian1",
+        "spritename": "Skab/!$GnomeSniper",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -7057,7 +7177,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$Librarian1",
+        "spritename": "Skab/!$Billionaire",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -7074,7 +7194,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$Librarian1",
+        "spritename": "Skab/!$WarInventor",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -7100,7 +7220,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$TribeArcher1",
+        "spritename": "Skab/!$Volunteer",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -7117,7 +7237,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$TribeArcher1",
+        "spritename": "Skab/!$DrillSergeant",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -7134,7 +7254,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$TribeArcher1",
+        "spritename": "Skab/!$DesertWitch",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -7151,7 +7271,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$TribeArcher1",
+        "spritename": "Skab/!$GnomePirate",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -7168,7 +7288,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$TribeArcher1",
+        "spritename": "Skab/!$Selene",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -7185,7 +7305,7 @@
         "luk": 30,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "NPCs/!$TribeArcher1",
+        "spritename": "Skab/!$Oracle",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -7211,7 +7331,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$Sage1",
+        "spritename": "Skab/!$CityScavenger",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -7228,7 +7348,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$Sage1",
+        "spritename": "Skab/!$AvianNoble",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -7245,7 +7365,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$Sage1",
+        "spritename": "Skab/!$OrcNun",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -7262,7 +7382,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$Sage1",
+        "spritename": "Skab/!$AndroidDancer",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -7279,7 +7399,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$Sage1",
+        "spritename": "Skab/!$RoborProtector",
         "spriteindex": 0,
         "role": "roles.support"
       }
@@ -7305,7 +7425,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$Soldier2",
+        "spritename": "Skab/!$SpacerMechanic",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -7322,7 +7442,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$Soldier2",
+        "spritename": "Skab/!$ForestRanger",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -7339,7 +7459,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$Soldier2",
+        "spritename": "Skab/!$HypernetExplorer",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -7356,7 +7476,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$Soldier2",
+        "spritename": "Skab/!$RichardBenson",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -7373,7 +7493,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$Soldier2",
+        "spritename": "Skab/!$EM",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -7390,7 +7510,7 @@
         "luk": 30,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "NPCs/!$Soldier2",
+        "spritename": "Skab/49",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }
@@ -7416,7 +7536,7 @@
         "luk": 15,
         "hiringCost": 23000,
         "weeklyCost": 4600,
-        "spritename": "NPCs/!$Sailor1",
+        "spritename": "Skab/!$AirlinePilot",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -7433,7 +7553,7 @@
         "luk": 18,
         "hiringCost": 38000,
         "weeklyCost": 7600,
-        "spritename": "NPCs/!$Sailor1",
+        "spritename": "Skab/!$Marine",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -7450,7 +7570,7 @@
         "luk": 21,
         "hiringCost": 53000,
         "weeklyCost": 10600,
-        "spritename": "NPCs/!$Sailor1",
+        "spritename": "Skab/!$DwarvenGuard",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },
@@ -7467,7 +7587,7 @@
         "luk": 24,
         "hiringCost": 68000,
         "weeklyCost": 13600,
-        "spritename": "NPCs/!$Sailor1",
+        "spritename": "Skab/!$GoblinShogun",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -7484,7 +7604,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "NPCs/!$Sailor1",
+        "spritename": "Skab/!$Commodore",
         "spriteindex": 0,
         "role": "roles.support"
       }

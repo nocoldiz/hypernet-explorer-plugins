@@ -1226,7 +1226,7 @@
 
     Window_ChoiceList.prototype.resetFontSettings = function () {
         Window_Base.prototype.resetFontSettings.call(this);
-        this.contents.fontFace = 'Lora';
+        this.contents.fontFace = 'Bitter';
         this.contents.fontSize = 24;
     };
 

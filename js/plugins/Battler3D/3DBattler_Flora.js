@@ -600,7 +600,17 @@
             this.cap = new THREE.Mesh(new THREE.SphereGeometry(0.62, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), capMat);
             this.cap.position.y = 0.92; this.cap.scale.set(1.25, 0.62, 1.25); this.bodyGroup.add(this.cap);
             const spotMat = this._mat(p.accent, 1, 0.5);
-            for (let i = 0; i < 9; i++) { const a = this.idRand() * Math.PI * 2, rr = 0.2 + this.idRand() * 0.42; const spot = new THREE.Mesh(new THREE.CircleGeometry(0.06 + this.idRand() * 0.04, 10), spotMat); spot.position.set(Math.cos(a) * rr, 0.92 + Math.sqrt(Math.max(0, 0.36 - rr * rr * 0.6)) * 0.4, Math.sin(a) * rr); spot.lookAt(spot.position.x * 2, spot.position.y + 1, spot.position.z * 2); this.cap.add(spot); }
+            // The spots are ON the cap, so they are placed on the cap's own
+            // dome in the cap's own space. Given body-space heights they were
+            // lifted clear of the mushroom by the cap's position and squashed
+            // sideways by its scale.
+            for (let i = 0; i < 9; i++) {
+                const a = this.idRand() * Math.PI * 2, rr = 0.2 + this.idRand() * 0.42;
+                const spot = new THREE.Mesh(new THREE.CircleGeometry(0.06 + this.idRand() * 0.04, 10), spotMat);
+                spot.position.set(Math.cos(a) * rr, Math.sqrt(Math.max(0, 0.62 * 0.62 - rr * rr)), Math.sin(a) * rr);
+                spot.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), spot.position.clone().normalize());
+                this.cap.add(spot);
+            }
             // Bouncing spore sacs: dangling pom-poms under the cap brim.
             this.spores = new THREE.Group();
             for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.12, 4), stalkMat); stem.position.set(Math.cos(a) * 0.5, 0.86, Math.sin(a) * 0.5); this.spores.add(stem); const sac = new THREE.Mesh(new THREE.SphereGeometry(0.07, 9, 9), this._mat(0xffe24a, 1, 0.4, 0xaa6a00)); sac.position.set(Math.cos(a) * 0.5, 0.76, Math.sin(a) * 0.5); this.spores.add(sac); }

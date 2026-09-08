@@ -469,6 +469,12 @@
 
     // Add throw targeting mode to Scene_Map
     Scene_Map.prototype.startThrowTargeting = function(itemData) {
+        // Key items and materials never leave the bag, whichever menu asked.
+        if (!ThrowService.isThrowable(ThrowService.resolve(itemData))) {
+            SoundManager.playBuzzer();
+            return;
+        }
+
         // Calculate initial target position (tile in front of player)
         let initialX = $gamePlayer.x;
         let initialY = $gamePlayer.y;
@@ -672,6 +678,15 @@
 
         // Set callback for when animation completes
         throwSprite.setCompletionCallback(() => {
+            // Whoever is standing on the landing tile wears the throw: an
+            // object hitting a person is assault, a culture vial breaking on
+            // one is an infection (window.ThrowItem owns both answers).
+            const struck = ThrowService.hitEventAt(finalPos.x, finalPos.y, itemData);
+            if (struck) ThrowService.announce(struck);
+
+            // A vial is gone once it breaks; anything else falls at their feet.
+            if (struck && struck.kind === 'infect') return;
+
             // Check if final position should destroy item
             if ($gameMap.isDestroyTile(finalPos.x, finalPos.y)) {
                 window.skipLocalization = true;
@@ -812,5 +827,274 @@
         }
         return _Game_Player_canMove.call(this);
     };
+
+
+    //=========================================================================
+    // Throw service (window.ThrowItem)
+    //
+    // The one answer to "may this be thrown", "how hard does it land" and
+    // "what happens to whoever it lands on". The map throw below, the battle
+    // Throw command (BattleSystemEnhanchedCommands.js) and the map fight's own
+    // Throw (MapBattleMode.js) all read it, so weight means the same thing
+    // wherever an object leaves a hand.
+    //=========================================================================
+
+    // The flight of a thrown object, on screen: how big the 3D model is
+    // drawn, how long it is in the air and how high the arc carries it.
+    const THROW_MODEL_SCALE = 90;
+    const THROW_FLIGHT_FRAMES = 24;
+    const THROW_ARC_HEIGHT = 90;
+
+    const ThrowService = {
+        // Grams. The tag is the only source; anything untagged is a light
+        // object of 100g, the same default the trajectory code has always used.
+        weightOf(item) {
+            if (!item) return 0;
+            const raw = item.meta && item.meta.Weight;
+            const grams = parseInt(raw, 10);
+            return Number.isFinite(grams) && grams > 0 ? grams : 100;
+        },
+
+        // A culture vial names the disease it carries; everything else is null.
+        diseaseVialId(item) {
+            const raw = item && item.meta && item.meta.DiseaseVial;
+            if (!raw || raw === true) return null;
+            return String(raw).trim() || null;
+        },
+
+        // Key items and materials stay in the bag: they are what a quest or a
+        // recipe still needs, and an unrecoverable throw would strand both.
+        // itypeId 2 is the flag the rest of the codebase reads for it.
+        isThrowable(item) {
+            if (!item) return false;
+            if (DataManager.isItem(item) && item.itypeId === 2) return false;
+            const cat = item.note && /<category:\s*([^>]+)>/i.exec(item.note);
+            if (cat && /^(Materials|Components)$/i.test(cat[1].trim())) return false;
+            if (window.VectorGun && window.VectorGun.isBound && window.VectorGun.isBound(item)) return false;
+            return true;
+        },
+
+        // Damage is the weight carried to the target, softened logarithmically
+        // (a sack twice as heavy does not hurt twice as much) and pushed by the
+        // thrower's strength when there is one. A vial is glassware: it breaks
+        // rather than bruises, so it lands for almost nothing and does its work
+        // through what is inside it.
+        damageFor(item, thrower) {
+            const grams = this.weightOf(item);
+            if (this.diseaseVialId(item)) return 1;
+            const base = Math.round(6 * Math.log2(1 + grams / 100));
+            const atk = thrower && thrower.atk ? thrower.atk : 0;
+            return Math.max(1, base + Math.round(atk / 4));
+        },
+
+        // Landing on a battler: plain HP damage with the usual popup, so the
+        // HUD, the corpses and the death handling all see an ordinary hit.
+        hitBattler(target, item, thrower) {
+            if (!target || !target.isAlive || !target.isAlive()) return 0;
+            const damage = this.damageFor(item, thrower);
+            if (target.clearResult) target.clearResult();
+            target.gainHp(-damage);
+            if (target.result && target.result()) {
+                const res = target.result();
+                res.hpAffected = true;
+                res.hpDamage = damage;
+            }
+            if (target.startDamagePopup) target.startDamagePopup();
+            if (target.hp <= 0 && target.performCollapse) target.performCollapse();
+            return damage;
+        },
+
+        // Landing on somebody who is not in a fight. A vial breaking on an NPC
+        // is an infection attempt (Health_DiseaseSystem.js) and is answered as
+        // bioterrorism when it is seen; anything else is assault, priced off
+        // what it did. Returns a short report for the caller to voice.
+        hitEvent(event, item, thrower) {
+            if (!event || !window.NPCSocietyRegistry) return null;
+            const name = (window.NPCSim && window.NPCSim.npcNameForEvent)
+                ? window.NPCSim.npcNameForEvent(event)
+                : (event.event && event.event() ? String(event.event().name || '').trim() : '');
+            if (!name) return null;
+            const profile = window.NPCSocietyRegistry.getProfile(name);
+            if (!profile) return null;
+
+            const diseaseId = this.diseaseVialId(item);
+            if (diseaseId) return this.infectEvent(event, profile, name, diseaseId, thrower);
+
+            const damage = this.damageFor(item, thrower);
+            this.souredBy(profile, damage);
+            const bounty = 200 + damage * 20;
+            if (window.CrimeSystem && window.CrimeSystem.addCrime) {
+                const label = window.CrimeSystem.presetCrimeName
+                    ? window.CrimeSystem.presetCrimeName('assault')
+                    : 'assault'; // i18n-ignore: CrimeSystem preset key
+                window.CrimeSystem.addCrime(label, bounty, 'assault');
+            }
+            return { kind: 'assault', name, damage, bounty };
+        },
+
+        // A hit NPC remembers it: the opinion of whoever threw collapses and
+        // the faction notices, the same ledger the Empathize attack writes to.
+        souredBy(profile, damage) {
+            if (!profile) return;
+            const leader = $gameParty && $gameParty.leader && $gameParty.leader();
+            const drop = Math.min(60, 20 + damage);
+            if (leader && profile.opinions) {
+                const id = leader.actorId();
+                const now = Number(profile.opinions[id] || 0);
+                profile.opinions[id] = Math.max(-100, now - drop);
+            }
+            profile.opinion = Math.max(-100, Number(profile.opinion || 0) - drop);
+            if (!Array.isArray(profile.log)) profile.log = [];
+            profile.log.push({ tag: 'crime', desc: 'hit by a thrown object' }); // i18n-ignore: internal log tag
+        },
+
+        // The vial breaks on them. A covert throw plants the disease quietly;
+        // a seen one is bioterrorism. Either way the pathogen is loose, so the
+        // outbreak is seeded where it happened.
+        infectEvent(event, profile, name, diseaseId, thrower) {
+            const DS = window.DiseaseSystem;
+            if (!DS || !DS.infectNpc) return null;
+
+            const chance = this.covertChance(thrower);
+            const covert = Math.random() * 100 < chance;
+
+            let epidemicId = null;
+            if (DS.startPlayerEpidemic) {
+                const placeKey = window.EpidemicSystem && window.EpidemicSystem.currentPlace
+                    ? window.EpidemicSystem.currentPlace()
+                    : null;
+                const epidemic = DS.startPlayerEpidemic(diseaseId, placeKey, {
+                    covert: covert,
+                    playerStarted: true,
+                    originNpc: name
+                });
+                epidemicId = epidemic && epidemic.id ? epidemic.id : null;
+            }
+            DS.infectNpc(profile, diseaseId, epidemicId);
+
+            if (!covert) {
+                if (window.CrimeSystem && window.CrimeSystem.addPresetCrime) {
+                    window.CrimeSystem.addPresetCrime('bioterrorism');
+                }
+                this.souredBy(profile, 20);
+            }
+            return { kind: 'infect', name, diseaseId, covert, epidemicId };
+        },
+
+        // The same reach the Empathize infection uses: a steady hand and a
+        // quick mind is what keeps a broken vial from being traced back.
+        covertChance(thrower) {
+            const actor = thrower || ($gameParty && $gameParty.leader && $gameParty.leader());
+            if (!actor || actor.mat == null) return 10;
+            return Math.max(5, Math.min(95, 10 + (actor.mat + actor.agi) / 0.6));
+        },
+
+        // What the throw did, said out loud (a toast, never a blocking box).
+        announce(report) {
+            if (!report || !window.ParchmentToast) return;
+            if (report.kind === 'assault') {
+                window.ParchmentToast.show(T('Battle.throw.hitNpc', {
+                    name: report.name, damage: report.damage
+                }));
+            } else if (report.kind === 'infect') {
+                window.ParchmentToast.show(T(
+                    report.covert ? 'Battle.throw.infectedQuietly' : 'Battle.throw.infectedSeen',
+                    { name: report.name }
+                ));
+            }
+        },
+
+        // The database entry behind a {itemType, itemId} throw record.
+        resolve(itemData) {
+            if (!itemData) return null;
+            switch (itemData.itemType) {
+                case 'weapon': return $dataWeapons[itemData.itemId];
+                case 'armor':  return $dataArmors[itemData.itemId];
+                default:       return $dataItems[itemData.itemId];
+            }
+        },
+
+        // Whoever stands on a landing tile takes the throw. Battlers in a map
+        // fight are hit as battlers; everyone else is answered as a person.
+        hitEventAt(x, y, itemData) {
+            const item = this.resolve(itemData);
+            if (!item) return null;
+            const thrower = $gameParty && $gameParty.leader && $gameParty.leader();
+            for (const ev of $gameMap.eventsXy(x, y)) {
+                const MBM = window.MapBattleMode;
+                if (MBM && MBM.isActive && MBM.isActive() && MBM.battlerFor) {
+                    const battler = MBM.battlerFor(ev);
+                    if (battler) {
+                        const damage = this.hitBattler(battler, item, thrower);
+                        return { kind: 'battler', battler, damage };
+                    }
+                }
+                const report = this.hitEvent(ev, item, thrower);
+                if (report) return report;
+            }
+            return null;
+        },
+
+        // The object itself, thrown across the screen in three dimensions.
+        // It borrows the weapon overlay (Weapon/Weapon3DOverlay.js), which is
+        // already an orthographic camera measured in game pixels, and the
+        // item model library (ItemSystem/ItemSystemUtils.js). Falls straight
+        // through to the callback wherever either is missing.
+        flyModel(item, from, to, onDone) {
+            const done = () => { if (onDone) onDone(); };
+            const overlay = window.WeaponThreeScene;
+            const models = window.ItemModelSystem;
+            if (!overlay || !models || !window.THREE || !from || !to) { done(); return; }
+
+            let model = null;
+            try { model = models.createModel(item); } catch (e) { model = null; }
+            if (!model) { done(); return; }
+
+            overlay.ref();
+            const pivot = new window.THREE.Group();
+            // The library builds in metres, standing on the floor; on screen
+            // the object is a hand-sized thing a few dozen pixels across.
+            model.scale.setScalar(THROW_MODEL_SCALE);
+            pivot.add(model);
+            overlay.scene.add(pivot);
+
+            const toScene = (p) => ({
+                x: p.x - Graphics.width / 2,
+                y: Graphics.height / 2 - p.y
+            });
+            const a = toScene(from);
+            const b = toScene(to);
+            const spin = 0.25 + Math.random() * 0.15;
+            const frames = THROW_FLIGHT_FRAMES;
+            let frame = 0;
+
+            const step = () => {
+                frame++;
+                const t = Math.min(1, frame / frames);
+                pivot.position.x = a.x + (b.x - a.x) * t;
+                // An arc, not a laser: the object rises and comes down again.
+                pivot.position.y = a.y + (b.y - a.y) * t + Math.sin(t * Math.PI) * THROW_ARC_HEIGHT;
+                pivot.rotation.z -= spin;
+                pivot.rotation.x += spin * 0.6;
+                overlay.render();
+                if (t >= 1) {
+                    overlay.scene.remove(pivot);
+                    overlay.render();
+                    overlay.deref();
+                    done();
+                    return;
+                }
+                requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        },
+
+        // Every throwable the party is carrying, for the battle menus.
+        throwableItems() {
+            return $gameParty.allItems().filter(it => ThrowService.isThrowable(it));
+        }
+    };
+
+    window.ThrowItem = ThrowService;
 
 })();

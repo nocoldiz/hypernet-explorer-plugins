@@ -692,13 +692,17 @@
         // ── Deep One: hunched fish-human hybrid, gill frills, bulbous eyes ───
         _buildDeepOne() {
             this._buildMerfolk();
+            // Gills and eyes are cut into the head, so they are placed in the
+            // head's own space. The head already stands at y 2.15, so the
+            // body-space heights these were written at put them a whole body
+            // length above the creature.
             const gillMat = this._mat(this.profile.accent, 0.85, 0.6);
             for (const s of [-1, 1]) for (let i = 0; i < 3; i++) {
                 const gill = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.1, 0.14), gillMat);
-                gill.position.set(s * 0.18, 2.12 + i * 0.02, -0.02 - i * 0.05); this.head.add(gill);
+                gill.position.set(s * 0.18, -0.03 + i * 0.02, -0.02 - i * 0.05); this.head.add(gill);
             }
             const bigEyeMat = this._mat(this.profile.accent, 1.0, 0.2, this.profile.accent); bigEyeMat.emissiveIntensity = 0.5;
-            for (const s of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 10), bigEyeMat); e.position.set(s * 0.11, 2.16, 0.16); this.head.add(e); }
+            for (const s of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 10), bigEyeMat); e.position.set(s * 0.11, 0.01, 0.16); this.head.add(e); }
         }
 
         // ── Toxic Anemone: sessile column + dense neon stinging tentacles ────

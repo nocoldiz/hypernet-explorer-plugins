@@ -244,7 +244,9 @@ Game_AIArmy.prototype._generateFactionArmy = function () {
       mdf: troop.mdf,
       agi: troop.agi,
       luk: troop.luk,
-      role: troop.role
+      role: troop.role,
+      spritename: troop.spritename,
+      spriteindex: troop.spriteindex
     });
   }
 };
@@ -319,7 +321,9 @@ Game_AIArmy.prototype._generateFactionArmyForCountry = function (faction, countr
       mdf: troop.mdf,
       agi: troop.agi,
       luk: troop.luk,
-      role: troop.role
+      role: troop.role,
+      spritename: troop.spritename,
+      spriteindex: troop.spriteindex
     });
   }
 };
@@ -391,7 +395,9 @@ Game_AIArmy.prototype._generateIndependentArmy = function () {
         mdf: troopTemplate.mdf,
         agi: troopTemplate.agi,
         luk: troopTemplate.luk,
-        role: troopTemplate.role
+        role: troopTemplate.role,
+        spritename: troopTemplate.spritename,
+        spriteindex: troopTemplate.spriteindex
       });
     }
   }

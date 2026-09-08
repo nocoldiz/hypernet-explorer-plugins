@@ -54,7 +54,10 @@
       "more": "Altro... ({count})",
       "clear": "Non mirare",
       "back": "Indietro",
-      "noParts": "Non resta nulla da mirare"
+      "noParts": "Non resta nulla da mirare",
+      "wholeName": "tutto il corpo",
+      "wholeRow": "Tutto il corpo  (dove capita)",
+      "wholeRowCurrent": "Tutto il corpo  (dove capita)  (mirato)"
     },
     "log": {
       "missed": "{actor} mira al {part} di {enemy} e trova solo aria.",
@@ -127,6 +130,21 @@
         "name": "Strappa via",
         "hit": "{actor} punta i piedi contro {enemy} e tira il suo {part}!",
         "miss": "{actor} non trova una presa su cui valga la pena tirare."
+      },
+      "shove": {
+        "name": "Spinta",
+        "hit": "{actor} spinge {enemy} indietro di un quadretto per il suo {part}!",
+        "miss": "{actor} spinge {enemy} e non lo sposta di un dito."
+      },
+      "throw": {
+        "name": "Proiezione",
+        "hit": "{actor} fa roteare {enemy} per il suo {part} e lo scaglia lontano!",
+        "miss": "{actor} prova a far roteare {enemy} e perde la presa."
+      },
+      "suplex": {
+        "name": "Suplex",
+        "hit": "{actor} solleva {enemy} e gli pianta il {part} nel terreno alle sue spalle!",
+        "miss": "{actor} prova a ribaltare {enemy} all’indietro e cede."
       }
     },
     "log": {

@@ -59,7 +59,7 @@
   "chooseYourOrigin": "Scegli la tua origine",
   "chooseYourVehicle": "Scegli il tuo veicolo",
   "confirmParty": "Conferma il gruppo",
-  "noCompanion": "Nessun compagno",
+  "noCompanion": "Nessun famiglio",
   "petKindNone": "Da solo",
   "noCompanionDesc": "Parti senza nessuno alle calcagna. Il posto resta libero per chi incontrerai.",
   "noDefiningTraits": "Nessun tratto distintivo",
@@ -73,7 +73,7 @@
   "origin": "Origine",
   "background": "Trascorso",
   "personalDossier": "DOSSIER PERSONALE",
-  "identityProfile": "Profilo Identità",
+  "identityProfile": "Genere",
   "vocation": "Classe",
   "startingWealth": "Ricchezza Iniziale",
   "traits": "Tratti",
@@ -406,29 +406,9 @@
       "name": "Scegli sulla mappa",
       "desc": "Scegli la tua città natale."
     },
-    "existingCharacter": {
-      "name": "Usa Personaggio Esistente",
-      "desc": "Seleziona tra personaggi già esistenti. Ognuno può essere selezionato una sola volta per mondo."
-    },
-    "modeFull": {
-      "name": "Completa",
-      "desc": "Creazione dettagliata: scegli classe, tratti, città natale e data di nascita per ogni membro."
-    },
-    "modeQuick": {
-      "name": "Rapida",
-      "desc": "Tre domande e sei in gioco: nome, aspetto e classe. Genere, corpo e ritratto arrivano con l'aspetto che scegli, e i tratti sono casuali."
-    },
-    "modeNormal": {
-      "name": "Normale",
-      "desc": "Creazione rapida per ogni membro: scelta rapida della classe, tratti casuali, niente passaggi narrativi."
-    },
     "combatMonsters": {
       "name": "Mostri",
       "desc": "Cattura e combatti con i mostri. \\C[1]Non potrà essere cambiato in seguito.\\C[0]"
-    },
-    "combatCards": {
-      "name": "Carte",
-      "desc": "Combattimento roguelike a mazzi. \\C[1]Non potrà essere cambiato in seguito.\\C[0] Ogni membro del gruppo pesca dal proprio mazzo costruito dalle sue abilità e gioca carte nel suo turno usando l'Energia al posto di MP/AP."
     },
     "combatMap": {
       "name": "Battaglia sulla Mappa",
@@ -444,7 +424,7 @@
     },
     "bloodAndOil": {
       "name": "Sangue e Petrolio",
-      "desc": "Le parti del corpo ridotte a zero HP vengono perse, con debuff permanenti alle statistiche. Perdere un organo vitale uccide il personaggio all'istante. Gli alleati non resuscitati entro la fine della battaglia muoiono permanentemente."
+      "desc": "Un colpo da taglio può staccare per sempre una parte del corpo, con debuff permanenti alle statistiche; una parte che si limita a rompersi guarisce ancora. Perdere un organo vitale uccide il personaggio all'istante. Gli alleati non resuscitati entro la fine della battaglia muoiono permanentemente."
     },
     "permadeath": {
       "name": "Permadeath",
@@ -453,10 +433,6 @@
     "roguelite": {
       "name": "Roguelite",
       "desc": "Se sconfitto ti risvegli nell'ultimo checkpoint. Gli alleati caduti restano nel gruppo e possono essere resuscitati dopo la battaglia."
-    },
-    "modeDetailed": {
-      "name": "Dettagliata",
-      "desc": "Compila una scheda personaggio completa."
     },
     "originCardCollector": {
       "name": "Collezionista di carte",
@@ -643,9 +619,20 @@
     "DEX": "Destrezza. Ordine di turno e probabilita di schivare un attacco.",
     "INT": "Intelligenza. Determina la potenza d'attacco magico, il danno effettivo di un incantesimo.",
     "WIS": "Saggezza. Difesa magica: resistenza a incantesimi e altri danni magici.",
-    "PSI": "Psiche. Fortuna: colpi critici, bottini rari e altre probabilita a favore del personaggio."
+    "PSI": "Psiche. Fortuna: colpi critici, bottini rari e altre probabilita a favore del personaggio.",
+    "ARCANE": "Arcano. Quanto il personaggio appare magico a chi lo osserva.",
+    "SUBSTANCE": "Sostanza. Quanto il personaggio e elegante, l'impressione che lascia il suo aspetto.",
+    "STEALTH": "Furtivita. Quanto il personaggio si confonde con l'ambiente circostante.",
+    "INTIMIDATION": "Intimidazione. Quanto i vestiti e l'equipaggiamento del personaggio appaiono minacciosi."
   },
+  "characterType": "Tipo di personaggio",
   "traitTypeLabel": "TRATTO",
+  "traitCategoryLabel": {
+    "physical": "FISICO",
+    "mental": "MENTALE",
+    "magical": "MAGICO",
+    "genetic": "GENETICO"
+  },
   "previewOff": "SPENTO",
   "previewOn": "ACCESO",
   "unknownVocation": "Sconosciuta",
@@ -688,6 +675,7 @@
       "personality": "Personalità",
       "ideology": "Ideologia",
       "faction": "Fazione",
+      "party": "Partito politico",
       "wealth": "Ricchezza",
       "morality": "Moralità",
       "romantic": "Orientamento romantico",
@@ -718,6 +706,8 @@
     "noMatches": "Nessun risultato.",
     "specLower": "restituisci {n}",
     "specPointsShort": "{left} / {total} punti",
+    "partyNote": "Un personaggio creato non si iscrive ad alcun partito se non ne scegli uno qui. Sono elencati solo i partiti della sua nazione d'origine.",
+    "partyMatch": "Stesso credo",
     "wealthNote": "Quanto questo personaggio porta alla cassa del gruppo.",
     "moreMatches": "Altri {n} , affina la ricerca per vederli."
   },
@@ -746,14 +736,15 @@
   "scenarioShared": "Scenario",
   "noGear": "Nessun oggetto personale",
   "optional": "Opzionale",
-  "biography": "Biografia e Ideologia",
+  "biography": "Bio",
   "customized": "Personalizzato",
-  "companion": "Compagno / Animale",
-  "releasePet": "Libera Compagno",
-  "chooseCompanion": "Scegli Compagno / Animale",
-  "companionStats": "Parametri Compagno",
-  "behavioralTraits": "Comportamento e Natura",
-  "chooseAsCompanion": "Scegli come compagno iniziale",
+  "companion": "Famiglio",
+  "petsTab": "Animali",
+  "releasePet": "Libera il famiglio",
+  "chooseCompanion": "Scegli Compagno",
+  "companionStats": "Parametri del famiglio",
+  "behavioralTraits": "Comportamento",
+  "chooseAsCompanion": "Scegli come famiglio iniziale",
   "selectedCompanion": "Compagno scelto",
   "budget": "Budget",
   "specializationSummary": "Dossier Talenti",
@@ -762,10 +753,10 @@
   "removeAllocated": "Rimuovi",
   "specsCurrent": "Attuali",
   "specGranted": "Concesso da Classe e Tratti",
-  "creedIdeology": "Credo e Ideologia Filosofica",
-  "originCity": "Città / Insediamento d'origine",
-  "moralityAlignment": "Allineamento Morale",
-  "ageBand": "Fascia d'età",
+  "creedIdeology": "Credo",
+  "originCity": "Città Natale",
+  "moralityAlignment": "Moralità",
+  "ageBand": "Età",
   "socialStanding": "Estrazione Sociale",
   "bloodType": "Gruppo Sanguigno",
   "backgroundSummary": "Profilo di Background",
@@ -780,7 +771,7 @@
   "bodyParts": "Parti del corpo",
   "reproductiveOrgans": "Organi riproduttivi",
   "reproductiveOrgansShort": "Organi:",
-  "reproNone": "Nessuno (sterile)",
+  "reproNone": "Sterile",
   "hormoneBalance": "Equilibrio endocrino",
   "hormoneBalanceShort": "Endocrino:",
   "hormoneOestrogenic": "Estrogenico",
@@ -809,12 +800,22 @@
   "scenarioPartyInventory": "Inventario del gruppo",
   "scenarioNoPartyInventory": "Il gruppo non porta ancora nulla con sé",
   "scenarioPickPrompt": "Scegli lo scenario in cui parte il gruppo",
+  "suggestedScenarios": "Scenari Consigliati",
+  "otherScenarios": "Altri Scenari",
+  "simpleMode": "Modalità Semplice",
+  "detailedMode": "Modalità Dettagliata",
+  "toggleModeTooltip": "Passa dalla modalità di creazione Semplice a quella Dettagliata",
+  "petDesc": "Un compagno in sintonia con l'ecosistema circostante. Resistente, vigile e devoto a seguire e proteggere il gruppo.",
+  "petDescKind": "Un compagno {kind} selvatico in sintonia con l'ecosistema circostante.",
   "returnToParty": "Torna alla configurazione del gruppo",
   "startingFunds": "Fondi Iniziali",
   "skillCount": "{n} abilità",
   "traitCount": "{n} tratti",
   "entryCount": "{n} voci",
   "primaryArchetype": "Archetipo primario",
+  "weaponSlotsHeld": "Armi impugnabili: {n}",
+  "deletePreset": "Elimina dossier",
+  "deletePresetBody": "Eliminare il dossier di {name}? Non si potrà tornare indietro.",
   "secondaryArchetype": "Archetipo secondario",
   "vital": "Vitale",
   "archetypeBoardHint": "Scegli un archetipo per un corpo base, oppure aggiungine un secondo per creare un ibrido.",
@@ -853,9 +854,9 @@
   "petKindCreatures": "Creature",
   "petKindConstructs": "Costrutti",
   "petKindUndead": "Non Morti",
-  "petSearchPlaceholder": "Cerca mostri compagni...",
+  "petSearchPlaceholder": "Cerca mostri famigli...",
   "petCount": "{n} mostri",
-  "petNoneFound": "Nessun mostro compagno corrisponde a questo filtro",
+  "petNoneFound": "Nessun mostro famiglio corrisponde a questo filtro",
   "petSpecies": "Specie",
   "petClassification": "Classificazione",
   "petMaxHp": "PV Massimi",
@@ -900,7 +901,7 @@
   "spriteClickHint": "Sprite: clicca per aprire la griglia di selezione",
   "bustLockedHint": "Ritratto preimpostato (bloccato)",
   "bustClickHint": "Ritratto: clicca per scegliere un busto",
-  "professionJob": "Professione / Impiego Iniziale",
+  "professionJob": "Professione",
   "defaultName": "Eroe",
   "defaultClassName": "Operativo",
   "bio": {
@@ -949,8 +950,8 @@
     "noDonor": "Nessuno (Donatore incompatibile)",
     "noRecipient": "Nessuno (Richiede donatore compatibile)",
     "traitLabel": "Proprietà:",
-    "bloodStandard": "Standard ABO / Rh",
-    "bloodExotic": "Sintetici, Rari ed Esotici",
+    "bloodStandard": "Sangue Standard",
+    "bloodExotic": "Sangue Esotico",
     "bloodTrait": {
       "O_NEG": "🌟 Donatore Universale per tutti i soggetti standard ABO/Rh.",
       "AB_POS": "🧬 Ricevente Universale (riceve in sicurezza tutto il sangue ABO/Rh standard).",
@@ -960,8 +961,8 @@
       "BOMBAY_HH": "🔬 Fenotipo Bombay (Privo di antigene H; donatore universale d'emergenza, riceve solo da Bombay hh).",
       "RARE_ANTIGEN": "🧬 Profilo Antigene-Nullo Raro (Richiede donatore con antigeni identici per trasfusioni ripetute)."
     },
-    "jobless": "Disoccupato / Nessuno",
-    "joblessOption": "Disoccupato / Nessun impiego",
+    "jobless": "Disoccupato",
+    "joblessOption": "Nessuna",
     "joblessShort": "Disoccupato",
     "jobGear": "Dotazione oggetti di lavoro iniziale:",
     "noJobGear": "Nessun equipaggiamento o strumento professionale iniziale in dotazione.",
@@ -976,7 +977,7 @@
   "preset": "Preimpostato",
   "presetDossiers": "Dossier Preimpostati",
   "onlyOnePreset": "È ammesso un solo personaggio preimpostato nel gruppo",
-  "romanceTab": "Amori e Legami",
+  "romanceTab": "Relazioni",
   "romance": {
     "romanticOrientation": "Orientamento romantico",
     "sexualOrientation": "Orientamento sessuale",
@@ -992,5 +993,15 @@
     "summaryTitle": "Registro degli affetti",
     "summaryPara1": "<b>{name}</b> si innamora come <b>{romantic}</b> e desidera come <b>{sexual}</b>, e tiene a un modo di legarsi <b>{style}</b>.",
     "summaryPara2": "Sulla scala Kinsey e registrato al grado <b>{kinsey}</b>:"
-  }
+  },
+  "vehiclesTab": "Veicoli",
+  "vehicleCount": "{n} selezionati",
+  "vehicleOwned": "In garage",
+  "vehicleFree": "Non preso",
+  "vehicleKeys": "Chiavi nello zaino",
+  "vehicleNoneTaken": "Niente in garage. Parti a piedi.",
+  "vehicleGarage": "Il tuo garage",
+  "vehicleRequired": "La modalità storia richiede un veicolo prima di partire.",
+  "vehicleTake": "Prendi questo veicolo",
+  "vehicleDrop": "Lascialo indietro"
 }

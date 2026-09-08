@@ -38,6 +38,20 @@
  * @text Image Name
  * @desc Name of the image in busts/ (without extension).
  *
+ * @command playStory
+ * @text Play Story Dialogue
+ * @desc Play a written scene from js/db/Dialogues, as a bust conversation.
+ *
+ * @arg fileName
+ * @type string
+ * @text Script Name
+ * @desc Name of the script in js/db/Dialogues, without the _en suffix (ex: mainquest1).
+ *
+ * @arg sceneName
+ * @type string
+ * @text Scene
+ * @desc The scene inside that script, named under its rule of dashes (ex: intro, new_year_eve). Empty plays the whole file.
+ *
  * @command Rumors
  * @text Talk To NPC
  * @desc One random bust exchange with the calling NPC: they open, the party opens, or they pass on a rumour.
@@ -91,6 +105,15 @@ Imported.DialogueSystem = true;
     const bustOverlap      = 2;     // slight overlap behind textbox border to prevent subpixel seams
     const bustTopMargin    = 6;     // air above its head
     const bustXOffset_16_9 = 245;   // side margin used when there is no box to align to
+    // A story scene stages both of its speakers on the left of the box, side by
+    // side and standing on its top edge, and dims whoever is not talking.
+    // The listener of a story scene is not made see-through, it is taken out of
+    // the light: full opacity, the brightness pulled down. A transparent
+    // portrait shows the map through somebody's face.
+    const storyDimTone     = [-96, -96, -96, 0];
+    const storyLitTone     = [0, 0, 0, 0];
+    const storyEdgeMargin  = 0;     // portraits sit flush against the screen edges
+    const storyMaxHeight   = 545;   // the tallest a story portrait is ever drawn
     const fadeInDuration   = 12;
     const fadeOutDuration  = 12;
 
@@ -203,6 +226,55 @@ Imported.DialogueSystem = true;
         return sentences.map(s => _wrapWords(s, maxLineLength)).join('\n');
     }
 
+    // -------------------------------------------------------------------------
+    // Paginating a long line
+    // -------------------------------------------------------------------------
+    // The box is four rows tall and clips whatever runs past them, so a line
+    // longer than that is not squeezed in: it is dealt out over as many boxes
+    // as it needs. A box always ends between two words, never inside one, and
+    // never inside a [Topic] either, since the brackets are read later.
+    const MSG_BOX_ROWS   = 4;
+    const MSG_LINE_CHARS = 46;  // what one row of the parchment box holds
+
+    // A page that opened a bracket it never closed hands the whole unfinished
+    // run to the page after it, so a topic is always read out of one box.
+    function _healBrackets(pages) {
+        for (let i = 0; i < pages.length - 1; i++) {
+            const page = pages[i];
+            const open = page.lastIndexOf('[');
+            if (open < 0 || page.indexOf(']', open) >= 0) continue;
+            pages[i]     = page.slice(0, open).trim();
+            pages[i + 1] = (page.slice(open) + ' ' + pages[i + 1]).trim();
+        }
+        return pages.filter(page => page.length > 0);
+    }
+
+    function paginateMessage(text, rows = MSG_BOX_ROWS, cols = MSG_LINE_CHARS) {
+        const flat = String(text == null ? '' : text)
+            .replace(/\r?\n/g, ' ').replace(/  +/g, ' ').trim();
+        if (!flat) return [];
+        // The box breaks a line after every sentence (see autoWrapText), so a
+        // page is counted in the rows those breaks actually produce.
+        const sentences = flat.replace(/\.(\s+|$)/g, '.\n').split('\n')
+            .map(s => s.trim()).filter(s => s.length > 0);
+        const pages = [];
+        let page = [];
+        let used = 0;
+        const flush = () => { if (page.length) { pages.push(page.join(' ')); page = []; used = 0; } };
+        for (const sentence of sentences) {
+            const lines = _wrapWords(sentence, cols).split('\n');
+            while (lines.length) {
+                if (used >= rows) { flush(); continue; }
+                const take = lines.splice(0, rows - used);
+                page.push(take.join(' '));
+                used += take.length;
+                if (lines.length) flush();
+            }
+        }
+        flush();
+        return _healBrackets(pages);
+    }
+
     Window_Message.prototype.numVisibleRows    = function () { return 4; };
     Window_Message.prototype.standardFontSize  = function () { return 29; };
     Window_ChoiceList.prototype.standardFontSize = function () { return 29; };
@@ -263,6 +335,12 @@ Imported.DialogueSystem = true;
             // from $gameMap._interpreter, and terminateMessage must hand control
             // to the exchange queue instead of the usual auto-hide check.
             this.exchangeMode        = false;
+            // A story script puts its whole cast on stage before the first
+            // line and leaves it there (see setStoryCast): the speakers stand
+            // side by side, clear of the box, and whoever is not talking is
+            // darkened rather than faded.
+            this.storyMode           = false;
+            this.storySlots          = [];
         }
 
         initialize() {
@@ -278,6 +356,178 @@ Imported.DialogueSystem = true;
             this.setupBustPosition(this.characterBust);
             this.updateBustHiddenPosition();
             this.characterBust.x = this.characterBust._hiddenX;
+
+        }
+
+        // A story scene is staged as a cast, not as one portrait at a time: the
+        // people the scene is between stand side by side for the whole of it,
+        // and the name tag stays on the left with them.
+        setStoryMode(on) {
+            const wanted = !!on;
+            if (wanted === this.storyMode) return;
+            this.storyMode = wanted;
+            if (!wanted) this.clearStoryCast();
+            // The one-slot portrait has no part in a story scene: the cast
+            // replaces it outright rather than standing behind it.
+            if (wanted && this.characterBust) {
+                if (this.characterBust.parent) this.characterBust.parent.removeChild(this.characterBust);
+                this.characterBust.opacity      = 0;
+                this.characterBust._slideType   = null;
+                this.characterBust._slideDuration = 0;
+                this.currentCharacterKey        = null;
+            }
+            if (wanted && this.nameWindow) this.nameWindow.setSide('left');
+            this.refreshLayout(true);
+        }
+
+        // `cast` is the speakers of the scene in the order they first talk,
+        // each { key, imageName }. Everybody is put up at once, before the
+        // first line, so nobody appears out of nowhere halfway through.
+        setStoryCast(cast) {
+            this.clearStoryCast();
+            if (!this.storyMode || !cast || !cast.length) return;
+            const scene = SceneManager._scene;
+            this.storySlots = cast.slice(0, 2).map(entry => {
+                const sprite    = new Sprite();
+                sprite.anchor.x = 0;
+                sprite.anchor.y = 1;
+                sprite.opacity  = bustOpacity;
+                sprite.storyKey = entry.key;
+                const path      = this.resolveBustPath(entry.imageName);
+                try {
+                    const bitmap = ImageManager.loadBitmap('img/', path);
+                    sprite.bitmap = bitmap;
+                    bitmap.addLoadListener(() => this.layoutStoryCast());
+                } catch (err) {
+                    console.warn('Failed to load story bust:', path, err);
+                    sprite.bitmap = this._loadFallback();
+                }
+                if (scene) addBustToScene(sprite, scene);
+                return sprite;
+            });
+            this.layoutStoryCast();
+            this.slideStoryCastIn();
+            this.setStoryActive(null);
+        }
+
+        // The cast is not simply switched on: each of them walks in from their
+        // own edge of the screen, the left one rightwards and the right one
+        // leftwards, under the same fade a single portrait gets.
+        slideStoryCastIn() {
+            (this.storySlots || []).forEach(sprite => {
+                sprite.x              = sprite._hiddenX;
+                sprite.opacity        = 0;
+                sprite._slideType     = 'in';
+                sprite._slideTarget   = sprite._targetX;
+                sprite._slideDuration = fadeInDuration;
+            });
+        }
+
+        // Leaving the stage is the same walk backwards, so the sprite is kept
+        // alive until it is off screen and only then taken out of the scene.
+        slideStoryCastOut() {
+            const leaving = (this.storySlots || []).filter(s => s.parent);
+            leaving.forEach(sprite => {
+                sprite._slideType     = 'out';
+                sprite._slideTarget   = sprite._hiddenX;
+                sprite._slideDuration = fadeOutDuration;
+            });
+            this._retiringSlots = (this._retiringSlots || []).concat(leaving);
+            this.storySlots = [];
+        }
+
+        updateStorySlots() {
+            const walk = sprite => {
+                if (sprite._slideDuration > 0) {
+                    sprite.x += (sprite._slideTarget - sprite.x) / sprite._slideDuration;
+                    sprite._slideDuration -= 1;
+                    if (sprite._slideType === 'in') {
+                        sprite.opacity = bustOpacity * (1 - sprite._slideDuration / fadeInDuration);
+                    } else {
+                        sprite.opacity = bustOpacity * (sprite._slideDuration / fadeOutDuration);
+                    }
+                    return true;
+                }
+                return false;
+            };
+            (this.storySlots || []).forEach(walk);
+            const retiring = this._retiringSlots || [];
+            if (!retiring.length) return;
+            this._retiringSlots = retiring.filter(sprite => {
+                if (walk(sprite)) return true;
+                if (sprite.parent) sprite.parent.removeChild(sprite);
+                sprite.opacity = 0;
+                return false;
+            });
+        }
+
+        clearStoryCast() {
+            this.slideStoryCastOut();
+        }
+
+        // The cast stands beside the box, not over it: one portrait against the
+        // left edge of the screen and one against the right, in the strip the
+        // box leaves free on either side of itself, with their feet on the
+        // floor of the screen rather than on the box's top edge.
+        storyLayout() {
+            // Feet on the bottom edge of the screen itself, under the quick bar
+            // and under the box: the cast is drawn as tall as the screen allows
+            // and the box, a DOM overlay over the canvas, hides whatever reaches
+            // in behind it. Only the middle of the screen is out of bounds, so
+            // the two of them never run into each other.
+            const floor  = Graphics.height;
+            const room   = Math.max(0, floor - bustTopMargin);
+            const half   = Math.max(0, Graphics.width / 2 - storyEdgeMargin);
+            const height = Math.min(storyMaxHeight, room, Math.round(half / bustAspect));
+            const width  = Math.round(height * bustAspect);
+            return {
+                width,
+                height,
+                x: i => (i === 0 ? storyEdgeMargin : Graphics.width - storyEdgeMargin - width),
+                // The edge each slot walks in from and retires to: the left one
+                // off the left of the screen, the right one off the right.
+                hiddenX: i => (i === 0 ? -width : Graphics.width + width),
+                y: floor,
+            };
+        }
+
+        layoutStoryCast() {
+            const slots = this.storySlots || [];
+            if (!slots.length) return;
+            const layout = this.storyLayout();
+            slots.forEach((sprite, i) => {
+                this.scaleBustToFit(sprite, layout.width, layout.height);
+                sprite._targetX = layout.x(i);
+                sprite._hiddenX = layout.hiddenX(i);
+                sprite.y        = layout.y;
+                if (sprite._slideDuration > 0) {
+                    sprite._slideTarget = sprite._slideType === 'out'
+                        ? sprite._hiddenX : sprite._targetX;
+                } else {
+                    sprite.x = sprite._slideType === 'out' ? sprite._hiddenX : sprite._targetX;
+                }
+            });
+        }
+
+        // Who is talking is the one in the light; everybody else on stage is
+        // darkened, at full opacity, and drawn behind them.
+        setStoryActive(key) {
+            const slots = this.storySlots || [];
+            // The name tag belongs to the portrait under the light, so it
+            // crosses the box with the turn instead of sitting on one end of
+            // the stage while the other end talks.
+            if (this.nameWindow && key) {
+                const idx = slots.findIndex(s => s.storyKey === key);
+                if (idx >= 0) this.nameWindow.setSide(idx === 0 ? 'left' : 'right');
+            }
+            slots.forEach(sprite => {
+                const lit = !!key && sprite.storyKey === key;
+                if (sprite.setColorTone) sprite.setColorTone(lit ? storyLitTone : storyDimTone);
+                // A portrait still walking in keeps its fade; only one already
+                // standing there is held at full opacity.
+                if (!(sprite._slideDuration > 0)) sprite.opacity = bustOpacity;
+                if (lit && sprite.parent && sprite.parent.addChild) sprite.parent.addChild(sprite);
+            });
         }
 
         updateBustHiddenPosition() {
@@ -289,10 +539,8 @@ Imported.DialogueSystem = true;
             if (window.$gameSplitScreen && window.$gameSplitScreen.active) {
                 this.characterBust._targetX = (Graphics.width - width) / 2;
             } else {
-                // Flush with the outer edge of the message box on its own side.
-                this.characterBust._targetX = left
-                    ? messageBoxLeft()
-                    : messageBoxRight() - width;
+                // Flush with the screen edge on its own side, no margin.
+                this.characterBust._targetX = left ? 0 : Graphics.width - width;
             }
         }
 
@@ -303,7 +551,7 @@ Imported.DialogueSystem = true;
             const wanted  = side === 'left' ? 'left' : 'right';
             const changed = wanted !== this.bustSide;
             this.bustSide = wanted;
-            if (this.nameWindow) this.nameWindow.setSide(wanted === 'left' ? 'right' : 'left');
+            if (this.nameWindow) this.nameWindow.setSide(this.storyMode ? 'left' : (wanted === 'left' ? 'right' : 'left'));
             this.updateBustHiddenPosition();
             // Changing ends is not a walk across the screen: the portrait is
             // parked off the new edge and slides in from there, under the same
@@ -341,7 +589,7 @@ Imported.DialogueSystem = true;
             const win = SceneManager._scene && SceneManager._scene._messageWindow;
             return Graphics.width + 'x' + Graphics.height + '|' +
                    (win ? win.y + ',' + win.width + ',' + win.height : '-') + '|' +
-                   bottomBarReserve() + '|' + this.bustSide + '|' +
+                   bottomBarReserve() + '|' + this.bustSide + '|' + (this.storyMode ? 's' : '-') + '|' +
                    (window.$gameSplitScreen && window.$gameSplitScreen.active ? '1' : '0');
         }
 
@@ -359,14 +607,17 @@ Imported.DialogueSystem = true;
             } else if (this.bustIsVisible) {
                 s.x = s._targetX;
             }
+            this.layoutStoryCast();
         }
 
-        scaleBustToFit(sprite) {
+        scaleBustToFit(sprite, width, height) {
             if (!sprite.bitmap || !sprite.bitmap.width || !sprite.bitmap.height) {
-                sprite.bitmap.addLoadListener(() => this.scaleBustToFit(sprite));
+                if (sprite.bitmap) sprite.bitmap.addLoadListener(() => this.scaleBustToFit(sprite, width, height));
                 return;
             }
-            const scale = Math.min(getBustWidth() / sprite.bitmap.width, getBustHeight() / sprite.bitmap.height);
+            const w = width  || getBustWidth();
+            const h = height || getBustHeight();
+            const scale = Math.min(w / sprite.bitmap.width, h / sprite.bitmap.height);
             sprite.scale.x = scale;
             sprite.scale.y = scale;
         }
@@ -466,6 +717,11 @@ Imported.DialogueSystem = true;
             if (!interpreter || !interpreter._eventId) return null;
             const gameEvent = $gameMap.event(interpreter._eventId);
             if (!gameEvent) return null;
+            // A `bust: <name>` line names the portrait outright, and is read
+            // through the same service the Empathize panel reads it with, so
+            // the message box and the panel can never show two faces.
+            const written = window.NPCInitSpec?.bustFor?.(null, gameEvent);
+            if (written) return written;
             const eventData = gameEvent.event();
             if (!eventData?.pages) return null;
             const page = eventData.pages.find(p => gameEvent.meetsConditions(p));
@@ -542,14 +798,17 @@ Imported.DialogueSystem = true;
             return true;
         }
 
+        resolveBustPath(imageName) {
+            const resolvedName = window.BustPath.resolve(imageName);
+            const path = resolvedName ? `busts/${resolvedName}` : `busts/7`;
+            return this.checkImageExists(path) ? path : `busts/7`;
+        }
+
         showCustomBust(imageName, characterName, side) {
             if (!imageName) return;
-            const resolvedName = window.BustPath.resolve(imageName);
-            let path = resolvedName ? `busts/${resolvedName}` : `busts/7`;
-            if (!this.checkImageExists(path)) path = `busts/7`;
+            const path         = this.resolveBustPath(imageName);
             const key          = `custom_${imageName}`;
             const fallback     = this._loadFallback();
-            const sideChanged  = this.setBustSide(side || this.sideForSpeaker(characterName));
 
             if (this.nameWindow) {
                 let displayName = characterName || this.convertCamelCaseToReadable(imageName);
@@ -557,6 +816,19 @@ Imported.DialogueSystem = true;
                 this.nameWindow.showName();
                 this.nameIsVisible = true;
             }
+
+            // In a story scene the whole cast is already standing there: the
+            // line only moves the light from one of them to the other.
+            if (this.storyMode && (this.storySlots || []).length) {
+                this.setStoryActive(key);
+                this.currentCharacterKey = key;
+                this.bustIsVisible       = true;
+                this.activeEventId       = 'custom';
+                this.hideScheduled       = false;
+                return;
+            }
+
+            const sideChanged = this.setBustSide(side || this.sideForSpeaker(characterName));
 
             // Same portrait as last line, but now speaking from the other end
             // of the screen: it has to cross over instead of standing still.
@@ -648,6 +920,7 @@ Imported.DialogueSystem = true;
 
         hideBusts() {
             if (this.characterBust.parent) this.slideOut();
+            this.clearStoryCast();
             if (this.nameWindow) { this.nameWindow.hideName(); this.nameIsVisible = false; }
             this.currentCharacterKey = null;
             this.batchDialogueMode   = false;
@@ -702,6 +975,7 @@ Imported.DialogueSystem = true;
 
         update() {
             this.refreshLayout(false);
+            this.updateStorySlots();
             const s = this.characterBust;
             if (s._slideDuration > 0) {
                 s.x += (s._slideTarget - s.x) / s._slideDuration;
@@ -779,7 +1053,7 @@ Imported.DialogueSystem = true;
     // -------------------------------------------------------------------------
     // Message window width: always 800px, centered
     // -------------------------------------------------------------------------
-    const MESSAGE_WINDOW_WIDTH = 800;
+    const MESSAGE_WINDOW_WIDTH = 640;
     function overrideMessageWindowRect(SceneClass) {
         const _orig = SceneClass.prototype.messageWindowRect;
         if (!_orig) return;
@@ -821,6 +1095,260 @@ Imported.DialogueSystem = true;
         return out;
     }
 
+    // The line itself is plain white; a marked run is written in gold, so a
+    // topic the party can ask about and a name a rumour drops in read off the
+    // box at a glance (see the marks under "Proper nouns in a spoken line").
+    // The text is revealed one character at a time, so a mark that has not been
+    // closed yet colours the tail of the line and closes itself.
+    function _msgEscapeHtml(t) {
+        return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Typing must never move a word that is already on screen. The box wraps
+    // itself (white-space: pre-wrap), so revealing the line one character at a
+    // time by growing the element's text makes the browser re-wrap on every
+    // frame and the last word of a row jumps down the moment it no longer fits.
+    // The whole line is written out from the first frame instead, and the part
+    // not yet typed is only made invisible: the wrap is computed once, off the
+    // finished line, and nothing ever moves while it is read out.
+    function _msgRenderReveal(el, text, shownLen) {
+        if (!el) return;
+        const marked = new RegExp('(' + NAME_OPEN + '[^' + NAME_CLOSE + ']*' + NAME_CLOSE + '?)');
+        const parts = String(text).split(marked).filter(part => part !== undefined && part !== '');
+        let at   = 0; // offset into the marked text, which is what shownLen counts
+        let html = '';
+        for (const part of parts) {
+            const isKey = part.charAt(0) === NAME_OPEN;
+            const start = at;
+            at += part.length;
+            const body  = isKey ? stripNameMarks(part) : part;
+            const open  = isKey ? '<span class="msg-keyword">' : '';
+            const close = isKey ? '</span>' : '';
+            if (shownLen >= at) {
+                html += open + _msgEscapeHtml(body) + close;
+            } else if (shownLen <= start) {
+                html += open + '<span class="msg-unrevealed">' + _msgEscapeHtml(body) + '</span>' + close;
+            } else {
+                // The reveal falls inside this part; a keyword's own opening mark
+                // is one character of the marked text that is never drawn.
+                const cut = isKey
+                    ? Math.max(0, Math.min(body.length, shownLen - start - 1))
+                    : shownLen - start;
+                // The cut almost always lands inside a word, and the word is
+                // then two elements rather than one. The word it falls in is
+                // held together so no engine can decide to wrap between the
+                // half being typed and the half still waiting.
+                const wordStart = body.lastIndexOf(' ', cut - 1) + 1;
+                let wordEnd = body.indexOf(' ', cut);
+                if (wordEnd < 0) wordEnd = body.length;
+                html += open + _msgEscapeHtml(body.slice(0, wordStart))
+                     + '<span class="msg-split">'
+                     + _msgEscapeHtml(body.slice(wordStart, cut))
+                     + '<span class="msg-unrevealed">' + _msgEscapeHtml(body.slice(cut, wordEnd)) + '</span>'
+                     + '</span>'
+                     + '<span class="msg-unrevealed">' + _msgEscapeHtml(body.slice(wordEnd)) + '</span>'
+                     + close;
+            }
+        }
+        el.innerHTML = html;
+    }
+
+    function _msgSetText(el, text) {
+        _msgRenderReveal(el, text, Infinity);
+    }
+
+    // The reveal is the one thing about the box a test can hold on to without a
+    // browser: it is asked to draw the same line at every length and the whole
+    // line has to come out of it every time.
+    window.DialogueTextBox = { render: _msgRenderReveal, wrap: autoWrapText, paginate: paginateMessage };
+
+    // -------------------------------------------------------------------------
+    // Letter voices: the line is chattered as it is typed
+    // -------------------------------------------------------------------------
+    // Every letter the typewriter reveals plays a short vowel or consonant blip
+    // out of audio/se/Vowels and audio/se/Consonants, the way a village of
+    // animals talks. The speaker's own pitch is the `pitch` field of their sheet
+    // in js/db/WorldGen/NPCs.json, so the same NPC always sounds like themselves;
+    // a sheet nobody catalogued falls back to a pitch hashed off the name, which
+    // is just as stable. A gold run (a [Keyword] or a marked name) is spoken a
+    // third higher, so a topic is heard as well as seen. Off unless the player
+    // turns "Dialogue Voices" on in the Audio options.
+    const VOICE_TIERS   = [{ tag: 'Low', nominal: 85 }, { tag: 'Mid', nominal: 110 }, { tag: 'High', nominal: 140 }];
+    const VOICE_VOWELS  = 'AEIOU';
+    const VOICE_KEY_MUL = 1.3;   // the gold third
+    const VOICE_STEP    = 2;     // one blip every other letter
+    const VOICE_GAP_MS  = 45;    // and never two inside this window
+    const VOICE_DEFAULT_PITCH = 100;
+    const VOICE_DEFAULT_VOLUME = 60;  // the Audio option's own default
+
+    // The chatter has its own slider in the Audio options, kept off seVolume.
+    function _voiceVolume() {
+        const v = typeof ConfigManager !== 'undefined' ? Number(ConfigManager.dialogueVoicesVolume) : NaN;
+        return isFinite(v) ? Math.max(0, Math.min(100, v)) : VOICE_DEFAULT_VOLUME;
+    }
+
+    function _voiceEnabled() {
+        return typeof ConfigManager !== 'undefined' && !!ConfigManager.dialogueVoices;
+    }
+
+    function _voiceHash(text) {
+        let h = 0;
+        const s = String(text || '');
+        for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+        return h;
+    }
+
+    // The sheet the line is spoken off, when a map event is talking.
+    function _voiceSpeakerSheet() {
+        try {
+            const scene = SceneManager._scene;
+            const bm    = scene && scene._bustManager;
+            const info  = bm && bm.getCurrentEventCharacterInfo ? bm.getCurrentEventCharacterInfo() : null;
+            return info && info.characterName ? String(info.characterName).split('.')[0] : '';
+        } catch (err) { return ''; }
+    }
+
+    // A box with nobody behind it, a signpost, a notice, a plaque, still has to
+    // be heard. It is voiced off the name of the event that opened it, so the
+    // same sign always reads back in the same voice and two different signs do
+    // not sound like the same person.
+    function _voiceEventKey() {
+        try {
+            const interp = $gameMap && $gameMap._interpreter;
+            if (!interp || !interp._eventId) return '';
+            const ev = $gameMap.event(interp._eventId);
+            const name = ev && ev.event() ? ev.event().name : '';
+            return name ? String(name) : '';
+        } catch (err) { return ''; }
+    }
+
+    function _voiceSpeakerName() {
+        try {
+            if ($gameMessage && $gameMessage.speakerName) return $gameMessage.speakerName() || '';
+        } catch (err) { /* no message */ }
+        return '';
+    }
+
+    // The travelling cast speak in a story scene, where there is no map event
+    // and so no sheet to read a pitch off: their voice is written here instead
+    // of hashed off their name, so Bubba always answers low.
+    const VOICE_CAST_PITCH = { Bubba: 56, Em: 126 }; // i18n-ignore: actor names matched at runtime
+
+    // The base pitch of whoever is speaking: the written cast first, the
+    // catalogued sheet after that, hashed last.
+    function _voicePitchFor(sheet, name) {
+        const cast = VOICE_CAST_PITCH[String(name == null ? '' : name).trim()];
+        if (isFinite(cast) && cast > 0) return cast;
+        const entry = sheet && window.WorldGen && window.WorldGen.NPCs ? window.WorldGen.NPCs[sheet] : null;
+        const own   = entry ? Number(entry.pitch) : NaN;
+        if (isFinite(own) && own > 0) return own;
+        const key = sheet || name;
+        if (!key) return VOICE_DEFAULT_PITCH;
+        return 78 + (_voiceHash(key) % 55); // 78..132, the range the sheets use
+    }
+
+    function _voiceTierFor(pitch) {
+        if (pitch < 96)  return VOICE_TIERS[0];
+        if (pitch < 122) return VOICE_TIERS[1];
+        return VOICE_TIERS[2];
+    }
+
+    // One letter, one file. Anything that is not a letter (space, punctuation,
+    // a digit) is silent, which is what gives the chatter its rhythm.
+    function _voiceSeFor(letter, tier) {
+        const c = letter.toUpperCase();
+        if (!/^[A-Z]$/.test(c)) return null;
+        return VOICE_VOWELS.indexOf(c) >= 0
+            ? 'Vowels/Vowel_' + c + '_' + tier.tag
+            : 'Consonants/Cons_' + c + '_' + tier.tag;
+    }
+
+    // A letter blip whose ogg is not in the build must never reach the engine's
+    // load error box: Scene_Base.update asks AudioManager to rethrow any errored
+    // buffer, so the voice buffers are swept out of that list first and the name
+    // is remembered as missing so it is not requested again.
+    const _voiceIsVoiceUrl = (url) => /\/(Vowels|Consonants)\//.test(String(url || ''));
+
+    const _AudioManager_checkErrors = AudioManager.checkErrors;
+    AudioManager.checkErrors = function() {
+        try {
+            const buffers = this._seBuffers || [];
+            for (let i = buffers.length - 1; i >= 0; i--) {
+                const b = buffers[i];
+                if (!b || !b.isError() || !_voiceIsVoiceUrl(b.url)) continue;
+                const m = /\/((?:Vowels|Consonants)\/[^/.]+)/.exec(String(b.url));
+                if (m) DialogueVoice._missing[m[1]] = true;
+                buffers.splice(i, 1);
+            }
+        } catch (err) { /* the sweep is never allowed to be the crash itself */ }
+        if (typeof _AudioManager_checkErrors === 'function') _AudioManager_checkErrors.call(this);
+    };
+
+    const DialogueVoice = {
+        // SE names whose file could not be loaded or played: asked for once,
+        // then left alone for the rest of the session.
+        _missing: Object.create(null),
+        _last: 0,
+        _count: 0,
+        _sheet: '',
+        _name: '',
+        _pitch: VOICE_DEFAULT_PITCH,
+
+        // A new line: the speaker is looked up once, not per letter.
+        begin() {
+            this._count = 0;
+            this._sheet = _voiceSpeakerSheet();
+            this._name  = _voiceSpeakerName();
+            this._pitch = _voicePitchFor(this._sheet, this._name || _voiceEventKey());
+        },
+
+        pitch() { return this._pitch; },
+
+        // Play one letter. `gold` raises it by the keyword third.
+        speakLetter(letter, gold, now) {
+            if (!_voiceEnabled()) return false;
+            const tier = _voiceTierFor(this._pitch);
+            const se   = _voiceSeFor(letter, tier);
+            if (!se) return false;
+            const t = (now === undefined) ? Date.now() : now;
+            if (t - this._last < VOICE_GAP_MS) return false;
+            if ((this._count++ % VOICE_STEP) !== 0) return false;
+            this._last = t;
+            const ratio = (this._pitch / tier.nominal) * (gold ? VOICE_KEY_MUL : 1);
+            const pitch = Math.max(50, Math.min(150, Math.round(100 * ratio)));
+            // A blip whose ogg was never shipped is simply not heard: the
+            // chatter is decoration, and neither a missing file nor an audio
+            // backend that refuses to decode it may reach the player as an
+            // error. A name that failed once is never asked for again.
+            if (DialogueVoice._missing[se]) return false;
+            try {
+                if (typeof AudioManager !== 'undefined' && AudioManager.playSe) {
+                    AudioManager.playSe({ name: se, volume: _voiceVolume(), pitch, pan: 0 });
+                }
+            } catch (err) {
+                DialogueVoice._missing[se] = true;
+                return false;
+            }
+            return true;
+        },
+
+        // The slice of the line that was just revealed. `text` still carries the
+        // gold marks, so whether a letter is inside one is read straight off it.
+        speakRange(text, from, to, now) {
+            if (!_voiceEnabled() || !text) return;
+            let gold = text.lastIndexOf(NAME_OPEN, Math.max(0, from - 1)) >
+                       text.lastIndexOf(NAME_CLOSE, Math.max(0, from - 1));
+            for (let i = Math.max(0, from); i < Math.min(text.length, to); i++) {
+                const ch = text.charAt(i);
+                if (ch === NAME_OPEN)  { gold = true;  continue; }
+                if (ch === NAME_CLOSE) { gold = false; continue; }
+                this.speakLetter(ch, gold, now);
+            }
+        },
+    };
+
+    window.DialogueVoice = DialogueVoice;
+
     const _WM_initialize = Window_Message.prototype.initialize;
     Window_Message.prototype.initialize = function (rect) {
         _WM_initialize.call(this, rect);
@@ -855,6 +1383,11 @@ Imported.DialogueSystem = true;
     const _WM_startMessage = Window_Message.prototype.startMessage;
     Window_Message.prototype.startMessage = function () {
         _WM_startMessage.call(this);
+        this._htmlMsgTurbo      = false;
+        this._htmlMsgTurboCount = 0;
+        this._htmlMsgVoiceText  = null;
+        this._htmlMsgVoiceShown = 0;
+        DialogueVoice.begin();
         if (this._htmlMsgRoot) {
             this._htmlMsgRoot.style.display = 'block';
             this._htmlMsgHideDelay  = 0;
@@ -870,10 +1403,24 @@ Imported.DialogueSystem = true;
     Window_Message.prototype.terminateMessage = function () {
         if (this._htmlMsgRoot && this._textState) {
             const full = _stripMsgEscapes(this._textState.text);
-            this._htmlMsgText.textContent = full;
-            this._htmlMsgLastText = full;
+            _msgSetText(this._htmlMsgText, full);
+            this._htmlMsgLastText  = full;
+            this._htmlMsgLastShown = full.length;
         }
-        _WM_terminateMessage.call(this);
+        // A message raised from outside the interpreter (the voxel world asks a
+        // passer-by a question this way) can be closed on a frame where the
+        // scene's own companion windows are not associated with this one, and
+        // the engine's terminate then throws on a window it assumes is there.
+        // Failing here leaves the box up forever with every key refused, so the
+        // close is completed by hand instead.
+        try {
+            _WM_terminateMessage.call(this);
+        } catch (e) {
+            console.error('[DialogueSystem] terminateMessage', e);
+            this.close();
+            if (this._goldWindow) this._goldWindow.close();
+            $gameMessage.clear();
+        }
         if (this._htmlMsgRoot) this._htmlMsgPendingHide = true;
         const scene = SceneManager._scene;
         if (scene && scene._bustManager && scene._bustManager.exchangeMode) {
@@ -902,11 +1449,74 @@ Imported.DialogueSystem = true;
     // in the middle of the portrait instead of under its feet. Every position
     // type is re-measured against the real screen, and the bottom one then sits
     // on the same floor the portrait stands on.
+    // The box never touches the screen edge: it is inset on both sides and
+    // lifted off the floor by the same margin, so it reads as a card laid on
+    // the scene rather than a bar welded to the frame. Every portrait is
+    // measured against this box (messageBoxTop / messageBoxLeft / messageBoxRight
+    // above), so the busts move in with it and keep standing on its top edge.
+    const msgEdgeMargin = 20;
+
     const _WM_updatePlacement = Window_Message.prototype.updatePlacement;
     Window_Message.prototype.updatePlacement = function () {
         _WM_updatePlacement.call(this);
-        const floor = Graphics.height - bottomBarReserve();
-        this.y = Math.max(0, (this._positionType * (floor - this.height)) / 2);
+        const m  = msgEdgeMargin;
+        const ww = Math.max(160, Math.min(MESSAGE_WINDOW_WIDTH, Graphics.boxWidth - m * 2));
+        if (this.width !== ww) {
+            this.width = ww;
+            if (typeof this.createContents === 'function') this.createContents();
+        }
+        this.x = Math.round((Graphics.width - this.width) / 2);
+        const floor = Graphics.height - bottomBarReserve() - m;
+        const room  = Math.max(0, floor - m - this.height);
+        this.y = Math.max(m, m + (this._positionType * room) / 2);
+    };
+
+    // Hurrying a line along. The engine's own answer to a keypress is
+    // `_showFast`, which empties the rest of the line into the box in a single
+    // frame: the reveal stops being a reveal and the letters stop being spoken.
+    // The press is taken as "faster", not "now": the typewriter keeps writing
+    // one letter at a time, several letters a frame instead of one, so the line
+    // still arrives letter by letter and is still chattered as it lands.
+    const MSG_TURBO_CHARS = 6; // letters per frame once the player asks to hurry
+
+    Window_Message.prototype.updateShowFast = function () {
+        if (this.isTriggered()) this._htmlMsgTurbo = true;
+    };
+
+    const _WM_shouldBreakHere = Window_Message.prototype.shouldBreakHere;
+    Window_Message.prototype.shouldBreakHere = function (textState) {
+        if (this._htmlMsgTurbo && !this._showFast && !this._lineShowFast &&
+            this.canBreakHere(textState)) {
+            this._htmlMsgTurboCount = (this._htmlMsgTurboCount || 0) + 1;
+            return this._htmlMsgTurboCount % MSG_TURBO_CHARS === 0;
+        }
+        return _WM_shouldBreakHere.call(this, textState);
+    };
+
+    const _WM_newPage = Window_Message.prototype.newPage;
+    Window_Message.prototype.newPage = function (textState) {
+        this._htmlMsgTurbo      = false;
+        this._htmlMsgTurboCount = 0;
+        this._htmlMsgVoiceText  = null;
+        this._htmlMsgVoiceShown = 0;
+        _WM_newPage.call(this, textState);
+    };
+
+    // The chatter keeps its own record of how much of the line has been spoken,
+    // separate from the one the reveal keeps for what is drawn. The drawn record
+    // deliberately holds the previous line until the typewriter writes its first
+    // character (so the box never flashes empty), which used to mean the opening
+    // letters of a line were never chattered, and a short line, a signpost or any
+    // other box that is over in a few frames, was heard as nothing at all.
+    Window_Message.prototype._htmlMsgSpeak = function (full, shown) {
+        if (full !== this._htmlMsgVoiceText) {
+            this._htmlMsgVoiceText  = full;
+            this._htmlMsgVoiceShown = 0;
+        }
+        if (shown > this._htmlMsgVoiceShown) {
+            DialogueVoice.speakRange(full, this._htmlMsgVoiceShown, shown);
+            this._htmlMsgVoiceShown = shown;
+        }
     };
 
     const _WM_update = Window_Message.prototype.update;
@@ -993,30 +1603,51 @@ Imported.DialogueSystem = true;
             }
         }
 
-        // Text reveal
-        let clean = null;
+        // Text reveal. The element always holds the finished line; only how much
+        // of it is visible changes, so the wrap is fixed for the whole reveal.
         if (this._textState) {
             const isFast = this._showFast || this._lineShowFast;
             // Re-strip only when the visible slice actually changed (text ident +
             // reveal index; index -1 flags the fast/full path).
             const idx = isFast ? -1 : this._textState.index;
-            const rc = this._htmlMsgStripCache;
-            let stripped;
+            const rc  = this._htmlMsgStripCache;
+            let full, shown;
             if (rc && rc.text === this._textState.text && rc.index === idx) {
-                stripped = rc.out;
+                full  = rc.full;
+                shown = rc.shown;
             } else {
-                stripped = _stripMsgEscapes(isFast ? this._textState.text : this._textState.text.substring(0, this._textState.index));
-                this._htmlMsgStripCache = { text: this._textState.text, index: idx, out: stripped };
+                full  = _stripMsgEscapes(this._textState.text);
+                shown = isFast ? full.length
+                    : _stripMsgEscapes(this._textState.text.substring(0, this._textState.index)).length;
+                this._htmlMsgStripCache = { text: this._textState.text, index: idx, full, shown };
             }
-            clean = stripped;
-            // Hold previous text until typewriter writes its first character, avoids blank flash between messages
-            if (!isFast && clean === '' && this._htmlMsgLastText) clean = null;
-        } else if (preFullText !== null) {
-            clean = preFullText;
-        }
-        if (clean !== null && clean !== this._htmlMsgLastText) {
-            this._htmlMsgText.textContent = clean;
-            this._htmlMsgLastText = clean;
+            // Hold previous text until the typewriter writes its first character,
+            // avoids a blank flash between messages.
+            if (shown > 0 || !this._htmlMsgLastText) {
+                if (full !== this._htmlMsgLastText || shown !== this._htmlMsgLastShown) {
+                    _msgRenderReveal(this._htmlMsgText, full, shown);
+                    // Chatter the letters that were just written out. A line
+                    // skipped to the end (or a new line) is never machine-gunned:
+                    // only a forward step inside the same line is spoken.
+                    if (!isFast) this._htmlMsgSpeak(full, shown);
+                    this._htmlMsgLastText  = full;
+                    this._htmlMsgLastShown = shown;
+                }
+            }
+        } else if (preFullText !== null &&
+                   (preFullText !== this._htmlMsgLastText ||
+                    this._htmlMsgLastShown < preFullText.length)) {
+            // The engine finishes the line and drops its text state in the same
+            // frame (onEndOfText), so the last characters are typed on a frame
+            // the reveal above never sees. The line already on screen is the
+            // right one, only shorter than it should be, so the tail has to be
+            // painted here as well: comparing the text alone left the box frozen
+            // at whatever the typewriter had reached, which is what ate the last
+            // letter of a line and the whole tail of a line hurried along.
+            _msgSetText(this._htmlMsgText, preFullText);
+            this._htmlMsgSpeak(preFullText, preFullText.length);
+            this._htmlMsgLastText  = preFullText;
+            this._htmlMsgLastShown = preFullText.length;
         }
 
         // Name: read from BustManager adapter (no separate vn-name-overlay needed)
@@ -1047,6 +1678,14 @@ Imported.DialogueSystem = true;
     // -------------------------------------------------------------------------
     // HTML Choice List
     // -------------------------------------------------------------------------
+    // A choice list is a column of lines unless the caller asked for a grid
+    // just before it set the choices. The spec says how many columns to lay
+    // the entries out in and how many of them fall under each heading; the
+    // Ask / Tell topics are the one thing that uses it so far. It is consumed
+    // by the window that opens next and never outlives it.
+    let pendingChoiceGrid = null;
+    function setChoiceGrid(spec) { pendingChoiceGrid = spec || null; }
+
     const _WCL_initialize = Window_ChoiceList.prototype.initialize;
     Window_ChoiceList.prototype.initialize = function () {
         _WCL_initialize.call(this);
@@ -1063,6 +1702,8 @@ Imported.DialogueSystem = true;
     Window_ChoiceList.prototype.start = function () {
         _WCL_start.call(this);
         this._htmlChoiceLastIndex = -1;
+        this._htmlChoiceGrid = pendingChoiceGrid;
+        pendingChoiceGrid    = null;
         if (this._htmlChoiceRoot) {
             this._htmlChoiceRoot.style.display = 'block';
             this._buildChoiceItems();
@@ -1075,16 +1716,44 @@ Imported.DialogueSystem = true;
         root.innerHTML = '';
         const list = this._list || [];
         const self = this;
+        const grid = this._htmlChoiceGrid;
         this._htmlChoiceOriginalIndices = [];
         this._htmlChoiceEls = [];
+        root.classList.toggle('story-ask-grid', !!grid);
+
+        // In grid mode the entries are laid out under their headings, so an
+        // entry is appended to the section it belongs to rather than to the
+        // overlay itself. The tail past the last section (Cancel) stands on
+        // its own line under the whole grid.
+        let cell = root;
+        let left = 0;
+        const sections = grid ? (grid.groups || []).slice() : [];
+        const nextCell = () => {
+            if (!grid) return;
+            while (left <= 0 && sections.length) {
+                const group  = sections.shift();
+                const header = document.createElement('div');
+                header.className   = 'html-choice-group';
+                header.textContent = group.title;
+                root.appendChild(header);
+                cell = document.createElement('div');
+                cell.className = 'html-choice-rows';
+                cell.style.gridTemplateColumns = `repeat(${Math.max(1, grid.cols || 2)}, minmax(0, 1fr))`;
+                root.appendChild(cell);
+                left = group.count;
+            }
+            if (left <= 0) cell = root; // the tail: Cancel
+        };
 
         list.forEach((cmd, i) => {
             if (cmd.hidden) return;
             const enabled = cmd.enabled !== false;
             this._htmlChoiceOriginalIndices.push(i);
+            nextCell();
             const item = document.createElement('div');
             item.dataset.idx = i;
             item.className   = enabled ? 'html-choice-item' : 'html-choice-item disabled';
+            if (grid && cell === root) item.classList.add('html-choice-tail');
             item.style.cursor = enabled ? 'pointer' : 'default';
             item.textContent  = cmd.name;
             if (enabled) {
@@ -1094,7 +1763,8 @@ Imported.DialogueSystem = true;
                     if (self.active && typeof self.processOk === 'function') self.processOk();
                 });
             }
-            root.appendChild(item);
+            cell.appendChild(item);
+            if (cell !== root) left--;
             self._htmlChoiceEls.push(item);
         });
 
@@ -1129,7 +1799,26 @@ Imported.DialogueSystem = true;
         if (!this._htmlChoiceRoot || this._htmlChoiceRoot.style.display === 'none') return;
         if (!this._htmlChoiceEls || this._htmlChoiceEls.length === 0) return;
 
-        if (this.active) {
+        if (this.active && this._htmlChoiceGrid) {
+            // A grid is walked in two directions: left and right step one
+            // entry, up and down a whole row, and the walk runs over the
+            // headings so the banks read as one board.
+            const visible = this._htmlChoiceOriginalIndices || [];
+            const cols    = Math.max(1, this._htmlChoiceGrid.cols || 2);
+            const here    = Math.max(0, visible.indexOf(this._index));
+            const step    = d => {
+                const to = Math.max(0, Math.min(visible.length - 1, here + d));
+                if (to === here) return;
+                if (typeof this.select === 'function') this.select(visible[to]);
+                if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
+            };
+            if      (Input.isRepeated('down'))  step(cols);
+            else if (Input.isRepeated('up'))    step(-cols);
+            else if (Input.isRepeated('right')) step(1);
+            else if (Input.isRepeated('left'))  step(-1);
+            if      (Input.isTriggered('ok'))     { if (typeof this.processOk     === 'function') this.processOk(); }
+            else if (Input.isTriggered('cancel')) { if (typeof this.processCancel === 'function') this.processCancel(); }
+        } else if (this.active) {
             const list      = this._list || [];
             const fullCount = list.length;
             const cur       = this._index >= 0 ? this._index : 0;
@@ -1153,9 +1842,19 @@ Imported.DialogueSystem = true;
 
         const sc       = _msgGetScale();
         const s        = this._htmlChoiceRoot.style;
-        s.left  = (sc.ox + this.x * sc.sx) + 'px';
-        s.top   = (sc.oy + this.y * sc.sy) + 'px';
-        s.width = (this.width * sc.sx) + 'px';
+        if (this._htmlChoiceGrid) {
+            // The board is wider than the engine measured the choice window to
+            // be, so it is centred on the screen instead of hung off it.
+            s.left      = '50%';
+            s.top       = '50%';
+            s.transform = 'translate(-50%, -50%)';
+            s.width     = 'auto';
+        } else {
+            s.transform = '';
+            s.left  = (sc.ox + this.x * sc.sx) + 'px';
+            s.top   = (sc.oy + this.y * sc.sy) + 'px';
+            s.width = (this.width * sc.sx) + 'px';
+        }
 
         const scaledFont = Math.round(((typeof this.standardFontSize === 'function') ? this.standardFontSize() : 26) * sc.sy * 0.85);
         const idx        = this._index >= 0 ? this._index : 0;
@@ -1171,6 +1870,7 @@ Imported.DialogueSystem = true;
     const _WCL_close = Window_ChoiceList.prototype.close;
     Window_ChoiceList.prototype.close = function () {
         _WCL_close.call(this);
+        this._htmlChoiceGrid = null;
         if (this._htmlChoiceRoot) this._htmlChoiceRoot.style.display = 'none';
     };
 
@@ -1199,15 +1899,17 @@ Imported.DialogueSystem = true;
                     if (!$gameSwitches.value(switchId)) enabled = false;
                 }
                 if (enabled) {
-                    const keywords = text.match(/\[([^\]]+)\]/g);
+                    const keywords = text.match(keywordRe());
                     if (keywords) {
                         let allKnown = true;
                         keywords.forEach(k => {
-                            const kw = k.slice(1, -1);
+                            const kw = splitKeyword(k.slice(1, -1)).topic;
                             if (!$gameParty.members().some(a => a._keywords && a._keywords.includes(kw))) allKnown = false;
                         });
                         if (!allKnown) { enabled = false; cmd.hidden = true; }
-                        else           { text = text.replace(/\[([^\]]+)\]/g, '$1'); }
+                        else {
+                            text = text.replace(keywordRe(), (_m, inner) => splitKeyword(inner).display);
+                        }
                     }
                 }
                 if (!enabled) { cmd.name = cmd.hidden ? '' : '???'; cmd.enabled = false; }
@@ -1225,24 +1927,40 @@ Imported.DialogueSystem = true;
     // conversation that taught them.
     function announceKeywords(learned) {
         if (!learned.length || !window.ParchmentToast) return;
-        const label = T('Dialogue.newTopic');
         window.ParchmentToast.group(learned.map(keyword => () => {
-            window.ParchmentToast.show(`${label}: ${keyword}`, {
+            window.ParchmentToast.show(T('Dialogue.learnedTopic', { topic: keyword }), {
                 severity: 'good',
-                duration: 150,
+                duration: 600,
                 key: `keyword:${keyword}`
             });
         }));
+    }
+
+    // A topic can be written [Tribunal | Judicial Dimension]: what the line
+    // says is the left half, what the party actually learns is the right half.
+    // With no pipe the two are the same thing.
+    const KEYWORD_SOURCE = /\[([^\]]+)\]/.source;
+
+    function keywordRe() { return new RegExp(KEYWORD_SOURCE, 'g'); }
+
+    function splitKeyword(inner) {
+        const pipe = inner.indexOf('|');
+        if (pipe < 0) {
+            const word = inner.trim();
+            return { display: word, topic: word };
+        }
+        return { display: inner.slice(0, pipe).trim(), topic: inner.slice(pipe + 1).trim() };
     }
 
     // Teach every [Keyword] in `text` to the whole party, and hand back only
     // the ones nobody knew yet, so a topic is announced once and never again.
     function learnKeywords(text) {
         const learned = [];
-        const keywordRegex = /\[([^\]]+)\]/g;
+        const keywordRegex = keywordRe();
         let match;
         while ((match = keywordRegex.exec(text)) !== null) {
-            const keyword = match[1];
+            const keyword = splitKeyword(match[1]).topic;
+            if (!keyword) continue;
             let isNew = false;
             $gameParty.members().forEach(actor => {
                 if (!actor._keywords) actor._keywords = [];
@@ -1278,7 +1996,10 @@ Imported.DialogueSystem = true;
         announceKeywords(learnKeywords(translatedText));
 
         const wrappedText   = autoWrapText(translatedText);
-        const displayedText = wrappedText.replace(/\[([^\]]+)\]/g, '\\C[4]$1\\C[0]');
+        const displayedText = wrappedText.replace(
+            keywordRe(),
+            (_m, inner) => NAME_OPEN + splitKeyword(inner).display + NAME_CLOSE
+        );
         displayedText.split('\n').forEach(line => this._texts.push(line));
     };
 
@@ -1345,6 +2066,142 @@ Imported.DialogueSystem = true;
     }
 
     // -------------------------------------------------------------------------
+    // Proper nouns in a spoken line
+    // -------------------------------------------------------------------------
+    // Everything the rumour and conversation banks fill their templates with -
+    // a party member, another NPC, a nation, a hyperpower, a faction, a town -
+    // is a name the player is meant to catch, so it is printed in the same gold
+    // a [Keyword] is printed in. The names are not marked at each of the two
+    // dozen fill sites: the finished line is read against the roster of names
+    // the world actually holds, which catches the ones a bank wrote out in full
+    // as well as the ones a template dropped in.
+    //
+    // The mark is a pair of private characters, never a visible bracket: the
+    // brackets a topic is written in are the writer's notation, not something
+    // the player reads. A [Keyword] is marked the same way once the party has
+    // been taught it (see processMessageBuffer). Only #html-msg-text reads the
+    // marks (see _msgSetText); everything else that ever sees such a line is
+    // handed the plain text through strip().
+    const NAME_OPEN  = '\u2045';
+    const NAME_CLOSE = '\u2046';
+
+    // A name is worth marking when it reads as a name: two characters at the
+    // least, opening and closing on a word character so \b can be trusted, and
+    // not a word the banks use as ordinary prose.
+    // A generated settlement, hyperpower or nation can be named with a word
+    // that is also ordinary prose, and a line then reads with a gold "Then" at
+    // the head of it. Any word a sentence is likely to open with is kept out of
+    // the roster: a name is only marked when nothing else could have written it.
+    const NAME_STOPWORDS = [ // i18n-ignore: prose words, never printed
+        'The', 'And', 'You', 'One', 'Only', 'Man', 'Old', 'New', 'Some', 'Free',
+        'Then', 'That', 'This', 'These', 'Those', 'There', 'Here', 'Now', 'Well',
+        'But', 'So', 'Or', 'If', 'When', 'While', 'What', 'Who', 'Why', 'How',
+        'Yes', 'No', 'Not', 'All', 'Any', 'Both', 'Each', 'Even', 'Just', 'Like',
+        'Still', 'Also', 'Once', 'Very', 'Much', 'More', 'Most', 'Less', 'Least',
+        'Good', 'Great', 'Big', 'Little', 'Long', 'Last', 'First', 'Next', 'Every',
+        'Maybe', 'Never', 'Always', 'After', 'Before', 'Because', 'Since', 'Until',
+        'They', 'Them', 'Their', 'She', 'Her', 'His', 'Him', 'Its', 'Our', 'Your',
+        'We', 'Us', 'Me', 'My', 'It', 'He', 'Do', 'Does', 'Did', 'Was', 'Were',
+        'Are', 'Is', 'Be', 'Been', 'Have', 'Has', 'Had', 'Will', 'Would', 'Could',
+        'Should', 'Can', 'May', 'Might', 'Must', 'Let', 'Get', 'Got', 'Go', 'Come',
+        'Say', 'Said', 'See', 'Look', 'Know', 'Think', 'Take', 'Make', 'Give',
+    ];
+
+    function _nameRoster() {
+        const names = new Set();
+        const add = v => {
+            const name = String(v == null ? '' : v).trim();
+            if (name.length < 2 || name.length > 48) return;
+            if (!/^[\wÀ-ÿ].*[\wÀ-ÿ]$/.test(name)) return;
+            if (NAME_STOPWORDS.includes(name)) return;
+            names.add(name);
+        };
+        try { ($gameParty?.allMembers?.() || []).forEach(a => add(a && a.name && a.name())); } catch (e) {}
+        try { Object.keys($gameSystem?._npcSociety || {}).forEach(add); } catch (e) {}
+        try { Object.keys($gameSystem?._npcMapGroups || {}).forEach(add); } catch (e) {}
+        try { (window.NPCPolitics?.listPowers?.() || []).forEach(add); } catch (e) {}
+        try { Object.keys(window.WorldGen?.Hyperpowers?.hyperpowers || {}).forEach(add); } catch (e) {}
+        try {
+            Object.values(window.WorldGen?.Countries || {}).forEach(c => add(c && c.country));
+        } catch (e) {}
+        try {
+            ($gameFactions?.getAllFactions?.() || []).forEach(f => add(f && f.name));
+        } catch (e) {}
+        return names;
+    }
+
+    // The roster only changes when somebody joins the party, an NPC is minted
+    // or a settlement is registered, so the pattern is rebuilt off that count
+    // rather than on every line spoken.
+    let _nameRegex = null;
+    let _nameSig   = null;
+
+    function _nameSignature() {
+        let party = '';
+        try { party = ($gameParty?.allMembers?.() || []).map(a => a && a.name && a.name()).join(','); } catch (e) {}
+        const npcs   = Object.keys($gameSystem?._npcSociety   || {}).length;
+        const groups = Object.keys($gameSystem?._npcMapGroups || {}).length;
+        return party + '|' + npcs + '|' + groups;
+    }
+
+    function _nameMatcher() {
+        const sig = _nameSignature();
+        if (_nameRegex && sig === _nameSig) return _nameRegex;
+        _nameSig = sig;
+        const names = Array.from(_nameRoster()).sort((a, b) => b.length - a.length);
+        if (!names.length) { _nameRegex = null; return null; }
+        const alts = names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+        _nameRegex = new RegExp('\\b(' + alts + ')\\b', 'g');
+        return _nameRegex;
+    }
+
+    // Mark every name the world knows in a spoken line. What is already marked
+    // (a topic, a name marked by an earlier pass) is stepped over rather than
+    // marked again, so nothing is ever nested.
+    function highlightNames(text) {
+        const line = String(text == null ? '' : text);
+        if (!line) return line;
+        const re = _nameMatcher();
+        if (!re) return line;
+        const marked = new RegExp('(' + NAME_OPEN + '[^' + NAME_CLOSE + ']*' + NAME_CLOSE + ')');
+        return line.split(marked).map(part => {
+            if (!part || part.charAt(0) === NAME_OPEN) return part || '';
+            re.lastIndex = 0;
+            return part.replace(re, m => NAME_OPEN + m + NAME_CLOSE);
+        }).join('');
+    }
+
+    // Teach the party every [Topic] a line carries and mark it for the box.
+    // Anything added straight to $gameMessage (a rumour, an exchange step, a
+    // story line) goes through here, since only the messageBuffer path is read
+    // by processMessageBuffer.
+    function markKeywords(text) {
+        const line = String(text == null ? '' : text);
+        if (!line || line.indexOf('[') < 0) return line;
+        announceKeywords(learnKeywords(line));
+        return line.replace(keywordRe(), (_m, inner) => NAME_OPEN + splitKeyword(inner).display + NAME_CLOSE);
+    }
+
+    // A spoken line as the box should print it: its topics taught and marked,
+    // then every name the world knows marked around them.
+    function markSpokenLine(text) {
+        return highlightNames(markKeywords(text));
+    }
+
+    function stripNameMarks(text) {
+        return String(text == null ? '' : text).split(NAME_OPEN).join('').split(NAME_CLOSE).join('');
+    }
+
+    window.DialogueNames = {
+        OPEN: NAME_OPEN,
+        CLOSE: NAME_CLOSE,
+        highlight: highlightNames,
+        mark: markSpokenLine,
+        strip: stripNameMarks,
+        roster: _nameRoster,
+    };
+
+    // -------------------------------------------------------------------------
     // NPC Exchange: a two-line VN beat played out on the map
     // -------------------------------------------------------------------------
     // A short player-line/NPC-line exchange, shown one bust at a time through
@@ -1363,6 +2220,7 @@ Imported.DialogueSystem = true;
             bm.exchangeMode      = false;
             bm.batchDialogueMode = false;
             bm.hideBusts();
+            bm.setStoryMode(false);
             return;
         }
         const step = _npcExchangeQueue.shift();
@@ -1370,17 +2228,79 @@ Imported.DialogueSystem = true;
         $gameMessage.setBackground(0);
         $gameMessage.setPositionType(2);
         window.skipLocalization = true;
-        $gameMessage.add(step.text);
+        $gameMessage.add(markSpokenLine(step.text));
         window.skipLocalization = false;
     }
 
-    function startNPCExchange(steps) {
+    // The portrait file of whoever is at the head of the party, named the way
+    // showCustomBust files it. A conversation is always between the leader and
+    // somebody else, so the left of the stage belongs to them even in a beat
+    // they never speak in (a rumour the NPC gives on their own).
+    function leaderBustName() {
+        const H     = window.NPCEmpathize?._helpers;
+        const actor = $gameParty && $gameParty.leader ? $gameParty.leader() : null;
+        const full  = H?._resolveBustForActor ? H._resolveBustForActor(actor) : 'img/busts/7.png';
+        return String(full).replace(/^img\/busts\//, '').replace(/\.png$/, '');
+    }
+
+    // `story` stages the whole exchange the way a story script is staged: the
+    // two speakers standing on either side of the box for the whole of it, the
+    // one who is not talking dimmed rather than taken away.
+    // The stage has two places and they are sides, not turns: the party stands
+    // on the left and whoever they are talking to on the right, whichever of
+    // them opens. Each is named by the same key showCustomBust files its
+    // portrait under. A scene with more than two voices falls back to the order
+    // they first speak in, since sides cannot seat three.
+    function exchangeCast(steps) {
+        const keyed = step => ({ key: `custom_${step.imageName}`, imageName: step.imageName });
+        const uniq  = [];
+        for (const step of steps) {
+            const entry = keyed(step);
+            if (!uniq.some(c => c.key === entry.key)) uniq.push(entry);
+        }
+        if (uniq.length > 2) return uniq;
+        const left  = steps.find(s => s.side === 'left');
+        const right = steps.find(s => s.side === 'right');
+        // Two people who both count as party members (Em asking Bubba, who
+        // walks with her) are both read as speaking from the left. Sides are
+        // places on a stage, not a property of the speaker: whenever the scene
+        // has two voices they take one end each, in the order they first talk.
+        if (uniq.length === 2) {
+            // The leader keeps the left end whichever of the two opens.
+            const leaderKey = `custom_${leaderBustName()}`;
+            return uniq[1].key === leaderKey ? [uniq[1], uniq[0]] : uniq;
+        }
+        if (!left && !right) return uniq;
+        const leftEntry  = left  ? keyed(left)  : keyed({ imageName: leaderBustName() });
+        const rightEntry = right ? keyed(right) : null;
+        return rightEntry && rightEntry.key !== leftEntry.key
+            ? [leftEntry, rightEntry] : [leftEntry];
+    }
+
+    // A step whose line is longer than the box is dealt out over as many
+    // boxes as it needs, each one still spoken by the same portrait.
+    function paginateSteps(steps) {
+        const out = [];
+        for (const step of steps) {
+            const pages = paginateMessage(step.text);
+            if (pages.length < 2) { out.push(step); continue; }
+            pages.forEach(text => out.push(Object.assign({}, step, { text })));
+        }
+        return out;
+    }
+
+    // Every exchange is staged the way a story scene is: both speakers stand
+    // on either side of the box for the whole of it and the one who is not
+    // talking is dimmed, rather than one portrait appearing at a time.
+    function startNPCExchange(steps, story) {
         const scene = SceneManager._scene;
         const bm    = scene && scene._bustManager;
         if (!bm || !steps || !steps.length) return false;
+        bm.setStoryMode(true);
+        bm.setStoryCast(exchangeCast(steps));
         bm.exchangeMode      = true;
         bm.batchDialogueMode = true;
-        _npcExchangeQueue    = steps.slice();
+        _npcExchangeQueue    = paginateSteps(steps);
         advanceNPCExchange();
         return true;
     }
@@ -1691,6 +2611,533 @@ Imported.DialogueSystem = true;
     }
 
     // -------------------------------------------------------------------------
+    // Story scripts
+    // -------------------------------------------------------------------------
+    // A written scene is a markdown file in js/db/Dialogues, one per language
+    // ("mainquest1_en.md", "mainquest1_it.md"), named to the plugin command
+    // without that suffix. It is played out through the very same left/right
+    // bust exchange two NPCs trade in the street, so a scripted scene and an
+    // emergent one read as one system.
+    //
+    // One file holds as many scenes as the writer wants. A rule of dashes ends
+    // the scene above it, and the first word under that rule names the scene
+    // below ("intro", "new_year_eve", "em_name"): that word is what the plugin
+    // command's Scene argument picks. A file with no rule in it is one unnamed
+    // scene, and a command with no scene named plays the whole file in order.
+    //
+    // The format is what a writer would type anyway:
+    //
+    //     ------------------------------------------------------------
+    //     intro
+    //
+    //     Bubba:
+    //     Em! I finally found you!
+    //     Speaking of God...
+    //
+    //     Em:
+    //     Who are you?
+    //
+    // A line that is only a name and a colon opens a block; every line under it
+    // is one message box in that character's voice. The name is the portrait:
+    // "Bubba" shows img/busts/presets/Bubba.png. Writing "Bubba - AlienMindMaster"
+    // keeps the name Bubba on the tag and draws AlienMindMaster out of img/busts
+    // instead, for when a character is not wearing their usual face.
+    //
+    // The party speaks from the left of the screen and everybody else answers
+    // from the right, the same rule sideForSpeaker applies everywhere else. The
+    // protagonist keeps the left slot in a story script whatever the party
+    // looks like at that point, so her portrait is on the left and her name tag
+    // opposite it on the right from the very first scene, before she has any
+    // party to be looked up in.
+    const STORY_DIR = 'js/db/Dialogues/';
+    const STORY_EXT = '.md';
+    // i18n-ignore: an actor name matched at runtime, the same match
+    // AutoIdleExplorer's story regroup makes.
+    const STORY_PROTAGONIST = 'Em';
+    // The travelling companion the Ask menu belongs to, matched the same way.
+    const STORY_ASK_BUBBA   = 'Bubba';
+
+    function storyReadPath(rel) {
+        if (typeof Utils !== 'undefined' && Utils.isNwjs && Utils.isNwjs()) {
+            try {
+                const fs       = require('fs');
+                const nodePath = require('path');
+                const full     = nodePath.join(process.cwd(), rel);
+                return fs.existsSync(full) ? fs.readFileSync(full, 'utf8') : null;
+            } catch (err) { return null; }
+        }
+        // Browser build: the scene has to be in hand before the first box is
+        // queued, so this one read is synchronous.
+        try {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', rel, false);
+            xhr.send();
+            return (xhr.status === 0 || xhr.status < 400) ? xhr.responseText : null;
+        } catch (err) { return null; }
+    }
+
+    function storyFileText(fileName, lang) {
+        return storyReadPath(`${STORY_DIR}${fileName}_${lang}${STORY_EXT}`);
+    }
+
+    // "mainquest1", "mainquest1_en.md" and "mainquest1.md" all name the same
+    // script; anything with a path in it names nothing.
+    function storyBaseName(fileName) {
+        return String(fileName == null ? '' : fileName).trim()
+            .replace(/\.(md|txt)$/i, '')
+            .replace(/_[a-z]{2}$/i, '');
+    }
+
+    // The scene in the player's language, falling back to the English original
+    // when that language has not been written yet.
+    function loadStoryScript(fileName) {
+        const name = storyBaseName(fileName);
+        if (!name || /[\/]/.test(name)) return null;
+        const lang = (typeof ConfigManager !== 'undefined' && ConfigManager.language) || 'en';
+        return storyFileText(name, lang) || (lang === 'en' ? null : storyFileText(name, 'en'));
+    }
+
+    // "Bubba" -> spoken and drawn as Bubba; "Bubba - AlienMindMaster" -> named
+    // Bubba, drawn as AlienMindMaster.
+    function parseStorySpeaker(raw) {
+        const parts = String(raw || '').split(/\s+-\s+/);
+        const name  = parts[0].trim();
+        const bust  = (parts[1] || '').trim() || name;
+        return { name, bust };
+    }
+
+    function storySide(name) {
+        const bm = SceneManager._scene && SceneManager._scene._bustManager;
+        if (String(name).trim() === STORY_PROTAGONIST) return 'left';
+        if (bm && bm.sideForSpeaker(name) === 'left') return 'left';
+        // The protagonist keeps the left slot even in a scene played before she
+        // is walking with anybody, when the party lookup has nobody to match.
+        try {
+            const hero = $gameActors && $gameActors.actor(1);
+            if (hero && hero.name && hero.name().trim() === String(name).trim()) return 'left';
+        } catch (err) { /* no actors yet */ }
+        return 'right';
+    }
+
+    // A scene written for the keyboard has to read right for a pad too, so a
+    // script names a control rather than a key: "press [CONTINUE]" is resolved
+    // at the moment the box is built, off whichever device the player last
+    // touched (Input.lastInputDevice, MouseControls.js).
+    // The pad faces are the ones rmmz_core's gamepadMapper actually binds: ok
+    // is A, cancel B, shift X, menu Y, pageup/pagedown the shoulders.
+    const STORY_KEYS = { // i18n-ignore: button faces, the same names printed on the hardware
+        CONTINUE:    { keyboard: 'ENTER',       pad: 'A'           },
+        OK:          { keyboard: 'ENTER',       pad: 'A'           },
+        INTERACT:    { keyboard: 'ENTER',       pad: 'A'           },
+        CANCEL:      { keyboard: 'ESC',         pad: 'B'           },
+        BACK:        { keyboard: 'ESC',         pad: 'B'           },
+        MENU:        { keyboard: 'ESC',         pad: 'Y'           },
+        SPRINT:      { keyboard: 'SHIFT',       pad: 'X'           },
+        SCROLLWHEEL: { keyboard: 'SCROLLWHEEL', pad: 'L2/R2'       },
+        TAB:         { keyboard: 'TAB',         pad: 'L1/R1'       },
+        MOVE:        { keyboard: 'WASD',        pad: 'LEFT STICK'  },
+        LOOK:        { keyboard: 'MOUSE',       pad: 'RIGHT STICK' },
+        MAP:         { keyboard: 'M',           pad: 'M'           },
+        ZOOMIN:      { keyboard: 'E',           pad: 'R2'          },
+        ZOOMOUT:     { keyboard: 'Q',           pad: 'L2'          },
+        HOTBAR:      { keyboard: '1-5',         pad: 'D-PAD'       },
+        QUICKSAVE:   { keyboard: 'F9',          pad: 'F9'          },
+        QUICKLOAD:   { keyboard: 'F10',         pad: 'F10'         },
+    };
+    const STORY_KEY_TOKEN = /\[([A-Z]+)\]/g;
+
+    function resolveStoryKeys(text) {
+        const pad = (typeof Input !== 'undefined' && Input.lastInputDevice
+            && Input.lastInputDevice() === 'pad');
+        return String(text == null ? '' : text).replace(STORY_KEY_TOKEN, (whole, token) => {
+            const entry = STORY_KEYS[token];
+            // A key name is printed in the same gold a keyword gets, so the
+            // button to press stands out of the line at a glance.
+            return entry ? NAME_OPEN + (pad ? entry.pad : entry.keyboard) + NAME_CLOSE : whole;
+        });
+    }
+
+    function storyStep(speaker, text) {
+        return {
+            imageName:   speaker.bust,
+            displayName: speaker.name,
+            text:        resolveStoryKeys(text),
+            side:        storySide(speaker.name),
+        };
+    }
+
+    // A speaker header is a name alone on its line ("Bubba:"), or a one-word
+    // name with the line already started ("Em: ...nope."). Anything else with a
+    // colon in it is prose - "Remember kiddo: love is the deepest oil deposit"
+    // is a line Bubba says, not a character called Remember kiddo.
+    const STORY_HEADER      = /^([^:]{1,60}):\s*$/;
+    const STORY_HEADER_LINE = /^([A-Za-z][\w'.-]*(?:\s+-\s+[A-Za-z][\w'.-]*)?):\s+(\S.*)$/;
+
+    // A rule of dashes closes the scene above it; the first word under the rule
+    // is the name of the scene below. Returns the file cut into named blocks in
+    // the order they were written, the text before the first rule kept under an
+    // empty name so a file written without any rule still plays.
+    const STORY_RULE = /^-{8,}\s*$/;
+
+    // A line is the scene's title, not a line anybody says, when it sits
+    // directly under the scene name and is not itself a speaker header.
+    function isStoryTitleLine(line) {
+        return !!line && !STORY_HEADER.test(line) && !STORY_HEADER_LINE.test(line);
+    }
+
+    function splitStoryScenes(text) {
+        const scenes = [];
+        let current  = { name: '', title: '', lines: [] };
+        let awaiting = false; // the rule has been read, the name has not
+        let titling  = false; // the name has been read, its title line has not
+        for (const raw of String(text == null ? '' : text).split(/\r?\n/)) {
+            const line = raw.trim();
+            if (STORY_RULE.test(line)) {
+                if (current.lines.length) scenes.push(current);
+                current  = { name: '', title: '', lines: [] };
+                awaiting = true;
+                titling  = false;
+                continue;
+            }
+            if (awaiting) {
+                if (!line) continue;
+                // The name is the first word on the line, so a writer may leave
+                // themselves a note beside it.
+                current.name = line.split(/\s+/)[0];
+                awaiting = false;
+                titling  = true;
+                continue;
+            }
+            // The very next line under the name, and only that one, is the
+            // scene's title: what the Ask menu offers it as. A blank line there
+            // means the scene simply has no title.
+            if (titling) {
+                titling = false;
+                if (isStoryTitleLine(line)) { current.title = line; continue; }
+            }
+            current.lines.push(raw);
+        }
+        if (current.lines.length) scenes.push(current);
+        return scenes.map(sc => ({ name: sc.name, title: sc.title, text: sc.lines.join('\n') }));
+    }
+
+    // The scenes a script offers as { name, title } pairs, in written order.
+    function storySceneList(fileName) {
+        const text = loadStoryScript(fileName);
+        return text ? splitStoryScenes(text).filter(sc => sc.name)
+            .map(sc => ({ name: sc.name, title: sc.title || sc.name })) : [];
+    }
+
+    // The scenes a script offers, by name, in the order they were written.
+    function storySceneNames(fileName) {
+        const text = loadStoryScript(fileName);
+        return text ? splitStoryScenes(text).map(sc => sc.name).filter(Boolean) : [];
+    }
+
+    // The text of one named scene, or the whole file when no scene was asked
+    // for. A scene the player's language has not been written to yet is taken
+    // from the English original rather than played as silence.
+    function storySceneText(fileName, sceneName) {
+        const wanted = String(sceneName == null ? '' : sceneName).trim();
+        const text   = loadStoryScript(fileName);
+        if (!wanted) return text;
+        if (!text) return null;
+        const pick = list => (list.find(sc => sc.name === wanted) || null);
+        const hit  = pick(splitStoryScenes(text));
+        if (hit) return hit.text;
+        const en = storyFileText(storyBaseName(fileName), 'en');
+        const fallback = en ? pick(splitStoryScenes(en)) : null;
+        return fallback ? fallback.text : null;
+    }
+
+    function parseStoryScript(text) {
+        const steps = [];
+        let speaker = null;
+        let naming  = false; // the rule has been read, its scene name has not
+        let titling = false; // the scene name has been read, its title has not
+        for (const raw of String(text == null ? '' : text).split(/\r?\n/)) {
+            const line = raw.trim();
+            // A rule and the scene name under it are furniture, never a line
+            // anybody says: a whole file played at once steps over them.
+            if (STORY_RULE.test(line)) { naming = true; titling = false; speaker = null; continue; }
+            if (naming) {
+                if (!line) continue;
+                naming  = false;
+                titling = true;
+                continue;
+            }
+            // The title line under the scene name is furniture too.
+            if (titling) {
+                titling = false;
+                if (isStoryTitleLine(line)) continue;
+            }
+            if (!line) continue;
+            const alone = line.match(STORY_HEADER);
+            if (alone) { speaker = parseStorySpeaker(alone[1]); continue; }
+            const inline = line.match(STORY_HEADER_LINE);
+            if (inline) {
+                speaker = parseStorySpeaker(inline[1]);
+                steps.push(storyStep(speaker, inline[2]));
+                continue;
+            }
+            if (!speaker) continue; // stage directions before anybody speaks
+            steps.push(storyStep(speaker, line));
+        }
+        return steps;
+    }
+
+    // The sheet Map/MapLegend.js pins to the corner of the map is not a topic
+    // Bubba talks through: it is two switches he flips, one for the controls
+    // checklist and one for the tips. They sit in the grid beside the topics
+    // and write the same settings the Gameplay page does, so the two can never
+    // disagree about what is on the paper.
+    const STORY_SHEET_CONTROLS = 'sheet_controls'; // i18n-ignore: toggle name
+    const STORY_SHEET_NOTICES  = 'sheet_notices';  // i18n-ignore: toggle name
+
+    // The tips are not a switch but three states, so the entry says which one
+    // it is standing on and picking it steps to the next.
+    function storyNoticeModeLabel() {
+        const mode = window.MapLegend?.noticesMode?.() || 'first'; // i18n-ignore: setting value
+        return T('Dialogue.askNotice_' + mode);
+    }
+
+    function storyAskToggles() {
+        if (!window.MapLegend) return [];
+        return [
+            { name: STORY_SHEET_CONTROLS, title: T('Dialogue.askToggleControls'),
+              run: () => window.MapLegend?.toggleControls?.() },
+            { name: STORY_SHEET_NOTICES,
+              title: `${T('Dialogue.askToggleNotices')}: ${storyNoticeModeLabel()}`,
+              run: () => window.MapLegend?.cycleNoticesMode?.() },
+        ];
+    }
+
+    function playStoryScript(fileName, sceneName) {
+        const label = sceneName ? `${fileName}#${sceneName}` : fileName;
+        const text  = storySceneText(fileName, sceneName);
+        if (!text) { console.warn(`Story script not found: ${label}`); return false; }
+        const steps = parseStoryScript(text);
+        if (!steps.length) { console.warn(`Story script has no lines: ${label}`); return false; }
+        // A scene is staged where the party is standing, so whoever wandered off
+        // under the autopilot closes up before the first bust slides in.
+        try { window.AutoIdleExplorer?.regroup?.forStory?.(); } catch (err) { /* no autopilot */ }
+        return startNPCExchange(steps, true);
+    }
+
+    // -------------------------------------------------------------------------
+    // Asking Bubba, telling Em
+    // -------------------------------------------------------------------------
+    // Em and Bubba are the only two who have this conversation, and only with
+    // each other: walking as Em, Bubba is Asked; walking as Bubba, Em is Told.
+    // Anybody else talking to either of them gets the ordinary exchange.
+    //
+    // What can be raised comes in two banks, offered side by side in a grid
+    // rather than down a list:
+    //
+    //   - the fixed ones, always available, written in the askbubba script
+    //   - the ones this place brings up, named by the map's MapInfos entry (or
+    //     its own note) as <Bubba: new_year_eve,em_name> and written in the
+    //     mainquest script
+    const STORY_ASK_FILE   = 'mainquest';           // i18n-ignore: script file name
+    const STORY_ASK_FIXED  = 'askbubba';            // i18n-ignore: script file name
+    const STORY_ASK_TAG    = /<Bubba:\s*([^>]*)>/i; // i18n-ignore: map note tag
+    const STORY_ASK_SWITCH = 75;                    // story mode
+    const STORY_ASK_COLS   = 2;                     // columns of the grid
+
+    function storyAskNote(mapId) {
+        const id = mapId || (typeof $gameMap !== 'undefined' && $gameMap ? $gameMap.mapId() : 0);
+        let note = '';
+        try {
+            const info = typeof $dataMapInfos !== 'undefined' && $dataMapInfos ? $dataMapInfos[id] : null;
+            if (info && info.note) note = String(info.note);
+        } catch (err) { /* no map infos loaded */ }
+        if (!note) {
+            try {
+                if (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.note) note = String($dataMap.note);
+            } catch (err) { /* no map loaded */ }
+        }
+        return note;
+    }
+
+    // Every scene of a script, tagged with the file it has to be played from.
+    function storyAskBank(fileName) {
+        return storySceneList(fileName).map(sc => ({ name: sc.name, title: sc.title, file: fileName }));
+    }
+
+    // The topics that are always there, in the order they were written.
+    function storyAskFixedScenes() {
+        return storyAskBank(STORY_ASK_FIXED);
+    }
+
+    // The scenes this map brings up, in the order the note lists them, each
+    // with the title its script gives it. A name the script does not hold is
+    // dropped rather than offered as a dead question.
+    function storyAskScenes(mapId) {
+        const hit = STORY_ASK_TAG.exec(storyAskNote(mapId));
+        if (!hit) return [];
+        const wanted = hit[1].split(',').map(w => w.trim()).filter(Boolean);
+        if (!wanted.length) return [];
+        const written = storyAskBank(STORY_ASK_FILE);
+        return wanted
+            .map(name => written.find(sc => sc.name === name))
+            .filter(Boolean);
+    }
+
+    // The two banks as the grid draws them, empty ones left out.
+    function storyAskGroups(mapId) {
+        const groups = [];
+        const fixed  = storyAskFixedScenes();
+        const here   = storyAskScenes(mapId);
+        const sheet  = storyAskToggles();
+        if (fixed.length) groups.push({ title: T('Dialogue.askGroupFixed'), scenes: fixed });
+        if (here.length)  groups.push({ title: T('Dialogue.askGroupHere'),  scenes: here  });
+        if (sheet.length) groups.push({ title: T('Dialogue.askGroupSheet'), scenes: sheet });
+        return groups;
+    }
+
+    // Who is walking at the head of the party, by name.
+    function storyAskLeaderName() {
+        try {
+            const leader = $gameParty && $gameParty.leader();
+            return leader && leader.name ? leader.name().trim() : '';
+        } catch (err) { return ''; }
+    }
+
+    // The one person the leader may raise these topics with: Em asks Bubba,
+    // Bubba tells Em. Anybody else at the head of the party has no partner.
+    function storyAskPartner(leaderName) {
+        const leader = leaderName == null ? storyAskLeaderName() : String(leaderName).trim();
+        if (leader === STORY_PROTAGONIST) return STORY_ASK_BUBBA;
+        if (leader === STORY_ASK_BUBBA)   return STORY_PROTAGONIST;
+        return null;
+    }
+
+    // Asking is Em's word for it; Bubba, who is the one who remembers, tells.
+    function storyAskVerb() {
+        return storyAskLeaderName() === STORY_ASK_BUBBA
+            ? T('Dialogue.askTell') : T('Dialogue.askAsk');
+    }
+
+    // Only in a story-mode playthrough, and only with Em or Bubba leading.
+    function isStoryAsker() {
+        try {
+            if (!$gameSwitches || !$gameSwitches.value(STORY_ASK_SWITCH)) return false;
+            return !!storyAskPartner();
+        } catch (err) { return false; }
+    }
+
+    function canAskStory(name, mapId) {
+        if (!isStoryAsker()) return false;
+        if (String(name || '').trim() !== storyAskPartner()) return false;
+        return storyAskGroups(mapId).some(g => g.scenes.length > 0);
+    }
+
+    // The two of them are on stage while the topics are up, the same pair a
+    // story scene stands there: the leader on the left, the one being asked on
+    // the right and lit, so a question is put to a face rather than to a menu.
+    function storyAskStage(partner) {
+        const bm = SceneManager._scene && SceneManager._scene._bustManager;
+        if (!bm || !partner) return;
+        const cast = exchangeCast([
+            { imageName: leaderBustName(), side: 'left' },
+            { imageName: partner,          side: 'right' },
+        ]);
+        bm.setStoryMode(true);
+        bm.setStoryCast(cast);
+        bm.showCustomBust(partner, partner, 'right');
+    }
+
+    // Nothing was asked after all: the cast walks off the way it came on.
+    function storyAskUnstage() {
+        const bm = SceneManager._scene && SceneManager._scene._bustManager;
+        if (!bm) return;
+        bm.setStoryMode(false);
+        bm.hideBusts();
+    }
+
+    // The grid itself: the fixed topics under their heading, this place's
+    // under theirs, Cancel on its own line at the end.
+    function openStoryAsk(mapId) {
+        const groups = storyAskGroups(mapId);
+        if (!groups.length) return false;
+        const scenes  = groups.reduce((all, g) => all.concat(g.scenes), []);
+        const choices = scenes.map(sc => sc.title);
+        choices.push(T('Dialogue.askCancel'));
+        setChoiceGrid({
+            cols:   STORY_ASK_COLS,
+            groups: groups.map(g => ({ title: g.title, count: g.scenes.length })),
+        });
+        storyAskStage(storyAskPartner());
+        $gameMessage.setChoices(choices, 0, choices.length - 1);
+        $gameMessage.setChoiceCallback(choice => {
+            const picked = scenes[choice];
+            if (!picked) { storyAskUnstage(); return; }
+            // A toggle is flipped where it stands and the grid comes straight
+            // back up, so both halves of the sheet can be set in one visit.
+            if (picked.run) {
+                try { picked.run(); } catch (err) { /* no legend */ }
+                setTimeout(() => openStoryAsk(mapId), 0);
+                return;
+            }
+            playStoryScript(picked.file, picked.name);
+        });
+        return true;
+    }
+
+    // Bubba walking with the party is not an event: talking to him at the
+    // leader's shoulder offers the topics and his own sheet side by side, so
+    // the Ask never swallows the Empathize panel. Story mode only, since that
+    // is the only playthrough canAskStory answers for.
+    // Opening either one is deferred a tick: the choice window is still
+    // closing while the callback runs.
+    function openStoryAskMenu(actorId, mapId) {
+        if (!storyAskGroups(mapId).some(g => g.scenes.length > 0)) return false;
+        const choices = [
+            storyAskVerb(),
+            T('Dialogue.askEmpathize'),
+            T('Dialogue.askCancel'),
+        ];
+        storyAskStage(storyAskPartner());
+        $gameMessage.setChoices(choices, 0, choices.length - 1);
+        $gameMessage.setChoiceCallback(choice => {
+            if (choice === 0) setTimeout(() => openStoryAsk(mapId), 0);
+            else if (choice === 1) {
+                storyAskUnstage();
+                setTimeout(() => window.NPCEmpathize?.openForActor?.(actorId), 0);
+            } else storyAskUnstage();
+        });
+        return true;
+    }
+
+    // The scenes are readable outside the plugin command too (a quest step, a
+    // cutscene, the test harness).
+    window.StoryDialogue = {
+        load:   loadStoryScript,
+        split:  splitStoryScenes,
+        scenes: storySceneNames,
+        list:   storySceneList,
+        scene:  storySceneText,
+        parse:  parseStoryScript,
+        play:   playStoryScript,
+        // The Ask (as Em) / Tell (as Bubba) grid, in story mode only.
+        askScenes:  storyAskScenes,
+        askFixed:   storyAskFixedScenes,
+        askGroups:  storyAskGroups,
+        askVerb:    storyAskVerb,
+        askPartner: storyAskPartner,
+        canAsk:     canAskStory,
+        ask:        openStoryAsk,
+        askStage:   storyAskStage,
+        // The layout the board was handed, readable until the window opens.
+        pendingGrid: () => pendingChoiceGrid,
+        // The Ask / Empathize / Cancel menu a party-member Bubba offers.
+        askMenu:   openStoryAskMenu,
+        // The sheet's own switches, offered in the grid beside the topics.
+        askToggles: storyAskToggles,
+        noticeModeLabel: storyNoticeModeLabel,
+    };
+
+    // -------------------------------------------------------------------------
     // Plugin Commands
     // -------------------------------------------------------------------------
     PluginManager.registerCommand(PLUGIN_NAME, "showBust", () => {
@@ -1725,6 +3172,9 @@ Imported.DialogueSystem = true;
         if (ev) ev.turnTowardPlayer();
 
         const npcName = _npcNameForEvent(ev);
+        // Bubba standing as an event on a <Bubba: ...> map is asked, not
+        // chatted with: the map's scenes are the whole of what he has to say.
+        if (canAskStory(npcName) && openStoryAsk()) return;
         const EM      = window.NPCEmpathize;
         const profile = ensureNpcProfile(ev, npcName);
         const sentient = !!(profile && profile.personalityIndex != null && !EM?.isNonSentientNPC?.(npcName));
@@ -1758,7 +3208,9 @@ Imported.DialogueSystem = true;
             // costs nothing.
             for (const build of builders) {
                 const steps = build();
-                if (steps && startNPCExchange(steps)) {
+                // Staged the way a written scene is: the leader and the NPC
+                // both on stage from the first line, the listener dimmed.
+                if (steps && startNPCExchange(steps, true)) {
                     this.setWaitMode('message');
                     return;
                 }
@@ -1776,9 +3228,16 @@ Imported.DialogueSystem = true;
         // The bank is already in the player's language; the string-for-string
         // translation pass would only try to match it again.
         window.skipLocalization = true;
-        $gameMessage.add(line);
+        $gameMessage.add(markSpokenLine(line));
         window.skipLocalization = false;
         this.setWaitMode('message');
+    });
+
+    // A written scene, played out as a bust conversation.
+    PluginManager.registerCommand(PLUGIN_NAME, "playStory", function (args) {
+        if (playStoryScript(args && args.fileName, args && args.sceneName)) {
+            this.setWaitMode('message');
+        }
     });
 
     PluginManager.registerCommand(PLUGIN_NAME, "showCustomBust", (args) => {

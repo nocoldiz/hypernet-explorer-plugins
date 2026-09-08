@@ -6,7 +6,7 @@
     "spec": "Packing",
     "description": "Jobs.1.description",
     "duration": 8,
-    "basePay": 12000,
+    "basePay": 30000,
     "locations": [
       26,
       37,
@@ -68,7 +68,7 @@
     "spec": "Farming",
     "description": "Jobs.2.description",
     "duration": 10,
-    "basePay": 27000,
+    "basePay": 67500,
     "locations": [
       1035,
       1037
@@ -129,7 +129,7 @@
     "spec": "Bartending",
     "description": "Jobs.3.description",
     "duration": 8,
-    "basePay": 10400,
+    "basePay": 26000,
     "locations": [
       302,
       367,
@@ -192,7 +192,7 @@
     "spec": "Acting",
     "description": "Jobs.4.description",
     "duration": 6,
-    "basePay": 7800,
+    "basePay": 19500,
     "locations": [
       446,
       533,
@@ -240,7 +240,7 @@
     "spec": "Blacksmithing",
     "description": "Jobs.5.description",
     "duration": 9,
-    "basePay": 15300,
+    "basePay": 38300,
     "locations": [
       "Forge District",
       "Craftsman Quarter",
@@ -302,7 +302,7 @@
     "spec": "Foraging",
     "description": "Jobs.6.description",
     "duration": 7,
-    "basePay": 15400,
+    "basePay": 38500,
     "locations": [
       450,
       1039
@@ -362,7 +362,7 @@
     "spec": "Alchemy",
     "description": "Jobs.7.description",
     "duration": 8,
-    "basePay": 16000,
+    "basePay": 40000,
     "locations": [
       320,
       531
@@ -427,7 +427,7 @@
     "spec": "Antique Restoration",
     "description": "Jobs.8.description",
     "duration": 6,
-    "basePay": 18600,
+    "basePay": 46500,
     "locations": [],
     "requirements": {
       "MAT": 16,
@@ -488,7 +488,7 @@
     "spec": "Crowd Control",
     "description": "Jobs.9.description",
     "duration": 12,
-    "basePay": 31200,
+    "basePay": 78000,
     "locations": [],
     "requirements": {
       "ATK": 16,
@@ -548,7 +548,7 @@
     "spec": "Boxing",
     "description": "Jobs.10.description",
     "duration": 4,
-    "basePay": 16000,
+    "basePay": 40000,
     "locations": [
       503,
       525
@@ -608,7 +608,7 @@
     "spec": "Hunting",
     "description": "Jobs.11.description",
     "duration": 8,
-    "basePay": 25600,
+    "basePay": 64000,
     "locations": [],
     "requirements": {
       "ATK": 16,
@@ -668,7 +668,7 @@
     "spec": "Pickpocketing",
     "description": "Jobs.12.description",
     "duration": 5,
-    "basePay": 14000,
+    "basePay": 35000,
     "locations": [
       446,
       533,
@@ -723,7 +723,7 @@
     "spec": "Streetwise",
     "description": "Jobs.13.description",
     "duration": 10,
-    "basePay": 31000,
+    "basePay": 77500,
     "locations": [],
     "requirements": {
       "Stealth": 30,
@@ -778,7 +778,7 @@
     "spec": "Lockpicking",
     "description": "Jobs.14.description",
     "duration": 6,
-    "basePay": 21600,
+    "basePay": 54000,
     "locations": [
       1076
     ],
@@ -836,7 +836,7 @@
     "spec": "Mechanics",
     "description": "Jobs.15.description",
     "duration": 8,
-    "basePay": 16000,
+    "basePay": 40000,
     "locations": [
       403,
       630,
@@ -895,7 +895,7 @@
     "spec": "Lockpicking",
     "description": "Jobs.16.description",
     "duration": 6,
-    "basePay": 14400,
+    "basePay": 36000,
     "locations": [],
     "requirements": {
       "Substance": 25,
@@ -943,7 +943,7 @@
     "spec": "Clock and Watchmaking",
     "description": "Jobs.17.description",
     "duration": 7,
-    "basePay": 21000,
+    "basePay": 52500,
     "locations": [
       29,
       723
@@ -994,7 +994,7 @@
     "spec": "Diplomacy",
     "description": "Jobs.18.description",
     "duration": 6,
-    "basePay": 17400,
+    "basePay": 43500,
     "remote": true,
     "locations": [
       1000
@@ -1048,7 +1048,7 @@
     "spec": "Divination",
     "description": "Jobs.19.description",
     "duration": 5,
-    "basePay": 11000,
+    "basePay": 27500,
     "remote": true,
     "locations": [
       450
@@ -1095,7 +1095,7 @@
     "spec": "Direction Sense",
     "description": "Jobs.20.description",
     "duration": 7,
-    "basePay": 11900,
+    "basePay": 29800,
     "locations": [],
     "requirements": {
       "AGI": 16,
@@ -1150,7 +1150,7 @@
     "factionId": 0,
     "description": "Jobs.100.description",
     "duration": 8,
-    "basePay": 16000,
+    "basePay": 40000,
     "locations": [
       1050
     ],
@@ -1205,7 +1205,7 @@
     "factionId": 3,
     "description": "Jobs.101.description",
     "duration": 6,
-    "basePay": 16200,
+    "basePay": 40500,
     "locations": [],
     "requirements": {
       "MAT": 14,
@@ -1262,7 +1262,7 @@
     "factionId": 4,
     "description": "Jobs.102.description",
     "duration": 8,
-    "basePay": 24800,
+    "basePay": 62000,
     "locations": [],
     "requirements": {
       "MAT": 16,
@@ -1326,7 +1326,7 @@
     "factionId": 5,
     "description": "Jobs.103.description",
     "duration": 9,
-    "basePay": 31500,
+    "basePay": 78800,
     "locations": [
       320,
       531
@@ -1395,7 +1395,7 @@
     "factionId": 6,
     "description": "Jobs.104.description",
     "duration": 10,
-    "basePay": 21000,
+    "basePay": 52500,
     "remote": true,
     "locations": [],
     "requirements": {
@@ -1451,7 +1451,7 @@
     "factionId": 1,
     "description": "Jobs.105.description",
     "duration": 8,
-    "basePay": 18400,
+    "basePay": 46000,
     "remote": true,
     "locations": [],
     "requirements": {
@@ -1505,7 +1505,7 @@
     "factionId": 20,
     "description": "Jobs.106.description",
     "duration": 8,
-    "basePay": 30400,
+    "basePay": 76000,
     "locations": [],
     "requirements": {
       "Stealth": 40,
@@ -1566,7 +1566,7 @@
     "factionId": 21,
     "description": "Jobs.107.description",
     "duration": 8,
-    "basePay": 20800,
+    "basePay": 52000,
     "locations": [
       7,
       43,
@@ -1629,7 +1629,7 @@
     "factionId": 22,
     "description": "Jobs.108.description",
     "duration": 7,
-    "basePay": 16800,
+    "basePay": 42000,
     "remote": true,
     "locations": [],
     "requirements": {
@@ -1675,7 +1675,7 @@
     "factionId": 23,
     "description": "Jobs.109.description",
     "duration": 9,
-    "basePay": 27900,
+    "basePay": 69800,
     "remote": true,
     "locations": [
       1050
@@ -1732,7 +1732,7 @@
     "factionId": 2,
     "description": "Jobs.110.description",
     "duration": 8,
-    "basePay": 26400,
+    "basePay": 66000,
     "remote": true,
     "locations": [],
     "requirements": {
@@ -1783,7 +1783,7 @@
     "factionId": 15,
     "description": "Jobs.111.description",
     "duration": 10,
-    "basePay": 33000,
+    "basePay": 82500,
     "remote": true,
     "locations": [],
     "requirements": {
@@ -1845,7 +1845,7 @@
     "factionId": 16,
     "description": "Jobs.112.description",
     "duration": 5,
-    "basePay": 16500,
+    "basePay": 41300,
     "locations": [],
     "requirements": {
       "AGI": 20,
@@ -1902,7 +1902,7 @@
     "factionId": 17,
     "description": "Jobs.113.description",
     "duration": 8,
-    "basePay": 27200,
+    "basePay": 68000,
     "locations": [],
     "requirements": {
       "ATK": 16,
@@ -1963,7 +1963,7 @@
     "factionId": 7,
     "description": "Jobs.114.description",
     "duration": 6,
-    "basePay": 18600,
+    "basePay": 46500,
     "remote": true,
     "locations": [],
     "requirements": {
@@ -2010,7 +2010,7 @@
     "factionId": 27,
     "description": "Jobs.124.description",
     "duration": 8,
-    "basePay": 16800,
+    "basePay": 42000,
     "locations": [
       727,
       1000,
@@ -2061,7 +2061,7 @@
     "factionId": 30,
     "description": "Jobs.127.description",
     "duration": 10,
-    "basePay": 29000,
+    "basePay": 72500,
     "locations": [
       727
     ],
@@ -2119,7 +2119,7 @@
     "spec": "Crowd Reading",
     "description": "Jobs.128.description",
     "duration": 10,
-    "basePay": 15000,
+    "basePay": 37500,
     "locations": [],
     "requirements": {
       "DEF": 12,
@@ -2173,7 +2173,7 @@
     "spec": "Fishing",
     "description": "Jobs.129.description",
     "duration": 8,
-    "basePay": 13600,
+    "basePay": 34000,
     "locations": [
       570
     ],
@@ -2220,7 +2220,7 @@
     "spec": "Street Sweeping",
     "description": "Jobs.130.description",
     "duration": 8,
-    "basePay": 8000,
+    "basePay": 20000,
     "locations": [
       704,
       689,
@@ -2279,7 +2279,7 @@
     "spec": "Project Management",
     "description": "Jobs.131.description",
     "duration": 8,
-    "basePay": 13600,
+    "basePay": 34000,
     "remote": true,
     "locations": [
       706,
@@ -2338,7 +2338,7 @@
     "spec": "Customer Service",
     "description": "Jobs.132.description",
     "duration": 8,
-    "basePay": 9600,
+    "basePay": 24000,
     "locations": [
       1054,
       463,
@@ -2401,7 +2401,7 @@
     "spec": "Cooking",
     "description": "Jobs.133.description",
     "duration": 8,
-    "basePay": 10400,
+    "basePay": 26000,
     "locations": [
       713,
       1061,
@@ -2464,7 +2464,7 @@
     "spec": "Art History",
     "description": "Jobs.134.description",
     "duration": 7,
-    "basePay": 12600,
+    "basePay": 31500,
     "locations": [
       307,
       714
@@ -2517,7 +2517,7 @@
     "spec": "Bodybuilding",
     "description": "Jobs.135.description",
     "duration": 6,
-    "basePay": 11400,
+    "basePay": 28500,
     "locations": [
       304,
       541,
@@ -2571,7 +2571,7 @@
     "spec": "Customer Service",
     "description": "Jobs.136.description",
     "duration": 9,
-    "basePay": 11700,
+    "basePay": 29300,
     "locations": [
       725
     ],
@@ -2627,7 +2627,7 @@
     "spec": "Crowd Control",
     "description": "Jobs.137.description",
     "duration": 8,
-    "basePay": 16800,
+    "basePay": 42000,
     "locations": [
       726
     ],
@@ -2688,7 +2688,7 @@
     "spec": "Swimming",
     "description": "Jobs.138.description",
     "duration": 8,
-    "basePay": 24000,
+    "basePay": 60000,
     "locations": [
       1130,
       1160
@@ -2745,7 +2745,7 @@
     "spec": "Law",
     "description": "Jobs.139.description",
     "duration": 8,
-    "basePay": 23200,
+    "basePay": 58000,
     "locations": [
       1102
     ],

@@ -8,5 +8,37 @@
   "size": "{size}px",
   "clear": "CLEAR",
   "save": "SAVE",
-  "exit": "EXIT"
+  "exit": "EXIT",
+  "paint": {
+    "appName": "Pain",
+    "untitledTitle": "untitled - Pain",
+    "title": "{file} - Pain",
+    "new": "New",
+    "open": "Open",
+    "save": "Save",
+    "setWallpaper": "Set as wallpaper",
+    "undo": "Undo",
+    "redo": "Redo",
+    "custom": "Custom colour",
+    "textPrompt": "Text to write:",
+    "savePrompt": "Save picture as (in C:/Pictures):",
+    "saved": "Saved {file}",
+    "saveError": "Could not save the picture.",
+    "openPrompt": "Open which picture? ({list})",
+    "openError": "Could not open that picture.",
+    "nothingToOpen": "There are no pictures in C:/Pictures yet.",
+    "opened": "Opened {file}",
+    "wallpaperSet": "Wallpaper set.",
+    "tool": {
+      "pencil": "Pencil",
+      "brush": "Brush",
+      "eraser": "Eraser",
+      "line": "Line",
+      "rect": "Rectangle",
+      "ellipse": "Ellipse",
+      "fill": "Fill with colour",
+      "picker": "Pick colour",
+      "text": "Text"
+    }
+  }
 }

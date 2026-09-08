@@ -1535,7 +1535,15 @@
         // During a map battle the P2 avatar is a tactical battler: it moves only
         // on its own Move command, never on free roaming input.
         if (inMapBattle()) return;
-        if (SplitScreenManager.active && SplitScreenManager.p2Event && !SplitScreenManager.p2Event.isMoving()) {
+        if (!SplitScreenManager.active || !SplitScreenManager.p2Event) return;
+        // On a <Platform> map the second player is a physics body like the
+        // first, so it runs the platformer step (Map/PlatformerMode.js) instead
+        // of the grid walk below: gravity has no direction to walk in.
+        if (window.PlatformerMode && window.PlatformerMode.isActive()) {
+            window.PlatformerMode.updateSplitScreenP2(SplitScreenManager.p2Event, SplitScreenManager);
+            return;
+        }
+        if (!SplitScreenManager.p2Event.isMoving()) {
             updateP2Movement();
         }
     };
@@ -2149,7 +2157,7 @@
         "Scene_Chess", "Scene_Pool", "Scene_BowlingMinigame", "Scene_HyperTamer",
         "Scene_MonsterTournament", "Scene_FishingMinigame", "Scene_SurfingGame",
         "Scene_PeriodicTable", "Scene_RamanScan", "Scene_ScratchCard",
-        "Scene_BoosterPack", "Scene_LockpickTetris", "Scene_TokenConverter"
+        "Scene_BoosterPack", "Scene_UnlockingBlocks", "Scene_TokenConverter"
     ]);
 
     SplitScreenManager.registerMinigameScene = function (name) {

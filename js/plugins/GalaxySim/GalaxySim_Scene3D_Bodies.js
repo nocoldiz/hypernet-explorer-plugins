@@ -592,8 +592,13 @@
 
       // Real systems are not perfectly coplanar: give each planet a small,
       // deterministic inclination (up to ~7 degrees, like the solar system) and
-      // tilt its orbit guide to match.
-      const inc = (hash01(planet.name, 11) - 0.5) * 0.24;
+      // tilt its orbit guide to match. A world out in the far cosmic web may
+      // carry its OWN inclination instead - a strange system's orbits stand at
+      // any angle it likes, and are the whole point of going out there (see
+      // GalaxySim_DataManager._applyStrangeOrbits).
+      const inc = planet.inclination != null
+        ? planet.inclination
+        : (hash01(planet.name, 11) - 0.5) * 0.24;
       const node = hash01(planet.name, 29) * Math.PI * 2;
 
       const line = buildOrbitLine(orbitWorld, opts.orbitColor);
@@ -688,7 +693,10 @@
         orbit: orbitWorld,
         inc,
         node,
-        periodMin: orbitPeriodMinutes(planet.orbitRadius, systemData.mass),
+        // A retrograde world runs its orbit backwards: same period, opposite
+        // sign, which is all the animator needs.
+        periodMin: orbitPeriodMinutes(planet.orbitRadius, systemData.mass) *
+          (planet.retrograde ? -1 : 1),
         phase: planet.phase || 0,
         moons: moonStates,
         _focused: false,
@@ -990,13 +998,13 @@
           }
           const sway = Math.sin(t * a.swayRate + a.swayPhase) * a.swayAmp;
           const height = 1 + (a.archHeight - 1) * heightMul;
-          if (updateArc) {
-            const newGeo = updateArc(a.p1, a.p2, a.apexDir, height, sway * heightMul, a.swayAxis, a.tubeR);
-            a.mesh.geometry.dispose();
-            a.mesh.geometry = newGeo;
-          }
+          if (updateArc) updateArc(a, height, sway * heightMul);
+          // Every strand of the rope brightens together, so the whole loop
+          // flares as one on a reconnection snap.
           const flicker = 0.62 + 0.38 * Math.sin(t * a.rate + a.phase);
-          a.mat.opacity = Math.min(1, a.baseOpacity * flicker * (1 + flash * 1.8));
+          for (const st of a.strands) {
+            st.mat.opacity = Math.min(1, st.baseOpacity * flicker * (1 + flash * 1.8));
+          }
         }
       }
       if (blackHole) blackHole.animate(t);

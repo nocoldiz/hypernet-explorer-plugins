@@ -106,6 +106,13 @@
             this._running = true;
             ArcadeManager.startGame();
         }
+        // Attract loop. The cabinet calls this instead of start() when nobody
+        // has put a coin in; the board is the same one, left to the competitor
+        // AI, so an idle machine shows a moving screen rather than a blank one.
+        startDemo(container) {
+            this._demo = true;
+            this.start(container);
+        }
         // Manager teardown contract: cancel the ticker when the cart is closed.
         stop() {
             if (this._running) {

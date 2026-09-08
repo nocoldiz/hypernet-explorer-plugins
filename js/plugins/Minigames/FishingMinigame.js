@@ -17,9 +17,10 @@
  * Megalodon in the lake is the Megalodon you then fight.
  *
  * How it plays
- *   1. AIM     - look around with WASD / the arrow keys / left stick / mouse
- *                drag. A ring on the water shows where the cast will come down
- *                and how deep the lake is there.
+ *   1. AIM     - look around with the arrow keys / left stick / mouse drag,
+ *                and walk the bank with WASD to fish another stretch of water.
+ *                A ring on the water shows where the cast will come down and
+ *                how deep the lake is there.
  *   2. POWER   - stop the swinging bar. Power decides how far out the bobber
  *                lands, and the water gets deeper the further you cast, so the
  *                cast decides WHICH fish can reach your hook (each species has
@@ -33,7 +34,8 @@
  * The camera stays locked on the hook from the moment it leaves the rod: it
  * leads the bobber through the air, holds it while it floats, and follows the
  * fight. Look input becomes a bounded offset on top of that, so the hook is
- * never lost off screen (and a marker frames it wherever it is).
+ * never lost off screen (and a marker frames it wherever it is). The angler
+ * may still walk the bank at any point, the fight included.
  *
  * The line is a real verlet rope pinned between the rod tip and the hook, with
  * gravity, drag and wind on the slack, so it whips out on the cast, hangs in a
@@ -133,18 +135,35 @@
     // cast always goes out over the water, but the tracking camera has to be
     // able to swing wider than that: a hook can land off to one side or come
     // down almost at the player's feet, and it must stay framed either way.
-    const LOOK_YAW_LIMIT  = 0.85;
+    const LOOK_YAW_LIMIT  = 1.05;
     const LOOK_PITCH_MIN  = -0.55;
     const LOOK_PITCH_MAX  = 0.30;
     const TRACK_YAW_LIMIT = 1.30;
     const TRACK_PITCH_MIN = -1.15;
     const TRACK_PITCH_MAX = 0.55;
-    const TRACK_OFFSET    = 0.40;   // how far the player may lead the tracked point
+    const TRACK_OFFSET    = 0.55;   // how far the player may lead the tracked point
     const TRACK_RATE      = 6.0;    // default follow stiffness, in 1/seconds
     const TRACK_FAST      = 15.0;   // following the bobber through the air
     const TRACK_FIGHT     = 9.0;    // following a hooked fish
     const TRACK_SNAP      = 0.0015; // radians: close enough, stop easing and land on it
     const CAST_LEAD       = 0.10;   // seconds of velocity the flight camera leads by
+
+    // Walking the bank. The angler is never allowed off the shore and into the
+    // lake, so every position the camera can reach still has the water in front
+    // of it and the cast solver still has somewhere to put the hook.
+    const CAM_EYE_Y   = 2.4;
+    const CAM_SPEED   = 7.0;                 // units per second
+    const CAM_X_LIMIT = LAKE_HALF_X - 9;
+    const CAM_Z_MIN   = SHORE_Z + 1.0;
+    const CAM_Z_MAX   = SHORE_Z + 10;
+
+    // Nothing hooked is ever dragged past the water's edge or under the lake
+    // bed: the fight ends the moment the catch is close enough to lift, and
+    // both the fish and the hook are pinned inside the water until then.
+    const LAND_DIST   = 1.8;                 // close enough to the rod to land it
+    const WATER_EDGE_Z = SHORE_Z - 2.2;      // the shallowest water a fight reaches
+    const BED_CLEAR   = 0.55;                // never closer than this to the bed
+    const SNAP_GRACE  = 0.35;                // seconds over the limit before the line goes
 
     // The lake's own geometry is patched with a harsher version of the player's
     // retro settings than the shared default: chunkier vertex snapping, fewer
@@ -413,7 +432,7 @@
             this.scene.fog = new THREE.Fog(pal.sky, pal.fogNear || 42, pal.fogFar || 118);
 
             this.camera = new THREE.PerspectiveCamera(58, this._w / this._h, 0.1, 400);
-            this.camera.position.set(0, 2.4, SHORE_Z + 2.2);
+            this.camera.position.set(0, CAM_EYE_Y, SHORE_Z + 2.2);
             this.scene.add(this.camera);   // the rod is a child of the camera
 
             this.renderer = new THREE.WebGLRenderer({ alpha: false, antialias: false, powerPreference: 'high-performance' });
@@ -862,14 +881,21 @@
             g.visible = false;
             this.scene.add(g);
             this._castMarker = g;
+            this._castRing = ring;
             this._castPip = pip;
             this._track(g);
         }
 
-        setCastMarker(x, z, visible) {
+        // `onWater` is false when the swing as aimed would put the hook on dry
+        // land or over the far bank. The marker says so before the cast is spent
+        // rather than after, so a wasted throw is always the player's choice.
+        setCastMarker(x, z, visible, onWater) {
             const g = this._castMarker;
             g.visible = !!visible;
             if (!visible) return;
+            const col = onWater === false ? 0xff5533 : 0xffe066;
+            this._castRing.material.color.setHex(col);
+            this._castPip.material.color.setHex(col);
             g.position.set(x, WATER_Y + 0.06 + waveHeight(x, z, this._t), z);
             const pulse = 1 + Math.sin(this._t * 6) * 0.12;
             g.scale.set(pulse, 1, pulse);
@@ -1156,6 +1182,39 @@
             // The rod tip is read back this same frame to anchor the line, so the
             // camera's world matrix has to be current, not one frame stale.
             this.camera.updateMatrixWorld(true);
+        }
+
+        // Walk the bank. Input is read in camera space (forward is wherever the
+        // player is looking, flattened onto the ground) and the result is clamped
+        // to the shore, so the angler can pick a stretch of water but can never
+        // step into the lake or wander off behind the treeline.
+        moveCamera(fwd, strafe, dt) {
+            if (!fwd && !strafe) return;
+            const len = Math.sqrt(fwd * fwd + strafe * strafe) || 1;
+            const f = fwd / len, r = strafe / len;
+            const sy = Math.sin(this.yaw), cy = Math.cos(this.yaw);
+            // Forward on the XZ plane for a camera looking down -Z at yaw 0.
+            const dx = (-sy * f + cy * r) * CAM_SPEED * dt;
+            const dz = (-cy * f - sy * r) * CAM_SPEED * dt;
+            const pos = this.camera.position;
+            pos.x = clamp(pos.x + dx, -CAM_X_LIMIT, CAM_X_LIMIT);
+            pos.z = clamp(pos.z + dz, CAM_Z_MIN, CAM_Z_MAX);
+            pos.y = CAM_EYE_Y;
+            this.camera.updateMatrixWorld(true);
+        }
+
+        // How far the swing may be thrown from where the angler is standing.
+        // Walking back up the bank does not shorten the reach into the water:
+        // the near limit is pushed out to clear the shoreline along the aim, so
+        // the shortest cast always still lands wet.
+        castRange() {
+            const dir = this.aimDirection();
+            const tip = this.rodTipWorld(this._rangeTmp || (this._rangeTmp = new THREE.Vector3()));
+            let min = CAST_MIN;
+            if (dir.z < -0.05) {
+                min = Math.max(CAST_MIN, (tip.z - (SHORE_Z - 4)) / -dir.z);
+            }
+            return { min: min, max: Math.max(min + 10, CAST_MAX) };
         }
 
         // Unit vector the player is aiming along, on the XZ plane.
@@ -1709,7 +1768,8 @@
                     this._castAnchor = { x: tip.x, z: tip.z };
                     // Solve the launch speed that lands the bobber at the distance
                     // the power bar asked for, at a fixed 38 degree elevation.
-                    const dist = lerp(CAST_MIN, CAST_MAX, this._power);
+                    const range = W.castRange();
+                    const dist = lerp(range.min, range.max, this._power);
                     const ang = 0.66;
                     const h = tip.y - WATER_Y;
                     // Range with a launch height: d = v*cos(a) * (v*sin(a) + sqrt((v*sin(a))^2 + 2*g*h)) / g
@@ -1742,7 +1802,7 @@
                 case 'waiting': {
                     this._inWater = true;
                     this._hookDepth = waterDepthAt(this._bob.z);
-                    this._waitTimer = 300 + Math.floor(Math.random() * 360);
+                    this._waitTimer = 260 + Math.floor(Math.random() * 300);
                     W.addSplash(this._bob.x, this._bob.z, 1);
                     W.lookAtPoint(this._bob.x, WATER_Y, this._bob.z, TRACK_RATE);
                     this._se('Water1', 110, 70);
@@ -1751,7 +1811,7 @@
                 }
 
                 case 'bite':
-                    this._biteTimer = 80;
+                    this._biteTimer = 170;
                     this._setPrompt('BITE', '#ff5544');
                     this._se('Water2', 140, 90);
                     this._shake = 8;
@@ -1765,7 +1825,8 @@
                     this._maxDistance = this._distance;
                     this._reeling = false;
                     this._runTimer = 40;
-                    this._pull = 0.2 + diff * 0.06;
+                    this._pull = 0.15 + diff * 0.04;
+                    this._overTimer = 0;
                     if (f) { f.state = 'hooked'; f.stamina = 1; }
                     this._se('Sword2', 150, 60);
                     this._setPrompt('');
@@ -1866,14 +1927,18 @@
                 if (hookLive && ent.likesDepth(this._hookDepth)) {
                     const dx = b.x - p.x, dz = b.z - p.z;
                     const dist = Math.sqrt(dx * dx + dz * dz);
-                    if (dist < 22) ent.state = 'interested';
+                    if (dist < 30) ent.state = 'interested';
                     if (ent.state === 'interested') {
                         const step = ent.speed * (ent.type === 'item' ? 0.35 : 1) * dt;
                         p.x += (dx / (dist || 1)) * step * 2.4;
                         p.z += (dz / (dist || 1)) * step * 2.4;
-                        p.y = lerp(p.y, WATER_Y - this._hookDepth * 0.16 - 0.7, dt * 1.4);
+                        // The hook's depth is where it WANTS to be; the bed is
+                        // where it may actually go. A hook cast into the shallows
+                        // used to pull the swimmer straight down through the mud.
+                        const wantY = WATER_Y - this._hookDepth * 0.16 - 0.7;
+                        p.y = lerp(p.y, clamp(wantY, bedY(p.z) + BED_CLEAR, -0.35), dt * 1.4);
                         ent.rig.rotation.y = Math.atan2(dx, dz);
-                        if (dist < 1.4 && Math.random() < (0.010 + ent.difficulty * 0.003)) {
+                        if (dist < 2.4 && Math.random() < (0.024 + ent.difficulty * 0.004)) {
                             this._hooked = ent;
                             this._setState('bite');
                             return;
@@ -1903,6 +1968,16 @@
 
                 ent.rig.rotation.y = lerp(ent.rig.rotation.y, ent.heading, dt * 3);
             }
+
+            // One last pass over everything that swims, hooked or not: no rig is
+            // ever left inside the bed or outside the banks, whatever moved it.
+            for (const ent of W.entities) {
+                if (ent.state === 'landed' || !ent.rig) continue;
+                const p = ent.rig.position;
+                p.x = clamp(p.x, -(LAKE_HALF_X - 2), LAKE_HALF_X - 2);
+                p.z = clamp(p.z, LAKE_FAR_Z + 3, WATER_EDGE_Z);
+                p.y = clamp(p.y, bedY(p.z) + BED_CLEAR, WATER_Y + 0.35);
+            }
         }
 
         // The fight. Hold Confirm to reel (distance falls, tension climbs),
@@ -1923,38 +1998,48 @@
                 // (Fishing, specialization 112).
                 const rodHand = window.SpecializationXP
                     ? window.SpecializationXP.discount('Fishing', 0.07, 0.7) : 1;
-                this._runStrength = (0.5 + Math.random()) * (0.35 + f.difficulty * 0.12) * (0.35 + f.stamina * 0.65) * rodHand;
+                this._runStrength = (0.5 + Math.random()) * (0.26 + f.difficulty * 0.08) * (0.35 + f.stamina * 0.65) * rodHand;
             }
             const running = this._runTimer > 40 ? 0 : this._runStrength || 0;
             const pull = this._pull * (0.4 + f.stamina * 0.6) + running;
 
             if (this._reeling) {
-                const gain = 5.5 * (1.25 - f.stamina * 0.55);
+                const gain = 7.0 * (1.25 - f.stamina * 0.55);
                 this._distance -= gain * dt;
-                this._tension += (0.55 + pull * 1.5) * dt;
+                this._tension += (0.40 + pull * 1.05) * dt;
                 W.setReelSpin(0.35);
             } else {
-                this._distance += pull * 2.2 * dt;
-                this._tension -= 0.85 * dt;
+                this._distance += pull * 1.7 * dt;
+                this._tension -= 1.15 * dt;
                 W.setReelSpin(0);
             }
             this._tension = clamp(this._tension, 0, 1.15);
             this._distance = clamp(this._distance, 0, this._maxDistance + 12);
 
             // Tension held in the working band tires the fish; slack lets it rest.
-            if (this._tension >= 0.45 && this._tension <= 0.88) {
-                f.stamina -= (0.05 + f.difficulty * 0.004) * dt;
+            if (this._tension >= 0.35 && this._tension <= 0.92) {
+                f.stamina -= (0.075 + f.difficulty * 0.005) * dt;
             } else if (this._tension < 0.2) {
                 f.stamina = Math.min(1, f.stamina + 0.02 * dt);
             }
             f.stamina = clamp(f.stamina, 0, 1);
 
+            // Overloading the line is a warning before it is a loss: the rod
+            // holds for a moment, which is long enough to let go and save it.
             if (this._tension >= 1) {
-                this._setPrompt(T('Fishing.lineSnapped'), '#ff6644');
-                this._setState('miss');
-                return;
+                this._overTimer = (this._overTimer || 0) + dt;
+                if (this._overTimer >= SNAP_GRACE) {
+                    this._setPrompt(T('Fishing.lineSnapped'), '#ff6644');
+                    this._setState('miss');
+                    return;
+                }
+            } else {
+                this._overTimer = 0;
             }
-            if (this._distance <= 0.2) {
+            // Landed the moment it is within reach of the rod. Reeling all the
+            // way to zero used to haul the fish up the bank and through the
+            // shore geometry before the state ever changed.
+            if (this._distance <= LAND_DIST) {
                 this._setState('caught');
                 return;
             }
@@ -1962,23 +2047,32 @@
             // Drag the fish along the line toward the rod and make it thrash.
             const anchor = this._castAnchor || W.rodTipWorld();
             const dir = this._castDir || W.aimDirection();
-            const tx = anchor.x + dir.x * this._distance;
-            const tz = anchor.z + dir.z * this._distance;
             const thrash = (0.25 + running) * 0.5;
             const p = f.rig.position;
-            p.x = lerp(p.x, tx + Math.sin(this._time * 9) * thrash, 0.16);
-            p.z = lerp(p.z, tz + Math.cos(this._time * 7) * thrash, 0.16);
+            // The line runs to the rod, which stands on dry land: the target is
+            // held at the water's edge and inside the banks so the fight never
+            // pulls the animal up the shore or out through the side of the lake.
+            const tx = clamp(anchor.x + dir.x * this._distance + Math.sin(this._time * 9) * thrash,
+                             -(LAKE_HALF_X - 2), LAKE_HALF_X - 2);
+            const tz = clamp(anchor.z + dir.z * this._distance + Math.cos(this._time * 7) * thrash,
+                             LAKE_FAR_Z + 3, WATER_EDGE_Z);
+            p.x = lerp(p.x, tx, 0.16);
+            p.z = lerp(p.z, tz, 0.16);
             // A tired fish rides higher; a fresh one bores deep and breaks the
-            // surface only during its runs.
+            // surface only during its runs. Clamped to the bed under the fish's
+            // OWN z, which the shallows make a much tighter band than open water.
+            const surf = WATER_Y + waveHeight(p.x, p.z, this._time);
+            const floor = bedY(p.z) + BED_CLEAR;
             const wantY = lerp(-2.4, -0.35, 1 - f.stamina) + (running > 0.4 ? Math.sin(this._time * 12) * 0.7 : 0);
-            p.y = lerp(p.y, clamp(wantY, bedY(p.z) + 0.5, 0.35), 0.12);
+            p.y = lerp(p.y, clamp(wantY, floor, Math.max(floor, surf + 0.25)), 0.12);
+            p.y = clamp(p.y, floor, surf + 0.35);
             f.rig.rotation.y = Math.atan2(anchor.x - p.x, anchor.z - p.z);
             f.rig.rotation.z = Math.sin(this._time * 11) * thrash * 0.8;
 
             if (p.y > -0.15 && Math.random() < 0.06) W.addSplash(p.x, p.z, 0.6);
 
             this._bob.x = p.x; this._bob.z = p.z;
-            this._bob.y = WATER_Y + waveHeight(p.x, p.z, this._time) - Math.min(0.35, this._tension * 0.4);
+            this._bob.y = surf - Math.min(0.35, this._tension * 0.4);
             W.setBobber(this._bob.x, this._bob.y, this._bob.z, true);
             // Stay on the hook, not on the fish: the fish rolls and dives under
             // it, and the player needs to read the line, not the animal.
@@ -2037,6 +2131,11 @@
             } else if (ent.type === 'item') {
                 $gameParty.gainItem(ent.data, 1);
             } else if (ent.type === 'monster') {
+                // Free play opened from the title screen has no map under it:
+                // a fight started there has nowhere to hand the party back to
+                // when it ends, so what was hooked stays a trophy and nothing
+                // climbs out of the water after it.
+                if (typeof $dataMap === 'undefined' || !$dataMap) return;
                 const troopId = ent.data.id;
                 const ceId = window.MovementSystem ? window.MovementSystem.fishingBattleCommonEventId : 0;
                 if (ceId > 0) $gameTemp.reserveCommonEvent(ceId);
@@ -2060,9 +2159,11 @@
         //---------------------------------------------------------------------
         // WASD is not bound to the movement keys everywhere in this project (the
         // shop, for one, steals A), so the scene claims them for the duration and
-        // hands them straight back.
+        // hands them straight back. They walk the bank rather than turn the head:
+        // the arrow keys, the stick and the mouse all look, and an angler who
+        // wants a different stretch of water walks to it.
         _bindLookKeys() {
-            const map = { 87: 'up', 65: 'left', 83: 'down', 68: 'right' };
+            const map = { 87: 'fishFwd', 65: 'fishLeft', 83: 'fishBack', 68: 'fishRight' };
             this._savedKeys = {};
             for (const code in map) {
                 this._savedKeys[code] = Input.keyMapper[code];
@@ -2100,6 +2201,20 @@
                 this._lastTouch = null;
             }
             if (dy || dp) W.applyLook(dy, dp);
+        }
+
+        // Walking is allowed at every stage, the fight included: the frozen cast
+        // anchor means moving never drags the fish about, it only changes where
+        // the fight is watched from.
+        _updateMove() {
+            const W = this._world;
+            if (!W) return;
+            let fwd = 0, strafe = 0;
+            if (Input.isPressed('fishFwd'))   fwd += 1;
+            if (Input.isPressed('fishBack'))  fwd -= 1;
+            if (Input.isPressed('fishRight')) strafe += 1;
+            if (Input.isPressed('fishLeft'))  strafe -= 1;
+            W.moveCamera(fwd, strafe, SIM_DT);
         }
 
         _handleConfirm() {
@@ -2140,6 +2255,7 @@
             // where the aim has to stay put. Once the line is out the input only
             // offsets the tracking camera, so the hook is never lost.
             if (this._state !== 'power' && this._state !== 'loading') this._updateLook();
+            if (this._state !== 'power' && this._state !== 'loading') this._updateMove();
 
             switch (this._state) {
                 case 'power':
@@ -2220,7 +2336,8 @@
             const W = this._world;
             const dir = W.aimDirection();
             const tip = W.rodTipWorld(this._tipTmp || (this._tipTmp = new THREE.Vector3()));
-            const dist = lerp(CAST_MIN, CAST_MAX, this._state === 'power' ? this._power : 0.5);
+            const range = W.castRange();
+            const dist = lerp(range.min, range.max, this._state === 'power' ? this._power : 0.5);
             const x = tip.x + dir.x * dist;
             const z = tip.z + dir.z * dist;
             return {
@@ -2238,12 +2355,20 @@
             }
             const p = this._castPreview();
             this._preview = p;
-            this._world.setCastMarker(p.x, p.z, true);
+            this._world.setCastMarker(p.x, p.z, true, p.onWater);
         }
 
         // How much line is paid out beyond the straight rod-to-hook run. This is
         // the only thing the scene tells the rope; every curve it draws is the
         // simulation's own doing.
+        // The fight ends at LAND_DIST, so that is where the gauge has to read
+        // empty: measuring against a zero it never reaches would leave a sliver
+        // of line showing on a landed fish.
+        _distanceFraction() {
+            const span = Math.max(1, (this._maxDistance || 1) - LAND_DIST);
+            return clamp((this._distance - LAND_DIST) / span, 0, 1);
+        }
+
         _lineSlack() {
             switch (this._state) {
                 case 'casting': return 0.30;   // line streaming out behind the bobber
@@ -2456,10 +2581,10 @@
 
             // Distance to the rod.
             by += gap;
-            window.PSXHud.bar(bmp, bx, by, bw, bh, clamp(this._distance / (this._maxDistance || 1), 0, 1),
+            window.PSXHud.bar(bmp, bx, by, bw, bh, this._distanceFraction(),
                 { seg: 3, gap: 1, color: P.amber });
             this._hudText(bmp, 'DIST', bx - labelW - 3, by - 1, labelW, 'right', P.dim, 8);
-            this._hudText(bmp, Math.ceil(this._distance) + 'M', bx + bw + 3, by - 1, labelW + 6, 'left', P.ink, 8);
+            this._hudText(bmp, Math.max(0, Math.ceil(this._distance - LAND_DIST)) + 'M', bx + bw + 3, by - 1, labelW + 6, 'left', P.ink, 8);
 
             // Fish stamina.
             by += gap;
@@ -2586,7 +2711,7 @@
             if (this._state === 'power') this._drawAsciiMeter(ctx, T('Fishing.meter.power'), this._power, meterY, cellW, cellH, 'fill');
             else if (this._state === 'reeling') {
                 this._drawAsciiMeter(ctx, T('Fishing.meter.line'), this._tension, meterY, cellW, cellH, 'safe');
-                this._drawAsciiMeter(ctx, T('Fishing.meter.dist'), this._distance / (this._maxDistance || 1), meterY + cellH * 3, cellW, cellH, 'fill');
+                this._drawAsciiMeter(ctx, T('Fishing.meter.dist'), this._distanceFraction(), meterY + cellH * 3, cellW, cellH, 'fill');
             }
 
             ctx.font = `${fs}px ${font}`;

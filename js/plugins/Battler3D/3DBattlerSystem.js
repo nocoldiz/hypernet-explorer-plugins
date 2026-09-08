@@ -1099,7 +1099,7 @@
         applyModelScale(growth = 1) {
             if (!this.model) return;
             if (this._fitClamp === undefined) this._computeFitClamp();
-            const s = this.scale * this._fitClamp, sh = this.shapeXYZ;
+            const s = this.scale * this._fitClamp, sh = this._shapeProportions();
             this.model.scale.set(s * sh.x, s * sh.y, s * sh.z);
             if (growth < 1) this._applySpawnFade(growth);
             else if (this._spawnFadeMats) this._clearSpawnFade();
@@ -1129,6 +1129,35 @@
             this._spawnFadeMats = null;
         }
 
+        // The non-uniform body proportions, kept readable. Several independent
+        // rolls multiply into shapeXYZ (per-id variation, the world seed's build
+        // shift, per-instance jitter, and a family's own tweaks on top), and
+        // stacked worst cases used to reach a 2:1 axis ratio, i.e. a creature
+        // rendered visibly squashed or stretched rather than differently built.
+        // The spread is compressed here (never a hard cut, so the direction of a
+        // build survives) until the longest axis is at most MAX_ANISO times the
+        // shortest, about the volume the raw rolls already implied.
+        _shapeProportions() {
+            const sh = this.shapeXYZ;
+            const c = this._shapeFitCache;
+            if (c && c.x === sh.x && c.y === sh.y && c.z === sh.z) return c.out;
+            const MAX_ANISO = 1.28;
+            const x = Math.max(sh.x, 1e-4), y = Math.max(sh.y, 1e-4), z = Math.max(sh.z, 1e-4);
+            const g = Math.cbrt(x * y * z);
+            let out = { x: x, y: y, z: z };
+            const r = Math.max(x, y, z) / Math.min(x, y, z);
+            if (r > MAX_ANISO) {
+                const e = Math.log(MAX_ANISO) / Math.log(r);
+                out = {
+                    x: g * Math.pow(x / g, e),
+                    y: g * Math.pow(y / g, e),
+                    z: g * Math.pow(z / g, e)
+                };
+            }
+            this._shapeFitCache = { x: sh.x, y: sh.y, z: sh.z, out: out };
+            return out;
+        }
+
         // Clamp (computed once) so a model can never render larger than the battle
         // view and spill off-screen. Measures the model's world bounding box at
         // full nominal scale and derives a uniform shrink factor if it exceeds the
@@ -1137,7 +1166,7 @@
         _computeFitClamp() {
             this._fitClamp = 1;
             if (!this.model || typeof THREE.Box3 === 'undefined') return;
-            const sh = this.shapeXYZ, s = this.scale;
+            const sh = this._shapeProportions(), s = this.scale;
             this.model.scale.set(s * sh.x, s * sh.y, s * sh.z); // full scale, no growth/clamp
             this.model.updateMatrixWorld(true);
             const box = new THREE.Box3().setFromObject(this.model);
@@ -3599,22 +3628,37 @@
                     continue;
                 }
 
-                let posX, posY;
+                let posX, posY, posZ = 0;
                 if (def) {
                     // Spread multiple procedural creatures evenly around centre.
                     // This is only the opening guess: spreadEnemyModels re-lays
                     // them out by their measured width once they have loaded.
-                    posX = procCount > 1 ? (procSlot - (procCount - 1) / 2) * ENEMY_SPREAD_GUESS : 0;
-                    posY = -1.5;
-                    procSlot++;
+                    if (procCount === 3) {
+                        const trioGuess = [
+                            { x: -4.5, z: -4.5 },
+                            { x: 0,    z: 0 },
+                            { x: 4.5,  z: -4.5 }
+                        ];
+                        const slot = trioGuess[procSlot] || { x: 0, z: 0 };
+                        posX = slot.x;
+                        posZ = slot.z;
+                        posY = -1.5;
+                        procSlot++;
+                    } else {
+                        posX = procCount > 1 ? (procSlot - (procCount - 1) / 2) * ENEMY_SPREAD_GUESS : 0;
+                        posY = -1.5;
+                        posZ = 0;
+                        procSlot++;
+                    }
                 } else {
                     posX = (sprite.x / Graphics.width) * 4 - 2;
                     posY = -((sprite.y / Graphics.height) * 4 - 2);
+                    posZ = 0;
                 }
 
-                debugLog(`Enemy ${i} 3D pos: (${posX}, ${posY}, 0)`);
+                debugLog(`Enemy ${i} 3D pos: (${posX}, ${posY}, ${posZ})`);
 
-                pending.push(this._battle3DScene.addModel(`enemy_${i}`, battlerModel, posX, posY, 0));
+                pending.push(this._battle3DScene.addModel(`enemy_${i}`, battlerModel, posX, posY, posZ));
 
                 // Hide 2D sprite
                 sprite.hide();
@@ -3702,7 +3746,23 @@
             zSlot++;
         }
 
-        if (row.length > 1) {
+        if (row.length === 3) {
+            // Triangle formation when facing 3 enemies:
+            // 1 front-center flanked by 2 rear enemies (left flank, right flank at red X positions)
+            const trio = [
+                { x: -4.5, z: -4.5 },
+                { x: 0,    z: 0 },
+                { x: 4.5,  z: -4.5 }
+            ];
+            for (let idx = 0; idx < 3; idx++) {
+                const e = row[idx];
+                const pos = trio[idx];
+                e.root.position.x = pos.x - e.centerOffset;
+                e.root.position.z = pos.z;
+                if (e.battlerModel) e.battlerModel._baseX = e.root.position.x;
+            }
+            debugLog(`Positioned 3 enemy models in triangle formation`);
+        } else if (row.length > 1) {
             const totalW = row.reduce((sum, e) => sum + e.width, 0);
             const maxSpan = spreadHalfSpan(row.length) * 2;
             let gap = spreadGap(row.length);

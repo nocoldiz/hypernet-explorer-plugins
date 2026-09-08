@@ -106,7 +106,9 @@
         create() {
             super.create();
             this._filter = 'all';
-            this._spread = 0;         // which pair of days is open
+            this._spread = 0;
+            this._writeOpen = false;
+            this._writeDraft = "";         // which pair of days is open
             this._loadDiary();
             this._buildDOM();
         }
@@ -140,8 +142,12 @@
                 return D && D.categoryOf(e) === this._filter;
             });
 
+            // Lines written in the same breath are read as one: several items
+            // out of the same chest are one sentence, not one line each.
+            const merged = (D && D.compact) ? D.compact(kept) : kept;
+
             const byDay = new Map();
-            for (const entry of kept) {
+            for (const entry of merged) {
                 const key = dayIndex(entry.t);
                 if (!byDay.has(key)) byDay.set(key, []);
                 byDay.get(key).push(entry);
@@ -248,7 +254,7 @@
             // grain is a noise PNG baked at runtime (see grainTexture below),
             // so the sheet reads it back off this custom property.
             const grain = grainTexture();
-            if (grain) this._container.style.setProperty("--diary-grain", `url("${grain}")`);
+            if (grain) this._container.style.setProperty("--diary-grain", window.UIPanel.assetUrl(grain));
             // The book's shell is built ONCE. `.diary-book` carries the
             // one-shot entrance animation, and its children (the diary-glyph
             // icons) carry a live CSS filter; rebuilding this wrapper on
@@ -273,10 +279,11 @@
             this._pageRightEl = this._container.querySelector(".diary-page-right");
             this._footEl = this._container.querySelector(".diary-foot");
             this._bindMouse();
+            this._bindKeyGuard();
             this._rebuildSheets();
             this._render();
             // The paper is measured with whatever font is installed at that
-            // moment. If Lora is still on its way in, every line is measured
+            // moment. If the UI serif is still on its way in, every line is measured
             // against the fallback serif and the sheets come out a line short
             // or a line long, so the book is paged again once the real face
             // has landed.
@@ -301,6 +308,31 @@
             this._onContext = (e) => e.preventDefault();
             this._onMouseDown = (e) => {
                 if (e.button !== 0 || !e.target || !e.target.closest) return;
+                // The writing sheet takes every click it is given: its own
+                // buttons act, the dimmed backdrop around it puts it away, and
+                // nothing underneath ever turns a page while it is up.
+                if (this._writeOpen) {
+                    const act = e.target.closest("[data-write]");
+                    if (act) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (act.dataset.write === "save") this._submitWrite();
+                        else this._closeWrite();
+                        return;
+                    }
+                    if (e.target.classList && e.target.classList.contains("diary-write-backdrop")) {
+                        e.preventDefault();
+                        this._closeWrite();
+                    }
+                    e.stopPropagation();
+                    return;
+                }
+                if (e.target.closest(".diary-pen")) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this._openWrite();
+                    return;
+                }
                 const mark = e.target.closest(".diary-mark");
                 if (mark) {
                     e.preventDefault();
@@ -318,6 +350,7 @@
             };
             this._onWheel = (e) => {
                 e.preventDefault();
+                if (this._writeOpen) return;
                 this._turnPage(e.deltaY > 0 ? 1 : -1);
             };
             this._container.addEventListener("contextmenu", this._onContext);
@@ -407,10 +440,104 @@
                 shown: Math.min(total, this._spread * 2 + 2),
                 total
             });
+            // Somebody else's book is read, never written in.
+            const pen = this._foreign ? "" :
+                `<button type="button" class="diary-pen">${escapeHtml(tr('write.button'))}</button>`;
             return `
                 <span class="diary-foot-owner">${escapeHtml(owner)}</span>
+                ${pen}
                 <span class="diary-foot-page">${escapeHtml(page)}</span>
             `;
+        }
+
+        // ---- writing a line of one's own -------------------------------------
+        // The same arrangement the Empathize panel types in: the field lives in
+        // its own overlay rather than inside anything the book re-renders, and a
+        // capture phase key guard runs ahead of every always-on map plugin so
+        // none of them can swallow a letter before the field sees it. The guard
+        // never calls preventDefault itself, so the browser still inserts the
+        // character; only Enter and Escape are acted on here.
+        _openWrite() {
+            if (!this._container || this._writeOpen || this._foreign) return;
+            SoundManager.playOk();
+            const sheet = document.createElement("div");
+            sheet.className = "diary-write-backdrop";
+            sheet.innerHTML = `
+                <div class="diary-write">
+                    <div class="diary-write-title">${escapeHtml(tr('write.title'))}</div>
+                    <textarea id="diary-write-input" class="diary-write-input" rows="4"
+                        maxlength="400" autocomplete="off" spellcheck="false"
+                        placeholder="${escapeHtml(tr('write.placeholder'))}"></textarea>
+                    <div class="diary-write-btns">
+                        <button type="button" class="diary-write-cancel" data-write="cancel">${escapeHtml(tr('write.cancel'))}</button>
+                        <button type="button" class="diary-write-save" data-write="save">${escapeHtml(tr('write.save'))}</button>
+                    </div>
+                </div>
+            `;
+            this._container.appendChild(sheet);
+            this._writeEl = sheet;
+            this._writeOpen = true;
+
+            const field = sheet.querySelector("#diary-write-input");
+            if (field) {
+                field.value = this._writeDraft || "";
+                field.addEventListener("input", () => { this._writeDraft = field.value; });
+                requestAnimationFrame(() => {
+                    field.focus();
+                    const end = field.value.length;
+                    try { field.setSelectionRange(end, end); } catch (e) { /* focus is enough */ }
+                });
+            }
+        }
+
+        _closeWrite() {
+            if (!this._writeOpen) return;
+            this._writeOpen = false;
+            if (this._writeEl && this._writeEl.parentNode) this._writeEl.remove();
+            this._writeEl = null;
+        }
+
+        _submitWrite() {
+            const field = this._writeEl && this._writeEl.querySelector("#diary-write-input");
+            const text = field ? field.value : "";
+            const D = window.Diary;
+            const written = (D && D.write) ? D.write(text) : null;
+            this._writeDraft = "";
+            this._closeWrite();
+            if (!written) { SoundManager.playBuzzer(); return; }
+            SoundManager.playSave();
+            // The book is re-read so the new line takes its place on the page,
+            // and the reader is put on the sheet it landed on.
+            const book = (D && D.currentDiary) ? D.currentDiary() : null;
+            if (book && Array.isArray(book.entries)) {
+                this._book = book;
+                this._entries = book.entries;
+            }
+            this._rebuildDays();
+            this._rebuildSheets();
+            this._spread = this._maxSpread();
+            this._render();
+        }
+
+        // Everything typed into the sheet is shielded from every other plugin's
+        // global key handler while the field has focus.
+        _bindKeyGuard() {
+            this._onKeyGuard = (e) => {
+                const active = document.activeElement;
+                if (!active || (active.tagName !== "INPUT" && active.tagName !== "TEXTAREA")) return;
+                e.stopImmediatePropagation();
+                if (e.type !== "keydown" || active.id !== "diary-write-input") return;
+                if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    this._submitWrite();
+                } else if (e.key === "Escape") {
+                    e.preventDefault();
+                    this._closeWrite();
+                }
+            };
+            window.addEventListener("keydown", this._onKeyGuard, true);
+            window.addEventListener("keyup", this._onKeyGuard, true);
+            window.addEventListener("keypress", this._onKeyGuard, true);
         }
 
         // ---- interaction -----------------------------------------------------
@@ -458,6 +585,10 @@
 
         update() {
             super.update();
+            // While the sheet is up the keyboard belongs to the field alone: no
+            // page turns, no cancel, nothing that could steal its focus.
+            if (this._writeOpen) return;
+            if (Input.isTriggered("ok") && !this._foreign) { this._openWrite(); return; }
             if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
                 TouchInput.clear();
                 SoundManager.playCancel();
@@ -473,6 +604,13 @@
         }
 
         terminate() {
+            this._closeWrite();
+            if (this._onKeyGuard) {
+                window.removeEventListener("keydown", this._onKeyGuard, true);
+                window.removeEventListener("keyup", this._onKeyGuard, true);
+                window.removeEventListener("keypress", this._onKeyGuard, true);
+                this._onKeyGuard = null;
+            }
             if (this._container) {
                 this._container.removeEventListener("contextmenu", this._onContext);
                 this._container.removeEventListener("mousedown", this._onMouseDown);

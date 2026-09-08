@@ -376,11 +376,78 @@
         this.isBridgeTile(character.x, character.y);
     },
 
+    // Bridge decks laid over WATER. The deck tile masks the water it is painted
+    // on, so the tile reads as region 12 and never as 99: every rule that has to
+    // know whether there is water under the span (the dive prompt, the
+    // underwater mask) asks this instead of the region. A deck tile counts as
+    // submerged when it can be reached from a region-99 tile by walking only
+    // over deck tiles, which is what makes a span thrown across a river count
+    // along its whole length while a deck over dry ground counts nowhere.
+    // Flooded once per map and cached on $gameMap.
+    isSubmergedBridgeTile(x, y) {
+      if ($gameMap.regionId(x, y) !== 12) return false;
+      const w = $gameMap.width();
+      if (!$gameMap._misSubmergedDeck) {
+        const h = $gameMap.height();
+        const set = new Set();
+        const queue = [];
+        for (let ty = 0; ty < h; ty++) {
+          for (let tx = 0; tx < w; tx++) {
+            if ($gameMap.regionId(tx, ty) !== 12) continue;
+            const near = [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) =>
+              $gameMap.regionId(tx + dx, ty + dy) === 99);
+            if (near) {
+              set.add(ty * w + tx);
+              queue.push([tx, ty]);
+            }
+          }
+        }
+        while (queue.length) {
+          const [cx, cy] = queue.pop();
+          for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const nx = cx + dx, ny = cy + dy;
+            if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
+            const key = ny * w + nx;
+            if (set.has(key) || $gameMap.regionId(nx, ny) !== 12) continue;
+            set.add(key);
+            queue.push([nx, ny]);
+          }
+        }
+        $gameMap._misSubmergedDeck = set;
+      }
+      return $gameMap._misSubmergedDeck.has(y * w + x);
+    },
+
+    // The tiles that stay water once the party is under the surface: painted
+    // water, plus the decks thrown across it, so a diver can pass beneath a
+    // span instead of the mask walling the river off at every bridge.
+    isDiveWater(x, y) {
+      return $gameMap.regionId(x, y) === 99 || this.isSubmergedBridgeTile(x, y);
+    },
+
+    // True while the character is in the water UNDER a bridge deck: swimming
+    // (or diving) along the span rather than walking the ground beneath it.
+    isSwimmingUnderBridge(character) {
+      return this.isUnderBridge(character) &&
+        this.isSubmergedBridgeTile(character.x, character.y);
+    },
+
     // Access tiles that place the walker on top of the bridge deck: regions 11
     // (cliff upper level) and 5 (always-passable step).
     isBridgeAccessTile(x, y) {
       const r = $gameMap.regionId(x, y);
       return r === 11 || r === 5;
+    },
+
+    // The swim / fish / dive menu belongs to painted water (region 99) only.
+    // A bridge deck is never an offer: the tile it masks still reads as water,
+    // so facing a span would otherwise ask the party to dive into the bridge,
+    // and standing ON a deck facing the river must not offer to swim off it.
+    canPromptWater(character, x, y) {
+      if (!character) return false;
+      if (this.isBridgeTile(character.x, character.y)) return false;
+      if (this.isBridgeTile(x, y)) return false;
+      return this.isWaterTile(x, y);
     },
 
     isWallTile(x, y) {
@@ -476,6 +543,51 @@
     }
   };
 
+  // --- Diving suit sprite ---
+  // The suit has two sheets: a still one that loops while the diver hangs in
+  // the water and a moving one that loops, slowly, while they swim. Movement
+  // between two tiles stops for a frame or two on every step, so the swap back
+  // to the still sheet waits out a short grace period instead of flickering on
+  // each of those gaps.
+  window.DivingSprite = {
+    STILL: 'Skab/!$DivingSuiteStill',   // i18n-ignore  sprite sheet name
+    MOVING: 'Skab/!$DivingSuiteMoving', // i18n-ignore  sprite sheet name
+    IDLE_FRAMES: 24,   // 0.4s at 60fps before the diver counts as still
+    MOVING_WAIT: 16,   // frames per animation cell while swimming (slow loop)
+
+    apply(character) {
+      if (!character) return;
+      if (character._originalStepAnime === undefined) {
+        character._originalStepAnime = character.hasStepAnime();
+      }
+      // An unknown counter means the diver has just entered the water: start
+      // them on the still sheet rather than mid swim.
+      if (character._diveIdleCount === undefined) character._diveIdleCount = this.IDLE_FRAMES;
+      if (character.isMoving()) character._diveIdleCount = 0;
+      else character._diveIdleCount = Math.min(character._diveIdleCount + 1, this.IDLE_FRAMES);
+
+      const swimming = character._diveIdleCount < this.IDLE_FRAMES;
+      const wanted = swimming ? this.MOVING : this.STILL;
+      character._diveSlowAnim = swimming;
+      if (character.characterName() !== wanted) character.setImage(wanted, 0);
+      character.setStepAnime(true);
+    },
+
+    clear(character) {
+      if (!character) return;
+      character._diveIdleCount = undefined;
+      character._diveSlowAnim = false;
+    }
+  };
+
+  // Both suit sheets loop on their own clock: the still one at a resting pace,
+  // the moving one slower than a walk cycle so the swim reads as a swim.
+  const _MIS_animationWait = Game_CharacterBase.prototype.animationWait;
+  Game_CharacterBase.prototype.animationWait = function() {
+    if (this._diveSlowAnim) return window.DivingSprite.MOVING_WAIT;
+    return _MIS_animationWait.call(this);
+  };
+
   // --- Core Systems ---
   const MovementSystem = {
     performKick(character, event) {
@@ -503,9 +615,14 @@
       if (character._isSwimming) return;
       this.storeOriginalAppearance(character);
       character._isSwimming = true;
+      this.resetSwimStamina(character);
+      // Getting into the water puts the swimmer under any span they were
+      // standing on, never on its deck: the deck-walker's exit restriction in
+      // canPass must not hold them on the bridge as they push off into it.
+      character._onBridge = false;
 
       if (Config.sounds.startSwim) {
-        AudioManager.playSe({ name: Config.sounds.startSwim, volume: 90, pitch: 100, pan: 0 });
+        AudioManager.playSe({ name: Config.sounds.startSwim, volume: 45, pitch: 100, pan: 0 });
       }
 
       // Issue #153: swimming washes the swimmer clean. Cleanliness is the
@@ -684,9 +801,12 @@
     exitSwimMode(character) {
       if (!character._isSwimming) return;
       character._isSwimming = false;
+      // Back on land the lungs fill again: the tile count starts from zero on
+      // the next crossing.
+      this.resetSwimStamina(character);
 
       if (Config.sounds.stopSwim) {
-        AudioManager.playSe({ name: Config.sounds.stopSwim, volume: 90, pitch: 100, pan: 0 });
+        AudioManager.playSe({ name: Config.sounds.stopSwim, volume: 45, pitch: 100, pan: 0 });
       }
 
       this.restoreOriginalAppearance(character);
@@ -704,6 +824,7 @@
     exitDiveMode(character) {
       if (!character._isDiving) return;
       character._isDiving = false;
+      window.DivingSprite.clear(character);
       character._hideTiles = false;
       
       // Restore events
@@ -1534,9 +1655,48 @@
     return character._misZIsRoofOrSeat;
   };
 
+  // A "☆" tile (the star passage of the tileset) is foreground scenery: it
+  // is always walkable and the tilemap paints it on the upper layer, over every
+  // character. That is right for the tile a character actually stands on (an
+  // awning, a treetop, a bush they have stepped into) but wrong for the tile
+  // directly NORTH of them, because a character sprite is taller than one tile
+  // and its head reaches up into that square. A bush painted as star tiles then
+  // shears the head off anyone standing south of it.
+  //
+  // So: standing south of a star tile, and not inside one, the character draws
+  // above the upper tile layer instead of below it. The scenery still shows
+  // whatever is behind it, and the sprite is whole.
+  const _misStarTileAt = (x, y) => {
+    if (!$gameMap || !$gameMap.isValid(x, y)) return false;
+    const flags = $gameMap.tilesetFlags();
+    return $gameMap.layeredTiles(x, y).some((tileId) => (flags[tileId] & 0x10) !== 0);
+  };
+
+  // Cached per tile: the classification only changes when the character moves.
+  const _misUnderStarTile = (character) => {
+    if (character._misStarX !== character.x || character._misStarY !== character.y) {
+      character._misStarX = character.x;
+      character._misStarY = character.y;
+      const x = character.x;
+      const y = character.y;
+      character._misStarOverhead =
+        !_misStarTileAt(x, y) &&
+        _misStarTileAt(x, y - 1) &&
+        // "Passable" in the sense the star tile itself promises: the scenery is
+        // walk-through, so a solid tile hidden beneath it (a wall, a cliff) is
+        // not something the sprite should be drawn over.
+        !!$gameMap.isPassable(x, y - 1, 2);
+    }
+    return character._misStarOverhead;
+  };
+
+  // Above the upper tile layer (z 4), below the bridge deck (z 7).
+  const STAR_OVERHEAD_Z = 5;
+
   const _Game_Player_screenZ = Game_Player.prototype.screenZ;
   Game_Player.prototype.screenZ = function () {
     if (_misRoofOrSeatAt(this)) return 10;
+    if (_misUnderStarTile(this)) return STAR_OVERHEAD_Z;
     // On a bridge tile: draw above the upper tile layer when on the deck, or at
     // the normal character depth (below the upper layer) when passing underneath,
     // so the bridge tile hides the player.
@@ -1549,6 +1709,9 @@
   const _Game_CharacterBase_screenZ = Game_CharacterBase.prototype.screenZ;
   Game_CharacterBase.prototype.screenZ = function () {
     if ($gameMap && $gameMap.regionId(this.x, this.y) === 102) return 10;
+    if ($gameMap && this._priorityType === 1 && _misUnderStarTile(this)) {
+      return STAR_OVERHEAD_Z;
+    }
     // Followers ride the same bridge layer as the player so the party does not
     // split across the deck and the underside.
     if ($gameMap && this instanceof Game_Follower &&
@@ -1696,10 +1859,30 @@
     return _Game_Player_checkEventTriggerThere.call(this, triggers);
   };
 
+  // A body that has lost legs walks slower. HealthCore reads the loss in the
+  // anatomy's own terms, so half a set of legs is half a set whether the
+  // walker has two of them or six, and the answer is floored well above zero:
+  // a maiming is a limp home, never a character who cannot move at all.
+  const MIN_MOBILITY_SPEED = 0.55;
+
+  function leaderMobility() {
+    const HC = window.HealthCore;
+    const leader = $gameParty && $gameParty.leader ? $gameParty.leader() : null;
+    if (!leader || !HC || typeof HC.mobility !== 'function') return 1;
+    try {
+      const share = Number(HC.mobility(leader));
+      if (!isFinite(share)) return 1;
+      return Math.max(MIN_MOBILITY_SPEED, Math.min(1, share));
+    } catch (e) {
+      return 1;
+    }
+  }
+
   const _Game_Player_realMoveSpeed = Game_Player.prototype.realMoveSpeed;
   Game_Player.prototype.realMoveSpeed = function () {
     let speed = _Game_Player_realMoveSpeed.call(this);
     if (this._isClimbing) speed *= Config.climbSpeed;
+    speed *= leaderMobility();
     return speed;
   };
 
@@ -1718,7 +1901,7 @@
       // would otherwise stand up mid river and be unable to swim back out of it.
       // The underside counts as the water it is painted over for as long as the
       // crossing lasts; the far side of the span decides what happens next.
-      const underDeck = Utils.isUnderBridge(this);
+      const underDeck = Utils.isSwimmingUnderBridge(this);
 
       if (!Utils.isWaterTile(this.x, this.y) && !underDeck) {
         if (this._isDiving) {
@@ -1732,10 +1915,13 @@
         MovementSystem.exitDiveMode(this);
       }
 
+      // The stroke is heard for every tile swum, the ones under a bridge deck
+      // included: the swimmer is still in the water down there, so the sound
+      // must not fall silent for the length of the span.
       if (Config.sounds.swimMove && this.isMoving()) {
         const currentFrame = Graphics.frameCount;
         if (currentFrame - lastSwimSoundFrame >= Config.sounds.swimInterval) {
-          AudioManager.playSe({ name: Config.sounds.swimMove, volume: 50, pitch: 100, pan: 0 });
+          AudioManager.playSe({ name: Config.sounds.swimMove, volume: 22, pitch: 100, pan: 0 });
           lastSwimSoundFrame = currentFrame;
         }
       }
@@ -1816,13 +2002,84 @@
     });
   };
 
+  // ---------------------------------------------------------------------------
+  // Swim stamina
+  // ---------------------------------------------------------------------------
+  // How far the party can swim is the Swimming specialization, in tiles: an
+  // untrained swimmer manages SWIM_BASE_TILES and every tier above Untrained
+  // buys SWIM_TILES_PER_LEVEL more. The budget is the party's best swimmer,
+  // because the party crosses together and the strong one tows the rest.
+  //
+  // Past it nothing is blocked, or a player would be stranded mid lake with no
+  // legal move: instead every further stroke costs the whole party HP and never
+  // takes anyone below 1, so the water pushes them to a shore rather than
+  // drowning them outright. Reaching land resets the count.
+  const SWIM_SPEC = "Swimming";  // i18n-ignore  specialization id
+  const SWIM_BASE_TILES = 20;
+  const SWIM_TILES_PER_LEVEL = 15;
+  const SWIM_EXHAUSTED_HP_PCT = 0.05;
+  const SWIM_EXHAUSTED_HP_MIN = 3;
+  // Swimming is how swimming is learnt: one point per this many tiles, to the
+  // whole party, since everybody is in the water (award's `shared`).
+  const SWIM_XP_PER_TILES = 8;
+
+  MovementSystem.swimTileBudget = function () {
+    const XP = window.SpecializationXP;
+    const level = (XP && XP.partyLevel) ? XP.partyLevel(SWIM_SPEC) : 1;
+    return SWIM_BASE_TILES + SWIM_TILES_PER_LEVEL * (Math.max(1, level) - 1);
+  };
+
+  MovementSystem.swimTilesLeft = function () {
+    const swum = ($gamePlayer && $gamePlayer._swimTiles) || 0;
+    return Math.max(0, MovementSystem.swimTileBudget() - swum);
+  };
+
+  MovementSystem.resetSwimStamina = function (character) {
+    if (!character) return;
+    character._swimTiles = 0;
+    character._swimExhaustedWarned = false;
+  };
+
+  // One stroke: count it, teach it, and once the budget is gone, charge for it.
+  MovementSystem.spendSwimStroke = function () {
+    const player = $gamePlayer;
+    if (!player) return;
+    player._swimTiles = (player._swimTiles || 0) + 1;
+
+    const XP = window.SpecializationXP;
+    if (XP && XP.award && player._swimTiles % SWIM_XP_PER_TILES === 0) {
+      XP.award(SWIM_SPEC, 1, { shared: true });
+    }
+
+    if (player._swimTiles <= MovementSystem.swimTileBudget()) return;
+
+    if (!player._swimExhaustedWarned) {
+      player._swimExhaustedWarned = true;
+      if (window.ParchmentToast && window.ParchmentToast.show) {
+        window.ParchmentToast.show(T('Movement.swimExhausted'),
+          { severity: 'warning', duration: 200 });
+      }
+    }
+
+    const members = ($gameParty && $gameParty.members) ? $gameParty.members() : [];
+    for (const actor of members) {
+      if (!actor || !actor.isAlive || !actor.isAlive()) continue;
+      const cost = Math.max(SWIM_EXHAUSTED_HP_MIN,
+        Math.ceil(actor.mhp * SWIM_EXHAUSTED_HP_PCT));
+      actor.setHp(Math.max(1, actor.hp - cost));
+    }
+  };
+
   const _Game_Player_increaseSteps = Game_Player.prototype.increaseSteps;
   Game_Player.prototype.increaseSteps = function () {
     _Game_Player_increaseSteps.call(this);
-    if (this._isSwimming && window.PartyNeeds?.addNeedToAll) {
-      const before = partyHygiene();
-      window.PartyNeeds.addNeedToAll("hygiene", SWIM_HYGIENE_PER_STEP);
-      reportSwimHygiene(before, partyHygiene());
+    if (this._isSwimming) {
+      MovementSystem.spendSwimStroke();
+      if (window.PartyNeeds?.addNeedToAll) {
+        const before = partyHygiene();
+        window.PartyNeeds.addNeedToAll("hygiene", SWIM_HYGIENE_PER_STEP);
+        reportSwimHygiene(before, partyHygiene());
+      }
     }
   };
 
@@ -1830,6 +2087,56 @@
   Game_Player.prototype.gatherFollowers = function () {
     _Game_Player_gatherFollowers.call(this);
     if (!companionsVisible) MovementSystem.setCompanionsVisibility(false);
+  };
+
+  // A gather that never finishes is a softlock: boarding a vehicle, a cutscene
+  // and a transfer all wait on areGathered(), and one companion (most often the
+  // pet, which trails at the end of the chain) stuck against a wall or wandered
+  // far off holds the whole party still. After GATHER_THROUGH_DELAY the
+  // stragglers are allowed to walk through walls, and if even that fails to
+  // close the distance they are placed on the player outright.
+  const GATHER_THROUGH_DELAY = 300;  // 5 seconds at 60fps
+  const GATHER_SNAP_DELAY = 600;     // 10 seconds: last resort
+
+  function releaseGatherThrough(followers) {
+    if (!followers._gatherForcedThrough) return;
+    for (const follower of followers._data) follower.setThrough(false);
+    followers._gatherForcedThrough = false;
+  }
+
+  const _Game_Followers_gather = Game_Followers.prototype.gather;
+  Game_Followers.prototype.gather = function () {
+    if (!this.areGathering()) this._gatherStartFrame = Graphics.frameCount;
+    _Game_Followers_gather.call(this);
+  };
+
+  const _Game_Followers_update_MIS = Game_Followers.prototype.update;
+  Game_Followers.prototype.update = function () {
+    if (this.areGathering()) {
+      if (this._gatherStartFrame === undefined) this._gatherStartFrame = Graphics.frameCount;
+      const waited = Graphics.frameCount - this._gatherStartFrame;
+      if (waited >= GATHER_SNAP_DELAY) {
+        this.synchronize($gamePlayer.x, $gamePlayer.y, $gamePlayer.direction());
+      } else if (waited >= GATHER_THROUGH_DELAY && !this._gatherForcedThrough) {
+        for (const follower of this._data) follower.setThrough(true);
+        this._gatherForcedThrough = true;
+      }
+    }
+    _Game_Followers_update_MIS.call(this);
+    if (!this.areGathering()) {
+      releaseGatherThrough(this);
+      this._gatherStartFrame = undefined;
+    }
+  };
+
+  // A companion parked on a seat ignores chaseCharacter, so it can never close
+  // the gap on its own: standing up is part of being gathered.
+  const _Game_Followers_updateMove_MIS = Game_Followers.prototype.updateMove;
+  Game_Followers.prototype.updateMove = function () {
+    if (this._gatherForcedThrough) {
+      for (const follower of this._data) follower._sittingDetached = false;
+    }
+    _Game_Followers_updateMove_MIS.call(this);
   };
 
   // Keep seated (detached) followers anchored on their seat tiles instead of
@@ -1977,7 +2284,12 @@
         const frontTile = Utils.getFrontTile(character);
         const hasEventInFront = Utils.hasEventOnTile(frontTile.x, frontTile.y);
 
-        if ((!isMultiplayer || $gameMap.mapId() !== 636) && !hasEventInFront && $gameMap.regionId(character.x, character.y) === 99) {
+        // Under a span the tile reads as the deck (region 12), not as water, so
+        // the swimmer beneath it has to be recognised as being in the water too:
+        // otherwise the dive (and the resurface) prompt goes dead mid crossing.
+        const inDiveWater = $gameMap.regionId(character.x, character.y) === 99 ||
+          Utils.isSwimmingUnderBridge(character);
+        if ((!isMultiplayer || $gameMap.mapId() !== 636) && !hasEventInFront && inDiveWater) {
           if ($gameParty.hasItem($dataItems[DIVING_SUIT_ITEM_ID])) {
             if (isPlayer ? Input.isTriggered("ok") : true) {
               if (character._isDiving) {
@@ -2062,7 +2374,7 @@
       // over water freely), so fishing from a boat gets its own prompt first.
       if (this.showBoatFishingOption(character)) return;
 
-      if (Utils.isWaterTile(frontTile.x, frontTile.y) && !Utils.isBlockedWaterTile(frontTile.x, frontTile.y) && !Utils.hasEventOnTile(frontTile.x, frontTile.y) && !Utils.isWallTile(frontTile.x, frontTile.y) && !character.canPass(character.x, character.y, character.direction())) {
+      if (Utils.canPromptWater(character, frontTile.x, frontTile.y) && !Utils.isBlockedWaterTile(frontTile.x, frontTile.y) && !Utils.hasEventOnTile(frontTile.x, frontTile.y) && !Utils.isWallTile(frontTile.x, frontTile.y) && !character.canPass(character.x, character.y, character.direction())) {
         if (character.isInVehicle && character.isInVehicle() && character.vehicle().isShip()) return;
         this.showSwimFishOptions(character);
       }
@@ -2084,7 +2396,7 @@
 
     const isAdjacent = Math.abs(playerX - x) + Math.abs(playerY - y) === 1;
 
-    if (isAdjacent && Utils.isWaterTile(x, y) && !Utils.isBlockedWaterTile(x, y) && !Utils.hasEventOnTile(x, y)) {
+    if (isAdjacent && Utils.canPromptWater($gamePlayer, x, y) && !Utils.isBlockedWaterTile(x, y) && !Utils.hasEventOnTile(x, y)) {
       let d = 0;
       if (x === playerX) d = y > playerY ? 2 : 8;
       else if (y === playerY) d = x > playerX ? 6 : 4;
@@ -2338,7 +2650,7 @@
         $gameMap._underwaterWaterTiles = new Set();
         for (let x = 0; x < $gameMap.width(); x++) {
           for (let y = 0; y < $gameMap.height(); y++) {
-            const isWater = $gameMap.regionId(x, y) === 99;
+            const isWater = Utils.isDiveWater(x, y);
             if (isWater) {
               $gameMap._underwaterWaterTiles.add(y * $gameMap.width() + x);
             }
@@ -2376,13 +2688,8 @@
         }
 
         // Force sprite change immediately
-        if (character.isMoving()) {
-          character.setImage('Skab/!$DivingSuiteMoving', 0);
-          character.setStepAnime(false);
-        } else {
-          character.setImage('Skab/!$DivingSuiteStill', 0);
-          character.setStepAnime(true);
-        }
+        window.DivingSprite.clear(character);
+        window.DivingSprite.apply(character);
 
         $gameScreen.startFlash([0, 50, 100, 128], 30);
       }
@@ -2558,10 +2865,22 @@
               }
             });
 
+            // Cache the submerged tiles the same way the non-proc dive prompt
+            // does, so Utils.isWaterTile keeps answering yes for the decks the
+            // diver swims under while the mask is up.
+            $gameMap._underwaterWaterTiles = new Set();
+            for (let x = 0; x < $gameMap.width(); x++) {
+              for (let y = 0; y < $gameMap.height(); y++) {
+                if (Utils.isDiveWater(x, y)) {
+                  $gameMap._underwaterWaterTiles.add(y * $gameMap.width() + x);
+                }
+              }
+            }
+
             if ($gameMap && $gameMap._fogOfWarData) {
               for (let x = 0; x < $gameMap.width(); x++) {
                 for (let y = 0; y < $gameMap.height(); y++) {
-                  const isWater = $gameMap.regionId(x, y) === 99;
+                  const isWater = $gameMap._underwaterWaterTiles.has(y * $gameMap.width() + x);
                   if (!isWater) {
                     $gameMap.setFogOfWarState(x, y, 0);
                   }
@@ -2681,6 +3000,7 @@
       // Passing UNDER the bridge (_onBridge false) is unrestricted so the ground
       // path beneath it stays walkable.
       if (currentRegion === 12 && this === $gamePlayer && this._onBridge &&
+          !this._isSwimming &&
           destRegion !== 12 && destRegion !== 11 && destRegion !== 5) {
         return false;
       }
@@ -2742,7 +3062,11 @@
     // tile's own passability decides, exactly as the map author painted it.
     if (regionId === 12 && (charIsSwimming || charIsWaterEnemy)) return true;
 
-    if (regionId === 5 || regionId === 13) return true;
+    // On foot the deck is always-passable terrain, exactly like the region 5
+    // step that leads onto it: the tile it is painted over (river water, a
+    // terrain-tag-3 procedural water tile) is impassable, so consulting the
+    // painted passability would leave a span nobody can walk across.
+    if (regionId === 12 || regionId === 5 || regionId === 13) return true;
     if (regionId === 4 && (charIsClimbing || this.isLadder(x, y))) return true;
     if (regionId === 99) return charIsSwimming || charIsWaterEnemy;
     if (terrainTag === 4) {
@@ -2800,7 +3124,8 @@
     // Bridge deck over water, see Game_Map.isPassable above.
     if (regionId === 12 && (charIsSwimming || charIsWaterEnemy)) return 0;
 
-    if (regionId === 5) return 0;
+    // The deck is walkable whatever it is painted over, see isPassable above.
+    if (regionId === 12 || regionId === 5) return 0;
     if (regionId === 4 || regionId === 10) {
       if (regionId === 4 && (charIsClimbing || this.isLadder(x, y))) return 0;
       return bit;
@@ -2883,6 +3208,9 @@
     _Game_Map_setup_MIS.call(this, mapId);
     ReflectionSystem.invalidateWaterScan();
     MirrorSystem.invalidate();
+    // The submerged-deck flood belongs to the map that was scanned, never to
+    // the next one loaded into the same $gameMap.
+    this._misSubmergedDeck = null;
     this._misScanSpecialPassability();
   };
 
@@ -3137,6 +3465,10 @@
     enterClimbMode: MovementSystem.enterClimbMode.bind(MovementSystem),
     exitClimbMode: MovementSystem.exitClimbMode.bind(MovementSystem),
     performFishing: MovementSystem.performFishing.bind(MovementSystem),
+    swimTileBudget: MovementSystem.swimTileBudget.bind(MovementSystem),
+    swimTilesLeft: MovementSystem.swimTilesLeft.bind(MovementSystem),
+    spendSwimStroke: MovementSystem.spendSwimStroke.bind(MovementSystem),
+    resetSwimStamina: MovementSystem.resetSwimStamina.bind(MovementSystem),
     hasFishingRod: Utils.hasFishingRod.bind(Utils),
     fishingRodItemIds: Config.fishingRodItemIds,
     fishingRodWeaponIds: Config.fishingRodWeaponIds,

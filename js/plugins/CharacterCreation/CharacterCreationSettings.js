@@ -24,7 +24,6 @@
 
   const {
     pickSettingIcon,
-    ENEMY_SPAWN_IMAGES,
     CREATION_BGM,
     getCCMusicTracks,
     CharacterCreationData,
@@ -41,17 +40,13 @@
       if (ConfigManager.enemyBattlers === undefined) ConfigManager.enemyBattlers = 1;
       if (!ConfigManager.battleMusicName) {
         const mss = window.MusicSelectionSystem;
-        ConfigManager.battleMusicName = (mss && mss.MUSIC_BIOME) || "RandomMind/Battle";
+        ConfigManager.battleMusicName = (mss && mss.MUSIC_DEFAULT) || "RandomMind/Battle";
       }
       // ASCII mode is not offered here; it lives in the in-game options menu
       // (GameOptions.js), which owns its own defaults.
       if (ConfigManager.activeTheme === undefined) ConfigManager.activeTheme = 0;
       if (ConfigManager.partyHud === undefined) ConfigManager.partyHud = true;
       if (ConfigManager.cpuPartyMembers === undefined) ConfigManager.cpuPartyMembers = false;
-      // Biome (0) is the default: the world as it stands, with the place
-      // deciding what lives there. ConfigManager seeds the same value, this
-      // only covers a config that never had one.
-      if (ConfigManager.enemySpawnMode === undefined) ConfigManager.enemySpawnMode = 0;
       if (ConfigManager.dialogueMode === undefined) ConfigManager.dialogueMode = 'empathize';
       // The look every 3D scene wears; PSXShader.js and the options menu
       // share this key and its snapvertex default.
@@ -77,7 +72,20 @@
 
       const cleanDesc = (s) => (s || '').replace(/\\C\[\d+\]/gi, '').replace(/\\C/gi, '');
 
-      return [
+      // Story mode has no difficulty choice: it is locked to roguelite and the
+      // row is dropped from the list entirely.
+      const storyMode = !!(typeof Scene_CharacterCreation !== 'undefined' && Scene_CharacterCreation._storyMode);
+      if (storyMode && window.$gameSystem) {
+        $gameSystem._difficultyMode = 'roguelite';
+        $gameSystem._bloodAndOilMode = false;
+        $gameSystem._peacefulMode = false;
+        if (window.$gameSwitches) {
+          $gameSwitches.setValue(9, false);
+          $gameSwitches.setValue(33, true);
+        }
+      }
+
+      const rows = [
         {
           key: 'difficulty',
           get label() {
@@ -214,41 +222,6 @@
           prev() { this._changeBy(-1); },
         },
         {
-          // Enemy spawn mode: what decides the level of everything roaming the
-          // world (BattleSystemEnhancedEncounters.js, BSE.Helpers.getSpawnMode).
-          // It shapes the whole run rather than one screen of it, so it is asked
-          // here, on the first page of creation, as well as in the options menu
-          // (Options > Gameplay > Enemy Spawn), which owns the very same
-          // ConfigManager.enemySpawnMode and can still change it later.
-          //
-          // Mode names and the blurb for the highlighted one are read from the
-          // options menu's own strings, so the two pages can never end up
-          // describing a mode differently, and a new mode has to be added in
-          // one place only.
-          key: 'enemySpawnMode',
-          label: T('GameOptions.label.enemySpawn'),
-          get _modes() { return T.list('GameOptions.enemySpawn'); },
-          get description() {
-            const states = T.list('GameOptions.descState.enemySpawnMode');
-            return states[this.currentIndex] || T('GameOptions.desc.enemySpawnMode');
-          },
-          get currentIndex() {
-            const v = ConfigManager.enemySpawnMode;
-            const count = this._modes.length;
-            return (Number.isInteger(v) && v >= 0 && v < count) ? v : 0;
-          },
-          get currentLabel() {
-            return this._modes[this.currentIndex] || this._modes[0] || '';
-          },
-          _changeBy(delta) {
-            const count = this._modes.length;
-            if (!count) return;
-            ConfigManager.enemySpawnMode = (this.currentIndex + delta + count) % count;
-          },
-          next() { this._changeBy(1); },
-          prev() { this._changeBy(-1); },
-        },
-        {
           // How a talking NPC with nothing scripted to say answers you: a
           // personality-driven Socialize line (Empathize) or Markov-generated
           // text from their own word bank (Markovian). Mirrors Options >
@@ -370,14 +343,7 @@
         {
           key: 'battleMusic',
           label: T('CharCreate.battleMusic'),
-          // A getter, not a fixed line: the Biome entry needs a word of its own
-          // to explain that the track comes from the ground the fight is on.
-          get description() {
-            const mss = window.MusicSelectionSystem;
-            return (mss && ConfigManager.battleMusicName === mss.MUSIC_BIOME)
-              ? T('MusicSelection.biomeEachPlace')
-              : T('CharCreate.musicTrackPlayedDuringCombatPressToPreviewTr');
-          },
+          description: T('CharCreate.musicTrackPlayedDuringCombatPressToPreviewTr'),
           get currentIndex() {
             const idx = getCCMusicTracks().findIndex(t => t.value === ConfigManager.battleMusicName);
             return idx >= 0 ? idx : 0;
@@ -409,6 +375,7 @@
           description: T('CharCreate.visualThemeAppliedToMenusAndHudPressToSwitch'),
           get _themes() { return window.GameOptions ? window.GameOptions.getThemes() : ['archive_foundation.css']; },
           get _themeNames() {
+            if (window.GameOptions) return this._themes.map((t, i) => window.GameOptions.themeName(i));
             return this._themes.map(t => {
               const base = t.replace('.css', '');
               return base.split(/[_-]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
@@ -421,15 +388,17 @@
           get currentLabel() { return this._themeNames[this.currentIndex] || this._themeNames[0]; },
           _changeBy(delta) {
             const next = (this.currentIndex + delta + this._themes.length) % this._themes.length;
-            ConfigManager.activeTheme = next;
-            // Persist only; applying live bleeds the freshly loaded theme's
-            // classes onto the current scene. Takes effect on restart.
-            if (window.GameOptions) window.GameOptions.persistTheme(next);
+            // Applied on the spot, ASCII included: setTheme owns the whole
+            // switch (Core/GameOptions.js) and no restart is involved.
+            if (window.GameOptions) window.GameOptions.setTheme(next);
+            else ConfigManager.activeTheme = next;
           },
           next() { this._changeBy(1); },
           prev() { this._changeBy(-1); },
         },
       ];
+
+      return storyMode ? rows.filter(r => r.key !== 'difficulty') : rows;
     }
 
     _settingsStateHash() {
@@ -498,7 +467,7 @@
           </div>
         ` : '';
       } else if (currentRow.key === 'difficulty') {
-        const glyphs = ['⚔', '💀', '🩸', '🕊'];
+        const glyphs = ['⚔', '☠', '✚', '☮'];
         const glyph = glyphs[currentRow.currentIndex] || '⚔';
         previewHtml = `
           <div class="cc-settings-img-stack">
@@ -506,8 +475,8 @@
               <div class="cc-settings-glyph">${glyph}</div>
               <img src="img/pictures/Settings/EnemyDifficulty.png" class="cc-settings-preview-img"
                    alt="${currentRow.currentLabel}"
-                   onload="if(this.naturalWidth<8){this.style.display='none'}else{this.previousElementSibling.style.display='none'}"
-                   onerror="this.style.display='none'">
+                   onload="if(this.naturalWidth<8){this.classList.add('ui-closed')}else{this.previousElementSibling.classList.add('ui-closed')}"
+                   onerror="this.classList.add('ui-closed')">
               <p class="cc-settings-value">${currentRow.currentLabel}</p>
             </div>
           </div>
@@ -518,26 +487,6 @@
         previewHtml = `
           <div class="cc-settings-glyph">◈</div>
           <p class="cc-settings-value">${currentRow.currentLabel}</p>
-        `;
-      } else if (currentRow.key === 'enemySpawnMode') {
-        // One plate per mode, the same files the options menu uses
-        // (GameOptions.js, OPTION_IMAGES.enemySpawnMode). Any of them that is
-        // still an empty stub fails to load and hides itself, leaving the skull
-        // and the mode's own blurb, which is all this panel showed before.
-        const plate = ENEMY_SPAWN_IMAGES[currentRow.currentIndex];
-        const plateHtml = plate ? `
-          <img src="img/pictures/Settings/${plate}.png" class="cc-settings-preview-img"
-               alt="${currentRow.currentLabel}"
-               onload="if(this.naturalWidth<8){this.style.display='none'}else{this.previousElementSibling.style.display='none'}"
-               onerror="this.style.display='none'">` : '';
-        previewHtml = `
-          <div class="cc-settings-img-stack">
-            <div class="cc-settings-img-entry">
-              <div class="cc-settings-glyph">☠</div>
-              ${plateHtml}
-              <p class="cc-settings-value">${currentRow.currentLabel}</p>
-            </div>
-          </div>
         `;
       }
 
@@ -688,7 +637,6 @@
     }
 
     onSettingsConfirm() {
-      SoundManager.playOk();
       // Any battle-music preview started from the settings is replaced here with
       // the creation theme so it does not bleed into later steps. Nothing is
       // stopped first: AudioManager.playBgm leaves an identical track playing

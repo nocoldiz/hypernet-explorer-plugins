@@ -111,11 +111,11 @@
     // 3. ACTOR DEATH ON MAP (processMapDeath)
     // ========================================================================
 
-    // Tutorial maps never trigger a terminal game over.
-    const _hardcoreTutorialMaps = [1414, 1415, 1416, 1417];
+    // Story mode maps never trigger a terminal game over.
+    const _hardcoreStoryModeMaps = [1414, 1415, 1416, 1417];
     function isTerminalDeath() {
         if (!$gameSwitches.value(9)) return false;
-        if ($gameSwitches.value(75) && _hardcoreTutorialMaps.includes($gameMap.mapId())) return false;
+        if ($gameSwitches.value(75) && _hardcoreStoryModeMaps.includes($gameMap.mapId())) return false;
         return !!(window.SaveSystem && window.SaveSystem.triggerGameOver);
     }
 
@@ -311,9 +311,9 @@
             $gameVariables.setValue(BSE.Params.respawnCountryIDVar, respawnCountryID);
         }
 
-        // Tutorial area respawn
-        const _tutorialMaps = [1414, 1415, 1416, 1417];
-        if ($gameSwitches.value(75) && _tutorialMaps.includes($gameMap.mapId())) {
+        // Story mode area respawn
+        const _storyModeMaps = [1414, 1415, 1416, 1417];
+        if ($gameSwitches.value(75) && _storyModeMaps.includes($gameMap.mapId())) {
             dest = { mapId: 1414, x: 61, y: 7, proc: null };
         }
 

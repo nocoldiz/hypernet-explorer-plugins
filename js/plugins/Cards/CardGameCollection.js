@@ -52,6 +52,11 @@
  * creature outright, so the collapse, the corpse and the spoils are the
  * ordinary ones. Read the model through window.CardCapture.odds(enemy, caster).
  *
+ * CADD TRADER is the same collection seen from the Hypernet: a program on the
+ * desktop (window.CaddTrader, app id app-cadd-trader) listing a handful of lots
+ * a day that sell out for good, and buying the party's spares back at the
+ * site's own price. Every figure comes from CardGame's market.
+ *
  * Requires Cards/CardGameCore.js.
  */
 
@@ -223,8 +228,7 @@
         { id: "auto", label: T("CardGame.col.autoDeck"), enabled: true },
         { id: "shuffle", label: T("CardGame.col.shuffleDeck"), enabled: CGx.ownedKeys().length > 0 },
         { id: "reroll", label: T("CardGame.col.reroll"), enabled: !!this.selectedKey() },
-        { id: "practice", label: T("CardGame.col.practice"), enabled: !!window.CardDuel && CGx.canDuel() },
-        { id: "close", label: T("CardGame.col.close"), enabled: true }
+        { id: "practice", label: T("CardGame.col.practice"), enabled: !!window.CardDuel && CGx.canDuel() }
       ];
     }
 
@@ -348,7 +352,7 @@
       this._index = Math.max(0, Math.min(length - 1, this._index + delta));
       SoundManager.playCursor();
       this.render();
-      const cell = document.querySelector("#cardcol-container .cc-cell.sel");
+      const cell = document.querySelector("#cardcol-container .cgc-cell.selected");
       if (cell) cell.scrollIntoView({ block: "nearest" });
     }
 
@@ -365,20 +369,25 @@
       }
       container.innerHTML = `
         <div class="book-spread">
-          <div class="left-page" style="display:flex">
-            <div class="cc-head">
-              <h2>${escapeHtml(T("CardGame.col.title"))}</h2>
-              <span class="cc-sub" id="cc-count"></span>
+          <div class="left-page cgc-left">
+            <div class="page-header-bar">
+              <div class="back-button focusable" id="cgc-back">${escapeHtml(T("CardGame.col.close"))}</div>
+              <div class="title">${escapeHtml(T("CardGame.col.title"))}</div>
+              <span class="cgc-count" id="cgc-count"></span>
             </div>
-            <div class="cc-tabs" id="cc-tabs"></div>
-            <div class="cc-grid" id="cc-grid"></div>
+            <div class="backpack-tabs" id="cgc-tabs"></div>
+            <div class="cgc-grid" id="cgc-grid"></div>
           </div>
-          <div class="right-page" style="display:flex">
-            <div class="cc-dossier" id="cc-dossier"></div>
-            <div class="cc-deck" id="cc-deck"></div>
-            <div class="cc-actions" id="cc-actions"></div>
+          <div class="right-page cgc-right">
+            <div class="cgc-dossier" id="cgc-dossier"></div>
+            <div class="cgc-deck" id="cgc-deck"></div>
+            <div class="cgc-actions" id="cgc-actions"></div>
           </div>
         </div>`;
+      // The way out stands where every other screen keeps it: first child of
+      // the header bar. Cancel does the same thing from anywhere on the page.
+      const back = container.querySelector("#cgc-back");
+      if (back) back.addEventListener("click", () => this.runAction("close"));
     }
 
     render() {
@@ -393,14 +402,14 @@
 
     renderTabs(container) {
       const CGx = CG();
-      const tabs = container.querySelector("#cc-tabs");
+      const tabs = container.querySelector("#cgc-tabs");
       tabs.innerHTML = FILTERS.map((id, i) => {
         const label = id === "deck"
           ? T("CardGame.col.tabDeck", { n: this._working.length })
           : T("CardGame.col.tab." + id);
-        return `<div class="cc-tab ${i === this._filter ? "on" : ""}" data-i="${i}">${escapeHtml(label)}</div>`;
+        return `<div class="backpack-tab focusable${i === this._filter ? " active" : ""}" data-i="${i}">${escapeHtml(label)}</div>`;
       }).join("");
-      tabs.querySelectorAll(".cc-tab").forEach((el) => {
+      tabs.querySelectorAll(".backpack-tab").forEach((el) => {
         el.addEventListener("click", () => {
           this._filter = parseInt(el.dataset.i, 10);
           this._index = 0;
@@ -409,7 +418,7 @@
           this.render();
         });
       });
-      container.querySelector("#cc-count").textContent = T("CardGame.col.owned", {
+      container.querySelector("#cgc-count").textContent = T("CardGame.col.owned", {
         cards: CGx.totalOwned(),
         distinct: CGx.ownedKeys().length,
         pct: CGx.completion().toFixed(1)
@@ -418,37 +427,38 @@
 
     renderGrid(container) {
       const CGx = CG();
-      const grid = container.querySelector("#cc-grid");
+      const grid = container.querySelector("#cgc-grid");
       const keys = this.visibleKeys();
       this._index = Math.max(0, Math.min(this._index, Math.max(0, keys.length - 1)));
 
       if (!keys.length) {
-        grid.innerHTML = `<div class="cc-empty">${escapeHtml(T("CardGame.col.empty"))}</div>`;
+        grid.innerHTML = `<div class="cgc-empty">${escapeHtml(T("CardGame.col.empty"))}</div>`;
         return;
       }
 
       const isDeckTab = FILTERS[this._filter] === "deck";
       grid.innerHTML = keys.map((key, i) => {
         const qty = isDeckTab ? this.inDeck(key) : CGx.countOf(key);
-        const dim = !isDeckTab && this.spare(key) <= 0 ? "opacity:.45;" : "";
-        return `<div class="cc-cell r${CGx.rarityOf(key)} ${i === this._index ? "sel" : ""}" data-i="${i}" style="--d:${Math.min(i, 40)}; ${dim}">
-            <div class="cc-artcell" style="height:56px; display:flex; align-items:center; justify-content:center"></div>
-            <div class="cc-lbl">${escapeHtml(CGx.nameOf(key))}</div>
-            <span class="cc-qty">x${qty}</span>
+        const rare = CGx.rarityKey(CGx.rarityOf(key));
+        const spent = !isDeckTab && this.spare(key) <= 0 ? " cgc-cell--spent" : "";
+        return `<div class="cgc-cell rarity--${rare}${i === this._index ? " selected" : ""}${spent}" data-i="${i}" style="--d:${Math.min(i, 40)}">
+            <div class="cgc-artcell"></div>
+            <div class="cgc-lbl">${escapeHtml(CGx.nameOf(key))}</div>
+            <span class="cgc-qty">x${qty}</span>
           </div>`;
       }).join("");
 
       // The riffle only plays when the shelf actually changed, never on every
       // cursor move.
-      grid.classList.toggle("cc-dealing", !!this._flourish);
+      grid.classList.toggle("cgc-dealing", !!this._flourish);
       if (this._flourish) {
         this._flourish = false;
-        setTimeout(() => grid.classList.remove("cc-dealing"), 900);
+        setTimeout(() => grid.classList.remove("cgc-dealing"), 900);
       }
 
-      grid.querySelectorAll(".cc-cell").forEach((el, i) => {
+      grid.querySelectorAll(".cgc-cell").forEach((el, i) => {
         const key = keys[i];
-        const host = el.querySelector(".cc-artcell");
+        const host = el.querySelector(".cgc-artcell");
         if (CGx.isEquip(key) || CGx.isEffect(key)) {
           const glyph = document.createElement("span");
           glyph.setAttribute("style", CGx.Art.iconStyle(key, 40));
@@ -456,7 +466,7 @@
         } else {
           const canvas = document.createElement("canvas");
           canvas.width = 40; canvas.height = 40;
-          canvas.style.width = "48px"; canvas.style.height = "48px";
+          canvas.className = "cgc-cell-canvas";
           // Keyed, not positional: gear and effect cells carry a glyph rather
           // than a canvas, so the nth canvas is not the nth card.
           canvas.dataset.k = key;
@@ -471,7 +481,7 @@
       });
 
       // The real column count, so up/down walks the grid the player sees.
-      const first = grid.querySelector(".cc-cell");
+      const first = grid.querySelector(".cgc-cell");
       if (first) {
         const width = grid.clientWidth || 1;
         this._cols = Math.max(1, Math.floor(width / (first.offsetWidth + 6)));
@@ -480,30 +490,38 @@
 
     renderDossier(container) {
       const CGx = CG();
-      const host = container.querySelector("#cc-dossier");
+      const host = container.querySelector("#cgc-dossier");
       const key = this.selectedKey();
-      if (!key) { host.innerHTML = `<div class="cc-empty">${escapeHtml(T("CardGame.col.pickACard"))}</div>`; return; }
+      if (!key) { host.innerHTML = `<div class="ui-empty"><div class="ui-empty-text">${escapeHtml(T("CardGame.col.pickACard"))}</div></div>`; return; }
       const stats = CGx.statsFor(key);
       const seed = this.seedFor(key);
       const effect = CGx.isEffect(key);
       const type = effect ? T("CardGame.type.effect")
         : CGx.isMonster(key) ? T("CardGame.type.monster")
           : CGx.isWeapon(key) ? T("CardGame.type.weapon") : T("CardGame.type.armor");
+      const rare = CGx.rarityKey(CGx.rarityOf(key));
       host.innerHTML = `
-        <h3 style="margin:0 0 2px; color:var(--text-primary-hover)">${escapeHtml(CGx.nameOf(key))}</h3>
-        <div class="cc-sub" style="margin-bottom:6px">${escapeHtml(type)} &middot; ${escapeHtml(CGx.rarityName(CGx.rarityOf(key)))}${
-          effect ? "" : ` &middot; ${escapeHtml(T("CardGame.col.power", { n: CGx.statTotal(stats) }))}`}</div>
-        <div class="cc-art" id="cc-art"></div>
-        ${effect ? "" : `<div class="cc-stats">
-          ${CGx.STATS.map((id) => `<div>${escapeHtml(CGx.statLabel(id))}<b>${stats[id]}</b></div>`).join("")}
-        </div>`}
-        <div class="cc-lore">${escapeHtml(CGx.cardText(key, seed))}</div>`;
-      fillArt(host.querySelector("#cc-art"), key, 96);
+        <div class="ui-detail-head">
+          <div class="ui-detail-titles">
+            <h2>${escapeHtml(CGx.nameOf(key))}</h2>
+            <div class="ui-detail-sub rarity--${rare}">${escapeHtml(type)} &middot; ${escapeHtml(CGx.rarityName(CGx.rarityOf(key)))}</div>
+          </div>
+        </div>
+        <div class="ui-detail-scroll">
+          <div class="cgc-art" id="cgc-art"></div>
+          ${effect ? "" : `<div class="inspect-section-title">${escapeHtml(T("CardGame.col.statsHeading"))}</div>
+          <div class="inspect-spec-grid">
+            ${CGx.STATS.map((id) => `<div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(CGx.statLabel(id))}</span><span class="inspect-spec-value">${stats[id]}</span></div>`).join("")}
+            <div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(T("CardGame.col.powerLabel"))}</span><span class="inspect-spec-value">${CGx.statTotal(stats)}</span></div>
+          </div>`}
+          <div class="ui-prose">${escapeHtml(CGx.cardText(key, seed))}</div>
+        </div>`;
+      fillArt(host.querySelector("#cgc-art"), key, 96);
     }
 
     renderDeck(container) {
       const CGx = CG();
-      const host = container.querySelector("#cc-deck");
+      const host = container.querySelector("#cgc-deck");
       const legal = CGx.deckLegality(this._working);
       const name = this._deckIndex >= 0 && CGx.decks()[this._deckIndex]
         ? CGx.decks()[this._deckIndex].name
@@ -516,31 +534,32 @@
       const counts = {};
       this._working.forEach((key) => { counts[key] = (counts[key] || 0) + 1; });
       const rows = Object.keys(counts).sort((a, b) => CGx.nameOf(a).localeCompare(CGx.nameOf(b)))
-        .map((key) => `<div class="cc-deckrow" data-k="${escapeHtml(key)}">
-            <span>${escapeHtml(CGx.nameOf(key))}</span><span>x${counts[key]}</span></div>`).join("");
+        .map((key) => `<div class="cgc-deckrow inspect-spec-row" data-k="${escapeHtml(key)}">
+            <span class="inspect-spec-label">${escapeHtml(CGx.nameOf(key))}</span><span class="inspect-spec-value">x${counts[key]}</span></div>`).join("");
 
       host.innerHTML = `
-        <div style="display:flex; justify-content:space-between">
-          <b>${escapeHtml(name)}</b>
-          <span>${this._working.length} / ${CGx.DECK_MAX}</span>
+        <div class="inspect-section-title">${escapeHtml(T("CardGame.col.deckHeading"))}</div>
+        <div class="inspect-spec-grid">
+          <div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(name)}</span><span class="inspect-spec-value">${this._working.length} / ${CGx.DECK_MAX}</span></div>
+          <div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(T("CardGame.col.legalLabel"))}</span><span class="inspect-spec-value ${legal.ok ? "cgc-legal--ok" : "cgc-legal--bad"}">${escapeHtml(reason)}</span></div>
         </div>
-        <div class="cc-legal ${legal.ok ? "ok" : "bad"}">${escapeHtml(reason)}</div>
-        <div class="cc-decklist">${rows || `<div class="cc-empty">${escapeHtml(T("CardGame.col.deckEmpty"))}</div>`}</div>`;
+        <div class="cgc-decklist inspect-spec-grid">${rows || `<div class="ui-empty-note">${escapeHtml(T("CardGame.col.deckEmpty"))}</div>`}</div>`;
 
-      host.querySelectorAll(".cc-deckrow").forEach((el) => {
+      host.querySelectorAll(".cgc-deckrow").forEach((el) => {
         el.addEventListener("click", () => this.removeFromDeck(el.dataset.k));
       });
     }
 
     renderActions(container) {
-      const host = container.querySelector("#cc-actions");
+      const host = container.querySelector("#cgc-actions");
       const list = this.actions();
       host.innerHTML = list.map((item, i) => {
-        const cls = "cc-btn" + (this._area === "actions" && i === this._actionIndex ? " focus" : "");
-        const dim = item.enabled ? "" : "opacity:.4;";
-        return `<button class="${cls}" data-i="${i}" style="${dim}">${escapeHtml(item.label)}</button>`;
+        const cls = "inspect-btn focusable"
+          + (this._area === "actions" && i === this._actionIndex ? " selected" : "")
+          + (item.enabled ? "" : " inspect-btn--disabled");
+        return `<button class="${cls}" data-i="${i}">${escapeHtml(item.label)}</button>`;
       }).join("");
-      host.querySelectorAll(".cc-btn").forEach((el) => {
+      host.querySelectorAll(".inspect-btn").forEach((el) => {
         el.addEventListener("click", () => {
           const item = list[parseInt(el.dataset.i, 10)];
           this._area = "actions";
@@ -557,7 +576,7 @@
       this._spriteFrame = (this._spriteFrame + 1) % 3;
       const container = document.getElementById("cardcol-container");
       if (!container) return;
-      container.querySelectorAll("#cc-grid .cc-cell canvas").forEach((canvas) => {
+      container.querySelectorAll("#cgc-grid .cgc-cell canvas").forEach((canvas) => {
         const key = canvas.dataset.k;
         if (key) CG().Art.drawTileSprite(canvas, key, this._spriteFrame);
       });
@@ -915,6 +934,220 @@
       this.open(window.CardGame.rollBooster(size, opts));
     }
   };
+
+  //===========================================================================
+  // Cadd Trader: the card market, as a Hypernet OS program
+  //===========================================================================
+  // A 2001 auction site for cards. It lists a handful of lots a day, sells
+  // them out for good, and buys the party's own spares at the shop's own
+  // price. Everything it knows about worth it asks CardGameCore for
+  // (CardGame.marketToday / sellableCards / buyLot / sellCard), so the site is
+  // a window onto the market rather than a second set of prices.
+
+  const TRADER_APP_ID = "app-cadd-trader";
+  const TRADER_WINDOW_ID = "win-cadd-trader";
+  const TRADER_ICON = 416;   // the card icon the main menu already uses
+
+  // Money is euros everywhere in the game: the raw figure carries two implied
+  // decimals, the same split MoneyFormatter draws.
+  function traderEuros(gold) {
+    const value = Math.round(Number(gold) || 0);
+    const unit = ($dataSystem && $dataSystem.currencyUnit) || "";
+    const str = String(Math.abs(value));
+    let main = str.length <= 2 ? "0." + str.padStart(2, "0") : str.slice(0, -2) + "." + str.slice(-2);
+    if (main.endsWith(".00")) main = main.slice(0, -3);
+    return main + (unit ? " " + unit : "");
+  }
+
+  // One line of stats, printed the way a card prints them.
+  function traderStatLine(key) {
+    const CGx = CG();
+    const stats = CGx.statsFor(key);
+    return CGx.STATS.map((id) => CGx.statLabel(id) + " " + stats[id]).join("  ");
+  }
+
+  window.CaddTrader = {
+    launch() {
+      const OS = window.HypernetOS;
+      const CGx = CG();
+      if (!OS || !OS.Syscalls || !CGx) return;
+
+      let tab = "buy";
+      let status = T("CardGame.trader.hint");
+      let error = false;
+
+      const contentHTML = `
+        <div id="ct-root" style="display:flex; flex-direction:column; height:100%; font-family:Tahoma,sans-serif; background:var(--xp-bg); overflow:hidden">
+          <div style="background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%); padding:10px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0">
+            <div>
+              <div style="color:var(--xp-gold); font-weight:bold; font-size:17px; letter-spacing:2px">${escapeHtml(T("CardGame.trader.banner"))}</div>
+              <div style="color:#cfe6ff; font-size:13px; margin-top:2px">${escapeHtml(T("CardGame.trader.tagline"))}</div>
+            </div>
+            <div style="margin-left:auto; text-align:right; color:#cfe6ff; font-size:13px; line-height:1.5">
+              <div>${escapeHtml(T("CardGame.trader.wallet"))}</div>
+              <div id="ct-wallet" style="color:var(--xp-gold); font-weight:bold; font-size:16px">&nbsp;</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:6px; padding:8px 12px 4px 12px; flex-shrink:0">
+            <button id="ct-tab-buy" class="focusable" data-focus-key="ct-tab-buy" tabindex="0"
+                    style="flex:1; padding:6px 0; font-size:15px; font-weight:bold; font-family:Tahoma,sans-serif; cursor:pointer; border:1px solid var(--xp-steel)">${escapeHtml(T("CardGame.trader.tabBuy"))}</button>
+            <button id="ct-tab-sell" class="focusable" data-focus-key="ct-tab-sell" tabindex="0"
+                    style="flex:1; padding:6px 0; font-size:15px; font-weight:bold; font-family:Tahoma,sans-serif; cursor:pointer; border:1px solid var(--xp-steel)">${escapeHtml(T("CardGame.trader.tabSell"))}</button>
+          </div>
+          <div id="ct-list" style="flex:1; overflow-y:auto; padding:6px 12px 12px 12px; display:flex; flex-direction:column; gap:5px"></div>
+          <div id="ct-status" style="border-top:1px solid var(--xp-ink-pale-2); padding:3px 10px; background:var(--xp-bg); font-size:13px; color:var(--xp-text-muted); flex-shrink:0">&nbsp;</div>
+        </div>`;
+
+      const win = OS.Syscalls.createWindow({
+        id: TRADER_WINDOW_ID,
+        title: T("CardGame.trader.title"),
+        contentHTML,
+        width: 620,
+        height: 480,
+        icon: TRADER_ICON
+      });
+
+      const el = (id) => win.querySelector("#" + id);
+
+      function row(inner, key) {
+        return `<div class="focusable" data-focus-key="${key}" tabindex="0" data-row="${key}"
+                     style="display:flex; align-items:center; gap:10px; background:var(--xp-white); border:1px solid var(--xp-silver-3); padding:6px 9px">${inner}</div>`;
+      }
+
+      function priceTag(text, colour) {
+        return `<div style="text-align:right; min-width:96px; font-size:16px; font-weight:bold; color:${colour}">${escapeHtml(text)}</div>`;
+      }
+
+      function cardCell(cardKey, note) {
+        const rare = CGx.rarityKey(CGx.rarityOf(cardKey));
+        return `<div style="flex:1; min-width:0">
+            <div style="font-size:15px; font-weight:bold; color:var(--xp-ink-3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${escapeHtml(CGx.nameOf(cardKey))}</div>
+            <div class="rarity--${rare}" style="font-size:12px; color:var(--xp-ink-soft)">${escapeHtml(CGx.rarityName(CGx.rarityOf(cardKey)))} &middot; ${escapeHtml(traderStatLine(cardKey))}${note ? " &middot; " + escapeHtml(note) : ""}</div>
+          </div>`;
+      }
+
+      function renderBuy() {
+        const lots = CGx.marketToday();
+        if (!lots.length) return `<div style="padding:14px; color:var(--xp-ink-soft)">${escapeHtml(T("CardGame.trader.emptyStock"))}</div>`;
+        return lots.map((lot) => {
+          const note = T("CardGame.trader.owned", { n: CGx.countOf(lot.key) });
+          const left = lot.left > 0 ? T("CardGame.trader.left", { n: lot.left }) : T("CardGame.trader.soldOut");
+          return row(
+            cardCell(lot.key, note)
+            + `<div style="min-width:78px; text-align:right; font-size:12px; color:${lot.left > 0 ? "var(--xp-ink-soft)" : "#8B1A00"}">${escapeHtml(left)}</div>`
+            + priceTag(traderEuros(lot.price), "var(--xp-navy-7)")
+            + `<button data-buy="${lot.index}" ${lot.left > 0 ? "" : "disabled"}
+                       style="padding:5px 12px; font-family:Tahoma,sans-serif; font-size:14px; cursor:${lot.left > 0 ? "pointer" : "default"};
+                              border:1px solid var(--xp-steel); background:var(--xp-bg); opacity:${lot.left > 0 ? 1 : 0.5}">${escapeHtml(T("CardGame.trader.buy"))}</button>`,
+            "ct-lot-" + lot.index
+          );
+        }).join("");
+      }
+
+      function renderSell() {
+        const mine = CGx.sellableCards();
+        if (!mine.length) return `<div style="padding:14px; color:var(--xp-ink-soft)">${escapeHtml(T("CardGame.trader.emptyShelf"))}</div>`;
+        return mine.map((entry) => row(
+          cardCell(entry.key, T("CardGame.trader.owned", { n: entry.count }))
+          + priceTag(traderEuros(entry.price), "#1d6b2f")
+          + `<button data-sell="${entry.key}"
+                     style="padding:5px 12px; font-family:Tahoma,sans-serif; font-size:14px; cursor:pointer;
+                            border:1px solid var(--xp-steel); background:var(--xp-bg)">${escapeHtml(T("CardGame.trader.sell"))}</button>`,
+          "ct-own-" + entry.key
+        )).join("");
+      }
+
+      function render() {
+        el("ct-wallet").textContent = traderEuros($gameParty.gold());
+        const paint = (btn, on) => {
+          btn.style.background = on ? "linear-gradient(180deg,var(--xp-sky-2),var(--xp-navy-7))" : "#ece9d8";
+          btn.style.color = on ? "#ffffff" : "#333333";
+        };
+        paint(el("ct-tab-buy"), tab === "buy");
+        paint(el("ct-tab-sell"), tab === "sell");
+        el("ct-list").innerHTML = tab === "buy" ? renderBuy() : renderSell();
+        const line = el("ct-status");
+        line.textContent = status;
+        line.style.color = error ? "#8B1A00" : "var(--xp-text-muted)";
+        bind();
+      }
+
+      function say(text, bad) {
+        status = text;
+        error = !!bad;
+      }
+
+      function onBuy(index) {
+        const result = CGx.buyLot(Number(index));
+        if (!result.ok) {
+          playSe("Buzzer1", 70, 100);
+          say(result.reason === "poor"
+            ? T("CardGame.trader.tooDear", { price: traderEuros(result.price) })
+            : T("CardGame.trader.soldOut"), true);
+        } else {
+          playSe("Casino/cards_pack_take_out_2", 80, 105);
+          say(T("CardGame.trader.bought", { name: CGx.nameOf(result.key), price: traderEuros(result.price) }), false);
+        }
+        render();
+      }
+
+      function onSell(key) {
+        const result = CGx.sellCard(key);
+        if (!result.ok) {
+          playSe("Buzzer1", 70, 100);
+          say(T("CardGame.trader.cannotSell"), true);
+        } else {
+          playSe("Shop2", 80, 100);
+          say(T("CardGame.trader.sold", { name: CGx.nameOf(result.key), price: traderEuros(result.price) }), false);
+        }
+        render();
+      }
+
+      // Re-bound after every redraw: the rows are rebuilt from state, and the
+      // OS focus ring re-acquires them by their stable data-focus-key.
+      function bind() {
+        win.querySelectorAll("[data-buy]").forEach((btn) => {
+          btn.addEventListener("click", (ev) => { ev.stopPropagation(); onBuy(btn.dataset.buy); });
+        });
+        win.querySelectorAll("[data-sell]").forEach((btn) => {
+          btn.addEventListener("click", (ev) => { ev.stopPropagation(); onSell(btn.dataset.sell); });
+        });
+        // A row is one focus stop: activating it does what its button does, so
+        // the keyboard and the pad never have to reach the button itself.
+        win.querySelectorAll("[data-row]").forEach((line) => {
+          line.addEventListener("click", () => {
+            const btn = line.querySelector("[data-buy],[data-sell]");
+            if (!btn || btn.disabled) return;
+            if (btn.dataset.buy != null) onBuy(btn.dataset.buy);
+            else onSell(btn.dataset.sell);
+          });
+        });
+      }
+
+      function setTab(next) {
+        if (tab === next) return;
+        tab = next;
+        say(next === "buy" ? T("CardGame.trader.hint") : T("CardGame.trader.hintSell"), false);
+        playSe("Cursor1", 70, 100);
+        render();
+      }
+
+      el("ct-tab-buy").addEventListener("click", () => setTab("buy"));
+      el("ct-tab-sell").addEventListener("click", () => setTab("sell"));
+      render();
+    }
+  };
+
+  if (window.HypernetOS) {
+    window.HypernetOS.registerApp({
+      id: TRADER_APP_ID,
+      name: T("CardGame.trader.title"),
+      icon: TRADER_ICON,
+      category: "economy",
+      desktopShortcut: true,
+      launchFn: () => window.CaddTrader.launch()
+    });
+  }
 
   const openCollection = () => { SceneManager.push(Scene_CardCollection); };
   const openPack = (args) => {

@@ -279,7 +279,7 @@
    * were given. js/db/WorldGen/NPCs.json records both for every sheet in the
    * game (window.SpriteCatalog.entry), so a character the wizard only ever
    * asked for a face still gets an identity that matches that face instead of
-   * a roll: an elf sheet builds an Elven body, a slime sheet a Slime one.
+   * a roll: a slime sheet builds a Slime body, a spider sheet a Spider one.
    *
    * The archetype is applied FIRST and the gender second: changeArchetype
    * writes the reproduction variable from the body plan alone, and the gender
@@ -298,17 +298,18 @@
       return null;
     }
 
-    // The sheet's own archetype is the whole answer: it becomes the primary,
-    // any spliced second half the slot used to carry is dropped (this sheet is
-    // one creature, not a hybrid), and the 3D model is regenerated from it so
-    // the character's body, its anatomy and its model all say the same thing.
-    // Humanoid is applied like any other rather than skipped, so a person's
-    // sheet also clears whatever the slot held before.
+    // The sheet's own archetypes are the whole answer: its primary becomes the
+    // primary and its SecondaryArchetype the spliced half (an empty one drops
+    // whatever the slot used to carry), and the 3D model is regenerated from
+    // the pair so the character's body, its anatomy and its model all say the
+    // same thing. Humanoid is applied like any other rather than skipped, so a
+    // person's sheet also clears whatever the slot held before.
     const archetype = entry.Archetype || DEFAULT_ARCHETYPE;
+    const secondary = entry.SecondaryArchetype || null;
     const actor = $gameActors.actor(memberIndex + 1);
     if (actor) {
       if (window.applyArchetypesToActor) {
-        window.applyArchetypesToActor(actor, [archetype]);
+        window.applyArchetypesToActor(actor, secondary ? [archetype, secondary] : [archetype]);
       } else if (window.changeArchetypeForActor && archetype !== DEFAULT_ARCHETYPE) {
         window.changeArchetypeForActor(actor, archetype);
       }
@@ -500,12 +501,12 @@
      * One button.
      * @param {string} label - Text on the button
      * @param {object} opts - { onclick, id, confirm (gold styling), highlighted
-     *                          (keyboard/controller cursor is on it), attrs }
+     *                          (keyboard/controller cursor is on it), attrs, cls }
      * @returns {string} HTML
      */
     button(label, opts = {}) {
-      const { onclick = "", id = "", confirm = false, highlighted = false, attrs = "" } = opts;
-      const cls = ["cc-btn-treaty", confirm ? "confirm" : "", highlighted ? "highlighted" : ""]
+      const { onclick = "", id = "", confirm = false, highlighted = false, attrs = "", cls: extra = "" } = opts;
+      const cls = ["cc-btn-treaty", confirm ? "confirm" : "", highlighted ? "highlighted" : "", extra]
         .filter(Boolean).join(" ");
       return `<button class="${cls}"` +
         `${id ? ` id="${id}"` : ""}${onclick ? ` onclick="${onclick}"` : ""}` +
@@ -515,14 +516,14 @@
     /**
      * The bar itself. Every slot takes raw HTML (or an array of it), so a step
      * that wants two extras just passes both.
-     * @param {object} slots - { back, middle, next, style }
+     * @param {object} slots - { back, middle, next, cls }
      * @returns {string} HTML
      */
     panel(slots = {}) {
-      const { back = "", middle = "", next = "", style = "" } = slots;
+      const { back = "", middle = "", next = "", cls = "" } = slots;
       const mid = Array.isArray(middle) ? middle.join("") : middle;
       return `
-        <div class="cc-button-panel cc-nav"${style ? ` style="${style}"` : ""}>
+        <div class="cc-button-panel cc-nav${cls ? " " + cls : ""}">
           <div class="cc-nav-slot cc-nav-back">${back}</div>
           <div class="cc-nav-slot cc-nav-mid">${mid}</div>
           <div class="cc-nav-slot cc-nav-next">${next}</div>
@@ -557,8 +558,7 @@
      */
     setShown(el, shown) {
       if (!el) return;
-      el.style.visibility = shown ? "visible" : "hidden";
-      el.style.pointerEvents = shown ? "" : "none";
+      el.classList.toggle("cc-invisible", !shown);
     },
   };
 
@@ -708,7 +708,9 @@
     // The body below is what a build without that plugin falls back on.
     update(container) {
       if (window.UIScroll && typeof window.UIScroll.updateTriggers === "function") return;
-      if (!container || container.style.display === "none") return;
+      // Hidden either way: the class CCPanel writes, or a display of its own
+      // (the overlay is not always ours to have opened).
+      if (!container || CCPanel.isHidden(container)) return;
       const pads = window.AnalogStickInput;
       if (!pads) return;
       const dz = this.TRIGGER_DEADZONE;
@@ -802,7 +804,7 @@
 
     // Which bodies are PEOPLE. A civilised trade is learned, taught and
     // practised with hands, in a settlement, by something that talks: the folk
-    // archetypes (Humanoid, Elven, Dwarf, Goblin, Centaur and their like) carry
+    // archetypes (Humanoid, DoubleHeadedHumanoid, Centaur and their like) carry
     // "sentient": true in Archetypes.json, and every beast, ooze, swarm and
     // elemental does not. An archetype the data does not know is not one.
     isSentientArchetype(key) {
@@ -835,6 +837,16 @@
         .filter((c) => c && c.id > SENTIENT_CLASS_MAX && c.name)
         .map((c) => c.id);
       return this._magicAllowed(ids);
+    },
+
+    // The sentient classes THE CREATION BOARD offers for a single archetype
+    // key: Archetypes.json "sentientClasses", authored per body. A humanoid
+    // lists the whole civilised roster, a bird lists nothing at all. [] when
+    // the archetype is unknown or takes no civilised trade.
+    sentientClassesFor(key) {
+      const data = this._data();
+      if (!key || !data || !data[key]) return [];
+      return this._magicAllowed(this._known(data[key].sentientClasses));
     },
 
     // The civilised roster of a single archetype key, [] when the archetype is
@@ -879,17 +891,24 @@
       return { creature, sentient };
     },
 
-    // The two rosters as the CREATION BOARD offers them: the same lists, minus
-    // the civilised half whenever the body is not folk. Only a character being
-    // built is held to this. An NPC beast that already wears a trade (and the
-    // pet roster that reads the same groups) keeps groupsForArchetypes as it
-    // is, so nothing already walking the world is retconned.
+    // The two rosters as the CREATION BOARD offers them. The monstrous half is
+    // groupsForArchetypes'; the civilised half is the archetype's authored
+    // "sentientClasses" instead of its NPC "classes" roster, so what a player
+    // may build is a data question and not a flag. A hybrid is offered what
+    // both bodies support. Only a character being built is held to this: an
+    // NPC beast that already wears a trade (and the pet roster that reads the
+    // same groups) keeps groupsForArchetypes as it is, so nothing already
+    // walking the world is retconned.
     playableGroupsForArchetypes(key1, key2) {
       const groups = this.groupsForArchetypes(key1, key2);
-      if (this.sentientAllowedFor(key1, key2)) return groups;
+      let sentient = this.sentientClassesFor(key1);
+      if (key2 && key2 !== key1) {
+        const second = new Set(this.sentientClassesFor(key2));
+        sentient = sentient.filter((id) => second.has(id));
+      }
       return {
         creature: groups.creature.length ? groups.creature : [this.fallbackId()],
-        sentient: [],
+        sentient,
       };
     },
 
@@ -959,6 +978,147 @@
   // Exports to Global Namespace
   //=============================================================================
 
+  // ---------------------------------------------------------------------
+  // CCArt: the one answer to "what does this IconSet glyph / walking sprite
+  // look like". Four copies of this maths lived in four creation plugins and
+  // each pasted a whole background shorthand into the markup. They now all
+  // call this, and it hands back CUSTOM PROPERTIES only: the stylesheet owns
+  // the image, the repeat and the pixelation, the markup only says which cell.
+  // ---------------------------------------------------------------------
+  const CCArt = {
+    // An image path handed over as a custom property, made absolute first.
+    // See UIPanel.assetUrl (Core/MouseControls.js) for why a relative one
+    // never paints: the fallback here is the same answer, for the harnesses
+    // that load this file on its own.
+    // Unquoted on purpose, like UIPanel.assetUrl: the value lands inside a
+    // inline style attribute, where an inner double quote ends the attribute
+    // and the picture is never painted.
+    url(path) {
+      if (window.UIPanel && window.UIPanel.assetUrl) return window.UIPanel.assetUrl(path);
+      if (!path) return "none";
+      let href;
+      try {
+        href = new URL(path, document.baseURI).href;
+      } catch (e) {
+        href = String(path);
+      }
+      const escaped = href.replace(/[()'"\s]/g, (c) =>
+        "%" + c.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0"));
+      return `url(${escaped})`;
+    },
+
+    // .cc-rpg-icon (and anything else reading --cc-icon-*).
+    icon(iconIndex, size = 32) {
+      if (!iconIndex) return `--cc-icon-box:${size}px;`;
+      const col = iconIndex % 16;
+      const row = Math.floor(iconIndex / 16);
+      return `--cc-icon-sheet:${size * 16}px; --cc-icon-x:-${col * size}px; ` +
+             `--cc-icon-y:-${row * size}px; --cc-icon-box:${size}px;`;
+    },
+
+    // .cc-sprite (and .cc-compact-avatar / .cc-wanted-sprite, which read the
+    // same properties). `size` overrides the 48px box a walking frame gets.
+    sprite(spriteName, spriteIndex, size) {
+      if (!spriteName) return "";
+      const url = `img/characters/${spriteName}.png`;
+      // isBigCharacter only reads the leading !$ of a FILE name, so a sheet
+      // given by folder ("NPCs/!$Wolf1") never matched and every companion in
+      // the roster was drawn with the 4x2 maths of a joined sheet: a 1200%
+      // zoom onto a corner of a 3x4 sheet, which is to say nothing at all.
+      const baseName = String(spriteName).replace(/^.*[/\\]/, "");
+      if (ImageManager.isBigCharacter(baseName)) {
+        // A $ sheet is always 3x4, but the frame is not square in every pack,
+        // so the box is measured off the bitmap instead of assumed.
+        const bitmap = ImageManager.loadCharacter(spriteName);
+        const frameW = (bitmap.width || 144) / 3;
+        const frameH = (bitmap.height || 192) / 4;
+        const w = size || 48;
+        const h = size ? size : Math.round(w * (frameH / frameW));
+        return `--cc-sprite-url:${this.url(url)}; --cc-sprite-x:50%; --cc-sprite-y:0%; ` +
+               `--cc-sprite-zoom:300% 400%; --cc-sprite-w:${w}px; --cc-sprite-h:${h}px;`;
+      }
+      const col = spriteIndex % 4;
+      const row = Math.floor(spriteIndex / 4);
+      const pctX = ((col * 3 + 1) / 11) * 100;
+      const pctY = ((row * 4) / 7) * 100;
+      const box = size || 48;
+      return `--cc-sprite-url:${this.url(url)}; --cc-sprite-x:${pctX}%; --cc-sprite-y:${pctY}%; ` +
+             `--cc-sprite-zoom:1200% 800%; --cc-sprite-w:${box}px; --cc-sprite-h:${box}px;`;
+    }
+  };
+
+  window.CCArt = CCArt;
+
+  // ------------------------------------------------------------------
+  // TraitParams: the one answer to what a trait's stat line means.
+  // A trait writes its bonuses in the engine's param names (atk, mdf, luk),
+  // which is not what this game calls its attributes, and its HP and MP
+  // figures are written on a small scale: a +4 next to a four hundred point
+  // pool is nothing, so those two, and only those two, are worth ten each.
+  // Every board that applies a trait or prints its badges asks here, so the
+  // number the player reads is the number the actor gets.
+  // ------------------------------------------------------------------
+  const TRAIT_PARAM_IDS = {
+    hp: 0, mp: 1, atk: 2, def: 3, mat: 4, mdf: 5, agi: 6, luk: 7,
+  };
+  const TRAIT_PARAM_ABBR = ["HP", "MP", "STR", "CON", "INT", "WIS", "DEX", "PSI"];
+  const TRAIT_VITAL_SCALE = 10;
+  window.TraitParams = {
+    paramId(paramName) {
+      const id = TRAIT_PARAM_IDS[String(paramName || "").toLowerCase()];
+      return typeof id === "number" ? id : undefined;
+    },
+    // HP and MP alone are multiplied; every other attribute is worth its face.
+    scale(paramName, value) {
+      const key = String(paramName || "").toLowerCase();
+      const n = Number(value) || 0;
+      return (key === "hp" || key === "mp") ? n * TRAIT_VITAL_SCALE : n;
+    },
+    // The attribute's name as the rest of the sheet prints it.
+    label(paramName) {
+      const id = this.paramId(paramName);
+      const abbr = typeof id === "number" ? TRAIT_PARAM_ABBR[id] : String(paramName || "").toUpperCase();
+      if (typeof window.CCStatLabel === "function") return window.CCStatLabel(abbr);
+      return abbr;
+    },
+    // One badge's text: "+40 HP", "-1 WIS".
+    text(paramName, value) {
+      const v = this.scale(paramName, value);
+      return `${v > 0 ? "+" : ""}${v} ${this.label(paramName)}`;
+    },
+  };
+
+  // ---------------------------------------------------------------------
+  // CCPanel: creation's name for the game-wide window.UIPanel (Core/
+  // MouseControls.js). Kept because sixty call sites in this folder say
+  // CCPanel; it is the same object, and there is only one implementation.
+  // ---------------------------------------------------------------------
+  // The fallback is what UIPanel does, for the harnesses that load this file
+  // without Core/MouseControls.js: one implementation, two ways in.
+  const UI = () => window.UIPanel || {
+    open(el) { if (el) { el.classList.remove("ui-closed"); el.classList.add("ui-open"); } },
+    close(el) { if (el) { el.classList.remove("ui-open"); el.classList.add("ui-closed"); } },
+    isOpen(el) { return !!el && el.classList.contains("ui-open"); },
+    isClosed(el) {
+      if (!el) return true;
+      if (el.classList.contains("ui-closed")) return true;
+      return !!(el.style && el.style.display === "none");
+    },
+    placeAt(el, x, y) {
+      if (!el) return;
+      el.style.setProperty("--ui-at-x", `${x}px`);
+      el.style.setProperty("--ui-at-y", `${y}px`);
+    }
+  };
+
+  const CCPanel = {
+    show(el) { UI().open(el); },
+    hide(el) { UI().close(el); },
+    isHidden(el) { return UI().isClosed(el); },
+    placeAt(el, x, y) { UI().placeAt(el, x, y); }
+  };
+
+  window.CCPanel = CCPanel;
   window.CCScroll = CCScroll;
   window.CCButtons = CCButtons;
   window.CreatureClasses = CreatureClasses;

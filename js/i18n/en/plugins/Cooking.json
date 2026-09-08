@@ -67,7 +67,7 @@
   "cooking": "Cooking",
   "nutritionalBase": "Nutritional Base",
   "aromaticBinder": "Aromatic Binder",
-  "yourBackpackContainsNoEdible": "Your backpack contains no edible ingredients...",
+  "yourBackpackContainsNoEdible": "[Empty]",
   "selectBase": "Select base...",
   "selectBinder": "Select binder...",
   "extraordinaryEffect50": "Extraordinary Effect (+50%)",
@@ -78,7 +78,6 @@
   "fat": "Fat",
   "satietyPerMember": "Satiety per Member",
   "split": "Split",
-  "combineANutritionalBaseAnd": "Combine a nutritional base and an aromatic binder to calculate the total calories and party satiety recovery details.",
   "clearSelection": "Clear Selection",
   "nutrition": {
     "calories": "Calories",

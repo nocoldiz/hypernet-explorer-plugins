@@ -3067,7 +3067,7 @@
   },
   "558": {
     "name": "Santifica",
-    "description": "Ripristina HP a un nemico e cura diversi stati\nnegativi.",
+    "description": "Infligge danni a un nemico e cura diversi stati\nnegativi.",
     "message1": "%1 casta %2",
     "message2": ""
   },
@@ -4735,7 +4735,7 @@
   },
   "917": {
     "name": "Raccolto Abbondante",
-    "description": "Ripristina HP a tutti i nemici e applica\nRigenerazione HP.",
+    "description": "Infligge danni a tutti i nemici e applica\nRigenerazione HP.",
     "message1": "%1 usa Raccolto Abbondante!",
     "message2": ""
   },
@@ -5143,7 +5143,7 @@
   },
   "1005": {
     "name": "Composto Esplosivo",
-    "description": "Ripristina HP a tutti i nemici e cura diversi\nstati negativi.",
+    "description": "Infligge danni ingenti a tutti i nemici e cura\ndiversi stati negativi.",
     "message1": "%1 lancia un composto esplosivo!",
     "message2": ""
   },
@@ -5425,7 +5425,7 @@
   },
   "1072": {
     "name": "Olio in Fiamme",
-    "description": "Ripristina HP a tutti i nemici e applica\nRigenerazione HP.",
+    "description": "Infligge danni a tutti i nemici e applica\nRigenerazione HP.",
     "message1": "%1 lancia olio infuocato!",
     "message2": ""
   },
@@ -6259,7 +6259,7 @@
   },
   "1241": {
     "name": "Operazione di Soccorso",
-    "description": "Ripristina HP a tutti i nemici.",
+    "description": "Infligge danni a tutti i nemici.",
     "message1": "%1 usa Operazione di Soccorso!",
     "message2": ""
   },

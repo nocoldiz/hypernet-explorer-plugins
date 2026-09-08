@@ -34,7 +34,7 @@
     if (!VW) { console.error('[VoxelWorld] core not loaded before VoxelWorldDigging.js'); return; }
 
     const { MAT, MATERIALS, ORE_ITEMS, PLACEABLE, VOX, VOXEL_STEP_MATERIAL,
-            VoxelWorldState, voxelHash3 } = VW;
+            VoxelWorldState, voxelHash3, FOOT_EYE, FOOT_BODY_R } = VW;
 
     // The voice of a cube. Everything that happens to one - a blow landing on
     // it, it coming apart, one being set down - is heard as the material it is
@@ -766,6 +766,9 @@
 
             const holdingBlock = !this._bar.holdingWeapon;
             const o = input.origin, d = input.dir;
+            // Where the eye is, kept for the one question a build has to ask:
+            // is that cube the one I am standing in?
+            this._eye = { x: o.x, y: o.y, z: o.z };
             // A weapon reaches as far as it reaches: an arm's length for
             // anything you swing, most of a field for anything you fire. A
             // block is placed at arm's length whatever you are carrying.
@@ -889,6 +892,13 @@
             const p = hit.place;
             const mat = this._bar.heldMaterial;
             if (!mat) return;
+            // A cube never goes where the builder is standing. Aiming down at
+            // your own feet to raise a tower otherwise fills the cell the body
+            // occupies, and the builder is left inside their own wall.
+            if (this._inBuilder(p.vx, p.vy, p.vz)) {
+                this._notifyOnce('noRoom', T('VoxelWorld.tool.noRoom'));
+                return;
+            }
             const ok = this._terrain.field.placeAt(p.vx, p.vy, p.vz, mat);
             if (!ok) {
                 this._notifyOnce('noRoom', T('VoxelWorld.tool.noRoom'));
@@ -897,6 +907,21 @@
             this._bar.spendHeld();
             // Set down, in the voice of the thing being set down.
             if (!matVoice(mat, 92)) this._playSe('Equip1', 80, 110);
+        }
+
+        // Does that cube overlap the person placing it? The eye is the only
+        // thing the tool is told about the builder, so the body is taken as a
+        // column of the walker's own width hanging under it.
+        _inBuilder(vx, vy, vz) {
+            const e = this._eye;
+            if (!e) return false;
+            const S = VOX.SIZE;
+            const hw = S * 0.5 + (FOOT_BODY_R || 4) * 0.85;
+            if (Math.abs(e.x - (vx + 0.5) * S) >= hw) return false;
+            if (Math.abs(e.z - (vz + 0.5) * S) >= hw) return false;
+            const feet = e.y - (FOOT_EYE || 7);
+            const head = e.y + S * 0.4;
+            return (vy + 1) * S > feet && vy * S < head;
         }
 
         // Chips in the colour of the cube that just went - a handful off every

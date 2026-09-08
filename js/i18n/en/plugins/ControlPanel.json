@@ -38,5 +38,18 @@
   "endurance": "Endurance:",
   "uplink": "Uplink:",
   "audio": "Audio:",
-  "board": "Board:"
+  "board": "Board:",
+  "tabApplets": "Applets",
+  "cpuLine": "{name} ({mhz})",
+  "ramLine": "{total} MB RAM, {free} MB free",
+  "gpuIntegrated": "{name} (shares {mb} MB of main memory)",
+  "hddLine": "{size} fixed disk, {used} used",
+  "psuDesktop": "250W ATX supply, mains",
+  "maker": "Manufacturer:",
+  "caseRow": "Case:",
+  "serial": "Serial:",
+  "runningOn": "Running on {machine} ({host})",
+  "openSysdm": "System Properties...",
+  "openDevmgmt": "Device Manager...",
+  "openDesk": "Display Properties..."
 }

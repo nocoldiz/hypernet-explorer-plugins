@@ -288,5 +288,63 @@
       "C'è una {corsa|partita|mano} che parte adesso e io non ci sono dentro.",
       "Vado alla ricevitoria. {È già deciso|L'ho deciso da un pezzo|L'ho deciso ore fa}."
     ]
+  },
+  "season": {
+    "SPRING": [
+      "{Tutto sta tornando|Si sveglia tutto|È di nuovo tutto verde} e io {mi sento ancora d'inverno|non mi sono ancora scongelato|sono mezzo addormentato}.",
+      "{Il disgelo|La prima settimana calda|Il fango} fa durare {il lavoro|tutto|la giornata} il doppio.",
+      "{Agnelli|Vitelli|Pulcini} e affitto, {agnelli|rumore|casino} e affitto. {La primavera è questa|Primavera, in due parole|Ogni anno uguale}.",
+      "{Primi fiori|Primo verde|Prima mattina tiepida} dell'anno. {Ci faccio sempre caso|Non me lo perdo mai|Mi segno il giorno}.",
+      "In primavera sono {tutti innamorati|tutti scemi|tutti fuori} e metà se ne {pentirà in autunno|dispiacerà in autunno|pagherà il conto dopo}.",
+      "{Tempo di semina|Tempo da semina|Finalmente terra buona}. {La schiena lo sa|Le mani lo sanno|Il dolore comincia oggi}."
+    ],
+    "SUMMER": [
+      "{Troppo caldo|Fa troppo caldo|Insopportabile} per pensare, e pensare è {la parte facile|l'unica cosa che devo fare|quasi tutto il mio lavoro}.",
+      "{Il pozzo|La cisterna|La botte dell'acqua} è di nuovo {basso|più basso dell'anno scorso|quasi a fango}.",
+      "{Le giornate lunghe|Queste sere lunghe|La luce} sono {l'unica|la sola|la sola} cosa che salva la stagione.",
+      "Con questo caldo va tutto a male entro mezzogiorno. {Ho smesso di comprare carne|Non si conserva niente|Non dura niente}.",
+      "{Stagione di feste|Stagione di mercati|La stagione dei viaggi}. {Sconosciuti dappertutto|Metà sono forestieri|La strada è piena di forestieri}.",
+      "{Acqua fresca|Ombra|Una cantina} e {un'ora per me|niente da fare|nessuno che mi chieda niente}. Non voglio altro."
+    ],
+    "AUTUMN": [
+      "{Il raccolto è dentro|Il raccolto è finito|Ce l'abbiamo fatta a raccogliere} e {non basterà|è più magro dell'anno scorso|copre a stento l'anno}.",
+      "{La luce se ne va|Il buio arriva|La giornata finisce} sempre prima, e alla gente {fa qualcosa|cambia l'umore|si vede in faccia}.",
+      "{Si mette via|Si sala|Si conserva} per l'inverno. {Metà andrà a male|Qualcosa va sempre a male|Non dura mai quanto speri}.",
+      "{Bel tempo per dormire|Tempo buono per dormire|Il mese migliore per dormire}, {almeno quello|se non altro|non fosse altro}.",
+      "{Sa tutto di|Tutta la strada sa di|L'aria sa di} {fumo|legna bruciata|marcio e fumo} adesso.",
+      "{I debiti|Gli affitti|I conti} scadono in autunno. {È sempre così|È sempre stato così|Qualcuno l'ha deciso apposta}."
+    ],
+    "WINTER": [
+      "{La legna|Il combustibile|Il carbone} costa {di più|più del cibo|il doppio di prima} e la brucio più in fretta di quanto guadagni.",
+      "{Nessuno|Non passa nessuno|Non viene nessuno} d'inverno. {Mi sta bene|Mi va benissimo|Mi dispiace meno di quanto dovrebbe}.",
+      "Il freddo entra {nelle giunture|nelle mani|nella vecchia frattura} e {ci resta|non se ne va|sta lì fino a primavera}.",
+      "{Notti lunghe|Queste notti|Il buio} per {pensare|ricordare|rivangare}, che io lo voglia o no.",
+      "{Ancora un mese|Ancora due mesi|Ancora qualche settimana} e poi {torna la luce|gira|le giornate si allungano}.",
+      "{Zuppa|Brodo|Qualcosa di caldo} e {la porta chiusa|un uscio chiuso|il fuoco coperto}. {Il piano è tutto qui|Tutto il piano|Niente di più ambizioso}."
+    ]
+  },
+  "wealth": {
+    "poor": [
+      "{L'affitto|Prima l'affitto|Quello che devo} prima, poi {il cibo|mangiare|il resto}, e il poi non arriva mai.",
+      "Ho {contato questi soldi|contato|guardato nel borsellino} tre volte e {tornano uguali|non crescono|dicono la stessa cosa}.",
+      "{Una settimana storta|Una sola settimana storta|Una settimana vuota} e {finisco in strada|sono finito|è finita}.",
+      "{La chiamano|La gente la chiama|La parola che usano è} prudenza. {Non lo è|Non è quella|Ha un altro nome}.",
+      "Potrei {lavorare il doppio|prendere un altro turno|non dormire proprio} e verrebbe fuori {lo stesso|la stessa cifra|poco o niente}.",
+      "{Qualcuno|C'è sempre qualcuno|Uno} viene {pagato prima di me|pagato per primo|prima di me in fila}."
+    ],
+    "comfortable": [
+      "{Basta|Basta così|Per ora basta}, e so benissimo quanto {in fretta|presto|facilmente} può cambiare.",
+      "{Qualcosa da parte|Un po' da parte|Una riserva} per {il mese storto|un mese storto|quando gira male}.",
+      "{Mi ricordo|Non ho dimenticato|Ricordo ancora} quando {avevo fame|ero al verde|non avevo niente}. {Mi tiene onesto|È quello che mi tiene attento|Per questo conto tutto}.",
+      "{Niente di grandioso|Niente di sfarzoso|Nessun lusso}, ma {il tetto tiene|la porta chiude|il fuoco è acceso}.",
+      "Un {anno buono|anno solido|anno tranquillo} e potrei {comprarmi la bottega|prendere il contratto|farlo come si deve}."
+    ],
+    "rich": [
+      "{I soldi|Adesso|Il denaro} si fanno da soli. {Questa parte non te la dice nessuno|Nessuno ti avverte di questa parte|È la parte strana}.",
+      "{Tutti|Tutti quanti|Mezza strada} sono {gentili|gentilissimi|affascinanti} con me e ho smesso di {crederci|prenderlo sul serio|lusingarmi}.",
+      "Potrei {comprarmi questa strada|comprarmene metà|comprare tutto} e dormirei {male lo stesso|uguale|sveglio alle quattro} comunque.",
+      "{Il trucco|Tutto il trucco|L'unico trucco} è {sembrare che non stai contando|non dare mai l'idea di contare|contare dove non ti vede nessuno}.",
+      "{Qualcuno|Uno|Un cugino} vuole {un favore|soldi|una presentazione}. {C'è sempre qualcuno|Ce n'è sempre uno|Ne spunta uno a settimana}."
+    ]
   }
 }

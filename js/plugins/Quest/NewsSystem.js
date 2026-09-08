@@ -1320,8 +1320,13 @@
                     <div class="news-body">
                         <!-- Left page: the headlines column -->
                         <div class="cc-page cc-page-left news-page">
-                            <div class="cc-subheader news-subheader">
-                                ${T('NewsSystem.ui.latestChronicles')}
+                            <div class="page-header-bar">
+                                <div class="back-button focusable" onclick="${sref}.popScene()">
+                                    ${T('NewsSystem.ui.dismiss')}
+                                </div>
+                                <h2 class="title cc-subheader news-subheader">
+                                    ${T('NewsSystem.ui.latestChronicles')}
+                                </h2>
                             </div>
 
                             <!-- Month navigator -->
@@ -1347,9 +1352,6 @@
 
                             <div class="news-footer">
                                 <span>${T('NewsSystem.ui.aDMonthW')}</span>
-                                <div class="back-button focusable" onclick="${sref}.popScene()">
-                                    ${T('NewsSystem.ui.dismiss')}
-                                </div>
                             </div>
                         </div>
                     </div>

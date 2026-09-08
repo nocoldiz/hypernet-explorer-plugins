@@ -609,7 +609,7 @@ window.Game_SummonFollower = Game_SummonFollower;
             ult: { anim: 1647, element: 5, scope: 'all', bonus: 'heal' }
         },
         fae: {
-            archetypes: ['Fairy', 'Gnome', 'Elven', 'Mushroom'],
+            archetypes: ['Fairy', 'Gnome', 'Mushroom'],
             upkeep: { type: 'mp', amount: 0.05, min: 3 },
             share: 0.75,
             ult: { anim: 130, element: 8, scope: 'all', bonus: 'purge' }
@@ -639,19 +639,19 @@ window.Game_SummonFollower = Game_SummonFollower;
             ult: { anim: 1683, element: 2, scope: 'all', bonus: 'none' }
         },
         titan: {
-            archetypes: ['Golem', 'Elephant', 'Ogre', 'Minotaur', 'AbyssalLeviathan', 'Hydra'],
+            archetypes: ['Golem', 'Elephant', 'Minotaur', 'AbyssalLeviathan', 'Hydra'],
             upkeep: { type: 'hp', amount: 0.09, min: 8 },
             share: 1.1,
             ult: { anim: 254, element: 1, scope: 'all', bonus: 'none' }
         },
         knight: {
-            archetypes: ['ArmoredKnight', 'Humanoid', 'Elven'],
+            archetypes: ['ArmoredKnight', 'Humanoid'],
             upkeep: { type: 'gold', amount: 300 },
             share: 0.95,
             ult: { anim: 1343, element: 1, scope: 'one', bonus: 'heal' }
         },
         rabble: {
-            archetypes: ['Goblin', 'Ogre', 'TrashCreature', 'Slime', 'Gnome', 'Mutant'],
+            archetypes: ['TrashCreature', 'Slime', 'Gnome', 'Mutant'],
             upkeep: { type: 'gold', amount: 80 },
             share: 0.6,
             ult: { anim: 315, element: 1, scope: 'all', bonus: 'purse' }
@@ -978,7 +978,7 @@ window.Game_SummonFollower = Game_SummonFollower;
         2: ['Bat', 'Ghost', 'Fairy'],                        // Witch
         3: ['Fairy', 'Angel', 'Bird'],                       // Nun
         4: ['Bird', 'Beast'],                                // Knight
-        5: ['Beast', 'Ogre'],                                // Wrestler
+        5: ['Beast', 'Minotaur'],                            // Wrestler
         6: ['ChestMimic', 'Gnome', 'Drone'],                 // CEO
         7: ['Bat', 'Ghost', 'Undead'],                       // Vampire
         8: ['Voidspawn', 'TentacledCreature', 'Ghost'],      // Cultist
@@ -986,12 +986,12 @@ window.Game_SummonFollower = Game_SummonFollower;
         10: ['Elemental', 'FireElemental', 'WaterElemental', 'StormElemental'], // Elementalist
         11: ['Beast', 'Bird', 'Serpent'],                    // Martial Artist
         12: ['Fairy', 'CrystalEntity', 'Gnome'],             // Enchanter
-        13: ['Hellhound', 'Beast', 'Ogre'],                  // Berserker
+        13: ['Hellhound', 'Beast', 'Minotaur'],              // Berserker
         14: ['Bird', 'Rabbit', 'Frog'],                      // Acrobat
         15: ['Turtle', 'Bird', 'Totem'],                     // Monk
-        16: ['Beast', 'Ogre'],                               // Brawler
+        16: ['Beast', 'Minotaur'],                           // Brawler
         17: ['Beast', 'Bird'],                               // Boxer
-        18: ['Beast', 'Ogre', 'TrashCreature'],              // Pro Wrestler
+        18: ['Beast', 'Minotaur', 'TrashCreature'],          // Pro Wrestler
         19: ['FireElemental', 'Phoenix', 'Hellhound'],       // Fire Mage
         20: ['WaterElemental', 'CrystalEntity', 'Bird'],     // Ice Mage
         21: ['Bat', 'Spider', 'Rabbit'],                     // Rogue
@@ -1005,15 +1005,15 @@ window.Game_SummonFollower = Game_SummonFollower;
         29: ['Ghost', 'Fairy', 'Totem'],                     // Oracle
         30: ['Beast', 'Hellhound'],                          // Gladiator
         31: ['Skeleton', 'Ghost', 'Undead'],                 // Necromancer
-        32: ['Bird', 'Beast', 'Goblin'],                     // Commander
+        32: ['Bird', 'Beast', 'Drone'],                      // Commander
         33: ['Golem', 'Turtle', 'Totem'],                    // Guardian
         34: ['Elemental', 'CrystalEntity', 'Ghost'],         // Spellblade
         35: ['Bird', 'Fairy', 'Gnome'],                      // Bard
         36: ['Ghost', 'Fairy', 'Slime'],                     // Illusionist
         37: ['FireElemental', 'Golem', 'Elemental'],         // Battlemage
-        38: ['Beast', 'Goblin', 'Drone'],                    // Mercenary
+        38: ['Beast', 'Mutant', 'Drone'],                    // Mercenary
         39: ['Totem', 'CrystalEntity', 'Turtle'],            // Sage
-        40: ['Beast', 'Hellhound', 'Ogre'],                  // Barbarian
+        40: ['Beast', 'Hellhound', 'Minotaur'],              // Barbarian
         41: ['Bacterial', 'Drone', 'Fairy'],                 // Doctor
         42: ['Bacterial', 'Slime', 'Drone'],                 // Scientist
         43: ['FireElemental', 'Beast', 'Bird'],              // Firefighter
@@ -1117,7 +1117,7 @@ window.Game_SummonFollower = Game_SummonFollower;
         spec.creatureName = enemy.name;
         spec.level = Math.max(1, summoner.level);
         spec.tierLevel = Math.max(1, summoner.level);
-        spec.params = balanceParams(enemy.params, KINDS.familiar, { ref: ownParams, bias: 1 });
+        spec.params = applyConvokerBonus(balanceParams(enemy.params, KINDS.familiar, { ref: ownParams, bias: 1 }));
         return spec;
     }
 
@@ -1357,9 +1357,36 @@ window.Game_SummonFollower = Game_SummonFollower;
         return (enemy.params || []).map(v => Math.max(1, Math.round((v || 1) * fit * power)));
     }
 
+    // A Convoker in the party binds what it calls up more tightly: the thing
+    // comes through with more health behind it and more force in its blows.
+    // The plugin that owns the class passives answers how much, so the boundary
+    // is never re-derived here.
+    function convokerBonus() {
+        const P = window.BattleSystemPassiveSkills;
+        const b = (P && P.getSummonBonus) ? P.getSummonBonus() : null;
+        return b || { hp: 1, power: 1 };
+    }
+
+    // Health takes the health bonus, the four offensive stats take the power
+    // one; defence, agility and luck are left as they were cut.
+    function applyConvokerBonus(params) {
+        const bonus = convokerBonus();
+        if (bonus.hp === 1 && bonus.power === 1) return params;
+        const out = (params || []).slice();
+        const scale = (i, mult) => {
+            if (out[i] === undefined) return;
+            out[i] = Math.max(1, Math.round(out[i] * mult));
+        };
+        scale(0, bonus.hp);
+        [2, 4].forEach(i => scale(i, bonus.power));
+        return out;
+    }
+
     function summonParams(raw, kind, enemy) {
-        if (kind && kind.balance === false && enemy) return unbalancedParams(enemy, kind);
-        return balanceParams(raw, kind);
+        if (kind && kind.balance === false && enemy) {
+            return applyConvokerBonus(unbalancedParams(enemy, kind));
+        }
+        return applyConvokerBonus(balanceParams(raw, kind));
     }
 
     // A person fights as the sheet the Empathize panel already shows, re-cut
@@ -1416,7 +1443,7 @@ window.Game_SummonFollower = Game_SummonFollower;
             npcName: mark.name,
             enemyId: 0,
             level: summonLevel(),
-            params: balanceParams(profileParams(profile), KINDS.npc),
+            params: applyConvokerBonus(balanceParams(profileParams(profile), KINDS.npc)),
             skillIds,
             classId: (profile.assignedClassId && $dataClasses[profile.assignedClassId])
                 ? profile.assignedClassId : 0,
@@ -1477,7 +1504,7 @@ window.Game_SummonFollower = Game_SummonFollower;
             name: T('Battle.summon.mirrorName', { name: summoner.name() }),
             enemyId: 0,
             level: Math.max(1, summoner.level),
-            params: balanceParams(raw, KINDS.mirror),
+            params: applyConvokerBonus(balanceParams(raw, KINDS.mirror)),
             skillIds,
             classId: summoner._classId || 0,
             characterName: summoner.characterName(),
@@ -1506,7 +1533,7 @@ window.Game_SummonFollower = Game_SummonFollower;
             level: Math.max(1, entry.level || summonLevel()),
             // A revenant is not the sheet they died on, it is the memory of a
             // traveller: built straight off the reference and cut to share.
-            params: balanceParams(referenceParams(), KINDS.revenant),
+            params: applyConvokerBonus(balanceParams(referenceParams(), KINDS.revenant)),
             skillIds: [],
             classId: (entry.classId && $dataClasses[entry.classId]) ? entry.classId : 0,
             characterName: entry.characterName || '',
@@ -2555,6 +2582,34 @@ window.Game_SummonFollower = Game_SummonFollower;
     // reach them through a common event's script line (window.SummonSystem.*),
     // which is how a skill casts one without knowing a plugin command's name.
 
+    // The familiar Em was handed at the start of story mode, dressed as a
+    // familiar rather than as a pet: the beast the player picked, standing at
+    // her own level. Returns null for anyone else, on any other run, or when
+    // nothing was picked, and the ordinary class roll takes over.
+    function storyModeFamiliarFor(summoner) {
+        const CP = window.CharacterPresets;
+        if (!summoner || !CP || !CP.isEmPlaythrough || !CP.isEmPlaythrough()) return null;
+        if (summoner.name() !== 'Em') return null;                  // i18n-ignore: proper name
+        const pets = window.PetSystem;
+        const chosenId = $gameSystem && $gameSystem._partyPet ? $gameSystem._partyPet.id : null;
+        const pet = pets ? (pets.getPet(chosenId) || pets.getActivePet()) : null;
+        if (!pet) return null;
+        const spec = buildPetSpec(pet);
+        if (!spec) return null;
+        spec.kindKey = 'familiar';                                  // i18n-ignore: internal tag
+        spec.kind = KINDS.familiar;
+        spec.familiarOf = summoner.actorId();
+        spec.level = Math.max(1, summoner.level);
+        spec.tierLevel = Math.max(1, summoner.level);
+        if (spec.params) {
+            const ownParams = [];
+            for (let i = 0; i < 8; i++) ownParams.push(summoner.param(i));
+            spec.params = applyConvokerBonus(balanceParams(spec.params, KINDS.familiar, { ref: ownParams, bias: 1 }));
+        }
+        linkMapSummonPet(pet.id);
+        return spec;
+    }
+
     // The familiar answers whoever is taking this turn, and nobody else: which
     // creature it is comes off their class, what it is called comes off their
     // name, and how strong it is comes off their level. The first call writes
@@ -2564,6 +2619,15 @@ window.Game_SummonFollower = Game_SummonFollower;
         const summoner = resolveSummoner();
         if (!summoner) {
             toast(T('Battle.summon.noSummoner'), 'warning');
+            return;
+        }
+        // Story mode is played as Em, and story mode asks her which creature
+        // answers to her before the game starts (the Familiar tab of character
+        // creation). When she is the one casting, that is the creature that
+        // comes: the class roll below is for everybody else.
+        const chosen = storyModeFamiliarFor(summoner);
+        if (chosen) {
+            beginSummon(chosen);
             return;
         }
         const spec = buildFamiliarSpec(summoner);

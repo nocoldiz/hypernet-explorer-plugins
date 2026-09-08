@@ -20,7 +20,7 @@
  * ============================================================================
  *
  * A third answer to the wizard's "creation mode" question, sitting between
- * Quick and the pre-made dossiers, and offered during the tutorial as well.
+ * Quick and the pre-made dossiers, and offered during the story mode as well.
  *
  * Instead of walking the wizard's per-character steps one screen at a time, it
  * hands the member over to the Empathize panel (NPC/NPCEmpathizeUI.js) opened
@@ -134,14 +134,7 @@
 
   function iconSpan(iconIndex, size) {
     if (!iconIndex && iconIndex !== 0) return "";
-    const scale = (size / 32).toFixed(4);
-    const col = iconIndex % 16;
-    const row = Math.floor(iconIndex / 16);
-    return `<span style="display:inline-block;width:${size}px;height:${size}px;` +
-      `background-image:url('img/system/IconSet.png');background-repeat:no-repeat;` +
-      `background-size:${512 * scale}px ${640 * scale}px;` +
-      `background-position:-${col * size}px -${row * size}px;` +
-      `vertical-align:middle;image-rendering:pixelated;"></span>`;
+    return `<span class="cc-rpg-icon" style="${window.CCArt.icon(iconIndex, size)}"></span>`;
   }
 
   //===========================================================================
@@ -192,10 +185,53 @@
     // when this name does not have one yet: the editor reads it several times
     // per redraw.
     const existing = _getProfile(name);
-    if (existing) return existing;
+    if (existing) { existing.playerCreated = true; return existing; }
     if (!window.NPCSocietyRegistry) return null;
     window.NPCSocietyRegistry.ensureProfile(name, actor.currentClass() ? actor.currentClass().id : null);
-    return _getProfile(name) || null;
+    const minted = _getProfile(name) || null;
+    // The sheet is only ever opened on a character the player is building, so
+    // the profile behind it is flagged as such: NPCPolitics hands a made
+    // character no party unless the party row below declares one.
+    if (minted) minted.playerCreated = true;
+    return minted;
+  }
+
+  // ---------------------------------------------------------------------
+  // PARTY AFFILIATION
+  // ---------------------------------------------------------------------
+  // A made character starts with no political party. The detailed sheet is the
+  // only place one is offered, and only parties standing in the party's home
+  // nation whose own creed sits nearest the creed picked above.
+
+  function partyChoices(profile) {
+    const POL = window.NPCPolitics;
+    if (!POL || !POL.partyChoicesFor) return [];
+    const town = $gameSystem && $gameSystem._ccHometown;
+    const country = POL.countryOfHometown ? POL.countryOfHometown(town) : null;
+    if (!country) return [];
+    const creed = profile ? window.NPCShared.ideologyFor(profile) : null;
+    return POL.partyChoicesFor(country, creed ? creed.id : null);
+  }
+
+  function declaredPartyLabel(profile) {
+    const name = profile && profile.declaredPartyName;
+    return name ? String(name) : T("detailed.none");
+  }
+
+  // Writing the declaration also corrects an identity the politics sim may
+  // already have minted for this name during creation, so the sheet and the
+  // Empathize panel never disagree.
+  function applyParty(profile, name) {
+    if (!profile) return;
+    profile.declaredPartyName = name || null;
+    const actor = editedActor();
+    const identity = actor && window.NPCPolitics?.getIdentity?.(actor.name());
+    if (!identity) return;
+    const party = name && window.NPCPolitics.getPower
+      ? (window.NPCPolitics.getPower(identity.power)?.parties || [])
+          .find((p) => p.name === name && (!identity.country || p.country === identity.country))
+      : null;
+    identity.partyId = party ? party.id : null;
   }
 
   // A renamed character is the same character: move the edited profile onto the
@@ -877,6 +913,14 @@
           },
         ],
       });
+      // Only offered where there is a ballot to join: a hometown whose nation
+      // stands no parties leaves the row off the sheet entirely.
+      if (partyChoices(profile).length) {
+        sections[sections.length - 1].rows.push({
+          id: "party", label: T("detailed.row.party"),
+          value: declaredPartyLabel(profile), kind: "pick",
+        });
+      }
     }
 
     const identity = [
@@ -1186,6 +1230,17 @@
             key: String(index), label: ideologyName(entry), icon: 186,
           })),
         };
+      case "party":
+        return {
+          title: T("detailed.row.party"),
+          note: T("detailed.partyNote"),
+          options: [{ key: "__none", label: T("detailed.none"), icon: 187 }].concat(
+            partyChoices(editedProfile()).map((entry) => ({
+              key: entry.name, label: entry.name, icon: 187,
+              sub: entry.exact ? T("detailed.partyMatch") : "",
+            }))
+          ),
+        };
       case "faction":
         return {
           title: T("detailed.row.faction"),
@@ -1313,7 +1368,18 @@
         if (profile) profile.personalityIndex = Number(key);
         return false;
       case "ideology":
-        if (profile) setIdeology(profile, Number(key));
+        if (profile) {
+          setIdeology(profile, Number(key));
+          // A declaration that no longer answers to the new creed is dropped
+          // rather than left standing under a belief it contradicts.
+          if (profile.declaredPartyName &&
+              !partyChoices(profile).some((p) => p.name === profile.declaredPartyName)) {
+            applyParty(profile, null);
+          }
+        }
+        return false;
+      case "party":
+        applyParty(profile, key === "__none" ? null : key);
         return false;
       case "faction":
         if (profile) profile.factionIndex = Number(key);
@@ -1596,7 +1662,7 @@
 
   Scene_NPCEmpathize.prototype._buildCCEditorHTML = function () {
     const actor = editedActor();
-    if (!actor) return `<p style="opacity:0.6;font-style: normal;">${esc(T("detailed.unavailable"))}</p>`;
+    if (!actor) return `<p class="cc-empty-note">${esc(T("detailed.unavailable"))}</p>`;
 
     let html = `<div class="npc-profile-name">${esc(actor.name())}</div>` +
       `<div class="npc-profile-sub">${esc(T("detailed.title"))}</div>` +
@@ -1631,12 +1697,12 @@
 
     let html = `<div class="npc-back-btn"
          onmousedown="event.stopPropagation();SceneManager._scene._ccClosePicker()">← ${esc(T("detailed.back"))}</div>` +
-      `<div class="npc-sec-hdr" style="margin-top:6px;">${esc(data.title)}</div>`;
+      `<div class="npc-sec-hdr npc-sec-hdr--spaced">${esc(data.title)}</div>`;
     // A picker can carry a running total (the specialization point budget),
     // which is the only place those points are ever shown.
     if (data.note) html += `<div class="npc-cc-note">${esc(data.note)}</div>`;
     if (!data.options.length) {
-      return html + `<p style="opacity:0.6;font-style: normal;">${esc(T("detailed.noOptions"))}</p>`;
+      return html + `<p class="cc-empty-note">${esc(T("detailed.noOptions"))}</p>`;
     }
 
     // A list long enough to have to be hunted through gets a search box. The
@@ -1647,7 +1713,7 @@
     if (searchable && bar) html += bar.html();
     const matches = searchable && query ? filterOptions(data.options, query) : data.options;
     if (!matches.length) {
-      return html + `<p style="opacity:0.6;font-style: normal;">${esc(T("detailed.noMatches"))}</p>`;
+      return html + `<p class="cc-empty-note">${esc(T("detailed.noMatches"))}</p>`;
     }
     // Searching the specializations from the category screen has all 800 of
     // them to answer with, and a broad query still leaves hundreds. Only the
@@ -1689,7 +1755,6 @@
 
   Scene_NPCEmpathize.prototype._ccActivateRow = function (id) {
     if (!isEditing(this)) return;
-    SoundManager.playOk();
     switch (id) {
       case "name": openNameInput(); return;
       case "nameRandom": randomName(); break;
@@ -1728,7 +1793,6 @@
     const data = buildPicker(id, null);
     const choices = data ? data.options.filter((o) => !o.disabled) : [];
     if (!choices.length) return;
-    SoundManager.playOk();
     const option = choices[Math.floor(Math.random() * choices.length)];
     applyPick(id, option.key, null);
     this._render();
@@ -1738,7 +1802,6 @@
     if (!isEditing(this) || !this._ccPicker) return;
     let key = encodedKey;
     try { key = decodeURIComponent(encodedKey); } catch (e) { /* raw key */ }
-    SoundManager.playOk();
     const result = applyPick(this._ccPicker.id, key, this._ccPicker.arg);
     if (result && result.arg !== undefined) {
       this._ccPicker = { id: this._ccPicker.id, arg: result.arg };
@@ -1762,8 +1825,7 @@
     if (!isEditing(this) || !this._ccPicker || this._ccPicker.id !== "specializations") return;
     let key = encodedKey;
     try { key = decodeURIComponent(encodedKey); } catch (e) { /* raw key */ }
-    if (lowerSpecLevel(Number(key))) SoundManager.playOk();
-    else SoundManager.playBuzzer();
+    if (!lowerSpecLevel(Number(key))) SoundManager.playBuzzer();
     this._render();
   };
 
@@ -1829,7 +1891,6 @@
     wrap.title = T("detailed.portraitHint");
     wrap.onmousedown = (event) => {
       event.stopPropagation();
-      SoundManager.playOk();
       openSpriteGrid();
     };
   };

@@ -36,6 +36,8 @@
     // (file2 exists -> file3), falling back to the lowest empty slot when the
     // end of the list is reached.
     function nextPlaythroughSlot() {
+        const own = dedicatedSlotFor(runKind());
+        if (own > 0) return own;
         let highest = 0;
         for (let i = 1; i <= DataManager.maxSavefiles(); i++) {
             if (DataManager.savefileInfo(i)) highest = i;
@@ -49,11 +51,101 @@
     }
 
     //=========================================================================
+    // Run kinds and their slot bands
+    //=========================================================================
+    // Three kinds of playthrough never share a savefile with each other:
+    //
+    //   "story"   - Story mode (switch 100). One slot of its own and one
+    //               autosave of its own. No other run may ever write them, not
+    //               even a playtest build: the main quest's save is the one
+    //               file nothing else can overwrite. It may still be deleted
+    //               from the save screen like any other.
+    //   "sandbox" - the sandbox ($gameSystem._isSandboxMode). One slot, and
+    //               nothing else: a sandbox is never autosaved or quicksaved.
+    //   ""        - an ordinary party: the world autosave (slot 0) and the
+    //               party band 1..maxSavefiles.
+    //
+    // The three quicksaves belong to no band at all: every run, story mode
+    // included, rotates over the same 101..103.
+    //
+    // Every save records which kind wrote it (makeSavefileInfo below), so the
+    // save and load lists can be scoped to the run that is asking.
+    const STORY_SLOT = 110;
+    const STORY_AUTO_SLOT = 111;
+    const SANDBOX_SLOT = 120;
+
+    function runKind() {
+        if (window.$gameSwitches && $gameSwitches.value(100)) return "story";
+        if (window.$gameSystem && $gameSystem._isSandboxMode) return "sandbox";
+        return "";
+    }
+
+    // The kind that wrote a savefile, read off its info. Saves written before
+    // the bands existed carry nothing and are ordinary parties.
+    function slotKind(index) {
+        // The three quicksaves are shared by every run, so they never belong
+        // to a band: whichever kind wrote one, any run may write it again.
+        if (QUICK_SLOT_IDS.indexOf(index) >= 0) return "";
+        if (index === STORY_SLOT || index === STORY_AUTO_SLOT) return "story";
+        if (index === SANDBOX_SLOT) return "sandbox";
+        const info = DataManager.savefileInfo(index);
+        return (info && info.runKind) || "";
+    }
+
+    // Where this run autosaves. Sandbox answers 0 slots: it is never autosaved.
+    function autosaveSlotFor(kind) {
+        if (kind === "story") return STORY_AUTO_SLOT;
+        if (kind === "sandbox") return -1;
+        return SAVE_SLOT;
+    }
+
+    function quickSlotsFor(kind) {
+        if (kind === "sandbox") return [];
+        return QUICK_SLOT_IDS.slice();
+    }
+
+    // The one slot this run owns outright, or 0 when it claims one out of the
+    // ordinary party band instead.
+    function dedicatedSlotFor(kind) {
+        if (kind === "story") return STORY_SLOT;
+        if (kind === "sandbox") return SANDBOX_SLOT;
+        return 0;
+    }
+
+    window.SaveSystem = window.SaveSystem || {};
+    window.SaveSystem.runKind = runKind;
+    window.SaveSystem.slotKind = slotKind;
+    window.SaveSystem.storySlots = () => [STORY_SLOT, STORY_AUTO_SLOT];
+    window.SaveSystem.sandboxSlot = () => SANDBOX_SLOT;
+    // Whether a story-mode playthrough has ever been saved: the title screen
+    // asks so its Story mode entry can offer to continue one instead.
+    window.SaveSystem.hasStorySave = function () {
+        return [STORY_SLOT, STORY_AUTO_SLOT]
+            .some((id) => !!DataManager.savefileInfo(id));
+    };
+    // Only the story band's MAIN slot counts as "a story to continue": the
+    // autosave slot is written on its own and never turns the title entry from
+    // New story into Continue story.
+    window.SaveSystem.hasStoryMainSave = function () {
+        return !!DataManager.savefileInfo(STORY_SLOT);
+    };
+    window.SaveSystem.latestStorySlot = function () {
+        let best = -1;
+        let bestTime = -1;
+        [STORY_SLOT, STORY_AUTO_SLOT].forEach((id) => {
+            const info = DataManager.savefileInfo(id);
+            if (info && info.timestamp > bestTime) { bestTime = info.timestamp; best = id; }
+        });
+        return best;
+    };
+
+    //=========================================================================
     // Quicksave slots
     //=========================================================================
-    // F5 rotates over three dedicated quicksave slots instead of writing over
+    // F9 rotates over three dedicated quicksave slots instead of writing over
     // the playthrough's own save. They sit above the 1..maxSavefiles party band
-    // so they never consume a playthrough slot, and they are always writable: a
+    // so they never consume a playthrough slot, they are shared by every run
+    // (story mode has no band of its own here) and they are always writable: a
     // quicksave may overwrite any quicksave, whichever playthrough wrote it.
     const QUICK_SLOT_IDS = [101, 102, 103];
 
@@ -72,20 +164,23 @@
 
     // Where the next quicksave goes: the first free slot, then the oldest one.
     function nextQuickSlot() {
-        const free = QUICK_SLOT_IDS.find(id => !DataManager.savefileInfo(id));
+        const band = quickSlotsFor(runKind());
+        if (!band.length) return 0; // sandbox: no quicksave band at all
+        const free = band.find(id => !DataManager.savefileInfo(id));
         if (free !== undefined) return free;
-        return QUICK_SLOT_IDS.reduce((a, b) => (quickSlotTime(b) < quickSlotTime(a) ? b : a));
+        return band.reduce((a, b) => (quickSlotTime(b) < quickSlotTime(a) ? b : a));
     }
 
-    // The most recent quicksave, or 0 when none has been written yet.
+    // The most recent quicksave of this run's own band, or 0 when none has
+    // been written yet.
     function latestQuickSlot() {
-        const used = QUICK_SLOT_IDS.filter(id => DataManager.savefileInfo(id));
+        const used = quickSlotsFor(runKind()).filter(id => DataManager.savefileInfo(id));
         if (!used.length) return 0;
         return used.reduce((a, b) => (quickSlotTime(b) > quickSlotTime(a) ? b : a));
     }
 
     // Which playthrough wrote a quicksave. A terminal death takes its own
-    // quicksaves down with it (see deletePlaythroughSaves), so F9 can never
+    // quicksaves down with it (see deletePlaythroughSaves), so F10 can never
     // undo a permadeath run.
     function stampQuickOwner(index) {
         const info = DataManager.savefileInfo(index);
@@ -101,6 +196,14 @@
     }
 
     function canSaveTo(index) {
+        const kind = runKind();
+        // The shared quicksaves belong to no band: any run may write any of
+        // them, whichever run wrote them last.
+        if (isQuickSlot(index)) return quickSlotsFor(kind).length > 0;
+        // A run never writes into another kind's band, playtest or not.
+        if (slotKind(index) !== kind) return false;
+        const own = dedicatedSlotFor(kind);
+        if (own > 0) return index === own || index === autosaveSlotFor(kind) || isQuickSlot(index);
         if (index === 0) return true; // shared world autosave, manually writable
         if (isQuickSlot(index)) return true; // a quicksave is always overwritable
         if (isPlaytest()) return true;
@@ -110,9 +213,24 @@
         return !DataManager.savefileInfo(index);
     }
 
+    // The savegame the party is playing right now is not up for deletion: it
+    // is the run in memory, and erasing it from inside itself leaves the
+    // session running against a file that no longer exists.
+    function canDeleteSlot(index) {
+        if (!window.$gameSystem || typeof $gameSystem.savefileId !== "function") return true;
+        // The story run is the one exception: it owns a single fixed slot, so
+        // wiping it is the only way to begin the story over. The binding is
+        // released on deletion (see deleteSavefile) so the live session is not
+        // left pointing at a file that no longer exists.
+        if (index === STORY_SLOT || index === STORY_AUTO_SLOT) return true;
+        const bound = $gameSystem.savefileId();
+        return !(bound > 0 && index === bound);
+    }
+
     window.SaveSystem = window.SaveSystem || {};
     window.SaveSystem.nextPlaythroughSlot = nextPlaythroughSlot;
     window.SaveSystem.canSaveTo = canSaveTo;
+    window.SaveSystem.canDeleteSlot = canDeleteSlot;
     window.SaveSystem.quickSlotIds = () => QUICK_SLOT_IDS.slice();
     window.SaveSystem.isQuickSlot = isQuickSlot;
     window.SaveSystem.nextQuickSlot = nextQuickSlot;
@@ -167,7 +285,7 @@
             // origin's spawn tile): in normal / peaceful play, where death is
             // non-terminal, register it as the BattleSystemEnhanced respawn point
             // (vars 25/26/27 + the _respawnPointSet flag). Skipped for the
-            // tutorial (switch 100) and for permadeath / blood-and-oil (switch 9),
+            // story mode (switch 100) and for permadeath / blood-and-oil (switch 9),
             // where a run ends on death instead of respawning.
             if (window.$gameSwitches &&
                 !$gameSwitches.value(9) &&
@@ -320,6 +438,7 @@
 
     Scene_Map.prototype._checkAutosaveOnTransition = function () {
         if (!ConfigManager.autosaveEnabled) return;
+        if (autosaveSlotFor(runKind()) < 0) return; // the sandbox is never autosaved
         if ($gameSystem._lastAutosaveFrame === undefined) {
             $gameSystem._lastAutosaveFrame = Graphics.frameCount;
             return;
@@ -348,7 +467,7 @@
         if ($gameTemp) $gameTemp._pendingAutosaveIcon = true;
         recordSaveLocation();
         $gameSystem.onBeforeSave();
-        DataManager.saveGame(SAVE_SLOT)
+        DataManager.saveGame(autosaveSlotFor(runKind()))
             .then(() => console.log("Autosave Successful"))
             .catch(() => { });
     };
@@ -515,6 +634,9 @@
         info.worldX = wx;
         info.worldY = wy;
         info.location = loc || { worldX: wx, worldY: wy };
+        // Which band this file belongs to, so the save and load lists can be
+        // scoped to the run that is asking (see runKind / slotKind).
+        info.runKind = runKind();
         return info;
     };
 
@@ -771,24 +893,46 @@
     // The three quicksave slots head the list: all of them in save mode (any
     // may be written over), only the written ones in load mode.
     Scene_File.prototype.visibleSlotIds = function () {
+        const kind = runKind();
+        const saving = this.mode() === "save";
+        const autoSlot = autosaveSlotFor(kind);
+        const band = quickSlotsFor(kind);
+        const quick = saving ? band : band.filter(id => DataManager.savefileInfo(id));
+
+        // A run with a band of its own is shown that band and nothing else:
+        // Story mode never lists another party's slots, and no other party
+        // ever lists Story mode's. Loading the same band is how a run is
+        // resumed, so the rule is the same in both modes.
+        const own = dedicatedSlotFor(kind);
+        if (own > 0) {
+            const ids = [];
+            if (autoSlot >= 0 && (saving || DataManager.savefileInfo(autoSlot))) ids.push(autoSlot);
+            if (saving || DataManager.savefileInfo(own)) ids.push(own);
+            return [...quick, ...ids];
+        }
+
+        // An ordinary party: the world autosave, its own slot, then the other
+        // parties of this world. Another band's files are never among them.
         const withFiles = [];
         for (let i = 1; i <= DataManager.maxSavefiles(); i++) {
-            if (DataManager.savefileInfo(i)) withFiles.push(i);
+            if (DataManager.savefileInfo(i) && slotKind(i) === "") withFiles.push(i);
         }
-        const quick = this.mode() === "save"
-            ? QUICK_SLOT_IDS.slice()
-            : QUICK_SLOT_IDS.filter(id => DataManager.savefileInfo(id));
-        if (this.mode() === "save") {
+        if (saving) {
             const bound = $gameSystem.savefileId();
             const ownSlot = bound > 0 ? bound : nextPlaythroughSlot();
-            const ids = [0];
+            const ids = [autoSlot];
             if (ownSlot > 0) ids.push(ownSlot);
             for (const i of withFiles) {
                 if (i !== ownSlot) ids.push(i);
             }
             return [...quick, ...ids];
         }
-        return [...quick, 0, ...withFiles];
+        // Load mode heads the list with the story run: the title screen's Story
+        // mode entry only ever begins one, so this is where an existing story
+        // party is picked up again.
+        const story = saving ? [] : [STORY_SLOT, STORY_AUTO_SLOT]
+            .filter((id) => DataManager.savefileInfo(id));
+        return [...story, ...quick, autoSlot, ...withFiles];
     };
 
     Scene_File.prototype.buildSaveList = function () {
@@ -817,11 +961,20 @@
             // but cannot be written to; mark them so the list makes that clear.
             const locked = this.mode() === "save" && !canSaveTo(i);
 
-            if (i === 0) {
+            if (i === 0 || i === STORY_AUTO_SLOT) {
                 slotName = T('SaveSystem.autosave');
                 summaryText = info ? info.playtime : (T('SaveSystem.none'));
+            } else if (i === STORY_SLOT || i === SANDBOX_SLOT) {
+                // A run with a band of its own has one slot, so it is named for
+                // what it is rather than by a number nothing else counts to.
+                slotName = i === STORY_SLOT
+                    ? T('SaveSystem.storySlot')
+                    : T('SaveSystem.sandboxSlot');
+                const leadName = savefileLeaderName(info);
+                if (leadName) slotName += " - " + T('SaveSystem.partyOf', { name: escapeHtml(leadName) });
+                summaryText = info ? info.playtime : (T('SaveSystem.new'));
             } else if (isQuickSlot(i)) {
-                // "QUICKSAVE 2 - Party of Ariel": the F5 rotation, named the
+                // "QUICKSAVE 2 - Party of Ariel": the F9 rotation, named the
                 // same way as a party slot so the list reads consistently.
                 slotName = T('SaveSystem.quickslot', { n: quickSlotNumber(i) });
                 const leader = savefileLeaderName(info);
@@ -873,8 +1026,9 @@
         return info.partyInfo[0].name || "";
     }
 
-    // Party roster: sprite, name, class, level and HP/MP (no bars) of
-    // every member recorded in the savefile.
+    // Party roster: sprite, name, class and level of every member recorded in
+    // the savefile. HP and MP are deliberately left out so the sprite can be
+    // the thing the eye lands on.
     function buildPartyMembersHTML(info) {
         const party = Array.isArray(info.partyInfo) ? info.partyInfo : [];
         if (party.length) {
@@ -882,8 +1036,6 @@
                 const meta = [];
                 if (member.level) meta.push(T('SaveSystem.levelShort', { n: member.level }));
                 if (member.className) meta.push(escapeHtml(member.className));
-                const hpText = typeof member.hp === "number" ? `${member.hp} / ${member.mhp || member.hp}` : "";
-                const mpText = typeof member.mp === "number" ? `${member.mp} / ${member.mmp || member.mp}` : "";
                 return `
                     <div class="save-member">
                         <canvas class="char-sprite-canvas" width="48" height="48" data-name="${escapeHtml(member.characterName || "")}" data-index="${member.characterIndex || 0}"></canvas>
@@ -891,10 +1043,6 @@
                             <div class="save-member-head">
                                 <span class="save-member-name">${escapeHtml(member.name || "")}</span>
                                 <span class="save-member-meta">${meta.join(" · ")}</span>
-                            </div>
-                            <div class="save-member-stats-row">
-                                ${hpText ? `<span class="save-member-stat-item"><span class="save-member-stat-label hp">${T('SaveSystem.hpShort')}</span> <span class="save-member-stat-value">${hpText}</span></span>` : ""}
-                                ${mpText ? `<span class="save-member-stat-item"><span class="save-member-stat-label mp">${T('SaveSystem.mpShort')}</span> <span class="save-member-stat-value">${mpText}</span></span>` : ""}
                             </div>
                         </div>
                     </div>
@@ -1003,6 +1151,7 @@
                 <h4 class="save-08">
                     ${T('SaveSystem.world')}: ${escapeHtml(WM.activeWorldName)}
                 </h4>
+                <div class="save-world-grid">
                 ${dateHTML}
                 <div class="detail-row">
                     <span class="detail-label">${T('SaveSystem.worldType')}</span>
@@ -1022,6 +1171,7 @@
                     <span>${artifactCount}</span>
                 </div>
                 ${destinyLineHTML()}
+                </div>
             </div>
         `;
     }
@@ -1199,9 +1349,10 @@
                         <button class="inspect-btn inspect-btn--secondary focusable save-15" onclick="SceneManager._scene.loadSavefile(${this._selectedIndex})">
                             ${T('SaveSystem.load')}
                         </button>` : ""}
+                        ${canDeleteSlot(this._selectedIndex) ? `
                         <button class="inspect-btn inspect-btn--danger focusable save-16" onclick="SceneManager._scene.deleteSavefile(${this._selectedIndex})">
                             ${T('SaveSystem.delete')}
-                        </button>
+                        </button>` : ""}
                     </div>
                 </div>
             `;
@@ -1372,6 +1523,16 @@
             SoundManager.playBuzzer();
             return;
         }
+        if (!canDeleteSlot(index)) {
+            SoundManager.playBuzzer();
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('SaveSystem.cannotDeleteCurrent'), {
+                    severity: "warning",
+                    duration: 120,
+                });
+            }
+            return;
+        }
 
         const useTranslation = ConfigManager.language === "it";
         this.showConfirmModal({
@@ -1395,6 +1556,14 @@
                 removal.then(() => {
                     if (DataManager._globalInfo) {
                         DataManager._globalInfo[index] = null;
+                    }
+                    // Erasing the slot this session is bound to leaves it
+                    // unbound rather than tied to a missing file: the next
+                    // save claims the slot again from scratch.
+                    if (window.$gameSystem
+                        && typeof $gameSystem.savefileId === "function"
+                        && $gameSystem.savefileId() === index) {
+                        $gameSystem._savefileId = 0;
                     }
                     DataManager.saveGlobalInfo();
                     this.buildSaveList();
@@ -1530,13 +1699,13 @@
     }
 
     // Deletes the manual save slot bound to the current playthrough, plus every
-    // quicksave that playthrough wrote (or death would be undoable with F9).
+    // quicksave that playthrough wrote (or death would be undoable with F10).
     // Slot 0 (the shared autosave) and other parties' quicksaves are never
     // touched.
     window.SaveSystem.deletePlaythroughSaves = function () {
         const bound = $gameSystem ? $gameSystem.savefileId() : 0;
         if (!(bound > 0)) return;
-        const ownQuick = QUICK_SLOT_IDS.filter(id => {
+        const ownQuick = quickSlotsFor(runKind()).filter(id => {
             const info = DataManager.savefileInfo(id);
             return info && info.quickOwner === bound;
         });
@@ -1738,20 +1907,19 @@
     window.Scene_HardcoreGameOver = Scene_HardcoreGameOver;
 
     // =========================================================================
-    // F5 Quicksave / F9 Quickload Integration
+    // F9 Quicksave / F10 Quickload Integration
     // =========================================================================
 
-    // F5 quicksave / F9 quickload, as in Bethesda's games. F9 (120) overrides
-    // RPG Maker's default debug menu. Quickload used to sit on F10 (121), which
-    // UI/ResolutionSwitcher.js loads later and claims for its own toggle, so the
-    // binding never fired.
-    Input.keyMapper[116] = 'quicksave';
-    Input.keyMapper[120] = 'quickload';
+    // F9 quicksave / F10 quickload. F9 (120) overrides RPG Maker's default
+    // debug menu and the map teleporter, which now sits on Shift+F6. F10 (121)
+    // used to be UI/ResolutionSwitcher.js's fullscreen toggle: that binding is
+    // gone, fullscreen lives on the core F11 key and in Options.
+    Input.keyMapper[120] = 'quicksave';
+    Input.keyMapper[121] = 'quickload';
 
-    // F5 is the browser/NW.js reload key: swallow it before the host acts on it,
-    // or quicksaving would restart the game.
+    // The host reacts to some function keys on its own: swallow ours first.
     document.addEventListener('keydown', event => {
-        if (event.keyCode === 116) event.preventDefault();
+        if (event.keyCode === 120 || event.keyCode === 121) event.preventDefault();
     });
 
     const _Scene_Map_update_quicks = Scene_Map.prototype.update;
@@ -1768,14 +1936,14 @@
         }
     };
 
-    // F5 fills the three quicksave slots in turn, then keeps rolling over the
+    // F9 fills the three quicksave slots in turn, then keeps rolling over the
     // oldest one: a quicksave never refuses to write and never touches the
     // playthrough's own save.
     Scene_Map.prototype.getQuicksaveSlot = function() {
         return nextQuickSlot();
     };
 
-    // F9 reloads the newest of the three.
+    // F10 reloads the newest of the three.
     Scene_Map.prototype.getQuickloadSlot = function() {
         return latestQuickSlot();
     };
@@ -1788,6 +1956,11 @@
         }
 
         const slot = this.getQuicksaveSlot();
+        if (!(slot > 0)) {
+            SoundManager.playBuzzer();
+            this.showQuickPopup("Saving Disabled");
+            return;
+        }
         window.SaveSystem.recordSaveLocation();
         $gameSystem.onBeforeSave();
 

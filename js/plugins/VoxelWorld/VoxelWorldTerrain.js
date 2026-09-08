@@ -36,6 +36,8 @@
 
     const {
         MAT, PLACEABLE, ProceduralDecorator, ROAD_SINK, ROAD_TOTAL_W, SEA_LEVEL,
+        ROAD_BARRIER_H, ROAD_BED_DROP, ROAD_COL, ROAD_DASH_OFF, ROAD_DASH_ON, ROAD_GAP, ROAD_KERB_H,
+        ROAD_LANE_OFF, ROAD_LINE_W, ROAD_MARK_LIFT, ROAD_SHOULDER_W, ROAD_SKIRT,
         VOX, VoxelField, VoxelMesher, WORLD_TILE_SIZE, getRenderType, profileFor,
         getRoadDirectionAt, loadTex, loadVoxelTex, sampleBiomeAt, voxelMaterial, VoxelWorldState,
         voxelGrassMaterial, voxelWaterMaterial, disposeVoxelMaterial,
@@ -474,9 +476,13 @@
                 this._addMesh(ch, 'all', VoxelMesher.build(this.field, wx, wy, 0, 0, n, step, px, pz, false));
             }
 
-            // The road is cut into the cubes themselves, so nothing is laid on
-            // top of it any more. Only the lamps that line it are still props.
-            if (type === 'road') this._buildStreetlights(grp, wx, wy);
+            // The carriageway is a real road: a ribbon extruded over the graded
+            // roadbed, with its paint, its median and its barriers, rather than
+            // a run of grey cubes with grey cubes painted on it.
+            if (type === 'road') {
+                this._buildRoadRibbon(grp, wx, wy, step);
+                if (step === 1) this._buildStreetlights(grp, wx, wy);
+            }
 
             // 2D billboard vegetation, rocks, props and settlements, unchanged:
             // they stand on the voxel surface the same way they stood on the
@@ -714,6 +720,265 @@
         carve(x, y, z, radius) { return this.field.carveSphere(x, y, z, radius, null); }
 
         // ---------------------------------------------------------------------
+        // Real roads
+        // ---------------------------------------------------------------------
+        // A motorway is not a run of cubes. The ground under a road square is a
+        // graded ROADBED, dropped out of sight by ROAD_BED_DROP and never looked
+        // at; what is drawn over it is this: a ribbon extruded along the
+        // centreline of the square, cross-section by cross-section, carrying
+        // asphalt, a hard shoulder, solid edge lines, a dashed lane line down
+        // each carriageway, a kerbed green median with a steel barrier along it
+        // and armco on both verges. The paving follows the same smooth height
+        // the camper drives at (VoxelField.heightAt answers with the paving on a
+        // road column), so what is under the wheels is exactly what is drawn.
+        //
+        // The centreline is the one ProceduralMapRoadGenerator laid down and
+        // VoxelField.roadAt solves against: straight through, a quarter-circle
+        // bend tangent to both edges, or legs out of a junction box.
+        // ---------------------------------------------------------------------
+
+        // The paths of a road square, in tile-local units. Each is a list of
+        // points the ribbon is swept along; `junction` asks for the box of plain
+        // tarmac that the legs of a crossing meet in.
+        _roadPaths(dir, ts) {
+            const H = ts / 2;
+            const box = ROAD_TOTAL_W / 2;
+            const line = (x0, z0, x1, z1) => {
+                const pts = [];
+                const n = 24;
+                for (let i = 0; i <= n; i++) {
+                    const t = i / n;
+                    pts.push({ x: x0 + (x1 - x0) * t, z: z0 + (z1 - z0) * t });
+                }
+                return { pts };
+            };
+            // A bend is the quarter ring roadAt solves: centred on the corner
+            // between the two open edges, radius half a tile, so it leaves each
+            // edge tangent to the straight road next door.
+            const arc = (ccx, ccz) => {
+                const R = ts * 0.5;
+                // The quarter runs from where the ring crosses one edge of the
+                // tile to where it crosses the other: due east or west of the
+                // corner, round to due north or south of it.
+                const s0 = ccx > 0 ? Math.PI : 0;
+                let s1 = ccz > 0 ? -Math.PI / 2 : Math.PI / 2;
+                // ...the short way round, which is the only way that stays
+                // inside the square.
+                while (s1 - s0 >  Math.PI) s1 -= Math.PI * 2;
+                while (s1 - s0 < -Math.PI) s1 += Math.PI * 2;
+                const pts = [];
+                const n = 20;
+                for (let i = 0; i <= n; i++) {
+                    const a = s0 + (s1 - s0) * (i / n);
+                    pts.push({ x: ccx + Math.cos(a) * R, z: ccz + Math.sin(a) * R });
+                }
+                return { pts };
+            };
+            const legs = (n, s, e, w) => {
+                const out = [];
+                if (n) out.push(line(0, -box, 0, -H));
+                if (s) out.push(line(0,  box, 0,  H));
+                if (w) out.push(line(-box, 0, -H, 0));
+                if (e) out.push(line( box, 0,  H, 0));
+                out.junction = true;
+                return out;
+            };
+
+            let paths;
+            switch (dir) {
+                case 'vertical':   paths = [line(0, -H, 0, H)]; break;
+                case 'horizontal': paths = [line(-H, 0, H, 0)]; break;
+                case 'cross':      paths = legs(1, 1, 1, 1); break;
+                case 't-up': case 't-north':   paths = legs(1, 0, 1, 1); break;
+                case 't-down': case 't-south': paths = legs(0, 1, 1, 1); break;
+                case 't-left': case 't-west':  paths = legs(1, 1, 0, 1); break;
+                case 't-right': case 't-east': paths = legs(1, 1, 1, 0); break;
+                case 'corner-up-left':    case 'corner-north-west': paths = [arc(-ts / 2, -ts / 2)]; break;
+                case 'corner-up-right':   case 'corner-north-east': paths = [arc( ts / 2, -ts / 2)]; break;
+                case 'corner-down-left':  case 'corner-south-west': paths = [arc(-ts / 2,  ts / 2)]; break;
+                case 'corner-down-right': case 'corner-south-east': paths = [arc( ts / 2,  ts / 2)]; break;
+                default:
+                    if (String(dir).indexOf('cross') >= 0 || String(dir).indexOf('t-') === 0) {
+                        paths = legs(1, 1, 1, 1);
+                    } else {
+                        paths = [line(-H, 0, H, 0)];
+                    }
+            }
+            return paths;
+        }
+
+        // The cross-section, from the middle of the road outwards. Every band is
+        // mirrored onto both carriageways, so this is written once and laid
+        // twice. `lift` is above the paving, `drop` below it at the far edge.
+        _roadBands() {
+            if (this._roadBandCache) return this._roadBandCache;
+            const half     = ROAD_TOTAL_W / 2;
+            const med      = ROAD_GAP / 2;
+            const shoulder = half - ROAD_SHOULDER_W;
+            const L        = ROAD_LINE_W;
+            const C        = ROAD_COL;
+            this._roadBandCache = [
+                // The median: grass behind a kerb, level with the paving.
+                { from: -med + 1.6, to: med - 1.6, lift: ROAD_KERB_H, col: C.median, both: false },
+                // The kerb, dropped far enough to close the flank of the median:
+                // the ground between the carriageways was never lowered for a
+                // roadbed, so it stands a bed's depth below the paving.
+                { from: med - 1.6, to: med + 0.4, lift: ROAD_KERB_H,
+                  drop: ROAD_KERB_H + ROAD_BED_DROP, col: C.kerb },
+                // The carriageway, and its hard shoulder outside the edge line.
+                { from: med + 0.4, to: shoulder, col: C.asphalt },
+                { from: shoulder, to: half, col: C.shoulder },
+                // The embankment: the paved edge falls away to the country, and
+                // covers the lip of the roadbed cubes while it is about it.
+                { from: half, to: half + 18, drop: ROAD_SKIRT, col: C.skirt },
+                // Paint. Solid either side of each carriageway, broken down the
+                // middle of it.
+                { from: med + 2.4, to: med + 2.4 + L, lift: ROAD_MARK_LIFT, col: C.paint, paint: true },
+                { from: shoulder - L - 1, to: shoulder - 1, lift: ROAD_MARK_LIFT, col: C.paint, paint: true },
+                { from: ROAD_LANE_OFF - L / 2, to: ROAD_LANE_OFF + L / 2, lift: ROAD_MARK_LIFT,
+                  col: C.paint, paint: true, dash: true }
+            ];
+            return this._roadBandCache;
+        }
+
+        // The ironmongery: a steel barrier down the median and armco on both
+        // verges. Written as walls rather than bands, one quad tall.
+        _roadWalls() {
+            const half = ROAD_TOTAL_W / 2;
+            return [
+                { at: 0,         y0: ROAD_KERB_H, y1: ROAD_KERB_H + ROAD_BARRIER_H, col: ROAD_COL.steel },
+                { at: half + 5,  y0: 4, y1: 4 + ROAD_BARRIER_H, col: ROAD_COL.steel },
+                { at: -half - 5, y0: 4, y1: 4 + ROAD_BARRIER_H, col: ROAD_COL.steel }
+            ];
+        }
+
+        _getRoadMat() {
+            if (!this._roadMat) {
+                this._roadMat = new THREE.MeshLambertMaterial({
+                    vertexColors: true, side: THREE.DoubleSide
+                });
+            }
+            return this._roadMat;
+        }
+
+        // Lay the carriageway of one square.
+        _buildRoadRibbon(grp, wx, wy, step) {
+            const ts  = this._ts;
+            const dir = String(getRoadDirectionAt(wx, wy) || 'horizontal').toLowerCase();
+            const paths = this._roadPaths(dir, ts);
+            if (!paths.length) return;
+
+            const px = wx * ts + ts * 0.5, pz = wy * ts + ts * 0.5;
+            const pos = [], col = [], idx = [];
+            const at = (x, z) => this.field.heightAt(px + x, pz + z);
+            const push = (x, y, z, c) => {
+                pos.push(x, y, z);
+                col.push(((c >> 16) & 255) / 255, ((c >> 8) & 255) / 255, (c & 255) / 255);
+                return pos.length / 3 - 1;
+            };
+            const quad = (a, b, c, d) => { idx.push(a, b, c, a, c, d); };
+
+            const fine  = step === 1;
+            const bands = this._roadBands();
+            const cycle = ROAD_DASH_ON + ROAD_DASH_OFF;
+
+            for (const path of paths) {
+                const pts = path.pts;
+                // Each point of the path, with the road's own normal at it and
+                // the distance along it, which is what the dashes are cut
+                // against, and the paved height it is laid at.
+                const S = [];
+                let along = 0;
+                for (let i = 0; i < pts.length; i++) {
+                    const p = pts[i];
+                    if (i > 0) along += Math.hypot(p.x - pts[i - 1].x, p.z - pts[i - 1].z);
+                    const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)];
+                    let tx = b.x - a.x, tz = b.z - a.z;
+                    const len = Math.hypot(tx, tz) || 1;
+                    tx /= len; tz /= len;
+                    const nx = -tz, nz = tx;
+                    // The height of the CENTRELINE is not the height of the
+                    // road: the centreline runs down the median, whose ground
+                    // was never dropped to make room for a roadbed. So the
+                    // section is hung off the two carriageways either side of
+                    // it, which is where the paving actually is.
+                    const y = (at(p.x + nx * ROAD_LANE_OFF, p.z + nz * ROAD_LANE_OFF) +
+                               at(p.x - nx * ROAD_LANE_OFF, p.z - nz * ROAD_LANE_OFF)) * 0.5;
+                    S.push({ x: p.x, z: p.z, nx, nz, s: along, y });
+                }
+
+                const strip = (band) => {
+                    for (let i = 0; i + 1 < S.length; i++) {
+                        const a = S[i], b = S[i + 1];
+                        if (band.dash) {
+                            const m = ((a.s % cycle) + cycle) % cycle;
+                            if (m > ROAD_DASH_ON) continue;
+                        }
+                        const sides = band.both === false ? [1] : [1, -1];
+                        for (const side of sides) {
+                            const f = band.both === false ? band.from : band.from * side;
+                            const t = band.both === false ? band.to   : band.to   * side;
+                            const yF = (band.lift || 0), yT = (band.lift || 0) - (band.drop || 0);
+                            const v0 = push(a.x + a.nx * f, a.y + yF, a.z + a.nz * f, band.col);
+                            const v1 = push(b.x + b.nx * f, b.y + yF, b.z + b.nz * f, band.col);
+                            const v2 = push(b.x + b.nx * t, b.y + yT, b.z + b.nz * t, band.col);
+                            const v3 = push(a.x + a.nx * t, a.y + yT, a.z + a.nz * t, band.col);
+                            if (side > 0) quad(v0, v1, v2, v3); else quad(v3, v2, v1, v0);
+                        }
+                    }
+                };
+                for (const band of bands) {
+                    // Far off, the broken line is a shimmer and nothing else:
+                    // the dashes are dropped and the solid lines kept.
+                    if (band.dash && !fine) continue;
+                    strip(band);
+                }
+
+                if (fine) {
+                    for (const wall of this._roadWalls()) {
+                        for (let i = 0; i + 1 < S.length; i++) {
+                            const a = S[i], b = S[i + 1];
+                            const ax = a.x + a.nx * wall.at, az = a.z + a.nz * wall.at;
+                            const bx = b.x + b.nx * wall.at, bz = b.z + b.nz * wall.at;
+                            const v0 = push(ax, a.y + wall.y0, az, wall.col);
+                            const v1 = push(bx, b.y + wall.y0, bz, wall.col);
+                            const v2 = push(bx, b.y + wall.y1, bz, wall.col);
+                            const v3 = push(ax, a.y + wall.y1, az, wall.col);
+                            quad(v0, v1, v2, v3);
+                        }
+                    }
+                }
+            }
+
+            // The junction box: the legs of a crossing meet in a plain square of
+            // tarmac, laid as a grid so it follows the ground under it.
+            if (paths.junction) {
+                const b = ROAD_TOTAL_W / 2, n = 5;
+                for (let j = 0; j < n; j++) {
+                    for (let i = 0; i < n; i++) {
+                        const x0 = -b + (2 * b * i) / n, x1 = -b + (2 * b * (i + 1)) / n;
+                        const z0 = -b + (2 * b * j) / n, z1 = -b + (2 * b * (j + 1)) / n;
+                        const v0 = push(x0, at(x0, z0), z0, ROAD_COL.asphalt);
+                        const v1 = push(x1, at(x1, z0), z0, ROAD_COL.asphalt);
+                        const v2 = push(x1, at(x1, z1), z1, ROAD_COL.asphalt);
+                        const v3 = push(x0, at(x0, z1), z1, ROAD_COL.asphalt);
+                        quad(v0, v1, v2, v3);
+                    }
+                }
+            }
+
+            if (!idx.length) return;
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+            geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+            geo.setIndex(idx);
+            geo.computeVertexNormals();
+            const mesh = new THREE.Mesh(geo, this._getRoadMat());
+            mesh.renderOrder = 1;
+            grp.add(mesh);
+        }
+
+        // ---------------------------------------------------------------------
         // Streetlights (the last thing on a road tile that is still a prop)
         // ---------------------------------------------------------------------
         _getPoleMat() {
@@ -797,7 +1062,8 @@
             this._matCache.clear();
             if (this._poleMat) this._poleMat.dispose();
             if (this._lampMat) this._lampMat.dispose();
-            this._poleMat = this._lampMat = null;
+            if (this._roadMat) this._roadMat.dispose();
+            this._poleMat = this._lampMat = this._roadMat = null;
             disposeVoxelMaterial();
             // The block palette goes with the world, not with a scene: one
             // material per block is shared by every square in it, and rebuilding

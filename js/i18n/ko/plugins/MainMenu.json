@@ -33,6 +33,28 @@
     "teleportToShip": "",
     "returnToWorldMap": "월드 맵으로 돌아가기"
   },
+  "cmdDesc": {
+    "backpack": "파티 인벤토리 및 소지품 관리",
+    "equip": "무기, 방어구 및 장신구 변경",
+    "skills": "습득한 스킬 및 마법 확인 및 사용",
+    "status": "캐릭터 능력치, 스탯 및 상태 확인",
+    "biologics": "생체 장기, 임플란트 및 건강 상태 모니터링",
+    "questLog": "진행 중인 퀘스트 및 저널 확인",
+    "dynamics": "파티 명단, 턴 순서 및 동료 기록 관리",
+    "pets": "동료, 소환수 및 탈것 관리",
+    "tools": "야외 장비, 생존 도구 및 유틸리티 사용",
+    "worldMap": "월드 맵 탐색 및 지도 확인",
+    "vehicles": "보유 차량 관리, 소환 및 탑승",
+    "wait": "시간을 보내고 대기",
+    "hyperdeck": "하이퍼덱 단말기 및 네트워크 접속",
+    "help": "게임 매뉴얼, 가이드 및 시스템 도움말 확인",
+    "save": "현재 진행 상황 저장",
+    "preferences": "오디오, 그래픽 및 조작 설정",
+    "resign": "게임을 종료하고 타이틀로 이동",
+    "stopTravel": "월드 이동을 멈추고 현재 위치 탐색",
+    "returnToWorldMap": "현재 지역을 벗어나 월드 맵으로 복귀",
+    "returnToShip": "즉시 우주선 내부로 탑승"
+  },
   "dynamics": {
     "roster": "",
     "rosterSub": "",

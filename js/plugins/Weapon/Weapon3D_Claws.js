@@ -522,7 +522,7 @@
         const throat = new THREE.Mesh(new THREE.BoxGeometry(0.062, 0.014, 0.018), dark);
         throat.position.set(0, 0.036, 0.008);
         group.add(throat);
-        this._rivets(group, dark, 2, 0.01, 0.02, 0.004, 0.016);
+        this._rivets(group, dark, 2, 0.01, 0.02, 0.004, 0.005, 0.008);
         return group;
       },
 
@@ -622,7 +622,9 @@
           group.add(shank);
           const hook = this._talon(group, bright, {
             length: 0.03, sweep: 0.026, curl: 0.1, r0: 0.0042, r1: 0.0014,
-            position: [x, 0.1, 0.03]
+            // Seated on the end of its own shank: the shank leans back, so a
+            // hook set forward of it hung off the tip.
+            position: [x, 0.1, 0.019]
           });
           hook.rotation.x = 0.7;
         }
@@ -924,12 +926,21 @@
           const x = -0.026 + i * 0.026;
           // A stack of octahedra reads as cleavage planes where a smooth
           // blade would read as steel.
+          // Each facet is stepped by its own height plus the next one's, so
+          // the stack stays a single blade as the crystals get smaller: a
+          // fixed step left the last facets floating past the point.
+          let fy = 0.058;
+          let fz = 0.018;
           for (let j = 0; j < 4; j++) {
-            const f = new THREE.Mesh(new THREE.OctahedronGeometry(0.011 - j * 0.002, 0), crystal);
-            f.position.set(x, 0.058 + j * 0.022, 0.018 + j * 0.014);
+            const r = 0.011 - j * 0.002;
+            const f = new THREE.Mesh(new THREE.OctahedronGeometry(r, 0), crystal);
+            f.position.set(x, fy, fz);
             f.rotation.set(0.4 + j * 0.1, 0, (i - 1) * 0.15);
             f.scale.set(0.55, 1.5, 0.9);
             group.add(f);
+            const step = (r + (0.011 - (j + 1) * 0.002)) * 1.5 * 0.85;
+            fy += step * 0.843;
+            fz += step * 0.536;
           }
           const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.01, 0.012, this.seg(8, 5)), setting);
           seat.position.set(x, 0.05, 0.016);

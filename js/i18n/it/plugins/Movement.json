@@ -19,5 +19,6 @@
   "cannotSwimHere": "Qui non puoi nuotare.",
   "drinkSaltWaterChoice": "Bevi acqua salata",
   "drankSaltWater": "Hai bevuto acqua salata",
-  "drankWater": "Hai bevuto acqua"
+  "drankWater": "Hai bevuto acqua",
+  "swimExhausted": "Sei senza fiato. Raggiungi la riva."
 }

@@ -1,0 +1,51 @@
+{
+  "found": {
+    "title": "Fonda una citta",
+    "nameLabel": "Nome della citta",
+    "namePlaceholder": "Dalle un nome…",
+    "button": "Fonda la citta",
+    "requirement": "Case presenti qui: {have} di {need}",
+    "here": "Questo quadrante: {place}",
+    "reason": {
+      "notHere": "Una citta si fonda all'aperto, non dentro un edificio.",
+      "claimed": "{place} sorge gia su questo quadrante.",
+      "exists": "Una tua citta sorge gia su questo quadrante.",
+      "houses": "Devono esserci tre case prima che qualcuno la chiami citta.",
+      "noName": "La citta ha bisogno di un nome.",
+      "duplicate": "Hai gia dato quel nome a una citta."
+    },
+    "success": "{name} e fondata.",
+    "founded": "{name}, fondata qui."
+  },
+  "deeds": {
+    "title": "Atti",
+    "back": "Indietro",
+    "empty": "Non hai fondato nessuna citta.",
+    "colTown": "Citta",
+    "colWhere": "Dove",
+    "colHouses": "Case",
+    "colShops": "Negozi",
+    "colResidents": "Residenti",
+    "colRent": "Affitto",
+    "rentPerDay": "{amount} al giorno",
+    "collected": "Affitto riscosso: {amount}",
+    "nothingDue": "Non c'e ancora affitto da riscuotere.",
+    "collect": "Riscuoti l'affitto",
+    "growing": "Si sta ancora popolando",
+    "full": "Del tutto abitata",
+    "onPlanet": "su {planet}",
+    "square": "{x}, {y}",
+    "sectionTowns": "Citta",
+    "sectionHouses": "Case",
+    "sectionShops": "Negozi",
+    "sectionAnimals": "Animali",
+    "emptyHouses": "Non possiedi nessuna casa.",
+    "emptyShops": "Non possiedi nessun negozio.",
+    "emptyAnimals": "Non possiedi nessun animale.",
+    "colType": "Tipo",
+    "colOccupancy": "Occupazione",
+    "colCategory": "Attivita",
+    "colBalance": "Saldo",
+    "colStage": "Stadio"
+  }
+}

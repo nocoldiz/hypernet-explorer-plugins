@@ -470,10 +470,75 @@
   }
 
   // ============================================================================
+  // Strangeness: how far out of the Local Group a place is, and how far from
+  // ordinary physics its worlds are allowed to be.
+  // ----------------------------------------------------------------------------
+  // ONE number answers both, a TIER from 0 to 15. Tier 0 is home: the Milky Way
+  // and its neighbours, where a system looks like the solar system. Every step
+  // out along the cosmic web raises it, and by the far tiers a "system" may be
+  // a dozen stars sharing one orbit, a ring of nothing but garden worlds, or a
+  // swarm of planets running backwards through each other's paths.
+  //
+  // The tier has to survive a save, a reload and a jump back years later, and
+  // the only thing a restored system knows about itself is its NAME
+  // ("GX.<seed>.<i>"). So the tier is carried in the low four bits of the
+  // galaxy seed itself: stampTier() puts it there when a galaxy is first named,
+  // tierOfSeed() reads it back, and nothing else has to be plumbed anywhere.
+  // Fifteen bits of the hash are spent on it, which costs a seed space of 2^32
+  // nothing it will ever notice.
+  // ============================================================================
+  const STRANGE_MAX_TIER = 15;
+
+  const Strangeness = {
+    MAX_TIER: STRANGE_MAX_TIER,
+
+    /** Fold a tier into a hash so the seed carries it for good. */
+    stampTier(hash, tier) {
+      const t = Math.max(0, Math.min(STRANGE_MAX_TIER, Math.round(tier || 0)));
+      return (((hash >>> 0) & ~0xF) | t) >>> 0;
+    },
+
+    /** The tier a "GX.<seed>..." seed was stamped with. */
+    tierOfSeed(seed) {
+      const n = Math.abs(Math.round(seed || 0));
+      return n & 0xF;
+    },
+
+    /** The tier of a system, from its name alone. Anything that is not a
+     *  procedural far-galaxy system (the Milky Way's own, the lazy field, the
+     *  hand-authored catalogue) is home, and home is tier 0. */
+    tierOfSystemName(name) {
+      if (typeof name !== "string" || !name.startsWith("GX.")) return 0;
+      const seed = parseInt(name.split(".")[1], 10);
+      return Number.isFinite(seed) ? this.tierOfSeed(seed) : 0;
+    },
+
+    /** The tier of a place in the cosmic web, from how far out it sits.
+     *  `r` and `radius` are in the same units (world units, or ly, or Mly:
+     *  only the ratio is read). The curve is deliberately gentle near home -
+     *  the Local Group and its wall are ordinary space - and steepens out
+     *  towards the edge of the observable universe. */
+    tierOfRadius(r, radius) {
+      const R = radius > 0 ? radius : 1;
+      const f = Math.max(0, Math.min(1, (r || 0) / R));
+      return Math.round(Math.pow(f, 0.72) * STRANGE_MAX_TIER);
+    },
+
+    /** 0..1, the tier as a fraction: what most generators actually want. */
+    strangeness(tier) {
+      return Math.max(0, Math.min(1, (tier || 0) / STRANGE_MAX_TIER));
+    },
+  };
+
+  // ============================================================================
   // Export to namespace
   // ============================================================================
 
   window.GalaxySim.Math = {
+    // How strange a place is allowed to be, by how far out it sits
+    Strangeness,
+    STRANGE_MAX_TIER,
+
     // Classes
     Vector2,
     Camera,

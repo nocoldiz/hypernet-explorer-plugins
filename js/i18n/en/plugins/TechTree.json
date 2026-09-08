@@ -29,6 +29,7 @@
   "procDesc": "A line of work that closed elsewhere and stayed open here. The result reproduces on this world's apparatus; no derivation for it has ever been published.",
   "unknownDiscoverer": "Unknown",
   "progressCleared": "\\C[3]Research progress cleared.\\C[0]",
+  "treeRegenerated": "\\C[3]A new tree of invention takes root.\\C[0]",
   "theme": {
     "Physics": {
       "a": [

@@ -30,6 +30,7 @@
     ccT,
     ccTp,
     ccStatLabel,
+    ccStatLabels,
     ccList,
     ccReproChoices,
     ccHormoneLean,
@@ -162,7 +163,7 @@
       const emptyHtml = `<div class="cc-class-empty">${ccT('Traits.noneInCategory', 'Nothing here')}</div>`;
 
       return `
-        <div class="cc-page cc-page-left ts-page cc-trait-board" style="display: flex; flex-direction: column;">
+        <div class="cc-page cc-page-left ts-page cc-trait-board cc-page-column">
           <div class="ts-tab-row">${tabsHtml}</div>
           <div class="cc-select-grid cc-trait-grid">
             ${cardsHtml || emptyHtml}
@@ -230,30 +231,30 @@
         let statRows = "";
         if (hoveredTrait.positive) {
           statRows += Object.entries(hoveredTrait.positive)
-            .map(([k, v]) => `<span class="cc-element-badge" style="color:var(--text-forest-green, #4ade80)">+${v} ${k.toUpperCase()}</span>`)
+            .map(([k, v]) => `<span class="cc-element-badge cc-badge-good">${window.TraitParams.text(k, v)}</span>`)
             .join(" ");
         }
         if (hoveredTrait.negative) {
           statRows += Object.entries(hoveredTrait.negative)
-            .map(([k, v]) => `<span class="cc-element-badge" style="color:var(--accent-red-3, #f87171)">${v} ${k.toUpperCase()}</span>`)
+            .map(([k, v]) => `<span class="cc-element-badge cc-badge-bad">${window.TraitParams.text(k, v)}</span>`)
             .join(" ");
         }
 
         let extraGrants = "";
         if (hoveredTrait.skills && hoveredTrait.skills.length > 0 && typeof $dataSkills !== "undefined") {
           const sNames = hoveredTrait.skills.map((sid) => ($dataSkills[sid] ? $dataSkills[sid].name : `Skill #${sid}`)).join(", ");
-          extraGrants += `<div style="font-size:0.85rem; color:var(--text-text-alt-2); margin-top:4px;"><strong>${ccT('Traits.grantsSkills', 'Skills')}:</strong> ${sNames}</div>`;
+          extraGrants += `<div class="cc-grant-note"><strong>${ccT('Traits.grantsSkills', 'Skills')}:</strong> ${sNames}</div>`;
         }
 
         detailHtml = `
-          <div class="cc-dossier-card ts-detail-card" style="margin-bottom:10px;">
+          <div class="cc-dossier-card ts-detail-card cc-gap-below">
             <div class="ts-detail-head">
               <span class="cc-rpg-icon" style="${this._ccIconStyle(hoveredTrait.icon || 87, 26)}"></span>
               <span class="ts-detail-label">${name}</span>
               ${costBadge}
             </div>
             <div class="ts-detail-desc">${desc}</div>
-            ${statRows ? `<div class="ts-badge-row" style="justify-content:flex-start; margin-top:6px;">${statRows}</div>` : ''}
+            ${statRows ? `<div class="ts-badge-row cc-row-start cc-gap-above-tight">${statRows}</div>` : ''}
             ${extraGrants}
           </div>
         `;
@@ -293,13 +294,13 @@
       });
       const bonusBadges = Object.entries(totals)
         .filter(([k, v]) => v !== 0)
-        .map(([k, v]) => `<span class="cc-element-badge" style="color:${v > 0 ? 'var(--text-forest-green, #4ade80)' : 'var(--accent-red-3, #f87171)'}">${v > 0 ? '+' : ''}${v} ${k.toUpperCase()}</span>`)
-        .join(" ") || `<span style="opacity:0.6; font-size:0.88rem">${ccT('CharCreate.noDefiningTraits', 'No trait modifiers')}</span>`;
+        .map(([k, v]) => `<span class="cc-element-badge ${v > 0 ? 'cc-badge-good' : 'cc-badge-bad'}">${window.TraitParams.text(k, v)}</span>`)
+        .join(" ") || `<span class="cc-note-faint">${ccT('CharCreate.noDefiningTraits', 'No trait modifiers')}</span>`;
 
       const totalBonusesTitle = (ccT('Traits.totalBonuses', 'Total Modifiers')).replace(/[:\s]+$/, '');
 
       return `
-        <div class="cc-page cc-page-right ts-page cc-trait-detail" style="display: flex; flex-direction: column;">
+        <div class="cc-page cc-page-right ts-page cc-trait-detail cc-page-column">
           <div class="ts-sheet-head">
             ${purseHtml}
             <div class="ts-sheet-actions">
@@ -333,7 +334,7 @@
           <div class="cc-dossier-card ts-summary">
             <div class="ts-summary-row">
               <span class="cc-dossier-label">${totalBonusesTitle}:</span>
-              <div class="ts-badge-row" style="justify-content:flex-start;">${bonusBadges}</div>
+              <div class="ts-badge-row cc-row-start">${bonusBadges}</div>
             </div>
           </div>
         </div>
@@ -421,7 +422,6 @@
           return;
         }
         picked.push(trait.id);
-        SoundManager.playOk();
       }
 
       this._ccApplyTraitIds(actor, picked);
@@ -499,7 +499,6 @@
         if (api && api.infectActor) {
           api.infectActor(actor, card.diseaseId, null, null, { silent: true, diagnosed: true });
         }
-        SoundManager.playOk();
       }
     }
 
@@ -523,7 +522,6 @@
         }
         this._ccApplyTraitIds(actor, picked);
       }
-      SoundManager.playOk();
       this._lastStep = -1;
       this._lastIndex = -1;
       this.refreshUIOverlayDOM();
@@ -531,13 +529,20 @@
 
     onTraitConfirm() {
       markStepCompleted(STEP.TRAITS);
-      SoundManager.playOk();
       this.nextStep();
     }
 
     // ── Specializations Step Helpers & Handlers ──
     _isSpecsPickerStep() {
       return this._step === STEP.SPECIALIZATIONS;
+    }
+
+    // The story mode is played as a character who already lived: her
+    // specializations are the record of that life, not a purse to spend. The
+    // board is opened there to be read, so it lists only what she actually
+    // stands above Untrained in and hands out no controls at all.
+    _specsReadOnly() {
+      return !!Scene_CharacterCreation._storyMode;
     }
 
     _specsCatalog() {
@@ -649,6 +654,10 @@
       const nameOf = (sp) => (S.displayName ? S.displayName(sp) : sp.name) || "";
       const descOf = (sp) => (S.describe ? S.describe(sp) : sp.description) || "";
 
+      if (this._specsReadOnly()) {
+        return this._specsWithLevels(Scene_CharacterCreation.getCurrentActor())
+          .slice().sort((a, b) => nameOf(a).localeCompare(nameOf(b)));
+      }
       const byCat = activeCat === "All"
         ? catalog
         : activeCat === SPEC_TAB_CURRENT
@@ -707,7 +716,8 @@
       // mixed-category tabs (All, and Current which spans whatever the
       // member trained).
       const activeCat = Scene_CharacterCreation._activeSpecCategory || "All";
-      const showCatLabel = activeCat === "All" || activeCat === SPEC_TAB_CURRENT;
+      const readOnly = this._specsReadOnly();
+      const showCatLabel = readOnly || activeCat === "All" || activeCat === SPEC_TAB_CURRENT;
       return specs.map((spec) => {
         const specName = S.displayName ? S.displayName(spec) : spec.name;
         const specCatLabel = S.categoryLabel ? S.categoryLabel(spec.category) : (spec.category || "General");
@@ -728,11 +738,12 @@
                 <span class="cc-spec-level-name">${this._specRankName(currentRank)}</span>
               </div>
             </div>
+            ${readOnly ? '' : `
             <div class="cc-spec-controls">
               <button class="cc-spec-btn cc-spec-btn-minus" ${currentRank <= grantRank ? 'disabled' : ''} onclick="SceneManager._scene.onSpecPointAdjust(${spec.id}, -1)">-</button>
               <div class="cc-spec-pips">${pipsHtml}</div>
               <button class="cc-spec-btn cc-spec-btn-plus" ${(remaining <= 0 || currentRank >= 4) ? 'disabled' : ''} onclick="SceneManager._scene.onSpecPointAdjust(${spec.id}, 1)">+</button>
-            </div>
+            </div>`}
           </div>
         `;
       }).join("");
@@ -744,7 +755,7 @@
       const remaining = this._specsRemaining(actor);
       const cards = this._specCardsHtml(this._filteredSpecs(), actor, remaining);
       if (cards.length > 0) return cards;
-      return `<div style="grid-column: 1 / -1; text-align:center; padding:20px; color:#a89f91; font-size:0.9rem;">${T('SpecMenu.ui.noMatches')}</div>`;
+      return `<div class="cc-empty-note">${T('SpecMenu.ui.noMatches')}</div>`;
     }
 
     // Redraw just the card grid in place, leaving the search field (and the
@@ -784,18 +795,21 @@
         `;
       }).join("");
 
+      const readOnly = this._specsReadOnly();
+
       return `
-        <div class="cc-page cc-page-left cc-spec-board ts-page" style="display: flex; flex-direction: column;">
-          <div style="display:flex; align-items:center; justify-content:flex-end; margin-bottom:8px">
-            <div class="ts-purse" style="display:flex; gap:6px; font-size:0.88rem;">
+        <div class="cc-page cc-page-left cc-spec-board ts-page cc-page-column">
+          ${readOnly ? '' : `
+          <div class="cc-row-end">
+            <div class="ts-purse">
               <span class="ts-purse-chip">${T('CharCreate.budgetPoints', { remaining: remaining, total: budget })}</span>
             </div>
           </div>
           <div class="cc-spec-tab-row">${catTabsHtml}</div>
-          <div style="margin-bottom:6px;">
-            <input type="text" class="cc-bio-select" style="padding:4px 10px; font-size:0.85rem; height:30px;" placeholder="${T('SpecMenu.ui.searchPlaceholder')}" oninput="SceneManager._scene.onSpecSearch(this.value)" value="${Scene_CharacterCreation._specSearchQuery || ''}">
-          </div>
-          <div class="cc-spec-grid" style="padding-bottom: 24px;">
+          <div class="cc-gap-below-tight">
+            <input type="text" class="cc-bio-select cc-search-field" placeholder="${T('SpecMenu.ui.searchPlaceholder')}" oninput="SceneManager._scene.onSpecSearch(this.value)" value="${Scene_CharacterCreation._specSearchQuery || ''}">
+          </div>`}
+          <div class="cc-spec-grid cc-pad-below">
             ${this._specGridInnerHtml()}
           </div>
         </div>
@@ -826,15 +840,15 @@
         const rankLabel = this._specRankName(rank);
 
         detailHtml = `
-          <div class="cc-dossier-card ts-detail" style="padding: 10px 12px; margin-bottom: 8px;">
-            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:8px; border-bottom:1px solid rgba(218,165,32,0.25); padding-bottom:6px;">
-              <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:0;">
-                <span class="cc-spec-stat-badge" style="font-size:0.85rem; flex-shrink:0;">${ccStatLabel(hoveredSpec.stat || 'INT')}</span>
-                <span style="font-family:'Lora',serif; font-size:1.15rem; font-weight:bold; color:#ffd700; overflow-wrap:break-word; line-height:1.2;">${specName}</span>
+          <div class="cc-dossier-card ts-detail">
+            <div class="cc-detail-head">
+              <div class="cc-detail-head-ident">
+                <span class="cc-spec-stat-badge">${ccStatLabel(hoveredSpec.stat || 'INT')}</span>
+                <span class="cc-detail-title">${specName}</span>
               </div>
-              <span class="trait-cost" style="font-size:0.82rem; white-space:nowrap; flex-shrink:0;">${rankLabel}</span>
+              <span class="trait-cost cc-detail-rank">${rankLabel}</span>
             </div>
-            <div style="font-size:0.88rem; color:#ded1c1; line-height:1.4; margin-bottom:8px">${specDesc || ccT('CharCreate.specGenericDesc', 'Proficiency acquired through rigorous study and fieldwork.')}</div>
+            <div class="cc-detail-desc">${specDesc || ccT('CharCreate.specGenericDesc', 'Proficiency acquired through rigorous study and fieldwork.')}</div>
             <div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('SpecMenu.ui.category', 'Category')}:</span><span class="cc-dossier-value">${catLabel}</span></div>
             <div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('SpecMenu.ui.governingStat', 'Governing Attribute')}:</span><span class="cc-dossier-value">${ccStatLabel(hoveredSpec.stat || "INT")}</span></div>
             ${grantRank > 0 ? `<div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('CharCreate.specGranted', 'Granted by Class and Traits')}:</span><span class="cc-dossier-value">${this._specRankName(grantRank)}</span></div>` : ''}
@@ -846,6 +860,7 @@
       // roster reads top to bottom instead of wrapping into a chip cloud. Each
       // row carries its own delete button; a granted rank has no such button
       // since selling back what nobody paid for isn't possible.
+      const readOnly = this._specsReadOnly();
       const trainedBadges = trainedEntries.map(([idStr, rank, grantRank]) => {
         const spec = catalog.find((s) => s.id === Number(idStr));
         const name = spec ? ((window.Specializations && window.Specializations.displayName) ? window.Specializations.displayName(spec) : spec.name) : `Spec #${idStr}`;
@@ -853,26 +868,27 @@
         return `
           <div class="cc-spec-badge-row${isGranted ? ' granted' : ''}" onmouseenter="SceneManager._scene.onSpecCardHover(${idStr})">
             <span class="cc-spec-badge-row-name">${name}</span>
-            <span class="cc-spec-stat-badge" style="padding:0 4px; flex-shrink:0;">${this._specRankName(rank)}</span>
-            <button class="cc-spec-badge-delete" title="${ccT('CharCreate.removeAllocated', 'Remove')}" ${isGranted ? 'disabled' : ''} onclick="event.stopPropagation(); SceneManager._scene.onSpecDeleteAllocated(${idStr})">&times;</button>
+            <span class="cc-spec-stat-badge cc-inline-gutter">${this._specRankName(rank)}</span>
+            ${readOnly ? '' : `<button class="cc-spec-badge-delete" title="${ccT('CharCreate.removeAllocated', 'Remove')}" ${isGranted ? 'disabled' : ''} onclick="event.stopPropagation(); SceneManager._scene.onSpecDeleteAllocated(${idStr})">&times;</button>`}
           </div>
         `;
       }).join("");
 
       return `
-        <div class="cc-page cc-page-right cc-spec-detail ts-page" style="display: flex; flex-direction: column;">
-          <div style="display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:6px; margin-bottom:8px">
+        <div class="cc-page cc-page-right cc-spec-detail ts-page cc-page-column">
+          ${readOnly ? '' : `
+          <div class="cc-row-end cc-row-end-wrap">
             <button class="cc-profile-open-btn" onclick="SceneManager._scene.onSuggestSpecsForCurrentActor()">${ccT('CharCreate.suggestSpecs', 'Suggested')}</button>
             <button class="cc-profile-open-btn" onclick="SceneManager._scene.onResetSpecsForCurrentActor()">${ccT('CharCreate.resetSpecs', 'Reset')}</button>
             <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeSpecsForCurrentActor()">${ccT('CharCreate.randomize', 'Randomize')}</button>
-          </div>
+          </div>`}
           ${detailHtml}
 
-          <h3 class="cc-subheader" style="margin-top:10px; margin-bottom:6px">
+          <h3 class="cc-subheader cc-gap-above">
             <span>${ccT('CharCreate.allocatedTalents', 'Allocated Talents')} (${trainedEntries.length})</span>
           </h3>
-          <div style="display:flex; flex-direction:column; min-height:48px; margin-bottom:10px; gap:4px;">
-            ${trainedBadges || `<span style="opacity:0.6; font-size:0.88rem; padding:6px;">${ccT('CharCreate.noTalentsSpent', 'No specialization points allocated yet.')}</span>`}
+          <div class="cc-stack cc-stack-roster">
+            ${trainedBadges || `<span class="cc-note-faint cc-note-faint-padded">${ccT('CharCreate.noTalentsSpent', 'No specialization points allocated yet.')}</span>`}
           </div>
         </div>
       `;
@@ -914,6 +930,7 @@
     }
 
     onSpecPointAdjust(specId, delta) {
+      if (this._specsReadOnly()) { SoundManager.playBuzzer(); return; }
       if (this._refusePresetEdit()) return;
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
@@ -934,7 +951,6 @@
           return;
         }
         actor._specTrained[specId] = current + 1;
-        SoundManager.playOk();
       } else if (delta < 0) {
         if (current <= grantRank) {
           SoundManager.playBuzzer();
@@ -952,6 +968,7 @@
     // as it is for the minus button, so a head start from the class or a
     // trait can never be sold away.
     onSpecDeleteAllocated(specId) {
+      if (this._specsReadOnly()) { SoundManager.playBuzzer(); return; }
       if (this._refusePresetEdit()) return;
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
@@ -1068,6 +1085,7 @@
     }
 
     onRandomizeSpecsForCurrentActor() {
+      if (this._specsReadOnly()) { SoundManager.playBuzzer(); return; }
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
       const catalog = this._specsCatalog();
@@ -1079,7 +1097,6 @@
       const grantCtx = this._specGrantContext(actor);
       this._randomSpendSpecs(actor, grantCtx, catalog, CC_SPEC_BUDGET);
 
-      SoundManager.playOk();
       this._patchSpecBoard();
     }
 
@@ -1087,6 +1104,7 @@
     // class and traits grant: a clean refund back to a full purse, with
     // nothing else about the board reset.
     onResetSpecsForCurrentActor() {
+      if (this._specsReadOnly()) { SoundManager.playBuzzer(); return; }
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
       actor._specTrained = {};
@@ -1101,6 +1119,7 @@
     // spends what is left over the same way Randomize does, so the purse is
     // never left holding points back.
     onSuggestSpecsForCurrentActor() {
+      if (this._specsReadOnly()) { SoundManager.playBuzzer(); return; }
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
       const catalog = this._specsCatalog();
@@ -1129,7 +1148,6 @@
         this._randomSpendSpecs(actor, grantCtx, catalog, remaining);
       }
 
-      SoundManager.playOk();
       this._patchSpecBoard();
     }
 
@@ -1203,42 +1221,52 @@
     _renderTypePillsHtml() {
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return "";
-      // The tutorial is played as the dossier that was picked on its own board:
+      // The story mode is played as the dossier that was picked on its own board:
       // there is no humanoid, creature or second dossier to switch to, so the
       // pills are not drawn rather than drawn and refused.
-      if (Scene_CharacterCreation._tutorialMode) return "";
+      if (Scene_CharacterCreation._storyMode) return "";
       const isPreset = !!this._presetWindow;
       const isPresetActor = !!(actor._isPresetActor);
       const hasAnotherPreset = this._hasPresetInParty(true);
       const isPresetDisabled = hasAnotherPreset && !isPresetActor;
       const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const isCreature = !isPresetActor && !isPreset && !!(actor._isCreatureActor || $gameSwitches.value(77 + currentMemberIndex));
+      // Drawn as the Bio tab's own kind of question: a titled section with a
+      // row of chips, the same shape gender and class wear, rather than a
+      // stripe of pills that belonged to the old sidebar.
       return `
-        <div class="cc-compact-type-pills" style="margin-bottom:10px;">
-          <div class="cc-compact-type-pill ${!isCreature && !isPresetActor && !isPreset ? 'active' : ''}" onclick="SceneManager._scene.onSetCharacterType('humanoid')">
-            ${ccT('CharCreate.humanoid', 'Humanoid')}
-          </div>
-          <div class="cc-compact-type-pill ${isCreature && !isPresetActor && !isPreset ? 'active' : ''}" onclick="SceneManager._scene.onSetCharacterType('creature')">
-            ${ccT('CharCreate.creature', 'Creature')}
-          </div>
-          <div class="cc-compact-type-pill ${(isPresetActor || isPreset) ? 'active' : ''} ${isPresetDisabled ? 'disabled' : ''}"
-               style="${isPresetDisabled ? 'opacity:0.35; cursor:not-allowed;' : ''}"
+        <div class="cc-bio-section">
+          <div class="cc-bio-section-title">${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.characterType', 'Character Type')}</span></div>
+          <div class="cc-bio-chips-row">
+            <button class="cc-bio-chip cc-type-chip ${!isCreature && !isPresetActor && !isPreset ? 'selected' : ''}" onclick="SceneManager._scene.onSetCharacterType('humanoid')">
+              ${ccT('CharCreate.humanoid', 'Humanoid')}
+            </button>
+            <button class="cc-bio-chip cc-type-chip ${isCreature && !isPresetActor && !isPreset ? 'selected' : ''}" onclick="SceneManager._scene.onSetCharacterType('creature')">
+              ${ccT('CharCreate.creature', 'Creature')}
+            </button>
+            <button class="cc-bio-chip cc-type-chip ${(isPresetActor || isPreset) ? 'selected' : ''} ${isPresetDisabled ? 'disabled' : ''}"
                title="${isPresetDisabled ? ccT('CharCreate.onlyOnePreset', 'Only 1 preset character allowed in the party') : ccT('CharCreate.presetDossiers', 'Preset Dossiers')}"
                onclick="${isPresetDisabled ? 'SoundManager.playBuzzer()' : "SceneManager._scene.onSetCharacterType('preset')"}">
-            ${ccT('CharCreate.preset', 'Preset')}
+              ${ccT('CharCreate.preset', 'Preset')}
+            </button>
           </div>
         </div>
       `;
     }
 
-    // The body a creature is spliced from. Both selects funnel through
+    // The body a character is spliced from. Both selects funnel through
     // applyArchetypesToActor (see onSelectCreatureArchetype /
     // onSelectCreatureSecondaryArchetype), which settles the 3D config from
     // the full canonical pair every time: changing the primary rebuilds the
     // model as the new kind, changing the secondary re-grafts its parts onto
     // it. Neither call is special-cased here, they already share the one path.
-    _creatureArchetypeBioHtml(actor) {
-      const currentArch = actorArchetypeKey(actor) || "Goblin";
+    //
+    // A person is offered the second half too, and only the second half: a
+    // humanoid is a humanoid, but it may be spliced with anything, which grafts
+    // that body's extra parts on (more arms means more weapons held, see
+    // HandSlots in ItemSystemEquipment.js).
+    _archetypeBioHtml(actor, isCreature) {
+      const currentArch = actorArchetypeKey(actor) || (isCreature ? "Beast" : "Humanoid"); // i18n-ignore: Archetypes.json keys
       const secondArch = actorSecondaryArchetypeKey(actor) || "";
       // Neither list offers what the other one holds: the two halves of a
       // spliced body are always two different archetypes.
@@ -1249,16 +1277,24 @@
       const primaryOptionsHtml = archetypeOptions(currentArch, secondArch);
       const secondaryOptionsHtml = `<option value="" ${secondArch ? '' : 'selected'}>${ccT('CharCreate.none', 'None')}</option>` +
         archetypeOptions(secondArch, currentArch);
-      return `
-        <div class="cc-bio-section" style="background:transparent !important; border:none !important; box-shadow:none !important; border-bottom:1px solid rgba(218,165,32,0.12) !important; padding:6px 0 10px 0;">
+      // What the spliced body can hold, asked of the one place that answers it.
+      const HS = window.HandSlots;
+      const slots = (HS && HS.layout) ? HS.layout(actor).slots : 0;
+      const slotsHtml = `<div class="cc-bio-note">${ccTp('CharCreate.weaponSlotsHeld', { n: slots }, `Weapons held: ${slots}`)}</div>`;
+      const primaryHtml = isCreature ? `
           <div class="cc-bio-section-title">${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.primaryArchetype', 'Primary Archetype')}</span></div>
           <select class="cc-bio-select" onchange="SceneManager._scene.onSelectCreatureArchetype(this.value)">
             ${primaryOptionsHtml}
           </select>
-          <div class="cc-bio-section-title" style="margin-top:10px;">${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.secondaryArchetype', 'Secondary Archetype')}</span></div>
+          <div class="cc-bio-section-title cc-gap-above">` : `
+          <div class="cc-bio-section-title">`;
+      return `
+        <div class="cc-bio-section">
+          ${primaryHtml}${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.secondaryArchetype', 'Secondary Archetype')}</span></div>
           <select class="cc-bio-select" onchange="SceneManager._scene.onSelectCreatureSecondaryArchetype(this.value)">
             ${secondaryOptionsHtml}
           </select>
+          ${slotsHtml}
         </div>
       `;
     }
@@ -1267,10 +1303,20 @@
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return `<div class="cc-page cc-page-left"></div>`;
 
+      // Story mode is played as Em and only as Em: her gender, her class, her
+      // creed and her lack of a job are hers, not the player's, so the controls
+      // that would edit them are settled and then shown as settled. See
+      // CharacterPresets.isStoryModeEm.
+      const CP = window.CharacterPresets;
+      const isStoryEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm(actor));
+      if (isStoryEm && CP.applyStoryModeEmLocks) CP.applyStoryModeEmLocks(actor);
+
       const typePillsHtml = this._renderTypePillsHtml();
       const memberIdxForType = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const isCreatureActor = !!(actor._isCreatureActor || $gameSwitches.value(77 + memberIdxForType));
-      const archetypeBioHtml = isCreatureActor ? this._creatureArchetypeBioHtml(actor) : "";
+      // The second half is asked of a person as much as of a creature; only
+      // the creature is asked what its first half is.
+      const archetypeBioHtml = this._archetypeBioHtml(actor, isCreatureActor);
 
       // Gender picker
       const genders = [
@@ -1283,7 +1329,8 @@
       const currentGender = $gameVariables.value(38 + currentMemberIdx);
       const genderChipsHtml = genders.map((g) => {
         const isSelected = currentGender === g.val;
-        return `<button class="cc-bio-chip ${isSelected ? 'selected' : ''}" onclick="SceneManager._scene.onSetActorGender(${g.val})">${g.label}</button>`;
+        const click = isStoryEm ? 'SoundManager.playBuzzer()' : `SceneManager._scene.onSetActorGender(${g.val})`;
+        return `<button class="cc-bio-chip ${isSelected ? 'selected' : ''} ${isStoryEm ? 'disabled' : ''}" onclick="${click}">${g.label}</button>`;
       }).join("");
 
       // Reproductive organs: the gender pick writes a default in here, and this
@@ -1298,8 +1345,10 @@
       const hormoneBalance = this._currentHormoneBalance();
 
       // Ideologies
+      const emCreedChoices = (isStoryEm && CP && CP.storyModeEmIdeologyChoices)
+        ? CP.storyModeEmIdeologyChoices() : [];
       const allIdeologies = (window.NPCShared && window.NPCShared.ideologyList && window.NPCShared.ideologyList()) || [];
-      const currentIdeology = actor._ideologyId || "pragmatist";
+      const currentIdeology = actor._ideologyId || "";
 
       // A handful of creeds used to sit above the list as chips, which said that
       // those seven were the ones worth having. Every creed is in the list (and
@@ -1316,12 +1365,22 @@
       ];
 
       // Full dropdown options with clean translated names
-      const ideologyOptionsHtml = (allIdeologies.length > 0 ? allIdeologies : coreQuickPicks).map((item) => {
-        const id = item.id || item;
-        const displayName = this._formatIdeologyName(item);
-        const isSelected = currentIdeology === id;
-        return `<option value="${id}" ${isSelected ? 'selected' : ''}>${displayName}</option>`;
-      }).join("");
+      // Alphabetical on the displayed creed name: the bank arrives grouped by
+      // political family, which reads as no order at all in a flat dropdown.
+      const ideologyOptionsHtml = (allIdeologies.length > 0 ? allIdeologies : coreQuickPicks)
+        .map((item) => ({ id: item.id || item, label: this._formatIdeologyName(item) }))
+        .filter((entry) => !isStoryEm || emCreedChoices.includes(entry.id))
+        .sort((a, b) => a.label.localeCompare(b.label))
+        .map((entry) => {
+          const isSelected = currentIdeology === entry.id;
+          return `<option value="${entry.id}" ${isSelected ? 'selected' : ''}>${entry.label}</option>`;
+        }).join("");
+      // A creed held is a creed chosen: the list opens on nobody's. The story
+      // mode's Em opens on Thelema instead and is offered the short shelf of
+      // creeds that fits her, nothing else (CharacterPresets).
+      const ideologyChoicesHtml = isStoryEm ? ideologyOptionsHtml : `
+        <option value="" ${currentIdeology ? '' : 'selected'}>${ccT('CharCreate.none', 'None')}</option>
+        ${ideologyOptionsHtml}`;
 
       // Morality Alignments
       const alignments = [
@@ -1342,7 +1401,12 @@
         ? Object.keys(window.WorkSystem.Destinations)
         : ["Paris", "Tokyo", "Neo-Cairo", "Brussels", "Berlin", "London", "Rome", "New York", "Geneva", "Athens"];
       const currentHometown = $gameSystem._ccHometown || "Paris";
-      const hometownOptions = hometowns.map((city) => `<option value="${city}" ${city === currentHometown ? 'selected' : ''}>${city}</option>`).join("");
+      // A dossier may name a town the work destinations never list (Em's
+      // Wimbledon): without this the select silently fell back to its first
+      // entry and the sheet claimed a birthplace nobody had chosen.
+      const hometownList = hometowns.includes(currentHometown)
+        ? hometowns : [currentHometown].concat(hometowns);
+      const hometownOptions = hometownList.map((city) => `<option value="${city}" ${city === currentHometown ? 'selected' : ''}>${city}</option>`).join("");
 
       // Age Bands
       const ageBands = [
@@ -1409,19 +1473,19 @@
       let compatHtml = "";
       if (otherMembersCount > 0) {
         compatHtml = `
-          <div style="margin-top:6px; padding:6px 10px; background:rgba(0,0,0,0.3); border:1px solid rgba(218,165,32,0.22); border-radius:4px; font-size:0.95rem;">
-            <div style="font-weight:bold; color:#ffd700; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
+          <div class="cc-blood-panel">
+            <div class="cc-blood-panel-head">
               <span>${ccT('CharCreate.bio.compatTitle', "Party Transfusion Compatibility")}</span>
-              <span style="font-size:0.9rem; color:#ded1c1; opacity:0.85;">${ccT('CharCreate.bio.compatSelected', "Selected")}: <b>${currentBloodEntry.type}</b></span>
+              <span class="cc-blood-panel-selected">${ccT('CharCreate.bio.compatSelected', "Selected")}: <b>${currentBloodEntry.type}</b></span>
             </div>
-            <div style="display:flex; flex-direction:column; gap:3px;">
-              <div style="color:#a5d6a7; display:flex; align-items:center; gap:6px;">
-                <span style="color:#81c784; font-weight:bold;">↳ ${ccT('CharCreate.bio.canDonate', "Can donate to:")}</span>
-                <span>${compat.canDonateTo.length > 0 ? compat.canDonateTo.map(m => `<b>${m.name}</b> (${m.type})`).join(", ") : `<span style="color:#ef9a9a; font-style:italic;">${ccT('CharCreate.bio.noDonor', "None (Incompatible donor)")}</span>`}</span>
+            <div class="cc-stack-gapped">
+              <div class="cc-blood-line cc-blood-line--donate">
+                <span class="cc-blood-line-label">↳ ${ccT('CharCreate.bio.canDonate', "Can donate to:")}</span>
+                <span>${compat.canDonateTo.length > 0 ? compat.canDonateTo.map(m => `<b>${m.name}</b> (${m.type})`).join(", ") : `<span class="cc-note-quiet">${ccT('CharCreate.bio.noDonor', "None (Incompatible donor)")}</span>`}</span>
               </div>
-              <div style="color:#90caf9; display:flex; align-items:center; gap:6px;">
-                <span style="color:#64b5f6; font-weight:bold;">↳ ${ccT('CharCreate.bio.canReceive', "Can receive from:")}</span>
-                <span>${compat.canReceiveFrom.length > 0 ? compat.canReceiveFrom.map(m => `<b>${m.name}</b> (${m.type})`).join(", ") : `<span style="color:#ef9a9a; font-style:italic;">${ccT('CharCreate.bio.noRecipient', "None (Requires matched donor)")}</span>`}</span>
+              <div class="cc-blood-line cc-blood-line--receive">
+                <span class="cc-blood-line-label">↳ ${ccT('CharCreate.bio.canReceive', "Can receive from:")}</span>
+                <span>${compat.canReceiveFrom.length > 0 ? compat.canReceiveFrom.map(m => `<b>${m.name}</b> (${m.type})`).join(", ") : `<span class="cc-note-quiet">${ccT('CharCreate.bio.noRecipient', "None (Requires matched donor)")}</span>`}</span>
               </div>
             </div>
           </div>
@@ -1437,8 +1501,8 @@
         const specialTrait = traitKey ? ccT('CharCreate.bio.bloodTrait.' + traitKey, "") : "";
         if (specialTrait) {
           compatHtml = `
-            <div style="margin-top:6px; padding:5px 8px; background:rgba(0,0,0,0.25); border:1px solid rgba(218,165,32,0.18); border-radius:4px; font-size:0.92rem; color:#e0d5c1;">
-              <span style="color:#ffd700; font-weight:bold;">${ccT('CharCreate.bio.traitLabel', "Trait:")}</span> ${specialTrait}
+            <div class="cc-blood-trait">
+              <span class="cc-blood-line-label">${ccT('CharCreate.bio.traitLabel', "Trait:")}</span> ${specialTrait}
             </div>
           `;
         }
@@ -1458,11 +1522,16 @@
       const currentJob = currentJobId > 0 ? (allJobs.find(j => j.id === currentJobId) || null) : null;
       const currentJobName = currentJob ? (window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(currentJob) : (currentJob.name || `Job #${currentJob.id}`)) : ccT('CharCreate.bio.jobless', "Jobless / Unemployed");
 
-      const joblessOptionHtml = `<option value="0" ${currentJobId === 0 ? 'selected' : ''}>-- ${ccT('CharCreate.bio.joblessOption', "Jobless / No occupation")} --</option>`;
-      const jobOptionsHtml = joblessOptionHtml + allJobs.map((j) => {
-        const jName = window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(j) : (j.name || `Job #${j.id}`);
-        const isSelected = currentJob && currentJob.id === j.id;
-        return `<option value="${j.id}" ${isSelected ? 'selected' : ''}>${jName} (${j.category} - ${j.spec})</option>`;
+      const joblessOptionHtml = `<option value="0" ${currentJobId === 0 ? 'selected' : ''}>-- ${ccT('CharCreate.bio.joblessOption', "None")} --</option>`;
+      // Sorted on the name the player actually reads, so the list is walkable
+      // in every language rather than in Jobs.json's authoring order.
+      const sortedJobs = allJobs.slice().map((j) => ({
+        job: j,
+        label: window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(j) : (j.name || `Job #${j.id}`)
+      })).sort((a, b) => a.label.localeCompare(b.label));
+      const jobOptionsHtml = joblessOptionHtml + sortedJobs.map((entry) => {
+        const isSelected = currentJob && currentJob.id === entry.job.id;
+        return `<option value="${entry.job.id}" ${isSelected ? 'selected' : ''}>${entry.label}</option>`;
       }).join("");
 
       let jobItemsBadges = "";
@@ -1472,26 +1541,104 @@
           const itemName = item ? item.name : `Item #${itemId}`;
           const iconIndex = item ? item.iconIndex : 160;
           return `
-            <span class="cc-element-badge" style="padding:2px 7px; font-size:0.92rem; display:inline-flex; align-items:center; gap:4px; text-transform:none;">
+            <span class="cc-element-badge cc-element-badge--plain">
               ${this._ccIconHtml(iconIndex, 14)} <span>${itemName}</span>
             </span>
           `;
         }).join(" ");
       }
 
+      // Classes list for Simple Mode
+      let availableClasses = [];
+      const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      const isCreature = !!(actor && (actor._isCreatureActor || $gameSwitches.value(77 + memberIndex)));
+      if (isCreature && window.CreatureClasses) {
+        const cIds = typeof window.CreatureClasses.creatureRoster === "function"
+          ? window.CreatureClasses.creatureRoster()
+          : (window.CreatureClasses.forActor(actor) || []);
+        const sAllowed = typeof window.CreatureClasses.sentientAllowedFor === "function"
+          ? window.CreatureClasses.sentientAllowedFor(
+              typeof actorArchetypeKey === "function" ? actorArchetypeKey(actor) : null,
+              typeof actorSecondaryArchetypeKey === "function" ? actorSecondaryArchetypeKey(actor) : null)
+          : true;
+        const sIds = (sAllowed && window.CreatureClasses.sentientRoster) ? window.CreatureClasses.sentientRoster() : [];
+        const combined = Array.from(new Set([...cIds, ...sIds]));
+        availableClasses = combined.map(id => (typeof $dataClasses !== 'undefined' ? $dataClasses[id] : null)).filter(Boolean);
+      } else if (window.CreatureClasses && window.CreatureClasses.sentientRoster) {
+        availableClasses = window.CreatureClasses.sentientRoster().map(id => (typeof $dataClasses !== 'undefined' ? $dataClasses[id] : null)).filter(Boolean);
+      } else if (typeof $dataClasses !== 'undefined') {
+        availableClasses = $dataClasses.filter(c => c && c.id > 0 && c.name);
+      }
+      availableClasses.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+      const currentClassId = (actor && actor._classId) ? actor._classId : 1;
+      const classChipsHtml = availableClasses.map((c) => {
+        const cName = window.CCDbName ? window.CCDbName(c) : c.name;
+        const isSelected = currentClassId === c.id;
+        const click = isStoryEm ? 'SoundManager.playBuzzer()' : `SceneManager._scene.onBioOptionChange('class', ${c.id})`;
+        return `<button type="button" class="cc-bio-chip ${isSelected ? 'selected' : ''} ${isStoryEm ? 'disabled' : ''}" onclick="${click}">${cName}</button>`;
+      }).join("");
+
+      // Story mode reads Em's sheet rather than writing it: the whole detailed
+      // page is drawn, down to her organs, her standing and her blood, and the
+      // page lock (see _presetLockFreeStep) is what keeps it from being edited.
+      const isSimpleMode = Scene_CharacterCreation.isSimpleMode() && !isStoryEm;
+
+      const professionSectionHtml = `
+        <div class="cc-bio-section">
+          <div class="cc-bio-section-title">${this._ccIconHtml(193, 16)} <span>${ccT('CharCreate.professionJob', "Profession")}</span></div>
+          <select class="cc-bio-select" onchange="SceneManager._scene.onBioOptionChange('job', this.value)">
+            ${jobOptionsHtml}
+          </select>
+          ${jobItemsBadges ? `
+            <div class="cc-stack-tight">
+              <div class="cc-row-chips">${jobItemsBadges}</div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      if (isSimpleMode) {
+        return `
+          <div class="cc-page cc-page-left ts-page cc-page-column">
+            <div class="cc-bio-container cc-step-scroll">
+              ${typePillsHtml}
+              ${archetypeBioHtml}
+              <div class="cc-bio-section">
+                <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.gender', "Gender")}</span></div>
+                <div class="cc-bio-chips-row">${genderChipsHtml}</div>
+              </div>
+              ${professionSectionHtml}
+              <div class="cc-bio-section">
+                <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology', "Creed")}</span></div>
+                <select id="cc-ideology-select" class="cc-bio-select" onchange="SceneManager._scene.onBioOptionChange('ideology', this.value)">
+                  ${ideologyChoicesHtml}
+                </select>
+              </div>
+              <div class="cc-bio-section cc-bio-section-flush">
+                <div class="cc-bio-section-title">${this._ccIconHtml(322, 16)} <span>${ccT('CharCreate.class', "Class")}</span></div>
+                <div class="cc-bio-chips-row">
+                  ${classChipsHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
       return `
-        <div class="cc-page cc-page-left ts-page" style="display:flex; flex-direction:column;">
-          <div class="cc-bio-container" style="flex:1; min-height:0; overflow-y:auto; padding-right:6px; padding-bottom:24px;">
+        <div class="cc-page cc-page-left ts-page cc-page-column">
+          <div class="cc-bio-container cc-step-scroll">
             ${typePillsHtml}
             ${archetypeBioHtml}
-            <div class="cc-bio-section" style="background:transparent !important; border:none !important; box-shadow:none !important; border-bottom:1px solid rgba(218,165,32,0.12) !important; padding:6px 0 10px 0;">
-              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.identityProfile', "Gender & Presentation")}</span></div>
+            <div class="cc-bio-section">
+              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.gender', "Gender")}</span></div>
               <div class="cc-bio-chips-row">${genderChipsHtml}</div>
             </div>
-            <div class="cc-bio-section" style="background:transparent !important; border:none !important; box-shadow:none !important; border-bottom:1px solid rgba(218,165,32,0.12) !important; padding:6px 0 10px 0;">
+            <div class="cc-bio-section">
               <div class="cc-bio-section-title">${this._ccIconHtml(267, 16)} <span>${ccT('CharCreate.reproductiveOrgans', "Reproductive Organs")}</span></div>
               <div class="cc-bio-chips-row">${reproChipsHtml}</div>
-              <div class="cc-bio-section-title" style="margin-top:10px;">${this._ccIconHtml(179, 16)} <span>${ccT('CharCreate.hormoneBalance', "Endocrine Balance")}</span></div>
+              <div class="cc-bio-section-title cc-gap-above">${this._ccIconHtml(179, 16)} <span>${ccT('CharCreate.hormoneBalance', "Endocrine Balance")}</span></div>
               <div class="cc-bio-slider-row">
                 <span class="cc-bio-slider-end">${ccT('CharCreate.hormoneOestrogenic', "Oestrogenic")}</span>
                 <input id="cc-hormone-slider" class="cc-bio-slider" type="range" min="0" max="100" step="1" value="${hormoneBalance}"
@@ -1501,56 +1648,41 @@
               </div>
               <div id="cc-hormone-readout" class="cc-bio-slider-readout">${this._hormoneReadoutHtml(hormoneBalance)}</div>
             </div>
-            <div class="cc-bio-section" style="background:transparent !important; border:none !important; box-shadow:none !important; border-bottom:1px solid rgba(218,165,32,0.12) !important; padding:6px 0 10px 0;">
-              <div class="cc-bio-section-title">${this._ccIconHtml(193, 16)} <span>${ccT('CharCreate.professionJob', "Profession / Starting Occupation")}</span></div>
-              <select class="cc-bio-select" onchange="SceneManager._scene.onBioOptionChange('job', this.value)">
-                ${jobOptionsHtml}
-              </select>
-              ${jobItemsBadges ? `
-                <div style="margin-top:6px; display:flex; flex-direction:column; gap:3px;">
-                  <div style="font-size:0.88rem; color:#a89f91;">${ccT('CharCreate.bio.jobGear', "Starting job gear & tools granted:")}</div>
-                  <div style="display:flex; flex-wrap:wrap; gap:4px;">${jobItemsBadges}</div>
-                </div>
-              ` : (currentJobId === 0 ? `
-                <div style="font-size:0.88rem; color:#a89f91; font-style:italic; margin-top:4px;">
-                  ${ccT('CharCreate.bio.noJobGear', "No initial professional equipment or work tools provided.")}
-                </div>
-              ` : '')}
-            </div>
-            <div class="cc-bio-section" style="background:transparent !important; border:none !important; box-shadow:none !important; border-bottom:1px solid rgba(218,165,32,0.12) !important; padding:6px 0 10px 0;">
-              <div style="display:flex; gap:14px; flex-wrap:wrap;">
-                <div style="flex:1; min-width:180px;">
-                  <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology', "Creed & Philosophical Ideology")}</span></div>
-                  <div style="display:flex; gap:6px; align-items:center;">
-                    <select id="cc-ideology-select" class="cc-bio-select" style="flex:1;" onchange="SceneManager._scene.onBioOptionChange('ideology', this.value)">
-                      ${ideologyOptionsHtml}
+            ${professionSectionHtml}
+            <div class="cc-bio-section">
+              <div class="cc-row-wide">
+                <div class="cc-col-grow">
+                  <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology', "Creed")}</span></div>
+                  <div class="cc-row-inline">
+                    <select id="cc-ideology-select" class="cc-bio-select cc-col-grow" onchange="SceneManager._scene.onBioOptionChange('ideology', this.value)">
+                      ${ideologyChoicesHtml}
                     </select>
                     <button type="button" class="cc-bio-chip" onclick="if(window.PoliticalGraph3D && SceneManager._scene){ SceneManager._scene.markReturnStep(); SceneManager._scene.closeStepUI(); window.PoliticalGraph3D.openModal({ focusId: (document.getElementById('cc-ideology-select') ? document.getElementById('cc-ideology-select').value : ''), onSelect: function(id) { Scene_CharacterCreation.applyIdeologySelection(id); } }); }" title="${ccT('CharCreate.openPoliticalGraph', 'Open the political graph')}">${ccT('CharCreate.politicalGraph', 'Graph')}</button>
                   </div>
                 </div>
-                <div style="flex:1; min-width:180px;">
-                  <div class="cc-bio-section-title">${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.originCity', "Hometown / Settlement of Origin")}</span></div>
+                <div class="cc-col-grow">
+                  <div class="cc-bio-section-title">${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.originCity', "Hometown")}</span></div>
                   <select class="cc-bio-select" onchange="SceneManager._scene.onBioOptionChange('hometown', this.value)">${hometownOptions}</select>
                 </div>
               </div>
             </div>
-            <div class="cc-bio-section" style="background:transparent !important; border:none !important; box-shadow:none !important; border-bottom:1px solid rgba(218,165,32,0.12) !important; padding:6px 0 10px 0;">
-              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.moralityAlignment', "Moral Disposition & Alignment")}</span></div>
+            <div class="cc-bio-section">
+              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.moralityAlignment', "Morality")}</span></div>
               <div class="cc-bio-chips-row">${moralityChips}</div>
             </div>
-            <div class="cc-bio-section" style="background:transparent !important; border:none !important; box-shadow:none !important; border-bottom:1px solid rgba(218,165,32,0.12) !important; padding:6px 0 10px 0;">
-              <div class="cc-bio-section-title">${this._ccIconHtml(113, 16)} <span>${ccT('CharCreate.ageBand', "Age Generation")}</span></div>
+            <div class="cc-bio-section">
+              <div class="cc-bio-section-title">${this._ccIconHtml(113, 16)} <span>${ccT('CharCreate.ageBand', "Age")}</span></div>
               <div class="cc-bio-chips-row">${ageChips}</div>
             </div>
-            <div class="cc-bio-section" style="background:transparent !important; border:none !important; box-shadow:none !important; border-bottom:1px solid rgba(218,165,32,0.12) !important; padding:6px 0 10px 0;">
-              <div class="cc-bio-section-title">${this._ccIconHtml(208, 16)} <span>${ccT('CharCreate.socialStanding', "Social Standing & Background")}</span></div>
+            <div class="cc-bio-section">
+              <div class="cc-bio-section-title">${this._ccIconHtml(208, 16)} <span>${ccT('CharCreate.socialStanding', "Social Standing")}</span></div>
               <div class="cc-bio-chips-row">${wealthChips}</div>
             </div>
-            <div class="cc-bio-section" style="background:transparent !important; border:none !important; box-shadow:none !important; padding:6px 0 10px 0;">
-              <div class="cc-bio-section-title">${this._ccIconHtml(176, 16)} <span>${ccT('CharCreate.bloodType', "Serology / Blood Type")}</span></div>
-              <div style="font-size:0.88rem; color:#a89f91; margin-bottom:4px;">${ccT('CharCreate.bio.bloodStandard', "Standard ABO / Rh")}</div>
-              <div class="cc-bio-chips-row" style="margin-bottom:6px;">${renderChips(standardBloods)}</div>
-              <div style="font-size:0.88rem; color:#a89f91; margin-bottom:4px;">${ccT('CharCreate.bio.bloodExotic', "Synthetic, Rare & Exotic")}</div>
+            <div class="cc-bio-section cc-bio-section-flush">
+              <div class="cc-bio-section-title">${this._ccIconHtml(176, 16)} <span>${ccT('CharCreate.bloodType', "Blood Type")}</span></div>
+              <div class="cc-note-label cc-note-label-spaced">${ccT('CharCreate.bio.bloodStandard', "Standard Blood")}</div>
+              <div class="cc-bio-chips-row cc-gap-below-tight">${renderChips(standardBloods)}</div>
+              <div class="cc-note-label cc-note-label-spaced">${ccT('CharCreate.bio.bloodExotic', "Exotic Blood")}</div>
               <div class="cc-bio-chips-row">${renderChips(specialBloods)}</div>
               ${compatHtml}
             </div>
@@ -1563,7 +1695,27 @@
     // the Empathize panel draw it. The age control on the facing page is the
     // one field the generator itself reads, so a re-aged character is dealt
     // the events of the lifetime the player just gave them.
+    // The fixed biography of a taken dossier, or "" for a character the player
+    // is writing from scratch. Em's resolves through the same call, so her
+    // canon (or rolled-branch) background is what her sheet shows.
+    _presetLoreHtml(actor) {
+      const CP = window.CharacterPresets;
+      if (!actor || !actor._isPresetActor || !CP || !CP.getPresetLore) return "";
+      const preset = CP.findPresetForActor ? CP.findPresetForActor(actor) : null;
+      const lore = CP.getPresetLore(preset || { id: actor._presetId });
+      if (!lore) return "";
+      return `<div class="npc-backstory-text">${lore}</div>`;
+    }
+
     _bioBackstoryHtml(actor, age) {
+      // A dossier is a written character, not a generated one: it reads the
+      // fixed biography its own entry carries (CharacterPresets.getPresetLore),
+      // never the life record the society simulator would deal a stranger. The
+      // dated event list belongs to that generated record, so it goes with it,
+      // which is also why story mode's Em is never shown one.
+      const presetLoreHtml = this._presetLoreHtml(actor);
+      if (presetLoreHtml) return presetLoreHtml;
+
       const profile = window.NPCSocietyRegistry?.getProfile?.(actor.name()) || null;
       if (profile && age) {
         const nowYear = window.NPCLifeSim?.currentYear?.() ?? 2001;
@@ -1582,6 +1734,113 @@
       return `<div class="npc-backstory-text">${ccT('CharCreate.bio.noBackstory', 'No backstory recorded yet.')}</div>`;
     }
 
+    _renderSimpleClassDetailsHtml(actor, c) {
+      if (!c) return "";
+      const passives = window.BattleSystemPassiveSkills;
+      const passiveName = passives && passives.getPassiveName ? passives.getPassiveName(c.id) : "";
+      const passiveDesc = passives && passives.getPassiveEffect ? passives.getPassiveEffect(c.id) : "";
+
+      const note = typeof this._classNote === "function" ? this._classNote(c, "") : (c.description || "");
+
+      const passiveHtml = passiveName ? `
+        <div class="cc-class-passive cc-gap-above-tight">
+          <div class="cc-class-passive-name">${this._ccIconHtml(87, 18)} <span>${passiveName}</span></div>
+          ${passiveDesc ? `<p class="cc-class-passive-desc">${passiveDesc}</p>` : ''}
+        </div>
+      ` : "";
+
+      // Weapon proficiencies
+      const hasEquipTrait = (code, dataId) =>
+        (c.traits || []).some((t) => t.code === code && t.dataId === dataId && t.value === 1);
+      const weaponNames = {
+        1: ccT('CharCreate.light', 'Light'), 2: ccT('CharCreate.sword', 'Sword'), 3: ccT('CharCreate.heavy', 'Heavy'),
+        4: ccT('CharCreate.axe', 'Axe'), 5: ccT('CharCreate.whip', 'Whip'), 6: ccT('CharCreate.staff', 'Staff'),
+        7: ccT('CharCreate.bow', 'Bow'), 8: ccT('CharCreate.projectile', 'Projectile'), 9: ccT('CharCreate.gun', 'Gun'),
+        10: ccT('CharCreate.claw', 'Claw'), 11: ccT('CharCreate.glove', 'Glove'), 12: ccT('CharCreate.spear', 'Spear')
+      };
+      const weaponIcons = (window.StartingEquipment && window.StartingEquipment.weaponTypeIcons) || {};
+      const weaponRows = [];
+      for (let wId = 1; wId <= 12; wId++) {
+        if (hasEquipTrait(51, wId)) {
+          if (typeof this._ccLoadoutRowHtml === "function") {
+            weaponRows.push(this._ccLoadoutRowHtml(weaponIcons[wId] || 96, weaponNames[wId] || "", ""));
+          } else {
+            weaponRows.push(`
+              <div class="cc-loadout-row">
+                <span class="cc-loadout-item-name">${this._ccIconHtml(weaponIcons[wId] || 96, 16)} <span>${weaponNames[wId] || ""}</span></span>
+              </div>
+            `);
+          }
+        }
+      }
+
+      // Learnings up to level 10
+      const sortedLearnings = (c.learnings || [])
+        .filter((l) => l.level > 1 && l.level <= 10)
+        .sort((a, b) => a.level - b.level);
+
+      const roadmapRowHtml = (l) => {
+        const sk = (typeof $dataSkills !== 'undefined') ? $dataSkills[l.skillId] : null;
+        if (!sk) return "";
+        const iconIndex = sk.iconIndex || 79;
+        const sName = window.CCDbName ? window.CCDbName(sk) : sk.name;
+        const lvLabel = `${ccT('CharCreate.abbrev.level', 'Lv')} ${l.level}`;
+        const hoverAttrs = typeof this._ccHoverAttrs === "function" ? this._ccHoverAttrs("skill", sk.id) : "";
+        if (typeof this._ccLoadoutRowHtml === "function") {
+          return this._ccLoadoutRowHtml(iconIndex, sName, lvLabel, { valueColor: 'var(--text-primary-hover)', hover: hoverAttrs });
+        }
+        return `
+          <div class="cc-loadout-row" ${hoverAttrs}>
+            <span class="cc-loadout-item-name">${this._ccIconHtml(iconIndex, 16)} <span>${sName}</span></span>
+            <span class="cc-loadout-item-value">${lvLabel}</span>
+          </div>
+        `;
+      };
+
+      const roadmapRows = sortedLearnings.map(roadmapRowHtml).join("");
+
+      return `
+        <div class="cc-class-detail cc-class-detail--ruled">
+          <h3 class="cc-subheader cc-subheader--lead">
+            ${window.CCDbName ? window.CCDbName(c) : c.name}
+          </h3>
+          <div class="cc-dossier-card cc-class-section cc-gap-below">
+            <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.classProfile', 'Class Skills')}</h4>
+            ${passiveHtml}
+          </div>
+
+          ${weaponRows.length ? (
+            typeof this._ccLoadoutSectionHtml === "function" ? this._ccLoadoutSectionHtml(
+              ccT('CharCreate.startingWeaponProficiencies', 'Starting Weapon Proficiencies'),
+              weaponRows.join(""),
+              ccT('CharCreate.none', 'None'),
+              true,
+              'cc-loadout-grid-cols'
+            ) : `
+              <div class="cc-dossier-card cc-class-section cc-gap-below">
+                <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.startingWeaponProficiencies', 'Starting Weapon Proficiencies')}</h4>
+                <div class="cc-loadout-grid-cols">${weaponRows.join("")}</div>
+              </div>
+            `
+          ) : ''}
+
+          ${roadmapRows ? (
+            typeof this._ccLoadoutSectionHtml === "function" ? this._ccLoadoutSectionHtml(
+              ccT('CharCreate.skillRoadmap', 'Skill Roadmap') + ' (Lv 1 - 10)',
+              `<div class="cc-loadout-col">${roadmapRows}</div>`,
+              "",
+              true
+            ) : `
+              <div class="cc-dossier-card cc-class-section cc-gap-above-tight">
+                <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.skillRoadmap', 'Skill Roadmap')} (Lv 1 - 10)</h4>
+                <div class="cc-loadout-col">${roadmapRows}</div>
+              </div>
+            `
+          ) : ''}
+        </div>
+      `;
+    }
+
     _bioPickerRightHtml() {
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return `<div class="cc-page cc-page-right"></div>`;
@@ -1593,32 +1852,32 @@
       if (actor.characterName()) {
         avatarStyle = this.getSpriteStyle(actor.characterName(), actor.characterIndex());
       }
-      const classData = $dataClasses[actor._classId];
-      const className = classData ? window.CCDbName(classData) : ccT('CharCreate.defaultClassName', 'Operative');
+      const classData = (typeof $dataClasses !== 'undefined') ? $dataClasses[actor._classId] : null;
+      const className = classData ? (window.CCDbName ? window.CCDbName(classData) : classData.name) : ccT('CharCreate.defaultClassName', 'Operative');
 
       // The biography every other screen shows for this character, not a
       // sentence assembled out of the picker's own fields: the backstory the
       // NPC society writes against the world's timeline, formative events and
       // birth line included.
       const storyHtml = this._bioBackstoryHtml(actor, age);
+      const isSimpleMode = Scene_CharacterCreation.isSimpleMode();
+      const simpleClassHtml = isSimpleMode ? this._renderSimpleClassDetailsHtml(actor, classData) : "";
 
       return `
-        <div class="cc-page cc-page-right ts-page" style="display:flex; flex-direction:column;">
-          <div style="display:flex; justify-content:flex-end; align-items:center; margin-bottom:8px;">
-            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeBioForCurrentActor()">${ccT('CharCreate.randomize', 'Randomize')}</button>
-          </div>
-
-          <div class="cc-dossier-card" style="flex:1; min-height:0; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:12px;">
+        <div class="cc-page cc-page-right ts-page cc-page-column">
+          <div class="cc-dossier-card cc-step-scroll-padded">
             <div class="cc-bio-identity">
-              <span class="cc-compact-avatar" style="${avatarStyle}; width: 28px; height: 28px;"></span>
+              <span class="cc-compact-avatar cc-avatar-sm" style="${avatarStyle}"></span>
               <span class="cc-bio-identity-name">${actor.name()}</span>
               <span class="cc-bio-identity-class">(${className})</span>
             </div>
 
-            <h3 class="cc-subheader" style="font-size:1.35rem; margin-top:2px; margin-bottom:4px; border-bottom:1px solid rgba(218,165,32,0.25); padding-bottom:4px;">
-              ${ccT('CharCreate.narrativeHistory', 'Backstory & Life Record')}
+            <h3 class="cc-subheader cc-subheader-ruled">
+              ${ccT('CharCreate.narrativeHistory', 'Backstory')}
             </h3>
             ${storyHtml}
+
+            ${simpleClassHtml}
 
           </div>
         </div>
@@ -1626,6 +1885,7 @@
     }
 
     onSetActorGender(genderVal) {
+      if (this._storyModeEmLocksField("gender")) { SoundManager.playBuzzer(); return; }
       const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       $gameVariables.setValue(38 + memberIdx, genderVal);
       const actor = Scene_CharacterCreation.getCurrentActor();
@@ -1633,43 +1893,157 @@
         actor._gender = genderVal;
         if (actor.setGender) actor.setGender(genderVal);
       }
-      // Male and female default the organ selector to testes and a uterus,
-      // which is the body those words usually come with. Non-binary and cocoon
-      // name no body at all, so `keepOrgans` leaves whatever is selected
-      // exactly as it is, and so does the slider below.
+      const isSimple = Scene_CharacterCreation.isSimpleMode();
+      // In simple mode, reproductive organs are always automatically set to the gender default.
+      // In detailed mode, existing custom organs are kept unless unset.
       const CCU = window.CharacterCreationUtils;
       if (CCU && CCU.applyGenderAndReproduction) {
-        CCU.applyGenderAndReproduction(memberIdx, genderVal, { keepOrgans: true });
+        CCU.applyGenderAndReproduction(memberIdx, genderVal, { keepOrgans: !isSimple });
       }
-      // The endocrine slider follows the same rule with one more of its own: a
-      // balance the player has already moved is theirs, and picking a gender
-      // afterwards does not drag it back. Only a body nobody has tuned takes
-      // the default (hormoneBalance() answers null until somebody says).
-      const untouched = !actor || !actor.hormoneBalance || actor.hormoneBalance() === null;
+      const untouched = isSimple || (!actor || !actor.hormoneBalance || actor.hormoneBalance() === null);
       if (actor && actor.setHormoneBalance && untouched && (genderVal === 0 || genderVal === 1) &&
           CCU && CCU.defaultHormoneBalance) {
         actor.setHormoneBalance(CCU.defaultHormoneBalance(genderVal));
       }
       SoundManager.playCursor();
       const container = this._dndContainer;
-      if (container) {
-        const leftPage = container.querySelector(".cc-page-left");
-        this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
-        const rightPage = container.querySelector(".cc-page-right");
-        this._ccSwapPage(rightPage, this._bioPickerRightHtml());
-        const sidebar = container.querySelector(".cc-compact-sidebar");
+      if (typeof document !== 'undefined' && typeof document.createElement === 'function' && container) {
+        const leftPage = container.querySelector ? container.querySelector(".cc-page-left") : null;
+        if (leftPage && typeof this._ccSwapPage === 'function') this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
+        const rightPage = container.querySelector ? container.querySelector(".cc-page-right") : null;
+        if (rightPage && typeof this._ccSwapPage === 'function') this._ccSwapPage(rightPage, this._bioPickerRightHtml());
+        const sidebar = container.querySelector ? container.querySelector(".cc-compact-sidebar") : null;
         if (sidebar) sidebar.outerHTML = this._renderCompactSidebarHtml();
         return;
       }
       this.refreshUIOverlayDOM();
     }
 
+    _ensureSimpleModeStatsAndTraits(actor) {
+      if (!actor) return;
+      // Auto-assign random traits if not yet selected
+      if (!actor._selectedTraits || actor._selectedTraits.length === 0) {
+        if (window.randomizeTraitsForActor) {
+          const aId = typeof actor.actorId === "function" ? actor.actorId() : 1;
+          window.randomizeTraitsForActor(aId);
+        } else if (window.Health && Array.isArray(window.Health.Traits)) {
+          const nonGenetic = window.Health.Traits.filter(t => (t.category || "mental") !== "genetic");
+          if (nonGenetic.length > 0) {
+            const pick = nonGenetic[Math.floor(Math.random() * nonGenetic.length)];
+            actor._selectedTraits = [pick.id];
+          }
+        }
+      }
+      // Auto-assign specializations if not yet trained. The story mode never
+      // spends anything here: what its protagonist knows is what her dossier
+      // wrote down, and the board there only reads it back.
+      if (!Scene_CharacterCreation._storyMode &&
+          (!actor._specTrained || Object.keys(actor._specTrained).length === 0)) {
+        const catalog = typeof this._specsCatalog === "function" ? this._specsCatalog() : [];
+        if (Array.isArray(catalog) && catalog.length > 0) {
+          actor._specTrained = {};
+          const grantCtx = typeof this._specGrantContext === "function" ? this._specGrantContext(actor) : null;
+          if (typeof this._randomSpendSpecs === "function") {
+            this._randomSpendSpecs(actor, grantCtx, catalog, typeof CC_SPEC_BUDGET !== "undefined" ? CC_SPEC_BUDGET : 12);
+          }
+        }
+      }
+      // Ensure gender defaults for organs & hormones
+      const memberIdx = ($gameParty && $gameParty.members) ? $gameParty.members().indexOf(actor) : 0;
+      if (memberIdx >= 0) {
+        const CCU = window.CharacterCreationUtils;
+        const currentGender = $gameVariables.value(38 + memberIdx);
+        if (CCU && CCU.applyGenderAndReproduction) {
+          CCU.applyGenderAndReproduction(memberIdx, currentGender, { keepOrgans: false });
+        }
+        if (actor.setHormoneBalance && CCU && CCU.defaultHormoneBalance) {
+          actor.setHormoneBalance(CCU.defaultHormoneBalance(currentGender));
+        }
+      }
+
+      // Ensure Morality if unset
+      if (actor._morality == null) {
+        const moralityVals = [2, 1, 0, -1, -2];
+        actor._morality = moralityVals[Math.floor(Math.random() * moralityVals.length)];
+      }
+
+      // Ensure Age if unset
+      if (!actor._ageBand) {
+        const ageVals = ["young", "adult", "middle", "elder"];
+        actor._ageBand = ageVals[Math.floor(Math.random() * ageVals.length)];
+      }
+
+      // Ensure Wealth if unset
+      if (!actor._wealthTier) {
+        const wealthVals = ["destitute", "working", "middle", "wealthy"];
+        actor._wealthTier = wealthVals[Math.floor(Math.random() * wealthVals.length)];
+      }
+
+      // Ensure Blood if unset
+      if (!actor._bloodType && !actor._bloodTypeId) {
+        const bloods = ["O_POS", "A_POS", "B_POS", "AB_POS", "O_NEG", "A_NEG", "B_NEG", "AB_NEG"];
+        actor._bloodTypeId = bloods[Math.floor(Math.random() * bloods.length)];
+      }
+
+      // Ensure Hometown if unset
+      if (!actor._hometownId && typeof getAvailableHometowns === "function") {
+        const towns = getAvailableHometowns();
+        if (towns && towns.length > 0) {
+          actor._hometownId = towns[Math.floor(Math.random() * towns.length)].id;
+        }
+      }
+    }
+
+    // The bio page stays open in story mode (see _presetLockFreeStep), so the
+    // four fields Em does not get to choose are refused here rather than by the
+    // dossier lock: the chips and selects are already drawn as settled, this
+    // catches the pad, the randomizer and anything else reaching in.
+    _storyModeEmLocksField(field) {
+      const CP = window.CharacterPresets;
+      if (!CP || !CP.isStoryModeEm || !CP.isStoryModeEm()) return false;
+      // The creed is not here: it is the one field of hers the player writes,
+      // and onBioOptionChange judges it by the value rather than by the field.
+      return field === "class" || field === "gender" || field === "job";
+    }
+
     onBioOptionChange(field, value) {
-      if (this._refusePresetEdit()) return;
+      const CP = window.CharacterPresets;
+      const isStoryEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm());
+      // Her creed is the one line of Em's sheet the story mode leaves open, and
+      // only as far as the shelf of creeds that fits her goes.
+      if (isStoryEm && field === "ideology") {
+        const allowed = (CP.storyModeEmIdeologyChoices && CP.storyModeEmIdeologyChoices()) || [];
+        if (!allowed.includes(String(value))) { SoundManager.playBuzzer(); return; }
+      } else {
+        if (this._refusePresetEdit()) return;
+        if (this._storyModeEmLocksField(field)) { SoundManager.playBuzzer(); return; }
+      }
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
       const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       actor._bioSet = true;
+
+      if (field === "class") {
+        const classId = Number(value) || 1;
+        actor.changeClass(classId, true);
+        if (typeof equipRandomCompatibleWeapon === "function") {
+          equipRandomCompatibleWeapon(actor, classId);
+        }
+        if (typeof equipClassStartingArmor === "function") {
+          equipClassStartingArmor(actor, classId);
+        }
+        if (typeof giveClassStartingItems === "function") {
+          giveClassStartingItems(actor, classId);
+        }
+        if (window.HealthCore && typeof window.HealthCore.ensureBodyPartSkills === "function" && typeof actor.isLearnedSkill === "function") {
+          window.HealthCore.ensureBodyPartSkills(actor);
+        }
+        SoundManager.playCursor();
+        this._lastStep = -1;
+        this._lastIndex = -1;
+        this.refreshUIOverlayDOM();
+        return;
+      }
 
       if (field === "job") {
         const jobId = Number(value) || 0;
@@ -1736,7 +2110,6 @@
         if (actor.setHormoneBalance) actor.setHormoneBalance(Number(value));
       }
 
-      SoundManager.playOk();
       const container = this._dndContainer;
       if (container) {
         const leftPage = container.querySelector(".cc-page-left");
@@ -1809,10 +2182,18 @@
     // its matching romantic half, the Kinsey step that orientation sits on and
     // the commonest way of being tied to somebody. A default is not a choice,
     // so none of it is written onto the actor until the player picks.
-    _romanceDefaults() {
+    _romanceDefaults(actor) {
       const banks = this._romanceBanks();
-      const sexual = (banks.orient.sexual || [])[0] || null;
-      const romantic = (sexual && this._romanceEntry(banks.orient.romantic, sexual.correspondsTo)) ||
+      // A member who came out of a dossier answers with the dossier's own
+      // orientation rather than the commonest one: Em is written asexual and
+      // aromantic, so that is what her page opens on until the player says
+      // otherwise.
+      const preset = (actor && window.CharacterPresets && window.CharacterPresets.findPresetForActor)
+        ? window.CharacterPresets.findPresetForActor(actor) : null;
+      const sexual = (preset && this._romanceEntry(banks.orient.sexual, preset.sexualOrientation)) ||
+        (banks.orient.sexual || [])[0] || null;
+      const romantic = (preset && this._romanceEntry(banks.orient.romantic, preset.romanticOrientation)) ||
+        (sexual && this._romanceEntry(banks.orient.romantic, sexual.correspondsTo)) ||
         (banks.orient.romantic || [])[0] || null;
       const styles = (banks.rel.styles || []).slice().sort((a, b) => (Number(b.weight) || 0) - (Number(a.weight) || 0));
       return {
@@ -1826,7 +2207,7 @@
 
     _romanceState(actor) {
       const stored = (actor && actor._ccRomance) || {};
-      const state = Object.assign(this._romanceDefaults(), stored);
+      const state = Object.assign(this._romanceDefaults(actor), stored);
       state.bonds = Object.assign({}, stored.bonds || {});
       return state;
     }
@@ -1904,7 +2285,7 @@
       const bonds = this._romanceBanks().rel.bonds || [];
       const others = ($gameParty ? $gameParty.members() : []).filter((m) => m && m.actorId() !== actor.actorId());
       if (others.length === 0) {
-        return `<div class="cc-bio-slider-readout" style="font-style:italic;">${ccT("CharCreate.romance.noOthers", "Nobody else has been created yet. Add a second member and their standing with this one can be set here.")}</div>`;
+        return `<div class="cc-bio-slider-readout cc-note-quiet">${ccT("CharCreate.romance.noOthers", "Nobody else has been created yet. Add a second member and their standing with this one can be set here.")}</div>`;
       }
       return others.map((other) => {
         const currentKey = state.bonds[other.actorId()] || "none";
@@ -1916,10 +2297,10 @@
         const desc = entry ? this._romanceText(entry.desc) : "";
         const avatar = other.characterName() ? this.getSpriteStyle(other.characterName(), other.characterIndex()) : "";
         return `
-          <div style="display:flex; flex-direction:column; gap:3px; margin-bottom:8px;">
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span class="cc-compact-avatar" style="${avatar}; width:24px; height:24px;"></span>
-              <span style="flex:1; color:#f0e6d2;">${other.name()}</span>
+          <div class="cc-stack-gapped cc-gap-below">
+            <div class="cc-row-inline">
+              <span class="cc-compact-avatar cc-avatar-xs" style="${avatar}"></span>
+              <span class="cc-col-grow cc-romance-name">${other.name()}</span>
             </div>
             <select class="cc-bio-select" onchange="SceneManager._scene.onRomanceBondChange(${other.actorId()}, this.value)">${options}</select>
             ${desc && currentKey !== "none" ? `<div class="cc-bio-slider-readout">${desc}</div>` : ""}
@@ -1944,33 +2325,32 @@
       const descLine = (o) => o && o.desc
         ? `<div class="cc-bio-slider-readout">${this._romanceText(o.desc)}</div>` : "";
 
-      const sectionStyle = "background:transparent !important; border:none !important; box-shadow:none !important; border-bottom:1px solid rgba(218,165,32,0.12) !important; padding:6px 0 10px 0;";
 
       return `
-        <div class="cc-page cc-page-left ts-page" style="display:flex; flex-direction:column;">
-          <div class="cc-bio-container" style="flex:1; min-height:0; overflow-y:auto; padding-right:6px; padding-bottom:24px;">
-            <div class="cc-bio-section" style="${sectionStyle}">
+        <div class="cc-page cc-page-left ts-page cc-page-column">
+          <div class="cc-bio-container cc-step-scroll">
+            <div class="cc-bio-section cc-bio-section--plain">
               <div class="cc-bio-section-title">${this._ccIconHtml(84, 16)} <span>${ccT("CharCreate.romance.romanticOrientation", "Romantic Orientation")}</span></div>
               <div class="cc-bio-chips-row">${this._romanceOrientChipsHtml("romantic", state.romanticKey)}</div>
               ${descLine(romantic)}
               ${pctLine(romantic)}
             </div>
-            <div class="cc-bio-section" style="${sectionStyle}">
+            <div class="cc-bio-section cc-bio-section--plain">
               <div class="cc-bio-section-title">${this._ccIconHtml(267, 16)} <span>${ccT("CharCreate.romance.sexualOrientation", "Sexual Orientation")}</span></div>
               <div class="cc-bio-chips-row">${this._romanceOrientChipsHtml("sexual", state.sexualKey)}</div>
               ${descLine(sexual)}
               ${pctLine(sexual)}
             </div>
-            <div class="cc-bio-section" style="${sectionStyle}">
+            <div class="cc-bio-section cc-bio-section--plain">
               <div class="cc-bio-section-title">${this._ccIconHtml(87, 16)} <span>${ccT("CharCreate.romance.kinseyScale", "Kinsey Scale Placement")}</span></div>
               ${this._romanceKinseyHtml(state)}
             </div>
-            <div class="cc-bio-section" style="${sectionStyle}">
+            <div class="cc-bio-section cc-bio-section--plain">
               <div class="cc-bio-section-title">${this._ccIconHtml(190, 16)} <span>${ccT("CharCreate.romance.style", "Preferred Relationship Style")}</span></div>
               <div class="cc-bio-chips-row">${this._romanceStyleChipsHtml(state.styleKey)}</div>
               ${descLine(style)}
             </div>
-            <div class="cc-bio-section" style="background:transparent !important; border:none !important; box-shadow:none !important; padding:6px 0 10px 0;">
+            <div class="cc-bio-section cc-bio-section-flush">
               <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT("CharCreate.romance.bonds", "Standing With The Rest Of The Party")}</span></div>
               ${this._romanceBondsHtml(actor, state)}
             </div>
@@ -2011,38 +2391,38 @@
         .filter((b) => b.other && b.key && b.key !== "none" && $gameParty.members().includes(b.other));
       const bondLines = bondEntries.map((b) => {
         const entry = this._romanceEntry(banks.rel.bonds, b.key);
-        return `<li style="margin-bottom:4px;"><b>${this._romanceText(entry && entry.name)}</b>: ${b.other.name()}</li>`;
+        return `<li class="cc-bond-line"><b>${this._romanceText(entry && entry.name)}</b>: ${b.other.name()}</li>`;
       }).join("");
 
       return `
-        <div class="cc-page cc-page-right ts-page" style="display:flex; flex-direction:column;">
-          <div style="display:flex; justify-content:flex-end; align-items:center; margin-bottom:8px;">
+        <div class="cc-page cc-page-right ts-page cc-page-column">
+          <div class="cc-row-end">
             <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeRomanceForCurrentActor()">${ccT("CharCreate.randomize", "Randomize")}</button>
           </div>
-          <div class="cc-dossier-card" style="flex:1; min-height:0; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:12px;">
+          <div class="cc-dossier-card cc-step-scroll-padded">
             <div class="cc-bio-identity">
-              <span class="cc-compact-avatar" style="${avatarStyle}; width: 28px; height: 28px;"></span>
+              <span class="cc-compact-avatar cc-avatar-sm" style="${avatarStyle}"></span>
               <span class="cc-bio-identity-name">${actor.name()}</span>
               <span class="cc-bio-identity-class">(${className})</span>
             </div>
-            <h3 class="cc-subheader" style="font-size:1.35rem; margin-top:2px; margin-bottom:4px; border-bottom:1px solid rgba(218,165,32,0.25); padding-bottom:4px;">
+            <h3 class="cc-subheader cc-subheader-ruled">
               ${ccT("CharCreate.romance.summaryTitle", "Attachment Record")}
             </h3>
-            <p class="cc-text-desc" style="text-align:left; font-size:1.18rem; line-height:1.65; color:#f0e6d2; margin-bottom:10px;">
+            <p class="cc-text-desc cc-prose-left">
               ${ccTp("CharCreate.romance.summaryPara1", params, "")}
             </p>
             ${kinseyKey !== null ? `
-              <p class="cc-text-desc" style="text-align:left; font-size:1.18rem; line-height:1.65; color:#ded1c1; margin-bottom:10px;">
+              <p class="cc-text-desc cc-prose-left">
                 ${ccTp("CharCreate.romance.summaryPara2", params, "")} ${this._romanceText(scale[kinseyKey])}
               </p>
             ` : ""}
             ${bondLines ? `
-              <h3 class="cc-subheader" style="font-size:1.35rem; margin-top:2px; margin-bottom:4px; border-bottom:1px solid rgba(218,165,32,0.25); padding-bottom:4px;">
+              <h3 class="cc-subheader cc-subheader-ruled">
                 ${ccT("CharCreate.romance.bondsTitle", "Ties Already Held")}
               </h3>
-              <ul style="margin:0; padding-left:18px; font-size:1.05rem; color:#ded1c1;">${bondLines}</ul>
+              <ul class="cc-bond-list">${bondLines}</ul>
             ` : `
-              <p class="cc-text-desc" style="text-align:left; font-size:1.05rem; line-height:1.6; color:#a89f91; font-style:italic;">
+              <p class="cc-text-desc cc-prose-aside">
                 ${ccT("CharCreate.romance.noBonds", "This one starts out tied to nobody in the party.")}
               </p>
             `}
@@ -2088,7 +2468,14 @@
 
       actor._ccRomance = state;
       this._romanceMirrorToProfile(actor);
-      SoundManager.playOk();
+      this._romanceRepaint();
+    }
+
+    onRandomizeRomanceForCurrentActor() {
+      if (this._refusePresetEdit()) return;
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor) return;
+      this._rollRomanceForActor(actor);
       this._romanceRepaint();
     }
 
@@ -2119,16 +2506,16 @@
       other._ccRomance = otherState;
       this._romanceMirrorToProfile(actor);
       this._romanceMirrorToProfile(other);
-      SoundManager.playOk();
       this._romanceRepaint();
     }
 
     // The same weighted rolls the world uses for an NPC, done once here rather
     // than from the world seed: this is the player asking for a surprise, not
     // the world settling what somebody it generated turned out to be.
-    onRandomizeRomanceForCurrentActor() {
-      if (this._refusePresetEdit()) return;
-      const actor = Scene_CharacterCreation.getCurrentActor();
+    // Rolling one character's attachments, kept apart from the button so the
+    // whole-member randomizer can roll them too: "Randomize Member" leaves
+    // nothing on the sheet untouched.
+    _rollRomanceForActor(actor) {
       if (!actor) return;
       const banks = this._romanceBanks();
       const weighted = (list, key) => {
@@ -2157,13 +2544,15 @@
 
       actor._ccRomance = state;
       this._romanceMirrorToProfile(actor);
-      SoundManager.playOk();
       this._romanceRepaint();
     }
 
     onRandomizeBioForCurrentActor() {
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
+      // Nothing about story mode's Em is rolled: she is who the story says.
+      const CP = window.CharacterPresets;
+      if (CP && CP.isStoryModeEm && CP.isStoryModeEm(actor)) { SoundManager.playBuzzer(); return; }
       const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       actor._bioSet = true;
 
@@ -2209,7 +2598,6 @@
         actor._bloodType = bloodTypes[Math.floor(Math.random() * bloodTypes.length)];
       }
 
-      SoundManager.playOk();
       const container = this._dndContainer;
       if (container) {
         const leftPage = container.querySelector(".cc-page-left");
@@ -2223,7 +2611,7 @@
       this.refreshUIOverlayDOM();
     }
 
-    // ── Pet / Follower Companion Selection Screen ──
+    // ── Familiar selection screen ──
     _petCatalog() {
       if (this._cachedPetCatalog && this._cachedPetCatalog.length > 0) {
         return this._cachedPetCatalog;
@@ -2275,7 +2663,7 @@
         const agi = 8 + ((hash >> 9) % 24);
 
         const icon = kind === "Animal" ? 292 : (kind === "Construct" ? 141 : (kind === "Undead" ? 136 : 176));
-        const desc = `A companion attuned to the surrounding ecosystem. Resilient, vigilant, and devoted to trailing and safeguarding the party.`;
+        const desc = ccT('CharCreate.petDesc', "A companion attuned to the surrounding ecosystem. Resilient, vigilant, and devoted to trailing and safeguarding the party.");
 
         catalog.push({
           id: id,
@@ -2330,7 +2718,7 @@
               atk: atk,
               def: def,
               agi: agi,
-              desc: `A wilderness ${kind.toLowerCase()} companion attuned to the surrounding ecosystem.`
+              desc: ccTp('CharCreate.petDescKind', { kind: kind.toLowerCase() }, `A wilderness ${kind.toLowerCase()} companion attuned to the surrounding ecosystem.`)
             });
           }
         }
@@ -2354,14 +2742,23 @@
     // Travelling alone leads the board. It was always allowed, but the only way
     // to say so was to take a companion and then hand it back, so the card that
     // means "none" sits first, ahead of every filter and every search.
+    // The board belongs to a familiar in the story mode and to the party's
+    // pets everywhere else, and every word on it follows the tab rather than
+    // half of them saying one thing and half the other.
+    _petWord(storyKey, storyFallback, petsKey, petsFallback) {
+      return Scene_CharacterCreation._storyMode
+        ? ccT(storyKey, storyFallback)
+        : ccT(petsKey, petsFallback);
+    }
+
     _petNoneCard() {
       return {
         id: PET_NONE_ID,
-        name: ccT('CharCreate.noCompanion', 'No companion'),
+        name: this._petWord('CharCreate.noCompanion', 'No familiar', 'CharCreate.petsNone', 'No pet'),
         kind: ccT('CharCreate.petKindNone', 'Alone'),
         sprite: "",
         spriteIndex: 0,
-        desc: ccT('CharCreate.noCompanionDesc', 'Set out with nobody at your heel.'),
+        desc: this._petWord('CharCreate.noCompanionDesc', 'Set out with nobody at your heel.', 'CharCreate.petsNoneDesc', 'Set out with nobody at your heel.'),
       };
     }
 
@@ -2398,10 +2795,10 @@
       const initialCards = this._buildPetCardsWindow(filtered, 0);
 
       return `
-        <div class="cc-page cc-page-full ts-page" style="display:flex; flex-direction:column;">
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+        <div class="cc-page cc-page-full ts-page cc-page-column">
+          <div class="cc-row-controls">
             <input type="text" class="backpack-search-input cc-rail-search"
-                   placeholder="${ccT('CharCreate.petSearchPlaceholder', 'Search companion monsters...')}"
+                   placeholder="${this._petWord('CharCreate.petSearchPlaceholder', 'Search familiar monsters...', 'CharCreate.petsSearchPlaceholder', 'Search pet monsters...')}"
                    value="${Scene_CharacterCreation._petSearchQuery || ''}"
                    oninput="SceneManager._scene.onPetSearch(this.value)" />
             <span class="cc-count-badge">${ccTp('CharCreate.petCount', { n: petCount }, petCount + ' monsters')}</span>
@@ -2450,7 +2847,7 @@
     // `scrollTop` is the current scroll position of the grid container.
     _buildPetCardsWindow(filtered, scrollTop, metrics) {
       if (!filtered || filtered.length === 0) {
-        return `<div class="cc-empty-note">${ccT('CharCreate.petNoneFound', 'No companion monsters match this filter')}</div>`;
+        return `<div class="cc-empty-note">${this._petWord('CharCreate.petNoneFound', 'No familiar monsters match this filter', 'CharCreate.petsNoneFound', 'No pet monsters match this filter')}</div>`;
       }
 
       const OVERSCAN_ROWS = 3; // extra rows rendered above/below the viewport
@@ -2485,7 +2882,7 @@
         return `
           <div class="cc-pet-card ${isSelected ? 'selected' : ''}" onclick="SceneManager._scene.onPetCardSelect('${pet.id}')">
             <div class="cc-pet-avatar">
-              <div style="${this.getSpriteStyle(pet.sprite, pet.spriteIndex || 0)}; transform: scale(1.2);"></div>
+              <div class="cc-sprite cc-sprite-x12" style="${this.getSpriteStyle(pet.sprite, pet.spriteIndex || 0)}"></div>
             </div>
             <div class="cc-pet-name" title="${pet.name}">${pet.name}</div>
             <div class="cc-pet-kind">${pet.kind}</div>
@@ -2494,8 +2891,8 @@
       }).join("");
 
       // Spacer divs maintain correct scrollbar height without DOM nodes for off-screen cards
-      const topSpacer    = topPad    > 0 ? `<div style="grid-column:1/-1; height:${topPad}px; pointer-events:none;"></div>` : "";
-      const bottomSpacer = bottomPad > 0 ? `<div style="grid-column:1/-1; height:${bottomPad}px; pointer-events:none;"></div>` : "";
+      const topSpacer    = topPad    > 0 ? `<div class="cc-grid-spacer" style="--cc-spacer-h:${topPad}px"></div>` : "";
+      const bottomSpacer = bottomPad > 0 ? `<div class="cc-grid-spacer" style="--cc-spacer-h:${bottomPad}px"></div>` : "";
 
       return `${topSpacer}${cardsHtml}${bottomSpacer}`;
     }
@@ -2561,49 +2958,83 @@
         ? window.PetSystem.previewAttrs(traits.sentient, traits.magical, traits.geneticFreak)
         : { STR: 10, CON: 10, INT: 10, WIS: 10, PSI: 10 };
 
+      const spriteStyle = this.getSpriteStyle(pet.sprite, pet.spriteIndex || 0);
+      const SL = ccStatLabels();
+
+      // The companion reads down the sidebar the way a party member does: the
+      // same identity card, the same portrait box and the same eight stat
+      // boxes, so a beast and a character are looked at in the same place
+      // rather than one being a table of rows and the other a stat sheet.
+      const stats = [
+        { key: "HP",  label: SL.HP,  val: pet.hp,   color: "var(--stat-hp)", vital: true },
+        { key: "STR", label: SL.STR, val: pet.atk,  color: "var(--stat-str)" },
+        { key: "CON", label: SL.CON, val: pet.def,  color: "var(--stat-con)" },
+        { key: "DEX", label: SL.DEX, val: pet.agi,  color: "var(--stat-dex)" },
+        { key: "INT", label: SL.INT, val: attrs.INT, color: "var(--stat-int)" },
+        { key: "WIS", label: SL.WIS, val: attrs.WIS, color: "var(--stat-wis)" },
+        { key: "PSI", label: SL.PSI, val: attrs.PSI, color: "var(--stat-psi)" },
+      ];
+      const statsHtml = `
+        <div class="cc-vitals-block">
+          <div class="cc-stat-grid">
+            ${stats.map((st) => {
+              if (st.vital) {
+                return `
+                  <div class="cc-stat-box">
+                    <span class="cc-stat-label cc-inked" style="--cc-ink:${st.color}">${st.label}</span>
+                    <span class="cc-stat-val">${st.val}</span>
+                  </div>
+                `;
+              }
+              const mod = Math.floor((st.val - 10) / 2);
+              const modStr = mod >= 0 ? "+" + mod : String(mod);
+              return `
+                <div class="cc-stat-box">
+                  <span class="cc-stat-label">${st.label}</span>
+                  <span class="cc-stat-val">${st.val} <span class="cc-stat-mod">(${modStr})</span></span>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+
       return `
         <div class="cc-compact-sidebar cc-pet-sidebar">
           <div class="cc-compact-sidebar-body">
             <div class="cc-compact-identity-card">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                <span class="cc-pet-sidebar-name">${pet.name}</span>
-                <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizePet()">${ccT('CharCreate.randomize', 'Randomize')}</button>
+              <div class="cc-row-inline cc-row-gap-wide">
+                <div class="cc-compact-avatar-wrap cc-compact-avatar-wrap--static" title="${pet.species}">
+                  <div class="cc-compact-avatar" style="${spriteStyle}"></div>
+                </div>
+                <div class="cc-col cc-col-gap-1 cc-col-grow">
+                  <div class="cc-row-spread">
+                    <span class="cc-pet-sidebar-name">${pet.name}</span>
+                    <button class="cc-profile-open-btn cc-profile-open-btn--icon" onclick="SceneManager._scene.onRandomizePet()" title="${ccT('CharCreate.randomize', 'Randomize')}">
+                      ${this._ccIconHtml(83, 16)}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="cc-pet-portrait">
-              <div class="cc-wanted-sprite" style="${this.getSpriteStyle(pet.sprite, pet.spriteIndex || 0)}; transform: scale(2);"></div>
-            </div>
+            ${statsHtml}
 
-            <div class="cc-dossier-card" style="padding:10px; margin-bottom:8px;">
-              <h3 class="cc-subheader" style="font-size:1.05rem; margin-bottom:6px;">${T('CharCreate.companionStats') || "Companion Vitals"}</h3>
-              <div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('CharCreate.petSpecies', 'Species')}</span><span class="cc-dossier-value">${pet.species}</span></div>
-              <div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('CharCreate.petClassification', 'Classification')}</span><span class="cc-dossier-value">${pet.kind}</span></div>
-              <div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('CharCreate.petMaxHp', 'Max HP')}</span><span class="cc-dossier-value">${pet.hp}</span></div>
-              <div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('CharCreate.petCombatPower', 'Combat power')}</span><span class="cc-dossier-value">${ccStatLabel('STR')} ${pet.atk} / ${ccStatLabel('CON')} ${pet.def} / ${ccStatLabel('DEX')} ${pet.agi}</span></div>
-            </div>
+            ${this._ccLoadoutSectionHtml(
+              ccT('CharCreate.petTraitsTitle', 'Traits'),
+              `<div class="cc-row-inline cc-gap-below">
+                 <button class="cc-bio-chip ${traits.sentient ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('sentient')">${ccT('CharCreate.petTraitSentient', 'Sentient')}</button>
+                 <button class="cc-bio-chip ${traits.magical ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('magical')">${ccT('CharCreate.petTraitMagical', 'Magical')}</button>
+                 <button class="cc-bio-chip ${traits.geneticFreak ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('geneticFreak')">${ccT('CharCreate.petTraitGeneticFreak', 'Genetic Freak')}</button>
+               </div>`,
+              "",
+              true
+            )}
 
-            <div class="cc-dossier-card" style="padding:10px; margin-bottom:8px;">
-              <h3 class="cc-subheader" style="font-size:1.05rem; margin-bottom:6px;">${ccT('CharCreate.petTraitsTitle', 'Traits')}</h3>
-              <div style="display:flex; gap:6px; margin-bottom:8px;">
-                <button class="cc-pet-trait-toggle ${traits.sentient ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('sentient')">${ccT('CharCreate.petTraitSentient', 'Sentient')}</button>
-                <button class="cc-pet-trait-toggle ${traits.magical ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('magical')">${ccT('CharCreate.petTraitMagical', 'Magical')}</button>
-                <button class="cc-pet-trait-toggle ${traits.geneticFreak ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('geneticFreak')">${ccT('CharCreate.petTraitGeneticFreak', 'Genetic Freak')}</button>
-              </div>
-              <div class="cc-dossier-row"><span class="cc-dossier-label">${ccStatLabel('STR')} / ${ccStatLabel('CON')}</span><span class="cc-dossier-value">${attrs.STR} / ${attrs.CON}</span></div>
-              <div class="cc-dossier-row"><span class="cc-dossier-label">${ccStatLabel('INT')} / ${ccStatLabel('WIS')}</span><span class="cc-dossier-value">${attrs.INT} / ${attrs.WIS}</span></div>
-              <div class="cc-dossier-row"><span class="cc-dossier-label">${ccStatLabel('PSI')}</span><span class="cc-dossier-value">${attrs.PSI}</span></div>
-            </div>
-
-            <div class="cc-dossier-card cc-pet-nature" style="padding:10px;">
-              <h3 class="cc-subheader" style="font-size:1.05rem; margin-bottom:6px;">${T('CharCreate.behavioralTraits') || "Behavior & Nature"}</h3>
-              <p class="cc-text-desc cc-text-desc--body">${pet.desc}</p>
-            </div>
           </div>
 
-          <div class="cc-compact-actions" style="display:flex; flex-direction:column; gap:6px;">
-            <button class="cc-compact-btn ${isChosen ? '' : 'primary'}" onclick="SceneManager._scene.onPetCardSelect('${pet.id}')">${isChosen ? ccT('CharCreate.selectedCompanion', 'Companion selected') : ccT('CharCreate.chooseAsCompanion', 'Choose as initial companion')}</button>
-            <button class="cc-compact-btn primary" onclick="SceneManager._scene.onProceedToScenario()">${this._partyConfirmLabel()}</button>
+          <div class="cc-compact-actions cc-stack">
+            <button class="cc-compact-btn ${isChosen ? '' : 'primary'}" onclick="SceneManager._scene.onPetCardSelect('${pet.id}')">${isChosen ? ccT('CharCreate.selectedCompanion', 'Companion selected') : this._petWord('CharCreate.chooseAsCompanion', 'Choose as initial familiar', 'CharCreate.petsChoose', 'Choose as starting pet')}</button>
           </div>
         </div>
       `;
@@ -2613,6 +3044,7 @@
       this._pageRailFocused = false;
       Scene_CharacterCreation._railFocus = null;
       Scene_CharacterCreation._isPetMode = true;
+      Scene_CharacterCreation._isVehicleMode = false;
       if (this._presetWindow) this.onPresetCancel();
       SoundManager.playCursor();
       this._lastStep = -1;
@@ -2687,7 +3119,6 @@
       if (!pet) return;
       $gameSystem._partyPet = pet;
       Scene_CharacterCreation._hoveredPetId = petId;
-      SoundManager.playOk();
 
       const sidebarSlot = this._dndContainer && this._dndContainer.querySelector(".cc-sidebar-slot");
       const sidebar = this._dndContainer && this._dndContainer.querySelector(".cc-compact-sidebar");
@@ -2728,7 +3159,147 @@
       const pet = catalog[Math.floor(Math.random() * catalog.length)];
       $gameSystem._partyPet = pet;
       Scene_CharacterCreation._hoveredPetId = pet.id;
-      SoundManager.playOk();
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
+    //=========================================================================
+    // The Vehicles tab
+    //=========================================================================
+    //
+    // The story mode's vehicle page, opened as a page of the dossier by every
+    // mode instead of only by the story mode, and a party may take more than one
+    // of them. The picks are choice symbols on $gameSystem._ccStartVehicles;
+    // applyStartingVehicles (CharacterCreation.js) is what turns them into keys
+    // in the pack when creation ends, so nothing here touches the party.
+    _vehicleCatalog() {
+      const CCV = window.CCStartVehicles;
+      if (!CCV) return [];
+      return CCV.symbols().map((symbol) => {
+        const spec = CCV.spec(symbol);
+        const suffix = symbol.replace("vehicle_", "");
+        const key = suffix.charAt(0).toUpperCase() + suffix.slice(1);
+        return {
+          symbol: symbol,
+          spec: spec,
+          name: ccT("CharCreate.choice.vehicle" + key + ".name", key),
+          desc: ccT("CharCreate.choice.vehicle" + key + ".desc", ""),
+          sprite: spec.sprite,
+        };
+      });
+    }
+
+    _selectedVehicleSymbols() {
+      if (!Array.isArray($gameSystem._ccStartVehicles)) $gameSystem._ccStartVehicles = [];
+      return $gameSystem._ccStartVehicles;
+    }
+
+    _vehiclePickerLeftHtml() {
+      const catalog = this._vehicleCatalog();
+      const chosen = this._selectedVehicleSymbols();
+      const cards = catalog.map((v) => {
+        const isSel = chosen.indexOf(v.symbol) >= 0;
+        return `
+          <div class="cc-pet-card cc-vehicle-card ${isSel ? 'selected' : ''}" onclick="SceneManager._scene.onVehicleCardToggle('${v.symbol}')" onmouseenter="SceneManager._scene.onVehicleCardHover('${v.symbol}')">
+            <div class="cc-pet-avatar">
+              <div class="cc-sprite cc-sprite-x12" style="${this.getSpriteStyle(v.sprite, 0)}"></div>
+            </div>
+            <div class="cc-pet-name" title="${v.name}">${v.name}</div>
+            <div class="cc-pet-kind">${isSel ? ccT('CharCreate.vehicleOwned', 'In the garage') : ccT('CharCreate.vehicleFree', 'Not taken')}</div>
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="cc-page cc-page-full ts-page cc-page-column">
+          <div class="cc-row-controls">
+            <h3 class="cc-subheader cc-subheader--flush">${T('CharCreate.chooseYourVehicle')}</h3>
+            <span class="cc-count-badge">${ccTp('CharCreate.vehicleCount', { n: chosen.length }, chosen.length + ' selected')}</span>
+          </div>
+          <div class="cc-pet-grid">
+            ${cards}
+          </div>
+        </div>
+      `;
+    }
+
+    _vehicleSidebarHtml() {
+      const catalog = this._vehicleCatalog();
+      if (catalog.length === 0) return `<div class="cc-compact-sidebar"></div>`;
+      const chosen = this._selectedVehicleSymbols();
+      const hovered = Scene_CharacterCreation._hoveredVehicleSymbol || chosen[0] || catalog[0].symbol;
+      const v = catalog.find((c) => c.symbol === hovered) || catalog[0];
+      const isSel = chosen.indexOf(v.symbol) >= 0;
+      return `
+        <div class="cc-compact-sidebar cc-vehicle-sidebar">
+          <div class="cc-compact-sidebar-body">
+            <div class="cc-compact-identity-card">
+              <div class="cc-row-spread">
+                <span class="cc-pet-sidebar-name">${v.name}</span>
+              </div>
+            </div>
+
+            <div class="cc-compact-portrait-card cc-vehicle-portrait">
+              <div class="cc-compact-bust-full empty cc-fill-center">
+                <div class="cc-wanted-sprite cc-sprite-x4" style="${this.getSpriteStyle(v.sprite, 0)}"></div>
+              </div>
+            </div>
+
+            <p class="cc-text-desc cc-text-desc--body">${v.desc}</p>
+
+          </div>
+
+          <div class="cc-compact-actions cc-stack">
+            <button class="cc-compact-btn ${isSel ? '' : 'primary'}" onclick="SceneManager._scene.onVehicleCardToggle('${v.symbol}')">${isSel ? ccT('CharCreate.vehicleDrop', 'Leave it behind') : ccT('CharCreate.vehicleTake', 'Take this vehicle')}</button>
+          </div>
+        </div>
+      `;
+    }
+
+    onVehicleTabClick() {
+      // The story mode sets out in The Beast, parked where Em left it, and is
+      // never asked what it drives.
+      if (Scene_CharacterCreation._storyMode) { SoundManager.playBuzzer(); return; }
+      this._pageRailFocused = false;
+      Scene_CharacterCreation._railFocus = null;
+      Scene_CharacterCreation._isPetMode = false;
+      Scene_CharacterCreation._isVehicleMode = true;
+      if (this._presetWindow) this.onPresetCancel();
+      SoundManager.playCursor();
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
+    onVehicleCardHover(symbol) {
+      if (Scene_CharacterCreation._hoveredVehicleSymbol === symbol) return;
+      Scene_CharacterCreation._hoveredVehicleSymbol = symbol;
+      const sidebarSlot = this._dndContainer && this._dndContainer.querySelector(".cc-sidebar-slot");
+      if (sidebarSlot) sidebarSlot.innerHTML = this._vehicleSidebarHtml();
+    }
+
+    onVehicleCardToggle(symbol) {
+      const chosen = this._selectedVehicleSymbols();
+      const at = chosen.indexOf(symbol);
+      if (at >= 0) {
+        chosen.splice(at, 1);
+        SoundManager.playCancel();
+      } else {
+        chosen.push(symbol);
+      }
+      Scene_CharacterCreation._hoveredVehicleSymbol = symbol;
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
+    onRandomizeVehicles() {
+      const catalog = this._vehicleCatalog();
+      if (catalog.length === 0) return;
+      const pick = catalog[Math.floor(Math.random() * catalog.length)];
+      $gameSystem._ccStartVehicles = [pick.symbol];
+      Scene_CharacterCreation._hoveredVehicleSymbol = pick.symbol;
       this._lastStep = -1;
       this._lastIndex = -1;
       this.refreshUIOverlayDOM();
@@ -3008,6 +3579,11 @@
             }
           });
         }
+      }
+
+      // Attachments, the one page of the sheet the roll used to skip.
+      if (typeof this._rollRomanceForActor === "function") {
+        this._rollRomanceForActor(currentActor);
       }
 
       // Random sprite selection

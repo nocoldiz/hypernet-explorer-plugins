@@ -1,311 +1,323 @@
 {
- "title": "Diario",
- "opening": "{names} ha aperto questo diario a {place}.",
- "empty": "Qui non c'è ancora scritto nulla.",
- "date": {
-  "heading": "{day} {month} {year}",
-  "continued": "{day} {month} {year}, continua"
- },
- "month": {
-  "jan": "gennaio",
-  "feb": "febbraio",
-  "mar": "marzo",
-  "apr": "aprile",
-  "may": "maggio",
-  "jun": "giugno",
-  "jul": "luglio",
-  "aug": "agosto",
-  "sep": "settembre",
-  "oct": "ottobre",
-  "nov": "novembre",
-  "dec": "dicembre"
- },
- "cat": {
-  "all": "Tutto",
-  "journey": "Viaggio",
-  "rest": "Riposo",
-  "combat": "Combattimenti",
-  "party": "Compagnia",
-  "people": "Persone",
-  "health": "Salute",
-  "wealth": "Averi",
-  "law": "Legge",
-  "work": "Lavoro",
-  "knowledge": "Studio",
-  "leisure": "Svaghi",
-  "other": "Altro"
- },
- "foot": {
-  "ours": "Il diario di {names}",
-  "theirs": "Tenuto da {names}",
-  "unknown": "Un diario senza firma",
-  "page": "Pagina {shown} di {total}"
- },
- "fmt": {
-  "itemCount": "{name} x{count}",
-  "and": "{a} e {b}"
- },
- "eris": {
-  "wonderful": "meravigliosamente",
-  "warm": "con calore",
-  "awkward": "con imbarazzo",
-  "disaster": "disastrosamente"
- },
- "surgery": {
-  "success": "ed ha tenuto",
-  "failure": "e non ha tenuto"
- },
- "worlds": {
-  "tab": "Diari",
-  "none": "In questo mondo nessuna compagnia ha ancora tenuto un diario.",
-  "entry": "{names}",
-  "meta": "{count} righe, vista l'ultima volta a {place}",
-  "unknownParty": "Una compagnia senza nome",
-  "read": "Leggi"
- },
- "entry": {
-  "note": "{text}",
-  "travel": {
-   "depart": "Partiti da {from} verso {to} in {transport} alle {time}, {km} km davanti a noi.",
-   "arrive": "Arrivati a {to} alle {time}, dopo {hours}h {minutes}m di strada.",
-   "refuel": "Messi {litres} litri in {vehicle} a {place}."
+  "title": "Diario",
+  "opening": "{names} ha aperto questo diario a {place}.",
+  "empty": "Qui non c'è ancora scritto nulla.",
+  "date": {
+    "heading": "{day} {month} {year}",
+    "continued": "{day} {month} {year}, continua"
   },
-  "landing": {
-   "planet": "Posata la nave su {planet}, sistema di {system}, alle {time}.",
-   "site": "Atterrati a {place} alle {time}."
+  "month": {
+    "jan": "gennaio",
+    "feb": "febbraio",
+    "mar": "marzo",
+    "apr": "aprile",
+    "may": "maggio",
+    "jun": "giugno",
+    "jul": "luglio",
+    "aug": "agosto",
+    "sep": "settembre",
+    "oct": "ottobre",
+    "nov": "novembre",
+    "dec": "dicembre"
   },
-  "warp": {
-   "system": "Aperto un ponte dritto verso {system} alle {time}.",
-   "orbit": "Ponte fino all'orbita di {planet}, {system}, alle {time}.",
-   "galaxy": "Usciti del tutto da {from}: {system}, in {galaxy}, alle {time}."
+  "cat": {
+    "all": "Tutto",
+    "journey": "Viaggio",
+    "rest": "Riposo",
+    "combat": "Combattimenti",
+    "party": "Compagnia",
+    "people": "Persone",
+    "health": "Salute",
+    "wealth": "Averi",
+    "law": "Legge",
+    "work": "Lavoro",
+    "knowledge": "Studio",
+    "leisure": "Svaghi",
+    "written": "Nostro Pugno",
+    "other": "Altro"
   },
-  "place": {
-   "entered": "Arrivati a {place} alle {time}."
+  "foot": {
+    "ours": "Il diario di {names}",
+    "theirs": "Tenuto da {names}",
+    "unknown": "Un diario senza firma",
+    "page": "Pagina {shown} di {total}"
   },
-  "structure": {
-   "entered": "Scesi dentro {place} alle {time}."
-  },
-  "floor": {
-   "changed": "Giù fino al piano {floor} di {place}."
-  },
-  "rest": {
-   "sleep": "Dormito {hours} ore a {place}, dalle {from} alle {to}.",
-   "wait": "Aspettato {hours} ore a {place}, dalle {from} alle {to}.",
-   "cryo": "Nella capsula criogenica alle {from}, e fuori di nuovo il {date}."
-  },
-  "battle": {
-   "won": "Battuti {enemies}. {exp} di esperienza e {gold} per noi.",
-   "boss": "Abbattuto {name}, livello {level}, e non era una creatura qualunque.",
-   "petrodemon": "Steso un petrodemone, {name}, livello {level}.",
-   "fled": "Scappati via da {place}.",
-   "lost": "Persa la battaglia contro {enemies}.",
-   "lostAnon": "Persa la battaglia a {place}.",
-   "arena": "Arena: {streak} vittorie di fila."
-  },
-  "party": {
-   "join": "{name} si è unito a noi, un {cls} di livello {level}.",
-   "leave": "{name} è andato per la sua strada.",
-   "death": "{name} è morto a {place}, livello {level}.",
-   "retire": "{name} è rimasto a {place}.",
-   "recall": "Richiamato un vecchio compagno dalla panchina.",
-   "level": "{name} ha raggiunto il livello {level}.",
-   "leader": "Ora è {name} a guidare la compagnia."
-  },
-  "pet": {
-   "join": "Preso con noi {name}, un {kind}.",
-   "follower": "{name} ha deciso di venire con noi.",
-   "abandon": "Lasciato indietro {name} a {place}."
-  },
-  "birth": {
-   "pregnant": "{name} aspetta un figlio.",
-   "born": "{parent} ha dato alla luce {child}.",
-   "mitosis": "{name} si è diviso. Adesso sono in due: {copy}."
-  },
-  "npc": {
-   "friend": "{name} e {npc} adesso sono amici.",
-   "enemy": "{npc} non ha più tempo per {name}.",
-   "romance": "{name} e {npc}: {stage}."
+  "fmt": {
+    "itemCount": "{name} x{count}",
+    "and": "{a} e {b}",
+    "repeat": "{text} (x{count})"
   },
   "eris": {
-   "date": "Una serata con Eris a {place}, dalle {time}.",
-   "dateEnd": "È andata {outcome}. Con noi sta a {opinion}."
+    "wonderful": "meravigliosamente",
+    "warm": "con calore",
+    "awkward": "con imbarazzo",
+    "disaster": "disastrosamente"
   },
-  "faction": {
-   "standing": "Il nostro rapporto con {faction} è cambiato: {value}."
+  "surgery": {
+    "success": "ed ha tenuto",
+    "failure": "e non ha tenuto"
   },
-  "health": {
-   "disease": "{name} si è preso {disease}, da {source}.",
-   "epidemic": "{name} ha preso {disease} nell'epidemia.",
-   "cured": "{name} è guarito da {disease}.",
-   "partLost": "{name} ha perso {part}.",
-   "augmentLost": "{name} ci ha rimesso anche l'{augment}.",
-   "augmentFit": "A {name} è stato montato un {augment} su {part}.",
-   "surgery": "{surgeon} ha operato {patient}, {outcome}.",
-   "relief": "{name} si è preso un momento per sé."
+  "worlds": {
+    "tab": "Diari",
+    "none": "In questo mondo nessuna compagnia ha ancora tenuto un diario.",
+    "entry": "{names}",
+    "meta": "{count} righe, vista l'ultima volta a {place}",
+    "unknownParty": "Una compagnia senza nome",
+    "read": "Leggi"
   },
-  "item": {
-   "found": "Trovato {item} x{count} a {place}.",
-   "artifactGot": "Il {item} è nostro, preso a {place}.",
-   "artifactLost": "Il {item} non c'è più."
+  "entry": {
+    "note": "{text}",
+    "travel": {
+      "depart": "Partiti da {from} verso {to} in {transport} alle {time}, {km} km davanti a noi.",
+      "arrive": "Arrivati a {to} alle {time}, dopo {hours}h {minutes}m di strada.",
+      "refuel": "Messi {litres} litri in {vehicle} a {place}."
+    },
+    "landing": {
+      "planet": "Posata la nave su {planet}, sistema di {system}, alle {time}.",
+      "site": "Atterrati a {place} alle {time}."
+    },
+    "warp": {
+      "system": "Aperto un ponte dritto verso {system} alle {time}.",
+      "orbit": "Ponte fino all'orbita di {planet}, {system}, alle {time}.",
+      "galaxy": "Usciti del tutto da {from}: {system}, in {galaxy}, alle {time}."
+    },
+    "place": {
+      "entered": "Arrivati a {place} alle {time}."
+    },
+    "structure": {
+      "entered": "Scesi dentro {place} alle {time}."
+    },
+    "floor": {
+      "changed": "Giù fino al piano {floor} di {place}."
+    },
+    "rest": {
+      "sleep": "Dormito {hours} ore a {place}, dalle {from} alle {to}.",
+      "wait": "Aspettato {hours} ore a {place}, dalle {from} alle {to}.",
+      "cryo": "Nella capsula criogenica alle {from}, e fuori di nuovo il {date}."
+    },
+    "battle": {
+      "won": "Battuti {enemies}. {exp} di esperienza e {gold} per noi.",
+      "boss": "Abbattuto {name}, livello {level}, e non era una creatura qualunque.",
+      "petrodemon": "Steso un petrodemone, {name}, livello {level}.",
+      "fled": "Scappati via da {place}.",
+      "lost": "Persa la battaglia contro {enemies}.",
+      "lostAnon": "Persa la battaglia a {place}.",
+      "arena": "Arena: {streak} vittorie di fila."
+    },
+    "party": {
+      "join": "{name} si è unito a noi, un {cls} di livello {level}.",
+      "leave": "{name} è andato per la sua strada.",
+      "death": "{name} è morto a {place}, livello {level}.",
+      "retire": "{name} è rimasto a {place}.",
+      "recall": "Richiamato un vecchio compagno dalla panchina.",
+      "level": "{name} ha raggiunto il livello {level}.",
+      "leader": "Ora è {name} a guidare la compagnia."
+    },
+    "pet": {
+      "join": "Preso con noi {name}, un {kind}.",
+      "follower": "{name} ha deciso di venire con noi.",
+      "abandon": "Lasciato indietro {name} a {place}."
+    },
+    "birth": {
+      "pregnant": "{name} aspetta un figlio.",
+      "born": "{parent} ha dato alla luce {child}.",
+      "mitosis": "{name} si è diviso. Adesso sono in due: {copy}."
+    },
+    "npc": {
+      "friend": "{name} e {npc} adesso sono amici.",
+      "enemy": "{npc} non ha più tempo per {name}.",
+      "romance": "{name} e {npc}: {stage}."
+    },
+    "eris": {
+      "date": "Una serata con Eris a {place}, dalle {time}.",
+      "dateEnd": "È andata {outcome}. Con noi sta a {opinion}."
+    },
+    "faction": {
+      "standing": "Il nostro rapporto con {faction} è cambiato: {value}."
+    },
+    "health": {
+      "disease": "{name} si è preso {disease}, da {source}.",
+      "epidemic": "{name} ha preso {disease} nell'epidemia.",
+      "cured": "{name} è guarito da {disease}.",
+      "partLost": "{name} ha perso {part}.",
+      "augmentLost": "{name} ci ha rimesso anche l'{augment}.",
+      "augmentFit": "A {name} è stato montato un {augment} su {part}.",
+      "surgery": "{surgeon} ha operato {patient}, {outcome}.",
+      "relief": "{name} si è preso un momento per sé."
+    },
+    "item": {
+      "found": "Trovato {item} x{count} a {place}.",
+      "artifactGot": "Il {item} è nostro, preso a {place}.",
+      "artifactLost": "Il {item} non c'è più.",
+      "foundMany": "Trovati {items} a {place}.",
+      "artifactGotMany": "{items} sono nostri, presi a {place}."
+    },
+    "container": {
+      "stored": "Messo {items} in un contenitore a {place}."
+    },
+    "shop": {
+      "buy": "Comprato {items} da {place}, {total}.",
+      "sell": "Venduto {items} a {place} per {total}.",
+      "order": "Ordinato {items} sull'Ipernet, {total}."
+    },
+    "property": {
+      "bought": "Comprato {property} a {place}.",
+      "sold": "Venduto {property}.",
+      "rented": "Presa una stanza a {place} per {price}."
+    },
+    "bank": {
+      "loan": "Presi in prestito {amount} da {bank}.",
+      "repaid": "Restituiti {amount}."
+    },
+    "stock": {
+      "trade": "{action} {count} di {stock} a {price}."
+    },
+    "crime": {
+      "committed": "{crime}, a {place}. Per qualcuno vale {bounty}.",
+      "settled": "Saldata l'accusa di {crime}."
+    },
+    "steal": {
+      "success": "Sgraffignato {item} da {place}.",
+      "caught": "Provato a prendere {item} a {place} e ci hanno visti."
+    },
+    "law": {
+      "trial": "Sotto processo a {place}.",
+      "verdict": "{verdict}. {sentence}",
+      "prison": "Dentro: {term}."
+    },
+    "work": {
+      "shift": "Fatto un turno come {job} a {place}, {hours} ore per {pay}."
+    },
+    "farm": {
+      "sown": "Seminato {plant} a {place}.",
+      "harvested": "Raccolto il {plant} a {place}."
+    },
+    "animal": {
+      "bought": "Comprato un {animal} per {place}.",
+      "produce": "Raccolto {items} dal {animal} a {place}."
+    },
+    "apiary": {
+      "harvest": "Preso {items} dalle arnie a {place}."
+    },
+    "craft": {
+      "forge": "Forgiato {item} x{count} a {place}.",
+      "cook": "Cucinato {item} x{count} a {place}.",
+      "alchemy": "Preparato {item} x{count} al banco.",
+      "brew": "Messo {item} x{count} a fermentare a {place}."
+    },
+    "build": {
+      "placed": "Montato {item} a {place}.",
+      "dismantled": "Smontato {item} a {place}."
+    },
+    "skill": {
+      "learned": "{name} ha imparato {skill}.",
+      "learnedMany": "{name} ha imparato {skills}."
+    },
+    "spec": {
+      "tier": "{name} adesso è {tier} in {spec}."
+    },
+    "tech": {
+      "researched": "Capito come funziona {tech}."
+    },
+    "quest": {
+      "accepted": "Preso l'incarico {quest} a {place}.",
+      "completed": "Concluso {quest}."
+    },
+    "bestiary": {
+      "found": "Segnato {creature} nel bestiario."
+    },
+    "alien": {
+      "identified": "Dato un nome a una nuova specie su {planet}: {species}."
+    },
+    "minigame": {
+      "played": "Giocato a {game} a {place}. {outcome} {score}"
+    },
+    "tv": {
+      "watched": "Visto {programme} su {channel} a {place}."
+    },
+    "dream": {
+      "had": "Sognato. {dream}"
+    },
+    "mail": {
+      "sent": "Spedita una lettera a {to}: {subject}",
+      "dimension": "Spedita una lettera attraverso le dimensioni, a {to} nel mondo {world}: {subject}"
+    },
+    "mining": {
+      "stripped": "Smantellato del tutto {body}, nel sistema di {system}."
+    },
+    "adventure": {
+      "done": "Risolto {adventure} a {place}. {reward}"
+    }
   },
-  "container": {
-   "stored": "Messo {items} in un contenitore a {place}."
+  "game": {
+    "arcade": "la sala giochi",
+    "frogger": "Frogger",
+    "snake": "Snake",
+    "bubblePop": "Bubble Pop",
+    "slots": "la slot machine",
+    "bowling": "bowling",
+    "pool": "biliardo",
+    "lockpick": "una serratura",
+    "tetris": "Tetris",
+    "scratchCard": "un gratta e vinci",
+    "horseRace": "le corse dei cavalli",
+    "tarot": "i tarocchi",
+    "fishing": "pesca",
+    "surfing": "surf",
+    "targetRange": "il poligono di tiro",
+    "piano": "il pianoforte",
+    "periodicTable": "la tavola periodica",
+    "raman": "lo spettroscopio",
+    "chess": "scacchi",
+    "tournament": "il torneo dei mostri",
+    "hyperTamer": "Hyper Tamer",
+    "boosters": "buste di carte",
+    "cardDuel": "un duello di carte",
+    "dream": "un sogno"
   },
-  "shop": {
-   "buy": "Comprato {items} da {place}, {total}.",
-   "sell": "Venduto {items} a {place} per {total}.",
-   "order": "Ordinato {items} sull'Ipernet, {total}."
+  "romance": {
+    "flirt": "un po' di flirt",
+    "admire": "una parola di ammirazione",
+    "loveLetter": "una lettera d'amore",
+    "serenade": "una serenata",
+    "askDance": "un ballo",
+    "holdHands": "mano nella mano",
+    "askOut": "una serata insieme",
+    "confess": "una confessione",
+    "kiss": "un bacio"
   },
-  "property": {
-   "bought": "Comprato {property} a {place}.",
-   "sold": "Venduto {property}.",
-   "rented": "Presa una stanza a {place} per {price}."
+  "vehicle": {
+    "camper": "il camper",
+    "car": "l'auto",
+    "bike": "la bici",
+    "boat": "la barca",
+    "airship": "l'astronave",
+    "broom": "la scopa"
   },
-  "bank": {
-   "loan": "Presi in prestito {amount} da {bank}.",
-   "repaid": "Restituiti {amount}."
+  "verdict": {
+    "acquitted": "Assolti",
+    "guilty": "Colpevoli"
+  },
+  "term": {
+    "open": "senza pena stabilita",
+    "fixed": "{days} giorni e {hours} ore"
+  },
+  "trade": {
+    "bought": "Comprate",
+    "sold": "Vendute"
   },
   "stock": {
-   "trade": "{action} {count} di {stock} a {price}."
+    "oil": "petrolio",
+    "souls": "anime"
   },
-  "crime": {
-   "committed": "{crime}, a {place}. Per qualcuno vale {bounty}.",
-   "settled": "Saldata l'accusa di {crime}."
+  "place": {
+    "stockbusters": "Stockbusters"
   },
-  "steal": {
-   "success": "Sgraffignato {item} da {place}.",
-   "caught": "Provato a prendere {item} a {place} e ci hanno visti."
-  },
-  "law": {
-   "trial": "Sotto processo a {place}.",
-   "verdict": "{verdict}. {sentence}",
-   "prison": "Dentro: {term}."
-  },
-  "work": {
-   "shift": "Fatto un turno come {job} a {place}, {hours} ore per {pay}."
-  },
-  "farm": {
-   "sown": "Seminato {plant} a {place}.",
-   "harvested": "Raccolto il {plant} a {place}."
-  },
-  "animal": {
-   "bought": "Comprato un {animal} per {place}.",
-   "produce": "Raccolto {items} dal {animal} a {place}."
-  },
-  "apiary": {
-   "harvest": "Preso {items} dalle arnie a {place}."
-  },
-  "craft": {
-   "forge": "Forgiato {item} x{count} a {place}.",
-   "cook": "Cucinato {item} x{count} a {place}.",
-   "alchemy": "Preparato {item} x{count} al banco.",
-   "brew": "Messo {item} x{count} a fermentare a {place}."
-  },
-  "build": {
-   "placed": "Montato {item} a {place}.",
-   "dismantled": "Smontato {item} a {place}."
-  },
-  "skill": {
-   "learned": "{name} ha imparato {skill}."
-  },
-  "spec": {
-   "tier": "{name} adesso è {tier} in {spec}."
-  },
-  "tech": {
-   "researched": "Capito come funziona {tech}."
-  },
-  "quest": {
-   "accepted": "Preso l'incarico {quest} a {place}.",
-   "completed": "Concluso {quest}."
-  },
-  "bestiary": {
-   "found": "Segnato {creature} nel bestiario."
-  },
-  "alien": {
-   "identified": "Dato un nome a una nuova specie su {planet}: {species}."
-  },
-  "minigame": {
-   "played": "Giocato a {game} a {place}. {outcome} {score}"
-  },
-  "tv": {
-   "watched": "Visto {programme} su {channel} a {place}."
-  },
-  "dream": {
-   "had": "Sognato. {dream}"
-  },
-  "mail": {
-   "sent": "Spedita una lettera a {to}: {subject}",
-   "dimension": "Spedita una lettera attraverso le dimensioni, a {to} nel mondo {world}: {subject}"
-  },
-  "mining": {
-   "stripped": "Smantellato del tutto {body}, nel sistema di {system}."
-  },
-  "adventure": {
-   "done": "Risolto {adventure} a {place}. {reward}"
+  "write": {
+    "button": "Scrivi",
+    "title": "Scrivi nel diario",
+    "placeholder": "Cosa vale la pena ricordare?",
+    "save": "Scrivilo",
+    "cancel": "Lascia stare"
   }
- },
- "game": {
-  "arcade": "la sala giochi",
-  "frogger": "Frogger",
-  "snake": "Snake",
-  "bubblePop": "Bubble Pop",
-  "slots": "la slot machine",
-  "bowling": "bowling",
-  "pool": "biliardo",
-  "lockpick": "una serratura",
-  "tetris": "Tetris",
-  "scratchCard": "un gratta e vinci",
-  "horseRace": "le corse dei cavalli",
-  "tarot": "i tarocchi",
-  "fishing": "pesca",
-  "surfing": "surf",
-  "targetRange": "il poligono di tiro",
-  "piano": "il pianoforte",
-  "periodicTable": "la tavola periodica",
-  "raman": "lo spettroscopio",
-  "chess": "scacchi",
-  "tournament": "il torneo dei mostri",
-  "hyperTamer": "Hyper Tamer",
-  "boosters": "buste di carte",
-  "cardDuel": "un duello di carte",
-  "dream": "un sogno"
- },
- "romance": {
-  "flirt": "un po' di flirt",
-  "admire": "una parola di ammirazione",
-  "loveLetter": "una lettera d'amore",
-  "serenade": "una serenata",
-  "askDance": "un ballo",
-  "holdHands": "mano nella mano",
-  "askOut": "una serata insieme",
-  "confess": "una confessione",
-  "kiss": "un bacio"
- },
- "vehicle": {
-  "camper": "il camper",
-  "car": "l'auto",
-  "bike": "la bici",
-  "boat": "la barca",
-  "airship": "l'astronave",
-  "broom": "la scopa"
- },
- "verdict": {
-  "acquitted": "Assolti",
-  "guilty": "Colpevoli"
- },
- "term": {
-  "open": "senza pena stabilita",
-  "fixed": "{days} giorni e {hours} ore"
- },
- "trade": {
-  "bought": "Comprate",
-  "sold": "Vendute"
- },
- "stock": {
-  "oil": "petrolio",
-  "souls": "anime"
- },
- "place": {
-  "stockbusters": "Stockbusters"
- }
 }

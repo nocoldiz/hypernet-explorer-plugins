@@ -579,7 +579,7 @@
       patterns: ["none", "runner"],
       ornaments: ["cratePiles", "pitProps"],
       dressing: { floor: 0.09, wall: 0.08 },
-      enemy: { biomes: ["Abandoned", "Docks", "City"], archetypes: ["Humanoid", "Goblin", "Beast"], cap: [0, 2], boss: false },
+      enemy: { biomes: ["Abandoned", "Docks", "City"], archetypes: ["Humanoid", "Beast"], cap: [0, 2], boss: false },
       chests: [2, 3],
     },
     {
@@ -2607,7 +2607,128 @@
    * Generate procedural village biome with prefabs placed near path features first.
    * Includes Lot proximity checks to prevent overlapping hints.
    */
-function generateVillageBiome(biome, seed, allFeatures, adjacentBiomes, allOtherData = {}) {
+  // ===== SETTLEMENT BLOCK LAYOUT =====
+
+  /**
+   * Plans a settlement as a grid of blocks before a single tile is laid, the
+   * way a town map is drawn rather than the way a footpath wanders. Every cell
+   * of the returned grid is one of four things:
+   *
+   *   "R" street        "H" a house lot        "B" part of a 2x2 building
+   *   "O" open ground (a green, a yard, a square) - whatever is left over
+   *
+   * The rules the plan holds to, and which the tests assert:
+   *  - the centre row and the centre column are street the whole way across,
+   *    so the settlement always meets the roads arriving at its four borders
+   *  - every other street crosses that central cross, so the network is one
+   *    connected whole and never a stub
+   *  - parallel streets stay minRoadGap blocks apart, so two streets never
+   *    merge into a slab of tarmac and there is always a row of lots between
+   *    them
+   *  - every house lot touches a street, and every 2x2 building has at least
+   *    one of its four blocks on a street
+   *
+   * Tile sizes are none of this function's business: it deals in blocks, and
+   * the generator that calls it decides how many tiles a block is worth.
+   */
+  const MIN_ROAD_GAP = 2;
+
+  // A village block is 9 tiles a side and a village is 7 blocks across, which
+  // lands the middle block dead on the centre of a 64x64 map, where the border
+  // roads arrive. A house lot is one block (7x7 of buildable ground), a 2x2
+  // building lot is four (16x16).
+  const VILLAGE_CELL = 9;
+  const VILLAGE_GRID = 7;
+
+  function planSettlementBlocks(cols, rows, rng, opts = {}) {
+    const buildingChance = opts.buildingChance !== undefined ? opts.buildingChance : 0.45;
+    const houseChance = opts.houseChance !== undefined ? opts.houseChance : 0.85;
+    const extraRoads = opts.extraRoads !== undefined ? opts.extraRoads : 2;
+    const minRoadGap = opts.minRoadGap !== undefined ? opts.minRoadGap : MIN_ROAD_GAP;
+
+    const cells = new Array(cols * rows).fill("O");
+    const inside = (c, r) => c >= 0 && r >= 0 && c < cols && r < rows;
+    const at = (c, r) => (inside(c, r) ? cells[r * cols + c] : null);
+    const set = (c, r, v) => { if (inside(c, r)) cells[r * cols + c] = v; };
+
+    const roadCol = (cols - 1) >> 1;
+    const roadRow = (rows - 1) >> 1;
+    for (let r = 0; r < rows; r++) set(roadCol, r, "R");
+    for (let c = 0; c < cols; c++) set(c, roadRow, "R");
+
+    const usedCols = [roadCol];
+    const usedRows = [roadRow];
+    const pickLine = (used, n) => {
+      const free = [];
+      for (let i = 1; i < n - 1; i++) {
+        if (used.every(u => Math.abs(u - i) >= minRoadGap)) free.push(i);
+      }
+      return free.length ? free[Math.floor(rng() * free.length)] : -1;
+    };
+
+    for (let i = 0; i < extraRoads; i++) {
+      if (rng() < 0.5) {
+        const c = pickLine(usedCols, cols);
+        if (c < 0) continue;
+        usedCols.push(c);
+        const from = Math.floor(rng() * (roadRow + 1));
+        const to = roadRow + Math.floor(rng() * (rows - roadRow));
+        for (let r = from; r <= to; r++) set(c, r, "R");
+      } else {
+        const r = pickLine(usedRows, rows);
+        if (r < 0) continue;
+        usedRows.push(r);
+        const from = Math.floor(rng() * (roadCol + 1));
+        const to = roadCol + Math.floor(rng() * (cols - roadCol));
+        for (let c = from; c <= to; c++) set(c, r, "R");
+      }
+    }
+
+    const touchesRoad = (c, r) =>
+      at(c - 1, r) === "R" || at(c + 1, r) === "R" ||
+      at(c, r - 1) === "R" || at(c, r + 1) === "R";
+
+    // The big lots first: a 2x2 of open blocks with a street on at least one
+    // of its four sides becomes one building, so a village has something in it
+    // bigger than a cottage.
+    const corners = [];
+    for (let r = 0; r < rows - 1; r++) for (let c = 0; c < cols - 1; c++) corners.push({ c, r });
+    for (let i = corners.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      const tmp = corners[i]; corners[i] = corners[j]; corners[j] = tmp;
+    }
+    const clusters = [];
+    for (const { c, r } of corners) {
+      if (rng() >= buildingChance) continue;
+      const quad = [[c, r], [c + 1, r], [c, r + 1], [c + 1, r + 1]];
+      if (!quad.every(([qc, qr]) => at(qc, qr) === "O")) continue;
+      if (!quad.some(([qc, qr]) => touchesRoad(qc, qr))) continue;
+      for (const [qc, qr] of quad) set(qc, qr, "B");
+      clusters.push({ c, r });
+    }
+
+    // Then the houses, on whatever open block still fronts a street.
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        if (at(c, r) !== "O") continue;
+        if (!touchesRoad(c, r)) continue;
+        if (rng() < houseChance) set(c, r, "H");
+      }
+    }
+
+    return { cols, rows, cells, roadCol, roadRow, clusters, at };
+  }
+
+  /** The plan as the pitch draws it, one character a block. Debug aid. */
+  function settlementLayoutToString(layout) {
+    const lines = [];
+    for (let r = 0; r < layout.rows; r++) {
+      lines.push(layout.cells.slice(r * layout.cols, (r + 1) * layout.cols).join(""));
+    }
+    return lines.join("\n");
+  }
+
+  function generateVillageBiome(biome, seed, allFeatures, adjacentBiomes, allOtherData = {}) {
     return runSteps(generateVillageBiomeSteps(biome, seed, allFeatures, adjacentBiomes, allOtherData));
   }
 
@@ -2681,78 +2802,172 @@ function generateVillageBiome(biome, seed, allFeatures, adjacentBiomes, allOther
     yield;
 
 
-    // --- STEP 1: Scatter path seeds ---
-    const pathSeeds = [];
+    // --- STEP 1: the block plan ---------------------------------------------
+    // The village is planned as a grid of blocks (see planSettlementBlocks) and
+    // only then drawn. The old generator scattered a handful of seeds and
+    // wandered organic tracks between them, which is why a village came out as
+    // two houses lost in a tangle of paths.
+    const CELL = VILLAGE_CELL;
+    const GRID = VILLAGE_GRID;
+    // The grid is offset so the centre block's centre lands exactly on the
+    // centre of the map, which is where the border roads arrive: a block out by
+    // one tile leaves the main street and the road into town as two carriageways
+    // an inch apart.
+    const halfCell = Math.floor(CELL / 2);
+    const midBlock = (GRID - 1) >> 1;
+    const ox = Math.floor(width / 2) - (midBlock * CELL + halfCell);
+    const oy = Math.floor(height / 2) - (midBlock * CELL + halfCell);
+    const layout = planSettlementBlocks(GRID, GRID, rng, {
+      buildingChance: 0.4,
+      houseChance: 0.85,
+      extraRoads: 2 + Math.floor(rng() * 2),
+    });
+
+    // The high street is as wide as the road arriving at that border, so the
+    // two are one carriageway and not one road beside another. With nothing
+    // arriving on that axis it is a two-lane street, and every other street in
+    // the village is a lane.
+    const SIDE_ROAD_W = 3;
+    const mainColW = (borderDirs.north || borderDirs.south) ? 7 : 5;
+    const mainRowW = (borderDirs.east || borderDirs.west) ? 7 : 5;
+    const cellCenterX = c => ox + c * CELL + Math.floor(CELL / 2);
+    const cellCenterY = r => oy + r * CELL + Math.floor(CELL / 2);
+    const roadWidthOf = (c, r) => {
+      if (c === layout.roadCol && r === layout.roadRow) return Math.max(mainColW, mainRowW);
+      if (c === layout.roadCol) return mainColW;
+      if (r === layout.roadRow) return mainRowW;
+      return SIDE_ROAD_W;
+    };
+
     const roadSet = new Set();
+    const isBorderRoad = (x, y) => borderRoadOccupied[y * width + x];
+    // The border roads are already down: the pavement pass has to know about
+    // them too, or the one street the village shares with its neighbours is the
+    // only one with nothing alongside it.
     if (hasCardinalRoads) {
       for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          if (borderRoadOccupied[y * width + x]) roadSet.add(`${x},${y}`);
-        }
+        for (let x = 0; x < width; x++) if (borderRoadOccupied[y * width + x]) roadSet.add(`${x},${y}`);
       }
     }
-
-    const pathSeedCount = 5 + Math.floor(rng() * 5);
-    for (let i = 0; i < pathSeedCount; i++) {
-      const x = 10 + Math.floor(rng() * (width - 20));
-      const y = 10 + Math.floor(rng() * (height - 20));
-      const idx = calculateIndex(x, y, 0, width, height);
-      mapData[idx] = streetTile;
-      pathSeeds.push({ x, y });
+    function paintStreetTile(x, y) {
+      if (x < 0 || y < 0 || x >= width || y >= height) return;
+      roadSet.add(`${x},${y}`);
+      if (isBorderRoad(x, y)) return;    // already drawn, with its own markings
+      mapData[calculateIndex(x, y, 0, width, height)] = streetTile;
+    }
+    function paintStreetRect(x0, y0, x1, y1) {
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) paintStreetTile(x, y);
     }
 
     yield;
 
 
-    // --- STEP 2: Identify prefab placement locations ---
-    // Lots have to be separated on BOTH axes, not in sum: the old Manhattan
-    // test (< 14) happily accepted two lots 14 apart on one axis and 0 on the
-    // other, and every prefab bigger than about 12 tiles centred on them then
-    // overlapped its neighbour and was dropped by the collision guard. Village
-    // prefabs run from 4x4 to 32x32, so villages ended up built out of nothing
-    // but whatever was small enough to survive that. Chebyshev separation gives
-    // the bigger ones room; the placement pass fits smaller prefabs into
-    // whatever a lot has left (see generatePrefabPositions).
-    const LOT_SEPARATION = 14;
-    const prefabLots = [];
-    for (const seed of pathSeeds) {
-      const lotsPerSeed = 2 + Math.floor(rng() * 2);
-      for (let i = 0; i < lotsPerSeed; i++) {
-        const distance = 10 + Math.floor(rng() * 13);
-        const angle = rng() * Math.PI * 2;
-        const lotX = Math.floor(seed.x + Math.cos(angle) * distance);
-        const lotY = Math.floor(seed.y + Math.sin(angle) * distance);
-
-        if (lotX >= 2 && lotX < width - 2 && lotY >= 2 && lotY < height - 2) {
-           // Strict distance check to prevent hint overlap
-           let isTooClose = false;
-           for (const existingLot of prefabLots) {
-             const dist = Math.max(Math.abs(existingLot.x - lotX), Math.abs(existingLot.y - lotY));
-             if (dist < LOT_SEPARATION) { isTooClose = true; break; }
-           }
-           if (!isTooClose) prefabLots.push({ x: lotX, y: lotY, dist: 1 });
+    // --- STEP 2: the streets ------------------------------------------------
+    // Each street block is drawn as its own square of carriageway plus an arm
+    // reaching to every neighbouring street block, so the network on the ground
+    // is exactly the network in the plan: straight, and connected.
+    const NEIGHBOURS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+    for (let r = 0; r < GRID; r++) {
+      for (let c = 0; c < GRID; c++) {
+        if (layout.at(c, r) !== "R") continue;
+        const hw = roadWidthOf(c, r) >> 1;
+        const cx = cellCenterX(c), cy = cellCenterY(r);
+        paintStreetRect(cx - hw, cy - hw, cx + hw, cy + hw);
+        for (const [dc, dr] of NEIGHBOURS) {
+          if (layout.at(c + dc, r + dr) !== "R") continue;
+          const nhw = Math.min(hw, roadWidthOf(c + dc, r + dr) >> 1);
+          const nx = cellCenterX(c + dc), ny = cellCenterY(r + dr);
+          paintStreetRect(
+            Math.min(cx, nx) - (dc ? 0 : nhw), Math.min(cy, ny) - (dr ? 0 : nhw),
+            Math.max(cx, nx) + (dc ? 0 : nhw), Math.max(cy, ny) + (dr ? 0 : nhw)
+          );
         }
       }
     }
 
-    const validPrefabLots = prefabLots.filter(lot => {
-      const checkRadius = 4;
-      for (let dy = -checkRadius; dy <= checkRadius; dy++) {
-        for (let dx = -checkRadius; dx <= checkRadius; dx++) {
-          const checkX = lot.x + dx;
-          const checkY = lot.y + dy;
-          if (checkX >= 0 && checkX < width && checkY >= 0 && checkY < height) {
-            if (borderRoadOccupied[checkY * width + checkX]) return false;
+    // Centre lines, on a carriageway wide enough to have two lanes and only on
+    // a block the street runs straight through: paint across a junction reads
+    // as a lane marking driving into the traffic it crosses. The cadence comes
+    // off the absolute coordinate (ProcGenRoads.isDashStep), so the dashes line
+    // up with the border roads and with the neighbouring map square.
+    const dashStep = n => window.ProcGenRoads && window.ProcGenRoads.isDashStep
+      ? window.ProcGenRoads.isDashStep(n)
+      : ((n % 4) + 4) % 4 < 3;
+    if (streetIsPaved) {
+      for (let r = 0; r < GRID; r++) {
+        for (let c = 0; c < GRID; c++) {
+          if (layout.at(c, r) !== "R") continue;
+          if (roadWidthOf(c, r) < 5) continue;
+          const vertical = layout.at(c, r - 1) === "R" || layout.at(c, r + 1) === "R";
+          const horizontal = layout.at(c - 1, r) === "R" || layout.at(c + 1, r) === "R";
+          if (vertical === horizontal) continue;              // a junction, or a stub
+          const dashTile = vertical ? villageDashedLines.vertical : villageDashedLines.horizontal;
+          if (!dashTile) continue;
+          const cx = cellCenterX(c), cy = cellCenterY(r);
+          const from = vertical ? oy + r * CELL : ox + c * CELL;
+          for (let i = from; i < from + CELL; i++) {
+            const x = vertical ? cx : i;
+            const y = vertical ? i : cy;
+            if (x < 1 || y < 1 || x >= width - 1 || y >= height - 1) continue;
+            if (!dashStep(i)) continue;
+            if (isBorderRoad(x, y)) continue;
+            if (mapData[calculateIndex(x, y, 0, width, height)] !== streetTile) continue;
+            mapData[calculateIndex(x, y, 1, width, height)] = dashTile;
           }
         }
       }
-      return true;
-    });
+    }
 
     yield;
 
 
-    // --- STEP 3: Apply prefabs ---
+    // --- STEP 3: the lots, and the prefabs that stand on them ----------------
+    // One lot per house block, one per 2x2 building block. Each is inset by a
+    // tile so a building never sits flush against the kerb, and each is handed
+    // over as a rectangle, not just a point, so the placement pass can pick a
+    // prefab that actually fits it.
+    const villageLots = [];
+    const lotFor = (c, r, wCells, hCells) => ({
+      x: ox + c * CELL + 1,
+      y: oy + r * CELL + 1,
+      w: wCells * CELL - 2,
+      h: hCells * CELL - 2,
+    });
+    const lotClearOfBorderRoad = (lot) => {
+      for (let y = lot.y; y < lot.y + lot.h; y++) {
+        for (let x = lot.x; x < lot.x + lot.w; x++) {
+          if (x < 0 || y < 0 || x >= width || y >= height) return false;
+          if (borderRoadOccupied[y * width + x]) return false;
+        }
+      }
+      return true;
+    };
+    for (const cl of layout.clusters) {
+      const lot = lotFor(cl.c, cl.r, 2, 2);
+      if (lotClearOfBorderRoad(lot)) villageLots.push(lot);
+    }
+    for (let r = 0; r < GRID; r++) {
+      for (let c = 0; c < GRID; c++) {
+        if (layout.at(c, r) !== "H") continue;
+        const lot = lotFor(c, r, 1, 1);
+        if (lotClearOfBorderRoad(lot)) villageLots.push(lot);
+      }
+    }
+
+    // Biggest lots first, so the large prefabs get the room built for them.
+    villageLots.sort((a, b) => (b.w * b.h) - (a.w * a.h));
+    const validPrefabLots = villageLots.map(lot => ({
+      x: lot.x + Math.floor(lot.w / 2),
+      y: lot.y + Math.floor(lot.h / 2),
+      w: lot.w,
+      h: lot.h,
+      dist: 1,
+    }));
+
+    yield;
+
+
+    // --- STEP 4: Apply prefabs ---
     // Prefabs are placed NOW. Any code after this must respect the tiles they placed.
     allOtherData.placementHints = validPrefabLots;
     if (biome && biome.prefabs && biome.prefabs.length > 0) {
@@ -2769,128 +2984,44 @@ function generateVillageBiome(biome, seed, allFeatures, adjacentBiomes, allOther
       }
     }
 
-    yield;
-
-
-    // --- STEP 4: Draw connecting roads ---
-    // Add existing paths to roadSet
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        const idx = calculateIndex(x, y, 0, width, height);
-        const surface = mapData[idx];
-        if ((surface === streetTile || surface === pathTile) &&
-            !borderRoadOccupied[y * width + x]) {
-          roadSet.add(`${x},${y}`);
-        }
-      }
-    }
-
-    /**
-     * UPDATED SETROAD: Checks if target tile is valid terrain before writing.
-     * Prevents roads from cutting through Prefab walls/floors.
-     */
-    function setRoad(x, y, tile) {
-      if (x < 1 || x >= width - 1 || y < 1 || y >= height - 1) return;
-      if (borderRoadOccupied[y * width + x]) return;
-
+    // --- Footpaths from each lot to its street ------------------------------
+    // A short spur of Path from the middle of a lot out to the nearest
+    // carriageway, laid only over ground nothing else has claimed, so a prefab
+    // is never cut into.
+    function layFootpath(x, y) {
+      if (x < 1 || y < 1 || x >= width - 1 || y >= height - 1) return false;
+      if (borderRoadOccupied[y * width + x]) return false;
       const idx = calculateIndex(x, y, 0, width, height);
-      const currentTile = mapData[idx];
-
-      // PROTECTION CHECK:
-      // If the tile is occupied by something that is NOT base terrain,
-      // NOT an existing street or footpath, and NOT empty (0), it is a Prefab.
-      // Do not overwrite it.
-      if (currentTile !== baseTile && currentTile !== 0 &&
-          currentTile !== pathTile && currentTile !== streetTile) {
-          return;
-      }
-
-      mapData[idx] = tile;
+      const current = mapData[idx];
+      if (current === streetTile || current === pathTile) return true;
+      if (current !== baseTile && current !== 0) return false;
+      mapData[idx] = pathTile;
       roadSet.add(`${x},${y}`);
+      return true;
     }
-
-    function drawBrush(cx, cy, radius, tile) {
-      for (let y = cy - radius; y <= cy + radius; y++) {
-        for (let x = cx - radius; x <= cx + radius; x++) {
-          if (Math.abs(x - cx) + Math.abs(y - cy) <= radius + 0.5) {
-            setRoad(x, y, tile);
+    for (const lot of villageLots) {
+      const fx = lot.x + Math.floor(lot.w / 2);
+      const fy = lot.y + Math.floor(lot.h / 2);
+      let best = null;
+      for (const [dx, dy] of NEIGHBOURS) {
+        for (let step = 1; step <= CELL; step++) {
+          const x = fx + dx * step;
+          const y = fy + dy * step;
+          if (x < 0 || y < 0 || x >= width || y >= height) break;
+          if (roadSet.has(`${x},${y}`)) {
+            if (!best || step < best.step) best = { dx, dy, step };
+            break;
           }
         }
       }
-    }
-
-    // Every centre tile of every street, in the order it was laid, with the way
-    // the street was running when it got there. The centre line is painted from
-    // this once the whole network is down, so no dash ends up buried under a
-    // street drawn afterwards.
-    const streetSpine = [];
-
-    function drawOrganicPath(x1, y1, x2, y2, brushSize = 1, tile = pathTile, spine = null) {
-      let cx = x1, cy = y1;
-      while (Math.abs(cx - x2) > 2 || Math.abs(cy - y2) > 2) {
-        const dx = x2 - cx, dy = y2 - cy;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        let vx = dx / dist, vy = dy / dist;
-        if (rng() < 0.3) { vx += (rng() - 0.5) * 0.6; vy += (rng() - 0.5) * 0.6; }
-        cx += vx; cy += vy;
-        const tx = Math.floor(cx), ty = Math.floor(cy);
-        drawBrush(tx, ty, brushSize, tile);
-        if (spine) spine.push({ x: tx, y: ty, horizontal: Math.abs(vx) >= Math.abs(vy) });
-      }
-      return { x: Math.floor(cx), y: Math.floor(cy) };
-    }
-
-    // Connect seeds: this run is the village's street, wide enough for two lanes
-    // and for the paint down the middle of them.
-    for (let i = 0; i < pathSeeds.length - 1; i++) {
-      drawOrganicPath(pathSeeds[i].x, pathSeeds[i].y, pathSeeds[i+1].x, pathSeeds[i+1].y, 1, streetTile, streetSpine);
-    }
-    // Extra loops
-    const extraConnections = Math.max(1, Math.floor(pathSeeds.length / 5));
-    for (let i = 0; i < extraConnections; i++) {
-      const idx1 = Math.floor(rng() * pathSeeds.length);
-      const idx2 = Math.floor(rng() * pathSeeds.length);
-      if (idx1 !== idx2) drawOrganicPath(pathSeeds[idx1].x, pathSeeds[idx1].y, pathSeeds[idx2].x, pathSeeds[idx2].y, 0);
-    }
-    // Connect lots
-    for (const lot of validPrefabLots) {
-      let nearestSeed = pathSeeds[0], minDist = Infinity;
-      for (const seed of pathSeeds) {
-        const dist = Math.sqrt((lot.x - seed.x) ** 2 + (lot.y - seed.y) ** 2);
-        if (dist < minDist) { minDist = dist; nearestSeed = seed; }
-      }
-      if (minDist > 12 && minDist < 40) drawOrganicPath(lot.x, lot.y, nearestSeed.x, nearestSeed.y, 0);
-    }
-
-    // --- Centre line down the streets ---
-    // Three tiles of paint then one of gap, the cadence the border roads and the
-    // city grid already use. Laid on layer 1, and only where the street is still
-    // there underneath, so a dash never strays onto a prefab, a yard or a verge.
-    // A tileset with no Road feature has no carriageway to paint on: its village
-    // is footpaths all the way down and gets no markings.
-    if (streetIsPaved) {
-      const DASH_LENGTH = 3;
-      const DASH_CYCLE = DASH_LENGTH + 1;
-      let dashStep = 0;
-      let lastSpineKey = null;
-      for (const point of streetSpine) {
-        const key = `${point.x},${point.y}`;
-        // The walk advances by less than a tile at a time, so the same centre
-        // tile turns up repeatedly: it is one step of the dash cycle, not many.
-        if (key === lastSpineKey) continue;
-        lastSpineKey = key;
-        const onCycle = dashStep++ % DASH_CYCLE < DASH_LENGTH;
-        if (!onCycle) continue;
-        const dashTile = point.horizontal
-          ? villageDashedLines.horizontal
-          : villageDashedLines.vertical;
-        if (!dashTile) continue;
-        if (point.x < 1 || point.x >= width - 1 || point.y < 1 || point.y >= height - 1) continue;
-        if (borderRoadOccupied[point.y * width + point.x]) continue;
-        if (mapData[calculateIndex(point.x, point.y, 0, width, height)] !== streetTile) continue;
-        mapData[calculateIndex(point.x, point.y, 1, width, height)] = dashTile;
+      if (!best) continue;
+      for (let step = 1; step < best.step; step++) {
+        if (!layFootpath(fx + best.dx * step, fy + best.dy * step)) break;
       }
     }
+
+    yield;
+
 
     // --- Sidewalks ---
     // UPDATED Call: Passes baseTile to ensure sidewalks don't overwrite prefabs
@@ -2948,6 +3079,15 @@ function generateVillageBiome(biome, seed, allFeatures, adjacentBiomes, allOther
     const DASH_LENGTH = 3;
     const DASH_GAP = 1;
     const DASH_CYCLE = DASH_LENGTH + DASH_GAP;
+    // The phase of the paint is read off the absolute coordinate, never off
+    // where this particular run happens to start. Each of the four runs used
+    // to count from its own end - south and east from the map centre, west
+    // backwards from it - so the dashes broke cadence at the centre junction
+    // and again at every map seam, where the neighbouring square's run was
+    // counting from somewhere else entirely.
+    const dashStep = (n) => window.ProcGenRoads?.isDashStep
+      ? window.ProcGenRoads.isDashStep(n)
+      : ((n % DASH_CYCLE) + DASH_CYCLE) % DASH_CYCLE < DASH_LENGTH;
     const dl = dashedLines || { horizontal: null, vertical: null };
     // A crossing, sometimes, well clear of the border edge and of the
     // junction at the map center where this run meets the street grid.
@@ -2969,9 +3109,8 @@ function generateVillageBiome(biome, seed, allFeatures, adjacentBiomes, allOther
           }
         }
         // Draw dashed center line
-        if (dl.vertical) {
-          const cyclePos = y % DASH_CYCLE;
-          if (cyclePos < DASH_LENGTH) {
+        if (dl.vertical && dashStep(y)) {
+          {
             const idx = calculateIndex(centerLineX, y, 1, width, height);
             mapData[idx] = dl.vertical;
           }
@@ -2997,9 +3136,8 @@ function generateVillageBiome(biome, seed, allFeatures, adjacentBiomes, allOther
           }
         }
         // Draw dashed center line
-        if (dl.vertical) {
-          const cyclePos = (y - centerY) % DASH_CYCLE;
-          if (cyclePos < DASH_LENGTH) {
+        if (dl.vertical && dashStep(y)) {
+          {
             const idx = calculateIndex(centerLineX, y, 1, width, height);
             mapData[idx] = dl.vertical;
           }
@@ -3026,9 +3164,8 @@ function generateVillageBiome(biome, seed, allFeatures, adjacentBiomes, allOther
           }
         }
         // Draw dashed center line
-        if (dl.horizontal) {
-          const cyclePos = (x - centerX) % DASH_CYCLE;
-          if (cyclePos < DASH_LENGTH) {
+        if (dl.horizontal && dashStep(x)) {
+          {
             const idx = calculateIndex(x, centerLineY, 1, width, height);
             mapData[idx] = dl.horizontal;
           }
@@ -3055,9 +3192,8 @@ function generateVillageBiome(biome, seed, allFeatures, adjacentBiomes, allOther
           }
         }
         // Draw dashed center line
-        if (dl.horizontal) {
-          const cyclePos = (centerX - x) % DASH_CYCLE;
-          if (cyclePos < DASH_LENGTH) {
+        if (dl.horizontal && dashStep(x)) {
+          {
             const idx = calculateIndex(x, centerLineY, 1, width, height);
             mapData[idx] = dl.horizontal;
           }
@@ -4337,7 +4473,27 @@ function generateVillageBiome(biome, seed, allFeatures, adjacentBiomes, allOther
         // one tile is the pavement the sidewalk pass and the furniture use.
         const lot = { x: block.x + 1, y: block.y + 1, w: block.w - 2, h: block.h - 2 };
         if (lot.w < 4 || lot.h < 4) { openBlocks.push({ kind: "vacant", rect: block }); continue; }
-        buildingLots.push(lot);
+        // A block wide or deep enough for two buildings gets two: one prefab
+        // per block left the widest blocks as a single house standing in a
+        // field of pavement, which is most of why a city read as empty. The
+        // halves keep a 2-tile gap between them, and neither is allowed below
+        // SPLIT_MIN, the frontage the smaller authored buildings need.
+        const SPLIT_MIN = 12;
+        const splitAlong = (l, axis) => {
+          const size = axis === "x" ? l.w : l.h;
+          const half = Math.floor((size - 2) / 2);
+          if (half < SPLIT_MIN) return [l];
+          return axis === "x"
+            ? [{ x: l.x, y: l.y, w: half, h: l.h },
+               { x: l.x + half + 2, y: l.y, w: size - half - 2, h: l.h }]
+            : [{ x: l.x, y: l.y, w: l.w, h: half },
+               { x: l.x, y: l.y + half + 2, w: l.w, h: size - half - 2 }];
+        };
+        let lots = lot.w >= lot.h ? splitAlong(lot, "x") : splitAlong(lot, "y");
+        if (lots.length === 1 && rng() < 0.5) {
+          lots = lot.w >= lot.h ? splitAlong(lot, "y") : splitAlong(lot, "x");
+        }
+        for (const l of lots) buildingLots.push(l);
         for (let y = lot.y; y < lot.y + lot.h; y++) {
           for (let x = lot.x; x < lot.x + lot.w; x++) occupiedMap[y * width + x] = 2;
         }
@@ -4970,6 +5126,11 @@ function generateBurgBiome(biome, seed, allFeatures, adjacentBiomes, allOtherDat
     // window steps these so a town built ahead of the party costs a few
     // milliseconds a frame instead of a whole dropped one.
     generateVillageBiomeSteps,
-    generateCityBiomeSteps
+    generateCityBiomeSteps,
+    // The block plan a settlement is drawn from, and its debug rendering.
+    planSettlementBlocks,
+    settlementLayoutToString,
+    VILLAGE_CELL,
+    VILLAGE_GRID
   };
 })();

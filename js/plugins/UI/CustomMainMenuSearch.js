@@ -36,7 +36,7 @@
  * the equip screen's own) and the creature pages come from window.BestiaryData
  * (Quest/Bestiary.js). Craftability is answered by the benches themselves,
  * window.CraftRecipes (Quest/ThinkerMenu.js) and window.ForgeRecipes
- * (Crafting/BlacksmithingMenu.js).
+ * (Quest/ThinkerMenu.js).
  *
  * Keyboard: type to search, Up/Down to walk the results, Enter to run the
  * highlighted result's first action, Escape to clear (again to leave the
@@ -430,7 +430,7 @@
                     <h3 class="target-title">${title}</h3>
                     <div class="inspect-actions">
                         ${rows}
-                        <div class="inspect-btn focusable" style="margin-top:15px;" onclick="window.MenuSearch.cancelPending()">${T('Inventory.ui.cancel')}</div>
+                        <div class="inspect-btn focusable target-cancel" onclick="window.MenuSearch.cancelPending()">${T('Inventory.ui.cancel')}</div>
                     </div>
                 </div>
             </div>`;
@@ -504,7 +504,7 @@
         const specRow = (label, value) => value === null || value === undefined || value === '' ? '' : `
             <div class="inspect-spec-row">
                 <span class="inspect-spec-label">${escapeHtml(label)}:</span>
-                <span class="inspect-spec-value">${escapeHtml(String(value))}</span>
+                <span class="inspect-spec-value inspect-spec-value--wrap">${escapeHtml(String(value))}</span>
             </div>`;
 
         const statRows = paramLabels.map((label, i) => specRow(label, params[i])).join('');
@@ -517,30 +517,35 @@
             specRow(T('MainMenu.search.enemy.speed'), note.speed);
 
         const sprite = mon.character
-            ? `<canvas id="menu-search-enemy-canvas" width="48" height="48" style="width:48px;height:48px;image-rendering:pixelated;"></canvas>`
+            ? `<canvas id="menu-search-enemy-canvas" class="inspect-creature-canvas" width="48" height="48"></canvas>`
             : '';
 
+        // Two columns of label/value pairs under each heading, the character
+        // sheet's fact grid: the answer sits beside its question instead of a
+        // page away from it. The grid is the card's own, not the backpack's
+        // ".inspect-pockets" one, so the creature reads the same wherever the
+        // panel is shown.
         return `
             <div class="item-inspect">
                 <div class="inspect-header">
                     <div class="inspect-frame">${sprite}</div>
                     <div class="inspect-title-box">
                         <h3 class="inspect-name">${escapeHtml(mon.name)}</h3>
-                        <div class="inspect-rarity" style="color: var(--text-gold-dark);">${escapeHtml(row.category)}${note.level ? ` · ${T('MainMenu.roster.levelAbbr')} ${escapeHtml(note.level)}` : ''}</div>
+                        <div class="inspect-rarity inspect-rarity--category">${escapeHtml(row.category)}${note.level ? ` · ${T('MainMenu.roster.levelAbbr')} ${escapeHtml(note.level)}` : ''}</div>
                     </div>
                 </div>
                 <div class="inspect-lore">
                     ${note.description ? `<div class="inspect-flavour">${escapeHtml(note.description)}</div>` : ''}
                     <div class="inspect-section-title">${T('MainMenu.search.enemy.stats')}</div>
-                    ${statRows}
-                    ${ecology ? `<div class="inspect-section-title">${T('MainMenu.search.enemy.ecology')}</div>${ecology}` : ''}
+                    <div class="inspect-spec-grid">${statRows}</div>
+                    ${ecology ? `<div class="inspect-section-title">${T('MainMenu.search.enemy.ecology')}</div><div class="inspect-spec-grid">${ecology}</div>` : ''}
                 </div>
             </div>`;
     }
 
     function unavailableHTML(what) {
         return `
-            <div class="item-inspect item-inspect--empty" style="justify-content:center;text-align:center;padding:40px 10px;">
+            <div class="item-inspect item-inspect--empty">
                 <p class="inspect-placeholder-text">${T('MainMenu.search.noPanel', { what: escapeHtml(what) })}</p>
             </div>`;
     }
@@ -549,7 +554,7 @@
         const row = currentRow();
         if (!row) {
             return `
-                <div class="item-inspect item-inspect--empty" style="justify-content:center;text-align:center;padding:40px 10px;">
+                <div class="item-inspect item-inspect--empty">
                     <h3 class="title">${T('MainMenu.search.detailTitle')}</h3>
                     <p class="inspect-placeholder-text">${T('MainMenu.search.detailHint')}</p>
                 </div>`;

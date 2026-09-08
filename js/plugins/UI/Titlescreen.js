@@ -350,14 +350,20 @@
             if (!el) return s;
             const vw = window.innerWidth || document.documentElement.clientWidth || r.width;
             const vh = window.innerHeight || document.documentElement.clientHeight || r.height;
+            // Where the panel is anchored and how far the canvas is blown up
+            // are the two things the stylesheet cannot know. They are handed
+            // over as custom properties; every size on the panel is a calc()
+            // off --title-scale in css/theme.css.
             const st = el.style;
-            if (opts.left != null) st.left = Math.round(r.left + opts.left * s) + 'px';
-            if (opts.right != null) st.right = Math.round(vw - (r.left + r.width) + opts.right * s) + 'px';
-            if (opts.top != null) st.top = Math.round(r.top + opts.top * s) + 'px';
-            if (opts.bottom != null) st.bottom = Math.round(vh - (r.top + r.height) + opts.bottom * s) + 'px';
+            el.classList.add('title-anchored');
+            st.setProperty('--title-scale', String(s));
+            if (opts.left != null) st.setProperty('--title-x', Math.round(r.left + opts.left * s) + 'px');
+            if (opts.right != null) st.setProperty('--title-right', Math.round(vw - (r.left + r.width) + opts.right * s) + 'px');
+            if (opts.top != null) st.setProperty('--title-y', Math.round(r.top + opts.top * s) + 'px');
+            if (opts.bottom != null) st.setProperty('--title-bottom', Math.round(vh - (r.top + r.height) + opts.bottom * s) + 'px');
             if (opts.centerY) {
-                st.top = Math.round(r.top + r.height / 2) + 'px';
-                st.transform = 'translateY(-50%)';
+                st.setProperty('--title-y', Math.round(r.top + r.height / 2) + 'px');
+                el.classList.add('title-anchored--midway');
             }
             return s;
         },
@@ -421,18 +427,10 @@
             delete el.dataset.lifting;
             // Longhands and an explicit size, never the `inset` shorthand: it is
             // not honoured in this runtime and collapses the box to nothing.
-            Object.assign(el.style, {
-                position: 'fixed', top: '0', right: '0', bottom: '0', left: '0',
-                width: '100vw', height: '100vh',
-                background: '#000',
-                zIndex: '99999',
-                // Never in the way of a press: the panels underneath are held
-                // hidden until they are placed, so nothing can be clicked by
-                // mistake and nothing has to be blocked here either.
-                pointerEvents: 'none',
-                transition: 'none',
-                opacity: '1'
-            });
+            // Never in the way of a press: the panels underneath are held
+            // hidden until they are placed, so nothing can be clicked by
+            // mistake and nothing has to be blocked here either.
+            el.className = 'title-veil';
             return el;
         },
 
@@ -448,11 +446,12 @@
             }
             if (el.dataset.lifting === '1') return;
             el.dataset.lifting = '1';
-            el.style.transition = `opacity ${VEIL_FADE_MS}ms ease-out`;
+            el.style.setProperty('--title-veil-fade', `${VEIL_FADE_MS}ms`);
+            el.classList.add('title-veil--fading');
             // Read a layout property so the browser starts the transition from
             // opacity 1 instead of folding both values into one recalculation.
             void el.offsetWidth;
-            el.style.opacity = '0';
+            el.classList.add('title-veil--out');
             setTimeout(() => {
                 if (el.parentNode) el.parentNode.removeChild(el);
             }, VEIL_FADE_MS + 80);
@@ -506,11 +505,12 @@
     Scene_Title.prototype.createCommandWindow = function () {
         _Scene_Title_createCommandWindow.call(this);
         this._commandWindow.setHandler('quickContinue', this.commandQuickContinue.bind(this));
-        this._commandWindow.setHandler('tutorial', this.commandTutorial.bind(this));
+        this._commandWindow.setHandler('storymode', this.commandStoryMode.bind(this));
         this._commandWindow.setHandler('sandboxGame', this.commandSandboxGame.bind(this));
         this._commandWindow.setHandler('minigames', this.commandMinigames.bind(this));
         this._commandWindow.setHandler('worlds', this.commandWorlds.bind(this));
         this._commandWindow.setHandler('wiki', this.commandWiki.bind(this));
+        this._commandWindow.setHandler('titleMusic', this.commandTitleMusic.bind(this));
         this._commandWindow.setHandler('exitGame', this.commandExitGame.bind(this));
         const ww = Graphics.width * toPct(windowWidthPct);
         const wx = Graphics.width * toPct(windowXOffsetPct) - ww / 2;
@@ -537,6 +537,10 @@
 
     Scene_Title.prototype.commandNewGame = function () {
         DataManager.setupNewGame();
+        // Straight into character creation: the start map's own event runs
+        // the wizard at once, and the curtain keeps the map hidden until it
+        // is up.
+        $gameSystem._pendingCreationCurtain = true;
         $gamePlayer.reserveTransfer(
             EXPLORE_START.mapId, EXPLORE_START.x, EXPLORE_START.y, EXPLORE_START.dir, 0);
         this._commandWindow.close();
@@ -578,39 +582,95 @@
             });
     };
 
-    // Tutorial command: start the tutorial directly (no info popup)
-    Scene_Title.prototype.commandTutorial = function () {
+    // Story mode: resumes the story band's newest save when one exists, and
+    // otherwise begins a new story run. The entry is named Story mode either
+    // way.
+    Scene_Title.prototype.commandStoryMode = function () {
+        if (!storyModeAvailable()) {
+            SoundManager.playBuzzer();
+            this._commandWindow.activate();
+            return;
+        }
+        if (hasStoryMainSave() && window.SaveSystem.latestStorySlot) {
+            const slot = window.SaveSystem.latestStorySlot();
+            if (slot >= 0) {
+                SoundManager.playLoad();
+                this._commandWindow.close();
+                this.fadeOutAll();
+                DataManager.loadGame(slot).then(() => {
+                    $gameSystem.onAfterLoad();
+                    SceneManager.goto(Scene_Map);
+                }).catch(() => {
+                    SoundManager.playBuzzer();
+                    this._commandWindow.open();
+                    this.startFadeIn(this.slowFadeSpeed(), false);
+                });
+                return;
+            }
+        }
         this._commandWindow.close();
         this.fadeOutAll();
+        if (!hasActiveWorld()) {
+            createStoryWorld().then(() => {
+                this.startStoryRun();
+            }).catch(e => {
+                console.error('[Titlescreen] Story world creation failed', e);
+                SoundManager.playBuzzer();
+                this._commandWindow.open();
+                this.startFadeIn(this.slowFadeSpeed(), false);
+            });
+            return;
+        }
+        this.startStoryRun();
+    };
+
+    // The story run itself, once a world is standing. Outside the canon year
+    // there is no tutorial map to walk, so the run is put down on its own
+    // landing and asks for the wizard itself (switch 100 is what the tutorial
+    // map would have raised).
+    Scene_Title.prototype.startStoryRun = function () {
         DataManager.setupNewGame();
-        $gamePlayer.reserveTransfer(1414, 61, 7, 2, 0);
+        beginStoryRunTransfer();
         SceneManager.goto(Scene_Map);
     };
 
-    Scene_Title.prototype.createTutorialWindow = function () {
+    function beginStoryRunTransfer() {
+        const landing = storyModeLanding();
+        // Switch 49 marks the save as a story run, whichever landing it opens on.
+        $gameSwitches.setValue(STORY_MODE_SWITCH, true);
+        // The story never opens on its landing either: the wizard comes first.
+        $gameSystem._pendingCreationCurtain = true;
+        if (!storyModeAvailable() || !window.StoryModeStart.usesTutorialMap()) {
+            $gameSwitches.setValue(100, true);
+            $gameSystem._pendingStoryModeCreation = true;
+        }
+        $gamePlayer.reserveTransfer(landing.mapId, landing.x, landing.y, landing.dir || 2, 0);
+    }
+
+    Scene_Title.prototype.createStoryModeWindow = function () {
         const width = 600;
         const height = 300;
         const x = (Graphics.boxWidth - width) / 2;
         const y = (Graphics.boxHeight - height) / 2;
         const rect = new Rectangle(x, y, width, height);
-        this._tutorialWindow = new Window_Tutorial(rect);
-        this._tutorialWindow.setHandler('continue', this.onTutorialContinue.bind(this));
-        this._tutorialWindow.setHandler('cancel', this.onTutorialCancel.bind(this));
-        this.addChild(this._tutorialWindow);
+        this._storyModeWindow = new Window_StoryMode(rect);
+        this._storyModeWindow.setHandler('continue', this.onStoryModeContinue.bind(this));
+        this._storyModeWindow.setHandler('cancel', this.onStoryModeCancel.bind(this));
+        this.addChild(this._storyModeWindow);
     };
 
-    Scene_Title.prototype.onTutorialContinue = function () {
-        this._tutorialWindow.close();
+    Scene_Title.prototype.onStoryModeContinue = function () {
+        this._storyModeWindow.close();
         this._commandWindow.close();
         this.fadeOutAll();
         DataManager.setupNewGame();
-        $gamePlayer.reserveTransfer(1414, 61, 7, 2, 0);
+        beginStoryRunTransfer();
         SceneManager.goto(Scene_Map);
     };
 
-    Scene_Title.prototype.onTutorialCancel = function () {
-        this._tutorialWindow.close();
-        this._tutorialWindow.hide();
+    Scene_Title.prototype.onStoryModeCancel = function () {
+        this._storyModeWindow.close();
+        this._storyModeWindow.hide();
     };
 
     Scene_Title.prototype.commandExitGame = function () {
@@ -862,8 +922,8 @@
     }
 
     function launchLockpick() {
-        const LT = window.LockpickTetris;
-        if (!LT || !window.Scene_LockpickTetris) return;
+        const LT = window.UnlockingBlocks;
+        if (!LT || !window.Scene_UnlockingBlocks) return;
         // Bypass the "needs a lockpick" gate: set the difficulty statics the
         // scene reads, neutralise the switch / self-switch writeback, then push.
         LT.difficulty = 5;
@@ -875,7 +935,7 @@
         LT.currentEventId = 0;
         LT.currentMapId = (typeof $gameMap !== 'undefined' && $gameMap.mapId) ? $gameMap.mapId() : 0;
         if (LT.calculateDifficultySettings) LT.calculateDifficultySettings(5, 1.0, 1.0);
-        SceneManager.push(window.Scene_LockpickTetris);
+        SceneManager.push(window.Scene_UnlockingBlocks);
     }
 
     // A card duel with no collection behind it: both sides are dealt a deck
@@ -999,7 +1059,7 @@
             { name: T('Titlescreen.minigame.hyperdeck'),              avail: () => hasScene('Scene_HyperDeck'),         run: s => launchHyperdeck() },
             { name: T('Titlescreen.minigame.periodicTable'),          avail: () => hasScene('Scene_PeriodicTable'),     run: s => SceneManager.push(window.Scene_PeriodicTable) },
             { name: T('Titlescreen.minigame.boosterPack'),            avail: () => hasCmd('BoosterPackSystem', 'openBoosterPack'), run: s => PluginManager.callCommand(s, 'BoosterPackSystem', 'openBoosterPack', {}) },
-            { name: T('Titlescreen.minigame.lockpick'),                avail: () => !!(window.LockpickTetris && window.Scene_LockpickTetris), run: s => launchLockpick() },
+            { name: T('Titlescreen.minigame.lockpick'),                avail: () => !!(window.UnlockingBlocks && window.Scene_UnlockingBlocks), run: s => launchLockpick() },
             { name: T('Titlescreen.minigame.arcadeSnake'),           avail: () => hasCmd('ArcadeCabinetManager', 'playGame'), run: s => launchArcade(s, 'AsciiSnake') },
             { name: T('Titlescreen.minigame.arcadeFrogger'),         avail: () => hasCmd('ArcadeCabinetManager', 'playGame'), run: s => launchArcade(s, 'AsciiFrogger') },
             { name: T('Titlescreen.minigame.arcadeBubblePop'),      avail: () => hasCmd('ArcadeCabinetManager', 'playGame'), run: s => launchArcade(s, 'ArcadeBubblePop') },
@@ -1021,12 +1081,77 @@
                                      : String(a.name).localeCompare(String(b.name)));
     }
 
-    // Grid metrics of the picker, matching the `gap` .mg-menu-list declares in
-    // css/theme.css. MG_MAX_COLS keeps a long catalogue from being spread so
-    // wide that the columns stop reading as one list.
-    const MG_GAP = 3;
-    const MG_COL_GAP = 8;
-    const MG_MAX_COLS = 4;
+    // ----------------------------------------------------------------------
+    // Gallery placeholders
+    // ----------------------------------------------------------------------
+    // No minigame ships a cover picture, and the catalogue is far too long to
+    // hand-draw one each, so every card gets a PLACEHOLDER: a small SVG cover
+    // built out of the game's own name. The same name always draws the same
+    // cover, so a game keeps its face between sessions, and a new entry gets
+    // one for free the day it is added. Swapping in a real picture later is a
+    // matter of giving the entry a `thumb` and nothing else.
+    const MG_THUMB_W = 128;
+    const MG_THUMB_H = 96;
+    const MG_THUMB_CACHE = {};
+
+    function mgHash(text) {
+        let h = 2166136261;
+        for (let i = 0; i < text.length; i++) {
+            h ^= text.charCodeAt(i);
+            h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+    }
+
+    // The initials the cover is stamped with: the first letter of up to two
+    // words, so "Space Invaders" reads SI and "Chess" reads CH.
+    function mgInitials(name) {
+        const words = String(name).toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean);
+        if (!words.length) return '??';
+        if (words.length === 1) return words[0].slice(0, 2);
+        return words[0][0] + words[1][0];
+    }
+
+    function minigameThumb(name) {
+        const key = String(name);
+        if (MG_THUMB_CACHE[key]) return MG_THUMB_CACHE[key];
+        let seed = mgHash(key);
+        const rnd = () => {
+            seed = (Math.imul(seed, 1103515245) + 12345) >>> 0;
+            return seed / 4294967296;
+        };
+        // One gold family, shifted a little per game, so a wall of covers still
+        // reads as one cabinet rather than a bag of sweets.
+        const hue = 34 + Math.floor(rnd() * 26);
+        const dim = `hsl(${hue}, 70%, 26%)`;
+        const lit = `hsl(${hue}, 88%, 62%)`;
+        const shapes = [];
+        const kind = Math.floor(rnd() * 4);
+        for (let i = 0; i < 5; i++) {
+            const x = Math.floor(rnd() * MG_THUMB_W);
+            const y = Math.floor(rnd() * MG_THUMB_H);
+            const r = 6 + Math.floor(rnd() * 22);
+            if (kind === 0) {
+                shapes.push(`<rect x="${x - r}" y="${y - r}" width="${r * 2}" height="${r * 2}" fill="none" stroke="${dim}" stroke-width="2"/>`);
+            } else if (kind === 1) {
+                shapes.push(`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${dim}" stroke-width="2"/>`);
+            } else if (kind === 2) {
+                shapes.push(`<path d="M${x - r} ${y + r} L${x} ${y - r} L${x + r} ${y + r} Z" fill="none" stroke="${dim}" stroke-width="2"/>`);
+            } else {
+                shapes.push(`<line x1="${x - r}" y1="${y - r}" x2="${x + r}" y2="${y + r}" stroke="${dim}" stroke-width="2"/>`);
+            }
+        }
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${MG_THUMB_W}" height="${MG_THUMB_H}" viewBox="0 0 ${MG_THUMB_W} ${MG_THUMB_H}">`
+            + `<rect width="${MG_THUMB_W}" height="${MG_THUMB_H}" fill="#0b0906"/>`
+            + shapes.join('')
+            + `<text x="${MG_THUMB_W / 2}" y="${MG_THUMB_H / 2}" fill="${lit}" font-family="monospace" font-size="34" font-weight="bold"`
+            + ` text-anchor="middle" dominant-baseline="central" letter-spacing="3">${mgInitials(name)}</text>`
+            + `<rect width="${MG_THUMB_W}" height="${MG_THUMB_H}" fill="none" stroke="${dim}" stroke-width="2"/>`
+            + `</svg>`;
+        const uri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        MG_THUMB_CACHE[key] = uri;
+        return uri;
+    }
 
     // The minigame picker mirrors the titlescreen menu: a DOM overlay reusing the
     // same .ts-menu-* item styling (see css/theme.css) inside centered, scrollable
@@ -1095,50 +1220,9 @@
                 document.body.appendChild(container);
             }
             this._menuContainer = container;
-            container.style.display = 'flex';
-            container.style.opacity = '1';
-            container.style.pointerEvents = 'auto';
+            window.UIPanel.open(container);
             container.innerHTML = '';
             this.refreshOverlay();
-        }
-
-        // The catalogue is long enough to run off the bottom of the screen as a
-        // single column, so it is dealt DOWN columns instead: as many rows as
-        // the panel has room for, then a new column beside it. The figures are
-        // measured off the rendered rows rather than estimated, so it comes out
-        // right at every resolution and UI scale; this runs in the same frame as
-        // the build, so the single-column state it measures is never painted.
-        applyGridLayout(total) {
-            const list = this._menuContainer.querySelector('.mg-menu-list');
-            const first = list && list.firstElementChild;
-            if (!list || !first) { this._rows = total; this._cols = 1; return; }
-
-            const rowH = first.offsetHeight + MG_GAP;
-            // Every column comes out as wide as the longest title (1fr tracks
-            // under a max-content constraint), so that is what a column costs.
-            let widest = 0;
-            for (const node of list.children) widest = Math.max(widest, node.offsetWidth);
-            const colW = widest + MG_COL_GAP;
-            // The list has already shrunk into the room the panel left it, so its
-            // own box is the answer; clientHeight carries the padding, which the
-            // rows do not get to stand in.
-            const cs = window.getComputedStyle(list);
-            const pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-            const fitRows = Math.max(1, Math.floor((list.clientHeight - (pad || 0)) / rowH));
-            // Width is read off the container (the overlay wrapper is only as
-            // wide as its own content, so it cannot answer for the screen).
-            const room = (this._menuContainer.clientWidth || colW) * 0.94;
-            const fitCols = Math.max(1, Math.floor(room / colW));
-
-            let cols = Math.max(1, Math.ceil(total / fitRows));
-            cols = Math.min(cols, MG_MAX_COLS, fitCols);
-            this._rows = Math.ceil(total / cols);
-            this._cols = Math.ceil(total / this._rows);
-
-            if (this._cols > 1) {
-                list.classList.add('mg-grid');
-                list.style.gridTemplateRows = 'repeat(' + this._rows + ', auto)';
-            }
         }
 
         // Rebuilding the whole list on every cursor step made the panel flicker,
@@ -1158,10 +1242,41 @@
             const rows = page.rows.map((text, i) => ({ text: String(text).toUpperCase(), index: i }));
             rows.push({ text: T('Titlescreen.minigameSetup.back').toUpperCase(), index: rows.length });
 
+            const hooks = i => `data-index="${i}"`
+                + ` onmouseenter="SceneManager._scene && SceneManager._scene.onMinigameHover && SceneManager._scene.onMinigameHover(${i})"`
+                + ` onclick="SceneManager._scene && SceneManager._scene.onMinigameClick && SceneManager._scene.onMinigameClick(${i})"`;
+
+            if (this._mode === 'list') {
+                // The catalogue is a gallery, read left to right: one card per
+                // game, its cover above its name, the strip scrolling sideways
+                // under the cursor. Nothing is stacked into columns any more,
+                // so no title is ever painted on top of its neighbour.
+                const cards = rows.map(r => (r.index === page.rows.length
+                    ? `<div class="mg-card mg-card-back" ${hooks(r.index)}>
+                           <img class="mg-card-cover" src="${minigameThumb(r.text)}" alt="">
+                           <div class="mg-card-label">${r.text}</div>
+                       </div>`
+                    : `<div class="mg-card" ${hooks(r.index)}>
+                           <img class="mg-card-cover" src="${minigameThumb(page.rows[r.index])}" alt="">
+                           <div class="mg-card-label">${r.text}</div>
+                       </div>`)).join('');
+                this._menuContainer.innerHTML = `
+                <div class="mg-menu-overlay mg-menu-gallery">
+                    <div class="mg-menu-title">${String(page.title).toUpperCase()}</div>
+                    <div class="mg-gallery">${cards}</div>
+                </div>`;
+                // A single strip: one row, every card its own column.
+                this._rows = 1;
+                this._cols = total;
+                this._itemNodes = Array.from(this._menuContainer.querySelectorAll('.mg-card'));
+                this._selectedNode = null;
+                this._layoutSig = this._menuContainer.clientWidth + 'x' + this._menuContainer.clientHeight;
+                this.syncSelection();
+                return;
+            }
+
             const items = rows.map(r => `
-                    <div class="ts-menu-item" data-index="${r.index}"
-                         onmouseenter="SceneManager._scene && SceneManager._scene.onMinigameHover && SceneManager._scene.onMinigameHover(${r.index})"
-                         onclick="SceneManager._scene && SceneManager._scene.onMinigameClick && SceneManager._scene.onMinigameClick(${r.index})">
+                    <div class="ts-menu-item" ${hooks(r.index)}>
                         <span class="ts-menu-text">${r.text}</span>
                     </div>`).join('');
 
@@ -1174,7 +1289,6 @@
             // The setup pages are two to four answers and stay a single column.
             this._rows = total;
             this._cols = 1;
-            if (this._mode === 'list') this.applyGridLayout(total);
 
             this._itemNodes = Array.from(this._menuContainer.querySelectorAll('.ts-menu-item'));
             this._selectedNode = null;
@@ -1193,7 +1307,11 @@
             node.classList.add('selected');
             // Only a column taller than the panel scrolls; a grid that fits does
             // not move, so this never yanks the page about under the cursor.
-            if (node.scrollIntoView) node.scrollIntoView({ block: 'nearest' });
+            if (node.scrollIntoView) {
+                node.scrollIntoView(this._mode === 'list'
+                    ? { block: 'nearest', inline: 'center' }
+                    : { block: 'nearest' });
+            }
         }
 
         // The grid is filled down its columns (grid-auto-flow: column over a
@@ -1201,6 +1319,17 @@
         // one column while left/right step between them, keeping the row and
         // clamping onto the last entry of a short final column.
         moveCursor(dx, dy, max) {
+            // The gallery is one strip, so both axes are the same step: left and
+            // right walk it, up and down do the same thing rather than nothing.
+            if (this._mode === 'list') {
+                const step = dx || dy;
+                const next = (this._selectedIndex + step + max) % max;
+                if (next === this._selectedIndex) return;
+                this._selectedIndex = next;
+                SoundManager.playCursor();
+                this.syncSelection();
+                return;
+            }
             const rows = Math.max(1, this._rows || max);
             let col = Math.floor(this._selectedIndex / rows);
             let row = this._selectedIndex % rows;
@@ -1373,7 +1502,7 @@
         // Park the overlay while a DOM-overlay minigame (piano) is on screen;
         // stillOpen() returns false once the overlay closes, restoring the list.
         suspendForOverlay(stillOpen) {
-            if (this._menuContainer) this._menuContainer.style.display = 'none';
+            window.UIPanel.close(this._menuContainer);
             this._overlayWatch = stillOpen;
         }
 
@@ -1383,7 +1512,7 @@
             if (this._overlayWatch) {
                 if (!this._overlayWatch()) {
                     this._overlayWatch = null;
-                    if (this._menuContainer) this._menuContainer.style.display = 'flex';
+                    window.UIPanel.open(this._menuContainer);
                 } else if (this.updateTravelPickerInput) {
                     // The borrowed travel map is driven with the same keys and
                     // pad it is driven with on the world map.
@@ -1428,7 +1557,7 @@
             }
             if (this._menuContainer) {
                 this._menuContainer.innerHTML = '';
-                this._menuContainer.style.display = 'none';
+                window.UIPanel.close(this._menuContainer);
                 this._menuContainer = null;
             }
         }
@@ -1474,9 +1603,9 @@
 
 
     // -------------------------------------------------------------------------
-    // Window_Tutorial
+    // Window_StoryMode
     // -------------------------------------------------------------------------
-    class Window_Tutorial extends Window_Command {
+    class Window_StoryMode extends Window_Command {
         constructor(rect) {
             super(rect);
         }
@@ -1499,18 +1628,19 @@
         return 'left';
     };
 
-    // Render the option labels with the parchment menu font ('Lora') so the
-    // title screen matches the in-game command menu typography.
+    // The title menu is set in Square, the terminal face the title screen is
+    // built around, and is deliberately the one menu in the game that does not
+    // wear the parchment UI serif.
     const _Window_TitleCommand_resetFontSettings = Window_TitleCommand.prototype.resetFontSettings;
     Window_TitleCommand.prototype.resetFontSettings = function () {
         _Window_TitleCommand_resetFontSettings.call(this);
-        this.contents.fontFace = 'Lora';
+        this.contents.fontFace = 'Square';
     };
 
     // Nothing that starts or continues a game can run without a world to put it
     // in: the history, the people, the dungeon and the savegame all live in the
     // world folder, and none is invented on the player's behalf any more. With
-    // an empty world folder Explore, Reconnect, Tutorial and Sandbox are greyed
+    // an empty world folder Explore, Reconnect, Story mode and Sandbox are greyed
     // out until one is made from the Worlds screen. The minigame arcade runs on
     // its own throwaway context and stays playable regardless.
     function hasActiveWorld() {
@@ -1540,12 +1670,130 @@
             this.selectSymbol('continue');
         } else if (hasActiveWorld()) {
             this.selectSymbol('newGame');
+        } else if (storyModeAvailable()) {
+            // No world yet: Story mode is the one entry that makes one.
+            this.selectSymbol('storymode');
         } else {
             this.selectSymbol('worlds');
         }
     };
 
-    // Add Tutorial command to the title menu
+    // Story mode runs in every world. It used to be gated on the canon one
+    // (2001, ordinary population, ordinary magic) and greyed out everywhere
+    // else; now the world it is begun in only decides WHERE it begins, which is
+    // what storyModeLanding() answers below.
+    function storyModeAvailable() {
+        return !!window.WorldManager;
+    }
+
+    // --- Where the story begins ---------------------------------------------
+    // The year the world was begun in decides where the story opens:
+    //   2001        map 169 at 67,33, where the story proper opens
+    //   any other   Em's own starting place (her dossier's map)
+    //   after 2012  the Omega Tower, the only ground left once Earth is gone
+    const STORY_MODE_SWITCH = 49;
+    const STORY_CANON_YEAR = 2001;
+    const STORY_EARTH_LOST_YEAR = 2012; // Nibiru: 21 December 2012
+
+    const STORY_EM_LANDING = { mapId: 722, x: 48, y: 48, dir: 2 };
+    // Where Em's story opens in the canon year, both when the run begins and
+    // when her sheet is finished.
+    const STORY_CANON_START = { mapId: 169, x: 67, y: 33, dir: 2 };
+
+    // The year the active world was begun in, which is the only thing that
+    // decides which of the three landings above the story uses.
+    function storyStartYear() {
+        const WM = window.WorldManager;
+        if (!WM || !WM.hasActiveWorld || !WM.hasActiveWorld()) return STORY_CANON_YEAR;
+        const info = WM.worldInfo() || {};
+        const year = Number(info.startYear);
+        return isNaN(year) ? STORY_CANON_YEAR : year;
+    }
+
+    function storyTowerLanding() {
+        const WMT = window.WorldMapTransfer;
+        const t = (WMT && WMT.towerLanding) ? WMT.towerLanding() : { mapId: 635, x: 13, y: 38, dir: 8 };
+        if (!t.dir) t.dir = 8;
+        return t;
+    }
+
+    // Em's dossier is the one record that knows her starting square; the
+    // constant above is only the fallback for a dossier that has gone missing.
+    function storyEmLanding() {
+        const presets = window.CharacterPresets;
+        const list = (presets && presets.getCharacterPresets && presets.getCharacterPresets()) || [];
+        const em = list.find(p => p && (p.proceduralLore === 'em' || p.loreKey === 'em' || p.name === 'Em'));
+        if (em && em.mapId) return { mapId: em.mapId, x: em.x, y: em.y, dir: 2 };
+        return Object.assign({}, STORY_EM_LANDING);
+    }
+
+    // Where a story run is put down when it begins.
+    function storyModeLanding() {
+        const year = storyStartYear();
+        if (year > STORY_EARTH_LOST_YEAR) return storyTowerLanding();
+        if (year === STORY_CANON_YEAR) return Object.assign({}, STORY_CANON_START);
+        return storyEmLanding();
+    }
+
+    // Where Em is put down when her creation ends. In the canon year the story
+    // proper opens on its own map, so her dossier's square is not where she
+    // goes.
+    function storyModeCreationLanding() {
+        const year = storyStartYear();
+        if (year > STORY_EARTH_LOST_YEAR) return storyTowerLanding();
+        if (year === STORY_CANON_YEAR) return Object.assign({}, STORY_CANON_START);
+        return storyEmLanding();
+    }
+
+    // The one answer to "where does the story begin", asked by the title screen
+    // here and by the character creation wizard when Em's sheet is finished.
+    window.StoryModeStart = {
+        CANON_YEAR: STORY_CANON_YEAR,
+        year: storyStartYear,
+        landing: storyModeLanding,
+        creationLanding: storyModeCreationLanding,
+        // No landing runs the wizard from an event of its own any more: the
+        // story asks for it on arrival, whatever year it opens in.
+        usesTutorialMap() { return false; }
+    };
+
+    // Builds the canon world (2001, ordinary population, ordinary magic: the
+    // creation defaults) and populates it the same way the Worlds screen does,
+    // so a first-time player reaches the story without passing through it.
+    async function createStoryWorld() {
+        const WM = window.WorldManager;
+        let base = (WM.randomWorldName && WM.randomWorldName()) || 'Story';
+        let name = base;
+        let n = 2;
+        while (WM.worldExists(name)) name = base + ' ' + (n++);
+        WM.createWorld(name, {});
+        WM.setActiveWorld(name);
+        if (typeof FactionDataManager !== 'undefined' &&
+            FactionDataManager.instance && FactionDataManager.instance._readyPromise) {
+            await FactionDataManager.instance._readyPromise;
+        }
+        if (window.HistoryManager) {
+            window.HistoryManager.initializeWorldHistory({ years: null, seed: WM.worldInfo().seed });
+        }
+        WM.initializeWorld();
+        await DataManager.loadGlobalInfo();
+    }
+
+    // Story mode has a savefile band of its own (SaveSystem), so the entry
+    // resumes one once it has been written. It is named Story mode either way.
+    // Only a main story save turns the entry into Continue story: the story
+    // autosave and the quicksave band do not count.
+    function hasStoryMainSave() {
+        return !!(window.SaveSystem && window.SaveSystem.hasStoryMainSave &&
+            window.SaveSystem.hasStoryMainSave());
+    }
+
+    function storyCommandKey(overlay) {
+        const group = overlay ? 'Titlescreen.menuOverlay.' : 'Titlescreen.menu.';
+        return group + (hasStoryMainSave() ? 'continueStory' : 'storyMode');
+    }
+
+    // Add the Story mode command to the title menu
 Window_TitleCommand.prototype.makeCommandList = function () {
     const worldReady = hasActiveWorld();
 
@@ -1557,7 +1805,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     }
 
     this.addCommand(T('Titlescreen.menu.reconnect'), 'continue', this.isContinueEnabled());
-    this.addCommand(T('Titlescreen.menu.tutorial'), 'tutorial', worldReady);
+
+    // Story mode sits under Select Party: the party comes first, the story is
+    // picked once there is someone to play it with.
+    this.addCommand(T(storyCommandKey(false)), 'storymode', storyModeAvailable());
     this.addCommand(T('Titlescreen.menu.minigames'), 'minigames');
 
     if (!hideStartOptions) {
@@ -1565,11 +1816,134 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     }
 
     this.addCommand(T('Titlescreen.menu.worlds'), 'worlds');
-    this.addCommand(T('Titlescreen.menu.wiki'), 'wiki', wikiAvailable());
     this.addCommand(T('Titlescreen.menu.preferences'), 'options');
     this.addCommand(T('Titlescreen.menu.mods'), 'mods');
     this.addCommand(T('Titlescreen.menu.exit'), 'exitGame');
 };
+
+    // -------------------------------------------------------------------------
+    // Title music selector
+    //
+    // Every classical piece shipped under audio/bgm/Classical is on the dial, so
+    // any of them can be the one the title opens on. The entry names the piece playing
+    // and steps to the next one, so the pick is made by ear without leaving the
+    // screen. Unpicked, the game opens on Ode to Joy or the New World Symphony.
+    // -------------------------------------------------------------------------
+    // i18n-ignore-start  bgm tracks, named after their file
+    const TITLE_MUSIC_DEFAULTS = [
+        { name: 'Ode to Joy',
+          value: 'Classical/Beethoven - Ode to Joy (Concert Band)' },
+        { name: 'New World Symphony',
+          value: "Classical/Antonin Dvorak - symphony no. 9 in e minor 'from the new world', op. 95 - iv. al" }
+    ];
+    // i18n-ignore-end
+
+    const TITLE_MUSIC_EXT = /\.(ogg|m4a)_?$/i;
+
+    // Only the classical repertoire is on the title's dial: audio/bgm/Classical
+    // is walked once and every track found becomes an entry of the switcher.
+    function scanTitleMusic() {
+        const found = [];
+        if (typeof require !== 'function') return found;
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const root = path.join(process.cwd(), 'audio', 'bgm', 'Classical');  // i18n-ignore  asset path
+            const seen = {};
+            const walk = (dir, prefix) => {
+                for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                    if (entry.isDirectory()) {
+                        walk(path.join(dir, entry.name), prefix + entry.name + '/');
+                        continue;
+                    }
+                    if (!TITLE_MUSIC_EXT.test(entry.name)) continue;
+                    const base = entry.name.replace(TITLE_MUSIC_EXT, '');
+                    const value = prefix + base;
+                    if (seen[value]) continue;   // .ogg and .m4a of the same track
+                    seen[value] = true;
+                    found.push({ name: base, value });
+                }
+            };
+            walk(root, 'Classical/');  // i18n-ignore  asset path
+            found.sort((a, b) => a.name.localeCompare(b.name));
+        } catch (e) {
+            return [];
+        }
+        return found;
+    }
+
+    // The two openers stay first and in order, so the piece the game opens on
+    // is always one arrow away however many tracks the scan turns up.
+    const TITLE_MUSIC = TITLE_MUSIC_DEFAULTS.concat(
+        scanTitleMusic().filter(t =>
+            !TITLE_MUSIC_DEFAULTS.some(d => d.value === t.value)));
+
+    // Nothing is picked yet on a fresh config: the game opens on one of the two
+    // symphonies, drawn once per session.
+    const TITLE_MUSIC_DEFAULT =
+        TITLE_MUSIC_DEFAULTS[Math.floor(Math.random() * TITLE_MUSIC_DEFAULTS.length)].value;
+
+    Object.defineProperty(ConfigManager, 'titleMusicName', {
+        get() {
+            return this._titleMusicName !== undefined
+                ? this._titleMusicName : TITLE_MUSIC_DEFAULT;
+        },
+        set(value) { this._titleMusicName = value; },
+        configurable: true
+    });
+
+    const _ConfigManager_makeData_titleMusic = ConfigManager.makeData;
+    ConfigManager.makeData = function () {
+        const config = _ConfigManager_makeData_titleMusic.call(this);
+        config.titleMusicName = this.titleMusicName;
+        return config;
+    };
+
+    const _ConfigManager_applyData_titleMusic = ConfigManager.applyData;
+    ConfigManager.applyData = function (config) {
+        _ConfigManager_applyData_titleMusic.call(this, config);
+        this.titleMusicName = config.titleMusicName !== undefined
+            ? config.titleMusicName : TITLE_MUSIC_DEFAULT;
+    };
+
+    function titleMusicIndex() {
+        const i = TITLE_MUSIC.findIndex(t => t.value === ConfigManager.titleMusicName);
+        if (i >= 0) return i;
+        const fallback = TITLE_MUSIC.findIndex(t => t.value === TITLE_MUSIC_DEFAULT);
+        return fallback < 0 ? 0 : fallback;
+    }
+
+    function titleMusicLabel(overlay) {
+        const track = TITLE_MUSIC[titleMusicIndex()];
+        const label = T(overlay ? 'Titlescreen.menuOverlay.music' : 'Titlescreen.menu.music');
+        const name = overlay ? track.name.toUpperCase() : track.name;
+        return label + ': ' + name;
+    }
+
+    // The title BGM is whichever of the three is currently picked, so the choice
+    // is heard the moment it is made and again on every return to the title.
+    Scene_Title.prototype.playTitleBgm = function () {
+        AudioManager.playBgm({
+            name: TITLE_MUSIC[titleMusicIndex()].value,
+            volume: 90, pitch: 100, pan: 0
+        });
+        AudioManager.stopBgs();
+        AudioManager.stopMe();
+    };
+
+    Scene_Title.prototype.commandTitleMusic = function () {
+        const next = (titleMusicIndex() + 1) % TITLE_MUSIC.length;
+        ConfigManager.titleMusicName = TITLE_MUSIC[next].value;
+        ConfigManager.save();
+        this.playTitleBgm();
+        if (this._commandWindow) {
+            const index = this._commandWindow.index();
+            this._commandWindow.refresh();
+            this._commandWindow.select(index);
+            this._commandWindow.activate();
+        }
+        if (this.refreshUIOverlayDOM) this.refreshUIOverlayDOM();
+    };
     // -------------------------------------------------------------------------
     // Terminal-style floating card with gold theme
     // -------------------------------------------------------------------------
@@ -3174,14 +3548,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             if (!layer) {
                 layer = document.createElement('div');
                 layer.id = 'title-artifact-labels';
-                layer.style.position = 'absolute';
-                layer.style.left = '0';
-                layer.style.top = '0';
-                layer.style.width = '100%';
-                layer.style.height = '100%';
-                layer.style.pointerEvents = 'none';
-                layer.style.zIndex = '50';
-                layer.style.overflow = 'hidden';
+                layer.className = 'title-label-layer';
                 document.body.appendChild(layer);
             }
             layer.innerHTML = '';
@@ -3191,12 +3558,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const canvas = document.createElement('canvas');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            canvas.style.position = 'absolute';
-            canvas.style.left = '0';
-            canvas.style.top = '0';
-            canvas.style.width = '100%';
-            canvas.style.height = '100%';
-            canvas.style.pointerEvents = 'none';
+            canvas.className = 'title-strand-canvas';
             layer.appendChild(canvas);
             this._strandCanvas = canvas;
             this._strandCtx = canvas.getContext('2d');
@@ -3237,18 +3599,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const euro = (weapon.price / 100).toFixed(2);
             const wtype = WEAPON_TYPE_NAMES[weapon.wtypeId] || T('Titlescreen.artifact.fallbackType');
             const div = document.createElement('div');
-            div.style.position = 'absolute';
-            div.style.transform = 'translate(-50%, 0)';
-            div.style.textAlign = 'center';
-            div.style.fontFamily = "'Square', monospace";
-            div.style.whiteSpace = 'nowrap';
-            div.style.textShadow = '0 0 4px #000, 0 0 4px #000';
+            div.className = 'title-artifact-label';
             // Readable black panel so the full stat readout stays legible over the
             // 3D models and the gold connection strands.
-            div.style.background = 'rgba(0, 0, 0, 0.82)';
-            div.style.border = '1px solid rgba(255, 215, 0, 0.45)';
-            div.style.borderRadius = '8px';
-            div.style.padding = '7px 12px';
+            div.classList.add('title-artifact-label--plated');
 
             const name = window.translateText ? window.translateText(weapon.name) : weapon.name;
             const kindTag = this._kind === 'weapons'
@@ -3271,19 +3625,19 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const states = _weaponStates(weapon);
 
             let html =
-                `<div style="color:#FFD700; font-size:21px; font-weight:bold">${name.toUpperCase()}</div>` +
-                `<div style="color:#FFA500; font-size:16px">[${kindTag}] [${wtype.toUpperCase()}]</div>`;
+                `<div class="title-card-name">${name.toUpperCase()}</div>` +
+                `<div class="title-card-kind">[${kindTag}] [${wtype.toUpperCase()}]</div>`;
             if (statBits.length) {
-                html += `<div style="color:#9fd9ff; font-size:16px; font-weight:bold">${statBits.join('  ')}</div>`;
+                html += `<div class="title-card-stats">${statBits.join('  ')}</div>`;
             }
             if (elements.length) {
-                html += `<div style="color:#ff9a6b; font-size:15px">${T('Titlescreen.card.element')}: ${elements.join(', ').toUpperCase()}</div>`;
+                html += `<div class="title-card-element">${T('Titlescreen.card.element')}: ${elements.join(', ').toUpperCase()}</div>`;
             }
             if (states.length) {
                 const stTxt = states.map(s => `${s.name.toUpperCase()}${s.chance ? ' ' + s.chance + '%' : ''}`).join(', ');
-                html += `<div style="color:#c8a6ff; font-size:15px">${T('Titlescreen.card.inflicts')}: ${stTxt}</div>`;
+                html += `<div class="title-card-status">${T('Titlescreen.card.inflicts')}: ${stTxt}</div>`;
             }
-            html += `<div style="color:#FF6B35; font-size:17px; font-weight:bold">${euro}â‚¬</div>`;
+            html += `<div class="title-card-price">${euro}â‚¬</div>`;
             div.innerHTML = html;
             this._labelLayer.appendChild(div);
             return div;
@@ -3380,8 +3734,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 // placed just below the model.
                 if (it.label) {
                     const p = this._project(proj, it.worldX, it.worldY);
-                    it.label.style.left = p.x + 'px';
-                    it.label.style.top = (p.y + it.halfSpan * proj.sy) + 'px';
+                    window.UIPanel.placeAt(it.label, p.x, p.y + it.halfSpan * proj.sy);
                 }
                 if (it.worldY > h / 2 + h * 0.26) {
                     this._removeItem(i);
@@ -3495,13 +3848,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._renderer.setClearColor(0x000000, 0);
             const cv = this._renderer.domElement;
             cv.id = 'title-enemies3d-canvas';
-            cv.style.position = 'absolute';
-            cv.style.left = '0';
-            cv.style.top = '0';
-            cv.style.width = '100%';
-            cv.style.height = '100%';
-            cv.style.pointerEvents = 'none';
-            cv.style.zIndex = '40';
+            cv.className = 'title-scene-canvas';
             document.body.appendChild(cv);
             this._canvasEl = cv;
 
@@ -3520,14 +3867,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             if (!layer) {
                 layer = document.createElement('div');
                 layer.id = 'title-enemies3d-labels';
-                layer.style.position = 'absolute';
-                layer.style.left = '0';
-                layer.style.top = '0';
-                layer.style.width = '100%';
-                layer.style.height = '100%';
-                layer.style.pointerEvents = 'none';
-                layer.style.zIndex = '50';
-                layer.style.overflow = 'hidden';
+                layer.className = 'title-label-layer';
                 document.body.appendChild(layer);
             }
             layer.innerHTML = '';
@@ -3536,12 +3876,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const canvas = document.createElement('canvas');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            canvas.style.position = 'absolute';
-            canvas.style.left = '0';
-            canvas.style.top = '0';
-            canvas.style.width = '100%';
-            canvas.style.height = '100%';
-            canvas.style.pointerEvents = 'none';
+            canvas.className = 'title-strand-canvas';
             layer.appendChild(canvas);
             this._strandCanvas = canvas;
             this._strandCtx = canvas.getContext('2d');
@@ -3603,18 +3938,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const lvLabel = T('Titlescreen.card.levelAbbr');
 
             const div = document.createElement('div');
-            div.style.position = 'absolute';
-            div.style.transform = 'translate(-50%, 0)';
-            div.style.textAlign = 'center';
-            div.style.fontFamily = "'Square', monospace";
-            div.style.width = '300px';
-            div.style.textShadow = '0 0 4px #000, 0 0 4px #000';
+            div.className = 'title-artifact-label title-artifact-label--wide';
             let html =
-                `<div style="color:#FFD700; font-size:19px; font-weight:bold; white-space:nowrap">${this._esc(enemy.name).toUpperCase()}</div>` +
-                `<div style="color:#FFD27A; font-size:15px; font-weight:bold; white-space:nowrap">${lvLabel} ${this._esc(lv)}${archName ? '  &middot;  ' + this._esc(archName).toUpperCase() : ''}</div>` +
-                `<div style="color:#9FD9FF; font-size:14px; font-weight:bold; white-space:nowrap">HP ${p[0]} &middot; ATK ${p[2]} &middot; DEF ${p[3]} &middot; AGI ${p[6]}</div>`;
+                `<div class="title-body-name">${this._esc(enemy.name).toUpperCase()}</div>` +
+                `<div class="title-body-sub">${lvLabel} ${this._esc(lv)}${archName ? '  &middot;  ' + this._esc(archName).toUpperCase() : ''}</div>` +
+                `<div class="title-body-stats">HP ${p[0]} &middot; ATK ${p[2]} &middot; DEF ${p[3]} &middot; AGI ${p[6]}</div>`;
             if (descTxt) {
-                html += `<div style="color:#FFA500; font-size:15px; line-height:1.25; margin-top:2px">${this._esc(descTxt)}</div>`;
+                html += `<div class="title-body-desc">${this._esc(descTxt)}</div>`;
             }
             div.innerHTML = html;
             this._labelLayer.appendChild(div);
@@ -3701,8 +4031,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 if (it.label) {
                     const px = it.worldX + w / 2;
                     const py = (h / 2 - it.worldY) + it.halfSpan;
-                    it.label.style.left = px + 'px';
-                    it.label.style.top = py + 'px';
+                    window.UIPanel.placeAt(it.label, px, py);
                 }
                 if (it.worldY > h / 2 + 340) {
                     this._removeItem(i);
@@ -4108,7 +4437,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             // #title-menu-container: that wrapper covers the whole screen, so
             // testing against it would treat every background press as a UI press.
             const onUI = (target) => !!(target && target.closest && target.closest(
-                '.ts-menu-overlay, #title-bg-switch, #title-hyperverse-info, ' +
+                '.ts-menu-overlay, #title-bg-switch, #title-music-switch, #title-hyperverse-info, ' +
                 '#title-hyperverse-next, #title-hyperverse-catalog-btn, #title-hyperverse-catalog'));
 
             this._onDown = (e) => {
@@ -4246,14 +4575,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._renderer.setClearColor(0x000000, 0);
             const cv = this._renderer.domElement;
             cv.id = 'title-hyperverse-canvas';
-            cv.style.position = 'absolute';
-            cv.style.left = '0';
-            cv.style.top = '0';
-            cv.style.width = '100%';
-            cv.style.height = '100%';
-            cv.style.pointerEvents = 'none';
-            cv.style.zIndex = '40';
-            cv.style.opacity = '0';
+            cv.className = 'title-scene-canvas title-scene-canvas--faded';
             // A lost GL context invalidates the lensing targets, and three
             // rebuilds its own resources on restore; drop ours so _lensCtx
             // makes them again instead of blitting from a dead texture.
@@ -4446,18 +4768,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const btn = document.createElement('div');
             btn.id = id;
             document.body.appendChild(btn);
-            Object.assign(btn.style, {
-                position: 'absolute', zIndex: '60',
-                fontFamily: "'Square', monospace", fontWeight: 'bold',
-                letterSpacing: '1px', color: '#FFD700',
-                background: 'rgba(0,0,0,0.85)', border: '2px solid #FFD700',
-                boxShadow: 'inset 0 0 0 2px rgba(255,215,0,0.25)',
-                cursor: 'pointer', userSelect: 'none', pointerEvents: 'auto',
-                opacity: '0', textShadow: '0 0 4px #000', textAlign: 'center',
-                transition: 'background 0.15s ease-out, opacity 0.25s ease-out'
-            });
-            btn.addEventListener('mouseenter', () => { btn.style.background = 'rgba(255,215,0,0.20)'; });
-            btn.addEventListener('mouseleave', () => { btn.style.background = 'rgba(0,0,0,0.85)'; });
+            btn.className = 'title-plate title-ctl-btn';
             // Swallow the press so it never reaches the free-look drag behind it.
             btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
             btn.addEventListener('click', (e) => {
@@ -4521,10 +4832,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._catalogIndex = at >= 0 ? at : 0;
             this._catalogOpen = true;
             this._renderCatalog();
-            this._catalogPanel.style.display = 'flex';
+            window.UIPanel.open(this._catalogPanel);
             // A frame later, so the transition actually runs.
             requestAnimationFrame(() => {
-                if (this._catalogPanel && this._catalogOpen) this._catalogPanel.style.opacity = '1';
+                if (this._catalogPanel && this._catalogOpen) {
+                    this._catalogPanel.classList.add('title-faded-in');
+                }
             });
             this._scrollCatalogIntoView();
             if (window.SoundManager) SoundManager.playOk();
@@ -4535,8 +4848,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._catalogOpen = false;
             this._catalogGuard = 2;
             if (this._catalogPanel) {
-                this._catalogPanel.style.opacity = '0';
-                this._catalogPanel.style.display = 'none';
+                this._catalogPanel.classList.remove('title-faded-in');
+                window.UIPanel.close(this._catalogPanel);
             }
             this._renderInfo(this._act ? this._act.info : null);
         }
@@ -4548,15 +4861,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             box.id = 'title-hyperverse-catalog';
             document.body.appendChild(box);
             this._catalogPanel = box;
-            Object.assign(box.style, {
-                position: 'absolute', zIndex: '61', boxSizing: 'border-box',
-                display: 'none', flexDirection: 'column', opacity: '0',
-                background: 'rgba(0,0,0,0.88)', border: '2px solid #FFD700',
-                boxShadow: 'inset 0 0 0 2px rgba(255,215,0,0.22), 0 0 22px rgba(255,215,0,0.15)',
-                fontFamily: "'Square', monospace", pointerEvents: 'auto',
-                textShadow: '0 0 4px #000, 0 0 4px #000', overflow: 'hidden',
-                transition: 'opacity 0.2s ease-out'
-            });
+            box.className = 'title-plate title-catalog';
             // Presses on the panel are its own: never the free-look drag behind.
             box.addEventListener('pointerdown', (e) => { e.stopPropagation(); });
             this.layout();
@@ -4574,20 +4879,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const header = document.createElement('div');
             header.textContent = T('Titlescreen.hyperverse.catalogTitle') +
                 ' [' + this._catalogList.length + ']';
-            Object.assign(header.style, {
-                color: '#8fb4c8', fontSize: em(10), letterSpacing: '2px',
-                marginBottom: '0.6em', flex: '0 0 auto'
-            });
+            header.className = 'title-catalog-head';
             box.appendChild(header);
 
             const list = document.createElement('div');
             // Positioned so the rows measure their offsetTop against the scroll
             // box itself, which is what _scrollCatalogIntoView works in; minHeight
             // lets the flex child actually shrink and scroll.
-            Object.assign(list.style, {
-                position: 'relative', overflowY: 'auto', overflowX: 'hidden',
-                flex: '1 1 auto', minHeight: '0'
-            });
+            list.className = 'title-catalog-list';
             // RMMZ preventDefaults every wheel event at the document level, so a
             // DOM pane never scrolls on its own: this one scrolls itself, and
             // swallows the event so it cannot also zoom the camera behind.
@@ -4612,27 +4911,20 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 if (!members.length) continue;
                 const gh = document.createElement('div');
                 gh.textContent = T('Titlescreen.hyperverse.groups.' + key);
-                Object.assign(gh.style, {
-                    color: '#6f8a99', fontSize: em(9), letterSpacing: '2px',
-                    margin: '0.7em 0 0.25em', borderBottom: '1px solid rgba(255,215,0,0.25)',
-                    paddingBottom: '0.2em'
-                });
+                gh.className = 'title-catalog-group';
                 list.appendChild(gh);
                 for (const { d, i } of members) list.appendChild(this._catalogRow(d, i, em));
             }
             if (!this._catalogList.length) {
                 const empty = document.createElement('div');
                 empty.textContent = T('Titlescreen.hyperverse.catalogEmpty');
-                Object.assign(empty.style, { color: '#FFA500', fontSize: em(11), margin: '0.6em 0' });
+                empty.className = 'title-catalog-empty';
                 list.appendChild(empty);
             }
 
             const foot = document.createElement('div');
             foot.textContent = T('Titlescreen.hyperverse.catalogControls');
-            Object.assign(foot.style, {
-                color: '#6f8a99', fontSize: em(9), letterSpacing: '1px',
-                marginTop: '0.7em', flex: '0 0 auto'
-            });
+            foot.className = 'title-catalog-foot';
             box.appendChild(foot);
 
             this._syncCatalogSelection();
@@ -4653,20 +4945,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
         _catalogRow(d, index, em) {
             const row = document.createElement('div');
-            Object.assign(row.style, {
-                display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
-                gap: '0.6em', padding: '0.18em 0.4em', cursor: 'pointer',
-                borderLeft: '2px solid transparent'
-            });
+            row.className = 'title-catalog-row';
             const name = document.createElement('span');
             name.textContent = d.name;
-            Object.assign(name.style, { color: '#FFD700', fontSize: em(11), whiteSpace: 'nowrap' });
+            name.className = 'title-catalog-name';
             const type = document.createElement('span');
             type.textContent = this._catalogTypeLabel(d);
-            Object.assign(type.style, {
-                color: '#9fd9ff', fontSize: em(9), textAlign: 'right',
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
-            });
+            type.className = 'title-catalog-type';
             row.appendChild(name);
             row.appendChild(type);
             row.addEventListener('mouseenter', () => {
@@ -4688,8 +4973,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 const row = this._catalogRows[i];
                 if (!row) continue;
                 const on = i === this._catalogIndex;
-                row.style.background = on ? 'rgba(255,215,0,0.18)' : 'transparent';
-                row.style.borderLeftColor = on ? '#FFD700' : 'transparent';
+                row.classList.toggle('title-catalog-row--on', on);
             }
         }
 
@@ -4761,14 +5045,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 document.body.appendChild(box);
             }
             this._infoBox = box;
-            Object.assign(box.style, {
-                position: 'absolute', zIndex: '50', boxSizing: 'border-box',
-                background: 'rgba(0,0,0,0.82)', border: '2px solid #FFD700',
-                boxShadow: 'inset 0 0 0 2px rgba(255,215,0,0.22), 0 0 22px rgba(255,215,0,0.15)',
-                fontFamily: "'Square', monospace", pointerEvents: 'none',
-                opacity: '0', transition: 'opacity 0.25s ease-out',
-                textShadow: '0 0 4px #000, 0 0 4px #000'
-            });
+            box.className = 'title-plate title-info-box';
             this.layout();
         }
 
@@ -4779,32 +5056,23 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // resize only has to move the box font-size.
         layout() {
             const rect = TitleLayout.rect();
+            // The one measurement that is not a multiple of the scale: how wide
+            // the readout may be before it eats the picture behind it.
             const width = s => Math.round(Math.min(340 * s, rect.width * 0.3)) + 'px';
             if (this._infoBox) {
                 const s = TitleLayout.place(this._infoBox, { right: 22, bottom: 114 });
-                this._infoBox.style.width = width(s);
-                this._infoBox.style.padding = TitleLayout.px(11, s) + ' ' + TitleLayout.px(13, s);
-                this._infoBox.style.fontSize = TitleLayout.px(HYPERVERSE_INFO_FONT, s);
+                this._infoBox.style.setProperty('--title-w', width(s));
             }
             if (this._catalogPanel) {
                 const s = TitleLayout.place(this._catalogPanel, { right: 22, bottom: 114 });
-                this._catalogPanel.style.width = width(s);
-                this._catalogPanel.style.padding = TitleLayout.px(11, s) + ' ' + TitleLayout.px(13, s);
-                this._catalogPanel.style.fontSize = TitleLayout.px(INFO_BASE_FONT, s);
+                this._catalogPanel.style.setProperty('--title-w', width(s));
                 // Tall enough to browse, short enough to clear the background
                 // switcher and its panel in the opposite corner.
-                this._catalogPanel.style.maxHeight = Math.round(rect.height * 0.58) + 'px';
+                this._catalogPanel.style.setProperty('--title-maxh',
+                    Math.round(rect.height * 0.58) + 'px');
             }
-            if (this._nextButton) {
-                const s = TitleLayout.place(this._nextButton, { right: 22, bottom: 68 });
-                this._nextButton.style.padding = TitleLayout.px(7, s) + ' ' + TitleLayout.px(14, s);
-                this._nextButton.style.fontSize = TitleLayout.px(14, s);
-            }
-            if (this._catalogButton) {
-                const s = TitleLayout.place(this._catalogButton, { right: 22, bottom: 22 });
-                this._catalogButton.style.padding = TitleLayout.px(7, s) + ' ' + TitleLayout.px(14, s);
-                this._catalogButton.style.fontSize = TitleLayout.px(14, s);
-            }
+            if (this._nextButton) TitleLayout.place(this._nextButton, { right: 22, bottom: 68 });
+            if (this._catalogButton) TitleLayout.place(this._catalogButton, { right: 22, bottom: 22 });
         }
 
         _renderInfo(lines) {
@@ -4823,14 +5091,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             // Every inner size is relative to the box font (INFO_BASE_FONT), which
             // is the single value the layout pass rescales.
             const em = px => (px / INFO_BASE_FONT).toFixed(3) + 'em';
-            const header = `<div style="color:#8fb4c8; font-size:${em(10)}; letter-spacing:2px; margin-bottom:0.5em">${lead}${source}${pos}</div>`;
+            const header = `<div class="title-info-head">${lead}${source}${pos}</div>`;
             const body = lines.map(ln => {
-                const fw = ln.bold ? 'bold' : 'normal';
-                const mt = ln.bold ? '' : 'margin-top:0.15em;';
-                return `<div style="color:${ln.color || '#FFA500'}; font-size:${em(ln.size || 12)}; font-weight:${fw}; line-height:1.3; ${mt}">${esc(ln.text)}</div>`;
+                return `<div class="title-info-line${ln.bold ? ' title-info-line--bold' : ' title-info-line--spaced'}"` +
+                    ` style="--title-ink:${ln.color || 'var(--title-amber)'}; --title-size:${em(ln.size || 12)}">${esc(ln.text)}</div>`;
             }).join('');
             const hint = (color, text) =>
-                `<div style="color:${color}; font-size:${em(10)}; letter-spacing:1px; margin-top:0.8em">${text}</div>`;
+                `<div class="title-info-foot" style="--title-ink:${color}">${text}</div>`;
             const foot = this._look.active
                 ? hint('#7fe08f', T('Titlescreen.hyperverse.freeLook'))
                 : hint('#6f8a99', T('Titlescreen.hyperverse.controls'));
@@ -5288,8 +5555,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             // The controls stay legible even between acts, so a body that failed
             // to build never leaves invisible buttons in the corner.
             if (!this._act) {
-                if (this._nextButton) this._nextButton.style.opacity = '0.5';
-                if (this._catalogButton) this._catalogButton.style.opacity = '0.5';
+                if (this._nextButton) this._nextButton.style.setProperty('--title-fade', '0.5');
+                if (this._catalogButton) this._catalogButton.style.setProperty('--title-fade', '0.5');
             }
 
             if (!this._act) {
@@ -5354,17 +5621,17 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 else if (act.frame > this._FADE_IN + this._HOLD) {
                     op = Math.max(0, 1 - (act.frame - this._FADE_IN - this._HOLD) / this._FADE_OUT);
                 }
-                if (this._canvasEl) this._canvasEl.style.opacity = op.toFixed(3);
+                if (this._canvasEl) this._canvasEl.style.setProperty('--title-fade', op.toFixed(3));
                 // The readout steps aside for the catalog panel, which stands in
                 // the same corner.
                 if (this._infoBox) {
-                    this._infoBox.style.opacity = this._catalogOpen ? '0' : op.toFixed(3);
+                    this._infoBox.style.setProperty('--title-fade', this._catalogOpen ? '0' : op.toFixed(3));
                 }
                 // The controls belong to the act, but must stay usable through
                 // the fade-out, so they never dim below half.
                 const ctlOp = Math.max(0.5, op).toFixed(3);
-                if (this._nextButton) this._nextButton.style.opacity = ctlOp;
-                if (this._catalogButton) this._catalogButton.style.opacity = ctlOp;
+                if (this._nextButton) this._nextButton.style.setProperty('--title-fade', ctlOp);
+                if (this._catalogButton) this._catalogButton.style.setProperty('--title-fade', ctlOp);
 
                 if (act.frame >= act.total) {
                     this._scene.remove(act.group);
@@ -5608,23 +5875,16 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             let box = document.getElementById('title-autodrive-info');
             if (!box) { box = document.createElement('div'); box.id = 'title-autodrive-info'; document.body.appendChild(box); }
             this._infoBox = box;
-            Object.assign(box.style, {
-                position: 'absolute', zIndex: '50', boxSizing: 'border-box',
-                background: 'rgba(0,0,0,0.82)', border: '2px solid #FFD700',
-                boxShadow: 'inset 0 0 0 2px rgba(255,215,0,0.22), 0 0 22px rgba(255,215,0,0.15)',
-                fontFamily: "'Square', monospace", pointerEvents: 'none',
-                opacity: '0', transition: 'opacity 0.3s ease-out',
-                textShadow: '0 0 4px #000, 0 0 4px #000'
-            });
+            box.className = 'title-plate title-info-box title-info-box--slow';
             const ap = k => T('Titlescreen.autopilot.' + k);
             const em = px => (px / INFO_BASE_FONT).toFixed(3) + 'em';
             box.innerHTML =
-                `<div style="color:#8fb4c8; font-size:${em(10)}; letter-spacing:2px; margin-bottom:0.5em">${ap('header')}</div>` +
-                `<div style="color:#FFD700; font-size:${em(18)}; font-weight:bold" id="ad-road">--</div>` +
-                `<div style="color:#FFA500; font-size:${em(13)}; margin-top:0.15em" id="ad-place">--</div>` +
-                `<div style="color:#9fd9ff; font-size:${em(12)}; margin-top:0.5em" id="ad-speed">${ap('speed')} -- km/h</div>` +
-                `<div style="color:#9fd9ff; font-size:${em(12)}; margin-top:0.15em" id="ad-head">${ap('heading')} --</div>` +
-                `<div style="color:#6f8a99; font-size:${em(10)}; letter-spacing:1px; margin-top:0.8em">${ap('lookHint')}</div>`;
+                `<div class="title-info-head">${ap('header')}</div>` +
+                `<div class="title-drive-road" id="ad-road">--</div>` +
+                `<div class="title-drive-place" id="ad-place">--</div>` +
+                `<div class="title-drive-stat" id="ad-speed">${ap('speed')} -- km/h</div>` +
+                `<div class="title-drive-stat" id="ad-head">${ap('heading')} --</div>` +
+                `<div class="title-info-foot">${ap('lookHint')}</div>`;
             this._roadEl = box.querySelector('#ad-road');
             this._placeEl = box.querySelector('#ad-place');
             this._speedEl = box.querySelector('#ad-speed');
@@ -5637,9 +5897,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             if (!this._infoBox) return;
             const rect = TitleLayout.rect();
             const s = TitleLayout.place(this._infoBox, { right: 22, bottom: 22 });
-            this._infoBox.style.width = Math.round(Math.min(320 * s, rect.width * 0.3)) + 'px';
-            this._infoBox.style.padding = TitleLayout.px(14, s) + ' ' + TitleLayout.px(16, s);
-            this._infoBox.style.fontSize = TitleLayout.px(INFO_BASE_FONT, s);
+            this._infoBox.style.setProperty('--title-w',
+                Math.round(Math.min(320 * s, rect.width * 0.3)) + 'px');
         }
 
         spawn() {}
@@ -5651,7 +5910,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 if (++this._startTries % 30 === 0) this._start();
                 return;
             }
-            if (this._infoBox.style.opacity !== '1') this._infoBox.style.opacity = '1';
+            this._infoBox.classList.add('title-faded-in');
 
             // The drive renders itself; only the readout needs refreshing, and
             // four times a second is plenty for a status panel.
@@ -5732,11 +5991,17 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // Top-right button to change the active background on the fly
         this.createBgSwitchButton();
 
+        // ... and the music selector on the plate right under it
+        this.createMusicSwitchButton();
+
         // Top-left build badge (VersionText parameter)
         this.createVersionBadge();
 
         // English / Italian flags, docked under the badge
-        this.createLanguageSelector();
+        // The game is locked to English, so the flag selector stays off the title.
+        if (!(window.HendrixLocalization && window.HendrixLocalization.isLocked && window.HendrixLocalization.isLocked())) {
+            this.createLanguageSelector();
+        }
 
         // Update notice under the flags, plus the launch check that fills it in
         this.createUpdateButton();
@@ -5934,24 +6199,11 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this._bgSwitchButton = btn;
         // Above the title menu overlay (z 100) so nothing can swallow the click.
         // Position and metrics come from layoutBgSwitchButton (canvas-relative).
-        Object.assign(btn.style, {
-            position: 'absolute', zIndex: '300',
-            display: 'flex', alignItems: 'center',
-            fontFamily: "'Square', monospace", fontWeight: 'bold', letterSpacing: '1px',
-            color: '#FFD700', background: 'rgba(0, 0, 0, 0.85)', border: '2px solid #FFD700',
-            boxShadow: 'inset 0 0 0 2px rgba(255, 215, 0, 0.25)', cursor: 'pointer',
-            userSelect: 'none', pointerEvents: 'auto', opacity: '1',
-            transition: 'background 0.15s ease-out'
-        });
+        btn.className = 'title-plate title-plate-btn';
 
         const makeArrow = (dir) => {
             const el = document.createElement('span');
-            Object.assign(el.style, {
-                display: 'inline-block', textAlign: 'center',
-                border: '1px solid rgba(255,215,0,0.45)',
-                color: '#FFD700', lineHeight: '1.1',
-                background: 'rgba(255,215,0,0.08)', pointerEvents: 'auto'
-            });
+            el.className = 'title-keycap';
             el.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
             el.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -5968,8 +6220,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         btn.appendChild(this._bgSwitchLabel);
         btn.appendChild(this._bgSwitchNext);
 
-        btn.addEventListener('mouseenter', () => { btn.style.background = 'rgba(255, 215, 0, 0.20)'; });
-        btn.addEventListener('mouseleave', () => { btn.style.background = 'rgba(0, 0, 0, 0.85)'; });
         // Swallow the press so it never reaches the canvas / free-look drag.
         btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
         btn.addEventListener('click', (e) => {
@@ -5981,6 +6231,81 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this._bgPadConnected = null;   // forces the first badge refresh
         this.refreshBgSwitchLabel();
         this.layoutBgSwitchButton();
+    };
+
+    // The title music selector, cut from the same plate as the background
+    // switcher and docked directly under it: the piece is picked by ear from
+    // the title itself, with the chevrons stepping the short playlist.
+    Scene_Title.prototype.createMusicSwitchButton = function () {
+        const stale = document.getElementById('title-music-switch');
+        if (stale && stale.parentNode) stale.parentNode.removeChild(stale);
+        const btn = document.createElement('div');
+        btn.id = 'title-music-switch';
+        btn.className = 'title-plate title-plate-btn';
+        document.body.appendChild(btn);
+        this._musicSwitchButton = btn;
+
+        const makeArrow = (dir) => {
+            const el = document.createElement('span');
+            el.className = 'title-keycap';
+            el.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (SceneManager._scene === this) this.cycleTitleMusic(dir);
+            });
+            return el;
+        };
+
+        this._musicSwitchPrev = makeArrow(-1);
+        this._musicSwitchNext = makeArrow(1);
+        this._musicSwitchLabel = document.createElement('span');
+        btn.appendChild(this._musicSwitchPrev);
+        btn.appendChild(this._musicSwitchLabel);
+        btn.appendChild(this._musicSwitchNext);
+
+        btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            if (SceneManager._scene === this) this.cycleTitleMusic(1);
+        });
+
+        this._musicSwitchPrev.textContent = '‹';
+        this._musicSwitchNext.textContent = '›';
+        this.refreshMusicSwitchLabel();
+        this.layoutMusicSwitchButton();
+    };
+
+    // Docked under the background switcher, sharing its right edge, the same
+    // way the news panel is docked under this one.
+    Scene_Title.prototype.layoutMusicSwitchButton = function () {
+        const btn = this._musicSwitchButton;
+        if (!btn) return;
+        const rect = TitleLayout.rect();
+        const s = TitleLayout.scale(rect);
+        const above = this._bgSwitchButton ? this._bgSwitchButton.getBoundingClientRect() : null;
+        const below = above && above.height > 0
+            ? (above.bottom - rect.top) / s
+            : 18 + 34;
+        TitleLayout.place(btn, { right: 18, top: Math.round(below + 8) });
+    };
+
+    Scene_Title.prototype.refreshMusicSwitchLabel = function () {
+        if (!this._musicSwitchLabel) return;
+        this._musicSwitchLabel.textContent =
+            T('Titlescreen.music.label') + TITLE_MUSIC[titleMusicIndex()].name.toUpperCase();
+    };
+
+    Scene_Title.prototype.cycleTitleMusic = function (dir) {
+        const n = TITLE_MUSIC.length;
+        const next = ((titleMusicIndex() + (dir || 1)) % n + n) % n;
+        ConfigManager.titleMusicName = TITLE_MUSIC[next].value;
+        ConfigManager.save();
+        this.playTitleBgm();
+        this.refreshMusicSwitchLabel();
+        this.layoutMusicSwitchButton();
+        this.layoutDisclaimerBox();
     };
 
     // Top-left build badge. Text only, never interactive, so it can sit over the
@@ -5996,15 +6321,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         el.textContent = text;
         document.body.appendChild(el);
         this._versionBadge = el;
-        Object.assign(el.style, {
-            position: 'absolute', zIndex: '300',
-            fontFamily: "'Square', monospace", fontWeight: 'bold', letterSpacing: '1px',
-            color: '#FFD700', background: 'rgba(0, 0, 0, 0.85)',
-            border: '2px solid rgba(255, 215, 0, 0.75)',
-            boxShadow: 'inset 0 0 0 2px rgba(255, 215, 0, 0.2)',
-            textShadow: '0 0 4px #000', userSelect: 'none', pointerEvents: 'none',
-            whiteSpace: 'nowrap'
-        });
+        el.className = 'title-plate title-hint-plate';
         this.layoutVersionBadge();
     };
 
@@ -6013,9 +6330,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     Scene_Title.prototype.layoutVersionBadge = function () {
         const el = this._versionBadge;
         if (!el) return;
-        const s = TitleLayout.place(el, { top: 18, left: 18 });
-        el.style.padding = TitleLayout.px(5, s) + ' ' + TitleLayout.px(10, s);
-        el.style.fontSize = TitleLayout.px(13, s);
+        TitleLayout.place(el, { top: 18, left: 18 });
     };
 
     // -------------------------------------------------------------------------
@@ -6142,15 +6457,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         document.body.appendChild(box);
         this._languageBox = box;
         this._languageButtons = [];
-        Object.assign(box.style, {
-            position: 'absolute', zIndex: '300',
-            display: 'flex', alignItems: 'center',
-            fontFamily: "'Square', monospace", fontWeight: 'bold', letterSpacing: '1px',
-            color: '#FFD700', background: 'rgba(0, 0, 0, 0.85)',
-            border: '2px solid rgba(255, 215, 0, 0.75)',
-            boxShadow: 'inset 0 0 0 2px rgba(255, 215, 0, 0.2)',
-            textShadow: '0 0 4px #000', userSelect: 'none', pointerEvents: 'auto'
-        });
+        box.className = 'title-plate title-lang-box';
 
         this._languageLabel = document.createElement('span');
         this._languageLabel.textContent = T('Titlescreen.language.label');
@@ -6167,14 +6474,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             }
             btn.title = languageName(symbol);
             btn._langSymbol = symbol;
-            Object.assign(btn.style, {
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxSizing: 'content-box', lineHeight: '1',
-                cursor: 'pointer', pointerEvents: 'auto',
-                transition: 'opacity 0.15s ease-out, border-color 0.15s ease-out'
-            });
+            btn.className = 'title-lang-btn';
             btn.addEventListener('mouseenter', () => {
-                if (activeLanguage() !== symbol) btn.style.opacity = '0.85';
+                if (activeLanguage() !== symbol) btn.classList.add('title-lang-btn--hover');
             });
             btn.addEventListener('mouseleave', () => this.refreshLanguageSelector());
             // Swallow the press so it never reaches the canvas / free-look drag.
@@ -6202,8 +6504,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const current = activeLanguage();
         for (const btn of this._languageButtons || []) {
             const on = btn._langSymbol === current;
-            btn.style.borderColor = on ? '#FFD700' : 'rgba(255, 215, 0, 0.25)';
-            btn.style.opacity = on ? '1' : '0.5';
+            btn.classList.toggle('title-lang-btn--on', on);
+            btn.classList.remove('title-lang-btn--hover');
             btn.title = languageName(btn._langSymbol);
         }
     };
@@ -6250,18 +6552,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             ? (badgeRect.bottom - rect.top) / s + 8
             : 18; // no badge: take the corner inset itself
         TitleLayout.place(box, { left: 18, top: Math.round(below) });
-        const px = v => TitleLayout.px(v, s);
-        box.style.gap = px(6);
-        box.style.padding = px(5) + ' ' + px(8);
-        box.style.fontSize = px(11);
-        for (const btn of this._languageButtons || []) {
-            // 3:2, the ratio every flag above is drawn at.
-            btn.style.width = px(27);
-            btn.style.height = px(18);
-            btn.style.borderWidth = px(2);
-            btn.style.borderStyle = 'solid';
-            btn.style.fontSize = px(9);
-        }
+        // The flags are 3:2, the ratio they are all drawn at; the whole strip
+        // is sized off --title-scale in the stylesheet.
     };
 
     Scene_Title.prototype.removeLanguageSelector = function () {
@@ -6331,21 +6623,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         btn.id = 'title-update';
         document.body.appendChild(btn);
         this._updateButton = btn;
-        Object.assign(btn.style, {
-            position: 'absolute', zIndex: '300', display: 'none',
-            alignItems: 'center', whiteSpace: 'nowrap',
-            fontFamily: "'Square', monospace", fontWeight: 'bold', letterSpacing: '1px',
-            color: '#FFD700', background: 'rgba(0, 0, 0, 0.85)',
-            border: '2px solid rgba(255, 215, 0, 0.75)',
-            boxShadow: 'inset 0 0 0 2px rgba(255, 215, 0, 0.2)',
-            textShadow: '0 0 4px #000', userSelect: 'none',
-            transition: 'color 0.15s ease-out, border-color 0.15s ease-out'
-        });
+        btn.className = 'title-plate title-update-btn';
 
-        btn.addEventListener('mouseenter', () => {
-            if (btn.style.cursor === 'pointer') btn.style.borderColor = '#FFFFFF';
-        });
-        btn.addEventListener('mouseleave', () => { btn.style.borderColor = 'rgba(255, 215, 0, 0.75)'; });
         // Swallow the press so it never reaches the canvas / free-look drag.
         btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
         btn.addEventListener('click', (e) => {
@@ -6403,24 +6682,31 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // first, since that is not a thing the game can do for the player.
     const setUpdateLabel = (btn, main, second) => {
         if (!btn) return;
+        btn.classList.toggle('title-update-btn--two-line', !!second);
         if (!second) {
-            btn.style.flexDirection = '';
-            btn.style.alignItems = 'center';
             btn.textContent = main;
             return;
         }
-        btn.style.flexDirection = 'column';
-        btn.style.alignItems = 'flex-start';
         btn.textContent = '';
         const head = document.createElement('div');
         head.textContent = main;
         const note = document.createElement('div');
+        note.className = 'title-update-note';
         note.textContent = second;
-        note.style.fontSize = '0.82em';
-        note.style.marginTop = '2px';
-        note.style.color = '#FF9A6E';
         btn.appendChild(head);
         btn.appendChild(note);
+    };
+
+    // The notice has six states and they are named, not painted: ready (gold,
+    // pulsing, clickable), warn (amber, pulsing), notice (amber, still), busy
+    // (working, not clickable), dim (nothing left to say) and gone.
+    const UPDATE_STATES = ['ready', 'warn', 'notice', 'busy', 'dim'];
+    const setUpdateState = (btn, state) => {
+        if (!btn) return;
+        for (const st of UPDATE_STATES) {
+            btn.classList.toggle('title-update-btn--' + st, st === state);
+        }
+        if (state) window.UIPanel.open(btn); else window.UIPanel.close(btn);
     };
 
     // A major update is one the file patch cannot fully carry, so the notice
@@ -6449,10 +6735,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // The launch check answers long after the panels have been faded in, so a
         // notice that turns up now fades itself in rather than snapping into the
         // corner. While the settle is still running the sweep covers it instead.
-        const wasHidden = btn.style.display === 'none';
+        const wasHidden = window.UIPanel.isClosed(btn);
         const fadeIn = () => {
             if (!wasHidden || !this._overlaysSettled) return;
-            if (btn.style.display === 'none') return;
+            if (window.UIPanel.isClosed(btn)) return;
             fadeInOverlay(btn, 0);
         };
 
@@ -6467,11 +6753,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             btn.title = majorTaken(result)
                 ? T('Titlescreen.update.majorInstalledTip')
                 : T('Titlescreen.update.restartTip');
-            btn.style.display = 'flex';
-            btn.style.cursor = 'pointer';
-            btn.style.pointerEvents = 'auto';
-            btn.style.color = '#FFD700';
-            btn.style.animation = 'title-update-pulse 2.4s ease-in-out infinite';
+            setUpdateState(btn, 'ready');
             this.layoutUpdateButton();
             fadeIn();
             return;
@@ -6487,22 +6769,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._updateAction = 'fullgame';
             setUpdateLabel(btn, T('Titlescreen.update.redownload'), majorPendingLine());
             btn.title = T('Titlescreen.update.redownloadTip');
-            btn.style.display = 'flex';
-            btn.style.cursor = 'pointer';
-            btn.style.pointerEvents = 'auto';
-            btn.style.color = '#FFB347';
-            btn.style.animation = 'title-update-pulse 2.4s ease-in-out infinite';
+            setUpdateState(btn, 'warn');
         } else if (result && result.available && !this._updateDone) {
             // An ordinary build: the one above has already taken every major
             // one, so nothing here needs the second line.
             this._updateAction = 'install';
             setUpdateLabel(btn, updateBuildLabel(result), '');
             btn.title = T('Titlescreen.update.tip');
-            btn.style.display = 'flex';
-            btn.style.cursor = 'pointer';
-            btn.style.pointerEvents = 'auto';
-            btn.style.color = '#FFD700';
-            btn.style.animation = 'title-update-pulse 2.4s ease-in-out infinite';
+            setUpdateState(btn, 'ready');
         } else if (result && majorTaken(result)) {
             // Nothing left to fetch, but this copy was patched across a major
             // update and is not whole: the one thing left is a full download.
@@ -6511,24 +6785,15 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._updateAction = 'major';
             setUpdateLabel(btn, T('Titlescreen.update.majorInstalled'), majorTakenLine());
             btn.title = T('Titlescreen.update.majorInstalledTip');
-            btn.style.display = 'flex';
-            btn.style.cursor = 'pointer';
-            btn.style.pointerEvents = 'auto';
-            btn.style.color = '#FFB347';
-            btn.style.animation = '';
+            setUpdateState(btn, 'notice');
         } else if (!result) {
             this._updateAction = null;
             setUpdateLabel(btn, T('Titlescreen.update.checking'), '');
             btn.title = T('Titlescreen.update.checkingTip');
-            btn.style.display = 'flex';
-            btn.style.cursor = 'default';
-            btn.style.pointerEvents = 'none';
-            btn.style.color = 'rgba(255, 215, 0, 0.55)';
-            btn.style.animation = '';
+            setUpdateState(btn, 'dim');
         } else {
             this._updateAction = null;
-            btn.style.display = 'none';
-            btn.style.animation = '';
+            setUpdateState(btn, null);
         }
         this.layoutUpdateButton();
         fadeIn();
@@ -6547,8 +6812,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             ? (aboveRect.bottom - rect.top) / s + 8
             : 18; // nothing above it: take the corner inset itself
         TitleLayout.place(btn, { left: 18, top: Math.round(below) });
-        btn.style.padding = TitleLayout.px(5, s) + ' ' + TitleLayout.px(10, s);
-        btn.style.fontSize = TitleLayout.px(12, s);
+
     };
 
     // Pressing the notice installs the build there and then: the newest commit
@@ -6607,17 +6871,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const say = (text) => {
             if (!btn) return;
             btn.textContent = text;
-            btn.style.cursor = 'default';
-            btn.style.pointerEvents = 'none';
-            btn.style.animation = '';
-            btn.style.display = 'flex';
+            setUpdateState(btn, 'busy');
         };
         const release = (text, dim) => {
             this._updateBusy = false;
             if (!btn) return;
             btn.textContent = text;
             btn.title = text;
-            btn.style.color = dim ? 'rgba(255, 215, 0, 0.55)' : '#FFD700';
+            btn.classList.toggle('title-update-btn--dim', !!dim);
         };
 
         const onProgress = (p) => {
@@ -6648,7 +6909,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 // the build being offered, so the notice has nothing left to say.
                 this._updateDone = true;
                 release(T('Titlescreen.update.upToDate'), true);
-                setTimeout(() => { if (btn) btn.style.display = 'none'; }, 2500);
+                setTimeout(() => setUpdateState(btn, null), 2500);
                 return null;
             }
             return api.install(sha, onProgress);
@@ -6664,10 +6925,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             if (major) {
                 setUpdateLabel(btn, T('Titlescreen.update.restarting'), majorTakenLine());
                 if (btn) {
-                    btn.style.cursor = 'default';
-                    btn.style.pointerEvents = 'none';
-                    btn.style.animation = '';
-                    btn.style.display = 'flex';
+                    setUpdateState(btn, 'busy');
                 }
                 this.layoutUpdateButton();
             } else {
@@ -6678,8 +6936,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             console.warn('Titlescreen: the update could not be installed', err);
             release(T('Titlescreen.update.failed'), false);
             if (btn) {
-                btn.style.cursor = 'pointer';
-                btn.style.pointerEvents = 'auto';
+                setUpdateState(btn, 'notice');
             }
         });
     };
@@ -6735,13 +6992,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         if (!btn) return;
         const s = TitleLayout.place(btn, { top: 18, right: 18 });
         const px = v => TitleLayout.px(v, s);
-        btn.style.gap = px(10);
-        btn.style.padding = px(6) + ' ' + px(10);
-        btn.style.fontSize = px(15);
+
         for (const el of [this._bgSwitchPrev, this._bgSwitchNext]) {
             if (!el) continue;
-            el.style.minWidth = px(22);
-            el.style.padding = px(2) + ' ' + px(4);
+
         }
         this._bgSwitchArrowScale = s;
         this._applyBgSwitchArrowFont();
@@ -6752,8 +7006,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     Scene_Title.prototype._applyBgSwitchArrowFont = function () {
         if (!this._bgSwitchPrev || !this._bgSwitchNext) return;
         const fs = TitleLayout.px(this._bgPadConnected ? 11 : 16, this._bgSwitchArrowScale);
-        this._bgSwitchPrev.style.fontSize = fs;
-        this._bgSwitchNext.style.fontSize = fs;
+
     };
 
     Scene_Title.prototype.refreshBgSwitchLabel = function () {
@@ -6774,6 +7027,17 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
     // L1 / R1 step the background; polled raw so a remapped gamepadMapper (or a
     // menu that is eating pageup/pagedown) cannot break it.
+    // The music switcher answers to the shoulders under the background's, and
+    // to PageUp / PageDown on the keyboard, so the chevrons beside the track
+    // name are never the only way to change it.
+    Scene_Title.prototype.updateMusicSwitchInput = function () {
+        if (!this._musicSwitchButton) return;
+        const prev = PAD.triggered(PAD.L2) || Input.isTriggered('pageup');
+        const next = PAD.triggered(PAD.R2) || Input.isTriggered('pagedown');
+        if (prev) this.cycleTitleMusic(-1);
+        else if (next) this.cycleTitleMusic(1);
+    };
+
     Scene_Title.prototype.updateBgSwitchInput = function () {
         if (!this._bgSwitchButton) return;
         const prev = PAD.triggered(PAD.L1);
@@ -6791,7 +7055,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // notice, the Discord invite, the Linktree and the two donation buttons.
     // Gated by the EnableDisclaimer parameter (ON by default).
     //
-    // The body is set in Lora rather than the title's Square: the notice is a
+    // The body is set in the UI serif rather than the title's Square: the notice is a
     // full paragraph and the URLs are long, and a proportional serif keeps both
     // readable at the small panel size. Square is kept for the header and the
     // short labels, so the panel still reads as part of the terminal.
@@ -6810,24 +7074,11 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this._disclaimerBox = box;
         // Geometry (position, width, padding, font) is applied by
         // layoutDisclaimerBox so the panel tracks the canvas at any resolution.
-        Object.assign(box.style, {
-            position: 'absolute', zIndex: '300', boxSizing: 'border-box',
-            fontFamily: "'Lora', Georgia, serif", lineHeight: '1.5',
-            color: '#F4E7C3', background: 'rgba(0, 0, 0, 0.9)', border: '2px solid #FFD700',
-            boxShadow: 'inset 0 0 0 2px rgba(255, 215, 0, 0.25), 0 0 22px rgba(0, 0, 0, 0.6)',
-            textShadow: '0 0 4px #000',
-            pointerEvents: 'auto', userSelect: 'none'
-        });
+        box.className = 'title-plate title-news-panel';
 
         const close = document.createElement('div');
         close.textContent = '✕';
-        Object.assign(close.style, {
-            position: 'absolute', top: '0.3em', right: '0.45em',
-            padding: '0 0.25em', cursor: 'pointer', fontSize: '1.15em', lineHeight: '1.2',
-            color: '#FFD700', pointerEvents: 'auto'
-        });
-        close.addEventListener('mouseenter', () => { close.style.color = '#FFFFFF'; });
-        close.addEventListener('mouseleave', () => { close.style.color = '#FFD700'; });
+        close.className = 'title-news-close';
         close.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
         close.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -6838,34 +7089,21 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
         const header = document.createElement('div');
         header.textContent = T('Titlescreen.news.header');
-        Object.assign(header.style, {
-            fontFamily: "'Square', monospace", fontSize: '0.85em', letterSpacing: '2px',
-            color: '#FFD700', paddingRight: '1.4em', paddingBottom: '0.4em',
-            marginBottom: '0.6em', borderBottom: '1px solid rgba(255, 215, 0, 0.35)'
-        });
+        header.className = 'title-news-head';
 
         // What the panel actually says: one version section of the changelog,
         // walked with the two buttons over it. The list is capped and scrolls on
         // its own, so a section as long as a release note cannot stretch the
         // panel down over the readouts in the corner.
         const navRow = document.createElement('div');
-        Object.assign(navRow.style, {
-            display: 'flex', alignItems: 'center', gap: '0.4em', marginBottom: '0.5em'
-        });
+        navRow.className = 'title-news-nav';
 
         const navButton = (label, step) => {
             const btn = document.createElement('div');
             btn.textContent = label;
-            Object.assign(btn.style, {
-                fontFamily: "'Square', monospace", fontSize: '0.72em', letterSpacing: '1px',
-                padding: '0.2em 0.55em', cursor: 'pointer', pointerEvents: 'auto',
-                whiteSpace: 'nowrap', color: '#FFD700',
-                border: '1px solid rgba(255, 215, 0, 0.45)', background: 'rgba(0, 0, 0, 0.6)'
-            });
+            btn.className = 'title-news-navbtn';
             btn.addEventListener('mouseenter', () => {
-                if (!btn.dataset.off) btn.style.color = '#FFFFFF';
             });
-            btn.addEventListener('mouseleave', () => { btn.style.color = '#FFD700'; });
             btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -6882,20 +7120,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const newerBtn = navButton(T('Titlescreen.news.newer'), -1);
 
         const versionLabel = document.createElement('div');
-        Object.assign(versionLabel.style, {
-            flex: '1 1 auto', textAlign: 'center', minWidth: '0',
-            fontFamily: "'Square', monospace", fontSize: '0.8em', letterSpacing: '1.5px',
-            color: '#8fb4c8'
-        });
+        versionLabel.className = 'title-news-version';
 
         navRow.appendChild(olderBtn);
         navRow.appendChild(versionLabel);
         navRow.appendChild(newerBtn);
 
         const text = document.createElement('div');
-        Object.assign(text.style, {
-            overflowY: 'auto', overflowX: 'hidden', pointerEvents: 'auto'
-        });
+        text.className = 'title-news-body';
         // RMMZ preventDefaults every wheel event at the document level, so a DOM
         // pane never scrolls on its own: this one scrolls itself and swallows the
         // event so it cannot also reach the background behind the panel.
@@ -6920,52 +7152,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // released builds, so a player wedged in a wall can always walk out.
         const noclipTip = document.createElement('div');
         noclipTip.textContent = T('Titlescreen.disclaimer.noclip');
-        Object.assign(noclipTip.style, {
-            marginTop: '0.5em', fontSize: '0.9em', lineHeight: '1.45',
-            color: '#E8C98A'
-        });
-
-        // One clickable line: a short Square caption plus the underlined URL.
-        const linkRow = (caption, url) => {
-            const row = document.createElement('div');
-            Object.assign(row.style, {
-                marginTop: '0.55em', cursor: 'pointer', pointerEvents: 'auto'
-            });
-            const tag = document.createElement('div');
-            tag.textContent = caption;
-            Object.assign(tag.style, {
-                fontFamily: "'Square', monospace", fontSize: '0.78em',
-                letterSpacing: '1.5px', color: '#8fb4c8', lineHeight: '1.2'
-            });
-            const href = document.createElement('div');
-            href.textContent = url;
-            Object.assign(href.style, {
-                color: '#FFD700', textDecoration: 'underline',
-                wordBreak: 'break-all', fontSize: '0.92em', lineHeight: '1.35'
-            });
-            row.addEventListener('mouseenter', () => { href.style.color = '#FFFFFF'; });
-            row.addEventListener('mouseleave', () => { href.style.color = '#FFD700'; });
-            row.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
-            row.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                SoundManager.playOk();
-                openExternalLink(url);
-            });
-            row.appendChild(tag);
-            row.appendChild(href);
-            return row;
-        };
+        noclipTip.className = 'title-news-tip';
 
         // Donation buttons: same terminal frame as the rest of the title, tinted
         // with each service's own colour so they read as two distinct choices.
         const donateLabel = document.createElement('div');
         donateLabel.textContent = T('Titlescreen.support.header');
-        Object.assign(donateLabel.style, {
-            fontFamily: "'Square', monospace", fontSize: '0.78em', letterSpacing: '1.5px',
-            color: '#8fb4c8', marginTop: '0.9em', paddingTop: '0.6em',
-            borderTop: '1px solid rgba(255, 215, 0, 0.35)'
-        });
+        donateLabel.className = 'title-donate-label';
 
         // What a patron actually gets, stated on the title screen rather than
         // buried in a tier list: a named planet (PatreonRewards builds the
@@ -6973,33 +7166,20 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // data file and are handed over on Patreon alone.
         const patronPerk = document.createElement('div');
         patronPerk.textContent = T('Titlescreen.support.patronPerk');
-        Object.assign(patronPerk.style, {
-            marginTop: '0.45em', fontSize: '0.9em', lineHeight: '1.45',
-            color: '#E8C98A'
-        });
+        patronPerk.className = 'title-news-tip title-news-tip--perk';
 
         const donateRow = document.createElement('div');
-        Object.assign(donateRow.style, {
-            display: 'flex', gap: '0.45em', marginTop: '0.5em'
-        });
+        donateRow.className = 'title-donate-row';
 
-        const donateButton = (label, url, accent) => {
+        const donateButton = (label, url) => {
             const btn = document.createElement('div');
             btn.textContent = label;
-            Object.assign(btn.style, {
-                flex: '1 1 0', textAlign: 'center', boxSizing: 'border-box',
-                fontFamily: "'Square', monospace", fontSize: '0.85em', letterSpacing: '1px',
-                padding: '0.4em 0.2em', cursor: 'pointer', pointerEvents: 'auto',
-                color: accent, border: '2px solid ' + accent, background: 'rgba(0, 0, 0, 0.6)',
-                transition: 'background 0.15s ease-out, color 0.15s ease-out'
-            });
+            btn.className = 'title-donate-btn';
             btn.addEventListener('mouseenter', () => {
-                btn.style.background = accent;
-                btn.style.color = '#000000';
+                btn.classList.add('title-donate-btn--on');
             });
             btn.addEventListener('mouseleave', () => {
-                btn.style.background = 'rgba(0, 0, 0, 0.6)';
-                btn.style.color = accent;
+                btn.classList.remove('title-donate-btn--on');
             });
             btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
             btn.addEventListener('click', (e) => {
@@ -7011,8 +7191,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             return btn;
         };
 
-        donateRow.appendChild(donateButton('PATREON', PATREON_LINK, '#FF6B57'));
-        donateRow.appendChild(donateButton('PAYPAL', PAYPAL_LINK, '#59B7EA'));
+        donateRow.appendChild(donateButton('PATREON', PATREON_LINK));
+        donateRow.appendChild(donateButton('PAYPAL', PAYPAL_LINK));
+        // The community links sit on the same row rather than as their own
+        // rows above it: four buttons, one strip.
+        donateRow.appendChild(donateButton('DISCORD', DISCLAIMER_LINK));
+        donateRow.appendChild(donateButton('LINKS', LINKTREE_LINK));
 
         // Swallow presses on the panel itself so they never reach the canvas
         // (free-look drag / card interaction behind it).
@@ -7023,8 +7207,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         box.appendChild(navRow);
         box.appendChild(text);
         box.appendChild(noclipTip);
-        box.appendChild(linkRow('DISCORD', DISCLAIMER_LINK));
-        box.appendChild(linkRow('LINKS', LINKTREE_LINK));
         box.appendChild(donateLabel);
         box.appendChild(patronPerk);
         box.appendChild(donateRow);
@@ -7050,7 +7232,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
         while (body.firstChild) body.removeChild(body.firstChild);
         if (this._newsVersion) this._newsVersion.textContent = section ? section.version : '';
-        if (this._newsNav) this._newsNav.style.display = sections.length ? 'flex' : 'none';
+        window.UIPanel.toggle(this._newsNav, sections.length > 0);
 
         if (!section) {
             const fallback = document.createElement('div');
@@ -7065,15 +7247,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const row = document.createElement('div');
             const heading = entry && typeof entry === 'object' ? entry.heading : null;
             row.textContent = heading ? String(heading) : NEWS_BULLET + entry;
-            Object.assign(row.style, {
-                marginBottom: '0.4em', fontSize: '0.95em', lineHeight: '1.4'
-            });
+            row.className = 'title-news-line';
             if (heading) {
-                Object.assign(row.style, {
-                    color: '#FFD700', letterSpacing: '1px', fontSize: '0.85em',
-                    marginTop: body.firstChild ? '0.9em' : '0',
-                    fontFamily: "'Square', monospace"
-                });
+                row.className = 'title-news-section' +
+                    (body.firstChild ? ' title-news-section--spaced' : '');
             }
             body.appendChild(row);
         }
@@ -7083,12 +7260,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             if (!btn) return;
             if (off) {
                 btn.dataset.off = '1';
-                btn.style.opacity = '0.3';
-                btn.style.cursor = 'default';
+                btn.classList.add('title-news-navbtn--off');
             } else {
                 delete btn.dataset.off;
-                btn.style.opacity = '1';
-                btn.style.cursor = 'pointer';
+                btn.classList.remove('title-news-navbtn--off');
             }
         };
         dim(this._newsOlder, i >= last);
@@ -7105,15 +7280,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         if (!box) return;
         const rect = TitleLayout.rect();
         const s = TitleLayout.scale(rect);
-        const btn = this._bgSwitchButton;
+        const btn = this._musicSwitchButton || this._bgSwitchButton;
         const btnRect = btn ? btn.getBoundingClientRect() : null;
         const below = btnRect && btnRect.height > 0
             ? (btnRect.bottom - rect.top) / s
-            : 18 + 34; // switcher inset + its design height
+            : 18 + 34 + 42; // switcher inset, its design height, the music plate
         TitleLayout.place(box, { right: 18, top: Math.round(below + 10) });
-        box.style.width = Math.round(Math.min(320 * s, rect.width * 0.3)) + 'px';
-        box.style.padding = TitleLayout.px(12, s) + ' ' + TitleLayout.px(14, s);
-        box.style.fontSize = TitleLayout.px(13, s);
+        box.style.setProperty('--title-w',
+            Math.round(Math.min(320 * s, rect.width * 0.3)) + 'px');
         // The one part of the panel that grows with its content is the one part
         // that is capped: everything under it keeps its place whichever section
         // is being read. The cap is then trimmed to whatever room is actually
@@ -7122,13 +7296,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // pushed off the edge by a long release note.
         const body = this._newsBody;
         if (body) {
-            body.style.maxHeight = TitleLayout.px(150, s);
+            body.style.setProperty('--title-maxh', TitleLayout.px(110, s));
             const boxRect = box.getBoundingClientRect();
             const bodyRect = body.getBoundingClientRect();
             const canvasBottom = rect.top + rect.height;
             const spill = boxRect.bottom - (canvasBottom - 18 * s);
             if (spill > 0 && bodyRect.height > 0) {
-                body.style.maxHeight = Math.round(Math.max(60 * s, bodyRect.height - spill)) + 'px';
+                body.style.setProperty('--title-maxh',
+                    Math.round(Math.max(60 * s, bodyRect.height - spill)) + 'px');
             }
         }
     };
@@ -7157,7 +7332,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const needsOverlay = DOM_CANVAS_MODES.includes(this._bgMode) || !!this._enemies3dBg;
         if (!needsOverlay) {
             if (this._logoSprite) this._logoSprite.visible = true;
-            if (this._logoOverlay) this._logoOverlay.style.display = 'none';
+            window.UIPanel.close(this._logoOverlay);
             return;
         }
         if (this._logoSprite) this._logoSprite.visible = false;
@@ -7171,23 +7346,20 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 // If the picture cannot be loaded, fall back to the PIXI logo
                 // rather than leaving the title with no logo at all.
                 img.onerror = () => {
-                    img.style.display = 'none';
+                    window.UIPanel.close(img);
                     if (this._logoSprite) this._logoSprite.visible = true;
                 };
                 document.body.appendChild(img);
             }
-            Object.assign(img.style, {
-                position: 'absolute', zIndex: '45', pointerEvents: 'none',
-                // Transparent until syncLogoOverlay has placed it once: the
-                // picture's own dimensions are read off the PIXI bitmap, which is
-                // usually still loading when the scene is built, and a shown but
-                // unplaced <img> paints the whole 1280x720 plate at the top-left
-                // corner for those frames.
-                imageRendering: 'auto', display: 'none', opacity: '0'
-            });
+            // Transparent until syncLogoOverlay has placed it once: the
+            // picture's own dimensions are read off the PIXI bitmap, which is
+            // usually still loading when the scene is built, and a shown but
+            // unplaced <img> paints the whole 1280x720 plate at the top-left
+            // corner for those frames.
+            img.className = 'title-logo-overlay';
             this._logoOverlay = img;
         }
-        img.style.display = 'block';
+        window.UIPanel.open(img);
         this.syncLogoOverlay();
     };
 
@@ -7196,7 +7368,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     Scene_Title.prototype.syncLogoOverlay = function () {
         const img = this._logoOverlay;
         const sprite = this._logoSprite;
-        if (!img || img.style.display === 'none' || !sprite || !sprite.bitmap) return;
+        if (!img || window.UIPanel.isClosed(img) || !sprite || !sprite.bitmap) return;
         const bmp = sprite.bitmap;
         if (!bmp.isReady || !bmp.isReady() || !bmp.width) return;
         const canvas = Graphics._canvas;
@@ -7206,16 +7378,16 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const sy = rect.height / Graphics.height;
         const w = bmp.width * sprite.scale.x;
         const h = bmp.height * sprite.scale.y;
-        img.style.left = Math.round(rect.left + sprite.x * sx) + 'px';
-        img.style.top = Math.round(rect.top + sprite.y * sy) + 'px';
-        img.style.width = Math.round(w * sx) + 'px';
-        img.style.height = Math.round(h * sy) + 'px';
+        window.UIPanel.placeAt(img, Math.round(rect.left + sprite.x * sx),
+            Math.round(rect.top + sprite.y * sy));
+        img.style.setProperty('--title-w', Math.round(w * sx) + 'px');
+        img.style.setProperty('--title-h', Math.round(h * sy) + 'px');
         // Now that it has a box, it can be shown. Every early return above leaves
         // it transparent, so it is never painted at its natural size. The PIXI
         // logo it stands in for is covered by the scene's own fade-in; this one
         // is not, so it is faded up by hand the first time it is placed.
         if (img.style.opacity !== '1') {
-            img.style.opacity = '1';
+            img.classList.add('title-faded-in');
             fadeInOverlay(img, 0);
         }
     };
@@ -7250,6 +7422,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         'title-language',
         'title-update',
         'title-bg-switch',
+        'title-music-switch',
         'title-disclaimer',
         'title-hyperverse-info',
         'title-hyperverse-catalog',
@@ -7271,7 +7444,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // measured height of the switcher), and their own fade-ins are left alone.
     Scene_Title.prototype.setScaledOverlaysVisible = function (visible) {
         for (const el of this.scaledOverlayNodes()) {
-            el.style.visibility = visible ? '' : 'hidden';
+            el.classList.toggle('title-invisible', !visible);
         }
     };
 
@@ -7334,15 +7507,17 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // the stylesheet the scale its metrics are multiplied by.
         if (this._menuContainer) {
             const st = this._menuContainer.style;
-            st.left = Math.round(rect.left) + 'px';
-            st.top = Math.round(rect.top) + 'px';
-            st.width = Math.round(rect.width) + 'px';
-            st.height = Math.round(rect.height) + 'px';
+            st.setProperty('--title-x', Math.round(rect.left) + 'px');
+            st.setProperty('--title-y', Math.round(rect.top) + 'px');
+            st.setProperty('--title-w', Math.round(rect.width) + 'px');
+            st.setProperty('--title-h', Math.round(rect.height) + 'px');
             st.setProperty('--ts-ui-scale', String(scale));
         }
 
         if (this._logoSprite) this._logoSprite.layout();
         this.layoutBgSwitchButton();
+        // After the switcher: the music plate is docked under its measured bottom.
+        this.layoutMusicSwitchButton();
         this.layoutVersionBadge();
         // After the badge: the selector is docked under its measured bottom.
         this.layoutLanguageSelector();
@@ -7447,13 +7622,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         }
 
         this._menuContainer = container;
-        this._menuContainer.style.display = "flex";
-        this._menuContainer.style.opacity = "1";
+        window.UIPanel.open(this._menuContainer);
         // Leave hit-testing to the stylesheet: the container spans the whole
         // screen, so forcing pointer-events here would make it swallow every
         // press on the background and kill the 3D free-look drag / wheel zoom.
         // Only .ts-menu-overlay (the actual list) takes pointer events.
-        this._menuContainer.style.pointerEvents = "";
+
         this._menuContainer.innerHTML = "";
 
         this._lastCommandIndex = -1;
@@ -7488,9 +7662,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         });
 
         commands.push({
-            text: T('Titlescreen.menuOverlay.tutorial'),
-            symbol: 'tutorial',
-            enabled: worldReady
+            text: T(storyCommandKey(true)),
+            symbol: 'storymode',
+            enabled: storyModeAvailable()
         });
 
         // Keep these in the SAME order as Window_TitleCommand.makeCommandList: the
@@ -7517,12 +7691,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                     ? ` [${activeWorld.toUpperCase()}]`
                     : ` [${T('Titlescreen.menuOverlay.noWorld')}]`),
             symbol: 'worlds'
-        });
-
-        commands.push({
-            text: T('Titlescreen.menuOverlay.wiki'),
-            symbol: 'wiki',
-            enabled: wikiAvailable()
         });
 
         commands.push({
@@ -7581,7 +7749,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
     Scene_Title.prototype.onTitleCommandHover = function (index) {
         if (!this._commandWindow) return;
-        if (this._tutorialWindow && this._tutorialWindow.visible) return;
+        if (this._storyModeWindow && this._storyModeWindow.visible) return;
 
         const commands = this.getTitleCommandText();
         const cmd = commands[index];
@@ -7596,7 +7764,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
     Scene_Title.prototype.onTitleCommandClick = function (index) {
         if (!this._commandWindow) return;
-        if (this._tutorialWindow && this._tutorialWindow.visible) return;
+        if (this._storyModeWindow && this._storyModeWindow.visible) return;
 
         const commands = this.getTitleCommandText();
         const cmd = commands[index];
@@ -7638,6 +7806,11 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         }
         this._bgSwitchButton = null;
         this._bgSwitchLabel = this._bgSwitchPrev = this._bgSwitchNext = null;
+        if (this._musicSwitchButton && this._musicSwitchButton.parentNode) {
+            this._musicSwitchButton.parentNode.removeChild(this._musicSwitchButton);
+        }
+        this._musicSwitchButton = null;
+        this._musicSwitchLabel = this._musicSwitchPrev = this._musicSwitchNext = null;
         if (this._versionBadge && this._versionBadge.parentNode) {
             this._versionBadge.parentNode.removeChild(this._versionBadge);
         }
@@ -7651,9 +7824,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this._logoOverlay = null;
         if (this._menuContainer) {
             const container = this._menuContainer;
-            container.style.transition = "opacity 0.2s ease-out";
-            container.style.opacity = "0";
-            container.style.pointerEvents = "none";
+            container.classList.add('title-menu--leaving');
 
             if (window._tsOverlayTimeout) {
                 clearTimeout(window._tsOverlayTimeout);
@@ -7661,9 +7832,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             window._tsOverlayTimeout = setTimeout(() => {
                 if (container) {
                     container.innerHTML = "";
-                    container.style.display = "none";
-                    container.style.opacity = "1";
-                    container.style.pointerEvents = "";
+                    container.classList.remove('title-menu--leaving');
+                    window.UIPanel.close(container);
                 }
                 window._tsOverlayTimeout = null;
             }, 200);
@@ -7672,7 +7842,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
     Scene_Title.prototype.updateUIInput = function () {
         if (!this._commandWindow) return;
-        if (this._tutorialWindow && this._tutorialWindow.visible) return;
+        if (this._storyModeWindow && this._storyModeWindow.visible) return;
         // The Hyperverse catalog is modal: while its list is up (and for the
         // frame after the press that closed it) the keyboard belongs to the
         // body picker, so choosing a body never also fires a title command.
@@ -7780,6 +7950,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
         // L1 / R1 (and the chevrons' badge state) for the background switcher
         this.updateBgSwitchInput();
+        this.updateMusicSwitchInput();
 
         // Follow the canvas when the window changes (resize, fullscreen toggle):
         // the signature only differs on the frames where it actually moved.
@@ -7899,4 +8070,51 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this.updateUIInput();
         }
     };
+})();
+
+//=============================================================================
+// The title music is a record off the concert hall shelf
+//=============================================================================
+// The title screen used to play whatever single track the database named. It
+// now plays whatever the music switcher is set to, and audio/bgm/Classical is
+// still a station of the radio's dial. The database's own title BGM is what
+// plays if the switcher is unavailable.
+(() => {
+    'use strict';
+
+    const CLASSICAL_DIR = 'audio/bgm/Classical';  // i18n-ignore  asset path
+    const AUDIO_EXT = /\.(ogg|m4a)_?$/i;
+
+    let cache = null;
+
+    function tracks() {
+        if (cache) return cache;
+        cache = [];
+        if (typeof require !== 'function') return cache;
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const dir = path.join(process.cwd(), CLASSICAL_DIR);
+            cache = fs.readdirSync(dir)
+                .filter(name => AUDIO_EXT.test(name))
+                .map(name => 'Classical/' + name.replace(AUDIO_EXT, ''))  // i18n-ignore  bgm key
+                .sort();
+        } catch (e) {
+            cache = [];
+        }
+        return cache;
+    }
+
+    // The title opens on whatever the music switcher is set to, so the piece
+    // heard on arrival is the one the player picked and not a fresh draw.
+    const _Scene_Title_playTitleMusic = Scene_Title.prototype.playTitleMusic;
+    Scene_Title.prototype.playTitleMusic = function () {
+        if (this.playTitleBgm) {
+            this.playTitleBgm();
+            return;
+        }
+        _Scene_Title_playTitleMusic.call(this);
+    };
+
+    window.TitleClassicalMusic = { tracks };
 })();

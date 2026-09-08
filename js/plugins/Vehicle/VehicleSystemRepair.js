@@ -474,6 +474,29 @@
     return max ? { current, max } : null;
   }
 
+  /**
+   * Every part of a vehicle, in one list the menus can print: the part id, the
+   * label it is shown under, how sound it is and whether losing it stops the
+   * vehicle. Empty for a vehicle that keeps no health record (the broom).
+   */
+  function partsStatus(vehicleType) {
+    const health = getVehicleHealth(vehicleType);
+    if (!health) return [];
+
+    const partsConfig = getPartsConfig(vehicleType);
+    return Object.keys(partsConfig).map(part => {
+      const max = partsConfig[part].maxHealth;
+      const value = health[part] != null ? health[part] : max;
+      return {
+        id: part,
+        label: window.VehicleParts.label(part),
+        health: Math.max(0, Math.min(max, value)),
+        max,
+        critical: !!partsConfig[part].critical
+      };
+    });
+  }
+
   function checkCriticalParts(vehicleType) {
     const health = getVehicleHealth(vehicleType);
     if (!health) return false;
@@ -560,6 +583,8 @@
     vehicleCondition,
     // Read-only: the party HUD draws this as the vehicle's HP bar.
     totalHealth,
+    // Read-only: the garage lists these under the vehicle it is showing.
+    partsStatus,
   };
 
   function repairVehicle(vehicleType, repairPercent) {
@@ -651,7 +676,7 @@
       this._dndContainer.style.display = 'flex';
       this._dndContainer.style.justifyContent = 'center';
       this._dndContainer.style.alignItems = 'center';
-      this._dndContainer.style.fontFamily = "'Lora', serif";
+      this._dndContainer.style.fontFamily = "var(--font-ui)";
       this._dndContainer.style.color = 'var(--accent-cream-light)';
       this._dndContainer.style.boxSizing = 'border-box';
 
@@ -725,26 +750,21 @@
         const partHealth = Math.round(health[part] || 0);
         const isCritical = partsConfig[part].critical;
 
-        let color = "var(--text-cost-ok)";
-        if (partHealth < 30) {
-          color = "var(--text-cost-bad)";
-        } else if (partHealth < 70) {
-          color = "var(--accent-amber-light)";
-        }
+        // One scale for every meter in the game (window.NeedGauge): the number
+        // and the bar fill take the same band class, so they never disagree.
+        const band = window.NeedGauge
+          ? window.NeedGauge.band(partHealth)
+          : (partHealth <= 20 ? 'gauge-band--bad' : partHealth <= 50 ? 'gauge-band--warn' : 'gauge-band--ok');
 
         partsListHTML += `
-          <div class="vrep-01">
-            <div class="vrep-02">
-              <span class="vrep-03" style="color:${isCritical ? 'var(--accent-red-3)' : 'var(--accent-cream-light)'}">
-                ${window.VehicleParts.label(part)} ${isCritical ? `<span class="vrep-04">${T('VehicleRepair.critical')}</span>` : ''}
-              </span>
-              <span class="vrep-05" style="color:${color}">
-                ${partHealth}%
-              </span>
+          <div class="item-slot item-slot--compact vrep-part">
+            <div class="item-slot-info">
+              <div class="item-slot-name">
+                ${window.VehicleParts.label(part)}${isCritical ? ` <span class="ui-chip vrep-critical-chip">${T('VehicleRepair.critical')}</span>` : ''}
+              </div>
+              <div class="vrep-track"><div class="vrep-fill gauge-fill ${band}" style="width:${partHealth}%"></div></div>
             </div>
-            <div class="vrep-06">
-              <div class="vrep-07" style="width:${partHealth}%; background:${color}"></div>
-            </div>
+            <span class="item-slot-count gauge-ink ${band}">${partHealth}%</span>
           </div>
         `;
       });
@@ -757,89 +777,77 @@
       if (shipSpec) vehicleName = shipSpec.name.toUpperCase();
 
       const shipPlateHTML = shipSpec ? `
-          <div class="vrep-08">
+          <div class="vrep-effect">
             ${shipSpec.registry} &middot; ${shipSpec.hull.label} &middot; ${shipSpec.engine.label}
           </div>` : "";
 
       const appearanceBtnHTML = shipSpec ? `
-          <div class="action-button focusable vrep-09" onclick="SceneManager._scene.openAppearance()">
+          <div class="inspect-btn focusable" onclick="SceneManager._scene.openAppearance()">
             ${T('VehicleRepair.changeAppearance')}
           </div>` : "";
 
       const leftPageHTML = `
-        <h2 class="cc-header-gothic vrep-10">
-          ${vehicleName}
-        </h2>
-
-        <div class="vrep-11">
-          <div class="vrep-12">
-            <canvas id="vehicle-sprite-canvas" width="150" height="150" style="image-rendering:${shipSpec ? 'auto' : 'pixelated'}"></canvas>
-          </div>
-          ${shipPlateHTML}
-
-          <div class="vrep-13">
-            "${vehicleDesc}"
-          </div>
-
-          <div class="vrep-14" style="border:4px double ${isBroken ? 'var(--border-blood-red)' : 'var(--border-forest-green)'}; background:${isBroken ? 'var(--bg-danger-medium-10)' : 'var(--bg-success-green-15)'}; color:${isBroken ? 'var(--accent-red-3)' : 'var(--text-cost-ok)'}">
-            ${isBroken ? (T('VehicleRepair.statusBroken')) : (T('VehicleRepair.statusOperational'))}
-          </div>
-          ${appearanceBtnHTML}
+        <div class="page-header-bar">
+          <div class="back-button focusable" onclick="SceneManager._scene.exitMaintenance()">${T('VehicleRepair.close')}</div>
+          <h2 class="title">${vehicleName}</h2>
         </div>
 
-        <div class="vrep-15">
+        <div class="vrep-portrait">
+          <canvas id="vehicle-sprite-canvas" width="150" height="150" style="image-rendering:${shipSpec ? 'auto' : 'pixelated'}"></canvas>
+        </div>
+        ${shipPlateHTML}
+
+        <p class="inspect-lore vrep-desc">${vehicleDesc}</p>
+
+        <div class="vrep-status gauge-ink ${isBroken ? 'gauge-band--bad' : 'gauge-band--ok'}">
+          ${isBroken ? (T('VehicleRepair.statusBroken')) : (T('VehicleRepair.statusOperational'))}
+        </div>
+        ${appearanceBtnHTML ? `<div class="inspect-actions">${appearanceBtnHTML}</div>` : ''}
+
+        <div class="ui-footer vrep-note">
           ${T('VehicleRepair.allCriticalComponentsMustMaintain')}
         </div>
       `;
 
       // Tab bar (Repair / Upgrades) shared by both pages.
       const tab = (id, label) => `
-        <div id="maint-tab-${id}" class="focusable" onclick="SceneManager._scene.switchTab('${id}')" style="${this.tabStyleFor(this._tab === id)}">
+        <div id="maint-tab-${id}" class="backpack-tab focusable${this._tab === id ? ' active' : ''}" onclick="SceneManager._scene.switchTab('${id}')">
           ${label}
         </div>`;
       const tabBarHTML = `
-        <div class="vrep-16">
+        <div class="backpack-tabs"><div class="backpack-tabs-row">
           ${tab('repair',T('VehicleRepair.repair'))}
           ${tab('upgrades',T('VehicleRepair.upgrades'))}
-        </div>`;
+        </div></div>`;
 
       // Both panels are built up-front and toggled by display so switching tabs
       // never rebuilds the DOM (and never reloads the sprite on the left page).
       const bodyHTML = `
-        <div class="vrep-17" id="maint-panel-repair" style="display:${this._tab === 'repair' ? 'flex' : 'none'}">
+        <div class="ui-detail vrep-panel" id="maint-panel-repair" style="display:${this._tab === 'repair' ? 'flex' : 'none'}">
           ${this.renderRepairPage(useItalian, partsListHTML)}
         </div>
-        <div class="vrep-17" id="maint-panel-upgrades" style="display:${this._tab === 'upgrades' ? 'flex' : 'none'}">
+        <div class="ui-detail vrep-panel" id="maint-panel-upgrades" style="display:${this._tab === 'upgrades' ? 'flex' : 'none'}">
           ${this.renderUpgradesPage(useItalian)}
         </div>`;
 
       // Transient feedback line.
       let flashHTML = "";
       if (this._flashTimer > 0 && this._flash) {
-        flashHTML = `<div class="vrep-18" style="color:${this._flash.ok ? 'var(--text-cost-ok)' : 'var(--text-cost-bad)'}">${this._flash.text}</div>`;
+        flashHTML = `<div class="vrep-flash gauge-ink ${this._flash.ok ? 'gauge-band--ok' : 'gauge-band--bad'}">${this._flash.text}</div>`;
       }
 
       const rightPageHTML = `
         ${tabBarHTML}
         ${flashHTML}
         ${bodyHTML}
-        <div class="action-button focusable vrep-19" onclick="SceneManager._scene.exitMaintenance()">
-          ${T('VehicleRepair.close')}
-        </div>
       `;
 
       this._dndContainer.innerHTML = `
-        <div class="cc-pockets-spread">
-          <!-- Spine Shading -->
-          <div class="vrep-20"></div>
-
-          <!-- Left Page -->
-          <div class="cc-page cc-page-left vrep-21">
+        <div class="book-spread">
+          <div class="left-page">
             ${leftPageHTML}
           </div>
-
-          <!-- Right Page -->
-          <div class="cc-page cc-page-right vrep-21">
+          <div class="right-page">
             ${rightPageHTML}
           </div>
         </div>
@@ -855,22 +863,20 @@
         const cost = REPAIR_COST[type === 'bike' ? 'bike' : 'default'][mode];
         const afford = canAfford(cost);
         return `
-          <div class="focusable vrep-22" onclick="SceneManager._scene.doRepair('${mode}')" style="cursor:${afford ? 'pointer' : 'not-allowed'}; opacity:${afford ? 1 : 0.55}; border:2px solid ${afford ? 'var(--border-gold-amber)' : 'var(--border-gold-amber-30)'}">
-            <div class="vrep-23">${label}</div>
-            <div class="vrep-24">${this.renderCost(cost)}</div>
+          <div class="inspect-btn focusable${afford ? '' : ' unusable'}" onclick="SceneManager._scene.doRepair('${mode}')">
+            <span class="vrep-btn-label">${label}</span>
+            <span class="vrep-btn-cost">${this.renderCost(cost)}</span>
           </div>`;
       };
 
       return `
-        <h2 class="cc-header-gothic vrep-25">
-          ${T('VehicleRepair.componentsRegistry')}
-        </h2>
+        <h3 class="inspect-section-title">${T('VehicleRepair.componentsRegistry')}</h3>
 
-        <div class="maint-scroll vrep-26" data-active="${this._tab === 'repair' ? '1' : '0'}">
+        <div class="ui-list maint-scroll" data-active="${this._tab === 'repair' ? '1' : '0'}">
           ${partsListHTML}
         </div>
 
-        <div class="vrep-27">
+        <div class="inspect-actions">
           ${mkRepairBtn('partial', T('VehicleRepair.repairPercent', { percent: repairAmountPartial }))}
           ${mkRepairBtn('full',T('VehicleRepair.fullRepair'))}
         </div>
@@ -896,55 +902,50 @@
         // Level pips / installed badge.
         let progressHTML;
         if (isBool) {
-          progressHTML = `<span class="vrep-28" style="color:${maxed ? 'var(--text-cost-ok)' : 'var(--text-card-medium)'}">
+          progressHTML = `<span class="ui-chip gauge-ink ${maxed ? 'gauge-band--ok' : 'gauge-band--warn'}">
             ${maxed ? (T('VehicleRepair.installed')) : (T('VehicleRepair.notInstalled'))}</span>`;
         } else {
           let pips = "";
           for (let i = 0; i < def.max; i++) {
-            pips += `<span class="vrep-29" style="background:${i < level ? 'var(--accent-amber-glow)' : 'transparent'}"></span>`;
+            pips += `<span class="vrep-pip${i < level ? ' filled' : ''}"></span>`;
           }
-          progressHTML = `<span class="vrep-30">${T('VehicleRepair.lv')} ${level}/${def.max}</span>${pips}`;
+          progressHTML = `<span class="ui-chip">${T('VehicleRepair.lv')} ${level}/${def.max}</span>${pips}`;
         }
 
         // Effect line (current -> next).
-        const effectHTML = `<div class="vrep-31">${this.upgradeEffectText(type, key, useItalian)}</div>`;
+        const effectHTML = `<div class="vrep-effect">${this.upgradeEffectText(type, key, useItalian)}</div>`;
 
         const iconStyle = `background: url('img/system/IconSet.png') -${(def.icon % 16) * 32}px -${Math.floor(def.icon / 16) * 32}px no-repeat; width:32px; height:32px; flex:0 0 32px;`;
 
         let actionHTML;
         if (maxed) {
-          actionHTML = `<div class="vrep-32">${T('VehicleRepair.maxed')}</div>`;
+          actionHTML = `<div class="inspect-actions"><span class="ui-chip gauge-ink gauge-band--ok">${T('VehicleRepair.maxed')}</span></div>`;
         } else {
           actionHTML = `
-            <div class="vrep-33">${this.renderCost(cost)}</div>
-            <div class="focusable vrep-34" onclick="SceneManager._scene.purchaseUpgrade('${key}')" style="cursor:${afford ? 'pointer' : 'not-allowed'}; opacity:${afford ? 1 : 0.55}; border:2px solid ${afford ? 'var(--border-gold-amber)' : 'var(--border-gold-amber-30)'}">
-              ${isBool ? (T('VehicleRepair.install')) : (T('VehicleRepair.upgradeAction'))}
+            <div class="inspect-actions">
+              <span class="vrep-btn-cost">${this.renderCost(cost)}</span>
+              <div class="inspect-btn focusable${afford ? '' : ' unusable'}" onclick="SceneManager._scene.purchaseUpgrade('${key}')">
+                ${isBool ? (T('VehicleRepair.install')) : (T('VehicleRepair.upgradeAction'))}
+              </div>
             </div>`;
         }
 
         cardsHTML += `
-          <div class="vrep-35">
-            <div class="vrep-36">
-              <div style="${iconStyle}"></div>
-              <div class="vrep-37">
-                <div class="vrep-38">
-                  <span class="vrep-39">${name}</span>
-                  <span class="vrep-40">${progressHTML}</span>
-                </div>
-                <div class="vrep-41">${desc}</div>
-                ${effectHTML}
-              </div>
+          <div class="item-slot vrep-upgrade">
+            <div class="item-icon" style="${iconStyle}"></div>
+            <div class="item-slot-info">
+              <div class="item-slot-name">${name}</div>
+              <div class="inspect-lore">${desc}</div>
+              ${effectHTML}
             </div>
-            ${actionHTML}
+            <div class="vrep-upgrade-side">${progressHTML}${actionHTML}</div>
           </div>`;
       });
 
       return `
-        <h2 class="cc-header-gothic vrep-25">
-          ${T('VehicleRepair.upgradeWorkshop')}
-        </h2>
-        <div class="maint-scroll vrep-42" data-active="${this._tab === 'upgrades' ? '1' : '0'}">
-          ${cardsHTML || `<div class="vrep-43">${T('VehicleRepair.noUpgradesAvailable')}</div>`}
+        <h3 class="inspect-section-title">${T('VehicleRepair.upgradeWorkshop')}</h3>
+        <div class="ui-list maint-scroll" data-active="${this._tab === 'upgrades' ? '1' : '0'}">
+          ${cardsHTML || `<div class="ui-empty">${T('VehicleRepair.noUpgradesAvailable')}</div>`}
         </div>
       `;
     }
@@ -994,21 +995,9 @@
         const ok = have >= qty || ($gameSystem && $gameSystem._isSandboxMode);
         const icon = matIcon(id);
         const iconStyle = `background: url('img/system/IconSet.png') -${(icon % 16) * 24}px -${Math.floor(icon / 16) * 24}px no-repeat; background-size:384px auto; width:24px; height:24px; display:inline-block; vertical-align:middle;`;
-        return `<span class="vrep-44" style="color:${ok ? 'var(--text-cost-ok)' : 'var(--text-cost-bad)'}" title="${matName(id)}">
+        return `<span class="vrep-cost gauge-ink ${ok ? 'gauge-band--ok' : 'gauge-band--bad'}" title="${matName(id)}">
           <span style="${iconStyle}"></span>${have}/${qty}</span>`;
       }).join('');
-    }
-
-    // Inline style for a tab button. Active tabs sit on the same dark backing as
-    // the registry cards so the amber label reads clearly on the light parchment.
-    tabStyleFor(active) {
-      return `
-        flex:1; text-align:center; cursor:pointer; padding:9px 6px; font-weight:bold; text-transform:uppercase;
-        font-family:'Lora', serif; font-size:1.14rem; letter-spacing:0.5px; border-radius:6px 6px 0 0;
-        border:2px solid ${active ? 'var(--border-gold-amber)' : 'var(--border-gold-amber-30)'}; border-bottom:none;
-        color:${active ? 'var(--accent-amber-glow)' : 'var(--text-card-medium)'};
-        background:${active ? 'var(--bg-dark-warm-translucent-96)' : 'transparent'};
-        text-shadow:${active ? '0 1px 2px var(--shadow-black-translucent-55)' : 'none'};`;
     }
 
     switchTab(id) {
@@ -1023,7 +1012,7 @@
         const panel = c.querySelector('#maint-panel-' + t);
         if (panel) panel.style.display = (t === id) ? 'flex' : 'none';
         const tabEl = c.querySelector('#maint-tab-' + t);
-        if (tabEl) tabEl.style.cssText = this.tabStyleFor(t === id);
+        if (tabEl) tabEl.classList.toggle('active', t === id);
         const scroll = panel && panel.querySelector('.maint-scroll');
         if (scroll) scroll.dataset.active = (t === id) ? '1' : '0';
       });

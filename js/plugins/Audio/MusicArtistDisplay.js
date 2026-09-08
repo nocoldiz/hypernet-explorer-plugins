@@ -43,10 +43,14 @@
  *               the per-track cooldown below).
  *   Minimal     the track and its artist go through window.ParchmentToast, the
  *               same notification every other system in the game speaks with.
- *   Off         nothing is announced. This is the default.
+ *   Off         nothing is announced.
  *
- * The cassette is what both cassette answers draw; they differ only in how
- * often a track is allowed to introduce itself.
+ * "First time" is the default. The cassette is what both cassette answers
+ * draw; they differ only in how often a track is allowed to introduce itself.
+ *
+ * Whatever the answer, a track is only ever announced when the player put it
+ * on themselves: the radio is tuned to it, or HyperAmp is playing it off the
+ * desktop. The map's own score is never announced.
  *
  * -----------------------------------------------------------------------
  * Who the artist is
@@ -66,9 +70,11 @@
  * -----------------------------------------------------------------------
  * When it is announced
  * -----------------------------------------------------------------------
- * Never in battle, and never over anything but the map: a fight is not the
- * moment to read a sleeve note, and the battle BGM belongs to the battle
- * rather than to the place.
+ * Never in battle, and never over anything but the map, except for HyperAmp,
+ * whose window is not on the map at all and whose track is announced through
+ * the toast wherever the desktop is open. A fight is not the moment to read a
+ * sleeve note, and the battle BGM belongs to the battle rather than to a
+ * record.
  *
  * Walking between two maps replays their music every time the player crosses
  * back, so every track carries a cooldown (5 real minutes by default) before
@@ -124,7 +130,10 @@
     const MODE_MINIMAL = 2;
     const MODE_OFF = 3;
     const MODE_COUNT = 4;
-    const MODE_DEFAULT = MODE_OFF;
+    // On by default, and once per track: the announcement now only ever fires
+    // for music the player chose to put on (the radio and HyperAmp), so it is
+    // never in the way of the map's own score.
+    const MODE_DEFAULT = MODE_FIRST;
 
     // The mode is written to the config by name rather than by number, because
     // the numbering changed when "first time" was added: a config written by an
@@ -333,13 +342,28 @@
         (SceneManager._scene instanceof Scene_Battle) ||
         (SceneManager.isNextScene && SceneManager.isNextScene(Scene_Battle));
 
+    // A track is only introduced when the player put it on themselves: the
+    // radio is tuned to it, or HyperAmp is playing it off the desktop. The
+    // map's own score, a shop's loop and a battle theme are the game speaking,
+    // not a record with a sleeve, and none of them are announced.
+    const radioPlaying = () => !!(window.TunableRadio && window.TunableRadio.isOn &&
+        window.TunableRadio.isOn());
+    const playerPlaying = () => {
+        const state = window.HyperAmp && window.HyperAmp._state;
+        return !!(state && state.touched && state.index >= 0);
+    };
+    const chosenByPlayer = () => radioPlaying() || playerPlaying();
+
     // Announcements belong to the map and to nothing else: a menu, a shop, the
-    // title screen and a fight all borrow the music without owning it.
+    // title screen and a fight all borrow the music without owning it. HyperAmp
+    // is the exception, because its window is not on the map at all: what it
+    // plays is announced wherever the desktop is open, through the toast.
     function canAnnounceNow() {
         if (mode() === MODE_OFF) return false;
+        if (!chosenByPlayer()) return false;
         if (inBattle()) return false;
         const scene = SceneManager._scene;
-        if (!(scene instanceof Scene_Map)) return false;
+        if (!(scene instanceof Scene_Map)) return playerPlaying();
         // The scene object exists a while before its windows do, and the poll
         // runs on a real timer rather than on the frame loop, so it lands in
         // that gap: Scene_Map#isBusy reads the message window it has not built
@@ -388,6 +412,7 @@
         const track = parseTrack(name);
         if (!track) { _pending = null; return; }
         if (mode() === MODE_OFF) { _pending = null; return; }
+        if (!chosenByPlayer()) { _pending = null; stopTimer(); return; }
 
         if (mode() === MODE_FIRST && hasHeard(track.key)) {
             // It has introduced itself once already, and once is the answer.
@@ -412,7 +437,7 @@
     function announce(track) {
         _lastShown.set(track.key, Date.now());
         if (mode() === MODE_FIRST) markHeard(track.key);
-        if (showsCassette() && window.PIXI) {
+        if (showsCassette() && window.PIXI && (SceneManager._scene instanceof Scene_Map)) {
             Cassette.play(track);
         } else {
             showToast(track);
@@ -565,7 +590,7 @@
     // inlay, so it stays in the UI face and only the writing is handwritten.
     function stamp(ctx, text, x, y, size, color, align) {
         ctx.save();
-        ctx.font = '600 ' + size + 'px "Lora", serif';   // i18n-ignore  css font shorthand
+        ctx.font = '600 ' + size + 'px "Bitter", serif';   // i18n-ignore  css font shorthand
         ctx.fillStyle = color;
         ctx.textAlign = align || 'left';
         ctx.textBaseline = 'alphabetic';

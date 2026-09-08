@@ -206,7 +206,9 @@
         def.sellValueAdult = g.sellValue || 0;
       }
     }
-    _animalDb = out;
+    // The wardrobe may not be registered yet on the first call; caching an
+    // empty database would leave the game with no breeds at all.
+    if (Object.keys(out).length) _animalDb = out;
     return out;
   }
 
@@ -1011,6 +1013,28 @@
     return name;
   }
 
+  // The savegame that bought an animal. _animalPlacements is world-shared
+  // (every savegame of the world walks past the same beasts), so a bought head
+  // of stock carries the postal id of the party that paid for it and only that
+  // party ever holds it as an asset. Legacy records carry no id and stay with
+  // whoever reads them.
+  function partyOwnerId() {
+    if (window.MailSystem && typeof window.MailSystem.partyId === "function") {
+      return window.MailSystem.partyId();
+    }
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return null;
+    return $gameSystem._mailPartyId || null;
+  }
+
+  // True when this record is this savegame's own property: bought by the party,
+  // not a farm's stock and not another savegame's purchase.
+  function isPartyOwned(rec) {
+    if (!rec || rec.wild || ownerOf(rec)) return false;
+    if (!rec.party) return true;              // legacy record, no id stamped
+    const mine = partyOwnerId();
+    return !mine || rec.party === mine;
+  }
+
   // The owner of one animal, or null for a wild one.
   function ownerOf(rec) {
     return (rec && rec.owner) || null;
@@ -1108,6 +1132,7 @@
     rec.y = y;
     rec.mapId = $gameMap ? $gameMap.mapId() : 0;
     rec.mapName = mapDisplayName(currentMapKey());
+    rec.party = partyOwnerId();   // whose stock this is (isPartyOwned)
     placementsAt(currentMapKey()).push(rec);
     const ev = spawnAnimalEvent(rec);
     if (ev && $dataMap) {
@@ -1168,9 +1193,10 @@
     const now = gameMinutes();
     const out = [];
     for (const { rec, mapKey } of allPlacements()) {
-      // A farm's own stock is not the party's property, so it never appears in
-      // the portfolio. It still grows and produces; it is just not an asset.
-      if (rec.wild) continue;
+      // A farm's own stock, and stock bought by another savegame of this
+      // world, are not this party's property, so they never appear in the
+      // portfolio. They still grow and produce; they are just not assets.
+      if (!isPartyOwned(rec)) continue;
       const def = ANIMAL_DB[rec.animalId];
       if (!def) continue;
       const stage = rec.stage || "adult";
@@ -1227,7 +1253,7 @@
     // Nobody sells an animal they never bought. A farm's own stock is not on
     // the portfolio in the first place, so this is a backstop rather than a
     // path the player can reach.
-    if (found.rec.wild) return null;
+    if (!isPartyOwned(found.rec)) return null;
     const def = ANIMAL_DB[found.rec.animalId];
     const value = sellValueOf(found.rec, def);
     removePlacement(uid);
@@ -1240,6 +1266,7 @@
   function petPlacement(uid) {
     const found = findPlacement(uid);
     if (!found) return null;
+    if (!isPartyOwned(found.rec)) return null;
     const def = ANIMAL_DB[found.rec.animalId];
     if (!def) return null;
     const rec = found.rec;
@@ -1814,6 +1841,7 @@
     frameBitmap:        (sprite, stage) => frameBitmap(sprite, stage),
     // Assets menu services
     listOwnedAnimals:   () => listOwnedAnimals(),
+    isPartyOwned:       (rec) => isPartyOwned(rec),
     collectFromPlacement: (uid) => collectFromPlacement(uid),
     sellPlacement:      (uid) => sellPlacement(uid),
     petPlacement:       (uid) => petPlacement(uid),

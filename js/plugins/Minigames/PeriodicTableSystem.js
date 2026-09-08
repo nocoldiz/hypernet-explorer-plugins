@@ -304,19 +304,15 @@
         Lr: { mass:'(266)',   state:'unknown', year:1961,        disc:'Ghiorso'            },
     };
 
-    const CAT_COLORS = {
-        alkaliMetal:    '#c0392b',
-        alkalineEarth:  '#d35400',
-        transitionMetal:'#8d6e00',
-        postTransition: '#27704a',
-        metalloid:      '#1a6b6b',
-        nonmetal:       '#2471a3',
-        halogen:        '#6c3483',
-        nobleGas:       '#4a235a',
-        lanthanide:     '#b0135a',
-        actinide:       '#7b241c',
-        esoteric:       '#5d2e8c',
-    };
+    // Category colour is meaning, not decoration, so it is a ladder of tokens
+    // exactly as item rarity is: every cell, swatch and tile carries a
+    // .pt-cat-<category> class and the stylesheet inks it from --pt-ink /
+    // --pt-fill / --pt-hover. No colour is written here.
+    const CATEGORIES = [
+        'alkaliMetal', 'alkalineEarth', 'transitionMetal', 'postTransition',
+        'metalloid', 'nonmetal', 'halogen', 'nobleGas',
+        'lanthanide', 'actinide', 'esoteric',
+    ];
 
 
     // =========================================================================
@@ -333,12 +329,7 @@
 
             this._container = document.createElement('div');
             this._container.id = 'pt-container';
-            this._container.style.cssText = `
-                position:absolute;top:0;left:0;width:100%;height:100%;
-                z-index:1000;display:flex;justify-content:center;align-items:center;
-                background:rgba(10,8,5,0.88);font-family:'Lora',serif;
-                user-select:none;opacity:0;transition:opacity 0.2s ease-out;
-            `;
+            this._container.className = 'ui-overlay pt-overlay';
             // Right-click closes the book. TouchInput (polled in _handleInput)
             // sees the mousedown on document, so only the native menu is killed.
             this._container.addEventListener('contextmenu', (event) => {
@@ -347,7 +338,9 @@
 
             document.body.appendChild(this._container);
             this._refresh();
-            setTimeout(() => { if (this._container) this._container.style.opacity = '1'; }, 16);
+            setTimeout(() => {
+                if (this._container) this._container.classList.add('pt-shown');
+            }, 16);
 
             if (window.MinigameFun) window.MinigameFun.played('Chemistry');
         }
@@ -372,7 +365,6 @@
 
             const el    = ELEMENTS[this._selectedIdx];
             const props = ELEM_PROPS[el.sym] || el;
-            const color = CAT_COLORS[el.cat] || '#555';
 
             const entry  = T.obj('PeriodicTable.data')[el.sym] || {};
             const name   = entry.name || el.sym;
@@ -394,26 +386,24 @@
                 pDisc: T('PeriodicTable.ui.props.discoveredBy'),
                 pYear: T('PeriodicTable.ui.props.year'),
                 pOrigin: T('PeriodicTable.ui.props.origin'),
+                sProps: T('PeriodicTable.ui.sections.properties'),
+                sDesc: T('PeriodicTable.ui.sections.description'),
+                sLegend: T('PeriodicTable.ui.sections.legend'),
             };
 
             if (!this._uiBuilt) {
                 this._container.innerHTML = `
-                    <div class="book-spread pt-spread" style="width:min(1560px,100%);height:min(960px,100%);">
+                    <div class="book-spread pt-spread">
                         <!-- LEFT PAGE: table grid -->
-                        <div class="left-page" style="overflow-y:auto;padding:28px 40px 28px 40px;justify-content:flex-start;">
-                            <div class="pt-header" style="position:relative;display:flex;align-items:center;justify-content:center;
-                                        border-bottom:2px dashed #bba16d;padding-bottom:8px;margin-bottom:12px;min-height:36px;flex-shrink:0;">
-                                <div class="back-button" onclick="SceneManager._scene.popScene()"
-                                    style="position:absolute;left:0;padding:3px 12px;font-size:0.72rem;
-                                           font-family:'Lora',serif;">
-                                    ${ui.back}
-                                </div>
-                                <h2 class="title" style="border:none;margin:0;padding:0;font-size:1.5em;">${ui.title}</h2>
+                        <div class="left-page pt-left">
+                            <div class="page-header-bar">
+                                <div class="back-button focusable" onclick="SceneManager._scene.popScene()">${ui.back}</div>
+                                <h2 class="title">${ui.title}</h2>
                             </div>
                             ${this._buildTableHTML(ui)}
                         </div>
                         <!-- RIGHT PAGE: element details -->
-                        <div class="right-page" style="overflow-y:auto;padding:32px 44px 32px 48px;justify-content:flex-start;gap:0;"></div>
+                        <div class="right-page pt-right"></div>
                     </div>
                 `;
 
@@ -437,67 +427,45 @@
             // Update right page only
             const rightPage = this._container.querySelector('.right-page');
             if (rightPage) {
-                rightPage.innerHTML = this._buildDetailHTML(el, props, name, desc, catLbl, state, color, ui);
+                rightPage.innerHTML = this._buildDetailHTML(el, props, name, desc, catLbl, state, ui);
             }
         }
 
+        // Selection is one class. The gold hairline that marks it is written
+        // once in the stylesheet, the same mark every list in the game wears.
         _setCellSelected(sym, selected) {
             const cell = this._container && this._container.querySelector(`[data-sym="${sym}"]`);
             if (!cell) return;
-            const el = ELEMENTS.find(e => e.sym === sym);
-            if (!el) return;
-            const c = CAT_COLORS[el.cat] || '#555';
             cell.classList.toggle('pt-selected', !!selected);
-            if (selected) {
-                cell.style.background = `${c}55`;
-                cell.style.border = '2px solid #f1c40f';
-                cell.style.boxShadow = '0 0 6px #f1c40f88';
-            } else {
-                cell.style.background = `${c}22`;
-                cell.style.border = `1px solid ${c}88`;
-                cell.style.boxShadow = '';
+            if (selected && cell.scrollIntoView) {
+                cell.scrollIntoView({ block: 'nearest', inline: 'nearest' });
             }
         }
 
+        // The whole table is ONE 18-column grid: every row, the two rare-earth
+        // rows and the esoteric row included, fills exactly eighteen tracks, so
+        // the columns line up without a single pixel measurement in here. Empty
+        // tracks are spacer spans; the stylesheet owns every size and colour.
         _buildTableHTML(ui) {
             // Build lookup map: "period_group" -> element
             const map = {};
             ELEMENTS.forEach(e => { map[`${e.period}_${e.group}`] = e; });
 
-            // Cell width / height / gap. 18 columns + gaps must stay inside the
-            // left page's ~825px of content width (58% of 1560 minus padding).
-            const W = 44, H = 44, G = 1;
-            const cellStyle = (el) => {
-                const c = CAT_COLORS[el.cat] || '#555';
-                return `display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
-                        width:${W}px;min-width:${W}px;height:${H}px;cursor:pointer;
-                        background:${c}22;border:1px solid ${c}88;border-radius:2px;position:relative;
-                        flex-shrink:0;box-sizing:border-box;`;
-            };
-
             const cell = (el) => `
-                <div class="pt-cell pt-cat-${el.cat}" data-sym="${el.sym}" style="${cellStyle(el)}">
-                    <span class="pt-cell-z" style="font-size:8px;color:rgba(44,36,22,0.55);position:absolute;top:2px;left:3px;line-height:1;">${el.z}</span>
-                    <span class="pt-cell-sym" style="font-size:${el.sym.length > 2 ? '11px' : '14px'};font-weight:bold;color:#2c2416;line-height:1;">${el.sym}</span>
+                <div class="pt-cell focusable pt-cat-${el.cat}" data-sym="${el.sym}" tabindex="0">
+                    <span class="pt-cell-z">${el.z}</span>
+                    <span class="pt-cell-sym${el.sym.length > 2 ? ' pt-cell-sym--long' : ''}">${el.sym}</span>
                 </div>`;
 
-            const emptyCell = (w = W) => `<div style="display:inline-block;width:${w}px;min-width:${w}px;height:${H}px;flex-shrink:0;"></div>`;
+            const gap = (n = 1) => `<span class="pt-gap"></span>`.repeat(n);
 
-            const placeholderCell = (label, cat) => {
-                const c = CAT_COLORS[cat];
-                return `<div class="pt-placeholder pt-cat-${cat}" style="display:inline-flex;align-items:center;justify-content:center;
-                         width:${W}px;min-width:${W}px;height:${H}px;border:1px dashed ${c}66;
-                         border-radius:2px;flex-shrink:0;font-size:11px;color:${c}99;font-style: normal;">
-                         ${label}</div>`;
-            };
+            const placeholderCell = (label, cat) =>
+                `<div class="pt-placeholder pt-cat-${cat}">${label}</div>`;
 
-            const rowStyle = `display:flex;gap:${G}px;margin-bottom:${G}px;`;
-
-            let html = `<div class="pt-grid" style="font-size:0;">`;
+            let html = `<div class="pt-grid">`;
 
             // Standard periods 1-7
             for (let p = 1; p <= 7; p++) {
-                html += `<div style="${rowStyle}">`;
                 for (let g = 1; g <= 18; g++) {
                     const e = map[`${p}_${g}`];
                     if (e) {
@@ -507,49 +475,32 @@
                     } else if (p === 7 && g === 3) {
                         html += placeholderCell('**', 'actinide');
                     } else {
-                        html += emptyCell();
+                        html += gap();
                     }
                 }
-                html += `</div>`;
             }
 
-            // Separator label row
-            html += `<div style="display:flex;gap:${G}px;margin:5px 0 3px 0;align-items:center;">`;
-            html += emptyCell(W * 2 + G);
-            html += `<span class="pt-sep-label" style="font-size:10.5px;color:#6b5242;font-style: normal;white-space:nowrap;">
-                        * ${ui.lan} &nbsp;&nbsp; ** ${ui.act}
-                     </span>`;
+            // Separator label, full width of the grid
+            html += `<div class="pt-sep-label">* ${_esc(ui.lan)} &nbsp;&nbsp; ** ${_esc(ui.act)}</div>`;
+
+            // Lanthanide and actinide rows, each offset by the two group columns
+            // they hang below, then padded back out to eighteen tracks.
+            ['lan', 'act'].forEach(kind => {
+                html += gap(2);
+                for (let i = 1; i <= 15; i++) {
+                    const e = map[`${kind}_${i}`];
+                    html += e ? cell(e) : gap();
+                }
+                html += gap();
+            });
+
+            // Esoteric section, its own heading and row inside the same grid
+            html += `<div class="inspect-section-title pt-row-title">${_esc(ui.eso)}</div>`;
+            const eso = ELEMENTS.filter(e => e.period === 'eso');
+            eso.forEach(e => { html += cell(e); });
+            html += gap(18 - eso.length);
+
             html += `</div>`;
-
-            // Lanthanide row ,  offset by 3 cells (col 3 = index 2, but we show from col 3)
-            html += `<div style="${rowStyle}">`;
-            html += emptyCell(W * 2 + G);
-            for (let i = 1; i <= 15; i++) {
-                const e = map[`lan_${i}`];
-                html += e ? cell(e) : emptyCell();
-            }
-            html += `</div>`;
-
-            // Actinide row
-            html += `<div style="${rowStyle}">`;
-            html += emptyCell(W * 2 + G);
-            for (let i = 1; i <= 15; i++) {
-                const e = map[`act_${i}`];
-                html += e ? cell(e) : emptyCell();
-            }
-            html += `</div>`;
-
-            // Esoteric section
-            html += `<div class="pt-eso-section" style="margin-top:10px;border-top:1px dashed #bba16d66;padding-top:6px;">`;
-            html += `<div class="pt-eso-title" style="font-size:11.5px;color:#8b5a2b;letter-spacing:1px;margin-bottom:4px;
-                                  font-family:'Lora',serif;font-style: normal;">
-                         &#10022; ${ui.eso}
-                     </div>`;
-            html += `<div style="${rowStyle}">`;
-            ELEMENTS.filter(e => e.period === 'eso').forEach(e => { html += cell(e); });
-            html += `</div></div>`;
-
-            html += `</div>`; // font-size:0 wrapper
 
             // Legend
             html += this._buildLegend(ui);
@@ -558,28 +509,19 @@
         }
 
         _buildLegend(ui) {
-            const cats = [
-                ['alkaliMetal','alkalineEarth','transitionMetal','postTransition'],
-                ['metalloid','nonmetal','halogen','nobleGas'],
-                ['lanthanide','actinide','esoteric'],
-            ];
-            let html = `<div class="pt-legend" style="margin-top:8px;display:flex;flex-direction:column;gap:3px;">`;
-            cats.forEach(row => {
-                html += `<div style="display:flex;gap:8px;flex-wrap:wrap;">`;
-                row.forEach(cat => {
-                    const c = CAT_COLORS[cat];
-                    const lbl = T('PeriodicTable.categories.' + cat);
-                    html += `<div class="pt-legend-item pt-cat-${cat}" style="display:flex;align-items:center;gap:3px;font-size:10px;color:#5a3e28;">
-                                <div class="pt-legend-swatch" style="width:10px;height:10px;background:${c}55;border:1px solid ${c};border-radius:1px;flex-shrink:0;"></div>
-                                ${lbl}
-                             </div>`;
-                });
-                html += `</div>`;
-            });
-            return html + `</div>`;
+            const items = CATEGORIES.map(cat => `
+                <div class="pt-legend-item pt-cat-${cat}">
+                    <span class="pt-legend-swatch"></span>
+                    <span>${_esc(T('PeriodicTable.categories.' + cat))}</span>
+                </div>`).join('');
+            return `
+                <div class="ui-section pt-legend-section">
+                    <div class="inspect-section-title">${_esc(ui.sLegend)}</div>
+                    <div class="pt-legend">${items}</div>
+                </div>`;
         }
 
-        _buildDetailHTML(el, props, name, desc, catLbl, stateLbl, color, ui) {
+        _buildDetailHTML(el, props, name, desc, catLbl, stateLbl, ui) {
             const isEso = el.period === 'eso';
             const mass  = props.mass  || el.mass  || '?';
             const rawYear = props.year || el.year || '?';
@@ -587,53 +529,52 @@
             const disc  = props.disc || T('PeriodicTable.unknownDiscoverer');
             const origin = T.obj('PeriodicTable.origins')[el.origin] || el.origin || '?';
 
-            // Large symbol display
-            const symBlock = `
-                <div class="pt-sym-block pt-cat-${el.cat}" style="text-align:center;margin-bottom:18px;">
-                    <div class="pt-sym-tile" style="display:inline-flex;flex-direction:column;align-items:center;
-                                justify-content:center;width:110px;height:110px;
-                                background:${color}22;border:3px solid ${color};border-radius:6px;
-                                box-shadow:0 0 20px ${color}44;margin-bottom:8px;">
-                        <span class="pt-sym-z" style="font-size:10px;color:rgba(44,36,22,0.55);line-height:1;">${el.z}</span>
-                        <span class="pt-sym-letters" style="font-size:42px;font-weight:bold;color:#2c2416;line-height:1.1;">${el.sym}</span>
-                        <span class="pt-sym-mass" style="font-size:10px;color:rgba(44,36,22,0.55);line-height:1;">${mass}</span>
+            // The head: the tile gives up its space to the reading, never the
+            // other way round, so it is fixed and the body below it scrolls.
+            const head = `
+                <div class="ui-detail-head pt-sym-block pt-cat-${el.cat}">
+                    <div class="pt-sym-tile">
+                        <span class="pt-sym-z">${el.z}</span>
+                        <span class="pt-sym-letters">${el.sym}</span>
+                        <span class="pt-sym-mass">${_esc(mass)}</span>
                     </div>
-                    <div class="pt-name" style="font-family:'Lora',serif;font-size:1.45em;color:#2c2416;font-weight:bold;">${_esc(name)}</div>
-                    <div class="pt-cat-label" style="font-size:0.78em;color:${color};font-style: normal;margin-top:2px;">${_esc(catLbl)}</div>
+                    <div class="ui-detail-titles">
+                        <div class="pt-name">${_esc(name)}</div>
+                        <div class="pt-cat-label">${_esc(catLbl)}</div>
+                    </div>
                 </div>`;
 
-            // Properties grid
+            // Two columns of label/value rows, the fact grid the backpack and
+            // the character sheet already read in.
             const propRow = (label, val) => `
-                <div class="pt-prop-row" style="display:flex;justify-content:space-between;border-bottom:1px dotted rgba(139,90,43,0.3);
-                            padding:4px 0;font-size:0.82em;">
-                    <span class="pt-prop-label" style="color:#6b5242;font-weight:bold;">${label}</span>
-                    <span class="pt-prop-value" style="color:#3e1b0c;">${val}</span>
+                <div class="inspect-spec-row">
+                    <span class="inspect-spec-label">${_esc(label)}</span>
+                    <span class="inspect-spec-value inspect-spec-value--wrap">${_esc(val)}</span>
                 </div>`;
 
             const propsHTML = `
-                <div class="pt-props" style="background:rgba(43,28,17,0.06);border:1px solid rgba(187,161,109,0.4);
-                            border-radius:4px;padding:10px 14px;margin-bottom:16px;">
+                <div class="inspect-section-title">${_esc(ui.sProps)}</div>
+                <div class="inspect-spec-grid">
                     ${propRow(ui.pSym,   el.sym)}
                     ${propRow(ui.pNum,   el.z)}
                     ${propRow(ui.pMass,  mass)}
-                    ${propRow(ui.pCat,   _esc(catLbl))}
-                    ${propRow(ui.pState, _esc(stateLbl))}
-                    ${isEso
-                        ? propRow(ui.pOrigin, _esc(origin))
-                        : propRow(ui.pDisc,   _esc(disc))
-                    }
+                    ${propRow(ui.pCat,   catLbl)}
+                    ${propRow(ui.pState, stateLbl)}
+                    ${isEso ? propRow(ui.pOrigin, origin) : propRow(ui.pDisc, disc)}
                     ${propRow(ui.pYear, year)}
                 </div>`;
 
             const descHTML = desc ? `
-                <div class="pt-desc" style="font-family:'Lora',serif;font-size:0.9em;line-height:1.55;color:#3e2c1a;
-                            background:rgba(43,28,17,0.04);border:1px double rgba(187,161,109,0.35);
-                            border-radius:4px;padding:14px 16px;flex:0 0 auto;max-height:45%;overflow-y:auto;
-                            font-style: normal;box-shadow:inset 0 0 12px rgba(0,0,0,0.08);">
-                    ${_esc(desc)}
+                <div class="ui-section">
+                    <div class="inspect-section-title">${_esc(ui.sDesc)}</div>
+                    <p class="ui-prose">${_esc(desc)}</p>
                 </div>` : '';
 
-            return symBlock + propsHTML + descHTML;
+            return `
+                <div class="ui-detail">
+                    ${head}
+                    <div class="ui-detail-scroll">${propsHTML}${descHTML}</div>
+                </div>`;
         }
 
         update() {

@@ -219,7 +219,13 @@
         
         updateMaxAmount() {
             if (this._mode === 'buy') {
-                this._maxAmount = Math.floor($gameParty.gold() / goldPerToken);
+                // Bounded by the purse AND by what the pocket still holds.
+                const token = $dataItems[tokenItemId];
+                const room = $gameParty.maxItems(token) - $gameParty.numItems(token);
+                this._maxAmount = Math.max(0, Math.min(
+                    Math.floor($gameParty.gold() / goldPerToken),
+                    room
+                ));
             } else {
                 this._maxAmount = $gameParty.numItems($dataItems[tokenItemId]);
             }
@@ -538,8 +544,26 @@
         }
 
         processBuy(amount) {
+            // Nothing to sell the player, so nothing to charge, sound or
+            // announce. A negative amount would otherwise pay gold OUT of the
+            // counter and confiscate tokens for it.
+            const wanted = Math.floor(Number(amount) || 0);
+            if (wanted <= 0) return;
+
+            // The pocket only holds so many. Charging for tokens that are
+            // dropped on the floor is the player paying for nothing.
+            const token = $dataItems[tokenItemId];
+            const room = $gameParty.maxItems(token) - $gameParty.numItems(token);
+            amount = Math.min(wanted, Math.max(0, room));
+            if (amount <= 0) {
+                SoundManager.playBuzzer();
+                window.skipLocalization = true;
+                $gameMessage.add(T('GoldTokenConverter.msg.pocketFull'));
+                window.skipLocalization = false;
+                return;
+            }
             const totalCost = amount * goldPerToken;
-            
+
             if ($gameParty.gold() >= totalCost) {
                 $gameParty.loseGold(totalCost);
                 $gameParty.gainItem($dataItems[tokenItemId], amount);
@@ -557,8 +581,12 @@
         }
         
         processSell(amount) {
+            // A zero or negative sale would mint gold and hand out free tokens.
+            amount = Math.floor(Number(amount) || 0);
+            if (amount <= 0) return;
+
             const currentTokens = $gameParty.numItems($dataItems[tokenItemId]);
-            
+
             if (currentTokens >= amount) {
                 const totalEarnings = amount * goldPerToken;
                 $gameParty.loseItem($dataItems[tokenItemId], amount);

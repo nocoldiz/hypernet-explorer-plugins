@@ -113,6 +113,7 @@
     {
       id: 1,
       name: "Bubba",
+      loreKey: "bubba",
       characterType: "humanoid",
       classId: 54,
       sprite: "NPCs/!$Bubba1",
@@ -127,13 +128,23 @@
       sexualOrientation: "heterosexual", // key into js/db/NPC/Orientations.json (sexual)
       romanticOrientation: "heteroromantic", // key into js/db/NPC/Orientations.json (romantic)
       money: 90000,
+      // What a man keeps in the cab: the shotgun, the cuffs that whistle up
+      // The Beast, and the roadside kit he fixes it with.
       items: [
-        { id: 1, amount: 5 },   // Potion x5
-        { id: 111, amount: 1 }, // Liminal cuffs - summons The Beast
+        { id: 1, amount: 5 },    // Potion x5
+        { id: 111, amount: 1 },  // Liminal cuffs - summons The Beast
+        { id: 1443, amount: 2 }, // First Aid Kit x2
+        { id: 870, amount: 1 },  // Oil Flask x1
       ],
       weapons: [{ id: 459, amount: 1 }], // Bubba's Shotgun x1
-      armors: [{ id: 4, amount: 1 }], // Twitching Reflex Cap x1
-      equips: [459, null, 4, null, null],
+      // Workwear, nothing enchanted: a trucker's cap, coveralls and the belt
+      // his class starts with. All of it is cheap and all of it is level one.
+      armors: [
+        { id: 577, amount: 1 }, // Asphalt Captain Cap
+        { id: 117, amount: 1 }, // Plain Work Coveralls
+        { id: 115, amount: 1 }, // Field Repair Belt
+      ],
+      equips: [459, null, 577, 117, 115],
       skills: [10],
       traits: [],
       specializations: [
@@ -143,12 +154,17 @@
         { id: 96, level: 2 },  // Electrical Wiring
       ],
       busts: "presets/Bubba",
+      // Kept off the dossier board: his record still exists for the story mode
+      // and for a save that already carries him, but he is not offered as a
+      // character the player can pick.
+      hidden: true,
     },
     {
       id: 2,
       name: "Em",
+      loreKey: "em",
       characterType: "humanoid",
-      classId: 2,
+      classId: 16, // Gunmancer
       sprite: "Other/!$Em",
       spriteIndex: 1,
       mapId: 722,
@@ -158,10 +174,14 @@
       birthDate: "1982-11-03", // Date of birth
       // The one fixed point across her branches: whatever else that dimension
       // did with history, Em was born in Britain in it. The town is not fixed,
-      // only the country (see proceduralHometown / buildEmTownName below).
+      // only the country. The town itself is Wimbledon in all of them.
       nationId: "United Kingdom", // Nation of birth (key into HistorySimulator_COUNTRIES)
-      proceduralHometown: "em", // Rolled per incarnation; the first one is Wimbledon
+      hometown: "Wimbledon", // i18n-ignore: place name. Born there in every branch
       gender: 1, // 0=Male 1=Female 2=Non-binary 3=Cocoon
+      // A witch with no past and no money: her purse is the camper's petty cash,
+      // not a wage, so the sheet reads her standing rather than her coins.
+      socialClass: 0, // 0=Destitute 1=Working 2=Middle 3=Wealthy
+      reproduction: 1, // REPRODUCTION_TYPES.UTERUS
       sexualOrientation: "asexual", // key into js/db/NPC/Orientations.json (sexual)
       romanticOrientation: "aromantic", // key into js/db/NPC/Orientations.json (romantic)
       money: 20000,
@@ -171,21 +191,44 @@
       items: [
         { id: 111, amount: 1 }, // Liminal cuffs
         { id: 168, amount: 1 }, // Flying broom
+        { id: 1, amount: 3 },   // Potion x3
+        { id: 21, amount: 3 },  // Mana Tonic x3
+        // The Ritual took her spells, not her library. What she walks out with
+        // is a shelf of unread grimoires (ForgottenGrimoire: each one is five
+        // offers, one kept), so the story mode starts with her magic still
+        // ahead of her rather than gone.
+        { id: 1406, amount: 1 }, // Arcanism Grimoire
+        { id: 1405, amount: 1 }, // Astral Magic Grimoire
+        { id: 1407, amount: 1 }, // Meta Magic Grimoire
+        { id: 1417, amount: 1 }, // Oneiromancy Grimoire
+        { id: 1412, amount: 1 }, // Augury Grimoire
+        { id: 1415, amount: 1 }, // Illusion Grimoire
+        { id: 1413, amount: 1 }, // Chronomancy Grimoire
+        { id: 1402, amount: 1 }, // Void Magic Grimoire
       ],
       weapons: [{ id: 525, amount: 1 }], // Vector gun
+      // A witch who buys her robes off a market stall and a shooting glove for
+      // the hand the vector gun sits in. Cheap, thematic and level one: the two
+      // late-game jackets she used to start in are gone.
       armors: [
-        { id: 434, amount: 1 }, // Pariah's Cold Jacket
-        { id: 435, amount: 1 }, // Hive-Mind Vestment
+        { id: 467, amount: 1 }, // Discount Wizard Robe
+        { id: 127, amount: 1 }, // Reflex Trigger Glove
       ],
-      equips: [525, null, null, 434, null],
+      equips: [525, null, null, 467, 127],
       skills: [],
-      traits: [],
+      // What the Ritual left her with: the potential that grew instead of
+      // shrinking, the mark it burned in, the scarring of the spell that took
+      // her memories, and the barrel she casts through.
+      traits: [190, 193, 192, 202], // Magically Gifted, Witch-marked, Spell-scarred, Gun Fu
       specializations: [
         { id: 165, level: 4 }, // Magic Theory
         { id: 73, level: 3 },  // Spell Concentration
         { id: 164, level: 2 }, // Lucid Dreaming
       ],
       busts: "presets/Em",
+      // Off the board like Bubba: the story mode is still played as her, and
+      // every screen that reads her record still finds it. See `hidden` above.
+      hidden: true,
       // The one dossier whose owner was modelled in 3D. Every screen that would
       // draw her flat bust as a portrait draws this model instead (the status
       // sheet and the Empathize panel), so her face is the same rig the rest of
@@ -197,12 +240,14 @@
       vehicle: { key: "camper", mapId: 722, x: 49, y: 44, worldX: 88, worldY: 131 },
       // Never spent: every playthrough of every world can pick Em again.
       endless: true,
-      // Her background is rolled instead of written (see buildEmLore).
+      // Her history is the written one (docs/Lore.odt, CharPresets.emBackstory);
+      // buildEmLore still rolls the branch she arrived from on top of it.
       proceduralLore: "em",
     },
     {
       id: 3,
       name: "Selene",
+      loreKey: "selene",
       characterType: "humanoid",
       classId: 6,
       sprite: "NPCs/!$Hitman1",
@@ -233,6 +278,7 @@
     {
       id: 4,
       name: "Giulio Andreotti",
+      loreKey: "andreotti",
       characterType: "humanoid",
       classId: 6, // CEO (power broker / statesman, closest analog to career politician)
       sprite: "Skab/!$Andreotti",
@@ -273,6 +319,7 @@
     {
       id: 5,
       name: "Margherita Hack",
+      loreKey: "margheritaHack",
       characterType: "humanoid",
       classId: 53, // Physicist (astrophysicist)
       sprite: "Skab/!$MargheritaHack",
@@ -308,6 +355,7 @@
     {
       id: 6,
       name: "Bill Clinton",
+      loreKey: "billClinton",
       characterType: "humanoid",
       classId: 35, // Bard (charismatic orator and saxophonist)
       sprite: "Skab/!$BillClinton",
@@ -339,6 +387,7 @@
     {
       id: 7,
       name: "Richard Benson",
+      loreKey: "richardBenson",
       characterType: "humanoid",
       classId: 60, // Entertainer (flamboyant Italian TV showman)
       sprite: "Skab/!$RichardBenson",
@@ -372,6 +421,7 @@
     {
       id: 8,
       name: "Silvio Berlusconi",
+      loreKey: "berlusconi",
       classId: 6, // CEO (media mogul / businessman)
       sprite: "Skab/!$Berlusconi",
       spriteIndex: 0,
@@ -402,6 +452,7 @@
     {
       id: 9,
       name: "Carlo Azeglio Ciampi",
+      loreKey: "ciampi",
       classId: 48, // Academic (central banker / technocrat)
       sprite: "Skab/!$Ciampi",
       spriteIndex: 0,
@@ -432,6 +483,7 @@
     {
       id: 10,
       name: "Mario Draghi",
+      loreKey: "draghi",
       classId: 32, // Commander ("whatever it takes" crisis leadership)
       sprite: "Skab/!$MarioDraghi",
       spriteIndex: 0,
@@ -466,6 +518,7 @@
     {
       id: 8,
       name: "Pope Petrus II",
+      loreKey: "popePetrus",
       characterType: "humanoid",
       classId: 59, // Priest
       sprite: "Skab/!$Ratzinger",
@@ -497,6 +550,7 @@
     {
       id: 9,
       name: "Rita Levi-Montalcini",
+      loreKey: "ritaLeviMontalcini",
       characterType: "humanoid",
       classId: 42, // Scientist (Nobel-laureate neurologist)
       sprite: "Skab/!$RitaLeviMontalcini",
@@ -532,6 +586,7 @@
     {
       id: 10,
       name: "Aleister Crowley",
+      loreKey: "aleisterCrowley",
       characterType: "humanoid",
       classId: 8, // Cultist (founder of Thelema)
       sprite: "Skab/!$AleisterCrowley",
@@ -568,6 +623,7 @@
     {
       id: 11,
       name: "Kofi Annan",
+      loreKey: "kofiAnnan",
       characterType: "humanoid",
       classId: 39, // Sage (elder statesman / diplomat)
       sprite: "Skab/!$KofiAnnan",
@@ -599,6 +655,7 @@
     {
       id: 12,
       name: "George W. Bush",
+      loreKey: "georgeWBush",
       characterType: "humanoid",
       classId: 32, // Commander (wartime president)
       sprite: "Skab/!$GeorgeWBush",
@@ -630,38 +687,51 @@
   ];
   // i18n-ignore-end
 
+  // The dossiers this file WROTE, as opposed to the ones the player made. A
+  // hand-authored dossier is played as it was written and can never be deleted;
+  // a saved character or a retired companion is the player's own and is theirs
+  // to edit, reuse and throw away. Taken here, off the literal above, before
+  // anything the savegame carries is merged into it.
+  const AUTHORED_PRESET_IDS = new Set(CharacterPresets.map((preset) => preset.id));
+
+  // Whether one dossier is one of those. A story mode dossier counts too (its
+  // ids are added the moment that list is built, below).
+  function isAuthoredPreset(presetId) {
+    return AUTHORED_PRESET_IDS.has(Number(presetId));
+  }
+
   //=============================================================================
-  // Tutorial-exclusive presets
+  // Story mode-exclusive presets
   //=============================================================================
-  // The tutorial never builds a character from scratch: it offers exactly
+  // The story mode never builds a character from scratch: it offers exactly
   // these three dossiers on the same preset board used everywhere else (see
   // CharacterCreation.js's showPresetSelection / getAvailableCharacterPresets
   // below). None of the three is ever spent - every one is reusable across
   // every playthrough of every world - and each is rolled fresh (name,
   // gender, and for the sprite-pool ones the sprite too) every time the
-  // tutorial's character creation opens, so no two tutorials look alike.
+  // story mode's character creation opens, so no two story modes look alike.
   //
   // `characterType` ("humanoid" | "creature") and, for a creature dossier,
   // `archetypes` (1-2 Archetypes.json keys, joined "A / B" for a hybrid)
-  // are a general extension of the preset schema, not tutorial-only fields:
+  // are a general extension of the preset schema, not story mode-only fields:
   // see CharacterCreation.js's _applyPreset, which reads them through
   // window.applyCreatureSelection (CharacterCreationCreature.js) for any
   // preset that declares characterType: "creature".
 
   // i18n-ignore-start: sprite sheet keys, not prose
-  const TUTORIAL_SLIME_SPRITES = [
+  const STORY_MODE_SLIME_SPRITES = [
     "Creatures/!$Slime1", "Creatures/!$Slime2", "NPCs/!$Slime3", "Creatures/!$Slime4",
     "Creatures/!$Slime5", "Creatures/!$Slime6", "Creatures/!$Slime7", "Creatures/!$Slime8",
   ];
   // i18n-ignore-end
 
-  // The looks each tutorial dossier may be worn as. They are written out rather
+  // The looks each story mode dossier may be worn as. They are written out rather
   // than filtered off the sprite catalogue's own class affinity: that affinity
   // is sparse and noisy (nothing at all answers to Paladin or Pro Wrestler, and
   // what answers to Witch includes joggers), so it cannot stand in for "sheets
   // that read as this class". The slimes are a list for the same reason.
   // i18n-ignore-start: sprite sheet keys, not prose
-  const TUTORIAL_SPRITE_LISTS = {
+  const STORY_MODE_SPRITE_LISTS = {
     // The ring, and the people who make a living being watched in it.
     wrestler: [
       "Varlenian/!$Wrestler1", "NPCs/!$Pro1", "NPCs/!$Pro2",
@@ -708,7 +778,7 @@
   // extracted NPCs/ cells and the hand-drawn Skab/ ones), narrowed by an extra
   // test where the dossier wants one. A beta sheet is always left out, the same
   // rule SpriteCatalog.npcKeys() applies everywhere else.
-  function tutorialCatalogPool(archetype, extra) {
+  function storyModeCatalogPool(archetype, extra) {
     const catalog = (window.WorldGen && window.WorldGen.NPCs) || {};
     return Object.keys(catalog).filter((key) => {
       const entry = catalog[key];
@@ -718,13 +788,13 @@
     });
   }
 
-  // The tutorial's Witch is a person, and one the catalogue already calls a
+  // The story mode's Witch is a person, and one the catalogue already calls a
   // caster: magical, and listed as suiting the Witch class. Arcane-themed ones
   // are preferred (the rest are cyberpunk and street looks that read as
   // anything but a witch), and the whole caster set stands in if the theme ever
   // stops being written.
-  function tutorialWitchSpritePool() {
-    const casters = tutorialCatalogPool("Humanoid", (entry) =>
+  function storyModeWitchSpritePool() {
+    const casters = storyModeCatalogPool("Humanoid", (entry) =>
       entry.magical === true && Array.isArray(entry.classes) && entry.classes.includes(2));
     const arcane = casters.filter((key) => {
       const entry = (window.WorldGen && window.WorldGen.NPCs || {})[key];
@@ -733,23 +803,26 @@
     return arcane.length > 0 ? arcane : casters;
   }
 
-  // The sheets one tutorial dossier may be worn as, by pool key. Exported so
+  // The sheets one story mode dossier may be worn as, by pool key. Exported so
   // the sprite board can be opened on that dossier's own looks and no others.
-  function getTutorialSpritePool(poolKey) {
-    return tutorialSpritePool(poolKey) || [];
+  function getStoryModeSpritePool(poolKey) {
+    return storyModeSpritePool(poolKey) || [];
   }
 
-  function tutorialSpritePool(poolKey) {
-    if (poolKey === "slime") return TUTORIAL_SLIME_SPRITES;
-    if (poolKey === "goblin") return tutorialCatalogPool("Goblin");
-    if (poolKey === "witch") return tutorialWitchSpritePool();
-    return TUTORIAL_SPRITE_LISTS[poolKey] || null;
+  function storyModeSpritePool(poolKey) {
+    if (poolKey === "slime") return STORY_MODE_SLIME_SPRITES;
+    // A goblin is a humanoid with a goblin's face, not an archetype of its own,
+    // so the pool is the sheets whose own names say goblin.
+    if (poolKey === "goblin") return storyModeCatalogPool("Humanoid")
+      .filter((key) => /goblin/i.test(key));
+    if (poolKey === "witch") return storyModeWitchSpritePool();
+    return STORY_MODE_SPRITE_LISTS[poolKey] || null;
   }
 
-  const TUTORIAL_PRESETS = [
+  const STORY_MODE_PRESETS = [
     {
       id: 9001,
-      tutorialOnly: true,
+      storyModeOnly: true,
       endless: true,
       characterType: "humanoid",
       classId: 2, // Witch
@@ -767,7 +840,7 @@
       armors: [],
       equips: [null, null, null, null, null],
       skills: [],
-      // Fixed, and the same in every tutorial: what a witch is, spelled out.
+      // Fixed, and the same in every story mode: what a witch is, spelled out.
       traits: [193, 190], // Witch-Marked, Magically Gifted
       specializations: [
         { id: 255, level: 4 }, // Spellcraft
@@ -778,7 +851,7 @@
     },
     {
       id: 9002,
-      tutorialOnly: true,
+      storyModeOnly: true,
       endless: true,
       characterType: "humanoid",
       classId: 18, // Pro Wrestler
@@ -796,7 +869,7 @@
       armors: [],
       equips: [null, null, null, null, null],
       skills: [],
-      // Fixed, and the same in every tutorial: the ring, and the show it puts on.
+      // Fixed, and the same in every story mode: the ring, and the show it puts on.
       traits: [153, 6], // Brawler, Athletic
       specializations: [
         { id: 301, level: 4 }, // Wrestling
@@ -807,10 +880,9 @@
     },
     {
       id: 9003,
-      tutorialOnly: true,
+      storyModeOnly: true,
       endless: true,
-      characterType: "creature",
-      archetypes: ["Goblin"],
+      characterType: "humanoid",
       classId: 16, // Gunmancer
       spritePoolKey: "goblin",
       spriteIndex: 0,
@@ -826,7 +898,7 @@
       armors: [],
       equips: [null, null, null, null, null],
       skills: [],
-      // Fixed, and the same in every tutorial: a gun in one hand, a spell in the
+      // Fixed, and the same in every story mode: a gun in one hand, a spell in the
       // other, which is the whole of what a gunmancer is.
       traits: [202, 190, 12], // Gun-Fu, Magically Gifted, Marksman
       specializations: [
@@ -838,7 +910,7 @@
     },
     {
       id: 9004,
-      tutorialOnly: true,
+      storyModeOnly: true,
       endless: true,
       characterType: "creature",
       archetypes: ["Slime"],
@@ -855,7 +927,7 @@
       armors: [],
       equips: [null, null, null, null, null],
       skills: [],
-      // Fixed, and the same in every tutorial: something that is never quite
+      // Fixed, and the same in every story mode: something that is never quite
       // whatever it is currently pretending to be.
       traits: [201, 179, 97], // Prosopometamorphopsia, Cold-Blooded, Survivalist
       specializations: [
@@ -867,7 +939,7 @@
     },
     {
       id: 9005,
-      tutorialOnly: true,
+      storyModeOnly: true,
       endless: true,
       characterType: "humanoid",
       classId: 22, // Paladin
@@ -885,7 +957,7 @@
       armors: [],
       equips: [null, null, null, null, null],
       skills: [],
-      // Fixed, and the same in every tutorial: what a paladin already is.
+      // Fixed, and the same in every story mode: what a paladin already is.
       traits: [116, 155, 11], // Devout, Shield Master, Defensive
       specializations: [
         { id: 889, level: 4 }, // Sword
@@ -896,7 +968,7 @@
     },
     {
       id: 9006,
-      tutorialOnly: true,
+      storyModeOnly: true,
       endless: true,
       characterType: "humanoid",
       classId: 49, // Psyker
@@ -914,7 +986,7 @@
       armors: [],
       equips: [null, null, null, null, null],
       skills: [],
-      // Fixed, and the same in every tutorial: what a psyker already is.
+      // Fixed, and the same in every story mode: what a psyker already is.
       traits: [196, 122, 52], // Clairvoyant, Prophetic, Synesthete
       specializations: [
         { id: 275, level: 4 }, // Telepathy
@@ -925,7 +997,7 @@
     },
     {
       id: 9007,
-      tutorialOnly: true,
+      storyModeOnly: true,
       endless: true,
       characterType: "humanoid",
       classId: 35, // Bard
@@ -943,7 +1015,7 @@
       armors: [],
       equips: [null, null, null, null, null],
       skills: [],
-      // Fixed, and the same in every tutorial: what a bard already is.
+      // Fixed, and the same in every story mode: what a bard already is.
       traits: [144, 197, 8], // Beautiful, Booming Voice, Lucky
       specializations: [
         { id: 208, level: 4 }, // Playing Guitar
@@ -954,7 +1026,7 @@
     },
     {
       id: 9008,
-      tutorialOnly: true,
+      storyModeOnly: true,
       endless: true,
       characterType: "humanoid",
       classId: 12, // Enchanter
@@ -972,7 +1044,7 @@
       armors: [],
       equips: [null, null, null, null, null],
       skills: [],
-      // Fixed, and the same in every tutorial: what a enchanter already is.
+      // Fixed, and the same in every story mode: what a enchanter already is.
       traits: [190, 139, 41], // Magically Gifted, Alchemist, Photographic Memory
       specializations: [
         { id: 731, level: 4 }, // Runecrafting
@@ -983,7 +1055,7 @@
     },
     {
       id: 9009,
-      tutorialOnly: true,
+      storyModeOnly: true,
       endless: true,
       characterType: "humanoid",
       classId: 5, // Convoker
@@ -1001,7 +1073,7 @@
       armors: [],
       equips: [null, null, null, null, null],
       skills: [],
-      // Fixed, and the same in every tutorial: what a convoker already is.
+      // Fixed, and the same in every story mode: what a convoker already is.
       traits: [99, 118, 186], // Cursed, Heretic, Beast Whisperer
       specializations: [
         { id: 510, level: 4 }, // Binding
@@ -1012,7 +1084,7 @@
     },
     {
       id: 9010,
-      tutorialOnly: true,
+      storyModeOnly: true,
       endless: true,
       characterType: "humanoid",
       classId: 3, // Nun
@@ -1030,7 +1102,7 @@
       armors: [],
       equips: [null, null, null, null, null],
       skills: [],
-      // Fixed, and the same in every tutorial: what a nun already is.
+      // Fixed, and the same in every story mode: what a nun already is.
       traits: [100, 119, 121], // Blessed, Pilgrim, Monk-Trained
       specializations: [
         { id: 277, level: 4 }, // Theology
@@ -1039,17 +1111,124 @@
         { id: 174, level: 2 }, // Meditation
       ],
     },
+    {
+      id: 9011,
+      storyModeOnly: true,
+      endless: true,
+      characterType: "humanoid",
+      classId: 3, // Nun
+      spritePoolKey: "nun",
+      spriteIndex: 0,
+      gender: 1,
+      noBust: true,
+      level: 1,
+      mapId: 1414,
+      x: 87,
+      y: 30,
+      switches: [],
+      sexualOrientation: "asexual",
+      romanticOrientation: "aromantic",
+      money: 0,
+      items: [],
+      weapons: [],
+      armors: [],
+      equips: [null, null, null, null, null],
+      skills: [],
+      // Fixed, and the same in every story mode: a clever tongue kept inside a
+      // habit.
+      traits: [7, 166, 172], // Genius, Cynic, Blunt
+      specializations: [
+        { id: 277, level: 4 }, // Theology
+        { id: 199, level: 3 }, // Philosophy
+        { id: 550, level: 2 }, // Creative Writing
+        { id: 535, level: 2 }, // Choir Singing
+      ],
+    },
+    {
+      id: 9012,
+      storyModeOnly: true,
+      endless: true,
+      characterType: "humanoid",
+      classId: 36, // Illusionist
+      spritePoolKey: "goblin",
+      spriteIndex: 0,
+      gender: 1,
+      noBust: true,
+      level: 1,
+      mapId: 1414,
+      x: 87,
+      y: 30,
+      switches: [],
+      sexualOrientation: "asexual",
+      romanticOrientation: "aromantic",
+      money: 0,
+      items: [],
+      weapons: [],
+      armors: [],
+      equips: [null, null, null, null, null],
+      skills: [],
+      // Fixed, and the same in every story mode: a mind that never trusts what
+      // it is shown, working the trade of showing things.
+      traits: [5, 201, 190], // Paranoid, Prosopometamorphopsia, Magically Gifted
+      specializations: [
+        { id: 632, level: 4 }, // Illusion Magic
+        { id: 137, level: 3 }, // Hypnosis
+        { id: 84, level: 2 },  // Deception
+        { id: 255, level: 2 }, // Spellcraft
+      ],
+    },
+    {
+      id: 9013,
+      storyModeOnly: true,
+      endless: true,
+      characterType: "humanoid",
+      classId: 2, // Witch
+      spritePoolKey: "witch",
+      spriteIndex: 0,
+      gender: 0,
+      noBust: true,
+      level: 1,
+      mapId: 1414,
+      x: 87,
+      y: 30,
+      switches: [],
+      sexualOrientation: "homosexual",
+      romanticOrientation: "homoromantic",
+      money: 0,
+      items: [],
+      weapons: [],
+      armors: [],
+      equips: [null, null, null, null, null],
+      skills: [],
+      // Fixed, and the same in every story mode: reading rather than shouting,
+      // and a witch's mark under all of it.
+      traits: [95, 132, 190], // Stoic, Scholar, Magically Gifted
+      specializations: [
+        { id: 165, level: 4 }, // Magic Theory
+        { id: 255, level: 3 }, // Spellcraft
+        { id: 62, level: 2 },  // Chess
+        { id: 135, level: 2 }, // History
+      ],
+    },
   ];
 
+  // The story mode's own dossiers are authored as much as the ones above.
+  STORY_MODE_PRESETS.forEach((preset) => AUTHORED_PRESET_IDS.add(preset.id));
+
   /**
-   * Every field the tutorial rolls fresh for one dossier: a Markov name, a
-   * random gender (0 male / 1 female / 2 non-binary / 3 cocoon), and, for a
-   * dossier drawing from a sprite pool, the sprite and bust to go with it.
-   * @param {object} preset - Entry from TUTORIAL_PRESETS
+   * Every field the story mode rolls fresh for one dossier: a Markov name, a
+   * random gender (0 male / 1 female / 2 non-binary / 3 cocoon) unless the
+   * dossier pins one, and, for a dossier drawing from a sprite pool, the
+   * sprite and, unless the dossier goes faceless, the bust to go with it.
+   * @param {object} preset - Entry from STORY_MODE_PRESETS
    * @returns {object} { name, gender, sprite?, busts? }
    */
-  function rollTutorialPresetFields(preset) {
-    const roll = { gender: Math.floor(Math.random() * 4) };
+  function rollStoryModePresetFields(preset) {
+    const roll = {
+      gender: typeof preset.gender === "number"
+        ? preset.gender
+        : Math.floor(Math.random() * 4),
+    };
 
     if (window.generateSeededMarkovName) {
       const seed = Date.now() + preset.id * 1000;
@@ -1062,11 +1241,11 @@
       roll.name = (name && !/unknown/i.test(name)) ? name : "";
     }
     if (!roll.name) {
-      roll.name = T('CharPresets.tutorialFallbackName') + " " + preset.id;
+      roll.name = T('CharPresets.storyModeFallbackName') + " " + preset.id;
     }
 
     if (preset.spritePoolKey) {
-      const pool = tutorialSpritePool(preset.spritePoolKey);
+      const pool = storyModeSpritePool(preset.spritePoolKey);
       const sprite = pool && pool.length
         ? pool[Math.floor(Math.random() * pool.length)]
         : null;
@@ -1074,7 +1253,9 @@
         roll.sprite = sprite;
         const catalog = (window.WorldGen && window.WorldGen.NPCs) || {};
         const entry = catalog[sprite];
-        roll.busts = (entry && entry.busts && entry.busts[0]) || "";
+        roll.busts = preset.noBust
+          ? ""
+          : (entry && entry.busts && entry.busts[0]) || "";
       }
     }
 
@@ -1082,36 +1263,36 @@
   }
 
   /**
-   * The per-save cache the tutorial's rolled dossier fields live in, so the
+   * The per-save cache the story mode's rolled dossier fields live in, so the
    * board and the dossier page agree while the player is browsing it.
    * @returns {object} presetId -> rolled fields
    */
-  function tutorialPresetRollCache() {
+  function storyModePresetRollCache() {
     if (typeof $gameSystem === "undefined" || !$gameSystem) return {};
-    if (!$gameSystem._tutorialPresetRoll) $gameSystem._tutorialPresetRoll = {};
-    return $gameSystem._tutorialPresetRoll;
+    if (!$gameSystem._storyModePresetRoll) $gameSystem._storyModePresetRoll = {};
+    return $gameSystem._storyModePresetRoll;
   }
 
   /**
-   * Re-rolls every tutorial dossier. Called once whenever the tutorial's
-   * character creation opens, so no two tutorials look alike; the rolled
-   * fields then stay stable (see getTutorialCharacterPresets) for the rest
+   * Re-rolls every story mode dossier. Called once whenever the story mode's
+   * character creation opens, so no two story modes look alike; the rolled
+   * fields then stay stable (see getStoryModeCharacterPresets) for the rest
    * of that session.
    */
-  function resetTutorialPresetRolls() {
+  function resetStoryModePresetRolls() {
     if (typeof $gameSystem === "undefined" || !$gameSystem) return;
-    $gameSystem._tutorialPresetRoll = {};
+    $gameSystem._storyModePresetRoll = {};
   }
 
   /**
-   * The tutorial's three dossiers, with this session's rolled name/gender/
+   * The story mode's three dossiers, with this session's rolled name/gender/
    * sprite filled in (rolling them now if nothing has yet).
    * @returns {array} Array of preset objects
    */
-  function getTutorialCharacterPresets() {
-    const cache = tutorialPresetRollCache();
-    return TUTORIAL_PRESETS.map((preset) => {
-      if (!cache[preset.id]) cache[preset.id] = rollTutorialPresetFields(preset);
+  function getStoryModeCharacterPresets() {
+    const cache = storyModePresetRollCache();
+    return STORY_MODE_PRESETS.map((preset) => {
+      if (!cache[preset.id]) cache[preset.id] = rollStoryModePresetFields(preset);
       const roll = cache[preset.id];
       return Object.assign({}, preset, {
         name: roll.name,
@@ -1123,14 +1304,14 @@
   }
 
   /**
-   * Whether the tutorial's dossier board should be shown instead of the
+   * Whether the story mode's dossier board should be shown instead of the
    * world's own preset pool: the in-scene flag while the wizard is running,
    * falling back to the switch (cleared at the add-member step, mirroring
-   * CharacterCreation.js's own isTutorialFlow).
-   * @returns {boolean} True while the tutorial's creation flow is active
+   * CharacterCreation.js's own isStoryModeFlow).
+   * @returns {boolean} True while the story mode's creation flow is active
    */
-  function isTutorialPresetFlow() {
-    if (typeof Scene_CharacterCreation !== "undefined" && Scene_CharacterCreation && Scene_CharacterCreation._tutorialMode) {
+  function isStoryModePresetFlow() {
+    if (typeof Scene_CharacterCreation !== "undefined" && Scene_CharacterCreation && Scene_CharacterCreation._storyMode) {
       return true;
     }
     return !!($gameSwitches && $gameSwitches.value(100));
@@ -1185,6 +1366,29 @@
   }
 
   /**
+   * Ninety-two percent of Em's memories were spent on the spear, and her own
+   * history reads that way: a share of the longer words in every paragraph
+   * goes under the archive marker. Which words go is seeded off the world seed
+   * and the paragraph index, so one world always blacks out the same words and
+   * the page does not flicker as it is re-rendered.
+   * @param {string} text - One backstory paragraph
+   * @param {number} index - Paragraph index, part of the seed
+   * @returns {string} The paragraph with some words redacted
+   */
+  function redactEmMemories(text, index) {
+    const worldSeed = window.HistoryManager && window.HistoryManager.getSeed
+      ? window.HistoryManager.getSeed() | 0
+      : 0;
+    let state = mix32(worldSeed ^ mix32(index + 1)) || 1;
+    const next = () => {
+      state = mix32(state);
+      return state / 0x100000000;
+    };
+    return String(text || "").replace(/[A-Za-z']{5,}/g, (word) =>
+      next() < 0.3 ? "█".repeat(Math.min(9, word.length)) : word);
+  }
+
+  /**
    * Compose one Em background out of the banks.
    * @param {number} seed - Dimension seed
    * @returns {{en: string, it: string}} Localized lore
@@ -1224,7 +1428,18 @@
   function getPresetLore(preset) {
     if (!preset) return "";
     if (preset.proceduralLore === "em") {
-      return isFirstEmIncarnation() ? T('CharPresets.emOriginalLore') : buildEmLore(emDimensionSeed());
+      // Her history is written (docs/Lore.odt), not rolled: the same paragraphs
+      // the status sheet and the Empathize panel print. The rolled branch is
+      // still what buildEmLore answers, and getEmBackstory hands it over
+      // separately as the branch this Em arrived from.
+      return getEmBackstory().paragraphs.join("<br><br>");
+    }
+    // Keyed by the dossier's own slug, not by its numeric id: ids have been
+    // reused and retired as presets came and went, and a shifted id silently
+    // handed one character another one's biography.
+    if (preset.loreKey) {
+      const slugKey = 'CharPresets.lore.' + preset.loreKey;
+      if (T.has(slugKey)) return T(slugKey);
     }
     const key = 'CharPresets.lore.' + preset.id;
     if (T.has(key)) return T(key);
@@ -1319,10 +1534,15 @@
     const code = (lang || (typeof ConfigManager !== "undefined" ? ConfigManager.language : "en")) === "it" ? "it" : "en";
     const preset = getBasePresets().find((entry) => entry && entry.proceduralLore === "em") || null;
     const town = getPresetHometown(preset) || EM_HOMETOWN_ORIGINAL;
-    const lore = getPresetLore(preset);
+    // The branch this Em fell out of, straight from its generator: the written
+    // history is what getPresetLore now answers with, so reading it back here
+    // would only hand this function its own paragraphs.
+    const lore = isFirstEmIncarnation()
+      ? T('CharPresets.emOriginalLore')
+      : buildEmLore(emDimensionSeed());
     return {
-      paragraphs: T.pool('CharPresets.emBackstory').map((line) =>
-        line.replace(/\{town\}/g, town)
+      paragraphs: T.pool('CharPresets.emBackstory').map((line, index) =>
+        redactEmMemories(line.replace(/\{town\}/g, town), index)
       ),
       branch: lore || "",
     };
@@ -1343,8 +1563,105 @@
   // either, while the rest of the register is Em's alone.
 
   const EM_SWITCH = 48;
+  const STORY_MODE_SWITCH = 75;
   const BUBBA_SWITCH = 49;
   const EM_NAME = "Em";
+
+  // Story mode is Em's story, so the wizard is not a wizard while it is running:
+  // she is who she is. Her name, her face, her body, her class, her creed and
+  // her (absent) job are all settled before the player ever sees the sheet, and
+  // every control that would edit one of them answers to this predicate rather
+  // than re-deriving "is this Em" from a literal of its own.
+  const EM_PRESET_ID = 2;
+  const EM_STORY_CLASS_ID = 16;      // Gunmancer
+  const EM_STORY_GENDER = 1;         // Female
+  // What she wakes up believing: Thelema, the creed of a witch who was left
+  // with her will and nothing else. It is the one part of her sheet the player
+  // is allowed a say in, and only within this shelf: a handful of creeds a
+  // memory-wiped, gun-casting anarchist witch could plausibly hold. Everything
+  // outside it is somebody else's Em.
+  const EM_STORY_IDEOLOGY = "thelemic_magus";
+  const EM_STORY_IDEOLOGY_CHOICES = [
+    "thelemic_magus",
+    "traditionalist_witch",
+    "esoteric_psychologist",
+    "metamagical_imaginism",
+    "discordian_chaos",
+    "individualist_egoist",
+    "anarcho_syndicalist",
+  ];
+  const EM_STORY_JOB_ID = 0;         // No profession, and no way to pick one
+
+  /**
+   * Whether the wizard is currently editing story mode's Em: the one character
+   * whose dossier the player is given rather than allowed to write.
+   * @param {object} [actor] - Actor to test (defaults to the current member)
+   * @returns {boolean} True while story mode is running on Em's own sheet
+   */
+  function isStoryModeEm(actor) {
+    if (!isStoryModePresetFlow()) return false;
+    if (typeof Scene_CharacterCreation === "undefined" || !Scene_CharacterCreation) return false;
+    if (!actor && Scene_CharacterCreation.getCurrentActor) {
+      actor = Scene_CharacterCreation.getCurrentActor();
+    }
+    if (!actor) return false;
+    if (actor._presetId === EM_PRESET_ID) return true;
+    const name = String(actor._presetName || (actor.name && actor.name()) || "").trim().toLowerCase();
+    const key = String(actor._presetKey || "").trim().toLowerCase();
+    return name === "em" || key === "em";
+  }
+
+  /**
+   * The fields story mode holds Em to, for the controls that need to show them
+   * as fixed rather than editable.
+   * @returns {object} { presetId, classId, gender, ideologyId, jobId }
+   */
+  function storyModeEmLocks() {
+    return {
+      presetId: EM_PRESET_ID,
+      classId: EM_STORY_CLASS_ID,
+      gender: EM_STORY_GENDER,
+      ideologyId: EM_STORY_IDEOLOGY,
+      ideologyChoices: EM_STORY_IDEOLOGY_CHOICES.slice(),
+      jobId: EM_STORY_JOB_ID
+    };
+  }
+
+  /**
+   * The creeds story mode lets the player hold Em to. The first of them is the
+   * one she opens on.
+   * @returns {string[]} Ideology.json ids, in the order they are offered
+   */
+  function storyModeEmIdeologyChoices() {
+    return EM_STORY_IDEOLOGY_CHOICES.slice();
+  }
+
+  /**
+   * Writes the locked fields onto Em's actor, so the sheet the player is shown
+   * is the sheet the party starts with even if some earlier step wrote its own
+   * value in. Safe to call on every render.
+   * @param {object} actor - Em's actor
+   */
+  function applyStoryModeEmLocks(actor) {
+    if (!actor || !isStoryModeEm(actor)) return;
+    const locks = storyModeEmLocks();
+    if (actor._classId !== locks.classId) {
+      if (actor.changeClass) actor.changeClass(locks.classId, true);
+      else actor._classId = locks.classId;
+    }
+    actor._gender = locks.gender;
+    if (actor.setGender) actor.setGender(locks.gender);
+    if (typeof $gameVariables !== "undefined" && $gameVariables) {
+      const idx = (typeof Scene_CharacterCreation !== "undefined" && Scene_CharacterCreation._currentPartyMemberIndex) || 0;
+      $gameVariables.setValue(38 + idx, locks.gender);
+    }
+    // The creed is a default, not a lock: whatever the player picked off the
+    // shelf stands, and only a creed from outside it is written back.
+    if (!EM_STORY_IDEOLOGY_CHOICES.includes(String(actor._ideologyId || ""))) {
+      actor._ideologyId = locks.ideologyId;
+    }
+    actor._jobId = locks.jobId;
+  }
 
 
   /**
@@ -1364,6 +1681,20 @@
   }
 
   /**
+   * Whether one actor IS Em: her dossier's preset, or her name on a member who
+   * joined outside creation. The one answer anything asking "is this Em"
+   * reads, so no other plugin re-derives her from a literal.
+   * @param {object} actor - Actor to test
+   * @returns {boolean} True when the actor is Em
+   */
+  function isEmActor(actor) {
+    if (!actor) return false;
+    if (actor._presetId === EM_PRESET_ID) return true;
+    const name = typeof actor.name === "function" ? actor.name() : actor._presetName;
+    return String(name || "").trim() === EM_NAME;
+  }
+
+  /**
    * Whether the camper is The Beast for this party: Em's dossier, Bubba's, or
    * either of them travelling with it.
    * @returns {boolean} True when the camper answers to its name
@@ -1377,12 +1708,24 @@
   }
 
   /**
-   * A label in Em's register, or the ordinary one when she is not in play.
+   * Whether the story mode is running. The story mode is played as Em, but it
+   * is the guided way in and keeps the plain menu wording rather than her own.
+   * @returns {boolean} True while the story mode switch is on
+   */
+  function isStoryMode() {
+    return typeof $gameSwitches !== "undefined" && !!$gameSwitches &&
+      !!$gameSwitches.value(STORY_MODE_SWITCH);
+  }
+
+  /**
+   * A label in Em's register, or the ordinary one when she is not in play or
+   * the story mode is running.
    * @param {string} key - Key into CharPresets.emLabel
    * @param {string} fallback - Label used on an ordinary playthrough
    * @returns {string} Label to display
    */
   function emLabel(key, fallback) {
+    if (isStoryMode()) return fallback;
     if (!isEmPlaythrough()) return fallback;
     const full = 'CharPresets.emLabel.' + key;
     return T.has(full) ? T(full) : fallback;
@@ -1547,12 +1890,15 @@
    * @returns {array} Array of preset objects
    */
   function getAvailableCharacterPresets() {
-    // The tutorial offers its own three dossiers and nothing else (see
-    // TUTORIAL_PRESETS above); the world's own pool is never mixed in.
-    if (isTutorialPresetFlow()) return getTutorialCharacterPresets();
+    // The story mode offers its own three dossiers and nothing else (see
+    // STORY_MODE_PRESETS above); the world's own pool is never mixed in.
+    if (isStoryModePresetFlow()) return getStoryModeCharacterPresets();
     const used = getUsedPresetIds();
+    // A hidden dossier is a record the game still owns but never offers: it is
+    // filtered out of the board only, so lookups by id, a save that already
+    // carries the character, and the story mode's own flow are untouched.
     return getCharacterPresets().filter(
-      (preset) => preset.endless || used.indexOf(preset.id) < 0
+      (preset) => !preset.hidden && (preset.endless || used.indexOf(preset.id) < 0)
     );
   }
 
@@ -1823,10 +2169,15 @@
    * @param {number} presetId - Preset ID to remove
    * @returns {boolean} Success status
    */
-  function removePresetById(presetId) {
+  function removePresetById(presetId, opts) {
     // An endless dossier survives its own death: killing one Em only ends that
     // branch of her, so she stays in the pool (permadeath calls this).
     if (isPresetEndless(presetId)) {
+      return false;
+    }
+    // A hand-authored dossier is part of the game, not of the player's own
+    // collection: the board may delete what the player saved, never this.
+    if (opts && opts.playerOnly && isAuthoredPreset(presetId)) {
       return false;
     }
 
@@ -2124,6 +2475,8 @@
     if (!actor) return { ok: false, reason: "notInParty" };
     if ($gameParty.members().length <= 1) return { ok: false, reason: "lastMember" };
     if ($gameParty.members()[0].actorId() === actorId) return { ok: false, reason: "isLeader" };
+    // Em and Bubba travel together for the whole story mode (PartyRoster.isStoryLocked).
+    if (window.PartyRoster?.isStoryLocked?.(actorId)) return { ok: false, reason: "storyLocked" };
 
     const preset = buildRetiredPreset(actor);
     // Assign a new array, the WorldManager-backed field is a getter/setter pair.
@@ -2137,6 +2490,26 @@
     $gameParty.removeActor(actorId);
     if ($gameTemp) $gameTemp._partyRetiringActorId = null;
 
+    return { ok: true, preset };
+  }
+
+  /**
+   * Put somebody on the bench without them ever having travelled: a recruit who
+   * said yes while the party was already three strong (NPCSystemParty.joinParty)
+   * signs on as inactive, and the Dynamics board is where they are called up.
+   * The actor handed in is a scratch slot holding their sheet, not a party
+   * member, so nothing is removed from the party here.
+   * @param {Game_Actor} actor - Actor slot carrying the recruit's sheet
+   * @param {object} [extra] - Fields to stamp onto the dossier (isCreature, ...)
+   * @returns {object} { ok: boolean, reason?: string, preset?: object }
+   */
+  function benchActorAsPreset(actor, extra) {
+    if (!actor || !$gameSystem) return { ok: false, reason: "noActor" };
+    const preset = Object.assign(buildRetiredPreset(actor), extra || {});
+    // Assign a new array, the WorldManager-backed field is a getter/setter pair.
+    $gameSystem._retiredCharacterPresets = getRetiredPresets()
+      .filter((entry) => entry.name !== preset.name)
+      .concat(preset);
     return { ok: true, preset };
   }
 
@@ -2490,6 +2863,13 @@
       return this._data ? this._data.length : 0;
     }
 
+    // The board after a dossier has left it: deleting one of the player's own
+    // rewrites the pool, and the list is read again rather than merely redrawn.
+    rebuild() {
+      this._data = getAvailableCharacterPresets();
+      this.refresh();
+    }
+
     maxCols() {
       if (!this._data || this._data.length === 0) return 1;
       return Math.min(this._data.length, 3); // Max 3 columns
@@ -2648,7 +3028,6 @@
     processOk() {
       const preset = this.itemAt(this.index());
       if (preset) {
-        this.playOkSound();
         this.callOkHandler();
       }
     }
@@ -2752,7 +3131,9 @@
     getAvailableRetiredPresets,
     getAvailableCharacterPresets,
     retirePartyMember,
+    benchActorAsPreset,
     unretirePartyMember,
+    freeCompanionActorId,
     getUsedPresetIds,
     isPresetUsed,
     isPresetEndless,
@@ -2769,6 +3150,12 @@
     getActorPresetModel,
     getEmBackstory,
     isEmPlaythrough,
+    isEmActor,
+    isStoryMode,
+    isStoryModeEm,
+    storyModeEmLocks,
+    storyModeEmIdeologyChoices,
+    applyStoryModeEmLocks,
     isBeastCrew,
     emLabel,
     getEmRestlessLine,
@@ -2776,6 +3163,7 @@
     saveCharacterPresets,
     getNextPresetId,
     removePresetById,
+    isAuthoredPreset,
     applyPresetIdentity,
     applyPresetVehicle,
     saveCurrentCharacterAsPreset,
@@ -2784,9 +3172,9 @@
     isStepCompleted,
     hasCompletedFirstCreation,
     markFirstCreationComplete,
-    getTutorialCharacterPresets,
-    getTutorialSpritePool,
-    resetTutorialPresetRolls,
+    getStoryModeCharacterPresets,
+    getStoryModeSpritePool,
+    resetStoryModePresetRolls,
 
     // Windows
     Window_CharacterPresets,

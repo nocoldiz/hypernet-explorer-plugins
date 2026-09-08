@@ -59,7 +59,7 @@
   "chooseYourOrigin": "Choose your origin",
   "chooseYourVehicle": "Choose your vehicle",
   "confirmParty": "Confirm party",
-  "noCompanion": "No companion",
+  "noCompanion": "No familiar",
   "petKindNone": "Alone",
   "noCompanionDesc": "Set out with nobody at your heel. The seat stays open for whoever you meet.",
   "noDefiningTraits": "No defining traits",
@@ -73,7 +73,7 @@
   "origin": "Origin",
   "background": "Background",
   "personalDossier": "PERSONAL DOSSIER",
-  "identityProfile": "Identity Profile",
+  "identityProfile": "Gender",
   "vocation": "Vocation",
   "startingWealth": "Starting Wealth",
   "traits": "Traits",
@@ -406,29 +406,9 @@
       "name": "Pick on map",
       "desc": "Choose your hometown from the map."
     },
-    "existingCharacter": {
-      "name": "Use Existing Character",
-      "desc": "Select from pre-made characters. Each one can be played only once per world."
-    },
-    "modeFull": {
-      "name": "Full",
-      "desc": "Detailed creation: live through your character's life."
-    },
-    "modeQuick": {
-      "name": "Quick",
-      "desc": "Three questions and you are playing: a name, a face and a class. Gender, body and portrait come with the face you pick, and traits are rolled for you."
-    },
-    "modeNormal": {
-      "name": "Normal",
-      "desc": "Fast creation for each member."
-    },
     "combatMonsters": {
       "name": "Monsters",
       "desc": "Capture and battle with monsters. \\C[1]This cannot be changed later.\\C[0]"
-    },
-    "combatCards": {
-      "name": "Cards",
-      "desc": "Roguelike deck combat. \\C[1]This cannot be changed later.\\C[0] Each party member draws from their own deck built from their skills and plays cards on their turn using Energy instead of MP/AP."
     },
     "combatMap": {
       "name": "Map Battle",
@@ -444,7 +424,7 @@
     },
     "bloodAndOil": {
       "name": "Blood and Oil",
-      "desc": "Body parts reduced to zero HP are lost, with permanent stat debuffs. Losing a vital organ kills the character instantly. Allies not resurrected by the end of the battle die permanently."
+      "desc": "A slashing blow can take a body part off for good, with permanent stat debuffs; a part it only breaks still heals. Losing a vital organ kills the character instantly. Allies not resurrected by the end of the battle die permanently."
     },
     "permadeath": {
       "name": "Permadeath",
@@ -453,10 +433,6 @@
     "roguelite": {
       "name": "Roguelite",
       "desc": "If defeated you rewake at the base floor of the dungeon. Fallen allies stay in the party and can be resurrected after battle."
-    },
-    "modeDetailed": {
-      "name": "Detailed",
-      "desc": "Build the character on their own dossier page: every field, from class and traits to hometown, orientation and history, edited by hand."
     },
     "originCardCollector": {
       "name": "Card Collector",
@@ -643,9 +619,20 @@
     "DEX": "Dexterity. Turn order and the odds of dodging an attack outright.",
     "INT": "Intelligence. Drives magic attack power, the damage a spell actually lands for.",
     "WIS": "Wisdom. Magic defense: resistance to spells and other magical harm.",
-    "PSI": "Psyche. Luck: critical hits, rare drops and other odds tipped in the character's favor."
+    "PSI": "Psyche. Luck: critical hits, rare drops and other odds tipped in the character's favor.",
+    "ARCANE": "Arcane. How magical the character looks and feels to anyone reading them.",
+    "SUBSTANCE": "Substance. How stylish the character is, the impression their look leaves.",
+    "STEALTH": "Stealth. How well the character blends into the surroundings.",
+    "INTIMIDATION": "Intimidation. How threatening the character's clothes and gear appear."
   },
+  "characterType": "Character Type",
   "traitTypeLabel": "TRAIT",
+  "traitCategoryLabel": {
+    "physical": "PHYSICAL",
+    "mental": "MENTAL",
+    "magical": "MAGICAL",
+    "genetic": "GENETIC"
+  },
   "previewOff": "OFF",
   "previewOn": "ON",
   "unknownVocation": "Unknown",
@@ -688,6 +675,7 @@
       "personality": "Personality",
       "ideology": "Ideology",
       "faction": "Faction",
+      "party": "Political party",
       "wealth": "Wealth",
       "morality": "Morality",
       "romantic": "Romantic orientation",
@@ -718,6 +706,8 @@
     "noMatches": "Nothing here matches that.",
     "specLower": "give back {n}",
     "specPointsShort": "{left} / {total} pts",
+    "partyNote": "A made character joins no party unless you pick one here. Only parties standing in their home nation are listed.",
+    "partyMatch": "Same creed",
     "wealthNote": "What this character brings to the party purse.",
     "moreMatches": "{n} more , narrow the search to see them."
   },
@@ -746,14 +736,15 @@
   "scenarioShared": "Scenario",
   "noGear": "No personal items",
   "optional": "Optional",
-  "biography": "Bio & Ideology",
+  "biography": "Bio",
   "customized": "Customized",
-  "companion": "Pet / Follower",
-  "releasePet": "Release Companion",
+  "companion": "Familiar",
+  "petsTab": "Pets",
+  "releasePet": "Release Familiar",
   "chooseCompanion": "Choose Pet / Follower",
-  "companionStats": "Companion Vitals",
-  "behavioralTraits": "Behavior & Nature",
-  "chooseAsCompanion": "Choose as initial companion",
+  "companionStats": "Familiar Vitals",
+  "behavioralTraits": "Behavior",
+  "chooseAsCompanion": "Choose as initial familiar",
   "selectedCompanion": "Companion selected",
   "budget": "Budget",
   "specializationSummary": "Talent Dossier",
@@ -762,14 +753,14 @@
   "removeAllocated": "Remove",
   "specsCurrent": "Current",
   "specGranted": "Granted by Class and Traits",
-  "creedIdeology": "Creed & Philosophical Ideology",
-  "originCity": "Hometown / Settlement of Origin",
-  "moralityAlignment": "Moral Disposition & Alignment",
-  "ageBand": "Age Generation",
-  "socialStanding": "Social Standing & Background",
-  "bloodType": "Serology / Blood Type",
+  "creedIdeology": "Creed",
+  "originCity": "Hometown",
+  "moralityAlignment": "Morality",
+  "ageBand": "Age",
+  "socialStanding": "Social Standing",
+  "bloodType": "Blood Type",
   "backgroundSummary": "Background Profile",
-  "narrativeHistory": "Backstory & Life Record",
+  "narrativeHistory": "Backstory",
   "randomize": "Randomize",
   "suggestSpecs": "Suggested",
   "resetSpecs": "Reset",
@@ -780,7 +771,7 @@
   "bodyParts": "Body parts",
   "reproductiveOrgans": "Reproductive Organs",
   "reproductiveOrgansShort": "Organs:",
-  "reproNone": "None (sterile)",
+  "reproNone": "Sterile",
   "hormoneBalance": "Endocrine Balance",
   "hormoneBalanceShort": "Endocrine:",
   "hormoneOestrogenic": "Oestrogenic",
@@ -809,12 +800,22 @@
   "scenarioPartyInventory": "Party inventory",
   "scenarioNoPartyInventory": "The party is not carrying anything yet",
   "scenarioPickPrompt": "Pick the scenario this party starts in",
+  "suggestedScenarios": "Suggested Scenarios",
+  "otherScenarios": "Other Scenarios",
+  "simpleMode": "Simple mode",
+  "detailedMode": "Detailed mode",
+  "toggleModeTooltip": "Toggle between Simple and Detailed creation mode",
+  "petDesc": "A companion attuned to the surrounding ecosystem. Resilient, vigilant, and devoted to trailing and safeguarding the party.",
+  "petDescKind": "A wilderness {kind} companion attuned to the surrounding ecosystem.",
   "returnToParty": "Return to Party Configuration",
   "startingFunds": "Starting Funds",
   "skillCount": "{n} skills",
   "traitCount": "{n} traits",
   "entryCount": "{n} entries",
   "primaryArchetype": "Primary Archetype",
+  "weaponSlotsHeld": "Weapons held: {n}",
+  "deletePreset": "Delete Dossier",
+  "deletePresetBody": "Delete the dossier of {name}? This cannot be undone.",
   "secondaryArchetype": "Secondary Archetype",
   "vital": "Vital",
   "archetypeBoardHint": "Pick one archetype for a baseline body, or add a second to splice a hybrid.",
@@ -853,9 +854,9 @@
   "petKindCreatures": "Creatures",
   "petKindConstructs": "Constructs",
   "petKindUndead": "Undead",
-  "petSearchPlaceholder": "Search companion monsters...",
+  "petSearchPlaceholder": "Search familiar monsters...",
   "petCount": "{n} monsters",
-  "petNoneFound": "No companion monsters match this filter",
+  "petNoneFound": "No familiar monsters match this filter",
   "petSpecies": "Species",
   "petClassification": "Classification",
   "petMaxHp": "Max HP",
@@ -889,7 +890,7 @@
   },
   "politicalGraph": "Graph",
   "openPoliticalGraph": "Open the political graph",
-  "classProfile": "Class Profile",
+  "classProfile": "Class Skills",
   "estimatedValue": "Estimated Value",
   "standardIssueGear": "Standard issue item or gear.",
   "settings": "Settings",
@@ -900,7 +901,7 @@
   "spriteClickHint": "Sprite: click to open the grid selector",
   "bustLockedHint": "Preset portrait (locked)",
   "bustClickHint": "Portrait: click to choose a bust",
-  "professionJob": "Profession / Starting Occupation",
+  "professionJob": "Profession",
   "defaultName": "Hero",
   "defaultClassName": "Operative",
   "bio": {
@@ -949,8 +950,8 @@
     "noDonor": "None (Incompatible donor)",
     "noRecipient": "None (Requires matched donor)",
     "traitLabel": "Trait:",
-    "bloodStandard": "Standard ABO / Rh",
-    "bloodExotic": "Synthetic, Rare & Exotic",
+    "bloodStandard": "Standard Blood",
+    "bloodExotic": "Exotic Blood",
     "bloodTrait": {
       "O_NEG": "🌟 Universal Donor for all standard ABO/Rh patients.",
       "AB_POS": "🧬 Universal Recipient (safely receives all standard ABO/Rh blood).",
@@ -960,9 +961,9 @@
       "BOMBAY_HH": "🔬 Bombay Phenotype (Lacks H antigen; universal emergency red cell donor, receives only Bombay hh).",
       "RARE_ANTIGEN": "🧬 Rare Antigen-Null profile (Requires matched antigen donor for safe repeat transfusion)."
     },
-    "jobless": "Jobless / Unemployed",
-    "joblessOption": "Jobless / No occupation",
-    "joblessShort": "Jobless",
+    "jobless": "Unemployed",
+    "joblessOption": "None",
+    "joblessShort": "Unemployed",
     "jobGear": "Starting job gear & tools granted:",
     "noJobGear": "No initial professional equipment or work tools provided.",
     "noBackstory": "No backstory recorded yet."
@@ -976,7 +977,7 @@
   "preset": "Preset",
   "presetDossiers": "Preset Dossiers",
   "onlyOnePreset": "Only 1 preset character allowed in the party",
-  "romanceTab": "Romance & Bonds",
+  "romanceTab": "Romance",
   "romance": {
     "romanticOrientation": "Romantic Orientation",
     "sexualOrientation": "Sexual Orientation",
@@ -992,5 +993,15 @@
     "summaryTitle": "Attachment Record",
     "summaryPara1": "<b>{name}</b> falls in love as a <b>{romantic}</b> and desires as a <b>{sexual}</b>, and holds to a <b>{style}</b> way of being tied to somebody.",
     "summaryPara2": "On the Kinsey scale they are recorded at step <b>{kinsey}</b>:"
-  }
+  },
+  "vehiclesTab": "Vehicles",
+  "vehicleCount": "{n} selected",
+  "vehicleOwned": "In the garage",
+  "vehicleFree": "Not taken",
+  "vehicleKeys": "Keys in the pack",
+  "vehicleNoneTaken": "Nothing in the garage. You set out on foot.",
+  "vehicleGarage": "Your garage",
+  "vehicleRequired": "Story mode needs one vehicle before you can set out.",
+  "vehicleTake": "Take this vehicle",
+  "vehicleDrop": "Leave it behind"
 }

@@ -139,7 +139,9 @@
 
                     // Icon selection: Folder vs File
                     const isFolder = item.type === 'directory';
-                    const iconHTML = window.HypernetOS.getIconHTML(isFolder ? 191 : 190, 32);
+                    // A stand-in executable wears the icon of the program it opens.
+                    const ownerApp = item.app && window.HypernetOS._apps[item.app];
+                    const iconHTML = window.HypernetOS.getIconHTML(isFolder ? 191 : (ownerApp ? ownerApp.icon : 190), 32);
 
                     itemEl.innerHTML = `
                         <div  class="hn-style-0096">
@@ -147,6 +149,33 @@
                         </div>
                         <div  class="hn-style-0097">${escapeHtml(item.name)}</div>
                     `;
+
+                    // Right click: open, send to the Recycle Bin, properties.
+                    itemEl.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const CM = window.HypernetOS.ContextMenu;
+                        const fs = window.HypernetFileSystem;
+                        if (!CM) return;
+                        const filePath = `${currentPath}/${item.name}`;
+                        const items = [{ label: T('HypernetOS.context.open'), bold: true, action: () => openItem(item) }];
+                        if (!isFolder) {
+                            items.push({ separator: true });
+                            items.push({ label: T('MyComputer.delete'), action: () => {
+                                const go = () => { if (fs.recycle(filePath)) refreshGrid(); };
+                                if (fs.getRegistry('recycleConfirm', true)) {
+                                    window.HypernetOS.Dialog.confirm(T('MyComputer.deleteConfirm', { file: item.name }), T('MyComputer.deleteTitle')).then(ok => { if (ok) go(); });
+                                } else go();
+                            } });
+                        }
+                        items.push({ separator: true });
+                        items.push({ label: T('HypernetOS.context.properties'), action: () => {
+                            const node = fs.resolvePath(filePath);
+                            const size = node && node.type === 'file' ? String(node.content || '').length : (fs.walk(filePath).length);
+                            window.HypernetOS.Dialog.alert(T('MyComputer.propsBody', { name: item.name, type: isFolder ? T('MyComputer.typeFolder') : (item.mime || T('MyComputer.typeFile')), size: size, location: currentPath.replace(/\//g, '\\') }), T('MyComputer.propsTitle', { name: item.name }));
+                        } });
+                        CM.show(e.clientX, e.clientY, items);
+                    });
 
                     // Single-click selection visual highlight (for premium feel)
                     itemEl.addEventListener('click', (e) => {
@@ -185,17 +214,11 @@
                     refreshGrid();
                     if (window.SoundManager) SoundManager.playCursor();
                 } else {
-                    // Open File! Extension support (txt for Notepad)
-                    const filePath = `${currentPath}/${item.name}`;
-                    if (item.name.toLowerCase().endsWith('.txt')) {
-                        if (window.HypernetNotepad) {
-                            window.HypernetNotepad.openFile(filePath);
-                        } else {
-                            alert(T('MyComputer.cannotOpen', { file: item.name }));
-                        }
-                    } else {
-                        alert(T('MyComputer.unsupportedType'));
-                    }
+                    // Open File! The OS decides which program owns the
+                    // document (txt: Notepad, png: Pain, csv: Hexcel, md: Wyrd,
+                    // a stand-in executable: its program) and shows its own
+                    // "cannot open this file" box for anything else.
+                    window.HypernetOS.openFile(`${currentPath}/${item.name}`);
                 }
             };
 
@@ -228,7 +251,7 @@
                     currentPath = newPath;
                     refreshGrid();
                 } else {
-                    alert(T('MyComputer.dirNotFound', { path: newPath }));
+                    window.HypernetOS.Dialog.error(T('MyComputer.dirNotFound', { path: newPath }), T('MyComputer.myComputer'));
                     addressBar.value = currentPath;
                 }
             };

@@ -302,10 +302,6 @@
       "title": "",
       "description": ""
     },
-    "combatCards": {
-      "title": "",
-      "description": ""
-    },
     "combatSummons": {
       "title": "",
       "description": ""
@@ -1058,7 +1054,7 @@
     },
     "nausea": {
       "title": "Stato: Nausea",
-      "description": "Consuma il 10% degli MP massimi ogni turno. Non svanisce da solo. E ti segue fuori dalla battaglia.",
+      "description": "Riduce la DES del 25%. Non svanisce da solo. E ti segue fuori dalla battaglia.",
       "type": "state"
     },
     "drunk": {

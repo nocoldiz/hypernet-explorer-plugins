@@ -14,6 +14,11 @@
       "discoveredBy": "Discovered By",
       "year": "Year",
       "origin": "Origin"
+    },
+    "sections": {
+      "properties": "Properties",
+      "description": "Description",
+      "legend": "Legend"
     }
   },
   "categories": {

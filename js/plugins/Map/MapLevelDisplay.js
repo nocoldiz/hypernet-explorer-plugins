@@ -165,6 +165,15 @@
             mapName = this._doorNameOverride;
         }
 
+        // A deed beats every other name: standing inside a floor the party owns
+        // (bought, built or inherited from a companion), the banner says whose
+        // house it is rather than repeating the reused interior template's name.
+        const H = window.ProceduralHouseSystem;
+        if (H && typeof H.isInsideHouse === 'function' && typeof H.isCurrentFloorOwned === 'function'
+            && H.isInsideHouse() && H.isCurrentFloorOwned()) {
+            mapName = window.T ? window.T('ProceduralHouse.yourHouse') : mapName;
+        }
+
         // A named world square (Paris, Milano, ...) names the OPEN SURFACE of that
         // square and nothing else. This used to read _procGenData.originX/originY
         // alone, and those outlive the excursion: walking from Paris into a fire
@@ -206,10 +215,34 @@
 
     const _Scene_Map_createMapNameWindow = Scene_Map.prototype.createMapNameWindow;
     Scene_Map.prototype.createMapNameWindow = function () {
-        // Use our custom window instead of the default one
-        const rect = this.mapNameWindowRect();
-        this._mapNameWindow = new Window_MapNameWithBorder(rect);
-        this.addChild(this._mapNameWindow);
+        // Use our custom window instead of the default one. If it refuses to
+        // build, the engine's own one is put up instead: every frame of the map
+        // asks this window to close itself while a message is up, and a scene
+        // without one takes the whole game down with it.
+        try {
+            const rect = this.mapNameWindowRect();
+            this._mapNameWindow = new Window_MapNameWithBorder(rect);
+            this.addChild(this._mapNameWindow);
+        } catch (e) {
+            console.error('MapLevelDisplay: map name window failed', e);
+            if (_Scene_Map_createMapNameWindow) _Scene_Map_createMapNameWindow.call(this);
+        }
+    };
+
+    // ...and the two places the engine talks to that window without ever
+    // asking whether it is there. A map reached by a route that never built
+    // one (a scene rebuilt under an overlay, a stripped build) must not throw
+    // on every frame a line of dialogue is on screen.
+    const _Scene_Map_updateMapNameWindow = Scene_Map.prototype.updateMapNameWindow;
+    Scene_Map.prototype.updateMapNameWindow = function () {
+        if (!this._mapNameWindow) return;
+        _Scene_Map_updateMapNameWindow.call(this);
+    };
+
+    const _Scene_Map_stop = Scene_Map.prototype.stop;
+    Scene_Map.prototype.stop = function () {
+        if (!this._mapNameWindow) this._mapNameWindow = { close() {} };
+        _Scene_Map_stop.call(this);
     };
 
     //-----------------------------------------------------------------------------

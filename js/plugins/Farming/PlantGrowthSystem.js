@@ -1183,6 +1183,13 @@
       return !!(this._rec && !this._rec.removed && this._rec.plantId);
     }
 
+    // The panel is a column down one edge, so the plot it talks about stays in
+    // view behind it: the map snapshot is shown as it is, never blurred.
+    createBackground() {
+      this._backgroundSprite = new Sprite(SceneManager.backgroundBitmap());
+      this.addChild(this._backgroundSprite);
+    }
+
     _plotLabel() {
       return plotLabel(this._mapId, this._eventId, this._tile);
     }
@@ -1236,7 +1243,7 @@
       loadUIResources();
 
       this._dndContainer = document.createElement('div');
-      this._dndContainer.id = 'menu-container';
+      this._dndContainer.id = 'plantgrow-panel';
       document.body.appendChild(this._dndContainer);
 
       this._dndContainer.addEventListener('contextmenu', (e) => {
@@ -1288,114 +1295,79 @@
         readyClass = inSeason ? "crop--growing" : "crop--dormant";
       }
 
-      const leftPageHTML = `
-        <div class="tools-pockets plant-02">
-          <div>
-            <h2 class="title plant-03">${T('Plant.ui.cropPlot')}</h2>
-            <div class="plant-desc plant-04">${this._plotLabel()}</div>
-            
-            <div class="plant-05">
-              <div class="portrait-frame plant-06">
-                <canvas id="plant-sprite-canvas" width="96" height="96"></canvas>
-              </div>
-              <div class="plant-07">
-                ${rec.plantId}
-              </div>
-              <div class="plant-08">
-                ${T('PlantGrowth.stageLine', { name: stageName(rec.stage), n: rec.stage })}
-              </div>
-            </div>
-
-            <div class="vitals-box plant-09">
-              <div class="vital-row plant-10">
-                <span class="vital-lbl plant-11">${T('PlantGrowth.growthLabel')}</span>
-                <div class="flask-container plant-12">
-                  <div class="flask-fill hp-fill plant-13" style="width:${progressPercent}%"></div>
-                </div>
-                <span class="vital-vals plant-14">${progressPercent}%</span>
-              </div>
-              <div class="plant-15">
-                ${T('PlantGrowth.dayOf', { day: Math.floor(rec.effectiveGrowthMinutes / MINUTES_PER_DAY), total: def.growthDays })}
-              </div>
-            </div>
-
-            <div class="cc-dossier-card plant-16">
-              <div class="cc-dossier-row">
-                <span class="cc-dossier-label">${T('PlantGrowth.expectedYield')}</span>
-                <span class="cc-dossier-value plant-17" style="color:${canYield ? 'var(--text-text-alt-11)' : 'var(--text-text-alt-25)'}">${yieldText}</span>
-              </div>
-              <div class="cc-dossier-row plant-18">
-                <span class="cc-dossier-label">${T('PlantGrowth.produces')}</span>
-                <span class="cc-dossier-value plant-19">
-                  <span class="plant-20" style="background:url('img/system/IconSet.png') -${x}px -${y}px no-repeat"></span>
-                  <strong>${itemName}</strong>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
       const harvestEnabled = rec.stage >= 2;
-      const harvestOpacity = harvestEnabled ? 1.0 : 0.45;
-      const harvestPointerEvents = harvestEnabled ? "auto" : "none";
-
-      const rightPageHTML = `
-        <div class="tools-pockets plant-02">
-          <div>
-            <h2 class="title plant-03">${T('PlantGrowth.conditionsActions')}</h2>
-            <div class="plant-desc plant-04">${T('PlantGrowth.plotBlurb')}</div>
-
-            <div class="cc-dossier-card plant-21">
-              <div class="cc-subheader plant-22">${T('PlantGrowth.growingConditions')}</div>
-              <div class="cc-dossier-row">
-                <span class="cc-dossier-label">${T('PlantGrowth.seasonLabel')}</span>
-                <span class="cc-dossier-value plant-23">${curSeason}</span>
-              </div>
-              <div class="cc-dossier-row">
-                <span class="cc-dossier-label">${T('PlantGrowth.greenhouseLabel')}</span>
-                <span class="cc-dossier-value">${greenhouse ? T('PlantGrowth.greenhouseYes') : T('PlantGrowth.no')}</span>
-              </div>
-              <div class="cc-dossier-row">
-                <span class="cc-dossier-label">${T('PlantGrowth.weatherLabel')}</span>
-                <span class="cc-dossier-value">${currentWeather().toUpperCase()} (${speedMult.toFixed(1)}x)</span>
-              </div>
-              <div class="cc-dossier-row">
-                <span class="cc-dossier-label">${T('PlantGrowth.growthSpeed')}</span>
-                <span class="cc-dossier-value plant-17" style="color:${currentMult > 0 ? 'var(--text-text-alt-11)' : 'var(--text-text-alt-25)'}">${currentMult.toFixed(1)}x</span>
-              </div>
-              <div class="cc-dossier-row plant-18">
-                <span class="cc-dossier-label">${T('PlantGrowth.readyLabel')}</span>
-                <span class="cc-dossier-value plant-17 ${readyClass}">${readyEstimateText}</span>
-              </div>
-            </div>
-
-            <div class="cc-subheader plant-22">${T('PlantGrowth.actions')}</div>
-            <div class="plant-grid">
-              <div class="command-item focusable plant-03" style="opacity:${harvestOpacity}; pointer-events:${harvestPointerEvents}" onclick="SceneManager._scene._onHarvest()">
-                ${iconHtml(263)}
-                <span class="plant-17">${T('PlantGrowth.cmd.harvest')}</span>
-              </div>
-              <div class="command-item focusable plant-24" onclick="SceneManager._scene._onRemove()">
-                ${iconHtml(217)}
-                <span class="plant-17">${T('PlantGrowth.clearPlot')}</span>
-              </div>
-              <div class="command-item focusable" onclick="SceneManager._scene.popScene()">
-                ${iconHtml(186)}
-                <span>${T('PlantGrowth.close')}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
 
       this._dndContainer.innerHTML = `
-        <div class="book-spread">
-          <div class="left-page">
-            ${leftPageHTML}
+        <div class="pgrow-header">
+          <span class="pgrow-title">${iconHtml(263)} ${T('Plant.ui.cropPlot')}</span>
+          <span class="pgrow-header-spacer"></span>
+          <button class="pgrow-close focusable" type="button" tabindex="0" onclick="SceneManager._scene.popScene()">✕</button>
+        </div>
+        <div class="pgrow-body">
+          <div class="pgrow-plot">${this._plotLabel()}</div>
+
+          <div class="pgrow-hero">
+            <canvas id="plant-sprite-canvas" width="96" height="96"></canvas>
+            <div class="pgrow-hero-text">
+              <div class="pgrow-hero-name">${rec.plantId}</div>
+              <div class="pgrow-hero-sub">${T('PlantGrowth.stageLine', { name: stageName(rec.stage), n: rec.stage })}</div>
+            </div>
           </div>
-          <div class="right-page">
-            ${rightPageHTML}
+
+          <div class="pgrow-bar-row">
+            <span class="pgrow-lbl">${T('PlantGrowth.growthLabel')}</span>
+            <div class="pgrow-bar"><div class="pgrow-bar-fill" style="width:${progressPercent}%"></div></div>
+            <span class="pgrow-val">${progressPercent}%</span>
+          </div>
+          <div class="pgrow-note">${T('PlantGrowth.dayOf', { day: Math.floor(rec.effectiveGrowthMinutes / MINUTES_PER_DAY), total: def.growthDays })}</div>
+
+          <div class="pgrow-section-label">${T('PlantGrowth.produces')}</div>
+          <div class="pgrow-rows">
+            <div class="pgrow-row">
+              <span class="pgrow-lbl">${T('PlantGrowth.expectedYield')}</span>
+              <span class="pgrow-val ${canYield ? 'ok' : 'bad'}">${yieldText}</span>
+            </div>
+            <div class="pgrow-row">
+              <span class="pgrow-lbl">${T('PlantGrowth.produces')}</span>
+              <span class="pgrow-val"><span class="plant-20" style="background:url('img/system/IconSet.png') -${x}px -${y}px no-repeat"></span>${itemName}</span>
+            </div>
+          </div>
+
+          <div class="pgrow-section-label">${T('PlantGrowth.growingConditions')}</div>
+          <div class="pgrow-rows">
+            <div class="pgrow-row">
+              <span class="pgrow-lbl">${T('PlantGrowth.seasonLabel')}</span>
+              <span class="pgrow-val">${curSeason}</span>
+            </div>
+            <div class="pgrow-row">
+              <span class="pgrow-lbl">${T('PlantGrowth.greenhouseLabel')}</span>
+              <span class="pgrow-val">${greenhouse ? T('PlantGrowth.greenhouseYes') : T('PlantGrowth.no')}</span>
+            </div>
+            <div class="pgrow-row">
+              <span class="pgrow-lbl">${T('PlantGrowth.weatherLabel')}</span>
+              <span class="pgrow-val">${currentWeather().toUpperCase()} (${speedMult.toFixed(1)}x)</span>
+            </div>
+            <div class="pgrow-row">
+              <span class="pgrow-lbl">${T('PlantGrowth.growthSpeed')}</span>
+              <span class="pgrow-val ${currentMult > 0 ? 'ok' : 'bad'}">${currentMult.toFixed(1)}x</span>
+            </div>
+            <div class="pgrow-row">
+              <span class="pgrow-lbl">${T('PlantGrowth.readyLabel')}</span>
+              <span class="pgrow-val ${readyClass}">${readyEstimateText}</span>
+            </div>
+          </div>
+
+          <div class="pgrow-section-label">${T('PlantGrowth.actions')}</div>
+          <div class="pgrow-actions">
+            <div class="pgrow-btn focusable${harvestEnabled ? '' : ' disabled'}" onclick="SceneManager._scene._onHarvest()">
+              ${iconHtml(263)}<span>${T('PlantGrowth.cmd.harvest')}</span>
+            </div>
+            <div class="pgrow-btn focusable" onclick="SceneManager._scene._onRemove()">
+              ${iconHtml(217)}<span>${T('PlantGrowth.clearPlot')}</span>
+            </div>
+            <div class="pgrow-btn focusable" onclick="SceneManager._scene.popScene()">
+              ${iconHtml(186)}<span>${T('PlantGrowth.close')}</span>
+            </div>
           </div>
         </div>
       `;
@@ -1489,6 +1461,13 @@
       return !!(this._rec && !this._rec.removed && this._rec.plantId);
     }
 
+    // The panel is a column down one edge, so the plot it talks about stays in
+    // view behind it: the map snapshot is shown as it is, never blurred.
+    createBackground() {
+      this._backgroundSprite = new Sprite(SceneManager.backgroundBitmap());
+      this.addChild(this._backgroundSprite);
+    }
+
     _plotLabel() {
       return plotLabel(this._mapId, this._eventId, this._tile);
     }
@@ -1508,7 +1487,7 @@
       loadUIResources();
 
       this._dndContainer = document.createElement('div');
-      this._dndContainer.id = 'menu-container';
+      this._dndContainer.id = 'plantgrow-panel';
       document.body.appendChild(this._dndContainer);
 
       this._dndContainer.addEventListener('contextmenu', (e) => {
@@ -1540,17 +1519,17 @@
           if (detailEl) {
             const seasonText = def.seasons.join(", ");
             detailEl.innerHTML = `
-              <div class="cc-dossier-row plant-25">
-                <span class="cc-dossier-label">${T('Plant.ui.growingSeasons')}</span>
-                <span class="cc-dossier-value plant-23">${seasonText}</span>
+              <div class="pgrow-row">
+                <span class="pgrow-lbl">${T('Plant.ui.growingSeasons')}</span>
+                <span class="pgrow-val">${seasonText}</span>
               </div>
-              <div class="cc-dossier-row plant-25">
-                <span class="cc-dossier-label">${T('Plant.ui.growthDuration')}</span>
-                <span class="cc-dossier-value plant-17">${T('Plant.ui.days', { count: def.growthDays })}</span>
+              <div class="pgrow-row">
+                <span class="pgrow-lbl">${T('Plant.ui.growthDuration')}</span>
+                <span class="pgrow-val">${T('Plant.ui.days', { count: def.growthDays })}</span>
               </div>
-              <div class="cc-dossier-row plant-26">
-                <span class="cc-dossier-label">${T('Plant.ui.yieldRange')}</span>
-                <span class="cc-dossier-value">×${def.yieldMin} – ${def.yieldMax}</span>
+              <div class="pgrow-row">
+                <span class="pgrow-lbl">${T('Plant.ui.yieldRange')}</span>
+                <span class="pgrow-val">×${def.yieldMin} – ${def.yieldMax}</span>
               </div>
             `;
           }
@@ -1566,7 +1545,7 @@
         if (stageLbl) stageLbl.innerText = "";
 
         const detailEl = document.getElementById("preview-seed-details");
-        if (detailEl) detailEl.innerHTML = `<p style='text-align:center; font-style: normal;'>${T('Plant.ui.goBackToMap')}</p>`;
+        if (detailEl) detailEl.innerHTML = `<div class="pgrow-note">${T('Plant.ui.goBackToMap')}</div>`;
 
         const canvas = document.getElementById("plant-preview-canvas");
         if (canvas) {
@@ -1615,92 +1594,51 @@
       const greenhouse = isGreenhouse();
       const weather = currentWeather().toUpperCase();
 
-      const leftPageHTML = `
-        <div class="tools-pockets plant-02">
-          <div>
-            <h2 class="title plant-03">${T('Plant.ui.emptyPlot')}</h2>
-            <div class="plant-desc plant-04">${this._plotLabel()}</div>
-            
-            <div class="plant-05">
-              <div class="portrait-frame plant-06">
-                <canvas id="plant-preview-canvas" width="96" height="96"></canvas>
-              </div>
-              <div class="plant-07" id="preview-seed-name">
-                ${T('Plant.ui.selectASeed')}
-              </div>
-              <div class="plant-08" id="preview-stage-name">
-                -
-              </div>
-            </div>
-
-            <div id="preview-seed-details" class="cc-dossier-card plant-27">
-              <p class="plant-28">
-                ${T('PlantGrowth.pickSeedHint')}
-              </p>
-            </div>
-
-            <div class="cc-dossier-card plant-29">
-              <p class="plant-30">
-                "${T('PlantGrowth.seedBlurb')}"
-              </p>
-            </div>
-          </div>
-        </div>
-      `;
-
-      let seedGridHTML = "";
+      let seedListHTML = "";
       for (const [id, def] of Object.entries(PLANT_DB)) {
         const canAfford = $gameParty ? $gameParty.gold() >= def.cost : false;
         const inSeason = greenhouse || def.seasons.includes(curSeason);
-
         const priceText = (def.cost / 100).toFixed(2) + "€";
-        const seasonClass = inSeason ? "seed-dot--in-season" : "seed-dot--out-of-season";
-        const costClass = canAfford ? "cost--ok" : "cost--short";
-
-        seedGridHTML += `
-          <div class="command-item focusable plant-31" data-plant="${id}" onclick="SceneManager._scene.onPlantSeedClick('${id}')">
-            <div class="plant-32">
-              <span class="plant-33 ${seasonClass}"></span>
-              <span class="plant-17">${id}</span>
-              <span class="plant-34">(${def.growthDays}d)</span>
-            </div>
-            <div class="plant-35 ${costClass}">
-              ${priceText}
-            </div>
+        seedListHTML += `
+          <div class="pgrow-seed focusable${canAfford ? '' : ' unaffordable'}" data-plant="${id}" onclick="SceneManager._scene.onPlantSeedClick('${id}')">
+            <span class="pgrow-seed-dot ${inSeason ? 'in-season' : 'out-of-season'}"></span>
+            <span class="pgrow-seed-name">${id}</span>
+            <span class="pgrow-seed-days">${T('Plant.ui.days', { count: def.growthDays })}</span>
+            <span class="pgrow-seed-cost ${canAfford ? 'ok' : 'bad'}">${priceText}</span>
           </div>
         `;
       }
 
-      const rightPageHTML = `
-        <div class="tools-pockets plant-02">
-          <div class="plant-36">
-            <h2 class="title plant-03">${T('PlantGrowth.seeds')}</h2>
-            
-            <div class="plant-37">
-              <span>${T('PlantGrowth.seasonLabel')} <strong>${curSeason}</strong></span>
-              <span>${T('PlantGrowth.weatherLabel')} <strong>${weather}</strong></span>
-              <span>${T('PlantGrowth.greenhouseLabel')} <strong>${greenhouse ? T('PlantGrowth.yes') : T('PlantGrowth.no')}</strong></span>
-            </div>
-
-            <div class="plant-grid plant-38">
-              ${seedGridHTML}
-            </div>
-
-            <div class="command-item focusable plant-39" onclick="SceneManager._scene.popScene()">
-              ${iconHtml(186)}
-              <span class="plant-17">${T('Plant.ui.close')}</span>
+      this._dndContainer.innerHTML = `
+        <div class="pgrow-header">
+          <span class="pgrow-title">${iconHtml(263)} ${T('PlantGrowth.seeds')}</span>
+          <span class="pgrow-header-spacer"></span>
+          <button class="pgrow-close focusable" type="button" tabindex="0" onclick="SceneManager._scene.popScene()">✕</button>
+        </div>
+        <div class="pgrow-conditions">
+          <span>${T('PlantGrowth.seasonLabel')} <strong>${curSeason}</strong></span>
+          <span>${T('PlantGrowth.weatherLabel')} <strong>${weather}</strong></span>
+          <span>${T('PlantGrowth.greenhouseLabel')} <strong>${greenhouse ? T('PlantGrowth.yes') : T('PlantGrowth.no')}</strong></span>
+        </div>
+        <div class="pgrow-body">
+          <div class="pgrow-plot">${T('Plant.ui.emptyPlot')} - ${this._plotLabel()}</div>
+          <div class="pgrow-seedlist">
+            ${seedListHTML}
+            <div class="pgrow-btn focusable" onclick="SceneManager._scene.popScene()">
+              ${iconHtml(186)}<span>${T('Plant.ui.close')}</span>
             </div>
           </div>
         </div>
-      `;
-
-      this._dndContainer.innerHTML = `
-        <div class="book-spread">
-          <div class="left-page">
-            ${leftPageHTML}
+        <div class="pgrow-aside">
+          <div class="pgrow-hero">
+            <canvas id="plant-preview-canvas" width="96" height="96"></canvas>
+            <div class="pgrow-hero-text">
+              <div class="pgrow-hero-name" id="preview-seed-name">${T('Plant.ui.selectASeed')}</div>
+              <div class="pgrow-hero-sub" id="preview-stage-name">-</div>
+            </div>
           </div>
-          <div class="right-page">
-            ${rightPageHTML}
+          <div class="pgrow-rows" id="preview-seed-details">
+            <div class="pgrow-note">${T('PlantGrowth.pickSeedHint')}</div>
           </div>
         </div>
       `;

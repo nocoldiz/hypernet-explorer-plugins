@@ -153,8 +153,11 @@
         thumb.position.set(w / 2 + 0.004, 0.028, 0.018);
         thumb.rotation.set(0.5, 0, -0.9);
         group.add(thumb);
-        const wrist = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.032, o.cuff || 0.05, this.seg(11, 7)), o.cuffMat || mat);
-        wrist.position.y = -0.05;
+        const cuffH = o.cuff || 0.05;
+        const wrist = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.032, cuffH, this.seg(11, 7)), o.cuffMat || mat);
+        // Hang the cuff off the bottom of the palm rather than at a fixed
+        // height: a short cuff used to float clear of the hand entirely.
+        wrist.position.y = (0.02 - 0.085 / 2) + 0.004 - cuffH / 2;
         wrist.scale.z = 0.72;
         group.add(wrist);
         return group;
@@ -322,9 +325,12 @@
           shaft.position.set(x, 0.078, 0.024);
           shaft.rotation.x = -0.35;
           group.add(shaft);
+          // The cup caps the shaft it belongs to rather than sitting at a
+          // guessed height: placed in group space it floated off the tilted
+          // tee entirely.
           const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.003, 0.008, this.seg(9, 6)), tee);
-          cup.position.set(x, 0.104, 0.033);
-          group.add(cup);
+          cup.position.set(0, 0.028, 0);
+          shaft.add(cup);
         }
         const strap = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.018, 0.06), velcro);
         strap.position.set(0, -0.03, 0.008);
@@ -635,15 +641,20 @@
           edge.scale.z = 0.8;
           group.add(edge);
         }
-        // The straps that hold them, buckled on the inside.
+        // The straps that hold them, buckled on the inside. They are spaced
+        // along the plate stack itself, which is much shorter than the arm:
+        // spacing them by a fixed step left two of them hanging in the air
+        // below the guard.
+        const plateRun = 0.032 * (plates - 1) / plates;
         for (let i = 0; i < 3; i++) {
+          const y = -0.06 - (i / 2) * plateRun;
           const strap = new THREE.Mesh(new THREE.TorusGeometry(0.033, 0.005, this.seg(4, 3), this.seg(12, 7)), leather);
           strap.rotation.x = Math.PI / 2;
-          strap.position.y = -0.07 - i * 0.07;
+          strap.position.y = y;
           strap.scale.z = 0.8;
           group.add(strap);
           const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.014, 0.004), brass);
-          buckle.position.set(0, -0.07 - i * 0.07, -0.028);
+          buckle.position.set(0, y, -0.028);
           group.add(buckle);
         }
         return group;
@@ -780,16 +791,20 @@
         heel.position.set(0, -0.03, -0.05);
         group.add(heel);
         // Laces and eyelets up the tongue.
+        // The lacing is spread over the length of the upper rather than
+        // stepped by a fixed amount: the last eyelet used to sit past the
+        // front of the boot, in the air over the toe.
         const eyelets = this.isLowDetail() ? 3 : 5;
         for (let i = 0; i < eyelets; i++) {
+          const lz = 0.005 + (i / (eyelets - 1)) * 0.076;
           for (const s of [-1, 1]) {
             const e = new THREE.Mesh(new THREE.TorusGeometry(0.004, 0.0015, this.seg(4, 3), this.seg(8, 5)), steel);
-            e.position.set(s * 0.026, 0.05, 0.02 + i * 0.022);
+            e.position.set(s * 0.026, 0.05, lz);
             e.rotation.x = Math.PI / 2;
             group.add(e);
           }
           const cross = new THREE.Mesh(new THREE.BoxGeometry(0.052, 0.003, 0.003), lace);
-          cross.position.set(0, 0.052, 0.03 + i * 0.022);
+          cross.position.set(0, 0.052, lz + 0.009);
           cross.rotation.y = (i % 2 ? 1 : -1) * 0.3;
           group.add(cross);
         }
@@ -999,10 +1014,12 @@
             group.add(sc);
           }
         }
+        // The spines sit along the cuff. Stepped down the forearm they ran
+        // off the end of the model and hung in the air below the hand.
         const spines = this.isLowDetail() ? 2 : 4;
         for (let i = 0; i < spines; i++) {
           const sp = new THREE.Mesh(new THREE.ConeGeometry(0.008, 0.03, this.seg(6, 4)), horn);
-          sp.position.set(0.036, -0.05 - i * 0.03, 0);
+          sp.position.set(0.036, -0.022 - (i / Math.max(1, spines - 1)) * 0.024, 0);
           sp.rotation.z = -1.2;
           group.add(sp);
         }

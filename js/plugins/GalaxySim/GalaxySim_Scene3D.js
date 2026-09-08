@@ -216,7 +216,11 @@
       if (typeof name !== "string" || !name.startsWith("GX.")) return null;
       const seed = parseInt(name.split(".")[1], 10);
       if (!Number.isFinite(seed)) return null;
-      return { name: null, seed, parentScale: SCALE_GALAXY, parentCluster: null };
+      const S = GS.Math && GS.Math.Strangeness;
+      return {
+        name: null, seed, parentScale: SCALE_GALAXY, parentCluster: null,
+        tier: S ? S.tierOfSeed(seed) : 0,
+      };
     }
 
     _createOverlay() {
@@ -242,6 +246,10 @@
       const renderer = new THREE.WebGLRenderer({
         antialias: true,
         powerPreference: "high-performance",
+        // The scales run from a 0.01 unit near plane out to a 200000 unit far
+        // one, a 2e6 ratio a 24-bit depth buffer cannot hold without z-fighting
+        // at the far end. A logarithmic buffer carries it.
+        logarithmicDepthBuffer: true,
       });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
       renderer.setSize(w, h);
@@ -396,7 +404,12 @@
 
       const r = this._cosmicView.radius || 1500;
       this._rig.minDistance = r * 0.12;
-      this._rig.maxDistance = r * 6;
+      // Every scale but the last has another one above it, so its outer band
+      // is a doorway and the camera may run past it. The last one has nothing
+      // above it: pulling out there used to leave the whole universe as a
+      // speck in the middle of a black screen, with no way to tell the zoom
+      // was still working. It stops at the edge of what it is drawing.
+      this._rig.maxDistance = scale === MAX_SCALE ? r * 2.4 : r * 6;
       // Panning may drift a view's width off centre and no further: past that
       // the scale is empty space with nothing to look at or click (see
       // CameraRig.clampPan).
@@ -440,10 +453,14 @@
     _enterWebCluster(index) {
       if (this._scale !== SCALE_FILAMENTS) return;
       const seed = GS.Scene3DCosmos.clusterSeed(index);
+      // The node's own tier, read off the web before it is torn down: it is
+      // what makes everything inside this cluster ordinary or impossible.
+      const cv = this._cosmicView;
+      const tier = (cv && cv.nodeTier) ? cv.nodeTier(index) : 0;
       this._teardownScaleContent();
       this._flashTransition();
-      this._webCluster = { index, seed };
-      this._cosmicView = GS.Scene3DCosmos.buildProceduralCluster({ seed });
+      this._webCluster = { index, seed, tier };
+      this._cosmicView = GS.Scene3DCosmos.buildProceduralCluster({ seed, tier });
       this._scene.add(this._cosmicView.group);
       this._pickTargets = this._cosmicView.pickables || [];
       this._refreshBookmarkMarkers();
@@ -480,7 +497,7 @@
     // back into a remembered procedural galaxy instead of deriving a fresh
     // seed from `name` (which, for that path, may not even be known - see
     // _returnGalaxyFocus).
-    _enterGalaxyFocus(name, forced) {
+    _enterGalaxyFocus(name, forced, tierHint) {
       // The re-entry path (see _returnGalaxyFocus) may not know the galaxy's
       // display name (e.g. right after a save load) - fall back to the same
       // default buildProceduralGalaxy itself uses rather than a blank label.
@@ -488,10 +505,17 @@
       const parentScale = forced ? forced.parentScale : this._scale;
       const parentCluster = forced ? forced.parentCluster
         : (this._webCluster ? this._webCluster.index : null);
-      const seed = forced ? forced.seed : GS.Scene3DCosmos.galaxySeedFromName(name);
+      // A galaxy out in the far web is a strange place, and the tier that
+      // says how strange is stamped into its seed here, once, at the moment
+      // it is first named (see GalaxySim.Math.Strangeness).
+      const tier = forced && forced.tier != null ? forced.tier
+        : (tierHint != null ? tierHint
+          : (this._webCluster ? (this._webCluster.tier || 0) : 0));
+      const seed = forced ? forced.seed
+        : GS.Scene3DCosmos.galaxySeedFromName(name, tier);
       this._teardownScaleContent();
       this._flashTransition();
-      this._galaxyFocus = { name, seed, parentScale, parentCluster };
+      this._galaxyFocus = { name, seed, parentScale, parentCluster, tier };
       // Freshly looking at the galaxy's own cosmic view again; the return path
       // is only meaningful once we dive into one of its systems (re-derived by
       // _enterScale(SCALE_SYSTEM, ...) at that point).
@@ -645,35 +669,30 @@
 
     _updateModeHint() {
       if (!this._overlayUI) return;
-      // With a controller plugged in the hints name its buttons (Xbox layout,
-      // expanded into chips by the overlay) instead of keys nobody is holding.
-      this._hintPad = !!(window.AnalogStickInput && AnalogStickInput.hasPad &&
-        AnalogStickInput.hasPad());
-      const hint = (key, params) => this._hintPad
-        ? T('Galaxy.hintPad.' + key, params)
-        : T('Galaxy.hint.' + key, params);
+      // The mode line says WHERE the view is and stops there. It used to carry
+      // a legend of keys and pad buttons for every scale; the game prints no
+      // control hints (docs/task/ui_fixing.md), so the scale name is the line.
       if (this._mode === "fly") {
-        this._overlayUI.setModeHint(hint('cockpit'));
+        this._overlayUI.setModeHint(`<b>${T('Galaxy.scale.cockpit')}</b>`);
         return;
       }
-      let scaleName, tail;
+      let scaleName;
       if (this._scale === SCALE_SYSTEM && this._planetFocus) {
-        scaleName = T('Galaxy.scale.planet'); tail = hint('planet');
+        scaleName = T('Galaxy.scale.planet');
       } else if (this._scale === SCALE_SYSTEM) {
-        scaleName = T('Galaxy.scale.system'); tail = hint('system');
+        scaleName = T('Galaxy.scale.system');
       } else if (this._scale === SCALE_GALAXY) {
-        scaleName = T('Galaxy.scale.galaxy'); tail = hint('galaxy');
+        scaleName = T('Galaxy.scale.galaxy');
       } else if (this._galaxyFocus) {
-        scaleName = this._galaxyFocus.name; tail = hint('galaxyFocus');
+        scaleName = this._galaxyFocus.name;
       } else if (this._webCluster) {
-        scaleName = T('Galaxy.scale.cluster'); tail = hint('cluster');
+        scaleName = T('Galaxy.scale.cluster');
       } else if (this._scale === SCALE_FILAMENTS) {
-        scaleName = T('Galaxy.scale.web'); tail = hint('web');
+        scaleName = T('Galaxy.scale.web');
       } else {
         scaleName = this._world.name(this._scale);
-        tail = hint('outer');
       }
-      this._overlayUI.setModeHint(hint('modeLine', { scale: scaleName, tail: tail }));
+      this._overlayUI.setModeHint(`<b>${scaleName}</b>`);
     }
 
     // Toggle orbit <-> free-fly cockpit, sharing the camera transform so the
@@ -1047,7 +1066,7 @@
       //    galaxy scale instead of a procedural stand-in.
       if (pick.kind === "galaxy" && !this._galaxyFocus) {
         if (t.name === "Milky Way") this._enterScale(SCALE_GALAXY, this._focusSystem);   // i18n-ignore: galaxy id
-        else this._enterGalaxyFocus(t.name);
+        else this._enterGalaxyFocus(t.name, null, pick.data && pick.data.tier);
         return;
       }
 
@@ -1198,17 +1217,27 @@
       }
       const cv = this._cosmicView;
       if (cv && cv.nodeAt && cv.nodeCount && !this._webCluster) {
-        // Same for the cosmic web's node cloud - every dot is a doorway.
+        // Same for the cosmic web's node cloud - every dot is a doorway. The
+        // sweep runs over POSITIONS only (cv.nodePos): the web holds thousands
+        // of nodes now, and building each one's record just to sort it and
+        // throw all but the nearest few dozen away was the cycle key's whole
+        // cost.
         const near = [];
         for (let i = 0; i < cv.nodeCount; i++) {
-          const node = cv.nodeAt(i);
-          if (node) near.push({ d: node.position.distanceTo(cam), node });
+          const at = cv.nodePos ? cv.nodePos(i) : null;
+          if (at) near.push({ d: at.distanceTo(cam), i });
+          else {
+            const node = cv.nodeAt(i);
+            if (node) near.push({ d: node.position.distanceTo(cam), i });
+          }
         }
         near.sort((a, b) => a.d - b.d);
         for (const n of near.slice(0, CYCLE_LIMIT)) {
+          const node = cv.nodeAt(n.i);
+          if (!node) continue;
           out.push({
-            kind: "cluster", data: n.node.data,
-            position: n.node.position, nodeIndex: n.node.index,
+            kind: "cluster", data: node.data,
+            position: node.position, nodeIndex: node.index,
           });
         }
       }
@@ -1409,6 +1438,14 @@
         const isParkedHere = isCurrent && !isMoving &&
           !!(ship && ship.parkedBody && ship.parkedBody.name === pick.data.name);
         const dm = this.dataManager;
+        // A lazy system carries no planets until it is materialized, so the
+        // info panel used to report every one of them as planetless (only its
+        // companions showed). Materializing on selection is cheap and
+        // deterministic, so the count the panel prints is the real one.
+        if (pick.data && pick.data.lazy && !pick.data._materialized &&
+            typeof dm.materializeLazySystem === "function") {
+          dm.materializeLazySystem(pick.data);
+        }
         const sysOpts = {
           isCurrent,
           canEnter: starBrowsable && !isMoving && !isCompanion,
@@ -1518,6 +1555,7 @@
         onTravelSystem: (name) => this._travelToSystem(name),
         onTravelPlanet: (sel) => this._travelToPlanet(sel),
         onLand: (sel) => this._landOnCurrentPlanet(sel),
+        onBridge: () => this._takeTheHelm(),
         onTeleportLocation: (loc) => this._teleportToLocation(loc),
         onBohrBridge: (sel) => this._bohrBridge(sel),
         onParkOrbit: (sel) => this._parkAtStar(sel),
@@ -1540,6 +1578,9 @@
         onReturnEarthEb: () => this._ebBridge(),
         onCloseMap: () => this.popScene(),
         onCatalogToggle: () => this._toggleCatalog(),
+        // Turning the In View filter back on re-reads the sky rather than
+        // showing whatever was in frame when the panel was opened.
+        onCatalogFilter: (on) => { if (on) this._refreshCatalogView(true); },
         onCatalogZoom: (id) => this._catalogAction(id, "zoom"),
         onCatalogCourse: (id) => this._catalogAction(id, "course"),
         onBookmarkToggle: (sel) => this._toggleBookmark(sel),
@@ -2220,7 +2261,9 @@
             id, scale: SCALE_SYSTEM, kind: "star", name: rec.system.name,
             data: rec.system, system: rec.system,
           });
-          patrons.push({ id, name: rec.name, sub: rec.sub, course: false });
+          // A patron's world is out in the Milky Way now, not a galaxy away,
+          // so a course to it is an ordinary flight plan like any other.
+          patrons.push({ id, name: rec.name, sub: rec.sub, course: true });
         });
       }
 
@@ -2273,7 +2316,73 @@
           empty: T('Galaxy.tab.patronsEmpty'),
           groups: [{ title: T('Galaxy.tab.patronWorlds'), items: patrons, life: true }],
         });
+      this._markCatalogInView(tabs);
+      // Held on to so the view filter can be re-run against a moved camera
+      // without walking every system in the galaxy again (_refreshCatalogView).
+      this._catalogTabs = tabs;
       return tabs;
+    }
+
+    /**
+     * Every body the camera has in frame right now, as a Set of the same data
+     * records the catalog files its rows under. The catalog opens filtered to
+     * these: the full list is thousands of stars long, and what is on screen is
+     * what a player asking "what is that" wants named.
+     *
+     * The test is the one picking already uses - in front of the near plane,
+     * inside the frustum - run over everything the current view can be asked
+     * about: the pickables of the built view, and, at galaxy scale, the star
+     * cloud, whose points are not objects of their own.
+     */
+    _inViewData() {
+      const set = new Set();
+      const cam = this._camera;
+      if (!cam) return set;
+      cam.updateMatrixWorld();
+      const v = this._catViewScratch || (this._catViewScratch = new THREE.Vector3());
+      const cs = this._catViewScratch2 || (this._catViewScratch2 = new THREE.Vector3());
+      const mark = (pick) => {
+        if (!pick || !pick.data || set.has(pick.data)) return;
+        if (!this._targetWorldPosition(pick, v)) return;
+        // Behind the camera (it looks down -z), past the far plane, or off the
+        // sides of the frame: not something the player can see.
+        cs.copy(v).applyMatrix4(cam.matrixWorldInverse);
+        if (cs.z >= -cam.near) return;
+        v.project(cam);
+        if (v.z > 1 || Math.abs(v.x) > 1 || Math.abs(v.y) > 1) return;
+        set.add(pick.data);
+      };
+      for (const t of (this._pickTargets || [])) mark(t);
+      if (this._scale === SCALE_GALAXY && this._galaxyView) {
+        for (const sys of (this._galaxyByIndex || [])) {
+          if (sys && sys.position) mark({ kind: "star", data: sys, system: sys });
+        }
+        for (const n of (this._galaxyView.nebulaPickables || [])) mark(n);
+      }
+      return set;
+    }
+
+    /**
+     * Stamp `inView` on every catalog row, so the panel can filter itself
+     * without knowing anything about cameras. A row whose body the current
+     * view does not draw at all (a landing site out in another system, say)
+     * is simply not in view.
+     */
+    _markCatalogInView(tabs) {
+      let vis;
+      try {
+        vis = this._inViewData();
+      } catch (err) {
+        // A catalog that cannot work out what is on screen still has to open:
+        // everything reads as in view rather than nothing.
+        console.warn("GalaxySim: in-view catalog filter failed", err);
+        vis = null;
+      }
+      const byId = new Map((this._catalogEntries || []).map((e) => [e.id, e]));
+      (tabs || []).forEach((tab) => (tab.groups || []).forEach((g) => (g.items || []).forEach((it) => {
+        const entry = byId.get(it.id);
+        it.inView = !vis || !!(entry && entry.data && vis.has(entry.data));
+      })));
     }
 
     /**
@@ -2433,9 +2542,29 @@
       if (!ov || !ov.isCatalogOpen()) return;
       const local = this._catalogLocalSystem();
       const name = local ? local.name : null;
-      if (name === this._catalogSystemName) return;
-      this._catalogSystemName = name;
-      ov.setCatalog(this._buildCatalog());
+      if (name !== this._catalogSystemName) {
+        this._catalogSystemName = name;
+        ov.setCatalog(this._buildCatalog());
+        return;
+      }
+      this._refreshCatalogView();
+    }
+
+    /**
+     * The camera moves under the open catalog, so a list filtered to what is in
+     * frame has to follow it. Only the `inView` marks are re-read - the rows
+     * themselves are the ones already built - and only a few times a second,
+     * since the sweep still projects every star at galaxy scale.
+     */
+    _refreshCatalogView(force) {
+      const ov = this._overlayUI;
+      if (!ov || !this._catalogTabs) return;
+      if (!force && !ov.isCatalogInView()) return;
+      const now = (typeof performance !== "undefined" ? performance.now() : Date.now());
+      if (!force && this._catalogViewAt && now - this._catalogViewAt < 400) return;
+      this._catalogViewAt = now;
+      this._markCatalogInView(this._catalogTabs);
+      ov.setCatalog(this._catalogTabs);
     }
 
     _catalogAction(id, what) {
@@ -2522,12 +2651,10 @@
       if (window.SoundManager) SoundManager.playCancel();
     }
 
-    /** Same keyboard/pad split as _updateModeHint, for the one line the
-     * overlay leaves on screen while the tour runs. */
+    /** The one line the overlay leaves on screen while the tour runs: the name
+     * of what is playing, not how to stop it. */
     _tourHintText() {
-      const pad = !!(window.AnalogStickInput && AnalogStickInput.hasPad &&
-        AnalogStickInput.hasPad());
-      return pad ? T('Galaxy.hintPad.grandTour') : T('Galaxy.hint.grandTour');
+      return `<b>${T('Galaxy.hud.grandTour')}</b>`;
     }
 
     /** Step to the next (or, with dir -1, previous) stop and set the rig's new
@@ -3308,6 +3435,17 @@
             SceneManager.pop();
             return;
           }
+          // A FLYBY never lands at all: the same world opens, and the party
+          // stays aboard the ship and flies it over the place. Flying it into
+          // the side of a mountain takes the mountain down and the hull with
+          // it, so this is a way of seeing a world, not a safer one.
+          if (mode === 'flyby') {
+            if (!this._liminalFlybyOn(planet, gx, gy, moonOf)) return buzz();
+            this._awardSpec("Spacecraft Piloting", 3);   // i18n-ignore: specialization id
+            if (window.SoundManager) SoundManager.playOk();
+            SceneManager.pop();
+            return;
+          }
           // Shared surface entry: builds the landed-planet descriptor
           // (atmosphere, life, satellites, palette), applies the EVA suit
           // when needed, generates the surface at the chosen grid square and
@@ -3340,10 +3478,54 @@
     // it, which is the honest answer for a comet.
     // The shared entry, so the star map and the on-foot landing-site picker
     // (Scene_AlienLandingGrid) open the same walk.
+    // ----------------------------------------------------------------------
+    // Taking the helm
+    // ----------------------------------------------------------------------
+    // The bridge, reached from the map rather than from a landing grid: the
+    // party walks onto their own bridge and flies the ship by hand over
+    // whatever world it is in orbit of. Nothing is landed and nothing is
+    // chosen - the ship is already there, and this is the pilot getting up and
+    // taking it (VoxelWorldSystem.startShipBridge).
+    _takeTheHelm() {
+      const VW = window.VoxelWorldSystem;
+      if (!VW || !VW.startShipBridge || !this._canTakeHelm()) {
+        if (window.SoundManager) SoundManager.playBuzzer();
+        return;
+      }
+      if (!VW.startShipBridge()) {
+        if (window.SoundManager) SoundManager.playBuzzer();
+        return;
+      }
+      this._awardSpec("Spacecraft Piloting", 2);   // i18n-ignore: specialization id
+      if (window.SoundManager) SoundManager.playOk();
+      SceneManager.pop();
+    }
+
+    /** Keep the rail's Bridge button in step with where the ship is. */
+    _refreshBridgeButton() {
+      if (this._overlayUI && this._overlayUI.setBridgeOffered) {
+        this._overlayUI.setBridgeOffered(this._canTakeHelm());
+      }
+    }
+
+    /** Whether there is a sky to fly the ship in: it has to be in orbit of a
+     *  world, parked, and not halfway across a system. */
+    _canTakeHelm() {
+      const ship = this.dataManager && this.dataManager.playerShip;
+      return !!(ship && !ship.isMoving && ship.currentPlanet);
+    }
+
     _liminalWalkOn(planet, gx, gy, moonOf) {
       if (!GS.startLiminalWalk) return false;
       return GS.startLiminalWalk(planet, gx, gy,
         { isMoon: !!moonOf, parentPlanet: moonOf || null });
+    }
+
+    /** The same world as the liminal walk, flown over rather than walked. */
+    _liminalFlybyOn(planet, gx, gy, moonOf) {
+      if (!GS.startLiminalWalk) return false;
+      return GS.startLiminalWalk(planet, gx, gy,
+        { isMoon: !!moonOf, parentPlanet: moonOf || null, flyby: true });
     }
 
     // Teleport the PARTY (not the ship) to a hand-authored landing site
@@ -3532,6 +3714,7 @@
       }
       const cur = this._currentSystem();
       this._overlayUI.setHomeSystem(cur ? cur.name : null);
+      this._refreshBridgeButton();
 
       // Fuel gauges + SB-Bridge availability.
       const D = GS.DataManager;
@@ -3637,7 +3820,8 @@
         const name = (pick.data && pick.data.name) || (t && t.name);
         if (!name) return null;
         if (name === "Milky Way") return () => this._enterScale(SCALE_GALAXY, this._focusSystem);   // i18n-ignore: galaxy id
-        return () => this._enterGalaxyFocus(name);
+        const tier = pick.data && pick.data.tier;
+        return () => this._enterGalaxyFocus(name, null, tier);
       }
       if (pick.kind === "star") {
         const sys = this._systemToEnter();
@@ -3817,7 +4001,7 @@
       if (best.data.home || name === "Milky Way") {   // i18n-ignore: galaxy id
         return () => this._enterScale(SCALE_GALAXY, this._focusSystem);
       }
-      return () => this._enterGalaxyFocus(name);
+      return () => this._enterGalaxyFocus(name, null, best.data && best.data.tier);
     }
 
     // ----------------------------------------------------------------------
@@ -4192,9 +4376,6 @@
         return;
       }
       this._refreshCatalogIfStale();
-      // A pad plugged in (or unplugged) mid-session swaps the hints over.
-      const pad = window.AnalogStickInput;
-      if (pad && pad.hasPad && pad.hasPad() !== this._hintPad) this._updateModeHint();
       const hasSel = !!(ov && ov.hasSelection());
       // Arrow keys / WASD drive a panel's focus ring ONLY while a panel that
       // needs them is open (selection info, catalog, or the engine panel), or

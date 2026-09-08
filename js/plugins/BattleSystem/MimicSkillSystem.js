@@ -206,7 +206,30 @@
             statModifiers: actor._statModifiers ? Object.assign({}, actor._statModifiers) : {},
             severedParts: actor._severedParts ? Object.assign({}, actor._severedParts) : {},
             paramOverrides: actor._mimicParamOverrides ? actor._mimicParamOverrides.slice() : null,
+            equips: (actor.equips() || []).map(it => it
+                ? { id: it.id, isWeapon: !!DataManager.isWeapon(it) }
+                : null),
         };
+    }
+
+    // A borrowed body has the borrowed body's slots, so anything that does not
+    // fit it is handed back to the packs on transformation. The gear is the
+    // character's, not the shape's: when the shape goes, it goes back on.
+    function restoreEquips(actor, list) {
+        if (!list || !list.length) return;
+        for (const entry of list) {
+            if (!entry) continue;
+            const item = entry.isWeapon ? $dataWeapons[entry.id] : $dataArmors[entry.id];
+            if (!item) continue;
+            if ((actor.equips() || []).some(e => e === item)) continue;
+            if (!actor.canEquip(item)) continue;
+            if (!$gameParty.hasItem(item)) continue;
+            const slot = window.HandSlots && window.HandSlots.emptySlotFor
+                ? window.HandSlots.emptySlotFor(actor, item)
+                : actor.equipSlots().findIndex((st, i) => st === item.etypeId && !actor.equips()[i]);
+            if (slot < 0) continue;
+            actor.changeEquip(slot, item);
+        }
     }
 
     // Put the character back. Called for every party member when the battle
@@ -234,6 +257,10 @@
         if (snap.bodyParts) actor._bodyParts = JSON.parse(JSON.stringify(snap.bodyParts));
         actor._statModifiers = Object.assign({}, snap.statModifiers);
         actor._severedParts = Object.assign({}, snap.severedParts);
+
+        // The old body is back, and with it the slots the old gear needs.
+        actor.refresh();
+        restoreEquips(actor, snap.equips);
 
         // The old body has the old maximums: clamp what is left of the borrowed
         // one down into them rather than handing back an over-full bar.
@@ -713,6 +740,7 @@
         kindOf: mimicKindOf,
         isMimicSkill,
         revert: revertActor,
+        snapshot: snapshotActor,
         isMimicking: actor => !!(actor && actor._mimicRevert),
     };
 

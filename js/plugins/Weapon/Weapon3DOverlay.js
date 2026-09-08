@@ -965,8 +965,18 @@
     }
 
     playReload() {
-      if (!this._model) return;
-      this.playClip('Reload');
+      // An authored GLB clip wins, as everywhere else. Everything the game
+      // actually holds is procedural and has no clips at all, so the reload
+      // goes through the ordinary animation path (WeaponSystemProcedural
+      // builds MOTIONS.reload and works the magazine on the same clock);
+      // calling playClip on a model with no mixer used to do nothing at all,
+      // which is why no procedural gun ever reloaded on screen. Sent even
+      // while the model is still loading: playAnimation keeps it pending.
+      if (this._clips && this._clips['Reload']) {
+        this.playClip('Reload');
+        return;
+      }
+      this.playAnimation('Reload');
     }
 
     playAnimation(name) {

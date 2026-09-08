@@ -618,4 +618,292 @@
             }
         }
     }
+
+    // =========================================================================
+    // Pain: the HypernetOS paint program
+    // =========================================================================
+    // The Aseprite-style maker above is the pixel tool the debug menu opens.
+    // This is the other one: a plain bitmap editor in a desktop window, with
+    // the old paint layout (tool box on the left, colour box along the
+    // bottom, primary and secondary colours on left and right click). Pictures
+    // save into the virtual file system under C:/Pictures as PNG data and can
+    // be put on the desktop as wallpaper.
+    const PAINT_APP_ID = 'app-hypernet-paint';
+    const PAINT_DIR = 'C:/Pictures';  // i18n-ignore  VFS path
+    const PAINT_COLORS = [
+        '#000000', '#808080', '#800000', '#808000', '#008000', '#008080', '#000080', '#800080',
+        '#808040', '#004040', '#0080ff', '#004080', '#8000ff', '#804000',
+        '#ffffff', '#c0c0c0', '#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff',
+        '#ffff80', '#00ff80', '#80ffff', '#8080ff', '#ff0080', '#ff8040'
+    ];
+    const PAINT_TOOLS = ['pencil', 'brush', 'eraser', 'line', 'rect', 'ellipse', 'fill', 'picker', 'text'];
+    const PAINT_W = 480, PAINT_H = 320;
+
+    function paintHexToRgba(hex) {
+        const n = parseInt(hex.replace('#', ''), 16);
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255, 255];
+    }
+
+    // Scanline flood fill on raw RGBA data. Returns how many pixels changed.
+    function paintFloodFill(data, w, h, sx, sy, rgba) {
+        if (sx < 0 || sy < 0 || sx >= w || sy >= h) return 0;
+        const at = (x, y) => (y * w + x) * 4;
+        const o = at(sx, sy);
+        const target = [data[o], data[o + 1], data[o + 2], data[o + 3]];
+        if (target[0] === rgba[0] && target[1] === rgba[1] && target[2] === rgba[2] && target[3] === rgba[3]) return 0;
+        const same = (x, y) => {
+            const i = at(x, y);
+            return data[i] === target[0] && data[i + 1] === target[1] && data[i + 2] === target[2] && data[i + 3] === target[3];
+        };
+        const set = (x, y) => { const i = at(x, y); data[i] = rgba[0]; data[i + 1] = rgba[1]; data[i + 2] = rgba[2]; data[i + 3] = rgba[3]; };
+        const stack = [[sx, sy]];
+        let count = 0;
+        while (stack.length) {
+            const [x0, y] = stack.pop();
+            let x = x0;
+            while (x >= 0 && same(x, y)) x--;
+            x++;
+            let up = false, down = false;
+            while (x < w && same(x, y)) {
+                set(x, y); count++;
+                if (y > 0) { const s = same(x, y - 1); if (s && !up) { stack.push([x, y - 1]); up = true; } else if (!s) up = false; }
+                if (y < h - 1) { const s = same(x, y + 1); if (s && !down) { stack.push([x, y + 1]); down = true; } else if (!s) down = false; }
+                x++;
+            }
+        }
+        return count;
+    }
+
+    window.HypernetPaint = {
+        COLORS: PAINT_COLORS,
+        TOOLS: PAINT_TOOLS,
+        DIR: PAINT_DIR,
+        floodFill: paintFloodFill,
+        hexToRgba: paintHexToRgba,
+        _pending: null,
+
+        openFile: function(path) {
+            const fs = window.HypernetFileSystem;
+            const content = fs ? fs.readFile(path) : null;
+            if (!content) return false;
+            this._pending = { path, content };
+            if (window.HypernetOS) window.HypernetOS.launchApp(PAINT_APP_ID);
+            return true;
+        },
+
+        pictures: function() {
+            const fs = window.HypernetFileSystem;
+            if (!fs) return [];
+            if (!fs.exists(PAINT_DIR)) fs.mkdir(PAINT_DIR);
+            return (fs.readDir(PAINT_DIR) || []).filter(f => f.type === 'file' && /\.png$/i.test(f.name)).map(f => f.name);
+        },
+
+        launch: function() {
+            const OS = window.HypernetOS;
+            if (!OS || !OS.WindowManager) return;
+            const T_ = (k, p) => T('PixelArt.paint.' + k, p);
+            const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+            const html = `
+                <div class="pain">
+                    <div class="pain-menu">
+                        <span class="pain-menu-item focusable" tabindex="0" id="pain-new">${T_('new')}</span>
+                        <span class="pain-menu-item focusable" tabindex="0" id="pain-open">${T_('open')}</span>
+                        <span class="pain-menu-item focusable" tabindex="0" id="pain-save">${T_('save')}</span>
+                        <span class="pain-menu-item focusable" tabindex="0" id="pain-wallpaper">${T_('setWallpaper')}</span>
+                        <span class="pain-menu-item focusable" tabindex="0" id="pain-undo">${T_('undo')}</span>
+                        <span class="pain-menu-item focusable" tabindex="0" id="pain-redo">${T_('redo')}</span>
+                    </div>
+                    <div class="pain-main">
+                        <div class="pain-tools">
+                            ${PAINT_TOOLS.map(t => `<div class="pain-tool focusable" tabindex="0" data-tool="${t}" title="${esc(T_('tool.' + t))}"><span class="pain-tool-glyph pain-tool--${t}"></span></div>`).join('')}
+                            <div class="pain-sizes">
+                                ${[1, 3, 6, 10].map(s => `<div class="pain-size focusable" tabindex="0" data-size="${s}"><i style="height:${s}px"></i></div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="pain-canvas-wrap">
+                            <canvas id="pain-canvas" width="${PAINT_W}" height="${PAINT_H}"></canvas>
+                            <canvas id="pain-overlay" width="${PAINT_W}" height="${PAINT_H}"></canvas>
+                        </div>
+                    </div>
+                    <div class="pain-colors">
+                        <div class="pain-current"><div class="pain-primary" id="pain-primary"></div><div class="pain-secondary" id="pain-secondary"></div></div>
+                        <div class="pain-palette">${PAINT_COLORS.map(c => `<div class="pain-swatch focusable" tabindex="0" data-color="${c}" style="background:${c}"></div>`).join('')}</div>
+                        <input type="color" id="pain-custom" class="focusable" value="#ff8000" title="${esc(T_('custom'))}">
+                    </div>
+                    <div class="pain-status" id="pain-status"></div>
+                </div>`;
+
+            const win = OS.WindowManager.createWindow({ id: PAINT_APP_ID, title: T_('untitledTitle'), icon: 224, width: 640, height: 520, contentHTML: html });
+            const pending = this._pending; this._pending = null;
+            if (win._painBound) { if (pending) win._painLoad(pending); return; }
+            win._painBound = true;
+
+            const q = s => win.querySelector(s);
+            const canvas = q('#pain-canvas'), overlay = q('#pain-overlay');
+            const ctx = canvas.getContext('2d'), octx = overlay.getContext('2d');
+            const st = { tool: 'pencil', size: 3, primary: '#000000', secondary: '#ffffff', path: null, undo: [], redo: [], drawing: false, start: null, color: '#000000' };
+
+            const setTitle = () => {
+                const name = st.path ? st.path.slice(st.path.lastIndexOf('/') + 1) : null;
+                const title = name ? T_('title', { file: name }) : T_('untitledTitle');
+                win.dataset.title = title;
+                const tt = win.querySelector('.hypernet-window-title');
+                if (tt) tt.innerHTML = win.dataset.iconHTML + ' ' + esc(title);
+                if (OS.refreshTaskbarTabs) OS.refreshTaskbarTabs();
+            };
+            const status = msg => { q('#pain-status').textContent = msg; };
+            const clear = () => { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, PAINT_W, PAINT_H); };
+            const snapshot = () => { st.undo.push(ctx.getImageData(0, 0, PAINT_W, PAINT_H)); if (st.undo.length > 30) st.undo.shift(); st.redo.length = 0; };
+            const undo = () => { if (!st.undo.length) return; st.redo.push(ctx.getImageData(0, 0, PAINT_W, PAINT_H)); ctx.putImageData(st.undo.pop(), 0, 0); };
+            const redo = () => { if (!st.redo.length) return; st.undo.push(ctx.getImageData(0, 0, PAINT_W, PAINT_H)); ctx.putImageData(st.redo.pop(), 0, 0); };
+            const paintColors = () => { q('#pain-primary').style.background = st.primary; q('#pain-secondary').style.background = st.secondary; };
+            const selectTool = t => { st.tool = t; win.querySelectorAll('.pain-tool').forEach(el => el.classList.toggle('active', el.dataset.tool === t)); status(T_('tool.' + t)); };
+            const selectSize = s => { st.size = s; win.querySelectorAll('.pain-size').forEach(el => el.classList.toggle('active', parseInt(el.dataset.size, 10) === s)); };
+
+            win._painLoad = (file) => {
+                const img = new Image();
+                img.onload = () => { snapshot(); clear(); ctx.drawImage(img, 0, 0); st.path = file.path; setTitle(); status(T_('opened', { file: file.path })); };
+                img.src = file.content;
+            };
+
+            clear();
+            paintColors();
+            selectTool('pencil');
+            selectSize(3);
+            setTitle();
+            if (pending) win._painLoad(pending);
+
+            const pos = e => {
+                const r = canvas.getBoundingClientRect();
+                return { x: Math.floor((e.clientX - r.left) * PAINT_W / r.width), y: Math.floor((e.clientY - r.top) * PAINT_H / r.height) };
+            };
+            const strokeStyle = (c) => { c.lineCap = 'round'; c.lineJoin = 'round'; c.lineWidth = st.size; c.strokeStyle = st.color; c.fillStyle = st.color; };
+            const shape = (c, a, b) => {
+                strokeStyle(c);
+                c.beginPath();
+                if (st.tool === 'line') { c.moveTo(a.x, a.y); c.lineTo(b.x, b.y); c.stroke(); }
+                else if (st.tool === 'rect') { c.strokeRect(Math.min(a.x, b.x), Math.min(a.y, b.y), Math.abs(b.x - a.x), Math.abs(b.y - a.y)); }
+                else if (st.tool === 'ellipse') { c.ellipse((a.x + b.x) / 2, (a.y + b.y) / 2, Math.abs(b.x - a.x) / 2, Math.abs(b.y - a.y) / 2, 0, 0, Math.PI * 2); c.stroke(); }
+            };
+
+            overlay.addEventListener('contextmenu', e => { e.preventDefault(); e.stopPropagation(); });
+            overlay.addEventListener('mousedown', e => {
+                e.stopPropagation();
+                const p = pos(e);
+                st.color = e.button === 2 ? st.secondary : st.primary;
+                if (st.tool === 'picker') {
+                    const d = ctx.getImageData(p.x, p.y, 1, 1).data;
+                    const hex = '#' + [d[0], d[1], d[2]].map(v => v.toString(16).padStart(2, '0')).join('');
+                    if (e.button === 2) st.secondary = hex; else st.primary = hex;
+                    paintColors(); return;
+                }
+                snapshot();
+                if (st.tool === 'fill') {
+                    const img = ctx.getImageData(0, 0, PAINT_W, PAINT_H);
+                    paintFloodFill(img.data, PAINT_W, PAINT_H, p.x, p.y, paintHexToRgba(st.color));
+                    ctx.putImageData(img, 0, 0); return;
+                }
+                if (st.tool === 'text') {
+                    const txt = prompt(T_('textPrompt'), '');
+                    if (txt) { ctx.fillStyle = st.color; ctx.font = (12 + st.size * 2) + 'px Tahoma, sans-serif'; ctx.fillText(txt, p.x, p.y); }
+                    return;
+                }
+                st.drawing = true; st.start = p; st.last = p;
+                if (st.tool === 'pencil' || st.tool === 'brush' || st.tool === 'eraser') {
+                    const w = st.tool === 'pencil' ? 1 : (st.tool === 'eraser' ? st.size * 2 : st.size);
+                    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = w;
+                    ctx.strokeStyle = st.tool === 'eraser' ? '#ffffff' : st.color;
+                    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + 0.1, p.y); ctx.stroke();
+                }
+            });
+            overlay.addEventListener('mousemove', e => {
+                const p = pos(e);
+                status(p.x + ', ' + p.y);
+                if (!st.drawing) return;
+                if (st.tool === 'pencil' || st.tool === 'brush' || st.tool === 'eraser') {
+                    ctx.beginPath(); ctx.moveTo(st.last.x, st.last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); st.last = p;
+                } else {
+                    octx.clearRect(0, 0, PAINT_W, PAINT_H); shape(octx, st.start, p);
+                }
+            });
+            const finish = e => {
+                if (!st.drawing) return;
+                st.drawing = false;
+                if (st.tool === 'line' || st.tool === 'rect' || st.tool === 'ellipse') {
+                    octx.clearRect(0, 0, PAINT_W, PAINT_H); shape(ctx, st.start, pos(e));
+                }
+            };
+            overlay.addEventListener('mouseup', finish);
+            overlay.addEventListener('mouseleave', finish);
+
+            win.querySelectorAll('.pain-tool').forEach(el => el.addEventListener('click', e => { e.stopPropagation(); selectTool(el.dataset.tool); }));
+            win.querySelectorAll('.pain-size').forEach(el => el.addEventListener('click', e => { e.stopPropagation(); selectSize(parseInt(el.dataset.size, 10)); }));
+            win.querySelectorAll('.pain-swatch').forEach(el => {
+                el.addEventListener('click', e => { e.stopPropagation(); st.primary = el.dataset.color; paintColors(); });
+                el.addEventListener('contextmenu', e => { e.preventDefault(); e.stopPropagation(); st.secondary = el.dataset.color; paintColors(); });
+            });
+            q('#pain-custom').addEventListener('input', e => { st.primary = e.target.value; paintColors(); });
+
+            q('#pain-new').addEventListener('click', e => { e.stopPropagation(); snapshot(); clear(); st.path = null; setTitle(); });
+            q('#pain-undo').addEventListener('click', e => { e.stopPropagation(); undo(); });
+            q('#pain-redo').addEventListener('click', e => { e.stopPropagation(); redo(); });
+            q('#pain-save').addEventListener('click', e => {
+                e.stopPropagation();
+                const fs = window.HypernetFileSystem;
+                if (!fs) return;
+                let path = st.path;
+                if (!path) {
+                    const typed = prompt(T_('savePrompt'), 'untitled.png');
+                    if (!typed) return;
+                    path = PAINT_DIR + '/' + (typed.toLowerCase().endsWith('.png') ? typed : typed + '.png');
+                }
+                if (!fs.exists(PAINT_DIR)) fs.mkdir(PAINT_DIR);
+                if (fs.writeFile(path, canvas.toDataURL('image/png'), 'png')) {
+                    st.path = path; setTitle(); status(T_('saved', { file: path }));
+                    if (window.SoundManager) SoundManager.playOk();
+                } else alert(T_('saveError'));
+            });
+            q('#pain-open').addEventListener('click', e => {
+                e.stopPropagation();
+                const names = this.pictures();
+                if (!names.length) { alert(T_('nothingToOpen')); return; }
+                const typed = prompt(T_('openPrompt', { list: names.join(', ') }), names[0]);
+                if (!typed) return;
+                const path = PAINT_DIR + '/' + typed;
+                const content = window.HypernetFileSystem.readFile(path);
+                if (!content) { alert(T_('openError')); return; }
+                win._painLoad({ path, content });
+            });
+            q('#pain-wallpaper').addEventListener('click', e => {
+                e.stopPropagation();
+                const fs = window.HypernetFileSystem;
+                if (!fs) return;
+                fs.setRegistry('wallpaper', 'url("' + canvas.toDataURL('image/png') + '") center / cover no-repeat');
+                status(T_('wallpaperSet'));
+                if (window.SoundManager) SoundManager.playOk();
+            });
+        }
+    };
+
+    function registerPaint() {
+        if (!window.HypernetOS || !window.HypernetOS.registerApp) return false;
+        window.HypernetOS.registerApp({
+            id: PAINT_APP_ID,
+            name: T('PixelArt.paint.appName'),
+            icon: 224,
+            category: 'accessories',
+            launchFn: () => window.HypernetPaint.launch(),
+            desktopShortcut: true
+        });
+        return true;
+    }
+    if (!registerPaint()) {
+        const _Scene_Boot_create_paint = Scene_Boot.prototype.create;
+        Scene_Boot.prototype.create = function() {
+            _Scene_Boot_create_paint.call(this);
+            registerPaint();
+        };
+    }
+
 })();

@@ -11,7 +11,6 @@
   "walkAway": "Leave it.",
   "walkedAway": "{You turn around and leave it alone.|Decided it's not worth the headache.|Walked away before things got messy.}",
   "mapClose": "Close the page",
-  "mapHint": "{Arrows to choose, Enter to answer|Direction keys to navigate, Enter to confirm|Arrows to select, Enter to commit}",
   "checkAction": "{stat} check, {name}",
   "checkChip": "{stat} DC {dc} {mod}",
   "chanceChip": "{pct}% odds",
@@ -2049,7 +2048,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "{vessel} {crashed|went down|got smashed} on {ground}, {broadcasting a dead distress signal|bleeding static into the comms|running a busted beacon} every {few|many} seconds.\n{The airlock is popped, the reactor is dead cold, but something inside is still drawing power.|Reactor's dead cold, life support is gone, but some idiot left the beacon on.|The hull is breached and freezing, but internal power is still humming.}\n{Either it's automated junk or a very obvious trap.|{Looks like|Appears to be|Seems like|Clearly} free salvage, if you don't mind the radiation.|Nobody came to help them, but we might as well loot the corpse.}",
+     "text": "{vessel} {crashed|went down|got smashed} on {ground}, {broadcasting a dead distress signal|bleeding static into the comms|running a busted beacon} every {few|many} seconds.\n{The airlock is popped, the reactor is dead cold, but something inside is still drawing power.|Reactor's dead cold, life support is gone, but some idiot left the beacon on.|The hull is breached and freezing, but internal power is still humming.}\n{Either it's automated junk or a very obvious trap.|Looks like free salvage, if you don't mind the radiation.|Appears to be free salvage, if you don't mind the radiation.|Seems like free salvage, if you don't mind the radiation.|Clearly free salvage, if you don't mind the radiation.|Nobody came to help them, but we might as well loot the corpse.}",
      "choices": [
       {
        "text": "Cut into the pressure hull.",
@@ -2278,7 +2277,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "{The heat here will {cook you alive|melt your suit seals|scorch your eyebrows off} in seconds.|Thermal sensors are screaming at maximum.|The surface temperature is completely unhinged.} {The signal is transmitting out of the hottest point on the sweep.|Something is broadcasting directly from the center of the magma field.|A beacon is screaming from inside the hottest vent.}",
+     "text": "{The heat here will cook you alive in seconds.|The heat here will melt your suit seals in seconds.|The heat here will scorch your eyebrows off in seconds.|Thermal sensors are screaming at maximum.|The surface temperature is completely unhinged.} {The signal is transmitting out of the hottest point on the sweep.|Something is broadcasting directly from the center of the magma field.|A beacon is screaming from inside the hottest vent.}",
      "choices": [
       {
        "text": "Go in with the suit at full cooling.",
@@ -3088,7 +3087,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "{It's not a distress call. It's {tone}, broadcasting from {place} on an endless loop.|An automated transmission ({tone}) is pulsing from {place} every {few|many} seconds.|A rhythmic signal is broadcasting out of {place}, clear and unbothered by atmospheric static.}",
+     "text": "{It's not a distress call. It's {tone}, broadcasting from {place} on an endless loop.|An automated transmission ({tone}) is pulsing from {place} every few seconds.|An automated transmission ({tone}) is pulsing from {place} every many seconds.|A rhythmic signal is broadcasting out of {place}, clear and unbothered by atmospheric static.}",
      "choices": [
       {
        "text": "{Answer it in the same pattern|Echo the signal rhythm|Transmit the matching code|Mirror the transmission frequency}.",
@@ -3154,7 +3153,7 @@
      }
     },
     "a2": {
-     "text": "{{The radio goes dark|The comms cut out completely|Static dies on the channel|The signal flatlines}.|{The radio goes dead|The channel goes completely silent|Dead air on the frequency|The receiver drops to zero}.} The count keeps on over {ground} behind them all the way back to the lander, and the team walks the last hundred metres faster than they walked the first.",
+     "text": "{The radio goes dark.|The comms cut out completely.|Static dies on the channel.|The signal flatlines.|The radio goes dead.|The channel goes completely silent.|Dead air on the frequency.|The receiver drops to zero.} The count keeps on over {ground} behind them all the way back to the lander, and the team walks the last hundred metres faster than they walked the first.",
      "outcome": {
       "kind": "none",
       "mag": "small",
@@ -3162,7 +3161,7 @@
      }
     },
     "b1": {
-     "text": "{{It lifts out easily|The assembly slides out smoothly|It pops free without any resistance|The module unlatches cleanly}.|It lifts out without any trouble.} The count stops, and every instrument the away team is carrying reports the same time to the same tenth of a second for the first time since they left Earth.",
+     "text": "{It lifts out easily.|The assembly slides out smoothly.|It pops free without any resistance.|The module unlatches cleanly.|It lifts out without any trouble.} The count stops, and every instrument the away team is carrying reports the same time to the same tenth of a second for the first time since they left Earth.",
      "outcome": {
       "kind": "schrodingerite",
       "mag": "large",
@@ -3319,7 +3318,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "{A bell is clanging out in the middle of nowhere, {distance}, where the charts swear there's only deep water.\nThrough the mist you spot a rusted buoy bobbing awkwardly in the swell. Someone welded an iron ladder onto the side and literally spray-painted a fake door with a real handle onto the metal.|There's a buoy out here in {two hundred|three hundred|four hundred} meters of open water, ringing like crazy. Up close, it's a beat-up rusted drum with a welded ladder and a painted door that shouldn't be there.}",
+     "text": "{A bell is clanging out in the middle of nowhere, {distance}, where the charts swear there's only deep water.\nThrough the mist you spot a rusted buoy bobbing awkwardly in the swell. Someone welded an iron ladder onto the side and literally spray-painted a fake door with a real handle onto the metal.|There's a buoy out here in two hundred meters of open water, ringing like crazy. Up close, it's a beat-up rusted drum with a welded ladder and a painted door that shouldn't be there.|There's a buoy out here in four hundred meters of open water, ringing like crazy. Up close, it's a beat-up rusted drum with a welded ladder and a painted door that shouldn't be there.}",
      "emText": "{A bell is clanging out across the water with an annoying, repetitive rhythm. The buoy is bobbing in the chop with a ladder welded on and a fake door painted onto the steel. In this line of work, weird doors are usually trouble.|The buoy rings out over the swell. Up close it has a ladder and a painted door with a real handle. Definitely suspicious.}",
      "bubba": "Bubba leans over the rail with his hat in his hand. \"Sugar, that's a door on a can. Uh-uh. Back home we got a word for openin' that, an' the word is {funerale|stupidaggine}.\"",
      "asides": {
@@ -10627,6 +10626,10 @@
       {
        "text": "{Grab whatever shiny relics he's guarding and bolt|Loot the altar while he rants|Snatch the ledger and run|Ignore him and loot the chest}",
        "to": "c"
+      },
+      {
+       "text": "{Draw steel on the officer|Put the usher down|Cut the clerk out of the air|Swing at him and be done}",
+       "to": "d"
       }
      ]
     },
@@ -10792,6 +10795,10 @@
       {
        "text": "{Wait behind a monument to see who left the footprints|Set an ambush by the gate|Watch the crypt entrance|Take cover behind a gravestone}",
        "to": "c"
+      },
+      {
+       "text": "{Take a piece of it to the man who buys these|Crate the fragment up and find a buyer|Sell the piece on|Load it into the car and drive it to the car park}",
+       "to": "d"
       }
      ]
     },
@@ -11069,6 +11076,10 @@
       {
        "text": "{Check the perimeter for hidden trap triggers|Inspect the masonry for runes|Scan for booby traps|Check the floor for pressure plates}",
        "to": "c"
+      },
+      {
+       "text": "{Report the seal and let the Vatican answer it|Send the report and wait for their people|Leave it sealed and call it in|Write it up for the Empire}",
+       "to": "d"
       }
      ]
     },
@@ -11207,6 +11218,10 @@
       {
        "text": "{Turn around and get out of the bog|Walk away before your boots get stuck|Leave the hermit alone|Head back to dry land}",
        "to": "c"
+      },
+      {
+       "text": "{Sit down on the plank and wait|Wait at the hole until somebody comes up|Take a seat and let them decide|Wait them out}",
+       "to": "d"
       }
      ]
     },

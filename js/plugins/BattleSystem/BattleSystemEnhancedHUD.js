@@ -1,3 +1,13 @@
+/*:
+ * @target MZ
+ * @plugindesc Battle HUD: party and enemy bars, weaknesses and body parts.
+ * @author Omni-Lex
+ *
+ * @help
+ * The heads-up display of the enhanced battle system. Load it after
+ * BattleSystemEnhanced.js. No parameters and no plugin commands.
+ */
+
 (() => {
 
   // A severed-magic world has no magic in it, so a magic meter is a bar that
@@ -257,7 +267,7 @@
     constructor(parentSprite) {
       this.parentSprite = parentSprite;
       this.root = document.createElement('div');
-      this.root.style.cssText = 'position:fixed;display:none;z-index:100;pointer-events:none;font-family:"Lora",serif;transform-origin:top left;';
+      this.root.className = 'bse-hud-layer';
       document.body.appendChild(this.root);
       this._pool = [];
       this._usedCount = 0;
@@ -268,7 +278,7 @@
                       this.parentSprite.worldAlpha > 0 && this.parentSprite.parent;
       if (!visible) {
         if (this._lastVisible !== false) {
-          this.root.style.display = 'none';
+          window.UIPanel.close(this.root);
           this._lastVisible = false;
         }
         return;
@@ -295,11 +305,10 @@
       if (this._lastVisible !== true || this._lastLeft !== left ||
           this._lastTop !== top || this._lastTransform !== transform ||
           this._lastOpacity !== opacity) {
-        this.root.style.display   = 'block';
-        this.root.style.left      = left + 'px';
-        this.root.style.top       = top  + 'px';
-        this.root.style.transform = transform;
-        this.root.style.opacity   = opacity;
+        window.UIPanel.open(this.root);
+        window.UIPanel.placeAt(this.root, left, top);
+        this.root.style.setProperty('--hud-transform', transform);
+        this.root.style.setProperty('--hud-fade', opacity);
         this._lastVisible   = true;
         this._lastLeft      = left;
         this._lastTop       = top;
@@ -311,14 +320,14 @@
     clear() {
       this._usedCount = 0;
       for (const el of this._pool) {
-        el.style.display = 'none';
+        window.UIPanel.close(el);
       }
     }
 
     _getEl() {
       if (this._usedCount < this._pool.length) {
         const el = this._pool[this._usedCount++];
-        el.style.display = '';
+        window.UIPanel.open(el);
         return el;
       }
       const el = document.createElement('div');
@@ -328,41 +337,29 @@
       return el;
     }
 
-    addText(text, x, y, width, align, fontSize, color, bold, outlineColor, outlineWidth = 2, fontFace = "Lora, serif", lineHeight = null) {
+    addText(text, x, y, width, align, fontSize, color, bold, outlineColor, outlineWidth = 2, fontFace = "Bitter, serif", lineHeight = null) {
       const el = this._getEl();
       el.innerHTML = text;
-      el.style.position = 'absolute';
-      el.style.left = x + 'px';
-      el.style.top = y + 'px';
-      el.style.width = width ? width + 'px' : '';
-      el.style.textAlign = align || 'left';
-      el.style.fontSize = fontSize + 'px';
-      el.style.color = color || '#ffffff';
-      el.style.fontWeight = bold ? 'bold' : 'normal';
-      el.style.fontFamily = fontFace;
-      if (lineHeight) {
-        el.style.lineHeight = lineHeight + 'px';
-      } else {
-        el.style.lineHeight = '';
-      }
-      if (outlineColor && outlineWidth > 0) {
-        const w = outlineWidth;
-        el.style.textShadow = `-${w}px -${w}px 0 ${outlineColor},${w}px -${w}px 0 ${outlineColor},-${w}px ${w}px 0 ${outlineColor},${w}px ${w}px 0 ${outlineColor},-${w}px 0 0 ${outlineColor},${w}px 0 0 ${outlineColor},0 -${w}px 0 ${outlineColor},0 ${w}px 0 ${outlineColor}`;
-      } else {
-        el.style.textShadow = 'none';
-      }
-      el.style.whiteSpace = 'nowrap';
-      // Reset chip/badge box styling so pooled elements reused as plain text stay clean
-      el.style.background = '';
-      el.style.border = '';
-      el.style.borderRadius = '';
-      el.style.boxShadow = '';
-      el.style.padding = '';
-      el.style.height = '';
-      el.style.boxSizing = '';
-      // Rows that laid a name and a level tag side by side leave flex behind
-      el.style.alignItems = '';
-      el.style.gap = '';
+      // Every one of these is a value the sheet cannot know: where the line
+      // sits over the battler, how big the canvas is drawing it, and what
+      // colour the battle system asked for. They are handed over as custom
+      // properties; .bse-hud-text says what a line of HUD text IS.
+      // The class is reset first because the pool hands the same element back
+      // as a chip one frame and as plain text the next.
+      el.className = 'bse-hud-text' +
+        (bold ? ' bse-hud-text--bold' : '') +
+        (outlineColor && outlineWidth > 0 ? ' bse-hud-text--outlined' : '');
+      const st = el.style;
+      st.setProperty('--hud-x', x + 'px');
+      st.setProperty('--hud-y', y + 'px');
+      st.setProperty('--hud-w', width ? width + 'px' : 'auto');
+      st.setProperty('--hud-align', align || 'left');
+      st.setProperty('--hud-size', fontSize + 'px');
+      st.setProperty('--hud-ink', color || 'var(--text-pure-white)');
+      st.setProperty('--hud-face', fontFace);
+      st.setProperty('--hud-line', lineHeight ? lineHeight + 'px' : 'normal');
+      st.setProperty('--hud-outline', outlineColor || 'transparent');
+      st.setProperty('--hud-outline-w', (outlineWidth || 0) + 'px');
       return el;
     }
 
@@ -526,18 +523,7 @@
 
     const root = document.createElement('div');
     root.id = 'html-battle-help-overlay';
-    root.style.cssText =
-        'position:fixed;display:flex;flex-direction:column;justify-content:center;z-index:501;pointer-events:none;' +
-        'box-sizing:border-box;overflow-y:auto;' +
-        'background:var(--text-danger-hover);' +
-        'border:3px solid var(--border-subtle);border-radius:6px;' +
-        'outline:1px solid var(--border-subtle-translucent-40);outline-offset:-7px;' +
-        'background-image:radial-gradient(ellipse at center,' +
-        'transparent 40%,var(--bg-brown-vignette-10) 100%);' +
-        'padding:16px 20px;' +
-        'font-family:\'Lora\',serif;font-weight:bold;color:var(--text-primary-hover);line-height:1.2;' +
-        'transform:translateX(115%);opacity:0;' +
-        'transition:transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease;';
+    root.className = 'bse-slide-panel bse-help-panel';
     this._htmlHelpRoot = root;
     document.body.appendChild(root);
   };
@@ -556,9 +542,39 @@
       _Window_Help_show.call(this);
   };
 
+  // The description box is a DOM node, so it only slides away while the window
+  // that owns it is still being updated. A scene that ends (or a map battle
+  // that hands the keys back) stops those updates mid-frame and used to leave
+  // the last description standing on screen; every one of those exits calls
+  // this instead.
+  function hideBattleHelpOverlay() {
+      const root = document.getElementById('html-battle-help-overlay');
+      if (!root) return;
+      root.classList.add('bse-slide-panel--quick');
+      root.classList.remove('bse-slide-panel--in');
+  }
+  window.BattleHelpOverlay = { hide: hideBattleHelpOverlay };
+
   const _Window_Help_hide = Window_Help.prototype.hide;
   Window_Help.prototype.hide = function () {
       _Window_Help_hide.call(this);
+      this._htmlHelpSlideState = 'hidden';
+      this._lastRawHelpText = null;
+      hideBattleHelpOverlay();
+  };
+
+  // Leaving a scene, and the end of a battle played out on the map, both drop
+  // the description with the rest of the battle UI.
+  const _BSEHelp_Scene_Base_terminate = Scene_Base.prototype.terminate;
+  Scene_Base.prototype.terminate = function () {
+      hideBattleHelpOverlay();
+      _BSEHelp_Scene_Base_terminate.call(this);
+  };
+
+  const _BSEHelp_BattleManager_endBattle = BattleManager.endBattle;
+  BattleManager.endBattle = function (result) {
+      hideBattleHelpOverlay();
+      _BSEHelp_BattleManager_endBattle.call(this, result);
   };
 
   const _Window_Help_render = Window_Help.prototype.render;
@@ -590,10 +606,8 @@
       if (!inBattle || !this.visible || this.height === 0 || this.width === 0 || !txt) {
           if (this._htmlHelpSlideState !== 'hidden') {
               this._htmlHelpSlideState = 'hidden';
-              this._htmlHelpRoot.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
-              this._htmlHelpRoot.style.transform = 'translateX(115%)';
-              this._htmlHelpRoot.style.opacity = '0';
-              this._htmlHelpRoot.style.pointerEvents = 'none';
+              this._htmlHelpRoot.classList.add('bse-slide-panel--quick');
+              this._htmlHelpRoot.classList.remove('bse-slide-panel--in');
           }
           this._lastRawHelpText = null;
           return;
@@ -615,12 +629,7 @@
           // Convert \I[n] icon codes into inline iconset spans so element
           // icons render to the left of their name in the help box.
           text = text.replace(/\\I\[(\d+)\]/gi, function (m, n) {
-              const idx = Number(n);
-              const ix = (idx % 16) * 32;
-              const iy = Math.floor(idx / 16) * 32;
-              return '<span style="background:url(\'img/system/IconSet.png\') -' + ix +
-                  'px -' + iy + 'px no-repeat;width:32px;height:32px;display:inline-block;' +
-                  'vertical-align:middle;image-rendering:pixelated;margin-right:4px;"></span>';
+              return `<span class="cc-rpg-icon bse-help-icon" style="${window.CCArt.icon(Number(n), 32)}"></span>`;
           });
 
           // Wrap in a single block child so the flex-column root does not
@@ -713,10 +722,13 @@
   // -------------------------------------------------------------------------
 
 
-  function getIconStyle(iconIndex) {
-      const x = (iconIndex % 16) * 32;
-      const y = Math.floor(iconIndex / 16) * 32;
-      return `background: url('img/system/IconSet.png') -${x}px -${y}px no-repeat; width: 32px; height: 32px; display: inline-block; vertical-align: middle; image-rendering: pixelated; transform: scale(0.75); margin-right: 4px;`;
+  // window.CCArt (CharacterCreation/CharacterCreationShared.js) is the one
+  // place an IconSet cell is worked out; .cc-rpg-icon in css/theme.css is what
+  // one looks like. This wants it three quarters size with a gutter after it,
+  // which is what .bse-item-icon adds.
+  function paintIcon(span, iconIndex) {
+      span.className = 'cc-rpg-icon bse-item-icon';
+      span.setAttribute('style', window.CCArt.icon(iconIndex, 32));
   }
 
   //=============================================================================
@@ -822,17 +834,7 @@
 
     const root = document.createElement('div');
     root.id = 'html-battle-item-overlay';
-    root.style.cssText =
-        'position:fixed;z-index:501;pointer-events:none;' +
-        'box-sizing:border-box;overflow-y:auto;display:grid;' +
-        'background:var(--text-danger-hover);' +
-        'border:3px solid var(--border-subtle);border-radius:6px;' +
-        'outline:1px solid var(--border-subtle-translucent-40);outline-offset:-7px;' +
-        'background-image:radial-gradient(ellipse at center,' +
-        'transparent 40%,var(--bg-brown-vignette-10) 100%);' +
-        'padding:16px 12px;' +
-        'transform:translateX(115%);opacity:0;' +
-        'transition:transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease;';
+    root.className = 'bse-slide-panel bse-item-panel';
     
     // Right click to cancel / back out
     root.addEventListener('contextmenu', (e) => {
@@ -886,22 +888,28 @@
           this._buildItemHtml();
           setTimeout(() => {
               if (this._htmlItemRoot && this.visible) {
-                  this._htmlItemRoot.style.transform = 'translateX(0)';
-                  this._htmlItemRoot.style.opacity = '1';
-                  this._htmlItemRoot.style.pointerEvents = 'auto';
+                  this._htmlItemRoot.classList.add('bse-slide-panel--in');
               }
           }, 0);
       }
   };
 
+  // update() writes the slid-in transform/opacity as INLINE styles, and an
+  // inline style outranks the stylesheet: dropping the --in class alone can
+  // never take the panel back off the screen. Every close goes through this,
+  // which clears what update() wrote.
+  Window_BattleItem.prototype._closeItemHtml = function () {
+      const root = this._htmlItemRoot;
+      if (!root) return;
+      root.classList.remove('bse-slide-panel--in');
+      // So the next open re-applies the layout instead of assuming it stands.
+      this._lastIdx = null;
+  };
+
   const _Window_BattleItem_hide = Window_BattleItem.prototype.hide;
   Window_BattleItem.prototype.hide = function () {
       _Window_BattleItem_hide.call(this);
-      if (this._htmlItemRoot) {
-          this._htmlItemRoot.style.transform = 'translateX(115%)';
-          this._htmlItemRoot.style.opacity = '0';
-          this._htmlItemRoot.style.pointerEvents = 'none';
-      }
+      this._closeItemHtml();
   };
 
   const _Window_BattleItem_refresh = Window_BattleItem.prototype.refresh;
@@ -966,10 +974,7 @@
       if (!root) return;
       root.innerHTML = '';
 
-      root.style.display = 'grid';
-      root.style.gridTemplateColumns = '1fr';
-      root.style.gridGap = '6px 12px';
-      root.style.alignContent = 'start';
+
 
       const sc = _hudGetScale();
       const baseFontSize = (typeof this.standardFontSize === 'function')
@@ -982,23 +987,18 @@
       this._htmlItemEls = items.map((item, i) => {
           const el = document.createElement('div');
           el.dataset.idx = i;
-          el.style.cssText =
-              'font-family:\'Lora\',serif;font-weight:bold;color:var(--text-primary-hover);' +
-              'padding:6px 12px;border-radius:4px;cursor:pointer;' +
-              'border:2px solid transparent;transition:background 0.1s, border-color 0.1s;' +
-              'display:flex;align-items:center;justify-content:space-between;' +
-              'user-select:none;box-sizing:border-box;min-height:40px;';
-          el.style.fontSize = scaledFont + 'px';
+          el.className = 'bse-item-row';
+          el.style.setProperty('--hud-size', scaledFont + 'px');
 
           // Left side: Icon + Name
           const leftDiv = document.createElement('div');
-          leftDiv.style.cssText = 'display:flex;align-items:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+          leftDiv.className = 'bse-item-row-name';
 
           if (typeof item === 'string') {
               // Category Mode
               const iconIndex = 209; // Generic bag icon
               const iconSpan = document.createElement('span');
-              iconSpan.style.cssText = getIconStyle(iconIndex);
+              paintIcon(iconSpan, iconIndex);
               leftDiv.appendChild(iconSpan);
 
               const nameSpan = document.createElement('span');
@@ -1008,7 +1008,7 @@
 
               // Right side: Item count in this category
               const rightDiv = document.createElement('div');
-              rightDiv.style.cssText = 'display:flex;align-items:center;font-size:85%;font-weight:bold;color:var(--text-primary-hover);';
+              rightDiv.className = 'bse-item-row-count';
 
               const count = $gameParty.allItems().filter(x => {
                   if (!self.includes(x)) return false;
@@ -1027,13 +1027,13 @@
                   return cat === item && $gameParty.canUse(x);
               });
               if (!isEnabled) {
-                  el.style.opacity = '0.4';
+                  el.classList.add('bse-item-row--spent');
               }
           } else if (item) {
               // Standard Item Mode
               const iconIndex = item.iconIndex;
               const iconSpan = document.createElement('span');
-              iconSpan.style.cssText = getIconStyle(iconIndex);
+              paintIcon(iconSpan, iconIndex);
               leftDiv.appendChild(iconSpan);
 
               const nameSpan = document.createElement('span');
@@ -1043,7 +1043,7 @@
 
               // Right side: Quantity / Number
               const rightDiv = document.createElement('div');
-              rightDiv.style.cssText = 'display:flex;align-items:center;font-size:85%;font-weight:bold;color:var(--text-primary-hover);';
+              rightDiv.className = 'bse-item-row-count';
 
               const count = $gameParty.numItems(item);
               const countSpan = document.createElement('span');
@@ -1054,10 +1054,10 @@
               // Enable/disable based on whether party can use the item in battle
               const isEnabled = $gameParty.canUse(item);
               if (!isEnabled) {
-                  el.style.opacity = '0.4';
+                  el.classList.add('bse-item-row--spent');
               }
           } else {
-              el.style.visibility = 'hidden';
+              el.classList.add('bse-hidden');
           }
 
           el.addEventListener('mouseover', () => {
@@ -1090,11 +1090,8 @@
 
       if (isClosed) {
           if (this._lastStateClosed !== true) {
-              this._htmlItemRoot.style.transform = 'translateX(115%)';
-              this._htmlItemRoot.style.opacity = '0';
-              this._htmlItemRoot.style.pointerEvents = 'none';
+              this._closeItemHtml();
               this._lastStateClosed = true;
-              this._lastIdx = null;
           }
           return;
       }
@@ -1126,15 +1123,16 @@
           const targetLeft = sc.ox + (Graphics.width * sc.sx) - scaledW - (20 * sc.sx);
           const targetTop = sc.oy + (ITEM_TOP * sc.sy);
 
-          s.left = targetLeft + 'px';
-          s.top = targetTop + 'px';
-          s.width = scaledW + 'px';
-          s.height = scaledH + 'px';
-          s.padding = Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px';
-
-          s.transform = 'translateX(0)';
-          s.opacity = '1';
-          s.pointerEvents = 'auto';
+          // Geometry is handed over as custom properties, the way the rest of
+          // the HUD does it; the slid-in state itself is the panel's own class,
+          // so nothing has to write transform or opacity onto the element.
+          s.setProperty('--bse-item-x', targetLeft + 'px');
+          s.setProperty('--bse-item-y', targetTop + 'px');
+          s.setProperty('--bse-item-w', scaledW + 'px');
+          s.setProperty('--bse-item-h', scaledH + 'px');
+          s.setProperty('--bse-item-pad',
+              Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px');
+          this._htmlItemRoot.classList.add('bse-slide-panel--in');
 
           const baseFontSize = (typeof this.standardFontSize === 'function')
               ? this.standardFontSize() : 24;
@@ -1142,14 +1140,8 @@
 
           if (this._htmlItemEls) {
               this._htmlItemEls.forEach((el, i) => {
-                  el.style.fontSize = scaledFont + 'px';
-                  if (i === idx) {
-                      el.style.background = 'var(--bg-subtle-translucent-15)';
-                      el.style.borderColor = 'var(--border-subtle)';
-                  } else {
-                      el.style.background = 'transparent';
-                      el.style.borderColor = 'transparent';
-                  }
+                  el.style.setProperty('--hud-size', scaledFont + 'px');
+                  el.classList.toggle('bse-item-row--on', i === idx);
               });
 
               // Scroll the selected element into view for keyboard/controller navigation
@@ -1356,11 +1348,11 @@
     this.bitmap.clear();
     if (this._htmlOverlay) this._htmlOverlay.clear();
     if (window.AsciiMode && window.AsciiMode.active) {
-      if (this._orb) this._orb.orb.style.display = "none";
+      if (this._orb) window.UIPanel.close(this._orb.orb);
       this.refreshAsciiEnemyBar();
       return;
     }
-    if (this._orb) this._orb.orb.style.display = "";
+    if (this._orb) window.UIPanel.open(this._orb.orb);
     this.refreshMinimalEnemyBar();
   };
 
@@ -1520,7 +1512,7 @@
       const nameBoxW = Math.max(40, geo.w + MINI.ang);
       const nameEl = this._htmlOverlay.addText(
         level
-          ? `<span>${rawName}</span><span style="color:${enemyLevelColor(b)}">${level}</span>`
+          ? `<span>${rawName}</span><span class="bse-mini-level" style="--hud-ink:${enemyLevelColor(b)}">${level}</span>`
           : rawName,
         geo.x - MINI.ang,
         -2,
@@ -1531,26 +1523,21 @@
         true,
         "black",
         1,
-        "Lora, serif",
+        "Bitter, serif",
         MINI.nameH
       );
       if (nameEl) {
-        nameEl.style.overflow = "hidden";
-        nameEl.style.textOverflow = "ellipsis";
+        nameEl.classList.add("bse-mini-name");
         // The same ambient glow the party cards put on a targeted member's
         // name (css/game.css .phud-card.phud-targeted .phud-name).
         if (isTargeted) {
-          nameEl.style.textShadow += ", 0 0 8px rgba(255, 240, 176, 0.85)";
+          nameEl.classList.add("bse-mini-name--targeted");
         }
         if (level) {
           // Only the name is allowed to shorten; the level tag always shows.
-          nameEl.style.display = "flex";
-          nameEl.style.justifyContent = "flex-end";
-          nameEl.style.alignItems = "baseline";
-          nameEl.style.gap = "5px";
-          nameEl.children[0].style.cssText =
-            "overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;";
-          nameEl.children[1].style.cssText = "flex:0 0 auto;";
+          nameEl.classList.add("bse-mini-name--tagged");
+          nameEl.children[0].className = "bse-mini-name-text";
+          nameEl.children[1].className = "bse-mini-name-tag";
         }
       }
 
@@ -1561,11 +1548,10 @@
       const addBarLabel = (text, y) => {
         const el = this._htmlOverlay.addText(
           text, barGeo.x - MINI.ang, y, barGeo.w + MINI.ang, "right",
-          12, "#f4ecd8", true, null, 0, "Lora, serif", MINI.thickness
+          12, "#f4ecd8", true, null, 0, "Bitter, serif", MINI.thickness
         );
         if (el) {
-          el.style.paddingRight = "10px";
-          el.style.boxSizing = "border-box";
+          el.classList.add("bse-bar-label");
         }
       };
       addBarLabel(Math.floor(b.hp) + "/" + Math.floor(b.mhp), MINI.hpY);
@@ -1587,10 +1573,9 @@
         // Pulled a few pixels further in than the gutter it was carved out
         // of, so the orb sits over the tail of the gauges rather than beside
         // them, the way the party's own orb overlaps the head of theirs.
-        this._orb.orb.style.left = (geo.x + geo.w - ORB_SIZE - ORB_OVERLAP) + "px";
-        this._orb.orb.style.top = orbTop + "px";
-        this._orb.fill.style.height = (rate * 100).toFixed(1) + "%";
-        this._orb.ghost.style.height = (rate * 100).toFixed(1) + "%";
+        window.UIPanel.placeAt(this._orb.orb, geo.x + geo.w - ORB_SIZE - ORB_OVERLAP, orbTop);
+        window.UIPanel.setBar(this._orb.fill, (rate * 100).toFixed(1), 'h');
+        window.UIPanel.setBar(this._orb.ghost, (rate * 100).toFixed(1), 'h');
         this._orb.val.textContent = String(tp);
         this._orb.orb.classList.toggle("phud-orb-empty", tp <= 0);
       }
@@ -1626,17 +1611,15 @@
             true,
             null,
             0,
-            "Lora, serif",
+            "Bitter, serif",
             chipH - 2
           );
           if (el) {
-            el.style.boxSizing = "border-box";
-            el.style.height = chipH + "px";
-            el.style.padding = "0 " + chipPadX + "px";
-            el.style.background = chip.background;
-            el.style.border = "1px solid " + chip.edge;
-            el.style.borderRadius = chipH / 2 + "px";
-            el.style.boxShadow = "0 1px 2px rgba(0,0,0,0.6)";
+            el.classList.add("bse-hud-chip");
+            el.style.setProperty("--hud-chip-h", chipH + "px");
+            el.style.setProperty("--hud-chip-pad", chipPadX + "px");
+            el.style.setProperty("--hud-chip-bg", chip.background);
+            el.style.setProperty("--hud-chip-edge", chip.edge);
           }
           rowX += chipW + 4;
         }
@@ -1784,13 +1767,13 @@
   const ENEMY_TARGET_CHROME = 14 + 18 + 12;
   const ENEMY_TARGET_MAX_W = 420;
 
-  // Measured on a canvas of its own: the rows are HTML drawn in Lora, which is
+  // Measured on a canvas of its own: the rows are HTML drawn in the UI serif, which is
   // neither the window font nor anything the engine can measure. One context
   // is kept for the whole session.
   let _hudMeasureCtx = null;
   function _hudTextWidth(text, px) {
     if (!_hudMeasureCtx) _hudMeasureCtx = document.createElement('canvas').getContext('2d');
-    _hudMeasureCtx.font = `bold ${px}px 'Lora', serif`;
+    _hudMeasureCtx.font = `bold ${px}px 'Bitter', serif`;
     return _hudMeasureCtx.measureText(String(text || '')).width;
   }
 
@@ -1834,9 +1817,7 @@
     if (!root) {
       root = document.createElement('div');
       root.id = 'html-enemytarget-overlay';
-      root.style.cssText =
-        'position:fixed;display:none;z-index:351;pointer-events:auto;' +
-        'flex-direction:column;transform-origin:top left;';
+      root.className = 'bse-target-list';
       document.body.appendChild(root);
       _enemyTargetEl = root;
     }
@@ -1874,50 +1855,33 @@
     enemies.forEach((enemy, i) => {
       const isSel = i === sel;
       const item = document.createElement('div');
-      item.className = 'actorcmd-item';
-      item.style.width = width + 'px';
-      item.style.height = ENEMY_TARGET_ROW_H + 'px';
-      item.style.cursor = 'pointer';
+      item.className = 'actorcmd-item' + (isSel ? '' : ' unsel');
+      item.classList.add('bse-target-row');
+      item.style.setProperty('--hud-w', width + 'px');
 
       const darkBase = document.createElement('div');
       darkBase.className = 'actorcmd-darkbase';
       item.appendChild(darkBase);
 
-      const grad = document.createElement('div');
-      grad.className = 'actorcmd-gradient';
-      const a0 = isSel ? 0.88 : 0.60;
-      const a1 = isSel ? 0.32 : 0.18;
-      grad.style.background =
-        `linear-gradient(to right, rgba(180,25,25,${a0}) 0%, rgba(180,25,25,${a1}) 55%, transparent 100%)`;
-      item.appendChild(grad);
-
       const stripe = document.createElement('div');
       stripe.className = 'actorcmd-stripe' + (isSel ? ' sel' : '');
-      stripe.style.background = CHEVRON_COLOR;
-      stripe.style.color = CHEVRON_COLOR;
-      item.appendChild(stripe);
 
-      if (isSel) {
-        const hl = document.createElement('div');
-        hl.className = 'actorcmd-top-hl';
-        item.appendChild(hl);
-      }
+      item.appendChild(stripe);
 
       const sep = document.createElement('div');
       sep.className = 'actorcmd-sep';
-      sep.style.background = isSel ? CHEVRON_COLOR : 'rgba(255,255,255,0.09)';
+      if (isSel) sep.classList.add('sel');
       item.appendChild(sep);
 
       const label = document.createElement('div');
       label.className = 'actorcmd-label';
-      label.style.fontSize = ENEMY_TARGET_NAME_PX + 'px';
-      label.style.marginLeft = '14px';
+
       label.textContent = _enemyTargetName(enemy);
       item.appendChild(label);
 
       const hp = document.createElement('div');
       hp.className = 'actorcmd-cost';
-      hp.style.fontSize = ENEMY_TARGET_HP_PX + 'px';
+
       hp.textContent = _enemyTargetHp(enemy);
       item.appendChild(hp);
 
@@ -1965,7 +1929,7 @@
     }
     this._enemyTargetSavedCmdVisible = null;
     const root = _enemyTargetFind();
-    if (root) root.style.display = 'none';
+    window.UIPanel.close(root);
   };
 
   Scene_Battle.prototype.updateEnemyTargetButtons = function () {
@@ -1973,7 +1937,7 @@
     const root = _enemyTargetFind();
     const active = win && win.visible && win.isOpen && win.isOpen();
     if (!active) {
-      if (root) root.style.display = 'none';
+      window.UIPanel.close(root);
       return;
     }
     const enemies = win._enemies || [];
@@ -1986,7 +1950,7 @@
     }
     const slot = _enemyTargetSlot();
     if (!slot || enemies.length === 0) {
-      if (root) root.style.display = 'none';
+      window.UIPanel.close(root);
       return;
     }
     win._enemyTargetLastIdx = idx;
@@ -2001,10 +1965,9 @@
     const listRoot = _enemyTargetRoot();
     const sc = _hudGetScale();
     const top = slot.bottom - enemies.length * ENEMY_TARGET_ROW_H;
-    listRoot.style.display = 'flex';
-    listRoot.style.left = (sc.ox + left * sc.sx) + 'px';
-    listRoot.style.top = (sc.oy + top * sc.sy) + 'px';
-    listRoot.style.transform = `scale(${sc.sx}, ${sc.sy})`;
+    window.UIPanel.open(listRoot);
+    window.UIPanel.placeAt(listRoot, sc.ox + left * sc.sx, sc.oy + top * sc.sy);
+    listRoot.style.setProperty('--hud-transform', `scale(${sc.sx}, ${sc.sy})`);
   };
 
   const _Window_SkillList_drawSkillCost =
@@ -2173,7 +2136,7 @@
       else if (hpRate <= 0.5) color = "#ffff00";
       else if (hpRate <= 0.75) color = "#ffaa00";
 
-      if (this._htmlOverlay) this._htmlOverlay.addText(`${hp}`, 0, 0, 200, "center", 20, color, true, "black", 1, "Lora, serif", 30);
+      if (this._htmlOverlay) this._htmlOverlay.addText(`${hp}`, 0, 0, 200, "center", 20, color, true, "black", 1, "Bitter, serif", 30);
     };
 
     sprite.refreshHP();
@@ -2404,6 +2367,12 @@
   window.BattleHotbar = window.BattleHotbar || {};
   window.BattleHotbar.reservedHeight =
     HOTBAR_SLOT_PX + HOTBAR_LABEL_PX + HOTBAR_MARGIN_BOTTOM + HOTBAR_LOG_GAP;
+  // Where the row of slots ends, in canvas pixels. The command list next to it
+  // stands on the same line (BattleSystemEnhanchedCommands.js) so the two read
+  // as one bar across the bottom of the screen.
+  window.BattleHotbar.slotBottomY = function () {
+    return Graphics.height - HOTBAR_MARGIN_BOTTOM - HOTBAR_LABEL_PX;
+  };
 
   let _hotbarActive = false; // true once the bar, rather than the command list, owns direction input
   let _hotbarIndex = 0;
@@ -2466,9 +2435,18 @@
   // and confirming it would (Scene_Battle.prototype.onSkillOk): the skill
   // and item windows are stood down first since either may be sitting open
   // underneath the bar.
+  // True while the fight is being played out on the map instead of in
+  // Scene_Battle (BattleSystem/MapBattleMode.js). The bar is the same bar and
+  // the actor's carried skills are the same skills; only the windows it has to
+  // stand down and the call that hands the chosen action on differ.
+  function _hotbarOnMap() {
+    return !!(window.MapBattleMode && window.MapBattleMode.isActive());
+  }
+
   function _hotbarUseSkill(actor, skill) {
     const scene = SceneManager._scene;
-    if (!(scene instanceof Scene_Battle)) return false;
+    const onMap = _hotbarOnMap();
+    if (!onMap && !(scene instanceof Scene_Battle)) return false;
     if (!BattleManager.isInputting() || BattleManager.actor() !== actor) return false;
     const action = BattleManager.inputtingAction();
     if (!action) return false;
@@ -2476,16 +2454,30 @@
       SoundManager.playBuzzer();
       return false;
     }
-    if (scene._skillWindow) { scene._skillWindow.deactivate(); scene._skillWindow.hide(); }
-    if (scene._itemWindow) { scene._itemWindow.deactivate(); scene._itemWindow.hide(); }
+    const MBM = window.MapBattleMode;
+    // On the map the skill and item lists belong to MapBattleMode, not to the
+    // scene; everywhere else they are the scene's own.
+    const host = onMap ? MBM : scene;
+    if (host._skillWindow) { host._skillWindow.deactivate(); host._skillWindow.hide(); }
+    if (host._itemWindow) { host._itemWindow.deactivate(); host._itemWindow.hide(); }
     // The skill list may be open as rows in the command menu
     // (CategorizedBattleSkills.js); the bar casts straight past it.
-    if (window.BattleSkillMenu) window.BattleSkillMenu.close(scene._actorCommandWindow);
+    const cmdWindow = onMap ? MBM._cmdWindow : scene._actorCommandWindow;
+    if (window.BattleSkillMenu) window.BattleSkillMenu.close(cmdWindow);
     _hotbarActive = false;
     action.setSkill(skill.id);
     actor.setLastBattleSkill(skill);
     SoundManager.playOk();
-    scene.onSelectAction();
+    if (onMap) {
+      // Same landing as picking the skill out of the map-battle skill list:
+      // close the command window, then either pass the turn on or open the
+      // tile cursor when the action needs a target.
+      MBM._closeCommandWindow();
+      MBM._closeSubWindows();
+      MBM._afterActionSelected();
+    } else {
+      scene.onSelectAction();
+    }
     return true;
   }
 
@@ -2503,13 +2495,13 @@
     // Dim the command list while the bar holds direction focus, so it never
     // reads as two things arguing over which is selected.
     const cmdRoot = document.getElementById('html-actorcmd-overlay');
-    if (cmdRoot) cmdRoot.style.opacity = _hotbarActive ? '0.55' : '';
+    if (cmdRoot) cmdRoot.classList.toggle('bse-dimmed', !!_hotbarActive);
   }
 
   function _hideHotbar() {
     _hotbarBar.hide();
     const cmdRoot = document.getElementById('html-actorcmd-overlay');
-    if (cmdRoot) cmdRoot.style.opacity = '';
+    if (cmdRoot) cmdRoot.classList.remove('bse-dimmed');
   }
 
   const _Scene_Battle_update_hotbar = Scene_Battle.prototype.update;
@@ -2551,13 +2543,10 @@
     return true;
   }
 
-  Scene_Battle.prototype.updateBattleHotbar = function () {
-    // The card battle layer (RoguelikeCardSystem.js) plays skills as a hand
-    // of cards instead, so the two never share the screen.
-    if (window.isCardCombatMode && window.isCardCombatMode()) {
-      _hideHotbar();
-      return;
-    }
+  // `inert` draws the bar but answers nothing: MapBattleMode passes it while
+  // the tile cursor, a walk animation or the talk menu owns the keyboard, so a
+  // number key aimed at those never also fires a slot.
+  function _updateBattleHotbar(inert) {
     const actor = BattleManager.actor();
     const inputting = !!actor && BattleManager.isInputting() && !$gameMessage.isBusy();
     if (!inputting) {
@@ -2598,6 +2587,13 @@
     // Pressing a second number while the first is still down re-arms onto the
     // new one, and the keys underneath it are spent, so releasing them later
     // does nothing.
+    if (inert) {
+      _hotbarActive = false;
+      _clearHotbarKeys();
+      _updateHotbarPosition(actor, skills);
+      return;
+    }
+
     if (_updateHotbarKeyHold(actor, skills)) return;
 
     if (_hotbarActive) {
@@ -2621,6 +2617,19 @@
     }
 
     _updateHotbarPosition(actor, skills);
+  }
+
+  Scene_Battle.prototype.updateBattleHotbar = _updateBattleHotbar;
+
+  // MapBattleMode.js drives the very same bar from Scene_Map, where there is
+  // no Scene_Battle to hang an update on: without this the spell quickbar
+  // simply never appeared once a fight was played out on the map.
+  window.BattleHotbar.update = _updateBattleHotbar;
+  window.BattleHotbar.hide = function () {
+    _hotbarActive = false;
+    _clearHotbarKeys();
+    _hotbarActor = null;
+    _hideHotbar();
   };
 
   const _Scene_Battle_terminate_hotbar = Scene_Battle.prototype.terminate;
@@ -2640,10 +2649,9 @@
   const _Window_ActorCommand_processCursorMove_hotbar = Window_ActorCommand.prototype.processCursorMove;
   Window_ActorCommand.prototype.processCursorMove = function () {
     if (_hotbarActive) return;
-    const cardMode = window.isCardCombatMode && window.isCardCombatMode();
     const back = Input.isTriggered('left') || Input.isTriggered('pageup');
     const fwd = Input.isTriggered('right') || Input.isTriggered('pagedown');
-    if (!cardMode && this.isCursorMovable() && (back || fwd)) {
+    if (this.isCursorMovable() && (back || fwd)) {
       const skills = _hotbarSkills(this._actor);
       if (skills.length > 0) {
         _hotbarActive = true;

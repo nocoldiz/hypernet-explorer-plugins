@@ -5,5 +5,45 @@
     "Storm": "Storm",
     "Snow": "Snow",
     "Unknown": "Unknown"
+  },
+  "app": {
+    "appName": "Whether Channel",
+    "tagline": "Whether it rains or whether it does not.",
+    "location": "Location",
+    "here": "Where I am",
+    "updated": "Last observation: {date}",
+    "today": "Today",
+    "indoors": "(indoors)",
+    "season": "Season",
+    "sunrise": "Sunrise",
+    "sunset": "Sunset",
+    "dayNight": "Day / night",
+    "humidity": "Humidity",
+    "wind": "Wind",
+    "cloud": "Cloud cover",
+    "kmh": "{n} km/h",
+    "outlook": "Five-day outlook",
+    "precip": "{n}% precip.",
+    "disclaimer": "Outlooks are rolled from the season tables and the calendar. The sky owes them nothing.",
+    "months": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "seasons": {
+      "winter": "Winter",
+      "spring": "Spring",
+      "summer": "Summer",
+      "autumn": "Autumn"
+    }
   }
 }

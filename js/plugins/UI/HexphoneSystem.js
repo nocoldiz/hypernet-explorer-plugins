@@ -424,6 +424,571 @@
     }
 
     //=============================================================================
+    // Numbers that answer
+    //
+    // The handset can dial three kinds of number: the emergency services of the
+    // nation the party is standing in, the public service lines, and everything
+    // else, which rings out. Emergency numbers are the ones that were in use in
+    // 2001, before the 112 harmonisation swallowed most of them, so which digits
+    // work depends on where you are. 112 itself is always accepted: on a GSM
+    // handset it reaches an operator anywhere on Earth.
+    //=============================================================================
+
+    // country name (as in js/db/WorldGen/Countries.json) -> [police, fire, medical]
+    const EMERGENCY_BY_COUNTRY = {
+        'Albania': ['129', '128', '127'],
+        'Andorra': ['110', '118', '116'],
+        'Armenia': ['02', '01', '03'],
+        'Austria': ['133', '122', '144'],
+        'Azerbaijan': ['02', '01', '03'],
+        'Belarus': ['02', '01', '03'],
+        'Belgium': ['101', '100', '100'],
+        'Bosnia and Herzegovina': ['122', '123', '124'],
+        'Bulgaria': ['166', '160', '150'],
+        'Croatia': ['92', '93', '94'],
+        'Cyprus': ['199', '199', '199'],
+        'Czech Republic': ['158', '150', '155'],
+        'Denmark': ['112', '112', '112'],
+        'Estonia': ['110', '112', '112'],
+        'Finland': ['112', '112', '112'],
+        'France': ['17', '18', '15'],
+        'Georgia': ['02', '01', '03'],
+        'Germany': ['110', '112', '112'],
+        'Greece': ['100', '199', '166'],
+        'Greenland': ['112', '112', '112'],
+        'Hungary': ['107', '105', '104'],
+        'Iceland': ['112', '112', '112'],
+        'Ireland': ['999', '999', '999'],
+        'Italy': ['113', '115', '118'],
+        'Italy - Sicily': ['113', '115', '118'],
+        'Italy - Sardinia': ['113', '115', '118'],
+        'Latvia': ['02', '01', '03'],
+        'Luxembourg': ['113', '112', '112'],
+        'Malta': ['191', '199', '196'],
+        'Moldova': ['902', '901', '903'],
+        'Monaco': ['17', '18', '15'],
+        'Montenegro': ['92', '93', '94'],
+        'Netherlands': ['112', '112', '112'],
+        'North Macedonia': ['92', '93', '94'],
+        'Norway': ['112', '110', '113'],
+        'Poland': ['997', '998', '999'],
+        'Portugal': ['112', '112', '112'],
+        'Romania': ['955', '981', '961'],
+        'Russia': ['02', '01', '03'],
+        'San Marino': ['113', '115', '118'],
+        'Scotland': ['999', '999', '999'],
+        'Serbia': ['92', '93', '94'],
+        'Slovakia': ['158', '150', '155'],
+        'Slovenia': ['113', '112', '112'],
+        'Spain': ['091', '080', '061'],
+        'Sweden': ['112', '112', '112'],
+        'Switzerland': ['117', '118', '144'],
+        'UK': ['999', '999', '999'],
+        'Ukraine': ['02', '01', '03'],
+        // Africa and the Middle East
+        'Algeria': ['17', '14', '14'],
+        'Egypt': ['122', '180', '123'],
+        'Iran': ['110', '125', '115'],
+        'Iraq': ['104', '115', '122'],
+        'Israel': ['100', '102', '101'],
+        'Jordan': ['191', '199', '193'],
+        'Kuwait': ['777', '777', '777'],
+        'Lebanon': ['112', '175', '140'],
+        'Mauritania': ['117', '118', '101'],
+        'Morocco': ['19', '15', '15'],
+        'Oman': ['999', '999', '999'],
+        'Palestine': ['100', '102', '101'],
+        'Qatar': ['999', '999', '999'],
+        'Bahrain': ['999', '999', '999'],
+        'Saudi Arabia': ['999', '998', '997'],
+        'Syria': ['112', '113', '110'],
+        'Tunisia': ['197', '198', '190'],
+        'Turkey': ['155', '110', '112'],
+        'United Arab Emirates': ['999', '997', '998'],
+        'Yemen': ['194', '191', '191'],
+        // Asia and Oceania
+        'Afghanistan': ['119', '119', '102'],
+        'Australia': ['000', '000', '000'],
+        'Bangladesh': ['100', '199', '199'],
+        'Bhutan': ['113', '110', '112'],
+        'Brunei': ['993', '995', '991'],
+        'Cambodia': ['117', '118', '119'],
+        'China': ['110', '119', '120'],
+        'India': ['100', '101', '102'],
+        'Indonesia': ['110', '113', '118'],
+        'Japan': ['110', '119', '119'],
+        'Kazakhstan': ['02', '01', '03'],
+        'Kyrgyzstan': ['02', '01', '03'],
+        'Laos': ['191', '190', '195'],
+        'Malaysia': ['999', '994', '999'],
+        'Mongolia': ['102', '101', '103'],
+        'Myanmar': ['199', '191', '192'],
+        'Nepal': ['100', '101', '102'],
+        'North Korea': ['119', '119', '119'],
+        'Pakistan': ['15', '16', '115'],
+        'Philippines': ['117', '117', '117'],
+        'Singapore': ['999', '995', '995'],
+        'South Korea': ['112', '119', '119'],
+        'Sri Lanka': ['119', '110', '110'],
+        'Taiwan': ['110', '119', '119'],
+        'Tajikistan': ['02', '01', '03'],
+        'Thailand': ['191', '199', '1669'],
+        'Turkmenistan': ['02', '01', '03'],
+        'Uzbekistan': ['02', '01', '03'],
+        'Vietnam': ['113', '114', '115'],
+        // The Americas
+        'Argentina': ['101', '100', '107'],
+        'Bolivia': ['110', '119', '118'],
+        'Brazil': ['190', '193', '192'],
+        'Canada': ['911', '911', '911'],
+        'Cascadia Protectorate': ['911', '911', '911'],
+        'Chile': ['133', '132', '131'],
+        'Colombia': ['112', '119', '125'],
+        'Eastern Seaboard': ['911', '911', '911'],
+        'Ecuador': ['101', '102', '131'],
+        'Guyana': ['911', '911', '911'],
+        'Mexico': ['060', '068', '065'],
+        'Paraguay': ['911', '132', '141'],
+        'Peru': ['105', '116', '117'],
+        'Suriname': ['115', '110', '113'],
+        'United States (Free States of Midwest)': ['911', '911', '911'],
+        'Uruguay': ['109', '104', '105'],
+        'Varlenia': ['911', '911', '911'],
+        'Venezuela': ['171', '171', '171'],
+        // The tower keeps its own switchboard
+        'OmegaTower': ['1', '1', '1']
+    };
+
+    // Nations the table does not name still have a switchboard: 911 across the
+    // Americas, 112 everywhere else, which is what a GSM handset falls back to.
+    const REGION_EMERGENCY = {
+        'North America': ['911', '911', '911'],
+        'South America': ['911', '911', '911'],
+        'Europe': ['112', '112', '112'],
+        'Africa': ['112', '112', '112'],
+        'Asia': ['112', '112', '112'],
+        'Middle East': ['112', '112', '112'],
+        'Oceania': ['112', '112', '112']
+    };
+
+    const GSM_UNIVERSAL = '112';
+
+    function normalizeNumber(number) {
+        return String(number || '').replace(/[^0-9*#+]/g, '');
+    }
+
+    const HexphoneDirectory = {
+        // The record of the nation the party is standing in. WeatherSystem is
+        // the one place that resolves a map to a country, so ask it first and
+        // fall back to the nation id in variable 86.
+        currentCountry() {
+            const cc = (typeof $gameWeather !== 'undefined' && $gameWeather) ?
+                $gameWeather.currentCountry : null;
+            if (cc && cc.country) return cc;
+            const list = (window.WorldGen && window.WorldGen.Countries) || [];
+            const id = $gameVariables ? $gameVariables.value(86) : 0;
+            return list.find(c => c.id === id) || null;
+        },
+
+        currentCountryName() {
+            const cc = this.currentCountry();
+            return (cc && cc.country) || '';
+        },
+
+        // [police, fire, medical] for wherever the party is.
+        emergencyNumbers() {
+            const cc = this.currentCountry();
+            const name = (cc && cc.country) || '';
+            const byName = EMERGENCY_BY_COUNTRY[name];
+            if (byName) return byName.slice();
+            const byRegion = REGION_EMERGENCY[(cc && cc.region) || ''];
+            return (byRegion || [GSM_UNIVERSAL, GSM_UNIVERSAL, GSM_UNIVERSAL]).slice();
+        },
+
+        // What the Emergency contact dials: the local police number, since that
+        // is the line a 2001 handset would have stored.
+        primaryEmergencyNumber() {
+            return this.emergencyNumbers()[0];
+        },
+
+        // Which service a dialled number reaches here, or null if it is not an
+        // emergency number in this nation.
+        serviceForNumber(number) {
+            const dialled = normalizeNumber(number);
+            if (!dialled) return null;
+            if (dialled === GSM_UNIVERSAL) return 'general';
+            const [police, fire, medical] = this.emergencyNumbers();
+            if (dialled === police) return 'police';
+            if (dialled === fire) return 'fire';
+            if (dialled === medical) return 'medical';
+            return null;
+        },
+
+        isEmergencyNumber(number) {
+            return this.serviceForNumber(number) !== null;
+        },
+
+        // A number that is an emergency line somewhere else but not here: worth
+        // its own recorded message rather than a dead line.
+        isForeignEmergencyNumber(number) {
+            const dialled = normalizeNumber(number);
+            if (!dialled || this.isEmergencyNumber(dialled)) return false;
+            for (const key of Object.keys(EMERGENCY_BY_COUNTRY)) {
+                if (EMERGENCY_BY_COUNTRY[key].indexOf(dialled) >= 0) return true;
+            }
+            return false;
+        },
+
+        publicNumbers() {
+            return PUBLIC_LINES.map(line => ({
+                number: line.number,
+                name: T(line.nameKey)
+            }));
+        },
+
+        entryForNumber(number) {
+            const dialled = normalizeNumber(number);
+            return PUBLIC_LINES.find(line => line.number === dialled) || null;
+        }
+    };
+    window.HexphoneDirectory = HexphoneDirectory;
+
+    //=============================================================================
+    // Call scripts
+    //
+    // A call is a little tree. Each node prints a few lines on the LCD and may
+    // offer numbered options; picking one runs it and returns the next node, or
+    // null to let the other end hang up.
+    //=============================================================================
+
+    function callNode(lines, options, extra) {
+        return Object.assign({
+            lines: [].concat(lines).filter(l => l !== null && l !== undefined && l !== ''),
+            options: options || []
+        }, extra || {});
+    }
+
+    function partyMembers() {
+        return ($gameParty && $gameParty.members) ? $gameParty.members() : [];
+    }
+
+    // Anyone bleeding, broken, dying or badly hurt counts as a casualty.
+    function injuredMembers() {
+        return partyMembers().filter(actor => {
+            if (!actor) return false;
+            if (actor.isDead() || actor.isDying()) return true;
+            if (actor.isStateAffected && actor.isStateAffected(48)) return true;
+            if (actor.mhp > 0 && actor.hp < actor.mhp * 0.9) return true;
+            const HC = window.HealthCore;
+            if (HC && typeof HC.partStates === 'function' && typeof HC.isPartBroken === 'function') {
+                const parts = HC.partStates(actor) || {};
+                for (const key of Object.keys(parts)) {
+                    if (HC.isPartBroken(parts[key])) return true;
+                }
+            }
+            return false;
+        });
+    }
+
+    const AMBULANCE_CALLOUT = 2000;      // the callout itself, in gold (€20)
+    const AMBULANCE_PER_CASUALTY = 1500; // per casualty carried (€15)
+    const FALSE_CALL_BOUNTY = 1500;      // wasting an operator's time
+
+    function ambulanceFee(casualties) {
+        return AMBULANCE_CALLOUT + AMBULANCE_PER_CASUALTY * Math.max(1, casualties);
+    }
+
+    function treatParty() {
+        const HC = window.HealthCore;
+        for (const actor of partyMembers()) {
+            if (!actor) continue;
+            if (HC && typeof HC.restoreAllBodyParts === 'function') {
+                HC.restoreAllBodyParts(actor);
+            }
+            actor.recoverAll();
+        }
+    }
+
+    function currentBounty() {
+        const CS = window.CrimeSystem;
+        if (CS && typeof CS.getTotalBounty === 'function') return CS.getTotalBounty();
+        return $gameVariables ? Number($gameVariables.value(66)) || 0 : 0;
+    }
+
+    function fileFalseCallCrime() {
+        const CS = window.CrimeSystem;
+        if (CS && typeof CS.addCrime === 'function') {
+            CS.addCrime(T('Hexphone.emergency.falseCallCharge'), FALSE_CALL_BOUNTY);
+        }
+        if (CS && typeof CS.raiseHeat === 'function') CS.raiseHeat(15);
+    }
+
+    // The public lines: numbers that are printed in a directory rather than on
+    // the back of an emergency card. Each answers with its own recorded voice.
+    const PUBLIC_LINES = [
+        {
+            number: '161',
+            nameKey: 'Hexphone.serviceLines.clock',
+            free: false,
+            answer() {
+                const now = currentGameDate();
+                return callNode([
+                    T('Hexphone.serviceLines.clockIntro'),
+                    formatClock(now),
+                    T('Hexphone.serviceLines.clockDate').replace('%1', formatStamp(now))
+                ], [], { autoEnd: true });
+            }
+        },
+        {
+            number: '197',
+            nameKey: 'Hexphone.serviceLines.weather',
+            free: false,
+            answer() {
+                const country = HexphoneDirectory.currentCountryName() ||
+                    T('Hexphone.emergency.unknownNation');
+                return callNode([
+                    T('Hexphone.serviceLines.weatherIntro').replace('%1', country),
+                    T('Hexphone.serviceLines.weatherBody')
+                ], [], { autoEnd: true });
+            }
+        },
+        {
+            number: '4444',
+            nameKey: 'Hexphone.serviceLines.anokiCare',
+            free: true,
+            answer() {
+                return callNode([
+                    T('Hexphone.serviceLines.anokiIntro'),
+                    T('Hexphone.serviceLines.anokiBalance')
+                        .replace('%1', goldToEuros($gameSystem.getPhoneCredits()))
+                ], [], { autoEnd: true });
+            }
+        },
+        {
+            number: '1515',
+            nameKey: 'Hexphone.serviceLines.tipLine',
+            free: true,
+            answer() {
+                const bounty = currentBounty();
+                if (bounty > 0) {
+                    return callNode([
+                        T('Hexphone.serviceLines.tipIntro'),
+                        T('Hexphone.serviceLines.tipRecord').replace('%1', goldToEuros(bounty))
+                    ], [], { autoEnd: true });
+                }
+                return callNode([
+                    T('Hexphone.serviceLines.tipIntro'),
+                    T('Hexphone.serviceLines.tipClean')
+                ], [], { autoEnd: true });
+            }
+        },
+        {
+            number: '899899',
+            nameKey: 'Hexphone.serviceLines.horoscope',
+            free: false,
+            answer() {
+                const day = currentGameDate().getDate();
+                const pool = T.pool('Hexphone.serviceLines.horoscopeLines');
+                if (pool.length === 0) pool.push(T('Hexphone.serviceLines.horoscopeIntro'));
+                return callNode([
+                    T('Hexphone.serviceLines.horoscopeIntro'),
+                    pool[day % pool.length]
+                ], [], { autoEnd: true });
+            }
+        },
+        {
+            number: '5730',
+            nameKey: 'Hexphone.serviceLines.taxi',
+            free: false,
+            answer() {
+                return callNode([
+                    T('Hexphone.serviceLines.taxiIntro'),
+                    T('Hexphone.serviceLines.taxiBody')
+                ], [], { autoEnd: true });
+            }
+        }
+    ];
+
+    //-------------------------------------------------------------------------
+    // The emergency tree
+    //-------------------------------------------------------------------------
+
+    function emergencyRoot(service) {
+        const numbers = HexphoneDirectory.emergencyNumbers();
+        const nation = HexphoneDirectory.currentCountryName();
+        const greeting = nation ?
+            T('Hexphone.emergency.greetingNation').replace('%1', nation) :
+            T('Hexphone.emergency.greeting');
+
+        if (service === 'police') return policeNode(greeting);
+        if (service === 'fire') return fireNode(greeting);
+        if (service === 'medical') return medicalNode(greeting);
+
+        // 112 and the like: one operator who asks which service you want.
+        return callNode([greeting, T('Hexphone.emergency.whichService')], [
+            { key: '1', label: T('Hexphone.emergency.optPolice'),
+              run: () => policeNode(T('Hexphone.emergency.transferPolice')) },
+            { key: '2', label: T('Hexphone.emergency.optFire'),
+              run: () => fireNode(T('Hexphone.emergency.transferFire')) },
+            { key: '3', label: T('Hexphone.emergency.optMedical'),
+              run: () => medicalNode(T('Hexphone.emergency.transferMedical')) },
+            { key: '4', label: T('Hexphone.emergency.optNothing'),
+              run: () => prankNode() }
+        ], { numbers: numbers });
+    }
+
+    function prankNode() {
+        fileFalseCallCrime();
+        return callNode([
+            T('Hexphone.emergency.prankReply'),
+            T('Hexphone.emergency.prankCharge')
+        ], [], { autoEnd: true });
+    }
+
+    //-------------------------------------------------------------------------
+    // Ambulance
+    //-------------------------------------------------------------------------
+
+    function medicalNode(intro) {
+        const casualties = injuredMembers();
+        if (casualties.length === 0) {
+            return callNode([intro, T('Hexphone.emergency.medNoCasualty')], [
+                { key: '1', label: T('Hexphone.emergency.optApologise'),
+                  run: () => callNode(T('Hexphone.emergency.medApology'), [], { autoEnd: true }) },
+                { key: '2', label: T('Hexphone.emergency.optInsist'),
+                  run: () => prankNode() }
+            ]);
+        }
+
+        const fee = ambulanceFee(casualties.length);
+        const worst = casualties[0].name();
+        return callNode([
+            intro,
+            T('Hexphone.emergency.medWho'),
+            T('Hexphone.emergency.medCasualties')
+                .replace('%1', String(casualties.length)).replace('%2', worst),
+            T('Hexphone.emergency.medFee').replace('%1', goldToEuros(fee))
+        ], [
+            { key: '1', label: T('Hexphone.emergency.optSendAmbulance'),
+              run: () => acceptAmbulance(fee, casualties.length) },
+            { key: '2', label: T('Hexphone.emergency.optNoThanks'),
+              run: () => callNode(T('Hexphone.emergency.medDeclined'), [], { autoEnd: true }) }
+        ]);
+    }
+
+    function acceptAmbulance(fee, casualties) {
+        if ($gameParty.gold() < fee) {
+            return callNode([
+                T('Hexphone.emergency.medNoMoney'),
+                T('Hexphone.emergency.medNoMoneyBody')
+            ], [], { autoEnd: true });
+        }
+        $gameParty.loseGold(fee);
+        treatParty();
+        return callNode([
+            T('Hexphone.emergency.medOnTheWay'),
+            T('Hexphone.emergency.medTreated').replace('%1', String(casualties))
+        ], [], { autoEnd: true, treated: true });
+    }
+
+    //-------------------------------------------------------------------------
+    // Police, and turning yourself in
+    //-------------------------------------------------------------------------
+
+    function policeNode(intro) {
+        return callNode([intro, T('Hexphone.emergency.polWhat')], [
+            { key: '1', label: T('Hexphone.emergency.optReportCrime'),
+              run: () => callNode([
+                  T('Hexphone.emergency.polReportTaken'),
+                  T('Hexphone.emergency.polReportBody')
+              ], [], { autoEnd: true }) },
+            { key: '2', label: T('Hexphone.emergency.optSurrender'),
+              run: () => surrenderNode() },
+            { key: '3', label: T('Hexphone.emergency.optNothing'),
+              run: () => prankNode() }
+        ]);
+    }
+
+    function surrenderNode() {
+        const bounty = currentBounty();
+        if (bounty <= 0) {
+            return callNode([
+                T('Hexphone.emergency.polNothingOnRecord'),
+                T('Hexphone.emergency.polNothingBody')
+            ], [], { autoEnd: true });
+        }
+        return callNode([
+            T('Hexphone.emergency.polRecordFound').replace('%1', goldToEuros(bounty)),
+            T('Hexphone.emergency.polHowSettle')
+        ], [
+            { key: '1', label: T('Hexphone.emergency.optPayFine'), run: () => payFineNode(bounty) },
+            { key: '2', label: T('Hexphone.emergency.optStandTrial'),
+              run: scene => { scene.exitToTrial('startTrial'); return null; } },
+            { key: '3', label: T('Hexphone.emergency.optGoToJail'),
+              run: scene => { scene.exitToTrial('skipToJail'); return null; } },
+            { key: '4', label: T('Hexphone.emergency.optChangedMind'),
+              run: () => callNode(T('Hexphone.emergency.polChangedMind'), [], { autoEnd: true }) }
+        ]);
+    }
+
+    function payFineNode(bounty) {
+        if ($gameParty.gold() < bounty) {
+            return callNode([
+                T('Hexphone.emergency.polCannotPay'),
+                T('Hexphone.emergency.polCannotPayBody')
+            ], [
+                { key: '1', label: T('Hexphone.emergency.optStandTrial'),
+                  run: scene => { scene.exitToTrial('startTrial'); return null; } },
+                { key: '2', label: T('Hexphone.emergency.optGoToJail'),
+                  run: scene => { scene.exitToTrial('skipToJail'); return null; } }
+            ]);
+        }
+        $gameParty.loseGold(bounty);
+        const CS = window.CrimeSystem;
+        if (CS && typeof CS.clearBounty === 'function') CS.clearBounty({ silent: true });
+        else if ($gameVariables) $gameVariables.setValue(66, 0);
+        return callNode([
+            T('Hexphone.emergency.polPaid').replace('%1', goldToEuros(bounty)),
+            T('Hexphone.emergency.polPaidBody')
+        ], [], { autoEnd: true });
+    }
+
+    function fireNode(intro) {
+        return callNode([intro, T('Hexphone.emergency.fireWhat')], [
+            { key: '1', label: T('Hexphone.emergency.optRealFire'),
+              run: () => callNode([
+                  T('Hexphone.emergency.fireDispatched'),
+                  T('Hexphone.emergency.fireStayClear')
+              ], [], { autoEnd: true }) },
+            { key: '2', label: T('Hexphone.emergency.optNothing'), run: () => prankNode() }
+        ]);
+    }
+
+    // The root node for whatever was dialled, or null when the line is dead.
+    function scriptForNumber(number) {
+        const dialled = normalizeNumber(number);
+        const service = HexphoneDirectory.serviceForNumber(dialled);
+        if (service) {
+            return { free: true, emergency: true, root: () => emergencyRoot(service) };
+        }
+        const line = HexphoneDirectory.entryForNumber(dialled);
+        if (line) {
+            return { free: !!line.free, root: () => line.answer() };
+        }
+        if (HexphoneDirectory.isForeignEmergencyNumber(dialled)) {
+            const local = HexphoneDirectory.emergencyNumbers()[0];
+            return {
+                free: true,
+                root: () => callNode([
+                    T('Hexphone.emergency.wrongCountry'),
+                    T('Hexphone.emergency.wrongCountryBody').replace('%1', local)
+                ], [], { autoEnd: true })
+            };
+        }
+        return null;
+    }
+
+    //=============================================================================
     // Game registry (module level; persists nothing, rebuilt each boot)
     //=============================================================================
 
@@ -534,6 +1099,26 @@
 
     Game_System.prototype.getContacts = function() {
         return this._phoneContacts || {};
+    };
+
+    // Every handset carries the local emergency number, and it follows the
+    // border: crossing into another nation rewrites it to whatever answers
+    // there. Refreshed whenever the phone is opened.
+    Game_System.prototype.ensureEmergencyContact = function() {
+        this.ensureAnokiPhone();
+        for (const key of Object.keys(this._phoneContacts)) {
+            if (this._phoneContacts[key] && this._phoneContacts[key].emergency) {
+                delete this._phoneContacts[key];
+            }
+        }
+        const name = T('Hexphone.emergency.contactName');
+        this._phoneContacts[name] = {
+            name: name,
+            number: HexphoneDirectory.primaryEmergencyNumber(),
+            commonEventId: 0,
+            emergency: true
+        };
+        return this._phoneContacts[name];
     };
 
     Game_System.prototype.findContactByNumber = function(number) {
@@ -656,6 +1241,9 @@
         this._closing = false;
         this._gameSession = null;
         this._currentGameName = '';
+        this._callScript = null;
+        this._callNode = null;
+        this._nodeSeconds = 0;
         this._incomingContact = null;
 
         this._selectedMenuIndex = 0;
@@ -664,6 +1252,7 @@
         this._selectedGameIndex = 0;
         this._selectedSettingIndex = 0;
         this._selectedHistoryIndex = 0;
+        this._selectedServiceIndex = 0;
         this._messageScroll = 0;
     };
 
@@ -674,7 +1263,10 @@
         // twice made every click fire two handlers, and a doubled popScene
         // emptied the scene stack and shut the game down via SceneManager.exit).
         Scene_MenuBase.prototype.create.call(this);
-        if ($gameSystem) $gameSystem.ensureAnokiPhone();
+        if ($gameSystem) {
+            $gameSystem.ensureAnokiPhone();
+            $gameSystem.ensureEmergencyContact();
+        }
         this.createPhoneBody();
         this.createScreen();
         this.createPhoneButtons();
@@ -711,36 +1303,184 @@
     // Phone body and screen (visuals unchanged from v2)
     //-------------------------------------------------------------------------
 
+    // The shell is drawn the way the hyperdeck is modelled: one moulded piece
+    // lit from the upper left, with a raised rim, a recessed screen well and
+    // keys that stand proud of the face. Everything is painted into bitmaps so
+    // the existing hit testing and the LCD content bitmap keep working.
+    const SHELL_PAD = 26;
+
+    function roundedPath(ctx, x, y, w, h, r) {
+        const rr = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + rr, y);
+        ctx.lineTo(x + w - rr, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
+        ctx.lineTo(x + w, y + h - rr);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h);
+        ctx.lineTo(x + rr, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - rr);
+        ctx.lineTo(x, y + rr);
+        ctx.quadraticCurveTo(x, y, x + rr, y);
+        ctx.closePath();
+    }
+
+    function etchedText(ctx, text, cx, y, size, light, dark) {
+        ctx.font = size + 'px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = dark;
+        ctx.fillText(text, cx, y + 1);
+        ctx.fillStyle = light;
+        ctx.fillText(text, cx, y);
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+    }
+
     Scene_AnokiPhone.prototype.createPhoneBody = function() {
-        const phoneX = Graphics.width / 2 - 150;
-        const phoneY = 50;
+        const W = 300;
+        const H = 600;
+        const P = SHELL_PAD;
 
         this._phoneSprite = new Sprite();
-        this._phoneSprite.bitmap = new Bitmap(300, 600);
-        this._phoneSprite.x = phoneX;
-        this._phoneSprite.y = phoneY;
+        this._phoneSprite.bitmap = new Bitmap(W + P * 2, H + P * 2);
+        this._phoneSprite.x = Graphics.width / 2 - 150 - P;
+        this._phoneSprite.y = 50 - P;
 
-        const bitmap = this._phoneSprite.bitmap;
-        const context = bitmap.context;
+        const ctx = this._phoneSprite.bitmap.context;
+        ctx.save();
 
-        const gradient = context.createLinearGradient(0, 0, 0, 600);
-        gradient.addColorStop(0, '#3a4a5a');
-        gradient.addColorStop(1, '#1f2937');
+        // The shadow the handset casts on whatever it is lying on.
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.72)';
+        ctx.shadowBlur = 24;
+        ctx.shadowOffsetY = 14;
+        ctx.fillStyle = '#0a0e14';
+        roundedPath(ctx, P, P, W, H, 40);
+        ctx.fill();
+        ctx.restore();
 
-        context.fillStyle = gradient;
-        context.roundRect(0, 0, 300, 600, 20);
-        context.fill();
+        // The moulded shell: a cylinder of plastic, lighter down the middle
+        // where it turns towards the light, dark at both rolled edges.
+        const across = ctx.createLinearGradient(P, 0, P + W, 0);
+        across.addColorStop(0.00, '#0e141c');
+        across.addColorStop(0.10, '#33465c');
+        across.addColorStop(0.34, '#5b768f');
+        across.addColorStop(0.55, '#3d5065');
+        across.addColorStop(0.86, '#1c2735');
+        across.addColorStop(1.00, '#0b1017');
+        ctx.fillStyle = across;
+        roundedPath(ctx, P, P, W, H, 40);
+        ctx.fill();
 
-        context.strokeStyle = '#0f172a';
-        context.lineWidth = 3;
-        context.roundRect(0, 0, 300, 600, 20);
-        context.stroke();
+        // Top light and the shade that falls off towards the bottom.
+        const down = ctx.createLinearGradient(0, P, 0, P + H);
+        down.addColorStop(0.00, 'rgba(255, 255, 255, 0.16)');
+        down.addColorStop(0.22, 'rgba(255, 255, 255, 0.02)');
+        down.addColorStop(0.70, 'rgba(0, 0, 0, 0.10)');
+        down.addColorStop(1.00, 'rgba(0, 0, 0, 0.38)');
+        ctx.fillStyle = down;
+        roundedPath(ctx, P, P, W, H, 40);
+        ctx.fill();
 
-        bitmap.fontSize = 12;
-        bitmap.fontFace = 'Arial';
-        bitmap.textColor = '#94a3b8';
-        bitmap.drawText('ANOKI', 0, 10, 300, 24, 'center');
+        // The rolled rim, bright where it faces up, dark underneath.
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+        roundedPath(ctx, P + 1, P + 1, W - 2, H - 2, 39);
+        ctx.stroke();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
+        roundedPath(ctx, P, P, W, H, 40);
+        ctx.stroke();
 
+        // The face plate sunk into the shell.
+        const face = ctx.createLinearGradient(0, P + 12, 0, P + H - 12);
+        face.addColorStop(0, '#2c3a4c');
+        face.addColorStop(0.5, '#22303f');
+        face.addColorStop(1, '#18222e');
+        ctx.fillStyle = face;
+        roundedPath(ctx, P + 11, P + 11, W - 22, H - 22, 32);
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+        roundedPath(ctx, P + 11, P + 11, W - 22, H - 22, 32);
+        ctx.stroke();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.10)';
+        roundedPath(ctx, P + 12, P + 12, W - 24, H - 24, 31);
+        ctx.stroke();
+
+        // Earpiece grille: a slot milled into the plastic with the slits in it.
+        const gx = P + W / 2 - 44;
+        const gy = P + 6;
+        ctx.fillStyle = '#0a0f15';
+        roundedPath(ctx, gx, gy, 88, 11, 6);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+        ctx.lineWidth = 1;
+        roundedPath(ctx, gx, gy + 1, 88, 11, 6);
+        ctx.stroke();
+        for (let i = 0; i < 7; i++) {
+            ctx.fillStyle = 'rgba(120, 145, 170, 0.30)';
+            ctx.fillRect(gx + 12 + i * 10, gy + 3, 3, 5);
+        }
+
+        // Brand, etched rather than printed.
+        etchedText(ctx, 'ANOKI', P + W / 2, P + 21, 12,
+            'rgba(196, 214, 232, 0.85)', 'rgba(0, 0, 0, 0.7)');
+
+        // The well the screen sits in, with the shadow its lip throws inwards.
+        const wx = P + 14;
+        const wy = P + 38;
+        ctx.save();
+        roundedPath(ctx, wx, wy, W - 28, 186, 14);
+        ctx.clip();
+        ctx.fillStyle = '#121a23';
+        ctx.fillRect(wx, wy, W - 28, 186);
+        const lip = ctx.createLinearGradient(0, wy, 0, wy + 26);
+        lip.addColorStop(0, 'rgba(0, 0, 0, 0.75)');
+        lip.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = lip;
+        ctx.fillRect(wx, wy, W - 28, 26);
+        ctx.restore();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 1;
+        roundedPath(ctx, wx, wy + 1, W - 28, 186, 14);
+        ctx.stroke();
+
+        // The keypad plate, a shade lighter and catching the light in a band
+        // across the top row the way a raked keypad does.
+        const kx = P + 14;
+        const ky = P + 228;
+        const kh = H - 228 - 19;
+        const plate = ctx.createLinearGradient(0, ky, 0, ky + kh);
+        plate.addColorStop(0, '#37485c');
+        plate.addColorStop(0.45, '#25313f');
+        plate.addColorStop(1, '#161f2a');
+        ctx.fillStyle = plate;
+        roundedPath(ctx, kx, ky, W - 28, kh, 22);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.55)';
+        ctx.lineWidth = 2;
+        roundedPath(ctx, kx, ky, W - 28, kh, 22);
+        ctx.stroke();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.13)';
+        ctx.lineWidth = 1;
+        roundedPath(ctx, kx + 1, ky + 2, W - 30, kh - 3, 21);
+        ctx.stroke();
+
+        // A single sheen laid diagonally over the whole handset.
+        ctx.save();
+        roundedPath(ctx, P, P, W, H, 40);
+        ctx.clip();
+        const sheen = ctx.createLinearGradient(P, P, P + W * 0.9, P + H * 0.55);
+        sheen.addColorStop(0.00, 'rgba(255, 255, 255, 0.16)');
+        sheen.addColorStop(0.28, 'rgba(255, 255, 255, 0.04)');
+        sheen.addColorStop(0.45, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = sheen;
+        ctx.fillRect(P, P, W, H);
+        ctx.restore();
+
+        ctx.restore();
+        this._phoneSprite.bitmap._baseTexture.update();
         this.addChild(this._phoneSprite);
     };
 
@@ -753,14 +1493,40 @@
         this._screenSprite.x = screenX;
         this._screenSprite.y = screenY;
 
-        const bitmap = this._screenSprite.bitmap;
-        bitmap.fillRect(0, 0, 260, 180, '#9fa870');
+        const ctx = this._screenSprite.bitmap.context;
+        ctx.save();
 
-        const context = bitmap.context;
-        context.strokeStyle = '#2d3748';
-        context.lineWidth = 2;
-        context.strokeRect(0, 0, 260, 180);
+        // Bezel: the dark frame the glass is held in.
+        ctx.fillStyle = '#0d1218';
+        roundedPath(ctx, 0, 0, 260, 180, 8);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.lineWidth = 2;
+        roundedPath(ctx, 0, 0, 260, 180, 8);
+        ctx.stroke();
 
+        // The panel itself, lit from an edge backlight low on the left.
+        const back = ctx.createRadialGradient(90, 150, 10, 130, 90, 220);
+        back.addColorStop(0, '#c2d07a');
+        back.addColorStop(0.55, '#a3b165');
+        back.addColorStop(1, '#7f8c4c');
+        ctx.fillStyle = back;
+        ctx.fillRect(4, 4, 252, 172);
+
+        // The pixel grid of a passive matrix panel.
+        ctx.fillStyle = 'rgba(40, 48, 24, 0.10)';
+        for (let x = 4; x < 256; x += 2) ctx.fillRect(x, 4, 1, 172);
+        for (let y = 4; y < 176; y += 2) ctx.fillRect(4, y, 252, 1);
+
+        // The shadow the bezel drops onto the glass.
+        const inner = ctx.createLinearGradient(0, 4, 0, 24);
+        inner.addColorStop(0, 'rgba(20, 26, 12, 0.45)');
+        inner.addColorStop(1, 'rgba(20, 26, 12, 0)');
+        ctx.fillStyle = inner;
+        ctx.fillRect(4, 4, 252, 20);
+
+        ctx.restore();
+        this._screenSprite.bitmap._baseTexture.update();
         this.addChild(this._screenSprite);
 
         this._contentSprite = new Sprite();
@@ -768,6 +1534,30 @@
         this._contentSprite.x = screenX + 5;
         this._contentSprite.y = screenY + 5;
         this.addChild(this._contentSprite);
+
+        // The glass over the digits: one raked reflection, drawn last so it
+        // lies on top of whatever the panel is showing.
+        this._glassSprite = new Sprite();
+        this._glassSprite.bitmap = new Bitmap(260, 180);
+        const gctx = this._glassSprite.bitmap.context;
+        gctx.save();
+        roundedPath(gctx, 4, 4, 252, 172, 4);
+        gctx.clip();
+        const glare = gctx.createLinearGradient(0, 0, 190, 130);
+        glare.addColorStop(0.00, 'rgba(255, 255, 255, 0.20)');
+        glare.addColorStop(0.30, 'rgba(255, 255, 255, 0.06)');
+        glare.addColorStop(0.42, 'rgba(255, 255, 255, 0)');
+        gctx.fillStyle = glare;
+        gctx.fillRect(0, 0, 260, 180);
+        gctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+        gctx.lineWidth = 1;
+        roundedPath(gctx, 5, 5, 250, 170, 4);
+        gctx.stroke();
+        gctx.restore();
+        this._glassSprite.bitmap._baseTexture.update();
+        this._glassSprite.x = screenX;
+        this._glassSprite.y = screenY;
+        this.addChild(this._glassSprite);
 
         this.refreshScreen();
     };
@@ -780,19 +1570,19 @@
         const funcY = 280;
 
         const callButton = new Sprite_AnokiButton(
-            startX, funcY, buttonWidth, buttonHeight - 5, 'CALL', '#16a34a');
+            startX, funcY, buttonWidth, buttonHeight - 5, 'CALL', '#1f7a44');
         callButton.setClickHandler(() => this.onCallButton());
         this._buttons.push(callButton);
         this.addChild(callButton);
 
         const menuButton = new Sprite_AnokiButton(
-            startX + buttonWidth + spacing, funcY, buttonWidth, buttonHeight - 5, 'MENU', '#3b82f6');
+            startX + buttonWidth + spacing, funcY, buttonWidth, buttonHeight - 5, 'MENU', '#2f5f9e');
         menuButton.setClickHandler(() => this.onMenuButton());
         this._buttons.push(menuButton);
         this.addChild(menuButton);
 
         const endButton = new Sprite_AnokiButton(
-            startX + (buttonWidth + spacing) * 2, funcY, buttonWidth, buttonHeight - 5, 'END', '#dc2626');
+            startX + (buttonWidth + spacing) * 2, funcY, buttonWidth, buttonHeight - 5, 'END', '#9e2b2b');
         endButton.setClickHandler(() => this.onEndButton());
         this._buttons.push(endButton);
         this.addChild(endButton);
@@ -812,7 +1602,7 @@
                 const btn = buttonLayout[row][col];
                 const x = startX + col * (buttonWidth + spacing);
                 const y = startY + row * (buttonHeight + spacing);
-                const button = new Sprite_AnokiButton(x, y, buttonWidth, buttonHeight, btn.label, '#4a5568');
+                const button = new Sprite_AnokiButton(x, y, buttonWidth, buttonHeight, btn.label, '#3a4b60');
                 button.setClickHandler(() => this.onNumberButton(btn.value));
                 this._buttons.push(button);
                 this.addChild(button);
@@ -844,6 +1634,7 @@
             case 'messages':    this.drawMessagesScreen(bitmap); break;
             case 'messageView': this.drawMessageViewScreen(bitmap); break;
             case 'settings':    this.drawSettingsScreen(bitmap); break;
+            case 'services':    this.drawServicesScreen(bitmap); break;
             case 'games':       this.drawGamesScreen(bitmap); break;
             case 'game':        this.drawGameScreen(bitmap); break;
         }
@@ -888,18 +1679,19 @@
             '3. ' + getText('CALL HISTORY'),
             '4. ' + getText('DIAL NUMBER'),
             '5. ' + getText('SETTINGS'),
-            '6. ' + getText('GAMES')
+            '6. ' + getText('GAMES'),
+            '7. ' + T('Hexphone.services.title')
         ];
 
-        let y = 30;
+        let y = 28;
         for (let i = 0; i < menuItems.length; i++) {
             const prefix = (i === this._selectedMenuIndex) ? '> ' : '  ';
-            bitmap.drawText(prefix + menuItems[i], 10, y, 230, 20, 'left');
-            y += 20;
+            bitmap.drawText(prefix + menuItems[i], 10, y, 230, 18, 'left');
+            y += 18;
         }
 
         bitmap.fontSize = 10;
-        bitmap.drawText(getText('Press END to exit'), 0, 150, 250, 20, 'center');
+        bitmap.drawText(getText('Press END to exit'), 0, 152, 250, 18, 'center');
     };
 
     Scene_AnokiPhone.prototype.drawDialScreen = function(bitmap) {
@@ -957,6 +1749,40 @@
     };
 
     Scene_AnokiPhone.prototype.drawCallingScreen = function(bitmap) {
+        // A call with someone on the other end: their words fill the panel and
+        // the numbered replies sit under them, answered on the keypad.
+        if (this._inCall && this._callNode) {
+            bitmap.fontSize = 11;
+            bitmap.fontBold = true;
+            bitmap.drawText(this._currentCallName || T('Hexphone.unknownCaller'), 4, 0, 180, 16, 'left');
+            bitmap.fontBold = false;
+            const duration = Math.floor(this._callDuration);
+            bitmap.drawText(
+                Math.floor(duration / 60).toString().padStart(2, '0') + ':' +
+                (duration % 60).toString().padStart(2, '0'), 180, 0, 66, 16, 'right');
+
+            bitmap.fontSize = 12;
+            let y = 20;
+            for (const line of this._callNode.lines) {
+                const used = this.drawWrappedText(bitmap, line, 6, y, 238, 15);
+                y += used * 15;
+            }
+
+            const options = this._callNode.options || [];
+            if (options.length > 0) {
+                y = Math.max(y + 4, 170 - 14 - options.length * 15);
+                bitmap.fontSize = 11;
+                for (const option of options) {
+                    bitmap.drawText(option.key + '. ' + option.label, 8, y, 234, 15, 'left');
+                    y += 15;
+                }
+            } else {
+                bitmap.fontSize = 10;
+                bitmap.drawText(getText('Press to hang up'), 0, 152, 250, 18, 'center');
+            }
+            return;
+        }
+
         bitmap.fontSize = 14;
         bitmap.fontBold = true;
         bitmap.drawText(getText('CALLING'), 0, 20, 250, 20, 'center');
@@ -1141,6 +1967,56 @@
         bitmap.drawText(getText('Change setting'), 0, 150, 250, 20, 'center');
     };
 
+    // The numbers that answer: the local emergency line at the top, then the
+    // public service lines, the way they were printed in a phone book.
+    Scene_AnokiPhone.prototype.serviceEntries = function() {
+        const numbers = HexphoneDirectory.emergencyNumbers();
+        const entries = [{
+            name: T('Hexphone.emergency.contactName'),
+            number: numbers[0]
+        }];
+        if (numbers[1] !== numbers[0]) {
+            entries.push({ name: T('Hexphone.emergency.optFire'), number: numbers[1] });
+        }
+        if (numbers[2] !== numbers[0] && numbers[2] !== numbers[1]) {
+            entries.push({ name: T('Hexphone.emergency.optMedical'), number: numbers[2] });
+        }
+        return entries.concat(HexphoneDirectory.publicNumbers());
+    };
+
+    Scene_AnokiPhone.prototype.drawServicesScreen = function(bitmap) {
+        bitmap.fontSize = 13;
+        bitmap.fontBold = true;
+        bitmap.drawText(T('Hexphone.services.title'), 0, 2, 250, 18, 'center');
+        bitmap.fontBold = false;
+
+        const nation = HexphoneDirectory.currentCountryName();
+        bitmap.fontSize = 10;
+        bitmap.drawText(nation || T('Hexphone.emergency.unknownNation'), 0, 18, 250, 14, 'center');
+
+        const entries = this.serviceEntries();
+        this._selectedServiceIndex =
+            Math.min(this._selectedServiceIndex, Math.max(0, entries.length - 1));
+
+        bitmap.fontSize = 11;
+        let y = 34;
+        for (let i = 0; i < entries.length; i++) {
+            const selected = (i === this._selectedServiceIndex);
+            bitmap.drawText((selected ? '> ' : '  ') + entries[i].name, 6, y, 170, 15, 'left');
+            bitmap.drawText(entries[i].number, 170, y, 74, 15, 'right');
+            y += 15;
+        }
+
+        bitmap.fontSize = 10;
+        bitmap.drawText(T('Hexphone.services.callHint'), 0, 152, 250, 18, 'center');
+    };
+
+    Scene_AnokiPhone.prototype.callSelectedService = function() {
+        const entries = this.serviceEntries();
+        const entry = entries[this._selectedServiceIndex];
+        if (entry) this.initiateCall(entry.number, entry.name, 0);
+    };
+
     Scene_AnokiPhone.prototype.drawGamesScreen = function(bitmap) {
         bitmap.fontSize = 14;
         bitmap.fontBold = true;
@@ -1246,7 +2122,7 @@
                 break;
 
             case 'menu':
-                if (value >= '1' && value <= '6') {
+                if (value >= '1' && value <= '7') {
                     this._selectedMenuIndex = Number(value) - 1;
                     this.enterMenuItem(this._selectedMenuIndex);
                 }
@@ -1281,9 +2157,17 @@
                 break;
             }
 
-            case 'calling':
+            case 'calling': {
+                if (this._inCall && this._callNode) {
+                    const option = (this._callNode.options || []).find(o => o.key === value);
+                    if (option) {
+                        this.answerCallOption(option);
+                        break;
+                    }
+                }
                 if (value === '#') this.endCall();
                 break;
+            }
 
             case 'messages': {
                 const messages = $gameSystem.getMessages();
@@ -1314,6 +2198,19 @@
                 }
                 this.refreshScreen();
                 break;
+
+            case 'services': {
+                const entries = this.serviceEntries();
+                if (entries.length === 0) break;
+                if (value === '2') {
+                    this._selectedServiceIndex = (this._selectedServiceIndex + 1) % entries.length;
+                } else if (value === '8') {
+                    this._selectedServiceIndex =
+                        (this._selectedServiceIndex - 1 + entries.length) % entries.length;
+                }
+                this.refreshScreen();
+                break;
+            }
 
             case 'games': {
                 const games = $gameSystem.getPhoneGames();
@@ -1346,6 +2243,7 @@
             case 3: this._screenMode = 'dial'; this._dialedNumber = ''; break;
             case 4: this._screenMode = 'settings'; break;
             case 5: this._screenMode = 'games'; this._selectedGameIndex = 0; break;
+            case 6: this._screenMode = 'services'; this._selectedServiceIndex = 0; break;
         }
     };
 
@@ -1381,6 +2279,8 @@
             this.openMessage();
         } else if (this._screenMode === 'games') {
             this.launchGame();
+        } else if (this._screenMode === 'services') {
+            this.callSelectedService();
         }
     };
 
@@ -1425,6 +2325,9 @@
             case 'games':
                 this.launchGame();
                 break;
+            case 'services':
+                this.callSelectedService();
+                break;
             case 'incoming':
                 this.answerIncomingCall();
                 break;
@@ -1457,7 +2360,7 @@
             this._screenMode = 'home';
             this.refreshScreen();
         } else if (['dial', 'contacts', 'addContact', 'callHistory',
-                    'messages', 'settings', 'games'].includes(this._screenMode)) {
+                    'messages', 'settings', 'games', 'services'].includes(this._screenMode)) {
             this._screenMode = 'menu';
             this._dialedNumber = '';
             this.refreshScreen();
@@ -1545,17 +2448,31 @@
 
     Scene_AnokiPhone.prototype.initiateCall = function(number, name, commonEventId) {
         const eventId = Number(commonEventId) || 0;
-        if (eventId === 0 && $gameSystem.getPhoneCredits() < callCostPerSecond) {
+
+        // What is on the other end of this number: an emergency operator, a
+        // public line, an event contact, or nobody at all.
+        const script = eventId > 0 ? null : (scriptForNumber(number) || {
+            free: true,
+            root: () => callNode([
+                T('Hexphone.deadLine'), T('Hexphone.deadLineBody')
+            ], [], { autoEnd: true })
+        });
+        const freeLine = eventId > 0 || (script && script.free);
+
+        if (!freeLine && $gameSystem.getPhoneCredits() < callCostPerSecond) {
             this.playErrorSound();
             return;
         }
+        this._callScript = script;
+        this._callNode = null;
+        this._nodeSeconds = 0;
 
         this._screenMode = 'calling';
         this._dialedNumber = number;
         this._currentCallName = name;
         this._currentCallEventId = eventId;
         this._inCall = false;
-        this._freeCall = eventId > 0;
+        this._freeCall = freeLine;
         this._callDuration = 0;
 
         this.playRingtone();
@@ -1572,12 +2489,45 @@
                 this.exitToMapWithEvent(this._currentCallEventId);
             } else {
                 this._inCall = true;
+                if (this._callScript) {
+                    this._callNode = this._callScript.root();
+                    this._nodeSeconds = 0;
+                }
                 this.startCallTimer();
                 this.refreshScreen();
             }
         }, 1500);
 
         this.refreshScreen();
+    };
+
+    // Pressing a number during a call answers the voice on the other end. An
+    // option may hand the party over to the courts, which closes the phone.
+    Scene_AnokiPhone.prototype.answerCallOption = function(option) {
+        const next = option.run ? option.run(this) : null;
+        if (this._closing) return;
+        this._nodeSeconds = 0;
+        if (!next) {
+            this.endCall();
+            return;
+        }
+        this._callNode = next;
+        this.refreshScreen();
+    };
+
+    // Turning yourself in leaves the handset: the trial and the cell live on
+    // the map, so the command is queued and run once the map is back up.
+    Scene_AnokiPhone.prototype.exitToTrial = function(command) {
+        if (this._closing) return;
+        this._closing = true;
+        this.clearCallTimer();
+        this.clearConnectTimeout();
+        if ($gameSystem && this._callDuration > 0) {
+            $gameSystem.addCallToHistory(this._dialedNumber, this._currentCallName,
+                this._callDuration);
+        }
+        $gameTemp._hexphonePendingTrial = command;
+        SceneManager.goto(Scene_Map);
     };
 
     Scene_AnokiPhone.prototype.startCallTimer = function() {
@@ -1593,6 +2543,14 @@
                     this.endCall();
                     this.playErrorSound();
                     return;
+                }
+                // The other end rings off once it has said its piece.
+                if (this._callNode && this._callNode.autoEnd) {
+                    this._nodeSeconds++;
+                    if (this._nodeSeconds >= 5) {
+                        this.endCall();
+                        return;
+                    }
                 }
                 this.refreshScreen();
             }
@@ -1623,6 +2581,9 @@
 
         this._inCall = false;
         this._freeCall = false;
+        this._callScript = null;
+        this._callNode = null;
+        this._nodeSeconds = 0;
         this._screenMode = 'home';
         this._dialedNumber = '';
         this._currentCallName = '';
@@ -1733,7 +2694,7 @@
     Scene_AnokiPhone.prototype.navigateList = function(delta) {
         switch (this._screenMode) {
             case 'menu':
-                this._selectedMenuIndex = (this._selectedMenuIndex + delta + 6) % 6;
+                this._selectedMenuIndex = (this._selectedMenuIndex + delta + 7) % 7;
                 this.playButtonSound();
                 this.refreshScreen();
                 break;
@@ -1744,6 +2705,9 @@
                 this.onNumberButton(delta > 0 ? '2' : '8');
                 break;
             case 'games':
+                this.onNumberButton(delta > 0 ? '2' : '8');
+                break;
+            case 'services':
                 this.onNumberButton(delta > 0 ? '2' : '8');
                 break;
             case 'callHistory':
@@ -1861,53 +2825,106 @@
 
     Sprite_AnokiButton.prototype.initialize = function(x, y, width, height, label, color) {
         Sprite_Clickable.prototype.initialize.call(this);
-        this.move(x, y);
+        this._baseX = x;
+        this._baseY = y;
+        // The cap is drawn inside a padded bitmap so the shadow it drops on
+        // the keypad plate has somewhere to fall.
+        this._pad = 6;
         this._buttonWidth = width;
         this._buttonHeight = height;
         this._label = label;
         this._color = color || '#4a5568';
+        this._wasPressed = false;
+        this.move(x - 6, y - 6);
         this.createButtonBitmap();
     };
 
     Sprite_AnokiButton.prototype.createButtonBitmap = function() {
-        this.bitmap = new Bitmap(this._buttonWidth, this._buttonHeight);
+        this.bitmap = new Bitmap(this._buttonWidth + this._pad * 2,
+            this._buttonHeight + this._pad * 2);
         this.redraw();
     };
 
-    Sprite_AnokiButton.prototype.redraw = function() {
+    // A key cap: the moulding tapers towards its top face, so the cap is drawn
+    // as a trapezoid, dark along the flank that faces away from the light and
+    // bright along the top edge, with a soft gloss over the crown.
+    Sprite_AnokiButton.prototype.redraw = function(pressed) {
         const bitmap = this.bitmap;
-        const context = bitmap.context;
+        const ctx = bitmap.context;
+        const p = this._pad;
+        const w = this._buttonWidth;
+        const h = this._buttonHeight;
+        const sink = pressed ? 2 : 0;
 
         bitmap.clear();
+        ctx.save();
 
-        const gradient = context.createLinearGradient(0, 0, 0, this._buttonHeight);
-        gradient.addColorStop(0, this.lightenColor(this._color, 20));
-        gradient.addColorStop(0.5, this._color);
-        gradient.addColorStop(1, this.darkenColor(this._color, 20));
+        // The recess in the plate the cap rises out of.
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+        roundedPath(ctx, p - 2, p + 1, w + 4, h + 4, 10);
+        ctx.fill();
 
-        context.fillStyle = gradient;
-        context.roundRect(0, 0, this._buttonWidth, this._buttonHeight, 5);
-        context.fill();
+        // The flank of the cap, the plastic seen edge on.
+        const flank = ctx.createLinearGradient(0, p, 0, p + h);
+        flank.addColorStop(0, this.darkenColor(this._color, 12));
+        flank.addColorStop(1, this.darkenColor(this._color, 48));
+        ctx.fillStyle = flank;
+        roundedPath(ctx, p, p + sink, w, h, 9);
+        ctx.fill();
 
-        context.strokeStyle = this.darkenColor(this._color, 40);
-        context.lineWidth = 2;
-        context.roundRect(0, 0, this._buttonWidth, this._buttonHeight, 5);
-        context.stroke();
+        // The top face, narrower than the base and lifted clear of it.
+        const inset = 4;
+        const lift = pressed ? 1 : 3;
+        const ty = p + sink + 1;
+        const tw = w - inset * 2;
+        const th = h - lift - 2;
+        const crown = ctx.createLinearGradient(p + inset, ty, p + inset, ty + th);
+        crown.addColorStop(0, this.lightenColor(this._color, pressed ? 8 : 26));
+        crown.addColorStop(0.48, this._color);
+        crown.addColorStop(1, this.darkenColor(this._color, 22));
+        ctx.fillStyle = crown;
+        roundedPath(ctx, p + inset, ty, tw, th, 7);
+        ctx.fill();
+
+        // The lit edge along the top of the crown and the shade under it.
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(255, 255, 255, ' + (pressed ? 0.16 : 0.34) + ')';
+        ctx.beginPath();
+        ctx.moveTo(p + inset + 7, ty + 1);
+        ctx.lineTo(p + inset + tw - 7, ty + 1);
+        ctx.stroke();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+        roundedPath(ctx, p + inset, ty, tw, th, 7);
+        ctx.stroke();
+
+        // Gloss: one highlight across the upper half of the crown.
+        ctx.save();
+        roundedPath(ctx, p + inset, ty, tw, th, 7);
+        ctx.clip();
+        const gloss = ctx.createLinearGradient(0, ty, 0, ty + th * 0.6);
+        gloss.addColorStop(0, 'rgba(255, 255, 255, ' + (pressed ? 0.06 : 0.20) + ')');
+        gloss.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = gloss;
+        ctx.fillRect(p + inset, ty, tw, th * 0.6);
+        ctx.restore();
+
+        ctx.restore();
 
         bitmap.fontFace = 'Arial, sans-serif';
-        bitmap.fontSize = 14;
-        bitmap.textColor = '#ffffff';
-        bitmap.outlineColor = 'rgba(0, 0, 0, 0.5)';
+        bitmap.textColor = '#f1f5f9';
+        bitmap.outlineColor = 'rgba(0, 0, 0, 0.65)';
         bitmap.outlineWidth = 3;
 
         const lines = this._label.split('\n');
-        if (lines.length === 1) {
-            bitmap.drawText(this._label, 0, this._buttonHeight / 2 - 7, this._buttonWidth, 20, 'center');
+        if (lines.length === 1 || !lines[1]) {
+            bitmap.fontSize = 15;
+            bitmap.drawText(lines[0], p, ty + th / 2 - 10, w, 20, 'center');
         } else {
-            bitmap.fontSize = 16;
-            bitmap.drawText(lines[0], 0, 4, this._buttonWidth, 20, 'center');
+            bitmap.fontSize = 17;
+            bitmap.drawText(lines[0], p, ty + 2, w, 20, 'center');
             bitmap.fontSize = 9;
-            bitmap.drawText(lines[1], 0, 22, this._buttonWidth, 20, 'center');
+            bitmap.textColor = '#c3ccd8';
+            bitmap.drawText(lines[1], p, ty + 19, w, 14, 'center');
         }
     };
 
@@ -1945,9 +2962,11 @@
 
     Sprite_AnokiButton.prototype.update = function() {
         Sprite_Clickable.prototype.update.call(this);
-        const scale = this.isPressed() ? 0.95 : 1.0;
-        this.scale.x = scale;
-        this.scale.y = scale;
+        const pressed = this.isPressed();
+        if (pressed !== this._wasPressed) {
+            this._wasPressed = pressed;
+            this.redraw(pressed);
+        }
     };
 
     //=============================================================================
@@ -2443,5 +3462,27 @@
             this.closePath();
         };
     }
+
+    //=============================================================================
+    // Handing the party over to the courts
+    //
+    // Turning yourself in on the emergency line closes the phone; the trial and
+    // the cell are run by ErisTrial on the map, so the command waits here until
+    // the map has come back up.
+    //=============================================================================
+
+    const _Scene_Map_start_hexphone = Scene_Map.prototype.start;
+    Scene_Map.prototype.start = function() {
+        _Scene_Map_start_hexphone.call(this);
+        const pending = $gameTemp ? $gameTemp._hexphonePendingTrial : null;
+        if (pending) {
+            $gameTemp._hexphonePendingTrial = null;
+            try {
+                PluginManager.callCommand(null, 'ErisTrial', pending, {});
+            } catch (e) {
+                console.error('Hexphone: could not hand over to ErisTrial', e);
+            }
+        }
+    };
 
 })();

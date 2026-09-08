@@ -82,7 +82,6 @@
     "save": "Write it down",
     "saved": "{name} is on the map now",
     "savedTitle": "Marked on the map",
-    "hint": "Left and right change a number, up and down move between the fields",
     "refused": {
       "range": "That square is off the map",
       "reserved": "A place already stands there",

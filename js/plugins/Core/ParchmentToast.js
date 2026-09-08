@@ -163,7 +163,7 @@
     s.left = "auto";
     s.right = (window.innerWidth - r.right) + 20 * sx + "px";
     s.top = r.top + 20 * sy + "px";
-    s.fontSize = Math.round(14 * sy) + "px";
+    s.fontSize = Math.round(19 * sy) + "px";
   }
 
   function tick() {

@@ -12,9 +12,9 @@
  * 
  * @param openKey
  * @text Open Debug Menu Key
- * @desc Key to open the debug map menu (F9 by default)
+ * @desc Key to open the debug map menu (F6 by default)
  * @type string
- * @default F9
+ * @default F6
  * 
  * @command openDebugMenu
  * @text Open Debug Map Menu
@@ -64,7 +64,7 @@
  * - Falls back to random passable tiles if no teleports exist
  * 
  * Usage:
- * - Press F9 (or configured key) to open the debug menu
+ * - Press Shift+F6 (or configured key) to open the debug menu
  * - Use plugin commands in events for scripted access
  * 
  * Plugin Commands:
@@ -77,7 +77,7 @@
     'use strict';
     //require('nw.gui').Window.get().showDevTools();
     const parameters = PluginManager.parameters('DebugMapTeleporter');
-    const openKey = parameters['openKey'] || 'F9';
+    const openKey = parameters['openKey'] || 'F6';
     
     let debugWindow = null;
     let mapCache = new Map();
@@ -138,15 +138,15 @@
     };
     
     Scene_Map.prototype.updateDebugInput = function() {
-        // Shift+F9 opens the map teleporter. Plain F9 is left to the core debug
-        // scene so a single F9 press only opens one popup.
-        if (Input.isPressed('shift') && Input.isTriggered('debug')) {
+        // Shift+F6 opens the map teleporter. F9 and F10 belong to the
+        // quicksave / quickload pair in Core/SaveSystem.js.
+        if (Input.isPressed('shift') && Input.isTriggered('debugmap')) {
             this.openDebugMapMenu();
         }
     };
     
     // Register debug key
-    Input.keyMapper[120] = 'debug'; // F9
+    Input.keyMapper[117] = 'debugmap'; // F6
     
     Scene_Map.prototype.createDebugMapWindow = function() {
         // Window will be created when opened

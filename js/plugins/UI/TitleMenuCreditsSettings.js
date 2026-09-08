@@ -141,7 +141,14 @@
                 { name: 'Music Loops', by: 'comigo', urls: ['comigo.itch.io/music-loops'] },
                 { name: 'Techno Trance Melodic Techno 03', by: 'moogify', urls: ['pixabay.com/music/techno-trance-melodic-techno-03-extended-version-moogify-9867/'] },
                 { name: 'Techno Trance Dark Dub Techno, Somewhere We Got Lost', urls: ['pixabay.com/music/techno-trance-dark-dub-techno-somewhere-we-got-lost-no-copyright-music-144827/'] },
-                { name: 'Medieval Exploration', urls: ['youtube.com/watch?v=XZO331MAAi0', 'youtube.com/watch?v=wGqJseFSWbA'] }
+                { name: 'Medieval Exploration', urls: ['youtube.com/watch?v=XZO331MAAi0', 'youtube.com/watch?v=wGqJseFSWbA'] },
+                // The radio's dial is the audio/bgm folder tree, so everything
+                // broadcasting on it is credited here, one entry per station.
+                { name: 'Royalty-free music library (Action, Atmospheric, Calm, Dark, Horror, Jazz, Techno and the rest of the dial)', by: 'Kevin MacLeod', urls: ['incompetech.com/', 'creativecommons.org/licenses/by/4.0/'] },
+                { name: 'Fantasy and chiptune loops', by: 'RandomMind', urls: ['opengameart.org/users/randommind'] },
+                { name: 'Shortcuts', by: 'Zane Little Music', urls: ['opengameart.org/users/zane-little-music'] },
+                { name: 'Public-domain classical recordings (Concert Hall station)', by: 'Musopen and the European Archive, via Wikimedia Commons', urls: ['musopen.org/', 'commons.wikimedia.org/wiki/Category:Musopen', 'creativecommons.org/publicdomain/mark/1.0/'] },
+                { name: 'Clocks', by: 'Nocoldiz', urls: ['nocoldiz.itch.io/'] }
             ]
         },
         {

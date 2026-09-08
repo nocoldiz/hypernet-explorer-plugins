@@ -256,7 +256,14 @@
     }
   }
 
+  // A door opened straight from the editor has no way in and so no way out: the
+  // fallback picks a residential building at random and drops the party there.
+  // That is a playtest convenience and nothing else. In a shipped build a lost
+  // return point must never turn into a random teleport across the world (see
+  // returnToRecordedSquare, which is the real answer), so the fallback is not
+  // offered at all outside a playtest.
   function findPlaytestFallbackLocation() {
+    if (!$gameTemp || !$gameTemp.isPlaytest()) return null;
     loadMapGroupsData();
     const currentMapId = $gameMap.mapId();
     let groupBuildings = [];
@@ -552,10 +559,16 @@
 
   function isBuildingPublic(building) {
     if (!building) return false;
-    if (COMMERCIAL_POOLS.has(buildingBasePool(building))) return true;
+    const base = buildingBasePool(building);
+    // A skyscraper and its floors belong to nobody: the whole town walks in.
+    if (PUBLIC_POOLS.has(base)) return true;
+    if (COMMERCIAL_POOLS.has(base)) return true;
     const interior = building.interiorMapId;
-    if (interior && $dataMapInfos && $dataMapInfos[interior] &&
-        COMMERCIAL_PARENT_IDS.includes($dataMapInfos[interior].parentId)) return true;
+    if (interior && $dataMapInfos && $dataMapInfos[interior]) {
+      const parent = $dataMapInfos[interior].parentId;
+      if (PUBLIC_PARENT_IDS.includes(parent)) return true;
+      if (COMMERCIAL_PARENT_IDS.includes(parent)) return true;
+    }
     return false;
   }
 
@@ -731,8 +744,25 @@
     return true;
   }
 
+  // The address a door built at (x,y) on `mapId` will answer to once the party
+  // walks through it. It has to be spelled exactly the way getCurrentOwnershipKey
+  // spells it, world-square prefix and square-local coordinates included, or a
+  // house the player put up themselves reads as somebody else's the moment they
+  // step inside (its cupboards then file thefts, and its deed never shows in the
+  // asset register).
+  function ownershipKeyForEntrance(mapId, x, y) {
+    if (mapId !== PROC_MAP_ID) return `${mapId}_${x}_${y}_f0`;
+    const S = window.ProcStitch;
+    const local = (S && typeof S.localToParty === 'function')
+      ? S.localToParty(x, y)
+      : { x, y };
+    const wx = (typeof $gameVariables !== 'undefined') ? $gameVariables.value(43) : 0;
+    const wy = (typeof $gameVariables !== 'undefined') ? $gameVariables.value(44) : 0;
+    return `${mapId}:${wx},${wy}_${local.x}_${local.y}_f0`;
+  }
+
   function markEntranceOwned(mapId, x, y) {
-    const key = `${mapId}_${x}_${y}_f0`;
+    const key = ownershipKeyForEntrance(mapId, x, y);
     getOwnedHouses()[key] = deedRecord();
     return key;
   }
@@ -744,11 +774,14 @@
   function listOwnedHouses() {
     const owned = getOwnedHouses();
     return Object.keys(owned).map(key => {
-      const m = key.match(/^(\d+)_(\d+)_(\d+)_f(\d+)$/);
+      // Two spellings: a plain `mapId_x_y_f0`, and the procedural map's
+      // `mapId:worldX,worldY_x_y_f0`, whose coordinates are square-local.
+      const m = key.match(/^(\d+)(?::(-?\d+),(-?\d+))?_(\d+)_(\d+)_f(\d+)$/);
       const mapId = m ? Number(m[1]) : null;
-      const x = m ? Number(m[2]) : null;
-      const y = m ? Number(m[3]) : null;
-      const floor = m ? Number(m[4]) : 0;
+      const x = m ? Number(m[4]) : null;
+      const y = m ? Number(m[5]) : null;
+      const floor = m ? Number(m[6]) : 0;
+      const keyWorld = (m && m[2] != null) ? { x: Number(m[2]), y: Number(m[3]) } : null;
       const h = (_hashKey(key) ^ getWorldSeed()) >>> 0;
       const value = 30000 + Math.floor(seededRandom(h) * 60000); // gold (300-900 EUR)
       const rec = owned[key] || {};
@@ -758,7 +791,7 @@
       // recorded fall back to the party's current square.
       let mapName = T('ProceduralHouse.unknownLocation');
       if (mapId != null && window.WorldMapReturn && window.WorldMapReturn.placeName) {
-        const coords = (rec.worldX != null) ? { x: rec.worldX, y: rec.worldY } : null;
+        const coords = keyWorld || ((rec.worldX != null) ? { x: rec.worldX, y: rec.worldY } : null);
         mapName = window.WorldMapReturn.placeName(mapId, coords) || mapName;
       } else if (mapId != null && $dataMapInfos && $dataMapInfos[mapId] && $dataMapInfos[mapId].name) {
         mapName = $dataMapInfos[mapId].name;
@@ -1530,23 +1563,23 @@
       openDoorAndEnter(doEntry);
       return;
     }
-    if (typeof LockpickTetris === 'undefined') return;
+    if (typeof UnlockingBlocks === 'undefined') return;
     _pendingNightHouse = { useFacing: useFacing, doEntry: doEntry, tile: tile || _procDoorTile };
     hookLockpickForHouse();
     // Randomized lock complexity, clamped to the minigame's 1-10 range.
     const difficulty = 3 + Math.floor(Math.random() * 6); // 3..8
-    LockpickTetris.start(difficulty, 0, 0, '', '');
+    UnlockingBlocks.start(difficulty, 0, 0, '', '');
   }
 
   // Mirrors PeekPlugin: wrap popScene once to resolve the pending entry when the
   // lockpick minigame succeeds. Lockpicking is never a crime, so whether it
   // succeeds or fails nothing is logged here; failure simply opens no door.
   function hookLockpickForHouse() {
-    if (typeof Scene_LockpickTetris === 'undefined') return;
-    if (Scene_LockpickTetris._houseHooked) return;
-    Scene_LockpickTetris._houseHooked = true;
-    const _popScene = Scene_LockpickTetris.prototype.popScene;
-    Scene_LockpickTetris.prototype.popScene = function() {
+    if (typeof Scene_UnlockingBlocks === 'undefined') return;
+    if (Scene_UnlockingBlocks._houseHooked) return;
+    Scene_UnlockingBlocks._houseHooked = true;
+    const _popScene = Scene_UnlockingBlocks.prototype.popScene;
+    Scene_UnlockingBlocks.prototype.popScene = function() {
       if (_pendingNightHouse) {
         const pending = _pendingNightHouse;
         _pendingNightHouse = null;
@@ -1834,6 +1867,40 @@
     performElevatorFloorChange(target);
   }
 
+  // The way out when no return point survived (a session id that outlived its
+  // entry, a save written inside the building before one was recorded). The old
+  // answer was findPlaytestFallbackLocation, which picks a residential building
+  // AT RANDOM anywhere in the world: that is how leaving a shop occasionally
+  // spat the party out at the Omega Tower. The party's world square is recorded
+  // by WorldMapTransfer on every map load, so ask for it instead and step back
+  // out onto it. Answers false only when even that is unknown.
+  function returnToRecordedSquare() {
+    const WMT = window.WorldMapTransfer;
+    if (!WMT) return false;
+    const pg = $gameSystem && $gameSystem._procGenData;
+    const here = WMT.playerWorld ? WMT.playerWorld() : null;
+    const tpl = WMT.TEMPLATE_COORDS || { x: -1, y: -1 };
+    const wx = (pg && typeof pg.originX === 'number') ? pg.originX : (here && here.x);
+    const wy = (pg && typeof pg.originY === 'number') ? pg.originY : (here && here.y);
+    if (typeof wx !== 'number' || typeof wy !== 'number') return false;
+    if (wx === tpl.x && wy === tpl.y) return false;
+    if (pg && pg.generatedMapData) {
+      // Square-local: ProcStitch's performTransfer hook converts it, and
+      // onMapLoaded moves the party off the tile if it is not standable.
+      $gameVariables.setValue(43, wx);
+      $gameVariables.setValue(44, wy);
+      $gamePlayer.reserveTransfer(PROC_MAP_ID, 32, 32, 2, 0);
+    } else {
+      // No square built: the world map itself, which is redirected to the tower
+      // by WorldMapReturn when there is no Earth left to arrive on.
+      $gamePlayer.reserveTransfer(WMT.worldMapId, wx, wy, 2, 0);
+    }
+    currentHouseSessionId = null;
+    currentMultiBuilding = null;
+    setCurrentBuilding(null);
+    return true;
+  }
+
   function exitHouse() {
     const returnPoint = houseReturnPoints[currentHouseSessionId];
     if (returnPoint) {
@@ -1880,6 +1947,9 @@
       currentHouseSessionId = null;
       currentMultiBuilding = null;
       setCurrentBuilding(null);
+    } else if (returnToRecordedSquare()) {
+      // Nothing recorded the way in, but the party's world square is still
+      // known, so they leave by the front of the square they are standing on.
     } else {
       const result = findPlaytestFallbackLocation();
       if (result) {

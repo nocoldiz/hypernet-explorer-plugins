@@ -20,7 +20,7 @@
   "encounterList": [],
   "encounterStep": 30,
   "height": 30,
-  "note": "\n<Interior>\n<Country: Belgium>\n<Coords 79 125>\n<MapGroup Ghent>\n<BuildRights: Owner>\n<Biome: City>",
+  "note": "\n<Interior>\n<Country: Belgium>\n<Coords 79 125>\n<MapGroup Ghent>\n<BuildRights: Free>\n<Biome: City>",
   "parallaxLoopX": true,
   "parallaxLoopY": true,
   "parallaxName": "Tiles/Texture_512x512_6",

@@ -5,6 +5,8 @@
   "credentials": "Accreditamento",
   "agenda": "Ordine del giorno",
   "chamber": "Aula",
+  "venue": "Sede",
+  "chairing": "Presiede",
   "motions": "Mozioni",
   "division": "La Votazione",
   "ballotKind": "Scrutinio",
@@ -51,10 +53,7 @@
   "sgBlurb": "Il Segretario Generale non rappresenta nessuno, non vota su nulla, ed è l'unica persona nell'edificio che possa sciogliere una parità nel Consiglio di Sicurezza.",
   "holdsSeat": "{name} occupa il seggio di questa delegazione all'assemblea.",
   "holdsSeatParent": "{name} siede per {faction}, a cui questa risponde.",
-  "you": "Tu",
-  "pressToContinue": "Premi Invio per continuare",
-  "cancelToAutoPlay": "Esc per riproduzione automatica",
-  "autoPlaying": "Riproduzione automatica"
+  "you": "Tu"
  },
  "role": {
   "secretaryGeneral": "Segretario Generale"

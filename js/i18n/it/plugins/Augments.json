@@ -26,10 +26,10 @@
     "damagedWarning": "La parte in cui si trova è rovinata. L'innesto funziona ancora, l'arto no.",
     "severWarning": "Amputare la parte porta via anche l'innesto.",
     "need": {
-      "halted": "{need} non si esaurisce mai.",
-      "slowed": "{need} cala del {pct}% più lentamente.",
-      "hastened": "{need} cala del {pct}% più in fretta.",
-      "restores": "{need} si ricarica invece di calare, al {pct}% del ritmo abituale."
+      "halted": "Non si esaurisce mai",
+      "slowed": "Cala del {pct}% più lentamente",
+      "hastened": "Cala del {pct}% più in fretta",
+      "restores": "Si ricarica al {pct}% del ritmo abituale"
     },
     "searchPlaceholder": "Cerca innesti…"
   }

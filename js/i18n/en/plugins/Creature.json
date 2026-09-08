@@ -17,6 +17,5 @@
     "weaponSlotsOne": "Can hold 1 weapon",
     "weaponSlotsMouth": "Can hold 1 weapon, in its mouth",
     "noWeaponSlots": "Cannot hold a weapon"
-  },
-  "selectSecondaryArchetypeGoblin": "Select a secondary archetype (everyone here is a goblin)"
+  }
 }

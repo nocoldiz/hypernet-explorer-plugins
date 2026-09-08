@@ -11,6 +11,7 @@
   "backBtn": "Indietro",
   "empty_backpack": "Il tuo zaino è vuoto...",
   "empty_container": "Il contenitore è vuoto...",
+  "empty_search": "Nessun oggetto corrisponde.",
   "inspect_placeholder": "Seleziona un oggetto per ispezionarlo e scegliere un'azione.",
   "common": "Comune",
   "uncommon": "Non Comune",
@@ -45,6 +46,9 @@
     "leave": "Lascia",
     "alreadyCollected": "Già raccolto",
     "partDestroyed": "Parte distrutta",
-    "needTools": "Richiede strumenti chirurgici"
+    "needTools": "Richiede strumenti chirurgici",
+    "examineTitle": "Esamina: {name}",
+    "bury": "Seppellisci",
+    "buried": "Seppellisci ciò che resta del {name}."
   }
 }

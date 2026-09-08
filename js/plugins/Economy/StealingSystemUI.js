@@ -56,6 +56,7 @@
       this._el   = el;
 
       this._attachClicks();
+      this._drawIcons();
     }
 
     _buildRows() {
@@ -63,15 +64,60 @@
         return `<div class="steal-empty">${T('Steal.nothingNearby')}</div>`;
       }
 
+      // A shelf reads like a pocket: the backpack's own row, part for part
+      // (.item-slot), so the mark, the icon, the name and the line under it
+      // are the same everywhere in the game. What a pocket spends on weight
+      // this spends on the odds, and the count on the right is what the
+      // counter has left rather than what the party is carrying.
       return this._items.map((entry, i) => {
-        const chance = SS().calcChance(entry.data, this._agi);
-        const color  = chanceColor(chance);
-        const sel    = i === this._idx ? ' selected' : '';
-        return `<div class="steal-choice${sel}" data-idx="${i}">
-          <span class="steal-choice-name">${entry.data.name}</span>
-          <span class="steal-choice-pct" style="color:${color}">${chance}%</span>
+        const item     = entry.data;
+        const chance   = SS().calcChance(item, this._agi);
+        const color    = chanceColor(chance);
+        const sel      = i === this._idx ? ' selected' : '';
+        const canvasId = `steal-ic-${i}`;
+        const rarity   = window.ItemSystemUtils
+          ? window.ItemSystemUtils.itemRarityClass(item) : 'rarity--common';
+        const stock    = Number.isFinite(entry.stock) ? entry.stock : null;
+        const countHTML = stock === null ? ''
+          : `<span class="item-slot-count">x${stock}</span>`;
+        return `<div class="item-slot steal-choice${sel}" data-idx="${i}"
+            data-icon-index="${item.iconIndex}" data-canvas-id="${canvasId}">
+          <div class="item-rarity-bar ${rarity}"></div>
+          <div class="item-slot-icon">
+            <canvas id="${canvasId}" class="item-slot-icon-canvas--sm" width="32" height="32"></canvas>
+          </div>
+          <div class="item-slot-info">
+            <div class="item-slot-name">${item.name}</div>
+            <div class="item-slot-meta">
+              <span class="steal-choice-pct" style="color:${color}">${chance}%</span>
+              ${countHTML}
+            </div>
+          </div>
         </div>`;
       }).join('');
+    }
+
+    // Every row's icon painted out of the IconSet, the same way the backpack
+    // and the containers paint theirs.
+    _drawIcons() {
+      if (!this._el) return;
+      const bitmap = ImageManager.loadSystem('IconSet');
+      const rows = Array.from(this._el.querySelectorAll('.steal-choice[data-canvas-id]'));
+      const draw = () => {
+        for (const row of rows) {
+          const canvas = document.getElementById(row.getAttribute('data-canvas-id'));
+          if (!canvas) continue;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) continue;
+          const iconIndex = parseInt(row.getAttribute('data-icon-index'), 10) || 0;
+          ctx.clearRect(0, 0, 32, 32);
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(bitmap.canvas, (iconIndex % 16) * 32, Math.floor(iconIndex / 16) * 32,
+                        32, 32, 0, 0, 32, 32);
+        }
+      };
+      if (bitmap.isReady()) draw();
+      else bitmap.addLoadListener(draw);
     }
 
     // ── Click / hover wiring ──────────────────────────────────

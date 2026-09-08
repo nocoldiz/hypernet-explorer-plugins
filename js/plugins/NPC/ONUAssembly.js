@@ -247,17 +247,6 @@
 
   const euros = (gold) => (gold / 100).toFixed(2) + "€";
 
-  // Inline IconSet sprite for the assembly's DOM pages.
-  function iconHTML(iconIndex, size = 20) {
-    const x = (iconIndex % 16) * size;
-    const y = Math.floor(iconIndex / 16) * size;
-    return `<span class="onu-icon onu-01" style="width:${size}px; height:${size}px; background-size:${size * 16}px auto; ` +
-      `background-position:-${x}px -${y}px"></span>`;
-  }
-
-  const escapeHTML = (s) => String(s == null ? "" : s)
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
   //===========================================================================
   // The clock
   //===========================================================================
@@ -1001,23 +990,36 @@
   }
 
   //===========================================================================
-  // The overlay
+  // The overlay, which lives in ONUAssemblyUI.js
   //===========================================================================
   //
-  // Everything below is the DOM chamber. It sits over Scene_Map exactly the
-  // way the trial does, marking its own container so the map cannot be walked
-  // away from or the menu opened while a sitting is in progress.
+  // Nothing below draws anything. The chamber, the agenda page, the dossier
+  // and the division board are all in NPC/ONUAssemblyUI.js; this file asks it
+  // for them and does not know what any of them look like. What stays here is
+  // the one thing the drawing cannot answer: whether a sitting is in progress,
+  // which is what keeps the map from being walked away from underneath one.
 
-  const COURT_ATTR = "data-onu-sitting";
-
-  function markSitting(el) {
-    if (el) el.setAttribute(COURT_ATTR, "1");
-  }
+  const UI = () => window.ONUAssemblyUI || null;
 
   function assemblyIsSitting() {
-    const node = document.querySelector("[" + COURT_ATTR + "]");
-    return !!(node && node.isConnected);
+    const ui = UI();
+    return ui ? ui.assemblyIsSitting() : false;
   }
+
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  function newChamber(titleKey) {
+    const ui = UI();
+    if (!ui) return null;
+    return new ui.Chamber(titleKey);
+  }
+
+  const agendaHTML = (session, motion) => { const u = UI(); return u ? u.agendaHTML(session, motion) : ""; };
+  const boardHTML = (entries, opts) => { const u = UI(); return u ? u.boardHTML(entries, opts) : ""; };
+  const dossierHTML = (delegation, actor) => { const u = UI(); return u ? u.dossierHTML(delegation, actor) : ""; };
+  const paintSeat = (index, vote) => { const u = UI(); if (u) u.paintSeat(index, vote); };
+  const paintTally = (counts) => { const u = UI(); if (u) u.paintTally(counts); };
+  const drawEmblem = (iconIndex, canvasId) => { const u = UI(); if (u) u.drawEmblem(iconIndex, canvasId); };
 
   const _Scene_Map_isMenuCalled = Scene_Map.prototype.isMenuCalled;
   Scene_Map.prototype.isMenuCalled = function () {
@@ -1037,440 +1039,6 @@
     _Scene_Map_callMenu.call(this);
   };
 
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-  // Escape and the pad's cancel both read as 'cancel'; the right mouse button
-  // arrives as a TouchInput cancel. Polled in one place so a single press can
-  // only ever be counted once.
-  const cancelPressed = () => Input.isTriggered("cancel") || TouchInput.isCancelled();
-
-  const AUTO_BASE_MS = 620;
-  const AUTO_PER_CHAR_MS = 26;
-  const AUTO_MAX_MS = 5200;
-
-  // The chamber: one transcript, one agenda page, one set of choices. The log
-  // is the record, not the screen, so the page can be rebuilt from it if
-  // something takes it away underneath a sitting.
-  class Chamber {
-    constructor(titleKey) {
-      this._titleKey = titleKey || "ONUMenu.ui.assembly";
-      this._log = [];
-      this._autoPlay = false;
-      this._sidebar = "";
-      this._container = null;
-      this._headline = "";
-    }
-
-    open() {
-      this._container = document.createElement("div");
-      this._container.id = "menu-container";
-      markSitting(this._container);
-      document.body.appendChild(this._container);
-      this.render();
-    }
-
-    close() {
-      if (!this._container) return;
-      const c = this._container;
-      c.style.transition = "opacity 0.2s ease-out";
-      c.style.opacity = "0";
-      c.style.pointerEvents = "none";
-      setTimeout(() => { if (c && c.parentNode) c.parentNode.removeChild(c); }, 250);
-      this._container = null;
-    }
-
-    setSidebar(html) {
-      this._sidebar = html || "";
-      const page = this._container ? this._container.querySelector("#onu-side") : null;
-      if (page) page.innerHTML = this._sidebar;
-      else this.render();
-    }
-
-    setHeadline(text) {
-      this._headline = text || "";
-      const el = this._container ? this._container.querySelector("#onu-headline") : null;
-      if (el) el.textContent = this._headline;
-    }
-
-    logHTML() {
-      return this._log.map((e) => {
-        const body = escapeHTML(e.text).replace(/\r?\n/g, "<br>");
-        if (e.who === "narrator") return `<div class="eris-dialogue-entry narrator">${body}</div>`;
-        const speaker = e.speaker ? `<span class="eris-speaker">${escapeHTML(e.speaker)}</span>` : "";
-        return `<div class="eris-dialogue-entry ${e.who}">${speaker}${body}</div>`;
-      }).join("");
-    }
-
-    render() {
-      if (!this._container) return;
-      this._container.innerHTML = `
-        <div class="book-spread">
-          <div class="left-page onu-02">
-            <h2 class="title">${T(this._titleKey)}</h2>
-            <div class="onu-headline onu-03" id="onu-headline">${escapeHTML(this._headline)}</div>
-            <div class="eris-dialogue-log" id="onu-log">${this.logHTML()}</div>
-            <div class="eris-choices-panel" id="onu-choices"></div>
-          </div>
-          <div class="right-page onu-02" id="onu-side">${this._sidebar}</div>
-        </div>`;
-      const log = this._container.querySelector("#onu-log");
-      if (log) log.scrollTop = log.scrollHeight;
-    }
-
-    // The transcript is the record. If something has taken the page away, draw
-    // it again from the log rather than play the rest of the sitting out to
-    // nobody.
-    ensure() {
-      let log = document.getElementById("onu-log");
-      if (log) return log;
-      if (!this._container) return null;
-      if (!this._container.parentNode) document.body.appendChild(this._container);
-      this.render();
-      return document.getElementById("onu-log");
-    }
-
-    // who: 'narrator' for stage directions, 'player' for the delegate the
-    // player is, anything else for a speaker on the floor.
-    add(text, who, speaker) {
-      const clean = vary(String(text)).replace(/\\C\[\d+\]/g, "");
-      const kind = who === "narrator" ? "narrator" : (who === "player" ? "player" : "eris");
-      this._log.push({ who: kind, text: clean, speaker: speaker || "" });
-      const log = this.ensure();
-      if (!log) return;
-      const entry = document.createElement("div");
-      entry.className = `eris-dialogue-entry ${kind}`;
-      const body = escapeHTML(clean).replace(/\r?\n/g, "<br>");
-      entry.innerHTML = (speaker ? `<span class="eris-speaker">${escapeHTML(speaker)}</span>` : "") + body;
-      log.appendChild(entry);
-      log.scrollTop = log.scrollHeight;
-    }
-
-    autoDelay() {
-      const last = this._log.length ? this._log[this._log.length - 1] : null;
-      const chars = last ? String(last.text).length : 0;
-      return Math.min(AUTO_MAX_MS, AUTO_BASE_MS + chars * AUTO_PER_CHAR_MS);
-    }
-
-    // Shows one message at a time and blocks until the player presses on, or
-    // until auto play closes it for them.
-    advance(minReadMs = 260) {
-      const log = this.ensure();
-      let hint = null;
-      if (log) {
-        hint = document.createElement("div");
-        hint.className = "eris-continue-hint";
-        log.appendChild(hint);
-        log.scrollTop = log.scrollHeight;
-      }
-
-      return new Promise((resolve) => {
-        const advanceKeys = ["Enter", "NumpadEnter", "Space"];
-        let readyAt = performance.now() + minReadMs;
-        let autoAt = this._autoPlay ? performance.now() + this.autoDelay() : 0;
-        let armed = false;
-        let active = true;
-
-        const paint = () => {
-          if (!hint) return;
-          hint.classList.toggle("auto", !!this._autoPlay);
-          if (this._autoPlay) {
-            hint.textContent = T("ONUMenu.ui.autoPlaying");
-            hint.classList.add("ready");
-          } else {
-            hint.textContent = armed
-              ? `${T("ONUMenu.ui.pressToContinue")}   ${T("ONUMenu.ui.cancelToAutoPlay")}`
-              : T("ONUMenu.ui.pressToContinue");
-            hint.classList.toggle("ready", armed);
-          }
-        };
-
-        const done = () => {
-          active = false;
-          document.removeEventListener("keydown", kh);
-          if (log) log.removeEventListener("click", ch);
-          if (hint && hint.parentNode) hint.parentNode.removeChild(hint);
-          // Drop the press so the next wait or choice does not inherit it.
-          Input.clear();
-          resolve();
-        };
-
-        const startAuto = () => {
-          this._autoPlay = true;
-          autoAt = performance.now() + this.autoDelay();
-          SoundManager.playCursor();
-          paint();
-        };
-        const stopAuto = () => {
-          this._autoPlay = false;
-          armed = false;
-          readyAt = performance.now() + 200;
-          paint();
-        };
-
-        const kh = (e) => {
-          if (!armed || e.repeat || this._autoPlay) return;
-          if (advanceKeys.includes(e.code)) { e.preventDefault(); SoundManager.playOk(); done(); }
-        };
-        const ch = () => {
-          if (this._autoPlay) { stopAuto(); SoundManager.playOk(); done(); return; }
-          if (armed) { SoundManager.playOk(); done(); }
-        };
-        document.addEventListener("keydown", kh);
-        if (log) log.addEventListener("click", ch);
-        paint();
-
-        const poll = () => {
-          if (!active) return;
-          if (this._autoPlay) {
-            if (cancelPressed()) {
-              stopAuto();
-            } else if (Input.isTriggered("ok")) {
-              stopAuto(); SoundManager.playOk(); done(); return;
-            } else if (performance.now() >= autoAt) {
-              done(); return;
-            }
-            requestAnimationFrame(poll);
-            return;
-          }
-          if (cancelPressed()) { startAuto(); requestAnimationFrame(poll); return; }
-          if (!armed) {
-            const held = Input.isPressed("ok") || Input.isPressed("down") || Input.isPressed("right");
-            if (!held && performance.now() >= readyAt) { armed = true; paint(); }
-          } else if (Input.isTriggered("ok") || Input.isTriggered("down") || Input.isTriggered("right")) {
-            SoundManager.playOk(); done(); return;
-          }
-          requestAnimationFrame(poll);
-        };
-        poll();
-      });
-    }
-
-    // Returns the chosen index. Keyboard and pad both arrive through Input
-    // alone: a DOM keydown handler beside this poll moved the cursor twice per
-    // press. `echo` false keeps a menu choice out of the transcript.
-    choose(rawChoices, opts) {
-      const options = opts || {};
-      const choices = rawChoices.map((c) => (typeof c === "string" ? { text: c } : c));
-      const labels = choices.map((c) => vary(c.text));
-      // A question is where auto play always hands the sitting back.
-      this._autoPlay = false;
-      return new Promise((resolve) => {
-        let panel = document.getElementById("onu-choices");
-        if (!panel) { this.ensure(); panel = document.getElementById("onu-choices"); }
-        if (!panel) { resolve(0); return; }
-        panel.innerHTML = "";
-        let sel = 0;
-        let active = true;
-        // The press that closed the last message must not also answer the
-        // question it asked.
-        let armed = false;
-        const readyAt = performance.now() + 200;
-
-        const btns = labels.map((text, i) => {
-          const btn = document.createElement("div");
-          btn.className = "eris-choice-btn" + (i === 0 ? " selected" : "") +
-            (choices[i].disabled ? " disabled" : "");
-          btn.textContent = text;
-          if (choices[i].disabled) btn.style.opacity = "0.45";
-          btn.addEventListener("mouseenter", () => { if (armed) { sel = i; upd(); } });
-          btn.addEventListener("click", () => { if (armed) finish(i); });
-          panel.appendChild(btn);
-          return btn;
-        });
-        const upd = () => btns.forEach((b, i) => b.classList.toggle("selected", i === sel));
-        const finish = (idx) => {
-          if (choices[idx].disabled) { SoundManager.playBuzzer(); return; }
-          active = false;
-          if (options.echo !== false) this.add(labels[idx], "player", options.speaker || T("ONUMenu.ui.you"));
-          panel.innerHTML = "";
-          SoundManager.playOk();
-          Input.clear();
-          resolve(idx);
-        };
-
-        const poll = () => {
-          if (!active) return;
-          if (!armed) {
-            if (!Input.isPressed("ok") && performance.now() >= readyAt) armed = true;
-            requestAnimationFrame(poll);
-            return;
-          }
-          if (Input.isTriggered("down") || Input.isRepeated("down")) {
-            sel = (sel + 1) % btns.length; upd(); SoundManager.playCursor();
-            if (options.onMove) options.onMove(sel);
-          } else if (Input.isTriggered("up") || Input.isRepeated("up")) {
-            sel = (sel - 1 + btns.length) % btns.length; upd(); SoundManager.playCursor();
-            if (options.onMove) options.onMove(sel);
-          } else if (Input.isTriggered("ok")) {
-            finish(sel); return;
-          } else if (options.cancelIndex != null && cancelPressed()) {
-            active = false;
-            panel.innerHTML = "";
-            SoundManager.playCancel();
-            Input.clear();
-            resolve(options.cancelIndex);
-            return;
-          }
-          requestAnimationFrame(poll);
-        };
-        poll();
-      });
-    }
-  }
-
-  //===========================================================================
-  // Sidebar panels
-  //===========================================================================
-
-  // `axis` is the stat the bar measures, and also the modifier that inks it:
-  // .onu-stat--military and friends live in theme.css so a preset can retune
-  // the whole sidebar without the plugin naming a single colour.
-  function statBar(label, value, max, axis) {
-    const pct = Math.max(0, Math.min(100, (value / max) * 100));
-    return `<div class="onu-04">
-      <span class="onu-05">${label}</span>
-      <span class="onu-06">
-        <span class="onu-07 onu-stat--${axis}" style="width:${pct}%"></span>
-      </span>
-      <span class="onu-08">${value}</span>
-    </div>`;
-  }
-
-  function dossierHTML(delegation, actor) {
-    if (!delegation) return "";
-    const rep = standingFor(actor, delegation);
-    const branches = delegation.branchIds
-      .map((id) => {
-        const f = $gameFactions.getFaction(id);
-        return f ? FactionDataManager.instance.t(f.name) : null;
-      })
-      .filter(Boolean);
-    const s = delegation.stats;
-    const bars = delegation.kind === "hyperpower" ? [
-      statBar(T("ONUMenu.stat.military"), s.military, 200, "military"),
-      statBar(T("ONUMenu.stat.economy"), s.economy, 200, "economy"),
-      statBar(T("ONUMenu.stat.population"), s.population, 300, "population"),
-      statBar(T("ONUMenu.stat.information"), s.information, 100, "information"),
-      statBar(T("ONUMenu.stat.arcane"), s.arcane, 100, "arcane"),
-    ].join("") : [
-      statBar(T("ONUMenu.stat.information"), s.information, 100, "information"),
-      statBar(T("ONUMenu.stat.arcane"), s.arcane, 100, "arcane"),
-    ].join("");
-
-    const projected = STIPEND_BASE + STIPEND_PER_POINT * Math.max(0, rep + JOIN_HEAD);
-
-    return `
-      <div class="faction-heraldry-card">
-        <div class="heraldry-emblem-box">
-          <canvas class="onu-09" id="onu-emblem" width="32" height="32"></canvas>
-        </div>
-        <div class="heraldry-header"><h3 class="heraldry-title">${escapeHTML(delegation.name)}</h3></div>
-        <div class="onu-10">
-          ${T("ONUMenu.ui.ledBy", { leader: escapeHTML(leaderOf(delegation)) })}
-        </div>
-        <div class="inspect-lore onu-11">
-          ${delegation.description || T("Factions.noDossier")}
-        </div>
-        ${bars}
-        ${branches.length ? `<div class="onu-12">
-          <strong>${T("Factions.branches")}</strong> <span>${escapeHTML(branches.join(", "))}</span>
-        </div>` : ""}
-        <div class="onu-13">
-          <span>${T("ONUMenu.ui.yourStanding")}</span>
-          <span class="onu-14" style="color:${$gameFactions.reputationColorOf(rep)}">${$gameFactions.reputationLevelOf(rep)} (${rep})</span>
-        </div>
-        <div class="onu-15">
-          <span>${T("ONUMenu.ui.projectedStipend")}</span>
-          <span class="onu-14">${euros(projected)}</span>
-        </div>
-      </div>`;
-  }
-
-  function drawEmblem(iconIndex, canvasId) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas || !iconIndex) return;
-    const bitmap = ImageManager.loadSystem("IconSet");
-    const draw = () => {
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      ctx.clearRect(0, 0, 32, 32);
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(bitmap.canvas, (iconIndex % 16) * 32, Math.floor(iconIndex / 16) * 32, 32, 32, 0, 0, 32, 32);
-    };
-    if (bitmap.isReady()) draw(); else bitmap.addLoadListener(draw);
-  }
-
-  // The agenda page: what is on the floor and how the room has voted so far.
-  function agendaHTML(session, motion) {
-    const rows = session.agenda.map((m, i) => {
-      const state = i < session.index ? "done" : (i === session.index ? "current" : "pending");
-      const mark = state === "done"
-        ? (session.results[i] && session.results[i].passed ? T("ONUMenu.ui.carried") : T("ONUMenu.ui.failed"))
-        : (state === "current" ? T("ONUMenu.ui.onTheFloor") : T("ONUMenu.ui.toCome"));
-      const markClass = state === "done"
-        ? (session.results[i] && session.results[i].passed ? "onu-mark--carried" : "onu-mark--failed")
-        : (state === "current" ? "onu-mark--current" : "onu-mark--pending");
-      return `<div class="eris-crime-row ${state === "pending" ? "onu-row--pending" : ""}">
-        <span class="crime-name">${escapeHTML(m.title)}</span>
-        <span class="onu-14 ${markClass}">${mark}</span>
-      </div>`;
-    }).join("");
-
-    const seatRow = session.actor ? `
-      <div class="eris-crime-row"><span class="crime-name">${T("ONUMenu.ui.representing")}</span></div>
-      <div class="eris-no-crimes">${escapeHTML(session.sg ? T("ONUMenu.role.secretaryGeneral") : (session.delegation ? session.delegation.name : "?"))}</div>` : "";
-
-    return `
-      <h2 class="title">${T("ONUMenu.ui.agenda")}</h2>
-      <h3 class="h3">${T("ONUMenu.ui.chamber")}</h3>
-      <div class="eris-crimes-list">
-        <div class="eris-no-crimes">${escapeHTML(session.venue)}</div>
-        <div class="eris-no-crimes">${escapeHTML(session.chair)}</div>
-      </div>
-      <h3 class="h3">${T("ONUMenu.ui.motions")}</h3>
-      <div class="eris-crimes-list">${rows}</div>
-      ${motion ? `<h3 class="h3">${T("ONUMenu.ui.ballotKind")}</h3>
-      <div class="eris-no-crimes">${motion.ballot === "secret" ? T("ONUMenu.ui.secretBallot") : T("ONUMenu.ui.publicBallot")}</div>` : ""}
-      <div class="eris-crimes-list">${seatRow}</div>`;
-  }
-
-  // The board: one tile per seat, green for, red against, amber abstaining.
-  function boardHTML(entries, opts) {
-    const secret = !!(opts && opts.secret);
-    const tiles = entries.map((e, i) => `
-      <div class="onu-seat onu-16" id="onu-seat-${i}">
-        ${secret ? T("ONUMenu.ui.sealedSeat") : escapeHTML(e.delegation.name)}
-      </div>`).join("");
-    return `
-      <h2 class="title">${T("ONUMenu.ui.division")}</h2>
-      <div class="onu-03">
-        ${secret ? T("ONUMenu.ui.secretBallotNote") : T("ONUMenu.ui.publicBallotNote")}
-      </div>
-      <div class="onu-17" id="onu-board">${tiles}</div>
-      <div class="onu-18" id="onu-tally"></div>`;
-  }
-
-  // How a seat is painted once it has voted: .onu-seat--for / --against /
-  // --abstain in theme.css. Kept as classes so the board reads on either
-  // preset instead of the one it was drawn against.
-  const VOTE_CLASSES = ["onu-seat--for", "onu-seat--against", "onu-seat--abstain"];
-
-  function paintSeat(index, vote) {
-    const el = document.getElementById("onu-seat-" + index);
-    if (!el) return;
-    el.classList.remove(...VOTE_CLASSES);
-    el.classList.add(VOTE_CLASSES.includes("onu-seat--" + vote) ? "onu-seat--" + vote : "onu-seat--abstain");
-  }
-
-  function paintTally(counts) {
-    const el = document.getElementById("onu-tally");
-    if (!el) return;
-    el.innerHTML =
-      `<span class="onu-19">${T("ONUMenu.ui.votesFor")} ${counts.for}</span> &nbsp;·&nbsp; ` +
-      `<span class="onu-20">${T("ONUMenu.ui.votesAgainst")} ${counts.against}</span> &nbsp;·&nbsp; ` +
-      `<span class="onu-21">${T("ONUMenu.ui.votesAbstain")} ${counts.abstain}</span>`;
-  }
-
   //===========================================================================
   // The session
   //===========================================================================
@@ -1482,7 +1050,8 @@
     const delegation = sg ? null : (post ? delegationByKey(post.key) : null);
     if (!sg && !delegation) return;
 
-    const chamber = new Chamber("ONUMenu.ui.assembly");
+    const chamber = newChamber("ONUMenu.ui.assembly");
+    if (!chamber) return;
     const session = {
       actor: actor,
       sg: sg,
@@ -1774,15 +1343,13 @@
   //===========================================================================
 
   async function runJoiningBoard(actor) {
-    const board = new Chamber("ONUMenu.ui.credentials");
+    const board = newChamber("ONUMenu.ui.credentials");
+    if (!board) return false;
     const offered = joinableFor(actor);
     board.open();
 
     if (!offered.length) {
-      board.setSidebar(`<div class="faction-heraldry-card onu-22">
-        <h3 class="title onu-23">${T("ONUMenu.ui.noSeatsTitle")}</h3>
-        <p class="onu-24">${T("ONUMenu.ui.noSeatsHint")}</p>
-      </div>`);
+      board.setSidebar(window.ONUAssemblyUI.noticeHTML("ONUMenu.ui.noSeatsTitle", "ONUMenu.ui.noSeatsHint"));
       board.add(say("ONUAssembly.joining.refused", { name: actor.name() }), "narrator");
       await board.advance();
       board.close();
@@ -1841,39 +1408,17 @@
   // The lobby
   //===========================================================================
 
+  // What the right page reads while the player stands at the desk: a notice
+  // for a traveller with no seat, the chair's service record, or the dossier
+  // of the power a delegate serves. Every one of the three is drawn by
+  // ONUAssemblyUI.
   function lobbySidebar(actor) {
+    const ui = window.ONUAssemblyUI;
     const post = postOf(actor);
-    if (!post) {
-      return `<div class="faction-heraldry-card onu-22">
-        <h3 class="title onu-23">${T("ONUMenu.ui.unaccredited")}</h3>
-        <p class="onu-24">${T("ONUMenu.ui.unaccreditedHint")}</p>
-      </div>`;
-    }
-    if (post.sg) {
-      const state = assemblyState();
-      return `<div class="faction-heraldry-card">
-        <div class="heraldry-header"><h3 class="heraldry-title">${T("ONUMenu.role.secretaryGeneral")}</h3></div>
-        <div class="inspect-lore onu-25">${T("ONUMenu.ui.sgBlurb")}</div>
-        <div class="onu-15">
-          <span>${T("ONUMenu.ui.weeksServed")}</span><span>${post.weeksServed || 0}</span>
-        </div>
-        <div class="onu-15">
-          <span>${T("ONUMenu.ui.weeklyStipend")}</span><span>${euros(weeklyPay(actor))}</span>
-        </div>
-        <div class="onu-15">
-          <span>${T("ONUMenu.ui.sessionsHeld")}</span><span>${(state && state.sessionsHeld) || 0}</span>
-        </div>
-      </div>`;
-    }
-    const delegation = delegationByKey(post.key);
-    let html = dossierHTML(delegation, actor);
-    html += `<div class="onu-26">
-      <span>${T("ONUMenu.ui.weeksServed")}</span><span>${post.weeksServed || 0}</span>
-    </div>
-    <div class="onu-15">
-      <span>${T("ONUMenu.ui.weeklyStipend")}</span><span>${euros(weeklyPay(actor))}</span>
-    </div>`;
-    return html;
+    if (!ui) return "";
+    if (!post) return ui.noticeHTML("ONUMenu.ui.unaccredited", "ONUMenu.ui.unaccreditedHint");
+    if (post.sg) return ui.secretaryHTML(actor, post, assemblyState());
+    return ui.seatedHTML(actor, post, delegationByKey(post.key));
   }
 
   function canSitThisWeek() {
@@ -2061,7 +1606,8 @@
     }
     if (assemblyIsSitting()) return;
 
-    const lobby = new Chamber("ONUMenu.ui.lobby");
+    const lobby = newChamber("ONUMenu.ui.lobby");
+    if (!lobby) return;
     lobby.open();
     lobby.setHeadline(vary(T("ONUMenu.ui.lobbyHeadline")));
     lobby.add(say("ONUAssembly.lobby.intro", { venue: say("ONUAssembly.venues") }), "narrator");
@@ -2215,6 +1761,24 @@
   });
 
   window.ONUAssembly = {
+    // Everything NPC/ONUAssemblyUI.js is allowed to ask this file. The drawing
+    // reads the roster, the words and the money through here and writes
+    // nothing back: the ledger is moved by the flows in this file alone.
+    _model: {
+      // T is the game-wide localization function, asked for late so this file
+      // never depends on which of the two loads first.
+      T: (key, tokens) => T(key, tokens),
+      vary,
+      euros,
+      standingFor,
+      leaderOf,
+      weeklyPay,
+      // What a seat would pay a character the week after they took it, which
+      // is the number the accreditation board offers them.
+      projectedStipend: (standing) =>
+        STIPEND_BASE + STIPEND_PER_POINT * Math.max(0, standing + JOIN_HEAD),
+    },
+
     delegations,
     delegationByKey,
     delegationForFaction,

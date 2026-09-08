@@ -493,7 +493,7 @@
       return `
         <div class="inspect-header">
           <div class="inspect-frame">
-            <canvas data-icon="${item.iconIndex}" width="36" height="36" style="image-rendering:pixelated;display:block;"></canvas>
+            <canvas data-icon="${item.iconIndex}" class="inspect-frame-canvas" width="36" height="36"></canvas>
           </div>
           <div class="inspect-title-box">
             <div class="inspect-name">${_itemName(item)}</div>

@@ -82,7 +82,6 @@
     "save": "Segnalo",
     "saved": "{name} ora è sulla mappa",
     "savedTitle": "Segnato sulla mappa",
-    "hint": "Sinistra e destra cambiano un numero, su e giù spostano tra i campi",
     "refused": {
       "range": "Quel quadrato è fuori dalla mappa",
       "reserved": "Lì c'è già un luogo",

@@ -56,6 +56,7 @@
     onPartyMemberTabClick(memberIndex) {
       this._pageRailFocused = false;
       Scene_CharacterCreation._isPetMode = false;
+      Scene_CharacterCreation._isVehicleMode = false;
       Scene_CharacterCreation._isScenarioMode = false;
       if (memberIndex >= $gameParty.size()) return;
       Scene_CharacterCreation._currentPartyMemberIndex = memberIndex;
@@ -92,7 +93,7 @@
           <p class="cc-modal-body">${opts.body || ""}</p>
           <div class="cc-modal-actions">
             <button class="cc-sidebar-btn cc-modal-cancel">${opts.cancelLabel || T('CharCreate.cancel')}</button>
-            <button class="cc-sidebar-btn primary cc-modal-accept">${opts.acceptLabel || T('CharCreate.confirm')}</button>
+            <button class="cc-sidebar-btn cc-modal-accept">${opts.acceptLabel || T('CharCreate.confirm')}</button>
           </div>
         </div>
       `;
@@ -121,6 +122,12 @@
       const partyMembers = $gameParty.members();
       if (idx >= partyMembers.length) return;
       const targetActor = partyMembers[idx];
+      // Em and Bubba are the story mode's party: neither can be dropped from it
+      // (PartyRoster.isStoryLocked).
+      if (targetActor && window.PartyRoster?.isStoryLocked?.(targetActor.actorId())) {
+        SoundManager.playBuzzer();
+        return;
+      }
       const name = targetActor ? targetActor.name() : ccT('CharCreate.unnamed', 'Unnamed');
 
       this._ccConfirm({
@@ -135,6 +142,12 @@
       if (idx <= 0 || idx >= partyMembers.length) return;
       const targetActor = partyMembers[idx];
       const actorId = targetActor.actorId();
+      if (window.PartyRoster?.isStoryLocked?.(actorId)) return;
+      // The actor object outlives the party seat: actor ids 1-3 are recycled by
+      // onAddPartyMember, so a dossier left flagged on the discarded actor came
+      // back with the next recruit and froze it on the Preset type. The lock is
+      // dropped here, which also returns the dossier to the world's pool.
+      if (this._clearPresetLock) this._clearPresetLock(targetActor);
       $gameParty.removeActor(actorId);
       $gameSwitches.setValue(77 + idx, false);
 
@@ -152,8 +165,8 @@
     onAddPartyMember() {
       Scene_CharacterCreation._railFocus = null;
       if ($gameParty.size() >= 3) return;
-      // One character and one companion is the whole tutorial party.
-      if (Scene_CharacterCreation._tutorialMode) { SoundManager.playBuzzer(); return; }
+      // One character and one companion is the whole story mode party.
+      if (Scene_CharacterCreation._storyMode) { SoundManager.playBuzzer(); return; }
 
       const existingIds = $gameParty.members().map((a) => a.actorId());
       let newActorId = 1;
@@ -166,6 +179,8 @@
 
       $gameParty.addActor(newActorId);
       const actor = $gameActors.actor(newActorId);
+      // A recycled actor id must not carry the previous occupant's dossier lock.
+      if (this._clearPresetLock) this._clearPresetLock(actor);
       const newIdx = $gameParty.members().indexOf(actor);
 
       // Randomize in humanoid mode with 2D sprite so it's fully ready and editable
@@ -175,12 +190,12 @@
       Scene_CharacterCreation._isCreatureMode = false;
       Scene_CharacterCreation._isScenarioMode = false;
       Scene_CharacterCreation._isPetMode = false;
+      Scene_CharacterCreation._isVehicleMode = false;
       // A new recruit opens on Bio, the page that names it and gives it a face,
       // rather than on whatever page the member before it was left on.
       this._step = STEP.BIO;
       if (this._titleWindow) this.setupStep();
 
-      SoundManager.playOk();
       this._lastStep = -1;
       this._lastIndex = -1;
       this.refreshUIOverlayDOM();
@@ -191,7 +206,6 @@
       const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       this._randomizeMemberCharacter(memberIndex);
       Scene_CharacterCreation._lastMemberWasRandom = true;
-      SoundManager.playOk();
       this._lastStep = -1;
       this._lastIndex = -1;
       this.refreshUIOverlayDOM();
@@ -218,6 +232,14 @@
     }
 
     onFinishPartyCreation() {
+      if (Scene_CharacterCreation.isSimpleMode()) {
+        const partyMembers = $gameParty ? $gameParty.members() : [];
+        partyMembers.forEach((actor) => {
+          if (typeof this._ensureSimpleModeStatsAndTraits === "function") {
+            this._ensureSimpleModeStatsAndTraits(actor);
+          }
+        });
+      }
       this._commitSpecPoints();
       const p1 = $gameActors.actor(1);
       if (!p1 || !p1.name() || p1.name() === "Unnamed") {
@@ -255,10 +277,15 @@
         });
       }
 
-      SoundManager.playOk();
+      // The garage chosen on the Vehicles tab, handed over before the origin
+      // deals its own loadout so no origin hands out a second set of keys.
+      if (window.CCStartVehicles && window.CCStartVehicles.apply) {
+        window.CCStartVehicles.apply(!!Scene_CharacterCreation._storyMode);
+      }
+
       markFirstCreationComplete();
       if (this._dndContainer) {
-        this._dndContainer.style.display = "none";
+        window.CCPanel.hide(this._dndContainer);
       }
       // A party holding a dossier lands where the dossier says, not where a
       // scenario would have put it: the scenario board was never shown.

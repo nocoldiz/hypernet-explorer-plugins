@@ -47,5 +47,6 @@
   ],
   "statFallback": "Stat",
   "inInventory": "In Inventory ({count})",
-  "existentInWorld": "Existent in World"
+  "existentInWorld": "Existent in World",
+  "structuralScan": "Structural Scan"
 }

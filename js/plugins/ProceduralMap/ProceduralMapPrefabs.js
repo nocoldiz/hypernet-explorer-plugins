@@ -332,9 +332,13 @@
   function getPrefabCount(rng, biomeName) {
     const lower = (biomeName || "").toLowerCase();
     if (lower.includes("city")) {
-      return 15 + Math.floor(rng() * 6);
+      // The city block plan now splits its widest blocks into two lots, so
+      // there are more lots than there used to be prefabs to fill them.
+      return 22 + Math.floor(rng() * 7);
     } else if (lower.includes("village")) {
-      return 8 + Math.floor(rng() * 8);
+      // One prefab per planned lot, near enough: a village is a grid of blocks
+      // now (see planSettlementBlocks) and it has room for every one of these.
+      return 14 + Math.floor(rng() * 8);
     } else if (lower.includes("ocean")) {
       // Islands should be rare, not a landmark on every ocean tile: most ocean
       // maps get none at all, and the ones that do only get a small handful.
@@ -525,6 +529,15 @@
           for (let ci = 0; ci < byAreaDesc.length && finalX === null; ci++) {
             const candidate = byAreaDesc[ci];
             if (pass === 0 && usedMapIds.has(candidate.mapId)) continue;
+
+            // A village hint now carries the LOT it stands in, not just its
+            // centre point (the block plan in the structure generator hands
+            // over rectangles). A prefab that cannot fit that lot belongs on
+            // another one: without this a hint took the biggest prefab there
+            // was and spilled it across the street and its neighbours' gardens.
+            // Three tiles of tolerance, the same slack the city lots allow.
+            if (hint.w && hint.h &&
+              (candidate.width > hint.w + 3 || candidate.height > hint.h + 3)) continue;
 
             // Keep the footprint on the map: lots sit as close as 2 tiles to the
             // edge, and a large prefab centred on one would hang off it.

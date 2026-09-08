@@ -842,8 +842,8 @@
       this.drawText(`${job.duration}h`, rect.x + rect.width - 150, rect.y, 50, 'right');
 
       // Pay
-      // Highlight the shifts that pay above the middle of the €10-€40/hour band.
-      const payColor = job.basePay / job.duration > 2500
+      // Highlight the shifts that pay above the middle of the €25-€100/hour band.
+      const payColor = job.basePay / job.duration > 6250
         ? ColorManager.powerUpColor() : ColorManager.normalColor();
       this.changeTextColor(payColor);
       this.drawText(`€${(job.basePay / 100).toFixed(2)}`, rect.x + rect.width - 90, rect.y, 80, 'right');
@@ -1310,7 +1310,7 @@
       this._dndContainer.style.display = 'flex';
       this._dndContainer.style.justifyContent = 'center';
       this._dndContainer.style.alignItems = 'center';
-      this._dndContainer.style.fontFamily = "'Lora', serif";
+      this._dndContainer.style.fontFamily = "var(--font-ui)";
       this._dndContainer.style.boxSizing = 'border-box';
 
       document.body.appendChild(this._dndContainer);
@@ -1340,15 +1340,29 @@
       let leftPageHTML = "";
       let rightPageHTML = "";
 
+      // Whichever fragment is drawn on the left page carries the screen's one
+      // Back stamp, in its page header. The board writes its own; the contract
+      // page is given one here, so a screen never ends up with two of them or
+      // with none.
+      const contractHeaderHTML = `
+        <div class="page-header-bar">
+          <div class="back-button focusable" onclick="SceneManager._scene.popScene()">
+            ${T('WorkSystem.dismiss')}
+          </div>
+          <h2 class="title cc-header-gothic work-09">
+            ${T('WorkSystem.guildRegistry')}
+          </h2>
+        </div>`;
+
       if (this._singleJobMode) {
-        leftPageHTML = this.getJobContractHTML(selectedJob, selectedActor);
+        leftPageHTML = contractHeaderHTML + this.getJobContractHTML(selectedJob, selectedActor);
         rightPageHTML = this.getActorSelectionHTML(actors, selectedActorIndex, selectedJob);
       } else {
         if (this._dndFocusSection === 'list') {
           leftPageHTML = this.getJobsBoardHTML(jobs, selectedIndex);
           rightPageHTML = this.getJobContractHTML(selectedJob, selectedActor);
         } else {
-          leftPageHTML = this.getJobContractHTML(selectedJob, selectedActor);
+          leftPageHTML = contractHeaderHTML + this.getJobContractHTML(selectedJob, selectedActor);
           rightPageHTML = this.getActorSelectionHTML(actors, selectedActorIndex, selectedJob);
         }
       }
@@ -1433,17 +1447,20 @@
         });
       }
 
+      // The way out stands where it stands on every screen: first child of the
+      // page header, top left of the left page. It used to be a stamp at the
+      // foot of the list, which put it in a different place on every menu.
       return `
-        <h2 class="cc-header-gothic work-09">
-          ${title}
-        </h2>
-        <div class="work-10" id="jobs-list">
-          ${listHTML}
-        </div>
-        <div class="work-11">
-          <div class="back-button focusable work-12" onclick="SceneManager._scene.popScene()">
+        <div class="page-header-bar">
+          <div class="back-button focusable" onclick="SceneManager._scene.popScene()">
             ${T('WorkSystem.dismiss')}
           </div>
+          <h2 class="title cc-header-gothic work-09">
+            ${title}
+          </h2>
+        </div>
+        <div class="work-10" id="jobs-list">
+          ${listHTML}
         </div>
       `;
     }
@@ -1560,13 +1577,6 @@
           </div>
         </div>
 
-        ${this._singleJobMode ? `
-        <div class="work-33">
-          <div class="back-button focusable work-12" onclick="SceneManager._scene.popScene()">
-            ${T('WorkSystem.dismiss')}
-          </div>
-        </div>
-        ` : ''}
       `;
     }
 
@@ -1790,6 +1800,136 @@
     }
   }
 
+  // Three travellers at most, the ceiling character creation builds a party
+  // to and the one Party Dynamics and CharacterCreationPresets both hold.
+  const MAX_ACTIVE_PARTY = 3;
+
+  // ============================================================================
+  // Shifts away (window.WorkSystem.Shifts)
+  //
+  // Taking a contract no longer darkens the screen and skips the party's day
+  // forward. The member who took it LEAVES: they are lifted out of the party
+  // for the hours the job runs, the rest of the party carries on playing, and
+  // the clock reaches the end of the shift on its own. Party Dynamics
+  // (UI/CustomMainMenuLayout.js) lists them under Busy with the time still to
+  // run, and when it runs out they come back to a free slot, or wait on the
+  // bench when there is none.
+  // ============================================================================
+
+  const WorkShifts = {
+    // Empty before a game is loaded: the menu and the map both ask early.
+    list() {
+      if (typeof $gameSystem === "undefined" || !$gameSystem) return [];
+      if (!$gameSystem._workShifts) $gameSystem._workShifts = [];
+      return $gameSystem._workShifts;
+    },
+
+    entryFor(actorId) {
+      return this.list().find(e => e.actorId === actorId) || null;
+    },
+
+    isBusy(actorId) {
+      return !!this.entryFor(actorId);
+    },
+
+    // Minutes still to run, never below zero.
+    remaining(entry) {
+      if (!entry) return 0;
+      return Math.max(0, entry.endMinute - getGameTimeMinutes());
+    },
+
+    // Send somebody off to work. Refused when they are the last one standing:
+    // an empty party has nobody to play as, so that shift is worked the old
+    // way, watched from behind the fade.
+    dispatch(actor, job, remote) {
+      if (!actor || !job) return false;
+      const actorId = actor.actorId();
+      if (this.isBusy(actorId)) return false;
+      if (!$gameParty.members().some(m => m.actorId() === actorId)) return false;
+      if ($gameParty.members().length <= 1) return false;
+
+      const hours = Number(job.duration || job.hours || 0) || 0;
+      if (hours <= 0) return false;
+
+      const now = getGameTimeMinutes();
+      this.list().push({
+        actorId: actorId,
+        job: job,
+        remote: !!remote,
+        startMinute: now,
+        endMinute: now + Math.round(hours * 60)
+      });
+
+      // The roster ledger (NPC/NPCSystemParty.js) reads this: somebody at work
+      // has not left the party, so no departure is written.
+      $gameTemp._workShiftActorId = actorId;
+      $gameParty.removeActor(actorId);
+      $gameTemp._workShiftActorId = null;
+
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('WorkSystem.shift.dispatched', {
+          actor: actor.name(),
+          job: window.WorkSystem.jobName(job),
+          hours: hours
+        }), { severity: 'info', duration: 200 });
+      }
+      return true;
+    },
+
+    // Called once a frame from the map: whoever's hours are up comes home.
+    update() {
+      const list = this.list();
+      if (list.length === 0) return;
+      const now = getGameTimeMinutes();
+      for (const entry of list.filter(e => e.endMinute <= now)) {
+        this.finish(entry);
+      }
+    },
+
+    // The shift is settled the moment it ends, wherever the party happens to
+    // be: the hours are already gone off the clock, so only the pay, the wear
+    // and the learning are applied here.
+    finish(entry) {
+      const list = this.list();
+      const at = list.indexOf(entry);
+      if (at >= 0) list.splice(at, 1);
+
+      const actor = $gameActors.actor(entry.actorId);
+      const job = entry.job;
+      if (!actor || !job) return;
+
+      const result = WorkManager.executeWork(actor, job, {});
+      WorkManager.applyWorkEffects(actor, job, result, { timeAlreadyPassed: true });
+
+      // applyWorkEffects only drains hunger and sleep when it is also the one
+      // moving the clock, and here the hours passed while the party played.
+      const hours = Number(job.duration || job.hours || 0) || 0;
+      if (actor.reduceHunger !== undefined) {
+        actor.reduceHunger(hours * HUNGER_PER_HOUR);
+        actor.reduceSleep(hours * SLEEP_PER_HOUR);
+      }
+
+      const rejoined = $gameParty.members().length < MAX_ACTIVE_PARTY;
+      if (rejoined) {
+        $gameParty.addActor(entry.actorId);
+      } else if (window.CharacterPresets && window.CharacterPresets.benchActorAsPreset) {
+        // No seat left: they wait on the bench, where Party Dynamics can pick
+        // them up again.
+        window.CharacterPresets.benchActorAsPreset(actor, { retiredReason: 'work' }); // i18n-ignore: internal reason key
+      }
+
+      if (window.ParchmentToast) {
+        const money = (result.pay / 100).toFixed(2);
+        window.ParchmentToast.show(T(
+          rejoined ? 'WorkSystem.shift.returned' : 'WorkSystem.shift.benched',
+          { actor: actor.name(), job: window.WorkSystem.jobName(job), amount: money }
+        ), { severity: result.pay >= 0 ? 'good' : 'warning', duration: 240 });
+      }
+    }
+  };
+
+  window.WorkSystem.Shifts = WorkShifts;
+
   // ============================================================================
   // Map Integration - Execute work on map
   // ============================================================================
@@ -1802,6 +1942,10 @@
       this.updateRemoteWorkSequence();
       return;
     }
+
+    // Anybody away on a contract comes back the moment their hours are up,
+    // whatever the party is doing at the time.
+    WorkShifts.update();
 
     if ($gameTemp._pendingWork && !$gameMessage.isBusy() && !$gamePlayer.isMoving()) {
       this.processWork();
@@ -1975,6 +2119,11 @@
   };
 
   Scene_Map.prototype.startWorkSequence = function (actor, job) {
+    // The shift is worked by one member while the rest of the party carries
+    // on: nothing fades, nothing is skipped. Only a party that cannot spare
+    // anybody falls through to the old watched-from-the-dark sequence below.
+    if (WorkShifts.dispatch(actor, job)) return;
+
     // Flagged for the travel window (TimeDateSystem's MapInfoHUD): the clock
     // is about to run fast behind the darkened screen, so the card shows.
     this._workSequenceActive = true;

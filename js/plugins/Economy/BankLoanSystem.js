@@ -1013,6 +1013,13 @@
 
             this._dndContainer.innerHTML = `
                 <div class="cc-pockets-spread">
+                    <div class="page-header-bar">
+                        <div class="back-button focusable" tabindex="0" id="bank-dismiss" data-bank-action="close">
+                            ${T('BankLoan.ui.dismiss')}
+                        </div>
+                        <h2 class="title">${T('BankLoan.ui.monetaryAccountPockets')}</h2>
+                    </div>
+
                     <!-- XP Tabs Navigation -->
                     <div class="xp-tabs">
                         <div class="xp-tab focusable ${this._activeTab === 'transact' ? 'active' : ''}" tabindex="0" id="bank-tab-transact" data-bank-action="tab:transact">
@@ -1031,12 +1038,6 @@
                         ${contentHTML}
                     </div>
 
-                    <!-- Footer Bar -->
-                    <div class="bank-19">
-                        <div class="back-button btn-stamp focusable bank-20" tabindex="0" id="bank-dismiss" data-bank-action="close">
-                            ${T('BankLoan.ui.dismiss')}
-                        </div>
-                    </div>
                 </div>
             `;
             return;
@@ -1090,9 +1091,23 @@
             { symbol: "cancel", label: T('BankLoan.ui.dismissPockets') }
         ];
 
+        // The way out is the shared Back stamp in the header bar, not a fifth
+        // row at the foot of the list. It keeps the command window's own index
+        // so the pad still walks onto it, it just stands where every other
+        // screen's Back stands.
         let commandListHTML = "";
+        let backButtonHTML = "";
         commands.forEach((cmd, idx) => {
             const isSelected = idx === selectedIndex && (!this._amountWindow || !this._amountWindow.active);
+
+            if (cmd.symbol === "cancel") {
+                backButtonHTML = `
+                <div class="back-button focusable ${isSelected ? 'selected' : ''}" tabindex="0" id="bank-cmd-${cmd.symbol}" data-bank-action="cmd:${idx}">
+                    ${cmd.label}
+                </div>
+            `;
+                return;
+            }
 
             commandListHTML += `
                 <div class="bank-command focusable ${isSelected ? 'selected' : ''}" tabindex="0" id="bank-cmd-${cmd.symbol}" data-bank-action="cmd:${idx}">
@@ -1102,9 +1117,12 @@
         });
 
         return `
-            <h2 class="cc-header-gothic bank-23">
-                ${T('BankLoan.ui.monetaryAccountPockets')}
-            </h2>
+            <div class="page-header-bar">
+                ${backButtonHTML}
+                <h2 class="title cc-header-gothic bank-23">
+                    ${T('BankLoan.ui.monetaryAccountPockets')}
+                </h2>
+            </div>
 
             <div class="bank-24">
                 <div class="bank-25">

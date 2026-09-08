@@ -83,6 +83,11 @@
     const LEVEL_NAMES_FALLBACK = ["Untrained", "Beginner", "Intermediate", "Advanced", "Master"];
     // i18n-ignore-end
 
+    // Columns on the left page. Kept in step with the `.backpack-grid` track
+    // count in css/theme.css: MenuVirtualList reads the layout off the
+    // stylesheet, the cursor reads it off here, and the two must agree.
+    const SPEC_COLS = 3;
+
     // The filter row is ['Trained', 'All', ...categories]; the first two are the
     // menu's own tabs and the rest are category ids, which stay English because
     // the list is filtered on them. Only the label is localised.
@@ -738,6 +743,7 @@
         _scene: null,
         _host: null,
         _actor: null,
+        _anchorSel: null,
         _raf: null,
         _expireAt: 0,
 
@@ -760,6 +766,10 @@
             // `actor` is the member the menu says is doing the work, from its
             // party switcher. Without one the chip reports the party.
             this._actor = opts.actor || null;
+            // A page with no party switcher can name the element the chip
+            // should hang under (its own header, say), so the badge never
+            // lands on top of the title in the corner.
+            this._anchorSel = opts.anchor || null;
             // A badge normally lives as long as the scene that raised it. On the
             // map nothing is "open", so a caller there (an overlay minigame, a
             // one-shot result) gets a timed chip instead of a permanent one.
@@ -776,6 +786,7 @@
             this._scene = null;
             this._host = null;
             this._actor = null;
+            this._anchorSel = null;
             this._expireAt = 0;
             if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
             this._el = null;
@@ -838,6 +849,17 @@
             const boxes = sel => Array.from(scope.querySelectorAll(sel))
                 .map(el => ({ el, r: el.getBoundingClientRect() }))
                 .filter(b => b.r.width > 0 && b.r.height > 0);
+
+            if (this._anchorSel) {
+                const a = boxes(this._anchorSel)[0];
+                if (a) {
+                    return {
+                        right: a.r.right,
+                        top: a.r.bottom + 6 * sy,
+                        width: a.r.width
+                    };
+                }
+            }
 
             const tabs = boxes('.companion-switcher')[0];
             if (tabs) {
@@ -958,7 +980,6 @@
 
     // The plugin sits in a subfolder, so its registered name carries the path.
     // Both keys are bound so an event authored either way keeps working.
-    PluginManager.registerCommand('UI/SpecializationMenu', 'addSpecializationExp', addSpecializationExp);
     PluginManager.registerCommand('SpecializationMenu', 'addSpecializationExp', addSpecializationExp);
 
     // =========================================================================
@@ -1139,35 +1160,21 @@
         initSpecDOM() {
             this._dndContainer = document.createElement('div');
             this._dndContainer.id = 'specialization-container';
-            this._dndContainer.style.position = 'absolute';
-            this._dndContainer.style.top = '0';
-            this._dndContainer.style.left = '0';
-            this._dndContainer.style.width = '100%';
-            this._dndContainer.style.height = '100%';
-            this._dndContainer.style.zIndex = '1000';
-            this._dndContainer.style.background = 'radial-gradient(circle, var(--accent-bronze-translucent-78) 0%, var(--shadow-heavy) 100%)';
-            this._dndContainer.style.display = 'flex';
-            this._dndContainer.style.justifyContent = 'center';
-            this._dndContainer.style.alignItems = 'center';
-            this._dndContainer.style.fontFamily = "'Lora', serif";
-            this._dndContainer.style.boxSizing = 'border-box';
-            this._dndContainer.style.opacity = '0';
-            this._dndContainer.style.transition = 'opacity 0.22s ease-out';
 
             this._dndContainer.innerHTML = `
                 <div class="book-spread">
-                    <div class="left-page spec-01">
+                    <div class="left-page spec-page">
                         <div class="page-header-bar">
                             <div class="back-button focusable">${T('SpecMenu.ui.back')}</div>
                             <h2 class="title">${T('SpecMenu.ui.specializations')}</h2>
                         </div>
                         <div id="spec-search-slot"></div>
-                        <div class="spec-02" id="spec-category-row"></div>
-                        <div class="spec-03" id="spec-list-content"></div>
+                        <div class="backpack-tabs spec-tab-row" id="spec-category-row"></div>
+                        <div class="backpack-grid spec-grid" id="spec-list-content"></div>
                     </div>
-                    <div class="right-page spec-01">
-                        <div class="companion-switcher spec-04" id="spec-companion-row"></div>
-                        <div class="spec-05" id="spec-detail-content"></div>
+                    <div class="right-page spec-page">
+                        <div class="companion-switcher ui-switcher-row" id="spec-companion-row"></div>
+                        <div class="ui-detail" id="spec-detail-content"></div>
                     </div>
                 </div>
             `;
@@ -1204,7 +1211,7 @@
             this.refreshSpecDOM();
 
             setTimeout(() => {
-                if (this._dndContainer) this._dndContainer.style.opacity = '1';
+                if (this._dndContainer) this._dndContainer.classList.add('is-visible');
             }, 16);
         }
 
@@ -1251,10 +1258,9 @@
         }
 
         levelPipsHTML(level) {
-            let html = '<div class="spec-pips spec-06">';
+            let html = '<div class="spec-pips">';
             for (let i = 1; i <= 5; i++) {
-                const filled = i <= level;
-                html += `<span class="spec-07" style="background:${filled ? 'var(--text-secondary-active)' : 'transparent'}"></span>`;
+                html += `<span class="spec-pip ${i <= level ? 'spec-pip--filled' : ''}"></span>`;
             }
             html += '</div>';
             return html;
@@ -1288,16 +1294,18 @@
                 this._categoryTabs.forEach((cat, idx) => {
                     const isSel = idx === this._categoryIndex;
                     const isFocused = isSel && this._activeArea === 'categories';
-                    tabsHTML += `
-                        <div class="spec-category-tab spec-08" data-cat-idx="${idx}" style="background:${isSel ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--bg-card-translucent-5)'}; border:1.5px solid ${isFocused ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; color:${isSel ? 'var(--text-secondary-active)' : 'var(--text-card-medium)'}">${escapeHtml(categoryTabLabel(cat))}</div>`;
+                    tabsHTML += `<div class="backpack-tab ${isSel ? 'active' : ''} ${isFocused ? 'selected' : ''}" data-cat-idx="${idx}">${escapeHtml(categoryTabLabel(cat))}</div>`;
                 });
-                // The shoulder buttons and TAB are what actually move this row,
-                // so the row says so: L1 on the near side, R1 and TAB on the
-                // far one. Button faces, not prose, so they are not translated.
-                const hintL = '<span class="char-switch-hint">L1</span>';  // i18n-ignore  button face
-                const hintR = '<span class="char-switch-hint">R1</span><span class="char-switch-hint">TAB</span>';  // i18n-ignore  button faces
-                categoryRow.innerHTML = hintL + tabsHTML + hintR;
-                categoryRow.querySelectorAll('.spec-category-tab').forEach(tab => {
+                // One badge, naming the device actually in hand: R1 on a pad,
+                // TAB on a keyboard, never the three faces at once
+                // (docs/task/ui_fixing.md, rule 9). Button faces, not prose.
+                const turnKey = (Input.lastInputDevice && Input.lastInputDevice() === 'pad') ? 'R1' : 'TAB';  // i18n-ignore  button faces
+                // The rail is built exactly as the backpack builds its own: the
+                // chips in a .backpack-tabs-row inside .backpack-tabs, so a rail
+                // that wraps to several lines spaces them the same way.
+                categoryRow.innerHTML = `<div class="backpack-tabs-row">${tabsHTML}` +
+                    `<span class="char-switch-hint">${turnKey}</span></div>`;
+                categoryRow.querySelectorAll('.backpack-tab').forEach(tab => {
                     tab.addEventListener('click', () => {
                         const idx = parseInt(tab.getAttribute('data-cat-idx'), 10);
                         if (idx !== this._categoryIndex) {
@@ -1328,7 +1336,7 @@
                     // The party hint cannot be the shared L/R or TAB one any
                     // more: those cycle the categories here. SHIFT (X on a pad)
                     // takes the companions instead.
-                    const partyKey = window.CharSwitcher.isControllerConnected() ? 'X' : 'SHIFT';  // i18n-ignore  button faces
+                    const partyKey = (Input.lastInputDevice && Input.lastInputDevice() === 'pad') ? 'X' : 'SHIFT';  // i18n-ignore  button faces
                     compRow.innerHTML = `<div class="companion-tabs-row">${tabs}</div><span class="char-switch-hint">${partyKey}</span>`;
                     compRow.querySelectorAll('.companion-tab').forEach(tab => {
                         tab.addEventListener('click', () => {
@@ -1349,17 +1357,21 @@
             this._listOrder = order;
             if (this._selectedIndex >= order.length) this._selectedIndex = Math.max(0, order.length - 1);
 
+            // A slot, not a boxed option: the backpack's frameless row, its
+            // name on the first line and the governing stat with the pips on
+            // the second, and a gold hairline on the one being read.
             const rowHTML = (spec, idx) => {
                 const level = actor.specializationLevel(spec.id);
-                const isSel = idx === this._selectedIndex;
-                const isFocused = isSel && this._activeArea === 'list';
+                const isSel = idx === this._selectedIndex && this._activeArea === 'list';
                 return `
-                    <div class="spec-row ${isFocused ? 'focused' : ''} spec-09" data-idx="${idx}" style="background:${isSel ? 'var(--bg-tertiary-focus-translucent-45)' : 'transparent'}">
-                        <span class="spec-10" style="color:${isSel ? 'var(--text-secondary-active)' : 'var(--text-card-medium)'}">${escapeHtml(window.Specializations.displayName(spec))}</span>
-                        <span class="spec-11">
-                            <span class="spec-12">${spec.stat}</span>
-                            ${this.levelPipsHTML(level)}
-                        </span>
+                    <div class="item-slot spec-slot ${isSel ? 'selected' : ''}" data-idx="${idx}">
+                        <div class="item-slot-info">
+                            <div class="item-slot-name">${escapeHtml(window.Specializations.displayName(spec))}</div>
+                            <div class="item-slot-meta">
+                                <span class="spec-slot-stat">${spec.stat}</span>
+                                ${this.levelPipsHTML(level)}
+                            </div>
+                        </div>
                     </div>`;
             };
 
@@ -1369,32 +1381,36 @@
             // (UI/MenuVirtualList.js). `_rowEntry` maps a place in the cursor's
             // own order back to its line, for scrolling onto a row that is not
             // currently built.
-            const header = (label, colour) =>
-                `<div class="spec-section-header spec-13" style="color:${colour}">${label}</div>`;
+            // Headings and notes take a line of their own in the three-column
+            // grid, so the slots after one stay in their columns.
+            const header = (label) =>
+                `<div class="inspect-section-title spec-group-title">${label}</div>`;
             const note = (label) =>
-                `<div class="spec-14">${label}</div>`;
+                `<div class="ui-empty-note spec-group-note">${label}</div>`;
 
             // A search answers with what it found, so it never prints "nothing
             // trained yet" under a heading the query itself emptied.
             const searching = !!(this._specBar && this._specBar.query.trim());
             const entries = [];
+            const fullWidth = [];
             this._rowEntry = [];
+            const pushFull = (fn) => { fullWidth[entries.length] = true; entries.push(fn); };
             const pushRow = (spec, orderIndex) => {
                 this._rowEntry[orderIndex] = entries.length;
                 entries.push(() => rowHTML(spec, orderIndex));
             };
 
-            if (searching && !order.length) entries.push(() => note(T('SpecMenu.ui.noMatches')));
+            if (searching && !order.length) pushFull(() => note(T('SpecMenu.ui.noMatches')));
             if (trained.length > 0 || !searching) {
-                entries.push(() => header(T('SpecMenu.ui.trained'), 'var(--text-secondary-active)'));
+                pushFull(() => header(T('SpecMenu.ui.trained')));
             }
             if (trained.length === 0) {
-                if (!searching) entries.push(() => note(T('SpecMenu.ui.noneTrained')));
+                if (!searching) pushFull(() => note(T('SpecMenu.ui.noneTrained')));
             } else {
                 trained.forEach((spec, i) => pushRow(spec, i));
             }
             if (untrained.length > 0) {
-                entries.push(() => header(T('SpecMenu.ui.untrained'), 'var(--text-card-medium)'));
+                pushFull(() => header(T('SpecMenu.ui.untrained')));
                 untrained.forEach((spec, i) => pushRow(spec, trained.length + i));
             }
 
@@ -1404,8 +1420,9 @@
                     key: `${this._currentActorIndex}|${this._categoryIndex}|${this._specBar ? this._specBar.query : ''}`,
                     count: entries.length,
                     renderItem: idx => entries[idx](),
+                    fullWidth: idx => !!fullWidth[idx],
                     onWindow: win => {
-                        win.querySelectorAll('.spec-row').forEach(row => {
+                        win.querySelectorAll('.spec-slot').forEach(row => {
                             row.addEventListener('click', () => {
                                 this._selectedIndex = parseInt(row.getAttribute('data-idx'), 10);
                                 this._activeArea = 'list';
@@ -1421,7 +1438,9 @@
         }
 
         buildDetailHTML(actor, spec) {
-            if (!spec) return `<div class="spec-15">${T('SpecMenu.ui.noneSelected')}</div>`;
+            if (!spec) {
+                return `<div class="ui-empty"><div class="ui-empty-text">${T('SpecMenu.ui.noneSelected')}</div></div>`;
+            }
 
             const level = actor.specializationLevel(spec.id);
             const levelName = window.Specializations.levelName(level);
@@ -1441,18 +1460,18 @@
                 const remaining = Math.max(0, Math.ceil((needed - have) * 10) / 10);
                 const nextName = window.Specializations.levelName(level + 1);
                 progressHTML = `
-                    <div class="spec-16">
-                        <div class="spec-17">
+                    <div class="ui-section">
+                        <div class="spec-progress-head">
                             <span>${T('SpecMenu.ui.towards', { level: escapeHtml(nextName) })}</span>
-                            <span>${have} / ${needed}</span>
+                            <span class="spec-progress-value">${have} / ${needed}</span>
                         </div>
-                        <div class="spec-18">
-                            <div class="spec-19" style="width:${pct}%"></div>
+                        <div class="spec-progress-track">
+                            <div class="spec-progress-fill" style="width:${pct}%"></div>
                         </div>
-                        <div class="spec-20">${T('SpecMenu.ui.pointsToNext', { points: remaining, level: escapeHtml(nextName) })}</div>
+                        <div class="spec-progress-note">${T('SpecMenu.ui.pointsToNext', { points: remaining, level: escapeHtml(nextName) })}</div>
                     </div>`;
             } else {
-                progressHTML = `<div class="spec-21">${T('SpecMenu.ui.mastered')}</div>`;
+                progressHTML = `<div class="ui-section spec-progress-note">${T('SpecMenu.ui.mastered')}</div>`;
             }
 
             // Weapon proficiencies drive the equip-screen stat scaling, so spell
@@ -1468,22 +1487,41 @@
                         ? T('SpecializationMenu.weapon.raised', { weapon: escapeHtml(window.Specializations.displayName(spec)), pct: pct })
                         : T('SpecializationMenu.weapon.full', { weapon: escapeHtml(window.Specializations.displayName(spec)) }));
                 weaponHTML = `
-                    <div class="spec-22">
-                        <div class="spec-23">${T('SpecializationMenu.weapon.title')}</div>
-                        <div class="spec-24">${note}</div>
-                        <div class="spec-25">${T('SpecializationMenu.weapon.trains')}</div>
+                    <div class="ui-section">
+                        <div class="inspect-section-title">${T('SpecializationMenu.weapon.title')}</div>
+                        <div class="ui-prose">${note}</div>
+                        <div class="spec-progress-note">${T('SpecializationMenu.weapon.trains')}</div>
                     </div>`;
             }
 
-            return `
-                <div class="spec-26">
-                    <h2 class="spec-27">${escapeHtml(window.Specializations.displayName(spec))}</h2>
-                    <div class="spec-28">${T('SpecMenu.ui.governingStat', { stat: spec.stat })}${spec.category ? ` &middot; ${escapeHtml(spec.category)}` : ''}</div>
-                    ${spec.description ? `<div class="spec-29">${escapeHtml(spec.description)}</div>` : ''}
-                    <div class="spec-30">
-                        <span class="spec-31">${escapeHtml(levelName)}</span>
-                        ${this.levelPipsHTML(level)}
+            // The card is read in two columns: a label sits beside its answer
+            // rather than at the far edge of the page (docs/task/ui_fixing.md).
+            const facts = `
+                <div class="inspect-spec-grid">
+                    <div class="inspect-spec-row">
+                        <span class="inspect-spec-label">${T('SpecMenu.ui.statLabel')}</span>
+                        <span class="inspect-spec-value">${escapeHtml(spec.stat)}</span>
                     </div>
+                    ${spec.category ? `
+                    <div class="inspect-spec-row">
+                        <span class="inspect-spec-label">${T('SpecMenu.ui.category')}</span>
+                        <span class="inspect-spec-value">${escapeHtml(spec.category)}</span>
+                    </div>` : ''}
+                </div>`;
+
+            return `
+                <div class="ui-detail-head">
+                    <div class="ui-detail-titles">
+                        <h2 class="inspect-name">${escapeHtml(window.Specializations.displayName(spec))}</h2>
+                        <div class="spec-tier-row">
+                            <span class="spec-tier-name">${escapeHtml(levelName)}</span>
+                            ${this.levelPipsHTML(level)}
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-detail-scroll">
+                    ${facts}
+                    ${spec.description ? `<div class="ui-prose">${escapeHtml(spec.description)}</div>` : ''}
                     ${progressHTML}
                     ${weaponHTML}
                 </div>
@@ -1504,12 +1542,11 @@
                 return;
             }
 
-            // Left and right belong to the tab row wherever the cursor is: the
-            // list is read top to bottom, so nothing else wants them.
-            if (Input.isTriggered('right') || Input.isRepeated('right')) { this.cycleCategory(1); return; }
-            if (Input.isTriggered('left') || Input.isRepeated('left')) { this.cycleCategory(-1); return; }
-
             if (this._activeArea === 'categories') {
+                // Up on the rail belongs to the rail; the list below is walked
+                // as a grid and wants left and right for itself.
+                if (Input.isTriggered('right') || Input.isRepeated('right')) { this.cycleCategory(1); return; }
+                if (Input.isTriggered('left') || Input.isRepeated('left')) { this.cycleCategory(-1); return; }
                 if (Input.isTriggered('down') || Input.isRepeated('down')) {
                     if (this._listOrder.length) {
                         this._activeArea = 'list';
@@ -1522,22 +1559,29 @@
                 return;
             }
 
-            // 'list' area
+            // 'list' area. The page is three across (.backpack-grid), so up and
+            // down step a whole row and left and right step a column; the
+            // cursor's own count has to match the stylesheet's track count or
+            // Down lands on the wrong entry.
             if (!this._listOrder.length) return;
 
+            const last = this._listOrder.length - 1;
+            const moveTo = (idx) => {
+                this._selectedIndex = Math.max(0, Math.min(last, idx));
+                SoundManager.playCursor();
+                this.refreshSpecDOM();
+                this.scrollSelectedIntoView();
+            };
+
             if (Input.isTriggered('down') || Input.isRepeated('down')) {
-                if (this._selectedIndex < this._listOrder.length - 1) {
-                    this._selectedIndex++;
-                    SoundManager.playCursor();
-                    this.refreshSpecDOM();
-                    this.scrollSelectedIntoView();
-                }
+                if (this._selectedIndex < last) moveTo(this._selectedIndex + SPEC_COLS);
+            } else if (Input.isTriggered('right') || Input.isRepeated('right')) {
+                if (this._selectedIndex < last) moveTo(this._selectedIndex + 1);
+            } else if (Input.isTriggered('left') || Input.isRepeated('left')) {
+                if (this._selectedIndex > 0) moveTo(this._selectedIndex - 1);
             } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
-                if (this._selectedIndex > 0) {
-                    this._selectedIndex--;
-                    SoundManager.playCursor();
-                    this.refreshSpecDOM();
-                    this.scrollSelectedIntoView();
+                if (this._selectedIndex >= SPEC_COLS) {
+                    moveTo(this._selectedIndex - SPEC_COLS);
                 } else {
                     this._activeArea = 'categories';
                     SoundManager.playCursor();

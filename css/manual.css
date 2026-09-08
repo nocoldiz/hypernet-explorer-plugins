@@ -2,7 +2,7 @@
 body {
     background-color: #fdf4d8;
     color: #1a1a1a;
-    font-family: 'Lora', serif;
+    font-family: var(--font-ui);
     line-height: 1.6;
     margin: 0;
     padding: 2em;
@@ -30,7 +30,7 @@ body {
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    font-family: 'Lora', serif;
+    font-family: var(--font-ui);
     font-size: 1.095em;
 }
 
@@ -42,7 +42,7 @@ body {
 
 /* --- Typography & Layout --- */
 h1, h2, h3 {
-    font-family: 'Lora', serif;
+    font-family: var(--font-ui);
     color: #58180D;
     font-weight: normal;
     border-bottom: 2px solid #c9ad6a;
@@ -138,7 +138,7 @@ code {
 .traits-list h4 {
     margin: 0 0 0.5rem 0;
     color: #8B4513;
-    font-family: 'Lora', serif;
+    font-family: var(--font-ui);
     font-weight: bold;
     font-size: 1.095em;
 }
@@ -151,7 +151,7 @@ code {
 .traits-list li {
     margin-bottom: 0.3rem;
     line-height: 1.4;
-    border-bottom: 1px dotted #d9c8a0;
+    border-bottom: none;
 }
 
 .traits-list li:last-child {
@@ -262,8 +262,8 @@ code {
 }
 
 .level-badge {
-    background-color: #8B4513;
-    color: white;
+    background-color: var(--accent-badge-yellow);
+    color: var(--accent-badge-text);
     padding: 0.15rem 0.4rem;
     font-size: 0.856em;
     font-weight: bold;

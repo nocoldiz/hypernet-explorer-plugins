@@ -14,7 +14,6 @@
   "skills": "ABILITÀ",
   "mastered": "IMPARATA",
   "magic": "MAGIA",
-  "pupil": "Allievo:",
   "fuseSpells": "✦ Fondi Incantesimi",
   "fuseSpellsShiftX": "Fondi Incantesimi (SHIFT / X)",
   "selectASkill": "SELEZIONA ABILITÀ",
@@ -32,6 +31,7 @@
   "recessiveSpellOrSkill": "Recessivo (Incantesimo o Abilità)",
   "spellOrSkillSetsThe": "magia o abilità · definisce il tipo",
   "skill": "ABILITÀ",
+  "emptySlot": "Vuoto",
   "emptyPressToChoose": "vuoto · premi per scegliere",
   "default": "predefinita",
   "animation": "Animazione",
@@ -80,7 +80,7 @@
   "forgeBlurb": "Fondi un incantesimo dominante con un incantesimo o un'abilità di {actor}; se il recessivo è un'abilità, esce un'abilità. Costa la somma di MP e AP dei componenti più Conoscenza, ed entrambi si dimenticano. Hai {knowledge} KP.",
   "kpMultiplier3x": "3.0X KC",
   "kpMultiplier15x": "1.5X KC",
-  "foreignSchool": "DA AUTODIDATTA (costo 3x)",
+  "foreignSchool": "Da autodidatta",
   "magicSystem": {
     "tabLabel": "Sistemi Magici",
     "title": "Sistemi Magici",
@@ -95,45 +95,62 @@
     "systems": {
       "Arcane": {
         "name": "Arcano",
-        "desc": "Magia antica, appresa da libri e formule."
+        "desc": "Magia antica, appresa da libri e formule.",
+        "lore": "Ogni opera arcana viene scritta prima di essere pronunciata. Un sigillo ha un costo dichiarato in fiato e sangue, una portata dichiarata, un'ora dichiarata, e il praticante che altera un termine della formula ottiene un risultato diverso, non uno piu' forte. Due maghi a due secoli di distanza che leggono la stessa pagina bruceranno la stessa candela e otterranno lo stesso fuoco: solo per questo i collegi hanno mai potuto insegnare."
       },
       "Sacred": {
         "name": "Sacro",
-        "desc": "Potere disceso da ordini superiori."
+        "desc": "Potere disceso da ordini superiori.",
+        "lore": "Il potere sacro si chiede, non si prende. Il rito e' fisso, la risposta no: la stessa preghiera detta con la stessa voce nella stessa mattina puo' resuscitare un morto, guarire uno sconosciuto a tre paesi di distanza, o non fare nulla per un anno intero. I devoti non parlano di costi o di limiti, solo di degnita', e mai due santi si sono trovati d'accordo su cosa renda una supplica ascoltata."
       },
       "Sympathetic": {
         "name": "Simpatica",
-        "desc": "Il simile richiama il simile: un oggetto legato a un altro."
+        "desc": "Il simile richiama il simile: un oggetto legato a un altro.",
+        "lore": "Il simile chiama il simile, e le tavole delle corrispondenze dicono esattamente quanto forte. Un capello lega piu' stretto di un cappotto, un cappotto piu' di un nome; la distanza dimezza la presa, e un legame spezzato chiude l'opera invece di indebolirla. La strega simpatetica tiene registri di cosa appartenga a chi, perche' in questa arte la forza di un vincolo si misura prima che cada il coltello."
       },
       "Dimensional": {
         "name": "Dimensionale",
-        "desc": "Magia che piega spazio, tempo e probabilità."
+        "desc": "Magia che piega spazio, tempo e probabilità.",
+        "lore": "Spazio, tempo e probabilita' sono trattati come materiali con una venatura e una tolleranza. Una piega ha un'ampiezza misurata, un debito in durata e un modo di guastarsi: forzala e il praticante arriva in un posto reale, solo non quello voluto. La matematica e' brutta e non perdona, ed e' esattamente per questo che i sopravvissuti di questa scuola sono tanto precisi con i loro numeri."
       },
       "Psionics": {
         "name": "Psionica",
-        "desc": "Potere proiettato dalla sola mente."
+        "desc": "Potere proiettato dalla sola mente.",
+        "lore": "Non c'e' nulla da leggere e nulla da comprare. Lo psionico spinge, e il mondo si muove fin dove lo porta la sua convinzione, che certi giorni arriva piu' lontano senza che nessuno abbia mai saputo dire perche'. Il talento arriva immeritato, si approfondisce senza esercizio e abbandona chi lo porta a meta' frase. Cio' che riesce a una mente non dice nulla di cosa riuscira' alla successiva."
       },
       "Technomagic": {
         "name": "Tecnomagia",
-        "desc": "L'occulto fuso con la macchina."
+        "desc": "L'occulto fuso con la macchina.",
+        "lore": "L'occulto e' stato smontato su un banco e rimontato con delle tolleranze. Un apparato tecnomagico dichiara il suo assorbimento in watt e la sua resa in effetto, si ferma quando si ferma l'alimentazione, e un secondo apparato costruito sullo stesso schema rende uguale entro un margine su cui i costruttori litigheranno per ore. Qui la magia e' una disciplina ingegneristica con norme di sicurezza peggiori."
       },
       "Pataphysic": {
         "name": "Patafisica",
-        "desc": "Magia che non risponde a nessuna legge coerente."
+        "desc": "Magia che non risponde a nessuna legge coerente.",
+        "lore": "Il patafisico studia le leggi che governano le eccezioni, e il campo ricambia la cortesia non avendone alcuna. Un'opera che martedi' ha aperto una porta, giovedi' fa si' che una porta apra il patafisico. Gli appunti si prendono, e parlano sempre di una magia che non esiste piu'. I praticanti la descrivono come una barzelletta raccontata da qualcosa che non ha senso dell'umorismo e ha pazienza infinita."
       },
       "Natural": {
         "name": "Naturale",
-        "desc": "Potere tratto da piante, bestie e terra."
+        "desc": "Potere tratto da piante, bestie e terra.",
+        "lore": "Il potere verde arriva alle sue condizioni. Un bosco da' quel che gli va di dare, nella stagione che sceglie, a un supplice su cui ha deciso per ragioni che nessun erborista e' riuscito a mettere per iscritto. I patti tengono finche' tengono. Ogni praticante ha una storia sull'anno in cui il fiume smise semplicemente di rispondere, e nessuno ha una spiegazione che valga la pena ripetere."
       },
       "Thermodynamics": {
         "name": "Termodinamica",
-        "desc": "Magia che vive nel calore, nel gelo e nella corrente."
+        "desc": "Magia che vive nel calore, nel gelo e nella corrente.",
+        "lore": "Il calore si sposta, non si crea. Scalda una stanza e qualcosa li' accanto si raffredda esattamente di altrettanto; chi dimentica il registro lo pareggia col proprio corpo. Le correnti scorrono dove la resistenza e' minore, i gradienti si equalizzano secondo tempi calcolabili in anticipo, e l'intera disciplina e' in fondo un ramo molto ostile della fisica praticato senza strumenti."
       },
       "Ritual": {
         "name": "Rituale",
-        "desc": "Potere pagato con rito, sangue o patto."
+        "desc": "Potere pagato con rito, sangue o patto.",
+        "lore": "Il prezzo e' fissato prima che l'opera cominci. Tante ore, tanto sangue, tante voci nel cerchio, e l'effetto segue in proporzione; dimezza l'offerta e dimezzi il risultato, spezza il cerchio e non ottieni nulla invece di qualcosa di selvaggio. I patti sono scritti in termini che entrambe le parti possono far valere, e i riti piu' antichi sono quelli i cui termini non hanno mai dovuto cambiare."
       }
-    }
+    },
+    "rigor": {
+      "hard": "Magia Rigida",
+      "soft": "Magia Fluida",
+      "hardHint": "Leggi fisse, costi dichiarati",
+      "softHint": "Libera, inspiegata"
+    },
+    "loreHeading": "Tradizione"
   },
   "graph": {
     "legendLearned": "Appresa",
@@ -143,15 +160,17 @@
     "lockedBy": "Si sblocca da: {skills}",
     "lockedByCount": "Ne servono ancora {need} fra: {skills}",
     "lockedHint": "Nulla di ciò che conosci confina con questa abilità.",
-    "lockedBySchool": "Sigillata nel cuore del cerchio. Occorre conoscere tutta la scuola; mancano ancora: {skills}",
+    "lockedBySchool": "Devi prima conoscere il resto della scuola, mancano {kind}: {count}",
+    "lockedKindSkills": "abilità",
+    "lockedKindSpells": "incantesimi",
     "lockedToast": "{skill} non confina con nulla che questo allievo conosca."
   },
   "atlas": {
     "progress": "{learned} di {total} apprese",
-    "hint": "Trascina per ruotare · Rotella per lo zoom · Shift per tutta la scuola",
     "kp": "{kp} KC",
     "schoolOf": "{index} / {total}",
-    "held": "Hai {knowledge} KC"
+    "held": "Hai {knowledge} KC",
+    "hint": "Trascina per spostare, rotella per ingrandire"
   },
   "tag": {
     "esoteric": "Esoterica",
@@ -175,5 +194,12 @@
     "deleted": "{skill} è stata disfatta."
   },
   "fusionCritical": "★ SUCCESSO CRITICO NAT 20! ★\n{result}\nPotenziata con -20% di costo in MP e +25% di efficacia!",
-  "fusionFailed": "☠ FUSIONE ARCANA FALLITA (CD {dc}) ☠\nLa fusione degli incantesimi si è destabilizzata in un violento contraccolpo magico!\nGli incantesimi componenti ({components}) sono stati distrutti!"
+  "fusionFailed": "☠ FUSIONE ARCANA FALLITA (CD {dc}) ☠\nLa fusione degli incantesimi si è destabilizzata in un violento contraccolpo magico!\nGli incantesimi componenti ({components}) sono stati distrutti!",
+  "primarySchool": "Primaria",
+  "secondarySchool": "Secondaria",
+  "rename": "Rinomina",
+  "dissolve": "Dissolvi",
+  "renamePrompt": "Inserisci un nuovo nome per questa magia:",
+  "dissolveConfirm": "Dissolvere {name} in conoscenza?",
+  "pupil": "Allievo"
 }

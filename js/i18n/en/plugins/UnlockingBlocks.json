@@ -1,0 +1,19 @@
+{
+  "title": "LOCKPICKING",
+  "complexity": "Lock complexity: ",
+  "timeLabel": "TIME",
+  "nextLabel": "NEXT",
+  "tensionLabel": "TENSION",
+  "seconds": "s",
+  "lockPicked": "Lock Picked!",
+  "lockJammed": "Lock jammed...",
+  "timeUp": "Time up!",
+  "seized": "The cylinder seized!",
+  "abandoned": "Pick withdrawn...",
+  "usedSkeletonKey": "Used Skeleton Key!",
+  "noLockpicks": "You don't have any lockpicks",
+  "craftOffer": "No lockpicks left, but there is enough to bend one: {materials}. Make a {item}?",
+  "craftYes": "Bend one now",
+  "craftNo": "Leave the lock",
+  "craftedOne": "Bent a {item} at the door"
+}

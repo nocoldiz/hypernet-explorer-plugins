@@ -4138,7 +4138,7 @@
             // the game canvas is not rendered while dreaming, so a
             // ParchmentToast would never show.
             const ins = document.createElement('div');
-            ins.style.cssText = 'position:absolute;left:0;right:0;top:14%;text-align:center;color:#e8ddff;font:16px monospace;letter-spacing:2px;text-shadow:0 0 10px #a06cff,0 0 3px #000;opacity:0;transition:opacity 0.6s;pointer-events:none;z-index:4;';
+            ins.style.cssText = 'position:absolute;left:0;right:0;top:14%;text-align:center;color:#e8ddff;font:16px monospace;letter-spacing:2px;text-shadow:0 1px 2px #000;opacity:0;transition:opacity 0.6s;pointer-events:none;z-index:4;';
             el.appendChild(ins);
             this._insightDiv = ins;
 
@@ -4146,7 +4146,7 @@
             // as subtitles because a dream has no voice to say it in.
             const sub = document.createElement('div');
             sub.style.cssText = 'position:absolute;left:8%;right:8%;bottom:52px;text-align:center;' +
-                'color:#f4f0ff;text-shadow:0 0 8px #000,0 0 20px #6b4cff;opacity:0;' +
+                'color:#f4f0ff;text-shadow:0 1px 2px #000;opacity:0;' +
                 'transition:opacity 0.35s;pointer-events:none;z-index:4;';
             el.appendChild(sub);
             this._subtitleDiv = sub;
@@ -6016,7 +6016,7 @@
             title.textContent = T('Dream.dreamThins');
             title.style.cssText = 'font-size:20px;margin-bottom:20px;letter-spacing:3px;text-transform:uppercase;' +
                 'color:var(--text-primary-hover, #ffcc66);' +
-                'text-shadow:0 0 10px var(--accent-amber-glow, #ffe9a8);';
+                '';
             panel.appendChild(title);
 
             const btns = [];

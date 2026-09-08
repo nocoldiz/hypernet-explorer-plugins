@@ -161,34 +161,34 @@
     const menuCloseSound = parameters['menuCloseSound'] || 'Cancel1';
 
     // ============================================================================
-    // Tutorial purse
+    // Story mode purse
     //
-    // The tutorial started from the title screen hands the player a party with
-    // nothing in its pockets, so the cabinets standing in the tutorial arcade
-    // could never be fed. Inside the tutorial the manager runs on a temporary
+    // The story mode started from the title screen hands the player a party with
+    // nothing in its pockets, so the cabinets standing in the story mode arcade
+    // could never be fed. Inside the story mode the manager runs on a temporary
     // purse instead of the coin item: it lives in this module only, is never
     // written to $gameParty and never reaches a savegame, and it is refilled
-    // whenever a new game is set up, so every tutorial run opens on the same
-    // bankroll. The tutorial switch stays on once creation hands over to the real
+    // whenever a new game is set up, so every story mode run opens on the same
+    // bankroll. The story mode switch stays on once creation hands over to the real
     // game, so the maps are checked as well and the purse ends with them.
     // ============================================================================
 
-    const TUTORIAL_SWITCH = 100;
-    const TUTORIAL_MAPS = [1414, 1415, 1416, 1417];
-    const TUTORIAL_COINS = 50;
-    let tutorialCoins = TUTORIAL_COINS;
+    const STORY_MODE_SWITCH = 100;
+    const STORY_MODE_MAPS = [1414, 1415, 1416, 1417];
+    const STORY_MODE_COINS = 50;
+    let storyModeCoins = STORY_MODE_COINS;
 
-    function isTutorialRun() {
+    function isStoryModeRun() {
         if (typeof $gameSwitches === 'undefined' || !$gameSwitches) return false;
-        if (!$gameSwitches.value(TUTORIAL_SWITCH)) return false;
+        if (!$gameSwitches.value(STORY_MODE_SWITCH)) return false;
         if (typeof $gameMap === 'undefined' || !$gameMap) return false;
-        return TUTORIAL_MAPS.includes($gameMap.mapId());
+        return STORY_MODE_MAPS.includes($gameMap.mapId());
     }
 
     const _DataManager_setupNewGame_Arcade = DataManager.setupNewGame;
     DataManager.setupNewGame = function () {
         _DataManager_setupNewGame_Arcade.call(this);
-        tutorialCoins = TUTORIAL_COINS;
+        storyModeCoins = STORY_MODE_COINS;
     };
 
     // ============================================================================
@@ -354,15 +354,15 @@
             }
         },
         
-        // True while the run is the title screen's tutorial, which plays on a
+        // True while the run is the title screen's story mode, which plays on a
         // temporary purse rather than the party's coin item.
-        isTutorialRun() {
-            return isTutorialRun();
+        isStoryModeRun() {
+            return isStoryModeRun();
         },
 
         // Get coin count
         getCoins() {
-            if (isTutorialRun()) return tutorialCoins;
+            if (isStoryModeRun()) return storyModeCoins;
             const coinItem = $dataItems && $dataItems[124];
             if (!coinItem) return 0;
             return $gameParty.numItems(coinItem) || 0;
@@ -370,9 +370,9 @@
 
         // Use coins
         useCoins(amount) {
-            if (isTutorialRun()) {
-                if (tutorialCoins >= amount) {
-                    tutorialCoins -= amount;
+            if (isStoryModeRun()) {
+                if (storyModeCoins >= amount) {
+                    storyModeCoins -= amount;
                     return true;
                 }
                 return false;

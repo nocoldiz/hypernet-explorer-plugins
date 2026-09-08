@@ -1,0 +1,60 @@
+{
+  "title": "Grafico politico 3D",
+  "back": "Indietro",
+  "search": "Cerca ideologie...",
+  "confirm": "Scegli ideologia",
+  "listHead": "Ideologie",
+  "noAdherents": "Nessun partito politico attivo in questa sessione",
+  "adherents": "Aderenti noti nel mondo:",
+  "axisShort": "E: {econ} | A: {auth} | Z: {myst}",
+  "canvasAxis": {
+    "econ": "Destra (+econ)",
+    "auth": "Auth (+autoritario)",
+    "myst": "Magia (+esoterico)"
+  },
+  "view": {
+    "isometric": "Isometrica 3D",
+    "top": "Dall'alto (bussola 2D)",
+    "front": "Frontale (econ-magia)",
+    "side": "Laterale (auth-magia)",
+    "orbit": "Orbita automatica"
+  },
+  "filter": {
+    "all": "Tutte ({n})",
+    "authLeft": "Auth-sinistra (rosso)",
+    "authRight": "Auth-destra (blu)",
+    "libLeft": "Lib-sinistra (verde)",
+    "libRight": "Lib-destra (giallo)",
+    "magic": "Molta magia",
+    "mundane": "Molto mondano"
+  },
+  "tag": {
+    "magic": "Magia",
+    "mundane": "Mondano",
+    "neutral": "Neutro"
+  },
+  "quadrant": {
+    "authLeft": "Sinistra autoritaria (rosso)",
+    "authRight": "Destra autoritaria (blu)",
+    "libLeft": "Sinistra libertaria (verde)",
+    "libRight": "Destra libertaria (giallo)"
+  },
+  "esoteric": {
+    "high": "Molta magia / esoterismo",
+    "low": "Molto mondano / razionalista",
+    "balanced": "Esoterismo in equilibrio"
+  },
+  "axis": {
+    "econ": "Asse economico (X):",
+    "auth": "Asse autoritario (Y):",
+    "myst": "Dimensione esoterica (Z):"
+  },
+  "side": {
+    "left": "Sinistra",
+    "right": "Destra",
+    "auth": "Autoritaria",
+    "lib": "Libertaria",
+    "magic": "Magia",
+    "mundane": "Mondano"
+  }
+}

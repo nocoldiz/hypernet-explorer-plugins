@@ -16,6 +16,8 @@
   "treatWounds": "Treat Wounds",
   "buyHouse": "Buy this floor",
   "joinParty": "Join Party",
+  "joinPartyInactive": "Join as Inactive",
+  "joinFollower": "Join as Follower",
   "socialWeb": "Social Web",
   "leave": "Leave",
   "traits": "Traits",
@@ -155,6 +157,7 @@
   "lifeHistoryTitle": "LIFE HISTORY",
   "noLifeHistory": "Nothing notable has happened to them yet.",
   "lifeHistoryTimeline": "Timeline",
+  "timesRepeated": "(x {n})",
   "emBranchHdr": "This branch of her",
   "cancel": "← Cancel",
   "back": "Back",
@@ -169,6 +172,7 @@
   "wikiTab": "Wiki",
   "wikiCategories": "Categories",
   "wikiPeople": "People",
+  "wikiMainPlayers": "Main Players",
   "wikiLeaders": "Leaders",
   "wikiPoliticians": "Politicians",
   "wikiHyperpowers": "Hyperpowers",
@@ -340,6 +344,7 @@
   "infectMember": "{name} is dosed with {disease}.",
   "infectMemberAlready": "{name} is already carrying {disease}.",
   "socializeLabel": "Socialize",
+  "bickerLabel": "Bicker",
   "courtLabel": "Court",
   "courtHarassmentFiled": "{name} has had enough of {actor}. A harassment complaint goes on the record: {fine}.",
   "courtHarassmentFiledFree": "{name} has had enough of {actor}. A harassment complaint goes on the record.",
@@ -435,9 +440,9 @@
     "none": "None",
     "0": "Testicles",
     "1": "Uterus",
-    "2": "Oviparous",
-    "3": "Plant Spores",
-    "4": "Mitosis"
+    "2": "Oviduct",
+    "3": "Sporangium",
+    "4": "Mitotic Gland"
   },
   "partyThought": {
     "hurt": "I'm not sure I can keep going like this...",
@@ -452,6 +457,8 @@
   "oldLegend": "an old legend",
   "bribeAccepted": "{name} accepts. +{op} ♥",
   "joinedParty": "{name} joined the party!",
+  "joinedPartyInactive": "{name} signs on as an inactive member.",
+  "joinedFollower": "{name} falls in behind the party as a follower.",
   "joinReplacedFallen": "{name} is left where they fell.",
   "joinFailed": "That didn't work out. They stay where they are.",
   "firstMeeting": "First meeting",
@@ -817,5 +824,12 @@
   "leaderSourcePast": "Once travelled with a party of this world",
   "leaderSourcePreset": "Playable, as they begin",
   "presetCharacterBadge": "Playable dossier",
-  "leftPartyLbl": "Left"
+  "leftPartyLbl": "Left",
+  "inhabitantsLbl": "Inhabitants",
+  "soldiersLbl": "Soldiers under arms",
+  "practitionersLbl": "Arcane practitioners",
+  "gdpLbl": "Yearly product",
+  "freedomIndexLbl": "Freedom of information",
+  "levelLbl": "Level",
+  "lifeLbl": "Life"
 }

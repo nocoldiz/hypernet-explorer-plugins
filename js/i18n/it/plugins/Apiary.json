@@ -35,9 +35,14 @@
   "simulatedHours": "Simulate {hours} ore",
   "honeyProduced": "Miele prodotto: {amount}",
   "currentPopulation": "Popolazione attuale: {total}",
+  "cell": {
+    "brood": "Covata",
+    "empty": "Cera vuota"
+  },
   "ui": {
     "back": "Indietro",
     "apiary": "Apiario",
+    "crossSection": "Sezione Trasversale",
     "colony": "Colonia",
     "state": "Stato",
     "mood": "Umore",

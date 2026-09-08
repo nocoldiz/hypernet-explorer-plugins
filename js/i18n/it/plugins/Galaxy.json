@@ -16,7 +16,8 @@
     "proceduralGalaxy": "galassia procedurale",
     "starSystem": "Sistema stellare",
     "milkyWay": "Galassia della Via Lattea",
-    "near": "presso {name}"
+    "near": "presso {name}",
+    "cockpit": "Cabina"
   },
   "sky": {
     "european": "Europeo",
@@ -131,7 +132,8 @@
     "mly": "{n} Mal",
     "thousandLy": "{n}.000 al",
     "billionStars": "~{n} miliardi",
-    "galaxies": "~{n} galassie"
+    "galaxies": "~{n} galassie",
+    "gly": "{n} Gal"
   },
   "hud": {
     "centreTheViewOnYour": "Centra la vista sulla tua nave, ovunque si trovi",
@@ -187,14 +189,19 @@
     "grandTour": "Gran Tour",
     "grandTourTooltip": "Un volo panoramico e senza comandi tra tutti i corpi di questo sistema",
     "sbBridge": "Ponte SB",
+    "bridge": "Plancia",
+    "bridgeTooltip": "Prendi il timone e pilota tu la nave",
     "setCourse": "Imposta la rotta",
     "parkInOrbit": "Parcheggia in orbita",
     "stopRefuel": "Interrompi il rifornimento",
     "harvestSchrDingerite": "Raccogli Schrödingerite",
     "serviceEverythingAffordable": "Ripara tutto il possibile",
     "refuelTooltip": "Rifornisci qui, oppure traccia una rotta verso la stella più vicina che possa rifornire la nave",
-    "orbitHint": "trascina per ruotare · rotellina per lo zoom · clic per selezionare · Esc per uscire",
     "nothingCatalogued": "Nessuna voce nel catalogo.",
+    "nothingInView": "Nessuna voce catalogata è in vista. Punta la camera altrove, oppure mostra tutto il catalogo.",
+    "catalogInView": "In vista",
+    "catalogAll": "Tutto",
+    "catalogViewTooltip": "Mostra solo ciò che la camera inquadra, oppure l'intero catalogo",
     "rechargesIn": "Si ricarica tra",
     "nominal": "Nominale",
     "mineProgress": "{mined} / {capacity} unità · ~{eta}s all'esaurimento",
@@ -203,7 +210,8 @@
     "bookmarkRemove": "Rimuovi dai segnalibri",
     "bookmarked": "Nei segnalibri",
     "bookmark": "Segnalibro",
-    "harvestRunning": "Sorvolo di raccolta in corso"
+    "harvestRunning": "Sorvolo di raccolta in corso",
+    "flyby": "Sorvolo"
   },
   "hubblePart": {
     "DF-224 Computer": {
@@ -300,30 +308,6 @@
     "alreadyRefuelling": "Rifornimento da {star} già in corso.",
     "tankFull": "Il serbatoio di iperflusso è già pieno.",
     "noStarInRange": "Nessuna stella in grado di rifornire la nave a portata."
-  },
-  "hint": {
-    "grandTour": "<b>Gran Tour</b> &nbsp;·&nbsp; Esc esci",
-    "cockpit": "<b>Abitacolo</b> &nbsp;·&nbsp; WASD spinta · Spazio/C su·giù · Shift turbo · mouse per guardare · F orbita · Esc esci",
-    "planet": "clicca la stella o allontana lo zoom per uscire",
-    "system": "clicca un pianeta per avvicinarti · cliccalo di nuovo per stringere",
-    "galaxy": "clicca una stella per puntarla · cliccala di nuovo per avvicinarti",
-    "galaxyFocus": "allontana lo zoom per uscire",
-    "cluster": "clicca una galassia per puntarla · cliccala di nuovo per entrarci",
-    "web": "clicca un nodo qualsiasi · cliccalo di nuovo per entrare nel suo ammasso",
-    "outer": "clicca una galassia per puntarla · cliccala di nuovo per entrarci",
-    "modeLine": "<b>{scale}</b> &nbsp;·&nbsp; trascina per ruotare · rotella per lo zoom · Tab per scegliere · {tail} · Spazio per puntare · F abitacolo · Esc esci"
-  },
-  "hintPad": {
-    "grandTour": "<b>Gran Tour</b> &nbsp;·&nbsp; [B] esci",
-    "cockpit": "<b>Abitacolo</b> &nbsp;·&nbsp; [LS] spinta · [RS] guarda · [RT]/[LT] sali·scendi · [X] turbo · [B] esci",
-    "planet": "[B] o allontana lo zoom per uscire",
-    "system": "[LB]/[RB] scegli un corpo · avvicina lo zoom per raggiungerlo",
-    "galaxy": "[LB]/[RB] scegli una stella · avvicina lo zoom per entrarci",
-    "galaxyFocus": "allontana lo zoom per uscire",
-    "cluster": "[LB]/[RB] scegli una galassia · avvicina lo zoom per entrarci",
-    "web": "[LB]/[RB] scegli un nodo · avvicina lo zoom per entrare nel suo ammasso",
-    "outer": "[LB]/[RB] scegli una galassia · avvicina lo zoom per entrarci",
-    "modeLine": "<b>{scale}</b> &nbsp;·&nbsp; [RS] ruota · [LT]/[RT] zoom · {tail} · [A] punta · [Y] catalogo · [L3] barra strumenti · [X] abitacolo · [B] esci"
   },
   "service": {
     "hubbleName": "Telescopio Spaziale Hubble",

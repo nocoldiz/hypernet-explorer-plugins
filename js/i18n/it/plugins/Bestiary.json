@@ -79,5 +79,16 @@
   "drawing": "Disegno...",
   "exp": "ESP",
   "harvestChance": "{chance}% di probabilità",
-  "searchPlaceholder": "Cerca creature…"
+  "searchPlaceholder": "Cerca creature…",
+  "incanta": {
+    "appName": "Incanta 96",
+    "edition": "Edizione Bestiario Multimediale",
+    "find": "Trova un articolo...",
+    "count": "{n} articoli",
+    "noMedia": "Nessuna ripresa dell'esemplare",
+    "mediaCaption": "Esemplare dal vivo. Trascina per ruotare, rotella per zoomare.",
+    "vitals": "Statistiche vitali",
+    "welcomeTitle": "Benvenuto in Incanta 96",
+    "welcomeBody": "Scegli una creatura dal sommario per aprirne l'articolo."
+  }
 }

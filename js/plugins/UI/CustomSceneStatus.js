@@ -575,9 +575,9 @@
     const STATUS_TABS = [
         { id: "attributes", labelKey: "SceneStatus.ui.tabAttributes" },
         { id: "bio", labelKey: "SceneStatus.ui.tabBio" },
+        { id: "backstory", labelKey: "SceneStatus.ui.tabBackstory" },
         { id: "traits", labelKey: "SceneStatus.ui.tabTraits" },
         { id: "passives", labelKey: "SceneStatus.ui.tabPassives" },
-        { id: "anatomy", labelKey: "SceneStatus.ui.tabAnatomy" },
         { id: "diseases", labelKey: "SceneStatus.ui.tabDiseases" }
     ];
 
@@ -684,7 +684,10 @@
         return null;
     }
 
-    function buildBioPageHTML(actor) {
+    // The bio sheet and the backstory are two tabs off one build: both are read
+    // from the same profile, so splitting them into two functions would only
+    // mean resolving that profile twice. `section` says which half is wanted.
+    function buildBioPageHTML(actor, section) {
         if (!actor) return "";
         const profile = getActorProfile(actor);
         const memberIndex = $gameParty.allMembers().indexOf(actor);
@@ -784,9 +787,16 @@
         }
 
         const ideology = window.NPCShared ? window.NPCShared.ideologyFor(profile) : null;
-        const ideologyName = ideology
-            ? ((window.DataService?.t?.(ideology.name)) || (ideology.name || "").split('.').pop().split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))
-            : "-";
+        // DataService.t hands the key straight back when the entry is missing, so
+        // an unresolved lookup has to be spotted and titled by hand rather than
+        // printed as "ideology.genomic_purity_restorationist".
+        const titleCase = (key) => (key || "").split('.').pop().split('_')
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        let ideologyName = "-";
+        if (ideology) {
+            const looked = window.DataService?.t?.(ideology.name);
+            ideologyName = (looked && looked !== ideology.name) ? looked : titleCase(ideology.name);
+        }
 
         let factionName = "-";
         let factionIcon = 187;
@@ -832,8 +842,10 @@
 
         let specsHTML = "";
         if (specs.length) {
-            specsHTML = `<div class="status-trait-badges status-05">` +
-                specs.map(s => `<span class="status-trait-badge"><span style="${iconStyle(s.icon, 16)}"></span>${escapeAttr(s.name)} <b>(${escapeAttr(s.levelName)})</b></span>`).join("") +
+            // Specializations read as a list of names, not as buttons: no plate
+            // and no frame, only the icon, the name and the rank behind it.
+            specsHTML = `<div class="status-spec-tags">` +
+                specs.map(s => `<span class="status-spec-tag"><span style="${iconStyle(s.icon, 16)}"></span>${escapeAttr(s.name)} <b>(${escapeAttr(s.levelName)})</b></span>`).join("") +
                 `</div>`;
         } else {
             specsHTML = `<div class="status-06">${T('SceneStatus.ui.noSpecializations') || "No trained specializations..."}</div>`;
@@ -872,6 +884,16 @@
                     `;
                 }).join("") +
                 `</div>`;
+        }
+
+        if (section === "backstory") {
+            return `
+            <div class="status-bio-section">
+                <div class="card-label">${T('SceneStatus.ui.backstoryTitle') || "Backstory & Formative Events"}</div>
+                ${narrative ? `<div class="status-bio-narrative">${escapeAttr(narrative)}</div>` : `<div class="status-06">${T('SceneStatus.ui.noBackstory') || "No backstory recorded..."}</div>`}
+                ${eventsHTML}
+            </div>
+        `;
         }
 
         return `
@@ -947,12 +969,6 @@
             <div class="status-bio-section">
                 <div class="card-label">${T('SceneStatus.ui.specializationsTitle') || "Specializations & Skills"}</div>
                 ${specsHTML}
-            </div>
-
-            <div class="status-bio-section">
-                <div class="card-label">${T('SceneStatus.ui.backstoryTitle') || "Backstory & Formative Events"}</div>
-                ${narrative ? `<div class="status-bio-narrative">${escapeAttr(narrative)}</div>` : `<div class="status-06">${T('SceneStatus.ui.noBackstory') || "No backstory recorded..."}</div>`}
-                ${eventsHTML}
             </div>
         `;
     }
@@ -1128,19 +1144,18 @@
     Scene_Status.prototype.create = function () {
         _Scene_Status_create.call(this);
 
-        // Hide standard canvas windows
-        if (this._statusWindow) {
-            this._statusWindow.visible = false;
-            this._statusWindow.deactivate();
-        }
-        if (this._statesWindow) {
-            this._statesWindow.visible = false;
-            this._statesWindow.deactivate();
-        }
-        if (this._paramsWindow) {
-            this._paramsWindow.visible = false;
-            this._paramsWindow.deactivate();
-        }
+        // Hide standard canvas windows. Scene_Status builds four of them
+        // (profile, status, params, equip) and this list used to name two that
+        // MZ never creates, so three parchment windowskin panels were left
+        // drawn over the black backdrop under the DOM spread.
+        ["_profileWindow", "_statusWindow", "_statusParamsWindow",
+            "_statusEquipWindow", "_cancelButton", "_pageupButton",
+            "_pagedownButton"].forEach(key => {
+                const win = this[key];
+                if (!win) return;
+                win.visible = false;
+                if (win.deactivate) win.deactivate();
+            });
 
         // Set actor index to active menu actor
         this._actorIndex = $gameParty.allMembers().indexOf(this.actor());
@@ -1264,10 +1279,11 @@
                             <h2 class="title status-12" id="status-actor-name"></h2>
                         </div>
                         
+                        <div class="status-left-body">
                         <div class="status-bust-wrapper">
                             <canvas id="status-bust" width="440" height="500"></canvas>
                         </div>
-                        
+
                         <div class="status-gauges-box">
                             <div class="status-gauge-grid">
                             <div class="status-gauge-row">
@@ -1308,11 +1324,15 @@
                                 <div class="status-gauge-bar-outer">
                                     <div class="status-gauge-bar-inner exp" id="status-exp-bar"></div>
                                 </div>
-                                <div class="status-gauge-note" id="status-exp-next"></div>
                             </div>
                             </div>
 
                             <div class="status-needs-rows" id="status-needs"></div>
+                        </div>
+
+                        <div class="status-anatomy-panel">
+                            <div class="anatomy-grid" id="bodyparts-scroll-container"></div>
+                        </div>
                         </div>
                     </div>
                     <div class="right-page status-13">
@@ -1330,15 +1350,9 @@
                                 </div>
                             </div>
 
-                            <div class="status-tab-panel" data-status-tab="anatomy">
-                                <div class="bodyparts-card status-card-fixed">
-                                    <div class="card-label" id="status-archetype-label">${T('SceneStatus.ui.archetype')}</div>
-                                    <div class="status-14" id="status-archetype"></div>
-                                </div>
-
-                                <div class="bodyparts-card">
-                                    <div class="card-label">${T('SceneStatus.ui.biologicalVitals')}</div>
-                                    <div class="bodyparts-list" id="bodyparts-scroll-container"></div>
+                            <div class="status-tab-panel" data-status-tab="backstory">
+                                <div class="bodyparts-card status-16">
+                                    <div class="status-bio-scroll" id="status-backstory-scroll"></div>
                                 </div>
                             </div>
 
@@ -1462,26 +1476,16 @@
         }
 
         const tpTextEl = spread.querySelector("#status-tp-text");
-        if (tpTextEl) tpTextEl.textContent = `${Math.ceil(actor.tp)} / ${actor.maxTp()}`;
+        if (tpTextEl) tpTextEl.textContent = `${Math.ceil(actor.tp)}`;
         const tpBarEl = spread.querySelector("#status-tp-bar");
         if (tpBarEl) tpBarEl.style.width = `${(actor.tp / actor.maxTp()) * 100}%`;
 
-        // The gauge counts the points earned inside the current level; the line
-        // under it says how many are still owed before the next one, which is
-        // what a player actually wants to know from this screen.
+        // The gauge counts the points earned inside the current level.
         const expTextEl = spread.querySelector("#status-exp-text");
-        const expNextEl = spread.querySelector("#status-exp-next");
         if (actor.isMaxLevel()) {
             if (expTextEl) expTextEl.textContent = T("SceneStatus.ui.expMax");
-            if (expNextEl) expNextEl.textContent = "";
         } else {
             if (expTextEl) expTextEl.textContent = `${expGainedThisLevel} / ${expForThisLevel}`;
-            if (expNextEl) {
-                expNextEl.textContent = T("SceneStatus.ui.expToNext", {
-                    exp: Math.max(0, expForThisLevel - expGainedThisLevel),
-                    level: actor.level + 1
-                });
-            }
         }
         const expBarEl = spread.querySelector("#status-exp-bar");
         if (expBarEl) expBarEl.style.width = `${expRate * 100}%`;
@@ -1592,7 +1596,10 @@
         if (breakdownEl) breakdownEl.innerHTML = buildStatBreakdownHTML(actor);
 
         const bioEl = spread.querySelector("#status-bio-scroll");
-        if (bioEl) bioEl.innerHTML = buildBioPageHTML(actor);
+        if (bioEl) bioEl.innerHTML = buildBioPageHTML(actor, "bio");
+
+        const backstoryEl = spread.querySelector("#status-backstory-scroll");
+        if (backstoryEl) backstoryEl.innerHTML = buildBioPageHTML(actor, "backstory");
 
         // Alignment Element
         let elementHTML = "";
@@ -1661,41 +1668,6 @@
                 : `<div class="status-traits-empty">${T('SceneStatus.ui.noDiseaseData')}</div>`;
         }
 
-        // Body archetype, sourced from Health_Core. A creature built from two
-        // archetypes is a hybrid and is named as both; the gestation term shown
-        // is the one a pregnancy of this actor would actually run for (the
-        // median of the two, or a single day for mitosis).
-        const archetypeLabelEl = spread.querySelector("#status-archetype-label");
-        const archetypeEl = spread.querySelector("#status-archetype");
-        if (archetypeEl) {
-            const health = window.HealthCore;
-            const keys = (health && health.getActorArchetypeKeys)
-                ? health.getActorArchetypeKeys(actor) : [];
-            const names = keys.map(k => health.getArchetypeDisplayName(k)).filter(Boolean);
-            const isHybrid = names.length > 1;
-            if (archetypeLabelEl) {
-                archetypeLabelEl.textContent = isHybrid
-                    ? T("SceneStatus.ui.hybridArchetype")
-                    : T("SceneStatus.ui.archetype");
-            }
-            if (names.length) {
-                const ccUtils = window.CharacterCreationUtils;
-                const memberIndex = $gameParty.members().indexOf(actor);
-                const repVar = (ccUtils && ccUtils.getReproductiveVariableId)
-                    ? ccUtils.getReproductiveVariableId(Math.max(0, memberIndex)) : 87;
-                const repType = $gameVariables.value(repVar);
-                const term = health.getPregnancyDuration(actor, repType);
-                archetypeEl.innerHTML = `
-                    <div class="status-21">
-                        <span class="status-22">${names.join(" / ")}</span>
-                        <span class="status-23">${T('SceneStatus.ui.gestationTerm', { days: term })}</span>
-                    </div>
-                `;
-            } else {
-                archetypeEl.innerHTML = `<div class="status-24">${T('SceneStatus.ui.noArchetype')}</div>`;
-            }
-        }
-
         // Passive abilities: the class's signature passive plus every trait
         // passive this character carries, all of them always on.
         const passivesEl = spread.querySelector("#status-passives-list");
@@ -1744,12 +1716,12 @@
                     : part.name;
 
                 bodyPartsHTML += `
-                    <div class="bodypart-row ${isSelected} ${strikeClass}" onclick="SceneManager._scene.selectUIBodyPart(${idx})">
-                        <span class="bodypart-name">${partName}</span>
-                        <div class="bodypart-hp-container">
-                            <div class="bodypart-bar" style="width:${barWidth}%"></div>
+                    <div class="anatomy-cell ${isSelected} ${strikeClass}" onclick="SceneManager._scene.selectUIBodyPart(${idx})">
+                        <div class="anatomy-cell-top">
+                            <span class="bodypart-name">${partName}</span>
                             <span class="bodypart-hp-val">${hpText}</span>
                         </div>
+                        <div class="anatomy-cell-bar"><div class="bodypart-bar" style="width:${barWidth}%"></div></div>
                     </div>
                 `;
             });
@@ -1761,8 +1733,8 @@
         this.drawUIStatusBust(actor, "status-bust");
 
         // 5. Scroll selected body part into view if active
-        if (this._dndActiveSection === "bodyparts" && this._dndActiveTab === "anatomy") {
-            const selectedPart = spread.querySelector(".bodypart-row.selected");
+        if (this._dndActiveSection === "bodyparts") {
+            const selectedPart = spread.querySelector(".anatomy-cell.selected");
             if (selectedPart) {
                 selectedPart.scrollIntoView({ block: "nearest", behavior: "smooth" });
             }
@@ -2391,8 +2363,9 @@
             return;
         }
 
-        if (this._dndActiveTab === "bio") {
-            const list = this._dndContainer && this._dndContainer.querySelector("#status-bio-scroll");
+        if (this._dndActiveTab === "bio" || this._dndActiveTab === "backstory") {
+            const sel = this._dndActiveTab === "bio" ? "#status-bio-scroll" : "#status-backstory-scroll";
+            const list = this._dndContainer && this._dndContainer.querySelector(sel);
             if (list) {
                 if (Input.isRepeated('down')) list.scrollTop += TRAIT_SCROLL_STEP;
                 else if (Input.isRepeated('up')) list.scrollTop -= TRAIT_SCROLL_STEP;
@@ -2400,8 +2373,8 @@
             return;
         }
 
-        if (this._dndActiveTab !== "anatomy") return;
-
+        // The anatomy grid lives on the left page now, so its cursor answers to
+        // up / down whichever section of the right page is being read.
         const actor = this.actor();
         if (actor && actor._bodyParts) {
             const bodyParts = [];

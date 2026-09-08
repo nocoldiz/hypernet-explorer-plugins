@@ -1,0 +1,22 @@
+{
+  "hyperamp": {
+    "appName": "HyperAmp",
+    "idle": "HyperAmp - it really whips the goblin",
+    "prev": "Previous",
+    "play": "Play",
+    "pause": "Pause",
+    "stop": "Stop",
+    "next": "Next",
+    "shuffle": "Shuffle",
+    "repeatOff": "Repeat: off",
+    "repeatAll": "Repeat: all",
+    "repeatOne": "Repeat: one",
+    "volume": "Volume",
+    "search": "Search the library...",
+    "allFolders": "All folders",
+    "rootFolder": "(root)",
+    "empty": "No tracks found under audio/bgm.",
+    "count": "{n} tracks",
+    "unknownArtist": "Unknown artist"
+  }
+}

@@ -32,7 +32,6 @@
       "x": 14,
       "y": 15
     },
-    "picture": "Antwerpen",
     "minLevel": 8
   },
   "Frozen Station": {
@@ -61,7 +60,6 @@
       "x": 46,
       "y": 49
     },
-    "picture": "FrozenStation",
     "minLevel": 1
   },
   "GreenWitch": {
@@ -96,7 +94,6 @@
       "x": 23,
       "y": 23
     },
-    "picture": "GreenWitch",
     "minLevel": 10
   },
   "GreenWitchSpaceCenter": {
@@ -125,7 +122,6 @@
       "x": 41,
       "y": 32
     },
-    "picture": "GreenWitchSpaceCenter",
     "minLevel": 10
   },
   "Ghent": {
@@ -170,7 +166,6 @@
       "x": 53,
       "y": 55
     },
-    "picture": "Ghent",
     "minLevel": 1
   },
   "Kola Superdeep Borehole": {
@@ -239,7 +234,6 @@
       "x": 31,
       "y": 48
     },
-    "picture": "OmegaTower",
     "minLevel": 8
   },
   "Luxembourg": {
@@ -270,11 +264,11 @@
       "mapId": 600,
       "x": 19,
       "y": 72
-    },
-    "picture": "Luxembourg"
+    }
   },
   "Amsterdam": {
     "name": "Amsterdam",
+    "picture": "destinations/Amsterdam",
     "type": "city",
     "country": "Netherlands",
     "nationId": 8,
@@ -293,11 +287,11 @@
       "91,108",
       "92,107",
       "92,108"
-    ],
-    "picture": "Amsterdam"
+    ]
   },
   "The Hague": {
     "name": "The Hague",
+    "picture": "destinations/TheHague",
     "type": "city",
     "country": "Netherlands",
     "nationId": 8,
@@ -316,11 +310,11 @@
       "87,110",
       "88,109",
       "88,110"
-    ],
-    "picture": "TheHague"
+    ]
   },
   "Rotterdam": {
     "name": "Rotterdam",
+    "picture": "destinations/Rotterdam",
     "type": "city",
     "country": "Netherlands",
     "nationId": 8,
@@ -339,11 +333,11 @@
       "91,111",
       "92,110",
       "92,111"
-    ],
-    "picture": "Rotterdam"
+    ]
   },
   "Ouddorp": {
     "name": "Ouddorp",
+    "picture": "destinations/Ouddorp",
     "type": "village",
     "country": "Netherlands",
     "nationId": 8,
@@ -359,11 +353,11 @@
     },
     "reservedTiles": [
       "87,112"
-    ],
-    "picture": "Ouddorp"
+    ]
   },
   "Middelburg": {
     "name": "Middelburg",
+    "picture": "destinations/Middelburg",
     "type": "village",
     "country": "Netherlands",
     "nationId": 8,
@@ -379,11 +373,11 @@
     },
     "reservedTiles": [
       "85,114"
-    ],
-    "picture": "Middelburg"
+    ]
   },
   "Harlem": {
     "name": "Harlem",
+    "picture": "destinations/Harlem",
     "type": "village",
     "country": "Netherlands",
     "nationId": 8,
@@ -400,11 +394,11 @@
     "reservedTiles": [
       "88,107",
       "89,107"
-    ],
-    "picture": "Harlem"
+    ]
   },
   "Alkmaar": {
     "name": "Alkmaar",
+    "picture": "destinations/Alkmaar",
     "type": "village",
     "country": "Netherlands",
     "nationId": 8,
@@ -420,11 +414,11 @@
     },
     "reservedTiles": [
       "89,104"
-    ],
-    "picture": "Alkmaar"
+    ]
   },
   "Leeuwarden": {
     "name": "Leeuwarden",
+    "picture": "destinations/Leeuwarden",
     "type": "village",
     "country": "Netherlands",
     "nationId": 8,
@@ -440,11 +434,11 @@
     },
     "reservedTiles": [
       "96,100"
-    ],
-    "picture": "Leeuwarden"
+    ]
   },
   "Groningen": {
     "name": "Groningen",
+    "picture": "destinations/Groningen",
     "type": "village",
     "country": "Netherlands",
     "nationId": 8,
@@ -460,11 +454,11 @@
     },
     "reservedTiles": [
       "103,101"
-    ],
-    "picture": "Groningen"
+    ]
   },
   "Limburg": {
     "name": "Limburg",
+    "picture": "destinations/Limburg",
     "type": "village",
     "country": "Netherlands",
     "nationId": 8,
@@ -480,11 +474,11 @@
     },
     "reservedTiles": [
       "100,118"
-    ],
-    "picture": "Limburg"
+    ]
   },
   "Eindhoven": {
     "name": "Eindhoven",
+    "picture": "destinations/Eindhoven",
     "type": "village",
     "country": "Netherlands",
     "nationId": 8,
@@ -501,11 +495,11 @@
     "reservedTiles": [
       "97,112",
       "98,112"
-    ],
-    "picture": "Eindhoven"
+    ]
   },
   "Zwolle": {
     "name": "Zwolle",
+    "picture": "destinations/Zwolle",
     "type": "village",
     "country": "Netherlands",
     "nationId": 8,
@@ -521,8 +515,7 @@
     },
     "reservedTiles": [
       "102,107"
-    ],
-    "picture": "Zwolle"
+    ]
   },
   "Tritunnel Ovest": {
     "name": "Tritunnel Ovest",
@@ -541,11 +534,11 @@
     },
     "reservedTiles": [
       "83,115"
-    ],
-    "picture": "TritunnelOvest"
+    ]
   },
   "Charleroi": {
     "name": "Charleroi",
+    "picture": "destinations/Charleroi",
     "type": "village",
     "country": "Belgium",
     "nationId": 121,
@@ -562,11 +555,11 @@
     "reservedTiles": [
       "94,124",
       "95,124"
-    ],
-    "picture": "Charleroi"
+    ]
   },
   "Luik": {
     "name": "Luik",
+    "picture": "destinations/Luik",
     "type": "village",
     "country": "Belgium",
     "nationId": 121,
@@ -583,11 +576,11 @@
     "reservedTiles": [
       "93,118",
       "94,118"
-    ],
-    "picture": "Luik"
+    ]
   },
   "Bologna": {
     "name": "Bologna",
+    "picture": "destinations/Bologna",
     "type": "city",
     "country": "Italy",
     "nationId": 78,
@@ -611,8 +604,7 @@
       "124,167",
       "125,166",
       "125,167"
-    ],
-    "picture": "Bologna"
+    ]
   },
   "Super sacred shrine": {
     "name": "Super Sacred Shrine",
@@ -635,6 +627,7 @@
   },
   "London": {
     "name": "London",
+    "picture": "destinations/London",
     "type": "city",
     "country": "UK",
     "nationId": 38,
@@ -676,6 +669,7 @@
   },
   "Vatican Citadel": {
     "name": "Vatican Citadel",
+    "picture": "destinations/VaticanCitadel",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -695,6 +689,7 @@
   },
   "MAXTavern": {
     "name": "MAX Tavern",
+    "picture": "destinations/MAXTavern",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -714,6 +709,7 @@
   },
   "Cardiff": {
     "name": "Cardiff",
+    "picture": "destinations/Cardiff",
     "type": "city",
     "country": "UK",
     "nationId": 38,
@@ -736,6 +732,7 @@
   },
   "Milano": {
     "name": "Milano",
+    "picture": "destinations/Milano",
     "type": "city",
     "country": "Italy",
     "nationId": 78,
@@ -758,6 +755,7 @@
   },
   "Canicattini Bagni": {
     "name": "Canicattini Bagni",
+    "picture": "destinations/CanicattiniBagni",
     "type": "village",
     "country": "Italy - Sicily",
     "nationId": 166,
@@ -777,6 +775,7 @@
   },
   "Casalpusterlengo": {
     "name": "Casalpusterlengo",
+    "picture": "destinations/Casalpusterlengo",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -796,6 +795,7 @@
   },
   "Plymouth": {
     "name": "Plymouth",
+    "picture": "destinations/Plymouth",
     "type": "village",
     "country": "UK",
     "nationId": 38,
@@ -816,6 +816,7 @@
   },
   "Canterbury": {
     "name": "Canterbury",
+    "picture": "destinations/Canterbury",
     "type": "village",
     "country": "UK",
     "nationId": 38,
@@ -835,6 +836,7 @@
   },
   "Brighton": {
     "name": "Brighton",
+    "picture": "destinations/Brighton",
     "type": "village",
     "country": "UK",
     "nationId": 38,
@@ -854,6 +856,7 @@
   },
   "Boston": {
     "name": "Boston",
+    "picture": "destinations/Boston",
     "type": "village",
     "country": "UK",
     "nationId": 38,
@@ -871,8 +874,29 @@
       "68,105"
     ]
   },
+  "Wimbledon": {
+    "name": "Wimbledon",
+    "picture": "destinations/Wimbledon",
+    "type": "village",
+    "country": "UK",
+    "nationId": 38,
+    "procedural": true,
+    "tag": "luxury",
+    "mapOffset": {
+      "x": 306,
+      "y": 598
+    },
+    "base": {
+      "x": 64,
+      "y": 113
+    },
+    "reservedTiles": [
+      "64,113"
+    ]
+  },
   "Manchester": {
     "name": "Manchester",
+    "picture": "destinations/Manchester",
     "type": "village",
     "country": "UK",
     "nationId": 38,
@@ -892,6 +916,7 @@
   },
   "Birmingham": {
     "name": "Birmingham",
+    "picture": "destinations/Birmingham",
     "type": "village",
     "country": "UK",
     "nationId": 38,
@@ -911,6 +936,7 @@
   },
   "Edinburgh": {
     "name": "Edinburgh",
+    "picture": "destinations/Edinburgh",
     "type": "village",
     "country": "Scotland",
     "nationId": 39,
@@ -930,6 +956,7 @@
   },
   "Glasgow": {
     "name": "Glasgow",
+    "picture": "destinations/Glasgow",
     "type": "village",
     "country": "Scotland",
     "nationId": 39,
@@ -949,6 +976,7 @@
   },
   "Perth": {
     "name": "Perth",
+    "picture": "destinations/Perth",
     "type": "village",
     "country": "Scotland",
     "nationId": 39,
@@ -968,6 +996,7 @@
   },
   "Oban": {
     "name": "Oban",
+    "picture": "destinations/Oban",
     "type": "village",
     "country": "Scotland",
     "nationId": 39,
@@ -987,6 +1016,7 @@
   },
   "Aberdeen": {
     "name": "Aberdeen",
+    "picture": "destinations/Aberdeen",
     "type": "village",
     "country": "Scotland",
     "nationId": 39,
@@ -1033,6 +1063,7 @@
   },
   "Belfast": {
     "name": "Belfast",
+    "picture": "destinations/Belfast",
     "type": "city",
     "country": "UK",
     "nationId": 38,
@@ -1055,6 +1086,7 @@
   },
   "Roma": {
     "name": "Roma",
+    "picture": "destinations/Roma",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1074,6 +1106,7 @@
   },
   "Messina": {
     "name": "Messina",
+    "picture": "destinations/Messina",
     "type": "village",
     "country": "Italy - Sicily",
     "nationId": 166,
@@ -1093,6 +1126,7 @@
   },
   "Londonderry": {
     "name": "Londonderry",
+    "picture": "destinations/Londonderry",
     "type": "village",
     "country": "UK",
     "nationId": 38,
@@ -1113,6 +1147,7 @@
   },
   "Sligo": {
     "name": "Sligo",
+    "picture": "destinations/Sligo",
     "type": "village",
     "country": "Ireland",
     "nationId": 40,
@@ -1132,6 +1167,7 @@
   },
   "Reggio Calabria": {
     "name": "Reggio Calabria",
+    "picture": "destinations/ReggioCalabria",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1151,6 +1187,7 @@
   },
   "Alba Adriatica": {
     "name": "Alba Adriatica",
+    "picture": "destinations/AlbaAdriatica",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1170,6 +1207,7 @@
   },
   "Dublin": {
     "name": "Dublin",
+    "picture": "destinations/Dublin",
     "type": "city",
     "country": "Ireland",
     "nationId": 40,
@@ -1192,6 +1230,7 @@
   },
   "Wexford": {
     "name": "Wexford",
+    "picture": "destinations/Wexford",
     "type": "village",
     "country": "Ireland",
     "nationId": 40,
@@ -1212,6 +1251,7 @@
   },
   "Cork": {
     "name": "Cork",
+    "picture": "destinations/Cork",
     "type": "village",
     "country": "Ireland",
     "nationId": 40,
@@ -1251,6 +1291,7 @@
   },
   "Killarney": {
     "name": "Killarney",
+    "picture": "destinations/Killarney",
     "type": "village",
     "country": "Ireland",
     "nationId": 40,
@@ -1270,6 +1311,7 @@
   },
   "Brusselles": {
     "name": "Bruxelles",
+    "picture": "destinations/Brusselles",
     "type": "city",
     "country": "Belgium",
     "nationId": 121,
@@ -1298,6 +1340,7 @@
   },
   "Reykyavik": {
     "name": "Reykjavik",
+    "picture": "destinations/Reykyavik",
     "type": "city",
     "country": "Iceland",
     "nationId": 37,
@@ -1346,6 +1389,7 @@
   },
   "Kalfafell": {
     "name": "Kalfafell",
+    "picture": "destinations/Kalfafell",
     "type": "village",
     "country": "Iceland",
     "nationId": 37,
@@ -1365,6 +1409,7 @@
   },
   "Laugar": {
     "name": "Laugar",
+    "picture": "destinations/Laugar",
     "type": "village",
     "country": "Iceland",
     "nationId": 37,
@@ -1384,6 +1429,7 @@
   },
   "Hvammstangi": {
     "name": "Hvammstangi",
+    "picture": "destinations/Hvammstangi",
     "type": "village",
     "country": "Iceland",
     "nationId": 37,
@@ -1403,6 +1449,7 @@
   },
   "Klasvik": {
     "name": "Klaksvik",
+    "picture": "destinations/Klasvik",
     "type": "village",
     "country": "Denmark",
     "nationId": 0,
@@ -1422,6 +1469,7 @@
   },
   "Gasadalur": {
     "name": "Gasadalur",
+    "picture": "destinations/Gasadalur",
     "type": "village",
     "country": "Denmark",
     "nationId": 0,
@@ -1441,6 +1489,7 @@
   },
   "Torshavn": {
     "name": "Torshavn",
+    "picture": "destinations/Torshavn",
     "type": "village",
     "country": "Denmark",
     "nationId": 0,
@@ -1460,6 +1509,7 @@
   },
   "Sandvik": {
     "name": "Sandvik",
+    "picture": "destinations/Sandvik",
     "type": "village",
     "country": "Denmark",
     "nationId": 0,
@@ -1479,6 +1529,7 @@
   },
   "Crabby Beach": {
     "name": "Crabby Beach",
+    "picture": "destinations/CrabbyBeach",
     "type": "village",
     "country": "Netherlands",
     "nationId": 8,
@@ -1498,6 +1549,7 @@
   },
   "Madrid": {
     "name": "Madrid",
+    "picture": "destinations/Madrid",
     "type": "city",
     "country": "Spain",
     "nationId": 69,
@@ -1525,6 +1577,7 @@
   },
   "Granada": {
     "name": "Granada",
+    "picture": "destinations/Granada",
     "type": "village",
     "country": "Spain",
     "nationId": 69,
@@ -1544,6 +1597,7 @@
   },
   "Valencia": {
     "name": "Valencia",
+    "picture": "destinations/Valencia",
     "type": "city",
     "country": "Spain",
     "nationId": 69,
@@ -1566,6 +1620,7 @@
   },
   "Genova": {
     "name": "Genova",
+    "picture": "destinations/Genova",
     "type": "city",
     "country": "Italy",
     "nationId": 78,
@@ -1588,6 +1643,7 @@
   },
   "La Spezia": {
     "name": "La Spezia",
+    "picture": "destinations/LaSpezia",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1607,6 +1663,7 @@
   },
   "Pisa": {
     "name": "Pisa",
+    "picture": "destinations/Pisa",
     "type": "city",
     "country": "Italy",
     "nationId": 78,
@@ -1629,6 +1686,7 @@
   },
   "Livorno": {
     "name": "Livorno",
+    "picture": "destinations/Livorno",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1648,6 +1706,7 @@
   },
   "Frosinone": {
     "name": "Frosinone",
+    "picture": "destinations/Frosinone",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1667,6 +1726,7 @@
   },
   "Napoli": {
     "name": "Napoli",
+    "picture": "destinations/Napoli",
     "type": "city",
     "country": "Italy",
     "nationId": 78,
@@ -1689,6 +1749,7 @@
   },
   "Capri": {
     "name": "Capri",
+    "picture": "destinations/Capri",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1708,6 +1769,7 @@
   },
   "Taranto": {
     "name": "Taranto",
+    "picture": "destinations/Taranto",
     "type": "city",
     "country": "Italy",
     "nationId": 78,
@@ -1730,6 +1792,7 @@
   },
   "Catanzaro": {
     "name": "Catanzaro",
+    "picture": "destinations/Catanzaro",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1749,6 +1812,7 @@
   },
   "Cosenza": {
     "name": "Cosenza",
+    "picture": "destinations/Cosenza",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1768,6 +1832,7 @@
   },
   "Lecce": {
     "name": "Lecce",
+    "picture": "destinations/Lecce",
     "type": "city",
     "country": "Italy",
     "nationId": 78,
@@ -1790,6 +1855,7 @@
   },
   "Ancona": {
     "name": "Ancona",
+    "picture": "destinations/Ancona",
     "type": "city",
     "country": "Italy",
     "nationId": 78,
@@ -1812,6 +1878,7 @@
   },
   "San Marino": {
     "name": "San Marino",
+    "picture": "destinations/SanMarino",
     "type": "village",
     "country": "San Marino",
     "nationId": 236,
@@ -1831,6 +1898,7 @@
   },
   "Verona": {
     "name": "Verona",
+    "picture": "destinations/Verona",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1850,6 +1918,7 @@
   },
   "Venezia": {
     "name": "Venezia",
+    "picture": "destinations/Venezia",
     "type": "city",
     "country": "Italy",
     "nationId": 78,
@@ -1872,6 +1941,7 @@
   },
   "Torino": {
     "name": "Torino",
+    "picture": "destinations/Torino",
     "type": "city",
     "country": "Italy",
     "nationId": 78,
@@ -1894,6 +1964,7 @@
   },
   "Lucca": {
     "name": "Lucca",
+    "picture": "destinations/Lucca",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1913,6 +1984,7 @@
   },
   "Firenze": {
     "name": "Firenze",
+    "picture": "destinations/Firenze",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1932,6 +2004,7 @@
   },
   "L'Aquila": {
     "name": "L'Aquila",
+    "picture": "destinations/LAquila",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1951,6 +2024,7 @@
   },
   "Latina": {
     "name": "Latina",
+    "picture": "destinations/Latina",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1970,6 +2044,7 @@
   },
   "Amalfi": {
     "name": "Amalfi",
+    "picture": "destinations/Amalfi",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -1989,6 +2064,7 @@
   },
   "Sorrento": {
     "name": "Sorrento",
+    "picture": "destinations/Sorrento",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -2008,6 +2084,7 @@
   },
   "Crotone": {
     "name": "Crotone",
+    "picture": "destinations/Crotone",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -2027,6 +2104,7 @@
   },
   "Catania": {
     "name": "Catania",
+    "picture": "destinations/Catania",
     "type": "village",
     "country": "Italy - Sicily",
     "nationId": 166,
@@ -2046,6 +2124,7 @@
   },
   "Siracusa": {
     "name": "Siracusa",
+    "picture": "destinations/Siracusa",
     "type": "village",
     "country": "Italy - Sicily",
     "nationId": 166,
@@ -2065,6 +2144,7 @@
   },
   "Palermo": {
     "name": "Palermo",
+    "picture": "destinations/Palermo",
     "type": "village",
     "country": "Italy - Sicily",
     "nationId": 166,
@@ -2084,6 +2164,7 @@
   },
   "Marsala": {
     "name": "Marsala",
+    "picture": "destinations/Marsala",
     "type": "village",
     "country": "Italy - Sicily",
     "nationId": 166,
@@ -2103,6 +2184,7 @@
   },
   "Lampedusa": {
     "name": "Lampedusa",
+    "picture": "destinations/Lampedusa",
     "type": "village",
     "country": "Italy - Sicily",
     "nationId": 166,
@@ -2122,6 +2204,7 @@
   },
   "Agrigento": {
     "name": "Agrigento",
+    "picture": "destinations/Agrigento",
     "type": "village",
     "country": "Italy - Sicily",
     "nationId": 166,
@@ -2141,6 +2224,7 @@
   },
   "Cagliari": {
     "name": "Cagliari",
+    "picture": "destinations/Cagliari",
     "type": "city",
     "country": "Italy - Sardinia",
     "nationId": 237,
@@ -2163,6 +2247,7 @@
   },
   "Sassari": {
     "name": "Sassari",
+    "picture": "destinations/Sassari",
     "type": "village",
     "country": "Italy - Sardinia",
     "nationId": 237,
@@ -2182,6 +2267,7 @@
   },
   "Tunisi": {
     "name": "Tunisi",
+    "picture": "destinations/Tunisi",
     "type": "city",
     "country": "Tunisia",
     "nationId": 0,
@@ -2204,6 +2290,7 @@
   },
   "Biserta": {
     "name": "Biserta",
+    "picture": "destinations/Biserta",
     "type": "village",
     "country": "Tunisia",
     "nationId": 0,
@@ -2223,6 +2310,7 @@
   },
   "Tripoli": {
     "name": "Tripoli",
+    "picture": "destinations/Tripoli",
     "type": "village",
     "country": "Libya",
     "nationId": 0,
@@ -2242,6 +2330,7 @@
   },
   "Algeri": {
     "name": "Algeri",
+    "picture": "destinations/Algeri",
     "type": "city",
     "country": "Algeria",
     "nationId": 42,
@@ -2264,6 +2353,7 @@
   },
   "Atene": {
     "name": "Atene",
+    "picture": "destinations/Atene",
     "type": "city",
     "country": "Greece",
     "nationId": 20,
@@ -2286,6 +2376,7 @@
   },
   "Instanbul": {
     "name": "Istanbul",
+    "picture": "destinations/Instanbul",
     "type": "city",
     "country": "Turkey",
     "nationId": 41,
@@ -2313,6 +2404,7 @@
   },
   "Corfù": {
     "name": "Corfù",
+    "picture": "destinations/Corf",
     "type": "village",
     "country": "Greece",
     "nationId": 20,
@@ -2332,6 +2424,7 @@
   },
   "Odessa": {
     "name": "Odessa",
+    "picture": "destinations/Odessa",
     "type": "city",
     "country": "Ukraine",
     "nationId": 153,
@@ -2354,6 +2447,7 @@
   },
   "Berlin": {
     "name": "Berlin",
+    "picture": "destinations/Berlin",
     "type": "city",
     "country": "Germany",
     "nationId": 109,
@@ -2376,6 +2470,7 @@
   },
   "Copenaghen": {
     "name": "Copenaghen",
+    "picture": "destinations/Copenaghen",
     "type": "city",
     "country": "Denmark",
     "nationId": 0,
@@ -2398,6 +2493,7 @@
   },
   "Malmo": {
     "name": "Malmo",
+    "picture": "destinations/Malmo",
     "type": "city",
     "country": "Sweden",
     "nationId": 35,
@@ -2420,6 +2516,7 @@
   },
   "Oslo": {
     "name": "Oslo",
+    "picture": "destinations/Oslo",
     "type": "city",
     "country": "Norway",
     "nationId": 34,
@@ -2442,6 +2539,7 @@
   },
   "Paris": {
     "name": "Paris",
+    "picture": "destinations/Paris",
     "type": "city",
     "country": "France",
     "nationId": 102,
@@ -2464,6 +2562,7 @@
   },
   "Marsiglia": {
     "name": "Marsiglia",
+    "picture": "destinations/Marsiglia",
     "type": "village",
     "country": "France",
     "nationId": 102,
@@ -2483,6 +2582,7 @@
   },
   "Bordeaux": {
     "name": "Bordeaux",
+    "picture": "destinations/Bordeaux",
     "type": "village",
     "country": "France",
     "nationId": 102,
@@ -2502,6 +2602,7 @@
   },
   "Brest": {
     "name": "Brest",
+    "picture": "destinations/Brest",
     "type": "village",
     "country": "France",
     "nationId": 102,
@@ -2521,6 +2622,7 @@
   },
   "Berna": {
     "name": "Berna",
+    "picture": "destinations/Berna",
     "type": "city",
     "country": "Switzerland",
     "nationId": 63,
@@ -2543,6 +2645,7 @@
   },
   "Ginevra": {
     "name": "Ginevra",
+    "picture": "destinations/Ginevra",
     "type": "city",
     "country": "Switzerland",
     "nationId": 63,
@@ -2565,6 +2668,7 @@
   },
   "Zermatt": {
     "name": "Zermatt",
+    "picture": "destinations/Zermatt",
     "type": "village",
     "country": "Switzerland",
     "nationId": 63,
@@ -2584,6 +2688,7 @@
   },
   "Lugano": {
     "name": "Lugano",
+    "picture": "destinations/Lugano",
     "type": "village",
     "country": "Switzerland",
     "nationId": 63,
@@ -2603,6 +2708,7 @@
   },
   "Liechtenstein": {
     "name": "Liechtenstein",
+    "picture": "destinations/Liechtenstein",
     "type": "city",
     "country": "Liechtenstein",
     "nationId": 0,
@@ -2625,6 +2731,7 @@
   },
   "Zurigo": {
     "name": "Zurigo",
+    "picture": "destinations/Zurigo",
     "type": "city",
     "country": "Switzerland",
     "nationId": 63,
@@ -2647,6 +2754,7 @@
   },
   "Basilea": {
     "name": "Basilea",
+    "picture": "destinations/Basilea",
     "type": "city",
     "country": "Switzerland",
     "nationId": 63,
@@ -2669,6 +2777,7 @@
   },
   "Le Havre": {
     "name": "Le Havre",
+    "picture": "destinations/LeHavre",
     "type": "village",
     "country": "France",
     "nationId": 102,
@@ -2688,6 +2797,7 @@
   },
   "Lille": {
     "name": "Lille",
+    "picture": "destinations/Lille",
     "type": "village",
     "country": "France",
     "nationId": 102,
@@ -2704,6 +2814,7 @@
   },
   "Orleans": {
     "name": "Orleans",
+    "picture": "destinations/Orleans",
     "type": "village",
     "country": "France",
     "nationId": 102,
@@ -2723,6 +2834,7 @@
   },
   "Le Mans": {
     "name": "Le Mans",
+    "picture": "destinations/LeMans",
     "type": "city",
     "country": "France",
     "nationId": 102,
@@ -2745,6 +2857,7 @@
   },
   "Saint Helier": {
     "name": "Saint Helier",
+    "picture": "destinations/SaintHelier",
     "type": "village",
     "country": "UK",
     "nationId": 38,
@@ -2764,6 +2877,7 @@
   },
   "Jersey": {
     "name": "Jersey",
+    "picture": "destinations/Jersey",
     "type": "village",
     "country": "UK",
     "nationId": 38,
@@ -2783,6 +2897,7 @@
   },
   "Guernsey": {
     "name": "Guernsey",
+    "picture": "destinations/Guernsey",
     "type": "village",
     "country": "UK",
     "nationId": 38,
@@ -2802,6 +2917,7 @@
   },
   "Palma di Maiorca": {
     "name": "Palma di Maiorca",
+    "picture": "destinations/PalmadiMaiorca",
     "type": "village",
     "country": "Spain",
     "nationId": 69,
@@ -2822,6 +2938,7 @@
   },
   "Ivissa": {
     "name": "Ivissa",
+    "picture": "destinations/Ivissa",
     "type": "village",
     "country": "Spain",
     "nationId": 69,
@@ -2841,6 +2958,7 @@
   },
   "Minorca": {
     "name": "Minorca",
+    "picture": "destinations/Minorca",
     "type": "village",
     "country": "Spain",
     "nationId": 69,
@@ -2860,6 +2978,7 @@
   },
   "Barcellona": {
     "name": "Barcellona",
+    "picture": "destinations/Barcellona",
     "type": "city",
     "country": "Spain",
     "nationId": 69,
@@ -2882,6 +3001,7 @@
   },
   "Saragozza": {
     "name": "Saragozza",
+    "picture": "destinations/Saragozza",
     "type": "city",
     "country": "Spain",
     "nationId": 69,
@@ -2904,6 +3024,7 @@
   },
   "Siviglia": {
     "name": "Siviglia",
+    "picture": "destinations/Siviglia",
     "type": "city",
     "country": "Spain",
     "nationId": 69,
@@ -2926,6 +3047,7 @@
   },
   "Moonlit Station": {
     "name": "Moonlit Station",
+    "picture": "destinations/MoonlitStation",
     "type": "gasStation",
     "country": "Netherlands",
     "nationId": 8,
@@ -2958,6 +3080,7 @@
   },
   "Lisbona": {
     "name": "Lisbona",
+    "picture": "destinations/Lisbona",
     "type": "city",
     "country": "Portugal",
     "nationId": 109,
@@ -2980,6 +3103,7 @@
   },
   "Porto": {
     "name": "Porto",
+    "picture": "destinations/Porto",
     "type": "city",
     "country": "Portugal",
     "nationId": 109,
@@ -3002,6 +3126,7 @@
   },
   "Santiago di Compostela": {
     "name": "Santiago di Compostela",
+    "picture": "destinations/SantiagodiCompostela",
     "type": "city",
     "country": "Spain",
     "nationId": 69,
@@ -3024,6 +3149,7 @@
   },
   "Pola": {
     "name": "Pola",
+    "picture": "destinations/Pola",
     "type": "city",
     "country": "Croatia",
     "nationId": 16,
@@ -3046,6 +3172,7 @@
   },
   "Zara": {
     "name": "Zara",
+    "picture": "destinations/Zara",
     "type": "village",
     "country": "Croatia",
     "nationId": 16,
@@ -3065,6 +3192,7 @@
   },
   "Sarajevo": {
     "name": "Sarajevo",
+    "picture": "destinations/Sarajevo",
     "type": "city",
     "country": "Bosnia and Herzegovina",
     "nationId": 0,
@@ -3087,6 +3215,7 @@
   },
   "Belgrado": {
     "name": "Belgrado",
+    "picture": "destinations/Belgrado",
     "type": "city",
     "country": "Serbia",
     "nationId": 22,
@@ -3109,6 +3238,7 @@
   },
   "Novi Sad": {
     "name": "Novi Sad",
+    "picture": "destinations/NoviSad",
     "type": "village",
     "country": "Serbia",
     "nationId": 22,
@@ -3128,6 +3258,7 @@
   },
   "Tirana": {
     "name": "Tirana",
+    "picture": "destinations/Tirana",
     "type": "village",
     "country": "Albania",
     "nationId": 19,
@@ -3147,6 +3278,7 @@
   },
   "Sofia": {
     "name": "Sofia",
+    "picture": "destinations/Sofia",
     "type": "city",
     "country": "Bulgaria",
     "nationId": 25,
@@ -3169,6 +3301,7 @@
   },
   "Bucarest": {
     "name": "Bucarest",
+    "picture": "destinations/Bucarest",
     "type": "city",
     "country": "Romania",
     "nationId": 0,
@@ -3191,6 +3324,7 @@
   },
   "Costanza": {
     "name": "Costanza",
+    "picture": "destinations/Costanza",
     "type": "village",
     "country": "Romania",
     "nationId": 0,
@@ -3210,6 +3344,7 @@
   },
   "Roccalonga": {
     "name": "Roccalonga",
+    "picture": "destinations/Roccalonga",
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -3229,6 +3364,7 @@
   },
   "Rome": {
     "name": "Rome",
+    "picture": "destinations/Rome",
     "type": "village",
     "country": "Italy",
     "nationId": 78,

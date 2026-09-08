@@ -172,6 +172,32 @@
   // ==========================================================================
   // Spriteset_Map integration
   // ==========================================================================
+  // A spriteset is thrown away and rebuilt every time the map scene is
+  // rebuilt, which the main menu does on the way in and back out. The
+  // animation clock, the starfield scroll, the approach ease, the depicted
+  // state key and the rolled spin angle all describe the SESSION's view out of
+  // the window, not this particular spriteset, so they live on a module level
+  // store: without it every menu round trip reset the clock to zero (stars
+  // jumped back to their start) and rolled a brand new random facing (the
+  // planet visibly span).
+  const _bgState = {
+    _shipBgTime: 0,
+    _shipBgScroll: 0,
+    _shipBgFrame: 0,
+    _shipBgApproachRaw: 0,
+    _shipBgApproach: 0,
+    _shipBgStateKey: null,
+    _shipBgSpinAngle: null,
+    _shipBgLiveModel: false,
+  };
+  Object.keys(_bgState).forEach(function (key) {
+    Object.defineProperty(Spriteset_Map.prototype, key, {
+      get: function () { return _bgState[key]; },
+      set: function (v) { _bgState[key] = v; },
+      configurable: true,
+    });
+  });
+
   const _createParallax = Spriteset_Map.prototype.createParallax;
   Spriteset_Map.prototype.createParallax = function () {
     _createParallax.call(this);
@@ -179,9 +205,6 @@
       ensureInitialEarthOrbit();
       this._shipBgSprite = new Sprite();
       this._shipBgSprite.bitmap = new Bitmap(Graphics.width, Graphics.height);
-      this._shipBgTime = 0;     // animation clock (seconds)
-      this._shipBgScroll = 0;   // accumulated travel scroll
-      this._shipBgFrame = 0;    // frame counter (drives the repaint throttle)
       // Added after the static parallax but before the tilemap, so it sits
       // behind the ship walls and shows through the windows.
       this._baseSprite.addChild(this._shipBgSprite);

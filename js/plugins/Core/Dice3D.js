@@ -187,6 +187,7 @@
             this._faceNormals = [];
             this._faceUpVectors = [];
             this._faceRightVectors = [];
+            this._faceQuats = [];
             this._animFrameId = null;
             // How many dice are in the air or waiting their turn. The scene,
             // the card and the frame loop are all single: two throws at once
@@ -251,142 +252,107 @@
                     width: 100%;
                     height: 100%;
                 }
+                /* The result strip: a thin rule of a card, read at a glance.
+                   No glow, no gradient, no boxed status word: the numbers are
+                   the message and everything else stays out of their way. */
                 #dice3d-banner {
                     position: absolute;
                     bottom: 15%;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    gap: 6px;
-                    padding: 12px 28px;
-                    background: linear-gradient(145deg, rgba(22, 19, 15, 0.96), rgba(10, 9, 8, 0.98));
-                    border: 1.5px solid #d4af37;
-                    border-radius: 8px;
-                    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.85), 0 0 22px rgba(212, 175, 55, 0.35);
-                    font-family: 'Cinzel', 'Lora', serif, 'GameFont';
-                    color: #fff;
+                    gap: 2px;
+                    padding: 10px 22px;
+                    background: rgba(10, 9, 8, 0.82);
+                    border: 1px solid rgba(212, 175, 55, 0.28);
+                    border-radius: 3px;
+                    font-family: 'Cinzel', var(--font-ui), 'GameFont';
+                    color: var(--text-success-active);
                     opacity: 0;
-                    transform: translateY(18px) scale(0.94);
-                    transition: all 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    transform: translateY(10px);
+                    transition: opacity 0.22s ease, transform 0.22s ease;
                     pointer-events: none;
-                    backdrop-filter: blur(6px);
-                    min-width: 280px;
+                    min-width: 210px;
                 }
                 #dice3d-banner.show {
                     opacity: 1;
-                    transform: translateY(0) scale(1);
+                    transform: translateY(0);
                 }
-                #dice3d-banner.crit-success {
-                    border-color: #ffd700;
-                    box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
-                }
-                #dice3d-banner.crit-fail {
-                    border-color: #ff3344;
-                    box-shadow: 0 0 30px rgba(255, 51, 68, 0.7);
-                }
+                #dice3d-banner.crit-success { border-color: rgba(255, 215, 0, 0.55); }
+                #dice3d-banner.crit-fail { border-color: rgba(255, 51, 68, 0.55); }
                 .dice3d-header {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    gap: 8px;
                     width: 100%;
-                    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-                    padding-bottom: 4px;
                 }
                 .dice3d-title {
-                    font-size: 0.78rem;
-                    letter-spacing: 2px;
+                    font-size: 0.66rem;
+                    letter-spacing: 1.6px;
                     text-transform: uppercase;
-                    color: #e5c158;
-                    font-weight: bold;
+                    color: #9d9382;
+                    font-weight: normal;
                 }
                 /* The scoreboard: what was rolled over what it had to reach. */
                 .dice3d-score {
                     display: flex;
-                    align-items: flex-start;
+                    align-items: baseline;
                     justify-content: center;
-                    gap: 14px;
-                    margin: 6px 0 2px;
+                    gap: 8px;
+                    margin: 2px 0 0;
                 }
                 .dice3d-score-cell {
                     display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    min-width: 84px;
+                    flex-direction: row;
+                    align-items: baseline;
+                    gap: 5px;
                 }
                 .dice3d-score-num {
-                    font-size: 2.6rem;
-                    line-height: 1.05;
-                    font-weight: 900;
-                    color: #ffffff;
-                    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
-                    transition: all 0.25s ease;
+                    font-size: 1.8rem;
+                    line-height: 1.1;
+                    font-weight: 700;
+                    color: var(--text-success-active);
+                    transition: color 0.2s ease;
                 }
                 .dice3d-score-num.need { color: #e5c158; }
-                .dice3d-score-num.summed {
-                    transform: scale(1.14);
-                    color: #ffd700;
-                    text-shadow: 0 0 18px rgba(255, 215, 0, 0.85);
-                }
-                .dice3d-score-num.crit-success { color: #ffd700; }
+                .dice3d-score-num.summed { color: var(--text-primary-hover); }
+                .dice3d-score-num.crit-success { color: var(--text-primary-hover); }
                 .dice3d-score-num.crit-fail { color: #ff4d4d; }
                 .dice3d-score-label {
-                    font-size: 0.66rem;
-                    letter-spacing: 2px;
+                    font-size: 0.58rem;
+                    letter-spacing: 1.2px;
                     text-transform: uppercase;
-                    color: #b0bec5;
-                    margin-top: 2px;
+                    color: #7d766a;
                 }
                 .dice3d-slash {
-                    font-size: 2rem;
+                    font-size: 1.2rem;
                     font-weight: 300;
-                    color: rgba(212, 175, 55, 0.75);
-                    line-height: 1.3;
+                    color: #6d6558;
                 }
                 .dice3d-breakdown {
-                    font-size: 0.9rem;
-                    letter-spacing: 0.6px;
-                    color: #dcd2bb;
+                    font-size: 0.72rem;
+                    letter-spacing: 0.4px;
+                    color: #9d9382;
                     text-align: center;
                 }
                 .dice3d-breakdown .mod { color: #81c784; }
                 .dice3d-breakdown .mod.neg { color: #ef9a9a; }
                 .dice3d-status {
-                    font-size: 0.92rem;
+                    font-size: 0.72rem;
                     font-weight: bold;
-                    letter-spacing: 1.5px;
-                    padding: 3px 10px;
-                    border-radius: 4px;
-                    background: rgba(0, 0, 0, 0.6);
-                    border: 1px solid transparent;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
+                    padding: 0;
+                    background: none;
+                    border: none;
                     opacity: 0;
-                    transform: scale(0.85);
-                    transition: all 0.22s ease;
+                    transition: opacity 0.2s ease;
                 }
-                .dice3d-status.visible {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-                .dice3d-status.success {
-                    color: #a5d6a7;
-                    border-color: #4caf50;
-                    box-shadow: 0 0 10px rgba(76, 175, 80, 0.35);
-                }
-                .dice3d-status.failure {
-                    color: #ef9a9a;
-                    border-color: #f44336;
-                    box-shadow: 0 0 10px rgba(244, 67, 54, 0.35);
-                }
-                .dice3d-status.crit-success {
-                    color: #ffd700;
-                    border-color: #ffd700;
-                    box-shadow: 0 0 14px rgba(255, 215, 0, 0.6);
-                }
-                .dice3d-status.crit-fail {
-                    color: #ff5252;
-                    border-color: #ff5252;
-                    box-shadow: 0 0 14px rgba(255, 82, 82, 0.6);
-                }
+                .dice3d-status.visible { opacity: 1; }
+                .dice3d-status.success { color: #a5d6a7; }
+                .dice3d-status.failure { color: #ef9a9a; }
+                .dice3d-status.crit-success { color: var(--text-primary-hover); }
+                .dice3d-status.crit-fail { color: #ff5252; }
                 .dice3d-footer {
                     font-size: 0.72rem;
                     color: #b0bec5;
@@ -409,7 +375,7 @@
                     justify-content: center;
                     background: rgba(0, 0, 0, 0.55);
                     backdrop-filter: blur(2px);
-                    font-family: 'Cinzel', 'Lora', serif, 'GameFont';
+                    font-family: 'Cinzel', var(--font-ui), 'GameFont';
                     opacity: 0;
                     transition: opacity 0.18s ease;
                 }
@@ -423,7 +389,7 @@
                     max-width: 78vw;
                     padding: 22px 34px 20px;
                     background: linear-gradient(145deg, rgba(22, 19, 15, 0.97), rgba(10, 9, 8, 0.99));
-                    border: 1.5px solid #d4af37;
+                    border: 1.5px solid var(--text-primary-hover);
                     border-radius: 10px;
                     box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), 0 0 26px rgba(212, 175, 55, 0.3);
                     transform: translateY(14px) scale(0.96);
@@ -449,7 +415,7 @@
                 .dice3d-prompt-target {
                     font-size: 1.9rem;
                     font-weight: 900;
-                    color: #ffffff;
+                    color: var(--text-success-active);
                     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
                 }
                 .dice3d-prompt-formula {
@@ -477,10 +443,10 @@
                     cursor: pointer;
                     transition: all 0.15s ease;
                 }
-                .dice3d-prompt-btn:hover { color: #fff; border-color: #d4af37; }
+                .dice3d-prompt-btn:hover { color: var(--text-success-active); border-color: var(--text-primary-hover); }
                 .dice3d-prompt-btn.selected {
-                    color: #ffd700;
-                    border-color: #ffd700;
+                    color: var(--text-primary-hover);
+                    border-color: var(--text-primary-hover);
                     background: rgba(212, 175, 55, 0.16);
                     box-shadow: 0 0 14px rgba(255, 215, 0, 0.45);
                     transform: scale(1.04);
@@ -664,6 +630,7 @@
             this._faceNormals = [];
             this._faceUpVectors = [];
             this._faceRightVectors = [];
+            this._faceQuats = [];
 
             for (let i = 0; i < 20; i++) {
                 nonIndexed.addGroup(i * 3, 3, i);
@@ -684,7 +651,10 @@
 
                 // Explicit local frame anchored directly to vertex A
                 const uVec = vA.clone().sub(center).normalize();
-                const rVec = new THREE.Vector3().crossVectors(normal, uVec).normalize();
+                // Right handed frame: right x up must give the normal, or the
+                // basis below is a reflection and the landed face comes out
+                // skewed instead of square to the camera.
+                const rVec = new THREE.Vector3().crossVectors(uVec, normal).normalize();
 
                 this._faceNormals[i] = normal;
                 this._faceUpVectors[i] = uVec;
@@ -734,19 +704,30 @@
             this._scene.add(this._diceMesh);
         }
 
-        _orientFace(targetNum) {
-            if (!this._diceMesh) return;
+        // The rotation that lays the given face flat against the camera, with
+        // its numeral upright. Cached: the basis never changes once built.
+        _faceQuaternion(targetNum) {
             const faceIdx = Math.max(0, Math.min(19, targetNum - 1));
+            if (!this._faceQuats) this._faceQuats = [];
+            if (this._faceQuats[faceIdx]) return this._faceQuats[faceIdx];
+
             const normal = this._faceNormals[faceIdx];
             const up = this._faceUpVectors[faceIdx];
             const right = this._faceRightVectors[faceIdx];
-
-            if (!normal || !up || !right) return;
+            if (!normal || !up || !right) return null;
 
             // Rotate mesh so face normal points to +Z, up points to +Y, right points to +X
             const rotMatrix = new THREE.Matrix4().makeBasis(right, up, normal);
             rotMatrix.transpose();
-            this._diceMesh.quaternion.setFromRotationMatrix(rotMatrix);
+            const q = new THREE.Quaternion().setFromRotationMatrix(rotMatrix);
+            this._faceQuats[faceIdx] = q;
+            return q;
+        }
+
+        _orientFace(targetNum) {
+            if (!this._diceMesh) return;
+            const q = this._faceQuaternion(targetNum);
+            if (q) this._diceMesh.quaternion.copy(q);
         }
 
         _playSE(name, volume = 90, pitch = 100) {
@@ -955,6 +936,16 @@
                         this._diceMesh.rotation.y = startRotY * (1 - progress);
                         this._diceMesh.rotation.z = startRotZ * (1 - progress);
                         this._diceMesh.scale.setScalar(0.42 + progress * 0.16);
+                        // The last stretch of the tumble eases straight into the
+                        // landed face, so the die settles square instead of
+                        // snapping to it on the frame it touches down.
+                        if (progress > 0.6) {
+                            const q = this._faceQuaternion(rawRoll);
+                            if (q) {
+                                const t = (progress - 0.6) / 0.4;
+                                this._diceMesh.quaternion.slerp(q, t * t * (3 - 2 * t));
+                            }
+                        }
                     } else {
                         const activeHoldTime = elapsed - rollDuration;
 

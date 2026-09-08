@@ -390,6 +390,18 @@
     isTreasureRoom: (mapId) => MapManager.isMapChild(mapId, Config.treasureRoomParentIds),
     isHouseMap: (mapId) => MapManager.isMapChild(mapId, Config.housePoolParentIds),
 
+    // <LocalsOnly> in a map's note: this map is peopled by its own map group
+    // and by nobody else. Read off the live $dataMap when it is the map the
+    // party is standing on, off the map file otherwise, so the answer is the
+    // same whichever side asks it.
+    isLocalsOnlyMap: (mapId) => {
+      if (!mapId) return false;
+      const note = (($dataMap && $dataMap.id === mapId)
+        ? $dataMap.note
+        : MapManager.loadMapData(mapId)?.note) || "";
+      return /<LocalsOnly>/i.test(note);
+    },
+
     // Stores the active group by NAME, group membership is resolved on
     // demand via GroupRegistry, so there's no object identity to keep in sync.
     setCurrentMapGroup: (groupName) => {
@@ -1120,6 +1132,26 @@
       });
     },
 
+    // <LocalsOnly>: the crowd of this map is drawn from its own map group and
+    // from the map itself, never from anywhere else. A group's pool reaches
+    // into every other group whenever the local supply is thin, and the global
+    // group has always drawn from the whole world (see getNPCPool), so a town
+    // that wants to look like itself would otherwise fill up with faces that
+    // live on the far side of the map. Applied as a view on the way out, the
+    // same way keepVarlenianHome is: the cached pool and the manifest are
+    // shared by every map and stay whole, only what THIS map may draw from is
+    // narrowed. It says nothing about the other direction, a local of a
+    // <LocalsOnly> town still travels and is still dealt into other towns.
+    keepLocalsHome: (pool, groupName) => {
+      if (!Array.isArray(pool) || !pool.length) return pool || [];
+      const mapId = $gameMap ? $gameMap.mapId() : null;
+      if (!mapId || !MapManager.isLocalsOnlyMap(mapId)) return pool;
+      const homeGroup = MapManager.findMapGroupByMap(mapId) || groupName;
+      const allowed = new Set(GroupRegistry.get(homeGroup)?.maps || []);
+      allowed.add(mapId);
+      return pool.filter(tpl => allowed.has(tpl?.mapId));
+    },
+
     getNPCPool: (groupName) => {
       // Templates are harvested directly from the AI/Local/Shop-tagged events
       // living on the group's own gameplay maps, no separate template-only
@@ -1136,7 +1168,7 @@
       // are edited, in which case deleting NPCPools.json forces a rebuild.
       $gameSystem._npcPoolCache = $gameSystem._npcPoolCache || {};
       if ($gameSystem._npcPoolCache[groupName]) {
-        return SpawnManager.keepVarlenianHome($gameSystem._npcPoolCache[groupName]);
+        return SpawnManager.keepLocalsHome(SpawnManager.keepVarlenianHome($gameSystem._npcPoolCache[groupName]), groupName);
       }
 
       // Every procedural settlement reads and writes the one shared entry, so
@@ -1153,7 +1185,7 @@
         const pool = fromManifest[manifestKey].filter(t => !Utils.hasStoryTag(t?.eventData?.note));
         $gameSystem._npcPoolCache[groupName] = pool;
         Utils.debug(`NPC pool for "${groupName}" loaded from js/db/WorldGen/NPCPools.json: ${pool.length} templates.`);
-        return SpawnManager.keepVarlenianHome(pool);
+        return SpawnManager.keepLocalsHome(SpawnManager.keepVarlenianHome(pool), groupName);
       }
 
       const npcPool = [];
@@ -1194,7 +1226,7 @@
       manifest.__shops = Object.assign(manifest.__shops || {}, shopIndex);
       NPCPoolStore.save(manifest);
       Utils.debug(`NPC pool for "${groupName}" built: ${npcPool.length} templates from ${seenMapIds.size} maps.`);
-      return SpawnManager.keepVarlenianHome(npcPool);
+      return SpawnManager.keepLocalsHome(SpawnManager.keepVarlenianHome(npcPool), groupName);
     },
     getPlaceholders: (includePlayers = false) => {
       const p2Active = window.$gameSplitScreen && window.$gameSplitScreen.active;
@@ -3128,6 +3160,24 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
           : T('NPCSystem.placeSettlement', { place: place });
       }
 
+      // A square the party founded a town on is no longer open country: it
+      // carries the name they signed for, and everyone born there is from
+      // there. The buildings standing on it are what the town fills up from,
+      // so the tally is refreshed while the party is here
+      // (Crafting/FurnitureSystem.js owns the register).
+      {
+        const TF = window.TownFounding;
+        const town = TF && TF.syncHere ? TF.syncHere() : null;
+        if (town) {
+          const grp = groups[groupName];
+          grp.foundedTown = town.name;
+          grp.townPopulation = TF.residents(town);
+          grp.displayName = grp.country
+            ? T('NPCSystem.placeOfCountry', { place: town.name, country: grp.country })
+            : T('NPCSystem.placeSettlement', { place: town.name });
+        }
+      }
+
       $gameSystem._currentProcGroup = groupName;
       MapManager.setCurrentMapGroup(groupName);
       return groupName;
@@ -3411,10 +3461,45 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       const mine = this.currentSlot();
       const out = [];
       for (const [slot, party] of Object.entries(this.parties())) {
-        if (Number(slot) === mine || !party || !party.location) continue;
+        const id = Number(slot);
+        if (id === mine || !party || !party.location) continue;
+        // Only a playthrough's own slot stands for a party in the world. The
+        // autosaves and the quicksave rotation are not playthroughs, and a
+        // slot that has since been deleted is nobody: party.json is merged
+        // and never pruned, so entries written by an older build (or left
+        // behind by a deleted savegame) are filtered out here rather than
+        // trusted because they are on file.
+        if (!this.isPlaythroughSlot(id)) continue;
+        if (!this.slotExists(id)) continue;
         out.push(party);
       }
       return out;
+    },
+
+    // Whether a slot id names a playthrough at all. The shared world autosave
+    // (slot 0), story mode's own autosave and the three quicksaves are places
+    // a run is written to, not parties that live in the world.
+    isPlaythroughSlot(slot) {
+      const id = Number(slot);
+      if (!Number.isFinite(id) || id <= 0) return false;          // the world autosave
+      const SS = window.SaveSystem;
+      if (SS) {
+        if (typeof SS.isQuickSlot === "function" && SS.isQuickSlot(id)) return false;
+        if (typeof SS.storySlots === "function") {
+          // storySlots() answers [own slot, autosave]; only the autosave is out.
+          const story = SS.storySlots();
+          if (Array.isArray(story) && story.length > 1 && id === Number(story[1])) return false;
+        }
+      }
+      return true;
+    },
+
+    // Whether that playthrough is still on disk. A deleted savegame leaves its
+    // party.json entry behind, and its party should stop being met.
+    slotExists(slot) {
+      if (typeof DataManager === "undefined" ||
+          typeof DataManager.savefileInfo !== "function") return true;
+      try { return !!DataManager.savefileInfo(Number(slot)); } catch (e) { return true; }
     },
 
     // ── Writing it down ────────────────────────────────────────────────────
@@ -3424,13 +3509,11 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // slot is.
     isRecordableSlot(savefileId) {
       const id = Number(savefileId);
-      if (!Number.isFinite(id) || id <= 0) return false;                 // autosave
-      if (window.SaveSystem && window.SaveSystem.isQuickSlot &&
-          window.SaveSystem.isQuickSlot(id)) return false;               // quicksave
+      if (!this.isPlaythroughSlot(id)) return false;   // autosave or quicksave
       return id === this.currentSlot();
     },
 
-    // Maps that are private to the playthrough standing on them (the tutorial,
+    // Maps that are private to the playthrough standing on them (the story mode,
     // a station interior used as a travel instance) rather than a real place
     // in the shared world: a save written there is never recorded as the
     // party's position, so no visitor ever spawns on them.
@@ -3498,6 +3581,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // else the biome (WorldMapTransfer.locationName). Answers null when that
     // playthrough has never saved, which is not the same as being nowhere.
     lastSeenName(slot) {
+      if (!this.isPlaythroughSlot(slot)) return null;
       const party = this.parties()[Number(slot)];
       if (!party || !party.location) return null;
       const WMT = window.WorldMapTransfer;
@@ -3517,7 +3601,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     lastSeenForMember(name) {
       if (!name) return null;
       for (const [slot, party] of Object.entries(this.parties())) {
-        if (!party) continue;
+        if (!party || !this.isPlaythroughSlot(slot)) continue;
         const found = (party.members || []).concat(party.pets || [])
           .some(person => person && person.name === name);
         if (found) return this.lastSeenName(slot);
@@ -5881,6 +5965,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       // with serial sync-XHR. The mapId guard handles the unlikely case where
       // the player transitions away before the slow build finishes.
       const mapId = $gameMap?.mapId();
+      if (window.PlatformerMode && window.PlatformerMode.isActive()) return;
       GroupRegistry.ensureBuiltAsync(() => {
         if ($gameMap?.mapId() !== mapId) return;
         $gameMap.setupNPCControllers();
@@ -5917,6 +6002,9 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
 
     this._npcControllersInitialized = true;
     $gameSystem.npcControllers = [];
+    // No autonomous NPC ever spawns on a platformer stage (see the note in
+    // Game_Map.update above).
+    if (window.PlatformerMode && window.PlatformerMode.isActive()) return;
     // Note: deliberately NOT gated on $dataMap.note, group membership,
     // AI-tagged events, and Local NPCs all still need to work on maps that
     // carry no map-level note at all (their tags live on individual events).
@@ -6158,7 +6246,6 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // Setup LOCAL NPCs on the map (always spawn here regardless of group rosters,
     // their template can still travel to other maps' rosters, see buildNPCPool)
     const localEvents = $gameMap.events().filter(e => Utils.hasLocalTag(e?.event()?.note) && Utils.isControllableEvent(e));
-    const passableTiles = [...MapManager.findPassableTerrainTiles()];
     localEvents.forEach(npc => {
       // Never relocate or claim the active Player 2 avatar.
       if (window.$gameSplitScreen?.active && window.$gameSplitScreen.p2Event === npc) return;
@@ -6168,13 +6255,9 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       npc.setPriorityType(1);
       npc.setOpacity(255);
 
-      // A <Story> local keeps the spot they were authored on, they are part of
-      // a written scene rather than a face in the crowd.
-      if (passableTiles.length > 0 && !Utils.hasStoryTag(npc.event()?.note)) {
-        const randIndex = Math.floor(Math.random() * passableTiles.length);
-        const tile = passableTiles.splice(randIndex, 1)[0];
-        npc.locate(tile.x, tile.y);
-      }
+      // A <Local> NPC belongs to the spot the author placed them on: they are
+      // the resident of that tile, not a face in the crowd, so the spread pass
+      // never scatters them. They still roam from there via their controller.
 
       if (!$gameSystem.npcControllers.some(c => c.eventName === npc.event().name)) {
         const controller = new NPCController(npc.event().name);
@@ -6206,9 +6289,17 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // their real-time routines and instead spend the steps the fight grants them
     // (see NPCController.updateTacticalStep). Every other simulation tick below
     // keeps running, only the movement clock is suspended.
+    // On a shared map in a network session the NPCs are walked by the one
+    // machine driving that map; everybody else places them from its packets
+    // (Multiplayer/MultiplayerSystem.js), so the controllers must not step here.
+    // A <Platform> map is a 2D platformer (Map/PlatformerMode.js): the party is
+    // a physics body on a side view stage, not a token on a walkable grid, so
+    // the autonomous simulation has nothing to walk and stays out entirely.
+    if (window.PlatformerMode && window.PlatformerMode.isActive()) return;
+    const drivesMap = !window.MultiplayerRemote || window.MultiplayerRemote.drivesMap();
     if (window.MapBattleMode && window.MapBattleMode.isActive()) {
       $gameSystem.npcControllers?.forEach(c => c.updateTacticalStep?.());
-    } else {
+    } else if (drivesMap) {
       $gameSystem.npcControllers?.forEach(c => c.update());
     }
     // Needs tick: every 10 game minutes, decay hunger/sleep for all loaded NPCs.
@@ -6372,6 +6463,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // Exposed so NPCSimulationCore's ShopShiftManager can draw <Shop> personas
     // from the same template/roster pools the spawn system already uses.
     getNPCPool: SpawnManager.getNPCPool,
+    keepLocalsHome: SpawnManager.keepLocalsHome,
     // Spawn templates synthesized from society profiles, for towns with no
     // authored NPC events (procedural settlements). See makeSocietyTemplate.
     buildSocietyPool: SpawnManager.buildSocietyPool,
@@ -6412,6 +6504,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     SEATED_GLOBAL_GROUPS: Config.SEATED_GLOBAL_GROUPS,
     findMapGroupByMap: MapManager.findMapGroupByMap,
     isHouseMap: MapManager.isHouseMap,
+    isLocalsOnlyMap: MapManager.isLocalsOnlyMap,
     // <Interior>/<Exterior> tag of any map, authored or procedural-current, see
     // MapManager.getMapEnvironmentTag. Used to keep the Animals/ wardrobe (see
     // NPCCreature) off NPCs whose home event is indoors.

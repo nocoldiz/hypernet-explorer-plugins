@@ -45,10 +45,18 @@ Galv.CPAUSE.time = Number(PluginManager.parameters('GALV_ChoicePauseMZ')['Pause 
 Galv.CPAUSE.Window_ChoiceList_open = Window_ChoiceList.prototype.open;
 Window_ChoiceList.prototype.open = function() {
 	this._pauseTime = Graphics.frameCount + Galv.CPAUSE.time;
+	// A key held down from the action that opened the list keeps auto repeating,
+	// which reads as a fresh trigger the moment the pause is over. Wait for the
+	// key to actually come up before the list will take an answer.
+	this._cpauseHeld = Input.isPressed('ok');
 	Galv.CPAUSE.Window_ChoiceList_open.call(this);
 };
 
 Galv.CPAUSE.Window_ChoiceList_isOkTriggered = Window_ChoiceList.prototype.isOkTriggered;
 Window_ChoiceList.prototype.isOkTriggered = function() {
+	if (this._cpauseHeld) {
+		if (Input.isPressed('ok')) return false;
+		this._cpauseHeld = false;
+	}
 	return Galv.CPAUSE.Window_ChoiceList_isOkTriggered.call(this) && Graphics.frameCount > this._pauseTime;
 };

@@ -1,19 +1,18 @@
 {
+  "workshopTitle": "Workshop",
   "title": "Blacksmithing",
   "anvil": "Anvil",
   "trades": "Trades",
-  "smithable": "Smithable",
-  "needMaterials": "Need materials",
+  "methods": "Production methods",
   "tooComplex": "Too complex",
   "tooComplexShort": "Beyond these hands",
   "materials": "Materials",
   "forge": "Forge",
   "forged": "Forged!",
   "noMaterials": "Not enough materials",
-  "noTrades": "No trades on this side of the board...",
   "noRecipes": "Nothing here...",
-  "selectHint": "Pick a trade, then a piece, to see what it takes to make.",
   "back": "BACK",
+  "close": "Close",
   "needs": "{trade}, {level}",
   "have": "{who}: {level}",
   "weaponType": "Weapon type",
@@ -31,7 +30,6 @@
   "finish": "Finish",
   "finishStrange": "Strange",
   "finishAuto": "As it falls",
-  "smeltHeld": "Smelt ({n} held)",
   "smeltNone": "None to smelt",
   "smelted": "Back into the crucible",
   "madeBy": "Beaten out by {smith}",
@@ -50,28 +48,199 @@
   },
   "nameBank": {
     "blade": {
-      "prefix": ["Widow", "Grim", "Blood", "Raven", "Ash", "Frost", "Night", "Iron", "Ghost", "Storm", "Pale", "Black"],
-      "noun": ["Fang", "Edge", "Thorn", "Reaver", "Whisper", "Biter", "Cleaver", "Tooth", "Song", "Sever", "Sting", "Bite"]
+      "prefix": [
+        "Widow",
+        "Grim",
+        "Blood",
+        "Raven",
+        "Ash",
+        "Frost",
+        "Night",
+        "Iron",
+        "Ghost",
+        "Storm",
+        "Pale",
+        "Black"
+      ],
+      "noun": [
+        "Fang",
+        "Edge",
+        "Thorn",
+        "Reaver",
+        "Whisper",
+        "Biter",
+        "Cleaver",
+        "Tooth",
+        "Song",
+        "Sever",
+        "Sting",
+        "Bite"
+      ]
     },
     "heavy": {
-      "prefix": ["Iron", "Stone", "Skull", "Storm", "Grave", "Doom", "Widow", "Ash", "Bone", "Thunder", "Black", "Old"],
-      "noun": ["Breaker", "Crusher", "Maul", "Ruin", "Splitter", "Render", "Wrecker", "Quake", "Hammer", "Fall", "Grinder", "Smasher"]
+      "prefix": [
+        "Iron",
+        "Stone",
+        "Skull",
+        "Storm",
+        "Grave",
+        "Doom",
+        "Widow",
+        "Ash",
+        "Bone",
+        "Thunder",
+        "Black",
+        "Old"
+      ],
+      "noun": [
+        "Breaker",
+        "Crusher",
+        "Maul",
+        "Ruin",
+        "Splitter",
+        "Render",
+        "Wrecker",
+        "Quake",
+        "Hammer",
+        "Fall",
+        "Grinder",
+        "Smasher"
+      ]
     },
     "gun": {
-      "prefix": ["Red", "Iron", "Night", "Ghost", "Silent", "Dead", "High", "Last", "Cold", "Long", "Black", "Grey"],
-      "noun": ["Line", "Maker", "Whisper", "Caller", "Reckoning", "Rattle", "Echo", "Watch", "Shot", "Mark", "Bark", "Song"]
+      "prefix": [
+        "Red",
+        "Iron",
+        "Night",
+        "Ghost",
+        "Silent",
+        "Dead",
+        "High",
+        "Last",
+        "Cold",
+        "Long",
+        "Black",
+        "Grey"
+      ],
+      "noun": [
+        "Line",
+        "Maker",
+        "Whisper",
+        "Caller",
+        "Reckoning",
+        "Rattle",
+        "Echo",
+        "Watch",
+        "Shot",
+        "Mark",
+        "Bark",
+        "Song"
+      ]
     },
     "wood": {
-      "prefix": ["Willow", "Storm", "Wind", "Silver", "Green", "Moon", "Wild", "Ash", "Deep", "Old", "Grey", "Long"],
-      "noun": ["Bough", "Reach", "Whistle", "Strider", "Branch", "Needle", "Thorn", "Wisp", "Root", "Sting", "Song", "Fletch"]
+      "prefix": [
+        "Willow",
+        "Storm",
+        "Wind",
+        "Silver",
+        "Green",
+        "Moon",
+        "Wild",
+        "Ash",
+        "Deep",
+        "Old",
+        "Grey",
+        "Long"
+      ],
+      "noun": [
+        "Bough",
+        "Reach",
+        "Whistle",
+        "Strider",
+        "Branch",
+        "Needle",
+        "Thorn",
+        "Wisp",
+        "Root",
+        "Sting",
+        "Song",
+        "Fletch"
+      ]
     },
     "magic": {
-      "prefix": ["Astral", "Void", "Arcane", "Ember", "Spectral", "Runic", "Lunar", "Prismatic", "Wyrd", "Hollow", "Umbral", "Gilded"],
-      "noun": ["Weave", "Sigil", "Flare", "Hex", "Whisper", "Bloom", "Veil", "Spark", "Rift", "Chant", "Ward", "Bind"]
+      "prefix": [
+        "Astral",
+        "Void",
+        "Arcane",
+        "Ember",
+        "Spectral",
+        "Runic",
+        "Lunar",
+        "Prismatic",
+        "Wyrd",
+        "Hollow",
+        "Umbral",
+        "Gilded"
+      ],
+      "noun": [
+        "Weave",
+        "Sigil",
+        "Flare",
+        "Hex",
+        "Whisper",
+        "Bloom",
+        "Veil",
+        "Spark",
+        "Rift",
+        "Chant",
+        "Ward",
+        "Bind"
+      ]
     },
     "default": {
-      "prefix": ["Iron", "Grey", "Old", "True", "Silent", "Wild", "Far", "Lone", "High", "Last", "Quiet", "Plain"],
-      "noun": ["Hand", "Watch", "Path", "Mark", "Call", "Hold", "Ward", "Reach", "Stand", "Keep", "Grip", "Line"]
+      "prefix": [
+        "Iron",
+        "Grey",
+        "Old",
+        "True",
+        "Silent",
+        "Wild",
+        "Far",
+        "Lone",
+        "High",
+        "Last",
+        "Quiet",
+        "Plain"
+      ],
+      "noun": [
+        "Hand",
+        "Watch",
+        "Path",
+        "Mark",
+        "Call",
+        "Hold",
+        "Ward",
+        "Reach",
+        "Stand",
+        "Keep",
+        "Grip",
+        "Line"
+      ]
     }
-  }
+  },
+  "status": {
+    "all": "All",
+    "ready": "Ready",
+    "short": "No materials",
+    "locked": "Untrained",
+    "owned": "Carried",
+    "forged": "Forged"
+  },
+  "allTrades": "All trades",
+  "shortBy": "No materials",
+  "pieceCount": "{n} pieces",
+  "pickHint": "Pick a piece to see what it takes to make.",
+  "smelt": "Smelt",
+  "qtyMax": "Max",
+  "batchCount": "x{n}"
 }

@@ -1,3 +1,16 @@
 {
-  "newTopic": "Nuovo argomento"
+  "newTopic": "Nuovo argomento",
+  "learnedTopic": "Hai imparato qualcosa su {topic}",
+  "askAsk": "Chiedi",
+  "askEmpathize": "Empatizza",
+  "askCancel": "Annulla",
+  "askTell": "Racconta",
+  "askGroupFixed": "Sempre",
+  "askGroupHere": "Qui",
+  "askGroupSheet": "Il foglio",
+  "askToggleControls": "Mostra/nascondi comandi",
+  "askToggleNotices": "Mostra/nascondi consigli",
+  "askNotice_first": "Solo la prima volta",
+  "askNotice_always": "Sempre",
+  "askNotice_off": "Mai"
 }

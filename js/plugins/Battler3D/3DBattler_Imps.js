@@ -153,10 +153,20 @@
             this.leftArm = this._impLimb(-0.34, 1.2, mat, true); this.rightArm = this._impLimb(0.34, 1.2, mat, true);
             this.leftLeg = this._impLimb(-0.14, 0.62, mat, false); this.rightLeg = this._impLimb(0.14, 0.62, mat, false);
             // Curling barbed tail.
+            // Each segment steps by its own radius plus the next one's, and
+            // the barb is seated on the LAST segment rather than one step past
+            // it: a fixed step down a tapering tail left it as a dotted line
+            // with the sting hanging off the end.
             this.tail = new THREE.Group();
-            let py = 0, pz = 0;
-            for (let i = 0; i < 5; i++) { const seg = new THREE.Mesh(new THREE.SphereGeometry(0.07 - i * 0.01, 8, 8), mat); seg.position.set(0, py, pz); this.tail.add(seg); py -= 0.02; pz -= 0.14; }
-            const barb = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.18, 5), this._mat(o.hornColor || 0x2a1a14, 1, 0.5)); barb.position.set(0, py - 0.02, pz - 0.06); barb.rotation.x = -Math.PI / 2; this.tail.add(barb);
+            let py = 0, pz = 0, r = 0.07;
+            for (let i = 0; i < 5; i++) {
+                const seg = new THREE.Mesh(new THREE.SphereGeometry(r, 8, 8), mat); seg.position.set(0, py, pz); this.tail.add(seg);
+                if (i === 4) break;
+                const next = 0.07 - (i + 1) * 0.01;
+                const step = (r + next) * 0.95;
+                py -= step / 7; pz -= step; r = next;
+            }
+            const barb = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.18, 5), this._mat(o.hornColor || 0x2a1a14, 1, 0.5)); barb.position.set(0, py, pz - 0.06); barb.rotation.x = -Math.PI / 2; this.tail.add(barb);
             this.tail.position.set(0, 0.75, -0.25); this.bodyGroup.add(this.tail);
             if (o.wings) { this.leftWing = this._batWing(-1, mat); this.rightWing = this._batWing(1, mat); }
             // Part map (humanoid keys).
@@ -269,7 +279,11 @@
             let mat;
             if (translucent) { mat = this._skinMat(p.bodyColor, 0.5); mat.opacity = 0.55; }
             this._impBase({ wings: winged, eyeColor: ac, hornColor: s.hornColor || 0x2a1a14, mat });
-            this.demonAura = new THREE.Group(); this.bodyGroup.add(this.demonAura); this._cascadeRules[0].hide.push(this.demonAura);
+            // The aura turns around the demon and is meant to hang in the air,
+            // which is what the marker says: nothing inside it is a limb that
+            // has come off.
+            this.demonAura = new THREE.Group(); this.demonAura.userData.aura = true;
+            this.bodyGroup.add(this.demonAura); this._cascadeRules[0].hide.push(this.demonAura);
             const g = this.demonAura;
             switch (form) {
                 case 'hexweaver': for (let i = 0; i < 4; i++) { const a = (i / 4) * Math.PI * 2; const rune = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.02, 4, 4), this._mat(ac, 0.85, 0.2, ac)); rune.position.set(Math.cos(a) * 0.55, 1.3, Math.sin(a) * 0.5); rune.rotation.set(a, a, 0); g.add(rune); } break;
@@ -277,7 +291,10 @@
                 case 'trickster': case 'sprite': case 'pixie': for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; const mo = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 6), this._mat(ac, 0.85, 0.2, ac)); mo.position.set(Math.cos(a) * 0.55, 1.2 + Math.sin(i) * 0.4, Math.sin(a) * 0.5); g.add(mo); } break;
                 case 'tormentor': for (let i = 0; i < 4; i++) { const a = (i / 4) * Math.PI * 2; const hook = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.3, 4), this._mat(0xcfd8e0, 1, 0.3)); hook.position.set(Math.cos(a) * 0.5, 1.1, Math.sin(a) * 0.5); hook.rotation.z = a; g.add(hook); } break;
                 case 'nixie': for (let i = 0; i < 4; i++) { const a = (i / 4) * Math.PI * 2; const drop = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), this._mat(ac, 0.7, 0.15, ac)); drop.scale.y = 1.6; drop.position.set(Math.cos(a) * 0.45, 0.9 + (i % 2) * 0.3, Math.sin(a) * 0.4); g.add(drop); } break;
-                case 'gremlin': for (const ex of [-0.34, 0.34]) { const bigEar = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.34, 5), this._impMat || this._skinMat(p.bodyColor, 0.6)); bigEar.position.set(ex, 1.6, -0.04); bigEar.rotation.z = ex * 1.8; this.head.add(bigEar); } break;
+                // The big ears hang off the head, so they are placed in the
+                // head's own space. At the body-space height they were written
+                // at they floated a head's length above the skull.
+                case 'gremlin': for (const ex of [-0.34, 0.34]) { const bigEar = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.34, 5), this._impMat || this._skinMat(p.bodyColor, 0.6)); bigEar.position.set(ex, 0.05, -0.04); bigEar.rotation.z = ex * 1.8; this.head.add(bigEar); } break;
                 default: { const halo = new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 12), this._mat(ac, 0.18, 0.2, ac)); halo.position.y = 1.1; g.add(halo); break; }
             }
         }

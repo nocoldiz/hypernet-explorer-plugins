@@ -941,8 +941,6 @@
     class Scene_RealEstate extends Scene_MenuBase {
         create() {
             super.create();
-            // Name the skill this menu runs on while it is open.
-            if (window.SpecBadge) window.SpecBadge.show('Real Estate Appraisal');  // i18n-ignore  Specialization.json id
             this.createHelpWindow();
             this.createGoldWindow();
             this.createPropertyListWindow();
@@ -966,6 +964,14 @@
             this._companyCommandIndex = 0;
 
             this.createUIRealEstateDOM();
+
+            // Name the skill this menu runs on while it is open. In a window on
+            // the desktop the chip is hung off the spread itself, so it goes
+            // when the window does instead of floating over the whole machine.
+            if (window.SpecBadge) {
+                window.SpecBadge.show('Real Estate Appraisal',  // i18n-ignore  Specialization.json id
+                    this._isAppMode ? { el: this._dndContainer } : {});
+            }
 
             // Opened as a window on the hyperdeck desktop the scene is never
             // pushed, so nothing calls start(): do its work here instead.
@@ -1081,8 +1087,15 @@
         commandInfo() {
             const property = this._propertyListWindow.property();
             if (property) {
-                $gameTemp.newsReturnScene = 'realEstate';
                 $gameTemp.newsFilterLocation = property.location;
+                // On the desktop the news opens as its own OS window: pushing an
+                // RMMZ scene from inside the OS would tear the desktop down.
+                if (this._isAppMode) {
+                    $gameTemp.newsReturnScene = null;
+                    if (window.HypernetNewsApp) window.HypernetNewsApp.launch();
+                    return;
+                }
+                $gameTemp.newsReturnScene = 'realEstate';
                 if (window.Scene_NewsHistory) {
                     SceneManager.push(window.Scene_NewsHistory);
                 }
@@ -1134,6 +1147,7 @@
         }
 
         terminate() {
+            if (window.SpecBadge) window.SpecBadge.hide();
             if (!this._isAppMode) super.terminate();
             if (this._dndContainer) {
                 const container = this._dndContainer;
@@ -1151,14 +1165,19 @@
 
         createUIRealEstateDOM() {
             this._dndContainer = document.createElement('div');
-            this._dndContainer.id = 'menu-container';
+            this._dndContainer.classList.add('estate-root');
             this._dndContainer.style.opacity = '0';
             this._dndContainer.style.transition = 'opacity 0.22s ease-out';
             const appHost = this._isAppMode ? document.getElementById('real-estate-content') : null;
             if (appHost) {
+                // Inside an OS window the registry wears XP chrome, dressed by
+                // #real-estate-content in hypernet.css. The parchment overlay id
+                // means position:absolute over the whole screen and a dark
+                // backdrop, which would paint across the desktop.
                 appHost.innerHTML = '';
                 appHost.appendChild(this._dndContainer);
             } else {
+                this._dndContainer.id = 'menu-container';
                 document.body.appendChild(this._dndContainer);
             }
 
@@ -1250,6 +1269,7 @@
             if (trend > 0.5) { marketSentiment = t('hot'); sentimentColor = 'var(--text-success-active)'; }
             else if (trend < -0.5) { marketSentiment = t('cold'); sentimentColor = 'var(--border-danger-active)'; }
 
+            const sref = this.sceneRef();
             const commands = [];
             if (selectedProperty.isOwned) {
                 commands.push({ label: T('RealEstate.ui.liquidateAsset'), action: "sell", danger: true });
@@ -1406,7 +1426,7 @@
             return `
                 <div class="left-page">
                     <div class="page-header-bar">
-                        <div class="back-button focusable" tabindex="0" data-focus-key="re-dismiss" onclick="${this.sceneRef()}.dismiss()">${dismissText}</div>
+                        ${this._isAppMode ? '' : `<div class="back-button focusable" tabindex="0" data-focus-key="re-dismiss" onclick="${this.sceneRef()}.dismiss()">${dismissText}</div>`}
                         <h2 class="title">${registryTitle}</h2>
                     </div>
                     ${this.buildTabBarHTML()}
@@ -1511,6 +1531,7 @@
         }
 
         buildProspectusHTML(company) {
+            const sref = this.sceneRef();
             if (!company) {
                 return `
                     <div class="item-inspect item-inspect--empty estate-04">
@@ -2117,11 +2138,23 @@
                 icon: 84,
                 width: 1000,
                 height: 660,
-                contentHTML: '<div id="real-estate-content" style="width:100%; height:100%; display:flex; flex-direction:column; background:#ece9d8; overflow:hidden"></div>'
+                contentHTML: '<div id="real-estate-content"></div>'
             });
             this.appInstance = new Scene_RealEstate();
             this.appInstance._isAppMode = true;
-            this.appInstance.create();
+            // A registry that cannot build itself takes its own window down
+            // rather than leaving a blank one on the desktop with a half made
+            // scene behind it that faults again on every repaint.
+            try {
+                this.appInstance.create();
+            } catch (e) {
+                console.error('RealEstateMarket: the registry failed to open.', e);
+                this.appInstance = null;
+                const win = this.win;
+                this.win = null;
+                if (win && window.HypernetWindowManager) window.HypernetWindowManager.closeWindow(win);
+                return;
+            }
             this.win.addEventListener('hypernet-closed', () => {
                 if (this.appInstance) {
                     this.appInstance.terminate();
@@ -2141,6 +2174,15 @@
             // Prices and rents move on the world clock, so repaint the open
             // window whenever the day the registry ran on has rolled over.
             if (!this.appInstance || !this.win || !$realEstateManager) return;
+            // The desktop can take the window away without telling us (turning
+            // the machine off used to do exactly that): drop the handles rather
+            // than keep repainting a node nobody can see.
+            if (!this.win.isConnected) {
+                this.appInstance.terminate();
+                this.appInstance = null;
+                this.win = null;
+                return;
+            }
             const key = realEstateDayKey();
             if (this._paintedDayKey !== key) {
                 this._paintedDayKey = key;

@@ -324,6 +324,10 @@
         actor._pinCount = 0;
       }
     },
+    // Second half of the Convoker's signature: anything the party calls up
+    // through the summoning rites is bound tighter and fights harder. Read by
+    // SummonSystem through getSummonBonus() when a spec's params are cut.
+    summonBonus: { hp: 0.3, power: 0.2 },
   });
   reg(11, {
     // Martial Artist
@@ -1236,6 +1240,129 @@
     });
   };
 
+  //==========================================================================
+  // Gunmancer: the chamber
+  //==========================================================================
+  // The class gimmick, in two halves, both of which only exist while a firearm
+  // is actually in hand:
+  //
+  //   1. Reloading is a casting motion. Snapping a fresh magazine home hands
+  //      the Gunmancer a fifth of their maximum mana back, in or out of battle.
+  //   2. A spell aimed at one enemy leaves the barrel rather than the hand: it
+  //      spends a round, and the weapon is heard and animated firing it. With
+  //      an empty magazine there is nothing to load the spell into, so those
+  //      spells are refused outright (greyed out in the skill menu, the battle
+  //      command list and the hotbar) until the gun is reloaded.
+  //
+  // Area spells, buffs, heals and anything cast with something other than a
+  // gun in hand are untouched: they are cast the ordinary way and cost no ammo.
+
+  const GUNMANCER_CLASS_ID = 16;
+  // Fraction of maximum MP a reload returns.
+  const RELOAD_MP_FRACTION = 1 / 5;
+
+  /** Whether this battler is a first-three Gunmancer holding a firearm. */
+  const isArmedGunmancer = (actor) =>
+    !!actor &&
+    isPassiveActor(actor) &&
+    classIdOf(actor) === GUNMANCER_CLASS_ID &&
+    equippedWeaponTypes(actor).indexOf(WTYPE_GUN) >= 0;
+
+  /**
+   * Whether a skill is one the gun fires for this actor: a magic skill that
+   * damages (or drains from) a single enemy. Scope 1 is one enemy, scope 7 is
+   * one enemy the user picks after a random roll; both are a single muzzle.
+   * @param {Game_Actor} actor - the caster
+   * @param {object} skill - $dataSkills entry
+   * @returns {boolean} True when casting it should spend a round
+   */
+  const isChamberedSpell = (actor, skill) => {
+    if (!skill || !isArmedGunmancer(actor)) return false;
+    if (skill.stypeId !== 1) return false;
+    if (skill.scope !== 1 && skill.scope !== 7) return false;
+    const dmg = skill.damage;
+    // Types 1 and 5 are HP damage and HP drain: the offensive ones.
+    return !!dmg && (dmg.type === 1 || dmg.type === 5);
+  };
+
+  /**
+   * The magazine of the weapon the actor is holding, or null when the weapon
+   * carries no ammunition at all (WeaponSystem is the owner of that answer).
+   */
+  const bulletsLeft = (actor) =>
+    actor && typeof actor.getCurrentBullets === "function"
+      ? actor.getCurrentBullets()
+      : null;
+
+  // --- 1. Reload feeds the caster -----------------------------------------
+  if (typeof Game_Actor.prototype.reloadBullets === "function") {
+    const _reloadBullets = Game_Actor.prototype.reloadBullets;
+    Game_Actor.prototype.reloadBullets = function () {
+      const armed = isArmedGunmancer(this);
+      const before = this.mp;
+      _reloadBullets.call(this);
+      if (!armed) return;
+      this.gainMp(Math.ceil(this.mmp * RELOAD_MP_FRACTION));
+      if (this.mp > before) {
+        battleLog(T("BattlePassives.log.chamberedReload", { actor: this.name() }));
+      }
+    };
+  }
+
+  // --- 2. The spell leaves the barrel --------------------------------------
+  // An empty magazine refuses the spell everywhere at once: every menu in the
+  // game asks canUse(), and canUse() asks this.
+  const _meetsSkillConditions = Game_BattlerBase.prototype.meetsSkillConditions;
+  Game_BattlerBase.prototype.meetsSkillConditions = function (skill) {
+    if (!_meetsSkillConditions.call(this, skill)) return false;
+    if (!isChamberedSpell(this, skill)) return true;
+    const left = bulletsLeft(this);
+    return left === null || left > 0;
+  };
+
+  // Firing it spends the round, the same way a plain attack does.
+  const _Game_Action_apply_chamber = Game_Action.prototype.apply;
+  Game_Action.prototype.apply = function (target) {
+    const subject = this.subject();
+    if (
+      this.isSkill() &&
+      subject &&
+      subject.isActor &&
+      subject.isActor() &&
+      isChamberedSpell(subject, this.item()) &&
+      typeof subject.canAttackWithBullets === "function" &&
+      subject.canAttackWithBullets()
+    ) {
+      subject.consumeBullet();
+    }
+    _Game_Action_apply_chamber.call(this, target);
+  };
+
+  // ...and the gun is seen and heard firing it. WeaponSystem only gives a skill
+  // the weapon's own shot when the skill is physical or names weapon
+  // animations; a chambered spell is neither, so it is declared an attacker
+  // here instead.
+  if (typeof Window_BattleLog !== "undefined") {
+    const _startAction_chamber = Window_BattleLog.prototype.startAction;
+    Window_BattleLog.prototype.startAction = function (subject, action, targets) {
+      _startAction_chamber.call(this, subject, action, targets);
+      if (
+        action &&
+        action.isSkill &&
+        action.isSkill() &&
+        subject &&
+        subject.isActor &&
+        subject.isActor() &&
+        isChamberedSpell(subject, action.item())
+      ) {
+        this._lastAttacker = subject;
+        this._multiAttackHitCount = 0;
+        // null: the weapon's own shot, not a motion the skill named.
+        this._skillAnimations = null;
+      }
+    };
+  }
+
   // --- Clear per-battle flag state at battle end ---------------------------
   // These transient fields (set in battleStart / during combat) must not
   // persist across battles or leak into the save file.
@@ -1384,7 +1511,7 @@
         true,
         "black",
         1,
-        "Lora, serif",
+        "Bitter, serif",
         16
       );
     };
@@ -1510,6 +1637,21 @@
       ? [{ label: T("BattlePassives.chip.gunFu"), color: "#ff9f43" }]
       : [];
 
+  // How much the party's Convokers strengthen a summoned battler. Bonuses from
+  // several eligible Convokers add up, so a coven calls up sturdier creatures.
+  function summonBonus() {
+    let hp = 0;
+    let power = 0;
+    firstThree().forEach((actor) => {
+      const p = PASSIVES[classIdOf(actor)];
+      if (p && p.summonBonus) {
+        hp += p.summonBonus.hp || 0;
+        power += p.summonBonus.power || 0;
+      }
+    });
+    return { hp: 1 + hp, power: 1 + power };
+  }
+
   window.BattleSystemPassiveSkills = {
     getPassive(classId) {
       return PASSIVES[classId] || null;
@@ -1549,6 +1691,15 @@
         }
       });
       return out;
+    },
+    // Summon hook: multipliers a summoned battler's health and offence are
+    // cut by, as { hp, power }, both 1 when no Convoker is contributing.
+    getSummonBonus() {
+      try {
+        return summonBonus();
+      } catch (e) {
+        return { hp: 1, power: 1 };
+      }
     },
     // HUD hook: live class-gimmick chips for an actor's battle bar.
     getBattleChips(actor) {

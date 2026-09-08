@@ -131,6 +131,16 @@
         gap: 4px;
     }
 
+    .cc-mode-toggle {
+        margin-bottom: 4px;
+        margin-left: 6px;
+        padding: 1px;
+    }
+
+    .cc-mode-pill {
+        font-size: 0.72rem;
+    }
+
     .cc-folder-tab {
         padding: 5px 10px;
         font-size: 0.82rem;
@@ -944,17 +954,6 @@
         padding: 3px 5px;
     }
 
-    .cc-pet-portrait {
-        min-height: 80px;
-        padding: 6px;
-        margin-bottom: 6px;
-    }
-
-    .cc-pet-sidebar .cc-pet-portrait {
-        min-height: 64px;
-        margin-bottom: 4px;
-    }
-
     .cc-pet-sidebar-name {
         font-size: 0.95rem;
     }
@@ -1039,11 +1038,6 @@
         min-height: 110px;
     }
 
-    .cc-bust-preview {
-        height: 25%;
-        margin-bottom: 6px;
-    }
-
     .cc-categories-list .cc-card-option {
         padding: 6px 10px !important;
         gap: 8px !important;
@@ -1109,6 +1103,11 @@
         font-size: 0.92rem;
     }
 
+    .cc-scenario-group-title {
+        font-size: 0.82rem;
+        padding: 4px 2px 2px 2px;
+    }
+
     .cc-scenario-grid .cc-card-option.cc-scenario-card {
         padding: 5px 8px;
     }
@@ -1162,10 +1161,6 @@
 
     .cc-scenario-dossier .cc-loadout-section-title {
         font-size: 0.88rem !important;
-    }
-
-    .cc-scenario-dossier .cc-loadout-section-count {
-        font-size: 0.78rem !important;
     }
 
     .cc-scenario-dossier .cc-loadout-empty {
@@ -1305,10 +1300,15 @@
 
     /* Preset-scoped panels that paint their own plate: the dense ones take the
        same reclaimed padding the shared spread pages get. */
-    .item-inspect .inspect-lore,
-    #pt-container .pt-props,
-    #pt-container .pt-desc {
+    .item-inspect .inspect-lore {
         padding: 8px 10px;
+    }
+
+    /* The periodic table's cells are sized by the grid rather than by a fixed
+       width, so they shrink with the page on their own; only the gap needs
+       tightening for eighteen columns on a handheld. */
+    #pt-container .pt-grid {
+        gap: 2px;
     }
 }
 
@@ -1331,9 +1331,10 @@
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    /* The clock plate at the head of the left page. */
+    /* The standing facts rule under the roster. */
     .pockets-clock {
-        padding: 6px 14px;
+        padding-top: 6px;
+        margin-top: 8px;
     }
 
     /* The key letter on the right of each row. It gives up its padding rather
@@ -1438,8 +1439,8 @@
     }
 
     .inspect-pockets .inspect-frame {
-        width: 46px;
-        height: 46px;
+        width: 38px;
+        height: 38px;
     }
 
     .inspect-meta-grid {
@@ -1489,13 +1490,12 @@
     /* Eight slot rows stacked down the left page: two pixels a row is a whole
        row's worth of height back. */
     .equip-slot-row {
-        padding: 4px 10px 4px 0;
-        margin-bottom: 4px;
+        padding: 4px 10px 4px 4px;
+        margin-bottom: 1px;
     }
 
     #equip-container .companion-tab {
-        padding: 4px 11px;
-        margin: 0 4px;
+        padding: 2px 7px;
     }
 
     .equip-right-content .stats-grid {
@@ -1533,21 +1533,17 @@
 
     #spec-category-row {
         gap: 4px;
-        padding: 4px 0 7px;
+        padding-bottom: 6px;
+        margin-bottom: 8px;
     }
 
-    .spec-category-tab {
-        padding: 3px 8px;
-    }
-
-    /* One row per specialization, and there are a great many of them. */
-    .spec-row {
-        gap: 8px;
+    /* Three slots across on a small screen still, but tighter. */
+    .spec-slot {
         padding: 4px 8px;
     }
 
-    .spec-section-header {
-        padding: 6px 8px 3px;
+    .spec-group-title {
+        margin-top: 6px;
     }
 }
 
@@ -1571,18 +1567,26 @@
         gap: 4px;
     }
 
+    /* Same two-column slot as the desktop spread, one notch tighter. */
     .save-item {
-        padding: 5px 4px 6px 4px;
+        grid-template-columns: minmax(120px, 32%) 1fr;
+        column-gap: 12px;
+        padding: 6px 6px 6px 9px;
     }
 
     /* The member row gets tighter on the handheld, never a second line. */
     .party-members-list {
-        gap: 6px;
+        gap: 8px;
+    }
+
+    .save-member {
+        flex-basis: 96px;
+        max-width: 96px;
     }
 
     .save-member .char-sprite-canvas {
-        width: 28px;
-        height: 34px;
+        width: 50px;
+        height: 60px;
     }
 
     /* The party card on the right page: a portrait row with a gauge each, the
@@ -1638,10 +1642,10 @@
 /* ==========================================================================
    The quest log board (Quest/KanbanQuestLog.js)
    --------------------------------------------------------------------------
-   Not a spread: a full-screen cork board of three columns, authored at desk
-   size throughout, and the worst offender in the menu tree on a handheld. The
-   card is what has to fit, four to a column rather than two, so the reclaim is
-   concentrated on the card and on the pinboard air between cards.
+   Not a spread: a full-screen board of four columns, authored at desk size
+   throughout, and the worst offender in the menu tree on a handheld. The card
+   is what has to fit, so the reclaim is concentrated on the card and on the
+   air between cards.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
@@ -1667,16 +1671,13 @@
         margin: 8px 6px;
     }
 
-    /* 26px between cards was pinboard air. Halved, and the card's own top
-       padding, which is there to clear the pin, comes down with it. */
     .kb-cards-wrap {
-        gap: 13px;
-        padding: 8px 5px 14px;
+        gap: 8px;
+        padding: 6px 4px 12px;
     }
 
     .kb-card {
-        min-height: 96px;
-        padding: 22px 12px 12px;
+        padding: 8px 10px;
     }
 
     .kb-card-title,
@@ -1815,17 +1816,8 @@
         margin: 2px 0 6px 0;
     }
 
-    .help-divider {
-        margin: 6px 0 9px 0;
-    }
-
     .help-image {
         margin: 12px auto;
-    }
-
-    .help-hints-bar {
-        padding-top: 6px;
-        margin-top: 5px;
     }
 }
 
@@ -1902,57 +1894,47 @@
 
 
 /* ==========================================================================
-   The build panel (Crafting/FurnitureSystem.js)
+   The build dock (Crafting/FurnitureSystem.js)
    --------------------------------------------------------------------------
-   A fixed 620px column standing over the map. On a 1280 panel that is nearly
-   half the screen, and the map behind it is the thing being furnished, so the
-   panel narrows and its catalogue keeps its three columns by giving up card
-   padding instead.
+   A dock along the foot of the screen. On a 1280x800 panel 40vh of it is most
+   of the map being furnished, so the dock keeps a little less height, the two
+   side columns narrow, and the gallery holds its thumbnails by giving up the
+   padding around them.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
     #fbuild-panel {
-        width: 520px;
+        width: 42vw;
+        min-width: 320px;
     }
 
     .fbuild-header {
-        padding: 8px 11px;
-    }
-
-    .fbuild-modebar {
-        gap: 7px;
         padding: 6px 11px;
     }
 
-    .fbuild-toptabs,
+    .fbuild-rail {
+        padding: 6px 8px;
+    }
+
+    .fbuild-aside {
+        padding: 6px 8px;
+    }
+
     .fbuild-catbar {
-        padding: 6px 11px;
-    }
-
-    .fbuild-section-label {
-        padding: 5px 11px 3px;
-    }
-
-    .fbuild-materials {
-        padding: 0 11px 7px;
-        max-height: 72px;
+        padding: 6px 8px;
     }
 
     .fbuild-grid {
-        padding: 7px 9px;
-        gap: 7px;
+        padding: 8px;
+        gap: 8px;
     }
 
     .fbuild-card {
-        padding: 6px;
+        padding: 4px;
     }
 
     .fbuild-card-img {
         height: 66px;
-    }
-
-    .fbuild-hint {
-        padding: 5px 11px;
     }
 }
 
@@ -1988,9 +1970,8 @@
         padding: 4px;
     }
 
-    .bestiary-portrait-btn {
-        padding: 3px 8px;
-    }
+    /* The two portrait stamps are the shared .inspect-btn strip now, which the
+       handheld already trims where every other action strip is trimmed. */
 }
 
 
@@ -2002,75 +1983,73 @@
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .cc-head {
-        padding-bottom: 4px;
-        margin-bottom: 7px;
-    }
-
-    .cc-tabs {
-        gap: 4px;
-        margin-bottom: 6px;
-    }
-
-    .cc-tab {
-        padding: 2px 9px;
-    }
-
-    .cc-grid {
-        grid-template-columns: repeat(auto-fill, minmax(66px, 1fr));
+    .cgc-grid {
+        grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
         gap: 5px;
     }
 
-    .cc-cell {
-        height: 82px;
+    .cgc-cell {
+        height: 96px;
     }
 
-    .cc-cell canvas,
-    .cc-cell img {
+    .cgc-cell canvas,
+    .cgc-cell img {
         max-height: 48px;
     }
 
-    .cc-art {
+    .cgc-art {
         height: 128px;
         margin-bottom: 6px;
     }
 
-    .cc-decklist {
+    .cgc-decklist {
         max-height: 120px;
     }
 }
 
 
 /* ==========================================================================
-   The faction register (NPC/FactionDataManager.js)
+   The shared interface kit (docs/task/ui_fixing.md)
    --------------------------------------------------------------------------
-   The heraldry grid on the left page is a .backpack-grid, so it is compacted
-   with the backpack above. These are the register's own plates.
+   The kit's panel, its field and its chips, tightened for the handheld. Every
+   reworked screen is built from these, so the compaction is written once here
+   rather than once per menu. Lists are .backpack-grid and are compacted with
+   the backpack above.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .facrep-26 {
-        width: min(400px, 82vw);
+    .ui-panel {
+        width: min(560px, 86vw);
         padding: 15px 18px 13px 18px;
     }
 
-    .facrep-27 {
+    .ui-input {
         margin: 9px 0 4px 0;
         padding: 6px 8px;
     }
 
-    .facrep-28 {
+    .inspect-actions {
         gap: 7px;
         margin-top: 9px;
     }
 
-    .facrep-29 {
+    .ui-chip-row {
         gap: 4px;
         margin-bottom: 8px;
     }
 
-    .facrep-30 {
+    .ui-chip {
         padding: 1px 6px;
+    }
+
+    .ui-detail-head {
+        gap: 8px;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+    }
+
+    .fac-accord-grid {
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
     }
 }
 
@@ -2141,10 +2120,6 @@
         margin-bottom: 9px;
     }
 
-    #menu-container .assets-sum-card {
-        padding: 5px 9px;
-    }
-
     #menu-container .assets-cat-header {
         margin: 6px 0 2px;
     }
@@ -2166,9 +2141,8 @@
         margin-top: 4px;
     }
 
-    #menu-container .assets-detail-head {
-        padding-bottom: 4px;
-        margin-bottom: 6px;
+    #menu-container .assets-detail {
+        padding-right: 4px;
     }
 }
 
@@ -2263,45 +2237,29 @@
 @media (max-width: 1366px) and (max-height: 860px) {
 
     .work-02,
-    .bank-22,
-    .joboffer-04,
-    .vrep-21 {
+    .bank-22 {
         padding: 16px 22px;
     }
 
     /* The spine. It is a drawn gutter between two pages, not a margin either
        page needs, so it is the cheapest 12px on the screen. */
     .work-01,
-    .bank-21,
-    .joboffer-03,
-    .vrep-20 {
+    .bank-21 {
         width: 20px;
     }
 
     /* The page headings, all 2.035rem and all followed by 16px of air. */
     .work-09,
     .work-21,
-    .bank-23,
-    .joboffer-18,
-    .joboffer-51,
-    .vrep-10 {
+    .bank-23 {
         font-size: 1.7rem;
         margin-bottom: 9px;
     }
 
     /* The "nothing here" plates, which are 40px of padding around one line. */
     .work-03,
-    .work-13,
-    .joboffer-05,
-    .joboffer-14,
-    .joboffer-22 {
+    .work-13 {
         padding: 22px;
-    }
-
-    .work-11,
-    .work-33,
-    .joboffer-19 {
-        padding-top: 7px;
     }
 }
 
@@ -2358,25 +2316,19 @@
 
 /* ==========================================================================
    Job offers (Work/WorkSystemJobOffers.js)
+   --------------------------------------------------------------------------
+   A spread on the shared kit now, so the shared page rules do most of the
+   work. What is left is the offer row and the candidate card.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .joboffer-21 {
-        padding: 12px;
+    .job-item,
+    .roster-item {
+        padding: 4px 10px;
     }
 
-    .joboffer-31 {
-        gap: 6px;
-    }
-
-    .joboffer-32 {
-        padding: 8px;
-        gap: 6px;
-    }
-
-    .joboffer-43 {
-        margin-top: 4px;
-        padding: 5px;
+    .job-face {
+        --job-face-size: 36px;
     }
 }
 
@@ -2529,7 +2481,7 @@
 
     .shop-selection-bar {
         gap: 8px;
-        padding: 5px 8px;
+        padding: 5px 0;
         margin-bottom: 7px;
     }
 
@@ -2543,104 +2495,42 @@
 /* ==========================================================================
    The quest board (Quest/QuestBoardUI.js)
    --------------------------------------------------------------------------
-   Notices pinned to a cork board at a size meant to be read across a desk.
-   The note is the unit: three across a 1280 panel instead of two, so it is the
-   note's own width and the padding that clears the pin which come down, and
-   the reading itself that does not.
+   A spread now, so the shared page rules do most of the work. What is left is
+   the notice row and the two panels the party writes and shops on, which are
+   the only parts authored at desk size.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .qb-tab {
-        padding: 5px 20px 6px;
-    }
-
     .qb-note {
-        flex: 0 0 214px;
-        width: 214px;
-        min-height: 168px;
-        padding: 22px 13px 13px;
+        padding: 4px 10px;
     }
 
-    .qb-note-title,
-    .qb-note-giver {
-        margin-bottom: 5px;
-    }
-
-    .qb-contract {
-        flex: 0 0 320px;
-        width: 320px;
-        min-height: 164px;
-    }
-
-    .qb-posted {
-        flex: 0 0 262px;
-        width: 262px;
-    }
-
-    .qb-btnrow {
-        gap: 7px;
-        margin-top: 8px;
-    }
-
-    .qb-btn {
-        padding: 4px 13px;
-    }
-
-    .qb-empty {
-        font-size: 1.35rem;
-        padding: 32px 20px;
-    }
-
-    /* The notice opened full page, and the compose sheet behind the Post tile.
-       Both are printed-page margins on a handheld screen. */
-    #qb-detail .qb-d-page {
-        padding: 24px 32px 32px;
-    }
-
-    #qb-detail .qb-d-giver {
-        margin: 8px 0 16px;
-    }
-
-    #qb-detail .qb-d-body {
-        font-size: 1.38rem;
-        margin-bottom: 16px;
-    }
-
-    #qb-detail .qb-d-sec {
-        margin: 18px 0 8px;
-    }
-
-    #qb-detail .qb-d-btns {
-        gap: 12px;
-        margin-top: 22px;
-    }
-
-    #qb-detail .qb-d-btns .qb-btn {
-        padding: 9px 26px;
-    }
-
-    #qb-compose .qb-c-page {
-        padding: 22px 32px 32px;
+    .qb-place {
+        margin-bottom: 4px;
     }
 
     .qb-c-intro {
-        margin: 8px 0 14px;
+        margin-bottom: 12px;
     }
 
     .qb-c-row {
         gap: 12px;
-        padding: 5px 9px;
-        min-height: 32px;
+        padding: 4px 8px;
+        min-height: 30px;
     }
 
     /* A quarter of the sheet was standing empty to the right of the labels. */
     .qb-c-label {
-        flex: 0 0 190px;
+        flex: 0 0 170px;
     }
 
     .qb-c-preview {
         margin-top: 7px;
-        padding: 12px 16px;
+        padding: 8px 12px;
+    }
+
+    .qb-p-row {
+        padding: 3px 8px;
     }
 }
 
@@ -2658,13 +2548,13 @@
         padding: 16px 20px;
     }
 
-    .travel-title {
+    .travel-left-page .page-header-bar {
         margin-bottom: 9px;
         padding-bottom: 5px;
+        min-height: 32px;
     }
 
     .travel-transport-info {
-        padding: 7px;
         margin-bottom: 9px;
     }
 
@@ -2696,127 +2586,70 @@
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .vrep-01 {
-        padding: 7px 9px;
-    }
-
-    .vrep-11 {
-        gap: 10px;
-    }
-
     /* The vehicle's portrait, which is decoration next to the readings. */
-    .vrep-12 {
+    .vrep-portrait {
         width: 132px;
         height: 132px;
-    }
-
-    .vrep-14 {
-        margin: 4px 0;
-        padding: 8px 18px;
-    }
-
-    .vrep-16 {
-        margin-bottom: 9px;
-    }
-
-    .vrep-26 {
-        gap: 7px 12px;
-        margin-bottom: 9px;
-        max-height: 300px;
-    }
-
-    .vrep-27 {
-        gap: 8px;
-        margin-bottom: 8px;
-    }
-
-    .vrep-35 {
-        padding: 8px;
+        max-height: 132px;
+        margin: 12px auto 8px;
     }
 }
 
 
 /* ==========================================================================
-   The prosthetics shop (Health/Health_ProstheticShop.js)
+   The prosthetic clinic (Health/Health_ProstheticShopUI.js)
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .pros-05 {
+    /* The register's faces, which are decoration next to the names. */
+    .pshop-face {
         width: 38px;
         height: 38px;
     }
 
-    .pros-13 {
-        gap: 7px;
+    .pshop-portrait,
+    .pshop-portrait canvas {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
     }
 
-    .pros-15 {
-        gap: 8px;
+    /* The briefing has to leave the dossier above it something to be read in. */
+    .pshop-brief {
+        margin-bottom: 8px;
     }
 
-    .pros-16 {
-        padding: 6px 5px;
-    }
-
-    .pros-17 {
-        padding: 7px 5px;
-    }
-
-    .pros-18,
-    .pros-21 {
-        padding: 12px;
-    }
-
-    .pros-22 {
-        font-size: 2.1em;
-        margin-bottom: 9px;
-    }
-
-    /* The fitted-augment list under the card, which is the part of this screen
-       that has more rows than room. */
-    .pros-27 {
-        margin-top: 6px;
-        max-height: 118px;
-        padding-top: 5px;
-    }
-
-    .pros-36 {
-        padding: 6px 9px;
-        margin-bottom: 7px;
+    .pshop-track {
+        height: 8px;
     }
 }
 
 
 /* ==========================================================================
-   The ONU assembly (NPC/ONUAssembly.js)
+   The ONU assembly (NPC/ONUAssemblyUI.js)
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .onu-09 {
+    .onu-emblem {
         width: 28px;
         height: 28px;
     }
 
-    /* The floor's own scrolling record of who said what. */
-    .onu-11 {
+    /* The dossier's own scrolling half of the page. */
+    .onu-dossier-lore {
         max-height: 96px;
         margin-bottom: 8px;
     }
 
-    .onu-13 {
-        margin-top: 8px;
-        padding-top: 6px;
+    .onu-seat {
+        padding: 3px 5px;
     }
 
-    .onu-16 {
-        padding: 4px 5px;
-    }
-
-    .onu-18 {
+    .onu-tally {
         margin-top: 9px;
     }
 
-    .onu-22 {
+    .onu-notice {
         padding: 22px 10px;
     }
 }
@@ -2906,12 +2739,6 @@
         font-size: 23px;
     }
 
-    #cs-mini .cs-close,
-    #hv-mini .cs-close {
-        padding: 2px 10px;
-        font-size: 23px;
-    }
-
     #cs-mini .cs-tabs {
         gap: 5px;
         padding: 8px 10px 0;
@@ -2979,10 +2806,21 @@
 @media (max-width: 1366px) and (max-height: 860px) {
 
     .pas-adv-panel {
-        width: 760px;
-        max-height: 56vh;
-        margin-top: 1vh;
-        padding: 12px 20px 11px;
+        width: 880px;
+        max-height: 74vh;
+        padding: 16px 26px 14px;
+    }
+
+    .pas-adv-title {
+        font-size: 1.55em;
+    }
+
+    .pas-adv-text {
+        font-size: 1.24em;
+    }
+
+    .pas-adv-row {
+        font-size: 1.14em;
     }
 
     .pas-adv-title {
@@ -3005,9 +2843,6 @@
         padding: 5px 12px;
     }
 
-    .pas-adv-hint {
-        margin-top: 6px;
-    }
 }
 
 
@@ -3025,11 +2860,9 @@
    pictures rather than information: the portrait frame, the entity emblem and
    the wiki card glyphs.
 
-   .npc-wiki-grid's `max-height: calc(100vh - 320px)` is left exactly as it is.
-   The 320 is a hand-counted sum of everything standing above the grid, and
-   this block shrinks several of those things: leaving it means the grid is a
-   little shorter than it could be, which costs a row, where recomputing it
-   wrong means it runs off the bottom of the panel.
+   The wiki grid has no height cap of its own any more: the right page is the
+   scroller and the category header is pinned to it, so nothing here has to
+   re-count how tall everything standing above the grid is.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
@@ -3159,15 +2992,11 @@
 
     /* --- The wiki tab: a grid of cards, then a list of entries. */
     .npc-wiki-grid--cards {
-        gap: 8px;
+        gap: 4px;
     }
 
     .npc-wiki-card {
-        padding: 11px 8px 9px;
-    }
-
-    .npc-wiki-card-glyph {
-        font-size: 1.9rem;
+        padding: 4px 8px;
     }
 
     .npc-wiki-entry {
@@ -3327,17 +3156,8 @@
         gap: 4px;
     }
 
-    #world-manage-container .wm-create input,
-    #world-manage-container .wm-create select {
+    #world-manage-container .wm-create input {
         padding: 4px 6px;
-    }
-
-    #world-manage-container .wm-history-list {
-        gap: 9px;
-    }
-
-    #world-manage-container .wm-check-row {
-        padding: 3px 6px;
     }
 }
 
@@ -3437,21 +3257,12 @@
         padding-bottom: 5px;
     }
 
-    .inspect-pockets .inspect-header {
-        gap: 10px;
-        margin-bottom: 8px;
-    }
-
     .inspect-pockets .inspect-actions {
         gap: 5px;
     }
 
     .inspect-pockets .inspect-btn {
         padding: 6px;
-    }
-
-    .inspect-pockets .item-inspect .inspect-meta-grid {
-        margin-bottom: 8px;
     }
 
     .inspect-pockets .item-inspect .inspect-section-title {
@@ -4129,12 +3940,7 @@
         margin: 5px auto 7px;
     }
 
-    .ag-actions {
-        gap: 4px;
-        margin-top: 8px;
-    }
-
-    .ag-action-btn {
+    #menu-container .assets-action {
         padding: 4px 8px;
     }
 }
@@ -4327,8 +4133,9 @@
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .search-weapon-viewport {
-        height: 128px;
+    .search-weapon-viewport,
+    .item-3d-viewport {
+        height: 200px;
         margin: 5px 0;
     }
 }
@@ -4378,13 +4185,6 @@
    --------------------------------------------------------------------------
    Two screens that css/theme.css styles and this file does not, so that the
    next person to notice the gap does not have to work out why twice.
-
-   The battle card hand (BattleSystem/RoguelikeCardSystem.js). Its cards are
-   sized off --rcs-card-w / --rcs-card-h, which come from a plugin parameter,
-   and the absolutes inside a card are tied to that size by hand: .rcs-desc
-   takes `calc(100% - 130px)`, where the 130 is the name bar, the icon and the
-   margins added up. Shrinking any one of them here silently breaks that sum.
-   The handheld answer for this screen is the plugin parameter, not CSS.
 
    The sky chart (GalaxySim/GalaxySimSkyViewer.js). It is an SVG that fills the
    viewport and is panned and zoomed; its type comes through
@@ -4658,7 +4458,6 @@
     #shop-container .weapon-previews-container {
         height: 176px;
         margin-bottom: 8px;
-        padding: 4px;
     }
 
     .detail-scroll {
@@ -4707,10 +4506,6 @@
         margin-bottom: 5px;
     }
 
-    .gauge-bar-outer {
-        margin: 0 8px;
-    }
-
     .detail-effect-chips {
         gap: 4px;
     }
@@ -4738,11 +4533,6 @@
         gap: 12px;
         min-height: 208px;
         margin-bottom: 7px;
-        padding: 6px;
-    }
-
-    .weapon-preview-card {
-        padding: 5px;
     }
 
     #blacksmith-container .weapon-previews-container {

@@ -1644,9 +1644,15 @@
             this._pendingTurnBreak = true;
             let targetStr = '';
             if (this._actionTargets && this._actionTargets.length > 0) {
-                const targetNames = this._actionTargets.map(t => {
-                    return t.isActor() ? NameColorCache.getActorName(t) : NameColorCache.getEnemyName(t);
-                });
+                // Multi-hit actions repeat the same battler once per hit; the
+                // log names each distinct target only once.
+                const seen = [];
+                const targetNames = [];
+                for (const t of this._actionTargets) {
+                    if (!t || seen.includes(t)) continue;
+                    seen.push(t);
+                    targetNames.push(t.isActor() ? NameColorCache.getActorName(t) : NameColorCache.getEnemyName(t));
+                }
                 targetStr = ' ' + targetNames.join(', ');
             }
             let verb = typeof T === 'function' ? T('BattleLog.attacks') : '';

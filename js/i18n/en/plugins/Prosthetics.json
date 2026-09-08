@@ -50,7 +50,6 @@
   "surgicalBlueprint": "SURGICAL BLUEPRINT",
   "graftLimb": "Graft Limb",
   "amputationProtocol": "AMPUTATION PROTOCOL",
-  "strongStyleColor822d2dBrWarningInstalledImpl": " <strong style='color:#822d2d;'><br>WARNING: Installed implant will be permanently lost!</strong>",
   "criticalVitalPartsCannotBeAmputatedWithoutCa": "CRITICAL: Vital parts cannot be amputated without causing terminal patient shock.",
   "amputate": "Amputate",
   "upgradeProtocol": "UPGRADE PROTOCOL",
@@ -67,7 +66,7 @@
   "prostheticUninstalledSuccessfully": "Prosthetic uninstalled successfully.",
   "installTheAdvancedProstheticMicroDeviceInsid": "Install the advanced prosthetic micro-device: {p1} inside the compatible slot.",
   "performFullSwapOfTheCurrentLimbForACustomize": "Perform full swap of the current limb for a customized archetype device: {p1}. Fee includes removal of old limb.",
-  "surgicallyAmputatingWillRemoveAllItsStatBonu": "Surgically amputating {p1} will remove all its stat bonuses and skills permanently.{p2}",
+  "surgicallyAmputatingWillRemoveAllItsStatBonu": "Surgically amputating {p1} will remove all its stat bonuses and skills permanently.",
   "thisSurgeryWillPermanentlyGraftANewOntoSBiol": "This surgery will permanently graft a new {p1} onto {p2}'s biological structure, granting standard bonuses.",
   "selectAnAdvancedMicroChipOrProstheticImplant": "Select an advanced micro-chip or prosthetic implant to graft onto slot: {p1}.",
   "chooseAReplacementDeviceModelToInstallOntoPa": "Choose a replacement device model to install onto patient's: {p1}.",
@@ -99,9 +98,9 @@
     "-1": "None",
     "0": "Testicles",
     "1": "Uterus",
-    "2": "Oviparous",
-    "3": "Plant Spores",
-    "4": "Mitosis"
+    "2": "Oviduct",
+    "3": "Sporangium",
+    "4": "Mitotic Gland"
   },
   "unknown": "Unknown",
   "classless": "Classless",
@@ -157,5 +156,12 @@
   "attachmentPoint": "Attachment Point",
   "chooseAttachmentPoint": "Choose the limb to fit {p1} onto. A hand goes onto a leg as readily as onto an arm.",
   "attachTo": "Fit here",
-  "attachedTo": "Fitted to {p1}"
+  "attachedTo": "Fitted to {p1}",
+  "back": "Back",
+  "abilities": "ABILITIES",
+  "vitals": "VITALS",
+  "free": "FREE",
+  "implantChip": "Implant",
+  "implantWarning": "The installed implant will be permanently lost.",
+  "nothingHere": "Nothing here."
 }

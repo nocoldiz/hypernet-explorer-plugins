@@ -2,6 +2,7 @@
 // AnimatedBattleBackgrounds.js - Refactored v3.0 with Dithered Gradients
 // =============================================================================
 /*:
+ * @target MZ
 * @plugindesc v3.0 Animated-style animated battle backgrounds with realistic moon phases and pixel art dithering
 * @author Omni-Lex (Refactored)
 *
@@ -1169,6 +1170,15 @@
         const mode = ConfigManager.ebBackgrounds;
         const isBattleTest = typeof DataManager !== 'undefined' &&
             typeof DataManager.isBattleTest === 'function' && DataManager.isBattleTest();
+
+        // A fight can start with no map loaded at all: a minigame opened from
+        // the title screen (the fishing lake hooking something hostile) runs on
+        // a throwaway context whose $dataMap was never filled in. There is no
+        // biome and no region to read there, and asking anyway crashes in
+        // Game_Map.width, so the stock battleback is left as it is.
+        if (typeof $dataMap === 'undefined' || !$dataMap) {
+            return;
+        }
 
         // A map with its battleback explicitly set in the editor always wins,
         // overriding biome, forced biome (arena/gauntlet) and random biome alike.

@@ -214,7 +214,9 @@
   "revolution": "REVOLUTION: the {govType} of {power} is overthrown; a provisional government calls an emergency {election}.",
   "assassination": "{name}, {title} of {power}, is assassinated.",
   "politicianDies": "{name} dies at {age}.",
-  "headDies": "{name} dies at {age}. {power} mourns its {title}."
+  "headDies": "{name} dies at {age}. {power} mourns its {title}.",
+  "diagnosed": "{name} has been diagnosed with {disease}. The physicians of {power} give no hope of a cure.",
+  "diesOfIllness": "{name} dies of {disease}. {power} mourns its {title}."
  },
  "note": {
   "coalition": "Coalition formed with {party}.",
@@ -250,7 +252,8 @@
   "wolfpigs": "fed to the wolfpigs after losing da Moot",
   "succession": "killed in the war of succession",
   "assassinated": "assassinated",
-  "naturalCauses": "died of natural causes at {age}"
+  "naturalCauses": "died of natural causes at {age}",
+  "illness": "died of {disease}"
  },
  "report": {
   "noPower": "No hyperpower named \"{power}\".",

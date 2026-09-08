@@ -73,25 +73,25 @@
     // A continental health bureau's terminal, circa 2001: institutional green,
     // flat panels, the same furniture as the other government portals.
     const S = {
-        app: 'display:flex; flex-direction:column; height:100%; background:#eceae1; ' +
-             "font-family:'Tahoma',sans-serif; font-size:15px; color:#1b1b1b;",
+        app: 'display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); ' +
+             "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
         header: 'display:flex; align-items:center; gap:12px; padding:10px 14px; ' +
-                'background:linear-gradient(to bottom,#1f6f5c,#134637); color:#fff; border-bottom:2px solid #0c2f24;',
-        nav: 'width:152px; flex-shrink:0; background:#dedbcf; border-right:1px solid #aca899; padding:8px 0;',
+                'background:linear-gradient(to bottom,var(--xp-green-3),var(--xp-green-2)); color:var(--xp-white); border-bottom:2px solid var(--xp-green-7);',
+        nav: 'width:152px; flex-shrink:0; background:var(--xp-face-6); border-right:1px solid var(--xp-face-shade); padding:8px 0;',
         navItem: 'padding:9px 12px; cursor:pointer; border-left:4px solid transparent; user-select:none;',
-        panel: 'flex:1; overflow-y:auto; padding:14px 16px; background:#f6f5ee; min-width:0;',
-        status: 'display:flex; gap:16px; align-items:center; border-top:1px solid #aca899; ' +
-                'padding:4px 10px; background:#eceae1; font-size:14px; color:#333;',
-        card: 'background:#fff; border:1px solid #cdc9bd; border-radius:3px; padding:10px 12px; margin-bottom:8px;',
-        btn: 'display:inline-block; padding:5px 12px; background:linear-gradient(to bottom,#fdfdfb,#dcd8cc); ' +
-             'border:1px solid #8c887c; border-radius:3px; cursor:pointer; font-size:15px; color:#111; user-select:none;',
-        h: 'margin:0 0 8px; font-size:17px; font-weight:bold; color:#134637;',
-        note: 'color:#5a5a5a; font-size:14px; line-height:1.5;',
-        tile: 'flex:1; min-width:96px; background:#fff; border:1px solid #cdc9bd; border-radius:3px; padding:8px 10px;',
+        panel: 'flex:1; overflow-y:auto; padding:14px 16px; background:var(--xp-face-2); min-width:0;',
+        status: 'display:flex; gap:16px; align-items:center; border-top:1px solid var(--xp-face-shade); ' +
+                'padding:4px 10px; background:var(--xp-face-5); font-size:14px; color:var(--xp-ink-4);',
+        card: 'background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:10px 12px; margin-bottom:8px;',
+        btn: 'display:inline-block; padding:5px 12px; background:linear-gradient(to bottom,var(--xp-paper),#dcd8cc); ' +
+             'border:1px solid var(--xp-face-4); border-radius:3px; cursor:pointer; font-size:15px; color:var(--xp-ink); user-select:none;',
+        h: 'margin:0 0 8px; font-size:17px; font-weight:bold; color:var(--xp-green-2);',
+        note: 'color:var(--xp-ink-soft-2); font-size:14px; line-height:1.5;',
+        tile: 'flex:1; min-width:96px; background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:8px 10px;',
         tileNum: 'font-size:22px; font-weight:bold; line-height:1.2;',
-        tileLbl: 'font-size:13px; color:#5a5a5a; text-transform:uppercase; letter-spacing:0.4px;',
+        tileLbl: 'font-size:13px; color:var(--xp-ink-soft-2); text-transform:uppercase; letter-spacing:0.4px;',
         table: 'width:100%; border-collapse:collapse; font-size:14px;',
-        th: 'text-align:left; padding:4px 6px; border-bottom:1px solid #aca899; color:#134637; font-weight:bold;',
+        th: 'text-align:left; padding:4px 6px; border-bottom:1px solid var(--xp-face-shade); color:var(--xp-green-2); font-weight:bold;',
         td: 'padding:4px 6px; border-bottom:1px solid #e6e3d8;',
     };
 
@@ -164,7 +164,7 @@
                 <span style="width:14px; height:3px; background:${C.dead}; display:inline-block"></span>${T('Eurodemics.deadSoFar')}</span>
               <span style="${S.note} margin-left:auto">${T('Eurodemics.chartFootnote')}</span>
             </div>
-            <div id="ed-chart-wrap" style="position:relative; background:${C.surface}; border:1px solid #cdc9bd; border-radius:3px">
+            <div id="ed-chart-wrap" style="position:relative; background:${C.surface}; border:1px solid var(--xp-face-3); border-radius:3px">
               <svg id="ed-chart" viewBox="0 0 ${w} ${h}" style="width:100%; height:auto; display:block"
                    data-daymin="${dayMin}" data-daymax="${dayMax}" data-padl="${padL}" data-plotw="${plotW}">
                 ${gridLines}
@@ -182,7 +182,7 @@
                 <text x="${padL + plotW}" y="${h - 8}" font-size="9" fill="${C.inkSoft}"
                       text-anchor="end">${escapeHtml(dateOf(dayMax))}</text>
               </svg>
-              <div id="ed-tip" style="position:absolute; display:none; pointer-events:none; background:#fffef7; border:1px solid #8c887c; border-radius:3px; padding:4px 7px; font-size:14px; box-shadow:0 2px 6px rgba(0,0,0,0.25); white-space:nowrap"></div>
+              <div id="ed-tip" style="position:absolute; display:none; pointer-events:none; background:#fffef7; border:1px solid var(--xp-face-4); border-radius:3px; padding:4px 7px; font-size:14px; box-shadow:0 2px 6px rgba(0,0,0,0.25); white-space:nowrap"></div>
             </div>`;
     }
 
@@ -270,7 +270,7 @@
                     <div style="${S.status}">
                         <span>${T('Eurodemics.bulletinLabel')} <b id="ed-date"></b></span>
                         <span>${T('Eurodemics.outbreaksLabel')} <b id="ed-count"></b></span>
-                        <span id="ed-message" style="margin-left:auto; color:#134637"></span>
+                        <span id="ed-message" style="margin-left:auto; color:var(--xp-green-2)"></span>
                     </div>
                 </div>`;
 
@@ -302,7 +302,7 @@
                 item.id = 'ed-tab-' + tab.id;
                 const active = this.tab === tab.id;
                 item.style.cssText = S.navItem +
-                    (active ? 'background:#f6f5ee; border-left-color:#1f6f5c; font-weight:bold;' : '');
+                    (active ? 'background:var(--xp-face-2); border-left-color:var(--xp-green-3); font-weight:bold;' : '');
                 item.textContent = tab.label;
                 item.addEventListener('mouseenter', () => { if (this.tab !== tab.id) item.style.background = '#e7e4d8'; });
                 item.addEventListener('mouseleave', () => { if (this.tab !== tab.id) item.style.background = 'transparent'; });
@@ -463,7 +463,7 @@
                     <b>${T('Eurodemics.yourPositionAt', { place: escapeHtml(placeName(place.key)) })}</b>
                     ${live.length ? lines
                         : `<div style="${S.note}">${T('Eurodemics.noOutbreakHere')}</div>`}
-                    ${ill.length ? `<div style="margin-top:8px; color:#8e2a20">${T('Eurodemics.carriedByParty', { list: escapeHtml(ill.join('; ')) })}</div>`
+                    ${ill.length ? `<div style="margin-top:8px; color:var(--xp-red-3)">${T('Eurodemics.carriedByParty', { list: escapeHtml(ill.join('; ')) })}</div>`
                         : `<div style="${S.note} margin-top:8px">${T('Eurodemics.nobodyIll')}</div>`}
                 </div>`;
         },
@@ -490,7 +490,7 @@
                 const on = epidemic.id === this.selectedId;
                 const chip = this.button(
                     `${epidemic.diseaseName || ES().nameOf(epidemic)} - ${epidemic.origin}`,
-                    S.btn + (on ? ' background:#1f6f5c; color:#fff; border-color:#134637; font-weight:bold;' : ''),
+                    S.btn + (on ? ' background:var(--xp-green-3); color:var(--xp-white); border-color:var(--xp-green-2); font-weight:bold;' : ''),
                     'ed-pick-' + epidemic.id,
                     () => {
                         this.selectedId = epidemic.id;
@@ -527,7 +527,7 @@
                 <div style="${S.card}">
                     <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap">
                         <div style="font-size:17px; font-weight:bold">${escapeHtml(ES().nameOf(epidemic))}</div>
-                        <span style="font-size:13px; padding:1px 7px; border-radius:8px; color:#fff; background:${hysteria ? '#6b4fa8' : '#1f6f5c'}">
+                        <span style="font-size:13px; padding:1px 7px; border-radius:8px; color:var(--xp-white); background:${hysteria ? '#6b4fa8' : '#1f6f5c'}">
                               ${hysteria ? T('Eurodemics.massHysteria') : T('Eurodemics.pathogen')}</span>
                         <span style="${S.note}">${T('Eurodemics.since', { date: escapeHtml(ES().dateStr(epidemic.startDay)) })}</span>
                     </div>

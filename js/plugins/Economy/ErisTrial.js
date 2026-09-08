@@ -191,13 +191,12 @@
   };
   const MOOD_ICON_DEFAULT = 220; // Hourglass
 
-  // Inline IconSet sprite for the trial's DOM pages.
+  // Inline IconSet sprite for the DOM pages. The frame is a computed offset, so
+  // it goes in as custom properties and .eris-icon in css/theme.css draws it.
   function erisIconHTML(iconIndex, size = 20) {
     const x = (iconIndex % 16) * size;
     const y = Math.floor(iconIndex / 16) * size;
-    return `<span class="eris-icon" style="display:inline-block;vertical-align:middle;width:${size}px;height:${size}px;` +
-      `background-image:url('img/system/IconSet.png');background-size:${size * 16}px auto;` +
-      `background-position:-${x}px -${y}px;image-rendering:pixelated;"></span>`;
+    return `<span class="eris-icon" style="--icon-size:${size}px;--icon-x:-${x}px;--icon-y:-${y}px;"></span>`;
   }
 
   function moodIconHTML(mood, size = 20) {
@@ -319,7 +318,6 @@
       s.top      = (r.top + 8 * sy) + 'px';
       s.padding  = `${Math.round(12 * sy)}px ${Math.round(20 * sx)}px`;
       s.minWidth = Math.round(220 * sx) + 'px';
-      s.fontSize = Math.round(16 * sy) + 'px';
     }
 
     _refresh(bounty) {
@@ -1510,6 +1508,11 @@
     return Input.isTriggered('cancel') || TouchInput.isCancelled();
   }
 
+  // The two states of the continue caret. Glyphs rather than words: they are
+  // the same in every language and they name no key.
+  const CARET_WAIT = '▾';
+  const CARET_AUTO = '▸▸';
+
   function waitForAdvance(trial, minReadMs = 260) {
     const log = trial._ensureBook();
     let hint = null;
@@ -1527,16 +1530,17 @@
       let armed = false;
       let active = true;
 
+      // The mark under the newest line is a caret, never a key legend: the
+      // game names no keys (docs/task/ui_fixing.md). One chevron means the
+      // transcript is waiting on the reader, two mean it is running itself.
       const paintHint = () => {
         if (!hint) return;
         hint.classList.toggle('auto', !!trial._autoPlay);
         if (trial._autoPlay) {
-          hint.textContent = T('ErisTrial.line.autoPlaying');
+          hint.textContent = CARET_AUTO;
           hint.classList.add('ready');
         } else {
-          hint.textContent = armed
-            ? `${T('ErisTrial.line.pressEnterToContinue')}   ${T('ErisTrial.line.cancelToAutoPlay')}`
-            : T('ErisTrial.line.pressEnterToContinue');
+          hint.textContent = CARET_WAIT;
           hint.classList.toggle('ready', armed);
         }
       };
@@ -1817,8 +1821,8 @@
 
     _renderBook() {
       const crimesHTML = this.crimes.length > 0
-        ? this.crimes.map(c => `<div class="eris-crime-row"><span class="crime-name">${c.name}</span><span class="crime-bounty">${this.formatEuros(c.bounty)}</span></div>`).join('')
-        : `<div class="eris-no-crimes">${T('ErisTrial.line.noCrimesOnRecord')}</div>`;
+        ? this.crimes.map(c => `<div class="inspect-spec-row"><span class="inspect-spec-label">${c.name}</span><span class="inspect-spec-value">${this.formatEuros(c.bounty)}</span></div>`).join('')
+        : `<div class="ui-empty-text">${T('ErisTrial.line.noCrimesOnRecord')}</div>`;
       const logHTML = this._dialogueLog.map(e => {
         const body = String(e.text).replace(/\r?\n/g, '<br>');
         if (e.who === 'narrator') return `<div class="eris-dialogue-entry narrator">${body}</div>`;
@@ -1827,32 +1831,36 @@
       }).join('');
       this._container.innerHTML = `
         <div class="book-spread">
-          <div class="left-page" style="justify-content:flex-start;">
-            <h2 class="title">${T('ErisTrial.line.theTrial')}</h2>
+          <div class="left-page page-top">
+            <div class="page-header-bar"><h2 class="title">${T('ErisTrial.line.theTrial')}</h2></div>
             <div class="eris-dialogue-log" id="eris-log">${logHTML}</div>
             <div class="eris-choices-panel" id="eris-choices"></div>
           </div>
-          <div class="right-page" style="justify-content:flex-start;">
-            <h2 class="title">Eris</h2>
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-              <span class="eris-mood-badge">${moodIconHTML(this.mood)} ${this.mood}</span>
+          <div class="right-page page-top">
+            <div class="page-header-bar"><h2 class="title">Eris</h2></div>
+            <div class="ui-chip-row">
+              <span class="ui-chip">${moodIconHTML(this.mood)} ${this.mood}</span>
             </div>
-            <h3 class="h3">${T('ErisTrial.line.charges')}</h3>
-            <div class="eris-crimes-list">${crimesHTML}</div>
-            <div class="eris-bounty-total">
+            <h3 class="inspect-section-title">${T('ErisTrial.line.charges')}</h3>
+            <div class="eris-rows">${crimesHTML}</div>
+            <div class="eris-total">
               <span>${T('ErisTrial.line.totalBounty')}</span>
               <span>${this.formatEuros(this.bounty)}</span>
             </div>
-            <div class="eris-chaos-meter">
+            <div class="eris-meter">
               <div class="meter-label">${T('ErisTrial.line.chaosLevel')}</div>
-              <div class="eris-chaos-track"><div class="eris-chaos-fill" id="eris-chaos" style="width:${this.chaos*100}%"></div></div>
+              <div class="eris-meter-track"><div class="eris-meter-fill" id="eris-chaos" style="--fill:${this.chaos * 100}%"></div></div>
             </div>
-            <h3 class="h3">${T('ErisTrial.line.todaySCourt')}</h3>
-            <div class="eris-crimes-list">
-              <div class="eris-crime-row"><span class="crime-name">${T('ErisTrial.line.venue')}</span></div>
-              <div class="eris-no-crimes">${this.court.venue}</div>
-              <div class="eris-crime-row"><span class="crime-name">${T('ErisTrial.line.gallery')}</span></div>
-              <div class="eris-no-crimes">${this.court.gallery}</div>
+            <h3 class="inspect-section-title">${T('ErisTrial.line.todaySCourt')}</h3>
+            <div class="eris-rows">
+              <div class="inspect-spec-row inspect-spec-row--stacked">
+                <span class="inspect-spec-label">${T('ErisTrial.line.venue')}</span>
+                <span class="inspect-spec-value">${this.court.venue}</span>
+              </div>
+              <div class="inspect-spec-row inspect-spec-row--stacked">
+                <span class="inspect-spec-label">${T('ErisTrial.line.gallery')}</span>
+                <span class="inspect-spec-value">${this.court.gallery}</span>
+              </div>
             </div>
           </div>
         </div>`;
@@ -1862,13 +1870,12 @@
 
     _updateTrialUI() {
       const bar = document.getElementById('eris-chaos');
-      if (bar) bar.style.width = `${this.chaos * 100}%`;
+      if (bar) bar.style.setProperty('--fill', `${this.chaos * 100}%`);
     }
 
     _removeTrialUI() {
       if (this._container) {
-        this._container.style.transition = 'opacity 0.2s ease-out';
-        this._container.style.opacity = '0';
+        this._container.classList.add('eris-fading');
         const c = this._container;
         setTimeout(() => { if (c && c.parentNode) c.parentNode.removeChild(c); }, 250);
         this._container = null;
@@ -1941,7 +1948,7 @@
         const readyAt = performance.now() + 200;
         const btns = choices.map((text, i) => {
           const btn = document.createElement('div');
-          btn.className = 'eris-choice-btn' + (i === 0 ? ' selected' : '');
+          btn.className = 'eris-choice-btn focusable' + (i === 0 ? ' selected' : '');
           btn.textContent = text;
           btn.addEventListener('click', () => { if (armed) finish(i); });
           panel.appendChild(btn);
@@ -2081,29 +2088,32 @@
       const lawName = (window.Specializations && window.Specializations.ready)
         ? window.Specializations.levelName(lawLevel)
         : String(lawLevel);
-      const lawRow = `<div class="eris-crime-row"><span class="crime-name">${T('ErisTrial.line.law')}</span><span class="crime-bounty">${esc(lawName)}</span></div>`;
+      const lawRow = `<div class="inspect-spec-row"><span class="inspect-spec-label">${T('ErisTrial.line.law')}</span><span class="inspect-spec-value">${esc(lawName)}</span></div>`;
+
+      const fact = (label, value) =>
+        `<div class="inspect-spec-row"><span class="inspect-spec-label">${label}</span><span class="inspect-spec-value">${value}</span></div>`;
 
       const statRow = option.kind === "none"
-        ? `<div class="eris-no-crimes">${T('ErisTrial.line.nobodySpeaksForYouOnly')}</div>
+        ? `<div class="ui-empty-text">${T('ErisTrial.line.nobodySpeaksForYouOnly')}</div>
            ${lawRow}`
         : `
-          <div class="eris-crime-row"><span class="crime-name">${T('ErisTrial.line.level')}</span><span class="crime-bounty">${option.level}</span></div>
-          <div class="eris-crime-row"><span class="crime-name">INT</span><span class="crime-bounty">${option.int}</span></div>
-          <div class="eris-crime-row"><span class="crime-name">WIS</span><span class="crime-bounty">${option.wis}</span></div>
+          ${fact(T('ErisTrial.line.level'), option.level)}
+          ${fact('INT', option.int)}
+          ${fact('WIS', option.wis)}
           ${lawRow}
-          <div class="eris-crime-row"><span class="crime-name">${T('ErisTrial.line.disposition')}</span><span class="crime-bounty">${this._dispositionLabel(option.disposition)} (${Math.round(option.disposition)})</span></div>`;
+          ${fact(T('ErisTrial.line.disposition'), `${this._dispositionLabel(option.disposition)} (${Math.round(option.disposition)})`)}`;
 
       const feeRow = option.kind === "npc"
-        ? `<div class="eris-bounty-total${affordable ? "" : " eris-fee-short"}">
+        ? `<div class="eris-total${affordable ? "" : " eris-fee-short"}">
              <span>${T('ErisTrial.line.fee')}</span>
              <span>${this.formatEuros(option.fee)}</span>
            </div>`
-        : `<div class="eris-bounty-total"><span>${T('ErisTrial.line.fee')}</span><span>${T('ErisTrial.line.none')}</span></div>`;
+        : `<div class="eris-total"><span>${T('ErisTrial.line.fee')}</span><span>${T('ErisTrial.line.none')}</span></div>`;
 
       const bar = (label, value, cls) => `
         <div class="eris-odds-row">
           <span class="eris-odds-label">${esc(label)}</span>
-          <span class="eris-odds-track"><span class="eris-odds-fill ${cls}" style="width:${Math.round(value * 100)}%"></span></span>
+          <span class="eris-odds-track"><span class="eris-odds-fill ${cls}" style="--fill:${Math.round(value * 100)}%"></span></span>
           <span class="eris-odds-value">${pct(value)}</span>
         </div>`;
 
@@ -2111,24 +2121,24 @@
         bar(T('ErisTrial.line.thrownOutOfCourt'), odds.banned, "ban");
 
       return `
-        <div class="eris-lawyer-card">
-          <div class="eris-lawyer-head">
+        <div class="ui-detail eris-lawyer-card">
+          <div class="ui-detail-head">
             ${sprite}
-            <div>
+            <div class="ui-detail-titles">
               <div class="eris-lawyer-name">${esc(option.name)}</div>
               <div class="eris-lawyer-title">${esc(option.title)}</div>
             </div>
           </div>
-          <div class="eris-crimes-list">${statRow}</div>
+          <div class="eris-rows">${statRow}</div>
           ${feeRow}
-          <h3 class="h3">${T('ErisTrial.line.projectedOutcome')}</h3>
+          <h3 class="inspect-section-title">${T('ErisTrial.line.projectedOutcome')}</h3>
           <div class="eris-odds-list">
             ${bar(T('ErisTrial.line.acquitted'), odds.acquitted, "good")}
             ${bar(T('ErisTrial.line.shortSentence'), odds.shortTerm, "warn")}
             ${bar(T('ErisTrial.line.longSentence'), odds.longTerm, "bad")}
             ${banRow}
           </div>
-          ${affordable ? "" : `<div class="eris-no-crimes">${T('ErisTrial.line.youCannotAffordThis')}</div>`}
+          ${affordable ? "" : `<div class="ui-empty-text">${T('ErisTrial.line.youCannotAffordThis')}</div>`}
         </div>`;
     }
 
@@ -2152,23 +2162,23 @@
       const listHTML = options.map((o, i) => {
         const cost = o.kind === "npc" ? this.formatEuros(o.fee) : (T('ErisTrial.line.free'));
         const poor = o.kind === "npc" && o.fee > gold();
-        return `<div class="eris-choice-btn eris-lawyer-row${poor ? " eris-row-poor" : ""}" data-index="${i}">
+        return `<div class="eris-choice-btn eris-lawyer-row focusable${poor ? " eris-row-poor" : ""}" data-index="${i}" tabindex="0">
                   <span>${esc(o.name)}</span><span class="eris-lawyer-cost">${cost}</span>
                 </div>`;
       }).join("");
 
       container.innerHTML = `
         <div class="book-spread">
-          <div class="left-page" style="justify-content:flex-start;">
-            <h2 class="title">${T('ErisTrial.line.theDefence')}</h2>
-            <div class="eris-brief-note">${T('ErisTrial.line.erisSCourtHasNever')}</div>
-            <div style="display:flex;align-items:center;gap:10px;margin:10px 0;">
-              <span class="eris-mood-badge">${moodIconHTML(this.mood)} ${this.mood}</span>
-              <span class="eris-lawyer-cost">${T('ErisTrial.line.funds')}: ${this.formatEuros(gold())}</span>
+          <div class="left-page page-top">
+            <div class="page-header-bar"><h2 class="title">${T('ErisTrial.line.theDefence')}</h2></div>
+            <div class="ui-prose">${T('ErisTrial.line.erisSCourtHasNever')}</div>
+            <div class="ui-chip-row">
+              <span class="ui-chip">${moodIconHTML(this.mood)} ${this.mood}</span>
+              <span class="ui-chip">${T('ErisTrial.line.funds')}: ${this.formatEuros(gold())}</span>
             </div>
             <div class="eris-choices-panel" id="eris-lawyer-list">${listHTML}</div>
           </div>
-          <div class="right-page" style="justify-content:flex-start;" id="eris-lawyer-card"></div>
+          <div class="right-page page-top" id="eris-lawyer-card"></div>
         </div>`;
 
       const rows = Array.from(container.querySelectorAll(".eris-lawyer-row"));
@@ -2212,8 +2222,7 @@
         // defendant with trained Law still argues their own case, and the maths
         // has to be able to ask them what they know.
         this.lawyer = option;
-        container.style.transition = "opacity 0.2s ease-out";
-        container.style.opacity = "0";
+        container.classList.add("eris-fading");
         setTimeout(() => { if (container.parentNode) container.parentNode.removeChild(container); }, 250);
         done();
       };
@@ -3579,8 +3588,8 @@
 
     _renderBook() {
       const chargesHTML = this.charges.length > 0
-        ? this.charges.map(c => `<div class="eris-crime-row"><span class="crime-name">${c.text}</span><span class="crime-bounty">${c.severity}/100</span></div>`).join('')
-        : `<div class="eris-no-crimes">${T('ErisTrial.line.noCharges')}</div>`;
+        ? this.charges.map(c => `<div class="inspect-spec-row"><span class="inspect-spec-label">${c.text}</span><span class="inspect-spec-value">${c.severity}/100</span></div>`).join('')
+        : `<div class="ui-empty-text">${T('ErisTrial.line.noCharges')}</div>`;
       const logHTML = this._dialogueLog.map(e => {
         const cls = this._entryClass(e.who);
         const speaker = this._speakerLabel(e.who);
@@ -3589,33 +3598,31 @@
         return `<div class="eris-dialogue-entry ${cls}">${head}${body}</div>`;
       }).join('');
       const moodBadge = this.mood
-        ? `<span class="eris-mood-badge">${moodIconHTML(this.mood)} ${REVERSE_MOOD_LABELS()[this.mood]}</span>`
-        : `<span class="eris-mood-badge">${T('ErisTrial.line.pending')}</span>`;
+        ? `<span class="ui-chip">${moodIconHTML(this.mood)} ${REVERSE_MOOD_LABELS()[this.mood]}</span>`
+        : `<span class="ui-chip">${T('ErisTrial.line.pending')}</span>`;
       const personality = this._personalityName();
 
       this._container.innerHTML = `
         <div class="book-spread">
-          <div class="left-page" style="justify-content:flex-start;">
-            <h2 class="title">${T('ErisTrial.line.erisSCourt')}</h2>
+          <div class="left-page page-top">
+            <div class="page-header-bar"><h2 class="title">${T('ErisTrial.line.erisSCourt')}</h2></div>
             <div class="eris-dialogue-log" id="eris-log">${logHTML}</div>
             <div class="eris-choices-panel" id="eris-choices"></div>
           </div>
-          <div class="right-page" style="justify-content:flex-start;">
-            <h2 class="title">${T('ErisTrial.line.defendant')}</h2>
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <div class="right-page page-top">
+            <div class="page-header-bar"><h2 class="title">${T('ErisTrial.line.defendant')}</h2></div>
+            <div class="ui-chip-row">
               ${moodBadge}
+              <span class="ui-chip">${this.defendantName}</span>
+              ${personality ? `<span class="ui-chip">${personality}</span>` : ''}
             </div>
-            <div class="eris-bounty-total" style="border-top:none;margin-top:0;padding-top:0;">
-              <span>${this.defendantName}</span>
-              <span>${personality || ''}</span>
-            </div>
-            <h3 class="h3">${T('ErisTrial.line.charges')}</h3>
-            <div class="eris-crimes-list">${chargesHTML}</div>
-            <div class="eris-bounty-total">
+            <h3 class="inspect-section-title">${T('ErisTrial.line.charges')}</h3>
+            <div class="eris-rows">${chargesHTML}</div>
+            <div class="eris-total">
               <span>${T('ErisTrial.line.caseSeverity')}</span>
               <span>${this.crimeSeverity}/100</span>
             </div>
-            <div class="eris-bounty-total">
+            <div class="eris-total">
               <span>${T('ErisTrial.line.demeanor')}</span>
               <span id="eris-demeanor">${this._demeanorLabel()}</span>
             </div>
@@ -3627,8 +3634,7 @@
 
     _removeUI() {
       if (this._container) {
-        this._container.style.transition = 'opacity 0.2s ease-out';
-        this._container.style.opacity = '0';
+        this._container.classList.add('eris-fading');
         const c = this._container;
         setTimeout(() => { if (c && c.parentNode) c.parentNode.removeChild(c); }, 250);
         this._container = null;
@@ -3701,7 +3707,7 @@
         const readyAt = performance.now() + 200;
         const btns = choices.map((text, i) => {
           const btn = document.createElement('div');
-          btn.className = 'eris-choice-btn' + (i === 0 ? ' selected' : '');
+          btn.className = 'eris-choice-btn focusable' + (i === 0 ? ' selected' : '');
           btn.textContent = text;
           btn.addEventListener('click', () => { if (armed) finish(i); });
           panel.appendChild(btn);

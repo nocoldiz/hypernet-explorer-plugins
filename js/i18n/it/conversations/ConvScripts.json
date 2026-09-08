@@ -455,6 +455,74 @@
         1,
         "Perché anch'io ho avuto bisogno che qualcuno non smettesse di credere in me."
       ]
+    ],
+    [
+      [
+        0,
+        "Hai un aspetto migliore della settimana scorsa."
+      ],
+      [
+        1,
+        "Lo sento. Qualunque cosa fosse, è passata."
+      ]
+    ],
+    [
+      [
+        0,
+        "Ti ho tenuto da parte il pane buono."
+      ],
+      [
+        1,
+        "Non dovevi."
+      ],
+      [
+        0,
+        "Lo so. È proprio quello il punto."
+      ]
+    ],
+    [
+      [
+        0,
+        "Vado dicendo in giro quello che hai fatto."
+      ],
+      [
+        1,
+        "Ti prego, no."
+      ],
+      [
+        0,
+        "Troppo tardi. Lo sa mezza strada."
+      ]
+    ],
+    [
+      [
+        0,
+        "Fai un pezzo di strada con me? Non ho voglia di farla da solo."
+      ],
+      [
+        1,
+        "Volentieri. In due è una strada migliore."
+      ]
+    ],
+    [
+      [
+        0,
+        "Qualsiasi cosa ti serva, basta chiedere."
+      ],
+      [
+        1,
+        "Me lo ricorderò. Di solito lo faccio."
+      ]
+    ],
+    [
+      [
+        0,
+        "Avevi ragione tu e torto io, e lo dico ad alta voce."
+      ],
+      [
+        1,
+        "Una volta l'anno basta. Me lo tengo."
+      ]
     ]
   ],
   "negative": [
@@ -874,6 +942,72 @@
       [
         1,
         "Va bene. Adesso ti sto ascoltando. Hai intenzione di dire qualcosa che valga la pena?"
+      ]
+    ],
+    [
+      [
+        0,
+        "Avevi detto che ci saresti stato."
+      ],
+      [
+        1,
+        "È saltato fuori un imprevisto."
+      ],
+      [
+        0,
+        "Salta sempre fuori qualcosa."
+      ]
+    ],
+    [
+      [
+        0,
+        "Ho sentito quello che vai dicendo di me."
+      ],
+      [
+        1,
+        "Allora hai sentito male."
+      ],
+      [
+        0,
+        "L'ho sentito due volte."
+      ]
+    ],
+    [
+      [
+        0,
+        "Non toccare più la mia roba."
+      ],
+      [
+        1,
+        "Non ho toccato niente."
+      ],
+      [
+        0,
+        "Allora se n'è andata da sola."
+      ]
+    ],
+    [
+      [
+        0,
+        "Ogni volta che ti aiuto ci rimetto."
+      ],
+      [
+        1,
+        "E allora smettila di aiutarmi."
+      ],
+      [
+        0,
+        "Ho tutta l'intenzione."
+      ]
+    ],
+    [
+      [
+        0,
+        "Parli parecchio per uno che non ha fatto niente."
+      ],
+      [
+        1,
+        "E tu non fai niente in silenzio. Ognuno il suo talento."
       ]
     ]
   ],
@@ -1476,6 +1610,90 @@
       [
         1,
         "Richiedimelo fra un anno."
+      ]
+    ],
+    [
+      [
+        0,
+        "Di nuovo i prezzi."
+      ],
+      [
+        1,
+        "Di nuovo i prezzi. Su questa strada finisce sempre lì."
+      ]
+    ],
+    [
+      [
+        0,
+        "Hai dormito?"
+      ],
+      [
+        1,
+        "Un po'. Non abbastanza da vantarmene."
+      ]
+    ],
+    [
+      [
+        0,
+        "Hanno spostato il giorno di mercato."
+      ],
+      [
+        1,
+        "Ovvio. Nessuno ce l'ha chiesto."
+      ]
+    ],
+    [
+      [
+        0,
+        "Giro di facce nuove."
+      ],
+      [
+        1,
+        "Facce nuove ce ne sono sempre. Poche restano."
+      ]
+    ],
+    [
+      [
+        0,
+        "Ci sei stato di recente oltre il bivio?"
+      ],
+      [
+        1,
+        "Non da quando è diventato strano. Tu?"
+      ],
+      [
+        0,
+        "Nemmeno io da allora."
+      ]
+    ],
+    [
+      [
+        0,
+        "Quest'acqua ha un altro sapore questo mese."
+      ],
+      [
+        1,
+        "Vero. E nessuno dice perché."
+      ]
+    ],
+    [
+      [
+        0,
+        "Giornata lunga?"
+      ],
+      [
+        1,
+        "Settimana lunga. La giornata fa solo la sua parte."
+      ]
+    ],
+    [
+      [
+        0,
+        "Come sta la famiglia?"
+      ],
+      [
+        1,
+        "Rumorosa. Sazia. È quasi tutto quello che chiedo."
       ]
     ]
   ],
@@ -2366,6 +2584,106 @@
       [
         1,
         "Sì. Non so quale delle due."
+      ]
+    ],
+    [
+      [
+        0,
+        "Buongiorno."
+      ],
+      [
+        1,
+        "Sì, lo è."
+      ]
+    ],
+    [
+      [
+        0,
+        "Attento allo scalino."
+      ],
+      [
+        1,
+        "Ogni giorno, e ogni giorno me lo scordo."
+      ]
+    ],
+    [
+      [
+        0,
+        "Hai visto il mio martello?"
+      ],
+      [
+        1,
+        "Visto. Non dico dove."
+      ]
+    ],
+    [
+      [
+        0,
+        "C'è silenzio, eh."
+      ],
+      [
+        1,
+        "Troppo, se vuoi il mio parere."
+      ]
+    ],
+    [
+      [
+        0,
+        "È tuo quel cane?"
+      ],
+      [
+        1,
+        "Adesso sì."
+      ]
+    ],
+    [
+      [
+        0,
+        "Notizie dalla strada?"
+      ],
+      [
+        1,
+        "Nessuna, che è il tipo di notizia buona."
+      ]
+    ],
+    [
+      [
+        0,
+        "Sei in piedi presto."
+      ],
+      [
+        1,
+        "Non sono mai andato a letto."
+      ]
+    ],
+    [
+      [
+        0,
+        "Più tardi piove."
+      ],
+      [
+        1,
+        "Piove sempre più tardi."
+      ]
+    ],
+    [
+      [
+        0,
+        "Occhio alla pozzanghera."
+      ],
+      [
+        1,
+        "Occhio alla buca sotto la pozzanghera."
+      ]
+    ],
+    [
+      [
+        0,
+        "Da fare?"
+      ],
+      [
+        1,
+        "Abbastanza per lamentarsi, non abbastanza per camparci."
       ]
     ]
   ]

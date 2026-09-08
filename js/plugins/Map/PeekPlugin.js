@@ -149,11 +149,11 @@
             this.hookLockpickScene();
 
             // Start lockpick minigame on standard difficulty
-            const difficulty = (typeof LockpickTetris !== 'undefined' && LockpickTetris.defaultDifficulty) ? LockpickTetris.defaultDifficulty : 5;
-            if (typeof LockpickTetris !== 'undefined') {
-                LockpickTetris.start(difficulty, 0, 0, '', '');
+            const difficulty = (typeof UnlockingBlocks !== 'undefined' && UnlockingBlocks.defaultDifficulty) ? UnlockingBlocks.defaultDifficulty : 5;
+            if (typeof UnlockingBlocks !== 'undefined') {
+                UnlockingBlocks.start(difficulty, 0, 0, '', '');
             } else {
-                console.error("LockpickTetris is not defined!");
+                console.error("UnlockingBlocks is not defined!");
                 this._peekingWithLockpick = false;
             }
         },
@@ -177,10 +177,10 @@
         },
 
         hookLockpickScene: function() {
-            if (typeof Scene_LockpickTetris !== 'undefined' && !Scene_LockpickTetris._peekHooked) {
-                Scene_LockpickTetris._peekHooked = true;
-                const _Scene_LockpickTetris_popScene = Scene_LockpickTetris.prototype.popScene;
-                Scene_LockpickTetris.prototype.popScene = function() {
+            if (typeof Scene_UnlockingBlocks !== 'undefined' && !Scene_UnlockingBlocks._peekHooked) {
+                Scene_UnlockingBlocks._peekHooked = true;
+                const _Scene_UnlockingBlocks_popScene = Scene_UnlockingBlocks.prototype.popScene;
+                Scene_UnlockingBlocks.prototype.popScene = function() {
                     if (PeekSystem.isPeeking && PeekSystem._peekingWithLockpick) {
                         if (this.success) {
                             // Play sound lock_01.ogg
@@ -192,7 +192,7 @@
                         }
                         PeekSystem._peekingWithLockpick = false;
                     }
-                    _Scene_LockpickTetris_popScene.call(this);
+                    _Scene_UnlockingBlocks_popScene.call(this);
                 };
             }
         },

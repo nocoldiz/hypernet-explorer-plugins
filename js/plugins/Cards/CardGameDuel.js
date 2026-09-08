@@ -33,6 +33,13 @@
  * Whoever has more monsters left standing wins, ties broken on the summed stats
  * of the survivors.
  *
+ * HYPER CARD ARENA (window.CardArena, app id app-card-arena) is this duel
+ * played against the machine from the Hypernet desktop: pick your own deck or
+ * a rolled one, pick how good the opponent is, and play one match or a
+ * straight knock-out bracket of eight. A bracket charges at the door, pays for
+ * every round won and pays the purse and a prize for the title; losing a round
+ * ends it. The run lives on $gameSystem, so it survives a save.
+ *
  * Requires Cards/CardGameCore.js.
  */
 
@@ -813,6 +820,8 @@
     settle(winner) {
       if (this._settled) return;
       this._settled = true;
+      // What the arena reads when the table is cleared (window.CardArena).
+      this._finishWinner = winner;
       const CGx = CG();
       const won = winner === 0, lost = winner === 1;
       const kind = won ? "won" : lost ? "lost" : "draw";
@@ -988,14 +997,27 @@
     // Opening the won pack once the banner is dismissed, so the reward is the
     // last thing that happens rather than something buried under a banner.
     popScene() {
+      // Whoever set the match up is told how it went once the table is
+      // actually gone: a bracket starts its next round off this. Walking out
+      // of an unsettled match is reported as a loss, because that is what it
+      // is to everyone waiting on the result.
+      const finish = this._config && this._config.onFinish;
+      const winner = this._finishWinner == null ? 1 : this._finishWinner;
+      const report = (delay) => {
+        if (!finish || this._reported) return;
+        this._reported = true;
+        setTimeout(() => { try { finish(winner); } catch (e) { console.error(e); } }, delay);
+      };
       if (this._pendingPack && this._pendingPack.length && window.CardBooster) {
         const keys = this._pendingPack;
         this._pendingPack = null;
         super.popScene();
         setTimeout(() => { try { window.CardBooster.open(keys); } catch (e) { /* optional */ } }, 260);
+        report(560);
         return;
       }
       super.popScene();
+      report(260);
     }
 
     //-------------------------------------------------------------------------
@@ -1298,14 +1320,17 @@
       if (card.lore === undefined) card.lore = CGx.cardText(card.key, card.seed);
       // An effect card has a rule to read, not a stat block, and while one is
       // half played the panel says what it is waiting for.
+      // The panel is the game's right column: the shared stat block, the shared
+      // gold heading and the shared prose measure, nothing inked in the markup.
       const body = effect
         ? (this._pendingSwap != null
-          ? `<div class="cd-lore" style="color:#9fe8ff">${escapeHtml(T("CardGame.duel.pickSecondTile"))}</div>` : "")
-        : `<table>${CGx.STATS.map((id) =>
-          `<tr><td>${escapeHtml(CGx.statLabel(id))}</td><td>${stats[id]}</td></tr>`).join("")}</table>`;
+          ? `<div class="cd-prompt">${escapeHtml(T("CardGame.duel.pickSecondTile"))}</div>` : "")
+        : `<div class="inspect-section-title">${escapeHtml(T("CardGame.col.statsHeading"))}</div>
+           <div class="inspect-spec-grid">${CGx.STATS.map((id) =>
+             `<div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(CGx.statLabel(id))}</span><span class="inspect-spec-value">${stats[id]}</span></div>`).join("")}</div>`;
       panel.innerHTML = `
         <h3>${escapeHtml(CGx.nameOf(card.key))}</h3>
-        <div style="font-size:0.878rem; opacity:.8; margin-bottom:3px">${escapeHtml(
+        <div class="ui-detail-sub">${escapeHtml(
           effect ? T("CardGame.type.effect") : CGx.rarityName(CGx.rarityOf(card.key)))}</div>
         ${body}
         <div class="cd-lore">${escapeHtml(card.lore || "")}</div>`;
@@ -1362,6 +1387,386 @@
       });
     }
   };
+
+  //===========================================================================
+  // Hyper Card Arena: the machine across the table, and the brackets
+  //===========================================================================
+  // A Hypernet program (the OS draws the window, Cards/CardGameDuel.js owns
+  // the duel underneath it) for playing somebody who is not there. Three
+  // decisions and nothing else: the deck you sit down with, how good the
+  // machine is, and whether tonight is one match or a bracket.
+  //
+  // A BRACKET is straight knock-out over eight entrants, so three rounds:
+  // quarter, semi, final. An entry fee is paid once at the door, every round
+  // won pays out on its own, and the title pays the purse and a prize on top
+  // of it. Losing ends the night: there is no repechage and the fee stays
+  // paid. The run lives on $gameSystem so it survives a save mid-bracket.
+
+  const ARENA_APP_ID = "app-card-arena";
+  const ARENA_WINDOW_ID = "win-card-arena";
+  const ARENA_ICON = 220;
+
+  // The machine, by how well it plays. `power` is the ceiling its rolled deck
+  // is allowed to reach up the rarity ladder (CardGame.randomDeck), `fee` what
+  // a bracket at that level costs to enter, in gold.
+  const ARENA_LEVELS = [
+    { power: 0.20, fee: 1000 },
+    { power: 0.35, fee: 2500 },
+    { power: 0.50, fee: 6000 },
+    { power: 0.70, fee: 14000 },
+    { power: 0.90, fee: 30000 }
+  ];
+  const ARENA_ROUNDS = 3;          // eight entrants: quarter, semi, final
+  const ARENA_ENTRANTS = 1 << ARENA_ROUNDS;
+  // What a round won pays, as a multiple of the entry fee. The final is worth
+  // most of the pot, which is what makes the last match the one that matters.
+  const ARENA_ROUND_PAY = [0.6, 1.2, 3.2];
+
+  const arenaLevel = (index) => ARENA_LEVELS[CG().clamp(Math.floor(index || 0), 0, ARENA_LEVELS.length - 1)];
+
+  function arenaLevelName(index) {
+    const names = (typeof T !== "undefined" && T.list) ? T.list("CardGame.arena.levels") : [];
+    return names[index] || T("CardGame.arena.levelFallback", { n: index + 1 });
+  }
+
+  // The handles the machine plays under. Seeded on the run, so a bracket has
+  // the same field from the door to the final rather than fresh strangers.
+  function arenaRivals(seed, count) {
+    const CGx = CG();
+    const pool = (typeof T !== "undefined" && T.list) ? T.list("CardGame.arena.rivals") : [];
+    const rng = CGx.makeRng((seed >>> 0) || 1);
+    const out = [];
+    const taken = new Set();
+    for (let i = 0; i < count; i++) {
+      let name = null;
+      for (let attempt = 0; attempt < 16 && pool.length; attempt++) {
+        const pick = pool[Math.floor(rng() * pool.length) % pool.length];
+        if (!taken.has(pick)) { name = pick; break; }
+      }
+      if (!name) name = T("CardGame.arena.rivalFallback", { n: i + 1 });
+      taken.add(name);
+      out.push(name);
+    }
+    return out;
+  }
+
+  function arenaRoundName(round) {
+    const names = (typeof T !== "undefined" && T.list) ? T.list("CardGame.arena.rounds") : [];
+    return names[round] || T("CardGame.arena.roundFallback", { n: round + 1 });
+  }
+
+  // What a round won pays at this level.
+  function arenaRoundPrize(levelIndex, round) {
+    const level = arenaLevel(levelIndex);
+    const rate = ARENA_ROUND_PAY[CG().clamp(round, 0, ARENA_ROUND_PAY.length - 1)];
+    return Math.round(level.fee * rate);
+  }
+
+  // The trophy: an ordinary item, picked out of the shelf of everything that
+  // has a price, as far up it as the level reaches. Built the way the arena
+  // gauntlet builds its own streak pool, so the prize is real merchandise
+  // rather than a thing invented for the occasion.
+  function arenaPrizeItem(levelIndex, rng) {
+    if (typeof $dataItems === "undefined") return null;
+    const pool = [];
+    for (let i = 1; i < $dataItems.length; i++) {
+      const item = $dataItems[i];
+      if (!item || !item.name || !item.name.trim()) continue;
+      if (item.itypeId !== 1 || !(item.price > 0)) continue;
+      pool.push(item);
+    }
+    if (!pool.length) return null;
+    pool.sort((a, b) => a.price - b.price);
+    const tier = (CG().clamp(levelIndex, 0, ARENA_LEVELS.length - 1) + 1) / ARENA_LEVELS.length;
+    const centre = Math.floor(tier * (pool.length - 1));
+    const span = Math.max(1, Math.floor(pool.length * 0.06));
+    const lo = Math.max(0, centre - span);
+    const hi = Math.min(pool.length - 1, centre + span);
+    const roll = rng ? rng() : Math.random();
+    return pool[lo + Math.floor(roll * (hi - lo + 1))] || pool[lo];
+  }
+
+  // The deck the player sits down with: their own, or one rolled for them.
+  function arenaPlayerDeck(deckChoice) {
+    const CGx = CG();
+    if (deckChoice === "random") return CGx.randomDeck(16, 0.5);
+    const own = CGx.playableDeck();
+    return own.length >= CGx.DECK_MIN ? own : CGx.randomDeck(16, 0.4);
+  }
+
+  function arenaRun() {
+    const s = typeof $gameSystem !== "undefined" ? $gameSystem : null;
+    return (s && s._cardTournament) || null;
+  }
+
+  function setArenaRun(run) {
+    if (typeof $gameSystem !== "undefined" && $gameSystem) $gameSystem._cardTournament = run || null;
+  }
+
+  function arenaToast(text, severity) {
+    try {
+      window.ParchmentToast && window.ParchmentToast.show(text, { severity: severity || "info", duration: 200 });
+    } catch (e) { /* cosmetic */ }
+  }
+
+  window.CardArena = {
+    LEVELS: ARENA_LEVELS,
+    ROUNDS: ARENA_ROUNDS,
+    ENTRANTS: ARENA_ENTRANTS,
+    levelName: arenaLevelName,
+    roundName: arenaRoundName,
+    roundPrize: arenaRoundPrize,
+    rivals: arenaRivals,
+    prizeItem: arenaPrizeItem,
+    playerDeck: arenaPlayerDeck,
+    entryFee: (levelIndex) => arenaLevel(levelIndex).fee,
+    // The whole purse of a run won from the door: every round plus the final.
+    purse: (levelIndex) => ARENA_ROUND_PAY.reduce((sum, rate, round) => sum + arenaRoundPrize(levelIndex, round), 0),
+    run: arenaRun,
+
+    // One match against the machine, nothing staked and nothing owed.
+    startMatch(levelIndex, deckChoice) {
+      const CGx = window.CardGame;
+      if (!CGx) return false;
+      const level = arenaLevel(levelIndex);
+      const rivals = arenaRivals(CGx.rollSeed(), 1);
+      return window.CardDuel.start({
+        playerDeck: arenaPlayerDeck(deckChoice),
+        opponentDeck: CGx.randomDeck(16, level.power),
+        opponentName: rivals[0],
+        practice: false
+      });
+    },
+
+    // Paying at the door. The fee is taken once; everything after it is the
+    // bracket paying out.
+    enter(levelIndex, deckChoice) {
+      const CGx = window.CardGame;
+      if (!CGx) return { ok: false, reason: "unavailable" };
+      const level = arenaLevel(levelIndex);
+      if (typeof $gameParty === "undefined" || $gameParty.gold() < level.fee) {
+        return { ok: false, reason: "fee", fee: level.fee };
+      }
+      $gameParty.loseGold(level.fee);
+      const seed = CGx.rollSeed();
+      setArenaRun({
+        level: CGx.clamp(Math.floor(levelIndex || 0), 0, ARENA_LEVELS.length - 1),
+        deck: deckChoice === "random" ? "random" : "own",
+        round: 0,
+        seed,
+        rivals: arenaRivals(seed, ARENA_ROUNDS),
+        won: 0
+      });
+      this.playRound();
+      return { ok: true, fee: level.fee };
+    },
+
+    // The next match of a bracket already paid for.
+    playRound() {
+      const CGx = window.CardGame;
+      const run = arenaRun();
+      if (!CGx || !run) return false;
+      const level = arenaLevel(run.level);
+      const rival = (run.rivals || [])[run.round] || T("CardGame.arena.rivalFallback", { n: run.round + 1 });
+      arenaToast(T("CardGame.arena.roundOpens", { round: arenaRoundName(run.round), rival }), "info");
+      return window.CardDuel.start({
+        playerDeck: arenaPlayerDeck(run.deck),
+        // Every round is harder than the last: the field thins towards
+        // somebody who deserved to reach the final.
+        opponentDeck: CGx.randomDeck(16, CGx.clamp(level.power + run.round * 0.06, 0, 1)),
+        opponentName: rival,
+        practice: true,
+        onFinish: (winner) => window.CardArena.settleRound(winner)
+      });
+    },
+
+    // How a round of the bracket ended. Anything but a win is elimination:
+    // walking out of the match counts as losing it.
+    settleRound(winner) {
+      const run = arenaRun();
+      if (!run) return null;
+      if (winner !== 0) {
+        setArenaRun(null);
+        arenaToast(T("CardGame.arena.knockedOut", { round: arenaRoundName(run.round) }), "bad");
+        return { ok: false, eliminated: true, round: run.round };
+      }
+
+      const prize = arenaRoundPrize(run.level, run.round);
+      if (typeof $gameParty !== "undefined") $gameParty.gainGold(prize);
+      try { window.ParchmentToast && window.ParchmentToast.gold(prize); } catch (e) { /* cosmetic */ }
+      run.won = (run.won || 0) + 1;
+      run.round += 1;
+
+      if (run.round < ARENA_ROUNDS) {
+        setArenaRun(run);
+        arenaToast(T("CardGame.arena.roundWon", { round: arenaRoundName(run.round - 1), amount: euros(prize) }), "good");
+        // The next match starts once the banner of the last one is gone.
+        setTimeout(() => { try { window.CardArena.playRound(); } catch (e) { /* the run keeps */ } }, 700);
+        return { ok: true, round: run.round, prize, done: false };
+      }
+
+      // The title.
+      setArenaRun(null);
+      const item = arenaPrizeItem(run.level, null);
+      if (item && typeof $gameParty !== "undefined") $gameParty.gainItem(item, 1);
+      arenaToast(T("CardGame.arena.championed", {
+        level: arenaLevelName(run.level),
+        amount: euros(prize),
+        item: item ? item.name : T("CardGame.arena.noPrize")
+      }), "good");
+      return { ok: true, round: run.round, prize, item, done: true };
+    }
+  };
+
+  //===========================================================================
+  // The arena program
+  //===========================================================================
+
+  function arenaLaunch() {
+    const OS = window.HypernetOS;
+    const CGx = window.CardGame;
+    if (!OS || !OS.Syscalls || !CGx) return;
+
+    let level = 0;
+    let deck = "own";
+    let mode = "match";
+
+    const contentHTML = `
+      <div style="display:flex; flex-direction:column; height:100%; font-family:Tahoma,sans-serif; background:var(--xp-bg); overflow:hidden">
+        <div style="background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%); padding:10px 16px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0">
+          <div style="color:var(--xp-gold); font-weight:bold; font-size:17px; letter-spacing:2px">${escapeHtml(T("CardGame.arena.banner"))}</div>
+          <div style="color:#cfe6ff; font-size:13px; margin-top:2px">${escapeHtml(T("CardGame.arena.tagline"))}</div>
+        </div>
+        <div style="flex:1; overflow-y:auto; padding:10px 14px; display:flex; flex-direction:column; gap:10px">
+          <div>
+            <div style="font-size:13px; color:var(--xp-ink-soft); letter-spacing:1px; margin-bottom:4px">${escapeHtml(T("CardGame.arena.deckHeading"))}</div>
+            <div style="display:flex; gap:6px">
+              <button id="ca-deck-own" class="focusable" data-focus-key="ca-deck-own" tabindex="0"
+                      style="flex:1; padding:6px 0; font-size:14px; font-family:Tahoma,sans-serif; cursor:pointer; border:1px solid var(--xp-steel)">${escapeHtml(T("CardGame.arena.deckOwn"))}</button>
+              <button id="ca-deck-random" class="focusable" data-focus-key="ca-deck-random" tabindex="0"
+                      style="flex:1; padding:6px 0; font-size:14px; font-family:Tahoma,sans-serif; cursor:pointer; border:1px solid var(--xp-steel)">${escapeHtml(T("CardGame.arena.deckRandom"))}</button>
+            </div>
+            <div id="ca-deck-note" style="font-size:12px; color:var(--xp-ink-faint); margin-top:4px">&nbsp;</div>
+          </div>
+          <div>
+            <div style="font-size:13px; color:var(--xp-ink-soft); letter-spacing:1px; margin-bottom:4px">${escapeHtml(T("CardGame.arena.levelHeading"))}</div>
+            <div id="ca-levels" style="display:flex; flex-direction:column; gap:4px"></div>
+          </div>
+          <div>
+            <div style="font-size:13px; color:var(--xp-ink-soft); letter-spacing:1px; margin-bottom:4px">${escapeHtml(T("CardGame.arena.modeHeading"))}</div>
+            <div style="display:flex; gap:6px">
+              <button id="ca-mode-match" class="focusable" data-focus-key="ca-mode-match" tabindex="0"
+                      style="flex:1; padding:6px 0; font-size:14px; font-family:Tahoma,sans-serif; cursor:pointer; border:1px solid var(--xp-steel)">${escapeHtml(T("CardGame.arena.modeMatch"))}</button>
+              <button id="ca-mode-bracket" class="focusable" data-focus-key="ca-mode-bracket" tabindex="0"
+                      style="flex:1; padding:6px 0; font-size:14px; font-family:Tahoma,sans-serif; cursor:pointer; border:1px solid var(--xp-steel)">${escapeHtml(T("CardGame.arena.modeBracket"))}</button>
+            </div>
+          </div>
+          <div id="ca-summary" style="background:var(--xp-white); border:1px solid var(--xp-silver-3); padding:9px 12px; font-size:13px; color:var(--xp-ink-3); line-height:1.6"></div>
+          <button id="ca-start" class="focusable" data-focus-key="ca-start" tabindex="0"
+                  style="width:100%; padding:10px; background:linear-gradient(135deg, var(--xp-navy-7), var(--xp-sky)); color:var(--xp-gold); border:1px solid var(--xp-sky-3); font-size:16px; font-weight:bold; font-family:Tahoma,sans-serif; letter-spacing:1.5px; cursor:pointer">${escapeHtml(T("CardGame.arena.start"))}</button>
+        </div>
+        <div id="ca-status" style="border-top:1px solid var(--xp-ink-pale-2); padding:3px 10px; background:var(--xp-bg); font-size:13px; color:var(--xp-text-muted); flex-shrink:0">&nbsp;</div>
+      </div>`;
+
+    const win = OS.Syscalls.createWindow({
+      id: ARENA_WINDOW_ID,
+      title: T("CardGame.arena.title"),
+      contentHTML,
+      width: 560,
+      height: 520,
+      icon: ARENA_ICON
+    });
+
+    const el = (id) => win.querySelector("#" + id);
+    const paint = (btn, on) => {
+      btn.style.background = on ? "linear-gradient(180deg,var(--xp-sky-2),var(--xp-navy-7))" : "#ece9d8";
+      btn.style.color = on ? "#ffffff" : "#333333";
+    };
+
+    function renderLevels() {
+      el("ca-levels").innerHTML = ARENA_LEVELS.map((entry, i) => `
+        <button class="focusable" data-focus-key="ca-level-${i}" data-level="${i}" tabindex="0"
+                style="display:flex; justify-content:space-between; align-items:center; padding:6px 10px; font-size:14px; font-family:Tahoma,sans-serif; cursor:pointer; border:1px solid var(--xp-steel)">
+          <span>${escapeHtml(arenaLevelName(i))}</span>
+          <span style="font-size:12px">${escapeHtml(T("CardGame.arena.feeTag", { amount: euros(entry.fee) }))}</span>
+        </button>`).join("");
+      win.querySelectorAll("[data-level]").forEach((btn) => {
+        paint(btn, Number(btn.dataset.level) === level);
+        btn.addEventListener("click", () => {
+          level = Number(btn.dataset.level);
+          playSe("Cursor1", 70, 100);
+          render();
+        });
+      });
+    }
+
+    function render() {
+      paint(el("ca-deck-own"), deck === "own");
+      paint(el("ca-deck-random"), deck === "random");
+      paint(el("ca-mode-match"), mode === "match");
+      paint(el("ca-mode-bracket"), mode === "bracket");
+      renderLevels();
+
+      const own = CGx.playableDeck();
+      el("ca-deck-note").textContent = deck === "own"
+        ? (own.length >= CGx.DECK_MIN
+          ? T("CardGame.arena.deckOwnNote", { n: own.length })
+          : T("CardGame.arena.deckOwnShort", { min: CGx.DECK_MIN }))
+        : T("CardGame.arena.deckRandomNote");
+
+      const fee = window.CardArena.entryFee(level);
+      el("ca-summary").innerHTML = mode === "bracket"
+        ? escapeHtml(T("CardGame.arena.summaryBracket", {
+          entrants: ARENA_ENTRANTS,
+          rounds: ARENA_ROUNDS,
+          fee: euros(fee),
+          purse: euros(window.CardArena.purse(level))
+        }))
+        : escapeHtml(T("CardGame.arena.summaryMatch", { level: arenaLevelName(level) }));
+    }
+
+    function start() {
+      if (mode === "bracket" && $gameParty.gold() < window.CardArena.entryFee(level)) {
+        playSe("Buzzer1", 70, 100);
+        const line = el("ca-status");
+        line.textContent = T("CardGame.arena.cannotAfford", { amount: euros(window.CardArena.entryFee(level)) });
+        line.style.color = "#8B1A00";
+        return;
+      }
+      playSe("Casino/card_place_1", 80, 105);
+      const chosen = { level, deck, mode };
+      OS.WindowManager.closeWindow(win);
+      SceneManager.pop();
+      // The desktop leaves the stage before the table is set, the same way the
+      // Colosseum program hands over to a fight.
+      setTimeout(() => {
+        try {
+          if (chosen.mode === "bracket") window.CardArena.enter(chosen.level, chosen.deck);
+          else window.CardArena.startMatch(chosen.level, chosen.deck);
+        } catch (e) {
+          console.error("CardArena: could not start the match.", e);
+        }
+      }, 320);
+    }
+
+    el("ca-deck-own").addEventListener("click", () => { deck = "own"; playSe("Cursor1", 70, 100); render(); });
+    el("ca-deck-random").addEventListener("click", () => { deck = "random"; playSe("Cursor1", 70, 100); render(); });
+    el("ca-mode-match").addEventListener("click", () => { mode = "match"; playSe("Cursor1", 70, 100); render(); });
+    el("ca-mode-bracket").addEventListener("click", () => { mode = "bracket"; playSe("Cursor1", 70, 100); render(); });
+    el("ca-start").addEventListener("click", start);
+    render();
+  }
+
+  if (window.HypernetOS) {
+    window.HypernetOS.registerApp({
+      id: ARENA_APP_ID,
+      name: T("CardGame.arena.title"),
+      icon: ARENA_ICON,
+      category: "games",
+      desktopShortcut: true,
+      launchFn: arenaLaunch
+    });
+  }
 
   const startRandom = (args) => {
     const CGx = window.CardGame;

@@ -1,4 +1,5 @@
 /*:
+ * @target MZ
  * @plugindesc Allows for breaking/digging walls at runtime
  * @author Omni-Lex
  *

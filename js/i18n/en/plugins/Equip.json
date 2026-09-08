@@ -30,5 +30,18 @@
   "slotMainHand": "Main Hand",
   "slotOffHand": "Off Hand",
   "slotExtraHand": "Hand {n}",
-  "slotMouth": "Mouth"
+  "damageType": "Damage Type",
+  "weaponType": "Weapon Type",
+  "slotMouth": "Mouth",
+  "short": {
+    "hp": "HP",
+    "mp": "MP",
+    "str": "STR",
+    "con": "CON",
+    "int": "INT",
+    "wis": "WIS",
+    "dex": "DEX",
+    "psi": "PSI"
+  },
+  "otherGroup": "Other"
 }

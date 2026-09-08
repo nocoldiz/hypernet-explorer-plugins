@@ -72,12 +72,12 @@
         // A choice that names a walking sheet shows it: the vehicle board is
         // read by shape before it is read by name.
         const spriteHtml = ch.sprite
-          ? `<div class="cc-option-sprite" style="${this.getSpriteStyle(ch.sprite, 0)}; margin:0 auto 6px;"></div>`
+          ? `<div class="cc-option-sprite" style="${this.getSpriteStyle(ch.sprite, 0)}"></div>`
           : "";
         return `
           <div class="cc-card-option ${isSelected ? 'selected' : ''}" onclick="SceneManager._scene.onOptionCardClick(${index})">
             ${spriteHtml}
-            <div class="cc-option-title" style="font-size:1.18rem; margin:0 auto; text-align:center;">${ch.name || ""}</div>
+            <div class="cc-option-title cc-option-title--wide">${ch.name || ""}</div>
           </div>
         `;
       }).join("");
@@ -85,12 +85,12 @@
       const description = this.cleanText(choice.description || "");
 
       return `
-        <div class="cc-page cc-page-full" style="display:flex; flex-direction:column; padding: 24px 36px; width:100%; box-sizing:border-box;">
-          <div class="cc-class-header" style="text-align:center; margin-bottom:16px; display:flex; flex-direction:column; align-items:center; gap:6px;">
-            <h2 class="cc-header-gothic" style="font-size:2.4rem; margin:0; color:#ffd700; font-family:'Lora',serif;">${choice.name || (stepData && stepData.title) || ""}</h2>
-            ${description ? `<p style="font-size:1.18rem; line-height:1.45; color:#ded1c1; text-align:center; margin:0; max-width:850px; font-style:italic;">${description}</p>` : ''}
+        <div class="cc-page cc-page-full cc-col cc-page-roomy">
+          <div class="cc-class-header cc-col cc-col-gap-2 cc-header-block">
+            <h2 class="cc-header-gothic cc-title-display">${choice.name || (stepData && stepData.title) || ""}</h2>
+            ${description ? `<p class="cc-lede">${description}</p>` : ''}
           </div>
-          <div class="cc-select-grid cc-compact cc-two-col" style="flex:1; min-height:0; overflow-y:auto; align-content:start; gap:10px; width:100%;">
+          <div class="cc-select-grid cc-compact cc-two-col cc-scroll-pane cc-grid-start">
             ${optionCards}
           </div>
         </div>
@@ -182,7 +182,7 @@
       const emptyHtml = `<div class="cc-class-empty">${ccT('CharCreate.noClassMatches', 'No class matches that search.')}</div>`;
 
       return `
-        <div class="cc-page cc-page-left cc-class-board" style="display:flex; flex-direction:column;">
+        <div class="cc-page cc-page-left cc-class-board cc-col">
           <input type="text" class="cc-bio-select cc-class-search" value="${query.replace(/"/g, '&quot;')}"
                  placeholder="${ccT('CharCreate.search', 'Search...')}"
                  oninput="SceneManager._scene.onClassSearch(this.value)" />
@@ -217,8 +217,8 @@
       // Random / browse commands have no dossier to show, only their own line.
       if (!c) {
         return `
-          <div class="cc-page cc-page-right cc-class-detail" style="display:flex; flex-direction:column; justify-content:center;">
-            <h2 class="cc-header-gothic" style="text-align:center;">${choice.name || ""}</h2>
+          <div class="cc-page cc-page-right cc-class-detail cc-col cc-col-centered">
+            <h2 class="cc-header-gothic cc-text-centered">${choice.name || ""}</h2>
             <p class="cc-class-quote">${this.cleanText(choice.description || "")}</p>
           </div>
         `;
@@ -301,7 +301,7 @@
         if (!sk) return "";
         return this._ccLoadoutRowHtml(sk.iconIndex || 79, window.CCDbName(sk),
           `${ccT('CharCreate.abbrev.level', 'Lv')} ${l.level}`,
-          { valueColor: '#ffd700', hover: this._ccHoverAttrs("skill", sk.id) });
+          { valueColor: 'var(--text-primary-hover)', hover: this._ccHoverAttrs("skill", sk.id) });
       };
       const roadmapLow = sortedLearnings.filter((l) => l.level <= 50).map(roadmapRowHtml).join("");
       const roadmapHigh = sortedLearnings.filter((l) => l.level > 50).map(roadmapRowHtml).join("");
@@ -319,27 +319,26 @@
         ? `<div class="cc-badge-wrap">${badges.join("")}</div>` : "";
 
       return `
-        <div class="cc-page cc-page-right cc-class-detail" style="display:flex; flex-direction:column;">
+        <div class="cc-page cc-page-right cc-class-detail cc-col">
           <div class="cc-class-detail-head">
-            <h2 class="cc-header-gothic" style="margin:0;">${window.CCDbName(c)}</h2>
-            ${showElement ? `<div class="cc-badge-wrap" style="justify-content:center;">
+            <h2 class="cc-header-gothic cc-flush">${window.CCDbName(c)}</h2>
+            ${showElement ? `<div class="cc-badge-wrap cc-row-centered">
               <span class="cc-element-badge${isCurrent ? ' good' : ''}">${elementValue}</span>
             </div>` : ''}
             ${note ? `<p class="cc-class-quote">"${note}"</p>` : ''}
           </div>
 
           <div class="cc-class-detail-body">
-            ${card(ccT('CharCreate.classProfile', 'Class Profile'), metaRows + passiveHtml)}
+            ${card(ccT('CharCreate.classProfile', 'Class Skills'), metaRows + passiveHtml)}
             ${this._ccLoadoutSectionHtml(
               T('CharCreate.startingWeaponProficiencies'),
-              null,
               weaponRows.join(""),
               T('CharCreate.none'),
               true,
               'cc-loadout-grid-cols'
             )}
             ${card(ccT('CharCreate.elementalAffinities', 'Elemental Affinities'), badgeRow(affinityBadges))}
-            ${Scene_CharacterCreation.isQuickMode() ? "" : this._ccLoadoutSectionHtml(T('CharCreate.skillRoadmap'), null, roadmapRows, "", true)}
+            ${Scene_CharacterCreation.isQuickMode() ? "" : this._ccLoadoutSectionHtml(T('CharCreate.skillRoadmap'), roadmapRows, "", true)}
           </div>
         </div>
       `;
@@ -396,7 +395,7 @@
         `;
         return `
           <div class="cc-card-option cc-archetype-card ${isPrimary ? 'selected' : ''} ${isSecondary ? 'is-secondary' : ''}" onclick="SceneManager._scene.onSelectArchetypeCard('${key}')">
-            <div class="cc-option-title" style="font-size:1.02rem; margin:0; text-align:center; line-height:1.15;">${archetypeDisplayName(key)}</div>
+            <div class="cc-option-title cc-option-title--tight">${archetypeDisplayName(key)}</div>
             <div class="cc-archetype-card-meta">${partCount} ${ccT('CharCreate.bodyParts', 'Body parts')}</div>
             ${role}
             ${secondBtn}
@@ -405,12 +404,12 @@
       }).join("");
 
       return `
-        <div class="cc-page cc-page-left" style="display:flex; flex-direction:column;">
-          <h3 class="cc-subheader" style="font-size:1.35rem; margin:0 0 2px 0;">${ccT('CharCreate.chooseAnArchetype', 'Choose an archetype')}</h3>
-          <p class="cc-text-desc" style="margin:0 0 8px 0; font-size:0.95rem; text-align:left; color:#ded1c1; opacity:0.85;">
+        <div class="cc-page cc-page-left cc-col">
+          <h3 class="cc-subheader cc-subheader--flush">${ccT('CharCreate.chooseAnArchetype', 'Choose an archetype')}</h3>
+          <p class="cc-text-desc cc-text-desc--intro">
             ${ccT('CharCreate.archetypeBoardHint', 'Pick one archetype for a baseline body, or add a second to splice a hybrid.')}
           </p>
-          <div class="cc-select-grid cc-compact cc-three-col cc-archetype-grid" style="flex:1; min-height:0; overflow-y:auto; align-content:start; gap:8px; margin-top:0; padding-right:6px;">
+          <div class="cc-select-grid cc-compact cc-three-col cc-archetype-grid cc-scroll-pane cc-grid-start">
             ${cards}
           </div>
         </div>
@@ -437,7 +436,7 @@
       }
       const partKeys = Object.keys(parts || {});
       if (!partKeys.length) {
-        return `<p class="cc-text-desc" style="text-align:left; font-size:1.02rem; color:#ded1c1;">${ccT('CharCreate.noAnatomicalOrgansDefined', 'No anatomical organs defined')}</p>`;
+        return `<p class="cc-text-desc cc-text-desc--body">${ccT('CharCreate.noAnatomicalOrgansDefined', 'No anatomical organs defined')}</p>`;
       }
       const spliced = (keys || []).length > 1;
       return partKeys.map((partKey) => {
@@ -449,7 +448,7 @@
           ? `<span class="cc-role-badge secondary">${ccT('CharCreate.secondary', 'Secondary')}</span>`
           : `<span class="cc-role-badge primary">${ccT('CharCreate.primary', 'Primary')}</span>`);
         return `
-          <div class="cc-archetype-part-row cc-dossier-row" style="font-size:1.02rem; padding:2px 0;">
+          <div class="cc-archetype-part-row cc-dossier-row cc-dossier-row--tight">
             <span class="cc-dossier-label">${name}${badge}</span>
             <span class="cc-dossier-value">${part.hpPercent}% HP${part.vital ? ` ${ccT('CharCreate.vital', 'Vital')}` : ''}</span>
           </div>
@@ -481,34 +480,34 @@
         : (archetypeDisplayName(current) || ccT('CharCreate.pending', 'Pending'));
 
       return `
-        <div class="cc-page cc-page-right" style="display:flex; flex-direction:column;">
-          <div style="display:flex; justify-content:center; align-items:center; min-height:64px; margin:4px 0 10px 0;">
-            <div class="cc-header-gothic" style="font-size:2.1rem; color:#ffd700; font-family:'Lora',serif; text-align:center;">
+        <div class="cc-page cc-page-right cc-col">
+          <div class="cc-row-centered cc-title-band">
+            <div class="cc-header-gothic cc-title-display cc-title-display--sm">
               ${title}
             </div>
           </div>
 
-          <div class="cc-dossier-card" style="margin-bottom:10px; padding:10px 12px;">
-            <div class="cc-dossier-row" style="font-size:1.05rem; padding:3px 0;">
+          <div class="cc-dossier-card cc-card-padded">
+            <div class="cc-dossier-row cc-dossier-row--lead">
               <span class="cc-dossier-label">${ccT('CharCreate.bodyParts', 'Body parts')}:</span>
               <span class="cc-dossier-value">${partCount}</span>
             </div>
-            <div class="cc-dossier-row" style="font-size:1.05rem; padding:3px 0;">
+            <div class="cc-dossier-row cc-dossier-row--lead">
               <span class="cc-dossier-label">${ccT('CharCreate.classesOfThisArchetype', 'Classes of this archetype')}:</span>
               <span class="cc-dossier-value">${classNames.length}</span>
             </div>
           </div>
 
-          <div class="cc-dossier-card" style="flex:1; min-height:0; overflow-y:auto; padding:10px 12px;">
-            <h3 class="cc-subheader" style="font-size:1.25rem; margin-top:0;">${ccT('CharCreate.anatomy', 'Anatomy')}</h3>
+          <div class="cc-dossier-card cc-card-padded cc-scroll-pane">
+            <h3 class="cc-subheader cc-subheader--flush">${ccT('CharCreate.anatomy', 'Anatomy')}</h3>
             ${anatomyRows}
-            <h3 class="cc-subheader" style="font-size:1.25rem;">${ccT('CharCreate.classesOfThisArchetype', 'Classes of this archetype')}</h3>
-            <p class="cc-text-desc" style="text-align:left; font-size:1.02rem; line-height:1.5; color:#ded1c1;">
+            <h3 class="cc-subheader">${ccT('CharCreate.classesOfThisArchetype', 'Classes of this archetype')}</h3>
+            <p class="cc-text-desc cc-text-desc--body">
               ${classNames.length ? classNames.join(", ") : ccT('CharCreate.onlyWhatYourArchetypesSupport', 'Only what your archetypes support.')}
             </p>
           </div>
 
-          <button class="cc-sidebar-btn primary" style="margin-top:10px; width:100%; justify-content:center; height:40px;" onclick="SceneManager._scene.onOpenCreature3DStudio()">
+          <button class="cc-sidebar-btn primary cc-btn-full cc-btn-full--tall" onclick="SceneManager._scene.onOpenCreature3DStudio()">
             ${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.custom3dModel', '3D Model')}</span>
           </button>
         </div>
@@ -534,11 +533,12 @@
         const rightPage = container.querySelector(".cc-page-right");
         if (rightPage) rightPage.innerHTML = strip(this._archetypeStepRightHtml());
       }
-      // The archetype picks also live on the Bio tab now: repaint it too, so a
-      // primary pick that collapses the secondary back to "None" (picking the
-      // half already held) shows that instead of leaving a stale option
-      // selected in an unrepainted dropdown.
-      if (this._step === STEP.BIO && this._isCurrentMemberCreature()) {
+      // The archetype picks also live on the Bio tab now, for a person as much
+      // as for a creature: repaint it too, so a primary pick that collapses the
+      // secondary back to "None" (picking the half already held) shows that
+      // instead of leaving a stale option selected in an unrepainted dropdown,
+      // and so the weapons the new body holds are counted again.
+      if (this._step === STEP.BIO) {
         const leftPage = container.querySelector(".cc-page-left");
         if (leftPage) leftPage.outerHTML = this._bioPickerLeftHtml();
       }
@@ -548,7 +548,7 @@
     }
 
     onSelectArchetypeCard(key) {
-      // A dossier is what it is: the tutorial's goblin gunmancer and its slime
+      // A dossier is what it is: the story mode's goblin gunmancer and its slime
       // mimic are the character, not a starting point to be edited away from.
       if (this._refusePresetEdit()) return;
       const actor = Scene_CharacterCreation.getCurrentActor();
@@ -557,7 +557,6 @@
         SoundManager.playBuzzer();
         return;
       }
-      SoundManager.playOk();
       this._repaintArchetypeStep();
     }
 
@@ -572,7 +571,6 @@
         SoundManager.playBuzzer();
         return;
       }
-      SoundManager.playOk();
       this._repaintArchetypeStep();
     }
 
@@ -648,8 +646,8 @@
         if (!data) return "";
         return `
           <div class="cc-dossier-row">
-            <span class="cc-dossier-label" style="display:flex; align-items:center; gap:6px">
-              <span style="${this._ccIconStyle(data.iconIndex)}"></span>${window.CCDbName(data)}
+            <span class="cc-dossier-label cc-row-inline">
+              <span class="cc-rpg-icon" style="${this._ccIconStyle(data.iconIndex)}"></span>${window.CCDbName(data)}
             </span>
             <span class="cc-dossier-value">x${entry.qty}</span>
           </div>
@@ -773,16 +771,16 @@
         : "";
 
       return `
-        <div class="cc-page cc-page-right" style="display: flex">
+        <div class="cc-page cc-page-right cc-col">
           <h2 class="cc-header-gothic">${choice.name || ""}</h2>
-          <p style="font-size: 1.329rem; line-height: 1.45; color: var(--text-card-dark); text-align: center; margin-bottom: 16px">
+          <p class="cc-lede cc-lede--page">
             ${this.cleanText(choice.description || "")}
           </p>
 
-          <div style="flex: 1; min-height: 0; overflow-y: auto">
+          <div class="cc-scroll-pane">
             ${dossierHtml}
           </div>
-          <button class="cc-sidebar-btn primary" style="margin-top: 12px; width: 100%; justify-content: center; height: 42px; font-size: 1.05rem;" onclick="SceneManager._scene.onFinishPartyCreation()">
+          <button class="cc-sidebar-btn primary cc-btn-full cc-btn-full--tall" onclick="SceneManager._scene.onFinishPartyCreation()">
             ${this._ccIconHtml(78, 20)} <span>${T('CharCreate.embark') || "Embark & Begin Journey"}</span>
           </button>
         </div>
@@ -837,7 +835,7 @@
 
       const voiceHtml = voice
         ? `<div class="cc-dossier-card"><h3 class="cc-subheader">${T('CharCreate.personalityVoice')}</h3>
-             <p class="cc-text-desc" style="margin-bottom: 0; font-style: italic">"${this.cleanText(voice)}"</p>
+             <p class="cc-text-desc cc-flush cc-note-quiet">"${this.cleanText(voice)}"</p>
            </div>`
         : "";
       const modsHtml = modRows.length
@@ -847,13 +845,13 @@
         : "";
 
       return `
-        <div class="cc-page cc-page-right" style="display: flex">
+        <div class="cc-page cc-page-right cc-col">
           <h2 class="cc-header-gothic">${choice.name || ""}</h2>
-          <p style="font-size: 1.329rem; line-height: 1.45; color: var(--text-card-dark); text-align: center; margin-bottom: 16px">
+          <p class="cc-lede cc-lede--page">
             ${this.cleanText(choice.description || "")}
           </p>
 
-          <div style="flex: 1; min-height: 0; overflow-y: auto">
+          <div class="cc-scroll-pane">
             ${voiceHtml}
             ${modsHtml}
           </div>

@@ -1,4 +1,5 @@
 /*:
+ * @target MZ
  * @plugindesc Dwarf Fortress-inspired limb and organ damage system for Actors 1, 2, and 3
  * @author Omni-Lex
  * @help
@@ -26,14 +27,14 @@
  * @desc Heals all body parts by specified amount
  * @arg actorId
  * @type number
- * @min 1
+ * @min 0
  * @max 3
- * @default 1
- * @desc Actor ID (1, 2, or 3)
+ * @default 0
+ * @desc Actor ID (1, 2, or 3). 0 heals the whole party.
  * @arg amount
  * @type number
- * @default 100
- * @desc Amount of HP to heal body parts
+ * @default 0
+ * @desc HP to heal each body part by. 0 is a full recovery: broken parts are restored.
  *
  * @command ChangeArchetype
  * @desc Changes actor's body archetype (Reptilian, Mushroom, etc.)
@@ -330,13 +331,16 @@
   // Three words cover every difficulty, and which one applies is a fact about
   // the mode and about the part:
   //
-  //   Broken     - every difficulty but Blood and Oil. The limb is ruined and
-  //                its stat penalty is on, but it is still attached and still
-  //                the character's: rest, a potion or a spell mend it, and the
-  //                penalty lifts the moment it is back above 1 HP.
+  //   Broken     - every difficulty, Blood and Oil included. The limb is
+  //                ruined and its stat penalty is on, but it is still attached
+  //                and still the character's: rest, a potion or a spell mend
+  //                it, and the penalty lifts the moment it is back above 1 HP.
+  //                In Blood and Oil this is what a part that could have come
+  //                off but did not gets: a blunt blow, or a lost coin toss.
   //   Cut off    - Blood and Oil, on a part the archetype says can come off
-  //                (canCutoff). It leaves the body for good, taking its slot,
-  //                its skills, its augment and whatever it was holding.
+  //                (canCutoff), struck by Cutting damage. It leaves the body
+  //                for good, taking its slot, its skills, its augment and
+  //                whatever it was holding. Nothing mends it.
   //   Destroyed  - Blood and Oil, on a part that cannot be severed: a torso, a
   //                mouth, an eye socket. It stays where it is, at zero, ruined
   //                for the rest of the run. Its penalty never lifts, and it can
@@ -354,12 +358,22 @@
   // What a weapon does to a body part
   // ===========================================================================
   // What an attack does to a body part:
-  // Limb can cut only by Explosive, Piercing and Cutting damage.
+  // A monster's limb can be cut by Explosive, Piercing and Cutting damage.
+  // A party member's limb comes off only under Cutting (slashing) damage.
   // Blunt, Area, Abstract, None cannot sever limbs.
   // ===========================================================================
   const CUTTING_DAMAGE_TYPES = ["Explosive", "Piercing", "Cutting"];
+  const PLAYER_CUTTING_DAMAGE_TYPES = ["Cutting"];
 
   function getActionDamageType(action, subject) {
+    // The vector gun's Wide shots mode fans one shot across several parts, and
+    // area damage is what spreads it: VectorGunSystem.js is the only place that
+    // is decided.
+    const s0 = subject || (action && action.subject ? action.subject() : null);
+    if (window.VectorGun && window.VectorGun.damageTypeOverride) {
+      const forced = window.VectorGun.damageTypeOverride(s0, action);
+      if (forced) return forced;
+    }
     if (action) {
       const item = typeof action.item === "function" ? action.item() : (action._item ? action.item() : null);
       if (item) {
@@ -386,6 +400,13 @@
     const act = action || (window.BattleManager ? BattleManager._action : null);
     const dt = getActionDamageType(act, subject);
     return CUTTING_DAMAGE_TYPES.includes(dt);
+  }
+
+  /** The stricter test a party member's body gets: only a slash severs. */
+  function attackerCanCutPlayer(subject, action) {
+    const act = action || (window.BattleManager ? BattleManager._action : null);
+    const dt = getActionDamageType(act, subject);
+    return PLAYER_CUTTING_DAMAGE_TYPES.includes(dt);
   }
 
   /**
@@ -1444,21 +1465,28 @@
    * body, and even there it is a coin toss: half the time the blow takes the
    * part off (the archetype's msg, the part gone and its full penalty owed),
    * half the time it only breaks it where it stands (brokenMsg, the smaller
-   * penalty). A part the archetype says cannot come off is never cut.
+   * penalty). A part the archetype says cannot come off is never cut, and
+   * only Cutting damage ever takes one off a party member.
    */
   function rollPartCutoff(actor, partKey, part, action) {
     if (!isBloodAndOil()) return false;
     if (!partCanCutoff(actor, partKey, part)) return false;
-    if (!attackerCanCut(null, action)) return false;
+    if (!attackerCanCutPlayer(null, action)) return false;
     return Math.random() < 0.5;
   }
 
+  /**
+   * What Blood and Oil makes of a part at zero. A part that came off is gone;
+   * a part that cannot come off is destroyed where it stands for the rest of
+   * the run. A part that COULD have come off and did not is only broken,
+   * exactly as on every other difficulty, and heals like one.
+   */
   function finishPartInBloodAndOil(actor, partKey) {
     const part = actor._bodyParts ? actor._bodyParts[partKey] : null;
     if (!part) return;
     if (part.vital || part._cutOff) {
       removeBodyPartOnZeroHp(actor, partKey);
-    } else {
+    } else if (!partCanCutoff(actor, partKey, part)) {
       destroyPartInPlace(actor, partKey);
     }
   }
@@ -1605,9 +1633,10 @@
         handleDamagedBodyPart(actor, partKey);
 
         // --- Blood and Oil mode check ---
-        // Only here is a finished part permanent: cut off if the body can shed
-        // it, ruined where it stands if it cannot. On every other difficulty
-        // the limb is merely broken and mends (healBodyParts).
+        // Only here can a finished part be permanent: cut off on a won coin
+        // toss under a slash, destroyed where it stands if the body can never
+        // shed it. Anything else, here as on every other difficulty, is merely
+        // broken and mends (healBodyParts).
         if (isBloodAndOil()) {
           if (part.vital) {
             // Vital organ check
@@ -1644,7 +1673,7 @@
   // when the part reaches zero is still Blood and Oil's decision: on every
   // other difficulty it is ruined but attached, and keeps its augment.
   // Returns the damage actually dealt.
-  function injureBodyPart(actor, partKey, amount) {
+  function injureBodyPart(actor, partKey, amount, options) {
     const part = actor && actor._bodyParts ? actor._bodyParts[partKey] : null;
     if (!part || part.damaged) return 0;
     const applied = Math.max(0, Math.min(part.currentHp, Math.round(amount || 0)));
@@ -1655,6 +1684,10 @@
       return applied;
     }
     part.damaged = true;
+    // An edge was used on it: a scalpel counts as a slash, a grapple does not.
+    // Only an edge takes a part off a party member, here as in battle.
+    part._cutOff = !part.vital && !!(options && options.cut) &&
+      isBloodAndOil() && partCanCutoff(actor, partKey, part);
     handleDamagedBodyPart(actor, partKey);
     if (isBloodAndOil()) {
       // Severs the part (with its augment), ruins it where it stands if the
@@ -1806,16 +1839,22 @@
   // off or ruined for good - so those keep their zero and their penalty, and
   // only what is still standing is made whole.
   function restoreAllBodyParts(actor) {
-    if (!actor._bodyParts) return;
+    if (!actor || !actor._bodyParts) return;
     const permanent = isBloodAndOil();
 
     // The penalties owed by limbs that are no longer on the body outlive any
-    // amount of rest, so the tally is rebuilt from them rather than wiped.
+    // amount of rest, so the tally is rebuilt from them rather than wiped. A
+    // part that IS still on the body owes nothing once it is whole again, so
+    // its record is dropped here rather than kept to be charged for ever.
     actor._statModifiers = {};
     const removed = actor._removedPartDebuffs || {};
     for (const key in removed) {
       const debuff = removed[key];
       if (!debuff || !debuff.param) continue;
+      if (actor._bodyParts[key] && !(permanent && actor._bodyParts[key].ruined)) {
+        delete removed[key];
+        continue;
+      }
       actor._statModifiers[debuff.param] = (actor._statModifiers[debuff.param] || 0) + debuff.amount;
     }
 
@@ -1835,12 +1874,17 @@
         continue;
       }
 
-      // Fully restore the part
+      // Fully restore the part. Outside Blood and Oil nothing a fight did to
+      // a limb survives a full recovery: the break, the ruin and the penalty
+      // that came with them all lift together, so a night's sleep is enough to
+      // put the character back on their feet whole.
       bodyPart.currentHp = bodyPart.maxHp;
       bodyPart.damaged = false;
       bodyPart.appliedStatEffect = false;
+      bodyPart.ruined = false;
       bodyPart._cutOff = false;
       bodyPart._brokenNotCut = false;
+      if (actor._severedParts) delete actor._severedParts[part];
     }
 
     // A limb that is whole again is a limb whose abilities come back.
@@ -1927,19 +1971,19 @@
     }
 
     // A broken limb is only broken. Anything the character still has mends
-    // under a potion or a spell, whether it was ruined or merely bruised, and
-    // the penalty it carries lifts the moment it is back above 1 HP - the
+    // under a potion or a spell, on every difficulty Blood and Oil included,
+    // and the penalty it carries lifts the moment it is back above 1 HP - the
     // point at which the limb is doing something again rather than hanging.
-    // Blood and Oil is the exception: a part finished there is finished, so it
-    // is passed over and its penalty stands for the rest of the run.
-    const permanent = isBloodAndOil();
+    // What Blood and Oil finished for good is the exception: a part cut off is
+    // no longer here to mend, and a part destroyed where it stands (ruined) is
+    // passed over, its penalty standing for the rest of the run.
     var needsRefresh = false;
     var mended = false;
 
     for (var part in actor._bodyParts) {
       var bodyPart = actor._bodyParts[part];
 
-      if (bodyPart.damaged && (permanent || bodyPart.ruined)) continue;
+      if (bodyPart.damaged && bodyPart.ruined) continue;
 
       bodyPart.currentHp = Math.min(
         bodyPart.maxHp,
@@ -2733,14 +2777,28 @@
 
   // MV/MZ compatibility for plugin commands
   if (Utils.RPGMAKER_NAME === "MZ") {
-    PluginManager.registerCommand("Health_Core", "HealBodyParts", (args) => {
-      var actorId = Number(args.actorId) || 1;
-      var actor = $gameActors.actor(actorId);
-      var amount = Number(args.amount) || (actor ? actor.mhp / 2 : 100);
-      if (actor) {
-        healBodyParts(actor, amount);
-      }
-    });
+    // No actor named means the whole party: the event command that heals the
+    // party, the inn and the night's sleep all come through here, and all of
+    // them are meant to put every body back together, not only the leader's.
+    // A full heal (no amount, or one at least as large as the body) restores
+    // the broken parts outright instead of merely topping their hit points up,
+    // so a mended limb stops owing its penalty. Blood and Oil is untouched by
+    // this: what is cut off or ruined there stays that way (restoreAllBodyParts).
+    const healBodyPartsCommand = (args) => {
+      args = args || {};
+      const actorId = Number(args.actorId) || 0;
+      const targets = actorId
+        ? [$gameActors.actor(actorId)]
+        : $gameParty.members();
+      const asked = args.amount === undefined || args.amount === "" ? 0 : Number(args.amount);
+      targets.forEach((actor) => {
+        if (!actor) return;
+        const amount = asked || actor.mhp;
+        if (amount >= actor.mhp) restoreAllBodyParts(actor);
+        else healBodyParts(actor, amount);
+      });
+    };
+    PluginManager.registerCommand("Health_Core", "HealBodyParts", healBodyPartsCommand);
 
     PluginManager.registerCommand("Health_Core", "ChangeArchetype", (args) => {
       var actorId = Number(args.actorId) || 1;
@@ -2836,6 +2894,8 @@
   // Does the blow being struck cut? Read by the monster anatomy so a mace
   // breaks a limb where a sword takes it off.
   window.HealthCore.attackerCanCut = attackerCanCut;
+  window.HealthCore.attackerCanCutPlayer = attackerCanCutPlayer;
+  window.HealthCore.PLAYER_CUTTING_DAMAGE_TYPES = PLAYER_CUTTING_DAMAGE_TYPES;
   window.HealthCore.getActionDamageType = getActionDamageType;
   window.HealthCore.CUTTING_DAMAGE_TYPES = CUTTING_DAMAGE_TYPES;
   window.HealthCore.CUTTING_WEAPON_TYPES = CUTTING_DAMAGE_TYPES;

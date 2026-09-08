@@ -9,6 +9,93 @@
    ========================================================================== */
 
 :root {
+    /* === The type scale (docs/task/ui_fixing.md) ===
+       Six sizes, and nothing between them. Every reworked screen reads its
+       font sizes from here; theme.css held 251 different ones before this
+       existed. --fs-caption is the floor: nothing in the game is smaller. */
+    --fs-title: 1.55rem;
+    --fs-heading: 1.15rem;
+    --fs-body: 1.08rem;
+    --fs-label: 1.02rem;
+    --fs-chip: 1rem;
+    --fs-caption: 0.92rem;
+
+    /* The right column, one scale for every screen (docs/task/ui_fixing.md).
+       A detail card is read, not scanned, so its type is a step LARGER than a
+       list row and it is the same size on the backpack, the codex, the skill
+       atlas, the register and every other page that draws .ui-detail. No
+       screen sets a right-page size of its own. */
+    --fs-detail-title: 1.62rem;
+    --fs-detail-prose: 1.26rem;
+    --fs-detail-body: 1.20rem;
+    --fs-detail-heading: 1.18rem;
+
+    /* The muted half of a label/value pair in a right column. The page
+       ink (#b0a080 / #6b5242) reads as a smudge at this size, and a
+       right column never carries it. */
+    --text-detail-label: #ded3b4;
+
+    /* Right-column section headings are gold, never the pale cream body ink. */
+    --text-detail-heading: var(--text-primary-hover);
+
+
+    /* The one size above the scale: a stamp slammed across the page, which is
+       a graphic rather than a line of text. Nothing else in the game uses it. */
+    --fs-display: 3.6rem;
+
+    /* === The type faces ===
+       One hook for the whole UI. Every parchment rule reads --font-ui rather
+       than naming a family, so the face is swapped here (and a theme preset
+       can carry its own) instead of in 600 declarations. The @font-face that
+       backs the default lives at the top of theme.css. */
+    --font-ui: 'Bitter', Georgia, serif;
+    --font-mono: 'Source Code Pro', 'Consolas', monospace;
+
+    /* === The spacing scale ===
+       Six steps. A gap, a padding or a margin is one of these. */
+    --sp-1: 4px;
+    --sp-2: 6px;
+    --sp-3: 8px;
+    --sp-4: 12px;
+    --sp-5: 18px;
+    --sp-6: 24px;
+
+    /* === The star map HUD (GalaxySim) ===
+       The map is drawn over its own 3D sky rather than over a page, but it is
+       not a game of its own: every accent below is the interface's own ink,
+       taken from the shared ladders rather than from a sci-fi palette. The
+       names stay, because each one says what it MEANS and no panel in the HUD
+       may reach for a literal: ship = the vessel and its course, bio = life
+       found, bridge = the SB-Bridge and its charge, warn = anything the player
+       is losing. */
+    --gx-hull: rgba(12, 10, 8, 0.92);
+    --gx-hull-deep: rgba(7, 6, 4, 0.96);
+    /* The dark the catalog modal lays over the sky behind it. */
+    --gx-scrim: rgba(4, 3, 2, 0.62);
+    --gx-line: var(--border-gold-amber-30);
+    --gx-ink: var(--text-success-active);
+    --gx-ink-dim: var(--accent-cream-warm);
+    --gx-accent-ship: var(--accent-amber-glow);
+    --gx-accent-ship-deep: var(--text-primary-hover);
+    --gx-accent-bio: var(--faction-accord-allied);
+    --gx-accent-bridge: var(--rarity-epic);
+    --gx-accent-bridge-deep: var(--rarity-epic);
+    --gx-accent-fuel: var(--accent-amber-light);
+    --gx-accent-fuel-deep: var(--border-gold-amber);
+    --gx-accent-warn: var(--faction-accord-hostile);
+
+    /* === The z-index ladder (docs/task/ui_fixing.md) ===
+       Six values and nothing between them. The map legend is the first screen
+       on the ladder; the rest join it as they are reworked. */
+    --z-map-hud: 480;
+    --z-panel: 900;
+    --z-overlay: 5000;
+    --z-dialog: 9000;
+    --z-toast: 12000;
+    --z-cursor: 20000;
+}
+
+:root {
     /* === Background Colors === */
     --bg-backdrop: #000000;
     --bg-base: #000000;
@@ -122,67 +209,126 @@
 
     /* === Text Colors === */
     --text-danger-hover: #000000;
-    --text-disabled: #777777;
+    --text-disabled: #8a8378;
     --text-highlight-active: #ffffff;
-    --text-info: #b89060;
+    --text-info: #ffffff;
     --text-inverse: #cccccc;
-    --text-muted-hover: #b89060;
+    --text-muted-hover: #ffffff;
     --text-primary-hover: #ffcc66;
     --text-secondary-active: #ffcc66;
-    --text-success-active: #d8d8d8;
+    --text-success-active: #e4e0d8;
     --text-text-alt-1-active: #ffcc66;
-    --text-text-alt-10: #ff5555;
-    --text-text-alt-11: #66ff66;
-    --text-text-alt-12: #aaaaaa;
-    --text-text-alt-13: #dddddd;
-    --text-text-alt-14-hover: #ffcc00;
-    --text-text-alt-15: #ff8844;
-    --text-text-alt-16: #66aaff;
-    --text-text-alt-17: #ffcc44;
-    --text-text-alt-18: #66ff77;
+    --text-text-alt-10: #e36a6a;
+    --text-text-alt-11: #6fd089;
+    --text-text-alt-12: #bdb7ad;
+    --text-text-alt-13: #e4e0d8;
+    --text-text-alt-14-hover: #ffcc66;
+    --text-text-alt-15: #e8a05a;
+    --text-text-alt-16: #7fb3e6;
+    --text-text-alt-17: #ffcc66;
+    --text-text-alt-18: #6fd089;
     --text-text-alt-19: #cc88ff;
-    --text-text-alt-2: #c8b088;
-    --text-text-alt-20: #ffaa44;
-    --text-text-alt-21: #00ff66;
-    --text-text-alt-22: #66ff99;
-    --text-text-alt-23: #ffcc44;
+    --text-text-alt-2: #ffffff;
+    --text-text-alt-20: #e8a05a;
+    --text-text-alt-21: #6fd089;
+    --text-text-alt-22: #6fd089;
+    --text-text-alt-23: #ffcc66;
     --text-text-alt-24: #cc88ff;
-    --text-text-alt-25: #ff9999;
-    --text-text-alt-3: #66ff77;
-    --text-text-alt-4: #b0a080;
-    --text-text-alt-5-hover: #ff5555;
+    --text-text-alt-25: #e36a6a;
+    --text-text-alt-3: #6fd089;
+    --text-text-alt-4: #ffffff;
+    --text-text-alt-5-hover: #e36a6a;
     --text-text-alt-6-active: #d8d8d8;
-    --text-text-alt-7: #e0e0e0;
-    --text-text-alt-8: #bbbbbb;
-    --text-text-alt-9: #c8a064;
+    --text-text-alt-7: #e4e0d8;
+    --text-text-alt-8: #bdb7ad;
+    --text-text-alt-9: #c8a44e;
     --text-text-alt-9-translucent-50: rgba(200, 160, 100, 0.6);
     --text-warning-hover: #ffffff;
-    --text-gold-dark: #c8a040;
+    --text-gold-dark: #c8a44e;
     --text-brown-deep: #3d2517;
-    --text-brown-medium: #8b7355;
-    --text-card-dark: #c8b088;
-    --text-card-medium: #b0a080;
+    --text-brown-medium: #a08a6a;
+    --text-card-dark: #ffffff;
+    --text-card-medium: #ffffff;
     --text-brown-dark: #3a1f0f;
-    --text-navy: #5a8aaa;
-    --text-forest-complete: #5aaa44;
-    --text-amber-hint: #c89030;
-    --text-forest-green: #4aaa78;
-    --text-blood-red: #c02020;
+    --text-navy: #7fb3e6;
+    --text-forest-complete: #6fd089;
+    --text-amber-hint: #c8a44e;
+    --text-forest-green: #6fd089;
+    --text-blood-red: #d96a6a;
     --text-npc-red: #8b1010;
-    --text-danger-dark: #8b1a1a;
+    --text-danger-dark: #d05a5a;
     --text-info-blue: #2980b9;
-    --text-settings-label: #a08048;
-    --text-settings-active: #f2d458;
+    --text-settings-label: #c8a44e;
+    --text-settings-active: #ffcc66;
     --text-settings-inactive: #8a6a30;
-    --text-settings-arrow-active: #d4a028;
-    --text-settings-value-active: #f8e878;
-    --text-caption-brown: #877659;
+    --text-settings-arrow-active: #c8a44e;
+    --text-settings-value-active: #ffcc66;
+    --text-caption-brown: #9d8b6b;
     --text-subtle-translucent-65: rgba(74, 39, 17, 0.65);
     --text-pure-white: #ffffff;
     --text-pure-black: #000000;
     --text-cost-ok: #6fd089;
     --text-cost-bad: #e36a6a;
     --text-teal: #2a9d8f;
+
+    /* === The one selected-chip look ===
+       Tab rails, filter tags and companion switchers used to stamp the active
+       entry as a solid gold plate with black text, one loud fill per screen.
+       They now share a quiet tint, the accent ink and an underline, so every
+       rail in the game reads the same and the text stays legible. */
+    --chip-active-bg: rgba(255, 204, 102, 0.18);
+    --chip-active-fg: #ffcc66;
+
+    /* === The stat ladder ===
+       HP / MP and the six attributes are tagged in the same eight colours
+       wherever a sheet prints them. The three character-creation tables used to
+       carry their own copy of the list, and one of them had HP in green while
+       the other two had it in red. */
+    --stat-hp: #e5736f;
+    --stat-mp: #6fa8e0;
+    --stat-str: #e08a6f;
+    --stat-con: #e0a860;
+    --stat-dex: #e0c760;
+    --stat-int: #b57fd0;
+    --stat-wis: #5fbaad;
+    --stat-psi: #e07fa8;
+
+    /* === Elements and magical nature ===
+       The nine damage elements and the three class natures, tagged in one set
+       of colours wherever a card, a chip or a skill row names them. The class
+       selector used to carry its own copy of both lists as literals, so they
+       could not follow a preset and nothing else could share them. */
+    --element-1: #a8a29a;
+    --element-2: #e5736f;
+    --element-3: #6fa8e0;
+    --element-4: #e0c760;
+    --element-5: #5fbaad;
+    --element-6: #a8846b;
+    --element-7: #6fd089;
+    --element-8: #f0d493;
+    --element-9: #b57fd0;
+    --nature-magical: #b57fd0;
+    --nature-mundane: #8d99a6;
+    --nature-both: #b09a8e;
+    --nature-magical-soft: rgba(181, 127, 208, 0.27);
+    --nature-mundane-soft: rgba(141, 153, 166, 0.27);
+    --nature-both-soft: rgba(176, 154, 142, 0.27);
+
+    /* === Skill roles ===
+       Attack red, heal green, support blue, and the engine's own basic kit in
+       its teal. The skills page used to answer this question twice with two
+       different sets, so a skill's stripe and its row accent disagreed. */
+    --role-offensive: #e5736f;
+    --role-healing: #6fd089;
+    --role-support: #6fa8e0;
+    --role-basic: #5fbaad;
+
+    /* === Inset plates on the page ===
+       The tray a stat box, a graph or a small panel sits in, inside a menu that
+       is already a page. These were black washes written as literals, which is
+       a plate on the dark preset and a grey smear on the parchment one. */
+    --plate-inset: rgba(0, 0, 0, 0.40);
+    --plate-inset-soft: rgba(0, 0, 0, 0.22);
 
     /* === Toast notifications (Core/ParchmentToast.js) ===
        The popup sits on the dark parchment plate, so its body text is light
@@ -251,19 +397,19 @@
        Nine bands, nemesis to exalted. Read as a class by the HTML badges and
        resolved by name for the canvas windows, so a preset retunes the whole
        ladder here rather than in the plugin. */
-    --faction-rep-exalted: #66ff66;
-    --faction-rep-revered: #5fdc7c;
-    --faction-rep-honored: #8fd98a;
-    --faction-rep-friendly: #b6e6a0;
+    --faction-rep-exalted: #7fe0a0;
+    --faction-rep-revered: #6fd089;
+    --faction-rep-honored: #8fd08a;
+    --faction-rep-friendly: #a8d894;
     --faction-rep-neutral: #b0a080;
-    --faction-rep-unfriendly: #ffaa44;
-    --faction-rep-hostile: #ff8844;
-    --faction-rep-hated: #ff6644;
-    --faction-rep-nemesis: #ff5555;
+    --faction-rep-unfriendly: #e0b070;
+    --faction-rep-hostile: #e8a05a;
+    --faction-rep-hated: #e08a6f;
+    --faction-rep-nemesis: #e36a6a;
     /* Accord stances between two factions, same idea. */
-    --faction-accord-allied: #66ff66;
+    --faction-accord-allied: #6fd089;
     --faction-accord-neutral: #b0a080;
-    --faction-accord-hostile: #ff5555;
+    --faction-accord-hostile: #e36a6a;
     --border-accent-deepest: #3d2800;
     --border-purple-medium: #6a3aa0;
     --border-blue-medium: #4070d0;
@@ -341,7 +487,7 @@
     /* === Accent & Brand Colors === */
     --accent-blue: #2e6db2;
     --accent-blue-2: #0d47a1;
-    --accent-blue-3: #1976d2;
+    --accent-blue-3: #6fa8e0;
     --accent-blue-4: #2c3e50;
     --accent-blue-5: #34495e;
     --accent-blue-6: #448aff;
@@ -364,7 +510,7 @@
     --accent-purple-2: #862eb2;
     --accent-purple-3: #e040fb;
     --accent-red: #800e0b;
-    --accent-red-2: #d32f2f;
+    --accent-red-2: #e0706e;
     --accent-red-3: #ff5252;
     --accent-red-4-translucent-85: rgba(120, 35, 35, 0.85);
     --accent-red-5-translucent-40: rgba(168, 88, 88, 0.4);
@@ -401,6 +547,15 @@
     --accent-red-warm-dark: #7a241b;
     --accent-orange: #ffcc66;
     --accent-gold-pure: #ffd700;
+
+    /* The six bands the historical archive reads a chronicle category in.
+       War and disaster, the state, trade, people, the arcane, the sciences. */
+    --hist-cat-war: #d9704f;
+    --hist-cat-state: #e0b352;
+    --hist-cat-trade: #7fb886;
+    --hist-cat-people: #79a9cf;
+    --hist-cat-arcane: #c08ad8;
+    --hist-cat-science: #6fc3bd;
     --accent-slate: #3a4a63;
     --accent-blue-gray-light: #e6ecf5;
     --accent-blue-gray: #cfd8e6;
@@ -412,6 +567,14 @@
     --accent-tab-active: #3a6ea5;
     --accent-tab-hover: #5a8fd0;
     --accent-badge-yellow: #ffcf4d;
+    /* Meaning plates. A tag that states an outcome is a bright plate with
+       --accent-badge-text on it: the page changes under a badge, the badge
+       does not, so one near-black ink reads on every preset. */
+    --plate-good: #7fd396;
+    --plate-bad: #f0908a;
+    --plate-neutral: #c7bfb2;
+    --cc-role-primary-wash: rgba(240, 164, 140, 0.14);
+    --cc-role-secondary-wash: rgba(205, 166, 236, 0.14);
     --accent-badge-text: #0c1118;
     --accent-amber-badge: rgba(255, 207, 77, 0.14);
     --accent-gold-translucent-16: rgba(202, 164, 74, 0.16);
@@ -469,6 +632,13 @@
     --rarity-rare: #e0883c;
     --rarity-epic: #b96fd6;
     --rarity-legendary: #e8c24a;
+
+    /* --- Eris (Economy/ErisDateSystem.js) ---
+       Her one accent, the only colour in the game that is not the parchment
+       gold. It inks her opinion meter and nothing else. */
+    --eris-accent: #ff69b4;
+    --eris-accent-light: #ffb6c1;
+    --eris-accent-deep: rgba(180, 40, 100, 0.85);
 }
 
 /* ==========================================================================
@@ -516,19 +686,15 @@
    page. The [style*=] rules are kept for any caller still inlining the hex. */
 .cc-role-badge.primary,
 .cc-archetype-role.primary,
+.cc-parent-ink.primary,
 .cc-presets-board .cc-wanted-card [style*="#822d2d"] {
     color: #f0a48c !important;
 }
 .cc-role-badge.secondary,
 .cc-archetype-role.secondary,
+.cc-parent-ink.secondary,
 .cc-presets-board .cc-wanted-card [style*="#5a3d75"] {
     color: #cda6ec !important;
-}
-.cc-role-badge.primary {
-    background: rgba(240, 164, 140, 0.14);
-}
-.cc-role-badge.secondary {
-    background: rgba(205, 166, 236, 0.14);
 }
 
 /* ==========================================================================
@@ -633,7 +799,7 @@
 
 .cc-sidebar-title {
     color: #ffcc66 !important;
-    text-shadow: 0 0 8px rgba(255, 204, 102, 0.4) !important;
+    text-shadow: none;
 }
 
 .cc-mode-badge {
@@ -739,7 +905,7 @@
 
 .cc-party-add-btn {
     background: #000000 !important;
-    border: 1px dashed #ffcc66 !important;
+    border: none;
     color: #ffd700 !important;
 }
 
@@ -916,130 +1082,6 @@
 }
 
 /* ==========================================================================
-   Name input (AltNameInput), dark-theme legibility
-   The name-entry spread is drawn for the cream parchment book: the typed name,
-   the identity card and every control on the right page use dark brown inks
-   (--text-brown-deep, #5d483b, #8b5a2b) that are nearly invisible on the Omega
-   Tower black page, while the keyboard sits inside a dashed translucent-brown
-   crate that stretches down the whole page and reads as a large empty box under
-   the keys. Strip the decorative plates back to bare dark and repaint every
-   label bright. This file is imported before theme.css (it is the live vars.css),
-   so every override needs !important to win the cascade.
-   ========================================================================== */
-
-/* Default ink for anything on the spread without its own colour. */
-.alchemical-name-container {
-    color: var(--accent-cream-light) !important;
-}
-
-/* Pack the keyboard page from the top instead of spreading it over the full
-   height, so no dead gap is left between the keys and the Space/Backspace row. */
-.alchemical-name-container .name-left-page {
-    justify-content: flex-start !important;
-}
-
-/* Keyboard crate: no plate, no dashed frame, no forced height. The keys are the
-   only thing that should be visible against the tower black. */
-.alchemical-name-container .kbd-grid {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    min-height: 0 !important;
-    flex-grow: 0 !important;
-}
-
-/* Character keys: brighter face, near-black ink and a gold edge so the whole
-   insert grid stands off the black page. */
-.alchemical-name-container .kbd-key {
-    background: linear-gradient(to bottom, #fffaf0 0%, #efe0bd 100%) !important;
-    border-color: var(--accent-amber-light) !important;
-    color: #241a10 !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.55) !important;
-}
-.alchemical-name-container .kbd-key.candidate {
-    background: linear-gradient(to bottom, #fff6e0 0%, #ffe9b8 100%) !important;
-    border-color: var(--accent-gold-pure) !important;
-    color: #6d2a08 !important;
-}
-
-/* Identity card: drop the brown plate and its inner glow, keep a gold rule. */
-.alchemical-name-container .actor-sync-card {
-    background: transparent !important;
-    border-color: var(--border-gold-amber-30) !important;
-    box-shadow: none !important;
-}
-.alchemical-name-container .actor-portrait-frame {
-    border-color: var(--border-focus-hover) !important;
-    box-shadow: none !important;
-}
-.alchemical-name-container .actor-name-title {
-    color: var(--accent-amber-glow) !important;
-}
-.alchemical-name-container .actor-class-subtitle {
-    color: var(--accent-amber-light) !important;
-}
-.alchemical-name-container .actor-meta-row {
-    color: var(--text-card-medium) !important;
-}
-
-/* "SYNCHRONIZE NAME" caption + character counter (hardcoded brown inline ink). */
-.alchemical-name-container [style*="#8b5a2b"] {
-    color: var(--accent-cream-warm) !important;
-}
-
-/* The typed name: bare field, bright cream-gold letters with a soft glow, and
-   the case the player actually typed (never force-uppercased). */
-.name-edit-bracket-box {
-    background: transparent !important;
-    border-color: var(--border-focus-hover) !important;
-    box-shadow: none !important;
-}
-.name-edit-bracket-box .name-display-text {
-    color: var(--accent-amber-glow) !important;
-    letter-spacing: 3px;
-    text-transform: none !important;
-    text-shadow: 0 0 8px rgba(255, 204, 102, 0.35);
-}
-.name-edit-bracket-box .name-bracket-char,
-.name-edit-bracket-box .name-text-cursor {
-    color: var(--border-focus-hover) !important;
-}
-
-/* CJK spelling buffer badge. */
-.alchemical-name-container .spell-buffer-badge {
-    background: transparent !important;
-    border-color: var(--border-gold-amber-30) !important;
-    color: var(--accent-cream-warm) !important;
-}
-
-/* Translation layers + modifier/navigation buttons: the unselected state was
-   dark brown text on an all-but-invisible fill. Bare button, gold rule, cream
-   label; the .active / .selected states already paint themselves amber. */
-.alchemical-name-container .lang-tab,
-.alchemical-name-container .edit-btn {
-    background: transparent !important;
-    border-color: var(--border-gold-amber-30) !important;
-    color: var(--accent-cream-light) !important;
-}
-.alchemical-name-container .lang-tab:hover,
-.alchemical-name-container .edit-btn:hover {
-    border-color: var(--border-focus-hover) !important;
-    color: var(--accent-amber-glow) !important;
-}
-
-/* Abort / Continue: readable when not highlighted. */
-.alchemical-name-container .action-btn-abort {
-    background: transparent !important;
-    border-color: var(--border-gold-amber-30) !important;
-    color: var(--accent-cream-warm) !important;
-}
-.alchemical-name-container .action-btn-seal {
-    background: transparent !important;
-    border-color: var(--border-focus-hover) !important;
-    color: var(--accent-amber-glow) !important;
-}
-
-/* ==========================================================================
    World Manager (Create World / Manage Worlds), dark-theme readability
    The dossier labels and the "CREATE WORLD" subheader inherit the base
    theme's dark-brown ink (--border-muted-focus #5a4a2a), which is nearly
@@ -1091,26 +1133,6 @@ select option:checked,
 select option:hover {
     background: var(--bg-tertiary-focus-translucent-45);
     color: var(--accent-amber-glow);
-}
-
-/* ==========================================================================
-   World Map page (main menu travel pockets), dark-theme readability
-   The "World map" header and the right-page dossier labels (Location /
-   World Coordinates / Sector) are painted with a hardcoded dark maroon-brown
-   (#58180D) inline ink that is nearly invisible on the Omega Tower black page.
-   Repaint every element using that brown gold, and centre the header so it
-   matches the other menu section titles.
-   ========================================================================== */
-.travel-pockets [style*="#58180D"],
-.travel-codex [style*="#58180D"] {
-    color: var(--text-primary-hover) !important;
-}
-
-/* Centre the "World map" section header and give it a gold dashed underline. */
-.travel-pockets .tools-header .title {
-    text-align: center;
-    width: 100%;
-    border-bottom-color: var(--border-focus-hover) !important;
 }
 
 /* ==========================================================================
@@ -1225,17 +1247,6 @@ select option:hover {
 }
 
 /* ==========================================================================
-   SkillMaster, skill-name legibility (issue #78)
-   Left-page skill rows paint the name inline: gold when focused, but
-   --border-subtle (dark brown) when not -> invisible on the black page.
-   Force every skill name in the grid to white. Scoped to .skill-card inside
-   the book spread, so the battle-scene .skill-card lists are untouched.
-   ========================================================================== */
-.book-spread .skill-card div[style*="font-weight:bold"] {
-    color: var(--text-pure-white) !important;
-}
-
-/* ==========================================================================
    Training / Fuse Spells menu (SkillMaster), dark-theme readability
    The category / member cards, the Fuse Spells editor slots, the animation
    rows and the Teach / Preview action buttons all paint their idle text with
@@ -1244,12 +1255,7 @@ select option:hover {
    express :hover, so these !important rules add genuine behaviour), and keep
    the focused state clearly brighter than the rest.
    ========================================================================== */
-.book-spread .category-card,
 .book-spread .member-card,
-.book-spread .skill-card,
-.book-spread .anim-row,
-.book-spread .action-button,
-.book-spread .preview-button,
 .book-spread .focusable {
     transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
@@ -1265,31 +1271,19 @@ select option:hover {
     color: var(--text-secondary-active) !important;
 }
 
-/* Hover feedback for every pickable row / card / button. */
-.book-spread .category-card:hover,
-.book-spread .member-card:hover,
-.book-spread .skill-card:hover,
-.book-spread .anim-row:hover,
-.book-spread .action-button:hover,
-.book-spread .preview-button:hover {
+/* Hover is the gold hairline and nothing behind it (docs/task/ui_fixing.md).
+   The skill atlas' own rows, cards and buttons are on the shared kit now and
+   are deliberately left off this list. */
+.book-spread .member-card:hover {
     border-color: var(--border-focus-hover) !important;
-    background: var(--bg-primary-hover-translucent-35) !important;
+    background: transparent !important;
 }
 
-/* Focused card / button gets a soft gold ring so keyboard / pad focus reads. */
-.book-spread .category-card.focused,
-.book-spread .member-card.focused,
-.book-spread .skill-card.focused,
-.book-spread .anim-row.focused,
-.book-spread .action-button.focused,
-.book-spread .preview-button.focused,
-.book-spread .focusable.focused {
-    box-shadow: 0 0 8px var(--shadow-gold-amber-50);
+/* Focus is a hairline, never a ring behind it: the glow that used to sit here
+   is one of the washes docs/task/ui_fixing.md removes. */
+.book-spread .member-card.focused {
+    border-color: var(--border-focus-hover) !important;
 }
-
-/* Spell-preview modal: keep the grab canvas obviously interactive. */
-#spell-preview-canvas { cursor: grab; }
-#spell-preview-canvas:active { cursor: grabbing; }
 
 /* ==========================================================================
    Book-page menus that hardcode parchment inks, dark-theme readability
@@ -1391,22 +1385,23 @@ select option:hover {
    flattens this plate away again; see .inspect-pockets in theme.css.)
    ========================================================================== */
 .item-inspect .inspect-lore {
-    background: var(--bg-dark-warm-translucent-96);
-    border-color: var(--border-gold-amber-30);
-    color: var(--accent-cream-light);
+    background: transparent;
+    border-color: transparent;
+    color: var(--text-success-active);
 }
 .item-inspect .inspect-section-title {
-    color: var(--accent-amber-glow);
-    border-bottom-color: var(--border-gold-amber-30);
+    color: var(--text-detail-heading);
+    border-bottom-color: transparent;
 }
-.item-inspect .inspect-spec-row { font-size: 1.032rem; }
-.item-inspect .inspect-spec-label { color: var(--accent-cream-warm); }
-.item-inspect .inspect-spec-value { color: var(--text-pure-white); }
-.item-inspect .inspect-bullet-item { color: var(--accent-cream-light); }
-.item-inspect .inspect-meta-val { color: var(--accent-amber-glow); }
-/* Attribute-modifier and inline status greens/reds tuned for a light card. */
-.item-inspect .inspect-spec-value[style*="#2e7d32"] { color: #84e884 !important; }
-.item-inspect .inspect-spec-value[style*="#c62828"] { color: #ff9b86 !important; }
+.item-inspect .inspect-spec-row { font-size: var(--fs-detail-body); }
+.item-inspect .inspect-spec-label { color: var(--text-detail-label); }
+.item-inspect .inspect-spec-value { color: var(--text-success-active); }
+.item-inspect .inspect-bullet-item { color: var(--text-success-active); }
+.item-inspect .inspect-meta-val { color: var(--text-success-active); }
+/* Attribute modifiers: the card no longer inks them inline, so the gain and
+   the loss are named classes read off the theme's own cost tokens. */
+.item-inspect .inspect-spec-value--gain { color: var(--text-cost-ok); }
+.item-inspect .inspect-spec-value--loss { color: var(--text-cost-bad); }
 
 /* ==========================================================================
    Assets / Bestiary / Equip / Workbench screens, dark-theme readability
@@ -1554,7 +1549,7 @@ select option:hover {
    pure white for the description prose (issue: "archive text hard to read").
    ========================================================================== */
 #help-container .help-body {
-    color: var(--text-pure-white) !important;
+    color: var(--text-success-active);
 }
 
 /* ==========================================================================
@@ -1702,169 +1697,62 @@ select option:hover {
     --pt-ink: #ff7b6b;
     --pt-fill: rgba(255, 123, 107, 0.14);
     --pt-hover: rgba(255, 123, 107, 0.30);
-    --pt-glow: rgba(255, 123, 107, 0.35);
 }
 #pt-container .pt-cat-alkalineEarth {
     --pt-ink: #ffa14a;
     --pt-fill: rgba(255, 161, 74, 0.14);
     --pt-hover: rgba(255, 161, 74, 0.30);
-    --pt-glow: rgba(255, 161, 74, 0.35);
 }
 #pt-container .pt-cat-transitionMetal {
     --pt-ink: #e8c24a;
     --pt-fill: rgba(232, 194, 74, 0.14);
     --pt-hover: rgba(232, 194, 74, 0.30);
-    --pt-glow: rgba(232, 194, 74, 0.35);
 }
 #pt-container .pt-cat-postTransition {
     --pt-ink: #6fd08c;
     --pt-fill: rgba(111, 208, 140, 0.14);
     --pt-hover: rgba(111, 208, 140, 0.30);
-    --pt-glow: rgba(111, 208, 140, 0.35);
 }
 #pt-container .pt-cat-metalloid {
     --pt-ink: #5fd0cc;
     --pt-fill: rgba(95, 208, 204, 0.14);
     --pt-hover: rgba(95, 208, 204, 0.30);
-    --pt-glow: rgba(95, 208, 204, 0.35);
 }
 #pt-container .pt-cat-nonmetal {
     --pt-ink: #6fb6ef;
     --pt-fill: rgba(111, 182, 239, 0.14);
     --pt-hover: rgba(111, 182, 239, 0.30);
-    --pt-glow: rgba(111, 182, 239, 0.35);
 }
 #pt-container .pt-cat-halogen {
     --pt-ink: #c98ce0;
     --pt-fill: rgba(201, 140, 224, 0.14);
     --pt-hover: rgba(201, 140, 224, 0.30);
-    --pt-glow: rgba(201, 140, 224, 0.35);
 }
 #pt-container .pt-cat-nobleGas {
     --pt-ink: #b98fe8;
     --pt-fill: rgba(185, 143, 232, 0.14);
     --pt-hover: rgba(185, 143, 232, 0.30);
-    --pt-glow: rgba(185, 143, 232, 0.35);
 }
 #pt-container .pt-cat-lanthanide {
     --pt-ink: #ff7fae;
     --pt-fill: rgba(255, 127, 174, 0.14);
     --pt-hover: rgba(255, 127, 174, 0.30);
-    --pt-glow: rgba(255, 127, 174, 0.35);
 }
 #pt-container .pt-cat-actinide {
     --pt-ink: #ff9078;
     --pt-fill: rgba(255, 144, 120, 0.14);
     --pt-hover: rgba(255, 144, 120, 0.30);
-    --pt-glow: rgba(255, 144, 120, 0.35);
 }
 #pt-container .pt-cat-esoteric {
     --pt-ink: #b39bff;
     --pt-fill: rgba(179, 155, 255, 0.14);
     --pt-hover: rgba(179, 155, 255, 0.30);
-    --pt-glow: rgba(179, 155, 255, 0.35);
 }
 
-/* --- Grid cells. Inline styles set background / border / colour, so every
-       repaint needs !important. --- */
-#pt-container .pt-cell {
-    background: var(--pt-fill) !important;
-    border: 1px solid var(--pt-ink) !important;
-    transition: background 0.12s ease, box-shadow 0.12s ease;
-}
-#pt-container .pt-cell .pt-cell-sym {
-    color: var(--pt-ink) !important;
-}
-#pt-container .pt-cell .pt-cell-z {
-    color: rgba(255, 244, 210, 0.55) !important;
-}
-#pt-container .pt-cell:hover {
-    background: var(--pt-hover) !important;
-    box-shadow: 0 0 6px var(--pt-glow) !important;
-}
-/* Selected cell: gold ring + amber symbol, and it must beat the hover rule,
-   so it stays last. */
-#pt-container .pt-cell.pt-selected {
-    background: var(--pt-hover) !important;
-    border: 2px solid var(--accent-gold-pure) !important;
-    box-shadow: 0 0 10px var(--shadow-gold-amber-50) !important;
-}
-#pt-container .pt-cell.pt-selected .pt-cell-sym {
-    color: var(--accent-amber-glow) !important;
-}
-#pt-container .pt-cell.pt-selected .pt-cell-z {
-    color: var(--accent-cream-warm) !important;
-}
-
-/* --- The two "*" / "**" lanthanide / actinide markers. --- */
-#pt-container .pt-placeholder {
-    border-color: var(--pt-ink) !important;
-    color: var(--pt-ink) !important;
-}
-
-/* --- Section labels under / above the grid. --- */
-#pt-container .pt-sep-label {
-    color: var(--accent-cream-warm) !important;
-}
-#pt-container .pt-eso-title {
-    color: var(--accent-amber-glow) !important;
-}
-#pt-container .pt-eso-section {
-    border-top-color: var(--border-gold-amber-30) !important;
-}
-#pt-container .pt-header {
-    border-bottom-color: var(--border-focus-hover) !important;
-}
-
-/* --- Legend: cream labels, solid category swatches. --- */
-#pt-container .pt-legend-item {
-    color: var(--accent-cream-warm) !important;
-}
-#pt-container .pt-legend-item .pt-legend-swatch {
-    background: var(--pt-hover) !important;
-    border-color: var(--pt-ink) !important;
-}
-
-/* --- Right page: big symbol tile + name + category line. --- */
-#pt-container .pt-sym-tile {
-    background: var(--pt-fill) !important;
-    border-color: var(--pt-ink) !important;
-    box-shadow: 0 0 22px var(--pt-glow) !important;
-}
-#pt-container .pt-sym-letters {
-    color: var(--pt-ink) !important;
-}
-#pt-container .pt-sym-z,
-#pt-container .pt-sym-mass {
-    color: rgba(255, 244, 210, 0.6) !important;
-}
-#pt-container .pt-name {
-    color: var(--accent-amber-glow) !important;
-}
-#pt-container .pt-cat-label {
-    color: var(--pt-ink) !important;
-}
-
-/* --- Right page: properties plate and description plate. --- */
-#pt-container .pt-props {
-    background: var(--bg-dark-warm-translucent-96) !important;
-    border-color: var(--border-gold-amber-30) !important;
-}
-#pt-container .pt-prop-row {
-    border-bottom-color: var(--border-gold-amber-30) !important;
-}
-#pt-container .pt-prop-label {
-    color: var(--text-primary-hover) !important;
-}
-#pt-container .pt-prop-value {
-    color: var(--accent-cream-light) !important;
-}
-#pt-container .pt-desc {
-    background: var(--bg-dark-warm-translucent-96) !important;
-    border-color: var(--border-gold-amber-30) !important;
-    color: var(--text-pure-white) !important;
-    box-shadow: none !important;
-}
+/* Nothing else is needed here. The plugin no longer writes a single inline
+   style, so `theme.css` draws the whole book from these tokens and the shared
+   classes, and the !important repaints this block used to carry are gone with
+   them. */
 
 /* ==========================================================================
    The shop counter (#shop-container)
@@ -1886,14 +1774,6 @@ select option:hover {
     color: var(--accent-amber-glow) !important;
     border-bottom-color: var(--accent-amber-glow) !important;
 }
-#shop-container .backpack-tab {
-    color: rgba(244, 233, 201, 0.72) !important;
-    border-color: var(--border-gold-amber-30) !important;
-}
-#shop-container .backpack-tab.active {
-    background: var(--accent-amber-glow) !important;
-    color: var(--bg-dark-warm-translucent-96) !important;
-}
 #shop-container .item-card-name {
     color: var(--accent-amber-glow) !important;
 }
@@ -1902,7 +1782,6 @@ select option:hover {
     color: rgba(244, 233, 201, 0.68) !important;
     font-weight: normal !important;
 }
-#shop-container .shop-sell-hint,
 #shop-container .shop-selection-bar .selection-count {
     color: var(--accent-cream-light) !important;
 }
@@ -1916,35 +1795,32 @@ select option:hover {
 /* --- Right page: the dossier's own prose. --- */
 #shop-container .detail-desc,
 #shop-container .detail-lore {
-    color: var(--text-pure-white) !important;
+    color: var(--text-success-active) !important;
+    font-size: var(--fs-detail-prose) !important;
 }
 #shop-container .detail-desc {
-    background: var(--bg-dark-warm-translucent-96) !important;
-    border-left-color: var(--accent-amber-glow) !important;
+    background: transparent !important;
+    border-left-color: transparent !important;
 }
 #shop-container .detail-name {
-    color: var(--accent-amber-glow) !important;
+    color: var(--text-detail-heading) !important;
 }
 #shop-container .badge-lbl {
     color: var(--text-primary-hover) !important;
 }
 #shop-container .badge-val,
 #shop-container .detail-effect-chip {
-    color: var(--accent-cream-light) !important;
-}
-#shop-container .detail-effect-chip {
-    border-color: var(--border-gold-amber-30) !important;
+    color: var(--text-success-active) !important;
 }
 
 
 /* ==========================================================================
    FurnitureSystem build panel (.fbuild-*), Omega Tower gold on black
    --------------------------------------------------------------------------
-   The shared block in css/theme.css paints the panel out of the dark-tech blue
-   family (--accent-dark-blue, --accent-tab-active, --accent-blue-gray-light),
-   which is the same in every preset, so the build menu was the one surface in
-   the tower that never took the gold. Re-ink every plate, rule and active
-   state here.
+   The dock in css/theme.css reads its ground and its ink off the shared
+   tokens, so it already follows the preset. What is left here is the tower's
+   own reading of it: the page is pure black rather than the panel wash, the
+   rules are gold at 30%, and the gallery thumbnails sit on nothing at all.
 
    Scoped by the panel id (#fbuild-panel, and body #fbuild-panel for the panel
    itself) so it outranks theme.css's plain class rules whichever way the preset
@@ -1952,110 +1828,535 @@ select option:hover {
    <style id="active-theme-override"> by GameOptions.applyTheme.
    ========================================================================== */
 body #fbuild-panel {
-    background: linear-gradient(180deg, #0d0a05 0%, #000000 100%);
-    border-right: 2px solid var(--border-focus-hover);
+    background: #000000;
+    border-right: 1px solid var(--border-focus-hover);
     box-shadow: 8px 0 28px var(--shadow-black-translucent-75);
-    color: #e8d5a8;
+    color: var(--accent-cream-warm);
 }
 
-/* Bars: header, mode switch, top tabs, category bar, hint footer. */
+/* The gallery, the folder cards and the piece grid all stand on the same pure
+   black as the panel, so a thumbnail never carries a wash of its own. */
+body #fbuild-panel .fbuild-grid,
+body #fbuild-panel .fbuild-card-img,
+body #fbuild-panel .fbuild-folder-img,
+body #fbuild-panel .fbuild-armed-thumb { background: #000000; }
+
+/* Every rule on the dock: the header, the two columns, the strip over the
+   gallery, and the chips that carry a hairline of their own. */
 #fbuild-panel .fbuild-header,
-#fbuild-panel .fbuild-modebar,
-#fbuild-panel .fbuild-toptabs,
+#fbuild-panel .fbuild-rail,
+#fbuild-panel .fbuild-aside,
 #fbuild-panel .fbuild-catbar,
-#fbuild-panel .fbuild-materials,
-#fbuild-panel .fbuild-hint {
-    background: rgba(255, 204, 102, 0.05);
-    border-color: var(--border-gold-amber-30);
-}
-#fbuild-panel .fbuild-title { color: var(--accent-amber-glow); }
-#fbuild-panel .fbuild-hint b { color: var(--border-focus-hover); }
-
-/* Chips and controls that took --accent-dark-blue as their plate. */
-#fbuild-panel .fbuild-count,
-#fbuild-panel .fbuild-close,
-#fbuild-panel .fbuild-clear-all,
-#fbuild-panel .fbuild-modeswitch,
-#fbuild-panel .fbuild-toptab-opt,
 #fbuild-panel .fbuild-dd-trigger,
 #fbuild-panel .fbuild-search,
-#fbuild-panel .fbuild-gold {
-    background: rgba(255, 204, 102, 0.08);
+#fbuild-panel .fbuild-mat {
     border-color: var(--border-gold-amber-30);
-    color: #e8d5a8;
 }
+
+/* Ink: gold for the title and anything being read for, cream for the rest,
+   muted amber for the captions. Nothing on this dock wears a plate. */
+#fbuild-panel .fbuild-title,
 #fbuild-panel .fbuild-gold,
-#fbuild-panel .fbuild-dd-trigger { color: var(--border-focus-hover); }
-
-/* Idle / hover / active states of every pickable control. */
-#fbuild-panel .fbuild-mode-opt,
-#fbuild-panel .fbuild-tab { color: var(--text-card-dark); }
-#fbuild-panel .fbuild-mode-opt:hover,
-#fbuild-panel .fbuild-toptab-opt:hover,
-#fbuild-panel .fbuild-dd-opt:hover { color: var(--accent-amber-glow); }
-#fbuild-panel .fbuild-toptab-opt:hover,
-#fbuild-panel .fbuild-dd-trigger:hover,
-#fbuild-panel .fbuild-search:hover,
-#fbuild-panel .fbuild-search:focus,
-#fbuild-panel .fbuild-dropdown.open .fbuild-dd-trigger {
-    border-color: var(--border-focus-hover);
-}
-#fbuild-panel .fbuild-mode-opt.active,
-#fbuild-panel .fbuild-toptab-opt.active,
-#fbuild-panel .fbuild-dd-opt.active,
-#fbuild-panel .fbuild-tab.active {
-    background: rgba(255, 204, 102, 0.22);
-    border-color: var(--border-focus-hover);
-    color: var(--accent-amber-glow);
-}
-#fbuild-panel .fbuild-tab:hover,
-#fbuild-panel .fbuild-mat,
-#fbuild-panel .fbuild-card-size { background: rgba(255, 204, 102, 0.06); }
-#fbuild-panel .fbuild-mat { border-color: var(--border-gold-amber-30); }
-
-/* Quiet captions: section labels, folder line, empty state, size pill. */
+#fbuild-panel .fbuild-crumb,
+#fbuild-panel .fbuild-armed-name { color: var(--accent-amber-glow); }
+#fbuild-panel .fbuild-card-name,
+#fbuild-panel .fbuild-dd-opt,
+#fbuild-panel .fbuild-subcat,
+#fbuild-panel .fbuild-dd-trigger,
+#fbuild-panel .fbuild-search,
+#fbuild-panel .fbuild-mat { color: var(--accent-cream-warm); }
 #fbuild-panel .fbuild-section-label,
 #fbuild-panel .fbuild-cat-label,
 #fbuild-panel .fbuild-card-folder,
 #fbuild-panel .fbuild-card-size,
+#fbuild-panel .fbuild-card-variants,
+#fbuild-panel .fbuild-count,
 #fbuild-panel .fbuild-mat-empty,
+#fbuild-panel .fbuild-armed-empty,
 #fbuild-panel .fbuild-empty,
 #fbuild-panel .fbuild-search::placeholder { color: var(--text-card-medium); }
+/* On black the muted amber reads as a smudge at caption size, so every label
+   that carries information is lifted to cream; only the placeholder stays low. */
+body #fbuild-panel .fbuild-section-label,
+body #fbuild-panel .fbuild-cat-label,
+body #fbuild-panel .fbuild-card-folder,
+body #fbuild-panel .fbuild-card-size,
+body #fbuild-panel .fbuild-card-variants,
+body #fbuild-panel .fbuild-count,
+body #fbuild-panel .fbuild-folder-count,
+body #fbuild-panel .fbuild-toptab-count,
+body #fbuild-panel .fbuild-mat-empty,
+body #fbuild-panel .fbuild-armed-empty,
+body #fbuild-panel .fbuild-empty { color: var(--accent-cream-warm); }
+body #fbuild-panel .fbuild-folder,
+body #fbuild-panel .fbuild-card-name,
+body #fbuild-panel .fbuild-toptab-opt,
+body #fbuild-panel .fbuild-mode-opt,
+body #fbuild-panel .fbuild-close,
+body #fbuild-panel .fbuild-clear-all,
+body #fbuild-panel .fbuild-subback { color: var(--accent-cream-warm); }
+body #fbuild-panel .fbuild-folder:hover,
+body #fbuild-panel .fbuild-folder.fbcursor { color: var(--accent-amber-glow); border-color: var(--border-focus-hover); }
 
-/* Category dropdown popup and the material tooltip. */
+/* Idle rail and mode entries, and the one being read or held. */
+#fbuild-panel .fbuild-toptab-opt,
+#fbuild-panel .fbuild-mode-opt,
+#fbuild-panel .fbuild-close,
+#fbuild-panel .fbuild-clear-all,
+#fbuild-panel .fbuild-subback { color: var(--text-card-medium); }
+#fbuild-panel .fbuild-toptab-opt:hover,
+#fbuild-panel .fbuild-toptab-opt.active,
+#fbuild-panel .fbuild-mode-opt:hover,
+#fbuild-panel .fbuild-mode-opt.active,
+#fbuild-panel .fbuild-dd-opt:hover,
+#fbuild-panel .fbuild-dd-opt.active,
+#fbuild-panel .fbuild-subcat:hover,
+#fbuild-panel .fbuild-close:hover,
+#fbuild-panel .fbuild-clear-all:hover,
+#fbuild-panel .fbuild-subback:hover {
+    color: var(--accent-amber-glow);
+    border-color: var(--border-focus-hover);
+}
+
+/* The gold hairline is the whole of focus, hover, cursor and armed. */
+#fbuild-panel .fbuild-card:hover,
+#fbuild-panel .fbuild-card.fbcursor,
+#fbuild-panel .fbuild-card.armed,
+#fbuild-panel .fbuild-card-armed-badge,
+#fbuild-panel .fbuild-armed-card,
+#fbuild-panel .fbuild-free { border-color: var(--border-focus-hover); }
+#fbuild-panel .fbuild-card-armed-badge,
+#fbuild-panel .fbuild-free { color: var(--accent-amber-glow); }
+
+/* The category popup and the material tooltip stand off the black page. */
 #fbuild-panel .fbuild-dd-list,
 #fbuild-panel .fbuild-mat-tip {
-    background: #0d0a05;
+    background: #000000;
     border-color: var(--border-focus-hover);
 }
-#fbuild-panel .fbuild-dd-opt { color: #e8d5a8; }
 #fbuild-panel .fbuild-mat-tip { color: var(--accent-amber-glow); }
-
-/* Furniture cards. */
-#fbuild-panel .fbuild-card {
-    background: rgba(255, 204, 102, 0.04);
-    border-color: var(--border-gold-amber-30);
-}
-#fbuild-panel .fbuild-card:hover,
-#fbuild-panel .fbuild-card.fbcursor {
-    background: rgba(255, 204, 102, 0.12);
-    border-color: var(--border-focus-hover);
-}
-#fbuild-panel .fbuild-card.fbcursor {
-    box-shadow: 0 0 0 2px var(--border-focus-hover), 0 4px 14px var(--shadow-black-translucent-75);
-}
-#fbuild-panel .fbuild-card-img { background: rgba(0, 0, 0, 0.55); }
-#fbuild-panel .fbuild-armed-name { color: var(--accent-amber-glow); }
 
 /* Scrollbars. */
 #fbuild-panel .fbuild-grid::-webkit-scrollbar-thumb,
 #fbuild-panel .fbuild-materials::-webkit-scrollbar-thumb,
-#fbuild-panel .fbuild-cats::-webkit-scrollbar-thumb,
+#fbuild-panel .fbuild-rail::-webkit-scrollbar-thumb,
+#fbuild-panel .fbuild-aside::-webkit-scrollbar-thumb,
 #fbuild-panel .fbuild-dd-list::-webkit-scrollbar-thumb {
     background: var(--scroll-thumb-hover-translucent-60);
 }
 #fbuild-panel .fbuild-grid::-webkit-scrollbar-thumb:hover,
-#fbuild-panel .fbuild-cats::-webkit-scrollbar-thumb:hover,
+#fbuild-panel .fbuild-rail::-webkit-scrollbar-thumb:hover,
+#fbuild-panel .fbuild-aside::-webkit-scrollbar-thumb:hover,
 #fbuild-panel .fbuild-dd-list::-webkit-scrollbar-thumb:hover {
     background: var(--border-focus-hover);
 }
+
+/* ==========================================================================
+   Galaxy System HUD (#gx-ui, #gx-landing-grid, #gx-service, #gx-anomaly, #gx-mining),
+   dark-theme readability (Omega Tower)
+   ========================================================================== */
+#gx-ui {
+    font-family: var(--font-ui);
+    color: var(--text-pure-white);
+}
+#gx-ui .gx-panel,
+#gx-landing-grid .gx-lg-card,
+#gx-service .gx-svc-card,
+#gx-anomaly .gx-anom-card,
+#gx-mining {
+    background: var(--bg-dark-panel);
+    border-color: var(--border-gold-amber-30);
+    box-shadow: 0 6px 20px var(--shadow-black-translucent-55);
+    color: var(--text-pure-white);
+}
+#gx-ui .gx-title,
+#gx-landing-grid .gx-title,
+#gx-service .gx-title,
+#gx-anomaly .gx-title,
+#gx-mining .gx-title {
+    color: var(--accent-amber-glow);
+    font-family: var(--font-ui);
+    text-shadow: 0 1px 3px var(--shadow-black-translucent-75);
+}
+#gx-ui .gx-title.gx-hard,
+#gx-ui .gx-loc-star {
+    color: var(--accent-gold-pure);
+    text-shadow: none;
+}
+#gx-ui .gx-sub {
+    font-family: var(--font-ui);
+    color: var(--accent-amber-light);
+}
+#gx-ui .gx-divider {
+    background: var(--border-gold-amber-30);
+}
+#gx-ui .gx-k,
+#gx-ui .gx-muted,
+#gx-fuel .gx-fuel-head .gx-muted,
+#gx-fuel .gx-fuel-name,
+#gx-fuel .gx-refuel-hint,
+#gx-catalog .gx-cat-type,
+#gx-catalog .gx-cat-count,
+#gx-service .gx-svc-note,
+#gx-anomaly .gx-anom-where,
+#gx-mining .gx-mine-log,
+#gx-mode {
+    font-family: var(--font-ui);
+    color: var(--text-text-alt-12);
+}
+#gx-ui .gx-v,
+#gx-fuel .gx-fuel-val,
+#gx-catalog .gx-cat-name,
+#gx-service .gx-svc-name,
+#gx-service .gx-svc-pct,
+#gx-anomaly .gx-anom-body {
+    font-family: var(--font-ui);
+    color: var(--text-pure-white);
+}
+#gx-ui .gx-note {
+    background: var(--bg-dark-warm-translucent-96);
+    border-color: var(--border-gold-amber-30);
+    color: var(--accent-cream-light);
+}
+#gx-ui .gx-btn {
+    font-family: var(--font-ui);
+    background: var(--bg-panel);
+    border-color: var(--border-focus-hover);
+    color: var(--text-primary-hover);
+}
+#gx-ui .gx-btn:hover,
+#gx-ui .gx-btn.focused {
+    background: var(--bg-tertiary-focus-translucent-45);
+    color: var(--accent-amber-glow);
+    box-shadow: 0 0 8px var(--shadow-gold-amber-50);
+}
+#gx-catalog .gx-cat-group {
+    color: var(--accent-amber-light);
+    border-bottom-color: var(--border-gold-amber-30);
+}
+#gx-catalog .gx-cat-tab.gx-on {
+    background: var(--bg-tertiary-focus-translucent-45);
+    color: var(--accent-amber-glow);
+}
+#gx-fuel .gx-fuel-pct {
+    color: var(--text-text-alt-16);
+}
+#gx-fuel .gx-fuel-bar,
+#gx-service .gx-svc-bar,
+#gx-mining .gx-mine-bar {
+    background: rgba(13, 16, 23, 0.9);
+    border-color: var(--border-gold-amber-30);
+}
+#gx-fuel .gx-sb-pip {
+    background: rgba(150, 120, 220, 0.25);
+}
+#gx-fuel .gx-sb-pip.on {
+    background: #c39bff;
+    box-shadow: 0 0 4px #a56bff;
+}
+#gx-fuel .gx-refuel-row {
+    border-top-color: var(--border-gold-amber-30);
+}
+#gx-zoom {
+    background: rgba(13, 16, 23, 0.85);
+    border-color: var(--border-gold-amber-30);
+}
+#gx-zoom .gx-zoom-fill {
+    background: linear-gradient(to top, var(--shadow-gold-amber-50), rgba(212, 160, 80, 0.08));
+}
+#gx-zoom .gx-zoom-knob {
+    background: var(--accent-amber-glow);
+    box-shadow: 0 0 8px var(--shadow-gold-amber-50);
+}
+#gx-tooltip {
+    background: var(--bg-darker-panel);
+    border-color: var(--border-gold-amber-30);
+    color: var(--text-pure-white);
+}
+#gx-landing-grid {
+    background: rgba(6, 8, 14, 0.72);
+}
+#gx-landing-grid .gx-lg-canvas {
+    border-color: var(--border-gold-amber-30);
+}
+#gx-service {
+    background: rgba(6, 8, 14, 0.72);
+}
+#gx-service .gx-svc-part {
+    border-color: var(--border-gold-amber-30);
+}
+#gx-anomaly {
+    background: rgba(4, 6, 12, 0.78);
+}
+#gx-anomaly .gx-anom-choices .gx-anom-choice {
+    background: rgba(13, 16, 23, 0.6);
+    border-color: var(--border-gold-amber-30);
+    color: var(--text-pure-white);
+}
+#gx-anomaly .gx-anom-choice:hover,
+#gx-anomaly .gx-anom-choice.focused {
+    border-color: var(--accent-amber-light);
+    background: rgba(212, 160, 80, 0.14);
+}
+#gx-anomaly .gx-anom-choice .gx-anom-num {
+    color: var(--accent-amber-light);
+}
+#gx-anomaly .gx-anom-rewards {
+    border-top-color: var(--border-gold-amber-30);
+    color: var(--accent-amber-light);
+}
+#gx-mining .gx-mine-clock {
+    color: var(--text-text-alt-16);
+}
+#gx-mining .gx-mine-log b {
+    color: var(--accent-amber-glow);
+}
+
+/* ==========================================================================
+   Voxel World HUD (#camper-drive-hud), dark-theme readability (Omega Tower)
+   ========================================================================== */
+#camper-drive-hud {
+    font-family: var(--font-ui);
+    color: var(--text-pure-white);
+}
+#camper-drive-hud .cds-panel {
+    background: var(--bg-dark-panel);
+    border-color: var(--border-gold-amber-30);
+    color: var(--text-pure-white);
+    box-shadow: 0 6px 20px var(--shadow-black-translucent-55);
+}
+#camper-drive-hud .cds-title {
+    color: var(--accent-amber-glow);
+    text-shadow: 0 1px 3px var(--shadow-black-translucent-75);
+}
+#camper-drive-hud .cds-label,
+#camper-drive-hud .cds-cmd-hint,
+#camper-drive-hud .cds-env-row,
+#camper-drive-hud .cds-status-meta,
+#camper-drive-hud .cds-dig-held {
+    color: var(--text-text-alt-12);
+}
+#camper-drive-hud .cds-val,
+#camper-drive-hud .cds-speed-text,
+#camper-drive-hud .cds-large-val,
+#camper-drive-hud .cds-map-coords,
+#camper-drive-hud .cds-full-coords {
+    color: var(--text-pure-white);
+}
+#camper-drive-hud .cds-minimap-canvas {
+    border-color: var(--border-gold-amber-30);
+}
+#camper-drive-hud .cds-key {
+    background: var(--bg-tertiary-focus-translucent-45);
+    border-color: var(--border-gold-amber-30);
+    color: var(--accent-amber-glow);
+}
+#camper-drive-hud .cds-gear-text {
+    color: var(--accent-amber-light);
+}
+#camper-drive-hud .cds-rpm-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+#camper-drive-hud .cds-rpm-bar {
+    background: var(--accent-amber-glow);
+}
+#camper-drive-hud .cds-dig-track {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: var(--border-gold-amber-30);
+}
+#camper-drive-hud .cds-dig-bar {
+    background: var(--accent-amber-glow);
+}
+#camper-drive-hud .cds-prompt {
+    background: var(--bg-dark-panel);
+    border-color: var(--border-gold-amber-30);
+    color: var(--accent-amber-glow);
+}
+#camper-drive-hud .cds-respawn-hint {
+    background: rgba(60, 10, 6, 0.82);
+    border-color: rgba(230, 90, 60, 0.8);
+    box-shadow: 0 6px 20px var(--shadow-black-translucent-55);
+    color: #ffd9c8;
+}
+#camper-drive-hud .cds-respawn-reason {
+    color: #ffb3a0;
+}
+#camper-drive-hud .cds-respawn-action {
+    color: var(--accent-amber-glow);
+}
+#camper-drive-hud .cds-respawn-key {
+    color: #ff7a55;
+}
+#camper-drive-hud .cds-full-map-panel {
+    background: rgba(6, 4, 2, 0.86);
+}
+
+
+/* ==========================================================================
+   THE BLACK PAGE (docs/task/ui_fixing.md)
+   --------------------------------------------------------------------------
+   Omega Tower is not parchment. The spread carries no gilt frame, no inner
+   rule, no inset glow and no paper wash: every menu is a pure black ground
+   with the content drawn straight onto it, which is what makes the gold type
+   and the hairline plates read. The shared sheet still draws the frame for
+   the paper preset, so this is an override rather than a deletion there.
+   ========================================================================== */
+.book-spread,
+.cc-pockets-spread,
+#thinker-container .book-spread,
+#blacksmith-container .book-spread,
+.save-book-spread,
+.shop-spread,
+.mp-spread,
+.travel-book-spread,
+.stock-spread,
+.mp-type-spread {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background-image: none;
+    background-color: #000000;
+}
+
+/* The binding spine down the middle of the book goes with the frame. */
+.book-spread::before,
+.cc-pockets-spread::before,
+#thinker-container .book-spread::before,
+#blacksmith-container .book-spread::before,
+.shop-spread::before,
+.mp-spread::before,
+.travel-book-spread::before,
+.stock-spread::before,
+.mp-type-spread::before {
+    display: none;
+}
+
+/* A label is read, so it is not printed in the plate's own brown. The muted
+   half of a label/value pair takes the warm cream ink everywhere, not only
+   inside an item card. */
+.inspect-spec-label,
+.status-bio-item-lbl,
+.ui-empty-text,
+.ui-panel-hint {
+    color: var(--text-detail-label);
+}
+
+/* ...and the backdrop the spread sits on. A 70% black over the live map is
+   what was still showing through as a warm haze in the screen corners. */
+#menu-container,
+#status-menu-container,
+#character-creation-container,
+#equip-container,
+#shop-container,
+#save-menu-container,
+#help-container,
+#world-manage-container,
+#travel-journal-container,
+#mp-container,
+#mp-type-container,
+#stock-container,
+#thinker-container,
+#blacksmith-container {
+    background: #000000;
+}
+
+
+/* ==========================================================================
+   Character creation, tower ink
+   ========================================================================== */
+
+/* The sprite and bust galleries are full-bleed windows over the wizard, so
+   they sit on the tower's own black rather than a dimmed card. */
+.cc-gal-overlay,
+.cc-gal-panel {
+    background: #000000 !important;
+}
+
+/* A picked control is gold ink and a gold hairline, with nothing behind it:
+   the warm gradient plate this used to wear is the one thing every other
+   picked row in the tower has already given up. */
+.cc-bio-chip.selected,
+.cc-choice-btn.selected,
+.cc-btn-treaty.selected,
+.cc-compact-btn.selected {
+    background: transparent !important;
+    background-image: none !important;
+    border-color: var(--accent-gold-pure) !important;
+    color: var(--accent-gold-pure) !important;
+    box-shadow: none !important;
+}
+
+/* A dropdown reads its own value in white; gold is for the frame, not for the
+   line the player is reading. */
+select,
+.cc-bio-select {
+    color: #ffffff !important;
+}
+
+select option,
+.cc-bio-select option {
+    color: #ffffff;
+}
+
+/* The one option under the cursor is the tower's gold, so the open list still
+   shows which line is being picked. */
+select option:checked,
+select option:hover {
+    color: var(--accent-amber-glow) !important;
+    background: var(--bg-tertiary-focus-translucent-45);
+}
+
+
+/* The open tab is the page's own top edge, so it has no bottom edge of its
+   own: the line under it read as a closed box sitting above the page. */
+.cc-folder-tab.active {
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
+/* The Simple / Detailed switch is minimal: two words, the one you are in in
+   gold, no cabinet around them. */
+.cc-mode-toggle {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    gap: var(--sp-3) !important;
+}
+
+.cc-mode-pill {
+    background: transparent !important;
+    border: none !important;
+    padding: 2px 4px !important;
+    box-shadow: none !important;
+    color: var(--text-detail-label) !important;
+}
+
+.cc-mode-pill.active {
+    color: var(--accent-gold-pure) !important;
+}
+
+
+/* ==========================================================================
+   Battle command rail (BattleSystemEnhanchedCommands.js)
+   Black slate rows; the gold edge down the left is the cursor, and a row that
+   carries a kind of its own (a skill's role) keeps that colour there instead.
+   ========================================================================== */
+:root {
+    --actorcmd-bg: rgba(0, 0, 0, 0.92);
+    --actorcmd-bg-sel: rgba(0, 0, 0, 0.98);
+    --actorcmd-bg-image: none;
+    --actorcmd-border: rgba(255, 255, 255, 0.07);
+    --actorcmd-border-sel: var(--accent-gold-pure);
+    --actorcmd-edge: var(--accent-gold-pure);
+    --actorcmd-sep: rgba(255, 255, 255, 0.09);
+    --actorcmd-ink: var(--text-pure-white);
+    --actorcmd-ink-sel: var(--accent-gold-pure);
+    --actorcmd-ink-cost: var(--text-primary-hover);
+    --actorcmd-ink-shadow: -1px -1px 0 #000, 1px -1px 0 #000,
+                           -1px 1px 0 #000, 1px 1px 0 #000,
+                           2px 2px 5px rgba(0, 0, 0, 0.95);
+}
+
+/* Section headers on the Empathize / wiki spreads read as gold in the tower:
+   --text-text-alt-4 is plain white here, which made every heading shout. */
+.npc-sec-hdr { color: var(--text-gold-dark); }

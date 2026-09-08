@@ -125,6 +125,11 @@
     return T.has(key) ? T(key) : fallback;
   };
 
+  // Both halves of a catalogued body. A sheet may be spliced from a second
+  // archetype (NPCs.json SecondaryArchetype), and every rail that asks what a
+  // sheet is made of asks about the pair, not the primary alone.
+  const archetypesOf = (e) => [e && e.Archetype, e && e.SecondaryArchetype].filter(Boolean);
+
   const SPRITE_TABS = [
     { id: "all", label: spriteTabLabel("all", "All"), match: (e) => true },
 
@@ -136,18 +141,23 @@
 
     // Special Entity Types (from NPCs.json flags)
     { id: "aliens", label: spriteTabLabel("aliens", "Aliens"), match: (e) => !!(e.aliens || e.alien) },
-    { id: "animals", label: spriteTabLabel("animals", "Animals"), match: (e) => !!(e.animals || e.animal || ["Beast", "Bird", "Rabbit", "Horse"].includes(e.Archetype)) },
-    { id: "creatures", label: spriteTabLabel("creatures", "Creatures"), match: (e) => !!(e.creatures || e.creature || ["Slime", "ChestMimic", "Mushroom", "Spherical", "Mutant", "Frog"].includes(e.Archetype)) },
+    { id: "animals", label: spriteTabLabel("animals", "Animals"), match: (e) => !!(e.animals || e.animal || archetypesOf(e).some((a) => ["Beast", "Bird", "Rabbit", "Horse"].includes(a))) },
+    { id: "creatures", label: spriteTabLabel("creatures", "Creatures"), match: (e) => !!(e.creatures || e.creature || archetypesOf(e).some((a) => ["Slime", "ChestMimic", "Mushroom", "Spherical", "Mutant", "Frog"].includes(a))) },
     { id: "varlenian", label: spriteTabLabel("varlenian", "Varlenian"), match: (e) => !!e.varlenian },
-    { id: "undead", label: spriteTabLabel("undead", "Undead"), match: (e) => !!(e.zombie || ["Undead", "Ghost", "ConstructedUndead"].includes(e.Archetype)) },
+    { id: "undead", label: spriteTabLabel("undead", "Undead"), match: (e) => !!(e.zombie || archetypesOf(e).some((a) => ["Undead", "Ghost", "ConstructedUndead"].includes(a))) },
 
     // Archetypes (from NPCs.json Archetype)
+    // The peoples are one archetype now: an elf, a goblin, a dwarf and an ogre
+    // are humanoids, so these four rails are read off the sheet's own name (the
+    // second argument every match is handed) instead of an archetype that no
+    // longer exists. A secondary archetype counts as much as the primary: a
+    // sheet spliced with a beast belongs on that beast's rail too.
     { id: "humanoid", label: spriteTabLabel("humanoid", "Humanoid"), match: (e) => !e.Archetype || e.Archetype === "Humanoid" },
-    { id: "elven", label: spriteTabLabel("elven", "Elven"), match: (e) => e.Archetype === "Elven" },
-    { id: "goblin", label: spriteTabLabel("goblin", "Goblin"), match: (e) => e.Archetype === "Goblin" },
-    { id: "dwarves", label: spriteTabLabel("dwarves", "Dwarves"), match: (e) => ["Dwarf", "Gnome"].includes(e.Archetype) },
-    { id: "insectoid", label: spriteTabLabel("insectoid", "Insectoid"), match: (e) => ["Insectoid", "Crustacean", "Frog"].includes(e.Archetype) },
-    { id: "demons", label: spriteTabLabel("demons", "Demons"), match: (e) => ["Demon", "Ogre"].includes(e.Archetype) },
+    { id: "elven", label: spriteTabLabel("elven", "Elven"), match: (e, key) => /elven|elf/i.test(key || "") },
+    { id: "goblin", label: spriteTabLabel("goblin", "Goblin"), match: (e, key) => /goblin/i.test(key || "") },
+    { id: "dwarves", label: spriteTabLabel("dwarves", "Dwarves"), match: (e, key) => /dwarf|dwarven/i.test(key || "") || archetypesOf(e).includes("Gnome") },
+    { id: "insectoid", label: spriteTabLabel("insectoid", "Insectoid"), match: (e) => archetypesOf(e).some((a) => ["Insectoid", "Crustacean", "Frog"].includes(a)) },
+    { id: "demons", label: spriteTabLabel("demons", "Demons"), match: (e, key) => archetypesOf(e).includes("Demon") || /ogre/i.test(key || "") },
 
     // Humanoid themes (from the NPCs.json "theme" tag, one word apiece)
     { id: "space", label: spriteTabLabel("space", "Space"), match: (e) => e.theme === "Space" },
@@ -203,7 +213,7 @@
     const db = (window.WorldGen && window.WorldGen.NPCs) || npcDatabase || {};
     const entry = db[sheetName] || {};
     for (const tab of SPRITE_TABS) {
-      if (tab.id !== "all" && tab.match && tab.match(entry)) {
+      if (tab.id !== "all" && tab.match && tab.match(entry, sheetName)) {
         return tab.id;
       }
     }
@@ -330,7 +340,7 @@
         const item = { name: name, index: index, tabId: "all" };
         spriteOptions.push(item);
         for (const tab of SPRITE_TABS) {
-          if (tab.id === "all" || (tab.match && tab.match(entry))) {
+          if (tab.id === "all" || (tab.match && tab.match(entry, name))) {
             tabSpriteOptionsMap[tab.id].push(item);
           }
         }
@@ -510,8 +520,8 @@
     el.dataset.sprite = key;
     const geo = spriteFrameGeometry(name);
     if (!geo.ready) {
-      el.style.backgroundImage = "none";
-      el.style.opacity = "0";
+      el.style.removeProperty("--cc-sprite-url");
+      el.classList.remove("cc-visible");
       if (geo.bitmap) {
         geo.bitmap.addLoadListener(() => {
           // The element may have been recycled onto another sheet meanwhile.
@@ -523,12 +533,12 @@
     }
     const frame = spriteFrameBackground(geo, index, pattern, directionRow);
     const size = spriteFrameBox(geo, box);
-    el.style.width = `${size.width}px`;
-    el.style.height = `${size.height}px`;
-    el.style.backgroundImage = `url("${spriteSheetUrl(name)}")`;
-    el.style.backgroundPosition = frame.position;
-    el.style.backgroundSize = frame.size;
-    el.style.opacity = "1";
+    el.style.setProperty("--cc-sprite-w", `${size.width}px`);
+    el.style.setProperty("--cc-sprite-h", `${size.height}px`);
+    el.style.setProperty("--cc-sprite-url", window.CCArt.url(spriteSheetUrl(name)));
+    el.style.setProperty("--cc-sprite-pos", frame.position);
+    el.style.setProperty("--cc-sprite-zoom", frame.size);
+    el.classList.add("cc-visible");
     return true;
   };
 
@@ -601,7 +611,7 @@
     // The board this character is allowed to see, cut once on the way in: a
     // humanoid never gets the animal sheets, tab counts included.
     scopeBoardToActor() {
-      // A board opened for one character in particular - the tutorial's
+      // A board opened for one character in particular - the story mode's
       // dossiers, which are a class and a set of looks that belong to it -
       // offers that character's own sheets and nothing else. The audience cut
       // is skipped there on purpose: the list was chosen for this character
@@ -684,7 +694,7 @@
       this._headerEls = [];
       if (this._overlay) {
         this._overlay.innerHTML = "";
-        this._overlay.style.display = "none";
+        window.CCPanel.hide(this._overlay);
       }
     }
 
@@ -702,9 +712,7 @@
         window._ccOverlayTimeout = null;
       }
       this._overlay = container;
-      container.style.display = "flex";
-      container.style.opacity = "1";
-      container.style.pointerEvents = "auto";
+      window.CCPanel.show(container);
       container.innerHTML = "";
       if (window.CCScroll) window.CCScroll.bindWheel(container);
 
@@ -715,22 +723,34 @@
         return `<button class="cc-sprite-tab-btn ${isActive ? 'active' : ''}" data-tab="${t.id}">${t.label} <span class="cc-sprite-tab-count">(${count})</span></button>`;
       }).join("");
 
+      // Shape B, the panel: the gallery is a modal over whatever opened it,
+      // and it is the same modal the bust gallery draws. Header bar with the
+      // one Back, the tab rail, the windowed board, and the action strip.
       container.innerHTML = `
-        <div class="cc-pockets-spread">
-          <div class="cc-page cc-page-full" style="padding: 20px 24px; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; overflow: hidden;">
-            <div class="cc-sprite-tab-bar">${tabsHtml}</div>
-            <div class="cc-presets-board cc-sprite-vgrid" style="flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; width: 100%; padding-right: 4px;">
-              <div class="cc-sprite-vcanvas"></div>
+        <div class="ui-overlay cc-gal-overlay">
+          <div class="ui-panel cc-gal-panel">
+            <div class="page-header-bar page-header-bar--compact">
+              <button class="back-button cc-gal-back">${T("CharCreate.back")}</button>
+              <div class="title">${T("CharCreate.selectSprite")}</div>
+            </div>
+            <div class="cc-sprite-tab-bar cc-gal-tabs">${tabsHtml}</div>
+            <div class="ui-panel-body cc-gal-board cc-gal-board--sprite">
+              <div class="cc-gal-canvas"></div>
             </div>
           </div>
         </div>
       `;
 
-      this._gridEl = container.querySelector(".cc-sprite-vgrid");
-      this._canvasEl = container.querySelector(".cc-sprite-vcanvas");
+      this._gridEl = container.querySelector(".cc-gal-board");
+      this._canvasEl = container.querySelector(".cc-gal-canvas");
 
-      // No Back and no Continue: picking a sprite IS the answer, and the
-      // gallery closes on it. Cancel still leaves without picking.
+      // No Continue: picking a sprite IS the answer, and the gallery closes on
+      // it. Back (and cancel) leave without picking.
+      const backEl = container.querySelector(".cc-gal-back");
+      if (backEl) backEl.addEventListener("click", () => {
+        SoundManager.playCancel();
+        this.leaveWithoutPicking();
+      });
 
       const tabBar = container.querySelector(".cc-sprite-tab-bar");
       if (tabBar) {
@@ -803,7 +823,7 @@
       this._cellW = Math.floor(
         (width - SPRITE_GRID_GAP * (SPRITE_GRID_COLS - 1)) / SPRITE_GRID_COLS,
       );
-      this._canvasEl.style.height = `${spriteCanvasH}px`;
+      this._canvasEl.style.setProperty("--cc-canvas-h", `${spriteCanvasH}px`);
       return true;
     }
 
@@ -811,15 +831,15 @@
       const cell = this._pool.pop();
       if (cell) return cell;
       const card = document.createElement("div");
-      card.className = "cc-wanted-card cc-sprite-card";
+      card.className = "cc-gal-cell cc-sprite-card";
       const art = document.createElement("div");
-      art.className = "cc-wanted-sprite";
+      art.className = "cc-gal-art cc-gal-art--sprite";
       card.appendChild(art);
       card._art = art;
       // Only the sheets that carry a caption of their own (the Monsters
       // folder) show one; the NPC sheets stay art and nothing else.
       const name = document.createElement("div");
-      name.className = "cc-sprite-card-name";
+      name.className = "cc-gal-cell-name";
       card.appendChild(name);
       card._name = name;
       return card;
@@ -890,10 +910,10 @@
     placeCell(cell, index) {
       const row = spriteRows[spriteRowOfIndex[index]];
       const col = row ? index - row.from : 0;
-      cell.style.left = `${col * (this._cellW + SPRITE_GRID_GAP)}px`;
-      cell.style.top = `${row ? row.top : 0}px`;
-      cell.style.width = `${this._cellW}px`;
-      cell.style.height = `${SPRITE_CELL_H}px`;
+      cell.style.setProperty("--cc-cell-x", `${col * (this._cellW + SPRITE_GRID_GAP)}px`);
+      cell.style.setProperty("--cc-cell-y", `${row ? row.top : 0}px`);
+      cell.style.setProperty("--cc-cell-w", `${this._cellW}px`);
+      cell.style.setProperty("--cc-cell-h", `${SPRITE_CELL_H}px`);
       cell.classList.toggle("selected", index === this._index);
     }
 
@@ -904,7 +924,7 @@
       cell.title = entry.label || decamelCase(entry.name.replace(/^.*\//, "").replace(/[!$]/g, ""));
       if (cell._name) {
         cell._name.textContent = entry.label || "";
-        cell._name.style.display = entry.label ? "block" : "none";
+        cell._name.classList.toggle("ui-closed", !entry.label);
       }
       const walking = index === this._index;
       paintSpriteFrame(
@@ -1070,7 +1090,6 @@
           moved = true;
         }
       } else if (Input.isTriggered("ok")) {
-        SoundManager.playOk();
         this.onSpriteConfirm();
         return;
       } else if (cancelPressed()) {
@@ -1087,7 +1106,7 @@
 
     update() {
       super.update();
-      if (!this._overlay || this._overlay.style.display === "none") return;
+      if (!this._overlay || window.CCPanel.isHidden(this._overlay)) return;
       this.updateInput();
       if (window.CCScroll) window.CCScroll.update(this._overlay);
       // The board rebuilds its cells underneath the ring, so the ring is
@@ -1115,7 +1134,6 @@
         $gamePlayer.refresh();
       }
 
-      SoundManager.playOk();
 
       // Picking a sprite ends here, whichever way the gallery was opened. The
       // sheet's own portrait comes with it (NPCs.json pairs one per index), so
@@ -1420,7 +1438,7 @@
       this._pool.length = 0;
       if (this._overlay) {
         this._overlay.innerHTML = "";
-        this._overlay.style.display = "none";
+        window.CCPanel.hide(this._overlay);
       }
     }
 
@@ -1438,31 +1456,39 @@
         window._ccOverlayTimeout = null;
       }
       this._overlay = container;
-      container.style.display = "flex";
-      container.style.opacity = "1";
-      container.style.pointerEvents = "auto";
+      window.CCPanel.show(container);
       container.innerHTML = "";
       if (window.CCScroll) window.CCScroll.bindWheel(container);
 
+      // The same modal the sprite gallery draws, one field wider: the species
+      // filter sits under the header, and Random / Continue ride the strip at
+      // the foot instead of a button panel of their own.
       container.innerHTML = `
-        <div class="cc-pockets-spread">
-          <div class="cc-page cc-page-full" style="padding: 20px 24px; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; overflow: hidden;">
-            <input type="text" class="cc-species-search" style="margin-bottom: 8px;" />
-            <div class="cc-sprite-tab-bar"></div>
-            <div class="cc-presets-board cc-bust-vgrid" style="flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; width: 100%; padding-right: 4px;">
-              <div class="cc-bust-vcanvas"></div>
+        <div class="ui-overlay cc-gal-overlay">
+          <div class="ui-panel cc-gal-panel">
+            <div class="page-header-bar page-header-bar--compact">
+              <button class="back-button cc-gal-back">${T("CharCreate.back")}</button>
+              <div class="title">${T("CharCreate.selectABust")}</div>
             </div>
-            <div class="cc-button-panel" style="margin-top: 12px; width: 100%;"></div>
+            <input type="text" class="cc-species-search ui-input cc-gal-search" />
+            <div class="cc-sprite-tab-bar cc-gal-tabs"></div>
+            <div class="ui-panel-body cc-gal-board cc-gal-board--bust">
+              <div class="cc-gal-canvas"></div>
+            </div>
+            <div class="inspect-actions cc-gal-actions"></div>
           </div>
         </div>
       `;
 
       this._tabBarEl = container.querySelector(".cc-sprite-tab-bar");
-      this._gridEl = container.querySelector(".cc-bust-vgrid");
-      this._canvasEl = container.querySelector(".cc-bust-vcanvas");
+      this._gridEl = container.querySelector(".cc-gal-board");
+      this._canvasEl = container.querySelector(".cc-gal-canvas");
       this._searchEl = container.querySelector(".cc-species-search");
-      this._buttonsEl = container.querySelector(".cc-button-panel");
+      this._buttonsEl = container.querySelector(".cc-gal-actions");
       this._searchEl.placeholder = T("CharCreate.searchSpecies");
+
+      const backEl = container.querySelector(".cc-gal-back");
+      if (backEl) backEl.addEventListener("click", () => this.onBustCancel());
 
       this.buildButtons();
 
@@ -1505,7 +1531,6 @@
       // No Back: cancel (ESC / right click) is how this board is left without
       // picking, same as the sprite board it now matches. Random in the
       // middle, Continue on the right.
-      const slots = window.CCButtons.slots(this._buttonsEl);
 
       // Always present, never gated on the gallery having loaded: if the
       // img/busts scan comes back empty (or is still running) the tab rail
@@ -1513,16 +1538,16 @@
       // draws from availableBustNames(), which falls back to its own
       // synchronous folder read rather than waiting on BustCatalogue's scan.
       this._randomEl = document.createElement("button");
-      this._randomEl.className = "cc-btn-treaty";
+      this._randomEl.className = "inspect-btn";
       this._randomEl.textContent = window.CCButtons.randomLabel();
       this._randomEl.addEventListener("click", () => this.onBustRandom());
-      slots.mid.appendChild(this._randomEl);
+      this._buttonsEl.appendChild(this._randomEl);
 
       this._confirmEl = document.createElement("button");
-      this._confirmEl.className = "cc-btn-treaty confirm";
+      this._confirmEl.className = "inspect-btn confirm";
       this._confirmEl.textContent = window.CCButtons.continueLabel();
       this._confirmEl.addEventListener("click", () => this.onBustConfirm());
-      slots.next.appendChild(this._confirmEl);
+      this._buttonsEl.appendChild(this._confirmEl);
       // Hidden with `visibility`, not `display`: while no category has
       // loaded yet there is nothing to confirm, but Random must not slide
       // sideways when Continue comes and goes.
@@ -1593,7 +1618,7 @@
       const btns = this._tabBarEl.querySelectorAll(".cc-sprite-tab-btn");
       btns.forEach((btn) => {
         const match = !term || bustCategoryLabel(btn.dataset.category).toLowerCase().includes(term);
-        btn.style.display = match ? "" : "none";
+        btn.classList.toggle("ui-closed", !match);
       });
     }
 
@@ -1629,7 +1654,7 @@
       if (!this._cellH) return;
       const rows = Math.ceil(this._busts.length / BUST_GRID_COLS);
       const height = rows > 0 ? rows * (this._cellH + BUST_GRID_GAP) - BUST_GRID_GAP : 0;
-      this._canvasEl.style.height = `${height}px`;
+      this._canvasEl.style.setProperty("--cc-canvas-h", `${height}px`);
     }
 
     releaseCells() {
@@ -1644,11 +1669,11 @@
       const cell = this._pool.pop();
       if (cell) return cell;
       const card = document.createElement("div");
-      card.className = "cc-wanted-card cc-bust-card";
+      card.className = "cc-gal-cell cc-bust-card";
       const art = document.createElement("div");
-      art.className = "cc-bust-image";
+      art.className = "cc-gal-art cc-gal-art--bust";
       const name = document.createElement("div");
-      name.className = "cc-wanted-name";
+      name.className = "cc-gal-cell-name";
       card.appendChild(art);
       card.appendChild(name);
       card._art = art;
@@ -1703,10 +1728,10 @@
     placeCell(cell, index) {
       const col = index % BUST_GRID_COLS;
       const row = Math.floor(index / BUST_GRID_COLS);
-      cell.style.left = `${col * (this._cellW + BUST_GRID_GAP)}px`;
-      cell.style.top = `${row * (this._cellH + BUST_GRID_GAP)}px`;
-      cell.style.width = `${this._cellW}px`;
-      cell.style.height = `${this._cellH}px`;
+      cell.style.setProperty("--cc-cell-x", `${col * (this._cellW + BUST_GRID_GAP)}px`);
+      cell.style.setProperty("--cc-cell-y", `${row * (this._cellH + BUST_GRID_GAP)}px`);
+      cell.style.setProperty("--cc-cell-w", `${this._cellW}px`);
+      cell.style.setProperty("--cc-cell-h", `${this._cellH}px`);
       cell.classList.toggle("selected", index === this._index);
     }
 
@@ -1715,7 +1740,7 @@
       cell.dataset.index = String(index);
       cell.dataset.bust = name;
       cell._name.textContent = decamelCase(name);
-      cell._art.style.backgroundImage = `url("${bustArtUrl(name)}")`;
+      cell._art.style.setProperty("--cc-bust", window.CCArt.url(bustArtUrl(name)));
     }
 
     refreshSelection() {
@@ -1845,7 +1870,6 @@
           moved = true;
         }
       } else if (Input.isTriggered("ok")) {
-        SoundManager.playOk();
         this.onBustConfirm();
         return;
       } else if (cancelPressed()) {
@@ -1861,7 +1885,7 @@
 
     update() {
       super.update();
-      if (!this._overlay || this._overlay.style.display === "none") return;
+      if (!this._overlay || window.CCPanel.isHidden(this._overlay)) return;
       this.updateInput();
       if (window.CCScroll) window.CCScroll.update(this._overlay);
       // The board rebuilds its cells underneath the ring, so the ring is
@@ -1898,7 +1922,6 @@
         $gameVariables.setValue(reproductiveVar, 2);
       }
 
-      SoundManager.playOk();
 
       // A bust IS the character's portrait: the 3D model editor is the other,
       // mutually exclusive branch (reached from the sprite step) and is never

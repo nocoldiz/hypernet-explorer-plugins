@@ -310,8 +310,20 @@
     }
   }
 
-  // Dashed center lines: 1-tile dash followed by a 1-tile gap.
-  const DASH_GAP_STEP = 2;
+  // Dashed centre lines: one cadence for the whole world. Three tiles of paint
+  // then one of gap, and the phase read off the ABSOLUTE coordinate, so the
+  // paint on a road biome, a city avenue and a village street is the same
+  // paint and the dashes still line up where two map squares meet. The road
+  // generator used to run its own 1-on/1-off cadence while the settlement
+  // generators ran 3-on/1-off, which is why a road changed its markings the
+  // moment it crossed into a town.
+  const DASH_LENGTH = 3;
+  const DASH_CYCLE = 4;
+
+  /** True where a dash tile belongs, for a tile at absolute coordinate `n`. */
+  function isDashStep(n) {
+    return ((n % DASH_CYCLE) + DASH_CYCLE) % DASH_CYCLE < DASH_LENGTH;
+  }
 
   // The ground a road marking is allowed to sit on. A dashed centre line is
   // paint ON a carriageway: laid anywhere else - a verge the road stopped
@@ -364,7 +376,7 @@
    * sits between dashes. Gated on the absolute Y so dashes align across segments.
    */
   function putDashV(mapData, x, y, tileId, width, height) {
-    if (y % DASH_GAP_STEP !== 0) return;
+    if (!isDashStep(y)) return;
     putDash(mapData, x, y, tileId, width, height);
   }
 
@@ -373,7 +385,7 @@
    * gap sits between dashes. Gated on the absolute X so dashes align across segments.
    */
   function putDashH(mapData, x, y, tileId, width, height) {
-    if (x % DASH_GAP_STEP !== 0) return;
+    if (!isDashStep(x)) return;
     putDash(mapData, x, y, tileId, width, height);
   }
 
@@ -1425,6 +1437,9 @@ function drawDashedCornerLines(
     parseRoadConfig,
     getDashedLineTileId,
     getDashedLineTileIds,
+    isDashStep,
+    DASH_LENGTH,
+    DASH_CYCLE,
     getZebraTileIds,
     stampZebraCrossing,
     getSingleFeatureTileId,

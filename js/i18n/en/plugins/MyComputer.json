@@ -10,5 +10,12 @@
   "dirInvalid": "Directory \"{path}\" is invalid or empty.",
   "cannotOpen": "File Explorer: Unable to open \"{file}\". Notepad is missing.",
   "unsupportedType": "File Explorer: File type not supported.",
-  "dirNotFound": "Address Bar: Directory \"{path}\" not found."
+  "dirNotFound": "Address Bar: Directory \"{path}\" not found.",
+  "delete": "Delete",
+  "deleteConfirm": "Are you sure you want to send '{file}' to the Recycle Bin?",
+  "deleteTitle": "Confirm File Delete",
+  "propsTitle": "{name} Properties",
+  "propsBody": "{name}\n\nType: {type}\nLocation: {location}\nSize: {size} bytes",
+  "typeFolder": "File Folder",
+  "typeFile": "File"
 }

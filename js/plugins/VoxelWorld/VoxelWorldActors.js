@@ -96,6 +96,8 @@
             this.bobT      = 0;                // stride phase, drives head bob + footsteps
             this.landDip   = 0;                // knees bending on a landing, decays
             this.solidAt   = null;             // (x,z,r) => {x,z} pushed out of any building
+            this.voxelSolid = null;            // (vx,vy,vz) => is that cube solid
+            this.voxelSize  = 0;               // world units to a cube side
             this.onStep    = null;             // called once per stride
             this.onJump    = null;             // called on a jump / wall kick
             this.onLand    = null;             // called on touchdown, 0..1 hardness
@@ -373,6 +375,7 @@
             this.wallContact = Math.max(0, (this.wallContact || 0) - delta);
             this.wallNormalX = this.wallNormalX || 0;
             this.wallNormalZ = this.wallNormalZ || 0;
+            this._pushOutOfVoxels();
             if (this.solidAt) {
                 const fix = this.solidAt(this.yaw.position.x, this.yaw.position.z, FOOT_BODY_R);
                 if (fix) {
@@ -407,6 +410,66 @@
                         }
                     }
                 }
+            }
+        }
+
+        // The cubes themselves are walls too. The ground answers for what is
+        // UNDER the feet and nothing else, so without this a wall of blocks is
+        // walked straight into and the walker ends up standing inside it. The
+        // body is a column one cube-and-a-bit above the feet - the first cube
+        // off the floor is a step, walked up, and only what stands over that
+        // stops anybody.
+        //
+        // Somebody already embedded - dropped into the rock, a cube placed on
+        // top of them, the noclip they were holding let go of inside a wall -
+        // is left alone rather than shoved: at that point every direction is a
+        // wall and the push would only rattle them between two faces.
+        _pushOutOfVoxels() {
+            const solid = this.voxelSolid;
+            const S = this.voxelSize;
+            if (!solid || !S) return;
+            const p = this.yaw.position;
+            const feet = p.y - this.eyeH;
+            const yLo = feet + S * 1.05;          // above the step a walker takes
+            const yHi = feet + this.eyeH * 0.95;  // up to the eye
+            const vy0 = Math.floor(yLo / S), vy1 = Math.floor(yHi / S);
+            const r = FOOT_BODY_R * 0.8;
+            const blocked = (vx, vz) => {
+                for (let vy = vy0; vy <= vy1; vy++) if (solid(vx, vy, vz)) return true;
+                return false;
+            };
+            // Standing in it already: nothing to push out of, only out of the way.
+            if (blocked(Math.floor(p.x / S), Math.floor(p.z / S))) return;
+
+            for (let pass = 0; pass < 3; pass++) {
+                let bestPen = 0, bestX = 0, bestZ = 0, bestSide = 0;
+                const vx0 = Math.floor((p.x - r) / S), vx1 = Math.floor((p.x + r) / S);
+                const vz0 = Math.floor((p.z - r) / S), vz1 = Math.floor((p.z + r) / S);
+                for (let vx = vx0; vx <= vx1; vx++) {
+                    for (let vz = vz0; vz <= vz1; vz++) {
+                        if (!blocked(vx, vz)) continue;
+                        const cx = (vx + 0.5) * S, cz = (vz + 0.5) * S;
+                        const hw = S * 0.5 + r;
+                        const dx = p.x - cx, dz = p.z - cz;
+                        if (Math.abs(dx) >= hw || Math.abs(dz) >= hw) continue;
+                        const px = hw - Math.abs(dx), pz = hw - Math.abs(dz);
+                        const pen = Math.min(px, pz);
+                        if (pen > bestPen) {
+                            bestPen = pen; bestX = cx; bestZ = cz;
+                            bestSide = px < pz ? (dx < 0 ? -1 : 1) : (dz < 0 ? -2 : 2);
+                        }
+                    }
+                }
+                if (!bestPen) break;
+                const hw = S * 0.5 + r;
+                if (bestSide === -1 || bestSide === 1) {
+                    p.x = bestX + bestSide * hw;
+                    this.wallNormalX = bestSide; this.wallNormalZ = 0;
+                } else {
+                    p.z = bestZ + (bestSide > 0 ? hw : -hw);
+                    this.wallNormalX = 0; this.wallNormalZ = bestSide > 0 ? 1 : -1;
+                }
+                this.wallContact = 0.22;
             }
         }
 

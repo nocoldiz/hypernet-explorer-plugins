@@ -35,9 +35,14 @@
   "simulatedHours": "Simulated {hours} hours",
   "honeyProduced": "Honey produced: {amount}",
   "currentPopulation": "Current population: {total}",
+  "cell": {
+    "brood": "Brood",
+    "empty": "Bare wax"
+  },
   "ui": {
     "back": "Back",
     "apiary": "Apiary",
+    "crossSection": "Cross Section",
     "colony": "Colony",
     "state": "State",
     "mood": "Mood",

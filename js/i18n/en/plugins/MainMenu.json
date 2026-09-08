@@ -17,7 +17,6 @@
     "vehicles": "Vehicles",
     "wait": "Wait",
     "cooking": "Cooking",
-    "blacksmithing": "Smithing",
     "alchemistry": "Alchemistry",
     "build": "Build",
     "training": "Training",
@@ -31,6 +30,7 @@
     "assets": "Assets",
     "hypernet": "Hypernet",
     "hyperdeck": "Hyperdeck",
+    "radio": "Radio",
     "multiplayer": "Multiplayer",
     "save": "Save",
     "preferences": "Preferences",
@@ -41,7 +41,31 @@
     "returnToWorldMap": "Return to map",
     "returnToElevator": "Return to the elevator",
     "chooseLandingSite": "Choose landing site",
-    "stopTravel": "Stop travel"
+    "stopTravel": "Stop travel",
+    "deeds": "Deeds"
+  },
+  "cmdDesc": {
+    "backpack": "Manage party inventory and carried items",
+    "equip": "Change weapons, armor and accessories",
+    "skills": "View and use learned abilities and spells",
+    "status": "Check character attributes, stats and conditions",
+    "biologics": "Monitor vital organs, implants and body health",
+    "questLog": "Track active objectives and journal entries",
+    "dynamics": "Manage party roster, turn order and companion history",
+    "pets": "Manage companions, followers and animal pets",
+    "tools": "Use field devices, survival gear and utility items",
+    "worldMap": "View regional travel, atlas and navigation",
+    "vehicles": "Manage, summon and board owned vehicles",
+    "wait": "Pass time and wait safely",
+    "hyperdeck": "Access computing terminal and network",
+    "radio": "Tune the wireless and pick a station",
+    "help": "Consult manual, guides and gameplay systems",
+    "save": "Record current progress and save game",
+    "preferences": "Adjust game audio, video and controls",
+    "resign": "Quit current game and return to title",
+    "stopTravel": "Stop world travel and explore current location",
+    "returnToWorldMap": "Leave current area and return to the map",
+    "returnToShip": "Board the starship interior immediately"
   },
   "dynamics": {
     "roster": "Roster",
@@ -70,6 +94,7 @@
     "partyEmpty": "Someone has to keep travelling: the party cannot be left empty.",
     "isLeader": "{name} leads the party. Make someone else leader first.",
     "cannotRetire": "{name} cannot be set inactive right now.",
+    "storyLocked": "{name} is not going anywhere: this road is theirs to the end.",
     "nowInactive": "{name} is now inactive and can be picked as a character in this world.",
     "back": "Back",
     "title": "Party Dynamics",
@@ -79,7 +104,14 @@
     "historySub": {
       "one": "{count} former member on record",
       "other": "{count} former members on record"
-    }
+    },
+    "activeTitle": "Travelling ({count}/{max})",
+    "pastTitle": "Former Members",
+    "lockedTower": "The Omega Tower keeps the party it let in: nobody joins or leaves until you are out of it.",
+    "lockedStructure": "No swapping companions inside a place like this: whoever walked in has to walk out.",
+    "busyTitle": "Busy",
+    "busyAt": "{job} · {time} left",
+    "busyRemaining": "{hours}h {minutes}m"
   },
   "roster": {
     "travelling": "Travelling",
@@ -99,8 +131,6 @@
     "none": "None",
     "left": "Left {date}",
     "levelAbbr": "Lv.",
-    "switchHintKeyboard": "TAB to switch member",
-    "switchHintGamepad": "L1 / R1 to switch member",
     "thatMember": "That member",
     "following": "Following",
     "setActive": "Set Active",
@@ -128,11 +158,11 @@
   },
   "reproduction": {
     "none": "None",
-    "testicles": "Testicles (Male)",
-    "uterus": "Uterus (Female)",
-    "oviparous": "Oviparous (Egg)",
-    "plant": "Plant (Spores)",
-    "mitosis": "Mitosis (Asexual)",
+    "testicles": "Testicles",
+    "uterus": "Uterus",
+    "oviparous": "Oviduct",
+    "plant": "Sporangium",
+    "mitosis": "Mitotic Gland",
     "unknown": "Unknown"
   },
   "gender": {
@@ -146,6 +176,7 @@
     "clear": "Clear"
   },
   "page": {
+    "main": "Menu",
     "tools": "Tools",
     "pets": "Followers",
     "vehicles": "Vehicles"
@@ -170,10 +201,10 @@
   "travel": {
     "goUp": "Go to the surface",
     "goDown": "Go underground",
-    "toggleMinimap": "Toggle world map",
+    "showMinimap": "Show minimap",
+    "hideMinimap": "Hide minimap",
     "openMap": "Open world map",
-    "openAtlas": "Open world atlas",
-    "resume": "Resume adventure",
+    "openAtlas": "Atlas",
     "worldMapTitle": "World map"
   },
   "pets": {
@@ -200,6 +231,17 @@
     "trainJoin": "Join the party",
     "trainStop": "Call it off",
     "traitSentient": "Sentient",
+    "sheetFacts": "Details",
+    "sheetKind": "Kind",
+    "sheetLevel": "Level",
+    "sheetLeash": "Leash",
+    "sheetWaiting": "Waiting",
+    "sheetOrigin": "Was",
+    "sheetParent": "Parent",
+    "sheetBorn": "Born",
+    "sheetTraining": "Training",
+    "sheetTraits": "Traits",
+    "sheetSkills": "Skills",
     "traitMagical": "Magical",
     "traitGeneticFreak": "Genetic Freak",
     "ride": "Ride",
@@ -207,13 +249,20 @@
     "mounted": "Ridden"
   },
   "vehicles": {
+    "fuel": "Fuel {fuel}L / {max}L",
+    "sectorValue": "Row {row} · Col {col}",
+    "noLocation": "Not parked anywhere yet",
     "spawn": "Spawn",
     "spawnIndoors": "Only the bike can be summoned indoors. Step outside for the rest.",
     "noFuelNeeded": "No fuel needed",
     "none": "No vehicles owned. Acquire a vehicle's summoning item to add it here.",
     "parkedAt": "Left at",
-    "show": "Stand it on the turntable",
-    "noModel": "No model of this one has been built"
+    "show": "Show this one on the right page",
+    "integrity": "{hp} / {max} HP",
+    "broken": "Broken down: a critical part has failed",
+    "allPartsSound": "All parts sound",
+    "morePartsWorn": "+{count} more worn",
+    "partsTitle": "Parts"
   },
   "tools": {
     "hexphone": "Hexphone",
@@ -274,5 +323,13 @@
   },
   "value": {
     "wantedLevel": "wanted {pct}%"
+  },
+  "group": {
+    "party": "Party",
+    "worldMap": "World map",
+    "create": "Create",
+    "archive": "Archive",
+    "manageParty": "Manage party",
+    "game": "Game"
   }
 }

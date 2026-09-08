@@ -653,7 +653,4 @@
     PluginManager.registerCommand('AlchemistryMenu', 'openMenu', () => {
         SceneManager.push(Scene_Alchemistry);
     });
-    PluginManager.registerCommand('Crafting/AlchemistryMenu', 'openMenu', () => {
-        SceneManager.push(Scene_Alchemistry);
-    });
 })();

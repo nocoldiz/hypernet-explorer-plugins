@@ -134,7 +134,7 @@
                     ${nodesHTML}
                 </div>
             </div>
-            <div style="text-align:center; opacity:0.65; font-family:'Lora', serif; font-size:1.15rem; padding-top:4px">${hintLabel}</div>
+            <div style="text-align:center; opacity:0.65; font-family:var(--font-ui); font-size:1.15rem; padding-top:4px">${hintLabel}</div>
         `;
     };
 
@@ -144,7 +144,7 @@
             const emptyLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.empty') : 'Select a system to inspect';
             return `
                 <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; gap:16px; padding:20px; box-sizing:border-box">
-                    <h3 class="cc-header-gothic" style="font-size:1.9rem; color:var(--text-secondary-active, #e5c07b); margin:0">${emptyLabel}</h3>
+                    <h3 class="cc-header-gothic" style="font-size:1.9rem; color:var(--text-secondary-active, var(--text-primary-hover)); margin:0">${emptyLabel}</h3>
                 </div>`;
         }
         const sys = SkillMaster.getAllMagicalSystems().find(s => s.id === id);
@@ -159,13 +159,13 @@
         const skills = SkillMaster.getSkillsForMagicSystem(id);
         const known = actor ? skills.filter(s => actor.isLearnedSkill(s.id)).length : 0;
         const fractionLine = skills.length
-            ? `<div style="font-family:'Lora', serif; font-size:1.1rem; color:${color}; margin-top:4px">${typeof T === 'function' ? T('SkillMaster.magicSystem.knownFraction', { known: known, total: skills.length, pct: Math.round(known / skills.length * 100) }) : `Known: ${known} / ${skills.length} (${Math.round(known / skills.length * 100)}%)`}</div>`
+            ? `<div style="font-family:var(--font-ui); font-size:1.1rem; color:${color}; margin-top:4px">${typeof T === 'function' ? T('SkillMaster.magicSystem.knownFraction', { known: known, total: skills.length, pct: Math.round(known / skills.length * 100) }) : `Known: ${known} / ${skills.length} (${Math.round(known / skills.length * 100)}%)`}</div>`
             : '';
         const noSpellsLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.noSpells') : 'No spells listed';
         const spellsHTML = skills.length
             ? `<ul style="margin:8px 0 0 0; padding-left:20px">${skills.map(s => {
                 const isKnown = actor && actor.isLearnedSkill(s.id);
-                return `<li style="margin-bottom:4px; ${isKnown ? 'color:var(--text-forest-complete, #52c41a); font-weight:bold;' : ''}">${isKnown ? '&#10003; ' : ''}${s.name}</li>`;
+                return `<li style="margin-bottom:4px; ${isKnown ? 'color:var(--text-forest-complete, var(--text-cost-ok)); font-weight:bold;' : ''}">${isKnown ? '&#10003; ' : ''}${s.name}</li>`;
               }).join('')}</ul>`
             : `<div style="opacity:0.65; margin-top:8px">${noSpellsLabel}</div>`;
 
@@ -174,16 +174,16 @@
 
         return `
             <div style="display:flex; flex-direction:column; height:100%; box-sizing:border-box">
-                <div style="display:flex; align-items:center; gap:10px; border-bottom:2px dashed var(--border-success, #52c41a); padding-bottom:10px; margin-bottom:6px">
+                <div style="display:flex; align-items:center; gap:10px; padding-bottom:10px; margin-bottom:6px">
                     <span style="width:22px; height:22px; border-radius:50%; background:${color}; flex-shrink:0; box-shadow:0 0 8px ${color}"></span>
                     <h2 class="cc-header-gothic" style="border:none; margin:0; padding:0; font-size:2.1rem">${SkillMaster.getMagicSystemDisplayName(id)}</h2>
                 </div>
                 ${fractionLine}
-                <div style="font-family:'Lora', serif; font-size:1.2rem; line-height:1.5; color:var(--text-card-medium, #ddd); margin-top:10px">${SkillMaster.getMagicSystemDesc(id)}</div>
+                <div style="font-family:var(--font-ui); font-size:1.2rem; line-height:1.5; color:var(--text-card-medium, #ddd); margin-top:10px">${SkillMaster.getMagicSystemDesc(id)}</div>
                 <h3 class="cc-header-gothic" style="font-size:1.4rem; margin-top:18px">${classesHeading}</h3>
-                <div style="font-family:'Lora', serif; font-size:1.15rem; color:#ffffff; max-height:26%; overflow-y:auto">${classesHTML}</div>
+                <div style="font-family:var(--font-ui); font-size:1.15rem; color:var(--text-success-active); max-height:26%; overflow-y:auto">${classesHTML}</div>
                 <h3 class="cc-header-gothic" style="font-size:1.4rem; margin-top:14px">${spellsHeading}</h3>
-                <div class="skill-scroll-box" style="flex:1; overflow-y:auto; font-family:'Lora', serif; font-size:1.15rem; color:#ffffff">${spellsHTML}</div>
+                <div class="skill-scroll-box" style="flex:1; overflow-y:auto; font-family:var(--font-ui); font-size:1.15rem; color:var(--text-success-active)">${spellsHTML}</div>
             </div>
         `;
     };

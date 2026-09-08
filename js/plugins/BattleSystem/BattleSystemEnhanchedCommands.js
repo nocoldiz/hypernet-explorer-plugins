@@ -13,7 +13,7 @@
  * - HTML/CSS rendering identical in style to MPP_SmoothBattleLog2
  * - Per-command colored gradient bars with solid dark base
  * - Left accent stripe with command-type color
- * - Icon + label layout using Lora font
+ * - Icon + label layout using the UI serif
  * - Selection highlight updates immediately
  * - Reload command support (requires WeaponSystem.js)
  *
@@ -59,10 +59,15 @@
     move:         { accent: "#44dd44", rgb: [25,  140, 25 ] },
     attack:       { accent: "#e63232", rgb: [180, 25,  25 ] },
     reload:       { accent: "#e68832", rgb: [180, 100, 25 ] },
+    vectorSwitch: { accent: "#c9a227", rgb: [150, 120, 30 ] },
     defense:      { accent: "#3388ff", rgb: [25,  80,  180] },
+    // The Hyper takes the row Defense or Reload was standing in, and is the
+    // one command in the rail that is not offered twice in a day.
+    hyper:        { accent: "#ffb347", rgb: [190, 110, 20 ] },
     skill:        { accent: "#9944ee", rgb: [90,  35,  170] },
     basic:        { accent: "#66bbdd", rgb: [40,  120, 150] },
     item:         { accent: "#44cc88", rgb: [25,  140, 80 ] },
+    throw:        { accent: "#dd8844", rgb: [150, 80,  35 ] },
     guard:        { accent: "#ffdd44", rgb: [140, 120, 25 ] },
     switchspirit: { accent: "#cc66ff", rgb: [120, 50,  170] },
     escape:       { accent: "#aaaaaa", rgb: [90,  90,  90 ] },
@@ -98,10 +103,13 @@
     move:         82,
     attack:       97,
     reload:       115,
+    vectorSwitch: 118,
     defense:      81,
+    hyper:        87,
     skill:        76,
     basic:        248,
     item:         209,
+    throw:        176,
     talk:         246,
     aim:          151,
     wrestle:      106,
@@ -133,6 +141,32 @@
 
   const isUsableSkill = (skill) =>
     skill && skill.name && skill.name.trim() && !skill.name.startsWith('<--');
+
+  //=============================================================================
+  // Pointer vs. key/pad arbitration
+  //
+  // Rebuilding the row list under a stationary cursor makes the browser fire a
+  // fresh mouseenter on whatever row happens to sit under it, and TouchInput
+  // keeps reporting the last cursor position forever. Both would drag the
+  // selection straight back onto the hovered row after every keyboard or
+  // controller move, so hover only counts while the pointer is the input that
+  // moved last.
+  //=============================================================================
+
+  let lastPointerMoveAt = 0;
+  let lastKeyNavAt = 0;
+  let lastPointerX = null;
+  let lastPointerY = null;
+
+  document.addEventListener('mousemove', (e) => {
+    if (e.clientX === lastPointerX && e.clientY === lastPointerY) return;
+    lastPointerX = e.clientX;
+    lastPointerY = e.clientY;
+    lastPointerMoveAt = performance.now();
+  }, true);
+
+  const noteKeyNav = () => { lastKeyNavAt = performance.now(); };
+  const pointerLeadsInput = () => lastPointerMoveAt > lastKeyNavAt;
 
   //=============================================================================
   // Scale helper (same pattern as MPP_SmoothBattleLog2)
@@ -225,7 +259,8 @@
     // Map Battle Mode (MapBattleMode.js): lets the acting battler reposition
     // on the map (range driven by DEX/agi) before choosing an action. Only
     // usable once per turn; MapBattleMode itself owns the enabled/used state.
-    if (window.MapBattleMode && window.MapBattleMode.isActive()) {
+    const mbmActive = !!(window.MapBattleMode && window.MapBattleMode.isActive());
+    if (mbmActive) {
       const canMove = window.MapBattleMode.canUseMoveCommand(this._actor);
       this.addCommandWithIcon("", "move", canMove, null, 82);
     }
@@ -245,10 +280,19 @@
       // The live projectile count rides on the Attack command itself.
       attackExt = { current: this._actor.getCurrentBullets(), max: bulletConfig.max };
     }
+    // A limit break takes the guard row. Somebody who was cut down to nothing
+    // during this fight (BattleSystemActiveSkills.js, window.LimitBreak) is
+    // offered their class's Hyper where Defense or Reload would stand: guarding
+    // is not what this round is for, and it is the one row that is gone again
+    // the moment it has been used.
+    const hyperReady = !!(window.LimitBreak && window.LimitBreak.isReady(this._actor));
+
     if (hasRanged && attackExt && attackExt.current === 0) {
       // Out of ammo: Attack becomes Bash. Reload is placed first as the primary
-      // action, followed by Bash (the fallback melee strike).
-      this.addCommandWithIcon("", "reload", true, null, 115);
+      // action, followed by Bash (the fallback melee strike). A Hyper takes
+      // that row instead: an empty magazine is exactly the moment for it.
+      if (hyperReady) this.addCommandWithIcon("", "hyper", true, null, 87);
+      else this.addCommandWithIcon("", "reload", true, null, 115);
       this.addCommandWithIcon("", "attack", true, attackExt, attackIcon);
     } else {
       // Attack is ALWAYS enabled. It is the one action a battler can never be
@@ -263,7 +307,18 @@
       if (hasRanged) {
         // Reload doubles as Defense for ranged actors: commandReload both recharges
         // projectiles and guards. The bullet count now shows on Attack instead.
-        this.addCommandWithIcon("", "reload", true, null, 115);
+        // The vector gun running the Blade of Thelema takes that row for its own
+        // SWITCH instead: folding the gun into the machete (and back) is what
+        // loads it (Weapon/VectorGunSystem.js).
+        if (hyperReady) {
+          this.addCommandWithIcon("", "hyper", true, null, 87);
+        } else if (window.VectorGun && window.VectorGun.bladeReady(this._actor)) {
+          this.addCommandWithIcon("", "vectorSwitch", true, null, 118);
+        } else {
+          this.addCommandWithIcon("", "reload", true, null, 115);
+        }
+      } else if (hyperReady) {
+        this.addCommandWithIcon("", "hyper", true, null, 87);
       } else {
         const defenseSkill = $dataSkills[2];
         const canDefend = defenseSkill && this._actor.canUse(defenseSkill);
@@ -322,6 +377,13 @@
     // battle-usable item. Mirrors Window_BattleItem.includes ($gameParty.canUse).
     const hasUsableItem = $gameParty.allItems().some(item => $gameParty.canUse(item));
     this.addCommandWithIcon("", "item",  hasUsableItem,          null, 209);
+
+    // Throw sits under the backpack: the same bag, but the object is hurled
+    // rather than used, and it hurts for its weight (window.ThrowItem). Key
+    // items and materials are not offered, so the row greys out when the party
+    // is carrying nothing worth throwing.
+    const hasThrowable = !!window.ThrowItem && window.ThrowItem.throwableItems().length > 0;
+    this.addCommandWithIcon("", "throw", hasThrowable,           null, 176);
     // Note: the standalone Guard command is intentionally omitted, it duplicates
     // the Defense command (both cast skill 2). The sole escape option is "Run" below.
 
@@ -330,6 +392,18 @@
     // game's main battle path sets canEscape=false). Handler set in
     // createActorCommandWindow (#110).
     this.addCommandWithIcon("", "escape", true, null, 140);
+
+    // Map Battle Mode reads Attack first, Skills second, Move third: walking is
+    // what you do around a swing, not before one, so the row that opens the
+    // cursor sits under the two actions that end the turn.
+    if (mbmActive) {
+      const head = [];
+      ["attack", "skill", "move"].forEach(symbol => {
+        const i = this._list.findIndex(cmd => cmd.symbol === symbol);
+        if (i >= 0) head.push(this._list.splice(i, 1)[0]);
+      });
+      this._list = head.concat(this._list);
+    }
   };
 
   // Whether a skill/magic/basic list holds anything the actor can act with this
@@ -373,10 +447,15 @@
           ? `${TextManager.attack} (${ext.current})`
           : TextManager.attack;
       case "defense": return T('Battle.cmd.defense');
+      // The Hyper wears the class's own word for it: HYPER for a Freelancer,
+      // GRACE for a Gunmancer, MIRACLE for a Nun (window.LimitBreak).
+      case "hyper":
+        return (window.LimitBreak && window.LimitBreak.commandName(this._actor)) || "";
       case "skill":   return ext ? ($dataSystem.skillTypes[ext] || T('Battle.cmd.skill')) : T('Battle.cmd.skills');
       case "basic":   return T('Battle.cmd.basic');
       case "guard":   return TextManager.guard;
       case "item":    return TextManager.item;
+      case "throw":   return T('Battle.cmd.throw');
       case "talk":    return T('Battle.cmd.talk');
       // An aim already taken is worn on the row, so what this actor has named
       // is legible without opening anything.
@@ -386,6 +465,15 @@
       }
       case "wrestle": return T('Battle.cmd.wrestle');
       case "reload":  return T('Battle.cmd.reload');
+      case "vectorSwitch":
+        // With the grimoire open (window.LimitBreak, Em's Hyper) the row is not
+        // folding the weapon into anything any more: it is turning a page.
+        if (window.LimitBreak && window.LimitBreak.isGrimoireOpen(this._actor)) {
+          return T('Battle.hyper.turnPage');
+        }
+        // One word either way: the row says SWITCH whichever shape the gun is
+        // standing in, since the weapon on screen already says which one.
+        return T('VectorGun.cmd.switch');
       case "escape":  return T('Battle.cmd.run');
       default:        return "";
     }
@@ -401,13 +489,13 @@
   };
 
   // Measured off a canvas of its own rather than the window's contents: the rows
-  // are HTML, drawn in Lora at LABEL_PX, and the window's own bitmap font is
+  // are HTML, drawn in the UI serif at LABEL_PX, and the window's own bitmap font is
   // neither. One context is kept for the whole session.
   let _cmdMeasureCtx = null;
   function _cmdTextWidth(text) {
     if (!_cmdMeasureCtx) {
       _cmdMeasureCtx = document.createElement('canvas').getContext('2d');
-      _cmdMeasureCtx.font = `bold ${LABEL_PX}px 'Lora', serif`;
+      _cmdMeasureCtx.font = `bold ${LABEL_PX}px 'Bitter', serif`;
     }
     return _cmdMeasureCtx.measureText(String(text || "")).width;
   }
@@ -472,7 +560,10 @@
     // options off the bottom of the screen (or leaving a gap below).
     const scene = SceneManager._scene;
     if (scene && scene._bseCommandBottomY != null) {
-      const newY = scene._bseCommandBottomY - this.height;
+      // A long list (a full skill loadout) grows upward until it would leave
+      // the screen; past that it stands on the top edge rather than running
+      // off it, since the rows above it could not be reached.
+      const newY = Math.max(0, scene._bseCommandBottomY - this.height);
       if (this.y !== newY) this.y = newY;
     }
   };
@@ -551,11 +642,17 @@
       // Locked and merely-nothing-usable both read as greyed; only the first
       // refuses to open.
       const isLit     = cmd.enabled !== false && !cmd.dim;
-      const { accent, rgb } = getRowColors(cmd);
+      const { accent } = getRowColors(cmd);
 
       // Outer item container
+      // A row handed a palette by the list that opened the menu (a skill, an
+      // ally, an enemy) wears that colour as its left line whatever the theme
+      // is; a plain command row has no kind of its own, so its edge is the
+      // theme's own and only shows under the cursor.
+      const typed     = !!cmd.colors;
       const item = document.createElement('div');
-      item.className = 'actorcmd-item' + (isSel ? '' : ' unsel');
+      item.className = 'actorcmd-item' + (isSel ? '' : ' unsel') +
+        (typed ? ' typed' : '');
       item.style.width  = rowW + 'px';
       item.style.height = ROW_HEIGHT + 'px';
       item.style.pointerEvents = 'auto';
@@ -563,6 +660,7 @@
 
       // Mouse hover: update selection on the active targeting window or command window
       item.addEventListener('mouseenter', () => {
+        if (!pointerLeadsInput()) return;
         if (this._targetSession && this._targetSession.activeWindow && this._targetSession.activeWindow.active) {
           if (this._targetSession.activeWindow.index() !== i) {
             this._targetSession.activeWindow.select(i);
@@ -611,34 +709,20 @@
       darkBase.className = 'actorcmd-darkbase';
       item.appendChild(darkBase);
 
-      // Colored gradient layer
-      const grad = document.createElement('div');
-      grad.className = 'actorcmd-gradient';
-      const a0 = isSel ? 0.88 : 0.60;
-      const a1 = isSel ? 0.32 : 0.18;
-      grad.style.background =
-        `linear-gradient(to right, rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a0}) 0%, ` +
-        `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a1}) 55%, transparent 100%)`;
-      item.appendChild(grad);
-
-      // Left accent stripe
+      // Left accent stripe. The row's kind is the only colour on it: the
+      // gradient wash the rows used to carry is gone, so the plate stays the
+      // flat surface the theme paints (theme.css .actorcmd-darkbase).
       const stripe = document.createElement('div');
       stripe.className = 'actorcmd-stripe' + (isSel ? ' sel' : '');
-      stripe.style.background = accent;
-      stripe.style.color = accent; // for box-shadow currentColor
-      item.appendChild(stripe);
-
-      // Top highlight (selected)
-      if (isSel) {
-        const hl = document.createElement('div');
-        hl.className = 'actorcmd-top-hl';
-        item.appendChild(hl);
+      if (typed) {
+        stripe.style.background = accent;
+        stripe.style.color = accent; // for box-shadow currentColor
       }
+      item.appendChild(stripe);
 
       // Bottom separator
       const sep = document.createElement('div');
       sep.className = 'actorcmd-sep';
-      sep.style.background = isSel ? accent : 'rgba(255,255,255,0.09)';
       item.appendChild(sep);
 
       // Icon (fall back to a per-symbol default for commands added by other
@@ -715,6 +799,17 @@
     }
 
     const sc = _cmdGetScale();
+
+    // Once the command has been chosen the window stops taking input, so the
+    // row it left behind should stop wearing the cursor border too: the plate
+    // stays readable, the highlight goes.
+    const live = this.active ||
+      !!(this._targetSession && this._targetSession.activeWindow &&
+         this._targetSession.activeWindow.active);
+    if (this._cmdLastLive !== live) {
+      this._cmdHtmlRoot.classList.toggle('inert', !live);
+      this._cmdLastLive = live;
+    }
 
     // Resolve global canvas position via PIXI transform chain
     let pt;
@@ -795,13 +890,26 @@
     return -xOffset;
   };
 
+  // The bottom line the command list stands on. It is the bottom edge of the
+  // skill hotbar's row of slots (BattleSystemEnhancedHUD.js), so the commands
+  // and the quick bar sit on one line; the hotbar measures in canvas pixels
+  // while a window's y is relative to the window layer, hence the box offset.
+  Scene_Battle.prototype._bseCommandBaseY = function () {
+    const margin = 12;
+    const hotbar = window.BattleHotbar;
+    if (hotbar && typeof hotbar.slotBottomY === 'function') {
+      const boxOffsetY = Math.floor((Graphics.height - Graphics.boxHeight) / 2);
+      return hotbar.slotBottomY() - boxOffsetY;
+    }
+    return Graphics.boxHeight - margin;
+  };
+
   Scene_Battle.prototype.actorCommandWindowRect = function () {
     const cmdWidth = MENU_WIDTH;
     // Pin the command menu to the bottom edge of the screen. refresh() bottom-aligns
     // the window to _bseCommandBottomY, so the last command always sits just above the
     // bottom margin and the list grows upward as more commands are exposed.
-    const margin = 12;
-    this._bseCommandBottomY = Graphics.boxHeight - margin;
+    this._bseCommandBottomY = this._bseCommandBaseY();
     const height = this.windowAreaHeight();
     const y = this._bseCommandBottomY - height;
     return new Rectangle(this._bseCommandX(cmdWidth), y, cmdWidth, height);
@@ -867,12 +975,15 @@
   Scene_Battle.prototype.createActorCommandWindow = function () {
     _Scene_Battle_createActorCommandWindow.call(this);
     this._actorCommandWindow.setHandler("reload",  this.commandReload.bind(this));
+    this._actorCommandWindow.setHandler("vectorSwitch", this.commandVectorSwitch.bind(this));
     this._actorCommandWindow.setHandler("defense", this.commandDefense.bind(this));
+    this._actorCommandWindow.setHandler("hyper",   this.commandHyper.bind(this));
     this._actorCommandWindow.setHandler("basic",   this.commandBasic.bind(this));
     this._actorCommandWindow.setHandler("escape",  this.commandEscape.bind(this));
     this._actorCommandWindow.setHandler("talk",    this.commandTalk.bind(this));
     this._actorCommandWindow.setHandler("aim",     this.commandAim.bind(this));
     this._actorCommandWindow.setHandler("wrestle", this.commandWrestle.bind(this));
+    this._actorCommandWindow.setHandler("throw",   this.commandThrow.bind(this));
   };
 
   // Guard: refuse to open a skill/magic/basic menu when its command is disabled
@@ -961,6 +1072,26 @@
     this.selectNextCommand();
   };
 
+  // The Hyper is booked here and performed at the head of the actor's turn
+  // (window.LimitBreak.unleash, called from BattleManager.startAction): the
+  // guard the row also sets is the placeholder that keeps the turn legal, so
+  // the round still resolves normally around one enormous act.
+  Scene_Battle.prototype.commandHyper = function () {
+    const actor = BattleManager.actor();
+    if (!actor || !window.LimitBreak || !window.LimitBreak.choose(actor)) {
+      SoundManager.playBuzzer();
+      this._actorCommandWindow.activate();
+      return;
+    }
+    const action = BattleManager.inputtingAction();
+    if (action) {
+      const defenseSkill = $dataSkills[2];
+      if (defenseSkill && actor.canUse(defenseSkill)) action.setSkill(2);
+      else action.setGuard();
+    }
+    this.selectNextCommand();
+  };
+
   Scene_Battle.prototype.commandReload = function () {
     const actor = BattleManager.actor();
     if (actor) {
@@ -974,6 +1105,112 @@
       }
       this.selectNextCommand();
     }
+  };
+
+  // The vector gun folds into whatever shape is fitted and back, and it does
+  // it as a machine: the weapon in the hand comes apart, the model is rebuilt
+  // at the pivot, and the new shape slams together (VectorGun.playSwitchFx,
+  // WeaponSystemProcedural.startVectorSwitch). The turn is passed only once the
+  // whole reconstruction has been seen - handing it over any earlier swaps the
+  // model to whoever is next in the same frame, and nothing is watched at all.
+  const MS_PER_FRAME = 1000 / 60;
+  const framesFor = (ms) => Math.max(1, Math.ceil(ms / MS_PER_FRAME));
+
+  Scene_Battle.prototype.commandVectorSwitch = function () {
+    const actor = BattleManager.actor();
+    // While the book is open the frame has nowhere to fold to: the row reads on
+    // instead (turnGrimoirePage), and nothing below this runs.
+    if (this.turnGrimoirePage(actor)) return;
+    if (!actor || !window.VectorGun) return;
+    if (this._actorCommandWindow) this._actorCommandWindow.deactivate();
+    this._vectorSwitchActorId = actor.actorId();
+    // Half one: the weapon it is holding now flies apart. The gun is still the
+    // old shape, which is the whole point of playing this before the swap.
+    const fold = window.VectorGun.playSwitchFx('fold');
+    this._vectorSwitchStage = 'fold';
+    this._vectorSwitchWait = framesFor(fold || 200);
+  };
+
+  /** Half two: the frame is rebuilt as the fitted shape and slams together. */
+  Scene_Battle.prototype.riseVectorSwitch = function () {
+    const actor = BattleManager.actor();
+    window.VectorGun.switchForm(actor);
+    // The model in the hand is rebuilt at the pivot of the animation, so the
+    // cloud of hardware that comes back together is the NEW weapon.
+    const spriteset = this._spriteset;
+    if (spriteset && spriteset.updateWeaponSprite) spriteset.updateWeaponSprite();
+    const rise = window.VectorGun.playSwitchFx('rise');
+    this._vectorSwitchStage = 'rise';
+    this._vectorSwitchWait = framesFor(rise || 300);
+  };
+
+  /** Passes the turn once the reconstruction has finished. */
+  Scene_Battle.prototype.finishVectorSwitch = function () {
+    this._vectorSwitchWait = 0;
+    this._vectorSwitchStage = null;
+    const actorId = this._vectorSwitchActorId;
+    this._vectorSwitchActorId = null;
+    const actor = BattleManager.actor();
+    // The turn may have been taken away from under the animation (a forced
+    // action, the actor going down); only the battler that asked for the switch
+    // gets its command spent on it.
+    if (!actor || actor.actorId() !== actorId) return;
+    const action = BattleManager.inputtingAction();
+    if (!action) return;
+    const defenseSkill = $dataSkills[2];
+    if (defenseSkill && actor.canUse(defenseSkill)) {
+      action.setSkill(2);
+    } else {
+      action.setGuard();
+    }
+    this.selectNextCommand();
+  };
+
+  /**
+   * The grimoire's own use of the SWITCH row (window.LimitBreak, Em's Hyper).
+   * There is no weapon to fold while the book is open, so the row turns a page
+   * instead: she pays for it out of her own health and is dealt another row of
+   * spells out of the same book. Unlike the fold, nothing is animated, so the
+   * turn is passed in the same frame.
+   * @param {?Game_Actor} actor - Whoever is inputting
+   * @returns {boolean} true when the row was spent on a page
+   */
+  Scene_Battle.prototype.turnGrimoirePage = function (actor) {
+    if (!actor || !window.LimitBreak || !window.LimitBreak.isGrimoireOpen(actor)) return false;
+    if (!window.LimitBreak.rerollGrimoire(actor)) {
+      // Nothing left to pay with: the row buzzes and the menu stays open.
+      SoundManager.playBuzzer();
+      this._actorCommandWindow.activate();
+      return true;
+    }
+    const action = BattleManager.inputtingAction();
+    if (action) {
+      const defenseSkill = $dataSkills[2];
+      if (defenseSkill && actor.canUse(defenseSkill)) action.setSkill(2);
+      else action.setGuard();
+    }
+    this.selectNextCommand();
+    return true;
+  };
+
+  const _BSEC_Scene_Battle_update = Scene_Battle.prototype.update;
+  Scene_Battle.prototype.update = function () {
+    _BSEC_Scene_Battle_update.call(this);
+    if (this._vectorSwitchWait > 0) {
+      this._vectorSwitchWait--;
+      if (this._vectorSwitchWait <= 0) {
+        if (this._vectorSwitchStage === 'fold') this.riseVectorSwitch();
+        else this.finishVectorSwitch();
+      }
+    }
+  };
+
+  // Nothing else may be pressed while the weapon is in pieces.
+  const _BSEC_Scene_Battle_isAnyInputWindowActive =
+    Scene_Battle.prototype.isAnyInputWindowActive;
+  Scene_Battle.prototype.isAnyInputWindowActive = function () {
+    if (this._vectorSwitchWait > 0) return true;
+    return _BSEC_Scene_Battle_isAnyInputWindowActive.call(this);
   };
 
   // -------------------------------------------------------------------------
@@ -1090,6 +1327,7 @@
           this.cursorDown(Input.isTriggered("down") || Input.isTriggered("right"));
         }
         if (this.index() !== lastIndex) {
+          noteKeyNav();
           this.playCursorSound();
         }
         return;
@@ -1110,6 +1348,7 @@
           this.select((this.index() + 1) % max);
         }
         if (this.index() !== lastIndex) {
+          noteKeyNav();
           this.playCursorSound();
         }
       }
@@ -1269,7 +1508,7 @@
       }
       const hitIndex = this.hitTestEnemyAt(TouchInput.x, TouchInput.y);
       if (hitIndex >= 0) {
-        if (this.index() !== hitIndex) {
+        if (this.index() !== hitIndex && (pointerLeadsInput() || TouchInput.isTriggered())) {
           this.select(hitIndex);
         }
         if (TouchInput.isTriggered()) {
@@ -1305,6 +1544,7 @@
           this.select((this.index() + 1) % max);
         }
         if (this.index() !== lastIndex) {
+          noteKeyNav();
           this.playCursorSound();
         }
       }
@@ -1367,7 +1607,7 @@
       }
       const hitIndex = this.hitTestActorAt(TouchInput.x, TouchInput.y);
       if (hitIndex >= 0) {
-        if (this.index() !== hitIndex) {
+        if (this.index() !== hitIndex && (pointerLeadsInput() || TouchInput.isTriggered())) {
           this.select(hitIndex);
         }
         if (TouchInput.isTriggered()) {
@@ -1517,6 +1757,144 @@
   Window_PartyCommand.prototype.drawAllItems = function () {};
   Window_PartyCommand.prototype.refreshCursor = function () {
     this.setCursorRect(0, 0, 0, 0);
+  };
+
+
+  //=============================================================================
+  // Throw: an object out of the backpack, at an enemy
+  //
+  // The row under Item. What is thrown is not used, it is hurled: the damage
+  // is its weight (window.ThrowItem, BattleSystem/ThrowItemPlugin.js), the
+  // object leaves the bag for good, and its 3D model is the thing seen flying
+  // across the screen. Key items and materials are never offered.
+  //=============================================================================
+
+  function Window_BattleThrow() {
+    this.initialize(...arguments);
+  }
+
+  Window_BattleThrow.prototype = Object.create(Window_BattleItem.prototype);
+  Window_BattleThrow.prototype.constructor = Window_BattleThrow;
+
+  // Unlike the item list, usability in battle is beside the point: a rock is
+  // not "usable" and is exactly the sort of thing worth throwing.
+  Window_BattleThrow.prototype.includes = function (item) {
+    return !!window.ThrowItem && window.ThrowItem.isThrowable(item);
+  };
+
+  Window_BattleThrow.prototype.isEnabled = function (item) {
+    return !!item && $gameParty.numItems(item) > 0;
+  };
+
+  Window_BattleThrow.prototype.needsNumber = function () {
+    return true;
+  };
+
+  Scene_Battle.prototype.createThrowWindow = function () {
+    if (this._throwWindow) return this._throwWindow;
+    this._throwWindow = new Window_BattleThrow(this.itemWindowRect());
+    this._throwWindow.setHelpWindow(this._helpWindow);
+    this._throwWindow.setHandler("ok", this.onThrowOk.bind(this));
+    this._throwWindow.setHandler("cancel", this.onThrowCancel.bind(this));
+    this.addWindow(this._throwWindow);
+    return this._throwWindow;
+  };
+
+  Scene_Battle.prototype.commandThrow = function () {
+    const win = this.createThrowWindow();
+    win.refresh();
+    win.show();
+    win.activate();
+    if (this._actorCommandWindow) this._actorCommandWindow.hide();
+  };
+
+  Scene_Battle.prototype.onThrowOk = function () {
+    const item = this._throwWindow.item();
+    if (!item) { this._throwWindow.activate(); return; }
+    this._pendingThrowItem = item;
+    this._throwWindow.hide();
+    this._throwWindow.deactivate();
+    // The enemy list is the same one every targeted action uses, so the row
+    // painting, the cursor and the cancel path are all the familiar ones.
+    this.startEnemySelection();
+  };
+
+  Scene_Battle.prototype.onThrowCancel = function () {
+    this._pendingThrowItem = null;
+    this._throwWindow.hide();
+    this._throwWindow.deactivate();
+    if (this._actorCommandWindow) {
+      this._actorCommandWindow.show();
+      this._actorCommandWindow.refresh();
+      this._actorCommandWindow.activate();
+    }
+  };
+
+  // Where the object starts and where it lands, in screen pixels. A sideview
+  // battler knows its own place; anything else throws from the foot of the
+  // screen, which is where the party stands in a front view.
+  Scene_Battle.prototype._throwScreenPoints = function (enemy) {
+    const actor = BattleManager.actor();
+    const from = (actor && actor.isSpriteVisible && actor.isSpriteVisible())
+      ? { x: actor.screenX(), y: actor.screenY() - 40 }
+      : { x: Graphics.width * 0.25, y: Graphics.height - 140 };
+    const to = enemy
+      ? { x: enemy.screenX(), y: enemy.screenY() - 40 }
+      : { x: Graphics.width * 0.75, y: Graphics.height * 0.4 };
+    return { from, to };
+  };
+
+  // The throw itself: the object leaves the bag, flies, lands for its weight.
+  // It is resolved here rather than through an action because nothing in the
+  // database describes it; the actor's turn is spent all the same.
+  Scene_Battle.prototype.resolveThrow = function (item, enemy) {
+    const actor = BattleManager.actor();
+    $gameParty.loseItem(item, 1);
+    const { from, to } = this._throwScreenPoints(enemy);
+    const land = () => {
+      if (!window.ThrowItem) return;
+      window.ThrowItem.hitBattler(enemy, item, actor);
+    };
+    if (window.ThrowItem && window.ThrowItem.flyModel) {
+      window.ThrowItem.flyModel(item, from, to, land);
+    } else {
+      land();
+    }
+  };
+
+  const _Scene_Battle_onEnemyOk_Throw = Scene_Battle.prototype.onEnemyOk;
+  Scene_Battle.prototype.onEnemyOk = function () {
+    if (!this._pendingThrowItem) {
+      _Scene_Battle_onEnemyOk_Throw.call(this);
+      return;
+    }
+    const item = this._pendingThrowItem;
+    this._pendingThrowItem = null;
+    const enemy = this._enemyWindow ? this._enemyWindow.enemy() : null;
+    if (this._actorCommandWindow) this._actorCommandWindow._targetSession = null;
+    if (this._enemyWindow) {
+      this._enemyWindow.hide();
+      this._enemyWindow.deactivate();
+    }
+    this.resolveThrow(item, enemy);
+    // The turn is spent: the empty action left in the slot does nothing when
+    // the round runs it.
+    this.selectNextCommand();
+  };
+
+  const _Scene_Battle_onEnemyCancel_Throw = Scene_Battle.prototype.onEnemyCancel;
+  Scene_Battle.prototype.onEnemyCancel = function () {
+    if (!this._pendingThrowItem) {
+      _Scene_Battle_onEnemyCancel_Throw.call(this);
+      return;
+    }
+    this._pendingThrowItem = null;
+    if (this._actorCommandWindow) this._actorCommandWindow._targetSession = null;
+    if (this._enemyWindow) {
+      this._enemyWindow.hide();
+      this._enemyWindow.deactivate();
+    }
+    this.commandThrow();
   };
 
 })();

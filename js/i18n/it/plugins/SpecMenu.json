@@ -13,6 +13,7 @@
     "pointsToNext": "{points} punti ancora per {level}",
     "mastered": "Padronanza completa. Non c'è più nulla da imparare.",
     "governingStat": "Statistica di riferimento: {stat}",
+    "statLabel": "Statistica di riferimento",
     "category": "Categoria",
     "tier": "Grado {n}"
   },

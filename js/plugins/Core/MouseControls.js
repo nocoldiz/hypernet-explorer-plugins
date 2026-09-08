@@ -571,6 +571,139 @@
     };
 
     window.UIScroll = UIScroll;
+
+    //=========================================================================
+    // UIPanel - the one answer to "is this overlay showing"
+    //=========================================================================
+    // Every DOM screen in the game used to write display, opacity,
+    // pointer-events and a transition onto its own panels, which meant the
+    // stylesheet could not say what an open panel looks like and a preset
+    // could not re-ink one. A panel now carries `.ui-open` or `.ui-closed`
+    // and nothing else: what open looks like is a rule, per panel, in
+    // css/theme.css. The two values a sheet genuinely cannot know - where a
+    // floating box was put and how full a bar is - are handed over as custom
+    // properties.
+    const UIPanel = {
+        open(el) {
+            if (!el) return;
+            el.classList.remove('ui-closed');
+            el.classList.add('ui-open');
+        },
+        close(el) {
+            if (!el) return;
+            el.classList.remove('ui-open');
+            el.classList.add('ui-closed');
+        },
+        toggle(el, on) { return on ? this.open(el) : this.close(el); },
+        isOpen(el) { return !!el && el.classList.contains('ui-open'); },
+        // The other half of the question, and not its negation: a panel that
+        // was never opened by name (one the stylesheet shows by default) is
+        // not closed, it simply never said.
+        isClosed(el) {
+            if (!el) return true;
+            if (el.classList.contains('ui-closed')) return true;
+            return !!(el.style && el.style.display === 'none');
+        },
+        // A tooltip or any other box placed at a point on the screen.
+        placeAt(el, x, y) {
+            if (!el) return;
+            el.style.setProperty('--ui-at-x', `${x}px`);
+            el.style.setProperty('--ui-at-y', `${y}px`);
+        },
+        // A meter's fill, 0..100. `axis` is 'w' (the default) or 'h'.
+        setBar(el, pct, axis) {
+            if (!el) return;
+            el.style.setProperty(axis === 'h' ? '--ui-bar-h' : '--ui-bar-w', `${pct}%`);
+        },
+        // An image handed to a rule as a custom property.
+        // ---------------------------------------------------------------
+        // A relative url() inside a custom property is resolved against the
+        // STYLESHEET that reads the property back, not against the page that
+        // wrote it: `img/busts/x.png` written onto an element and read by a
+        // rule in css/theme.css is looked for in css/img/busts/x.png, which
+        // is nowhere, and the element paints nothing with no error anywhere.
+        // That is what blanked every sprite, bust, portrait and vehicle card
+        // the moment they moved off inline backgrounds. Any path going into
+        // a property comes through here and leaves absolute.
+        //
+        // The value is written UNQUOTED. Nearly every caller drops it into a
+        // style="..." attribute built by a template literal, and a url("...")
+        // there closes the attribute at its first inner quote: the browser
+        // kept `--cc-sprite-url:url(` and threw the rest away, which blanked
+        // the wizard's sidebar sprite, bust and tab portraits without an
+        // error. The few characters an unquoted url() cannot carry are percent
+        // encoded instead, which every URL loader reads back as the same file.
+        assetUrl(path) {
+            if (!path) return 'none';
+            let href;
+            try {
+                href = new URL(path, document.baseURI).href;
+            } catch (e) {
+                href = String(path);
+            }
+            return `url(${UIPanel.escapeCssUrl(href)})`;
+        },
+
+        // What url() needs escaped when it goes unquoted: quotes of both kinds,
+        // parentheses and whitespace.
+        escapeCssUrl(href) {
+            return String(href).replace(/[()'"\s]/g, (c) =>
+                '%' + c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0'));
+        }
+    };
+
+    window.UIPanel = UIPanel;
     UIScroll.install();
+
+    // =========================================================================
+    // Which device is actually in the player's hands
+    //
+    // A key badge on a screen ("TAB", "R1") has to name one device, not three
+    // (docs/task/ui_fixing.md, rule 9), and this is the one place that question
+    // is asked. Whichever of the two last did something wins; before either has,
+    // a plugged in pad is assumed and a bare keyboard falls back to itself.
+    // =========================================================================
+    if (!Input.lastInputDevice) {
+        let device = null;
+
+        const padPressed = () => {
+            const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+            for (let i = 0; i < pads.length; i++) {
+                const pad = pads[i];
+                if (!pad || !pad.connected) continue;
+                for (let b = 0; b < pad.buttons.length; b++) {
+                    const button = pad.buttons[b];
+                    if (button && (button.pressed || button.value > 0.5)) return true;
+                }
+                for (let a = 0; a < pad.axes.length; a++) {
+                    if (Math.abs(pad.axes[a]) > 0.5) return true;
+                }
+            }
+            return false;
+        };
+
+        const padConnected = () => {
+            const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+            for (let i = 0; i < pads.length; i++) {
+                if (pads[i] && pads[i].connected) return true;
+            }
+            return false;
+        };
+
+        document.addEventListener('keydown', () => { device = 'keyboard'; }, { passive: true });
+
+        // The pad is polled rather than delivered, so it is read once a frame
+        // off the same hook the triggers use.
+        const _updateInput = Input.update;
+        Input.update = function () {
+            _updateInput.apply(this, arguments);
+            if (padPressed()) device = 'pad';
+        };
+
+        Input.lastInputDevice = function () {
+            if (device) return device;
+            return padConnected() ? 'pad' : 'keyboard';
+        };
+    }
 
 })();

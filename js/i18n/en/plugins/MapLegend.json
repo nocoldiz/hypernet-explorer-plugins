@@ -1,48 +1,33 @@
 {
-  "controlsHeading": "Controls",
+  "speaker": "Bubba",
   "foldHint": "fold this away",
   "unfoldHint": "read this",
+  "controlsHeading": "Controls",
   "controls": {
-    "up": "Move Up",
-    "down": "Move Down",
-    "left": "Move Left",
-    "right": "Move Right",
     "action": "Action",
-    "stopTravel": "Stop travelling",
-    "wait": "Wait",
-    "run": "Run",
-    "menu": "Menu",
-    "leftClick": "Left Click",
-    "scrollWheel": "Scroll wheel",
+    "down": "Move Down",
     "holdShift": "Hold Shift",
-    "openMap": "Open the map",
     "hotbarCycle": "Change hotbar item",
     "hotbarUse": "Use hotbar item",
-    "build": "Build",
-    "inventory": "Inventory",
-    "quests": "Quests",
-    "zoom": "Zoom in and out",
     "interact": "Interact with or dismantle an object",
+    "left": "Move Left",
+    "leftClick": "Left Click",
+    "menu": "Menu",
     "returnToWorld": "Return to the world map",
-    "moveMouse": "Move the mouse",
-    "holdLeftClick": "Hold Left Click",
-    "voxWalk": "Walk through the 3D world",
-    "voxLook": "Look around",
-    "voxJump": "Jump (again at a wall to kick off it)",
-    "voxRun": "Run",
-    "voxDig": "Break the block you are looking at",
-    "voxPlace": "Put a block back down",
-    "voxBar": "Change quick bar: blocks, items, spells",
-    "voxSlot": "Take a cell of the quick bar in hand",
-    "voxInteract": "Interact: talk, loot, chests, get in a vehicle",
-    "voxMap": "Change the map view"
+    "right": "Move Right",
+    "run": "Run",
+    "scrollWheel": "Scroll wheel",
+    "stopTravel": "Stop travelling",
+    "up": "Move Up",
+    "wait": "Wait",
+    "zoom": "Zoom in and out"
   },
   "areas": {
-    "tutorialVillage": {
+    "storyModeVillage": {
       "title": "Village",
       "text": "Village sample text"
     },
-    "tutorialWaterfall": {
+    "storyModeWaterfall": {
       "title": "Secret Waterfall",
       "text": "You should check behind every waterfall"
     },

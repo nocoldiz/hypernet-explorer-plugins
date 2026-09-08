@@ -1,0 +1,19 @@
+{
+  "title": "SCASSO",
+  "complexity": "Complessità serratura: ",
+  "timeLabel": "TEMPO",
+  "nextLabel": "PROSSIMO",
+  "tensionLabel": "TENSIONE",
+  "seconds": "s",
+  "lockPicked": "Serratura scassinata!",
+  "lockJammed": "Serratura bloccata...",
+  "timeUp": "Tempo scaduto!",
+  "seized": "Il cilindro si è inceppato!",
+  "abandoned": "Grimaldello ritirato...",
+  "usedSkeletonKey": "Usato Grimaldello Universale!",
+  "noLockpicks": "Non hai grimaldelli",
+  "craftOffer": "Niente grimaldelli, ma c'è abbastanza per piegarne uno: {materials}. Fabbricare un {item}?",
+  "craftYes": "Piegane uno adesso",
+  "craftNo": "Lascia stare",
+  "craftedOne": "Piegato un {item} davanti alla porta"
+}

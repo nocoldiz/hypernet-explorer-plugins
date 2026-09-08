@@ -113,7 +113,7 @@
  *
  * CAR THEFT:
  * - Pressing the action button while facing a PARKED car offers "Steal car" /
- *   "Cancel". Stealing runs the LockpickTetris minigame (a lockpick, item 374,
+ *   "Cancel". Stealing runs the UnlockingBlocks minigame (a lockpick, item 374,
  *   is required; a skeleton key, item 740, opens it outright).
  * - Success: the party gains the "Utilitarian car" keys (item 164) and the car
  *   is removed from the world (that world cell keeps one parked car fewer).
@@ -2045,7 +2045,7 @@
       return;
     }
 
-    if (typeof LockpickTetris === "undefined" || typeof Scene_LockpickTetris === "undefined") {
+    if (typeof UnlockingBlocks === "undefined" || typeof Scene_UnlockingBlocks === "undefined") {
       say(T('RoadCar.lockStuck'));
       return;
     }
@@ -2054,26 +2054,26 @@
     hookLockpickForCarTheft();
     // Car locks are a touch harder than house doors.
     const difficulty = 4 + Math.floor(Math.random() * 5); // 4..8
-    LockpickTetris.start(difficulty, 0, 0, "", "", "none");
+    UnlockingBlocks.start(difficulty, 0, 0, "", "", "none");
   }
 
   // Mirrors ProceduralHouseSystem: wrap popScene once to resolve the pending
   // theft when the minigame ends. The minigame already eats the lockpick on a
-  // failure; the crime is deferred to Scene_Map.start (LockpickTetris consumes
+  // failure; the crime is deferred to Scene_Map.start (UnlockingBlocks consumes
   // pendingCrimeKey there) so the notification lands on the map, not the scene
   // being popped.
   function hookLockpickForCarTheft() {
-    if (Scene_LockpickTetris._carTheftHooked) return;
-    Scene_LockpickTetris._carTheftHooked = true;
-    const _popScene = Scene_LockpickTetris.prototype.popScene;
-    Scene_LockpickTetris.prototype.popScene = function () {
+    if (Scene_UnlockingBlocks._carTheftHooked) return;
+    Scene_UnlockingBlocks._carTheftHooked = true;
+    const _popScene = Scene_UnlockingBlocks.prototype.popScene;
+    Scene_UnlockingBlocks.prototype.popScene = function () {
       if (_pendingCarTheft) {
         const pending = _pendingCarTheft;
         _pendingCarTheft = null;
         if (this.success) {
           completeCarTheft(pending);
-        } else if (typeof LockpickTetris !== "undefined") {
-          LockpickTetris.pendingCrimeKey = "vehicleTheft";
+        } else if (typeof UnlockingBlocks !== "undefined") {
+          UnlockingBlocks.pendingCrimeKey = "vehicleTheft";
         }
       }
       _popScene.call(this);

@@ -476,6 +476,10 @@
     // too many - and what is on this one is no use out there anyway, since
     // nothing in the 3D world is an item you eat or drink.
     if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive()) return false;
+    // A fight played out on the map (BattleSystem/MapBattleMode.js) puts the
+    // battle spell quickbar in exactly this spot, and both answer the number
+    // keys. Battle items are reached through the battle Item command instead.
+    if (window.MapBattleMode && window.MapBattleMode.isActive()) return false;
     return !ItemHotbar.isEmpty();
   }
 
@@ -660,7 +664,6 @@
   ItemHotbar.inventoryBarHTML = function (headExtraHTML) {
     return `<div class="backpack-hotbar">
         <div class="backpack-hotbar-head">
-          <div class="backpack-hotbar-label">${T('Inventory.hotbar.title')}</div>
           ${headExtraHTML || ''}
         </div>
         <div class="backpack-hotbar-mount" id="backpack-hotbar-mount"></div>

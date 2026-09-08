@@ -1,0 +1,293 @@
+{
+  "menu": "Vector gun",
+  "title": "Vector gun",
+  "back": "Back",
+  "switch": "Switch",
+  "subtitle": "Operating modes",
+  "tab": {
+    "modes": "Operating modes",
+    "spell": "Bound spell",
+    "element": "Element",
+    "form": "Weapon form"
+  },
+  "slots": "{used} of {max} modes running",
+  "state": {
+    "on": "Running",
+    "off": "Idle"
+  },
+  "full": "Maximum 3 modes at once.",
+  "noGun": "The party does not have the gun.",
+  "detail": {
+    "status": "Status",
+    "effect": "Effect",
+    "modesTitle": "Active modes",
+    "spellTitle": "Bound spell",
+    "cost": "Mana at half",
+    "unbound": "Nothing bound",
+    "fitted": "Fitted",
+    "elementTitle": "Element",
+    "formTitle": "Weapon form",
+    "range": "Range",
+    "magazine": "Magazine"
+  },
+  "mode": {
+    "mana": {
+      "name": "Mana bullets",
+      "desc": "Damage scales off INT.",
+      "effect": "Attack damage uses INT instead of the weapon's own scaling."
+    },
+    "recoil": {
+      "name": "Vector recoil",
+      "desc": "Knockback on hit.",
+      "effect": "Targets hit are knocked back and floated."
+    },
+    "spellblaster": {
+      "name": "Spellblaster",
+      "desc": "Fires the bound spell with every shot.",
+      "effect": "The bound spell fires with every attack. Without this mode a bound spell costs 150% of its MP cost; with it, 75%. Out of MP, the shot is a normal attack."
+    },
+    "card": {
+      "name": "Card",
+      "desc": "Kills drop monster cards.",
+      "effect": "A killing blow adds that enemy's monster card to the collection."
+    },
+    "wide": {
+      "name": "Wide shots",
+      "desc": "Hits several body parts for less damage.",
+      "effect": "Lower total damage, split across several body parts per attack."
+    },
+    "psi": {
+      "name": "Psi vectors",
+      "desc": "Damage scales off PSI.",
+      "effect": "Attack damage uses PSI instead of the weapon's own scaling."
+    },
+    "burst": {
+      "name": "Burst fire",
+      "desc": "Two shots per attack at 70% damage.",
+      "effect": "Each attack fires twice at 70% damage. Both shots consume ammo."
+    },
+    "pierce": {
+      "name": "Piercing vectors",
+      "desc": "Ignores guard.",
+      "effect": "Damage ignores the target's guard."
+    },
+    "drain": {
+      "name": "Vampiric vectors",
+      "desc": "25% HP lifesteal.",
+      "effect": "The user recovers HP equal to 25% of damage dealt."
+    },
+    "siphon": {
+      "name": "Mana siphon",
+      "desc": "15% MP leech.",
+      "effect": "The user recovers MP equal to 15% of damage dealt."
+    },
+    "deadeye": {
+      "name": "Deadeye",
+      "desc": "+40% critical rate.",
+      "effect": "Critical hit chance increases by 40 points."
+    },
+    "tracker": {
+      "name": "Tracker rounds",
+      "desc": "Attacks never miss.",
+      "effect": "Attacks always hit, ignoring evasion."
+    },
+    "overload": {
+      "name": "Overload",
+      "desc": "Double magazine, 85% damage.",
+      "effect": "Magazine capacity doubled. All shots deal 85% damage."
+    },
+    "hex": {
+      "name": "Hexed rounds",
+      "desc": "40% chance of a random debuff.",
+      "effect": "A hit has a 40% chance to inflict one of: blind, silence, unbalance, vulnerability, broken guard."
+    },
+    "longshot": {
+      "name": "Long shot",
+      "desc": "Double range.",
+      "effect": "Doubles weapon range on the battle map, in any ranged form."
+    },
+    "venom": {
+      "name": "Venom rounds",
+      "desc": "30% chance to poison.",
+      "effect": "A hit has a 30% chance to inflict poison."
+    },
+    "concussion": {
+      "name": "Concussive rounds",
+      "desc": "30% chance to stun.",
+      "effect": "A hit has a 30% chance to inflict stun."
+    },
+    "thermalOverload": {
+      "name": "Thermal overload",
+      "desc": "30% chance to burn.",
+      "effect": "A hit has a 30% chance to inflict burning."
+    },
+    "thermalUnderload": {
+      "name": "Thermal underload",
+      "desc": "30% chance to freeze.",
+      "effect": "A hit has a 30% chance to inflict freeze."
+    },
+    "executioner": {
+      "name": "Executioner",
+      "desc": "More damage to low HP targets.",
+      "effect": "Damage rises as target HP falls, up to +60% against a target near death."
+    },
+    "ambush": {
+      "name": "Ambush protocol",
+      "desc": "150% damage on the first turn.",
+      "effect": "Attacks made in the first turn of a battle deal 150% damage."
+    },
+    "resonance": {
+      "name": "Resonance",
+      "desc": "More damage at high MP.",
+      "effect": "Damage rises with the user's current MP, up to +40% at full MP."
+    },
+    "overpressure": {
+      "name": "Overpressure",
+      "desc": "135% damage, 2 ammo per shot.",
+      "effect": "Each shot deals 135% damage and consumes 2 rounds instead of 1."
+    },
+    "hollowPoint": {
+      "name": "Hollow point",
+      "desc": "+75% critical damage.",
+      "effect": "Critical hits deal 75% more damage. Does not change critical rate."
+    },
+    "deepMagazine": {
+      "name": "Deep magazine",
+      "desc": "+4 magazine capacity.",
+      "effect": "Magazine capacity +4 in any weapon form. Damage unchanged."
+    }
+  },
+  "spell": {
+    "none": "No spell",
+    "noneDesc": "No spell fires with the shot.",
+    "empty": "No single-target spell is known.",
+    "hint": "Only offensive single-target magic can be bound. Skills cannot be bound.",
+    "mp": "{cost} MP",
+    "fired": "{cost} MP a shot"
+  },
+  "toast": {
+    "fitted": "{mode} is running.",
+    "removed": "{mode} is idle.",
+    "bound": "{spell} bound to the shot.",
+    "cleared": "Spell unbound.",
+    "card": "{name} card obtained.",
+    "element": "Element set to {element}.",
+    "swapped": "{mode} is running, {old} is idle.",
+    "form": "Form set to {form}.",
+    "unracked": "Coilgun out of ammo, reverted to pistol."
+  },
+  "locked": {
+    "equip": "Only Em can equip the vector gun.",
+    "part": "The vector gun cannot leave Em."
+  },
+  "cmd": {
+    "toBlade": "Switch to blade",
+    "toGun": "Switch to gun",
+    "switch": "Switch"
+  },
+  "element": {
+    "title": "Element",
+    "hint": "The element applies in every form and with any modes running.",
+    "physicalDesc": "Physical damage, no element.",
+    "desc": {
+      "1": "Physical damage, no element.",
+      "2": "Fire damage, can set the target burning.",
+      "3": "Ice damage, can freeze the target.",
+      "4": "Lightning damage.",
+      "5": "Water damage.",
+      "6": "Earth damage.",
+      "7": "Wind damage.",
+      "8": "Holy damage, extra effective against undead.",
+      "9": "Dark damage."
+    }
+  },
+  "form": {
+    "gun": "Gun",
+    "blade": "Blade of Thelema",
+    "fitted": "Fitted",
+    "gain": "Melee form: +{bonus}% damage, {element} element. Gun form has no bonus and is the only form that can fire the bound spell.",
+    "gunGain": "Base form: normal shots, and the only form that can fire the bound spell. SWITCH converts it into the coilgun."
+  },
+  "bay": {
+    "slot": "Bay {n}",
+    "empty": "Empty",
+    "loaded": "Bay {n}"
+  },
+  "shape": {
+    "gun": {
+      "name": "Coilgun",
+      "desc": "Default form.",
+      "effect": "With no other form fitted, SWITCH converts the pistol into a coilgun sniper rifle: 3 shots, 4x range on the battle map. The third shot reverts it to the pistol and reloads."
+    },
+    "abrasax": {
+      "name": "Athame of Abrasax",
+      "desc": "Alternate form: dagger.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and dagger. In dagger form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "thelema": {
+      "name": "Blade of Thelema",
+      "desc": "Alternate form: machete.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and machete. In machete form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "choronzon": {
+      "name": "Maul of Choronzon",
+      "desc": "Alternate form: maul.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and maul. In maul form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "babalon": {
+      "name": "Axe of Babalon",
+      "desc": "Alternate form: axe.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and axe. In axe form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "nuit": {
+      "name": "Scourge of Nuit",
+      "desc": "Alternate form: whip.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and whip. In whip form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "hadit": {
+      "name": "Staff of Hadit",
+      "desc": "Alternate form: staff.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and staff. In staff form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "aiwass": {
+      "name": "Bow of Aiwass",
+      "desc": "Alternate form: bow.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and bow. In bow form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "zos": {
+      "name": "Darts of Zos",
+      "desc": "Alternate form: throwing darts.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and darts. In dart form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "baphomet": {
+      "name": "Talons of Baphomet",
+      "desc": "Alternate form: claws.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and claws. In claw form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "kia": {
+      "name": "Gauntlet of Kia",
+      "desc": "Alternate form: gauntlet.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and gauntlet. In gauntlet form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "longinus": {
+      "name": "Lance of Longinus",
+      "desc": "Alternate form: lance.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and lance. In lance form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+    },
+    "sniper": {
+      "name": "Coilgun",
+      "desc": "Extended gun form.",
+      "effect": "3 shots, 4x range. The last shot reverts it to the pistol."
+    },
+    "solomon": {
+      "name": "Grimoire of Solomon",
+      "desc": "Alternate form: the open book.",
+      "effect": "Fitted, the book is already open when the fight starts: Em begins every battle reading, with a row of spells out of the grimoire instead of her own. It is a pact, not a gift. Graceful Death buys no turn of invulnerability with it, and the book gives back no health: it takes health for every spell read, priced on what the spell costs to cast. Only one alternate form can be fitted."
+    }
+  },
+  "growth": {
+    "footer": "Frame at level {level}: +{damage}% a shot, +{atk} ATK and AGI, +{rounds} rounds",
+    "label": "Growth",
+    "desc": "The weapon's stats scale with Em's level."
+  }
+}

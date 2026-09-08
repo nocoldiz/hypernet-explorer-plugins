@@ -360,28 +360,8 @@
       "name": "",
       "desc": ""
     },
-    "existingCharacter": {
-      "name": "",
-      "desc": ""
-    },
-    "modeFull": {
-      "name": "",
-      "desc": ""
-    },
-    "modeQuick": {
-      "name": "",
-      "desc": ""
-    },
-    "modeNormal": {
-      "name": "",
-      "desc": ""
-    },
     "combatMonsters": {
       "name": "Монстры",
-      "desc": ""
-    },
-    "combatCards": {
-      "name": "Карты",
       "desc": ""
     },
     "combatMap": {

@@ -51,6 +51,21 @@
     const APIARY_TIME_VAR = 114;
     // Safety cap (in hours) on a single catch-up simulation to avoid a frame-freezing loop.
     const APIARY_MAX_CATCHUP_HOURS = 168;
+
+    // ---- The hive in cross section ----------------------------------------
+    // The sheet the bees are drawn from: an ordinary 3x4 character sheet under
+    // img/characters, loaded through ImageManager so an encrypted build finds
+    // it like any other asset.
+    const BEE_SHEET   = 'Monsters/$BuzzingBumblebee';  // i18n-ignore: asset path
+    const BEE_PATTERN = [1, 0, 1, 2];   // the walk every RMMZ sheet is drawn in
+    const BEE_SIZE    = 18;             // how tall one is on the comb, in px
+    const BEE_MAX     = 26;             // and how many of them are ever drawn
+    const HIVE_W      = 520;
+    const HIVE_H      = 210;
+    const HIVE_PAD    = 10;
+    const HIVE_FRAMES = 3;              // frames hanging in the box
+    const HIVE_COLS   = 13;             // cells across one frame
+    const HIVE_ROWS   = 9;
     // Hard ceiling on the serialized bee population so saves don't bloat.
     const MAX_COLONY_BEES = 2000;
 
@@ -984,6 +999,7 @@
             this._feedbackMsg = '';
             this._feedbackTimer = 0;
             this._simTimer = 0;
+            this._hive = null;
 
             this._container = document.createElement('div');
             this._container.id = 'apiary-container';
@@ -1003,7 +1019,296 @@
                 this._container.remove();
                 this._container = null;
             }
+            this._hive = null;
             super.terminate();
+        }
+
+        // ------------------------------------------------------------------
+        // The hive in cross section
+        // ------------------------------------------------------------------
+        // The colony was a page of numbers, and a hive is the one thing in the
+        // game that is worth watching rather than reading: the frames are cut
+        // open, every cell is drawn as what the colony actually put in it, and
+        // the bees the census counts are on the comb, walking it and flying
+        // the space in front of it.
+        //
+        // The canvas outlives refreshUIApiary, which rewrites the page's markup
+        // on every keypress and every simulated hour: it is built once and
+        // re-hung on the placeholder each time, so the bees do not restart at
+        // the top of the comb whenever a cursor moves.
+        _hiveCanvas() {
+            if (this._hive) return this._hive.canvas;
+            const canvas = document.createElement('canvas');
+            canvas.id = 'apiary-hive-canvas';
+            canvas.width = HIVE_W;
+            canvas.height = HIVE_H;
+            const comb = document.createElement('canvas');
+            comb.width = HIVE_W;
+            comb.height = HIVE_H;
+            this._hive = {
+                canvas,
+                ctx: canvas.getContext('2d'),
+                // The comb is three hundred and fifty hexagons and it does not
+                // move: it is painted once onto a layer of its own and blitted
+                // under the bees, rather than re-stroked sixty times a second
+                // while the colony simulation is also running.
+                comb,
+                combCtx: comb.getContext('2d'),
+                combKey: null,
+                bees: [],
+                t: 0,
+                cells: null,       // the comb, rebuilt only when the stores move
+                cellKey: '',
+                ink: null,         // the palette, read off the page's own tokens
+                bitmap: ImageManager.loadCharacter(BEE_SHEET),
+            };
+            return canvas;
+        }
+
+        // Every colour the cross section paints, read off the stylesheet rather
+        // than written here: the two presets ink this page differently, and a
+        // canvas cannot inherit. Re-read whenever the page is rebuilt, since a
+        // preset can change under an open menu.
+        _hiveInk() {
+            const h = this._hive;
+            if (!h) return null;
+            if (h.ink) return h.ink;
+            const el = this._container && this._container.querySelector('.apiary-hive');
+            const cs = el && window.getComputedStyle ? window.getComputedStyle(el) : null;
+            const read = (name, fallback) => {
+                const v = cs ? cs.getPropertyValue(name).trim() : '';
+                return v || fallback;
+            };
+            h.ink = {
+                air:     read('--apiary-air', '#ffffff'),
+                wood:    read('--apiary-wood', '#ffffff'),
+                wax:     read('--apiary-wax', '#ffffff'),
+                empty:   read('--apiary-empty', '#ffffff'),
+                honey:   read('--apiary-honey', '#e0b000'),
+                pollen:  read('--apiary-pollen', '#e0b000'),
+                brood:   read('--apiary-brood', '#ffe9a8'),
+                queen:   read('--apiary-queen', '#ffffff'),
+            };
+            return h.ink;
+        }
+
+        /**
+         * What each cell of the comb holds. A cell is not random dressing: the
+         * counts come straight off the report, so a colony that has eaten its
+         * stores shows bare wax and one that has been left alone shows capped
+         * honey. Rebuilt only when those counts change, so the comb does not
+         * shimmer from frame to frame.
+         */
+        _hiveCells(report) {
+            const h = this._hive;
+            const total = HIVE_COLS * HIVE_ROWS * HIVE_FRAMES;
+            const brood = report.population.eggs + report.population.larvae + report.population.pupae;
+            const key = [Math.round(report.resources.honey), Math.round(report.resources.pollen),
+                Math.round(brood), report.queen.alive ? 1 : 0].join('|');
+            if (h.cells && h.cellKey === key) return h.cells;
+
+            const share = (value, max) => Math.max(0, Math.min(1, value / max));
+            const nHoney  = Math.round(total * share(report.resources.honey, 500) * 0.55);
+            const nPollen = Math.round(total * share(report.resources.pollen, 200) * 0.22);
+            const nBrood  = Math.round(total * share(brood, 900) * 0.4);
+
+            // A real frame is laid out the way a colony builds it: brood in the
+            // warm middle, pollen in a band around it, honey capped along the
+            // top and the outer edges. So the cells are handed out by rank
+            // rather than scattered, and the picture reads as a hive.
+            const cells = [];
+            for (let f = 0; f < HIVE_FRAMES; f++) {
+                for (let r = 0; r < HIVE_ROWS; r++) {
+                    for (let c = 0; c < HIVE_COLS; c++) {
+                        const dx = (c + 0.5) / HIVE_COLS - 0.5;
+                        const dy = (r + 0.5) / HIVE_ROWS - 0.45;
+                        cells.push({ f, r, c, d: Math.hypot(dx * 1.15, dy) });
+                    }
+                }
+            }
+            const byCentre = cells.slice().sort((a, b) => a.d - b.d);
+            byCentre.forEach((cell, i) => {
+                if (i < nBrood) cell.kind = 'brood';
+                else if (i < nBrood + nPollen) cell.kind = 'pollen';
+                else cell.kind = 'empty';
+            });
+            // Honey is capped from the outside in, over whatever is not brood.
+            const byEdge = cells.slice().sort((a, b) => b.d - a.d);
+            let capped = 0;
+            for (const cell of byEdge) {
+                if (capped >= nHoney) break;
+                if (cell.kind === 'brood') continue;
+                cell.kind = 'honey';
+                capped++;
+            }
+            if (report.queen.alive) {
+                // The queen keeps the warmest cell in the middle frame.
+                const middle = byCentre.find((c) => c.f === Math.floor(HIVE_FRAMES / 2));
+                if (middle) middle.queen = true;
+            }
+            h.cells = cells;
+            h.cellKey = key;
+            return cells;
+        }
+
+        /**
+         * How many bees are on the comb: the colony's own adult count, scaled
+         * down to something a person can watch. An empty hive draws none, and a
+         * city of forty thousand does not draw forty thousand.
+         */
+        _hiveBeeCount(report) {
+            const adults = report.population.total - report.population.eggs -
+                report.population.larvae - report.population.pupae;
+            if (adults <= 0) return 0;
+            return Math.max(1, Math.min(BEE_MAX, Math.round(Math.sqrt(adults) / 2.2)));
+        }
+
+        _hiveSpawnBee() {
+            const onComb = Math.random() < 0.62;
+            return {
+                x: HIVE_PAD + Math.random() * (HIVE_W - HIVE_PAD * 2),
+                y: HIVE_PAD + Math.random() * (HIVE_H - HIVE_PAD * 2),
+                // A bee on the comb crawls; one in the air in front of it flies,
+                // which is faster, wanders more and is drawn a little larger.
+                onComb,
+                speed: onComb ? 0.25 + Math.random() * 0.35 : 0.8 + Math.random() * 0.9,
+                dir: Math.random() * Math.PI * 2,
+                turn: 0,
+                pause: 0,
+                phase: Math.random() * 100,
+                pattern: 0,
+            };
+        }
+
+        _hiveStepBees(report) {
+            const h = this._hive;
+            const want = this._hiveBeeCount(report);
+            while (h.bees.length < want) h.bees.push(this._hiveSpawnBee());
+            if (h.bees.length > want) h.bees.length = want;
+
+            for (const b of h.bees) {
+                if (b.pause > 0) { b.pause--; continue; }
+                // A wandering walk, not a straight line: the heading drifts,
+                // and a crawling bee stops every so often the way one working a
+                // cell does.
+                b.turn += (Math.random() - 0.5) * 0.5;
+                b.turn *= 0.86;
+                b.dir += b.turn * (b.onComb ? 0.12 : 0.2);
+                b.x += Math.cos(b.dir) * b.speed;
+                b.y += Math.sin(b.dir) * b.speed;
+                if (b.x < HIVE_PAD) { b.x = HIVE_PAD; b.dir = Math.PI - b.dir; }
+                if (b.x > HIVE_W - HIVE_PAD) { b.x = HIVE_W - HIVE_PAD; b.dir = Math.PI - b.dir; }
+                if (b.y < HIVE_PAD) { b.y = HIVE_PAD; b.dir = -b.dir; }
+                if (b.y > HIVE_H - HIVE_PAD) { b.y = HIVE_H - HIVE_PAD; b.dir = -b.dir; }
+                if (b.onComb && Math.random() < 0.006) b.pause = 20 + Math.floor(Math.random() * 60);
+                b.phase += b.speed;
+                // The 3-frame walk every RMMZ sheet is drawn in: 1, 0, 1, 2.
+                b.pattern = BEE_PATTERN[Math.floor(b.phase / 6) % BEE_PATTERN.length];
+            }
+        }
+
+        // Which of the sheet's four rows a heading reads as. The sheet is an
+        // ordinary character sheet, so the rows are down / left / right / up.
+        _hiveBeeRow(dir) {
+            const a = ((dir % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+            if (a < Math.PI * 0.25 || a >= Math.PI * 1.75) return 2; // right
+            if (a < Math.PI * 0.75) return 0;                        // down
+            if (a < Math.PI * 1.25) return 1;                        // left
+            return 3;                                                // up
+        }
+
+        /**
+         * The still half of the picture: the box, the three frames hanging in
+         * it and every cell of comb, painted onto its own layer. Repainted only
+         * when the colony's stores move or the page is re-inked.
+         */
+        _paintComb(cells, ink) {
+            const h = this._hive;
+            const key = h.cellKey + '|' + ink.honey + ink.brood + ink.empty;
+            if (h.combKey === key) return;
+            h.combKey = key;
+            const ctx = h.combCtx;
+            if (!ctx) return;
+
+            // The box the frames hang in, seen from the side.
+            ctx.clearRect(0, 0, HIVE_W, HIVE_H);
+            ctx.fillStyle = ink.air;
+            ctx.fillRect(0, 0, HIVE_W, HIVE_H);
+            ctx.fillStyle = ink.wood;
+            ctx.fillRect(0, 0, HIVE_W, HIVE_PAD * 0.6);
+            ctx.fillRect(0, HIVE_H - HIVE_PAD * 0.6, HIVE_W, HIVE_PAD * 0.6);
+
+            const frameW = (HIVE_W - HIVE_PAD * 2) / HIVE_FRAMES;
+            const cw = (frameW - 6) / HIVE_COLS;
+            const ch = (HIVE_H - HIVE_PAD * 2) / HIVE_ROWS;
+            const rx = Math.max(1.5, Math.min(cw, ch) * 0.46);
+
+            for (let f = 0; f < HIVE_FRAMES; f++) {
+                const fx = HIVE_PAD + f * frameW;
+                ctx.fillStyle = ink.wood;
+                ctx.fillRect(fx, HIVE_PAD * 0.6, 2, HIVE_H - HIVE_PAD * 1.2);
+                ctx.fillRect(fx + frameW - 4, HIVE_PAD * 0.6, 2, HIVE_H - HIVE_PAD * 1.2);
+            }
+
+            // The comb itself: one hexagon per cell, offset row by row.
+            for (const cell of cells) {
+                const fx = HIVE_PAD + cell.f * frameW + 4;
+                const x = fx + (cell.c + (cell.r % 2 ? 0.5 : 0)) * cw + cw / 2;
+                const y = HIVE_PAD + cell.r * ch + ch / 2;
+                if (x + rx > HIVE_W - HIVE_PAD) continue;
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    const a = (Math.PI / 3) * i - Math.PI / 6;
+                    const px = x + Math.cos(a) * rx;
+                    const py = y + Math.sin(a) * rx * 1.08;
+                    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.fillStyle = cell.queen ? ink.queen : (ink[cell.kind] || ink.empty);
+                ctx.fill();
+                ctx.strokeStyle = ink.wax;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+
+        _drawHive() {
+            const h = this._hive;
+            if (!h || !h.ctx) return;
+            const apiary = $gameSystem.apiaryComplex;
+            if (!apiary) return;
+            const report = this._hiveReport || (this._hiveReport = apiary.generateReport(0));
+            const ink = this._hiveInk();
+            const ctx = h.ctx;
+            h.t++;
+
+            const cells = this._hiveCells(report);
+            this._paintComb(cells, ink);
+
+            ctx.clearRect(0, 0, HIVE_W, HIVE_H);
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(h.comb, 0, 0);
+
+            // The bees, over the comb they are working.
+            this._hiveStepBees(report);
+            const bmp = h.bitmap;
+            const ready = bmp && bmp.isReady && bmp.isReady() && bmp.canvas;
+            for (const b of h.bees) {
+                const size = b.onComb ? BEE_SIZE : Math.round(BEE_SIZE * 1.25);
+                if (ready) {
+                    const sw = bmp.width / 3, sh = bmp.height / 4;
+                    ctx.drawImage(bmp.canvas,
+                        b.pattern * sw, this._hiveBeeRow(b.dir) * sh, sw, sh,
+                        Math.round(b.x - size / 2), Math.round(b.y - size / 2), size, size);
+                } else {
+                    // The sheet is still loading (or missing): a dot rather than
+                    // an empty hive.
+                    ctx.fillStyle = ink.honey;
+                    ctx.beginPath();
+                    ctx.arc(b.x, b.y, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
         }
 
         refreshUIApiary() {
@@ -1012,6 +1317,10 @@
             if (!apiary) return;
 
             const report = apiary.generateReport(0);
+            // The cross section is redrawn every frame and must not build a
+            // report of its own each time: it reads the one the page was built
+            // from, refreshed whenever the page is.
+            this._hiveReport = report;
 
             // Icon helper ,  scales the 512×384 IconSet to target size
             const ic = (idx, sz = 20) => {
@@ -1148,6 +1457,17 @@
                     </div>
 
                     <div class="right-page">
+                        <div class="apiary-section apiary-hive">
+                            <div class="apiary-section-title">${ic(41, 14)} ${T('Apiary.ui.crossSection')}</div>
+                            <div class="apiary-hive-mount" id="apiary-hive-mount"></div>
+                            <div class="apiary-hive-legend">
+                                <span><i class="apiary-key apiary-key-brood"></i>${T('Apiary.cell.brood')}</span>
+                                <span><i class="apiary-key apiary-key-pollen"></i>${T('Apiary.resource.pollen')}</span>
+                                <span><i class="apiary-key apiary-key-honey"></i>${T('Apiary.resource.honey')}</span>
+                                <span><i class="apiary-key apiary-key-empty"></i>${T('Apiary.cell.empty')}</span>
+                            </div>
+                        </div>
+
                         <h2 class="title" style="border:none; margin:0 0 14px 0; padding:0">${T('Apiary.ui.resources')}</h2>
 
                         <div class="apiary-resources">${resourceHTML}</div>
@@ -1168,6 +1488,16 @@
                     </div>
                 </div>
             `;
+
+            // The canvas is the one part of this page that survives a rebuild:
+            // hung back on its placeholder, with the palette re-read in case a
+            // preset changed under the open menu.
+            const mount = this._container.querySelector('#apiary-hive-mount');
+            if (mount) {
+                if (this._hive) this._hive.ink = null;
+                mount.appendChild(this._hiveCanvas());
+                this._drawHive();
+            }
 
             this._container.querySelectorAll('.apiary-action-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1222,6 +1552,9 @@
 
         update() {
             super.update();
+
+            // The hive moves whether or not anything else on the page does.
+            this._drawHive();
 
             if (this._feedbackTimer > 0) {
                 this._feedbackTimer--;

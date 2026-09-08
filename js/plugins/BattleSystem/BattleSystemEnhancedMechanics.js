@@ -17,7 +17,9 @@
  * Requires BattleSystemEnhanced.js (Core) and sub-modules to be loaded first.
  *
  * Provides the one-shot 1-HP save, the stat requirement
- * fumble roll (<StatReq: STAT N>, window.SkillStatReq), and debug commands.
+ * fumble roll (<StatReq: STAT N>, window.SkillStatReq), the drain share
+ * tags (<DrainRate: n> on an HP/MP drain, <DrainMp: n> on a damaging
+ * skill that saps mana), and debug commands.
  *
  * Loading order:
  *   1. BattleSystemEnhanced.js (Core)
@@ -395,6 +397,45 @@
         return val;
     };
 
+    // ========================================================================
+    // Burst fire: a flurry is not a multiplier
+    // ========================================================================
+    // A plain attack's damage is read off the attacker's stats, not off the
+    // weapon, so every round of a burst used to land for exactly what a
+    // greatsword lands for. An assault rifle firing nine times therefore hit
+    // nine times as hard as any melee weapon in the game, for the price of
+    // ammunition. The burst keeps every one of its hits, its motion and its
+    // reports; what it no longer does is multiply the damage by the round
+    // count. The whole flurry is worth a little more than one strike, which
+    // is what the ammunition and the range are already paying for.
+    const BURST_TOTAL = 1.6;
+
+    /**
+     * The share of one strike each round of this action's burst carries. 1 for
+     * anything that resolves once. Read once per action and remembered: the
+     * repeat count shrinks as the magazine empties, and a burst must not hit
+     * harder the further into itself it gets.
+     */
+    const burstShareFor = (action) => {
+        if (!action || typeof action.isAttack !== 'function' || !action.isAttack()) return 1;
+        if (action._bseBurstShare === undefined) {
+            let hits = 1;
+            try { hits = action.numRepeats(); } catch (e) { hits = 1; }
+            action._bseBurstShare = (hits > 1) ? (BURST_TOTAL / hits) : 1;
+        }
+        return action._bseBurstShare;
+    };
+    BSE.Helpers.burstShareFor = burstShareFor;
+
+    const _Game_Action_makeDamageValue_Burst = Game_Action.prototype.makeDamageValue;
+    Game_Action.prototype.makeDamageValue = function(target, critical) {
+        const value = _Game_Action_makeDamageValue_Burst.call(this, target, critical);
+        const share = burstShareFor(this);
+        if (share === 1 || !value) return value;
+        const scaled = Math.round(value * share);
+        return value > 0 ? Math.max(1, scaled) : Math.min(-1, scaled);
+    };
+
     // 4. Protect (Status 19 / Substitute): Piercing hits substitute for full damage and penetrates to protected target for half damage
     const _BattleManager_invokeNormalAction_Piercing = BattleManager.invokeNormalAction;
     BattleManager.invokeNormalAction = function(subject, target) {
@@ -424,6 +465,12 @@
     // evaluate damage formula based on the character's corresponding attributes.
 
     function getWeaponScalingStats(subject) {
+        // The vector gun's modes can rewrite what the shot is worked out from
+        // (Mana bullets reads INT), and VectorGunSystem.js is the only place
+        // that is decided.
+        const vectorScale = window.VectorGun && window.VectorGun.scaleOverride
+            ? window.VectorGun.scaleOverride(subject) : null;
+        if (vectorScale) return vectorScale.slice();
         const weapon = (subject && typeof subject.weapons === 'function' && subject.weapons().length > 0)
             ? subject.weapons()[0]
             : null;
@@ -507,6 +554,101 @@
             }
         }
         return _Game_Action_evalDamageFormula_Scaling.call(this, target);
+    };
+
+    // ========================================================================
+    // Life and mana drain
+    // ========================================================================
+    // A life-stealing skill used to carry a "Recover HP" effect, which RMMZ
+    // applies to the TARGET: the vampire healed whoever it bit. Those skills
+    // are HP drains (damage type 5) now, and the fraction they used to recover
+    // is kept as <DrainRate: n>, read here. A skill that saps mana while it
+    // deals HP damage carries <DrainMp: n> instead and moves that share of the
+    // damage out of the target's MP and into the user's.
+
+    function drainMetaRate(item, tag) {
+        if (!item || !item.meta) return null;
+        const raw = item.meta[tag];
+        if (raw === undefined || raw === true) return null;
+        const value = Number(String(raw).trim());
+        if (!Number.isFinite(value) || value <= 0) return null;
+        return value;
+    }
+
+    function drainBeneficiary(action) {
+        return action._reflectionTarget || action.subject();
+    }
+
+    const _Game_Action_gainDrainedHp = Game_Action.prototype.gainDrainedHp;
+    Game_Action.prototype.gainDrainedHp = function(value) {
+        const rate = drainMetaRate(this.item(), 'DrainRate');
+        const amount = rate === null ? value : Math.floor(value * rate);
+        _Game_Action_gainDrainedHp.call(this, amount);
+    };
+
+    const _Game_Action_gainDrainedMp = Game_Action.prototype.gainDrainedMp;
+    Game_Action.prototype.gainDrainedMp = function(value) {
+        const rate = drainMetaRate(this.item(), 'DrainRate');
+        const amount = rate === null ? value : Math.floor(value * rate);
+        _Game_Action_gainDrainedMp.call(this, amount);
+    };
+
+    const _Game_Action_executeHpDamage_Drain = Game_Action.prototype.executeHpDamage;
+    Game_Action.prototype.executeHpDamage = function(target, value) {
+        _Game_Action_executeHpDamage_Drain.call(this, target, value);
+        const rate = drainMetaRate(this.item(), 'DrainMp');
+        if (rate === null || !(value > 0)) return;
+        const wanted = Math.floor(value * rate);
+        const taken = Math.min(wanted, target.mp);
+        if (taken <= 0) return;
+        target.gainMp(-taken);
+        const gainTarget = drainBeneficiary(this);
+        if (gainTarget) gainTarget.gainMp(taken);
+    };
+
+
+    // ========================================================================
+    // The vector gun's operating modes
+    // ========================================================================
+    // Em's gun is the one weapon whose behaviour is set by the player rather
+    // than by its note tags, and VectorGunSystem.js holds what it is set to.
+    // Three of the five modes are answered here: the shot's damage is cut when
+    // it is fanned across body parts, the bound spell rides the shot, and what
+    // a landed shot leaves behind (the recoil throw, the printed card) is
+    // handed back to the same file. Mana bullets is answered by the scaling
+    // block above, Wide shots by Health_Core's damage-type reading.
+
+    const _Game_Action_makeDamageValue_Vector = Game_Action.prototype.makeDamageValue;
+    Game_Action.prototype.makeDamageValue = function(target, critical) {
+        const value = _Game_Action_makeDamageValue_Vector.call(this, target, critical);
+        const VG = window.VectorGun;
+        if (!VG || !VG.damageRate) return value;
+        // The target is handed over as well: the Executioner mode reads how much
+        // of it is left, and nothing else can answer that from the action alone.
+        const rate = VG.damageRate(this.subject(), this, target);
+        return rate === 1 ? value : Math.round(value * rate);
+    };
+
+    const _BattleManager_invokeNormalAction_Vector = BattleManager.invokeNormalAction;
+    BattleManager.invokeNormalAction = function(subject, target) {
+        _BattleManager_invokeNormalAction_Vector.call(this, subject, target);
+        const VG = window.VectorGun;
+        if (!VG) return;
+        const action = this._action;
+        VG.onShotLanded(subject, target, action);
+        // Spellblaster: the bound spell is paid for and cast on the same
+        // target, as its own line in the log. With no mana it never comes back
+        // and the shot stays an ordinary one.
+        const extra = VG.spellblasterAction(subject, action);
+        if (!extra) return;
+        this._action = extra;
+        const item = extra.item();
+        if (item && item.animationId > 0 && this._logWindow) {
+            this._logWindow.push('showAnimation', subject, [target], item.animationId);
+        }
+        extra.apply(target);
+        if (this._logWindow) this._logWindow.displayActionResults(subject, target);
+        this._action = action;
     };
 
 })();

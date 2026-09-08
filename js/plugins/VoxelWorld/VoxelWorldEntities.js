@@ -188,7 +188,7 @@
         ctx.textBaseline = 'middle';
         ctx.lineJoin = 'round';
         const draw = (text, y, size, color) => {
-            ctx.font = 'bold ' + size + "px GameFont, 'Lora', serif";  // i18n-ignore  CSS font stack
+            ctx.font = 'bold ' + size + "px GameFont, 'Bitter', serif";  // i18n-ignore  CSS font stack
             ctx.lineWidth = 8;
             ctx.strokeStyle = 'rgba(0,0,0,0.85)';
             ctx.strokeText(text, cv.width / 2, y);
@@ -257,22 +257,17 @@
         }
 
         // ---------------------------------------------------------------------
-        // The spawn mode
+        // The spawn band
         // ---------------------------------------------------------------------
-        // What meets the party out here is decided by the SAME setting that
-        // decides it on the 2D map: Options -> Enemy Spawn, which the battle
-        // system reads as Biome, Party Level, Realistic (distance from spawn) or
-        // Chaos (BattleSystemEnhancedEncounters, section 4b). The 3D world used
-        // to ignore it outright and hand out the biome's whole roster flat,
-        // which is exactly one of the four modes and was not necessarily the one
-        // anybody had chosen - a party on Party Level walked into level 90
-        // fauna, and a party on Realistic met the same things a step from the
-        // square they started the game on as they did a continent away.
+        // What meets the party out here is decided by the SAME rule that decides
+        // it on the 2D map: the biome's own band
+        // (BattleSystemEnhancedEncounters, section 4b). The 3D world used to
+        // reimplement it and hand out the biome's whole roster flat, which drifted
+        // from what the 2D map actually spawned.
         //
-        // The mode's own band and its own level weighting are asked for rather
-        // than reimplemented, so the two worlds cannot drift apart. Re-read on a
-        // timer rather than per spawn: getPlaceLevel walks the world map and the
-        // answer only moves as the party does.
+        // The band and its level weighting are asked for rather than
+        // reimplemented, so the two worlds cannot drift apart. Re-read on a timer
+        // rather than per spawn: the answer only moves as the party does.
         _spawnBand() {
             const now = (typeof performance !== 'undefined') ? performance.now() : Date.now();
             if (this._bandAt && now - this._bandAt < SPAWN_BAND_TTL) return this._band;
@@ -285,7 +280,7 @@
                 const mode = H.getSpawnMode();
                 const party = H.getPartyReferenceLevel ? H.getPartyReferenceLevel() : 1;
                 const ref = H.getModeRefLevel(mode, party);
-                // Biome mode pitches a share of its spawns at the party and the
+                // The biome pitches a share of its spawns at the party and the
                 // rest at whatever the place holds; the roll is the battle
                 // system's own, so the share is the same in both worlds.
                 let band = H.getSpawnBand(mode, ref);

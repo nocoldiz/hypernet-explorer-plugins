@@ -224,8 +224,9 @@
             if (!this._container.querySelector('.tt-spread')) {
                 this._container.innerHTML =
                     `<div class="tt-rail">` +
-                    `<div class="back-button tt-back">${T('TechTree.back')}</div>` +
-                    `<div class="tt-rail-title">${T('TechTree.disciplines')}</div>` +
+                    `<div class="page-header-bar page-header-bar--compact">` +
+                    `<div class="back-button focusable tt-back">${T('TechTree.back')}</div>` +
+                    `</div>` +
                     `<div class="tt-rail-list"></div></div>` +
                     `<div class="book-spread tt-spread">` +
                     `<div class="left-page tt-left"><div class="tt-tree"></div></div>` +
@@ -240,7 +241,7 @@
             // the open tree trains, and the party's tier in it.
             if (window.SpecBadge && this.activeTree) {
                 const spec = PTT.treeSpec ? PTT.treeSpec(this.activeTree.id) : null;
-                if (spec) window.SpecBadge.show(spec);
+                if (spec) window.SpecBadge.show(spec, { anchor: '.tt-detail-head' });
             }
         }
 
@@ -295,10 +296,24 @@
             // TechTree.phase.<id>, falling back to the id for a new one.
             const phaseKey = 'TechTree.phase.' + (node.phase || '');
             const badge = node.phase ? (T.has(phaseKey) ? T(phaseKey) : node.phase) : '';
+            // The cost is read off the node itself: a target is picked by what
+            // it asks for as much as by what it is, so the materials are shown
+            // on the tile and not only on the detail page.
+            let mats = '';
+            if (state !== 'done' && (node.materials || []).length) {
+                const chips = node.materials.map(m => {
+                    const item = $dataItems[m.id];
+                    if (!item) return '';
+                    const ok = $gameParty.numItems(item) >= m.qty || ($gameSystem && $gameSystem._isSandboxMode);
+                    return `<span class="tt-node-mat ${ok ? 'tt-req-ok' : 'tt-req-miss'}" title="${dbName(item)}">` +
+                        `<span class="tt-node-mat-icon" style="${iconCss(item.iconIndex, 16)}"></span>${m.qty}</span>`;
+                }).join('');
+                if (chips) mats = `<span class="tt-node-mats">${chips}</span>`;
+            }
             return `<div class="${cls}" data-node="${node.id}" data-row="${r}" data-lane="${l}" style="--tt-accent:${this.activeTree.accent}">` +
                 `<span class="tt-node-glyph">${glyph}</span>` +
                 `<span class="tt-node-body"><span class="tt-node-name">${nobel}${nodeName(node)}</span>` +
-                (badge ? `<span class="tt-node-badge">${badge}</span>` : '') + `</span></div>`;
+                (badge ? `<span class="tt-node-badge">${badge}</span>` : '') + mats + `</span></div>`;
         }
 
         _drawLinks() {
@@ -384,22 +399,20 @@
             let matHTML = '';
             if ((node.materials || []).length && state !== 'done') {
                 const dailyOutput = PTT.workforceDailyOutput ? PTT.workforceDailyOutput(node) : [];
-                const rows = node.materials.map(m => {
+                const chips = node.materials.map(m => {
                     const item = $dataItems[m.id];
                     if (!item) return '';
                     const have = $gameParty.numItems(item);
                     const ok = have >= m.qty || ($gameSystem && $gameSystem._isSandboxMode);
                     const perDay = dailyOutput.find(d => d.id === m.id);
-                    const workforceHTML = (perDay && perDay.qty > 0)
-                        ? `<span class="tt-mat-workforce">+${perDay.qty}/${T('TechTree.day')} (${statName(perDay.stat)})</span>`
+                    const workforce = (perDay && perDay.qty > 0)
+                        ? ` +${perDay.qty}/${T('TechTree.day')}`
                         : '';
-                    return `<div class="tt-mat-row">` +
-                        `<span class="tt-mat-icon" style="${iconCss(item.iconIndex, 24)}"></span>` +
-                        `<span class="tt-mat-name">${dbName(item)}</span>` +
-                        `<span class="tt-mat-count ${ok ? 'tt-req-ok' : 'tt-req-miss'}">${have}/${m.qty} ${ok ? '✔' : '✖'}</span>` +
-                        workforceHTML + `</div>`;
+                    return `<span class="tt-inline-chip ${ok ? 'tt-req-ok' : 'tt-req-miss'}" title="${dbName(item)}">` +
+                        `<span class="tt-mat-icon" style="${iconCss(item.iconIndex, 20)}"></span>` +
+                        `<span class="tt-mat-count">${have}/${m.qty}</span>${workforce}</span>`;
                 }).join('');
-                matHTML = `<div class="tt-section">${T('TechTree.materialsRequired')}</div><div class="tt-mat-list">${rows}</div>`;
+                matHTML = `<div class="tt-section">${T('TechTree.materialsRequired')}</div><div class="tt-inline-line">${chips}</div>`;
             }
 
             // Prerequisites (if any, only useful when locked)
@@ -423,31 +436,34 @@
             }
 
             // Reward + payout
+            // The yield is read at a glance, so it is two lines and no more:
+            // one for the currencies, one for everything the node hands over.
             const rw = PTT.nodeRewards(node);
             let rewardHTML = `<div class="tt-section">${T('TechTree.yieldLabel')}</div>` +
-                `<div class="tt-mat-row"><span class="tt-mat-name">${T('TechTree.exp')}</span><span class="tt-mat-count">${rw.exp}</span></div>` +
-                `<div class="tt-mat-row"><span class="tt-mat-name">${T('TechTree.gold')}</span><span class="tt-mat-count">€${(rw.gold / 100).toFixed(2)}</span></div>`;
+                `<div class="tt-inline-line">` +
+                `<span class="tt-inline-chip"><span class="tt-mat-name">${T('TechTree.exp')}</span>` +
+                `<span class="tt-mat-count">${rw.exp}</span></span>` +
+                `<span class="tt-inline-chip"><span class="tt-mat-name">${T('TechTree.gold')}</span>` +
+                `<span class="tt-mat-count">€${(rw.gold / 100).toFixed(2)}</span></span></div>`;
+            let goods = '';
             if (state !== 'done') {
-                const payout = PTT.materialPayout(node, tree.id);
-                const rows = payout.map(m => {
+                goods += PTT.materialPayout(node, tree.id).map(m => {
                     const item = $dataItems[m.id];
                     if (!item) return '';
-                    return `<div class="tt-mat-row">` +
-                        `<span class="tt-mat-icon" style="${iconCss(item.iconIndex, 24)}"></span>` +
-                        `<span class="tt-mat-name">${dbName(item)}</span>` +
-                        `<span class="tt-mat-count">x${m.qty}</span></div>`;
+                    return `<span class="tt-inline-chip" title="${dbName(item)}">` +
+                        `<span class="tt-mat-icon" style="${iconCss(item.iconIndex, 20)}"></span>` +
+                        `<span class="tt-mat-count">x${m.qty}</span></span>`;
                 }).join('');
-                if (rows) rewardHTML += rows;
             }
             if (node.reward) {
                 const entry = PTT.rewardDbEntry(node.reward);
                 if (entry) {
-                    rewardHTML += `<div class="tt-mat-row tt-reward-row">` +
-                        `<span class="tt-mat-icon" style="${iconCss(entry.iconIndex, 24)}"></span>` +
-                        `<span class="tt-mat-name">${dbName(entry)}</span>` +
-                        `<span class="tt-mat-count">x${node.reward.qty || 1}</span></div>`;
+                    goods += `<span class="tt-inline-chip tt-reward-row" title="${dbName(entry)}">` +
+                        `<span class="tt-mat-icon" style="${iconCss(entry.iconIndex, 20)}"></span>` +
+                        `<span class="tt-mat-count">x${node.reward.qty || 1}</span></span>`;
                 }
             }
+            if (goods) rewardHTML += `<div class="tt-inline-line">${goods}</div>`;
 
             // Action button
             let btn = '';
@@ -476,7 +492,8 @@
 
             return `<div class="tt-detail">` +
                 `<div class="tt-detail-head"><h2 class="tt-detail-name">${nodeName(node)}</h2>` +
-                ((sub || tag) ? `<div class="tt-detail-sub">${sub} ${tag}</div>` : '') + `${badge}</div>` +
+                (sub ? `<div class="tt-detail-sub">${sub}</div>` : '') +
+                ((tag || badge) ? `<div class="tt-detail-flags">${tag}${badge}</div>` : '') + `</div>` +
                 `<p class="tt-detail-desc">${nodeDesc(node)}</p>` +
                 preHTML + matHTML + buffHTML + rewardHTML + btn + projectBtn + `</div>`;
         }

@@ -28,7 +28,7 @@
     },
     "controlsMenus": {
       "title": "Controls: Menu Hotkeys",
-      "description": "Tab opens and closes the menu. Each screen also has its own letter, pressed on the map:\n\n- I inventory\n- C character sheet\n- R equipment\n- P magic and skills\n- J quest log\n- M minimap toggle\n- B build (furniture and structures)\n- V vehicles\n- F factions\n- H holdings (assets, property, portfolio)\n- K cooking\n- L this book\n- N training\n- Y bestiary\n- U biologics\n- O options\n- G sandbox (tester builds only)\n\nInside the menu: 1 Thinker, 2 multiplayer, 3 Hypernet. On the map, 1 to 9 use the quick bar slots.\n\nReserved, so they cannot be bound to a menu: W, A, S, D (move), Z and X (confirm, cancel), Q and E (world map zoom), T (world map / local map).\n\nF5 quicksave. F9 quickload. F10 fullscreen."
+      "description": "Tab opens and closes the menu. Each screen also has its own letter, pressed on the map:\n\n- I inventory\n- C character sheet\n- R equipment\n- P magic and skills\n- J quest log\n- M minimap toggle\n- B build (furniture and structures)\n- V vehicles\n- F factions\n- H holdings (assets, property, portfolio)\n- K cooking\n- L this book\n- N training\n- Y bestiary\n- U biologics\n- O options\n- G sandbox (tester builds only)\n\nInside the menu: 1 Thinker, 2 multiplayer, 3 Hypernet. On the map, 1 to 9 use the quick bar slots.\n\nReserved, so they cannot be bound to a menu: W, A, S, D (move), Z and X (confirm, cancel), Q and E (world map zoom), T (world map / local map).\n\nF9 quicksave. F10 quickload. F11 fullscreen."
     },
     "controlsMouse": {
       "title": "Controls: Mouse",
@@ -52,11 +52,11 @@
     },
     "savingGame": {
       "title": "Saving, Autosave and Quicksaves",
-      "description": "The game autosaves on map change, at most once every few minutes, into an ordinary save slot.\n\nF5 quicksaves, F9 quickloads. Quicksaves rotate over three dedicated slots. Any playthrough may overwrite any quicksave.\n\nDeleting a permadeath savegame still leaves its diary behind for the next playthrough."
+      "description": "The game autosaves on map change, at most once every few minutes, into an ordinary save slot.\n\nF9 quicksaves, F10 quickloads. Quicksaves rotate over three dedicated slots. Any playthrough may overwrite any quicksave.\n\nDeleting a permadeath savegame still leaves its diary behind for the next playthrough."
     },
     "worldsFolders": {
       "title": "Worlds and Savegames",
-      "description": "A world is a folder, and several worlds can sit side by side. Worlds are made from the Worlds screen on the title menu. Until one exists, Explore, Reconnect, Tutorial and Sandbox stay greyed out.\n\nA world is generated once, in full, before it is played: a century of history, the people and their homes and jobs, shop rotas, the dungeon layout, politics, faction accords, the settlement web, continental epidemics.\n\nEvery playthrough started in the same world walks into the same place, already changed by the ones before it: emptied chests, planted crops, market prices, bashed doors, built furniture. The clock only moves forward, so loading a save continues from the latest date reached there.\n\nOther playthroughs appear in person, standing where they were last saved."
+      "description": "A world is a folder, and several worlds can sit side by side. Worlds are made from the Worlds screen on the title menu. Until one exists, Explore, Reconnect, Story Mode and Sandbox stay greyed out.\n\nA world is generated once, in full, before it is played: a century of history, the people and their homes and jobs, shop rotas, the dungeon layout, politics, faction accords, the settlement web, continental epidemics.\n\nEvery playthrough started in the same world walks into the same place, already changed by the ones before it: emptied chests, planted crops, market prices, bashed doors, built furniture. The clock only moves forward, so loading a save continues from the latest date reached there.\n\nOther playthroughs appear in person, standing where they were last saved."
     },
     "optionsMenu": {
       "title": "Options",
@@ -228,7 +228,7 @@
     },
     "bodyParts": {
       "title": "Limbs and Organs",
-      "description": "Every character and monster has individual limbs and organs, each with its own health, taken from its species archetype.\n\nDamage is spread across parts. A part at 0 is destroyed, carries a permanent penalty while it stays that way, and changes what the body can do:\n\n- a lost hand takes its weapon slot and drops what it held\n- a body with no hands holds a weapon in its mouth\n- damaged legs cost movement and evasion\n- vital organs are shielded from ordinary damage and only exposed by deliberate targeting or by a state that opens them\n\nA part at 0, damaged or severed can neither grapple nor be grappled.\n\nParts never heal on their own. They are treated at a clinic, restored by magic, or replaced with a prosthetic. In Blood and Oil mode a part taken to 0 leaves the body, carrying its augment with it.\n\nThe status sheet has an Anatomy section showing the whole body part by part."
+      "description": "Every character and monster has individual limbs and organs, each with its own health, taken from its species archetype.\n\nDamage is spread across parts. A part at 0 is destroyed, carries a permanent penalty while it stays that way, and changes what the body can do:\n\n- a lost hand takes its weapon slot and drops what it held\n- a body with no hands holds a weapon in its mouth\n- damaged legs cost movement and evasion\n- vital organs are shielded from ordinary damage and only exposed by deliberate targeting or by a state that opens them\n\nA part at 0, damaged or severed can neither grapple nor be grappled.\n\nParts never heal on their own. They are treated at a clinic, restored by magic, or replaced with a prosthetic. In Blood and Oil mode a slashing blow can take a part off the body, carrying its augment with it, while a part that is only broken still mends under a potion or a spell.\n\nThe status sheet has an Anatomy section showing the whole body part by part."
     },
     "bodyBiologics": {
       "title": "Biologics",
@@ -244,7 +244,7 @@
     },
     "healthSurgery": {
       "title": "Clinics, Prosthetics and Field Surgery",
-      "description": "A clinic can install a body part, remove one, replace one or fit an implant.\n\n- installing: 1000 euros per percent of body health the part represents\n- removal: 100 euros per percent\n- vital parts cannot be removed\n- an installed part grants its stat bonus, removing it takes the bonus away\n\nField surgery is the same operation on the road. The party picks a patient and a surgeon, nothing is bought, only parts already carried can be fitted, an augment can be taken out but never seated, and there is no fee.\n\nEvery operation is a roll, with the odds shown beforehand:\n\n- the surgeon's Surgery specialization: 35 / 50 / 65 / 78 / 90 percent by tier\n- under a roof +10, in a cave -5, in the open -10\n- rain -15, storm -25, snow +5\n- operating on yourself -15\n\nA failure wounds the patient elsewhere. Vital organs are only at risk in Blood and Oil mode, which is also the only mode where a part taken to 0 leaves the body, carrying its augment out."
+      "description": "A clinic can install a body part, remove one, replace one or fit an implant.\n\n- installing: 1000 euros per percent of body health the part represents\n- removal: 100 euros per percent\n- vital parts cannot be removed\n- an installed part grants its stat bonus, removing it takes the bonus away\n\nField surgery is the same operation on the road. The party picks a patient and a surgeon, nothing is bought, only parts already carried can be fitted, an augment can be taken out but never seated, and there is no fee.\n\nEvery operation is a roll, with the odds shown beforehand:\n\n- the surgeon's Surgery specialization: 35 / 50 / 65 / 78 / 90 percent by tier\n- under a roof +10, in a cave -5, in the open -10\n- rain -15, storm -25, snow +5\n- operating on yourself -15\n\nA failure wounds the patient elsewhere. Vital organs are only at risk in Blood and Oil mode, which is also the only mode where a part can leave the body, carrying its augment out."
     },
     "healthAugments": {
       "title": "Augments",
@@ -296,15 +296,11 @@
     },
     "combatModes": {
       "title": "Difficulty and Combat Modes",
-      "description": "Several settings change what combat is. Most are chosen at character creation.\n\n- Peaceful: monsters act only once hurt. An unprovoked enemy skips its turn with a line about what it is doing. Provocation is per enemy. A party wipe respawns you at your respawn point with nobody dead. Roaming monsters wander instead of chasing\n- Ordinary: death leaves a gravestone and the run continues\n- Hardcore and Blood and Oil: death is a game over with no respawn, and the character is removed. Blood and Oil also removes the health protection charge and lets a part taken to 0 leave the body, carrying its augment\n- Card combat: replaces the command menu (own page)\n- Map battle: fights on the live map (own page)"
+      "description": "Several settings change what combat is. Most are chosen at character creation.\n\n- Peaceful: monsters act only once hurt. An unprovoked enemy skips its turn with a line about what it is doing. Provocation is per enemy. A party wipe respawns you at your respawn point with nobody dead. Roaming monsters wander instead of chasing\n- Ordinary: death leaves a gravestone and the run continues\n- Hardcore and Blood and Oil: death is a game over with no respawn, and the character is removed. Blood and Oil also removes the health protection charge and lets a slashing blow take a part off the body, carrying its augment. A part it only breaks still heals\n- Card combat: replaces the command menu (own page)\n- Map battle: fights on the live map (own page)"
     },
     "combatMapBattle": {
       "title": "Map Battle Mode",
       "description": "An experimental option fights every battle on the map you are standing on instead of a battle screen.\n\n- everyone fights from where they stand. Only a member off screen is placed, on a muster tile near the fight\n- every other monster on the map keeps its position and behaviour. Any that wanders within a few tiles joins the fight, with its own HP card and turn slot\n- a townsperson near the brawl joins your side if the party is well liked or if they are brave. They fight from their own profile: level, stats, skills, pockets\n- Move lets the acting battler reposition before acting, with a range driven by agility\n- weapons have reach: 1 for melee, 2 for spears, whips, staves and flails, more for bows, guns and thrown weapons, with line of sight required. Skills carry their own range\n- a combatant that steps into water swims, and swimming costs more movement per tile\n\nRound order: party and enemy troop interleaved by agility, then any townspeople who joined, then the world step, where every roaming monster, townsperson and your pet take one tile at once. Nothing outside the fight moves at any other time."
-    },
-    "combatCards": {
-      "title": "Card Combat",
-      "description": "An alternative combat mode, chosen at character creation or toggled in experimental options. A running fight keeps the mode it started with.\n\n- each member has their own deck, hand and energy, built automatically from that member's class skills. There is no deck builder\n- playing one card is that member's action for the turn\n- energy replaces MP and AP. A card costs 1 to 6 energy depending on the skill it came from, a basic attack costs 1\n- energy starts at 0 and gains 1 at the start of that member's turn, capped at 6. Passing grants 2 and draws a card\n- the deck holds each skill in copies weighted by cost, so cheap cards appear more often, padded to at least eight with plain attacks\n- hand size 4, one draw per turn, and the opening hand always contains something cheap"
     },
     "combatSummons": {
       "title": "Summons",
@@ -1020,7 +1016,7 @@
     },
     "nausea": {
       "title": "State: Nausea",
-      "description": "It drains 10% of max MP every turn. It does not wear off on its own. And it follows you out of the fight."
+      "description": "It lowers AGI by 25%. It does not wear off on its own. And it follows you out of the fight."
     },
     "drunk": {
       "title": "State: Drunk",

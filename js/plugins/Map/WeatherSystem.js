@@ -1751,7 +1751,8 @@
         return;
       }
 
-      const rainSounds = ['rain-calming', 'rain-calming2', 'rain-gentle', 'rain-light', 'rain-liquid', 'rain-shower'];
+      const rainSounds = ['rain-calming', 'rain-calming2', 'rain-gentle', 'rain-light', 'rain-liquid', 'rain-shower',
+        'rain-steady-loop', 'rain-soft-loop', 'rain-patter-loop', 'rain-heavy-long'];
       const randomRain = rainSounds[Math.floor(Math.random() * rainSounds.length)];
 
       const bgsSetting = {
@@ -2979,4 +2980,215 @@
     try { v += window.WeatherExposure.paramDelta(this, paramId); } catch (e) { /* a stat is not worth a crash */ }
     return v;
   };
+
+  //===========================================================================
+  // The Whether Channel: the HypernetOS weather app
+  //===========================================================================
+  // Current conditions where the party stands, read off $gameWeather, plus a
+  // five-day outlook and a climate sheet for any country in the table. The
+  // outlook is not a promise the simulation keeps: it is rolled from the
+  // country's season (precipitation and cloud cover) with a hash of the date,
+  // so the same day always prints the same forecast and the page never
+  // rewrites itself while it is being read.
+  const WHETHER_APP_ID = 'app-weather';
+
+  function whetherHash(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    return h / 4294967296;
+  }
+
+  // Season of a day of the year, north of the equator, the same four the
+  // country table is keyed by.
+  function whetherSeasonOf(month) {
+    if (month === 11 || month <= 1) return 'winter';
+    if (month <= 4) return 'spring';
+    if (month <= 7) return 'summer';
+    return 'autumn';
+  }
+
+  // One forecast day: { weather, high, low, precipChance, cloud, wind }.
+  function whetherForecastDay(country, year, month, day) {
+    const seasons = country && country.seasons;
+    const season = seasons ? seasons[whetherSeasonOf(month)] : null;
+    if (!season) return null;
+    const tag = country.id + ':' + year + '-' + month + '-' + day;
+    const r1 = whetherHash(tag + 'w'), r2 = whetherHash(tag + 't'), r3 = whetherHash(tag + 'c');
+    // Precipitation in the table is mm a day; 3 mm is a wet climate.
+    const precipChance = Math.max(0.03, Math.min(0.9, (season.precipitation || 0) / 3.5));
+    const cloud = Math.max(0, Math.min(100, (season.cloudCover || 30) + (r3 - 0.5) * 40));
+    let weather = WeatherTypes.NONE;
+    const high = season.dayTemp + (r2 - 0.5) * 6;
+    if (r1 < precipChance) {
+      if (high <= 1) weather = WeatherTypes.SNOW;
+      else weather = r1 < precipChance * 0.25 ? WeatherTypes.STORM : WeatherTypes.RAIN;
+    }
+    const effect = WeatherTemperatureEffects[weather] || 0;
+    return {
+      weather,
+      high: Math.round(high + effect),
+      low: Math.round(season.nightTemp + (r2 - 0.5) * 4 + effect),
+      precipChance: Math.round(precipChance * 100),
+      cloud: Math.round(cloud),
+      wind: Math.round((season.windSpeed || 8) * (0.7 + r3 * 0.6))
+    };
+  }
+
+  function whetherForecast(country, date, days) {
+    const out = [];
+    const d = new Date(date.year, date.month, date.day);
+    for (let i = 0; i < days; i++) {
+      const f = whetherForecastDay(country, d.getFullYear(), d.getMonth(), d.getDate());
+      if (f) out.push(Object.assign({ year: d.getFullYear(), month: d.getMonth(), day: d.getDate(), weekday: d.getDay() }, f));
+      d.setDate(d.getDate() + 1);
+    }
+    return out;
+  }
+
+  function whetherLabel(id) {
+    const name = { none: 'Clear', rain: 'Rain', storm: 'Storm', snow: 'Snow' }[id] || 'Unknown';  // i18n-ignore  weather ids
+    return window.WeatherNames.label(name);
+  }
+
+  function whetherGlyph(id) {
+    // Sky drawn in text, the way a 2001 weather site would.
+    const cls = { none: 'sun', rain: 'rain', storm: 'storm', snow: 'snow' }[id] || 'sun';
+    return `<span class="whether-glyph whether-glyph--${cls}"></span>`;
+  }
+
+  window.WhetherChannel = {
+    hash: whetherHash,
+    seasonOf: whetherSeasonOf,
+    forecastDay: whetherForecastDay,
+    forecast: whetherForecast,
+
+    countries: () => Countries.filter(c => c && c.seasons).slice().sort((a, b) => String(a.country).localeCompare(String(b.country))),
+
+    current: function() {
+      const gw = typeof $gameWeather !== 'undefined' ? $gameWeather : null;
+      const country = gw && gw.currentCountry ? gw.currentCountry : defaultCountry;
+      const date = getGameDateFromVariable();
+      const seasonKey = (gw && gw.getSeason ? gw.getSeason() : whetherSeasonOf(date.month)).toLowerCase();
+      const season = country && country.seasons ? country.seasons[seasonKey] : null;
+      return {
+        country,
+        date,
+        seasonKey,
+        season,
+        weather: gw ? gw.currentWeatherType : WeatherTypes.NONE,
+        temperature: gw && Number.isFinite(gw.currentTemperature) ? Math.round(gw.currentTemperature) : null,
+        sheltered: window.WeatherExposure ? window.WeatherExposure.isSheltered() : false
+      };
+    },
+
+    launch: function() {
+      const OS = window.HypernetOS;
+      if (!OS || !OS.WindowManager) return;
+      const T_ = (k, p) => T('Weather.app.' + k, p);
+      const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      const html = `
+        <div class="whether">
+          <div class="whether-banner">
+            <div class="whether-logo">${T_('appName')}</div>
+            <div class="whether-tagline">${T_('tagline')}</div>
+          </div>
+          <div class="whether-toolbar">
+            <label>${T_('location')}</label>
+            <select id="whether-country" class="focusable"></select>
+            <button id="whether-here" class="focusable">${T_('here')}</button>
+            <span class="whether-updated" id="whether-updated"></span>
+          </div>
+          <div class="whether-body" id="whether-body"></div>
+        </div>`;
+
+      const win = OS.WindowManager.createWindow({ id: WHETHER_APP_ID, title: T_('appName'), icon: 184, width: 640, height: 520, contentHTML: html });
+      if (win._whetherBound) return;
+      win._whetherBound = true;
+      const q = s => win.querySelector(s);
+
+      const sel = q('#whether-country');
+      sel.innerHTML = this.countries().map(c => `<option value="${c.id}">${esc(c.country)}</option>`).join('');
+
+      const render = (countryId) => {
+        const cur = this.current();
+        const here = !countryId || (cur.country && cur.country.id === countryId);
+        const country = here ? cur.country : Countries.find(c => c.id === countryId);
+        if (!country) return;
+        sel.value = String(country.id);
+        const stale = OS.staleDate && OS.staleDate();
+        q('#whether-updated').textContent = T_('updated', { date: stale || (String(cur.date.day).padStart(2, '0') + '/' + String(cur.date.month + 1).padStart(2, '0') + '/' + cur.date.year + ' ' + String(cur.date.hours).padStart(2, '0') + ':' + String(cur.date.minutes).padStart(2, '0')) });
+
+        const seasonKey = here ? cur.seasonKey : whetherSeasonOf(cur.date.month);
+        const season = country.seasons ? country.seasons[seasonKey] : null;
+        const nowWeather = here ? cur.weather : (whetherForecastDay(country, cur.date.year, cur.date.month, cur.date.day) || {}).weather;
+        const nowTemp = here && cur.temperature != null ? cur.temperature : (season ? Math.round((season.dayTemp + season.nightTemp) / 2) : null);
+        const days = T.list('HypernetOS.dayAbbr');
+        const months = T.list('Weather.app.months');
+
+        const outlook = whetherForecast(country, cur.date, 5).map((f, i) => `
+          <div class="whether-day${i === 0 ? ' today' : ''}">
+            <div class="whether-day-name">${i === 0 ? T_('today') : esc(days[f.weekday])}</div>
+            <div class="whether-day-date">${f.day} ${esc(months[f.month] || '')}</div>
+            ${whetherGlyph(f.weather)}
+            <div class="whether-day-cond">${esc(whetherLabel(f.weather))}</div>
+            <div class="whether-day-temps"><b>${f.high}&deg;</b> / ${f.low}&deg;</div>
+            <div class="whether-day-extra">${T_('precip', { n: f.precipChance })}</div>
+          </div>`).join('');
+
+        q('#whether-body').innerHTML = `
+          <div class="whether-now">
+            <div class="whether-now-left">
+              ${whetherGlyph(nowWeather)}
+              <div class="whether-now-temp">${nowTemp != null ? nowTemp + '&deg;C' : '--'}</div>
+            </div>
+            <div class="whether-now-right">
+              <div class="whether-now-place">${esc(country.country)}${country.region ? ' <small>(' + esc(country.region) + ')</small>' : ''}</div>
+              <div class="whether-now-cond">${esc(whetherLabel(nowWeather))}${here && cur.sheltered ? ' <small>' + T_('indoors') + '</small>' : ''}</div>
+              <table class="whether-facts">
+                <tr><td>${T_('season')}</td><td>${esc(T('Weather.app.seasons.' + seasonKey))}</td></tr>
+                ${season ? `
+                <tr><td>${T_('sunrise')}</td><td>${esc(season.sunrise)}</td></tr>
+                <tr><td>${T_('sunset')}</td><td>${esc(season.sunset)}</td></tr>
+                <tr><td>${T_('dayNight')}</td><td>${Math.round(season.dayTemp)}&deg; / ${Math.round(season.nightTemp)}&deg;</td></tr>
+                <tr><td>${T_('humidity')}</td><td>${season.dayHumidity != null ? season.dayHumidity + '%' : '--'}</td></tr>
+                <tr><td>${T_('wind')}</td><td>${season.windSpeed != null ? T_('kmh', { n: season.windSpeed }) : '--'}</td></tr>
+                <tr><td>${T_('cloud')}</td><td>${season.cloudCover != null ? season.cloudCover + '%' : '--'}</td></tr>` : ''}
+              </table>
+            </div>
+          </div>
+          <div class="whether-outlook-title">${T_('outlook')}</div>
+          <div class="whether-outlook">${outlook}</div>
+          <div class="whether-footer">${T_('disclaimer')}</div>`;
+      };
+
+      sel.addEventListener('change', () => render(parseInt(sel.value, 10)));
+      q('#whether-here').addEventListener('click', (e) => { e.stopPropagation(); render(null); });
+      render(null);
+    }
+  };
+
+  function registerWhether() {
+    if (!window.HypernetOS || !window.HypernetOS.registerApp) return false;
+    window.HypernetOS.registerApp({
+      id: WHETHER_APP_ID,
+      name: T('Weather.app.appName'),
+      icon: 184,
+      category: 'reference',
+      launchFn: () => window.WhetherChannel.launch(),
+      desktopShortcut: true
+    });
+    return true;
+  }
+  if (!registerWhether()) {
+    const _Scene_Boot_create_whether = Scene_Boot.prototype.create;
+    Scene_Boot.prototype.create = function() {
+      _Scene_Boot_create_whether.call(this);
+      registerWhether();
+    };
+  }
+
 })();

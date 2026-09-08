@@ -7,8 +7,8 @@
  * Booster Pack System for RPGMaker MZ
  * ============================================================================
  * 
- * Compatible with RoguelikeCardSystem. Allows opening booster packs containing
- * skill cards with beautiful Art Deco inspired visuals.
+ * Opens booster packs containing skill cards with beautiful Art Deco
+ * inspired visuals.
  * 
  * Features:
  * - Plugin command to open booster packs
@@ -17,7 +17,7 @@
  * - Art Deco inspired card back designs
  * - Interactive card flipping mechanics
  * - Duplicate cards convert to gold (cost * 1000)
- * - Skills learned from packs are remembered for card mode
+ * - Skills learned from packs are remembered
  * 
  * Skill Note Tags:
  * <category:CategoryName> - Assigns skill to a category for filtering
@@ -62,7 +62,7 @@
     // Store skills learned from booster packs
     let $boosterPackSkills = [];
     
-    // Helper function to calculate energy cost (same as in RoguelikeCardSystem)
+    // Helper function to calculate energy cost
     function calculateSkillEnergyCost(skillId) {
         const skill = $dataSkills[skillId];
         if (!skill) return 0;
@@ -120,32 +120,6 @@
         if (_Game_System_makeEmpty) _Game_System_makeEmpty.call(this);
         this._boosterPackSkills = [];
     };
-    
-    // Hook into card combat toggle to restore booster pack skills
-    const _originalChangeCardCombatSetting = Window_Options.prototype.changeCardCombatSetting;
-    if (_originalChangeCardCombatSetting) {
-        Window_Options.prototype.changeCardCombatSetting = function() {
-            const wasActive = $gameSwitches.value(45);
-            _originalChangeCardCombatSetting.call(this);
-            const nowActive = $gameSwitches.value(45);
-            
-            // If switching to card mode, restore booster pack skills
-            if (!wasActive && nowActive) {
-                this.restoreBoosterPackSkills();
-            }
-        };
-        
-        Window_Options.prototype.restoreBoosterPackSkills = function() {
-            const actor1 = $gameParty.members()[0];
-            if (!actor1 || !$boosterPackSkills) return;
-            
-            for (const skillId of $boosterPackSkills) {
-                if (!actor1.isLearnedSkill(skillId)) {
-                    actor1.learnSkill(skillId);
-                }
-            }
-        };
-    }
     
     // Booster Pack Scene
     function Scene_BoosterPack() {
@@ -515,7 +489,7 @@
             // Learn skill
             actor1.learnSkill(cardData.skillId);
             
-            // Remember for card mode
+            // Remember the skill this pack handed over
             if (!$boosterPackSkills) $boosterPackSkills = [];
             if (!$boosterPackSkills.includes(cardData.skillId)) {
                 $boosterPackSkills.push(cardData.skillId);

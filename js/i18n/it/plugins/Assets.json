@@ -63,6 +63,7 @@
     "assets": "Patrimonio",
     "debt": "Debiti",
     "netWorth": "Patrimonio netto",
+  "allCategories": "Tutti",
     "noAssetsOwnedYetAcquire": "Nessun bene posseduto. Acquista titoli, immobili o proprietà.",
     "paid": "acq.",
     "back": "Indietro",

@@ -117,10 +117,8 @@
     ];
 
 
-    // Seal colours and hashing shared with QuestBoardUI so a note pinned to the
-    // cork board and the same note on the log look like the same piece of paper.
-    const SEAL_COLORS = ['#8b263e', '#1f4e79', '#3e6b2f', '#6b4a1f', '#4a2f6b', '#2f6b62', '#7a3b17', '#41414d'];
-    const PIN_COLORS = ['#b03030', '#2f5db0', '#2f8a45', '#a88a1f'];
+    // The wax seal and the pin went with the cork board: a card is flat now, and
+    // its only ornament is the marker colour on its left edge.
 
     function hashStr(s) {
         let h = 0x811c9dc5;
@@ -184,11 +182,6 @@
         const done = o.colId === 'done' || (q.column === 'done' && !o.colId);
         const failed = o.colId === 'failed' || (q.column === 'failed' && !o.colId);
         const latest = q.updates && q.updates.length ? q.updates[0].text : '';
-        const rot = o.flat ? 0 : ((hashStr(q.id) % 9) - 4) * 0.9;
-        const pin = PIN_COLORS[hashStr(q.id + 'p') % PIN_COLORS.length];
-        const seal = SEAL_COLORS[hashStr(q.id + 's') % SEAL_COLORS.length];
-        const sealSrc = String(meta.giver || q.title || '?').replace(/^(a|an|the)\s+/i, '');
-        const sealCh = esc(sealSrc.charAt(0).toUpperCase() || '?');
         const stamp = done ? (T('Kanban.resolved'))
             : failed ? (T('Kanban.failed')) : '';
         const stars = meta.diff > 0
@@ -200,8 +193,7 @@
 
         return `<div class="kb-card${o.focused ? ' focused' : ''}${o.grabbed ? ' kb-grabbed' : ''}${done || failed ? ' kb-done' : ''}"
                      ${o.attrs || ''}
-                     style="--rot:${rot}deg; --note-bg:${q.color || '#faf2d3'}; --pin:${pin}; --seal:${seal}; --marker:${markerColor}">
-          <div class="kb-pin"></div>
+                     style="--marker:${markerColor}">
           <div class="kb-quest-icon" style="${markerIconCss}" title="${T('Kanban.mapMarker') || ''}"></div>
           ${urgent}
           <span class="kb-card-title">${esc(q.title)}</span>
@@ -211,7 +203,6 @@
           ${o.progressHTML || ''}
           ${stars ? `<div class="kb-diff">${stars}</div>` : ''}
           ${stamp ? `<span class="kb-resolved-stamp${failed ? ' failed' : ''}">${stamp}</span>` : ''}
-          <div class="kb-seal">${sealCh}</div>
         </div>`;
     }
 
@@ -555,7 +546,7 @@
                     icon: 186,
                     width: 950,
                     height: 600,
-                    contentHTML: '<div id="kanban-quest-content" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: #ece9d8"></div>'
+                    contentHTML: '<div id="kanban-quest-content" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: var(--xp-bg)"></div>'
                 });
 
                 this.appInstance = new Scene_KanbanQuest();
@@ -980,10 +971,9 @@
             this._el.querySelectorAll('#kb-board-header, #kb-columns, #kb-detail-backdrop')
                 .forEach(n => n.remove());
             this._el.insertAdjacentHTML('beforeend', `
-              <div id="kb-board-header">
-                <div class="back-button kb-board-back">${T('Kanban.back')}</div>
-                <span class="kb-board-title">${T('Kanban.questLog')}</span>
-                <div class="kb-board-hint">${T('Kanban.boardHint')}</div>
+              <div id="kb-board-header" class="page-header-bar">
+                <div class="back-button focusable kb-board-back">${T('Kanban.back')}</div>
+                <span class="kb-board-title title">${T('Kanban.questLog')}</span>
               </div>
               <div id="kb-columns">
                 ${colsHTML.join('<div class="kb-col-divider"></div>')}
@@ -1027,8 +1017,8 @@
             if (this._selectedQuest) {
                 if (cancelled) this._closeDetail();
                 else if (Input.isTriggered('shift')) this._showOnMap();
-                else if (Input.isTriggered('right') || Input.isTriggered('d')) this._moveSelectedTo('inProgress');
-                else if (Input.isTriggered('left') || Input.isTriggered('a')) this._moveSelectedTo('todo');
+                else if (Input.isTriggered('right')) this._moveSelectedTo('inProgress');
+                else if (Input.isTriggered('left')) this._moveSelectedTo('todo');
                 return;
             }
 
@@ -1045,9 +1035,9 @@
             }
             if (this._okHeld) {
                 if (Input.isPressed('ok')) {
-                    if (Input.isRepeated('right') || Input.isRepeated('d')) {
+                    if (Input.isRepeated('right')) {
                         if (this._moveCard(1, COLS)) this._grabCarried = true;
-                    } else if (Input.isRepeated('left') || Input.isRepeated('a')) {
+                    } else if (Input.isRepeated('left')) {
                         if (this._moveCard(-1, COLS)) this._grabCarried = true;
                     }
                     return;
@@ -1065,19 +1055,19 @@
 
             let moved = false;
 
-            if (Input.isRepeated('down') || Input.isRepeated('s')) {
+            if (Input.isRepeated('down')) {
                 const len = QuestManager.getQuestsInColumn(COLS[this._focusCol]).length;
                 if (this._focusRow < len - 1) { this._focusRow++; moved = true; }
-            } else if (Input.isRepeated('up') || Input.isRepeated('w')) {
+            } else if (Input.isRepeated('up')) {
                 if (this._focusRow > 0) { this._focusRow--; moved = true; }
-            } else if (Input.isRepeated('left') || Input.isRepeated('a')) {
+            } else if (Input.isRepeated('left')) {
                 if (Input.isPressed('shift')) {
                     this._moveCard(-1, COLS);
                 } else if (this._focusCol > 0) {
                     this._focusCol--;
                     moved = true;
                 }
-            } else if (Input.isRepeated('right') || Input.isRepeated('d')) {
+            } else if (Input.isRepeated('right')) {
                 if (Input.isPressed('shift')) {
                     this._moveCard(1, COLS);
                 } else if (this._focusCol < COLS.length - 1) {
@@ -1211,15 +1201,20 @@
     };
 
 
-    // Initialize WASD input mapping
+    // WASD are the directional keys everywhere in the game (movement, every
+    // parchment menu, the battle command window). They used to be remapped
+    // here to the bare symbols 'w'/'a'/'s'/'d', and because Input.initialize
+    // runs after every plugin has loaded, that assignment won every other
+    // plugin's WASD mapping and silently killed WASD navigation in the main
+    // menu and elsewhere. Map them to the directions instead: the board below
+    // already reads the direction symbols.
     const _Input_initialize = Input.initialize;
     Input.initialize = function () {
         _Input_initialize.call(this);
-        // Add WASD mappings
-        this.keyMapper[87] = 'w'; // W
-        this.keyMapper[65] = 'a'; // A
-        this.keyMapper[83] = 's'; // S
-        this.keyMapper[68] = 'd'; // D
+        this.keyMapper[87] = 'up';    // W
+        this.keyMapper[65] = 'left';  // A
+        this.keyMapper[83] = 'down';  // S
+        this.keyMapper[68] = 'right'; // D
     };
 
     // NOTE: do NOT preventDefault W/A/S/D here. Input._onKeyDown is a

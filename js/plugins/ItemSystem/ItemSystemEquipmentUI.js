@@ -17,11 +17,75 @@
     const enableSwitching = window.EquipParams.enableSwitching;
     const switchSound     = window.EquipParams.switchSound;
 
+    // ── Stat tooltip ──────────────────────────────────────────────────────────
+    // The same card the character sheet shows when a stat box is hovered
+    // (CharacterCreationDossier.onStatHover): one shared #cc-item-tooltip
+    // element, its prose read off the shared CharCreate.statInfo bank so both
+    // screens explain a stat with the same words.
+    const equipT = (key, fallback) => {
+        if (typeof T === 'function') {
+            try {
+                if (T.has && T.has(key)) {
+                    const res = T(key);
+                    if (typeof res === 'string' && res.trim() && res !== key) return res;
+                }
+            } catch (e) {}
+        }
+        return fallback != null ? fallback : '';
+    };
+
+    const statTooltipEl = () => {
+        let el = document.getElementById('cc-item-tooltip');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'cc-item-tooltip';
+            el.className = 'cc-item-tooltip';
+            document.body.appendChild(el);
+        }
+        return el;
+    };
+
+    const showStatTooltip = (event, statKey, label) => {
+        const desc = equipT('CharCreate.statInfo.' + statKey, '');
+        if (!desc) return;
+        const el = statTooltipEl();
+        el.innerHTML = `
+            <div class="cc-item-tooltip-header">
+                <span class="cc-item-tooltip-title">${escapeHtml(label)}</span>
+            </div>
+            <div class="cc-item-tooltip-desc">${desc}</div>`;
+        el.style.display = 'block';
+        el.style.left = `${Math.min(window.innerWidth - 330, (event.clientX || 100) + 16)}px`;
+        el.style.top  = `${Math.min(window.innerHeight - 180, (event.clientY || 100) + 16)}px`;
+    };
+
+    const hideStatTooltip = () => {
+        const el = document.getElementById('cc-item-tooltip');
+        if (el) el.style.display = 'none';
+    };
+
     const escapeHtml = (text) =>
         String(text === undefined || text === null ? '' : text).replace(
             /[&<>"']/g,
             (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
         );
+
+    // The heading a piece is filed under on the bench: its weapon type, or its
+    // armour type when it has one, falling back to the slot type it fills.
+    const equipGroupOf = (item) => {
+        if (!item || item.isRemoveOption) return '';
+        const tr = (s) => (window.translateText ? window.translateText(String(s)) : String(s));
+        if (DataManager.isWeapon(item)) {
+            const n = ($dataSystem.weaponTypes || [])[item.wtypeId];
+            if (n) return tr(n);
+        } else if (DataManager.isArmor(item)) {
+            const n = ($dataSystem.armorTypes || [])[item.atypeId];
+            if (n) return tr(n);
+            const e = ($dataSystem.equipTypes || [])[item.etypeId];
+            if (e) return tr(e);
+        }
+        return tr(T('Equip.otherGroup'));
+    };
 
     // ── Shared character-switcher hint helper (idempotent across plugins) ──────
     // Shows controller bumper hints (L / R) around a .companion-tabs-row when a
@@ -145,6 +209,7 @@
             this._wasdUpListener = null;
         }
         window.CharSwitcher.removeTabKey(this);
+        hideStatTooltip();
         this.cleanup3DWeaponPreview();
         const container = document.getElementById('equip-container');
         if (container) container.remove();
@@ -154,11 +219,17 @@
     // =============================================================================
     // 3D weapon preview
     // =============================================================================
-    // The viewer itself is a shared service (window.Weapon3DPreview): one weapon,
+    // The viewer itself is a shared service (window.Weapon3DPreview): one entry,
     // one canvas, orbit / pan / zoom, with the model's own gears, ropes and runes
     // ticking exactly as they do in battle. Any other menu that wants to show a
-    // weapon in 3D (the main menu's search page) mounts the same viewer rather
-    // than growing a second copy of this loop.
+    // piece in 3D (the main menu's search page, the backpack's inspect card)
+    // mounts the same viewer rather than growing a second copy of this loop.
+    //
+    // It is called Weapon3DPreview because weapons were the first thing it
+    // showed, but it takes ANY database entry now: a weapon is built by
+    // WeaponSystemProcedural, an item or an armour by ItemModelSystem
+    // (ItemSystem/ItemSystemUtils.js). Nothing else about the viewport changes,
+    // so a potion turns on the counter the way a sword does.
     if (!window.Weapon3DPreview) {
         window.Weapon3DPreview = (() => {
 
@@ -206,8 +277,14 @@
                         undefined,
                         (err) => console.error('[Weapon3DPreview] Failed to load model:', item.model3d, err)
                     );
-                } else if (window.WeaponSystemProcedural) {
-                    const pModel = WeaponSystemProcedural.createModel(item);
+                } else {
+                    // A weapon is built by the weapon pipeline, anything else by
+                    // the item one. Both hand back a plain THREE.Group, so the
+                    // rest of the viewport does not care which answered.
+                    const isWeapon = item.wtypeId !== undefined;
+                    const pModel = isWeapon
+                        ? (window.WeaponSystemProcedural && WeaponSystemProcedural.createModel(item))
+                        : (window.ItemModelSystem && window.ItemModelSystem.createModel(item));
                     if (pModel) setupModelPosition(pModel);
                 }
 
@@ -289,7 +366,7 @@
                 // cleanup can cancel it (instead of pushing a new id every frame into
                 // a shared, unbounded array).
                 const previewEntry = {
-                    renderer, canvas,
+                    renderer, canvas, camera,
                     listeners: { mousedown: onStart, mousemove: onMove, mouseup: onEnd, wheel: onWheel,
                                  auxclick: onAuxClick, touchstart: onTouchStart, touchmove: onTouchMove, touchend: onTouchEnd },
                     rafId: 0
@@ -352,10 +429,20 @@
                         }
                     }
 
+                    // The model on the stand, published on the record so a menu
+                    // can play something on the piece itself: the vector gun's
+                    // screen folds the one it is showing into its other shape.
+                    previewEntry.model = model;
+
                     if (model && window.WeaponSystemProcedural) {
                         // Gears, drifting shards and pulsing runes declared by the
                         // model itself, same as in battle.
                         WeaponSystemProcedural.tickModelParts(model, deltaMs);
+                        // A reconstruction, when one has been started on it: the
+                        // call is free on a model that is not coming apart.
+                        if (WeaponSystemProcedural.tickVectorSwitch) {
+                            WeaponSystemProcedural.tickVectorSwitch(model, deltaMs);
+                        }
                         const ropes = [];
                         if (model.userData._verletRope)  ropes.push(model.userData._verletRope);
                         if (model.userData._verletRopes) model.userData._verletRopes.forEach(r => ropes.push(r));
@@ -515,6 +602,14 @@
                 items.sort((a, b) => prof.compare(actor, a, b));
             }
         }
+        // The bench lists like the backpack does: one heading per equipment
+        // type, its pieces in alphabetical order underneath. The proficiency
+        // sort above only survives as the tag on the row now.
+        items.sort((a, b) => {
+            const ga = equipGroupOf(a), gb = equipGroupOf(b);
+            if (ga !== gb) return ga.localeCompare(gb);
+            return String(a.name).localeCompare(String(b.name));
+        });
         items.unshift({ name: t.noEquip, id: -1, isRemoveOption: true });
         return items;
     };
@@ -595,21 +690,21 @@
         const cBefore = actor.calculateCustomStats();
         const cAfter  = tempActor ? tempActor.calculateCustomStats() : cBefore;
         const gridStats = [
-            { label: t.hp,  code: null,  percent: false, valBefore: actor.mhp, valAfter: tempActor ? tempActor.mhp : actor.mhp },
-            { label: t.mp,  code: null,  percent: false, valBefore: actor.mmp, valAfter: tempActor ? tempActor.mmp : actor.mmp },
-            { label: t.arcane, code: null, percent: true, valBefore: cBefore.arcane, valAfter: cAfter.arcane },
+            { label: t.hp,  code: null,  key: 'HP',  percent: false, valBefore: actor.mhp, valAfter: tempActor ? tempActor.mhp : actor.mhp },
+            { label: t.mp,  code: null,  key: 'MP',  percent: false, valBefore: actor.mmp, valAfter: tempActor ? tempActor.mmp : actor.mmp },
+            { label: t.arcane, code: null, key: 'ARCANE', percent: true, valBefore: cBefore.arcane, valAfter: cAfter.arcane },
 
-            { label: t.str, code: 'STR', percent: false, valBefore: actor.atk, valAfter: tempActor ? tempActor.atk : actor.atk },
-            { label: t.con, code: 'CON', percent: false, valBefore: actor.def, valAfter: tempActor ? tempActor.def : actor.def },
-            { label: t.substance, code: null, percent: true, valBefore: cBefore.substance, valAfter: cAfter.substance },
+            { label: t.str, code: 'STR', key: 'STR', percent: false, valBefore: actor.atk, valAfter: tempActor ? tempActor.atk : actor.atk },
+            { label: t.con, code: 'CON', key: 'CON', percent: false, valBefore: actor.def, valAfter: tempActor ? tempActor.def : actor.def },
+            { label: t.substance, code: null, key: 'SUBSTANCE', percent: true, valBefore: cBefore.substance, valAfter: cAfter.substance },
 
-            { label: t.int, code: 'INT', percent: false, valBefore: actor.mat, valAfter: tempActor ? tempActor.mat : actor.mat },
-            { label: t.wis, code: 'WIS', percent: false, valBefore: actor.mdf, valAfter: tempActor ? tempActor.mdf : actor.mdf },
-            { label: t.stealth, code: null, percent: true, valBefore: cBefore.stealth, valAfter: cAfter.stealth },
+            { label: t.int, code: 'INT', key: 'INT', percent: false, valBefore: actor.mat, valAfter: tempActor ? tempActor.mat : actor.mat },
+            { label: t.wis, code: 'WIS', key: 'WIS', percent: false, valBefore: actor.mdf, valAfter: tempActor ? tempActor.mdf : actor.mdf },
+            { label: t.stealth, code: null, key: 'STEALTH', percent: true, valBefore: cBefore.stealth, valAfter: cAfter.stealth },
 
-            { label: t.dex, code: 'DEX', percent: false, valBefore: actor.agi, valAfter: tempActor ? tempActor.agi : actor.agi },
-            { label: t.psi, code: 'PSI', percent: false, valBefore: actor.luk, valAfter: tempActor ? tempActor.luk : actor.luk },
-            { label: t.intimidation, code: null, percent: true, valBefore: cBefore.intimidation, valAfter: cAfter.intimidation }
+            { label: t.dex, code: 'DEX', key: 'DEX', percent: false, valBefore: actor.agi, valAfter: tempActor ? tempActor.agi : actor.agi },
+            { label: t.psi, code: 'PSI', key: 'PSI', percent: false, valBefore: actor.luk, valAfter: tempActor ? tempActor.luk : actor.luk },
+            { label: t.intimidation, code: null, key: 'INTIMIDATION', percent: true, valBefore: cBefore.intimidation, valAfter: cAfter.intimidation }
         ];
 
         let statsGridHTML = '';
@@ -620,7 +715,7 @@
                            : diff < 0 ? `<span class="stat-diff negative">${diff}${unit}</span>` : '';
             const isScaling = !!(stat.code && scalingCodes.has(stat.code));
             const grade     = isScaling ? codeGradeMap[stat.code] : null;
-            const labelCls  = isScaling ? 'stat-label stat-label--scaling' : 'stat-label';
+            const labelCls  = isScaling ? 'inspect-spec-label stat-label stat-label--scaling' : 'inspect-spec-label stat-label';
             const valCls    = isScaling ? 'stat-val stat-val--scaling' : 'stat-val';
             const labelHtml = grade ? `${stat.label} <span class="stat-scaling-grade">(${grade})</span>` : stat.label;
 
@@ -633,21 +728,21 @@
                 const modBeforeStr = modBefore >= 0 ? '+' + modBefore : String(modBefore);
                 const modAfter = Math.floor((stat.valAfter - 10) / 2);
                 const modAfterStr = modAfter >= 0 ? '+' + modAfter : String(modAfter);
-                valBeforeFormatted = `${stat.valBefore} <span style="font-size:0.78em; opacity:0.88; color:var(--text-cost-ok);">(${modBeforeStr})</span>`;
-                valAfterFormatted = `${stat.valAfter} <span style="font-size:0.78em; opacity:0.88; color:var(--text-cost-ok);">(${modAfterStr})</span>`;
+                valBeforeFormatted = `${stat.valBefore} <span class="equip-stat-mod">(${modBeforeStr})</span>`;
+                valAfterFormatted = `${stat.valAfter} <span class="equip-stat-mod">(${modAfterStr})</span>`;
                 const modDiff = modAfter - modBefore;
                 if (tempActor && modDiff !== 0) {
-                    modBonusHtml = `<span class="stat-diff ${modDiff > 0 ? 'positive' : 'negative'}" style="font-size:0.72rem; margin-left:3px;">[${modDiff > 0 ? '+' + modDiff : modDiff} Mod]</span>`;
+                    modBonusHtml = `<span class="stat-diff equip-stat-diff ${modDiff > 0 ? 'positive' : 'negative'}">[${modDiff > 0 ? '+' + modDiff : modDiff} Mod]</span>`;
                 }
             }
 
             statsGridHTML += `
-                <div class="stat-row${isScaling ? ' stat-row--scaling' : ''}">
+                <div class="inspect-spec-row stat-row${isScaling ? ' stat-row--scaling' : ''}"${stat.key ? ` data-stat="${stat.key}"` : ''}>
                     <span class="${labelCls}">${labelHtml}</span>
-                    <span class="stat-val-container">
+                    <span class="inspect-spec-value stat-val-container">
                         <span class="${valCls}">${valBeforeFormatted}</span>
                         ${tempActor && diff !== 0 ? `➔ <span class="stat-val-new">${valAfterFormatted}</span>` : ''}
-                        ${diffHtml}${modBonusHtml}
+                        ${stat.code ? modBonusHtml : diffHtml}
                     </span>
                 </div>`;
         }
@@ -704,26 +799,32 @@
             const dt = (loreItem.meta && loreItem.meta.DamageType) ||
                 (loreItem.note && (loreItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
             if (dt) {
-                const wtype = DataManager.isWeapon(loreItem) ? ($dataSystem.weaponTypes[loreItem.wtypeId] || '') : '';
-                loreHTML += `<div class="equip-damage-type" style="margin-top:6px;font-size:1.15em;font-family:'Lora',serif;color:var(--text-secondary-active, #e5c07b);"><span style="opacity:0.8;color:var(--text-card-medium, #ddd);">Damage Type:</span> <strong>${escapeHtml(String(dt).trim())}</strong>${wtype ? ` <span style="opacity:0.75;font-size:0.9em;">(${escapeHtml(wtype)})</span>` : ''}</div>`;
+                loreHTML += `<div class="equip-damage-type"><span class="equip-damage-type-label">${T('Equip.damageType')}:</span> <strong>${escapeHtml(String(dt).trim())}</strong></div>`;
+            }
+            const wtype = DataManager.isWeapon(loreItem) ? ($dataSystem.weaponTypes[loreItem.wtypeId] || '') : '';
+            if (wtype) {
+                loreHTML += `<div class="equip-damage-type"><span class="equip-damage-type-label">${T('Equip.weaponType')}:</span> <strong>${escapeHtml(String(wtype).trim())}</strong></div>`;
             }
         }
         if (loreItem && loreItem.description && String(loreItem.description).trim()) {
             let desc = String(loreItem.description).trim();
             if (window.translateText && typeof window.translateText === 'function') desc = window.translateText(desc);
-            loreHTML += `<div class="equip-desc" style="margin-top:6px;font-family:'Lora',serif;line-height:1.35;">${desc.replace(/\n/g, '<br>')}</div>`;
+            // Database descriptions are hard-wrapped for the message window;
+            // only a blank line is a real break here, the rest reflows.
+            desc = desc.replace(/\s*\n\s*\n\s*/g, '<br><br>').replace(/\s*\n\s*/g, ' ');
+            loreHTML += `<div class="equip-desc">${desc}</div>`;
         }
         if (loreItem && window.ItemSystemUtils && typeof window.ItemSystemUtils.loreFor === 'function') {
             const loreText = window.ItemSystemUtils.loreFor(loreItem);
-            if (loreText) loreHTML += `<div class="equip-lore" style="font-style: normal;opacity:0.78;margin-top:6px;font-family:'Lora',serif;line-height:1.35;">${loreText}</div>`;
+            if (loreText) loreHTML += `<div class="equip-lore">${loreText}</div>`;
         }
 
         return `
-            <div class="equip-right-content">
+            <div class="equip-right-content ui-detail">
                 ${previewBoxHTML}
                 <div class="bottom-stats-block">
-                    <div class="stats-grid stats-grid--3col">${statsGridHTML}</div>
-                    ${loreHTML}
+                    <div class="inspect-spec-grid stats-grid stats-grid--2col equip-stats-col">${statsGridHTML}</div>
+                    <div class="equip-lore-col">${loreHTML}</div>
                 </div>
             </div>`;
     };
@@ -790,8 +891,10 @@
             if (itemList.length === 0) {
                 mainContentHTML += `<div class="placeholder-message">${useItalian ? 'Nessun equipaggiamento disponibile...' : 'No matching equipment available...'}</div>`;
             } else {
-                mainContentHTML += '<div class="inventory-grid">';
-                const paramNames = [t.hp, t.mp, t.str, t.con, t.int, t.wis, t.dex, t.psi];
+                mainContentHTML += '<div class="backpack-grid equip-pick-grid">';
+                const shortName = k => T('Equip.short.' + k);
+                const paramNames = [shortName('hp'), shortName('mp'), shortName('str'), shortName('con'),
+                                    shortName('int'), shortName('wis'), shortName('dex'), shortName('psi')];
                 const getParams  = a => [a.mhp, a.mmp, a.atk, a.def, a.mat, a.mdf, a.agi, a.luk];
                 const beforeParams = getParams(actor);
                 // Mutate _equips directly rather than through changeEquip/forceChangeEquip:
@@ -800,55 +903,71 @@
                 // battler's live equips, and going through the change hooks would also
                 // fire saveCustomStatsToVariables for every row in the list.
                 const diffActor = JsonEx.makeDeepCopy(actor);
+                // The bench walks the same lines the backpack walks: a heading
+                // opens each type, the rows under it are pockets, and the
+                // layout the cursor moves through is recorded as it is built.
+                this._invLayout = [];
+                let row = [];
+                let lastGroup = null;
+                const closeRow = () => { if (row.length) { this._invLayout.push(row); row = []; } };
                 itemList.forEach((item, idx) => {
-                    const focused = idx === this._inventoryIndex ? 'focused' : '';
+                    const focused = idx === this._inventoryIndex ? 'selected' : '';
                     if (item.isRemoveOption) {
+                        closeRow();
+                        this._invLayout.push([idx]);
                         mainContentHTML += `
-                            <div class="inventory-item-row full-width ${focused}" data-idx="${idx}">
+                            <div class="item-slot equip-pick-row equip-pick-row--full ${focused}" data-idx="${idx}">
                                 <div class="item-icon-empty">✖</div>
-                                <div class="item-details" style="margin-left:8px;">
-                                    <span class="item-name inventory-remove-name">${item.name}</span>
+                                <div class="item-slot-info">
+                                    <div class="item-slot-name inventory-remove-name">${item.name}</div>
                                 </div>
                             </div>`;
-                    } else {
-                        const iconIdx   = item.iconIndex;
-                        const iconStyle = `background:url('img/system/IconSet.png') -${(iconIdx%16)*32}px -${Math.floor(iconIdx/16)*32}px no-repeat;`;
-                        const rarity    = window.ItemSystemUtils.getItemRarity(item);
-                        const gi = new Game_Item();
-                        gi.setObject(item);
-                        diffActor._equips[this._slotIndex] = gi;
-                        const afterParams = getParams(diffActor);
-                        const paramDesc  = [];
-                        for (let p = 0; p < 8; p++) {
-                            const delta = afterParams[p] - beforeParams[p];
-                            if (delta !== 0) paramDesc.push(`${paramNames[p]} ${delta>0?'+':''}${delta}`);
-                        }
-                        const itemDt = (item.meta && item.meta.DamageType) || (item.note && (item.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
-                        if (itemDt && itemDt !== 'None') paramDesc.unshift(`[${itemDt.trim()}]`);
-                        // Non-param traits (element resist, attack element/state,
-                        // dual wielding...) don't fit the before/after delta above,
-                        // so they're listed as-is, same wording as the backpack tooltip.
-                        paramDesc.push(...window.ItemSystemUtils.traitLines(item));
-                        // Weapons below Intermediate proficiency fight at reduced
-                        // stats; flag the tier the character is actually at.
-                        const prof = window.WeaponProficiency;
-                        const untrained = prof && DataManager.isWeapon(item) && prof.isUntrained(actor, item);
-                        const profTag = untrained
-                            ? `<span class="item-proficiency-tag">${prof.levelNameFor(actor, item) || t.untrained}</span>`
-                            : '';
-                        mainContentHTML += `
-                            <div class="inventory-item-row ${focused}" data-idx="${idx}">
-                                <div class="item-rarity-bar" style="background:${rarity.colorCode};"></div>
-                                <div class="item-icon" style="${iconStyle}"></div>
-                                <div class="item-details" style="margin-left:8px;">
-                                    <div class="item-name-row"><span class="item-name">${item.name}</span>${profTag}</div>
-                                    <div class="item-meta-row">
-                                        <span>${paramDesc.join(', ')}</span>
-                                    </div>
-                                </div>
-                            </div>`;
+                        return;
                     }
+                    const group = equipGroupOf(item);
+                    if (group !== lastGroup) {
+                        lastGroup = group;
+                        closeRow();
+                        mainContentHTML += `<div class="backpack-group-title">${escapeHtml(group)}</div>`;
+                    }
+                    if (row.length >= 3) closeRow();
+                    row.push(idx);
+
+                    const iconIdx   = item.iconIndex;
+                    const iconStyle = `background:url('img/system/IconSet.png') -${(iconIdx%16)*32}px -${Math.floor(iconIdx/16)*32}px no-repeat;`;
+                    const rarity    = window.ItemSystemUtils.getItemRarity(item);
+                    const gi = new Game_Item();
+                    gi.setObject(item);
+                    diffActor._equips[this._slotIndex] = gi;
+                    const afterParams = getParams(diffActor);
+                    // Only the stats this piece actually moves, as short signed
+                    // chips; the full description lives on the right page.
+                    const paramDesc  = [];
+                    for (let p = 0; p < 8; p++) {
+                        const delta = afterParams[p] - beforeParams[p];
+                        if (delta !== 0) {
+                            const cls = delta > 0 ? 'positive' : 'negative';
+                            paramDesc.push(`<span class="equip-delta-chip ${cls}">${paramNames[p]} ${delta>0?'+':''}${delta}</span>`);
+                        }
+                    }
+                    // Weapons below Intermediate proficiency fight at reduced
+                    // stats; flag the tier the character is actually at.
+                    const prof = window.WeaponProficiency;
+                    const untrained = prof && DataManager.isWeapon(item) && prof.isUntrained(actor, item);
+                    const profTag = untrained
+                        ? `<span class="item-proficiency-tag">${prof.levelNameFor(actor, item) || t.untrained}</span>`
+                        : '';
+                    mainContentHTML += `
+                        <div class="item-slot equip-pick-row ${focused}" data-idx="${idx}">
+                            <div class="item-rarity-bar ${window.ItemSystemUtils.rarityClass(rarity)}"></div>
+                            <div class="item-slot-icon"><div class="item-icon" style="${iconStyle}"></div></div>
+                            <div class="item-slot-info">
+                                <div class="item-name-row"><span class="item-slot-name">${item.name}</span>${profTag}</div>
+                                <div class="item-slot-meta equip-delta-row">${paramDesc.join('')}</div>
+                            </div>
+                        </div>`;
                 });
+                closeRow();
                 mainContentHTML += '</div>';
             }
         } else {
@@ -869,7 +988,7 @@
                         ? `<span class="item-proficiency-tag">${prof.levelNameFor(actor, equippedItem) || t.untrained}</span>`
                         : '';
                     slotItemHTML = `
-                        <div class="item-rarity-bar" style="background:${rarity.colorCode};"></div>
+                        <div class="item-rarity-bar ${window.ItemSystemUtils.rarityClass(rarity)}"></div>
                         <div class="item-icon" style="${iconStyle}"></div>
                         <span class="item-name">${equippedItem.name}</span>${profTag}`;
                 } else {
@@ -899,7 +1018,7 @@
                         <div class="left-content-area equip-main-content"></div>
                     </div>
                     <div class="right-page">
-                        <div class="companion-switcher" id="equip-companion-switcher" style="flex:0 0 auto; justify-content:center; min-height:26px; margin-bottom:8px;"></div>
+                        <div class="companion-switcher" id="equip-companion-switcher"></div>
                         <div class="right-content-area"></div>
                     </div>
                 </div>`;
@@ -930,6 +1049,8 @@
         this.init3DWeaponPreview();
 
         // ── Mouse / click bindings ─────────────────────────────────────────────
+
+        this._bindStatTooltips();
 
         container.querySelectorAll('.equip-commands .backpack-tab').forEach((btn, idx) => {
             btn.addEventListener('click', () => {
@@ -970,7 +1091,7 @@
                     this._refreshDOM();
                 });
             }
-            container.querySelectorAll('.inventory-item-row').forEach(row => {
+            container.querySelectorAll('.equip-pick-row').forEach(row => {
                 row.addEventListener('mouseover', () => {
                     const idx = parseInt(row.getAttribute('data-idx'));
                     if (idx !== this._inventoryIndex) {
@@ -1001,13 +1122,28 @@
         SoundManager.playCursor();
     };
 
+    // Hovering a stat row explains what that stat does, on the same card the
+    // character sheet uses. The right page is rebuilt on every selection, so
+    // the rows are rebound each time it is.
+    Scene_Equip.prototype._bindStatTooltips = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        container.querySelectorAll('.stat-row[data-stat]').forEach(row => {
+            const key   = row.getAttribute('data-stat');
+            const label = ((row.querySelector('.stat-label') || {}).textContent || key).trim();
+            row.addEventListener('mousemove',  (e) => showStatTooltip(e, key, label));
+            row.addEventListener('mouseleave', hideStatTooltip);
+        });
+    };
+
     Scene_Equip.prototype._updateInventoryHighlight = function () {
         const container = document.getElementById('equip-container');
         if (!container) return;
-        container.querySelectorAll('.inventory-item-row').forEach((row, idx) => {
-            row.classList.toggle('focused', idx === this._inventoryIndex);
+        container.querySelectorAll('.equip-pick-row').forEach(row => {
+            const idx = parseInt(row.getAttribute('data-idx'));
+            row.classList.toggle('selected', idx === this._inventoryIndex);
         });
-        const focused = container.querySelector('.inventory-item-row.focused');
+        const focused = container.querySelector('.equip-pick-row.selected');
         if (focused) focused.scrollIntoView({ block: 'nearest' });
 
         // Rebuild only the right page (stat deltas change per selected item)
@@ -1015,6 +1151,7 @@
         const rightArea = container.querySelector('.right-content-area');
         if (rightArea) rightArea.innerHTML = this._buildRightPageHTML();
         this.init3DWeaponPreview();
+        this._bindStatTooltips();
         SoundManager.playCursor();
     };
 
@@ -1153,7 +1290,26 @@
             const itemList = this.getInventoryItemsForSlot();
             const total    = itemList.length;
             const idx      = this._inventoryIndex;
-            const COLS     = 2; // matches .inventory-grid grid-template-columns
+            // The rows are the ones the page was actually built with: type
+            // headings break a line early, so counting three at a time would
+            // walk off the list the reader sees.
+            const layout   = this._invLayout && this._invLayout.length
+                ? this._invLayout
+                : (() => { const rows = []; for (let i = 0; i < total; i += 3) rows.push(itemList.slice(i, i + 3).map((_, k) => i + k)); return rows; })();
+            let r = -1, c = 0;
+            for (let i = 0; i < layout.length; i++) {
+                const at = layout[i].indexOf(idx);
+                if (at >= 0) { r = i; c = at; break; }
+            }
+            const moveTo = (row, col) => {
+                const line = layout[row];
+                if (!line || !line.length) return;
+                const target = line[Math.min(col, line.length - 1)];
+                if (target != null && target !== this._inventoryIndex) {
+                    this._inventoryIndex = target;
+                    this._updateInventoryHighlight();
+                }
+            };
 
             if (isOk) {
                 this.equipSelectedItem();
@@ -1161,36 +1317,19 @@
                 this._activeArea = 'slots';
                 SoundManager.playCancel();
                 this._refreshDOM();
+            } else if (r < 0) {
+                // Nothing focused yet: any direction lands on the first row.
+                moveTo(0, 0);
             } else if (isDown) {
-                if (idx === 0) {
-                    // full-width remove row → first grid item
-                    if (total > 1) { this._inventoryIndex = 1; this._updateInventoryHighlight(); }
-                } else {
-                    const gridIdx = idx - 1;
-                    const next    = gridIdx + COLS;
-                    if (next + 1 < total) { this._inventoryIndex = next + 1; this._updateInventoryHighlight(); }
-                }
+                moveTo(r + 1, c);
             } else if (isUp) {
-                if (idx === 1 || idx === 2) {
-                    // first grid row → remove option
-                    this._inventoryIndex = 0; this._updateInventoryHighlight();
-                } else if (idx > 2) {
-                    const gridIdx = idx - 1;
-                    this._inventoryIndex = (gridIdx - COLS) + 1; this._updateInventoryHighlight();
-                }
-                // idx === 0 → already at top, do nothing
+                moveTo(r - 1, c);
             } else if (isRight) {
-                if (idx > 0) {
-                    const gridIdx = idx - 1;
-                    if (gridIdx % COLS < COLS - 1 && idx + 1 < total) {
-                        this._inventoryIndex = idx + 1; this._updateInventoryHighlight();
-                    }
-                }
+                if (c + 1 < layout[r].length) moveTo(r, c + 1);
+                else moveTo(r + 1, 0);
             } else if (isLeft) {
-                if (idx > 0) {
-                    const gridIdx = idx - 1;
-                    if (gridIdx % COLS > 0) { this._inventoryIndex = idx - 1; this._updateInventoryHighlight(); }
-                }
+                if (c > 0) moveTo(r, c - 1);
+                else if (r > 0) moveTo(r - 1, (layout[r - 1] || []).length - 1);
             }
         }
     };

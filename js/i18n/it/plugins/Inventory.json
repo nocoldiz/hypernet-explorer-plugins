@@ -10,7 +10,9 @@
  "sort": {
   "name": "Nome",
   "weight": "Peso",
-  "price": "Valore"
+  "price": "Valore",
+  "count": "Quantità",
+  "rarity": "Rarità"
  },
  "category": {
   "All": "Tutto",
@@ -64,7 +66,7 @@
   ],
   "occasion": [
    "Sempre",
-   "In battaglia",
+   "Battaglia",
    "Fuori dalla battaglia",
    "Mai"
   ],
@@ -102,13 +104,15 @@
    "equipSlot": "Slot equipaggiamento",
    "slotFallback": "Slot",
    "consumable": "Consumabile",
-   "occasion": "Occasione",
+   "occasion": "Utilizzabile",
    "scope": "Bersaglio",
    "speedAdjust": "Modifica velocità",
    "successRate": "Percentuale di riuscita",
    "repeatActions": "Ripetizioni",
    "apGain": "Guadagno AP",
    "hitClassification": "Classificazione colpo",
+   "damageCategory": "Classe di danno",
+   "scaling": "Scalatura",
    "damageType": "Tipo di danno",
    "attackElement": "Elemento d'attacco",
    "formula": "Formula",
@@ -202,6 +206,9 @@
   "Danno da terreno",
   "Tasso di ESP"
  ],
+ "model": {
+  "fullscreenHint": "Trascina per ruotare, rotella per zoomare, tasto centrale per spostare"
+ },
  "section": {
   "specifications": "Specifiche",
   "invocationStats": "Statistiche di invocazione",
@@ -292,12 +299,16 @@
   "inspectionPlaceholder": "Seleziona un oggetto dallo zaino a sinistra per esaminarne le proprietà naturali, la composizione chimica e i dettagli meccanici.",
   "useItem": "Usa oggetto",
   "equip": "Equipaggia",
+  "favorite": "Preferito",
+  "unfavorite": "Non preferito",
   "throw": "Lancia",
   "discard": "Getta",
   "discardItem": "Getta oggetto",
   "discardBody": "Vuoi togliere {qty} di {item} dallo zaino? (ne hai {owned})"
  },
  "medicineDoses": "{days} dosi giornaliere",
+ "medicineIllnessCount": "{count} malattie",
+ "medicineInfoButton": "Info",
  "nature": {
   "label": "Natura",
   "mundane": "Mondano",

@@ -5,12 +5,15 @@
   "ap": "AP",
   "mp": "MP"
  },
+ "assist": {
+  "none": "There is no one to assist.",
+  "borrowed": "Borrowed \\C[3]{skill}\\C[0] from {actor}."
+  },
  "cost": {
   "mp": "{n} MP",
   "ap": "{n} AP"
  },
  "battle": {
-  "more": "More... ({count})",
   "back": "Back",
   "none": "Nothing to cast"
  },
@@ -19,7 +22,7 @@
   "standard": "Standard Discipline"
  },
  "section": {
-  "damage": "Damage",
+"damage": "Damage",
   "skillEffects": "Skill Effects",
   "training": "Training"
  },
@@ -77,8 +80,8 @@
  "empty": {
   "title": "Grimoire Codicil",
   "hint": "Select a skill from the list on the left to inspect its elemental scale, use cost, and alchemical actions.",
-  "section": "No skills cataloged under this section.",
-  "category": "No skills cataloged in this category."
+  "section": "[Empty]",
+  "category": "[Empty]"
  },
  "spec": {
   "statMet": "{value} (met)",
@@ -87,6 +90,7 @@
   "bonus": "Skill bonus",
   "label": {
    "damage": "Damage",
+   "damageCategory": "Damage Class",
    "statReq": "Requires",
    "statHeld": "Base stat",
    "grantedBy": "Granted by",
@@ -112,7 +116,8 @@
   "best": "Best",
   "random": "Random",
   "bestApplied": "Synced the {n} most useful skills.",
-  "randomApplied": "Synced {n} random skills."
+  "randomApplied": "Synced {n} random skills.",
+  "statLocked": "{name} needs {stat} to sync."
  },
  "tag": {
   "field": "Field"

@@ -699,7 +699,11 @@
     // authority: half of this is a person, and a person holds any civilised
     // trade. Same rule as rollIdentity, restated here for the callers that
     // build the archetype pair themselves.
-    if ((keys || []).includes(HYBRID_ARCHETYPE) && isCreatureSheet(spriteKey)) {
+    // A person CROSSED IN, that is: a sheet whose own archetype is Humanoid
+    // (an orc, a goblin; the peoples are one archetype now) is not a hybrid,
+    // and keeps its own roster like every other sheet.
+    const crossed = (keys || []).length > 1 && (keys || []).includes(HYBRID_ARCHETYPE);
+    if (crossed && isCreatureSheet(spriteKey)) {
       return rollHumanoidClassId(rng);
     }
     let creature = own.filter((id) => isNonSentientClassId(id));

@@ -35,7 +35,8 @@
         1,
         2
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_jiao.name"
   },
   "kang": {
     "name": "亢 (Kang) - Neck",
@@ -83,7 +84,8 @@
         2,
         3
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_kang.name"
   },
   "di": {
     "name": "氐 (Di) - Root",
@@ -135,7 +137,8 @@
         3,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_di.name"
   },
   "fang": {
     "name": "房 (Fang) - Room",
@@ -187,7 +190,8 @@
         3,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_fang.name"
   },
   "xin": {
     "name": "心 (Xin) - Heart",
@@ -225,7 +229,8 @@
         1,
         2
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_xin.name"
   },
   "wei": {
     "name": "尾 (Wei) - Tail",
@@ -323,7 +328,8 @@
         7,
         8
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_wei.name"
   },
   "ji": {
     "name": "箕 (Ji) - Winnowing Basket",
@@ -375,7 +381,8 @@
         3,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_ji.name"
   },
   "dou": {
     "name": "斗 (Dou) - Dipper",
@@ -447,7 +454,8 @@
         5,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_dou.name"
   },
   "niu": {
     "name": "牛 (Niu) - Ox",
@@ -519,7 +527,8 @@
         5,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_niu.name"
   },
   "nu": {
     "name": "女 (Nü) - Girl",
@@ -567,7 +576,8 @@
         2,
         3
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_nu.name"
   },
   "xu": {
     "name": "虛 (Xu) - Emptiness",
@@ -595,7 +605,8 @@
         0,
         1
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_xu.name"
   },
   "wei_north": {
     "name": "危 (Wei) - Rooftop",
@@ -633,7 +644,8 @@
         1,
         2
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_wei_north.name"
   },
   "shi": {
     "name": "室 (Shi) - Encampment",
@@ -661,7 +673,8 @@
         0,
         1
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_shi.name"
   },
   "bi": {
     "name": "壁 (Bi) - Wall",
@@ -689,7 +702,8 @@
         0,
         1
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_bi.name"
   },
   "kui": {
     "name": "奎 (Kui) - Legs",
@@ -851,7 +865,8 @@
         14,
         8
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_kui.name"
   },
   "lou": {
     "name": "婁 (Lou) - Bond",
@@ -889,7 +904,8 @@
         1,
         2
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_lou.name"
   },
   "wei_west": {
     "name": "胃 (Wei) - Stomach",
@@ -931,7 +947,8 @@
         2,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_wei_west.name"
   },
   "mao": {
     "name": "昴 (Mao) - Hairy Head",
@@ -1013,7 +1030,8 @@
         6,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_mao.name"
   },
   "bi_west": {
     "name": "畢 (Bi) - Net",
@@ -1105,7 +1123,8 @@
         7,
         3
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_bi_west.name"
   },
   "zui": {
     "name": "觜 (Zui) - Turtle Beak",
@@ -1147,7 +1166,8 @@
         2,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_zui.name"
   },
   "shen": {
     "name": "參 (Shen) - Three Stars",
@@ -1233,7 +1253,8 @@
         2,
         4
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_shen.name"
   },
   "jing": {
     "name": "井 (Jing) - Well",
@@ -1325,7 +1346,8 @@
         7,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_jing.name"
   },
   "gui": {
     "name": "鬼 (Gui) - Ghost",
@@ -1387,7 +1409,8 @@
         4,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_gui.name"
   },
   "liu": {
     "name": "柳 (Liu) - Willow",
@@ -1479,7 +1502,8 @@
         7,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_liu.name"
   },
   "xing": {
     "name": "星 (Xing) - Star",
@@ -1561,7 +1585,8 @@
         6,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_xing.name"
   },
   "zhang": {
     "name": "張 (Zhang) - Extended Net",
@@ -1633,7 +1658,8 @@
         5,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_zhang.name"
   },
   "yi": {
     "name": "翼 (Yi) - Wings",
@@ -1865,7 +1891,8 @@
         21,
         12
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_yi.name"
   },
   "zhen": {
     "name": "軫 (Zhen) - Chariot",
@@ -1917,7 +1944,8 @@
         3,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_zhen.name"
   },
   "ziwei": {
     "name": "紫微垣 (Ziwei Yuan) - Purple Forbidden Enclosure",
@@ -2081,7 +2109,8 @@
         14,
         15
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_ziwei.name"
   },
   "taiwei": {
     "name": "太微垣 (Taiwei Yuan) - Supreme Palace Enclosure",
@@ -2185,7 +2214,8 @@
         8,
         9
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_taiwei.name"
   },
   "tianshi": {
     "name": "天市垣 (Tianshi Yuan) - Heavenly Market Enclosure",
@@ -2313,7 +2343,8 @@
         10,
         11
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_tianshi.name"
   },
   "beidou": {
     "name": "北斗七星 (Beidou Qixing) - Big Dipper",
@@ -2391,7 +2422,8 @@
         5,
         6
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_beidou.name"
   },
   "nandou": {
     "name": "南斗六星 (Nandou Liuxing) - Southern Dipper",
@@ -2463,7 +2495,8 @@
         5,
         0
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_nandou.name"
   },
   "sanxing": {
     "name": "參宿三星 (Sanshu Sanxing) - Orion's Belt",
@@ -2501,6 +2534,7 @@
         1,
         2
       ]
-    ]
+    ],
+    "name_int": "constellation.cn_sanxing.name"
   }
 }

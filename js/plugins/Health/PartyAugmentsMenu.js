@@ -165,7 +165,7 @@
       s.display = "flex";
       s.justifyContent = "center";
       s.alignItems = "center";
-      s.fontFamily = "'Lora', serif";
+      s.fontFamily = "var(--font-ui)";
       s.boxSizing = "border-box";
       s.opacity = "0";
       s.transition = "opacity 0.22s ease-out";
@@ -258,6 +258,9 @@
       // (UI/MenuVirtualList.js).
       const listBox = document.getElementById("aug-list-content");
       if (listBox) {
+        // The catalogue is hundreds of entries, so it reads three across;
+        // the fitted list stays one row per line.
+        listBox.classList.toggle("aug-grid", this._tab === 1);
         const empty = this._tab === 0 ? T('Augments.ui.noneFitted') : T('Augments.ui.noCatalogue');
         window.MenuVirtualList.render(listBox, {
           key: `${this._tab}|${this._augBar ? this._augBar.query : ''}`,
@@ -293,7 +296,7 @@
         ? `<span class="augment-07">${T('Augments.ui.damagedHost')}</span>`
         : `<span class="augment-08">${escapeHtml(priceLabel(row.prosthetic.cost))}</span>`;
       return `
-        <div class="aug-row focusable ${isFocused ? 'focused' : ''} augment-09" data-idx="${idx}" style="background:${isSel ? 'var(--bg-tertiary-focus-translucent-45)' : 'transparent'}">
+        <div class="aug-row focusable ${isFocused ? 'focused' : ''} augment-09" data-idx="${idx}">
           <span class="augment-10">
             <span class="augment-11" style="color:${isSel ? 'var(--text-secondary-active)' : 'var(--text-card-medium)'}">${escapeHtml(name)}</span>
             <span class="augment-08">${escapeHtml(sub)}</span>
@@ -304,99 +307,111 @@
 
     buildDetailHTML(row) {
       if (!row) {
-        return `<div class="augment-12">${T('Augments.ui.noneSelected')}</div>`;
+        return `<div class="ui-empty"><div class="ui-empty-text">${T('Augments.ui.noneSelected')}</div></div>`;
       }
       const p = row.prosthetic;
       const name = augmentName(row.key, p);
       const typeLabel = T('Augments.ui.type.' + (p.type || "biological"));
 
-      let effectsHTML = "";
-      const effects = Object.entries(p.effects || {});
-      if (effects.length) {
-        effectsHTML = effects.map(([paramId, value]) => `
-          <div class="augment-13">
-            <span>${escapeHtml(paramName(parseInt(paramId, 10)))}</span>
-            <span class="augment-14">${value >= 0 ? "+" : ""}${value}</span>
-          </div>`).join("");
-      } else {
-        effectsHTML = `<div class="augment-15">${T('Augments.ui.noStatChange')}</div>`;
+      // Every effect the augment has is read in the one stat-block shape the
+      // rest of the game's right columns use: label on the left, answer on the
+      // right, the pair no wider than its own column.
+      const effectRows = [];
+      for (const [paramId, value] of Object.entries(p.effects || {})) {
+        effectRows.push({
+          label: paramName(parseInt(paramId, 10)),
+          value: (value >= 0 ? "+" : "") + value
+        });
       }
 
       // A `needs` block is a multiplier on how fast that need drains, so it is
       // read out as plain English: stopped, slowed by a share, or reversed.
       for (const [needKey, rate] of Object.entries(p.needs || {})) {
         const label = (window.PartyNeeds && window.PartyNeeds.LABELS && window.PartyNeeds.LABELS[needKey]) || needKey;
-        let line;
+        let value;
         if (rate < 0) {
-          line = T('Augments.ui.need.restores', { need: label, pct: Math.round(Math.abs(rate) * 100) });
+          value = T('Augments.ui.need.restores', { pct: Math.round(Math.abs(rate) * 100) });
         } else if (rate === 0) {
-          line = T('Augments.ui.need.halted', { need: label });
+          value = T('Augments.ui.need.halted');
         } else if (rate < 1) {
-          line = T('Augments.ui.need.slowed', { need: label, pct: Math.round((1 - rate) * 100) });
+          value = T('Augments.ui.need.slowed', { pct: Math.round((1 - rate) * 100) });
         } else if (rate > 1) {
-          line = T('Augments.ui.need.hastened', { need: label, pct: Math.round((rate - 1) * 100) });
+          value = T('Augments.ui.need.hastened', { pct: Math.round((rate - 1) * 100) });
         } else {
           continue;
         }
-        effectsHTML += `<div class="augment-16">${escapeHtml(line)}</div>`;
+        effectRows.push({ label, value });
       }
 
+      const specRow = (r) => `
+        <div class="inspect-spec-row">
+          <span class="inspect-spec-label">${escapeHtml(r.label)}</span>
+          <span class="inspect-spec-value">${escapeHtml(String(r.value))}</span>
+        </div>`;
+
       // An endocrine implant's real effect is in the blood, not in the params,
-      // so the biologic simulation supplies that line itself.
+      // so the biologic simulation supplies that sentence itself.
       const endocrine = window.EndocrineImplants && window.EndocrineImplants.describe
         ? window.EndocrineImplants.describe(row.key) : null;
-      if (endocrine) {
-        effectsHTML += `<div class="augment-16">${escapeHtml(endocrine)}</div>`;
-      }
+
+      let effectsHTML = effectRows.length
+        ? `<div class="inspect-spec-grid">${effectRows.map(specRow).join("")}</div>`
+        : `<div class="ui-empty-note">${T('Augments.ui.noStatChange')}</div>`;
+      if (endocrine) effectsHTML += `<div class="ui-prose">${escapeHtml(endocrine)}</div>`;
 
       let skillHTML = "";
       for (const sid of skillIds(p.skill)) {
         const skill = $dataSkills && $dataSkills[sid];
         if (!skill || !skill.name) continue;
-        const desc = (skill.description || "").split("\n").join(" ");
+        const desc = String(skill.description || "").split(/\s*[\r\n]+\s*/).join(" ").trim();
         skillHTML += `
-          <div class="augment-17">
-            <div class="augment-18">${escapeHtml(skill.name)}</div>
-            ${desc ? `<div class="augment-19">${escapeHtml(desc)}</div>` : ""}
-            <div class="augment-20">${T('Augments.ui.alwaysCarried')}</div>
-          </div>`;
+          <div class="inspect-spec-grid">
+            ${specRow({ label: skill.name, value: T('Augments.ui.alwaysCarried') })}
+          </div>
+          ${desc ? `<div class="ui-prose">${escapeHtml(desc)}</div>` : ""}`;
       }
 
       const sockets = socketsFor(row.key);
       const socketsHTML = sockets.length
-        ? `<div class="augment-21">` + sockets.map((s) =>
-            `<span class="augment-22">${escapeHtml(s)}</span>`
+        ? `<div class="ui-chip-row">` + sockets.map((s) =>
+            `<span class="ui-chip">${escapeHtml(s)}</span>`
           ).join("") + `</div>`
-        : `<div class="augment-15">${T('Augments.ui.noSocket')}</div>`;
+        : `<div class="ui-empty-note">${T('Augments.ui.noSocket')}</div>`;
 
       const fittedHTML = row.actor
-        ? `<div class="augment-23">
-             <div class="augment-24">${T('Augments.ui.fittedTo')}</div>
-             <div class="augment-13">
-               <span>${escapeHtml(row.actor.name())}</span><span>${escapeHtml(row.partName)}</span>
+        ? `<div class="ui-section">
+             <div class="inspect-section-title">${T('Augments.ui.fittedTo')}</div>
+             <div class="inspect-spec-grid">
+               ${specRow({ label: row.actor.name(), value: row.partName })}
              </div>
-             ${row.damaged ? `<div class="augment-25">${T('Augments.ui.damagedWarning')}</div>` : ""}
-             <div class="augment-26">${T('Augments.ui.severWarning')}</div>
+             ${row.damaged ? `<div class="aug-warning">${T('Augments.ui.damagedWarning')}</div>` : ""}
+             <div class="ui-prose">${T('Augments.ui.severWarning')}</div>
            </div>`
         : "";
 
       return `
-        <div class="augment-27">
-          <h2 class="augment-28">${escapeHtml(name)}</h2>
-          <div class="augment-15">${escapeHtml(typeLabel)} &middot; ${escapeHtml(priceLabel(p.cost))}</div>
-          <div class="augment-23">
-            <div class="augment-24">${T('Augments.ui.effects')}</div>
-            ${effectsHTML}
+        <div class="ui-detail">
+          <div class="ui-detail-head">
+            <div class="ui-detail-titles">
+              <h2>${escapeHtml(name)}</h2>
+              <div class="ui-detail-sub">${escapeHtml(typeLabel)} &middot; ${escapeHtml(priceLabel(p.cost))}</div>
+            </div>
           </div>
-          ${skillHTML ? `<div class="augment-23">
-            <div class="augment-24">${T('Augments.ui.grantedSkill')}</div>
-            ${skillHTML}
-          </div>` : ""}
-          <div class="augment-23">
-            <div class="augment-24">${T('Augments.ui.sockets')}</div>
-            ${socketsHTML}
+          <div class="ui-detail-scroll">
+            <div class="ui-section">
+              <div class="inspect-section-title">${T('Augments.ui.effects')}</div>
+              ${effectsHTML}
+            </div>
+            ${skillHTML ? `<div class="ui-section">
+              <div class="inspect-section-title">${T('Augments.ui.grantedSkill')}</div>
+              ${skillHTML}
+            </div>` : ""}
+            <div class="ui-section">
+              <div class="inspect-section-title">${T('Augments.ui.sockets')}</div>
+              ${socketsHTML}
+            </div>
+            ${fittedHTML}
           </div>
-          ${fittedHTML}
         </div>
       `;
     }
@@ -479,6 +494,5 @@
   const openAugments = () => {
     SceneManager.push(Scene_PartyAugments);
   };
-  PluginManager.registerCommand("Health/PartyAugmentsMenu", "OpenAugments", openAugments);
   PluginManager.registerCommand("PartyAugmentsMenu", "OpenAugments", openAugments);
 })();

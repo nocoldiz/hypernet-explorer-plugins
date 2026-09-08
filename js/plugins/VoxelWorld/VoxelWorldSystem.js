@@ -63,6 +63,10 @@
  * @command ResetDigging
  * @text Reset Digging
  * @desc Put every cube this world has had dug out of it back, everywhere.
+ *
+ * @command OpenShipBridge
+ * @text Open the Ship's Bridge
+ * @desc Step onto the starship's bridge and fly it by hand, from wherever it is.
  */
 
 (() => {
@@ -122,6 +126,8 @@
                     standalone: true,
                     footOnly: !!o.footOnly,
                     vehicle: o.footOnly ? undefined : (o.vehicle || 'camper'),
+                    startFlying: !!o.startFlying,
+                    atHelm: !!o.atHelm,
                     startTile: o.startTile || null
                 });
             this._scene._onStandaloneExit = (typeof onExit === 'function') ? onExit : null;
@@ -149,8 +155,59 @@
                 { footOnly: true, alien: { biome, planet: planet || null, species: species || null } });
             return this._scene;
         },
+        // ---------------------------------------------------------------------
+        // A flyby of another world
+        // ---------------------------------------------------------------------
+        // The third way down from the landing grid, and the only one that never
+        // touches the ground: the same world the liminal walk opens, with the
+        // party still aboard the ship and flying it. The ship is a vehicle out
+        // here like any other (VEHICLE_DRIVE.starship), so it steers, boosts and
+        // climbs the way it does over Earth - and flown into the side of a
+        // mountain it takes the damage on its own hull, the mountain left
+        // standing (see VoxelWorldScene._checkTerrainRam).
+        startAlienFlyby(biome, planet, species, opts) {
+            if (!biome) return null;
+            if (this._scene) this.stop();
+            const name = (planet && planet.name) || biome.name || '';
+            this._scene = new VoxelWorldScene(999999, name, 0, 0, {
+                vehicle: 'starship',
+                startFlying: true,
+                atHelm: !!(opts && opts.atHelm),
+                alien: { biome, planet: planet || null, species: species || null },
+            });
+            return this._scene;
+        },
+        // ---------------------------------------------------------------------
+        // The bridge
+        // ---------------------------------------------------------------------
+        // The ship's own room, and the way into flying it by hand. Unlike the
+        // flyby it is not reached from the star map at all: it is opened from
+        // inside the ship (map 721's own bridge door, the OpenShipBridge
+        // command), which is why it has to work out for itself what the ship is
+        // currently over.
+        //
+        //   in orbit of a world  -> that world's sky, the way a flyby opens it
+        //   anywhere else        -> the world the party is standing on
+        //
+        // Either way the party arrives at the helm, in first person, flying,
+        // and can get up and walk the bridge (V) or set the ship down.
+        startShipBridge(onExit) {
+            const GS = window.GalaxySim;
+            if (GS && GS.startShipBridgeFlight && GS.startShipBridgeFlight()) {
+                if (this._scene) this._scene._onStandaloneExit = onExit || null;
+                return this._scene;
+            }
+            return this.startStandalone(onExit, {
+                vehicle: 'starship', atHelm: true, startFlying: true,
+            });
+        },
         // True while the walk is on another world rather than on Earth.
         isAlienWalk() { return !!(this._scene && this._scene._alien); },
+        // True while that world is being flown over rather than walked.
+        isAlienFlyby() {
+            const s = this._scene;
+            return !!(s && s._alien && s._vehicleId === 'starship');
+        },
 
         // Which vehicle the party is actually aboard out here ('camper', 'car',
         // ...), or null on foot. The party HUD asks this so the vehicle row over
@@ -191,8 +248,20 @@
         isWorldRoadDataReady() { return roadDataReady(); },
         stop() {
             if (!this._scene) return;
-            this._scene.dispose();
+            // The live spriteset may still be holding the sprite keyed to the
+            // world's canvas texture, which dispose() is about to destroy.
+            // Left in place, PIXI reads the freed uvs on the very next frame
+            // ("cannot read property 'uvsFloat32' of null") and the game dies
+            // on a black screen. Take it down first.
+            detachGroundSprite();
+            const sc = this._scene;
+            // The reference goes FIRST: everything else in the game reads
+            // isActive() to decide whether the world has the controls, and a
+            // teardown that died halfway used to leave that answer as "yes"
+            // for the rest of the session.
             this._scene = null;
+            try { sc.dispose(); } catch (e) { console.error('[VoxelWorld] stop', e); }
+            sweepOverlays();
         },
         isActive() { return !!this._scene; },
         isTitleDrive() { return !!(this._scene && this._scene._titleMode); },
@@ -316,6 +385,10 @@
         PluginManager.registerCommand(host, 'ResetDigging', () => {
             VoxelWorldSystem.resetDigging();
         });
+
+        PluginManager.registerCommand(host, 'OpenShipBridge', () => {
+            VoxelWorldSystem.startShipBridge();
+        });
     }
 
     // The travel timer belongs to FastTravelSystem, which loads well after this
@@ -361,6 +434,47 @@
     Scene_Map.prototype.isMenuEnabled = function() {
         if (VoxelWorldSystem.isActive()) return false;
         return _Scene_Map_isMenuEnabled_CDS.call(this);
+    };
+
+    // Resigning to the title (or dying) while the world is up leaves the scene
+    // running: its overlay sits over the title menu with the walk still under
+    // the player's hands. Anything that is not the title's own background drive
+    // is torn down before those scenes are built.
+    // Drop the sprite that blits the world's canvas into whatever spriteset is
+    // currently up (map or battle). Safe to call at any time.
+    function detachGroundSprite() {
+        const sc = (typeof SceneManager !== 'undefined') ? SceneManager._scene : null;
+        const ss = sc && sc._spriteset;
+        if (!ss || !ss._vwGroundSprite) return;
+        if (ss.removeVoxelWorldGround) { ss.removeVoxelWorldGround(); return; }
+        if (ss._vwGroundSprite.parent) {
+            ss._vwGroundSprite.parent.removeChild(ss._vwGroundSprite);
+        }
+        ss._vwGroundSprite.destroy({ texture: false, baseTexture: false });
+        ss._vwGroundSprite = null;
+    }
+
+    // Nothing of the world may outlive it on the page. dispose() takes its own
+    // overlay down; this catches any left by an earlier world whose teardown
+    // failed, so a fresh scene (or the title screen) never comes up under one.
+    function sweepOverlays() {
+        const list = document.querySelectorAll('#camper-drive-overlay');
+        for (const el of list) { if (el.parentNode) el.parentNode.removeChild(el); }
+    }
+
+    function stopPlayableWorld() {
+        const sc = VoxelWorldSystem._scene;
+        if (sc && !sc._titleMode) VoxelWorldSystem.stop();
+    }
+    const _Scene_Title_create_VW = Scene_Title.prototype.create;
+    Scene_Title.prototype.create = function() {
+        stopPlayableWorld();
+        _Scene_Title_create_VW.call(this);
+    };
+    const _Scene_Gameover_create_VW = Scene_Gameover.prototype.create;
+    Scene_Gameover.prototype.create = function() {
+        stopPlayableWorld();
+        _Scene_Gameover_create_VW.call(this);
     };
 
     // =========================================================================
@@ -451,9 +565,15 @@
         // The world drew a new frame into that canvas since the last tick;
         // this is what carries it up into the battle layer.
         hideBattleGround(this);
-        if (this._vwGroundSprite.texture) {
-            this._vwGroundSprite.texture.update();
-        }
+        // A texture whose canvas has gone (the world was stopped under us)
+        // must never be drawn from again.
+        const tex = this._vwGroundSprite.texture;
+        if (!tex || !tex.baseTexture || !tex._uvs) { if (this._vwGroundSprite.parent) {
+                this._vwGroundSprite.parent.removeChild(this._vwGroundSprite);
+            }
+            this._vwGroundSprite.destroy({ texture: false, baseTexture: false });
+            this._vwGroundSprite = null; return; }
+        tex.update();
     };
 
     const _Spriteset_Battle_destroy_VW = Spriteset_Battle.prototype.destroy;
@@ -540,9 +660,13 @@
         }
         if (!this._vwGroundSprite) this.createVoxelWorldGround();
         if (!this._vwGroundSprite) return;
+        // A texture whose canvas has gone (the world was stopped under us)
+        // must never be drawn from again.
+        const tex = this._vwGroundSprite.texture;
+        if (!tex || !tex.baseTexture || !tex._uvs) { this.removeVoxelWorldGround(); return; }
         // The world drew a new frame into that canvas since the last tick;
         // this is what carries it up into the map layer.
-        this._vwGroundSprite.texture.update();
+        tex.update();
     };
 
     const _Spriteset_Map_destroy_VW = Spriteset_Map.prototype.destroy;

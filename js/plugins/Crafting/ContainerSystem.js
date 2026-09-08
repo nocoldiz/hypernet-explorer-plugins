@@ -328,12 +328,14 @@
     // i18n-ignore-end
 
     // i18n-ignore-start: keyed by the tier id
+    // The one rarity ladder, read from the presets. This used to be a third
+    // private copy of it, in a third set of hues.
     const RARITY_DISPLAY_COLORS = {
-        "Common":    "#6b5242",
-        "Uncommon":  "#607d8b",
-        "Rare":      "#d87d4a",
-        "Epic":      "#9c27b0",
-        "Legendary": "#d4af37"
+        "Common":    "var(--rarity-common)",
+        "Uncommon":  "var(--rarity-uncommon)",
+        "Rare":      "var(--rarity-rare)",
+        "Epic":      "var(--rarity-epic)",
+        "Legendary": "var(--rarity-legendary)"
     };
     // i18n-ignore-end
 
@@ -383,7 +385,7 @@
 
         static getItemDisplayColor(item) {
             const rarity = this.getItemRarity(item);
-            return RARITY_DISPLAY_COLORS[rarity.name] || "#6b5242";
+            return RARITY_DISPLAY_COLORS[rarity.name] || "var(--rarity-common)";
         }
 
         // Which database a given data object belongs to.

@@ -226,6 +226,35 @@
  * running, still counting idle frames, ...). window.AutoIdleExplorer.loose
  * exposes the loose party controller.
  *
+ * ============================================================================
+ * 3. REGROUPING ON COMMAND
+ * ============================================================================
+ *
+ * Two plugin commands for an event that needs the party closed up before it
+ * plays. Both of them HOLD the event: the command written under one does not
+ * run until the walk is over.
+ *
+ *   Party Regroup      every member walks back to the leader and turns to face
+ *                      them. A member with no way through is put beside the
+ *                      leader once the walk has had its ten seconds.
+ * Both are on window.AutoIdleExplorer.regroup too (party, pair, forStory,
+ * busy), for a plugin with no event to write the command under: a written
+ * scene calls forStory before its first bust.
+ *
+ *   Em / Bubba Regroup story mode only (switch 75). Whichever of the two the
+ *                      player is not holding walks up to the one they are, and
+ *                      the pair turn to face each other. The command waits for
+ *                      the facing, not merely for the arrival, and does nothing
+ *                      at all outside story mode or with either of them absent.
+ *
+ * @command PartyRegroup
+ * @text Party Regroup
+ * @desc Walks every party member back to the leader and waits here until they have all arrived.
+ *
+ * @command EmBubbaRegroup
+ * @text Em / Bubba Regroup
+ * @desc Story mode only. The other of the two walks up to the one being played, and the two turn to face each other. Waits until they do.
+ *
  * @param looseLeash
  * @text Loose Wander Radius (tiles)
  * @desc How far from the leader a party member strolls while idling. Coming back is decided by the screen.
@@ -325,6 +354,9 @@
     // same shoulder, not on the leader, so the party trails behind in a line
     // rather than piling onto the one they are all following.
     const COLUMN_GAP = 1;
+    // How long somebody the leader walked into stands still after stepping out
+    // of the way, so they do not drift back under the player's feet.
+    const NUDGE_HOLD = 45;
     // "Wait for me!" is for the moment they are left behind, not for every
     // sprint: one member says it, rarely, and not again for a good while.
     const RECALL_CRY_ODDS = 0.3;
@@ -340,13 +372,20 @@
     // What tells a member they have been left behind is the SCREEN, not a tile
     // count: somebody the player can see is not lost, however far across a wide
     // map they have wandered, and a leader walking about near them should never
-    // drag them back into line. These two are margins measured from the edge of
-    // the screen outward, in tiles: one to head back, one to be put back.
-    const LOOSE_SIGHT_MARGIN = 1;
+    // drag them back into line. This is the margin, measured from the edge of
+    // the screen outward in tiles, past which they are simply put back.
     const LOOSE_SNAP_MARGIN = Math.max(4, Number(params.looseSnap) || 10);
     // Once heading back, keep walking until this far INSIDE the edge again, so a
     // member does not stop dead on the rim and drift straight back out of it.
     const LOOSE_BACK_INSET = 2;
+    // Nobody is ever allowed to actually leave the screen: this is the band
+    // just INSIDE the edge that already counts as gone, so a member turns for
+    // the leader while they can still be seen rather than after they cannot.
+    const LOOSE_EDGE_INSET = 1;
+    // How far ahead the camera is read when asking the same question: the
+    // leader walking away carries the screen with them, and a member standing
+    // near the trailing edge is about to be off it even standing still.
+    const LOOSE_CAMERA_LOOKAHEAD = 2;
     // A stroll stays a stroll: this is how far a member sets out to go, which is
     // not the same question as when they come back.
     const LOOSE_ROAM = Math.min(Math.max(2, Number(params.looseLeash) || 7), 12);
@@ -596,6 +635,9 @@
         // Skip fast-travel / menu-opening nodes we cannot drive.
         const name = (ev.event() && ev.event().name) || "";
         if (/teleport|fast\s*travel/i.test(name)) return false;
+        // Another player's body in a network session is theirs to walk, not
+        // ours to talk to (Multiplayer/MultiplayerSystem.js).
+        if (window.MultiplayerRemote && window.MultiplayerRemote.isRemoteEvent(ev)) return false;
         return true;
     }
 
@@ -2412,7 +2454,7 @@
 
             const heartText = delta >= 0 ? `+${delta}♥` : `${delta}♥`;
             const outcomeText = success ? `Success (${heartText})` : `Rejected (${heartText})`;
-            const toastMsg = `🎲 [Romance] ${s.name} → ${t.name} (${act.label}): Rolled ${roll} vs ${chance}% ➔ ${outcomeText}`;
+            const toastMsg = `[Romance] ${s.name} → ${t.name} (${act.label}): Rolled ${roll} vs ${chance}% ➔ ${outcomeText}`;
 
             if (window.ParchmentToast && typeof window.ParchmentToast.show === "function") {
                 try {
@@ -2574,6 +2616,10 @@
         // The states of the game in which no follower may be walking itself.
         conditionsMet() {
             if (this.inMapBattle()) return false;
+            // A <Platform> map is a side view platformer (Map/PlatformerMode.js):
+            // the followers replay the leader's jump arc, and nothing here may
+            // walk one off a ledge on its own.
+            if (window.PlatformerMode && window.PlatformerMode.isActive()) return false;
             if (!$gamePlayer || !$gameMap || !$gameParty || !$gameMessage) return false;
             if (!(SceneManager._scene instanceof Scene_Map)) return false;
             if ($gameParty.inBattle()) return false;
@@ -2702,17 +2748,71 @@
         // the screen, positive outward (past the edge) and negative inward.
         offScreen(f, margin) {
             if (!f || !$gameMap || typeof f.screenX !== "function") return false;
+            return this.offScreenPoint(f.screenX(), f.screenY(), margin);
+        },
+
+        // The same question asked of a bare tile rather than of somebody
+        // standing on one, which is what lets an errand be turned down before
+        // it is ever set out on.
+        offScreenAt(x, y, margin) {
+            if (!$gameMap) return false;
+            const tw = $gameMap.tileWidth();
+            const th = $gameMap.tileHeight();
+            return this.offScreenPoint(
+                $gameMap.adjustX(x) * tw + tw / 2,
+                $gameMap.adjustY(y) * th + th,
+                margin
+            );
+        },
+
+        offScreenPoint(sx, sy, margin) {
+            if (!$gameMap) return false;
             const z = ($gameScreen && $gameScreen.zoomScale()) || 1;
             const zx = $gameScreen ? $gameScreen.zoomX() : 0;
             const zy = $gameScreen ? $gameScreen.zoomY() : 0;
             // The stage is scaled about the zoom centre, so that is where a
             // character's screen position really ends up on the canvas.
-            const x = (f.screenX() - zx) * z + zx;
-            const y = (f.screenY() - zy) * z + zy;
+            const x = (sx - zx) * z + zx;
+            const y = (sy - zy) * z + zy;
             const m = Number(margin) || 0;
             const mx = m * $gameMap.tileWidth() * z;
             const my = m * $gameMap.tileHeight() * z;
             return x < -mx || x > Graphics.width + mx || y < -my || y > Graphics.height + my;
+        },
+
+        // Is this tile somewhere a member may stand and still be seen? An
+        // errand is only ever set on a tile that answers yes.
+        inView(x, y) {
+            return !this.offScreenAt(x, y, -LOOSE_EDGE_INSET);
+        },
+
+        inViewOf(c) {
+            return !!c && this.inView(c.x, c.y);
+        },
+
+        // About to be off the screen, which is the moment they turn back rather
+        // than the moment after it. Three ways of being about to: standing in
+        // the band just inside the edge, walking into it, or standing still
+        // while the leader drags the camera off them.
+        leavingView(f) {
+            if (!f || !$gameMap) return false;
+            if (this.offScreenAt(f.x, f.y, -LOOSE_EDGE_INSET)) return true;
+            const d = f.direction();
+            if (d > 0 && f.isMoving()) {
+                const nx = $gameMap.roundXWithDirection(f.x, d);
+                const ny = $gameMap.roundYWithDirection(f.y, d);
+                if (this.offScreenAt(nx, ny, -LOOSE_EDGE_INSET)) return true;
+            }
+            if ($gamePlayer && $gamePlayer.isMoving()) {
+                // The camera follows the leader, so a step of theirs carries
+                // this member the same step the other way across the screen.
+                const pd = $gamePlayer.direction();
+                const k = LOOSE_CAMERA_LOOKAHEAD;
+                const dx = ($gameMap.roundXWithDirection($gamePlayer.x, pd) - $gamePlayer.x) * k;
+                const dy = ($gameMap.roundYWithDirection($gamePlayer.y, pd) - $gamePlayer.y) * k;
+                if ((dx || dy) && this.offScreenAt(f.x - dx, f.y - dy, -LOOSE_EDGE_INSET)) return true;
+            }
+            return false;
         },
 
         // Has this member been quiet long enough to say something, and has the
@@ -3013,11 +3113,63 @@
                 f.moveStraight(dir);
                 if (f.isMovementSucceeded()) return true;
             }
+            // Somebody is standing on the goal. Walking up to a person means
+            // walking up to the tile BESIDE them, never onto them: the engine's
+            // search refuses a tile another character occupies, so aiming at
+            // the person themselves returns nothing and the member would stand
+            // where they are for the whole visit.
+            if (this.stepBeside(f, x, y)) return true;
             // No dry way there. If what is in the way is water, they get in and
             // swim it: the engine already lets a swimming character onto those
             // tiles, and a member cut off by a river would otherwise stand on
             // the bank for ever.
-            return this.swimToward(f, x, y);
+            if (this.swimToward(f, x, y)) return true;
+            // Boxed in: the party closed around them, or they were put down in
+            // a corner. Rather than grind against the same wall until the goal
+            // times out, they look for any way out at all and take it.
+            return this.stepFree(f, x, y);
+        },
+
+        // The four tiles around the goal, nearest first, as stand-in goals.
+        stepBeside(f, x, y) {
+            if (!$gameMap) return false;
+            if (f.x === x && f.y === y) return false;
+            const around = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]
+                .filter(([nx, ny]) => $gameMap.isValid(nx, ny))
+                .filter(([nx, ny]) => nx !== f.x || ny !== f.y)
+                .sort((a, b) =>
+                    (Math.abs(a[0] - f.x) + Math.abs(a[1] - f.y)) -
+                    (Math.abs(b[0] - f.x) + Math.abs(b[1] - f.y)));
+            for (const [nx, ny] of around) {
+                const d = f.findDirectionTo(nx, ny);
+                if (d <= 0) continue;
+                f.moveStraight(d);
+                if (f.isMovementSucceeded()) return true;
+            }
+            return false;
+        },
+
+        // A way out of wherever they are wedged: any passable neighbour, the
+        // one that leaves them closest to where they were heading first. It is
+        // a step, not a path, but taken every frame it walks them out of the
+        // pocket and back into open ground where the search works again.
+        stepFree(f, x, y) {
+            if (!$gameMap) return false;
+            const dirs = [2, 4, 6, 8]
+                .map((d) => ({
+                    d,
+                    nx: $gameMap.roundXWithDirection(f.x, d),
+                    ny: $gameMap.roundYWithDirection(f.y, d),
+                }))
+                .filter((o) => $gameMap.isValid(o.nx, o.ny) && f.canPass(f.x, f.y, o.d))
+                .sort((a, b) =>
+                    (Math.abs(a.nx - x) + Math.abs(a.ny - y)) -
+                    (Math.abs(b.nx - x) + Math.abs(b.ny - y)));
+            for (const o of dirs) {
+                f.moveStraight(o.d);
+                if (f.isMovementSucceeded()) return true;
+            }
+            return false;
         },
 
         swimToward(f, x, y) {
@@ -3042,28 +3194,32 @@
         think(f) {
             const s = this.stateOf(f);
             if (f.isMoving()) return;
-            if (s.wait > 0) {
-                s.wait--;
-                return;
-            }
 
             // Left so far behind that walking home is pointless: put back.
             if (this.offScreen(f, LOOSE_SNAP_MARGIN)) {
                 this.placeBeside(f);
                 return;
             }
-            // Out of sight and nothing else matters, whatever they were doing:
-            // a member off the screen always heads for the leader. Once heading
-            // back they keep going until a little inside the edge, so nobody
-            // stops dead on the rim and drifts straight out of it again.
-            const gone = this.offScreen(f, LOOSE_SIGHT_MARGIN);
+            // About to be out of sight and nothing else matters, whatever they
+            // were doing and however long they meant to stand there doing it: a
+            // member on the point of leaving the screen heads for the leader at
+            // once, which is why this is asked before the pause they are
+            // sitting out. Once heading back they keep going until a little
+            // inside the edge, so nobody stops dead on the rim and drifts
+            // straight out of it again.
+            const gone = this.leavingView(f);
             const strayed = this.strayed(f, s.act === "return");
             if (gone || strayed || (s.act === "return" && this.offScreen(f, -LOOSE_BACK_INSET))) {
+                s.wait = 0;
                 if (s.act !== "return") {
                     this.clearGoal(s);
                     s.act = "return";
                 }
                 if (!this.stepTo(f, $gamePlayer.x, $gamePlayer.y)) s.wait = 20;
+                return;
+            }
+            if (s.wait > 0) {
+                s.wait--;
                 return;
             }
             if (s.act === "return") this.clearGoal(s);
@@ -3142,7 +3298,8 @@
                 const r = 2 + Math.random() * (roam - 1);
                 const x = Math.round($gamePlayer.x + Math.cos(a) * r);
                 const y = Math.round($gamePlayer.y + Math.sin(a) * r);
-                if ((x !== f.x || y !== f.y) && tilePassable(x, y) && this.inLeash(x, y)) {
+                if ((x !== f.x || y !== f.y) && tilePassable(x, y) && this.inLeash(x, y) &&
+                    this.inView(x, y)) {
                     this.clearGoal(s);
                     s.act = "walk";
                     s.gx = x;
@@ -3950,7 +4107,7 @@
             const s = this.stateOf(f);
             const consider = (c) => {
                 if (!c || c === f || this.stale(s, c)) return;
-                if (!this.inLeashOf(c)) return;
+                if (!this.inLeashOf(c) || !this.inViewOf(c)) return;
                 const d = this.dist(f, c);
                 if (d <= LOOSE_SCAN && d < bestD) {
                     best = c;
@@ -3981,7 +4138,7 @@
             const consider = (c) => {
                 if (!c || c === f || this.stale(s, c)) return;
                 if (c.isTransparent && c.isTransparent()) return;
-                if (!this.inLeashOf(c)) return;
+                if (!this.inLeashOf(c) || !this.inViewOf(c)) return;
                 const d = this.dist(f, c);
                 if (d <= LOOSE_SCAN && d < bestD) {
                     best = c;
@@ -4011,7 +4168,7 @@
             let bestD = LOOSE_SCAN + 1;
             for (const ev of $gameMap.events()) {
                 if (!isSceneryEvent(ev) || this.stale(s, ev)) continue;
-                if (!this.inLeashOf(ev)) continue;
+                if (!this.inLeashOf(ev) || !this.inViewOf(ev)) continue;
                 const d = this.dist(f, ev);
                 if (d <= LOOSE_SCAN && d < bestD) {
                     best = ev;
@@ -4075,6 +4232,94 @@
             Bubbles.clear();
         },
 
+        // ------------------------------------------------------- solid bodies
+        // A member walking the map for themselves is a body on it: the leader
+        // cannot walk through them, and they cannot walk through each other.
+        // The engine's own chain has them all pass through everything, which is
+        // right for a column glued to the leader and wrong for people standing
+        // about on their own.
+
+        // The loose member standing on this tile, if any. Somebody the engine
+        // is carrying (a vehicle, a recall, a map battle) is not a body: their
+        // through(true) is what walks them home through the walls.
+        followerAt(x, y, except) {
+            if (!$gamePlayer || !$gamePlayer.followers()) return null;
+            for (const f of $gamePlayer.followers().data()) {
+                if (f === except) continue;
+                // The companion at heel is walked through by everybody. It
+                // still obeys the map itself (it is not through), it simply is
+                // not a wall: a pet standing in a doorway must never be the
+                // reason the party cannot get out of a room.
+                if (this.isPet(f)) continue;
+                if (!f.isVisible() || f.isTransparent()) continue;
+                if (f.isThrough()) continue;
+                if (!this.activeFor(f)) continue;
+                if (f.pos(x, y)) return f;
+            }
+            return null;
+        },
+
+        // Is the leader blocked by one of them? The party may never wall the
+        // player in: with no free tile left around them, everyone is walked
+        // through again rather than leaving the game stuck.
+        blocksLeader(x, y) {
+            if (!this.active()) return false;
+            if ($gamePlayer.isInVehicle()) return false;
+            if (!this.followerAt(x, y)) return false;
+            for (const d of [2, 4, 6, 8]) {
+                const nx = $gameMap.roundXWithDirection($gamePlayer.x, d);
+                const ny = $gameMap.roundYWithDirection($gamePlayer.y, d);
+                if (this.followerAt(nx, ny)) continue;
+                if (!$gamePlayer.isMapPassable($gamePlayer.x, $gamePlayer.y, d)) continue;
+                if ($gameMap.eventsXyNt(nx, ny).some((e) => e.isNormalPriority())) continue;
+                return true; // there is a way out, so this one may be blocked
+            }
+            return false;
+        },
+
+        // Walking into somebody. A member (or the pet) standing where the
+        // leader wants to go steps out of the way instead of being a wall:
+        // sideways first, so they clear the lane the leader is walking down,
+        // then on ahead, then back the way the leader came. Whatever they were
+        // doing is dropped, and they hold still for a beat afterwards so they
+        // do not wander straight back onto the tile.
+        nudgeAside(d) {
+            if (!this.active() || !d) return false;
+            if ($gamePlayer.isInVehicle()) return false;
+            const x = $gameMap.roundXWithDirection($gamePlayer.x, d);
+            const y = $gameMap.roundYWithDirection($gamePlayer.y, d);
+            const f = this.followerAt(x, y);
+            if (!f || f.isMoving()) return false;
+            const side = (d === 2 || d === 8) ? [4, 6] : [2, 8];
+            if (Math.random() < 0.5) side.reverse();
+            for (const nd of side.concat([d, 10 - d])) {
+                const nx = $gameMap.roundXWithDirection(f.x, nd);
+                const ny = $gameMap.roundYWithDirection(f.y, nd);
+                if (!$gameMap.isValid(nx, ny)) continue;
+                if (!f.canPass(f.x, f.y, nd)) continue;
+                f.moveStraight(nd);
+                if (!f.isMovementSucceeded()) continue;
+                const s = this.stateOf(f);
+                if (s) {
+                    this.clearGoal(s);
+                    s.wait = Math.max(s.wait || 0, NUDGE_HOLD);
+                }
+                return true;
+            }
+            return false;
+        },
+
+        // The same question for a member: the leader is a body to them too.
+        blocksFollower(f, x, y) {
+            if (!this.activeFor(f)) return false;
+            // The other half of the same rule: nothing that walks through the
+            // pet may be walked into by it, or it would be left standing on the
+            // wrong side of the leader for ever.
+            if (this.isPet(f)) return false;
+            if (this.followerAt(x, y, f)) return true;
+            return !$gamePlayer.isThrough() && $gamePlayer.pos(x, y);
+        },
+
         // --------------------------------------------------------- talking to one
         // The member standing on the tile the leader is facing.
         facedFollower() {
@@ -4089,9 +4334,39 @@
             return null;
         },
 
+        // The companion at heel, when the leader is facing it. Asked whether or
+        // not the loose layer is running: chained into the marching column it
+        // still walks where the leader just was, and it is still the one thing
+        // in that column worth turning round to.
+        facedPet() {
+            if (!$gamePlayer || !$gamePlayer.followers()) return null;
+            if ($gamePlayer.isInVehicle()) return null;
+            const d = $gamePlayer.direction();
+            const fx = $gameMap.roundXWithDirection($gamePlayer.x, d);
+            const fy = $gameMap.roundYWithDirection($gamePlayer.y, d);
+            for (const f of $gamePlayer.followers().data()) {
+                if (!this.isPet(f)) continue;
+                if (!f.isVisible() || f.isTransparent()) continue;
+                if (f.pos(fx, fy)) return f;
+            }
+            return null;
+        },
+
         talkTo(f) {
+            if (this.isPet(f)) return this.petMenu(f);
             const actor = f && f.actor();
             if (!actor) return false;
+            // On a map that carries <Bubba: scene,scene>, Em is offered the
+            // map's questions and his sheet side by side rather than one or the
+            // other (DialogueSystem owns the menu and the gate).
+            const SD = window.StoryDialogue;
+            if (SD?.canAsk?.(actor.name())) {
+                f.setDirection(f.reverseDir($gamePlayer.direction()));
+                this.clearGoal(this.stateOf(f));
+                Bubbles.clear();
+                if (SD.askMenu?.(actor.actorId())) return true;
+                if (SD.ask()) return true;
+            }
             if (!window.NPCEmpathize || typeof window.NPCEmpathize.openForActor !== "function") return false;
             f.setDirection(f.reverseDir($gamePlayer.direction()));
             this.clearGoal(this.stateOf(f));
@@ -4099,9 +4374,245 @@
             window.NPCEmpathize.openForActor(actor.actorId());
             return true;
         },
+
+        // ------------------------------------------------------- the companion
+        // The pet has no actor behind it, so its Empathize sheet is not opened
+        // the way a member's is and none of the party's conversation is its to
+        // hold. What it is offered instead is a short menu: something that
+        // talks is talked to, something feral is petted (window.NPCCreature owns
+        // that boundary, and the record's own answer is what it was recruited
+        // with), and either way its own page is one choice down.
+        petMenu(f) {
+            const PS = window.PetSystem;
+            const pet = PS && PS.getActivePet ? PS.getActivePet() : null;
+            if (!pet) return false;
+            if ($gameMap.isEventRunning() || $gameMessage.isBusy()) return false;
+
+            f.setDirection(f.reverseDir($gamePlayer.direction()));
+            this.clearGoal(this.stateOf(f));
+            Bubbles.clear();
+
+            const sentient = this.petIsSentient(pet);
+            const ids = [sentient ? "talk" : "pet", "empathize", "cancel"];
+            const labels = [
+                T(sentient ? "AutoIdle.pet.actionTalk" : "AutoIdle.pet.actionPet"),
+                T("AutoIdle.pet.actionEmpathize"),
+                T("AutoIdle.pet.actionCancel"),
+            ];
+            $gameMessage.setChoices(labels, 0, ids.length - 1);
+            $gameMessage.setChoiceBackground(0);
+            $gameMessage.setChoicePositionType(2);
+            $gameMessage.setChoiceCallback((n) => {
+                switch (ids[n]) {
+                    case "talk": this.petSpeaks(f, pet); break;
+                    case "pet": this.petStroked(f, pet); break;
+                    case "empathize": this.petEmpathize(pet); break;
+                    default: break;
+                }
+            });
+            return true;
+        },
+
+        // Is there anybody home? The flag was baked onto the record when it was
+        // recruited (an explicit choice, or the <Talk> tag on the monster it
+        // came from), and a companion carrying a creature class is feral by the
+        // one rule that answers that question for everybody.
+        petIsSentient(pet) {
+            if (!pet) return false;
+            const NC = window.NPCCreature;
+            const classId = pet.training && pet.training.classId;
+            if (classId && NC && NC.isNonSentientClassId) {
+                return !NC.isNonSentientClassId(classId);
+            }
+            return !!pet.sentient;
+        },
+
+        // A word from the one that has words. Said in a bubble over its own
+        // head, like every other line spoken on the map.
+        petSpeaks(f, pet) {
+            const lines = T.pool("AutoIdle.pet.said");
+            if (!lines.length) return;
+            const line = lines[Math.floor(Math.random() * lines.length)]
+                .replace(/\{name\}/g, pet.name || "");
+            Bubbles.show(f, line);
+        },
+
+        // Making a fuss of the one that has none. Written about it rather than
+        // said by it, so a growl is never mistaken for conversation.
+        petStroked(f, pet) {
+            const lines = T.pool("AutoIdle.pet.petted");
+            if (!lines.length) return;
+            const line = lines[Math.floor(Math.random() * lines.length)]
+                .replace(/\{name\}/g, pet.name || "");
+            window.skipLocalization = true;
+            $gameMessage.add(line);
+            window.skipLocalization = false;
+        },
+
+        // Its own page, opened by name: with no event and no actor behind it,
+        // the society profile under its name is the whole of what there is.
+        petEmpathize(pet) {
+            const EM = window.NPCEmpathize;
+            if (!EM || typeof EM.openByName !== "function" || !pet.name) return;
+            EM.openByName(pet.name);
+        },
     };
 
     AutoIdle.loose = Loose;
+
+    // ========================================================================
+    // Scripted regrouping
+    // ========================================================================
+    // Two plugin commands an event may call to close the party up before a
+    // scene plays. Both of them HOLD the interpreter: the command written under
+    // one does not run until the walk is over, so a cutscene never opens on a
+    // party still strung out across the map.
+    //
+    // The loose layer keeps its hands off while one runs (an event is running,
+    // so canAct is false for every member anyway) and the walking here is the
+    // only thing moving them.
+    const REGROUP_WAIT = "aieRegroup";
+    const REGROUP_STORY_SWITCH = 75;   // story mode
+    const REGROUP_EM = "Em";           // i18n-ignore: actor name, matched at runtime
+    const REGROUP_BUBBA = "Bubba";     // i18n-ignore: actor name, matched at runtime
+
+    const Regroup = {
+        // Frames a regroup is given before whoever is still walking is simply
+        // put where they were walking to. A member on the far side of a maze
+        // may have no way round at all, and an event may not wait for ever.
+        LIMIT: 600,
+
+        _job: null,
+
+        busy() {
+            return !!this._job;
+        },
+
+        // Every member walking themselves back to the leader.
+        startParty() {
+            if (!this._available()) return;
+            this._job = { mode: "party", frames: 0 };
+        },
+
+        // Story mode only, and only with both of them in the party: whichever
+        // of the two the player is NOT holding walks up to the one they are,
+        // and the pair turn to face each other.
+        startPair() {
+            if (!this._available()) return;
+            if (!$gameSwitches || !$gameSwitches.value(REGROUP_STORY_SWITCH)) return;
+            const leader = $gameParty.leader();
+            if (!leader) return;
+            const name = leader.name();
+            const other = name === REGROUP_EM ? REGROUP_BUBBA
+                : (name === REGROUP_BUBBA ? REGROUP_EM : null);
+            if (!other) return;
+            const f = $gamePlayer.followers().data().find((m) => {
+                const a = m && m.isVisible() && m.actor && m.actor();
+                return !!a && a.name() === other;
+            });
+            if (!f) return;
+            this._job = { mode: "pair", frames: 0, follower: f };
+        },
+
+        _available() {
+            if (this._job) return false;
+            if (!$gamePlayer || !$gameMap || !$gameParty) return false;
+            if (!(SceneManager._scene instanceof Scene_Map)) return false;
+            if (Loose.inMapBattle()) return false;
+            return true;
+        },
+
+        update() {
+            const job = this._job;
+            if (!job) return;
+            if (!$gamePlayer || !$gameMap || !(SceneManager._scene instanceof Scene_Map) ||
+                $gamePlayer.isTransferring() || Loose.inMapBattle()) {
+                this._job = null;
+                return;
+            }
+            job.frames++;
+            const done = job.mode === "pair" ? this._stepPair(job) : this._stepParty(job);
+            if (done) {
+                this._job = null;
+                return;
+            }
+            if (job.frames >= this.LIMIT) {
+                this._force(job);
+                this._job = null;
+            }
+        },
+
+        // Everybody at the leader's elbow. Arrived is one tile away or closer,
+        // which is where the marching column would have left them.
+        _stepParty(job) {
+            let waiting = false;
+            for (const f of $gamePlayer.followers().data()) {
+                if (!f.isVisible() || Loose.heldByP2(f)) continue;
+                if (Loose.dist(f, $gamePlayer) <= 1) {
+                    if (!f.isMoving()) f.setDirection(f.reverseDir($gamePlayer.direction()));
+                    continue;
+                }
+                waiting = true;
+                if (f.isMoving()) continue;
+                if (Loose.offScreen(f, LOOSE_SNAP_MARGIN)) {
+                    Loose.placeBeside(f);
+                    continue;
+                }
+                f.setMoveSpeed($gamePlayer.realMoveSpeed());
+                Loose.stepTo(f, $gamePlayer.x, $gamePlayer.y);
+            }
+            return !waiting;
+        },
+
+        // The two of them. Walking is over when they stand next to each other;
+        // the command is over once they are actually looking at each other,
+        // which is a frame or two later.
+        _stepPair(job) {
+            const f = job.follower;
+            if (!f || !f.isVisible()) return true;
+            if (Loose.dist(f, $gamePlayer) > 1) {
+                if (!f.isMoving()) {
+                    f.setMoveSpeed($gamePlayer.realMoveSpeed());
+                    Loose.stepTo(f, $gamePlayer.x, $gamePlayer.y);
+                }
+                return false;
+            }
+            if (f.isMoving() || $gamePlayer.isMoving()) return false;
+            return this._faceOff(f);
+        },
+
+        // Turn the pair on each other. True once both are looking the right way.
+        _faceOff(f) {
+            const toLeader = dirBetween(f.x, f.y, $gamePlayer.x, $gamePlayer.y);
+            const toOther = dirBetween($gamePlayer.x, $gamePlayer.y, f.x, f.y);
+            if (toLeader) f.setDirection(toLeader);
+            if (toOther) $gamePlayer.setDirection(toOther);
+            // Standing on the same tile there is no direction to take: they are
+            // as face to face as they will get.
+            if (!toLeader || !toOther) return true;
+            return f.direction() === toLeader && $gamePlayer.direction() === toOther;
+        },
+
+        // Time is up: put whoever is still walking where they were walking to.
+        _force(job) {
+            if (job.mode === "pair") {
+                const f = job.follower;
+                if (f && f.isVisible()) {
+                    if (Loose.dist(f, $gamePlayer) > 1) Loose.placeBeside(f);
+                    this._faceOff(f);
+                }
+                return;
+            }
+            Loose.gatherNear();
+            for (const f of $gamePlayer.followers().data()) {
+                if (f.isVisible() && !Loose.heldByP2(f)) {
+                    f.setDirection(f.reverseDir($gamePlayer.direction()));
+                }
+            }
+        },
+    };
+
+    AutoIdle.regroup = Regroup;
 
     // ========================================================================
     // Taking the lead
@@ -4177,6 +4688,9 @@
         // The states of the game in which the lead may change hands at all.
         available() {
             if (!$gameParty || !$gamePlayer || !$gameMap || !$gameMessage) return false;
+            // Whether the lead may change hands at all is one answer for every
+            // end that asks (PartyRoster.canSwitchLeader), story mode included.
+            if (window.PartyRoster?.canSwitchLeader?.() === false) return false;
             if (!(SceneManager._scene instanceof Scene_Map)) return false;
             if (SceneManager.isSceneChanging()) return false;
             if ($gameParty.inBattle() || Loose.inMapBattle()) return false;
@@ -4424,6 +4938,23 @@
         clearFor(char) { Bubbles.clearFor(char); },
         clear() { Bubbles.clear(); },
     };
+    // The two regroup commands, reachable from another plugin as well as from
+    // an event: a written scene wants the party standing together before the
+    // first bust slides in, and the dialogue plugin has no event to write the
+    // command under.
+    // Named methods on the module itself rather than a second object standing
+    // in front of it: the frame update the scene calls lives there too, and a
+    // facade that replaced it left the commands running with nothing driving
+    // them.
+    Regroup.party = function () { this.startParty(); return this.busy(); };
+    Regroup.pair  = function () { this.startPair();  return this.busy(); };
+    // What a story scene asks for: in story mode the two leads close on
+    // each other, and anywhere else the party closes on the leader.
+    Regroup.forStory = function () {
+        this.startPair();
+        if (!this.busy()) this.startParty();
+        return this.busy();
+    };
     window.AutoIdleExplorer = AutoIdle;
 
     // ========================================================================
@@ -4496,13 +5027,49 @@
         _Game_Player_updateScroll_lead.call(this, lastScrolledX, lastScrolledY);
     };
 
+    // 2c) Collisions. Loose members are solid: to the leader, to each other and
+    //     to nobody else (an NPC still walks through them, as it always has).
+    const _Game_Player_isCollidedWithCharacters_loose = Game_Player.prototype.isCollidedWithCharacters;
+    Game_Player.prototype.isCollidedWithCharacters = function (x, y) {
+        if (_Game_Player_isCollidedWithCharacters_loose &&
+            _Game_Player_isCollidedWithCharacters_loose.call(this, x, y)) return true;
+        try {
+            return Loose.blocksLeader(x, y);
+        } catch (e) {
+            return false;
+        }
+    };
+
+    const _Game_Follower_isCollidedWithCharacters_loose = Game_Follower.prototype.isCollidedWithCharacters;
+    Game_Follower.prototype.isCollidedWithCharacters = function (x, y) {
+        if (_Game_Follower_isCollidedWithCharacters_loose &&
+            _Game_Follower_isCollidedWithCharacters_loose.call(this, x, y)) return true;
+        try {
+            return Loose.blocksFollower(this, x, y);
+        } catch (e) {
+            return false;
+        }
+    };
+
+    // 2d) ...but a body that can move is not a wall. Before the leader's own
+    //     step is resolved, whoever is standing on the tile they are walking
+    //     into is asked to step aside, so the party parts around the player
+    //     rather than penning them in.
+    const _Game_Player_executeMove_loose = Game_Player.prototype.executeMove;
+    Game_Player.prototype.executeMove = function (direction) {
+        try {
+            Loose.nudgeAside(direction);
+        } catch (e) { /* never block the leader's own step */ }
+        _Game_Player_executeMove_loose.call(this, direction);
+    };
+
     // 3) OK on a member standing in front of the leader opens their Empathize
     //    sheet, the same page the Dynamics roster opens. Checked before the
     //    engine's own action button so the member is not walked through.
     const _Game_Player_triggerButtonAction_loose = Game_Player.prototype.triggerButtonAction;
     Game_Player.prototype.triggerButtonAction = function () {
         if (Input.isTriggered("ok") && !this.isInVehicle()) {
-            const f = Loose.facedFollower();
+            const f = Loose.facedFollower() || Loose.facedPet();
             if (f && Loose.talkTo(f)) return true;
         }
         return _Game_Player_triggerButtonAction_loose.call(this);
@@ -4523,6 +5090,11 @@
             Loose.update();
         } catch (e) {
             console.error("[AutoIdleExplorer] loose party update error:", e);
+        }
+        try {
+            Regroup.update();
+        } catch (e) {
+            console.error("[AutoIdleExplorer] regroup update error:", e);
         }
         try {
             AutoIdle.ensureP2Hook();
@@ -5349,6 +5921,37 @@
         return _Game_Player_triggerButtonAction_partyCorpse.call(this);
     };
 
+    // --- 4b. Keeping the party on the map in step with the party on paper ---
+    // Somebody is dragged in or out of the party on the Dynamics board
+    // (UI/CustomMainMenuLayout.js), or signs on from Empathize, while the map is
+    // still standing there behind the menu. RPG Maker rebuilds the follower
+    // train from $gameParty on a refresh and no sooner, so without this the new
+    // companion has no sprite and the one who left keeps walking along: the
+    // members on the map are replaced here, once, wherever the change came from.
+    function syncPartySprites() {
+        if (typeof $gamePlayer === "undefined" || !$gamePlayer) return;
+        if (typeof $gameMap === "undefined" || !$gameMap || !$gameMap.mapId()) return;
+        $gamePlayer.refresh();
+        $gamePlayer.followers().refresh();
+        // The loose layer scatters the party over its own tiles, so a member who
+        // was never on the map has nowhere to stand until it places them.
+        Loose.gatherNear();
+    }
+
+    const _Game_Party_addActor_sprites = Game_Party.prototype.addActor;
+    Game_Party.prototype.addActor = function (actorId) {
+        const had = this._actors.includes(actorId);
+        _Game_Party_addActor_sprites.call(this, actorId);
+        if (!had) syncPartySprites();
+    };
+
+    const _Game_Party_removeActor_sprites = Game_Party.prototype.removeActor;
+    Game_Party.prototype.removeActor = function (actorId) {
+        const had = this._actors.includes(actorId);
+        _Game_Party_removeActor_sprites.call(this, actorId);
+        if (had) syncPartySprites();
+    };
+
     // --- 5. Leader Succession on Death in Permadeath / Blood & Oil ---
 
     const _Game_Actor_processMapDeath_succession = Game_Actor.prototype.processMapDeath;
@@ -5377,6 +5980,33 @@
         }
     };
 
+    // ========================================================================
+    // The two regroup commands
+    // ========================================================================
+    // The interpreter stops on this wait mode until the walk is over, so the
+    // command written under one of these runs with the party already closed up.
+    const _Game_Interpreter_updateWaitMode_regroup = Game_Interpreter.prototype.updateWaitMode;
+    Game_Interpreter.prototype.updateWaitMode = function () {
+        if (this._waitMode === REGROUP_WAIT) {
+            if (Regroup.busy()) return true;
+            this._waitMode = "";
+            return false;
+        }
+        return _Game_Interpreter_updateWaitMode_regroup.call(this);
+    };
+
+    function registerRegroup(names, start) {
+        for (const name of names) {
+            PluginManager.registerCommand(PLUGIN, name, function () {
+                start();
+                if (Regroup.busy()) this.setWaitMode(REGROUP_WAIT);
+            });
+        }
+    }
+
+    // The names as the editor lists them, and the names as they read in a
+    // command list, both of them accepted.
+    registerRegroup(["PartyRegroup", "party regroup"], () => Regroup.startParty());
+    registerRegroup(["EmBubbaRegroup", "Em Bubba regroup"], () => Regroup.startPair());
+
 })();
-
-

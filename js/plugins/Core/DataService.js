@@ -642,17 +642,18 @@
             // wardrobe, the creature-creation board and the enemies that roam
             // the map all read this one list. A two-headed one is still a
             // person, which is why DoubleHeadedHumanoid is on it.
-            PEOPLE_ARCHETYPES: ["Humanoid", "DoubleHeadedHumanoid", "Elven", "Goblin", "Dwarf"],
+            PEOPLE_ARCHETYPES: ["Humanoid", "DoubleHeadedHumanoid"],
 
             // Whether one wardrobe entry belongs in this world at all. This is
             // the single rule behind both the sprite a procedural inhabitant is
             // dealt and the bust that comes with it (a bust is a field of the
             // sheet's own entry, so gating the sheet gates the face with it).
             //
-            //   goblin  , only goblins: the sheet says so in its name or the
-            //             entry carries the Goblin archetype outright.
+            //   goblin  , only goblins: the sheet says so in its own name.
+            //             (Goblin is not an archetype, a goblin is a humanoid
+            //             wearing a goblin's face.)
             //   monster , nothing that reads as a person: every archetype
-            //             except Humanoid, Elven, Goblin and Dwarf.
+            //             except Humanoid and DoubleHeadedHumanoid.
             //   normal  , everything, which is every world made before this
             //             option existed.
             //
@@ -801,10 +802,8 @@
             // so. It is the same rule a goblin world narrows its whole pool by
             // (allowedInPopulation), named here so the world and the Horde's
             // own ground cannot drift apart.
-            isGoblinSheet(key, entry) {
-                if (String(key).toLowerCase().includes("goblin")) return true;
-                const e = entry || this.entry(key);
-                return !!(e && e.Archetype === "Goblin"); // i18n-ignore: Archetypes.json id
+            isGoblinSheet(key) {
+                return String(key).toLowerCase().includes("goblin");
             },
 
             // The goblin half of the wardrobe: the sheets the crowd of a

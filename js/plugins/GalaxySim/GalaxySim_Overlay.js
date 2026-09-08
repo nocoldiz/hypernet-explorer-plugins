@@ -156,6 +156,11 @@
       this._landingGridCallbacks = null; // { onPick, onCancel }
       this._service = null; // { title, subtitle, parts, footer } while the bay is open
       this._mineLog = null; // last few ore lines shown on the mining console
+      this._catTabs = [];
+      this._catTab = null;
+      // The catalog opens on what the camera is pointed at rather than on the
+      // whole sky: see _catVisibleGroups.
+      this._catInView = true;
     }
 
     _invalidateFocusables() { this._focusables = null; }
@@ -194,17 +199,23 @@
         `${T('Galaxy.hud.grandTour')}</span>` +
         `<span class="gx-btn gx-land focusable" tabindex="0" data-action="home" ` +
         `data-role="home-btn">${T('Galaxy.hud.home')}</span>` +
+        // The way onto the ship's own bridge, and into flying it by hand. Shown
+        // only while the ship is in orbit of a world, which is the only place
+        // there is a sky to fly it in (see Scene3D._takeTheHelm).
+        `<span class="gx-btn gx-ship focusable ui-closed" tabindex="0" data-action="bridge" ` +
+        `data-role="bridge-btn" title="${T('Galaxy.hud.bridgeTooltip')}">` +
+        `${T('Galaxy.hud.bridge')}</span>` +
         `<span class="gx-btn gx-sb gx-disabled focusable" tabindex="0" data-action="sb-bridge" ` +
         `data-role="sb-btn" title="${T('Galaxy.hud.quantumBridgeToTheSelected')}">` +
         `${T('Galaxy.hud.sbBridge')}</span>` +
         `<span class="gx-btn focusable" tabindex="0" data-action="return-earth-toggle" ` +
         `data-role="return-earth-btn">${T('Galaxy.hud.returnToEarth')}</span>` +
         `<span class="gx-btn gx-land focusable" tabindex="0" data-action="return-earth-course" ` +
-        `data-role="return-earth-course-btn" style="display:none" ` +
+        `data-role="return-earth-course-btn" class="ui-closed" ` +
         `title="${T('Galaxy.hud.plotACourseHomeMilky')}">` +
         `${T('Galaxy.hud.setCourse')}</span>` +
         `<span class="gx-btn gx-sb focusable" tabindex="0" data-action="return-earth-eb" ` +
-        `data-role="return-earth-eb-btn" style="display:none" ` +
+        `data-role="return-earth-eb-btn" class="ui-closed" ` +
         `title="${T('Galaxy.hud.quantumBridgeStraightHomeCosts')}">${T('Galaxy.hud.ebBridge')}</span>` +
         `<span class="gx-btn focusable" tabindex="0" data-action="close-map" ` +
         `data-role="close-map-btn" title="${T('Galaxy.hud.closeMapTooltip')}">${T('Galaxy.hud.closeMap')}</span>`;
@@ -262,7 +273,9 @@
 
       const mode = document.createElement("div");
       mode.id = "gx-mode";
-      mode.innerHTML = `<b>${T('Galaxy.hud.orbit')}</b> &nbsp;·&nbsp; ${T('Galaxy.hud.orbitHint')}`;
+      // The line names where the view is, and nothing else: the game prints no
+      // key legends (docs/task/ui_fixing.md).
+      mode.innerHTML = `<b>${T('Galaxy.hud.orbit')}</b>`;
 
       // Grand Tour: the one line left on screen while the slideshow runs -
       // every other panel, orbit guide and name is hidden (see .gx-tour-active).
@@ -302,6 +315,9 @@
         // whichever is selected.
         `<span class="gx-btn focusable gx-lg-mode is-on" tabindex="0" data-action="landing-mode" data-mode="land">${T('Galaxy.hud.landHere')}</span>` +
         `<span class="gx-btn focusable gx-lg-mode" tabindex="0" data-action="landing-mode" data-mode="walk">${T('Galaxy.hud.liminalWalk')}</span>` +
+        // The third way down, and the only one that never touches the ground:
+        // the ship itself is flown over the world (see startLiminalFlyby).
+        `<span class="gx-btn focusable gx-lg-mode" tabindex="0" data-action="landing-mode" data-mode="flyby">${T('Galaxy.hud.flyby')}</span>` +
         `<span class="gx-btn focusable" tabindex="0" data-action="landing-grid-cancel">${T('Galaxy.hud.cancel')}</span>` +
         `</div></div>`;
 
@@ -395,6 +411,7 @@
       this.els.catalog = catalog;
       this.els.catToggle = catToggle;
       this.els.homeBtn = catToggle.querySelector('[data-role="home-btn"]');
+      this.els.bridgeBtn = catToggle.querySelector('[data-role="bridge-btn"]');
       this.els.sbBtn = catToggle.querySelector('[data-role="sb-btn"]');
       this.els.returnEarthBtn = catToggle.querySelector('[data-role="return-earth-btn"]');
       this.els.returnEarthCourseBtn = catToggle.querySelector('[data-role="return-earth-course-btn"]');
@@ -461,9 +478,32 @@
           if (this.callbacks && this.callbacks.onSpeedSet) this.callbacks.onSpeedSet(v);
         });
       }
+      // The scrim behind the modal is the panel's own ::before, so a click on
+      // it lands on the panel element itself rather than on any of its rows:
+      // outside the box is a click on the sky, and it closes the catalog the
+      // way clicking away from a modal is expected to.
+      catalog.addEventListener("mousedown", (e) => {
+        const box = catalog.getBoundingClientRect();
+        const out = e.clientX < box.left || e.clientX > box.right ||
+                    e.clientY < box.top || e.clientY > box.bottom;
+        if (!out) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.callbacks.onCatalogToggle) this.callbacks.onCatalogToggle();
+        else this.setCatalogOpen(false);
+      });
+
       // The catalog owns the wheel while the pointer is over it: scroll the
       // list instead of letting the gesture fall through to the camera zoom.
       catalog.addEventListener("wheel", (e) => {
+        const body = catalog.querySelector(".gx-cat-scroll");
+        if (body) {
+          e.preventDefault();
+          e.stopPropagation();
+          const room = body.scrollHeight - body.clientHeight;
+          body.scrollTop = Math.max(0, Math.min(room, body.scrollTop + e.deltaY));
+          return;
+        }
         e.stopPropagation();
         const max = catalog.scrollHeight - catalog.clientHeight;
         if (max <= 0) return;
@@ -486,7 +526,16 @@
       if (!this.els.homeBtn || name === this._homeName) return;
       this._homeName = name;
       this.els.homeBtn.textContent = name || "Home";
-      this.els.homeBtn.style.display = name ? "" : "none";
+      window.UIPanel.toggle(this.els.homeBtn, !!name);
+      this._invalidateFocusables();
+    }
+
+    /** Offer the bridge, or take it away: there is only a ship to fly by hand
+     *  while it is sitting in orbit of a world. */
+    setBridgeOffered(on) {
+      if (!this.els.bridgeBtn || !!on === this._bridgeOffered) return;
+      this._bridgeOffered = !!on;
+      window.UIPanel.toggle(this.els.bridgeBtn, !!on);
       this._invalidateFocusables();
     }
 
@@ -517,21 +566,43 @@
       this._renderCatalog();
     }
 
+    // What the catalog is showing right now: with the In View filter on (the
+    // state it opens in), only the bodies the camera is actually pointed at,
+    // which is what makes the list worth reading at all - the full catalog is
+    // thousands of stars long. A row the scene could not place carries no
+    // `inView` at all and is treated as out of view.
+    _catVisibleGroups(tab) {
+      const groups = (tab && tab.groups) || [];
+      if (!this._catInView) return groups;
+      return groups
+        .map((g) => ({ ...g, items: g.items.filter((it) => it.inView) }))
+        .filter((g) => g.items.length);
+    }
+
+    _catCount(tab) {
+      return this._catVisibleGroups(tab).reduce((n, g) => n + g.items.length, 0);
+    }
+
     _renderCatalog() {
       const cat = this.els.catalog;
       if (!cat) return;
       const tabs = this._catTabs || [];
       const active = tabs.find((t) => t.id === this._catTab);
+      // A tab's count is what the filter has left in it, so the strip says
+      // where there is anything to look at before a tab is opened.
       const tabsHtml = tabs.length > 1
-        ? `<div class="gx-cat-tabs">` + tabs.map((t) =>
-          `<span class="gx-btn gx-cat-tab focusable${t.id === this._catTab ? " gx-on" : ""}" ` +
-          `tabindex="0" data-action="cat-tab" data-target="${esc(t.id)}">${esc(t.title)}</span>`
-        ).join("") + `</div>`
+        ? `<div class="gx-cat-tabs">` + tabs.map((t) => {
+          const n = this._catCount(t);
+          return `<span class="gx-btn gx-cat-tab focusable${t.id === this._catTab ? " gx-on" : ""}` +
+            `${n ? "" : " gx-cat-tab-empty"}" ` +
+            `tabindex="0" data-action="cat-tab" data-target="${esc(t.id)}">${esc(t.title)}` +
+            `<span class="gx-cat-count">${n}</span></span>`;
+        }).join("") + `</div>`
         : "";
       // Groups are headings, not drawers: every list is always open. Collapsing
       // them hid the contents behind an extra click for no gain - the panel
       // scrolls, and a heading you have to open is a heading you can miss.
-      const groups = (active && active.groups) || [];
+      const groups = this._catVisibleGroups(active);
       const body = groups.map((g) => {
         const rows = g.items.map((it) =>
           `<div class="gx-cat-row${g.life ? " gx-cat-life" : ""}` +
@@ -552,21 +623,54 @@
           `<span class="gx-cat-count">${g.items.length}</span></div>` +
           `<div class="gx-cat-body">${rows}</div>`;
       }).join("");
-      const scrollTop = cat.scrollTop;
+      // An empty list under the filter is not an empty catalog: it means the
+      // camera is pointed somewhere else, and the way out is the filter, not
+      // more scrolling.
+      const emptyText = this._catInView
+        ? T('Galaxy.hud.nothingInView')
+        : ((active && active.empty) || T('Galaxy.hud.nothingCatalogued'));
+      const prev = cat.querySelector(".gx-cat-scroll");
+      const scrollTop = prev ? prev.scrollTop : 0;
       cat.innerHTML =
-        `<div class="gx-title">${T('Galaxy.hud.catalog')}</div>` + tabsHtml +
-        (body || `<div class="gx-cat-empty">${
-          esc((active && active.empty) || "${T('Galaxy.hud.nothingCatalogued')}")}</div>`);
-      cat.scrollTop = scrollTop;
+        `<div class="gx-cat-head">` +
+          `<div class="gx-title">${T('Galaxy.hud.catalog')}</div>` +
+          `<span class="gx-btn gx-cat-filter focusable${this._catInView ? " gx-on" : ""}" ` +
+            `tabindex="0" data-action="cat-view" ` +
+            `title="${T('Galaxy.hud.catalogViewTooltip')}">` +
+            `${this._catInView ? T('Galaxy.hud.catalogInView') : T('Galaxy.hud.catalogAll')}</span>` +
+          `<span class="gx-btn focusable" tabindex="0" data-action="catalog">` +
+            `${T('Galaxy.hud.close')}</span>` +
+        `</div>` + tabsHtml +
+        `<div class="gx-cat-scroll">` +
+        (body || `<div class="gx-cat-empty">${esc(emptyText)}</div>`) +
+        `</div>`;
+      const scroller = cat.querySelector(".gx-cat-scroll");
+      if (scroller) scroller.scrollTop = scrollTop;
       this._wire(cat);
       this._invalidateFocusables();
+    }
+
+    // In View / All. The list is rebuilt where it stands; the scroll goes back
+    // to the top, since the rows under the cursor are not the same rows.
+    _setCatalogViewFilter(on) {
+      const wanted = on == null ? !this._catInView : !!on;
+      if (wanted === this._catInView) return;
+      this._catInView = wanted;
+      this._focusEl = null;
+      // The scene answers this by re-marking the rows and handing them back
+      // through setCatalog, which renders; the render below is what happens
+      // when nobody is listening.
+      if (this.callbacks.onCatalogFilter) this.callbacks.onCatalogFilter(wanted);
+      this._renderCatalog();
+      this._refocusCatalog('[data-action="cat-view"]');
     }
 
     _setCatalogTab(id) {
       if (!id || id === this._catTab) return;
       this._catTab = id;
       this._focusEl = null;
-      if (this.els.catalog) this.els.catalog.scrollTop = 0;
+      const scroller = this.els.catalog && this.els.catalog.querySelector(".gx-cat-scroll");
+      if (scroller) scroller.scrollTop = 0;
       this._renderCatalog();
       this._refocusCatalog(`[data-action="cat-tab"][data-target="${id}"]`);
     }
@@ -581,15 +685,24 @@
     }
 
     isCatalogOpen() {
-      return !!(this.els.catalog && this.els.catalog.style.display === "block");
+      return window.UIPanel.isOpen(this.els.catalog);
+    }
+
+    /** Whether the open catalog is showing only what the camera has in frame. */
+    isCatalogInView() {
+      return this.isCatalogOpen() && !!this._catInView;
     }
 
     setCatalogOpen(open) {
       if (!this.els.catalog) return;
-      this.els.catalog.style.display = open ? "block" : "none";
+      window.UIPanel.toggle(this.els.catalog, open);
       if (open) {
-        this.els.catalog.scrollTop = 0;
+        // Every opening starts on what the camera is looking at: the filter is
+        // a way of reading the list, not a setting to remember.
+        this._catInView = true;
         this._renderCatalog();
+        const scroller = this.els.catalog.querySelector(".gx-cat-scroll");
+        if (scroller) scroller.scrollTop = 0;
       }
       this._focusEl = null;
       this._applyFocusClass();
@@ -629,18 +742,18 @@
       }
       if (this.els.speed && !this._speedShown) {
         this._speedShown = true;
-        this.els.speed.style.display = "block";
+        window.UIPanel.open(this.els.speed);
         this._invalidateFocusables();
       }
     }
     hideSpeed() {
       if (this.els.speed && this._speedShown) {
         this._speedShown = false;
-        this.els.speed.style.display = "none";
+        window.UIPanel.close(this.els.speed);
         this._invalidateFocusables();
       }
     }
-    isSpeedShown() { return this.els.speed && this.els.speed.style.display === "block"; }
+    isSpeedShown() { return window.UIPanel.isOpen(this.els.speed); }
 
     // ---- Fuel gauges ------------------------------------------------------
     /**
@@ -662,7 +775,7 @@
       const hfFrac = hfMax > 0 ? hf / hfMax : 0;
       const low = hfFrac < 0.2;
       if (this.els.hfFill) {
-        this.els.hfFill.style.width = (hfFrac * 100).toFixed(1) + "%";
+        window.UIPanel.setBar(this.els.hfFill, (hfFrac * 100).toFixed(1));
         this.els.hfFill.classList.toggle("gx-low", low);
       }
       if (this.els.hfVal) {
@@ -693,7 +806,7 @@
       const mfMax = f.mapFuelMax || 10000;
       const mf = Math.max(0, f.mapFuel || 0);
       if (this.els.mfFill) {
-        this.els.mfFill.style.width = (Math.min(1, mf / mfMax) * 100).toFixed(1) + "%";
+        window.UIPanel.setBar(this.els.mfFill, (Math.min(1, mf / mfMax) * 100).toFixed(1));
       }
       if (this.els.mfVal) {
         this.els.mfVal.textContent = Math.round(mf).toLocaleString() + " / " +
@@ -746,8 +859,8 @@
     setReturnEarthOpen(open) {
       this._returnEarthOpen = !!open;
       const show = this._returnEarthOpen ? "" : "none";
-      if (this.els.returnEarthCourseBtn) this.els.returnEarthCourseBtn.style.display = show;
-      if (this.els.returnEarthEbBtn) this.els.returnEarthEbBtn.style.display = show;
+      window.UIPanel.toggle(this.els.returnEarthCourseBtn, show);
+      window.UIPanel.toggle(this.els.returnEarthEbBtn, show);
       this._invalidateFocusables();
     }
 
@@ -771,30 +884,26 @@
       const flash = this.els.warpFlash;
       const core = this.els.warpCore;
       const box = this.els.warpBox;
-      w.style.display = "block";
+      window.UIPanel.open(w);
       // Restart the CSS animations by clearing and reassigning on the next frame.
-      flash.style.animation = "none";
-      core.style.animation = "none";
-      if (box) box.style.animation = "none";
+      flash.classList.remove("gx-warping");
+      core.classList.remove("gx-warping");
+      if (box) box.classList.remove("gx-warping");
       // eslint-disable-next-line no-unused-expressions
       void w.offsetWidth;
       const DUR = 1200;
-      flash.style.animation = `gx-warp-flash-kf ${DUR}ms ease-in-out forwards`;
-      core.style.animation = `gx-warp-core-kf ${DUR}ms ease-in forwards`;
-      if (box) {
-        box.style.animation =
-          `gx-warp-box-kf ${DUR}ms ease-in-out forwards, ` +
-          `gx-warp-box-bg-kf ${DUR}ms linear forwards`;
-      }
+      flash.classList.add("gx-warping");
+      core.classList.add("gx-warping");
+      if (box) box.classList.add("gx-warping");
       if (this._warpMidTimer) clearTimeout(this._warpMidTimer);
       if (this._warpEndTimer) clearTimeout(this._warpEndTimer);
       // Fires once the door is fully open (the kf plateau starts at 42%).
       this._warpMidTimer = setTimeout(() => { if (mid) mid(); }, DUR * 0.42);
       this._warpEndTimer = setTimeout(() => {
-        w.style.display = "none";
-        flash.style.animation = "none";
-        core.style.animation = "none";
-        if (box) box.style.animation = "none";
+        window.UIPanel.close(w);
+        flash.classList.remove("gx-warping");
+        core.classList.remove("gx-warping");
+        if (box) box.classList.remove("gx-warping");
         if (done) done();
       }, DUR);
     }
@@ -805,8 +914,8 @@
       const pct = Math.round((1 - Math.max(0, Math.min(1, f || 0))) * 1000) / 10;
       if (pct === this._zoomPct) return; // skip redundant style writes
       this._zoomPct = pct;
-      this.els.zoomKnob.style.top = pct + "%";
-      if (this.els.zoomFill) this.els.zoomFill.style.height = (100 - pct) + "%";
+      this.els.zoomKnob.style.setProperty("--ui-at-y", pct + "%");
+      window.UIPanel.setBar(this.els.zoomFill, 100 - pct, "h");
     }
 
     setScale(name, sub) {
@@ -838,7 +947,7 @@
       this.root.classList.toggle("gx-tour-active", on);
       if (this.els.tourHint) {
         if (on) this.els.tourHint.innerHTML = padGlyphs(hintHtml || "");
-        this.els.tourHint.style.display = on ? "block" : "none";
+        window.UIPanel.toggle(this.els.tourHint, on);
       }
       this._invalidateFocusables();
     }
@@ -853,11 +962,10 @@
         t.innerHTML = `${esc(name)}` +
           (type ? `<div class="gx-tt-type">${esc(String(type).replace(/_/g, " "))}</div>` : "");
       }
-      t.style.left = x + "px";
-      t.style.top = y + "px";
-      if (t.style.display !== "block") t.style.display = "block";
+      window.UIPanel.placeAt(t, x, y);
+      window.UIPanel.open(t);
     }
-    hideTooltip() { if (this.els.tooltip) this.els.tooltip.style.display = "none"; }
+    hideTooltip() { window.UIPanel.close(this.els.tooltip); }
 
     // ---- Selection panel --------------------------------------------------
     hasSelection() { return !!this._selection; }
@@ -1080,7 +1188,7 @@
     }
 
     _openInfo() {
-      this.els.info.style.display = "block";
+      window.UIPanel.open(this.els.info);
       this._wire(this.els.info);
       this._focusEl = null;
       this._invalidateFocusables();
@@ -1090,7 +1198,7 @@
       this._selection = null;
       this._focusEl = null;
       this._applyFocusClass();
-      if (this.els.info) this.els.info.style.display = "none";
+      window.UIPanel.close(this.els.info);
       this._invalidateFocusables();
     }
 
@@ -1119,16 +1227,16 @@
       this._syncLandingMode();
       this._landingGridCallbacks = { onPick: opts.onPick, onCancel: opts.onCancel };
       this.els.landingGridTitle.textContent = `${T('Galaxy.hud.chooseLandingSite')} · ${planet.name || "Planet"}`;
-      this.els.landingGrid.style.display = "flex";
+      window.UIPanel.open(this.els.landingGrid);
       this._focusEl = null;
       this._invalidateFocusables();
       this._redrawLandingGrid();
     }
 
-    // Which of the two ways down is armed, shown on the buttons themselves.
+    // Which of the three ways down is armed, shown on the buttons themselves.
     setLandingMode(mode) {
       const lg = this._landingGrid;
-      if (!lg || (mode !== 'land' && mode !== 'walk')) return;
+      if (!lg || (mode !== 'land' && mode !== 'walk' && mode !== 'flyby')) return;
       lg.mode = mode;
       this._syncLandingMode();
       if (window.SoundManager) SoundManager.playCursor();
@@ -1151,7 +1259,7 @@
     hideLandingGrid() {
       if (!this.isLandingGridOpen()) return;
       const cb = this._landingGridCallbacks;
-      this.els.landingGrid.style.display = "none";
+      window.UIPanel.close(this.els.landingGrid);
       this._landingGrid = null;
       this._landingGridCallbacks = null;
       this._invalidateFocusables();
@@ -1176,7 +1284,7 @@
       if (!lg || !cb) return;
       const { gx, gy } = lg.cursor;
       const mode = lg.mode || 'land';
-      this.els.landingGrid.style.display = "none";
+      window.UIPanel.close(this.els.landingGrid);
       this._landingGrid = null;
       this._landingGridCallbacks = null;
       this._invalidateFocusables();
@@ -1213,7 +1321,7 @@
         parts: opts.parts || [],
         footer: opts.footer || "",
       };
-      this.els.service.style.display = "flex";
+      window.UIPanel.open(this.els.service);
       this._focusEl = null;
       this.renderService(opts.parts, opts.subtitle, opts.footer);
     }
@@ -1224,7 +1332,7 @@
 
     hideService() {
       if (!this.isServiceOpen()) return;
-      this.els.service.style.display = "none";
+      window.UIPanel.close(this.els.service);
       this._service = null;
       this._invalidateFocusables();
     }
@@ -1257,14 +1365,14 @@
             `tabindex="0" data-action="service-part" data-part="${esc(p.name)}">${T('Galaxy.hud.repair')}</span>`;
         return `<div class="gx-svc-part${p.critical ? " gx-crit" : ""}${done ? " gx-ok" : ""}">` +
           `<div class="gx-svc-main"><div class="gx-svc-name">${esc(p.label || p.name)}` +
-          `${p.critical ? ` <span class="gx-short" style="color:#ff5252">${T('Galaxy.hud.critical')}</span>` : ""}</div>` +
+          `${p.critical ? ` <span class="gx-short gx-crit-ink">${T('Galaxy.hud.critical')}</span>` : ""}</div>` +
           `<div class="gx-svc-note">${esc(p.note || "")}</div>` +
           `<div class="gx-svc-cost">${costTxt}</div></div>` +
-          `<div class="gx-svc-bar"><div class="gx-svc-fill${cls}" style="width:${pct}%"></div></div>` +
+          `<div class="gx-svc-bar"><div class="gx-svc-fill${cls}" style="--ui-bar-w:${pct}%"></div></div>` +
           `<div class="gx-svc-pct">${pct}%</div>${btn}</div>`;
       }).join("");
       this.els.svcActions.innerHTML =
-        (S.footer ? `<div class="gx-muted" style="margin-bottom:6px">${S.footer}</div>` : "") +
+        (S.footer ? `<div class="gx-muted gx-svc-footer">${S.footer}</div>` : "") +
         `<span class="gx-btn gx-land focusable" tabindex="0" data-action="service-all">` +
         `${T('Galaxy.hud.serviceEverythingAffordable')}</span>` +
         `<span class="gx-btn focusable" tabindex="0" data-action="service-close">${T('Galaxy.hud.close')}</span>`;
@@ -1280,7 +1388,7 @@
     // ---- Strip-mining console ---------------------------------------------
     showMining(state) {
       if (!this.els.mining) return;
-      this.els.mining.style.display = "block";
+      window.UIPanel.open(this.els.mining);
       this._mineLog = [];
       this.updateMining(state);
       this._invalidateFocusables();
@@ -1292,7 +1400,7 @@
 
     hideMining() {
       if (!this.isMiningOpen()) return;
-      this.els.mining.style.display = "none";
+      window.UIPanel.close(this.els.mining);
       this._mineLog = null;
       this._invalidateFocusables();
     }
@@ -1306,7 +1414,7 @@
       const secs = Math.max(0, Math.round(state.elapsed || 0));
       this.els.mineClock.textContent =
         `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
-      this.els.mineFill.style.width = pct.toFixed(1) + "%";
+      window.UIPanel.setBar(this.els.mineFill, pct.toFixed(1));
       this.els.mineStat.textContent =
         T('Galaxy.hud.mineProgress', { mined: Math.round(state.mined), capacity: cap, eta: state.eta || 0 });
       this.els.mineFuel.textContent =
@@ -1328,7 +1436,7 @@
     showAnomaly(view, opts) {
       if (!this.els.anomaly) return;
       this._anomaly = Object.assign({ where: "" }, opts || {});
-      this.els.anomaly.style.display = "flex";
+      window.UIPanel.open(this.els.anomaly);
       this.renderAnomaly(view);
     }
 
@@ -1338,7 +1446,7 @@
 
     hideAnomaly() {
       if (!this.isAnomalyOpen()) return;
-      this.els.anomaly.style.display = "none";
+      window.UIPanel.close(this.els.anomaly);
       this._anomaly = null;
       this._focusEl = null;
       this._invalidateFocusables();
@@ -1376,12 +1484,11 @@
         const chipOf = (c) => {
           const PA = window.ProceduralAdventure;
           const t = (PA && PA.Stage && PA.Stage.chipText) ? PA.Stage.chipText(c) : "";
-          return t ? ` <span style="border:1px solid currentColor;border-radius:9px;` +
-            `padding:0 7px;font-size:0.8em;opacity:0.85;white-space:nowrap;">${esc(t)}</span>` : "";
+          return t ? ` <span class="gx-anom-tag">${esc(t)}</span>` : "";
         };
         this.els.anomChoices.innerHTML = (view.choices || []).map((c, i) =>
           `<span class="gx-anom-choice focusable" tabindex="0" data-action="anom-choice" ` +
-          `data-index="${i}"${c.locked ? ' style="opacity:0.45;"' : ""}>` +
+          `data-index="${i}"${c.locked ? ' data-locked="1"' : ""}>` +
           `<span class="gx-anom-num">${i + 1}</span>${esc(c.text)}${chipOf(c)}</span>`
         ).join("");
       }
@@ -1412,12 +1519,15 @@
       const cb = this.callbacks;
       // Catalog tabs and drawers are panel-local: they never reach the scene.
       if (action === "cat-tab") { this._setCatalogTab(btn.getAttribute("data-target")); return; }
+      if (action === "cat-view") { this._setCatalogViewFilter(); return; }
       if (action === "enter-system" && cb.onEnterSystem) {
         cb.onEnterSystem(btn.getAttribute("data-target"));
       } else if (action === "travel-system" && cb.onTravelSystem) {
         cb.onTravelSystem(btn.getAttribute("data-target"));
       } else if (action === "travel-planet" && cb.onTravelPlanet) {
         cb.onTravelPlanet(this._selection);
+      } else if (action === "bridge" && cb.onBridge) {
+        cb.onBridge();
       } else if (action === "land" && cb.onLand) {
         cb.onLand(this._selection);
       } else if (action === "landing-mode") {

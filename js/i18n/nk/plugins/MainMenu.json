@@ -41,6 +41,28 @@
     "returnToWorldMap": "RETURN TA WORLD MAP",
     "chooseLandingSite": "CHOOSE LANDIN' SITE"
   },
+  "cmdDesc": {
+    "backpack": "MANAGE PARTY INVENTORY 'N GEAR",
+    "equip": "CHANGE WEAPONS, ARMOR 'N LOOT",
+    "skills": "CHECK 'N CAST SPELLS 'N SKILLS",
+    "status": "CHECK STATS, BUFFS 'N CONDITIONS",
+    "biologics": "MONITOR ORGANS, IMPLANTS 'N GUTS",
+    "questLog": "TRACK QUESTS 'N LOG ENTRIES",
+    "dynamics": "MANAGE DA CREW, TURN ORDER 'N HISTORY",
+    "pets": "MANAGE DA PETS, MOUNTS 'N COMPANIONS",
+    "tools": "USE DA GADGETS, GEAR 'N UTILITY TOOLS",
+    "worldMap": "LOOK AT DA WORLD MAP 'N ROUTES",
+    "vehicles": "SUMMON, RIDE 'N BOARD VEHICLES",
+    "wait": "PASS DA TIME 'N WAIT OUT 'ERE",
+    "hyperdeck": "BOOT UP DA HYPERDECK TERMINAL",
+    "help": "CHECK OUT DA MANUAL, GUIDES 'N RULES",
+    "save": "SAVE DA GAME 'N PROGRESS",
+    "preferences": "TWEAK SETTIN'S, AUDIO 'N CONTROLS",
+    "resign": "QUIT DA GAME 'N GO TA TITLE",
+    "stopTravel": "STOP TRAVELLIN' 'N LOOK AROUND",
+    "returnToWorldMap": "BAIL OUT 'N GO BACK TA MAP",
+    "returnToShip": "HOP BACK INTO DA STARSHIP"
+  },
   "dynamics": {
     "roster": "ROSTER",
     "rosterSub": "{count} TRAVELLIN', SET INACTIVE OR CHANGE LEADER",

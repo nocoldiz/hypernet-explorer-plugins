@@ -2,7 +2,8 @@
   "menu": {
     "explore": "탐험",
     "reconnect": "재접속",
-    "tutorial": "튜토리얼",
+    "storyMode": "새 스토리",
+    "continueStory": "스토리 이어하기",
     "minigames": "미니게임",
     "sandbox": "샌드박스",
     "worlds": "세계",
@@ -15,7 +16,8 @@
   "menuOverlay": {
     "explore": "탐험",
     "reconnect": "재접속",
-    "tutorial": "튜토리얼",
+    "storyMode": "새 스토리",
+    "continueStory": "스토리 이어하기",
     "minigames": "미니게임",
     "sandbox": "샌드박스",
     "worlds": "세계",

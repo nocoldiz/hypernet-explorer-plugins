@@ -203,14 +203,16 @@
 
   const TRAIT_LABELS = () => dateBank('ErisDate.traitLabels');
 
-  // Inline IconSet sprite for the date's DOM pages.
+  // Inline IconSet sprite for the DOM pages. The frame is a computed offset, so
+  // it goes in as custom properties and .eris-icon in css/theme.css draws it.
   function erisIconHTML(iconIndex, size = 20) {
     const x = (iconIndex % 16) * size;
     const y = Math.floor(iconIndex / 16) * size;
-    return `<span class="eris-icon" style="display:inline-block;vertical-align:middle;width:${size}px;height:${size}px;` +
-      `background-image:url('img/system/IconSet.png');background-size:${size * 16}px auto;` +
-      `background-position:-${x}px -${y}px;image-rendering:pixelated;"></span>`;
+    return `<span class="eris-icon" style="--icon-size:${size}px;--icon-x:-${x}px;--icon-y:-${y}px;"></span>`;
   }
+
+  // The mark under the newest line while the date waits on the reader.
+  const CARET_WAIT = '▾';
 
   function moodIconHTML(mood, size = 20) {
     return erisIconHTML(MOOD_ICONS[mood] || MOOD_ICON_DEFAULT, size);
@@ -1990,54 +1992,44 @@
       }).join('');
 
       this._container.innerHTML = `
-        <style>
-          @keyframes erisHeartPulse { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(1); } 100% { transform: scale(1); } }
-          .eris-pulse-icon { display: inline-block; animation: erisHeartPulse 0.85s ease-in-out infinite; }
-          @keyframes erisEldritchFlicker {
-            0%, 100% { filter: invert(1) hue-rotate(120deg) saturate(2.2) contrast(1.15); }
-            43% { filter: invert(1) hue-rotate(160deg) saturate(3) contrast(1.3); }
-            47% { filter: invert(0) hue-rotate(300deg) saturate(0.3) brightness(0.5); }
-            52% { filter: invert(1) hue-rotate(90deg) saturate(2.6) contrast(1.4); }
-            56% { filter: invert(1) hue-rotate(120deg) saturate(2.2) contrast(1.15); }
-          }
-          .eris-eldritch-portrait { animation: erisEldritchFlicker 4.3s steps(1) infinite; }
-        </style>
         <div class="book-spread">
-          <div class="left-page" style="justify-content:flex-start;">
-            <h2 class="title">${T('ErisDate.line.theDate')}</h2>
+          <div class="left-page page-top">
+            <div class="page-header-bar"><h2 class="title">${T('ErisDate.line.theDate')}</h2></div>
             <div class="eris-dialogue-log" id="eris-log">${logHTML}</div>
             <div class="eris-choices-panel" id="eris-choices"></div>
           </div>
-          <div class="right-page" style="justify-content:flex-start;">
-            <h2 class="title">Eris</h2>
+          <div class="right-page page-top">
+            <div class="page-header-bar"><h2 class="title">Eris</h2></div>
             <div class="eris-date-portrait-frame">
               <img class="eris-date-portrait${this.isEldritch() ? ' eris-eldritch-portrait' : ''}" id="eris-date-portrait" src="img/pictures/Eris.png" alt="Eris">
             </div>
-            <div class="eris-date-badges">
-              <span class="eris-mood-badge" id="eris-mood-badge">${moodIconHTML(this.mood)} ${this._moodLabel()}</span>
-              <span class="eris-mood-badge">${this._locationLabel()}</span>
-              <span class="eris-mood-badge">${T('ErisDate.hud.tone')}: ${this._toneLabel()}</span>
+            <div class="ui-chip-row">
+              <span class="ui-chip" id="eris-mood-badge">${moodIconHTML(this.mood)} ${this._moodLabel()}</span>
+              <span class="ui-chip">${this._locationLabel()}</span>
+              <span class="ui-chip">${T('ErisDate.hud.tone')}: ${this._toneLabel()}</span>
             </div>
-            <div class="eris-chaos-meter">
+            <div class="eris-meter">
               <div class="meter-label">${erisIconHTML(OPINION_ICON, 16)} ${T('ErisDate.line.opinion')}</div>
-              <div class="eris-chaos-track">
-                <div class="eris-chaos-fill eris-opinion-fill" id="eris-opinion-fill" style="width:${this.opinion / 10}%"></div>
+              <div class="eris-meter-track">
+                <div class="eris-meter-fill eris-opinion-fill" id="eris-opinion-fill" style="--fill:${this.opinion / 10}%"></div>
               </div>
             </div>
-            <div class="eris-bounty-total">
-              <span>${T('ErisDate.line.rapport')}</span>
-              <span id="eris-opinion-value">${this.opinion} / 1000</span>
+            <div class="eris-rows">
+              <div class="inspect-spec-row">
+                <span class="inspect-spec-label">${T('ErisDate.line.rapport')}</span>
+                <span class="inspect-spec-value" id="eris-opinion-value">${this.opinion} / 1000</span>
+              </div>
+              <div class="inspect-spec-row">
+                <span class="inspect-spec-label">${T('ErisDate.hud.you')}</span>
+                <span class="inspect-spec-value" id="eris-heart-you">${this._heartHTML(this.hearts.you, false)}</span>
+              </div>
+              <div class="inspect-spec-row">
+                <span class="inspect-spec-label">${T('ErisDate.hud.her')}</span>
+                <span class="inspect-spec-value" id="eris-heart-her">${this._heartHTML(this.hearts.her, this.isEldritch())}</span>
+              </div>
             </div>
-            <div class="eris-bounty-total">
-              <span>${T('ErisDate.hud.you')}</span>
-              <span id="eris-heart-you">${this._heartHTML(this.hearts.you, false)}</span>
-            </div>
-            <div class="eris-bounty-total">
-              <span>${T('ErisDate.hud.her')}</span>
-              <span id="eris-heart-her">${this._heartHTML(this.hearts.her, this.isEldritch())}</span>
-            </div>
-            <h3 class="h3">${T('ErisDate.line.impressions')}</h3>
-            <div class="eris-crimes-list" id="eris-traits">${this._traitsHTML()}</div>
+            <h3 class="inspect-section-title">${T('ErisDate.line.impressions')}</h3>
+            <div class="eris-rows" id="eris-traits">${this._traitsHTML()}</div>
           </div>
         </div>`;
 
@@ -2052,10 +2044,10 @@
       if (eldritch) {
         const readings = bank(ELDRITCH().pulse);
         const glyph = readings.length ? pick(readings) : '???';
-        return `<span class="eris-pulse-icon" style="animation-duration:${(0.1 + Math.random() * 0.2).toFixed(2)}s">${erisIconHTML(OPINION_ICON, 16)}</span> ${glyph}`;
+        return `<span class="eris-pulse-icon" style="--pulse-rate:${(0.1 + Math.random() * 0.2).toFixed(2)}s">${erisIconHTML(OPINION_ICON, 16)}</span> ${glyph}`;
       }
       const value = Math.round(bpm);
-      return `<span class="eris-pulse-icon" style="animation-duration:${(60 / value).toFixed(2)}s">${erisIconHTML(OPINION_ICON, 16)}</span> ${value} ${T('ErisDate.hud.bpm')}`;
+      return `<span class="eris-pulse-icon" style="--pulse-rate:${(60 / value).toFixed(2)}s">${erisIconHTML(OPINION_ICON, 16)}</span> ${value} ${T('ErisDate.hud.bpm')}`;
     }
 
     _toneLabel() {
@@ -2067,8 +2059,8 @@
       // The bank is already in the active language; it is not keyed by one.
       const labels = TRAIT_LABELS() || {};
       return Object.keys(this.playerTraits).map(key =>
-        `<div class="eris-trait-row"><span class="crime-name">${labels[key]}</span>` +
-        `<span class="crime-bounty">${this.playerTraits[key]}</span></div>`
+        `<div class="inspect-spec-row"><span class="inspect-spec-label">${labels[key]}</span>` +
+        `<span class="inspect-spec-value">${this.playerTraits[key]}</span></div>`
       ).join('');
     }
 
@@ -2077,7 +2069,7 @@
       const fill = document.getElementById('eris-opinion-fill');
       const val = document.getElementById('eris-opinion-value');
       const traits = document.getElementById('eris-traits');
-      if (fill) fill.style.width = `${this.opinion / 10}%`;
+      if (fill) fill.style.setProperty('--fill', `${this.opinion / 10}%`);
       if (val) val.textContent = `${this.opinion} / 1000`;
       if (traits) traits.innerHTML = this._traitsHTML();
       // The living parts of the sheet: both pulses, the mood badge (moods
@@ -2094,8 +2086,7 @@
 
     _removeDateUI() {
       if (this._container) {
-        this._container.style.transition = 'opacity 0.2s ease-out';
-        this._container.style.opacity = '0';
+        this._container.classList.add('eris-fading');
         const c = this._container;
         setTimeout(() => { if (c && c.parentNode) c.parentNode.removeChild(c); }, 250);
         this._container = null;
@@ -2166,7 +2157,8 @@
       if (log) {
         hint = document.createElement('div');
         hint.className = 'eris-continue-hint';
-        hint.textContent = T('ErisDate.line.pressEnterToContinue');
+        // A caret, not a key legend: the game names no keys.
+        hint.textContent = CARET_WAIT;
         log.appendChild(hint);
         log.scrollTop = log.scrollHeight;
       }
@@ -2226,7 +2218,7 @@
         const readyAt = performance.now() + 200;
         const btns = choices.map((text, i) => {
           const btn = document.createElement('div');
-          btn.className = 'eris-choice-btn' + (i === 0 ? ' selected' : '');
+          btn.className = 'eris-choice-btn focusable' + (i === 0 ? ' selected' : '');
           btn.textContent = text;
           btn.addEventListener('click', () => { if (armed) finish(i); });
           panel.appendChild(btn);

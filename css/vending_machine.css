@@ -92,7 +92,7 @@
     font-weight: 800;
     letter-spacing: 3px;
     color: #f8fafc;
-    text-shadow: 0 0 14px rgba(226, 232, 240, 0.45), 0 2px 3px rgba(0, 0, 0, 0.8);
+    text-shadow: none;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -111,7 +111,7 @@
     letter-spacing: 2px;
     color: #ffcc00;
     white-space: nowrap;
-    text-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
+    text-shadow: none;
 }
 
 .vm-marquee-clock {
@@ -120,7 +120,7 @@
     font-weight: 700;
     letter-spacing: 1px;
     color: #39ff14;
-    text-shadow: 0 0 6px rgba(57, 255, 20, 0.6);
+    text-shadow: none;
 }
 
 /* A machine full of oddities wears it on the outside. */
@@ -130,7 +130,7 @@
 }
 .vm-wrapper.vm-weird .vm-marquee-brand {
     color: #e9d5ff;
-    text-shadow: 0 0 16px rgba(192, 132, 252, 0.6), 0 2px 3px rgba(0, 0, 0, 0.8);
+    text-shadow: none;
 }
 .vm-wrapper.vm-weird .vm-marquee-tagline { color: #c084fc; }
 .vm-wrapper.vm-weird .vm-led-bar {
@@ -308,9 +308,9 @@
     bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
-    background: #1e2025;
+    background: var(--accent-badge-text);
     border: 1px solid #3c4046;
-    color: #ffcc00;
+    color: var(--accent-badge-yellow);
     font-size: 14px;
     font-weight: 700;
     padding: 1px 8px;
@@ -320,12 +320,12 @@
     pointer-events: none;
 }
 .vm-slot.active .vm-slot-tag {
-    background: #ffcc00;
-    color: #111;
+    background: var(--accent-badge-yellow);
+    color: var(--accent-badge-text);
     border-color: #ffea70;
 }
 .vm-slot.weird.active .vm-slot-tag {
-    background: #c084fc;
+    background: var(--text-text-alt-24);
     border-color: #e9d5ff;
 }
 
@@ -358,8 +358,8 @@
     pointer-events: none;
 }
 .vm-soldout-badge {
-    background: #ef4444;
-    color: #fff;
+    background: var(--plate-bad);
+    color: var(--accent-badge-text);
     font-size: 15px;
     font-weight: 800;
     padding: 3px 10px;
@@ -516,7 +516,7 @@
     font-size: 23px;
     font-weight: 700;
     letter-spacing: 1.5px;
-    text-shadow: 0 0 6px rgba(57, 255, 20, 0.75);
+    text-shadow: none;
     text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
@@ -529,7 +529,7 @@
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.5px;
-    text-shadow: 0 0 3px rgba(30, 189, 30, 0.5);
+    text-shadow: none;
     display: flex;
     justify-content: space-between;
 }
@@ -825,7 +825,7 @@
 .vm-wallet-row.money-row span.val {
     color: #fbbf24;
     font-size: 17px;
-    text-shadow: 0 0 4px rgba(251, 191, 36, 0.25);
+    text-shadow: none;
 }
 
 .vm-footer-btn-container {
@@ -833,7 +833,9 @@
 }
 
 .vm-exit-btn {
-    width: 100%;
+    width: auto;
+    padding: 0 22px;
+    align-self: center;
     height: 44px;
     display: flex;
     align-items: center;

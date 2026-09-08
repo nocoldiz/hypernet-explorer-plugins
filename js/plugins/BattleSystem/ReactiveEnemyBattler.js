@@ -1540,7 +1540,7 @@
                 overflow: visible;
                 pointer-events: none;
                 z-index: 190;
-                font-family: 'Lora', serif;
+                font-family: var(--font-ui);
             }
             #${DMG_LAYER_ID} .dmg-pop {
                 position: absolute;

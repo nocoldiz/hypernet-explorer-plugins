@@ -91,7 +91,7 @@ var WeaponSystemProcedural = {
   },
 
   /**
-   * A forged piece (Crafting/BlacksmithingMenu.js) is materialized as a brand
+   * A forged piece (Quest/ThinkerMenu.js) is materialized as a brand
    * new database entry, with its own id past FORGE_ID_BASE, so anything keyed
    * on database id (the bespoke model table, a house finish) would otherwise
    * lose track of what the piece actually is the moment it leaves the anvil.
@@ -482,7 +482,9 @@ var WeaponSystemProcedural = {
     const meta = weapon.meta || {};
     const key = this.worldSeed() + ':' + (weapon.id || 0) +
       ':' + (meta.ForgeSeed || '') + ':' + (meta.ForgeTexture || '') +
-      ':' + (this.isLowDetail() ? 'lo' : 'hi');
+      ':' + (this.isLowDetail() ? 'lo' : 'hi') +
+      // The vector gun's form and element are part of what it looks like.
+      ':' + ((window.VectorGun && window.VectorGun.isVectorGun(weapon)) ? window.VectorGun.modelKey() : '');
     const cached = this._modelCache.get(key);
     if (cached) {
       // Map preserves insertion order, so re-inserting is the whole LRU touch.
@@ -717,7 +719,7 @@ var WeaponSystemProcedural = {
 
     // A piece that came off the forge with a finish chosen at the anvil wears
     // that finish instead of the one its seed would have dealt it
-    // (Crafting/BlacksmithingMenu.js writes the tag when the piece is made).
+    // (Quest/ThinkerMenu.js writes the tag when the piece is made).
     const forcedTex = this.forcedTextureFor(weapon);
 
     const OriginalMeshStandardMaterial = THREE.MeshStandardMaterial;
@@ -766,6 +768,19 @@ var WeaponSystemProcedural = {
       // Bespoke per-weapon models, keyed by database id exactly like the i18n
       // name/description tables are. A weapon that has one never falls back to
       // the generic silhouette for its type.
+      // The vector gun folded into one of its shapes is a different weapon in
+      // the hand, so it is a different model (Weapon/VectorGunSystem.js). The
+      // Blade of Thelema has a builder written for it; every other shape is
+      // built as its weapon type and then taken over by the element the gun is
+      // set to strike with, so a fitted lance is unmistakably the same weapon.
+      if (window.VectorGun && window.VectorGun.isVectorGun(weapon) && window.VectorGun.inBlade()) {
+        const builder = window.VectorGun.formBuilder() ||
+          this.TYPE_MODELS[window.VectorGun.formWeaponType()] || 'createSwordModel';
+        const model = this.finish(this.build(builder, weapon, rand), weapon);
+        if (!window.VectorGun.formBuilder()) this.applyVectorFrame(model);
+        return model;
+      }
+
       const bespoke = this.UNIQUE_MODELS[this.dispatchIdFor(weapon)];
       if (bespoke && typeof this[bespoke] === 'function') return this.finish(this[bespoke](weapon, rand), weapon);
 
@@ -781,6 +796,118 @@ var WeaponSystemProcedural = {
       THREE.MeshStandardMaterial = OriginalMeshStandardMaterial;
       restoreGeometry();
     }
+  },
+
+  // ============================================================
+  // The vector gun's frame, worn by whatever it folded into
+  // ============================================================
+  // Two shapes have a model written by hand (the Blade of Thelema and the
+  // coilgun, Weapon3D_Guns.js) and paint themselves. Every other shape comes
+  // out of the generic builder for its weapon type, which knows nothing about
+  // the gun, so the weapon is put back on it here in two passes:
+  //
+  //   the colour     the black frame, the matte polymer and the element the
+  //                  gun strikes with, out of the one palette every hand
+  //                  written shape uses (_vectorGunPalette)
+  //   the fittings   the same pieces of hardware the modes bolt onto the
+  //                  pistol, rebuilt to the size of the shape and moved onto
+  //                  its own front end
+  //
+  // which is what makes a fitted lance and the pistol read as one weapon.
+
+  // How metallic a material has to be to count as an accent rather than a body.
+  VECTOR_ACCENT_METALNESS: 0.6,
+  // The pistol the fittings were laid out on is about this long: what a shape
+  // measures against it is what the fittings are scaled by.
+  VECTOR_FIT_REFERENCE: 0.3,
+  // Never smaller than the pistol's own, never more than this much bigger: a
+  // greatsword should not carry a cell the size of its blade.
+  VECTOR_FIT_MAX_SCALE: 2.2,
+
+  /**
+   * Paints one built shape in the gun's own colours and bolts the fittings of
+   * the running modes onto it.
+   * @param {THREE.Object3D} model - The model the type builder returned
+   * @returns {THREE.Object3D} The same model
+   */
+  applyVectorFrame(model) {
+    if (!model || !model.traverse) return model;
+    this.applyVectorFormAccent(model);
+    this.applyVectorFormFittings(model);
+    return model;
+  },
+
+  /** The colour pass: the frame dark, the accents and the glow the element. */
+  applyVectorFormAccent(model) {
+    const VG = window.VectorGun;
+    const color = VG && VG.elementColor ? VG.elementColor() : null;
+    if (!model || !color || !model.traverse) return model;
+    const seen = new Set();
+    model.traverse((node) => {
+      const mats = !node.material ? []
+        : (Array.isArray(node.material) ? node.material : [node.material]);
+      for (const mat of mats) {
+        if (!mat || seen.has(mat)) continue;
+        seen.add(mat);
+        // Anything that already emits light is the shape's glow: it becomes the
+        // element outright, which is what the fuller and the bands do on the blade.
+        if (mat.emissive && mat.emissiveIntensity > 0) {
+          mat.emissive.setHex(color);
+          if (mat.color) mat.color.setHex(color);
+        } else if (mat.color && Number(mat.metalness) >= this.VECTOR_ACCENT_METALNESS) {
+          mat.color.setHex(color);
+        } else if (mat.color) {
+          // The body of the shape is the gun's frame: wood, leather and bone
+          // all come back as the same black polymer the pistol is made of.
+          mat.color.setHex(0x121417);
+        }
+        mat.needsUpdate = true;
+      }
+    });
+    return model;
+  },
+
+  /**
+   * The hardware pass: the fittings are built once at the pistol's own scale,
+   * then measured against the shape they are going onto and moved to its front
+   * end, so a mode is recognisable on a knife and on a lance alike.
+   */
+  applyVectorFormFittings(model) {
+    if (!model || typeof THREE === 'undefined' || !this._vectorGunFittings) return model;
+    const mats = this._vectorGunPalette();
+    const fittings = this._vectorGunFittings(
+      new THREE.Group(), mats, this.VECTOR_FIT_LAYOUTS.gun);
+    if (!fittings || !fittings.children.length) return model;
+
+    const hostBox = new THREE.Box3().setFromObject(model);
+    const size = hostBox.getSize(new THREE.Vector3());
+    const longest = Math.max(size.x, size.y, size.z) || this.VECTOR_FIT_REFERENCE;
+    const scale = Math.min(this.VECTOR_FIT_MAX_SCALE,
+      Math.max(1, longest / this.VECTOR_FIT_REFERENCE));
+    fittings.scale.set(scale, scale, scale);
+
+    // The fittings were laid out along +Z, so they are turned onto whichever
+    // way the shape is long: a staff running up +Y takes them up its shaft.
+    const axis = (size.y >= size.x && size.y >= size.z) ? 'y'
+      : (size.z >= size.x ? 'z' : 'x');
+    const center = hostBox.getCenter(new THREE.Vector3());
+    // A quarter of the way from the middle towards the business end: on the
+    // pistol that is the slide, on a spear it is the shaft below the head.
+    const forward = longest * 0.25;
+    if (axis === 'y') {
+      fittings.rotation.x = -Math.PI / 2;
+      fittings.position.set(center.x, center.y + forward, hostBox.max.z);
+    } else if (axis === 'x') {
+      fittings.rotation.y = Math.PI / 2;
+      fittings.position.set(center.x + forward, hostBox.max.y, center.z);
+    } else {
+      fittings.position.set(center.x, hostBox.max.y, center.z + forward);
+    }
+    // The fittings are hardware bolted on, not part of the silhouette: the
+    // welding pass must not drag them back into the body.
+    fittings.userData.dynamic = true;
+    model.add(fittings);
+    return model;
   },
 
   // ============================================================
@@ -1430,6 +1557,98 @@ var WeaponSystemProcedural = {
   },
 
   // ============================================================
+  // Reloading
+  // ============================================================
+  // A gun that reloads is the one time the magazine, the cylinder and the
+  // charging handle are the whole point of the shot: the hand clip (MOTIONS.
+  // reload) only takes the weapon out of the frame and works on it, and what
+  // reads as a reload is the parts moving while it is down there.
+  //
+  // Driven exactly like beginGunFire/tickGun, on the finished clip's own
+  // duration, so the magazine is back in the well before the hand comes up.
+  // The windows are fractions of that clip.
+  RELOAD_WINDOWS: { out: 0.14, outEnd: 0.34, in: 0.50, inEnd: 0.70, charge: 0.76, chargeEnd: 0.94 },
+  // How far the magazine drops out of the well, in model units.
+  RELOAD_MAG_DROP: 0.22,
+
+  /**
+   * Starts a reload sequence on the parts of a gun.
+   * @param {number} duration - the finished clip's length in ms.
+   */
+  beginGunReload(model, weapon, duration) {
+    if (!model) return;
+    const parts = this.gunPartsOf(model);
+    // Nothing tagged that could be worked on: a bow, a sling, a thrown rock.
+    if (!parts.magazine && !parts.cylinder && !parts.slide && !parts.bolt && !parts.charging) return;
+    model._gunReload = {
+      elapsed: 0,
+      duration: Math.max(200, duration || 900),
+      // A revolver with no magazine is not swapped, it is turned through on a
+      // speedloader, so the cylinder does the work the magazine would.
+      speedloader: !parts.magazine && !!parts.cylinder,
+      seed: Math.random() * 6.28
+    };
+  },
+
+  /** Drives the moving parts of a reloading gun. Cheap when nothing reloads. */
+  tickGunReload(model, dtMs) {
+    const rl = model && model._gunReload;
+    if (!rl) return;
+    const parts = this.gunPartsOf(model);
+    rl.elapsed += dtMs;
+    const t = Math.max(0, Math.min(1, rl.elapsed / rl.duration));
+    const w = this.RELOAD_WINDOWS;
+    const span = (a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+    if (parts.magazine) {
+      // Out of the well, gone for a moment, and a fresh one pushed back up.
+      const out = span(w.out, w.outEnd);
+      const back = span(w.in, w.inEnd);
+      const drop = Math.max(0, out - back);
+      const r = parts.magazine.userData._gunRest;
+      parts.magazine.position.y = r.y - drop * this.RELOAD_MAG_DROP;
+      parts.magazine.position.z = r.z - drop * 0.03;
+      parts.magazine.rotation.x = r.rx + drop * 0.35;
+      // The empty one is clear of the gun before the new one arrives.
+      parts.magazine.visible = !(out >= 1 && back <= 0);
+    }
+    if (parts.cylinder) {
+      const r = parts.cylinder.userData._gunRest;
+      const axis = parts.cylinder.userData._gunSpinAxis || 'z';
+      // Swung out and turned through its chambers on the way back in.
+      const turn = rl.speedloader ? span(w.out, w.inEnd) : span(w.in, w.chargeEnd);
+      parts.cylinder.rotation[axis] = r['r' + axis] + turn * Math.PI * 2;
+    }
+    const slider = parts.slide || parts.bolt || parts.charging;
+    if (slider) {
+      // Charged once the fresh rounds are in: back, then released.
+      const c = span(w.charge, w.chargeEnd);
+      const back = c < 0.45 ? c / 0.45 : 1 - (c - 0.45) / 0.55;
+      const r = slider.userData._gunRest;
+      slider.position.z = r.z - back * (parts.slide ? 0.055 : 0.045);
+    }
+    if (parts.hammer && !parts.cylinder) {
+      const r = parts.hammer.userData._gunRest;
+      parts.hammer.rotation.x = r.rx - span(w.charge, w.chargeEnd) * 0.9;
+    }
+
+    // Done: everything back where the builder left it.
+    if (t >= 1) {
+      for (const key of ['magazine', 'cylinder', 'slide', 'bolt', 'charging', 'hammer']) {
+        const p = parts[key];
+        if (!p) continue;
+        const r = p.userData._gunRest;
+        p.position.set(r.x, r.y, r.z);
+        p.rotation.x = r.rx;
+        p.rotation.y = r.ry;
+        p.rotation.z = r.rz;
+        p.visible = true;
+      }
+      model._gunReload = null;
+    }
+  },
+
+  // ============================================================
   // Sword canes
   // ============================================================
   // A cane that hides a blade has one moving part and the whole weapon reads
@@ -1482,6 +1701,113 @@ var WeaponSystemProcedural = {
    * Drives the blade out of the shaft and back into it. Cheap when nothing is
    * being drawn: a single property check.
    */
+  // ============================================================
+  // The vector gun reconstructing itself
+  // ============================================================
+  // SWITCH is not a model swap, it is a machine coming apart and building
+  // itself back as something else (Weapon/VectorGunSystem.js). It is played in
+  // two halves with the swap between them, so the piece that flies apart is the
+  // one being put away and the piece that assembles is the one being drawn:
+  //
+  //   fold   the weapon spins up, every part slides out along its own axis
+  //          until the whole thing is a cloud of hardware, and the cloud
+  //          collapses into the hand
+  //   rise   the new shape arrives as the same cloud, spinning the other way,
+  //          and every part slams home with a hard overshoot
+  //
+  // Both halves move the parts the builders placed, so any shape animates:
+  // nothing here knows what weapon it is taking apart.
+  VECTOR_FOLD_MS: 330,
+  VECTOR_RISE_MS: 470,
+  VECTOR_SPREAD: 0.55,     // how far a part travels, as a share of the model
+  VECTOR_SPIN: Math.PI * 5,
+
+  /**
+   * Starts one half of the reconstruction on a model.
+   * @param {THREE.Object3D} model - The weapon in the hand
+   * @param {string} phase - 'fold' (coming apart) or 'rise' (going together)
+   */
+  startVectorSwitch(model, phase) {
+    if (!model || typeof THREE === 'undefined') return null;
+    const rise = phase === 'rise';
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const reach = (Math.max(size.x, size.y, size.z) || 0.3) * this.VECTOR_SPREAD;
+    const parts = [];
+    let index = 0;
+    model.traverse((node) => {
+      if (node === model || !node.isMesh) return;
+      const home = node.position.clone();
+      // Which way a part flies: away from the middle of the piece it is bolted
+      // to. A part sitting exactly on the axis is given a turn of its own, so a
+      // barrel and a slide do not travel as one.
+      let dir = home.clone();
+      if (dir.lengthSq() < 1e-6) {
+        const a = index * 2.399963;   // the golden angle: no two alike
+        dir = new THREE.Vector3(Math.cos(a), Math.sin(a) * 0.6, Math.sin(a));
+      }
+      dir.normalize();
+      parts.push({
+        node: node,
+        home: home,
+        dir: dir,
+        spin: (index % 2 ? 1 : -1) * (1.2 + (index % 5) * 0.4),
+        rest: node.rotation.clone(),
+      });
+      index++;
+    });
+    model._vectorSwitch = {
+      elapsed: 0,
+      duration: rise ? this.VECTOR_RISE_MS : this.VECTOR_FOLD_MS,
+      rise: rise,
+      reach: reach,
+      parts: parts,
+    };
+    return model._vectorSwitch;
+  },
+
+  /** One frame of it. Runs after the pose, so it works on top of the pose. */
+  tickVectorSwitch(model, dtMs) {
+    const vs = model && model._vectorSwitch;
+    if (!vs) return;
+    vs.elapsed += dtMs;
+    const t = Math.max(0, Math.min(1, vs.elapsed / vs.duration));
+
+    // Coming apart accelerates; going together arrives hard and settles, which
+    // is the difference between a thing falling open and a thing being built.
+    const easeIn = t * t;
+    const back = 1.7;
+    const u = t - 1;
+    const easeOutBack = 1 + (back + 1) * u * u * u + back * u * u;
+    const spread = vs.rise ? Math.max(0, 1 - easeOutBack) : easeIn;
+    const spin = vs.rise ? -(1 - easeOutBack) * this.VECTOR_SPIN : easeIn * this.VECTOR_SPIN;
+    // The piece is small in the hand while it is only a cloud of parts.
+    const shrink = vs.rise ? 0.25 + 0.75 * Math.min(1, easeOutBack) : 1 - 0.8 * easeIn;
+
+    for (const part of vs.parts) {
+      part.node.position.set(
+        part.home.x + part.dir.x * vs.reach * spread,
+        part.home.y + part.dir.y * vs.reach * spread,
+        part.home.z + part.dir.z * vs.reach * spread);
+      part.node.rotation.set(
+        part.rest.x + part.spin * spread,
+        part.rest.y + part.spin * spread * 1.4,
+        part.rest.z + part.spin * spread);
+    }
+    model.rotation.y += spin;
+    model.scale.multiplyScalar(Math.max(0.05, shrink));
+
+    if (t >= 1) {
+      // Everything back exactly where the builder left it: an animation that
+      // ends a millimetre out leaves the weapon wrong for the rest of the fight.
+      for (const part of vs.parts) {
+        part.node.position.copy(part.home);
+        part.node.rotation.copy(part.rest);
+      }
+      model._vectorSwitch = null;
+    }
+  },
+
   tickCane(model, dtMs) {
     const draw = model && model._caneDraw;
     if (!draw) return;
@@ -3187,6 +3513,12 @@ var WeaponSystemProcedural = {
     // on: same reason as the punch and the bow below.
     if (motion.kind === 'recoil' && model) {
       this.beginGunFire(model, weapon, clip.duration);
+    }
+    // The magazine, the cylinder and the charging handle, on the clock the
+    // hand is working to: the gun is out of the frame for exactly as long as
+    // the parts need, and back in battery before it comes up again.
+    if (motion.kind === 'reload' && model) {
+      this.beginGunReload(model, weapon, clip.duration);
     }
     // Same clock for the string, the limbs and the arrow: the hand kicks on
     // the frame they let go.
@@ -5456,15 +5788,19 @@ var WeaponSystemProcedural = {
   },
 
   /** A row of rivet heads down a handle scale. */
-  _rivets(group, mat, count, yStart, yStep, radius, z) {
+  // `z` is the half-thickness the rivet heads stand off by, and `zCentre` the
+  // plane they straddle: a part built away from z = 0 needs it, or its back
+  // rivets end up in the air behind the weapon.
+  _rivets(group, mat, count, yStart, yStep, radius, z, zCentre) {
     if (!this.wantsTrim()) return;
+    const mid = zCentre || 0;
     for (let i = 0; i < count; i++) {
       const r = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, radius * 0.8, this.seg(6, 4)), mat);
       r.rotation.x = Math.PI / 2;
-      r.position.set(0, yStart + i * yStep, z);
+      r.position.set(0, yStart + i * yStep, mid + z);
       group.add(r);
       const back = r.clone();
-      back.position.z = -z;
+      back.position.z = mid - z;
       group.add(back);
     }
   },
@@ -5999,6 +6335,10 @@ var WeaponSystemProcedural = {
     // Override playClip to track standard animation clip status
     const _Sprite_3DWeapon_playClip = Sprite_3DWeapon.prototype.playClip;
     Sprite_3DWeapon.prototype.playClip = function(clipName) {
+      // Only an authored clip that actually exists freezes the idle sway: a
+      // procedural weapon has no mixer at all, and marking one as playing
+      // used to leave it hanging in mid-pose forever.
+      if (!this._mixer || !this._clips || !this._clips[clipName]) return;
       this._clipPlaying = true;
       if (this.beginTrail) this.beginTrail();
       if (_Sprite_3DWeapon_playClip) {
@@ -6057,11 +6397,18 @@ var WeaponSystemProcedural = {
         // Trigger, action, ejected case and muzzle flash, while a shot is
         // still working through the gun.
         WeaponSystemProcedural.tickGun(this._model, deltaMs);
+        // The magazine coming out and going back in, while the weapon is
+        // being worked on below the frame.
+        WeaponSystemProcedural.tickGunReload(this._model, deltaMs);
         // The blade leaving a sword cane's shaft and going back into it.
         WeaponSystemProcedural.tickCane(this._model, deltaMs);
         // The string coming back to the cheek, the limbs bending with it and
-        // the arrow leaving. Last, so it owns the parts it drives.
+        // the arrow leaving.
         WeaponSystemProcedural.tickBow(this._model, deltaMs);
+        // The vector gun coming apart and building itself back as another
+        // weapon. Last of the movers, so while a reconstruction is running it
+        // owns every part, whatever shape the frame is standing in.
+        WeaponSystemProcedural.tickVectorSwitch(this._model, deltaMs);
         // A bare hand clenching into the punch it is throwing, and turning
         // over on the wrist as it goes. Same reason it comes after the
         // ambient parts: it owns the rotations it writes.

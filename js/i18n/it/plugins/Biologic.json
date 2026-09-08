@@ -113,7 +113,10 @@
  "noActiveStates": "Nessuno Stato Attivo",
  "destroyed": "DISTRUTTO",
  "statesReactions": "Reazioni e Stati",
+ "additionalAnatomy": "Anatomia Aggiuntiva",
+ "additionalRegions": "Regioni Aggiuntive",
  "anatomicalIntegrityLimbOrganHp": "Integrità Corporea (Arti & Organi)",
+ "bodyParts": "Parti del Corpo",
  "bradycardia": "Bradicardia",
  "tachycardia": "Tachicardia",
  "hypertension": "Ipertensione",
@@ -139,6 +142,7 @@
  "bloodPressure": "Pressione Sanguigna",
  "bodyTemperature": "Temperatura",
  "oxygenSaturation": "Saturazione Ossigeno",
+ "oxygenConsumption": "Consumo O₂",
  "cortisolStress": "Cortisolo (Stress)",
  "metabolism": "Metabolismo",
  "respiratoryRate": "Frequenza Respiratoria",
@@ -258,11 +262,11 @@
   "diseases": "Malattie"
  },
  "reproductionType": [
-  "Testicoli (Maschio)",
-  "Mammifero (Utero)",
-  "Oviparo (Ovidotto)",
-  "Vegetale (Semi)",
-  "Mitosi (Divisione cellulare)"
+  "Testicoli",
+  "Utero",
+  "Ovidotto",
+  "Sporangio",
+  "Ghiandola Mitotica"
  ],
  "mood": {
   "Enraged": "Furioso",
@@ -279,10 +283,10 @@
  "seedProduced": "Seme prodotto! Totale semi pronti: {count}",
  "pregnancyType": [
   "Nessuno",
-  "Mammifero (Utero)",
-  "Oviparo (Ovidotto)",
-  "Vegetale (Semi)",
-  "Mitosi (Divisione cellulare)"
+  "Utero",
+  "Ovidotto",
+  "Sporangio",
+  "Ghiandola Mitotica"
  ],
  "gestationalAgeLine": "Età gestazionale: {days} giorni ({weeks} settimane)",
  "cycleDayLine": "Giorno {day} di {length}",

@@ -1,4 +1,5 @@
 /*:
+ * @target MZ
  * @plugindesc Stock Market System v4.0 - Advanced Multi-Asset Stock Trading Terminal with Complex Orders (Market, Limit, Stop-Loss, Take-Profit).
  * @author Omni-Lex & Antigravity
  * 
@@ -1398,7 +1399,7 @@
           icon: 229,
           width: 1040,
           height: 680,
-          contentHTML: '<div id="stock-market-content" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: #ece9d8; overflow: hidden"></div>'
+          contentHTML: '<div id="stock-market-content" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: var(--xp-bg); overflow: hidden"></div>'
         });
 
         this.appInstance = new Scene_StockMarket();
@@ -1497,7 +1498,7 @@
       const toast = document.getElementById("sm-toast-notification");
       if (toast) {
         toast.textContent = text;
-        toast.style.background = isError ? "linear-gradient(135deg, #c0392b, #e74c3c)" : "linear-gradient(135deg, #27ae60, #2ecc71)";
+        toast.style.background = isError ? "linear-gradient(135deg, var(--xp-red-2), #e74c3c)" : "linear-gradient(135deg, var(--xp-green), #2ecc71)";
         toast.style.display = "block";
         this._toastTimer = 180;
       }
@@ -1570,13 +1571,13 @@
                 ${stock.name && stock.name !== stock.symbol ? `<span style="font-weight:bold; font-size:13px; color:#1a2a3a; margin-left:4px">${stock.name}</span>` : ''}
               </div>
               <div style="text-align:right">
-                <div style="font-weight:bold; font-size:14px; color:#0b2f70">${formatMoney(price)}</div>
+                <div style="font-weight:bold; font-size:14px; color:var(--xp-blue-dark)">${formatMoney(price)}</div>
                 <div style="font-size:11px; font-weight:bold; color:${up ? '#27ae60' : '#c0392b'}">
                   ${up ? '▲ +' : '▼ '}${pct.toFixed(2)}%
                 </div>
               </div>
             </div>
-            ${sharesOwned > 0 ? `<div style="font-size:11px; color:#555; margin-top:3px; display:flex; justify-content:space-between"><span>Holding: <b>${sharesOwned}</b> shares</span><span>${formatMoney(sharesOwned * price)}</span></div>` : ''}
+            ${sharesOwned > 0 ? `<div style="font-size:11px; color:var(--xp-text-muted); margin-top:3px; display:flex; justify-content:space-between"><span>Holding: <b>${sharesOwned}</b> shares</span><span>${formatMoney(sharesOwned * price)}</span></div>` : ''}
           </div>
         `;
       }
@@ -1596,17 +1597,17 @@
 
       let orderBookHTML = `
         <div class="sm-orderbook-box">
-          <div style="font-size:11px; font-weight:bold; color:#444; margin-bottom:4px; display:flex; justify-content:space-between">
+          <div style="font-size:11px; font-weight:bold; color:var(--xp-ink-5); margin-bottom:4px; display:flex; justify-content:space-between">
             <span>LIVE ORDER BOOK</span>
-            <span style="color:#777">SPREAD: ${formatMoney(spread * 2)}</span>
+            <span style="color:var(--xp-ink-faint)">SPREAD: ${formatMoney(spread * 2)}</span>
           </div>
           <div style="display:flex; flex-direction:column; gap:2px; font-size:11px">
-            ${asks.reverse().map(a => `<div style="display:flex; justify-content:space-between; color:#c0392b; background:rgba(231,76,60,0.08); padding:1px 4px; border-radius:2px"><span>${formatMoney(a.price)}</span><span>${a.size} sh</span></div>`).join('')}
-            <div style="display:flex; justify-content:space-between; font-weight:bold; padding:2px 4px; background:#eef4fb; border-top:1px dashed #7f9db9; border-bottom:1px dashed #7f9db9">
-              <span style="color:#0b2f70">MID: ${formatMoney(stockPrice)}</span>
+            ${asks.reverse().map(a => `<div style="display:flex; justify-content:space-between; color:var(--xp-red-2); background:rgba(231,76,60,0.08); padding:1px 4px; border-radius:2px"><span>${formatMoney(a.price)}</span><span>${a.size} sh</span></div>`).join('')}
+            <div style="display:flex; justify-content:space-between; font-weight:bold; padding:2px 4px; background:#eef4fb; border-top:1px dashed var(--xp-border); border-bottom:1px dashed var(--xp-border)">
+              <span style="color:var(--xp-blue-dark)">MID: ${formatMoney(stockPrice)}</span>
               <span>MARKET</span>
             </div>
-            ${bids.map(b => `<div style="display:flex; justify-content:space-between; color:#27ae60; background:rgba(39,174,96,0.08); padding:1px 4px; border-radius:2px"><span>${formatMoney(b.price)}</span><span>${b.size} sh</span></div>`).join('')}
+            ${bids.map(b => `<div style="display:flex; justify-content:space-between; color:var(--xp-green); background:rgba(39,174,96,0.08); padding:1px 4px; border-radius:2px"><span>${formatMoney(b.price)}</span><span>${b.size} sh</span></div>`).join('')}
           </div>
         </div>
       `;
@@ -1645,8 +1646,8 @@
           const pnlColor = pnl >= 0 ? '#27ae60' : '#c0392b';
 
           return `
-            <tr style="border-bottom:1px solid #e0e0e0; ${qty > 0 ? 'background:#fff;' : 'opacity:0.6'}">
-              <td style="padding:6px 8px; font-weight:bold; color:#0b2f70">${stk.symbol}</td>
+            <tr style="border-bottom:1px solid var(--xp-gray); ${qty > 0 ? 'background:var(--xp-white);' : 'opacity:0.6'}">
+              <td style="padding:6px 8px; font-weight:bold; color:var(--xp-blue-dark)">${stk.symbol}</td>
               <td style="padding:6px 8px">${stk.name}</td>
               <td style="padding:6px 8px; text-align:right; font-weight:bold">${qty}</td>
               <td style="padding:6px 8px; text-align:right">${avgCost > 0 ? formatMoney(avgCost) : '-'}</td>
@@ -1657,7 +1658,7 @@
               </td>
               <td style="padding:6px 8px; text-align:center">
                 <button class="sm-btn-small focusable" data-action="quick-trade" data-stock="${stk.id}">Select</button>
-                ${qty > 0 ? `<button class="sm-btn-small focusable" style="color:#c0392b" data-action="quick-sell-all" data-stock="${stk.id}">Sell All</button>` : ''}
+                ${qty > 0 ? `<button class="sm-btn-small focusable" style="color:var(--xp-red-2)" data-action="quick-sell-all" data-stock="${stk.id}">Sell All</button>` : ''}
               </td>
             </tr>
           `;
@@ -1666,7 +1667,7 @@
         bottomContentHTML = `
           <table style="width:100%; border-collapse:collapse; font-size:12px">
             <thead>
-              <tr style="background:#dfe8f5; border-bottom:2px solid #7f9db9; color:#0b2f70; text-align:left">
+              <tr style="background:var(--xp-row-tint); border-bottom:2px solid var(--xp-border); color:var(--xp-blue-dark); text-align:left">
                 <th style="padding:6px 8px">Symbol</th>
                 <th style="padding:6px 8px">Asset Name</th>
                 <th style="padding:6px 8px; text-align:right">Shares</th>
@@ -1683,7 +1684,7 @@
       } else if (this._bottomTab === 'orders') {
         const openOrders = sm.getOpenOrders();
         if (openOrders.length === 0) {
-          bottomContentHTML = `<div style="padding:24px; text-align:center; color:#777; font-size:13px">No active limit or stop orders. Place limit orders above to trade automatically at target prices.</div>`;
+          bottomContentHTML = `<div style="padding:24px; text-align:center; color:var(--xp-ink-faint); font-size:13px">No active limit or stop orders. Place limit orders above to trade automatically at target prices.</div>`;
         } else {
           const orderRows = openOrders.map(ord => {
             const stock = sm.getStock(ord.stockId) || { symbol: ord.stockId };
@@ -1692,17 +1693,17 @@
             const sideColor = ord.side === 'buy' ? '#27ae60' : '#c0392b';
 
             return `
-              <tr style="border-bottom:1px solid #e0e0e0; background:#fff">
-                <td style="padding:6px 8px; font-weight:bold; color:#0b2f70">${ord.id}</td>
+              <tr style="border-bottom:1px solid var(--xp-gray); background:var(--xp-white)">
+                <td style="padding:6px 8px; font-weight:bold; color:var(--xp-blue-dark)">${ord.id}</td>
                 <td style="padding:6px 8px; font-weight:bold">${stock.symbol}</td>
                 <td style="padding:6px 8px; font-weight:bold; color:${sideColor}; text-transform:uppercase">${ord.side} ${ord.type.replace('_', ' ')}</td>
                 <td style="padding:6px 8px; text-align:right">${ord.shares}</td>
                 <td style="padding:6px 8px; text-align:right; font-weight:bold">${formatMoney(ord.targetPrice)}</td>
                 <td style="padding:6px 8px; text-align:right">${formatMoney(curP)}</td>
-                <td style="padding:6px 8px; text-align:right; color:#555">${dist}% away</td>
+                <td style="padding:6px 8px; text-align:right; color:var(--xp-text-muted)">${dist}% away</td>
                 <td style="padding:6px 8px; text-align:right">${ord.escrowGold > 0 ? `Escrow: ${formatMoney(ord.escrowGold)}` : `${ord.escrowShares} sh escrowed`}</td>
                 <td style="padding:6px 8px; text-align:center">
-                  <button class="sm-btn-small focusable" style="color:#c0392b" data-action="cancel-order" data-order-id="${ord.id}">Cancel</button>
+                  <button class="sm-btn-small focusable" style="color:var(--xp-red-2)" data-action="cancel-order" data-order-id="${ord.id}">Cancel</button>
                 </td>
               </tr>
             `;
@@ -1711,7 +1712,7 @@
           bottomContentHTML = `
             <table style="width:100%; border-collapse:collapse; font-size:12px">
               <thead>
-                <tr style="background:#dfe8f5; border-bottom:2px solid #7f9db9; color:#0b2f70; text-align:left">
+                <tr style="background:var(--xp-row-tint); border-bottom:2px solid var(--xp-border); color:var(--xp-blue-dark); text-align:left">
                   <th style="padding:6px 8px">Order ID</th>
                   <th style="padding:6px 8px">Symbol</th>
                   <th style="padding:6px 8px">Side & Type</th>
@@ -1730,7 +1731,7 @@
       } else if (this._bottomTab === 'history') {
         const historyList = sm.getOrderHistory();
         if (historyList.length === 0) {
-          bottomContentHTML = `<div style="padding:24px; text-align:center; color:#777; font-size:13px">No trading history recorded for this session.</div>`;
+          bottomContentHTML = `<div style="padding:24px; text-align:center; color:var(--xp-ink-faint); font-size:13px">No trading history recorded for this session.</div>`;
         } else {
           const histRows = historyList.slice(0, 30).map(t => {
             const stock = sm.getStock(t.stockId) || { symbol: t.stockId };
@@ -1739,8 +1740,8 @@
             const timeStr = new Date(t.time || t.filledAt || Date.now()).toLocaleTimeString();
 
             return `
-              <tr style="border-bottom:1px solid #e0e0e0; background:#fff">
-                <td style="padding:5px 8px; color:#666">${timeStr}</td>
+              <tr style="border-bottom:1px solid var(--xp-gray); background:var(--xp-white)">
+                <td style="padding:5px 8px; color:var(--xp-ink-soft)">${timeStr}</td>
                 <td style="padding:5px 8px; font-weight:bold">${stock.symbol}</td>
                 <td style="padding:5px 8px; font-weight:bold; color:${sideColor}; text-transform:uppercase">${t.side} (${t.type || 'market'})</td>
                 <td style="padding:5px 8px; text-align:right">${t.shares} sh</td>
@@ -1749,7 +1750,7 @@
                 <td style="padding:5px 8px; text-align:right; font-weight:bold; color:${pnlColor}">
                   ${t.side === 'sell' && t.pnl !== undefined ? `${t.pnl >= 0 ? '+' : ''}${formatMoney(t.pnl)}` : '-'}
                 </td>
-                <td style="padding:5px 8px; text-align:center"><span style="color:#27ae60; font-size:11px; font-weight:bold">FILLED</span></td>
+                <td style="padding:5px 8px; text-align:center"><span style="color:var(--xp-green); font-size:11px; font-weight:bold">FILLED</span></td>
               </tr>
             `;
           }).join('');
@@ -1757,7 +1758,7 @@
           bottomContentHTML = `
             <table style="width:100%; border-collapse:collapse; font-size:12px">
               <thead>
-                <tr style="background:#dfe8f5; border-bottom:2px solid #7f9db9; color:#0b2f70; text-align:left">
+                <tr style="background:var(--xp-row-tint); border-bottom:2px solid var(--xp-border); color:var(--xp-blue-dark); text-align:left">
                   <th style="padding:6px 8px">Time</th>
                   <th style="padding:6px 8px">Symbol</th>
                   <th style="padding:6px 8px">Action</th>
@@ -1777,10 +1778,10 @@
         bottomContentHTML = `
           <div style="display:flex; flex-direction:column; gap:6px; padding:6px">
             ${newsItems.map(n => `
-              <div style="background:#fff; border:1px solid #dcdcdc; padding:8px 12px; border-radius:3px; display:flex; gap:10px; align-items:center">
+              <div style="background:var(--xp-white); border:1px solid var(--xp-disabled); padding:8px 12px; border-radius:3px; display:flex; gap:10px; align-items:center">
                 <span class="sm-ticker-badge">${n.tag}</span>
-                <span style="font-size:11px; color:#777; width:60px">${n.time}</span>
-                <span style="font-size:13px; color:#222; flex:1">${n.text}</span>
+                <span style="font-size:11px; color:var(--xp-ink-faint); width:60px">${n.time}</span>
+                <span style="font-size:13px; color:var(--xp-ink-3); flex:1">${n.text}</span>
               </div>
             `).join('')}
           </div>
@@ -1793,19 +1794,19 @@
           #stock-container {
             font-family: 'Tahoma', 'Segoe UI', sans-serif !important;
             box-sizing: border-box;
-            background: #ece9d8;
-            color: #111;
+            background: var(--xp-bg);
+            color: var(--xp-ink);
             user-select: none;
           }
           #stock-container * { box-sizing: border-box; font-family: inherit; }
           .sm-header-bar {
-            background: linear-gradient(180deg, #0b5394 0%, #06263f 100%);
-            color: #fff;
+            background: linear-gradient(180deg, var(--xp-navy-7) 0%, var(--xp-navy-8) 100%);
+            color: var(--xp-white);
             padding: 8px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #04203a;
+            border-bottom: 2px solid var(--xp-navy-6);
             flex-shrink: 0;
           }
           .sm-stat-pill {
@@ -1818,8 +1819,8 @@
             text-align: right;
           }
           .sm-stock-card {
-            background: #fff;
-            border: 1px solid #7f9db9;
+            background: var(--xp-white);
+            border: 1px solid var(--xp-border);
             border-radius: 3px;
             padding: 8px 10px;
             margin-bottom: 6px;
@@ -1827,17 +1828,17 @@
             transition: all 0.15s ease;
           }
           .sm-stock-card:hover {
-            border-color: #0b5394;
-            background: #f4f8fd;
+            border-color: var(--xp-navy-7);
+            background: var(--xp-row-tint-2);
           }
           .sm-stock-card-selected {
-            border: 2px solid #0b5394 !important;
+            border: 2px solid var(--xp-navy-7) !important;
             background: #eaf2fb !important;
             box-shadow: 0 0 6px rgba(11,83,148,0.3);
           }
           .sm-ticker-badge {
-            background: #0b5394;
-            color: #fff;
+            background: var(--xp-navy-7);
+            color: var(--xp-white);
             font-size: 10px;
             font-weight: bold;
             padding: 2px 6px;
@@ -1845,8 +1846,8 @@
             letter-spacing: 0.5px;
           }
           .sm-chart-box {
-            background: #ffffff;
-            border: 1px solid #7f9db9;
+            background: var(--xp-white);
+            border: 1px solid var(--xp-border);
             border-radius: 3px;
             display: flex;
             flex-direction: column;
@@ -1854,8 +1855,8 @@
             position: relative;
           }
           .sm-orderbook-box {
-            background: #fafafa;
-            border: 1px solid #c0c0c0;
+            background: var(--xp-near-white);
+            border: 1px solid var(--xp-silver);
             border-radius: 3px;
             padding: 6px;
             margin-top: 6px;
@@ -1865,33 +1866,35 @@
             font-size: 12px;
             font-weight: bold;
             cursor: pointer;
-            background: #ece9d8;
-            border: 1px solid #7f9db9;
+            background: var(--xp-bg);
+            border: 1px solid var(--xp-border);
             border-bottom: none;
             border-top-left-radius: 3px;
             border-top-right-radius: 3px;
             margin-right: 3px;
-            color: #333;
+            color: var(--xp-ink-4);
           }
           .sm-tab-btn.active {
-            background: #fff;
-            border-bottom: 1px solid #fff;
+            background: var(--xp-white);
+            border-bottom: 1px solid var(--xp-white);
             margin-bottom: -1px;
-            color: #0b5394;
+            color: var(--xp-navy-7);
           }
           .sm-action-btn {
-            background: #ece9d8;
-            border: 1px solid #7f9db9;
+            white-space: nowrap;
+            background: var(--xp-bg);
+            border: 1px solid var(--xp-border);
             border-radius: 2px;
             padding: 4px 8px;
             cursor: pointer;
             font-size: 11px;
             font-weight: bold;
           }
-          .sm-action-btn:hover { background: #dfe8f5; }
+          .sm-action-btn:hover { background: var(--xp-row-tint); }
           .sm-btn-small {
-            background: #fff;
-            border: 1px solid #7f9db9;
+            white-space: nowrap;
+            background: var(--xp-white);
+            border: 1px solid var(--xp-border);
             border-radius: 2px;
             padding: 2px 6px;
             font-size: 11px;
@@ -1899,42 +1902,44 @@
             font-weight: bold;
             margin: 0 2px;
           }
-          .sm-btn-small:hover { background: #dfe8f5; }
+          .sm-btn-small:hover { background: var(--xp-row-tint); }
           .sm-order-type-btn {
             flex: 1;
+            min-width: 0;
+            white-space: nowrap;
             padding: 5px 2px;
             font-size: 11px;
             font-weight: bold;
-            border: 1px solid #7f9db9;
-            background: #f0f0f0;
+            border: 1px solid var(--xp-border);
+            background: var(--xp-gray-light);
             cursor: pointer;
             text-align: center;
           }
           .sm-order-type-btn.active {
-            background: #0b5394;
-            color: #fff;
-            border-color: #0b5394;
+            background: var(--xp-navy-7);
+            color: var(--xp-white);
+            border-color: var(--xp-navy-7);
           }
         </style>
 
         <!-- Notification Toast -->
-        <div id="sm-toast-notification" style="display:none; position:absolute; top:52px; right:20px; z-index:999; color:#fff; padding:8px 16px; border-radius:4px; font-weight:bold; font-size:13px; box-shadow:0 4px 12px rgba(0,0,0,0.3)"></div>
+        <div id="sm-toast-notification" style="display:none; position:absolute; top:52px; right:20px; z-index:999; color:var(--xp-white); padding:8px 16px; border-radius:4px; font-weight:bold; font-size:13px; box-shadow:0 4px 12px rgba(0,0,0,0.3)"></div>
 
         <!-- Top Header Bar -->
         <div class="sm-header-bar">
           <div style="display:flex; align-items:center; gap:12px">
-            <span style="font-size:18px; font-weight:bold; letter-spacing:1px; color:#ffd700">STOCK MARKET</span>
-            <span style="background:#27ae60; color:#fff; font-size:10px; font-weight:bold; padding:2px 8px; border-radius:10px">● LIVE MARKET OPEN</span>
+            <span style="font-size:18px; font-weight:bold; letter-spacing:1px; color:var(--xp-gold)">STOCK MARKET</span>
+            <span style="background:var(--xp-green); color:var(--xp-white); font-size:10px; font-weight:bold; padding:2px 8px; border-radius:10px">● LIVE MARKET OPEN</span>
             <span style="font-size:12px; color:#cfe6ff">Session Ticks: ${sm._updateCounter}</span>
           </div>
           <div style="display:flex; gap:10px">
             <div class="sm-stat-pill">
               <span style="font-size:10px; color:#cfe6ff">LIQUID GOLD</span>
-              <span style="font-size:14px; font-weight:bold; color:#fff">${goldToEurosForDisplay(playerGold)}</span>
+              <span style="font-size:14px; font-weight:bold; color:var(--xp-white)">${goldToEurosForDisplay(playerGold)}</span>
             </div>
             <div class="sm-stat-pill">
               <span style="font-size:10px; color:#cfe6ff">PORTFOLIO STOCKS</span>
-              <span style="font-size:14px; font-weight:bold; color:#ffd700">${formatMoney(sm.getTotalStockValue())}</span>
+              <span style="font-size:14px; font-weight:bold; color:var(--xp-gold)">${formatMoney(sm.getTotalStockValue())}</span>
             </div>
             <div class="sm-stat-pill">
               <span style="font-size:10px; color:#cfe6ff">NET WORTH</span>
@@ -1947,18 +1952,18 @@
         <div style="flex:1; display:flex; gap:8px; padding:8px; min-height:0; overflow:hidden">
           
           <!-- Column 1: Watchlist (Left) -->
-          <div style="width:260px; background:#fff; border:1px solid #7f9db9; border-radius:3px; display:flex; flex-direction:column; padding:8px">
-            <div style="font-size:13px; font-weight:bold; color:#0b2f70; border-bottom:1px solid #7f9db9; padding-bottom:4px; margin-bottom:8px; display:flex; justify-content:space-between">
+          <div style="width:260px; background:var(--xp-white); border:1px solid var(--xp-border); border-radius:3px; display:flex; flex-direction:column; padding:8px">
+            <div style="font-size:13px; font-weight:bold; color:var(--xp-blue-dark); border-bottom:1px solid var(--xp-border); padding-bottom:4px; margin-bottom:8px; display:flex; justify-content:space-between">
               <span>MARKET WATCHLIST</span>
-              <span style="font-size:11px; color:#666">${_smi18n('ui.assetCount', { n: allStocks.length }) || allStocks.length}</span>
+              <span style="font-size:11px; color:var(--xp-ink-soft)">${_smi18n('ui.assetCount', { n: allStocks.length }) || allStocks.length}</span>
             </div>
             <div style="flex:1; overflow-y:auto; padding-right:2px">
               ${watchlistHTML}
             </div>
             <!-- Key Stats Box -->
-            <div style="background:#f4f8fd; border:1px solid #c0d4ec; padding:6px 8px; border-radius:3px; margin-top:6px; font-size:11px">
-              <div style="font-weight:bold; color:#0b2f70; margin-bottom:3px">${currentStock.symbol} ASSET PROFILE</div>
-              <div style="color:#555; line-height:1.3; margin-bottom:4px">${currentStock.description}</div>
+            <div style="background:var(--xp-row-tint-2); border:1px solid var(--xp-steel-3); padding:6px 8px; border-radius:3px; margin-top:6px; font-size:11px">
+              <div style="font-weight:bold; color:var(--xp-blue-dark); margin-bottom:3px">${currentStock.symbol} ASSET PROFILE</div>
+              <div style="color:var(--xp-text-muted); line-height:1.3; margin-bottom:4px">${currentStock.description}</div>
               <div style="display:flex; justify-content:space-between"><span>${_smi18n('ui.category') || ''}</span><b>${currentStock.category}</b></div>
               <div style="display:flex; justify-content:space-between"><span>${_smi18n('ui.volatility') || ''}</span><b>${(currentStock.volatility * 100).toFixed(0)}%</b></div>
               ${currentStock.totalShares ? `
@@ -1972,11 +1977,11 @@
             
             <!-- Chart Container -->
             <div class="sm-chart-box">
-              <div style="padding:6px 10px; background:#f4f8fd; border-bottom:1px solid #d0d0d0; display:flex; justify-content:space-between; align-items:center">
+              <div style="padding:6px 10px; background:var(--xp-row-tint-2); border-bottom:1px solid var(--xp-silver-3); display:flex; justify-content:space-between; align-items:center">
                 <div>
-                  <span style="font-size:15px; font-weight:bold; color:#0b2f70">${currentStock.name}</span>
+                  <span style="font-size:15px; font-weight:bold; color:var(--xp-blue-dark)">${currentStock.name}</span>
                   <span class="sm-ticker-badge" style="margin-left:6px">${currentStock.symbol}</span>
-                  <span style="font-size:16px; font-weight:bold; margin-left:10px; color:#111">${formatMoney(stockPrice)}</span>
+                  <span style="font-size:16px; font-weight:bold; margin-left:10px; color:var(--xp-ink)">${formatMoney(stockPrice)}</span>
                   <span style="font-size:12px; font-weight:bold; margin-left:6px; color:${isUp ? '#27ae60' : '#c0392b'}">
                     ${isUp ? '▲ +' : '▼ '}${formatMoney(Math.abs(deltaPrice))} (${pctChange.toFixed(2)}%)
                   </span>
@@ -1992,8 +1997,8 @@
             </div>
 
             <!-- Bottom Tabs Header & Tab Panel -->
-            <div style="flex:1; background:#fff; border:1px solid #7f9db9; border-radius:3px; display:flex; flex-direction:column; min-height:0">
-              <div style="display:flex; background:#ece9d8; border-bottom:1px solid #7f9db9; padding:4px 6px 0 6px">
+            <div style="flex:1; background:var(--xp-white); border:1px solid var(--xp-border); border-radius:3px; display:flex; flex-direction:column; min-height:0">
+              <div style="display:flex; background:var(--xp-bg); border-bottom:1px solid var(--xp-border); padding:4px 6px 0 6px">
                 <button class="sm-tab-btn focusable ${this._bottomTab === 'holdings' ? 'active' : ''}" data-tab="holdings">Portafoglio / Holdings</button>
                 <button class="sm-tab-btn focusable ${this._bottomTab === 'orders' ? 'active' : ''}" data-tab="orders">Open Orders (${sm.getOpenOrders().length})</button>
                 <button class="sm-tab-btn focusable ${this._bottomTab === 'history' ? 'active' : ''}" data-tab="history">Trade History</button>
@@ -2007,25 +2012,25 @@
           </div>
 
           <!-- Column 3: Order Execution Console (Right) -->
-          <div style="width:280px; background:#fff; border:1px solid #7f9db9; border-radius:3px; display:flex; flex-direction:column; padding:10px">
-            <div style="font-size:14px; font-weight:bold; color:#0b2f70; border-bottom:1px solid #7f9db9; padding-bottom:4px; margin-bottom:8px">
+          <div style="width:280px; flex:0 0 280px; box-sizing:border-box; overflow-x:hidden; background:var(--xp-white); border:1px solid var(--xp-border); border-radius:3px; display:flex; flex-direction:column; padding:10px">
+            <div style="font-size:14px; font-weight:bold; color:var(--xp-blue-dark); border-bottom:1px solid var(--xp-border); padding-bottom:4px; margin-bottom:8px">
               ORDER PLACEMENT TERMINAL
             </div>
 
             <!-- Buy / Sell Mode Toggle -->
             <div style="display:flex; gap:4px; margin-bottom:8px">
-              <button class="focusable" id="sm-side-buy" style="flex:1; padding:7px; font-weight:bold; font-size:13px; cursor:pointer; border:1px solid #27ae60; background:${isBuy ? '#27ae60' : '#f0f0f0'}; color:${isBuy ? '#fff' : '#27ae60'}; border-radius:2px">
+              <button class="focusable" id="sm-side-buy" style="flex:1; padding:7px; font-weight:bold; font-size:13px; cursor:pointer; border:1px solid var(--xp-green); background:${isBuy ? '#27ae60' : '#f0f0f0'}; color:${isBuy ? '#fff' : '#27ae60'}; border-radius:2px">
                 BUY / LONG
               </button>
-              <button class="focusable" id="sm-side-sell" style="flex:1; padding:7px; font-weight:bold; font-size:13px; cursor:pointer; border:1px solid #c0392b; background:${!isBuy ? '#c0392b' : '#f0f0f0'}; color:${!isBuy ? '#fff' : '#c0392b'}; border-radius:2px">
+              <button class="focusable" id="sm-side-sell" style="flex:1; padding:7px; font-weight:bold; font-size:13px; cursor:pointer; border:1px solid var(--xp-red-2); background:${!isBuy ? '#c0392b' : '#f0f0f0'}; color:${!isBuy ? '#fff' : '#c0392b'}; border-radius:2px">
                 SELL / LIQUIDATE
               </button>
             </div>
 
             <!-- Order Type Selector -->
             <div style="margin-bottom:8px">
-              <div style="font-size:11px; font-weight:bold; color:#555; margin-bottom:3px">ORDER EXECUTION TYPE</div>
-              <div style="display:flex; gap:2px">
+              <div style="font-size:11px; font-weight:bold; color:var(--xp-text-muted); margin-bottom:3px">ORDER EXECUTION TYPE</div>
+              <div style="display:flex; gap:2px; flex-wrap:wrap">
                 <button class="sm-order-type-btn focusable ${this._orderType === 'market' ? 'active' : ''}" data-type="market">Market</button>
                 <button class="sm-order-type-btn focusable ${this._orderType === 'limit' ? 'active' : ''}" data-type="limit">Limit</button>
                 <button class="sm-order-type-btn focusable ${this._orderType === 'stop_loss' ? 'active' : ''}" data-type="stop_loss">Stop Loss</button>
@@ -2035,18 +2040,18 @@
 
             <!-- Limit / Trigger Price (shown for limit/stop/tp) -->
             ${this._orderType !== 'market' ? `
-              <div style="background:#f4f8fd; border:1px solid #c0d4ec; padding:6px 8px; border-radius:3px; margin-bottom:8px">
-                <div style="font-size:11px; font-weight:bold; color:#0b2f70; margin-bottom:3px">
+              <div style="background:var(--xp-row-tint-2); border:1px solid var(--xp-steel-3); padding:6px 8px; border-radius:3px; margin-bottom:8px">
+                <div style="font-size:11px; font-weight:bold; color:var(--xp-blue-dark); margin-bottom:3px">
                   ${this._orderType === 'limit' ? 'LIMIT TARGET PRICE' : this._orderType === 'stop_loss' ? 'STOP TRIGGER PRICE' : 'TAKE PROFIT PRICE'}
                 </div>
-                <div style="display:flex; gap:4px; align-items:center">
-                  <button class="sm-btn-small focusable" data-action="adjust-price" data-delta="-500">-5%</button>
-                  <button class="sm-btn-small focusable" data-action="adjust-price" data-delta="-100">-1%</button>
-                  <input type="number" id="sm-input-target-price" value="${Math.round(this._customTargetPrice / 100)}" step="1" style="flex:1; padding:3px 6px; font-weight:bold; font-size:13px; text-align:center; border:1px solid #7f9db9">
-                  <button class="sm-btn-small focusable" data-action="adjust-price" data-delta="100">+1%</button>
-                  <button class="sm-btn-small focusable" data-action="adjust-price" data-delta="500">+5%</button>
+                <input type="number" id="sm-input-target-price" value="${Math.round(this._customTargetPrice / 100)}" step="1" style="width:100%; box-sizing:border-box; padding:3px 6px; font-weight:bold; font-size:13px; text-align:center; border:1px solid var(--xp-border)">
+                <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap; margin-top:4px">
+                  <button class="sm-btn-small focusable" style="flex:1; min-width:0" data-action="adjust-price" data-delta="-500">-5%</button>
+                  <button class="sm-btn-small focusable" style="flex:1; min-width:0" data-action="adjust-price" data-delta="-100">-1%</button>
+                  <button class="sm-btn-small focusable" style="flex:1; min-width:0" data-action="adjust-price" data-delta="100">+1%</button>
+                  <button class="sm-btn-small focusable" style="flex:1; min-width:0" data-action="adjust-price" data-delta="500">+5%</button>
                 </div>
-                <div style="font-size:10px; color:#555; margin-top:3px; text-align:center">
+                <div style="font-size:10px; color:var(--xp-text-muted); margin-top:3px; text-align:center">
                   Market Reference: <b>${formatMoney(stockPrice)}</b>
                 </div>
               </div>
@@ -2054,50 +2059,50 @@
 
             <!-- Quantity Stepper & Presets -->
             <div style="margin-bottom:8px">
-              <div style="font-size:11px; font-weight:bold; color:#555; margin-bottom:3px; display:flex; justify-content:space-between">
+              <div style="font-size:11px; font-weight:bold; color:var(--xp-text-muted); margin-bottom:3px; display:flex; justify-content:space-between">
                 <span>ORDER QUANTITY</span>
                 <span>Available: <b>${isBuy ? goldToEurosForDisplay(playerGold) : `${sharesHeld} shares`}</b></span>
               </div>
-              <div style="display:flex; gap:4px; align-items:center">
-                <button class="sm-action-btn focusable" data-action="step-qty" data-step="-10000" style="padding:4px 8px">-10k</button>
-                <button class="sm-action-btn focusable" data-action="step-qty" data-step="-1000" style="padding:4px 8px">-1k</button>
-                <button class="sm-action-btn focusable" data-action="step-qty" data-step="-10" style="padding:4px 8px">-10</button>
-                <button class="sm-action-btn focusable" data-action="step-qty" data-step="-1" style="padding:4px 8px">-1</button>
-                <input type="number" id="sm-input-qty" value="${this._inputShares}" min="1" max="99999" style="flex:1; padding:4px 6px; font-weight:bold; font-size:14px; text-align:center; border:1px solid #7f9db9">
-                <button class="sm-action-btn focusable" data-action="step-qty" data-step="1" style="padding:4px 8px">+1</button>
-                <button class="sm-action-btn focusable" data-action="step-qty" data-step="10" style="padding:4px 8px">+10</button>
-                <button class="sm-action-btn focusable" data-action="step-qty" data-step="1000" style="padding:4px 8px">+1k</button>
-                <button class="sm-action-btn focusable" data-action="step-qty" data-step="10000" style="padding:4px 8px">+10k</button>
+              <input type="number" id="sm-input-qty" value="${this._inputShares}" min="1" max="99999" style="width:100%; box-sizing:border-box; padding:4px 6px; font-weight:bold; font-size:14px; text-align:center; border:1px solid var(--xp-border)">
+              <div style="display:flex; gap:3px; align-items:center; flex-wrap:wrap; margin-top:4px">
+                <button class="sm-action-btn focusable" data-action="step-qty" data-step="-10000" style="flex:1; min-width:0; padding:4px 2px">-10k</button>
+                <button class="sm-action-btn focusable" data-action="step-qty" data-step="-1000" style="flex:1; min-width:0; padding:4px 2px">-1k</button>
+                <button class="sm-action-btn focusable" data-action="step-qty" data-step="-10" style="flex:1; min-width:0; padding:4px 2px">-10</button>
+                <button class="sm-action-btn focusable" data-action="step-qty" data-step="-1" style="flex:1; min-width:0; padding:4px 2px">-1</button>
+                <button class="sm-action-btn focusable" data-action="step-qty" data-step="1" style="flex:1; min-width:0; padding:4px 2px">+1</button>
+                <button class="sm-action-btn focusable" data-action="step-qty" data-step="10" style="flex:1; min-width:0; padding:4px 2px">+10</button>
+                <button class="sm-action-btn focusable" data-action="step-qty" data-step="1000" style="flex:1; min-width:0; padding:4px 2px">+1k</button>
+                <button class="sm-action-btn focusable" data-action="step-qty" data-step="10000" style="flex:1; min-width:0; padding:4px 2px">+10k</button>
               </div>
-              <div style="display:flex; gap:3px; margin-top:4px">
-                <button class="sm-btn-small focusable" style="flex:1" data-action="preset-qty" data-preset="1">+1</button>
-                <button class="sm-btn-small focusable" style="flex:1" data-action="preset-qty" data-preset="5">+5</button>
-                <button class="sm-btn-small focusable" style="flex:1" data-action="preset-qty" data-preset="25">+25</button>
-                <button class="sm-btn-small focusable" style="flex:1" data-action="preset-qty" data-preset="100">+100</button>
-                <button class="sm-btn-small focusable" style="flex:1" data-action="preset-qty" data-preset="1000">+1000</button>
-                <button class="sm-btn-small focusable" style="flex:1" data-action="preset-qty" data-preset="10000">+10000</button>
-                <button class="sm-btn-small focusable" style="flex:1" data-action="preset-qty" data-preset="max">MAX</button>
+              <div style="display:flex; gap:3px; margin-top:4px; flex-wrap:wrap">
+                <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="1">+1</button>
+                <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="5">+5</button>
+                <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="25">+25</button>
+                <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="100">+100</button>
+                <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="1000">+1000</button>
+                <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="10000">+10000</button>
+                <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="max">MAX</button>
               </div>
             </div>
 
             <!-- Order Summary Card -->
-            <div style="background:#f9f9f9; border:1px solid #d0d0d0; padding:8px; border-radius:3px; font-size:12px; margin-bottom:8px">
+            <div style="background:#f9f9f9; border:1px solid var(--xp-silver-3); padding:8px; border-radius:3px; font-size:12px; margin-bottom:8px">
               <div style="display:flex; justify-content:space-between; margin-bottom:3px">
-                <span style="color:#666">Execution Rate:</span>
+                <span style="color:var(--xp-ink-soft)">Execution Rate:</span>
                 <b>${formatMoney(unitTargetPrice)}</b>
               </div>
               <div style="display:flex; justify-content:space-between; margin-bottom:3px">
-                <span style="color:#666">Order Quantity:</span>
+                <span style="color:var(--xp-ink-soft)">Order Quantity:</span>
                 <b>${this._inputShares} shares</b>
               </div>
-              <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:bold; border-top:1px dashed #c0c0c0; padding-top:4px; margin-top:4px">
-                <span style="color:#0b2f70">${isBuy ? 'Total Required:' : 'Estimated Proceeds:'}</span>
+              <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:bold; border-top:1px dashed var(--xp-silver); padding-top:4px; margin-top:4px">
+                <span style="color:var(--xp-blue-dark)">${isBuy ? 'Total Required:' : 'Estimated Proceeds:'}</span>
                 <span style="color:${isBuy ? '#c0392b' : '#27ae60'}">${formatMoney(totalEstimated)}</span>
               </div>
             </div>
 
             <!-- Order Execution Button -->
-            <button id="sm-execute-order-btn" class="focusable" style="width:100%; padding:10px; font-size:14px; font-weight:bold; cursor:${isValid ? 'pointer' : 'not-allowed'}; background:${isValid ? (isBuy ? 'linear-gradient(180deg, #2ecc71, #27ae60)' : 'linear-gradient(180deg, #e74c3c, #c0392b)') : '#ccc'}; color:#fff; border:1px solid ${isValid ? (isBuy ? '#1e8449' : '#922b21') : '#aaa'}; border-radius:3px; box-shadow:${isValid ? '0 2px 5px rgba(0,0,0,0.2)' : 'none'}">
+            <button id="sm-execute-order-btn" class="focusable" style="width:auto; min-width:180px; align-self:center; padding:10px 26px; font-size:14px; font-weight:bold; cursor:${isValid ? 'pointer' : 'not-allowed'}; background:${isValid ? (isBuy ? 'linear-gradient(180deg, #2ecc71, var(--xp-green))' : 'linear-gradient(180deg, #e74c3c, var(--xp-red-2))') : '#ccc'}; color:var(--xp-white); border:1px solid ${isValid ? (isBuy ? '#1e8449' : '#922b21') : '#aaa'}; border-radius:3px; box-shadow:${isValid ? '0 2px 5px rgba(0,0,0,0.2)' : 'none'}">
               ${isValid ? `PLACE ${isBuy ? 'BUY' : 'SELL'} ${this._orderType.toUpperCase().replace('_', ' ')} ORDER` : validationMsg.toUpperCase()}
             </button>
 
@@ -2544,10 +2549,10 @@
   // PLUGIN COMMANDS & REGISTRATIONS
   // ============================================================================
   PluginManager.registerCommand(pluginName, "OpenStockMarket", () => {
-    if ($gameSystem && !$gameSystem.stockMarket.update) {
+    if ($gameSystem && !($gameSystem.stockMarket && $gameSystem.stockMarket.update)) {
       $gameSystem.stockMarket = new StockMarketSystem();
     }
-    if (window.HypernetOS && SceneManager._scene instanceof Scene_HypernetOS) {
+    if (window.HypernetOS && window.HypernetStockApp && SceneManager._scene instanceof Scene_HypernetOS) {
       window.HypernetStockApp.launch();
     } else {
       SceneManager.push(Scene_StockMarket);
@@ -2573,7 +2578,7 @@
       name: "Stock Market",
       icon: 229,
       launchFn: function() {
-        if ($gameSystem && !$gameSystem.stockMarket.update) {
+        if ($gameSystem && !($gameSystem.stockMarket && $gameSystem.stockMarket.update)) {
           $gameSystem.stockMarket = new StockMarketSystem();
         }
         if (window.HypernetStockApp) {
@@ -2599,7 +2604,7 @@
   Game_Interpreter.prototype.pluginCommand = function (command, args) {
     _Game_Interpreter_pluginCommand.call(this, command, args);
     if (command === "OpenStockMarket") {
-      if ($gameSystem && !$gameSystem.stockMarket.update) {
+      if ($gameSystem && !($gameSystem.stockMarket && $gameSystem.stockMarket.update)) {
         $gameSystem.stockMarket = new StockMarketSystem();
       }
       if (window.HypernetOS && SceneManager._scene instanceof Scene_HypernetOS) {

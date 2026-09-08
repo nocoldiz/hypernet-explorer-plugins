@@ -5,5 +5,45 @@
     "Storm": "Tempesta",
     "Snow": "Neve",
     "Unknown": "Sconosciuto"
+  },
+  "app": {
+    "appName": "Whether Channel",
+    "tagline": "Che piova o che non piova.",
+    "location": "Località",
+    "here": "Dove sono",
+    "updated": "Ultima osservazione: {date}",
+    "today": "Oggi",
+    "indoors": "(al chiuso)",
+    "season": "Stagione",
+    "sunrise": "Alba",
+    "sunset": "Tramonto",
+    "dayNight": "Giorno / notte",
+    "humidity": "Umidità",
+    "wind": "Vento",
+    "cloud": "Nuvolosità",
+    "kmh": "{n} km/h",
+    "outlook": "Previsioni a cinque giorni",
+    "precip": "{n}% precip.",
+    "disclaimer": "Le previsioni sono tirate dalle tabelle stagionali e dal calendario. Il cielo non deve loro niente.",
+    "months": [
+      "Gen",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Mag",
+      "Giu",
+      "Lug",
+      "Ago",
+      "Set",
+      "Ott",
+      "Nov",
+      "Dic"
+    ],
+    "seasons": {
+      "winter": "Inverno",
+      "spring": "Primavera",
+      "summer": "Estate",
+      "autumn": "Autunno"
+    }
   }
 }

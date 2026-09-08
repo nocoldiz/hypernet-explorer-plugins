@@ -139,7 +139,6 @@
             // range this large; it is a sentinel, not a number of tiles.
             const UNLIMITED_RANGE = 99;
 
-            const hitTypeName = (hitType) => enumName("Inventory.spec.hitType", hitType);
             const occasionName = (occasion) => enumName("Inventory.spec.occasion", occasion);
             const scopeName = (scope) => enumName("Inventory.spec.scope", scope);
             const damageTypeName = (type) => enumName("Inventory.spec.damageType", type);
@@ -239,7 +238,6 @@
                 if (skill.successRate !== undefined && skill.successRate !== 100) specs.push({ label: T("Inventory.spec.label.successRate"), val: skill.successRate + "%" });
                 if (skill.repeats !== undefined && skill.repeats > 1) specs.push({ label: T("Inventory.spec.label.repeatActions"), val: "x" + skill.repeats });
                 if (skill.tpGain > 0) specs.push({ label: T("Inventory.spec.label.apGain"), val: "+" + skill.tpGain });
-                if (skill.hitType) specs.push({ label: T("Inventory.spec.label.hitClassification"), val: hitTypeName(skill.hitType) });
 
                 // How far it reaches, in tiles of the map battle grid
                 // (MapBattleMode's <Range:N>). The far end of the scale is not a
@@ -284,16 +282,17 @@
                         label: T("SkillsMenu.spec.label.statReq"),
                         val: svc.statName(req.stat) + " " + req.points
                     });
+                    // The stat the caster actually holds is only worth a row of
+                    // its own when it falls short: "9 (met)" under "INT 8" says
+                    // nothing the row above has not already said.
                     const stand = actor && svc.check(actor, skill);
-                    if (stand) {
+                    if (stand && !stand.met) {
                         specs.push({
                             label: T("SkillsMenu.spec.label.statHeld"),
-                            val: stand.met
-                                ? T("SkillsMenu.spec.statMet", { value: stand.have })
-                                : T("SkillsMenu.spec.statShort", {
-                                    value: stand.have,
-                                    percent: Math.round(stand.failChance * 100)
-                                })
+                            val: T("SkillsMenu.spec.statShort", {
+                                value: stand.have,
+                                percent: Math.round(stand.failChance * 100)
+                            })
                         });
                     }
                 }
@@ -494,6 +493,11 @@
                 if (training.length) {
                     html += section(T("SkillsMenu.section.training"), specRows(training));
                 }
+                // The skill's lore closes the card, under every number, the way
+                // an item's does on the backpack page: flavour is read last.
+                const lore = (window.ItemSystemUtils && window.ItemSystemUtils.loreFor)
+                    ? window.ItemSystemUtils.loreFor(skill) : "";
+                if (lore) html += `<div class="inspect-flavour">${esc(lore)}</div>`;
                 return html;
             }
 
@@ -539,11 +543,11 @@
                     <div class="item-inspect">
                         <div class="inspect-header">
                             <div class="inspect-frame">
-                                <canvas id="${canvasId}" width="32" height="32" style="width:36px; height:36px; image-rendering: pixelated;"></canvas>
+                                <canvas id="${canvasId}" class="inspect-frame-canvas" width="32" height="32"></canvas>
                             </div>
                             <div class="inspect-title-box">
                                 <h3 class="inspect-name">${esc(dbText(skill.name))}</h3>
-                                <div class="inspect-rarity" style="color: var(--text-gold-dark);">${esc(subtitle)}</div>
+                                <div class="inspect-rarity inspect-rarity--school">${esc(subtitle)}</div>
                             </div>
                         </div>
                         <div class="inspect-meta-grid">${resourceHTML}</div>
@@ -744,14 +748,18 @@
     // The stripe down the left edge of a list card. The backpack prints an
     // item's rarity there; a skill has no rarity, so it prints the role the
     // skill answers to, which is the one thing about it that never changes.
+    // One answer, shared with the row wash below: --role-* in the presets. The
+    // stripe used to name a different set (danger's *ink*, which is black, the
+    // body grey and the accent gold), so a card's edge and the row it sat in
+    // disagreed about what kind of skill it was.
     const ROLE_STRIPE = {
-        Offensive: 'var(--text-danger-hover)',
-        Healing: 'var(--text-success-active)',
-        Support: 'var(--text-primary-hover)'
+        Offensive: 'var(--role-offensive)',
+        Healing: 'var(--role-healing)',
+        Support: 'var(--role-support)'
     };
     function skillStripeColor(skill) {
-        if (!skill || isBasicSkill(skill)) return 'var(--border-primary-hover-translucent-15)';
-        return ROLE_STRIPE[getSkillRole(skill)] || 'var(--border-primary-hover-translucent-15)';
+        if (!skill || isBasicSkill(skill)) return 'var(--role-basic)';
+        return ROLE_STRIPE[getSkillRole(skill)] || 'var(--role-basic)';
     }
 
     // A skill a body part or an installed augment grants is carried the way a
@@ -829,11 +837,22 @@
         // i18n-ignore-end
     ];
 
+    // A skill whose <StatReq:> floor the character is under cannot be synced at
+    // all: window.SkillStatReq is the one answer, so the card, the presets and
+    // the keyboard all refuse the same skills.
+    function isStatLocked(actor, skill) {
+        if (!actor || !skill) return false;
+        const svc = window.SkillStatReq;
+        const stand = svc && svc.check(actor, skill);
+        return !!(stand && !stand.met);
+    }
+
     function presetCandidates(actor) {
         if (!actor) return [];
         const seen = new Set();
         return actor.skills().filter(skill => {
             if (!skill || isDummySkill(skill) || isAlwaysCarried(actor, skill)) return false;
+            if (isStatLocked(actor, skill)) return false;
             if (seen.has(skill.id)) return false;
             seen.add(skill.id);
             return true;
@@ -975,6 +994,7 @@
 
         isAlwaysCarried: isAlwaysCarried,
         isBasic: isBasicSkill,
+        isStatLocked: isStatLocked,
 
         // Carried ids the character still knows, in carry order. An always
         // carried skill is dropped from the count even when an older save has
@@ -1013,6 +1033,7 @@
                 list.splice(i, 1);
                 return 'off';
             }
+            if (isStatLocked(actor, skill)) return 'statlocked';
             if (list.length >= LOADOUT_MAX) return 'full';
             list.push(skill.id);
             return 'on';
@@ -1025,6 +1046,7 @@
         setSlot(actor, index, skill) {
             if (!actor || !skill) return 'locked';
             if (isAlwaysCarried(actor, skill)) return 'locked';
+            if (isStatLocked(actor, skill)) return 'statlocked';
             if (index < 0 || index >= LOADOUT_MAX) return 'locked';
             // The row shows this.ids(), not the raw stored list, so the slot the
             // player counted along is an index into the filtered view.
@@ -1052,6 +1074,7 @@
             const skill = $dataSkills[skillId];
             if (!actor || !skill || isDummySkill(skill)) return false;
             if (isAlwaysCarried(actor, skill)) return false;
+            if (isStatLocked(actor, skill)) return false;
             const list = loadoutIds(actor);
             if (list.includes(skillId)) return false;
             if (list.length >= LOADOUT_MAX) return false;
@@ -1215,12 +1238,15 @@
     // (BattleSystemEnhanchedCommands.js): attack red, heal green, support
     // blue, and the engine's own basic kit in its teal, so a skill row and a
     // command row of the same colour mean the same kind of thing.
+    // The accent is the shared --role-* ink; the rgb triple is the darker base
+    // the row's gradient washes from, which has to be numbers because it is
+    // mixed per row rather than named.
     const ROLE_ROW_COLORS = {
-        Offensive: { accent: '#e63232', rgb: [180, 25,  25 ] },
-        Healing:   { accent: '#44cc88', rgb: [25,  140, 80 ] },
-        Support:   { accent: '#3388ff', rgb: [25,  80,  180] },
+        Offensive: { accent: 'var(--role-offensive)', rgb: [180, 25,  25 ] },
+        Healing:   { accent: 'var(--role-healing)',   rgb: [25,  140, 80 ] },
+        Support:   { accent: 'var(--role-support)',   rgb: [25,  80,  180] },
     };
-    const BASIC_ROW_COLORS = { accent: '#66bbdd', rgb: [40, 120, 150] };
+    const BASIC_ROW_COLORS = { accent: 'var(--role-basic)', rgb: [40, 120, 150] };
 
     function skillRowColors(skill) {
         if (!skill || isBasicSkill(skill)) return BASIC_ROW_COLORS;
@@ -1232,15 +1258,14 @@
     // cursor is on it. Called from the builder and again from update() as the
     // cursor moves, so both states come out of one place.
     function paintSkillRow(el, skill, selected) {
-        const { accent, rgb } = skillRowColors(skill);
-        const a0 = selected ? 0.88 : 0.42;
-        const a1 = selected ? 0.32 : 0.12;
+        const { accent } = skillRowColors(skill);
         el.style.backgroundColor = selected
-            ? 'var(--bg-dark-overlay-78)' : 'var(--bg-dark-overlay-90)';
-        el.style.backgroundImage =
-            `linear-gradient(to right, rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a0}) 0%, ` +
-            `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a1}) 55%, transparent 100%)`;
-        el.style.borderColor = selected ? accent : 'transparent';
+            ? 'var(--actorcmd-bg-sel)' : 'var(--actorcmd-bg)';
+        el.style.backgroundImage = 'var(--actorcmd-bg-image, none)';
+        el.style.color = selected
+            ? 'var(--actorcmd-ink-sel)' : 'var(--actorcmd-ink)';
+        el.style.borderColor = selected
+            ? 'var(--actorcmd-border-sel)' : 'var(--actorcmd-border)';
         el.style.borderLeft = (selected ? '6px' : '4px') + ' solid ' + accent;
         el.style.boxShadow = selected ? '0 0 6px 1px ' + accent : 'none';
     }
@@ -1567,7 +1592,7 @@
             const el = document.createElement('div');
             el.dataset.idx = i;
             el.style.cssText =
-                'font-family:\'Lora\',serif;font-weight:bold;color:var(--text-pure-white);' +
+                'font-family:var(--font-ui);font-weight:bold;color:var(--text-pure-white);' +
                 'padding:6px 12px;border-radius:3px;cursor:pointer;' +
                 'border:2px solid transparent;transition:background 0.1s, border-color 0.1s;' +
                 'display:flex;align-items:center;justify-content:space-between;' +
@@ -1777,7 +1802,6 @@
     // when the list was a panel; it is anchored to the top edge of the menu
     // through window.BattleListPage.
 
-    const BATTLE_MENU_ROWS = 9;      // skills shown on one page of the menu
     const ALLY_ROW_ICON    = 73;
 
     // What a row's tail says: the pool the skill is actually paid from.
@@ -1821,14 +1845,12 @@
             if (list.length === 0) {
                 push(T('SkillsMenu.battle.none'), { kind: 'blocked' }, false, 76, null, '');
             }
-            for (const skill of list.slice(session.offset, session.offset + BATTLE_MENU_ROWS)) {
+            // Every carried skill is a row. The menu is bottom-pinned and
+            // grows upward, so the list simply keeps adding rows until the
+            // whole loadout is on screen: there is no page to turn.
+            for (const skill of list) {
                 push(skill.name, { kind: 'skill', id: skill.id }, actor.canUse(skill),
                      skill.iconIndex, skillRowColors(skill), battleRowCost(actor, skill));
-            }
-            // A loadout longer than one page turns instead of growing the menu
-            // off the top of the screen (it is bottom-pinned and grows upward).
-            if (list.length > BATTLE_MENU_ROWS) {
-                push(T('SkillsMenu.battle.more', { count: list.length }), { kind: 'more' }, true, 4, null, '');
             }
             push(T('SkillsMenu.battle.back'), { kind: 'back' }, true, 140, null, '');
         },
@@ -1947,13 +1969,6 @@
         if (!session || !ext) return;
 
         switch (ext.kind) {
-            case 'more':
-                session.offset += BATTLE_MENU_ROWS;
-                if (session.offset >= session.list.length) session.offset = 0;
-                win.refresh();
-                win.select(0);
-                win.activate();
-                return;
             case 'back':
                 this.onBattleSkillCancel();
                 return;
@@ -1966,7 +1981,7 @@
                 // Where to come back to if the target choice is backed out of.
                 this._battleSkillReturn = {
                     mode: session.mode, stypeId: session.stypeId,
-                    offset: session.offset, index: win.index(),
+                    index: win.index(),
                     symbol: session.returnSymbol,
                 };
                 BattleSkillMenu.close(win);
@@ -1993,7 +2008,6 @@
         const win = this._actorCommandWindow;
         if (!ret || !win) return false;
         if (!BattleSkillMenu.open(win, this, ret.mode, ret.stypeId, ret.symbol)) return false;
-        win._skillSession.offset = ret.offset || 0;
         win.refresh();
         win.select(ret.index != null ? ret.index : 0);
         win.activate();
@@ -2269,8 +2283,26 @@
             slots: LOADOUT_MAX,
             inline: true,
             onSlotClick: (i) => this.clickUILoadoutCell(i),
-            onSlotContext: (i) => this.dropUILoadoutCell(i)
+            onSlotContext: (i) => this.dropUILoadoutCell(i),
+            onSlotDrop: (i) => this.onUILoadoutSlotDrop(i),
+            onSlotDragStart: (i) => this.onUILoadoutDragStart(i)
         }) : null;
+
+        // Dropping a carried skill back on the pocket cards puts it down, the
+        // mirror of dragging a card onto the row.
+        this._dndContainer.addEventListener('dragover', (e) => {
+            if (this._dragLoadoutSkill && e.target.closest && e.target.closest('.backpack-grid')) {
+                e.preventDefault();
+            }
+        });
+        this._dndContainer.addEventListener('drop', (e) => {
+            const skill = this._dragLoadoutSkill;
+            this._dragLoadoutSkill = null;
+            if (!skill || !e.target.closest || !e.target.closest('.backpack-grid')) return;
+            e.preventDefault();
+            if (!BattleLoadout.isActive(this.actor(), skill)) return;
+            this.toggleUILoadout(skill);
+        });
 
         this.refreshUISkill();
         UISkillInputManager.activate(this);
@@ -2504,8 +2536,6 @@
         return `
             <div class="item-inspect item-inspect--empty">
                 <div class="inspect-placeholder-icon"></div>
-                <h3 class="title">${T('SkillsMenu.empty.title')}</h3>
-                <p class="inspect-placeholder-text">${T('SkillsMenu.empty.hint')}</p>
             </div>
         `;
     };
@@ -2531,6 +2561,20 @@
         const result = BattleLoadout.toggle(actor, skill);
         if (result === 'locked') {
             SoundManager.playBuzzer();
+            return;
+        }
+        // A stat floor the character is under is a hard lock: the row says what
+        // the sheet is missing rather than silently doing nothing.
+        if (result === 'statlocked') {
+            SoundManager.playBuzzer();
+            const svc = window.SkillStatReq;
+            const stand = svc && svc.check(actor, skill);
+            if (window.ParchmentToast && stand) {
+                window.ParchmentToast.show(T('SkillsMenu.loadout.statLocked', {
+                    name: skill.name,
+                    stat: svc.statName(stand.stat) + ' ' + stand.points
+                }), { severity: "warning" });
+            }
             return;
         }
         if (result === 'full') {
@@ -2612,7 +2656,7 @@
         const skill = this.uiCurrentSkill();
         if (!actor || !skill) { SoundManager.playBuzzer(); return; }
         const result = BattleLoadout.setSlot(actor, index, skill);
-        if (result === 'locked') { SoundManager.playBuzzer(); return; }
+        if (result === 'locked' || result === 'statlocked') { SoundManager.playBuzzer(); return; }
         if (result === 'same') { SoundManager.playCursor(); return; }
         SoundManager.playOk();
         this._itemWindow.refresh();
@@ -2627,6 +2671,51 @@
         const skill = skillId ? $dataSkills[skillId] : null;
         if (!skill) return;
         this.toggleUILoadout(skill);
+    };
+
+    // Dragging a pocket card. Nothing here may redraw the page: rebuilding the
+    // grid mid-drag would tear out the very element the browser is dragging.
+    Scene_Skill.prototype.onUISkillDragStart = function (event, idx) {
+        const list = this.getUISkillsOnlyList();
+        const skill = this.uiSkillOf(list[idx]);
+        if (!skill || this.isUILevelUpTab() || BattleLoadout.isAlwaysCarried(this.actor(), skill)) {
+            event.preventDefault();
+            return;
+        }
+        this._dragSkill = skill;
+        this._dragLoadoutSkill = null;
+        event.dataTransfer.effectAllowed = 'copy';
+        event.dataTransfer.setData('text/plain', String(skill.id));
+    };
+
+    Scene_Skill.prototype.onUISkillDragEnd = function () {
+        this._dragSkill = null;
+    };
+
+    // Picking a skill up out of the carried row, to drop it either on another
+    // slot (a reorder) or back on the cards (putting it down).
+    Scene_Skill.prototype.onUILoadoutDragStart = function (i) {
+        const skillId = BattleLoadout.ids(this.actor())[i];
+        const skill = skillId ? $dataSkills[skillId] : null;
+        if (!skill) return false;
+        this._dragLoadoutSkill = skill;
+        this._dragSkill = skill;
+        return true;
+    };
+
+    // A card, or another carried slot, dropped on slot i of the row.
+    Scene_Skill.prototype.onUILoadoutSlotDrop = function (i) {
+        const skill = this._dragSkill;
+        this._dragSkill = null;
+        this._dragLoadoutSkill = null;
+        if (!skill) return;
+        const actor = this.actor();
+        const result = BattleLoadout.setSlot(actor, i, skill);
+        if (result === 'locked' || result === 'statlocked') { SoundManager.playBuzzer(); return; }
+        if (result === 'same') { SoundManager.playCursor(); return; }
+        SoundManager.playOk();
+        this._itemWindow.refresh();
+        this.refreshUISkill();
     };
 
     // Paint the carried row into whatever mount point the current left page
@@ -2646,7 +2735,11 @@
             if (this._dndInspectSkillId === skill.id) selected = i;
             entries.push({
                 iconIndex: skill.iconIndex,
-                enabled: actor.canUse(skill),
+                // The bar shows what is CARRIED, not what can be cast standing
+                // in a menu: a battle-only skill is greyed out by canUse and
+                // left the whole row colourless. Affording the cast is the only
+                // thing that dims a slot here.
+                enabled: actor.canPaySkillCost(skill),
                 tooltip: dbText(skill.name)
             });
         }
@@ -2678,26 +2771,24 @@
             if (this._skillCallsCommonEvent(skill)) {
                 // A common-event skill must not stay inside the menu: the
                 // event it reserves is run by the map interpreter, which only
-                // runs once the menu is gone. Cast it, then pop all the way
-                // back to Scene_Map so the reserved event actually plays out.
-                // The scene stack is Scene_Map -> Scene_Menu -> Scene_Skill,
-                // so we need to pop both Scene_Skill and Scene_Menu.
-                // SceneManager.pop() is deferred (sets _nextScene), so the
-                // second pop() overwrites the first and the engine transitions
-                // directly from Scene_Skill to Scene_Map in one frame.
+                // runs once the menu is gone. Cast it, then go straight back to
+                // the map so the reserved event actually plays out.
                 SoundManager.playOk();
+                // Game_Battler.useItem already pays the skill cost, so paying
+                // it again here charged the caster twice.
                 actor.useItem(skill);
-                actor.paySkillCost(skill);
                 // Applying the skill to the caster reserves the common event
                 // (the direct-use path above never calls apply, so do it here).
                 const commonEventAction = new Game_Action(actor);
                 commonEventAction.setItemObject(skill);
-                commonEventAction.applyGlobal();                
-                // Pop Scene_Skill from the stack, then Scene_Menu.
-                // The second pop() overwrites the first goto()'s _nextScene,
-                // so the transition goes: Scene_Skill -> Scene_Map directly.
-                SceneManager.pop();
-                SceneManager.pop();
+                commonEventAction.applyGlobal();
+                // Land on the map however deep the menu stack happens to be.
+                // Popping a fixed two scenes exited the game outright when the
+                // skill list was opened straight off the map (a one entry
+                // stack): the second pop found nothing left and called
+                // SceneManager.exit().
+                SceneManager._stack.length = 0;
+                SceneManager.goto(Scene_Map);
                 return;
             }
             if (skill.scope === 1 || skill.scope === 7 || skill.scope === 8 || skill.scope === 9 || skill.scope === 10 || skill.scope === 11) {
@@ -2872,9 +2963,6 @@
         if (!isLevelUp) {
             loadoutGridHTML = `
                 <div class="backpack-hotbar">
-                    <div class="backpack-hotbar-head">
-                        <div class="backpack-hotbar-label">${T('SkillsMenu.loadout.skills')}</div>
-                    </div>
                     <div class="backpack-hotbar-mount" id="skill-loadout-mount"></div>
                 </div>
             `;
@@ -2925,7 +3013,7 @@
             rightPageContentHTML = `
                 <div class="target-overlay">
                     <h3 class="target-title">${T('SkillsMenu.target.title')}</h3>
-                    <div style="font-family: 'Lora', serif; margin-bottom: 15px; color:var(--text-primary-hover);">
+                    <div style="font-family: var(--font-ui); margin-bottom: 15px; color:var(--text-primary-hover);">
                         ${T('SkillsMenu.target.prompt', { skill: `<strong>${escapeHtml(dbText(skill.name))}</strong>` })}
                     </div>
                     <div class="inspect-actions">
@@ -3037,7 +3125,12 @@
         const isLearned = isLevelUp ? entry.isLearned : true;
         const isFocused = (this._dndActiveSection === "skills" && this._dndSelectedIndex === idx) ? "selected" : "";
         const costText = this.getUISkillCostText(item);
-        const dimStyle = (isLevelUp && !isLearned) ? ' style="opacity:0.6;"' : '';
+        // A skill the character is short of the stat for cannot be synced at
+        // all, so its card is greyed out the same way an unlearned one is.
+        const statSvc = window.SkillStatReq;
+        const standing = statSvc && statSvc.check(actor, item);
+        const isStatLocked = !isLevelUp && !!(standing && !standing.met);
+        const dimStyle = ((isLevelUp && !isLearned) || isStatLocked) ? ' style="opacity:0.6;"' : '';
 
         // The chip in the stack-count corner. On the ledger it is the level the
         // skill is learned at; everywhere else it says whether the skill is in
@@ -3048,9 +3141,11 @@
             chipHTML = `<span class="item-slot-count">Lv ${entry.level}</span>`;
         } else if (BattleLoadout.isAlwaysCarried(actor, item)) {
             chipHTML = `<span class="item-slot-count">${T('SkillsMenu.loadout.always')}</span>`;
-        } else if (BattleLoadout.isActive(actor, item)) {
-            chipHTML = `<span class="item-slot-count" onclick="event.stopPropagation(); SceneManager._scene.clickUILoadout(${idx})">${T('SkillsMenu.loadout.carried')}</span>`;
         }
+        // A synced skill wears no chip: its name is written in gold instead, so
+        // the row says what it carries without spending width on a glyph.
+        const syncedClass = (!isLevelUp && !BattleLoadout.isAlwaysCarried(actor, item)
+            && BattleLoadout.isActive(actor, item)) ? " skill-synced" : "";
         // A skill out of sync wears no chip at all: the bare card says it, and
         // the row stays as legible as any other.
 
@@ -3064,14 +3159,21 @@
         // have the sheet for reads no differently from any other, and one they
         // do not is a skill that will come apart in their hands often enough
         // that it should say so before it is carried into a fight.
-        const svc = window.SkillStatReq;
-        const stand = svc && svc.check(actor, item);
+        const svc = statSvc;
+        const stand = standing;
         const reqFlag = (stand && !stand.met)
             ? `<span class="skill-req-flag" title="${escapeHtml(T('SkillsMenu.spec.statShort', { value: stand.have, percent: Math.round(stand.failChance * 100) }))}">${escapeHtml(svc.statName(stand.stat) + ' ' + stand.points)}</span>`
             : "";
 
+        // A card can be picked up and dropped on the carried row. The ledger
+        // has no row to drop onto, and a skill the anatomy teaches is not the
+        // player's to place, so neither is draggable.
+        const dragAttrs = (!isLevelUp && !isStatLocked && !BattleLoadout.isAlwaysCarried(actor, item))
+            ? ` draggable="true" ondragstart="SceneManager._scene.onUISkillDragStart(event, ${idx})" ondragend="SceneManager._scene.onUISkillDragEnd(event)"`
+            : "";
+
         return `
-            <div class="item-slot ${isFocused}"${dimStyle} data-skill-idx="${idx}" onclick="SceneManager._scene.clickUISkill(${idx})" ondblclick="SceneManager._scene.dblClickUISkill(${idx})">
+            <div class="item-slot ${isFocused}${syncedClass}${isStatLocked ? " skill-stat-locked" : ""}"${dimStyle} data-skill-idx="${idx}"${dragAttrs} onclick="SceneManager._scene.clickUISkill(${idx})" ondblclick="SceneManager._scene.dblClickUISkill(${idx})">
                 <div class="item-rarity-bar" style="background:${skillStripeColor(item)};"></div>
                 <div class="item-slot-icon">
                     <canvas id="skill-canvas-${idx}" width="32" height="32" style="width:32px;height:32px;"></canvas>
@@ -3236,6 +3338,8 @@
     };
 
     // Keyboard and Gamepad Interceptor for Skills/Spellbook Screen
+    const SKILL_COLS = 3;   // matches #skill-grid grid-template-columns
+
     const UISkillInputManager = {
         _scene: null,
         _active: false,
@@ -3312,6 +3416,8 @@
             if (skill) scene.toggleUILoadout(skill);
         },
 
+        // How many skills a line of the roll holds. Must match
+        // .backpack-grid grid-template-columns in css/theme.css.
         handleMove: function (dir) {
             const scene = this._scene;
             const section = scene._dndActiveSection;
@@ -3383,7 +3489,14 @@
                         }
                     }
                 } else if (dir === "down") {
-                    if (list[scene._dndSelectedIndex]) {
+                    // The roll is three across (.backpack-grid), so down is a
+                    // row, not a page: it only leaves the list from the last
+                    // row of it. Matches the backpack exactly.
+                    if (scene._dndSelectedIndex + SKILL_COLS < list.length) {
+                        SoundManager.playCursor();
+                        scene._dndSelectedIndex += SKILL_COLS;
+                        scene.refreshUISkill();
+                    } else if (list[scene._dndSelectedIndex]) {
                         const actions = scene.getUISkillActions();
                         if (actions.length > 0) {
                             SoundManager.playCursor();
@@ -3393,9 +3506,15 @@
                         }
                     }
                 } else if (dir === "up") {
-                    SoundManager.playCursor();
-                    scene._dndActiveSection = "types";
-                    scene.refreshUISkill();
+                    if (scene._dndSelectedIndex - SKILL_COLS >= 0) {
+                        SoundManager.playCursor();
+                        scene._dndSelectedIndex -= SKILL_COLS;
+                        scene.refreshUISkill();
+                    } else {
+                        SoundManager.playCursor();
+                        scene._dndActiveSection = "types";
+                        scene.refreshUISkill();
+                    }
                 }
             } else if (section === "actions") {
                 const actions = scene.getUISkillActions();
@@ -3986,6 +4105,71 @@
         this.changeTextColor(ColorManager.normalColor());
         this.contents.drawText(actor.name(), x, y + (height - 16) / 2 - 2, width, 16, "center");
         this.resetFontSettings();
+    };
+
+    // =====================================================================
+    // Assist
+    // ---------------------------------------------------------------------
+    // Common event 142 (the Assist skill) calls this. It borrows one battle
+    // skill from another party member and has the user cast it at once, and
+    // refunds half of what that skill cost once the borrowed action is over.
+    // =====================================================================
+    const ASSIST_COMMON_EVENT_ID = 142;
+
+    function isAssistSkill(skill) {
+        return (skill.effects || []).some(
+            e => e && e.code === 44 && Number(e.dataId) === ASSIST_COMMON_EVENT_ID
+        );
+    }
+
+    PluginManager.registerCommand("CategorizedBattleSkills", "assist", function () {
+        if (!$gameParty.inBattle()) return;
+        const subject = BattleManager._subject;
+        const user = subject && subject.isActor && subject.isActor() ? subject : $gameParty.leader();
+        if (!user) return;
+
+        const pool = [];
+        for (const donor of $gameParty.battleMembers()) {
+            if (donor === user || !donor.isAlive()) continue;
+            for (const skill of donor.skills()) {
+                // occasion 0 (always) and 1 (battle only) are the ones a
+                // battler can act with; 2 and 3 never reach a turn.
+                if (!skill || skill.occasion > 1) continue;
+                if (isAssistSkill(skill)) continue;
+                if (!user.canPaySkillCost(skill)) continue;
+                pool.push({ donor: donor, skill: skill });
+            }
+        }
+        if (pool.length === 0) {
+            if ($gameMessage) $gameMessage.add(T("SkillsMenu.assist.none"));
+            return;
+        }
+
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        user._assistRefund = {
+            mp: Math.floor(user.skillMpCost(pick.skill) / 2),
+            tp: Math.floor(user.skillTpCost(pick.skill) / 2)
+        };
+        if ($gameMessage) {
+            $gameMessage.add(T("SkillsMenu.assist.borrowed", {
+                actor: pick.donor.name(),
+                skill: pick.skill.name
+            }));
+        }
+        user.forceAction(pick.skill.id, -1);
+        BattleManager.forceAction(user);
+    });
+
+    const _CBS_BattleManager_endAction = BattleManager.endAction;
+    BattleManager.endAction = function () {
+        const subject = this._subject;
+        if (subject && subject._assistRefund) {
+            const refund = subject._assistRefund;
+            subject._assistRefund = null;
+            subject.gainMp(refund.mp);
+            subject.gainTp(refund.tp);
+        }
+        _CBS_BattleManager_endAction.call(this);
     };
 
     window.Window_SkillInfo = Window_SkillInfo;

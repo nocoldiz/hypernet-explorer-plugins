@@ -36,7 +36,7 @@
  * in config.rpgsave, persisting between sessions.
  *
  * Keyboard Controls:
- * - F10: Toggle between windowed and fullscreen mode (with fade effect)
+ * - Fullscreen is toggled from Options or the core F11 key
  *
  * ============================================================================
  */
@@ -182,20 +182,10 @@
     };
 
     // ========================================================================
-    // Input - F10 key handling for fullscreen toggle
+    // Fullscreen toggle
+    // F10 now belongs to Core/SaveSystem.js's quickload, so no key is bound
+    // here: the toggle is reached from Options or the core F11 key.
     // ========================================================================
-
-    const _Scene_Map_update = Scene_Map.prototype.update;
-    Scene_Map.prototype.update = function() {
-        _Scene_Map_update.call(this);
-        this.updateFullscreenToggle();
-    };
-
-    Scene_Map.prototype.updateFullscreenToggle = function() {
-        if (Input.isTriggered('f10')) {
-            this.toggleFullscreenWithFade();
-        }
-    };
 
     Scene_Map.prototype.toggleFullscreenWithFade = function() {
         const newValue = !ConfigManager.fullscreen;
@@ -214,9 +204,6 @@
             }, fadeDuration * 16.67);
         }, fadeDuration * 16.67);
     };
-
-    // Add F10 key mapping
-    Input.keyMapper[121] = 'f10';  // F10 key code
 
     // ========================================================================
     // Scene_Boot - Apply resolution and fullscreen on game start

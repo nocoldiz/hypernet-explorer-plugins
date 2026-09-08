@@ -1,265 +1,263 @@
 {
-  "constellation": {
-    "andromeda": {
-      "name": ""
-    },
-    "aquarius": {
-      "name": ""
-    },
-    "aquila": {
-      "name": ""
-    },
-    "aries": {
-      "name": ""
-    },
-    "auriga": {
-      "name": ""
-    },
-    "bootes": {
-      "name": ""
-    },
-    "canis_major": {
-      "name": ""
-    },
-    "canis_minor": {
-      "name": ""
-    },
-    "capricornus": {
-      "name": ""
-    },
-    "cassiopeia": {
-      "name": ""
-    },
-    "cepheus": {
-      "name": ""
-    },
-    "cetus": {
-      "name": ""
-    },
-    "corona_borealis": {
-      "name": ""
-    },
-    "corvus": {
-      "name": ""
-    },
-    "crater": {
-      "name": ""
-    },
-    "cygnus": {
-      "name": ""
-    },
-    "delphinus": {
-      "name": ""
-    },
-    "draco": {
-      "name": ""
-    },
-    "equuleus": {
-      "name": ""
-    },
-    "eridanus": {
-      "name": ""
-    },
-    "gemini": {
-      "name": ""
-    },
-    "hercules": {
-      "name": ""
-    },
-    "hydra": {
-      "name": ""
-    },
-    "lacerta": {
-      "name": ""
-    },
-    "leo": {
-      "name": ""
-    },
-    "leo_minor": {
-      "name": ""
-    },
-    "lepus": {
-      "name": ""
-    },
-    "libra": {
-      "name": ""
-    },
-    "lynx": {
-      "name": ""
-    },
-    "lyra": {
-      "name": ""
-    },
-    "monoceros": {
-      "name": ""
-    },
-    "ophiuchus": {
-      "name": ""
-    },
-    "orion": {
-      "name": ""
-    },
-    "pegasus": {
-      "name": ""
-    },
-    "perseus": {
-      "name": ""
-    },
-    "pisces": {
-      "name": ""
-    },
-    "piscis_austrinus": {
-      "name": ""
-    },
-    "sagitta": {
-      "name": ""
-    },
-    "sagittarius": {
-      "name": ""
-    },
-    "scorpius": {
-      "name": ""
-    },
-    "scutum": {
-      "name": ""
-    },
-    "serpens": {
-      "name": ""
-    },
-    "taurus": {
-      "name": ""
-    },
-    "triangulum": {
-      "name": ""
-    },
-    "ursa_major": {
-      "name": ""
-    },
-    "ursa_minor": {
-      "name": ""
-    },
-    "virgo": {
-      "name": ""
-    },
-    "vulpecula": {
-      "name": ""
-    },
-    "antlia": {
-      "name": ""
-    },
-    "apus": {
-      "name": ""
-    },
-    "ara": {
-      "name": ""
-    },
-    "caelum": {
-      "name": ""
-    },
-    "camelopardalis": {
-      "name": ""
-    },
-    "cancer": {
-      "name": ""
-    },
-    "canes_venatici": {
-      "name": ""
-    },
-    "carina": {
-      "name": ""
-    },
-    "centaurus": {
-      "name": ""
-    },
-    "chamaeleon": {
-      "name": ""
-    },
-    "circinus": {
-      "name": ""
-    },
-    "columba": {
-      "name": ""
-    },
-    "coma_berenices": {
-      "name": ""
-    },
-    "corona_australis": {
-      "name": ""
-    },
-    "crux": {
-      "name": ""
-    },
-    "dorado": {
-      "name": ""
-    },
-    "fornax": {
-      "name": ""
-    },
-    "grus": {
-      "name": ""
-    },
-    "horologium": {
-      "name": ""
-    },
-    "hydrus": {
-      "name": ""
-    },
-    "indus": {
-      "name": ""
-    },
-    "mensa": {
-      "name": ""
-    },
-    "microscopium": {
-      "name": ""
-    },
-    "musca": {
-      "name": ""
-    },
-    "norma": {
-      "name": ""
-    },
-    "octans": {
-      "name": ""
-    },
-    "pavo": {
-      "name": ""
-    },
-    "phoenix": {
-      "name": ""
-    },
-    "pictor": {
-      "name": ""
-    },
-    "puppis": {
-      "name": ""
-    },
-    "pyxis": {
-      "name": ""
-    },
-    "reticulum": {
-      "name": ""
-    },
-    "sculptor": {
-      "name": ""
-    },
-    "sextans": {
-      "name": ""
-    },
-    "telescopium": {
-      "name": ""
-    },
-    "triangulum_australe": {
-      "name": ""
-    },
-    "tucana": {
-      "name": ""
-    },
-    "vela": {
-      "name": ""
-    },
-    "volans": {
-      "name": ""
-    }
+  "andromeda": {
+    "name": ""
+  },
+  "aquarius": {
+    "name": ""
+  },
+  "aquila": {
+    "name": ""
+  },
+  "aries": {
+    "name": ""
+  },
+  "auriga": {
+    "name": ""
+  },
+  "bootes": {
+    "name": ""
+  },
+  "canis_major": {
+    "name": ""
+  },
+  "canis_minor": {
+    "name": ""
+  },
+  "capricornus": {
+    "name": ""
+  },
+  "cassiopeia": {
+    "name": ""
+  },
+  "cepheus": {
+    "name": ""
+  },
+  "cetus": {
+    "name": ""
+  },
+  "corona_borealis": {
+    "name": ""
+  },
+  "corvus": {
+    "name": ""
+  },
+  "crater": {
+    "name": ""
+  },
+  "cygnus": {
+    "name": ""
+  },
+  "delphinus": {
+    "name": ""
+  },
+  "draco": {
+    "name": ""
+  },
+  "equuleus": {
+    "name": ""
+  },
+  "eridanus": {
+    "name": ""
+  },
+  "gemini": {
+    "name": ""
+  },
+  "hercules": {
+    "name": ""
+  },
+  "hydra": {
+    "name": ""
+  },
+  "lacerta": {
+    "name": ""
+  },
+  "leo": {
+    "name": ""
+  },
+  "leo_minor": {
+    "name": ""
+  },
+  "lepus": {
+    "name": ""
+  },
+  "libra": {
+    "name": ""
+  },
+  "lynx": {
+    "name": ""
+  },
+  "lyra": {
+    "name": ""
+  },
+  "monoceros": {
+    "name": ""
+  },
+  "ophiuchus": {
+    "name": ""
+  },
+  "orion": {
+    "name": ""
+  },
+  "pegasus": {
+    "name": ""
+  },
+  "perseus": {
+    "name": ""
+  },
+  "pisces": {
+    "name": ""
+  },
+  "piscis_austrinus": {
+    "name": ""
+  },
+  "sagitta": {
+    "name": ""
+  },
+  "sagittarius": {
+    "name": ""
+  },
+  "scorpius": {
+    "name": ""
+  },
+  "scutum": {
+    "name": ""
+  },
+  "serpens": {
+    "name": ""
+  },
+  "taurus": {
+    "name": ""
+  },
+  "triangulum": {
+    "name": ""
+  },
+  "ursa_major": {
+    "name": ""
+  },
+  "ursa_minor": {
+    "name": ""
+  },
+  "virgo": {
+    "name": ""
+  },
+  "vulpecula": {
+    "name": ""
+  },
+  "antlia": {
+    "name": ""
+  },
+  "apus": {
+    "name": ""
+  },
+  "ara": {
+    "name": ""
+  },
+  "caelum": {
+    "name": ""
+  },
+  "camelopardalis": {
+    "name": ""
+  },
+  "cancer": {
+    "name": ""
+  },
+  "canes_venatici": {
+    "name": ""
+  },
+  "carina": {
+    "name": ""
+  },
+  "centaurus": {
+    "name": ""
+  },
+  "chamaeleon": {
+    "name": ""
+  },
+  "circinus": {
+    "name": ""
+  },
+  "columba": {
+    "name": ""
+  },
+  "coma_berenices": {
+    "name": ""
+  },
+  "corona_australis": {
+    "name": ""
+  },
+  "crux": {
+    "name": ""
+  },
+  "dorado": {
+    "name": ""
+  },
+  "fornax": {
+    "name": ""
+  },
+  "grus": {
+    "name": ""
+  },
+  "horologium": {
+    "name": ""
+  },
+  "hydrus": {
+    "name": ""
+  },
+  "indus": {
+    "name": ""
+  },
+  "mensa": {
+    "name": ""
+  },
+  "microscopium": {
+    "name": ""
+  },
+  "musca": {
+    "name": ""
+  },
+  "norma": {
+    "name": ""
+  },
+  "octans": {
+    "name": ""
+  },
+  "pavo": {
+    "name": ""
+  },
+  "phoenix": {
+    "name": ""
+  },
+  "pictor": {
+    "name": ""
+  },
+  "puppis": {
+    "name": ""
+  },
+  "pyxis": {
+    "name": ""
+  },
+  "reticulum": {
+    "name": ""
+  },
+  "sculptor": {
+    "name": ""
+  },
+  "sextans": {
+    "name": ""
+  },
+  "telescopium": {
+    "name": ""
+  },
+  "triangulum_australe": {
+    "name": ""
+  },
+  "tucana": {
+    "name": ""
+  },
+  "vela": {
+    "name": ""
+  },
+  "volans": {
+    "name": ""
   }
 }

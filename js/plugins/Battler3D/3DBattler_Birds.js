@@ -275,9 +275,14 @@
                     finger.rotation.z = side * Math.PI / 2; finger.rotation.y = -side * i * 0.28;
                     finger.position.set(side * p.wingLen * 0.4, -i * 0.06, 0); g.add(finger);
                 }
+                // The membrane is a triangle already lying in the plane of the
+                // wing, so it only has to be pointed outward. Turning it with
+                // two Euler angles keyed off `side` did not compose into a
+                // reflection: the two wings came out at different heights and
+                // neither lined up with its own finger bones.
                 const memb = new THREE.Mesh(new THREE.CircleGeometry(p.wingLen * 0.7, 3), wingMat);
-                memb.rotation.z = side * Math.PI / 2; memb.rotation.y = side * Math.PI / 2;
-                memb.scale.set(0.7, 1, 1); memb.position.set(side * p.wingLen * 0.4, -0.12, 0); g.add(memb);
+                memb.rotation.z = side > 0 ? 0 : Math.PI;
+                memb.scale.set(1, 0.7, 1); memb.position.set(side * p.wingLen * 0.4, -0.12, 0); g.add(memb);
                 g.position.set(side * p.bodyR * 0.5, this._wingY, -0.05); g._side = side;
                 this.bodyGroup.add(g); return g;
             }

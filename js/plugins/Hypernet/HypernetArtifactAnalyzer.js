@@ -42,7 +42,18 @@
         _searchQuery: '',
         _selectedArtifactId: null,
         _selectedArtifactType: null, // 'item', 'weapon', 'armor'
+        _previews: [],
         win: null,
+
+        // Every rebuild of the details panel throws its canvas away, so the WebGL
+        // context behind it has to go with it: the browser force-loses the OLDEST
+        // context once the cap is passed, and that is the game's own.
+        disposePreviews: function() {
+            if (this._previews.length && window.Weapon3DPreview) {
+                window.Weapon3DPreview.disposeAll(this._previews);
+            }
+            this._previews = [];
+        },
 
         launch: function() {
             if (!window.HypernetOS || !window.HypernetOS.WindowManager) {
@@ -115,6 +126,7 @@
             this.refreshApp(win);
 
             win.addEventListener('hypernet-closed', () => {
+                this.disposePreviews();
                 this.win = null;
                 this._selectedArtifactId = null;
                 this._selectedArtifactType = null;
@@ -238,6 +250,7 @@
 
         refreshApp: function(win) {
             if (!win) return;
+            this.disposePreviews();
             const useItalian = ConfigManager.language === 'it';
             const listContainer = win.querySelector('#discovered-artifacts-list');
             const detailsPanel = win.querySelector('#analyzer-details-panel');
@@ -355,6 +368,12 @@
                 const stats = this.getArtifactStats(activeItem);
                 const custodyHistory = this.getArtifactCustodyHistory(activeItem.name);
                 const worldState = this.getLastKnownOwner(activeItem.name);
+
+                // The same question every other menu asks about a 3D model, asked
+                // of the one service that answers it (shields included).
+                const previewModel = window.Weapon3DPreview
+                    ? window.Weapon3DPreview.modelFor(activeItem.rawItem)
+                    : null;
                 
                 let detailsHTML = `
                     <h3  class="hn-style-0019">${T('ArtifactAnalyzer.satelliteDiagnostics')}</h3>
@@ -388,6 +407,13 @@
                             <span  class="hn-style-0025">${T('ArtifactAnalyzer.estimatedValue')}:</span>
                             <span  class="hn-style-0028">€ ${((activeItem.price || 0) / 100).toFixed(2)}</span>
                         </div>
+
+                        ${previewModel ? `
+                        <div  class="hn-style-0029">
+                            <span  class="hn-style-0030">${T('ArtifactAnalyzer.structuralScan')}</span>
+                            <canvas id="artifact-model-canvas" class="hn-artifact-model"></canvas>
+                        </div>
+                        ` : ''}
 
                         <!--  Stats Grid -->
                         ${stats.length > 0 ? `
@@ -438,6 +464,12 @@
                     </div>
                 `;
                 detailsPanel.innerHTML = detailsHTML;
+
+                if (previewModel && window.Weapon3DPreview) {
+                    const canvas = detailsPanel.querySelector('#artifact-model-canvas');
+                    const entry = canvas ? window.Weapon3DPreview.mount(canvas, previewModel) : null;
+                    if (entry) this._previews.push(entry);
+                }
             } else {
                 detailsPanel.innerHTML = `
                     <div  class="hn-style-0043">

@@ -186,21 +186,11 @@
 
     function getCategoryIconStyle(categoryName) {
         const data = CATEGORY_DATA[categoryName] || SkillMaster.CATEGORY_DATA[categoryName];
-        const iconIndex = data ? data.icon : 245;
-        const iconSize = 32;
-        const cols = 16;
-        const x = (iconIndex % cols) * iconSize;
-        const y = Math.floor(iconIndex / cols) * iconSize;
-        return `background: url('img/system/IconSet.png') -${x}px -${y}px no-repeat; width: 32px; height: 32px; image-rendering: pixelated; display: inline-block;`;
+        return window.CCArt.icon(data ? data.icon : 245, 32);
     }
 
     function getSkillIconStyle(iconIndex) {
-        const index = iconIndex || 0;
-        const iconSize = 32;
-        const cols = 16;
-        const x = (index % cols) * iconSize;
-        const y = Math.floor(index / cols) * iconSize;
-        return `background: url('img/system/IconSet.png') -${x}px -${y}px no-repeat; width: 32px; height: 32px; image-rendering: pixelated; display: inline-block;`;
+        return window.CCArt.icon(iconIndex || 0, 32);
     }
 
     function getSkillCategory(skillId) {
@@ -1376,11 +1366,8 @@
         const _Window_MenuCommand_addOriginalCommands = Window_MenuCommand.prototype.addOriginalCommands;
         Window_MenuCommand.prototype.addOriginalCommands = function () {
             _Window_MenuCommand_addOriginalCommands.call(this);
-            const cardMode = window.isCardCombatMode ? window.isCardCombatMode() : ($gameSwitches ? $gameSwitches.value(45) : false);
-            if (!cardMode) {
-                const label = typeof T === 'function' ? T('SkillMaster.training') : encyclopediaCommand;
-                this.addCommand(label, 'skillEncyclopedia', true, 77);
-            }
+            const label = typeof T === 'function' ? T('SkillMaster.training') : encyclopediaCommand;
+            this.addCommand(label, 'skillEncyclopedia', true, 77);
         };
 
         const _Scene_Menu_createCommandWindow = Scene_Menu.prototype.createCommandWindow;

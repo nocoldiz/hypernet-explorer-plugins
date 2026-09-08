@@ -123,6 +123,18 @@
   const TEX_W = 256;
   const TEX_H = 128;
 
+  // The noise each painter builds its own relief out of: the scale it samples
+  // at, kept here so the ground a party walks is cut from the very field the
+  // picture of that world was painted with (see planetElevation below). Change
+  // one of these and the painter above must change with it.
+  const SURFACE_FIELDS = {
+    terrestrial: { scale: 0.045 },
+    rocky:       { scale: 0.07 },
+    icy:         { scale: 0.06 },
+    volcanic:    { scale: 0.05 },
+    gas:         { scale: 0.03 },
+  };
+
   function newCanvas(w, h) {
     const c = document.createElement("canvas");
     c.width = w;
@@ -462,19 +474,24 @@
   // loop shape every frame instead of it sitting frozen once built.
   function buildProminenceArcs(seed, colorHex) {
     const arcs = [], mats = [];
-    const count = 4 + Math.floor(hash(1, 1, seed) * 4); // 4-7 loops
+    const base = new THREE.Color(colorHex);
+    // The plasma inside a loop is far hotter than the photosphere it left, so
+    // the core strand runs almost white and only the outer sheath keeps the
+    // star's own colour.
+    const coreCol = base.clone().lerp(new THREE.Color(0xffffff), 0.8);
+    const midCol = base.clone().lerp(new THREE.Color(0xffffff), 0.35);
+    const count = 9 + Math.floor(hash(1, 1, seed) * 5); // 9-13 loops
     for (let i = 0; i < count; i++) {
       const theta1 = hash(i, 11, seed) * Math.PI * 2;
       const phi1 = Math.acos(hash(i, 23, seed) * 1.6 - 0.8); // clear of the poles
-      const sep = 0.4 + hash(i, 37, seed) * 0.9; // footpoint separation, radians - wider loops
+      const sep = 0.35 + hash(i, 37, seed) * 1.0; // footpoint separation, radians
       const bearing = hash(i, 53, seed) * Math.PI * 2;
       const theta2 = theta1 + Math.cos(bearing) * sep;
       const phi2 = Math.min(Math.PI - 0.15, Math.max(0.15, phi1 + Math.sin(bearing) * sep));
       const p1 = sphToUnit(theta1, phi1);
       const p2 = sphToUnit(theta2, phi2);
-      // A wider footpoint separation arcs higher, like a real coronal loop -
-      // kept shallow so a wide loop reads as low and broad, not tall.
-      const archHeight = 1.03 + sep * (0.28 + hash(i, 67, seed) * 0.2);
+      // A wider footpoint separation arcs higher, like a real coronal loop.
+      const archHeight = 1.05 + sep * (0.34 + hash(i, 67, seed) * 0.3);
       const apexDir = p1.clone().add(p2).normalize();
       // Lateral axis the apex sways along while the loop "moves": perpendicular
       // to both the chord and the radial direction, so it reads as the loop
@@ -482,20 +499,15 @@
       const chordDir = p2.clone().sub(p1).normalize();
       const swayAxis = new THREE.Vector3().crossVectors(chordDir, apexDir).normalize();
       if (!isFinite(swayAxis.x) || swayAxis.lengthSq() < 0.5) swayAxis.set(0, 1, 0);
-      const tubeR = 0.006 + hash(i, 79, seed) * 0.01;
-      const mat = new THREE.MeshBasicMaterial({
-        color: colorHex,
-        transparent: true,
-        opacity: 0.55 + hash(i, 83, seed) * 0.35,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      });
-      mats.push(mat);
-      const geo = updateProminenceArc(p1, p2, apexDir, archHeight, 0, swayAxis, tubeR);
-      arcs.push({
-        mesh: new THREE.Mesh(geo, mat), mat, baseOpacity: mat.opacity,
-        rate: 0.8 + hash(i, 97, seed) * 1.6, phase: hash(i, 101, seed) * Math.PI * 2,
+      const tubeR = 0.005 + hash(i, 79, seed) * 0.007;
+      const arc = {
         p1, p2, apexDir, archHeight, swayAxis, tubeR,
+        // The loop is a braided flux rope, not one wire: its strands wind
+        // around a common axis, widest at the apex where the field is loosest.
+        ropeR: tubeR * (2.2 + hash(i, 157, seed) * 2.6),
+        twist: 1 + Math.floor(hash(i, 163, seed) * 3), // whole turns along the loop
+        handed: hash(i, 167, seed) < 0.5 ? -1 : 1,
+        rate: 0.8 + hash(i, 97, seed) * 1.6, phase: hash(i, 101, seed) * Math.PI * 2,
         // Sway: a slow lateral drift of the apex, like the loop stirring in
         // the stellar wind.
         swayAmp: 0.05 + hash(i, 109, seed) * 0.12,
@@ -508,19 +520,130 @@
         snapPeriod: 5 + hash(i, 131, seed) * 9,
         snapPhase: hash(i, 139, seed) * 97,
         snapWidth: 0.03 + hash(i, 149, seed) * 0.03,
-      });
+        strands: [],
+      };
+      arc.mesh = new THREE.Group();
+      // Layers, innermost out: a white-hot core, two or three braided sheath
+      // strands and a wide faint halo that gives the whole rope its bloom.
+      const strandCount = 2 + Math.floor(hash(i, 173, seed) * 2);
+      const layers = [
+        { off: 0, r: tubeR * 0.55, col: coreCol, op: 0.95, phase: 0 },
+        { off: 0, r: tubeR * 2.6, col: base, op: 0.14, phase: 0 }, // halo
+      ];
+      for (let s = 0; s < strandCount; s++) {
+        layers.push({
+          off: 1, r: tubeR * (0.7 + hash(i * 7 + s, 179, seed) * 0.5),
+          col: midCol, op: 0.5 + hash(i * 7 + s, 181, seed) * 0.3,
+          phase: (s / strandCount) * Math.PI * 2,
+        });
+      }
+      for (const L of layers) {
+        const mat = new THREE.MeshBasicMaterial({
+          color: L.col.getHex(),
+          transparent: true,
+          opacity: L.op,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        });
+        mats.push(mat);
+        const strand = { mat, baseOpacity: L.op, off: L.off, r: L.r, phase: L.phase };
+        strand.mesh = new THREE.Mesh(buildStrandGeometry(arc, strand, arc.archHeight, 0), mat);
+        arc.mesh.add(strand.mesh);
+        arc.strands.push(strand);
+      }
+      arcs.push(arc);
     }
     return { arcs, mats };
   }
 
-  // (Re)builds one prominence loop's tube geometry from its footpoints and a
-  // current apex offset. Shared by the initial build above and the per-frame
-  // sway/snap update in Scene3D_Bodies' animate(), which disposes the old
-  // geometry and swaps this one in.
-  function updateProminenceArc(p1, p2, apexDir, height, sway, swayAxis, tubeR) {
-    const apex = apexDir.clone().multiplyScalar(height).addScaledVector(swayAxis, sway);
-    const curve = new THREE.CatmullRomCurve3([p1, apex, p2]);
-    return new THREE.TubeGeometry(curve, 20, tubeR, 6, false);
+  // One strand of a flux rope as a tapered tube: the centreline bows from
+  // footpoint to footpoint, the strand winds around it, and the radius swells
+  // toward the apex and pinches to nothing where the loop enters the surface,
+  // which is what makes a loop read as plasma rather than as a drawn line.
+  function buildStrandGeometry(arc, strand, height, sway) {
+    const SEG = 34, RAD = 6;
+    const apex = arc.apexDir.clone().multiplyScalar(height).addScaledVector(arc.swayAxis, sway);
+    const curve = new THREE.CatmullRomCurve3([arc.p1, apex, arc.p2]);
+    const pts = curve.getPoints(SEG);
+    const centres = [], radii = [];
+    const tmpN = new THREE.Vector3(), tmpB = new THREE.Vector3();
+    for (let i = 0; i <= SEG; i++) {
+      const u = i / SEG;
+      const env = Math.sin(Math.PI * u); // 0 at the footpoints, 1 at the apex
+      const p = pts[i].clone();
+      if (strand.off) {
+        // Wind around the centreline in the plane spanned by the sway axis and
+        // the local radial direction.
+        const ang = arc.handed * (arc.twist * u * Math.PI * 2 + strand.phase);
+        tmpN.copy(p).normalize();
+        tmpB.copy(arc.swayAxis);
+        p.addScaledVector(tmpB, Math.cos(ang) * arc.ropeR * env);
+        p.addScaledVector(tmpN, Math.sin(ang) * arc.ropeR * env * 0.6);
+      }
+      centres.push(p);
+      radii.push(strand.r * (0.15 + 0.85 * Math.pow(env, 0.45)));
+    }
+    return tubeFromCentres(centres, radii, RAD);
+  }
+
+  // A tube of varying radius around an arbitrary polyline. The frame is carried
+  // forward along the curve (a cheap parallel transport) so the tube never
+  // flips where the path turns back on itself.
+  function tubeFromCentres(centres, radii, radial) {
+    const n = centres.length;
+    const pos = new Float32Array(n * (radial + 1) * 3);
+    const idx = [];
+    const normal = new THREE.Vector3(0, 1, 0);
+    const tangent = new THREE.Vector3(), binormal = new THREE.Vector3(), tmp = new THREE.Vector3();
+    for (let i = 0; i < n; i++) {
+      const a = centres[Math.max(0, i - 1)], b = centres[Math.min(n - 1, i + 1)];
+      tangent.copy(b).sub(a);
+      if (tangent.lengthSq() < 1e-12) tangent.set(0, 0, 1);
+      tangent.normalize();
+      // Re-orthogonalise the carried normal against the new tangent.
+      tmp.copy(tangent).multiplyScalar(normal.dot(tangent));
+      normal.sub(tmp);
+      if (normal.lengthSq() < 1e-8) {
+        normal.set(Math.abs(tangent.x) < 0.9 ? 1 : 0, Math.abs(tangent.x) < 0.9 ? 0 : 1, 0);
+        tmp.copy(tangent).multiplyScalar(normal.dot(tangent));
+        normal.sub(tmp);
+      }
+      normal.normalize();
+      binormal.crossVectors(tangent, normal);
+      for (let j = 0; j <= radial; j++) {
+        const ang = (j / radial) * Math.PI * 2;
+        const c = Math.cos(ang) * radii[i], s = Math.sin(ang) * radii[i];
+        const o = (i * (radial + 1) + j) * 3;
+        pos[o] = centres[i].x + normal.x * c + binormal.x * s;
+        pos[o + 1] = centres[i].y + normal.y * c + binormal.y * s;
+        pos[o + 2] = centres[i].z + normal.z * c + binormal.z * s;
+      }
+    }
+    for (let i = 0; i < n - 1; i++) {
+      for (let j = 0; j < radial; j++) {
+        const a = i * (radial + 1) + j, b = a + radial + 1;
+        idx.push(a, b, a + 1, b, b + 1, a + 1);
+      }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    return geo;
+  }
+
+  // (Re)builds every strand of one prominence loop for the current apex height
+  // and sway, disposing the geometry it replaces. Called by the initial build
+  // above and by Scene3D_Bodies' animate() each frame.
+  function updateProminenceArc(arc, height, sway) {
+    if (!arc || !arc.strands) return null;
+    for (const s of arc.strands) {
+      const geo = buildStrandGeometry(arc, s, height, sway);
+      if (s.mesh.geometry) s.mesh.geometry.dispose();
+      s.mesh.geometry = geo;
+    }
+    return null;
   }
 
   // A cloud of tiny debris specks as ONE mesh: each fragment is a single
@@ -1426,6 +1549,79 @@
       return list;
     },
 
+    // ========================================================================
+    // Any world's ground, not just a terrestrial one
+    // ========================================================================
+    // Every painter above builds its bump map out of one noise field at one
+    // scale, and that bump map IS the world's relief: what the picture shades
+    // as a ridge is a ridge. terrestrialElevation answers for paintTerrestrial;
+    // the rest of the sky had nothing to answer with, so a walked ice moon and
+    // a walked lava world were both raised out of the terrestrial field and
+    // came out as the same continent twice.
+    //
+    // surfaceFamilyOf says which painter a world belongs to, and
+    // planetElevation samples THAT painter's own field, at its own scale, with
+    // the extra readings each family's ground needs: the fissure field a
+    // volcanic world's lava runs in, the fracture lines an icy world cracks
+    // along, and a finer octave of the same field for the metre scale, which
+    // the picture is painted far too coarsely to carry.
+    surfaceFamilyOf(type) {
+      if (this.isGasGiant(type)) return "gas";
+      if (this.isVolcanic(type)) return "volcanic";
+      if (this.isIcy(type)) return "icy";
+      if (this.isTerrestrial(type)) return "terrestrial";
+      return "rocky";
+    },
+
+    // opts: { family, isOcean }. u/v are the same longitude/latitude fractions
+    // terrestrialElevation takes. Returns the elevation in 0..1, the sea level
+    // to measure it from, the band the picture paints there, a detail reading
+    // of the same field four times finer, and the two family fields
+    // (crack: how deep in a fissure this is, fracture: how near a crack line).
+    planetElevation(seed, u, v, opts) {
+      const o = opts || {};
+      const fam = o.family || "rocky";
+      const f = SURFACE_FIELDS[fam] || SURFACE_FIELDS.rocky;
+      // The detail octave: the SAME field carried on past the five octaves the
+      // texture stops at, so the roughness underfoot belongs to this world
+      // rather than to a generic noise laid over it.
+      const detail = fbmTileX(u * TEX_W * 4, v * TEX_H * 4, TEX_W * 4, f.scale, seed + 61, 3);
+      if (fam === "terrestrial") {
+        const r = this.terrestrialElevation(seed, u, v, !!o.isOcean);
+        r.detail = detail;
+        r.crack = 0;
+        r.fracture = 0;
+        return r;
+      }
+      const e = fbmTileX(u * TEX_W, v * TEX_H, TEX_W, f.scale, seed, 5);
+      const lat = Math.abs((v - 0.5) * 2);
+      let band = "rock";
+      let crack = 0;
+      let fracture = 0;
+      if (fam === "volcanic") {
+        // paintVolcanic's own fissure test, to the letter: where two noise
+        // fields meet, the crust is open and the melt is showing.
+        const cracks = fbmTileX(u * TEX_W, v * TEX_H, TEX_W, 0.09, seed + 5, 4);
+        crack = Math.max(0, 0.5 - Math.abs(cracks - 0.5)) * 2;
+        band = crack > 0.78 ? "lava" : (e < 0.42 ? "ash" : "basalt");
+      } else if (fam === "icy") {
+        // The fracture lines paintIcy draws over the ice, as a field: how near
+        // this point is to one of them.
+        const fr = fbmTileX(u * TEX_W, v * TEX_H, TEX_W, 0.11, seed + 17, 3);
+        fracture = Math.max(0, 1 - Math.abs(fr - 0.5) * 9);
+        band = e > 0.65 ? "snow" : (e < 0.35 ? "ice" : "snow");
+        if (e < 0.35) band = "ice";
+      } else if (fam === "gas") {
+        band = "cloud";
+      } else {
+        // The rocky bucket: dust in the lowlands, bare rock over it, and the
+        // frost the poles of an airless world keep in permanent shadow.
+        band = e < 0.4 ? "dust" : (e < 0.75 ? "rock" : "ridge");
+        if (lat > 0.9) band = "snow";
+      }
+      return { elevation: e, seaLevel: -0.35, band, detail, crack, fracture };
+    },
+
     init() {
       if (this._inited) return this._ok;
       this._inited = true;
@@ -1979,7 +2175,7 @@
       // Prominence arcs rebuild their own geometry every frame (see
       // updateProminenceArc), so only whatever is currently attached needs
       // releasing here.
-      if (group._arcs) group._arcs.forEach((a) => a.mesh && a.mesh.geometry && a.mesh.geometry.dispose());
+      if (group._arcs) group._arcs.forEach((a) => a.strands && a.strands.forEach((st) => st.mesh && st.mesh.geometry && st.mesh.geometry.dispose()));
     },
 
     // ------------------------------------------------------------------

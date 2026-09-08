@@ -156,8 +156,8 @@
  * @text Hide Destination Picture
  * @desc Hides the destination picture window.
  *
- * @command TutorialStation
- * @text Tutorial Station
+ * @command StoryModeStation
+ * @text Story mode Station
  * @desc Opens the fast travel destination window via train, restricted to Ghent and Omega Tower.
  *
  * @help FastTravelSystem.js (v1.7.0)
@@ -628,9 +628,9 @@
         }
     });
 
-    PluginManager.registerCommand(pluginName, "TutorialStation", () => {
+    PluginManager.registerCommand(pluginName, "StoryModeStation", () => {
         if (SceneManager._scene instanceof Scene_Map) {
-            SceneManager._scene.startTutorialTravel();
+            SceneManager._scene.startStoryModeTravel();
         }
     });
 
@@ -785,6 +785,30 @@
                 eventId: 0, // No event ID needed for hardcoded destinations
                 transportOverrides: transportData
             });
+        }
+
+        // Towns the party founded themselves (Crafting/FurnitureSystem.js).
+        // They belong to the world folder rather than to Destinations.json, so
+        // they are appended here: a pin of their own on the same sheet, sitting
+        // on the world square the charter was signed on. Only Earth ones: a
+        // town on another planet has no square of this map to stand on.
+        const TF = window.TownFounding;
+        if (TF && TF.list) {
+            for (const town of TF.list()) {
+                if (town.planet) continue;
+                if (destinations.some(d => d.name === town.name)) continue;
+                destinations.push({
+                    name: town.name,
+                    fullName: 'Teleport - ' + town.name,  // i18n-ignore  event name prefix
+                    type: 'village',   // i18n-ignore  Destinations.json id
+                    mapId: 315,
+                    x: town.worldX,
+                    y: town.worldY,
+                    eventId: 0,
+                    founded: true,
+                    transportOverrides: { base: { x: town.worldX, y: town.worldY } }
+                });
+            }
         }
 
         destinationCache = destinations;
@@ -1498,13 +1522,15 @@
         const overlay = document.createElement('div');
         overlay.id = 'travel-arrival-overlay';
         overlay.innerHTML = `
-            <div class="travel-arrival-box">
-                <h2 class="travel-title">${T('FastTravel.arrival.title')}</h2>
+            <div class="ui-panel travel-arrival-box">
+                <div class="page-header-bar">
+                    <h2 class="title">${T('FastTravel.arrival.title')}</h2>
+                </div>
                 <div class="travel-arrival-place">${dest.name ? destLabel(dest.name) : biome}</div>
-                <div class="travel-arrival-options">
-                    <div class="travel-btn travel-btn-confirm travel-arrival-option selected" data-answer="visit"
+                <div class="inspect-actions travel-arrival-options">
+                    <div class="inspect-btn focusable travel-arrival-option selected" data-answer="visit"
                          onclick="SceneManager._scene.answerTravelArrival('visit')">${T('FastTravel.arrival.visit', { biome: biome })}</div>
-                    <div class="travel-btn travel-btn-cancel travel-arrival-option" data-answer="world"
+                    <div class="inspect-btn inspect-btn--secondary focusable travel-arrival-option" data-answer="world"
                          onclick="SceneManager._scene.answerTravelArrival('world')">${T('FastTravel.arrival.worldMap')}</div>
                 </div>
             </div>
@@ -2008,7 +2034,7 @@
         this.openFastTravelUIOverlay();
     };
 
-    Scene_Map.prototype.startTutorialTravel = function () {
+    Scene_Map.prototype.startStoryModeTravel = function () {
         const data = getFastTravelData();
         $gamePlayer.setMovementLock(true);
         data.selectedTransport = 'train';
@@ -2160,7 +2186,7 @@
                     <span class="travel-dest-name">${rowLabel(dest)}${hubBadge}</span>
                     <span class="travel-dest-meta">
                         <span>Distance: ${distanceInKm} km</span>
-                        <span class="travel-01">${costText}</span>
+                        <span class="travel-dest-cost">${costText}</span>
                     </span>
                 </div>
             `;
@@ -2214,13 +2240,12 @@
             ? "SceneManager._scene.reopenCreationOriginStep()"
             : "SceneManager._scene.closeTravelUIOverlay()";
 
+        // The one way out of the picker, in the place every other spread keeps
+        // it: the left of the page header, never a button at the foot of the
+        // list.
         const backButtonHTML = (isCCTravel && !ccCanReopenOrigin)
             ? ""
-            : `
-            <div class="travel-02">
-                <div class="travel-btn travel-btn-cancel travel-03" onclick="${backButtonAction}">${backButtonLabel}</div>
-            </div>
-            `;
+            : `<div class="back-button focusable" onclick="${backButtonAction}">${backButtonLabel}</div>`;
 
         const editToolbarHTML = isSandbox ? `
             <div class="travel-edit-toolbar" id="travel-edit-toolbar">
@@ -2230,58 +2255,59 @@
         ` : '';
 
         overlay.innerHTML = `
-            <div class="travel-book">
-                <div class="travel-left-page">
+            <div class="travel-book-spread">
+                <div class="left-page travel-left-page">
                     <!-- LIST PANEL -->
-                    <div class="travel-04" id="panel-list">
-                        <h2 class="travel-title">${T('FastTravel.ui.stations')}</h2>
-                        <div class="travel-transport-info">
-                            <div class="travel-05">
-                                ${transportDisplayName}
-                            </div>
-                            <div class="travel-06">
-                                ${multiplierText}
-                            </div>
+                    <div class="travel-list-panel" id="panel-list">
+                        <div class="page-header-bar">
+                            ${backButtonHTML}
+                            <h2 class="title">${T('FastTravel.ui.stations')}</h2>
                         </div>
-                        <div class="travel-dest-list">
+                        <div class="travel-transport-info">
+                            <span class="travel-transport-name">${transportDisplayName}</span>
+                            <span class="travel-transport-rate">${multiplierText}</span>
+                        </div>
+                        <div class="ui-list travel-dest-list">
                             ${addCustomHTML}
                             ${listItemsHTML}
                         </div>
-                        ${backButtonHTML}
                     </div>
-                    
+
                     <!-- CONFIRM PANEL (initially hidden) -->
-                    <div class="travel-07" id="panel-confirm">
-                        <h2 class="travel-title">${T('FastTravel.ui.confirmJourney')}</h2>
-                        <div class="travel-08" id="sidebar-dest-title">${T('FastTravel.ui.travelToPlaceholder')}</div>
-                        
-                        <div class="travel-confirm-details travel-09">
-                            <div class="travel-modal-detail travel-10">
-                                <span class="travel-modal-label travel-11">${T('FastTravel.ui.transport')}</span>
-                                <span class="travel-modal-value travel-12" id="sidebar-transport-val">${T('FastTravel.ui.transportPlaceholder')}</span>
+                    <div class="ui-detail travel-confirm-panel" id="panel-confirm">
+                        <div class="page-header-bar">
+                            <div class="back-button focusable" onclick="SceneManager._scene.closeTravelConfirmModal()">${T('FastTravel.ui.back')}</div>
+                            <h2 class="title">${T('FastTravel.ui.confirmJourney')}</h2>
+                        </div>
+                        <div class="travel-confirm-dest" id="sidebar-dest-title">${T('FastTravel.ui.travelToPlaceholder')}</div>
+                        <div class="travel-confirm-picture" id="sidebar-dest-picture"></div>
+
+                        <div class="ui-detail-scroll travel-confirm-details">
+                            <div class="inspect-spec-row">
+                                <span class="inspect-spec-label">${T('FastTravel.ui.transport')}</span>
+                                <span class="inspect-spec-value" id="sidebar-transport-val">${T('FastTravel.ui.transportPlaceholder')}</span>
                             </div>
-                            <div class="travel-modal-detail travel-10">
-                                <span class="travel-modal-label travel-11">${T('FastTravel.ui.distance')}</span>
-                                <span class="travel-modal-value travel-12" id="sidebar-distance-val">12 km</span>
+                            <div class="inspect-spec-row">
+                                <span class="inspect-spec-label">${T('FastTravel.ui.distance')}</span>
+                                <span class="inspect-spec-value" id="sidebar-distance-val">12 km</span>
                             </div>
-                            <div class="travel-modal-detail travel-10">
-                                <span class="travel-modal-label travel-11">${T('FastTravel.ui.cost')}</span>
-                                <span class="travel-modal-value travel-01" id="sidebar-cost-val">1.20€</span>
+                            <div class="inspect-spec-row">
+                                <span class="inspect-spec-label">${T('FastTravel.ui.cost')}</span>
+                                <span class="inspect-spec-value travel-dest-cost" id="sidebar-cost-val">1.20&euro;</span>
                             </div>
-                            <div class="travel-modal-detail travel-10">
-                                <span class="travel-modal-label travel-11">${T('FastTravel.ui.travelTime')}</span>
-                                <span class="travel-modal-value travel-12" id="sidebar-time-val">4s</span>
+                            <div class="inspect-spec-row">
+                                <span class="inspect-spec-label">${T('FastTravel.ui.travelTime')}</span>
+                                <span class="inspect-spec-value" id="sidebar-time-val">4s</span>
                             </div>
                         </div>
-                        
-                        <div class="travel-13">
-                            <div class="travel-btn travel-btn-cancel travel-03" onclick="SceneManager._scene.closeTravelConfirmModal()">${T('FastTravel.ui.cancel')}</div>
-                            <div class="travel-btn travel-btn-confirm travel-03" id="sidebar-confirm-action-btn">${T('FastTravel.ui.travel')}</div>
+
+                        <div class="inspect-actions travel-confirm-actions">
+                            <div class="inspect-btn focusable" id="sidebar-confirm-action-btn">${T('FastTravel.ui.travel')}</div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="travel-right-page">
+
+                <div class="right-page travel-right-page">
                     <div class="travel-map-viewer" id="travel-viewer">
                         <div class="travel-map-wrapper" id="travel-wrapper">
                             ${offEarth
@@ -2293,15 +2319,15 @@
                                 <path class="travel-route-line-bg" id="travel-route-bg" d=""></path>
                                 <path class="travel-route-line" id="travel-route" d=""></path>
                             </svg>
-                            
+
                             ${markersHTML}
-                            
+
                             <div class="travel-player-marker" style="left:${playerPixelX}px; top:${playerPixelY}px">
                                 <div class="travel-player-pulse"></div>
                                 <div class="travel-player-dot"></div>
                             </div>
                         </div>
-                        
+
                         <div class="travel-zoom-controls">
                             <div class="travel-zoom-btn" onclick="SceneManager._scene.adjustTravelZoom(1.3)">+</div>
                             <div class="travel-zoom-btn" onclick="SceneManager._scene.adjustTravelZoom(0.7)">-</div>
@@ -2312,10 +2338,12 @@
             </div>
 
             <!-- COORDINATE BOX (initially hidden) -->
-            <div class="travel-custom-modal" id="travel-custom-modal" style="display:none">
-                <div class="travel-custom-box">
-                    <h2 class="travel-title">${T('FastTravel.custom.title')}</h2>
-                    <div class="travel-custom-field" id="travel-custom-field-0" onclick="SceneManager._scene.focusCustomField(0)">
+            <div class="ui-overlay travel-custom-modal" id="travel-custom-modal">
+                <div class="ui-panel travel-custom-box">
+                    <div class="page-header-bar">
+                        <h2 class="title">${T('FastTravel.custom.title')}</h2>
+                    </div>
+                    <div class="travel-custom-field focusable" id="travel-custom-field-0" onclick="SceneManager._scene.focusCustomField(0)">
                         <span class="travel-custom-label">${T('FastTravel.custom.x')}</span>
                         <span class="travel-custom-stepper">
                             <span class="travel-custom-arrow" onclick="SceneManager._scene.stepCustomField(0, -1)">&#9664;</span>
@@ -2323,7 +2351,7 @@
                             <span class="travel-custom-arrow" onclick="SceneManager._scene.stepCustomField(0, 1)">&#9654;</span>
                         </span>
                     </div>
-                    <div class="travel-custom-field" id="travel-custom-field-1" onclick="SceneManager._scene.focusCustomField(1)">
+                    <div class="travel-custom-field focusable" id="travel-custom-field-1" onclick="SceneManager._scene.focusCustomField(1)">
                         <span class="travel-custom-label">${T('FastTravel.custom.y')}</span>
                         <span class="travel-custom-stepper">
                             <span class="travel-custom-arrow" onclick="SceneManager._scene.stepCustomField(1, -1)">&#9664;</span>
@@ -2331,15 +2359,14 @@
                             <span class="travel-custom-arrow" onclick="SceneManager._scene.stepCustomField(1, 1)">&#9654;</span>
                         </span>
                     </div>
-                    <div class="travel-custom-field" id="travel-custom-field-2" onclick="SceneManager._scene.focusCustomField(2)">
+                    <div class="travel-custom-field focusable" id="travel-custom-field-2" onclick="SceneManager._scene.focusCustomField(2)">
                         <span class="travel-custom-label">${T('FastTravel.custom.name')}</span>
-                        <input class="travel-custom-input" id="travel-custom-name" type="text" maxlength="48">
+                        <input class="ui-input travel-custom-input" id="travel-custom-name" type="text" maxlength="48">
                     </div>
                     <div class="travel-custom-status" id="travel-custom-status"></div>
-                    <div class="travel-custom-hint">${T('FastTravel.custom.hint')}</div>
-                    <div class="travel-13">
-                        <div class="travel-btn travel-btn-cancel travel-03" onclick="SceneManager._scene.closeCustomPointModal()">${T('FastTravel.ui.cancel')}</div>
-                        <div class="travel-btn travel-btn-confirm travel-03" id="travel-custom-save" onclick="SceneManager._scene.saveCustomPoint()">${T('FastTravel.custom.save')}</div>
+                    <div class="inspect-actions">
+                        <div class="inspect-btn focusable" id="travel-custom-save" onclick="SceneManager._scene.saveCustomPoint()">${T('FastTravel.custom.save')}</div>
+                        <div class="inspect-btn inspect-btn--secondary focusable" onclick="SceneManager._scene.closeCustomPointModal()">${T('FastTravel.ui.cancel')}</div>
                     </div>
                 </div>
             </div>
@@ -2374,7 +2401,7 @@
             const listPanel = document.getElementById('panel-list');
             const isListVisible = listPanel && listPanel.style.display !== 'none';
             const customBox = document.getElementById('travel-custom-modal');
-            if (customBox && customBox.style.display !== 'none') return;
+            if (customBox && customBox.style.display === 'flex') return;
 
             // Up/Down navigation (ArrowUp/ArrowDown and W/S remapped to up/down) is
             // handled solely by the RMMZ Input handler in Scene_Map.update so the
@@ -2435,7 +2462,7 @@
                 markerStartTop = parseFloat(markerEl.style.top) || 0;
                 return;
             }
-            if (e.target.closest('.travel-marker') || e.target.closest('.travel-btn') || e.target.closest('.travel-modal')) return;
+            if (e.target.closest('.travel-marker') || e.target.closest('.inspect-btn') || e.target.closest('.travel-zoom-btn') || e.target.closest('.travel-edit-btn')) return;
             isDragging = true;
             viewer.style.cursor = 'grabbing';
             startX = e.clientX - this._travelPanX;
@@ -2782,6 +2809,30 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         }
 
         document.getElementById('sidebar-dest-title').innerText = T('FastTravel.ui.travelTo', { name: rowLabel(dest) });
+
+        // The place is shown before its numbers: the 4:3 plate the entry names,
+        // and nothing at all when it names none (a square written down by hand).
+        // A plate that was never drawn is simply not shown: a missing file takes
+        // the box away and the journey is confirmed exactly as before.
+        try {
+            const pictureBox = document.getElementById('sidebar-dest-picture');
+            if (pictureBox) {
+                const pictureName = dest.picture || (TRANSPORT_DESTINATIONS[dest.name] || {}).picture;
+                pictureBox.innerHTML = '';
+                if (pictureName) {
+                    const plate = document.createElement('img');
+                    plate.className = 'travel-confirm-plate';
+                    plate.onerror = () => { pictureBox.style.display = 'none'; };
+                    plate.onload = () => { pictureBox.style.display = ''; };
+                    plate.src = `img/pictures/${encodeURI(pictureName)}.png`;
+                    pictureBox.appendChild(plate);
+                } else {
+                    pictureBox.style.display = 'none';
+                }
+            }
+        } catch (e) {
+            console.warn('FastTravel: destination plate failed', e);
+        }
         document.getElementById('sidebar-transport-val').innerText = transportDisplayName;
         document.getElementById('sidebar-distance-val').innerText = `${distanceInKm} km`;
         document.getElementById('sidebar-cost-val').innerText = costValueText;
@@ -3066,7 +3117,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         // The coordinate box takes every button while it is up: the list under
         // it must not scroll, and cancel closes the box rather than the map.
         const customModal = document.getElementById('travel-custom-modal');
-        if (customModal && customModal.style.display !== 'none') {
+        if (customModal && customModal.style.display === 'flex') {
             const nameInput = document.getElementById('travel-custom-name');
             if (nameInput && document.activeElement === nameInput) {
                 // The name is being typed: only cancel is ours, and all it does
@@ -3367,7 +3418,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
                 return !currentMapName.toLowerCase().includes(dest.name.toLowerCase());
             });
 
-            // If a destination whitelist is set (e.g. tutorial station), apply it
+            // If a destination whitelist is set (e.g. story mode station), apply it
             if (data.allowedDestinations && data.allowedDestinations.length > 0) {
                 filteredDestinations = filteredDestinations.filter(dest =>
                     data.allowedDestinations.includes(dest.name)
@@ -3442,8 +3493,12 @@ Scene_Map.prototype.printTravelCoordinates = function () {
 
         setLocation(locationName) {
             this._locationName = locationName;
-            this.loadPicture();
-            this.refresh();
+            try {
+                this.loadPicture();
+                this.refresh();
+            } catch (e) {
+                console.warn('FastTravel: destination picture could not be drawn', locationName, e);
+            }
             this.show();
         }
 
@@ -3452,20 +3507,39 @@ Scene_Map.prototype.printTravelCoordinates = function () {
             const destinationData = TRANSPORT_DESTINATIONS[this._locationName];
             const filename = destinationData && destinationData.picture ? destinationData.picture : this._locationName;
 
-            this._bitmap = ImageManager.loadPicture(filename);
-
-            // Wait for bitmap to load
-            if (this._bitmap && !this._bitmap.isReady()) {
-                this._bitmap.addLoadListener(() => {
-                    this.refresh();
+            // A destination whose plate was never drawn must cost the player
+            // nothing: the file is loaded OUTSIDE ImageManager's cache, so a
+            // missing one can never reach ImageManager.isReady and raise the
+            // game-wide load error screen. It simply draws no picture.
+            this._bitmap = null;
+            try {
+                const url = `img/pictures/${encodeURI(filename)}.png`;
+                const bitmap = Bitmap.load(url);
+                this._bitmap = bitmap;
+                bitmap.addLoadListener(() => {
+                    try {
+                        if (bitmap.isError && bitmap.isError()) {
+                            if (this._bitmap === bitmap) this._bitmap = null;
+                        }
+                        this.refresh();
+                    } catch (e) {
+                        console.warn('FastTravel: destination picture failed', filename, e);
+                    }
                 });
+            } catch (e) {
+                console.warn('FastTravel: destination picture missing', filename, e);
+                this._bitmap = null;
             }
         }
 
         refresh() {
             this.contents.clear();
 
-            if (!this._bitmap || !this._bitmap.isReady()) {
+            if (!this._bitmap || (this._bitmap.isError && this._bitmap.isError())) {
+                this._bitmap = null;
+                return;
+            }
+            if (!this._bitmap.isReady()) {
                 return;
             }
 
@@ -3591,6 +3665,11 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         'selectTravelDestination', 'closeTravelConfirmModal', 'reopenCreationOriginStep',
         'closeTravelUIOverlay'
     ];
+
+    // A town founded mid-session is a new pin: the cache built before it was
+    // signed for has to be dropped (Crafting/FurnitureSystem.js calls this).
+    window.FastTravelSystem = window.FastTravelSystem || {};
+    window.FastTravelSystem.refreshDestinations = refreshDestinationCache;
 
     window.FastTravelPicker = {
         // Teach a scene the map. Idempotent: a scene class is only ever taught

@@ -1,4 +1,5 @@
 /*:
+ * @target MZ
  * @plugindesc v4.0 High-performance fog of war system with vision cones and smooth transitions (Optimized, Persistent, Configurable).
  * @author Omni-Lex (Modified)
  *

@@ -913,6 +913,93 @@
     }
 
     // =========================================================================
+    // The ship's bridge
+    // =========================================================================
+    // The inside of the starship, and the counterpart of the camper's cabin:
+    // the room the party stands in while the ship is flown, built here with the
+    // rest of the garage rather than in the driving scene, because it is a
+    // vehicle body like any other.
+    //
+    // It is drawn in the SHIP'S OWN FRAME (forward +Z, +X to the pilot's left,
+    // four units to the metre) and sized to VoxelWorldCore's SHIP_BRIDGE_BOUNDS,
+    // so what the walls say and what the walk allows are the same room. The
+    // helm console stands under the forward viewport on the centre line, with
+    // four stations round it for everybody else.
+    //
+    // Seen only from inside: the driving scene shows it in the first-person
+    // views and hides it in the chase camera, so it never reads through the
+    // hull from outside (see VoxelWorldScene._setBridgeVisible).
+    //
+    // Returned to the shared model contract, so anything that can show a
+    // vehicle can show this: { group, length, update(t), dispose() }, plus
+    // `stations` (where the party sits) and `helm` (where the pilot does).
+    function buildShipBridge() {
+        const b = new VehicleBuild();
+        const HULL  = b.mat(0x2b3038);
+        const DECK  = b.mat(0x1c2027);
+        const TRIM  = b.mat(0xc08a3a);
+        const PANEL = b.mat(0x161a20);
+        const GLASS = b.mat(0x9fd8ff, { transparent: true, opacity: 0.18 });
+        const LIT   = b.mat(0x7fd8ff);
+
+        const W = 9.4, D = 13.4, FLOOR = 4.0, CEIL = 12.0;
+
+        // Deck, ceiling and the four walls. The forward wall is mostly viewport,
+        // so it is built as a frame round the glass rather than a slab.
+        b.box(W * 2, 0.6, D * 2, DECK, 0, FLOOR - 0.3, 0);
+        b.box(W * 2, 0.6, D * 2, HULL, 0, CEIL + 0.3, 0);
+        b.box(0.6, CEIL - FLOOR, D * 2, HULL,  W, (FLOOR + CEIL) / 2, 0);
+        b.box(0.6, CEIL - FLOOR, D * 2, HULL, -W, (FLOOR + CEIL) / 2, 0);
+        b.box(W * 2, CEIL - FLOOR, 0.6, HULL, 0, (FLOOR + CEIL) / 2, -D);
+        // The forward wall: sill, header, two mullions, and the view between.
+        b.box(W * 2, 1.6, 0.6, HULL, 0, FLOOR + 0.8, D);
+        b.box(W * 2, 1.6, 0.6, HULL, 0, CEIL - 0.8, D);
+        b.box(0.5, CEIL - FLOOR, 0.5, HULL,  3.4, (FLOOR + CEIL) / 2, D);
+        b.box(0.5, CEIL - FLOOR, 0.5, HULL, -3.4, (FLOOR + CEIL) / 2, D);
+        b.box(W * 2 - 1.0, CEIL - FLOOR - 3.2, 0.15, GLASS, 0, (FLOOR + CEIL) / 2, D);
+
+        // A lit strip down each side of the ceiling, so the room reads as lit
+        // from inside rather than by whatever star it happens to be near.
+        b.box(1.2, 0.2, D * 1.7, LIT,  W - 1.4, CEIL - 0.2, 0);
+        b.box(1.2, 0.2, D * 1.7, LIT, -(W - 1.4), CEIL - 0.2, 0);
+
+        // The helm: a console across the centre line under the viewport, its
+        // top raked toward the pilot, with a lit instrument face on it. Kept
+        // clear of SHIP_HELM_SEAT (z 8.0) so the eye sits behind it.
+        const console_ = b.box(6.4, 1.4, 2.6, PANEL, 0, FLOOR + 1.9, 9.6);
+        console_.rotation.x = -0.18;
+        b.box(6.0, 0.12, 1.9, LIT, 0, FLOOR + 2.62, 9.4).rotation.x = -0.18;
+        b.box(6.8, 0.4, 0.5, TRIM, 0, FLOOR + 1.1, 8.5);
+        // The pilot's chair, at the seat itself.
+        b.box(2.0, 0.4, 2.0, PANEL, 0, FLOOR + 1.5, 7.4);
+        b.box(2.0, 2.4, 0.4, PANEL, 0, FLOOR + 2.6, 6.5);
+
+        // Four stations round it, matching SHIP_BRIDGE_SEATS: a desk against
+        // the wall and a seat in front of it, so a party member sitting there
+        // is sitting AT something.
+        const stations = [
+            { x:  5.4, z:  2.6 }, { x: -5.4, z:  2.6 },
+            { x:  5.4, z: -4.2 }, { x: -5.4, z: -4.2 },
+        ];
+        for (const st of stations) {
+            const side = st.x > 0 ? 1 : -1;
+            b.box(0.9, 1.2, 3.2, PANEL, st.x + side * 2.0, FLOOR + 1.8, st.z);
+            b.box(0.12, 0.9, 2.6, LIT,  st.x + side * 1.5, FLOOR + 2.1, st.z);
+            b.box(1.6, 0.35, 1.6, PANEL, st.x, FLOOR + 1.3, st.z);
+            b.box(1.6, 1.8, 0.35, PANEL, st.x, FLOOR + 2.2, st.z - side * 0.0 - 0.9);
+        }
+
+        // A gold rail round the well in front of the viewport, which is the one
+        // piece of the room that says whose ship it is.
+        b.box(W * 1.5, 0.25, 0.25, TRIM, 0, FLOOR + 3.2, 5.2);
+
+        const model = b.finish(D * 2);
+        model.helm = { x: 0, y: 6.6, z: 8.0 };
+        model.stations = stations.map((st) => ({ x: st.x, y: 6.3, z: st.z }));
+        return model;
+    }
+
+    // =========================================================================
     // window.VehicleModels
     // =========================================================================
     const VehicleModels = {
@@ -926,7 +1013,7 @@
         // in the world it has to stand beside a person, so anything that puts
         // one on the ground scales it by this over its own `length`.
         REAL_LENGTH: {
-            camper: 26, car: 18, bike: 7, boat: 14, broom: 6, starship: 120, airship: 120
+            camper: 26, car: 18, bike: 7, boat: 14, broom: 6, starship: 4000, airship: 4000
         },
 
         // The factor a built model has to be multiplied by to stand at true size.
@@ -962,6 +1049,14 @@
             if (key === 'camper') return buildCamperStandIn();
             const fn = VEHICLE_BUILDERS[key];
             return fn ? fn() : null;
+        },
+
+        // The inside of the ship: the room the party stands in while it is
+        // flown, to the same contract as build() plus `helm` and `stations`.
+        // Nothing else in the garage has an interior, so nothing else answers.
+        buildBridge() {
+            if (typeof THREE === 'undefined') return null;
+            return buildShipBridge();
         },
 
         // A live, slowly turning portrait of a vehicle, bound to a canvas the

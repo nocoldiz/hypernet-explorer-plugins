@@ -21,6 +21,7 @@
   'use strict';
 
   const PLUGIN_NAME = '3DPoliticalGraph';
+  const CONTAINER_ID = 'political-graph-container';
 
   // ==========================================================================
   // Public Namespace & API
@@ -143,7 +144,7 @@
     }
 
     applyFilters() {
-      const q = this._searchQuery.toLowerCase().trim();
+      const q = (this._bar ? this._bar.query : this._searchQuery).toLowerCase().trim();
       this._filteredIdeologies = this._ideologies.filter(item => {
         if (!item || !item.axes) return false;
 
@@ -204,157 +205,94 @@
     }
 
     // ==========================================================================
-    // DOM UI Overlay Construction (Character Creation Theme: Gold & Dark Parchment)
+    // DOM UI Overlay Construction
+    // --------------------------------------------------------------------------
+    // Shape A, the spread: the chart is the left page, the reading of one
+    // ideology and the roll of them all are the right. Nothing here names a
+    // colour, a font or a size; the classes are the shared kit's own
+    // (.page-header-bar, .backpack-tabs, .item-slot, .inspect-spec-grid,
+    // .inspect-actions) so this screen inherits every fix made to them.
     // ==========================================================================
     createDOMOverlay() {
+      this._bar = window.MenuSearchBar ? window.MenuSearchBar.create({
+        id: 'pgraph',
+        placeholder: T('PoliticalGraph.search'),
+        onChange: () => { this.applyFilters(); this.updateIdeologyList(); }
+      }) : null;
+
       this._overlay = document.createElement('div');
-      this._overlay.id = 'political-graph-3d-overlay';
-      this._overlay.style.cssText = `
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        pointer-events: none;
-        font-family: 'Lora', serif;
-        color: var(--text-text-alt-13);
-        box-sizing: border-box;
-        overflow: hidden;
-        user-select: none;
-        z-index: 10;
-      `;
+      this._overlay.id = CONTAINER_ID;
+      this._overlay.innerHTML = `
+        <div class="book-spread">
+          <div class="left-page pgraph-chart-page">
+            <div class="page-header-bar">
+              <div class="back-button focusable" id="pgraph-back" tabindex="0">${T('PoliticalGraph.back')}</div>
+              <h2 class="title">${T('PoliticalGraph.title')}</h2>
+              ${this._bar ? this._bar.html() : ''}
+            </div>
+            <div class="backpack-tabs pgraph-views" id="pgraph-views"></div>
+            <div class="backpack-tabs pgraph-filters" id="pgraph-filters"></div>
+            <div class="pgraph-frame" id="pgraph-frame"></div>
+          </div>
+          <div class="right-page">
+            <div class="ui-detail" id="pgraph-detail"></div>
+            <div class="ui-footer" id="pgraph-count"></div>
+            <div class="ui-list ui-scroll" id="pgraph-list"></div>
+            <div class="inspect-actions" id="pgraph-actions"></div>
+          </div>
+        </div>`;
 
-      // Header Bar (matches the Character Creation grid selector's gold/parchment HUD)
-      const header = document.createElement('div');
-      header.style.cssText = `
-        position: absolute; top: 15px; left: 20px; right: 20px;
-        height: 56px;
-        display: flex; align-items: center; justify-content: space-between;
-        background: var(--bg-panel);
-        border: 1px solid var(--border-gold-amber-30);
-        border-radius: 4px;
-        padding: 0 24px;
-        pointer-events: auto;
-        box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7);
-      `;
-      header.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 14px;">
-          <span style="font-size: 22px; font-weight: 700; color: var(--text-primary-hover); letter-spacing: 1.2px; text-transform: uppercase; font-family: 'Lora', serif;">
-            3D Political Graph
-          </span>
-          <span style="font-size: 13px; font-weight: 600; background: var(--bg-primary-hover-translucent-35); color: var(--text-primary-hover); padding: 4px 12px; border-radius: 3px; border: 1px solid var(--border-gold-amber-30);">
-            ${this._isModal ? 'Select Ideology Mode' : 'Econ / Auth / Esoteric'}
-          </span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 14px;" id="header-controls"></div>
-      `;
-      this._overlay.appendChild(header);
+      const back = this._overlay.querySelector('#pgraph-back');
+      back.addEventListener('click', () => SceneManager.pop());
 
-      const headerControls = header.querySelector('#header-controls');
-
-      // Search Input
-      const searchInput = document.createElement('input');
-      searchInput.type = 'text';
-      searchInput.placeholder = 'Search 228 ideologies...';
-      searchInput.style.cssText = `
-        background: var(--text-pure-black);
-        border: 1px solid var(--border-gold-amber-30);
-        border-radius: 3px;
-        color: var(--text-text-alt-13);
-        font-family: 'Lora', serif;
-        padding: 8px 14px;
-        font-size: 14px;
-        width: 220px;
-        outline: none;
-        transition: border 0.2s;
-      `;
-      searchInput.addEventListener('focus', () => searchInput.style.borderColor = 'var(--text-primary-hover)');
-      searchInput.addEventListener('blur', () => searchInput.style.borderColor = 'var(--border-gold-amber-30)');
-      searchInput.addEventListener('input', (e) => {
-        this._searchQuery = e.target.value;
-        this.applyFilters();
-        this.updateIdeologyList();
-      });
-      headerControls.appendChild(searchInput);
-
-      // Confirm Selection Button - the only way to confirm a pick, so the
-      // per-ideology button in the sidebar (redundant with this one and with
-      // double-clicking a list row) was removed.
-      if (this._isModal) {
-        const selectBtn = document.createElement('button');
-        selectBtn.className = 'cc-btn-treaty confirm';
-        selectBtn.style.cssText = `padding: 7px 20px; font-size: 14px;`;
-        selectBtn.innerText = 'Select Ideology';
-        selectBtn.addEventListener('click', () => this.confirmSelection());
-        headerControls.appendChild(selectBtn);
-      }
-
-      // Close Button
-      const closeBtn = document.createElement('button');
-      closeBtn.innerText = '✕ ESC';
-      closeBtn.style.cssText = `
-        background: rgba(180, 50, 50, 0.25);
-        border: 1px solid rgba(235, 80, 80, 0.5);
-        color: #ffaaaa;
-        font-family: 'Lora', serif;
-        padding: 8px 18px;
-        border-radius: 3px;
-        cursor: pointer;
-        font-weight: 700;
-        font-size: 14px;
-        transition: all 0.2s;
-      `;
-      closeBtn.addEventListener('mouseenter', () => closeBtn.style.background = 'rgba(220, 60, 60, 0.45)');
-      closeBtn.addEventListener('mouseleave', () => closeBtn.style.background = 'rgba(180, 50, 50, 0.25)');
-      closeBtn.addEventListener('click', () => SceneManager.pop());
-      headerControls.appendChild(closeBtn);
-
-      // Toolbar Controls Bar (Camera Presets & Filter Pills, styled as the
-      // same tab rail the character sheet's grid selectors use)
-      const toolbar = document.createElement('div');
-      toolbar.style.cssText = `
-        position: absolute; top: 82px; left: 20px; right: 420px;
-        display: flex; gap: 8px; align-items: center;
-        pointer-events: auto;
-        overflow-x: auto;
-        padding-bottom: 5px;
-      `;
-
+      // The camera presets and the quadrant filters are two runs of the one tab
+      // rail every menu in the game wears, not a bar of this screen's own.
+      const views = this._overlay.querySelector('#pgraph-views');
       const cameraPresets = [
-        { label: 'Isometric 3D', action: () => { this._rotX = 0.42; this._rotY = -0.75; this._zoom = 1.0; } },
-        { label: 'Top (2D Compass)', action: () => { this._rotX = 1.57; this._rotY = 0; this._zoom = 1.1; } },
-        { label: 'Front (Econ-Magic)', action: () => { this._rotX = 0; this._rotY = 0; this._zoom = 1.0; } },
-        { label: 'Side (Auth-Magic)', action: () => { this._rotX = 0; this._rotY = 1.57; this._zoom = 1.0; } },
-        { label: 'Auto-Orbit', action: (btn) => {
+        { key: 'isometric', action: () => { this._rotX = 0.42; this._rotY = -0.75; this._zoom = 1.0; } },
+        { key: 'top', action: () => { this._rotX = 1.57; this._rotY = 0; this._zoom = 1.1; } },
+        { key: 'front', action: () => { this._rotX = 0; this._rotY = 0; this._zoom = 1.0; } },
+        { key: 'side', action: () => { this._rotX = 0; this._rotY = 1.57; this._zoom = 1.0; } },
+        { key: 'orbit', action: (btn) => {
             this._autoRotate = !this._autoRotate;
             btn.classList.toggle('active', this._autoRotate);
           }
         }
       ];
-
+      this._viewButtons = [];
       cameraPresets.forEach(preset => {
-        const btn = document.createElement('button');
-        btn.className = 'cc-sprite-tab-btn';
-        btn.innerText = preset.label;
-        btn.addEventListener('click', () => preset.action(btn));
-        toolbar.appendChild(btn);
+        const btn = document.createElement('div');
+        btn.className = 'backpack-tab focusable';
+        btn.tabIndex = 0;
+        btn.innerText = T('PoliticalGraph.view.' + preset.key);
+        btn.addEventListener('click', () => {
+          if (preset.key !== 'orbit') {
+            this._autoRotate = false;
+            this._viewButtons.forEach(b => b.classList.toggle('active', b === btn));
+          }
+          preset.action(btn);
+        });
+        views.appendChild(btn);
+        this._viewButtons.push(btn);
       });
+      this._viewButtons[0].classList.add('active');
 
-      const div = document.createElement('div');
-      div.style.cssText = `width: 1px; height: 24px; background: var(--border-gold-amber-30); margin: 0 4px;`;
-      toolbar.appendChild(div);
-
+      const filters = this._overlay.querySelector('#pgraph-filters');
       const filterPills = [
-        { id: 'ALL', label: 'All (228)' },
-        { id: 'AUTH_LEFT', label: 'Auth-Left (Red)' },
-        { id: 'AUTH_RIGHT', label: 'Auth-Right (Blue)' },
-        { id: 'LIB_LEFT', label: 'Lib-Left (Green)' },
-        { id: 'LIB_RIGHT', label: 'Lib-Right (Yellow)' },
-        { id: 'MAGIC', label: 'High Magic' },
-        { id: 'MUNDANE', label: 'High Mundane' }
+        { id: 'ALL', label: T('PoliticalGraph.filter.all', { n: (this._ideologies || []).length }) },
+        { id: 'AUTH_LEFT', label: T('PoliticalGraph.filter.authLeft') },
+        { id: 'AUTH_RIGHT', label: T('PoliticalGraph.filter.authRight') },
+        { id: 'LIB_LEFT', label: T('PoliticalGraph.filter.libLeft') },
+        { id: 'LIB_RIGHT', label: T('PoliticalGraph.filter.libRight') },
+        { id: 'MAGIC', label: T('PoliticalGraph.filter.magic') },
+        { id: 'MUNDANE', label: T('PoliticalGraph.filter.mundane') }
       ];
 
       this._pillButtons = [];
       filterPills.forEach(pill => {
-        const btn = document.createElement('button');
-        btn.className = 'cc-sprite-tab-btn';
+        const btn = document.createElement('div');
+        btn.className = 'backpack-tab focusable';
+        btn.tabIndex = 0;
         btn.classList.toggle('active', this._filterQuadrant === pill.id);
         btn.innerText = pill.label;
         btn.addEventListener('click', () => {
@@ -363,42 +301,27 @@
           this.applyFilters();
           this.updateIdeologyList();
         });
-        toolbar.appendChild(btn);
+        filters.appendChild(btn);
         this._pillButtons.push({ id: pill.id, btn });
       });
 
-      this._overlay.appendChild(toolbar);
-
-      // Sidebar Container (Expanded width: 380px with larger fonts)
-      const sidebar = document.createElement('div');
-      sidebar.id = 'political-graph-sidebar';
-      sidebar.style.cssText = `
-        position: absolute; top: 82px; right: 20px; bottom: 20px;
-        width: 380px;
-        background: var(--bg-panel);
-        border: 1px solid var(--border-gold-amber-30);
-        border-radius: 4px;
-        display: flex; flex-direction: column;
-        pointer-events: auto;
-        box-shadow: 0 4px 25px rgba(0, 0, 0, 0.75);
-        overflow: hidden;
-      `;
-      sidebar.innerHTML = `
-        <div style="padding: 18px; border-bottom: 1px solid var(--border-gold-amber-30); background: var(--bg-primary-hover-translucent-35);">
-          <div id="sidebar-title" style="font-size: 20px; font-weight: 700; color: var(--text-primary-hover); font-family: 'Lora', serif; margin-bottom: 4px;">Select an Ideology</div>
-          <div id="sidebar-subtitle" style="font-size: 13px; color: var(--text-text-alt-13);">Click any 3D node or list item</div>
-        </div>
-        <div id="sidebar-details" style="padding: 18px; flex-shrink: 0; border-bottom: 1px solid var(--border-gold-amber-30); font-size: 14px;"></div>
-        <div style="padding: 10px 18px; background: rgba(0,0,0,0.3); font-size: 12px; font-weight: 700; color: var(--text-primary-hover); text-transform: uppercase; letter-spacing: 1.2px;">
-          Ideologies (<span id="filtered-count">0</span>)
-        </div>
-        <div id="sidebar-list" style="flex: 1; overflow-y: auto; padding: 10px;"></div>
-      `;
-      this._overlay.appendChild(sidebar);
+      // Confirming a pick is an action on the reading, so it stands at the foot
+      // of the right page with every other menu's action strip, and the Back
+      // button keeps the one place it stands on every screen in the game.
+      if (this._isModal) {
+        const actions = this._overlay.querySelector('#pgraph-actions');
+        const selectBtn = document.createElement('div');
+        selectBtn.className = 'inspect-btn focusable';
+        selectBtn.tabIndex = 0;
+        selectBtn.innerText = T('PoliticalGraph.confirm');
+        selectBtn.addEventListener('click', () => this.confirmSelection());
+        actions.appendChild(selectBtn);
+      }
 
       document.body.appendChild(this._overlay);
+      if (window.MenuSearchBar) window.MenuSearchBar.dock();
       // Everything on this chart - the camera presets, the quadrant filters,
-      // the ideology rows, the confirm and close buttons - was a click and
+      // the ideology rows, the confirm and back buttons - was a click and
       // nothing else: the scene read Cancel and no other key. The shared DOM
       // focus ring walks them (window.CCNav, CharacterCreationNav.js), the same
       // ring the creation screens and the maintenance bay wear.
@@ -413,66 +336,69 @@
       if (window.CCNav) window.CCNav.enter("up");
     }
 
+    // One row per ideology, mounted in a window rather than built whole: two
+    // hundred and thirty eight rows cost the dozen the page can show.
     updateIdeologyList() {
-      const listContainer = document.getElementById('sidebar-list');
-      const countSpan = document.getElementById('filtered-count');
+      const listContainer = document.getElementById('pgraph-list');
+      const countBox = document.getElementById('pgraph-count');
       if (!listContainer) return;
 
-      if (countSpan) countSpan.innerText = this._filteredIdeologies.length;
-      listContainer.innerHTML = '';
+      const rows = this._filteredIdeologies;
+      if (countBox) countBox.innerText = T('PoliticalGraph.listHead') + ' (' + rows.length + ')';
 
-      this._filteredIdeologies.forEach(item => {
+      const rowHTML = (idx) => {
+        const item = rows[idx];
         const name = this.getLocalizedName(item);
-        const row = document.createElement('div');
-        // The project-wide tag for a click-driven div, so the focus ring
-        // collects the rows the same way it collects the toolbar's buttons.
-        row.className = 'focusable';
         const isSelected = this._selectedIdeology && this._selectedIdeology.id === item.id;
-
         const myst = item.axes.myst !== undefined ? item.axes.myst : (item.axes.esoteric || 0);
-        let esotericTag = myst > 25 ? 'Magic' : myst < -25 ? 'Mundane' : 'Neutral';
+        const esotericTag = myst > 25 ? T('PoliticalGraph.tag.magic')
+          : myst < -25 ? T('PoliticalGraph.tag.mundane') : T('PoliticalGraph.tag.neutral');
+        return `
+          <div class="item-slot pgraph-row focusable${isSelected ? ' selected' : ''}" data-idx="${idx}" tabindex="0">
+            <div class="pgraph-row-ident">
+              <div class="item-slot-name">${name}</div>
+              <div class="item-slot-meta">${T('PoliticalGraph.axisShort', {
+                  econ: item.axes.econ, auth: item.axes.auth, myst: myst })}</div>
+            </div>
+            <span class="ui-chip">${esotericTag}</span>
+          </div>`;
+      };
 
-        row.style.cssText = `
-          padding: 10px 14px;
-          margin-bottom: 6px;
-          border-radius: 3px;
-          background: ${isSelected ? 'var(--bg-primary-hover-translucent-35)' : 'transparent'};
-          border: 1px solid ${isSelected ? 'var(--text-primary-hover)' : 'var(--border-gold-amber-30)'};
-          cursor: pointer;
-          display: flex; justify-content: space-between; align-items: center;
-          transition: background 0.15s;
-        `;
-        row.innerHTML = `
-          <div>
-            <div style="font-size: 14px; font-weight: 600; color: ${isSelected ? 'var(--text-primary-hover)' : 'var(--text-text-alt-13)'}; margin-bottom: 2px;">${name}</div>
-            <div style="font-size: 12px; color: var(--text-text-alt-13); opacity: 0.75;">E: ${item.axes.econ} | A: ${item.axes.auth} | Z: ${myst}</div>
-          </div>
-          <span style="font-size: 11px; padding: 3px 8px; border-radius: 3px; background: rgba(0,0,0,0.4); color: var(--text-primary-hover); border: 1px solid var(--border-gold-amber-30);">${esotericTag}</span>
-        `;
-        row.addEventListener('click', () => {
-          this.selectIdeology(item);
-          this.updateIdeologyList();
+      const wire = (scope) => {
+        scope.querySelectorAll('.pgraph-row').forEach(row => {
+          const item = rows[Number(row.dataset.idx)];
+          if (!item) return;
+          row.addEventListener('click', () => {
+            this.selectIdeology(item);
+            this.updateIdeologyList();
+          });
+          row.addEventListener('dblclick', () => {
+            this.selectIdeology(item);
+            if (this._isModal) this.confirmSelection();
+          });
+          row.addEventListener('mouseenter', () => { this._hoveredIdeology = item; });
+          row.addEventListener('mouseleave', () => { this._hoveredIdeology = null; });
         });
-        row.addEventListener('dblclick', () => {
-          this.selectIdeology(item);
-          if (this._isModal) this.confirmSelection();
+      };
+
+      if (window.MenuVirtualList) {
+        window.MenuVirtualList.render(listContainer, {
+          key: this._filterQuadrant + '|' + (this._bar ? this._bar.query : ''),
+          count: rows.length,
+          renderItem: rowHTML,
+          onWindow: (win) => wire(win)
         });
-        row.addEventListener('mouseenter', () => {
-          this._hoveredIdeology = item;
-          if (!isSelected) row.style.background = 'var(--bg-primary-hover-translucent-35)';
-        });
-        row.addEventListener('mouseleave', () => {
-          this._hoveredIdeology = null;
-          if (!isSelected) row.style.background = 'transparent';
-        });
-        listContainer.appendChild(row);
-      });
+      } else {
+        listContainer.innerHTML = rows.map((_, i) => rowHTML(i)).join('');
+        wire(listContainer);
+      }
+      if (this._bar) this._bar.restoreFocus();
     }
 
+    // The right page, in the one shape every detail page in the game wears:
+    // a head, a grid of label/value pairs, then a titled section.
     updateDetailPanel() {
-      const title = document.getElementById('sidebar-title');
-      const subtitle = document.getElementById('sidebar-subtitle');
-      const details = document.getElementById('sidebar-details');
+      const details = document.getElementById('pgraph-detail');
       if (!details || !this._selectedIdeology) return;
 
       const item = this._selectedIdeology;
@@ -483,17 +409,15 @@
       const myst = item.axes.myst !== undefined ? item.axes.myst : (item.axes.esoteric || 0);
 
       let quadrantStr = '';
-      if (auth >= 0 && econ < 0) quadrantStr = 'Authoritarian Left (Red)';
-      else if (auth >= 0 && econ >= 0) quadrantStr = 'Authoritarian Right (Blue)';
-      else if (auth < 0 && econ < 0) quadrantStr = 'Libertarian Left (Green)';
-      else quadrantStr = 'Libertarian Right (Yellow)';
+      if (auth >= 0 && econ < 0) quadrantStr = T('PoliticalGraph.quadrant.authLeft');
+      else if (auth >= 0 && econ >= 0) quadrantStr = T('PoliticalGraph.quadrant.authRight');
+      else if (auth < 0 && econ < 0) quadrantStr = T('PoliticalGraph.quadrant.libLeft');
+      else quadrantStr = T('PoliticalGraph.quadrant.libRight');
 
-      let esotericStr = myst > 25 ? 'High Magic / Esoteric' : myst < -25 ? 'High Mundane / Rationalist' : 'Balanced Esoteric';
+      const esotericStr = myst > 25 ? T('PoliticalGraph.esoteric.high')
+        : myst < -25 ? T('PoliticalGraph.esoteric.low') : T('PoliticalGraph.esoteric.balanced');
 
-      if (title) title.innerText = name;
-      if (subtitle) subtitle.innerText = `${quadrantStr} • ${esotericStr}`;
-
-      let adherents = [];
+      const adherents = [];
       if (window.NPCPolitics && typeof window.NPCPolitics.getPower === 'function') {
         try {
           const powers = window.NPCPolitics.listPowers ? window.NPCPolitics.listPowers() : [];
@@ -510,44 +434,50 @@
         } catch (e) {}
       }
 
-      let adherentsHTML = adherents.length > 0
-        ? adherents.slice(0, 4).map(a => `<li style="margin-bottom: 4px;">${a}</li>`).join('')
-        : `<span style="color: var(--text-text-alt-13); font-style: italic;">No active political parties in present session</span>`;
+      const adherentsHTML = adherents.length > 0
+        ? adherents.slice(0, 4).map(a => `<div class="inspect-bullet-item">${a}</div>`).join('')
+        : `<div class="ui-empty-note">${T('PoliticalGraph.noAdherents')}</div>`;
+
+      // The value keeps a side of its own - a reading of an axis IS a side -
+      // but it is named rather than painted, and the ink comes from a token.
+      const axisRow = (label, value, side, word) => `
+        <div class="inspect-spec-row">
+          <span class="inspect-spec-label">${label}</span>
+          <span class="inspect-spec-value pgraph-axis-value--${side}">${value} (${word})</span>
+        </div>`;
 
       details.innerHTML = `
-        <div style="margin-bottom: 14px; font-size: 14px;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-            <span style="color: var(--text-text-alt-13);">Economic Axis (X):</span>
-            <span style="font-weight: 700; color: ${econ < 0 ? '#ff7777' : '#77b5ff'};">${econ} (${econ < 0 ? 'Left' : 'Right'})</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-            <span style="color: var(--text-text-alt-13);">Authoritarian Axis (Y):</span>
-            <span style="font-weight: 700; color: ${auth >= 0 ? '#ff9955' : '#55ff99'};">${auth} (${auth >= 0 ? 'Authoritarian' : 'Libertarian'})</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-            <span style="color: var(--text-text-alt-13);">Esoteric Dimension (Z):</span>
-            <span style="font-weight: 700; color: ${myst > 0 ? '#d070ff' : '#00e5ff'};">${myst} (${myst > 0 ? 'Magic' : 'Mundane'})</span>
+        <div class="ui-detail-head">
+          <div class="ui-detail-titles">
+            <h3>${name}</h3>
+            <div class="ui-detail-sub">${quadrantStr} &bull; ${esotericStr}</div>
           </div>
         </div>
-        <div style="background: rgba(0,0,0,0.35); padding: 10px 12px; border-radius: 3px; border: 1px solid var(--border-gold-amber-30);">
-          <div style="font-size: 11px; color: var(--text-primary-hover); text-transform: uppercase; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px;">Known World Adherents:</div>
-          <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-text-alt-13);">${adherentsHTML}</ul>
-        </div>
-      `;
+        <div class="ui-detail-scroll">
+          <div class="inspect-spec-grid">
+            ${axisRow(T('PoliticalGraph.axis.econ'), econ, econ < 0 ? 'left' : 'right',
+                econ < 0 ? T('PoliticalGraph.side.left') : T('PoliticalGraph.side.right'))}
+            ${axisRow(T('PoliticalGraph.axis.auth'), auth, auth >= 0 ? 'auth' : 'lib',
+                auth >= 0 ? T('PoliticalGraph.side.auth') : T('PoliticalGraph.side.lib'))}
+            ${axisRow(T('PoliticalGraph.axis.myst'), myst, myst > 0 ? 'magic' : 'mundane',
+                myst > 0 ? T('PoliticalGraph.side.magic') : T('PoliticalGraph.side.mundane'))}
+          </div>
+          <div class="inspect-section-title">${T('PoliticalGraph.adherents')}</div>
+          ${adherentsHTML}
+        </div>`;
     }
 
     createCanvas3D() {
       this._canvas = document.createElement('canvas');
       this._canvas.id = 'political-graph-3d-canvas';
-      this._canvas.style.cssText = `
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        z-index: 5; pointer-events: auto;
-      `;
-      document.body.appendChild(this._canvas);
+      this._canvas.className = 'pgraph-canvas';
+      const frame = this._overlay.querySelector('#pgraph-frame');
+      frame.appendChild(this._canvas);
       this._ctx = this._canvas.getContext('2d');
 
       this.resizeCanvas();
-      window.addEventListener('resize', () => this.resizeCanvas());
+      this._onResize = () => this.resizeCanvas();
+      window.addEventListener('resize', this._onResize);
 
       this._canvas.addEventListener('mousedown', (e) => {
         if (e.target !== this._canvas) return;
@@ -586,14 +516,25 @@
       });
     }
 
+    // The chart is the left page of a spread now, so it measures the page it
+    // sits in rather than the window.
     resizeCanvas() {
       if (!this._canvas) return;
-      this._canvas.width = window.innerWidth;
-      this._canvas.height = window.innerHeight;
+      const frame = this._overlay && this._overlay.querySelector('#pgraph-frame');
+      const w = frame && frame.clientWidth ? frame.clientWidth : window.innerWidth;
+      const h = frame && frame.clientHeight ? frame.clientHeight : window.innerHeight;
+      this._canvas.width = w;
+      this._canvas.height = h;
     }
 
     update() {
       super.update();
+      // A focused search field owns the keyboard: neither Cancel nor the ring
+      // may read a key while the player is typing into it.
+      if (window.MenuSearchBar && window.MenuSearchBar.isTyping()) {
+        this.render3D();
+        return;
+      }
       if (Input.isTriggered('escape') || Input.isTriggered('cancel')) {
         SceneManager.pop();
         return;
@@ -612,7 +553,10 @@
     }
 
     checkNodeHover(mx, my) {
-      if (!this._nodeScreenPositions) return;
+      if (!this._nodeScreenPositions || !this._canvas) return;
+      const rect = this._canvas.getBoundingClientRect();
+      mx -= rect.left;
+      my -= rect.top;
       let closest = null;
       let minDst = 20;
 
@@ -629,7 +573,7 @@
       if (this._hoveredIdeology !== closest) {
         this._hoveredIdeology = closest;
         this._hoveredNode = closest;
-        this._canvas.style.cursor = closest ? 'pointer' : 'default';
+        this._canvas.classList.toggle('pgraph-canvas--over', !!closest);
       }
     }
 
@@ -652,10 +596,10 @@
 
       const cameraDistance = 3.5;
       // Increased scale factor from 0.28 to 0.46 to render the 3D graph much larger
-      const scale = (width * 0.46 * this._zoom) / (cameraDistance - z2 * 0.35);
+      const scale = (Math.min(width, height * 1.35) * 0.42 * this._zoom) / (cameraDistance - z2 * 0.35);
 
-      const centerX = width * 0.38;
-      const centerY = height * 0.52;
+      const centerX = width * 0.5;
+      const centerY = height * 0.5;
 
       const sx = centerX + x1 * scale;
       const sy = centerY - y2 * scale;
@@ -670,7 +614,7 @@
       const h = this._canvas.height;
 
       // Dark parchment radial gradient background
-      const bgGrad = ctx.createRadialGradient(w * 0.38, h * 0.5, w * 0.1, w * 0.38, h * 0.5, w * 0.85);
+      const bgGrad = ctx.createRadialGradient(w * 0.5, h * 0.5, w * 0.1, w * 0.5, h * 0.5, w * 0.85);
       bgGrad.addColorStop(0, '#16120e');
       bgGrad.addColorStop(1, '#0a0806');
       ctx.fillStyle = bgGrad;
@@ -820,7 +764,7 @@
       ctx.lineWidth = 2.5;
       ctx.stroke();
       ctx.fillStyle = '#70b5ff';
-      ctx.fillText('Right (+Econ)', xAxis.sx + 6, xAxis.sy + 4);
+      ctx.fillText(T('PoliticalGraph.canvasAxis.econ'), xAxis.sx + 6, xAxis.sy + 4);
 
       ctx.beginPath();
       ctx.moveTo(origin.sx, origin.sy);
@@ -829,7 +773,7 @@
       ctx.lineWidth = 2.5;
       ctx.stroke();
       ctx.fillStyle = '#ff9955';
-      ctx.fillText('Auth (+Authoritarian)', yAxis.sx + 6, yAxis.sy + 4);
+      ctx.fillText(T('PoliticalGraph.canvasAxis.auth'), yAxis.sx + 6, yAxis.sy + 4);
 
       ctx.beginPath();
       ctx.moveTo(origin.sx, origin.sy);
@@ -838,7 +782,7 @@
       ctx.lineWidth = 3;
       ctx.stroke();
       ctx.fillStyle = '#d070ff';
-      ctx.fillText('Magic (+Esoteric)', zAxis.sx + 6, zAxis.sy + 4);
+      ctx.fillText(T('PoliticalGraph.canvasAxis.myst'), zAxis.sx + 6, zAxis.sy + 4);
     }
 
     renderNodeLasers(ctx, item, w, h, isSelected) {
@@ -872,12 +816,11 @@
 
     destroy() {
       if (window.CCNav) window.CCNav.detach(this);
+      if (this._onResize) window.removeEventListener('resize', this._onResize);
       if (this._overlay && this._overlay.parentNode) {
         this._overlay.parentNode.removeChild(this._overlay);
       }
-      if (this._canvas && this._canvas.parentNode) {
-        this._canvas.parentNode.removeChild(this._canvas);
-      }
+      this._canvas = null;
       super.destroy();
     }
   }

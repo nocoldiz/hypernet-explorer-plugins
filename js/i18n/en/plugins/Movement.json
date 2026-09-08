@@ -17,5 +17,6 @@
   "drinkSaltWaterChoice": "Drink salt water",
   "drankSaltWater": "You drank salt water",
   "drankWater": "You drank water",
-  "cannotSwimHere": "You can't swim here."
+  "cannotSwimHere": "You can't swim here.",
+  "swimExhausted": "You are out of breath. Get to land."
 }

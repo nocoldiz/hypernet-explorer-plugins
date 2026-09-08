@@ -559,14 +559,6 @@
     "description": "HelpTopics.combatMapBattle.description",
     "image": ""
   },
-  "combatCards": {
-    "type": "mechanic",
-    "group": "combat",
-    "order": 5120,
-    "title": "HelpTopics.combatCards.title",
-    "description": "HelpTopics.combatCards.description",
-    "image": ""
-  },
   "combatSummons": {
     "type": "mechanic",
     "group": "combat",

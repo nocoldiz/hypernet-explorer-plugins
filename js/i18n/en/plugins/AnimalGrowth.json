@@ -62,5 +62,6 @@
   "owner": "Owner",
   "wildAnimal": "Wild",
   "actionConvince": "Convince to join",
-  "actionJoinPet": "Join as pet"
+  "actionJoinPet": "Join as pet",
+  "actionJoinPartyAnimal": "Join party"
 }

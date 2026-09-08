@@ -366,103 +366,6 @@
     const WORLD = { minLon: -172, maxLon: 180, minLat: -58, maxLat: 84 };
     const MIN_SPAN = 6;
     const LABEL_PX = 46;      // a nation is named once it is this wide on screen
-    const STYLE_ID = "wa-style";
-
-    const CSS = `
-#${CONTAINER_ID} { font-family: 'Lora', serif; }
-/* The page keeps the spread's own 58% width; only its padding gives way, so
-   the map gets the room the parchment margins were using. */
-#${CONTAINER_ID} .wa-map-page {
-    display: flex; flex-direction: column; justify-content: flex-start;
-    padding: 22px 22px 16px 26px; box-sizing: border-box; min-width: 0; }
-/* The header bar centres its children, so the two ends are pushed apart by
-   hand: the way out on the left, the shading buttons on the right. */
-#${CONTAINER_ID} .page-header-bar .back-button { margin-right: auto; }
-#${CONTAINER_ID} .wa-modes { display: flex; gap: 8px; margin-left: auto; }
-#${CONTAINER_ID} .wa-mode {
-    font-size: 0.78em; padding: 3px 10px; border: 1px solid var(--border-primary-hover-translucent-15);
-    border-radius: 3px; cursor: pointer; color: var(--text-secondary); background: transparent; }
-#${CONTAINER_ID} .wa-mode.active {
-    color: var(--text-primary-hover); border-color: var(--text-primary-hover);
-    background: var(--bg-primary-hover-translucent-10); }
-#${CONTAINER_ID} .wa-frame {
-    position: relative; flex: 1; min-height: 0; margin-top: 10px;
-    border: 2px solid var(--border-primary-hover-translucent-15);
-    box-shadow: inset 0 0 34px var(--shadow-primary-hover-translucent-5);
-    overflow: hidden; cursor: grab; }
-#${CONTAINER_ID} .wa-frame.dragging { cursor: grabbing; }
-#${CONTAINER_ID} svg { width: 100%; height: 100%; display: block; touch-action: none; }
-#${CONTAINER_ID} .wa-ocean { fill: #2a4a6b; }
-#${CONTAINER_ID} .wa-grid { stroke: #ffffff; stroke-opacity: 0.10; fill: none; }
-#${CONTAINER_ID} .wa-land { fill: #6d6a58; stroke: #3a3a30; stroke-width: 0.6; }
-#${CONTAINER_ID} .wa-country { stroke: #2b2b24; stroke-width: 0.5; cursor: pointer; }
-#${CONTAINER_ID} .wa-country.dim { opacity: 0.30; }
-#${CONTAINER_ID} .wa-country.hovered { stroke: #ffffff; stroke-width: 1.4; }
-#${CONTAINER_ID} .wa-country.selected { stroke: #f6e7c1; stroke-width: 2.0; }
-#${CONTAINER_ID} .wa-fragment { stroke-dasharray: 1.6 1.2; opacity: 0.75; }
-#${CONTAINER_ID} .wa-label {
-    fill: #f4ecd8; stroke: #1c1c16; stroke-width: 0.30; paint-order: stroke;
-    text-anchor: middle; pointer-events: none; font-family: 'Lora', serif; }
-#${CONTAINER_ID} .wa-continent {
-    fill: #f4ecd8; fill-opacity: 0.42; text-anchor: middle; pointer-events: none;
-    letter-spacing: 0.35em; font-family: 'Lora', serif; }
-#${CONTAINER_ID} .wa-pin { fill: #e8443a; stroke: #2b1a12; stroke-width: 0.4; }
-#${CONTAINER_ID} .wa-tower { fill: #f0d060; stroke: #2b1a12; stroke-width: 0.4; }
-#${CONTAINER_ID} .wa-legend {
-    display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; max-height: 22%;
-    overflow-y: auto; font-size: 0.76em; color: var(--text-secondary); }
-#${CONTAINER_ID} .wa-legend-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-#${CONTAINER_ID} .wa-legend-item.muted { opacity: 0.42; }
-#${CONTAINER_ID} .wa-swatch {
-    width: 13px; height: 13px; border: 1px solid var(--border-primary-hover-translucent-15);
-    display: inline-block; flex: none; }
-#${CONTAINER_ID} .right-page { display: flex; flex-direction: column; }
-#${CONTAINER_ID} .wa-dossier { flex: 1; min-height: 0; overflow-y: auto; padding-right: 6px; }
-#${CONTAINER_ID} .wa-here {
-    display: inline-block; margin-left: 8px; font-size: 0.72em; padding: 1px 8px;
-    border: 1px solid var(--text-primary-hover); color: var(--text-primary-hover); border-radius: 10px; }
-#${CONTAINER_ID} .wa-climate { width: 100%; border-collapse: collapse; font-size: 0.82em; margin-top: 6px; }
-#${CONTAINER_ID} .wa-climate th, #${CONTAINER_ID} .wa-climate td {
-    padding: 3px 6px; text-align: right; border-bottom: 1px solid var(--border-primary-hover-translucent-15); }
-#${CONTAINER_ID} .wa-climate th:first-child, #${CONTAINER_ID} .wa-climate td:first-child { text-align: left; }
-#${CONTAINER_ID} .wa-climate th { color: var(--text-primary-hover); font-weight: normal; }
-#${CONTAINER_ID} .wa-climate col.wa-now { background: var(--bg-primary-hover-translucent-10); }
-#${CONTAINER_ID} .wa-footer { margin-top: auto; padding-top: 8px; font-size: 0.78em; color: var(--text-secondary); }
-#${CONTAINER_ID} .wa-years { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-#${CONTAINER_ID} .wa-year-readout {
-    font-family: 'Lora', serif; font-size: 1.15em; color: var(--text-primary-hover);
-    min-width: 3.4em; text-align: center; }
-#${CONTAINER_ID} .wa-year-era { font-size: 0.74em; color: var(--text-secondary); min-width: 9em; }
-#${CONTAINER_ID} .wa-slider {
-    flex: 1; height: 4px; -webkit-appearance: none; appearance: none; background: transparent;
-    border: none; cursor: pointer; }
-#${CONTAINER_ID} .wa-slider::-webkit-slider-runnable-track {
-    height: 4px; background: var(--border-primary-hover-translucent-15); border-radius: 2px; }
-#${CONTAINER_ID} .wa-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none; width: 13px; height: 13px; margin-top: -5px;
-    border-radius: 50%; background: var(--text-primary-hover); border: 1px solid var(--bg-secondary-hover); }
-#${CONTAINER_ID} .wa-year-btn {
-    font-size: 0.76em; padding: 2px 9px; border: 1px solid var(--border-primary-hover-translucent-15);
-    border-radius: 3px; cursor: pointer; color: var(--text-secondary); }
-#${CONTAINER_ID} .wa-year-btn:hover { color: var(--text-primary-hover); border-color: var(--text-primary-hover); }
-#${CONTAINER_ID} .wa-changes { margin-top: 6px; font-size: 0.8em; }
-#${CONTAINER_ID} .wa-change-row {
-    display: flex; justify-content: space-between; gap: 8px; padding: 2px 0;
-    border-bottom: 1px dotted var(--border-primary-hover-translucent-15); }
-#${CONTAINER_ID} .wa-open-wiki {
-    display: inline-block; margin-top: 10px; font-size: 0.82em; padding: 4px 12px; cursor: pointer;
-    border: 1px solid var(--text-primary-hover); border-radius: 4px; color: var(--text-primary-hover); }
-#${CONTAINER_ID} .wa-open-wiki:hover { background: var(--bg-primary-hover-translucent-10); }
-`;
-
-    function ensureStyle() {
-        if (document.getElementById(STYLE_ID)) return;
-        const st = document.createElement("style");
-        st.id = STYLE_ID;
-        st.textContent = CSS;
-        document.head.appendChild(st);
-    }
-
     class Scene_WorldAtlas extends Scene_MenuBase {
         create() {
             super.create();
@@ -486,7 +389,6 @@
             this._year = this._today;
             this._histCache = {};
             this._era = this._geo ? this._geo.era : { legacyUntil: 1992, settledFrom: 1994 };
-            ensureStyle();
             this._buildDOM();
         }
 
@@ -495,31 +397,29 @@
         _buildDOM() {
             const el = document.createElement("div");
             el.id = CONTAINER_ID;
-            el.style.opacity = "0";
-            el.style.transition = "opacity 0.22s ease-out";
             el.innerHTML = `
                 <div class="book-spread">
                     <div class="left-page wa-map-page">
                         <div class="page-header-bar">
                             <div class="back-button focusable" id="wa-back" tabindex="0">${escHtml(T("Atlas.back"))}</div>
                             <h2 class="title">${escHtml(T("Atlas.title"))}</h2>
-                            <div class="wa-modes">${this._modeButtons()}</div>
                         </div>
+                        <div class="backpack-tabs wa-modes">${this._modeButtons()}</div>
                         <div class="wa-frame" id="wa-frame">${this._svg()}</div>
                         <div class="wa-years">
-                            <span class="wa-year-btn focusable" id="wa-year-back" tabindex="0">&#9664;</span>
+                            <span class="inspect-btn wa-step focusable" id="wa-year-back" tabindex="0">&#9664;</span>
                             <input class="wa-slider" id="wa-year-slider" type="range"
                                    min="${FIRST_YEAR}" max="${this._today}" step="1" value="${this._year}">
-                            <span class="wa-year-btn focusable" id="wa-year-fwd" tabindex="0">&#9654;</span>
+                            <span class="inspect-btn wa-step focusable" id="wa-year-fwd" tabindex="0">&#9654;</span>
                             <span class="wa-year-readout" id="wa-year-readout">${this._year}</span>
                             <span class="wa-year-era" id="wa-year-era">${escHtml(this._eraLabel())}</span>
-                            <span class="wa-year-btn focusable" id="wa-year-now" tabindex="0">${escHtml(T("Atlas.today"))}</span>
+                            <span class="inspect-btn focusable" id="wa-year-now" tabindex="0">${escHtml(T("Atlas.today"))}</span>
                         </div>
-                        <div class="wa-legend" id="wa-legend">${this._legend()}</div>
+                        <div class="wa-legend ui-scroll" id="wa-legend">${this._legend()}</div>
                     </div>
                     <div class="right-page">
-                        <div class="wa-dossier" id="wa-dossier">${this._dossier()}</div>
-                        <div class="wa-footer">${escHtml(T("Atlas.countLabel", { n: this._entries.length }))}</div>
+                        <div class="ui-detail" id="wa-dossier">${this._dossier()}</div>
+                        <div class="ui-footer">${escHtml(T("Atlas.countLabel", { n: this._entries.length }))}</div>
                     </div>
                 </div>`;
             document.body.appendChild(el);
@@ -531,7 +431,6 @@
                 frame: el.querySelector("#wa-frame"),
                 svg: el.querySelector("#wa-svg"),
                 labels: el.querySelector("#wa-labels"),
-                continent: el.querySelector(".wa-continent"),
                 tower: el.querySelector("#wa-tower-mark"),
                 pin: el.querySelector("#wa-party-mark"),
                 dossier: el.querySelector("#wa-dossier"),
@@ -554,17 +453,17 @@
             window.addEventListener("resize", this._onResize);
             this._attachEvents();
             this._resetView();
-            setTimeout(() => { if (this._el) this._el.style.opacity = "1"; }, 16);
+            setTimeout(() => { if (this._el) this._el.classList.add("wa-open"); }, 16);
         }
 
         _modeButtons() {
             return MODES.map((m) =>
-                `<div class="wa-mode focusable${m === this._mode ? " active" : ""}" data-mode="${m}" tabindex="0">` +
+                `<div class="backpack-tab wa-mode focusable${m === this._mode ? " active" : ""}" data-mode="${m}" tabindex="0">` +
                 `${escHtml(T("Atlas.mode." + m))}</div>`).join("");
         }
 
         _svg() {
-            if (!this._geo) return `<p class="item-grid-empty">${escHtml(T("Atlas.noData"))}</p>`;
+            if (!this._geo) return `<p class="ui-empty-text">${escHtml(T("Atlas.noData"))}</p>`;
             const grid = [];
             for (let lon = -180; lon <= 180; lon += 20) {
                 grid.push(`<path class="wa-grid" d="M${lon} -90L${lon} 90"/>`);
@@ -596,10 +495,7 @@
                 <path class="wa-land" id="wa-land-morph" d="" display="none"/>
                 <g id="wa-countries">${shapes}</g>
                 <g id="wa-marks">${towerMark}<path class="wa-pin" id="wa-party-mark" d="" display="none"/></g>
-                <g id="wa-labels" font-size="3">
-                    <text class="wa-continent" x="-95" y="-24" font-size="9">${escHtml(T("Atlas.continent.canadafrica"))}</text>
-                    ${labels}
-                </g>
+                <g id="wa-labels" font-size="3">${labels}</g>
             </svg>`;
         }
 
@@ -629,17 +525,17 @@
             } else {
                 const steps = T.list("Atlas.climateScale");
                 return steps.map((label, i) =>
-                    `<div class="wa-legend-item"><span class="wa-swatch" ` +
-                    `style="background:${rampInk(i / Math.max(1, steps.length - 1))}"></span>` +
-                    `${escHtml(label)}</div>`).join("");
+                    `<div class="wa-legend-item ui-chip" style="--wa-ink:${rampInk(i / Math.max(1, steps.length - 1))}">` +
+                    `<span class="wa-swatch"></span>${escHtml(label)}</div>`).join("");
             }
             return seen.map((s) => {
                 const label = this._mode === "power"
                     ? (s.key === NEUTRAL ? T("Atlas.unaligned") : powerLabel(s.key))
                     : regionLabel(s.key);
                 const muted = this._focusHolder && this._focusHolder !== s.key ? " muted" : "";
-                return `<div class="wa-legend-item focusable${muted}" data-key="${escHtml(s.key)}" tabindex="0">` +
-                    `<span class="wa-swatch" style="background:${s.ink}"></span>${escHtml(label)}</div>`;
+                return `<div class="wa-legend-item ui-chip focusable${muted}" data-key="${escHtml(s.key)}"` +
+                    ` tabindex="0" style="--wa-ink:${s.ink}">` +
+                    `<span class="wa-swatch"></span>${escHtml(label)}</div>`;
             }).join("");
         }
 
@@ -647,44 +543,48 @@
 
         _dossier() {
             const name = this._selected;
-            if (!name) return `<p class="item-grid-empty">${escHtml(T("Atlas.selectPrompt"))}</p>`;
-            const c = this._byName[name];
-            if (!c) return `<p class="item-grid-empty">${escHtml(T("Atlas.selectPrompt"))}</p>`;
+            const c = name ? this._byName[name] : null;
+            if (!c) {
+                return `<div class="ui-empty"><p class="ui-empty-text">` +
+                    `${escHtml(T("Atlas.selectPrompt"))}</p></div>`;
+            }
 
             const holder = this._holderOf(c);
+            const holderName = holder === NEUTRAL ? T("Atlas.unaligned") : powerLabel(holder);
             const here = partyCountryName() === name && this._year === this._today
-                ? `<span class="wa-here">${escHtml(T("Atlas.here"))}</span>` : "";
+                ? `<span class="ui-chip">${escHtml(T("Atlas.here"))}</span>` : "";
             const fragment = this._geo && this._geo.notes[name] === "fragment"
-                ? `<div class="inspect-bullet-item">${escHtml(T("Atlas.fragment"))}</div>` : "";
+                ? `<p class="ui-prose">${escHtml(T("Atlas.fragment"))}</p>` : "";
             const rows = [
                 [T("Atlas.field.region"), regionLabel(c.region)],
-                [T("Atlas.field.heldIn", { year: this._year }),
-                 holder === NEUTRAL ? T("Atlas.unaligned") : powerLabel(holder)],
+                [T("Atlas.field.heldIn", { year: this._year }), holderName],
                 [T("Atlas.field.faction"), c.faction === NEUTRAL ? T("Atlas.unaligned") : powerLabel(c.faction)],
             ].map(([k, v]) =>
                 `<div class="inspect-spec-row"><span class="inspect-spec-label">${escHtml(k)}</span>` +
                 `<span class="inspect-spec-value">${escHtml(v)}</span></div>`).join("");
 
             const wiki = window.NPCEmpathize && typeof window.NPCEmpathize.openEntity === "function"
-                ? `<div class="wa-open-wiki focusable" id="wa-wiki" tabindex="0">${escHtml(T("Atlas.openArticle"))}</div>`
+                ? `<div class="inspect-actions"><div class="inspect-btn focusable" id="wa-wiki" tabindex="0">` +
+                  `${escHtml(T("Atlas.openArticle"))}</div></div>`
                 : "";
 
             return `
-                <div class="inspect-header">
-                    <div class="inspect-frame"><span class="wa-swatch" style="width:34px;height:34px;background:${powerInk(holder)}"></span></div>
-                    <div class="inspect-title-box">
-                        <h3 class="inspect-name">${escHtml(nationLabel(name))}${here}</h3>
-                        <div class="inspect-rarity">${escHtml(holder === NEUTRAL ? T("Atlas.unaligned") : powerLabel(holder))}</div>
+                <div class="ui-detail-head">
+                    <span class="wa-swatch wa-swatch--large" style="--wa-ink:${powerInk(holder)}"></span>
+                    <div class="ui-detail-titles">
+                        <h3>${escHtml(nationLabel(name))}</h3>
+                        <div class="ui-detail-sub">${escHtml(holderName)}</div>
                     </div>
+                    ${here}
                 </div>
-                <div class="inspect-lore">
-                    ${rows}
+                <div class="ui-detail-scroll">
+                    <div class="inspect-spec-grid">${rows}</div>
                     ${fragment}
-                    ${wiki}
                     ${this._handsHTML(name)}
                     <div class="inspect-section-title">${escHtml(T("Atlas.field.climate"))}</div>
                     ${this._climateTable(c)}
-                </div>`;
+                </div>
+                ${wiki}`;
         }
 
         // Every time this nation changed hands, up to the year on the slider.
@@ -693,15 +593,16 @@
             const line = nationTimeline(name, this._histCache).filter((r) => r.year <= this._year);
             if (line.length < 2) return "";
             const rows = line.slice(-8).reverse().map((r) =>
-                `<div class="wa-change-row"><span>${r.year}</span>` +
-                `<span>${escHtml(r.controller === NEUTRAL ? T("Atlas.unaligned") : powerLabel(r.controller))}</span></div>`
+                `<div class="inspect-spec-row"><span class="inspect-spec-label">${r.year}</span>` +
+                `<span class="inspect-spec-value">` +
+                `${escHtml(r.controller === NEUTRAL ? T("Atlas.unaligned") : powerLabel(r.controller))}</span></div>`
             ).join("");
             return `<div class="inspect-section-title">${escHtml(T("Atlas.field.changedHands"))}</div>` +
-                `<div class="wa-changes">${rows}</div>`;
+                `<div class="inspect-spec-grid">${rows}</div>`;
         }
 
         _climateTable(c) {
-            if (!c.seasons) return `<div class="sl-empty-line">${escHtml(T("Atlas.noClimate"))}</div>`;
+            if (!c.seasons) return `<p class="ui-empty-note">${escHtml(T("Atlas.noClimate"))}</p>`;
             const num = (v, digits) => (typeof v === "number" ? v.toFixed(digits === undefined ? 1 : digits) : "-");
             const rows = [
                 [T("Atlas.climate.dayTemp"), (s) => T("Atlas.units.temp", { value: num(s.dayTemp) })],
@@ -790,7 +691,6 @@
                     a[0] >= x0 && a[0] <= x1 && -a[1] >= y0 && -a[1] <= y1;
                 node.setAttribute("display", visible ? "inline" : "none");
             });
-            if (this._dom.continent) this._dom.continent.setAttribute("font-size", (34 * perPx).toFixed(3));
         }
 
         _updateMarks(perPx) {

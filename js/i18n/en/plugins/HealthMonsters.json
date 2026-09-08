@@ -54,7 +54,10 @@
       "more": "More... ({count})",
       "clear": "Aim nowhere",
       "back": "Back",
-      "noParts": "Nothing left to aim at"
+      "noParts": "Nothing left to aim at",
+      "wholeName": "the whole body",
+      "wholeRow": "The whole body  (wherever it lands)",
+      "wholeRowCurrent": "The whole body  (wherever it lands)  (aimed)"
     },
     "log": {
       "missed": "{actor} aims for {enemy}'s {part} and finds nothing but air.",
@@ -127,6 +130,21 @@
         "name": "Tear Off",
         "hit": "{actor} braces against {enemy} and hauls at its {part}!",
         "miss": "{actor} cannot get a grip worth pulling on."
+      },
+      "shove": {
+        "name": "Shove Back",
+        "hit": "{actor} drives {enemy} back a square by its {part}!",
+        "miss": "{actor} shoves at {enemy} and it does not budge."
+      },
+      "throw": {
+        "name": "Throw",
+        "hit": "{actor} swings {enemy} by its {part} and hurls it away!",
+        "miss": "{actor} tries to swing {enemy} around and loses the grip."
+      },
+      "suplex": {
+        "name": "Suplex",
+        "hit": "{actor} lifts {enemy} over and plants its {part} in the ground behind!",
+        "miss": "{actor} tries to take {enemy} over backwards and buckles."
       }
     },
     "log": {

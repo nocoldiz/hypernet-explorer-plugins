@@ -69,6 +69,14 @@
  * @max 100
  * @default 30
  *
+ * @param defaultDialogueVoicesVolume
+ * @text Default Dialogue Voices Volume
+ * @desc Default volume for the letter blips under a dialogue line (0-100)
+ * @type number
+ * @min 0
+ * @max 100
+ * @default 60
+ *
  * @param defaultWeatherVolume
  * @text Default Weather Volume
  * @desc Default volume for weather and outdoor ambience, rain, storms, night (0-100)
@@ -113,6 +121,11 @@ const GameOptions = {
      * Scan css/themes directory and load all theme files dynamically.
      * @returns {string[]} An array of theme filenames.
      */
+    // The look the ASCII layer wears (UI/ASCIIMode.js). It is not a stylesheet:
+    // picking it turns the experimental ASCII mode on, and turning that mode on
+    // from the Experimental page picks it here. One state, two doors.
+    ASCII_THEME: 'ascii', // i18n-ignore: sentinel, not a label
+
     getThemes: function () {
         if (this._themesCache) return this._themesCache;
 
@@ -144,87 +157,173 @@ const GameOptions = {
             themes.push('omega_tower.css');
         }
 
+        themes.push(this.ASCII_THEME);
         this._themesCache = themes;
         return themes;
     },
 
+    asciiThemeIndex: function () {
+        return this.getThemes().indexOf(this.ASCII_THEME);
+    },
+
+    isAsciiTheme: function (index) {
+        return this.getThemes()[index] === this.ASCII_THEME;
+    },
+
+    // The name a theme is offered under. Filenames are title-cased; the ASCII
+    // entry is named in the player's language.
+    themeName: function (index) {
+        const file = this.getThemes()[index];
+        if (!file) return '';
+        if (file === this.ASCII_THEME) return T('GameOptions.label.themeAscii');
+        return file.replace('.css', '').split(/[_-]/)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    },
+
     /**
-     * Persist a theme selection to disk WITHOUT applying it live.
-     * Writes the chosen preset into css/vars.css so it loads on next restart.
-     * Used when the player changes the theme at runtime: applying a freshly
-     * loaded stylesheet live causes class/token "bleeding" against the already
-     * rendered scene, so the new theme only takes effect after a restart.
-     * @param {number} themeIndex - Index of theme in getThemes list.
+     * Put one preset on screen, now. Every theme token the game draws with is a
+     * CSS custom property on :root, so a preset is applied by injecting it as a
+     * stylesheet that sits after the linked one in the cascade: nothing has to
+     * be rebuilt and no restart is needed. The same content is written to
+     * css/vars.css so the choice survives a restart.
+     *
+     * Presets keep full token parity (docs/task/ui_fixing.md), which is what
+     * makes a live swap safe: every property the old preset defined is defined
+     * by the new one too, so no surface is left reading a token that no longer
+     * has a value.
+     * @param {string} themeFile - A filename from getThemes, never the ASCII entry.
      */
-    persistTheme: function (themeIndex) {
-        const themes = this.getThemes();
-        const themeFile = themes[themeIndex] || themes[0];
-        if (!themeFile) return;
-
-        if (Utils.isNwjs()) {
-            try {
-                const fs = require('fs');
-                const path = require('path');
-                const base = path.dirname(process.mainModule.filename);
-                const themesDir = path.join(base, 'css', 'themes');
-                const selectedThemePath = path.join(themesDir, themeFile);
-                const varsPath = path.join(base, 'css', 'vars.css');
-
-                if (fs.existsSync(selectedThemePath)) {
-                    const content = fs.readFileSync(selectedThemePath, 'utf8');
-                    // Write to disk for persistence across restarts only.
-                    fs.writeFileSync(varsPath, content, 'utf8');
-                }
-            } catch (e) {
-                console.error("GameOptions: Failed to persist theme.", e);
+    _injectTheme: function (themeFile) {
+        if (!themeFile || themeFile === this.ASCII_THEME) return;
+        if (!Utils.isNwjs()) {
+            // In a browser there is no disk to write: point a second <link> at
+            // the preset instead, which the cascade applies over vars.css.
+            let link = document.getElementById('active-theme-link');
+            if (!link) {
+                link = document.createElement('link');
+                link.id = 'active-theme-link';
+                link.rel = 'stylesheet';
+                document.head.appendChild(link);
             }
+            link.href = 'css/themes/' + themeFile;
+            this._forceRepaint();
+            return;
+        }
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const base = path.dirname(process.mainModule.filename);
+            const selectedThemePath = path.join(base, 'css', 'themes', themeFile);
+            const varsPath = path.join(base, 'css', 'vars.css');
+            if (!fs.existsSync(selectedThemePath)) return;
+            const content = fs.readFileSync(selectedThemePath, 'utf8');
+            // Written for the next boot; injected for this one.
+            fs.writeFileSync(varsPath, content, 'utf8');
+            let style = document.getElementById('active-theme-override');
+            if (!style) {
+                style = document.createElement('style');
+                style.id = 'active-theme-override';
+                document.head.appendChild(style);
+            }
+            style.textContent = content;
+            // Force a repaint. Updating the :root vars alone won't make
+            // Chromium repaint cached gradient/url() background-images on
+            // surfaces that weren't structurally mutated (e.g. the options
+            // menu's #menu-container / .book-spread). Without this, scenes
+            // that only re-render a small inner subtree show no theme change.
+            this._forceRepaint();
+        } catch (e) {
+            console.error("GameOptions: Failed to apply theme.", e);
         }
     },
 
     /**
-     * Apply a theme stylesheet dynamically. Writes to vars.css in NW.js and
-     * injects it live. Only used at boot (when the scene is built against the
-     * already-persisted theme), never on a live theme change.
+     * Persist a theme selection. Kept as the old name because other plugins
+     * call it; it now applies the preset as well, since a theme change is
+     * immediate everywhere.
+     * @param {number} themeIndex - Index of theme in getThemes list.
+     */
+    persistTheme: function (themeIndex) {
+        this.setTheme(themeIndex);
+    },
+
+    /**
+     * Apply the stored theme without touching the ASCII mode flag. This is the
+     * boot path (ConfigManager.applyData): the saved value is already the
+     * player's choice, and ASCIIMode restores its own state from the same save.
      * @param {number} themeIndex - Index of theme in getThemes list.
      */
     applyTheme: function (themeIndex) {
         const themes = this.getThemes();
-        const themeFile = themes[themeIndex] || themes[0];
-        if (!themeFile) return;
+        if (this.isAsciiTheme(themeIndex)) return;
+        this._injectTheme(themes[themeIndex] || themes[0]);
+    },
 
-        if (Utils.isNwjs()) {
-            try {
-                const fs = require('fs');
-                const path = require('path');
-                const base = path.dirname(process.mainModule.filename);
-                const themesDir = path.join(base, 'css', 'themes');
-                const selectedThemePath = path.join(themesDir, themeFile);
-                const varsPath = path.join(base, 'css', 'vars.css');
+    // Guards the two directions of the ASCII theme against each other: picking
+    // the ASCII theme turns ASCII mode on, and turning ASCII mode on picks the
+    // ASCII theme. Without this they would call each other forever.
+    _themeSyncing: false,
 
-                if (fs.existsSync(selectedThemePath)) {
-                    const content = fs.readFileSync(selectedThemePath, 'utf8');
-                    // Write to disk for persistence across restarts
-                    fs.writeFileSync(varsPath, content, 'utf8');
-                    // Apply instantly via injected <style>, cascade order ensures it
-                    // overrides the linked stylesheet without requiring a reload/re-fetch.
-                    let style = document.getElementById('active-theme-override');
-                    if (!style) {
-                        style = document.createElement('style');
-                        style.id = 'active-theme-override';
-                        document.head.appendChild(style);
-                    }
-                    style.textContent = content;
-                    // Force a repaint. Updating the :root vars alone won't make
-                    // Chromium repaint cached gradient/url() background-images on
-                    // surfaces that weren't structurally mutated (e.g. the options
-                    // menu's #menu-container / .book-spread). Without this, scenes
-                    // that only re-render a small inner subtree show no theme change.
-                    this._forceRepaint();
-                }
-            } catch (e) {
-                console.error("GameOptions: Failed to apply theme.", e);
+    /**
+     * The one entry point for a theme change the player made. Applies the look
+     * on the spot, with no restart, and keeps the ASCII mode toggle in step.
+     * @param {number} themeIndex - Index of theme in getThemes list.
+     */
+    setTheme: function (themeIndex) {
+        const themes = this.getThemes();
+        const index = (themeIndex >= 0 && themeIndex < themes.length) ? themeIndex : 0;
+        ConfigManager.activeTheme = index;
+        if (this._themeSyncing) return;
+        this._themeSyncing = true;
+        try {
+            if (this.isAsciiTheme(index)) {
+                // Remember what to come back to, then hand the look to ASCII.
+                ConfigManager.asciiModeEnabled = 1;
+            } else {
+                if (ConfigManager.asciiModeEnabled) ConfigManager.asciiModeEnabled = 0;
+                ConfigManager.themeBeforeAscii = index;
+                this._injectTheme(themes[index]);
             }
+        } finally {
+            this._themeSyncing = false;
         }
+        this._notifyThemeChange();
+    },
+
+    /**
+     * Called by UI/ASCIIMode.js whenever the experimental ASCII Mode option
+     * moves. Turning it on forces the theme to ASCII; turning it off puts the
+     * previous theme back.
+     * @param {number|boolean} value - The new ASCII mode value.
+     */
+    onAsciiModeChanged: function (value) {
+        const asciiIndex = this.asciiThemeIndex();
+        if (asciiIndex < 0 || this._themeSyncing) return;
+        this._themeSyncing = true;
+        try {
+            if (value) {
+                if (ConfigManager.activeTheme !== asciiIndex) {
+                    ConfigManager.themeBeforeAscii = ConfigManager.activeTheme || 0;
+                }
+                ConfigManager.activeTheme = asciiIndex;
+            } else if (ConfigManager.activeTheme === asciiIndex) {
+                const back = ConfigManager.themeBeforeAscii || 0;
+                ConfigManager.activeTheme = back;
+                this._injectTheme(this.getThemes()[back]);
+            }
+        } finally {
+            this._themeSyncing = false;
+        }
+        this._notifyThemeChange();
+    },
+
+    // Anything holding DOM it drew from theme tokens can listen for this and
+    // redraw itself. Nothing has to: the tokens are live already.
+    _notifyThemeChange: function () {
+        if (typeof document === 'undefined' || !document.dispatchEvent) return;
+        document.dispatchEvent(new CustomEvent('gamethemechange', {
+            detail: { index: ConfigManager.activeTheme, name: this.themeName(ConfigManager.activeTheme) }
+        }));
     },
 
     /**
@@ -282,14 +381,12 @@ const GameOptions = {
             id: 'gameplay',
             nameKey: 'gameplay',
             categories: ['gameplay'],
-            // Language leads the page: it is the setting that decides how every
-            // other one reads, so it must stay first.
+            // Language is hidden while the game is locked to English, so the
+            // page opens on the world settings instead.
             symbols: [
-                // enemySpawnModeV2/V3/V4 are migration markers on the config,
-                // not options, so they are not listed here.
-                'language', 'fowEnabled', 'enemySpawnMode', 'enemyDifficulty',
-                'cpuPartyMembers', 'fogOfWar', 'commandRemember',
-                'smoothBattleLog'
+                'fowEnabled', 'enemyDifficulty',
+                'cpuPartyMembers', 'mapBattleMode', 'mapStreaming', 'fogOfWar', 'commandRemember',
+                'smoothBattleLog', 'mapTooltips', 'showControls', 'showMapNotices', 'runInBackground'
             ]
         },
         {
@@ -305,7 +402,7 @@ const GameOptions = {
             id: 'audio',
             nameKey: 'audio',
             categories: ['audio'],
-            symbols: ['musicArtistDisplay', 'battleMusicName', 'bgmMute', 'bgmVolume', 'bgsVolume', 'weatherVolume', 'meVolume', 'seVolume', 'footstepsVolume', 'uisVolume', 'vscVolume', 'masterVolume']
+            symbols: ['musicArtistDisplay', 'battleMusicRandom', 'battleMusicName', 'masterVolume', 'bgmMute', 'bgmVolume', 'bgsVolume', 'weatherVolume', 'meVolume', 'seVolume', 'footstepsVolume', 'dialogueVoices', 'dialogueVoicesVolume', 'uisVolume', 'vscVolume']
         },
         {
             id: 'shader',
@@ -324,7 +421,7 @@ const GameOptions = {
             nameKey: 'experimental',
             categories: ['experimental'],
             symbols: [
-                'cardCombat', 'mapBattleMode', 'asciiModeEnabled', 'asciiHudEnabled'
+                'asciiModeEnabled', 'asciiHudEnabled'
             ]
         }
     ]
@@ -344,6 +441,7 @@ window.GameOptions = GameOptions;
     const defaultMeVolume = Number(parameters['defaultMeVolume'] || 90);
     const defaultSeVolume = Number(parameters['defaultSeVolume'] || 90);
     const defaultFootstepsVolume = Number(parameters['defaultFootstepsVolume'] || 30);
+    const defaultDialogueVoicesVolume = Number(parameters['defaultDialogueVoicesVolume'] || 60);
     const defaultWeatherVolume = Number(parameters['defaultWeatherVolume'] || 80);
 
     //=============================================================================
@@ -581,15 +679,6 @@ window.GameOptions = GameOptions;
     const ENEMY_DIFFICULTY_DEFAULT = 50;
     const ENEMY_DIFFICULTY_SCALE = 2;
 
-    // Enemy spawn modes, in the order the option cycles them and the order
-    // GameOptions.enemySpawn names them: 0 Biome, 1 Party Level, 2 Realistic
-    // (distance from spawn), 3 Chaos. Biome leads the list and is the default:
-    // the world as it stands, where the place decides what lives there and
-    // nothing is arranged around the party
-    // (BattleSystemEnhancedEncounters.js, section 4b).
-    const ENEMY_SPAWN_MODE_COUNT = 4;
-    const ENEMY_SPAWN_MODE_DEFAULT = 0; // Biome
-
     // Slider value -> signed stat percentage shown to the player.
     const enemyDifficultyPercent = function (value) {
         const v = value != null ? value : ENEMY_DIFFICULTY_DEFAULT;
@@ -637,6 +726,12 @@ window.GameOptions = GameOptions;
         if (this.meVolume === undefined) this.meVolume = defaultMeVolume;
         if (this.seVolume === undefined) this.seVolume = defaultSeVolume;
         this.footstepsVolume = volume(config.footstepsVolume, defaultFootstepsVolume);
+        // Animalese chattering under the dialogue box (see DialogueSystem's
+        // letter voices). On unless the player turns it off.
+        this.dialogueVoices = config.dialogueVoices === undefined ? true : !!config.dialogueVoices;
+        // How loud those blips are, kept off seVolume so the chatter can be
+        // quieted without quieting the rest of the sound effects.
+        this.dialogueVoicesVolume = volume(config.dialogueVoicesVolume, defaultDialogueVoicesVolume);
         // Weather/outdoor ambience (the MUSH channel 4 BGS the WeatherSystem
         // drives: rain, storms, night). Kept off bgsVolume so a player can quiet
         // the rain without silencing a map's own background sound.
@@ -671,7 +766,12 @@ window.GameOptions = GameOptions;
         // Back-compat mirror for any code still reading charBasedSprites.
         this.charBasedSprites = (this.enemyBattlers === 2);
         this.activeTheme = config.activeTheme !== undefined ? config.activeTheme : 0;
+        // The theme to come back to when the ASCII layer is switched off.
+        this.themeBeforeAscii = config.themeBeforeAscii !== undefined ? config.themeBeforeAscii : 0;
         this.showFps = config.showFps !== undefined ? config.showFps : false;
+        this.runInBackground = config.runInBackground !== undefined
+            ? !!config.runInBackground
+            : false;
         // Title screen background style: 0 Random, 1 Cards, 2 Space
         // (planets + stars + black holes + galaxies), 3 Artifacts, 4 Bestiary,
         // 5 Weapons, 7 Hyperverse (default), 8 Camper Drive. 6 was the separate
@@ -683,58 +783,16 @@ window.GameOptions = GameOptions;
         // CPU party members: when on, every party member except the leader
         // (first member) is auto-controlled in battle. Disabled by default.
         this.cpuPartyMembers = config.cpuPartyMembers !== undefined ? config.cpuPartyMembers : false;
-        // Roguelike card combat (BattleSystem/RoguelikeCardSystem.js): off by
-        // default. Independent of the per-save Switch 45 set at character
-        // creation - either one enables card battles.
-        this.cardCombat = config.cardCombat !== undefined ? config.cardCombat : false;
         // Tactical map battle (BattleSystem/MapBattleMode.js): off by default.
         this.mapBattleMode = config.mapBattleMode !== undefined ? config.mapBattleMode : false;
-        // The two alternate battle layers are mutually exclusive; a config that
-        // somehow carries both on is resolved in favour of card combat here so
-        // the menu never shows two "on" rows that fight over the next battle.
-        if (this.cardCombat && this.mapBattleMode) this.mapBattleMode = false;
-        // Enemy spawn mode (BattleSystemEnhancedEncounters.js): 0 = Distance
-        // from spawn (the whole biome roster, pitched at how far the ground
-        // lies from where the party started), 1 = Party Level (default;
-        // roaming enemies at/below party level + one much-higher boss per
-        // proc map), 2 = Biome (the biome's whole roster, flat, any level to
-        // 100), 3 = Chaos.
-        //
-        // Two migrations, each with its own marker, applied oldest first:
-        //
-        // V2 - the list used to hold a fourth mode, Tower Distance, at index 2,
-        //   with Chaos at 3. Tower Distance becomes Distance from spawn, the
-        //   mode that inherited its idea of danger-by-place, and 3 becomes
-        //   Chaos where it then sat.
-        // V3 - Distance from spawn and Party Level swapped places so the
-        //   default leads the list, and Biome was inserted ahead of Chaos. So a
-        //   config from before the swap has its 0 and 1 exchanged and its
-        //   Chaos moved up from 2 to 3.
-        // V4 - Biome became the default and moved to the head of the list,
-        //   trading places with Distance from spawn (now named Realistic),
-        //   which fell to 2. Party Level and Chaos did not move.
-        const spawnModes = ENEMY_SPAWN_MODE_COUNT;
-        const OLD_DISTANCE_INDEX = 1; // index Distance from spawn held pre-V3
-        let spawnMode = config.enemySpawnMode !== undefined
-            ? config.enemySpawnMode : ENEMY_SPAWN_MODE_DEFAULT;
-        if (!config.enemySpawnModeV2) {
-            if (spawnMode === 2) spawnMode = OLD_DISTANCE_INDEX; // was Tower Distance
-            else if (spawnMode === 3) spawnMode = 2;             // was Chaos
-        }
-        if (!config.enemySpawnModeV3 && config.enemySpawnMode !== undefined) {
-            if (spawnMode === 0) spawnMode = 1;      // Balanced -> Party Level
-            else if (spawnMode === 1) spawnMode = 0; // Distance from spawn
-            else if (spawnMode === 2) spawnMode = 3; // Chaos, now behind Biome
-        }
-        if (!config.enemySpawnModeV4 && config.enemySpawnMode !== undefined) {
-            if (spawnMode === 0) spawnMode = 2;      // Distance from spawn -> Realistic
-            else if (spawnMode === 2) spawnMode = 0; // Biome, now the default
-        }
-        this.enemySpawnModeV2 = true;
-        this.enemySpawnModeV3 = true;
-        this.enemySpawnModeV4 = true;
-        this.enemySpawnMode = (spawnMode >= 0 && spawnMode < spawnModes)
-            ? spawnMode : ENEMY_SPAWN_MODE_DEFAULT;
+        // Procedural map streaming (Map/WorldMapReturn.js, window.ProcStitch): on
+        // by default. Off falls back to one square per map, crossed with a pan.
+        this.mapStreaming = config.mapStreaming !== undefined ? config.mapStreaming : true;
+        // The controls checklist pinned to the corner of the map (Map/
+        // MapLegend.js). On for a fresh config: it is how a first game learns
+        // the keys, and Bubba's own "controls" topic takes it down again.
+        this.showControls = config.showControls !== undefined ? config.showControls : true;
+        this.showMapNotices = config.showMapNotices !== undefined ? config.showMapNotices : 'first';
         // Enemy difficulty slider: 0..100 with 50 = untouched stats. Anything
         // else scales every enemy parameter (see the Game_Enemy.paramBase hook).
         this.enemyDifficulty = config.enemyDifficulty !== undefined ? config.enemyDifficulty : ENEMY_DIFFICULTY_DEFAULT;
@@ -803,21 +861,23 @@ window.GameOptions = GameOptions;
     ConfigManager.makeData = function () {
         const config = _ConfigManager_makeData.call(this);
         config.footstepsVolume = this.footstepsVolume;
+        config.dialogueVoices = this.dialogueVoices;
+        config.dialogueVoicesVolume = this.dialogueVoicesVolume;
         config.weatherVolume = this.weatherVolume;
         config.bgmVolumeBeforeMute = this.bgmVolumeBeforeMute;
         config.enemyBattlers = this.enemyBattlers;
         config.charBasedSprites = this.charBasedSprites;
         config.activeTheme = this.activeTheme;
+        config.themeBeforeAscii = this.themeBeforeAscii;
         config.proceduralHitFX = this.proceduralHitFX;
         config.showFps = this.showFps;
+        config.runInBackground = this.runInBackground;
         config.titleBackground = this.titleBackground;
         config.cpuPartyMembers = this.cpuPartyMembers;
-        config.cardCombat = this.cardCombat;
         config.mapBattleMode = this.mapBattleMode;
-        config.enemySpawnMode = this.enemySpawnMode;
-        config.enemySpawnModeV2 = true;
-        config.enemySpawnModeV3 = true;
-        config.enemySpawnModeV4 = true;
+        config.mapStreaming = this.mapStreaming;
+        config.showControls = this.showControls;
+        config.showMapNotices = this.showMapNotices;
         config.enemyDifficulty = this.enemyDifficulty;
         config.retroTune = RETRO_TUNE;
         config.retroShaderMode = this.retroShaderMode;
@@ -1124,14 +1184,16 @@ window.GameOptions = GameOptions;
         const it = ConfigManager.language === 'it';
         const mainTitle =T('GameOptions.preferences');
         const backLabel =T('GameOptions.back');
+        const resetLabel = T('GameOptions.resetDefaults');
 
         // Spec skeleton: book-spread -> left-page (header bar + tab strip + list) + right-page (inspect)
         this._dndContainer.innerHTML = `
-            <div class="book-spread">
+            <div class="book-spread options-spread">
                 <div class="left-page">
                     <div class="page-header-bar">
                         <button class="back-button" id="opt-back-btn" onclick="SceneManager._scene.goBack()">${backLabel}</button>
                         <h2 class="title">${mainTitle}</h2>
+                        <button class="back-button" id="opt-reset-btn" onclick="SceneManager._scene.resetToDefaults()">${resetLabel}</button>
                     </div>
                     <div class="backpack-tabs" id="options-categories"></div>
                     <div id="options-list" class="pockets-scroll"></div>
@@ -1195,23 +1257,6 @@ window.GameOptions = GameOptions;
         }, 16);
     };
 
-    //=========================================================================
-    // Random game-icon picker (no emojis, draw from the IconSet bitmap)
-    //=========================================================================
-    // A curated pool of recognizable, non-blank IconSet indices.
-    const ICON_POOL = [
-        64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
-        80, 81, 82, 83, 84, 87, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105,
-        160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 176, 177, 178, 179,
-        208, 209, 210, 211, 212, 213, 214, 215, 311, 312, 313
-    ];
-    // Stable hash -> a "random" but consistent icon for a given key.
-    const pickIcon = (key) => {
-        let h = 0;
-        const s = String(key);
-        for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
-        return ICON_POOL[h % ICON_POOL.length];
-    };
 
     //=========================================================================
     // Settings preview images (img/pictures/Settings/)
@@ -1226,12 +1271,6 @@ window.GameOptions = GameOptions;
         autoIdle:        { on: 'AutoIdleON',        off: 'AutoIdleOFF' },
         commandRemember: { on: 'CommandRememberON', off: 'CommandRememberOFF' },
         autosaveEnabled: { on: 'AutoSaveON',        off: 'AutoSaveOFF' },
-        // One plate per spawn mode, indexed by the stored value (0 Biome,
-        // 1 Party Level, 2 Realistic, 3 Chaos). Any of these that is still a
-        // stub simply shows nothing and leaves the written blurb to explain the
-        // mode, which is how the option worked before it had art at all.
-        enemySpawnMode:  { states: ['EnemySpawnBiome', 'EnemySpawnPartyLevel',
-                                    'EnemySpawnDistance', 'EnemySpawnChaos'] },
         enemyDifficulty: { img: 'EnemyDifficulty' },
         combatMode:      { on: 'CombatModeON',      off: 'CombatModeOFF' },
         autosaveInterval: { img: 'SaveInterval' },
@@ -1250,6 +1289,7 @@ window.GameOptions = GameOptions;
         partyHud:        { on: 'PartyHudON',        off: 'PartyHudOFF' },
         activeTheme:     { img: 'ActiveTheme' },
         battleMusicName: { img: 'BattleMusic' },
+        battleMusicRandom: { img: 'BattleMusic' },
         titleBackground: { img: 'TitleBackground' },
         uiScale:         { img: 'UiScale' },
         fontScale:       { img: 'FontScale' },
@@ -1268,7 +1308,6 @@ window.GameOptions = GameOptions;
         // Experimental: ASCII mode is a 3-way select (0 Off, 1 On, 2 Only UI).
         asciiModeEnabled: { states: ['AsciiModeOFF', 'AsciiModeON', 'AsciiHUDON'] },
         asciiHudEnabled: { on: 'AsciiHUDON',        off: 'AsciiHUDOFF' },
-        cardCombat:      { on: 'CardCombatON',      off: 'CardCombatOFF' },
         // Tactical map battle (BattleSystem/MapBattleMode.js).
         mapBattleMode:   { on: 'MapBattleON',       off: 'MapBattleOFF' },
         // 3D
@@ -1335,26 +1374,6 @@ window.GameOptions = GameOptions;
         return settingsImageUsable(path) ? path : null;
     };
 
-    Scene_Options.prototype.drawOptionIcons = function () {
-        if (!this._dndContainer) return;
-        const bitmap = ImageManager.loadSystem('IconSet');
-        const canvases = this._dndContainer.querySelectorAll('canvas[data-icon]');
-        const draw = () => {
-            canvases.forEach(canvas => {
-                const iconIndex = parseInt(canvas.dataset.icon, 10);
-                const ctx = canvas.getContext('2d');
-                if (!ctx) return;
-                const size = canvas.width;
-                ctx.clearRect(0, 0, size, size);
-                ctx.imageSmoothingEnabled = false;
-                const sx = (iconIndex % 16) * 32;
-                const sy = Math.floor(iconIndex / 16) * 32;
-                ctx.drawImage(bitmap.canvas, sx, sy, 32, 32, 0, 0, size, size);
-            });
-        };
-        if (bitmap.isReady()) draw();
-        else bitmap.addLoadListener(draw);
-    };
 
     //=========================================================================
     // Standalone input manager (menurework spec §5), keyboard + controller
@@ -1426,13 +1445,10 @@ window.GameOptions = GameOptions;
         const it = ConfigManager.language === 'it';
         c.innerHTML = GameOptions.tabs.map((tab, idx) => {
             const dispName = T('GameOptions.label.' + tab.nameKey);
-            const icon = pickIcon(tab.id);
             return `<div class="backpack-tab" data-tab="${idx}" onclick="SceneManager._scene.selectTab(${idx})">
-                        <canvas class="opt-tab-icon" width="18" height="18" data-icon="${icon}"></canvas>
                         <span>${dispName}</span>
                     </div>`;
         }).join('');
-        this.drawOptionIcons();
     };
 
     Scene_Options.prototype.renderOptions = function () {
@@ -1453,8 +1469,7 @@ window.GameOptions = GameOptions;
             const name = cmd.name;
             const custom = GameOptions._options[symbol];
             const value = w.getConfigValue(symbol);
-            const iconHTML = `<canvas class="opt-row-icon" width="20" height="20" data-icon="${pickIcon(symbol)}"></canvas>`;
-            const labelHTML = `<span class="option-label">${iconHTML}<span class="option-name">${name}</span></span>`;
+            const labelHTML = `<span class="option-label"><span class="option-name">${name}</span></span>`;
 
             // Number / volume slider. A slider may provide a statusTextFn when the
             // raw 0..100 position is not what the player should read (e.g. enemy
@@ -1495,7 +1510,6 @@ window.GameOptions = GameOptions;
                         <span class="option-status-toggle ${value ? 'enabled' : 'disabled'}">${value ? T('GameOptions.active') : T('GameOptions.inactive')}</span>
                     </div>`;
         }).join('');
-        this.drawOptionIcons();
     };
 
     Scene_Options.prototype.renderInspect = function (overrideIdx) {
@@ -1512,17 +1526,13 @@ window.GameOptions = GameOptions;
         // committed selection. Falls back to the selected index when not hovering.
         const hasPreview = overrideIdx != null && !!list[overrideIdx];
 
-        // Tab summary (no option focused, or empty list)
-        if ((this._activeSection !== 'options' && !hasPreview) || list.length === 0) {
+        // The right page is always kept: folding the spread when there was
+        // nothing to describe made the whole layout jump sideways as the cursor
+        // moved between options. An empty tab simply leaves the page blank.
+        this.setSpreadSolo(false);
+        if (list.length === 0) {
             container.classList.add('item-inspect--empty');
-            container.innerHTML = `
-                <div class="title">${tabName}</div>
-                <div class="inspect-placeholder-text">${T('GameOptions.settingsInSection', { count: list.length })}</div>
-                <div class="inspect-lore">
-                    <div class="inspect-bullet-item">${T('GameOptions.pressOrOkToEdit')}</div>
-                    <div class="inspect-bullet-item">${T('GameOptions.l1R1SwitchTabs')}</div>
-                    <div class="inspect-bullet-item">${T('GameOptions.adjustTheFocusedValue')}</div>
-                </div>`;
+            container.innerHTML = '';
             return;
         }
 
@@ -1540,10 +1550,6 @@ window.GameOptions = GameOptions;
         else if (isSelect) valStr = w.statusText(idx);
         else valStr = w.getConfigValue(symbol) ? T('GameOptions.active2') : T('GameOptions.inactive2');
 
-        const ctrlHint = (isNum || isSelect)
-            ? T('GameOptions.toAdjust')
-            : T('GameOptions.okOrToToggle');
-
         // Pass the live value so boolean toggles pick on/off art and multi-state
         // selects (Skill Categorization, Enemy Battlers) pick their per-state art.
         const imgVal = isNum ? null : w.getConfigValue(symbol);
@@ -1552,21 +1558,21 @@ window.GameOptions = GameOptions;
         // blank stub, so no empty frame is left sitting on the page.
         const imgHTML = imgPath
             ? `<div class="opt-inspect-img-wrap"><img class="opt-inspect-img" src="${imgPath}" alt=""
-                    onerror="this.parentNode.style.display='none';"
-                    onload="if(this.naturalWidth<=2||this.naturalHeight<=2)this.parentNode.style.display='none';"></div>`
+                    onerror="this.parentNode.classList.add('is-hidden');"
+                    onload="if(this.naturalWidth<=2||this.naturalHeight<=2)this.parentNode.classList.add('is-hidden');"></div>`
             : '';
 
         // Options whose new value only takes effect after a game restart.
         const RESTART_REQUIRED = ['activeTheme'];
         const restartHTML = RESTART_REQUIRED.includes(symbol)
-            ? `<div class="inspect-bullet-item" style="color: var(--border-focus-hover); font-weight: bold">${T('GameOptions.requiresRestartToApply')}</div>`
+            ? `<div class="inspect-bullet-item opt-note">${T('GameOptions.requiresRestartToApply')}</div>`
             : '';
 
         // Per-option warnings shown under the value.
         // Per-option warnings live in GameOptions.warn, keyed by option symbol.
         const noteKey = 'GameOptions.warn.' + symbol;
         const noteHTML = T.has(noteKey)
-            ? `<div class="inspect-bullet-item" style="color: var(--border-focus-hover); font-weight: bold">${T(noteKey)}</div>`
+            ? `<div class="inspect-bullet-item opt-note">${T(noteKey)}</div>`
             : '';
 
         // Plain-language explanation of what the option does. `desc.<symbol>` is
@@ -1581,8 +1587,7 @@ window.GameOptions = GameOptions;
         if (T.has(descKey)) descLines.push(`<div class="inspect-bullet-item">${T(descKey)}</div>`);
         stateLines.forEach((line, i) => {
             const on = i === curValue;
-            const style = on ? ' style="color: var(--border-focus-hover);"' : '';
-            descLines.push(`<div class="inspect-bullet-item"${style}>${line}</div>`);
+            descLines.push(`<div class="inspect-bullet-item${on ? ' opt-state-on' : ''}">${line}</div>`);
         });
         const descHTML = descLines.length
             ? `<div class="inspect-section-title">${T('GameOptions.howItWorks')}</div>${descLines.join('')}`
@@ -1590,10 +1595,9 @@ window.GameOptions = GameOptions;
 
         container.innerHTML = `
             <div class="inspect-header">
-                <div class="inspect-frame"><canvas class="inspect-canvas" width="36" height="36" data-icon="${pickIcon(symbol)}"></canvas></div>
                 <div class="inspect-title-box">
                     <div class="inspect-name">${cmd.name}</div>
-                    <div class="inspect-rarity" style="color: var(--border-focus-hover)">${tabName} · ${typeLabel}</div>
+                    <div class="inspect-rarity opt-inspect-kind">${tabName} · ${typeLabel}</div>
                 </div>
             </div>
             ${imgHTML}
@@ -1602,13 +1606,17 @@ window.GameOptions = GameOptions;
                 <div class="inspect-section-title">${T('GameOptions.currentValue')}</div>
                 <div class="inspect-spec-row"><span class="inspect-spec-label">${cmd.name}</span><span class="inspect-spec-value">${valStr}</span></div>
                 ${noteHTML}
-                <div class="inspect-section-title">${T('GameOptions.controls')}</div>
-                <div class="inspect-bullet-item">${ctrlHint}</div>
-                <div class="inspect-bullet-item">${T('GameOptions.toBrowse')}</div>
-                <div class="inspect-bullet-item">${T('GameOptions.l1R1SwitchTabs2')}</div>
                 ${restartHTML}
             </div>`;
-        this.drawOptionIcons();
+    };
+
+    // Fold the spread to a single full-width page (and back). The class carries
+    // the whole change: the right page is dropped, the binding spine with it, and
+    // the left page widens to the full sheet.
+    Scene_Options.prototype.setSpreadSolo = function (solo) {
+        const spread = this._dndContainer && this._dndContainer.querySelector('.book-spread');
+        if (!spread) return;
+        spread.classList.toggle('options-solo', !!solo);
     };
 
     // Hover preview helpers: render the inspect panel for a hovered row without
@@ -1826,6 +1834,21 @@ window.GameOptions = GameOptions;
         OptionsInputManager.update();
     };
 
+    // Reset every setting to its default. There is no defaults table of its
+    // own: applyData({}) is the single place, core and plugin alike, where an
+    // absent key falls back to its default, so an empty config IS the defaults.
+    Scene_Options.prototype.resetToDefaults = function () {
+        ConfigManager.applyData({});
+        ConfigManager.save();
+        SoundManager.playLoad();
+        this._rebuildRows();
+        this.renderOptions();
+        this.updateHighlight();
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(T('GameOptions.resetDefaultsDone'));
+        }
+    };
+
     Scene_Options.prototype.goBack = function () {
         if (this._closing) return;
         this._closing = true;
@@ -1892,6 +1915,25 @@ window.GameOptions = GameOptions;
             return isFinite(v) ? v : defaultFootstepsVolume;
         },
         (value) => ConfigManager.footstepsVolume = value,
+        'audio', 'number');
+
+    // Dialogue Voices: each letter of a typed dialogue line is chattered with a
+    // vowel or consonant blip, pitched by the speaker's own voice, a keyword's
+    // gold run a third higher. Off by default; the blips live in
+    // audio/se/Vowels and audio/se/Consonants.
+    GameOptions.registerOption('dialogueVoices', T('GameOptions.label.dialogueVoices'),
+        () => !!ConfigManager.dialogueVoices,
+        (value) => ConfigManager.dialogueVoices = !!value,
+        'audio', 'boolean');
+
+    // How loud the letter blips are. Its own slider rather than a share of the
+    // SE volume, so the chatter can be turned down on its own.
+    GameOptions.registerOption('dialogueVoicesVolume', T('GameOptions.label.dialogueVoicesVolume'),
+        () => {
+            const v = Number(ConfigManager.dialogueVoicesVolume);
+            return isFinite(v) ? v : defaultDialogueVoicesVolume;
+        },
+        (value) => ConfigManager.dialogueVoicesVolume = value,
         'audio', 'number');
 
     // Weather Volume: the rain/storm/night ambience the WeatherSystem plays on
@@ -1973,58 +2015,58 @@ window.GameOptions = GameOptions;
         },
         'video', 'boolean');
 
-    // Register Theme Switcher
-    const themes = GameOptions.getThemes();
-    const themeNames = themes.map(t => {
-        const baseName = t.replace('.css', '');
-        return baseName.split(/[_-]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-    });
+    // Register Run In Background: with this on the game keeps updating while
+    // the window is not focused, so alt tabbing no longer freezes it.
+    GameOptions.registerOption('runInBackground', T('GameOptions.label.runInBackground'),
+        () => ConfigManager.runInBackground === true,
+        (value) => { ConfigManager.runInBackground = value; },
+        'gameplay', 'boolean');
+
+    const _SceneManager_isGameActive = SceneManager.isGameActive;
+    SceneManager.isGameActive = function () {
+        if (ConfigManager.runInBackground) return true;
+        return _SceneManager_isGameActive.call(this);
+    };
+
+    // Register Theme Switcher. Every preset, plus the ASCII layer, applied on
+    // the spot: the tokens are swapped live and nothing needs a restart.
+    const themeCount = () => GameOptions.getThemes().length;
 
     GameOptions.registerOption('activeTheme', T('GameOptions.label.activeTheme'),
         () => ConfigManager.activeTheme !== undefined ? ConfigManager.activeTheme : 0,
-        (value) => {
-            ConfigManager.activeTheme = value;
-            // Persist only; live application bleeds the freshly loaded theme's
-            // classes/tokens onto the current scene. Takes effect on restart.
-            GameOptions.persistTheme(value);
-        },
+        (value) => GameOptions.setTheme(value),
         'video', 'boolean',
-        (value) => themeNames[value] || themeNames[0],
+        (value) => GameOptions.themeName(value) || GameOptions.themeName(0),
         function () {
             let v = this.getConfigValue('activeTheme');
-            v = (v + 1) % themeNames.length;
+            v = (v + 1) % themeCount();
             this.setConfigValue('activeTheme', v);
         },
         function () {
             let v = this.getConfigValue('activeTheme');
-            v = (v - 1 + themeNames.length) % themeNames.length;
+            v = (v - 1 + themeCount()) % themeCount();
             this.setConfigValue('activeTheme', v);
         }
     );
 
-    // Roguelike deck combat (BattleSystem/RoguelikeCardSystem.js) and tactical
-    // map battle (BattleSystem/MapBattleMode.js) are alternate battle layers:
-    // both replace the standard battle scene, so turning one on turns the other
-    // off. Off by default; the new value is picked up by the next battle (the
-    // running battle keeps the mode it started with).
-    GameOptions.registerOption('cardCombat', T('GameOptions.label.cardCombat'),
-        () => ConfigManager.cardCombat === true,
-        (value) => {
-            ConfigManager.cardCombat = !!value;
-            if (value) ConfigManager.mapBattleMode = false;
-        },
-        'experimental', 'boolean');
-
-    // Map Battle replaces the standard battle scene the same way card combat
-    // does, so it sits next to it on the Experimental page. Off by default; it
-    // is also offered up front as a combat mode during character creation.
+    // Map Battle is a shipped battle mode, so it lives on the Gameplay page
+    // beside the other combat settings: it replaces the standard battle scene.
+    // Off by default; it is also offered up front as a combat mode during
+    // character creation.
     GameOptions.registerOption('mapBattleMode', T('GameOptions.label.mapBattle'),
         () => ConfigManager.mapBattleMode === true,
         (value) => {
+            // In a LAN session the host's setting is everybody's setting
+            // (Multiplayer/MultiplayerSystem.js keeps it in step).
+            if (window.MultiplayerRemote && window.MultiplayerRemote.isMapBattleLocked()) {
+                if (window.ParchmentToast && window.ParchmentToast.show) {
+                    window.ParchmentToast.show(T('Multiplayer.lan.mapBattleLockedByHost'));
+                }
+                return;
+            }
             ConfigManager.mapBattleMode = !!value;
-            if (value) ConfigManager.cardCombat = false;
         },
-        'experimental', 'boolean');
+        'gameplay', 'boolean');
 
     //=========================================================================
     // Retro shader options (the low-poly/low-res 3D shader, PSXShader.js)
@@ -2219,28 +2261,6 @@ window.GameOptions = GameOptions;
         }
     );
 
-    // Enemy Spawn Mode select (0 Biome default, 1 Party Level, 2 Realistic, 3 Chaos).
-    // Consumed by BattleSystemEnhancedEncounters.js via BSE.Helpers.getSpawnMode().
-    const enemySpawnNames = () => T.list('GameOptions.enemySpawn');
-    GameOptions.registerOption('enemySpawnMode', T('GameOptions.label.enemySpawn'),
-        () => ConfigManager.enemySpawnMode !== undefined ? ConfigManager.enemySpawnMode : ENEMY_SPAWN_MODE_DEFAULT,
-        (value) => ConfigManager.enemySpawnMode = value,
-        'gameplay', 'boolean',
-        (value) => enemySpawnNames()[value] || enemySpawnNames()[0],
-        function () {
-            let v = this.getConfigValue('enemySpawnMode');
-            if (v === undefined) v = ENEMY_SPAWN_MODE_DEFAULT;
-            v = (v + 1) % ENEMY_SPAWN_MODE_COUNT;
-            this.setConfigValue('enemySpawnMode', v);
-        },
-        function () {
-            let v = this.getConfigValue('enemySpawnMode');
-            if (v === undefined) v = ENEMY_SPAWN_MODE_DEFAULT;
-            v = (v - 1 + ENEMY_SPAWN_MODE_COUNT) % ENEMY_SPAWN_MODE_COUNT;
-            this.setConfigValue('enemySpawnMode', v);
-        }
-    );
-
     //=========================================================================
     // Enemy Difficulty slider (buff / nerf every enemy parameter)
     //=========================================================================
@@ -2265,9 +2285,91 @@ window.GameOptions = GameOptions;
     };
 
     //=========================================================================
+    // Map tooltips (the written tips and compass targets the map shows)
+    //=========================================================================
+    // The setting lives on switch 75, which the map hints and the story-mode
+    // rules of BattleSystemEnhanced already read, so it belongs to the save
+    // rather than to ConfigManager. Outside a running game there is nothing to
+    // read, and the row reads as off.
+    //=========================================================================
+    // The controls checklist (Map/MapLegend.js)
+    //=========================================================================
+    // The same setting Bubba's "controls" topic writes, so the row and the
+    // conversation are two ways at one list rather than two lists. Turning it
+    // on here pins the paper up on every map, whatever else is happening.
+    GameOptions.registerOption('showControls', T('GameOptions.label.showControls'),
+        () => ConfigManager.showControls !== false,
+        (value) => {
+            if (window.MapLegend && window.MapLegend.setControlsShown) {
+                window.MapLegend.setControlsShown(value);
+            } else {
+                ConfigManager.showControls = !!value;
+            }
+            if (window.MapLegend && window.MapLegend.refresh) window.MapLegend.refresh();
+        },
+        'gameplay', 'boolean');
+
+    // The notices half of the same sheet: the tips Bubba reads off a place.
+    // Three states rather than two, so a tip can be read once and spent.
+    const NOTICE_MODES = ['first', 'always', 'off']; // i18n-ignore: setting values
+
+    function noticeMode() {
+        const legend = window.MapLegend;
+        if (legend && legend.noticesMode) return legend.noticesMode();
+        const raw = ConfigManager.showMapNotices;
+        if (raw === false) return 'off';
+        return NOTICE_MODES.includes(raw) ? raw : 'first';
+    }
+
+    function setNoticeMode(mode) {
+        const value = NOTICE_MODES.includes(mode) ? mode : 'first';
+        if (window.MapLegend && window.MapLegend.setNoticesMode) {
+            window.MapLegend.setNoticesMode(value);
+        } else {
+            ConfigManager.showMapNotices = value;
+        }
+        if (window.MapLegend && window.MapLegend.refresh) window.MapLegend.refresh();
+    }
+
+    function stepNoticeMode(step) {
+        const i = NOTICE_MODES.indexOf(noticeMode());
+        const next = (i + step + NOTICE_MODES.length) % NOTICE_MODES.length;
+        setNoticeMode(NOTICE_MODES[next]);
+    }
+
+    GameOptions.registerOption('showMapNotices', T('GameOptions.label.showMapNotices'),
+        () => NOTICE_MODES.indexOf(noticeMode()),
+        (value) => setNoticeMode(NOTICE_MODES[Number(value) % NOTICE_MODES.length]),
+        'gameplay', 'number',
+        () => T('GameOptions.mapNotices.' + noticeMode()),
+        function () { stepNoticeMode(1); this.redrawCurrentItem && this.redrawCurrentItem(); },
+        function () { stepNoticeMode(-1); this.redrawCurrentItem && this.redrawCurrentItem(); });
+
+    GameOptions.registerOption('mapTooltips', T('GameOptions.label.mapTooltips'),
+        () => !!(window.$gameSwitches && $gameSwitches.value(75)),
+        (value) => { if (window.$gameSwitches) $gameSwitches.setValue(75, !!value); },
+        'gameplay', 'boolean');
+
+    //=========================================================================
     // CPU Party Members (auto-control every party member except the leader)
     //=========================================================================
     // Registered here, consumed via the Game_Actor.isAutoBattle override below.
+    //=========================================================================
+    // Procedural map streaming (Map/WorldMapReturn.js)
+    //=========================================================================
+    // On, neighbouring procedural squares sharing a tileset are stitched into one
+    // seamless map and walked across without a transition. Off, one square is
+    // loaded at a time and its border is crossed with a Zelda-style screen pan.
+    GameOptions.registerOption('mapStreaming', T('GameOptions.label.mapStreaming'),
+        () => ConfigManager.mapStreaming !== false,
+        (value) => {
+            ConfigManager.mapStreaming = !!value;
+            if (window.ProcStitch && window.ProcStitch.onStreamingChanged) {
+                window.ProcStitch.onStreamingChanged(!!value);
+            }
+        },
+        'gameplay', 'boolean');
+
     GameOptions.registerOption('cpuPartyMembers', T('GameOptions.label.cpuPartyMembers'),
         () => ConfigManager.cpuPartyMembers,
         (value) => ConfigManager.cpuPartyMembers = value,
@@ -2315,4 +2417,86 @@ window.GameOptions = GameOptions;
         return _Game_Actor_isAutoBattle_cpuParty.call(this);
     };
 
+    //=========================================================================
+    // The UI face on the canvas windows
+    //=========================================================================
+    // theme.css dresses every DOM menu in --font-ui. RPG Maker's own windows
+    // are painted into a canvas and never read a stylesheet, so they are told
+    // the same face here and the two halves of the UI finally agree.
+    //
+    // The face has to be pulled in on purpose: a canvas draw does not fetch a
+    // webfont the way a DOM node does, so a window drawn before anything on the
+    // page has used the face would fall back without it.
+    const UI_FONT_FACE = "Bitter";
+
+    // Where the parchment face is deliberately NOT worn:
+    //   - the minigames and the arcade, which each carry their own display font
+    //     and are pastiches of somebody else's machine rather than of our UI,
+    //   - the title screen's own menu, which is set in Square,
+    //   - the simulated desktop, which is DOM and dressed as its own operating
+    //     system in hypernet.css, so it never asks this question at all.
+    const UI_FONT_EXEMPT_SCENES = [
+        "Scene_Title",
+        "Scene_Arcade", "Scene_GameSelect", "Scene_HighScores", "Scene_InitialEntry",
+        "Scene_BoosterPack", "Scene_CardBooster", "Scene_CardCollection", "Scene_CardDuel",
+        "Scene_Chess", "Scene_FishingMinigame", "Scene_HyperTamer", "Scene_UnlockingBlocks",
+        "Scene_MonsterTournament", "Scene_PeriodicTable", "Scene_RamanScan",
+        "Scene_ScratchCard", "Scene_ScratchCardSelect", "Scene_SurfingGame",
+        "Scene_TargetRange", "Scene_Tarot", "Scene_TarotBase", "Scene_TarotNPC",
+        "Scene_TokenConverter",
+    ];
+
+    // The scene being drawn for is the one on screen, or the one being built
+    // when a window asks during a scene change. A scene not on the list can
+    // still step aside by setting `_uiFontExempt` on itself.
+    function isUiFontExempt() {
+        const scene = SceneManager._nextScene || SceneManager._scene;
+        if (!scene) return false;
+        if (scene._uiFontExempt) return true;
+        const name = scene.constructor && scene.constructor.name;
+        return UI_FONT_EXEMPT_SCENES.indexOf(name) >= 0;
+    }
+
+    const _Game_System_mainFontFace_uiFont = Game_System.prototype.mainFontFace;
+    Game_System.prototype.mainFontFace = function () {
+        if (isUiFontExempt()) return _Game_System_mainFontFace_uiFont.call(this);
+        return UI_FONT_FACE + ", " + $dataSystem.advanced.fallbackFonts;
+    };
+
+    // Loaded alongside the engine's own fonts, both weights, so the first
+    // window drawn is already wearing it. The faces themselves are declared in
+    // theme.css: asking for them here only makes the page fetch them.
+    // One weight of one face, added to the document so both the DOM and the
+    // canvas can draw with it. A face already there is left alone.
+    function addUiFontFace(family, url, weight) {
+        if (!window.FontFace || !document.fonts) return;
+        try {
+            const font = new FontFace(family, `url(${url})`, { weight, style: "normal" });
+            font.load().then((loaded) => document.fonts.add(loaded)).catch((err) => {
+                console.error(`GameOptions: the UI face ${family} ${weight} did not load from ${url}`, err);
+            });
+        } catch (err) {
+            console.error(`GameOptions: the UI face ${family} ${weight} could not be declared`, err);
+        }
+    }
+
+    const _Scene_Boot_loadGameFonts_uiFont = Scene_Boot.prototype.loadGameFonts;
+    Scene_Boot.prototype.loadGameFonts = function () {
+        _Scene_Boot_loadGameFonts_uiFont.call(this);
+        // Built here rather than left to the @font-face in theme.css: this URL
+        // is relative to index.html, the one path the engine itself proves
+        // works (it is how Terminus.ttf is fetched), so the canvas half of the
+        // UI does not depend on how a stylesheet's own relative url() resolves.
+        // Weight 400 is the semibold cut: see the note on the @font-face in
+        // theme.css. The two must name the same file or the canvas windows
+        // would be drawn a shade lighter than the DOM menus beside them.
+        addUiFontFace(UI_FONT_FACE, "fonts/Bitter-SemiBold.ttf", "400");
+        addUiFontFace(UI_FONT_FACE, "fonts/Bitter-Bold.ttf", "700");
+        // The title menu's own face, drawn into a canvas for the same reason.
+        addUiFontFace("Square", "fonts/Square.ttf", "400");
+    };
+
+    window.UIFont = { face: UI_FONT_FACE, isExempt: isUiFontExempt };
+
 })();
+

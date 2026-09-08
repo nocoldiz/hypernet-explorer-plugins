@@ -1,4 +1,5 @@
 /*:
+ * @target MZ
 * @plugindesc Creates procedurally generated items, weapons, and armor with random properties
 * @author Omni-Lex
 *

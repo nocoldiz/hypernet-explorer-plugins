@@ -46,14 +46,14 @@
     "1414": {
       "areas": [
         {
-          "key": "MapLegend.areas.tutorialVillage",
+          "key": "MapLegend.areas.storyModeVillage",
           "x1": 69,
           "y1": 25,
           "x2": 93,
           "y2": 49
         },
         {
-          "key": "MapLegend.areas.tutorialWaterfall",
+          "key": "MapLegend.areas.storyModeWaterfall",
           "x1": 69,
           "y1": 1,
           "x2": 78,

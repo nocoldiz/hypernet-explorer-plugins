@@ -204,7 +204,15 @@
     "instr": "Instr",
     "presetHeading": "CANNED SCHEMATICS",
     "presetHint": "Pick one and it is drawn where you are looking. Everything it puts down is ordinary tiles: pull it about, wire it into something bigger, or etch it as it stands.",
-    "placing": "{name} in hand. Click to place it, right button or Esc to put it back."
+    "placing": "{name} in hand. Click to place it, right button or Esc to put it back.",
+    "app": {
+      "name": "Circuit Board Editor",
+      "dies": "ETCHED DIES",
+      "noDies": "Nothing etched yet.",
+      "fitted": "on the deck",
+      "inBag": "in the bag",
+      "gone": "spent"
+    }
   },
   "bios": {
     "heading": "HYPERDECK FIRMWARE SETUP",

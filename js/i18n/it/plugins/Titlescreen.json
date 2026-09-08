@@ -2,13 +2,15 @@
   "menu": {
     "explore": "Nuovo Party",
     "reconnect": "Seleziona Party",
-    "tutorial": "Tutorial",
+    "storyMode": "Nuova Storia",
+    "continueStory": "Continua la Storia",
     "minigames": "Minigiochi",
     "sandbox": "Sandbox",
     "worlds": "Mondi",
     "wiki": "Storia del Mondo",
     "preferences": "Preferenze",
     "mods": "Mods",
+    "music": "Musica",
     "exit": "Esci",
     "continue": "Continua",
     "quickContinue": "Continua"
@@ -16,13 +18,15 @@
   "menuOverlay": {
     "explore": "NUOVO PARTY",
     "reconnect": "SELEZIONA PARTY",
-    "tutorial": "TUTORIAL",
+    "storyMode": "NUOVA STORIA",
+    "continueStory": "CONTINUA LA STORIA",
     "minigames": "MINIGIOCHI",
     "sandbox": "SANDBOX",
     "worlds": "MONDI",
     "wiki": "STORIA DEL MONDO",
     "preferences": "PREFERENZE",
     "mods": "MODS",
+    "music": "MUSICA",
     "exit": "ESCI",
     "noWorld": "NESSUN MONDO",
     "quickContinue": "CONTINUA"
@@ -134,7 +138,7 @@
     "curvature": "CURVATURA SPAZIALE RILEVATA"
   },
   "version": {
-    "text": "0.5.1a"
+    "text": "0.6.0a"
   },
   "language": {
     "label": "✦ LINGUA"
@@ -269,5 +273,8 @@
     ],
     "nameFormat": "{noun} {adj}",
     "fallbackType": "Reliquia"
+  },
+  "music": {
+    "label": "✦ MUSICA: "
   }
 }

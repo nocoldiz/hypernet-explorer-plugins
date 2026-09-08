@@ -58,6 +58,7 @@
   "enemyFloor": "Lo Schiacciamento va avanti da un po': qui i nemici vaganti partono dal livello {level}, in qualsiasi modalità di generazione.",
   "enemyFloorOpen": "La fauna è fuori controllo: nel mondo vaga qualunque cosa dal livello 1 al {level}.",
   "enemyFloorCollapse": "Il paradosso si è compiuto: non resta nulla sotto il livello {level}, e non c'è più alcun limite superiore.",
+  "storyDisabled": "La modalita storia e scritta per l'anno 2001, una popolazione ordinaria e magia ordinaria. Con queste impostazioni la modalita storia sara disabilitata: questo mondo resta giocabile con Esplora, Riconnetti e Sandbox.",
   "earthLost": "Non c'è più la Terra. Nibiru l'ha colpita il 21 dicembre 2012 e la mappa del mondo se n'è andata con lei: nella sua orbita resta la Torre Omega, e tutto ciò che ti avrebbe portato in superficie ti porta lì.",
   "startingLevel": "Livello iniziale",
   "lowerLevel": "Abbassa il livello",

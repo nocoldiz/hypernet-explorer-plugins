@@ -1113,24 +1113,87 @@
     return { group, animate, pickables, dispose: () => disposeObject3D(group), radius: 1600 };
   }
 
+  // ==========================================================================
+  // The cosmic web. Not a ball of dots any more: a real large-scale structure
+  // out to the edge of the observable universe.
+  //
+  //  - The view is 4600 world units across, which at this scale's 10 Mly per
+  //    unit is the 46 Gly radius of the observable universe. It was 2000.
+  //  - Nodes are not sprinkled uniformly. A few hundred ATTRACTORS are drawn
+  //    first and gathered onto sheets; every node is then strung between a
+  //    pair of them, which lays the clusters out along walls and filaments and
+  //    leaves the space between them as voids, the way the real web looks.
+  //  - Every node carries a TIER (GalaxySim.Math.Strangeness): 0 at home, 15
+  //    at the rim. It rides down into the galaxies, systems and worlds the
+  //    player finds inside it, and it is what makes the far web weird.
+  // ==========================================================================
   function buildCosmicWeb(opts) {
     opts = opts || {};
     const rnd = lcg(opts.seed || 14142);
     const group = new THREE.Group();
     group.name = "gx-cosmicweb";
+    const STRANGE = (window.GalaxySim.Math && window.GalaxySim.Math.Strangeness) || null;
 
-    // Clustered nodes.
-    const N = 900, R = 2000;
-    const nodes = [];
-    for (let i = 0; i < N; i++) {
-      const rr = Math.pow(rnd(), 0.8) * R, u = rnd() * 2 - 1, th = rnd() * Math.PI * 2;
-      const s = Math.sqrt(1 - u * u);
-      nodes.push(new THREE.Vector3(Math.cos(th) * s * rr, u * rr, Math.sin(th) * s * rr));
+    // 46 Gly at 10 Mly per world unit: the whole observable universe, and the
+    // node count that keeps it reading as a web rather than a haze.
+    const N = opts.nodeCount || 4200;
+    const R = opts.radius || 4600;
+
+    // --- The scaffolding: attractors gathered onto sheets -------------------
+    const ATTRACTORS = 260;
+    const attr = [];
+    for (let i = 0; i < ATTRACTORS; i++) {
+      // The polar angle is quantised into bands and then jittered, so
+      // attractors gather on surfaces rather than filling the ball evenly.
+      const band = Math.floor(rnd() * 7);
+      const u = Math.max(-1, Math.min(1, (band / 6) * 2 - 1 + (rnd() - 0.5) * 0.22));
+      const th = rnd() * Math.PI * 2;
+      const s = Math.sqrt(Math.max(0, 1 - u * u));
+      const rr = Math.pow(0.06 + rnd() * 0.94, 0.72) * R;
+      attr.push(new THREE.Vector3(Math.cos(th) * s * rr, u * rr * 0.82, Math.sin(th) * s * rr));
     }
+
+    // --- The nodes themselves: strung between neighbouring attractors -------
+    const nodes = [];
+    const tiers = new Array(N);
+    for (let i = 0; i < N; i++) {
+      const a = attr[(rnd() * attr.length) | 0];
+      // Its partner is the nearest OTHER attractor out of a handful of tries,
+      // so the pair spans a real filament rather than an arbitrary chord.
+      let b = a, bd = Infinity;
+      for (let k = 0; k < 14; k++) {
+        const c = attr[(rnd() * attr.length) | 0];
+        if (c === a) continue;
+        const d = a.distanceToSquared(c);
+        if (d < bd) { bd = d; b = c; }
+      }
+      // Along the strand, with a bias to the ends: clusters pile up where two
+      // filaments meet, which is where the real ones are.
+      let t = rnd();
+      t = t < 0.5 ? Math.pow(t * 2, 1.7) * 0.5 : 1 - Math.pow((1 - t) * 2, 1.7) * 0.5;
+      const spread = R * 0.012 + rnd() * R * 0.03;
+      const p = new THREE.Vector3(
+        a.x + (b.x - a.x) * t + (rnd() - 0.5) * spread,
+        a.y + (b.y - a.y) * t + (rnd() - 0.5) * spread,
+        a.z + (b.z - a.z) * t + (rnd() - 0.5) * spread);
+      nodes.push(p);
+      tiers[i] = STRANGE ? STRANGE.tierOfRadius(p.length(), R) : 0;
+    }
+    // The Local Group is a node like any other, and it is the one at the
+    // origin: node 0 is always home, so tier 0 is always reachable.
+    nodes[0].set(0, 0, 0);
+    tiers[0] = 0;
+
     const npos = new Float32Array(N * 3), ncol = new Float32Array(N * 3);
     for (let i = 0; i < N; i++) {
       npos[i * 3] = nodes[i].x; npos[i * 3 + 1] = nodes[i].y; npos[i * 3 + 2] = nodes[i].z;
-      const w = 0.5 + rnd() * 0.5; ncol[i * 3] = 0.85 * w; ncol[i * 3 + 1] = 0.9 * w; ncol[i * 3 + 2] = 1.0 * w;
+      // A node's colour says how strange it is: the near web is the cool white
+      // of ordinary galaxies, the far web burns towards amber.
+      const f = tiers[i] / 15;
+      const w = 0.5 + rnd() * 0.5;
+      ncol[i * 3] = (0.85 + 0.15 * f) * w;
+      ncol[i * 3 + 1] = (0.9 - 0.24 * f) * w;
+      ncol[i * 3 + 2] = (1.0 - 0.62 * f) * w;
     }
     // Crisp constant-size dots: each node is a click target, so they must stay
     // individually distinguishable at any zoom rather than merging into glare.
@@ -1145,7 +1208,11 @@
     // are identical to the brute-force scan (no RNG is consumed here).
     const segs = [];
     {
-      const CELL = R / 6; // ~ typical neighbour spacing
+      // Cell size is a real cost here, not a detail: at 4200 nodes the search
+      // walks every cell of every ring it opens, so a grid that is too fine
+      // spends more on empty cells than it saves on distance tests. R/16 was
+      // measured as the floor of that curve (66ms, against 96 at R/26).
+      const CELL = R / 16;
       const invCell = 1 / CELL;
       const grid = new Map();
       const nodeCell = new Array(N);
@@ -1203,36 +1270,80 @@
     });
     group.add(new THREE.LineSegments(lgeo, lmat));
 
+    // Intergalactic haze along the walls, so the voids read as empty rather
+    // than as the edge of the drawing.
+    {
+      const n = 9000;
+      const pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) {
+        const a = nodes[(rnd() * N) | 0];
+        const rr = Math.pow(rnd(), 0.7) * R * 0.05;
+        const u = rnd() * 2 - 1, th = rnd() * Math.PI * 2;
+        const s = Math.sqrt(Math.max(0, 1 - u * u));
+        pos[i * 3] = a.x + Math.cos(th) * s * rr;
+        pos[i * 3 + 1] = a.y + u * rr;
+        pos[i * 3 + 2] = a.z + Math.sin(th) * s * rr;
+        const w = 0.12 + rnd() * 0.22;
+        col[i * 3] = 0.78 * w; col[i * 3 + 1] = 0.84 * w; col[i * 3 + 2] = 1.0 * w;
+      }
+      const haze = new THREE.Points(
+        new THREE.BufferGeometry()
+          .setAttribute("position", new THREE.BufferAttribute(pos, 3))
+          .setAttribute("color", new THREE.BufferAttribute(col, 3)),
+        makePointsMaterial(1.6, dotTexture(), 0.5, false));
+      haze.frustumCulled = false;
+      group.add(haze);
+    }
+
     // Every node is a real destination: selecting one and zooming in builds a
     // procedural cluster of galaxies from its seed (see buildProceduralCluster).
     // The descriptive record is derived deterministically from the node index so
-    // it stays identical between visits without storing 900 objects up front.
+    // it stays identical between visits without storing 4200 objects up front.
     function nodeAt(i) {
       const p = nodes[i];
       if (!p) return null;
+      const tier = tiers[i] || 0;
       const seed = clusterSeed(i);
       const r = lcg(seed);
-      const members = 60 + ((seed >>> 3) % 900);
+      // The far web is not only further away, it is emptier: the rim holds
+      // sparse, ragged groups rather than the rich clusters of home.
+      const members = Math.max(12, Math.round((60 + ((seed >>> 3) % 900)) * (1 - tier * 0.045)));
+      // 10 Mly per world unit at this scale, printed in Gly once it stops
+      // fitting into four digits of Mly.
+      const mly = p.length() * 10;
       return {
         index: i,
         seed,
+        tier,
         position: p,
         data: {
           name: clusterName(seed),
           type: members > 600 ? "rich galaxy cluster"  // i18n-ignore  body-type ids, resolved by bodyTypeLabel
             : members > 250 ? "galaxy cluster" : "galaxy group",  // i18n-ignore  body-type ids
           kind: "cluster",
+          tier,
           diameter: T('Galaxy.unit.mly', { n: 6 + Math.round(r() * 24) }),
           members: T('Galaxy.unit.galaxies', { n: members }),
-          distance: T('Galaxy.unit.mly', { n: Math.round(p.length() * 0.5) }),
+          distance: mly >= 1000
+            ? T('Galaxy.unit.gly', { n: Math.round(mly / 100) / 10 })
+            : T('Galaxy.unit.mly', { n: Math.round(mly) }),
         },
       };
     }
 
+    /** The tier of a node, for anything that holds only its index. */
+    function nodeTier(i) { return tiers[i] || 0; }
+
+    /** Just where a node IS. nodeAt() builds a whole descriptive record with
+     *  four formatted strings in it, which is far too much to pay 4200 times
+     *  over every time the player presses the cycle key; this is what that
+     *  sweep actually needs. */
+    function nodePos(i) { return nodes[i] || null; }
+
     function animate() {}
     return {
-      group, animate, pickables: [], nodePoints, nodeAt, nodeCount: N,
-      dispose: () => disposeObject3D(group), radius: 2100,
+      group, animate, pickables: [], nodePoints, nodeAt, nodeTier, nodePos, nodeCount: N,
+      dispose: () => disposeObject3D(group), radius: R * 1.05,
     };
   }
 
@@ -1244,15 +1355,20 @@
   // Deliberately separate from buildMilkyWay so the hero galaxy is untouched.
   // ==========================================================================
 
-  /** Stable 32-bit hash so a galaxy's look is tied to its name, not to order. */
-  function galaxySeedFromName(name) {
+  /** Stable 32-bit hash so a galaxy's look is tied to its name, not to order.
+   *  The optional `tier` is stamped into the seed's low four bits: from there
+   *  it rides into every "GX.<seed>.<i>" system the galaxy holds and survives
+   *  a save with no plumbing at all (GalaxySim.Math.Strangeness). */
+  function galaxySeedFromName(name, tier) {
     let h = 2166136261 >>> 0;
     const s = String(name || "galaxy");
     for (let i = 0; i < s.length; i++) {
       h ^= s.charCodeAt(i);
       h = Math.imul(h, 16777619) >>> 0;
     }
-    return h >>> 0;
+    h = h >>> 0;
+    const S = window.GalaxySim.Math && window.GalaxySim.Math.Strangeness;
+    return S ? S.stampTier(h, tier || 0) : h;
   }
 
   const GALAXY_TINTS = [
@@ -1506,6 +1622,9 @@
     group.name = "gx-cluster";
     const pickables = [];
     const name = opts.name || clusterName(seed);
+    // How strange this whole cluster is allowed to be: handed down from the
+    // web node it hangs off, and handed on again to every galaxy in it.
+    const tier = Math.max(0, Math.min(15, Math.round(opts.tier || 0)));
 
     const R = 900;                       // cluster framing radius (world units)
     const clumps = 3 + ((seed >>> 5) % 4);
@@ -1543,6 +1662,7 @@
             "-" + (pickables.length + 1),
           type: rnd() < 0.5 ? "spiral galaxy" : "elliptical galaxy",  // i18n-ignore  body-type ids
           kind: "galaxy",
+          tier,
           diameter: T('Galaxy.unit.thousandLy', { n: Math.round(40 + rnd() * 160) }),
           stars: T('Galaxy.unit.billionStars', { n: Math.round(20 + rnd() * 900) }),
           distance: T('Galaxy.unit.mly',
@@ -3138,6 +3258,44 @@
   }
 
 
+  // Crude oil, seen as a slick: an all but black ground with the thin-film
+  // interference bands that make a puddle iridescent. Bands are laid down as
+  // overlapping rainbow arcs at low alpha, so no two runs of the texture sit
+  // the same way and the seam wraps.
+  function oilSlickTexture(rnd) {
+    rnd = rnd || Math.random;
+    const w = 256, h = 128;
+    const cv = document.createElement("canvas");
+    cv.width = w; cv.height = h;
+    const ctx = cv.getContext("2d");
+    ctx.fillStyle = "#07060a";
+    ctx.fillRect(0, 0, w, h);
+    const SHEEN = ["#7d3bd4", "#2f6fd0", "#25b39a", "#c9c33a", "#d0632a", "#a32f7a"];
+    for (let i = 0; i < 26; i++) {
+      const x = rnd() * w, y = rnd() * h, r = 12 + rnd() * 56;
+      const g = ctx.createRadialGradient(x, y, r * 0.15, x, y, r);
+      const from = (rnd() * SHEEN.length) | 0;
+      for (let k = 0; k < 4; k++) {
+        g.addColorStop(k / 3, SHEEN[(from + k) % SHEEN.length]);
+      }
+      ctx.globalAlpha = 0.10 + rnd() * 0.16;
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      if (x < r) { ctx.save(); ctx.translate(w, 0); ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+      if (x > w - r) { ctx.save(); ctx.translate(-w, 0); ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+    }
+    // Back down into the dark: oil is black first and a rainbow second.
+    ctx.globalAlpha = 0.45;
+    ctx.fillStyle = "#050407";
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalAlpha = 1;
+    const tex = new THREE.CanvasTexture(cv);
+    tex.wrapS = THREE.RepeatWrapping;
+    return tex;
+  }
+
   // Core body sphere + optional back-side corona + optional glow sprite.
   function exoticBody(ctx, opt) {
     opt = opt || {};
@@ -3527,6 +3685,594 @@
       ctx.anims.push((t) => { halo.mat.opacity = 0.5 + 0.4 * Math.abs(Math.sin(t * 9)); });
       return { lightColor: 0xe0ffb0, lightIntensity: 2.0 };
     },
+    // ------------------------------------------------------------------------
+    // The esoteric objects. Nothing in the sky is one of these: they have a
+    // frequency of zero in StarTypes.json and are only ever authored, one per
+    // patron's world (js/plugins/Crafting/PatreonRewards.js).
+    // ------------------------------------------------------------------------
+
+    // A star with a hole where its heart is: a bloated luminous envelope with a
+    // genuinely black core inside it, ringed by the light bent round the back.
+    BLACK_HOLE_STAR(ctx) {
+      exoticBody(ctx, {
+        texture: exoticSurfaceTexture("#e0763c", { rnd: ctx.rnd, cells: 46, cellSize: 20, brightRatio: 0.45, darkA: 0.5 }),
+        coronaColor: 0xff9a5a, coronaOpacity: 0.35, coronaScale: 1.26,
+        glow: "rgba(255,150,90,0.75)", glowScale: 4.2, glowPulse: 0.05, glowPulseRate: 0.6,
+        spin: 0.03,
+      });
+      // The core, seen through the envelope: an absolute void with a photon
+      // ring around it. Drawn after the body with the depth write off, so it
+      // reads as a hole cut in the star rather than a ball in front of it.
+      const core = new THREE.Mesh(
+        new THREE.SphereGeometry(ctx.R * 0.32, 24, 18),
+        new THREE.MeshBasicMaterial({ color: 0x000000, depthWrite: false }));
+      core.renderOrder = 2;
+      ctx.group.add(core);
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(ctx.R * 0.42, ctx.R * 0.02, 8, 72),
+        new THREE.MeshBasicMaterial({
+          color: 0xffd9a0, transparent: true, opacity: 0.85,
+          blending: THREE.AdditiveBlending, depthWrite: false,
+        }));
+      ring.renderOrder = 3;
+      ctx.group.add(ring);
+      // Envelope material falling inward: a thin, fast, tilted inflow disk.
+      const feed = new THREE.Mesh(
+        new THREE.RingGeometry(ctx.R * 0.5, ctx.R * 0.95, 64, 1),
+        new THREE.MeshBasicMaterial({
+          map: makeAccretionTexture("rgba(255,190,120,0.9)", ctx.rnd),
+          transparent: true, opacity: 0.5, side: THREE.DoubleSide,
+          blending: THREE.AdditiveBlending, depthWrite: false,
+        }));
+      feed.rotation.x = Math.PI / 2 - 0.3;
+      feed.renderOrder = 3;
+      ctx.group.add(feed);
+      ctx.anims.push((t) => {
+        ring.rotation.z = t * 0.6;
+        ring.rotation.x = 0.5 + Math.sin(t * 0.2) * 0.3;
+        feed.rotation.z = t * 1.6;
+      });
+      return { lightColor: 0xffab6e, lightIntensity: 1.6 };
+    },
+
+    // A star somebody did something to. Cracked black crust over an ember
+    // interior, wrapped in slowly turning sigil rings that never quite line up.
+    CURSED_STAR(ctx) {
+      exoticBody(ctx, {
+        texture: exoticSurfaceTexture("#2a0710", { rnd: ctx.rnd, cells: 40, brightRatio: 0.35, brightA: 0.55, darkA: 0.6 }),
+        coronaColor: 0x7a1030, coronaOpacity: 0.4, coronaScale: 1.2,
+        glow: "rgba(190,30,70,0.7)", glowScale: 3.6, glowPulse: 0.12, glowPulseRate: 0.9,
+        spin: -0.04,
+      });
+      // Three sigil rings on stubbornly different axes, each a broken circle.
+      const rings = [];
+      for (let i = 0; i < 3; i++) {
+        const ring = new THREE.Mesh(
+          new THREE.TorusGeometry(ctx.R * (1.5 + i * 0.45), ctx.R * 0.025, 6, 48, Math.PI * (1.2 + ctx.rnd() * 0.6)),
+          new THREE.MeshBasicMaterial({
+            color: 0xd11a44, transparent: true, opacity: 0.55,
+            blending: THREE.AdditiveBlending, depthWrite: false,
+          }));
+        ring.rotation.set(ctx.rnd() * Math.PI, ctx.rnd() * Math.PI, ctx.rnd() * Math.PI);
+        rings.push(ring);
+        ctx.group.add(ring);
+      }
+      // Thorns: the star is impaled on its own light.
+      const thorns = new THREE.Group();
+      ctx.group.add(thorns);
+      for (let i = 0; i < 9; i++) {
+        const len = ctx.R * (1.4 + ctx.rnd() * 1.6);
+        const geo = new THREE.ConeGeometry(ctx.R * 0.09, len, 5, 1);
+        geo.translate(0, len / 2 + ctx.R * 0.9, 0);
+        const thorn = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+          color: 0x8b0f2c, transparent: true, opacity: 0.6,
+          blending: THREE.AdditiveBlending, depthWrite: false,
+        }));
+        thorn.rotation.set(ctx.rnd() * Math.PI * 2, ctx.rnd() * Math.PI * 2, ctx.rnd() * Math.PI * 2);
+        thorns.add(thorn);
+      }
+      ctx.anims.push((t) => {
+        rings.forEach((r, i) => {
+          r.rotation.z += 0.004 * (i % 2 ? -1 : 1);
+          r.rotation.x += 0.002 * (i + 1);
+          r.material.opacity = 0.35 + 0.3 * Math.sin(t * (0.7 + i * 0.4) + i);
+        });
+        thorns.rotation.y = t * 0.08;
+      });
+      return { lightColor: 0xb01838, lightIntensity: 0.7 };
+    },
+
+    // A star that died and did not stay dead: the burnt-out remnant of a
+    // failed supernova, still twitching, still shedding the ejecta it never
+    // finished throwing off.
+    ZOMBIE_STAR(ctx) {
+      const body = exoticBody(ctx, {
+        texture: exoticSurfaceTexture("#8fd06a", { rnd: ctx.rnd, cells: 26, brightRatio: 0.5, brightA: 0.5, darkA: 0.55 }),
+        scale: 0.6, coronaColor: 0x9fe07a, coronaOpacity: 0.3,
+        glow: "rgba(159,224,122,0.8)", glowScale: 4.5, spin: 0.9,
+      });
+      exoticShells(ctx, { color: 0x6fae4e, count: 3, speed: 0.09, from: 1.4, to: 4.2, maxOpacity: 0.16 });
+      // The ragged shroud of the supernova that failed to finish it.
+      const shroud = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(ctx.R * 2.1, 2),
+        new THREE.MeshBasicMaterial({
+          color: 0x7fbf5c, wireframe: true, transparent: true, opacity: 0.18,
+          blending: THREE.AdditiveBlending, depthWrite: false,
+        }));
+      ctx.group.add(shroud);
+      // It comes back irregularly rather than pulsing: dead, dead, dead, ALIVE.
+      ctx.anims.push((t) => {
+        const beat = Math.pow(Math.max(0, Math.sin(t * 1.1)), 8) +
+                     Math.pow(Math.max(0, Math.sin(t * 2.7 + 1.3)), 12);
+        body.scale.setScalar(1 + beat * 0.46);
+        shroud.rotation.y = t * 0.1;
+        shroud.rotation.x = t * 0.04;
+        shroud.material.opacity = 0.1 + beat * 0.3;
+      });
+      return { lightColor: 0xaef08a, lightIntensity: 1.1 };
+    },
+
+    // An eyeball star: one tidally locked, unblinking eye. The iris always
+    // faces the same way, the pupil widens and narrows, and every so often the
+    // lids come down over the whole thing.
+    EYEBALL_STAR(ctx) {
+      exoticBody(ctx, {
+        texture: exoticSurfaceTexture("#f6ead8", { rnd: ctx.rnd, cells: 18, brightRatio: 0.2, brightA: 0.12, darkA: 0.12 }),
+        corona: false, glow: "rgba(255,233,208,0.55)", glowScale: 2.8, spin: 0,
+      });
+      // Veins, drawn as thin meridians creeping in from the back of the globe.
+      for (let i = 0; i < 7; i++) {
+        const vein = new THREE.Mesh(
+          new THREE.TorusGeometry(ctx.R * 1.005, ctx.R * 0.012, 4, 40, 1.1 + ctx.rnd() * 0.8),
+          new THREE.MeshBasicMaterial({ color: 0xc2564a, transparent: true, opacity: 0.35 }));
+        vein.rotation.set(ctx.rnd() * Math.PI, ctx.rnd() * Math.PI, ctx.rnd() * Math.PI);
+        ctx.group.add(vein);
+      }
+      // The eye itself, on the +Z face: iris, pupil and a wet highlight.
+      const face = new THREE.Group();
+      face.position.z = ctx.R * 0.86;
+      ctx.group.add(face);
+      const iris = new THREE.Mesh(
+        new THREE.CircleGeometry(ctx.R * 0.52, 48),
+        new THREE.MeshBasicMaterial({ color: 0xffb02e, transparent: true, opacity: 0.95 }));
+      face.add(iris);
+      const pupil = new THREE.Mesh(
+        new THREE.CircleGeometry(ctx.R * 0.22, 40),
+        new THREE.MeshBasicMaterial({ color: 0x08060a }));
+      pupil.position.z = ctx.R * 0.01;
+      face.add(pupil);
+      const glint = new THREE.Mesh(
+        new THREE.CircleGeometry(ctx.R * 0.09, 20),
+        new THREE.MeshBasicMaterial({
+          color: 0xffffff, transparent: true, opacity: 0.8,
+          blending: THREE.AdditiveBlending, depthWrite: false,
+        }));
+      glint.position.set(-ctx.R * 0.18, ctx.R * 0.18, ctx.R * 0.02);
+      face.add(glint);
+      // Two lids: hemispherical caps that sweep together and part again.
+      const lids = [1, -1].map((d) => {
+        const lid = new THREE.Mesh(
+          new THREE.SphereGeometry(ctx.R * 1.04, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2),
+          new THREE.MeshBasicMaterial({
+            color: 0xd9c3a6, side: THREE.DoubleSide,
+            map: exoticSurfaceTexture("#d9c3a6", { rnd: ctx.rnd, cells: 12, brightRatio: 0.3, darkA: 0.2 }),
+          }));
+        if (d < 0) lid.rotation.z = Math.PI;
+        ctx.group.add(lid);
+        return lid;
+      });
+      ctx.anims.push((t) => {
+        // The gaze wanders; the whole globe turns with it, lids and all.
+        ctx.group.rotation.y = Math.sin(t * 0.23) * 0.55;
+        ctx.group.rotation.x = Math.sin(t * 0.17 + 1.1) * 0.28;
+        pupil.scale.setScalar(1 + Math.sin(t * 0.8) * 0.28);
+        // A blink: shut for a moment, then open for a good while.
+        const cycle = (t * 0.35) % 1;
+        const shut = cycle > 0.94 ? Math.sin((cycle - 0.94) / 0.06 * Math.PI) : 0;
+        lids.forEach((lid, i) => {
+          lid.rotation.x = (i === 0 ? 1 : -1) * (Math.PI / 2) * (1 - shut * 1.02);
+        });
+      });
+      return { lightColor: 0xffd9a8, lightIntensity: 1.0 };
+    },
+
+    // A star that is, literally, star-shaped: a five-pointed solid turning
+    // slowly in space, exactly as a child would draw one.
+    PENTAGRAM_STAR(ctx) {
+      const R = ctx.R;
+      const points = 5;
+      const outer = R * 1.5, inner = R * 0.62, depth = R * 0.45;
+      const verts = [];
+      const rim = [];
+      for (let i = 0; i < points * 2; i++) {
+        const ang = (i / (points * 2)) * Math.PI * 2 + Math.PI / 2;
+        const rad = i % 2 === 0 ? outer : inner;
+        rim.push([Math.cos(ang) * rad, Math.sin(ang) * rad, 0]);
+      }
+      // Two apexes, front and back: the rim skinned to each gives the classic
+      // faceted star that catches the light differently on every point.
+      [depth, -depth].forEach((z, side) => {
+        const apex = [0, 0, z];
+        for (let i = 0; i < rim.length; i++) {
+          const a = rim[i], b = rim[(i + 1) % rim.length];
+          const tri = side === 0 ? [apex, a, b] : [apex, b, a];
+          for (const v of tri) verts.push(v[0], v[1], v[2]);
+        }
+      });
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(verts), 3));
+      geo.computeVertexNormals();
+      const star = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+        color: 0xffd24a, side: THREE.DoubleSide,
+      }));
+      ctx.group.add(star);
+      const edge = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+        color: 0xfff6c0, wireframe: true, transparent: true, opacity: 0.5,
+        blending: THREE.AdditiveBlending, depthWrite: false,
+      }));
+      edge.scale.setScalar(1.01);
+      ctx.group.add(edge);
+      const gl = makeGlowSprite("rgba(255,210,74,0.85)");
+      gl.sprite.scale.set(R * 6, R * 6, 1);
+      ctx.group.add(gl.sprite);
+      ctx.anims.push((t) => {
+        ctx.group.rotation.z = t * 0.25;
+        ctx.group.rotation.y = Math.sin(t * 0.2) * 0.5;
+        const p = 1 + Math.sin(t * 1.4) * 0.06;
+        gl.sprite.scale.set(R * 6 * p, R * 6 * p, 1);
+      });
+      return { lightColor: 0xffe08a, lightIntensity: 1.9 };
+    },
+
+    // An angelic star: no surface, only rings. Concentric wheels of eyes,
+    // turning inside one another around a light too bright to look at.
+    ANGELIC_STAR(ctx) {
+      const R = ctx.R;
+      const core = new THREE.Mesh(
+        new THREE.SphereGeometry(R * 0.5, 24, 18),
+        new THREE.MeshBasicMaterial({ color: 0xfffdf0 }));
+      ctx.group.add(core);
+      const halo = makeGlowSprite("rgba(255,243,196,0.9)");
+      halo.sprite.scale.set(R * 7, R * 7, 1);
+      ctx.group.add(halo.sprite);
+
+      const wheels = [];
+      const EYES = [8, 12, 16, 20];
+      for (let w = 0; w < EYES.length; w++) {
+        const wheel = new THREE.Group();
+        const radius = R * (1.15 + w * 0.62);
+        wheel.rotation.set(ctx.rnd() * Math.PI, ctx.rnd() * Math.PI, ctx.rnd() * Math.PI);
+        const band = new THREE.Mesh(
+          new THREE.TorusGeometry(radius, R * 0.03, 8, 96),
+          new THREE.MeshBasicMaterial({
+            color: 0xffe9a8, transparent: true, opacity: 0.55,
+            blending: THREE.AdditiveBlending, depthWrite: false,
+          }));
+        wheel.add(band);
+        const pupils = [];
+        for (let i = 0; i < EYES[w]; i++) {
+          const ang = (i / EYES[w]) * Math.PI * 2;
+          const eye = new THREE.Group();
+          eye.position.set(Math.cos(ang) * radius, Math.sin(ang) * radius, 0);
+          const white = new THREE.Mesh(
+            new THREE.CircleGeometry(R * 0.17, 20),
+            new THREE.MeshBasicMaterial({
+              color: 0xfff6d8, side: THREE.DoubleSide,
+              transparent: true, opacity: 0.9, depthWrite: false,
+            }));
+          eye.add(white);
+          const pupil = new THREE.Mesh(
+            new THREE.CircleGeometry(R * 0.07, 14),
+            new THREE.MeshBasicMaterial({
+              color: 0x1a1206, side: THREE.DoubleSide, depthWrite: false,
+            }));
+          pupil.position.z = R * 0.004;
+          eye.add(pupil);
+          pupils.push(pupil);
+          wheel.add(eye);
+        }
+        ctx.group.add(wheel);
+        wheels.push({ wheel, pupils, dir: w % 2 ? -1 : 1 });
+      }
+      ctx.anims.push((t) => {
+        wheels.forEach((w, i) => {
+          w.wheel.rotation.z += 0.004 * w.dir;
+          w.wheel.rotation.y += 0.0015 * (i + 1) * w.dir;
+          // Every eye in a wheel narrows and opens together.
+          const s = 0.6 + 0.6 * Math.abs(Math.sin(t * (0.6 + i * 0.23)));
+          w.pupils.forEach((p) => p.scale.setScalar(s));
+        });
+        halo.mat.opacity = 0.6 + 0.25 * Math.sin(t * 1.3);
+        core.scale.setScalar(1 + Math.sin(t * 2.1) * 0.05);
+      });
+      return { lightColor: 0xfff3c4, lightIntensity: 2.6 };
+    },
+
+    // A star of crude oil: a cold black sphere of the stuff, holding together
+    // because nothing out here tells it not to. It gives almost no light of its
+    // own - what you see is the rainbow sheen sliding over the slick - and it
+    // sheds slow droplets that pull apart and fall back in.
+    OIL_STAR(ctx) {
+      const body = exoticBody(ctx, {
+        texture: oilSlickTexture(ctx.rnd),
+        corona: false, glow: "rgba(60,40,90,0.35)", glowScale: 2.4, spin: 0.06,
+      });
+      // The sheen: a second skin just off the surface, additive, turning the
+      // other way, so the colours crawl across the black the way they do on a
+      // puddle.
+      const sheen = new THREE.Mesh(
+        new THREE.SphereGeometry(ctx.R * 1.02, 32, 24),
+        new THREE.MeshBasicMaterial({
+          map: oilSlickTexture(ctx.rnd), transparent: true, opacity: 0.5,
+          blending: THREE.AdditiveBlending, depthWrite: false,
+        }));
+      ctx.group.add(sheen);
+      // Droplets: fat globules climbing out of the surface and falling back.
+      const drops = [];
+      for (let i = 0; i < 10; i++) {
+        const drop = new THREE.Mesh(
+          new THREE.SphereGeometry(ctx.R * (0.05 + ctx.rnd() * 0.09), 10, 8),
+          new THREE.MeshBasicMaterial({ color: 0x120c16 }));
+        const dir = new THREE.Vector3(
+          ctx.rnd() - 0.5, ctx.rnd() - 0.5, ctx.rnd() - 0.5).normalize();
+        ctx.group.add(drop);
+        drops.push({ mesh: drop, dir, phase: ctx.rnd(), rate: 0.2 + ctx.rnd() * 0.3 });
+      }
+      ctx.anims.push((t) => {
+        sheen.rotation.y = -t * 0.11;
+        sheen.rotation.x = Math.sin(t * 0.07) * 0.2;
+        for (const d of drops) {
+          const f = (t * d.rate + d.phase) % 1;
+          // Out and back, slowing at the top: a drop that never quite escapes.
+          const reach = ctx.R * (1 + Math.sin(f * Math.PI) * 0.55);
+          d.mesh.position.copy(d.dir).multiplyScalar(reach);
+          const s = 0.6 + Math.sin(f * Math.PI) * 0.6;
+          d.mesh.scale.set(s, s * (1 + Math.sin(f * Math.PI) * 0.5), s);
+        }
+      });
+      void body;
+      return { lightColor: 0x4a3a66, lightIntensity: 0.25 };
+    },
+
+    // A clockwork star: brass rings on gimbals inside an escapement that keeps
+    // the whole thing ticking. It does not burn, it runs, and it is running
+    // down: the beat is a hair slower every swing.
+    CLOCKWORK_STAR(ctx) {
+      const R = ctx.R;
+      exoticBody(ctx, {
+        texture: exoticSurfaceTexture("#8a6a2a", { rnd: ctx.rnd, cells: 30, brightRatio: 0.6, brightA: 0.3 }),
+        scale: 0.55, corona: false, glow: "rgba(255,196,96,0.6)", glowScale: 3, spin: 0.4,
+      });
+      // Toothed gears: a torus with radial teeth stood on it.
+      const gears = [];
+      for (let g = 0; g < 3; g++) {
+        const gear = new THREE.Group();
+        const radius = R * (1.0 + g * 0.5);
+        const teeth = 16 + g * 8;
+        gear.add(new THREE.Mesh(
+          new THREE.TorusGeometry(radius, R * 0.05, 8, 64),
+          new THREE.MeshBasicMaterial({ color: 0xd4a24a })));
+        for (let i = 0; i < teeth; i++) {
+          const ang = (i / teeth) * Math.PI * 2;
+          const tooth = new THREE.Mesh(
+            new THREE.BoxGeometry(R * 0.1, R * 0.14, R * 0.06),
+            new THREE.MeshBasicMaterial({ color: 0xb8862f }));
+          tooth.position.set(Math.cos(ang) * radius * 1.06, Math.sin(ang) * radius * 1.06, 0);
+          tooth.rotation.z = ang;
+          gear.add(tooth);
+        }
+        gear.rotation.set(ctx.rnd() * Math.PI, ctx.rnd() * Math.PI, ctx.rnd() * Math.PI);
+        ctx.group.add(gear);
+        gears.push({ gear, dir: g % 2 ? -1 : 1, teeth });
+      }
+      const gl = makeGlowSprite("rgba(255,196,96,0.7)");
+      gl.sprite.scale.set(R * 4, R * 4, 1);
+      ctx.group.add(gl.sprite);
+      ctx.anims.push((t) => {
+        // Meshed: a gear with more teeth turns proportionally slower, and the
+        // whole train drags as the mainspring gives out.
+        const wind = 1 / (1 + t * 0.006);
+        gears.forEach((g) => { g.gear.rotation.z += (0.02 / (g.teeth / 16)) * g.dir * wind; });
+        // The escapement beat, visible in the light.
+        gl.mat.opacity = 0.45 + 0.35 * Math.abs(Math.sin(t * 3.1 * wind));
+      });
+      return { lightColor: 0xffc46a, lightIntensity: 1.2 };
+    },
+
+    // A mirror star: a shell of flat panes that reflects a sky that is not
+    // there. Nothing comes out of it; everything comes off it.
+    MIRROR_STAR(ctx) {
+      const R = ctx.R;
+      // Flat-shaded facets: a low geodesic with its normals left hard, so each
+      // pane catches a different slice of the glow behind it.
+      const shell = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(R, 1),
+        new THREE.MeshBasicMaterial({
+          color: 0xdfe9f5, transparent: true, opacity: 0.85,
+        }));
+      ctx.group.add(shell);
+      const seams = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(R * 1.005, 1),
+        new THREE.MeshBasicMaterial({
+          color: 0x9fc4ff, wireframe: true, transparent: true, opacity: 0.7,
+          blending: THREE.AdditiveBlending, depthWrite: false,
+        }));
+      ctx.group.add(seams);
+      // Shards that came off it, still orbiting the break.
+      const shards = new THREE.Group();
+      ctx.group.add(shards);
+      for (let i = 0; i < 22; i++) {
+        const shard = new THREE.Mesh(
+          new THREE.TetrahedronGeometry(R * (0.06 + ctx.rnd() * 0.12)),
+          new THREE.MeshBasicMaterial({
+            color: 0xeaf2ff, transparent: true, opacity: 0.8, side: THREE.DoubleSide,
+          }));
+        const a = ctx.rnd() * Math.PI * 2, e = (ctx.rnd() - 0.5) * 1.2;
+        const d = R * (1.5 + ctx.rnd() * 1.8);
+        shard.position.set(Math.cos(a) * d, Math.sin(e) * d * 0.4, Math.sin(a) * d);
+        shard.rotation.set(ctx.rnd() * 6, ctx.rnd() * 6, ctx.rnd() * 6);
+        shards.add(shard);
+      }
+      const gl = makeGlowSprite("rgba(200,225,255,0.7)");
+      gl.sprite.scale.set(R * 4.5, R * 4.5, 1);
+      ctx.group.add(gl.sprite);
+      ctx.anims.push((t) => {
+        shell.rotation.y = t * 0.12;
+        shell.rotation.x = Math.sin(t * 0.09) * 0.35;
+        seams.rotation.copy(shell.rotation);
+        shards.rotation.y = -t * 0.06;
+        shards.children.forEach((s, i) => {
+          s.rotation.y += 0.01 + i * 0.0004;
+          // The glint as a pane turns edge-on to you and back.
+          s.material.opacity = 0.35 + 0.55 * Math.abs(Math.sin(t * 1.4 + i));
+        });
+      });
+      return { lightColor: 0xdfeaff, lightIntensity: 1.5 };
+    },
+
+    // A bone star: a cage of ribs closed around a dim marrow light. Whatever
+    // it was the star of, the star outlived it.
+    BONE_STAR(ctx) {
+      const R = ctx.R;
+      const marrow = new THREE.Mesh(
+        new THREE.SphereGeometry(R * 0.45, 20, 16),
+        new THREE.MeshBasicMaterial({ color: 0xffd9b0, transparent: true, opacity: 0.9 }));
+      ctx.group.add(marrow);
+      const gl = makeGlowSprite("rgba(255,217,176,0.55)");
+      gl.sprite.scale.set(R * 3.2, R * 3.2, 1);
+      ctx.group.add(gl.sprite);
+      // Ribs: half-circles of bone standing round a spine axis.
+      const cage = new THREE.Group();
+      ctx.group.add(cage);
+      const boneMat = new THREE.MeshBasicMaterial({ color: 0xe8dfc8 });
+      for (let i = 0; i < 11; i++) {
+        const f = i / 10;
+        const span = R * (0.5 + Math.sin(f * Math.PI) * 0.85);
+        const pts = [];
+        for (let k = 0; k <= 16; k++) {
+          const a = Math.PI * (k / 16) - Math.PI / 2;
+          pts.push(new THREE.Vector3(Math.cos(a) * span, 0, Math.sin(a) * span));
+        }
+        const rib = new THREE.Mesh(
+          new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, R * 0.045, 6, false),
+          boneMat);
+        rib.position.y = (f - 0.5) * R * 2.2;
+        rib.rotation.y = f * 0.6;
+        cage.add(rib);
+      }
+      const spine = new THREE.Mesh(
+        new THREE.CylinderGeometry(R * 0.07, R * 0.07, R * 2.4, 8),
+        boneMat);
+      cage.add(spine);
+      ctx.anims.push((t) => {
+        cage.rotation.y = t * 0.14;
+        cage.rotation.z = Math.sin(t * 0.21) * 0.12;
+        // The marrow breathes, slowly, in something that has no lungs.
+        const b = 1 + Math.sin(t * 0.55) * 0.12;
+        marrow.scale.setScalar(b);
+        gl.mat.opacity = 0.35 + 0.2 * Math.sin(t * 0.55);
+      });
+      return { lightColor: 0xffe0bc, lightIntensity: 0.8 };
+    },
+
+    // A hollow star: the shell of one, cracked wide open, with nothing at all
+    // inside. The light comes out of the crack, and the crack is the only
+    // place it comes from.
+    HOLLOW_STAR(ctx) {
+      const R = ctx.R;
+      const tex = exoticSurfaceTexture("#3b3f4a", { rnd: ctx.rnd, cells: 34, brightRatio: 0.35, brightA: 0.14, darkA: 0.5 });
+      // Two halves parted along a jagged seam, each an open hemisphere seen
+      // from inside as well as out.
+      const halves = [1, -1].map((d) => {
+        const half = new THREE.Mesh(
+          new THREE.SphereGeometry(R, 32, 20, 0, Math.PI * 2, 0, Math.PI / 2 - 0.12),
+          new THREE.MeshBasicMaterial({ color: 0x8e97a8, map: tex, side: THREE.DoubleSide }));
+        if (d < 0) half.rotation.z = Math.PI;
+        ctx.group.add(half);
+        return half;
+      });
+      // The light in the gap: a bright disc edge-on, seen through the crack.
+      const seam = new THREE.Mesh(
+        new THREE.CircleGeometry(R * 0.98, 48),
+        new THREE.MeshBasicMaterial({
+          color: 0xfff2c8, transparent: true, opacity: 0.9, side: THREE.DoubleSide,
+          blending: THREE.AdditiveBlending, depthWrite: false,
+        }));
+      seam.rotation.x = Math.PI / 2;
+      ctx.group.add(seam);
+      const gl = makeGlowSprite("rgba(255,242,200,0.8)");
+      gl.sprite.scale.set(R * 4, R * 1.2, 1);
+      ctx.group.add(gl.sprite);
+      ctx.anims.push((t) => {
+        // The shell works itself open and closed, and never quite shuts.
+        const gap = R * (0.12 + 0.1 * (0.5 + 0.5 * Math.sin(t * 0.4)));
+        halves[0].position.y = gap;
+        halves[1].position.y = -gap;
+        ctx.group.rotation.y = t * 0.08;
+        seam.material.opacity = 0.65 + 0.3 * Math.sin(t * 1.7);
+        gl.sprite.scale.set(R * 4, R * (0.9 + gap / R * 3), 1);
+      });
+      return { lightColor: 0xfff0c0, lightIntensity: 1.3 };
+    },
+
+    // A candle star: a flame standing on a column of wax that has been running
+    // down it for a very long time. It is shorter than it was.
+    CANDLE_STAR(ctx) {
+      const R = ctx.R;
+      const waxMat = new THREE.MeshBasicMaterial({
+        color: 0xf3e6cf, transparent: true, opacity: 0.95,
+      });
+      // The column, wider at the foot where everything it has burnt collected.
+      const column = new THREE.Mesh(
+        new THREE.CylinderGeometry(R * 0.55, R * 0.95, R * 2.2, 24, 1),
+        waxMat);
+      column.position.y = -R * 0.5;
+      ctx.group.add(column);
+      // Runs of wax down the side, frozen where they cooled.
+      for (let i = 0; i < 9; i++) {
+        const a = (i / 9) * Math.PI * 2 + ctx.rnd() * 0.4;
+        const len = R * (0.5 + ctx.rnd() * 1.1);
+        const run = new THREE.Mesh(
+          THREE.CapsuleGeometry
+            ? new THREE.CapsuleGeometry(R * 0.09, len, 4, 8)
+            : new THREE.CylinderGeometry(R * 0.09, R * 0.09, len, 8),
+          waxMat);
+        run.position.set(Math.cos(a) * R * 0.62, R * 0.2 - len * 0.5, Math.sin(a) * R * 0.62);
+        ctx.group.add(run);
+      }
+      // The flame: two nested teardrops, a hot heart inside a soft body.
+      const flame = new THREE.Group();
+      flame.position.y = R * 0.9;
+      ctx.group.add(flame);
+      const outer = new THREE.Mesh(
+        new THREE.SphereGeometry(R * 0.42, 20, 16),
+        new THREE.MeshBasicMaterial({
+          color: 0xffb03a, transparent: true, opacity: 0.75,
+          blending: THREE.AdditiveBlending, depthWrite: false,
+        }));
+      outer.scale.set(0.7, 1.7, 0.7);
+      flame.add(outer);
+      const heart = new THREE.Mesh(
+        new THREE.SphereGeometry(R * 0.2, 16, 12),
+        new THREE.MeshBasicMaterial({ color: 0xfff6d0 }));
+      heart.scale.set(0.7, 1.4, 0.7);
+      flame.add(heart);
+      const gl = makeGlowSprite("rgba(255,176,58,0.9)");
+      gl.sprite.scale.set(R * 5, R * 5, 1);
+      gl.sprite.position.y = R * 0.9;
+      ctx.group.add(gl.sprite);
+      ctx.anims.push((t) => {
+        // A guttering flame: it leans, stretches and flares on no fixed beat.
+        const flick = Math.sin(t * 9.1) * 0.5 + Math.sin(t * 3.7 + 1.2) * 0.5;
+        flame.rotation.z = flick * 0.16;
+        flame.scale.set(1 + flick * 0.06, 1 + flick * 0.14, 1 + flick * 0.06);
+        const s = R * (4.6 + flick * 0.6);
+        gl.sprite.scale.set(s, s, 1);
+        gl.mat.opacity = 0.65 + flick * 0.2;
+      });
+      return { lightColor: 0xffc070, lightIntensity: 1.6 };
+    },
+
     ROGUE_PLANET(ctx) {
       // A starless world: pitch dark, readable only as a silhouette with the
       // faintest starlit limb. No light comes from it.

@@ -105,7 +105,7 @@
     const rows = getClassGrantedSpecializations(className);
     if (!rows.length) return "";
     const badges = rows.map((r) =>
-      `<span class="cc-element-badge cc-chip">${r.name} <span style="opacity:0.7">(${r.levelName})</span></span>`
+      `<span class="cc-element-badge cc-chip">${r.name} <span class="cc-chip-sub">(${r.levelName})</span></span>`
     ).join(" ");
     return `
       <div class="cc-dossier-card cc-card-tight">
@@ -147,12 +147,7 @@
   // TraitSelector.getIconStyle / Scene_CharacterCreation._ccIconStyle), used to
   // render the "Starting Items" dossier card below.
   function iconStyle(iconIndex) {
-    if (!iconIndex) return "";
-    const col = iconIndex % 16;
-    const row = Math.floor(iconIndex / 16);
-    const x = col * 32;
-    const y = row * 32;
-    return `background-image: url('img/system/IconSet.png'); background-position: -${x}px -${y}px; width: 32px; height: 32px; image-rendering: pixelated; display: inline-block; flex-shrink: 0;`;
+    return window.CCArt.icon(iconIndex, 32);
   }
   const { markFirstCreationComplete } = window.CharacterPresets || {};
 
@@ -255,7 +250,6 @@
     processOk() {
       const classId = this.itemAt(this.index());
       if (classId) {
-        this.playOkSound();
         this.callOkHandler();
       }
     }
@@ -521,7 +515,7 @@
       super.terminate();
       if (window.CCNav) window.CCNav.detach(this);
       if (this._dndContainer) {
-        this._dndContainer.style.display = "none";
+        window.CCPanel.hide(this._dndContainer);
       }
     }
 
@@ -555,10 +549,7 @@
       }
 
       this._dndContainer = container;
-      this._dndContainer.style.transition = "none";
-      this._dndContainer.style.display = "flex";
-      this._dndContainer.style.opacity = "1";
-      this._dndContainer.style.pointerEvents = "auto";
+      window.CCPanel.show(this._dndContainer);
       this._dndContainer.innerHTML = ""; // Wipe clean to prevent stale DOM layout leaking
 
       this._lastIndex = -1;
@@ -627,9 +618,12 @@
             <h3 class="cc-roster-head">${label}</h3>
           `;
 
+        // The nine elements are tagged from the shared ladder (--element-1..9
+        // in the presets), so a card here and a skill row elsewhere agree.
         const _elemColors = {
-          1:"#9e9e9e",2:"#ef5350",3:"#42a5f5",4:"#ffee58",
-          5:"#26c6da",6:"#8d6e63",7:"#66bb6a",8:"#fff176",9:"#ab47bc"
+          1:"var(--element-1)",2:"var(--element-2)",3:"var(--element-3)",4:"var(--element-4)",
+          5:"var(--element-5)",6:"var(--element-6)",7:"var(--element-7)",8:"var(--element-8)",
+          9:"var(--element-9)"
         };
 
         const classCards = classList.map((classId, index) => {
@@ -638,7 +632,7 @@
           if (!classObj) return "";
           const className = window.CCDbName(classObj);
           const em = classObj.note && classObj.note.match(/<elem:\s*(\d+)>/);
-          const eColor = em ? (_elemColors[parseInt(em[1])] || "rgba(218,165,32,0.4)") : "rgba(218,165,32,0.4)";
+          const eColor = em ? (_elemColors[parseInt(em[1])] || "var(--border-gold-amber-30)") : "var(--border-gold-amber-30)";
 
           let head = "";
           if (groupBreak > 0) {
@@ -648,10 +642,10 @@
 
           return `
             ${head}
-            <div class="cc-class-card ${isSelected ? 'selected' : ''}"
-                 style="padding:6px 10px 6px 12px; border-left:3px solid ${eColor}; background:${isSelected ? 'rgba(218,165,32,0.1)' : 'transparent'}; border-radius:2px; cursor:pointer; display:flex; align-items:center; ${isSelected ? 'box-shadow:inset 0 0 0 1px rgba(218,165,32,0.35);' : ''}"
+            <div class="cc-class-row focusable ${isSelected ? 'selected' : ''}"
+                 style="--cc-class-elem:${eColor}"
                  onclick="SceneManager._scene.onClassCardClick(${index})">
-              <span style="font-family:'Lora',serif; font-size:0.92rem; font-weight:${isSelected ? 'bold' : '500'}; color:${isSelected ? '#ffd700' : '#ccc'}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${className}</span>
+              <span class="cc-class-row-name">${className}</span>
             </div>
           `;
         }).join("");
@@ -685,7 +679,7 @@
             const elementId = parseInt(elemMatch[1]);
             if (elementId > 0 && elementId < $dataSystem.elements.length) {
               const elementName = elementLabel(elementId);
-              elementHtml = `<div class="cc-element-badge" style="margin-top: 8px">${elementName}</div>`;
+              elementHtml = `<div class="cc-element-badge cc-element-badge-spaced">${elementName}</div>`;
             }
           }
 
@@ -732,7 +726,7 @@
             }
           }
           if (!lv1SkillsHtml) {
-            lv1SkillsHtml = `<span style="font-size: 1.219rem; color: var(--text-card-medium)">${T('CharCreate.noStartingSkills')}</span>`;
+            lv1SkillsHtml = `<span class="cc-class-empty">${T('CharCreate.noStartingSkills')}</span>`;
           }
 
           // Thematic class starting items (Items.json only), off the class's
@@ -744,8 +738,8 @@
               if (!it) return "";
               return `
                 <div class="cc-dossier-row">
-                  <span class="cc-dossier-label" style="display:flex; align-items:center; gap:6px">
-                    <span style="${iconStyle(it.iconIndex)}"></span>${window.CCDbName(it)}
+                  <span class="cc-dossier-label cc-class-icon-label">
+                    <span class="cc-rpg-icon" style="${iconStyle(it.iconIndex)}"></span>${window.CCDbName(it)}
                   </span>
                   <span class="cc-dossier-value">x${e.qty}</span>
                 </div>
@@ -768,20 +762,21 @@
 
           // ── Nature & Magical System pills ──────────────────────────────────
           const _nature = window.MagicNature ? window.MagicNature.natureOf(c) : null;
-          const _natureColors = { magical:"#ba68c8", mundane:"#78909c", both:"#a1887f" };
+          const _natureColors = { magical:"var(--nature-magical)", mundane:"var(--nature-mundane)", both:"var(--nature-both)" };
+          const _natureSoft = { magical:"var(--nature-magical-soft)", mundane:"var(--nature-mundane-soft)", both:"var(--nature-both-soft)" };
           const _natureLabels = { magical: T('ClassSelect.natureMagical'), mundane: T('ClassSelect.natureMundane'), both: T('ClassSelect.natureBoth') };
           const naturePill = _nature
-            ? `<span class="cc-element-badge cc-chip" style="border-color:${_natureColors[_nature]}44; color:${_natureColors[_nature]}; font-size:0.8rem;">✦ ${_natureLabels[_nature]}</span>`
+            ? `<span class="cc-element-badge cc-chip" style="--cc-chip-line:${_natureSoft[_nature]}; --cc-chip-ink:${_natureColors[_nature]}">✦ ${_natureLabels[_nature]}</span>`
             : "";
           const _magicMatch = c.note.match(/<MagicalSystem:\s*([^>]+)>/i);
           const magicSystemPill = _magicMatch
-            ? `<span class="cc-element-badge cc-chip" style="font-size:0.8rem;">⊕ ${T('SkillsMenu.magicSystem.' + _magicMatch[1].trim()) || _magicMatch[1].trim()}</span>`
+            ? `<span class="cc-element-badge cc-chip">⊕ ${T('SkillsMenu.magicSystem.' + _magicMatch[1].trim()) || _magicMatch[1].trim()}</span>`
             : "";
 
           // ── Dual Wield ─────────────────────────────────────────────────────
           const hasDualWield = c.traits.some(t => t.code === 55 && t.dataId === 1);
           const dualWieldBadge = hasDualWield
-            ? `<span class="cc-element-badge cc-chip" style="border-color:rgba(255,213,79,0.5); color:#ffd54f;">⚔ ${T('ClassSelect.dualWield')}</span>`
+            ? `<span class="cc-element-badge cc-chip cc-chip-gold">⚔ ${T('ClassSelect.dualWield')}</span>`
             : "";
 
           // ── XParam Bonuses ─────────────────────────────────────────────────
@@ -794,10 +789,9 @@
           ];
           const xBonuses = c.traits.filter(t => t.code === 22 && t.value !== 0).map(t => {
             const sign = t.value >= 0 ? "+" : "";
-            const col  = t.value >= 0 ? "#a5d6a7" : "#ef9a9a";
-            return `<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:0.88rem;">
-              <span style="color:#b0bec5;">${_xNames[t.dataId] || T('ClassSelect.xparam.unknown', { n: t.dataId })}</span>
-              <span style="color:${col};font-weight:bold;">${sign}${Math.round(t.value*100)}%</span>
+            return `<div class="cc-class-bonus-row">
+              <span class="cc-class-bonus-name">${_xNames[t.dataId] || T('ClassSelect.xparam.unknown', { n: t.dataId })}</span>
+              <span class="cc-class-bonus-value${t.value >= 0 ? '' : ' negative'}">${sign}${Math.round(t.value*100)}%</span>
             </div>`;
           });
           const bonusesSectionHtml = xBonuses.length ? `
@@ -816,29 +810,28 @@
               const ap = sk.tpCost || 0;
               const desc = window.CCDbDesc(sk).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
               const isStart = l.level === 1;
-              return `<div style="display:flex;align-items:center;gap:6px;padding:3px 2px;border-bottom:1px solid rgba(218,165,32,0.08);cursor:default;"
-                           title="${desc}">
-                <span style="min-width:28px;text-align:right;font-size:0.72rem;color:rgba(218,165,32,${isStart?'0.9':'0.45'});font-weight:bold;">
+              return `<div class="cc-class-learn-row${isStart ? ' start' : ''}" title="${desc}">
+                <span class="cc-class-learn-level">
                   ${isStart ? '★' : T('ClassSelect.levelShort')+l.level}
                 </span>
-                <span style="flex:1;font-size:0.88rem;color:${isStart?'#fff':'#bbb'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${window.CCDbName(sk)}</span>
-                ${mp ? `<span style="font-size:0.75rem;color:#64b5f6;flex-shrink:0;">${mp}MP</span>` : ""}
-                ${ap ? `<span style="font-size:0.75rem;color:#ffcc80;flex-shrink:0;">${ap}AP</span>` : ""}
+                <span class="cc-class-learn-name">${window.CCDbName(sk)}</span>
+                ${mp ? `<span class="cc-class-learn-cost">${mp}MP</span>` : ""}
+                ${ap ? `<span class="cc-class-learn-cost ap">${ap}AP</span>` : ""}
               </div>`;
             }).join("");
           const learnsetHtml = _learnRows ? `
             <div class="cc-dossier-card cc-card-tight">
               <h3 class="cc-subheader">${T('ClassSelect.learnset')}</h3>
-              <div style="max-height:160px;overflow-y:auto;">
+              <div class="cc-class-learnset">
                 ${_learnRows}
               </div>
             </div>` : "";
 
           leftHtml = `
-            <div class="cc-page cc-page-left" style="display:flex; flex-direction:column;">
+            <div class="cc-page cc-page-left cc-page-column">
               <h2 class="cc-header-gothic">${T('CharCreate.classes')}</h2>
               ${creatureNote}
-              <div style="display:flex; flex-direction:column; gap:2px; margin-top:8px; flex:1; min-height:0; overflow-y:auto; overflow-x:hidden;">
+              <div class="cc-class-list">
                 ${classCards}
               </div>
             </div>
@@ -853,14 +846,14 @@
         rightHtml = `
           <div class="cc-page cc-page-right">
             <h2 class="cc-header-gothic">${window.CCDbName(c)}</h2>
-            <p style="font-size:1.1rem;line-height:1.45;color:var(--text-card-dark);text-align:center;margin-bottom:8px;font-style:italic;">"${note}"</p>
+            <p class="cc-class-quote">"${note}"</p>
 
-            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-bottom:10px;">
+            <div class="cc-class-pills">
               ${elementHtml}${naturePill}${magicSystemPill}
             </div>
 
             <div class="cc-dossier-card cc-card-tight">
-              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px 12px;">
+              <div class="cc-class-stat-grid">
                 <div class="cc-dossier-row"><span class="cc-dossier-label">${_SL.STR}:</span><span class="cc-dossier-value">${str}</span></div>
                 <div class="cc-dossier-row"><span class="cc-dossier-label">${_SL.CON}:</span><span class="cc-dossier-value">${con}</span></div>
                 <div class="cc-dossier-row"><span class="cc-dossier-label">${_SL.DEX}:</span><span class="cc-dossier-value">${agi}</span></div>
@@ -875,7 +868,7 @@
             <div class="cc-dossier-card cc-card-tight">
               <h3 class="cc-subheader">${T('CharCreate.startingWeaponProficiencies')||'Weapon Proficiencies'}</h3>
               <div class="cc-chip-row">
-                ${weaponBadges.join("") || `<span style="font-size:1.1rem;color:var(--text-card-medium);">${T('CharCreate.none')||'None'}</span>`}
+                ${weaponBadges.join("") || `<span class="cc-class-empty">${T('CharCreate.none')||'None'}</span>`}
                 ${dualWieldBadge}
               </div>
             </div>
@@ -894,7 +887,7 @@
                 onclick: "SceneManager._scene.onClassSelect()",
                 confirm: true,
               }),
-              style: "margin-top: 16px;",
+              cls: "cc-nav--spaced",
             })}
           </div>
         `;
@@ -1042,7 +1035,6 @@
             moved = true;
           }
         } else if (Input.isTriggered('ok')) {
-          SoundManager.playOk();
           windowObj.processOk();
           return;
         } else if (Input.isTriggered('cancel')) {

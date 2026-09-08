@@ -4,9 +4,73 @@
     "skills": [],
     "defaultBattler": "",
     "reproduction": 1,
-    "lifeSpan": 70,
+    "lifeSpan": 80,
     "pregnancyDuration": 270,
     "classes": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62
+    ],
+    "sentientClasses": [
       1,
       2,
       3,
@@ -702,6 +766,7 @@
       11,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -986,6 +1051,7 @@
       13,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -1258,6 +1324,7 @@
       21,
       58
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -1468,6 +1535,18 @@
       32,
       61,
       6
+    ],
+    "sentientClasses": [
+      1,
+      10,
+      19,
+      20,
+      23,
+      27,
+      32,
+      33,
+      39,
+      61
     ],
     "creatureClasses": [
       63,
@@ -1792,6 +1871,17 @@
       40,
       62
     ],
+    "sentientClasses": [
+      1,
+      4,
+      8,
+      21,
+      23,
+      26,
+      31,
+      38,
+      62
+    ],
     "creatureClasses": [
       63,
       65,
@@ -1968,6 +2058,19 @@
       10,
       14,
       28,
+      60
+    ],
+    "sentientClasses": [
+      1,
+      2,
+      12,
+      14,
+      29,
+      35,
+      36,
+      39,
+      50,
+      58,
       60
     ],
     "creatureClasses": [
@@ -2230,6 +2333,7 @@
       61,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       64,
@@ -2395,6 +2499,15 @@
       31,
       38,
       40,
+      62
+    ],
+    "sentientClasses": [
+      1,
+      8,
+      23,
+      31,
+      49,
+      59,
       62
     ],
     "creatureClasses": [
@@ -2586,6 +2699,7 @@
       28,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -2952,6 +3066,7 @@
       12,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       64,
@@ -3274,6 +3389,7 @@
       58,
       52
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       64,
@@ -3433,6 +3549,15 @@
       37,
       39,
       29
+    ],
+    "sentientClasses": [
+      1,
+      10,
+      19,
+      20,
+      27,
+      33,
+      39
     ],
     "creatureClasses": [
       65,
@@ -3595,6 +3720,7 @@
       58,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -3796,6 +3922,14 @@
       52,
       39
     ],
+    "sentientClasses": [
+      1,
+      29,
+      36,
+      39,
+      42,
+      50
+    ],
     "creatureClasses": [
       63,
       64,
@@ -3963,6 +4097,20 @@
       32,
       44,
       47
+    ],
+    "sentientClasses": [
+      1,
+      32,
+      33,
+      41,
+      42,
+      43,
+      44,
+      47,
+      53,
+      54,
+      55,
+      58
     ],
     "creatureClasses": [
       64,
@@ -4153,6 +4301,7 @@
       14,
       29
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -4335,6 +4484,19 @@
       33,
       29,
       23
+    ],
+    "sentientClasses": [
+      1,
+      4,
+      21,
+      24,
+      26,
+      28,
+      30,
+      38,
+      42,
+      44,
+      52
     ],
     "creatureClasses": [
       63,
@@ -4542,6 +4704,7 @@
       45,
       56
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -4680,6 +4843,7 @@
       56,
       58
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       64,
@@ -4819,6 +4983,7 @@
       53,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -4962,6 +5127,70 @@
       23,
       49,
       1
+    ],
+    "sentientClasses": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62
     ],
     "creatureClasses": [
       63,
@@ -5164,6 +5393,15 @@
       52,
       62
     ],
+    "sentientClasses": [
+      1,
+      2,
+      21,
+      23,
+      29,
+      31,
+      49
+    ],
     "creatureClasses": [
       63,
       65,
@@ -5309,6 +5547,14 @@
       37,
       54,
       43
+    ],
+    "sentientClasses": [
+      1,
+      4,
+      22,
+      33,
+      47,
+      57
     ],
     "creatureClasses": [
       64,
@@ -5488,6 +5734,18 @@
       37,
       38,
       60
+    ],
+    "sentientClasses": [
+      1,
+      2,
+      7,
+      8,
+      23,
+      31,
+      36,
+      49,
+      61,
+      62
     ],
     "creatureClasses": [
       63,
@@ -5726,6 +5984,17 @@
       49,
       62
     ],
+    "sentientClasses": [
+      1,
+      2,
+      29,
+      31,
+      35,
+      36,
+      49,
+      59,
+      62
+    ],
     "creatureClasses": [
       64,
       65,
@@ -5872,6 +6141,7 @@
       58,
       44
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       65,
       66,
@@ -6006,6 +6276,14 @@
       39,
       61
     ],
+    "sentientClasses": [
+      1,
+      23,
+      31,
+      36,
+      49,
+      61
+    ],
     "creatureClasses": [
       63,
       64,
@@ -6138,6 +6416,16 @@
       21,
       38,
       49
+    ],
+    "sentientClasses": [
+      1,
+      13,
+      21,
+      38,
+      41,
+      42,
+      49,
+      62
     ],
     "creatureClasses": [
       63,
@@ -6314,6 +6602,15 @@
       29,
       33
     ],
+    "sentientClasses": [
+      1,
+      10,
+      29,
+      39,
+      42,
+      49,
+      53
+    ],
     "creatureClasses": [
       64,
       65,
@@ -6473,6 +6770,7 @@
       21,
       10
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -6610,6 +6908,14 @@
       54,
       33,
       13,
+      62
+    ],
+    "sentientClasses": [
+      1,
+      8,
+      31,
+      41,
+      42,
       62
     ],
     "creatureClasses": [
@@ -6773,6 +7079,19 @@
       56,
       47,
       50
+    ],
+    "sentientClasses": [
+      1,
+      4,
+      13,
+      17,
+      18,
+      30,
+      33,
+      38,
+      40,
+      47,
+      57
     ],
     "creatureClasses": [
       63,
@@ -6954,653 +7273,6 @@
       "MightyDesolator"
     ]
   },
-  "Goblin": {
-    "sentient": true,
-    "skills": [],
-    "defaultBattler": "",
-    "reproduction": 2,
-    "lifeSpan": 40,
-    "pregnancyDuration": 60,
-    "classes": [
-      5,
-      6,
-      8,
-      13,
-      21,
-      23,
-      28,
-      38,
-      40,
-      45,
-      46,
-      54,
-      55,
-      60
-    ],
-    "creatureClasses": [
-      63,
-      65,
-      66,
-      68,
-      69
-    ],
-    "parts": {
-      "BRAIN": {
-        "hpPercent": 5,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 3,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.brain.name",
-        "msg": "enemyArchetypes.goblin.brain.msg",
-        "itemId": 1005,
-        "brokenMsg": "enemyArchetypes.goblin.brain.brokenMsg"
-      },
-      "SKULL": {
-        "hpPercent": 8,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 5,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.skull.name",
-        "msg": "enemyArchetypes.goblin.skull.msg",
-        "itemId": 1063,
-        "brokenMsg": "enemyArchetypes.goblin.skull.brokenMsg"
-      },
-      "TORSO": {
-        "hpPercent": 30,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.torso.name",
-        "msg": "enemyArchetypes.goblin.torso.msg",
-        "itemId": 1000,
-        "brokenMsg": "enemyArchetypes.goblin.torso.brokenMsg"
-      },
-      "RIBCAGE": {
-        "hpPercent": 10,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 5,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.ribcage.name",
-        "msg": "enemyArchetypes.goblin.ribcage.msg",
-        "itemId": 1064,
-        "brokenMsg": "enemyArchetypes.goblin.ribcage.brokenMsg"
-      },
-      "PELVIS": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 6,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.pelvis.name",
-        "msg": "enemyArchetypes.goblin.pelvis.msg",
-        "itemId": 1157,
-        "brokenMsg": "enemyArchetypes.goblin.pelvis.brokenMsg"
-      },
-      "HEART": {
-        "hpPercent": 10,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.heart.name",
-        "msg": "enemyArchetypes.goblin.heart.msg",
-        "itemId": 1014,
-        "brokenMsg": "enemyArchetypes.goblin.heart.brokenMsg"
-      },
-      "LUNGS": {
-        "hpPercent": 10,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.lungs.name",
-        "msg": "enemyArchetypes.goblin.lungs.msg",
-        "itemId": 1158,
-        "brokenMsg": "enemyArchetypes.goblin.lungs.brokenMsg"
-      },
-      "LIVER": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.liver.name",
-        "msg": "enemyArchetypes.goblin.liver.msg",
-        "itemId": 1017,
-        "brokenMsg": "enemyArchetypes.goblin.liver.brokenMsg"
-      },
-      "KIDNEYS": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.kidneys.name",
-        "msg": "enemyArchetypes.goblin.kidneys.msg",
-        "itemId": 1159,
-        "brokenMsg": "enemyArchetypes.goblin.kidneys.brokenMsg"
-      },
-      "STOMACH": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.stomach.name",
-        "msg": "enemyArchetypes.goblin.stomach.msg",
-        "itemId": 1018,
-        "brokenMsg": "enemyArchetypes.goblin.stomach.brokenMsg"
-      },
-      "SMALL_INTESTINE": {
-        "hpPercent": 6,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.small_intestine.name",
-        "msg": "enemyArchetypes.goblin.small_intestine.msg",
-        "itemId": 1160,
-        "brokenMsg": "enemyArchetypes.goblin.small_intestine.brokenMsg"
-      },
-      "LARGE_INTESTINE": {
-        "hpPercent": 6,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.large_intestine.name",
-        "msg": "enemyArchetypes.goblin.large_intestine.msg",
-        "itemId": 1161,
-        "brokenMsg": "enemyArchetypes.goblin.large_intestine.brokenMsg"
-      },
-      "PANCREAS": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.pancreas.name",
-        "msg": "enemyArchetypes.goblin.pancreas.msg",
-        "itemId": 1162,
-        "brokenMsg": "enemyArchetypes.goblin.pancreas.brokenMsg"
-      },
-      "SPLEEN": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.spleen.name",
-        "msg": "enemyArchetypes.goblin.spleen.msg",
-        "itemId": 1019,
-        "brokenMsg": "enemyArchetypes.goblin.spleen.brokenMsg"
-      },
-      "NOSE": {
-        "hpPercent": 3,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 3,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.nose.name",
-        "msg": "enemyArchetypes.goblin.nose.msg",
-        "itemId": 1008,
-        "brokenMsg": "enemyArchetypes.goblin.nose.brokenMsg"
-      },
-      "MOUTH": {
-        "hpPercent": 3,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 3,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.mouth.name",
-        "msg": "enemyArchetypes.goblin.mouth.msg",
-        "itemId": 1011,
-        "brokenMsg": "enemyArchetypes.goblin.mouth.brokenMsg"
-      },
-      "EYE_LEFT": {
-        "hpPercent": 4,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 3,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.eye_left.name",
-        "msg": "enemyArchetypes.goblin.eye_left.msg",
-        "itemId": 1006,
-        "brokenMsg": "enemyArchetypes.goblin.eye_left.brokenMsg"
-      },
-      "EYE_RIGHT": {
-        "hpPercent": 4,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 3,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.eye_right.name",
-        "msg": "enemyArchetypes.goblin.eye_right.msg",
-        "itemId": 1007,
-        "brokenMsg": "enemyArchetypes.goblin.eye_right.brokenMsg"
-      },
-      "EAR_LEFT": {
-        "hpPercent": 3,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 3,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.ear_left.name",
-        "msg": "enemyArchetypes.goblin.ear_left.msg",
-        "itemId": 1009,
-        "brokenMsg": "enemyArchetypes.goblin.ear_left.brokenMsg"
-      },
-      "EAR_RIGHT": {
-        "hpPercent": 3,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 3,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.ear_right.name",
-        "msg": "enemyArchetypes.goblin.ear_right.msg",
-        "itemId": 1010,
-        "brokenMsg": "enemyArchetypes.goblin.ear_right.brokenMsg"
-      },
-      "TONGUE": {
-        "hpPercent": 2,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 3,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.tongue.name",
-        "msg": "enemyArchetypes.goblin.tongue.msg",
-        "itemId": 1044,
-        "brokenMsg": "enemyArchetypes.goblin.tongue.brokenMsg"
-      },
-      "LEFT_UPPER_ARM": {
-        "hpPercent": 6,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.left_upper_arm.name",
-        "msg": "enemyArchetypes.goblin.left_upper_arm.msg",
-        "itemId": 1163,
-        "brokenMsg": "enemyArchetypes.goblin.left_upper_arm.brokenMsg"
-      },
-      "LEFT_FOREARM": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.left_forearm.name",
-        "msg": "enemyArchetypes.goblin.left_forearm.msg",
-        "itemId": 1164,
-        "brokenMsg": "enemyArchetypes.goblin.left_forearm.brokenMsg"
-      },
-      "LEFT_HAND": {
-        "hpPercent": 4,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.left_hand.name",
-        "msg": "enemyArchetypes.goblin.left_hand.msg",
-        "itemId": 1021,
-        "canHoldWeapon": true,
-        "brokenMsg": "enemyArchetypes.goblin.left_hand.brokenMsg"
-      },
-      "RIGHT_UPPER_ARM": {
-        "hpPercent": 6,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.right_upper_arm.name",
-        "msg": "enemyArchetypes.goblin.right_upper_arm.msg",
-        "itemId": 1165,
-        "brokenMsg": "enemyArchetypes.goblin.right_upper_arm.brokenMsg"
-      },
-      "RIGHT_FOREARM": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.right_forearm.name",
-        "msg": "enemyArchetypes.goblin.right_forearm.msg",
-        "itemId": 1166,
-        "brokenMsg": "enemyArchetypes.goblin.right_forearm.brokenMsg"
-      },
-      "RIGHT_HAND": {
-        "hpPercent": 4,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.right_hand.name",
-        "msg": "enemyArchetypes.goblin.right_hand.msg",
-        "itemId": 1023,
-        "canHoldWeapon": true,
-        "brokenMsg": "enemyArchetypes.goblin.right_hand.brokenMsg"
-      },
-      "LEFT_THIGH": {
-        "hpPercent": 7,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.left_thigh.name",
-        "msg": "enemyArchetypes.goblin.left_thigh.msg",
-        "itemId": 1167,
-        "brokenMsg": "enemyArchetypes.goblin.left_thigh.brokenMsg"
-      },
-      "LEFT_SHIN": {
-        "hpPercent": 6,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.left_shin.name",
-        "msg": "enemyArchetypes.goblin.left_shin.msg",
-        "itemId": 1168,
-        "brokenMsg": "enemyArchetypes.goblin.left_shin.brokenMsg"
-      },
-      "LEFT_FOOT": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.left_foot.name",
-        "msg": "enemyArchetypes.goblin.left_foot.msg",
-        "itemId": 1025,
-        "brokenMsg": "enemyArchetypes.goblin.left_foot.brokenMsg"
-      },
-      "RIGHT_THIGH": {
-        "hpPercent": 7,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.right_thigh.name",
-        "msg": "enemyArchetypes.goblin.right_thigh.msg",
-        "itemId": 1169,
-        "brokenMsg": "enemyArchetypes.goblin.right_thigh.brokenMsg"
-      },
-      "RIGHT_SHIN": {
-        "hpPercent": 6,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.right_shin.name",
-        "msg": "enemyArchetypes.goblin.right_shin.msg",
-        "itemId": 1170,
-        "brokenMsg": "enemyArchetypes.goblin.right_shin.brokenMsg"
-      },
-      "RIGHT_FOOT": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.goblin.right_foot.name",
-        "msg": "enemyArchetypes.goblin.right_foot.msg",
-        "itemId": 1027,
-        "brokenMsg": "enemyArchetypes.goblin.right_foot.brokenMsg"
-      }
-    },
-    "hitLocations": {
-      "BRAIN": {
-        "weight": 5
-      },
-      "SKULL": {
-        "weight": 8
-      },
-      "TORSO": {
-        "weight": 14
-      },
-      "RIBCAGE": {
-        "weight": 10
-      },
-      "PELVIS": {
-        "weight": 8
-      },
-      "HEART": {
-        "weight": 10
-      },
-      "LUNGS": {
-        "weight": 10
-      },
-      "LIVER": {
-        "weight": 8
-      },
-      "KIDNEYS": {
-        "weight": 8
-      },
-      "STOMACH": {
-        "weight": 8
-      },
-      "SMALL_INTESTINE": {
-        "weight": 6
-      },
-      "LARGE_INTESTINE": {
-        "weight": 6
-      },
-      "PANCREAS": {
-        "weight": 5
-      },
-      "SPLEEN": {
-        "weight": 5
-      },
-      "NOSE": {
-        "weight": 3
-      },
-      "MOUTH": {
-        "weight": 3
-      },
-      "EYE_LEFT": {
-        "weight": 4
-      },
-      "EYE_RIGHT": {
-        "weight": 4
-      },
-      "EAR_LEFT": {
-        "weight": 3
-      },
-      "EAR_RIGHT": {
-        "weight": 3
-      },
-      "TONGUE": {
-        "weight": 2
-      },
-      "LEFT_UPPER_ARM": {
-        "weight": 6
-      },
-      "LEFT_FOREARM": {
-        "weight": 5
-      },
-      "LEFT_HAND": {
-        "weight": 4
-      },
-      "RIGHT_UPPER_ARM": {
-        "weight": 6
-      },
-      "RIGHT_FOREARM": {
-        "weight": 5
-      },
-      "RIGHT_HAND": {
-        "weight": 4
-      },
-      "LEFT_THIGH": {
-        "weight": 7
-      },
-      "LEFT_SHIN": {
-        "weight": 6
-      },
-      "LEFT_FOOT": {
-        "weight": 5
-      },
-      "RIGHT_THIGH": {
-        "weight": 7
-      },
-      "RIGHT_SHIN": {
-        "weight": 6
-      },
-      "RIGHT_FOOT": {
-        "weight": 5
-      }
-    },
-    "sprites": [
-      "GoblinArcher",
-      "GoblinFanatic",
-      "GoblinFighter",
-      "GoblinOccultist",
-      "GoblinShark",
-      "GoblinWolfRider",
-      "HobgoblinBolter",
-      "HobgoblinBrawler",
-      "HobgoblinGrunt",
-      "HobgoblinRaider",
-      "HobgoblinSapper",
-      "Kragbit",
-      "MutantGoblin",
-      "SeveredGoblinHead"
-    ]
-  },
   "Crustacean": {
     "skills": [],
     "defaultBattler": "",
@@ -7616,6 +7288,7 @@
       47,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       64,
@@ -7810,6 +7483,7 @@
       33,
       58
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       64,
       65,
@@ -7971,6 +7645,7 @@
       52,
       29
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       64,
@@ -8170,6 +7845,14 @@
       33,
       32,
       24,
+      52
+    ],
+    "sentientClasses": [
+      1,
+      13,
+      24,
+      30,
+      40,
       52
     ],
     "creatureClasses": [
@@ -8585,6 +8268,7 @@
       61,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       64,
@@ -8733,6 +8417,15 @@
       39,
       10,
       27
+    ],
+    "sentientClasses": [
+      1,
+      10,
+      19,
+      25,
+      29,
+      39,
+      61
     ],
     "creatureClasses": [
       63,
@@ -8922,183 +8615,6 @@
       "Phoenix"
     ]
   },
-  "Ogre": {
-    "sentient": true,
-    "skills": [],
-    "defaultBattler": "",
-    "reproduction": 1,
-    "lifeSpan": 70,
-    "pregnancyDuration": 330,
-    "classes": [
-      40,
-      13,
-      16,
-      18,
-      30,
-      38,
-      33,
-      45,
-      47,
-      57
-    ],
-    "creatureClasses": [
-      63,
-      65,
-      68,
-      69
-    ],
-    "parts": {
-      "HEAD": {
-        "hpPercent": 15,
-        "vital": true,
-        "skillId": [
-          1789,
-          318,
-          325
-        ],
-        "canCutoff": true,
-        "statEffect": {
-          "param": 3,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.ogre.head.name",
-        "msg": "enemyArchetypes.ogre.head.msg",
-        "itemId": 1195,
-        "brokenMsg": "enemyArchetypes.ogre.head.brokenMsg"
-      },
-      "TORSO": {
-        "hpPercent": 35,
-        "vital": true,
-        "skillId": [
-          398,
-          54,
-          412
-        ],
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.ogre.torso.name",
-        "msg": "enemyArchetypes.ogre.torso.msg",
-        "itemId": 1196,
-        "brokenMsg": "enemyArchetypes.ogre.torso.brokenMsg"
-      },
-      "LEFT_ARM": {
-        "hpPercent": 15,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.ogre.left_arm.name",
-        "msg": "enemyArchetypes.ogre.left_arm.msg",
-        "itemId": 1001,
-        "canHoldWeapon": true,
-        "brokenMsg": "enemyArchetypes.ogre.left_arm.brokenMsg"
-      },
-      "RIGHT_ARM": {
-        "hpPercent": 15,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.ogre.right_arm.name",
-        "msg": "enemyArchetypes.ogre.right_arm.msg",
-        "itemId": 1002,
-        "canHoldWeapon": true,
-        "brokenMsg": "enemyArchetypes.ogre.right_arm.brokenMsg"
-      },
-      "LEFT_LEG": {
-        "hpPercent": 10,
-        "vital": false,
-        "skillId": [
-          1786,
-          1790
-        ],
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.ogre.left_leg.name",
-        "msg": "enemyArchetypes.ogre.left_leg.msg",
-        "itemId": 1003,
-        "brokenMsg": "enemyArchetypes.ogre.left_leg.brokenMsg"
-      },
-      "RIGHT_LEG": {
-        "hpPercent": 10,
-        "vital": false,
-        "skillId": [
-          1790,
-          1793
-        ],
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.ogre.right_leg.name",
-        "msg": "enemyArchetypes.ogre.right_leg.msg",
-        "itemId": 1004,
-        "brokenMsg": "enemyArchetypes.ogre.right_leg.brokenMsg"
-      },
-      "MAW": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 2,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.ogre.maw.name",
-        "msg": "enemyArchetypes.ogre.maw.msg",
-        "brokenMsg": "enemyArchetypes.ogre.maw.brokenMsg"
-      }
-    },
-    "hitLocations": {
-      "HEAD": {
-        "weight": 15
-      },
-      "TORSO": {
-        "weight": 35
-      },
-      "LEFT_ARM": {
-        "weight": 15
-      },
-      "RIGHT_ARM": {
-        "weight": 15
-      },
-      "LEFT_LEG": {
-        "weight": 10
-      },
-      "RIGHT_LEG": {
-        "weight": 10
-      }
-    },
-    "sprites": [
-      "BrawnyOgre",
-      "ConjuringOni",
-      "OgreMage",
-      "OrcCaptain",
-      "OrcReaver",
-      "OrcSavage",
-      "VeteranSwordsman"
-    ]
-  },
   "Scarecrow": {
     "skills": [],
     "defaultBattler": "",
@@ -9111,6 +8627,11 @@
       31,
       33,
       36,
+      56,
+      62
+    ],
+    "sentientClasses": [
+      1,
       56,
       62
     ],
@@ -9281,6 +8802,7 @@
       21,
       13
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -9421,6 +8943,7 @@
       39,
       12
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       64,
       65,
@@ -9548,6 +9071,14 @@
       23,
       10,
       62
+    ],
+    "sentientClasses": [
+      1,
+      10,
+      19,
+      20,
+      31,
+      33
     ],
     "creatureClasses": [
       63,
@@ -9713,6 +9244,22 @@
       46,
       49,
       60
+    ],
+    "sentientClasses": [
+      1,
+      2,
+      7,
+      8,
+      21,
+      23,
+      26,
+      31,
+      35,
+      36,
+      38,
+      49,
+      59,
+      61
     ],
     "creatureClasses": [
       63,
@@ -9920,6 +9467,7 @@
       31,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -10062,6 +9610,7 @@
       35,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -10279,6 +9828,16 @@
       26,
       34,
       37,
+      44
+    ],
+    "sentientClasses": [
+      1,
+      4,
+      22,
+      26,
+      32,
+      33,
+      38,
       44
     ],
     "creatureClasses": [
@@ -10508,6 +10067,20 @@
       40,
       30,
       14
+    ],
+    "sentientClasses": [
+      1,
+      4,
+      24,
+      26,
+      28,
+      29,
+      32,
+      35,
+      39,
+      52,
+      56,
+      58
     ],
     "creatureClasses": [
       63,
@@ -10741,6 +10314,7 @@
       52,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -10880,6 +10454,14 @@
       54,
       4,
       43,
+      47
+    ],
+    "sentientClasses": [
+      1,
+      4,
+      32,
+      33,
+      44,
       47
     ],
     "creatureClasses": [
@@ -11032,6 +10614,7 @@
       43,
       38
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       64,
       65,
@@ -11190,6 +10773,16 @@
       31,
       36,
       59
+    ],
+    "sentientClasses": [
+      1,
+      2,
+      21,
+      23,
+      29,
+      31,
+      36,
+      49
     ],
     "creatureClasses": [
       63,
@@ -11357,6 +10950,14 @@
       40,
       61
     ],
+    "sentientClasses": [
+      1,
+      10,
+      20,
+      29,
+      31,
+      61
+    ],
     "creatureClasses": [
       63,
       65,
@@ -11499,6 +11100,7 @@
       29,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       64,
@@ -11668,6 +11270,14 @@
       29,
       58
     ],
+    "sentientClasses": [
+      1,
+      10,
+      20,
+      25,
+      39,
+      58
+    ],
     "creatureClasses": [
       64,
       65,
@@ -11815,6 +11425,14 @@
       37,
       12,
       39,
+      53,
+      58
+    ],
+    "sentientClasses": [
+      1,
+      10,
+      16,
+      49,
       53,
       58
     ],
@@ -11981,6 +11599,13 @@
       12,
       39,
       29,
+      58
+    ],
+    "sentientClasses": [
+      1,
+      10,
+      32,
+      39,
       58
     ],
     "creatureClasses": [
@@ -12156,6 +11781,13 @@
       43,
       45
     ],
+    "sentientClasses": [
+      1,
+      10,
+      19,
+      30,
+      43
+    ],
     "creatureClasses": [
       65,
       66,
@@ -12283,6 +11915,14 @@
       47,
       53
     ],
+    "sentientClasses": [
+      1,
+      4,
+      10,
+      33,
+      47,
+      54
+    ],
     "creatureClasses": [
       64,
       65,
@@ -12407,6 +12047,14 @@
       31,
       36,
       39
+    ],
+    "sentientClasses": [
+      1,
+      10,
+      23,
+      31,
+      36,
+      49
     ],
     "creatureClasses": [
       64,
@@ -12578,6 +12226,14 @@
       61,
       39
     ],
+    "sentientClasses": [
+      1,
+      10,
+      22,
+      25,
+      29,
+      59
+    ],
     "creatureClasses": [
       65,
       66,
@@ -12748,6 +12404,14 @@
       50,
       59
     ],
+    "sentientClasses": [
+      1,
+      25,
+      29,
+      31,
+      39,
+      59
+    ],
     "creatureClasses": [
       64,
       65,
@@ -12904,6 +12568,15 @@
       27,
       39,
       53
+    ],
+    "sentientClasses": [
+      1,
+      3,
+      25,
+      29,
+      39,
+      59,
+      61
     ],
     "creatureClasses": [
       65,
@@ -13067,6 +12740,18 @@
       39,
       27,
       32
+    ],
+    "sentientClasses": [
+      1,
+      3,
+      22,
+      25,
+      29,
+      33,
+      39,
+      49,
+      59,
+      61
     ],
     "creatureClasses": [
       65,
@@ -13287,205 +12972,6 @@
       "SwordArchon"
     ]
   },
-  "Elven": {
-    "sentient": true,
-    "skills": [],
-    "defaultBattler": "",
-    "reproduction": 1,
-    "pregnancyDuration": 720,
-    "classes": [
-      24,
-      28,
-      27,
-      12,
-      39,
-      35,
-      29,
-      36,
-      34,
-      2,
-      14,
-      48,
-      52,
-      10,
-      20,
-      59
-    ],
-    "creatureClasses": [
-      63,
-      64,
-      65,
-      66,
-      67,
-      68,
-      69
-    ],
-    "parts": {
-      "HEAD": {
-        "hpPercent": 15,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 3,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.elven.head.name",
-        "msg": "enemyArchetypes.elven.head.msg",
-        "itemId": 1290,
-        "brokenMsg": "enemyArchetypes.elven.head.brokenMsg"
-      },
-      "HEART": {
-        "hpPercent": 25,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.elven.heart.name",
-        "msg": "enemyArchetypes.elven.heart.msg",
-        "itemId": 1014,
-        "brokenMsg": "enemyArchetypes.elven.heart.brokenMsg"
-      },
-      "BOW": {
-        "hpPercent": 20,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.elven.bow.name",
-        "msg": "enemyArchetypes.elven.bow.msg",
-        "itemId": 1291,
-        "brokenMsg": "enemyArchetypes.elven.bow.brokenMsg"
-      },
-      "ROBE": {
-        "hpPercent": 20,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 5,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.elven.robe.name",
-        "msg": "enemyArchetypes.elven.robe.msg",
-        "itemId": 1289,
-        "brokenMsg": "enemyArchetypes.elven.robe.brokenMsg"
-      },
-      "LEFT_LEG": {
-        "hpPercent": 10,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.elven.left_leg.name",
-        "msg": "enemyArchetypes.elven.left_leg.msg",
-        "itemId": 1003,
-        "brokenMsg": "enemyArchetypes.elven.left_leg.brokenMsg"
-      },
-      "RIGHT_LEG": {
-        "hpPercent": 10,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.elven.right_leg.name",
-        "msg": "enemyArchetypes.elven.right_leg.msg",
-        "itemId": 1004,
-        "brokenMsg": "enemyArchetypes.elven.right_leg.brokenMsg"
-      },
-      "LEFT_HAND": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.elven.left_hand.name",
-        "msg": "enemyArchetypes.elven.left_hand.msg",
-        "canHoldWeapon": true,
-        "brokenMsg": "enemyArchetypes.elven.left_hand.brokenMsg"
-      },
-      "RIGHT_HAND": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.elven.right_hand.name",
-        "msg": "enemyArchetypes.elven.right_hand.msg",
-        "canHoldWeapon": true,
-        "brokenMsg": "enemyArchetypes.elven.right_hand.brokenMsg"
-      },
-      "MOUTH": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 2,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.elven.mouth.name",
-        "msg": "enemyArchetypes.elven.mouth.msg",
-        "brokenMsg": "enemyArchetypes.elven.mouth.brokenMsg"
-      }
-    },
-    "hitLocations": {
-      "HEAD": {
-        "weight": 15
-      },
-      "HEART": {
-        "weight": 25
-      },
-      "BOW": {
-        "weight": 20
-      },
-      "ROBE": {
-        "weight": 20
-      },
-      "LEFT_LEG": {
-        "weight": 10
-      },
-      "RIGHT_LEG": {
-        "weight": 10
-      }
-    },
-    "sprites": [
-      "DarkElfLord",
-      "DryadStabber",
-      "ElfBladedancer",
-      "ElfEnchanter",
-      "ElfLord",
-      "ElfSharpshooter",
-      "ElfWayfarer"
-    ]
-  },
   "Gnome": {
     "sentient": true,
     "skills": [],
@@ -13505,6 +12991,23 @@
       56,
       39,
       58
+    ],
+    "sentientClasses": [
+      1,
+      2,
+      12,
+      16,
+      36,
+      39,
+      42,
+      45,
+      48,
+      50,
+      53,
+      54,
+      55,
+      58,
+      60
     ],
     "creatureClasses": [
       63,
@@ -13717,597 +13220,6 @@
       "ObsidianGolem"
     ]
   },
-  "Dwarf": {
-    "sentient": true,
-    "skills": [],
-    "defaultBattler": "",
-    "reproduction": 1,
-    "lifeSpan": 180,
-    "pregnancyDuration": 330,
-    "classes": [
-      1,
-      2,
-      4,
-      10,
-      12,
-      13,
-      15,
-      16,
-      17,
-      21,
-      22,
-      24,
-      28,
-      30,
-      32,
-      33,
-      35,
-      37,
-      38,
-      39,
-      40,
-      42,
-      45,
-      47,
-      48,
-      50,
-      52,
-      54,
-      55,
-      56,
-      57,
-      59,
-      60
-    ],
-    "creatureClasses": [
-      63,
-      64,
-      65,
-      66,
-      67,
-      68,
-      69,
-      70
-    ],
-    "parts": {
-      "HEAD": {
-        "hpPercent": 22,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 3,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.head.name",
-        "msg": "enemyArchetypes.dwarf.head.msg",
-        "itemId": 999,
-        "brokenMsg": "enemyArchetypes.dwarf.head.brokenMsg"
-      },
-      "BEARD": {
-        "hpPercent": 15,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 7,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.beard.name",
-        "msg": "enemyArchetypes.dwarf.beard.msg",
-        "itemId": 1293,
-        "brokenMsg": "enemyArchetypes.dwarf.beard.brokenMsg"
-      },
-      "TORSO": {
-        "hpPercent": 55,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.torso.name",
-        "msg": "enemyArchetypes.dwarf.torso.msg",
-        "itemId": 1000,
-        "brokenMsg": "enemyArchetypes.dwarf.torso.brokenMsg"
-      },
-      "LEFT_ARM": {
-        "hpPercent": 18,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.left_arm.name",
-        "msg": "enemyArchetypes.dwarf.left_arm.msg",
-        "itemId": 1001,
-        "brokenMsg": "enemyArchetypes.dwarf.left_arm.brokenMsg"
-      },
-      "RIGHT_ARM": {
-        "hpPercent": 18,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.right_arm.name",
-        "msg": "enemyArchetypes.dwarf.right_arm.msg",
-        "itemId": 1002,
-        "brokenMsg": "enemyArchetypes.dwarf.right_arm.brokenMsg"
-      },
-      "LEFT_LEG": {
-        "hpPercent": 18,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.left_leg.name",
-        "msg": "enemyArchetypes.dwarf.left_leg.msg",
-        "itemId": 1003,
-        "brokenMsg": "enemyArchetypes.dwarf.left_leg.brokenMsg"
-      },
-      "RIGHT_LEG": {
-        "hpPercent": 18,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.right_leg.name",
-        "msg": "enemyArchetypes.dwarf.right_leg.msg",
-        "itemId": 1004,
-        "brokenMsg": "enemyArchetypes.dwarf.right_leg.brokenMsg"
-      },
-      "BRAIN": {
-        "hpPercent": 18,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 3,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.brain.name",
-        "msg": "enemyArchetypes.dwarf.brain.msg",
-        "itemId": 1005,
-        "brokenMsg": "enemyArchetypes.dwarf.brain.brokenMsg"
-      },
-      "LEFT_EYE": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.left_eye.name",
-        "msg": "enemyArchetypes.dwarf.left_eye.msg",
-        "itemId": 1006,
-        "brokenMsg": "enemyArchetypes.dwarf.left_eye.brokenMsg"
-      },
-      "RIGHT_EYE": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.right_eye.name",
-        "msg": "enemyArchetypes.dwarf.right_eye.msg",
-        "itemId": 1007,
-        "brokenMsg": "enemyArchetypes.dwarf.right_eye.brokenMsg"
-      },
-      "NOSE": {
-        "hpPercent": 6,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "name": "enemyArchetypes.dwarf.nose.name",
-        "msg": "enemyArchetypes.dwarf.nose.msg",
-        "itemId": 1008,
-        "brokenMsg": "enemyArchetypes.dwarf.nose.brokenMsg"
-      },
-      "LEFT_EAR": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "name": "enemyArchetypes.dwarf.left_ear.name",
-        "msg": "enemyArchetypes.dwarf.left_ear.msg",
-        "itemId": 1009,
-        "brokenMsg": "enemyArchetypes.dwarf.left_ear.brokenMsg"
-      },
-      "RIGHT_EAR": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "name": "enemyArchetypes.dwarf.right_ear.name",
-        "msg": "enemyArchetypes.dwarf.right_ear.msg",
-        "itemId": 1010,
-        "brokenMsg": "enemyArchetypes.dwarf.right_ear.brokenMsg"
-      },
-      "MOUTH": {
-        "hpPercent": 8,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "name": "enemyArchetypes.dwarf.mouth.name",
-        "msg": "enemyArchetypes.dwarf.mouth.msg",
-        "itemId": 1011,
-        "brokenMsg": "enemyArchetypes.dwarf.mouth.brokenMsg"
-      },
-      "TEETH": {
-        "hpPercent": 6,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "multiple": true,
-        "name": "enemyArchetypes.dwarf.teeth.name",
-        "msg": "enemyArchetypes.dwarf.teeth.msg",
-        "itemId": 1012,
-        "brokenMsg": "enemyArchetypes.dwarf.teeth.brokenMsg"
-      },
-      "GENITALS": {
-        "hpPercent": 35,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 0,
-          "amount": -3,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.genitals.name",
-        "msg": "enemyArchetypes.dwarf.genitals.msg",
-        "itemId": 1013,
-        "brokenMsg": "enemyArchetypes.dwarf.genitals.brokenMsg"
-      },
-      "HEART": {
-        "hpPercent": 30,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.heart.name",
-        "msg": "enemyArchetypes.dwarf.heart.msg",
-        "itemId": 1014,
-        "brokenMsg": "enemyArchetypes.dwarf.heart.brokenMsg"
-      },
-      "LEFT_LUNG": {
-        "hpPercent": 24,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.left_lung.name",
-        "msg": "enemyArchetypes.dwarf.left_lung.msg",
-        "itemId": 1015,
-        "brokenMsg": "enemyArchetypes.dwarf.left_lung.brokenMsg"
-      },
-      "RIGHT_LUNG": {
-        "hpPercent": 24,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.right_lung.name",
-        "msg": "enemyArchetypes.dwarf.right_lung.msg",
-        "itemId": 1016,
-        "brokenMsg": "enemyArchetypes.dwarf.right_lung.brokenMsg"
-      },
-      "LIVER": {
-        "hpPercent": 25,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 1,
-          "amount": -2,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.liver.name",
-        "msg": "enemyArchetypes.dwarf.liver.msg",
-        "itemId": 1017,
-        "brokenMsg": "enemyArchetypes.dwarf.liver.brokenMsg"
-      },
-      "STOMACH": {
-        "hpPercent": 18,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 7,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.stomach.name",
-        "msg": "enemyArchetypes.dwarf.stomach.msg",
-        "itemId": 1018,
-        "brokenMsg": "enemyArchetypes.dwarf.stomach.brokenMsg"
-      },
-      "SPLEEN": {
-        "hpPercent": 10,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": false,
-        "name": "enemyArchetypes.dwarf.spleen.name",
-        "msg": "enemyArchetypes.dwarf.spleen.msg",
-        "itemId": 1019,
-        "brokenMsg": "enemyArchetypes.dwarf.spleen.brokenMsg"
-      },
-      "INTESTINES": {
-        "hpPercent": 22,
-        "vital": true,
-        "skillId": 0,
-        "canCutoff": false,
-        "statEffect": {
-          "param": 5,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.intestines.name",
-        "msg": "enemyArchetypes.dwarf.intestines.msg",
-        "itemId": 1020,
-        "brokenMsg": "enemyArchetypes.dwarf.intestines.brokenMsg"
-      },
-      "LEFT_HAND": {
-        "hpPercent": 12,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "equipSlot": "leftHand",
-        "statEffect": {
-          "param": 2,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.left_hand.name",
-        "msg": "enemyArchetypes.dwarf.left_hand.msg",
-        "itemId": 1021,
-        "canHoldWeapon": true,
-        "brokenMsg": "enemyArchetypes.dwarf.left_hand.brokenMsg"
-      },
-      "LEFT_FINGERS": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "multiple": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.left_fingers.name",
-        "msg": "enemyArchetypes.dwarf.left_fingers.msg",
-        "itemId": 1022,
-        "brokenMsg": "enemyArchetypes.dwarf.left_fingers.brokenMsg"
-      },
-      "RIGHT_HAND": {
-        "hpPercent": 12,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "equipSlot": "rightHand",
-        "statEffect": {
-          "param": 2,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.right_hand.name",
-        "msg": "enemyArchetypes.dwarf.right_hand.msg",
-        "itemId": 1023,
-        "canHoldWeapon": true,
-        "brokenMsg": "enemyArchetypes.dwarf.right_hand.brokenMsg"
-      },
-      "RIGHT_FINGERS": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "multiple": true,
-        "statEffect": {
-          "param": 2,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.right_fingers.name",
-        "msg": "enemyArchetypes.dwarf.right_fingers.msg",
-        "itemId": 1024,
-        "brokenMsg": "enemyArchetypes.dwarf.right_fingers.brokenMsg"
-      },
-      "LEFT_FOOT": {
-        "hpPercent": 12,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.left_foot.name",
-        "msg": "enemyArchetypes.dwarf.left_foot.msg",
-        "itemId": 1025,
-        "brokenMsg": "enemyArchetypes.dwarf.left_foot.brokenMsg"
-      },
-      "LEFT_TOES": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "multiple": true,
-        "name": "enemyArchetypes.dwarf.left_toes.name",
-        "msg": "enemyArchetypes.dwarf.left_toes.msg",
-        "itemId": 1026,
-        "brokenMsg": "enemyArchetypes.dwarf.left_toes.brokenMsg"
-      },
-      "RIGHT_FOOT": {
-        "hpPercent": 12,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "statEffect": {
-          "param": 6,
-          "amount": -1,
-          "brokenAmount": -1
-        },
-        "name": "enemyArchetypes.dwarf.right_foot.name",
-        "msg": "enemyArchetypes.dwarf.right_foot.msg",
-        "itemId": 1027,
-        "brokenMsg": "enemyArchetypes.dwarf.right_foot.brokenMsg"
-      },
-      "RIGHT_TOES": {
-        "hpPercent": 5,
-        "vital": false,
-        "skillId": 0,
-        "canCutoff": true,
-        "multiple": true,
-        "name": "enemyArchetypes.dwarf.right_toes.name",
-        "msg": "enemyArchetypes.dwarf.right_toes.msg",
-        "itemId": 1028,
-        "brokenMsg": "enemyArchetypes.dwarf.right_toes.brokenMsg"
-      }
-    },
-    "hitLocations": {
-      "HEAD": {
-        "weight": 7
-      },
-      "BEARD": {
-        "weight": 8
-      },
-      "TORSO": {
-        "weight": 45
-      },
-      "LEFT_ARM": {
-        "weight": 15
-      },
-      "RIGHT_ARM": {
-        "weight": 15
-      },
-      "LEFT_LEG": {
-        "weight": 11
-      },
-      "RIGHT_LEG": {
-        "weight": 11
-      },
-      "BRAIN": {
-        "weight": 3
-      },
-      "LEFT_EYE": {
-        "weight": 2
-      },
-      "RIGHT_EYE": {
-        "weight": 2
-      },
-      "NOSE": {
-        "weight": 3
-      },
-      "LEFT_EAR": {
-        "weight": 2
-      },
-      "RIGHT_EAR": {
-        "weight": 2
-      },
-      "MOUTH": {
-        "weight": 3
-      },
-      "TEETH": {
-        "weight": 2
-      },
-      "GENITALS": {
-        "weight": 3
-      },
-      "HEART": {
-        "weight": 5
-      },
-      "LEFT_LUNG": {
-        "weight": 4
-      },
-      "RIGHT_LUNG": {
-        "weight": 4
-      },
-      "LIVER": {
-        "weight": 4
-      },
-      "STOMACH": {
-        "weight": 4
-      },
-      "SPLEEN": {
-        "weight": 3
-      },
-      "INTESTINES": {
-        "weight": 4
-      },
-      "LEFT_HAND": {
-        "weight": 5
-      },
-      "LEFT_FINGERS": {
-        "weight": 2
-      },
-      "RIGHT_HAND": {
-        "weight": 5
-      },
-      "RIGHT_FINGERS": {
-        "weight": 2
-      },
-      "LEFT_FOOT": {
-        "weight": 4
-      },
-      "LEFT_TOES": {
-        "weight": 2
-      },
-      "RIGHT_FOOT": {
-        "weight": 4
-      },
-      "RIGHT_TOES": {
-        "weight": 2
-      }
-    },
-    "sprites": [
-      "DwarfHammersmith",
-      "DwarfHunter",
-      "dwarfpaladin",
-      "DwarfPriest",
-      "DwarfWarrior"
-    ]
-  },
   "Elephant": {
     "skills": [
       439,
@@ -14326,6 +13238,7 @@
       47,
       29
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -14531,6 +13444,14 @@
       36,
       62
     ],
+    "sentientClasses": [
+      1,
+      23,
+      29,
+      31,
+      36,
+      49
+    ],
     "creatureClasses": [
       63,
       64,
@@ -14670,6 +13591,16 @@
       36,
       38,
       39
+    ],
+    "sentientClasses": [
+      1,
+      2,
+      21,
+      23,
+      24,
+      28,
+      31,
+      36
     ],
     "creatureClasses": [
       63,
@@ -14940,6 +13871,7 @@
       38,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -15124,6 +14056,7 @@
       38,
       56
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -15323,6 +14256,15 @@
       12,
       9
     ],
+    "sentientClasses": [
+      1,
+      3,
+      25,
+      29,
+      39,
+      59,
+      61
+    ],
     "creatureClasses": [
       63,
       65,
@@ -15521,6 +14463,7 @@
       52,
       62
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       65,
@@ -15725,6 +14668,14 @@
       37,
       38
     ],
+    "sentientClasses": [
+      1,
+      8,
+      23,
+      31,
+      38,
+      61
+    ],
     "creatureClasses": [
       63,
       64,
@@ -15891,6 +14842,7 @@
       1,
       55
     ],
+    "sentientClasses": [],
     "creatureClasses": [
       63,
       64,

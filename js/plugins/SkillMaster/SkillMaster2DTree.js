@@ -249,7 +249,7 @@
                             cost.textContent = `${kp} KP`;
                             cost.style.color = 'var(--text-secondary-active, #e5c07b)';
                         } else {
-                            cost.textContent = '🔒';
+                            cost.textContent = (typeof T === 'function' ? T('SkillMaster.graph.locked') : 'Locked');
                             cost.style.color = '#888';
                         }
                     }
@@ -623,7 +623,7 @@
                     ctx.font = '8px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText('🔒', radius - 4, -radius + 4.5);
+                    ctx.fillText('⊘', radius - 4, -radius + 4.5);
                 }
 
                 ctx.restore();

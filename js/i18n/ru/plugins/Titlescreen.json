@@ -2,7 +2,8 @@
   "menu": {
     "explore": "Исследовать",
     "reconnect": "Переподключение",
-    "tutorial": "Обучение",
+    "storyMode": "Новый сюжет",
+    "continueStory": "Продолжить сюжет",
     "minigames": "Мини-игры",
     "sandbox": "Песочница",
     "worlds": "Миры",
@@ -15,7 +16,8 @@
   "menuOverlay": {
     "explore": "ИССЛЕДОВАТЬ",
     "reconnect": "ПЕРЕПОДКЛЮЧЕНИЕ",
-    "tutorial": "ОБУЧЕНИЕ",
+    "storyMode": "НОВЫЙ СЮЖЕТ",
+    "continueStory": "ПРОДОЛЖИТЬ СЮЖЕТ",
     "minigames": "МИНИ-ИГРЫ",
     "sandbox": "ПЕСОЧНИЦА",
     "worlds": "МИРЫ",

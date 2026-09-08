@@ -1341,7 +1341,7 @@
   },
   "336": {
     "name": "EHI Omniscient Binder",
-    "description": "A whip made from living encyclopedia pages that \nbind enemies with knowledge but confuse the wielder with constant whispers."
+    "description": "A whip made from living encyclopedia pages that bind enemies\nwith knowledge but confuse the wielder with constant whispers."
   },
   "337": {
     "name": "EHI Memetic Rifle",
@@ -1349,7 +1349,7 @@
   },
   "338": {
     "name": "EHI Omniscience Edge",
-    "description": "A sword with a blade made of encyclopedia pages \ncompressed to diamond hardness, cutting through defenses but driving its wielder insane."
+    "description": "A sword with a blade made of encyclopedia pages compressed to diamond\nhardness, cutting through defenses but driving its wielder insane."
   },
   "339": {
     "name": "EHI Combustion Lance",
@@ -1357,15 +1357,15 @@
   },
   "340": {
     "name": "EHI Forbidden Codex",
-    "description": "A staff containing the complete knowledge of \nancient civilizations, granting immense magical power but rapidly aging the user."
+    "description": "A staff containing the complete knowledge of ancient civilizations,\ngranting immense magical power but rapidly aging the user."
   },
   "341": {
     "name": "EHI Psychoactive Talons",
-    "description": "Claws infused with a mixture of rare oils and \nencyclopedic knowledge, granting unnatural speed but causing hallucinations."
+    "description": "Claws infused with a mixture of rare oils and encyclopedic\nknowledge, granting unnatural speed but causing hallucinations."
   },
   "342": {
     "name": "EHI Identity Eraser",
-    "description": "A bow that fires arrows containing concentrated \nknowledge, shattering minds but causing the user to forget their own identity."
+    "description": "A bow that fires arrows containing concentrated knowledge,\nshattering minds but causing the user to forget their own identity."
   },
   "343": {
     "name": "EHI Petrocorruptor",
@@ -1373,7 +1373,7 @@
   },
   "344": {
     "name": "EHI Headache Inducer",
-    "description": "A pistol that fires bullets containing compressed \nencyclopedic knowledge, overwhelming targets but causing crippling migraines."
+    "description": "A pistol that fires bullets containing compressed encyclopedic\nknowledge, overwhelming targets but causing crippling migraines."
   },
   "345": {
     "name": "EHI Suicide Bomber",
@@ -1385,11 +1385,11 @@
   },
   "347": {
     "name": "EHI Brain Hemorrhager",
-    "description": "A launcher that fires projectiles containing the \ndistilled essence of an entire library, overwhelming enemies with knowledge but causing cerebral hemorrhaging in the user."
+    "description": "A launcher firing projectiles that hold a whole library distilled.\nIt overwhelms the enemy and bleeds the user's brain."
   },
   "348": {
     "name": "EHI Apocalypse Fists",
-    "description": "Gauntlets containing all the world's oil reserves \nin compressed form, granting godlike strength but causing rapid cellular degeneration."
+    "description": "Gauntlets containing all the world's oil reserves in compressed form,\ngranting godlike strength but causing rapid cellular degeneration."
   },
   "349": {
     "name": "EHI Petroleum Omniscience",
@@ -1401,7 +1401,7 @@
   },
   "351": {
     "name": "Telekinetic Gauntlets",
-    "description": "Gauntlets that amplify telekinetic abilities, \nallowing the wielder to strike enemies from a distance with psychic force."
+    "description": "Gauntlets that amplify telekinetic abilities, allowing the\nwielder to strike enemies from a distance with psychic force."
   },
   "352": {
     "name": "Psionic Edge",

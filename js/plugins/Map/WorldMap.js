@@ -143,8 +143,6 @@
     let isDragging = false;
     let lastMouseX = 0;
     let lastMouseY = 0;
-    let tilesLoaded = 0; // Count of loaded tiles
-    const totalTiles = 64; // 8x8 grid
 
     // Cache decoded minimap tile Bitmaps by URL. renderMiniMap runs on every
     // player step, so an uncached Bitmap.load re-decodes the same JPEG each step;
@@ -183,7 +181,7 @@
         const old = worldMapSprite.bitmap;
         worldMapSprite.bitmap = bmp;
         if (old && old !== bmp && old !== worldMapBitmap && old !== fullscreenBitmap &&
-            typeof old.destroy === 'function') {
+            old !== blankBitmap && typeof old.destroy === 'function') {
             old.destroy();
         }
     }
@@ -223,14 +221,32 @@
     // centre of it, which is where the dot has always been drawn.
     const PROC_MAP_ID = 636;
 
+    // The world square the party stands on. WorldMapTransfer is the one answer
+    // to "where is this" (see its header): it reads the loaded map's own
+    // <Coords>, the procedural map's generated origin and an alien landing grid
+    // alike, and only falls back to vars 43/44 when nothing else knows. Reading
+    // the variables here instead left the chart on whatever square was written
+    // last, which is how an interior with a stale or template tag drew the
+    // wrong corner of the world.
+    function partyWorldSquare() {
+        const svc = window.WorldMapTransfer;
+        if (svc && typeof svc.currentWorldCoords === 'function' && $gameMap) {
+            const wc = svc.currentWorldCoords();
+            if (wc && isFinite(wc.x) && isFinite(wc.y)) return { x: wc.x | 0, y: wc.y | 0 };
+        }
+        return {
+            x: ($gameVariables && $gameVariables.value(43)) || 0,
+            y: ($gameVariables && $gameVariables.value(44)) || 0
+        };
+    }
+
     // How far into its own world square the party stands, 0..1 on each axis.
     // Answers with the square itself too, because on a stitched window the
     // square the party is in is the cell they are standing on, not necessarily
     // the one vars 43/44 have caught up with.
     function playerSquarePosition() {
-        const varX = $gameVariables.value(43) || 0;
-        const varY = $gameVariables.value(44) || 0;
-        const result = { squareX: varX, squareY: varY, fracX: 0.5, fracY: 0.5 };
+        const square = partyWorldSquare();
+        const result = { squareX: square.x, squareY: square.y, fracX: 0.5, fracY: 0.5 };
         const stitch = window.ProcStitch;
         if (!$gameMap || $gameMap.mapId() !== PROC_MAP_ID || !stitch || !$gamePlayer) return result;
 
@@ -300,7 +316,7 @@
         currentMapState = 3;
         focusTileHint = null; // an explicit open follows the party
         resetZoom();
-        fullscreenBitmap = null;
+        clearFullscreenCache();
         refreshWorldMapDisplay();
     });
 
@@ -317,20 +333,14 @@
     });
 
     PluginManager.registerCommand(pluginName, "toggleMinimap", args => {
-        if (currentMapState > 0) {
-            currentMapState = 0;
-        } else {
-            currentMapState = ($gameSystem && $gameSystem._lastActiveMinimapState) || 1;
-        }
-        if ($gameSystem) $gameSystem._minimapState = currentMapState;
-        refreshWorldMapDisplay();
+        setMinimapVisible(!isMinimapVisible());
     });
 
     PluginManager.registerCommand(pluginName, "showZoomableMap", args => {
         currentMapState = 3;
         focusTileHint = null; // an explicit open follows the party
         resetZoom();
-        fullscreenBitmap = null;
+        clearFullscreenCache();
         refreshWorldMapDisplay();
     });
 
@@ -443,7 +453,7 @@
         focusTileHint = { x: Number(wx), y: Number(wy) };
         autoOpenedForTravel = false;
         currentMapState = 3;          // fullscreen, the map the M key cycles to
-        fullscreenBitmap = null;      // reload tiles so markers redraw
+        clearFullscreenCache();       // rebuild the layer so markers redraw
         resetZoom();
         refreshWorldMapDisplay();
         return true;
@@ -460,7 +470,33 @@
     window.WorldMapView = {
         focusAt: focusWorldMapAt,
         requestFocusAt: requestWorldMapFocus,
+        isMinimapVisible: () => isMinimapVisible(),
+        setMinimapVisible: (v) => setMinimapVisible(v),
+        // The three minimap modes and the one the player picked.
+        minimapModes: () => MINIMAP_MODES.slice(),
+        minimapMode: () => minimapMode(),
+        setMinimapMode: (m) => setMinimapMode(m),
+        // A town the party just founded is a new name over a tile: the sprites
+        // standing on the map now know nothing about it.
+        refreshLabels: () => {
+            if (SceneManager._scene instanceof Scene_Map) {
+                createCityLabelsContainer();
+                refreshCityLabelSprites();
+            }
+        },
     };
+
+    // The towns the party founded on Earth, as world-map tiles (world squares
+    // 0-255, the same space every other pin on the sheet is drawn in).
+    function foundedTownPins() {
+        const TF = window.TownFounding;
+        if (!TF || !TF.list) return [];
+        try {
+            return TF.list().filter(t => !t.planet);
+        } catch (e) {
+            return [];
+        }
+    }
 
     function centerOnCurrentCoordinates() {
         // Bologna fullscreen: center on player position within the assembled cell grid
@@ -477,8 +513,8 @@
 
         // GalaxySim alien planet fullscreen: center on the current landing-grid
         // cell within the planet's own (much smaller) bitmap coordinate space.
-        if (isAlienPlanetSurface()) {
-            const grid = window.GalaxySim.getAlienGridInfo();
+        if (isOffEarthView()) {
+            const grid = alienGridInfo();
             if (grid) {
                 const px = (grid.gx + 0.5) * ALIEN_GRID_CELL_PX;
                 const py = (grid.gy + 0.5) * ALIEN_GRID_CELL_PX;
@@ -658,17 +694,16 @@
     // The marker under the cursor, or null. Screen space to bitmap space is the
     // inverse of the pan/zoom applied to the sprite.
     function questMarkerAtPointer() {
-        if (!worldMapSprite || !worldMapSprite.bitmap) return null;
-        const bmp = worldMapSprite.bitmap;
-        if (!bmp.width || !zoomScale) return null;
+        const dims = fullscreenMapDims();
+        if (!dims || !dims.w || !zoomScale) return null;
         const bx = (TouchInput.x - panX) / zoomScale;
         const by = (TouchInput.y - panY) / zoomScale;
         // Generous in bitmap pixels, because on a 12288px sheet a marker is tiny.
         const radius = Math.max(28, 22 / zoomScale);
         let best = null, bestD = Infinity;
         for (const qt of getQuestMarkerTiles()) {
-            const qx = (qt.x / WORLD_TILES) * bmp.width;
-            const qy = (qt.y / WORLD_TILES) * bmp.height;
+            const qx = (qt.x / WORLD_TILES) * dims.w;
+            const qy = (qt.y / WORLD_TILES) * dims.h;
             const d = Math.abs(qx - bx) + Math.abs(qy - by);
             if (d <= radius * 2 && d < bestD) { bestD = d; best = qt; }
         }
@@ -828,13 +863,13 @@
     function updateQuestEdgeMarkers() {
         // Only the world sheet paints quest diamonds; the Bologna and alien-planet
         // fullscreens are other coordinate spaces entirely.
-        if (currentMapState !== 3 || !isLiveSprite(worldMapSprite) || !worldMapSprite.bitmap ||
-            !$gameMap || $gameMap.mapId() === BOLOGNA_MAP_ID || isAlienPlanetSurface()) {
+        if (currentMapState !== 3 || !isLiveSprite(worldMapSprite) ||
+            !$gameMap || $gameMap.mapId() === BOLOGNA_MAP_ID || isOffEarthView()) {
             hideQuestEdgeMarkers();
             return;
         }
-        const bmp = worldMapSprite.bitmap;
-        if (!bmp.width || !bmp.height || !zoomScale) { hideQuestEdgeMarkers(); return; }
+        const dims = fullscreenMapDims();
+        if (!dims || !dims.w || !dims.h || !zoomScale) { hideQuestEdgeMarkers(); return; }
 
         const tiles = getQuestMarkerTiles();
         const key = questEdgeSignature(tiles);
@@ -852,8 +887,8 @@
 
         for (const group of container._groups) {
             const tile = group._tile;
-            const sx = panX + (tile.x / WORLD_TILES) * bmp.width * zoomScale;
-            const sy = panY + (tile.y / WORLD_TILES) * bmp.height * zoomScale;
+            const sx = panX + (tile.x / WORLD_TILES) * dims.w * zoomScale;
+            const sy = panY + (tile.y / WORLD_TILES) * dims.h * zoomScale;
 
             // Inside the viewport (minus the band the arrows occupy): the real
             // diamond is doing the job, so the border marker steps aside.
@@ -1054,7 +1089,7 @@
         const GS = window.GalaxySim;
         if (!GS || !GS.Renderer3D || !GS.Renderer3D.drawPlanetGrid ||
             !GS.getAlienGridInfo || !GS.getAlienGridTextureCanvas) return null;
-        const grid = GS.getAlienGridInfo();
+        const grid = alienGridInfo();
         const textureCanvas = GS.getAlienGridTextureCanvas();
         if (!grid || !textureCanvas) return null;
 
@@ -1088,55 +1123,168 @@
             !!(window.GalaxySim && window.GalaxySim.isAlienSurface && window.GalaxySim.isAlienSurface());
     }
 
+    // Earth's chart is 64 photographed tiles of one planet. Anywhere off that
+    // planet it is simply the wrong picture, so the landing grid is drawn for
+    // the whole trip and not only while the open surface (map 636) is loaded: a
+    // cave, a wreck or a building on another world used to fall through to
+    // row-1-column-1 of Earth and read as a coastline nobody was standing on.
+    function isOffEarthView() {
+        if (isAlienPlanetSurface()) return true;
+        const GS = window.GalaxySim;
+        return !!(GS && GS.isOffEarth && GS.isOffEarth());
+    }
+
+    // The landing grid to chart, on the surface or under it.
+    function alienGridInfo() {
+        const GS = window.GalaxySim;
+        if (!GS) return null;
+        if (GS.getAlienGridInfo) {
+            const live = GS.getAlienGridInfo();
+            if (live) return live;
+        }
+        return (GS.getOffEarthGridInfo && GS.getOffEarthGridInfo()) || null;
+    }
+
     // ------------------------------------------------------------------------
     // Core Logic
     // ------------------------------------------------------------------------
 
+    // The M key is the world map key: it opens the zoomable map and, pressed
+    // again, closes it back to whatever the minimap was doing. It no longer
+    // cycles the minimap on and off - that lives in the travel page selector.
     function toggleMapState() {
-        // Cycle: 1 (Zoomed Mini) -> 2 (Default Mini) -> 3 (Full Map) -> 0 (Hidden) -> 1 ...
-        if (currentMapState === 1) {
-            currentMapState = 2; // Go to Default Minimap
-        } else if (currentMapState === 2) {
-            currentMapState = 3; // Go to Full Map
-            resetZoom();
-            fullscreenBitmap = null; // Clear cache to reload tiles
-        } else if (currentMapState === 3) {
-            currentMapState = 0; // Hide the map entirely
-            fullscreenBitmap = null;
-            focusTileHint = null; // manual cycling follows the party again
+        if (currentMapState === 3) {
+            currentMapState = savedMinimapState();
+            clearFullscreenCache();
+            focusTileHint = null;
         } else {
-            currentMapState = 1; // Fallback / Turn ON
+            currentMapState = 3;
+            resetZoom();
+            clearFullscreenCache(); // drop the streamed layer so markers redraw
         }
 
+        // The fullscreen map is never persisted: _minimapState stays the corner
+        // minimap's own state, so closing the map (or a transfer) restores it.
+        refreshWorldMapDisplay();
+    }
+
+    // ------------------------------------------------------------------------
+    // MINIMAP MODE
+    // ------------------------------------------------------------------------
+    // The corner minimap is not a plain on/off any more: it has three modes,
+    // kept in the config so they survive a save.
+    //   off        never drawn
+    //   exploring  drawn only where the party is exploring unknown ground: a
+    //              procedural map, or the landing grid of a planet. The default,
+    //              because an authored town has nothing to read off the chart.
+    //   always     drawn wherever the map allows it
+    const MINIMAP_MODES = ['off', 'exploring', 'always'];
+    const DEFAULT_MINIMAP_MODE = 'exploring';
+
+    function minimapMode() {
+        const value = ConfigManager && ConfigManager.minimapMode;
+        return MINIMAP_MODES.includes(value) ? value : DEFAULT_MINIMAP_MODE;
+    }
+
+    function setMinimapMode(mode) {
+        ConfigManager.minimapMode = MINIMAP_MODES.includes(mode) ? mode : DEFAULT_MINIMAP_MODE;
+        ConfigManager.save();
+        refreshWorldMapDisplay();
+    }
+
+    // Is the party out exploring? The procedural map (map 636) is the one map
+    // the generator builds, on Earth and on an alien landing grid alike, so it
+    // answers for both; GalaxySim is asked as well for a planetside scene that
+    // is not on that map.
+    function isExploringContext() {
+        const procId = (window.WorldMapReturn && window.WorldMapReturn.procMapId) || 636;
+        if ($gameMap && $gameMap.mapId() === procId) return true;
+        return !!(window.GalaxySim && window.GalaxySim.isAlienSurface &&
+                  window.GalaxySim.isAlienSurface());
+    }
+
+    // Does the current mode let the corner minimap be drawn here at all?
+    function modeAllowsMinimap() {
+        const mode = minimapMode();
+        if (mode === 'off') return false;
+        if (mode === 'always') return true;
+        return isExploringContext();
+    }
+
+    const _ConfigManager_makeData_minimap = ConfigManager.makeData;
+    ConfigManager.makeData = function () {
+        const config = _ConfigManager_makeData_minimap.call(this);
+        config.minimapMode = minimapMode();
+        return config;
+    };
+
+    const _ConfigManager_applyData_minimap = ConfigManager.applyData;
+    ConfigManager.applyData = function (config) {
+        _ConfigManager_applyData_minimap.call(this, config);
+        this.minimapMode = MINIMAP_MODES.includes(config.minimapMode)
+            ? config.minimapMode : DEFAULT_MINIMAP_MODE;
+    };
+
+    // The minimap state the map falls back to when the fullscreen map closes.
+    function savedMinimapState() {
+        if ($gameSystem && typeof $gameSystem._minimapState === 'number' &&
+            $gameSystem._minimapState > 0 && $gameSystem._minimapState < 3) {
+            return $gameSystem._minimapState;
+        }
+        return 0;
+    }
+
+    // The travel page's minimap selector: show or hide the corner minimap
+    // without touching the fullscreen map.
+    function setMinimapVisible(visible) {
+        // Asking for the minimap while the mode says never is a request for the
+        // mode to change too; 'exploring' is left alone, it is still a yes.
+        if (visible && minimapMode() === 'off') {
+            ConfigManager.minimapMode = 'always';
+            ConfigManager.save();
+        } else if (!visible) {
+            ConfigManager.minimapMode = 'off';
+            ConfigManager.save();
+        }
+        currentMapState = visible
+            ? (($gameSystem && $gameSystem._lastActiveMinimapState) || 1)
+            : 0;
         if ($gameSystem) {
             $gameSystem._minimapState = currentMapState;
-            if (currentMapState === 1 || currentMapState === 2) {
-                $gameSystem._lastActiveMinimapState = currentMapState;
-            }
+            if (currentMapState > 0) $gameSystem._lastActiveMinimapState = currentMapState;
         }
-
         refreshWorldMapDisplay();
+    }
+
+    function isMinimapVisible() {
+        if (!modeAllowsMinimap()) return false;
+        // The fullscreen map is not the minimap: while it is up the selector
+        // still speaks for the corner map the party had before it opened.
+        if (currentMapState === 3) return savedMinimapState() > 0;
+        return currentMapState === 1 || currentMapState === 2;
     }
 
     function refreshWorldMapDisplay() {
         createWorldMapSprite();
         if (!isLiveSprite(worldMapSprite)) return;
 
-        if (currentMapState === 0) {
+        if (currentMapState === 0 || (currentMapState !== 3 && !modeAllowsMinimap())) {
             worldMapSprite.visible = false;
+            if (fsLayer) fsLayer.visible = false;
             return;
         }
 
         // We only hard-check worldMapBitmap for Fullscreen or Map 315.
         // If we are in Detail Mode (Map != 315), we load dynamic images.
         const isBologna = $gameMap && $gameMap.mapId() === BOLOGNA_MAP_ID;
-        const isAlienPlanet = isAlienPlanetSurface();
+        const isAlienPlanet = isOffEarthView();
         if (currentMapState === 3 && !isBologna && !isAlienPlanet && (!worldMapBitmap || !worldMapBitmap.isReady())) return;
 
         worldMapSprite.visible = true;
 
         if (currentMapState === 1 || currentMapState === 2) {
             // --- MINI MODE (High-Resolution Supersampled Rendering) ---
+            if (fsLayer) fsLayer.visible = false;
             renderMiniMap();
             worldMapSprite.x = 10;
             worldMapSprite.y = Graphics.height - mapHeight - 10;
@@ -1423,7 +1571,7 @@
         // 2.5. GalaxySim alien planet surface (map 636, Alien* biome): show the
         // planet's own unwrapped landing grid instead of Earth's
         // row-N-column-M tiles, which don't exist for this coordinate space.
-        if (isAlienPlanetSurface()) {
+        if (isOffEarthView()) {
             const alienBitmap = buildAlienPlanetBitmap(targetW, targetH, MINIMAP_SCALE);
             if (alienBitmap) setWorldMapSpriteBitmap(alienBitmap);
             return;
@@ -1528,7 +1676,7 @@
     // single already-in-memory canvas, so it can be drawn synchronously with
     // no async load/cache machinery.
     function renderAlienPlanetFullscreen() {
-        const grid = window.GalaxySim && window.GalaxySim.getAlienGridInfo && window.GalaxySim.getAlienGridInfo();
+        const grid = alienGridInfo();
         if (!grid) return;
         const w = Math.max(1, grid.w) * ALIEN_GRID_CELL_PX;
         const h = Math.max(1, grid.h) * ALIEN_GRID_CELL_PX;
@@ -1536,130 +1684,224 @@
         if (bitmap) setWorldMapSpriteBitmap(bitmap);
     }
 
+    // ------------------------------------------------------------------------
+    // Fullscreen world sheet: a streamed layer, not one giant bitmap
+    //
+    // The sheet is 8x8 JPEG segments of 1536px, i.e. 12288x12288. Compositing
+    // that into a single Bitmap allocates a 603MB canvas and uploads it as one
+    // texture on every repaint, which is what made opening the map take seconds
+    // and, on a tight machine, fail outright.
+    //
+    // Instead the map is a container carried by worldMapSprite, so pan and zoom
+    // still apply once, to the parent:
+    //   - a base sprite showing img/pictures/worldmap, the whole world at 1/8
+    //     resolution, already in memory for the minimap, so the map opens on the
+    //     first frame with nothing to load;
+    //   - detail segments streamed in only for the cells the viewport actually
+    //     covers, and dropped again when they leave it;
+    //   - one small overlay bitmap for the grid, the markers and their labels,
+    //     scaled up to sheet space, redrawn only when what it draws changes.
+    // ------------------------------------------------------------------------
+    const WORLD_SHEET_PX = 12288;   // virtual pixel size of the whole sheet
+    const FS_TILE_PX = 1536;
+    const FS_GRID = 8;
+    const FS_OVERLAY_PX = 3072;     // marker/grid layer, upscaled to sheet space
+    const FS_MAX_TILES = 9;         // wider views read fine off the base image
+    const FS_MAX_LOADING = 3;
+
+    let fsLayer = null;       // container parented to worldMapSprite
+    let fsBase = null;        // whole-world low resolution sprite
+    let fsTileLayer = null;   // streamed detail segments
+    let fsOverlay = null;     // grid + entity markers
+    const fsTiles = new Map(); // "row,col" -> { sprite, bitmap }
+    let fsLoading = 0;
+    let fsGeneration = 0;     // invalidates in-flight tile loads
+    let fsOverlayKey = null;
+    let blankBitmap = null;
+
+    // The sheet pixel size, whichever fullscreen view is up. Screen space math
+    // used to read worldMapSprite.bitmap.width; the world sheet no longer has a
+    // bitmap of its own, so it answers here instead.
+    function fullscreenMapDims() {
+        if (isLiveSprite(worldMapSprite) && worldMapSprite.bitmap &&
+            worldMapSprite.bitmap !== blankBitmap && worldMapSprite.bitmap.width > 1) {
+            return { w: worldMapSprite.bitmap.width, h: worldMapSprite.bitmap.height };
+        }
+        if (fsLayer) return { w: WORLD_SHEET_PX, h: WORLD_SHEET_PX };
+        return null;
+    }
+
+    function dropFsTile(key) {
+        const entry = fsTiles.get(key);
+        if (!entry) return;
+        fsTiles.delete(key);
+        if (entry.sprite && entry.sprite.parent) entry.sprite.parent.removeChild(entry.sprite);
+        if (entry.bitmap && typeof entry.bitmap.destroy === 'function') entry.bitmap.destroy();
+    }
+
+    // Tears the layer down without destroying anything shared: the base sprite
+    // draws worldMapBitmap, which the minimap still needs, so the container is
+    // only unparented and the bitmaps this layer owns are freed by hand.
+    function destroyFullscreenLayer() {
+        fsGeneration++;
+        for (const key of Array.from(fsTiles.keys())) dropFsTile(key);
+        if (fsBase && fsBase.parent) fsBase.parent.removeChild(fsBase);
+        if (fsOverlay) {
+            if (fsOverlay.parent) fsOverlay.parent.removeChild(fsOverlay);
+            const bmp = fsOverlay.bitmap;
+            fsOverlay.bitmap = null;
+            if (bmp && typeof bmp.destroy === 'function') bmp.destroy();
+        }
+        if (fsLayer && fsLayer.parent) fsLayer.parent.removeChild(fsLayer);
+        fsLayer = fsBase = fsTileLayer = fsOverlay = null;
+        fsOverlayKey = null;
+        fsLoading = 0;
+    }
+
+    // Everything the fullscreen map caches, dropped in one call.
+    function clearFullscreenCache() {
+        fullscreenBitmap = null;
+        destroyFullscreenLayer();
+    }
+
+    function ensureFullscreenLayer() {
+        if (!isLiveSprite(worldMapSprite)) return null;
+        if (fsLayer && isLiveSprite(fsLayer) && fsLayer.parent === worldMapSprite) return fsLayer;
+        destroyFullscreenLayer();
+        if (!worldMapBitmap || !worldMapBitmap.isReady()) return null;
+
+        fsLayer = new PIXI.Container();
+
+        fsBase = new Sprite(worldMapBitmap);
+        const baseScale = WORLD_SHEET_PX / (worldMapBitmap.width || FS_TILE_PX);
+        fsBase.scale.set(baseScale, baseScale);
+        fsLayer.addChild(fsBase);
+
+        fsTileLayer = new PIXI.Container();
+        fsLayer.addChild(fsTileLayer);
+
+        fsOverlay = new Sprite(new Bitmap(FS_OVERLAY_PX, FS_OVERLAY_PX));
+        const overlayScale = WORLD_SHEET_PX / FS_OVERLAY_PX;
+        fsOverlay.scale.set(overlayScale, overlayScale);
+        fsLayer.addChild(fsOverlay);
+
+        worldMapSprite.addChild(fsLayer);
+        return fsLayer;
+    }
+
+    function loadFsTile(key) {
+        const parts = key.split(',');
+        const row = Number(parts[0]);
+        const col = Number(parts[1]);
+        const generation = fsGeneration;
+        const bitmap = Bitmap.load(`img/worldmap/row-${row + 1}-column-${col + 1}.jpg`);
+        const entry = { sprite: null, bitmap: bitmap };
+        fsTiles.set(key, entry);
+        fsLoading++;
+        bitmap.addLoadListener(() => {
+            fsLoading = Math.max(0, fsLoading - 1);
+            // Dropped from the viewport, or the whole layer rebuilt, while this
+            // segment was still decoding.
+            if (generation !== fsGeneration || fsTiles.get(key) !== entry) return;
+            if (!fsTileLayer || !isLiveSprite(fsTileLayer)) return;
+            const sprite = new Sprite(bitmap);
+            sprite.x = col * FS_TILE_PX;
+            sprite.y = row * FS_TILE_PX;
+            const s = FS_TILE_PX / (bitmap.width || FS_TILE_PX);
+            sprite.scale.set(s, s);
+            entry.sprite = sprite;
+            fsTileLayer.addChild(sprite);
+        });
+    }
+
+    // Load the segments the viewport covers, drop the ones it left. Cheap enough
+    // to run every frame: a handful of divisions plus a set comparison.
+    function updateFullscreenStreaming() {
+        if (!fsLayer || !isLiveSprite(fsLayer) || !zoomScale) return;
+        const cellOf = v => Math.max(0, Math.min(FS_GRID - 1, Math.floor(v / FS_TILE_PX)));
+        const c0 = cellOf((-panX) / zoomScale);
+        const c1 = cellOf((Graphics.width - panX) / zoomScale);
+        const r0 = cellOf((-panY) / zoomScale);
+        const r1 = cellOf((Graphics.height - panY) / zoomScale);
+
+        const wanted = new Set();
+        for (let r = r0; r <= r1; r++) {
+            for (let c = c0; c <= c1; c++) wanted.add(r + ',' + c);
+        }
+        for (const key of Array.from(fsTiles.keys())) {
+            if (!wanted.has(key)) dropFsTile(key);
+        }
+        // Zoomed far enough out that a detail segment would be downsampled past
+        // the base image anyway: leave the sheet on the base and load nothing.
+        if (wanted.size > FS_MAX_TILES) {
+            for (const key of Array.from(fsTiles.keys())) dropFsTile(key);
+            return;
+        }
+        for (const key of wanted) {
+            if (fsTiles.has(key)) continue;
+            if (fsLoading >= FS_MAX_LOADING) break;
+            loadFsTile(key);
+        }
+    }
+
+    // What the overlay draws. Redrawing a 3072px canvas is not free, so it only
+    // happens when one of these actually moved.
+    function fullscreenOverlaySignature() {
+        const world = playerWorldPosition();
+        return [
+            Math.round(world.x * 4), Math.round(world.y * 4),
+            questEdgeSignature(getQuestMarkerTiles()),
+            foundedTownPins().length,
+            $gameMap ? $gameMap.mapId() : 0
+        ].join('|');
+    }
+
+    function redrawFullscreenOverlay() {
+        if (!fsOverlay || !fsOverlay.bitmap) return;
+        const bitmap = fsOverlay.bitmap;
+        bitmap.clear();
+        const ctx = bitmap.context;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.lineWidth = 1;
+        const step = FS_OVERLAY_PX / FS_GRID;
+        for (let i = 1; i < FS_GRID; i++) {
+            const pos = i * step;
+            ctx.beginPath(); ctx.moveTo(pos, 0); ctx.lineTo(pos, FS_OVERLAY_PX); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, pos); ctx.lineTo(FS_OVERLAY_PX, pos); ctx.stroke();
+        }
+        ctx.restore();
+        // The overlay is drawn small and scaled up, so its markers and labels are
+        // sized in overlay pixels: the ratio keeps them the size on screen they
+        // were when the whole sheet was one 12288px bitmap.
+        drawEntitiesOnBitmap(bitmap, FS_OVERLAY_PX, FS_OVERLAY_PX, true, FS_OVERLAY_PX / WORLD_SHEET_PX);
+    }
+
     // Render Logic for Fullscreen (8x8 grid of detailed tiles with async loading)
     function renderFullscreenMap() {
         if ($gameMap && $gameMap.mapId() === BOLOGNA_MAP_ID) {
+            if (fsLayer) destroyFullscreenLayer();
             renderBolognaFullscreen();
             return;
         }
-        if (isAlienPlanetSurface()) {
+        if (isOffEarthView()) {
+            if (fsLayer) destroyFullscreenLayer();
             renderAlienPlanetFullscreen();
             return;
         }
-        const tilePixelSize = 1536; // Each tile is 1536x1536 pixels
-        const gridSize = 8; // 8x8 grid
-        const totalSize = tilePixelSize * gridSize; // 12288x12288 pixels
-
-        // Reuse cached bitmap or create new one
-        if (!fullscreenBitmap) {
-            const target = fullscreenBitmap = new Bitmap(totalSize, totalSize);
-            tilesLoaded = 0;
-            loadFullscreenTiles(target, tilePixelSize, gridSize, totalSize);
+        // The world sheet is drawn by the streamed layer, not by a bitmap on the
+        // sprite itself; the sprite keeps a 1x1 placeholder so its texture stays
+        // valid while the layer under it does the drawing.
+        if (!blankBitmap) blankBitmap = new Bitmap(1, 1);
+        if (worldMapSprite.bitmap !== blankBitmap) setWorldMapSpriteBitmap(blankBitmap);
+        if (!ensureFullscreenLayer()) return;
+        fsLayer.visible = true;
+        updateFullscreenStreaming();
+        const key = fullscreenOverlaySignature();
+        if (key !== fsOverlayKey) {
+            fsOverlayKey = key;
+            redrawFullscreenOverlay();
         }
-
-        setWorldMapSpriteBitmap(fullscreenBitmap);
-    }
-
-    // The world image is 64 JPEG segments of 1536x1536. Requesting all of them at
-    // once stalls the frame and, worse, the old code only painted the grid and the
-    // entity markers once the LAST segment arrived, so a single slow or missing
-    // file left the map with no player dot and no quest markers at all.
-    //
-    // Instead: work outwards from the segment the party is standing in, a few at a
-    // time, and repaint the overlay after every arrival. The area the player cares
-    // about is legible almost immediately and the markers are always drawn.
-    const FULLSCREEN_TILE_BATCH = 4;
-
-    // Which 8x8 segment holds a world coordinate (each segment spans 32 tiles).
-    function playerFullscreenCell(gridSize) {
-        let wx, wy;
-        if ($gameMap && $gameMap.mapId() === 315 && $gamePlayer) {
-            wx = $gamePlayer.x; wy = $gamePlayer.y;
-        } else {
-            wx = $gameVariables ? ($gameVariables.value(43) || 0) : 0;
-            wy = $gameVariables ? ($gameVariables.value(44) || 0) : 0;
-        }
-        const per = WORLD_TILES / gridSize;
-        const clamp = v => Math.max(1, Math.min(gridSize, Math.floor(v / per) + 1));
-        return { row: clamp(wy), col: clamp(wx) };
-    }
-
-    function loadFullscreenTiles(target, tilePixelSize, gridSize, totalSize) {
-        // A focus request centres somewhere other than the player, so load around
-        // whatever the map is about to show rather than around the party.
-        const per = WORLD_TILES / gridSize;
-        const clampCell = v => Math.max(1, Math.min(gridSize, Math.floor(v / per) + 1));
-        const focus = focusTileHint
-            ? { row: clampCell(focusTileHint.y), col: clampCell(focusTileHint.x) }
-            : playerFullscreenCell(gridSize);
-        const order = [];
-        for (let row = 1; row <= gridSize; row++) {
-            for (let col = 1; col <= gridSize; col++) {
-                order.push({
-                    row, col,
-                    d: Math.max(Math.abs(row - focus.row), Math.abs(col - focus.col)),
-                });
-            }
-        }
-        // Nearest first; stable within a ring so the order is deterministic.
-        order.sort((a, b) => a.d - b.d || a.row - b.row || a.col - b.col);
-
-        let next = 0;
-        const pump = () => {
-            if (fullscreenBitmap !== target) return; // cache cleared, abandon
-            while (next < order.length) {
-                const spent = next;
-                if (spent - tilesLoaded >= FULLSCREEN_TILE_BATCH) return; // let some land first
-                const t = order[next++];
-                const tileBitmap = Bitmap.load(`img/worldmap/row-${t.row}-column-${t.col}.jpg`);
-                tileBitmap.addLoadListener(() => {
-                    // The cache may have been cleared (map closed/reopened) while
-                    // this tile was still loading; drop stale blits.
-                    if (fullscreenBitmap !== target) return;
-                    const destX = (t.col - 1) * tilePixelSize;
-                    const destY = (t.row - 1) * tilePixelSize;
-                    target.blt(tileBitmap, 0, 0, tileBitmap.width, tileBitmap.height,
-                        destX, destY, tilePixelSize, tilePixelSize);
-                    tilesLoaded++;
-                    // Grid + player + teleports + quest markers, repainted over
-                    // whatever has arrived so far. Throttled because each repaint
-                    // forces a texture upload of a very large bitmap: paint at once
-                    // for the segment the player is in, then occasionally, then a
-                    // final pass so nothing is missing when loading finishes.
-                    const last = tilesLoaded >= order.length;
-                    if (tilesLoaded === 1 || last || tilesLoaded % 8 === 0) {
-                        drawFullscreenGridLines(target, tilePixelSize, gridSize, totalSize);
-                        refreshWorldMapDisplay();
-                    }
-                    pump();
-                });
-            }
-        };
-        pump();
-    }
-
-    function drawFullscreenGridLines(bitmap, tilePixelSize, gridSize, totalSize) {
-        const ctx = bitmap.context;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.lineWidth = 2;
-
-        for (let i = 1; i < gridSize; i++) {
-            const pos = i * tilePixelSize;
-            // Vertical lines
-            ctx.beginPath();
-            ctx.moveTo(pos, 0);
-            ctx.lineTo(pos, totalSize);
-            ctx.stroke();
-
-            // Horizontal lines
-            ctx.beginPath();
-            ctx.moveTo(0, pos);
-            ctx.lineTo(totalSize, pos);
-            ctx.stroke();
-        }
-
-        // Draw entities after grid
-        drawEntitiesOnBitmap(bitmap, totalSize, totalSize, true);
     }
 
     function renderBolognaFullscreen() {
@@ -1723,6 +1965,16 @@
         const wTiles = $dataMap ? $dataMap.width : 256; 
         const hTiles = $dataMap ? $dataMap.height : 256;
 
+        // The fullscreen sheet is 12288px wide and is drawn zoomed out, so a
+        // marker and a name sized in bitmap pixels alone render a couple of
+        // pixels tall and read as nothing at all. Everything named on the sheet
+        // is sized off the sheet itself, the way the quest markers already are.
+        const markerPx = Math.max(8 * scale, Math.round(targetW / 400));
+        const namePx = Math.max(labelFontSize * scale, Math.round(targetW / 380));
+        // Places and founded towns are named in one pass so their names never
+        // pile up on each other.
+        const placeNames = [];
+
         for (const ev of events) {
             if (!ev || ev._erased) continue;
             const name = ev.event().name || "";
@@ -1730,25 +1982,36 @@
                 const ex = Math.floor((ev.x / wTiles) * targetW);
                 const ey = Math.floor((ev.y / hTiles) * targetH);
 
-                drawSquare(context, ex, ey, '#00FF00', showLabels ? 10 * scale : 6 * scale);
+                drawSquare(context, ex, ey, '#00FF00', showLabels ? markerPx : 6 * scale);
 
                 if (showLabels) {
-                    let labelText = name.replace(/^teleport\s*/i, '').replace(/^-\s*/, '').trim();
-                    if (labelText) {
-                        drawLabel(context, ex, ey, labelText, undefined, labelFontSize * scale);
-                    }
+                    // The event carries the Destinations.json key; the sheet
+                    // shows that entry's readable name.
+                    const labelText = teleportEventLabel(name);
+                    if (labelText) placeNames.push({ x: ex, y: ey, name: labelText });
                 }
             }
+        }
+
+        // 1a. Towns the party founded. They have no teleport event of their own
+        // (nothing on map 315 was ever placed for them), so they are drawn from
+        // the world folder's own register.
+        for (const town of foundedTownPins()) {
+            const tx = Math.floor((town.worldX / WORLD_TILES) * targetW);
+            const ty = Math.floor((town.worldY / WORLD_TILES) * targetH);
+            drawSquare(context, tx, ty, '#FFD27F', showLabels ? markerPx : 6 * scale);
+            // A town the party raised itself is named before any catalogued
+            // place, so a crowded coast never drops it.
+            if (showLabels) placeNames.unshift({ x: tx, y: ty, name: town.name, color: '#FFD27F' });
+        }
+
+        if (showLabels && placeNames.length) {
+            drawMinimapNames(context, placeNames, targetW, targetH, namePx / MINIMAP_NAME_FONT);
         }
 
         // 1b. Active quest objectives. Always in world-tile space (0-255), which
         // is what the world image and the vars 43/44 coordinates both use.
         const questTiles = getQuestMarkerTiles();
-        // The fullscreen sheet is 12288px wide and is drawn zoomed out, so a
-        // 14px label on it renders about 7px on screen. Scale the marker and its
-        // name with the bitmap so the quest name is actually readable.
-        const markerPx = Math.max(8 * scale, Math.round(targetW / 400));
-        const namePx = Math.max(labelFontSize * scale, Math.round(targetW / 380));
         for (const qt of questTiles) {
             const qx = Math.floor((qt.x / WORLD_TILES) * targetW);
             const qy = Math.floor((qt.y / WORLD_TILES) * targetH);
@@ -1917,6 +2180,16 @@
             }
         }
 
+        // Founded towns stand on map 315 without an event of their own, so
+        // their names are written straight over their world square.
+        if ($gameMap.mapId() === 315) {
+            for (const town of foundedTownPins()) {
+                const labelSprite = new Sprite_CityLabel(town.worldX, town.worldY, town.name);
+                tilemap.addChild(labelSprite);
+                cityLabelsContainer.push(labelSprite);
+            }
+        }
+
         // Labels another plugin has hung on this map (Bologna's shop signs).
         // They are tiles rather than events, so they cannot be discovered from
         // the event list, but they are drawn and scrolled by exactly the same
@@ -2012,6 +2285,9 @@
             updateQuestMarkerInteraction();
             updateZoomControls();
             updatePanControls();
+            // The visible segments change with every pan and zoom step, and the
+            // check is cheap, so it rides the same frame rather than a redraw.
+            updateFullscreenStreaming();
             // Sandbox: tap a cell on the Bologna overlay to teleport there.
             if ($gameMap.mapId() === BOLOGNA_MAP_ID && isSandboxEnabled()) {
                 updateBolognaTeleportClick();
@@ -2044,7 +2320,7 @@
         if (vehTravel && !travelOrigin) {
             // Travel just started: snapshot the world origin (vars 43/44 still hold
             // it because vehicle travel keeps the player on the interior map).
-            travelOrigin = { x: $gameVariables.value(43) || 0, y: $gameVariables.value(44) || 0 };
+            travelOrigin = partyWorldSquare();
             if (currentMapState === 0) {
                 autoOpenedForTravel = true;
                 currentMapState = 2; // full world overview
@@ -2186,7 +2462,7 @@
             if (window.BolognaMapSystem.teleportToCell(row, col, tileX, tileY)) {
                 // Close the overlay so the player drops back onto the map.
                 currentMapState = 0;
-                fullscreenBitmap = null;
+                clearFullscreenCache();
                 if (worldMapSprite) worldMapSprite.visible = false;
             }
         }
@@ -2227,6 +2503,10 @@
     Scene_Base.prototype.terminate = function() {
         _Scene_Base_terminate.call(this);
         if (worldMapSprite) {
+            // Unparent the streamed layer first: the scene destroys its children
+            // with their textures, and the base sprite draws the shared world
+            // picture the minimap still needs.
+            destroyFullscreenLayer();
             if (worldMapSprite.parent) worldMapSprite.parent.removeChild(worldMapSprite);
             worldMapSprite = null;
         }
@@ -2244,19 +2524,15 @@
 
         const mapId = $gameMap.mapId();
 
-        // Parse map note for <Coords X Y> tag and set variables 43 & 44.
-        // Skip the world map (315) and the procedural map (636): on those, vars
-        // 43/44 track the live world position. The proc map template carries a
-        // static <Coords 79 125> tag, and applying it here would clobber the real
-        // world coordinates after generation, sending the minimap to 79,125.
-        if (mapId !== 315 && mapId !== 636 && $dataMap && $dataMap.note) {
-            const coordsMatch = $dataMap.note.match(/<Coords\s*(\d+)\s+(\d+)>/i);
-            if (coordsMatch) {
-                const coordX = parseInt(coordsMatch[1]);
-                const coordY = parseInt(coordsMatch[2]);
-                $gameVariables.setValue(43, coordX);
-                $gameVariables.setValue(44, coordY);
-            }
+        // Where the party now is, filed once through the coordinate service.
+        // This used to parse <Coords X Y> here and write vars 43/44 itself,
+        // which took the editor template's default pair literally and stamped
+        // 79,125 (or a stale hand-written tag) over the party's real square:
+        // the chart then drew a corner of the world they had never been to.
+        // syncPlayerWorld reads the same tag with the template filtered out and
+        // leaves an alien landing grid alone.
+        if (window.WorldMapTransfer && window.WorldMapTransfer.syncPlayerWorld) {
+            window.WorldMapTransfer.syncPlayerWorld(mapId);
         }
 
         // Minimap permanence logic: check if the map explicitly disables minimap (<NoMinimap>)
@@ -2274,7 +2550,7 @@
             if ($gameSystem) $gameSystem._minimapState = 1;
         }
 
-        currentMapState = noMinimap ? 0 : savedState;
+        currentMapState = (noMinimap || !modeAllowsMinimap()) ? 0 : savedState;
 
         if (currentMapState > 0) {
             createWorldMapSprite();

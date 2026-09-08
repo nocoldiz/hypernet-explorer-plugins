@@ -65,5 +65,7 @@
   "clickToRecruit": "Click to recruit",
   "cannotAfford": "Cannot afford",
   "combatStatistics": "Combat Statistics",
-  "release": "Release"
+  "release": "Release",
+  "practiceBattle": "Practice Battle",
+  "practiceTooFew": "Two fighting troops are needed for a drill."
 }

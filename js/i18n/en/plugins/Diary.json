@@ -1,311 +1,323 @@
 {
- "title": "Diary",
- "opening": "{names} opened this diary at {place}.",
- "empty": "Nothing written here yet.",
- "date": {
-  "heading": "{day} {month} {year}",
-  "continued": "{day} {month} {year}, continued"
- },
- "month": {
-  "jan": "January",
-  "feb": "February",
-  "mar": "March",
-  "apr": "April",
-  "may": "May",
-  "jun": "June",
-  "jul": "July",
-  "aug": "August",
-  "sep": "September",
-  "oct": "October",
-  "nov": "November",
-  "dec": "December"
- },
- "cat": {
-  "all": "Everything",
-  "journey": "Journey",
-  "rest": "Rest",
-  "combat": "Fighting",
-  "party": "Company",
-  "people": "People",
-  "health": "Health",
-  "wealth": "Belongings",
-  "law": "Law",
-  "work": "Work",
-  "knowledge": "Learning",
-  "leisure": "Diversions",
-  "other": "Other"
- },
- "foot": {
-  "ours": "The diary of {names}",
-  "theirs": "Kept by {names}",
-  "unknown": "An unsigned diary",
-  "page": "Page {shown} of {total}"
- },
- "fmt": {
-  "itemCount": "{name} x{count}",
-  "and": "{a} and {b}"
- },
- "eris": {
-  "wonderful": "wonderfully",
-  "warm": "warmly",
-  "awkward": "awkwardly",
-  "disaster": "disastrously"
- },
- "surgery": {
-  "success": "and it held",
-  "failure": "and it did not hold"
- },
- "worlds": {
-  "tab": "Diaries",
-  "none": "No party has kept a diary in this world yet.",
-  "entry": "{names}",
-  "meta": "{count} lines, last seen at {place}",
-  "unknownParty": "An unnamed party",
-  "read": "Read"
- },
- "entry": {
-  "note": "{text}",
-  "travel": {
-   "depart": "Left {from} for {to} by {transport} at {time}, {km} km ahead of us.",
-   "arrive": "Reached {to} at {time}, after {hours}h {minutes}m on the road.",
-   "refuel": "Put {litres} litres into {vehicle} at {place}."
+  "title": "Diary",
+  "opening": "{names} opened this diary at {place}.",
+  "empty": "Nothing written here yet.",
+  "date": {
+    "heading": "{day} {month} {year}",
+    "continued": "{day} {month} {year}, continued"
   },
-  "landing": {
-   "planet": "Set the ship down on {planet}, in the {system} system, at {time}.",
-   "site": "Touched down at {place} at {time}."
+  "month": {
+    "jan": "January",
+    "feb": "February",
+    "mar": "March",
+    "apr": "April",
+    "may": "May",
+    "jun": "June",
+    "jul": "July",
+    "aug": "August",
+    "sep": "September",
+    "oct": "October",
+    "nov": "November",
+    "dec": "December"
   },
-  "warp": {
-   "system": "Opened a bridge straight to {system} at {time}.",
-   "orbit": "Bridged into orbit of {planet}, {system}, at {time}.",
-   "galaxy": "Bridged out of {from} altogether: {system}, in {galaxy}, at {time}."
+  "cat": {
+    "all": "Everything",
+    "journey": "Journey",
+    "rest": "Rest",
+    "combat": "Fighting",
+    "party": "Company",
+    "people": "People",
+    "health": "Health",
+    "wealth": "Belongings",
+    "law": "Law",
+    "work": "Work",
+    "knowledge": "Learning",
+    "leisure": "Diversions",
+    "written": "Our Hand",
+    "other": "Other"
   },
-  "place": {
-   "entered": "Came to {place} at {time}."
+  "foot": {
+    "ours": "The diary of {names}",
+    "theirs": "Kept by {names}",
+    "unknown": "An unsigned diary",
+    "page": "Page {shown} of {total}"
   },
-  "structure": {
-   "entered": "Went down into {place} at {time}."
-  },
-  "floor": {
-   "changed": "Down to floor {floor} of {place}."
-  },
-  "rest": {
-   "sleep": "Slept {hours} hours at {place}, from {from} to {to}.",
-   "wait": "Waited {hours} hours at {place}, from {from} to {to}.",
-   "cryo": "Into the cryogenic pod at {from}, and out again on {date}."
-  },
-  "battle": {
-   "won": "Beat {enemies}. {exp} experience and {gold} between us.",
-   "boss": "Felled {name}, level {level}, and it was no ordinary creature.",
-   "petrodemon": "Put down a petrodemon, {name}, level {level}.",
-   "fled": "Ran for it at {place}.",
-   "lost": "Lost the fight against {enemies}.",
-   "lostAnon": "Lost the fight at {place}.",
-   "arena": "Arena: {streak} wins in a row."
-  },
-  "party": {
-   "join": "{name} joined us, a {cls} of level {level}.",
-   "leave": "{name} went their own way.",
-   "death": "{name} died at {place}, level {level}.",
-   "retire": "{name} stayed behind at {place}.",
-   "recall": "Called an old companion back off the bench.",
-   "level": "{name} reached level {level}.",
-   "leader": "{name} leads the party now."
-  },
-  "pet": {
-   "join": "Took in {name}, a {kind}.",
-   "follower": "{name} decided to come along with us.",
-   "abandon": "Left {name} behind at {place}."
-  },
-  "birth": {
-   "pregnant": "{name} is expecting.",
-   "born": "{parent} gave birth to {child}.",
-   "mitosis": "{name} divided. There are two of them now: {copy}."
-  },
-  "npc": {
-   "friend": "{name} and {npc} are friends now.",
-   "enemy": "{npc} has no more time for {name}.",
-   "romance": "{name} and {npc}: {stage}."
+  "fmt": {
+    "itemCount": "{name} x{count}",
+    "and": "{a} and {b}",
+    "repeat": "{text} (x{count})"
   },
   "eris": {
-   "date": "An evening with Eris at {place}, from {time}.",
-   "dateEnd": "It went {outcome}. She is at {opinion} with us."
+    "wonderful": "wonderfully",
+    "warm": "warmly",
+    "awkward": "awkwardly",
+    "disaster": "disastrously"
   },
-  "faction": {
-   "standing": "Where we stand with {faction} has moved: {value}."
+  "surgery": {
+    "success": "and it held",
+    "failure": "and it did not hold"
   },
-  "health": {
-   "disease": "{name} came down with {disease}, off {source}.",
-   "epidemic": "{name} caught {disease} in the outbreak.",
-   "cured": "{name} is over {disease}.",
-   "partLost": "{name} lost {part}.",
-   "augmentLost": "{name} lost the {augment} with it.",
-   "augmentFit": "{name} was fitted with a {augment} on the {part}.",
-   "surgery": "{surgeon} operated on {patient}, {outcome}.",
-   "relief": "{name} took a moment for themselves."
+  "worlds": {
+    "tab": "Diaries",
+    "none": "No party has kept a diary in this world yet.",
+    "entry": "{names}",
+    "meta": "{count} lines, last seen at {place}",
+    "unknownParty": "An unnamed party",
+    "read": "Read"
   },
-  "item": {
-   "found": "Found {item} x{count} at {place}.",
-   "artifactGot": "The {item} is ours, taken at {place}.",
-   "artifactLost": "The {item} is gone."
+  "entry": {
+    "note": "{text}",
+    "travel": {
+      "depart": "Left {from} for {to} by {transport} at {time}, {km} km ahead of us.",
+      "arrive": "Reached {to} at {time}, after {hours}h {minutes}m on the road.",
+      "refuel": "Put {litres} litres into {vehicle} at {place}."
+    },
+    "landing": {
+      "planet": "Set the ship down on {planet}, in the {system} system, at {time}.",
+      "site": "Touched down at {place} at {time}."
+    },
+    "warp": {
+      "system": "Opened a bridge straight to {system} at {time}.",
+      "orbit": "Bridged into orbit of {planet}, {system}, at {time}.",
+      "galaxy": "Bridged out of {from} altogether: {system}, in {galaxy}, at {time}."
+    },
+    "place": {
+      "entered": "Came to {place} at {time}."
+    },
+    "structure": {
+      "entered": "Went down into {place} at {time}."
+    },
+    "floor": {
+      "changed": "Down to floor {floor} of {place}."
+    },
+    "rest": {
+      "sleep": "Slept {hours} hours at {place}, from {from} to {to}.",
+      "wait": "Waited {hours} hours at {place}, from {from} to {to}.",
+      "cryo": "Into the cryogenic pod at {from}, and out again on {date}."
+    },
+    "battle": {
+      "won": "Beat {enemies}. {exp} experience and {gold} between us.",
+      "boss": "Felled {name}, level {level}, and it was no ordinary creature.",
+      "petrodemon": "Put down a petrodemon, {name}, level {level}.",
+      "fled": "Ran for it at {place}.",
+      "lost": "Lost the fight against {enemies}.",
+      "lostAnon": "Lost the fight at {place}.",
+      "arena": "Arena: {streak} wins in a row."
+    },
+    "party": {
+      "join": "{name} joined us, a {cls} of level {level}.",
+      "leave": "{name} went their own way.",
+      "death": "{name} died at {place}, level {level}.",
+      "retire": "{name} stayed behind at {place}.",
+      "recall": "Called an old companion back off the bench.",
+      "level": "{name} reached level {level}.",
+      "leader": "{name} leads the party now."
+    },
+    "pet": {
+      "join": "Took in {name}, a {kind}.",
+      "follower": "{name} decided to come along with us.",
+      "abandon": "Left {name} behind at {place}."
+    },
+    "birth": {
+      "pregnant": "{name} is expecting.",
+      "born": "{parent} gave birth to {child}.",
+      "mitosis": "{name} divided. There are two of them now: {copy}."
+    },
+    "npc": {
+      "friend": "{name} and {npc} are friends now.",
+      "enemy": "{npc} has no more time for {name}.",
+      "romance": "{name} and {npc}: {stage}."
+    },
+    "eris": {
+      "date": "An evening with Eris at {place}, from {time}.",
+      "dateEnd": "It went {outcome}. She is at {opinion} with us."
+    },
+    "faction": {
+      "standing": "Where we stand with {faction} has moved: {value}."
+    },
+    "health": {
+      "disease": "{name} came down with {disease}, off {source}.",
+      "epidemic": "{name} caught {disease} in the outbreak.",
+      "cured": "{name} is over {disease}.",
+      "partLost": "{name} lost {part}.",
+      "augmentLost": "{name} lost the {augment} with it.",
+      "augmentFit": "{name} was fitted with a {augment} on the {part}.",
+      "surgery": "{surgeon} operated on {patient}, {outcome}.",
+      "relief": "{name} took a moment for themselves."
+    },
+    "item": {
+      "found": "Found {item} x{count} at {place}.",
+      "artifactGot": "The {item} is ours, taken at {place}.",
+      "artifactLost": "The {item} is gone.",
+      "foundMany": "Found {items} at {place}.",
+      "artifactGotMany": "The {items} are ours, taken at {place}."
+    },
+    "container": {
+      "stored": "Placed {items} in a container at {place}."
+    },
+    "shop": {
+      "buy": "Bought {items} from {place}, {total}.",
+      "sell": "Sold {items} at {place} for {total}.",
+      "order": "Ordered {items} off the Hypernet, {total}."
+    },
+    "property": {
+      "bought": "Bought {property} at {place}.",
+      "sold": "Sold {property}.",
+      "rented": "Took a room at {place} for {price}."
+    },
+    "bank": {
+      "loan": "Borrowed {amount} from {bank}.",
+      "repaid": "Paid back {amount}."
+    },
+    "stock": {
+      "trade": "{action} {count} of {stock} at {price}."
+    },
+    "crime": {
+      "committed": "{crime}, at {place}. Worth {bounty} to somebody.",
+      "settled": "Settled the charge of {crime}."
+    },
+    "steal": {
+      "success": "Lifted {item} from {place}.",
+      "caught": "Tried for {item} at {place} and was seen."
+    },
+    "law": {
+      "trial": "Stood trial at {place}.",
+      "verdict": "{verdict}. {sentence}",
+      "prison": "Sent down: {term}."
+    },
+    "work": {
+      "shift": "Worked a shift as {job} at {place}, {hours} hours for {pay}."
+    },
+    "farm": {
+      "sown": "Sowed {plant} at {place}.",
+      "harvested": "Took in the {plant} at {place}."
+    },
+    "animal": {
+      "bought": "Bought a {animal} for {place}.",
+      "produce": "Collected {items} from the {animal} at {place}."
+    },
+    "apiary": {
+      "harvest": "Took {items} off the hives at {place}."
+    },
+    "craft": {
+      "forge": "Forged {item} x{count} at {place}.",
+      "cook": "Cooked {item} x{count} at {place}.",
+      "alchemy": "Brewed {item} x{count} at the bench.",
+      "brew": "Set {item} x{count} to ferment at {place}."
+    },
+    "build": {
+      "placed": "Put up {item} at {place}.",
+      "dismantled": "Pulled down {item} at {place}."
+    },
+    "skill": {
+      "learned": "{name} learned {skill}.",
+      "learnedMany": "{name} learned {skills}."
+    },
+    "spec": {
+      "tier": "{name} is {tier} at {spec} now."
+    },
+    "tech": {
+      "researched": "Worked out {tech}."
+    },
+    "quest": {
+      "accepted": "Took on {quest} at {place}.",
+      "completed": "Finished {quest}."
+    },
+    "bestiary": {
+      "found": "Wrote up {creature} in the bestiary."
+    },
+    "alien": {
+      "identified": "Named a new species on {planet}: {species}."
+    },
+    "minigame": {
+      "played": "Played {game} at {place}. {outcome} {score}"
+    },
+    "tv": {
+      "watched": "Watched {programme} on {channel} at {place}."
+    },
+    "dream": {
+      "had": "Dreamed. {dream}"
+    },
+    "mail": {
+      "sent": "Posted a letter to {to}: {subject}",
+      "dimension": "Posted a letter across the dimensions, to {to} in {world}: {subject}"
+    },
+    "mining": {
+      "stripped": "Stripped {body} out entirely, in {system}."
+    },
+    "adventure": {
+      "done": "Answered {adventure} at {place}. {reward}"
+    }
   },
-  "container": {
-   "stored": "Placed {items} in a container at {place}."
+  "game": {
+    "arcade": "the arcade",
+    "frogger": "Frogger",
+    "snake": "Snake",
+    "bubblePop": "Bubble Pop",
+    "slots": "the slot machine",
+    "bowling": "bowling",
+    "pool": "pool",
+    "lockpick": "a lock",
+    "tetris": "Tetris",
+    "scratchCard": "a scratch card",
+    "horseRace": "the horses",
+    "tarot": "the tarot",
+    "fishing": "fishing",
+    "surfing": "surfing",
+    "targetRange": "the shooting range",
+    "piano": "the piano",
+    "periodicTable": "the periodic table",
+    "raman": "the spectroscope",
+    "chess": "chess",
+    "tournament": "the monster tournament",
+    "hyperTamer": "Hyper Tamer",
+    "boosters": "booster packs",
+    "cardDuel": "a card duel",
+    "dream": "a dream"
   },
-  "shop": {
-   "buy": "Bought {items} from {place}, {total}.",
-   "sell": "Sold {items} at {place} for {total}.",
-   "order": "Ordered {items} off the Hypernet, {total}."
+  "romance": {
+    "flirt": "a little flirting",
+    "admire": "an admiring word",
+    "loveLetter": "a love letter",
+    "serenade": "a serenade",
+    "askDance": "a dance",
+    "holdHands": "held hands",
+    "askOut": "an evening out",
+    "confess": "a confession",
+    "kiss": "a kiss"
   },
-  "property": {
-   "bought": "Bought {property} at {place}.",
-   "sold": "Sold {property}.",
-   "rented": "Took a room at {place} for {price}."
+  "vehicle": {
+    "camper": "the camper",
+    "car": "the car",
+    "bike": "the bike",
+    "boat": "the boat",
+    "airship": "the starship",
+    "broom": "the broom"
   },
-  "bank": {
-   "loan": "Borrowed {amount} from {bank}.",
-   "repaid": "Paid back {amount}."
+  "verdict": {
+    "acquitted": "Acquitted",
+    "guilty": "Guilty"
+  },
+  "term": {
+    "open": "no term named",
+    "fixed": "{days} days and {hours} hours"
+  },
+  "trade": {
+    "bought": "Bought",
+    "sold": "Sold"
   },
   "stock": {
-   "trade": "{action} {count} of {stock} at {price}."
+    "oil": "oil",
+    "souls": "souls"
   },
-  "crime": {
-   "committed": "{crime}, at {place}. Worth {bounty} to somebody.",
-   "settled": "Settled the charge of {crime}."
+  "place": {
+    "stockbusters": "Stockbusters"
   },
-  "steal": {
-   "success": "Lifted {item} from {place}.",
-   "caught": "Tried for {item} at {place} and was seen."
-  },
-  "law": {
-   "trial": "Stood trial at {place}.",
-   "verdict": "{verdict}. {sentence}",
-   "prison": "Sent down: {term}."
-  },
-  "work": {
-   "shift": "Worked a shift as {job} at {place}, {hours} hours for {pay}."
-  },
-  "farm": {
-   "sown": "Sowed {plant} at {place}.",
-   "harvested": "Took in the {plant} at {place}."
-  },
-  "animal": {
-   "bought": "Bought a {animal} for {place}.",
-   "produce": "Collected {items} from the {animal} at {place}."
-  },
-  "apiary": {
-   "harvest": "Took {items} off the hives at {place}."
-  },
-  "craft": {
-   "forge": "Forged {item} x{count} at {place}.",
-   "cook": "Cooked {item} x{count} at {place}.",
-   "alchemy": "Brewed {item} x{count} at the bench.",
-   "brew": "Set {item} x{count} to ferment at {place}."
-  },
-  "build": {
-   "placed": "Put up {item} at {place}.",
-   "dismantled": "Pulled down {item} at {place}."
-  },
-  "skill": {
-   "learned": "{name} learned {skill}."
-  },
-  "spec": {
-   "tier": "{name} is {tier} at {spec} now."
-  },
-  "tech": {
-   "researched": "Worked out {tech}."
-  },
-  "quest": {
-   "accepted": "Took on {quest} at {place}.",
-   "completed": "Finished {quest}."
-  },
-  "bestiary": {
-   "found": "Wrote up {creature} in the bestiary."
-  },
-  "alien": {
-   "identified": "Named a new species on {planet}: {species}."
-  },
-  "minigame": {
-   "played": "Played {game} at {place}. {outcome} {score}"
-  },
-  "tv": {
-   "watched": "Watched {programme} on {channel} at {place}."
-  },
-  "dream": {
-   "had": "Dreamed. {dream}"
-  },
-  "mail": {
-   "sent": "Posted a letter to {to}: {subject}",
-   "dimension": "Posted a letter across the dimensions, to {to} in {world}: {subject}"
-  },
-  "mining": {
-   "stripped": "Stripped {body} out entirely, in {system}."
-  },
-  "adventure": {
-   "done": "Answered {adventure} at {place}. {reward}"
+  "write": {
+    "button": "Write",
+    "title": "Write in the diary",
+    "placeholder": "What is worth remembering?",
+    "save": "Write it",
+    "cancel": "Never mind"
   }
- },
- "game": {
-  "arcade": "the arcade",
-  "frogger": "Frogger",
-  "snake": "Snake",
-  "bubblePop": "Bubble Pop",
-  "slots": "the slot machine",
-  "bowling": "bowling",
-  "pool": "pool",
-  "lockpick": "a lock",
-  "tetris": "Tetris",
-  "scratchCard": "a scratch card",
-  "horseRace": "the horses",
-  "tarot": "the tarot",
-  "fishing": "fishing",
-  "surfing": "surfing",
-  "targetRange": "the shooting range",
-  "piano": "the piano",
-  "periodicTable": "the periodic table",
-  "raman": "the spectroscope",
-  "chess": "chess",
-  "tournament": "the monster tournament",
-  "hyperTamer": "Hyper Tamer",
-  "boosters": "booster packs",
-  "cardDuel": "a card duel",
-  "dream": "a dream"
- },
- "romance": {
-  "flirt": "a little flirting",
-  "admire": "an admiring word",
-  "loveLetter": "a love letter",
-  "serenade": "a serenade",
-  "askDance": "a dance",
-  "holdHands": "held hands",
-  "askOut": "an evening out",
-  "confess": "a confession",
-  "kiss": "a kiss"
- },
- "vehicle": {
-  "camper": "the camper",
-  "car": "the car",
-  "bike": "the bike",
-  "boat": "the boat",
-  "airship": "the starship",
-  "broom": "the broom"
- },
- "verdict": {
-  "acquitted": "Acquitted",
-  "guilty": "Guilty"
- },
- "term": {
-  "open": "no term named",
-  "fixed": "{days} days and {hours} hours"
- },
- "trade": {
-  "bought": "Bought",
-  "sold": "Sold"
- },
- "stock": {
-  "oil": "oil",
-  "souls": "souls"
- },
- "place": {
-  "stockbusters": "Stockbusters"
- }
 }

@@ -281,6 +281,27 @@
         return !!commit && (isMajorMessage(commit.message) || isMajorMessage(commit.body));
     }
 
+    // Version strings compared field by field ("0.4.0a" against "0.5.3a"), with
+    // the letter suffix of the last field as a final tiebreak. Returns a
+    // negative number when `a` is older, 0 when they match, positive when it is
+    // newer, and null when either side cannot be read as a version.
+    const VERSION_PARTS = /^v?(\d+)\.(\d+)(?:\.(\d+))?([A-Za-z]*)/;
+    function versionFields(text) {
+        const m = String(text || '').trim().match(VERSION_PARTS);
+        if (!m) return null;
+        return [Number(m[1]), Number(m[2]), Number(m[3] || 0), (m[4] || '').toLowerCase()];
+    }
+    function compareVersions(a, b) {
+        const x = versionFields(a);
+        const y = versionFields(b);
+        if (!x || !y) return null;
+        for (let i = 0; i < 3; i++) {
+            if (x[i] !== y[i]) return x[i] - y[i];
+        }
+        if (x[3] === y[3]) return 0;
+        return x[3] < y[3] ? -1 : 1;
+    }
+
     function formatBytes(bytes) {
         const b = Number(bytes) || 0;
         if (b < 1024) return b + ' B';
@@ -658,19 +679,8 @@
             const box = document.createElement('div');
             box.id = 'gu-closing-notice';
             box.textContent = getT().closingNotice || 'Closing the game to apply update';
-            Object.assign(box.style, {
-                position: 'fixed', left: '0', top: '0', width: '100%', height: '100%',
-                zIndex: '100000', display: 'flex',
-                alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-                padding: '0 6%', boxSizing: 'border-box',
-                background: 'rgba(0, 0, 0, 0.92)', color: '#FFD700',
-                fontFamily: "'Square', monospace", fontSize: '28px',
-                fontWeight: 'bold', letterSpacing: '2px',
-                textShadow: '0 0 6px #000', userSelect: 'none',
-                opacity: '0', transition: 'opacity 0.18s ease-out'
-            });
             document.body.appendChild(box);
-            requestAnimationFrame(() => { box.style.opacity = '1'; });
+            requestAnimationFrame(() => { box.classList.add('gu-shown'); });
         } catch (e) {
             console.warn(PLUGIN_NAME + ': could not show the closing notice', e);
         }
@@ -797,7 +807,7 @@
         // on its plan.
         isMajorBuild(sha) {
             if (!sha) return false;
-            return isMajorCommit(this.commitInfo(sha) || this._plans[sha]);
+            return this._majorHere(this.commitInfo(sha) || this._plans[sha]);
         },
 
         // The newest build declaring a major update among the ones switching to
@@ -813,13 +823,30 @@
         // whose files already match has nothing to install and is never asked
         // this question, so the only copies it can over-warn are ones that are
         // genuinely behind.
+        // A major build this copy has already caught up with is not ahead of
+        // it. The version written in the shipped CHANGELOG.txt is what this
+        // copy runs, so a major build published under an older or equal
+        // version has been crossed already, whatever the install record says,
+        // and the whole-game download it asks for is not owed any more.
+        majorCrossedByVersion(commit) {
+            const own = this.gameVersion();
+            if (!own || !commit) return false;
+            const theirs = this._versionName(messageTitle(commit.message)) ||
+                messageTitle(commit.message);
+            const cmp = compareVersions(theirs, own);
+            return cmp !== null && cmp <= 0;
+        },
+        _majorHere(commit) {
+            return isMajorCommit(commit) && !this.majorCrossedByVersion(commit);
+        },
+
         majorAhead(sha) {
             if (!sha) return null;
             const list = this.commits();
             const target = list.findIndex(c => c.sha === sha);
             if (target < 0) {
                 const lone = this.commitInfo(sha) || this._plans[sha];
-                return isMajorCommit(lone) ? lone : null;
+                return this._majorHere(lone) ? lone : null;
             }
             const info = this.installedInfo();
             const from = info ? list.findIndex(c => c.sha === info.sha) : -1;
@@ -827,7 +854,7 @@
             const hi = from < 0 ? list.length - 1 : Math.max(target, from);
             for (let i = lo; i <= hi; i++) {
                 if (i === from) continue;   // the build already running is not crossed
-                if (isMajorCommit(list[i])) return list[i];
+                if (this._majorHere(list[i])) return list[i];
             }
             return null;
         },
@@ -924,9 +951,9 @@
             const FIX = '(hotfix|hot-fix|patch|hf)\\s*[.#]?\\s*(\\d+)?';
             const plain = str.match(new RegExp('^v?' + VERSION + '$', 'i'));
             if (plain) return plain[1];
-            const trailing = str.match(new RegExp('^v?' + VERSION + '\\s*[-–-:,]?\\s*' + FIX + '$', 'i'));
+            const trailing = str.match(new RegExp('^v?' + VERSION + '\\s*[\u2013:,-]?\\s*' + FIX + '$', 'i'));
             const leading  = trailing ? null
-                : str.match(new RegExp('^' + FIX + '\\s*[-–-:,]?\\s*v?' + VERSION + '$', 'i'));
+                : str.match(new RegExp('^' + FIX + '\\s*[\u2013:,-]?\\s*v?' + VERSION + '$', 'i'));
             if (trailing) return trailing[1] + ' hotfix' + (trailing[3] ? ' ' + trailing[3] : '');
             if (leading)  return leading[3] + ' hotfix' + (leading[2] ? ' ' + leading[2] : '');
             return null;
@@ -1723,13 +1750,11 @@
 
             this._container = document.createElement('div');
             this._container.id = 'game-updater-container';
-            this._container.style.opacity    = '0';
-            this._container.style.transition = 'opacity 0.22s ease-out';
             document.body.appendChild(this._container);
 
             this._refreshDOM();
             UpdaterInput.activate(this);
-            setTimeout(() => { if (this._container) this._container.style.opacity = '1'; }, 16);
+            setTimeout(() => { if (this._container) this._container.classList.add('gu-shown'); }, 16);
 
             // Opening the screen is itself the request for an update: the
             // branch is read and the newest build taken, without a press.
@@ -1754,9 +1779,8 @@
             UpdaterInput.deactivate();
             if (this._container) {
                 const c = this._container;
-                c.style.transition    = 'opacity 0.2s ease-out';
-                c.style.opacity       = '0';
-                c.style.pointerEvents = 'none';
+                c.classList.remove('gu-shown');
+                c.classList.add('gu-closing');
                 setTimeout(() => { if (c.parentNode) c.parentNode.removeChild(c); }, 200);
                 this._container = null;
                 this._dom = null;
@@ -2165,14 +2189,14 @@
                 <div class="book-spread">
                     <div class="left-page" id="gu-left-page">
                         <div class="page-header-bar">
-                            <button class="back-button" id="gu-back-btn">${T.back}</button>
+                            <button class="back-button focusable" id="gu-back-btn">${T.back}</button>
                             <h2 class="title">${T.title}</h2>
                         </div>
-                        <div class="gu-tabs" id="gu-tabs"></div>
-                        <div class="gu-build-header" id="gu-build-header"></div>
-                        <div class="gu-build-list" id="gu-build-list"></div>
-                        <div class="gu-console" id="gu-console">
-                            <div class="gu-log" id="gu-log"></div>
+                        <div class="backpack-tabs" id="gu-tabs"></div>
+                        <div class="inspect-section-title" id="gu-build-header"></div>
+                        <div class="ui-list ui-scroll" id="gu-build-list"></div>
+                        <div class="gu-console">
+                            <div class="gu-log ui-scroll" id="gu-log"></div>
                             <div class="gu-progress gu-progress--idle" id="gu-progress">
                                 <div class="gu-progress-fill" id="gu-progress-fill"></div>
                             </div>
@@ -2180,18 +2204,20 @@
                         <div class="mod-hint-bar" id="gu-hint"></div>
                     </div>
                     <div class="right-page" id="gu-right-page">
-                        <div class="item-inspect">
-                            <div class="inspect-header">
-                                <div class="inspect-title-box">
-                                    <div class="inspect-name" id="gu-name"></div>
-                                    <div class="inspect-rarity" id="gu-status"></div>
+                        <div class="ui-detail">
+                            <div class="ui-detail-head">
+                                <div class="ui-detail-titles">
+                                    <h3 id="gu-name"></h3>
+                                    <div class="ui-detail-sub" id="gu-status"></div>
                                 </div>
                             </div>
-                            <div class="gu-note" id="gu-note" style="display:none"></div>
-                            <div class="inspect-lore" id="gu-specs"></div>
-                            <div class="gu-changelog" id="gu-changelog" style="display:none"></div>
+                            <div class="ui-detail-scroll ui-scroll">
+                                <div class="gu-note" id="gu-note" hidden></div>
+                                <div class="inspect-spec-grid" id="gu-specs"></div>
+                                <div class="gu-changelog" id="gu-changelog" hidden></div>
+                                <div class="gu-files" id="gu-files" hidden></div>
+                            </div>
                             <div class="inspect-actions" id="gu-actions"></div>
-                            <div class="gu-files" id="gu-files" style="display:none"></div>
                         </div>
                     </div>
                 </div>`;
@@ -2244,7 +2270,7 @@
             const label = { stable: T.tabStable, unstable: T.tabUnstable };
             const current = GameUpdater.channel();
             return list.map(ch => `
-                <button class="gu-tab${ch.key === current ? ' gu-tab--active' : ''}" data-channel="${esc(ch.key)}">
+                <button class="backpack-tab focusable gu-tab${ch.key === current ? ' selected' : ''}" tabindex="0" data-channel="${esc(ch.key)}">
                     <span class="gu-tab-name">${esc(label[ch.key] || ch.key.toUpperCase())}</span>
                     <span class="gu-tab-branch">${esc(ch.branch)}</span>
                 </button>`).join('');
@@ -2253,19 +2279,21 @@
         _renderTabs(T) {
             const html = this._tabsHTML(T);
             if (this._setRegion('tabs', this._dom.tabs, html)) this._wireTabs();
-            if (this._dom.tabs) this._dom.tabs.style.display = html ? '' : 'none';
+            if (this._dom.tabs) this._dom.tabs.hidden = !html;
         }
 
         _wireTabs() {
             if (!this._dom.tabs) return;
-            this._dom.tabs.querySelectorAll('.gu-tab[data-channel]').forEach(btn => {
+            this._dom.tabs.querySelectorAll('.backpack-tab[data-channel]').forEach(btn => {
                 btn.addEventListener('click', () => this._switchChannel(btn.dataset.channel));
             });
         }
 
         _buildListHTML(T) {
             const commits = GameUpdater.commits();
-            if (!commits.length) return `<div class="gu-build-empty">${esc(this._emptyText(T))}</div>`;
+            if (!commits.length) {
+                return `<div class="ui-empty"><div class="ui-empty-text">${esc(this._emptyText(T))}</div></div>`;
+            }
             // Neither the cursor nor the check badge is in here: both are
             // applied to the standing nodes afterwards, so moving the cursor or
             // checking a build never rewrites a single row.
@@ -2275,19 +2303,19 @@
                 // A major build wears its own mark, beside whichever of the two
                 // above it already carries.
                 const major = isMajorCommit(commit);
+                const title = messageTitle(commit.message) || T.unknown;
+                const name = GameUpdater._versionName(title) || title;
+                const sub = [shortSha(commit.sha), formatDate(commit.date) || T.unknown, commit.author || '']
+                    .filter(Boolean).join('  ·  ');
                 return `
-                    <div class="gu-build" data-idx="${i}">
-                        <div class="gu-build-head">
-                            <span class="gu-build-sha">${esc(shortSha(commit.sha))}</span>
-                            <span class="gu-build-date">${esc(formatDate(commit.date) || T.unknown)}</span>
-                            ${major ? `<span class="gu-build-tag gu-build-tag--major">${esc(T.tagMajor)}</span>` : ''}
-                            ${tag ? `<span class="gu-build-tag">${esc(tag)}</span>` : ''}
+                    <div class="item-slot gu-build focusable" data-idx="${i}" tabindex="0">
+                        <div class="item-slot-info">
+                            <div class="item-slot-name">${esc(name)}</div>
+                            <div class="item-slot-meta">${esc(sub)}</div>
                         </div>
-                        <div class="gu-build-message">${esc(commit.message || T.unknown)}</div>
-                        <div class="gu-build-foot">
-                            <span class="gu-badge"></span>
-                            <span class="gu-build-sub">${esc(commit.author || '')}</span>
-                        </div>
+                        ${major ? `<span class="ui-chip gu-chip--major">${esc(T.tagMajor)}</span>` : ''}
+                        ${tag ? `<span class="ui-chip">${esc(tag)}</span>` : ''}
+                        <span class="gu-badge"></span>
                     </div>`;
             }).join('');
         }
@@ -2360,7 +2388,7 @@
                 .filter(l => l.trim().length);
             if (!lines.length) return '';
             return `
-                <div class="gu-changelog-header">${esc(T.changelog || T.message || '')}</div>
+                <div class="inspect-section-title">${esc(T.changelog || T.message || '')}</div>
                 ${lines.map(line => {
                     const item = /^\s*[-*•]\s+/.test(line);
                     const text = item ? line.replace(/^\s*[-*•]\s+/, '') : line.trim();
@@ -2375,7 +2403,7 @@
             const shown = plan.changed.slice(0, 60);
             const rest  = plan.changed.length - shown.length;
             return `
-                <div class="gu-files-header">${DOWNLOADS_ENABLED ? T.listHeader : T.listHeaderChanged}</div>
+                <div class="inspect-section-title">${DOWNLOADS_ENABLED ? T.listHeader : T.listHeaderChanged}</div>
                 ${shown.map(c => `<div class="gu-file-row"><span class="gu-file-flag">${c.isNew ? '+' : '~'}</span><span class="gu-file-path">${esc(c.path)}</span><span class="gu-file-size">${formatBytes(c.size)}</span></div>`).join('')}
                 ${rest > 0 ? `<div class="gu-file-more">${fmt(T.andMore, rest)}</div>` : ''}`;
         }
@@ -2441,7 +2469,7 @@
             const note = this._noteState(T);
             this._setRegion('note', this._dom.note, note.text);
             if (this._dom.note) {
-                this._dom.note.style.display = note.text ? '' : 'none';
+                this._dom.note.hidden = !note.text;
                 this._dom.note.classList.toggle('gu-note--bad', !!note.bad);
                 this._dom.note.classList.toggle('gu-note--major', !!note.major);
             }
@@ -2450,18 +2478,18 @@
             if (this._setRegion('changelog', this._dom.changelog, changelog) && this._dom.changelog) {
                 this._dom.changelog.scrollTop = 0;
             }
-            if (this._dom.changelog) this._dom.changelog.style.display = changelog ? '' : 'none';
+            if (this._dom.changelog) this._dom.changelog.hidden = !changelog;
 
             const files = this._filesHTML(T);
             if (this._setRegion('files', this._dom.files, files) && this._dom.files) {
                 this._dom.files.scrollTop = 0;
             }
-            if (this._dom.files) this._dom.files.style.display = files ? '' : 'none';
+            if (this._dom.files) this._dom.files.hidden = !files;
 
             // The cursor is a class, so the button list only ever changes when
             // the actions themselves do.
             const actions = this._actions()
-                .map(a => `<button class="inspect-btn" data-action="${a.key}">${esc(a.label)}</button>`)
+                .map(a => `<button class="inspect-btn focusable" data-action="${a.key}" tabindex="0">${esc(a.label)}</button>`)
                 .join('');
             if (this._setRegion('actions', this._dom.actions, actions)) this._wireActions();
         }

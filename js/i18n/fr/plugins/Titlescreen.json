@@ -2,7 +2,8 @@
   "menu": {
     "explore": "Explorer",
     "reconnect": "Reconnexion",
-    "tutorial": "Tutoriel",
+    "storyMode": "Nouvelle Histoire",
+    "continueStory": "Continuer l'Histoire",
     "minigames": "Mini-jeux",
     "sandbox": "Bac à sable",
     "worlds": "Mondes",
@@ -15,7 +16,8 @@
   "menuOverlay": {
     "explore": "EXPLORER",
     "reconnect": "RECONNEXION",
-    "tutorial": "TUTORIEL",
+    "storyMode": "NOUVELLE HISTOIRE",
+    "continueStory": "CONTINUER L'HISTOIRE",
     "minigames": "MINI-JEUX",
     "sandbox": "BAC À SABLE",
     "worlds": "MONDES",

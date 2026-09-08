@@ -71,35 +71,24 @@
   // Book Excerpts (the "Read" verb)
   //=============================================================================
 
-  // Book items carry a common event effect that opens their full text in
-  // BookViewer (common events 250-285, each a single "openBook" plugin command).
-  // Reading from the inventory reuses that mapping to quote a random passage
-  // straight into the message window instead of opening the reader.
+  // A book item says which book it is on itself, with <Book: file> (see
+  // Quest/BookViewer.js). Reading from the inventory reads that tag and quotes
+  // a random passage straight into the message window instead of opening the
+  // reader.
   const EXCERPT_MAX_CHARS = 320;
   const EXCERPT_MIN_PARAGRAPH = 60;
   const VERSE_LINE_CHARS = 50;
   const _bookPassageCache = {};
 
-  // Walk the item's common event effects looking for the BookViewer command and
-  // return the book file it opens, or null for non-book readables (maps, scrolls).
+  // The book file an item is, or null for non-book readables (maps, scrolls).
+  // BookViewer owns the tag, so this asks it rather than parsing notes twice.
   function bookFileForItem(item) {
-    if (!item || !item.effects || !$dataCommonEvents) return null;
-
-    for (const effect of item.effects) {
-      if (effect.code !== Game_Action.EFFECT_COMMON_EVENT) continue;
-      const commonEvent = $dataCommonEvents[effect.dataId];
-      if (!commonEvent || !commonEvent.list) continue;
-
-      for (const command of commonEvent.list) {
-        // 357 = Plugin Command: [pluginPath, commandName, displayName, args]
-        if (command.code !== 357) continue;
-        if (command.parameters[1] !== "openBook") continue;
-        const args = command.parameters[3];
-        if (args && args.bookName) return String(args.bookName);
-      }
+    if (!item || !item.note) return null;
+    if (window.BookManager && window.BookManager.bookFileForItem) {
+      return window.BookManager.bookFileForItem(item);
     }
-
-    return null;
+    const match = item.note.match(/<Book:\s*([^>]+)>/i);  // i18n-ignore: note tag
+    return match ? match[1].trim() : null;
   }
 
   // The source files are Gutenberg transcriptions, so the legal front and back
@@ -922,6 +911,11 @@
   // bandage. The sound the use already plays is the confirmation.
   function reserveItemCommonEvent(item) {
     const commonEventId = commonEventEffectOf(item);
+    // The event that runs next has to be able to ask what was used to run it:
+    // one common event now serves every book, and it reads the book off the
+    // item. Scene_ItemBase does this for the default menu; this menu is the
+    // one the game actually uses.
+    if (commonEventId > 0) $gameParty.setLastItem(item);
     if (commonEventId > 0) $gameTemp.reserveCommonEvent(commonEventId);
     return commonEventId;
   }
@@ -1245,24 +1239,17 @@
 
     actor.addHunger(recoveryAmount);
 
-    // NOTE: do not zero nutrition variables 88-90 here. The food common event
-    // reserved below runs deferred and reads these values, so clearing them
-    // first would make it read zeros. They are always re-populated before the
-    // next use (L953-955 / the EatFood plugin command).
-
-    // Trigger common event for food consumption (if actor 1, 2, or 3)
-    let commonEventId = 0;
-    if (actor.actorId() === 1) {
-      commonEventId = FOOD_COMMON_EVENT_ACTOR1;
-    } else if (actor.actorId() === 2) {
-      commonEventId = FOOD_COMMON_EVENT_ACTOR2;
-    } else if (actor.actorId() === 3) {
-      commonEventId = FOOD_COMMON_EVENT_ACTOR3;
-    }
-
-    if (commonEventId > 0) {
-      $gameTemp.reserveCommonEvent(commonEventId);
-    }
+    // The meal is applied right here, so the EatFood common event is NOT
+    // reserved as well: it would read the same nutrition variables and add the
+    // meal a second time. Worse, a reserved common event only runs once the map
+    // interpreter gets a turn, so a starving party walking through a scene that
+    // never runs one used to queue one EatFood per member per step and then
+    // apply the whole stack at once, slamming hunger up to the overeating
+    // ceiling where it looked frozen for a thousand steps. The variables are
+    // cleared for the same reason.
+    $gameVariables.setValue(88, 0);
+    $gameVariables.setValue(89, 0);
+    $gameVariables.setValue(90, 0);
 
     // Add notification
     const itemName = window.translateText ? window.translateText(foodItem.name) : foodItem.name;
@@ -1281,13 +1268,13 @@
     // Call original function first
     _Game_Party_updateHungerAndSleep.call(this);
 
-    // Check each actor for 0% hunger and auto-eat
-    this.members().forEach((actor) => {
-      if (actor.hunger() <= 0) {
-        // Try to auto-eat
-        autoEatFood(actor);
-      }
-    });
+    // Hunger is one meter shared by the whole party, so an empty one is fed
+    // once, through the leader, and only until it is off empty again. Feeding
+    // every member on the same step used to spend three tins on one stomach.
+    const leader = this.leader();
+    if (leader && leader.hunger() <= 0) {
+      autoEatFood(leader);
+    }
   };
 
   //=============================================================================
@@ -1895,7 +1882,9 @@
         }
       });
 
-      this.addCommand(T('Inventory.throw'), "throw");
+      if (!window.ThrowItem || window.ThrowItem.isThrowable(this._item)) {
+        this.addCommand(T('Inventory.throw'), "throw");
+      }
     } else {
       // Regular item context menu: Use (if consumable), Throw, Disassemble, Special
 
@@ -1912,7 +1901,9 @@
       if (window.ItemHotbar && window.ItemHotbar.isFavoritable(this._item)) {
         this.addCommand(T('Inventory.favorites2'), "favorite");
       }
-      this.addCommand(T('Inventory.throw'), "throw");
+      if (!window.ThrowItem || window.ThrowItem.isThrowable(this._item)) {
+        this.addCommand(T('Inventory.throw'), "throw");
+      }
       this.addCommand(T('Inventory.disassemble'), "disassemble");
 
       // Add special commands from item notes

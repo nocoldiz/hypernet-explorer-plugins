@@ -38,7 +38,7 @@
     },
     "5": {
       "name": "Grapple Chain",
-      "desc": "Consecutive basic attacks on the same enemy build a Pin; at 3 the enemy is stunned."
+      "desc": "Consecutive basic attacks on the same enemy build a Pin; at 3 the enemy is stunned. Everything you summon comes through with +30% health and +20% attack and magic."
     },
     "11": {
       "name": "Chi Flow",
@@ -50,7 +50,7 @@
     },
     "16": {
       "name": "Spellshot",
-      "desc": "With a firearm in hand you deal +25% damage, and every action you take returns a little mana."
+      "desc": "With a firearm in hand you deal +25% damage and every action returns a little mana. A spell aimed at one enemy is fired out of the barrel and spends a round, so an empty magazine refuses it; reloading hands back a fifth of your maximum mana."
     },
     "17": {
       "name": "Footwork",
@@ -194,7 +194,7 @@
     },
     "54": {
       "name": "Gearhead",
-      "desc": "Vehicle repairs cost half and dismantling furniture returns full materials."
+      "desc": "Vehicle repairs cost half and dismantling furniture returns full materials. Nothing you do is magic: your mana never rises above the ten you started with."
     },
     "24": {
       "name": "Marksman",
@@ -329,7 +329,8 @@
     "mirrorShatters": "A mirror image of {actor} shatters!",
     "gunFuFollowThrough": "{actor} follows through - Gun-Fu!",
     "divineBloodSurges": "{target}'s divine blood surges!",
-    "comboSlip": "{target} slips the blow! Combo x{combo}"
+    "comboSlip": "{target} slips the blow! Combo x{combo}",
+    "chamberedReload": "{actor} loads the chamber and draws the mana back."
   },
   "chip": {
     "next": "Next",

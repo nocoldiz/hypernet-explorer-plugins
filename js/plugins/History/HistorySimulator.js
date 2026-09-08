@@ -169,6 +169,12 @@
                          // Whether this one may hold a power's MORAL office
                          // (Leaders.json `moralGuide`); everyone else governs.
                          moralGuide: raw.moralGuide === true,
+                         // A written-down head of state: an office the book
+                         // fills itself, for exactly the years on this record,
+                         // rather than one an election decides (NPCPolitics
+                         // canonHeadRecord). North Korea's three Kims are the
+                         // whole of this list.
+                         headOfState: raw.headOfState === true,
                          // The id this entry reads by, so anything holding only
                          // a seated leader can still reach the whole record.
                          id: id,
@@ -476,6 +482,58 @@
         diplomatic: 190
     };
 
+
+    // --- Mortality ------------------------------------------------------------
+    // Until now the only way out of office was a bullet: a leader was either
+    // assassinated, executed, or ran out of the years their Leaders.json entry
+    // gave them. Nobody simply got old, and nobody ever got ill. These two
+    // strands close that gap, and both of them read the same ages the book
+    // already writes down (`birthDate` / `birthYear`).
+    //
+    // Old age is a Gompertz curve: the yearly odds of dying double roughly
+    // every eight years of age, which puts a sixty-year-old at a fraction of a
+    // percent and a ninety-year-old at better than one in six. The office
+    // protects nobody from it, but `protected` and `immortal` do: a figure the
+    // world is written around outlives the century by construction.
+    const MORTALITY_BASE_AGE = 55;          // where the curve starts to bite
+    const MORTALITY_AT_BASE  = 0.006;       // yearly odds at that age
+    const MORTALITY_DOUBLING = 8;           // years of age per doubling
+    const MORTALITY_CAP      = 0.35;        // yearly odds, however old they get
+
+    // A leader can also be diagnosed with something that kills them. Only a
+    // MORTAL disease is ever handed out (Diseases.json `severity: lethal`, or a
+    // case fatality ratio a tenth of the sick and worse): a head of state with
+    // a head cold is not history. The diagnosis is announced the day it is
+    // made, and the illness runs for a while before it takes them, so the world
+    // gets to read about a dying leader rather than only a dead one.
+    const ILLNESS_YEARLY_CHANCE = 0.012;    // at MORTALITY_BASE_AGE; scales with age
+    const ILLNESS_MIN_MONTHS = 2;
+    const ILLNESS_MAX_MONTHS = 30;
+    const ILLNESS_MIN_AGE = 30;             // nobody younger is written up as terminal
+    // A handful of names had not been given to anything yet. A 1912 chancellor
+    // does not die of a disease medicine had not described, so these carry the
+    // year they became sayable; everything else is fair game for the century.
+    const ILLNESS_EARLIEST = {
+        hiv: 1981, aids: 1981, cjd: 1920, kuru: 1957, 'fatal-insomnia': 1986,
+        legionellosis: 1976, hantavirus: 1993, ebola: 1976, marburg: 1967,
+        'mad-cow': 1986, sars: 2002, 'hepatitis-c': 1989
+    };
+
+    // Every mortal disease in the table, read once. The epidemic layer owns the
+    // living version of this data (window.Health.Diseases); the simulation can
+    // run before any of that is up, so the file is the fallback.
+    let MORTAL_DISEASES = null;
+    function mortalDiseases() {
+        if (MORTAL_DISEASES) return MORTAL_DISEASES;
+        const data = (window.Health && window.Health.Diseases)
+            || loadJsonFile('js/db/Health/Diseases.json');
+        const list = (data && Array.isArray(data.diseases)) ? data.diseases : [];
+        MORTAL_DISEASES = list.filter(d =>
+            d && d.id && !d.stageOnly &&
+            (d.severity === 'lethal' || (typeof d.cfr === 'number' && d.cfr >= 0.1)));
+        return MORTAL_DISEASES;
+    }
+
     // Form of government a nation adopts while under a given hyperpower's
     // control. Mirrors NPCPolitics' ARCHETYPES so the wiki shows the same
     // labels whether the data comes from history or the live simulation.
@@ -594,10 +652,24 @@
         return (rec && rec.name) || v.$n || '';
     }
 
+    // A disease is a data label too: its name lives in the Diseases i18n bank
+    // (js/i18n/<lang>/plugins/Diseases.json), which the epidemic layer reads and
+    // the simulation does not. An obituary names the illness by id so it reads
+    // in whatever language the world is opened in; the stored name is the
+    // fallback for an id the bank no longer carries.
+    function DZ(id, name) { return { $dz: String(id), $n: name || '' }; }
+    function isDZ(v) { return !!v && typeof v === 'object' && typeof v.$dz === 'string'; }
+    function renderDZ(v) {
+        const bank = (window.T && typeof T.obj === 'function' && T.obj('Diseases')) || null;
+        const entry = bank && bank.disease && bank.disease[v.$dz];
+        return (entry && entry.name) || v.$n || v.$dz;
+    }
+
     function renderParam(v) {
         if (isLK(v)) return renderLK(v.$k, v.$p);
         if (isFD(v)) return renderFD(v.$fd);
         if (isAR(v)) return renderAR(v);
+        if (isDZ(v)) return renderDZ(v);
         // A plain string param is nearly always a world name: the nation an
         // event happened in, the hyperpower or faction behind it, the leader who
         // ordered it. Those are stored under their English name because that
@@ -652,6 +724,10 @@
     // object itself, so a read costs one comparison and nothing reaches the
     // world's JSON files. A record with no key keeps the prose it was saved
     // with, which is what a world simulated before this carries.
+    function currentLang() {
+        return (window.T && typeof T.language === 'function') ? T.language() : 'en';
+    }
+
     function localizeList(list, kind) {
         if (!Array.isArray(list)) return list;
         const lang = (window.T && typeof T.language === 'function') ? T.language() : 'en';
@@ -801,6 +877,7 @@
             this._nationHistory = {};   // country → [{date, controller, government, reason}]
             this._artifactRecords = {}; // "kind:id" → {name, date, action, holders:[...]}
             this._leaderDeaths = {};    // leader name → {date, cause}
+            this._leaderIllness = {};   // leader name → {diseaseId, diseaseName, since, until}
             this._epidemics = [];       // the century's plagues and panics
             this._earthRegionSet = null; // rebuilt from the countries below
 
@@ -836,7 +913,10 @@
             normalizeLeaders(this._currentFactions);
         }
 
-        generateArtifacts() {
+        // Composes the whole artifact set from the world seed in the ACTIVE
+        // language. Pure: same seed always yields the same set, and only the
+        // written name and description follow the language.
+        composeArtifacts() {
             if (!this._seed) this._seed = normalizeHistorySeed(this.getSeed());
             // Derive a dedicated seeded stream so artifact identity is a pure
             // function of the world seed (independent of any prior sim rolls).
@@ -891,6 +971,12 @@
                 generated.armors.push(createArtifact(1501 + i, armorNouns, false, true));
             }
 
+            generated.lang = currentLang();
+            return generated;
+        }
+
+        generateArtifacts() {
+            const generated = this.composeArtifacts();
             if (window.WorldManager) {
                 window.WorldManager.setField("artifacts", "generated", generated);
             } else if (typeof $gameSystem !== 'undefined' && $gameSystem) {
@@ -899,8 +985,37 @@
             this.injectArtifacts(generated);
         }
 
+        // A world stores its artifacts as written objects, so a world created
+        // in one language kept its Italian (or English) names forever. The set
+        // is a pure function of the seed, so it is simply recomposed in the
+        // active language and written back.
+        relocalizeArtifacts(generated) {
+            const lang = currentLang();
+            if (!generated || generated.lang === lang) return generated;
+            const fresh = this.composeArtifacts();
+            ['items', 'weapons', 'armors'].forEach(kind => {
+                const stored = generated[kind] || [];
+                const source = fresh[kind] || [];
+                stored.forEach((art, i) => {
+                    const src = source[i];
+                    if (art && src) {
+                        art.name = src.name;
+                        art.description = src.description;
+                    }
+                });
+            });
+            generated.lang = lang;
+            if (window.WorldManager && window.WorldManager.activeWorldName) {
+                window.WorldManager.setField("artifacts", "generated", generated);
+            } else if (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._generatedArtifacts === generated) {
+                $gameSystem._generatedArtifacts = generated;
+            }
+            return generated;
+        }
+
         injectArtifacts(generated) {
             if (!generated) return;
+            this.relocalizeArtifacts(generated);
             if (typeof $dataItems !== 'undefined' && generated.items) {
                 generated.items.forEach(a => $dataItems[a.id] = a);
             }
@@ -980,6 +1095,7 @@
                 if (firstOfMonth) {
                     this.handleFoundings(date);
                     this.updateActiveLeaders(date);
+                    this.handleLeaderMortality(date);
                     // A fixed event is keyed by its month (History.fixed.<yyyy-mm>),
                     // so it is still read once, on the first.
                     this.handleFixedEvents(date);
@@ -1553,6 +1669,155 @@
             };
         }
 
+        // --- Age, illness and the end of a life --------------------------------
+        // Everyone the century can bury: whoever is holding one of the offices
+        // right now, political or moral, in a power or in a faction. The book
+        // is full of names nobody ever seated, and a world that quietly killed
+        // them off-stage would be reporting deaths for people the reader has
+        // never met.
+        seatedLeaders() {
+            const out = [];
+            const add = (leader, actor) => {
+                if (!leader || !leader.name) return;
+                if (out.some(e => e.leader.name === leader.name)) return;
+                out.push({ leader, actor });
+            };
+            for (const [power, leader] of Object.entries(this._currentLeaders || {})) add(leader, power);
+            for (const [power, leader] of Object.entries(this._currentFactionLeaders || {})) add(leader, power);
+            for (const [power, leader] of Object.entries(this._currentHolyLeaders || {})) add(leader, power);
+            for (const [power, leader] of Object.entries(this._currentMoralGuides || {})) add(leader, power);
+            return out;
+        }
+
+        // How old they are on this date, or null when the book never said when
+        // they were born - a leader with no birthday cannot die of age.
+        leaderAge(leader, date) {
+            if (!leader) return null;
+            let born = null;
+            if (leader.birthDate) {
+                const parsed = new Date(leader.birthDate);
+                if (!isNaN(parsed)) born = parsed;
+            }
+            if (!born && Number.isFinite(leader.birthYear)) born = new Date(leader.birthYear, 0, 1);
+            if (!born) return null;
+            const age = (date - born) / (365.2425 * 24 * 3600 * 1000);
+            return age > 0 && age < 130 ? age : null;
+        }
+
+        // The Gompertz odds of dying of nothing in particular in a given year.
+        oldAgeYearlyChance(age) {
+            if (!Number.isFinite(age) || age < MORTALITY_BASE_AGE) return 0;
+            const chance = MORTALITY_AT_BASE *
+                Math.pow(2, (age - MORTALITY_BASE_AGE) / MORTALITY_DOUBLING);
+            return Math.min(chance, MORTALITY_CAP);
+        }
+
+        // Nothing buries a figure the world is written around.
+        leaderIsSpared(leader) {
+            return !leader || leader.protected === true || leader.immortal === true ||
+                this._deadLeaders.has(leader.name);
+        }
+
+        // The mortal disease a leader is told they have, drawn from the same
+        // table the epidemics run on and filtered to what medicine could name
+        // in the year they are told it.
+        pickMortalDisease(year) {
+            const pool = mortalDiseases().filter(d => !(ILLNESS_EARLIEST[d.id] > year));
+            if (!pool.length) return null;
+            return pool[Math.floor(this._rand() * pool.length)];
+        }
+
+        // The illness a stored record names, as a marker the reader resolves.
+        diseaseLabel(disease) {
+            return disease ? DZ(disease.id, disease.name) : '';
+        }
+
+        // One monthly pass: the diagnoses that are due, then the new ones, then
+        // whoever simply reached the end of a long life.
+        handleLeaderMortality(date) {
+            const year = date.getFullYear();
+            if (!this._leaderIllness) this._leaderIllness = {};
+            for (const entry of this.seatedLeaders()) {
+                const leader = entry.leader;
+                const actor = entry.actor;
+                if (this.leaderIsSpared(leader)) continue;
+                const name = leader.name;
+                const illness = this._leaderIllness[name];
+
+                // Already dying: the day comes when it comes.
+                if (illness) {
+                    if (dayStr(date) < illness.until) continue;
+                    this._deadLeaders.add(name);
+                    this._markLeaderDead(name, date,
+                        LK('History.leaderDeath.illness',
+                            { disease: DZ(illness.diseaseId, illness.diseaseName) }));
+                    delete this._leaderIllness[name];
+                    this._events.push({
+                        date: dayStr(date), category: 'political', type: 'death',
+                        ...descOf('History.internal.diedOfIllness',
+                            { leader: name, place: actor,
+                              disease: DZ(illness.diseaseId, illness.diseaseName) }),
+                        iconIndex: ICONS['epidemic'] || 0
+                    });
+                    continue;
+                }
+
+                const age = this.leaderAge(leader, date);
+
+                // A new diagnosis. The odds climb with age on the same curve
+                // old age itself does, so a young leader falling terminally ill
+                // is the rare tragedy it ought to be.
+                if (age === null || age >= ILLNESS_MIN_AGE) {
+                    const scale = age === null ? 1
+                        : Math.max(0.25, Math.pow(2, (age - MORTALITY_BASE_AGE) / MORTALITY_DOUBLING));
+                    if (this._rand() < MONTHLY(Math.min(ILLNESS_YEARLY_CHANCE * scale, 0.2))) {
+                        const disease = this.pickMortalDisease(year);
+                        if (disease) {
+                            const months = ILLNESS_MIN_MONTHS +
+                                Math.floor(this._rand() * (ILLNESS_MAX_MONTHS - ILLNESS_MIN_MONTHS + 1));
+                            const due = new Date(date.getTime());
+                            due.setMonth(due.getMonth() + months);
+                            const diseaseName = this.diseaseLabel(disease);
+                            this._leaderIllness[name] = {
+                                diseaseId: disease.id, diseaseName: disease.name,
+                                since: dayStr(date), until: dayStr(due)
+                            };
+                            this._events.push({
+                                date: dayStr(date), category: 'political', type: 'diagnosis',
+                                ...descOf('History.internal.diagnosed',
+                                    { leader: name, place: actor, disease: diseaseName }),
+                                iconIndex: ICONS['epidemic'] || 0
+                            });
+                            continue;
+                        }
+                    }
+                }
+
+                // Old age, for whoever the book gave a birthday to.
+                const yearly = this.oldAgeYearlyChance(age);
+                if (yearly > 0 && this._rand() < MONTHLY(yearly)) {
+                    this._deadLeaders.add(name);
+                    this._markLeaderDead(name, date,
+                        LK('History.leaderDeath.oldAge', { age: Math.floor(age) }));
+                    this._events.push({
+                        date: dayStr(date), category: 'political', type: 'death',
+                        ...descOf('History.internal.diedOfOldAge',
+                            { leader: name, place: actor, age: Math.floor(age) }),
+                        iconIndex: ICONS['royal'] || 0
+                    });
+                }
+            }
+        }
+
+        // Who is dying right now and of what, for anything that prints a leader.
+        getLeaderIllnesses() {
+            return this._histField("leaderIllness", this._leaderIllness) || {};
+        }
+
+        getLeaderIllness(name) {
+            return this.getLeaderIllnesses()[name] || null;
+        }
+
         // Whoever a power can put in office right now: its own roster, plus the
         // roster of every nation it currently holds. A conquered nation hands
         // its political class to its conqueror - take Persia and its ministers
@@ -2076,6 +2341,7 @@
                 WM.setField("history", "nationHistory", this._nationHistory);
                 WM.setField("history", "artifactRecords", this._artifactRecords);
                 WM.setField("history", "leaderDeaths", this._leaderDeaths);
+                WM.setField("history", "leaderIllness", this._leaderIllness);
                 WM.setField("history", "holyLeaders", this._currentHolyLeaders);
                 WM.setField("history", "moralGuides", this._currentMoralGuides);
                 WM.setField("history", "epidemics", this._epidemics);
@@ -2096,6 +2362,7 @@
                 $gameSystem._historicalNationHistory = this._nationHistory;
                 $gameSystem._historicalArtifactRecords = this._artifactRecords;
                 $gameSystem._historicalLeaderDeaths = this._leaderDeaths;
+                $gameSystem._historicalLeaderIllness = this._leaderIllness;
                 $gameSystem._historicalHolyLeaders = this._currentHolyLeaders;
                 $gameSystem._historicalMoralGuides = this._currentMoralGuides;
                 $gameSystem._historicalEpidemics = this._epidemics;
@@ -2127,6 +2394,7 @@
                     nationHistory: "_historicalNationHistory",
                     artifactRecords: "_historicalArtifactRecords",
                     leaderDeaths: "_historicalLeaderDeaths",
+                    leaderIllness: "_historicalLeaderIllness",
                     holyLeaders: "_historicalHolyLeaders",
                     epidemics: "_historicalEpidemics",
                     seed: "_historySeed"
@@ -2183,8 +2451,54 @@
             return this._histField("hyperpowers", this._currentHyperpowers) || {};
         }
 
+        // ── What the abstract indices mean in people ────────────────────
+        //
+        // A power's record carries five bare numbers (population, military,
+        // economy, information, arcane) that mean nothing to a reader: a
+        // "Military 95" is not a fact about anything. These turn them into the
+        // figures a yearbook would print, on one fixed reading of the scale:
+        //   population index   1 point  = one million inhabitants
+        //   military index   100 points = 0.4% of the population under arms
+        //   arcane index     100 points = 0.06% of it in arcane practice
+        //   economy index      1 point  = one billion euros of yearly product
+        //   information index          = a 0-100 freedom-of-information score,
+        //                                which is also ranked against every
+        //                                other power in the world.
+        // Nothing here changes the simulation: it is one reading of the same
+        // numbers, so a power that grows reads as growing in people too.
+        realFigures(hist) {
+            if (!hist) return null;
+            const idx = n => (Number.isFinite(Number(n)) ? Number(n) : 0);
+            const population = Math.round(idx(hist.population) * 1e6);
+            const soldiers = Math.round(population * (idx(hist.military) / 100) * 0.004);
+            const practitioners = Math.round(population * (idx(hist.arcane) / 100) * 0.0006);
+            const gdp = Math.round(idx(hist.economy) * 1e9);
+            const freedom = Math.max(0, Math.min(100, Math.round(idx(hist.information) / 3)));
+            return { population, soldiers, practitioners, gdp, freedom };
+        }
+
+        // Where a power stands on the freedom-of-information index against
+        // every other power the world knows: { rank, of }, 1 being the freest.
+        freedomRank(powerName) {
+            const powers = this.getHyperpowers() || {};
+            const rows = Object.entries(powers)
+                .map(([name, rec]) => ({ name, score: this.realFigures(rec)?.freedom ?? 0 }))
+                .sort((a, b) => b.score - a.score);
+            const at = rows.findIndex(r => r.name === powerName);
+            return at < 0 ? null : { rank: at + 1, of: rows.length };
+        }
+
         getHistoricalFactions() {
             return this._histField("factions", this._currentFactions) || {};
+        }
+
+        // The life LeaderPersona.bakeLives wrote for this person when the
+        // world was made, or null for a world made before that existed.
+        bakedLife(name) {
+            if (!window.WorldManager) return null;
+            const lives = window.WorldManager.getField("history", "leaderLives");
+            const life = lives && lives[name];
+            return Array.isArray(life) && life.length ? life : null;
         }
 
         // Every event, with its keyed descriptions written out in the language
@@ -2257,8 +2571,30 @@
                 const label = renderFD(key);
                 if (label && label !== key) return label;
             }
-            const raw = leader.ideology || leader.personality || '';
-            return raw === 'Unknown' ? T('History.leader.unknownIdeology') : String(raw);   // i18n-ignore: placeholder ideology id
+            let raw = leader.ideology || leader.personality || '';
+            if (raw === 'Unknown') return T('History.leader.unknownIdeology');   // i18n-ignore: placeholder ideology id
+            // The label may still be the id it was resolved from: the ideology
+            // book is read once, before the localizer is up, so a key the
+            // faction table does not hold falls through as "ideology.x". Ask
+            // the localizer directly, then the ideology catalogue, and only
+            // then print the id with its punctuation taken off.
+            raw = String(raw);
+            if (/^(ideology|personalities)\./.test(raw)) {
+                if (window.T && window.T.has && window.T.has(raw)) {
+                    const t = window.T(raw);
+                    if (t && t !== raw) return t;
+                }
+                const ideo = window.NPCShared && window.NPCShared.ideologyById
+                    ? window.NPCShared.ideologyById(raw.replace(/^ideology\./, ''))
+                    : null;
+                if (ideo && ideo.name && window.T) {
+                    const t = window.T(ideo.name);
+                    if (t && t !== ideo.name) return t;
+                }
+                raw = raw.replace(/^(ideology|personalities)\./, '').replace(/_/g, ' ');
+                raw = raw.replace(/\w/g, c => c.toUpperCase());
+            }
+            return raw;   // i18n-ignore: placeholder ideology id
         }
 
         // Events mentioning a name. The name is an English id and the sentences
@@ -2375,6 +2711,11 @@
     // Used by the ONU assembly to enter every motion it votes on.
     //
     // `descKey` / `descParams` are the same contract descOf() uses internally.
+    // The marker an outside caller (NPCPolitics) passes as an event's disease
+    // param, so an obituary it files still reads in the language the world is
+    // opened in rather than in the one it was written in.
+    HistoryManager.prototype.diseaseRef = function (id, name) { return DZ(id, name); };
+
     HistoryManager.prototype.recordEvent = function (rec) {
         const events = this._eventStore();
         if (!events || !rec) return null;
@@ -2439,6 +2780,13 @@
         } else {
             this.runSimulation(options.years || null);
         }
+        // Every procedural leader the century seated gets a whole life run for
+        // them here, once, and it is kept in the world folder with the rest of
+        // the history (LeaderPersona.bakeLives).
+        try {
+            const baked = window.LeaderPersona ? window.LeaderPersona.bakeLives() : 0;
+            if (baked) console.log(`[HistorySimulator] Simulated ${baked} procedural leader lives.`);
+        } catch (e) { console.warn("[HistorySimulator] leader lives", e); }
         info.seed = seed;
         info.historyYears = canon ? null : (options.years || null);
         info.historyInitialized = true;
@@ -2547,6 +2895,7 @@
             nationHistory: this._liveGet("nationHistory"),
             artifactRecords: this._liveGet("artifactRecords"),
             leaderDeaths: this._liveGet("leaderDeaths"),
+            leaderIllness: this._liveGet("leaderIllness"),
             deadLeaders: this._liveGet("deadLeaders"),
             holyLeaders: this._liveGet("holyLeaders"),
             epidemics: this._liveGet("epidemics"),
@@ -2557,6 +2906,7 @@
         if (held.nationHistory) this._nationHistory = held.nationHistory;
         if (held.artifactRecords) this._artifactRecords = held.artifactRecords;
         if (held.leaderDeaths) this._leaderDeaths = held.leaderDeaths;
+        if (held.leaderIllness) this._leaderIllness = held.leaderIllness;
         if (held.holyLeaders) this._currentHolyLeaders = held.holyLeaders;
         if (Array.isArray(held.epidemics)) this._epidemics = held.epidemics;
         if (Array.isArray(held.deadLeaders)) this._deadLeaders = new Set(held.deadLeaders);
@@ -2589,6 +2939,7 @@
         this._liveSet("nationHistory", this._nationHistory);
         this._liveSet("artifactRecords", this._artifactRecords);
         this._liveSet("leaderDeaths", this._leaderDeaths);
+        this._liveSet("leaderIllness", this._leaderIllness);
         this._liveSet("holyLeaders", this._currentHolyLeaders);
         this._liveSet("deadLeaders", Array.from(this._deadLeaders || []));
         this._liveSet("epidemics", this._epidemics);
@@ -2630,6 +2981,7 @@
                 // Northpoint Army declares itself on 1 December 2001, which is
                 // eleven months after the game starts.
                 this.handleFoundings(date);
+                this.handleLeaderMortality(date);
                 this.handleEpidemics(date);
                 this.handleInternalPolitics(date, false);
                 this.handleInternalPolitics(date, true);
@@ -3161,12 +3513,318 @@
 
         // ── The public answer ───────────────────────────────────────────────
 
+        // -- Procedural leaders: the ones the book never wrote down ---------
+        //
+        // Two kinds of person hold office in this world. The BOOK's people are
+        // in Leaders.json: real historical figures and the canon cast, written
+        // by hand, and the wiki files them under Main Players. Everybody else
+        // is procedural: a name a world's own history seated (a power whose
+        // roster ran out, a faction's officer, a politician NPCPolitics
+        // invented). Until now those had no dossier at all, because dossierFor
+        // asked the book and stopped when the book said nothing.
+        //
+        // They do have a record: the roster entry the world's history.json
+        // holds for them (name, ideology or personality, country, years, the
+        // sprite and bust they are drawn with). rosterRecord turns that into
+        // the same shape a book record has, so every derivation below - the
+        // vocation, the traits, the trades, the birth date, the wealth - runs
+        // on them unchanged.
+        function rosterRecord(name) {
+            if (!name) return null;
+            const groups = [
+                [manager.getHyperpowers ? manager.getHyperpowers() : {}, 'leaders'],
+                [manager.getHyperpowers ? manager.getHyperpowers() : {}, 'holy_leaders'],
+                [manager.getHistoricalFactions ? manager.getHistoricalFactions() : {}, 'leaders'],
+            ];
+            for (const [group, field] of groups) {
+                for (const [ofName, data] of Object.entries(group || {})) {
+                    for (const entry of ((data && data[field]) || [])) {
+                        if (!entry || entry.name !== name) continue;
+                        const rawKey = entry.ideologyKey || entry.ideology || entry.personality || '';
+                        return {
+                            name: entry.name,
+                            ideology: entry.ideology || entry.personality || '',
+                            ideologyKey: /^(ideology|personalities)\./.test(String(rawKey)) ? rawKey : null,
+                            country: entry.country || null,
+                            years: entry.years || null,
+                            sprite: entry.spritename || entry.sprite || null,
+                            spriteIndex: entry.spriteindex || 0,
+                            bust: entry.bust || null,
+                            of: ofName,
+                            procedural: true,
+                        };
+                    }
+                }
+            }
+            // A politician the political simulation invented: they are not in
+            // any roster, they are in an assembly.
+            const found = window.NPCPolitics && window.NPCPolitics.findPolitician
+                ? window.NPCPolitics.findPolitician(name) : null;
+            if (found && found.pol) {
+                const pol = found.pol;
+                return {
+                    name: pol.name,
+                    ideology: '',
+                    ideologyKey: null,
+                    country: (found.power && found.power.homeNation) || null,
+                    years: null,
+                    of: (found.power && found.power.name) || null,
+                    office: pol.office || null,
+                    politician: pol,
+                    procedural: true,
+                };
+            }
+            return null;
+        }
+
+        // The record any leader reads by: the book first, the world's own
+        // rosters and assemblies second.
+        function recordFor(name) {
+            return manager.getLeaderRecord(name) || rosterRecord(name);
+        }
+
+        function className(classId) {
+            const cls = (typeof $dataClasses !== 'undefined' && $dataClasses) ? $dataClasses[classId] : null;
+            return (cls && cls.name) || '';
+        }
+
+        // -- A leader as a character -----------------------------------------
+        //
+        // An officeholder used to be five bars (charisma, integrity, cunning,
+        // ambition, approval) and nothing else, which is a spreadsheet, not a
+        // person. Every leader and every politician now carries the same sheet
+        // a party member does: a class, a level, the eight parameters read off
+        // that class's own growth curve, the skills that class knows by that
+        // level, the traits they are read by and the gear they are dressed in.
+        //
+        // Nothing is stored: it is derived from the world seed and the name, so
+        // a leader is the same person in every savegame of a world and a
+        // different one between worlds, exactly like the rest of the sim.
+
+        // The seven political statistics. A politician the assembly invented
+        // already has them; a leader out of a roster is given the same seven,
+        // rolled off their own seed and pulled toward what their record says
+        // they are, so both kinds read on the same scale.
+        function politicalStatsOf(record) {
+            if (record && record.politician) {
+                const pol = record.politician;
+                return {
+                    charisma: pol.charisma, integrity: pol.integrity, cunning: pol.cunning,
+                    ambition: pol.ambition, strength: pol.strength, intellect: pol.intellect,
+                    divinity: pol.divinity, approval: pol.approval,
+                };
+            }
+            const seed = seedOf(record && record.name);
+            const hay = haystackOf(record || {});
+            const roll = (step, lo, hi) => Math.round(lo + rollFrom(seed, step) * (hi - lo));
+            const bump = (base, re, by) => Math.max(1, Math.min(100, base + (re.test(hay) ? by : 0)));
+            return {
+                charisma:  bump(roll(20, 25, 90), /populist|orator|charism|media|showman|democrat|king|queen|emperor/i, 15),
+                integrity: bump(roll(21, 10, 90), /honest|pacifist|humanit|reform|ascet|monk/i, 20),
+                cunning:   bump(roll(22, 15, 90), /machiavell|espionage|junta|shadow|smuggl|assassin|dictator/i, 20),
+                ambition:  bump(roll(23, 20, 95), /expansion|imperial|conquer|absolut|ambition|restorat|khan/i, 15),
+                strength:  bump(roll(24,  8, 85), /marshal|general|admiral|commander|militar|warlord|barbar|khan/i, 20),
+                intellect: bump(roll(25, 15, 90), /scien|technocra|philosoph|sage|archmage|academ|analyz|scholar/i, 20),
+                divinity:  bump(roll(26,  1, 70), /pope|pontif|priest|clerical|theocra|holy|lama|god|divin|magus|arcane/i, 30),
+                approval:  roll(27, 25, 85),
+            };
+        }
+
+        // How far along a leader is. Time in office is the bulk of it: a
+        // thirty year reign is a life spent at this, and the sheet says so.
+        function levelOf(record) {
+            const seed = seedOf(record && record.name);
+            const reign = reignLength(record || {});
+            const born = birthDateOf(record || {});
+            const bornYear = born ? Number(String(born).slice(0, 4)) : null;
+            const start = record && record.years && Number(record.years[0]);
+            const age = (Number.isFinite(bornYear) && Number.isFinite(start)) ? (start - bornYear) : 45;
+            const raw = 8 + reign * 0.85 + (age - 30) * 0.30 + rollFrom(seed, 30) * 12;
+            return Math.max(1, Math.min(99, Math.round(raw)));
+        }
+
+        // The eight parameters, off the class's own growth curve at that level
+        // and then bent by who the person is: a cunning leader is quicker, a
+        // devout one carries more magic, a soldier hits harder. The curve is
+        // the one $dataClasses holds, which is the curve a party member's
+        // status screen is drawn from, so the two sheets are comparable.
+        const PARAM_BIAS = [
+            ['strength',  0.6],   // MHP
+            ['divinity',  0.9],   // MMP
+            ['strength',  0.9],   // ATK
+            ['integrity', 0.7],   // DEF
+            ['intellect', 0.9],   // MAT
+            ['divinity',  0.7],   // MDF
+            ['cunning',   0.8],   // AGI
+            ['charisma',  0.8],   // LUK
+        ];
+
+        function paramsOf(classId, level, stats) {
+            const cls = (typeof $dataClasses !== 'undefined' && $dataClasses) ? $dataClasses[classId] : null;
+            if (!cls || !cls.params) return null;
+            const lv = Math.max(1, Math.min(99, level));
+            return PARAM_BIAS.map(function (bias, i) {
+                const curve = cls.params[i];
+                const base = Array.isArray(curve) ? (curve[lv] !== undefined ? curve[lv] : curve[curve.length - 1] || 0) : 0;
+                const stat = Math.max(0, Math.min(100, Number(stats && stats[bias[0]]) || 50));
+                // 50 is neutral: the curve as written. The bias never doubles
+                // or halves a parameter, it colours it.
+                const factor = 1 + ((stat - 50) / 100) * bias[1];
+                return Math.max(1, Math.round(base * factor));
+            });
+        }
+
+        // Everything that class knows by that level. This is the class's own
+        // learning table, so a leader's skill list is the list a party member
+        // of the same vocation and level would have.
+        function skillsOf(classId, level) {
+            const cls = (typeof $dataClasses !== 'undefined' && $dataClasses) ? $dataClasses[classId] : null;
+            if (!cls || !Array.isArray(cls.learnings)) return [];
+            const out = [];
+            for (const learning of cls.learnings) {
+                if (!learning || learning.level > level) continue;
+                if (out.indexOf(learning.skillId) < 0) out.push(learning.skillId);
+            }
+            return out;
+        }
+
+        // What a class is allowed to hold and wear, read off its own equip
+        // traits (51 = weapon type, 52 = armor type), which is the same answer
+        // the equip screen gives a party member of that class.
+        function equipTypesOf(classId) {
+            const cls = (typeof $dataClasses !== 'undefined' && $dataClasses) ? $dataClasses[classId] : null;
+            const wtypes = [], atypes = [];
+            for (const trait of ((cls && cls.traits) || [])) {
+                if (trait.code === 51) wtypes.push(trait.dataId);
+                else if (trait.code === 52) atypes.push(trait.dataId);
+            }
+            return { wtypes, atypes };
+        }
+
+        // The gear an officeholder of that standing would actually be carrying:
+        // one weapon and one piece per armour slot, picked from what the class
+        // may equip, in the price band their level earns, seeded by the name.
+        function equipmentOf(record, classId, level) {
+            if (typeof $dataWeapons === 'undefined' || !$dataWeapons) return null;
+            const seed = seedOf(record && record.name);
+            const types = equipTypesOf(classId);
+            const cap = 500 + level * 900;   // what this rank can afford
+            const pick = function (list, step) {
+                if (!list.length) return null;
+                const affordable = list.filter(e => (e.price || 0) <= cap);
+                const pool = (affordable.length ? affordable : list).slice();
+                // The best quarter of what they can afford, so rank shows
+                // without the same three items turning up on everybody.
+                pool.sort((a, b) => (b.price || 0) - (a.price || 0));
+                const top = pool.slice(0, Math.max(1, Math.ceil(pool.length * 0.25)));
+                return top[Math.floor(rollFrom(seed, step) * top.length)] || null;
+            };
+            const weapon = pick(
+                $dataWeapons.filter(w => w && w.name && types.wtypes.indexOf(w.wtypeId) >= 0), 40);
+            const armorIds = [];
+            for (let etype = 2; etype <= 5; etype++) {
+                const found = pick(($dataArmors || []).filter(
+                    a => a && a.name && a.etypeId === etype && types.atypes.indexOf(a.atypeId) >= 0), 40 + etype);
+                if (found) armorIds.push(found.id);
+            }
+            return { weaponId: weapon ? weapon.id : 0, armorIds: armorIds };
+        }
+
+        // -- A whole life, not a span of years -------------------------------
+        //
+        // "1948 - 2012" is a database row. A procedural leader now gets the
+        // life those two numbers imply: born somewhere, schooled, given a
+        // calling, seated, and then walked through whatever their politics
+        // were always going to walk them into, down to the grave. Every beat
+        // is keyed (History.leaderLife.*) so it is read in the language of
+        // whoever opens the article, and every beat is a roll off the world
+        // seed and the person's own name, so it is the same life in every
+        // savegame of a world and a different one in the next world.
+        const LIFE_BEATS = [
+            { key: 'war',        test: /marshal|general|admiral|commander|militar|warlord|khan|junta/i },
+            { key: 'reform',     test: /reform|democrat|social|liberal|progress|labour/i },
+            { key: 'scandal',    test: /machiavell|corrupt|junta|dictator|absolut|infam/i },
+            { key: 'exile',      test: /revolution|anarch|heret|dissident|opposition/i },
+            { key: 'pilgrimage', test: /pope|pontif|priest|clerical|theocra|holy|lama|monk/i },
+            { key: 'discovery',  test: /scien|technocra|archmage|magus|arcane|academ|research/i },
+            { key: 'fortune',    test: /capital|corporat|petro|tycoon|banker|merchant/i },
+            { key: 'purge',      test: /purge|single_party|absolut|authoritar|juche/i },
+            { key: 'treaty',     test: /diploma|envoy|ambassador|accord|peace|onu/i },
+            { key: 'uprising',   test: /populist|nationalist|militant|front|liberation/i },
+        ];
+        // The beats any life has room for, whatever the person believed.
+        const COMMON_BEATS = ['marriage', 'child', 'illness', 'rival', 'journey', 'betrayal', 'honour'];
+
+        function lifeOf(record) {
+            if (!record) return [];
+            const seed = seedOf(record.name);
+            const hay = haystackOf(record);
+            const born = birthDateOf(record);
+            const bornYear = born ? Number(String(born).slice(0, 4)) : null;
+            const years = record.years || [];
+            const start = Number(years[0]);
+            const end = Number(years[1]);
+            const place = record.hometown || record.country || null;
+            const name = record.name;
+            const out = [];
+            const push = function (year, key, params) {
+                if (!Number.isFinite(year)) return;
+                out.push({ year: year, key: 'History.leaderLife.' + key, params: params || {} });
+            };
+
+            if (Number.isFinite(bornYear)) {
+                push(bornYear, place ? 'born' : 'bornNowhere',
+                     { name: name, place: place || '', date: born });
+                push(bornYear + 6 + Math.floor(rollFrom(seed, 50) * 4), 'schooled', { name: name });
+                push(bornYear + 17 + Math.floor(rollFrom(seed, 51) * 6), 'calling',
+                     { name: name, vocation: className(vocationOf(record)) });
+            }
+            if (Number.isFinite(start)) {
+                push(start, 'seated', { name: name, body: record.of || record.country || '' });
+            }
+
+            // The middle of a life: the beats their politics were walking them
+            // toward, then whatever else fits in the years they had.
+            const span = (Number.isFinite(start) && Number.isFinite(end) && end > start) ? end - start : 12;
+            const room = Math.max(2, Math.min(7, Math.round(span / 6) + 2));
+            const pool = LIFE_BEATS.filter(b => b.test.test(hay)).map(b => b.key).concat(COMMON_BEATS);
+            const used = {};
+            for (let i = 0; i < room; i++) {
+                const key = pool[Math.floor(rollFrom(seed, 60 + i) * pool.length)];
+                if (!key || used[key]) continue;
+                used[key] = true;
+                const at = Number.isFinite(start)
+                    ? start + Math.floor(rollFrom(seed, 80 + i) * Math.max(1, span))
+                    : NaN;
+                push(at, key, { name: name });
+            }
+
+            const deaths = manager.getLeaderDeaths ? (manager.getLeaderDeaths() || {}) : {};
+            const death = deaths[record.name];
+            if (death && death.date) {
+                push(Number(String(death.date).slice(0, 4)), 'died',
+                     { name: name, cause: death.cause || '', date: death.date });
+            } else if (Number.isFinite(end)) {
+                push(end, 'leftOffice', { name: name });
+            }
+            return out.sort((a, b) => a.year - b.year);
+        }
+
         const CACHE = {};
 
         window.LeaderPersona = {
             // Whether this name is somebody the book knows, which is what the
             // wiki tests before offering to open a person's panel on them.
-            isLeader(name) { return !!manager.getLeaderRecord(name); },
+            isLeader(name) { return !!recordFor(name); },
+
+            // Whether the BOOK wrote this person down. The wiki splits its
+            // cast on exactly this: written-down people are Main Players, the
+            // rest are the procedural Leaders the world seated for itself.
+            isBookLeader(name) { return !!manager.getLeaderRecord(name); },
+
+            // The record behind a leader, book or roster, for anything that
+            // needs to ask what this world says about them.
+            recordFor(name) { return recordFor(name); },
 
             // Nothing here survives a save: it is all derived, and the pieces
             // it derives from (the party, the retired list) change under it.
@@ -3177,7 +3835,9 @@
             // plus `source` (where the sheet came from) and `level`.
             // Returns null for a name the book does not hold.
             dossierFor(name) {
-                const record = manager.getLeaderRecord(name);
+                // The book first, then whatever roster this world seated them
+                // from: a procedural leader has a dossier too (rosterRecord).
+                const record = recordFor(name);
                 if (!record) return null;
                 const key = String(name);
 
@@ -3306,6 +3966,93 @@
                 else if (d.nationId) out.birthplace = d.nationId;
                 if (d.isPresetCharacter) out.isPresetCharacter = true;
                 return out;
+            },
+
+            // The character sheet behind the office: class, level, the eight
+            // parameters, the class's skills at that level, the traits they
+            // are read by and what they are carrying. Null for a name this
+            // world holds no record for.
+            characterSheetFor(name) {
+                const record = recordFor(name);
+                if (!record) return null;
+                const key = 'sheet:' + String(name);
+                if (CACHE[key]) return CACHE[key];
+                // A leader the player has actually played is read off their
+                // own dossier: that is who they became, not who they were
+                // rolled as. Everybody else is derived.
+                const dossier = this.dossierFor(name) || {};
+                const classId = dossier.classId || vocationOf(record);
+                const level = dossier.level > 1 ? dossier.level : levelOf(record);
+                const stats = politicalStatsOf(record);
+                const sheet = {
+                    name: record.name,
+                    classId: classId,
+                    className: className(classId),
+                    level: level,
+                    stats: stats,
+                    params: paramsOf(classId, level, stats),
+                    skills: (dossier.skills && dossier.skills.length)
+                        ? dossier.skills : skillsOf(classId, level),
+                    traits: dossier.traits || traitsOf(record),
+                    specializations: dossier.specializations || specsOf(record),
+                    equipment: equipmentOf(record, classId, level),
+                    procedural: record.procedural === true,
+                };
+                CACHE[key] = sheet;
+                return sheet;
+            },
+
+            // The whole life, oldest beat first. Read from the world's own
+            // baked copy where there is one (bakeLives, run once when a world
+            // is created), derived on the spot otherwise so a world made
+            // before this existed still reads.
+            lifeFor(name) {
+                const baked = manager.bakedLife ? manager.bakedLife(name) : null;
+                if (baked) return baked;
+                const record = recordFor(name);
+                return record ? lifeOf(record) : [];
+            },
+
+            // Every procedural leader this world seated: the roll the wiki
+            // files under Leaders, as opposed to the book's Main Players.
+            listProceduralNames() {
+                const names = [];
+                const seen = {};
+                const add = function (group, field) {
+                    for (const data of Object.values(group || {})) {
+                        for (const entry of ((data && data[field]) || [])) {
+                            if (!entry || !entry.name || seen[entry.name]) continue;
+                            if (manager.getLeaderRecord(entry.name)) continue;
+                            seen[entry.name] = true;
+                            names.push(entry.name);
+                        }
+                    }
+                };
+                add(manager.getHyperpowers ? manager.getHyperpowers() : {}, 'leaders');
+                add(manager.getHyperpowers ? manager.getHyperpowers() : {}, 'holy_leaders');
+                add(manager.getHistoricalFactions ? manager.getHistoricalFactions() : {}, 'leaders');
+                return names;
+            },
+
+            // Runs a whole life for every procedural leader in the world and
+            // writes them into the world folder, once, when the world is made.
+            // Nothing NEEDS this file - lifeFor derives the same beats on
+            // demand - but a world that was simulated keeps its people's lives
+            // with the rest of its history instead of re-deriving them on
+            // every reader's machine.
+            bakeLives() {
+                const WM = window.WorldManager;
+                if (!WM || !WM.activeWorldName) return 0;
+                const lives = {};
+                let count = 0;
+                for (const name of this.listProceduralNames()) {
+                    const record = recordFor(name);
+                    if (!record) continue;
+                    lives[name] = lifeOf(record);
+                    count++;
+                }
+                WM.setField('history', 'leaderLives', lives);
+                return count;
             },
         };
     })();

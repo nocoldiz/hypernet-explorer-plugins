@@ -125,6 +125,20 @@
         $gameParty.gainItem(orb, SANDBOX_WISH_ORB_COUNT);
     }
 
+    // The vector gun is Em's in the story; the sandbox is for trying things, so
+    // it is handed to the leader once and its screen opens with it. The gun's
+    // own plugin owns which weapon that is and who may hold it.
+    function grantSandboxVectorGun() {
+        if (!window.VectorGun || !window.$gameSystem || !window.$gameParty) return;
+        if ($gameSystem._sandboxVectorGunGiven) return;
+        const gun = window.VectorGun.gunData();
+        if (!gun) return;
+        $gameSystem._sandboxVectorGunGiven = true;
+        $gameParty.gainItem(gun, 1);
+        const leader = $gameParty.leader();
+        if (leader && leader.canEquip(gun)) leader.changeEquip(0, gun);
+    }
+
     // Check if player name is Test (or Party) to enable Sandbox mode. Run from
     // both the pause menu AND every map start, so the "Party" full-randomize
     // override fires as soon as the name takes effect (character creation,
@@ -154,7 +168,10 @@
                 $gameSystem._sandboxPartyGenerated = true;
             }
         }
-        if ($gameSystem && $gameSystem._isSandboxMode) grantSandboxWishOrbs();
+        if ($gameSystem && $gameSystem._isSandboxMode) {
+            grantSandboxWishOrbs();
+            grantSandboxVectorGun();
+        }
     }
 
     const _Scene_Menu_createCommandWindow = Scene_Menu.prototype.createCommandWindow;
@@ -1046,26 +1063,22 @@
 
         const isWish = this._isWishMode;
 
-        // What the fauna is currently scaled to, and which spawn rules produced
-        // it: the spawn mode from the options plus the year-driven spawn era.
+        // What the fauna is currently scaled to: the biome's band
+        // (BattleSystemEnhancedEncounters, section 4b) plus the year-driven
+        // spawn era.
         const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
         const spawnEra = BSEH && BSEH.getSpawnEra ? BSEH.getSpawnEra() : null;
-        // Three modes, and the label names the one that is on: "distance" is
-        // the distance-from-spawn mode (BattleSystemEnhancedEncounters,
-        // section 4b), which used to be called Realistic.
-        const SPAWN_MODE_LABELS = { distance: "Distance from spawn", balanced: "Party Level", biome: "Biome", chaos: "Chaos" };
-        const spawnModeLabel = BSEH && BSEH.getSpawnMode
-            ? (SPAWN_MODE_LABELS[BSEH.getSpawnMode()] || "?") : "?";
+        const spawnModeLabel = BSEH && BSEH.getSpawnMode ? "Biome" : "?";
         const eraLabel = spawnEra
             ? `${Math.floor(spawnEra.year)}${spawnEra.eliteMin ? ` (Lv. ${spawnEra.eliteMin}+ mixed in)` : ""}`
             : "?";
-        // In the distance-from-spawn mode the ground itself carries a level, and
-        // it is the one number that explains everything the map spawned. Print
-        // the whole measurement: where the party began, how far out they are of
-        // how far they can get, and what that lands on inside the gradient.
+        // The ground itself carries a level, and it is the one number that
+        // explains what the map is pitched at. Print the whole measurement:
+        // where the party began, how far out they are of how far they can get,
+        // and what that lands on inside the gradient.
         // BSEH.describePlace() reports the same object to the console.
         let placeLabel = "";
-        if (BSEH && BSEH.describePlace && BSEH.getSpawnMode && BSEH.getSpawnMode() === "distance") {
+        if (BSEH && BSEH.describePlace) {
             const p = BSEH.describePlace();
             placeLabel = p.offWorld
                 ? "off Earth (the world it sits in decides)"
@@ -2302,7 +2315,7 @@
                 break;
             case "mini_lockpick":
                 cleanupDOM = true;
-                if ($gameMap && $gameMap._interpreter) PluginManager.callCommand($gameMap._interpreter, 'LockpickTetris', 'start', {});
+                if ($gameMap && $gameMap._interpreter) PluginManager.callCommand($gameMap._interpreter, 'UnlockingBlocks', 'start', {});
                 this.popScene();
                 break;
             case "mini_surf":
@@ -3350,9 +3363,6 @@
 
     function beginAnimTestRun(seq) {
         $gameTemp._sandboxSkillAnimTest = seq;
-        if (window.isCardCombatMode && window.isCardCombatMode()) {
-            console.log("[SkillAnimTest] Card combat is ON: the card overlay is drawn but the run still forces each skill directly.");
-        }
         // The run is entered straight from the menu, so remember the map track
         // here: finishSkillAnimTest() puts it back when the run is over.
         BattleManager.saveBgmAndBgs();

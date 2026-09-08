@@ -117,8 +117,6 @@
       ? WM.populationMode() : "normal";
   }
 
-  // The archetype a goblin world builds everybody on. Named once, here.
-  const GOBLIN_ARCHETYPE = "Goblin";
 
   // True while this builder is running for a paused Quick-mode creation. A
   // creature is asked for three things there and no more: its archetype(s),
@@ -138,7 +136,7 @@
   function archetypeOfferedInPopulation(key) {
     if (populationMode() !== "monster") return true;
     const people = (window.SpriteCatalog && window.SpriteCatalog.PEOPLE_ARCHETYPES) ||
-                   ["Humanoid", "DoubleHeadedHumanoid", "Elven", "Goblin", "Dwarf"];
+                   ["Humanoid", "DoubleHeadedHumanoid"];
     return !people.includes(key);
   }
 
@@ -812,7 +810,7 @@
       this._wasdUpListener = null;
     }
     if (this._dndContainer) {
-      this._dndContainer.style.display = "none";
+      window.CCPanel.hide(this._dndContainer);
     }
   };
 
@@ -862,10 +860,7 @@
     }
 
     this._dndContainer = container;
-    this._dndContainer.style.transition = "none";
-    this._dndContainer.style.display = "flex";
-    this._dndContainer.style.opacity = "1";
-    this._dndContainer.style.pointerEvents = "auto";
+    window.CCPanel.show(this._dndContainer);
     this._dndContainer.innerHTML = ""; // Wipe clean to prevent stale DOM layout leaking
 
     this._lastStep = -1;
@@ -883,21 +878,7 @@
   };
 
   Scene_CreateCreature.prototype.getSpriteStyle = function (spriteName, spriteIndex, scale) {
-    if (!spriteName) return "";
-    const sz = Math.round(48 * (scale || 1));
-    const isBig = ImageManager.isBigCharacter(spriteName);
-    const url = `img/characters/${spriteName}.png`;
-    if (isBig) {
-      return `background-image: url('${url}'); background-position: 50% 0%; background-size: 300% 400%; width: ${sz}px; height: ${sz}px; image-rendering: pixelated;`;
-    } else {
-      const col = spriteIndex % 4;
-      const row = Math.floor(spriteIndex / 4);
-      const fx = col * 3 + 1;
-      const fy = row * 4;
-      const pctX = (fx / 11) * 100;
-      const pctY = (fy / 7) * 100;
-      return `background-image: url('${url}'); background-position: ${pctX}% ${pctY}%; background-size: 1200% 800%; width: ${sz}px; height: ${sz}px; image-rendering: pixelated;`;
-    }
+    return window.CCArt.sprite(spriteName, spriteIndex, Math.round(48 * (scale || 1)));
   };
 
   Scene_CreateCreature.prototype.refreshUIOverlayDOM = function () {
@@ -954,7 +935,7 @@
               onclick: "SceneManager._scene.onModeCardConfirm()",
               confirm: true,
             }),
-            style: "margin-top: 16px;",
+            cls: "cc-nav--spaced",
           })}
         </div>
       `;
@@ -978,23 +959,23 @@
             // Base skills section
             let skillsHtml = "";
             if (arch.skills && arch.skills.length > 0) {
-              skillsHtml = `<div class="cc-dossier-section-title" style="color: var(--text-muted-hover); font-weight: bold; margin: 4px 0 2px 0; font-size: 1.219rem">${T('CharCreate.baseSkills')}</div>` +
+              skillsHtml = `<div class="cc-dossier-section-title cc-dossier-section-title--muted">${T('CharCreate.baseSkills')}</div>` +
                 arch.skills.map(sid => {
                   const sname = getSkillDisplayName(sid) || sid;
-                  return `<div class="cc-dossier-row" style="margin-bottom: 0"><span class="cc-dossier-label" style="color: var(--text-muted-hover)">${sname}</span><span class="cc-dossier-value" style="font-size: 1.132rem; color: var(--text-card-medium)">#${sid}</span></div>`;
+                  return `<div class="cc-dossier-row cc-flush-below"><span class="cc-dossier-label cc-label-muted">${sname}</span><span class="cc-dossier-value cc-value-quiet">#${sid}</span></div>`;
                 }).join("");
             }
             // Parts section
             let bodyHtml = "";
             if (arch.parts) {
-              bodyHtml = `<div class="cc-dossier-section-title" style="color: var(--text-forest-green); font-weight: bold; margin: 4px 0 2px 0; font-size: 1.219rem">${T('CharCreate.anatomy')}</div>` +
+              bodyHtml = `<div class="cc-dossier-section-title cc-dossier-section-title--anatomy">${T('CharCreate.anatomy')}</div>` +
                 Object.keys(arch.parts).map(k => {
                   const p = arch.parts[k];
                   const name = partName(p);
                   const skillName = getSkillDisplayName(p.skillId);
-                  const skillInfo = skillName ? `<span style="font-size: 1.132rem; color: var(--text-card-medium)">, ${skillName}</span>` : "";
+                  const skillInfo = skillName ? `<span class="cc-value-quiet">, ${skillName}</span>` : "";
                   return `
-                    <div class="cc-dossier-row" style="margin-bottom: 0">
+                    <div class="cc-dossier-row cc-flush-below">
                       <span class="cc-dossier-label">${name}:</span>
                       <span class="cc-dossier-value">${p.hpPercent}% HP${skillInfo}</span>
                     </div>
@@ -1020,23 +1001,23 @@
               // Base skills section
               let skillsHtml = "";
               if (arch.skills && arch.skills.length > 0) {
-                skillsHtml = `<div class="cc-dossier-section-title" style="color: var(--text-muted-hover); font-weight: bold; margin: 4px 0 2px 0; font-size: 1.219rem">${T('CharCreate.baseSkills')}</div>` +
+                skillsHtml = `<div class="cc-dossier-section-title cc-dossier-section-title--muted">${T('CharCreate.baseSkills')}</div>` +
                   arch.skills.map(sid => {
                     const sname = getSkillDisplayName(sid) || sid;
-                    return `<div class="cc-dossier-row" style="margin-bottom: 0"><span class="cc-dossier-label" style="color: var(--text-muted-hover)">${sname}</span><span class="cc-dossier-value" style="font-size: 1.132rem; color: var(--text-card-medium)">#${sid}</span></div>`;
+                    return `<div class="cc-dossier-row cc-flush-below"><span class="cc-dossier-label cc-label-muted">${sname}</span><span class="cc-dossier-value cc-value-quiet">#${sid}</span></div>`;
                   }).join("");
               }
               // Parts section
               let bodyHtml = "";
               if (arch.parts) {
-                bodyHtml = `<div class="cc-dossier-section-title" style="color: var(--text-forest-green); font-weight: bold; margin: 4px 0 2px 0; font-size: 1.219rem">${T('CharCreate.anatomy')}</div>` +
+                bodyHtml = `<div class="cc-dossier-section-title cc-dossier-section-title--anatomy">${T('CharCreate.anatomy')}</div>` +
                   Object.keys(arch.parts).map(k => {
                     const p = arch.parts[k];
                     const name = partName(p);
                     const skillName = getSkillDisplayName(p.skillId);
-                    const skillInfo = skillName ? `<span style="font-size: 1.132rem; color: var(--text-card-medium)">, ${skillName}</span>` : "";
+                    const skillInfo = skillName ? `<span class="cc-value-quiet">, ${skillName}</span>` : "";
                     return `
-                      <div class="cc-dossier-row" style="margin-bottom: 0">
+                      <div class="cc-dossier-row cc-flush-below">
                         <span class="cc-dossier-label">${name}:</span>
                         <span class="cc-dossier-value">${p.hpPercent}% HP${skillInfo}</span>
                       </div>
@@ -1047,7 +1028,7 @@
             }
           } else {
             leftSubheaderName = "...";
-            partsHtml = `<div class="cc-text-desc" style="grid-column: span 2; width: 100%">${T('CharCreate.selectArchetypes')}</div>`;
+            partsHtml = `<div class="cc-text-desc cc-span-two">${T('CharCreate.selectArchetypes')}</div>`;
           }
         } else {
           // Merged display
@@ -1081,7 +1062,7 @@
           if (arch2 && arch2.skills) arch2.skills.forEach(sid => mergedSkillIds.add(sid));
           let skillsHtml = "";
           if (mergedSkillIds.size > 0) {
-            skillsHtml = `<div class="cc-dossier-section-title" style="color: var(--text-muted-hover); font-weight: bold; margin: 4px 0 2px 0; font-size: 1.219rem">${T('CharCreate.baseSkills')}</div>` +
+            skillsHtml = `<div class="cc-dossier-section-title cc-dossier-section-title--muted">${T('CharCreate.baseSkills')}</div>` +
               Array.from(mergedSkillIds).map(sid => {
                 const sname = getSkillDisplayName(sid) || sid;
                 const fromArch1 = arch1 && arch1.skills && arch1.skills.includes(sid);
@@ -1094,11 +1075,11 @@
                 } else {
                   badges = `<span class="cc-role-badge secondary">${T('Creature.ui.secondaryBadge')}</span>`;
                 }
-                return `<div class="cc-dossier-row" style="margin-bottom: 0"><span class="cc-dossier-label" style="color: var(--text-muted-hover)">${sname}</span><span class="cc-dossier-value" style="font-size: 1.132rem; color: var(--text-card-medium)">#${sid}${badges}</span></div>`;
+                return `<div class="cc-dossier-row cc-flush-below"><span class="cc-dossier-label cc-label-muted">${sname}</span><span class="cc-dossier-value cc-value-quiet">#${sid}${badges}</span></div>`;
               }).join("");
           }
 
-          let bodyHtml = `<div class="cc-dossier-section-title" style="color: var(--text-forest-green); font-weight: bold; margin: 4px 0 2px 0; font-size: 1.219rem">${T('CharCreate.anatomy')}</div>` +
+          let bodyHtml = `<div class="cc-dossier-section-title cc-dossier-section-title--anatomy">${T('CharCreate.anatomy')}</div>` +
             Object.keys(mergedParts).map(partKey => {
               const { part, from } = mergedParts[partKey];
               const name = partName(part);
@@ -1106,15 +1087,15 @@
                 ? `<span class="cc-role-badge secondary">${T('Creature.ui.secondaryBadge')}</span>`
                 : `<span class="cc-role-badge primary">${T('Creature.ui.primaryBadge')}</span>`;
               const skillName = getSkillDisplayName(part.skillId);
-              const skillInfo = skillName ? `<span style="font-size: 1.132rem; color: var(--text-card-medium)">, ${skillName}</span>` : "";
+              const skillInfo = skillName ? `<span class="cc-value-quiet">, ${skillName}</span>` : "";
               
               return `
-                <div class="cc-dossier-row" style="margin-bottom: 0; display: flex; align-items: center">
-                  <div style="display: flex; align-items: center">
-                    <span class="cc-dossier-label" style="color: ${from === 2 ? '#5a3d75' : '#822d2d'}">${name}</span>
+                <div class="cc-dossier-row cc-flush-below cc-row-inline">
+                  <div class="cc-row-inline">
+                    <span class="cc-dossier-label ${from === 2 ? 'cc-parent-ink secondary' : 'cc-parent-ink primary'}">${name}</span>
                     ${originLabel}
                   </div>
-                  <span class="cc-dossier-value" style="font-weight: bold">${part.hpPercent}% HP${skillInfo}</span>
+                  <span class="cc-dossier-value cc-value-strong">${part.hpPercent}% HP${skillInfo}</span>
                 </div>
               `;
             }).join("");
@@ -1133,7 +1114,7 @@
         // In a goblin world the primary is the world's, not the player's: it is
         // drawn committed and greyed, since pressing it does nothing.
         const isLockedPrimary = this.isArchetypePrimaryLocked() &&
-                                item.key === GOBLIN_ARCHETYPE;
+                                item.key === this._selectedArchetype1;
 
         if (this._mode === 'baseline') {
           isSelected = idx === activeIdx;
@@ -1151,7 +1132,7 @@
         const isCursor = !isSelected && idx === activeIndex;
         return `
           <div class="cc-card-option ${isSelected ? 'selected' : isCursor ? 'highlighted' : ''}"${
-            isLockedPrimary ? ' style="opacity: 0.75; cursor: default"' : ''
+            isLockedPrimary ? ' data-locked="1"' : ''
           } onclick="SceneManager._scene.onArchetypeCardClick(${idx})">
             <div class="cc-option-title">${item.name}</div>
             ${selectionBadge}
@@ -1165,14 +1146,14 @@
 
       const isConfirmDisabled = !this._selectedArchetype1;
       const bothReady = !!this._selectedArchetype1; // ready to confirm with one or two picks
-      const confirmFocusStyle = bothReady ? ' outline: 3px solid #c8a96e; outline-offset: 2px; box-shadow: 0 0 10px rgba(200,169,110,0.6);' : '';
+      const confirmFocusClass = bothReady ? "cc-btn-ready" : "";
 
       leftHtml = `
-        <div class="cc-page cc-page-left" style="display: flex">
+        <div class="cc-page cc-page-left cc-col">
           <h2 class="cc-header-gothic">${stepTitle}</h2>
           <p class="cc-text-desc">${stepDesc}</p>
 
-          <div class="cc-select-grid cc-compact cc-three-col" style="flex: 1; min-height: 0; overflow-y: auto; align-content: start">
+          <div class="cc-select-grid cc-compact cc-three-col cc-scroll-pane cc-grid-start">
             ${archetypeCards}
           </div>
         </div>
@@ -1182,11 +1163,11 @@
         <div class="cc-page cc-page-right">
           <h2 class="cc-header-gothic">${T('CharCreate.biology')}</h2>
 
-          <div class="cc-dossier-card" style="margin-top: 16px; flex: 1; min-height: 0; overflow-y: auto">
+          <div class="cc-dossier-card cc-gap-above-wide cc-scroll-pane">
             <h3 class="cc-subheader">${leftSubheaderName || "..."}</h3>
             ${weaponsLine ? `<div class="cc-weapon-slots">${weaponsLine}</div>` : ""}
             <div class="cc-dossier-grid cc-dossier-grid-single">
-              ${partsHtml || `<div class="cc-text-desc" style="width: 100%">${T('CharCreate.noAnatomicalOrgansDefined')}</div>`}
+              ${partsHtml || `<div class="cc-text-desc cc-span-full">${T('CharCreate.noAnatomicalOrgansDefined')}</div>`}
             </div>
           </div>
 
@@ -1198,10 +1179,10 @@
               onclick: "SceneManager._scene.onArchetypeConfirm()",
               confirm: true,
               attrs: isConfirmDisabled
-                ? 'disabled style="opacity: 0.5; pointer-events: none;"'
-                : `style="${confirmFocusStyle}"`,
+                ? "disabled" : "",
+              cls: isConfirmDisabled ? "cc-btn-disabled" : confirmFocusClass,
             }),
-            style: "margin-top: 16px;",
+            cls: "cc-nav--spaced",
           })}
         </div>
       `;
@@ -1222,10 +1203,10 @@
       let previewImgHtml = "";
       if (activeItem && activeItem.custom) {
         previewImgHtml = `
-          <div style="text-align: center; padding: 24px">
-            <div style="font-size: 2.798rem; margin-bottom: 12px">&#128736;</div>
-            <div style="font-size: 1.585rem; font-weight: bold; color: var(--text-primary-hover); margin-bottom: 8px">${T('CharCreate.custom3dModel')}</div>
-            <div style="font-size: 1.292rem; color: var(--text-card-medium); max-width: 320px; margin: 0 auto; line-height: 1.4">${T('CharCreate.sculptAUniqueCreatureFromMixedPartsSeededFro')}</div>
+          <div class="cc-text-centered cc-pad-roomy">
+            <div class="cc-glyph-display"><span class="cc-rpg-icon" style="${window.CCArt.icon(108, 48)}"></span></div>
+            <div class="cc-title-display--sm cc-gap-below">${T('CharCreate.custom3dModel')}</div>
+            <div class="cc-lede--page">${T('CharCreate.sculptAUniqueCreatureFromMixedPartsSeededFro')}</div>
           </div>
         `;
       } else if (canShow3D) {
@@ -1235,14 +1216,14 @@
         // No caption under it: the drag/zoom controls are discovered by grabbing
         // the model, and the hint line only ate viewport height.
         previewImgHtml = `
-          <canvas id="creature-3d-canvas" style="width: 100%; height: 68vh; min-height: 380px; max-height: 720px; display: block; cursor: grab; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4))"></canvas>
+          <canvas id="creature-3d-canvas" class="cc-model-canvas"></canvas>
         `;
       } else if (activeItem && activeItem.battlerName) {
         previewImgHtml = `
-          <img src="img/enemies/${activeItem.battlerName}.png" style="max-width: 100%; max-height: 560px; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4))" />
+          <img class="cc-battler-preview" src="img/enemies/${activeItem.battlerName}.png" />
         `;
       } else {
-        previewImgHtml = `<span style="font-size: 1.365rem; color: var(--text-card-medium)">${T('CharCreate.loadingBattlerAsset')}</span>`;
+        previewImgHtml = `<span class="cc-value-loading">${T('CharCreate.loadingBattlerAsset')}</span>`;
       }
 
       // Name-only entries, so they render as flat roster rows rather than the
@@ -1258,9 +1239,9 @@
       }).join("");
 
       leftHtml = `
-        <div class="cc-page cc-page-left" style="align-items: center; justify-content: flex-start">
-          <h2 class="cc-header-gothic" style="margin-bottom: 20px">${T('CharCreate.profileImage')}</h2>
-          <div style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center">
+        <div class="cc-page cc-page-left cc-page-top">
+          <h2 class="cc-header-gothic cc-gap-below-wide">${T('CharCreate.profileImage')}</h2>
+          <div class="cc-col cc-col-centered cc-span-full cc-items-centered">
             ${previewImgHtml}
           </div>
         </div>
@@ -1271,7 +1252,7 @@
           <h2 class="cc-header-gothic">${T('CharCreate.profileImageSelection')}</h2>
           <p class="cc-text-desc">${T('CharCreate.chooseAProfileImage')}</p>
 
-          <div class="cc-presets-board" style="grid-template-columns: repeat(2, 1fr); gap: 0 20px; flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; margin-top: 10px; align-content: start">
+          <div class="cc-presets-board cc-board-two-col cc-scroll-pane cc-grid-start">
             ${battlerCards}
           </div>
 
@@ -1308,26 +1289,26 @@
       }).join("");
 
       leftHtml = `
-        <div class="cc-page cc-page-left" style="display: flex">
+        <div class="cc-page cc-page-left cc-col">
           <h2 class="cc-header-gothic">${T('CharCreate.sprites')}</h2>
 
-          <div class="cc-presets-board cc-sprite-board" style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; margin-top: 14px">
+          <div class="cc-presets-board cc-sprite-board cc-scroll-pane cc-gap-above-wide">
             ${spriteCards}
           </div>
         </div>
       `;
 
       rightHtml = `
-        <div class="cc-page cc-page-right" style="align-items: center; justify-content: center">
-          <h2 class="cc-header-gothic" style="margin-bottom: 12px">${T('CharCreate.selectedSprite')}</h2>
-          <p class="cc-text-desc" style="margin-bottom: 8px">
+        <div class="cc-page cc-page-right cc-page-centered cc-col-centered">
+          <h2 class="cc-header-gothic cc-gap-below">${T('CharCreate.selectedSprite')}</h2>
+          <p class="cc-text-desc cc-gap-below">
             ${T('CharCreate.creatureSynthesisComplete')}
           </p>
 
           <div class="cc-sprite-portrait no-bust">
             <div class="cc-sprite-portrait-sprite" style="${largeSpriteStyle}"></div>
           </div>
-          <div class="cc-option-title" style="text-align: center">
+          <div class="cc-option-title cc-text-centered">
             ${activeItem ? activeItem.displayName : "..."}
           </div>
 
@@ -1339,7 +1320,7 @@
               onclick: "SceneManager._scene.onCharacterOk()",
               confirm: true,
             }),
-            style: "margin-top: auto; width: 100%;",
+            cls: "cc-nav--footed",
           })}
         </div>
       `;
@@ -1579,7 +1560,7 @@
         state.activeButton = e.button; state.dragging = true;
         state.prev = { x: e.clientX, y: e.clientY };
         if (e.button === 1) e.preventDefault();
-        canvas.style.cursor = 'grabbing';
+        canvas.classList.add('cc-grabbing');
       }
     };
     L.onMove = (e) => {
@@ -1593,7 +1574,7 @@
       }
       state.prev = { x: e.clientX, y: e.clientY };
     };
-    L.onUp = () => { state.activeButton = -1; state.dragging = false; canvas.style.cursor = 'grab'; };
+    L.onUp = () => { state.activeButton = -1; state.dragging = false; canvas.classList.remove('cc-grabbing'); };
     L.onWheel = (e) => {
       e.preventDefault();
       e.stopPropagation(); // don't let the page's wheel handler also scroll the list
@@ -1729,27 +1710,18 @@
     this.refreshUIOverlayDOM();
   };
 
-  // Whether the primary pick is fixed by the world rather than chosen. In a
-  // goblin world everybody is a goblin: the primary is Goblin and stays Goblin,
-  // and the only thing left to pick is what else they are.
+  // Nothing pins the primary any more. A goblin world used to fix it to the
+  // Goblin archetype; goblins are humanoids wearing a goblin's face now, and
+  // the world narrows the wardrobe (SpriteCatalog.isGoblinSheet) instead of the
+  // board. Kept as a question so the board can be pinned again some day.
   Scene_CreateCreature.prototype.isArchetypePrimaryLocked = function () {
-    return populationMode() === "goblin";
+    return false;
   };
 
   // Toggle an archetype in/out of the (max two) selection. The first pick is the
   // primary; a second distinct pick is the secondary (making a hybrid). Selecting
   // an already-chosen archetype removes it; picking a third replaces the secondary.
   Scene_CreateCreature.prototype._toggleArchetype = function (key) {
-    if (this.isArchetypePrimaryLocked()) {
-      // The primary is the world's answer, not the player's: Goblin can be
-      // neither cleared nor demoted, and everything else is a secondary. A
-      // second press on the secondary still takes it back off, so a plain
-      // goblin remains reachable.
-      this._selectedArchetype1 = GOBLIN_ARCHETYPE;
-      if (key === GOBLIN_ARCHETYPE) return;
-      this._selectedArchetype2 = (this._selectedArchetype2 === key) ? null : key;
-      return;
-    }
     if (this._selectedArchetype1 === key) {
       this._selectedArchetype1 = this._selectedArchetype2;
       this._selectedArchetype2 = null;
@@ -1813,11 +1785,11 @@
 
     if (Input.isTriggered("ok")) {
       switch (this._step) {
-        case 0: SoundManager.playOk(); this.onModeCardConfirm(); return;
+        case 0: this.onModeCardConfirm(); return;
         case 1:
-        case 2: SoundManager.playOk(); this.onArchetypeOk(); return;
-        case 3: SoundManager.playOk(); this.onBattlerOk(); return;
-        case 4: SoundManager.playOk(); this.onCharacterOk(); return;
+        case 2: this.onArchetypeOk(); return;
+        case 3: this.onBattlerOk(); return;
+        case 4: this.onCharacterOk(); return;
       }
     }
 
@@ -2096,13 +2068,8 @@
         break;
       case 1: // Archetype(s) - single screen: pick one (baseline) or two (hybrid)
         this._mode = 'hybrid'; // multi-select while on this screen; resolved at confirm
-        this._helpWindow.setText(this.isArchetypePrimaryLocked()
-          ? T('Creature.selectSecondaryArchetypeGoblin')
-          : T('Creature.selectOneOrTwoArchetypes'));
-        // A goblin world opens with Goblin already committed as the primary,
-        // so the screen is only ever asking what else this creature is.
-        this._selectedArchetype1 = this.isArchetypePrimaryLocked()
-          ? GOBLIN_ARCHETYPE : null;
+        this._helpWindow.setText(T('Creature.selectOneOrTwoArchetypes'));
+        this._selectedArchetype1 = null;
         this._selectedArchetype2 = null;
         this._archetypeWindow.show();
         this._archetypeWindow.activate();

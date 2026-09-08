@@ -1,144 +1,159 @@
 {
-    "preferences": "PREFERENZE",
-    "back": "Indietro",
-    "noSettingsHere": "Nessuna impostazione qui.",
-    "normal": "Normale",
-    "active": "✦ ATTIVO",
-    "inactive": "✧ INATTIVO",
-    "pressOrOkToEdit": "Premi ▼ o OK per modificare.",
-    "l1R1SwitchTabs": "L1 / R1 cambiano scheda.",
-    "adjustTheFocusedValue": "◀ / ▶ regolano il valore.",
-    "slider": "Cursore",
-    "selection": "Selezione",
-    "toggle": "Interruttore",
-    "active2": "Attivo",
-    "inactive2": "Inattivo",
-    "toAdjust": "◀ / ▶ per regolare",
-    "okOrToToggle": "OK o ◀ / ▶ per commutare",
-    "requiresRestartToApply": "⟳ Richiede riavvio per applicare",
-    "currentValue": "Valore Attuale",
-    "controls": "Comandi",
-    "howItWorks": "Come Funziona",
-    "toBrowse": "▲ / ▼ per scorrere",
-    "l1R1SwitchTabs2": "L1 / R1 cambiano scheda",
-    "label": {
-        "gameplay": "Giocabilità",
-        "video": "Video",
-        "audio": "Audio",
-        "shader": "Shader",
-        "experimental": "Sperimentale",
-        "uiVolume": "Volume Interfaccia",
-        "voiceVolume": "Volume Voci",
-        "masterVolume": "Volume Generale",
-        "language": "Lingua",
-        "muteBgm": "Silenzia BGM",
-        "footstepsVolume": "Volume Passi",
-        "weatherVolume": "Volume Meteo",
-        "enemyBattlers": "Combattenti Nemici",
-        "proceduralHitFX": "Colpi Arma Procedurali",
-        "showFps": "Mostra Contatore FPS",
-        "activeTheme": "Tema Attivo",
-        "cardCombat": "Combattimento a Carte",
-        "mapBattle": "Battaglia sulla Mappa",
-        "shaderStyle": "Stile Shader",
-        "renderResolution": "Risoluzione di Render",
-        "dithering": "Dithering",
-        "colorLevels": "Livelli di Colore",
-        "vertexSnap": "Snapping Vertici",
-        "pixelSize": "Dimensione Pixel",
-        "weaponDetail": "Dettaglio Arma",
-        "pixelPalette": "Tavolozza Colori",
-        "lightBands": "Bande di Luce",
-        "saturation": "Saturazione",
-        "inkedShadows": "Ombre Inchiostrate",
-        "uiScaling": "Scala Interfaccia",
-        "fontScaling": "Scala Caratteri",
-        "titleBackground": "Sfondo del Titolo",
-        "enemySpawn": "Comparsa Nemici",
-        "enemyDifficulty": "Difficoltà Nemici",
-        "cpuPartyMembers": "Compagni Controllati dalla CPU",
-        "sprite": "Sprite",
-        "sprites": "Sprite",
-        "markovLlmModel": "Modello di dialogo IA",
-        "dialogueMode": "Modalità Dialogo NPC"
-    },
-    "warn": {
-        "language": "⚠ In lavorazione: solo l'inglese è tradotto per intero. Le altre lingue hanno ancora parti del gioco non tradotte.",
-        "cardCombat": "⚠ Sostituisce la battaglia standard e disattiva Battaglia sulla Mappa.",
-        "mapBattleMode": "⚠ Sostituisce la battaglia standard e disattiva Combattimento a Carte.",
-        "markovLlmModel": "⚠ Il modello gira sul processore e vuole qualche gigabyte di memoria. Scrive in inglese, e la prima battuta della sessione attende il caricamento del modello."
-    },
-    "titleBackground": [
-        "Casuale",
-        "Schede",
-        "Spazio",
-        "Artefatti",
-        "Bestiario",
-        "Armi",
-        "Bestiario",
-        "Iperverso",
-        "Camper"
+  "preferences": "PREFERENZE",
+  "back": "Indietro",
+  "noSettingsHere": "Nessuna impostazione qui.",
+  "normal": "Normale",
+  "active": "✦ ATTIVO",
+  "inactive": "✧ INATTIVO",
+  "pressOrOkToEdit": "Premi ▼ o OK per modificare.",
+  "l1R1SwitchTabs": "L1 / R1 cambiano scheda.",
+  "adjustTheFocusedValue": "◀ / ▶ regolano il valore.",
+  "slider": "Cursore",
+  "selection": "Selezione",
+  "toggle": "Interruttore",
+  "active2": "Attivo",
+  "inactive2": "Inattivo",
+  "toAdjust": "◀ / ▶ per regolare",
+  "okOrToToggle": "OK o ◀ / ▶ per commutare",
+  "requiresRestartToApply": "⟳ Richiede riavvio per applicare",
+  "currentValue": "Valore Attuale",
+  "controls": "Comandi",
+  "howItWorks": "Come Funziona",
+  "toBrowse": "▲ / ▼ per scorrere",
+  "l1R1SwitchTabs2": "L1 / R1 cambiano scheda",
+  "label": {
+    "gameplay": "Giocabilità",
+    "video": "Video",
+    "audio": "Audio",
+    "shader": "Shader",
+    "experimental": "Sperimentale",
+    "uiVolume": "Volume Interfaccia",
+    "voiceVolume": "Volume Voci",
+    "masterVolume": "Volume Generale",
+    "language": "Lingua",
+    "muteBgm": "Silenzia BGM",
+    "footstepsVolume": "Volume Passi",
+    "weatherVolume": "Volume Meteo",
+    "enemyBattlers": "Combattenti Nemici",
+    "proceduralHitFX": "Colpi Arma Procedurali",
+    "runInBackground": "Esegui in Secondo Piano",
+    "showFps": "Mostra Contatore FPS",
+    "activeTheme": "Tema Attivo",
+    "mapBattle": "Battaglia sulla Mappa",
+    "mapStreaming": "Streaming Mappa",
+    "shaderStyle": "Stile Shader",
+    "renderResolution": "Risoluzione di Render",
+    "dithering": "Dithering",
+    "colorLevels": "Livelli di Colore",
+    "vertexSnap": "Snapping Vertici",
+    "pixelSize": "Dimensione Pixel",
+    "weaponDetail": "Dettaglio Arma",
+    "pixelPalette": "Tavolozza Colori",
+    "lightBands": "Bande di Luce",
+    "saturation": "Saturazione",
+    "inkedShadows": "Ombre Inchiostrate",
+    "uiScaling": "Scala Interfaccia",
+    "fontScaling": "Scala Caratteri",
+    "titleBackground": "Sfondo del Titolo",
+    "enemyDifficulty": "Difficoltà Nemici",
+    "cpuPartyMembers": "Compagni Controllati dalla CPU",
+    "sprite": "Sprite",
+    "sprites": "Sprite",
+    "markovLlmModel": "Modello GGUF locale",
+    "dialogueMode": "Modalità Dialogo NPC",
+    "mapTooltips": "Suggerimenti sulla Mappa",
+    "showControls": "Elenco dei Comandi",
+    "showMapNotices": "Consigli sulla Mappa",
+    "dialogueVoices": "Voci dei Dialoghi",
+    "dialogueVoicesVolume": "Volume Voci dei Dialoghi",
+    "asciiMode": "Modalita ASCII",
+    "asciiHud": "HUD ASCII",
+    "themeAscii": "ASCII"
+  },
+  "warn": {
+    "language": "⚠ In lavorazione: solo l'inglese è tradotto per intero. Le altre lingue hanno ancora parti del gioco non tradotte.",
+    "mapBattleMode": "⚠ Sostituisce la battaglia standard.",
+    "markovLlmModel": "⚠ Il modello gira sul processore e vuole qualche gigabyte di memoria. Scrive in inglese, e la prima battuta della sessione attende il caricamento del modello.",
+    "asciiModeEnabled": "⚠ Mentre la modalita ASCII e attiva prende il posto del tema; disattivandola torna il tema precedente."
+  },
+  "titleBackground": [
+    "Casuale",
+    "Schede",
+    "Spazio",
+    "Artefatti",
+    "Bestiario",
+    "Armi",
+    "Bestiario",
+    "Iperverso",
+    "Camper"
+  ],
+  "dialogueMode": [
+    "Empatia",
+    "Markoviano"
+  ],
+  "enemyBattler": [
+    "3D",
+    "Sprite",
+    "2D"
+  ],
+  "enemyBattlerToast": {
+    "model3d": "3D attivato (nemici)",
+    "sprites": "Sprite attivati (nemici)",
+    "battlers2d": "Combattenti 2D attivati (nemici)"
+  },
+  "languageProgress": "{name} tradotto all'1%",
+  "settingsInSection": "{count} impostazioni in questa sezione.",
+  "desc": {
+    "mapStreaming": "Unisce i quadranti procedurali adiacenti in una sola mappa continua da attraversare senza interruzioni. Se disattivato carica un quadrante alla volta e scorre lo schermo verso il successivo quando raggiungi un bordo.",
+    "runInBackground": "Mantiene il gioco in esecuzione mentre la finestra non è attiva, così puoi passare ad altre finestre senza metterlo in pausa.",
+    "proceduralHitFX": "Effetti d'impatto 3D disegnati per ogni tipo di arma dove cade il colpo. Disattivato riproduce l'animazione indicata dall'arma.",
+    "weatherVolume": "Volume dei suoni ambientali esterni: pioggia, temporali, vento e rumori del bioma. Non tocca gli interni.",
+    "partyHud": "Una scheda per ogni membro del gruppo in alto a sinistra: HP, MP, stati e bisogni urgenti.",
+    "musicArtistDisplay": "Se mostrare titolo e autore della musica in riproduzione.",
+    "battleMusicName": "Quale brano parte quando inizia uno scontro. Bioma, l'opzione predefinita, usa il tema di battaglia del luogo in cui stai combattendo.",
+    "battleMusicRandom": "Estrae un brano diverso all'inizio di ogni battaglia. Mentre e' attiva la selezione del brano resta nascosta.",
+    "markovLlmModel": "Quale modello linguistico GGUF scrive i dialoghi generati. Spento lascia ogni battuta generata alle catene di Markov. Metti un file .gguf nella cartella models del gioco e comparirà qui.",
+    "dialogueMode": "Come risponde un NPC senza nulla di scritto quando gli parli. Empatia esegue un'azione Socializza tratta dalla sua personalità, ripiegando su una battuta di contorno. Markoviano genera invece una nuova frase dal suo stesso archivio di parole.",
+    "mapTooltips": "Messaggi dei tutorial in tempo reale, segnaposto della bussola per le missioni e suggerimenti scritti mentre esplori la mappa.",
+    "showControls": "L'elenco di tutti i comandi appuntato nell'angolo della mappa, con ogni riga spuntata la prima volta che la usi. H lo ripiega, L3 sul pad. Resta appuntato in modalità storia e nelle mappe del tutorial, nascosto finché non lo chiedi altrove. Anche Bubba lo toglie, se sollevi con lui l'argomento dei comandi.",
+    "showMapNotices": "Gli avvisi appuntati accanto ai comandi: cio che Bubba legge di un luogo, la zona in cui ti trovi e qualunque cosa sia impostata come suggerimento. Anche Bubba li mostra e li nasconde, se sollevi con lui l'argomento del foglio.",
+    "dialogueVoices": "Ogni lettera di una battuta digitata viene cinguettata con un breve suono di vocale o consonante. Il tono è quello di chi parla; una parola chiave dorata suona più acuta.",
+    "dialogueVoicesVolume": "Quanto sono forti i suoni delle lettere sotto una battuta di dialogo, separati dagli altri effetti sonori."
+  },
+  "descState": {
+    "musicArtistDisplay": [
+      "Prima volta: annuncia un brano solo la prima volta che lo senti.",
+      "Ogni volta: mostra la cassetta ogni volta che il brano torna (mai in combattimento, mai due volte in 5 minuti).",
+      "Minimale: titolo e artista nella solita notifica d'angolo.",
+      "No: nessun annuncio."
     ],
-    "enemySpawn": [
-        "Bioma",
-        "Livello del Gruppo",
-        "Realistico",
-        "Caos"
-    ],
-    "dialogueMode": [
-        "Empatia",
-        "Markoviano"
-    ],
-    "enemyBattler": [
-        "3D",
-        "Sprite",
-        "2D"
-    ],
-    "enemyBattlerToast": {
-        "model3d": "3D attivato (nemici)",
-        "sprites": "Sprite attivati (nemici)",
-        "battlers2d": "Combattenti 2D attivati (nemici)"
-    },
-    "languageProgress": "{name} tradotto all'1%",
-    "settingsInSection": "{count} impostazioni in questa sezione.",
-    "desc": {
-        "proceduralHitFX": "Effetti d'impatto 3D disegnati per ogni tipo di arma dove cade il colpo. Disattivato riproduce l'animazione indicata dall'arma.",
-        "enemySpawnMode": "Quanto sono forti i nemici vaganti. L'anno alza comunque i livelli: +10 all'anno fino al 2010, fino a 110 nel 2010-2011, niente sotto l'80 dal 2012.",
-        "weatherVolume": "Volume dei suoni ambientali esterni: pioggia, temporali, vento e rumori del bioma. Non tocca gli interni.",
-        "partyHud": "Una scheda per ogni membro del gruppo in alto a sinistra: HP, MP, stati e bisogni urgenti.",
-        "musicArtistDisplay": "Se mostrare titolo e autore della musica in riproduzione.",
-        "battleMusicName": "Quale brano parte quando inizia uno scontro. Bioma, l'opzione predefinita, usa il tema di battaglia del luogo in cui stai combattendo. Casuale ne estrae uno diverso tra quelli sotto all'inizio di ogni battaglia.",
-        "markovLlmModel": "Quale modello linguistico GGUF scrive i dialoghi generati. Spento lascia ogni battuta generata alle catene di Markov. Metti un file .gguf nella cartella models del gioco e comparirà qui.",
-        "dialogueMode": "Come risponde un NPC senza nulla di scritto quando gli parli. Empatia esegue un'azione Socializza tratta dalla sua personalità, ripiegando su una battuta di contorno. Markoviano genera invece una nuova frase dal suo stesso archivio di parole."
-    },
-    "descState": {
-        "enemySpawnMode": [
-            "Bioma: può comparire qualunque creatura viva qui. Metà delle apparizioni è tarata entro cinque livelli dal tuo gruppo; l'altra metà è l'intera scala che il luogo ospita, distribuita attorno a una mediana fissata dall'anno, così compaiono sia le creature deboli sia quelle ben più forti, solo più di rado.",
-            "Livello del Gruppo: i nemici stanno al passo con il tuo gruppo. I vaganti vanno dal tuo livello fino a dieci sopra; ogni casella nasconde un boss ancora più su. L'opzione più sicura.",
-            "Realistico: la difficoltà viene dal luogo, non da te. I livelli salgono più una casella dista da dove hai iniziato. Ogni nazione e bioma ha il proprio elenco, e ogni casella nasconde un boss.",
-            "Caos: livelli da 1 a 110 ovunque, bioma o no. Le mappe procedurali ridistribuiscono i mostri a ogni ingresso."
-        ],
-        "musicArtistDisplay": [
-            "Prima volta: annuncia un brano solo la prima volta che lo senti.",
-            "Ogni volta: mostra la cassetta ogni volta che il brano torna (mai in combattimento, mai due volte in 5 minuti).",
-            "Minimale: titolo e artista nella solita notifica d'angolo.",
-            "No: nessun annuncio."
-        ],
-        "shaderStyle": [
-            "Off: three.js puro. I modelli sono disegnati puliti, senza tremolio, bande o riduzione di risoluzione.",
-            "SnapVertex: l'estetica PlayStation-1. I vertici scattano su una griglia grossolana, i colori si dividono in bande e l'immagine e' resa sotto la risoluzione piena.",
-            "Pixel Art: l'estetica a sprite. Bande cel piatte, pixel grossi e una tavolozza limitata opzionale."
-        ]
-    },
-    "shaderMode": {
-        "off": "Off",
-        "snapvertex": "SnapVertex",
-        "pixelart": "Pixel Art"
-    },
-    "palette": {
-        "aurora256": "256 Colori",
-        "splendor128": "128 Colori",
-        "lcd": "LCD",
-        "none": "Nessuna (Illimitati)"
-    }
+    "shaderStyle": [
+      "Off: three.js puro. I modelli sono disegnati puliti, senza tremolio, bande o riduzione di risoluzione.",
+      "SnapVertex: l'estetica PlayStation-1. I vertici scattano su una griglia grossolana, i colori si dividono in bande e l'immagine e' resa sotto la risoluzione piena.",
+      "Pixel Art: l'estetica a sprite. Bande cel piatte, pixel grossi e una tavolozza limitata opzionale."
+    ]
+  },
+  "shaderMode": {
+    "off": "Off",
+    "snapvertex": "SnapVertex",
+    "pixelart": "Pixel Art"
+  },
+  "palette": {
+    "aurora256": "256 Colori",
+    "splendor128": "128 Colori",
+    "lcd": "LCD",
+    "none": "Nessuna (Illimitati)"
+  },
+  "asciiState": [
+    "Disattivato",
+    "Attivo",
+    "Solo UI"
+  ],
+  "resetDefaults": "Ripristina Predefiniti",
+  "resetDefaultsDone": "Tutte le impostazioni sono tornate ai valori predefiniti",
+  "mapNotices": {
+    "first": "Solo la prima volta",
+    "always": "Sempre",
+    "off": "Mai"
+  }
 }

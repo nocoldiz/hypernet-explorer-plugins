@@ -257,6 +257,15 @@
 
   function placeCivicSigns(mapData, biome, allFeatures, seed, counts) {
     if (!mapData || !allFeatures) return;
+    // Bus stops and camper parks are Earth civic infrastructure: an alien
+    // surface has neither a bus line nor a road authority, so no sign of any
+    // kind goes up there (the alien mountain route reuses the Earth mountain
+    // generator, so the biome name is the only reliable tell).
+    if (/^Alien/i.test(String((biome && biome.name) || "")) ||
+      (typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._procGenData &&
+        $gameSystem._procGenData.alienGrid)) {
+      return;
+    }
     const width = PROC_MAP_WIDTH;
     const height = PROC_MAP_HEIGHT;
     // Dedicated RNG stream so signs never perturb terrain generation.
@@ -4606,12 +4615,36 @@
       } else {
         AudioManager.stopBgs();
       }
+
+      applyBiomeBgm(biomeName, finalBiome, seed, originX, originY);
     } else {
       AudioManager.stopBgs();
+      applyBiomeBgm(biomeName, null, seed, originX, originY);
     }
 
     return true;
   };
+
+  // Only the enclosed places carry music of their own: a crypt, a sewer, a
+  // dungeon, a cave. Out in the open the procedural map is scored by its
+  // ambience alone, so walking back up a staircase into the daylight stops
+  // whatever the room below was playing.
+  function applyBiomeBgm(biomeName, biomeEntry, seed, originX, originY) {
+    const list = (biomeEntry && Array.isArray(biomeEntry.bgm))
+      ? biomeEntry.bgm.filter((n) => n && n.trim())
+      : [];
+    if (!isInteriorBiome(biomeName || "") || list.length === 0) {
+      AudioManager.stopBgm();
+      return;
+    }
+    // Seeded on the square, so the same crypt keeps the same theme and a walk
+    // through its rooms never reshuffles the music.
+    const rng = createSeededRandom(seed + originX * 31 + originY * 17);
+    const name = list[Math.floor(rng() * list.length)];
+    const current = AudioManager._currentBgm;
+    if (current && current.name === name) return;
+    AudioManager.playBgm({ name: name, volume: 70, pitch: 100, pan: 0 });
+  }
 
   // ==========================================================================
   // Overland origins: the world square a character-creation origin starts on
@@ -4693,6 +4726,15 @@
       roadDirection = biomeName.substring(5).toLowerCase();
       biomeName = "Road";
     }
+    // The cache is NOT already rolled for the world in hand: it can be preloaded
+    // from a BiomesMap.json snapshot exported from another world, and a special
+    // rolled there ("SpiritWoods") belongs to that world's seed and not to this
+    // one. resolveSquare unwraps and re-rolls every name it reads; so does this,
+    // or the square the party is put down on is named one thing by the origin
+    // and another by the resolver - and the stitched window, which is guarded on
+    // the two agreeing, then collapses and every border crossing costs a fade.
+    biomeName = resolveSpecialBiome(
+      normalizeLatitudeBiome(unwrapSpecialBiome(biomeName), y), x, y);
     return { biomeName, roadDirection, bridgeDirection: null };
   }
 
@@ -6004,15 +6046,6 @@
       }
     }
 
-    // Underground: the square is built from the surface biome's lower layer, and
-    // the neighbours it is blended against stay SURFACE names (that is what the
-    // cave generator's sealed-side test reads, see undergroundNeighbourNames).
-    let biomeName = surfaceName;
-    if (depth > 0 && biome && biome.lowerLayer) {
-      const lower = getBiomeByName(biome.lowerLayer);
-      if (lower) { biomeName = biome.lowerLayer; biome = lower; }
-    }
-
     // Adjacency. On an alien planet every neighbour is the same biome; on Earth
     // it is the live tile column where that is readable and the cache otherwise.
     let adjacentBiomes = null, cacheInfo = null, diagonalBiomes = null;
@@ -6040,6 +6073,19 @@
       }
     }
 
+    const displayAsBeach = alienGrid ? false : shouldDisplayAsBeach(surfaceName, adjacentBiomes, diagonalBiomes);
+
+    // Underground: the square is built from the surface biome's lower layer, and
+    // the neighbours it is blended against stay SURFACE names (that is what the
+    // cave generator's sealed-side test reads, see undergroundNeighbourNames).
+    let biomeName = surfaceName;
+    if (depth > 0 && biome && biome.lowerLayer) {
+      let lowerName = biome.lowerLayer;
+      if (displayAsBeach && lowerName === 'Cave') lowerName = 'CaveFlooded';
+      const lower = getBiomeByName(lowerName);
+      if (lower) { biomeName = lowerName; biome = lower; }
+    }
+
     return {
       worldX, worldY, depth,
       surfaceBiome: surfaceName,
@@ -6055,7 +6101,7 @@
       alien: !!alienGrid,
       // A homogeneous planet has no coastline, so beach/island substitution
       // (which only means anything at a biome transition) never applies.
-      displayAsBeach: alienGrid ? false : shouldDisplayAsBeach(biomeName, adjacentBiomes, diagonalBiomes),
+      displayAsBeach: alienGrid ? false : (depth > 0 ? false : displayAsBeach),
       displayAsIsland: alienGrid ? false : (shouldDisplayAsIsland ? shouldDisplayAsIsland(biomeName, adjacentBiomes) : false),
       seed: procMapSeed(worldX, worldY, depth),
       dayTemperature: (biome && biome.dayTemperature) || 20,

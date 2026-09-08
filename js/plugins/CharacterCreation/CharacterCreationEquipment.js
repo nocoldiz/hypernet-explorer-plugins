@@ -313,7 +313,10 @@
         console.warn(`StartWeapon tag for class ${classId} points at no real weapon.`);
         return false;
       }
-      weapons.forEach((weapon) => $gameParty.gainItem(weapon, 1));
+      weapons.forEach((weapon) => {
+        $gameParty.gainItem(weapon, 1);
+        recordClassGrant(actor, 'weapon', 'weapon', weapon.id, 1);
+      });
       let equippedAny = false;
       weapons.forEach((weapon) => {
         if (equipIntoOpenSlot(actor, weapon)) equippedAny = true;
@@ -346,7 +349,10 @@
       return false;
     }
 
-    starters.forEach((weapon) => $gameParty.gainItem(weapon, 1));
+    starters.forEach((weapon) => {
+      $gameParty.gainItem(weapon, 1);
+      recordClassGrant(actor, 'weapon', 'weapon', weapon.id, 1);
+    });
 
     // The one actually held is the cheapest of the set: a starting character
     // walks out carrying their whole kit but wearing the humblest of it.
@@ -373,7 +379,10 @@
     if (!actor || !classId) return false;
     const armors = getClassStartArmors(classId).map((id) => $dataArmors[id]).filter(isRealEntry);
     if (armors.length === 0) return false;
-    armors.forEach((armor) => $gameParty.gainItem(armor, 1));
+    armors.forEach((armor) => {
+      $gameParty.gainItem(armor, 1);
+      recordClassGrant(actor, 'armor', 'armor', armor.id, 1);
+    });
     let equippedAny = false;
     armors.forEach((armor) => {
       if (equipIntoOpenSlot(actor, armor)) equippedAny = true;
@@ -447,6 +456,7 @@
       const item = $dataItems[entry.id];
       if (item) {
         $gameParty.gainItem(item, entry.qty);
+        recordClassGrant(actor, 'item', 'item', entry.id, entry.qty);
       } else {
         console.warn(`StartingEquipment: class starting item ${entry.id} not found.`);
       }
@@ -525,6 +535,118 @@
   }
 
   //=============================================================================
+  // Class Grant Ledger
+  //=============================================================================
+  //
+  // An indecisive player used to walk out of creation carrying every class
+  // they ever hovered over: each visit to the class step handed out a fresh
+  // weapon, armor and item kit and taught a fresh set of class skills, and
+  // nothing ever took the last class's deal back. The ledger below writes down
+  // what a class handed to an actor, so the next class change can take exactly
+  // that back before the new class deals its own. Only creation is touched: a
+  // mid-game class change is somebody else's business.
+
+  const CLASS_GRANT_SLOTS = ["weapon", "armor", "item"];
+
+  /** True while one of the character creation scenes is on screen. */
+  function isCreationScene() {
+    const scene = typeof SceneManager !== "undefined" ? SceneManager._scene : null;
+    const name = scene && scene.constructor ? scene.constructor.name : "";
+    return /CharacterCreation|CreateCreature|ClassSelect|CharacterPreset/i.test(name);
+  }
+
+  function grantEntryData(kind, id) {
+    if (kind === "weapon") return $dataWeapons[id];
+    if (kind === "armor") return $dataArmors[id];
+    return $dataItems[id];
+  }
+
+  function classGrantBook(actor) {
+    if (!actor._ccClassGrants) actor._ccClassGrants = {};
+    return actor._ccClassGrants;
+  }
+
+  /**
+   * Write down one thing a class just handed over.
+   * @param {Game_Actor} actor - Actor the class was chosen for
+   * @param {string} slot - "weapon", "armor" or "item"
+   * @param {string} kind - Which database the entry lives in
+   * @param {number} id - Entry id
+   * @param {number} qty - How many were handed over
+   */
+  function recordClassGrant(actor, slot, kind, id, qty) {
+    if (!actor || !isCreationScene()) return;
+    const book = classGrantBook(actor);
+    if (!book[slot]) book[slot] = [];
+    book[slot].push({ kind, id, qty: qty || 1 });
+  }
+
+  /**
+   * Take back everything a previous class handed to this actor in one slot.
+   * A piece still worn is taken off first, so it lands in the bag and can be
+   * removed from it like anything else.
+   * @param {Game_Actor} actor - Actor to strip
+   * @param {string} slot - "weapon", "armor" or "item"
+   */
+  function revokeClassGrant(actor, slot) {
+    if (!actor || !actor._ccClassGrants) return;
+    const rows = actor._ccClassGrants[slot];
+    if (!rows) return;
+    delete actor._ccClassGrants[slot];
+    rows.forEach((row) => {
+      const data = grantEntryData(row.kind, row.id);
+      if (!data) return;
+      if (row.kind !== "item") {
+        actor.equips().forEach((piece, slotId) => {
+          if (piece === data) {
+            try { actor.changeEquip(slotId, null); } catch (e) { /* slot refused, leave it worn */ }
+          }
+        });
+      }
+      const held = $gameParty.numItems(data);
+      if (held > 0) $gameParty.loseItem(data, Math.min(held, row.qty || 1));
+    });
+  }
+
+  /** Take back every class-dealt piece and kit this actor is holding. */
+  function revokeAllClassGrants(actor) {
+    CLASS_GRANT_SLOTS.forEach((slot) => revokeClassGrant(actor, slot));
+  }
+
+  /**
+   * Unlearn the skills the class being left behind taught, keeping anything
+   * the class being joined teaches too and the global starter skills every
+   * character keeps whatever they end up being.
+   * @param {Game_Actor} actor - Actor changing class
+   * @param {number} oldClassId - Class being left
+   * @param {number} newClassId - Class being joined
+   */
+  function forgetClassSkills(actor, oldClassId, newClassId) {
+    const oldClass = $dataClasses[oldClassId];
+    if (!actor || !oldClass) return;
+    const newClass = $dataClasses[newClassId];
+    const kept = new Set(GLOBAL_STARTER_SKILLS);
+    ((newClass && newClass.learnings) || []).forEach((l) => kept.add(l.skillId));
+    (oldClass.learnings || []).forEach((learning) => {
+      if (kept.has(learning.skillId)) return;
+      actor.forgetSkill(learning.skillId);
+    });
+  }
+
+  // The one hook: every class change during creation, from whichever of the
+  // many wizard paths made it, settles the last class's account first.
+  const _Game_Actor_changeClass = Game_Actor.prototype.changeClass;
+  Game_Actor.prototype.changeClass = function (classId, keepExp) {
+    const previous = this._classId;
+    _Game_Actor_changeClass.call(this, classId, keepExp);
+    if (!previous || !isCreationScene()) return;
+    // The same class picked twice is still a second deal, so its kit is taken
+    // back too; only the skills are left alone, since nothing changed there.
+    if (previous !== classId) forgetClassSkills(this, previous, classId);
+    revokeAllClassGrants(this);
+  };
+
+  //=============================================================================
   // Exports to Global Namespace
   //=============================================================================
 
@@ -554,7 +676,13 @@
     getClassStartingItems,
     getClassStartingItemsValue,
     giveClassStartingItems,
-    auditClassStartingItems
+    auditClassStartingItems,
+
+    // Class grant ledger
+    recordClassGrant,
+    revokeClassGrant,
+    revokeAllClassGrants,
+    forgetClassSkills
   };
 
   console.log(`${pluginName} loaded successfully.`);

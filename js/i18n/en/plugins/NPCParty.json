@@ -3,5 +3,7 @@
   "partyFull": "Your party is full.",
   "introduce": "My name is {name} and I'm a {className}",
   "joinsParty": "{name} joins the party!",
-  "residence": "Residence"
+  "residence": "Residence",
+  "joinedInactive": "{name} signs on, but there is no room on the road: they wait as an inactive member.",
+  "benchedLore": "{name} agreed to travel with the party, and has been waiting for a place in it ever since."
 }

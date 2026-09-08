@@ -308,20 +308,12 @@
     return value || (trait[type] || "");
   };
 
+  // The engine's own param names (ATT, M.DEF, LUCK) are not what this game
+  // calls its attributes: a trait's stat line reads STR, WIS and PSI like the
+  // sheet beside it. window.TraitParams is the one place that says so.
   const getParamDisplayName = (paramKey) => {
-    const displayNames = {
-      hp: _si18n("HP"),
-      mp: _si18n("MP"),
-      atk: _si18n("ATT"),
-      def: _si18n("DEF"),
-      mat: _si18n("M.ATT"),
-      mdf: _si18n("M.DEF"),
-      agi: _si18n("AGILITY"),
-      luk: _si18n("LUCK"),
-      eva: "EVA"
-    };
-
-    return displayNames[paramKey] || paramKey;
+    if (paramKey === "eva") return "EVA";
+    return window.TraitParams ? window.TraitParams.label(paramKey) : String(paramKey).toUpperCase();
   };
 
   // Specializations (js/db/Skills/Specialization.json via SpecializationMenu.js)
@@ -401,7 +393,7 @@
       if (window.CCNav) window.CCNav.detach(this);
       if (this._traitBar) { this._traitBar.dispose(); this._traitBar = null; }
       if (this._dndContainer) {
-        this._dndContainer.style.display = "none";
+        window.CCPanel.hide(this._dndContainer);
       }
     }
 
@@ -426,9 +418,7 @@
       }
 
       this._dndContainer = container;
-      this._dndContainer.style.display = "flex";
-      this._dndContainer.style.opacity = "1";
-      this._dndContainer.style.pointerEvents = "auto";
+      window.CCPanel.show(this._dndContainer);
       this._dndContainer.innerHTML = ""; // Wipe clean to prevent stale DOM layout leaking
 
       this._sig = { category: null, selection: null, cursor: -1, hover: -1, specsReady: null, confirm: null };
@@ -451,11 +441,7 @@
     // Sprite from IconSet.png at an arbitrary size. The sheet is 16 icons wide
     // at 32px each, so scaling the whole sheet keeps every cell square.
     getIconStyle(iconIndex, size = 32) {
-      const box = `width:${size}px; height:${size}px; display:inline-block; flex:0 0 auto;`;
-      if (!iconIndex) return box;
-      const col = iconIndex % 16;
-      const row = Math.floor(iconIndex / 16);
-      return `${box} background-image:url('img/system/IconSet.png'); background-size:${size * 16}px auto; background-position:-${col * size}px -${row * size}px; image-rendering:pixelated;`;
+      return window.CCArt.icon(iconIndex, size);
     }
 
     currentTraits() {
@@ -591,7 +577,7 @@
             </h3>
             <div class="ts-picked-list" id="ts-picked"></div>
 
-            <div class="cc-dossier-card ts-summary" id="ts-diseases-card" style="display: none">
+            <div class="cc-dossier-card ts-summary" id="ts-diseases-card">
               <h3 class="cc-subheader">${t("selectedDiseasesLabel")}</h3>
               <div class="ts-badge-row" id="ts-diseases"></div>
             </div>
@@ -615,7 +601,7 @@
           <!-- The runtime does not honour the "inset" shorthand: it silently
                collapses the overlay onto the top-left corner of the spread, so
                the four longhands (plus a size) are spelled out here. -->
-          <div id="ts-prompt" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 1200; display: none; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.55)"></div>
+          <div id="ts-prompt"></div>
         </div>
       `;
 
@@ -686,7 +672,7 @@
       if (idx === this._cursor) classes.push("highlighted");
       return `
         <div class="${classes.join(" ")}" data-idx="${idx}">
-          <span style="${this.getIconStyle(trait.icon, 22)}"></span>
+          <span class="cc-rpg-icon" style="${this.getIconStyle(trait.icon, 22)}"></span>
           <div class="cc-option-title">${getTraitText(trait, "name")}</div>
           ${trait.diseaseId ? "" : costBadgeHTML(traitCost(trait))}
         </div>`;
@@ -784,13 +770,13 @@
       if (trait.diseaseId) return this.renderDiseaseInfo(trait);
 
       const statBadges = (stats, color) => Object.keys(stats || {}).map((key) => {
-        const value = stats[key];
+        const value = window.TraitParams ? window.TraitParams.scale(key, stats[key]) : stats[key];
         const sign = value > 0 ? "+" : "";
-        return `<span class="cc-element-badge" style="color: ${color}">${getParamDisplayName(key)} ${sign}${value}</span>`;
+        return `<span class="cc-element-badge" class="cc-inked" style="--cc-ink:${color}">${getParamDisplayName(key)} ${sign}${value}</span>`;
       }).join("");
 
       const iconBadge = (iconIndex, label, suffix) =>
-        `<span class="cc-element-badge"><span style="${this.getIconStyle(iconIndex, 16)} margin-right: 6px"></span>${label}${suffix ? ` ${suffix}` : ""}</span>`;
+        `<span class="cc-element-badge"><span class="cc-rpg-icon cc-rpg-icon-gap" style="${this.getIconStyle(iconIndex, 16)}"></span>${label}${suffix ? ` ${suffix}` : ""}</span>`;
 
       // trait.items is a flat array with one entry per copy, so tally by id.
       const itemCounts = {};
@@ -828,7 +814,7 @@
       this._el.info.innerHTML = `
         <div class="cc-dossier-card ts-detail-card">
           <div class="ts-detail-head">
-            <span style="${this.getIconStyle(trait.icon, 30)}"></span>
+            <span class="cc-rpg-icon" style="${this.getIconStyle(trait.icon, 30)}"></span>
             <span class="ts-detail-label">${t("costLabel")}</span>
             ${costBadgeHTML(traitCost(trait))}
           </div>
@@ -880,7 +866,7 @@
       // one keypress away and prints it in full above.
       this._el.picked.innerHTML = picked.map((trait, index) => `
         <div class="cc-trait-picked" data-nav data-picked="${index}">
-          <span style="${this.getIconStyle(trait.icon, 20)}"></span>
+          <span class="cc-rpg-icon" style="${this.getIconStyle(trait.icon, 20)}"></span>
           <span class="cc-trait-picked-name">${getTraitText(trait, "name")}</span>
           ${costBadgeHTML(traitCost(trait))}
           <span class="cc-slot-remove">✕</span>
@@ -898,10 +884,10 @@
     renderDiseases() {
       if (!this._el.diseases) return;
       const cards = this._selectedDiseases;
-      this._el.diseasesCard.style.display = cards.length ? "" : "none";
+      this._el.diseasesCard.classList.toggle("ui-closed", !cards.length);
       this._el.diseases.innerHTML = cards.map((card, idx) => `
-        <span class="cc-element-badge focusable" data-nav data-disease-slot="${idx}" style="cursor: pointer">
-          <span style="${this.getIconStyle(card.icon, 16)} margin-right: 6px"></span>${card.name} ✕
+        <span class="cc-element-badge cc-element-badge--clickable focusable" data-nav data-disease-slot="${idx}">
+          <span class="cc-rpg-icon cc-rpg-icon-gap" style="${this.getIconStyle(card.icon, 16)}"></span>${card.name} ✕
         </span>
       `).join("");
       this._el.diseases.querySelectorAll("[data-disease-slot]").forEach((node) => {
@@ -917,7 +903,7 @@
       this._el.info.innerHTML = `
         <div class="cc-dossier-card ts-detail-card">
           <div class="ts-detail-head">
-            <span style="${this.getIconStyle(card.icon, 30)}"></span>
+            <span class="cc-rpg-icon" style="${this.getIconStyle(card.icon, 30)}"></span>
             <span class="ts-detail-label">${card.name}</span>
           </div>
           ${api && api.diseaseDossierHTML ? api.diseaseDossierHTML(card.diseaseId) : `<p class="ts-detail-desc">${card.description}</p>`}
@@ -928,9 +914,9 @@
     renderBonuses() {
       const totals = this.calculateTotalBonuses();
       const badges = Object.keys(totals).filter((key) => totals[key] !== 0).map((key) => {
-        const value = totals[key];
+        const value = window.TraitParams ? window.TraitParams.scale(key, totals[key]) : totals[key];
         const color = value > 0 ? "var(--text-forest-green)" : "var(--accent-red-3)";
-        return `<span class="cc-element-badge" style="color: ${color}">${getParamDisplayName(key)} ${value > 0 ? "+" : ""}${value}</span>`;
+        return `<span class="cc-element-badge" class="cc-inked" style="--cc-ink:${color}">${getParamDisplayName(key)} ${value > 0 ? "+" : ""}${value}</span>`;
       }).join("");
       this._el.bonuses.innerHTML = badges ||
         `<span class="ts-summary-empty">${t('noBonusesYet')}</span>`;
@@ -945,7 +931,7 @@
       });
       this._el.skills.innerHTML = ids.length ? ids.map((id) => {
         const skill = $dataSkills[id];
-        return `<span class="cc-element-badge"><span style="${this.getIconStyle(skill.iconIndex, 16)} margin-right: 6px"></span>${dbName(skill)}</span>`;
+        return `<span class="cc-element-badge"><span class="cc-rpg-icon cc-rpg-icon-gap" style="${this.getIconStyle(skill.iconIndex, 16)}"></span>${dbName(skill)}</span>`;
       }).join("") : `<span class="ts-summary-empty">${t("noSkills")}</span>`;
     }
 
@@ -953,15 +939,15 @@
     renderPrompt() {
       const layer = this._el.prompt;
       if (this._confirmYes === null) {
-        layer.style.display = "none";
+        window.CCPanel.hide(layer);
         layer.innerHTML = "";
         this._promptBtns = null;
         return;
       }
       if (!this._promptBtns) {
         layer.innerHTML = `
-          <div style="padding: 24px 32px; text-align: center; background: var(--gradient-1); border: 2px solid var(--border-primary-hover-translucent-15); border-radius: 10px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5)">
-            <h2 class="cc-header-gothic" style="margin: 0 0 18px 0; font-size: 2.064rem">${t('confirmTraits')}</h2>
+          <div class="ts-prompt-box">
+            <h2 class="cc-header-gothic ts-prompt-title">${t('confirmTraits')}</h2>
             <!-- Same three-slot bar as the page behind it, so the answer that
                  goes back is on the left and the one that goes on is on the
                  right, exactly where Back and Continue are. -->
@@ -972,7 +958,7 @@
               // see who walks these two.
               back: window.CCButtons.button(t('no'), { attrs: 'data-yes="0" data-nav-owner="updateInput"' }),
               next: window.CCButtons.button(t('yes'), { confirm: true, attrs: 'data-yes="1" data-nav-owner="updateInput"' }),
-              style: "margin-top: 0; padding-top: 0; min-width: 380px; background: transparent; box-shadow: none;",
+              cls: "cc-nav--bare",
             })}
           </div>
         `;
@@ -981,7 +967,7 @@
           btn.addEventListener("click", () => this.answerPrompt(btn.dataset.yes === "1"));
         });
       }
-      layer.style.display = "flex";
+      window.CCPanel.show(layer);
       this._promptBtns.forEach((btn) => {
         btn.classList.toggle("highlighted", (btn.dataset.yes === "1") === this._confirmYes);
       });
@@ -1064,7 +1050,7 @@
       if (trait.diseaseId) {
         const at = this._selectedDiseases.indexOf(trait);
         if (at >= 0) { SoundManager.playCancel(); this._selectedDiseases.splice(at, 1); }
-        else { SoundManager.playOk(); this._selectedDiseases.push(trait); }
+        else { this._selectedDiseases.push(trait); }
         this.syncOverlay(false);
         return;
       }
@@ -1074,7 +1060,6 @@
       } else if (state.blocked) {
         SoundManager.playBuzzer();
       } else {
-        SoundManager.playOk();
         this._selectedTraits.push(trait);
         this.syncOverlay(false);
       }
@@ -1127,7 +1112,6 @@
     // plugin-command randomizer skips them , that category is decided by the
     // biology chosen earlier in creation.
     onTraitsRandom() {
-      SoundManager.playOk();
       this._selectedTraits = pickRandomTraits({
         pool: getTraits().filter((trait) => (trait.category || "mental") !== "genetic"),
       });
@@ -1158,7 +1142,6 @@
         SoundManager.playBuzzer();
         return;
       }
-      SoundManager.playOk();
       this._confirmYes = true;
       this.syncOverlay(false);
     }
@@ -1170,7 +1153,6 @@
         this.syncOverlay(false);
         return;
       }
-      SoundManager.playOk();
       this._confirmYes = null;
       this.applyTraits();
       Scene_TraitSelector._returnToCharacterCreation = false;
@@ -1464,23 +1446,13 @@
     }
 
     addParam(actor, paramName, value) {
-      const paramMap = {
-        hp: 0,      // Max HP (unchanged)
-        mp: 1,      // Max MP (unchanged)
-        atk: 2,     // STR (was atk)
-        def: 3,     // CON (was def)
-        mat: 4,     // INT (was mat)
-        mdf: 5,     // SAG (was mdf)
-        agi: 6,     // DES (was agi)
-        luk: 7,     // PSI (was luk)
-      };
-
-      const paramId = paramMap[paramName];
+      const paramId = window.TraitParams.paramId(paramName);
       if (typeof paramId === "number") {
         if (!actor._paramPlus) {
           actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
         }
-        actor._paramPlus[paramId] = (actor._paramPlus[paramId] || 0) + value;
+        actor._paramPlus[paramId] =
+          (actor._paramPlus[paramId] || 0) + window.TraitParams.scale(paramName, value);
       }
     }
 

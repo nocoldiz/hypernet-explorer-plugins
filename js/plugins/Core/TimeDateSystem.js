@@ -13,7 +13,7 @@
  * --- What's New in v1.2.0 ---
  * - Added overeating system:
  * - Hunger indicator can exceed 100% (up to 150% by default).
- * - If it exceeds 110%, the player suffers a state (default: 41).
+ * - If it exceeds 300%, the player suffers a state (default: 41).
  * - The state is removed when hunger drops below 100%.
  * - Hunger consumption is much faster when above 100%.
  *
@@ -68,12 +68,12 @@
  * @desc Maximum hunger value that can be reached during overeating.
  * @type number
  * @min 100
- * @default 150
+ * @default 350
  * @parent --- Hunger/Sleep Settings ---
  *
  * @param overeatStateId
  * @text Overeating State ID
- * @desc The ID of the state applied when overeating (>110%).
+ * @desc The ID of the state applied when overeating (>300%).
  * @type state
  * @default 41
  * @parent --- Hunger/Sleep Settings ---
@@ -388,7 +388,7 @@
   const maxHunger = Number(parameters.maxHunger || 100);
 
   // New Overeating Parameters
-  const overeatMaxHunger = Number(parameters.overeatMaxHunger || 150);
+  const overeatMaxHunger = Number(parameters.overeatMaxHunger || 350);
   const overeatStateId = Number(parameters.overeatStateId || 41);
   const overeatDepletionMultiplier = Number(
     parameters.overeatDepletionMultiplier || 3.0
@@ -461,7 +461,7 @@
   // The interior maps of a vehicle (train, bus, taxi, camper, car). The travel
   // window (MapInfoHUD) only counts one of these as "inside a vehicle" - the
   // prison (1102) shares the no-depletion list but is not a vehicle.
-  const VEHICLE_INTERIOR_MAPS = [718, 719, 720, 327, 1094, 317];
+  const VEHICLE_INTERIOR_MAPS = [718, 719, 720, 327, 721, 1094, 317];
 
 
   // Debug logging helper. Gated on the test flag only: previously this also
@@ -498,7 +498,13 @@
   function advanceGameTimeSimulated(totalMinutes) {
     if (totalMinutes <= 0) return getGameTimeMinutes();
 
-    const STEP = 60;
+    // One chunk an hour is right for a nap, but a cryogenic jump or a
+    // SimulateTime of years would ask for thousands of NPCSim passes in one
+    // synchronous loop and lock the game up for as long as they take. The
+    // chunk grows with the jump instead, so no single call ever runs more
+    // than MAX_CHUNKS of them however far the clock is pushed.
+    const MAX_CHUNKS = 48;
+    const STEP = Math.max(60, Math.ceil(totalMinutes / MAX_CHUNKS));
     let remaining   = totalMinutes;
     let currentTime = getGameTimeMinutes();
 
@@ -527,6 +533,27 @@
 
     updateGameDateVariable();
     return currentTime;
+  }
+
+  // Runs the hourly NPC schedule passes an advancing sequence (sleep, waiting)
+  // has crossed, never more than `maxTicks` of them in one call. Whatever is
+  // left over is dropped rather than queued: a frame that covers half a day
+  // must not pay for twelve NPCSim passes, and NPCLifeSim.catchUp resolves the
+  // skipped stretch in one delta pass when the sequence ends anyway.
+  function runNpcTicksUpTo(a, upTo, maxTicks) {
+    let ran = 0;
+    while (a.nextNpcTick <= upTo) {
+      if (maxTicks > 0 && ran >= maxTicks) {
+        a.nextNpcTick = upTo + 60;
+        break;
+      }
+      if (window.NPCSim?.tick) {
+        try { window.NPCSim.tick(a.nextNpcTick); } catch (_) {}
+      }
+      a.nextNpcTick += 60;
+      ran++;
+    }
+    return ran;
   }
 
   // Convert minutes since epoch to date/time components
@@ -738,7 +765,7 @@
       debug("Nutrient variables have been reset to 0.");
 
       // Refresh menu if open
-      if (SceneManager._scene instanceof Scene_Menu) {
+      if (SceneManager._scene instanceof Scene_Menu && SceneManager._scene._hungerSleepStatusWindow) {
         SceneManager._scene._hungerSleepStatusWindow.refresh();
       }
     } else {
@@ -772,7 +799,7 @@
       actor.addSleep(sleepAmount);
 
       // Refresh menu if open
-      if (SceneManager._scene instanceof Scene_Menu) {
+      if (SceneManager._scene instanceof Scene_Menu && SceneManager._scene._hungerSleepStatusWindow) {
         SceneManager._scene._hungerSleepStatusWindow.refresh();
       }
     } else {
@@ -809,7 +836,7 @@
       actor.updateOvereatState();
 
       // Refresh menu if open
-      if (SceneManager._scene instanceof Scene_Menu) {
+      if (SceneManager._scene instanceof Scene_Menu && SceneManager._scene._hungerSleepStatusWindow) {
         SceneManager._scene._hungerSleepStatusWindow.refresh();
       }
 
@@ -877,7 +904,7 @@
       debug(`FullRestore: ${actor.name()} hunger=${maxHunger}, sleep=${maxSleep}`);
     }
 
-    if (SceneManager._scene instanceof Scene_Menu) {
+    if (SceneManager._scene instanceof Scene_Menu && SceneManager._scene._hungerSleepStatusWindow) {
       SceneManager._scene._hungerSleepStatusWindow.refresh();
     }
   });
@@ -1193,7 +1220,7 @@
 
   // New method for handling overeating state
   Game_Actor.prototype.updateOvereatState = function () {
-    const overeatThreshold = maxHunger * 1.1; // 110%
+    const overeatThreshold = maxHunger * 3.0; // 300%
     const normalThreshold = maxHunger; // 100%
 
     const isOvereating = this.isStateAffected(overeatStateId);
@@ -3023,7 +3050,10 @@
       const data = ($gameSystem && $gameSystem.getFastTravelData) ? $gameSystem.getFastTravelData() : null;
       if (data && data.timerActive) return 'travel';
     }
-    if (scene._sleepSequenceState || scene._cryoSequenceState || scene._workSequenceActive) return 'clock';
+    // Waiting is a clock sequence like the others: the card is the travel
+    // window the hours and the needs are watched through, so it comes up for
+    // the wait timelapse too.
+    if (scene._sleepSequenceState || scene._waitAdvance || scene._cryoSequenceState || scene._workSequenceActive) return 'clock';
     // Same reasoning as an active sleep/work sequence: there is no location to
     // report inside a cell, only the sentence's clock running -- and unlike
     // those, a jail term can run for real minutes without any sequence active
@@ -3107,11 +3137,9 @@
   };
 
   // How dangerous this square is, in the one unit that means anything: the
-  // level of the creature it usually fields. Drawn ONLY in the distance-from-
-  // spawn encounter mode, where a square's danger is a property of the square
-  // and so is worth reading off the map before walking onto it. In the other
-  // two modes the answer is "whatever level your party is" (Balanced) or
-  // "anything at all" (Chaos), and a number would be a lie in both.
+  // level of the creature it usually fields. A square's danger is a property of
+  // the square - the biome decides what lives there - so it is worth reading off
+  // the map before walking onto it.
   //
   // The figure is the weighted median of the local roster, built by the
   // encounter system itself (BSE.Helpers.getPlaceEncounterMedianLevel), so it
@@ -3121,8 +3149,7 @@
   // the temperature row uses.
   MapInfoHUD.prototype._enemyLevel = function () {
     const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
-    if (!BSEH || !BSEH.getSpawnMode || !BSEH.getPlaceEncounterMedianLevel) return '';
-    if (BSEH.getSpawnMode() !== 'distance') return '';
+    if (!BSEH || !BSEH.getPlaceEncounterMedianLevel) return '';
     const level = BSEH.getPlaceEncounterMedianLevel(this._getBiomeId());
     // Nothing spawnable here at all: an empty world, or a biome whose whole
     // roster this nation suppresses. Saying "Lv. 0" would be worse than
@@ -3423,6 +3450,8 @@
   // Hook: destroy HUD when leaving the scene
   const _Scene_Map_terminate_TDS = Scene_Map.prototype.terminate;
   Scene_Map.prototype.terminate = function () {
+    const dim = document.getElementById("wait-dim");
+    if (dim && dim.parentNode) dim.parentNode.removeChild(dim);
     if (this._mapInfoHUD) {
       this._mapInfoHUD.destroy();
       this._mapInfoHUD = null;
@@ -3471,13 +3500,46 @@
     this._sleepIsWait = false;
   };
 
-  // Live on-map waiting: does NOT darken or fade the screen. Time-of-day lighting,
+  // The light dim drawn under the DOM HUDs while waiting.
+  function showWaitDim(on) {
+    let el = document.getElementById("wait-dim");
+    if (on) {
+      if (!el) {
+        el = document.createElement("div");
+        el.id = "wait-dim";
+        document.body.appendChild(el);
+      }
+      // A frame between insertion and the class so the fade actually plays.
+      setTimeout(() => {
+        const node = document.getElementById("wait-dim");
+        if (node) node.classList.add("wait-dim-visible");
+      }, 16);
+      return;
+    }
+    if (!el) return;
+    el.classList.remove("wait-dim-visible");
+    setTimeout(() => {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, 400);
+  }
+
+  // Live on-map waiting: no fade to black, only a light dim over the map.
+  // Time-of-day lighting,
   // NPCs, cars, enemies, and autonomous party members move and simulate at super speed.
   Scene_Map.prototype.startWaitSequence = function (hours) {
     if (this.closeSleepMenu) this.closeSleepMenu(true);
-    const FRAMES_PER_HOUR = 90; // ~1.5 real seconds per simulated hour for visual timelapse
+    // The timelapse is a flourish, not a wait: a whole day used to run for
+    // 2160 frames (36 real seconds) of accelerated map updates, which reads as
+    // a hung game. Every wait now lands inside a fixed window whatever it
+    // covers, so half an hour and a full day both finish in a couple of seconds.
+    const FRAMES_PER_HOUR = 20;
+    const MIN_WAIT_FRAMES = 30;
+    const MAX_WAIT_FRAMES = 150;
     const totalMinutes = hours * 60;
-    const totalFrames = Math.max(90, Math.round(hours * FRAMES_PER_HOUR));
+    const totalFrames = Math.max(
+      MIN_WAIT_FRAMES,
+      Math.min(MAX_WAIT_FRAMES, Math.round(hours * FRAMES_PER_HOUR))
+    );
     const startTime = getGameTimeMinutes();
     const leader = $gameParty.leader();
     const sleepStart = leader ? leader._sleep : 0;
@@ -3485,6 +3547,10 @@
     if ($gameTemp) {
       $gameTemp._isWaitingFastForward = true;
     }
+
+    // The map dims behind the travel card while the hours run, and only the
+    // map: the dim layer sits above the game canvas but under every DOM HUD.
+    showWaitDim(true);
 
     this._waitAdvance = {
       hours: hours,
@@ -3505,9 +3571,29 @@
     }
   };
 
+  // A sequence that throws mid-step would otherwise leave the map locked in
+  // fast-forward (or, for sleep, faded out) with nothing left to finish it, so
+  // every step runs behind a guard: any error, or a run that overshoots the
+  // frame budget it was built with, ends the sequence cleanly instead.
+  const ADVANCE_FRAME_SLACK = 4;
+
   Scene_Map.prototype._stepWaitAdvance = function () {
     const a = this._waitAdvance;
     if (!a) { this._finishWaitAdvance(); return; }
+    a.framesRun = (a.framesRun || 0) + 1;
+    if (a.framesRun > (a.totalFrames || 150) * ADVANCE_FRAME_SLACK) {
+      this._finishWaitAdvance();
+      return;
+    }
+    try {
+      this._stepWaitAdvanceBody(a);
+    } catch (e) {
+      console.error("TimeDateSystem: wait sequence step failed", e);
+      this._finishWaitAdvance();
+    }
+  };
+
+  Scene_Map.prototype._stepWaitAdvanceBody = function (a) {
 
     const prevDone = a.doneMinutes;
     a.doneMinutes = Math.min(a.totalMinutes, a.doneMinutes + a.minutesPerFrame);
@@ -3518,13 +3604,9 @@
     setGameTimeMinutes(Math.floor(currentTime));
     updateGameDateVariable();
 
-    // Run NPC schedules for every simulated hour we cross during waiting.
-    while (a.nextNpcTick <= currentTime) {
-      if (window.NPCSim?.tick) {
-        try { window.NPCSim.tick(a.nextNpcTick); } catch (_) {}
-      }
-      a.nextNpcTick += 60;
-    }
+    // Run NPC schedules for the simulated hours we cross during waiting, a
+    // bounded few per frame so a long wait can never stall on them.
+    runNpcTicksUpTo(a, currentTime, 2);
 
     // Party needs degradation
     const leader = $gameParty.leader();
@@ -3544,7 +3626,7 @@
     // Accelerated Map Simulation: extra updates per frame so events, cars, enemies & followers zoom
     if ($gameMap) {
       const events = $gameMap.events();
-      for (let s = 0; s < 3; s++) {
+      for (let s = 0; s < 2; s++) {
         for (let i = 0; i < events.length; i++) {
           const ev = events[i];
           if (ev && !ev._erased) {
@@ -3560,6 +3642,16 @@
       }
     }
 
+    // Weather and the day/night tint are part of the hours passing, so they are
+    // recomputed on every tick rather than left to the once-per-in-game-minute
+    // gate in the weather system's own update.
+    if (window.$gameWeather) {
+      try {
+        $gameWeather.updateTimeAndWeather();
+        $gameWeather.updateTimeOfDayTint(true);
+      } catch (_) {}
+    }
+
     // Push the new state to the bottom-right card immediately this frame.
     if (this._mapInfoHUD && this._mapInfoHUD._refresh) {
       this._mapInfoHUD._refresh();
@@ -3571,26 +3663,42 @@
   };
 
   Scene_Map.prototype._finishWaitAdvance = function () {
+    showWaitDim(false);
+
     const a = this._waitAdvance;
     this._waitAdvance = null;
 
-    if (a) {
-      const endTime = a.startTime + a.totalMinutes;
-      setGameTimeMinutes(endTime);
-      updateGameDateVariable();
-      while (a.nextNpcTick <= endTime) {
-        if (window.NPCSim?.tick) {
-          try { window.NPCSim.tick(a.nextNpcTick); } catch (_) {}
+    // The clock and the fast-forward flag are settled first and inside a guard:
+    // whatever else goes wrong, the map must not be left running at speed.
+    try {
+      if (a) {
+        const endTime = a.startTime + a.totalMinutes;
+        setGameTimeMinutes(endTime);
+        updateGameDateVariable();
+        runNpcTicksUpTo(a, endTime, 12);
+        if (window.NPCLifeSim?.catchUp) {
+          try { window.NPCLifeSim.catchUp(endTime); } catch (_) {}
         }
-        a.nextNpcTick += 60;
       }
-      if (window.NPCLifeSim?.catchUp) {
-        try { window.NPCLifeSim.catchUp(endTime); } catch (_) {}
-      }
+    } catch (e) {
+      console.error("TimeDateSystem: wait sequence finish failed", e);
     }
 
     if ($gameTemp) {
       $gameTemp._isWaitingFastForward = false;
+      // Waiting closed its popup with the block kept on (nobody walks off
+      // mid-timelapse); this is the point where the player gets moving again.
+      $gameTemp._sleepMenuOpen = false;
+    }
+
+    // Weather and the day/night tint are part of the hours passing, so they are
+    // recomputed on every tick rather than left to the once-per-in-game-minute
+    // gate in the weather system's own update.
+    if (window.$gameWeather) {
+      try {
+        $gameWeather.updateTimeAndWeather();
+        $gameWeather.updateTimeOfDayTint(true);
+      } catch (_) {}
     }
 
     // Gather loose followers back to leader
@@ -3644,7 +3752,7 @@
   // Set up the frame-by-frame sleep advance. The night is spread over a fixed
   // number of frames so the HUD animates regardless of how many hours are slept.
   Scene_Map.prototype._beginSleepAdvance = function (hours, isWait) {
-    const FRAMES = 150;
+    const FRAMES = 45;
     const totalMinutes = hours * 60;
     const startTime = getGameTimeMinutes();
     const leader = $gameParty.leader();
@@ -3653,6 +3761,7 @@
       isWait: !!isWait,
       hours: hours,
       totalMinutes: totalMinutes,
+      totalFrames: FRAMES,
       doneMinutes: 0,
       minutesPerFrame: FRAMES > 0 ? totalMinutes / FRAMES : totalMinutes,
       startTime: startTime,
@@ -3673,6 +3782,20 @@
   Scene_Map.prototype._stepSleepAdvance = function () {
     const a = this._sleepAdvance;
     if (!a) { this._finishSleepAdvance(); return; }
+    a.framesRun = (a.framesRun || 0) + 1;
+    if (a.framesRun > (a.totalFrames || 45) * ADVANCE_FRAME_SLACK) {
+      this._finishSleepAdvance();
+      return;
+    }
+    try {
+      this._stepSleepAdvanceBody(a);
+    } catch (e) {
+      console.error("TimeDateSystem: sleep sequence step failed", e);
+      this._finishSleepAdvance();
+    }
+  };
+
+  Scene_Map.prototype._stepSleepAdvanceBody = function (a) {
 
     const prevDone = a.doneMinutes;
     a.doneMinutes = Math.min(a.totalMinutes, a.doneMinutes + a.minutesPerFrame);
@@ -3683,13 +3806,9 @@
     setGameTimeMinutes(Math.floor(currentTime));
     updateGameDateVariable();
 
-    // Run NPC schedules for every simulated hour we cross during the night.
-    while (a.nextNpcTick <= currentTime) {
-      if (window.NPCSim?.tick) {
-        try { window.NPCSim.tick(a.nextNpcTick); } catch (_) {}
-      }
-      a.nextNpcTick += 60;
-    }
+    // Run NPC schedules for the simulated hours we cross during the night, a
+    // bounded few per frame so a long sleep never stalls on them.
+    runNpcTicksUpTo(a, currentTime, 2);
 
     // The body keeps working while asleep: hunger and the social/hygiene/fun
     // meters wear down over the slept minutes while the sleep meter fills.
@@ -3726,17 +3845,18 @@
     if (a) {
       // Snap the clock to the exact wake time and finish any remaining hourly
       // NPC ticks, then resolve background life events across the whole night.
-      const endTime = a.startTime + a.totalMinutes;
-      setGameTimeMinutes(endTime);
-      updateGameDateVariable();
-      while (a.nextNpcTick <= endTime) {
-        if (window.NPCSim?.tick) {
-          try { window.NPCSim.tick(a.nextNpcTick); } catch (_) {}
+      // Guarded: the screen is faded out at this point, so an error here must
+      // not stop the wake-up below from fading it back in.
+      try {
+        const endTime = a.startTime + a.totalMinutes;
+        setGameTimeMinutes(endTime);
+        updateGameDateVariable();
+        runNpcTicksUpTo(a, endTime, 12);
+        if (window.NPCLifeSim?.catchUp) {
+          try { window.NPCLifeSim.catchUp(endTime); } catch (_) {}
         }
-        a.nextNpcTick += 60;
-      }
-      if (window.NPCLifeSim?.catchUp) {
-        try { window.NPCLifeSim.catchUp(endTime); } catch (_) {}
+      } catch (e) {
+        console.error("TimeDateSystem: sleep sequence finish failed", e);
       }
     }
 
@@ -3754,33 +3874,47 @@
     }
 
     // Restorative effects. The sleep meter was already filled gradually above;
-    // recoverAll() only touches HP/MP/states, so it leaves it intact.
-    $gameParty.members().forEach(actor => actor.recoverAll());
+    // recoverAll() only touches HP/MP/states, so it leaves it intact. Healing
+    // reaches into Health_Core and the insomnia clock, so it is guarded too:
+    // a black screen the player cannot leave is worse than a missed heal.
+    try {
+      $gameParty.members().forEach(actor => actor.recoverAll());
 
-    // The one thing that stops the insomnia clock, and takes the mind back off
-    // whatever it had started doing without one.
-    if (window.Insomnia) window.Insomnia.markSlept();
+      // The one thing that stops the insomnia clock, and takes the mind back
+      // off whatever it had started doing without one.
+      if (window.Insomnia) window.Insomnia.markSlept();
 
-    for (let j = 0; j < 2; j++) {
-      PluginManager.callCommand(this, "Health_Core", "HealBodyParts", { amount: "100" });
-    }
+      // A night's sleep sets every bone: each member's broken parts are put
+      // back whole and the penalties they owed lift with them. Blood and Oil
+      // keeps what it took - a part cut off or ruined there never grows back.
+      PluginManager.callCommand(this, "Health_Core", "HealBodyParts", {});
 
-    $gameParty.members().forEach(actor => {
-      actor.gainMp(9999);
-      actor.gainTp(100);
-    });
+      $gameParty.members().forEach(actor => {
+        actor.gainMp(9999);
+        actor.gainTp(100);
+      });
 
-    if (this._mapInfoHUD && this._mapInfoHUD._refresh) {
-      this._mapInfoHUD._refresh();
+      if (this._mapInfoHUD && this._mapInfoHUD._refresh) {
+        this._mapInfoHUD._refresh();
+      }
+    } catch (e) {
+      console.error("TimeDateSystem: waking the party failed", e);
     }
 
     // Long rests sometimes drop the party into a dream: the awakening menu is
     // the Dream / Cancel prompt, and it only shows up on that roll. Every other
     // sleep just fades back in on the spot.
     const sleptHours = a ? a.hours : 0;
+    let dreamed = false;
     if (sleptHours > DREAM_MIN_HOURS && Math.random() < DREAM_CHANCE && this.openSleepMenu) {
-      this.openSleepMenu("post_sleep");
-    } else {
+      try {
+        this.openSleepMenu("post_sleep");
+        dreamed = !!this._sleepMenuEl;
+      } catch (e) {
+        console.error("TimeDateSystem: dream prompt failed", e);
+      }
+    }
+    if (!dreamed) {
       if (this.closeSleepMenu) this.closeSleepMenu();
       $gameScreen.startFadeIn(60);
     }

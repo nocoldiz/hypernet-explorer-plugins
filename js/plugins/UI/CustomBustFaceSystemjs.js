@@ -632,14 +632,14 @@
     applyUIParchmentStyle(Window_EventItem);
 
     // ==========================================================================
-    // Dialogue Typography & Colors Overrides (Lora & Lora)
+    // Dialogue Typography & Colors Overrides (UI serif)
     // ==========================================================================
 
     // Dialogue text overrides (Window_Message)
     const _Window_Message_resetFontSettings = Window_Message.prototype.resetFontSettings;
     Window_Message.prototype.resetFontSettings = function() {
         _Window_Message_resetFontSettings.call(this);
-        this.contents.fontFace = 'Lora';
+        this.contents.fontFace = 'Bitter';
         this.contents.fontSize = 20; // neat and readable serif size
     };
 
@@ -651,7 +651,7 @@
     const _Window_NameBox_resetFontSettings = Window_NameBox.prototype.resetFontSettings;
     Window_NameBox.prototype.resetFontSettings = function() {
         _Window_NameBox_resetFontSettings.call(this);
-        this.contents.fontFace = 'Lora';
+        this.contents.fontFace = 'Bitter';
         this.contents.fontSize = 24; // bold gothic header size
     };
 
@@ -663,7 +663,7 @@
     const _Window_ChoiceList_resetFontSettings = Window_ChoiceList.prototype.resetFontSettings;
     Window_ChoiceList.prototype.resetFontSettings = function() {
         _Window_ChoiceList_resetFontSettings.call(this);
-        this.contents.fontFace = 'Lora';
+        this.contents.fontFace = 'Bitter';
     };
 
     Window_ChoiceList.prototype.resetTextColor = function() {
@@ -763,10 +763,10 @@
 
             this.createUIParchment();
 
-            // Override font to use Lora in crimson for character names
+            // Override font to use the UI serif in crimson for character names
             this.resetFontSettings = function() {
                 Window_Base.prototype.resetFontSettings.call(this);
-                this.contents.fontFace = 'Lora';
+                this.contents.fontFace = 'Bitter';
                 this.contents.fontSize = 24;
             };
             this.resetTextColor = function() {

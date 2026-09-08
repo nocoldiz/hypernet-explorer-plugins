@@ -1,3 +1,14 @@
+/*:
+ * @target MZ
+ * @plugindesc Generates the procedural battle effect animations drawn over the battlers.
+ * @author Omni-Lex
+ *
+ * @help
+ * Draws the generated battle effects (wavy lines, bursts, sweeps) into the
+ * animation bitmaps the battle scene plays. No parameters and no plugin
+ * commands: the battle system calls it.
+ */
+
 (() => {
   function drawWavyLines() {
     var w = this._currentBitmap.width;

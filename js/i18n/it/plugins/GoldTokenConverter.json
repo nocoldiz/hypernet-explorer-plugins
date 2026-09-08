@@ -17,7 +17,8 @@
     "rate": "Prezzo: 1 gettone = {price}€",
     "max": "(Max: {max})",
     "bought": "Hai comprato {amount} gettoni per €{total}!",
-    "sold": "Hai venduto {amount} gettoni per €{total}!"
+    "sold": "Hai venduto {amount} gettoni per €{total}!",
+    "pocketFull": "Non puoi portare altri gettoni!"
   },
   "confirm": {
     "buy": "Comprare {amount} gettoni per €{total}?",

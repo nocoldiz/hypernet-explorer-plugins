@@ -267,8 +267,24 @@
   // over every row of a database, so rebuilding the pattern per item is waste.
   const categoryPatterns = {};
 
+  // A few shelves are defined by what a thing IS rather than by the category
+  // note somebody remembered to write on it, and books are the standing
+  // example: the readable titles carry <Book:>, the teaching ones <Grimoire:>
+  // or <SkillBook:>, and most of those are filed under Tools in the database,
+  // so a plain <category:Books> sweep walked straight past every one of them.
+  // The library trades below ask for these instead, which means a book added
+  // to the database tomorrow is on their shelves tomorrow, with no list of
+  // ids for anybody to keep up to date.
+  const NOTE_CATEGORIES = {
+    books: /<category:\s*books\s*>|<Book:\s*[\w-]+\s*>/i,
+    grimoires: /<Grimoire:\s*[\w -]+>/i,
+    skillbooks: /<SkillBook:\s*[\w -]+>/i
+  };
+
   function hasCategory(entry, category) {
     if (!entry || !entry.note) return false;
+    const named = NOTE_CATEGORIES[String(category).toLowerCase()];
+    if (named) return named.test(entry.note);
     if (!categoryPatterns[category]) {
       categoryPatterns[category] = new RegExp(`<category:\\s*${category}\\s*>`, "i");
     }
@@ -774,7 +790,7 @@
       ids: [352, 354, 346, 675, 676, 683, 673, 724, 725, 650, 652, 97, 98,
             262, 264, 680, 349, 359, 360, 355, 679, 682, 348],
       fixed: [262, 115],        // empty spellbook, candle
-      categories: ["monsters"],
+      categories: ["monsters", "books"],
       artifacts: "item",
     },
     streetDealer: {
@@ -980,13 +996,14 @@
       artifacts: "all",
     },
     // The bookshop absorbed the old library: its textbooks stay hand-picked,
-    // but it now carries anything shelved under Books as well.
+    // but it carries every book in the database as well, the skill books
+    // included. The grimoires are the emporium next door.
     academy: {
       get label() { return T('DailyShop.shopType.academy'); },
       ids: [1421, 1422, 1423, 1425, 1426, 1427, 1428, 1429, 1430, 1431,
             1433, 1436, 1437, 1441, 145, 147],
       fixed: [113, 127, 262, 128],   // pen, notebook, blank spellbook, travel journal
-      categories: ["books"],
+      categories: ["books", "skillbooks"],
     },
     grimoire: {
       get label() { return T('DailyShop.shopType.grimoire'); },
@@ -994,7 +1011,7 @@
             1412, 1413, 1414, 1415, 1416, 1417, 1418, 1419, 1420, 1434, 1435,
             1438, 1439, 262],
       fixed: [262, 1400],       // empty spellbook, pyromancy grimoire
-      categories: ["books", "magic"],
+      categories: ["books", "magic", "grimoires"],
       artifacts: "item",
     }
   };
@@ -1400,8 +1417,8 @@
           <div class="back-button focusable" onclick="SceneManager._scene.popScene()">${back}</div>
           <h2 class="title" style="font-size:1.665em;">${this.headerTitle()}</h2>
         </div>
-        <div style="font-family:'Lora',serif; font-style: normal; opacity:0.8; font-size:0.892em; margin-bottom:12px; color:var(--text-primary-hover,#58180D);">${blurb}</div>
-        <div style="font-family:'Lora',serif; font-weight:bold; font-size:0.928em; margin-bottom:6px; color:var(--text-primary-hover,#58180D);">${T('DailyShop.ui.pupil')}</div>
+        <div style="font-family:var(--font-ui); font-style: normal; opacity:0.8; font-size:0.892em; margin-bottom:12px; color:var(--text-primary-hover,#58180D);">${blurb}</div>
+        <div style="font-family:var(--font-ui); font-weight:bold; font-size:0.928em; margin-bottom:6px; color:var(--text-primary-hover,#58180D);">${T('DailyShop.ui.pupil')}</div>
         <div class="teach-list">${actorsHTML}</div>
         <div class="teach-info">
           <div style="font-weight:bold; color:var(--accent-gold-pure,#b8860b);">${isMagic ? (T('DailyShop.ui.todaySSchools')) : (T('DailyShop.ui.todaySDisciplines'))}</div>

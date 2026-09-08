@@ -262,6 +262,12 @@
         }
     }
 
+    // The camera items (Pocket Video Recorder, Digital Camera, Investigator's
+    // Camera, Covert Recorder) take the same picture F3 does, so the capture is
+    // published rather than kept private to the key handler.
+    window.ForceConsole = window.ForceConsole || {};
+    window.ForceConsole.takeScreenshot = takeScreenshot;
+
     //=========================================================================
     // Playtest: a Player 1 with no sprite gets one
     //=========================================================================

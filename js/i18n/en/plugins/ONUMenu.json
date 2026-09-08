@@ -5,6 +5,8 @@
   "credentials": "Accreditation",
   "agenda": "Agenda",
   "chamber": "Chamber",
+  "venue": "Venue",
+  "chairing": "Chairing",
   "motions": "Motions",
   "division": "The Division",
   "ballotKind": "Ballot",
@@ -51,10 +53,7 @@
   "sgBlurb": "The Secretary General represents nobody, votes on nothing, and is the only person in the building who can break a tie on the Security Council.",
   "holdsSeat": "{name} holds this delegation's seat at the assembly.",
   "holdsSeatParent": "{name} sits for {faction}, which this answers to.",
-  "you": "You",
-  "pressToContinue": "Press Enter to continue",
-  "cancelToAutoPlay": "Esc to auto play",
-  "autoPlaying": "Auto playing"
+  "you": "You"
  },
  "role": {
   "secretaryGeneral": "Secretary General"

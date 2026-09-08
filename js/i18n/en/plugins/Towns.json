@@ -1,0 +1,51 @@
+{
+  "found": {
+    "title": "Found a town",
+    "nameLabel": "Name of the town",
+    "namePlaceholder": "Name it…",
+    "button": "Found the town",
+    "requirement": "Houses standing here: {have} of {need}",
+    "here": "This square: {place}",
+    "reason": {
+      "notHere": "A town is founded on open ground, not from inside a building.",
+      "claimed": "{place} already stands on this square.",
+      "exists": "A town of yours already stands on this square.",
+      "houses": "Three houses have to stand here before anyone will call it a town.",
+      "noName": "The town needs a name.",
+      "duplicate": "You have already named a town that."
+    },
+    "success": "{name} is founded.",
+    "founded": "{name}, founded here."
+  },
+  "deeds": {
+    "title": "Deeds",
+    "back": "Back",
+    "empty": "You have founded no towns.",
+    "colTown": "Town",
+    "colWhere": "Where",
+    "colHouses": "Houses",
+    "colShops": "Shops",
+    "colResidents": "Residents",
+    "colRent": "Rent",
+    "rentPerDay": "{amount} a day",
+    "collected": "Rent collected: {amount}",
+    "nothingDue": "No rent is due yet.",
+    "collect": "Collect rent",
+    "growing": "Still filling up",
+    "full": "Fully settled",
+    "onPlanet": "on {planet}",
+    "square": "{x}, {y}",
+    "sectionTowns": "Towns",
+    "sectionHouses": "Houses",
+    "sectionShops": "Shops",
+    "sectionAnimals": "Animals",
+    "emptyHouses": "You own no houses.",
+    "emptyShops": "You own no shops.",
+    "emptyAnimals": "You own no animals.",
+    "colType": "Type",
+    "colOccupancy": "Occupancy",
+    "colCategory": "Trade",
+    "colBalance": "Balance",
+    "colStage": "Stage"
+  }
+}

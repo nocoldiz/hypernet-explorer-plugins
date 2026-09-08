@@ -1372,24 +1372,25 @@
                     <div class="pantry-list-container" style="flex: 1; display: flex; flex-direction: column; overflow: hidden"></div>
                 </div>
                 <div class="right-page">
-                    <div id="cooking-companion-row" class="companion-switcher companion-switcher--header"></div>
+                    <div class="ui-detail">
+                        <div id="cooking-companion-row" class="companion-switcher companion-switcher--header"></div>
 
-                    <div class="pot-label">${_T('Cooking.nutritionalBase')}</div>
-                    <div class="slot-container-1"></div>
-                    
-                    <div class="hearth-area">
-                        <div class="cauldron"></div>
-                        <div class="hearth-fire"></div>
-                    </div>
-                    
-                    <div class="pot-label">${_T('Cooking.aromaticBinder')}</div>
-                    <div class="slot-container-2"></div>
-                    
-                    <div class="result-card-container"></div>
-                    
-                    <div class="cooking-actions">
-                        <div class="btn primary" id="cook-btn"></div>
-                        <div class="btn" id="cancel-btn"></div>
+                        <h3 class="inspect-section-title">${_T('Cooking.nutritionalBase')}</h3>
+                        <div class="slot-container-1"></div>
+
+                        <div class="hearth-area">
+                            <div class="cauldron"></div>
+                            <div class="hearth-fire"></div>
+                        </div>
+
+                        <h3 class="inspect-section-title">${_T('Cooking.aromaticBinder')}</h3>
+                        <div class="slot-container-2"></div>
+
+                        <div class="result-card-container"></div>
+
+                        <div class="inspect-actions">
+                            <div class="inspect-btn" id="cook-btn"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1454,20 +1455,21 @@
             let pantryHTML = "";
             if (itemsList.length === 0) {
                 pantryHTML = `
-                    <div class="empty-pantry-msg">
+                    <div class="ui-empty empty-pantry-msg">
                         ${_T('Cooking.yourBackpackContainsNoEdible')}
                     </div>
                 `;
             } else {
-                pantryHTML = `<div class="pantry-list">`;
+                pantryHTML = `<div class="ui-list pantry-list">`;
                 itemsList.forEach((item, idx) => {
                     const isSelected = item === item1 || item === item2;
                     const isFocused = this._activeArea === "pantry" && this._pantryIndex === idx;
                     const isEnabled = this._itemListWindow ? this._itemListWindow.isEnabled(item) : true;
 
-                    const cName = isSelected ? "pantry-item selected-ingredient" : "pantry-item";
-                    const fName = isFocused ? `${cName} focused` : cName;
-                    const finalClass = isEnabled ? fName : `${fName} disabled`;
+                    let finalClass = "item-slot item-slot--compact pantry-row";
+                    if (isSelected) finalClass += " selected-ingredient";
+                    if (isFocused) finalClass += " selected";
+                    if (!isEnabled) finalClass += " unusable";
 
                     const nut = CookingSystem.getRecoveryValues(item);
                     const iconIdx = item.iconIndex;
@@ -1476,14 +1478,14 @@
                     pantryHTML += `
                         <div class="${finalClass}" data-idx="${idx}">
                             <div class="item-icon" style="${iconStyle}"></div>
-                            <div class="item-details">
-                                <span class="item-name">${window.translateText ? window.translateText(item.name) : item.name}</span>
-                                <span class="item-stats">
+                            <div class="item-slot-info">
+                                <div class="item-slot-name">${window.translateText ? window.translateText(item.name) : item.name}</div>
+                                <div class="cook-nutrition-line">
                                     ${_ci18n('nutritionShort.calories')}: ${nut.hunger} | ${_ci18n('nutritionShort.protein')}: ${nut.tp} | ${_ci18n('nutritionShort.fat')}: ${nut.mp}
-                                </span>
+                                </div>
                             </div>
-                            <span class="item-qty">x${$gameParty.numItems(item)}</span>
-                            <div class="eat-raw-btn focusable" data-eat-idx="${idx}" title="${_ci18n('ui.eatButton')}">${_ci18n('ui.eatButton')}</div>
+                            <span class="item-slot-count">x${$gameParty.numItems(item)}</span>
+                            <div class="inspect-btn inspect-btn--secondary focusable eat-raw-btn" data-eat-idx="${idx}" title="${_ci18n('ui.eatButton')}">${_ci18n('ui.eatButton')}</div>
                         </div>
                     `;
                 });
@@ -1493,7 +1495,7 @@
 
             // Bind click handlers for mouse support
             if (itemsList.length > 0) {
-                const itemNodes = pantryListContainer.querySelectorAll(".pantry-item");
+                const itemNodes = pantryListContainer.querySelectorAll(".pantry-row");
                 itemNodes.forEach(node => {
                     node.addEventListener("click", () => {
                         const idx = parseInt(node.getAttribute("data-idx"), 10);
@@ -1547,19 +1549,17 @@
         const slotContainer1 = container.querySelector(".slot-container-1");
         if (slotContainer1) {
             let slot1HTML = `
-                <div class="ingredient-slot">
-                    <span class="empty-slot-text">${_T('Cooking.selectBase')}</span>
-                </div>
+                <div class="ui-empty">${_T('Cooking.selectBase')}</div>
             `;
             if (item1) {
                 const iconIdx = item1.iconIndex;
                 const iconStyle = `background: url('img/system/IconSet.png') -${(iconIdx % 16) * 32}px -${Math.floor(iconIdx / 16) * 32}px no-repeat;`;
                 slot1HTML = `
-                    <div class="ingredient-slot filled">
+                    <div class="item-slot item-slot--compact">
                         <div class="item-icon" style="${iconStyle}"></div>
-                        <div class="item-details">
-                            <span class="item-name">${window.translateText ? window.translateText(item1.name) : item1.name}</span>
-                            <span class="item-stats">${_ci18n('nutritionShort.calories')}: ${item1.meta.calories || 0} | ${_ci18n('nutritionShort.protein')}: ${item1.meta.protein || 0} | ${_ci18n('nutritionShort.fat')}: ${item1.meta.fat || 0}</span>
+                        <div class="item-slot-info">
+                            <div class="item-slot-name">${window.translateText ? window.translateText(item1.name) : item1.name}</div>
+                            <div class="cook-nutrition-line">${_ci18n('nutritionShort.calories')}: ${item1.meta.calories || 0} | ${_ci18n('nutritionShort.protein')}: ${item1.meta.protein || 0} | ${_ci18n('nutritionShort.fat')}: ${item1.meta.fat || 0}</div>
                         </div>
                     </div>
                 `;
@@ -1570,19 +1570,17 @@
         const slotContainer2 = container.querySelector(".slot-container-2");
         if (slotContainer2) {
             let slot2HTML = `
-                <div class="ingredient-slot">
-                    <span class="empty-slot-text">${_T('Cooking.selectBinder')}</span>
-                </div>
+                <div class="ui-empty">${_T('Cooking.selectBinder')}</div>
             `;
             if (item2) {
                 const iconIdx = item2.iconIndex;
                 const iconStyle = `background: url('img/system/IconSet.png') -${(iconIdx % 16) * 32}px -${Math.floor(iconIdx / 16) * 32}px no-repeat;`;
                 slot2HTML = `
-                    <div class="ingredient-slot filled">
+                    <div class="item-slot item-slot--compact">
                         <div class="item-icon" style="${iconStyle}"></div>
-                        <div class="item-details">
-                            <span class="item-name">${window.translateText ? window.translateText(item2.name) : item2.name}</span>
-                            <span class="item-stats">${_ci18n('nutritionShort.calories')}: ${item2.meta.calories || 0} | ${_ci18n('nutritionShort.protein')}: ${item2.meta.protein || 0} | ${_ci18n('nutritionShort.fat')}: ${item2.meta.fat || 0}</span>
+                        <div class="item-slot-info">
+                            <div class="item-slot-name">${window.translateText ? window.translateText(item2.name) : item2.name}</div>
+                            <div class="cook-nutrition-line">${_ci18n('nutritionShort.calories')}: ${item2.meta.calories || 0} | ${_ci18n('nutritionShort.protein')}: ${item2.meta.protein || 0} | ${_ci18n('nutritionShort.fat')}: ${item2.meta.fat || 0}</div>
                         </div>
                     </div>
                 `;
@@ -1651,47 +1649,32 @@
                 let adjectiveMsg = "";
                 if (isSameItem) {
                     if (CookingSystem._lastAdjectiveEffect === 'positive') {
-                        adjectiveMsg = `<div style="font-size:13px; color:var(--text-cost-ok); font-weight:bold; margin-top:2px">${_T('Cooking.extraordinaryEffect50')}</div>`;
+                        adjectiveMsg = `<div class="cook-verdict gauge-ink gauge-band--ok">${_T('Cooking.extraordinaryEffect50')}</div>`;
                     } else if (CookingSystem._lastAdjectiveEffect === 'neutral') {
-                        adjectiveMsg = `<div style="font-size:13px; color:var(--text-amber-hint); font-weight:bold; margin-top:2px">${_T('Cooking.minorEffect25')}</div>`;
+                        adjectiveMsg = `<div class="cook-verdict gauge-ink gauge-band--warn">${_T('Cooking.minorEffect25')}</div>`;
                     } else {
-                        adjectiveMsg = `<div style="font-size:13px; color:var(--text-cost-bad); font-weight:bold; margin-top:2px">${_T('Cooking.disastrousEffect75')}</div>`;
+                        adjectiveMsg = `<div class="cook-verdict gauge-ink gauge-band--bad">${_T('Cooking.disastrousEffect75')}</div>`;
                     }
                 }
 
                 resultCardHTML = `
-                    <div class="result-card">
-                        <div class="result-header">
-                            <span>${cookedName}</span>
-                        </div>
+                    <div class="cook-result">
+                        <h3 class="inspect-section-title">${cookedName}</h3>
                         ${adjectiveMsg}
-                        <div class="result-nutrition">
-                            <div class="nut-box">
-                                ${_T('Cooking.calories')}
-                                <span class="nut-val">${Math.floor(totalCalories)}</span>
-                            </div>
-                            <div class="nut-box">
-                                ${_T('Cooking.protein')}
-                                <span class="nut-val">${Math.floor(totalProtein)}g</span>
-                            </div>
-                            <div class="nut-box">
-                                ${_T('Cooking.fat')}
-                                <span class="nut-val">${Math.floor(totalFat)}g</span>
-                            </div>
-                        </div>
-                        <div class="recovery-preview">
-                            +${hungerPercent}% ${_T('Cooking.satietyPerMember')} (${_T('Cooking.split')} ${partySize})
+                        <div class="inspect-spec-grid">
+                            <span class="inspect-spec-label">${_T('Cooking.calories')}</span>
+                            <span class="inspect-spec-value">${Math.floor(totalCalories)}</span>
+                            <span class="inspect-spec-label">${_T('Cooking.protein')}</span>
+                            <span class="inspect-spec-value">${Math.floor(totalProtein)}g</span>
+                            <span class="inspect-spec-label">${_T('Cooking.fat')}</span>
+                            <span class="inspect-spec-value">${Math.floor(totalFat)}g</span>
+                            <span class="inspect-spec-label">${_T('Cooking.satietyPerMember')}</span>
+                            <span class="inspect-spec-value inspect-spec-value--gain">+${hungerPercent}% (${_T('Cooking.split')} ${partySize})</span>
                         </div>
                     </div>
                 `;
             } else {
-                resultCardHTML = `
-                    <div class="cooking-empty-hint">
-                        <p>
-                            ${_T('Cooking.combineANutritionalBaseAnd')}
-                        </p>
-                    </div>
-                `;
+                resultCardHTML = "";
             }
             resultCardContainer.innerHTML = resultCardHTML;
         }
@@ -1699,11 +1682,11 @@
         // 4. Update Actions Buttons
         const isCookEnabled = item1 && item2;
         const isCookFocused = this._activeArea === "confirm" && this._confirmIndex === 0;
-        const isCancelFocused = this._activeArea === "confirm" && this._confirmIndex === 1;
+        this._confirmIndex = 0;
 
         const cookBtn = container.querySelector("#cook-btn");
         if (cookBtn) {
-            cookBtn.className = isCookEnabled ? (isCookFocused ? "btn primary focused" : "btn primary") : "btn primary disabled";
+            cookBtn.className = "inspect-btn focusable" + (isCookEnabled ? "" : " unusable") + (isCookFocused ? " selected" : "");
             cookBtn.textContent = _ci18n('ui.cookButton');
             // Re-bind click handler
             const newCookBtn = cookBtn.cloneNode(true);
@@ -1717,25 +1700,6 @@
             });
         }
 
-        const cancelBtn = container.querySelector("#cancel-btn");
-        if (cancelBtn) {
-            cancelBtn.className = isCancelFocused ? "btn focused" : "btn";
-            cancelBtn.textContent = item1 ? (_T('Cooking.clearSelection')) : _ci18n('ui.cancelButton');
-            const newCancelBtn = cancelBtn.cloneNode(true);
-            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-            newCancelBtn.addEventListener("click", () => {
-                if (item1) {
-                    CookingSystem.clearSelectedItems();
-                    SoundManager.playCancel();
-                    this._activeArea = "pantry";
-                    this._pantryIndex = 0;
-                    this.refreshUICooking();
-                } else {
-                    SoundManager.playCancel();
-                    this.popScene();
-                }
-            });
-        }
     };
 
     Scene_Cooking.prototype.updateUICookingInput = function () {
@@ -1765,7 +1729,7 @@
                 // Adjust scroll position dynamically
                 const container = document.getElementById("cooking-container");
                 if (container) {
-                    const activeRow = container.querySelector(".pantry-item.focused");
+                    const activeRow = container.querySelector(".pantry-row.selected");
                     if (activeRow) activeRow.scrollIntoView({ block: "nearest" });
                 }
             } else if (Input.isRepeated('up')) {
@@ -1776,7 +1740,7 @@
                 // Adjust scroll position dynamically
                 const container = document.getElementById("cooking-container");
                 if (container) {
-                    const activeRow = container.querySelector(".pantry-item.focused");
+                    const activeRow = container.querySelector(".pantry-row.selected");
                     if (activeRow) activeRow.scrollIntoView({ block: "nearest" });
                 }
             } else if (Input.isTriggered('right') && item1 && item2) {
@@ -1827,24 +1791,12 @@
                 }
             }
         } else if (this._activeArea === "confirm") {
-            if (Input.isRepeated('left') || Input.isRepeated('right') || Input.isRepeated('up') || Input.isRepeated('down')) {
-                this._confirmIndex = (this._confirmIndex + 1) % 2;
-                SoundManager.playCursor();
-                this.refreshUICooking();
-            } else if (Input.isTriggered('left') && this._confirmIndex === 0) {
+            if (Input.isTriggered('left') || Input.isTriggered('up') || Input.isTriggered('down')) {
                 this._activeArea = "pantry";
                 SoundManager.playCursor();
                 this.refreshUICooking();
             } else if (Input.isTriggered('ok')) {
-                if (this._confirmIndex === 0) { // Prepare Dish
-                    this.onCookOk();
-                } else { // Cancel / Clear
-                    CookingSystem.clearSelectedItems();
-                    SoundManager.playCancel();
-                    this._activeArea = "pantry";
-                    this._pantryIndex = 0;
-                    this.refreshUICooking();
-                }
+                this.onCookOk();
             } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                 CookingSystem.clearSelectedItems();
                 SoundManager.playCancel();

@@ -1,5 +1,10 @@
 {
   "welcomeTxt": "Benvenuto in Archways XP v2.0!\n\nQuesto è un sistema operativo alchemico modernissimo e completamente modulare, in esecuzione dentro RPG Maker MZ.\n\nQui puoi tenere aperte più applicazioni insieme, regolare le opzioni dal Pannello di controllo, consultare specifiche hardware che rispecchiano le statistiche del gruppo e gestire file di testo in una cartella virtuale.\n\nFai doppio clic su un file di testo per aprire il Blocco note!",
   "pocketsTxt": "TASCHE DATI - RISERVATO\n-------------------------------\nElementi:\n1:Fisico, 2:Fuoco, 3:Ghiaccio, 4:Fulmine, 5:Acqua, 6:Petrolio, 7:Vento, 8:Sacro, 9:Maledetto\n\nNote sulla frequenza dell'anima:\nLa Tendenza dell'Anima (Var 53) sposta i valori di mercato e il comportamento dei titoli.\nL'Intimidazione (Var 90) influenza le metriche di scambio.\n\nMettete al sicuro tutti i core dati!",
-  "diaryTxt": "Voce 882:\nAbbiamo integrato l'architettura modulare del ricevitore Hexphone come estensione del nucleo di Archways XP.\n\nIl file system virtuale si aggancia senza attriti al sistema di salvataggio del gioco: qualsiasi modifica fatta qui resta per sempre."
+  "diaryTxt": "Voce 882:\nAbbiamo integrato l'architettura modulare del ricevitore Hexphone come estensione del nucleo di Archways XP.\n\nIl file system virtuale si aggancia senza attriti al sistema di salvataggio del gioco: qualsiasi modifica fatta qui resta per sempre.",
+  "binaryStub": "MZ  Questo programma non può essere eseguito in modalità DOOM.\n{name}\nProprietà di Archways Corp. Non leccare.",
+  "iniStub": "[archways]\nfile={name}\nshell=exploder.exe\ngoblins=1\n[boot]\nloot=C:\\loot.ini\n",
+  "fontStub": "{name}: un carattere tipografico. Ogni glifo è un goblin molto piccolo.",
+  "batStub": "@echo off\nrem {name}\necho Evocazione...\nsystem666\\svcghost.exe /quiet\n",
+  "helpStub": "{name}: premi un tasto qualsiasi. Non quello."
 }

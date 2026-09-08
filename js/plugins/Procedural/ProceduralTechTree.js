@@ -162,6 +162,13 @@
         return 19002001;
     }
 
+    // A world may be made to forget its unpublished lines of work and roll new
+    // ones (the FutureForge rite). The shift is kept with the rest of the tech
+    // state, so it survives the save and is shared by the world.
+    function seedShift() {
+        try { return Number(techStore().procShift) || 0; } catch (e) { return 0; }
+    }
+
     function makeRng(seed) {
         if (window.ProcGenUtils && typeof window.ProcGenUtils.createSeededRandom === 'function') {
             return window.ProcGenUtils.createSeededRandom(seed >>> 0);
@@ -370,7 +377,7 @@
 
     function buildAllTrees() {
         const MN = window.MagicNature;
-        const seed = worldSeed();
+        const seed = (worldSeed() + seedShift() * 7919) >>> 0;
         // The CACHE key carries the magic level too (two worlds of one seed
         // hold different curricula, and the cache outlives a world switch
         // inside one session), but `seed` itself stays the number buildTree
@@ -549,7 +556,7 @@
     // reagent.
     //
     // The workbenches already gate their entries on the party's TRADE LEVEL
-    // (`<CraftLevel:>` in BlacksmithingMenu, the skill checks in the alchemy
+    // (`<CraftLevel:>` in Quest/ThinkerMenu.js, the skill checks in the alchemy
     // menu), so what research buys is exactly that: knowing the theory raises
     // the trade. Every NODES_PER_TIER discoveries in a tree that feeds a bench
     // is worth one tier at it, up to MAX_RESEARCH_TIERS, which is deliberately
@@ -889,6 +896,18 @@
         console.error('[TechTree] Scene_TechTree is not defined - is ProceduralTechTreeUI.js enabled and loaded after ProceduralTechTree.js?');
     }
     PluginManager.registerCommand(pluginName, 'openTechTree', openScene);
+    // Rolls a fresh crop of procedural nodes for every discipline. The real
+    // discoveries and the research already done on them are untouched; the
+    // unpublished lines of work the world had invented are replaced.
+    PluginManager.registerCommand(pluginName, 'generateNewTree', () => {
+        const store = techStore();
+        store.procShift = (Number(store.procShift) || 0) + 1;
+        _builtSeed = null;
+        buildAllTrees();
+        reconcileBuffs();
+        if ($gameMessage) $gameMessage.add(T('TechTree.treeRegenerated'));
+    });
+
     PluginManager.registerCommand(pluginName, 'resetProgress', () => {
         if (usingWorld()) {
             const f = window.WorldManager.getFile('techtree');

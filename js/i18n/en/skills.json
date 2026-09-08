@@ -3067,7 +3067,7 @@
   },
   "558": {
     "name": "Sanctify",
-    "description": "Restores HP to one enemy and cures several\nnegative states.",
+    "description": "Deals damage to one enemy and cures several\nnegative states.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
@@ -4735,7 +4735,7 @@
   },
   "917": {
     "name": "Bountiful Harvest",
-    "description": "Restores HP to all enemies and inflicts HP\nRegeneration.",
+    "description": "Deals damage to all enemies and inflicts HP\nRegeneration.",
     "message1": "%1 uses Bountiful Harvest!",
     "message2": ""
   },
@@ -5143,7 +5143,7 @@
   },
   "1005": {
     "name": "Explosive Compound",
-    "description": "Restores HP to all enemies and cures several\nnegative states.",
+    "description": "Deals heavy damage to all enemies and cures\nseveral negative states.",
     "message1": "%1 throws an explosive compound!",
     "message2": ""
   },
@@ -5425,7 +5425,7 @@
   },
   "1072": {
     "name": "Flaming Oil",
-    "description": "Restores HP to all enemies and inflicts HP\nRegeneration.",
+    "description": "Deals damage to all enemies and inflicts HP\nRegeneration.",
     "message1": "%1 throws flaming oil!",
     "message2": ""
   },
@@ -6259,7 +6259,7 @@
   },
   "1241": {
     "name": "Rescue Operation",
-    "description": "Restores HP to all enemies.",
+    "description": "Deals damage to all enemies.",
     "message1": "%1 uses Rescue Operation!",
     "message2": ""
   },

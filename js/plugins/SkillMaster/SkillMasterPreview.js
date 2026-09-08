@@ -216,12 +216,12 @@
 
         const ov = document.createElement('div');
         ov.id = 'spell-preview-overlay';
-        ov.style.cssText = 'position:absolute; top:0; left:0; right:0; bottom:0; z-index:2000; display:flex; align-items:center; justify-content:center; background:var(--shadow-black-translucent-75, rgba(0,0,0,0.75)); font-family:\'Lora\',serif;';
+        ov.style.cssText = 'position:absolute; top:0; left:0; right:0; bottom:0; z-index:2000; display:flex; align-items:center; justify-content:center; background:var(--shadow-black-translucent-75, rgba(0,0,0,0.75)); font-family:var(--font-ui);';
         ov.innerHTML = `
-            <div style="width:82%; max-width:560px; max-height:88%; display:flex; flex-direction:column; gap:12px; padding:20px; box-sizing:border-box; background:var(--bg-dark-warm-translucent-96, rgba(20,18,15,0.96)); border:1.5px solid var(--border-focus-hover, #e5c07b); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.75)">
+            <div style="width:82%; max-width:560px; max-height:88%; display:flex; flex-direction:column; gap:12px; padding:20px; box-sizing:border-box; background:var(--bg-dark-warm-translucent-96, rgba(20,18,15,0.96)); border:1.5px solid var(--border-focus-hover, var(--text-primary-hover)); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.75)">
                 <div style="display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--border-secondary-hover-translucent-15); padding-bottom:8px">
                     <div style="${SkillMaster.getSkillIconStyle(skill.iconIndex)} transform:scale(1.1); flex-shrink:0; image-rendering:pixelated"></div>
-                    <h3 class="cc-header-gothic" style="font-size:1.994rem; color:var(--text-secondary-active, #e5c07b); margin:0">${skill.name}</h3>
+                    <h3 class="cc-header-gothic" style="font-size:1.994rem; color:var(--text-secondary-active, var(--text-primary-hover)); margin:0">${skill.name}</h3>
                 </div>
                 <div id="spell-preview-stage" style="position:relative; width:100%; height:300px; border-radius:10px; overflow:hidden; border:1.5px solid var(--border-secondary-hover-translucent-15); background:radial-gradient(circle at 50% 42%, var(--bg-tertiary-focus-translucent-45, rgba(40,35,25,0.45)) 0%, rgba(10,8,6,1) 78%)">
                     <div style="position:absolute; left:50%; bottom:26px; transform:translate(-50%, 0) perspective(420px) rotateX(66deg); width:150px; height:150px; border-radius:50%; border:2px solid rgba(229,192,123,0.5); box-shadow:0 0 0 18px rgba(229,192,123,0.16) inset; background:radial-gradient(circle, rgba(229,192,123,0.16) 0%, transparent 70%)"></div>
@@ -229,11 +229,11 @@
                     <canvas id="spell-preview-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; cursor:grab; touch-action:none"></canvas>
                     ${noEfkNote}
                 </div>
-                <div style="text-align:center; font-size:1.234rem; color:var(--text-secondary-active, #e5c07b); font-weight:bold">${animLabel}</div>
+                <div style="text-align:center; font-size:1.234rem; color:var(--text-secondary-active, var(--text-primary-hover)); font-weight:bold">${animLabel}</div>
                 <div style="text-align:center; font-size:1.17rem; color:var(--text-card-medium, #aaa)">${typeof T === 'function' ? T('SkillMaster.dragToRotateScrollTo') : 'Drag to rotate · Scroll to zoom'}</div>
                 <div style="display:flex; gap:10px; margin-top:2px">
-                    <div class="focusable" onclick="SceneManager._scene.replaySpellPreview()" style="flex:1; text-align:center; padding:9px; background:var(--text-text-alt-3, #e5c07b); color:#000; border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase">${typeof T === 'function' ? T('SkillMaster.replay') : 'Replay'}</div>
-                    <div class="focusable" onclick="SceneManager._scene.closeSpellPreview()" style="flex:0 0 auto; text-align:center; padding:9px 18px; background:transparent; color:var(--text-primary-hover, #fff); border:1.5px solid var(--text-primary-hover, #fff); border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase">${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}</div>
+                    <div class="focusable" onclick="SceneManager._scene.replaySpellPreview()" style="flex:1; text-align:center; padding:9px; background:var(--text-text-alt-3, var(--text-primary-hover)); color:#000; border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase">${typeof T === 'function' ? T('SkillMaster.replay') : 'Replay'}</div>
+                    <div class="focusable" onclick="SceneManager._scene.closeSpellPreview()" style="flex:0 0 auto; text-align:center; padding:9px 18px; background:transparent; color:var(--text-primary-hover, var(--text-success-active)); border:1.5px solid var(--text-primary-hover, var(--text-success-active)); border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase">${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}</div>
                 </div>
             </div>`;
         this._dndContainer.appendChild(ov);

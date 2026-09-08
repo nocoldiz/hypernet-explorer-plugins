@@ -102,7 +102,7 @@
  *   any save continues at the latest date reached in the world.
  * - No world is ever created behind the player's back. With an empty world
  *   folder there is simply no active world, and the title screen greys out
- *   everything that would need one (Explore, Reconnect, Tutorial, Sandbox)
+ *   everything that would need one (Explore, Reconnect, Story mode, Sandbox)
  *   until one is made from the Worlds screen. Only the minigame arcade, which
  *   stands on a throwaway context, stays playable.
  * - A world is generated once, up front, not piecemeal as it is explored.
@@ -240,11 +240,11 @@
     //   51,64    Camper / Car unlocked (a dossier can park one; the parked spot
     //            itself already lives per-save in $gameSystem)
     //   77,78,79 Player 1/2/3 is a creature
-    //   100      Tutorial mode. Turned on by the Icebush intro event and never
+    //   100      Story mode mode. Turned on by the Icebush intro event and never
     //            turned off, so as a world switch it made every later savegame
-    //            of that world believe it was still in the tutorial.
-    const TUTORIAL_SWITCH_ID = 100;
-    const DEFAULT_PRIVATE_SWITCHES = [9, 10, 13, 33, 45, 46, 48, 49, 50, 51, 58, 64, 77, 78, 79, TUTORIAL_SWITCH_ID];
+    //            of that world believe it was still in the story mode.
+    const STORY_MODE_SWITCH_ID = 100;
+    const DEFAULT_PRIVATE_SWITCHES = [9, 10, 13, 33, 45, 46, 48, 49, 50, 51, 58, 64, 77, 78, 79, STORY_MODE_SWITCH_ID];
     const WORLD_PRIVATE_SWITCHES = new Set((() => {
         const ids = parseIdList(params.privateSwitches);
         return ids.length ? ids : DEFAULT_PRIVATE_SWITCHES;
@@ -946,6 +946,14 @@
             return this.getFile("world");
         },
 
+        // Every data file a world folder is made of. Published because a LAN
+        // host has to pack its whole world up and hand it to the guests
+        // (Multiplayer/MultiplayerSystem.js), and that list must not be a
+        // second copy of this one that drifts out of date.
+        dataFileKeys() {
+            return DATA_FILE_KEYS.slice();
+        },
+
         hasHistory() {
             const events = this.getField("history", "events");
             return Array.isArray(events) && events.length > 0;
@@ -992,6 +1000,16 @@
         isUnboundMagic() { return this.magicalLevel() === "unbound"; },
 
         MAGICAL_LEVELS: MAGICAL_LEVELS,
+
+        // Story mode used to be authored against the canon world alone (2001,
+        // an ordinary population, ordinary magic) and was refused everywhere
+        // else. It now runs in any world: the year only decides where the run
+        // is put down (window.StoryModeStart, in Titlescreen.js), and the
+        // population and the magic never decided anything. Kept as the answer
+        // every caller still asks for.
+        storyModeAllowed() {
+            return true;
+        },
 
         // Beta sprites are strictly disabled across all worlds and cannot be selected.
         allowBetaSprites() { return false; },
@@ -1199,6 +1217,14 @@
             return this.sharedVarIds().indexOf(Number(id)) !== -1;
         },
 
+        // The variable the world clock is counted in. Published so nobody has
+        // to hardcode 114 again: a networked session needs to know which of the
+        // shared variables is the clock, because a clock is the one thing two
+        // players must not both advance (Multiplayer/MultiplayerSystem.js).
+        timeVariableId() {
+            return TIME_VARIABLE_ID;
+        },
+
         // Switches are world-shared by default; only WORLD_PRIVATE_SWITCHES
         // stay per-savegame.
         isPrivateSwitch(id) {
@@ -1287,11 +1313,11 @@
             const state = this.getFile("state");
             if (!state.switches) return;
             for (const id of WORLD_PRIVATE_SWITCHES) {
-                // Tutorial mode is the one exception: it was never turned off
-                // again, so a world that once played the tutorial has it stored
+                // Story mode mode is the one exception: it was never turned off
+                // again, so a world that once played the story mode has it stored
                 // as true and every legacy savegame would adopt it. A savegame
-                // that says nothing about it is not in the tutorial.
-                if (id === TUTORIAL_SWITCH_ID) continue;
+                // that says nothing about it is not in the story mode.
+                if (id === STORY_MODE_SWITCH_ID) continue;
                 const stored = state.switches[id];
                 if (stored === undefined) continue;
                 const current = $gameSwitches._data[id];

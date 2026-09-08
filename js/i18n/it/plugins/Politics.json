@@ -214,7 +214,9 @@
   "revolution": "RIVOLUZIONE: {govType} di {power} viene rovesciata; un governo provvisorio indice {election} d'emergenza.",
   "assassination": "{name}, {title} di {power}, viene assassinato.",
   "politicianDies": "{name} muore a {age} anni.",
-  "headDies": "{name} muore a {age} anni. {power} piange il suo {title}."
+  "headDies": "{name} muore a {age} anni. {power} piange il suo {title}.",
+  "diagnosed": "A {name} è stata diagnosticata {disease}. I medici di {power} non danno speranza di guarigione.",
+  "diesOfIllness": "{name} muore di {disease}. {power} piange il suo {title}."
  },
  "note": {
   "coalition": "Coalizione formata con {party}.",
@@ -250,7 +252,8 @@
   "wolfpigs": "dato in pasto ai lupomaiali dopo aver perso da Moot",
   "succession": "ucciso nella guerra di successione",
   "assassinated": "assassinato",
-  "naturalCauses": "morto per cause naturali a {age} anni"
+  "naturalCauses": "morto per cause naturali a {age} anni",
+  "illness": "morto di {disease}"
  },
  "report": {
   "noPower": "Nessuna iperpotenza di nome \"{power}\".",

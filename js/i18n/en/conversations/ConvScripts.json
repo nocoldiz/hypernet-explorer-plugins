@@ -455,6 +455,74 @@
         1,
         "Because I've needed someone not to give up on me too."
       ]
+    ],
+    [
+      [
+        0,
+        "You look better than you did last week."
+      ],
+      [
+        1,
+        "I feel it. Whatever it was, it has passed."
+      ]
+    ],
+    [
+      [
+        0,
+        "I kept the good bread back for you."
+      ],
+      [
+        1,
+        "You did not have to do that."
+      ],
+      [
+        0,
+        "I know. That is rather the point."
+      ]
+    ],
+    [
+      [
+        0,
+        "I have been telling people what you did."
+      ],
+      [
+        1,
+        "Please do not."
+      ],
+      [
+        0,
+        "Too late. Half the street knows."
+      ]
+    ],
+    [
+      [
+        0,
+        "Walk with me a while? I do not want the road on my own."
+      ],
+      [
+        1,
+        "Gladly. It is a better road with two."
+      ]
+    ],
+    [
+      [
+        0,
+        "Whatever you need, you only have to ask."
+      ],
+      [
+        1,
+        "I will remember that. I usually do."
+      ]
+    ],
+    [
+      [
+        0,
+        "You were right and I was wrong, and I am saying it out loud."
+      ],
+      [
+        1,
+        "Once a year is enough. I will take it."
+      ]
     ]
   ],
   "negative": [
@@ -874,6 +942,72 @@
       [
         1,
         "Fine. I am listening now. Are you going to say something worth hearing?"
+      ]
+    ],
+    [
+      [
+        0,
+        "You said you would be there."
+      ],
+      [
+        1,
+        "Something came up."
+      ],
+      [
+        0,
+        "Something always does."
+      ]
+    ],
+    [
+      [
+        0,
+        "I heard what you have been saying about me."
+      ],
+      [
+        1,
+        "Then you heard it wrong."
+      ],
+      [
+        0,
+        "I heard it twice."
+      ]
+    ],
+    [
+      [
+        0,
+        "Do not touch what is mine again."
+      ],
+      [
+        1,
+        "I did not touch anything."
+      ],
+      [
+        0,
+        "Then it walked off by itself."
+      ]
+    ],
+    [
+      [
+        0,
+        "Every time I help you it costs me."
+      ],
+      [
+        1,
+        "Then stop helping."
+      ],
+      [
+        0,
+        "I intend to."
+      ]
+    ],
+    [
+      [
+        0,
+        "You talk a great deal for someone who has done nothing."
+      ],
+      [
+        1,
+        "And you do a great deal of nothing quietly. We each have our gift."
       ]
     ]
   ],
@@ -1476,6 +1610,90 @@
       [
         1,
         "Ask me again in a year."
+      ]
+    ],
+    [
+      [
+        0,
+        "Prices again."
+      ],
+      [
+        1,
+        "Prices again. Every conversation on this street ends there."
+      ]
+    ],
+    [
+      [
+        0,
+        "Did you sleep?"
+      ],
+      [
+        1,
+        "Some. Not enough to boast about."
+      ]
+    ],
+    [
+      [
+        0,
+        "They have moved the market day."
+      ],
+      [
+        1,
+        "Of course they have. Nobody asked us."
+      ]
+    ],
+    [
+      [
+        0,
+        "New faces about."
+      ],
+      [
+        1,
+        "There are always new faces. Few of them stay."
+      ]
+    ],
+    [
+      [
+        0,
+        "Have you been out past the crossroads lately?"
+      ],
+      [
+        1,
+        "Not since it got strange out there. You?"
+      ],
+      [
+        0,
+        "Not since then either."
+      ]
+    ],
+    [
+      [
+        0,
+        "The water tastes different this month."
+      ],
+      [
+        1,
+        "It does. Nobody will say why."
+      ]
+    ],
+    [
+      [
+        0,
+        "Long day?"
+      ],
+      [
+        1,
+        "Long week. The day is only doing its share."
+      ]
+    ],
+    [
+      [
+        0,
+        "How is the family?"
+      ],
+      [
+        1,
+        "Loud. Fed. That is most of what I ask."
       ]
     ]
   ],
@@ -2366,6 +2584,106 @@
       [
         1,
         "Yes. Not sure which."
+      ]
+    ],
+    [
+      [
+        0,
+        "Morning."
+      ],
+      [
+        1,
+        "It is."
+      ]
+    ],
+    [
+      [
+        0,
+        "Watch that step."
+      ],
+      [
+        1,
+        "Every day, and every day I forget."
+      ]
+    ],
+    [
+      [
+        0,
+        "Seen my hammer?"
+      ],
+      [
+        1,
+        "Seen it. Not saying where."
+      ]
+    ],
+    [
+      [
+        0,
+        "Quiet, isn't it."
+      ],
+      [
+        1,
+        "Too quiet, if you want my view."
+      ]
+    ],
+    [
+      [
+        0,
+        "That your dog?"
+      ],
+      [
+        1,
+        "It is now."
+      ]
+    ],
+    [
+      [
+        0,
+        "Any word from the road?"
+      ],
+      [
+        1,
+        "None, which is the good kind of word."
+      ]
+    ],
+    [
+      [
+        0,
+        "You are up early."
+      ],
+      [
+        1,
+        "I never went down."
+      ]
+    ],
+    [
+      [
+        0,
+        "Rain later."
+      ],
+      [
+        1,
+        "Rain always later."
+      ]
+    ],
+    [
+      [
+        0,
+        "Mind the puddle."
+      ],
+      [
+        1,
+        "Mind the hole under the puddle."
+      ]
+    ],
+    [
+      [
+        0,
+        "Busy?"
+      ],
+      [
+        1,
+        "Enough to complain about, not enough to live on."
       ]
     ]
   ]

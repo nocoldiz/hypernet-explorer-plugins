@@ -404,6 +404,7 @@
       this._confirmResign = null; // actorId whose seat is one press from being given up
       this._extendDays = 1;  // nights the selected stay would be paid on for
       this._assets = [];
+      this._catFilter = null; // null = every category, otherwise one category name
       this._lastOil = 0;
       this._lastSouls = 0;
 
@@ -423,8 +424,7 @@
     createDOM() {
       this._container = document.createElement('div');
       this._container.id = 'menu-container';
-      this._container.style.opacity = '0';
-      this._container.style.transition = 'opacity 0.22s ease-out';
+      this._container.className = 'assets-fade';
       document.body.appendChild(this._container);
 
       // Right-click anywhere exits, like the other parchment overlays.
@@ -441,13 +441,14 @@
       });
 
       this.refreshDOM();
-      setTimeout(() => { if (this._container) this._container.style.opacity = '1'; }, 16);
+      setTimeout(() => { if (this._container) this._container.classList.add('assets-fade-in'); }, 16);
     }
 
     refreshDOM() {
       if (!this._container) return;
       const it = isItalian();
-      this._assets = gatherAssets();
+      this._allAssets = gatherAssets();
+      this._assets = this.filterAssets(this._allAssets);
       if (this._selIndex >= this._assets.length) this._selIndex = Math.max(0, this._assets.length - 1);
       this._btnIndex = -1;   // the rebuilt detail card starts with no button focused
 
@@ -458,29 +459,33 @@
       const cash = $gameParty ? $gameParty.gold() : 0;
       let totalAssets = cash;
       let totalLiabilities = 0;
-      this._assets.forEach(a => {
+      this._allAssets.forEach(a => {
         if (a.liability) totalLiabilities += a.value; else totalAssets += a.value;
       });
       const netWorth = totalAssets - totalLiabilities;
 
       // ---- Left page: summary + pockets list ----
-      const summaryCard = (lbl, val, color) => `
-        <div class="assets-sum-card">
-          <span class="assets-sum-lbl">${lbl}</span>
-          <span class="assets-sum-val" style="color:${color}">${val}</span>
+      // Facts, not plates: the four totals read as a label over its answer on
+      // the page itself, the shape every other detail card in the game uses.
+      const summaryCard = (lbl, val, tone) => `
+        <div class="ui-fact">
+          <span class="ui-fact-lbl">${lbl}</span>
+          <span class="ui-fact-val assets-sum-val${tone}">${val}</span>
         </div>`;
 
       const summaryHTML = `
-        <div class="assets-summary">
-          ${summaryCard(T('Assets.ui.cash'), euro(cash), 'var(--text-brown-medium)')}
-          ${summaryCard(T('Assets.ui.assets'), euro(totalAssets), 'var(--text-cost-ok)')}
-          ${summaryCard(T('Assets.ui.debt'), euro(totalLiabilities), 'var(--text-cost-bad)')}
-          ${summaryCard(T('Assets.ui.netWorth'), euro(netWorth), netWorth >= 0 ? 'var(--text-cost-ok)' : 'var(--text-cost-bad)')}
+        <div class="ui-fact-grid assets-summary">
+          ${summaryCard(T('Assets.ui.cash'), euro(cash), '')}
+          ${summaryCard(T('Assets.ui.assets'), euro(totalAssets), ' assets-val--gain')}
+          ${summaryCard(T('Assets.ui.debt'), euro(totalLiabilities), ' assets-val--loss')}
+          ${summaryCard(T('Assets.ui.netWorth'), euro(netWorth), netWorth >= 0 ? ' assets-val--gain' : ' assets-val--loss')}
         </div>`;
+
+      const tabsHTML = this.buildTabsHTML();
 
       let listHTML = '';
       if (this._assets.length === 0) {
-        listHTML = `<div class="assets-empty">${T('Assets.ui.noAssetsOwnedYetAcquire')}</div>`;
+        listHTML = `<div class="ui-empty"><div class="ui-empty-text">${T('Assets.ui.noAssetsOwnedYetAcquire')}</div></div>`;
       } else {
         let lastCat = null;
         this._assets.forEach((a, idx) => {
@@ -489,17 +494,17 @@
             listHTML += `<div class="assets-cat-header">${a.cat}</div>`;
           }
           const sel = idx === this._selIndex ? 'selected' : '';
-          const valColor = a.liability ? 'var(--text-cost-bad)' : 'var(--text-cost-ok)';
+          const valTone = a.liability ? 'assets-val--loss' : 'assets-val--gain';
           const sign = a.liability ? '-' : '';
           listHTML += `
-            <div class="item-slot assets-row ${sel}" onclick="SceneManager._scene.selectAsset(${idx})">
-              <div class="assets-row-bar" style="background:${a.color}"></div>
+            <div class="item-slot assets-row focusable ${sel}" data-tint="${a.color}" tabindex="0" onclick="SceneManager._scene.selectAsset(${idx})">
+              <div class="assets-row-bar"></div>
               <div class="assets-row-info">
                 <div class="assets-row-name">${a.name}</div>
                 <div class="assets-row-sub">${a.sub}</div>
               </div>
               <div class="assets-row-vals">
-                <span class="assets-row-val" style="color:${valColor}">${sign}${euro(a.value)}</span>
+                <span class="assets-row-val ${valTone}">${sign}${euro(a.value)}</span>
                 ${a.bought != null ? `<span class="assets-row-bought">${T('Assets.ui.paid')} ${euro(a.bought)}</span>` : ''}
               </div>
             </div>`;
@@ -512,53 +517,110 @@
             <div class="back-button" onclick="SceneManager._scene.popScene()">${T('Assets.ui.back')}</div>
             <h2 class="title">${T('Assets.ui.assets')}</h2>
           </div>
+          ${tabsHTML}
           ${summaryHTML}
-          <div class="assets-list" id="assets-list">${listHTML}</div>
+          <div class="ui-list ui-scroll assets-list" id="assets-list">${listHTML}</div>
         </div>`;
 
       // ---- Right page: live graph + selected detail ----
       const rightPageHTML = `
         <div class="right-page">
           <div class="assets-graph-box">
-            <div class="assets-graph-title">${T('Assets.ui.stockMarket')}</div>
+            <div class="inspect-section-title assets-graph-title">${T('Assets.ui.stockMarket')}</div>
             <canvas id="assets-graph" width="560" height="200"></canvas>
             <div class="assets-graph-legend">
-              <div class="assets-legend-item"><span class="assets-legend-dot" style="background:var(--text-cost-ok)"></span>OIL</div>
-              <div class="assets-legend-item"><span class="assets-legend-dot" style="background:var(--border-purple-medium)"></span>SOUL</div>
+              <div class="ui-chip assets-legend-item assets-legend--oil">OIL</div>
+              <div class="ui-chip assets-legend-item assets-legend--soul">SOUL</div>
             </div>
           </div>
-          <div class="assets-detail" id="assets-detail">${this.buildDetailHTML()}</div>
+          <div class="ui-detail assets-detail" id="assets-detail">${this.buildDetailHTML()}</div>
         </div>`;
 
       this._container.innerHTML = `<div class="book-spread">${leftPageHTML}${rightPageHTML}</div>`;
 
+      this.applyRowTints();
       this.paintGraph();
       this.paintAnimalSprite();
       this.scrollToSelected();
+    }
+
+    // The category strip: one tab per category actually held, plus "All".
+    // L1 / R1 walk it, as they do on every tabbed page in the game.
+    assetCategories() {
+      const seen = [];
+      (this._allAssets || []).forEach(a => { if (seen.indexOf(a.cat) < 0) seen.push(a.cat); });
+      return seen;
+    }
+
+    filterAssets(list) {
+      if (!this._catFilter) return list.slice();
+      return list.filter(a => a.cat === this._catFilter);
+    }
+
+    buildTabsHTML() {
+      const cats = this.assetCategories();
+      if (cats.length < 2) return '';
+      const tab = (label, key, on) =>
+        `<div class="backpack-tab focusable${on ? ' selected' : ''}" tabindex="0"` +
+        ` onclick="SceneManager._scene.setCategoryFilter(${key})">${label}</div>`;
+      const html = [tab(T('Assets.ui.allCategories'), 'null', !this._catFilter)]
+        .concat(cats.map(c => tab(c, JSON.stringify(c), this._catFilter === c)));
+      return `<div class="backpack-tabs">${html.join('')}</div>`;
+    }
+
+    setCategoryFilter(cat) {
+      if (this._catFilter === cat) return;
+      this._catFilter = cat;
+      this._selIndex = 0;
+      SoundManager.playCursor();
+      this.refreshDOM();
+    }
+
+    stepCategory(delta) {
+      const cats = this.assetCategories();
+      if (cats.length < 2) return false;
+      const all = [null].concat(cats);
+      const at = all.indexOf(this._catFilter);
+      const next = all[((at < 0 ? 0 : at) + delta + all.length) % all.length];
+      this.setCategoryFilter(next);
+      return true;
+    }
+
+    // A row's kind stripe is data, so it is handed to the stylesheet as a
+    // custom property rather than painted into the markup.
+    applyRowTints() {
+      if (!this._container) return;
+      this._container.querySelectorAll('.assets-row[data-tint]').forEach(el => {
+        el.style.setProperty('--assets-tint', el.dataset.tint || 'var(--text-text-alt-4)');
+      });
     }
 
     buildDetailHTML() {
       const it = isItalian();
       const a = this._assets[this._selIndex];
       if (!a) {
-        return `<div class="assets-detail-empty">${T('Assets.ui.selectAnAssetFromThe')}</div>`;
+        return `<div class="ui-empty"><div class="ui-empty-text">${T('Assets.ui.selectAnAssetFromThe')}</div></div>`;
       }
       const rows = a.details.map(d => {
-        let style = '';
-        if (d.pnl !== undefined) style = `color:${d.pnl >= 0 ? 'var(--text-cost-ok)' : 'var(--text-cost-bad)'};font-weight:bold;`;
+        let tone = '';
+        if (d.pnl !== undefined) tone = d.pnl >= 0 ? ' assets-val--gain' : ' assets-val--loss';
         return `<div class="inspect-spec-row">
           <span class="inspect-spec-label">${d.label}:</span>
-          <span class="inspect-spec-value" style="${style}">${d.val}</span>
+          <span class="inspect-spec-value${tone}">${d.val}</span>
         </div>`;
       }).join('');
       return `
-        <div class="assets-detail-head" style="border-color:${a.color}">
-          <h3 class="assets-detail-name">${a.name}</h3>
-          <div class="assets-detail-cat" style="color:${a.color}">${a.cat}</div>
+        <div class="ui-detail-head">
+          <div class="ui-detail-titles">
+            <h3 class="assets-detail-name">${a.name}</h3>
+            <div class="assets-detail-cat">${a.cat}</div>
+          </div>
         </div>
-        ${a.animal ? this.buildAnimalPortraitHTML(a.animal) : ''}
-        <div class="inspect-section-title">${T('Assets.ui.pocketsDetail')}</div>
-        ${rows}
+        <div class="ui-detail-scroll ui-scroll">
+          ${a.animal ? this.buildAnimalPortraitHTML(a.animal) : ''}
+          <div class="inspect-section-title">${T('Assets.ui.pocketsDetail')}</div>
+          <div class="inspect-spec-grid">${rows}</div>
+        </div>
         ${this.buildAssetActionsHTML(a)}`;
     }
 
@@ -580,8 +642,8 @@
         const animal = asset.animal;
         return [
           { key: 'collect', cls: '', label: T('Assets.ui.collect'), enabled: animal.hasReady },
-          { key: 'sell', cls: ' ag-action-sell', label: `${T('Assets.ui.sell')} ${euro(animal.value)}`, enabled: true },
-          { key: 'pet', cls: ' ag-action-pet', label: T('Assets.ui.makePet'), enabled: true },
+          { key: 'sell', cls: ' assets-action--sell', label: `${T('Assets.ui.sell')} ${euro(animal.value)}`, enabled: true },
+          { key: 'pet', cls: ' assets-action--pet', label: T('Assets.ui.makePet'), enabled: true },
         ];
       }
       if (asset.rental) {
@@ -607,7 +669,7 @@
         return [
           {
             key: 'resign',
-            cls: ' ag-action-sell',
+            cls: ' assets-action--sell',
             label: armed ? T('Assets.ui.resignConfirm') : T('Assets.ui.resignPost'),
             enabled: true,
           },
@@ -620,13 +682,13 @@
       const btns = this.assetButtons(asset);
       if (!btns.length) return '';
       const html = btns.map((b, i) => {
-        const focus = i === this._btnIndex ? ' focused' : '';
-        const dis = b.enabled ? '' : ' disabled';
+        const focus = i === this._btnIndex ? ' selected' : '';
+        const dis = b.enabled ? '' : ' inspect-btn--disabled';
         const click = b.enabled
           ? ` onclick="SceneManager._scene.runAssetAction('${b.key}')"` : '';
-        return `<div class="ag-action-btn${b.cls}${focus}${dis}" data-btn="${i}"${click}>${b.label}</div>`;
+        return `<div class="inspect-btn assets-action focusable${b.cls}${focus}${dis}" tabindex="0" data-btn="${i}"${click}>${b.label}</div>`;
       }).join('');
-      return `<div class="ag-actions">${html}</div>`;
+      return `<div class="inspect-actions assets-actions-row">${html}</div>`;
     }
 
     // Moves the button cursor over the enabled buttons of the selected asset.
@@ -647,8 +709,8 @@
 
     refreshAssetButtons() {
       if (!this._container) return;
-      this._container.querySelectorAll('.ag-action-btn').forEach(el => {
-        el.classList.toggle('focused', Number(el.dataset.btn) === this._btnIndex);
+      this._container.querySelectorAll('.assets-action').forEach(el => {
+        el.classList.toggle('selected', Number(el.dataset.btn) === this._btnIndex);
       });
     }
 
@@ -790,6 +852,14 @@
       }
     }
 
+    // The graph is drawn on a canvas, which cannot read a class. It reads the
+    // theme's own tokens instead, so no ink on this page is a literal.
+    token(name, fallback) {
+      if (!this._container) return fallback;
+      const v = getComputedStyle(this._container).getPropertyValue(name);
+      return (v && v.trim()) || fallback;
+    }
+
     // Repaints the oil/soul trend graph from the shared stock-market history.
     paintGraph() {
       const canvas = this._container && this._container.querySelector('#assets-graph');
@@ -810,10 +880,10 @@
       const max = Math.max(...all) * 1.08;
       const padL = 56, padR = 14, padT = 14, padB = 16;
 
-      ctx.strokeStyle = 'rgba(74,39,17,0.12)';
+      ctx.strokeStyle = this.token('--border-primary-hover-translucent-15', 'transparent');
       ctx.lineWidth = 1;
       ctx.font = '9px Tahoma';
-      ctx.fillStyle = '#6b5242';
+      ctx.fillStyle = this.token('--text-text-alt-4', 'currentColor');
       ctx.textAlign = 'right';
       for (let i = 0; i <= 4; i++) {
         const gy = padT + (h - padT - padB) * (i / 4);
@@ -837,8 +907,8 @@
         ctx.lineCap = 'round';
         ctx.stroke();
       };
-      trend(oil, '#2ecc71');
-      trend(souls, '#9b59b6');
+      trend(oil, this.token('--text-cost-ok', 'currentColor'));
+      trend(souls, this.token('--text-text-alt-19', 'currentColor'));
     }
 
     scrollToSelected() {
@@ -888,6 +958,8 @@
       // selected asset's buttons and confirm fires the focused one.
       if (!handled && Input.isRepeated('right')) { handled = this.moveAssetButton(1); }
       else if (!handled && Input.isRepeated('left')) { handled = this.moveAssetButton(-1); }
+      if (!handled && Input.isTriggered('pagedown')) { handled = this.stepCategory(1); }
+      else if (!handled && Input.isTriggered('pageup')) { handled = this.stepCategory(-1); }
       if (!handled && Input.isTriggered('ok')) { handled = this.triggerAssetButton(); }
 
       if (!handled && (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled())) {
@@ -909,7 +981,8 @@
     // asset set itself changed (e.g. a position was opened/closed while open).
     liveUpdate() {
       if (!this._container) return;
-      this._assets = gatherAssets();
+      this._allAssets = gatherAssets();
+      this._assets = this.filterAssets(this._allAssets);
       const sm = $gameSystem && $gameSystem.stockMarket;
       if (sm) { this._lastOil = sm.getOilPrice(); this._lastSouls = sm.getSoulsPrice(); }
 
@@ -919,7 +992,7 @@
       // Summary totals.
       const cash = $gameParty ? $gameParty.gold() : 0;
       let totalAssets = cash, totalLiabilities = 0;
-      this._assets.forEach(a => {
+      this._allAssets.forEach(a => {
         if (a.liability) totalLiabilities += a.value; else totalAssets += a.value;
       });
       const netWorth = totalAssets - totalLiabilities;
@@ -929,7 +1002,8 @@
         sumVals[1].textContent = euro(totalAssets);
         sumVals[2].textContent = euro(totalLiabilities);
         sumVals[3].textContent = euro(netWorth);
-        sumVals[3].style.color = netWorth >= 0 ? 'var(--text-cost-ok)' : 'var(--text-cost-bad)';
+        sumVals[3].classList.toggle('assets-val--gain', netWorth >= 0);
+        sumVals[3].classList.toggle('assets-val--loss', netWorth < 0);
       }
 
       // Pockets value columns.
@@ -954,9 +1028,8 @@
       }
       if (this._container) {
         const c = this._container;
-        c.style.transition = 'opacity 0.2s ease-out';
-        c.style.opacity = '0';
-        c.style.pointerEvents = 'none';
+        c.classList.remove('assets-fade-in');
+        c.classList.add('assets-fade-out');
         setTimeout(() => { if (c && c.parentNode) c.parentNode.removeChild(c); }, 200);
         this._container = null;
       }

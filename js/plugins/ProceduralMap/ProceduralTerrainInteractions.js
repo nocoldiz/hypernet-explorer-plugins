@@ -1621,7 +1621,7 @@
       const lit = isLit(t.x, t.y);
       const toggleLabel = lit ? (T('Terrain.turnOff') || T('Terrain.blowOut') || "Turn Off") : (T('Terrain.turnOn') || T('Terrain.lightUp') || "Turn On");
       const dismantleLabel = verbLabel(VERB.DISMANTLE);
-      const cfg = FEATURE_INFO[name] || { verb: VERB.DISMANTLE, spec: "Metalworking", rewards: [[MAT.STEEL, 1, 2]] };
+      const cfg = classify(name) || { verb: VERB.DISMANTLE, spec: "Metalworking", rewards: [[MAT.STEEL, 1, 2]] };  // i18n-ignore  spec id
 
       showChoiceMenu([toggleLabel, dismantleLabel], (index) => {
         if (index === 0) {

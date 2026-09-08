@@ -30,5 +30,18 @@
   "slotMainHand": "Mano Principale",
   "slotOffHand": "Mano Secondaria",
   "slotExtraHand": "Mano {n}",
-  "slotMouth": "Bocca"
+  "damageType": "Tipo di Danno",
+  "weaponType": "Tipo di Arma",
+  "slotMouth": "Bocca",
+  "short": {
+    "hp": "PV",
+    "mp": "PM",
+    "str": "FRZ",
+    "con": "COS",
+    "int": "INT",
+    "wis": "SAG",
+    "dex": "DES",
+    "psi": "PSI"
+  },
+  "otherGroup": "Altro"
 }

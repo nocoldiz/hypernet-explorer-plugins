@@ -67,6 +67,73 @@
   const LAZY_BASE_PER_CHUNK = 4;     // systems per chunk at the Sun's density
   const LAZY_CHUNK_CACHE = 256;      // generated chunks kept in memory (LRU)
   const MATERIALIZED_LAZY_CACHE = 128; // materialized lazy systems kept in this.systems (LRU)
+  // ==========================================================================
+  // The strange-system archetypes (see _strangePlan). `from` is the lowest
+  // strangeness tier that may build one; `apply` writes the whole plan.
+  // ==========================================================================
+  const STRANGE_ARCHETYPES = [
+    // Nothing shares a plane out here.
+    { key: "tilted", from: 3, apply(plan, tier) {
+      plan.tilt = Math.min(1.55, 0.35 + tier * 0.07);
+      plan.retrograde = Math.min(0.5, 0.1 + tier * 0.025);
+    } },
+    // Orbits that cross each other, which should not last and does.
+    { key: "crossing", from: 4, apply(plan, tier) {
+      plan.shuffleOrbits = true;
+      plan.tilt = Math.min(1.2, 0.2 + tier * 0.05);
+    } },
+    // Every world in the system is one a party could walk out onto.
+    { key: "garden", from: 5, apply(plan, tier, rng) {
+      plan.typePool = HABITABLE_TYPES.slice();
+      plan.planetChance = 1;
+      plan.minPlanets = 3;
+      plan.maxPlanets = 4 + rng.int(0, Math.min(9, tier));
+    } },
+    // Far too many worlds for one star.
+    { key: "swarm", from: 6, apply(plan, tier, rng) {
+      plan.planetChance = 1;
+      plan.minPlanets = 12;
+      plan.maxPlanets = 14 + rng.int(0, tier * 2);
+    } },
+    // Far too many stars for one system.
+    { key: "crowded", from: 7, apply(plan, tier, rng) {
+      plan.extraStars = 2 + rng.int(0, Math.min(7, tier - 4));
+      plan.planetChance = 0.7;
+      plan.tilt = 0.6;
+    } },
+    // A ring of worlds sharing one orbit.
+    { key: "shepherd", from: 9, apply(plan, tier, rng) {
+      plan.coOrbital = true;
+      plan.planetChance = 1;
+      plan.minPlanets = 6;
+      plan.maxPlanets = 8 + rng.int(0, tier);
+    } },
+    // Giants at the star's throat, dust out past the dark.
+    { key: "inverted", from: 10, apply(plan, tier) {
+      plan.inverted = true;
+      plan.planetChance = 0.9;
+      plan.minPlanets = 4;
+      plan.tilt = Math.min(1.4, 0.3 + tier * 0.06);
+    } },
+    // The rim: a garden ring around a knot of stars, which is every one of the
+    // rules above broken at once.
+    { key: "impossible", from: 12, apply(plan, tier, rng) {
+      plan.typePool = HABITABLE_TYPES.slice();
+      plan.coOrbital = true;
+      plan.extraStars = 3 + rng.int(0, 6);
+      plan.planetChance = 1;
+      plan.minPlanets = 8;
+      plan.maxPlanets = 10 + rng.int(0, tier);
+      plan.tilt = 1.5;
+      plan.retrograde = 0.5;
+    } },
+  ];
+
+  // The worlds a "garden" system is made of: everything the planet table calls
+  // life-bearing, so the set follows the data rather than a list written twice.
+  const HABITABLE_TYPES = Object.keys(PLANET_TYPES)
+    .filter((k) => PLANET_TYPES[k] && PLANET_TYPES[k].supportLife);
+
   const GALAXY_SYSTEM_COUNT = 220;   // travelable systems generated per procedural (non-Milky-Way) galaxy
   const GAL_SUN_R_LY = 26000;        // Sun distance from the galactic core
   const GAL_DISK_RADIUS_LY = 52000;  // visible disk radius
@@ -139,8 +206,31 @@
     "WHITE_DWARF", "L", "T", "RED_GIANT",
   ];
   // Types that never receive stellar modifiers (no companions, no Dyson
-  // shells, no feeding donors of their own).
-  const NO_MODIFIER_TYPES = new Set(["ROGUE_PLANET", "SUPERMASSIVE_BLACK_HOLE"]);
+  // shells, no feeding donors of their own). The esoteric objects are in here
+  // too: whatever a patron's world orbits, it orbits it alone.
+  const NO_MODIFIER_TYPES = new Set([
+    "ROGUE_PLANET", "SUPERMASSIVE_BLACK_HOLE",
+    "BLACK_HOLE_STAR", "CURSED_STAR", "ZOMBIE_STAR", "EYEBALL_STAR",
+    "PENTAGRAM_STAR", "ANGELIC_STAR", "OIL_STAR", "CLOCKWORK_STAR",
+    "MIRROR_STAR", "BONE_STAR", "HOLLOW_STAR", "CANDLE_STAR",
+  ]);
+
+  // The weighted bag every procedural star is drawn from. A class with a
+  // frequency of zero is left out of it entirely: those are the esoteric
+  // objects (black-hole star, cursed star, zombie star, eyeball star,
+  // pentagram star, angelic star, oil star, clockwork star, mirror star, bone
+  // star, hollow star, candle star), which exist nowhere in the universe
+  // except where they are authored - one per patron's world (PatreonRewards).
+  function buildStarTypePool() {
+    const pool = [];
+    Object.keys(STAR_TYPES).forEach((type) => {
+      const freq = Number(STAR_TYPES[type].freq) || 0;
+      if (freq <= 0) return;
+      const count = Math.max(1, Math.round(freq * 20000));
+      for (let i = 0; i < count; i++) pool.push(type);
+    });
+    return pool;
+  }
   // Chance a procedural main-sequence star hides an abandoned Dyson sphere.
   const ABANDONED_DYSON_CHANCE = 0.0006;
   // Schrödingerite harvested from a black hole per visit, and how long (in
@@ -1505,6 +1595,118 @@
     // Roll companions / feeding donors / derelict Dyson shells for a freshly
     // generated procedural system. Deterministic: consumes only the caller's
     // seeded rng. ROGUE_PLANET systems are lone dark worlds and skip all of it.
+    // ------------------------------------------------------------------------
+    // Strange systems: what the far cosmic web does to a star system.
+    // ------------------------------------------------------------------------
+    // Every procedural system carries a TIER, 0 to 15, read straight off its
+    // own name (GalaxySim.Math.Strangeness): 0 in the Local Group, 15 out at
+    // the rim of the observable universe. Tier 0 to 2 is ordinary physics and
+    // generates exactly what it always did. Above that the system may be built
+    // to one of the ARCHETYPES below instead, and the archetypes get stranger
+    // and more likely the further out the player has gone.
+    //
+    // Each archetype is a whole system's worth of decisions, not a modifier
+    // sprinkled on top, so a player who travels far enough finds places that
+    // could not exist here: a ring of twenty worlds sharing one orbit, a
+    // system of nothing but gardens, a knot of nine stars with planets threading
+    // between them. That is the point of the far web, and it is why the web is
+    // worth crossing.
+    //
+    // All of it is deterministic from the system's name: the same star out
+    // there is the same star on the next visit, and on the next save.
+    // ------------------------------------------------------------------------
+    _strangeTier(name) {
+      const S = window.GalaxySim.Math && window.GalaxySim.Math.Strangeness;
+      return S ? S.tierOfSystemName(name) : 0;
+    }
+
+    // The plan for one system: which archetype (if any), how many planets, and
+    // what the orbits are allowed to do. Consumes the rng in a fixed order so
+    // the stream never desyncs between visits.
+    _strangePlan(tier, rng) {
+      const plan = {
+        tier,
+        archetype: null,
+        planetChance: 0.3,
+        minPlanets: 1,
+        maxPlanets: 8,
+        typePool: null,       // null = every type, as at home
+        extraStars: 0,
+        tilt: 0,              // radians of orbital inclination allowed
+        retrograde: 0,        // share of worlds running backwards
+        shuffleOrbits: false, // orbit radii no longer increase outward
+        coOrbital: false,     // everything on ONE orbit
+        inverted: false,      // giants innermost, pebbles outermost
+      };
+      if (tier <= 2) return plan;
+
+      // How often the far web bothers to be strange at all: about a third of
+      // systems at tier 3, nearly all of them at the rim.
+      const odds = Math.min(0.95, (tier - 2) * 0.09);
+      const roll = rng.random();
+      // Even an ordinary far system is not quite flat or quite tidy.
+      plan.planetChance = Math.min(0.85, 0.3 + tier * 0.035);
+      plan.tilt = Math.min(1.5, (tier - 2) * 0.09);
+      plan.retrograde = Math.min(0.45, (tier - 2) * 0.03);
+      plan.maxPlanets = 8 + Math.round((tier - 2) * 0.8);
+      if (roll >= odds) return plan;
+
+      // Pick the archetype. The list is ordered by how far out it starts, and
+      // the choice is taken from the ones this tier has unlocked, so the rim
+      // can still throw up a merely tilted system and home never throws up a
+      // ring of gardens.
+      const unlocked = STRANGE_ARCHETYPES.filter((a) => tier >= a.from);
+      if (!unlocked.length) return plan;
+      const pick = unlocked[rng.int(0, unlocked.length - 1)];
+      plan.archetype = pick.key;
+      pick.apply(plan, tier, rng);
+      return plan;
+    }
+
+    // Rebuild the orbits of a finished system to the plan. Runs after the
+    // planets exist, so every archetype works on the same shape of data.
+    _applyStrangeOrbits(system, plan, rng) {
+      const planets = system.planets || [];
+      if (!planets.length || !plan) return system;
+
+      if (plan.coOrbital) {
+        // One orbit, shared: the worlds are strung around a single ring, each
+        // at its own point on it. A real system cannot hold this together;
+        // out there something does.
+        const shared = rng.range(0.6, 6);
+        planets.forEach((p, i) => {
+          p.orbitRadius = shared;
+          p.phase = (i / planets.length) * Math.PI * 2;
+        });
+      } else if (plan.inverted) {
+        // Sorted the wrong way round: the giants crowd the star and the
+        // pebbles are flung out past where a system should end.
+        const radii = planets.map((p) => p.orbitRadius).sort((a, b) => a - b);
+        const byMass = planets.slice().sort((a, b) => b.mass - a.mass);
+        byMass.forEach((p, i) => { p.orbitRadius = radii[i]; });
+      } else if (plan.shuffleOrbits) {
+        // The same radii, redealt: orbits cross, and a year is no longer a
+        // measure of how far out a world sits.
+        const radii = planets.map((p) => p.orbitRadius);
+        for (let i = radii.length - 1; i > 0; i--) {
+          const j = rng.int(0, i);
+          const t = radii[i]; radii[i] = radii[j]; radii[j] = t;
+        }
+        planets.forEach((p, i) => { p.orbitRadius = radii[i]; });
+      }
+
+      // Tilt and direction. `inclination` and `retrograde` are read by the 3D
+      // system view; at home neither is ever set, and the view keeps its own
+      // small solar-system-like tilt.
+      planets.forEach((p) => {
+        if (plan.tilt > 0) p.inclination = (rng.random() - 0.5) * 2 * plan.tilt;
+        if (plan.retrograde > 0 && rng.random() < plan.retrograde) p.retrograde = true;
+        p.period = Math.sqrt(Math.pow(Math.max(0.01, p.orbitRadius), 3) /
+          Math.max(0.02, system.mass)) * 365;
+      });
+      return system;
+    }
+
     _applyStellarModifiers(system, rng) {
       if (!system || NO_MODIFIER_TYPES.has(system.type)) return system;
 
@@ -1628,14 +1830,10 @@
       // freq * 20000 with a floor of 1 keeps the common classes dominant while
       // guaranteeing every rare/theoretical type at least a sliver of the pool
       // (at * 1000, anything under freq 0.0005 rounded to zero and could
-      // never spawn at all).
-      const starTypePool = [];
-      Object.keys(STAR_TYPES).forEach((type) => {
-        const count = Math.max(1, Math.round(STAR_TYPES[type].freq * 20000));
-        for (let i = 0; i < count; i++) {
-          starTypePool.push(type);
-        }
-      });
+      // never spawn at all). A frequency of exactly zero is the exception: it
+      // means the class does not occur in nature at all and is only ever
+      // authored onto a system (the esoteric objects a patron's world orbits).
+      const starTypePool = buildStarTypePool();
 
       // Distribute stars in a flattened galactic disk rather than a uniform
       // sphere: x/y fill the disk plane (uniform by area), while z is a thin
@@ -1767,13 +1965,7 @@
 
       const moonTypePool = Object.keys(PLANET_TYPES).filter((type) => !MOON_INVALID_PLANET_TYPES.has(type));
 
-      const starTypePool = [];
-      Object.keys(STAR_TYPES).forEach((type) => {
-        const count = Math.max(1, Math.round(STAR_TYPES[type].freq * 20000));
-        for (let i = 0; i < count; i++) {
-          starTypePool.push(type);
-        }
-      });
+      const starTypePool = buildStarTypePool();
 
       const starType = starTypePool[rng.int(0, starTypePool.length - 1)];
       const starData = STAR_TYPES[starType];
@@ -1795,12 +1987,34 @@
         hardcoded: false,
         planets: [],
       };
+      // How strange this place is allowed to be, read off its own name: 0 at
+      // home, up to 15 out at the rim of the cosmic web. See _strangePlan.
+      const tier = this._strangeTier(name);
+      const plan = this._strangePlan(tier, rng);
+      system.strangeTier = tier;
+      if (plan.archetype) system.strangeArchetype = plan.archetype;
+
       if (starType === "ROGUE_PLANET") this._finishRoguePlanet(system, rng);
       else this._applyStellarModifiers(system, rng);
 
-      if (starType !== "ROGUE_PLANET" && rng.random() < 0.3) {
-        const numPlanets = rng.int(1, 8);
-        const planetTypes = Object.keys(PLANET_TYPES);
+      // A crowded system is knotted with far more stars than the ordinary
+      // 22% companion roll would ever give it.
+      if (plan.extraStars > 0 && starType !== "ROGUE_PLANET") {
+        const comps = system.companions || [];
+        for (let c = 0; c < plan.extraStars; c++) {
+          const type = COMPANION_TYPES[rng.int(0, COMPANION_TYPES.length - 1)];
+          comps.push(this._makeCompanionStar(
+            system.name + " " + String.fromCharCode(66 + comps.length), type, rng,
+            rng.range(6, 90)));
+        }
+        system.companions = comps;
+        system.binary = true;
+      }
+
+      if (starType !== "ROGUE_PLANET" && rng.random() < plan.planetChance) {
+        const numPlanets = rng.int(plan.minPlanets, Math.max(plan.minPlanets, plan.maxPlanets));
+        const planetTypes = plan.typePool && plan.typePool.length
+          ? plan.typePool : Object.keys(PLANET_TYPES);
 
         for (let p = 0; p < numPlanets; p++) {
           const planetType = planetTypes[rng.int(0, planetTypes.length - 1)];
@@ -1855,6 +2069,7 @@
 
           system.planets.push(planet);
         }
+        this._applyStrangeOrbits(system, plan, rng);
       }
 
       return system;
@@ -1866,11 +2081,7 @@
 
     _lazyStarTypePool() {
       if (this._starTypePoolCache) return this._starTypePoolCache;
-      const pool = [];
-      Object.keys(STAR_TYPES).forEach((type) => {
-        const count = Math.max(1, Math.round(STAR_TYPES[type].freq * 20000));
-        for (let i = 0; i < count; i++) pool.push(type);
-      });
+      const pool = buildStarTypePool();
       this._starTypePoolCache = pool.length ? pool : Object.keys(STAR_TYPES);
       return this._starTypePoolCache;
     }
@@ -2064,7 +2275,12 @@
         h ^= s.charCodeAt(i);
         h = Math.imul(h, 16777619) >>> 0;
       }
-      return h >>> 0;
+      h = h >>> 0;
+      // Stamped exactly the way the cosmos module stamps it, or the mirror and
+      // the original would disagree by up to fifteen. A galaxy named here is a
+      // hand-authored neighbour of ours (Andromeda), so its tier is 0: home.
+      const S = window.GalaxySim.Math && window.GalaxySim.Math.Strangeness;
+      return S ? S.stampTier(h, 0) : h;
     }
 
     _registerFarSystem(system) {

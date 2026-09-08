@@ -33,6 +33,10 @@
  *                       walking into it, up to EDGE_FENCE_DEPTH tiles thick.
  *   <Coords x y>        World coords this map connects to.
  *   <Borders mapId x y> Override border teleport destination (all borders).
+ *   <disableReturn>     No way out of this map through the T key or the
+ *                       "Return to World Map" menu row: both are refused and
+ *                       the row is not drawn. The map must be left through its
+ *                       own events.
  *
  * @command ReturnToWorldMap
  * @text Return to World Map
@@ -92,6 +96,10 @@
  * @min -2147483648
  * @default 0
  * @desc Extra seed ingredient, so two entrances of the same kind on one world square open onto different structures.
+ *
+ * @command exitStructure
+ * @text Exit Structure
+ * @desc Leave the structure the party is inside (a patron's vault, a cellar, a crypt) and step back out on the entrance tile - the hatch, under a patron's square.
  *
  * @command switchLayer
  * @text Switch Layer
@@ -305,13 +313,17 @@
         }
         if (!shouldDive && $gamePlayer._isDiving) shouldDive = true;
 
-        // Only re-evaluate the party sprites when something that affects them
-        // changed: dive state, the player's tile, or whether the player is moving
-        // (the diving sprite swaps between Moving/Still images on that boundary).
-        const sig = (shouldDive ? 1 : 0) + '|' + $gamePlayer.x + ',' + $gamePlayer.y +
-                    '|' + ($gamePlayer.isMoving() ? 1 : 0);
-        if (sig === _lastDivingSig) return;
-        _lastDivingSig = sig;
+        // While diving the sprites are re-evaluated every frame: the swap back to
+        // the still suit is timed (see window.DivingSprite), so it needs a tick
+        // per frame rather than one per movement boundary. Out of the water the
+        // old signature gate still skips the work while nothing changes.
+        if (!shouldDive) {
+            const sig = '0|' + $gamePlayer.x + ',' + $gamePlayer.y;
+            if (sig === _lastDivingSig) return;
+            _lastDivingSig = sig;
+        } else {
+            _lastDivingSig = null;
+        }
 
         updateCharacterSprite($gamePlayer, shouldDive);
         const followers = $gamePlayer.followers()._data || [];
@@ -322,24 +334,14 @@
         const actor = character.actor ? character.actor() : $gameParty.leader();
         if (!actor) return;
         if (shouldDive) {
-            const isMoving     = character.isMoving();
-            const currentImage = character.characterName();
-            if (character._originalStepAnime === undefined) {
-                character._originalStepAnime = character.hasStepAnime();
-            }
-            if (isMoving && currentImage !== 'Skab/!$DivingSuiteMoving') {
-                character.setImage('Skab/!$DivingSuiteMoving', 0);
-                character.setStepAnime(false);
-            } else if (!isMoving && currentImage !== 'Skab/!$DivingSuiteStill') {
-                character.setImage('Skab/!$DivingSuiteStill', 0);
-                character.setStepAnime(true);
-            }
+            if (window.DivingSprite) window.DivingSprite.apply(character);
         } else {
             const defaultName  = actor.characterName();
             const defaultIndex = actor.characterIndex();
             if (character.characterName() !== defaultName || character.characterIndex() !== defaultIndex) {
                 character.setImage(defaultName, defaultIndex);
             }
+            if (window.DivingSprite) window.DivingSprite.clear(character);
             if (character._originalStepAnime !== undefined) {
                 character.setStepAnime(character._originalStepAnime);
                 character._originalStepAnime = undefined;
@@ -348,30 +350,34 @@
     }
 
     // ============================================================================
-    // BIOME MUSIC SELECTION
+    // BIOME MUSIC SELECTION (OFF-WORLD ONLY)
     // ----------------------------------------------------------------------------
-    // Only a place with a musical identity of its own carries a track pool:
-    // settlements (cities, burgs, villages), the built dungeons of the structure
-    // catalogue (crypt, sewer, catacombs, oubliette, bunker, ...) and every alien
-    // biome. Open country, interiors and CAVES deliberately carry none, so the
-    // map keeps whatever BGM it was authored with rather than being overridden.
+    // Nothing on Earth carries a track pool any more. A map's BGM is whatever
+    // the map was authored with or whatever an event started, and nothing here
+    // overrides it, borrows over it or stops it: settlements, dungeons, caves
+    // and open country all keep the music they were given.
     //
-    // Where a pool exists it is a wide one (`bgm` for day, `bgmNight` for night)
-    // but only ONE of them is ever heard while the party stays put: the track is
-    // picked deterministically from the world seed, the biome name, the day/night
-    // half and above all the NATION the player is currently standing in
-    // (Variable 86, set by WeatherSystem.setCurrentCountry).
+    // Off-world is the exception. Alien surfaces and Space are generated and
+    // have no authored track to fall back on, so they keep their pools (`bgm`
+    // for day, `bgmNight` for night; alien pools are drawn from Atmospheric by
+    // day and Dark by night, see js/db/WorldGen/AlienBiomes.json).
     //
-    // So a city keeps one identity for as long as the party walks around one
-    // country, and the whole musical palette rotates the moment they cross a
-    // border: the same city biome sounds different on the French side. No
-    // per-visit shuffling, no restart when stepping between two maps of the same
-    // biome, and no state to persist -- the same inputs always give the same pick.
-    //
-    // Alien biomes deliberately draw their pools from different categories
-    // (Atmospheric by day, Dark by night; see js/db/WorldGen/AlienBiomes.json)
-    // while using this very same picking rule.
+    // Only ONE track of a pool is heard while the party stays put: it is picked
+    // deterministically from the world seed, the biome name, the day/night half
+    // and the NATION the player is standing in (Variable 86, set by
+    // WeatherSystem.setCurrentCountry). No per-visit shuffling, no restart when
+    // stepping between two maps of the same biome, no state to persist.
     // ============================================================================
+
+    // Biome music is no longer a thing on Earth. A map's BGM is whatever the
+    // map was authored with or whatever an event started, and nothing here
+    // overrides it or stops it. The one exception is off-world: alien biomes
+    // and Space keep their pools, because those maps are generated and have no
+    // authored track of their own to fall back on.
+    function biomeMusicAllowed(biomeName) {
+        const name = String(biomeName || '');
+        return /^Alien/i.test(name) || name === 'Space' || name === 'Spacecenter';   // i18n-ignore  biome ids
+    }
 
     const VAR_NATION_ID = 86;
 
@@ -404,33 +410,10 @@
         return tracks[Math.min(tracks.length - 1, Math.floor(rng() * tracks.length))];
     }
 
-    // An empty world (WorldManager.populationMode) is not supposed to sound
-    // like the world it was, so every biome carries a second, much narrower
-    // pool of dark and atmospheric tracks in `emptyWorldBGM`
-    // (tools/worldgen/gen_empty_world_bgm.js). It is ONE pool, deliberately:
-    // nothing about an empty world changes when the sun comes up, so day and
-    // night are the same. A zombie apocalypse is just as depopulated, so it
-    // shares the same override rather than getting a pool of its own.
-    function isEmptyWorld() {
-        const WM = window.WorldManager;
-        if (!WM) return false;
-        if (typeof WM.isEmptyWorld === 'function' && WM.isEmptyWorld()) return true;
-        return !!(typeof WM.isZombieWorld === 'function' && WM.isZombieWorld());
-    }
-
-    function emptyWorldPool(biome) {
-        return ((biome && biome.emptyWorldBGM) || []).filter(n => n && n.trim());
-    }
-
     // The night pool is optional: a biome with no `bgmNight` keeps its day pool
     // after dark rather than falling silent.
     function biomeTrackPool(biome, isNight) {
         const clean = arr => (arr || []).filter(n => n && n.trim());
-        const empty = emptyWorldPool(biome);
-        // In an empty world the biome's own two pools are not consulted at all.
-        // A biome the generator has not reached yet still falls through to
-        // them, so a missing key is quieter data rather than silence.
-        if (isEmptyWorld() && empty.length) return empty;
         const day   = clean(biome.bgm);
         const night = clean(biome.bgmNight);
         return (isNight && night.length > 0) ? night : day;
@@ -474,6 +457,8 @@
     // into open country. A hand-made map is authored, not generated, so there it
     // still means "carry on with whatever is playing".
     function biomeMusicDecision(biome, biomeName, procGenData, isNight, isProcGenMap) {
+        // On Earth there is nothing to decide: leave the BGM alone.
+        if (!biomeMusicAllowed(biomeName)) return { tracks: [], name: biomeName, borrowed: false, action: 'keep' };
         let musicBiome = biome, musicBiomeName = biomeName;
         if (biomeTrackPool(biome, isNight).length === 0) {
             const borrowed = borrowedMusicBiome(biomeName, procGenData, isNight);
@@ -512,7 +497,7 @@
         // both halves of the day), so only a border crossing is worth a
         // re-pick there; watching the daylight would restart the ambience at
         // 20:00 and 06:00 for a track that is not going to change.
-        const half = isEmptyWorld() ? 0 : (isNightTimeNow() ? 1 : 0);
+        const half = isNightTimeNow() ? 1 : 0;
         const sig = currentNationId() + '|' + half;
         if (_lastMusicSig === null) { _lastMusicSig = sig; return; }
         if (sig === _lastMusicSig) return;
@@ -634,24 +619,11 @@
         const isNightTime = isNightTimeNow();
         // Must be built exactly as watchNationMusicChange builds it, or the
         // two disagree and the watcher re-picks on every throttled tick.
-        _lastMusicSig     = currentNationId() + '|' +
-                            (isEmptyWorld() ? 0 : (isNightTime ? 1 : 0));
+        _lastMusicSig     = currentNationId() + '|' + (isNightTime ? 1 : 0);
 
-        // A hand-made map normally keeps whatever music it was authored with.
-        // An empty world overrules that: having got this far the map HAS a
-        // biome (no biome returns above), and the biome's empty-world pool is
-        // what an emptied world sounds like, whoever authored the map. The
-        // map's own track survives as the fallback for a map that declares no
-        // biome at all, which never reaches this line.
-        const emptyOverride = isEmptyWorld() && emptyWorldPool(biome).length > 0;
-
-        if (!isProcGenMap && $dataMap && $dataMap.autoplayBgm && !emptyOverride) {
+        if (!isProcGenMap && $dataMap && $dataMap.autoplayBgm) {
             // Keep map's own BGM; only handle BGS below
         } else {
-            // The empty-world pool is one list for both halves of the day, so
-            // the pick is seeded as day whatever the clock says: otherwise the
-            // track would change at 20:00 for no reason the player can see.
-            const seedNight = emptyOverride ? false : isNightTime;
             // A biome with no music of its own borrows it from the ground it
             // sits on or from next door. Only the music: the ambience below
             // stays the biome's own, so a road still sounds like a road.
@@ -661,7 +633,7 @@
             }
             const tracks  = decision.tracks;
             const target  = decision.action === 'play'
-                ? pickBiomeTrack(decision.name, tracks, seedNight)
+                ? pickBiomeTrack(decision.name, tracks, isNightTime)
                 : null;
             const playing = AudioManager._currentBgm && AudioManager._currentBgm.name;
             if (!target) {
@@ -1923,6 +1895,9 @@
         const pg = $gameSystem && $gameSystem._procGenData;
         if (!$dataMap || !pg || !pg.generatedMapData) return false;
 
+        // Fresh tiles: whatever was standing on the old ones has to be placed again.
+        invalidateSquarePopulation();
+
         // Lay the neighbouring squares alongside this one where their tileset
         // allows it (see THE STITCHED WINDOW below). The square the caller built
         // is handed over as the centre, so this only ever ADDS to what would have
@@ -1938,8 +1913,12 @@
             x: $gameVariables.value(VAR_WORLD_X),
             y: $gameVariables.value(VAR_WORLD_Y),
         };
-        const anchor = (!reanchor && pg.stitchCentre) ? pg.stitchCentre : partySquare;
-        const win = openWindow(anchor.x, anchor.y, anchor.depth, {
+        const currentDepth = (pg.biomeLayerStack || []).length;
+        let anchor = (!reanchor && pg.stitchCentre) ? pg.stitchCentre : partySquare;
+        if (anchor && anchor.depth != null && anchor.depth !== currentDepth) {
+            anchor = partySquare;
+        }
+        const win = openWindow(anchor.x, anchor.y, currentDepth, {
             centreData: pg.generatedMapData,
             adoptAt: partySquare,
         });
@@ -1988,6 +1967,8 @@
             $gameSystem._procGenData.generatedMapData) {
             const currentWorldX = $gameVariables.value(VAR_WORLD_X);
             const currentWorldY = $gameVariables.value(VAR_WORLD_Y);
+            const currentDepth  = ($gameSystem._procGenData.biomeLayerStack || []).length;
+            const currentBiome  = $gameSystem._procGenData.currentBiome;
             // The unchanged-coordinates short-circuit keeps the map already in
             // $dataMap. When there is none -- a save loaded on the procedural map
             // boots with $dataMap null, and the coordinates it recorded are of
@@ -2011,11 +1992,15 @@
             if (!$dataMap || !$dataMap.data ||
                 $dataMap.data !== shown ||
                 $gameSystem._procGenData.lastLoadedProcMapX !== currentWorldX ||
-                $gameSystem._procGenData.lastLoadedProcMapY !== currentWorldY) {
+                $gameSystem._procGenData.lastLoadedProcMapY !== currentWorldY ||
+                $gameSystem._procGenData.lastLoadedProcMapDepth !== currentDepth ||
+                $gameSystem._procGenData.lastLoadedProcMapBiome !== currentBiome) {
                 _DataManager_loadMapData.call(this, mapId);
                 procMapLoadPending = !applyProcGenDataToDataMap();
-                $gameSystem._procGenData.lastLoadedProcMapX = currentWorldX;
-                $gameSystem._procGenData.lastLoadedProcMapY = currentWorldY;
+                $gameSystem._procGenData.lastLoadedProcMapX     = currentWorldX;
+                $gameSystem._procGenData.lastLoadedProcMapY     = currentWorldY;
+                $gameSystem._procGenData.lastLoadedProcMapDepth = currentDepth;
+                $gameSystem._procGenData.lastLoadedProcMapBiome = currentBiome;
             }
             return;
         }
@@ -2745,6 +2730,18 @@
 
         _orig_Player_performTransfer.call(this);
 
+        // Ensure spriteset tilemap is refreshed after same-map transfer
+        const scene = SceneManager._scene;
+        const spriteset = scene && scene._spriteset;
+        if (spriteset && $gameMap.mapId() === procMapId) {
+            if (typeof spriteset.loadTileset === 'function') spriteset.loadTileset();
+            if (spriteset._tilemap) {
+                spriteset._tilemap.setData($gameMap.width(), $gameMap.height(), $gameMap.data());
+                spriteset._tilemap.refresh();
+            }
+            if (typeof spriteset.update === 'function') spriteset.update();
+        }
+
         // The party has arrived: re-derive their world square straight away rather
         // than waiting for the end of Scene_Map.onMapLoaded. Every other map-load
         // hook (the vehicle store's reconcile, for one) runs between the two, and
@@ -3193,9 +3190,20 @@
         return window.ProcGenSquare || null;
     }
 
+    // Is procedural map streaming on? The option defaults to on, so anything
+    // other than an explicit false reads as yes (a config written before the
+    // option existed has no key at all).
+    function mapStreamingEnabled() {
+        return !(window.ConfigManager && ConfigManager.mapStreaming === false);
+    }
+
     // Stitching is off entirely for a square the old system owns end to end.
     function stitchingAllowed() {
         if (stitchDisabled) return false;
+        // The player's own answer (Options / gameplay / Map Streaming). Off, no
+        // square is ever joined onto another: one map is loaded at a time and its
+        // border is crossed with the panning transition below.
+        if (!mapStreamingEnabled()) return false;
         const pg = procGen();
         if (!pg) return false;
         // A door / sandbox / tower dungeon is a single sealed square whose border
@@ -3254,6 +3262,22 @@
     // The offset of each neighbour, by the direction walked into it.
     const EXIT_DELTA = { 2: { dx: 0, dy: 1 }, 4: { dx: -1, dy: 0 }, 6: { dx: 1, dy: 0 }, 8: { dx: 0, dy: -1 } };
 
+    // Do these two names describe the same square? Normally they are the same
+    // string. They differ in one honest case: a special biome rolled per world
+    // seed ("SpiritWoods" for Forest), which one path may have unwrapped and the
+    // other not. Both sides are folded back to their parent before they are
+    // compared, so a stale roll no longer collapses the window and sends the
+    // party through a fade for ground that is already joinable. Everything else -
+    // a forced biome, a structure, a tower floor - still disagrees, which is what
+    // keeps a cave from being stitched onto a crypt.
+    function sameSquareIdentity(resolvedName, standingName) {
+        if (resolvedName === standingName) return true;
+        if (!resolvedName || !standingName) return false;
+        const unwrap = window.ProcGenUtils && window.ProcGenUtils.unwrapSpecialBiome;
+        if (!unwrap) return false;
+        return unwrap(resolvedName) === unwrap(standingName);
+    }
+
     /**
      * @param {?{x:number,y:number}} guardSquare the square the PARTY is standing
      *        on, which is not always the one the window is centred on.
@@ -3268,6 +3292,7 @@
      *        it (see growTowards).
      */
     function planWindow(cx, cy, depth, guardSquare, requireDelta) {
+        if (!stitchingAllowed()) return null;
         const api = ProcGenSquareApi();
         if (!api) return null;
         const pg = procGen();
@@ -3291,7 +3316,7 @@
             const standing = (guard.x === cx && guard.y === cy)
                 ? centre
                 : api.resolve(guard.x, guard.y, { depth });
-            if (!standing || standing.biomeName !== pg.currentBiome) return null;
+            if (!standing || !sameSquareIdentity(standing.biomeName, pg.currentBiome)) return null;
         }
 
         // A centre the old system owns takes no neighbours at all - and it only
@@ -4383,7 +4408,38 @@
      * is what keeps a crossing feeling like a crossing: the world was already
      * there, its inhabitants arrive with the party.
      */
-    function populatePartySquare() {
+    // What the last population was for. A square is populated on arrival and on
+    // every crossing into a new one; a plain Scene_Map rebuild (closing a menu,
+    // leaving the battle scene) is neither, and must never re-roll the placement
+    // passes. They only look deterministic: every one of them rejects tiles that
+    // are occupied or under the party, so running them again once the party has
+    // walked a few steps hands back a DIFFERENT map, which is how a cardboard
+    // box turned into an armour chest across a menu round trip.
+    let populatedKey = null;
+
+    function squarePopulationKey() {
+        const pg = procGen();
+        if (!pg) return null;
+        return [
+            $gameVariables.value(VAR_WORLD_X),
+            $gameVariables.value(VAR_WORLD_Y),
+            (pg.biomeLayerStack || []).length,
+            pg.currentBiome || '',
+        ].join(':');
+    }
+
+    // Say so whenever the tiles under the party have been laid down afresh: the
+    // events standing on them have to be placed again on top.
+    function invalidateSquarePopulation() {
+        populatedKey = null;
+    }
+
+    function populatePartySquare(force) {
+        const key = squarePopulationKey();
+        // Already dealt, and the party has not left the square nor had the ground
+        // relaid under them: leave it exactly as it stands.
+        if (!force && key !== null && key === populatedKey) return false;
+        populatedKey = key;
         withSquareLocalView(partyCell(), () => {
             if (placeChestEvents) placeChestEvents();
             if (placeSpikeTrapEvents) placeSpikeTrapEvents();
@@ -4393,6 +4449,7 @@
         });
         updateEventVisibility();
         withSquareLocalView(partyCell(), () => refreshEnemiesForBiome());
+        return true;
     }
 
     window.ProcStitch = {
@@ -4402,6 +4459,27 @@
         cellSize() { return { width: CELL_W, height: CELL_H }; },
         open: openWindow,
         close: closeWindow,
+        // The Map Streaming option was just flipped. Turning it off tears the
+        // standing window down and reloads the party's own square on its own;
+        // turning it on lets the next step build a window again.
+        onStreamingChanged(on) {
+            if (on || !stitchWindow) return;
+            const pg = procGen();
+            const here = worldSquareAt($gamePlayer.x, $gamePlayer.y);
+            const local = localCoord($gamePlayer.x, $gamePlayer.y);
+            closeWindow();
+            // Nothing is cached while streaming is off: drop the squares the
+            // window had already built so they are not held for a session.
+            const api = ProcGenSquareApi();
+            if (api && api.forget) api.forget();
+            if (pg && here) {
+                $gameVariables.setValue(VAR_WORLD_X, here.x);
+                $gameVariables.setValue(VAR_WORLD_Y, here.y);
+            }
+            if ($gameMap.mapId() === procMapId) {
+                $gamePlayer.reserveTransfer(procMapId, local.x, local.y, $gamePlayer.direction(), 2);
+            }
+        },
         plan: planWindow,
         compose: composeWindow,
         apply: applyWindowToDataMap,
@@ -4439,6 +4517,9 @@
         inPartySquare(fn) { return withSquareLocalView(partyCell(), fn); },
         partyCell,
         populate: populatePartySquare,
+        // Say so after relaying a square's tiles behind ProcStitch's back: the
+        // next populate will deal it again instead of holding what it has.
+        invalidatePopulation: invalidateSquarePopulation,
         // How much ground is still being built ahead of the party, the square
         // half-built right now included.
         pending() { return prefetchQueue.length + (prefetchJob && !prefetchJob.done ? 1 : 0); },
@@ -4660,7 +4741,15 @@
         if (window.SplitScreenManager && window.SplitScreenManager.active) {
             window.SplitScreenManager.forceP2Teleport = true;
         }
-        $gameScreen.startFadeOut(10);
+        // With streaming on the crossing is hidden behind a fade. With it off it
+        // is shown: the screen pans from the square being left to the one being
+        // entered, Zelda style, so take the picture of the old one now, while it
+        // is still on screen, and hold the brightness where it is.
+        if (mapStreamingEnabled()) {
+            $gameScreen.startFadeOut(10);
+        } else {
+            beginEdgePan(exitDirection);
+        }
 
         const system         = $gameSystem;
         const storedExitDir  = exitDirection;
@@ -4716,6 +4805,28 @@
 
             _resolveAdjacentBiomeAndTransfer(system, storedExitDir, storedPlayerX, storedPlayerY, d, adjacentCoords);
         };
+
+        // The fading crossing waits for the screen to go black (Game_Screen.update
+        // below). The panning one never goes black, so nothing would ever wake the
+        // callback: run it on the next tick instead.
+        if (!mapStreamingEnabled()) {
+            system._procGenData._edgeTransitionDispatching = true;
+            const cb = system._procGenData._edgeTransitionCallback;
+            setTimeout(() => {
+                try {
+                    cb();
+                } catch (e) {
+                    console.error(`[WorldMapReturn-Edge] Panning crossing failed`, e);  // i18n-ignore  console diagnostic
+                    cancelEdgePan();
+                    $gameScreen.startFadeIn(10);
+                } finally {
+                    if (system._procGenData) {
+                        system._procGenData._edgeTransitionScheduled   = false;
+                        system._procGenData._edgeTransitionDispatching = false;
+                    }
+                }
+            }, 0);
+        }
     }
 
     // ============================================================================
@@ -4941,6 +5052,138 @@
     };
 
     // ============================================================================
+    // THE PANNING BORDER CROSSING (Map Streaming off)
+    // ============================================================================
+    // With streaming on a border is a seam inside one big stitched map and there
+    // is nothing to show. With it off only the party's own square is ever loaded,
+    // so every border really is a crossing, and it is drawn the way the first
+    // Zelda drew it: the picture of the square being left slides off one side
+    // while the square being entered slides in behind it, and control comes back
+    // when it stops.
+    //
+    // The old square is a still taken the frame the border is touched
+    // (SceneManager.snap). The new one is the live scene: the pan is the whole
+    // spriteset pushed one screen off centre and walked back to zero, with the
+    // still riding one screen ahead of it. Both sprites live on the SCENE, not
+    // inside the spriteset, so the still is never scrolled or tinted by the map
+    // it is covering.
+    const EDGE_PAN_FRAMES = 24;
+
+    // Screen offset, in pixels, the entering square starts at for each exit.
+    function edgePanOffset(exitDirection) {
+        const w = Graphics.width, h = Graphics.height;
+        switch (exitDirection) {
+            case 2: return { x: 0,  y: h };   // walked south: the new map is below
+            case 8: return { x: 0,  y: -h };
+            case 4: return { x: -w, y: 0 };
+            case 6: return { x: w,  y: 0 };
+        }
+        return { x: 0, y: 0 };
+    }
+
+    function beginEdgePan(exitDirection) {
+        cancelEdgePan();
+        let snap = null;
+        try {
+            snap = SceneManager.snap();
+        } catch (e) {
+            console.warn(`[WorldMapReturn-Edge] Screen capture failed, crossing without a pan`, e);  // i18n-ignore  console diagnostic
+            return;
+        }
+        $gameTemp._edgePan = {
+            bitmap: snap,
+            offset: edgePanOffset(exitDirection),
+            frames: 0,
+            started: false
+        };
+    }
+
+    function cancelEdgePan() {
+        const pan = $gameTemp && $gameTemp._edgePan;
+        if (pan && pan.bitmap && pan.bitmap.destroy) pan.bitmap.destroy();
+        if ($gameTemp) $gameTemp._edgePan = null;
+    }
+
+    // A pan is running: the party is a passenger until it lands.
+    function edgePanRunning() {
+        const pan = $gameTemp && $gameTemp._edgePan;
+        return !!(pan && pan.started);
+    }
+
+    const _EdgePan_Scene_Map_start = Scene_Map.prototype.start;
+    Scene_Map.prototype.start = function() {
+        _EdgePan_Scene_Map_start.call(this);
+        const pan = $gameTemp && $gameTemp._edgePan;
+        if (!pan || pan.started || $gameMap.mapId() !== procMapId) {
+            // The crossing did not end on a procedural square after all (a town,
+            // a dungeon door): the still would be a lie, so drop it.
+            if (pan && !pan.started) cancelEdgePan();
+            return;
+        }
+        pan.started = true;
+        pan.sprite = new Sprite(pan.bitmap);
+        this.addChild(pan.sprite);
+        this._edgePanSprite = pan.sprite;
+        this.updateEdgePan(0);
+    };
+
+    // progress 0 = the old square fills the screen, 1 = the new one does.
+    Scene_Map.prototype.updateEdgePan = function(progress) {
+        const pan = $gameTemp && $gameTemp._edgePan;
+        if (!pan || !this._spriteset) return;
+        const e = 1 - Math.pow(1 - progress, 3);   // ease out, so it settles
+        const ox = Math.round(pan.offset.x * (1 - e));
+        const oy = Math.round(pan.offset.y * (1 - e));
+        this._spriteset.x = ox;
+        this._spriteset.y = oy;
+        if (pan.sprite) {
+            pan.sprite.x = ox - pan.offset.x;
+            pan.sprite.y = oy - pan.offset.y;
+        }
+    };
+
+    const _EdgePan_Scene_Map_update = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function() {
+        _EdgePan_Scene_Map_update.call(this);
+        const pan = $gameTemp && $gameTemp._edgePan;
+        if (!pan || !pan.started) return;
+        pan.frames++;
+        const progress = Math.min(pan.frames / EDGE_PAN_FRAMES, 1);
+        this.updateEdgePan(progress);
+        if (progress >= 1) {
+            if (pan.sprite && pan.sprite.parent) pan.sprite.parent.removeChild(pan.sprite);
+            if (this._spriteset) { this._spriteset.x = 0; this._spriteset.y = 0; }
+            this._edgePanSprite = null;
+            cancelEdgePan();
+        }
+    };
+
+    // Leaving the scene mid-pan (a battle, a menu, a second transfer) must not
+    // leave the still hanging over the next one.
+    const _EdgePan_Scene_Map_terminate = Scene_Map.prototype.terminate;
+    Scene_Map.prototype.terminate = function() {
+        if (this._edgePanSprite) {
+            if (this._edgePanSprite.parent) this._edgePanSprite.parent.removeChild(this._edgePanSprite);
+            this._edgePanSprite = null;
+            if (this._spriteset) { this._spriteset.x = 0; this._spriteset.y = 0; }
+            cancelEdgePan();
+        }
+        _EdgePan_Scene_Map_terminate.call(this);
+    };
+
+    // No walking, and no map events, while the screen is travelling.
+    const _EdgePan_Player_canMove = Game_Player.prototype.canMove;
+    Game_Player.prototype.canMove = function() {
+        if (edgePanRunning()) return false;
+        return _EdgePan_Player_canMove.call(this);
+    };
+
+    const _EdgePan_Scene_Map_isBusy = Scene_Map.prototype.isBusy;
+    Scene_Map.prototype.isBusy = function() {
+        return edgePanRunning() || _EdgePan_Scene_Map_isBusy.call(this);
+    };
+
+    // ============================================================================
     // PLUGIN COMMANDS (WorldMapReturn)
     // ============================================================================
 
@@ -5085,6 +5328,8 @@
         // out puts back the very tiles and prefabs the party left behind.
         stashSurfaceSnapshot(procGenData);
 
+        if (window.ProcStitch) window.ProcStitch.close();
+
         procGenData.biomeLayerStack.push(procGenData.currentBiome);
         let lowerBiomeName = currentBiome.lowerLayer;
         if (procGenData.displayAsBeach) lowerBiomeName = 'CaveFlooded';
@@ -5099,12 +5344,20 @@
         procGenData.currentBiomeTileset    = lowerBiome.tilesetId;
         procGenData.biomeDayTemperature    = lowerBiome.dayTemperature   || 20;
         procGenData.biomeNightTemperature  = lowerBiome.nightTemperature || 10;
+        procGenData.lastLoadedProcMapX     = null;
+        procGenData.lastLoadedProcMapY     = null;
+        procGenData._stitchReanchor        = true;
 
-        const seed = procMapSeed(procGenData.originX, procGenData.originY, procGenData.biomeLayerStack.length);
+        const originX = procGenData.originX || $gameVariables.value(VAR_WORLD_X) || 0;
+        const originY = procGenData.originY || $gameVariables.value(VAR_WORLD_Y) || 0;
+        procGenData.originX = originX;
+        procGenData.originY = originY;
+
+        const seed = procMapSeed(originX, originY, procGenData.biomeLayerStack.length);
         const adjacentBiomes = { north: lowerBiomeName, south: lowerBiomeName, east: lowerBiomeName, west: lowerBiomeName };
         procGenData.displayAsBeach = false;
 
-        const worldCoords = { x: procGenData.originX, y: procGenData.originY };
+        const worldCoords = { x: originX, y: originY };
         procGenData.generatedMapData = generateProceduralTerrain(lowerBiome, seed, null, adjacentBiomes, null, worldCoords, procGenData.biomeCoordinateCache);
 
         $gameScreen.clearWeather();
@@ -5173,6 +5426,8 @@
         // to take the whole prefab -- door included -- away with it.
         stashSurfaceSnapshot(procGenData);
 
+        if (window.ProcStitch) window.ProcStitch.close();
+
         // Return the player to the door on "Go to the surface".
         procGenData.goDownEventX = $gamePlayer.x;
         procGenData.goDownEventY = $gamePlayer.y;
@@ -5182,6 +5437,9 @@
         procGenData.currentBiomeTileset   = lowerBiome.tilesetId;
         procGenData.biomeDayTemperature   = lowerBiome.dayTemperature   || 20;
         procGenData.biomeNightTemperature = lowerBiome.nightTemperature || 10;
+        procGenData.lastLoadedProcMapX    = null;
+        procGenData.lastLoadedProcMapY    = null;
+        procGenData._stitchReanchor       = true;
 
         // Seed from the world coordinates AND the door tile, so different doors on
         // the same map open onto different, but deterministic, dungeons.
@@ -5291,14 +5549,18 @@
         if (!pg.seed) pg.seed = 12345;
 
         // Force the chosen biome as a fresh, non-underground procedural map.
-        pg.biomeLayerStack      = [];
-        pg.currentBiome         = biomeName;
-        pg.currentRoadDirection = null;
-        pg.currentBiomeTileset  = biome.tilesetId;
-        pg.biomeDayTemperature  = biome.dayTemperature   || 20;
+        if (window.ProcStitch) window.ProcStitch.close();
+        pg.biomeLayerStack       = [];
+        pg.currentBiome          = biomeName;
+        pg.currentRoadDirection  = null;
+        pg.currentBiomeTileset   = biome.tilesetId;
+        pg.biomeDayTemperature   = biome.dayTemperature   || 20;
         pg.biomeNightTemperature = biome.nightTemperature || 10;
-        pg.displayAsBeach       = false;
-        pg.displayAsIsland      = false;
+        pg.displayAsBeach        = false;
+        pg.displayAsIsland       = false;
+        pg.lastLoadedProcMapX    = null;
+        pg.lastLoadedProcMapY    = null;
+        pg._stitchReanchor       = true;
 
         // Salted with the forced biome's name so a sandbox Dungeon and a sandbox
         // Crypt at the same world square are not the same layout, then with the
@@ -5433,6 +5695,11 @@
             if (above) { surfaceToDestination(procGenData, above); return; }
         }
 
+        if (window.ProcStitch) window.ProcStitch.close();
+        procGenData.lastLoadedProcMapX    = null;
+        procGenData.lastLoadedProcMapY    = null;
+        procGenData._stitchReanchor       = true;
+
         procGenData.currentBiome          = previousBiomeName;
         procGenData.currentBiomeTileset   = previousBiome.tilesetId;
         procGenData.biomeDayTemperature   = previousBiome.dayTemperature   || 20;
@@ -5466,6 +5733,93 @@
         };
     });
 
+    // Leave an enclosed structure on command instead of walking to its border.
+    //
+    // Written for a patron's vault - the PatronVault biome is a hall the size of
+    // a village and its border is a long walk from wherever the party finished
+    // emptying it - but it is deliberately general: any structure entered off
+    // the procedural map (a cellar, a crypt, a cave den, a sewer) leaves the
+    // same way, because they all keep the same session record.
+    //
+    // Where it puts the party, in order of preference:
+    //   1. The session's own entrance: the exact tile they came in by, on the
+    //      square put back exactly as it was. This is what the border does, and
+    //      for a vault under a patron's square that tile IS the hatch.
+    //   2. No session (a save made inside one before this existed, or a vault
+    //      reached some other way): the square is rebuilt from its seed and the
+    //      party is put on the patron's hatch tile, read back out of the
+    //      encrypted record for this square (PatreonRewards.hatchTileAtWorld).
+    //   3. Nothing to rebuild: out onto the world map square itself, which is
+    //      always somewhere real.
+    PluginManager.registerCommand(PLUGIN_PMT, 'exitStructure', () => {
+        const pg = $gameSystem && $gameSystem._procGenData;
+        if (!pg) { logWarn('exitStructure: no procedural map active.'); return; }
+
+        // The ordinary case: hand the border's own exit the party's facing.
+        if (pg._dungeonSession && pg._dungeonSession.type !== 'tower') {
+            exitDungeonSession($gamePlayer.direction());
+            return;
+        }
+        if (pg._dungeonSession) { logWarn('exitStructure: a tower floor has no border to leave by.'); return; }
+
+        // No session. Rebuild the square this structure was dug under and step
+        // out onto the hatch, if a patron owns it.
+        const worldX = pg.originX != null ? pg.originX : $gameVariables.value(VAR_WORLD_X);
+        const worldY = pg.originY != null ? pg.originY : $gameVariables.value(VAR_WORLD_Y);
+        const hatch = (window.PatreonRewards && window.PatreonRewards.hatchTileAtWorld)
+            ? window.PatreonRewards.hatchTileAtWorld(worldX, worldY)
+            : null;
+
+        const surfaceName = Utils2.getBiomeFromCacheWithFallback
+            ? Utils2.getBiomeFromCacheWithFallback(pg.biomeCoordinateCache, worldX, worldY, $gameMap, worldMapId)
+            : null;
+        const surfaceBiome = surfaceName ? getBiomeByName(surfaceName) : null;
+
+        if (!hatch || !surfaceBiome) {
+            logWarn('exitStructure: no hatch on this square, leaving by the world map.');
+            $gameScreen.startFadeOut(10);
+            pg._edgeTransitionScheduled = true;
+            pg._edgeTransitionCallback = () => {
+                if (!pg._edgeTransitionScheduled) return;
+                pg._edgeTransitionScheduled = false;
+                $gameSystem.clearProcGenData();
+                $gamePlayer.reserveTransfer(worldMapId, worldX, worldY, $gamePlayer.direction(), 0);
+                setTimeout(() => { $gameScreen.startFadeIn(10); }, 150);
+            };
+            return;
+        }
+
+        if (window.ProcStitch) window.ProcStitch.close();
+        pg.biomeLayerStack        = [];
+        pg.lastLoadedProcMapX     = null;
+        pg.lastLoadedProcMapY     = null;
+        pg._stitchReanchor        = true;
+        pg.currentBiome           = surfaceName;
+        pg.currentBiomeTileset    = surfaceBiome.tilesetId;
+        pg.biomeDayTemperature    = surfaceBiome.dayTemperature   || 20;
+        pg.biomeNightTemperature  = surfaceBiome.nightTemperature || 10;
+        // The hatch is stamped back on by PatreonRewards.applyMapFeatures at the
+        // end of generation, so the party lands on it and can go straight back
+        // down; rebuildSurfaceFromSeed reproduces the rest of the square.
+        rebuildSurfaceFromSeed(pg, surfaceName, surfaceBiome);
+
+        $gameScreen.clearWeather();
+        $gameScreen.startFadeOut(10);
+        pg._edgeTransitionScheduled = true;
+        pg._edgeTransitionCallback = () => {
+            if (!pg._edgeTransitionScheduled) return;
+            pg._edgeTransitionScheduled = false;
+
+            if (window.SplitScreenManager && window.SplitScreenManager.active) window.SplitScreenManager.forceP2Teleport = true;
+            $gamePlayer.reserveTransfer(procMapId, hatch[0], hatch[1], $gamePlayer.direction(), 2);
+
+            setTimeout(() => updateEventVisibility(), 100);
+            setTimeout(() => refreshEnemiesForBiome(), 100);
+            setTimeout(() => updateBiomeAudio(), 100);
+            setTimeout(() => { $gameScreen.startFadeIn(10); }, 150);
+        };
+    });
+
     PluginManager.registerCommand(PLUGIN_PMT, 'switchLayer', () => {
         const system      = $gameSystem;
         const procGenData = system._procGenData;
@@ -5485,6 +5839,11 @@
                 const above = surfaceDestinationFor(procGenData.originX, procGenData.originY);
                 if (above) { surfaceToDestination(procGenData, above); return; }
             }
+
+            if (window.ProcStitch) window.ProcStitch.close();
+            procGenData.lastLoadedProcMapX    = null;
+            procGenData.lastLoadedProcMapY    = null;
+            procGenData._stitchReanchor       = true;
 
             procGenData.currentBiome          = previousBiomeName;
             procGenData.currentBiomeTileset   = previousBiome.tilesetId;
@@ -5528,6 +5887,8 @@
             // Keep the surface square before the lower layer overwrites it.
             stashSurfaceSnapshot(procGenData);
 
+            if (window.ProcStitch) window.ProcStitch.close();
+
             procGenData.biomeLayerStack.push(procGenData.currentBiome);
             let lowerBiomeName = currentBiome.lowerLayer;
             if (procGenData.displayAsBeach) lowerBiomeName = 'CaveFlooded';
@@ -5542,6 +5903,9 @@
             procGenData.currentBiomeTileset   = lowerBiome.tilesetId;
             procGenData.biomeDayTemperature   = lowerBiome.dayTemperature   || 20;
             procGenData.biomeNightTemperature = lowerBiome.nightTemperature || 10;
+            procGenData.lastLoadedProcMapX    = null;
+            procGenData.lastLoadedProcMapY    = null;
+            procGenData._stitchReanchor       = true;
 
             const seed = procMapSeed(procGenData.originX, procGenData.originY, procGenData.biomeLayerStack.length);
             const adjacentBiomes = $gameMap.mapId() === PROC_MAP_ID
@@ -5786,7 +6150,7 @@
 
     Window_WorldMapChoice.prototype.resetFontSettings = function() {
         Window_Command.prototype.resetFontSettings.call(this);
-        this.contents.fontFace = 'Lora';
+        this.contents.fontFace = 'Bitter';
     };
 
     Window_WorldMapChoice.prototype.resetTextColor = function() {
@@ -5796,13 +6160,19 @@
     Window_WorldMapChoice.prototype.makeCommandList = function() {
         // One row, three jobs: the world map on Earth, the landing-site picker on
         // another planet, the lift on a tower floor (see commandWorldMap).
-        this.addCommand(worldMapReturnLabel(), 'return');
+        if (!isReturnDisabled()) this.addCommand(worldMapReturnLabel(), 'return');
         if ($gameMap.mapId() === procMapId) {
             const procGenData   = $gameSystem._procGenData;
             const isUnderground = procGenData && procGenData.biomeLayerStack && procGenData.biomeLayerStack.length > 0;
             const currentBiome  = procGenData && procGenData.currentBiome && window.ProcGenUtils
                 ? window.ProcGenUtils.getBiomeByName(procGenData.currentBiome) : null;
-            const hasUnderground = currentBiome && currentBiome.lowerLayer;
+            // A procedural interior (dungeon, cave, sewer, loot cellar and the
+            // rest of the enclosed catalogue) is already a roofed-over place
+            // with no square to dig into, so it never offers the descent.
+            const inInterior = !!(window.ProceduralInteriors
+                && typeof window.ProceduralInteriors.isCurrent === 'function'
+                && window.ProceduralInteriors.isCurrent());
+            const hasUnderground = currentBiome && currentBiome.lowerLayer && !inInterior;
             if (isUnderground)       this.addCommand(T('WorldMapReturn.goToSurface'), 'goUp');
             else if (hasUnderground) this.addCommand(T('WorldMapReturn.goUnderground'), 'goDown');
         }
@@ -5858,22 +6228,26 @@
             $gameSystem._procGenData.generatedMapData) {
             // Never strand the player on a non-passable tile after a transfer.
             ensurePlayerOnStandableTile();
-            if (this._tilemap) {
-                const procGenData   = $gameSystem._procGenData;
-                const biomeObj      = getBiomeByName(procGenData.currentBiome);
-                const tilesetId     = biomeObj ? biomeObj.tilesetId : 1;
-                const tilesetData   = $dataTilesets[tilesetId];
-                const tilesetName   = tilesetData ? tilesetData.name : $gameMap.tileset().name;
-                this._tilemap.setTileBitmap(0, ImageManager.loadTileset(tilesetName));
-                this._tilemap.refresh();
+            if (this._spriteset) {
+                if (typeof this._spriteset.loadTileset === 'function') {
+                    this._spriteset.loadTileset();
+                }
+                if (this._spriteset._tilemap) {
+                    this._spriteset._tilemap.setData($gameMap.width(), $gameMap.height(), $gameMap.data());
+                    this._spriteset._tilemap.refresh();
+                }
+                this._spriteset.update();
             }
-            if (this._spriteset) this._spriteset.update();
 
             // Chests, traps, doors, police and enemies, all placed inside the
             // square the party is actually standing in rather than wherever the
             // window happens to put tile (0,0).
-            console.log(`[Scene_Map.onMapLoaded] Procedural map loaded, populating square`);
-            populatePartySquare();
+            // Only a real arrival populates. A rebuild of Scene_Map on the same
+            // square -- closing a menu, coming back from battle -- keeps the
+            // square exactly as the party left it.
+            if (populatePartySquare(this._transfer)) {
+                console.log(`[Scene_Map.onMapLoaded] Procedural map loaded, populated square`);
+            }
             // Entering a square from the world map (or from a house / dungeon /
             // vehicle) is a fresh arrival, so re-resolve the biome track here as
             // well as on border crossings. The pick is deterministic, so this is
@@ -6135,6 +6509,16 @@
             return T('WorldMapReturn.returnToElevator');
         }
         return T('WorldMapReturn.returnToWorldMap');
+    }
+
+    // <disableReturn> / <DisableWorldMap>: this map keeps the party until one of
+    // its own events lets them out. The T key and the "Return to World Map" menu
+    // row both answer here before doing anything, and the menu row is not drawn
+    // at all. The two tags say the same thing, they only read differently in the
+    // editor's note field.
+    function isReturnDisabled() {
+        const meta = $dataMap && $dataMap.meta;
+        return !!(meta && (meta.disableReturn || meta.DisableWorldMap || meta.disableWorldMap));
     }
 
     function isAlienSurfaceNow() {
@@ -6457,6 +6841,13 @@
         // The 3D drive / free walk runs over a live map scene and owns the
         // keyboard while it is up; it hands the party back itself.
         if (window.VoxelWorldSystem && VoxelWorldSystem.isActive()) return;
+        // A map that holds the party says so rather than swallowing the press:
+        // silence reads as a broken key.
+        if (isReturnDisabled()) {
+            $gameMessage.add(T('WorldMapReturn.returnDisabledHere'));
+            Input.clear();
+            return;
+        }
         if ($gameMap.mapId() === worldMapId) {
             const origin = $gameTemp && $gameTemp._lastWorldMapReturnOrigin;
             const camperDriving = window.VoxelWorldSystem && window.VoxelWorldSystem.isActive();
@@ -6620,7 +7011,7 @@
             SceneManager.pop();
             return;
         }
-        // Block return from Icebush (map 1414) during tutorial
+        // Block return from Icebush (map 1414) during story mode
         if ($gameMap.mapId() === 1414 && $gameSwitches.value(100)) {
             // playBuzzerSound is a Window_Base method; a Scene has to go through SoundManager,
             // and calling it on `this` threw instead of refusing the press.
@@ -6750,6 +7141,7 @@
     // landing picker answering in the world map's place. False means nothing
     // happened and the caller should leave its own scene alone.
     function performReturnToWorldMap() {
+        if (isReturnDisabled()) return false;
         if (divertedToLandingPicker()) return false;
         if (divertedToElevator()) return true;
         if (isProceduralInterior()) {
@@ -6820,6 +7212,9 @@
     window.WorldMapReturn = {
         performVisitMap: performStopTravel,
         returnToWorldMap: performReturnToWorldMap,
+        // <disableReturn> on the map's note: the T key and the menu row both
+        // refuse, and the row is not drawn (UI/CustomMainMenuLayout.js asks too).
+        isReturnDisabled,
         returnToSurface: performReturnToSurface,
         isProceduralInterior,
         enterProceduralSquareAt,
@@ -6988,5 +7383,45 @@
         earthLost,
         towerLanding
     };
+
+
+    // ── The minimap, as an options row ──────────────────────────────────────
+    // The corner minimap used to be toggled from the World Map submenu, which
+    // no longer exists: the pocket opens the map itself. Its state lives on
+    // $gameSystem (Map/WorldMap.js), so the row is only meaningful in a running
+    // game and simply reads as off on the title screen.
+    // The row is a three way selector rather than a switch: the minimap can be
+    // off, drawn only while the party explores a generated map or a planet's
+    // landing grid (the default), or drawn everywhere. The modes themselves
+    // live in Map/WorldMap.js, which is the only place that decides when the
+    // corner map is allowed on screen.
+    if (window.GameOptions && typeof window.GameOptions.registerOption === 'function') {
+        const minimapModes = () => (window.WorldMapView && window.WorldMapView.minimapModes)
+            ? window.WorldMapView.minimapModes() : ['off', 'exploring', 'always'];
+        const currentMinimapMode = () => (window.WorldMapView && window.WorldMapView.minimapMode)
+            ? window.WorldMapView.minimapMode() : 'exploring';
+        const applyMinimapMode = (mode) => {
+            if (window.WorldMapView && window.WorldMapView.setMinimapMode) {
+                window.WorldMapView.setMinimapMode(mode);
+            }
+        };
+        const cycleMinimapMode = (step) => {
+            const modes = minimapModes();
+            const at = Math.max(0, modes.indexOf(currentMinimapMode()));
+            applyMinimapMode(modes[(at + step + modes.length) % modes.length]);
+        };
+        window.GameOptions.registerOption('worldMinimap', () => T('WorldMapReturn.minimapOption'),
+            () => currentMinimapMode(),
+            (value) => applyMinimapMode(value),
+            'video', 'boolean',
+            (value) => {
+                const modes = minimapModes();
+                const labels = T.list('WorldMapReturn.minimapModes');
+                const at = Math.max(0, modes.indexOf(value));
+                return labels[at] || labels[0] || modes[at];
+            },
+            function () { cycleMinimapMode(1); },
+            function () { cycleMinimapMode(-1); });
+    }
 
 })();

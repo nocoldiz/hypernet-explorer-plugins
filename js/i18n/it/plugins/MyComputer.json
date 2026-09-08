@@ -10,5 +10,12 @@
   "dirInvalid": "La cartella \"{path}\" non è valida o è vuota.",
   "cannotOpen": "Esplora file: impossibile aprire \"{file}\". Manca il Blocco note.",
   "unsupportedType": "Esplora file: tipo di file non supportato.",
-  "dirNotFound": "Barra degli indirizzi: cartella \"{path}\" non trovata."
+  "dirNotFound": "Barra degli indirizzi: cartella \"{path}\" non trovata.",
+  "delete": "Elimina",
+  "deleteConfirm": "Spostare '{file}' nel Cestino?",
+  "deleteTitle": "Conferma eliminazione file",
+  "propsTitle": "Proprieta' - {name}",
+  "propsBody": "{name}\n\nTipo: {type}\nPercorso: {location}\nDimensione: {size} byte",
+  "typeFolder": "Cartella di file",
+  "typeFile": "File"
 }

@@ -56,9 +56,6 @@
   "availableFunds": "",
   "acquireGoods": "",
   "liquidateAssets": "",
-  "description": "",
-  "noProductsOnSale": "",
-  "inventoryEmpty": "",
   "item": "",
   "itemParameters": "",
   "vitalNutritionMetrics": "",
@@ -67,7 +64,6 @@
   "proficiency": "",
   "buy": "",
   "sell": "",
-  "hoverOrSelectAnItem": "",
   "totalCost": "",
   "sellValue": "",
   "confirmTransaction": "CONFIRMER LA TRANSACTION",
@@ -144,5 +140,6 @@
     "scale": "",
     "type": "",
     "weight": ""
-  }
+  },
+  "listEmpty": "[Empty]"
 }

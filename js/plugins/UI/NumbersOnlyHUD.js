@@ -2,7 +2,7 @@
  * @target MZ
  * @pluginname NumbersOnlyHUD
  * @author Omni-Lex
- * @description Replaces all HP/MP/TP bars with left-aligned numbers only
+ * @plugindesc Replaces all HP/MP/TP bars with left-aligned numbers only
  *
  * @help
  * This plugin removes all gauge bars and replaces them with simple left-aligned 

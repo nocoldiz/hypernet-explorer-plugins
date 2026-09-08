@@ -67,9 +67,6 @@
   "availableFunds": "Available Funds: ",
   "acquireGoods": "ACQUIRE",
   "liquidateAssets": "LIQUIDATE",
-  "description": "DESCRIPTION",
-  "noProductsOnSale": "No products on sale...",
-  "inventoryEmpty": "Inventory empty...",
   "item": "Item",
   "itemParameters": "ITEM PARAMETERS",
   "vitalNutritionMetrics": "VITAL NUTRITION METRICS",
@@ -78,7 +75,6 @@
   "proficiency": "PROFICIENCY",
   "buy": "BUY",
   "sell": "SELL",
-  "hoverOrSelectAnItem": "Hover or select an item to inspect its alchemical specifications...",
   "max": "Max:",
   "totalCost": "Total Cost:",
   "sellValue": "Sell Value:",
@@ -92,8 +88,6 @@
   "ownedStock": "Owned: {owned} Stock: {stock}",
   "ownedCount": "Owned: {owned}",
   "wornCount": "(worn: {count})",
-  "sellHint": "Click items, or a category header, to put them on the counter - then sell the lot in one go.",
-  "buyHint": "Click items, or a category header, to fill the basket - then buy the lot in one go.",
   "selectionCount": "{lines} lines, {units} items",
   "sellSelected": "SELL ALL ({lines})",
   "buySelected": "BUY ALL ({lines})",
@@ -158,7 +152,7 @@
   },
   "occasion": {
     "0": "Always",
-    "1": "Battle Only",
+    "1": "Battle",
     "2": "Menu Only",
     "3": "Never",
     "unknown": "Unknown"
@@ -193,5 +187,6 @@
     "title": "Not served",
     "notorious": "The shopkeeper looks at your face, then at the door. Whatever your name is worth, it is not worth the trouble of being seen selling to it.",
     "standing": "The shopkeeper folds their arms. Word has gone around about you here, and the counter stays shut."
-  }
+  },
+  "listEmpty": "[Empty]"
 }

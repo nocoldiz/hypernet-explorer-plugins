@@ -394,13 +394,13 @@
               </div>
               <div class="inspect-lore">
                 <div class="inspect-section-title">${T('BladeSeed.spiritStats')}</div>
-                <div class="bs-stat-grid">
+                <div class="inspect-spec-grid bs-stat-grid">
                   ${[['mhp',st.mhp],['mmp',st.mmp],['atk',st.atk],['def',st.def],
                      ['mat',st.mat],['mdf',st.mdf],['agi',st.agi],['luk',st.luk]]
                     .map(([k,v]) => [T('BladeSeed.stat.' + k), v])
-                    .map(([n,v]) => `<div class="bs-stat-cell">
-                      <span class="bs-stat-label">${n}</span>
-                      <span class="bs-stat-value">+${v}</span>
+                    .map(([n,v]) => `<div class="inspect-spec-row bs-stat-cell">
+                      <span class="inspect-spec-label bs-stat-label">${n}</span>
+                      <span class="inspect-spec-value bs-stat-value">+${v}</span>
                     </div>`).join('')}
                 </div>
               </div>
@@ -551,14 +551,14 @@
         const s = spirit.currentStats;
         rightContent = `
           <div class="inspect-section-title">${T('BladeSeed.statBonuses')}</div>
-          <div class="bs-stat-grid">
+          <div class="inspect-spec-grid bs-stat-grid">
             ${[[T('BladeSeed.stat.mhp'),s.mhp],[T('BladeSeed.stat.mmp'),s.mmp],
                [T('BladeSeed.stat.atk'),s.atk],[T('BladeSeed.stat.def'),s.def],
                [T('BladeSeed.stat.mat'),s.mat],[T('BladeSeed.stat.mdf'),s.mdf],
                [T('BladeSeed.stat.agi'),s.agi],[T('BladeSeed.stat.luk'),s.luk]]
-              .map(([n,v]) => `<div class="bs-stat-cell">
-                <span class="bs-stat-label">${n}</span>
-                <span class="bs-stat-value">+${v}</span>
+              .map(([n,v]) => `<div class="inspect-spec-row bs-stat-cell">
+                <span class="inspect-spec-label bs-stat-label">${n}</span>
+                <span class="inspect-spec-value bs-stat-value">+${v}</span>
               </div>`).join('')}
           </div>`;
       } else {

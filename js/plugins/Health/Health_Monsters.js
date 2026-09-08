@@ -1,4 +1,5 @@
 /*:
+ * @target MZ
  * @plugindesc Enhanced monster limb and organ damage system with targeted attacks
  * @author Inspired by Health_Core
  * @help
@@ -2013,6 +2014,28 @@
       states: [{ id: 48, rate: 0.9 }] },
   ];
 
+  // Holds that only mean anything where the fight has ground under it: the
+  // tactical map (MapBattleMode.js). Each is an ordinary hold in every other
+  // respect - the same odds, the same damage, the same states - and additionally
+  // moves the monster's body across the field. They are offered nowhere else,
+  // because in a lined-up battle there is nowhere to throw anybody.
+  const WRESTLE_MAP_HOLDS = [
+    { id: "shove",  icon: 76, stat: "STR", vs: "CON", base: 76, power: 0.6, map: true,
+      limbs: ["HAND", "ARM", "BODY", "LEG"], push: 1,
+      states: [{ id: 48, rate: 0.15 }] },
+    { id: "throw",  icon: 72, stat: "STR", vs: "DEX", base: 56, power: 1.5, map: true,
+      limbs: ["HAND", "ARM"], needs: "hold", push: 3,
+      states: [{ id: 54, rate: 0.5 }, { id: 38, rate: 0.3 }] },
+    { id: "suplex", icon: 72, stat: "CON", vs: "STR", base: 44, power: 2.4, map: true,
+      limbs: ["ARM", "BODY"], needs: "hold", suplex: true,
+      states: [{ id: 54, rate: 0.7 }, { id: 13, rate: 0.3 }, { id: 48, rate: 0.35 }] },
+  ];
+
+  function wrestleHoldById(id) {
+    return WRESTLE_HOLDS.find(h => h.id === id) ||
+           WRESTLE_MAP_HOLDS.find(h => h.id === id) || null;
+  }
+
   const WRESTLE_STAT_PARAM = { STR: 2, CON: 3, INT: 4, WIS: 5, DEX: 6, PSI: 7 };
 
   function wrestleStat(battler, statKey) {
@@ -2339,9 +2362,11 @@
     canCommand(actor) {
       if (!actor || !actor.isActor || !actor.isActor()) return false;
       if (!$gameParty.inBattle()) return false;
-      if (window.MapBattleMode && window.MapBattleMode.isActive && window.MapBattleMode.isActive()) return false;
       if (!$gameTroop || $gameTroop.aliveMembers().length === 0) return false;
-      return wrestleOwnParts(actor).length > 0;
+      if (wrestleOwnParts(actor).length === 0) return false;
+      // On the map it takes a monster within arm's reach.
+      if (mapBattle()) return !!mapBattleGrappleTarget(actor);
+      return true;
     },
 
     // The Wrestle command was chosen: the grapple rides on the ordinary action
@@ -2357,6 +2382,11 @@
       const action = BattleManager.inputtingAction();
       if (!action) return false;
       action.setSkill(WRESTLE_SKILL_ID);
+      const neighbour = mapBattleGrappleTarget(actor);
+      if (neighbour) {
+        action.setTarget(neighbour.index());
+        return scene.openWrestleMenu(neighbour);
+      }
       const alive = $gameTroop.aliveMembers();
       if (alive.length === 1) {
         action.setTarget(alive[0].index());
@@ -2454,6 +2484,23 @@
         }
       }
 
+      // On the map a hold can also move the body it has hold of.
+      if (mapBattle()) {
+        for (const hold of WRESTLE_MAP_HOLDS) {
+          const name = T('HealthMonsters.wrestle.hold.' + hold.id + '.name');
+          const blocker = wrestleHoldBlocker(session, hold);
+          if (blocker) {
+            push(T('HealthMonsters.wrestle.menu.holdBlocked', {
+                   name: name, reason: T('HealthMonsters.wrestle.menu.blocked.' + blocker),
+                 }), { kind: "blocked" }, false, hold.icon);
+          } else {
+            push(T('HealthMonsters.wrestle.menu.holdRow', {
+                   name: name, chance: wrestleChance(session, hold),
+                 }), { kind: "hold", id: hold.id }, true, hold.icon);
+          }
+        }
+      }
+
       push(T('HealthMonsters.wrestle.menu.finishers'), { kind: "openFinisher" },
            !!mine && !!theirs && wrestleFinishers(session.actor).length > 0, 76);
     },
@@ -2463,6 +2510,26 @@
   // ---------------------------------------------------------------------------
   // Scene wiring
   // ---------------------------------------------------------------------------
+
+  // The tactical map fight (MapBattleMode.js) is a battle drawn on Scene_Map,
+  // so both planning menus work there too; these two answer what is different
+  // about it. Grappling is a thing done at arm's length, so on the map it wants
+  // a monster standing next to you rather than merely standing.
+  function mapBattle() {
+    const MBM = window.MapBattleMode;
+    return (MBM && MBM.isActive && MBM.isActive()) ? MBM : null;
+  }
+
+  function mapBattleGrappleTarget(actor) {
+    const MBM = mapBattle();
+    return MBM && MBM.grappleTargetFor ? MBM.grappleTargetFor(actor) : null;
+  }
+
+  // Ending the actor's command, whichever window the fight is drawn in.
+  function endActorCommand(scene) {
+    if (scene && scene.selectNextCommand) scene.selectNextCommand();
+    else BattleManager.selectNextCommand();
+  }
 
   function isWrestleAction(action) {
     const item = action && action.item ? action.item() : null;
@@ -2585,7 +2652,7 @@
           theirPart: session.theirKey,
         };
         this.closeWrestleMenu();
-        this.selectNextCommand();
+        endActorCommand(this);
         return;
       }
       default:
@@ -2854,7 +2921,7 @@
   Game_Action.prototype._applyWrestleHold = function (target, session, holdId) {
     const subject = this.subject();
     const partName = session.theirPartData().name;
-    const hold = WRESTLE_HOLDS.find(h => h.id === holdId) || WRESTLE_HOLDS[0];
+    const hold = wrestleHoldById(holdId) || WRESTLE_HOLDS[0];
     const chance = wrestleChance(session, hold);
     const roll = Math.random() * 100;
 
@@ -2894,6 +2961,14 @@
       if (entry.targetFamily && entry.targetFamily.indexOf(session.theirFamily()) < 0) continue;
       const odds = entry.rate >= 1 ? 1 : entry.rate * stateRate;
       if (Math.random() < odds) target.addState(entry.id);
+    }
+
+    // A map hold ends with the body somewhere else: thrown down the line the
+    // grapple was taken along, shoved a square back, or picked up and driven
+    // into the ground behind the wrestler.
+    if (hold.map) {
+      const MBM = mapBattle();
+      if (MBM && MBM.displaceGrappled) MBM.displaceGrappled(subject, target, hold);
     }
 
     // Tearing a limb away is the same wound taken to its end. Whether the body
@@ -3008,6 +3083,11 @@
     return best ? best.key : null;
   }
 
+  // Naming the whole body instead of one place on it. The plan still points at
+  // ONE monster (that is what an aim is), but the blow lands wherever the
+  // ordinary weights send it, so nothing is spent on reaching a limb.
+  const AIM_WHOLE = "*"; // i18n-ignore: sentinel key, never shown
+
   // The aim rides on the actor and points at a TROOP SLOT rather than at a
   // battler object, so it survives everything that rebuilds the troop.
   function aimPlanOf(actor) {
@@ -3058,7 +3138,7 @@
       key: null,
     };
     if (plan && $gameTroop.members()[plan.enemyIndex] === enemy &&
-        session.parts.some(entry => entry.key === plan.partKey)) {
+        (plan.partKey === AIM_WHOLE || session.parts.some(entry => entry.key === plan.partKey))) {
       session.key = plan.partKey;
     }
     return session;
@@ -3081,7 +3161,9 @@
     canCommand(actor) {
       if (!actor || !actor.isActor || !actor.isActor()) return false;
       if (!$gameParty.inBattle()) return false;
-      if (window.MapBattleMode && window.MapBattleMode.isActive && window.MapBattleMode.isActive()) return false;
+      // On the map, naming a body is always open: it reaches every monster in
+      // sight, in the fight or not, and the one picked is dragged into it.
+      if (mapBattle()) return true;
       return this.candidates().length > 0;
     },
 
@@ -3105,6 +3187,12 @@
       const enemy = aimLivingEnemy(plan);
       if (!enemy) { this.clear(actor); return null; }
       if (!enemy._bodyParts) initializeEnemyBodyParts(enemy);
+      if (plan.partKey === AIM_WHOLE) {
+        return {
+          enemy: enemy, enemyIndex: plan.enemyIndex, partKey: AIM_WHOLE, whole: true,
+          part: { name: T('HealthMonsters.aim.menu.wholeName') },
+        };
+      }
       let part = enemy._bodyParts[plan.partKey];
       if (!part || part.destroyed) {
         const key = aimWeakestPart(enemy);
@@ -3172,6 +3260,7 @@
       for (const actor of $gameParty.battleMembers()) {
         const plan = aimPlanOf(actor);
         if (!plan || plan.enemyIndex !== index) continue;
+        if (plan.partKey === AIM_WHOLE) continue;
         const part = enemy._bodyParts[plan.partKey];
         if (part && !part.destroyed) continue;
         const key = (enemy.isAlive && enemy.isAlive()) ? aimWeakestPart(enemy) : null;
@@ -3187,7 +3276,8 @@
     // named it on, and nothing anywhere else.
     refreshHighlight(actor) {
       const plan = actor ? this.planFor(actor) : null;
-      aimSetHighlight(plan ? plan.enemy : null, plan ? plan.partKey : null);
+      aimSetHighlight(plan && !plan.whole ? plan.enemy : null,
+                      plan && !plan.whole ? plan.partKey : null);
     },
 
     // The Aim command was chosen. Unlike Wrestle this rides on no skill and
@@ -3197,6 +3287,8 @@
     startFromCommand(scene) {
       const actor = BattleManager.actor();
       if (!scene || !actor || !this.canCommand(actor)) return false;
+      const MBM = mapBattle();
+      if (MBM) return MBM.startAimSelection();
       // One monster standing is no choice at all: open straight on its body.
       // Counted off the whole troop rather than off the candidates, so a field
       // holding something with no anatomy still asks which one is meant.
@@ -3241,6 +3333,10 @@
         push(T('HealthMonsters.aim.menu.more', { count: session.parts.length }),
              { kind: "more", total: session.parts.length }, true, 4);
       }
+      // The whole body: still one named monster, but the blow spreads over it
+      // the way an unaimed one does, so nothing is risked on reaching a limb.
+      push(T('HealthMonsters.aim.menu.' + (session.key === AIM_WHOLE ? 'wholeRowCurrent' : 'wholeRow')),
+           { kind: "part", key: AIM_WHOLE }, true, 96);
       push(T('HealthMonsters.aim.menu.clear'), { kind: "clear" }, !!session.key, 140);
       push(T('HealthMonsters.aim.menu.back'), { kind: "back" }, true, 140);
     },
@@ -3463,7 +3559,7 @@
       ? Aiming.planFor(subject) : null;
     // An aim is about ONE monster: a swing that landed on any other one is an
     // ordinary swing, spread over that body by the usual weights.
-    if (!plan || plan.enemy !== target) {
+    if (!plan || plan.enemy !== target || plan.whole) {
       _GA_apply_AIM.call(this, target);
       return;
     }

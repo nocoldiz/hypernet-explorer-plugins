@@ -37,7 +37,6 @@
     "enemyBattlers": "Combattants Ennemis",
     "showFps": "Afficher le Compteur FPS",
     "activeTheme": "Thème Actif",
-    "cardCombat": "Combat de Cartes",
     "mapBattle": "Combat sur la Carte",
     "retroShader": "Shader Rétro",
     "renderResolution": "Résolution de Rendu",
@@ -47,7 +46,6 @@
     "uiScaling": "Échelle de l'Interface",
     "fontScaling": "Échelle des Polices",
     "titleBackground": "Fond du Titre",
-    "enemySpawn": "Apparition des Ennemis",
     "enemyDifficulty": "Difficulté des Ennemis",
     "cpuPartyMembers": "Équipiers Contrôlés par l'IA",
     "sprite": "Sprite",
@@ -55,8 +53,7 @@
   },
   "warn": {
     "language": "⚠ Travail en cours : seul l'anglais est entièrement traduit. Toute autre langue laisse de grandes parties du jeu non traduites.",
-    "cardCombat": "⚠ Remplace la scène de combat standard. L'activer désactive le Combat sur la Carte.",
-    "mapBattleMode": "⚠ Remplace la scène de combat standard. L'activer désactive le Combat de Cartes."
+    "mapBattleMode": "⚠ Remplace la scène de combat standard."
   },
   "titleBackground": [
     "Aléatoire",
@@ -69,12 +66,6 @@
     "Hypervers",
     "Camper"
   ],
-  "enemySpawn": [
-    "Biome",
-    "Niveau du Groupe",
-    "Distance du départ",
-    "Chaos"
-  ],
   "enemyBattler": [
     "3D",
     "Sprites"
@@ -85,15 +76,6 @@
   },
   "languageProgress": "{name} traduit à 1%",
   "settingsInSection": "{count} réglages dans cette section.",
-  "desc": {
-    "enemySpawnMode": "La force des ennemis errants. L'année relève les niveaux quoi qu'il arrive : +10 par an jusqu'en 2010, jusqu'à 110 en 2010-2011, plus rien sous 80 à partir de 2012."
-  },
-  "descState": {
-    "enemySpawnMode": [
-      "Biome : toute créature qui vit ici peut apparaître, à n'importe quel niveau jusqu'à 100, toutes également probables. Le lieu décide ce que vous rencontrez, jamais la difficulté.",
-      "Niveau du Groupe : les ennemis s'adaptent à votre groupe. Les rôdeurs restent à votre niveau ou en dessous ; chaque case cache un boss plus fort. L'option la plus sûre.",
-      "Distance du départ : la difficulté vient du lieu, pas de vous. Les niveaux montent à mesure qu'une case s'éloigne de votre point de départ. Chaque nation et chaque biome a sa propre liste, et chaque case cache un boss.",
-      "Chaos : du niveau 1 à 110, partout, quel que soit le biome. Les cartes procédurales redistribuent leurs monstres à chaque entrée."
-    ]
-  }
+  "desc": {},
+  "descState": {}
 }

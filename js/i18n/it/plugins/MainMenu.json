@@ -17,7 +17,6 @@
     "vehicles": "Veicoli",
     "wait": "Attendi",
     "cooking": "Cucina",
-    "blacksmithing": "Forgiatura",
     "alchemistry": "Alchimica",
     "build": "Costruisci",
     "training": "Addestramento",
@@ -31,6 +30,7 @@
     "assets": "Beni",
     "hypernet": "Hypernet",
     "hyperdeck": "Hyperdeck",
+    "radio": "Radio",
     "multiplayer": "Multigiocatore",
     "save": "Salva",
     "preferences": "Preferenze",
@@ -41,7 +41,31 @@
     "returnToWorldMap": "Torna alla mappa",
     "returnToElevator": "Torna all'ascensore",
     "chooseLandingSite": "Scegli il sito di atterraggio",
-    "stopTravel": "Interrompi viaggio"
+    "stopTravel": "Interrompi viaggio",
+    "deeds": "Atti"
+  },
+  "cmdDesc": {
+    "backpack": "Gestisci inventario e oggetti del gruppo",
+    "equip": "Modifica armi, armature ed equipaggiamento",
+    "skills": "Visualizza e usa abilità e incantesimi",
+    "status": "Controlla parametri, attributi e condizioni",
+    "biologics": "Monitora organi vitali, innesti e salute",
+    "questLog": "Traccia missioni attive e voci del diario",
+    "dynamics": "Gestisci organico del gruppo, ordine di turno e cronologia",
+    "pets": "Gestisci compagni animali, seguaci e cavalcature",
+    "tools": "Usa dispositivi da campo, strumenti e kit utili",
+    "worldMap": "Consulta mappa, navigazione e atlante",
+    "vehicles": "Evoca, gestisci e pilota i veicoli posseduti",
+    "wait": "Fai scorrere il tempo e attendi sul posto",
+    "hyperdeck": "Accedi al terminale e alla rete Hyperdeck",
+    "radio": "Sintonizza la radio e scegli una stazione",
+    "help": "Consulta manuale, guide e sistemi di gioco",
+    "save": "Salva la partita e registra i progressi",
+    "preferences": "Configura opzioni video, audio e comandi",
+    "resign": "Abbandona la partita e torna al titolo",
+    "stopTravel": "Ferma il viaggio ed esplora l'area corrente",
+    "returnToWorldMap": "Esci dall'area e torna alla mappa",
+    "returnToShip": "Sali subito a bordo dell'astronave"
   },
   "dynamics": {
     "roster": "Organico",
@@ -70,6 +94,7 @@
     "partyEmpty": "Qualcuno deve continuare a viaggiare: il gruppo non può restare vuoto.",
     "isLeader": "{name} guida il gruppo. Nomina prima un altro capogruppo.",
     "cannotRetire": "{name} non può essere messo a riposo adesso.",
+    "storyLocked": "{name} non va da nessuna parte: questa strada è sua fino alla fine.",
     "nowInactive": "{name} è ora inattivo e può essere scelto come personaggio in questo mondo.",
     "back": "Indietro",
     "title": "Dinamiche del Gruppo",
@@ -79,7 +104,14 @@
     "historySub": {
       "one": "{count} ex membro registrato",
       "other": "{count} ex membri registrati"
-    }
+    },
+    "activeTitle": "In viaggio ({count}/{max})",
+    "pastTitle": "Membri passati",
+    "lockedTower": "La Torre Omega tiene il gruppo che ha lasciato entrare: nessuno entra o esce finché non ne sei fuori.",
+    "lockedStructure": "Niente scambi di compagni in un posto come questo: chi è entrato deve uscire.",
+    "busyTitle": "Impegnati",
+    "busyAt": "{job} · {time} rimanenti",
+    "busyRemaining": "{hours}h {minutes}m"
   },
   "roster": {
     "travelling": "In viaggio",
@@ -99,8 +131,6 @@
     "none": "Nessuno",
     "left": "Andato via il {date}",
     "levelAbbr": "Liv.",
-    "switchHintKeyboard": "TAB per cambiare membro",
-    "switchHintGamepad": "L1 / R1 per cambiare membro",
     "thatMember": "Quel membro",
     "following": "Al seguito",
     "setActive": "Rendi attivo",
@@ -128,11 +158,11 @@
   },
   "reproduction": {
     "none": "Nessuna",
-    "testicles": "Testicoli (Maschio)",
-    "uterus": "Utero (Femmina)",
-    "oviparous": "Oviparo (Uovo)",
-    "plant": "Pianta (Spore)",
-    "mitosis": "Mitosi (Asessuata)",
+    "testicles": "Testicoli",
+    "uterus": "Utero",
+    "oviparous": "Ovidotto",
+    "plant": "Sporangio",
+    "mitosis": "Ghiandola Mitotica",
     "unknown": "Sconosciuta"
   },
   "gender": {
@@ -146,6 +176,7 @@
     "clear": "Sereno"
   },
   "page": {
+    "main": "Menu",
     "tools": "Strumenti",
     "pets": "Seguaci",
     "vehicles": "Veicoli"
@@ -170,10 +201,10 @@
   "travel": {
     "goUp": "Vai in superficie",
     "goDown": "Scendi nel sottosuolo",
-    "toggleMinimap": "Attiva/disattiva la minimappa",
+    "showMinimap": "Mostra la minimappa",
+    "hideMinimap": "Nascondi la minimappa",
     "openMap": "Apri la mappa del mondo",
-    "openAtlas": "Apri l'atlante del mondo",
-    "resume": "Riprendi l'avventura",
+    "openAtlas": "Atlante",
     "worldMapTitle": "Mappa del mondo"
   },
   "pets": {
@@ -200,6 +231,17 @@
     "trainJoin": "Unisciti al gruppo",
     "trainStop": "Interrompi",
     "traitSentient": "Senziente",
+    "sheetFacts": "Dettagli",
+    "sheetKind": "Tipo",
+    "sheetLevel": "Livello",
+    "sheetLeash": "Guinzaglio",
+    "sheetWaiting": "In attesa",
+    "sheetOrigin": "Era",
+    "sheetParent": "Genitore",
+    "sheetBorn": "Nato il",
+    "sheetTraining": "Addestramento",
+    "sheetTraits": "Tratti",
+    "sheetSkills": "Abilità",
     "traitMagical": "Magico",
     "traitGeneticFreak": "Mutante Genetico",
     "ride": "Cavalca",
@@ -207,13 +249,20 @@
     "mounted": "Cavalcato"
   },
   "vehicles": {
+    "fuel": "Carburante {fuel}L / {max}L",
+    "sectorValue": "Riga {row} · Col {col}",
+    "noLocation": "Non ancora parcheggiato",
     "spawn": "Evoca",
     "spawnIndoors": "Solo la bici può essere evocata al chiuso. Per gli altri esci all'aperto.",
     "noFuelNeeded": "Non richiede carburante",
     "none": "Nessun veicolo posseduto. Procurati l'oggetto di richiamo di un veicolo per aggiungerlo qui.",
     "parkedAt": "Lasciato a",
-    "show": "Mettilo sulla piattaforma",
-    "noModel": "Di questo non esiste un modello"
+    "show": "Mostralo sulla pagina di destra",
+    "integrity": "{hp} / {max} PV",
+    "broken": "In panne: un componente critico è guasto",
+    "allPartsSound": "Tutti i componenti integri",
+    "morePartsWorn": "+{count} altri usurati",
+    "partsTitle": "Componenti"
   },
   "tools": {
     "hexphone": "Hexphone",
@@ -274,5 +323,13 @@
   },
   "value": {
     "wantedLevel": "ricercati {pct}%"
+  },
+  "group": {
+    "party": "Gruppo",
+    "worldMap": "Mappa del mondo",
+    "create": "Creare",
+    "archive": "Archivio",
+    "manageParty": "Gestione gruppo",
+    "game": "Gioco"
   }
 }

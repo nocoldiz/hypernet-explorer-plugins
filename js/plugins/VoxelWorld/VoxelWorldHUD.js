@@ -105,20 +105,13 @@
         _build(overlay) {
             const hud = document.createElement('div');
             hud.id = 'camper-drive-hud';
-            hud.style.cssText = `
-                position:absolute; top:0; left:0; width:100%; height:100%;
-                pointer-events:none; font-family:'Lora',serif; z-index:1;
-                box-sizing:border-box;
-            `;
+            hud.className = 'camper-drive-hud';
 
-            const panel = (html, style) => {
+            // Where a panel sits is its class's business (#camper-drive-hud
+            // .cds-*-panel in css/theme.css), not the builder's.
+            const panel = (html, extraClass) => {
                 const d = document.createElement('div');
-                d.style.cssText = `
-                    position:absolute; background:rgba(10,6,3,0.72);
-                    border:2px solid rgba(139,90,43,0.55); border-radius:6px;
-                    padding:10px 14px; color:#ecdcb9; font-size:17px;
-                    line-height:1.5; ${style}
-                `;
+                d.className = 'cds-panel' + (extraClass ? ' ' + extraClass : '');
                 d.innerHTML = html;
                 return d;
             };
@@ -135,10 +128,10 @@
             this._miniW = MINI_W;
             this._miniH = MINI_H;
             this._miniPanel = panel(`
-                <div style="font-size:14px; font-weight:bold; color:#a1680d; letter-spacing:1px; margin-bottom:4px">${T('CamperDrive.hud.map')}</div>
-                <canvas id="cds-minimap" width="${MINI_W}" height="${MINI_H}" style="display:block; width:${MINI_W}px; height:${MINI_H}px; border:1px solid rgba(139,90,43,0.45); border-radius:3px"></canvas>
-                <div id="cds-map-coords" style="font-size:15px; color:#ecdcb9; text-align:right; margin-top:4px">0, 0</div>
-            `, 'top:16px;right:16px;');
+                <div class="cds-title cds-minimap-title">${T('CamperDrive.hud.map')}</div>
+                <canvas id="cds-minimap" class="cds-minimap-canvas" width="${MINI_W}" height="${MINI_H}"></canvas>
+                <div id="cds-map-coords" class="cds-val cds-map-coords">0, 0</div>
+            `, 'cds-mini-panel');
 
             this._mapImgReady = false;
             this._mapImg = new Image();
@@ -150,26 +143,22 @@
             this._planetTex = null;
 
             this._journeyPanel = this._walk ? null : panel(`
-                <div id="cds-dest-name" style="font-size:21px; font-weight:bold; color:#ffe8b0; text-align:center; margin-bottom:4px">${this._destination || T('CamperDrive.hud.destination')}</div>
-                <div style="display:flex; justify-content:space-around; gap:20px">
-                    <div style="text-align:center">
-                        <div style="font-size:13px; color:#a1680d; letter-spacing:1px">${T('CamperDrive.hud.time')}</div>
-                        <div id="cds-time-text" style="font-size:19px; color:#ecdcb9">--:--</div>
+                <div id="cds-dest-name" class="cds-title cds-dest-title">${this._destination || T('CamperDrive.hud.destination')}</div>
+                <div class="cds-journey-stats">
+                    <div class="cds-stat-col">
+                        <div class="cds-label">${T('CamperDrive.hud.time')}</div>
+                        <div id="cds-time-text" class="cds-val cds-large-val">--:--</div>
                     </div>
-                    <div style="text-align:center">
-                        <div style="font-size:13px; color:#a1680d; letter-spacing:1px">${T('CamperDrive.hud.distance')}</div>
-                        <div id="cds-dist-text" style="font-size:19px; color:#ecdcb9">-- km</div>
+                    <div class="cds-stat-col">
+                        <div class="cds-label">${T('CamperDrive.hud.distance')}</div>
+                        <div id="cds-dist-text" class="cds-val cds-large-val">-- km</div>
                     </div>
                 </div>
-            `, 'bottom:20px;left:50%;transform:translateX(-50%);min-width:260px;text-align:center;');
+            `, 'cds-journey-panel');
 
             this._modePanel = document.createElement('div');
-            this._modePanel.style.cssText = `
-                position:absolute; bottom:20px; left:16px;
-                background:rgba(10,6,3,0.72); border:2px solid rgba(139,90,43,0.55);
-                border-radius:6px; padding:10px 14px; color:#ecdcb9;
-                font-family:'Lora',serif; font-size:16px; pointer-events:auto;
-            `;
+            this._modePanel.className = 'cds-panel cds-mode-panel';
+
             // A short, stacked list of only the commands a player needs at a
             // glance (not every key the scene answers to): each row is a key
             // badge plus a short label, one per line, easier to scan than the
@@ -197,30 +186,30 @@
                 ['T', T('CamperDrive.hud.cmdExit')]
             ];
             const cmdRowHTML = ([key, label]) => `
-                <div style="display:flex; align-items:center; gap:8px">
-                    <span style="min-width:36px; text-align:center; background:rgba(139,90,43,0.35); border:1px solid rgba(161,104,13,0.8); padding:2px 6px; font-size:14px; font-weight:bold; color:#ffe8b0; letter-spacing:0.5px">${key}</span>
-                    <span style="font-size:15px; color:#ecdcb9">${label}</span>
+                <div class="cds-cmd-row">
+                    <span class="cds-key">${key}</span>
+                    <span class="cds-label">${label}</span>
                 </div>`;
             const headerHTML = this._walk
-                ? `<div style="font-size:16px; font-weight:bold; color:#ffe8b0">${T('CamperDrive.viewMode.foot')}</div>
-                   <div style="margin-top:4px">${T('CamperDrive.hud.mode')} <span id="cds-env-label" style="color:#7fd0ff">${T('CamperDrive.envMode.land')}</span></div>`
-                : `<div id="cds-mode-btn">${T('CamperDrive.hud.view')} <span id="cds-mode-label" style="color:#4caf50">${T('CamperDrive.viewMode.fpdrive')}</span> [TAB]</div>
-                   <div style="margin-top:4px">${T('CamperDrive.hud.mode')} <span id="cds-env-label" style="color:#7fd0ff">${T('CamperDrive.envMode.road')}</span></div>`;
+                ? `<div class="cds-title cds-view-title">${T('CamperDrive.viewMode.foot')}</div>
+                   <div class="cds-env-row">${T('CamperDrive.hud.mode')} <span id="cds-env-label" class="cds-env-val">${T('CamperDrive.envMode.land')}</span></div>`
+                : `<div id="cds-mode-btn" class="cds-title cds-view-title">${T('CamperDrive.hud.view')} <span id="cds-mode-label" class="cds-mode-val">${T('CamperDrive.viewMode.fpdrive')}</span> [TAB]</div>
+                   <div class="cds-env-row">${T('CamperDrive.hud.mode')} <span id="cds-env-label" class="cds-env-val">${T('CamperDrive.envMode.road')}</span></div>`;
             this._modePanel.innerHTML = `
                 ${headerHTML}
-                <div id="cds-cmd-list" style="margin-top:8px; display:none; flex-direction:column; gap:5px">
+                <div id="cds-cmd-list" class="cds-cmd-list ui-closed">
                     ${CMD_ROWS.map(cmdRowHTML).join('')}
                 </div>
-                <div id="cds-cmd-hint" style="margin-top:6px; font-size:14px; color:#a1680d">
+                <div id="cds-cmd-hint" class="cds-cmd-hint">
                     ${T('CamperDrive.hud.cmdHelp')}
                 </div>
-                <div id="cds-controller-hint" style="margin-top:8px; font-size:14px; color:#7fd0ff; line-height:1.45; display:none">
+                <div id="cds-controller-hint" class="cds-controller-hint ui-closed">
                     ${T(this._walk ? 'CamperDrive.hud.controllerHintWalk' : 'CamperDrive.hud.controllerHint')}
                 </div>`;
             // Nothing to switch to on a free walk, so the panel is a plain legend
             // there rather than the view-mode button.
             if (!this._walk) {
-                this._modePanel.style.cursor = 'pointer';
+                this._modePanel.classList.add('cds-clickable');
                 this._modePanel.onclick = () => {
                     if (window.VoxelWorldSystem && VoxelWorldSystem._scene) {
                         VoxelWorldSystem._scene._cycleViewMode();
@@ -229,30 +218,30 @@
             }
 
             this._speedPanel = this._walk ? null : panel(`
-                <div id="cds-speed-text" style="font-size:24px; font-weight:bold; color:#ecdcb9; text-align:center">0 km/h</div>
-                <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:2px">
-                    <span id="cds-gear-text" style="font-size:16px; font-weight:bold; color:#a1680d; min-width:14px">N</span>
-                    <span style="display:inline-block; width:70px; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden">
-                        <span id="cds-rpm-bar" style="display:block; height:100%; width:10%; background:#e8c840"></span>
+                <div id="cds-speed-text" class="cds-val cds-speed-text">0 km/h</div>
+                <div class="cds-rpm-row">
+                    <span id="cds-gear-text" class="cds-gear-text">N</span>
+                    <span class="cds-rpm-track">
+                        <span id="cds-rpm-bar" class="cds-rpm-bar" style="--ui-bar-w:10%"></span>
                     </span>
                 </div>`,
-                'top:16px;left:50%;transform:translateX(-50%);min-width:130px;text-align:center;'
+                'cds-speed-panel'
             );
 
             // Status strip under the speedo: ability chips (Fly / Float / Dive,
             // dim when locked, lit when unlocked, highlighted when active) plus the
             // vehicle condition and a live trip odometer.
             this._statusPanel = this._walk ? null : panel(`
-                <div style="display:flex; gap:9px; justify-content:center; align-items:center; font-size:14px; font-weight:bold; letter-spacing:0.5px">
-                    <span id="cds-ab-fly">${T('CamperDrive.hud.fly')}</span>
-                    <span id="cds-ab-float">${T('CamperDrive.hud.float')}</span>
-                    <span id="cds-ab-dive">${T('CamperDrive.hud.dive')}</span>
+                <div class="cds-ab-row">
+                    <span id="cds-ab-fly" class="cds-ab-chip">${T('CamperDrive.hud.fly')}</span>
+                    <span id="cds-ab-float" class="cds-ab-chip">${T('CamperDrive.hud.float')}</span>
+                    <span id="cds-ab-dive" class="cds-ab-chip">${T('CamperDrive.hud.dive')}</span>
                 </div>
-                <div id="cds-status-meta" style="display:flex; gap:14px; justify-content:center; margin-top:5px; font-size:14px; color:#a1680d">
-                    <span id="cds-cond-wrap">${T('CamperDrive.hud.cond')} <span id="cds-cond" style="color:#4caf50">--</span></span>
-                    <span>${T('CamperDrive.hud.trip')} <span id="cds-trip" style="color:#ecdcb9">0.0 km</span></span>
+                <div id="cds-status-meta" class="cds-status-meta">
+                    <span id="cds-cond-wrap">${T('CamperDrive.hud.cond')} <span id="cds-cond" class="cds-cond-val">--</span></span>
+                    <span>${T('CamperDrive.hud.trip')} <span id="cds-trip" class="cds-trip-val">0.0 km</span></span>
                 </div>
-            `, 'top:88px;left:50%;transform:translateX(-50%);min-width:150px;text-align:center;');
+            `, 'cds-status-panel');
 
             // The walker carries no ability strip of its own: swimming, diving
             // and flying are answered by the water and the air the party is
@@ -262,53 +251,40 @@
             // Respawn prompt: shown centred when the camper is stuck (in water
             // without float/dive/fly, flipped, or wedged). Hidden by default.
             this._respawnHint = document.createElement('div');
-            this._respawnHint.style.cssText = `
-                position:absolute; top:38%; left:50%; transform:translate(-50%,-50%);
-                background:rgba(60,10,6,0.82); border:2px solid rgba(230,90,60,0.8);
-                border-radius:8px; padding:14px 22px; color:#ffd9c8;
-                font-family:'Lora',serif; text-align:center; display:none; z-index:3;
-            `;
+            this._respawnHint.id = 'cds-respawn-hint';
+            this._respawnHint.className = 'cds-respawn-hint';
+            window.UIPanel.close(this._respawnHint);
             this._respawnHint.innerHTML = `
-                <div id="cds-respawn-reason" style="font-size:19px; color:#ffb3a0; margin-bottom:6px">${T('CamperDrive.hud.camperStuck')}</div>
-                <div style="font-size:23px; font-weight:bold; color:#ffe8b0">${T('CamperDrive.hud.pressRToRespawn', { key: '<span style="color:#ff7a55">R</span>' })}</div>`;
+                <div id="cds-respawn-reason" class="cds-respawn-reason">${T('CamperDrive.hud.camperStuck')}</div>
+                <div class="cds-respawn-action">${T('CamperDrive.hud.pressRToRespawn', { key: '<span class="cds-respawn-key">R</span>' })}</div>`;
 
             // The eye's own mark, and what pressing the action key would do
             // right now: both belong to walking, and setPrompt hides them again
             // the moment the party is back behind the wheel.
             this._crosshair = document.createElement('div');
-            this._crosshair.style.cssText = `
-                position:absolute; top:50%; left:50%; width:5px; height:5px;
-                margin:-2.5px 0 0 -2.5px; border-radius:50%;
-                background:rgba(255,240,210,0.75);
-                box-shadow:0 0 3px rgba(0,0,0,0.9); display:none;
-            `;
+            this._crosshair.id = 'cds-crosshair';
+            this._crosshair.className = 'cds-crosshair';
+            window.UIPanel.close(this._crosshair);
+
             // What the pick is pointed at and what it would put back, with the
             // bar that fills while a cube is coming apart. Only ever shown on
             // foot, and only while something is actually in reach.
             this._digPanel = document.createElement('div');
-            this._digPanel.style.cssText = `
-                position:absolute; bottom:20px; right:16px;
-                background:rgba(10,6,3,0.72); border:2px solid rgba(139,90,43,0.55);
-                border-radius:6px; padding:8px 12px; color:#ecdcb9;
-                font-family:'Lora',serif; font-size:15px; min-width:150px;
-                display:none;
-            `;
+            this._digPanel.id = 'vw-dig-panel';
+            this._digPanel.className = 'cds-panel cds-dig-panel';
+            window.UIPanel.close(this._digPanel);
             this._digPanel.innerHTML = `
-                <div id="vw-dig-target" style="color:#ffe8b0; font-weight:bold"></div>
-                <div style="height:4px; margin:5px 0 6px 0; background:rgba(0,0,0,0.5);
-                            border:1px solid rgba(139,90,43,0.6); border-radius:2px">
-                    <div id="vw-dig-bar" style="height:100%; width:0%; background:#d8a24a"></div>
+                <div id="vw-dig-target" class="cds-title cds-dig-target"></div>
+                <div class="cds-dig-track">
+                    <div id="vw-dig-bar" class="cds-dig-bar" style="--ui-bar-w:0%"></div>
                 </div>
-                <div id="vw-dig-held" style="font-size:14px; color:#a1680d"></div>`;
+                <div id="vw-dig-held" class="cds-label cds-dig-held"></div>`;
 
             this._promptEl = document.createElement('div');
-            this._promptEl.style.cssText = `
-                position:absolute; top:56%; left:50%; transform:translateX(-50%);
-                background:rgba(10,6,3,0.72); border:1px solid rgba(139,90,43,0.6);
-                border-radius:5px; padding:5px 12px; color:#ffe8b0;
-                font-family:'Lora',serif; font-size:17px; white-space:nowrap;
-                display:none;
-            `;
+            this._promptEl.id = 'cds-prompt';
+            this._promptEl.className = 'cds-panel cds-prompt';
+            window.UIPanel.close(this._promptEl);
+
             for (const el of [this._fuelPanel, this._miniPanel, this._journeyPanel,
                 this._modePanel, this._speedPanel, this._statusPanel,
                 this._walkStatusPanel, this._digPanel, this._crosshair,
@@ -338,17 +314,12 @@
             // The big map. It lives over everything, takes the mouse while it
             // is up, and is empty until [M] cycles onto it.
             this._fullPanel = document.createElement('div');
-            this._fullPanel.style.cssText = `
-                position:absolute; left:0px; top:0px; width:100%; height:100%;
-                display:none; pointer-events:auto; z-index:6;
-                background:rgba(6,4,2,0.86);
-            `;
+            this._fullPanel.id = 'cds-full-map-panel';
+            this._fullPanel.className = 'cds-full-map-panel';
+            window.UIPanel.close(this._fullPanel);
             this._fullPanel.innerHTML = `
-                <canvas id="cds-worldmap-full" style="position:absolute; left:0px; top:0px;
-                    width:100%; height:100%; cursor:grab"></canvas>
-                <div id="cds-worldmap-full-coords" style="position:absolute; right:22px; bottom:18px;
-                    color:#ecdcb9; font-size:19px; background:rgba(10,6,3,0.72);
-                    border:2px solid rgba(139,90,43,0.55); border-radius:6px; padding:6px 12px">0, 0</div>
+                <canvas id="cds-worldmap-full" class="cds-worldmap-full-canvas"></canvas>
+                <div id="cds-worldmap-full-coords" class="cds-panel cds-full-coords">0, 0</div>
             `;
             hud.appendChild(this._fullPanel);
             this._bindFullMap();
@@ -389,21 +360,21 @@
             const cross = onFoot && !this._split;
             if (this._crosshair && this._lastCross !== cross) {
                 this._lastCross = cross;
-                this._crosshair.style.display = cross ? 'block' : 'none';
+                window.UIPanel.toggle(this._crosshair, cross);
             }
             if (!this._promptEl) return;
             const t = cross ? (text || '') : '';
             if (t === this._lastPrompt) return;
             this._lastPrompt = t;
             this._promptEl.textContent = t;
-            this._promptEl.style.display = t ? 'block' : 'none';
+            window.UIPanel.toggle(this._promptEl, !!t);
         }
 
         // Toggle the "Press R to respawn" prompt. `reason` labels why the camper
         // is stuck (in water / flipped / wedged).
         setRespawnHint(show, reason) {
             if (!this._respawnHint) return;
-            this._respawnHint.style.display = show ? 'block' : 'none';
+            window.UIPanel.toggle(this._respawnHint, !!show);
             if (show && reason) {
                 const r = document.getElementById('cds-respawn-reason');
                 if (r) r.textContent = reason;
@@ -420,14 +391,16 @@
         updateEnvLabel(env) {
             const el = document.getElementById('cds-env-label');
             if (!el) return;
-            const colors = { road: '#7fd0ff', land: '#7fd0ff', air: '#b388ff',
-                             water: '#4dd0e1', underwater: '#26a69a', cave: '#c9a15a' };
             // A walker is never "on the road": dry ground under their own two
             // feet is simply land.
             if (this._walk && env === 'road') env = 'land';
             const key = 'CamperDrive.envMode.' + env;
             el.textContent = T.has(key) ? T(key) : env.toUpperCase();
-            el.style.color = colors[env] || '#7fd0ff';
+            // The element the party is in is a NAME, and the stylesheet inks
+            // it: .cds-env--water and its five siblings.
+            const ENVS = ['road', 'land', 'air', 'water', 'underwater', 'cave'];
+            for (const e of ENVS) el.classList.toggle('cds-env--' + e, e === env);
+            if (ENVS.indexOf(env) < 0) el.classList.add('cds-env--land');
         }
 
         // Only show the L2/R2 zoom + Y switch-view hint while a gamepad is
@@ -437,7 +410,7 @@
             if (!el) return;
             if (this._last.controllerHint === connected) return;
             this._last.controllerHint = connected;
-            el.style.display = connected ? 'block' : 'none';
+            window.UIPanel.toggle(el, !!connected);
         }
 
         // Ability chips. `abilities` = { fly:{unlocked,active}, float:{...}, dive:{...} }.
@@ -450,9 +423,9 @@
                 const state = !ab.unlocked ? 'locked' : ab.active ? 'active' : 'ready';
                 if (last[key] === state) return;
                 last[key] = state;
-                if (state === 'locked') { el.style.color = '#6b5a44'; el.style.opacity = '0.4'; }
-                else if (state === 'active') { el.style.color = '#5fe08a'; el.style.opacity = '1'; }
-                else { el.style.color = '#e8c840'; el.style.opacity = '1'; }
+                el.classList.toggle('cds-ab--locked', state === 'locked');
+                el.classList.toggle('cds-ab--active', state === 'active');
+                el.classList.toggle('cds-ab--ready', state === 'ready');
             };
             paint(els.abFly,   'abFly',   abilities.fly);
             paint(els.abFloat, 'abFloat', abilities.float);
@@ -466,14 +439,15 @@
             const last = this._last || (this._last = {});
             if (els.condWrap) {
                 const show = condPct != null;
-                const disp = show ? '' : 'none';
-                if (disp !== last.condDisp) { els.condWrap.style.display = disp; last.condDisp = disp; }
+                if (show !== last.condShown) { window.UIPanel.toggle(els.condWrap, show); last.condShown = show; }
                 if (show && els.condEl) {
                     const pct = Math.max(0, Math.min(100, Math.round(condPct)));
                     if (pct !== last.condPct) {
                         last.condPct = pct;
                         els.condEl.textContent = pct + '%';
-                        els.condEl.style.color = pct > 60 ? '#4caf50' : pct > 30 ? '#e8c840' : '#c0392b';
+                        const band = pct > 60 ? 'good' : pct > 30 ? 'warn' : 'bad';
+                        els.condEl.classList.remove('cds-cond--good', 'cds-cond--warn', 'cds-cond--bad');
+                        els.condEl.classList.add('cds-cond--' + band);
                     }
                 }
             }
@@ -514,10 +488,10 @@
                 if (gearLabel !== last.gearTxt) { els.gearEl.textContent = gearLabel; last.gearTxt = gearLabel; }
             }
             if (els.rpmEl && rpm01 != null) {
-                const w = Math.round(Math.max(4, Math.min(100, rpm01 * 100))) + '%';
-                if (w !== last.rpmW) { els.rpmEl.style.width = w; last.rpmW = w; }
-                const bg = rpm01 > 0.85 ? '#c0392b' : '#e8c840';
-                if (bg !== last.rpmBg) { els.rpmEl.style.background = bg; last.rpmBg = bg; }
+                const w = Math.round(Math.max(4, Math.min(100, rpm01 * 100)));
+                if (w !== last.rpmW) { window.UIPanel.setBar(els.rpmEl, w); last.rpmW = w; }
+                const red = rpm01 > 0.85;
+                if (red !== last.rpmRed) { els.rpmEl.classList.toggle('cds-rpm--redline', red); last.rpmRed = red; }
             }
 
             // The minimap canvas does not need a full 60fps redraw; every 3rd
@@ -637,11 +611,11 @@
             // away for it too and the big one is drawn in its place.
             this._lastVanX = vanX; this._lastVanZ = vanZ;
             if (this._mapMode === 'hidden' || this._mapMode === 'full') {
-                if (this._miniPanel) this._miniPanel.style.display = 'none';
+                window.UIPanel.close(this._miniPanel);
                 if (this._mapMode === 'full') { this._syncFullMap(); this._drawFullMap(vanX, vanZ); }
                 return;
             }
-            if (this._miniPanel) this._miniPanel.style.display = '';
+            window.UIPanel.open(this._miniPanel);
 
             const cv = document.getElementById('cds-minimap');
             if (!cv) return;
@@ -761,7 +735,7 @@
             this._onFullDown = (e) => {
                 if (this._mapMode !== 'full') return;
                 this._fullDrag = { x: e.clientX, y: e.clientY };
-                cv.style.cursor = 'grabbing';
+                cv.classList.add('cds-grabbing');
                 e.preventDefault(); e.stopPropagation();
             };
             this._onFullMove = (e) => {
@@ -776,7 +750,7 @@
             this._onFullUp = () => {
                 if (!this._fullDrag) return;
                 this._fullDrag = null;
-                cv.style.cursor = 'grab';
+                cv.classList.remove('cds-grabbing');
             };
             this._onFullWheel = (e) => {
                 if (this._mapMode !== 'full') return;
@@ -802,7 +776,7 @@
         _syncFullMap() {
             if (!this._fullPanel) return;
             const on = (this._mapMode === 'full');
-            this._fullPanel.style.display = on ? 'block' : 'none';
+            window.UIPanel.toggle(this._fullPanel, on);
             if (!on) { this._fullDrag = null; return; }
             const cv = this._fullCanvas;
             if (cv) {
@@ -945,8 +919,8 @@
         setDigReadout(targetName, heldName, progress) {
             if (!this._digPanel) return;
             const show = !!targetName;
-            if (show !== (this._digPanel.style.display === 'block')) {
-                this._digPanel.style.display = show ? 'block' : 'none';
+            if (show !== window.UIPanel.isOpen(this._digPanel)) {
+                window.UIPanel.toggle(this._digPanel, show);
             }
             if (!show) return;
             this._digEls = this._digEls || {
@@ -956,7 +930,7 @@
             };
             const e = this._digEls;
             if (e.target && e.target.textContent !== targetName) e.target.textContent = targetName;
-            if (e.bar) e.bar.style.width = Math.round(Math.min(1, progress || 0) * 100) + '%';
+            window.UIPanel.setBar(e.bar, Math.round(Math.min(1, progress || 0) * 100));
             if (e.held) {
                 const txt = heldName ? T('VoxelWorld.tool.holding', { name: heldName }) : '';
                 if (e.held.textContent !== txt) e.held.textContent = txt;
@@ -977,9 +951,9 @@
             const horizontal = !!(SS && SS.splitOrientation &&
                                   SS.splitOrientation() === 'horizontal');
             // Player 1 has the left half, or the top one.
-            this._el.style.width  = (split && !horizontal) ? '50%' : '';
-            this._el.style.height = (split && horizontal)  ? '50%' : '';
-            if (this._promptEl) this._promptEl.style.display = split ? 'none' : '';
+            this._el.classList.toggle('cds-half-w', !!(split && !horizontal));
+            this._el.classList.toggle('cds-half-h', !!(split && horizontal));
+            if (split) window.UIPanel.close(this._promptEl);
             // setPrompt owns the crosshair frame by frame, so it is told rather
             // than overruled - it would put it straight back otherwise.
             this._lastCross = null;
@@ -995,15 +969,15 @@
 
         setCommandsVisible(on) {
             this._cmdsShown = !!on;
-            if (this._cmdList) this._cmdList.style.display = on ? 'flex' : 'none';
-            if (this._cmdHint) this._cmdHint.style.display = on ? '' : 'none';
+            window.UIPanel.toggle(this._cmdList, on);
+            window.UIPanel.toggle(this._cmdHint, !on);
         }
 
         // Take the whole readout off the screen without tearing it down: a
         // fight fought over this world draws its own HUD, and two sets of
         // panels over one picture is one set too many.
         setHidden(on) {
-            if (this._el) this._el.style.display = on ? 'none' : '';
+            window.UIPanel.toggle(this._el, !on);
             // The quick bar is pinned to the canvas rather than mounted inside
             // this overlay, so hiding the overlay does not take it with it.
             if (on && this._bar) this._bar.hide();

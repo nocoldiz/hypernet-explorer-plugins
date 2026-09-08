@@ -2963,3 +2963,448 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
         this.addLoadListener(() => this.volumeTransition(startVolume, endVolume, time));
     }
 };
+
+//==============================================================================================================
+// * Section 8 : HyperAmp, the HypernetOS media player
+//==============================================================================================================
+// Plays any track under audio/bgm from a window on the desktop: a library
+// scanned off the disk (folders become albums, credited by MusicArtistDisplay),
+// transport buttons, a seek bar, a volume slider, shuffle and repeat, and a
+// spectrum drawn off a tap on the engine's master gain. The map's own music
+// is put back when the window closes.
+(() => {
+    'use strict';
+
+    const APP_ID = 'app-hyperamp';
+    const BGM_DIR = 'audio/bgm';  // i18n-ignore  asset path
+    const EXTENSIONS = ['.ogg', '.ogg_', '.m4a', '.m4a_'];  // i18n-ignore  file extensions
+
+    function escapeHtml(v) {
+        return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function stripExt(file) {
+        for (const ext of EXTENSIONS) {
+            if (file.toLowerCase().endsWith(ext)) return file.slice(0, file.length - ext.length);
+        }
+        return null;
+    }
+
+    // Walks a folder tree and returns every playable file as its BGM key
+    // (path under audio/bgm, no extension). `readdir`/`isDir` are injectable so
+    // the walk can be tested without a disk.
+    function walkLibrary(readdir, isDir, dir, prefix, out) {
+        let entries = [];
+        try { entries = readdir(dir); } catch (e) { return out; }
+        entries.slice().sort((a, b) => a.localeCompare(b)).forEach(name => {
+            const full = dir + '/' + name;
+            if (isDir(full)) {
+                walkLibrary(readdir, isDir, full, prefix ? prefix + '/' + name : name, out);
+                return;
+            }
+            const base = stripExt(name);
+            if (base == null) return;
+            const key = prefix ? prefix + '/' + base : base;
+            if (!out.some(t => t.key === key)) out.push({ key, folder: prefix });
+        });
+        return out;
+    }
+
+    function describe(entry) {
+        const parsed = window.MusicArtistDisplay && window.MusicArtistDisplay.parseTrack
+            ? window.MusicArtistDisplay.parseTrack(entry.key) : null;
+        const fallbackTitle = entry.key.slice(entry.key.lastIndexOf('/') + 1);
+        return {
+            key: entry.key,
+            folder: entry.folder || '',
+            title: parsed ? parsed.title : fallbackTitle,
+            artist: parsed ? parsed.artist : T('MUSH_Audio_Engine.hyperamp.unknownArtist'),
+            genre: parsed ? parsed.genre : ''
+        };
+    }
+
+    function fmtTime(sec) {
+        if (!Number.isFinite(sec) || sec < 0) sec = 0;
+        const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+        return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    window.HyperAmp = {
+        _library: null,
+        _state: null,
+
+        walkLibrary,
+        describe,
+        fmtTime,
+
+        // Every track under audio/bgm, scanned once per session.
+        library: function(force) {
+            if (this._library && !force) return this._library;
+            let raw = [];
+            if (typeof require === 'function') {
+                try {
+                    const fs = require('fs');
+                    const path = require('path');
+                    const root = path.join(process.cwd(), BGM_DIR);
+                    raw = walkLibrary(
+                        d => fs.readdirSync(d),
+                        f => { try { return fs.statSync(f).isDirectory(); } catch (e) { return false; } },
+                        root, '', []);
+                } catch (e) { raw = []; }
+            }
+            this._library = raw.map(describe);
+            return this._library;
+        },
+
+        folders: function() {
+            const seen = new Set();
+            this.library().forEach(t => seen.add(t.folder));
+            return Array.from(seen).sort((a, b) => a.localeCompare(b));
+        },
+
+        // Which track follows `index` in the current order.
+        nextIndex: function(index, count, shuffle, repeat, rng) {
+            if (count <= 0) return -1;
+            if (repeat === 'one') return index;
+            if (shuffle) {
+                if (count === 1) return 0;
+                let n = index;
+                const r = typeof rng === 'function' ? rng : Math.random;
+                while (n === index) n = Math.floor(r() * count);
+                return n;
+            }
+            if (index + 1 < count) return index + 1;
+            return repeat === 'all' ? 0 : -1;
+        },
+
+        launch: function() {
+            const OS = window.HypernetOS;
+            if (!OS || !OS.WindowManager) return;
+            const T_ = k => T('MUSH_Audio_Engine.hyperamp.' + k);
+
+            const html = `
+                <div class="hyperamp">
+                    <div class="hyperamp-display">
+                        <div class="hyperamp-marquee"><span id="hyperamp-title">${T_('idle')}</span></div>
+                        <div class="hyperamp-readout">
+                            <span id="hyperamp-time">0:00</span>
+                            <canvas id="hyperamp-vis" width="120" height="28"></canvas>
+                            <span id="hyperamp-length">0:00</span>
+                        </div>
+                        <div class="hyperamp-meta" id="hyperamp-meta"></div>
+                    </div>
+                    <input type="range" id="hyperamp-seek" class="hyperamp-seek focusable" min="0" max="1000" value="0" tabindex="0">
+                    <div class="hyperamp-transport">
+                        <button class="hyperamp-btn focusable" id="hyperamp-prev" title="${T_('prev')}">|&lt;</button>
+                        <button class="hyperamp-btn focusable" id="hyperamp-play" title="${T_('play')}">&#9654;</button>
+                        <button class="hyperamp-btn focusable" id="hyperamp-pause" title="${T_('pause')}">||</button>
+                        <button class="hyperamp-btn focusable" id="hyperamp-stop" title="${T_('stop')}">&#9632;</button>
+                        <button class="hyperamp-btn focusable" id="hyperamp-next" title="${T_('next')}">&gt;|</button>
+                        <span class="hyperamp-spacer"></span>
+                        <button class="hyperamp-toggle focusable" id="hyperamp-shuffle">${T_('shuffle')}</button>
+                        <button class="hyperamp-toggle focusable" id="hyperamp-repeat">${T_('repeatOff')}</button>
+                        <input type="range" id="hyperamp-volume" class="hyperamp-volume focusable" min="0" max="100" value="${AudioManager.bgmVolume}" title="${T_('volume')}" tabindex="0">
+                    </div>
+                    <div class="hyperamp-playlist">
+                        <div class="hyperamp-playlist-bar">
+                            <select id="hyperamp-folder" class="focusable"></select>
+                            <input id="hyperamp-search" class="focusable" type="text" placeholder="${T_('search')}">
+                            <span id="hyperamp-count" class="hyperamp-count"></span>
+                        </div>
+                        <div id="hyperamp-list" class="hyperamp-list"></div>
+                    </div>
+                </div>`;
+
+            const win = OS.WindowManager.createWindow({
+                id: APP_ID, title: T_('appName'), icon: 80, width: 520, height: 520, contentHTML: html
+            });
+            if (win._hyperampBound) return;
+            win._hyperampBound = true;
+
+            const q = sel => win.querySelector(sel);
+            const state = {
+                queue: [], index: -1, shuffle: false, repeat: 'all', lastPos: 0,
+                savedBgm: AudioManager.saveBgm(), touched: false, raf: 0, analyser: null, folder: '', search: ''
+            };
+            this._state = state;
+
+            const rebuildQueue = () => {
+                const lib = this.library();
+                const s = state.search.trim().toLowerCase();
+                state.queue = lib.filter(t => (!state.folder || t.folder === state.folder)
+                    && (!s || t.title.toLowerCase().includes(s) || t.artist.toLowerCase().includes(s) || t.key.toLowerCase().includes(s)));
+                renderList();
+            };
+
+            const renderList = () => {
+                const list = q('#hyperamp-list');
+                const current = state.index >= 0 ? state.queue[state.index] : null;
+                list.innerHTML = state.queue.map((t, i) => `
+                    <div class="hyperamp-row focusable${current && current.key === t.key ? ' playing' : ''}" tabindex="0" data-index="${i}">
+                        <span class="hyperamp-row-num">${i + 1}.</span>
+                        <span class="hyperamp-row-title">${escapeHtml(t.artist)} - ${escapeHtml(t.title)}</span>
+                        <span class="hyperamp-row-folder">${escapeHtml(t.folder || T_('rootFolder'))}</span>
+                    </div>`).join('') || `<div class="hyperamp-empty">${T_('empty')}</div>`;
+                q('#hyperamp-count').textContent = T('MUSH_Audio_Engine.hyperamp.count', { n: state.queue.length });
+                list.querySelectorAll('.hyperamp-row').forEach(row => {
+                    row.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        playIndex(parseInt(row.dataset.index, 10));
+                    });
+                });
+            };
+
+            const playIndex = (i) => {
+                if (i < 0 || i >= state.queue.length) { stop(); return; }
+                state.index = i;
+                const t = state.queue[i];
+                state.touched = true;
+                state.lastPos = 0;
+                AudioManager.playBgm({ name: t.key, volume: parseInt(q('#hyperamp-volume').value, 10), pitch: 100, pan: 0 });
+                q('#hyperamp-title').textContent = t.artist + ' - ' + t.title;
+                q('#hyperamp-meta').textContent = [t.genre, t.folder].filter(Boolean).join(' / ');
+                renderList();
+                const row = q('.hyperamp-row.playing');
+                if (row && row.scrollIntoView) row.scrollIntoView({ block: 'nearest' });
+            };
+
+            const stop = () => {
+                if (state.touched) AudioManager.stopBgm();
+                state.index = -1;
+                q('#hyperamp-title').textContent = T_('idle');
+                q('#hyperamp-meta').textContent = '';
+                renderList();
+            };
+
+            const buffer = () => AudioManager._bgmBuffer;
+
+            q('#hyperamp-play').addEventListener('click', (e) => {
+                e.stopPropagation();
+                const b = buffer();
+                if (state.index >= 0 && b && !b.isPlaying()) { b.play(true, state.lastPos); return; }
+                if (state.index < 0) playIndex(state.queue.length ? (state.shuffle ? Math.floor(Math.random() * state.queue.length) : 0) : -1);
+            });
+            q('#hyperamp-pause').addEventListener('click', (e) => {
+                e.stopPropagation();
+                const b = buffer();
+                if (b && b.isPlaying()) { state.lastPos = b.seek(); b.stop(); }
+            });
+            q('#hyperamp-stop').addEventListener('click', (e) => { e.stopPropagation(); stop(); });
+            q('#hyperamp-next').addEventListener('click', (e) => {
+                e.stopPropagation();
+                playIndex(this.nextIndex(state.index, state.queue.length, state.shuffle, state.repeat === 'one' ? 'all' : state.repeat));
+            });
+            q('#hyperamp-prev').addEventListener('click', (e) => {
+                e.stopPropagation();
+                const b = buffer();
+                if (b && b.seek() > 3) { playIndex(state.index); return; }
+                playIndex(state.index > 0 ? state.index - 1 : state.queue.length - 1);
+            });
+            q('#hyperamp-shuffle').addEventListener('click', (e) => {
+                e.stopPropagation();
+                state.shuffle = !state.shuffle;
+                q('#hyperamp-shuffle').classList.toggle('on', state.shuffle);
+            });
+            q('#hyperamp-repeat').addEventListener('click', (e) => {
+                e.stopPropagation();
+                state.repeat = state.repeat === 'all' ? 'one' : (state.repeat === 'one' ? 'off' : 'all');
+                q('#hyperamp-repeat').textContent = T_(state.repeat === 'all' ? 'repeatAll' : (state.repeat === 'one' ? 'repeatOne' : 'repeatOff'));
+                q('#hyperamp-repeat').classList.toggle('on', state.repeat !== 'off');
+            });
+            q('#hyperamp-repeat').classList.add('on');
+            q('#hyperamp-repeat').textContent = T_('repeatAll');
+
+            q('#hyperamp-volume').addEventListener('input', (e) => {
+                const v = parseInt(e.target.value, 10);
+                const b = buffer();
+                if (b) b.volume = v / 100;
+            });
+            q('#hyperamp-seek').addEventListener('change', (e) => {
+                const b = buffer();
+                if (!b || !b._totalTime) return;
+                const pos = (parseInt(e.target.value, 10) / 1000) * b._totalTime;
+                state.lastPos = pos;
+                b.play(true, pos);
+            });
+
+            const folderSel = q('#hyperamp-folder');
+            folderSel.innerHTML = `<option value="">${T_('allFolders')}</option>` +
+                this.folders().filter(Boolean).map(f => `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join('');
+            folderSel.addEventListener('change', () => { state.folder = folderSel.value; rebuildQueue(); });
+            q('#hyperamp-search').addEventListener('input', (e) => { state.search = e.target.value; rebuildQueue(); });
+            q('#hyperamp-search').addEventListener('keydown', (e) => e.stopPropagation());
+
+            // Spectrum: a tap on the master gain, never in the signal path.
+            const vis = q('#hyperamp-vis');
+            const ensureAnalyser = () => {
+                if (state.analyser) return state.analyser;
+                try {
+                    const ctx = WebAudio._context;
+                    const master = WebAudio._masterGainNode;
+                    if (!ctx || !master) return null;
+                    const an = ctx.createAnalyser();
+                    an.fftSize = 64;
+                    an.smoothingTimeConstant = 0.7;
+                    master.connect(an);
+                    state.analyser = an;
+                } catch (e) { state.analyser = null; }
+                return state.analyser;
+            };
+
+            const tick = () => {
+                if (!win.isConnected) return;
+                state.raf = requestAnimationFrame(tick);
+                const b = buffer();
+                const total = b && b._totalTime ? b._totalTime : 0;
+                const pos = b && b.isPlaying() ? b.seek() : state.lastPos;
+                q('#hyperamp-time').textContent = fmtTime(pos);
+                q('#hyperamp-length').textContent = fmtTime(total);
+                const seek = q('#hyperamp-seek');
+                if (document.activeElement !== seek && total > 0) seek.value = Math.round((pos / total) * 1000);
+                // A wrap of the loop means the track ended: move on.
+                if (b && b.isPlaying() && state.index >= 0 && total > 0 && pos + 0.5 < state.lastPos && state.lastPos > total * 0.5) {
+                    if (state.repeat !== 'one') {
+                        const n = this.nextIndex(state.index, state.queue.length, state.shuffle, state.repeat);
+                        if (n === -1) stop(); else playIndex(n);
+                        return;
+                    }
+                }
+                if (b && b.isPlaying()) state.lastPos = pos;
+
+                const ctx2d = vis.getContext('2d');
+                ctx2d.clearRect(0, 0, vis.width, vis.height);
+                const an = ensureAnalyser();
+                const bars = 24;
+                const data = an ? new Uint8Array(an.frequencyBinCount) : null;
+                if (data) an.getByteFrequencyData(data);
+                const bw = vis.width / bars;
+                for (let i = 0; i < bars; i++) {
+                    const v = data ? data[i] / 255 : 0;
+                    const h = Math.max(1, v * vis.height);
+                    ctx2d.fillStyle = v > 0.75 ? '#ff5a3c' : (v > 0.45 ? '#ffd23c' : '#2ee66a');
+                    ctx2d.fillRect(i * bw + 1, vis.height - h, bw - 2, h);
+                }
+            };
+            tick();
+
+            win.addEventListener('hypernet-closed', () => {
+                cancelAnimationFrame(state.raf);
+                try { if (state.analyser) state.analyser.disconnect(); } catch (e) {}
+                if (state.touched) {
+                    if (state.savedBgm && state.savedBgm.name) AudioManager.replayBgm(state.savedBgm);
+                    else AudioManager.stopBgm();
+                }
+                this._state = null;
+            });
+
+            rebuildQueue();
+        }
+    };
+
+    function registerHyperAmp() {
+        if (!window.HypernetOS || !window.HypernetOS.registerApp) return false;
+        window.HypernetOS.registerApp({
+            id: APP_ID,
+            name: T('MUSH_Audio_Engine.hyperamp.appName'),
+            icon: 80,
+            category: 'media',
+            launchFn: () => window.HyperAmp.launch(),
+            desktopShortcut: true
+        });
+        return true;
+    }
+    if (!registerHyperAmp()) {
+        const _Scene_Boot_create = Scene_Boot.prototype.create;
+        Scene_Boot.prototype.create = function() {
+            _Scene_Boot_create.call(this);
+            registerHyperAmp();
+        };
+    }
+})();
+
+//==============================================================================================================
+// * Section 9 : Plain audio files inside an encrypted build
+//==============================================================================================================
+// An encrypted build renames every shipped track to "<name>.ogg_" and tells the
+// engine, once and for all, that ALL audio is encrypted: WebAudio then asks for
+// "<name>.ogg_" whatever it is loading and runs the answer through the
+// decrypter. A player who drops their own plain .ogg into audio/bgm therefore
+// gets a 404 followed by a decryption error, even though the file sitting next
+// to the encrypted ones is perfectly playable, and the radio and HyperAmp both
+// list it because they scan the folder.
+//
+// Two answers, one for each half of that:
+//
+//   * the url. A file is asked for at the "_" name only if the "_" name is
+//     really there; otherwise the plain name is used, exactly as an
+//     unencrypted build would.
+//   * the bytes. A buffer that does not carry the RPG Maker header was never
+//     encrypted, so it is handed over as it is instead of throwing.
+//
+// Both are harmless on an unencrypted build, where nothing wears the suffix in
+// the first place.
+(() => {
+    'use strict';
+
+    if (typeof WebAudio === 'undefined') return;
+
+    // Answering "is the encrypted twin on disk" costs a stat call, and the same
+    // few dozen tracks are asked for over and over.
+    const twinCache = Object.create(null);
+    let fs = null;
+    let path = null;
+    let root = '';
+    try {
+        if (typeof require === 'function') {
+            fs = require('fs');
+            path = require('path');
+            root = process.cwd();
+        }
+    } catch (e) {
+        fs = null;
+    }
+
+    // js/asset_decrypt.js patches existsSync to answer for the twin as well, so
+    // the check has to be made against the raw suffixed name, which no patch
+    // rewrites.
+    function twinExists(url) {
+        if (!fs) return true;
+        if (url in twinCache) return twinCache[url];
+        let exists = true;
+        try {
+            exists = fs.existsSync(path.join(root, decodeURIComponent(url) + '_'));
+        } catch (e) {
+            exists = true;
+        }
+        twinCache[url] = exists;
+        return exists;
+    }
+
+    const _WebAudio_realUrl = WebAudio.prototype._realUrl;
+    WebAudio.prototype._realUrl = function () {
+        if (Utils.hasEncryptedAudio() && !twinExists(this._url)) return this._url;
+        return _WebAudio_realUrl.call(this);
+    };
+
+    const RPGMV_HEADER = [0x52, 0x50, 0x47, 0x4d, 0x56, 0, 0, 0, 0, 3, 1, 0, 0, 0, 0, 0];
+
+    function isEncryptedBuffer(buffer) {
+        if (!buffer || buffer.byteLength < 16) return false;
+        const header = new Uint8Array(buffer, 0, 16);
+        for (let i = 0; i < 16; i++) {
+            if (header[i] !== RPGMV_HEADER[i]) return false;
+        }
+        return true;
+    }
+
+    const _WebAudio_readableBuffer = WebAudio.prototype._readableBuffer;
+    WebAudio.prototype._readableBuffer = function () {
+        const buffer = this._data ? this._data.buffer : null;
+        if (Utils.hasEncryptedAudio() && buffer && !isEncryptedBuffer(buffer)) {
+            return buffer;
+        }
+        return _WebAudio_readableBuffer.call(this);
+    };
+
+    window.PlainAudioFallback = { isEncryptedBuffer, twinExists };
+})();

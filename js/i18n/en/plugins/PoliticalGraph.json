@@ -1,0 +1,60 @@
+{
+  "title": "3D Political Graph",
+  "back": "Back",
+  "search": "Search ideologies...",
+  "confirm": "Select Ideology",
+  "listHead": "Ideologies",
+  "noAdherents": "No active political parties in present session",
+  "adherents": "Known World Adherents:",
+  "axisShort": "E: {econ} | A: {auth} | Z: {myst}",
+  "canvasAxis": {
+    "econ": "Right (+Econ)",
+    "auth": "Auth (+Authoritarian)",
+    "myst": "Magic (+Esoteric)"
+  },
+  "view": {
+    "isometric": "Isometric 3D",
+    "top": "Top (2D Compass)",
+    "front": "Front (Econ-Magic)",
+    "side": "Side (Auth-Magic)",
+    "orbit": "Auto-Orbit"
+  },
+  "filter": {
+    "all": "All ({n})",
+    "authLeft": "Auth-Left (Red)",
+    "authRight": "Auth-Right (Blue)",
+    "libLeft": "Lib-Left (Green)",
+    "libRight": "Lib-Right (Yellow)",
+    "magic": "High Magic",
+    "mundane": "High Mundane"
+  },
+  "tag": {
+    "magic": "Magic",
+    "mundane": "Mundane",
+    "neutral": "Neutral"
+  },
+  "quadrant": {
+    "authLeft": "Authoritarian Left (Red)",
+    "authRight": "Authoritarian Right (Blue)",
+    "libLeft": "Libertarian Left (Green)",
+    "libRight": "Libertarian Right (Yellow)"
+  },
+  "esoteric": {
+    "high": "High Magic / Esoteric",
+    "low": "High Mundane / Rationalist",
+    "balanced": "Balanced Esoteric"
+  },
+  "axis": {
+    "econ": "Economic Axis (X):",
+    "auth": "Authoritarian Axis (Y):",
+    "myst": "Esoteric Dimension (Z):"
+  },
+  "side": {
+    "left": "Left",
+    "right": "Right",
+    "auth": "Authoritarian",
+    "lib": "Libertarian",
+    "magic": "Magic",
+    "mundane": "Mundane"
+  }
+}

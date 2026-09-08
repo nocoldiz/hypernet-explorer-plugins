@@ -1,265 +1,263 @@
 {
-  "constellation": {
-    "andromeda": {
-      "name": "안드로메다"
-    },
-    "aquarius": {
-      "name": "물병자리"
-    },
-    "aquila": {
-      "name": "독수리자리"
-    },
-    "aries": {
-      "name": "양자리"
-    },
-    "auriga": {
-      "name": "마차부자리"
-    },
-    "bootes": {
-      "name": "목동자리"
-    },
-    "canis_major": {
-      "name": "큰개자리"
-    },
-    "canis_minor": {
-      "name": "작은개자리"
-    },
-    "capricornus": {
-      "name": "염소자리"
-    },
-    "cassiopeia": {
-      "name": "카시오페이아"
-    },
-    "cepheus": {
-      "name": "세페우스"
-    },
-    "cetus": {
-      "name": "고래자리"
-    },
-    "corona_borealis": {
-      "name": "북쪽왕관자리"
-    },
-    "corvus": {
-      "name": "까마귀자리"
-    },
-    "crater": {
-      "name": "컵자리"
-    },
-    "cygnus": {
-      "name": "백조자리"
-    },
-    "delphinus": {
-      "name": "돌고래자리"
-    },
-    "draco": {
-      "name": "용자리"
-    },
-    "equuleus": {
-      "name": "조랑말자리"
-    },
-    "eridanus": {
-      "name": "에리다누스"
-    },
-    "gemini": {
-      "name": "쌍둥이자리"
-    },
-    "hercules": {
-      "name": "헤라클레스"
-    },
-    "hydra": {
-      "name": "바다뱀자리"
-    },
-    "lacerta": {
-      "name": "도마뱀자리"
-    },
-    "leo": {
-      "name": "사자자리"
-    },
-    "leo_minor": {
-      "name": "작은사자자리"
-    },
-    "lepus": {
-      "name": "토끼자리"
-    },
-    "libra": {
-      "name": "천칭자리"
-    },
-    "lynx": {
-      "name": "살쾡이자리"
-    },
-    "lyra": {
-      "name": "거문고자리"
-    },
-    "monoceros": {
-      "name": "외뿔소자리"
-    },
-    "ophiuchus": {
-      "name": "뱀주인자리"
-    },
-    "orion": {
-      "name": "오리온"
-    },
-    "pegasus": {
-      "name": "페가수스"
-    },
-    "perseus": {
-      "name": "페르세우스"
-    },
-    "pisces": {
-      "name": "물고기자리"
-    },
-    "piscis_austrinus": {
-      "name": "남쪽물고기자리"
-    },
-    "sagitta": {
-      "name": "화살자리"
-    },
-    "sagittarius": {
-      "name": "사수자리"
-    },
-    "scorpius": {
-      "name": "전갈자리"
-    },
-    "scutum": {
-      "name": "방패자리"
-    },
-    "serpens": {
-      "name": "뱀자리"
-    },
-    "taurus": {
-      "name": "황소자리"
-    },
-    "triangulum": {
-      "name": "삼각형자리"
-    },
-    "ursa_major": {
-      "name": "큰곰자리"
-    },
-    "ursa_minor": {
-      "name": "작은곰자리"
-    },
-    "virgo": {
-      "name": "처녀자리"
-    },
-    "vulpecula": {
-      "name": "여우자리"
-    },
-    "antlia": {
-      "name": "공기펌프자리"
-    },
-    "apus": {
-      "name": "극락조자리"
-    },
-    "ara": {
-      "name": "제단자리"
-    },
-    "caelum": {
-      "name": "조각칼자리"
-    },
-    "camelopardalis": {
-      "name": "기린자리"
-    },
-    "cancer": {
-      "name": "게자리"
-    },
-    "canes_venatici": {
-      "name": "사냥개자리"
-    },
-    "carina": {
-      "name": "용골자리"
-    },
-    "centaurus": {
-      "name": "센타우루스"
-    },
-    "chamaeleon": {
-      "name": "카멜레온자리"
-    },
-    "circinus": {
-      "name": "컴퍼스자리"
-    },
-    "columba": {
-      "name": "비둘기자리"
-    },
-    "coma_berenices": {
-      "name": "머리카락자리"
-    },
-    "corona_australis": {
-      "name": "남쪽왕관자리"
-    },
-    "crux": {
-      "name": "남십자자리"
-    },
-    "dorado": {
-      "name": "황새치자리"
-    },
-    "fornax": {
-      "name": "화로자리"
-    },
-    "grus": {
-      "name": "두루미자리"
-    },
-    "horologium": {
-      "name": "시계자리"
-    },
-    "hydrus": {
-      "name": "물뱀자리"
-    },
-    "indus": {
-      "name": "인디언자리"
-    },
-    "mensa": {
-      "name": "테이블산자리"
-    },
-    "microscopium": {
-      "name": "현미경자리"
-    },
-    "musca": {
-      "name": "파리자리"
-    },
-    "norma": {
-      "name": "직각자자리"
-    },
-    "octans": {
-      "name": "팔분의자리"
-    },
-    "pavo": {
-      "name": "공작자리"
-    },
-    "phoenix": {
-      "name": "봉황자리"
-    },
-    "pictor": {
-      "name": "화가자리"
-    },
-    "puppis": {
-      "name": "고물자리"
-    },
-    "pyxis": {
-      "name": "나침반자리"
-    },
-    "reticulum": {
-      "name": "그물자리"
-    },
-    "sculptor": {
-      "name": "조각가자리"
-    },
-    "sextans": {
-      "name": "육분의자리"
-    },
-    "telescopium": {
-      "name": "망원경자리"
-    },
-    "triangulum_australe": {
-      "name": "남쪽삼각형자리"
-    },
-    "tucana": {
-      "name": "큰부리새자리"
-    },
-    "vela": {
-      "name": "돛자리"
-    },
-    "volans": {
-      "name": "날치자리"
-    }
+  "andromeda": {
+    "name": "안드로메다"
+  },
+  "aquarius": {
+    "name": "물병자리"
+  },
+  "aquila": {
+    "name": "독수리자리"
+  },
+  "aries": {
+    "name": "양자리"
+  },
+  "auriga": {
+    "name": "마차부자리"
+  },
+  "bootes": {
+    "name": "목동자리"
+  },
+  "canis_major": {
+    "name": "큰개자리"
+  },
+  "canis_minor": {
+    "name": "작은개자리"
+  },
+  "capricornus": {
+    "name": "염소자리"
+  },
+  "cassiopeia": {
+    "name": "카시오페이아"
+  },
+  "cepheus": {
+    "name": "세페우스"
+  },
+  "cetus": {
+    "name": "고래자리"
+  },
+  "corona_borealis": {
+    "name": "북쪽왕관자리"
+  },
+  "corvus": {
+    "name": "까마귀자리"
+  },
+  "crater": {
+    "name": "컵자리"
+  },
+  "cygnus": {
+    "name": "백조자리"
+  },
+  "delphinus": {
+    "name": "돌고래자리"
+  },
+  "draco": {
+    "name": "용자리"
+  },
+  "equuleus": {
+    "name": "조랑말자리"
+  },
+  "eridanus": {
+    "name": "에리다누스"
+  },
+  "gemini": {
+    "name": "쌍둥이자리"
+  },
+  "hercules": {
+    "name": "헤라클레스"
+  },
+  "hydra": {
+    "name": "바다뱀자리"
+  },
+  "lacerta": {
+    "name": "도마뱀자리"
+  },
+  "leo": {
+    "name": "사자자리"
+  },
+  "leo_minor": {
+    "name": "작은사자자리"
+  },
+  "lepus": {
+    "name": "토끼자리"
+  },
+  "libra": {
+    "name": "천칭자리"
+  },
+  "lynx": {
+    "name": "살쾡이자리"
+  },
+  "lyra": {
+    "name": "거문고자리"
+  },
+  "monoceros": {
+    "name": "외뿔소자리"
+  },
+  "ophiuchus": {
+    "name": "뱀주인자리"
+  },
+  "orion": {
+    "name": "오리온"
+  },
+  "pegasus": {
+    "name": "페가수스"
+  },
+  "perseus": {
+    "name": "페르세우스"
+  },
+  "pisces": {
+    "name": "물고기자리"
+  },
+  "piscis_austrinus": {
+    "name": "남쪽물고기자리"
+  },
+  "sagitta": {
+    "name": "화살자리"
+  },
+  "sagittarius": {
+    "name": "사수자리"
+  },
+  "scorpius": {
+    "name": "전갈자리"
+  },
+  "scutum": {
+    "name": "방패자리"
+  },
+  "serpens": {
+    "name": "뱀자리"
+  },
+  "taurus": {
+    "name": "황소자리"
+  },
+  "triangulum": {
+    "name": "삼각형자리"
+  },
+  "ursa_major": {
+    "name": "큰곰자리"
+  },
+  "ursa_minor": {
+    "name": "작은곰자리"
+  },
+  "virgo": {
+    "name": "처녀자리"
+  },
+  "vulpecula": {
+    "name": "여우자리"
+  },
+  "antlia": {
+    "name": "공기펌프자리"
+  },
+  "apus": {
+    "name": "극락조자리"
+  },
+  "ara": {
+    "name": "제단자리"
+  },
+  "caelum": {
+    "name": "조각칼자리"
+  },
+  "camelopardalis": {
+    "name": "기린자리"
+  },
+  "cancer": {
+    "name": "게자리"
+  },
+  "canes_venatici": {
+    "name": "사냥개자리"
+  },
+  "carina": {
+    "name": "용골자리"
+  },
+  "centaurus": {
+    "name": "센타우루스"
+  },
+  "chamaeleon": {
+    "name": "카멜레온자리"
+  },
+  "circinus": {
+    "name": "컴퍼스자리"
+  },
+  "columba": {
+    "name": "비둘기자리"
+  },
+  "coma_berenices": {
+    "name": "머리카락자리"
+  },
+  "corona_australis": {
+    "name": "남쪽왕관자리"
+  },
+  "crux": {
+    "name": "남십자자리"
+  },
+  "dorado": {
+    "name": "황새치자리"
+  },
+  "fornax": {
+    "name": "화로자리"
+  },
+  "grus": {
+    "name": "두루미자리"
+  },
+  "horologium": {
+    "name": "시계자리"
+  },
+  "hydrus": {
+    "name": "물뱀자리"
+  },
+  "indus": {
+    "name": "인디언자리"
+  },
+  "mensa": {
+    "name": "테이블산자리"
+  },
+  "microscopium": {
+    "name": "현미경자리"
+  },
+  "musca": {
+    "name": "파리자리"
+  },
+  "norma": {
+    "name": "직각자자리"
+  },
+  "octans": {
+    "name": "팔분의자리"
+  },
+  "pavo": {
+    "name": "공작자리"
+  },
+  "phoenix": {
+    "name": "봉황자리"
+  },
+  "pictor": {
+    "name": "화가자리"
+  },
+  "puppis": {
+    "name": "고물자리"
+  },
+  "pyxis": {
+    "name": "나침반자리"
+  },
+  "reticulum": {
+    "name": "그물자리"
+  },
+  "sculptor": {
+    "name": "조각가자리"
+  },
+  "sextans": {
+    "name": "육분의자리"
+  },
+  "telescopium": {
+    "name": "망원경자리"
+  },
+  "triangulum_australe": {
+    "name": "남쪽삼각형자리"
+  },
+  "tucana": {
+    "name": "큰부리새자리"
+  },
+  "vela": {
+    "name": "돛자리"
+  },
+  "volans": {
+    "name": "날치자리"
   }
 }

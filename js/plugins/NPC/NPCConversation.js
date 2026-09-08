@@ -210,6 +210,16 @@
   const CRAVING_THOUGHTS = () => bank('ConvThoughts.craving');
   const CRAVING_WITHDRAWAL_THOUGHTS = () => bank('ConvThoughts.withdrawal');
 
+  // What the month of the year is doing to them, keyed by the season
+  // PlantGrowthSystem and WeatherSystem already agree on (SPRING..WINTER).
+  // Weather is what the sky is doing today; this is what the year is doing.
+  const SEASON_THOUGHTS = () => bank('ConvThoughts.season');
+
+  // How the purse feels from the inside, keyed by wealth tier: the same street
+  // is a different place to somebody counting coppers and somebody who has
+  // stopped counting. NPCSociety's wealthTierBase decides which voice they use.
+  const WEALTH_THOUGHTS = () => bank('ConvThoughts.wealth');
+
   // Extra thoughts for NPCs who know the player well (playerOpinion >= 20).
   // Formerly FAMILIAR_THOUGHT_POOL in NPCSimulationCore.js.
   const FAMILIAR_THOUGHTS = () => bank('ConvThoughts.familiar');
@@ -498,6 +508,11 @@
     return vary(String(text).replace(/{a}/g, aName).replace(/{b}/g, bName), persName);
   }
 
+  // True while Map Battle Mode (BattleSystem/MapBattleMode.js) has the map:
+  // no ambient chatter, no face-to-face talk and no thought bubbles open then.
+  const isTacticalFight = () =>
+    !!(window.MapBattleMode && window.MapBattleMode.isActive && window.MapBattleMode.isActive());
+
   const ConversationManager = {
     _active: [],            // running conversations (face-to-face + ambient)
     _pairCooldowns: {},     // pairKey -> game minute of last exchange
@@ -567,6 +582,9 @@
 
       if (now >= this._nextScanAt) {
         this._nextScanAt = now + SCAN_MS;
+        // A tactical fight freezes the world: nobody stops for a chat
+        // (MapBattleMode.js). Running exchanges finish on their own.
+        if (isTacticalFight()) return;
         this._scanFaceToFace();
         this._scanAmbient();
       }
@@ -849,9 +867,33 @@
   //   - personalityCoreThoughts       (personality inner voice, fires at random)
   //   - need-based templates          (shared pool, voiced per personality)
 
+  // The season the game is in, in the vocabulary the farming and weather
+  // plugins already use, with the calendar variable as the fallback.
+  const SEASON_MONTHS = { SPRING: [2, 3, 4], SUMMER: [5, 6, 7], AUTUMN: [8, 9, 10] };
+  function _currentSeason() {
+    try {
+      if (typeof $gameWeather !== 'undefined' && $gameWeather?.getSeason) return $gameWeather.getSeason();
+    } catch (_) {}
+    const date = String($gameVariables?.value(113) || '01 JAN 2001 12:00').split(' ').filter(Boolean);
+    const month = String(date[1] || 'JAN').toUpperCase();
+    const en = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const it = ['GEN', 'FEB', 'MAR', 'APR', 'MAG', 'GIU', 'LUG', 'AGO', 'SET', 'OTT', 'NOV', 'DIC'];
+    let m = en.indexOf(month);
+    if (m === -1) m = it.indexOf(month);
+    if (m === -1) m = 0;
+    const found = Object.keys(SEASON_MONTHS).find(s => SEASON_MONTHS[s].includes(m));
+    return found || 'WINTER';
+  }
+
   const SituationalThoughts = {
     pick(profile) {
       const persName = _personalityNameOf(profile);
+      // A quarter of the time they are thinking about the year rather than
+      // about today's sky or this hour of the day.
+      if (Math.random() < 0.25) {
+        const pool = SEASON_THOUGHTS()[_currentSeason()];
+        if (pool?.length) return vary(_pickFrom(pool), persName);
+      }
       if (Math.random() < 0.5) {
         let type = 'clear';
         const w = ($gameScreen && ($gameScreen.weatherType?.() ?? $gameScreen._weatherType)) || 'none';
@@ -916,6 +958,12 @@
         const t = WorldProvider.pickWorldThought(profile);
         if (t) return t;
       }
+      // What is in the purse speaks up too, and says something different at
+      // each end of the street.
+      if (Math.random() < 0.10) {
+        const t = this.pickWealthThought(profile);
+        if (t) return t;
+      }
       const r = Math.random();
       if ((profile.playerOpinion ?? 0) >= 20 && r < 0.12) {
         return applyVoice(_pickFrom(FAMILIAR_THOUGHTS()), _personalityNameOf(profile));
@@ -934,6 +982,16 @@
     pickNeedThought(profile) {
       const pool = NEED_THOUGHTS()[profile?.currentNeed ?? null] || NEED_THOUGHTS()[null];
       return applyVoice(_pickFrom(pool), _personalityNameOf(profile));
+    },
+
+    // Tier 0-1 counts every coin, 2-3 has something put by, 4 and up has
+    // stopped counting where anyone can see.
+    pickWealthThought(profile) {
+      const tier = profile?.wealthTierBase ?? null;
+      if (tier === null) return null;
+      const key = tier <= 1 ? 'poor' : tier <= 3 ? 'comfortable' : 'rich';
+      const pool = WEALTH_THOUGHTS()[key];
+      return pool?.length ? applyVoice(_pickFrom(pool), _personalityNameOf(profile)) : null;
     },
 
     pickPersonalityCoreThought(profile) {
@@ -1292,6 +1350,7 @@
 
       queue(npcName, text) {
         if (!npcName || !text || !$gameMap) return;
+        if (isTacticalFight()) return;
         // A non-sentient NPC (one of the creature classes, see NPCCreature) has
         // no sentences to think in. Whatever the simulation wrote for it is
         // heard the way an animal is heard, off the same growl bank every other
@@ -1378,6 +1437,12 @@
   const _Scene_Map_update = Scene_Map.prototype.update;
   Scene_Map.prototype.update = function () {
     _Scene_Map_update.call(this);
+    if (isTacticalFight()) {
+      // The fight took the map mid-sentence: pull every balloon down
+      ConversationManager.hideAll();
+      if (ThoughtBubbleManager) ThoughtBubbleManager.hideAll();
+      return;
+    }
     ConversationManager.update();
     if (ThoughtBubbleManager) ThoughtBubbleManager.update();
   };
@@ -1408,6 +1473,7 @@
         AMBIENT_SCRIPTS: AMBIENT_SCRIPTS(), NEED_THOUGHTS: NEED_THOUGHTS(),
         FAMILIAR_THOUGHTS: FAMILIAR_THOUGHTS(), CAPABILITY_THOUGHTS: CAPABILITY_THOUGHTS(),
         CRAVING_THOUGHTS: CRAVING_THOUGHTS(), CRAVING_WITHDRAWAL_THOUGHTS: CRAVING_WITHDRAWAL_THOUGHTS(),
+        SEASON_THOUGHTS: SEASON_THOUGHTS(), WEALTH_THOUGHTS: WEALTH_THOUGHTS(),
         PERSONALITY_CORE_THOUGHTS: PERSONALITY_CORE_THOUGHTS(), WEATHER_THOUGHTS: WEATHER_THOUGHTS(),
         TIME_THOUGHTS: TIME_THOUGHTS(), POLITICAL_THOUGHTS: POLITICAL_THOUGHTS(),
         ELECTION_THOUGHTS: ELECTION_THOUGHTS(), POLITICAL_RUMOR_THOUGHTS: POLITICAL_RUMOR_THOUGHTS(),

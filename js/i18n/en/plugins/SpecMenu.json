@@ -13,6 +13,7 @@
     "pointsToNext": "{points} more points to {level}",
     "mastered": "Fully mastered. Nothing left to learn.",
     "governingStat": "Governing stat: {stat}",
+    "statLabel": "Governing stat",
     "category": "Category",
     "tier": "Tier {n}"
   },

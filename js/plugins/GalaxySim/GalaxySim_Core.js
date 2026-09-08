@@ -880,6 +880,14 @@
         seed: (window.GalaxySim.Renderer3D && window.GalaxySim.Renderer3D._seedFor)
           ? window.GalaxySim.Renderer3D._seedFor(planet) : 0,
         family: terrainFamilyOf(planet),
+        // Which painter's relief the ground is cut from - "terrestrial",
+        // "rocky", "icy", "volcanic" or "gas". `family` answers for the 2D
+        // surface maps and has only ever known two of them; this one answers
+        // for the 3D ground, which raises an ice moon out of the ice field and
+        // a lava world out of the lava field instead of raising both out of
+        // Earth's. See Renderer3D.surfaceFamilyOf / .planetElevation.
+        surface: (window.GalaxySim.Renderer3D && window.GalaxySim.Renderer3D.surfaceFamilyOf)
+          ? window.GalaxySim.Renderer3D.surfaceFamilyOf(planet.type) : "rocky",
         isOcean: planet.type === "ocean",   // i18n-ignore: planet type id
         grid: opts.grid || planetGridSize(planet),
         cell: opts.gridCell || null,
@@ -977,6 +985,11 @@
       gridCell: { gx, gy }, grid: { w, h },
       isMoon: !!opts.isMoon, parentPlanet: opts.parentPlanet || null,
     });
+    // The same descriptor, kept for as long as the landing lasts rather than
+    // only while map 636 is loaded: a cave, a structure or a building on the
+    // planet is still off Earth, and anything that has to know which world the
+    // party is on there (the minimap, for one) has nothing else to ask.
+    $gameSystem._offEarthPlanet = $gameSystem._landedPlanet;
     $gameVariables.setValue(43, gx);
     $gameVariables.setValue(44, gy);
 
@@ -999,6 +1012,30 @@
     return grid || null;
   }
   window.GalaxySim.getAlienGridInfo = getAlienGridInfo;
+
+  // ----------------------------------------------------------------------------
+  // OFF EARTH
+  // ----------------------------------------------------------------------------
+  // isAlienSurface() answers for map 636 alone, so every map reached FROM the
+  // surface (a cave, a wreck, a building interior) reads as Earth again, and
+  // anything drawing a chart there falls back to an Earth tile that has nothing
+  // to do with where the party is standing. The landing itself outlives those
+  // maps: _procGenData.alienGrid is only struck out on leaving the planet
+  // (clearAlienSurfaceState), and _offEarthPlanet is kept beside it.
+  function offEarthGrid() {
+    const pg = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._procGenData : null;
+    return (pg && pg.alienGrid) || null;
+  }
+  function isOffEarth() { return !!offEarthGrid(); }
+  function getOffEarthPlanet() {
+    if (!isOffEarth()) return null;
+    return ((typeof $gameSystem !== "undefined" && $gameSystem)
+      ? ($gameSystem._offEarthPlanet || $gameSystem._landedPlanet) : null) || null;
+  }
+  function getOffEarthGridInfo() { return isOffEarth() ? offEarthGrid() : null; }
+  window.GalaxySim.isOffEarth = isOffEarth;
+  window.GalaxySim.getOffEarthPlanet = getOffEarthPlanet;
+  window.GalaxySim.getOffEarthGridInfo = getOffEarthGridInfo;
 
   // ============================================================================
   // Alien ground terrain bridge
@@ -1059,7 +1096,7 @@
   // persisted to save data). Returns null off an alien surface.
   let _alienGridTextureCache = null; // { key, canvas }
   function getAlienGridTextureCanvas() {
-    const landed = getSurfacePlanet();
+    const landed = getSurfacePlanet() || getOffEarthPlanet();
     const R3D = window.GalaxySim.Renderer3D;
     if (!landed || !R3D || !R3D.getPlanetTextureCanvas) return null;
     const key = landed.name || "";
@@ -1124,6 +1161,9 @@
     opts = opts || {};
     const VW = window.VoxelWorldSystem;
     if (!VW || !VW.startAlienWalk || !planet || !planet.type) return false;
+    // A flyby is the same world opened the same way; the only difference is
+    // what the party arrives in, so it takes the same route in.
+    if (opts.flyby && !VW.startAlienFlyby) return false;
     const PT = window.GalaxySim.PlanetTypes || {};
     const biomeName = (PT[planet.type] && PT[planet.type].biome) || null;
     const list = (window.WorldGen && window.WorldGen.Biomes) || [];
@@ -1158,9 +1198,53 @@
       desc.terrain.cell = { gx: cell.gx, gy: cell.gy };
     }
     if (desc.day && desc.day.frozen) desc.day.fixedHour = frozenHourForCell(cell.gx, grid.w);
+    if (opts.flyby) {
+      return !!VW.startAlienFlyby(biome, desc, species, { atHelm: !!opts.atHelm });
+    }
     return !!VW.startAlienWalk(biome, desc, species);
   }
   window.GalaxySim.startLiminalWalk = startLiminalWalk;
+
+  // ============================================================================
+  // Flying the ship by hand, from the bridge
+  // ----------------------------------------------------------------------------
+  // The bridge is opened from INSIDE the ship (VoxelWorldSystem.startShipBridge,
+  // which map 721's bridge door calls), so unlike the flyby nobody has picked a
+  // world off a landing grid: this has to work out for itself what the ship is
+  // currently over, and open that.
+  //
+  // A ship in orbit of a world opens that world's sky, at the square under it.
+  // A ship anywhere else - deep space, a star, its own hangar - has no world to
+  // fly over, and the caller falls back on the one the party is standing on.
+  // Answers true when it opened something.
+  // ============================================================================
+  function startShipBridgeFlight() {
+    const dm = window.GalaxySim.dataManager || window.GalaxySim.DataManager;
+    const ship = dm && dm.playerShip;
+    if (!ship || ship.isMoving) return false;
+    const planetName = ship.currentPlanet;
+    if (!planetName) return false;
+    const system = dm.getSystem && dm.getSystem(ship.currentSystem);
+    if (!system || !system.planets) return false;
+    let planet = system.planets.find((p) => p && p.name === planetName);
+    // A moon is a world to fly over like any other.
+    let parent = null;
+    if (!planet) {
+      for (const p of system.planets) {
+        const moon = (p.moons || []).find((m) => m && m.name === planetName);
+        if (moon) { planet = moon; parent = p; break; }
+      }
+    }
+    if (!planet || !planet.type) return false;
+    // The square the ship is over: nobody chose one, so it is the middle of the
+    // world's own grid, which is the same square a flyby would start on if the
+    // player had picked the centre of the picture.
+    const grid = planetGridSize(planet);
+    return startLiminalWalk(planet, Math.floor(grid.w / 2), Math.floor(grid.h / 2), {
+      isMoon: !!parent, parentPlanet: parent, flyby: true, atHelm: true,
+    });
+  }
+  window.GalaxySim.startShipBridgeFlight = startShipBridgeFlight;
 
   // ============================================================================
   // Landing-site picker on foot (Scene_AlienLandingGrid)
@@ -1476,6 +1560,7 @@
     }
     $gameSystem._alienPlanetHasLife = false;
     $gameSystem._alienLifeSigns = LIFE.NONE;
+    $gameSystem._offEarthPlanet = null;
     _alienGridTextureCache = null;
   }
   window.GalaxySim.clearAlienSurfaceState = clearAlienSurfaceState;

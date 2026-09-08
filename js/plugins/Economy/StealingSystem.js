@@ -297,7 +297,30 @@
                 }
             }
 
-            return uniqueItems;
+            // What is on the shelf is what can be lifted off it. Every row is
+            // put against the counter's own stock record (window.ShopStock,
+            // the same numbers the till sells from), and a row the shop has
+            // run out of is not offered. Without this a thief could take the
+            // same thing off the same shelf forever.
+            return uniqueItems.filter(entry => {
+                entry.stock = this.stockOf(entry);
+                return entry.stock > 0;
+            });
+        }
+
+        // How many of an entry the counter it came from still holds. A source
+        // that keeps no stock of its own answers with the unlimited count, so
+        // nothing that was stealable before stops being stealable now.
+        static stockOf(entry) {
+            const SS = window.ShopStock;
+            if (!SS || !entry || !entry.data) return 999;
+            if (!entry.sourceMapId || !entry.sourceEventId) return 999;
+            try {
+                return SS.get(entry.sourceMapId, entry.sourceEventId, entry.data);
+            } catch (e) {
+                console.error('StealingSystem: Error reading shop stock:', e);
+                return 999;
+            }
         }
 
         static isWithinProximity(eventX, eventY, playerX, playerY, distance) {
@@ -592,18 +615,20 @@
         rollModifier: (agi) => StealCalculator.rollModifier(agi),
         fmt:          goldToEuros,
         translate,
+        // A lifted thing comes off the shop's own stock, whether or not that
+        // counter has ever been opened: window.ShopStock writes the record the
+        // till reads. The old version wrote only into a record that already
+        // existed, which for an unopened shop was none, so nothing was ever
+        // taken off the shelf.
+        stockOf: (entry) => ShopScanner.stockOf(entry),
         reduceStock: (entry) => {
-            if (!entry.sourceMapId || !entry.sourceEventId || !$gameSystem._shopStocks) return;
-            const mapStocks = $gameSystem._shopStocks[entry.sourceMapId];
-            if (!mapStocks) return;
-            const shopData = mapStocks[entry.sourceEventId];
-            if (!shopData) return;
-            const d = entry.data;
-            let key = '';
-            if (DataManager.isItem(d))        key = 'i_' + d.id;
-            else if (DataManager.isWeapon(d)) key = 'w_' + d.id;
-            else if (DataManager.isArmor(d))  key = 'a_' + d.id;
-            if (key && shopData[key] !== undefined) shopData[key] = Math.max(0, shopData[key] - 1);
+            if (!entry || !entry.data || !entry.sourceMapId || !entry.sourceEventId) return;
+            if (!window.ShopStock) return;
+            try {
+                window.ShopStock.reduce(entry.sourceMapId, entry.sourceEventId, entry.data, 1);
+            } catch (e) {
+                console.error('StealingSystem: Error reducing shop stock:', e);
+            }
         },
     };
     window.StealCalculator = StealCalculator;

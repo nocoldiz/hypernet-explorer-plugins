@@ -1127,7 +1127,7 @@
    * How a thing is made, for every panel that inspects one.
    *
    * An entry carries its own recipe and, for weapons and armor, the trade and
-   * the tier of that trade the forge asks for (BlacksmithingMenu.js):
+   * the tier of that trade the forge asks for (Quest/ThinkerMenu.js):
    *
    *   <Recipe: 865x13, 863x5>   <Craft: Bladesmithing>   <CraftLevel: 5>
    *
@@ -1477,4 +1477,270 @@
     apply: apply,
     hasVariants: hasVariants
   };
+})();
+
+//=============================================================================
+// Item 3D Models
+//=============================================================================
+// Every item and every armour has a 3D model, built the same way the weapons
+// are (Weapon/WeaponSystemProcedural.js and its Weapon3D_* families): a tree
+// of primitives assembled by a builder, cached as a prototype and handed out
+// as instances. The models are drawn only in the flat UI surfaces, the HUD,
+// the backpack, the shop counter, the Thinker's bench and so on. Nothing here
+// is ever equipped or posed.
+//
+// Two differences from the weapon pipeline, both deliberate:
+//
+//  * An item's look is FIXED. A weapon is world-persistent procedural content
+//    and hangs off the world seed; a Health Potion is a manufactured object
+//    and looks the same in every world, so the RNG here is seeded from the
+//    database id and name alone.
+//  * The dispatch reads the item's <category:> tag (and, for an armour, its
+//    equip and armour type) rather than a weapon type. A category always has
+//    a generic silhouette; a bespoke model per database id overrides it.
+//
+// The builders live in the Item3D_* files beside the weapon families and are
+// injected at runtime from ITEM3D_FAMILIES below. None of them is listed in
+// plugins.js. The whole shared construction library of WeaponSystemProcedural
+// (_mat, _steel, _wood, seg, _rivets, the palettes, the geometry budget) is
+// available as `this` inside a builder, because ItemModelSystem inherits from
+// it.
+//=============================================================================
+
+(function () {
+  "use strict";
+
+  const ItemModelSystem = {
+    // Seeded from the entry alone, never from the world: a manufactured object
+    // looks the same everywhere.
+    ITEM_SEED_SALT: 0x4954454d, // "ITEM"
+
+    MODEL_CACHE_MAX: 32,
+    _modelCache: new Map(),
+
+    // category -> builder name. Filled in by the families.
+    CATEGORY_MODELS: {},
+    // "etypeId:atypeId" -> builder name, for armours.
+    ARMOR_MODELS: {},
+    // database id -> builder name, for the bespoke ones. Items are keyed by
+    // 'i<id>', armours by 'a<id>', so the two id spaces never collide.
+    UNIQUE_MODELS: {},
+
+    _familyOwners: {},
+    FALLBACK_MODEL: "createGenericItemModel",
+
+    /** The one answer to "what family of thing is this". */
+    categoryOf(entry) {
+      if (!entry) return "";
+      const m = /<category:\s*([^>]+)>/i.exec(entry.note || "");
+      return m ? m[1].trim() : "";
+    },
+
+    isArmor(entry) {
+      return !!(entry && entry.etypeId !== undefined && entry.atypeId !== undefined);
+    },
+
+    /** Cache and RNG key. Bespoke models are looked up under the same key. */
+    keyFor(entry) {
+      return (this.isArmor(entry) ? "a" : "i") + (entry.id || 0);
+    },
+
+    seedFor(entry) {
+      const text = this.keyFor(entry) + ":" + (entry.name || "");
+      let h = this.ITEM_SEED_SALT;
+      for (let i = 0; i < text.length; i++) h = (Math.imul(h, 31) + text.charCodeAt(i)) | 0;
+      return h >>> 0;
+    },
+
+    /**
+     * The builder an entry is drawn with, in priority order: its own bespoke
+     * model, then its category (or its armour slot), then the fallback.
+     */
+    builderFor(entry) {
+      if (!entry) return null;
+      const unique = this.UNIQUE_MODELS[this.keyFor(entry)];
+      if (unique) return unique;
+      if (this.isArmor(entry)) {
+        return this.ARMOR_MODELS[entry.etypeId + ":" + entry.atypeId] ||
+          this.ARMOR_MODELS[entry.etypeId + ":*"] ||
+          this.FALLBACK_MODEL;
+      }
+      return this.CATEGORY_MODELS[this.categoryOf(entry)] || this.FALLBACK_MODEL;
+    },
+
+    /**
+     * Calls a builder by name. A family that failed to load costs only the
+     * models it carried: the entry falls back to the generic shape rather
+     * than throwing into whatever menu asked for it.
+     */
+    build(name, entry, rand) {
+      if (typeof this[name] === "function") return this[name](entry, rand);
+      if (!this._missingBuilders) this._missingBuilders = {};
+      if (!this._missingBuilders[name]) {
+        this._missingBuilders[name] = true;
+        console.warn("[ItemModelSystem] builder not loaded: " + name);
+      }
+      if (name !== this.FALLBACK_MODEL && typeof this[this.FALLBACK_MODEL] === "function") {
+        return this[this.FALLBACK_MODEL](entry, rand);
+      }
+      return null;
+    },
+
+    _buildModel(entry) {
+      if (!window.THREE || !this._linkLibrary()) return null;
+      const rand = this.createSeededRandom(this.seedFor(entry));
+      const restoreGeometry = this._patchGeometryBudget();
+      try {
+        const model = this.build(this.builderFor(entry), entry, rand);
+        if (model) this.weldLooseParts(model);
+        return model;
+      } catch (e) {
+        console.warn("[ItemModelSystem] model build failed for " + (entry && entry.name), e);
+        return null;
+      } finally {
+        restoreGeometry();
+      }
+    },
+
+    /**
+     * The model for a database entry, ready to be added to a scene. Shared
+     * geometry, per-instance materials, exactly as the weapons are handed out.
+     */
+    createModel(entry) {
+      if (!window.THREE || !entry || !this._linkLibrary()) return null;
+      const key = this.keyFor(entry) + ":" + (this.isLowDetail() ? "lo" : "hi");
+      const cached = this._modelCache.get(key);
+      if (cached) {
+        this._modelCache.delete(key);
+        this._modelCache.set(key, cached);
+        return this._instance(cached);
+      }
+      const root = this._buildModel(entry);
+      if (!root) return null;
+      try {
+        this.mergeStaticParts(root);
+        this._protectResources(root);
+        this._modelCache.set(key, root);
+        while (this._modelCache.size > this.MODEL_CACHE_MAX) {
+          const oldest = this._modelCache.keys().next().value;
+          const victim = this._modelCache.get(oldest);
+          this._modelCache.delete(oldest);
+          this._freePrototype(victim);
+        }
+        return this._instance(root);
+      } catch (e) {
+        console.warn("[ItemModelSystem] model caching failed, using one-off model", e);
+        this._modelCache.delete(key);
+        this._freePrototypeProtection(root);
+        return root;
+      }
+    },
+
+    clearModelCache() {
+      for (const entry of this._modelCache.values()) this._freePrototype(entry);
+      this._modelCache.clear();
+    },
+
+    /**
+     * A family calls this with:
+     *   models     { methodName: fn }        builders, bound onto this object
+     *   categories { category: methodName }  the generic model of a category
+     *   armors     { "etypeId:atypeId": m }  the generic model of an armour slot
+     *   unique     { "i123"|"a45": method }  bespoke model per database entry
+     */
+    registerFamily(family) {
+      if (!family) return;
+      const owner = family.name || "anonymous";
+      if (family.models) {
+        for (const key of Object.keys(family.models)) {
+          const previous = this._familyOwners[key];
+          if (previous && previous !== owner) {
+            console.warn("[ItemModelSystem] " + owner + " overrides " + key + " from " + previous);
+          }
+          this._familyOwners[key] = owner;
+          this[key] = family.models[key];
+        }
+      }
+      const tables = [["categories", "CATEGORY_MODELS"], ["armors", "ARMOR_MODELS"], ["unique", "UNIQUE_MODELS"]];
+      for (const pair of tables) {
+        const source = family[pair[0]];
+        if (!source) continue;
+        for (const key of Object.keys(source)) this[pair[1]][key] = source[key];
+      }
+      if (this._modelCache.size) this.clearModelCache();
+    }
+  };
+
+  // The whole shared construction library of the weapon pipeline (_mat, seg,
+  // _plate, the geometry budget, the model cache helpers) is INHERITED rather
+  // than copied, by linking this object's prototype to it.
+  //
+  // That link is made on first use, not here: this file sits near the top of
+  // plugins.js (it has to load before the inventory and the shop) while
+  // Weapon/WeaponSystemProcedural.js sits far below it, so at this point in the
+  // boot there is nothing yet to inherit from. Linking eagerly left every
+  // builder without its library and every model build threw.
+  ItemModelSystem._linkLibrary = function () {
+    if (Object.getPrototypeOf(this) !== Object.prototype) return true;
+    const base = window.WeaponSystemProcedural;
+    if (!base) {
+      if (!this._warnedNoLibrary) {
+        this._warnedNoLibrary = true;
+        console.error("[ItemModelSystem] WeaponSystemProcedural not loaded; item models disabled");
+      }
+      return false;
+    }
+    Object.setPrototypeOf(this, base);
+    return true;
+  };
+
+  window.ItemModelSystem = ItemModelSystem;
+
+  // ==========================================================================
+  // Family loader
+  // ==========================================================================
+  // One family per subject, injected in list order with async=false so a
+  // family may lean on the one before it. A family that fails to arrive costs
+  // only the models it carried.
+  const ITEM3D_FAMILIES = [
+    "Item3D_Generic",      // the generic silhouette of every category and slot
+    "Item3D_Medical",      // the pharmacy shelf
+    "Item3D_Combat",       // the throwables and the technique records
+    "Item3D_Tools",        // the tool rack
+    "Item3D_Vehicles",     // what you carry that brings the vehicle
+    "Item3D_Lifestyle",    // the evening-off shelf
+    "Item3D_Arctic",       // hide, bone, packed snow and ice
+    "Item3D_Artisan",      // one master's work per trade
+    "Item3D_Books",        // the library, one binding per volume
+    "Item3D_Collectibles",  // what people kept from fights
+    "Item3D_Counterfeits",  // fakes, built so the fake shows
+    "Item3D_Espionage",     // kit built not to be noticed
+    "Item3D_Food",          // the food shelf
+    "Item3D_Diseases",      // one culture vial, two hundred labels
+    "Item3D_Alchemistry",   // one reagent jar, one printed formula
+    "Item3D_Components",    // hyperdeck parts, sized off their own grid shape
+    "Item3D_Magic",         // enchanted things, and they light
+    "Item3D_BodyParts",     // the creature's own battler part, on a tray
+    "Item3D_Materials",     // ore, stock, trophies and what was cut out of things
+    "Item3D_Sundries",      // the last four shelves: misc, survival, trash, remedies
+    "Item3D_Armor"          // every armour, built from its own recipe and weight
+  ];
+
+  (function loadItem3DFamilies() {
+    if (typeof document === "undefined") return;
+    const host = document.body || document.head || document.documentElement;
+    if (!host) return;
+    const dir = "js/plugins/ItemSystem/";
+    for (const name of ITEM3D_FAMILIES) {
+      const src = dir + name + ".js";
+      if (document.querySelector('script[src="' + src + '"]')) continue;
+      const s = document.createElement("script");
+      s.type = "text/javascript";
+      s.src = src;
+      s.async = false;
+      s.defer = false;
+      s.onerror = () => console.error("[ItemModelSystem] Failed to load family: " + src);
+      host.appendChild(s);
+    }
+  })();
 })();

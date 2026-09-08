@@ -981,13 +981,18 @@
         if (enemyLevel <= 0) return 1;
         const actorLevel = BSE.Helpers.getBattlerLevel(subject);
         const gap = enemyLevel - actorLevel;
-        if (gap <= 0) {
-            // Same or superior level deals normal damage
-            return 1;
+        const fair = BSE.Params.levelGapFair;
+        // Inside the fair gap, in either direction, a hit is a hit.
+        if (Math.abs(gap) <= fair) return 1;
+        if (gap < 0) {
+            // The party outranks the monster by more than the fair gap: they
+            // cut through fauna they have outgrown instead of trading blows.
+            return gapLift(-gap - fair, 0);
         }
-        const damp = gapDamp(gap);
+        const over = gap - fair;
+        const damp = gapDamp(over);
         const falloff = Math.max(1, BSE.Params.levelDampLeverageFalloff);
-        const cap = BSE.Params.levelDampLeverageCap * Math.pow(0.5, gap / falloff);
+        const cap = BSE.Params.levelDampLeverageCap * Math.pow(0.5, over / falloff);
         const leverage = BSE.Helpers.tacticalLeverage(subject, target, action, critical) * cap;
         return Math.max(BSE.Params.levelDampFloor, damp + (1 - damp) * leverage);
     };
@@ -1013,13 +1018,17 @@
         if (enemyLevel <= 0) return 1;
         const actorLevel = BSE.Helpers.getBattlerLevel(target);
         const ahead = enemyLevel - actorLevel;
-        if (ahead <= 0) {
-            return gapDamp(actorLevel - enemyLevel);
+        const fair = BSE.Params.levelGapFair;
+        // Inside the fair gap an even fight is an even fight, whatever the
+        // head count on either side.
+        if (Math.abs(ahead) <= fair) return 1;
+        if (ahead < 0) {
+            return gapDamp(-ahead - fair);
         }
         // The headcount widens the gap rather than multiplying on top of it,
         // so an even fight is never changed by it and the extra weight comes
         // in gradually as the gap opens instead of arriving as a step.
-        return gapLift(ahead, BSE.Helpers.outnumberedRatio(subject) * BSE.Params.levelPressureOutnumber);
+        return gapLift(ahead - fair, BSE.Helpers.outnumberedRatio(subject) * BSE.Params.levelPressureOutnumber);
     };
 
     // ------------------------------------------------------------------
@@ -2119,7 +2128,11 @@
             if (hue) {
                 if (!this._hueFilter) {
                     this._hueFilter = new PIXI.filters.ColorMatrixFilter();
-                    this.filters = [this._hueFilter];
+                    // Appended, never assigned: something else may already be
+                    // filtering this sprite (a map battle draws the monsters
+                    // standing out of the fight in black and white) and a bare
+                    // assignment would throw that away without a word.
+                    this.filters = (this.filters || []).concat(this._hueFilter);
                     this._appliedHue = null;
                 }
                 // Rebuilding the ColorMatrix every frame is wasteful when the hue
@@ -2160,11 +2173,25 @@
     // ------------------------------------------------------------------
     // 13. Corpse Interaction
     // ------------------------------------------------------------------
+    // A body is a thing lying on the ground, not a wall: the party steps over it
+    // wherever the ground itself allows, and searching it is what standing on it
+    // does (checkEventTriggerHere below). Nothing here touches passability, so a
+    // corpse on a passable tile is walked onto and one on a wall was never
+    // reachable to begin with.
+    BSE.Helpers.corpseAt = function(x, y) {
+        if (!$gameMap || !BSE.State.mapCorpses) return null;
+        const mapId = $gameMap.mapId();
+        return BSE.State.mapCorpses.find(c => c && c.mapId === mapId && c.x === x && c.y === y) || null;
+    };
+
     const _Game_Player_checkTriggerHere = Game_Player.prototype.checkEventTriggerHere;
     Game_Player.prototype.checkEventTriggerHere = function(triggers) {
         _Game_Player_checkTriggerHere.call(this, triggers);
         if (!triggers.includes(0)) return;
         if ($gameMap.isEventRunning() || SceneManager.isSceneChanging()) return;
+        // A map battle keeps Scene_Map alive: pushing the harvest scene there
+        // leaves a stale, unprepared scene on the stack.
+        if ($gameParty.inBattle()) return;
         const corpses = BSE.State.mapCorpses.filter(c => c.mapId === $gameMap.mapId());
         const corpse = corpses.find(c => c.x === this.x && c.y === this.y);
         if (corpse && typeof Scene_BodyPartHarvest !== 'undefined') {
@@ -2178,6 +2205,9 @@
         _Game_Player_checkTriggerThere.call(this, triggers);
         if (!triggers.includes(0)) return;
         if ($gameMap.isEventRunning() || SceneManager.isSceneChanging()) return;
+        // A map battle keeps Scene_Map alive: pushing the harvest scene there
+        // leaves a stale, unprepared scene on the stack.
+        if ($gameParty.inBattle()) return;
         const corpses = BSE.State.mapCorpses.filter(c => c.mapId === $gameMap.mapId());
         if (corpses.find(c => c.x === this.x && c.y === this.y)) return;
         const x2 = $gameMap.roundXWithDirection(this.x, this.direction());
@@ -2229,11 +2259,39 @@
             // The troop index, not the position in the living: a dead monster
             // still holds its slot in $gameTroop.members().
             if (action) action.setTarget(alive[0].index());
+            // The command list doubles as the target picker
+            // (BattleSystemEnhanchedCommands.js); it has nothing to pick.
+            if (this._actorCommandWindow) this._actorCommandWindow._targetSession = null;
             this.hideSubInputWindows();
             this.selectNextCommand();
             return;
         }
         _Scene_Battle_startEnemySelection_BSE.call(this);
+    };
+
+    // The same courtesy on the party's own side: an item or a skill aimed at a
+    // single ally with only one ally it can land on (a lone survivor, or the
+    // one fallen member a revive can reach) is used straight away instead of
+    // opening a picker with a single row in it.
+    const _Scene_Battle_startActorSelection_BSE = Scene_Battle.prototype.startActorSelection;
+    Scene_Battle.prototype.startActorSelection = function() {
+        const action = BattleManager.inputtingAction();
+        if (action && !action.isForAll() && !action.isForRandom()) {
+            // Game_Party.members() is battleMembers() in battle, which is what
+            // an action's target index is read against.
+            const members = $gameParty.battleMembers();
+            const targets = action.isForDeadFriend()
+                ? members.filter(m => m.isDead())
+                : members.filter(m => m.isAlive());
+            if (targets.length === 1) {
+                action.setTarget(members.indexOf(targets[0]));
+                if (this._actorCommandWindow) this._actorCommandWindow._targetSession = null;
+                this.hideSubInputWindows();
+                this.selectNextCommand();
+                return;
+            }
+        }
+        _Scene_Battle_startActorSelection_BSE.call(this);
     };
 
     // ------------------------------------------------------------------

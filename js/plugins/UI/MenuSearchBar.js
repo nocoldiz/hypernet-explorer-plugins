@@ -56,6 +56,12 @@
  * dozen the page can actually show. A menu wearing this strip should mount its
  * list through that plugin rather than assigning innerHTML itself.
  *
+ * Wherever the host mounts it, the FIELD half is then docked onto that page's
+ * own .page-header-bar: it rides the same row as the Back button and the page
+ * title, pinned to the right edge, rather than taking a full width row of its
+ * own under the header. A page with no header bar keeps the field where the
+ * host put it.
+ *
  * Every field starts COLLAPSED: all the page shows is the IconSet magnifier
  * (247) at its top right, and the field itself only exists once that handle is
  * opened (it autofocuses then, and empties itself again when collapsed). The
@@ -245,9 +251,8 @@
                             return `<option value="${escapeHtml(value)}"${value === state.category ? ' selected' : ''}>${escapeHtml(label)}</option>`;
                         })).join('');
                     bits.push(`<select class="msb-select focusable" onchange="${call('setCategory', 'this.value')}" ${STOP}>${options}</select>`);
-                } else if (state.count !== null) {
-                    bits.push(`<span class="msb-count">${T('MenuSearch.showing', { count: state.count })}</span>`);
                 }
+
                 if (bits.length) rows.push(`<div class="msb-row">${bits.join('')}</div>`);
 
                 if (ranges.length) {
@@ -366,6 +371,7 @@
                 if (!nodes.length) return;
                 const markup = this.fieldHTML();
                 Array.from(nodes).forEach(node => { node.outerHTML = markup; });
+                dockAll();
             },
 
             setKind(kind) {
@@ -446,7 +452,65 @@
         bars.set(id, bar);
         lastId = id;
         installSearchKey();
+        installDocking();
         return bar;
+    }
+
+    // ---- docking the field onto the page header ---------------------------
+    // One search field, one place on the page: the strip's field rides the
+    // SAME row as the Back button and the page title, pinned to the right edge
+    // of the header, instead of taking a full width row of its own under it.
+    // Hosts keep mounting it wherever they always did; this moves it up into
+    // the nearest .page-header-bar of the page it was mounted in, so every
+    // menu carrying a search gets the shape without a per menu layout.
+    //
+    // A page with no header bar (the main menu's results page, whose field IS
+    // the page) is left exactly where the host put it.
+    function headerFor(node) {
+        let p = node.parentElement;
+        while (p && p !== document.body) {
+            if (p.classList && p.classList.contains('page-header-bar')) return p;
+            const header = p.querySelector(':scope > .page-header-bar');
+            if (header) return header;
+            p = p.parentElement;
+        }
+        return null;
+    }
+
+    function dockOne(node) {
+        if (!node || node.classList.contains('msb-docked')) return;
+        const header = headerFor(node);
+        if (!header || node.parentElement === header) {
+            if (node.parentElement === header) node.classList.add('msb-docked');
+            return;
+        }
+        const active = document.activeElement;
+        const keep = active && node.contains(active) ? active : null;
+        const caret = keep && typeof keep.selectionStart === 'number' ? keep.selectionStart : null;
+        node.classList.add('msb-docked');
+        header.appendChild(node);
+        if (keep) {
+            keep.focus();
+            if (caret !== null) { try { keep.setSelectionRange(caret, caret); } catch (e) { /* not a text input */ } }
+        }
+    }
+
+    function dockAll() {
+        if (typeof document === 'undefined') return;
+        const loose = document.querySelectorAll('.msb-field-only:not(.msb-docked)');
+        Array.from(loose).forEach(dockOne);
+    }
+
+    let dockInstalled = false;
+    function installDocking() {
+        if (dockInstalled || typeof document === 'undefined' || typeof MutationObserver === 'undefined') return;
+        dockInstalled = true;
+        // A host redraws its page whenever the list changes, which puts a fresh
+        // undocked field back under the header every time; the observer is how
+        // the shape survives those redraws without every host calling in.
+        const observer = new MutationObserver(() => dockAll());
+        observer.observe(document.body, { childList: true, subtree: true });
+        dockAll();
     }
 
     // ---- the keyboard route to the handle ----------------------------------
@@ -484,6 +548,9 @@
         create,
         isTyping,
         toggleHTML,
+        // Pull every loose field up onto its page header, for a host that builds
+        // its page in one synchronous pass and wants the shape before paint.
+        dock: dockAll,
         get(id) {
             // A dead id would take an inline handler down with it, and these
             // handlers are strings in markup that can outlive their scene.

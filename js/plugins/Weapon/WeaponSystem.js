@@ -319,6 +319,65 @@
     { test: /drone|stellar|swarm/i, sounds: ["Psi1", "LaserShot2"], reload: null }
   ];
 
+  // The SE files in audio/se/Weapons that are not one report but a burst of
+  // them, counted off the waveforms rather than read off the names: three or
+  // more separate transients in the same file. A weapon drawing one of these
+  // is already heard firing several rounds, so it is played once for a whole
+  // flurry and never once per hit; the engine reuses one buffer per SE name,
+  // so a second copy a frame later only cuts the first one off.
+  const MULTI_SHOT_SOUNDS = [
+    "UziAutomatic", "MachineGun1", "MachineGun2", "MachineGun3",
+    "Musket1", "Taser2", "DoubleGunshot"
+  ];
+
+  // How many rounds one Attack sends downrange. A trigger held down is not a
+  // single shot: an Uzi empties a third of its magazine in the time a musket
+  // fires once, and each of those rounds is its own motion, its own damage and
+  // (unless the weapon is <Automatic>) its own report. Routed by name, closest
+  // match first, the same way the sound banks are, so the hundreds of
+  // procedurally named firearms need no hand-authored tag.
+  //   automatic: the shot SE covers the whole burst, so it plays once
+  const FIRE_RATE_NAME_RULES = [
+    { test: /minigun|gatling|chain gun|autocannon|\brotary\b/i, rate: 6, automatic: true },
+    { test: /machine gun|\bhmg\b|\blmg\b|\bmg\b/i, rate: 5, automatic: true },
+    { test: /\bsmg\b|uzi|submachine|\bmp\d|\bpdw\b|\baks?-?74u\b|machine pistol|tommy|thompson/i,
+      rate: 4, automatic: true },
+    { test: /flame|flamethrower|napalm|incendiar|sprayer|water jet|\bhose\b/i, rate: 4, automatic: true },
+    { test: /taser|stun|shock|paralyz|scrambler|disruptor/i, rate: 3, automatic: true },
+    { test: /volley|repeater|micro-missile|missile array|swarm/i, rate: 3, automatic: false },
+    { test: /assault|battle rifle|carbine|bullpup|modular combat|\bak-|\bar-|\bsks\b|memetic rifle/i,
+      rate: 3, automatic: true },
+    { test: /combat shotgun|tactical shotgun|riot gun|double-barrel|pepperbox|double gun/i,
+      rate: 2, automatic: false }
+  ];
+
+  /**
+   * How many rounds this weapon sends per Attack, and whether its shot SE
+   * already covers the burst. Only the three shooting types have a fire rate:
+   * a sword swings as often as the actor's attack times say and no more.
+   */
+  const fireProfileFor = (weapon) => {
+    if (!weapon || !RANGED_WTYPES.includes(weapon.wtypeId)) return { rate: 1, automatic: false };
+    let rate = weapon.fireRate || 0;
+    let automatic = weapon.automatic === true;
+    if (!rate || weapon.automatic === undefined) {
+      const rule = FIRE_RATE_NAME_RULES.find((r) => r.test.test(weapon.name || ""));
+      if (rule) {
+        if (!rate) rate = rule.rate;
+        if (weapon.automatic === undefined) automatic = rule.automatic;
+      }
+    }
+    // A weapon whose bank is a recorded burst is heard once whatever its name
+    // is: the file itself decides that, not the tag.
+    if (!automatic) {
+      const bank = weaponSoundsFor(weapon) || [];
+      automatic = bank.some((n) => MULTI_SHOT_SOUNDS.includes(String(n).split("/").pop()));
+    }
+    return { rate: Math.max(1, rate || 1), automatic };
+  };
+
+  window.WeaponFireRate = { profileFor: fireProfileFor, multiShotSounds: MULTI_SHOT_SOUNDS };
+
   // Static animation keyframes (no movement, just holds position)
   // Add this near the top of the file where STATIC_ANIMATION is defined (around line 138)
   // Mirrored swing animation for left hand
@@ -363,6 +422,8 @@
   DataManager.extractWeaponSystemData = function (weapon) {
     weapon.weaponSounds = [];
     weapon.noMultiAttackSound = false;
+    weapon.fireRate = 0;
+    weapon.automatic = undefined;
     weapon.weaponAnimations = [];
     weapon.maxBullets = null;
     weapon.reloadSound = null;
@@ -395,6 +456,22 @@
     if (note.match(/<NoMultiAttackSound>/i)) {
       weapon.noMultiAttackSound = true;
       debugLog(`Weapon ${weapon.name}: NoMultiAttackSound enabled`);
+    }
+    // <FireRate: n>: how many rounds one Attack sends, each its own motion,
+    // damage and (unless <Automatic>) report. Untagged ranged weapons fall
+    // back to FIRE_RATE_NAME_RULES.
+    const fireRateMatch = note.match(/<FireRate:\s*(\d+)>/i);
+    if (fireRateMatch) {
+      weapon.fireRate = Math.max(1, parseInt(fireRateMatch[1]));
+      debugLog(`Weapon ${weapon.name}: FireRate ${weapon.fireRate}`);
+    }
+    // <Automatic>: the shot SE is a recorded burst, so it is played once for
+    // the whole flurry rather than once per round.
+    if (note.match(/<Automatic>/i)) {
+      weapon.automatic = true;
+      debugLog(`Weapon ${weapon.name}: Automatic fire, one report per burst`);
+    } else if (note.match(/<SemiAuto>/i)) {
+      weapon.automatic = false;
     }
     const singleMatch = note.match(/<WeaponSound:\s*(.+?)>/i);
     if (singleMatch) {
@@ -645,6 +722,24 @@
     return weaponSoundsFor(this.weapons()[0]);
   };
 
+  /**
+   * The fire profile of the weapon actually in hand. A dry magazine turns
+   * Attack into Bash, one strike with the thing itself, so there is no burst
+   * and no automatic report to fold.
+   */
+  Game_Actor.prototype.fireProfile = function () {
+    if (this.isOutOfBullets()) return { rate: 1, automatic: false };
+    return fireProfileFor(this.weapons()[0]);
+  };
+
+  Game_Actor.prototype.fireRate = function () {
+    return this.fireProfile().rate;
+  };
+
+  Game_Actor.prototype.isAutomaticWeapon = function () {
+    return this.fireProfile().automatic;
+  };
+
   Game_Actor.prototype.hasNoMultiAttackSound = function () {
     const weapons = this.weapons();
     if (weapons.length === 0) return false;
@@ -722,9 +817,16 @@
       });
 
       const scene = SceneManager._scene;
-      if (scene && scene._spriteset && scene._spriteset._3dWeaponSprites) {
-        const sprite3d = scene._spriteset._3dWeaponSprites['right'];
-        if (sprite3d) sprite3d.playReload();
+      const sprites = scene && scene._spriteset && scene._spriteset._3dWeaponSprites;
+      if (sprites) {
+        // Every hand that is holding something works on it: the gun being
+        // reloaded is not always the right one (a pistol carried offhand is
+        // still a pistol), and only the hand that holds the weapon used to
+        // move at all.
+        for (const hand in sprites) {
+          const sprite3d = sprites[hand];
+          if (sprite3d && sprite3d.playReload) sprite3d.playReload();
+        }
       }
     }
   };
@@ -766,13 +868,19 @@
     const subject = this.subject();
 
     if (this.isAttack() && subject && subject.isActor()) {
+      let repeats = _Game_Action_numRepeats.call(this);
+      // The trigger held down: every extra round of the burst is a repeat of
+      // its own, so it gets its own motion, its own damage and its own report.
+      // The Attack Times trait a firearm carries says the same thing the fire
+      // rate says, so the two are read as one reading of how many rounds leave
+      // the barrel, never added together.
+      const rate = subject.fireRate();
+      if (rate > 1) repeats = Math.max(repeats, rate);
       const current = subject.getCurrentBullets();
       // A full or partial magazine still caps the repeat count at what's
       // left; an empty one no longer caps it at zero hits, that's the Bash.
-      if (current !== null && current > 0) {
-        const normalRepeats = _Game_Action_numRepeats.call(this);
-        return Math.min(normalRepeats, current);
-      }
+      if (current !== null && current > 0) return Math.min(repeats, current);
+      return repeats;
     }
 
     return _Game_Action_numRepeats.call(this);
@@ -934,7 +1042,11 @@
         // the whole flurry the way a multi-hit swing is.
         const ranged = !!(heldWeapon && RANGED_WTYPES.includes(heldWeapon.wtypeId)) &&
           !actor.isOutOfBullets();
-        const noMultiSound = !ranged && actor.hasNoMultiAttackSound();
+        // An <Automatic> weapon, or one whose bank is a recorded burst, is the
+        // exception to that: the file already holds every report of the
+        // flurry, so it is played on the first round and left to run.
+        const automatic = ranged && fireProfileFor(heldWeapon).automatic;
+        const noMultiSound = automatic || (!ranged && actor.hasNoMultiAttackSound());
         this._multiAttackHitCount = this._multiAttackHitCount || 0;
 
         if (this._multiAttackHitCount === 0 || !noMultiSound) {
@@ -1263,10 +1375,7 @@
     if (!this._3dWeaponSprites) this._3dWeaponSprites = {};
     this._mirroredOffhand = false;
 
-    // In card combat mode (RoguelikeCardSystem, Switch 45, locked at character
-    // creation) attacks are cards rather than weapon swings, so nothing is held.
-    const cardMode = window.isCardCombatMode ? window.isCardCombatMode() : $gameSwitches.value(45);
-    if (cardMode || !window.Sprite_3DWeapon) {
+    if (!window.Sprite_3DWeapon) {
       this.clearWeaponModels();
       return;
     }
@@ -1332,7 +1441,13 @@
       }
       return null;
     }
-    if (!held || held._weapon !== weapon) {
+    // The vector gun is ONE database row in two shapes: folded into the Blade
+    // of Thelema it is a different model in the hand, and the row is the same
+    // object either way, so the form (and the element it strikes with) has to
+    // be compared too or the machete never appears (Weapon/VectorGunSystem.js).
+    const formKey = (window.VectorGun && window.VectorGun.isVectorGun(weapon))
+      ? window.VectorGun.modelKey() : '';
+    if (!held || held._weapon !== weapon || held._vgFormKey !== formKey) {
       const isLeft = hand === 'left';
       // The incoming model is built BEFORE the outgoing one is let go. When
       // this is the only weapon on screen, terminating first drops the last
@@ -1343,6 +1458,7 @@
       // terminate() runs disposeWeaponObject3D; a bare scene.remove would leak
       // the model's GPU buffers on every swap.
       if (held) held.terminate();
+      next._vgFormKey = formKey;
       this._3dWeaponSprites[hand] = next;
     }
     const sprite = this._3dWeaponSprites[hand];

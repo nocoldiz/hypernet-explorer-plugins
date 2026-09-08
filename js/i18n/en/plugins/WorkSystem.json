@@ -5,6 +5,8 @@
   "unknown": "Unknown",
   "requirements": "Requirements",
   "successRate": "Success Rate",
+  "deficitWarning": "Deficits detected. Taking this contract on carries a higher risk of failure and injury.",
+  "successRatePct": "{pct}% success",
   "selectWorker": "Select worker:",
   "noGuildLaborRequisitionsCurrently": "No guild labor requisitions currently available.",
   "dismiss": "Dismiss",
@@ -100,5 +102,10 @@
   },
   "ui": {},
   "guildRegistry": "GUILD LABOR REGISTRY",
-  "guildRegistryCategory": "GUILD LABOR REGISTRY: {category}"
+  "guildRegistryCategory": "GUILD LABOR REGISTRY: {category}",
+  "shift": {
+    "dispatched": "{actor} leaves for a {hours}h shift at {job}.",
+    "returned": "{actor} is back from {job} with {amount}€.",
+    "benched": "{actor} finished at {job} with {amount}€, and waits with the inactive members."
+  }
 }

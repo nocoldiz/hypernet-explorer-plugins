@@ -697,8 +697,8 @@
     }
 
     PluginManager.registerCommand(pluginName, 'showClock', () => {
-        const interp = $gameMap._interpreter;
-        const event  = $gameMap.event(interp.eventId());
+        const interp = $gameMap && $gameMap._interpreter;
+        const event  = interp ? $gameMap.event(interp.eventId()) : null;
         if (!event) return;
         showClockAt($gameMap.mapId(), event.x, event.y);
     });

@@ -5,12 +5,15 @@
     "ap": "AP",
     "mp": "MP"
   },
+  "assist": {
+   "none": "Non c'è nessuno da assistere.",
+   "borrowed": "\\C[3]{skill}\\C[0] presa in prestito da {actor}."
+   },
   "cost": {
     "mp": "{n} MP",
     "ap": "{n} AP"
   },
   "battle": {
-    "more": "Altro... ({count})",
     "back": "Indietro",
     "none": "Niente da lanciare"
   },
@@ -78,8 +81,8 @@
   "empty": {
     "title": "Codicillo del Grimorio",
     "hint": "Scegli un'abilità dall'elenco a sinistra per esaminarne la scala elementale, il costo d'uso e le azioni alchemiche.",
-    "section": "Nessuna abilità catalogata in questa sezione.",
-    "category": "Nessuna abilità catalogata in questa categoria."
+    "section": "[Vuoto]",
+    "category": "[Vuoto]"
   },
   "spec": {
     "statMet": "{value} (soddisfatta)",
@@ -87,6 +90,7 @@
     "trains": "Allena",
     "bonus": "Bonus abilità",
     "label": {
+      "damageCategory": "Classe di danno",
       "statReq": "Richiede",
       "statHeld": "Statistica base",
       "grantedBy": "Concessa da",
@@ -113,7 +117,8 @@
     "best": "Migliori",
     "random": "Casuali",
     "bestApplied": "Sincronizzate le {n} abilità più utili.",
-    "randomApplied": "Sincronizzate {n} abilità casuali."
+    "randomApplied": "Sincronizzate {n} abilità casuali.",
+    "statLocked": "{name} richiede {stat} per sincronizzarsi."
   },
   "tag": {
     "field": "Campo"

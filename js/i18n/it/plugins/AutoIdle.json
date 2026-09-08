@@ -145,5 +145,27 @@
   },
   "succession": {
     "takesCommand": "{name} prende il comando del gruppo."
+  },
+  "pet": {
+    "actionPet": "Accarezza",
+    "actionTalk": "Parla",
+    "actionEmpathize": "Empatizza",
+    "actionCancel": "Lascia stare",
+    "petted": [
+      "{name} si preme contro la tua mano e non si sposta piu'.",
+      "{name} emette un verso basso e soddisfatto.",
+      "Gratti {name} dove non arriva da solo. Ti perdona tutto.",
+      "{name} ti da' una testata sulla gamba e si acciambella.",
+      "{name} si rotola sulla schiena. A quanto pare e' la risposta giusta."
+    ],
+    "said": [
+      "Sto al passo. Piu' o meno.",
+      "Questa strada ha un odore che non mi piace.",
+      "Dimmelo e passo avanti io.",
+      "Mangerei. Quando mai non mangerei?",
+      "Non lasciarmi indietro un'altra volta.",
+      "C'era qualcosa la' dietro. Adesso non c'e' piu'.",
+      "Preferisco quando camminiamo."
+    ]
   }
 }

@@ -47,5 +47,6 @@
   ],
   "statFallback": "Statistica",
   "inInventory": "In inventario ({count})",
-  "existentInWorld": "Libero nel mondo"
+  "existentInWorld": "Libero nel mondo",
+  "structuralScan": "Scansione Strutturale"
 }

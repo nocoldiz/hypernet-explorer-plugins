@@ -779,28 +779,28 @@
                 }
                 #raman-overlay * { box-sizing: border-box; }
                 .raman-panel {
-                    width: min(860px, 92vw); height: min(600px, 88vh);
+                    width: 100%; height: 100%;
                     display: flex; flex-direction: column;
                     background: var(--bg-panel, #0a0a0a);
                     border: 2px solid var(--border-gold-amber, #d4a050);
-                    border-radius: 4px;
-                    box-shadow: 0 0 24px rgba(212, 160, 80, 0.25);
+                    border-radius: 0;
+                    box-shadow: inset 0 0 60px rgba(212, 160, 80, 0.12);
                 }
                 .raman-title {
-                    padding: 8px 12px; text-align: center;
-                    letter-spacing: 3px; font-size: 14px; font-weight: bold;
+                    padding: 10px 16px; text-align: center;
+                    letter-spacing: 4px; font-size: 18px; font-weight: bold;
                     color: var(--text-primary-hover, #ffcc66);
                     border-bottom: 1px solid var(--border-gold-amber, #d4a050);
                     background: rgba(212, 160, 80, 0.08);
                 }
                 .raman-target {
-                    padding: 6px 12px; font-size: 12px;
+                    padding: 8px 16px; font-size: 14px;
                     color: var(--text-text-alt-9, #c8a064);
                     display: flex; justify-content: space-between; gap: 12px;
                 }
                 .raman-ident { color: var(--text-primary-hover, #ffcc66); font-weight: bold; }
                 .raman-plot {
-                    position: relative; flex: 1; margin: 0 12px;
+                    position: relative; flex: 1; margin: 0 16px;
                     border: 1px solid var(--border-border-alt-1, #5a4a2a);
                     background: #000000;
                 }
@@ -814,11 +814,11 @@
                     white-space: pre; display: none;
                 }
                 .raman-status {
-                    padding: 6px 12px; font-size: 11px;
+                    padding: 8px 16px; font-size: 13px;
                     color: var(--text-text-alt-9, #c8a064);
                 }
                 .raman-hint {
-                    padding: 0 12px 8px; font-size: 11px;
+                    padding: 0 16px 10px; font-size: 13px;
                     color: var(--text-disabled, #777777);
                     display: flex; justify-content: space-between; gap: 12px;
                 }

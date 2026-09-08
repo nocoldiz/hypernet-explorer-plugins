@@ -1,4 +1,5 @@
 /*:
+ * @target MZ
  * @plugindesc [Add-on] A deep, real-time biologic simulation for Actor 1.
  * @author Omni-Lex
  * @help
@@ -866,11 +867,13 @@
                   </div>
                   <h1 class="title bio-04">${T('Biologic.biology')}</h1>
                 </div>
-                
-                <div class="card left-profile-fields bio-05"></div>
+                <div class="bio-left-header bio-09"></div>
+                <div class="bio-chapter"></div>
             </div>
-            
-            <div class="right-page"></div>
+
+            <div class="right-page">
+                <div class="bio-parts-pane"></div>
+            </div>
         </div>
     `;
 
@@ -886,7 +889,10 @@
     if (!container || container._bioWheelBound) return;
     container._bioWheelBound = true;
     container.addEventListener("wheel", (e) => {
-      const page = container.querySelector(".right-page");
+      // Both pages scroll now (the chapter on the left, the anatomy list on the
+      // right), so the wheel belongs to whichever pane the cursor is over.
+      let page = e.target && e.target.closest ? e.target.closest(".bio-chapter, .bio-parts-pane") : null;
+      if (!page) page = container.querySelector(".bio-chapter");
       if (!page) return;
       // Wheel deltas arrive in pixels, lines or pages depending on the device.
       const delta = e.deltaMode === 1 ? e.deltaY * 40 : (e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY);
@@ -1022,15 +1028,15 @@
       this.cycleUIActor(-1);
     }
 
-    const rightPage = this._dndContainer ? this._dndContainer.querySelector(".right-page") : null;
-    if (rightPage) {
-      this.updateUITriggerScroll(rightPage);
+    const chapter = this._dndContainer ? this._dndContainer.querySelector(".bio-chapter") : null;
+    if (chapter) {
+      this.updateUITriggerScroll(chapter);
       if (Input.isPressed('down')) {
-        rightPage.scrollTop += 8;
-        this.syncUIScrollVar(rightPage);
+        chapter.scrollTop += 8;
+        this.syncUIScrollVar(chapter);
       } else if (Input.isPressed('up')) {
-        rightPage.scrollTop -= 8;
-        this.syncUIScrollVar(rightPage);
+        chapter.scrollTop -= 8;
+        this.syncUIScrollVar(chapter);
       }
     }
   };
@@ -1086,11 +1092,10 @@
         <div class="metric-row"><span class="metric-label">${T('Biologic.personality')}</span><span class="metric-value bio-07">${pName}</span></div>
         <div class="metric-row"><span class="metric-label">${T('Biologic.reproduction')}</span><span class="metric-value">${repText}</span></div>
     `;
-    const profileContainer = this._dndContainer.querySelector(".left-profile-fields");
-    if (profileContainer && leftProfileHTML !== this._lastProfileHTML) {
-      this._lastProfileHTML = leftProfileHTML;
-      profileContainer.innerHTML = leftProfileHTML;
-    }
+    // The identity rows are no longer a card of their own on the left page:
+    // they open the Overview chapter, which is where the rest of "who is this"
+    // already lives.
+    this._profileRowsHTML = leftProfileHTML;
 
     // Only redraw the bust canvas when its driving value (the bust image path)
     // changes; the canvas itself is not rebuilt by this refresh.
@@ -1115,10 +1120,17 @@
     });
     categoryTabsHTML += `</div>`;
 
-    const rightPage = this._dndContainer.querySelector(".right-page");
-    const rightScrollTop = rightPage ? rightPage.scrollTop : 0;
+    const header = this._dndContainer.querySelector(".bio-left-header");
+    const headerHTML = `<div class="companion-switcher bio-10">${companionHTML}</div>${categoryTabsHTML}`;
+    if (header && headerHTML !== this._lastHeaderHTML) {
+      this._lastHeaderHTML = headerHTML;
+      header.innerHTML = headerHTML;
+    }
 
-    let rightHTML = `<div class="bio-right-header bio-09"><div class="companion-switcher bio-10">${companionHTML}</div>${categoryTabsHTML}</div>`;
+    const chapterPane = this._dndContainer.querySelector(".bio-chapter");
+    const chapterScrollTop = chapterPane ? chapterPane.scrollTop : 0;
+
+    let rightHTML = "";
 
     switch (this._category) {
       case 0:
@@ -1150,11 +1162,226 @@
         break;
     }
 
-    if (rightPage && rightHTML !== this._lastRightHTML) {
+    if (chapterPane && rightHTML !== this._lastRightHTML) {
       this._lastRightHTML = rightHTML;
-      rightPage.innerHTML = rightHTML;
-      rightPage.scrollTop = rightScrollTop;
+      chapterPane.innerHTML = rightHTML;
+      chapterPane.scrollTop = chapterScrollTop;
     }
+
+    // The anatomy list is not a chapter: it stands on the right page whatever
+    // the left page is showing.
+    const partsPane = this._dndContainer.querySelector(".bio-parts-pane");
+    const partsHTML = this.renderBodyPartsPane(actor);
+    if (partsPane && partsHTML !== this._lastPartsHTML) {
+      const partsScroll = partsPane.scrollTop;
+      this._lastPartsHTML = partsHTML;
+      partsPane.innerHTML = partsHTML;
+      partsPane.scrollTop = partsScroll;
+    }
+  };
+
+  // Where each humanoid part sits on the body plate, as percentages of the
+  // plate: x is the centre of the chip, y its top. Anything not named here is
+  // not part of the human plan and goes in the grid beside the body.
+  const BODY_MAP = {
+    HEAD: [50, 0], LEFT_EYE: [26, 8], BRAIN: [50, 8], RIGHT_EYE: [74, 8],
+    LEFT_EAR: [26, 16], NOSE: [50, 16], RIGHT_EAR: [74, 16],
+    MOUTH: [37, 24], TEETH: [63, 24],
+    LEFT_ARM: [12, 33], TORSO: [50, 32], RIGHT_ARM: [88, 33],
+    LEFT_HAND: [12, 41], LEFT_LUNG: [36, 40], RIGHT_LUNG: [64, 40], RIGHT_HAND: [88, 41],
+    LEFT_FINGERS: [12, 49], HEART: [36, 48], RIGHT_FINGERS: [88, 49],
+    LIVER: [36, 56], STOMACH: [64, 56],
+    SPLEEN: [36, 64], INTESTINES: [64, 64],
+    GENITALS: [50, 72],
+    LEFT_LEG: [34, 80], RIGHT_LEG: [66, 80],
+    LEFT_FOOT: [34, 88], RIGHT_FOOT: [66, 88],
+    LEFT_TOES: [34, 96], RIGHT_TOES: [66, 96]
+  };
+
+  // A body is drawn as a body only when the anatomy really is the human plan:
+  // a head, a torso and the four limbs. Creatures and anything rebuilt by a
+  // hit source fall back to the flat grid.
+  const HUMANOID_CORE = ["HEAD", "TORSO", "LEFT_ARM", "RIGHT_ARM", "LEFT_LEG", "RIGHT_LEG"];
+  function isHumanoidAnatomy(parts) {
+    if (!parts) return false;
+    return HUMANOID_CORE.every((k) => !!parts[k]);
+  }
+
+  // Drawn to scale and centred: the old path was stretched by
+  // preserveAspectRatio="none" across the whole plate, which flattened the
+  // head into a lump.
+  const BODY_SILHOUETTE = `
+      <svg class="bio-body-figure" viewBox="0 0 100 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <circle cx="50" cy="13" r="10"/>
+          <rect x="46" y="21" width="8" height="8" rx="3"/>
+          <path d="M50 28c-8 0-14 3-16 9l-4 27c-0.8 5 7 6 7.6 1L40 45v22c0 8 1 16 2 24h16c1-8 2-16 2-24V45l2.4 20c0.6 5 8.4 4 7.6-1l-4-27c-2-6-8-9-16-9z"/>
+          <path d="M42 93l-3 38-2 42c0 5 8 5 8.4 0L49 129l1-36z"/>
+          <path d="M58 93l3 38 2 42c0 5-8 5-8.4 0L51 129l-1-36z"/>
+      </svg>`;
+
+  // ---- The creature plate ------------------------------------------------
+  // A character whose anatomy is not the human plan is drawn as its OWN 3D
+  // model: window.ActorModel3D is the one answer to which model portrays a
+  // character, so the figure on this page is the figure the status screen
+  // shows. It is rendered once, flat filled in a single ink, and cached as an
+  // image, so the page never carries a live GL context of its own.
+  const creatureSilhouettes = {};
+
+  const silhouetteInk = () => {
+    try {
+      const v = getComputedStyle(document.documentElement)
+        .getPropertyValue("--text-primary-hover").trim();
+      if (v) return v;
+    } catch (e) {}
+    return "#e0b000";
+  };
+
+  // One colour, no lighting, no billboards: a silhouette, not a portrait.
+  function paintFlat(root, color) {
+    const flat = new THREE.MeshBasicMaterial({ color: new THREE.Color(color) });
+    root.traverse((o) => {
+      if (o.isMesh || o.isSkinnedMesh) o.material = flat;
+      else if (o.isSprite || o.isPoints || o.isLine) o.visible = false;
+    });
+  }
+
+  function drawCreatureSilhouette(battler, actor) {
+    let renderer = null;
+    try {
+      const W = 360, H = 560;
+      const canvas = document.createElement("canvas");
+      canvas.width = W;
+      canvas.height = H;
+      renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+      renderer.setPixelRatio(1);
+      renderer.setSize(W, H, false);
+      const scene3d = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40, W / H, 0.05, 300);
+      try { battler.update(1 / 60); } catch (e) {}
+      // A limb this character has lost is missing from the silhouette too.
+      const HC = window.HealthCore;
+      const states = (HC && HC.partStates) ? HC.partStates(actor) : actor._bodyParts;
+      try { if (states && battler.hideBrokenParts) battler.hideBrokenParts(states); } catch (e) {}
+      const fit = window.ActorModel3D.framing(battler, camera, 1.12);
+      const holder = new THREE.Group();
+      holder.position.copy(fit.center).multiplyScalar(-1);
+      holder.add(battler.model);
+      scene3d.add(holder);
+      paintFlat(battler.model, silhouetteInk());
+      camera.position.set(0, 0, fit.distance);
+      camera.lookAt(0, 0, 0);
+      renderer.render(scene3d, camera);
+      return canvas.toDataURL("image/png");
+    } catch (e) {
+      return null;
+    } finally {
+      if (renderer) {
+        try { renderer.dispose(); } catch (e) {}
+        try { renderer.forceContextLoss(); } catch (e) {}
+      }
+    }
+  }
+
+  // Returns the cached image, or null while it is being built: the page
+  // re-renders itself once the model has arrived.
+  function creatureSilhouette(actor) {
+    const AM = window.ActorModel3D;
+    if (!AM || !AM.infoFor || typeof THREE === "undefined") return null;
+    let info = null;
+    try { info = AM.infoFor(actor); } catch (e) { info = null; }
+    if (!info) return null;
+    const key = actor.actorId() + ":" + (AM.keyFor(info) || "");
+    if (Object.prototype.hasOwnProperty.call(creatureSilhouettes, key)) {
+      return creatureSilhouettes[key];
+    }
+    creatureSilhouettes[key] = null;
+    const scene = SceneManager._scene;
+    Promise.resolve(AM.build(info)).then((battler) => {
+      const url = (battler && battler.model) ? drawCreatureSilhouette(battler, actor) : null;
+      creatureSilhouettes[key] = url;
+      if (url && SceneManager._scene === scene && scene.refreshUIBiologic) scene.refreshUIBiologic();
+    }).catch(() => { creatureSilhouettes[key] = null; });
+    return null;
+  }
+
+  // The limb and organ plate, drawn once and shown on every chapter.
+  Scene_BiologicSimulation.prototype.renderBodyPartsPane = function (actor) {
+    const parts = actor._bodyParts || {};
+    const humanoid = isHumanoidAnatomy(parts);
+
+    const chipHTML = (key, part, placed, gridStyle) => {
+      // Broken, cut off or destroyed: which word a finished part gets is the
+      // difficulty's and the part's business (window.HealthCore.partStatusLabel).
+      const HC = window.HealthCore;
+      const statusText = (HC && HC.partStatusLabel) ? HC.partStatusLabel(actor, key, part) : "";
+      const isDestroyed = !!statusText || part.damaged || part.currentHp <= 0;
+      const rate = part.maxHp > 0 ? (part.currentHp / part.maxHp) * 100 : 0;
+      const hpText = isDestroyed ? (statusText || T('Biologic.destroyed')) : `${Math.ceil(part.currentHp)}/${part.maxHp}`;
+      const band = isDestroyed ? 'gauge-band--bad' : window.NeedGauge.band(rate);
+      const pos = placed ? BODY_MAP[key] : null;
+      const style = pos
+        ? ` style="left:${pos[0]}%;top:${pos[1]}%"`
+        : (gridStyle ? ` style="${gridStyle}"` : "");
+      const cls = (placed ? "bodypart-cell bodypart-cell--placed" : "bodypart-cell")
+        + (gridStyle ? " bodypart-cell--flank" : "")
+        + (isDestroyed ? " destroyed" : "");
+      return `
+              <div class="${cls}"${style}>
+                  <span class="bodypart-vital-lbl">${part.name}</span>
+                  <span class="bodypart-vital-val gauge-ink ${band}">${hpText}</span>
+                  <div class="bodypart-vital-bar">
+                      <div class="bodypart-vital-bar-fill gauge-fill ${band}" style="width:${isDestroyed ? 0 : rate}%"></div>
+                  </div>
+              </div>
+          `;
+    };
+
+    if (!humanoid) {
+      // Chips flank the figure two to a row, so none of them covers the model
+      // or its neighbour. The order the anatomy is declared in is kept.
+      const keys = Object.keys(parts).filter((k) => !!parts[k]);
+      const rows = Math.max(1, Math.ceil(keys.length / 2));
+      let chips = "";
+      keys.forEach((key, i) => {
+        const col = (i % 2 === 0) ? 1 : 3;
+        const row = Math.floor(i / 2) + 1;
+        chips += chipHTML(key, parts[key], false, `grid-column:${col};grid-row:${row}`);
+      });
+      const silhouette = creatureSilhouette(actor);
+      const figure = silhouette
+        ? `<img class="bio-creature-figure" src="${silhouette}" alt="" style="grid-row:1 / span ${rows}">`
+        : `<div class="bio-creature-figure bio-creature-figure--pending" style="grid-row:1 / span ${rows}"></div>`;
+      return `
+          <div class="card-header bio-parts-title">${T('Biologic.bodyParts')}</div>
+          <div class="bio-creature-plate" style="grid-template-rows:repeat(${rows}, auto)">
+              ${figure}
+              ${chips}
+          </div>
+      `;
+    }
+
+    let plateHTML = "";
+    let extraHTML = "";
+    for (const key in parts) {
+      const part = parts[key];
+      if (!part) continue;
+      if (BODY_MAP[key]) plateHTML += chipHTML(key, part, true);
+      else extraHTML += chipHTML(key, part, false);
+    }
+
+    const extrasBlock = extraHTML
+      ? `<div class="bio-parts-extra-title">${T('Biologic.additionalAnatomy')}</div>
+         <div class="bio-parts-grid">${extraHTML}</div>`
+      : "";
+
+    return `
+          <div class="card-header bio-parts-title">${T('Biologic.bodyParts')}</div>
+          <div class="bio-body-plate">
+              ${BODY_SILHOUETTE}
+              ${plateHTML}
+          </div>
+          ${extrasBlock}
+      `;
   };
 
   Scene_BiologicSimulation.prototype.renderChapterOverview = function (actor, useTranslation) {
@@ -1169,46 +1396,16 @@
     });
     if (statesHTML === "") statesHTML = `<span>${T('Biologic.noActiveStates')}</span>`;
 
-    // Uniform needs-bar palette (matches the Hunger/Sleep/Hygiene bars on the
-    // main menu right page): gold when healthy, orange when low, red when
-    // critical, so this list reads on the same scale as the rest of the UI.
-
-    let partsGridHTML = `<div class="grid-3 bio-12">`;
-    for (let key in actor._bodyParts) {
-      const part = actor._bodyParts[key];
-      if (!part) continue;
-      // Broken, cut off or destroyed: which word a finished part gets is the
-      // difficulty's and the part's business (window.HealthCore.partStatusLabel).
-      const HC = window.HealthCore;
-      const statusText = (HC && HC.partStatusLabel) ? HC.partStatusLabel(actor, key, part) : "";
-      const isDestroyed = !!statusText || part.damaged || part.currentHp <= 0;
-      const rate = part.maxHp > 0 ? (part.currentHp / part.maxHp) * 100 : 0;
-      const cellClass = isDestroyed ? "bodypart-cell destroyed" : "bodypart-cell";
-      const hpText = isDestroyed ? (statusText || T('Biologic.destroyed')) : `${Math.ceil(part.currentHp)}/${part.maxHp}`;
-      const band = isDestroyed ? 'gauge-band--bad' : window.NeedGauge.band(rate);
-
-      partsGridHTML += `
-              <div class="${cellClass}">
-                  <span class="bodypart-vital-lbl">${part.name}</span>
-                  <span class="bodypart-vital-val gauge-ink ${band}">${hpText}</span>
-                  <div class="bodypart-vital-bar">
-                      <div class="bodypart-vital-bar-fill gauge-fill ${band}" style="width:${isDestroyed ? 0 : rate}%"></div>
-                  </div>
-              </div>
-          `;
-    }
-    partsGridHTML += `</div>`;
-
     return `
+          <div class="card">
+              <div class="card-header">${T('Biologic.tab.overview')}</div>
+              ${this._profileRowsHTML || ""}
+          </div>
           <div class="card">
               <div class="card-header">${T('Biologic.statesReactions')}</div>
               <div class="bio-13">
                   ${statesHTML}
               </div>
-          </div>
-          <div class="card">
-              <div class="card-header">${T('Biologic.anatomicalIntegrityLimbOrganHp')}</div>
-              ${partsGridHTML}
           </div>
       `;
   };
@@ -1489,60 +1686,33 @@
       if (integrityPercent < 30) rowColor = "danger";
       else if (integrityPercent < 75) rowColor = "warning";
 
-      let flowBarColor = "magic";
-      if (currentFlow > 115) flowBarColor = "hp";
-      else if (currentFlow < 45) flowBarColor = "mp";
-
       tableRows += `
-              <tr class="bio-19">
-                  <td class="bio-20">${partName}</td>
-                  <td class="bio-21">
-                      <div class="metric-row bio-22">
-                          <span>${integrityPercent}%</span>
-                      </div>
-                      <div class="gauge-container bio-23">
-                          <div class="gauge-outer bio-24"><div class="gauge-inner ${rowColor === 'success' ? 'magic' : (rowColor === 'warning' ? 'mp' : 'hp')}" style="width:${integrityPercent}%"></div></div>
-                      </div>
-                  </td>
-                  <td class="bio-25">
-                      <div class="metric-row bio-22">
-                          <span>${currentFlow}%</span>
-                      </div>
-                      <div class="gauge-container bio-23">
-                          <div class="gauge-outer bio-24"><div class="gauge-inner ${flowBarColor}" style="width:${Math.min(100, currentFlow)}%"></div></div>
-                      </div>
-                  </td>
-              </tr>
+              <div class="meridian-row">
+                  <span class="meridian-name">${partName}</span>
+                  <span class="meridian-val meridian-val--${rowColor}">${integrityPercent}%</span>
+                  <span class="meridian-track"><span class="meridian-fill meridian-fill--${rowColor}" style="width:${integrityPercent}%"></span></span>
+                  <span class="meridian-flow" title="${T('Biologic.flowIntensity')}">≈ ${currentFlow}%</span>
+              </div>
           `;
     }
 
     return `
-          <div class="card">
-              <div class="card-header">${T('Biologic.esotericCirculation')}</div>
-              <div class="metric-row">
+          <div class="card bio-26 bio-span-2 ley-summary">
+              <div class="ley-summary-item">
                   <span class="metric-label">${T('Biologic.manaFlowRate')}</span>
                   <span class="badge ${flowColor}">${flow}% (${flowStatus})</span>
               </div>
-              <div class="metric-row">
+              <div class="ley-summary-item">
                   <span class="metric-label">${T('Biologic.channelStability')}</span>
                   <span class="badge ${stabilityColor}">${leyStability}</span>
               </div>
           </div>
           
-          <div class="card bio-26">
+          <div class="card bio-26 bio-span-2">
               <div class="card-header bio-27">${T('Biologic.meridianChannelStatus')}</div>
-              <table class="bio-28">
-                  <thead>
-                      <tr class="bio-29">
-                          <th class="bio-30">${T('Biologic.meridian')}</th>
-                          <th class="bio-30">${T('Biologic.channelIntegrity')}</th>
-                          <th class="bio-31">${T('Biologic.flowIntensity')}</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      ${tableRows}
-                  </tbody>
-              </table>
+              <div class="meridian-list">
+                  ${tableRows}
+              </div>
           </div>
       `;
   };
@@ -1583,27 +1753,28 @@
           badgeColor = "warning";
         }
 
-        // Each region carries its own transmitters (the motor cortex has
+        // Every region carries its own transmitter panel (the motor cortex has
         // acetylcholine/GABA, the prefrontal dopamine/serotonin/norepinephrine),
-        // so list what is actually there instead of padding with fixed 50s.
+        // so list all of them with their oxygen draw instead of a bare bar.
         const nts = r.neurotransmitters || {};
         const ntLabels = T.obj('Biologic.ntAbbrev') || {};
-        const ntText = Object.keys(nts)
+        const ntHTML = Object.keys(nts)
           .filter((k) => Number.isFinite(Number(nts[k])))
-          .map((k) => `${ntLabels[k] || k}: ${Number(nts[k]).toFixed(1)}`)
-          .join(" | ");
+          .map((k) => `<span class="brain-nt-chip"><span class="brain-nt-key">${ntLabels[k] || k}</span> ${Number(nts[k]).toFixed(2)}</span>`)
+          .join("");
         const oxygenVal = num(r.oxygenConsumption, 0);
 
         regionsHTML += `
-                  <div class="brain-region-card">
+                  <div class="brain-region-card brain-region-card--${badgeColor}">
                       <div class="brain-region-header">
                           <strong class="bio-32">${regionName}</strong>
                           <span class="badge ${badgeColor} bio-33">${activity}% (${badgeStatus})</span>
                       </div>
+                      <div class="brain-region-bar"><div class="brain-region-bar-fill badge-fill--${badgeColor}" style="width:${Math.max(0, Math.min(100, activity))}%"></div></div>
                       <div class="brain-region-func">${funcDesc}</div>
                       <div class="brain-region-meta">
-                          <span>O₂: ${oxygenVal.toFixed(1)}</span>
-                          <span>${ntText}</span>
+                          <span class="brain-region-o2">${T('Biologic.oxygenConsumption')}: ${oxygenVal.toFixed(1)}</span>
+                          <span class="brain-region-nt">${ntHTML}</span>
                       </div>
                   </div>
               `;
@@ -1670,9 +1841,9 @@
               </div>
           </div>
 
-          <div class="card bio-26">
+          <div class="card bio-26 bio-span-2">
               <div class="card-header">${T('Biologic.brainRegionalCortexRegistry')}</div>
-              <div class="bio-45">
+              <div class="bio-brain-regions">
                   ${regionsHTML}
               </div>
           </div>
@@ -1686,8 +1857,8 @@
     const api = window.DiseaseSystem;
     if (!api || !api.panelHTML) return `<div class="card-header">${T('Biologic.tab.diseases')}</div>`;
     return `
-      <div class="bodyparts-card">
-        <div class="card-label">${T('Biologic.tab.diseases')}</div>
+      <div class="card">
+        <div class="card-header">${T('Biologic.tab.diseases')}</div>
         ${api.panelHTML(actor)}
       </div>
     `;
@@ -1730,12 +1901,14 @@
       return `
               <div class="card">
                   <div class="card-header">${T('Biologic.maleReproductiveGlands')}</div>
+                  <div class="metric-columns">
                   <div class="metric-row"><span class="metric-label">${T('Biologic.spermDensity')}</span><span class="metric-value">${(spermCount / 1000000).toFixed(0)}M /mL</span></div>
                   <div class="metric-row"><span class="metric-label">${T('Biologic.dailyProductionRate')}</span><span class="metric-value">${T('Biologic.unit.millionPerDay', { n: dailyProduction.toFixed(0) })}</span></div>
                   <div class="metric-row"><span class="metric-label">${T('Biologic.spermMotility')}</span><span class="metric-value">${motility.toFixed(1)}%</span></div>
                   <div class="metric-row"><span class="metric-label">${T('Biologic.normalMorphology')}</span><span class="metric-value">${morphology.toFixed(1)}%</span></div>
                   <div class="metric-row"><span class="metric-label">${T('Biologic.testosteroneOutput')}</span><span class="metric-value">${testosterone.toFixed(0)} ng/dL</span></div>
                   <div class="metric-row"><span class="metric-label">${T('Biologic.fertilityIndex')}</span><span class="metric-value">${fertility.toFixed(1)}%</span></div>
+                  </div>
               </div>
           `;
     }
@@ -1768,11 +1941,13 @@
         detailsHTML = `
                   <div class="card bio-49">
                       <div class="card-header bio-15">${T('Biologic.activeGestationalRegistry')}</div>
+                      <div class="metric-columns">
                       <div class="metric-row"><span class="metric-label">${T('Biologic.gestationalState')}</span><span class="badge danger">${T('Biologic.pregnant')}</span></div>
                       <div class="metric-row"><span class="metric-label">${T('Biologic.gestationalAge')}</span><span class="metric-value">${gestationalAge} ${T('Biologic.days')} (${(gestationalAge / 7).toFixed(1)} ${T('Biologic.weeks')})</span></div>
                       <div class="metric-row"><span class="metric-label">${T('Biologic.currentTrimester')}</span><span class="metric-value">${trimester}° ${T('Biologic.trimester')}</span></div>
                       <div class="metric-row"><span class="metric-label">${T('Biologic.gestationalTerm')}</span><span class="metric-value">${term} ${T('Biologic.days')}</span></div>
                       <div class="metric-row"><span class="metric-label">${T('Biologic.gestationalProgress')}</span><span class="metric-value">${progressPercent.toFixed(1)}%</span></div>
+                      </div>
                       <div class="gauge-container">
                           <div class="gauge-outer"><div class="gauge-inner hp" style="width:${progressPercent}%"></div></div>
                       </div>
@@ -1780,9 +1955,11 @@
                   
                   <div class="card">
                       <div class="card-header">${T('Biologic.fetalBiometricRegister')}</div>
+                      <div class="metric-columns">
                       <div class="metric-row"><span class="metric-label">${T('Biologic.developmentalStage')}</span><span class="metric-value bio-50">${fetalStage}</span></div>
                       <div class="metric-row"><span class="metric-label">${T('Biologic.estimatedFetalLength')}</span><span class="metric-value">${sizeDesc}</span></div>
                       <div class="metric-row"><span class="metric-label">${T('Biologic.estimatedFetalWeight')}</span><span class="metric-value">${weightDesc}</span></div>
+                      </div>
                       <div class="metric-row bio-51"><span class="metric-label bio-52">${T('Biologic.developmentalMilestone')}</span></div>
                       <p class="bio-53">${milestone}</p>
                   </div>
@@ -1804,10 +1981,12 @@
         detailsHTML = `
                   <div class="card">
                       <div class="card-header">${T('Biologic.physiologicalOvarianCycle')}</div>
+                      <div class="metric-columns">
                       <div class="metric-row"><span class="metric-label">${T('Biologic.cycleStatus')}</span><span class="badge ${isFertile ? 'success' : 'info'}">${ovulating}</span></div>
                       <div class="metric-row"><span class="metric-label">${T('Biologic.dayOfCycle')}</span><span class="metric-value">${dayInCycle} / ${cycleLength}</span></div>
                       <div class="metric-row"><span class="metric-label">${T('Biologic.estimatedEggReserve')}</span><span class="metric-value">${Math.floor(num(uterus.eggCount, 400000)).toLocaleString()} ${T('Biologic.oocytes')}</span></div>
                       <div class="metric-row"><span class="metric-label">${T('Biologic.daysToNextOvulation')}</span><span class="metric-value">${daysToNext} ${T('Biologic.days')}</span></div>
+                      </div>
                   </div>
 
 

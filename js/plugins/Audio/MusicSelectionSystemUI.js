@@ -78,13 +78,11 @@
       const isNone   = t.value === MSS().MUSIC_NONE;
       const isMap    = t.value === MSS().MUSIC_MAP;
       const isRandom = t.value === MSS().MUSIC_RANDOM;
-      const isBiome  = t.value === MSS().MUSIC_BIOME;
       const isSaved  = t.value === saved;
 
       let descHTML;
       if (isNone)        descHTML = `<p class="inspect-lore">${T('MusicSelection.noMusic')}</p>`;
       else if (isRandom) descHTML = `<p class="inspect-lore">${T('MusicSelection.randomEachBattle')}</p>`;
-      else if (isBiome)  descHTML = `<p class="inspect-lore">${T('MusicSelection.biomeEachPlace')}</p>`;
       else if (isMap)    descHTML = `<p class="inspect-lore">${T('MusicSelection.continueMap')}</p>`;
       else               descHTML = `<p class="inspect-lore">${T('MusicSelection.playingAsBattle')}</p>`;
 

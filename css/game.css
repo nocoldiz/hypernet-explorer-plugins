@@ -4,14 +4,14 @@
     height: 6px !important;
 }
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05) !important;
+    background: rgba(212, 160, 80, 0.10) !important;
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(139, 90, 43, 0.4) !important;
+    background: rgba(212, 160, 80, 0.55) !important;
     border-radius: 3px !important;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(139, 90, 43, 0.6) !important;
+    background: rgba(233, 196, 106, 0.85) !important;
 }
 
 body {
@@ -299,7 +299,7 @@ body {
     bottom: 16px;
     right: 16px;
     z-index: 200;
-    font-family: 'Lora', serif;
+    font-family: var(--font-ui);
     pointer-events: none;
     background: var(--bg-secondary-hover);
     border: 3px double var(--text-primary-hover);
@@ -468,7 +468,7 @@ body {
     position: fixed;
     z-index: 200;
     pointer-events: none;
-    font-family: 'Lora', serif;
+    font-family: var(--font-ui);
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -502,13 +502,13 @@ body {
 #party-hud .phud-orb {
     position: relative;
     flex: 0 0 auto;
-    width: 22px;
-    height: 22px;
-    border: none;
+    width: 28px;
+    height: 28px;
+    border: 2px solid rgba(255, 216, 120, 0.85);
     border-radius: 50%;
-    background: var(--shadow-black-translucent-55);
+    background: rgba(0, 0, 0, 0.85);
     overflow: hidden;
-    box-shadow: 0 2px 8px var(--shadow-black-translucent-55);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 200, 60, 0.45), 0 2px 8px var(--shadow-black-translucent-55);
 }
 #party-hud .phud-orb-fill,
 #party-hud .phud-orb-ghost {
@@ -520,7 +520,7 @@ body {
     transition: height 0.2s ease-out;
 }
 #party-hud .phud-orb-fill {
-    background: linear-gradient(to top, #7a5210, #ffcc33);
+    background: linear-gradient(to top, #a86c12, #ffe066);
 }
 /* What an armed skill is about to take: the fill drops to what would be left
    and this dimmer band stays behind at the current level, so the cost reads as
@@ -535,11 +535,11 @@ body {
     top: 50%;
     transform: translateY(-50%);
     text-align: center;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
-    line-height: 10px;
-    color: #fff6dd;
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.9);
+    line-height: 12px;
+    color: #ffffff;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 /* A skill is armed and its cost is showing: the rim brightens so the gap
    between fill and ghost reads as a price about to be paid rather than as the
@@ -557,6 +557,10 @@ body {
    (.ebar-orb) instead of sitting in a flex row. */
 .phud-orb.ebar-orb {
     position: absolute;
+    /* Anchored by JS (UIPanel.placeAt) into the gutter at the right of the
+       gauges; without these it would fall back to the overlay's top-left. */
+    left: var(--ui-at-x, 0);
+    top: var(--ui-at-y, 0);
     width: 22px;
     height: 22px;
     border: none;
@@ -926,4 +930,22 @@ body {
         font-size: 14px;
         padding: 10px;
     }
+}
+
+/* Waiting: the map behind the travel card is dimmed, the card and the other
+   DOM HUDs are not (canvas is z-index 1, PartyHud 10, #map-info-hud 200). */
+#wait-dim {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+    background: var(--shadow-black-translucent-30);
+    opacity: 0;
+    transition: opacity 0.35s ease-out;
+}
+#wait-dim.wait-dim-visible {
+    opacity: 1;
 }

@@ -103,6 +103,9 @@
    *                 dropped on this slot. Only bars that pass this become
    *                 drop targets at all; the battle skill bar leaves it
    *                 unset and stays inert to drags.
+   *   onSlotDragStart (index, entry, event) when a filled slot is picked up.
+   *                 Only bars that pass this let their slots be dragged at
+   *                 all; return false to refuse the drag.
    */
   class HotbarUI {
     constructor(options) {
@@ -124,6 +127,7 @@
       this.onSlotClick = o.onSlotClick || null;
       this.onSlotContext = o.onSlotContext || null;
       this.onSlotDrop = o.onSlotDrop || null;
+      this.onSlotDragStart = o.onSlotDragStart || null;
       this._root = null;
       this._labelEl = null;
       this._entries = [];
@@ -333,6 +337,23 @@
             e.preventDefault();
             slot.classList.remove('drag-over');
             this.onSlotDrop(i, this._entries[i] || null, e);
+          });
+        }
+
+        // A bar the caller wired a pick-up handler onto lets a filled slot be
+        // dragged out of the row, so a skill can be put down by dropping it
+        // back on the page it came from.
+        if (this.onSlotDragStart && entry) {
+          slot.setAttribute('draggable', 'true');
+          slot.addEventListener('dragstart', (e) => {
+            if (this.onSlotDragStart(i, this._entries[i] || null, e) === false) {
+              e.preventDefault();
+              return;
+            }
+            slot.classList.add('dragging');
+          });
+          slot.addEventListener('dragend', () => {
+            slot.classList.remove('dragging');
           });
         }
 

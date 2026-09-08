@@ -513,7 +513,6 @@
     confirm() {
       const el = this.focused();
       if (!el) return false;
-      if (typeof SoundManager !== "undefined") SoundManager.playOk();
       if (typeof el.click === "function") el.click();
       else if (el.onclick) el.onclick({ stopPropagation() {}, preventDefault() {} });
       // Acting on a control usually redraws the page under the ring.

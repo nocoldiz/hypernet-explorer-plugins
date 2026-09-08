@@ -16,6 +16,8 @@
   "treatWounds": "Cura Ferite",
   "buyHouse": "Compra questo piano",
   "joinParty": "Unisciti",
+  "joinPartyInactive": "Unisciti come inattivo",
+  "joinFollower": "Unisciti come seguace",
   "socialWeb": "Rete Sociale",
   "leave": "Lascia",
   "traits": "Caratteristiche",
@@ -155,6 +157,7 @@
   "lifeHistoryTitle": "STORIA DI VITA",
   "noLifeHistory": "Non gli è ancora successo nulla di rilevante.",
   "lifeHistoryTimeline": "Cronologia",
+  "timesRepeated": "(x {n})",
   "emBranchHdr": "Questo ramo di lei",
   "cancel": "← Annulla",
   "back": "Indietro",
@@ -169,6 +172,7 @@
   "wikiTab": "Wiki",
   "wikiCategories": "Categorie",
   "wikiPeople": "Persone",
+  "wikiMainPlayers": "Protagonisti",
   "wikiLeaders": "Leader",
   "wikiPoliticians": "Politici",
   "wikiHyperpowers": "Iperpotenze",
@@ -340,6 +344,7 @@
   "infectMember": "{name} viene inoculato con {disease}.",
   "infectMemberAlready": "{name} ha già {disease}.",
   "socializeLabel": "Socializza",
+  "bickerLabel": "Punzecchia",
   "courtLabel": "Corteggia",
   "courtHarassmentFiled": "{name} ne ha abbastanza di {actor}. Una denuncia per molestie finisce agli atti: {fine}.",
   "courtHarassmentFiledFree": "{name} ne ha abbastanza di {actor}. Una denuncia per molestie finisce agli atti.",
@@ -435,9 +440,9 @@
     "none": "Nessuno",
     "0": "Testicoli",
     "1": "Utero",
-    "2": "Oviparo",
-    "3": "Spore Vegetali",
-    "4": "Mitosi"
+    "2": "Ovidotto",
+    "3": "Sporangio",
+    "4": "Ghiandola Mitotica"
   },
   "partyThought": {
     "hurt": "Non so per quanto ancora reggo così...",
@@ -452,6 +457,8 @@
   "oldLegend": "una vecchia leggenda",
   "bribeAccepted": "{name} accetta. +{op} ♥",
   "joinedParty": "{name} si è unito al gruppo!",
+  "joinedPartyInactive": "{name} si unisce come membro inattivo.",
+  "joinedFollower": "{name} si accoda al gruppo come seguace.",
   "joinReplacedFallen": "{name} resta dove è caduto.",
   "joinFailed": "Non ha funzionato. Restano dove sono.",
   "firstMeeting": "Primo incontro",
@@ -817,5 +824,12 @@
   "leaderSourcePast": "Ha viaggiato con una compagnia di questo mondo",
   "leaderSourcePreset": "Giocabile, come inizia",
   "presetCharacterBadge": "Dossier giocabile",
-  "leftPartyLbl": "Andato via"
+  "leftPartyLbl": "Andato via",
+  "inhabitantsLbl": "Abitanti",
+  "soldiersLbl": "Soldati in armi",
+  "practitionersLbl": "Praticanti arcani",
+  "gdpLbl": "Prodotto annuo",
+  "freedomIndexLbl": "Liberta di informazione",
+  "levelLbl": "Livello",
+  "lifeLbl": "Vita"
 }

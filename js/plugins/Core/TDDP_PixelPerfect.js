@@ -3,6 +3,7 @@
 //=============================================================================
 
 /*:
+ * @target MZ
 * @plugindesc 1.2.1 Enable pixel perfect scaling mode for your game
 * @author Galenmereth / TDD
 * @help

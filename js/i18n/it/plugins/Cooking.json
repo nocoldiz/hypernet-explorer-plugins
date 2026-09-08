@@ -67,7 +67,7 @@
   "cooking": "Cucina",
   "nutritionalBase": "Base Nutrizionale",
   "aromaticBinder": "Legante Aromatico",
-  "yourBackpackContainsNoEdible": "La tua borsa non contiene ingredienti commestibili...",
+  "yourBackpackContainsNoEdible": "[Vuoto]",
   "selectBase": "Seleziona base...",
   "selectBinder": "Seleziona legante...",
   "extraordinaryEffect50": "Effetto Straordinario (+50%)",
@@ -78,7 +78,6 @@
   "fat": "Grassi",
   "satietyPerMember": "Sazietà per Membro",
   "split": "Diviso",
-  "combineANutritionalBaseAnd": "Combina una base nutrizionale ed un legante aromatico per calcolare le calorie totali e il ripristino di sazietà del gruppo.",
   "clearSelection": "Pulisci",
   "nutrition": {
     "calories": "Calorie",

@@ -158,13 +158,15 @@
         WORK:      'work',
         KNOWLEDGE: 'knowledge',
         LEISURE:   'leisure',
+        WRITTEN:   'written',
         OTHER:     'other'
     };
 
     // Every category in the order the book pages through them.
     const CATEGORIES = [
         CAT.JOURNEY, CAT.REST, CAT.COMBAT, CAT.PARTY, CAT.PEOPLE, CAT.HEALTH,
-        CAT.WEALTH, CAT.LAW, CAT.WORK, CAT.KNOWLEDGE, CAT.LEISURE, CAT.OTHER
+        CAT.WEALTH, CAT.LAW, CAT.WORK, CAT.KNOWLEDGE, CAT.LEISURE, CAT.WRITTEN,
+        CAT.OTHER
     ];
 
     const KINDS = {
@@ -285,8 +287,26 @@
         'dream.had':          { icon: 307, cat: CAT.LEISURE },
 
         // The player's own hand
-        'note':               { icon: 225, cat: CAT.OTHER }
+        'note':               { icon: 225, cat: CAT.WRITTEN }
     };
+
+    // The kinds that read better as one sentence when several of them land in
+    // the same minute: the names are gathered into a list and written out under
+    // the plural phrasing named here.
+    const GROUPED = {
+        'item.found':      { name: 'item', count: 'count', into: 'items', many: 'Diary.entry.item.foundMany' },
+        'item.artifactGot':{ name: 'item', count: null,    into: 'items', many: 'Diary.entry.item.artifactGotMany' },
+        // A day of study is one sentence: whoever learned three spells learned
+        // them together, wherever on the page the lines happened to fall.
+        'skill.learned':   { name: 'skill', count: null, into: 'skills', many: 'Diary.entry.skill.learnedMany',
+                             day: true, by: ['name'], join: 'and' }
+    };
+
+    // The day of the world calendar a moment falls on. The clock starts at
+    // 10:00 on 1 Jan 2001, so the boundary is offset by those ten hours.
+    function dayOf(minutes) {
+        return Math.floor(((Number(minutes) || 0) + 600) / 1440);
+    }
 
     function kindMeta(kind) {
         return KINDS[kind] || { icon: 225, cat: CAT.OTHER };
@@ -497,7 +517,92 @@
         describe(entry) {
             if (!entry) return "";
             if (entry.k === 'note') return String((entry.p && entry.p.text) || "");
-            return T('Diary.entry.' + entry.k, entry.p || {});
+            const key = entry.g ? entry.g : ('Diary.entry.' + entry.k);
+            const text = T(key, entry.p || {});
+            if (entry.rep > 1) return T('Diary.fmt.repeat', { text, count: entry.rep });
+            return text;
+        },
+
+        // Several lines written in the same minute, in the same place, about
+        // the same kind of thing read as one line: a chestful of loot is one
+        // sentence naming everything in it, not twenty sentences naming one
+        // thing each. Purely a reading pass: what is stored is never touched.
+        compact(entries) {
+            const list = Array.isArray(entries) ? entries : [];
+            const out = [];
+            let run = null;
+
+            const flush = () => {
+                if (!run) return;
+                if (run.members.length === 1) {
+                    out.push(run.members[0]);
+                } else if (run.rule) {
+                    const pairs = new Map();
+                    for (const e of run.members) {
+                        const name = String((e.p && e.p[run.rule.name]) || "").trim();
+                        if (!name) continue;
+                        const qty = Math.max(1, Number((e.p && e.p[run.rule.count])) || 1);
+                        pairs.set(name, (pairs.get(name) || 0) + qty);
+                    }
+                    const p = Object.assign({}, run.members[0].p || {});
+                    p[run.rule.into] = itemList([...pairs.entries()]);
+                    out.push({ k: run.key, t: run.members[0].t, w: run.members[0].w, p, g: run.rule.many });
+                } else {
+                    const first = run.members[0];
+                    out.push(Object.assign({}, first, { rep: run.members.length }));
+                }
+                run = null;
+            };
+
+            // The kinds gathered over a whole day are pulled out first: their
+            // lines need not sit next to one another to be read as one.
+            const daily = new Map();
+            for (const entry of list) {
+                if (!entry) continue;
+                const rule = GROUPED[entry.k];
+                if (!rule || !rule.day) continue;
+                const sig = [entry.k, dayOf(entry.t)]
+                    .concat((rule.by || []).map(f => String((entry.p && entry.p[f]) || "")))
+                    .join("|");
+                if (!daily.has(sig)) daily.set(sig, []);
+                daily.get(sig).push(entry);
+            }
+            const written = new Set();
+
+            for (const entry of list) {
+                if (!entry) continue;
+                const rule = GROUPED[entry.k] || null;
+                if (rule && rule.day) {
+                    const sig = [entry.k, dayOf(entry.t)]
+                        .concat((rule.by || []).map(f => String((entry.p && entry.p[f]) || "")))
+                        .join("|");
+                    if (written.has(sig)) continue;
+                    written.add(sig);
+                    flush();
+                    const members = daily.get(sig) || [entry];
+                    if (members.length === 1) { out.push(members[0]); continue; }
+                    const names = [];
+                    for (const e of members) {
+                        const name = String((e.p && e.p[rule.name]) || "").trim();
+                        if (name && !names.includes(name)) names.push(name);
+                    }
+                    const p = Object.assign({}, members[0].p || {});
+                    p[rule.into] = rule.join === 'and' ? joinNames(names) : itemList(names.map(n => [n, 1]));
+                    out.push({ k: entry.k, t: members[0].t, w: members[0].w, p, g: rule.many });
+                    continue;
+                }
+                const sig = rule
+                    ? entry.k + "|" + entry.t + "|" + (entry.w || "")
+                    : entry.k + "|" + entry.t + "|" + (entry.w || "") + "|" + this.describe(entry);
+                if (run && run.sig === sig) {
+                    run.members.push(entry);
+                    continue;
+                }
+                flush();
+                run = { sig, key: entry.k, rule, members: [entry] };
+            }
+            flush();
+            return out;
         },
 
         iconOf(entry) { return entry ? kindMeta(entry.k).icon : 225; },
@@ -540,6 +645,18 @@
                 console.error("[Diary] failed to write a line (" + kind + ")", e);
                 return null;
             }
+        },
+
+        // The player's own hand: a line they wrote themselves, filed under the
+        // written category and flushed straight away so it survives whatever
+        // happens next. Returns the entry, or null if there was nothing to write.
+        write(text, opts) {
+            const line = String(text == null ? "" : text).trim();
+            if (!line) return null;
+            const entry = this.record('note', { text: line },
+                Object.assign({ dedupe: line + "|" + Date.now() }, opts || {}));
+            if (entry) this.flush();
+            return entry;
         },
 
         markDirty() {
@@ -1850,7 +1967,7 @@
     const MINIGAME_SCENES = {
         Scene_Arcade: 'arcade', Scene_Frogger: 'frogger', Scene_Snake: 'snake',
         Scene_BubblePop: 'bubblePop', Scene_SlotMachine: 'slots', Scene_Bowling: 'bowling',
-        Scene_PoolGame: 'pool', Scene_LockpickTetris: 'lockpick', Scene_HexphoneTetris: 'tetris',
+        Scene_PoolGame: 'pool', Scene_UnlockingBlocks: 'lockpick', Scene_HexphoneTetris: 'tetris',
         Scene_ScratchCard: 'scratchCard', Scene_HorseRace: 'horseRace', Scene_Tarot: 'tarot',
         Scene_FishingMinigame: 'fishing', Scene_SurfingGame: 'surfing', Scene_VisualPiano: 'piano',
         Scene_PeriodicTable: 'periodicTable', Scene_RamanScan: 'raman', Scene_Chess: 'chess',
@@ -1955,7 +2072,7 @@
         _lastFloor = null;
     };
 
-    // The party's first line: the diary says when it was opened and by whom.
+    // The diary remembers when it was started, but does not write a line about it.
     const _Scene_Map_start = Scene_Map.prototype.start;
     Scene_Map.prototype.start = function () {
         _Scene_Map_start.call(this);
@@ -1963,8 +2080,6 @@
             if (!Diary.isActive()) return;
             if ($gameSystem._diaryStarted != null) return;
             $gameSystem._diaryStarted = worldMinutes();
-            const names = $gameParty.members().map(a => a.name()).join(", ");
-            log('note', { text: T('Diary.opening', { names, place: placeNow() }) });
         } catch (e) { /* the diary is open either way */ }
     };
 

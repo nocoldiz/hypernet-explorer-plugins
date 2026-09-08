@@ -77,6 +77,7 @@
     resetOriginRoll,
     resolveOriginLoadout,
     grantOriginLoadout,
+    cullStartingOverload,
     plannedStartingEuros,
     AUGMENTED_ORIGIN_MIN,
     AUGMENTED_ORIGIN_MAX,
@@ -119,13 +120,6 @@
     for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
     return SETTINGS_ICON_POOL[h % SETTINGS_ICON_POOL.length];
   };
-
-  // Preview plate per enemy spawn mode, indexed by the stored setting value
-  // (0 Biome, 1 Party Level, 2 Realistic, 3 Chaos). The same files the options
-  // menu shows for this setting; see GameOptions.js, OPTION_IMAGES.
-  const ENEMY_SPAWN_IMAGES = [
-    "EnemySpawnBiome", "EnemySpawnPartyLevel", "EnemySpawnDistance", "EnemySpawnChaos",
-  ];
 
   // Robust i18n resolver with safe fallback that never leaks raw keys
   function ccT(key, fallback) {
@@ -208,20 +202,24 @@
   // uterus the same thing.
   function ccReproLabels() {
     return ccList('Biologic.reproductionType', [
-      "Testicles (Male)", "Mammalian (Uterus)", "Oviparous (Egg-laying)",
-      "Plant-based (Seeds)", "Mitosis (Cell division)"
+      "Testicles", "Uterus", "Oviduct",
+      "Sporangium", "Mitotic Gland"
     ]);
   }
   function ccReproChoices() {
     const R = ccReproTypes();
     const labels = ccReproLabels();
+    // A bank that answers with a short list (an unfinished locale, a bank that
+    // did not load) used to print a chip labelled "undefined" rather than
+    // simply falling back to English for the entries it is missing.
+    const label = (i, fallback) => labels[i] || fallback;
     return [
-      { val: R.TESTICLES, label: labels[0] },
-      { val: R.UTERUS, label: labels[1] },
-      { val: R.OVIPAROUS, label: labels[2] },
-      { val: R.PLANT, label: labels[3] },
-      { val: R.MITOSIS, label: labels[4] },
-      { val: R.NONE, label: ccT('CharCreate.reproNone', "None (sterile)") }
+      { val: R.TESTICLES, label: label(0, "Testicles") },
+      { val: R.UTERUS, label: label(1, "Uterus") },
+      { val: R.OVIPAROUS, label: label(2, "Oviduct") },
+      { val: R.PLANT, label: label(3, "Sporangium") },
+      { val: R.MITOSIS, label: label(4, "Mitotic Gland") },
+      { val: R.NONE, label: ccT('CharCreate.reproNone', "Sterile") }
     ];
   }
   // Where a body sits reads as a phrase rather than as a number: "leaning
@@ -245,7 +243,7 @@
   const CREATION_PAGE_TURN_SE = { name: "PixelUI/PixelUI (1)", volume: 90, pitch: 100, pan: 0 };
   const CREATION_START_GOLD = 2000; // per humanoid member, as the event gave it
   const SWITCH_CREATION_NAMED = 12;
-  // Switch 100 is the tutorial's own: while it is on, the name is not the
+  // Switch 100 is the story mode's own: while it is on, the name is not the
   // player's to type (the event asked the same question before its Name Input).
   const SWITCH_TUTORIAL = 100;
   // The Markov call the event made, argument for argument. Plugin commands are
@@ -274,7 +272,7 @@
     if (screen === "name") {
       if (typeof Scene_Name === "undefined" || !$dataActors[actorId]) return false;
       SceneManager.push(Scene_Name);
-      // Length is overridden by AltNameInput's own prepare; the event passed 8.
+      // The default name scene takes the max length from the caller; the event passed 8.
       SceneManager.prepareNextScene(actorId, 8);
       return true;
     }
@@ -313,7 +311,7 @@
       const el = this._element();
       el.textContent = text;
       el.classList.remove("fading");
-      el.style.display = "block";
+      window.CCPanel.show(el);
       void el.offsetWidth; // restart the transition on a recycled element
       el.classList.add("visible");
       this._card = card;
@@ -328,12 +326,11 @@
       if (!this._card || !this._el) return;
       const rect = this._card.getBoundingClientRect();
       const h = this._el.offsetHeight || 0;
-      this._el.style.left = `${rect.left + rect.width / 2}px`;
-      this._el.style.top = `${rect.top - h - 14}px`;
+      window.CCPanel.placeAt(this._el, rect.left + rect.width / 2, rect.top - h - 14);
     },
 
     update() {
-      if (!this._el || this._el.style.display === "none") return;
+      if (!this._el || window.CCPanel.isHidden(this._el)) return;
       const now = Date.now();
       if (this._fadeAt) {
         if (now >= this._fadeAt) this.release();
@@ -351,7 +348,7 @@
     release() {
       if (!this._el) return;
       this._el.classList.remove("visible", "fading");
-      this._el.style.display = "none";
+      window.CCPanel.hide(this._el);
       this._card = null;
       this._hideAt = 0;
       this._fadeAt = 0;
@@ -410,18 +407,18 @@
     if (typeof getAvailableCharacterPresets === "function") return getAvailableCharacterPresets();
     return typeof getCharacterPresets === "function" ? getCharacterPresets() : [];
   }
-  // The tutorial is a streamlined single-character flow that must build a
+  // The story mode is a streamlined single-character flow that must build a
   // character from scratch, so pre-made dossiers are never offered there. The
   // in-scene flag is cleared at the add-member step, hence the switch 100
   // fallback (same guard the origin step uses).
-  function isTutorialFlow() {
-    if (typeof Scene_CharacterCreation !== "undefined" && Scene_CharacterCreation._tutorialMode) return true;
+  function isStoryModeFlow() {
+    if (typeof Scene_CharacterCreation !== "undefined" && Scene_CharacterCreation._storyMode) return true;
     return !!($gameSwitches && $gameSwitches.value(100));
   }
   // Detailed creation mode lives in CharacterCreationFull.js: the whole
   // character sheet is edited inside the Empathize panel instead of being
   // walked step by step. The option only exists while that plugin is loaded,
-  // and unlike the other modes it is offered during the tutorial too.
+  // and unlike the other modes it is offered during the story mode too.
   function detailedModeAvailable() {
     const full = window.CharacterCreationFull;
     return !!(full && full.isAvailable && full.isAvailable());
@@ -466,6 +463,10 @@
   // world that never touched the option (or an older world) answers 1 and this
   // does nothing at all.
   function applyWorldStartingLevel() {
+    // The story mode is the one run that always starts at the bottom: it teaches
+    // the game, so its Em is level 1 whatever level the world builds its people
+    // at.
+    if (isStoryModeFlow()) return;
     const WM = window.WorldManager;
     const level = (WM && WM.startingLevel) ? WM.startingLevel() : 1;
     if (!(level > 1)) return;
@@ -576,20 +577,16 @@
   }
 
   // CC_MUSIC_TRACKS plus any player tracks dropped into audio/bgm/BattleMusic,
-  // led by the Biome and Random entries so a pick made in the options menu still
-  // reads back here instead of silently showing the first track. Biome is the
-  // default battle music, so it heads the list.
+  // led by the Random entry so a pick made in the options menu still reads back
+  // here instead of silently showing the first track.
   // Resolved at runtime since MusicSelectionSystem.js loads after this plugin.
   function getCCMusicTracks() {
     const mss = window.MusicSelectionSystem;
     const custom = (mss && mss.scanCustomTracks) ? mss.scanCustomTracks() : [];
-    const biome = (mss && mss.MUSIC_BIOME)
-      ? [{ name: T('MusicSelection.trackBiome'), value: mss.MUSIC_BIOME }]
-      : [];
     const random = (mss && mss.MUSIC_RANDOM)
       ? [{ name: T('MusicSelection.trackRandom'), value: mss.MUSIC_RANDOM }]
       : [];
-    return biome.concat(random, ccMusicTracks(), custom);
+    return random.concat(ccMusicTracks(), custom);
   }
 
   // No origin begins inside a vehicle any more: the camper and the car are
@@ -680,6 +677,11 @@
     }
     return null;
   }
+
+  // The body a creature falls back to when nothing has said what it is. Goblin
+  // used to stand here; a goblin is a humanoid wearing a goblin's face now, so
+  // the fallback is the plainest creature there is instead.
+  const DEFAULT_CREATURE_ARCHETYPE = "Beast"; // i18n-ignore: Archetypes.json key
 
   // Every archetype a creature can be built from, sorted by the name it shows
   // under, so every picker that lists them reads alphabetically.
@@ -775,6 +777,10 @@
   // The primary alone, keeping whatever second archetype the member carries
   // (unless the new primary IS that one, in which case the pair collapses).
   function applyArchetypeToActor(actor, key) {
+    // A primary the data does not know is refused outright: without this the
+    // pair collapsed onto the secondary and a spelling mistake silently
+    // promoted the member's second half to being the whole of it.
+    if (!healthArchetypeKey(key)) return false;
     return applyArchetypesToActor(actor, [key, actorSecondaryArchetypeKey(actor)]);
   }
 
@@ -793,15 +799,18 @@
     const hasConfig = !!(CC3D && CC3D.getConfig && CC3D.getConfig(actor.actorId()));
     const primary = actorArchetypeKey(actor);
     if (hasConfig && primary) return true;
-    const key = primary || healthArchetypeKey("Goblin") || creatureArchetypeKeys()[0];
+    const key = primary || healthArchetypeKey(DEFAULT_CREATURE_ARCHETYPE) || creatureArchetypeKeys()[0];
     if (!key) return false;
     return applyArchetypesToActor(actor, [key, actorSecondaryArchetypeKey(actor)]);
   }
 
   // The second half of a spliced body. An empty key drops it and leaves the
-  // member built from its primary alone.
+  // member built from its primary alone. A person carries no archetype of its
+  // own until something asks (a new actor's body is Humanoid by default), so
+  // the primary a non-creature is spliced onto is Humanoid.
   function applySecondaryArchetypeToActor(actor, key) {
-    const primary = actorArchetypeKey(actor);
+    const primary = actorArchetypeKey(actor) ||
+      (actor && actor._isCreatureActor ? null : "Humanoid"); // i18n-ignore: Archetypes.json key
     if (!primary) return false;
     if (!key) return applyArchetypesToActor(actor, [primary]);
     return applyArchetypesToActor(actor, [primary, key]);
@@ -943,13 +952,12 @@
       },
     },
     {
-      // Combat Mode - RPG / Map Battle / Cards / Monsters. Asked once per party
-      // (showOnlyOnce); flips the per-save switches RoguelikeCardSystem reads
-      // (45 = Cards, 46 = Monsters). The Cards/Monsters choice is locked for the
-      // save because those are $gameSwitches and the step never reappears; Map
-      // Battle is a ConfigManager option (Options > Gameplay > Map Battle), so
-      // picking it here just presets that toggle and it can still be changed
-      // later. See docs/tasks/roguelike-card-rework.md.
+      // Combat Mode - RPG / Map Battle / Monsters. Asked once per party
+      // (showOnlyOnce); flips the per-save Monsters switch (46). That choice is
+      // locked for the save because it is a $gameSwitch and the step never
+      // reappears; Map Battle is a ConfigManager option (Options > Gameplay >
+      // Map Battle), so picking it here just presets that toggle and it can
+      // still be changed later.
       id: "combatMode",
       showOnlyOnce: true,
       get title() {
@@ -959,85 +967,38 @@
         return [
           getLocalizedChoice(T('CharCreate.choice.combatRpg.name'), "combat_rpg", T('CharCreate.choice.combatRpg.desc')),
           getLocalizedChoice(T('CharCreate.choice.combatMap.name'), "combat_map", T('CharCreate.choice.combatMap.desc')),
-          getLocalizedChoice(T('CharCreate.choice.combatCards.name'), "combat_cards", T('CharCreate.choice.combatCards.desc')),
           getLocalizedChoice(T('CharCreate.choice.combatMonsters.name'), "combat_monsters", T('CharCreate.choice.combatMonsters.desc')),
         ];
       },
       handler: function (symbol) {
-        // RPG (default) leaves both switches off.
-        $gameSwitches.setValue(45, symbol === "combat_cards");
+        // RPG (default) leaves the switch off.
         $gameSwitches.setValue(46, symbol === "combat_monsters");
         // Map Battle is a global option rather than a save switch, so it is set
         // both ways here: picking another mode must also clear a Map Battle the
         // player had left on from a previous playthrough, otherwise "Classic
-        // RPG" would still open fights on the map. Cards and Map Battle are
-        // mutually exclusive battle layers (GameOptions enforces the same).
+        // RPG" would still open fights on the map.
         ConfigManager.mapBattleMode = (symbol === "combat_map");
-        if (ConfigManager.mapBattleMode) ConfigManager.cardCombat = false;
         ConfigManager.save();
         markStepCompleted(STEP.COMBAT_MODE);
         this.nextStep();
       },
     },
     {
-      // Creation Mode, how much of the wizard this party walks through (see
-      // CC_MODE). Asked once per party (showOnlyOnce); the chosen mode drives
-      // which steps appear and how they behave for every member. Persisted to
-      // $gameSystem so reprise paths keep it.
+      // Creation Mode. The page that asked for it (Quick / Normal / Detailed /
+      // Use Existing Character) is gone: the mode is Normal unless the sheet's
+      // own Simple / Detailed toggle says otherwise, and pre-made dossiers are
+      // reached from the character-type pills. The step is kept as an always
+      // skipped placeholder so the step layout and STEP.CREATION_MODE stay put.
       id: "creationMode",
+      autoSkip: true,
       showOnlyOnce: true,
       get title() {
         return T('CharCreate.chooseCreationMode');
       },
       get choices() {
-        const choices = [
-          // Quick first: it is the shortest way into the game, three questions
-          // and the character is playing.
-          getLocalizedChoice(T('CharCreate.choice.modeQuick.name'), "mode_quick", T('CharCreate.choice.modeQuick.desc')),
-          getLocalizedChoice(T('CharCreate.choice.modeNormal.name'), "mode_normal", T('CharCreate.choice.modeNormal.desc')),
-        ];
-        // Full mode is disabled for now (FULL_CREATION_MODE_ENABLED).
-        if (FULL_CREATION_MODE_ENABLED) {
-          choices.push(
-            getLocalizedChoice(T('CharCreate.choice.modeFull.name'), "mode_full", T('CharCreate.choice.modeFull.desc'))
-          );
-        }
-        // Detailed mode sits between the wizard and the pre-made
-        // dossiers: every field of the character sheet is edited by hand in
-        // the Empathize panel. Offered during the tutorial as well.
-        if (detailedModeAvailable()) {
-          choices.push(
-            getLocalizedChoice(T('CharCreate.choice.modeDetailed.name'), "mode_detailed", T('CharCreate.choice.modeDetailed.desc'), 84)
-          );
-        }
-        // Pre-made characters are spent once played, so the option is offered
-        // only while this world still has at least one free dossier, and never
-        // during the tutorial (which always builds a fresh character).
-        if (!isTutorialFlow() && availablePresets().length > 0) {
-          choices.push(
-            getLocalizedChoice(T('CharCreate.choice.existingCharacter.name'), "existing_character", T('CharCreate.choice.existingCharacter.desc'))
-          );
-        }
-        return choices;
+        return [];
       },
-      handler: function (symbol) {
-        if (symbol === "existing_character") {
-          // Pre-made character: skip the rest of the wizard and pick a preset.
-          this.showPresetSelection();
-          return;
-        }
-        if (symbol === "mode_detailed") {
-          // The wizard keeps running; the character-type step hands over to the
-          // Empathize editor (see setupStep) for this and every later member.
-          setCreationMode(CC_MODE.DETAILED);
-          markStepCompleted(STEP.CREATION_MODE);
-          this.nextStep();
-          return;
-        }
-        const mode = symbol === "mode_quick" ? CC_MODE.QUICK
-          : (symbol === "mode_full" && FULL_CREATION_MODE_ENABLED) ? CC_MODE.FULL
-            : CC_MODE.NORMAL;
-        setCreationMode(mode);
+      handler: function () {
         markStepCompleted(STEP.CREATION_MODE);
         this.nextStep();
       },
@@ -1069,7 +1030,7 @@
       get choices() {
         const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
 
-        if (Scene_CharacterCreation._tutorialMode) {
+        if (Scene_CharacterCreation._storyMode) {
           return [
             getLocalizedChoice(T('CharCreate.choice.newCharacter2.name'), "new_character", T('CharCreate.choice.newCharacter2.desc')),
             getLocalizedChoice(T('CharCreate.choice.createCreature2.name'), "create_creature", T('CharCreate.choice.createCreature2.desc'))
@@ -1324,19 +1285,16 @@
             ? window.CreatureClasses.creatureRoster()
             : (window.CreatureClasses.forActor(creatureActor) || []);
           const creatureCards = creatureIds.map((id) => classChoice(id, "creature")).filter(Boolean).sort(byName);
-          // The civilised half of the board belongs to the folk archetypes
-          // alone (Humanoid, Elven, Dwarf, Goblin and their like, flagged
-          // "sentient" in Archetypes.json). A beast, an ooze or a swarm is
-          // offered the monstrous kinds and nothing else: a slime has no
-          // profession, and a spliced body is only as civilised as its worse
-          // half.
-          const sentientAllowed = typeof window.CreatureClasses.sentientAllowedFor === "function"
-            ? window.CreatureClasses.sentientAllowedFor(
-                actorArchetypeKey(creatureActor), actorSecondaryArchetypeKey(creatureActor))
-            : true;
-          const sentientCards = sentientAllowed
-            ? getSentientClassList().map((c) => classChoice(c.id, "sentient")).filter(Boolean).sort(byName)
+          // The civilised half of the board is the archetype's own
+          // "sentientClasses" roster in Archetypes.json: a humanoid lists all
+          // 62, a centaur its handful, a slime none at all. A spliced body is
+          // offered only what both halves support.
+          const sentientIds = typeof window.CreatureClasses.playableGroupsForArchetypes === "function"
+            ? (window.CreatureClasses.playableGroupsForArchetypes(
+                actorArchetypeKey(creatureActor), actorSecondaryArchetypeKey(creatureActor)).sentient || [])
             : [];
+          const sentientCards = sentientIds
+            .map((id) => classChoice(id, "sentient")).filter(Boolean).sort(byName);
           const creatureRoster = creatureCards.concat(sentientCards);
           if (creatureRoster.length) return creatureRoster;
         }
@@ -1581,7 +1539,6 @@
           const idx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
           this._randomizeMemberCharacter(idx);
           Scene_CharacterCreation._lastMemberWasRandom = true;
-          SoundManager.playOk();
           // Force a full DOM rebuild so the regenerated character (name, class,
           // gender, traits, sprite, backstory) shows in the left dossier.
           this._lastStep = -1;
@@ -1627,11 +1584,11 @@
       },
     },
     {
-      // Vehicle, and the tutorial's own step. The tutorial never asks for an
+      // Vehicle, and the story mode's own step. The story mode never asks for an
       // origin (it always begins on the Icebush map and stays there), so the
       // one piece of the starting kit it does put to the player is what they
       // drive away in, asked last of all once the character is settled. The
-      // pick is parked on the tutorial map beside the party and its summoning
+      // pick is parked on the story mode map beside the party and its summoning
       // item goes into the pack: owning that item is what makes a vehicle
       // drivable and lists it in the Vehicles menu (see VehicleSystem).
       id: "vehicle",
@@ -1649,17 +1606,17 @@
         ].map((choice) => {
           // A vehicle is recognised by its shape long before its name, so each
           // card carries the sheet the thing is actually drawn from on the map.
-          const spec = TUTORIAL_VEHICLES[choice.symbol];
+          const spec = STORY_MODE_VEHICLES[choice.symbol];
           if (spec && spec.sprite) choice.sprite = spec.sprite;
           return choice;
         });
       },
       handler: function (symbol) {
-        applyTutorialVehicle(symbol);
+        applyStoryModeVehicle(symbol);
         markStepCompleted(STEP.VEHICLE);
-        // Answering this is what ends the tutorial's creation, and it ends it
+        // Answering this is what ends the story mode's creation, and it ends it
         // through the one exit that lands the party where its dossier says and
-        // puts the tutorial down after it (see _walkPresetLanding). Walking on
+        // puts the story mode down after it (see _walkPresetLanding). Walking on
         // to the origin step instead would pop the scene with the party still
         // standing nowhere.
         this.onFinishPartyCreation();
@@ -1674,8 +1631,8 @@
       // is NOT showOnlyOnce. It used to be, which meant the completion flag
       // written by the first party silenced the step for every later party
       // built in the same savegame, ending creation with no starting point
-      // chosen. Hidden entirely in tutorial mode (the tutorial flow ends at
-      // the add-member step, on the tutorial map).
+      // chosen. Hidden entirely in story mode mode (the story mode flow ends at
+      // the add-member step, on the story mode map).
       id: "origin",
       get title() {
         return T('CharCreate.chooseYourOrigin');
@@ -1683,17 +1640,17 @@
       get choices() {
         return [
           getLocalizedChoice(T('CharCreate.choice.originTrain.name'), "origin_train", T('CharCreate.choice.originTrain.desc')),
-          getLocalizedChoice(T('CharCreate.choice.originStranded.name'), "origin_stranded", T('CharCreate.choice.originStranded.desc')),
-          getLocalizedChoice(T('CharCreate.choice.originSpace.name'), "origin_space", T('CharCreate.choice.originSpace.desc')),
           getLocalizedChoice(T('CharCreate.choice.originCamper.name'), "origin_camper", T('CharCreate.choice.originCamper.desc')),
-          getLocalizedChoice(T('CharCreate.choice.originCar.name'), "origin_car", T('CharCreate.choice.originCar.desc')),
-          getLocalizedChoice(T('CharCreate.choice.originBike.name'), "origin_bike", T('CharCreate.choice.originBike.desc')),
+          getLocalizedChoice(T('CharCreate.choice.originSpace.name'), "origin_space", T('CharCreate.choice.originSpace.desc')),
+          getLocalizedChoice(T('CharCreate.choice.originStranded.name'), "origin_stranded", T('CharCreate.choice.originStranded.desc')),
           getLocalizedChoice(T('CharCreate.choice.originLot.name'), "origin_lot", T('CharCreate.choice.originLot.desc')),
           getLocalizedChoice(T('CharCreate.choice.originDungeon.name'), "origin_dungeon", T('CharCreate.choice.originDungeon.desc')),
+          getLocalizedChoice(T('CharCreate.choice.originCeo.name'), "origin_ceo", T('CharCreate.choice.originCeo.desc')),
+          getLocalizedChoice(T('CharCreate.choice.originCar.name'), "origin_car", T('CharCreate.choice.originCar.desc')),
+          getLocalizedChoice(T('CharCreate.choice.originBike.name'), "origin_bike", T('CharCreate.choice.originBike.desc')),
           getLocalizedChoice(T('CharCreate.choice.originMayor.name'), "origin_mayor", T('CharCreate.choice.originMayor.desc')),
           getLocalizedChoice(T('CharCreate.choice.originCriminal.name'), "origin_criminal", T('CharCreate.choice.originCriminal.desc')),
           getLocalizedChoice(T('CharCreate.choice.originBunker.name'), "origin_bunker", T('CharCreate.choice.originBunker.desc')),
-          getLocalizedChoice(T('CharCreate.choice.originCeo.name'), "origin_ceo", T('CharCreate.choice.originCeo.desc')),
           getLocalizedChoice(T('CharCreate.choice.originArtifact.name'), "origin_artifact", T('CharCreate.choice.originArtifact.desc')),
           getLocalizedChoice(T('CharCreate.choice.originCrash.name'), "origin_crash", T('CharCreate.choice.originCrash.desc')),
           getLocalizedChoice(T('CharCreate.choice.originWarlord.name'), "origin_warlord", T('CharCreate.choice.originWarlord.desc')),
@@ -1786,18 +1743,18 @@
   window.CCSteps = STEP;
 
   //===========================================================================
-  // Tutorial vehicle
+  // Story mode vehicle
   //===========================================================================
   //
-  // The tutorial hands the party a vehicle of their choosing, parked on the
-  // tutorial map (1414, Icebush) a short walk from where they wake up. The
+  // The story mode hands the party a vehicle of their choosing, parked on the
+  // story mode map (1414, Icebush) a short walk from where they wake up. The
   // boat needs water under it, so it gets a berth of its own.
-  const TUTORIAL_VEHICLE_MAP = 1414;
-  const TUTORIAL_VEHICLE_PARK = { x: 87, y: 29 };
-  const TUTORIAL_BOAT_PARK = { x: 74, y: 29 };
+  const STORY_MODE_VEHICLE_MAP = 1414;
+  const STORY_MODE_VEHICLE_PARK = { x: 87, y: 29 };
+  const STORY_MODE_BOAT_PARK = { x: 74, y: 29 };
   // Icebush's world square (<Coords 66 92> in Map1414), so the vehicle stands
-  // on the world map where the tutorial map itself stands.
-  const TUTORIAL_VEHICLE_WORLD = { x: 66, y: 92 };
+  // on the world map where the story mode map itself stands.
+  const STORY_MODE_VEHICLE_WORLD = { x: 66, y: 92 };
 
   // Choice symbol -> everything parking that vehicle takes. `key` is the name
   // window.VehiclePosition files it under; `type` is the engine Game_Vehicle it
@@ -1811,44 +1768,47 @@
   // VehicleSystem parks (its config's sprites.normal): the broom used to name
   // !$Broom, which is a byte copy of the airship sheet, so the card for it
   // showed the starship.
-  const TUTORIAL_VEHICLES = {
+  const STORY_MODE_VEHICLES = {
     vehicle_car: { key: "car", type: "boat", boatType: "car", switchId: 64, itemId: 164, sprite: "Vehicles/!$Car" },
     vehicle_camper: { key: "camper", type: "ship", switchId: 51, itemId: 111, sprite: "Vehicles/!$RV" },
-    vehicle_boat: { key: "boat", type: "boat", boatType: "boat", switchId: 0, itemId: 167, park: TUTORIAL_BOAT_PARK, sprite: "Vehicles/!$Boat" },
+    vehicle_boat: { key: "boat", type: "boat", boatType: "boat", switchId: 0, itemId: 167, park: STORY_MODE_BOAT_PARK, sprite: "Vehicles/!$Boat" },
     vehicle_bike: { key: "bike", type: "boat", boatType: "bike", switchId: 0, itemId: 131, sprite: "Vehicles/!$Bike" },
     vehicle_starship: { key: "airship", type: "airship", switchId: 0, itemId: 166, sprite: "Vehicles/!$Airship" },
     vehicle_broom: { key: "broom", type: "boat", boatType: "broom", switchId: 0, itemId: 168, sprite: "Vehicles/!$BroomStick" },
   };
 
   /**
-   * Park the vehicle the tutorial's vehicle step chose and hand over its keys.
+   * Park the vehicle the story mode's vehicle step chose and hand over its keys.
    * @param {string} symbol - Choice symbol ("vehicle_car", "vehicle_boat", ...)
    */
-  function applyTutorialVehicle(symbol) {
-    const spec = TUTORIAL_VEHICLES[symbol];
+  function applyStoryModeVehicle(symbol, slot) {
+    const spec = STORY_MODE_VEHICLES[symbol];
     if (!spec) return;
-    const park = spec.park || TUTORIAL_VEHICLE_PARK;
+    const base = spec.park || STORY_MODE_VEHICLE_PARK;
+    // A party may set out with a whole garage, so each one parks a couple of
+    // tiles along from the last rather than every one of them on one square.
+    const park = { x: base.x + (Number(slot) || 0) * 2, y: base.y };
 
     // window.VehiclePosition is the single source of truth VehicleSystem
     // re-places every Game_Vehicle from on map load, so the pick shows up both
-    // on the tutorial map and on the world map at Icebush's square.
+    // on the story mode map and on the world map at Icebush's square.
     if (window.VehiclePosition) {
-      window.VehiclePosition.set(spec.key, TUTORIAL_VEHICLE_MAP, park.x, park.y,
-        TUTORIAL_VEHICLE_WORLD.x, TUTORIAL_VEHICLE_WORLD.y);
+      window.VehiclePosition.set(spec.key, STORY_MODE_VEHICLE_MAP, park.x, park.y,
+        STORY_MODE_VEHICLE_WORLD.x, STORY_MODE_VEHICLE_WORLD.y);
     } else {
-      console.warn("CharacterCreation: VehicleSystem not loaded; tutorial vehicle not parked.");
+      console.warn("CharacterCreation: VehicleSystem not loaded; story mode vehicle not parked.");
     }
     // The car, bike and boat share the engine's single 'boat' vehicle, so the
     // shared slot has to be told which one it currently is.
     if (spec.boatType) $gameSystem._boatType = spec.boatType;
     if (spec.switchId > 0) $gameSwitches.setValue(spec.switchId, true);
 
-    // Place it now as well: the tutorial map is already loaded behind the
+    // Place it now as well: the story mode map is already loaded behind the
     // wizard, and VehicleSystem only moves vehicles on map load.
     const map = (typeof $gameMap !== "undefined") ? $gameMap : null;
     const vehicle = (map && map.vehicle) ? map.vehicle(spec.type) : null;
     if (vehicle) {
-      vehicle.setLocation(TUTORIAL_VEHICLE_MAP, park.x, park.y);
+      vehicle.setLocation(STORY_MODE_VEHICLE_MAP, park.x, park.y);
       vehicle.refresh();
     }
 
@@ -1858,10 +1818,56 @@
     if (item && !$gameParty.hasItem(item)) {
       $gameParty.gainItem(item, 1);
     } else if (!item) {
-      console.warn(`CharacterCreation: tutorial vehicle item ${spec.itemId} not found.`);
+      console.warn(`CharacterCreation: story mode vehicle item ${spec.itemId} not found.`);
     }
-    $gameSystem._ccTutorialVehicle = spec.key;
+    $gameSystem._ccStoryModeVehicle = spec.key;
   }
+
+  //===========================================================================
+  // Starting vehicles (the Vehicles tab)
+  //===========================================================================
+  //
+  // The Vehicles tab is the story mode's old vehicle page turned into a page of
+  // the dossier every mode can open, and a party may leave with more than one.
+  // The picks live on $gameSystem._ccStartVehicles as choice symbols; the
+  // story mode parks each of them beside the party the way its single pick was
+  // parked, and every other run just hands over the keys (holding the item is
+  // what makes a vehicle drivable and lists it in the Vehicles menu), so the
+  // vehicle is summoned wherever the chosen origin drops the party.
+  function ccStartVehicleKeys() {
+    if (!Array.isArray($gameSystem._ccStartVehicles)) $gameSystem._ccStartVehicles = [];
+    return $gameSystem._ccStartVehicles;
+  }
+
+  function applyStartingVehicles(storyMode) {
+    ccStartVehicleKeys().forEach((symbol, slot) => {
+      const spec = STORY_MODE_VEHICLES[symbol];
+      if (!spec) return;
+      if (storyMode) {
+        applyStoryModeVehicle(symbol, slot);
+        return;
+      }
+      // The car, bike, boat and broom share the engine's single 'boat' slot,
+      // so the first of them taken is the one it currently stands for.
+      if (spec.boatType && !$gameSystem._boatType) $gameSystem._boatType = spec.boatType;
+      if (spec.switchId > 0) $gameSwitches.setValue(spec.switchId, true);
+      const item = (typeof $dataItems !== "undefined" && $dataItems) ? $dataItems[spec.itemId] : null;
+      if (item && !$gameParty.hasItem(item)) $gameParty.gainItem(item, 1);
+      else if (!item) console.warn(`CharacterCreation: starting vehicle item ${spec.itemId} not found.`);
+    });
+  }
+
+  // The one answer to "what did the party leave with", asked by the origins so
+  // the camper, car and bike starts never hand out a second set of keys.
+  window.CCStartVehicles = {
+    symbols: () => Object.keys(STORY_MODE_VEHICLES),
+    spec: (symbol) => STORY_MODE_VEHICLES[symbol] || null,
+    selected: () => ccStartVehicleKeys().slice(),
+    isSelected: (symbol) => ccStartVehicleKeys().indexOf(symbol) >= 0,
+    itemIds: () => Object.keys(STORY_MODE_VEHICLES).map((k) => STORY_MODE_VEHICLES[k].itemId),
+    ownsItemId: (itemId) => ccStartVehicleKeys().some((k) => STORY_MODE_VEHICLES[k] && STORY_MODE_VEHICLES[k].itemId === itemId),
+    apply: applyStartingVehicles,
+  };
 
   // --- Scene_CharacterCreation ---
   class Scene_CharacterCreation extends Scene_MenuBase {
@@ -1871,7 +1877,9 @@
     static _traitsProcessed = false; // Track if traits step has been processed once
     static _currentPartyMemberIndex = 0; // Track which party member is being created (0=first, 1=second, 2=third)
     static _lastMemberWasRandom = false; // True when the current member was built via "Total Random" (enables Reroll on the add-member step)
-    static _tutorialMode = false; // Tutorial mode: streamlined single-character creation
+    static _storyMode = false; // Story mode: streamlined single-character creation
+    static _isVehicleMode = false; // Vehicles tab: the garage the party sets out with
+    static _isSimpleMode = true;  // Simple mode (default) vs Detailed mode
     static _settingsRowIndex = 0; // Currently focused row in the initial settings step
     static _creationMode = null; // CC_MODE.* (runtime; mirrors $gameSystem._ccCreationMode)
     static _randomizedAllParty = false; // True after "Randomize all party" jumped straight to origin
@@ -1978,9 +1986,9 @@
     // runtime flag, falling back to the persisted value so reprise paths behave
     // consistently, and answers Normal for anything it cannot make sense of.
     static creationMode() {
-      // The tutorial is always a streamlined single-character flow, and it is
+      // The story mode is always a streamlined single-character flow, and it is
       // never asked which mode to run in.
-      if (this._tutorialMode) return CC_MODE.NORMAL;
+      if (this._storyMode) return CC_MODE.NORMAL;
       const mode = this._creationMode || storedCreationMode();
       if (mode === CC_MODE.FULL && !FULL_CREATION_MODE_ENABLED) return CC_MODE.NORMAL;
       if (mode === CC_MODE.QUICK || mode === CC_MODE.FULL || mode === CC_MODE.DETAILED) {
@@ -2024,17 +2032,27 @@
       return this._creationMode === "detailed";
     }
 
+    static isSimpleMode() {
+      if (this._isSimpleMode === undefined || this._isSimpleMode === null) {
+        if ($gameSystem && typeof $gameSystem._ccIsSimpleMode === "boolean") {
+          return $gameSystem._ccIsSimpleMode;
+        }
+        return true;
+      }
+      return !!this._isSimpleMode;
+    }
+
     // True when the CLASS step lists the whole sentient roster inline, one
     // class to a card, with the highlighted one's dossier on the right page.
     // Quick and Normal only: Full mode opens the detailed class browser,
-    // creature mode has its own base/hybrid picker and the tutorial defaults to
+    // creature mode has its own base/hybrid picker and the story mode defaults to
     // Mana Cyborg.
     static usesFullClassList() {
-      return this.usesQuickFlow() && !this._isCreatureMode && !this._tutorialMode;
+      return this.usesQuickFlow() && !this._isCreatureMode && !this._storyMode;
     }
 
     // Steps that are skipped purely because of the chosen creation mode (as
-    // opposed to tutorial/creature/member-index rules). Used by both
+    // opposed to story mode/creature/member-index rules). Used by both
     // _stepAutoAdvances (Back/Forward) and setupStep (forward skip).
     static _stepHiddenForMode(step) {
       if (this.isQuickMode()) {
@@ -2063,7 +2081,7 @@
     }
     // Returns true when setupStep() would auto-advance past this step without
     // ever showing an interactive choice. This mirrors every forward-skip in
-    // setupStep() (tutorial defaults, creatures skipping class selection,
+    // setupStep() (story mode defaults, creatures skipping class selection,
     // party members 2/3 auto-randomizing traits, the add-member step when the
     // party is full, etc.) plus the static autoSkip / completed showOnlyOnce
     // rules. Back/forward navigation must skip these so they never count as a
@@ -2079,15 +2097,15 @@
       // Back/Forward navigation never lands on it. See setupStep().
       if (step === STEP.COMBAT_MODE) return true;
 
-      // The tutorial's own flow, and only while it is still running: once its
+      // The story mode's own flow, and only while it is still running: once its
       // dossier has been taken the pages are reached by tab, and a step the
       // walk skips is a page the tab could not open (see setupStep).
-      const isTutorial = Scene_CharacterCreation._tutorialMode &&
+      const isStoryMode = Scene_CharacterCreation._storyMode &&
         !(this.getCurrentActor() || {})._isPresetActor;
       const isCreature = Scene_CharacterCreation._isCreatureMode;
       const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
 
-      if (isTutorial) {
+      if (isStoryMode) {
         if (step === STEP.SETTINGS) return true;             // settings skipped
         if (STEP.DIFFICULTY != null && step === STEP.DIFFICULTY) return true; // difficulty auto-applied
         if (step === STEP.COMBAT_MODE) return true;          // combat mode default (RPG)
@@ -2096,13 +2114,13 @@
         if (step === STEP.CLASS) return true;                // class fixed to Mana Cyborg
         if (step === STEP.ADD_MEMBER) return true;           // single-character party (ends)
       }
-      // Creation mode is never asked during the tutorial: it is always a
+      // Creation mode is never asked during the story mode: it is always a
       // streamlined single-character flow, so it goes straight to the humanoid /
       // creature choice. Guarded on the switch as well as the in-scene flag
       // (same as the origin step), since the flag is cleared at add-member.
-      // The exception is Detailed mode, which the tutorial does offer, so the
+      // The exception is Detailed mode, which the story mode does offer, so the
       // step stays interactive whenever that plugin is loaded.
-      if (step === STEP.CREATION_MODE && isTutorialFlow() && !detailedModeAvailable()) return true;
+      if (step === STEP.CREATION_MODE && isStoryModeFlow() && !detailedModeAvailable()) return true;
 
       // Detailed mode: the character-type step hands the whole member over to
       // the Empathize editor, so every step it covers is walked past by
@@ -2131,11 +2149,10 @@
       // profile keeps whatever the society generator rolled.
       if (step === STEP.PERSONALITY && personalityCatalog().length === 0) return true;
       if (step === STEP.ADD_MEMBER && $gameParty.size() >= 3) return true; // party already full
-      // The vehicle step belongs to the tutorial alone: every other run gets
-      // whatever it drives from the origin it picks, and asking again once the
-      // pick is made would park a second vehicle on the tutorial map.
-      if (step === STEP.VEHICLE && (!isTutorialFlow() || isStepCompleted(step))) return true;
-      if (step === STEP.ORIGIN && $gameSwitches.value(100)) return true;   // tutorial switch ends at origin
+      // Nobody walks onto the vehicle step any more: it lives on as the
+      // Vehicles tab, opened by hand, and the story mode does not open it at all.
+      if (step === STEP.VEHICLE) return true;
+      if (step === STEP.ORIGIN && $gameSwitches.value(100)) return true;   // story mode switch ends at origin
 
       return false;
     }
@@ -2246,6 +2263,13 @@
     static applyIdeologySelection(id) {
       const actor = this.getCurrentActor();
       if (!actor || !id) return;
+      // The story mode's Em holds one of her own shelf of creeds or none of
+      // them, whichever door the pick came through (see CharacterPresets).
+      const CP = window.CharacterPresets;
+      if (CP && CP.isStoryModeEm && CP.isStoryModeEm(actor)) {
+        const allowed = (CP.storyModeEmIdeologyChoices && CP.storyModeEmIdeologyChoices()) || [];
+        if (!allowed.includes(String(id))) { SoundManager.playBuzzer(); return; }
+      }
       actor._ideologyId = id;
       actor._bioSet = true;
       // NPCSociety.js publishes itself as NPCSocietyRegistry; the old name resolved to
@@ -2267,8 +2291,8 @@
       this.hideUI();
       // The board's DOM overlay is separate from the RMMZ windows and would sit
       // over the panel until terminate() fades it out, so it is dropped here,
-      // the same thing the tutorial's end-of-flow branch does.
-      if (this._dndContainer) this._dndContainer.style.display = "none";
+      // the same thing the story mode's end-of-flow branch does.
+      if (this._dndContainer) window.CCPanel.hide(this._dndContainer);
       window.CharacterCreationFull.open(memberIndex || 0);
       return true;
     }
@@ -2371,15 +2395,14 @@
       this._seedDefaultFirstMemberSpriteAndBust();
       this.createTitleWindow();
       this.createGridWindow();
-      // The tutorial never builds a character step by step: it opens straight
-      // onto its own dossier board (see startTutorialPresetSelection), the same
-      // preset UI used everywhere else in the wizard. Only while the dossier is
-      // still to be taken, though: once it has been, the wizard is rebuilt
-      // around the sprite board and the vehicle page after it, and reopening
-      // the board there would throw the taken dossier away.
-      if (Scene_CharacterCreation._tutorialMode &&
+      // The story mode never builds a character and never picks one: it is played
+      // as Em, whose record is stamped onto the seat on the way in (see
+      // startStoryModeDossier) so the wizard opens on her sheet. Only while the
+      // seat is still empty, though: once she is on it the wizard is rebuilt
+      // around her pages, and stamping her again would spend a second Em.
+      if (Scene_CharacterCreation._storyMode &&
           !(Scene_CharacterCreation.getCurrentActor() || {})._isPresetActor) {
-        this.startTutorialPresetSelection();
+        this.startStoryModeDossier();
       } else {
         this.setupStep();
       }
@@ -2410,17 +2433,36 @@
     // Always assign a random sprite and associated bust to the first party member
     // when creating character, so the protagonist starts with a valid sprite and matching bust.
     _seedDefaultFirstMemberSpriteAndBust() {
-      const p1 = $gameActors.actor(1);
-      if (!p1 || p1._isPresetActor) return;
-      if (!p1.characterName() || !p1.vnBust() || !p1._ccSpriteSeeded) {
-        Scene_CharacterCreation.assignRandomSpriteAndBust(p1);
-        p1._ccSpriteSeeded = true;
-      }
+      const members = ($gameParty && $gameParty.members && $gameParty.members()) || [];
+      const seats = members.length ? members : [$gameActors.actor(1)];
+      seats.forEach((actor) => Scene_CharacterCreation.ensureSpriteAndBust(actor));
     }
 
-    // Applies the defaults the tutorial's SETTINGS/DIFFICULTY/COMBAT_MODE
+    // Actor 1 opens the wizard with the empty characterName data/Actors.json
+    // gives it, so a seat that was never rolled drew an empty avatar box and,
+    // because the bust is read off the sprite, an empty portrait beside it.
+    // Every seat is answered here instead of only the first, and the panels
+    // ask again as they draw, so no page can open on a blank frame.
+    static ensureSpriteAndBust(actor) {
+      if (!actor || actor._isPresetActor) return false;
+      const hasSprite = !!actor.characterName();
+      const hasBust = typeof actor.vnBust === "function" ? !!actor.vnBust() : true;
+      if (hasSprite && hasBust) {
+        actor._ccSpriteSeeded = true;
+        return false;
+      }
+      if (!hasSprite) {
+        Scene_CharacterCreation.assignRandomSpriteAndBust(actor);
+      } else if (window.selectRandomBustForActor) {
+        window.selectRandomBustForActor(actor.actorId());
+      }
+      actor._ccSpriteSeeded = true;
+      return true;
+    }
+
+    // Applies the defaults the story mode's SETTINGS/DIFFICULTY/COMBAT_MODE
     // steps used to set silently (roguelite difficulty, classic RPG combat,
-    // Map Battle off), then opens the tutorial's own preset board in place
+    // Map Battle off), then opens the story mode's own preset board in place
     // of the step-by-step wizard.
     terminate() {
       super.terminate();
@@ -2433,11 +2475,8 @@
         clearTimeout(window._ccOverlayTimeout);
         window._ccOverlayTimeout = null;
       }
-      container.style.transition = "none";
       container.innerHTML = "";
-      container.style.display = "none";
-      container.style.opacity = "1";
-      container.style.pointerEvents = "auto";
+      window.CCPanel.hide(container);
     }
 
     createUIOverlay() {
@@ -2472,10 +2511,7 @@
       }
       
       this._dndContainer = container;
-      this._dndContainer.style.transition = "none";
-      this._dndContainer.style.display = "flex";
-      this._dndContainer.style.opacity = "1";
-      this._dndContainer.style.pointerEvents = "auto";
+      window.CCPanel.show(this._dndContainer);
       this._dndContainer.innerHTML = ""; // Wipe clean to prevent stale DOM layout leaking
 
       this._lastIndex = -1;
@@ -2540,15 +2576,11 @@
     applySceneBackground(name) {
       if (!this._dndContainer) return;
       if (!name) {
-        this._dndContainer.style.backgroundImage = "";
+        this._dndContainer.style.removeProperty("--cc-scene-bg");
         return;
       }
       const url = `img/battlebacks2/${name}.png`;
-      this._dndContainer.style.backgroundImage =
-        `linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.82)), url('${url}')`;
-      this._dndContainer.style.backgroundSize = "cover";
-      this._dndContainer.style.backgroundPosition = "center";
-      this._dndContainer.style.backgroundRepeat = "no-repeat";
+      this._dndContainer.style.setProperty("--cc-scene-bg", window.CCArt.url(url));
     }
 
     cleanText(str) {
@@ -2561,30 +2593,7 @@
     // clock, so it reflects the game's own timeline. Returns null when the
     // preset has no birthDate or the time system isn't available yet.
     getSpriteStyle(spriteName, spriteIndex) {
-      if (!spriteName) return "";
-      const isBig = ImageManager.isBigCharacter(spriteName);
-      const url = `img/characters/${spriteName}.png`;
-      if (isBig) {
-        // Big-character ($) sheets are always a 3-col x 4-row grid, but the
-        // per-frame aspect ratio varies by pack (this project's sheets are
-        // not the RTP's square 48x48 frame). Forcing a fixed 48x48 box
-        // squishes/crops any sheet whose frame isn't square, so size the box
-        // from the actual bitmap dimensions to keep frames undistorted.
-        const bitmap = ImageManager.loadCharacter(spriteName);
-        const frameW = (bitmap.width || 144) / 3;
-        const frameH = (bitmap.height || 192) / 4;
-        const displayWidth = 48;
-        const displayHeight = Math.round(displayWidth * (frameH / frameW));
-        return `background-image: url('${url}'); background-position: 50% 0%; background-size: 300% 400%; width: ${displayWidth}px; height: ${displayHeight}px;`;
-      } else {
-        const col = spriteIndex % 4;
-        const row = Math.floor(spriteIndex / 4);
-        const fx = col * 3 + 1; // Standing middle
-        const fy = row * 4;     // Facing down
-        const pctX = (fx / 11) * 100;
-        const pctY = (fy / 7) * 100;
-        return `background-image: url('${url}'); background-position: ${pctX}% ${pctY}%; background-size: 1200% 800%; width: 48px; height: 48px;`;
-      }
+      return window.CCArt.sprite(spriteName, spriteIndex);
     }
 
     // ── RPG Maker IconSet Renderer (Icons.json reference) ──
@@ -2592,7 +2601,7 @@
       if (iconIndex == null || iconIndex < 0) return "";
       const col = iconIndex % 16;
       const row = Math.floor(iconIndex / 16);
-      return `<span class="cc-rpg-icon" style="background-image: url('img/system/IconSet.png'); background-size: ${size * 16}px auto; background-position: -${col * size}px -${row * size}px; width: ${size}px; height: ${size}px; image-rendering: pixelated; display: inline-block; vertical-align: middle; flex-shrink: 0;"></span>`;
+      return `<span class="cc-rpg-icon" style="${this._ccIconStyle(iconIndex, size)}"></span>`;
     }
 
     // The thumbnail a party tab wears: the member's own walking sprite, facing
@@ -2619,6 +2628,9 @@
     _renderTopFolderTabsHtml() {
       const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const isPetActive = !!Scene_CharacterCreation._isPetMode;
+      // Declared here rather than beside the vehicle tab below: the party tabs
+      // read it too, and from there it was still in its temporal dead zone.
+      const isVehicleActive = !!Scene_CharacterCreation._isVehicleMode;
       const isScenarioMode = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
       const isSettingsActive = (this._step === STEP.SETTINGS) || (CharacterCreationData[this._step] && CharacterCreationData[this._step].isSettingsStep);
       const partyMembers = $gameParty ? $gameParty.members() : [];
@@ -2639,7 +2651,7 @@
       // 1. Top Left: Party Member Tabs + Pet Slot
       const partyTabsHtml = partyMembers.map((partyActor, idx) => {
         const name = partyActor.name() || `Member ${idx + 1}`;
-        const isActive = !isSettingsActive && !isScenarioMode && !isPetActive && idx === currentMemberIndex;
+        const isActive = !isSettingsActive && !isScenarioMode && !isPetActive && !isVehicleActive && idx === currentMemberIndex;
         const isComp = partyActor.name() && partyActor._classId > 0 && partyActor.characterName();
         const roman = idx === 0 ? 'I' : (idx === 1 ? 'II' : 'III');
         const isLeader = idx === 0;
@@ -2661,21 +2673,36 @@
 
       // The empty seat. The pad walks onto it like any other tab (it is the slot
       // L1/R1 stop on when the party is short a member) and Confirm fills it.
-      // The tutorial plays one character and one companion, so the seat is not
+      // The story mode plays one character and one companion, so the seat is not
       // offered there at all.
-      const addBtnHtml = partySize < 3 && !Scene_CharacterCreation._tutorialMode ? `
+      const addBtnHtml = partySize < 3 && !Scene_CharacterCreation._storyMode ? `
         <div class="cc-folder-tab cc-tab-add-plus ${railFocus === 'add' ? 'selected' : ''}" title="${ccT('CharCreate.addPartyMember', 'Add Member')}" onclick="SceneManager._scene.onAddPartyMember()">
           +
         </div>
       ` : '';
 
       const pet = $gameSystem._partyPet;
-      const petName = pet ? pet.name : ccT('CharCreate.companion', "Pet / Follower");
+      // Only the story mode keeps a familiar: everywhere else the tab is the
+      // party's pets, and it is named that.
+      const petTabLabel = Scene_CharacterCreation._storyMode
+        ? ccT('CharCreate.companion', "Familiar")
+        : ccT('CharCreate.petsTab', "Pets");
+      const petName = pet ? pet.name : petTabLabel;
       const removePetBtn = pet ? `
-        <span class="cc-tab-remove-x" title="${ccT('CharCreate.releasePet', 'Release Companion')}" onclick="event.stopPropagation(); SceneManager._scene.onRemovePet(event)">
+        <span class="cc-tab-remove-x" title="${this._petWord('CharCreate.releasePet', 'Release Familiar', 'CharCreate.petsTabRelease', 'Release Pet')}" onclick="event.stopPropagation(); SceneManager._scene.onRemovePet(event)">
           ✕
         </span>
       ` : '';
+
+      const chosenVehicles = (window.CCStartVehicles && window.CCStartVehicles.selected()) || [];
+      // The story mode is never asked what it drives: The Beast is already parked
+      // where Em left it, so the garage is not offered at all.
+      const vehicleTabHtml = Scene_CharacterCreation._storyMode ? '' : `
+        <div class="cc-folder-tab cc-vehicle-tab ${!isSettingsActive && !isScenarioMode && isVehicleActive ? 'active' : ''}" onclick="SceneManager._scene.onVehicleTabClick()">
+          <span class="cc-tab-dot ${chosenVehicles.length ? 'done' : ''}"></span>
+          <span>${ccT('CharCreate.vehiclesTab', 'Vehicles')}${chosenVehicles.length ? ` (${chosenVehicles.length})` : ''}</span>
+        </div>
+      `;
 
       const petTabHtml = `
         <div class="cc-folder-tab cc-pet-tab ${!isSettingsActive && !isScenarioMode && isPetActive ? 'active' : ''}" onclick="SceneManager._scene.onPetTabClick()">
@@ -2691,14 +2718,15 @@
 
       // The settings page belongs to no character, so the step rail that edits one
       // is not drawn beside it: it would offer six tabs none of which can be the
-      // open page.
-      const stepTabsHtml = isSettingsActive ? '' : isScenarioMode ? `
+      // open page. The familiar and the garage are the same case: neither is a
+      // party member's sheet, so neither stands under that rail either.
+      const stepTabsHtml = (isSettingsActive || isPetActive || isVehicleActive) ? '' : isScenarioMode ? `
         <div class="cc-folder-tab active" onclick="SceneManager._scene.onReturnToPartyDossier()">
           ${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.scenarioShared', "Scenario & Origin")}</span>
         </div>
       ` : tabs.map((tab) => {
         if (tab.id === "origin") return ""; // Origin is moved to dedicated scenario confirm
-        const isTabActive = !isSettingsActive && !isPreset && !isPetActive && (this._step === tab.step || (tab.id === 'archetype' && this._step === STEP.GENDER));
+        const isTabActive = !isSettingsActive && !isPreset && !isPetActive && !Scene_CharacterCreation._isVehicleMode && (this._step === tab.step || (tab.id === 'archetype' && this._step === STEP.GENDER));
         const isCompleted = this._isTabCompleted(tab.id);
 
         return `
@@ -2717,7 +2745,16 @@
             ${settingsTabHtml}
             ${partyTabsHtml}
             ${addBtnHtml}
-            ${petTabHtml}`;
+            ${petTabHtml}
+            ${vehicleTabHtml}`;
+
+      const isSimple = Scene_CharacterCreation.isSimpleMode();
+      const modeToggleHtml = (isSettingsActive || isScenarioMode || Scene_CharacterCreation._storyMode) ? '' : `
+        <div class="cc-mode-toggle" title="${ccT('CharCreate.toggleModeTooltip', 'Toggle between Simple and Detailed creation mode')}">
+          <button type="button" class="cc-mode-pill ${isSimple ? 'active' : ''}" data-nav="simple-mode" data-nav-key="cc-mode-simple" onclick="event.stopPropagation(); SceneManager._scene.onSetSimpleMode(true)">${ccT('CharCreate.simpleMode', 'Simple mode')}</button>
+          <button type="button" class="cc-mode-pill ${!isSimple ? 'active' : ''}" data-nav="detailed-mode" data-nav-key="cc-mode-detailed" onclick="event.stopPropagation(); SceneManager._scene.onSetSimpleMode(false)">${ccT('CharCreate.detailedMode', 'Detailed mode')}</button>
+        </div>
+      `;
 
       return `
         <div class="cc-dossier-top-bar">
@@ -2726,6 +2763,7 @@
           </div>
           <div class="cc-folder-tabs-right">
             ${stepTabsHtml}
+            ${modeToggleHtml}
           </div>
         </div>
       `;
@@ -2784,6 +2822,12 @@
 
       const _curStepData = this._step < CharacterCreationData.length ? CharacterCreationData[this._step] : null;
       if (!_curStepData) return;
+      // A seat can reach the sheet without ever passing the seeding done on
+      // entry (a member added mid-flow, a relayed sub-screen), so the page
+      // asks for its own sprite and bust before it draws them.
+      if (!Scene_CharacterCreation._isPetMode) {
+        Scene_CharacterCreation.ensureSpriteAndBust(Scene_CharacterCreation.getCurrentActor());
+      }
       if (_curStepData.isSettingsStep) {
         this._refreshSettingsDOM();
         return;
@@ -2801,6 +2845,7 @@
       const currentStep = this._step;
       const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const isPetMode = !!Scene_CharacterCreation._isPetMode;
+      const isVehicleMode = !!Scene_CharacterCreation._isVehicleMode;
 
       // ── Memoization Check to Prevent 60 FPS Dom Rebuilding & Tab Flickering ──
       if (this._lastIndex === activeIndex && 
@@ -2808,6 +2853,7 @@
           this._lastPresetMode === isPreset && 
           this._lastMemberIndex === currentMemberIndex &&
           this._lastPetMode === isPetMode &&
+          this._lastVehicleMode === isVehicleMode &&
           this._lastScenarioMode === isScenario) {
         return;
       }
@@ -2839,6 +2885,8 @@
         this._lastPresetMode = isPreset;
         this._lastMemberIndex = currentMemberIndex;
         this._lastPetMode = isPetMode;
+      this._lastVehicleMode = isVehicleMode;
+        this._lastVehicleMode = isVehicleMode;
         this._lastScenarioMode = isScenario;
         return;
       }
@@ -2846,6 +2894,9 @@
       if (Scene_CharacterCreation._isPetMode) {
         // The dossier moved to the sidebar, so the roster takes the whole board.
         leftHtml = this._petPickerLeftHtml();
+        rightHtml = "";
+      } else if (isVehicleMode) {
+        leftHtml = this._vehiclePickerLeftHtml();
         rightHtml = "";
       } else if (isPreset) {
         leftHtml = this._presetPickerLeftHtml(activeIndex);
@@ -2888,7 +2939,7 @@
       }
 
       const unifiedLayout = this._dndContainer.querySelector(".cc-unified-layout");
-      if (!unifiedLayout || this._lastScenarioMode !== isScenario || this._lastPetMode !== isPetMode || this._lastPresetMode !== isPreset) {
+      if (!unifiedLayout || this._lastScenarioMode !== isScenario || this._lastPetMode !== isPetMode || this._lastVehicleMode !== isVehicleMode || this._lastPresetMode !== isPreset) {
         this._dndContainer.innerHTML = `
           <div class="cc-unified-layout">
             <div class="cc-top-folder-tabs-slot">${this._renderTopFolderTabsHtml()}</div>
@@ -2931,6 +2982,7 @@
       this._lastPresetMode = isPreset;
       this._lastMemberIndex = currentMemberIndex;
       this._lastPetMode = isPetMode;
+      this._lastVehicleMode = isVehicleMode;
       this._lastScenarioMode = isScenario;
 
       if (isPetMode) {
@@ -2956,7 +3008,7 @@
       // A page entering the spread fades and slides in; that is meant for a
       // genuine step change, not for the dozens of swaps a hovering cursor
       // makes, so a swapped-in page is exempted from it.
-      fresh.style.animation = "none";
+      fresh.classList.add("cc-no-anim");
       const scroller = el.scrollTop;
       el.replaceWith(fresh);
       fresh.scrollTop = scroller;
@@ -2993,8 +3045,7 @@
     // ── Sidebar Tabs & Completion Calculation ──
     _getCreationTabs() {
       const actor = Scene_CharacterCreation.getCurrentActor();
-      const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const isCreature = !!(actor && (actor._isCreatureActor || $gameSwitches.value(77 + memberIndex)));
+      const isSimple = Scene_CharacterCreation.isSimpleMode();
 
       // Bio leads the strip: it is where the character is named, given a face
       // and given a past, so it is the first thing a player is asked for.
@@ -3005,6 +3056,54 @@
         subtitle: (actor && actor._bioSet) ? ccT('CharCreate.customized', "Customized") : ccT('CharCreate.optional', "Optional"),
         step: STEP.BIO
       };
+      const klass = {
+        id: "class",
+        iconIndex: 322,
+        title: ccT('CharCreate.class', "Class"),
+        subtitle: (actor && $dataClasses[actor._classId] && window.CCDbName($dataClasses[actor._classId])) || ccT('CharCreate.pending', "Choose"),
+        step: STEP.CLASS
+      };
+
+      const traits = {
+        id: "traits",
+        iconIndex: 87,
+        title: ccT('CharCreate.traits', 'Traits'),
+        subtitle: actor && actor._selectedTraits && actor._selectedTraits.length > 0 ? `${actor._selectedTraits.length} traits` : ccT('CharCreate.optional', "Optional"),
+        step: STEP.TRAITS
+      };
+
+      // Simple mode still picks its own traits: they are the one choice that
+      // changes how a character plays rather than how they read, so the board
+      // is offered here too. Specialization points are not asked for at all in
+      // this mode; they are spent for the player when the party is confirmed
+      // (see _ensureSimpleModeStatsAndTraits).
+      if (isSimple) {
+        // Story mode is played as a written character: her traits and the
+        // specializations her history gave her are already on the sheet, so
+        // both pages are offered to be read even in the simple strip. The ties
+        // page is offered too, and it is the one page there she is actually
+        // written on (see _presetLockFreeStep).
+        if (Scene_CharacterCreation._storyMode) {
+          return [bio, {
+            id: "romance",
+            iconIndex: 84,
+            title: ccT('CharCreate.romanceTab', 'Romance & Bonds'),
+            subtitle: (actor && actor._ccRomance) ? ccT('CharCreate.customized', "Customized") : ccT('CharCreate.optional', "Optional"),
+            step: STEP.ROMANCE
+          }, traits, {
+            id: "specializations",
+            iconIndex: 126,
+            title: ccT('CharCreate.specializations', 'Specializations'),
+            subtitle: (actor && actor._specPointsSpent ? `${actor._specPointsSpent} pts` : ccT('CharCreate.optional', "Optional")),
+            step: STEP.SPECIALIZATIONS
+          }];
+        }
+        return [bio, traits];
+      }
+
+      const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      const isCreature = !!(actor && (actor._isCreatureActor || $gameSwitches.value(77 + memberIndex)));
+
       // Romance sits beside Bio: the same dossier question, asked about who
       // the character is drawn to rather than about what they are.
       const romance = {
@@ -3020,20 +3119,6 @@
         title: ccT('CharCreate.archetype', "Archetype"),
         subtitle: archetypeDisplayName(actorArchetypeKey(actor)) || ccT('CharCreate.pending', "Choose"),
         step: STEP.GENDER
-      };
-      const klass = {
-        id: "class",
-        iconIndex: 322,
-        title: ccT('CharCreate.class', "Class"),
-        subtitle: (actor && $dataClasses[actor._classId] && window.CCDbName($dataClasses[actor._classId])) || ccT('CharCreate.pending', "Choose"),
-        step: STEP.CLASS
-      };
-      const traits = {
-        id: "traits",
-        iconIndex: 87,
-        title: ccT('CharCreate.traits', 'Traits'),
-        subtitle: actor && actor._selectedTraits && actor._selectedTraits.length > 0 ? `${actor._selectedTraits.length} traits` : ccT('CharCreate.optional', "Optional"),
-        step: STEP.TRAITS
       };
       const specializations = {
         id: "specializations",
@@ -3087,7 +3172,7 @@
 
       if (isCreature && window.Scene_CC3DModel && window.CC3DModel &&
           window.CC3DModel.isAvailable && window.CC3DModel.isAvailable()) {
-        const archetypes = actor._creatureArchetypes || ["Goblin"];
+        const archetypes = actor._creatureArchetypes || [DEFAULT_CREATURE_ARCHETYPE];
         window.Scene_CC3DModel.setup(actor.actorId(), Scene_CharacterCreation, {
           creature: true,
           initArchetypes: archetypes,
@@ -3104,8 +3189,8 @@
     }
 
     onSetCharacterType(type) {
-      // The tutorial is played as the dossier it opened on (see _renderTypePillsHtml).
-      if (Scene_CharacterCreation._tutorialMode) { SoundManager.playBuzzer(); return; }
+      // The story mode is played as the dossier it opened on (see _renderTypePillsHtml).
+      if (Scene_CharacterCreation._storyMode) { SoundManager.playBuzzer(); return; }
       const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const creatureSwitchId = 77 + currentMemberIndex;
       const actor = Scene_CharacterCreation.getCurrentActor();
@@ -3138,7 +3223,7 @@
           }
           if (!actorArchetypeKey(actor)) {
             const archetypes = creatureArchetypeKeys().filter((k) => k !== "Humanoid");
-            const randomArch = archetypes[Math.floor(Math.random() * archetypes.length)] || "Goblin";
+            const randomArch = archetypes[Math.floor(Math.random() * archetypes.length)] || DEFAULT_CREATURE_ARCHETYPE;
             applyArchetypeToActor(actor, randomArch);
           }
           if (actor.setPortraitMode) actor.setPortraitMode("model");
@@ -3156,10 +3241,20 @@
             actor.changeClass(1, false);
           }
           if (actor.setPortraitMode) actor.setPortraitMode("bust");
+          // Coming back from the creature branch, the body the creature was
+          // built on must go with it: left in place, the member stayed a goblin
+          // with a human class. The archetype, its grafts and the 3D config it
+          // implied are all put back to plain Humanoid.
+          actor._creatureArchetypes = null;
+          actor._ccGraftedParts = null;
+          actor._ccReplacedParts = null;
+          applyArchetypesToActor(actor, ["Humanoid"]); // i18n-ignore: Archetypes.json key
+          const CC3D = window.CC3DModel;
+          if (CC3D && CC3D.setConfig) CC3D.setConfig(actor.actorId(), null);
+          if (CC3D && CC3D.setCreatureSeed) CC3D.setCreatureSeed(actor.actorId(), null);
         }
       }
 
-      SoundManager.playOk();
       this._lastStep = -1;
       this._lastIndex = -1;
       this.refreshUIOverlayDOM();
@@ -3167,6 +3262,7 @@
 
     onTabClick(stepIndex, tabId) {
       Scene_CharacterCreation._isPetMode = false;
+      Scene_CharacterCreation._isVehicleMode = false;
       Scene_CharacterCreation._isScenarioMode = false;
       // Only a deliberate visit to the Class tab opens the class step for a
       // creature; the linear flow still walks past it.
@@ -3203,6 +3299,7 @@
       this._pageRailFocused = false;
       Scene_CharacterCreation._railFocus = null;
       Scene_CharacterCreation._isPetMode = false;
+      Scene_CharacterCreation._isVehicleMode = false;
       Scene_CharacterCreation._isScenarioMode = false;
       if (this._presetWindow) {
         this.onPresetCancel();
@@ -3213,6 +3310,27 @@
       this._lastStep = -1;
       this._lastIndex = -1;
       this.refreshUIOverlayDOM();
+    }
+
+    onSetSimpleMode(isSimple) {
+      Scene_CharacterCreation._isSimpleMode = !!isSimple;
+      if ($gameSystem) $gameSystem._ccIsSimpleMode = Scene_CharacterCreation._isSimpleMode;
+      SoundManager.playCursor();
+      if (Scene_CharacterCreation._isSimpleMode) {
+        // Traits are a simple-mode page too, so switching modes on that board
+        // leaves the player where they were rather than kicking them to Bio.
+        if (this._step !== STEP.BIO && this._step !== STEP.TRAITS && this._step !== STEP.SETTINGS && this._step !== STEP.ORIGIN) {
+          this._step = STEP.BIO;
+        }
+      }
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
+    onToggleCreationMode(event) {
+      if (event) event.stopPropagation();
+      this.onSetSimpleMode(!Scene_CharacterCreation.isSimpleMode());
     }
 
     // ── The rail on the open page (trait / talent / companion categories) ──
@@ -3311,8 +3429,10 @@
       const entries = [{ kind: "settings" }];
       const size = $gameParty ? $gameParty.size() : 0;
       for (let i = 0; i < size; i++) entries.push({ kind: "member", index: i });
-      if (size < 3) entries.push({ kind: "add" });
+      if (size < 3 && !Scene_CharacterCreation._storyMode) entries.push({ kind: "add" });
       entries.push({ kind: "pet" });
+      // No garage in the story mode: it sets out in The Beast (see the vehicle tab).
+      if (!Scene_CharacterCreation._storyMode) entries.push({ kind: "vehicle" });
       return entries;
     }
 
@@ -3328,6 +3448,10 @@
         const i = entries.findIndex((e) => e.kind === "pet");
         if (i >= 0) return i;
       }
+      if (Scene_CharacterCreation._isVehicleMode) {
+        const i = entries.findIndex((e) => e.kind === "vehicle");
+        if (i >= 0) return i;
+      }
       const member = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const i = entries.findIndex((e) => e.kind === "member" && e.index === member);
       return i >= 0 ? i : 0;
@@ -3340,6 +3464,7 @@
         case "settings": this.onSettingsTabClick(); break;
         case "member":   this.onPartyMemberTabClick(entry.index); break;
         case "pet":      this.onPetTabClick(); break;
+        case "vehicle":  this.onVehicleTabClick(); break;
         case "add":
           Scene_CharacterCreation._railFocus = "add";
           SoundManager.playCursor();
@@ -3406,7 +3531,6 @@
       if (actor) {
         const generated = Scene_CharacterCreation.generateRandomMarkovName(Scene_CharacterCreation._currentPartyMemberIndex || 0);
         actor.setName(generated);
-        SoundManager.playOk();
         this._lastStep = -1;
         this._lastIndex = -1;
         this.refreshUIOverlayDOM();
@@ -3482,7 +3606,6 @@
         SoundManager.playBuzzer();
         return;
       }
-      SoundManager.playOk();
       this._repaintArchetypeStep();
     }
 
@@ -3496,7 +3619,6 @@
         SoundManager.playBuzzer();
         return;
       }
-      SoundManager.playOk();
       this._repaintArchetypeStep();
     }
 
@@ -3507,7 +3629,7 @@
       if (window.Scene_CC3DModel && window.CC3DModel && window.CC3DModel.isAvailable && window.CC3DModel.isAvailable()) {
         // Sculpting one is what makes the model the creature's portrait.
         if (actor.setPortraitMode) actor.setPortraitMode("model");
-        const archetypes = (actor && actor._creatureArchetypes) || [actor._currentArchetype || "Goblin"];
+        const archetypes = (actor && actor._creatureArchetypes) || [actor._currentArchetype || DEFAULT_CREATURE_ARCHETYPE];
         window.Scene_CC3DModel.setup(actor.actorId(), Scene_CharacterCreation, {
           creature: true,
           initArchetypes: archetypes,
@@ -3537,6 +3659,10 @@
         if (window.NPCSocietyRegistry) {
           const cls = actor.currentClass();
           const profile = window.NPCSocietyRegistry.ensureProfile(name, cls ? cls.id : null);
+          // Somebody the player built is not dealt a political party by the
+          // simulation: NPCPolitics reads this flag and leaves them unaffiliated
+          // unless the detailed sheet declared one (profile.declaredPartyName).
+          if (profile) profile.playerCreated = true;
           // Drive backstory pronouns from the gender the player picked here
           // (0 he, 1 she, 2 they, 3 xe). Regenerate the cached backstory if the
           // gender changed so the narrative and the NPC wiki stay in sync.
@@ -3567,10 +3693,7 @@
     // True when the CLASS step renders the list-left / details-right spread.
     // Creature mode keeps its own inline layout.
     _ccIconStyle(iconIndex, size = 32) {
-      if (!iconIndex) return "";
-      const col = iconIndex % 16;
-      const row = Math.floor(iconIndex / 16);
-      return `background-image: url('img/system/IconSet.png'); background-size: ${size * 16}px auto; background-position: -${col * size}px -${row * size}px; width: ${size}px; height: ${size}px; image-rendering: pixelated; display: inline-block; flex-shrink: 0;`;
+      return window.CCArt.icon(iconIndex, size);
     }
 
     onOptionCardClick(index) {
@@ -3650,7 +3773,6 @@
         }
 
         markStepCompleted(this._step);
-        SoundManager.playOk();
       }
 
       const container = this._dndContainer;
@@ -3725,7 +3847,7 @@
       super.start();
       this._ccHandingOver = false;
       if (this._dndContainer) {
-        this._dndContainer.style.display = "flex";
+        window.CCPanel.show(this._dndContainer);
       }
       this._lastStep = -1;
       this._lastIndex = -1;
@@ -3796,10 +3918,9 @@
       }
 
       // Combat mode: step disabled for now (kept in code). Default to classic
-      // RPG combat (switches 45/46 off) and skip without ever showing the
-      // choice, for every creation mode. Remove this block to re-enable.
+      // RPG combat (switch 46 off) and skip without ever showing the choice,
+      // for every creation mode. Remove this block to re-enable.
       if (this._step === STEP.COMBAT_MODE) {
-        $gameSwitches.setValue(45, false);
         $gameSwitches.setValue(46, false);
         // Map Battle (BattleSystem/MapBattleMode.js) is a ConfigManager option,
         // not a save switch, so a copy of the game that has it on carries it
@@ -3819,17 +3940,17 @@
       }
 
       const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const isTutorial = Scene_CharacterCreation._tutorialMode;
-      // The skips below are the tutorial's linear flow, and that flow is over
+      const isStoryMode = Scene_CharacterCreation._storyMode;
+      // The skips below are the story mode's linear flow, and that flow is over
       // the moment its dossier has been taken: from there the pages are only
       // ever opened by a tab the player clicked, and a skip would force the
-      // dossier's class back to the tutorial's own, throw its traits away, or
+      // dossier's class back to the story mode's own, throw its traits away, or
       // walk off the end of a wizard that is not running.
-      const tutorialFlowRunning = isTutorial &&
+      const storyModeFlowRunning = isStoryMode &&
         !(Scene_CharacterCreation.getCurrentActor() || {})._isPresetActor;
 
-      // ── TUTORIAL MODE: auto-skip steps and silently apply defaults ──
-      if (tutorialFlowRunning) {
+      // ── STORY_MODE MODE: auto-skip steps and silently apply defaults ──
+      if (storyModeFlowRunning) {
         // Settings: skipped silently (kept at defaults) and marked complete.
         if (this._step === STEP.SETTINGS) {
           markStepCompleted(STEP.SETTINGS);
@@ -3849,9 +3970,8 @@
           return;
         }
 
-        // Combat mode: tutorial always uses classic RPG combat (switches off).
+        // Combat mode: story mode always uses classic RPG combat (switch off).
         if (this._step === STEP.COMBAT_MODE) {
-          $gameSwitches.setValue(45, false);
           $gameSwitches.setValue(46, false);
           markStepCompleted(STEP.COMBAT_MODE);
           this._step++;
@@ -3859,7 +3979,7 @@
           return;
         }
 
-        // Class: fixed to Mana Cyborg (class 66) in tutorial - apply and skip.
+        // Class: fixed to Mana Cyborg (class 66) in story mode - apply and skip.
         if (this._step === STEP.CLASS) {
           if (!Scene_CharacterCreation._isCreatureMode) {
             const currentActor = Scene_CharacterCreation.getCurrentActor();
@@ -3888,10 +4008,10 @@
           return;
         }
 
-        // Add Party Member: never asked (only 1 character in tutorial). One
+        // Add Party Member: never asked (only 1 character in story mode). One
         // question is still owed after it though, the vehicle, so the walk goes
         // on to that rather than ending here. No origin and no travel picker:
-        // the tutorial starts where it is being played, on the Icebush map, and
+        // the story mode starts where it is being played, on the Icebush map, and
         // the player is meant to walk around it rather than be put straight on
         // a train out, so the origin step is where its creation ends.
         if (this._step === STEP.ADD_MEMBER) {
@@ -3900,14 +4020,14 @@
           return;
         }
       }
-      // ── END TUTORIAL MODE skips ──
+      // ── END STORY_MODE MODE skips ──
 
-      // Creation mode: never asked during the tutorial. Normal is applied
+      // Creation mode: never asked during the story mode. Normal is applied
       // silently and the wizard moves straight on to the humanoid / creature
       // choice. (Guarded on the switch as well as the in-scene flag, like the
-      // origin step below.) Detailed mode is the exception, the tutorial offers
+      // origin step below.) Detailed mode is the exception, the story mode offers
       // it, so the step is shown whenever CharacterCreationFull is loaded.
-      if (this._step === STEP.CREATION_MODE && isTutorialFlow() && !detailedModeAvailable()) {
+      if (this._step === STEP.CREATION_MODE && isStoryModeFlow() && !detailedModeAvailable()) {
         setCreationMode(CC_MODE.NORMAL);
         markStepCompleted(STEP.CREATION_MODE);
         this._step++;
@@ -3915,18 +4035,18 @@
         return;
       }
 
-      // Origin: not available while the tutorial switch (100) is active. The
-      // tutorial has its own starting point, so creation just ends here and the
-      // player stays where they are. (The in-scene _tutorialMode flag is
+      // Origin: not available while the story mode switch (100) is active. The
+      // story mode has its own starting point, so creation just ends here and the
+      // player stays where they are. (The in-scene _storyMode flag is
       // cleared at the add-member step, so guard on the switch directly.)
       if (this._step === STEP.ORIGIN && $gameSwitches.value(100)) {
         markStepCompleted(STEP.ORIGIN);
         // End-of-creation finalize (settings no longer does it). Idempotent.
         markFirstCreationComplete();
-        // The tutorial's flow is over here, so the flag that says it is running
+        // The story mode's flow is over here, so the flag that says it is running
         // is put down here too: it outlives the scene, and a later run of the
-        // wizard would otherwise open on the tutorial's dossier board again.
-        Scene_CharacterCreation._tutorialMode = false;
+        // wizard would otherwise open on the story mode's dossier board again.
+        Scene_CharacterCreation._storyMode = false;
         this.popScene();
         return;
       }
@@ -3952,7 +4072,7 @@
       }
 
       // Gender & Identity Step: Interactive setup
-      if (this._step === STEP.GENDER && tutorialFlowRunning) {
+      if (this._step === STEP.GENDER && storyModeFlowRunning) {
         this._step++;
         this.setupStep();
         return;
@@ -3969,17 +4089,17 @@
       }
 
       // Traits Step: Interactive optional selection
-      if (this._step === STEP.TRAITS && tutorialFlowRunning) {
+      if (this._step === STEP.TRAITS && storyModeFlowRunning) {
         this._step++;
         this.setupStep();
         return;
       }
 
       // Personality: nothing to pick from without PersonalityData.json, and the
-      // tutorial does not ask (like traits and class). Either way the member
+      // story mode does not ask (like traits and class). Either way the member
       // keeps the disposition their society profile was rolled with.
       if (this._step === STEP.PERSONALITY &&
-          (tutorialFlowRunning || personalityCatalog().length === 0)) {
+          (storyModeFlowRunning || personalityCatalog().length === 0)) {
         this._step++;
         this.setupStep();
         return;
@@ -4002,10 +4122,10 @@
         return;
       }
 
-      // Vehicle: the tutorial's own question (see the vehicle step). Every
-      // other run walks straight past it, and so does a tutorial that has
+      // Vehicle: the story mode's own question (see the vehicle step). Every
+      // other run walks straight past it, and so does a story mode that has
       // already been given its keys.
-      if (this._step === STEP.VEHICLE && (!isTutorialFlow() || isStepCompleted(this._step))) {
+      if (this._step === STEP.VEHICLE && (!isStoryModeFlow() || isStepCompleted(this._step))) {
         this._step++;
         this.setupStep();
         return;
@@ -4137,12 +4257,11 @@
       if (this._step < firstStep) this._step = firstStep;
       this.setupStep();
     }
-    // The tutorial's hand-over onto the vehicle page: from the dossier board
-    // (taking a dossier settles the party) and from the sidebar's Confirm Party
-    // button on any page the tutorial leaves open. The dossier board keeps its
-    // own windows over the spread, so they come down here the way leaving the
+    // The story mode's last button: the sheet is read, the party is Em, and there
+    // is nothing else to answer, so this ends creation outright. Any board
+    // windows still standing over the spread come down first, the way leaving a
     // board any other way brings them down (see onPresetCancel).
-    goToTutorialVehicleStep() {
+    finishStoryModeCreation() {
       if (this._presetTitleWindow) {
         this._presetTitleWindow.close();
         this._presetTitleWindow = null;
@@ -4151,12 +4270,7 @@
         this._presetWindow.close();
         this._presetWindow = null;
       }
-      this._step = STEP.VEHICLE;
-      // setupStep re-fills and re-activates the grid window with the vehicles.
-      this.setupStep();
-      this._lastStep = -1;
-      this._lastIndex = -1;
-      this.refreshUIOverlayDOM();
+      this.onFinishPartyCreation();
     }
 
     onGridOk() {
@@ -4275,6 +4389,10 @@
         // Default: pick any city on the map and land there on foot.
         startWorldMapPickerOrigin();
       }
+      // Everything this origin hands out has been handed out by now, so the
+      // pack is trimmed back to 80% of what the party can carry before they
+      // take their first step (see cullStartingOverload).
+      cullStartingOverload();
       // The two faction origins returned above and land through
       // startWorldMapPickerOrigin, which answers this on its own; everything
       // else has just chosen a spot on a planet that is not there.
@@ -4328,7 +4446,7 @@
       Scene_CharacterCreation._traitsProcessed = false;
       Scene_CharacterCreation._currentPartyMemberIndex = 0;
       Scene_CharacterCreation._lastMemberWasRandom = false;
-      Scene_CharacterCreation._tutorialMode = false;
+      Scene_CharacterCreation._storyMode = false;
       Scene_CharacterCreation._settingsRowIndex = 0;
       Scene_CharacterCreation._creationMode = null;
       Scene_CharacterCreation._randomizedAllParty = false;
@@ -4423,7 +4541,7 @@
     // setupStep(), i.e. before the overlay has been built at all.
     closeStepUI() {
       this._ccHandingOver = true;
-      if (this._dndContainer) this._dndContainer.style.display = "none";
+      if (this._dndContainer) window.CCPanel.hide(this._dndContainer);
       this.hideUI();
       if (this._titleWindow) {
         this._titleWindow.deactivate();
@@ -4439,7 +4557,7 @@
     // after all, so the step it was leaving stays usable.
     reopenStepUI() {
       this._ccHandingOver = false;
-      if (this._dndContainer) this._dndContainer.style.display = "flex";
+      if (this._dndContainer) window.CCPanel.show(this._dndContainer);
       if (this._titleWindow) this._titleWindow.open();
       if (this._gridWindow) this._gridWindow.open();
       this.showUI();
@@ -4581,7 +4699,6 @@
           moved = true;
         }
       } else if (Input.isTriggered('ok')) {
-        SoundManager.playOk();
         if (isPreset) {
           this.onPresetSelect();
         } else {
@@ -4627,7 +4744,7 @@
       if (this._isSubScreenRelay || this._ccHandingOver) return;
 
       if (this._dndContainer) {
-        this._dndContainer.style.display = "flex";
+        window.CCPanel.show(this._dndContainer);
         this.updateUIInput();
         if (window.CCScroll) window.CCScroll.update(this._dndContainer);
         this.refreshUIOverlayDOM();
@@ -4672,7 +4789,7 @@
       if (typeof THREE === "undefined" || !window.ActorModel3D) return;
       const canvas = document.createElement("canvas");
       canvas.className = "cc3d-live-canvas";
-      canvas.style.cssText = "position:absolute; top:0; left:0; width:100%; height:100%;";
+      canvas.classList.add("cc-fill-layer");
       wrap.appendChild(canvas);
 
       const rect = wrap.getBoundingClientRect();
@@ -5035,18 +5152,15 @@
   }
 
   //=============================================================================
-  // Tutorial controls legend
+  // Story mode controls legend
   //=============================================================================
   // The legend itself lives in Map/MapLegend.js now: one parchment sheet in the
-  // corner of the map carrying the control rows, the map's own notice, the
-  // notice of the area underfoot and the tooltip variable. Creation only has to
-  // arm it once the tutorial's preset pick is over, so that is all that is left
-  // here, still published on CCKit under the name the preset flow calls.
+  // corner of the map carrying the notice of the area underfoot and the tooltip
+  // variable. It no longer teaches the controls, so there is nothing left for
+  // creation to arm; the hook is kept on CCKit under the name the preset flow
+  // calls so that flow does not have to know the rows are gone.
 
-  function beginTutorialControlsLegend() {
-    if (window.MapLegend && window.MapLegend.beginTutorialLegend) {
-      window.MapLegend.beginTutorialLegend();
-    }
+  function beginStoryModeControlsLegend() {
   }
 
   // The heaviest thing any step opens is the sprite board: it builds its sheet
@@ -5062,14 +5176,25 @@
 
   // Plugin Commands
   PluginManager.registerCommand(pluginName, "characterCreation", () => {
+    openCharacterCreation();
+  });
+
+  // The wizard, opened either by the plugin command above (the tutorial map's
+  // own event) or by the story mode itself when it begins somewhere with no
+  // event to run it (see the Scene_Map hook below).
+  function openCharacterCreation() {
     warmCreationAssets();
     // A brand new party: nothing of a previous run's hand-over is still owed.
     Scene_CharacterCreation._interruptedStep = -1;
     Scene_CharacterCreation.clearSubScreens();
 
-    // Tutorial mode: Switch 100 ON and player is on map 1414
-    const isTutorial = $gameSwitches.value(100) && $gameMap.mapId() === 1414;
-    Scene_CharacterCreation._tutorialMode = isTutorial;
+    // Story mode: switch 100 is on and the player is on the tutorial map, or
+    // the story run asked for the wizard itself because it began in a year
+    // that has no tutorial to walk (window.StoryModeStart).
+    const isStoryMode = $gameSwitches.value(100) &&
+      ($gameMap.mapId() === STORY_TUTORIAL_MAP_ID || !!$gameSystem._pendingStoryModeCreation);
+    $gameSystem._pendingStoryModeCreation = false;
+    Scene_CharacterCreation._storyMode = isStoryMode;
     Scene_CharacterCreation._currentPartyMemberIndex = 0;
     Scene_CharacterCreation._railFocus = null;
     // A new party is dealt a new kit: the origins that roll their loadout hold
@@ -5099,7 +5224,43 @@
     }
 
     SceneManager.push(Scene_CharacterCreation);
-  });
+  }
+
+  // The tutorial map, the one map that runs the wizard from an event of its
+  // own. Every other story landing asks for it here instead, on the first frame
+  // the map is up.
+  const STORY_TUTORIAL_MAP_ID = 1414;
+
+  const _CC_Scene_Map_start = Scene_Map.prototype.start;
+  Scene_Map.prototype.start = function () {
+    // A run that opens on the wizard (the title screen's own New game and
+    // Story mode entries) never shows the map first: the curtain is dropped
+    // over the landing and only lifts on the map the wizard hands the party
+    // to, so the first thing a new player sees is the first page of creation.
+    const curtain = !!($gameSystem && $gameSystem._pendingCreationCurtain);
+    const pendingStory = !!($gameSystem && $gameSystem._pendingStoryModeCreation &&
+        $gameMap.mapId() !== STORY_TUTORIAL_MAP_ID &&
+        !(SceneManager._scene instanceof Scene_CharacterCreation));
+    _CC_Scene_Map_start.call(this);
+    if (curtain || pendingStory) {
+      $gameSystem._pendingCreationCurtain = false;
+      this.startFadeOut(1);
+    }
+    if (pendingStory) openCharacterCreation();
+    // Insurance: if the wizard never arrives (an event that did not run, a
+    // landing with nothing to open it) the curtain lifts by itself rather
+    // than leaving the player on a black screen.
+    this._ccCurtainWait = (curtain || pendingStory) ? 90 : 0;
+  };
+
+  const _CC_Scene_Map_update = Scene_Map.prototype.update;
+  Scene_Map.prototype.update = function () {
+    _CC_Scene_Map_update.call(this);
+    if (this._ccCurtainWait > 0 && --this._ccCurtainWait === 0 &&
+        SceneManager._scene === this && !$gameMap.isEventRunning()) {
+      this.startFadeIn(this.fadeSpeed(), false);
+    }
+  };
 
   // Where a reprise picks the flow back up: one step past the one that was
   // interrupted, or back on the last real question before it when the screen in
@@ -5223,7 +5384,7 @@
     skinKeyPadOn,
     skinKeyLabel,
     markFirstCreationComplete,
-    beginTutorialControlsLegend,
+    beginStoryModeControlsLegend,
     Window_CharacterCreationTitle,
     ccT,
     ccTp,
@@ -5244,7 +5405,6 @@
     applyArchetypesToActor,
     STEP,
     pickSettingIcon,
-    ENEMY_SPAWN_IMAGES,
     CREATION_BGM,
     getCCMusicTracks,
     CharacterCreationData,

@@ -185,6 +185,10 @@ Game_Army.prototype.addTroop = function (factionId, troopData) {
     hiringCost: troopData.hiringCost,
     weeklyCost: troopData.weeklyCost,
     role: troopData.role, // Store role for icon display
+    // The Skab sheet the troop is drawn with on the battlefield
+    formation: troopData.formation,
+    spritename: troopData.spritename,
+    spriteindex: troopData.spriteindex || 0,
     squadId: null // Not in a squad by default
   };
 
@@ -514,7 +518,9 @@ class UIArmyInputManager {
         this.scene._confirmChoice = this.scene._confirmChoice === 'yes' ? 'no' : 'yes';
         this.scene.refreshUIDOM();
       } else if (Input.isTriggered('ok')) {
-        this.scene.handleConfirmOk();
+        // Confirm on the highlighted answer is the same call the click makes,
+        // so the keyboard and the pointer walk one path.
+        this.scene.confirmRelease(this.scene._confirmChoice);
       } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
         SoundManager.playCancel();
         this.scene._confirmOpen = false;
@@ -852,6 +858,17 @@ Scene_Army.prototype.createDummyWindows = function () {
   this.addWindow(this._statsWindow);
 };
 
+// In an Em playthrough the camp is her own force, so the page wears the same
+// name the main menu gives it (CharacterCreationPresets.emLabel).
+function armyPageTitle() {
+  const base = T('ArmyManager.armyOverview');
+  const CP = window.CharacterPresets;
+  if (CP && CP.emLabel && CP.isEmPlaythrough && CP.isEmPlaythrough()) {
+    return CP.emLabel("menuWorkforce", base);  // i18n-ignore  label key
+  }
+  return base;
+}
+
 Scene_Army.prototype.createUIDOM = function () {
   this._dndContainer = document.createElement('div');
   this._dndContainer.id = 'menu-container';
@@ -1013,7 +1030,7 @@ Scene_Army.prototype.refreshUIDOM = function () {
         <div class="left-page army-left">
             <div class="page-header-bar">
                 <div class="back-button focusable" onclick="SceneManager._scene.leaveCamp()">${T('ArmyManager.back')}</div>
-                <h2 class="title">${T('ArmyManager.armyOverview')}</h2>
+                <h2 class="title">${armyPageTitle()}</h2>
             </div>
 
             <div class="vitals-box army-19">
@@ -1062,7 +1079,8 @@ Scene_Army.prototype.refreshUIDOM = function () {
 Scene_Army.prototype.commandList = function () {
   return [
     { label: T('ArmyManager.reviewTroops'), key: "troops" },
-    { label: T('ArmyManager.manageSquads'), key: "squads" }
+    { label: T('ArmyManager.manageSquads'), key: "squads" },
+    { label: T('ArmyManager.practiceBattle'), key: "practice" }
   ];
 };
 
@@ -1102,7 +1120,29 @@ Scene_Army.prototype.handleCommandOk = function () {
     // Manage Squads
     SoundManager.playOk();
     SceneManager.push(Scene_Squads);
+  } else if (this._commandIndex === 2) {
+    this.startPracticeBattle();
   }
+};
+
+// The drill: the company splits in two and fights itself on the battle field,
+// with no casualties and nothing written back to the roster. Scientists are
+// left out of the muster, as they are out of a real battle.
+Scene_Army.prototype.startPracticeBattle = function () {
+  const fighters = $gameArmy.getTroops()
+    .filter(t => !/scientist/i.test(String(t.role || "")));  // i18n-ignore  troop db id
+  if (fighters.length < 2 || typeof Scene_ArmyBattle === "undefined") {
+    SoundManager.playBuzzer();
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ArmyManager.practiceTooFew'), { severity: "warning" });
+    }
+    return;
+  }
+  SoundManager.playOk();
+  $gameTemp._armyPracticeBattle = true;
+  $gameTemp._battleEnemyArmy = null;
+  $gameTemp._battleArmyEventId = null;
+  SceneManager.push(Scene_ArmyBattle);
 };
 
 Scene_Army.prototype.promptReleaseTroop = function (index) {

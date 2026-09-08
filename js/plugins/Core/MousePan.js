@@ -930,6 +930,23 @@
         return { name: persona.name, classId, className };
     }
 
+    // An "Enemy" event is hovered under the name of the enemy it is linked to,
+    // never under the bare event name. The troop is normally on the event
+    // itself; a procedurally placed one is remembered per event id instead.
+    function enemyDisplayName(ev) {
+        const data = ev.event ? ev.event() : null;
+        if (!data || data.name !== "Enemy") return null; // i18n-ignore: event name
+        let troopId = ev._fixedTroopId;
+        if (!(troopId > 0) && $gameSystem && $gameSystem._procGenEnemyTroops) {
+            troopId = $gameSystem._procGenEnemyTroops[ev.eventId()];
+        }
+        if (!(troopId > 0)) return null;
+        const troop = $dataTroops[troopId];
+        if (!troop || !troop.members.length) return null;
+        const enemy = $dataEnemies[troop.members[0].enemyId];
+        return enemy ? enemy.name.trim() : null;
+    }
+
     function formatEventName(name) {
         if (!name) return "";
         let displayName = name.trim();
@@ -976,7 +993,7 @@
             'outline:1px solid var(--border-subtle-translucent-40);outline-offset:-7px;' +
             'background-image:radial-gradient(ellipse at center,' +
             'transparent 40%,var(--bg-brown-vignette-10) 100%);' +
-            'color:var(--text-primary-hover);font-family:\'Lora\',serif;font-weight:bold;' +
+            'color:var(--text-primary-hover);font-family:var(--font-ui);font-weight:bold;' +
             'box-shadow:0 4px 10px rgba(0,0,0,0.25);' +
             'display:none;justify-content:center;align-items:center;text-align:center;';
         
@@ -1015,7 +1032,7 @@
         if (w !== undefined) return w;
         const tempBitmap = new Bitmap(1, 1);
         tempBitmap.fontSize = 18;
-        tempBitmap.fontFace = 'Lora';
+        tempBitmap.fontFace = 'Bitter';
         const measuredWidth = Math.ceil(tempBitmap.measureTextWidth(text));
         tempBitmap.destroy();
         w = Math.max(32, measuredWidth + 32);
@@ -1174,12 +1191,9 @@
 
                 // Build display text
                 let displayName = formatEventName(name);
-                if (name === "Enemy" && ev._fixedTroopId > 0) {
-                    const troop = $dataTroops[ev._fixedTroopId];
-                    if (troop && troop.members.length > 0) {
-                        const enemy = $dataEnemies[troop.members[0].enemyId];
-                        if (enemy) displayName = enemy.name.trim();
-                    }
+                const enemyName = enemyDisplayName(ev);
+                if (enemyName) {
+                    displayName = enemyName;
                 } else {
                     const notes = ev.event().note;
                     const npcMatch = notes.match(/NPC-(\d+)/);
@@ -1237,12 +1251,9 @@
             const evNotes = hoveredEvent.event().note || "";
             let name = formatEventName(evName);
 
-            if (evName === "Enemy" && hoveredEvent._fixedTroopId > 0) {
-                const troop = $dataTroops[hoveredEvent._fixedTroopId];
-                if (troop && troop.members.length > 0) {
-                    const enemy = $dataEnemies[troop.members[0].enemyId];
-                    if (enemy) name = enemy.name.trim();
-                }
+            const hoveredEnemyName = enemyDisplayName(hoveredEvent);
+            if (hoveredEnemyName) {
+                name = hoveredEnemyName;
             } else {
                 const npcMatch = evNotes.match(/NPC-(\d+)/);
                 if (npcMatch) {

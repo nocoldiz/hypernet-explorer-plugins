@@ -10,8 +10,7 @@
   "signalLost": "Il segnale si sfalda prima che se ne possa ricavare qualcosa.",
   "walkAway": "Lascia perdere.",
   "walkedAway": "La squadra se ne va, e quella cosa resta là dov'era.",
-  "mapClose": "Chiudi la pagina",
-  "mapHint": "Frecce per scegliere, Invio per rispondere"
+  "mapClose": "Chiudi la pagina"
  },
  "reward": {
   "artifact": "Recuperato: {name}.",

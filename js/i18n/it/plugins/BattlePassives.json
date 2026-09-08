@@ -38,7 +38,7 @@
     },
     "5": {
       "name": "Catena di Prese",
-      "desc": "Attacchi base consecutivi sullo stesso nemico accumulano una Presa; a 3 il nemico e stordito."
+      "desc": "Attacchi base consecutivi sullo stesso nemico accumulano una Presa; a 3 il nemico e stordito. Tutto cio che evochi arriva con +30% di salute e +20% di attacco e magia."
     },
     "11": {
       "name": "Flusso di Chi",
@@ -50,7 +50,7 @@
     },
     "16": {
       "name": "Incantacolpo",
-      "desc": "Con un'arma da fuoco in mano infliggi +25% danni e ogni azione ti restituisce un po' di mana."
+      "desc": "Con un'arma da fuoco in pugno infliggi +25% danni e ogni azione restituisce un po' di mana. Un incantesimo puntato su un solo nemico esce dalla canna e consuma un colpo, quindi un caricatore vuoto lo rifiuta; ricaricare restituisce un quinto del mana massimo."
     },
     "17": {
       "name": "Gioco di Gambe",
@@ -194,7 +194,7 @@
     },
     "54": {
       "name": "Meccanico",
-      "desc": "Le riparazioni dei veicoli costano metà e smontare mobili restituisce tutti i materiali."
+      "desc": "Le riparazioni dei veicoli costano metà e smontare mobili restituisce tutti i materiali. Niente di ciò che fai è magia: il tuo mana non sale mai oltre i dieci di partenza."
     },
     "24": {
       "name": "Tiratore Scelto",
@@ -329,7 +329,8 @@
     "mirrorShatters": "Un'immagine speculare di {actor} si frantuma!",
     "gunFuFollowThrough": "{actor} incalza - Gun-Fu!",
     "divineBloodSurges": "Il sangue divino di {target} sfolgora!",
-    "comboSlip": "{target} schiva! Combo x{combo}"
+    "comboSlip": "{target} schiva! Combo x{combo}",
+    "chamberedReload": "{actor} carica la camera e ne riprende il mana."
   },
   "chip": {
     "next": "Prossima",

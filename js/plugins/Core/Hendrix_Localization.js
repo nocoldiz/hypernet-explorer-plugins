@@ -31,7 +31,7 @@
  * Turn on Extract Text parameter > Start the game > Hit Yes to generate
  * all context from your game to a translation file (game_messages.csv).
  * Whatever you type to this file will be shown in-game.
- * Tutorial: https://www.youtube.com/watch?v=QvHeVdmUjRQ
+ * Story mode: https://www.youtube.com/watch?v=QvHeVdmUjRQ
  * 
  * - What if I want to translate something manually?
  * Then open game_messages.csv and type it in <3.
@@ -238,7 +238,11 @@ Imported.Hendrix_Localization = true;
     const excludeNameText = parameters['Exclude Name Text'] === 'true';
     const extractVariableText = parameters['Extract Variable Text'] === 'true';
     const extractPluginCommandText = parameters['Extract Plugin Command Text'] === 'true';
-    const defaultLanguage = parameters['Default Language'];
+    // The game ships locked to English for now: the language selector is off the
+    // title screen and the Language row is out of the options menu, so nothing
+    // may switch away from LOCKED_LANGUAGE while this is set.
+    const LOCKED_LANGUAGE = 'en';
+    const defaultLanguage = LOCKED_LANGUAGE || parameters['Default Language'];
     const partialMatching = parameters['Partial Matching'] === 'true';
     const useTranslationCache = parameters['Use Translation Cache'] === 'true';
     let languagesParam = [];
@@ -1829,6 +1833,7 @@ Imported.Hendrix_Localization = true;
         // The selector cycles this list in order, so English leads and Italian
         // is the first alternative offered.
         availableLanguages = sortLanguagesForMenu(availableLanguages);
+        if (LOCKED_LANGUAGE) availableLanguages = [LOCKED_LANGUAGE];
 
         if (!availableLanguages.includes(currentLanguage)) {
             currentLanguage = availableLanguages[0] || defaultLanguage;
@@ -2198,13 +2203,16 @@ Imported.Hendrix_Localization = true;
     const _ConfigManager_applyData = ConfigManager.applyData;
     ConfigManager.applyData = function (config) {
         _ConfigManager_applyData.call(this, config);
-        this.language = config.language || defaultLanguage;
+        this.language = LOCKED_LANGUAGE || config.language || defaultLanguage;
         currentLanguage = this.language;
         loadTranslations(currentLanguage);
         applyLanguageSettings();
     };
 
-    if (window.GameOptions) {
+    if (LOCKED_LANGUAGE) {
+        // Locked: no Language row anywhere, and no cycling from a stray key.
+        Window_Options.prototype.changeLanguage = function () { };
+    } else if (window.GameOptions) {
         // The label is a function so the row renames itself the moment the
         // player switches language, without waiting for a restart.
         window.GameOptions.registerOption('language', () => T('GameOptions.label.language'),
@@ -2271,7 +2279,7 @@ Imported.Hendrix_Localization = true;
         };
     }
 
-    Window_Options.prototype.changeLanguage = function (direction) {
+    if (!LOCKED_LANGUAGE) Window_Options.prototype.changeLanguage = function (direction) {
         const currentIndex = availableLanguages.indexOf(ConfigManager.language);
 
         let nextIndex = (currentIndex + direction + availableLanguages.length) % availableLanguages.length;
@@ -2837,6 +2845,7 @@ Imported.Hendrix_Localization = true;
     // step) to list, label and switch languages without duplicating logic.
     window.HendrixLocalization = {
         getAvailableLanguages() {
+            if (LOCKED_LANGUAGE) return [LOCKED_LANGUAGE];
             return sortLanguagesForMenu((availableLanguages && availableLanguages.length)
                 ? availableLanguages
                 : languageSymbols);
@@ -2844,10 +2853,12 @@ Imported.Hendrix_Localization = true;
         getLanguageName,
         getLanguageMenuLabel,
         getCurrentLanguage() { return ConfigManager.language; },
+        isLocked() { return !!LOCKED_LANGUAGE; },
         setLanguage(symbol) { return window.changeToLanguage(symbol); },
     };
 
     window.changeToLanguage = function (languageSymbol) {
+        if (LOCKED_LANGUAGE) return false;
         if (languageSymbol === 'next') {
             const currentIndex = availableLanguages.indexOf(ConfigManager.language);
             const nextIndex = (currentIndex + 1) % availableLanguages.length;

@@ -152,7 +152,7 @@
         this._dndContainer.style.display = 'flex';
         this._dndContainer.style.justifyContent = 'center';
         this._dndContainer.style.alignItems = 'center';
-        this._dndContainer.style.fontFamily = "'Lora', serif";
+        this._dndContainer.style.fontFamily = "var(--font-ui)";
         this._dndContainer.style.color = 'var(--bg-bg-alt-25-translucent-8, #e5e0d8)';
         this._dndContainer.style.boxSizing = 'border-box';
         this._dndContainer.style.opacity = '0';
@@ -516,11 +516,11 @@
             const isLearned = teachActor ? teachActor.isLearnedSkill(skill.id) : false;
             const isOpen = window.SkillGraph ? window.SkillGraph.isOpen(teachActor, skill.id) : true;
             const badge = isLearned
-                ? `<span style="font-family:'Lora', serif; font-size:1.081rem; text-transform:uppercase; color:var(--text-forest-complete, #52c41a); border:1px solid var(--border-forest-green, #52c41a); padding:1px 5px; font-weight:bold; background:var(--bg-success-green-15, rgba(82,196,26,0.15)); letter-spacing:0.5px">${typeof T === 'function' ? T('SkillMaster.mastered') : 'Mastered'}</span>`
-                : (!isOpen ? `<span style="font-family:'Lora', serif; font-size:1.081rem; text-transform:uppercase; color:var(--text-card-medium, #aaa); border:1px solid var(--border-secondary-hover-translucent-15, #555); padding:1px 5px; letter-spacing:0.5px">${typeof T === 'function' ? T('SkillMaster.graph.locked') : 'Locked'}</span>` : '');
+                ? `<span style="font-family:var(--font-ui); font-size:1.081rem; text-transform:uppercase; color:var(--text-forest-complete, var(--text-cost-ok)); border:1px solid var(--border-forest-green, var(--text-cost-ok)); padding:1px 5px; font-weight:bold; background:var(--bg-success-green-15, rgba(82,196,26,0.15)); letter-spacing:0.5px">${typeof T === 'function' ? T('SkillMaster.mastered') : 'Mastered'}</span>`
+                : (!isOpen ? `<span style="font-family:var(--font-ui); font-size:1.081rem; text-transform:uppercase; color:var(--text-card-medium, #aaa); border:1px solid var(--border-secondary-hover-translucent-15, #555); padding:1px 5px; letter-spacing:0.5px">${typeof T === 'function' ? T('SkillMaster.graph.locked') : 'Locked'}</span>` : '');
 
             skillsListHTML += `
-                <div class="skill-card ${isFocused ? 'focused' : ''}" onclick="SceneManager._scene.selectSkill(${idx})" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--accent-gray-2-translucent-0, rgba(20,20,20,0.4)); border:1px solid ${isFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.15))'}; border-radius:6px; cursor:pointer; font-family:'Lora', serif; opacity:${isLearned || isOpen ? 1 : 0.6}; transition:all 0.15s ease">
+                <div class="skill-card ${isFocused ? 'focused' : ''}" onclick="SceneManager._scene.selectSkill(${idx})" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--accent-gray-2-translucent-0, rgba(20,20,20,0.4)); border:1px solid ${isFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.15))'}; border-radius:6px; cursor:pointer; font-family:var(--font-ui); opacity:${isLearned || isOpen ? 1 : 0.6}; transition:all 0.15s ease">
                     <div style="display:flex; align-items:center; gap:10px">
                         <div style="${SkillMaster.getSkillIconStyle(skill.iconIndex)} transform: scale(0.8); flex-shrink: 0; image-rendering: pixelated; margin-right: 2px"></div>
                         <div style="font-weight:bold; color:${isFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--text-card-medium, #ddd)'}; font-size:1.365rem">${skill.name}</div>
@@ -633,9 +633,9 @@
             if (hasSkill) {
                 const learnedLabel = typeof T === 'function' ? T('SkillMaster.learned') : 'Learned';
                 actionsListHTML += `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg-success-green-15, rgba(82,196,26,0.15)); border:1px solid var(--border-forest-green, #52c41a); border-radius:6px; color:var(--text-forest-complete, #52c41a); font-weight:bold; font-size:1.365rem">
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg-success-green-15, rgba(82,196,26,0.15)); border:1px solid var(--border-forest-green, var(--text-cost-ok)); border-radius:6px; color:var(--text-forest-complete, var(--text-cost-ok)); font-weight:bold; font-size:1.365rem">
                         <span>${actor.name()}</span>
-                        <span style="font-family:'Lora', serif; font-size:1.196rem; text-transform:uppercase">✓ ${learnedLabel}</span>
+                        <span style="font-family:var(--font-ui); font-size:1.196rem; text-transform:uppercase">✓ ${learnedLabel}</span>
                     </div>
                 `;
                 actionsListHTML += this.carryToggleHTML(actor, skill, allowActionFocus);
@@ -645,7 +645,16 @@
                 const openers = graph ? graph.openers(skill.id, actor).map(s => s.name) : [];
                 const wanted = graph ? graph.stillWanted(skill.id, actor) : 1;
                 const lockLine = (graph && graph.isForbidden(skill.id))
-                    ? (typeof T === 'function' ? T('SkillMaster.graph.lockedBySchool', { skills: openers.join(', ') }) : `Master the school to unlock: ${openers.join(', ')}`)
+                    ? (function () {
+                        const isSpell = skill.stypeId === 1;
+                        const kind = typeof T === 'function'
+                            ? T(isSpell ? 'SkillMaster.graph.lockedKindSpells' : 'SkillMaster.graph.lockedKindSkills')
+                            : (isSpell ? 'spells' : 'skills');
+                        const missing = openers.length || wanted;
+                        return typeof T === 'function'
+                            ? T('SkillMaster.graph.lockedBySchool', { kind: kind, count: missing })
+                            : `You need to know the rest of the school first, missing ${kind}: ${missing}`;
+                    })()
                     : (openers.length
                         ? (wanted > 1
                             ? (typeof T === 'function' ? T('SkillMaster.graph.lockedByCount', { need: wanted, skills: openers.join(', ') }) : `Requires ${wanted} more of: ${openers.join(', ')}`)
@@ -653,7 +662,7 @@
                         : (typeof T === 'function' ? T('SkillMaster.graph.lockedHint') : 'Prerequisites not yet unlocked.'));
                 const lockedTitle = typeof T === 'function' ? T('SkillMaster.graph.locked') : 'Locked';
                 actionsListHTML += `
-                    <div style="padding:10px 14px; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); border:1px dashed var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2)); border-radius:6px; font-family:'Lora', serif">
+                    <div style="padding:10px 14px; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); border-radius:6px; font-family:var(--font-ui)">
                         <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; font-size:1.292rem; color:var(--text-card-medium, #ddd)">
                             <span>${lockedTitle}</span>
                             <span style="color:var(--shadow-shadow-alt-5-translucent-40, #aaa)">${cost} KP</span>
@@ -666,9 +675,9 @@
             } else {
                 const teachText = typeof T === 'function' ? T('SkillMaster.teachPupil', { actor: actor.name() }) : `Teach ${actor.name()}`;
                 actionsListHTML += `
-                    <div class="action-button ${isActionFocused ? 'focused' : ''} ${!canAfford ? 'disabled' : ''}" onclick="SceneManager._scene.teachSkill(${actor.actorId()}, ${cost})" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:${isActionFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--accent-gray-2-translucent-0, rgba(30,30,30,0.6))'}; border:1px solid ${isActionFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:6px; cursor:${canAfford ? 'pointer' : 'not-allowed'}; font-family:'Lora', serif; opacity:${canAfford ? 1 : 0.6}; transition:all 0.15s ease">
+                    <div class="action-button ${isActionFocused ? 'focused' : ''} ${!canAfford ? 'disabled' : ''}" onclick="SceneManager._scene.teachSkill(${actor.actorId()}, ${cost})" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:${isActionFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--accent-gray-2-translucent-0, rgba(30,30,30,0.6))'}; border:1px solid ${isActionFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:6px; cursor:${canAfford ? 'pointer' : 'not-allowed'}; font-family:var(--font-ui); opacity:${canAfford ? 1 : 0.6}; transition:all 0.15s ease">
                         <span style="font-weight:bold; color:${isActionFocused ? 'var(--text-pure-black, #000)' : 'var(--text-card-medium, #fff)'}">${teachText}</span>
-                        <span style="font-family:'Lora', serif; font-weight:bold; color:${isActionFocused ? 'var(--text-pure-black, #000)' : canAfford ? 'var(--text-text-alt-3, #e5c07b)' : 'var(--shadow-shadow-alt-5-translucent-40, #888)'}">${cost} KP</span>
+                        <span style="font-family:var(--font-ui); font-weight:bold; color:${isActionFocused ? 'var(--text-pure-black, #000)' : canAfford ? 'var(--text-text-alt-3, #e5c07b)' : 'var(--shadow-shadow-alt-5-translucent-40, #888)'}">${cost} KP</span>
                     </div>
                 `;
             }
@@ -682,7 +691,7 @@
         const isPreviewFocused = allowActionFocus && (this._selectedActionIndex === 1);
         const previewLabel = typeof T === 'function' ? T('SkillMaster.preview') : 'Preview';
         const previewBtnHTML = `
-            <div class="action-button preview-button ${isPreviewFocused ? 'focused' : ''}" onclick="SceneManager._scene.openSpellPreview(${skill.id})" style="flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; padding:10px 16px; background:${isPreviewFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--bg-card-translucent-5, rgba(20,20,20,0.5))'}; border:1px solid ${isPreviewFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:6px; cursor:pointer; font-family:'Lora', serif; transition:all 0.15s ease">
+            <div class="action-button preview-button ${isPreviewFocused ? 'focused' : ''}" onclick="SceneManager._scene.openSpellPreview(${skill.id})" style="flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; padding:10px 16px; background:${isPreviewFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--bg-card-translucent-5, rgba(20,20,20,0.5))'}; border:1px solid ${isPreviewFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:6px; cursor:pointer; font-family:var(--font-ui); transition:all 0.15s ease">
                 <span style="font-size:1.658rem; line-height:1">◈</span>
                 <span style="font-weight:bold; text-transform:uppercase; font-size:1.17rem; color:${isPreviewFocused ? 'var(--text-pure-black, #000)' : 'var(--text-secondary-active, #e5c07b)'}">${previewLabel}</span>
             </div>`;
@@ -697,12 +706,12 @@
         const dt = (skill.meta && skill.meta.DamageType) ||
             (skill.note && (skill.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
         const damageTypeBadge = (dt && String(dt).trim() !== 'None')
-            ? `<span>&middot;</span><span style="color:var(--text-secondary-active, #e5c07b); font-weight:bold;">${String(dt).trim()}</span>`
+            ? `<span>&middot;</span><span style="color:var(--text-secondary-active, var(--text-primary-hover)); font-weight:bold;">${String(dt).trim()}</span>`
             : '';
 
         const rootSizing = opts.popup ? 'flex:1 1 auto; min-height:0;' : 'height:100%;';
         const closeBtnHTML = opts.popup
-            ? `<div class="focusable" onclick="SceneManager._scene.dismissSkillDetail()" title="${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}" style="flex:0 0 auto; margin-left:auto; align-self:flex-start; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-secondary-hover-translucent-15); border-radius:50%; color:var(--text-secondary-active, #e5c07b); cursor:pointer; font-size:1.292rem; line-height:1">✕</div>`
+            ? `<div class="focusable" onclick="SceneManager._scene.dismissSkillDetail()" title="${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}" style="flex:0 0 auto; margin-left:auto; align-self:flex-start; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-secondary-hover-translucent-15); border-radius:50%; color:var(--text-secondary-active, var(--text-primary-hover)); cursor:pointer; font-size:1.292rem; line-height:1">✕</div>`
             : '';
 
         const teachLabel = typeof T === 'function' ? T('SkillMaster.teach') : 'Teach';
@@ -713,7 +722,7 @@
                 <div style="display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--border-secondary-hover-translucent-15); padding-bottom:8px">
                     <div style="${SkillMaster.getSkillIconStyle(skill.iconIndex)} transform: scale(1.2); flex-shrink: 0; image-rendering: pixelated; margin-right: 2px"></div>
                     <div>
-                        <h3 class="cc-header-gothic" style="font-size:2.134rem; color:var(--text-secondary-active, #e5c07b); margin:0; line-height:1.2">
+                        <h3 class="cc-header-gothic" style="font-size:2.134rem; color:var(--text-secondary-active, var(--text-primary-hover)); margin:0; line-height:1.2">
                             ${skill.name}
                         </h3>
                         <div style="display:flex; align-items:center; gap:8px; font-size:1.196rem; color:var(--text-inverse, #bbb); text-transform:uppercase; margin-top:3px">
@@ -731,12 +740,12 @@
                     "${descriptionText}"
                 </div>
 
-                <div class="skill-scroll-box" style="flex:1; min-height:0; overflow-y:auto; padding-right:6px; font-family:'Lora', serif; font-size:1.365rem; color:var(--text-card-medium, #ddd)">
+                <div class="skill-scroll-box" style="flex:1; min-height:0; overflow-y:auto; padding-right:6px; font-family:var(--font-ui); font-size:1.365rem; color:var(--text-card-medium, #ddd)">
                     ${detailedInfoHTML}
                 </div>
 
-                <div style="display:flex; flex-direction:column; gap:8px; margin-top:auto; border-top:1px dashed var(--scroll-thumb-hover-translucent-60, rgba(255,255,255,0.2)); padding-top:12px">
-                    <h4 style="margin:0 0 4px 0; font-family:'Lora', serif; color:var(--text-secondary-active, #e5c07b); font-size:1.658rem; text-align:center">
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:auto; padding-top:12px">
+                    <h4 style="margin:0 0 4px 0; font-family:var(--font-ui); color:var(--text-secondary-active, var(--text-primary-hover)); font-size:1.658rem; text-align:center">
                         ${teachLabel}
                         <span style="font-size:1.196rem; font-weight:normal; color:var(--text-card-medium, #aaa); letter-spacing:0.5px">&middot; ${heldLabel}</span>
                     </h4>
@@ -781,11 +790,11 @@
         if (!overlay) {
             overlay = document.createElement('div');
             overlay.id = 'skill-detail-popup';
-            overlay.style.cssText = "position:absolute; top:0; right:0; bottom:0; z-index:1500; display:flex; align-items:stretch; justify-content:flex-end; pointer-events:none; font-family:'Lora', serif;";
+            overlay.style.cssText = "position:absolute; top:0; right:0; bottom:0; z-index:1500; display:flex; align-items:stretch; justify-content:flex-end; pointer-events:none; font-family:var(--font-ui);";
             this._dndContainer.appendChild(overlay);
         }
         overlay.innerHTML = `
-            <div id="skill-detail-bar" onclick="event.stopPropagation()" style="pointer-events:auto; width:min(30vw, 460px); min-width:340px; height:100%; display:flex; flex-direction:column; overflow-y:auto; padding:18px 20px; box-sizing:border-box; background:var(--bg-black-translucent-96, rgba(12,12,14,0.96)); border-left:1.5px solid var(--border-focus-hover, #e5c07b); box-shadow:-10px 0 30px rgba(0,0,0,0.75)">
+            <div id="skill-detail-bar" onclick="event.stopPropagation()" style="pointer-events:auto; width:min(30vw, 460px); min-width:340px; height:100%; display:flex; flex-direction:column; overflow-y:auto; padding:18px 20px; box-sizing:border-box; background:var(--bg-black-translucent-96, rgba(12,12,14,0.96)); border-left:1.5px solid var(--border-focus-hover, var(--text-primary-hover)); box-shadow:-10px 0 30px rgba(0,0,0,0.75)">
                 ${cardHTML}
             </div>`;
         this._lastPopupKey = key;
@@ -871,15 +880,15 @@
                 let bonusBadge = "";
                 if (cat !== "All") {
                     if (SkillMaster.actorCategoryManager.isPrimary(cat)) {
-                        bonusBadge = `<span style="font-family:'Lora', serif; font-size:1.081rem; background:var(--text-secondary-active, #e5c07b); color:#000; padding:1px 5px; font-weight:bold; letter-spacing:0.5px">3x KP</span>`;
+                        bonusBadge = `<span style="font-family:var(--font-ui); font-size:1.081rem; background:var(--text-secondary-active, var(--text-primary-hover)); color:#000; padding:1px 5px; font-weight:bold; letter-spacing:0.5px">3x KP</span>`;
                     } else if (SkillMaster.actorCategoryManager.isSecondary(cat)) {
-                        bonusBadge = `<span style="font-family:'Lora', serif; font-size:1.081rem; background:var(--text-secondary-active, #e5c07b); color:#000; padding:1px 5px; font-weight:bold; letter-spacing:0.5px">1.5x KP</span>`;
+                        bonusBadge = `<span style="font-family:var(--font-ui); font-size:1.081rem; background:var(--text-secondary-active, var(--text-primary-hover)); color:#000; padding:1px 5px; font-weight:bold; letter-spacing:0.5px">1.5x KP</span>`;
                     } else if (SkillMaster.actorCategoryManager.isForeign(cat)) {
-                        bonusBadge = `<span style="font-family:'Lora', serif; font-size:1.081rem; background:transparent; color:var(--text-card-medium, #aaa); border:1px solid var(--border-secondary-hover-translucent-15); padding:1px 5px; font-weight:bold; letter-spacing:0.5px">${typeof T === 'function' ? T('SkillMaster.foreignSchool') : 'Foreign'}</span>`;
+                        bonusBadge = `<span style="font-family:var(--font-ui); font-size:1.081rem; background:transparent; color:var(--text-card-medium, #aaa); border:1px solid var(--border-secondary-hover-translucent-15); padding:1px 5px; font-weight:bold; letter-spacing:0.5px">${typeof T === 'function' ? T('SkillMaster.foreignSchool') : 'Foreign'}</span>`;
                     }
                 }
                 html += `
-                    <div class="category-card ${focused ? 'focused' : ''}" data-pane="${pane}" data-idx="${idx}" onclick="SceneManager._scene.selectCategoryClick(${pane}, ${idx})" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:8px; padding:14px 8px; min-height:100px; background:${focused ? 'var(--bg-tertiary-focus-translucent-45, rgba(45,35,25,0.45))' : 'var(--bg-card-translucent-5, rgba(20,20,20,0.5))'}; border:1.5px solid ${focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:8px; cursor:pointer; font-family:'Lora', serif; transition:all 0.15s ease">
+                    <div class="category-card ${focused ? 'focused' : ''}" data-pane="${pane}" data-idx="${idx}" onclick="SceneManager._scene.selectCategoryClick(${pane}, ${idx})" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:8px; padding:14px 8px; min-height:100px; background:${focused ? 'var(--bg-tertiary-focus-translucent-45, rgba(45,35,25,0.45))' : 'var(--bg-card-translucent-5, rgba(20,20,20,0.5))'}; border:1.5px solid ${focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:8px; cursor:pointer; font-family:var(--font-ui); transition:all 0.15s ease">
                         <div style="${SkillMaster.getCategoryIconStyle(cat)} transform: scale(1.35); flex-shrink: 0; image-rendering: pixelated"></div>
                         <div class="category-card-name" style="font-weight:bold; color:${focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--text-card-medium, #ddd)'}; font-size:1.329rem; line-height:1.2">
                             ${catName}
@@ -1013,15 +1022,15 @@
                 const teachActor = this.getTeachActor();
                 const pupilLabel = typeof T === 'function' ? T('SkillMaster.pupil') : 'Pupil';
                 const pupilLine = teachActor
-                    ? `<div style="font-family:'Lora', serif; font-size:1.219rem; color:var(--text-card-medium, #aaa); text-align:center; margin-top:8px">${pupilLabel} <strong style="color:var(--text-secondary-active, #e5c07b)">${teachActor.name()}</strong> &middot; ${knowledge} KP</div>`
+                    ? `<div style="font-family:var(--font-ui); font-size:1.219rem; color:var(--text-card-medium, #aaa); text-align:center; margin-top:8px">${pupilLabel} <strong style="color:var(--text-secondary-active, var(--text-primary-hover))">${teachActor.name()}</strong> &middot; ${knowledge} KP</div>`
                     : '';
                 const fuseLabel = typeof T === 'function' ? T('SkillMaster.fuseSpells') : 'Fuse Spells';
                 const magicSysLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.tabLabel') : 'Magical Systems Wheel';
 
                 const fuseBtn = `
-                    <div class="fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()" style="position:relative; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px; padding:10px 14px; font-family:'Lora',serif; font-size:1.292rem; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); color:var(--text-secondary-active, #e5c07b); border-radius:6px; font-weight:bold; cursor:pointer; border:1.5px solid var(--text-secondary-active, #e5c07b); text-transform:uppercase; letter-spacing:0.5px; user-select:none">${fuseLabel}</div>`;
+                    <div class="fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()" style="position:relative; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px; padding:10px 14px; font-family:var(--font-ui); font-size:1.292rem; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); color:var(--text-secondary-active, var(--text-primary-hover)); border-radius:6px; font-weight:bold; cursor:pointer; border:1.5px solid var(--text-secondary-active, var(--text-primary-hover)); text-transform:uppercase; letter-spacing:0.5px; user-select:none">${fuseLabel}</div>`;
                 const magicSystemsBtn = `
-                    <div class="magic-systems-btn focusable" onclick="SceneManager._scene.openMagicSystems()" style="position:relative; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:10px; padding:10px 14px; font-family:'Lora',serif; font-size:1.292rem; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); color:var(--text-secondary-active, #e5c07b); border-radius:6px; font-weight:bold; cursor:pointer; border:1.5px solid var(--text-secondary-active, #e5c07b); text-transform:uppercase; letter-spacing:0.5px; user-select:none">${magicSysLabel}</div>`;
+                    <div class="magic-systems-btn focusable" onclick="SceneManager._scene.openMagicSystems()" style="position:relative; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:10px; padding:10px 14px; font-family:var(--font-ui); font-size:1.292rem; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); color:var(--text-secondary-active, var(--text-primary-hover)); border-radius:6px; font-weight:bold; cursor:pointer; border:1.5px solid var(--text-secondary-active, var(--text-primary-hover)); text-transform:uppercase; letter-spacing:0.5px; user-select:none">${magicSysLabel}</div>`;
 
                 rightPageHTML = `
                     <div class="page-header-bar">
@@ -1040,7 +1049,7 @@
                     rightPageHTML = `
                         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; gap:20px; padding:20px; box-sizing:border-box">
                             <div style="${SkillMaster.getCategoryIconStyle('All')} transform: scale(2.0); image-rendering: pixelated; margin-bottom: 12px"></div>
-                            <h3 class="cc-header-gothic" style="font-size:2.204rem; color:var(--text-secondary-active, #e5c07b); margin:0">
+                            <h3 class="cc-header-gothic" style="font-size:2.204rem; color:var(--text-secondary-active, var(--text-primary-hover)); margin:0">
                                 ${selectPrompt}
                             </h3>
                         </div>
@@ -1161,7 +1170,7 @@
         const focused = allowFocus && (this._selectedActionIndex === 0) && !locked;
         const usable = !locked && (active || !full);
         return `
-            <div class="action-button carry-button ${focused ? 'focused' : ''} ${usable ? '' : 'disabled'}" onclick="SceneManager._scene.toggleCarry(${actor.actorId()})" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; margin-top:6px; background:${active ? 'var(--bg-tertiary-focus-translucent-45, rgba(45,35,25,0.45))' : 'var(--accent-gray-2-translucent-0, rgba(20,20,20,0.5))'}; border:1px solid ${focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:${usable ? 'pointer' : 'not-allowed'}; font-family:'Lora', serif; opacity:${usable ? 1 : 0.6}; transition:all 0.15s ease">
+            <div class="action-button carry-button ${focused ? 'focused' : ''} ${usable ? '' : 'disabled'}" onclick="SceneManager._scene.toggleCarry(${actor.actorId()})" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; margin-top:6px; background:${active ? 'var(--bg-tertiary-focus-translucent-45, rgba(45,35,25,0.45))' : 'var(--accent-gray-2-translucent-0, rgba(20,20,20,0.5))'}; border:1px solid ${focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:${usable ? 'pointer' : 'not-allowed'}; font-family:var(--font-ui); opacity:${usable ? 1 : 0.6}; transition:all 0.15s ease">
                 <span style="font-weight:bold; font-size:1.292rem; text-transform:uppercase">${active ? '◉' : '○'} ${label}</span>
                 <span style="font-size:1.196rem; color:var(--text-card-medium, #aaa)">${count}</span>
             </div>
@@ -1188,7 +1197,7 @@
     Scene_SkillEncyclopedia.prototype.fusionActionsHTML = function (actor, skill) {
         if (!skill || !skill._customSpell || skill._ownerActorId !== actor.actorId()) return '';
         const btn = (label, handler, danger) => `
-            <div class="action-button focusable" onclick="${handler}" style="flex:1; display:flex; justify-content:center; align-items:center; padding:9px 12px; background:var(--accent-gray-2-translucent-0, rgba(20,20,20,0.5)); border:1px solid ${danger ? 'var(--text-danger-hover, #ff4d4f)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:pointer; font-family:'Lora', serif; font-size:1.259rem; font-weight:bold; text-transform:uppercase; color:${danger ? 'var(--text-danger-hover, #ff4d4f)' : 'var(--text-secondary-active, #e5c07b)'}; transition:all 0.15s ease">
+            <div class="action-button focusable" onclick="${handler}" style="flex:1; display:flex; justify-content:center; align-items:center; padding:9px 12px; background:var(--accent-gray-2-translucent-0, rgba(20,20,20,0.5)); border:1px solid ${danger ? 'var(--text-danger-hover, #ff4d4f)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:pointer; font-family:var(--font-ui); font-size:1.259rem; font-weight:bold; text-transform:uppercase; color:${danger ? 'var(--text-danger-hover, #ff4d4f)' : 'var(--text-secondary-active, #e5c07b)'}; transition:all 0.15s ease">
                 ${label}
             </div>
         `;

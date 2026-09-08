@@ -1,0 +1,293 @@
+{
+  "menu": "Pistola vettoriale",
+  "title": "Pistola vettoriale",
+  "back": "Indietro",
+  "switch": "Trasforma",
+  "subtitle": "Modalita operative",
+  "tab": {
+    "modes": "Modalita operative",
+    "spell": "Incantesimo caricato",
+    "element": "Elemento",
+    "form": "Forma"
+  },
+  "slots": "{used} di {max} modalita attive",
+  "state": {
+    "on": "Attiva",
+    "off": "Inattiva"
+  },
+  "full": "Massimo 3 modalita alla volta.",
+  "noGun": "Il gruppo non ha la pistola.",
+  "detail": {
+    "status": "Stato",
+    "effect": "Effetto",
+    "modesTitle": "Modalita attive",
+    "spellTitle": "Incantesimo caricato",
+    "cost": "Mana dimezzato",
+    "unbound": "Niente caricato",
+    "fitted": "Montato",
+    "elementTitle": "Elemento",
+    "formTitle": "Forma",
+    "range": "Portata",
+    "magazine": "Caricatore"
+  },
+  "mode": {
+    "mana": {
+      "name": "Proiettili di mana",
+      "desc": "Il danno scala su INT.",
+      "effect": "Il danno d'attacco usa INT invece della scalatura dell'arma."
+    },
+    "recoil": {
+      "name": "Rinculo vettoriale",
+      "desc": "Contraccolpo sul bersaglio.",
+      "effect": "I bersagli colpiti vengono respinti e resi fluttuanti."
+    },
+    "spellblaster": {
+      "name": "Spellblaster",
+      "desc": "Spara l'incantesimo caricato a ogni colpo.",
+      "effect": "L'incantesimo caricato parte a ogni attacco. Senza questa modalita costa il 150% del suo costo in MP; con essa il 75%. Senza MP, il colpo e' un attacco normale."
+    },
+    "card": {
+      "name": "Carta",
+      "desc": "Le uccisioni danno carte mostro.",
+      "effect": "Un colpo di grazia aggiunge la carta mostro del nemico alla collezione."
+    },
+    "wide": {
+      "name": "Colpi larghi",
+      "desc": "Colpisce piu parti del corpo con meno danno.",
+      "effect": "Danno totale minore, distribuito su piu parti del corpo per attacco."
+    },
+    "psi": {
+      "name": "Vettori psichici",
+      "desc": "Il danno scala su PSI.",
+      "effect": "Il danno d'attacco usa PSI invece della scalatura dell'arma."
+    },
+    "burst": {
+      "name": "Raffica",
+      "desc": "Due colpi per attacco al 70% del danno.",
+      "effect": "Ogni attacco spara due volte al 70% del danno. Entrambi i colpi consumano munizioni."
+    },
+    "pierce": {
+      "name": "Vettori perforanti",
+      "desc": "Ignora la guardia.",
+      "effect": "Il danno ignora la guardia del bersaglio."
+    },
+    "drain": {
+      "name": "Vettori vampirici",
+      "desc": "Assorbimento HP del 25%.",
+      "effect": "Chi spara recupera HP pari al 25% del danno inflitto."
+    },
+    "siphon": {
+      "name": "Sifone di mana",
+      "desc": "Assorbimento MP del 15%.",
+      "effect": "Chi spara recupera MP pari al 15% del danno inflitto."
+    },
+    "deadeye": {
+      "name": "Occhio di falco",
+      "desc": "+40% di critico.",
+      "effect": "La probabilita di colpo critico aumenta di 40 punti."
+    },
+    "tracker": {
+      "name": "Proiettili traccianti",
+      "desc": "Gli attacchi non mancano mai.",
+      "effect": "Gli attacchi colpiscono sempre, ignorando l'elusione."
+    },
+    "overload": {
+      "name": "Sovraccarico",
+      "desc": "Caricatore doppio, danno all'85%.",
+      "effect": "Capacita del caricatore raddoppiata. Tutti i colpi infliggono l'85% del danno."
+    },
+    "hex": {
+      "name": "Proiettili maledetti",
+      "desc": "40% di probabilita di un malus casuale.",
+      "effect": "Un colpo a segno ha il 40% di probabilita di infliggere uno tra: cecita, silenzio, squilibrio, vulnerabilita, guardia rotta."
+    },
+    "longshot": {
+      "name": "Tiro lungo",
+      "desc": "Portata doppia.",
+      "effect": "Raddoppia la portata dell'arma sulla mappa di battaglia, in qualsiasi forma a distanza."
+    },
+    "venom": {
+      "name": "Proiettili velenosi",
+      "desc": "30% di probabilita di avvelenare.",
+      "effect": "Un colpo a segno ha il 30% di probabilita di infliggere veleno."
+    },
+    "concussion": {
+      "name": "Proiettili a concussione",
+      "desc": "30% di probabilita di stordire.",
+      "effect": "Un colpo a segno ha il 30% di probabilita di infliggere stordimento."
+    },
+    "thermalOverload": {
+      "name": "Sovraccarico termico",
+      "desc": "30% di probabilita di incendiare.",
+      "effect": "Un colpo a segno ha il 30% di probabilita di infliggere bruciatura."
+    },
+    "thermalUnderload": {
+      "name": "Sottocarico termico",
+      "desc": "30% di probabilita di congelare.",
+      "effect": "Un colpo a segno ha il 30% di probabilita di infliggere congelamento."
+    },
+    "executioner": {
+      "name": "Giustiziere",
+      "desc": "Piu danno sui bersagli a HP bassi.",
+      "effect": "Il danno cresce al calare degli HP del bersaglio, fino a +60% contro un bersaglio in fin di vita."
+    },
+    "ambush": {
+      "name": "Protocollo imboscata",
+      "desc": "150% di danno al primo turno.",
+      "effect": "Gli attacchi eseguiti nel primo turno di battaglia infliggono il 150% del danno."
+    },
+    "resonance": {
+      "name": "Risonanza",
+      "desc": "Piu danno con MP alti.",
+      "effect": "Il danno cresce con gli MP attuali di chi spara, fino a +40% con MP pieni."
+    },
+    "overpressure": {
+      "name": "Sovrapressione",
+      "desc": "135% di danno, 2 munizioni per colpo.",
+      "effect": "Ogni colpo infligge il 135% del danno e consuma 2 munizioni invece di 1."
+    },
+    "hollowPoint": {
+      "name": "Punta cava",
+      "desc": "+75% di danno critico.",
+      "effect": "I colpi critici infliggono il 75% di danno in piu. Non modifica la probabilita di critico."
+    },
+    "deepMagazine": {
+      "name": "Caricatore profondo",
+      "desc": "+4 di capacita del caricatore.",
+      "effect": "Capacita del caricatore +4 in qualsiasi forma. Danno invariato."
+    }
+  },
+  "spell": {
+    "none": "Nessun incantesimo",
+    "noneDesc": "Nessun incantesimo parte col colpo.",
+    "empty": "Nessun incantesimo a bersaglio singolo conosciuto.",
+    "hint": "Si puo caricare solo magia offensiva a bersaglio singolo. Le abilita non si possono caricare.",
+    "mp": "{cost} MP",
+    "fired": "{cost} MP a colpo"
+  },
+  "toast": {
+    "fitted": "{mode} attiva.",
+    "removed": "{mode} inattiva.",
+    "bound": "{spell} caricato nel colpo.",
+    "cleared": "Incantesimo scaricato.",
+    "card": "Carta di {name} ottenuta.",
+    "element": "Elemento impostato su {element}.",
+    "swapped": "{mode} attiva, {old} inattiva.",
+    "form": "Forma impostata su {form}.",
+    "unracked": "Coilgun senza munizioni, torna pistola."
+  },
+  "locked": {
+    "equip": "Solo Em puo equipaggiare la pistola vettoriale.",
+    "part": "La pistola vettoriale non puo lasciare Em."
+  },
+  "cmd": {
+    "toBlade": "Passa alla lama",
+    "toGun": "Passa alla pistola",
+    "switch": "Trasforma"
+  },
+  "element": {
+    "title": "Elemento",
+    "hint": "L'elemento vale in ogni forma e con qualsiasi modalita attiva.",
+    "physicalDesc": "Danno fisico, senza elemento.",
+    "desc": {
+      "1": "Danno fisico, senza elemento.",
+      "2": "Danno di fuoco, puo incendiare il bersaglio.",
+      "3": "Danno di ghiaccio, puo congelare il bersaglio.",
+      "4": "Danno di fulmine.",
+      "5": "Danno d'acqua.",
+      "6": "Danno di terra.",
+      "7": "Danno di vento.",
+      "8": "Danno sacro, piu efficace contro i non morti.",
+      "9": "Danno oscuro."
+    }
+  },
+  "form": {
+    "gun": "Pistola",
+    "blade": "Lama di Thelema",
+    "fitted": "Montata",
+    "gain": "Forma da mischia: +{bonus}% di danno, elemento {element}. La forma pistola non ha bonus ed e' l'unica che puo sparare l'incantesimo caricato.",
+    "gunGain": "Forma base: colpi normali, e l'unica forma che puo sparare l'incantesimo caricato. TRASFORMA la converte nel coilgun."
+  },
+  "bay": {
+    "slot": "Alloggiamento {n}",
+    "empty": "Vuoto",
+    "loaded": "Alloggiamento {n}"
+  },
+  "shape": {
+    "gun": {
+      "name": "Coilgun",
+      "desc": "Forma predefinita.",
+      "effect": "Senza altre forme montate, TRASFORMA converte la pistola in un fucile di precisione coilgun: 3 colpi, portata 4x sulla mappa di battaglia. Il terzo colpo la riporta a pistola e la ricarica."
+    },
+    "abrasax": {
+      "name": "Athame di Abrasax",
+      "desc": "Forma alternativa: pugnale.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e pugnale. Nella forma pugnale l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "thelema": {
+      "name": "Lama di Thelema",
+      "desc": "Forma alternativa: machete.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e machete. Nella forma machete l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "choronzon": {
+      "name": "Maglio di Choronzon",
+      "desc": "Forma alternativa: maglio.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e maglio. Nella forma maglio l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "babalon": {
+      "name": "Ascia di Babalon",
+      "desc": "Forma alternativa: ascia.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e ascia. Nella forma ascia l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "nuit": {
+      "name": "Flagello di Nuit",
+      "desc": "Forma alternativa: frusta.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e frusta. Nella forma frusta l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "hadit": {
+      "name": "Bastone di Hadit",
+      "desc": "Forma alternativa: bastone.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e bastone. Nella forma bastone l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "aiwass": {
+      "name": "Arco di Aiwass",
+      "desc": "Forma alternativa: arco.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e arco. Nella forma arco l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "zos": {
+      "name": "Dardi di Zos",
+      "desc": "Forma alternativa: dardi da lancio.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e dardi. Nella forma dardi l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "baphomet": {
+      "name": "Artigli di Baphomet",
+      "desc": "Forma alternativa: artigli.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e artigli. Nella forma artigli l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "kia": {
+      "name": "Guanto di Kia",
+      "desc": "Forma alternativa: guanto d'arme.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e guanto d'arme. Nella forma guanto l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "longinus": {
+      "name": "Lancia di Longino",
+      "desc": "Forma alternativa: lancia.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e lancia. Nella forma lancia l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+    },
+    "sniper": {
+      "name": "Coilgun",
+      "desc": "Forma pistola estesa.",
+      "effect": "3 colpi, portata 4x. L'ultimo colpo la riporta a pistola."
+    },
+    "solomon": {
+      "name": "Grimorio di Salomone",
+      "desc": "Forma alternativa: il libro aperto.",
+      "effect": "Montato, il libro è già aperto quando comincia lo scontro: Em entra in ogni battaglia leggendo, con una fila di incantesimi presi dal grimorio al posto dei suoi. È un patto, non un regalo. Con questa forma Morte Aggraziata non concede alcun turno di invulnerabilità, e il libro non restituisce salute: la prende, per ogni incantesimo letto, in proporzione a quanto costa lanciarlo. Si può montare una sola forma alternativa."
+    }
+  },
+  "growth": {
+    "footer": "Telaio al livello {level}: +{damage}% a colpo, +{atk} ATT e AGI, +{rounds} munizioni",
+    "label": "Crescita",
+    "desc": "Le statistiche dell'arma scalano col livello di Em."
+  }
+}

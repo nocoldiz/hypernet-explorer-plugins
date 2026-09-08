@@ -33,6 +33,28 @@
     "teleportToShip": "",
     "returnToWorldMap": "Retour à la carte du monde"
   },
+  "cmdDesc": {
+    "backpack": "Gérer l'inventaire et les objets du groupe",
+    "equip": "Modifier les armes, armures et accessoires",
+    "skills": "Consulter et utiliser les compétences et sorts",
+    "status": "Vérifier les caractéristiques, stats et états",
+    "biologics": "Surveiller les organes vitaux et implants",
+    "questLog": "Suivre les quêtes actives et le journal",
+    "dynamics": "Gérer l'équipe, l'ordre des tours et l'historique",
+    "pets": "Gérer les animaux de compagnie et compagnons",
+    "tools": "Utiliser les outils, appareils et kits de survie",
+    "worldMap": "Consulter la carte du monde et la navigation",
+    "vehicles": "Gérer, invoquer et monter les véhicules",
+    "wait": "Faire défiler le temps et attendre",
+    "hyperdeck": "Accéder au terminal et au réseau Hyperdeck",
+    "help": "Consulter le manuel, les guides et le système",
+    "save": "Enregistrer la progression de la partie",
+    "preferences": "Régler les options audio, vidéo et contrôles",
+    "resign": "Quitter la partie et retourner à l'écran titre",
+    "stopTravel": "Arrêter le voyage et explorer la zone",
+    "returnToWorldMap": "Quitter la zone et revenir à la carte",
+    "returnToShip": "Monter immédiatement à bord du vaisseau"
+  },
   "dynamics": {
     "roster": "",
     "rosterSub": "",

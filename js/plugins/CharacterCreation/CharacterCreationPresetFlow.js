@@ -22,6 +22,18 @@
  *
  * Every method here was a method of Scene_CharacterCreation and still is:
  * the class body below is copied onto its prototype at load.
+ *
+ * @command joinPresetCharacter
+ * @text Dossier Joins The Party
+ * @desc Signs a premade dossier on by its id, built exactly as the wizard
+ * builds it. With no seat free they wait on the Dynamics roster instead.
+ *
+ * @arg presetId
+ * @text Dossier Id
+ * @type number
+ * @min 1
+ * @default 1
+ * @desc The id of the premade dossier to sign on.
  */
 
 (() => {
@@ -42,7 +54,7 @@
     availablePresets,
     skinKeyPadOn,
     skinKeyLabel,
-    beginTutorialControlsLegend,
+    beginStoryModeControlsLegend,
     Window_CharacterCreationTitle,
     STEP,
   } = window.CCKit;
@@ -67,13 +79,28 @@
   } = window.CCOrigins || {};
 
   // What a dossier starts with. Most of them spell their own kit out and are
-  // played exactly as written. The tutorial's three do not: they are a class and
+  // played exactly as written. The story mode's three do not: they are a class and
   // a face and nothing else, so they start as their class does, with the very
   // weapon, armour, items, level-1 skills and purse the class step hands a
   // character built by hand. The board that shows the kit and the code that
   // grants it both read this, so what the player is shown is what the player
   // gets. `fromClass` says which of the two answers this is, because a class kit
   // is granted by the class helpers themselves (they equip as well as give).
+  // The one dossier the story mode is played as. Read off the world's own pool
+  // rather than off availablePresets(), which answers with the story mode board's
+  // dossiers while the story mode is running.
+  function storyModeEmPreset() {
+    return storyModePresetBy((entry) => entry.proceduralLore === "em");
+  }
+
+  // Read off the world's own pool rather than off availablePresets(), which
+  // answers with the story mode board's dossiers while the story mode is running.
+  function storyModePresetBy(test) {
+    const api = window.CharacterPresets || {};
+    const all = (typeof api.getCharacterPresets === "function") ? api.getCharacterPresets() : [];
+    return all.find((entry) => entry && test(entry)) || null;
+  }
+
   function presetLoadout(preset) {
     const own = {
       skills: preset.skills || [],
@@ -197,7 +224,7 @@
         mapId: preset.mapId,
         x: preset.x,
         y: preset.y,
-        tutorialOnly: !!preset.tutorialOnly
+        storyModeOnly: !!preset.storyModeOnly
       };
     }
 
@@ -214,18 +241,33 @@
       markFirstCreationComplete();
       grantMinimumCards();
 
-      // The tutorial's dossiers are done with the wizard here, and the legend
-      // that teaches the controls starts on the map they land on. They are put
-      // down by the same transfer every other dossier gets: creation is reached
-      // from the title screen as much as from the tutorial map itself, so
-      // "stay where you are" left the party wherever the title had them.
-      if (landing.tutorialOnly) {
-        Scene_CharacterCreation._tutorialMode = false;
-        beginTutorialControlsLegend();
+      // The story mode is done with the wizard here, and the legend that teaches
+      // the controls starts on the map it lands on. It is put down by the same
+      // transfer every other dossier gets: creation is reached from the title
+      // screen as much as from the story mode map itself, so "stay where you are"
+      // left the party wherever the title had them. The flag is read as well as
+      // the landing's own mark, because the story mode is played as Em now, whose
+      // record is one of the world's own and carries no story mode mark.
+      const wasStoryMode = !!(landing.storyModeOnly || Scene_CharacterCreation._storyMode);
+      if (wasStoryMode) {
+        Scene_CharacterCreation._storyMode = false;
+        beginStoryModeControlsLegend();
+      }
+      // The story mode does not land where Em's dossier says: her square is
+      // where she lives, not where the story opens. window.StoryModeStart owns
+      // that answer (the canon year opens on its own map, a later year on her
+      // square, and a world begun after 2012 on the Omega Tower).
+      if (wasStoryMode && window.StoryModeStart && window.StoryModeStart.creationLanding) {
+        const start = window.StoryModeStart.creationLanding();
+        if (start && start.mapId) {
+          landing.mapId = start.mapId;
+          landing.x = start.x;
+          landing.y = start.y;
+        }
       }
       const target = $dataMapInfos && $dataMapInfos[landing.mapId];
       if ($gameTemp) $gameTemp._ccOriginLanding = true;
-      if (!landing.tutorialOnly && startsAtOmegaTower()) {
+      if (!wasStoryMode && startsAtOmegaTower()) {
         startAtOmegaTower();
       } else if (target) {
         $gamePlayer.reserveTransfer(landing.mapId, landing.x, landing.y, 2, 0);
@@ -240,8 +282,21 @@
     // Applies one preset dossier (class, inventory, skills, traits, gear,
     // switches) onto the actor being created. `skinData` is the look picked on
     // the dossier page; without one the dossier's own sprite and bust stand.
-    _applyPreset(preset, actor, skinData) {
+    //
+    // `opts` is how a dossier is stamped onto somebody who is JOINING a party
+    // that is already under way (joinPresetCharacter, below) rather than being
+    // built at the start of one:
+    //   joining     - the party keeps its purse, its stock and its vehicle; the
+    //                 dossier hands over only what belongs to the person.
+    //   memberIndex - which of the three seats they sit in, for the switches and
+    //                 variables that speak per seat. -1 means no seat at all,
+    //                 which is a sheet built on the bench's scratch slot.
+    _applyPreset(preset, actor, skinData, opts = {}) {
       const look = skinData || presetSkins(preset)[0] || preset;
+      const joining = !!opts.joining;
+      const seat = Number.isInteger(opts.memberIndex)
+        ? opts.memberIndex
+        : (Scene_CharacterCreation._currentPartyMemberIndex || 0);
 
       // Mark preset properties on actor
       actor._isPresetActor = true;
@@ -267,16 +322,21 @@
         actor.changeLevel(Math.max(1, Math.min(99, preset.level)), false);
       }
 
-      // Clear party's current inventory and gold
-      $gameParty.initAllItems();
-      $gameParty.gainGold(-$gameParty.gold());
+      // Clear party's current inventory and gold. Never when somebody joins a
+      // party already on the road: the dossier is a person, not a new game.
+      if (!joining) {
+        $gameParty.initAllItems();
+        $gameParty.gainGold(-$gameParty.gold());
+      }
 
       // Apply the dossier's money and kit. A dossier that spells out no kit of
       // its own starts as its class does, and that half is handed over by the
       // very helpers the class step uses, so it is worn and not merely carried
       // (see presetLoadout).
       const loadout = presetLoadout(preset);
-      $gameParty.gainGold(loadout.money);
+      // A dossier's purse is the money a game STARTS with, so a latecomer
+      // brings their kit and their gear but not a second founding fortune.
+      if (!joining) $gameParty.gainGold(loadout.money);
       if (loadout.fromClass) {
         const SE = window.StartingEquipment || {};
         if (SE.equipRandomCompatibleWeapon) SE.equipRandomCompatibleWeapon(actor, preset.classId);
@@ -297,7 +357,7 @@
         });
       }
 
-      if ($dataItems[714]) {
+      if (!joining && $dataItems[714]) {
         $gameParty.gainItem($dataItems[714], 1);
       }
 
@@ -338,6 +398,7 @@
         actor._isCreatureActor = false;
         const slot = $gameParty.members().indexOf(actor);
         if (slot >= 0) $gameSwitches.setValue(77 + slot, false);
+        else if (seat >= 0) $gameSwitches.setValue(77 + seat, false);
         if (actor.setPortraitMode) actor.setPortraitMode("bust");
         Scene_CharacterCreation._isCreatureMode = false;
       }
@@ -400,30 +461,35 @@
         });
       }
 
-      const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      const currentMemberIndex = seat;
       const creatureSwitchId = 77 + currentMemberIndex;
 
-      if (preset.characterType) {
-        $gameSwitches.setValue(creatureSwitchId, preset.characterType === "creature");
-      } else if (preset.isCreature !== undefined) {
-        $gameSwitches.setValue(creatureSwitchId, preset.isCreature);
-      } else {
-        $gameSwitches.setValue(creatureSwitchId, false);
+      // Switches 77/78/79 and variables 38+ speak for a seat. A sheet built on
+      // the bench's scratch slot sits in none of them, so it writes to none.
+      if (currentMemberIndex >= 0) {
+        if (preset.characterType) {
+          $gameSwitches.setValue(creatureSwitchId, preset.characterType === "creature");
+        } else if (preset.isCreature !== undefined) {
+          $gameSwitches.setValue(creatureSwitchId, preset.isCreature);
+        } else {
+          $gameSwitches.setValue(creatureSwitchId, false);
+        }
       }
 
       if (preset.gender !== undefined) {
-        $gameVariables.setValue(38 + currentMemberIndex, preset.gender);
+        if (currentMemberIndex >= 0) $gameVariables.setValue(38 + currentMemberIndex, preset.gender);
         actor._gender = preset.gender;
         if (actor.setGender) actor.setGender(preset.gender);
       }
 
       window.CharacterPresets?.applyPresetIdentity?.(preset, actor);
-      window.CharacterPresets?.applyPresetVehicle?.(preset);
+      // The camper a dossier arrives in belongs to the founding of a party.
+      if (!joining) window.CharacterPresets?.applyPresetVehicle?.(preset);
 
       // A dossier is played as it was written, so the Bio page it hands over is
       // already answered rather than sitting on its own defaults with nobody
       // allowed to touch them.
-      this._initPresetBio(preset, actor);
+      this._initPresetBio(preset, actor, currentMemberIndex);
 
       actor.refresh();
     }
@@ -431,9 +497,11 @@
     // The bio a dossier implies. Age comes off its birth date, wealth off its
     // purse, and everything the dossier does not state is settled from its own
     // id so the same person is always the same person.
-    _initPresetBio(preset, actor) {
+    _initPresetBio(preset, actor, seatIndex) {
       if (!preset || !actor) return;
-      const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      const memberIdx = Number.isInteger(seatIndex)
+        ? seatIndex
+        : (Scene_CharacterCreation._currentPartyMemberIndex || 0);
       actor._bioSet = true;
 
       const nowYear = (window.TimeDateSystem && window.TimeDateSystem.getCurrentDateObj)
@@ -441,14 +509,36 @@
       const birthYear = parseInt(String(preset.birthDate || "").slice(0, 4), 10);
       if (!isNaN(birthYear)) {
         const age = Math.max(1, nowYear - birthYear);
-        if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
-        $gameSystem._ccBirthAge[memberIdx] = age;
+        actor._ccAge = age;
+        if (memberIdx >= 0) {
+          if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
+          $gameSystem._ccBirthAge[memberIdx] = age;
+        }
       }
 
       // Euros, the way the rest of the game counts money: destitute under 200,
       // working class under 1000, middle class under 5000, wealthy above it.
-      const euros = (Number(preset.money) || 0) / 100;
-      actor._wealthTier = euros >= 5000 ? 3 : euros >= 1000 ? 2 : euros >= 200 ? 1 : 0;
+      // A dossier that states its own standing outranks its purse: what is in
+      // somebody's pocket on the day they set out is not what they came from.
+      if (preset.socialClass != null) {
+        actor._wealthTier = Number(preset.socialClass);
+      } else {
+        const euros = (Number(preset.money) || 0) / 100;
+        actor._wealthTier = euros >= 5000 ? 3 : euros >= 1000 ? 2 : euros >= 200 ? 1 : 0;
+      }
+
+      // The body the dossier was written with. Nothing had been writing this,
+      // so every dossier sat on the reproduction selector's default (testicles)
+      // no matter which gender it declared; a dossier that names no organs
+      // takes the ones its gender usually comes with.
+      const CCU = window.CharacterCreationUtils;
+      if (memberIdx >= 0 && CCU) {
+        if (preset.reproduction != null && CCU.setReproductionType) {
+          CCU.setReproductionType(memberIdx, Number(preset.reproduction));
+        } else if (preset.gender !== undefined && CCU.applyGenderAndReproduction) {
+          CCU.applyGenderAndReproduction(memberIdx, preset.gender, { keepOrgans: true });
+        }
+      }
 
       if (actor._morality == null) actor._morality = 0;
       if (!actor._jobId) actor._jobId = 0;
@@ -469,17 +559,17 @@
     }
 
     onPresetCancel() {
-      // The tutorial's dossier choice is mandatory: there is nowhere to back
-      // out to (see startTutorialPresetSelection), so leaving the board means
+      // The story mode's dossier choice is mandatory: there is nowhere to back
+      // out to (see startStoryModeDossier), so leaving the board means
       // taking the dossier standing in front of you. That is what a step tab
-      // clicked from the board does too, which is how the tutorial reaches its
+      // clicked from the board does too, which is how the story mode reaches its
       // own bio and romance pages with a character already on them.
-      if (Scene_CharacterCreation._tutorialMode) {
+      if (Scene_CharacterCreation._storyMode) {
         const actor = Scene_CharacterCreation.getCurrentActor();
         if (!actor || !actor._isPresetActor) {
           this._applyPresetToMember(this._presetWindow ? this._presetWindow.index() : 0);
         }
-        // The board parked the step on CREATION_MODE, a page the tutorial never
+        // The board parked the step on CREATION_MODE, a page the story mode never
         // asks; the sheet the dossier is now on opens on the bio page instead.
         this._step = STEP.BIO;
       }
@@ -503,23 +593,77 @@
     }
 
 
-    startTutorialPresetSelection() {
+    // The story mode is played as Em and nobody else: no board is opened and no
+    // dossier is chosen. Her own record is stamped onto the seat straight away,
+    // which is what hands over the liminal cuffs and parks The Beast where she
+    // left it, and the wizard opens on her sheet so the player still reads who
+    // they are before setting out. Taking her record also spends this world's
+    // Em (markPresetUsed -> recordEndlessPick), so the next one to fall through
+    // a door is a drifter from another branch rather than the native one.
+    startStoryModeDossier() {
       $gameSwitches.setValue(9, false);   // permadeath off (roguelite)
       $gameSystem._bloodAndOilMode = false;
-      $gameSwitches.setValue(45, false);  // card combat off
       $gameSwitches.setValue(46, false);  // monster mode off
       if (!hasCompletedFirstCreation()) {
         ConfigManager.mapBattleMode = false;
         ConfigManager.save();
       }
-      if (window.CharacterPresets && typeof window.CharacterPresets.resetTutorialPresetRolls === "function") {
-        window.CharacterPresets.resetTutorialPresetRolls();
+      $gameSwitches.setValue(33, true);   // roguelite difficulty, applied silently
+      // The pages the story mode's old walk used to tick off on its way past
+      // them. Nothing walks them any more, so they are marked here instead, and
+      // a later creation still knows they have been answered once.
+      const presets = window.CharacterPresets;
+      if (presets && typeof presets.markStepCompleted === "function") {
+        [STEP.SETTINGS, STEP.DIFFICULTY, STEP.COMBAT_MODE].forEach((step) => {
+          if (step != null) presets.markStepCompleted(step);
+        });
       }
-      // showPresetSelection()'s DOM renderer only reads this._step to rule
-      // out the settings step; park it on a harmless index first (the same
-      // one the ordinary "existing character" choice leaves it on).
-      this._step = STEP.CREATION_MODE;
-      this.showPresetSelection();
+      this._applyStoryModeEmPreset();
+      // Her sheet opens on the page the story mode leaves the player to write:
+      // the bio. STEP.CREATION_MODE, where the old board parked the wizard, is
+      // a page the story mode never asks.
+      this._step = STEP.BIO;
+      this.setupStep();
+    }
+
+    // Em's dossier, taken without a board in front of it. Everything the
+    // ordinary pick does (_applyPresetToMember) minus the board: the record is
+    // spent, the landing is remembered and the seat is filled.
+    _applyStoryModeEmPreset() {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor || actor._isPresetActor) return;
+      const preset = storyModeEmPreset();
+      if (!preset) {
+        console.error("CharacterCreation: the story mode Em dossier is missing.");
+        return;
+      }
+      try {
+        this._applyPreset(preset, actor, presetSkins(preset)[0] || preset);
+      } catch (e) {
+        console.error('CharacterCreation: failed to apply the story mode dossier "Em"', e);
+        return;
+      }
+      if (typeof markPresetUsed === "function") markPresetUsed(preset.id);
+      // The story mode is Em's playthrough and nobody else's: her own dossier
+      // switch stands alone, and every other dossier switch the record would
+      // hand out (Bubba's 49, the shared 50) stays off.
+      const EM_STORY_SWITCH = 48;
+      const CPApi = window.CharacterPresets;
+      const dossierSwitches = (CPApi && typeof CPApi.getPresetSwitchIds === "function")
+        ? CPApi.getPresetSwitchIds()
+        : (preset.switches || []);
+      dossierSwitches.forEach((id) => {
+        if (id > 0 && id !== EM_STORY_SWITCH) $gameSwitches.setValue(id, false);
+      });
+      $gameSwitches.setValue(EM_STORY_SWITCH, true);
+      // Her creed and her lack of a job are story mode's, not the dossier's, so
+      // they are written on now rather than waiting for the bio page to draw.
+      const CP = window.CharacterPresets;
+      if (CP && CP.applyStoryModeEmLocks) CP.applyStoryModeEmLocks(actor);
+      actor.refresh();
+      actor.recoverAll();
+      $gameSystem._currentPresetId = preset.id;
+      this._recordPresetLanding(preset);
     }
 
     // Leaving the wizard, whether for good or only as far as one of the screens
@@ -573,10 +717,19 @@
     _isActorLockedPreset(actor) {
       if (!actor) actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor || !actor._isPresetActor) return false;
+      // A dossier the player wrote (a saved character, a retired companion) is
+      // theirs: taken as a starting point and edited from there, however far
+      // they like. Only the hand-authored ones are played as written.
+      const CP = window.CharacterPresets;
+      if (CP && CP.isAuthoredPreset && !CP.isAuthoredPreset(actor._presetId)) return false;
       const name = (actor._presetName || actor.name() || "").trim().toLowerCase();
       const key = (actor._presetKey || "").trim().toLowerCase();
       if (name === "em" || key === "em") {
-        return false;
+        // Em is the one dossier an ordinary playthrough may rewrite: she is a
+        // different Em every time. Story mode is the exception, because there
+        // she is not a dossier at all, she is the protagonist.
+        return !!(window.CharacterPresets && window.CharacterPresets.isStoryModeEm &&
+          window.CharacterPresets.isStoryModeEm(actor));
       }
       return true;
     }
@@ -609,26 +762,25 @@
       return this._isActorLockedPreset(Scene_CharacterCreation.getCurrentActor());
     }
 
-    // The pages a taken dossier leaves open. The tutorial is played as one of
-    // three dossiers and never gets the ordinary wizard, so the two pages that
-    // say who the character is rather than what they can do - the bio and the
-    // ties they hold - are the player's to write there even though the dossier
-    // is locked. The vehicle is open for the same reason and a plainer one: it
-    // belongs to the party, not to the dossier, and refusing it there would
-    // leave the tutorial with no way to answer its last question. Everywhere
-    // else a dossier is played exactly as written.
+    // The pages a taken dossier leaves open. The story mode is played as Em and
+    // never gets the ordinary wizard, so the page that says who she holds close
+    // - the ties - is the player's to write there even though the dossier is
+    // locked. The bio page is not: Em's sheet is read there in full, every
+    // detail of it, and none of it is the player's to rewrite. Everywhere else a
+    // dossier is played exactly as written. The garage is not among them any
+    // more: the story mode sets out in The Beast, parked where Em left it, and
+    // is never asked what it drives.
     _presetLockFreeStep() {
-      if (!Scene_CharacterCreation._tutorialMode) return false;
-      return this._step === STEP.BIO || this._step === STEP.ROMANCE ||
-        this._step === STEP.VEHICLE;
+      if (!Scene_CharacterCreation._storyMode) return false;
+      return this._step === STEP.ROMANCE;
     }
 
     // What the button under a dossier says. The wizard stamps the dossier onto
-    // the seat being edited and carries on filling the party; the tutorial has
+    // the seat being edited and carries on filling the party; the story mode has
     // only this one seat to fill, so taking a dossier there settles the party
     // outright, and the one page still owed after it is the vehicle.
     _presetConfirmLabel() {
-      return Scene_CharacterCreation._tutorialMode
+      return Scene_CharacterCreation._storyMode
         ? ccT('CharCreate.confirmParty', 'Confirm Party')
         : T('CharCreate.applyToMember');
     }
@@ -649,6 +801,54 @@
     // refreshUIOverlayDOM so the preset screen is drawn the way every other
     // page of the spread is: a left method and a right one, asked for by the
     // dispatcher and owned by the module whose subject they are.
+    // Throwing a dossier away. Only the player's own: a saved character or a
+    // retired companion is theirs to keep or drop, while a hand-authored one is
+    // part of the game and has no button at all (CharacterPresets.isAuthoredPreset).
+    _presetIsPlayerMade(preset) {
+      const CP = window.CharacterPresets;
+      if (!preset || !CP || !CP.isAuthoredPreset) return false;
+      return !CP.isAuthoredPreset(preset.id);
+    }
+
+    _presetDeleteButtonHtml(preset, activeIndex) {
+      if (!this._presetIsPlayerMade(preset)) return "";
+      return `
+          <button class="cc-sidebar-btn cc-btn-full cc-btn-danger" onclick="SceneManager._scene.onDeletePreset(${activeIndex})">
+            ${this._ccIconHtml(168, 18)} <span>${ccT('CharCreate.deletePreset', 'Delete Dossier')}</span>
+          </button>`;
+    }
+
+    // Asked on the same parchment every other confirmation is asked on, and
+    // answered by CharacterPresets.removePresetById, which refuses anything the
+    // game itself wrote even when something asks it to.
+    onDeletePreset(index) {
+      const preset = this._presetWindow && this._presetWindow.itemAt
+        ? this._presetWindow.itemAt(index)
+        : null;
+      if (!this._presetIsPlayerMade(preset)) { SoundManager.playBuzzer(); return; }
+      this._ccConfirm({
+        title: ccT('CharCreate.deletePreset', 'Delete Dossier'),
+        body: ccTp('CharCreate.deletePresetBody', { name: preset.name },
+          `Delete the dossier of ${preset.name}? This cannot be undone.`),
+        acceptLabel: ccT('CharCreate.deletePreset', 'Delete Dossier')
+      }, () => {
+        const CP = window.CharacterPresets;
+        if (!CP || !CP.removePresetById(preset.id, { playerOnly: true })) {
+          SoundManager.playBuzzer();
+          return;
+        }
+        SoundManager.playCancel();
+        if (this._presetWindow && this._presetWindow.rebuild) {
+          this._presetWindow.rebuild();
+          const max = this._presetWindow.maxItems ? this._presetWindow.maxItems() : 0;
+          if (this._presetWindow.select) this._presetWindow.select(Math.max(0, Math.min(index, max - 1)));
+        }
+        this._lastStep = -1;
+        this._lastIndex = -1;
+        this.refreshUIOverlayDOM();
+      });
+    }
+
     _presetPickerRightHtml(activeIndex) {
       const preset = this._presetWindow.currentPreset();
       const skins = preset ? presetSkins(preset) : [];
@@ -662,13 +862,13 @@
       const presetLore = preset
         ? (typeof getPresetLore === "function" ? getPresetLore(preset) : (preset.lore || ""))
         : "";
-      // A dossier the tutorial deals is a CLASS being chosen, so the page reads
+      // A dossier the story mode deals is a CLASS being chosen, so the page reads
       // as one: what the class does for a living, and what each of the skills it
       // opens with actually does in a fight. Every other dossier is a person,
       // and keeps its own prose.
-      const briefHtml = (preset && preset.tutorialOnly)
-        ? this._tutorialClassBriefHtml(preset)
-        : `<p class="cc-text-desc" style="font-size:1.15rem; text-align:left; color:#ded1c1;">
+      const briefHtml = (preset && preset.storyModeOnly)
+        ? this._storyModeClassBriefHtml(preset)
+        : `<p class="cc-text-desc cc-text-desc--body">
             ${this.cleanText(presetLore || ccT('CharCreate.presetNoLore', 'A distinguished operative prepared for network field operations.'))}
           </p>`;
       const presetGold = preset ? (presetLoadout(preset).money || 200000) : 200000;
@@ -695,61 +895,62 @@
           </div>` : "";
 
       const rightHtml = preset ? `
-        <div class="cc-page cc-page-right" style="display:flex; flex-direction:column;">
-          <div style="display:flex; justify-content:flex-end; align-items:center; margin-bottom:8px;">
+        <div class="cc-page cc-page-right cc-col">
+          <div class="cc-row-end">
             <div class="cc-money-badge">${presetMoneyFormatted}</div>
           </div>
           <div class="cc-dossier-photo-frame">
-            <div class="cc-wanted-sprite" style="${this.getSpriteStyle(currentSkin.sprite, currentSkin.spriteIndex)}; transform:scale(1.8); margin:6px 0;"></div>
+            <div class="cc-wanted-sprite cc-sprite-x18 cc-sprite-tight" style="${this.getSpriteStyle(currentSkin.sprite, currentSkin.spriteIndex)}"></div>
           </div>
           ${skinsHtml}
-          <div class="cc-dossier-card" style="padding:10px; margin-bottom:10px;">
-            <div class="cc-dossier-row" style="font-size:1.15rem; padding:4px 0;"><span class="cc-dossier-label">${ccT('CharCreate.dossierName', 'Name')}</span><span class="cc-dossier-value">${preset.name}</span></div>
-            <div class="cc-dossier-row" style="font-size:1.15rem; padding:4px 0;"><span class="cc-dossier-label">${T('CharCreate.vocation')}</span><span class="cc-dossier-value">${className}</span></div>
+          <div class="cc-dossier-card cc-card-padded">
+            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.dossierName', 'Name')}</span><span class="cc-dossier-value">${preset.name}</span></div>
+            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${T('CharCreate.vocation')}</span><span class="cc-dossier-value">${className}</span></div>
           </div>
-          <div style="flex:1; min-height:0; overflow-y:auto;">
+          <div class="cc-scroll-pane">
             ${briefHtml}
           </div>
-          <button class="cc-sidebar-btn primary" style="margin-top:10px; width:100%; justify-content:center; height:44px; font-size:1.1rem;" onclick="SceneManager._scene.onApplyPresetToCurrentMember(${activeIndex})">
+          <button class="cc-sidebar-btn cc-btn-full cc-btn-full--tall" onclick="SceneManager._scene.onApplyPresetToCurrentMember(${activeIndex})">
             ${this._ccIconHtml(189, 18)} <span>${this._presetConfirmLabel()}</span>
           </button>
+          ${this._presetDeleteButtonHtml(preset, activeIndex)}
         </div>
       ` : `<div class="cc-page cc-page-right"></div>`;
       return rightHtml;
     }
 
-    // What a tutorial class is and what it opens with, written for somebody who
-    // has never played this before: the prose lives in CharPresets.tutorialClass
-    // and CharPresets.tutorialSkill, and nothing outside the tutorial board
+    // What a story mode class is and what it opens with, written for somebody who
+    // has never played this before: the prose lives in CharPresets.storyModeClass
+    // and CharPresets.storyModeSkill, and nothing outside the story mode board
     // reads either bank. A skill with no brief of its own falls back to the
     // database line every other menu shows.
-    _tutorialClassBriefHtml(preset) {
+    _storyModeClassBriefHtml(preset) {
       const classId = preset && preset.classId;
       const classData = $dataClasses[classId];
       if (!classData) return "";
-      const briefKey = "CharPresets.tutorialClass." + classId;
+      const briefKey = "CharPresets.storyModeClass." + classId;
       const brief = T.has(briefKey) ? T(briefKey) : "";
 
       const skillsHtml = (classData.learnings || [])
         .filter((l) => l && l.level === 1 && $dataSkills[l.skillId])
         .map((l) => {
           const skill = $dataSkills[l.skillId];
-          const key = "CharPresets.tutorialSkill." + skill.id;
+          const key = "CharPresets.storyModeSkill." + skill.id;
           const text = T.has(key) ? T(key) : String(skill.description || "");
           return `
-            <div class="cc-dossier-card cc-tutorial-skill" style="padding:8px 10px; margin-bottom:6px;">
-              <div class="cc-subheader" style="font-size:1.05rem; margin:0 0 3px 0; display:flex; align-items:center; gap:6px;">
+            <div class="cc-dossier-card cc-storymode-skill cc-card-padded cc-card-padded--tight">
+              <div class="cc-subheader cc-subheader--flush cc-row-inline">
                 ${this._ccIconHtml(skill.iconIndex || 79, 20)}
                 <span>${window.CCDbName(skill)}</span>
               </div>
-              <p class="cc-text-desc cc-text-desc--body" style="margin:0; font-size:1.02rem; color:#ded1c1;">${this.cleanText(text)}</p>
+              <p class="cc-text-desc cc-text-desc--body cc-flush cc-text-desc--body">${this.cleanText(text)}</p>
             </div>
           `;
         }).join("");
 
       return `
-        ${brief ? `<p class="cc-text-desc" style="font-size:1.15rem; text-align:left; color:#ded1c1; margin-bottom:10px;">${this.cleanText(brief)}</p>` : ""}
-        ${skillsHtml ? `<h3 class="cc-subheader" style="font-size:1.05rem; margin:0 0 6px 0;">${T('CharCreate.startingSkills')}</h3>${skillsHtml}` : ""}
+        ${brief ? `<p class="cc-text-desc cc-text-desc--body cc-gap-below">${this.cleanText(brief)}</p>` : ""}
+        ${skillsHtml ? `<h3 class="cc-subheader cc-subheader--flush">${T('CharCreate.startingSkills')}</h3>${skillsHtml}` : ""}
       `;
     }
 
@@ -770,7 +971,7 @@
 
       const leftHtml = `
         <div class="cc-page cc-page-left">
-          <div class="cc-presets-board">${presetsCards}</div>
+          <div class="cc-presets-board cc-dossier-board">${presetsCards}</div>
         </div>
       `;
       return leftHtml;
@@ -798,13 +999,13 @@
 
       const identityHeaderHtml = `
         <div class="cc-compact-identity-card">
-          <div style="display:flex; gap:10px; align-items:center;">
+          <div class="cc-row-inline cc-row-gap-wide">
             <div class="cc-compact-avatar-wrap">
               <div class="cc-compact-avatar" style="${avatarStyle}"></div>
             </div>
-            <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:0;">
-              <div style="font-family:'Lora',serif; font-weight:bold; font-size:1.15rem; color:#ffd700;">${preset.name || ""}</div>
-              <div style="font-weight:700; color:#ffd700;">${className}</div>
+            <div class="cc-col cc-col-gap-1 cc-col-grow">
+              <div class="cc-detail-title">${preset.name || ""}</div>
+              <div class="cc-identity-name">${className}</div>
             </div>
           </div>
         </div>
@@ -817,14 +1018,14 @@
       };
       const SL = ccStatLabels();
       const stats = [
-        { key: "HP",  label: SL.HP,  val: paramAt(0, 450), color: "#ef5350" },
-        { key: "MP",  label: SL.MP,  val: paramAt(1, 100), color: "#64b5f6" },
-        { key: "STR", label: SL.STR, val: paramAt(2, 12),  color: "#e57373" },
-        { key: "CON", label: SL.CON, val: paramAt(3, 10),  color: "#ffb74d" },
-        { key: "DEX", label: SL.DEX, val: paramAt(6, 10),  color: "#ffd54f" },
-        { key: "INT", label: SL.INT, val: paramAt(4, 10),  color: "#ba68c8" },
-        { key: "WIS", label: SL.WIS, val: paramAt(5, 10),  color: "#4db6ac" },
-        { key: "PSI", label: SL.PSI, val: paramAt(7, 10),  color: "#f06292" }
+        { key: "HP",  label: SL.HP,  val: paramAt(0, 450), color: "var(--stat-hp)" },
+        { key: "MP",  label: SL.MP,  val: paramAt(1, 100), color: "var(--stat-mp)" },
+        { key: "STR", label: SL.STR, val: paramAt(2, 12),  color: "var(--stat-str)" },
+        { key: "CON", label: SL.CON, val: paramAt(3, 10),  color: "var(--stat-con)" },
+        { key: "DEX", label: SL.DEX, val: paramAt(6, 10),  color: "var(--stat-dex)" },
+        { key: "INT", label: SL.INT, val: paramAt(4, 10),  color: "var(--stat-int)" },
+        { key: "WIS", label: SL.WIS, val: paramAt(5, 10),  color: "var(--stat-wis)" },
+        { key: "PSI", label: SL.PSI, val: paramAt(7, 10),  color: "var(--stat-psi)" }
       ];
       const statsHtml = `
         <div class="cc-vitals-block">
@@ -835,7 +1036,7 @@
               if (isVital) {
                 return `
                   <div class="cc-stat-box" ${statHover}>
-                    <span class="cc-stat-label" style="color:${st.color};">${st.label}</span>
+                    <span class="cc-stat-label" class="cc-inked" style="--cc-ink:${st.color}">${st.label}</span>
                     <span class="cc-stat-val">${st.val}</span>
                   </div>
                 `;
@@ -855,21 +1056,18 @@
 
       const traitObjs = selectedTraitObjects({ _selectedTraits: preset.traits });
       const traitRowsHtml = traitObjs.map((tr) => {
-        const cost = Number.isFinite(Number(tr.cost)) ? Number(tr.cost) : 1;
-        const price = cost < 0 ? `+${-cost}` : String(cost);
         return this._ccLoadoutRowHtml(
           tr.icon || 87,
           (tr.name && resolveTraitName(tr.name, tr.id)) || tr.id,
-          price,
-          { valueColor: cost < 0 ? '#a5d6a7' : '#ffd700', hover: this._ccHoverAttrs("trait", tr.id) }
+          "",
+          { hover: this._ccHoverAttrs("trait", tr.id) }
         );
       }).join("");
       const traitsSectionHtml = this._ccLoadoutSectionHtml(
         T('CharCreate.traits'),
-        ccTp('CharCreate.traitCount', { n: traitObjs.length }, traitObjs.length + ' traits'),
         traitRowsHtml,
         T('CharCreate.noDefiningTraits'),
-        false,
+        true,
         'cc-loadout-grid-cols'
       );
 
@@ -883,10 +1081,9 @@
         { hover: this._ccHoverAttrs("skill", sk.id) })).join("");
       const skillsSectionHtml = this._ccLoadoutSectionHtml(
         T('CharCreate.startingSkills'),
-        ccTp('CharCreate.skillCount', { n: skillsList.length }, skillsList.length + ' skills'),
         skillsLoadoutHtml,
         T('CharCreate.noStartingSkills'),
-        false,
+        true,
         'cc-loadout-grid-cols'
       );
 
@@ -907,17 +1104,16 @@
         208,
         ccT('CharCreate.startingFunds', 'Starting Funds'),
         this._formatGoldToEuros(loadout.money),
-        { nameColor: '#ffd700', valueColor: '#a5d6a7' }
+        { nameColor: 'var(--text-primary-hover)', valueColor: 'var(--text-cost-ok)' }
       );
       const loadoutItemsHtml = itemsList.map((it) => this._ccLoadoutRowHtml(
         it.iconIndex, it.name, `x${it.qty}`, { hover: this._ccHoverAttrs(it.type, it.id, it.qty) }
       )).join("");
       const startingItemsSectionHtml = this._ccLoadoutSectionHtml(
         T('CharCreate.startingItems'),
-        ccTp('CharCreate.entryCount', { n: itemsList.length + 1 }, (itemsList.length + 1) + ' entries'),
         moneyRowHtml + loadoutItemsHtml,
         T('CharCreate.noGear'),
-        false,
+        true,
         'cc-loadout-grid-cols'
       );
 
@@ -939,12 +1135,13 @@
     onApplyPresetToCurrentMember(presetIndex) {
       const presets = availablePresets();
       if (!this._applyPresetToMember(presetIndex)) return;
-      // The tutorial fills one seat and no more: the dossier it just took is
-      // the party, so the board hands over to the last thing still to choose,
-      // the vehicle, rather than back to the wizard. The adventure begins on
-      // that page (see goToTutorialVehicleStep).
-      if (Scene_CharacterCreation._tutorialMode) {
-        this.goToTutorialSpriteBoard(presets[presetIndex] ||
+      // The story mode fills one seat and no more: the dossier it just took is
+      // the party, so the board hands over to the face it is played with and
+      // the adventure begins from there (see finishStoryModeCreation). It is
+      // never opened on the story mode's own way in any more, which is played as
+      // Em without a board at all, only if something reopens it.
+      if (Scene_CharacterCreation._storyMode) {
+        this.goToStoryModeSpriteBoard(presets[presetIndex] ||
           (this._presetWindow && this._presetWindow.currentPreset()));
         return;
       }
@@ -955,16 +1152,16 @@
     // board opens on that dossier's own sheets alone - the witches, the ring,
     // the goblins, the slimes - so a look can be chosen without stepping
     // outside what the dossier is. Confirming it (or backing out of it) brings
-    // the wizard back on the vehicle page, the tutorial's last question, which
+    // the wizard back on the vehicle page, the story mode's last question, which
     // is the step after the one the chain is opened from.
-    goToTutorialSpriteBoard(preset) {
+    goToStoryModeSpriteBoard(preset) {
       const board = window.Scene_SpriteGridSelector;
       const presetsApi = window.CharacterPresets;
-      const pool = (preset && presetsApi && presetsApi.getTutorialSpritePool)
-        ? presetsApi.getTutorialSpritePool(preset.spritePoolKey)
+      const pool = (preset && presetsApi && presetsApi.getStoryModeSpritePool)
+        ? presetsApi.getStoryModeSpritePool(preset.spritePoolKey)
         : null;
       if (!board || !pool || pool.length === 0) {
-        this.goToTutorialVehicleStep();
+        this.finishStoryModeCreation();
         return;
       }
       // The board keeps its own windows over the spread; they come down here
@@ -1004,14 +1201,13 @@
         } catch (e) {
           console.error(`CharacterCreation: failed to apply preset "${preset.name}"`, e);
         }
-        if (!preset.tutorialOnly && typeof markPresetUsed === "function") {
+        if (!preset.storyModeOnly && typeof markPresetUsed === "function") {
           markPresetUsed(preset.id);
         }
         actor.refresh();
         actor.recoverAll();
         $gameSystem._currentPresetId = preset.id;
         this._recordPresetLanding(preset);
-        SoundManager.playOk();
       }
       return true;
     }
@@ -1028,11 +1224,11 @@
     onPresetCardClick(index) {
       if (this._presetWindow) {
         // Clicking the highlighted dossier again takes it, except in the
-        // tutorial, where taking one begins the adventure: there the board is
+        // story mode, where taking one begins the adventure: there the board is
         // browsed with the mouse and committed to with the button under it, so
         // a second click on the card that was already highlighted cannot end
         // creation by accident.
-        if (this._presetWindow.index() === index && !Scene_CharacterCreation._tutorialMode) {
+        if (this._presetWindow.index() === index && !Scene_CharacterCreation._storyMode) {
           this.onPresetSelect();
         } else if (this._presetWindow.index() === index) {
           SoundManager.playCursor();
@@ -1093,7 +1289,8 @@
       // The dossier portrait keeps the layout it was drawn with.
       const portrait = spread.querySelector(".cc-page-right .cc-dossier-photo-frame .cc-wanted-sprite");
       if (portrait) {
-        portrait.setAttribute("style", `${spriteStyle}; transform:scale(1.8); margin:6px 0;`);
+        portrait.setAttribute("style", spriteStyle);
+      portrait.classList.add("cc-sprite-x18", "cc-sprite-tight");
       }
 
       // Which thumbnail wears the stamp, and the count under the row.
@@ -1113,6 +1310,97 @@
     }
 
   }
+
+  //===========================================================================
+  // Signing a dossier on mid-adventure
+  //===========================================================================
+  // The wizard is not the only way a premade dossier enters a party: an event
+  // can call one up by its id long after the game began. The person is built by
+  // the very method the wizard's board uses, so they arrive with the class,
+  // level, skills, traits, specializations, gear, look, bust, creature form,
+  // bio and lore the dossier states, and with nothing the wizard would only
+  // hand a party being founded (its purse, its stock, its camper, its landing).
+  //
+  // With no seat free they sign on all the same and wait on the Inactive list
+  // in Dynamics -> Roster, exactly as a recruit who says yes to a full party
+  // does (NPCSystemParty.benchRecruit).
+
+  // The scratch slot a benched dossier's sheet is built on: a map-battle ally
+  // actor, never in the party outside a fight, handed back blank the moment the
+  // sheet has been snapshotted off it. The same slot NPCSystemParty uses.
+  const BENCH_SCRATCH_ACTOR_ID = 8;
+
+  // Stamps a dossier onto an actor without a scene under it. _applyPreset only
+  // ever reaches for `this` to answer the bio, which the prototype answers too.
+  function stampPreset(preset, actor, memberIndex) {
+    const skins = presetSkins(preset);
+    Scene_CharacterCreation.prototype._applyPreset.call(
+      Scene_CharacterCreation.prototype,
+      preset, actor, skins[0] || preset,
+      { joining: true, memberIndex }
+    );
+    actor.refresh();
+    actor.recoverAll();
+  }
+
+  /**
+   * Sign a premade dossier on by its id, into the party or onto the bench.
+   * @param {number} presetId - Dossier id, as listed in the preset records
+   * @returns {object} { ok, reason?, actorId?, inactive?, preset? }
+   */
+  function joinPresetCharacter(presetId) {
+    if (!$gameParty || !$gameActors) return { ok: false, reason: "noParty" };
+    const api = window.CharacterPresets || {};
+    const id = Number(presetId);
+    const all = (typeof api.getCharacterPresets === "function") ? api.getCharacterPresets() : [];
+    const preset = all.find((entry) => entry && Number(entry.id) === id);
+    if (!preset) {
+      console.error(`CharacterCreation: no dossier with id ${presetId} to sign on`);
+      return { ok: false, reason: "unknownPreset" };
+    }
+    if ($gameParty.members().some((mem) => mem.name() === preset.name)) {
+      return { ok: false, reason: "alreadyHere" };
+    }
+
+    const actorId = (typeof api.freeCompanionActorId === "function") ? api.freeCompanionActorId() : 0;
+    if (actorId && $gameActors.actor(actorId)) {
+      const actor = $gameActors.actor(actorId);
+      stampPreset(preset, actor, $gameParty.members().length);
+      $gameParty.addActor(actorId);
+      if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
+      if (typeof markPresetUsed === "function" && !preset.storyModeOnly) markPresetUsed(preset.id);
+      window.ParchmentToast?.show?.(T("CharPresets.dossierJoined", { name: preset.name }));
+      return { ok: true, actorId, inactive: false, preset };
+    }
+
+    // No seat: build the sheet on the scratch slot, snapshot it onto the bench
+    // and leave nothing of them behind on the slot.
+    const scratch = $gameActors.actor(BENCH_SCRATCH_ACTOR_ID);
+    const bench = api.benchActorAsPreset;
+    if (!bench || !scratch || ($gameParty._actors || []).includes(BENCH_SCRATCH_ACTOR_ID)) {
+      return { ok: false, reason: "partyFull" };
+    }
+    stampPreset(preset, scratch, -1);
+    const result = bench(scratch, {
+      isCreature: preset.characterType === "creature" || !!preset.isCreature,
+      lore: (typeof getPresetLore === "function" && getPresetLore(preset)) || preset.lore || "",
+    });
+    $gameActors._data[BENCH_SCRATCH_ACTOR_ID] = null;
+    if (!result || !result.ok) return { ok: false, reason: "partyFull" };
+    if (typeof markPresetUsed === "function" && !preset.storyModeOnly) markPresetUsed(preset.id);
+    window.ParchmentToast?.show?.(T("CharPresets.dossierJoinedInactive", { name: preset.name }));
+    return { ok: true, inactive: true, preset: result.preset };
+  }
+
+  const joinPresetCommand = (args) => {
+    joinPresetCharacter(Number((args && (args.presetId ?? args.id)) || 0));
+  };
+  PluginManager.registerCommand("CharacterCreationPresetFlow", "joinPresetCharacter", joinPresetCommand);
+  // Legacy keys: the dossier records and the wizard both answer to this too.
+  PluginManager.registerCommand("CharacterPresets", "joinPresetCharacter", joinPresetCommand);
+  PluginManager.registerCommand("CharacterCreation", "joinPresetCharacter", joinPresetCommand);
+
+  window.CCPresetJoin = { joinPresetCharacter };
 
   for (const key of Object.getOwnPropertyNames(CCPresetFlow.prototype)) {
     if (key === "constructor") continue;

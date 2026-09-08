@@ -1648,14 +1648,16 @@
           shank.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
           group.add(shank);
         }
+        // The grip is only the last few centimetres of the bat: wound down
+        // the arm it ran off the end of the wood, and the knob with it.
         for (let i = 0; i < 5; i++) {
           const wrap = new THREE.Mesh(new THREE.TorusGeometry(0.022, 0.005, this.seg(4, 3), this.seg(10, 6)), tape);
           wrap.rotation.x = Math.PI / 2;
-          wrap.position.y = -0.03 - i * 0.026;
+          wrap.position.y = -0.008 - i * 0.008;
           group.add(wrap);
         }
         const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.024, 0.016, this.seg(10, 6)), ash);
-        knob.position.y = -0.17;
+        knob.position.y = -0.046;
         group.add(knob);
         return group;
       },

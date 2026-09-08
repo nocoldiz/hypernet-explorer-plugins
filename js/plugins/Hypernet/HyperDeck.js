@@ -2769,6 +2769,9 @@
     // The bench, as a scene
     //-------------------------------------------------------------------------
     const LAB_ID = 'hyperchip-lab';
+    // The same chrome dressed inside a HypernetOS window: the styles hang off
+    // the class, the fixed full-screen placement off the id alone.
+    const LAB_CLASS = 'hyperchip-lab';   // i18n-ignore  css class
 
     // The palette, in the order it is drawn and the order the number keys walk.
     function chipPalette() {
@@ -2833,9 +2836,10 @@
         createDom() {
             this.styleDom();
             this.root = document.createElement('div');
-            this.root.id = LAB_ID;
+            this.root.className = LAB_CLASS + (this.hostEl ? ' hosted' : '');
+            if (!this.hostEl) this.root.id = LAB_ID;
             this.root.innerHTML = this.skeleton();
-            document.body.appendChild(this.root);
+            (this.hostEl || document.body).appendChild(this.root);
             this.canvas = this.root.querySelector('.cl-canvas');
             this.ctx = this.canvas.getContext('2d');
             this.statusEl = this.root.querySelector('.cl-status');
@@ -2852,53 +2856,60 @@
             const st = document.createElement('style');
             st.id = LAB_ID + '-style';
             st.textContent = `
-#${LAB_ID} { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
-  z-index: 62; font-family: '${hudFont()}', monospace; -webkit-font-smoothing: none;
+#${LAB_ID} { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; z-index: 62; }
+.${LAB_CLASS} { font-family: '${hudFont()}', monospace; -webkit-font-smoothing: none;
   color: ${deco('ink', '#f6e8c4')}; }
-#${LAB_ID} .cl-panel { position: absolute; background: ${deco('black', '#08070b')};
-  border: 2px solid ${gold}; box-shadow: 0 0 0 2px #000, 0 6px 22px rgba(0,0,0,0.75);
+.${LAB_CLASS}.hosted { position: relative; width: 100%; height: 100%; overflow: hidden;
+  background: #14110c; font-size: 12px; line-height: 1.4; }
+.${LAB_CLASS} .cl-dies { position: absolute; background: ${deco('black', '#08070b')};
+  border: 2px solid ${gold}; padding: 6px 10px; display: flex; flex-direction: column; gap: 2px; }
+.${LAB_CLASS} .cl-die { display: flex; justify-content: space-between; gap: 10px; }
+.${LAB_CLASS} .cl-die span:last-child { color: ${deco('dim', '#c0a468')}; }
+.${LAB_CLASS} .cl-die.fitted span:last-child { color: ${deco('green', '#93d86e')}; }
+.${LAB_CLASS} .cl-panel { position: absolute; background: ${deco('black', '#08070b')};
+  border: 2px solid ${gold}; box-shadow: 0 0 0 2px var(--xp-black), 0 6px 22px rgba(0,0,0,0.75);
   display: flex; flex-direction: column; }
-#${LAB_ID} .cl-head { background: ${gold}; color: #000; padding: 4px 10px;
+.${LAB_CLASS} .cl-head { background: ${gold}; color: var(--xp-black); padding: 4px 10px;
   letter-spacing: 2px; flex: 0 0 auto; }
-#${LAB_ID} .cl-scroll { overflow-y: auto; overflow-x: hidden; flex: 1 1 auto;
+.${LAB_CLASS} .cl-scroll { overflow-y: auto; overflow-x: hidden; flex: 1 1 auto;
   min-height: 0; padding: 4px; }
-#${LAB_ID} .cl-item { display: flex; justify-content: space-between; gap: 8px;
+.${LAB_CLASS} .cl-item { display: flex; justify-content: space-between; gap: 8px;
   padding: 5px 7px; cursor: pointer; border: 1px solid transparent; }
-#${LAB_ID} .cl-item:hover { background: ${deco('selHi', '#43331a')}; }
-#${LAB_ID} .cl-item.on { background: ${deco('sel', '#2a2010')}; border-color: ${gold}; }
-#${LAB_ID} .cl-item span:last-child { color: ${deco('dim', '#c0a468')}; }
-#${LAB_ID} .cl-group { color: ${gold}; letter-spacing: 2px; padding: 8px 7px 2px;
+.${LAB_CLASS} .cl-item:hover { background: ${deco('selHi', '#43331a')}; }
+.${LAB_CLASS} .cl-item.on { background: ${deco('sel', '#2a2010')}; border-color: ${gold}; }
+.${LAB_CLASS} .cl-item span:last-child { color: ${deco('dim', '#c0a468')}; }
+.${LAB_CLASS} .cl-group { color: ${gold}; letter-spacing: 2px; padding: 8px 7px 2px;
   border-bottom: 1px solid ${goldLo}; margin-bottom: 2px; }
-#${LAB_ID} .cl-sub { color: ${gold}; letter-spacing: 2px; padding: 7px 10px 2px;
+.${LAB_CLASS} .cl-sub { color: ${gold}; letter-spacing: 2px; padding: 7px 10px 2px;
   border-top: 1px solid ${goldLo}; flex: 0 0 auto; }
-#${LAB_ID} .cl-presets { display: none; z-index: 2; }
-#${LAB_ID} .cl-presets.on { display: flex; }
-#${LAB_ID} .cl-canvas { position: absolute; background: #0b0d12; cursor: crosshair;
+.${LAB_CLASS} .cl-presets { display: none; z-index: 2; }
+.${LAB_CLASS} .cl-presets.on { display: flex; }
+.${LAB_CLASS} .cl-canvas { position: absolute; background: #0b0d12; cursor: crosshair;
   border: 2px solid ${goldLo}; image-rendering: pixelated; }
-#${LAB_ID} .cl-bar { position: absolute; display: flex; flex-wrap: wrap; gap: 4px;
+.${LAB_CLASS} .cl-bar { position: absolute; display: flex; flex-wrap: wrap; gap: 4px;
   align-items: stretch; }
-#${LAB_ID} .cl-btn { cursor: pointer; padding: 6px 10px; color: ${gold};
-  border: 1px solid ${goldLo}; background: #12101a; white-space: nowrap; }
-#${LAB_ID} .cl-btn:hover { background: ${deco('selHi', '#43331a')};
+.${LAB_CLASS} .cl-btn { cursor: pointer; padding: 6px 10px; color: ${gold};
+  border: 1px solid ${goldLo}; background: var(--xp-terminal); white-space: nowrap; }
+.${LAB_CLASS} .cl-btn:hover { background: ${deco('selHi', '#43331a')};
   color: ${deco('goldHi', '#fff2c6')}; }
-#${LAB_ID} .cl-btn.on { border-color: ${deco('green', '#93d86e')};
+.${LAB_CLASS} .cl-btn.on { border-color: ${deco('green', '#93d86e')};
   background: ${deco('sel', '#2a2010')}; }
-#${LAB_ID} .cl-btn.bad { color: ${deco('red', '#d9533d')}; }
-#${LAB_ID} .cl-status { position: absolute; background: ${deco('black', '#08070b')};
+.${LAB_CLASS} .cl-btn.bad { color: ${deco('red', '#d9533d')}; }
+.${LAB_CLASS} .cl-status { position: absolute; background: ${deco('black', '#08070b')};
   border: 2px solid ${gold}; padding: 6px 10px; }
-#${LAB_ID} .cl-line { display: flex; justify-content: space-between; gap: 12px; }
-#${LAB_ID} .cl-line span:first-child { color: ${deco('dim', '#c0a468')}; }
-#${LAB_ID} .cl-pins { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
-#${LAB_ID} .cl-pin { width: 26px; text-align: center; cursor: pointer; padding: 3px 0;
-  border: 1px solid ${goldLo}; background: #12101a; color: ${deco('dim', '#c0a468')}; }
-#${LAB_ID} .cl-pin.on { background: ${deco('green', '#93d86e')}; color: #06120a; }
-#${LAB_ID} .cl-pin.lit { border-color: ${deco('green', '#93d86e')};
+.${LAB_CLASS} .cl-line { display: flex; justify-content: space-between; gap: 12px; }
+.${LAB_CLASS} .cl-line span:first-child { color: ${deco('dim', '#c0a468')}; }
+.${LAB_CLASS} .cl-pins { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+.${LAB_CLASS} .cl-pin { width: 26px; text-align: center; cursor: pointer; padding: 3px 0;
+  border: 1px solid ${goldLo}; background: var(--xp-terminal); color: ${deco('dim', '#c0a468')}; }
+.${LAB_CLASS} .cl-pin.on { background: ${deco('green', '#93d86e')}; color: #06120a; }
+.${LAB_CLASS} .cl-pin.lit { border-color: ${deco('green', '#93d86e')};
   color: ${deco('green', '#93d86e')}; }
-#${LAB_ID} .cl-regs { margin-top: 6px; border-top: 1px solid ${goldLo}; padding-top: 4px; }
-#${LAB_ID} .cl-regs .cl-line { display: flex; justify-content: space-between; gap: 10px; }
-#${LAB_ID} .cl-regs .cl-line span:first-child { color: ${deco('dim', '#c0a468')}; }
-#${LAB_ID} .cl-msg { color: ${deco('green', '#93d86e')}; padding-top: 6px; }
-#${LAB_ID} .cl-hint { color: ${deco('faint', '#7d6836')}; padding: 6px 10px;
+.${LAB_CLASS} .cl-regs { margin-top: 6px; border-top: 1px solid ${goldLo}; padding-top: 4px; }
+.${LAB_CLASS} .cl-regs .cl-line { display: flex; justify-content: space-between; gap: 10px; }
+.${LAB_CLASS} .cl-regs .cl-line span:first-child { color: ${deco('dim', '#c0a468')}; }
+.${LAB_CLASS} .cl-msg { color: ${deco('green', '#93d86e')}; padding-top: 6px; }
+.${LAB_CLASS} .cl-hint { color: ${deco('faint', '#7d6836')}; padding: 6px 10px;
   border-top: 1px solid ${goldLo}; flex: 0 0 auto; }
 `;
             document.head.appendChild(st);
@@ -2948,6 +2959,7 @@
   <div class="cl-regs"></div>
   <div class="cl-msg"></div>
 </div>
+${this.hostEl ? '<div class="cl-dies"></div>' : ''}
 <div class="cl-panel cl-presets">
   <div class="cl-head">${esc(T('HyperDeck.chip.presetHeading'))}</div>
   <div class="cl-scroll">${presets}</div>
@@ -2966,9 +2978,19 @@
 </div>`;
         }
 
-        layout() {
+        // Where the chrome is laid out: the game canvas for the scene, the
+        // window's own box (from its top left corner) for a hosted bench.
+        hostRect() {
+            if (this.hostEl) {
+                const hr = this.hostEl.getBoundingClientRect();
+                return { left: 0, top: 0, width: hr.width, height: hr.height };
+            }
             const gc = Graphics._canvas || document.getElementById('gameCanvas');
-            const r = gc && gc.getBoundingClientRect ? gc.getBoundingClientRect() : null;
+            return gc && gc.getBoundingClientRect ? gc.getBoundingClientRect() : null;
+        }
+
+        layout() {
+            const r = this.hostRect();
             if (!r || !r.width) return;
             const geom = [r.left, r.top, r.width, r.height].join('|');
             if (this._geom === geom) return;
@@ -2977,7 +2999,7 @@
             const pad = Math.round(r.width * 0.012);
             const palW = Math.round(Math.max(150, Math.min(260, r.width * 0.16)));
             const barH = Math.round(Math.max(34, r.height * 0.07));
-            this.root.style.fontSize = Math.max(11, Math.round(r.width / 100)) + 'px';
+            this.root.style.fontSize = Math.max(11, Math.round(r.width / (this.hostEl ? 80 : 100))) + 'px';
             this.root.style.lineHeight = '1.4';
 
             const palette = this.root.querySelector('.cl-palette');
@@ -3015,6 +3037,11 @@
                 left: (r.left + pad) + 'px',
                 top: (r.top + r.height - pad - barH) + 'px',
                 width: Math.round(r.width - pad * 2) + 'px'
+            });
+            const dies = this.root.querySelector('.cl-dies');
+            if (dies) Object.assign(dies.style, {
+                left: (cx + pad) + 'px', top: (r.top + pad * 2) + 'px',
+                width: Math.round(Math.min(230, r.width * 0.2)) + 'px'
             });
             this._dirty = true;
         }
@@ -3600,7 +3627,30 @@
                 regs.style.display = 'none';
             }
             this.root.querySelector('.cl-msg').textContent = this._message || '';
+            this.refreshDies();
             this._chromeDirty = false;
+        }
+
+        // What the bench has etched so far and where each die is: fitted to
+        // the deck, in the bag, or gone. The hosted editor shows it so the
+        // desktop and the deck read the same shelf.
+        refreshDies() {
+            const el = this.root.querySelector('.cl-dies');
+            if (!el) return;
+            const dies = chipDies();
+            const fitted = {};
+            const d = deck();
+            (d ? d.placed : []).forEach(rec => { fitted[rec.itemId] = true; });
+            const rows = Object.keys(dies).map(id => {
+                const die = dies[id];
+                const item = $dataItems[id];
+                const where = fitted[id] ? T('HyperDeck.chip.app.fitted')
+                    : (item && $gameParty.numItems(item) > 0) ? T('HyperDeck.chip.app.inBag')
+                        : T('HyperDeck.chip.app.gone');
+                return `<div class="cl-die ${fitted[id] ? 'fitted' : ''}"><span>${esc(die.name)}</span><span>${esc(T('HyperDeck.unit.mhz', { n: die.mhz }))} ${esc(where)}</span></div>`;
+            });
+            el.innerHTML = `<div class="cl-line"><span>${esc(T('HyperDeck.chip.app.dies'))}</span><span>${rows.length} / ${CHIP_DIE_SLOTS}</span></div>`
+                + (rows.length ? rows.join('') : `<div class="cl-die"><span>${esc(T('HyperDeck.chip.app.noDies'))}</span><span></span></div>`);
         }
 
         //--- the loop --------------------------------------------------------
@@ -3625,7 +3675,12 @@
             if (Input.isPressed('up')) { v.y -= pan; this._dirty = true; }
             if (Input.isPressed('down')) { v.y += pan; this._dirty = true; }
             this.clampView();
+            this.pump();
+        }
 
+        // The simulation, the chrome and the picture: one frame of the bench,
+        // whichever screen it is on.
+        pump() {
             if (this._running) {
                 this._frame++;
                 const every = Math.max(1, Math.round(16 / this._lab.speed));
@@ -3648,6 +3703,72 @@
     }
 
     window.Scene_ChipLab = Scene_ChipLab;
+
+    //-------------------------------------------------------------------------
+    // The bench, as a HypernetOS program
+    //-------------------------------------------------------------------------
+    // The same bench inside a desktop window: the same lab on $gameSystem, the
+    // same simulation, the same etching, so a circuit drawn on the desktop is
+    // the one on the deck's bench and a die etched here goes in the bag like
+    // any other. The scene's own methods draw it; only the host, the loop and
+    // the way out differ.
+    const CHIP_APP_ID = 'app-chiplab';   // i18n-ignore  app id
+
+    function mountChipBench(hostEl, onDone) {
+        const b = Object.create(Scene_ChipLab.prototype);
+        b._running = false;
+        b._frame = 0;
+        b._dirty = true;
+        b._paint = 0;
+        b._last = null;
+        b._lab = chipLab();
+        b._sim = new ChipSim(b._lab);
+        b.hostEl = hostEl;
+        b.popScene = () => onDone();
+        b.createDom();
+        return b;
+    }
+
+    function registerChipBenchApp() {
+        if (!window.HypernetOS || !window.HypernetOS.registerApp) return;
+        let bench = null;
+        window.HypernetOS.registerApp({
+            id: CHIP_APP_ID,
+            name: T('HyperDeck.chip.app.name'),
+            icon: 84,
+            desktopShortcut: false,
+            category: 'accessories',   // i18n-ignore  category id
+            launchFn: function () {
+                const WM = window.HypernetOS.WindowManager;
+                const win = WM.createWindow({
+                    id: 'win-' + CHIP_APP_ID,
+                    title: T('HyperDeck.chip.app.name'),
+                    icon: 84,
+                    width: 900,
+                    height: 600,
+                    contentHTML: '<div class="chip-bench-host"></div>'
+                });
+                const host = win.querySelector('.chip-bench-host');
+                if (!host || host.dataset.mounted) return win;
+                host.dataset.mounted = '1';
+                host.style.cssText = 'position:absolute; left:0; top:0; width:100%; height:100%;';
+                if (!chipLab()) return win;
+                bench = mountChipBench(host, () => WM.closeWindow(win));
+                win.addEventListener('hypernet-closed', () => {
+                    if (bench) { bench.unbind(); if (bench.root && bench.root.parentNode) bench.root.parentNode.removeChild(bench.root); }
+                    bench = null;
+                });
+                return win;
+            },
+            // The kernel ticks every running program once a frame.
+            update: function () {
+                if (!bench || !bench.root || !bench.root.isConnected) return;
+                bench.layout();
+                bench.pump();
+            }
+        });
+    }
+    registerChipBenchApp();
 
     //=========================================================================
     window.HyperDeck = {
@@ -4254,7 +4375,6 @@
             this.list = this.root.querySelector('.hd-list');
             this.specBody = this.root.querySelector('.hd-spec-body');
             this.req = this.root.querySelector('.hd-req');
-            this.hint = this.root.querySelector('.hd-hint');
             this.picker = this.root.querySelector('.hd-picker');
             this.bios = this.root.querySelector('.hd-bios');
             this._bind();
@@ -4273,10 +4393,10 @@
   -webkit-font-smoothing: none; }
 #${HUD_ID} .hd-panel { position: absolute; pointer-events: auto;
   background: ${deco('black', '#08070b')}; color: ${deco('ink', '#f6e8c4')};
-  border: 2px solid ${gold}; box-shadow: 0 0 0 2px #000, 0 6px 22px rgba(0,0,0,0.75);
+  border: 2px solid ${gold}; box-shadow: 0 0 0 2px var(--xp-black), 0 6px 22px rgba(0,0,0,0.75);
   display: none; flex-direction: column; }
 #${HUD_ID} .hd-panel.on { display: flex; }
-#${HUD_ID} .hd-head { background: ${gold}; color: #000; padding: 4px 10px;
+#${HUD_ID} .hd-head { background: ${gold}; color: var(--xp-black); padding: 4px 10px;
   letter-spacing: 2px; flex: 0 0 auto; }
 #${HUD_ID} .hd-sub { color: ${gold}; letter-spacing: 2px; padding: 8px 10px 2px;
   border-top: 1px solid ${goldLo}; }
@@ -4295,7 +4415,7 @@
 #${HUD_ID} .hd-tools { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px;
   flex: 0 0 auto; border-top: 1px solid ${goldLo}; }
 #${HUD_ID} .hd-btn { flex: 1 1 28%; text-align: center; cursor: pointer;
-  padding: 6px 2px; color: ${gold}; border: 1px solid ${goldLo}; background: #12101a; }
+  padding: 6px 2px; color: ${gold}; border: 1px solid ${goldLo}; background: var(--xp-terminal); }
 #${HUD_ID} .hd-btn:hover { background: ${deco('selHi', '#43331a')};
   color: ${deco('goldHi', '#fff2c6')}; }
 #${HUD_ID} .hd-btn.on { border-color: ${deco('goldHi', '#fff2c6')};
@@ -4327,12 +4447,12 @@
 #${HUD_ID} .hd-picker { position: absolute; pointer-events: auto; display: none;
   background: ${deco('black', '#08070b')}; color: ${deco('ink', '#f6e8c4')};
   border: 2px solid ${gold};
-  box-shadow: 0 0 0 2px #000, 0 8px 30px rgba(0,0,0,0.8); flex-direction: column; }
+  box-shadow: 0 0 0 2px var(--xp-black), 0 8px 30px rgba(0,0,0,0.8); flex-direction: column; }
 #${HUD_ID} .hd-picker.on { display: flex; }
 #${HUD_ID} .hd-scroll { overflow-y: auto; }
 #${HUD_ID} .hd-swatches { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; }
 #${HUD_ID} .hd-swatch { width: 52px; height: 52px; cursor: pointer;
-  border: 2px solid ${goldLo}; background: #12101a; overflow: hidden;
+  border: 2px solid ${goldLo}; background: var(--xp-terminal); overflow: hidden;
   display: flex; align-items: center; justify-content: center;
   color: ${deco('dim', '#c0a468')}; font-size: 0.7em; text-align: center; }
 #${HUD_ID} .hd-swatch img { width: 100%; height: 100%; object-fit: cover; }
@@ -4340,40 +4460,40 @@
 #${HUD_ID} .hd-swatch.on { border-color: ${deco('green', '#93d86e')}; }
 #${HUD_ID} .hd-rows { display: flex; flex-direction: column; gap: 2px; padding: 8px; }
 #${HUD_ID} .hd-pick { cursor: pointer; padding: 7px 10px; border: 1px solid ${goldLo};
-  background: #12101a; display: flex; justify-content: space-between; gap: 12px; }
+  background: var(--xp-terminal); display: flex; justify-content: space-between; gap: 12px; }
 #${HUD_ID} .hd-pick:hover { background: ${deco('selHi', '#43331a')}; }
 #${HUD_ID} .hd-pick.on { border-color: ${deco('green', '#93d86e')}; }
 #${HUD_ID} .hd-pick span:last-child { color: ${deco('dim', '#c0a468')}; }
 /* The firmware screen. Blue, grey and cyan on purpose: this is the one part
    of the machine that predates anybody choosing how it should look. */
 #${HUD_ID} .hd-bios { position: absolute; pointer-events: auto; display: none;
-  background: #0000a8; color: #c8c8c8; flex-direction: column; padding: 0;
-  border: 2px solid #b0b0b0; box-shadow: 0 0 0 2px #000; }
+  background: var(--xp-navy-4); color: var(--xp-silver-2); flex-direction: column; padding: 0;
+  border: 2px solid var(--xp-ink-pale-3); box-shadow: 0 0 0 2px var(--xp-black); }
 #${HUD_ID} .hd-bios.on { display: flex; }
-#${HUD_ID} .hd-bios-bar { background: #b0b0b0; color: #0000a8; text-align: center;
+#${HUD_ID} .hd-bios-bar { background: var(--xp-ink-pale-3); color: var(--xp-navy-4); text-align: center;
   letter-spacing: 3px; padding: 4px 0; flex: 0 0 auto; }
-#${HUD_ID} .hd-bios-banner { text-align: center; color: #f0f0f0; padding: 8px 0 2px; }
+#${HUD_ID} .hd-bios-banner { text-align: center; color: var(--xp-gray-light); padding: 8px 0 2px; }
 #${HUD_ID} .hd-bios-sub { text-align: center; color: #7f9fd8; padding-bottom: 8px; }
 #${HUD_ID} .hd-bios-tabs { display: flex; gap: 2px; padding: 0 10px; flex: 0 0 auto; }
-#${HUD_ID} .hd-bios-tab { padding: 3px 16px; cursor: pointer; color: #c8c8c8;
+#${HUD_ID} .hd-bios-tab { padding: 3px 16px; cursor: pointer; color: var(--xp-silver-2);
   border: 1px solid #5a5aa8; }
-#${HUD_ID} .hd-bios-tab.on { background: #b0b0b0; color: #0000a8; border-color: #f0f0f0; }
+#${HUD_ID} .hd-bios-tab.on { background: var(--xp-ink-pale-3); color: var(--xp-navy-4); border-color: var(--xp-gray-light); }
 #${HUD_ID} .hd-bios-body { flex: 1 1 auto; overflow-y: auto; min-height: 0;
   margin: 0 10px; padding: 8px 12px; border: 1px solid #5a5aa8; }
 #${HUD_ID} .hd-bios-row { display: flex; justify-content: space-between; gap: 16px;
   padding: 2px 0; }
 #${HUD_ID} .hd-bios-row span:first-child { color: #8f8f8f; }
-#${HUD_ID} .hd-bios-row span:last-child { color: #f0f0f0; }
+#${HUD_ID} .hd-bios-row span:last-child { color: var(--xp-gray-light); }
 #${HUD_ID} .hd-bios-fault { color: #ffd75f; padding: 2px 0; }
-#${HUD_ID} .hd-bios-clean { color: #6fe08a; padding: 2px 0; }
+#${HUD_ID} .hd-bios-clean { color: var(--xp-green-6); padding: 2px 0; }
 #${HUD_ID} .hd-bios-verdict { text-align: center; padding: 6px 0 2px; }
-#${HUD_ID} .hd-bios-verdict.good { color: #6fe08a; }
+#${HUD_ID} .hd-bios-verdict.good { color: var(--xp-green-6); }
 #${HUD_ID} .hd-bios-verdict.bad { color: #ff8f7f; }
 #${HUD_ID} .hd-bios-keys { display: flex; gap: 4px; padding: 6px 10px 8px;
   flex: 0 0 auto; }
 #${HUD_ID} .hd-bios-key { flex: 1 1 0; text-align: center; cursor: pointer;
-  padding: 4px 0; background: #b0b0b0; color: #0000a8; border: 1px solid #f0f0f0; }
-#${HUD_ID} .hd-bios-key:hover { background: #f0f0f0; }
+  padding: 4px 0; background: var(--xp-ink-pale-3); color: var(--xp-navy-4); border: 1px solid var(--xp-gray-light); }
+#${HUD_ID} .hd-bios-key:hover { background: var(--xp-gray-light); }
 `;
             document.head.appendChild(st);
         }
@@ -4400,7 +4520,6 @@
     <div class="hd-sub">${esc(T('HyperDeck.required.heading'))}</div>
     <div class="hd-req"></div>
   </div>
-  <div class="hd-hint"></div>
 </div>
 <div class="hd-picker"></div>
 <div class="hd-bios"></div>`;
@@ -4419,8 +4538,8 @@
             const pad = Math.round(r.width * 0.012);
             // The rail carries part names, which run long and wrap; the spec
             // sheet carries short figures, so it stays the narrower of the two.
-            const railW = Math.round(Math.max(210, Math.min(460, r.width * 0.27)));
-            const specW = Math.round(Math.max(200, Math.min(380, r.width * 0.225)));
+            const railW = Math.round(Math.max(260, Math.min(520, r.width * 0.30)));
+            const specW = Math.round(Math.max(210, Math.min(460, r.width * 0.27)));
             this.root.style.fontSize = Math.max(11, Math.round(r.width / 96)) + 'px';
             this.root.style.lineHeight = '1.45';
 
@@ -4508,7 +4627,7 @@
                 b.classList.toggle('on', focus === 'tools' && i === index));
         }
 
-        setSpec(hint) {
+        setSpec() {
             const s = specs();
             // [label, value, bad, wraps]. Only the two prose values wrap; the
             // figures stay whole on one line so the sheet reads as a column.
@@ -4537,7 +4656,6 @@
                 const has = !!s.kinds[kind];
                 return `<div class="${has ? 'hd-yes' : 'hd-no'}">${has ? '+' : 'x'} ${esc(kindLabel(kind))}</div>`;
             }).join('');
-            this.hint.textContent = hint || '';
         }
 
         // The finish tray, with the choice of lower half sitting under it,
@@ -4762,8 +4880,7 @@
 
         refreshSpec() {
             if (!this._hud) return;
-            this._hud.setSpec(this._mode === MODE.EDIT
-                ? T('HyperDeck.hint.edit') : T('HyperDeck.hint.idle'));
+            this._hud.setSpec();
         }
 
         applyModeToView() {
@@ -5463,6 +5580,9 @@
             if (this._bootShown >= this._bootLines.length && this._bootHold <= -BOOT_TAIL) {
                 this._bootTimer = -999;
                 if (window.Scene_HypernetOS) {
+                    // The desktop about to come up runs on this board: its
+                    // fitted parts are the hardware every OS app reports.
+                    if (window.HypernetOS && window.HypernetOS.Host) window.HypernetOS.Host.bootFrom('hyperdeck');   // i18n-ignore  profile id
                     SceneManager.push(window.Scene_HypernetOS);
                 } else {
                     console.warn('HyperDeck: Scene_HypernetOS is not defined; the deck booted into nothing.');

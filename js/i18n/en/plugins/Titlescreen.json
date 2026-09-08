@@ -2,13 +2,15 @@
   "menu": {
     "explore": "New Party",
     "reconnect": "Select Party",
-    "tutorial": "Tutorial",
+    "storyMode": "New Story",
+    "continueStory": "Continue Story",
     "minigames": "Minigames",
     "sandbox": "Sandbox",
     "worlds": "Worlds",
     "wiki": "World History",
     "preferences": "Preferences",
     "mods": "Mods",
+    "music": "Music",
     "exit": "Exit",
     "continue": "Continue",
     "quickContinue": "Continue"
@@ -16,13 +18,15 @@
   "menuOverlay": {
     "explore": "NEW PARTY",
     "reconnect": "SELECT PARTY",
-    "tutorial": "TUTORIAL",
+    "storyMode": "NEW STORY",
+    "continueStory": "CONTINUE STORY",
     "minigames": "MINIGAMES",
     "sandbox": "SANDBOX",
     "worlds": "WORLDS",
     "wiki": "WORLD HISTORY",
     "preferences": "PREFERENCES",
     "mods": "MODS",
+    "music": "MUSIC",
     "exit": "EXIT",
     "noWorld": "NO WORLD",
     "quickContinue": "CONTINUE"
@@ -134,7 +138,7 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.5.1a"
+    "text": "0.6.0a"
   },
   "language": {
     "label": "✦ LANG"
@@ -269,5 +273,8 @@
     ],
     "nameFormat": "{adj} {noun}",
     "fallbackType": "Relic"
+  },
+  "music": {
+    "label": "✦ MUSIC: "
   }
 }

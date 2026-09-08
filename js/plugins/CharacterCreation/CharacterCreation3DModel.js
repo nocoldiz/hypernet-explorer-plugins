@@ -1776,6 +1776,14 @@
     this._focus = 0;
     this._modal = null;
     this._sliderDrag = null;
+    // Right and middle drags turn and pan the view. RMMZ reads the right
+    // button as "cancel", and cancel leaves this scene, so an orbit used to
+    // fire an exit on every press: enough of them drained the scene stack and
+    // SceneManager.pop() walked off the end of it and shut the game down, with
+    // the sculptor's own DOM still on screen and nothing left running behind
+    // it. A stage drag swallows the cancel it caused.
+    this._eatCancel = 0;
+    this._leaving = false;
     this._history = [];
     this._future = [];
     this._hoverSlot = null;
@@ -1830,7 +1838,7 @@
     this._sliderDrag = null;
     this.closeModal();
     this._teardownStage();
-    if (this._root) this._root.style.display = "none";
+    if (this._root) window.CCPanel.hide(this._root);
     const styles = document.getElementById("cc3d-styles");
     if (styles) styles.remove();
   };
@@ -1906,116 +1914,10 @@
   // Styles
   //---------------------------------------------------------------------------
 
-  Scene_CC3DModel.prototype._injectStyles = function () {
-    if (document.getElementById("cc3d-styles")) return;
-    const style = document.createElement("style");
-    style.id = "cc3d-styles";
-    style.textContent = `
-      .cc3d { display:flex; flex-direction:column; width:100%; height:100%;
-        box-sizing:border-box; overflow:hidden;
-        font-family:'Lora',serif; color:var(--text-muted-hover); user-select:none; }
-
-      /* --- top bar ------------------------------------------------------- */
-      /* The bar must never be wider than the screen: a chip that will not shrink
-         pushes the whole layout out and takes Continue off the right edge with
-         it, along with everything the columns below are measured against. */
-      .cc3d-top { display:flex; align-items:center; gap:6px; padding:6px 10px; min-width:0;
-        overflow:hidden; border-bottom:1px solid var(--border-accent-hover-translucent-5);
-        background:var(--gradient-1); flex:0 0 auto; }
-      .cc3d-top > * { min-width:0; }
-      .cc3d-top .cc3d-chip { overflow:hidden; text-overflow:ellipsis; }
-      .cc3d-top .cc-btn-treaty { flex:0 0 auto; }
-      .cc3d-title { font-family:'Cinzel','Lora',serif; font-size:1.05rem; letter-spacing:0.06em;
-        color:var(--text-primary-hover); text-transform:uppercase; white-space:nowrap;
-        overflow:hidden; text-overflow:ellipsis; }
-      .cc3d-spacer { flex:1 1 auto; min-width:4px; }
-
-      /* --- the two sidebars, then the creature ---------------------------- */
-      .cc3d-mid { flex:1; min-height:0; min-width:0; display:flex; overflow:hidden; }
-      .cc3d-side { flex:0 0 auto; display:flex; flex-direction:column; gap:4px;
-        padding:8px; box-sizing:border-box; background:var(--gradient-1);
-        border-right:1px solid var(--border-accent-hover-translucent-5); }
-      .cc3d-anat { width:236px; min-width:200px; }
-      .cc3d-parts { width:352px; min-width:280px; }
-      .cc3d-scroll { flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; padding-right:5px; }
-
-      /* --- what the creature is made of ----------------------------------- */
-      .cc3d-part { display:flex; align-items:baseline; justify-content:space-between; gap:6px;
-        padding:3px 5px; border-radius:4px; font-size:0.95rem; }
-      .cc3d-part.pick { cursor:pointer; }
-      .cc3d-part.pick:hover { background:var(--bg-card-translucent-5); }
-      .cc3d-part.on { border:1px solid var(--text-primary-hover);
-        background:var(--border-primary-hover-translucent-15); }
-      .cc3d-part-hp { color:var(--text-primary-hover); white-space:nowrap; }
-
-      /* --- the shelf of parts, three across -------------------------------- */
-      .cc3d-shelf { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:4px;
-        align-content:start; }
-      .cc3d-card { min-width:0; display:flex; flex-direction:column; align-items:center; gap:2px;
-        padding:3px 2px; text-align:center; cursor:pointer; border-radius:5px;
-        border:1px solid var(--border-primary-hover-translucent-15);
-        font-size:0.78rem; line-height:1.1; color:var(--text-muted-hover); }
-      .cc3d-card.on { border-color:var(--text-primary-hover); color:var(--text-primary-hover);
-        background:var(--border-primary-hover-translucent-15); }
-      .cc3d-card-name { width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-      .cc3d-shot { width:100%; height:50px; display:flex; align-items:center; justify-content:center;
-        border-radius:4px; background:var(--bg-card-translucent-5); overflow:hidden; }
-      .cc3d-shot img { max-width:100%; max-height:100%; opacity:0; transition:opacity 0.15s; }
-      .cc3d-shot.bare { border:1px dashed var(--border-primary-hover-translucent-15); font-size:1.4rem; }
-      .cc3d-knobs { display:flex; flex-direction:column; gap:4px; }
-      .cc3d-knobs .cc3d-chip { align-self:flex-start; }
-
-      /* --- the creature, and the sizer in its corner ----------------------- */
-      .cc3d-stage { flex:1; position:relative; min-width:0; }
-      .cc3d-stage canvas { position:absolute; left:0; top:0; width:100%; height:100%;
-        display:block; cursor:grab; }
-      .cc3d-hint { position:absolute; left:12px; right:12px; top:8px; text-align:center;
-        font-size:0.92rem; color:var(--text-muted-hover); opacity:0.5; pointer-events:none; }
-      .cc3d-handles { position:absolute; right:12px; bottom:12px; width:222px; max-width:calc(100% - 24px);
-        box-sizing:border-box; padding:7px 8px;
-        border-radius:7px; display:flex; flex-direction:column; gap:4px;
-        background:var(--bg-primary-hover-translucent-35);
-        border:1px solid var(--border-primary-hover-translucent-15); }
-      .cc3d-handles-name { font-size:1rem; font-weight:bold; color:var(--text-primary-hover);
-        overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-
-      /* --- small parts shared by everything -------------------------------- */
-      .cc3d-add { padding:5px 10px; border-radius:5px; cursor:pointer; text-align:center;
-        font-size:0.98rem; color:var(--text-primary-hover); font-weight:bold;
-        border:1px solid var(--text-primary-hover); background:var(--border-primary-hover-translucent-15); }
-      .cc3d-chip { flex:0 0 auto; padding:3px 10px; border-radius:4px; cursor:pointer;
-        font-size:0.98rem; white-space:nowrap; color:var(--text-muted-hover);
-        border:1px solid var(--border-primary-hover-translucent-15); }
-      .cc3d-chip.on { border-color:var(--text-primary-hover); color:var(--text-primary-hover);
-        background:var(--border-primary-hover-translucent-15); font-weight:bold; }
-      .cc3d-chip.spent { opacity:0.3; }
-      .cc3d-chip.grow { flex:1; text-align:center; }
-      .cc3d-chip .cc3d-dot { display:inline-block; width:5px; height:5px; border-radius:50%;
-        margin-left:5px; vertical-align:middle; background:var(--text-primary-hover); }
-      .cc3d-lbl { font-size:0.93rem; opacity:0.75; white-space:nowrap; }
-      .cc3d-search { flex:0 0 170px; padding:3px 8px; border-radius:5px; font-size:0.96rem;
-        border:1px solid var(--border-primary-hover-translucent-15);
-        background:var(--bg-primary-hover-translucent-35); color:var(--text-primary-hover);
-        font-family:'Lora',serif; }
-      .cc3d-sl { padding:2px 4px 4px 4px; cursor:pointer; border-radius:4px; }
-      .cc3d-sl-head { display:flex; justify-content:space-between; gap:8px; font-size:0.93rem;
-        margin-bottom:2px; }
-      .cc3d-sl-val { color:var(--text-primary-hover); }
-      .cc3d-sl-bar { height:6px; border-radius:3px; background:var(--bg-card-translucent-5);
-        border:1px solid var(--border-primary-hover-translucent-15); overflow:hidden; }
-      .cc3d-sl-fill { height:100%; background:var(--text-primary-hover); opacity:0.7; }
-      .cc3d-tag { font-size:0.8rem; padding:0 5px; margin-left:5px; border-radius:3px;
-        border:1px solid var(--border-primary-hover-translucent-15); }
-      .cc3d-tag.vital { border-color:#d9534f; color:#e8837f; }
-      .cc3d-tag.graft { border-color:var(--text-primary-hover); color:var(--text-primary-hover); }
-      .cc3d-focus { outline:1px solid var(--text-primary-hover); outline-offset:1px; }
-      .cc3d-tip { position:fixed; left:0; top:0; padding:2px 8px; border-radius:4px;
-        font-size:0.96rem; pointer-events:none; display:none; z-index:1400;
-        background:var(--bg-primary-hover-translucent-35); color:var(--text-primary-hover);
-        border:1px solid var(--text-primary-hover); }
-    `;
-    document.head.appendChild(style);
-  };
+  // The editor's stylesheet lives in css/theme.css with every other screen's,
+  // so a preset can re-ink it and the contrast gate can measure it. Kept as a
+  // no-op because the build path still calls it.
+  Scene_CC3DModel.prototype._injectStyles = function () {};
 
   //---------------------------------------------------------------------------
   // Layout
@@ -2030,10 +1932,7 @@
       document.body.appendChild(root);
     }
     this._root = root;
-    root.style.transition = "none";
-    root.style.display = "flex";
-    root.style.opacity = "1";
-    root.style.pointerEvents = "auto";
+    window.CCPanel.show(root);
     root.innerHTML = `
       <div class="cc3d">
         <div class="cc3d-top" id="cc3d-top"></div>
@@ -2057,7 +1956,7 @@
           </div>
         </div>
       </div>
-      <div id="cc3d-modal" style="display:none"></div>
+      <div class="cc3d-modal" id="cc3d-modal"></div>
       <div class="cc3d-tip" id="cc3d-tip"></div>
     `;
     if (window.CCScroll) window.CCScroll.bindWheel(root);
@@ -2125,11 +2024,11 @@
     const group = this._group3();
     if (!group) return "";
     if (group.kind !== "slot") {
-      return `<div style="display:flex; gap:5px"><span class="cc3d-chip grow" data-focus="1"
+      return `<div class="cc-row-inline"><span class="cc3d-chip grow" data-focus="1"
         data-hnav="partsbar" onclick="SceneManager._scene.surpriseGroup()"
         >${T('CharCreate.cc3d.surprise')}</span></div>`;
     }
-    return `<div style="display:flex; gap:5px; align-items:center">
+    return `<div class="cc-row-inline">
         <input id="cc3d-search" class="cc3d-search" type="text" autocomplete="off"
                placeholder="${T('CharCreate.search')}" value="${this._filter}" />
         <span class="cc3d-chip" data-focus="1" data-hnav="partsbar"
@@ -2190,8 +2089,7 @@
         // the whole shelf flash and redraw itself.
         const key = thumbKey(this._slot, option, this._config);
         const url = THUMB_CACHE.get(key);
-        shot = `<span class="cc3d-shot"><img data-thumb="${key}" alt=""` +
-          (url ? ` src="${url}" style="opacity:1"` : ``) + ` /></span>`;
+        shot = `<span class="cc3d-shot"><img class="cc-visible" data-thumb="${key}" alt=""` + (url ? ` src="${url}"` : ``) + ` /></span>`;
       }
       html += `<div class="cc3d-card ${option === worn ? "on" : ""}" data-focus="1" data-hnav="shelf"
         data-part="${option}" title="${name}"
@@ -2230,18 +2128,13 @@
 
   Scene_CC3DModel.prototype._skinHtml = function () {
     const cfg = this._config;
-    const colors = { flesh: "#c78b6a", green: "#5a7a3a", bone: "#e6e0cf", metal: "#8a8f98", stone: "#7a726a" };
     let html = `<span class="cc3d-chip" data-focus="1" data-hnav="knobs"
-        onclick="SceneManager._scene.openPicker('surface')"><span style="display:inline-block;
-        width:11px; height:11px; border-radius:2px; vertical-align:middle; margin-right:5px;
-        background:${colors[cfg.texturePool] || "#888"}"></span>${displayName(cfg.texturePool)}</span>`;
+        onclick="SceneManager._scene.openPicker('surface')"><span class="cc3d-swatch cc3d-surface-${cfg.texturePool}"></span>${displayName(cfg.texturePool)}</span>`;
     if (hairApplies(cfg)) {
       html += `<span class="cc3d-chip" data-focus="1" data-hnav="knobs"
           onclick="SceneManager._scene.openPicker('hairstyle')">${hairLabel("hairstyle", cfg.hairStyle)}</span>
         <span class="cc3d-chip" data-focus="1" data-hnav="knobs"
-          onclick="SceneManager._scene.openPicker('haircolor')"><span style="display:inline-block;
-          width:11px; height:11px; border-radius:50%; vertical-align:middle; margin-right:5px;
-          background:${hairSwatchCss(cfg.hairColor)}"></span>${hairLabel("haircolor", cfg.hairColor)}</span>`;
+          onclick="SceneManager._scene.openPicker('haircolor')"><span class="cc3d-swatch cc3d-swatch--round" style="--cc3d-swatch:${hairSwatchCss(cfg.hairColor)}"></span>${hairLabel("haircolor", cfg.hairColor)}</span>`;
     }
     html += SKIN_SLIDERS.map((key) => this._sliderHtml("cfg:" + key)).join("");
     return `<div class="cc3d-knobs">${html}</div>`;
@@ -2269,9 +2162,9 @@
       <div class="cc3d-handles">
         <div class="cc3d-handles-name">${slotLabel(slot)} &middot; ${fitted
           ? displayName(worn) : T('CharCreate.cc3d.bare')}</div>
-        <div style="display:flex; gap:4px">${chips}</div>
+        <div class="cc-row-inline cc-row-gap-tight">${chips}</div>
         ${sliders}
-        <div style="display:flex; gap:4px">
+        <div class="cc-row-inline cc-row-gap-tight">
           <span class="cc3d-chip grow" data-focus="1" data-hnav="handles"
                 onclick="SceneManager._scene.resetPart()">${T('CharCreate.cc3d.reset')}</span>
           ${fitted ? `<span class="cc3d-chip grow" data-focus="1" data-hnav="handles"
@@ -2378,8 +2271,7 @@
     if (def.swatch) {
       const css = `hsl(${Math.round(value * 360)}, ${Math.round((this._config.sat || 0.45) * 100)}%,` +
                   ` ${Math.round((this._config.lit || 0.6) * 100)}%)`;
-      return `<span style="display:inline-block; width:11px; height:11px; border-radius:2px;
-        vertical-align:middle; margin-right:4px; background:${css}"></span>${Math.round(value * 360)}&deg;`;
+      return `<span class="cc3d-swatch" style="--cc3d-swatch:${css}"></span>${Math.round(value * 360)}&deg;`;
     }
     if (def.unit === "height") {
       const cm = Math.round(HEIGHT_BASE_M * value * 100);
@@ -2399,7 +2291,7 @@
         <div class="cc3d-sl-head"><span>${def.label()}</span>
           <span class="cc3d-sl-val" id="cc3d-v-${CSS_ID(id)}">${this._sliderText(def)}</span></div>
         <div class="cc3d-sl-bar" data-sliderbar="${id}">
-          <div class="cc3d-sl-fill" id="cc3d-f-${CSS_ID(id)}" style="width:${pct}%"></div>
+          <div class="cc3d-sl-fill" id="cc3d-f-${CSS_ID(id)}" style="--cc-bar-w:${pct}%"></div>
         </div>
       </div>`;
   };
@@ -2410,7 +2302,8 @@
     const value = document.getElementById("cc3d-v-" + CSS_ID(id));
     const fill = document.getElementById("cc3d-f-" + CSS_ID(id));
     if (value) value.innerHTML = this._sliderText(def);
-    if (fill) fill.style.width = clamp(((this._sliderValue(def) - def.min) / (def.max - def.min)) * 100, 0, 100) + "%";
+    if (fill) fill.style.setProperty("--cc-bar-w",
+      clamp(((this._sliderValue(def) - def.min) / (def.max - def.min)) * 100, 0, 100) + "%");
   };
 
   Scene_CC3DModel.prototype._refreshXfSliders = function () {
@@ -2470,7 +2363,6 @@
     let restored;
     try { restored = normalizeConfig(JSON.parse(json)); } catch (e) { return; }
     this._config = restored;
-    SoundManager.playOk();
     const groups = this._groups();
     if (!groups.some((g) => g.id === this._group)) this._openGroup(groups[0]);
     if (this._selected && this._slots().indexOf(this._selected) < 0) this._selected = null;
@@ -2541,7 +2433,6 @@
       this._config.partXf[target] = defaultXf();
     });
     this._selected = slot;
-    SoundManager.playOk();
     this._renderParts();
     this._renderHandles();
     this._renderBody();
@@ -2558,7 +2449,6 @@
     if (!this._selected) return;
     this.pushHistory();
     this.applyPartTransform(this._selected, defaultXf());
-    SoundManager.playOk();
     this._renderHandles();
     this._afterRender();
   };
@@ -2567,7 +2457,6 @@
     if (this._config[key] === state) return;
     this.pushHistory();
     this._config[key] = state;
-    SoundManager.playOk();
     this._renderParts();
     this._renderBody();
     this._afterRender();
@@ -2591,7 +2480,6 @@
     if (group.appendage && group.appendage.kind === "slider") {
       this.pushHistory();
       this._config[group.id] = Math.round(Math.random() * 20) / 10;
-      SoundManager.playOk();
       this._renderParts();
       this._afterRender();
       this.scheduleRebuild();
@@ -2603,7 +2491,6 @@
   Scene_CC3DModel.prototype.rerollSeed = function () {
     this.pushHistory();
     this._config.seed = 1 + Math.floor(Math.random() * 99998);
-    SoundManager.playOk();
     this._renderTop();
     this._afterRender();
     this.scheduleRebuild();
@@ -2623,7 +2510,6 @@
     Object.assign(next, kept);
     rollParts(next);
     this._config = next;
-    SoundManager.playOk();
     const groups = this._groups();
     if (!groups.some((g) => g.id === this._group)) this._openGroup(groups[0]);
     this.refreshAll();
@@ -2674,22 +2560,51 @@
   // Leaving
   //---------------------------------------------------------------------------
 
+  // Leaving happens exactly once. A second call cannot pop a second scene off
+  // the stack, and a pop is never allowed to run past the bottom of it, which
+  // is SceneManager.exit(): the game closing itself.
+  Scene_CC3DModel.prototype._safePop = function () {
+    if (SceneManager._stack && SceneManager._stack.length > 0) SceneManager.pop();
+    else if (typeof Scene_Map !== "undefined") SceneManager.goto(Scene_Map);
+  };
+
+  // Nothing that happens on the way out is allowed to keep the player in here.
+  // Writing the sculpt down and rebuilding the body from it both touch data
+  // that came from a hundred donors, and a single part the store or Health
+  // cannot swallow used to throw out of onConfirm with the leaving latch
+  // already down: the Continue button and Escape both went dead, the sculptor
+  // stayed on screen, and the only way out of a finished creature was closing
+  // the game. The sculpt is saved as best it can be, and the scene leaves
+  // either way.
   Scene_CC3DModel.prototype.onConfirm = function () {
-    setConfig(this._actorId, this._config);
-    this._applyAnatomyToActor();
-    SoundManager.playOk();
+    if (this._leaving) return;
+    this._leaving = true;
+    try { setConfig(this._actorId, this._config); } catch (e) { console.error(e); }
+    try { this._applyAnatomyToActor(); } catch (e) { console.error(e); }
     // Creature mode was PUSHED over the creature scene: pop once back to it and
     // let it resume the flow. Humanoid mode mirrors the bust selector's exit: a
     // double pop past the sprite board it was opened from, landing on the
     // wizard, which resumes on the step after the one that opened the chain.
-    if (this._creatureMode) { Scene_CC3DModel._creatureResult = "confirm"; SceneManager.pop(); return; }
-    // Back to whoever opened the sculptor, never past it: popping blind used to
-    // walk the stack all the way out to the map, ending creation instead of
-    // returning to the sheet the sculpt belongs to.
-    if (Scene_CC3DModel._returnByPop) { SceneManager.pop(); return; }
-    const ret = Scene_CC3DModel._returnSceneClass;
-    if (ret) { SceneManager.goto(ret); return; }
-    SceneManager.pop();
+    try {
+      if (this._creatureMode) {
+        Scene_CC3DModel._creatureResult = "confirm";
+        this._safePop();
+        return;
+      }
+      // Back to whoever opened the sculptor, never past it: popping blind used
+      // to walk the stack all the way out to the map, ending creation instead
+      // of returning to the sheet the sculpt belongs to.
+      if (Scene_CC3DModel._returnByPop) { this._safePop(); return; }
+      const ret = Scene_CC3DModel._returnSceneClass;
+      if (ret) { SceneManager.goto(ret); return; }
+      this._safePop();
+    } catch (e) {
+      // The scene the sculptor was told to go back to is gone or broken. Fall
+      // back to the plain pop, and if even that fails let the player press
+      // Continue again rather than sealing them in.
+      console.error(e);
+      try { this._safePop(); } catch (e2) { console.error(e2); this._leaving = false; }
+    }
   };
 
   // What the character walks away with. The parts the sculpt fitted are
@@ -2703,8 +2618,21 @@
     const grafts = graftedParts(this._config, this._archetypeKeys);
     actor._ccGraftedParts = Object.keys(grafts.parts).length ? grafts.parts : null;
     actor._ccReplacedParts = grafts.replaced.length ? grafts.replaced : null;
+    const kept = actor._bodyParts;
     actor._bodyParts = null;
-    if (typeof window.initializeBodyParts === "function") window.initializeBodyParts(actor);
+    if (typeof window.initializeBodyParts === "function") {
+      // A graft Health cannot read must not leave the character with no body at
+      // all: the anatomy it walked in with is put back and the sculpt still
+      // stands, rather than an actor whose every limb has vanished.
+      try {
+        window.initializeBodyParts(actor);
+      } catch (e) {
+        console.error(e);
+        actor._ccGraftedParts = null;
+        actor._ccReplacedParts = null;
+        actor._bodyParts = kept || null;
+      }
+    }
   };
 
   //---------------------------------------------------------------------------
@@ -2882,6 +2810,10 @@
     if (this._modal) { this._updateModalInput(); return; }
     // Escape and the pad's B leave the same way Continue does: with the sculpt
     // kept. There is no discard here, so a stray press cannot cost one.
+    if (this._eatCancel > 0) {
+      this._eatCancel--;
+      if (TouchInput.isCancelled()) return;
+    }
     if (Input.isTriggered("cancel") || TouchInput.isCancelled()) { this.onConfirm(); return; }
     if (Input.isRepeated("down")) this._moveFocus(1, true);
     else if (Input.isRepeated("up")) this._moveFocus(-1, true);
@@ -2916,7 +2848,6 @@
       kind: kind, options: options, filtered: options, filter: "",
       index: Math.max(0, options.indexOf(current)), page: 48, shown: 0
     };
-    SoundManager.playOk();
     this._renderModal();
     this._paintFocus(null, false);
   };
@@ -2925,7 +2856,7 @@
     if (!this._modal) return;
     this._modal = null;
     const el = document.getElementById("cc3d-modal");
-    if (el) { el.style.display = "none"; el.innerHTML = ""; }
+    if (el) { el.classList.remove("open"); el.innerHTML = ""; }
     this._paintFocus(null, false);
   };
 
@@ -2942,33 +2873,22 @@
     const el = document.getElementById("cc3d-modal");
     if (!el) return;
     const modal = this._modal;
-    // "inset" is not honoured by the runtime (the overlay collapses onto the
-    // top-left corner), so the longhands and an explicit size are used.
-    el.style.cssText = "position:absolute; left:0; top:0; right:0; bottom:0; width:100%; height:100%;" +
-      " z-index:1200; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.55);";
+    // The overlay, its card and its grid are all in the stylesheet
+    // (.cc3d-modal and friends); the only thing the markup knows that the
+    // sheet cannot is how many columns the grid is meant to have.
     el.innerHTML = `
-      <div style="width:74%; max-width:880px; height:78%; display:flex; flex-direction:column;
-                  background:var(--gradient-1); border:2px solid var(--border-primary-hover-translucent-15);
-                  border-radius:10px; box-shadow:0 12px 40px rgba(0,0,0,0.5); padding:14px 16px;
-                  box-sizing:border-box">
-        <div data-nav-skip data-nav-owner="_updateModalInput"
-             style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; gap:12px">
-          <h2 class="cc-header-gothic" style="margin:0; border:none; padding:0; font-size:1.9rem"
-            >${this._modalTitle()}</h2>
-          ${modal.kind === "structure" ? `<input id="cc3d-modal-search" type="text"
-            placeholder="${T('CharCreate.search')}" value="${modal.filter}"
-            style="flex:0 0 220px; padding:6px 10px; border-radius:6px;
-            border:1px solid var(--border-primary-hover-translucent-15);
-            background:var(--bg-primary-hover-translucent-35); color:var(--text-primary-hover);
-            font-family:'Lora',serif" />` : ``}
+      <div class="cc3d-modal-card">
+        <div class="cc3d-modal-head" data-nav-skip data-nav-owner="_updateModalInput">
+          <h2 class="cc-header-gothic cc3d-modal-title">${this._modalTitle()}</h2>
+          ${modal.kind === "structure" ? `<input id="cc3d-modal-search" class="cc3d-modal-search" type="text"
+            placeholder="${T('CharCreate.search')}" value="${modal.filter}" />` : ``}
           <button class="cc-btn-treaty" onclick="SceneManager._scene.closeModal()"
             >${T('CharCreate.close')}</button>
         </div>
-        <div id="cc3d-modal-grid" class="pockets-scroll" style="flex:1; overflow-y:auto; display:grid;
-             grid-template-columns:repeat(${MODAL_COLS}, 1fr); gap:10px; padding-right:8px;
-             align-content:start"></div>
+        <div id="cc3d-modal-grid" class="pockets-scroll cc3d-modal-grid"
+             style="--cc3d-modal-cols:${MODAL_COLS}"></div>
       </div>`;
-    el.style.display = "flex";
+    el.classList.add("open");
     const search = document.getElementById("cc3d-modal-search");
     if (search) {
       search.addEventListener("input", () => {
@@ -2992,7 +2912,7 @@
     const modal = this._modal;
     modal.shown = 0;
     if (!modal.filtered.length) {
-      grid.innerHTML = `<div class="cc3d-note" style="grid-column:1/-1">${T('CharCreate.noMatches')}</div>`;
+      grid.innerHTML = `<div class="cc3d-note cc-span-full-row">${T('CharCreate.noMatches')}</div>`;
       return;
     }
     grid.innerHTML = "";
@@ -3038,21 +2958,15 @@
       label = group ? group.label() : option;
       const worn = group && group.kind === "slot" && this._config.parts[group.id] !== "default";
       const grown = group && group.appendage && !!this._config[group.id];
-      if (worn || grown) lead = `<span class="cc3d-dot" style="margin-right:6px"></span>`;
+      if (worn || grown) lead = `<span class="cc3d-dot cc-rpg-icon-gap"></span>`;
     } else if (kind === "surface") {
-      const colors = { flesh: "#c78b6a", green: "#5a7a3a", bone: "#e6e0cf", metal: "#8a8f98", stone: "#7a726a" };
-      lead = `<span style="display:inline-block; width:14px; height:14px; border-radius:3px;
-        vertical-align:middle; margin-right:6px; background:${colors[option] || "#888"}"></span>`;
+      lead = `<span class="cc3d-swatch cc3d-swatch--lg cc3d-surface-${option}"></span>`;
     } else if (kind === "haircolor") {
-      lead = `<span style="display:inline-block; width:14px; height:14px; border-radius:50%;
-        vertical-align:middle; margin-right:6px; background:${hairSwatchCss(option)}"></span>`;
+      lead = `<span class="cc3d-swatch cc3d-swatch--lg cc3d-swatch--round" style="--cc3d-swatch:${hairSwatchCss(option)}"></span>`;
     }
     return `<div class="cc-wanted-card cc3d-cell" data-idx="${index}"
-        onclick="SceneManager._scene.pickModalOption(${index})"
-        style="display:flex; align-items:center; justify-content:center; text-align:center;
-               min-height:42px; padding:8px 6px">
-        <span style="font-size:1.1rem; line-height:1.15; word-break:break-word;
-                     color:var(--text-muted-hover)">${lead}${label}</span>
+        onclick="SceneManager._scene.pickModalOption(${index})">
+        <span class="cc3d-cell-label">${lead}${label}</span>
       </div>`;
   };
 
@@ -3084,13 +2998,11 @@
     if (option == null) return;
     const kind = modal.kind;
     if (kind === "group") {
-      SoundManager.playOk();
       this.closeModal();
       this.openGroup(option);
       return;
     }
     this.pushHistory();
-    SoundManager.playOk();
     this.closeModal();
     if (kind === "structure") {
       if (this._config.base !== option) {
@@ -3363,10 +3275,12 @@
     if (!state || this._modal) return;
     if (e.button === 1) {
       state.mode = "pan"; state.prev = { x: e.clientX, y: e.clientY };
+      this._eatCancel = 3;
       e.preventDefault(); return;
     }
     if (e.button === 2) {
       state.mode = "orbit"; state.prev = { x: e.clientX, y: e.clientY };
+      this._eatCancel = 3;
       e.preventDefault(); return;
     }
     if (e.button !== 0) return;
@@ -3412,7 +3326,7 @@
           state.ray.ray.intersectPlane(state.plane, hit);
           state.grabLocal.copy(part.parent.worldToLocal(hit.clone())).sub(part.position);
         }
-        state.canvas.style.cursor = "grabbing";
+        state.canvas.classList.add("cc-grabbing");
         return;
       }
       state.mode = "none";
@@ -3421,7 +3335,7 @@
 
     // 3. Empty space: turn the creature round.
     state.mode = "orbit";
-    state.canvas.style.cursor = "grabbing";
+    state.canvas.classList.add("cc-grabbing");
   };
 
   // A point on the plane facing the camera through the selected part.
@@ -3520,7 +3434,7 @@
     state.partHandle = null;
     state.gizmoAxis = null;
     state.dragStart = null;
-    state.canvas.style.cursor = "grab";
+    state.canvas.classList.remove("cc-grabbing");
   };
 
   // Nothing on the creature looks clickable until it lights up under the
@@ -3544,14 +3458,13 @@
     const tip = document.getElementById("cc3d-tip");
     if (!tip) return;
     tip.textContent = text;
-    tip.style.display = "block";
-    tip.style.left = (e.clientX + 14) + "px";
-    tip.style.top = (e.clientY + 16) + "px";
+    window.CCPanel.show(tip);
+    window.CCPanel.placeAt(tip, e.clientX + 14, e.clientY + 16);
   };
 
   Scene_CC3DModel.prototype._hideTip = function () {
     const tip = document.getElementById("cc3d-tip");
-    if (tip) tip.style.display = "none";
+    if (tip) window.CCPanel.hide(tip);
   };
 
   //---------------------------------------------------------------------------
@@ -3686,7 +3599,7 @@
     if (!url || !this._root) return;
     this._root.querySelectorAll('img[data-thumb="' + key + '"]').forEach((img) => {
       img.src = url;
-      img.style.opacity = "1";
+      img.classList.add("cc-visible");
     });
   };
 

@@ -10,7 +10,7 @@
  * Implements:
  *  - D&D backpack parchment overlay (book-spread layout)
  *  - Full keyboard + controller support (WASD, arrows, L1/R1, gamepad B = cancel)
- *  - 2-column grid navigation
+ *  - 3-column grid navigation
  *  - L1 / R1  →  cycle through category tabs from anywhere
  */
 
@@ -141,16 +141,36 @@
         }).join(', ');
       };
 
-      const buildSpecRows = (specs) => specs.map(s => `
-        <div class="inspect-spec-row">
-          <span class="inspect-spec-label">${s.label}:</span>
-          <span class="inspect-spec-value" ${s.colored ? `style="color:${s.colored};"` : ''}>${s.val}</span>
-        </div>`).join('');
+      // Every block of facts on the right page is the same stat block: one
+      // .inspect-spec-grid of label/value pairs, the label muted, the value in
+      // the bright ink and right-aligned in its own column. No block inks or
+      // sizes itself (docs/task/ui_fixing.md).
+      // A value that is a list rather than a word (every status a remedy lifts,
+      // every material a recipe eats) is crushed into a two-word right-hand
+      // column and comes out as a ragged tower with white space all down the
+      // row. Past a short measure the pair stacks instead: the label on its
+      // line, the list under it running the full width, left to right.
+      const STACK_AT = 28;
+      const specRowHTML = (label, val, valClass) => {
+        const plain   = String(val).replace(/<[^>]*>/g, '');
+        const stacked = (valClass || '').includes('inspect-spec-value--wrap') && plain.length > STACK_AT;
+        return `<div class="inspect-spec-row${stacked ? ' inspect-spec-row--stacked' : ''}">` +
+          `<span class="inspect-spec-label">${label}:</span>` +
+          `<span class="inspect-spec-value${valClass ? ' ' + valClass : ''}">${val}</span>` +
+        `</div>`;
+      };
+      const specBlock = (rowsHTML) => `<div class="inspect-spec-grid">${rowsHTML}</div>`;
+      const buildSpecRows = (specs) =>
+        specBlock(specs.map(s => specRowHTML(s.label, s.val, s.valClass)).join(''));
 
       // Everything under the header: description, lore, and every spec block the
       // item has anything to say in.
-      function detailsHTML(selectedItem) {
+      // `opts.out` receives the general spec list so the caller can hoist it up
+      // beside the turning piece, and `opts.hoistGeneral` then keeps this body
+      // from printing the same rows a second time.
+      function detailsHTML(selectedItem, opts) {
         if (!selectedItem) return '';
+        const dOpts = opts || {};
         const isWeapon = DataManager.isWeapon(selectedItem);
         const isArmor  = DataManager.isArmor(selectedItem);
         const isItem   = DataManager.isItem(selectedItem);
@@ -163,7 +183,7 @@
           const dt = (selectedItem.meta && selectedItem.meta.DamageType) ||
               (selectedItem.note && (selectedItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
           if (dt) {
-            generalSpecs.push({ label: T('Inventory.spec.label.damageCategory') || 'Damage Type', val: String(dt).trim() });
+            generalSpecs.push({ label: T('Inventory.spec.label.damageCategory'), val: String(dt).trim() });
           }
           const note = selectedItem.note || '';
           const scales = [];
@@ -173,7 +193,7 @@
             scales.push(...match[1].split(',').map(s => s.trim().toUpperCase()));
           }
           if (scales.length > 0) {
-            generalSpecs.push({ label: 'Scaling', val: scales.join(' + ') });
+            generalSpecs.push({ label: T('Inventory.spec.label.scaling'), val: scales.join(' + ') });
           }
         }
         else if (isArmor) {
@@ -186,7 +206,7 @@
           const dt = (selectedItem.meta && selectedItem.meta.DamageType) ||
               (selectedItem.note && (selectedItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
           if (dt && dt !== 'None' && !(selectedItem.damage && selectedItem.damage.type > 0)) {
-            generalSpecs.push({ label: T('Inventory.spec.label.damageCategory') || 'Damage Type', val: String(dt).trim() });
+            generalSpecs.push({ label: T('Inventory.spec.label.damageCategory'), val: String(dt).trim() });
           }
         }
 
@@ -211,7 +231,7 @@
           const dt = (selectedItem.meta && selectedItem.meta.DamageType) ||
               (selectedItem.note && (selectedItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
           if (dt) {
-            damageSpecs.push({ label: T('Inventory.spec.label.damageCategory') || 'Damage Type', val: String(dt).trim() });
+            damageSpecs.push({ label: T('Inventory.spec.label.damageCategory'), val: String(dt).trim() });
           }
           damageSpecs.push({ label: T('Inventory.spec.label.damageType'), val: getDamageTypeName(selectedItem.damage.type) });
           if (selectedItem.damage.elementId > 0) damageSpecs.push({ label: T('Inventory.spec.label.attackElement'), val: $dataSystem.elements[selectedItem.damage.elementId] || T('Inventory.spec.noneValue') });
@@ -261,6 +281,12 @@
               if (colonIdx !== -1) { name = inner.substring(0, colonIdx).trim(); val = inner.substring(colonIdx+1).trim(); }
               const nl = name.toLowerCase();
               if (nl === 'movement' || nl === 'weight' || nl === 'category' || nl === 'uncraftable' || nl === 'damagetype') return;
+              // Sound file names are for the engine, not the reader.
+              if (nl === 'hitsounds' || nl === 'weaponsounds' || nl === 'hitsound' || nl === 'weaponsound') return;
+              // <Scale:> is already printed as "Scaling" in the specifications
+              // above, and a weapon carries one tag per stat, so leaving it here
+              // repeated the same answer once per stat.
+              if (nl === 'scale') return;
               if (nl === 'needrestore') return; // rendered as its own "Needs Restored" section below
               // <Medicine:>, <Cures:> and <Treats:> are already rendered as
               // their own "Medicine" section above (getMedicineInfo); listing
@@ -289,31 +315,40 @@
 
         // The short description states what the item does; the lore below it is
         // the combinatorial, world-seeded flavour. Both are shown.
-        const shortDesc = descriptionOf(selectedItem);
+        // Combinatorial descriptions leave double spaces and stray blank lines
+        // where an alternative resolved to nothing, which print as gaps in the
+        // middle of the sentence.
+        const tidyProse = (t) => String(t || '')
+          .replace(/[ 	]*(?:<br\s*\/?>[ 	]*){2,}/gi, '<br>')
+          .replace(/^(?:\s|<br\s*\/?>)+|(?:\s|<br\s*\/?>)+$/gi, '')
+          .replace(/[ 	]{2,}/g, ' ')
+          .replace(/\s+([,.;:!?])/g, '$1');
+        const shortDesc = tidyProse(descriptionOf(selectedItem));
         let detailedInfoHTML = '';
         if (shortDesc) detailedInfoHTML += `<div class="inspect-desc">${shortDesc}</div>`;
-        if (loreText)  detailedInfoHTML += `<div class="inspect-flavour">${loreText}</div>`;
+        // The lore is the last thing on the card. It is flavour, and reading it
+        // first pushed the numbers the player actually opened the card for off
+        // the bottom of the page, so it goes under every spec block instead.
+        const loreProse = tidyProse(loreText);
 
-        if (generalSpecs.length)    { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.specifications')}</div>`         + buildSpecRows(generalSpecs); }
-        if (paramSpecs.length)      { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.attributeModifiers')}</div>`   + paramSpecs.map(s => `<div class="inspect-spec-row"><span class="inspect-spec-label">${s.label}:</span><span class="inspect-spec-value" style="color:${s.val.startsWith('+')?'var(--text-cost-ok)':'var(--text-cost-bad)'};">${s.val}</span></div>`).join(''); }
+        if (dOpts.out) dOpts.out.general = generalSpecs;
+        if (generalSpecs.length && !dOpts.hoistGeneral) { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.specifications')}</div>`         + buildSpecRows(generalSpecs); }
+        if (paramSpecs.length)      { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.attributeModifiers')}</div>`   + specBlock(paramSpecs.map(s => specRowHTML(s.label, s.val, s.val.startsWith('+') ? 'inspect-spec-value--gain' : 'inspect-spec-value--loss')).join('')); }
         if (invocationSpecs.length) { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.invocationStats')}</div>`      + buildSpecRows(invocationSpecs); }
         if (damageSpecs.length)     { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.combatApplication')}</div>`    + buildSpecRows(damageSpecs); }
         if (effectsOrdered.length) {
-          detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.medicalEffects')}</div>` + effectsOrdered.map(e =>
+          detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.medicalEffects')}</div>` + specBlock(effectsOrdered.map(e =>
             e.group
-              ? `<div class="inspect-bullet-item"><span class="inspect-effect-label">${e.group.label}:</span> ${e.group.items.join(', ')}</div>`
+              ? specRowHTML(e.group.label, e.group.items.join(', '), 'inspect-spec-value--wrap')
               : `<div class="inspect-bullet-item">${e.text}</div>`
-          ).join('');
+          ).join(''));
         }
-        if (traitsList.length)      { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.specialProperties')}</div>`   + traitsList.map(t => `<div class="inspect-bullet-item">${t}</div>`).join(''); }
+        if (traitsList.length)      { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.specialProperties')}</div>`   + specBlock(traitsList.map(t => `<div class="inspect-bullet-item">${t}</div>`).join('')); }
         if (nutritionSpecs.length)  { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.nutritionalProfile')}</div>`  + buildSpecRows(nutritionSpecs); }
         const needRestores = window.ItemSystemUtils && window.ItemSystemUtils.getNeedRestores ? window.ItemSystemUtils.getNeedRestores(selectedItem) : [];
         if (needRestores.length) {
-          detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.needsRestored')}</div>` + needRestores.map(r => `
-            <div class="inspect-spec-row">
-              <span class="inspect-spec-label">${r.label}:</span>
-              <span class="inspect-spec-value" style="color:${r.color};font-weight:bold;">+${r.amount}%</span>
-            </div>`).join('');
+          detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.needsRestored')}</div>`
+            + specBlock(needRestores.map(r => specRowHTML(r.label, `+${r.amount}%`)).join(''));
         }
         // What this item is medicine for. A course is only worth anything taken
         // daily, so the number of doses each illness asks for is printed beside
@@ -321,35 +356,26 @@
         const medicine = window.ItemSystemUtils && window.ItemSystemUtils.getMedicineInfo
           ? window.ItemSystemUtils.getMedicineInfo(selectedItem) : null;
         if (medicine) {
+          // The full list runs to dozens of illnesses, which used to bury every
+          // other section of the card. Only the counts are printed here; the
+          // register itself lives behind the Info button.
           detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.medicine')}</div>`;
-          detailedInfoHTML += `
-            <div class="inspect-spec-row">
-              <span class="inspect-spec-label">${T('Shop.medicineClass')}:</span>
-              <span class="inspect-spec-value">${medicine.label}</span>
-            </div>`;
-          if (medicine.cures.length) {
-            detailedInfoHTML += medicine.cures.slice(0, 24).map(c => `
-              <div class="inspect-spec-row">
-                <span class="inspect-spec-label">${c.name}:</span>
-                <span class="inspect-spec-value">${T('Inventory.medicineDoses', { days: c.days })}</span>
-              </div>`).join('');
-            if (medicine.cures.length > 24) {
-              detailedInfoHTML += `<div class="inspect-bullet-item">${T('Shop.medicineMore', { count: medicine.cures.length - 24 })}</div>`;
-            }
-          }
-          if (medicine.treats.length) {
-            detailedInfoHTML += `<div class="inspect-bullet-item"><span class="inspect-effect-label">${T('Shop.medicineTreats')}:</span> ${medicine.treats.map(t => t.name).join(', ')}</div>`;
+          detailedInfoHTML += specBlock(
+            specRowHTML(T('Shop.medicineClass'), medicine.label)
+            + (medicine.cures.length ? specRowHTML(T('Shop.medicineCures'), T('Inventory.medicineIllnessCount', { count: medicine.cures.length })) : '')
+            + (medicine.treats.length ? specRowHTML(T('Shop.medicineTreats'), T('Inventory.medicineIllnessCount', { count: medicine.treats.length })) : ''));
+          if (medicine.cures.length || medicine.treats.length) {
+            const ref = itemRefOf(selectedItem);
+            detailedInfoHTML += `<div class="inspect-medicine-info"><div class="army-dialog-btn" onclick="window.ItemInspect.showMedicineInfo('${ref.kind}', ${ref.id})">${T('Inventory.medicineInfoButton')}</div></div>`;
           }
         }
         const cravingsFed = window.ItemSystemUtils && window.ItemSystemUtils.getAddictionRelief ? window.ItemSystemUtils.getAddictionRelief(selectedItem) : [];
         if (cravingsFed.length) {
-          detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.cravingsFed')}</div>` + cravingsFed.map(r => `
-            <div class="inspect-spec-row">
-              <span class="inspect-spec-label">${r.label}:</span>
-              <span class="inspect-spec-value inspect-spec-value--muted">-${r.amount}%</span>
-            </div>`).join('');
+          detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.cravingsFed')}</div>`
+            + specBlock(cravingsFed.map(r => specRowHTML(r.label, `-${r.amount}%`, 'inspect-spec-value--muted')).join(''));
         }
-        if (noteTags.length)        { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.blueprints')}</div>` + noteTags.map(tag => `<div class="inspect-spec-row"><span class="inspect-spec-label">${tag.name}:</span><span class="inspect-spec-value" style="font-style: normal;max-width:60%;text-align:right;word-wrap:break-word;">${tag.value}</span></div>`).join(''); }
+        if (noteTags.length)        { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.blueprints')}</div>` + specBlock(noteTags.map(tag => specRowHTML(tag.name, tag.value, 'inspect-spec-value--wrap')).join('')); }
+        if (loreProse) detailedInfoHTML += `<div class="inspect-flavour">${loreProse}</div>`;
 
         return detailedInfoHTML;
       }
@@ -371,23 +397,42 @@
         const weightText = weightVal >= 0.01 ? `${weightVal.toFixed(2)} kg` : `${weightGrams} g` /* i18n-ignore: unit */;
         const valueVal  = ((item.price || 0) / 100).toFixed(2);
 
+        // The details are built first: with a turning piece on the card, the
+        // general specs (consumable, usable, scope and their kin) are hoisted
+        // out of the body and read as one column beside it, under the weight
+        // and the price.
+        const extra = o.extraHTML || '';
+        const detailsOut  = {};
+        const detailsBody = detailsHTML(item, { hoistGeneral: !!extra, out: detailsOut });
+        const hoistedHTML = (extra ? (detailsOut.general || []) : []).map(sp =>
+          `<div class="inspect-meta-item"><span>${sp.label}</span><span class="inspect-meta-val">${sp.val}</span></div>`).join('');
+
+        // Identity and numbers stand together in the left column, the turning
+        // piece as a borderless square on the right, so the card reads across
+        // rather than pushing the description a viewport further down.
+        const identityHTML = `
+            <div class="inspect-header">
+              <div class="inspect-frame">
+                <canvas id="${canvasId}" class="inspect-frame-canvas" width="32" height="32"></canvas>
+              </div>
+              <div class="inspect-title-box">
+                <h3 class="inspect-name">${item.name}${o.nameExtraHTML || ''}</h3>
+                <div class="inspect-rarity rarity--${rarity.key}">${rarity.name} ${itemType}</div>
+              </div>
+            </div>
+            <div class="inspect-meta-grid inspect-meta-grid--stacked${weightGrams === 0 ? ' inspect-meta-grid--single' : ''}">
+              ${weightGrams > 0 ? `<div class="inspect-meta-item"><span>${T('Inventory.section.unitWeight')}</span><span class="inspect-meta-val">${weightText}</span></div>` : ''}
+              <div class="inspect-meta-item"><span>${T('Inventory.section.marketValue')}</span><span class="inspect-meta-val">${valueVal} €</span></div>
+              ${hoistedHTML}
+            </div>`;
+
         return `
         <div class="item-inspect">
-          <div class="inspect-header">
-            <div class="inspect-frame">
-              <canvas id="${canvasId}" width="32" height="32" style="width:36px;height:36px;image-rendering:pixelated;"></canvas>
-            </div>
-            <div class="inspect-title-box">
-              <h3 class="inspect-name">${item.name}${o.nameExtraHTML || ''}</h3>
-              <div class="inspect-rarity" style="color:${rarity.color};">${rarity.name} ${itemType}</div>
-            </div>
-          </div>
-          <div class="inspect-meta-grid" style="${weightGrams === 0 ? 'grid-template-columns:1fr;' : ''}">
-            ${weightGrams > 0 ? `<div class="inspect-meta-item"><span>${T('Inventory.section.unitWeight')}</span><span class="inspect-meta-val">${weightText}</span></div>` : ''}
-            <div class="inspect-meta-item"><span>${T('Inventory.section.marketValue')}</span><span class="inspect-meta-val">${valueVal} €</span></div>
-          </div>
-          ${o.extraHTML || ''}
-          <div class="inspect-lore">${detailsHTML(item)}</div>
+          ${extra ? `<div class="inspect-topline">
+            <div class="inspect-topline-info">${identityHTML}</div>
+            <div class="inspect-topline-preview">${extra}</div>
+          </div>` : identityHTML}
+          <div class="inspect-lore">${detailsBody}</div>
           <div class="inspect-actions">${o.actionsHTML || ''}</div>
         </div>`;
       }
@@ -409,7 +454,113 @@
         if (bitmap.isReady()) draw(); else bitmap.addLoadListener(draw);
       }
 
-      return { rarityOf, typeLabelOf, descriptionOf, loreOf, detailsHTML, build, drawIcon };
+      // A database entry addressed as a pair the click handler can put back
+      // together, since an onclick attribute can only carry text.
+      function itemRefOf(item) {
+        if (!item) return { kind: 'item', id: 0 };
+        if (item.wtypeId !== undefined) return { kind: 'weapon', id: item.id };
+        if (item.atypeId !== undefined) return { kind: 'armor',  id: item.id };
+        return { kind: 'item', id: item.id };
+      }
+
+      function resolveRef(kind, id) {
+        if (kind === 'weapon') return $dataWeapons[id];
+        if (kind === 'armor')  return $dataArmors[id];
+        return $dataItems[id];
+      }
+
+      // The whole medicinal register of one item, as its own window: every
+      // illness the course cures with the doses it asks for, then everything it
+      // merely holds at bay.
+      function showMedicineInfo(kind, id) {
+        const item = resolveRef(kind, id);
+        const info = item && window.ItemSystemUtils && window.ItemSystemUtils.getMedicineInfo
+          ? window.ItemSystemUtils.getMedicineInfo(item) : null;
+        if (!info) return;
+        closeMedicineInfo();
+        const el = document.createElement('div');
+        el.id        = 'medicine-info-modal';
+        el.className = 'army-dialog-overlay medicine-info-overlay';
+        el.innerHTML = `
+          <div class="army-dialog medicine-info-dialog">
+            <h3>${escapeHtml(item.name)}</h3>
+            <div class="medicine-info-body">
+              ${specRowHTML(T('Shop.medicineClass'), info.label)}
+              ${info.cures.length ? `<div class="inspect-section-title">${T('Shop.medicineCures')}</div>`
+                + specBlock(info.cures.map(c => specRowHTML(c.name, T('Inventory.medicineDoses', { days: c.days }))).join('')) : ''}
+              ${info.treats.length ? `<div class="inspect-section-title">${T('Shop.medicineTreats')}</div>`
+                + specBlock(info.treats.map(t => `<div class="inspect-bullet-item">${escapeHtml(t.name)}</div>`).join('')) : ''}
+            </div>
+            <div class="army-dialog-buttons">
+              <div class="army-dialog-btn selected" onclick="window.ItemInspect.closeMedicineInfo()">${T('Inventory.ui.cancel')}</div>
+            </div>
+          </div>`;
+        el.addEventListener('click', (e) => { if (e.target === el) closeMedicineInfo(); });
+        document.body.appendChild(el);
+        // The scene below would read the same Escape as its own cancel and walk
+        // out of the inspect card, so the key is eaten here while this is open.
+        medicineKeyHandler = (e) => {
+          if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'x' || e.key === 'X') {
+            e.preventDefault(); e.stopPropagation(); closeMedicineInfo();
+          }
+        };
+        document.addEventListener('keydown', medicineKeyHandler, true);
+      }
+
+      let medicineKeyHandler = null;
+
+      function closeMedicineInfo() {
+        if (medicineKeyHandler) { document.removeEventListener('keydown', medicineKeyHandler, true); medicineKeyHandler = null; }
+        const el = document.getElementById('medicine-info-modal');
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+      }
+
+      // The piece on its own, filling the screen: the same viewer the card's
+      // little square runs, so the drag, the wheel button pan and the wheel
+      // zoom behave exactly as they do in the inspect pane.
+      let fullscreenEntry = null;
+      let fullscreenKeyHandler = null;
+
+      function showModelFullscreen(kind, id) {
+        const item = resolveRef(kind, id);
+        if (!item || typeof THREE === 'undefined' || !window.Weapon3DPreview) return;
+        closeModelFullscreen();
+        const el = document.createElement('div');
+        el.id        = 'item-model-fullscreen';
+        el.className = 'item-model-fullscreen';
+        el.innerHTML = `
+          <div class="item-model-fullscreen-stage"><canvas id="item-model-fullscreen-canvas"></canvas></div>
+          <div class="item-model-fullscreen-bar">
+            <span class="item-model-fullscreen-name">${escapeHtml(item.name)}</span>
+            <span class="item-model-fullscreen-hint">${T('Inventory.model.fullscreenHint')}</span>
+            <div class="army-dialog-btn" onclick="window.ItemInspect.closeModelFullscreen()">${T('Inventory.ui.cancel')}</div>
+          </div>`;
+        document.body.appendChild(el);
+        el.addEventListener('click', (e) => { if (e.target === el) closeModelFullscreen(); });
+        const canvas = document.getElementById('item-model-fullscreen-canvas');
+        const entry  = canvas ? window.Weapon3DPreview.mount(canvas, item) : null;
+        if (entry) fullscreenEntry = [entry];
+        // The scene below would read Escape as its own cancel and leave the
+        // inspect card, so the key is eaten here while this is open.
+        fullscreenKeyHandler = (e) => {
+          if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'x' || e.key === 'X') {
+            e.preventDefault(); e.stopPropagation(); closeModelFullscreen();
+          }
+        };
+        document.addEventListener('keydown', fullscreenKeyHandler, true);
+      }
+
+      function closeModelFullscreen() {
+        if (fullscreenKeyHandler) { document.removeEventListener('keydown', fullscreenKeyHandler, true); fullscreenKeyHandler = null; }
+        if (fullscreenEntry && window.Weapon3DPreview) window.Weapon3DPreview.disposeAll(fullscreenEntry);
+        fullscreenEntry = null;
+        const el = document.getElementById('item-model-fullscreen');
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+      }
+
+      function isModelFullscreenOpen() { return !!document.getElementById('item-model-fullscreen'); }
+
+      return { rarityOf, typeLabelOf, descriptionOf, loreOf, detailsHTML, build, drawIcon, showMedicineInfo, closeMedicineInfo, showModelFullscreen, closeModelFullscreen, isModelFullscreenOpen };
     })();
   }
 
@@ -484,6 +635,9 @@
     }
 
     UIbackpackInputManager.deactivate();
+
+    if (window.ItemInspect) window.ItemInspect.closeModelFullscreen();
+    this.disposeUIItemViewport();
 
     // The bar's root is a child of the container about to be torn down.
     if (window.ItemHotbar) window.ItemHotbar.disposeInventoryBar();
@@ -627,20 +781,27 @@
         const count      = $gameParty.numItems(item);
         const canvasId   = `item-canvas-${idx}`;
         const rarity     = this.getUIItemRarity(item);
-        // One line per pocket: mark, icon, name, how many. What a thing weighs
-        // is read off the inspect page on the right, which already prints it,
-        // and off the carry gauge under the grid, so printing it again on every
-        // slot only made the slots taller.
+        // The pocket is the skills page's row, part for part: mark, icon, name
+        // and a meta line under it. Where a skill prints what it costs to cast,
+        // an item prints what the whole stack weighs, with the count on the
+        // right of the same line.
+        const stackGrams = (window.ItemSystemUtils && window.ItemSystemUtils.getItemWeight
+          ? window.ItemSystemUtils.getItemWeight(item) : 0) * count;
+        const stackKg = stackGrams / 1000;
+        const weightText = stackKg >= 0.01 ? `${stackKg.toFixed(2)} kg` : `${stackGrams} g` /* i18n-ignore: unit */;
         return `
-          <div class="item-slot item-slot--compact ${isFocused}" data-icon-index="${item.iconIndex}" data-canvas-id="${canvasId}" draggable="true" onclick="SceneManager._scene.selectUIItem(${idx})" ondragstart="SceneManager._scene.onUIItemDragStart(event, ${idx})" ondragend="SceneManager._scene.onUIItemDragEnd(event)">
+          <div class="item-slot ${isFocused}" data-icon-index="${item.iconIndex}" data-canvas-id="${canvasId}" draggable="true" onclick="SceneManager._scene.selectUIItem(${idx})" onmouseenter="SceneManager._scene.hoverUIItem(${idx})" ondragstart="SceneManager._scene.onUIItemDragStart(event, ${idx})" ondragend="SceneManager._scene.onUIItemDragEnd(event)">
             <div class="item-rarity-bar" style="background:${rarity.color};"></div>
             <div class="item-slot-icon">
-              <canvas id="${canvasId}" width="32" height="32" style="width:24px;height:24px;"></canvas>
+              <canvas id="${canvasId}" class="item-slot-icon-canvas--sm" width="32" height="32"></canvas>
             </div>
             <div class="item-slot-info">
               <div class="item-slot-name">${this.isItemFavorited(item) ? '★ ' : ''}${item.name}</div>
+              <div class="item-slot-meta">
+                <span>${weightText}</span>
+                <span class="item-slot-count">x${count}</span>
+              </div>
             </div>
-            <span class="item-slot-count">x${count}</span>
           </div>`;
       });
     });
@@ -732,7 +893,7 @@
         </div>`;
     } else if (!selectedItem) {
       rightPageInnerHTML = `
-        <div class="item-inspect item-inspect--empty" style="justify-content:center;text-align:center;padding:40px 10px;">
+        <div class="item-inspect item-inspect--empty">
           <div class="inspect-placeholder-icon"></div>
           <h3 class="title">${T('Inventory.ui.inspectionLog')}</h3>
           <p class="inspect-placeholder-text">${T('Inventory.ui.inspectionPlaceholder')}</p>
@@ -760,24 +921,43 @@
         this._dndActionsList.push('equip'); btnIdx++;
       }
 
-      if (window.Game_Map && Game_Map.prototype.isThrowBlocked) {
+      // Em's vector gun is never thrown and never discarded: it is the one
+      // thing she does not put down (Weapon/VectorGunSystem.js).
+      const isBoundGear = !!(window.VectorGun && window.VectorGun.isBound(selectedItem));
+
+      // Key items and materials are never thrown: window.ThrowItem is the
+      // one answer to what may leave a hand.
+      const canThrow = !window.ThrowItem || window.ThrowItem.isThrowable(selectedItem);
+      if (window.Game_Map && Game_Map.prototype.isThrowBlocked && !isBoundGear && canThrow) {
         const isThrowFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
         actionBtnsHTML += `<div class="inspect-btn ${isThrowFocused}" onclick="SceneManager._scene.triggerUIItemAction('throw')">${T('Inventory.ui.throw')}</div>`;
         this._dndActionsList.push('throw'); btnIdx++;
       }
 
-      const isDiscardFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
-      actionBtnsHTML += `<div class="inspect-btn inspect-btn--danger ${isDiscardFocused}" onclick="SceneManager._scene.triggerUIItemAction('discard')">${T('Inventory.ui.discard')}</div>`;
-      this._dndActionsList.push('discard'); btnIdx++;
+      // Favouriting is a button of its own down here rather than a star beside
+      // the name: the row of actions is where the page's verbs live, and the
+      // star kept being missed up in the header.
+      if (this.canFavoriteItem(selectedItem)) {
+        const isFavFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
+        const isFav = this.isItemFavorited(selectedItem);
+        actionBtnsHTML += `<div class="inspect-btn ${isFav ? 'active ' : ''}${isFavFocused}" title="${T('Inventory.hotbar.starHint')}" onclick="SceneManager._scene.triggerUIItemAction('favorite')">${T(isFav ? 'Inventory.ui.unfavorite' : 'Inventory.ui.favorite')}</div>`;
+        this._dndActionsList.push('favorite'); btnIdx++;
+      }
+
+      if (!isBoundGear) {
+        const isDiscardFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
+        actionBtnsHTML += `<div class="inspect-btn inspect-btn--danger ${isDiscardFocused}" onclick="SceneManager._scene.triggerUIItemAction('discard')">${T('Inventory.ui.discard')}</div>`;
+        this._dndActionsList.push('discard'); btnIdx++;
+      }
 
       // The card itself, from the shared inspect service (window.ItemInspect):
-      // the main menu's search page renders the identical panel from it.
-      const favStar = this.canFavoriteItem(selectedItem)
-        ? `<span class="inspect-favorite-star ${this.isItemFavorited(selectedItem) ? 'active' : ''}" title="${T('Inventory.hotbar.starHint')}" onclick="event.stopPropagation(); SceneManager._scene.toggleFavoriteStatus(SceneManager._scene._dndSelectedItem);">${this.isItemFavorited(selectedItem) ? '★' : '☆'}</span>`
-        : '';
+      // the main menu's search page renders the identical panel from it. The
+      // viewport rides in the card's extra slot, between the meta grid and the
+      // details, so the piece turns on the right page while its numbers are
+      // read underneath it.
       rightPageInnerHTML = window.ItemInspect.build(selectedItem, {
-        nameExtraHTML: favStar,
-        actionsHTML:   actionBtnsHTML
+        extraHTML:   this.itemViewportHTML(selectedItem),
+        actionsHTML: actionBtnsHTML
       });
     }
 
@@ -841,6 +1021,7 @@
     if (window.ItemHotbar) window.ItemHotbar.renderInventoryBar(this);
 
     if (selectedItem) this.drawUIItemIcon(selectedItem.iconIndex, 'inspect-canvas');
+    this.mountUIItemViewport(selectedItem);
 
     if (this._dndActiveSection === 'items' && gridContainer) {
       const line = gridLineOf[this._dndSelectedIndex];
@@ -851,6 +1032,48 @@
   // =========================================================================
   // Helper rendering methods
   // =========================================================================
+
+  // ---- the 3D piece on the right page --------------------------------------
+  // Every entry in the database has a model (ItemSystem/Item3D_*.js), so the
+  // inspect card shows the thing itself turning rather than only its icon. The
+  // viewer is the shared one the equip screen and the search page use
+  // (window.Weapon3DPreview), which is why nothing here knows about three.js.
+
+  Scene_EnhancedItem.prototype.itemViewportHTML = function (item) {
+    if (!item || typeof THREE === 'undefined' || !window.Weapon3DPreview) return '';
+    return '<div class="item-3d-viewport item-3d-viewport--borderless"><canvas id="backpack-item-canvas"></canvas></div>';
+  };
+
+  Scene_EnhancedItem.prototype.mountUIItemViewport = function (item) {
+    // The old viewport goes first: its canvas has just been replaced by the
+    // page re-render, and its WebGL context has to be released or the browser
+    // force-loses the game's own once the cap is passed.
+    this.disposeUIItemViewport();
+    if (!item || !window.Weapon3DPreview) return;
+    const canvas = document.getElementById('backpack-item-canvas');
+    if (!canvas) return;
+    const entry = window.Weapon3DPreview.mount(canvas, item);
+    if (entry) this._itemPreviews = [entry];
+    // A click on the square opens the piece full screen, but the same square is
+    // also dragged to turn it: only a press that did not travel counts as a
+    // click, so turning the model never throws the viewer open.
+    let downAt = null;
+    canvas.addEventListener('mousedown', (e) => { if (e.button === 0) downAt = { x: e.clientX, y: e.clientY }; });
+    canvas.addEventListener('mouseup', (e) => {
+      if (e.button !== 0 || !downAt) { downAt = null; return; }
+      const moved = Math.abs(e.clientX - downAt.x) + Math.abs(e.clientY - downAt.y);
+      downAt = null;
+      if (moved > 6) return;
+      const ref = item.wtypeId !== undefined ? 'weapon' : (item.atypeId !== undefined ? 'armor' : 'item');
+      window.ItemInspect.showModelFullscreen(ref, item.id);
+    });
+  };
+
+  Scene_EnhancedItem.prototype.disposeUIItemViewport = function () {
+    if (!this._itemPreviews) return;
+    if (window.Weapon3DPreview) window.Weapon3DPreview.disposeAll(this._itemPreviews);
+    this._itemPreviews = null;
+  };
 
   Scene_EnhancedItem.prototype.drawUIItemIcon = function (iconIndex, canvasId) {
     const canvas = document.getElementById(canvasId);
@@ -891,6 +1114,7 @@
 
   Scene_EnhancedItem.prototype.showDiscardModal = function (item) {
     if (!this._dndContainer || !item) return;
+    if (window.VectorGun && window.VectorGun.isBound(item)) { SoundManager.playBuzzer(); return; }
     this._discardModalOpen    = true;
     this._discardModalFocusIdx = 0;
     this._discardPendingItem  = item;
@@ -1041,6 +1265,8 @@
         this._dndActiveSection = 'targets'; this._selectedTargetIndex = 0;
         this.refreshUIbackpack();
       }
+    } else if (action === 'favorite') {
+      this.toggleFavoriteStatus(item);
     } else if (action === 'throw') {
       this.throwUIItem(item);
     } else if (action === 'discard') {
@@ -1054,6 +1280,7 @@
 
   Scene_EnhancedItem.prototype.throwUIItem = function (item) {
     if (!item) return;
+    if (window.VectorGun && window.VectorGun.isBound(item)) { SoundManager.playBuzzer(); return; }
     if (!(window.Game_Map && Game_Map.prototype.isThrowBlocked)) { SoundManager.playBuzzer(); return; }
     if ($gameParty.numItems(item) <= 0) { SoundManager.playBuzzer(); return; }
 
@@ -1131,19 +1358,6 @@
     this.refreshUIbackpack();
   };
 
-  // The three sort chips - name, weight, price - as one key. SHIFT steps to the
-  // next of them and then turns it round, which is the same two things clicking
-  // a chip does: pick it, or flip the direction of the one already picked. The
-  // chips had no key at all before, so a pad could not reorder the pockets.
-  Scene_EnhancedItem.prototype.cycleUISort = function () {
-    const keys = ['name', 'weight', 'price'];  // i18n-ignore: sort field ids
-    const at = keys.indexOf(this._dndSortKey);
-    // Descending is the second half of a chip's own cycle, so a step forward
-    // only moves on once this key has been seen both ways round.
-    if (at >= 0 && this._dndSortDirection === 'asc') this.toggleUISort(this._dndSortKey);
-    else this.toggleUISort(keys[(at + 1 + keys.length) % keys.length]);
-  };
-
   Scene_EnhancedItem.prototype.toggleUISort = function (key) {
     SoundManager.playOk();
     if (this._dndSortKey === key) {
@@ -1153,6 +1367,17 @@
       this._dndSortDirection = 'asc';
     }
     this._dndSelectedIndex = 0;
+    this.refreshUIbackpack();
+  };
+
+  // Passing the pointer over a row is enough to bring its piece up on the right
+  // page: the card, and the model turning on it, follow the mouse. A hover never
+  // steals the cursor back from the button strip, and never makes a sound.
+  Scene_EnhancedItem.prototype.hoverUIItem = function (idx) {
+    if (this._dndActiveSection === 'actions') return;
+    if (this._dndActiveSection === 'items' && this._dndSelectedIndex === idx) return;
+    this._dndActiveSection = 'items';
+    this._dndSelectedIndex = idx;
     this.refreshUIbackpack();
   };
 
@@ -1263,6 +1488,9 @@
 
     update() {
       if (!this._active || !this._scene) return;
+      // The full screen model viewer owns the whole screen while it is open,
+      // Escape included: the backpack takes no key until it is closed.
+      if (window.ItemInspect && window.ItemInspect.isModelFullscreenOpen()) return;
       const scene = this._scene;
 
       // Search bar has focus, pass all keys to browser
@@ -1335,11 +1563,28 @@
         }
       }
 
+      // Shift walks the sort strip: the same three tags the mouse clicks, in
+      // order, and pressing it again on the tag already picked flips the
+      // direction exactly as a second click does.
+      if (Input.isTriggered('shift')) {
+        const keys = ['name', 'weight', 'price'];
+        const at = keys.indexOf(scene._dndSortKey);
+        scene.toggleUISort(scene._dndSortDirection === 'asc' && at >= 0
+          ? keys[at] : keys[(at + 1 + keys.length) % keys.length]);
+        return;
+      }
+
+      // Tab opens the medicinal register of the piece on the right page,
+      // which is the one control on the card that is not a row of the list.
+      if (Input.isTriggered('tab')) {
+        const info = document.querySelector('.inspect-medicine-info .army-dialog-btn');
+        if (info) { info.click(); return; }
+      }
+
       if      (isDown)  this.handleMove('down');
       else if (isUp)    this.handleMove('up');
       else if (isLeft)  this.handleMove('left');
       else if (isRight) this.handleMove('right');
-      else if (Input.isTriggered('shift'))                                                   this._scene.cycleUISort();
       else if (Input.isTriggered('ok'))                                                      this.handleOk();
       else if (Input.isTriggered('escape') || Input.isTriggered('cancel') || TouchInput.isCancelled()) this.handleCancel();
     },
@@ -1390,7 +1635,7 @@
         // up in categories: already at top, do nothing
 
       } else if (section === 'items') {
-        const COLS  = 2;
+        const COLS  = 3;   // matches .backpack-grid grid-template-columns
         const items = scene.getFilteredUIItems();
         const total = items.length;
         const idx   = scene._dndSelectedIndex;

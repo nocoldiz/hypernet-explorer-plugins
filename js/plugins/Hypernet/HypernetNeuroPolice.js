@@ -97,26 +97,26 @@
     // --- Styling ------------------------------------------------------------
     // Continental government portal circa 2001: institutional blue, flat panels.
     const S = {
-        app: 'display:flex; flex-direction:column; height:100%; background:#eceae1; ' +
-             "font-family:'Tahoma',sans-serif; font-size:15px; color:#1b1b1b;",
+        app: 'display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); ' +
+             "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
         header: 'display:flex; align-items:center; gap:12px; padding:10px 14px; ' +
-                'background:linear-gradient(to bottom,#22458c,#16305f); color:#fff; border-bottom:2px solid #0d1e3d;',
-        nav: 'width:150px; flex-shrink:0; background:#dedbcf; border-right:1px solid #aca899; padding:8px 0;',
+                'background:linear-gradient(to bottom,var(--xp-navy-3),var(--xp-navy-2)); color:var(--xp-white); border-bottom:2px solid var(--xp-navy-9);',
+        nav: 'width:150px; flex-shrink:0; background:var(--xp-face-6); border-right:1px solid var(--xp-face-shade); padding:8px 0;',
         navItem: 'padding:9px 12px; cursor:pointer; border-left:4px solid transparent; user-select:none;',
-        panel: 'flex:1; overflow-y:auto; padding:14px 16px; background:#f6f5ee; min-width:0;',
-        status: 'display:flex; gap:16px; align-items:center; border-top:1px solid #aca899; ' +
-                'padding:4px 10px; background:#eceae1; font-size:14px; color:#333;',
-        card: 'background:#fff; border:1px solid #cdc9bd; border-radius:3px; padding:10px 12px; margin-bottom:8px;',
-        btn: 'display:inline-block; padding:5px 12px; background:linear-gradient(to bottom,#fdfdfb,#dcd8cc); ' +
-             'border:1px solid #8c887c; border-radius:3px; cursor:pointer; font-size:15px; color:#111; user-select:none;',
-        btnMain: 'display:inline-block; padding:6px 14px; background:linear-gradient(to bottom,#3a63b8,#22458c); ' +
-                 'border:1px solid #16305f; border-radius:3px; cursor:pointer; font-size:15px; color:#fff; ' +
+        panel: 'flex:1; overflow-y:auto; padding:14px 16px; background:var(--xp-face-2); min-width:0;',
+        status: 'display:flex; gap:16px; align-items:center; border-top:1px solid var(--xp-face-shade); ' +
+                'padding:4px 10px; background:var(--xp-face-5); font-size:14px; color:var(--xp-ink-4);',
+        card: 'background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:10px 12px; margin-bottom:8px;',
+        btn: 'display:inline-block; padding:5px 12px; background:linear-gradient(to bottom,var(--xp-paper),#dcd8cc); ' +
+             'border:1px solid var(--xp-face-4); border-radius:3px; cursor:pointer; font-size:15px; color:var(--xp-ink); user-select:none;',
+        btnMain: 'display:inline-block; padding:6px 14px; background:linear-gradient(to bottom,#3a63b8,var(--xp-navy-3)); ' +
+                 'border:1px solid var(--xp-navy-2); border-radius:3px; cursor:pointer; font-size:15px; color:var(--xp-white); ' +
                  'font-weight:bold; user-select:none;',
-        btnDanger: 'display:inline-block; padding:6px 14px; background:linear-gradient(to bottom,#c0392b,#8e2a20); ' +
-                   'border:1px solid #6b1f18; border-radius:3px; cursor:pointer; font-size:15px; color:#fff; ' +
+        btnDanger: 'display:inline-block; padding:6px 14px; background:linear-gradient(to bottom,var(--xp-red-2),var(--xp-red-3)); ' +
+                   'border:1px solid #6b1f18; border-radius:3px; cursor:pointer; font-size:15px; color:var(--xp-white); ' +
                    'font-weight:bold; user-select:none;',
-        note: 'color:#5a5a5a; font-size:14px; line-height:1.5;',
-        h: 'margin:0 0 8px; font-size:17px; font-weight:bold; color:#16305f;'
+        note: 'color:var(--xp-ink-soft-2); font-size:14px; line-height:1.5;',
+        h: 'margin:0 0 8px; font-size:17px; font-weight:bold; color:var(--xp-navy-2);'
     };
 
     const TABS = [
@@ -159,7 +159,7 @@
                         <span>${T('NeuroPolice.citizenLabel')} <b id="np-citizen"></b></span>
                         <span>${T('NeuroPolice.outstandingLabel')} <b id="np-outstanding"></b></span>
                         <span>${T('NeuroPolice.walletLabel')} <b id="np-wallet"></b></span>
-                        <span id="np-message" style="margin-left:auto; color:#16305f"></span>
+                        <span id="np-message" style="margin-left:auto; color:var(--xp-navy-2)"></span>
                     </div>
                 </div>
             `;
@@ -191,7 +191,7 @@
                 item.id = 'np-tab-' + tab.id;
                 const active = this.tab === tab.id;
                 item.style.cssText = S.navItem +
-                    (active ? 'background:#f6f5ee; border-left-color:#22458c; font-weight:bold;' : '');
+                    (active ? 'background:var(--xp-face-2); border-left-color:var(--xp-navy-3); font-weight:bold;' : '');
                 item.textContent = tab.label;
                 item.addEventListener('mouseenter', () => { if (this.tab !== tab.id) item.style.background = '#e7e4d8'; });
                 item.addEventListener('mouseleave', () => { if (this.tab !== tab.id) item.style.background = 'transparent'; });
@@ -278,7 +278,7 @@
 
             const holder = panel.querySelector('#np-charges');
             if (list.length === 0) {
-                holder.innerHTML = `<div style="${S.card} color:#4a4a4a">${T('NeuroPolice.emptyFile')}</div>`;
+                holder.innerHTML = `<div style="${S.card} color:var(--xp-ink-6)">${T('NeuroPolice.emptyFile')}</div>`;
             } else {
                 list.forEach((crime, index) => {
                     const row = document.createElement('div');
@@ -288,7 +288,7 @@
                             <div style="font-weight:bold">${escapeHtml(crime.name)}</div>
                             <div style="${S.note}">${T('NeuroPolice.filedOn', { date: escapeHtml(crime.timestamp || T('NeuroPolice.dateUnknown')) })}</div>
                         </div>
-                        <div style="font-weight:bold; color:#8e2a20; white-space:nowrap">${euros(crime.bounty)}</div>
+                        <div style="font-weight:bold; color:var(--xp-red-3); white-space:nowrap">${euros(crime.bounty)}</div>
                     `;
                     const affordable = gold >= (crime.bounty || 0);
                     row.appendChild(this.button(
@@ -386,7 +386,7 @@
                     ${T('NeuroPolice.declarationBlurb')}
                 </div>
                 <input id="np-report-filter" type="text" placeholder="${T('NeuroPolice.searchOffences')}" value="${escapeHtml(this.reportFilter)}"
-                       style="width:100%; box-sizing:border-box; padding:5px 8px; margin-bottom:10px; border:1px solid #8c887c; border-radius:2px; font-family:inherit; font-size:15px" />
+                       style="width:100%; box-sizing:border-box; padding:5px 8px; margin-bottom:10px; border:1px solid var(--xp-face-4); border-radius:2px; font-family:inherit; font-size:15px" />
                 <div id="np-report-list"></div>
             `;
 
@@ -419,14 +419,14 @@
 
             const cats = Object.keys(categories);
             if (cats.length === 0) {
-                holder.innerHTML = `<div style="${S.card} color:#4a4a4a">${T('NeuroPolice.noOffenceMatch')}</div>`;
+                holder.innerHTML = `<div style="${S.card} color:var(--xp-ink-6)">${T('NeuroPolice.noOffenceMatch')}</div>`;
                 return;
             }
 
             holder.innerHTML = '';
             cats.forEach(cat => {
                 const head = document.createElement('div');
-                head.style.cssText = 'font-weight:bold; color:#16305f; margin:10px 0 4px; border-bottom:1px solid #cdc9bd;';
+                head.style.cssText = 'font-weight:bold; color:var(--xp-navy-2); margin:10px 0 4px; border-bottom:1px solid var(--xp-face-3);';
                 head.textContent = cat;
                 holder.appendChild(head);
 
@@ -437,7 +437,7 @@
                     row.innerHTML = `
                         <div style="flex:1; min-width:0">${escapeHtml(crime.name)}</div>
                         <div style="${S.note} white-space:nowrap">
-                            <s>${euros(crime.bounty)}</s> &rarr; <b style="color:#8e2a20">${euros(half)}</b>
+                            <s>${euros(crime.bounty)}</s> &rarr; <b style="color:var(--xp-red-3)">${euros(half)}</b>
                         </div>
                     `;
                     row.appendChild(this.button(T('NeuroPolice.confess'), S.btn, 'np-confess-' + key,
@@ -549,8 +549,8 @@
 
             holder.innerHTML = `
                 <div style="position:absolute; top:0; right:0; bottom:0; left:0; background:rgba(20,25,40,0.45); display:flex; align-items:center; justify-content:center; z-index:10">
-                    <div style="background:#f6f5ee; border:2px solid #16305f; border-radius:4px; width:380px; max-width:85%; box-shadow:0 8px 22px rgba(0,0,0,0.4)">
-                        <div style="background:linear-gradient(to bottom,#22458c,#16305f); color:#fff; padding:6px 10px; font-weight:bold">${escapeHtml(title)}</div>
+                    <div style="background:var(--xp-face-2); border:2px solid var(--xp-navy-2); border-radius:4px; width:380px; max-width:85%; box-shadow:0 8px 22px rgba(0,0,0,0.4)">
+                        <div style="background:linear-gradient(to bottom,var(--xp-navy-3),var(--xp-navy-2)); color:var(--xp-white); padding:6px 10px; font-weight:bold">${escapeHtml(title)}</div>
                         <div style="padding:12px; line-height:1.5">${escapeHtml(body)}</div>
                         <div id="np-confirm-actions" style="padding:0 12px 12px; display:flex; gap:8px; justify-content:flex-end"></div>
                     </div>

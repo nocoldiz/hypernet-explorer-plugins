@@ -246,7 +246,56 @@
         }).join(' ');
     }
 
+    //=========================================================================
+    // Story mode: Em's curriculum
+    //=========================================================================
+    // Em does not study the ordinary skill categories. A memory-wiped witch who
+    // casts through a gun learns one magical system at a time, so in story mode
+    // her trees are the ten magical systems themselves plus the one mundane
+    // trade she keeps: firearms. Everywhere else, and for everybody else, the
+    // categories are untouched.
+    const MAGIC_TREE_PREFIX = 'MagicSystem:';
+    const EM_STORY_SWITCH = 49;   // raised when a story run is started
+    const EM_SKILL_TREES = ['Firearms'];
+    const MAGIC_TREE_ICON = 79;
+
+    function isMagicTree(category) {
+        return typeof category === 'string' && category.startsWith(MAGIC_TREE_PREFIX);
+    }
+
+    function magicTreeId(category) {
+        return isMagicTree(category) ? category.slice(MAGIC_TREE_PREFIX.length) : null;
+    }
+
+    function currentTeachActorId() {
+        const scene = SceneManager._scene;
+        if (scene && scene._teachActorId) return scene._teachActorId;
+        return actorCategoryManager._actorId;
+    }
+
+    // True only while a story run is teaching Em herself: any other run, and any
+    // other member of her party, keeps the ordinary category trees.
+    function usesEmCurriculum(actorId) {
+        if (typeof $gameSwitches === 'undefined' || !$gameSwitches) return false;
+        if (!$gameSwitches.value(EM_STORY_SWITCH)) return false;
+        const id = actorId || currentTeachActorId();
+        const actor = (typeof $gameActors !== 'undefined' && $gameActors) ? $gameActors.actor(id) : null;
+        if (!actor) return false;
+        if (actor._presetId === 2) return true;
+        const name = String(actor._presetName || (actor.name && actor.name()) || '').trim().toLowerCase();
+        return name === 'em';
+    }
+
+    function getEmCurriculumCategories() {
+        const list = ['All'].concat(EM_SKILL_TREES);
+        for (const sys of getAllMagicalSystems()) {
+            if (sys && sys.id) list.push(MAGIC_TREE_PREFIX + sys.id);
+        }
+        return list;
+    }
+
     function getCategoryDisplayName(categoryName) {
+        if (isMagicTree(categoryName)) return getMagicSystemDisplayName(magicTreeId(categoryName));
         const key = 'SkillMaster.category.' + categoryName;
         if (typeof T === 'function' && T.has(key)) return T(key);
         const data = CATEGORY_DATA[categoryName] || SkillMaster.CATEGORY_DATA[categoryName];
@@ -258,27 +307,19 @@
     }
 
     function getCategoryIcon(categoryName) {
+        if (isMagicTree(categoryName)) return MAGIC_TREE_ICON;
         const data = CATEGORY_DATA[categoryName] || SkillMaster.CATEGORY_DATA[categoryName];
         return data ? data.icon : 245;
     }
 
     function getCategoryIconStyle(categoryName) {
+        if (isMagicTree(categoryName)) return window.CCArt.icon(MAGIC_TREE_ICON, 32);
         const data = CATEGORY_DATA[categoryName] || SkillMaster.CATEGORY_DATA[categoryName];
-        const iconIndex = data ? data.icon : 245;
-        const iconSize = 32;
-        const cols = 16;
-        const x = (iconIndex % cols) * iconSize;
-        const y = Math.floor(iconIndex / cols) * iconSize;
-        return `background: url('img/system/IconSet.png') -${x}px -${y}px no-repeat; width: 32px; height: 32px; image-rendering: pixelated; display: inline-block;`;
+        return window.CCArt.icon(data ? data.icon : 245, 32);
     }
 
     function getSkillIconStyle(iconIndex) {
-        const index = iconIndex || 0;
-        const iconSize = 32;
-        const cols = 16;
-        const x = (index % cols) * iconSize;
-        const y = Math.floor(index / cols) * iconSize;
-        return `background: url('img/system/IconSet.png') -${x}px -${y}px no-repeat; width: 32px; height: 32px; image-rendering: pixelated; display: inline-block;`;
+        return window.CCArt.icon(iconIndex || 0, 32);
     }
 
     function getSkillCategory(skillId) {
@@ -317,6 +358,28 @@
 
     function getMagicSystemDesc(id) {
         const key = 'SkillMaster.magicSystem.systems.' + id + '.desc';
+        return (typeof T === 'function' && T.has(key)) ? T(key) : '';
+    }
+
+    // Hard or soft magic: a cosmetic label on every system, read off the data
+    // so the wheel and the detail page never disagree about which is which.
+    function getMagicSystemRigor(id) {
+        const sys = getAllMagicalSystems().find(s => s && s.id === id);
+        return (sys && sys.rigor === 'hard') ? 'hard' : 'soft';
+    }
+
+    function getMagicSystemRigorLabel(id) {
+        const key = 'SkillMaster.magicSystem.rigor.' + getMagicSystemRigor(id);
+        return (typeof T === 'function' && T.has(key)) ? T(key) : '';
+    }
+
+    function getMagicSystemRigorHint(id) {
+        const key = 'SkillMaster.magicSystem.rigor.' + getMagicSystemRigor(id) + 'Hint';
+        return (typeof T === 'function' && T.has(key)) ? T(key) : '';
+    }
+
+    function getMagicSystemLore(id) {
+        const key = 'SkillMaster.magicSystem.systems.' + id + '.lore';
         return (typeof T === 'function' && T.has(key)) ? T(key) : '';
     }
 
@@ -437,6 +500,7 @@
     };
 
     function getAllSkillCategories() {
+        if (usesEmCurriculum()) return getEmCurriculumCategories();
         const allowed = actorCategoryManager.allowedCategories();
         const categories = new Set();
         categories.add("All");
@@ -462,6 +526,7 @@
 
     function getCategoryType(category) {
         if (category === 'All') return 'Skill';
+        if (isMagicTree(category)) return 'Magic';
         const data = CATEGORY_DATA[category] || SkillMaster.CATEGORY_DATA[category];
         return (data && data.type === 'Magic') ? 'Magic' : 'Skill';
     }
@@ -483,6 +548,22 @@
     }
 
     function getSkillsByCategory(category) {
+        if (isMagicTree(category)) {
+            const MN0 = window.MagicNature;
+            const filter0 = !!(MN0 && MN0.isFiltering());
+            return getSkillsForMagicSystem(magicTreeId(category))
+                .filter(s => s && s.name && !s.name.startsWith('<--') && (!filter0 || MN0.allowsData(s)));
+        }
+        if (category === 'All' && usesEmCurriculum()) {
+            const out = [];
+            for (const cat of getEmCurriculumCategories()) {
+                if (cat === 'All') continue;
+                for (const skill of getSkillsByCategory(cat)) {
+                    if (!out.includes(skill)) out.push(skill);
+                }
+            }
+            return out;
+        }
         if (category === FUSION_CATEGORY) {
             const actorId = (SceneManager._scene && SceneManager._scene._teachActorId) || 0;
             if (typeof $gameSystem === 'undefined' || !$gameSystem) return [];
@@ -529,10 +610,17 @@
     SkillMaster.getAllMagicalSystems = getAllMagicalSystems;
     SkillMaster.getMagicSystemDisplayName = getMagicSystemDisplayName;
     SkillMaster.getMagicSystemDesc = getMagicSystemDesc;
+    SkillMaster.getMagicSystemLore = getMagicSystemLore;
+    SkillMaster.getMagicSystemRigor = getMagicSystemRigor;
+    SkillMaster.getMagicSystemRigorLabel = getMagicSystemRigorLabel;
+    SkillMaster.getMagicSystemRigorHint = getMagicSystemRigorHint;
     SkillMaster.getClassesForMagicSystem = getClassesForMagicSystem;
     SkillMaster.getSkillsForMagicSystem = getSkillsForMagicSystem;
     SkillMaster.actorCategoryManager = actorCategoryManager;
     SkillMaster.getAllSkillCategories = getAllSkillCategories;
+    SkillMaster.usesEmCurriculum = usesEmCurriculum;
+    SkillMaster.isMagicTree = isMagicTree;
+    SkillMaster.magicTreeId = magicTreeId;
     SkillMaster.getCategoryType = getCategoryType;
     SkillMaster.getSplitSkillCategories = getSplitSkillCategories;
     SkillMaster.getSkillsByCategory = getSkillsByCategory;
@@ -1454,11 +1542,8 @@
         const _Window_MenuCommand_addOriginalCommands = Window_MenuCommand.prototype.addOriginalCommands;
         Window_MenuCommand.prototype.addOriginalCommands = function () {
             _Window_MenuCommand_addOriginalCommands.call(this);
-            const cardMode = window.isCardCombatMode ? window.isCardCombatMode() : ($gameSwitches ? $gameSwitches.value(45) : false);
-            if (!cardMode) {
-                const label = typeof T === 'function' ? T('SkillMaster.training') : encyclopediaCommand;
-                this.addCommand(label, 'skillEncyclopedia', true, 77);
-            }
+            const label = typeof T === 'function' ? T('SkillMaster.training') : encyclopediaCommand;
+            this.addCommand(label, 'skillEncyclopedia', true, 77);
         };
 
         const _Scene_Menu_createCommandWindow = Scene_Menu.prototype.createCommandWindow;
@@ -2204,19 +2289,7 @@
             st.meshes = st.nodes.map(n => ({ node: n, userData: { node: n } }));
             st.halos = st.nodes.map(n => ({ node: n, userData: { node: n } }));
 
-            // Spawn flow energy particles on edges
             st.particles = [];
-            if (st.edges.length > 0) {
-                for (let i = 0; i < Math.min(st.edges.length * 2, 80); i++) {
-                    const edgeIdx = i % st.edges.length;
-                    st.particles.push({
-                        edgeIndex: edgeIdx,
-                        progress: Math.random(),
-                        speed: 0.25 + Math.random() * 0.45,
-                        size: 2.0 + Math.random() * 2.0
-                    });
-                }
-            }
 
             this.resize(true);
             this.fitToScreen(false);
@@ -2256,7 +2329,7 @@
 
             for (const node of figure.nodes) {
                 const el = document.createElement('div');
-                el.className = 'sg3-label sg2d-node-label';
+                el.className = 'sg3-label sg2d-node-label ui-closed';
                 el.dataset.id = String(node.id);
                 const iconStyle = SkillMaster.getSkillIconStyle ? SkillMaster.getSkillIconStyle(node.skill.iconIndex) : '';
 
@@ -2296,16 +2369,18 @@
 
                     const cost = el.querySelector('.sg2d-label-cost');
                     if (cost) {
+                        // The three states are named, not painted: the
+                        // stylesheet inks them so both presets can answer.
+                        cost.classList.toggle('sg2d-label-cost--learned', learned);
+                        cost.classList.toggle('sg2d-label-cost--open', !learned && open);
+                        cost.classList.toggle('sg2d-label-cost--locked', !learned && !open);
                         if (learned) {
                             cost.textContent = '✓';
-                            cost.style.color = 'var(--text-forest-complete, #52c41a)';
                         } else if (open) {
                             const kp = $gameSystem.getSkillKnowledgeCost(node.id, actor ? actor.actorId() : 1);
                             cost.textContent = `${kp} KP`;
-                            cost.style.color = 'var(--text-secondary-active, #e5c07b)';
                         } else {
-                            cost.textContent = '🔒';
-                            cost.style.color = '#888';
+                            cost.textContent = '⊘';
                         }
                     }
                 }
@@ -2537,39 +2612,6 @@
                 }
             }
 
-            // Animate traveling energy sparks on mastered edges
-            for (const p of st.particles) {
-                const edge = st.edges[p.edgeIndex];
-                if (!edge) continue;
-                const [a, b] = edge;
-                if (a.state !== 2 && b.state !== 2) continue;
-
-                p.progress = (p.progress + dt * p.speed) % 1.0;
-                const t = p.progress;
-
-                const ax = a.x * scale, ay = a.y * scale;
-                const bx = b.x * scale, by = b.y * scale;
-                const midY = (ay + by) / 2;
-
-                // Bezier interpolation
-                const u = 1 - t;
-                const tt = t * t;
-                const uu = u * u;
-                const uuu = uu * u;
-                const ttt = tt * t;
-
-                const px = uuu * ax + 3 * uu * t * ax + 3 * u * tt * bx + ttt * bx;
-                const py = uuu * ay + 3 * uu * t * midY + 3 * u * tt * midY + ttt * by;
-
-                const hue = a.hue || 210;
-                ctx.shadowColor = `hsla(${hue}, 100%, 75%, 1)`;
-                ctx.shadowBlur = 8;
-                ctx.fillStyle = '#ffffff';
-                ctx.beginPath();
-                ctx.arc(px, py, p.size, 0, TAU);
-                ctx.fill();
-            }
-
             ctx.restore();
         },
 
@@ -2594,10 +2636,8 @@
                 // 1. Selection & Hover Aura Reticle
                 if (isFocus || isHover) {
                     ctx.save();
-                    ctx.rotate(st.time * (isFocus ? 1.5 : 0.8));
-                    ctx.strokeStyle = `hsla(${hue}, 95%, 70%, ${0.7 + st.pulse * 0.3})`;
+                    ctx.strokeStyle = `hsla(${hue}, 95%, 70%, ${isFocus ? 0.95 : 0.7})`;
                     ctx.lineWidth = isFocus ? 2.5 : 1.8;
-                    ctx.setLineDash(isFocus ? [8, 6] : [4, 4]);
                     ctx.beginPath();
                     ctx.arc(0, 0, radius + 8, 0, TAU);
                     ctx.stroke();
@@ -2660,7 +2700,7 @@
 
                 // 4. Status Glyphs (Checkmark / Lock badge on top corner)
                 if (isLearned) {
-                    ctx.fillStyle = 'var(--text-forest-complete, #52c41a)';
+                    ctx.fillStyle = 'var(--text-forest-complete)';
                     ctx.beginPath();
                     ctx.arc(radius - 4, -radius + 4, 6, 0, TAU);
                     ctx.fill();
@@ -2678,7 +2718,7 @@
                     ctx.font = '8px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText('🔒', radius - 4, -radius + 4.5);
+                    ctx.fillText('⊘', radius - 4, -radius + 4.5);
                 }
 
                 ctx.restore();
@@ -2705,18 +2745,18 @@
                 node.vis = (sx >= -100 && sx <= st.sized.w + 100 && sy >= -100 && sy <= st.sized.h + 100);
 
                 if (!node.vis || visibleCount >= maxVisibleLabels) {
-                    if (el.style.display !== 'none') el.style.display = 'none';
+                    el.classList.add('ui-closed');
                     continue;
                 }
 
                 visibleCount++;
-                el.style.display = 'block';
-                el.style.left = `${sx.toFixed(1)}px`;
-                el.style.top = `${(sy + 26 * st.zoom).toFixed(1)}px`;
+                el.classList.remove('ui-closed');
+                el.style.setProperty('--ms-x', `${sx.toFixed(1)}px`);
+                el.style.setProperty('--ms-y', `${(sy + 26 * st.zoom).toFixed(1)}px`);
 
                 // Scale label with zoom subtly
                 const labelScale = Math.max(0.75, Math.min(1.15, st.zoom));
-                el.style.transform = `translate(-50%, 0) scale(${labelScale.toFixed(2)})`;
+                el.style.setProperty('--ms-label-scale', labelScale.toFixed(2));
             }
         },
 
@@ -2970,31 +3010,33 @@
             ? `#${skill.animationId} · ${anim.name}`
             : (typeof T === 'function' ? T('SkillMaster.noAnimation') : 'No Animation');
         const noEfkNote = previewable ? '' :
-            `<div style="position:absolute; top:0; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; text-align:center; color:var(--text-card-medium); font-size:1.292rem; pointer-events:none">${typeof T === 'function' ? T('SkillMaster.no3dAnimationForThis') : 'No 3D Animation'}</div>`;
+            `<div class="sm-stage-note">${typeof T === 'function' ? T('SkillMaster.no3dAnimationForThis') : 'No 3D Animation'}</div>`;
 
         const old = document.getElementById('spell-preview-overlay');
         if (old && old.parentNode) old.parentNode.removeChild(old);
 
+        // Shape B: the dim, one card in the middle of it, the header bar with
+        // the way out first and the button strip last.
         const ov = document.createElement('div');
         ov.id = 'spell-preview-overlay';
-        ov.style.cssText = 'position:absolute; top:0; left:0; right:0; bottom:0; z-index:2000; display:flex; align-items:center; justify-content:center; background:var(--shadow-black-translucent-75, rgba(0,0,0,0.75)); font-family:\'Lora\',serif;';
+        ov.className = 'ui-overlay sm-preview-overlay';
         ov.innerHTML = `
-            <div style="width:82%; max-width:560px; max-height:88%; display:flex; flex-direction:column; gap:12px; padding:20px; box-sizing:border-box; background:var(--bg-dark-warm-translucent-96, rgba(20,18,15,0.96)); border:1.5px solid var(--border-focus-hover, #e5c07b); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.75)">
-                <div style="display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--border-secondary-hover-translucent-15); padding-bottom:8px">
-                    <div style="${SkillMaster.getSkillIconStyle(skill.iconIndex)} transform:scale(1.1); flex-shrink:0; image-rendering:pixelated"></div>
-                    <h3 class="cc-header-gothic" style="font-size:1.994rem; color:var(--text-secondary-active, #e5c07b); margin:0">${skill.name}</h3>
+            <div class="ui-panel sm-preview-panel">
+                <div class="page-header-bar">
+                    <div class="back-button focusable" onclick="SceneManager._scene.closeSpellPreview()">${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}</div>
+                    <h2 class="title">${skill.name}</h2>
                 </div>
-                <div id="spell-preview-stage" style="position:relative; width:100%; height:300px; border-radius:10px; overflow:hidden; border:1.5px solid var(--border-secondary-hover-translucent-15); background:radial-gradient(circle at 50% 42%, var(--bg-tertiary-focus-translucent-45, rgba(40,35,25,0.45)) 0%, rgba(10,8,6,1) 78%)">
-                    <div style="position:absolute; left:50%; bottom:26px; transform:translate(-50%, 0) perspective(420px) rotateX(66deg); width:150px; height:150px; border-radius:50%; border:2px solid rgba(229,192,123,0.5); box-shadow:0 0 0 18px rgba(229,192,123,0.16) inset; background:radial-gradient(circle, rgba(229,192,123,0.16) 0%, transparent 70%)"></div>
-                    <div style="position:absolute; left:50%; bottom:88px; transform:translateX(-50%); width:2px; height:70px; background:linear-gradient(to bottom, transparent, rgba(229,192,123,0.5)); pointer-events:none"></div>
-                    <canvas id="spell-preview-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; cursor:grab; touch-action:none"></canvas>
-                    ${noEfkNote}
+                <div class="ui-panel-body sm-preview-body">
+                    <div id="spell-preview-stage" class="sm-preview-stage">
+                        <div class="sm-stage-ring"></div>
+                        <div class="sm-stage-shaft"></div>
+                        <canvas id="spell-preview-canvas" class="sm-stage-canvas"></canvas>
+                        ${noEfkNote}
+                    </div>
+                    <div class="sm-preview-anim">${animLabel}</div>
                 </div>
-                <div style="text-align:center; font-size:1.234rem; color:var(--text-secondary-active, #e5c07b); font-weight:bold">${animLabel}</div>
-                <div style="text-align:center; font-size:1.17rem; color:var(--text-card-medium, #aaa)">${typeof T === 'function' ? T('SkillMaster.dragToRotateScrollTo') : 'Drag to rotate · Scroll to zoom'}</div>
-                <div style="display:flex; gap:10px; margin-top:2px">
-                    <div class="focusable" onclick="SceneManager._scene.replaySpellPreview()" style="flex:1; text-align:center; padding:9px; background:var(--text-text-alt-3, #e5c07b); color:#000; border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase">${typeof T === 'function' ? T('SkillMaster.replay') : 'Replay'}</div>
-                    <div class="focusable" onclick="SceneManager._scene.closeSpellPreview()" style="flex:0 0 auto; text-align:center; padding:9px 18px; background:transparent; color:var(--text-primary-hover, #fff); border:1.5px solid var(--text-primary-hover, #fff); border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase">${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}</div>
+                <div class="inspect-actions ui-panel-actions">
+                    <div class="inspect-btn focusable" onclick="SceneManager._scene.replaySpellPreview()">${typeof T === 'function' ? T('SkillMaster.replay') : 'Replay'}</div>
                 </div>
             </div>`;
         this._dndContainer.appendChild(ov);
@@ -3259,9 +3301,9 @@
             box.querySelectorAll('.anim-row').forEach(row => {
                 const ri = parseInt(row.dataset.idx, 10);
                 const on = ri === k;
+                // The hairline is the whole of the mark, and the stylesheet
+                // draws it: nothing is painted from here.
                 row.classList.toggle('focused', on);
-                row.style.borderColor = on ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)';
-                row.style.background = on ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--accent-gray-2-translucent-0)';
             });
         }
         const label = document.getElementById('anim-preview-label');
@@ -3443,16 +3485,16 @@
                 const cat = SkillMaster.getSkillCategory(skill.id);
                 const isSkill = cat ? SkillMaster.getCategoryType(cat) !== 'Magic' : false;
                 const bLabel = isSkill ? (typeof T === 'function' ? T('SkillMaster.skill') : 'Skill') : (typeof T === 'function' ? T('SkillMaster.magic') : 'Magic');
-                typeBadge = `<span style="margin-left:6px; font-family:'Lora',serif; font-size:1.081rem; text-transform:uppercase; color:var(--accent-badge-text); background:var(--accent-badge-yellow); padding:1px 5px; font-weight:bold">${bLabel}</span>`;
+                typeBadge = `<span class="sm-forge-badge">${bLabel}</span>`;
             }
-            const inner = skill
-                ? `<div style="display:flex; align-items:center; gap:10px"><div style="${SkillMaster.getSkillIconStyle(skill.iconIndex)} transform:scale(0.75); flex-shrink:0; image-rendering:pixelated"></div><span style="font-weight:bold; color:var(--text-primary-hover)">${skill.name}</span><span style="margin-left:auto; font-size:1.081rem; color:var(--text-card-medium)">MP ${skill.mpCost} · AP ${skill.tpCost}</span></div>`
-                : `<span style="color:var(--text-card-medium)">${typeof T === 'function' ? T('SkillMaster.emptyPressToChoose') : '[ Empty - Click to choose ]'}</span>`;
+            const value = skill
+                ? `<span class="sm-forge-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></span><span class="inspect-spec-value">${skill.name}</span><span class="sm-forge-cost">MP ${skill.mpCost} &middot; AP ${skill.tpCost}</span>`
+                : `<span class="inspect-spec-value inspect-spec-value--muted">${typeof T === 'function' ? T('SkillMaster.emptySlot') : 'Empty'}</span>`;
             slotsHTML += `
-                <div class="focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorFocusSlot(${i})" style="display:flex; flex-direction:column; gap:4px; padding:9px 13px; background:${focused ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--bg-card-translucent-5)'}; border:1.5px solid ${focused ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:8px; cursor:pointer; transition:all 0.15s ease">
-                    <span style="font-size:1.081rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary-active); font-weight:bold">${meta.label}${typeBadge}</span>
-                    ${inner}
-                    <span style="font-size:1.081rem; color:var(--text-card-medium)">${meta.hint}</span>
+                <div class="sm-forge-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorFocusSlot(${i})">
+                    <span class="inspect-spec-label">${meta.label}${typeBadge}</span>
+                    <span class="sm-forge-answer">${value}</span>
+                    <span class="sm-forge-hint">${meta.hint}</span>
                 </div>`;
         });
 
@@ -3461,9 +3503,9 @@
         const animName = animData ? `#${animId} · ${animData.name}` : (typeof T === 'function' ? T('SkillMaster.default') : 'Default');
         const animFocused = !animPicking && this._editorFocus === FORGE_ANIM_IDX;
         const animRowHTML = `
-            <div class="focusable ${animFocused ? 'focused' : ''}" onclick="SceneManager._scene.openAnimPicker()" style="display:flex; flex-direction:column; gap:4px; padding:9px 13px; background:${animFocused ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--bg-card-translucent-5)'}; border:1.5px solid ${animFocused ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:8px; cursor:pointer; transition:all 0.15s ease">
-                <span style="font-size:1.081rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary-active); font-weight:bold">${typeof T === 'function' ? T('SkillMaster.animation') : 'Animation'}</span>
-                <span style="font-weight:bold; color:var(--text-primary-hover)">${animName}</span>
+            <div class="sm-forge-row focusable ${animFocused ? 'focused' : ''}" onclick="SceneManager._scene.openAnimPicker()">
+                <span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.animation') : 'Animation'}</span>
+                <span class="sm-forge-answer"><span class="inspect-spec-value">${animName}</span></span>
             </div>`;
 
         const allFilled = this._editorSlots.every(x => x != null);
@@ -3471,12 +3513,14 @@
         const canPay = !allFilled || knowledge >= fuseCost;
         const canForge = allFilled && canPay;
         const createFocused = !animPicking && this._editorFocus === FORGE_CREATE_IDX;
-        const costTag = allFilled ? ` <span style="font-size:1.17rem; opacity:0.85">&middot; ${fuseCost} KP</span>` : '';
+        const costTag = allFilled ? ` <span class="sm-forge-cost">&middot; ${fuseCost} KP</span>` : '';
         const createHTML = `
-            <div class="focusable ${createFocused ? 'focused' : ''} ${canForge ? '' : 'disabled'}" onclick="SceneManager._scene.editorCreate()" style="display:flex; justify-content:center; align-items:center; padding:12px; margin-top:4px; background:${canForge ? (createFocused ? 'var(--text-secondary-active)' : 'var(--text-text-alt-3)') : 'var(--shadow-primary-hover-translucent-5)'}; color:${canForge ? 'var(--text-pure-black)' : 'var(--text-text-alt-12)'}; border:1px solid var(--border-secondary-hover-translucent-15); border-radius:8px; cursor:${canForge ? 'pointer' : 'not-allowed'}; font-weight:bold; text-transform:uppercase; font-family:'Lora', serif; transition:all 0.15s ease">
-                ${typeof T === 'function' ? T('SkillMaster.fuseSpells2') : 'Fuse Spells'}${costTag}
+            <div class="inspect-actions sm-forge-actions">
+                <div class="inspect-btn focusable ${createFocused ? 'selected' : ''} ${canForge ? '' : 'unusable'}" onclick="SceneManager._scene.editorCreate()">
+                    ${typeof T === 'function' ? T('SkillMaster.fuseSpells2') : 'Fuse Spells'}${costTag}
+                </div>
             </div>
-            <div style="text-align:center; font-family:'Lora',serif; font-size:1.17rem; color:${canPay ? 'var(--text-card-medium)' : 'var(--text-danger-hover)'}">
+            <div class="sm-forge-knowledge ${canPay ? '' : 'sm-forge-knowledge--short'}">
                 ${typeof T === 'function' ? T('SkillMaster.knowledge') : 'Knowledge'}: <strong>${knowledge} KP</strong>${allFilled && !canPay ? (typeof T === 'function' ? T('SkillMaster.notEnough') : ' (Not enough KP)') : ''}
             </div>`;
 
@@ -3486,28 +3530,29 @@
             const focusIdx = FORGE_SPLIT_BASE + k;
             const focused = !animPicking && this._editorFocus === focusIdx;
             fusedListHTML += `
-                <div class="focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorSplit(${s.id})" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:${focused ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--bg-card-translucent-5)'}; border:1px solid ${focused ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:pointer">
-                    <span style="display:flex; align-items:center; gap:8px; font-weight:bold; color:var(--text-primary-hover)"><div style="${SkillMaster.getSkillIconStyle(s.iconIndex)} transform:scale(0.7); flex-shrink:0; image-rendering:pixelated"></div>${s.name}</span>
-                    <span style="font-family:'Lora',serif; font-size:1.081rem; text-transform:uppercase; color:var(--text-secondary-active); border:1px solid var(--border-danger-active); border-radius:3px; padding:1px 6px">${typeof T === 'function' ? T('SkillMaster.split') : 'Split'}</span>
+                <div class="sm-skill-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorSplit(${s.id})">
+                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${s.name}</span></span>
+                    <span class="ui-chip sm-skill-badge">${typeof T === 'function' ? T('SkillMaster.split') : 'Split'}</span>
                 </div>`;
         });
-        if (!fusedListHTML) fusedListHTML = `<div style="color:var(--text-card-medium); font-size:1.219rem; padding:4px">${typeof T === 'function' ? T('SkillMaster.noFusedSpellsYet') : 'No fused spells forged yet'}</div>`;
+        if (!fusedListHTML) fusedListHTML = `<div class="ui-empty"><div class="ui-empty-text">${typeof T === 'function' ? T('SkillMaster.noFusedSpellsYet') : 'No fused spells forged yet'}</div></div>`;
 
         const backBtn = typeof T === 'function' ? T('SkillMaster.back') : 'Back';
         const title = typeof T === 'function' ? T('SkillMaster.fuseSpells3') : 'Spell Fusion';
         leftBox.innerHTML = `
-            <div class="page-header-bar" style="margin-bottom:14px">
+            <div class="page-header-bar">
               <div class="back-button focusable" onclick="SceneManager._scene.closeSpellEditor()">${backBtn}</div>
-              <h2 class="cc-header-gothic" style="border:none; margin:0; padding:0; text-align:center; font-size:2.344rem">${title}</h2>
+              <h2 class="title">${title}</h2>
             </div>
-            <div style="display:flex; flex-direction:column; gap:9px">
+            <div class="sm-forge-rows">
                 ${slotsHTML}
                 ${animRowHTML}
                 ${createHTML}
             </div>
-            <div style="border-top:1px dashed var(--scroll-thumb-hover-translucent-60); margin:14px 0 8px 0"></div>
-            <h4 style="margin:0 0 8px 0; font-family:'Lora',serif; color:var(--text-secondary-active); font-size:1.463rem; text-align:center">${typeof T === 'function' ? T('SkillMaster.fusedSpells') : 'Forged Spells'}</h4>
-            <div id="fused-scroll-box" class="skill-scroll-box" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding-right:6px; min-height:60px">
+            <div class="ui-section sm-forged-section">
+                <h4 class="inspect-section-title">${typeof T === 'function' ? T('SkillMaster.fusedSpells') : 'Forged Spells'}</h4>
+            </div>
+            <div id="fused-scroll-box" class="ui-list ui-scroll sm-forged-list">
                 ${fusedListHTML}
             </div>`;
 
@@ -3519,21 +3564,23 @@
             candidates.forEach((s, k) => {
                 const focused = this._editorPickIndex === k;
                 candHTML += `
-                    <div class="focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorPickCandidate(${k})" style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:${focused ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--accent-gray-2-translucent-0)'}; border:1px solid ${focused ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:pointer">
-                        <span style="display:flex; align-items:center; gap:8px; font-weight:bold; color:${focused ? 'var(--text-secondary-active)' : 'var(--text-card-medium)'}"><div style="${SkillMaster.getSkillIconStyle(s.iconIndex)} transform:scale(0.72); flex-shrink:0; image-rendering:pixelated"></div>${s.name}</span>
-                        <span style="font-size:1.081rem; color:var(--text-inverse)">MP ${s.mpCost} · AP ${s.tpCost}</span>
+                    <div class="sm-skill-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorPickCandidate(${k})">
+                        <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${s.name}</span></span>
+                        <span class="sm-skill-cost">MP ${s.mpCost} · AP ${s.tpCost}</span>
                     </div>`;
             });
-            if (!candHTML) candHTML = `<div style="color:var(--text-card-medium); text-align:center; margin-top:20px">${typeof T === 'function' ? T('SkillMaster.noAvailableSkillsForThis') : 'No available skills for this slot'}</div>`;
+            if (!candHTML) candHTML = `<div class="ui-empty"><div class="ui-empty-text">${typeof T === 'function' ? T('SkillMaster.noAvailableSkillsForThis') : 'No available skills for this slot'}</div></div>`;
             const pickTitle = slotIdx === FORGE_DOMINANT_IDX
                 ? (typeof T === 'function' ? T('SkillMaster.chooseDominantSpell') : 'Choose Dominant Spell')
                 : (typeof T === 'function' ? T('SkillMaster.chooseRecessive') : 'Choose Recessive Component');
             rightHTML = `
-                <div class="page-header-bar">
-                  <h2 class="cc-header-gothic" style="text-align:center; font-size:2.064rem">${pickTitle}</h2>
-                </div>
-                <div id="candidates-scroll-box" class="skill-scroll-box" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding-right:6px">
-                    ${candHTML}
+                <div class="ui-detail">
+                    <div class="ui-detail-head">
+                        <div class="ui-detail-titles"><h3 class="sm-detail-name">${pickTitle}</h3></div>
+                    </div>
+                    <div id="candidates-scroll-box" class="ui-detail-scroll ui-scroll sm-candidate-list">
+                        ${candHTML}
+                    </div>
                 </div>`;
         } else if (animPicking) {
             const list = this.getAvailableAnimations();
@@ -3544,30 +3591,30 @@
             list.forEach((a, k) => {
                 const on = this._editorAnimPickIndex === k;
                 rowsHTML += `
-                    <div class="anim-row ${on ? 'focused' : ''}" data-idx="${k}" onclick="SceneManager._scene.editorAnimHighlight(${k})" style="display:flex; align-items:center; justify-content:space-between; padding:6px 10px; background:${on ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--accent-gray-2-translucent-0)'}; border:1px solid ${on ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:5px; cursor:pointer">
-                        <span style="font-weight:bold; color:${on ? 'var(--text-secondary-active)' : 'var(--text-primary-hover)'}; font-size:1.219rem">${a.name}</span>
-                        <span style="font-size:1.081rem; color:var(--text-card-medium)">#${a.id}</span>
+                    <div class="sm-skill-row anim-row focusable ${on ? 'focused' : ''}" data-idx="${k}" onclick="SceneManager._scene.editorAnimHighlight(${k})">
+                        <span class="sm-skill-name">${a.name}</span>
+                        <span class="sm-skill-cost">#${a.id}</span>
                     </div>`;
             });
             const pickTitle = typeof T === 'function' ? T('SkillMaster.chooseAnimation') : 'Choose Animation';
             const useLbl = typeof T === 'function' ? T('SkillMaster.use') : 'Use';
             const backLbl = typeof T === 'function' ? T('SkillMaster.cancel') : 'Cancel';
             rightHTML = `
-                <div style="display:flex; flex-direction:column; height:100%; box-sizing:border-box">
-                    <div class="page-header-bar page-header-bar--compact">
-                      <h2 class="cc-header-gothic" style="text-align:center; font-size:1.854rem">${pickTitle}</h2>
+                <div class="ui-detail">
+                    <div class="ui-detail-head">
+                        <div class="ui-detail-titles"><h3 class="sm-detail-name">${pickTitle}</h3></div>
                     </div>
-                    <div style="position:relative; width:100%; height:210px; border-radius:8px; overflow:hidden; border:1.5px solid var(--border-secondary-hover-translucent-15); background:radial-gradient(circle at 50% 40%, var(--bg-tertiary-focus-translucent-45) 0%, rgba(10,8,6,1) 100%); perspective:600px">
-                        <div style="position:absolute; left:50%; bottom:6px; transform:translateX(-50%) rotateX(8deg); width:150px; height:150px; background:url('img/faces/${actor.faceName()}.png') -${faceX}px -${faceY}px no-repeat; image-rendering:pixelated; filter:drop-shadow(0 6px 10px rgba(0,0,0,0.5))"></div>
-                        <canvas id="anim-preview-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none"></canvas>
+                    <div class="sm-anim-stage">
+                        <div class="sm-anim-face" style="--sm-face: ${window.CCArt.url('img/faces/' + actor.faceName() + '.png')}; --sm-face-x: -${faceX}px; --sm-face-y: -${faceY}px"></div>
+                        <canvas id="anim-preview-canvas" class="sm-stage-canvas"></canvas>
                     </div>
-                    <div id="anim-preview-label" style="text-align:center; font-family:'Lora',serif; font-size:1.219rem; color:var(--text-secondary-active); font-weight:bold; margin:8px 0">${cur ? `#${cur.id} · ${cur.name}` : ''}</div>
-                    <div id="anim-list-box" class="skill-scroll-box" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:5px; padding-right:6px; min-height:60px">
+                    <div id="anim-preview-label" class="sm-preview-anim">${cur ? `#${cur.id} · ${cur.name}` : ''}</div>
+                    <div id="anim-list-box" class="ui-list ui-scroll sm-anim-list">
                         ${rowsHTML}
                     </div>
-                    <div style="display:flex; gap:8px; margin-top:8px">
-                        <div class="focusable" onclick="SceneManager._scene.editorConfirmAnim()" style="flex:1; text-align:center; padding:9px; background:var(--text-text-alt-3); color:var(--text-pure-black); border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase; font-family:'Lora',serif">${useLbl}</div>
-                        <div class="focusable" onclick="SceneManager._scene.editorCancelAnim()" style="flex:0 0 auto; text-align:center; padding:9px 14px; background:transparent; color:var(--text-primary-hover); border:1.5px solid var(--text-primary-hover); border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase; font-family:'Lora',serif">${backLbl}</div>
+                    <div class="inspect-actions ui-panel-actions sm-anim-actions">
+                        <div class="inspect-btn focusable" onclick="SceneManager._scene.editorConfirmAnim()">${useLbl}</div>
+                        <div class="inspect-btn focusable" onclick="SceneManager._scene.editorCancelAnim()">${backLbl}</div>
                     </div>
                 </div>`;
         } else {
@@ -3584,22 +3631,32 @@
                 const resultKind = resultIsSkill ? (typeof T === 'function' ? T('SkillMaster.skill') : 'Skill') : (typeof T === 'function' ? T('SkillMaster.magic') : 'Magic');
                 const previewCost = this.editorFusionCost();
                 rightHTML = `
-                    <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; text-align:center; gap:14px; padding:20px; box-sizing:border-box">
-                        <h3 class="cc-header-gothic" style="font-size:1.924rem; color:var(--text-secondary-active); margin:0">${typeof T === 'function' ? T('SkillMaster.preview2') : 'Preview'}</h3>
-                        <div style="font-size:2.612rem; font-weight:bold; color:var(--text-text-alt-3); font-family:'Lora',serif">${previewName}</div>
-                        <span style="font-family:'Lora',serif; font-size:1.081rem; text-transform:uppercase; color:var(--accent-badge-text); background:var(--accent-badge-yellow); padding:2px 8px; font-weight:bold">${typeof T === 'function' ? T('SkillMaster.becomesA') : 'Becomes a'} ${resultKind}</span>
-                        <div style="display:flex; gap:26px; font-size:1.512rem; color:var(--text-primary-hover)"><div><strong>${typeof T === 'function' ? T('SkillMaster.mpLabel') : 'MP'}</strong> ${mp}</div><div><strong>${typeof T === 'function' ? T('SkillMaster.apLabel') : 'AP'}</strong> ${ap}</div></div>
-                        <div style="font-size:1.463rem; color:${knowledge >= previewCost ? 'var(--text-secondary-active)' : 'var(--text-danger-hover)'};"><strong>${typeof T === 'function' ? T('SkillMaster.fusionCost') : 'Fusion Cost'}</strong> ${previewCost} KP <span style="font-size:1.234rem; color:var(--text-card-medium)">(${typeof T === 'function' ? T('SkillMaster.youHold') : 'You have'} ${knowledge})</span></div>
-                        <div style="border-top:1px dashed var(--scroll-thumb-hover-translucent-60); width:80%"></div>
-                        <div style="font-size:1.292rem; color:var(--text-card-medium)">${typeof T === 'function' ? T('SkillMaster.dominant') : 'Dominant'}: <strong style="color:var(--text-secondary-active)">${dominant.name}</strong> &middot; ${typeof T === 'function' ? T('SkillMaster.recessive') : 'Recessive'}: <strong style="color:var(--text-secondary-active)">${recessive.name}</strong></div>
-                        <div style="font-size:1.234rem; color:var(--text-card-medium); line-height:1.5; max-width:85%">${typeof T === 'function' ? T('SkillMaster.theDominantDefinesDamageAnd') : 'Dominant sets core properties, recessive provides mixed traits.'}</div>
+                    <div class="ui-detail sm-fuse-preview">
+                        <div class="ui-detail-head">
+                            <div class="ui-detail-titles">
+                                <h3 class="sm-detail-name">${previewName}</h3>
+                                <div class="sm-detail-meta">${typeof T === 'function' ? T('SkillMaster.preview2') : 'Preview'}</div>
+                            </div>
+                            <span class="ui-chip sm-result-chip">${typeof T === 'function' ? T('SkillMaster.becomesA') : 'Becomes a'} ${resultKind}</span>
+                        </div>
+                        <div class="ui-detail-scroll ui-scroll">
+                            <div class="inspect-spec-grid">
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.mpLabel') : 'MP'}</span><span class="inspect-spec-value">${mp}</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.apLabel') : 'AP'}</span><span class="inspect-spec-value">${ap}</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.fusionCost') : 'Fusion Cost'}</span><span class="inspect-spec-value ${knowledge >= previewCost ? '' : 'sm-value--short'}">${previewCost} KP</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.youHold') : 'You have'}</span><span class="inspect-spec-value">${knowledge} KP</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.dominant') : 'Dominant'}</span><span class="inspect-spec-value">${dominant.name}</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.recessive') : 'Recessive'}</span><span class="inspect-spec-value">${recessive.name}</span></div>
+                            </div>
+                            <div class="ui-prose">${typeof T === 'function' ? T('SkillMaster.theDominantDefinesDamageAnd') : 'Dominant sets core properties, recessive provides mixed traits.'}</div>
+                        </div>
                     </div>`;
             } else {
                 rightHTML = `
-                    <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; text-align:center; gap:16px; padding:24px; box-sizing:border-box">
-                        <div style="${SkillMaster.getCategoryIconStyle('All')} transform:scale(1.8); image-rendering:pixelated"></div>
-                        <h3 class="cc-header-gothic" style="font-size:1.924rem; color:var(--text-secondary-active); margin:0">${typeof T === 'function' ? T('SkillMaster.fuseSpells3') : 'Spell Fusion'}</h3>
-                        <div style="font-size:1.365rem; color:var(--text-card-medium); line-height:1.5; max-width:88%">${typeof T === 'function' ? T('SkillMaster.forgeBlurb', { actor: actor.name(), knowledge: knowledge }) : `Combine two known abilities into a unique spell for ${actor.name()}.`}</div>
+                    <div class="ui-empty sm-empty">
+                        <div class="sm-empty-icon" style="${SkillMaster.getCategoryIconStyle('All')}"></div>
+                        <h3 class="sm-detail-name">${typeof T === 'function' ? T('SkillMaster.fuseSpells3') : 'Spell Fusion'}</h3>
+                        <div class="ui-empty-text">${typeof T === 'function' ? T('SkillMaster.forgeBlurb', { actor: actor.name(), knowledge: knowledge }) : `Combine two known abilities into a unique spell for ${actor.name()}.`}</div>
                     </div>`;
             }
         }
@@ -3751,7 +3808,7 @@
         leftPageBox.innerHTML = `
             <div class="page-header-bar">
               <div class="back-button focusable" onclick="SceneManager._scene.closeMagicSystems()">${backLabel}</div>
-              <h2 class="cc-header-gothic" style="border:none; margin:0; padding:0; text-align:center; font-size:2.542rem">${titleLabel}</h2>
+              <h2 class="title">${titleLabel}</h2>
             </div>
             ${this.renderMagicSystemWheelHTML()}
         `;
@@ -3806,29 +3863,27 @@
             const pctLabel = skills.length ? Math.round(known / skills.length * 100) + '%' : '&mdash;';
             const yourSysTitle = typeof T === 'function' ? T('SkillMaster.magicSystem.yourSystem') : 'Your System';
             nodesHTML += `
-                <div class="ms-node ${isSel ? 'ms-selected' : ''} ${isActor ? 'ms-actor' : ''}" data-id="${p.sys.id}" onclick="SceneManager._scene.selectMagicSystem('${p.sys.id}')" title="${isActor ? yourSysTitle : ''}" style="left:${(p.x - 70).toFixed(1)}px; top:${(p.y - 46).toFixed(1)}px">
-                    <div class="ms-ring" style="border-color:${p.sys.color}"><span class="ms-pct" style="color:${p.sys.color}">${pctLabel}</span></div>
-                    <div class="ms-name" style="color:${p.sys.color}">${SkillMaster.getMagicSystemDisplayName(p.sys.id)}</div>
+                <div class="ms-node ${isSel ? 'ms-selected' : ''} ${isActor ? 'ms-actor' : ''}" data-id="${p.sys.id}" onclick="SceneManager._scene.selectMagicSystem('${p.sys.id}')" title="${isActor ? yourSysTitle : ''}" style="--ms-x:${(p.x - 70).toFixed(1)}px; --ms-y:${(p.y - 46).toFixed(1)}px; --ms-ink:${p.sys.color}">
+                    <div class="ms-ring"><span class="ms-pct">${pctLabel}</span></div>
+                    <div class="ms-name">${SkillMaster.getMagicSystemDisplayName(p.sys.id)}</div>
+                    <div class="ms-rigor ms-rigor-${SkillMaster.getMagicSystemRigor(p.sys.id)}">${SkillMaster.getMagicSystemRigorLabel(p.sys.id)}</div>
                 </div>`;
         }
 
-        const hintLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.hint') : 'Click a magical system to view affiliated classes and spells';
-
         return `
-            <div style="flex:1; display:flex; align-items:center; justify-content:center; min-height:0">
-                <div class="ms-wheel-box" style="position:relative; width:${size}px; height:${size}px; flex-shrink:0">
-                    <svg width="${size}" height="${size}" style="position:absolute; left:0; top:0">
+            <div class="sm-wheel-frame">
+                <div class="ms-wheel-box" style="--ms-wheel-size:${size}px">
+                    <svg class="sm-wheel-svg" width="${size}" height="${size}">
                         ${rimHTML}
                         <g>${ringHTML}${spokesHTML}</g>
                         <g class="ms-pentacle">
-                            <circle cx="${cx}" cy="${cy}" r="${pentR + 10}" fill="none" stroke="var(--text-secondary-active, #e5c07b)" stroke-width="1.5" />
-                            <path d="${starPath}" fill="none" stroke="var(--text-secondary-active, #e5c07b)" stroke-width="1.5" />
+                            <circle cx="${cx}" cy="${cy}" r="${pentR + 10}" fill="none" stroke="var(--text-secondary-active)" stroke-width="1.5" />
+                            <path d="${starPath}" fill="none" stroke="var(--text-secondary-active)" stroke-width="1.5" />
                         </g>
                     </svg>
                     ${nodesHTML}
                 </div>
             </div>
-            <div style="text-align:center; opacity:0.65; font-family:'Lora', serif; font-size:1.15rem; padding-top:4px">${hintLabel}</div>
         `;
     };
 
@@ -3837,47 +3892,60 @@
         if (!id) {
             const emptyLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.empty') : 'Select a system to inspect';
             return `
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; gap:16px; padding:20px; box-sizing:border-box">
-                    <h3 class="cc-header-gothic" style="font-size:1.9rem; color:var(--text-secondary-active, #e5c07b); margin:0">${emptyLabel}</h3>
-                </div>`;
+                <div class="ui-empty"><div class="ui-empty-text">${emptyLabel}</div></div>`;
         }
         const sys = SkillMaster.getAllMagicalSystems().find(s => s.id === id);
-        const color = sys ? sys.color : 'var(--text-secondary-active, #e5c07b)';
+        const color = sys ? sys.color : 'var(--text-secondary-active)';
         const classNames = SkillMaster.getClassesForMagicSystem(id);
         const noClassesLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.noClasses') : 'No classes affiliated';
         const classesHTML = classNames.length
-            ? `<ul style="margin:8px 0 0 0; padding-left:20px">${classNames.map(n => `<li style="margin-bottom:4px">${n}</li>`).join('')}</ul>`
-            : `<div style="opacity:0.65; margin-top:8px">${noClassesLabel}</div>`;
+            ? `<ul class="sm-ms-list">${classNames.map(n => `<li>${n}</li>`).join('')}</ul>`
+            : `<div class="ui-empty-note">${noClassesLabel}</div>`;
 
         const actor = this.getTeachActor();
         const skills = SkillMaster.getSkillsForMagicSystem(id);
         const known = actor ? skills.filter(s => actor.isLearnedSkill(s.id)).length : 0;
         const fractionLine = skills.length
-            ? `<div style="font-family:'Lora', serif; font-size:1.1rem; color:${color}; margin-top:4px">${typeof T === 'function' ? T('SkillMaster.magicSystem.knownFraction', { known: known, total: skills.length, pct: Math.round(known / skills.length * 100) }) : `Known: ${known} / ${skills.length} (${Math.round(known / skills.length * 100)}%)`}</div>`
+            ? `<div class="sm-ms-fraction">${typeof T === 'function' ? T('SkillMaster.magicSystem.knownFraction', { known: known, total: skills.length, pct: Math.round(known / skills.length * 100) }) : `Known: ${known} / ${skills.length} (${Math.round(known / skills.length * 100)}%)`}</div>`
             : '';
         const noSpellsLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.noSpells') : 'No spells listed';
         const spellsHTML = skills.length
-            ? `<ul style="margin:8px 0 0 0; padding-left:20px">${skills.map(s => {
+            ? `<ul class="sm-ms-list">${skills.map(s => {
                 const isKnown = actor && actor.isLearnedSkill(s.id);
-                return `<li style="margin-bottom:4px; ${isKnown ? 'color:var(--text-forest-complete, #52c41a); font-weight:bold;' : ''}">${isKnown ? '&#10003; ' : ''}${s.name}</li>`;
+                return `<li class="${isKnown ? 'sm-ms-known' : ''}">${isKnown ? '&#10003; ' : ''}${s.name}</li>`;
               }).join('')}</ul>`
-            : `<div style="opacity:0.65; margin-top:8px">${noSpellsLabel}</div>`;
+            : `<div class="ui-empty-note">${noSpellsLabel}</div>`;
 
+        const loreText = SkillMaster.getMagicSystemLore(id);
+        const loreHeading = typeof T === 'function' ? T('SkillMaster.magicSystem.loreHeading') : 'Lore';
+        const loreHTML = loreText
+            ? `<div class="ui-section"><h4 class="inspect-section-title">${loreHeading}</h4><div class="ui-prose sm-ms-lore">${loreText}</div></div>`
+            : '';
         const classesHeading = typeof T === 'function' ? T('SkillMaster.magicSystem.classesHeading') : 'Affiliated Classes';
         const spellsHeading = typeof T === 'function' ? T('SkillMaster.magicSystem.spellsHeading') : 'Curriculum Spells';
 
         return `
-            <div style="display:flex; flex-direction:column; height:100%; box-sizing:border-box">
-                <div style="display:flex; align-items:center; gap:10px; border-bottom:2px dashed var(--border-success, #52c41a); padding-bottom:10px; margin-bottom:6px">
-                    <span style="width:22px; height:22px; border-radius:50%; background:${color}; flex-shrink:0; box-shadow:0 0 8px ${color}"></span>
-                    <h2 class="cc-header-gothic" style="border:none; margin:0; padding:0; font-size:2.1rem">${SkillMaster.getMagicSystemDisplayName(id)}</h2>
+            <div class="ui-detail sm-ms-detail" style="--ms-ink:${color}">
+                <div class="ui-detail-head">
+                    <span class="sm-ms-dot"></span>
+                    <div class="ui-detail-titles">
+                        <h3 class="sm-detail-name">${SkillMaster.getMagicSystemDisplayName(id)}</h3>
+                        <div class="sm-ms-rigor sm-ms-rigor-${SkillMaster.getMagicSystemRigor(id)}" title="${SkillMaster.getMagicSystemRigorHint(id)}">${SkillMaster.getMagicSystemRigorLabel(id)}</div>
+                        ${fractionLine}
+                    </div>
                 </div>
-                ${fractionLine}
-                <div style="font-family:'Lora', serif; font-size:1.2rem; line-height:1.5; color:var(--text-card-medium, #ddd); margin-top:10px">${SkillMaster.getMagicSystemDesc(id)}</div>
-                <h3 class="cc-header-gothic" style="font-size:1.4rem; margin-top:18px">${classesHeading}</h3>
-                <div style="font-family:'Lora', serif; font-size:1.15rem; color:#ffffff; max-height:26%; overflow-y:auto">${classesHTML}</div>
-                <h3 class="cc-header-gothic" style="font-size:1.4rem; margin-top:14px">${spellsHeading}</h3>
-                <div class="skill-scroll-box" style="flex:1; overflow-y:auto; font-family:'Lora', serif; font-size:1.15rem; color:#ffffff">${spellsHTML}</div>
+                <div class="ui-detail-scroll ui-scroll">
+                    <div class="ui-prose">${SkillMaster.getMagicSystemDesc(id)}</div>
+                    ${loreHTML}
+                    <div class="ui-section">
+                        <h4 class="inspect-section-title">${classesHeading}</h4>
+                        ${classesHTML}
+                    </div>
+                    <div class="ui-section">
+                        <h4 class="inspect-section-title">${spellsHeading}</h4>
+                        ${spellsHTML}
+                    </div>
+                </div>
             </div>
         `;
     };
@@ -3899,7 +3967,10 @@
 
     window.SkillMaster = window.SkillMaster || {};
 
-    const CATEGORY_PAGE_COLS = 2;
+    // Three across, with the backpack and the skills menu. The track count lives
+    // in .sm-school-grid (css/theme.css); this is the cursor's copy of it and the
+    // two move together.
+    const CATEGORY_PAGE_COLS = 3;
     const SKILL_GRID_COLS = 2;
     const ATLAS_ZOOM_DEFAULT = 1.0;
     const ATLAS_ZOOM_WHOLE = 0.65;
@@ -3999,9 +4070,7 @@
         if (window.SkillTree2D) window.SkillTree2D.dispose();
         if (this._dndContainer) {
             const container = this._dndContainer;
-            container.style.transition = "opacity 0.2s ease-out";
-            container.style.opacity = "0";
-            container.style.pointerEvents = "none";
+            container.classList.add('sm-container--leaving');
             setTimeout(() => {
                 if (container && container.parentNode) {
                     container.parentNode.removeChild(container);
@@ -4032,31 +4101,19 @@
     Scene_SkillEncyclopedia.prototype.createUISkillDOM = function () {
         this._dndContainer = document.createElement('div');
         this._dndContainer.id = 'menu-container';
-        this._dndContainer.style.position = 'absolute';
-        this._dndContainer.style.top = '0';
-        this._dndContainer.style.left = '0';
-        this._dndContainer.style.width = '100%';
-        this._dndContainer.style.height = '100%';
-        this._dndContainer.style.zIndex = '1000';
-        this._dndContainer.style.background = 'radial-gradient(circle, var(--accent-bronze-translucent-78, rgba(35,28,20,0.78)) 0%, var(--shadow-heavy, rgba(0,0,0,0.92)) 100%)';
-        this._dndContainer.style.display = 'flex';
-        this._dndContainer.style.justifyContent = 'center';
-        this._dndContainer.style.alignItems = 'center';
-        this._dndContainer.style.fontFamily = "'Lora', serif";
-        this._dndContainer.style.color = 'var(--bg-bg-alt-25-translucent-8, #e5e0d8)';
-        this._dndContainer.style.boxSizing = 'border-box';
-        this._dndContainer.style.opacity = '0';
-        this._dndContainer.style.transition = 'opacity 0.22s ease-out';
+        // Every one of the ten properties this used to set from script is a
+        // class now: the ground, the type and the fade all live in the sheet.
+        this._dndContainer.classList.add('sm-container');
 
         this._dndContainer.innerHTML = `
             <div class="book-spread">
                 <div class="spine-divider"></div>
-                <div class="left-page" style="position:relative">
-                    <div id="left-page-content" style="display:flex; flex-direction:column; flex:1; min-height:0"></div>
+                <div class="left-page sm-page">
+                    <div id="left-page-content" class="sm-page-body"></div>
                 </div>
-                <div class="right-page" style="position:relative">
-                    <div class="companion-switcher" id="skillmaster-companion-row" style="flex:0 0 auto; justify-content:flex-end; min-height:26px; margin-bottom:10px"></div>
-                    <div id="right-page-content" style="display:flex; flex-direction:column; flex:1 1 auto; min-height:0"></div>
+                <div class="right-page sm-page">
+                    <div class="companion-switcher ui-switcher-row" id="skillmaster-companion-row"></div>
+                    <div id="right-page-content" class="sm-page-body"></div>
                 </div>
             </div>
         `;
@@ -4067,7 +4124,9 @@
 
         this._dndContainer.addEventListener("wheel", (e) => {
             e.preventDefault();
-            let box = e.target.closest && e.target.closest('.skill-scroll-box');
+            // Every scrolling pane on this screen wears the shared .ui-scroll
+            // now; the school grids are the last to keep their own name.
+            let box = e.target.closest && e.target.closest('.ui-scroll, .skill-scroll-box');
             if (!box) {
                 box = document.getElementById('category-scroll-box-left') ||
                       document.getElementById('category-scroll-box-right') ||
@@ -4093,7 +4152,7 @@
 
         setTimeout(() => {
             if (this._dndContainer) {
-                this._dndContainer.style.opacity = '1';
+                this._dndContainer.classList.add('sm-container--shown');
             }
         }, 16);
     };
@@ -4300,13 +4359,13 @@
             dragging = true;
             st.dragged = false;
             fromX = e.clientX; fromY = e.clientY;
-            canvas.style.cursor = 'grabbing';
+            canvas.classList.add('sm-grabbing');
         };
         L.move = (e) => {
             const rect = canvas.getBoundingClientRect();
             if (!dragging) {
                 st.hoverId = window.SkillTree2D.pick(e.clientX - rect.left, e.clientY - rect.top);
-                canvas.style.cursor = st.hoverId ? 'pointer' : 'grab';
+                canvas.classList.toggle('sm-pointing', !!st.hoverId);
                 return;
             }
             const dx = e.clientX - fromX, dy = e.clientY - fromY;
@@ -4317,7 +4376,7 @@
         };
         L.up = () => {
             dragging = false;
-            canvas.style.cursor = 'grab';
+            canvas.classList.remove('sm-grabbing');
         };
         L.click = (e) => {
             if (st.dragged) { st.dragged = false; return; }
@@ -4340,58 +4399,38 @@
         canvas.addEventListener('contextmenu', L.ctx);
     };
 
-    Scene_SkillEncyclopedia.prototype.renderAtlasPagerHTML = function () {
+    Scene_SkillEncyclopedia.prototype.renderAtlasTitleHTML = function () {
+        const heading = this.focusedCategory();
+        const name = SkillMaster.getCategoryDisplayName(heading);
         const list = this.atlasCategories();
         const cur = list.indexOf(this.viewedCategory());
-        if (list.length <= 1 || cur < 0) return '';
+        if (list.length <= 1 || cur < 0) return name;
         const prev = list[(cur - 1 + list.length) % list.length];
         const next = list[(cur + 1) % list.length];
-        const schoolOfText = typeof T === 'function' ? T('SkillMaster.atlas.schoolOf', { index: cur + 1, total: list.length }) : `${cur + 1} / ${list.length}`;
         return `
-            <div class="sg-pager">
-                <span class="sg-pager-arrow" onclick="SceneManager._scene.pageAtlasSchool(-1)" title="${SkillMaster.getCategoryDisplayName(prev)}">&#8249;</span>
-                <span class="sg-pager-name">${SkillMaster.getCategoryDisplayName(list[cur])}</span>
-                <span class="sg-pager-count">${schoolOfText}</span>
-                <span class="sg-pager-arrow" onclick="SceneManager._scene.pageAtlasSchool(1)" title="${SkillMaster.getCategoryDisplayName(next)}">&#8250;</span>
-            </div>`;
+            <span class="sg-title-arrow" onclick="SceneManager._scene.pageAtlasSchool(-1)" title="${SkillMaster.getCategoryDisplayName(prev)}">&#8249;</span>
+            <span class="sg-title-name">${name}</span>
+            <span class="sg-title-arrow" onclick="SceneManager._scene.pageAtlasSchool(1)" title="${SkillMaster.getCategoryDisplayName(next)}">&#8250;</span>`;
     };
 
     Scene_SkillEncyclopedia.prototype.renderAtlasChromeHTML = function () {
-        const legendKey = (color, label) =>
-            `<span class="sg-legend-key"><span class="sg-legend-dot" style="border:2px solid ${color}"></span>${label}</span>`;
-        const lMastered = typeof T === 'function' ? T('SkillMaster.graph.legendLearned') : 'Mastered';
-        const lOpen = typeof T === 'function' ? T('SkillMaster.graph.legendOpen') : 'Available';
-        const lLocked = typeof T === 'function' ? T('SkillMaster.graph.legendLocked') : 'Locked';
-        const hint = typeof T === 'function' ? T('SkillMaster.atlas.hint') : 'Drag to Pan · Wheel to Zoom';
-
-        return `
-            ${this.renderAtlasPagerHTML()}
-            <div class="sg-legend">
-                ${legendKey('var(--border-forest-green, #52c41a)', lMastered)}
-                ${legendKey('var(--text-secondary-active, #e5c07b)', lOpen)}
-                ${legendKey('var(--border-secondary-hover-translucent-15, #4b5563)', lLocked)}
-                <span class="sg-legend-key">
-                    <span class="sg-zoom" onclick="SceneManager._scene.zoomAtlas(-1)" title="Zoom Out">-</span>
-                    <span class="sg-zoom" onclick="SceneManager._scene.zoomAtlas(1)" title="Zoom In">+</span>
-                </span>
-                <span class="sg-hint">${hint}</span>
-            </div>`;
-    };
-
-    Scene_SkillEncyclopedia.prototype.renderAtlasBannerHTML = function () {
         const category = this.viewedCategory();
         const count = this.atlasLearnedCount(category);
-        const progressText = typeof T === 'function' ? T('SkillMaster.atlas.progress', { learned: count.learned, total: count.total }) : `${count.learned}/${count.total}`;
-        return `${SkillMaster.getCategoryDisplayName(category)}<span class="sg-banner-sub">${progressText}</span>`;
+        const progressText = typeof T === 'function' ? T('SkillMaster.atlas.progress', { learned: count.learned, total: count.total }) : `${count.learned} / ${count.total}`;
+        return `
+            <div class="sg-topbar">
+                <span class="sg-progress">${progressText}</span>
+                <span class="sg-zoom" onclick="SceneManager._scene.zoomAtlas(-1)">-</span>
+                <span class="sg-zoom" onclick="SceneManager._scene.zoomAtlas(1)">+</span>
+            </div>`;
     };
 
     Scene_SkillEncyclopedia.prototype.renderSkillAtlasHTML = function () {
         return `
             <div id="sg3-chrome">${this.renderAtlasChromeHTML()}</div>
-            <div id="skill-atlas-box" class="sg3-sky sg2d-sky-box" style="flex:1; position:relative; overflow:hidden">
-                <canvas id="skill-atlas-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%"></canvas>
-                <div id="skill-atlas-labels" class="sg3-labels" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none"></div>
-                <div id="sg3-banner" class="sg-banner">${this.renderAtlasBannerHTML()}</div>
+            <div id="skill-atlas-box" class="sg3-sky sg2d-sky-box sm-atlas-box">
+                <canvas id="skill-atlas-canvas" class="sm-atlas-canvas"></canvas>
+                <div id="skill-atlas-labels" class="sg3-labels sm-atlas-labels"></div>
             </div>
         `;
     };
@@ -4406,22 +4445,24 @@
             const isLearned = teachActor ? teachActor.isLearnedSkill(skill.id) : false;
             const isOpen = window.SkillGraph ? window.SkillGraph.isOpen(teachActor, skill.id) : true;
             const badge = isLearned
-                ? `<span style="font-family:'Lora', serif; font-size:1.081rem; text-transform:uppercase; color:var(--text-forest-complete, #52c41a); border:1px solid var(--border-forest-green, #52c41a); padding:1px 5px; font-weight:bold; background:var(--bg-success-green-15, rgba(82,196,26,0.15)); letter-spacing:0.5px">${typeof T === 'function' ? T('SkillMaster.mastered') : 'Mastered'}</span>`
-                : (!isOpen ? `<span style="font-family:'Lora', serif; font-size:1.081rem; text-transform:uppercase; color:var(--text-card-medium, #aaa); border:1px solid var(--border-secondary-hover-translucent-15, #555); padding:1px 5px; letter-spacing:0.5px">${typeof T === 'function' ? T('SkillMaster.graph.locked') : 'Locked'}</span>` : '');
+                ? `<span class="ui-chip sm-skill-badge sm-skill-badge--learned">${typeof T === 'function' ? T('SkillMaster.mastered') : 'Mastered'}</span>`
+                : (!isOpen ? `<span class="ui-chip sm-skill-badge sm-skill-badge--locked">${typeof T === 'function' ? T('SkillMaster.graph.locked') : 'Locked'}</span>` : '');
 
             skillsListHTML += `
-                <div class="skill-card ${isFocused ? 'focused' : ''}" onclick="SceneManager._scene.selectSkill(${idx})" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--accent-gray-2-translucent-0, rgba(20,20,20,0.4)); border:1px solid ${isFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.15))'}; border-radius:6px; cursor:pointer; font-family:'Lora', serif; opacity:${isLearned || isOpen ? 1 : 0.6}; transition:all 0.15s ease">
-                    <div style="display:flex; align-items:center; gap:10px">
-                        <div style="${SkillMaster.getSkillIconStyle(skill.iconIndex)} transform: scale(0.8); flex-shrink: 0; image-rendering: pixelated; margin-right: 2px"></div>
-                        <div style="font-weight:bold; color:${isFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--text-card-medium, #ddd)'}; font-size:1.365rem">${skill.name}</div>
-                    </div>
+                <div class="sm-skill-row focusable ${isFocused ? 'focused' : ''} ${isLearned || isOpen ? '' : 'is-shut'}" onclick="SceneManager._scene.selectSkill(${idx})">
+                    <span class="sm-skill-ident">
+                        <span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></span>
+                        <span class="sm-skill-name">${skill.name}</span>
+                    </span>
                     ${badge}
                 </div>
             `;
         });
 
+        // The track count is the scene's own (the cursor walks it), so it is
+        // handed to the stylesheet as a property rather than as a grid rule.
         return `
-            <div id="skills-scroll-box" class="skill-scroll-box" style="flex:1; overflow-y:auto; padding-right:10px; display:grid; grid-template-columns:repeat(${SKILL_GRID_COLS}, 1fr); gap:10px; align-content:start; box-sizing:border-box">
+            <div id="skills-scroll-box" class="ui-list ui-scroll sm-skill-grid" style="--sm-skill-cols:${SKILL_GRID_COLS}">
                 ${skillsListHTML}
             </div>
         `;
@@ -4490,16 +4531,14 @@
         if (window.SkillTree2D) window.SkillTree2D.setFocus(this._focusSkillId);
         const title = document.getElementById('atlas-school-name');
         const activeCat = this.focusedCategory();
-        if (title && activeCat) title.textContent = SkillMaster.getCategoryDisplayName(activeCat);
+        if (title && activeCat) {
+            const titleHTML = this.renderAtlasTitleHTML();
+            if (title.innerHTML !== titleHTML) title.innerHTML = titleHTML;
+        }
         const chrome = document.getElementById('sg3-chrome');
         if (chrome) {
             const html = this.renderAtlasChromeHTML();
             if (chrome.innerHTML !== html) chrome.innerHTML = html;
-        }
-        const banner = document.getElementById('sg3-banner');
-        if (banner) {
-            const html = this.renderAtlasBannerHTML();
-            if (banner.innerHTML !== html) banner.innerHTML = html;
         }
     };
 
@@ -4523,9 +4562,9 @@
             if (hasSkill) {
                 const learnedLabel = typeof T === 'function' ? T('SkillMaster.learned') : 'Learned';
                 actionsListHTML += `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg-success-green-15, rgba(82,196,26,0.15)); border:1px solid var(--border-forest-green, #52c41a); border-radius:6px; color:var(--text-forest-complete, #52c41a); font-weight:bold; font-size:1.365rem">
-                        <span>${actor.name()}</span>
-                        <span style="font-family:'Lora', serif; font-size:1.196rem; text-transform:uppercase">✓ ${learnedLabel}</span>
+                    <div class="sm-state-row sm-state-row--learned">
+                        <span class="sm-state-title">${actor.name()}</span>
+                        <span class="sm-state-mark">✓ ${learnedLabel}</span>
                     </div>
                 `;
                 actionsListHTML += this.carryToggleHTML(actor, skill, allowActionFocus);
@@ -4535,7 +4574,16 @@
                 const openers = graph ? graph.openers(skill.id, actor).map(s => s.name) : [];
                 const wanted = graph ? graph.stillWanted(skill.id, actor) : 1;
                 const lockLine = (graph && graph.isForbidden(skill.id))
-                    ? (typeof T === 'function' ? T('SkillMaster.graph.lockedBySchool', { skills: openers.join(', ') }) : `Master the school to unlock: ${openers.join(', ')}`)
+                    ? (function () {
+                        const isSpell = skill.stypeId === 1;
+                        const kind = typeof T === 'function'
+                            ? T(isSpell ? 'SkillMaster.graph.lockedKindSpells' : 'SkillMaster.graph.lockedKindSkills')
+                            : (isSpell ? 'spells' : 'skills');
+                        const missing = openers.length || wanted;
+                        return typeof T === 'function'
+                            ? T('SkillMaster.graph.lockedBySchool', { kind: kind, count: missing })
+                            : `You need to know the rest of the school first, missing ${kind}: ${missing}`;
+                    })()
                     : (openers.length
                         ? (wanted > 1
                             ? (typeof T === 'function' ? T('SkillMaster.graph.lockedByCount', { need: wanted, skills: openers.join(', ') }) : `Requires ${wanted} more of: ${openers.join(', ')}`)
@@ -4543,22 +4591,20 @@
                         : (typeof T === 'function' ? T('SkillMaster.graph.lockedHint') : 'Prerequisites not yet unlocked.'));
                 const lockedTitle = typeof T === 'function' ? T('SkillMaster.graph.locked') : 'Locked';
                 actionsListHTML += `
-                    <div style="padding:10px 14px; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); border:1px dashed var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2)); border-radius:6px; font-family:'Lora', serif">
-                        <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; font-size:1.292rem; color:var(--text-card-medium, #ddd)">
-                            <span>${lockedTitle}</span>
-                            <span style="color:var(--shadow-shadow-alt-5-translucent-40, #aaa)">${cost} KP</span>
+                    <div class="sm-state-row sm-state-row--locked">
+                        <div class="sm-state-line">
+                            <span class="sm-state-title">${lockedTitle}</span>
+                            <span class="sm-state-cost">${cost} KP</span>
                         </div>
-                        <div style="margin-top:5px; font-size:1.145rem; line-height:1.35; color:var(--text-card-medium, #bbb)">
-                            ${lockLine}
-                        </div>
+                        <div class="sm-state-note">${lockLine}</div>
                     </div>
                 `;
             } else {
                 const teachText = typeof T === 'function' ? T('SkillMaster.teachPupil', { actor: actor.name() }) : `Teach ${actor.name()}`;
                 actionsListHTML += `
-                    <div class="action-button ${isActionFocused ? 'focused' : ''} ${!canAfford ? 'disabled' : ''}" onclick="SceneManager._scene.teachSkill(${actor.actorId()}, ${cost})" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:${isActionFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--accent-gray-2-translucent-0, rgba(30,30,30,0.6))'}; border:1px solid ${isActionFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:6px; cursor:${canAfford ? 'pointer' : 'not-allowed'}; font-family:'Lora', serif; opacity:${canAfford ? 1 : 0.6}; transition:all 0.15s ease">
-                        <span style="font-weight:bold; color:${isActionFocused ? 'var(--text-pure-black, #000)' : 'var(--text-card-medium, #fff)'}">${teachText}</span>
-                        <span style="font-family:'Lora', serif; font-weight:bold; color:${isActionFocused ? 'var(--text-pure-black, #000)' : canAfford ? 'var(--text-text-alt-3, #e5c07b)' : 'var(--shadow-shadow-alt-5-translucent-40, #888)'}">${cost} KP</span>
+                    <div class="inspect-btn sm-wide-btn focusable ${isActionFocused ? 'selected' : ''} ${!canAfford ? 'unusable' : ''}" onclick="SceneManager._scene.teachSkill(${actor.actorId()}, ${cost})">
+                        <span class="sm-btn-label">${teachText}</span>
+                        <span class="sm-btn-cost">${cost} KP</span>
                     </div>
                 `;
             }
@@ -4572,9 +4618,8 @@
         const isPreviewFocused = allowActionFocus && (this._selectedActionIndex === 1);
         const previewLabel = typeof T === 'function' ? T('SkillMaster.preview') : 'Preview';
         const previewBtnHTML = `
-            <div class="action-button preview-button ${isPreviewFocused ? 'focused' : ''}" onclick="SceneManager._scene.openSpellPreview(${skill.id})" style="flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; padding:10px 16px; background:${isPreviewFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--bg-card-translucent-5, rgba(20,20,20,0.5))'}; border:1px solid ${isPreviewFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:6px; cursor:pointer; font-family:'Lora', serif; transition:all 0.15s ease">
-                <span style="font-size:1.658rem; line-height:1">◈</span>
-                <span style="font-weight:bold; text-transform:uppercase; font-size:1.17rem; color:${isPreviewFocused ? 'var(--text-pure-black, #000)' : 'var(--text-secondary-active, #e5c07b)'}">${previewLabel}</span>
+            <div class="inspect-btn sm-preview-btn focusable ${isPreviewFocused ? 'selected' : ''}" onclick="SceneManager._scene.openSpellPreview(${skill.id})">
+                ${previewLabel}
             </div>`;
 
         const note = skill.note || '';
@@ -4584,23 +4629,21 @@
             ? `<span class="sg-occult sg-forbidden">${tagForbidden}</span>`
             : (/<Esoteric>/i.test(note) ? `<span class="sg-occult">${tagEsoteric}</span>` : '');
 
-        const rootSizing = opts.popup ? 'flex:1 1 auto; min-height:0;' : 'height:100%;';
+        const rootClass = opts.popup ? 'sm-skill-detail--popup' : '';
         const closeBtnHTML = opts.popup
-            ? `<div class="focusable" onclick="SceneManager._scene.dismissSkillDetail()" title="${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}" style="flex:0 0 auto; margin-left:auto; align-self:flex-start; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-secondary-hover-translucent-15); border-radius:50%; color:var(--text-secondary-active, #e5c07b); cursor:pointer; font-size:1.292rem; line-height:1">✕</div>`
+            ? `<div class="sm-detail-close focusable" onclick="SceneManager._scene.dismissSkillDetail()" title="${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}">✕</div>`
             : '';
 
         const teachLabel = typeof T === 'function' ? T('SkillMaster.teach') : 'Teach';
         const heldLabel = typeof T === 'function' ? T('SkillMaster.atlas.held', { knowledge: knowledge }) : `${knowledge} KP held`;
 
         return `
-            <div style="display:flex; flex-direction:column; gap:12px; ${rootSizing} box-sizing:border-box">
-                <div style="display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--border-secondary-hover-translucent-15); padding-bottom:8px">
-                    <div style="${SkillMaster.getSkillIconStyle(skill.iconIndex)} transform: scale(1.2); flex-shrink: 0; image-rendering: pixelated; margin-right: 2px"></div>
-                    <div>
-                        <h3 class="cc-header-gothic" style="font-size:2.134rem; color:var(--text-secondary-active, #e5c07b); margin:0; line-height:1.2">
-                            ${skill.name}
-                        </h3>
-                        <div style="display:flex; align-items:center; gap:8px; font-size:1.196rem; color:var(--text-inverse, #bbb); text-transform:uppercase; margin-top:3px">
+            <div class="ui-detail sm-skill-detail ${rootClass}">
+                <div class="ui-detail-head">
+                    <span class="sm-detail-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></span>
+                    <div class="ui-detail-titles">
+                        <h3 class="sm-detail-name">${skill.name}</h3>
+                        <div class="sm-detail-meta">
                             <span>MP ${skill.mpCost || 0}</span>
                             <span>&middot;</span>
                             <span>AP ${skill.tpCost || 0}</span>
@@ -4610,23 +4653,18 @@
                     ${closeBtnHTML}
                 </div>
 
-                <div style="font-size:1.292rem; line-height:1.5; color:var(--text-highlight-active, #e5e0d8); background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); border:1px solid var(--border-secondary-hover-translucent-15); border-radius:6px; padding:10px 14px">
-                    "${descriptionText}"
-                </div>
-
-                <div class="skill-scroll-box" style="flex:1; min-height:0; overflow-y:auto; padding-right:6px; font-family:'Lora', serif; font-size:1.365rem; color:var(--text-card-medium, #ddd)">
+                <div class="ui-detail-scroll ui-scroll sm-detail-body">
+                    <div class="ui-prose sm-detail-desc">${descriptionText}</div>
                     ${detailedInfoHTML}
                 </div>
 
-                <div style="display:flex; flex-direction:column; gap:8px; margin-top:auto; border-top:1px dashed var(--scroll-thumb-hover-translucent-60, rgba(255,255,255,0.2)); padding-top:12px">
-                    <h4 style="margin:0 0 4px 0; font-family:'Lora', serif; color:var(--text-secondary-active, #e5c07b); font-size:1.658rem; text-align:center">
+                <div class="ui-section sm-teach-section">
+                    <h4 class="inspect-section-title sm-teach-heading">
                         ${teachLabel}
-                        <span style="font-size:1.196rem; font-weight:normal; color:var(--text-card-medium, #aaa); letter-spacing:0.5px">&middot; ${heldLabel}</span>
+                        <span class="sm-teach-held">&middot; ${heldLabel}</span>
                     </h4>
-                    <div style="display:flex; gap:8px; align-items:stretch">
-                        <div style="flex:1; display:flex; flex-direction:column; gap:8px; max-height:150px; overflow-y:auto; padding-right:4px">
-                            ${actionsListHTML}
-                        </div>
+                    <div class="inspect-actions sm-teach-actions">
+                        ${actionsListHTML}
                         ${previewBtnHTML}
                     </div>
                 </div>
@@ -4664,11 +4702,11 @@
         if (!overlay) {
             overlay = document.createElement('div');
             overlay.id = 'skill-detail-popup';
-            overlay.style.cssText = "position:absolute; top:0; right:0; bottom:0; z-index:1500; display:flex; align-items:stretch; justify-content:flex-end; pointer-events:none; font-family:'Lora', serif;";
+            overlay.className = 'sm-detail-dock';
             this._dndContainer.appendChild(overlay);
         }
         overlay.innerHTML = `
-            <div id="skill-detail-bar" onclick="event.stopPropagation()" style="pointer-events:auto; width:min(30vw, 460px); min-width:340px; height:100%; display:flex; flex-direction:column; overflow-y:auto; padding:18px 20px; box-sizing:border-box; background:var(--bg-black-translucent-96, rgba(12,12,14,0.96)); border-left:1.5px solid var(--border-focus-hover, #e5c07b); box-shadow:-10px 0 30px rgba(0,0,0,0.75)">
+            <div id="skill-detail-bar" class="ui-panel sm-detail-bar" onclick="event.stopPropagation()">
                 ${cardHTML}
             </div>`;
         this._lastPopupKey = key;
@@ -4689,10 +4727,10 @@
         if (compRow) {
             const members = getSwitchableMembers();
             if (this._viewMode === 'spellEditor' || members.length <= 1) {
-                compRow.style.display = 'none';
+                compRow.classList.add('is-hidden');
                 compRow.innerHTML = '';
             } else {
-                compRow.style.display = 'flex';
+                compRow.classList.remove('is-hidden');
                 let tabs = '';
                 members.forEach((m, idx) => {
                     const sel = m.actorId() === this._teachActorId ? 'selected' : '';
@@ -4711,26 +4749,17 @@
         const leftPageEl = this._dndContainer.querySelector('.left-page');
         const rightPageEl = this._dndContainer.querySelector('.right-page');
         const spineEl = this._dndContainer.querySelector('.spine-divider');
+        // The atlas takes the whole sheet: one class on the spread and the
+        // stylesheet folds the right page and the spine away with it.
         if (spreadEl) spreadEl.classList.toggle('skill-fullpage', fullPageList);
-        if (leftPageEl) leftPageEl.style.width = fullPageList ? '100%' : '';
-        if (rightPageEl) rightPageEl.style.display = fullPageList ? 'none' : '';
-        if (spineEl) spineEl.style.display = fullPageList ? 'none' : '';
 
-        if (compRow && compRow.style.display !== 'none') {
+        if (compRow && !compRow.classList.contains('is-hidden')) {
             if (fullPageList && leftPageEl && compRow.parentNode !== leftPageEl) {
                 leftPageEl.appendChild(compRow);
-                compRow.style.position = 'absolute';
-                compRow.style.top = '10px';
-                compRow.style.right = '45px';
-                compRow.style.zIndex = '12';
-                compRow.style.marginBottom = '0';
+                compRow.classList.add('sm-switcher--pinned');
             } else if (!fullPageList && rightPageEl && compRow.parentNode !== rightPageEl) {
                 rightPageEl.insertBefore(compRow, rightPageEl.firstChild);
-                compRow.style.position = '';
-                compRow.style.top = '';
-                compRow.style.right = '';
-                compRow.style.zIndex = '';
-                compRow.style.marginBottom = '10px';
+                compRow.classList.remove('sm-switcher--pinned');
             }
         }
 
@@ -4754,19 +4783,17 @@
                 let bonusBadge = "";
                 if (cat !== "All") {
                     if (SkillMaster.actorCategoryManager.isPrimary(cat)) {
-                        bonusBadge = `<span style="font-family:'Lora', serif; font-size:1.081rem; background:var(--text-secondary-active, #e5c07b); color:#000; padding:1px 5px; font-weight:bold; letter-spacing:0.5px">3x KP</span>`;
+                        bonusBadge = `<span class="sm-school-badge">${typeof T === 'function' ? T('SkillMaster.primarySchool') : 'Primary'}</span>`;
                     } else if (SkillMaster.actorCategoryManager.isSecondary(cat)) {
-                        bonusBadge = `<span style="font-family:'Lora', serif; font-size:1.081rem; background:var(--text-secondary-active, #e5c07b); color:#000; padding:1px 5px; font-weight:bold; letter-spacing:0.5px">1.5x KP</span>`;
+                        bonusBadge = `<span class="sm-school-badge">${typeof T === 'function' ? T('SkillMaster.secondarySchool') : 'Secondary'}</span>`;
                     } else if (SkillMaster.actorCategoryManager.isForeign(cat)) {
-                        bonusBadge = `<span style="font-family:'Lora', serif; font-size:1.081rem; background:transparent; color:var(--text-card-medium, #aaa); border:1px solid var(--border-secondary-hover-translucent-15); padding:1px 5px; font-weight:bold; letter-spacing:0.5px">${typeof T === 'function' ? T('SkillMaster.foreignSchool') : 'Foreign'}</span>`;
+                        bonusBadge = `<span class="sm-school-badge sm-school-badge--foreign">${typeof T === 'function' ? T('SkillMaster.foreignSchool') : 'Foreign'}</span>`;
                     }
                 }
                 html += `
-                    <div class="category-card ${focused ? 'focused' : ''}" data-pane="${pane}" data-idx="${idx}" onclick="SceneManager._scene.selectCategoryClick(${pane}, ${idx})" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:8px; padding:14px 8px; min-height:100px; background:${focused ? 'var(--bg-tertiary-focus-translucent-45, rgba(45,35,25,0.45))' : 'var(--bg-card-translucent-5, rgba(20,20,20,0.5))'}; border:1.5px solid ${focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:8px; cursor:pointer; font-family:'Lora', serif; transition:all 0.15s ease">
-                        <div style="${SkillMaster.getCategoryIconStyle(cat)} transform: scale(1.35); flex-shrink: 0; image-rendering: pixelated"></div>
-                        <div class="category-card-name" style="font-weight:bold; color:${focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--text-card-medium, #ddd)'}; font-size:1.329rem; line-height:1.2">
-                            ${catName}
-                        </div>
+                    <div class="category-card ${focused ? 'focused' : ''}" data-pane="${pane}" data-idx="${idx}" onclick="SceneManager._scene.selectCategoryClick(${pane}, ${idx})">
+                        <div class="category-card-icon" style="${SkillMaster.getCategoryIconStyle(cat)}"></div>
+                        <div class="category-card-name">${catName}</div>
                         ${bonusBadge}
                     </div>
                 `;
@@ -4793,9 +4820,9 @@
                 leftPageHTML = `
                     <div class="page-header-bar">
                       <div class="back-button focusable" onclick="SceneManager._scene.categoryBack()">${backBtnText}</div>
-                      <h2 class="cc-header-gothic" style="text-align:center; font-size:2.542rem">${skillsTitle}</h2>
+                      <h2 class="title">${skillsTitle}</h2>
                     </div>
-                    <div id="category-scroll-box-left" class="skill-scroll-box" style="flex:1; overflow-y:auto; padding-right:10px; display:grid; grid-template-columns:repeat(${CATEGORY_PAGE_COLS}, 1fr); gap:10px; align-content:start; box-sizing:border-box">
+                    <div id="category-scroll-box-left" class="skill-scroll-box sm-school-grid">
                         ${categoriesListHTML}
                     </div>
                 `;
@@ -4807,7 +4834,7 @@
                 leftPageHTML = `
                     <div class="page-header-bar">
                       <div class="back-button focusable" onclick="SceneManager._scene.goBack()">${returnBtnText}</div>
-                      <h2 id="atlas-school-name" class="cc-header-gothic" style="border: none; margin: 0; padding: 0; text-align: center; font-size: 2.134rem">${SkillMaster.getCategoryDisplayName(heading)}</h2>
+                      <h2 id="atlas-school-name" class="title">${onAtlas ? this.renderAtlasTitleHTML() : SkillMaster.getCategoryDisplayName(heading)}</h2>
                     </div>
                     ${bodyHTML}
                 `;
@@ -4826,10 +4853,6 @@
                     const idx = parseInt(card.dataset.idx, 10);
                     const focused = (this._categoryPane === pane && this._selectedCategoryIndex === idx);
                     card.classList.toggle('focused', focused);
-                    card.style.borderColor = focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15)';
-                    card.style.background = focused ? 'var(--bg-tertiary-focus-translucent-45, rgba(45,35,25,0.45))' : 'var(--bg-card-translucent-5, rgba(20,20,20,0.5))';
-                    const nameDiv = card.querySelector('.category-card-name');
-                    if (nameDiv) nameDiv.style.color = focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--text-card-medium, #ddd)';
                 });
             };
             applyFocus('category-scroll-box-left', 0);
@@ -4838,8 +4861,7 @@
             if (fuseEl) {
                 const on = !!this._categoryFuseFocused;
                 fuseEl.classList.toggle('focused', on);
-                fuseEl.style.background = on ? 'var(--text-secondary-active, #e5c07b)' : 'var(--bg-card-translucent-5, rgba(20,20,20,0.5))';
-                fuseEl.style.color = on ? '#000' : 'var(--text-secondary-active, #e5c07b)';
+                fuseEl.classList.toggle('selected', on);
                 if (on && fuseEl.scrollIntoView) fuseEl.scrollIntoView({ block: 'nearest' });
             }
         } else if (this.usesGraphView()) {
@@ -4847,19 +4869,11 @@
             this.repaintAtlasFocus();
             if (needsLeftRebuild) this.centreAtlasOnFocus();
         } else {
-            const cards = leftPageBox.querySelectorAll('.skill-card');
+            // One class, and the stylesheet draws the hairline. Nothing on
+            // this page paints an ink of its own any more.
+            const cards = leftPageBox.querySelectorAll('.sm-skill-row');
             cards.forEach((card, idx) => {
-                if (idx === this._selectedSkillIndex) {
-                    card.classList.add('focused');
-                    card.style.borderColor = 'var(--text-secondary-active, #e5c07b)';
-                    const nameDiv = card.querySelector('div:last-child div:last-child');
-                    if (nameDiv) nameDiv.style.color = 'var(--text-secondary-active, #e5c07b)';
-                } else {
-                    card.classList.remove('focused');
-                    card.style.borderColor = 'var(--border-secondary-hover-translucent-15)';
-                    const nameDiv = card.querySelector('div:last-child div:last-child');
-                    if (nameDiv) nameDiv.style.color = 'var(--text-card-medium, #ddd)';
-                }
+                card.classList.toggle('focused', idx === this._selectedSkillIndex);
             });
         }
 
@@ -4893,39 +4907,35 @@
                 const split = SkillMaster.getSplitSkillCategories();
                 const magicListHTML = renderCategoryCardsHTML(split.Magic, 1);
                 const magicTitle = typeof T === 'function' ? T('SkillMaster.magic') : 'Magic';
-                const teachActor = this.getTeachActor();
-                const pupilLabel = typeof T === 'function' ? T('SkillMaster.pupil') : 'Pupil';
-                const pupilLine = teachActor
-                    ? `<div style="font-family:'Lora', serif; font-size:1.219rem; color:var(--text-card-medium, #aaa); text-align:center; margin-top:8px">${pupilLabel} <strong style="color:var(--text-secondary-active, #e5c07b)">${teachActor.name()}</strong> &middot; ${knowledge} KP</div>`
-                    : '';
+                const pupilLine = `<div class="sm-pupil-line">${typeof T === 'function' ? T('SkillMaster.atlas.held', { knowledge: knowledge }) : `${knowledge} KP`}</div>`;
                 const fuseLabel = typeof T === 'function' ? T('SkillMaster.fuseSpells') : 'Fuse Spells';
                 const magicSysLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.tabLabel') : 'Magical Systems Wheel';
 
                 const fuseBtn = `
-                    <div class="fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()" style="position:relative; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px; padding:10px 14px; font-family:'Lora',serif; font-size:1.292rem; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); color:var(--text-secondary-active, #e5c07b); border-radius:6px; font-weight:bold; cursor:pointer; border:1.5px solid var(--text-secondary-active, #e5c07b); text-transform:uppercase; letter-spacing:0.5px; user-select:none">${fuseLabel}</div>`;
+                    <div class="inspect-btn fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()">${fuseLabel}</div>`;
                 const magicSystemsBtn = `
-                    <div class="magic-systems-btn focusable" onclick="SceneManager._scene.openMagicSystems()" style="position:relative; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:10px; padding:10px 14px; font-family:'Lora',serif; font-size:1.292rem; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); color:var(--text-secondary-active, #e5c07b); border-radius:6px; font-weight:bold; cursor:pointer; border:1.5px solid var(--text-secondary-active, #e5c07b); text-transform:uppercase; letter-spacing:0.5px; user-select:none">${magicSysLabel}</div>`;
+                    <div class="inspect-btn magic-systems-btn focusable" onclick="SceneManager._scene.openMagicSystems()">${magicSysLabel}</div>`;
 
                 rightPageHTML = `
                     <div class="page-header-bar">
-                      <h2 class="cc-header-gothic" style="text-align:center; font-size:2.542rem">${magicTitle}</h2>
+                      <h2 class="title">${magicTitle}</h2>
                     </div>
-                    <div id="category-scroll-box-right" class="skill-scroll-box" style="flex:1; overflow-y:auto; padding-right:10px; display:grid; grid-template-columns:repeat(${CATEGORY_PAGE_COLS}, 1fr); gap:10px; align-content:start; box-sizing:border-box">
+                    <div id="category-scroll-box-right" class="skill-scroll-box sm-school-grid">
                         ${magicListHTML}
                     </div>
-                    ${fuseBtn}
-                    ${magicSystemsBtn}
+                    <div class="inspect-actions sm-magic-actions">
+                        ${fuseBtn}
+                        ${magicSystemsBtn}
+                    </div>
                     ${pupilLine}
                 `;
             } else if (this._viewMode === 'list' || this._viewMode === 'detail') {
                 if (!skill) {
                     const selectPrompt = typeof T === 'function' ? T('SkillMaster.selectASkill') : 'Select a skill';
                     rightPageHTML = `
-                        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; gap:20px; padding:20px; box-sizing:border-box">
-                            <div style="${SkillMaster.getCategoryIconStyle('All')} transform: scale(2.0); image-rendering: pixelated; margin-bottom: 12px"></div>
-                            <h3 class="cc-header-gothic" style="font-size:2.204rem; color:var(--text-secondary-active, #e5c07b); margin:0">
-                                ${selectPrompt}
-                            </h3>
+                        <div class="ui-empty sm-empty">
+                            <div class="sm-empty-icon" style="${SkillMaster.getCategoryIconStyle('All')}"></div>
+                            <div class="ui-empty-text">${selectPrompt}</div>
                         </div>
                     `;
                 } else {
@@ -5044,9 +5054,9 @@
         const focused = allowFocus && (this._selectedActionIndex === 0) && !locked;
         const usable = !locked && (active || !full);
         return `
-            <div class="action-button carry-button ${focused ? 'focused' : ''} ${usable ? '' : 'disabled'}" onclick="SceneManager._scene.toggleCarry(${actor.actorId()})" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; margin-top:6px; background:${active ? 'var(--bg-tertiary-focus-translucent-45, rgba(45,35,25,0.45))' : 'var(--accent-gray-2-translucent-0, rgba(20,20,20,0.5))'}; border:1px solid ${focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:${usable ? 'pointer' : 'not-allowed'}; font-family:'Lora', serif; opacity:${usable ? 1 : 0.6}; transition:all 0.15s ease">
-                <span style="font-weight:bold; font-size:1.292rem; text-transform:uppercase">${active ? '◉' : '○'} ${label}</span>
-                <span style="font-size:1.196rem; color:var(--text-card-medium, #aaa)">${count}</span>
+            <div class="inspect-btn sm-wide-btn focusable ${focused ? 'selected' : ''} ${usable ? '' : 'unusable'}" onclick="SceneManager._scene.toggleCarry(${actor.actorId()})">
+                <span class="sm-btn-label">${active ? '◉' : '○'} ${label}</span>
+                <span class="sm-btn-cost">${count}</span>
             </div>
         `;
     };
@@ -5071,14 +5081,14 @@
     Scene_SkillEncyclopedia.prototype.fusionActionsHTML = function (actor, skill) {
         if (!skill || !skill._customSpell || skill._ownerActorId !== actor.actorId()) return '';
         const btn = (label, handler, danger) => `
-            <div class="action-button focusable" onclick="${handler}" style="flex:1; display:flex; justify-content:center; align-items:center; padding:9px 12px; background:var(--accent-gray-2-translucent-0, rgba(20,20,20,0.5)); border:1px solid ${danger ? 'var(--text-danger-hover, #ff4d4f)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:pointer; font-family:'Lora', serif; font-size:1.259rem; font-weight:bold; text-transform:uppercase; color:${danger ? 'var(--text-danger-hover, #ff4d4f)' : 'var(--text-secondary-active, #e5c07b)'}; transition:all 0.15s ease">
+            <div class="inspect-btn focusable ${danger ? 'inspect-btn--danger' : ''}" onclick="${handler}">
                 ${label}
             </div>
         `;
         const renameLabel = typeof T === 'function' ? T('SkillMaster.rename') : 'Rename';
         const dissolveLabel = typeof T === 'function' ? T('SkillMaster.dissolve') : 'Dissolve';
         return `
-            <div style="display:flex; gap:8px; margin-top:6px">
+            <div class="inspect-actions ui-panel-actions sm-fusion-actions">
                 ${btn(renameLabel, `SceneManager._scene.renameFusedSpell(${skill.id})`, false)}
                 ${btn(dissolveLabel, `SceneManager._scene.dissolveFusedSpell(${skill.id})`, true)}
             </div>
@@ -5200,7 +5210,7 @@
         return document.getElementById('skills-scroll-box') ||
             document.getElementById('category-scroll-box-right') ||
             document.getElementById('category-scroll-box-left') ||
-            (this._dndContainer && this._dndContainer.querySelector('.skill-scroll-box'));
+            (this._dndContainer && this._dndContainer.querySelector('.ui-scroll, .skill-scroll-box'));
     };
 
     Scene_SkillEncyclopedia.prototype.update = function () {
@@ -5378,7 +5388,7 @@
             if (this._selectedSkillIndex !== prev) {
                 SoundManager.playCursor();
                 this.refreshUISkillDOM();
-                this.scrollToActiveItem('skills-scroll-box', '.skill-card.focused');
+                this.scrollToActiveItem('skills-scroll-box', '.sm-skill-row.focused');
             }
         } else if (this._viewMode === 'preview') {
             this.updateSpellPreviewInput();

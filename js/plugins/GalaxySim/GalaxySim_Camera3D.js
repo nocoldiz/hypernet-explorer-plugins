@@ -148,13 +148,23 @@
       this.last = { x: 0, y: 0 };
       this.rotateSpeed = 0.005;
       // Zoom is exponential in the wheel delta rather than one fixed step per
-      // event: `zoomRate` is the log-distance change for one standard notch
-      // (~100px of deltaY). Small on purpose - the whole min..max range is a
-      // long slider (~150 notches) instead of a dozen jumps, so a flick of the
-      // wheel no longer throws the camera across a whole scale.
-      this.zoomRate = 0.055;
+      // event: the rate is the log-distance change for one standard notch
+      // (~100px of deltaY).
+      //
+      // It is no longer a CONSTANT, because the scales it has to cross are not
+      // the same size. A system view spans a couple of hundred to one; the
+      // cosmic web, since it grew to the whole observable universe, spans
+      // thousands. At one fixed rate a system crossed in a dozen notches and
+      // the web took over a hundred, which is the same wheel meaning two
+      // different things depending on where the player is standing. Instead
+      // the rate is derived from the rig's own min..max range so that ONE FULL
+      // BAND IS ALWAYS ABOUT `zoomNotches` NOTCHES, at every scale, and only
+      // the clamps below decide how fast that is allowed to get.
+      this.zoomNotches = 26;
+      this.minZoomRate = 0.035;
+      this.maxZoomRate = 0.16;
       this.maxNotchesPerEvent = 2.5; // clamp trackpad/inertia bursts
-      this.stickZoomRate = 0.9;      // log-distance per second at full stick
+      this.stickZoomSpan = 4.5;      // seconds to cross a full band on a trigger
       this.panKeySpeed = 0.6; // fraction of distance per second
       this.stickRotateSpeed = 2.2; // radians per second at full right stick
 
@@ -216,6 +226,22 @@
     }
 
     _onUp() { this.dragging = false; }
+
+    /** Log-distance per wheel notch at the rig's CURRENT band. See the
+     *  constructor: a band is always about `zoomNotches` notches wide. */
+    get zoomRate() {
+      const lo = Math.max(1e-6, this.rig.minDistance);
+      const hi = Math.max(lo * 1.0001, this.rig.maxDistance);
+      const span = Math.log(hi / lo) / Math.max(1, this.zoomNotches);
+      return clamp(span, this.minZoomRate, this.maxZoomRate);
+    }
+
+    /** Log-distance per second at full trigger, on the same band. */
+    get stickZoomRate() {
+      const lo = Math.max(1e-6, this.rig.minDistance);
+      const hi = Math.max(lo * 1.0001, this.rig.maxDistance);
+      return clamp(Math.log(hi / lo) / this.stickZoomSpan, 0.35, 3.2);
+    }
 
     _onWheel(e) {
       e.preventDefault();

@@ -582,7 +582,15 @@
             this.head = new THREE.Group();
             const dome = new THREE.Mesh(o.headGeom || new THREE.SphereGeometry(0.26, 12, 10, 0, Math.PI * 2, 0, Math.PI / 2), mat); this.head.add(dome);
             this.headEye = this._eye(this.head, 0, 0.02, 0.22, 0.1, this.profile.accent);
-            this.head.position.set(0, o.headY || 2.0, 0); this.bodyGroup.add(this.head);
+            // The head sits on whatever shoulder this chassis actually has.
+            // Bodies here come in four sizes; at one fixed height the dome
+            // hovered over the shoulders of every mech in the family.
+            dome.geometry.computeBoundingBox();
+            const bodyH = (this.body.geometry.parameters && this.body.geometry.parameters.height) || 1.0;
+            const shoulder = Math.max(1.3 + bodyH / 2, o.plate !== false ? 1.8 : 0);
+            this._shoulderY = shoulder;
+            this.head.position.set(0, o.headY !== undefined ? o.headY : shoulder - dome.geometry.boundingBox.min.y - 0.06, 0);
+            this.bodyGroup.add(this.head);
             this.rightArm = (o.rightArm === 'claw') ? this._mechClaw(mat) : this._mechGun(mat); this.rightArm.position.set(0.65, 1.4, 0); this.bodyGroup.add(this.rightArm);
             this.leftArm = (o.leftArm === 'gun') ? this._mechGun(mat) : this._mechClaw(mat); this.leftArm.position.set(-0.6, 1.5, 0); this.bodyGroup.add(this.leftArm);
             this.leftLeg = this._mechLeg(mat, -0.32); this.rightLeg = this._mechLeg(mat, 0.32);
@@ -612,9 +620,14 @@
             const p = this.profile, s = p.spec || {};
             const m = this._skinMat(p.bodyColor, 0.5);
             this._mechRig(m, { bodyGeom: new THREE.BoxGeometry(0.85, 0.9, 0.6) });
-            for (let i = 0; i < 4; i++) { const a = i * 2.39996; const plate = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.06), this._mat(0x6a5a3a, 1, 0.75)); plate.position.set(Math.cos(a) * 0.42, 0.0 + Math.sin(i) * 0.3, 0.34); plate.rotation.z = a; this.body.add(plate); }
-            const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.5, 5), m); rod.position.set(0.15, 2.32, 0); this.bodyGroup.add(rod);
-            const tip = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), this._mat(p.accent, 0.9, 0.2, p.accent)); tip.position.set(0.15, 2.57, 0); this.bodyGroup.add(tip);
+            // Salvage riveted onto the chest plate, so it is kept inside the
+            // chassis it is bolted to: further out it hung off the front of
+            // the machine with daylight behind it.
+            for (let i = 0; i < 4; i++) { const a = i * 2.39996; const plate = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.06), this._mat(0x6a5a3a, 1, 0.75)); plate.position.set(Math.cos(a) * 0.26, Math.sin(i) * 0.26, 0.28); plate.rotation.z = a; this.body.add(plate); }
+            // The aerial grows out of the head, so it rides the head: left in
+            // body space it stayed put while the head came down to the body.
+            const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.5, 5), m); rod.position.set(0.15, 0.32, 0); this.head.add(rod);
+            const tip = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), this._mat(p.accent, 0.9, 0.2, p.accent)); tip.position.set(0.15, 0.57, 0); this.head.add(tip);
         }
 
 

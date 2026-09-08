@@ -15,13 +15,17 @@
  * (see Core/WorldManager.js). Opened from the title screen "Worlds" command,
  * which hosts both creating and managing worlds on one parchment spread.
  *
- * Layout follows the D&D double-page parchment theme (css/theme.css):
- *   - Left page: world list + "Create World" pockets entry.
- *   - Right page: selected world's dossier with tabs:
- *       Dossier , creation date, world date, savegame count, seed.
- *       History , scrollable timeline of historical events.
- *       Balance , hyperpowers military/economy standings.
- *       Wiki    , opens Scene_History (full-screen archive) for this world.
+ * Layout is the shared kit (css/theme.css), Shape A: a .book-spread whose
+ * .left-page is the .page-header-bar, the .ui-list of worlds and the create
+ * entry, and whose .right-page is the dossier behind .backpack-tab tabs.
+ *   - Dossier , creation date, world date, savegame count, seed, the two
+ *               permanent world settings, then Set Active / Delete.
+ *   - History , opens Scene_History, the full archive, for this world.
+ *   - Balance , every hyperpower's military and economy, strongest first.
+ *   - Diaries , every diary the world holds, whichever savegame kept it.
+ * The create form and the delete confirmation are Shape B: .ui-overlay over
+ * .ui-panel. Nothing here sets a style; the classes above are inked in
+ * css/theme.css under WORLD MANAGER.
  *
  * World history is always simulated canonically from 1900 to 2000, there
  * is no per-world history length selection. Creating a world only lets the
@@ -180,6 +184,14 @@
         return year >= EARTH_LOST_YEAR ? T("WorldManagerUI.earthLost") : "";
     }
 
+    // Story mode used to be refused outside the canon world (2001, an ordinary
+    // population, ordinary magic) and the form warned about it here. It runs in
+    // every world now: the year only decides where the run begins
+    // (window.StoryModeStart), so there is nothing left to warn about.
+    function storyDisabledNoticeFor() {
+        return "";
+    }
+
     // Months since January 2001, the single ordering the two spinners clamp on.
     function dateToIndex(year, month) {
         return (year - START_YEAR_MIN) * 12 + (month - 1);
@@ -221,86 +233,34 @@
     // is the id; the label reads through WorldNames (see Core/DataService.js).
     function worldName(name) { return window.WorldNames ? window.WorldNames.any(name) : name; }
 
-    // An event's category is an id on the record and a label on the card.
-    function categoryLabel(id) {
-        const key = 'History.category.' + String(id || '');
-        return T.has(key) ? T(key) : String(id || '');
-    }
-
-    // i18n-ignore-start: theme tokens
-    function categoryVars(category) {
-        const map = {
-            'military':   { color: 'var(--text-secondary-active, #822d2d)',  bg: 'var(--shadow-soft-active-translucent-25, rgba(130,45,45,0.05))' },
-            'political':  { color: 'var(--text-text-alt-5-hover, #b05c3c)',  bg: 'var(--border-primary-hover-translucent-15, rgba(176,92,60,0.05))' },
-            'internal':   { color: 'var(--text-text-alt-5-hover, #b05c3c)',  bg: 'var(--border-primary-hover-translucent-15, rgba(176,92,60,0.05))' },
-            'economic':   { color: 'var(--text-text-alt-3, #2b5e3c)',        bg: 'var(--bg-bg-alt-7-translucent-12, rgba(43,94,60,0.05))' },
-            'social':     { color: 'var(--text-text-alt-16, #3d5e75)',       bg: 'var(--bg-bg-alt-6-translucent-12, rgba(61,94,117,0.05))' },
-            'paranormal': { color: 'var(--bg-bg-alt-14, #5a3d75)',           bg: 'var(--bg-bg-alt-15-translucent-12, rgba(90,61,117,0.05))' },
-            'royal':      { color: 'var(--text-text-alt-19, #8c4375)',       bg: 'var(--border-primary-hover-translucent-15, rgba(140,67,117,0.05))' },
-            'artifact':   { color: 'var(--text-gold-dark)',                  bg: 'var(--accent-gold-translucent-16)' }
-        };
-        return map[category] || { color: 'var(--border-muted-focus, #8b5a2b)', bg: 'var(--border-secondary-hover-translucent-15, rgba(139,90,43,0.05))' };
-    }
-
-    // i18n-ignore-end
-    function isArtifactEvent(evt) {
-        return evt.category === 'artifact' || /artifact/i.test(evt.description || '');
-    }
-
-    const ARTIFACT_BADGE = `<span class="wm-card-badge" style="color:var(--text-gold-dark); background:var(--accent-gold-translucent-16); border:1px solid var(--border-gold-amber-30)">${T('WorldManager.ui.artifactBadge')}</span>`;
-
-    function renderHistoryEvents(events) {
-        if (!events || events.length === 0) {
-            return `<div class="wm-empty">${T('WorldManagerUI.noTimelineRecordsFound')}</div>`;
-        }
-        return events.map(evt => {
-            const cv = categoryVars(evt.category);
-            const dateParts = String(evt.date || "").split('-');
-            const formattedDate = dateParts.length === 3 ? `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}` : evt.date;
-            const artifactTag = isArtifactEvent(evt) ? ARTIFACT_BADGE : "";
-            return `
-                <div class="wm-event-card" style="--event-card-accent:${cv.color}">
-                    <div class="wm-card-header">
-                        <span class="wm-card-date">${escapeHtml(formattedDate)}</span>
-                        <span class="wm-card-badge" style="color:${cv.color}; background:${cv.bg}; border:1px solid ${cv.color}30">${escapeHtml(categoryLabel(evt.category))}</span>
-                        ${artifactTag}
-                    </div>
-                    <div class="wm-card-desc">${escapeHtml(evt.description)}</div>
-                    ${evt.results ? `<div class="wm-card-results">${escapeHtml(evt.results)}</div>` : ""}
-                </div>
-            `;
-        }).join("");
-    }
-
     function renderHyperpowers(hyperpowers) {
         const powersList = Object.entries(hyperpowers || {})
             .sort((a, b) => (b[1].military + b[1].economy) - (a[1].military + a[1].economy));
         if (powersList.length === 0) return "";
 
-        let html = `<div class="cc-dossier-card"><div class="cc-subheader">${T('WorldManagerUI.hyperpowersBalance')}</div>`;
-        powersList.slice(0, 3).forEach(([name, data]) => {
-            const milPct = Math.min(100, Math.max(5, (data.military / 300) * 100));
-            const ecoPct = Math.min(100, Math.max(5, (data.economy / 250) * 100));
+        let html = `<div class="item-inspect wm-balance">
+            <div class="inspect-section-title">${T('WorldManagerUI.hyperpowersBalance')}</div>`;
+        powersList.forEach(([name, data]) => {
             const controlled = [];
             for (const [cName, cData] of Object.entries(getCountries())) {
                 if (cData.controller === name) controlled.push(worldName(cName));
             }
             const territories = controlled.slice(0, 3).join(", ") + (controlled.length > 3 ? "..." : "");
             html += `
-                <div style="border-bottom:1px dashed var(--scroll-thumb-hover-translucent-60, rgba(139,90,43,0.25)); padding-bottom:8px; margin-bottom:8px">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:4px">
-                        <strong style="font-size:1.02rem; color:var(--text-primary-hover, #2b1c11)">${escapeHtml(worldName(name))}</strong>
-                        <span style="font-size:0.854rem; color:var(--text-disabled, #5c4b3d); font-family:'Courier Prime', monospace">${escapeHtml(territories)}</span>
+                <div class="wm-power">
+                    <div class="wm-power-head">
+                        <span class="wm-power-name">${escapeHtml(worldName(name))}</span>
+                        <span class="wm-power-territories">${escapeHtml(territories)}</span>
                     </div>
-                    <div class="cc-dossier-row">
-                        <span class="cc-dossier-label">${T('WorldManager.ui.military')}</span>
-                        <div class="cc-progress-container"><div class="cc-progress-fill" style="width:${milPct}%; background:var(--text-secondary-active, #822d2d)"></div></div>
-                        <span class="cc-dossier-value">${Math.floor(data.military)}</span>
-                    </div>
-                    <div class="cc-dossier-row">
-                        <span class="cc-dossier-label">${T('WorldManager.ui.economy')}</span>
-                        <div class="cc-progress-container"><div class="cc-progress-fill" style="width:${ecoPct}%; background:var(--text-text-alt-3, #2b5e3c)"></div></div>
-                        <span class="cc-dossier-value">${Math.floor(data.economy)}</span>
+                    <div class="inspect-spec-grid">
+                        <div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${T('WorldManager.ui.military')}</span>
+                            <span class="inspect-spec-value">${Math.floor(data.military)}</span>
+                        </div>
+                        <div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${T('WorldManager.ui.economy')}</span>
+                            <span class="inspect-spec-value">${Math.floor(data.economy)}</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -313,9 +273,9 @@
     // Input manager, keyboard + controller navigation
     //=========================================================================
 
-    // "wiki" is intentionally last, pressing OK on it pushes Scene_History
-    // rather than switching tab content, so it never becomes _rightTab.
-    const RIGHT_TABS = ["info", "history", "balance", "diaries", "wiki"];
+    // "history" does not switch tab content: pressing OK on it pushes
+    // Scene_History, the full archive, so it never becomes _rightTab.
+    const RIGHT_TABS = ["info", "history", "balance", "diaries"];
 
     const WorldManageInputManager = {
         _scene: null,
@@ -495,7 +455,10 @@
                 scene.onSelectTab(RIGHT_TABS[scene._focusIndex] || "info");
                 return;
             }
-            if (el.disabled) {
+            // A button the page has greyed out says so either way it is
+            // drawn: as the attribute on a real <button>, or as the shared
+            // .disabled class on an .inspect-btn.
+            if (el.disabled || el.classList.contains("disabled")) {
                 SoundManager.playBuzzer();
                 return;
             }
@@ -594,8 +557,8 @@
                                     .map(id => document.getElementById(id)).filter(Boolean);
                 case "modalclose": return [document.getElementById("wm-create-close-btn")].filter(Boolean);
                 case "back":    return [document.getElementById("wm-back-btn")].filter(Boolean);
-                case "tabs":    return [...c.querySelectorAll(".wm-tabs .category-tab")];
-                case "actions": return [...c.querySelectorAll(".cc-page-right .cc-button-panel .cc-btn-treaty")];
+                case "tabs":    return [...c.querySelectorAll(".wm-tabs .backpack-tab")];
+                case "actions": return [...c.querySelectorAll(".right-page .inspect-actions .inspect-btn")];
                 default:        return [];
             }
         }
@@ -667,14 +630,27 @@
             if (floorEl) {
                 const notice = enemyLevelNoticeFor(this._startYear);
                 floorEl.textContent = notice;
-                floorEl.style.display = notice ? "" : "none";
+                floorEl.classList.toggle("wm-hidden", !notice);
             }
             const lostEl = document.getElementById("wm-earth-lost");
             if (lostEl) {
                 const notice = earthLostNoticeFor(this._startYear);
                 lostEl.textContent = notice;
-                lostEl.style.display = notice ? "" : "none";
+                lostEl.classList.toggle("wm-hidden", !notice);
             }
+            this._refreshStoryNotice();
+        }
+
+        // Repaints the "story mode will be disabled" line. Called by every
+        // spinner that feeds it rather than rebuilding the form, which would
+        // drop the name being typed.
+        _refreshStoryNotice() {
+            const el = document.getElementById("wm-story-disabled");
+            if (!el) return;
+            const notice = storyDisabledNoticeFor(
+                this._startYear, this._populationMode, this._magicalLevel);
+            el.textContent = notice;
+            el.classList.toggle("wm-hidden", !notice);
         }
 
         _changeStartLevel(delta) {
@@ -713,8 +689,9 @@
             if (noteEl) {
                 const note = populationNoteFor(next);
                 noteEl.textContent = note;
-                noteEl.style.display = note ? "" : "none";
+                noteEl.classList.toggle("wm-hidden", !note);
             }
+            this._refreshStoryNotice();
             SoundManager.playCursor();
         }
 
@@ -737,8 +714,9 @@
             if (noteEl) {
                 const note = magicalNoteFor(next);
                 noteEl.textContent = note;
-                noteEl.style.display = note ? "" : "none";
+                noteEl.classList.toggle("wm-hidden", !note);
             }
+            this._refreshStoryNotice();
             SoundManager.playCursor();
         }
 
@@ -763,9 +741,8 @@
                 document.body.appendChild(container);
             }
             this._container = container;
-            container.style.display = "flex";
-            container.style.opacity = "1";
-            container.style.pointerEvents = "auto";
+            container.classList.remove("wm-closing");
+            container.classList.add("wm-open");
 
             // The container element is persistent and reused across scene openings, so
             // bind the container-scoped listeners only once. These closures resolve the
@@ -839,12 +816,10 @@
             }
             if (this._container) {
                 const container = this._container;
-                container.style.transition = "opacity 0.2s ease-out";
-                container.style.opacity = "0";
-                container.style.pointerEvents = "none";
+                container.classList.add("wm-closing");
                 setTimeout(() => {
                     container.innerHTML = "";
-                    container.style.display = "none";
+                    container.classList.remove("wm-open", "wm-closing");
                 }, 200);
                 this._container = null;
             }
@@ -878,12 +853,12 @@
                 const isActive   = world.name === active;
                 const isSelected = world.name === this._selectedWorld;
                 return `
-                    <div class="wm-world-row ${isSelected ? "selected" : ""}"
+                    <div class="item-slot wm-world-row ${isSelected ? "selected" : ""}"
                          data-world-name="${escapeHtml(world.name)}"
                          onclick="SceneManager._scene.onSelectWorld('${world.name.replace(/'/g, "\\'")}')">
-                        <div class="wm-world-name">
-                            ${escapeHtml(world.name)}
-                            ${isActive ? `<span class="wm-active-badge">${T('WorldManagerUI.active')}</span>` : ""}
+                        <div class="item-slot-info">
+                            <div class="item-slot-name wm-world-name">${escapeHtml(world.name)}</div>
+                            ${isActive ? `<div class="item-slot-meta wm-active-badge">${T('WorldManagerUI.active')}</div>` : ""}
                         </div>
                     </div>
                 `;
@@ -919,40 +894,38 @@
 
             this._container.innerHTML = `
                 <div class="book-spread">
-                    <div class="cc-page cc-page-left">
-                        <h2 class="cc-header-gothic">${T('WorldManagerUI.worlds')}</h2>
-                        <div class="wm-list" id="wm-world-list">
+                    <div class="left-page">
+                        <div class="page-header-bar">
+                            <div class="back-button" id="wm-back-btn"
+                                 onclick="SoundManager.playCancel(); SceneManager._scene.popScene();">${T('WorldManagerUI.back')}</div>
+                            <h2 class="title">${T('WorldManagerUI.worlds')}</h2>
+                        </div>
+                        <div class="ui-list ui-scroll wm-list" id="wm-world-list">
                             ${this._buildWorldRowsHTML(worlds, active)}
                         </div>
-                        <div class="wm-list-actions">
-                            <button type="button" id="wm-create-open-btn" class="cc-btn-treaty"
-                                    onclick="SceneManager._scene.openCreateModal()">
-                                + ${T('WorldManagerUI.createWorld')}
-                            </button>
-                        </div>
-                        <div class="cc-button-panel">
-                            <button id="wm-back-btn" class="cc-btn-treaty" onclick="SoundManager.playCancel(); SceneManager._scene.popScene();">
-                                ${T('WorldManagerUI.back')}
-                            </button>
+                        <div class="ui-footer wm-list-actions">
+                            <div class="inspect-btn" id="wm-create-open-btn" role="button" tabindex="0"
+                                 onclick="SceneManager._scene.openCreateModal()">
+                                ${T('WorldManagerUI.createWorld')}
+                            </div>
                         </div>
                     </div>
-                    <div class="cc-page cc-page-right" id="wm-right-page">
+                    <div class="right-page" id="wm-right-page">
                         ${this.renderRightPage(worlds, active)}
                     </div>
                 </div>
-                <div id="wm-create-overlay" class="wm-modal-overlay wm-create-overlay"
-                     style="${creating ?"" : "display:none;"}"
+                <div id="wm-create-overlay" class="ui-overlay wm-modal-overlay wm-create-overlay${creating ? "" : " wm-hidden"}"
                      onclick="if (event.target === this) SceneManager._scene.closeCreateModal();">
-                    <div class="wm-modal wm-create-modal" role="dialog" aria-modal="true">
-                        <div class="wm-create-modal-header">
-                            <h3 class="cc-subheader">${T('WorldManagerUI.createWorld')}</h3>
+                    <div class="ui-panel wm-modal wm-create-modal" role="dialog" aria-modal="true">
+                        <div class="page-header-bar wm-create-modal-header">
+                            <h3 class="title">${T('WorldManagerUI.createWorld')}</h3>
                             ${hasWorlds ? `
                             <button type="button" id="wm-create-close-btn" class="wm-modal-x"
                                     onclick="SceneManager._scene.closeCreateModal()"
                                     aria-label="${T('WorldManagerUI.cancel')}">&times;</button>
                             ` : ""}
                         </div>
-                        <div class="wm-create wm-create-modal-body">
+                        <div class="ui-panel-body ui-scroll wm-create wm-create-modal-body">
                             <label>${T('WorldManagerUI.worldName')}</label>
                             <input id="wm-name-input" type="text" maxlength="40"
                                    value="${escapeHtml(nameValue)}"
@@ -972,11 +945,11 @@
                                     <button type="button" class="wm-year-arrow" onclick="SceneManager._scene._changeStartYear(1)" aria-label="${T('WorldManagerUI.nextYear')}">&#9654;</button>
                                 </div>
                             </div>
-                            <div id="wm-enemy-floor" class="wm-enemy-floor" role="status"
-                                 style="${enemyLevelNoticeFor(start.year) ?"" : "display:none;"}"
+                            <div id="wm-enemy-floor" role="status"
+                                 class="wm-enemy-floor${enemyLevelNoticeFor(start.year) ? "" : " wm-hidden"}"
                             >${escapeHtml(enemyLevelNoticeFor(start.year))}</div>
-                            <div id="wm-earth-lost" class="wm-enemy-floor wm-earth-lost" role="status"
-                                 style="${earthLostNoticeFor(start.year) ?"" : "display:none;"}"
+                            <div id="wm-earth-lost" role="status"
+                                 class="wm-enemy-floor wm-earth-lost${earthLostNoticeFor(start.year) ? "" : " wm-hidden"}"
                             >${escapeHtml(earthLostNoticeFor(start.year))}</div>
                             <label>${T('WorldManagerUI.startingLevel')}</label>
                             <div class="wm-date-row">
@@ -996,8 +969,8 @@
                                     <button type="button" class="wm-year-arrow" onclick="SceneManager._scene._changePopulationMode(1)" aria-label="${T('WorldManagerUI.nextPopulation')}">&#9654;</button>
                                 </div>
                             </div>
-                            <div id="wm-population-note" class="wm-enemy-floor" role="status"
-                                 style="${populationNoteFor(populationMode) ?"" : "display:none;"}"
+                            <div id="wm-population-note" role="status"
+                                 class="wm-enemy-floor${populationNoteFor(populationMode) ? "" : " wm-hidden"}"
                             >${escapeHtml(populationNoteFor(populationMode))}</div>
                             <label>${T('WorldManagerUI.magicalLevel')}</label>
                             <div class="wm-date-row">
@@ -1008,12 +981,15 @@
                                     <button type="button" class="wm-year-arrow" onclick="SceneManager._scene._changeMagicalLevel(1)" aria-label="${T('WorldManagerUI.nextMagic')}">&#9654;</button>
                                 </div>
                             </div>
-                            <div id="wm-magic-note" class="wm-enemy-floor" role="status"
-                                 style="${magicalNoteFor(magicalLevel) ?"" : "display:none;"}"
+                            <div id="wm-magic-note" role="status"
+                                 class="wm-enemy-floor${magicalNoteFor(magicalLevel) ? "" : " wm-hidden"}"
                             >${escapeHtml(magicalNoteFor(magicalLevel))}</div>
+                            <div id="wm-story-disabled" role="status"
+                                 class="wm-enemy-floor wm-story-disabled${storyDisabledNoticeFor(start.year, populationMode, magicalLevel) ? "" : " wm-hidden"}"
+                            >${escapeHtml(storyDisabledNoticeFor(start.year, populationMode, magicalLevel))}</div>
                             <label>${T('WorldManagerUI.seed')}</label>
-                            <div class="wm-seed-row" style="display:flex; gap:6px; align-items:center">
-                                <input id="wm-seed-input" type="text" maxlength="40" style="flex:1"
+                            <div class="wm-seed-row">
+                                <input id="wm-seed-input" type="text" maxlength="40"
                                        value="${escapeHtml(seedValue)}"
                                        placeholder="${escapeHtml(DEFAULT_WORLD_SEED)}" autocomplete="off">
                                 <button id="wm-seed-random-btn" type="button" class="wm-year-arrow"
@@ -1021,7 +997,7 @@
                                         title="${T('WorldManagerUI.randomizeSeed')}"
                                         aria-label="${T('WorldManagerUI.randomizeSeed')}">&#9851;</button>
                             </div>
-                            <button id="wm-create-btn" class="cc-btn-treaty confirm" onclick="SceneManager._scene.onCreateWorld()">
+                            <button id="wm-create-btn" type="button" class="inspect-btn" onclick="SceneManager._scene.onCreateWorld()">
                                 ${T('WorldManagerUI.createActivate')}
                             </button>
                             <div id="wm-status" class="wm-status"></div>
@@ -1082,38 +1058,41 @@
             const world = worlds.find(w => w.name === this._selectedWorld);
             if (!world) {
                 return `
-                    <h2 class="cc-header-gothic">${T('WorldManagerUI.dossier')}</h2>
-                    <div class="cc-text-desc">${T('WorldManagerUI.selectAWorldToView')}</div>
+                    <div class="item-inspect item-inspect--empty">
+                        <h2 class="title">${T('WorldManagerUI.dossier')}</h2>
+                        <p class="inspect-placeholder-text">${T('WorldManagerUI.selectAWorldToView')}</p>
+                    </div>
                 `;
             }
 
+            const tab = (label, key) => `
+                <div class="backpack-tab ${this._rightTab === key ? "selected" : ""}"
+                     onclick="SceneManager._scene.onSelectTab('${key}')">${label}</div>`;
+            // "history" is not a page of its own: it opens the full archive
+            // (Scene_History) loaded with this world, which is the same reading
+            // the wiki entry used to be a second door onto.
             const tabsHTML = `
-                <div class="wm-tabs">
-                    <div class="category-tab ${this._rightTab === "info"    ? "selected" : ""}"
-                         onclick="SceneManager._scene.onSelectTab('info')">${T('WorldManagerUI.dossier2')}</div>
-                    <div class="category-tab ${this._rightTab === "history" ? "selected" : ""}"
-                         onclick="SceneManager._scene.onSelectTab('history')">${T('WorldManagerUI.history')}</div>
-                    <div class="category-tab ${this._rightTab === "balance" ? "selected" : ""}"
-                         onclick="SceneManager._scene.onSelectTab('balance')">${T('WorldManagerUI.balance')}</div>
-                    <div class="category-tab ${this._rightTab === "diaries" ? "selected" : ""}"
-                         onclick="SceneManager._scene.onSelectTab('diaries')">${T('Diary.worlds.tab')}</div>
-                    <div class="category-tab wm-wiki-tab"
-                         onclick="SceneManager._scene.onSelectTab('wiki')">${T('WorldManagerUI.wiki')} ↗</div>
+                <div class="backpack-tabs wm-tabs">
+                    ${tab(T('WorldManagerUI.dossier2'), "info")}
+                    ${tab(T('WorldManagerUI.history'), "history")}
+                    ${tab(T('WorldManagerUI.balance'), "balance")}
+                    ${tab(T('Diary.worlds.tab'), "diaries")}
                 </div>
             `;
 
             let body = "";
             switch (this._rightTab) {
-                case "history": body = this.renderHistoryTab(world); break;
                 case "balance": body = this.renderBalanceTab(world); break;
                 case "diaries": body = this.renderDiariesTab(world); break;
                 default:        body = this.renderInfoTab(world, active); break;
             }
 
             return `
-                <h2 class="cc-header-gothic">${escapeHtml(world.name)}</h2>
+                <div class="page-header-bar">
+                    <h2 class="title">${escapeHtml(world.name)}</h2>
+                </div>
                 ${tabsHTML}
-                <div class="wm-tab-body">${body}</div>
+                <div class="ui-scroll wm-tab-body">${body}</div>
             `;
         }
 
@@ -1129,55 +1108,49 @@
             const savesCount = window.WorldManager.countSaves(world.name);
 
             return `
-                <div class="cc-dossier-card">
-                    <div class="cc-dossier-row">
-                        <span class="cc-dossier-label">${T('WorldManagerUI.created')}</span>
-                        <span class="cc-dossier-value">${escapeHtml(created)}</span>
-                    </div>
-                    <div class="cc-dossier-row">
-                        <span class="cc-dossier-label">${T('WorldManagerUI.worldDate')}</span>
-                        <span class="cc-dossier-value">${escapeHtml(worldDate)}</span>
-                    </div>
-                    <div class="cc-dossier-row">
-                        <span class="cc-dossier-label">${T('WorldManagerUI.savegames')}</span>
-                        <span class="cc-dossier-value">${savesCount === null ? "?" : savesCount}</span>
-                    </div>
-                    <div class="cc-dossier-row">
-                        <span class="cc-dossier-label">${T('WorldManagerUI.seed')}</span>
-                        <span class="cc-dossier-value">${world.seed !== undefined ? world.seed : "?"}</span>
-                    </div>
-                    <div class="cc-dossier-row" title="${T('WorldManagerUI.populationLocked')}">
-                        <span class="cc-dossier-label">${T('WorldManagerUI.magicalLevel')}</span>
-                        <span class="cc-dossier-value">${escapeHtml(magicalLabel(
-                            MAGICAL_LEVELS.includes(world.magicalLevel)
-                                ? world.magicalLevel : MAGICAL_DEFAULT))}</span>
-                    </div>
-                    <div class="cc-dossier-row" title="${T('WorldManagerUI.populationLocked')}">
-                        <span class="cc-dossier-label">${T('WorldManagerUI.populationMode')}</span>
-                        <span class="cc-dossier-value">${escapeHtml(populationLabel(
-                            POPULATION_MODES.includes(world.populationMode)
-                                ? world.populationMode : POPULATION_DEFAULT))}</span>
+                <div class="item-inspect">
+                    <div class="inspect-section-title">${T('WorldManagerUI.dossier2')}</div>
+                    <div class="inspect-spec-grid">
+                        <div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${T('WorldManagerUI.created')}</span>
+                            <span class="inspect-spec-value">${escapeHtml(created)}</span>
+                        </div>
+                        <div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${T('WorldManagerUI.worldDate')}</span>
+                            <span class="inspect-spec-value">${escapeHtml(worldDate)}</span>
+                        </div>
+                        <div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${T('WorldManagerUI.savegames')}</span>
+                            <span class="inspect-spec-value">${savesCount === null ? "?" : savesCount}</span>
+                        </div>
+                        <div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${T('WorldManagerUI.seed')}</span>
+                            <span class="inspect-spec-value">${world.seed !== undefined ? escapeHtml(world.seed) : "?"}</span>
+                        </div>
+                        <div class="inspect-spec-row" title="${T('WorldManagerUI.populationLocked')}">
+                            <span class="inspect-spec-label">${T('WorldManagerUI.magicalLevel')}</span>
+                            <span class="inspect-spec-value">${escapeHtml(magicalLabel(
+                                MAGICAL_LEVELS.includes(world.magicalLevel)
+                                    ? world.magicalLevel : MAGICAL_DEFAULT))}</span>
+                        </div>
+                        <div class="inspect-spec-row" title="${T('WorldManagerUI.populationLocked')}">
+                            <span class="inspect-spec-label">${T('WorldManagerUI.populationMode')}</span>
+                            <span class="inspect-spec-value">${escapeHtml(populationLabel(
+                                POPULATION_MODES.includes(world.populationMode)
+                                    ? world.populationMode : POPULATION_DEFAULT))}</span>
+                        </div>
                     </div>
                 </div>
-                <div class="cc-button-panel">
-                    <button class="cc-btn-treaty" ${isActive ? "disabled" : ""}
+                <div class="inspect-actions">
+                    <div class="inspect-btn ${isActive ? "disabled" : ""}" role="button" tabindex="0"
                         onclick="SceneManager._scene.onActivateWorld('${world.name.replace(/'/g, "\\'")}')">
                         ${T('WorldManagerUI.setActive')}
-                    </button>
-                    <button class="cc-btn-treaty confirm"
+                    </div>
+                    <div class="inspect-btn inspect-btn--secondary" role="button" tabindex="0"
                         onclick="SceneManager._scene.onDeleteWorld('${world.name.replace(/'/g, "\\'")}')">
                         ${T('WorldManagerUI.delete')}
-                    </button>
+                    </div>
                 </div>
-            `;
-        }
-
-        renderHistoryTab(world) {
-            const history = window.WorldManager.readWorldFile(world.name, "history") || {};
-            const events  = history.events || [];
-            return `
-                <div class="cc-subheader">${T('WorldManagerUI.historicalArchive')}</div>
-                <div class="wm-history-list">${renderHistoryEvents(events)}</div>
             `;
         }
 
@@ -1201,12 +1174,12 @@
                 // A button rather than a card, so the pockets' own keyboard and
                 // controller walk ("actions") reaches every diary for free.
                 return `
-                    <button type="button" class="cc-btn-treaty wm-diary-row" onclick="${call}">
+                    <button type="button" class="inspect-btn wm-diary-row" onclick="${call}">
                         <span class="wm-diary-names">${escapeHtml(names)}</span>
                         <span class="wm-diary-meta">${escapeHtml(meta)}</span>
                     </button>`;
             }).join("");
-            return `<div class="cc-button-panel wm-diary-list">${rows}</div>`;
+            return `<div class="inspect-actions wm-diary-list">${rows}</div>`;
         }
 
         // Reading one needs the game objects the book scene expects, exactly as
@@ -1250,8 +1223,9 @@
         }
 
         onSelectTab(tab) {
-            // Wiki opens Scene_History loaded with this world's data.
-            if (tab === "wiki") {
+            // History opens the full archive, Scene_History, loaded with this
+            // world's data rather than a second, smaller copy of the timeline.
+            if (tab === "history") {
                 if (!this._selectedWorld || !window.Scene_History) return;
                 const history = window.WorldManager.readWorldFile(this._selectedWorld, "history") || {};
                 if (!$gameSystem) DataManager.setupNewGame();
@@ -1274,6 +1248,12 @@
         onActivateWorld(name) {
             if (this._busy) return;
             const WM = window.WorldManager;
+            // The strip is drawn from divs, so the greyed-out entry has to be
+            // refused here as well as painted there.
+            if (WM.activeWorldName === name) {
+                SoundManager.playBuzzer();
+                return;
+            }
             SoundManager.playOk();
             WM.setActiveWorld(name);
             if (window.HistoryManager) {
@@ -1310,14 +1290,14 @@
             this._confirmCallback = onConfirm || null;
 
             const overlay = document.createElement("div");
-            overlay.className = "wm-modal-overlay";
+            overlay.className = "ui-overlay wm-modal-overlay";
             overlay.innerHTML = `
-                <div class="wm-modal" role="dialog" aria-modal="true">
-                    <h3 class="cc-subheader wm-modal-title">${escapeHtml(title)}</h3>
+                <div class="ui-panel wm-modal" role="dialog" aria-modal="true">
+                    <h3 class="title wm-modal-title">${escapeHtml(title)}</h3>
                     <div class="wm-modal-message">${escapeHtml(message)}</div>
-                    <div class="wm-modal-buttons">
-                        <button type="button" class="cc-btn-treaty wm-modal-cancel">${escapeHtml(cancelLabel)}</button>
-                        <button type="button" class="cc-btn-treaty confirm wm-modal-confirm">${escapeHtml(confirmLabel)}</button>
+                    <div class="inspect-actions wm-modal-buttons">
+                        <button type="button" class="inspect-btn inspect-btn--secondary wm-modal-cancel">${escapeHtml(cancelLabel)}</button>
+                        <button type="button" class="inspect-btn wm-modal-confirm">${escapeHtml(confirmLabel)}</button>
                     </div>
                 </div>
             `;
@@ -1472,10 +1452,10 @@
         _Scene_Title_commandNewGame.call(this);
     };
 
-    const _Scene_Title_commandTutorial = Scene_Title.prototype.commandTutorial;
-    Scene_Title.prototype.commandTutorial = function () {
+    const _Scene_Title_commandStoryMode = Scene_Title.prototype.commandStoryMode;
+    Scene_Title.prototype.commandStoryMode = function () {
         if (!requireActiveWorld()) return;
-        _Scene_Title_commandTutorial.call(this);
+        _Scene_Title_commandStoryMode.call(this);
     };
 
     const _Scene_Title_commandSandboxGame = Scene_Title.prototype.commandSandboxGame;
@@ -1484,13 +1464,13 @@
         _Scene_Title_commandSandboxGame.call(this);
     };
 
-    const _Scene_Title_onTutorialContinue = Scene_Title.prototype.onTutorialContinue;
-    Scene_Title.prototype.onTutorialContinue = function () {
+    const _Scene_Title_onStoryModeContinue = Scene_Title.prototype.onStoryModeContinue;
+    Scene_Title.prototype.onStoryModeContinue = function () {
         if (!requireActiveWorld()) {
-            if (this._tutorialWindow) this._tutorialWindow.close();
+            if (this._storyModeWindow) this._storyModeWindow.close();
             return;
         }
-        _Scene_Title_onTutorialContinue.call(this);
+        _Scene_Title_onStoryModeContinue.call(this);
     };
 
 })();

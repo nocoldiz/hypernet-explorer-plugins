@@ -5,6 +5,8 @@
   "unknown": "Sconosciuto",
   "requirements": "Requisiti",
   "successRate": "Tasso di Successo",
+  "deficitWarning": "Carenze rilevate. Accettare questo contratto comporta un rischio maggiore di fallimento e ferite.",
+  "successRatePct": "{pct}% di successo",
   "selectWorker": "Seleziona il lavoratore:",
   "noGuildLaborRequisitionsCurrently": "Nessun incarico di gilda disponibile al momento.",
   "dismiss": "Esci",
@@ -100,5 +102,10 @@
   },
   "ui": {},
   "guildRegistry": "REGISTRO DI GILDA",
-  "guildRegistryCategory": "REGISTRO DI GILDA: {category}"
+  "guildRegistryCategory": "REGISTRO DI GILDA: {category}",
+  "shift": {
+    "dispatched": "{actor} parte per un turno di {hours}h a {job}.",
+    "returned": "{actor} torna da {job} con {amount}€.",
+    "benched": "{actor} ha finito a {job} con {amount}€, e attende tra i membri inattivi."
+  }
 }

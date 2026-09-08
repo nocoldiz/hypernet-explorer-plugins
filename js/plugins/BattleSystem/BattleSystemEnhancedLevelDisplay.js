@@ -146,7 +146,21 @@
         }
         label.x = this.x;
         label.y = this.y - 50;
-        label.visible = this.visible && this.opacity > 0;
+        // The plate sits well above its owner, so a monster standing just past
+        // the bottom or the side of the screen would still push its level onto
+        // the map. Nothing shows for an owner the player cannot see.
+        label.visible = this.visible && this.opacity > 0 && this.isOwnerOnScreen();
+    };
+
+    // Whether the character the plate belongs to is inside the viewport, with
+    // a tile of slack so a plate does not blink out on the edge of a scroll.
+    Sprite_Character.prototype.isOwnerOnScreen = function() {
+        const w = Graphics.width;
+        const h = Graphics.height;
+        const padX = $gameMap ? $gameMap.tileWidth() : 48;
+        const padY = $gameMap ? $gameMap.tileHeight() : 48;
+        return this.x >= -padX && this.x <= w + padX &&
+               this.y >= -padY && this.y <= h + padY;
     };
 
     Sprite_Character.prototype.removeEnemyLevelLabel = function() {

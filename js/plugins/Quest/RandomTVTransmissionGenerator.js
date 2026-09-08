@@ -645,6 +645,8 @@
         const interpreter = $gameMap.interpreter;
         if (!interpreter) return;
 
+        if (tvPlayStoryWarning()) { interpreter.setWaitMode('message'); return; }
+
         updateLanguage();
         initializeSeed();
         
@@ -1411,6 +1413,29 @@
         return !!tvEmActor();
     }
 
+    // --- Bubba's warning, once per main-quest run -------------------------
+    // The first television any Em playthrough turns on is not a broadcast: it
+    // is the scene where Bubba tells her what watching one costs. The scene is
+    // played instead of that first programme, and every set from then on works
+    // as it always did.
+    const TV_STORY_FILE = "mainquest";
+    const TV_STORY_SCENE = "television";
+
+    /**
+     * Play the television warning if this run is still owed it.
+     * @returns {boolean} true when the scene took the set over
+     */
+    function tvPlayStoryWarning() {
+        if (typeof $gameSystem === "undefined" || !$gameSystem) return false;
+        if ($gameSystem._tvStoryWarningSeen) return false;
+        if (!tvEmInPlay()) return false;
+        const story = window.StoryDialogue;
+        if (!story || !story.play) return false;
+        if (!story.play(TV_STORY_FILE, TV_STORY_SCENE)) return false;
+        $gameSystem._tvStoryWarningSeen = true;
+        return true;
+    }
+
     function tvEmName() {
         const actor = tvEmActor();
         return (actor && actor.name && actor.name()) || TV_EM_NAME;
@@ -1485,6 +1510,42 @@
     // Hers, and not one of them a reply.
     const TV_EM_REFUSAL = () => tvBank('TvEm.refusal');
 
+    // --- The programmes that want a word out of her -----------------------
+    // Most transmissions only ask. A minority of them are not asking: they
+    // have been given one word and an hour to get it said out loud, and they
+    // spend the hour on that and nothing else. Which programme is one of those
+    // is decided by the programme itself, never by the roll of the broadcast,
+    // so a show that hunts her keeps hunting her every time it is on.
+    const TV_EM_AGGRO_SHARE = 0.3;    // share of programmes that hunt the word
+    const TV_EM_AGGRO_BEAT_EVERY = 2; // an aggressive hour barely stops for the show
+    const TV_EM_AGGRO_BEAT_MAX = 8;
+    const TV_EM_AGGRO_VOCATIVE_RATE = 0.85;
+    const TV_EM_WORDS = () => tvBank('TvEm.word');
+    const TV_EM_AGGRO_OPEN = () => tvBank('TvEm.aggro.open');
+    const TV_EM_AGGRO_DEMAND = () => tvBank('TvEm.aggro.demand');
+    const TV_EM_AGGRO_BAIT = () => tvBank('TvEm.aggro.bait');
+    const TV_EM_AGGRO_CHORUS = () => tvBank('TvEm.aggro.chorus');
+    const TV_EM_AGGRO_THREAT = () => tvBank('TvEm.aggro.threat');
+    const TV_EM_AGGRO_SILENCE = () => tvBank('TvEm.aggro.silence');
+    const TV_EM_AGGRO_REFUSAL = () => tvBank('TvEm.aggro.refusal');
+    const TV_EM_AGGRO_CLOSE = () => tvBank('TvEm.aggro.close');
+
+    /**
+     * Whether this programme is one of the ones that hunts the word.
+     * @param {object} base - Template context carrying channel and title
+     * @returns {boolean}
+     */
+    function tvEmAggressive(base) {
+        const key = String((base && base.title) || "") + "|" + String((base && base.channel) || "");
+        if (!key.replace(/\|/g, "")) return false;
+        let h = 2166136261;
+        for (let i = 0; i < key.length; i++) {
+            h ^= key.charCodeAt(i);
+            h = Math.imul(h, 16777619);
+        }
+        return ((h >>> 0) % 1000) / 1000 < TV_EM_AGGRO_SHARE;
+    }
+
     function tvEmCtx(base) {
         return Object.assign({ em: tvEmName(), em_town: tvEmTown() }, base || {});
     }
@@ -1506,11 +1567,11 @@
     }
 
     // One ordinary line of the programme, turned to face her.
-    function tvEmFaceLine(rng, text, ctx) {
+    function tvEmFaceLine(rng, text, ctx, rate) {
         const name = ctx.em;
         const redirected = tvEmRedirect(text, name);
         const already = new RegExp("\\b" + name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b").test(redirected);
-        if (already || rng() >= TV_EM_VOCATIVE_RATE) return redirected;
+        if (already || rng() >= (rate === undefined ? TV_EM_VOCATIVE_RATE : rate)) return redirected;
         return tvEmAttach(rng, redirected, ctx);
     }
 
@@ -1535,11 +1596,41 @@
             return tvT(rng, tpl, ctx);
         };
 
+        // An aggressive hour picks its word before the first line and then
+        // works up a ladder: it asks, it tricks, the room starts chanting, and
+        // by the end it is telling her what happens if she keeps not saying it.
+        const aggro = tvEmAggressive(base);
+        if (aggro) ctx.word = tvT(rng, tvPick(rng, TV_EM_WORDS()), ctx);
+        const ladder = [TV_EM_AGGRO_DEMAND, TV_EM_AGGRO_BAIT, TV_EM_AGGRO_CHORUS, TV_EM_AGGRO_THREAT];
+        const beatEvery = aggro ? TV_EM_AGGRO_BEAT_EVERY : TV_EM_BEAT_EVERY;
+        const beatMax = aggro ? TV_EM_AGGRO_BEAT_MAX : TV_EM_BEAT_MAX;
+        const vocative = aggro ? TV_EM_AGGRO_VOCATIVE_RATE : TV_EM_VOCATIVE_RATE;
+
         const out = [];
         let beats = 0;
         let silences = 0;
         lines.forEach((ln, i) => {
-            out.push({ speaker: ln.speaker, text: tvEmFaceLine(rng, ln.text, ctx) });
+            out.push({ speaker: ln.speaker, text: tvEmFaceLine(rng, ln.text, ctx, vocative) });
+            // The hunt announces itself the moment the programme has opened.
+            if (aggro && i === 0) {
+                out.push({ speaker: ln.speaker, text: draw(TV_EM_AGGRO_OPEN()) });
+                return;
+            }
+            if (aggro) {
+                if (i >= lines.length - 1) return;
+                if (beats >= beatMax || (i + 1) % beatEvery !== 0) return;
+                // The further into the hour, the further up the ladder: the
+                // last rungs are the room chanting and the threat behind it.
+                const rung = Math.min(ladder.length - 1, Math.floor(beats / 2));
+                const pool = (rng() < 0.7 ? ladder[rung] : ladder[Math.floor(rng() * ladder.length)])();
+                beats++;
+                out.push({ speaker: ln.speaker, text: draw(pool) });
+                if (rng() < 0.55) {
+                    out.push({ speaker: ctx.em, text: draw(TV_EM_AGGRO_REFUSAL()), em: true });
+                    out.push({ speaker: ln.speaker, text: draw(TV_EM_AGGRO_SILENCE()) });
+                }
+                return;
+            }
             // The opening line is left to open the programme; the sign-off is
             // handled by the close below.
             if (i === 0 || i >= lines.length - 1) return;
@@ -1561,7 +1652,16 @@
         // However the programme signed off, the hour closes on the question it
         // did not get an answer to.
         const last = out[out.length - 1];
-        out.push({ speaker: (last && last.speaker) || ctx.em, text: draw(TV_EM_OPINION()) });
+        const speaker = (last && last.speaker) || ctx.em;
+        if (aggro) {
+            // A hunt does not close on a question. It closes on the demand, her
+            // silence, and the promise that the same hour is booked tomorrow.
+            out.push({ speaker, text: draw(TV_EM_AGGRO_DEMAND()) });
+            out.push({ speaker: ctx.em, text: draw(TV_EM_AGGRO_REFUSAL()), em: true });
+            out.push({ speaker, text: draw(TV_EM_AGGRO_CLOSE()) });
+            return out;
+        }
+        out.push({ speaker, text: draw(TV_EM_OPINION()) });
         out.push({ speaker: ctx.em, text: draw(TV_EM_REFUSAL()), em: true });
         return out;
     }
@@ -1727,6 +1827,7 @@
     // broadcast in place (no transfer); omitted/'ask' prompts the player to
     // listen, watch, or cancel.
     function tvTuneIn(channelId, programId, mode) {
+        if (tvPlayStoryWarning()) return;
         const db = loadTVDB();
         const resolved = tvResolveProgram(channelId, programId);
         if (!resolved) { console.warn("TV: cannot tune", channelId, programId); return; }

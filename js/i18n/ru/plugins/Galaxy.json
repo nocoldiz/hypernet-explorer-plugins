@@ -147,7 +147,6 @@
     "close": "Закрыть",
     "landingGridHelp": "",
     "refuelTooltip": "",
-    "orbitHint": "",
     "nothingCatalogued": "",
     "rechargesIn": "",
     "nominal": "",
@@ -257,28 +256,6 @@
     "alreadyRefuelling": "",
     "tankFull": "",
     "noStarInRange": ""
-  },
-  "hint": {
-    "cockpit": "",
-    "planet": "",
-    "system": "",
-    "galaxy": "",
-    "galaxyFocus": "",
-    "cluster": "",
-    "web": "",
-    "outer": "",
-    "modeLine": ""
-  },
-  "hintPad": {
-    "cockpit": "",
-    "planet": "",
-    "system": "",
-    "galaxy": "",
-    "galaxyFocus": "",
-    "cluster": "",
-    "web": "",
-    "outer": "",
-    "modeLine": ""
   },
   "service": {
     "hubbleName": "",

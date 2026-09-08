@@ -1,0 +1,22 @@
+{
+  "hyperamp": {
+    "appName": "HyperAmp",
+    "idle": "HyperAmp - frusta davvero il goblin",
+    "prev": "Precedente",
+    "play": "Riproduci",
+    "pause": "Pausa",
+    "stop": "Stop",
+    "next": "Successivo",
+    "shuffle": "Casuale",
+    "repeatOff": "Ripeti: no",
+    "repeatAll": "Ripeti: tutto",
+    "repeatOne": "Ripeti: uno",
+    "volume": "Volume",
+    "search": "Cerca nella libreria...",
+    "allFolders": "Tutte le cartelle",
+    "rootFolder": "(radice)",
+    "empty": "Nessun brano trovato in audio/bgm.",
+    "count": "{n} brani",
+    "unknownArtist": "Artista sconosciuto"
+  }
+}

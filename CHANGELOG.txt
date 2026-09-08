@@ -1,5 +1,126 @@
-0.5.2a
+0.6.0a
+- fix diving suit animation
+- camper interior backdrop reframed, parked-vehicle exit offers the biome
+- replaced broken npc sprites with goblin originals
+- romance selector chips update immediately
+- title screen: link buttons, smaller selectors, real ode to joy
+- remove forage skill from all enemies
+- fix missing busts and sprites in encrypted builds
+- enemies join a battle only within three tiles
+- restore standard main menu labels except army of em
+- hypernet os more realistic: xp applets, host specs, own dialogs
+- story mode em learns from magic system trees and firearms
+- nokia-style hexphone with working numbers and 2001 emergency lines
+- reworked vector gun: menu, bespoke form models, forms carry element and damage
+- block based city and village generation
+- lan multiplayer mode with network scanning
+- 3d models for every item and armour
+- real highways in voxel mode instead of voxel roads
+- story mode: straight into character creation as em, gunmancer with a fixed dossier, roguelite only, canon worlds only, own protected save
+- story dialogues authored as md scripts cut into named scenes, played by plugin command
+- dialogue rework: white text, golden keywords and names, topics with [Display | Topic] and a learned-about toast
+- map battle rework and ascii theme, ok engages a nearby enemy, spell hotbar and hit flash
+- building system: doors on walls, free build on passable tiles, purchase by default, click and drag; found a town tab with deeds and rent, all buildrights free
+- reworked the thinker workshop into one board with batch crafting
+- new hypernet os apps, start menu categories and context menus
+- alien voxel terrain varies by planet and follows its heightmap
+- map streaming option; borders pan zelda style when off
+- option to keep the game running while the window is unfocused
+- throw items at npcs and enemies for weight damage
+- vector gun granted and usable in sandbox mode
+- reworked em and bubba empathize interactions
+- rework radio: folder stations, drawn over the map
+- drag skills in and out of the battle skill quickbar
+- rework thinker menu into trades, item grid and a piece window
+- rework skill lore in the voice of each magical system
+- clicking an enemy in map battle mode starts the fight
+- vector gun: twenty more modes, a form selector and animated switching
+- vector gun: desert eagle model, operating modes menu, blade of thelema
+- reworked gunmancer and mechanic learnsets and gimmicks
+- enemy spawn is biome only, option removed
+- swim off a bridge deck and dive under the span
+- go underground hidden inside procedural interiors
+- minimap mode option, exploring only by default
+- artifact viewer shows the 3d model when there is one
+- expanded askbubba with lore topics
+- item effects now match their names and descriptions
+- bubba ask now toggles controls and tips instead of a dialog
+- hardcoded npc sprites are never randomized
+- world leaders now die of old age and mortal disease
+- secondary archetype for humanoids; elf, goblin, dwarf and ogre are humanoids
+- army battles use troop sprites, plus a practice drill in camp
+- titlescreen picks any bgm; 1812 overture is a real recording
+- grimoire faces the player and deals only spells
+- map battle escape needs one tile of gap, disabled otherwise
+- em starts with grimoires, picks her creed, gets romance and read-only spec tabs
+- job shifts send a party member away instead of skipping time
+- library shops now stock every book, grimoire and skill book
+- class limit breaks replace defend when a fight puts you down
+- scrambler events glitch their graphic between other tiles
+- map battle: distance-based escape, weapon and shot animations, group targeting fixes
+- dialogue letter sounds also play for signs and other non-npc boxes
+- vehicles key opens a vehicle choice list on the map
+- diary groups a day's learned skills into one line
+- map battle aim and wrestle throws, corpses walked over and buried
+- star magnetic lines are braided glowing flux ropes
+- music selector on the titlescreen
+- skills under their stat floor are greyed out and cannot sync
+- easier 3d fishing, walkable camera, no more fish dragged through the ground
+- corpses block the tile they lie on
+- minimal dice result, join party/follower offers, follower sheet
+- pets are walk-through and offer pet/talk plus empathize
+- slower exp curve for all classes
+- f9 quicksaves and f10 quickloads
+- titlescreen story entry: new story only without a main story save
+- open world map names destinations and founded towns
+- vector gun levels up with em
+- blood and oil: healing mends broken parts, only slashing severs
+- party members and pets step aside when you walk into them
+- petrodemons now fight with physical attacks
+- camper interior shows a zoomed still of the map outside
+- story dialogue: bubba and em voices, boxes split on words, busts on ask
+- local npcs spawn where their event is placed
+- npc letter voices on by default, with their own volume slider
+- starship is a kilometre wide and no vehicle punches holes in the ground
+- 3d ranged weapons now play a reload animation
+- lockpick tetris reworked into unlocking blocks
+- space now hurries dialogue instead of freezing it
+- idle party members walk around a blocked party member
+- animalese letter voices for dialogue, off by default
+- ask bubba about story scenes on <Bubba:> maps, plugin command for bubba joining the party
+- bubba party talk offers ask, empathize or cancel
+- em voice reference and reworked em dialogue banks
+- first television in a main quest run plays bubba's warning
+- automatic weapons fire a burst per attack, heard once
+- enemy skill rates are all equal now
+- only plant enemies stand still on the map
+- adjacent city biomes now stitch into one map
+- world map opens instantly instead of building one huge image
+- artifact names in the analyzer follow the game language
+- 3d dice land square with the rolled number upright
+- visiting parties only from real save slots, not autosaves or quicksaves
+- map bgm removed except world map, tutorial and dungeons; biome battle music axed
+- creature archetypes list which sentient classes they can take
+- water no longer cuts weapon range, swim distance follows the swimming skill
+- fix skill common event commands that crashed or did nothing
+- fix buying animals from the build menu
+- fix map tooltips editor 404 on loading a map
+- fix map freezing on the old map after character creation
+- radio no longer slows the game, minimal panel
+- hand-placed map monsters no longer stand frozen
+- battle commands are back: multiplayer no longer freezes actor input
+- fix vehicles not crossing world map bridges
+- held spacebar no longer auto-picks the first choice
+- 3d enemies no longer render squished by stacked shape rolls
+- removed biome music except alien biomes and space
+- restored the controls checklist, toggled by bubba or the options
+- removed the old creation mode select screen
+- hide language selection, game locked to english
+- removed the card battle mode
+- removed f1 binding for ascii mode
 
+
+0.5.2a
 - reworked eurodemics to keep track of player started epidemics: plateal infection or party member being infected will get registered, convert infection will have to wait the windoow period of the disease before being tracked-
 - player started epidemics now spread on their own when time passes
 - reassigned monster spawn list for omega tower dungeon 

@@ -448,7 +448,50 @@
     return true;
   }
 
-  // ── Infecting somebody out of a vial ──────────────────────────────────────  // ── Infecting somebody out of a vial ──────────────────────────────────────
+  // The same animal asked for more than company: a place in the party. It walks
+  // in wearing its creature class and holding a slot, which is the one thing a
+  // pet never does (PetSystem.inductAsMember). Everything else, the placement
+  // record and the map event, is settled exactly as a pet's would be.
+  function _recruitAnimalAsMember(rec, status, npcName, eventId) {
+    const AG = window.AnimalGrowthSystem;
+    const PS = window.PetSystem;
+    if (!AG || !PS || typeof PS.inductAsMember !== 'function') return false;
+    const def = AG.ANIMAL_DB?.[rec.animalId];
+    const sprite = def ? AG.getCurrentSprite(rec, def) : null;
+    const actor = PS.inductAsMember({
+      name: npcName || rec.animalId,
+      characterName: sprite,
+      characterIndex: 0,
+      isFollower: false,
+      note: _getT().beastPetNote
+        ? String(_getT().beastPetNote).replace(/\{kind\}/g, status.breed || '')
+        : '',
+    });
+    if (!actor) return false;
+    AG.releaseAnimal?.(rec, eventId);
+    return true;
+  }
+
+  // Somebody who talks, walking with the party rather than in it. No party slot
+  // and no actor: a follower record in the same registry a pet lives in, which
+  // is why it is marked sentient and carries the <Talk> tag (PetFollowerSystem).
+  function _recruitNpcAsFollower(npcName, profile, eventId) {
+    const PS = window.PetSystem;
+    if (!PS || typeof PS.recruitPet !== 'function') return false;
+    const ev = eventId != null ? $gameMap?.event(eventId) : null;
+    const pet = PS.recruitPet({
+      name: npcName,
+      characterName: ev?.characterName?.() || profile?.spriteKey || '',
+      characterIndex: ev?.characterIndex?.() ?? 0,
+      isFollower: true,
+      sentient: true,
+      level: profile?.level || 1,
+      note: '<Talk>', // i18n-ignore: note tag
+    });
+    return !!pet;
+  }
+
+  // ── Infecting somebody out of a vial ──────────────────────────────────────
   // A sealed culture vial names the disease in it, which is the only metadata
   // the action needs: <DiseaseVial: influenza>, written by
   // tools/health/gen_disease_vials.py onto all 228 of them.
@@ -621,6 +664,11 @@
   }
 
   function _bustNameFromEvent(event) {
+    // A `bust: <name>` line is the explicit form of the same statement and
+    // wins over the bare single-token comment (see NPCInitSpec, SECTION 3c of
+    // NPCSociety.js).
+    const written = window.NPCInitSpec?.bustFor?.(null, event);
+    if (written) return written;
     for (const line of _eventCommentLines(event)) {
       if (!line.includes(' ') && _bustFileExists(line)) return line;
     }
@@ -661,6 +709,10 @@
     // A bust named in the event's comments wins, exactly as in the message box.
     const commentBust = _bustNameFromEvent(event);
     if (commentBust && commentBust !== '7') return _bustUrl(commentBust);
+    // The panel opens on people who are nowhere near the player (the wiki, the
+    // web graph, a chat hyperlink), and a written bust is still theirs.
+    const writtenBust = window.NPCInitSpec?.bustFor?.(npcName, null);
+    if (writtenBust && writtenBust !== '7') return _bustUrl(writtenBust);
     const presetBust = _presetFromEvent(event)?.busts;
     if (presetBust && presetBust !== '7') return _bustUrl(presetBust);
     // A world leader carries their own portrait in Leaders.json, and this is
@@ -952,7 +1004,7 @@
   // rather than the woman. All of it is gated on Switch 48 (set by her dossier)
   // AND on Em being the party member actually doing the talking, so an ordinary
   // playthrough never sees any of it. Lines and numbers live in the "em" block
-  // of js/db/NPC/SocialLines.json.
+  // of js/db/NPC/SocialLines.json, whose "player" pool is what she says back.
   const EM_SWITCH   = 48;
   const EM_NAME     = 'Em';       // i18n-ignore: actor name, matched at runtime
   const BUBBA_NAME  = 'Bubba';    // i18n-ignore: actor name, matched at runtime
@@ -1116,6 +1168,142 @@
     const bonus = Number(_bubbaDb().opinionBonus);
     if (!bonus) return;
     _setNpcBaseOpinion(profile, actorId, (profile.playerOpinion ?? 0) + bonus);
+  }
+
+  // ── Em and Bubba, to each other ─────────────────────────────────────────
+  // The two layers above are about how the WORLD treats each of them. This one
+  // is the conversation they have with nobody but each other, and it runs in
+  // both directions: Em walking up to Bubba (`em.bubba` in SocialLines.json)
+  // and Bubba walking up to Em (`bubba.em`), whether Em is standing there as a
+  // map NPC or is being opened from the party roster. They are best friends and
+  // partners in crime, so the register is teasing rather than courteous: he
+  // frets and jokes and calls her guagliona, she answers the literal meaning of
+  // whatever he said and is magnificent about it.
+  //
+  // Nothing about it is romantic. The Court option is shown when Em raises it,
+  // because refusing to hear the answer is her whole character, and the answer
+  // is always the same: he is still Eris's, and being anything but her travel
+  // buddy would be weird. Bubba is never offered the option at all
+  // (NPCEmpathizeUI.js), and neither of them can be reported for harassing the
+  // other, which is the one thing three refusals normally costs.
+  //
+  // Every bank comes in two versions, one per direction, and both carry the
+  // same shape: greeting, positive/neutral/negative, `bicker` (the teasing
+  // exchange the Bicker action plays) and `situations`, keyed lines for what is
+  // happening around them right now (see _pairSituationKeys).
+  function _isEmNpc(npcName, event) {
+    if (String(npcName || '').trim().toLowerCase() === EM_NAME.toLowerCase()) return true;
+    const preset = event ? _presetFromEvent(event) : null;
+    return String(preset?.name || '').trim().toLowerCase() === EM_NAME.toLowerCase();
+  }
+
+  // Which way round this conversation is: 'em' when Em is doing the talking and
+  // Bubba is the one being talked to, 'bubba' for the mirror, null otherwise.
+  // Neither switch is consulted: two actors both named for the pair is proof
+  // enough, and Em's own layer already gates on hers.
+  function _pairSide(actor, npcName, event) {
+    if (!actor || !npcName) return null;
+    const me = String(actor.name() || '').trim().toLowerCase();
+    if (me === EM_NAME.toLowerCase() && _isBubbaNpc(npcName, event))    return 'em';
+    if (me === BUBBA_NAME.toLowerCase() && _isEmNpc(npcName, event))    return 'bubba';
+    return null;
+  }
+
+  // The block of lines for that direction: what the OTHER one says back, plus
+  // the `player` pool the talker answers in.
+  function _pairData(side) {
+    const db = _socialLines();
+    return side === 'em' ? (db.em?.bubba || null) : (db.bubba?.em || null);
+  }
+
+  function _pairContext(actor, npcName, event) {
+    const side = _pairSide(actor, npcName, event);
+    if (!side) return null;
+    const data = _pairData(side);
+    return data ? { side, data, bubba: true, pair: true } : null;
+  }
+
+  // The hour on the game clock, off the same minute counter the event log
+  // stamps its entries with. The world starts at 10:00 on 1 January 2001.
+  function _pairHour() {
+    const mins = Number($gameVariables?.value(114)) || 0;
+    return ((10 + Math.floor(mins / 60)) % 24 + 24) % 24;
+  }
+
+  // Every `situations` key that fits where the two of them are standing right
+  // now, most specific first: what the sky is doing, then the place, then the
+  // hour, then the state the party is in. Only keys the bank actually writes
+  // lines for are used, so the list can grow in the JSON alone.
+  function _pairSituationKeys() {
+    const keys = [];
+    const weather = window.$gameWeather?.currentWeatherType;
+    if (weather === 'rain')  keys.push('rain');   // i18n-ignore: WeatherTypes value
+    if (weather === 'storm') keys.push('storm');  // i18n-ignore: WeatherTypes value
+    if (weather === 'snow')  keys.push('snow');   // i18n-ignore: WeatherTypes value
+
+    let biome = '';
+    try { biome = String($gameSystem?.getBiomeFromCache?.($gamePlayer?.x, $gamePlayer?.y) || ''); }
+    catch (e) { biome = ''; }
+    if (!biome || biome === 'Unknown') biome = String($gameSystem?._procGenData?.currentBiome || ''); // i18n-ignore: sentinel
+    // i18n-ignore: biome ids, matched against Biomes.json keys
+    const PLACE = [
+      [/desert|dune|badland/i,          'desert'],
+      [/forest|jungle|wood|taiga/i,     'forest'],
+      [/mountain|peak|alpine|cliff/i,   'mountain'],
+      [/beach|coast|shore/i,            'beach'],
+      [/ocean|sea|lake|river|water/i,   'water'],
+      [/swamp|marsh|bog|fen/i,          'swamp'],
+      [/city|town|urban|village|road/i, 'town'],
+      [/dungeon|crypt|sewer|cave|ruin/i,'underground'],
+      [/space|station|orbit/i,          'space'],
+      [/^alien/i,                       'alien'],
+      [/snow|tundra|glacier|ice|arctic/i,'cold'],
+    ];
+    for (const [re, key] of PLACE) if (re.test(biome)) { keys.push(key); break; }
+    if (window.isProceduralInteriorMap?.($gameMap?.mapId?.())) keys.push('indoors');
+    if (window.WorldMapTransfer?.isWorldMap?.()) keys.push('worldmap');
+
+    const hour = _pairHour();
+    if (hour >= 23 || hour < 5)      keys.push('night');
+    else if (hour < 8)               keys.push('dawn');
+    else if (hour >= 20)             keys.push('evening');
+
+    const leader = $gameParty?.leader?.();
+    if (leader && leader.mhp > 0 && leader.hp / leader.mhp < 0.35) keys.push('hurt');
+    if (($gameParty?.gold?.() ?? 0) < 500) keys.push('broke');
+    return keys;
+  }
+
+  // The bond between the two of them is not an opinion and does not behave like
+  // one. It is a single shared number, the same read from either side, it
+  // starts where twelve years on the road left it, and it has NO ceiling: every
+  // kind word, every jab and every hour spent in the same camper puts it up
+  // again, forever. The one thing that has ever taken it down is Em asking him
+  // the question he has to say no to (see the romance branch in
+  // NPCEmpathizeUI.js). Kept on $gameSystem, so it belongs to the savegame.
+  const PAIR_BOND_START = 92;
+
+  function _pairBond() {
+    if (!window.$gameSystem) return PAIR_BOND_START;
+    if ($gameSystem._emBubbaBond == null) $gameSystem._emBubbaBond = PAIR_BOND_START;
+    return $gameSystem._emBubbaBond;
+  }
+  function _addPairBond(delta) {
+    const v = Math.round(_pairBond() + (Number(delta) || 0));
+    // A floor and no ceiling: she can ask twice and still have a friend.
+    if (window.$gameSystem) $gameSystem._emBubbaBond = Math.max(0, v);
+    return Math.max(0, v);
+  }
+
+  // A line about the here and now, or '' when nothing fits. Not every meeting
+  // gets one: the plain greetings would never be seen again if it did.
+  const PAIR_SITUATION_CHANCE = 0.6;
+  function _pairSituationLine(data) {
+    const bank = data?.situations;
+    if (!bank || Math.random() > PAIR_SITUATION_CHANCE) return '';
+    const live = _pairSituationKeys().filter(k => (bank[k] || []).length);
+    if (!live.length) return '';
+    return _rand(bank[live[Math.floor(Math.random() * live.length)]]);
   }
 
   // ── Non-sentient party members (classes 63+) ────────────────────────────
@@ -2524,6 +2712,59 @@
       if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
     }
 
+    // ── Em and Bubba (either direction) ────────────────────────────────────
+    // The pair conversation, in whichever direction it is running, or null when
+    // this is not the two of them. Unlike _emCtx / _bubbaCtx this DOES answer in
+    // actor mode: opening Em from the roster while Bubba leads is the commonest
+    // way the second direction is ever seen.
+    _pairCtx() {
+      if (this._entity) return null; // wiki page
+      const npcName = this._targetName();
+      if (!npcName) return null;
+      return _pairContext(
+        this._focusActor(), npcName,
+        this._actorId != null ? null : $gameMap?.event(this._eventId)
+      );
+    }
+
+    // How the other one greets them: a line about the weather, the place or the
+    // hour when one fits, otherwise the plain hello. One shot per panel.
+    _sayPairGreeting() {
+      if (this._pairGreeted) return;
+      const ctx = this._pairCtx();
+      if (!ctx) return;
+      const line = _pairSituationLine(ctx.data) || _rand(ctx.data.greeting);
+      if (!line) return;
+      this._pairGreeted = true;
+      const npcName = this._targetName();
+      this._chatHistory.push({ role: 'npc', text: vary(String(line).replace(/\{name\}/g, npcName)) });
+      if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
+    }
+
+    // Bicker: the action the two of them have and nobody else does. One of them
+    // starts something, the other gives it straight back, and it costs neither
+    // of them anything, because this is what they do instead of talking. The
+    // `bicker` bank is a list of {player, reply} pairs so a jab and its answer
+    // are never drawn out of step with one another.
+    _bicker() {
+      const ctx = this._pairCtx();
+      if (!ctx) return;
+      const npcName = this._targetName();
+      const fill = s => vary(String(s || '').replace(/\{name\}/g, npcName));
+      const beat = _rand(ctx.data.bicker || []);
+      if (!beat) return;
+      this._socialMode = false;
+      this._activeTab  = 'chat';
+      this._menuIndex  = 0;
+      this._pushChat('player', fill(beat.player));
+      this._pushChat('npc',    fill(beat.reply));
+      // Winding each other up is time spent together and nothing else: a point
+      // of standing, never a loss, whichever way the jab went.
+      _addPairBond(1 + Math.floor(Math.random() * 3));
+      this._gainCompany();
+      this._render();
+    }
+
     update() {
       Scene_MenuBase.prototype.update.call(this);
       NPCEmpathizeInputManager.update();
@@ -2816,7 +3057,9 @@
         case 'gift':       this._gift();        break;
         case 'pet':        this._pet();         break;
         case 'collect':    this._collect();     break;
-        case 'animalJoin': this._animalJoin();  break;
+        case 'animalJoin':      this._animalJoin(false); break;
+        case 'animalJoinParty': this._animalJoin(true);  break;
+        case 'joinFollower':    this._joinFollower();    break;
         case 'feed':       this._feed();        break;
         case 'bribe':      this._bribe();       break;
         case 'attack':     this._attack();      break;
@@ -2830,6 +3073,7 @@
         case 'spit':       this._beginTransmit('saliva');   break;
         case 'bite':       this._beginTransmit('bite');     break;
         case 'socialize':  this._socialize();   break;
+        case 'bicker':     this._bicker();      break;
         case 'romance':    this._romance();     break;
         case 'directions': this._askDirections(); break;
         case 'cardDuel':   this._cardDuel();    break;
@@ -3129,9 +3373,13 @@
       return _isNonSentientNpc(name);
     }
     _focusOpinion(profile) {
+      // Em and Bubba read their own uncapped bond, never a stranger's opinion.
+      if (this._pairCtx?.()) return _pairBond();
       return _npcEffectiveOpinion(profile, this._focusActor());
     }
     _focusAttraction(profile) {
+      // And they want nothing from each other, in either direction, ever.
+      if (this._pairCtx?.()) return 0;
       return _npcEffectiveAttraction(profile, this._focusActor());
     }
     // Who the panel is actually about, whichever of the three ways it was
@@ -3392,7 +3640,10 @@
     //
     // Thrown on the same d20 every other check in the game is thrown on, so the
     // player sees the number they were quoted actually rolled.
-    async _animalJoin() {
+    // `asMember` is the difference between the two offers on the board: an
+    // animal asked to follow becomes a pet, an animal asked to travel takes a
+    // party slot. Same roll, same odds, same refusal; only the landing differs.
+    async _animalJoin(asMember = false) {
       const AG = window.AnimalGrowthSystem;
       const status = this._animalStatus?.();
       const rec = this._animalRecord?.();
@@ -3404,7 +3655,9 @@
       const actor = this._focusActor() || $gameParty?.leader();
       const kind = this._beastKind();
 
-      if (_travellingPartyCount() >= 3) { SoundManager.playBuzzer(); return; }
+      if (asMember) {
+        if (!window.PetSystem?.hasFreeSlot?.()) { SoundManager.playBuzzer(); return; }
+      } else if (_travellingPartyCount() >= 3) { SoundManager.playBuzzer(); return; }
 
       const chance = _animalJoinChance(status, actor);
       const wisMod = _wisMod(actor);
@@ -3449,7 +3702,9 @@
       SoundManager.playOk();
       // It comes along as a pet rather than as a party member: an animal walks
       // with the party, it does not hold a slot in it (PetFollowerSystem).
-      const joined = _recruitAnimalAsPet(rec, status, npcName, this._eventId);
+      const joined = asMember
+        ? _recruitAnimalAsMember(rec, status, npcName, this._eventId)
+        : _recruitAnimalAsPet(rec, status, npcName, this._eventId);
       if (!joined) {
         this._pushChat('npc', String(T.beastJoinRefused || '')
           .replace(/\{kind\}/g, kind).replace(/\{name\}/g, npcName));
@@ -3745,18 +4000,44 @@
       // Em (Switch 48): the NPC answers her, not a stranger. Their stance owns
       // the reply and scales what the interaction is worth, so praise from the
       // god-killer lands very differently on a zealot and on an invasive fan.
-      const emCtx = this._emCtx();
+      // The two of them talking to each other owns the exchange outright, in
+      // whichever direction it is running: the world's opinion of either of
+      // them has nothing to do with it, so neither layer below is consulted.
+      const pairCtx = this._pairCtx();
+      if (pairCtx) {
+        const tone = emTone || (delta >= 0 ? 'positive' : 'negative');
+        const said = _rand(pairCtx.data.player?.[tone] || pairCtx.data.player);
+        if (said && id !== 'joke' && id !== 'story' && id !== 'poem') playerLine = fill(said);
+        const back = _rand(pairCtx.data[tone]);
+        if (back) npcLine = fill(back);
+        delta = Math.round(Math.abs(delta) * _stanceToneMult(pairCtx, tone));
+        // Insulting each other is the friendliest thing either of them does.
+        // Whatever the move was meant to be worth, between the two of them it
+        // comes out the same way: up. The bond takes it instead of an opinion,
+        // uncapped, and nothing is filed against either of them for it.
+        _addPairBond(delta);
+      }
+
+      const emCtx = pairCtx ? null : this._emCtx();
       if (emCtx) {
         if (!emTone) emTone = delta >= 0 ? 'positive' : 'negative';
         const emLine = _rand(emCtx.data[emTone]);
         if (emLine) npcLine = fill(emLine);
         delta = Math.round(delta * _stanceToneMult(emCtx, emTone));
+        // She does not speak like the party leader she is standing in for: the
+        // "player" pool of the em block is her own voice, keyed by tone. A joke
+        // or a performance is content she chose, so those keep the line they
+        // generated; everything else is answered in her words.
+        if (id !== 'joke' && id !== 'story' && id !== 'poem') {
+          const emSaid = _rand(_emDb().player?.[emTone]);
+          if (emSaid) playerLine = fill(emSaid);
+        }
       }
 
       // Bubba (Switch 49): he does not perform, he deflects. Whatever the move
       // was, he says something modest about a shed and a wrench, and the NPC
       // answers the man who gave them their roads back rather than a stranger.
-      const bubbaCtx = this._bubbaCtx();
+      const bubbaCtx = pairCtx ? null : this._bubbaCtx();
       if (bubbaCtx) {
         let tone = emTone || (delta >= 0 ? 'positive' : 'negative');
         const modest = _rand(bubbaCtx.data.player);
@@ -3771,8 +4052,9 @@
       // NPC's own. A flop pays nobody.
       const funStep = _payFun(actorId, profile, npcName, id, delta);
 
-      // Apply reputation to the focused member only.
-      if (profile && actorId != null) {
+      // Apply reputation to the focused member only. The pair keep their own
+      // ledger (above) and are on nobody's faction books for teasing.
+      if (profile && actorId != null && !pairCtx) {
         _addNpcOpinion(profile, actorId, delta);
         (profile.eventLog ??= []).push({
           tag: 'social_' + id, desc: `${id} (${delta >= 0 ? '+' : ''}${delta})`,
@@ -3847,7 +4129,8 @@
       // beast narrows the tray.
       const feral = _isNonSentientActor(this._focusActor()) || this._isNonSentientSubject();
       this._giftItems         = ($gameParty?.items() ?? [])
-        .filter(i => i.itypeId === 1 && (!feral || _feralCanGift(i)));
+        .filter(i => i.itypeId === 1 && (!feral || _feralCanGift(i)) &&
+          !(window.VectorGun && window.VectorGun.isBound(i)));
       this._stealMode         = false;
       this._bribeMode         = false;
       this._attackConfirm     = false;
@@ -4497,13 +4780,15 @@
       const profile = _getProfile(npcName);
       const T       = _getT();
 
-      // Join gates, mirroring the UI gate in _renderInner: the 3-member party cap,
-      // the level margin, the event needing a self-switch A page to disappear
-      // behind once it is recruited, and never a shop-shift-covered counter
-      // (the face shown is a borrowed persona, not someone free to travel, and
-      // flipping the counter's own self-switch A would strand it, see
+      // Join gates, mirroring the UI gate in _renderInner: the level margin, the
+      // event needing a self-switch A page to disappear behind once it is
+      // recruited, and never a shop-shift-covered counter (the face shown is a
+      // borrowed persona, not someone free to travel, and flipping the
+      // counter's own self-switch A would strand it, see
       // ShopShiftManager.isShopEvent). No Switch 67 or name-matching.
-      if (_travellingPartyCount() >= 3 || !_hasSelfSwitchAPage(evId)
+      // A full party is NOT a gate any more: the fourth person to say yes signs
+      // on inactive and waits on the Dynamics board (NPCSystemParty.joinParty).
+      if (!_hasSelfSwitchAPage(evId)
           || window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
           || !_joinLevelOk(_presetFromEvent($gameMap?.event(evId))?.level ?? profile?.level)) {
         SoundManager.playBuzzer();
@@ -4641,22 +4926,104 @@
         window.NPCGone?.record($gameMap.mapId(), swEvId, npcName, 'joined');
       }
 
-      // Show success in the chat, the player closes the panel when ready.
-      const joinText = T('Empathize.joinedParty', { name: npcName });
+      // Somebody joining is the end of the conversation, not a line in it: the
+      // panel closes and the news is a toast, so the player is left standing on
+      // the map with their new companion rather than reading a chat log.
+      const inactive = $gameTemp?._npcJoinedInactive === true;
+      const joinText = inactive
+        ? T('Empathize.joinedPartyInactive', { name: npcName })
+        : T('Empathize.joinedParty', { name: npcName });
       // The newcomer may have taken the place of a companion who fell and was
       // never brought back; say whose place it was rather than letting them
       // vanish from the roster without a word.
       const displaced = $gameTemp?._npcJoinDisplacedName;
       if (displaced) {
-        this._chatHistory.push({ role: 'npc', text: T('Empathize.joinReplacedFallen', { name: displaced }) });
+        window.ParchmentToast?.show?.(T('Empathize.joinReplacedFallen', { name: displaced }),
+          { severity: 'warning', duration: 240 });
         $gameTemp._npcJoinDisplacedName = null;
       }
-      this._chatHistory.push({ role: 'npc', text: joinText });
-      if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
-      this._joinMessage = { type: 'accept', text: joinText };
-      this._activeTab = 'chat';
-      this._render();
-      this._scrollChatToBottom();
+      window.ParchmentToast?.show?.(joinText, { severity: 'info', duration: 260 });
+
+      // Same handover the card table uses: drop the overlay, let go of the
+      // event, and hand the map back.
+      this._removeOverlay();
+      this._releaseEventLock();
+      SceneManager.pop();
+    }
+
+    // The lesser of the two offers made to somebody who talks: come along, but
+    // not as one of us. They walk behind the party as a follower (the registry
+    // PetFollowerSystem owns) instead of taking one of the three slots, which
+    // means there is always room for them however full the party is. Argued on
+    // the same PSI roll and the same odds as Join, because it is the same
+    // question asked more modestly.
+    async _joinFollower() {
+      const evId    = this._eventId;
+      const npcName = _getNPCName(evId);
+      const profile = _getProfile(npcName);
+      const T       = _getT();
+
+      if (!_hasSelfSwitchAPage(evId)
+          || window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))) {
+        SoundManager.playBuzzer();
+        return;
+      }
+
+      const actor   = this._focusActor() || $gameParty?.leader();
+      const opinion = this._focusOpinion(profile);
+      const chance  = _joinChance(opinion, actor);
+      const psiMod  = actor ? (actor.psiMod ?? Math.floor(((actor.luk || 10) - 10) / 2)) : 0;
+
+      let success;
+      if (window.Dice3D) {
+        const res = await window.Dice3D.rollPercentage(chance, {
+          actionName: `Follow: ${npcName}`, // i18n-ignore: Dice3D check id
+          statName: 'PSI', // i18n-ignore: Dice3D stat id
+          modifier: psiMod,
+          actor,
+          force3D: true,
+        });
+        success = res.success;
+      } else {
+        success = Math.random() * 100 < chance;
+      }
+
+      if (!success) {
+        SoundManager.playBuzzer();
+        if (profile) _addNpcOpinion(profile, actor?.actorId(), -2);
+        const phrases = T.joinRefusalPhrases || [];
+        this._pushChat('npc', phrases[Math.floor(Math.random() * phrases.length)] || '');
+        this._render();
+        this._scrollChatToBottom();
+        return;
+      }
+
+      if (!_recruitNpcAsFollower(npcName, profile, evId)) {
+        SoundManager.playBuzzer();
+        this._joinMessage = { type: 'reject', text: T('Empathize.joinFailed') };
+        this._render();
+        return;
+      }
+
+      SoundManager.playOk();
+      if (profile) profile.playerOpinion = Math.min(100, (profile.playerOpinion ?? 0) + 40);
+      _gainSocialFromOpinion(actor?.actorId(), 40, profile);
+      this._justJoined = true;
+
+      // They stop standing on the map, and the world knows they left with the
+      // party, exactly as a full recruit does.
+      const swEvId = evId ?? this._launchEventId;
+      if (swEvId != null && $gameMap) {
+        $gameSelfSwitches.setValue([$gameMap.mapId(), swEvId, 'A'], true);
+        $gameMap.event(swEvId)?.refresh();
+        window.NPCGone?.record($gameMap.mapId(), swEvId, npcName, 'joined');
+      }
+
+      window.ParchmentToast?.show?.(T('Empathize.joinedFollower', { name: npcName }),
+        { severity: 'info', duration: 260 });
+      this._removeOverlay();
+      this._releaseEventLock();
+      SceneManager.pop();
     }
 
     // Focus/blur callbacks from the chat input, the single source of truth for
@@ -5391,7 +5758,9 @@
       return [...people.values()].sort((a, b) => a.name.localeCompare(b.name));
     },
 
-    listLeaders() {
+    // Everybody who ever held an office in this world, book or not. The two
+    // wiki shelves above are cut out of this one roll.
+    listAllLeaders() {
       const hm = this._hm();
       const deaths = hm?.getLeaderDeaths?.() || {};
       const deadList = new Set(hm?.getDeadLeaders?.() || []);
@@ -5426,6 +5795,29 @@
       // A-Z of the page is the A-Z the reader sees.
       const label = n => (window.WorldNames ? window.WorldNames.leader(n) : n);
       return [...out.values()].sort((a, b) => label(a.name).localeCompare(label(b.name)));
+    },
+
+    // The cast splits in two, and the wiki gives each half its own shelf.
+    //
+    // MAIN PLAYERS are the people the book wrote down: Leaders.json, the real
+    // historical figures and the canon characters, each with a hand-written
+    // record behind them. LEADERS is everybody else the world happened to
+    // seat - a power whose roster ran out, a faction's own officers - whose
+    // whole biography is simulated (LeaderPersona). Both open the same kind of
+    // article; the difference is who wrote the person.
+    _isBookLeader(name) {
+      try { return !!window.LeaderPersona?.isBookLeader?.(name); }
+      catch (e) { return false; }
+    },
+
+    listMainPlayers() {
+      return this.listAllLeaders().filter(l => this._isBookLeader(l.name));
+    },
+
+    // The wiki's Leaders shelf: the procedural half of the cast, whose lives
+    // the world simulated rather than a writer writing them.
+    listLeaders() {
+      return this.listAllLeaders().filter(l => !this._isBookLeader(l.name));
     },
 
     // The other half of the political class: everybody NPCPolitics elected,
@@ -5790,9 +6182,11 @@
       // Bubba (Switch 49): the same for the man who built the Liminal Engine,
       // so the UI can hide what he refuses to do and label what he walks into.
       _bubbaPlaythrough, _isBubbaActor, _bubbaContext, _bubbaDb,
+      _isEmNpc, _pairSide, _pairContext, _pairSituationKeys, _pairSituationLine,
+      _pairBond, _addPairBond,
       // Non-sentient members (classes 63+): the UI layer builds their action
       // list out of these and hides everything a beast cannot do.
-      _animalJoinChance, _wisMod, _recruitAnimalAsPet,
+      _animalJoinChance, _wisMod, _recruitAnimalAsPet, _recruitAnimalAsMember,
       _isNonSentientActor, _feralKind, _feralBand, _feralCanGift, FERAL_ACTIONS,
       _feralGrowlFor, _feralNoise, _isNonSentientNpc,
       // Petting and feeding: the UI layer builds the beast action row and the

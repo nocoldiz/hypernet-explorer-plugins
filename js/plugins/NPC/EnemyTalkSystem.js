@@ -908,28 +908,6 @@
         // gone.
         // i18n-ignore-start: Archetypes.json ids and sprite sheet names
         switch (archetype) {
-            case 'Goblin':
-                const goblinSheets = [
-                    'NPCs/!$GoblinJester1', 'NPCs/!$GoblinKnight1',
-                    'NPCs/!$GoblinCourier1', 'NPCs/!$GoblinRecruit1',
-                    'NPCs/!$GoblinCleric1', 'Creatures/!$OrcBrawler1',
-                    'NPCs/!$BotSpacer1'
-                ];
-                characterName = goblinSheets[Math.floor(Math.random() * goblinSheets.length)];
-                characterIndex = 0;
-                break;
-
-            case 'Dwarf':
-                const dwarfSheets = [
-                    'Skab/!$DwarvenGuard', 'Skab/!$DwarvenMiner',
-                    'Skab/!$DwarvenWarrior', 'Skab/!$DwarvenSmith',
-                    'Skab/!$DwarvenExplorer', 'Skab/!$DwarvenSage',
-                    'Skab/!$DwarvenValkirie'
-                ];
-                characterName = dwarfSheets[Math.floor(Math.random() * dwarfSheets.length)];
-                characterIndex = 0;
-                break;
-
             case 'ArmoredKnight':
                 characterName = 'NPCs/!$WanderingKnight1';
                 characterIndex = 0;

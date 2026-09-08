@@ -2,7 +2,8 @@
   "menu": {
     "explore": "EXPLORE",
     "reconnect": "RECONNECT",
-    "tutorial": "TUTORIAL",
+    "storyMode": "NEW STORY",
+    "continueStory": "CONTINUE STORY",
     "minigames": "MINIGAMES",
     "sandbox": "SANDBOX",
     "worlds": "WORLDS",
@@ -15,7 +16,8 @@
   "menuOverlay": {
     "explore": "EXPLORE",
     "reconnect": "RECONNECT",
-    "tutorial": "TUTORIAL",
+    "storyMode": "NEW STORY",
+    "continueStory": "CONTINUE STORY",
     "minigames": "MINIGAMES",
     "sandbox": "SANDBOX",
     "worlds": "WORLDS",

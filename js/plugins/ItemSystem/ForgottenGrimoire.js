@@ -429,10 +429,10 @@
               <div class="back-button focusable" onclick="SceneManager._scene.popScene()">${back}</div>
               <h2 class="title" style="font-size:1.665em;">${this.headerTitle()}</h2>
             </div>
-            <div style="font-family:'Lora',serif; font-style: normal; opacity:0.8; font-size:0.892em; margin-bottom:12px; color:var(--text-primary-hover,#58180D);">
+            <div style="font-family:var(--font-ui); font-style: normal; opacity:0.8; font-size:0.892em; margin-bottom:12px; color:var(--text-primary-hover,#58180D);">
               ${T('Grimoire.ui.blurb')}
             </div>
-            <div style="font-family:'Lora',serif; font-weight:bold; font-size:0.928em; margin-bottom:6px; color:var(--text-primary-hover,#58180D);">${T('Grimoire.ui.partyReader')}</div>
+            <div style="font-family:var(--font-ui); font-weight:bold; font-size:0.928em; margin-bottom:6px; color:var(--text-primary-hover,#58180D);">${T('Grimoire.ui.partyReader')}</div>
             <div class="grim-list">${actorsHTML}</div>
             <div class="grim-psi">
               <div style="font-weight:bold; color:var(--accent-gold-pure,#b8860b);">${T('Grimoire.ui.psychicDiagnostics')}</div>

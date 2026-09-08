@@ -65,5 +65,7 @@
   "clickToRecruit": "Clicca per ingaggiare",
   "cannotAfford": "Fondi insufficienti",
   "combatStatistics": "Statistiche di combattimento",
-  "release": "Congeda"
+  "release": "Congeda",
+  "practiceBattle": "Battaglia di addestramento",
+  "practiceTooFew": "Servono almeno due truppe combattenti per un'esercitazione."
 }

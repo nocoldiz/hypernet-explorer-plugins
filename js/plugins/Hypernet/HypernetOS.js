@@ -87,16 +87,118 @@
 
         registerApp: function(options) {
             const { id, name, icon, launchFn, desktopShortcut = true, desktopAnchor = 'left' } = options;
-            this._apps[id] = { id, name, icon, launchFn, desktopShortcut, desktopAnchor };
+            const category = options.category || this.defaultCategory(id);
+            this._apps[id] = { id, name, icon, launchFn, desktopShortcut, desktopAnchor, category };
 
             // Proactively refresh desktop and start menu if scene is active
             this.refreshDesktopIcons();
             this.refreshStartMenu();
         },
+
+        // --- Program categories -------------------------------------------------
+        // The start menu files every program under a heading, the way the old
+        // "All Programs" tree did. An app may name its own category when it
+        // registers; the ones that never did are filed here so the menu never
+        // shows a loose program.
+        CATEGORY_ORDER: ['accessories', 'media', 'reference', 'internet', 'economy', 'office', 'games', 'civic', 'system'],
+        // i18n-ignore-start  app ids and category ids, named by categoryLabel()
+        DEFAULT_CATEGORIES: {
+            'sys-task-mgr': 'system', 'sys-terminal': 'system', 'control-panel': 'system',
+            'my-computer': 'system', 'my-documents': 'system', 'app-bios': 'system',
+            'app-hypernet-browser': 'internet', 'app-hypernet-shop': 'internet', 'app-news-history': 'internet',
+            'tv-guide': 'media', 'app-hyperamp': 'media',
+            'app-hypernet-notepad': 'accessories', 'app-hypernet-paint': 'accessories',
+            'app-weather': 'reference', 'app-bestiary-encarta': 'reference', 'app-object-index': 'reference',
+            'app-eurodemics': 'reference', 'app-artifact-analyzer': 'reference',
+            'app-bank-system': 'economy', 'app-stock-market': 'economy', 'app-real-estate': 'economy',
+            'app-token-exchange': 'economy', 'app-job-offers': 'economy',
+            'app-kanban-quest': 'office',
+            'app-colosseum': 'games', 'app-bobnzi': 'games',
+            'app-neuropolice': 'civic',
+            'app-recycle': 'system', 'app-search': 'accessories', 'app-help': 'accessories',
+            'app-chiplab': 'accessories'
+        },
+        // i18n-ignore-end
+
+        defaultCategory: function(id) {
+            return this.DEFAULT_CATEGORIES[id] || 'accessories';
+        },
+
+        categoryLabel: function(category) {
+            const key = 'HypernetOS.category.' + category;
+            return T.has(key) ? T(key) : category;
+        },
+
+        // Registered apps grouped by category, in menu order. Categories with
+        // no program are skipped; an unknown category goes last.
+        appsByCategory: function() {
+            const groups = new Map();
+            this.CATEGORY_ORDER.forEach(c => groups.set(c, []));
+            Object.values(this._apps).forEach(app => {
+                if (!this.isInstalled(app)) return;
+                const c = app.category || this.defaultCategory(app.id);
+                if (!groups.has(c)) groups.set(c, []);
+                groups.get(c).push(app);
+            });
+            const out = [];
+            groups.forEach((apps, category) => {
+                if (!apps.length) return;
+                apps.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+                out.push({ category, label: this.categoryLabel(category), apps });
+            });
+            return out;
+        },
+
+        // --- Desktop shortcuts the player chose ----------------------------------
+        // registerApp's desktopShortcut is only the default. The player pins and
+        // unpins programs from the start menu (drag, or the context menu), and
+        // that choice lives on $gameSystem so it travels with the save.
+        desktopPins: function() {
+            if (typeof $gameSystem === 'undefined' || !$gameSystem) return {};
+            if (!$gameSystem._hypernetDesktopPins) $gameSystem._hypernetDesktopPins = {};
+            return $gameSystem._hypernetDesktopPins;
+        },
+
+        isOnDesktop: function(app) {
+            if (!app) return false;
+            const pins = this.desktopPins();
+            if (Object.prototype.hasOwnProperty.call(pins, app.id)) return !!pins[app.id];
+            return app.desktopShortcut !== false;
+        },
+
+        // Pin (or unpin) a program on the desktop. An optional cell says where
+        // a dragged shortcut was dropped; it is honoured when legal.
+        setOnDesktop: function(id, on, cell) {
+            const app = this._apps[id];
+            if (!app) return false;
+            const pins = this.desktopPins();
+            pins[id] = !!on;
+            const layout = this.DesktopGrid.savedLayout();
+            if (layout) {
+                if (on && cell) layout[id] = { c: cell.c, r: cell.r };
+                if (!on) delete layout[id];
+            }
+            this.refreshDesktopIcons();
+            return true;
+        },
         
         launchApp: function(id) {
             const app = this._apps[id];
+            if (app && !this.isInstalled(app)) {
+                if (this.Dialog) this.Dialog.error(T('HypernetOS.xp.run.removed', { name: app.name }), app.name);
+                return;
+            }
             if (app && typeof app.launchFn === 'function') {
+                let spawned = null;
+                // Add or Remove Programs reads how often and when a program ran.
+                if (window.HypernetFileSystem && !/^sys-|^app-run$/.test(id)) {
+                    const usage = window.HypernetFileSystem.getRegistry('appUsage', {}) || {};
+                    const rec = usage[id] || { count: 0, last: '' };
+                    rec.count++;
+                    rec.last = this.clockStamp ? this.clockStamp().slice(0, 10) : '';
+                    usage[id] = rec;
+                    window.HypernetFileSystem.setRegistry('appUsage', usage);
+                }
                 try {
                     // Close start menu on launch
                     const startMenu = document.getElementById('hypernet-start-menu');
@@ -107,6 +209,7 @@
                     if (window.HypernetOS.Kernel) {
                         const proc = window.HypernetOS.Kernel.spawnProcess(app.name || id, app);
                         if (!proc) return; // OOM or spawn failure
+                        spawned = proc;
                         window.HypernetOS.currentLaunchingPid = proc.pid;
                     }
 
@@ -115,7 +218,18 @@
 
                     if (window.SoundManager) SoundManager.playOk();
                 } catch (err) {
+                    // A launch that threw halfway leaves the process it was
+                    // given and the pid stamp on the next window behind it:
+                    // hand both back so the machine stays consistent.
                     console.error(`Error launching app ${id}:`, err);
+                    window.HypernetOS.currentLaunchingPid = null;
+                    if (spawned && window.HypernetOS.Kernel) {
+                        window.HypernetOS.Kernel.killProcess(spawned.pid);
+                    }
+                    if (window.HypernetOS.XP && window.HypernetFileSystem
+                        && !window.HypernetFileSystem.getRegistry('errorReportingOff', false)) {
+                        window.HypernetOS.XP.errorReport(app.name || id, err);
+                    }
                 }
             } else {
                 console.warn(`App "${id}" is not registered or missing launchFn.`);
@@ -156,7 +270,7 @@
             grid.icons = [];
 
             Object.values(this._apps).forEach(app => {
-                if (app.desktopShortcut === false) return;
+                if (!this.isOnDesktop(app) || !this.isInstalled(app)) return;
 
                 const iconDiv = document.createElement('div');
                 iconDiv.className = 'desktop-icon';
@@ -438,19 +552,119 @@
             if (!listContainer) return;
 
             listContainer.innerHTML = '';
-            Object.values(this._apps).forEach(app => {
-                const item = document.createElement('div');
-                item.className = 'start-menu-app-item';
-                item.innerHTML = `
-                    <div class="start-menu-app-icon">${this.getIconHTML(app.icon, 24)}</div>
-                    <div class="start-menu-app-name">${app.name}</div>
-                `;
-                item.addEventListener('click', (e) => {
+            // Programs are filed under their category headings. A heading
+            // folds its group away; the folded set is remembered on the save.
+            const folded = this.foldedCategories();
+            this.appsByCategory().forEach(group => {
+                const head = document.createElement('div');
+                head.className = 'start-menu-category focusable' + (folded[group.category] ? ' folded' : '');
+                head.tabIndex = 0;
+                head.dataset.category = group.category;
+                head.innerHTML = `<span class="start-menu-category-arrow"></span><span>${group.label}</span>`;
+                head.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    this.launchApp(app.id);
+                    folded[group.category] = !folded[group.category];
+                    this.refreshStartMenu();
+                    if (window.SoundManager) SoundManager.playCursor();
                 });
-                listContainer.appendChild(item);
+                listContainer.appendChild(head);
+                if (folded[group.category]) return;
+
+                group.apps.forEach(app => {
+                    const item = document.createElement('div');
+                    item.className = 'start-menu-app-item';
+                    item.dataset.appId = app.id;
+                    item.innerHTML = `
+                        <div class="start-menu-app-icon">${this.getIconHTML(app.icon, 24)}</div>
+                        <div class="start-menu-app-name">${app.name}</div>
+                    `;
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (item._hnDragged) { item._hnDragged = false; return; }
+                        this.launchApp(app.id);
+                    });
+                    this.attachStartMenuDrag(item, app);
+                    listContainer.appendChild(item);
+                });
             });
+        },
+
+        foldedCategories: function() {
+            if (typeof $gameSystem === 'undefined' || !$gameSystem) return {};
+            if (!$gameSystem._hypernetFoldedCategories) $gameSystem._hypernetFoldedCategories = {};
+            return $gameSystem._hypernetFoldedCategories;
+        },
+
+        // A program dragged out of the start menu and dropped on the desktop
+        // becomes a shortcut in the cell it landed on. The item itself stays
+        // put: a ghost copy travels with the pointer.
+        attachStartMenuDrag: function(item, app) {
+            item.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                const startX = e.clientX, startY = e.clientY;
+                let ghost = null;
+                let dragging = false;
+
+                const onMove = (ev) => {
+                    if (!dragging) {
+                        if (Math.abs(ev.clientX - startX) + Math.abs(ev.clientY - startY) < 8) return;
+                        dragging = true;
+                        ghost = document.createElement('div');
+                        ghost.className = 'desktop-icon start-menu-drag-ghost';
+                        ghost.innerHTML = `
+                            <div class="desktop-icon-img">${this.getIconHTML(app.icon, 72)}</div>
+                            <div class="desktop-icon-text">${app.name}</div>`;
+                        const host = document.getElementById('hypernet-os-container') || document.body;
+                        host.appendChild(ghost);
+                    }
+                    ghost.style.left = (ev.clientX - 40) + 'px';
+                    ghost.style.top = (ev.clientY - 40) + 'px';
+                    const over = this._desktopDropTarget(ev);
+                    ghost.classList.toggle('illegal', !over);
+                };
+
+                const onUp = (ev) => {
+                    document.removeEventListener('mousemove', onMove, true);
+                    document.removeEventListener('mouseup', onUp, true);
+                    if (!dragging) return;
+                    if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
+                    item._hnDragged = true;
+                    setTimeout(() => { item._hnDragged = false; }, 0);
+
+                    if (!this._desktopDropTarget(ev)) return;
+                    const container = document.getElementById('hypernet-desktop-icons-container');
+                    let cell = null;
+                    if (container) {
+                        const cr = container.getBoundingClientRect();
+                        const m = this.DesktopGrid.metrics();
+                        cell = this.DesktopGrid.cellFromPoint(ev.clientX - cr.left, ev.clientY - cr.top, m);
+                        if (!this.DesktopGrid.isLegalCell({ app }, cell, m)) cell = null;
+                    }
+                    this.setOnDesktop(app.id, true, cell);
+                    this.closeStartMenu();
+                    if (window.SoundManager) SoundManager.playOk();
+                };
+
+                document.addEventListener('mousemove', onMove, true);
+                document.addEventListener('mouseup', onUp, true);
+            });
+        },
+
+        // True when the pointer is over bare desktop: not the start menu, not
+        // the taskbar, not an open window.
+        _desktopDropTarget: function(ev) {
+            const el = document.elementFromPoint(ev.clientX, ev.clientY);
+            if (!el) return false;
+            if (el.closest('#hypernet-start-menu') || el.closest('#hypernet-taskbar') ||
+                el.closest('.hypernet-os-window')) return false;
+            return !!el.closest('#hypernet-os-desktop');
+        },
+
+        closeStartMenu: function() {
+            const startMenu = document.getElementById('hypernet-start-menu');
+            const startBtn = document.getElementById('hypernet-start-btn');
+            if (startMenu) startMenu.classList.remove('open');
+            if (startBtn) startBtn.classList.remove('active');
         },
 
         refreshTaskbarTabs: function() {
@@ -535,7 +749,45 @@
             if (idx > -1) {
                 this.processes[idx].status = 'KILLED';
                 this.processes.splice(idx, 1);
+                return true;
             }
+            return false;
+        },
+
+        findProcess: function(pid) {
+            return this.processes.find(p => p.pid == pid) || null;
+        },
+
+        // A suspended process keeps its memory but stops being ticked and stops
+        // counting towards the load, which is what the machine does when a
+        // window is minimised and what the shell's SUSPEND asks for.
+        setStatus: function(pid, status) {
+            const proc = this.findProcess(pid);
+            if (!proc) return false;
+            proc.status = status;
+            if (status === 'SUSPENDED') proc.cpuUsage = 0;
+            return true;
+        },
+
+        // Seconds the machine has been up. The kernel is created with the OS
+        // scene, so this is honestly "since the desktop came up".
+        bootTime: Date.now(),
+        uptime: function() {
+            return Math.max(0, Math.floor((Date.now() - this.bootTime) / 1000));
+        },
+
+        // One reader for every place that prints the machine's condition: the
+        // task manager, the shell's MEM and SYSTEMINFO, the control panel.
+        getStats: function() {
+            const usedRAM = this.getUsedRAM();
+            return {
+                totalRAM: this.totalRAM,
+                usedRAM: usedRAM,
+                freeRAM: Math.max(0, this.totalRAM - usedRAM),
+                cpu: this.totalCPU,
+                processes: this.processes.length,
+                uptime: this.uptime()
+            };
         },
         
         getUsedRAM: function() {
@@ -543,7 +795,7 @@
         },
         
         tick: function() {
-            let baseCPU = 2; 
+            let baseCPU = 2;
             this.processes.forEach(p => {
                 if (p.status === 'RUNNING') {
                     p.tick();
@@ -985,10 +1237,16 @@
         },
 
         closeAll: function() {
-            this.windows.forEach(win => {
+            const closed = this.windows.slice();
+            closed.forEach(win => {
                 if (win.parentNode) win.parentNode.removeChild(win);
             });
             this.windows = [];
+            // Turning the machine off is still a close: every app hangs its
+            // teardown (scene terminate, stray overlays, timers) on this event,
+            // so skipping it here left whole apps running with nothing on
+            // screen, and their stale handles were ticked by the next session.
+            closed.forEach(win => win.dispatchEvent(new Event('hypernet-closed')));
             window.HypernetOS.refreshTaskbarTabs();
         }
     };
@@ -1004,6 +1262,32 @@
     Scene_HypernetOS.prototype = Object.create(Scene_MenuBase.prototype);
     Scene_HypernetOS.prototype.constructor = Scene_HypernetOS;
     window.Scene_HypernetOS = Scene_HypernetOS;
+
+    // An app's own DOM handlers (the inline onclick attributes every window's
+    // markup is built from) run outside every guard the OS puts around launch
+    // and the per-frame tick. One of them throwing used to reach RMMZ's global
+    // error handler, which answers by stopping the scene and all audio: the
+    // desktop stayed on screen with nothing updating and no way to shut it
+    // down, and the only way out was killing the game. While the machine is the
+    // running scene such an error is logged and the desktop keeps going.
+    const _SceneManager_onError_HypernetOS = SceneManager.onError;
+    SceneManager.onError = function(event) {
+        if (SceneManager._scene instanceof Scene_HypernetOS) {
+            console.error('HypernetOS: an application faulted.', event.message,
+                event.filename, event.lineno);
+            return;
+        }
+        _SceneManager_onError_HypernetOS.call(this, event);
+    };
+
+    const _SceneManager_onReject_HypernetOS = SceneManager.onReject;
+    SceneManager.onReject = function(event) {
+        if (SceneManager._scene instanceof Scene_HypernetOS) {
+            console.error('HypernetOS: an application faulted.', event.reason);
+            return;
+        }
+        _SceneManager_onReject_HypernetOS.call(this, event);
+    };
 
     Scene_HypernetOS.prototype.initialize = function() {
         Scene_MenuBase.prototype.initialize.call(this);
@@ -1109,6 +1393,19 @@
                             <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(188, 16)}</div>
                             <div>${T('HypernetOS.hypernetExplorer')}</div>
                         </div>
+                        <div class="start-menu-divider"></div>
+                        <div class="start-menu-link" id="link-help">
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(190, 16)}</div>
+                            <div>${T('HypernetOS.xp.help.appName')}</div>
+                        </div>
+                        <div class="start-menu-link" id="link-search">
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(190, 16)}</div>
+                            <div>${T('HypernetOS.xp.search.appName')}</div>
+                        </div>
+                        <div class="start-menu-link" id="link-run">
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(234, 16)}</div>
+                            <div>${T('HypernetOS.xp.run.menu')}</div>
+                        </div>
                     </div>
                 </div>
                 <div class="start-menu-footer">
@@ -1210,6 +1507,8 @@
                 startMenu.classList.remove('open');
                 startBtn.classList.remove('active');
             }
+            const CM = window.HypernetOS.ContextMenu;
+            if (CM && CM.isOpen() && !CM.contains(e.target)) CM.hide();
         };
         document.addEventListener('click', this._documentClickHandler);
 
@@ -1225,9 +1524,37 @@
             const tag = e.target && e.target.tagName;
             if (tag === 'INPUT' || tag === 'TEXTAREA') return;
 
+            // The desktop, its shortcuts, the start menu's programs and the
+            // screen buddy each answer a right click with a menu of their own.
+            const CM = window.HypernetOS.ContextMenu;
+            if (CM && CM.isOpen()) { CM.hide(); return; }
+            const target = e.target;
+            const icon = target.closest && target.closest('.desktop-icon:not(.start-menu-drag-ghost)');
+            const startItem = target.closest && target.closest('.start-menu-app-item');
+            const buddy = target.closest && target.closest('#hypernet-buddy');
+            if (CM && icon && icon.dataset.appId) {
+                CM.show(e.clientX, e.clientY, CM.itemsForShortcut(icon.dataset.appId));
+                return;
+            }
+            if (CM && startItem && startItem.dataset.appId) {
+                CM.show(e.clientX, e.clientY, CM.itemsForProgram(startItem.dataset.appId));
+                return;
+            }
+            if (CM && buddy && window.HypernetOS.Buddy) {
+                CM.show(e.clientX, e.clientY, window.HypernetOS.Buddy.menuItems());
+                return;
+            }
+
             if (startMenu && startMenu.classList.contains('open')) {
                 startMenu.classList.remove('open');
                 startBtn.classList.remove('active');
+                return;
+            }
+
+            const onDesktop = target.closest && target.closest('#hypernet-os-desktop')
+                && !target.closest('.hypernet-os-window');
+            if (CM && onDesktop) {
+                CM.show(e.clientX, e.clientY, CM.itemsForDesktop());
                 return;
             }
 
@@ -1251,10 +1578,18 @@
 
         // Logoff and Turnoff Computer Buttons
         document.getElementById('start-btn-logoff').addEventListener('click', () => {
-            this.onExitClick();
+            startMenu.classList.remove('open');
+            startBtn.classList.remove('active');
+            if (window.HypernetOS.XP) window.HypernetOS.XP.logOffDialog(); else this.onExitClick();
         });
         document.getElementById('start-btn-turnoff').addEventListener('click', () => {
-            this.onTurnOffClick();
+            startMenu.classList.remove('open');
+            startBtn.classList.remove('active');
+            if (window.HypernetOS.XP) window.HypernetOS.XP.turnOffDialog(); else this.onTurnOffClick();
+        });
+        ['run', 'search', 'help'].forEach(k => {
+            const link = document.getElementById('link-' + k);
+            if (link) link.addEventListener('click', () => window.HypernetOS.launchApp(k === 'run' ? 'app-run' : k === 'search' ? 'app-search' : 'app-help'));
         });
 
         // Re-flow the icon grid and the open windows when the game window /
@@ -1269,6 +1604,12 @@
         window.HypernetOS.refreshDesktopIcons();
         window.HypernetOS.refreshStartMenu();
         window.HypernetOS.refreshTaskbarTabs();
+        // The screen buddy comes back on its own if it was on screen when the
+        // machine was last shut down.
+        if (window.HypernetOS.Buddy) window.HypernetOS.Buddy.restore();
+        // The host profile, the tray, the balloons, the screensaver, the
+        // scheduled tasks: everything the period's desktop did on its own.
+        if (window.HypernetOS.XP) window.HypernetOS.XP.install(this);
 
         // Auto launch if requested from prepareNextScene
         if (this._autoLaunchApp) {
@@ -1333,6 +1674,10 @@
                 (document.activeElement.tagName === 'INPUT' ||
                  document.activeElement.tagName === 'TEXTAREA' ||
                  document.activeElement.tagName === 'IFRAME');
+
+            // A message box, the screensaver, a power screen or a shortcut of
+            // the period (Alt+Tab, Alt+F4, Win+R...) takes the key first.
+            if (window.HypernetOS.XP && window.HypernetOS.XP.handleKey(event)) return;
 
             const key = event.key.toUpperCase();
 
@@ -1431,7 +1776,11 @@
         ].join(', ');
         const seen = new Set();
         const out = [];
-        this._container.querySelectorAll(selector).forEach(el => {
+        // A message box is modal: while one is up, only its own controls
+        // can take the focus ring.
+        const D = window.HypernetOS.Dialog;
+        const scope = (D && D.isOpen()) ? D.top().shade : this._container;
+        scope.querySelectorAll(selector).forEach(el => {
             if (seen.has(el)) return;
             seen.add(el);
             if (el.disabled) return;
@@ -1623,6 +1972,10 @@
     // highest window still on screen so a stale focus state never swallows the
     // press.
     Scene_HypernetOS.prototype.closeTopWindowOrExit = function() {
+        // An open context menu is the topmost thing on screen: Escape, B and a
+        // stray right click all dismiss it first.
+        const CM = window.HypernetOS.ContextMenu;
+        if (CM && CM.isOpen()) { CM.hide(); return; }
         const active = document.querySelector('.hypernet-os-window.active:not(.minimized)');
         const win = active || window.HypernetOS.WindowManager.windows
             .filter(w => w.isConnected && !w.classList.contains('minimized'))
@@ -1642,14 +1995,23 @@
         this.popScene();
     };
 
-    // "Turn Off" leaves the OS entirely, exactly like "Log Off". The old black
-    // "safe to turn off" screen that kept the scene alive underneath is gone.
+    // "Turn Off" powers the machine down, so it leaves the deck as well: where
+    // "Log Off" drops back to the Hyperdeck sitting open on the table, this one
+    // drops all the way out to whatever opened the deck, the main menu included.
     Scene_HypernetOS.prototype.onTurnOffClick = function() {
         // Close the start menu so it isn't left open when the scene is rebuilt.
         const startMenu = document.getElementById('hypernet-start-menu');
         const startBtn = document.getElementById('hypernet-start-btn');
         if (startMenu) startMenu.classList.remove('open');
         if (startBtn) startBtn.classList.remove('active');
+
+        // The deck below us is the machine itself: take it off the stack so the
+        // single pop below lands on the scene that booted it.
+        const stack = SceneManager._stack;
+        if (window.Scene_HyperDeck && stack && stack.length &&
+            stack[stack.length - 1] === window.Scene_HyperDeck) {
+            stack.pop();
+        }
 
         this.onExitClick();
     };
@@ -1740,12 +2102,30 @@
         this.updateAnalogCursor();
         this._updateFocusHighlight();
         if (window.HypernetOS.Kernel) window.HypernetOS.Kernel.tick();
-        if (window.HypercapitalisEmporiumApp && typeof window.HypercapitalisEmporiumApp.update === 'function') window.HypercapitalisEmporiumApp.update();
-        if (window.HypernetStockApp && typeof window.HypernetStockApp.update === 'function') window.HypernetStockApp.update();
-        if (window.HypernetNewsApp && typeof window.HypernetNewsApp.update === 'function') window.HypernetNewsApp.update();
-        if (window.HypernetJobsApp && typeof window.HypernetJobsApp.update === 'function') window.HypernetJobsApp.update();
-        if (window.HypernetBankApp && typeof window.HypernetBankApp.update === 'function') window.HypernetBankApp.update();
-        if (window.HypernetRealEstateApp && typeof window.HypernetRealEstateApp.update === 'function') window.HypernetRealEstateApp.update();
+        this.updateHostedApps();
+    };
+
+    // Apps drawn as windows keep their own per-frame work. One of them throwing
+    // used to take the whole frame with it, and RMMZ answers an uncaught error
+    // by stopping every sound and freezing the scene: the machine would still be
+    // on screen with the music gone and no way to shut it down. An app that
+    // fails is logged once and dropped from the tick instead.
+    Scene_HypernetOS.prototype.updateHostedApps = function() {
+        const apps = [
+            'HypercapitalisEmporiumApp', 'HypernetStockApp', 'HypernetNewsApp',
+            'HypernetJobsApp', 'HypernetBankApp', 'HypernetRealEstateApp'
+        ];
+        if (!this._brokenApps) this._brokenApps = {};
+        for (const key of apps) {
+            const app = window[key];
+            if (!app || typeof app.update !== 'function' || this._brokenApps[key]) continue;
+            try {
+                app.update();
+            } catch (e) {
+                this._brokenApps[key] = true;
+                console.error('HypernetOS: ' + key + ' stopped updating.', e);
+            }
+        }
     };
 
     Scene_HypernetOS.prototype.terminate = function() {
@@ -1781,8 +2161,12 @@
             this._contextMenuHandler = null;
         }
 
+        if (window.HypernetOS.XP) window.HypernetOS.XP.teardown();
+
         // Close all windows
         window.HypernetOS.WindowManager.closeAll();
+        if (window.HypernetOS.ContextMenu) window.HypernetOS.ContextMenu.hide();
+        if (window.HypernetOS.Buddy) window.HypernetOS.Buddy.despawn(true);
 
         // Cleanup DOM element
         if (this._container) {
@@ -1874,6 +2258,594 @@
         }
     });
 
+    // --- The shell -----------------------------------------------------------
+    // A real command interpreter over the virtual file system and the process
+    // kernel, kept apart from the terminal window that draws it: exec() takes a
+    // line and a session and answers with lines of text, so the same shell can
+    // be driven by a script, a test or another app without a DOM.
+    const Shell = window.HypernetOS.Shell = {
+        // The machine's name: the deck's when the deck booted us, the stock
+        // box's otherwise, and whatever System Properties renamed it to.
+        get HOSTNAME() { return window.HypernetOS.Host ? window.HypernetOS.Host.hostname() : 'HYPERDECK'; },   // i18n-ignore  machine name
+        ROOT: 'C:',                 // i18n-ignore  drive letter
+
+        vfs: function() { return window.HypernetFileSystem || null; },
+        kernel: function() { return window.HypernetOS.Kernel; },
+
+        newSession: function() {
+            return {
+                cwd: [this.ROOT],
+                history: [],
+                env: {
+                    // i18n-ignore-start  environment variable names and values
+                    PATH: 'C:\\System',
+                    USER: (window.HypernetFileSystem
+                        ? window.HypernetFileSystem.getRegistry('user', 'explorer')
+                        : 'explorer'),
+                    COMPUTERNAME: this.HOSTNAME,
+                    OS: 'Hypernet_Esoteric'
+                    // i18n-ignore-end
+                }
+            };
+        },
+
+        // 'C:\Documents' for the prompt, 'C:/Documents' for the VFS. Every path
+        // the shell hands to the file system goes through pathOf().
+        pathOf: function(parts) { return parts.join('/'); },
+        displayOf: function(parts) { return parts.join('\\'); },
+
+        // Resolves an argument against the session's directory: absolute when it
+        // names the drive, relative otherwise, with . and .. collapsed. Returns
+        // null when it walks off the top of the drive.
+        resolveParts: function(cwd, arg) {
+            const raw = String(arg || '').replace(/\\/g, '/');
+            let parts;
+            if (/^[a-z]:/i.test(raw)) {
+                parts = raw.split('/').filter(p => p.length);
+                parts[0] = parts[0].toUpperCase();
+            } else if (raw.startsWith('/')) {
+                parts = [cwd[0]].concat(raw.split('/').filter(p => p.length));
+            } else {
+                parts = cwd.concat(raw.split('/').filter(p => p.length));
+            }
+            const out = [];
+            for (const part of parts) {
+                if (part === '.') continue;
+                if (part === '..') {
+                    if (out.length <= 1) return null;
+                    out.pop();
+                    continue;
+                }
+                out.push(part);
+            }
+            return out.length ? out : null;
+        },
+
+        // A line is split on spaces, but quoted runs stay together so a path with
+        // a space in it survives being typed.
+        tokenize: function(line) {
+            const out = [];
+            const re = /"([^"]*)"|(\S+)/g;
+            let m;
+            while ((m = re.exec(line)) !== null) out.push(m[1] !== undefined ? m[1] : m[2]);
+            return out;
+        },
+
+        // Trailing > file / >> file is stripped before the command runs and its
+        // output is written to the VFS instead of the screen.
+        _splitRedirect: function(tokens) {
+            for (let i = tokens.length - 2; i >= 0; i--) {
+                if (tokens[i] === '>' || tokens[i] === '>>') {
+                    return {
+                        args: tokens.slice(0, i),
+                        target: tokens[i + 1],
+                        append: tokens[i] === '>>'
+                    };
+                }
+            }
+            return { args: tokens, target: null, append: false };
+        },
+
+        pad: function(text, width) {
+            const s = String(text);
+            return s.length >= width ? s : s + ' '.repeat(width - s.length);
+        },
+
+        padLeft: function(text, width) {
+            const s = String(text);
+            return s.length >= width ? s : ' '.repeat(width - s.length) + s;
+        },
+
+        // Names under the session's directory that begin with a fragment: the
+        // answer to a Tab press.
+        complete: function(session, fragment) {
+            const fs = this.vfs();
+            if (!fs) return [];
+            const slash = Math.max(fragment.lastIndexOf('/'), fragment.lastIndexOf('\\'));
+            const dirPart = slash >= 0 ? fragment.slice(0, slash) : '';
+            const namePart = (slash >= 0 ? fragment.slice(slash + 1) : fragment).toLowerCase();
+            const parts = this.resolveParts(session.cwd, dirPart || '.');
+            const listing = parts ? fs.readDir(this.pathOf(parts)) : null;
+            if (!listing) return [];
+            return listing
+                .filter(e => e.name.toLowerCase().startsWith(namePart))
+                .map(e => (slash >= 0 ? fragment.slice(0, slash + 1) : '') + e.name);
+        },
+
+        // Runs one line. Answers { lines, clear, exit, title }: the terminal draws
+        // the lines and obeys the flags, and nothing here touches the DOM.
+        exec: function(line, session) {
+            const res = { lines: [], clear: false, exit: false, title: null };
+            const print = t => res.lines.push(t);
+            const trimmed = String(line || '').trim();
+            if (!trimmed) return res;
+            session.history.push(trimmed);
+
+            const redirect = this._splitRedirect(this.tokenize(trimmed));
+            const tokens = redirect.args;
+            if (!tokens.length) return res;
+            const cmd = tokens.shift().toLowerCase();
+            const args = tokens;
+            const fs = this.vfs();
+            const joined = args.join(' ');
+
+            const err = key => print(T(key));
+
+            switch (cmd) {
+                case 'help':
+                case '?':
+                    T.list('HypernetOS.terminalHelp').forEach(print);
+                    break;
+
+                case 'cls':
+                case 'clear':
+                    res.clear = true;
+                    break;
+
+                case 'echo':
+                    print(joined);
+                    break;
+
+                case 'ver':
+                    print(T('HypernetOS.termVer'));
+                    break;
+
+                case 'date':
+                    print(T('HypernetOS.termDate', { date: this.systemDate() }));
+                    break;
+
+                case 'time':
+                    print(T('HypernetOS.termTime', { time: this.systemTime() }));
+                    break;
+
+                case 'vol':
+                    print(T('HypernetOS.termVolume', { drive: session.cwd[0] }));
+                    break;
+
+                case 'cd':
+                case 'chdir': {
+                    if (!args[0]) { print(this.displayOf(session.cwd)); break; }
+                    const parts = this.resolveParts(session.cwd, args[0]);
+                    const node = parts && fs ? fs.resolvePath(this.pathOf(parts)) : null;
+                    if (!node) { err('HypernetOS.termBadPath'); break; }
+                    if (node.type !== 'directory') { err('HypernetOS.termNotDir'); break; }
+                    session.cwd = parts;
+                    break;
+                }
+
+                case 'dir':
+                case 'ls': {
+                    const parts = this.resolveParts(session.cwd, args[0] || '.');
+                    const listing = parts && fs ? fs.readDir(this.pathOf(parts)) : null;
+                    if (!listing) { err('HypernetOS.termBadPath'); break; }
+                    print(T('HypernetOS.termDirOf', { path: this.displayOf(parts) }));
+                    print('');
+                    let files = 0, dirs = 0;
+                    listing.forEach(entry => {
+                        if (entry.type === 'directory') {
+                            dirs++;
+                            print('  ' + this.pad('<DIR>', 10) + entry.name);
+                        } else {
+                            files++;
+                            const node = fs.resolvePath(this.pathOf(parts.concat(entry.name)));
+                            const size = node && node.content ? String(node.content).length : 0;
+                            print('  ' + this.pad(this.padLeft(size, 8), 10) + entry.name);
+                        }
+                    });
+                    if (!listing.length) print(T('HypernetOS.emptyDir'));
+                    else print(T('HypernetOS.termDirSummary', { files: files, dirs: dirs }));
+                    break;
+                }
+
+                case 'tree': {
+                    const parts = this.resolveParts(session.cwd, args[0] || '.');
+                    if (!parts || !fs || !fs.exists(this.pathOf(parts))) { err('HypernetOS.termBadPath'); break; }
+                    print(this.displayOf(parts));
+                    fs.walk(this.pathOf(parts)).forEach(entry => {
+                        print('  '.repeat(entry.depth + 1) + (entry.node.type === 'directory' ? '+ ' : '- ') + entry.node.name);
+                    });
+                    break;
+                }
+
+                case 'type':
+                case 'cat': {
+                    const parts = args[0] ? this.resolveParts(session.cwd, args[0]) : null;
+                    if (!parts) { err('HypernetOS.termSyntax'); break; }
+                    const content = fs ? fs.readFile(this.pathOf(parts)) : null;
+                    if (content === null || content === undefined) { err('HypernetOS.termNotFound'); break; }
+                    String(content).split('\n').forEach(print);
+                    break;
+                }
+
+                case 'find': {
+                    // FIND "text" file: the lines of a file that carry a phrase.
+                    if (args.length < 2) { err('HypernetOS.termSyntax'); break; }
+                    const needle = args[0].toLowerCase();
+                    const parts = this.resolveParts(session.cwd, args[1]);
+                    const content = parts && fs ? fs.readFile(this.pathOf(parts)) : null;
+                    if (content === null || content === undefined) { err('HypernetOS.termNotFound'); break; }
+                    const hits = String(content).split('\n').filter(l => l.toLowerCase().includes(needle));
+                    if (!hits.length) print(T('HypernetOS.termNoMatch'));
+                    else hits.forEach(print);
+                    break;
+                }
+
+                case 'md':
+                case 'mkdir': {
+                    const parts = args[0] ? this.resolveParts(session.cwd, args[0]) : null;
+                    if (!parts || !fs) { err('HypernetOS.termSyntax'); break; }
+                    if (fs.exists(this.pathOf(parts))) { err('HypernetOS.termExists'); break; }
+                    if (!fs.mkdir(this.pathOf(parts))) { err('HypernetOS.termBadPath'); break; }
+                    print(T('HypernetOS.termCreated', { path: this.displayOf(parts) }));
+                    break;
+                }
+
+                case 'rd':
+                case 'rmdir': {
+                    const recursive = args.some(a => /^\/s$/i.test(a));
+                    const target = args.filter(a => !a.startsWith('/'))[0];
+                    const parts = target ? this.resolveParts(session.cwd, target) : null;
+                    if (!parts || !fs) { err('HypernetOS.termSyntax'); break; }
+                    const node = fs.resolvePath(this.pathOf(parts));
+                    if (!node) { err('HypernetOS.termBadPath'); break; }
+                    if (node.type !== 'directory') { err('HypernetOS.termNotDir'); break; }
+                    if (!fs.rmdir(this.pathOf(parts), recursive)) { err('HypernetOS.termDirNotEmpty'); break; }
+                    print(T('HypernetOS.termDeleted', { path: this.displayOf(parts) }));
+                    break;
+                }
+
+                case 'del':
+                case 'erase':
+                case 'rm': {
+                    const parts = args[0] ? this.resolveParts(session.cwd, args[0]) : null;
+                    if (!parts || !fs) { err('HypernetOS.termSyntax'); break; }
+                    const node = fs.resolvePath(this.pathOf(parts));
+                    if (!node) { err('HypernetOS.termNotFound'); break; }
+                    if (node.type === 'directory') { err('HypernetOS.termIsDir'); break; }
+                    fs.deleteFile(this.pathOf(parts));
+                    print(T('HypernetOS.termDeleted', { path: this.displayOf(parts) }));
+                    break;
+                }
+
+                case 'copy': {
+                    if (args.length < 2 || !fs) { err('HypernetOS.termSyntax'); break; }
+                    const src = this.resolveParts(session.cwd, args[0]);
+                    const dst = this.resolveParts(session.cwd, args[1]);
+                    if (!src || !dst || !fs.exists(this.pathOf(src))) { err('HypernetOS.termNotFound'); break; }
+                    if (!fs.copy(this.pathOf(src), this.pathOf(dst))) { err('HypernetOS.termBadPath'); break; }
+                    print(T('HypernetOS.termCopied', { path: this.displayOf(src) }));
+                    break;
+                }
+
+                case 'move':
+                case 'ren':
+                case 'rename': {
+                    if (args.length < 2 || !fs) { err('HypernetOS.termSyntax'); break; }
+                    const src = this.resolveParts(session.cwd, args[0]);
+                    // REN takes a bare new name in the same directory.
+                    const dst = (cmd === 'move')
+                        ? this.resolveParts(session.cwd, args[1])
+                        : (src ? src.slice(0, -1).concat(args[1]) : null);
+                    if (!src || !dst || !fs.exists(this.pathOf(src))) { err('HypernetOS.termNotFound'); break; }
+                    if (!fs.move(this.pathOf(src), this.pathOf(dst))) { err('HypernetOS.termBadPath'); break; }
+                    print(T('HypernetOS.termMoved', { path: this.displayOf(dst) }));
+                    break;
+                }
+
+                case 'edit':
+                case 'notepad': {
+                    const parts = args[0] ? this.resolveParts(session.cwd, args[0]) : null;
+                    if (parts && window.HypernetNotepad && fs && fs.exists(this.pathOf(parts))) {
+                        window.HypernetNotepad.openFile(this.pathOf(parts));
+                        print(T('HypernetOS.launching', { app: args[0] }));
+                    } else if (window.HypernetOS._apps['app-hypernet-notepad']) {
+                        window.HypernetOS.launchApp('app-hypernet-notepad');
+                    } else {
+                        err('HypernetOS.termNotFound');
+                    }
+                    break;
+                }
+
+                case 'run':
+                case 'start': {
+                    if (!args[0]) { err('HypernetOS.runUsage'); break; }
+                    if (window.HypernetOS._apps[args[0]]) {
+                        print(T('HypernetOS.launching', { app: args[0] }));
+                        window.HypernetOS.launchApp(args[0]);
+                    } else {
+                        print(T('HypernetOS.appNotFound', { app: args[0] }));
+                    }
+                    break;
+                }
+
+                case 'apps': {
+                    const apps = Object.values(window.HypernetOS._apps);
+                    if (!apps.length) { err('HypernetOS.termNoApps'); break; }
+                    apps.forEach(app => print('  ' + this.pad(app.id, 24) + app.name));
+                    break;
+                }
+
+                case 'ps':
+                case 'tasklist': {
+                    const kernel = this.kernel();
+                    print('  ' + this.pad(T('HypernetOS.colPid'), 8)
+                        + this.pad(T('HypernetOS.colImageName'), 26)
+                        + this.pad(T('HypernetOS.colMemUsage'), 12)
+                        + T('HypernetOS.colStatus'));
+                    kernel.processes.forEach(p => {
+                        print('  ' + this.pad(p.pid, 8) + this.pad(p.name, 26)
+                            + this.pad(p.memoryUsage + ' MB', 12) + p.status);
+                    });
+                    break;
+                }
+
+                case 'kill':
+                case 'taskkill': {
+                    const pid = parseInt(args.filter(a => !a.startsWith('/'))[0], 10);
+                    const kernel = this.kernel();
+                    if (!pid || !kernel.findProcess(pid)) {
+                        print(T('HypernetOS.termNoPid', { pid: args[0] }));
+                        break;
+                    }
+                    // Killing a process closes the window it was spawned for, so
+                    // the desktop never keeps an orphan frame around.
+                    const win = document.querySelector(`.hypernet-os-window[data-pid="${pid}"]`);
+                    kernel.killProcess(pid);
+                    if (win) {
+                        win.dataset.pid = '';
+                        window.HypernetOS.WindowManager.closeWindow(win);
+                    }
+                    print(T('HypernetOS.termKilled', { pid: pid }));
+                    break;
+                }
+
+                case 'suspend':
+                case 'resume': {
+                    const pid = parseInt(args[0], 10);
+                    const status = cmd === 'suspend' ? 'SUSPENDED' : 'RUNNING';
+                    if (!this.kernel().setStatus(pid, status)) {
+                        print(T('HypernetOS.termNoPid', { pid: args[0] }));
+                        break;
+                    }
+                    print(T(cmd === 'suspend' ? 'HypernetOS.termSuspended' : 'HypernetOS.termResumed', { pid: pid }));
+                    break;
+                }
+
+                case 'mem': {
+                    const st = this.kernel().getStats();
+                    print(T('HypernetOS.termMemTotal', { mb: st.totalRAM }));
+                    print(T('HypernetOS.termMemUsed', { mb: st.usedRAM }));
+                    print(T('HypernetOS.termMemFree', { mb: st.freeRAM }));
+                    break;
+                }
+
+                case 'uptime': {
+                    const s = this.kernel().uptime();
+                    print(T('HypernetOS.termUptime', {
+                        h: Math.floor(s / 3600),
+                        m: Math.floor((s % 3600) / 60),
+                        s: s % 60
+                    }));
+                    break;
+                }
+
+                case 'systeminfo': {
+                    const st = this.kernel().getStats();
+                    print(T('HypernetOS.termVer'));
+                    print(T('HypernetOS.termInfoHost', { host: this.HOSTNAME }));
+                    print(T('HypernetOS.termInfoUser', { user: session.env.USER }));
+                    if (window.HypernetOS.Host) {
+                        const hp = window.HypernetOS.Host.profile();
+                        print(T('HypernetOS.termInfoMaker', { vendor: hp.vendor, model: hp.model }));
+                        print(T('HypernetOS.termInfoProcessor', { cpu: hp.cpu, mhz: window.HypernetOS.Host.fmtMhz(hp.mhz) }));
+                        print(T('HypernetOS.termInfoDisk', { size: window.HypernetOS.Host.fmtMb(hp.disk) }));
+                        print(T('HypernetOS.termInfoBoot', { source: T('HypernetOS.host.origin.' + hp.origin) }));
+                    }
+                    print(T('HypernetOS.termInfoCpu', { cpu: st.cpu }));
+                    print(T('HypernetOS.termMemTotal', { mb: st.totalRAM }));
+                    print(T('HypernetOS.termMemFree', { mb: st.freeRAM }));
+                    print(T('HypernetOS.termInfoProcs', { count: st.processes }));
+                    print(T('HypernetOS.termDate', { date: this.systemDate() }));
+                    break;
+                }
+
+                case 'whoami':
+                    print(this.HOSTNAME.toLowerCase() + '\\' + session.env.USER);
+                    break;
+
+                case 'hostname':
+                    print(this.HOSTNAME);
+                    break;
+
+                case 'ipconfig':
+                    print(T('HypernetOS.termIpAdapter'));
+                    print(T('HypernetOS.termIpAddress', { ip: this.localAddress() }));
+                    print(T('HypernetOS.termIpMask'));
+                    print(T('HypernetOS.termIpGateway'));
+                    break;
+
+                case 'ping': {
+                    if (!args[0]) { err('HypernetOS.termSyntax'); break; }
+                    const host = args[0];
+                    // The net is a simulation, so the reply is seeded off the
+                    // host name: the same address always answers the same way.
+                    let seed = 0;
+                    for (let i = 0; i < host.length; i++) seed = (seed * 31 + host.charCodeAt(i)) >>> 0;
+                    const reachable = (seed % 5) !== 0;
+                    print(T('HypernetOS.termPingHeader', { host: host }));
+                    if (!reachable) {
+                        print(T('HypernetOS.termPingLost'));
+                        break;
+                    }
+                    for (let i = 0; i < 4; i++) {
+                        print(T('HypernetOS.termPingReply', {
+                            host: host,
+                            ms: 20 + ((seed >> (i * 3)) % 90)
+                        }));
+                    }
+                    break;
+                }
+
+                case 'set': {
+                    if (!args.length) {
+                        Object.keys(session.env).sort().forEach(k => print(k + '=' + session.env[k]));
+                        break;
+                    }
+                    const eq = joined.indexOf('=');
+                    if (eq < 0) {
+                        const key = args[0].toUpperCase();
+                        if (session.env[key] === undefined) print(T('HypernetOS.termEnvUnset', { name: key }));
+                        else print(key + '=' + session.env[key]);
+                        break;
+                    }
+                    const key = joined.slice(0, eq).trim().toUpperCase();
+                    const value = joined.slice(eq + 1).trim();
+                    if (!value) delete session.env[key];
+                    else session.env[key] = value;
+                    break;
+                }
+
+                case 'reg': {
+                    const sub = (args[0] || '').toLowerCase();
+                    if (!fs) { err('HypernetOS.termSyntax'); break; }
+                    if (sub === 'query') {
+                        const value = fs.getRegistry(args[1], undefined);
+                        if (value === undefined) print(T('HypernetOS.termRegMissing', { key: args[1] }));
+                        else print(args[1] + ' = ' + value);
+                    } else if (sub === 'set' || sub === 'add') {
+                        if (args.length < 3) { err('HypernetOS.termSyntax'); break; }
+                        fs.setRegistry(args[1], args.slice(2).join(' '));
+                        print(T('HypernetOS.termRegSet', { key: args[1] }));
+                    } else {
+                        err('HypernetOS.termSyntax');
+                    }
+                    break;
+                }
+
+                case 'title':
+                    res.title = joined;
+                    break;
+
+                case 'history': {
+                    const past = session.history.slice(0, -1);
+                    if (!past.length) { err('HypernetOS.termHistoryEmpty'); break; }
+                    past.forEach((h, i) => print('  ' + this.padLeft(i + 1, 3) + '  ' + h));
+                    break;
+                }
+
+                case 'exit':
+                    res.exit = true;
+                    break;
+
+                // SHUTDOWN -s turns the machine off, -r restarts it, -l logs
+                // off; bare SHUTDOWN just leaves the shell, as it always did.
+                case 'shutdown': {
+                    const XP = window.HypernetOS.XP;
+                    const flag = (args[0] || '').toLowerCase();
+                    if (XP && /^[-/](s|r|l)$/.test(flag)) {
+                        res.exit = true;
+                        setTimeout(() => XP.shutdown(flag.endsWith('s') ? 'off' : flag.endsWith('r') ? 'restart' : 'logoff'), 200);
+                    } else {
+                        res.exit = true;
+                    }
+                    break;
+                }
+
+                // START opens a program the way the Run box would.
+                case 'start': {
+                    const hit = window.HypernetOS.XP ? window.HypernetOS.XP.resolveRun(joined, window.HypernetOS._apps) : null;
+                    if (!hit) { err('HypernetOS.termNotFound'); break; }
+                    window.HypernetOS.launchApp(hit.appId);
+                    break;
+                }
+
+                case 'chkdsk': {
+                    const H = window.HypernetOS.Host;
+                    const p = H.profile();
+                    const entries = fs ? fs.walk(session.cwd[0]) : [];
+                    const files = entries.filter(e => e.node.type === 'file');
+                    const bytes = files.reduce((n, e) => n + String(e.node.content || '').length, 0);
+                    T.list('HypernetOS.termChkdsk').forEach(line => print(line
+                        .replace('{drive}', session.cwd[0])
+                        .replace('{files}', files.length)
+                        .replace('{dirs}', entries.length - files.length)
+                        .replace('{kb}', Math.round(bytes / 1024))
+                        .replace('{total}', p.disk * 1024)
+                        .replace('{free}', Math.max(0, p.disk - H.diskUsedMb()) * 1024)));
+                    break;
+                }
+
+                default: {
+                    // A program's name typed at the prompt runs it, the way
+                    // typing CALC or NOTEPAD always did.
+                    const hit = window.HypernetOS.XP ? window.HypernetOS.XP.resolveRun(cmd, window.HypernetOS._apps) : null;
+                    if (hit && window.HypernetOS.isInstalled(window.HypernetOS._apps[hit.appId])) {
+                        window.HypernetOS.launchApp(hit.appId);
+                        break;
+                    }
+                    print(T('HypernetOS.notRecognized', { cmd: cmd }));
+                    break;
+                }
+            }
+
+            if (redirect.target && fs) {
+                const parts = this.resolveParts(session.cwd, redirect.target);
+                const target = parts ? this.pathOf(parts) : null;
+                const previous = (redirect.append && target) ? (fs.readFile(target) || '') : '';
+                const body = res.lines.join('\n');
+                const ok = target && fs.writeFile(target, redirect.append && previous ? previous + '\n' + body : body);
+                res.lines = ok ? [] : [T('HypernetOS.termBadPath')];
+            }
+
+            return res;
+        },
+
+        // The machine's own clock, which is the game's clock when there is one.
+        systemDate: function() {
+            const stale = window.HypernetOS.staleDate();
+            if (stale) return stale;
+            if (window.TimeSystem && typeof window.TimeSystem.getDateString === 'function') {
+                return window.TimeSystem.getDateString();
+            }
+            const d = new Date();
+            return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+        },
+
+        systemTime: function() {
+            const d = new Date();
+            return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+        },
+
+        // A stable address per world, so the same machine keeps its number.
+        localAddress: function() {
+            let seed = 0;
+            const name = (window.WorldManager && typeof window.WorldManager.currentWorldName === 'function')
+                ? String(window.WorldManager.currentWorldName()) : 'esoteric';
+            for (let i = 0; i < name.length; i++) seed = (seed * 33 + name.charCodeAt(i)) >>> 0;
+            return `10.${seed % 254}.${(seed >> 8) % 254}.${(seed >> 16) % 253 + 1}`;
+        }
+    };
+
     // 2. Esoteric Terminal
     window.HypernetOS.registerApp({
         id: 'sys-terminal',
@@ -1884,8 +2856,8 @@
             const content = `
                 <div class="sys-terminal-container" id="term-container">
                     <div id="term-output">
-                        Hypernet Esoteric OS [Version 2.0.0]<br>
-                        (C) Copyright 1985-2001 E-Corp.<br><br>
+                        ${T('HypernetOS.termVer')}<br>
+                        ${T('HypernetOS.termCopyright')}<br><br>
                     </div>
                     <div class="sys-terminal-input-wrapper">
                         <span id="term-prompt">C:\\></span>
@@ -1902,12 +2874,11 @@
                 icon: 84
             });
 
-            // Focus logic
             const termContainer = document.getElementById('term-container');
             const termInput = document.getElementById('term-input');
             const termOutput = document.getElementById('term-output');
             const termPrompt = document.getElementById('term-prompt');
-            
+
             termContainer.addEventListener('click', () => termInput.focus());
 
             // The `autofocus` attribute does not fire for innerHTML-injected
@@ -1916,69 +2887,95 @@
             // of being typed into the command line.
             setTimeout(() => termInput.focus(), 50);
 
-            let currentPath = '';
+            const session = window.HypernetOS.Shell.newSession();
+            let historyIndex = -1;   // where the up arrow is walking
+
+            const escapeHTML = t => String(t)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
             const printLine = (text) => {
-                termOutput.innerHTML += text + '<br>';
+                termOutput.innerHTML += escapeHTML(text) + '<br>';
                 termContainer.scrollTop = termContainer.scrollHeight;
             };
+
+            const refreshPrompt = () => {
+                termPrompt.innerText = window.HypernetOS.Shell.displayOf(session.cwd) + '>';
+            };
+            refreshPrompt();
 
             termInput.addEventListener('keydown', (e) => {
                 // Keep keystrokes inside the field so the document-level OS
                 // handler never treats W/A/S/D as focus navigation while typing.
                 // Escape is allowed to bubble so it can still leave/close the app.
                 if (e.key !== 'Escape') e.stopPropagation();
-                if (e.key === 'Enter') {
-                    const val = termInput.value.trim();
-                    printLine(termPrompt.innerText + ' ' + val);
-                    termInput.value = '';
-                    
-                    if (val === '') return;
-                    
-                    const args = val.split(' ');
-                    const cmd = args.shift().toLowerCase();
-                    
-                    try {
-                        if (cmd === 'help') {
-                            T.list('HypernetOS.terminalHelp').forEach(printLine);
-                        } else if (cmd === 'clear' || cmd === 'cls') {
-                            termOutput.innerHTML = '';
-                        } else if (cmd === 'echo') {
-                            printLine(args.join(' '));
-                        } else if (cmd === 'dir') {
-                            const efs = window.HypernetOS.EFS;
-                            const items = efs.readDir(currentPath);
-                            if (items && items.length > 0) {
-                                items.forEach(i => printLine('  ' + i));
-                            } else {
-                                printLine(T('HypernetOS.emptyDir'));
-                            }
-                        } else if (cmd === 'cd') {
-                            if (!args[0]) {
-                                printLine(currentPath || 'C:\\');
-                            } else {
-                                const target = args[0] === '..' ? '' : (currentPath ? currentPath + '/' + args[0] : args[0]);
-                                // In a full implementation we'd check if dir exists.
-                                currentPath = target;
-                                termPrompt.innerText = 'C:\\' + currentPath.replace(/\//g, '\\') + '>';
-                            }
-                        } else if (cmd === 'run') {
-                            if (!args[0]) {
-                                printLine(T('HypernetOS.runUsage'));
-                            } else if (window.HypernetOS._apps[args[0]]) {
-                                printLine(T('HypernetOS.launching', { app: args[0] }));
-                                window.HypernetOS.launchApp(args[0]);
-                            } else {
-                                printLine(T('HypernetOS.appNotFound', { app: args[0] }));
-                            }
-                        } else {
-                            printLine(T('HypernetOS.notRecognized', { cmd: cmd }));
-                        }
-                    } catch (err) {
-                        printLine('Error: ' + err.message);
-                    }
-                    termContainer.scrollTop = termContainer.scrollHeight;
+
+                // Up and down walk the command history, the way a real prompt does.
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const hist = session.history;
+                    if (!hist.length) return;
+                    if (historyIndex === -1) historyIndex = hist.length;
+                    historyIndex += (e.key === 'ArrowUp' ? -1 : 1);
+                    historyIndex = Math.max(0, Math.min(hist.length, historyIndex));
+                    termInput.value = historyIndex >= hist.length ? '' : hist[historyIndex];
+                    return;
                 }
+
+                // Tab completes the word being typed against the current directory.
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const value = termInput.value;
+                    const cut = value.lastIndexOf(' ') + 1;
+                    const matches = window.HypernetOS.Shell.complete(session, value.slice(cut));
+                    if (matches.length === 1) {
+                        termInput.value = value.slice(0, cut) + matches[0];
+                    } else if (matches.length > 1) {
+                        printLine(termPrompt.innerText + ' ' + value);
+                        matches.forEach(m => printLine('  ' + m));
+                    }
+                    return;
+                }
+
+                // Ctrl+L clears the screen, Ctrl+C abandons the line being typed.
+                if (e.ctrlKey && (e.key === 'l' || e.key === 'c')) {
+                    e.preventDefault();
+                    if (e.key === 'l') termOutput.innerHTML = '';
+                    else printLine(termPrompt.innerText + ' ' + termInput.value + '^C');
+                    termInput.value = '';
+                    return;
+                }
+
+                if (e.key !== 'Enter') return;
+
+                const val = termInput.value;
+                printLine(termPrompt.innerText + ' ' + val);
+                termInput.value = '';
+                historyIndex = -1;
+                if (!val.trim()) return;
+
+                let result;
+                try {
+                    result = window.HypernetOS.Shell.exec(val, session);
+                } catch (err) {
+                    printLine('Error: ' + err.message);  // i18n-ignore  shell fault
+                    return;
+                }
+
+                if (result.clear) termOutput.innerHTML = '';
+                result.lines.forEach(printLine);
+                if (result.title) {
+                    // The titlebar holds the icon and then the caption as a bare
+                    // text node, so only that node is rewritten and the icon stays.
+                    const titleEl = win.querySelector('.hypernet-window-title');
+                    if (titleEl && titleEl.lastChild && titleEl.lastChild.nodeType === 3) {
+                        titleEl.lastChild.nodeValue = result.title;
+                    }
+                    win.dataset.title = result.title;
+                    window.HypernetOS.refreshTaskbarTabs();
+                }
+                refreshPrompt();
+                if (result.exit) window.HypernetOS.WindowManager.closeWindow(win);
+                termContainer.scrollTop = termContainer.scrollHeight;
             });
         }
     });
@@ -2051,13 +3048,13 @@
                 const midLv = Math.floor((b.min + Math.min(b.max, 99)) / 2);
                 el.innerHTML = `
                     <div style="margin-bottom:8px">
-                        <div style="font-size:21px; font-weight:bold; font-family:Georgia,serif; color:#8B1A00; margin-bottom:2px">
+                        <div style="font-size:21px; font-weight:bold; font-family:Georgia,serif; color:var(--xp-red-4); margin-bottom:2px">
                             ${T('HypernetOS.levelBracket', { range: b.label })}
                         </div>
-                        <div style="font-size:14px; color:#666">${T.n('HypernetOS.eligibleVessels', cnt)}</div>
+                        <div style="font-size:14px; color:var(--xp-ink-soft)">${T.n('HypernetOS.eligibleVessels', cnt)}</div>
                     </div>
-                    <div style="background:#f8f8f8; border:1px solid #ddd; padding:10px; font-size:14px; color:#444; line-height:1.75">
-                        <strong style="display:block; color:#333; margin-bottom:5px">${T('HypernetOS.randomPartyProtocol')}</strong>
+                    <div style="background:#f8f8f8; border:1px solid var(--xp-silver-5); padding:10px; font-size:14px; color:var(--xp-ink-5); line-height:1.75">
+                        <strong style="display:block; color:var(--xp-ink-4); margin-bottom:5px">${T('HypernetOS.randomPartyProtocol')}</strong>
                         <ul style="margin:0; padding-left:16px">
                             <li>${T('HypernetOS.protoDraft')}</li>
                             <li>${T('HypernetOS.protoLevel', { level: midLv })}</li>
@@ -2069,30 +3066,30 @@
                     </div>
                     <div style="flex:1"></div>
                     <button id="hc-enter-btn" data-focus-key="hc-enter-btn" onclick="window._hcEnter()"
-                            style="width:100%; padding:11px; background:linear-gradient(135deg, #6B0000, #C0392B); color:#FFD700; border:1px solid #FF6B6B; font-size:16px; font-weight:bold; font-family:Georgia,serif; letter-spacing:1.5px; cursor:pointer; margin-top:10px; box-shadow:0 2px 5px rgba(0,0,0,0.35); text-shadow:0 1px 2px #000">
+                            style="width:100%; padding:11px; background:linear-gradient(135deg, var(--xp-red-5), var(--xp-red-2)); color:var(--xp-gold); border:1px solid #FF6B6B; font-size:16px; font-weight:bold; font-family:Georgia,serif; letter-spacing:1.5px; cursor:pointer; margin-top:10px; box-shadow:0 2px 5px rgba(0,0,0,0.35); text-shadow:0 1px 2px #000">
                         &nbsp;&nbsp;${T('HypernetOS.enterColosseum')}
                     </button>
                 `;
             };
 
             const contentHTML = `
-                <div style="display:flex; flex-direction:column; height:100%; font-family:Tahoma,sans-serif; overflow:hidden; background:#ece9d8">
-                    <div style="background:linear-gradient(135deg, #1a0300 0%, #8B1A00 55%, #B22222 100%); padding:11px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid #6B0000; flex-shrink:0">
+                <div style="display:flex; flex-direction:column; height:100%; font-family:Tahoma,sans-serif; overflow:hidden; background:var(--xp-bg)">
+                    <div style="background:linear-gradient(135deg, #1a0300 0%, var(--xp-red-4) 55%, #B22222 100%); padding:11px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--xp-red-5); flex-shrink:0">
                         <div style="font-size:2.2rem; line-height:1"></div>
                         <div>
-                            <div style="color:#FFD700; font-weight:bold; font-size:17px; letter-spacing:2px; font-family:Georgia,serif; text-shadow:1px 1px 2px #000">${T('HypernetOS.colosseumBanner')}</div>
+                            <div style="color:var(--xp-gold); font-weight:bold; font-size:17px; letter-spacing:2px; font-family:Georgia,serif; text-shadow:1px 1px 2px #000">${T('HypernetOS.colosseumBanner')}</div>
                             <div style="color:#ffccaa; font-size:13px; margin-top:2px">${T('HypernetOS.colosseumTagline')}</div>
                         </div>
                         <div style="margin-left:auto; font-size:13px; color:#ff9966; text-align:right; line-height:1.5">${T('HypernetOS.partyRestoredNote')}</div>
                     </div>
                     <div style="display:flex; flex:1; overflow:hidden">
                         <div style="width:200px; min-width:200px; display:flex; flex-direction:column; border-right:1px solid #aaa; overflow:hidden">
-                            <div style="background:#316ac5; color:#fff; padding:3px 8px; font-size:14px; font-weight:bold; flex-shrink:0; letter-spacing:0.3px">${T('HypernetOS.levelBrackets')}</div>
-                            <div id="colosseum-list" style="flex:1; overflow-y:auto; background:#fff"></div>
+                            <div style="background:var(--xp-blue-tab); color:var(--xp-white); padding:3px 8px; font-size:14px; font-weight:bold; flex-shrink:0; letter-spacing:0.3px">${T('HypernetOS.levelBrackets')}</div>
+                            <div id="colosseum-list" style="flex:1; overflow-y:auto; background:var(--xp-white)"></div>
                         </div>
                         <div id="colosseum-right" style="flex:1; display:flex; flex-direction:column; padding:14px; gap:8px; overflow-y:auto"></div>
                     </div>
-                    <div style="border-top:1px solid #a0a0a0; padding:2px 8px; background:#ece9d8; font-size:13px; color:#555; flex-shrink:0">
+                    <div style="border-top:1px solid var(--xp-ink-pale-2); padding:2px 8px; background:var(--xp-bg); font-size:13px; color:var(--xp-text-muted); flex-shrink:0">
                         ${T('HypernetOS.colosseumHint')}
                     </div>
                 </div>`;
@@ -2246,5 +3243,3115 @@
             render();
         }
     });
+
+
+    // =========================================================================
+    // Context menus
+    // =========================================================================
+    // One popup shared by the desktop, its shortcuts, the start menu's
+    // programs and the screen buddy. Items are `.focusable`, so the focus ring
+    // walks them the same way it walks everything else on the desktop.
+    window.HypernetOS.ContextMenu = {
+        _el: null,
+
+        isOpen: function() {
+            return !!(this._el && this._el.isConnected && this._el.classList.contains('open'));
+        },
+
+        contains: function(node) {
+            return !!(this._el && node && this._el.contains(node));
+        },
+
+        // items: [{ label, icon, action, disabled, bold, separator }]
+        show: function(x, y, items) {
+            this.hide();
+            const host = document.getElementById('hypernet-os-container');
+            if (!host || !items || !items.length) return;
+
+            const el = document.createElement('div');
+            el.id = 'hypernet-context-menu';
+            el.className = 'hypernet-context-menu open';
+            items.forEach(item => {
+                if (item.separator) {
+                    const sep = document.createElement('div');
+                    sep.className = 'hypernet-context-sep';
+                    el.appendChild(sep);
+                    return;
+                }
+                const row = document.createElement('div');
+                row.className = 'hypernet-context-item focusable' + (item.disabled ? ' disabled' : '') + (item.bold ? ' bold' : '');
+                row.tabIndex = 0;
+                row.innerHTML = `<span class="hypernet-context-icon">${item.icon != null ? window.HypernetOS.getIconHTML(item.icon, 16) : ''}</span><span>${item.label}</span>`;
+                row.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (item.disabled) return;
+                    this.hide();
+                    if (window.SoundManager) SoundManager.playOk();
+                    try { item.action(); } catch (err) { console.error('Context menu action failed', err); }
+                });
+                el.appendChild(row);
+            });
+            host.appendChild(el);
+            this._el = el;
+
+            // Keep the whole menu on screen.
+            const hr = host.getBoundingClientRect();
+            const w = el.offsetWidth, h = el.offsetHeight;
+            const left = Math.max(0, Math.min(x - hr.left, hr.width - w - 2));
+            const top = Math.max(0, Math.min(y - hr.top, hr.height - h - 2));
+            el.style.left = left + 'px';
+            el.style.top = top + 'px';
+            if (window.SoundManager) SoundManager.playCursor();
+        },
+
+        hide: function() {
+            if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
+            this._el = null;
+        },
+
+        // A shortcut on the desktop.
+        itemsForShortcut: function(appId) {
+            const OS = window.HypernetOS;
+            const app = OS._apps[appId];
+            if (!app) return [];
+            return [
+                { label: T('HypernetOS.context.open'), icon: app.icon, bold: true, action: () => OS.launchApp(appId) },
+                { separator: true },
+                { label: T('HypernetOS.context.removeFromDesktop'), action: () => OS.setOnDesktop(appId, false) }
+            ];
+        },
+
+        // A program in the start menu.
+        itemsForProgram: function(appId) {
+            const OS = window.HypernetOS;
+            const app = OS._apps[appId];
+            if (!app) return [];
+            const onDesk = OS.isOnDesktop(app);
+            return [
+                { label: T('HypernetOS.context.open'), icon: app.icon, bold: true, action: () => OS.launchApp(appId) },
+                { separator: true },
+                onDesk
+                    ? { label: T('HypernetOS.context.removeFromDesktop'), action: () => OS.setOnDesktop(appId, false) }
+                    : { label: T('HypernetOS.context.addToDesktop'), action: () => { OS.setOnDesktop(appId, true); OS.closeStartMenu(); } }
+            ];
+        },
+
+        // Bare desktop.
+        itemsForDesktop: function() {
+            const OS = window.HypernetOS;
+            const has = id => !!OS._apps[id];
+            const items = [
+                { label: T('HypernetOS.context.arrangeIcons'), action: () => {
+                    const layout = OS.DesktopGrid.savedLayout();
+                    if (layout) Object.keys(layout).forEach(k => delete layout[k]);
+                    OS.refreshDesktopIcons();
+                } },
+                { label: T('HypernetOS.context.refresh'), action: () => { OS.refreshDesktopIcons(); OS.refreshStartMenu(); } },
+                { separator: true }
+            ];
+            if (has('app-hypernet-notepad')) items.push({ label: T('HypernetOS.context.newTextDocument'), icon: 190, action: () => OS.launchApp('app-hypernet-notepad') });
+            if (has('app-hypernet-paint')) items.push({ label: T('HypernetOS.context.newPicture'), icon: 224, action: () => OS.launchApp('app-hypernet-paint') });
+            if (has('app-bobnzi') && OS.Buddy && !OS.Buddy.isOnScreen()) items.push({ label: T('HypernetOS.context.summonBuddy'), action: () => OS.launchApp('app-bobnzi') });
+            items.push({ separator: true });
+            if (has('control-panel')) items.push({ label: T('HypernetOS.context.properties'), icon: 234, action: () => OS.launchApp('control-panel') });
+            return items;
+        }
+    };
+
+    // =========================================================================
+    // Bobnzi the Goblin, the screen buddy
+    // =========================================================================
+    // A living goblin off the NPC catalogue (NPCs.json entries flagged
+    // goblin: true) walks the bottom of the desktop, chatters in goblin
+    // Markov prose, and can be dragged about, talked to, and sent away. The
+    // sprite it wears is rolled once and kept on the save, so the same goblin
+    // comes back every time the machine is switched on.
+    window.HypernetOS.Buddy = {
+        _el: null, _canvas: null, _bubble: null, _bitmap: null, _raf: 0, _state: null, _frame: null, _anim: null,
+
+        SIZE: 3,           // sprite scale
+        SPEED: 38,         // px per second while walking
+
+        state: function() {
+            if (typeof $gameSystem === 'undefined' || !$gameSystem) return this._state || (this._state = { sprite: null, active: false, x: 0.5 });
+            if (!$gameSystem._hypernetBuddy) $gameSystem._hypernetBuddy = { sprite: null, active: false, x: 0.5 };
+            return $gameSystem._hypernetBuddy;
+        },
+
+        // Every goblin sprite in the catalogue that is alive.
+        goblinSprites: function(catalogue) {
+            const cat = catalogue || (window.WorldGen && window.WorldGen.NPCs) || {};
+            return Object.keys(cat).filter(k => cat[k] && cat[k].goblin === true);
+        },
+
+        pickSprite: function(rng, catalogue) {
+            const pool = this.goblinSprites(catalogue);
+            if (!pool.length) return null;
+            const r = typeof rng === 'function' ? rng() : Math.random();
+            return pool[Math.floor(r * pool.length) % pool.length];
+        },
+
+        isOnScreen: function() {
+            return !!(this._el && this._el.isConnected);
+        },
+
+        restore: function() {
+            if (this.state().active) this.spawn(false);
+        },
+
+        // Put the goblin on the desktop. A fresh summon rolls a new goblin.
+        spawn: function(reroll) {
+            const desk = document.getElementById('hypernet-os-desktop');
+            if (!desk) return;
+            const st = this.state();
+            if (reroll || !st.sprite) st.sprite = this.pickSprite();
+            if (!st.sprite) return;
+            st.active = true;
+            this.despawn();
+
+            const el = document.createElement('div');
+            el.id = 'hypernet-buddy';
+            // Clicking the buddy makes it talk, so it is a control like any other:
+            // the desktop's ring collects it and Confirm greets it.
+            el.className = 'hypernet-buddy focusable';
+            el.tabIndex = 0;
+            el.title = T('HypernetOS.buddy.name');
+            const canvas = document.createElement('canvas');
+            canvas.className = 'hypernet-buddy-sprite';
+            const bubble = document.createElement('div');
+            bubble.className = 'hypernet-buddy-bubble';
+            bubble.hidden = true;
+            el.appendChild(bubble);
+            el.appendChild(canvas);
+            desk.appendChild(el);
+            this._el = el; this._canvas = canvas; this._bubble = bubble;
+
+            this._anim = { dir: 0, frame: 1, t: 0, walking: false, target: null, idleFor: 1.5, talkIn: 4 + Math.random() * 6, last: performance.now(), dragging: false };
+            this._frame = null;
+            this._bitmap = ImageManager.loadCharacter(st.sprite);
+            this._bitmap.addLoadListener(() => this._sized());
+            if (this._bitmap.isReady()) this._sized();
+
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (el._hnDragged) { el._hnDragged = false; return; }
+                this.say(this.line('greet'));
+            });
+            this._attachDrag(el, desk);
+
+            const loop = (now) => {
+                if (!this._el || !this._el.isConnected) return;
+                this._raf = requestAnimationFrame(loop);
+                this._tick(Math.min(0.1, (now - this._anim.last) / 1000), desk);
+                this._anim.last = now;
+            };
+            this._raf = requestAnimationFrame(loop);
+            this.say(this.line(reroll ? 'hello' : 'back'));
+        },
+
+        // Takes the goblin off the screen. The save's flag is left alone, so
+        // shutting the machine down brings it back next boot; dismiss() is
+        // what clears it.
+        despawn: function() {
+            cancelAnimationFrame(this._raf);
+            clearTimeout(this._bubbleTimer);
+            if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
+            this._el = null; this._canvas = null; this._bubble = null;
+        },
+
+        dismiss: function() {
+            this.say(this.line('bye'));
+            this.state().active = false;
+            setTimeout(() => this.despawn(), 900);
+        },
+
+        _sized: function() {
+            const bmp = this._bitmap;
+            if (!bmp || !this._canvas) return;
+            const fw = Math.floor(bmp.width / 3), fh = Math.floor(bmp.height / 4);
+            this._frame = { w: fw, h: fh };
+            this._canvas.width = fw; this._canvas.height = fh;
+            this._canvas.style.width = (fw * this.SIZE) + 'px';
+            this._canvas.style.height = (fh * this.SIZE) + 'px';
+            this._place();
+            this._draw();
+        },
+
+        _place: function() {
+            const desk = document.getElementById('hypernet-os-desktop');
+            if (!desk || !this._el || !this._frame) return;
+            const w = this._frame.w * this.SIZE;
+            const x = Math.round(this.state().x * Math.max(1, desk.clientWidth - w));
+            this._el.style.left = x + 'px';
+            this._el.style.bottom = '2px';
+        },
+
+        _draw: function() {
+            const bmp = this._bitmap, c = this._canvas, f = this._frame;
+            if (!bmp || !c || !f || !bmp.isReady()) return;
+            const ctx = c.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, f.w, f.h);
+            // !$ single sheets: 3 columns of walk frames, 4 rows of facings
+            // (down, left, right, up).
+            const a = this._anim;
+            const row = a.dir === 0 ? 0 : (a.dir < 0 ? 1 : 2);
+            ctx.drawImage(bmp.canvas, a.frame * f.w, row * f.h, f.w, f.h, 0, 0, f.w, f.h);
+        },
+
+        _tick: function(dt, desk) {
+            const a = this._anim, st = this.state();
+            if (!a || !this._frame || a.dragging) return;
+            const w = this._frame.w * this.SIZE;
+            const span = Math.max(1, desk.clientWidth - w);
+
+            if (a.walking) {
+                const dx = a.target - st.x;
+                const step = (this.SPEED / span) * dt;
+                if (Math.abs(dx) <= step) { st.x = a.target; a.walking = false; a.dir = 0; a.frame = 1; a.idleFor = 1 + Math.random() * 4; }
+                else { st.x += Math.sign(dx) * step; a.dir = Math.sign(dx); }
+                a.t += dt;
+                if (a.t > 0.16) { a.t = 0; a.frame = (a.frame + 1) % 3; }
+                this._place();
+            } else {
+                a.idleFor -= dt;
+                if (a.idleFor <= 0) { a.walking = true; a.target = Math.random(); }
+            }
+            this._draw();
+
+            a.talkIn -= dt;
+            if (a.talkIn <= 0) { a.talkIn = 12 + Math.random() * 20; this.say(this.line('chatter')); }
+        },
+
+        _attachDrag: function(el, desk) {
+            el.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                const a = this._anim, st = this.state();
+                const startX = e.clientX;
+                const startPos = st.x;
+                let moved = false;
+                const onMove = (ev) => {
+                    if (!moved && Math.abs(ev.clientX - startX) < 6) return;
+                    moved = true; a.dragging = true; a.walking = false; a.dir = 0; a.frame = 1;
+                    const w = this._frame ? this._frame.w * this.SIZE : 48;
+                    const span = Math.max(1, desk.clientWidth - w);
+                    st.x = Math.max(0, Math.min(1, startPos + (ev.clientX - startX) / span));
+                    this._place(); this._draw();
+                };
+                const onUp = () => {
+                    document.removeEventListener('mousemove', onMove, true);
+                    document.removeEventListener('mouseup', onUp, true);
+                    a.dragging = false;
+                    if (moved) { el._hnDragged = true; setTimeout(() => { el._hnDragged = false; }, 0); }
+                };
+                document.addEventListener('mousemove', onMove, true);
+                document.addEventListener('mouseup', onUp, true);
+            });
+        },
+
+        // What the goblin says. Fixed lines are i18n; chatter is goblin Markov.
+        line: function(kind) {
+            if (kind === 'chatter' && typeof window.generateMarkovString === 'function') {
+                try {
+                    const txt = window.generateMarkovString('semiwild_goblin', { chainOrder: 2, minLength: 6, maxLength: 22 });  // i18n-ignore  markov db id
+                    if (txt && !/^ERROR/.test(txt)) return txt;
+                } catch (e) { /* fall through to the fixed lines */ }
+            }
+            const key = 'HypernetOS.buddy.' + (kind === 'chatter' ? 'greet' : kind);
+            const list = T.list ? T.list(key) : null;
+            if (Array.isArray(list) && list.length) return list[Math.floor(Math.random() * list.length)];
+            return T(key);
+        },
+
+        say: function(text) {
+            if (!this._bubble || !text) return;
+            this._bubble.textContent = text;
+            this._bubble.hidden = false;
+            clearTimeout(this._bubbleTimer);
+            this._bubbleTimer = setTimeout(() => { if (this._bubble) this._bubble.hidden = true; }, 4500);
+        },
+
+        menuItems: function() {
+            return [
+                { label: T('HypernetOS.buddy.talk'), bold: true, action: () => this.say(this.line('chatter')) },
+                { label: T('HypernetOS.buddy.reroll'), action: () => this.spawn(true) },
+                { separator: true },
+                { label: T('HypernetOS.buddy.goAway'), action: () => this.dismiss() }
+            ];
+        }
+    };
+
+    window.HypernetOS.registerApp({
+        id: 'app-bobnzi',
+        name: T('HypernetOS.buddy.appName'),
+        icon: 84,
+        category: 'games',
+        launchFn: function() {
+            const B = window.HypernetOS.Buddy;
+            if (B.isOnScreen()) B.say(B.line('greet'));
+            else B.spawn(true);
+        },
+        desktopShortcut: false
+    });
+
+
+    // =========================================================================
+    // The host machine
+    // -------------------------------------------------------------------------
+    // The desktop runs on whatever booted it. Booted off the Hyperdeck, the
+    // fitted parts are the hardware: the kernel's memory, the shell's host
+    // name, the Control Panel's spec sheet and the Device Manager's tree are
+    // all read off the board, so swapping a part moves every one of them.
+    // Reached any other way (the hotkey, an event, a shop counter, the main
+    // menu) the OS runs on a stock desktop of 2001, rolled once per world off
+    // the world seed so the same world always sits at the same beige box.
+    // =========================================================================
+    // XP-PURE-START
+    function xpHash(str) {
+        let h = 2166136261;
+        const s = String(str || '');
+        for (let i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 16777619) >>> 0;
+        }
+        return h >>> 0;
+    }
+
+    // The same weighting HyperDeck.performanceIndex uses, so a stock box and a
+    // deck are ranked on one scale.
+    function xpPerfIndex(mhz, ram, vram, mb) {
+        return Math.round((mhz || 0) / 10 + Math.min(1024, ram || 0) / 4
+            + Math.min(1024, vram || 0) * 1.5 + Math.min(1000000, mb || 0) / 2000);
+    }
+
+    // The stock catalogue: names live in i18n, the numbers behind them here,
+    // index for index.
+    const STOCK_CPU_MHZ = [866, 1000, 1500, 1700, 1200, 1333, 800, 900];
+    const STOCK_RAM_MB = [128, 128, 256, 256, 384, 512];
+    const STOCK_GPU_VRAM = [32, 64, 16, 32, 16, 4];
+    const STOCK_DISK_GB = [20, 30, 40, 60];
+    const STOCK_MODEM_KBPS = [56, 33.6, 10000, 56];
+
+    function stockDesktop(seed) {
+        const h = xpHash(seed);
+        const idx = (salt, n) => n > 0 ? xpHash(h + ':' + salt) % n : 0;
+        const cpus = T.list('HypernetOS.host.stock.cpus');
+        const gpus = T.list('HypernetOS.host.stock.gpus');
+        const sounds = T.list('HypernetOS.host.stock.sounds');
+        const modems = T.list('HypernetOS.host.stock.modems');
+        const vendors = T.list('HypernetOS.host.stock.vendors');
+        const models = T.list('HypernetOS.host.stock.models');
+        const ci = idx('cpu', STOCK_CPU_MHZ.length);
+        const gi = idx('gpu', STOCK_GPU_VRAM.length);
+        const mi = idx('modem', STOCK_MODEM_KBPS.length);
+        const vi = idx('vendor', vendors.length);
+        const ram = STOCK_RAM_MB[idx('ram', STOCK_RAM_MB.length)];
+        const disk = STOCK_DISK_GB[idx('disk', STOCK_DISK_GB.length)] * 1024;
+        const vram = STOCK_GPU_VRAM[gi];
+        return {
+            origin: 'desktop',                                        // i18n-ignore  profile id
+            hostname: 'OEM-' + (h % 0xFFFFFF).toString(16).toUpperCase().padStart(6, '0'),  // i18n-ignore  machine name
+            vendor: vendors[vi] || '',
+            model: models[vi] || '',
+            cpu: cpus[ci] || '',
+            mhz: STOCK_CPU_MHZ[ci],
+            ram: ram,
+            vram: vram,
+            gpu: gpus[gi] || '',
+            integrated: gi === STOCK_GPU_VRAM.length - 1,
+            disk: disk,
+            sound: sounds[idx('sound', sounds.length)] || '',
+            modem: modems[mi] || '',
+            linkKbps: STOCK_MODEM_KBPS[mi],
+            caseName: T('HypernetOS.host.stock.tower'),
+            serial: (xpHash(h + ':serial') % 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0'),
+            index: xpPerfIndex(STOCK_CPU_MHZ[ci], ram, vram, disk)
+        };
+    }
+
+    // The Run box: what a typed name opens. Program names of the period map to
+    // the desktop's own programs; the resolver answers an app id or null.
+    // i18n-ignore-start  executable names and app ids
+    const RUN_ALIASES = {
+        'notepad': 'app-hypernet-notepad', 'notebad': 'app-hypernet-notepad',
+        'calc': 'app-calc', 'charmap': 'app-charmap', 'clipbrd': 'app-clipbrd',
+        'cmd': 'sys-terminal', 'command': 'sys-terminal',
+        'taskmgr': 'sys-task-mgr', 'control': 'control-panel',
+        'msconfig': 'app-msconfig', 'regedit': 'app-regedit', 'regedt32': 'app-regedit',
+        'explorer': 'my-computer', 'mspaint': 'app-hypernet-paint', 'pbrush': 'app-hypernet-paint',
+        'winver': 'app-winver', 'cleanmgr': 'app-cleanmgr', 'dfrg.msc': 'app-defrag', 'defrag': 'app-defrag',
+        'sysdm.cpl': 'app-sysdm', 'timedate.cpl': 'app-timedate', 'intl.cpl': 'app-intl',
+        'mmsys.cpl': 'app-mmsys', 'appwiz.cpl': 'app-appwiz', 'desk.cpl': 'app-desk',
+        'devmgmt.msc': 'app-devmgmt', 'eventvwr': 'app-eventvwr', 'eventvwr.msc': 'app-eventvwr',
+        'osk': 'app-osk', 'wscui.cpl': 'app-wscui', 'mstsc': 'app-netstat', 'ncpa.cpl': 'app-netstat',
+        'iexplore': 'app-hypernet-browser', 'exploder': 'app-hypernet-browser',
+        'helpctr': 'app-help', 'hh': 'app-help', 'schtasks': 'app-schedtasks',
+        'wmplayer': 'app-hyperamp', 'excel': 'app-hexcel', 'winword': 'app-wyrd',
+        'services.msc': 'app-msconfig', 'sndvol32': 'app-mmsys', 'recycle': 'app-recycle',
+        'search': 'app-search', 'run': 'app-run',
+        'chiplab': 'app-chiplab', 'circuit': 'app-chiplab', 'etch': 'app-chiplab', 'eagle': 'app-chiplab'
+    };
+    // i18n-ignore-end
+
+    function resolveRun(text, apps) {
+        const raw = String(text || '').trim();
+        if (!raw) return null;
+        const lower = raw.toLowerCase();
+        if (/^(https?:\/\/|www\.)/.test(lower)) return { appId: 'app-hypernet-browser', arg: raw };
+        const first = lower.split(/\s+/)[0];
+        const bare = first.replace(/\.(exe|com|bat|cpl|msc)$/, '');
+        const alias = RUN_ALIASES[first] || RUN_ALIASES[bare];
+        if (alias) return { appId: alias, arg: raw.slice(first.length).trim() };
+        if (apps && apps[first]) return { appId: first, arg: '' };
+        if (apps) {
+            const hit = Object.values(apps).find(a => String(a.name || '').toLowerCase() === lower);
+            if (hit) return { appId: hit.id, arg: '' };
+        }
+        return null;
+    }
+
+    // The Standard calculator, as a state machine the buttons feed. Every key
+    // of the real one: the four operations, sqrt, %, 1/x, sign, backspace,
+    // clear entry, clear and the memory column.
+    const CalcEngine = {
+        create() { return { display: '0', acc: null, op: null, fresh: true, memory: 0, error: false }; },
+        value(st) { return parseFloat(st.display) || 0; },
+        fmt(n) {
+            if (!isFinite(n)) return null;
+            let s = String(Math.round(n * 1e10) / 1e10);
+            if (s.length > 24) s = n.toExponential(12);
+            return s;
+        },
+        apply(st, a, b, op) {
+            switch (op) {
+                case '+': return a + b;
+                case '-': return a - b;
+                case '*': return a * b;
+                case '/': return b === 0 ? NaN : a / b;
+            }
+            return b;
+        },
+        press(st, key) {
+            if (st.error && key !== 'C') return st;
+            if (/^[0-9]$/.test(key)) {
+                st.display = (st.fresh || st.display === '0') ? key : st.display + key;
+                st.fresh = false;
+                return st;
+            }
+            switch (key) {
+                case '.':
+                    if (st.fresh) { st.display = '0.'; st.fresh = false; }
+                    else if (!st.display.includes('.')) st.display += '.';
+                    return st;
+                case 'BS':
+                    if (st.fresh) return st;
+                    st.display = st.display.length > 1 ? st.display.slice(0, -1) : '0';
+                    return st;
+                case 'CE': st.display = '0'; st.fresh = true; return st;
+                case 'C': Object.assign(st, { display: '0', acc: null, op: null, fresh: true, error: false }); return st;
+                case '+/-': st.display = this.fmt(-this.value(st)); return st;
+                case 'sqrt': return this.unary(st, Math.sqrt(this.value(st)));
+                case '1/x': return this.unary(st, this.value(st) === 0 ? NaN : 1 / this.value(st));
+                case '%': return this.unary(st, st.acc === null ? 0 : st.acc * this.value(st) / 100);
+                case 'MC': st.memory = 0; return st;
+                case 'MR': st.display = this.fmt(st.memory); st.fresh = true; return st;
+                case 'MS': st.memory = this.value(st); st.fresh = true; return st;
+                case 'M+': st.memory += this.value(st); st.fresh = true; return st;
+                case '+': case '-': case '*': case '/': {
+                    if (st.op && !st.fresh) {
+                        const r = this.apply(st, st.acc, this.value(st), st.op);
+                        if (!this.unary(st, r).error) st.acc = r;
+                        else return st;
+                    } else if (st.acc === null || !st.fresh) {
+                        st.acc = this.value(st);
+                    }
+                    st.op = key;
+                    st.fresh = true;
+                    return st;
+                }
+                case '=': {
+                    if (st.op === null) return st;
+                    const r = this.apply(st, st.acc, this.value(st), st.op);
+                    this.unary(st, r);
+                    st.acc = null;
+                    st.op = null;
+                    return st;
+                }
+            }
+            return st;
+        },
+        unary(st, r) {
+            const s = this.fmt(r);
+            if (s === null) { st.error = true; st.display = T('HypernetOS.xp.calc.error'); }
+            else st.display = s;
+            st.fresh = true;
+            return st;
+        }
+    };
+
+    // The character sets Character Map pages through, by code point range.
+    // i18n-ignore-start  set ids and code points
+    const CHARMAP_SETS = [
+        { id: 'latin', from: 0x21, to: 0x7E },
+        { id: 'latin1', from: 0xA1, to: 0xFF },
+        { id: 'greek', from: 0x391, to: 0x3C9 },
+        { id: 'cyrillic', from: 0x410, to: 0x44F },
+        { id: 'runic', from: 0x16A0, to: 0x16F0 },
+        { id: 'arrows', from: 0x2190, to: 0x21FF },
+        { id: 'math', from: 0x2200, to: 0x22FF },
+        { id: 'box', from: 0x2500, to: 0x257F },
+        { id: 'astro', from: 0x263C, to: 0x2653 },
+        { id: 'alchemy', from: 0x1F700, to: 0x1F773 }
+    ];
+    // i18n-ignore-end
+
+    function charmapChars(setId) {
+        const set = CHARMAP_SETS.find(s => s.id === setId) || CHARMAP_SETS[0];
+        const out = [];
+        for (let cp = set.from; cp <= set.to; cp++) out.push(String.fromCodePoint(cp));
+        return out;
+    }
+    // XP-PURE-END
+
+    window.HypernetOS.Host = {
+        _source: null,
+        _cache: null,
+
+        // HyperDeck calls this right before it pushes the OS; nothing else
+        // does, so any other entry lands on the stock desktop.
+        bootFrom(source) { this._source = source; this._cache = null; },
+        reset() { this._source = null; this._cache = null; },
+        source() { return this._source || 'desktop'; },   // i18n-ignore  profile id
+
+        seed() {
+            const g = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem : null;
+            const s = g && (g._historySeed || g._worldSeed);
+            return String(s || 'esoteric');   // i18n-ignore  default seed
+        },
+
+        isHyperdeck() {
+            const HD = window.HyperDeck;
+            return this.source() === 'hyperdeck' && !!(HD && HD.summary && HD.summary());
+        },
+
+        // A player may rename the machine in System Properties; the name is
+        // kept in the registry and beats whatever the profile rolled.
+        hostname() {
+            const fs = window.HypernetFileSystem;
+            const named = fs ? fs.getRegistry('computerName', '') : '';
+            return named || this.profile().hostname;
+        },
+
+        profile() {
+            const key = this.source() + '|' + this.seed();
+            if (this._cache && this._cache.key === key && this._cache.origin !== 'hyperdeck') return this._cache;
+            let p;
+            if (this.isHyperdeck()) {
+                const HD = window.HyperDeck;
+                const s = HD.specs();
+                const rig = HD.summary();
+                const model = HD.format.caseName(HD.caseDef());
+                p = {
+                    origin: 'hyperdeck',                              // i18n-ignore  profile id
+                    hostname: 'HYPERDECK',                            // i18n-ignore  machine name
+                    vendor: T('HypernetOS.host.deckVendor'),
+                    model: model,
+                    cpu: HD.partNameFor('cpu', 'mhz') || T('HypernetOS.host.unknownPart'),
+                    mhz: s.mhz,
+                    ram: s.ram === Infinity ? 4096 : s.ram,
+                    vram: s.vram,
+                    gpu: rig.graphics,
+                    integrated: !!s.shared,
+                    disk: s.mb,
+                    sound: rig.audio,
+                    modem: rig.uplink,
+                    linkKbps: s.kinds.modem ? 56 : 0,
+                    caseName: model,
+                    serial: (xpHash(this.seed() + ':deck') % 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0'),
+                    index: rig.index,
+                    endurance: rig.endurance,
+                    power: rig.power,
+                    board: rig.board
+                };
+            } else {
+                p = stockDesktop(this.seed());
+            }
+            p.key = key;
+            this._cache = p;
+            return p;
+        },
+
+        // Printed spec lines, the way the Control Panel and the shell want them.
+        fmtMhz(n) { return n >= 1000 ? T('HypernetOS.host.ghz', { n: Math.round(n / 10) / 100 }) : T('HypernetOS.host.mhz', { n: n }); },
+        fmtMb(n) { return n >= 1024 ? T('HypernetOS.host.gb', { n: Math.round(n / 102.4) / 10 }) : T('HypernetOS.host.mb', { n: n }); },
+
+        // The paging file the Advanced tab quotes: one and a half times the
+        // memory, capped to what the disk can spare.
+        pagingMb() {
+            const p = this.profile();
+            const initial = Math.min(Math.round(p.ram * 1.5), Math.round(p.disk / 4));
+            return { initial: initial, max: Math.min(initial * 2, Math.round(p.disk / 2)) };
+        },
+
+        // Bytes the virtual drive holds, as the disk applets count them.
+        diskUsedMb() {
+            const fs = window.HypernetFileSystem;
+            if (!fs || !fs.walk) return 0;
+            let bytes = 0;
+            fs.walk('C:').forEach(e => {                      // i18n-ignore  drive
+                if (e.node.type === 'file') bytes += String(e.node.content || '').length;
+            });
+            // The system's own files never show in the tree at their real
+            // weight, so a fixed footprint stands in for them.
+            return Math.round(bytes / 1048576) + 1180;
+        },
+
+        // The kernel and the shell take the profile: memory and host name.
+        apply() {
+            const p = this.profile();
+            window.HypernetOS.Kernel.totalRAM = p.ram;
+            return p;
+        },
+
+        // The Device Manager tree. Every branch is a category of the period
+        // with the machine's own parts under it.
+        devices() {
+            const p = this.profile();
+            const X = 'HypernetOS.xp.devmgmt.';
+            const line = k => T(X + k);
+            return [
+                { label: line('catComputer'), items: [p.origin === 'hyperdeck' ? line('devDeck') : line('devStandardPc')] },
+                { label: line('catDisk'), items: [T(X + 'devDisk', { size: this.fmtMb(p.disk), vendor: p.vendor })] },
+                { label: line('catDisplay'), items: [p.gpu] },
+                { label: line('catOptical'), items: p.origin === 'hyperdeck' ? [] : [line('devCdrom')] },
+                { label: line('catFloppy'), items: p.origin === 'hyperdeck' ? [] : [line('devFloppy')] },
+                { label: line('catIde'), items: [line('devIdePrimary'), line('devIdeSecondary')] },
+                { label: line('catKeyboard'), items: [p.origin === 'hyperdeck' ? line('devDeckKeys') : line('devKeyboard')] },
+                { label: line('catMouse'), items: [line('devMouse')] },
+                { label: line('catModem'), items: p.modem ? [p.modem] : [] },
+                { label: line('catMonitor'), items: [p.origin === 'hyperdeck' ? line('devDeckPanel') : line('devMonitor')] },
+                { label: line('catPorts'), items: [line('devCom1'), line('devCom2'), line('devLpt1')] },
+                { label: line('catProcessor'), items: [T(X + 'devCpu', { name: p.cpu, mhz: this.fmtMhz(p.mhz) })] },
+                { label: line('catSound'), items: [p.sound] },
+                { label: line('catSystem'), items: [line('devPci'), line('devDma'), line('devPic'), line('devRtc'), line('devSpeaker')] },
+                { label: line('catUsb'), items: [line('devUsbRoot'), line('devUsbHub')] }
+            ].filter(c => c.items.length);
+        }
+    };
+
+    // =========================================================================
+    // Message boxes
+    // -------------------------------------------------------------------------
+    // The desktop never shows a browser dialog: every question an app asks is
+    // one of these, a modal box in the OS's own chrome. They return promises,
+    // so an app writes `await Dialog.confirm(...)` where it used to block.
+    // =========================================================================
+    window.HypernetOS.Dialog = {
+        _open: [],
+
+        isOpen() { return this._open.length > 0; },
+        top() { return this._open.length ? this._open[this._open.length - 1] : null; },
+        contains(node) { return this._open.some(d => d.shade.contains(node)); },
+
+        // i18n-ignore  icon glyphs of the four classic boxes
+        ICONS: { info: 'i', question: '?', warning: '!', error: 'x', none: '' },
+
+        // options: title, message (text or HTML when html: true), icon,
+        // buttons [{ id, label, default, cancel }], input { value, password },
+        // select { options: [{ value, label }], value }, checkbox { label, checked }
+        show(options) {
+            const host = document.getElementById('hypernet-os-container');
+            if (!host) return Promise.resolve({ button: 'cancel' });
+            const opts = options || {};
+            const buttons = (opts.buttons && opts.buttons.length) ? opts.buttons
+                : [{ id: 'ok', label: T('HypernetOS.xp.dialog.ok'), default: true, cancel: true }];
+            const iconKey = opts.icon || 'none';
+            const escape = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            const body = opts.html ? String(opts.message || '') : escape(opts.message).replace(/\n/g, '<br>');
+
+            const shade = document.createElement('div');
+            shade.className = 'hypernet-dialog-shade';
+            shade.innerHTML = `
+                <div class="hypernet-dialog ${opts.wide ? 'wide' : ''}" role="dialog">
+                    <div class="hypernet-dialog-title">${escape(opts.title || T('HypernetOS.xp.dialog.defaultTitle'))}</div>
+                    <div class="hypernet-dialog-body">
+                        ${iconKey !== 'none' ? `<div class="hypernet-dialog-icon icon-${iconKey}">${this.ICONS[iconKey] || ''}</div>` : ''}
+                        <div class="hypernet-dialog-text">
+                            <div class="hypernet-dialog-message">${body}</div>
+                            ${opts.input ? `<input class="hypernet-dialog-input" type="${opts.input.password ? 'password' : 'text'}" value="${escape(opts.input.value)}" ${opts.input.placeholder ? `placeholder="${escape(opts.input.placeholder)}"` : ''}>` : ''}
+                            ${opts.select ? `<select class="hypernet-dialog-select">${opts.select.options.map(o => `<option value="${escape(o.value)}" ${o.value === opts.select.value ? 'selected' : ''}>${escape(o.label)}</option>`).join('')}</select>` : ''}
+                            ${opts.checkbox ? `<label class="hypernet-dialog-check"><input type="checkbox" ${opts.checkbox.checked ? 'checked' : ''}> ${escape(opts.checkbox.label)}</label>` : ''}
+                        </div>
+                    </div>
+                    <div class="hypernet-dialog-buttons">
+                        ${buttons.map(b => `<button class="hypernet-dialog-btn focusable ${b.default ? 'default' : ''}" data-id="${escape(b.id)}" tabindex="0">${escape(b.label)}</button>`).join('')}
+                    </div>
+                </div>`;
+            host.appendChild(shade);
+
+            if (iconKey === 'error' && window.SoundManager) SoundManager.playBuzzer();
+            else if (iconKey !== 'none' && window.SoundManager) SoundManager.playCursor();
+
+            return new Promise(resolve => {
+                const entry = { shade, buttons, resolve, opts };
+                this._open.push(entry);
+                const finish = (id) => {
+                    const input = shade.querySelector('.hypernet-dialog-input');
+                    const select = shade.querySelector('.hypernet-dialog-select');
+                    const check = shade.querySelector('.hypernet-dialog-check input');
+                    this._open = this._open.filter(d => d !== entry);
+                    if (shade.parentNode) shade.parentNode.removeChild(shade);
+                    resolve({
+                        button: id,
+                        value: input ? input.value : (select ? select.value : undefined),
+                        select: select ? select.value : undefined,
+                        checked: check ? check.checked : undefined
+                    });
+                };
+                entry.finish = finish;
+                shade.querySelectorAll('.hypernet-dialog-btn').forEach(btn => {
+                    btn.addEventListener('click', e => { e.stopPropagation(); finish(btn.dataset.id); });
+                });
+                shade.addEventListener('mousedown', e => e.stopPropagation());
+                shade.addEventListener('click', e => e.stopPropagation());
+                const input = shade.querySelector('.hypernet-dialog-input');
+                const first = input || shade.querySelector('.hypernet-dialog-btn.default') || shade.querySelector('.hypernet-dialog-btn');
+                if (first) setTimeout(() => { first.focus(); if (input) input.select(); }, 0);
+            });
+        },
+
+        // Enter picks the default button, Escape the cancelling one. The scene's
+        // key hook hands every key here first while a box is up.
+        handleKey(event) {
+            const d = this.top();
+            if (!d) return false;
+            const key = event.key;
+            if (key === 'Escape') {
+                const cancel = d.buttons.find(b => b.cancel) || d.buttons[d.buttons.length - 1];
+                event.preventDefault();
+                d.finish(cancel.id);
+                return true;
+            }
+            if (key === 'Enter') {
+                const focused = document.activeElement;
+                if (focused && focused.classList && focused.classList.contains('hypernet-dialog-btn')) {
+                    event.preventDefault();
+                    d.finish(focused.dataset.id);
+                    return true;
+                }
+                const def = d.buttons.find(b => b.default) || d.buttons[0];
+                event.preventDefault();
+                d.finish(def.id);
+                return true;
+            }
+            // Every other key stays inside the box.
+            return !['Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(key)
+                && !(document.activeElement && ['INPUT', 'SELECT'].includes(document.activeElement.tagName));
+        },
+
+        alert(message, title, icon) {
+            return this.show({ title, message, icon: icon || 'info' }).then(() => true);
+        },
+        error(message, title) {
+            return this.show({ title: title || T('HypernetOS.xp.dialog.errorTitle'), message, icon: 'error' }).then(() => true);
+        },
+        confirm(message, title, icon) {
+            return this.show({
+                title, message, icon: icon || 'question',
+                buttons: [
+                    { id: 'yes', label: T('HypernetOS.xp.dialog.yes'), default: true },
+                    { id: 'no', label: T('HypernetOS.xp.dialog.no'), cancel: true }
+                ]
+            }).then(r => r.button === 'yes');
+        },
+        prompt(message, defaultValue, title) {
+            return this.show({
+                title, message, input: { value: defaultValue == null ? '' : defaultValue },
+                buttons: [
+                    { id: 'ok', label: T('HypernetOS.xp.dialog.ok'), default: true },
+                    { id: 'cancel', label: T('HypernetOS.xp.dialog.cancel'), cancel: true }
+                ]
+            }).then(r => r.button === 'ok' ? r.value : null);
+        },
+
+        // "Archways cannot open this file": the box the shell shows for a
+        // document no program claims, with the installed programs to pick from.
+        // Resolves with the app it launched, or null.
+        cannotOpen(fileName) {
+            const apps = Object.values(window.HypernetOS._apps)
+                .filter(a => window.HypernetOS.isInstalled(a))
+                .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+            return this.show({
+                title: T('HypernetOS.xp.dialog.cannotOpenTitle'),
+                message: T('HypernetOS.xp.dialog.cannotOpenBody', { file: fileName }),
+                icon: 'question',
+                wide: true,
+                select: { options: apps.map(a => ({ value: a.id, label: a.name })), value: apps.length ? apps[0].id : '' },
+                checkbox: { label: T('HypernetOS.xp.dialog.alwaysUse'), checked: false },
+                buttons: [
+                    { id: 'ok', label: T('HypernetOS.xp.dialog.ok'), default: true },
+                    { id: 'cancel', label: T('HypernetOS.xp.dialog.cancel'), cancel: true }
+                ]
+            }).then(r => {
+                if (r.button !== 'ok' || !r.value) return null;
+                const ext = String(fileName).toLowerCase().split('.').pop();
+                if (r.checked && window.HypernetFileSystem) {
+                    const assoc = window.HypernetFileSystem.getRegistry('fileAssoc', {}) || {};
+                    assoc[ext] = r.value;
+                    window.HypernetFileSystem.setRegistry('fileAssoc', assoc);
+                }
+                window.HypernetOS.launchApp(r.value);
+                return r.value;
+            });
+        }
+    };
+
+    // Opening a document from anywhere (My Computer, Search, the Run box): the
+    // program that owns the extension, then the one the player associated, then
+    // the "cannot open" box.
+    window.HypernetOS.openFile = function(filePath) {
+        const name = String(filePath).slice(String(filePath).lastIndexOf('/') + 1);
+        const ext = name.toLowerCase().slice(name.lastIndexOf('.') + 1);
+        const fs = window.HypernetFileSystem;
+        const node = fs ? fs.resolvePath(filePath) : null;
+        if (node && node.app && this._apps[node.app]) { this.launchApp(node.app); return true; }
+        // i18n-ignore-start  extensions
+        const openers = {
+            txt: () => window.HypernetNotepad && window.HypernetNotepad.openFile(filePath),
+            png: () => window.HypernetPaint && window.HypernetPaint.openFile(filePath),
+            csv: () => window.HypernetOffice && window.HypernetOffice.Hexcel.openFile(filePath),
+            md: () => window.HypernetOffice && window.HypernetOffice.Wyrd.openFile(filePath)
+        };
+        // i18n-ignore-end
+        if (openers[ext]) {
+            if (openers[ext]()) return true;
+            this.Dialog.error(T('MyComputer.cannotOpen', { file: name }));
+            return false;
+        }
+        const assoc = fs ? (fs.getRegistry('fileAssoc', {}) || {}) : {};
+        if (assoc[ext] && this._apps[assoc[ext]]) { this.launchApp(assoc[ext]); return true; }
+        this.Dialog.cannotOpen(name);
+        return false;
+    };
+
+    // Programs the player removed through Add or Remove Programs stay
+    // registered (the code is loaded) but vanish from the desktop, the start
+    // menu and the Run box until they are put back.
+    window.HypernetOS.removedApps = function() {
+        const fs = window.HypernetFileSystem;
+        return fs ? (fs.getRegistry('removedApps', []) || []) : [];
+    };
+    window.HypernetOS.isInstalled = function(app) {
+        if (!app) return false;
+        return !this.removedApps().includes(app.id);
+    };
+    window.HypernetOS.setInstalled = function(id, on) {
+        const fs = window.HypernetFileSystem;
+        if (!fs) return;
+        const list = this.removedApps().filter(x => x !== id);
+        if (!on) list.push(id);
+        fs.setRegistry('removedApps', list);
+        this.refreshDesktopIcons();
+        this.refreshStartMenu();
+    };
+
+    // =========================================================================
+    // Clipboard, event log, balloon tips
+    // =========================================================================
+    window.HypernetOS.Clipboard = {
+        _text: '',
+        _kind: 'text',   // i18n-ignore  clip kind
+        set(text, kind) { this._text = String(text == null ? '' : text); this._kind = kind || 'text'; },
+        get() { return this._text; },
+        kind() { return this._kind; },
+        clear() { this._text = ''; this._kind = 'text'; }
+    };
+
+    // Everything the machine does is written down, the way the Event Viewer
+    // of the period showed it: three logs, a ring of the last hundred each,
+    // kept in the registry so a reboot still remembers.
+    window.HypernetOS.EventLog = {
+        LIMIT: 100,
+        LOGS: ['application', 'security', 'system'],   // i18n-ignore  log ids
+        _all() {
+            const fs = window.HypernetFileSystem;
+            const stored = fs ? fs.getRegistry('eventLog', null) : null;
+            return stored || { application: [], security: [], system: [] };
+        },
+        write(log, level, source, text) {
+            const all = this._all();
+            if (!all[log]) all[log] = [];
+            all[log].unshift({ t: Date.now(), level: level, source: source, text: text, game: window.HypernetOS.clockStamp() });
+            if (all[log].length > this.LIMIT) all[log].length = this.LIMIT;
+            const fs = window.HypernetFileSystem;
+            if (fs) fs.setRegistry('eventLog', all);
+        },
+        read(log) { return (this._all()[log] || []).slice(); },
+        clear(log) {
+            const all = this._all();
+            all[log] = [];
+            const fs = window.HypernetFileSystem;
+            if (fs) fs.setRegistry('eventLog', all);
+        }
+    };
+
+    // The game's clock as a stamp, shared by the logs and the file properties.
+    window.HypernetOS.clockStamp = function() {
+        const TDS = window.TimeDateSystem;
+        const now = (TDS && typeof TDS.getCurrentDateObj === 'function') ? TDS.getCurrentDateObj() : new Date();
+        const two = n => String(n).padStart(2, '0');
+        return `${now.getFullYear()}-${two(now.getMonth() + 1)}-${two(now.getDate())} ${two(now.getHours())}:${two(now.getMinutes())}`;
+    };
+
+    // The yellow tip that rises out of the tray. One at a time; a new one
+    // replaces the old. Click runs the action, the x dismisses it.
+    window.HypernetOS.Balloon = {
+        _el: null,
+        _timer: null,
+        show(opts) {
+            this.hide();
+            const host = document.getElementById('hypernet-os-container');
+            if (!host) return;
+            const el = document.createElement('div');
+            el.className = 'hypernet-balloon';
+            el.innerHTML = `
+                <div class="hypernet-balloon-head">
+                    <span class="hypernet-balloon-icon icon-${opts.icon || 'info'}">${window.HypernetOS.Dialog.ICONS[opts.icon || 'info'] || ''}</span>
+                    <span class="hypernet-balloon-title"></span>
+                    <span class="hypernet-balloon-x focusable" tabindex="0">r</span>
+                </div>
+                <div class="hypernet-balloon-text"></div>`;
+            el.querySelector('.hypernet-balloon-title').textContent = opts.title || '';
+            el.querySelector('.hypernet-balloon-text').textContent = opts.text || '';
+            el.querySelector('.hypernet-balloon-x').addEventListener('click', e => { e.stopPropagation(); this.hide(); });
+            el.addEventListener('click', e => {
+                e.stopPropagation();
+                this.hide();
+                if (typeof opts.onClick === 'function') opts.onClick();
+            });
+            host.appendChild(el);
+            this._el = el;
+            if (window.SoundManager) SoundManager.playCursor();
+            requestAnimationFrame(() => el.classList.add('open'));
+            this._timer = setTimeout(() => this.hide(), opts.timeout || 12000);
+        },
+        hide() {
+            if (this._timer) { clearTimeout(this._timer); this._timer = null; }
+            if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
+            this._el = null;
+        }
+    };
+
+    // =========================================================================
+    // The XP shell: Run, the keyboard, Alt+Tab, power, the screensaver
+    // -------------------------------------------------------------------------
+    // The desktop's own habits, the ones the period's OS had and nobody else
+    // copied: the Run box, the balloon that says the machine might be at
+    // risk, Stand By, the welcome screen, the screensaver kicking in over a
+    // forgotten window. All of it hangs off the scene through install() and
+    // teardown(), and nothing here draws its own window chrome: every box is
+    // a WindowManager window or a Dialog.
+    // =========================================================================
+    const XP = window.HypernetOS.XP = {
+        resolveRun: resolveRun,
+        RUN_ALIASES: RUN_ALIASES,
+        Calc: CalcEngine,
+        charmapChars: charmapChars,
+        CHARMAP_SETS: CHARMAP_SETS,
+        stockDesktop: stockDesktop,
+        hash: xpHash,
+
+        _scene: null,
+        _timers: [],
+        _keyUp: null,
+        _activity: null,
+        _lastInput: 0,
+        _altTab: null,
+        _clockTick: null,
+        _lastTaskMinute: null,
+
+        reg(key, def) { const fs = window.HypernetFileSystem; return fs ? fs.getRegistry(key, def) : def; },
+        setReg(key, value) { const fs = window.HypernetFileSystem; if (fs) fs.setRegistry(key, value); },
+
+        later(fn, ms) { const t = setTimeout(fn, ms); this._timers.push(t); return t; },
+
+        // Wired by Scene_HypernetOS.createDesktop once the desktop exists.
+        install(scene) {
+            this._scene = scene;
+            this._lastInput = Date.now();
+            window.HypernetOS.Host.apply();
+            this.applyVisualEffects();
+            this.applyColorScheme();
+            this.applyWallpaperPosition();
+            this.buildTray();
+            this.log('security', 'info', 'Winlogon', T('HypernetOS.xp.events.logon', { user: this.userName() }));   // i18n-ignore  source
+
+            // Any input keeps the screensaver away.
+            this._activity = () => { this._lastInput = Date.now(); if (this.Saver.active) this.Saver.stop(); };
+            ['mousemove', 'mousedown', 'keydown', 'wheel'].forEach(ev => document.addEventListener(ev, this._activity, true));
+            this._keyUp = (e) => this.onKeyUp(e);
+            document.addEventListener('keyup', this._keyUp);
+
+            // The second hand: scheduled tasks, the screensaver, the tray.
+            this._clockTick = setInterval(() => this.tick(), 1000);
+
+            this.startup();
+        },
+
+        teardown() {
+            this._timers.forEach(t => clearTimeout(t));
+            this._timers = [];
+            if (this._activity) ['mousemove', 'mousedown', 'keydown', 'wheel'].forEach(ev => document.removeEventListener(ev, this._activity, true));
+            this._activity = null;
+            if (this._keyUp) document.removeEventListener('keyup', this._keyUp);
+            this._keyUp = null;
+            if (this._clockTick) clearInterval(this._clockTick);
+            this._clockTick = null;
+            this.Saver.stop();
+            this.hideAltTab();
+            window.HypernetOS.Balloon.hide();
+            window.HypernetOS.Dialog._open.forEach(d => { if (d.shade.parentNode) d.shade.parentNode.removeChild(d.shade); });
+            window.HypernetOS.Dialog._open = [];
+            const overlay = document.getElementById('hypernet-xp-overlay');
+            if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            this._scene = null;
+            window.HypernetOS.Host.reset();
+        },
+
+        log(logName, level, source, text) { window.HypernetOS.EventLog.write(logName, level, source, text); },
+
+        userName() {
+            const named = this.reg('user', '');
+            if (named) return named;
+            const leader = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.leader() : null;
+            return leader ? leader.name() : T('HypernetOS.defaultUser');
+        },
+
+        // --- Boot -------------------------------------------------------------
+        startup() {
+            const fs = window.HypernetFileSystem;
+            // Programs listed in msconfig's Startup tab come up on their own.
+            (this.reg('startupApps', []) || []).forEach((id, i) => {
+                this.later(() => { if (window.HypernetOS._apps[id]) window.HypernetOS.launchApp(id); }, 700 + i * 400);
+            });
+            // Found New Hardware: a part the machine did not have last time.
+            const p = window.HypernetOS.Host.profile();
+            const sig = [p.cpu, p.gpu, p.sound, p.modem, p.ram, p.disk].join('|');
+            const last = this.reg('hwSignature', null);
+            if (last !== sig) {
+                this.setReg('hwSignature', sig);
+                if (last !== null) {
+                    this.later(() => window.HypernetOS.Balloon.show({
+                        title: T('HypernetOS.xp.balloon.newHardwareTitle'),
+                        text: T('HypernetOS.xp.balloon.newHardwareText', { name: p.cpu }),
+                        onClick: () => window.HypernetOS.launchApp('app-devmgmt')
+                    }), 1800);
+                    this.later(() => window.HypernetOS.Balloon.show({
+                        title: T('HypernetOS.xp.balloon.newHardwareTitle'),
+                        text: T('HypernetOS.xp.balloon.hardwareReady')
+                    }), 7000);
+                    this.log('system', 'info', 'PlugPlay', T('HypernetOS.xp.events.newHardware', { name: p.cpu }));   // i18n-ignore  source
+                }
+            }
+            // Security Center: three switches, all off on a fresh install.
+            const sec = this.security();
+            if (!sec.firewall || !sec.updates || !sec.antivirus) {
+                this.later(() => window.HypernetOS.Balloon.show({
+                    title: T('HypernetOS.xp.balloon.riskTitle'),
+                    text: T('HypernetOS.xp.balloon.riskText'),
+                    icon: 'warning',
+                    onClick: () => window.HypernetOS.launchApp('app-wscui')
+                }), last === sig ? 3500 : 12000);
+            }
+            // Unused icons, the nag every desktop of the period got.
+            this.later(() => {
+                const icons = document.querySelectorAll('#hypernet-desktop-icons-container .desktop-icon').length;
+                if (icons >= 8) window.HypernetOS.Balloon.show({
+                    title: T('HypernetOS.xp.balloon.unusedTitle'),
+                    text: T('HypernetOS.xp.balloon.unusedText'),
+                    onClick: () => window.HypernetOS.launchApp('app-desk')
+                });
+            }, 90000);
+            // Low disk space, should the drive ever fill.
+            const used = window.HypernetOS.Host.diskUsedMb();
+            if (used > p.disk * 0.9) {
+                this.later(() => window.HypernetOS.Balloon.show({
+                    title: T('HypernetOS.xp.balloon.lowDiskTitle'),
+                    text: T('HypernetOS.xp.balloon.lowDiskText'),
+                    icon: 'warning',
+                    onClick: () => window.HypernetOS.launchApp('app-cleanmgr')
+                }), 6000);
+            }
+            if (fs && !this.reg('firstBootDone', false)) {
+                this.setReg('firstBootDone', true);
+                this.later(() => window.HypernetOS.Balloon.show({
+                    title: T('HypernetOS.xp.balloon.tourTitle'),
+                    text: T('HypernetOS.xp.balloon.tourText'),
+                    onClick: () => window.HypernetOS.launchApp('app-help')
+                }), 20000);
+            }
+        },
+
+        security() {
+            return Object.assign({ firewall: false, updates: false, antivirus: false }, this.reg('security', {}) || {});
+        },
+
+        // --- The second hand --------------------------------------------------
+        tick() {
+            if (!this._scene || !this._scene.isActive()) return;
+            // Scheduled tasks fire on the game clock, once per minute.
+            const stamp = window.HypernetOS.clockStamp();
+            const hhmm = stamp.slice(11);
+            if (hhmm !== this._lastTaskMinute) {
+                this._lastTaskMinute = hhmm;
+                (this.reg('scheduledTasks', []) || []).forEach(task => {
+                    if (task.time === hhmm && window.HypernetOS._apps[task.app] && task.enabled !== false) {
+                        window.HypernetOS.launchApp(task.app);
+                        task.lastRun = stamp;
+                        this.log('application', 'info', 'Schedule', T('HypernetOS.xp.events.taskRan', { name: window.HypernetOS._apps[task.app].name }));   // i18n-ignore  source
+                    }
+                });
+            }
+            // The screensaver, after the wait the Display applet set.
+            const kind = this.reg('screenSaver', 'none');
+            const waitMin = Number(this.reg('screenSaverWait', 10)) || 10;
+            if (kind !== 'none' && !this.Saver.active && !window.HypernetOS.Dialog.isOpen()
+                && Date.now() - this._lastInput > waitMin * 60000) {
+                this.Saver.start(kind);
+            }
+        },
+
+        // --- Keyboard ---------------------------------------------------------
+        // Returns true when the key was the desktop's to take.
+        handleKey(event) {
+            const D = window.HypernetOS.Dialog;
+            if (D.handleKey(event)) return true;
+            if (this.Saver.active) { this.Saver.stop(); event.preventDefault(); return true; }
+            const overlay = document.getElementById('hypernet-xp-overlay');
+            if (overlay && overlay.dataset.kind === 'standby') { this.resume(); event.preventDefault(); return true; }
+            if (overlay) { event.preventDefault(); return true; }
+
+            const k = event.key;
+            const meta = event.metaKey;
+            const lower = String(k).toLowerCase();
+
+            if (event.altKey && k === 'Tab') { event.preventDefault(); this.altTabStep(event.shiftKey ? -1 : 1); return true; }
+            if (event.altKey && k === 'F4') { event.preventDefault(); this.altF4(); return true; }
+            if (event.ctrlKey && k === 'Escape') { event.preventDefault(); this.toggleStartMenu(); return true; }
+            if ((event.ctrlKey && event.shiftKey && k === 'Escape') || (event.ctrlKey && event.altKey && k === 'Delete')) {
+                event.preventDefault(); window.HypernetOS.launchApp('sys-task-mgr'); return true;
+            }
+            if (meta && lower === 'r') { event.preventDefault(); window.HypernetOS.launchApp('app-run'); return true; }
+            if (meta && lower === 'e') { event.preventDefault(); window.HypernetOS.launchApp('my-computer'); return true; }
+            if (meta && lower === 'd') { event.preventDefault(); this.showDesktop(); return true; }
+            if (meta && lower === 'm') { event.preventDefault(); this.minimizeAll(); return true; }
+            if (meta && lower === 'f') { event.preventDefault(); window.HypernetOS.launchApp('app-search'); return true; }
+            if (meta && lower === 'l') { event.preventDefault(); this.lock(); return true; }
+            if (meta && (k === 'Pause' || k === 'Break')) { event.preventDefault(); window.HypernetOS.launchApp('app-sysdm'); return true; }
+            const typing = document.activeElement && ['INPUT', 'TEXTAREA', 'IFRAME'].includes(document.activeElement.tagName);
+            if (k === 'F1' && !typing) { event.preventDefault(); window.HypernetOS.launchApp('app-help'); return true; }
+            if (k === 'F3' && !typing) { event.preventDefault(); window.HypernetOS.launchApp('app-search'); return true; }
+            if (k === 'PrintScreen') { this.printScreen(); return true; }
+            return false;
+        },
+
+        onKeyUp(event) {
+            if (event.key === 'Alt' && this._altTab) this.altTabCommit();
+        },
+
+        toggleStartMenu() {
+            const btn = document.getElementById('hypernet-start-btn');
+            if (btn) btn.click();
+        },
+
+        altF4() {
+            const win = window.HypernetOS._getActiveWindow();
+            if (win) window.HypernetOS.WindowManager.closeWindow(win);
+            else this.turnOffDialog();
+        },
+
+        openWindows() {
+            return window.HypernetOS.WindowManager.windows.filter(w => w.isConnected);
+        },
+
+        showDesktop() {
+            const WM = window.HypernetOS.WindowManager;
+            const wins = this.openWindows();
+            const anyVisible = wins.some(w => !w.classList.contains('minimized'));
+            wins.forEach(w => {
+                const min = w.classList.contains('minimized');
+                if (anyVisible ? !min : min) WM.toggleMinimize(w);
+            });
+        },
+
+        minimizeAll() {
+            const WM = window.HypernetOS.WindowManager;
+            this.openWindows().forEach(w => { if (!w.classList.contains('minimized')) WM.toggleMinimize(w); });
+        },
+
+        // PrintScreen copies the game's own canvas to the clipboard, so Pain
+        // can paste the screen the player was looking at.
+        printScreen() {
+            try {
+                const canvas = document.querySelector('#gameCanvas') || document.querySelector('canvas');
+                if (canvas) window.HypernetOS.Clipboard.set(canvas.toDataURL('image/png'), 'image');   // i18n-ignore  mime
+            } catch (e) { /* a tainted canvas is no screenshot */ }
+        },
+
+        // --- Alt+Tab ------------------------------------------------------------
+        altTabStep(dir) {
+            const wins = this.openWindows().sort((a, b) => (parseInt(b.style.zIndex, 10) || 0) - (parseInt(a.style.zIndex, 10) || 0));
+            if (!wins.length) return;
+            if (!this._altTab) {
+                const host = document.getElementById('hypernet-os-container');
+                const el = document.createElement('div');
+                el.className = 'hypernet-alttab';
+                el.innerHTML = `<div class="hypernet-alttab-row"></div><div class="hypernet-alttab-name"></div>`;
+                host.appendChild(el);
+                this._altTab = { el, wins, index: 0 };
+                const row = el.querySelector('.hypernet-alttab-row');
+                wins.forEach(w => {
+                    const cell = document.createElement('div');
+                    cell.className = 'hypernet-alttab-cell';
+                    cell.innerHTML = w.dataset.iconHTML || window.HypernetOS.getIconHTML(234, 16);
+                    row.appendChild(cell);
+                });
+            }
+            const st = this._altTab;
+            st.index = (st.index + dir + st.wins.length) % st.wins.length;
+            st.el.querySelectorAll('.hypernet-alttab-cell').forEach((c, i) => c.classList.toggle('selected', i === st.index));
+            st.el.querySelector('.hypernet-alttab-name').textContent = st.wins[st.index].dataset.title || '';
+        },
+
+        altTabCommit() {
+            const st = this._altTab;
+            this.hideAltTab();
+            if (!st) return;
+            const win = st.wins[st.index];
+            if (!win || !win.isConnected) return;
+            const WM = window.HypernetOS.WindowManager;
+            if (win.classList.contains('minimized')) WM.toggleMinimize(win);
+            WM.bringToFront(win);
+        },
+
+        hideAltTab() {
+            if (this._altTab && this._altTab.el.parentNode) this._altTab.el.parentNode.removeChild(this._altTab.el);
+            this._altTab = null;
+        },
+
+        // --- Power ------------------------------------------------------------
+        overlay(kind, html) {
+            let el = document.getElementById('hypernet-xp-overlay');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'hypernet-xp-overlay';
+                const host = document.getElementById('hypernet-os-container');
+                if (host) host.appendChild(el);
+            }
+            el.dataset.kind = kind;
+            el.className = 'hypernet-xp-overlay kind-' + kind;
+            el.innerHTML = html;
+            return el;
+        },
+
+        clearOverlay() {
+            const el = document.getElementById('hypernet-xp-overlay');
+            if (el && el.parentNode) el.parentNode.removeChild(el);
+        },
+
+        // The Turn Off box: Stand By, Turn Off, Restart. Its own overlay, not a
+        // Dialog, because the period drew it as three big glyphs on a fade.
+        turnOffDialog() {
+            const X = 'HypernetOS.xp.power.';
+            const el = this.overlay('turnoff', `
+                <div class="hypernet-power-box">
+                    <div class="hypernet-power-title">${T(X + 'turnOffTitle')}</div>
+                    <div class="hypernet-power-row">
+                        <div class="hypernet-power-btn focusable" data-act="standby" tabindex="0"><div class="glyph glyph-standby"></div><div>${T(X + 'standBy')}</div></div>
+                        <div class="hypernet-power-btn focusable" data-act="off" tabindex="0"><div class="glyph glyph-off"></div><div>${T(X + 'turnOff')}</div></div>
+                        <div class="hypernet-power-btn focusable" data-act="restart" tabindex="0"><div class="glyph glyph-restart"></div><div>${T(X + 'restart')}</div></div>
+                    </div>
+                    <div class="hypernet-power-foot"><button class="hypernet-dialog-btn focusable" data-act="cancel" tabindex="0">${T('HypernetOS.xp.dialog.cancel')}</button></div>
+                </div>`);
+            el.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', e => {
+                e.stopPropagation();
+                const act = b.dataset.act;
+                this.clearOverlay();
+                if (act === 'standby') this.standBy();
+                else if (act === 'off') this.shutdown('off');
+                else if (act === 'restart') this.shutdown('restart');
+            }));
+            const first = el.querySelector('[data-act="off"]');
+            if (first) first.focus();
+        },
+
+        logOffDialog() {
+            const X = 'HypernetOS.xp.power.';
+            const el = this.overlay('logoff', `
+                <div class="hypernet-power-box">
+                    <div class="hypernet-power-title">${T(X + 'logOffTitle')}</div>
+                    <div class="hypernet-power-row">
+                        <div class="hypernet-power-btn focusable" data-act="switch" tabindex="0"><div class="glyph glyph-switch"></div><div>${T(X + 'switchUser')}</div></div>
+                        <div class="hypernet-power-btn focusable" data-act="logoff" tabindex="0"><div class="glyph glyph-logoff"></div><div>${T(X + 'logOff')}</div></div>
+                    </div>
+                    <div class="hypernet-power-foot"><button class="hypernet-dialog-btn focusable" data-act="cancel" tabindex="0">${T('HypernetOS.xp.dialog.cancel')}</button></div>
+                </div>`);
+            el.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', e => {
+                e.stopPropagation();
+                const act = b.dataset.act;
+                this.clearOverlay();
+                if (act === 'switch') this.welcomeScreen(false);
+                else if (act === 'logoff') this.shutdown('logoff');
+            }));
+        },
+
+        // Stand By dims the panel; the first key or click wakes it.
+        standBy() {
+            this.log('system', 'info', 'Power', T('HypernetOS.xp.events.standby'));   // i18n-ignore  source
+            window.HypernetOS.Balloon.hide();
+            const el = this.overlay('standby', `<div class="hypernet-standby-led"></div>`);
+            el.addEventListener('click', e => { e.stopPropagation(); this.resume(); });
+        },
+
+        resume() {
+            this.clearOverlay();
+            this._lastInput = Date.now();
+            this.log('system', 'info', 'Power', T('HypernetOS.xp.events.resume'));   // i18n-ignore  source
+        },
+
+        // The lock screen and Switch User both land on the welcome screen: the
+        // party members are the accounts on this machine.
+        lock() { this.welcomeScreen(true); },
+
+        welcomeScreen(locked) {
+            const X = 'HypernetOS.xp.welcome.';
+            const members = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.members() : [];
+            const names = members.length ? members.map(m => m.name()) : [this.userName()];
+            const current = this.userName();
+            const tiles = names.map((n, i) => `
+                <div class="hypernet-welcome-user focusable" data-name="${n.replace(/"/g, '&quot;')}" tabindex="0">
+                    <div class="hypernet-welcome-avatar" style="background: hsl(${(xpHash(n) % 360)}, 55%, 55%)">${window.HypernetOS.getIconHTML(245, 28)}</div>
+                    <div class="hypernet-welcome-name">${n}</div>
+                    <div class="hypernet-welcome-note">${n === current ? (locked ? T(X + 'locked') : T(X + 'loggedOn')) : ''}</div>
+                </div>`).join('');
+            const el = this.overlay('welcome', `
+                <div class="hypernet-welcome">
+                    <div class="hypernet-welcome-left">
+                        <div class="hypernet-welcome-logo">${T(X + 'brand')}</div>
+                        <div class="hypernet-welcome-hint">${T(X + 'hint')}</div>
+                    </div>
+                    <div class="hypernet-welcome-right">${tiles}</div>
+                    <div class="hypernet-welcome-foot">
+                        <button class="hypernet-dialog-btn focusable" data-act="off" tabindex="0">${T('HypernetOS.xp.power.turnOff')}</button>
+                        <span>${T(X + 'foot')}</span>
+                    </div>
+                </div>`);
+            el.querySelectorAll('.hypernet-welcome-user').forEach(u => u.addEventListener('click', e => {
+                e.stopPropagation();
+                const name = u.dataset.name;
+                this.clearOverlay();
+                if (name !== current) {
+                    this.setReg('user', name);
+                    const header = document.querySelector('.start-menu-username');
+                    if (header) header.textContent = name;
+                    this.log('security', 'info', 'Winlogon', T('HypernetOS.xp.events.switchUser', { user: name }));   // i18n-ignore  source
+                    if (window.SoundManager) SoundManager.playOk();
+                } else {
+                    this.log('security', 'info', 'Winlogon', T('HypernetOS.xp.events.unlock', { user: name }));   // i18n-ignore  source
+                }
+            }));
+            el.querySelector('[data-act="off"]').addEventListener('click', e => { e.stopPropagation(); this.clearOverlay(); this.shutdown('off'); });
+        },
+
+        // Turning off, restarting and logging off all walk through the same
+        // black screen with the period's words on it, then part ways.
+        shutdown(mode) {
+            const X = 'HypernetOS.xp.power.';
+            const scene = this._scene;
+            window.HypernetOS.Balloon.hide();
+            this.log('system', 'info', 'USER32', T(X + (mode === 'off' ? 'eventOff' : mode === 'restart' ? 'eventRestart' : 'eventLogoff')));   // i18n-ignore  source
+            const step = (text, cls) => this.overlay('shutdown', `<div class="hypernet-shutdown ${cls || ''}">${text}</div>`);
+            step(mode === 'logoff' ? T(X + 'savingSettings') : T(X + 'shuttingDown'));
+            if (window.SoundManager) SoundManager.playCancel();
+            const finishOff = () => {
+                step(T(X + 'safeToTurnOff'), 'safe');
+                this.later(() => { this.clearOverlay(); if (scene) scene.onTurnOffClick(); }, 1400);
+            };
+            const finishLogoff = () => { this.clearOverlay(); if (scene) scene.onExitClick(); };
+            const finishRestart = () => {
+                window.HypernetOS.WindowManager.closeAll();
+                step(`<div class="hypernet-boot-logo">${T('HypernetOS.xp.welcome.brand')}</div><div class="hypernet-boot-bar"><i></i></div>`, 'boot');
+                this.later(() => {
+                    this.clearOverlay();
+                    this._lastInput = Date.now();
+                    this.setReg('hwSignature', null);
+                    window.HypernetOS.Kernel.bootTime = Date.now();
+                    if (window.SoundManager) SoundManager.playLoad();
+                    this.startup();
+                }, 2600);
+            };
+            this.later(mode === 'off' ? finishOff : mode === 'restart' ? finishRestart : finishLogoff, 1300);
+        },
+
+        // "X has encountered a problem and needs to close": the box a crashed
+        // launch shows in place of a console line.
+        errorReport(appName, err) {
+            const X = 'HypernetOS.xp.errrep.';
+            this.log('application', 'error', 'Application Error', T(X + 'event', { name: appName, error: String(err && err.message || err) }));   // i18n-ignore  source
+            return window.HypernetOS.Dialog.show({
+                title: appName,
+                message: T(X + 'body', { name: appName }),
+                icon: 'error',
+                buttons: [
+                    { id: 'send', label: T(X + 'send'), default: true },
+                    { id: 'dont', label: T(X + 'dontSend'), cancel: true }
+                ]
+            }).then(r => {
+                if (r.button === 'send') {
+                    window.HypernetOS.Balloon.show({ title: T(X + 'sentTitle'), text: T(X + 'sentText') });
+                }
+            });
+        },
+
+        // --- Visual settings ------------------------------------------------------
+        visualEffects() {
+            return Object.assign({ animate: true, shadows: true, fade: true, dragContents: true, smoothFonts: true }, this.reg('visualEffects', {}) || {});
+        },
+        applyVisualEffects() {
+            const host = document.getElementById('hypernet-os-container');
+            if (!host) return;
+            const fx = this.visualEffects();
+            host.classList.toggle('xp-fx-noanim', !fx.animate);
+            host.classList.toggle('xp-fx-noshadow', !fx.shadows);
+            host.classList.toggle('xp-fx-nofade', !fx.fade);
+            host.classList.toggle('xp-fx-nodrag', !fx.dragContents);
+            host.classList.toggle('xp-fx-nosmooth', !fx.smoothFonts);
+        },
+        applyColorScheme() {
+            const host = document.getElementById('hypernet-os-container');
+            if (!host) return;
+            const scheme = this.reg('colorScheme', 'blue');
+            ['blue', 'olive', 'silver', 'classic'].forEach(s => host.classList.toggle('xp-scheme-' + s, s === scheme));   // i18n-ignore  scheme ids
+        },
+        applyWallpaperPosition() {
+            const desktop = document.getElementById('hypernet-os-desktop');
+            if (!desktop) return;
+            const pos = this.reg('wallpaperPosition', 'stretch');
+            ['stretch', 'tile', 'center'].forEach(p => desktop.classList.toggle('xp-wp-' + p, p === pos));   // i18n-ignore  position ids
+        },
+
+        // --- The tray -----------------------------------------------------------
+        buildTray() {
+            const tray = document.getElementById('hypernet-system-tray');
+            if (!tray) return;
+            const icons = tray.querySelectorAll('.tray-icon');
+            if (icons[0]) { icons[0].id = 'tray-net'; icons[0].classList.add('focusable'); icons[0].tabIndex = 0; icons[0].addEventListener('click', e => { e.stopPropagation(); window.HypernetOS.launchApp('app-netstat'); }); }
+            if (icons[1]) { icons[1].id = 'tray-shield'; icons[1].classList.add('focusable'); icons[1].tabIndex = 0; icons[1].addEventListener('click', e => { e.stopPropagation(); window.HypernetOS.launchApp('app-wscui'); }); }
+            if (this.reg('trayVolume', true) && !document.getElementById('tray-volume')) {
+                const vol = document.createElement('div');
+                vol.className = 'tray-icon tray-volume focusable';
+                vol.id = 'tray-volume';
+                vol.tabIndex = 0;
+                vol.title = T('HypernetOS.xp.mmsys.trayTitle');
+                vol.addEventListener('click', e => { e.stopPropagation(); window.HypernetOS.launchApp('app-mmsys'); });
+                tray.insertBefore(vol, tray.querySelector('#tray-clock'));
+            }
+            const clock = document.getElementById('tray-clock');
+            if (clock) {
+                clock.classList.add('focusable');
+                clock.tabIndex = 0;
+                clock.addEventListener('dblclick', e => { e.stopPropagation(); window.HypernetOS.launchApp('app-timedate'); });
+            }
+        },
+
+        // --- The screensaver ----------------------------------------------------
+        Saver: {
+            active: false,
+            _raf: null,
+            _canvas: null,
+            KINDS: ['none', 'blank', 'starfield', 'mystify', 'marquee', 'beziers', 'pipes'],   // i18n-ignore  saver ids
+
+            start(kind, preview) {
+                this.stop();
+                const host = document.getElementById('hypernet-os-container');
+                if (!host || kind === 'none') return;
+                const canvas = document.createElement('canvas');
+                canvas.className = 'hypernet-saver' + (preview ? ' preview' : '');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                host.appendChild(canvas);
+                this._canvas = canvas;
+                this.active = true;
+                canvas.addEventListener('mousedown', e => { e.stopPropagation(); this.stop(); });
+                const ctx = canvas.getContext('2d');
+                const W = canvas.width, H = canvas.height;
+                const state = this.seed(kind, W, H);
+                const frame = () => {
+                    if (!this.active) return;
+                    this.draw(kind, ctx, W, H, state);
+                    this._raf = requestAnimationFrame(frame);
+                };
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, W, H);
+                frame();
+                if (!preview) window.HypernetOS.XP.log('system', 'info', 'Screensaver', T('HypernetOS.xp.events.saver'));   // i18n-ignore  source
+            },
+
+            stop() {
+                this.active = false;
+                if (this._raf) cancelAnimationFrame(this._raf);
+                this._raf = null;
+                if (this._canvas && this._canvas.parentNode) this._canvas.parentNode.removeChild(this._canvas);
+                this._canvas = null;
+            },
+
+            seed(kind, W, H) {
+                const rnd = () => Math.random();
+                if (kind === 'starfield') {
+                    return { stars: Array.from({ length: 240 }, () => ({ x: (rnd() - 0.5) * W, y: (rnd() - 0.5) * H, z: rnd() * W })) };
+                }
+                if (kind === 'mystify') {
+                    const poly = () => ({
+                        pts: Array.from({ length: 4 }, () => ({ x: rnd() * W, y: rnd() * H, dx: (rnd() - 0.5) * 6, dy: (rnd() - 0.5) * 6 })),
+                        hue: rnd() * 360, trail: []
+                    });
+                    return { polys: [poly(), poly()] };
+                }
+                if (kind === 'marquee') {
+                    return { x: W, text: window.HypernetOS.XP.reg('marqueeText', T('HypernetOS.xp.saver.marqueeDefault')), y: H / 2, hue: 0 };
+                }
+                if (kind === 'beziers') {
+                    return { t: 0, pts: Array.from({ length: 4 }, () => ({ x: rnd() * W, y: rnd() * H, dx: (rnd() - 0.5) * 4, dy: (rnd() - 0.5) * 4 })), hue: rnd() * 360 };
+                }
+                if (kind === 'pipes') {
+                    return { pipes: [], ticks: 0 };
+                }
+                return {};
+            },
+
+            draw(kind, ctx, W, H, st) {
+                if (kind === 'blank') { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H); return; }
+                if (kind === 'starfield') {
+                    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+                    st.stars.forEach(s => {
+                        s.z -= 6;
+                        if (s.z <= 1) { s.x = (Math.random() - 0.5) * W; s.y = (Math.random() - 0.5) * H; s.z = W; }
+                        const k = 256 / s.z;
+                        const px = s.x * k + W / 2, py = s.y * k + H / 2;
+                        const size = Math.max(0.5, (1 - s.z / W) * 3);
+                        ctx.fillStyle = 'rgba(255,255,255,' + Math.min(1, 1.2 - s.z / W) + ')';
+                        ctx.fillRect(px, py, size, size);
+                    });
+                    return;
+                }
+                if (kind === 'mystify') {
+                    ctx.fillStyle = 'rgba(0,0,0,0.08)'; ctx.fillRect(0, 0, W, H);
+                    st.polys.forEach(p => {
+                        p.pts.forEach(q => {
+                            q.x += q.dx; q.y += q.dy;
+                            if (q.x < 0 || q.x > W) q.dx = -q.dx;
+                            if (q.y < 0 || q.y > H) q.dy = -q.dy;
+                        });
+                        p.hue = (p.hue + 0.7) % 360;
+                        ctx.strokeStyle = 'hsl(' + p.hue + ', 100%, 60%)';
+                        ctx.beginPath();
+                        p.pts.forEach((q, i) => i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y));
+                        ctx.closePath();
+                        ctx.stroke();
+                    });
+                    return;
+                }
+                if (kind === 'marquee') {
+                    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+                    ctx.font = 'bold 72px Tahoma, sans-serif';
+                    st.hue = (st.hue + 1) % 360;
+                    ctx.fillStyle = 'hsl(' + st.hue + ', 90%, 60%)';
+                    const w = ctx.measureText(st.text).width;
+                    st.x -= 4;
+                    if (st.x < -w) { st.x = W; st.y = 80 + Math.random() * (H - 160); }
+                    ctx.fillText(st.text, st.x, st.y);
+                    return;
+                }
+                if (kind === 'beziers') {
+                    ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0, 0, W, H);
+                    st.pts.forEach(q => {
+                        q.x += q.dx; q.y += q.dy;
+                        if (q.x < 0 || q.x > W) q.dx = -q.dx;
+                        if (q.y < 0 || q.y > H) q.dy = -q.dy;
+                    });
+                    st.hue = (st.hue + 0.5) % 360;
+                    ctx.strokeStyle = 'hsl(' + st.hue + ', 100%, 65%)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(st.pts[0].x, st.pts[0].y);
+                    ctx.bezierCurveTo(st.pts[1].x, st.pts[1].y, st.pts[2].x, st.pts[2].y, st.pts[3].x, st.pts[3].y);
+                    ctx.stroke();
+                    return;
+                }
+                if (kind === 'pipes') {
+                    // Flat pipes: a segment grows in one of four directions,
+                    // turns at random, and a new colour starts when it dies.
+                    st.ticks++;
+                    if (!st.pipes.length || st.ticks % 900 === 0) {
+                        if (st.ticks % 900 === 0) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H); st.pipes = []; }
+                        st.pipes.push({ x: Math.random() * W, y: Math.random() * H, dir: Math.floor(Math.random() * 4), hue: Math.random() * 360, life: 0 });
+                    }
+                    st.pipes.forEach(p => {
+                        const step = 4;
+                        const prev = { x: p.x, y: p.y };
+                        if (p.dir === 0) p.x += step; else if (p.dir === 1) p.y += step; else if (p.dir === 2) p.x -= step; else p.y -= step;
+                        if (p.x < 0 || p.x > W || p.y < 0 || p.y > H || Math.random() < 0.02) {
+                            p.dir = (p.dir + (Math.random() < 0.5 ? 1 : 3)) % 4;
+                            p.x = Math.max(0, Math.min(W, p.x)); p.y = Math.max(0, Math.min(H, p.y));
+                            ctx.fillStyle = 'hsl(' + p.hue + ', 80%, 45%)';
+                            ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI * 2); ctx.fill();
+                        }
+                        ctx.strokeStyle = 'hsl(' + p.hue + ', 80%, 55%)';
+                        ctx.lineWidth = 12;
+                        ctx.lineCap = 'round';
+                        ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+                        p.life++;
+                        if (p.life > 600) { p.life = 0; p.hue = Math.random() * 360; p.x = Math.random() * W; p.y = Math.random() * H; }
+                    });
+                    if (st.pipes.length < 3 && st.ticks % 200 === 0) st.pipes.push({ x: Math.random() * W, y: Math.random() * H, dir: Math.floor(Math.random() * 4), hue: Math.random() * 360, life: 0 });
+                }
+            }
+        }
+    };
+
+    // =========================================================================
+    // The applets
+    // -------------------------------------------------------------------------
+    // Every small program of the period, each a registered app so the Run
+    // box, the start menu, the shell's START and the Control Panel all reach
+    // it the same way. None has a desktop shortcut of its own except the
+    // Recycle Bin, which sits where it always sat.
+    // =========================================================================
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const XK = key => 'HypernetOS.xp.' + key;
+
+    // Registers one applet: `key` names its i18n branch (appName lives there),
+    // build(win, T_) fills the window it was given.
+    function xpApp(id, key, icon, size, build, extra) {
+        const T_ = (sub, p) => T(XK(key + '.' + sub), p);
+        window.HypernetOS.registerApp(Object.assign({
+            id: id,
+            name: T_('appName'),
+            icon: icon,
+            desktopShortcut: false,
+            category: 'system',   // i18n-ignore  category id
+            launchFn: function(params) {
+                const win = window.HypernetOS.WindowManager.createWindow({
+                    id: 'win-' + id,
+                    title: T_('appName'),
+                    icon: icon,
+                    width: size[0],
+                    height: size[1],
+                    contentHTML: `<div class="xp-app xp-${key}"></div>`
+                });
+                const root = win.querySelector('.xp-app');
+                if (root && !root.dataset.built) {
+                    root.dataset.built = '1';
+                    build(win, root, T_, params);
+                }
+                return win;
+            }
+        }, extra || {}));
+    }
+
+    const q = (root, sel) => root.querySelector(sel);
+    const on = (el, ev, fn) => { if (el) el.addEventListener(ev, e => { e.stopPropagation(); fn(e); }); };
+    const tabsOf = (root, onChange) => {
+        root.querySelectorAll('.xp-tab').forEach(tab => on(tab, 'click', () => {
+            root.querySelectorAll('.xp-tab').forEach(t => t.classList.toggle('active', t === tab));
+            root.querySelectorAll('.xp-pane').forEach(p => p.classList.toggle('active', p.dataset.pane === tab.dataset.tab));
+            if (onChange) onChange(tab.dataset.tab);
+        }));
+    };
+    const tabBar = (T_, ids) => `<div class="xp-tabs">${ids.map((id, i) => `<div class="xp-tab focusable ${i ? '' : 'active'}" data-tab="${id}" tabindex="0">${T_('tab.' + id)}</div>`).join('')}</div>`;
+    const pane = (id, html, active) => `<div class="xp-pane ${active ? 'active' : ''}" data-pane="${id}">${html}</div>`;
+    const btn = (id, label, extra) => `<button class="xp-btn focusable ${extra || ''}" id="${id}" tabindex="0">${label}</button>`;
+
+    // --- Run ---------------------------------------------------------------------
+    xpApp('app-run', 'run', 234, [420, 190], (win, root, T_) => {
+        const history = XP.reg('runHistory', []) || [];
+        root.innerHTML = `
+            <div class="xp-run">
+                <div class="xp-run-head">${window.HypernetOS.getIconHTML(234, 32)}<div>${T_('body')}</div></div>
+                <div class="xp-run-row"><label>${T_('open')}</label>
+                    <input class="xp-input" id="run-input" list="run-history" value="${esc(history[0] || '')}">
+                    <datalist id="run-history">${history.map(h => `<option value="${esc(h)}">`).join('')}</datalist>
+                </div>
+                <div class="xp-row-right">${btn('run-ok', T('HypernetOS.xp.dialog.ok'), 'default')}${btn('run-cancel', T('HypernetOS.xp.dialog.cancel'))}${btn('run-browse', T_('browse'))}</div>
+            </div>`;
+        const input = q(root, '#run-input');
+        const go = () => {
+            const text = input.value.trim();
+            if (!text) return;
+            const hit = resolveRun(text, window.HypernetOS._apps);
+            if (!hit || !window.HypernetOS.isInstalled(window.HypernetOS._apps[hit.appId])) {
+                window.HypernetOS.Dialog.error(T_('notFound', { name: text }), T_('appName'));
+                return;
+            }
+            const list = [text].concat(history.filter(h => h !== text)).slice(0, 12);
+            XP.setReg('runHistory', list);
+            window.HypernetOS.WindowManager.closeWindow(win);
+            if (hit.arg && hit.appId === 'app-hypernet-browser') window.HypernetOS._apps[hit.appId].launchFn({ url: hit.arg });
+            else window.HypernetOS.launchApp(hit.appId);
+        };
+        on(q(root, '#run-ok'), 'click', go);
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.stopPropagation(); go(); } });
+        on(q(root, '#run-cancel'), 'click', () => window.HypernetOS.WindowManager.closeWindow(win));
+        on(q(root, '#run-browse'), 'click', () => window.HypernetOS.launchApp('my-computer'));
+        setTimeout(() => { input.focus(); input.select(); }, 50);
+    });
+
+    // --- About Archways ------------------------------------------------------------
+    xpApp('app-winver', 'winver', 234, [440, 330], (win, root, T_) => {
+        const p = window.HypernetOS.Host.profile();
+        const st = window.HypernetOS.Kernel.getStats();
+        root.innerHTML = `
+            <div class="xp-winver">
+                <div class="xp-winver-banner">${T('HypernetOS.xp.welcome.brand')}</div>
+                <div class="xp-winver-body">
+                    <div>${T_('version')}</div>
+                    <div>${T_('copyright')}</div>
+                    <div class="xp-winver-gap">${T_('licensed')}</div>
+                    <div class="xp-winver-indent">${esc(XP.userName())}</div>
+                    <div class="xp-winver-indent">${esc(p.vendor)}</div>
+                    <div class="xp-winver-indent">${esc(p.serial)}</div>
+                    <div class="xp-winver-gap">${T_('memory', { mb: st.totalRAM })}</div>
+                </div>
+                <div class="xp-row-right">${btn('winver-ok', T('HypernetOS.xp.dialog.ok'), 'default')}</div>
+            </div>`;
+        on(q(root, '#winver-ok'), 'click', () => window.HypernetOS.WindowManager.closeWindow(win));
+    }, { category: 'accessories' });
+
+    // --- Calculator ----------------------------------------------------------------
+    xpApp('app-calc', 'calc', 84, [300, 330], (win, root, T_) => {
+        const st = CalcEngine.create();
+        // i18n-ignore-start  key layout
+        const rows = [
+            ['BS', 'CE', 'C'],
+            ['MC', '7', '8', '9', '/', 'sqrt'],
+            ['MR', '4', '5', '6', '*', '%'],
+            ['MS', '1', '2', '3', '-', '1/x'],
+            ['M+', '0', '+/-', '.', '+', '=']
+        ];
+        // i18n-ignore-end
+        const labels = { BS: T_('backspace'), CE: T_('clearEntry'), C: T_('clear'), sqrt: T_('sqrt') };
+        root.innerHTML = `
+            <div class="xp-calc">
+                <div class="xp-calc-display" id="calc-display">0</div>
+                <div class="xp-calc-memflag" id="calc-mem"></div>
+                ${rows.map((r, i) => `<div class="xp-calc-row ${i ? '' : 'top'}">${r.map(k => `<button class="xp-calc-key focusable ${/^[0-9.]$/.test(k) ? 'num' : ''} ${/^M/.test(k) ? 'mem' : ''}" data-key="${k}" tabindex="0">${labels[k] || k}</button>`).join('')}</div>`).join('')}
+            </div>`;
+        const display = q(root, '#calc-display');
+        const mem = q(root, '#calc-mem');
+        const press = k => {
+            CalcEngine.press(st, k);
+            display.textContent = st.display;
+            mem.textContent = st.memory ? 'M' : '';   // i18n-ignore  memory flag
+            if (st.error && window.SoundManager) SoundManager.playBuzzer();
+        };
+        root.querySelectorAll('.xp-calc-key').forEach(b => on(b, 'click', () => press(b.dataset.key)));
+        win.addEventListener('keydown', e => {
+            const map = { Enter: '=', Backspace: 'BS', Escape: 'C', Delete: 'CE' };
+            const k = map[e.key] || e.key;
+            if (/^[0-9.+\-*/=%]$/.test(k) || ['BS', 'C', 'CE'].includes(k)) { e.stopPropagation(); e.preventDefault(); press(k); }
+        });
+    }, { category: 'accessories' });
+
+    // --- Character Map ---------------------------------------------------------------
+    xpApp('app-charmap', 'charmap', 84, [560, 420], (win, root, T_) => {
+        root.innerHTML = `
+            <div class="xp-charmap">
+                <div class="xp-row"><label>${T_('font')}</label>
+                    <select class="xp-select" id="cm-set">${CHARMAP_SETS.map(s => `<option value="${s.id}">${T_('set.' + s.id)}</option>`).join('')}</select>
+                </div>
+                <div class="xp-charmap-grid" id="cm-grid"></div>
+                <div class="xp-row"><label>${T_('toCopy')}</label><input class="xp-input" id="cm-out">${btn('cm-select', T_('select'))}${btn('cm-copy', T_('copy'))}</div>
+                <div class="xp-charmap-status" id="cm-status"></div>
+            </div>`;
+        const grid = q(root, '#cm-grid');
+        const out = q(root, '#cm-out');
+        const status = q(root, '#cm-status');
+        let current = '';
+        const render = () => {
+            grid.innerHTML = charmapChars(q(root, '#cm-set').value).map(ch =>
+                `<div class="xp-charmap-cell focusable" data-ch="${esc(ch)}" tabindex="0">${esc(ch)}</div>`).join('');
+            grid.querySelectorAll('.xp-charmap-cell').forEach(cell => {
+                on(cell, 'click', () => {
+                    grid.querySelectorAll('.xp-charmap-cell').forEach(c => c.classList.toggle('selected', c === cell));
+                    current = cell.dataset.ch;
+                    status.textContent = T_('status', { code: 'U+' + current.codePointAt(0).toString(16).toUpperCase().padStart(4, '0') });   // i18n-ignore  code point prefix
+                });
+                on(cell, 'dblclick', () => { out.value += cell.dataset.ch; });
+            });
+        };
+        on(q(root, '#cm-set'), 'change', render);
+        on(q(root, '#cm-select'), 'click', () => { if (current) out.value += current; });
+        on(q(root, '#cm-copy'), 'click', () => {
+            window.HypernetOS.Clipboard.set(out.value);
+            status.textContent = T_('copied');
+            if (window.SoundManager) SoundManager.playOk();
+        });
+        render();
+    }, { category: 'accessories' });
+
+    // --- ClipBook Viewer --------------------------------------------------------------
+    xpApp('app-clipbrd', 'clipbrd', 191, [420, 300], (win, root, T_) => {
+        const render = () => {
+            const C = window.HypernetOS.Clipboard;
+            const text = C.get();
+            root.innerHTML = `
+                <div class="xp-clipbrd">
+                    <div class="xp-toolbar">${btn('cb-refresh', T_('refresh'))}${btn('cb-clear', T_('clear'))}${btn('cb-paste', T_('pasteNotepad'))}</div>
+                    <div class="xp-clipbrd-body">${!text ? `<div class="xp-empty">${T_('empty')}</div>`
+                        : C.kind() === 'image' ? `<img src="${text}" alt="">` : `<pre>${esc(text)}</pre>`}</div>
+                    <div class="xp-status">${T_('format', { kind: T_('kind.' + C.kind()), size: text.length })}</div>
+                </div>`;
+            on(q(root, '#cb-refresh'), 'click', render);
+            on(q(root, '#cb-clear'), 'click', () => { C.clear(); render(); });
+            on(q(root, '#cb-paste'), 'click', () => {
+                if (window.HypernetNotepad && window.HypernetNotepad.openText) window.HypernetNotepad.openText(text);
+                else window.HypernetOS.launchApp('app-hypernet-notepad');
+            });
+        };
+        render();
+    }, { category: 'accessories' });
+
+    // --- Registry Editor ---------------------------------------------------------------
+    xpApp('app-regedit', 'regedit', 234, [640, 440], (win, root, T_) => {
+        const fs = window.HypernetFileSystem;
+        // i18n-ignore-start  hive names
+        const HIVES = ['HKEY_CLASSES_ROOT', 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE', 'HKEY_USERS', 'HKEY_CURRENT_CONFIG'];
+        const PATH = 'HKEY_CURRENT_USER\\Software\\Archways\\CurrentVersion';
+        // i18n-ignore-end
+        const render = () => {
+            const reg = ($gameSystem && $gameSystem._hypernetRegistry) || {};
+            const keys = Object.keys(reg).sort();
+            const typeOf = v => typeof v === 'number' ? 'REG_DWORD' : typeof v === 'string' ? 'REG_SZ' : 'REG_BINARY';   // i18n-ignore  value types
+            const show = v => typeof v === 'string' ? v : typeof v === 'number' ? '0x' + v.toString(16).padStart(8, '0') + ' (' + v + ')' : JSON.stringify(v);   // i18n-ignore  hex prefix
+            root.innerHTML = `
+                <div class="xp-regedit">
+                    <div class="xp-regedit-tree">${HIVES.map(h => `<div class="xp-tree-node ${h === 'HKEY_CURRENT_USER' ? 'open' : ''}">+ ${h}</div>`).join('')}
+                        <div class="xp-tree-leaf selected">${T_('branch')}</div></div>
+                    <div class="xp-regedit-list">
+                        <div class="xp-regedit-row head"><span>${T_('name')}</span><span>${T_('type')}</span><span>${T_('data')}</span></div>
+                        <div class="xp-regedit-row focusable" data-key="" tabindex="0"><span>${T_('default')}</span><span>REG_SZ</span><span>${T_('valueNotSet')}</span></div>
+                        ${keys.map(k => `<div class="xp-regedit-row focusable" data-key="${esc(k)}" tabindex="0"><span>${esc(k)}</span><span>${typeOf(reg[k])}</span><span>${esc(show(reg[k]))}</span></div>`).join('')}
+                    </div>
+                    <div class="xp-toolbar">${btn('reg-new', T_('newValue'))}${btn('reg-edit', T_('modify'))}${btn('reg-del', T_('delete'))}</div>
+                    <div class="xp-status">${PATH}</div>
+                </div>`;
+            let selected = null;
+            root.querySelectorAll('.xp-regedit-row[data-key]').forEach(row => {
+                on(row, 'click', () => { root.querySelectorAll('.xp-regedit-row').forEach(r => r.classList.toggle('selected', r === row)); selected = row.dataset.key; });
+                on(row, 'dblclick', () => { selected = row.dataset.key; edit(); });
+            });
+            const edit = () => {
+                if (!selected || !fs) return;
+                const v = reg[selected];
+                const text = typeof v === 'string' ? v : JSON.stringify(v);
+                window.HypernetOS.Dialog.prompt(T_('editValue', { name: selected }), text, T_('editTitle')).then(r => {
+                    if (r === null) return;
+                    let parsed = r;
+                    if (typeof v !== 'string') { try { parsed = JSON.parse(r); } catch (e) { parsed = r; } }
+                    fs.setRegistry(selected, parsed);
+                    render();
+                });
+            };
+            on(q(root, '#reg-edit'), 'click', edit);
+            on(q(root, '#reg-new'), 'click', () => {
+                window.HypernetOS.Dialog.prompt(T_('newValueName'), '', T_('newValue')).then(name => {
+                    if (!name || !fs) return;
+                    fs.setRegistry(name.trim(), '');
+                    render();
+                });
+            });
+            on(q(root, '#reg-del'), 'click', () => {
+                if (!selected) return;
+                window.HypernetOS.Dialog.confirm(T_('confirmDelete', { name: selected }), T_('appName'), 'warning').then(ok => {
+                    if (!ok) return;
+                    delete $gameSystem._hypernetRegistry[selected];
+                    render();
+                });
+            });
+        };
+        render();
+    });
+
+    // --- System Configuration Utility (msconfig) ------------------------------------------
+    xpApp('app-msconfig', 'msconfig', 234, [600, 440], (win, root, T_) => {
+        const services = T.list(XK('msconfig.services'));
+        const disabled = XP.reg('servicesDisabled', []) || [];
+        const startup = XP.reg('startupApps', []) || [];
+        const mode = XP.reg('startupMode', 'normal');
+        const apps = Object.values(window.HypernetOS._apps).filter(a => window.HypernetOS.isInstalled(a) && !/^sys-|^app-run$/.test(a.id))
+            .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const p = window.HypernetOS.Host.profile();
+        root.innerHTML = `
+            <div class="xp-msconfig">
+                ${tabBar(T_, ['general', 'systemini', 'bootini', 'services', 'startup'])}
+                ${pane('general', `
+                    <div class="xp-group"><div class="xp-group-title">${T_('startupSelection')}</div>
+                        <label class="xp-radio"><input type="radio" name="ms-mode" value="normal" ${mode === 'normal' ? 'checked' : ''}> ${T_('modeNormal')}</label>
+                        <label class="xp-radio"><input type="radio" name="ms-mode" value="diagnostic" ${mode === 'diagnostic' ? 'checked' : ''}> ${T_('modeDiagnostic')}</label>
+                        <label class="xp-radio"><input type="radio" name="ms-mode" value="selective" ${mode === 'selective' ? 'checked' : ''}> ${T_('modeSelective')}</label>
+                    </div>
+                    <div class="xp-row-right">${btn('ms-restore', T_('launchRestore'))}${btn('ms-expand', T_('expandFile'))}</div>`, true)}
+                ${pane('systemini', `<pre class="xp-ini">${esc(T.list(XK('msconfig.systemIni')).join('\n'))}</pre>`)}
+                ${pane('bootini', `<pre class="xp-ini">${esc(T.list(XK('msconfig.bootIni')).map(l => l.replace('{host}', p.hostname)).join('\n'))}</pre>
+                    <div class="xp-row"><label>${T_('timeout')}</label><input class="xp-input short" id="ms-timeout" value="${esc(XP.reg('bootTimeout', 30))}"> ${T_('seconds')}</div>`)}
+                ${pane('services', `<div class="xp-list">${services.map((s, i) => `<label class="xp-check-row"><input type="checkbox" data-svc="${i}" ${disabled.includes(i) ? '' : 'checked'}> <span>${esc(s)}</span><span class="xp-dim">${disabled.includes(i) ? T_('stopped') : T_('running')}</span></label>`).join('')}</div>
+                    <div class="xp-row-right">${btn('ms-svc-all', T_('enableAll'))}${btn('ms-svc-none', T_('disableAll'))}</div>`)}
+                ${pane('startup', `<div class="xp-list">${apps.map(a => `<label class="xp-check-row"><input type="checkbox" data-app="${a.id}" ${startup.includes(a.id) ? 'checked' : ''}> ${window.HypernetOS.getIconHTML(a.icon, 16)} <span>${esc(a.name)}</span><span class="xp-dim">${T_('startupLocation')}</span></label>`).join('')}</div>`)}
+                <div class="xp-row-right">${btn('ms-ok', T('HypernetOS.xp.dialog.ok'), 'default')}${btn('ms-cancel', T('HypernetOS.xp.dialog.cancel'))}${btn('ms-apply', T_('apply'))}</div>
+            </div>`;
+        tabsOf(root);
+        const apply = () => {
+            const m = root.querySelector('input[name="ms-mode"]:checked');
+            XP.setReg('startupMode', m ? m.value : 'normal');
+            XP.setReg('bootTimeout', parseInt(q(root, '#ms-timeout').value, 10) || 30);
+            const dis = [];
+            root.querySelectorAll('input[data-svc]').forEach(c => { if (!c.checked) dis.push(parseInt(c.dataset.svc, 10)); });
+            XP.setReg('servicesDisabled', dis);
+            const su = [];
+            root.querySelectorAll('input[data-app]').forEach(c => { if (c.checked) su.push(c.dataset.app); });
+            XP.setReg('startupApps', (m && m.value === 'diagnostic') ? [] : su);
+            if (window.SoundManager) SoundManager.playOk();
+        };
+        on(q(root, '#ms-apply'), 'click', apply);
+        on(q(root, '#ms-ok'), 'click', () => {
+            apply();
+            window.HypernetOS.WindowManager.closeWindow(win);
+            window.HypernetOS.Dialog.show({
+                title: T_('appName'), message: T_('restartPrompt'), icon: 'info',
+                buttons: [{ id: 'restart', label: T_('restartNow'), default: true }, { id: 'later', label: T_('restartLater'), cancel: true }]
+            }).then(r => { if (r.button === 'restart') XP.shutdown('restart'); });
+        });
+        on(q(root, '#ms-cancel'), 'click', () => window.HypernetOS.WindowManager.closeWindow(win));
+        on(q(root, '#ms-svc-all'), 'click', () => root.querySelectorAll('input[data-svc]').forEach(c => { c.checked = true; }));
+        on(q(root, '#ms-svc-none'), 'click', () => root.querySelectorAll('input[data-svc]').forEach(c => { c.checked = false; }));
+        on(q(root, '#ms-restore'), 'click', () => window.HypernetOS.launchApp('app-sysdm'));
+        on(q(root, '#ms-expand'), 'click', () => window.HypernetOS.Dialog.alert(T_('expandBody'), T_('expandFile')));
+    });
+
+    // --- Disk Cleanup ------------------------------------------------------------------
+    // i18n-ignore-start  folders the cleanup empties
+    const CLEANUP_DIRS = [
+        { id: 'temp', path: 'C:/Temp' },
+        { id: 'inet', path: 'C:/ARCHWAYS/Temporary Hypernet Files' },
+        { id: 'recycle', path: 'C:/RECYCLER' },
+        { id: 'downloaded', path: 'C:/ARCHWAYS/Downloaded Program Files' },
+        { id: 'logs', path: 'C:/ARCHWAYS/Logs' }
+    ];
+    // i18n-ignore-end
+    function dirBytes(fs, path) {
+        if (!fs || !fs.exists || !fs.exists(path)) return 0;
+        let n = 0;
+        fs.walk(path).forEach(e => { if (e.node.type === 'file') n += String(e.node.content || '').length; });
+        return n;
+    }
+    xpApp('app-cleanmgr', 'cleanmgr', 86, [480, 420], (win, root, T_) => {
+        const fs = window.HypernetFileSystem;
+        const p = window.HypernetOS.Host.profile();
+        root.innerHTML = `<div class="xp-cleanmgr"><div class="xp-cleanmgr-scan">${window.HypernetOS.getIconHTML(86, 32)}<div>${T_('scanning', { drive: 'C:' })}</div><div class="xp-progress"><i></i></div></div></div>`;   // i18n-ignore  drive
+        const bar = q(root, '.xp-progress i');
+        let pct = 0;
+        const timer = setInterval(() => {
+            pct = Math.min(100, pct + 6 + Math.random() * 10);
+            if (bar) bar.style.width = pct + '%';
+            if (pct >= 100) { clearInterval(timer); show(); }
+        }, 90);
+        win.addEventListener('hypernet-closed', () => clearInterval(timer));
+        const kb = n => T('HypernetOS.host.kb', { n: Math.max(0, Math.round(n / 1024)) });
+        const show = () => {
+            const rows = CLEANUP_DIRS.map(d => ({ id: d.id, path: d.path, bytes: dirBytes(fs, d.path) }));
+            const total = rows.reduce((s, r) => s + r.bytes, 0);
+            root.innerHTML = `
+                <div class="xp-cleanmgr">
+                    ${tabBar(T_, ['cleanup', 'more'])}
+                    ${pane('cleanup', `
+                        <div class="xp-note">${T_('intro', { size: kb(total), drive: 'C:' })}</div>
+                        <div class="xp-list" id="cm-rows">${rows.map(r => `<label class="xp-check-row"><input type="checkbox" data-id="${r.id}" ${r.bytes ? 'checked' : ''}> <span>${T_('cat.' + r.id)}</span><span class="xp-dim">${kb(r.bytes)}</span></label>`).join('')}</div>
+                        <div class="xp-row"><span>${T_('totalGain')}</span><b id="cm-total">${kb(total)}</b></div>
+                        <div class="xp-desc" id="cm-desc">${T_('descDefault')}</div>`, true)}
+                    ${pane('more', `
+                        <div class="xp-group"><div class="xp-group-title">${T_('moreComponents')}</div><div class="xp-note">${T_('moreComponentsText')}</div><div class="xp-row-right">${btn('cm-appwiz', T_('cleanUp'))}</div></div>
+                        <div class="xp-group"><div class="xp-group-title">${T_('moreRestore')}</div><div class="xp-note">${T_('moreRestoreText')}</div><div class="xp-row-right">${btn('cm-restore', T_('cleanUp'))}</div></div>`)}
+                    <div class="xp-row-right">${btn('cm-ok', T('HypernetOS.xp.dialog.ok'), 'default')}${btn('cm-cancel', T('HypernetOS.xp.dialog.cancel'))}</div>
+                </div>`;
+            tabsOf(root);
+            const recount = () => {
+                let t = 0;
+                root.querySelectorAll('#cm-rows input').forEach(c => { if (c.checked) t += rows.find(r => r.id === c.dataset.id).bytes; });
+                q(root, '#cm-total').textContent = kb(t);
+            };
+            root.querySelectorAll('#cm-rows input').forEach(c => {
+                c.addEventListener('change', recount);
+                on(c.parentNode, 'click', () => { q(root, '#cm-desc').textContent = T_('desc.' + c.dataset.id); });
+            });
+            on(q(root, '#cm-cancel'), 'click', () => window.HypernetOS.WindowManager.closeWindow(win));
+            on(q(root, '#cm-appwiz'), 'click', () => window.HypernetOS.launchApp('app-appwiz'));
+            on(q(root, '#cm-restore'), 'click', () => window.HypernetOS.Dialog.confirm(T_('restoreConfirm'), T_('appName'), 'warning').then(ok => { if (ok) XP.setReg('restorePoints', []); }));
+            on(q(root, '#cm-ok'), 'click', () => {
+                window.HypernetOS.Dialog.confirm(T_('confirm'), T_('appName')).then(ok => {
+                    if (!ok) return;
+                    root.querySelectorAll('#cm-rows input').forEach(c => {
+                        if (!c.checked || !fs) return;
+                        const row = rows.find(r => r.id === c.dataset.id);
+                        if (row.id === 'recycle' && fs.emptyRecycler) fs.emptyRecycler();
+                        else if (fs.exists(row.path)) fs.readDir(row.path).forEach(e => {
+                            const child = row.path + '/' + e.name;
+                            if (e.type === 'directory') fs.rmdir(child, true); else fs.deleteFile(child);
+                        });
+                    });
+                    XP.log('application', 'info', 'cleanmgr', T_('event'));   // i18n-ignore  source
+                    if (window.SoundManager) SoundManager.playOk();
+                    window.HypernetOS.WindowManager.closeWindow(win);
+                });
+            });
+        };
+    });
+
+    // --- Disk Defragmenter --------------------------------------------------------------
+    xpApp('app-defrag', 'defrag', 86, [640, 460], (win, root, T_) => {
+        const fs = window.HypernetFileSystem;
+        const p = window.HypernetOS.Host.profile();
+        const used = window.HypernetOS.Host.diskUsedMb();
+        const pctUsed = Math.min(100, Math.round(used / p.disk * 100));
+        root.innerHTML = `
+            <div class="xp-defrag">
+                <div class="xp-defrag-vol">
+                    <div class="xp-regedit-row head"><span>${T_('volume')}</span><span>${T_('status')}</span><span>${T_('fileSystem')}</span><span>${T_('capacity')}</span><span>${T_('freeSpace')}</span><span>${T_('pctFree')}</span></div>
+                    <div class="xp-regedit-row selected"><span>(C:)</span><span id="df-status"></span><span>NTFS</span><span>${window.HypernetOS.Host.fmtMb(p.disk)}</span><span>${window.HypernetOS.Host.fmtMb(p.disk - used)}</span><span>${100 - pctUsed} %</span></div>
+                </div>
+                <div class="xp-defrag-label">${T_('before')}</div>
+                <canvas class="xp-defrag-map" id="df-before" width="600" height="46"></canvas>
+                <div class="xp-defrag-label">${T_('after')}</div>
+                <canvas class="xp-defrag-map" id="df-after" width="600" height="46"></canvas>
+                <div class="xp-toolbar">${btn('df-analyze', T_('analyze'))}${btn('df-defrag', T_('defragment'))}${btn('df-pause', T_('pause'))}${btn('df-stop', T_('stop'))}${btn('df-report', T_('viewReport'))}</div>
+                <div class="xp-defrag-legend"><i class="frag"></i>${T_('legendFrag')} <i class="contig"></i>${T_('legendContig')} <i class="unmov"></i>${T_('legendUnmov')} <i class="free"></i>${T_('legendFree')}</div>
+                <div class="xp-status" id="df-msg"></div>
+            </div>`;
+        const CELLS = 150;
+        const seed = xpHash(window.HypernetOS.Host.seed() + ':' + used);
+        let blocks = null;
+        const roll = () => {
+            const out = [];
+            let h = seed;
+            for (let i = 0; i < CELLS; i++) {
+                h = (Math.imul(h, 1103515245) + 12345) >>> 0;
+                const r = (h >>> 8) % 100;
+                out.push(i < CELLS * pctUsed / 100 || i < 12 ? (r < 18 ? 'frag' : r < 26 ? 'unmov' : 'contig') : (r < 6 ? 'frag' : 'free'));   // i18n-ignore  cell states
+            }
+            return out;
+        };
+        const COLORS = { frag: '#e53935', contig: '#1e4fd8', unmov: '#2e8b3a', free: '#f4f4f4' };
+        const paint = (id, cells) => {
+            const c = q(root, '#' + id);
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+            if (!cells) return;
+            const w = c.width / CELLS;
+            cells.forEach((k, i) => { ctx.fillStyle = COLORS[k]; ctx.fillRect(i * w, 4, w - 1, c.height - 8); });
+        };
+        paint('df-before', null); paint('df-after', null);
+        let timer = null;
+        const fragCount = cells => cells.filter(k => k === 'frag').length;
+        on(q(root, '#df-analyze'), 'click', () => {
+            blocks = roll();
+            q(root, '#df-status').textContent = T_('analyzing');
+            let i = 0;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                i += 6;
+                paint('df-before', blocks.slice(0, i).concat(new Array(Math.max(0, CELLS - i)).fill('free')));
+                if (i >= CELLS) {
+                    clearInterval(timer);
+                    q(root, '#df-status').textContent = T_('analyzed');
+                    const frag = Math.round(fragCount(blocks) / CELLS * 100);
+                    window.HypernetOS.Dialog.show({
+                        title: T_('appName'), message: frag > 10 ? T_('shouldDefrag') : T_('noNeed'), icon: 'info',
+                        buttons: [{ id: 'report', label: T_('viewReport') }, { id: 'defrag', label: T_('defragment'), default: true }, { id: 'close', label: T_('close'), cancel: true }]
+                    }).then(r => { if (r.button === 'defrag') q(root, '#df-defrag').click(); else if (r.button === 'report') q(root, '#df-report').click(); });
+                }
+            }, 40);
+        });
+        on(q(root, '#df-defrag'), 'click', () => {
+            if (!blocks) blocks = roll();
+            q(root, '#df-status').textContent = T_('defragmenting');
+            const target = blocks.slice().sort((a, b) => ['unmov', 'contig', 'frag', 'free'].indexOf(a) - ['unmov', 'contig', 'frag', 'free'].indexOf(b)).map(k => k === 'frag' ? 'contig' : k);
+            const work = blocks.slice();
+            let i = 0;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                for (let n = 0; n < 3 && i < CELLS; n++, i++) work[i] = target[i];
+                paint('df-after', work);
+                q(root, '#df-msg').textContent = T_('progress', { pct: Math.round(i / CELLS * 100) });
+                if (i >= CELLS) {
+                    clearInterval(timer);
+                    blocks = target;
+                    q(root, '#df-status').textContent = T_('defragmented');
+                    XP.setReg('lastDefrag', window.HypernetOS.clockStamp());
+                    XP.log('application', 'info', 'Defrag', T_('event'));   // i18n-ignore  source
+                    window.HypernetOS.Dialog.alert(T_('complete'), T_('appName'));
+                }
+            }, 30);
+        });
+        on(q(root, '#df-pause'), 'click', () => { clearInterval(timer); q(root, '#df-status').textContent = T_('paused'); });
+        on(q(root, '#df-stop'), 'click', () => { clearInterval(timer); q(root, '#df-status').textContent = ''; paint('df-after', null); });
+        on(q(root, '#df-report'), 'click', () => {
+            const files = fs ? fs.walk('C:').filter(e => e.node.type === 'file').length : 0;   // i18n-ignore  drive
+            const b = blocks || roll();
+            window.HypernetOS.Dialog.alert(T_('report', {
+                size: window.HypernetOS.Host.fmtMb(p.disk), used: window.HypernetOS.Host.fmtMb(used), files: files,
+                frag: Math.round(fragCount(b) / CELLS * 100), last: XP.reg('lastDefrag', T_('never'))
+            }), T_('reportTitle'));
+        });
+        win.addEventListener('hypernet-closed', () => clearInterval(timer));
+    });
+
+    // --- Date and Time Properties ---------------------------------------------------------
+    xpApp('app-timedate', 'timedate', 84, [420, 400], (win, root, T_) => {
+        const zones = T.list(XK('timedate.zones'));
+        const zone = XP.reg('timeZone', 1);
+        root.innerHTML = `
+            <div class="xp-timedate">
+                ${tabBar(T_, ['datetime', 'zone', 'inet'])}
+                ${pane('datetime', `
+                    <div class="xp-timedate-main">
+                        <div class="xp-timedate-cal">
+                            <div class="xp-row"><b id="td-month"></b><b id="td-year"></b></div>
+                            <div class="xp-cal-grid" id="td-grid"></div>
+                        </div>
+                        <div class="xp-timedate-clock"><canvas id="td-clock" width="150" height="150"></canvas><div id="td-digital" class="xp-timedate-digital"></div></div>
+                    </div>
+                    <div class="xp-note">${T_('currentZone', { zone: esc(zones[zone] || '') })}</div>`, true)}
+                ${pane('zone', `
+                    <select class="xp-select" id="td-zone">${zones.map((z, i) => `<option value="${i}" ${i === zone ? 'selected' : ''}>${esc(z)}</option>`).join('')}</select>
+                    <div class="xp-timedate-map"></div>
+                    <label class="xp-check-row"><input type="checkbox" id="td-dst" ${XP.reg('dst', true) ? 'checked' : ''}> ${T_('dst')}</label>`)}
+                ${pane('inet', `
+                    <label class="xp-check-row"><input type="checkbox" id="td-sync" ${XP.reg('inetTime', true) ? 'checked' : ''}> ${T_('syncAuto')}</label>
+                    <div class="xp-row"><label>${T_('server')}</label><input class="xp-input" id="td-server" value="${esc(XP.reg('timeServer', T_('defaultServer')))}">${btn('td-update', T_('updateNow'))}</div>
+                    <div class="xp-note" id="td-inet-msg">${T_('inetNote')}</div>`)}
+                <div class="xp-row-right">${btn('td-ok', T('HypernetOS.xp.dialog.ok'), 'default')}${btn('td-cancel', T('HypernetOS.xp.dialog.cancel'))}${btn('td-apply', T_('apply'))}</div>
+            </div>`;
+        tabsOf(root);
+        const now = () => {
+            const TDS = window.TimeDateSystem;
+            return (TDS && typeof TDS.getCurrentDateObj === 'function') ? TDS.getCurrentDateObj() : new Date();
+        };
+        const months = T.list('HypernetOS.monthAbbr');
+        const days = T.list('HypernetOS.dayAbbr');
+        const drawCal = () => {
+            const d = now();
+            q(root, '#td-month').textContent = months[d.getMonth()] || '';
+            q(root, '#td-year').textContent = d.getFullYear();
+            const first = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
+            const count = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+            let html = days.map(n => `<div class="xp-cal-head">${n}</div>`).join('');
+            for (let i = 0; i < first; i++) html += '<div></div>';
+            for (let i = 1; i <= count; i++) html += `<div class="xp-cal-day ${i === d.getDate() ? 'today' : ''}">${i}</div>`;
+            q(root, '#td-grid').innerHTML = html;
+        };
+        const drawClock = () => {
+            const c = q(root, '#td-clock');
+            if (!c) return;
+            const ctx = c.getContext('2d');
+            const d = now();
+            const r = 70, cx = 75, cy = 75;
+            ctx.clearRect(0, 0, 150, 150);
+            ctx.fillStyle = '#fff'; ctx.strokeStyle = '#444'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            for (let i = 0; i < 12; i++) {
+                const a = i / 12 * Math.PI * 2;
+                ctx.beginPath(); ctx.moveTo(cx + Math.sin(a) * (r - 8), cy - Math.cos(a) * (r - 8)); ctx.lineTo(cx + Math.sin(a) * r, cy - Math.cos(a) * r); ctx.stroke();
+            }
+            const hand = (angle, len, w) => { ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.sin(angle) * len, cy - Math.cos(angle) * len); ctx.stroke(); };
+            ctx.strokeStyle = '#000';
+            hand((d.getHours() % 12 + d.getMinutes() / 60) / 12 * Math.PI * 2, r * 0.5, 4);
+            hand(d.getMinutes() / 60 * Math.PI * 2, r * 0.75, 3);
+            ctx.strokeStyle = '#c00';
+            hand(d.getSeconds() / 60 * Math.PI * 2, r * 0.85, 1);
+            const two = n => String(n).padStart(2, '0');
+            q(root, '#td-digital').textContent = `${two(d.getHours())}:${two(d.getMinutes())}:${two(d.getSeconds())}`;
+        };
+        drawCal(); drawClock();
+        const timer = setInterval(drawClock, 1000);
+        win.addEventListener('hypernet-closed', () => clearInterval(timer));
+        const apply = () => {
+            XP.setReg('timeZone', parseInt(q(root, '#td-zone').value, 10) || 0);
+            XP.setReg('dst', q(root, '#td-dst').checked);
+            XP.setReg('inetTime', q(root, '#td-sync').checked);
+            XP.setReg('timeServer', q(root, '#td-server').value);
+            q(root, '.xp-note').textContent = T_('currentZone', { zone: zones[parseInt(q(root, '#td-zone').value, 10)] || '' });
+        };
+        on(q(root, '#td-apply'), 'click', apply);
+        on(q(root, '#td-ok'), 'click', () => { apply(); window.HypernetOS.WindowManager.closeWindow(win); });
+        on(q(root, '#td-cancel'), 'click', () => window.HypernetOS.WindowManager.closeWindow(win));
+        on(q(root, '#td-update'), 'click', () => {
+            const msg = q(root, '#td-inet-msg');
+            msg.textContent = T_('syncing', { server: q(root, '#td-server').value });
+            const p = window.HypernetOS.Host.profile();
+            setTimeout(() => {
+                msg.textContent = p.linkKbps ? T_('syncOk', { server: q(root, '#td-server').value, time: window.HypernetOS.clockStamp() }) : T_('syncFail', { server: q(root, '#td-server').value });
+            }, 1800);
+        });
+    });
+
+    // --- Regional and Language Options ------------------------------------------------------
+    xpApp('app-intl', 'intl', 84, [460, 420], (win, root, T_) => {
+        const lang = (T.language && T.language()) || 'en';   // i18n-ignore  fallback code
+        const locales = T.list(XK('intl.locales'));
+        const codes = ['en', 'it', 'fr', 'ko', 'ru'];   // i18n-ignore  locale codes
+        const chosen = XP.reg('regionalFormat', lang);
+        const d = new Date(2001, 8, 11, 14, 30, 0);
+        const fmt = code => {
+            const tag = { en: 'en-GB', it: 'it-IT', fr: 'fr-FR', ko: 'ko-KR', ru: 'ru-RU' }[code] || 'en-GB';   // i18n-ignore  BCP 47 tags
+            let money = '';
+            try { money = new Intl.NumberFormat(tag, { style: 'currency', currency: 'EUR' }).format(123456.78); } catch (e) { money = '123456.78'; }   // i18n-ignore  currency code
+            return {
+                number: (123456789.5).toLocaleString(tag),
+                currency: money,
+                time: d.toLocaleTimeString(tag),
+                shortDate: d.toLocaleDateString(tag),
+                longDate: d.toLocaleDateString(tag, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+            };
+        };
+        const render = () => {
+            const code = q(root, '#intl-format') ? q(root, '#intl-format').value : chosen;
+            const s = fmt(code);
+            const samples = q(root, '#intl-samples');
+            if (samples) samples.innerHTML = `
+                <div class="xp-regedit-row"><span>${T_('number')}</span><span>${esc(s.number)}</span></div>
+                <div class="xp-regedit-row"><span>${T_('currency')}</span><span>${esc(s.currency)}</span></div>
+                <div class="xp-regedit-row"><span>${T_('time')}</span><span>${esc(s.time)}</span></div>
+                <div class="xp-regedit-row"><span>${T_('shortDate')}</span><span>${esc(s.shortDate)}</span></div>
+                <div class="xp-regedit-row"><span>${T_('longDate')}</span><span>${esc(s.longDate)}</span></div>`;
+        };
+        root.innerHTML = `
+            <div class="xp-intl">
+                ${tabBar(T_, ['regional', 'languages', 'advanced'])}
+                ${pane('regional', `
+                    <div class="xp-group"><div class="xp-group-title">${T_('standards')}</div>
+                        <div class="xp-note">${T_('standardsText')}</div>
+                        <select class="xp-select" id="intl-format">${codes.map((c, i) => `<option value="${c}" ${c === chosen ? 'selected' : ''}>${esc(locales[i] || c)}</option>`).join('')}</select>
+                        <div class="xp-list" id="intl-samples"></div>
+                    </div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('location')}</div>
+                        <div class="xp-note">${T_('locationText')}</div>
+                        <select class="xp-select" id="intl-location">${T.list(XK('intl.locations')).map((l, i) => `<option value="${i}" ${i === XP.reg('location', 0) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>
+                    </div>`, true)}
+                ${pane('languages', `
+                    <div class="xp-group"><div class="xp-group-title">${T_('inputLangs')}</div>
+                        <div class="xp-note">${T_('inputLangsText')}</div>
+                        <div class="xp-list">${T.list(XK('intl.inputLangs')).map((l, i) => `<div class="xp-regedit-row"><span>${esc(l)}</span><span>${i === 0 ? T_('defaultInput') : ''}</span></div>`).join('')}</div>
+                        <div class="xp-row-right">${btn('intl-details', T_('details'))}</div>
+                    </div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('supplemental')}</div>
+                        <label class="xp-check-row"><input type="checkbox" ${XP.reg('complexScripts', false) ? 'checked' : ''} id="intl-complex"> ${T_('complexScripts')}</label>
+                        <label class="xp-check-row"><input type="checkbox" ${XP.reg('eastAsian', false) ? 'checked' : ''} id="intl-eastasian"> ${T_('eastAsian')}</label>
+                    </div>`)}
+                ${pane('advanced', `
+                    <div class="xp-group"><div class="xp-group-title">${T_('nonUnicode')}</div>
+                        <div class="xp-note">${T_('nonUnicodeText')}</div>
+                        <select class="xp-select" id="intl-ansi">${codes.map((c, i) => `<option value="${c}" ${c === XP.reg('nonUnicodeLang', chosen) ? 'selected' : ''}>${esc(locales[i] || c)}</option>`).join('')}</select>
+                    </div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('codePages')}</div>
+                        <div class="xp-list">${T.list(XK('intl.codePages')).map(c => `<label class="xp-check-row"><input type="checkbox" checked disabled> ${esc(c)}</label>`).join('')}</div>
+                    </div>`)}
+                <div class="xp-row-right">${btn('intl-ok', T('HypernetOS.xp.dialog.ok'), 'default')}${btn('intl-cancel', T('HypernetOS.xp.dialog.cancel'))}${btn('intl-apply', T_('apply'))}</div>
+            </div>`;
+        tabsOf(root);
+        render();
+        on(q(root, '#intl-format'), 'change', render);
+        const apply = () => {
+            XP.setReg('regionalFormat', q(root, '#intl-format').value);
+            XP.setReg('location', parseInt(q(root, '#intl-location').value, 10) || 0);
+            XP.setReg('nonUnicodeLang', q(root, '#intl-ansi').value);
+            XP.setReg('complexScripts', q(root, '#intl-complex').checked);
+            XP.setReg('eastAsian', q(root, '#intl-eastasian').checked);
+        };
+        on(q(root, '#intl-apply'), 'click', apply);
+        on(q(root, '#intl-ok'), 'click', () => { apply(); window.HypernetOS.WindowManager.closeWindow(win); });
+        on(q(root, '#intl-cancel'), 'click', () => window.HypernetOS.WindowManager.closeWindow(win));
+        on(q(root, '#intl-details'), 'click', () => window.HypernetOS.Dialog.alert(T_('detailsBody'), T_('inputLangs')));
+    });
+
+    // --- Sounds and Audio Devices -------------------------------------------------------------
+    // i18n-ignore-start  program event ids and the SoundManager call each plays
+    const SOUND_EVENTS = [
+        ['startArchways', 'playLoad'], ['exitArchways', 'playCancel'], ['criticalStop', 'playBuzzer'],
+        ['defaultBeep', 'playCursor'], ['exclamation', 'playBuzzer'], ['asterisk', 'playCursor'],
+        ['question', 'playCursor'], ['newMail', 'playOk'], ['emptyRecycle', 'playUseItem'],
+        ['menuCommand', 'playOk'], ['menuPopup', 'playCursor'], ['minimize', 'playCancel'],
+        ['restoreUp', 'playOk'], ['deviceConnect', 'playEquip'], ['deviceDisconnect', 'playCancel'],
+        ['lowBattery', 'playBuzzer'], ['systemNotification', 'playSave']
+    ];
+    // i18n-ignore-end
+    xpApp('app-mmsys', 'mmsys', 111, [460, 440], (win, root, T_) => {
+        const p = window.HypernetOS.Host.profile();
+        const CM = window.ConfigManager;
+        const master = CM ? Math.round((CM.bgmVolume + CM.seVolume) / 2) : 100;
+        const muted = XP.reg('audioMuted', false);
+        const schemes = T.list(XK('mmsys.schemes'));
+        root.innerHTML = `
+            <div class="xp-mmsys">
+                ${tabBar(T_, ['volume', 'sounds', 'audio', 'voice', 'hardware'])}
+                ${pane('volume', `
+                    <div class="xp-row">${window.HypernetOS.getIconHTML(111, 32)}<b>${esc(p.sound)}</b></div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('deviceVolume')}</div>
+                        <div class="xp-row"><span>${T_('low')}</span><input type="range" min="0" max="100" value="${master}" id="mm-vol" class="xp-range"><span>${T_('high')}</span></div>
+                        <label class="xp-check-row"><input type="checkbox" id="mm-mute" ${muted ? 'checked' : ''}> ${T_('mute')}</label>
+                        <label class="xp-check-row"><input type="checkbox" id="mm-tray" ${XP.reg('trayVolume', true) ? 'checked' : ''}> ${T_('trayIcon')}</label>
+                        <div class="xp-row-right">${btn('mm-advanced', T_('advanced'))}</div>
+                    </div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('speakerSettings')}</div>
+                        <select class="xp-select" id="mm-speakers">${T.list(XK('mmsys.speakers')).map((s, i) => `<option value="${i}" ${i === XP.reg('speakerSetup', 0) ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>
+                    </div>`, true)}
+                ${pane('sounds', `
+                    <div class="xp-row"><label>${T_('scheme')}</label><select class="xp-select" id="mm-scheme">${schemes.map((s, i) => `<option value="${i}" ${i === XP.reg('soundScheme', 0) ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select></div>
+                    <div class="xp-note">${T_('programEvents')}</div>
+                    <div class="xp-list" id="mm-events">${SOUND_EVENTS.map(([id]) => `<div class="xp-regedit-row focusable" data-ev="${id}" tabindex="0"><span>${T_('event.' + id)}</span></div>`).join('')}</div>
+                    <div class="xp-row"><label>${T_('sounds')}</label><input class="xp-input" id="mm-evname" readonly>${btn('mm-test', T_('test'))}</div>`)}
+                ${pane('audio', `
+                    <div class="xp-group"><div class="xp-group-title">${T_('playback')}</div><select class="xp-select"><option>${esc(p.sound)}</option></select></div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('recording')}</div><select class="xp-select"><option>${esc(p.sound)}</option></select></div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('midi')}</div><select class="xp-select"><option>${T_('midiSynth')}</option></select></div>
+                    <label class="xp-check-row"><input type="checkbox" checked> ${T_('defaultOnly')}</label>`)}
+                ${pane('voice', `
+                    <div class="xp-group"><div class="xp-group-title">${T_('voicePlayback')}</div><select class="xp-select"><option>${esc(p.sound)}</option></select></div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('voiceRecording')}</div><select class="xp-select"><option>${esc(p.sound)}</option></select></div>
+                    <div class="xp-row-right">${btn('mm-testhw', T_('testHardware'))}</div>`)}
+                ${pane('hardware', `<div class="xp-list">${window.HypernetOS.Host.devices().filter(c => /sound|audio|suono/i.test(c.label) || c.items.includes(p.sound)).concat([{ label: T_('codecs'), items: T.list(XK('mmsys.codecsList')) }]).map(c => c.items.map(i => `<div class="xp-regedit-row"><span>${esc(i)}</span><span>${T_('working')}</span></div>`).join('')).join('')}</div>`)}
+                <div class="xp-row-right">${btn('mm-ok', T('HypernetOS.xp.dialog.ok'), 'default')}${btn('mm-cancel', T('HypernetOS.xp.dialog.cancel'))}${btn('mm-apply', T_('apply'))}</div>
+            </div>`;
+        tabsOf(root);
+        let selectedEv = null;
+        root.querySelectorAll('#mm-events .xp-regedit-row').forEach(row => on(row, 'click', () => {
+            root.querySelectorAll('#mm-events .xp-regedit-row').forEach(r => r.classList.toggle('selected', r === row));
+            selectedEv = row.dataset.ev;
+            q(root, '#mm-evname').value = T_('event.' + selectedEv) + '.wav';   // i18n-ignore  extension
+        }));
+        on(q(root, '#mm-test'), 'click', () => {
+            const ev = SOUND_EVENTS.find(e => e[0] === selectedEv);
+            if (ev && window.SoundManager && typeof SoundManager[ev[1]] === 'function') SoundManager[ev[1]]();
+        });
+        const apply = () => {
+            const v = parseInt(q(root, '#mm-vol').value, 10);
+            const mute = q(root, '#mm-mute').checked;
+            if (CM) {
+                if (mute && !XP.reg('audioMuted', false)) XP.setReg('audioUnmuted', { bgm: CM.bgmVolume, se: CM.seVolume, bgs: CM.bgsVolume, me: CM.meVolume });
+                const level = mute ? 0 : v;
+                CM.bgmVolume = level; CM.seVolume = level; CM.bgsVolume = level; CM.meVolume = level;
+                if (typeof CM.save === 'function') CM.save();
+            }
+            XP.setReg('audioMuted', mute);
+            XP.setReg('trayVolume', q(root, '#mm-tray').checked);
+            XP.setReg('speakerSetup', parseInt(q(root, '#mm-speakers').value, 10) || 0);
+            XP.setReg('soundScheme', parseInt(q(root, '#mm-scheme').value, 10) || 0);
+            const tray = document.getElementById('tray-volume');
+            if (tray && !q(root, '#mm-tray').checked) tray.parentNode.removeChild(tray);
+            else if (!tray && q(root, '#mm-tray').checked) XP.buildTray();
+        };
+        on(q(root, '#mm-apply'), 'click', apply);
+        on(q(root, '#mm-ok'), 'click', () => { apply(); window.HypernetOS.WindowManager.closeWindow(win); });
+        on(q(root, '#mm-cancel'), 'click', () => window.HypernetOS.WindowManager.closeWindow(win));
+        on(q(root, '#mm-advanced'), 'click', () => window.HypernetOS.Dialog.alert(T_('advancedBody'), T_('appName')));
+        on(q(root, '#mm-testhw'), 'click', () => window.HypernetOS.Dialog.alert(T_('testHardwareBody'), T_('testHardware')));
+    });
+
+    // --- System Properties ----------------------------------------------------------------------
+    xpApp('app-sysdm', 'sysdm', 234, [520, 480], (win, root, T_) => {
+        const H = window.HypernetOS.Host;
+        const p = H.profile();
+        const fx = XP.visualEffects();
+        const paging = H.pagingMb();
+        const restoreOn = XP.reg('systemRestore', true);
+        const updates = XP.reg('autoUpdates', 'notify');
+        root.innerHTML = `
+            <div class="xp-sysdm">
+                ${tabBar(T_, ['general', 'name', 'hardware', 'advanced', 'restore', 'updates', 'remote'])}
+                ${pane('general', `
+                    <div class="xp-sysdm-general">
+                        <div class="xp-sysdm-logo">${window.HypernetOS.getIconHTML(234, 64)}</div>
+                        <div>
+                            <div class="xp-group-title">${T_('system')}</div>
+                            <div class="xp-indent">${T_('osName')}</div><div class="xp-indent">${T_('osVersion')}</div><div class="xp-indent">${T_('servicePack')}</div>
+                            <div class="xp-group-title">${T_('registeredTo')}</div>
+                            <div class="xp-indent">${esc(XP.userName())}</div><div class="xp-indent">${esc(p.vendor)}</div><div class="xp-indent">${esc(p.serial)}</div>
+                            <div class="xp-group-title">${T_('computer')}</div>
+                            <div class="xp-indent">${esc(p.vendor)} ${esc(p.model)}</div>
+                            <div class="xp-indent">${esc(p.cpu)}</div>
+                            <div class="xp-indent">${H.fmtMhz(p.mhz)}, ${T_('ramOf', { mb: p.ram })}</div>
+                        </div>
+                    </div>`, true)}
+                ${pane('name', `
+                    <div class="xp-note">${T_('nameIntro')}</div>
+                    <div class="xp-row"><label>${T_('description')}</label><input class="xp-input" id="sd-desc" value="${esc(XP.reg('computerDescription', ''))}"></div>
+                    <div class="xp-row"><label>${T_('fullName')}</label><b id="sd-name">${esc(H.hostname())}</b></div>
+                    <div class="xp-row"><label>${T_('workgroup')}</label><b>${esc(XP.reg('workgroup', T_('defaultWorkgroup')))}</b></div>
+                    <div class="xp-row-right">${btn('sd-netid', T_('networkId'))}${btn('sd-rename', T_('change'))}</div>`)}
+                ${pane('hardware', `
+                    <div class="xp-group"><div class="xp-group-title">${T_('devmgmt')}</div><div class="xp-note">${T_('devmgmtText')}</div><div class="xp-row-right">${btn('sd-devmgmt', T_('devmgmt'))}</div></div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('drivers')}</div><div class="xp-note">${T_('driversText')}</div><div class="xp-row-right">${btn('sd-signing', T_('driverSigning'))}${btn('sd-wupdate', T_('windowsUpdate'))}</div></div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('profiles')}</div><div class="xp-note">${T_('profilesText')}</div><div class="xp-row-right">${btn('sd-profiles', T_('profiles'))}</div></div>`)}
+                ${pane('advanced', `
+                    <div class="xp-group"><div class="xp-group-title">${T_('performance')}</div>
+                        <label class="xp-check-row"><input type="checkbox" data-fx="animate" ${fx.animate ? 'checked' : ''}> ${T_('fxAnimate')}</label>
+                        <label class="xp-check-row"><input type="checkbox" data-fx="shadows" ${fx.shadows ? 'checked' : ''}> ${T_('fxShadows')}</label>
+                        <label class="xp-check-row"><input type="checkbox" data-fx="fade" ${fx.fade ? 'checked' : ''}> ${T_('fxFade')}</label>
+                        <label class="xp-check-row"><input type="checkbox" data-fx="dragContents" ${fx.dragContents ? 'checked' : ''}> ${T_('fxDrag')}</label>
+                        <label class="xp-check-row"><input type="checkbox" data-fx="smoothFonts" ${fx.smoothFonts ? 'checked' : ''}> ${T_('fxSmooth')}</label>
+                    </div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('virtualMemory')}</div>
+                        <div class="xp-note">${T_('pagingFile', { initial: paging.initial, max: paging.max, drive: 'C:' })}</div>
+                    </div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('startupRecovery')}</div>
+                        <div class="xp-note">${T_('defaultOs')}</div>
+                        <label class="xp-check-row"><input type="checkbox" id="sd-autoreboot" ${XP.reg('autoReboot', true) ? 'checked' : ''}> ${T_('autoReboot')}</label>
+                        <div class="xp-row-right">${btn('sd-env', T_('envVars'))}${btn('sd-errrep', T_('errorReporting'))}</div>
+                    </div>`)}
+                ${pane('restore', `
+                    <label class="xp-check-row"><input type="checkbox" id="sd-restore-off" ${restoreOn ? '' : 'checked'}> ${T_('restoreOff')}</label>
+                    <div class="xp-group"><div class="xp-group-title">${T_('restoreDrives')}</div>
+                        <div class="xp-regedit-row"><span>(C:)</span><span>${restoreOn ? T_('monitoring') : T_('turnedOff')}</span></div>
+                        <div class="xp-row"><span>${T_('diskUsage')}</span><input type="range" min="1" max="12" value="${XP.reg('restoreUsage', 12)}" id="sd-restore-usage" class="xp-range"><span id="sd-restore-pct">${XP.reg('restoreUsage', 12)}%</span></div>
+                        <div class="xp-note" id="sd-restore-points">${T_('restorePoints', { n: (XP.reg('restorePoints', []) || []).length })}</div>
+                        <div class="xp-row-right">${btn('sd-restore-create', T_('createPoint'))}</div>
+                    </div>`)}
+                ${pane('updates', `
+                    <div class="xp-note">${T_('updatesIntro')}</div>
+                    <label class="xp-radio"><input type="radio" name="sd-upd" value="auto" ${updates === 'auto' ? 'checked' : ''}> ${T_('updAuto')}</label>
+                    <label class="xp-radio"><input type="radio" name="sd-upd" value="download" ${updates === 'download' ? 'checked' : ''}> ${T_('updDownload')}</label>
+                    <label class="xp-radio"><input type="radio" name="sd-upd" value="notify" ${updates === 'notify' ? 'checked' : ''}> ${T_('updNotify')}</label>
+                    <label class="xp-radio"><input type="radio" name="sd-upd" value="off" ${updates === 'off' ? 'checked' : ''}> ${T_('updOff')}</label>`)}
+                ${pane('remote', `
+                    <label class="xp-check-row"><input type="checkbox" id="sd-remote-assist" ${XP.reg('remoteAssistance', false) ? 'checked' : ''}> ${T_('remoteAssist')}</label>
+                    <label class="xp-check-row"><input type="checkbox" id="sd-remote-desktop" ${XP.reg('remoteDesktop', false) ? 'checked' : ''}> ${T_('remoteDesktop')}</label>
+                    <div class="xp-note">${T_('remoteNote', { host: esc(H.hostname()) })}</div>`)}
+                <div class="xp-row-right">${btn('sd-ok', T('HypernetOS.xp.dialog.ok'), 'default')}${btn('sd-cancel', T('HypernetOS.xp.dialog.cancel'))}${btn('sd-apply', T_('apply'))}</div>
+            </div>`;
+        tabsOf(root);
+        const usage = q(root, '#sd-restore-usage');
+        usage.addEventListener('input', () => { q(root, '#sd-restore-pct').textContent = usage.value + '%'; });
+        const apply = () => {
+            const fxOut = {};
+            root.querySelectorAll('input[data-fx]').forEach(c => { fxOut[c.dataset.fx] = c.checked; });
+            XP.setReg('visualEffects', fxOut);
+            XP.applyVisualEffects();
+            XP.setReg('computerDescription', q(root, '#sd-desc').value);
+            XP.setReg('autoReboot', q(root, '#sd-autoreboot').checked);
+            XP.setReg('systemRestore', !q(root, '#sd-restore-off').checked);
+            XP.setReg('restoreUsage', parseInt(usage.value, 10) || 12);
+            const upd = root.querySelector('input[name="sd-upd"]:checked');
+            XP.setReg('autoUpdates', upd ? upd.value : 'notify');
+            XP.setReg('remoteAssistance', q(root, '#sd-remote-assist').checked);
+            XP.setReg('remoteDesktop', q(root, '#sd-remote-desktop').checked);
+            const sec = XP.security();
+            sec.updates = upd ? upd.value === 'auto' : sec.updates;
+            XP.setReg('security', sec);
+        };
+        on(q(root, '#sd-apply'), 'click', apply);
+        on(q(root, '#sd-ok'), 'click', () => { apply(); window.HypernetOS.WindowManager.closeWindow(win); });
+        on(q(root, '#sd-cancel'), 'click', () => window.HypernetOS.WindowManager.closeWindow(win));
+        on(q(root, '#sd-devmgmt'), 'click', () => window.HypernetOS.launchApp('app-devmgmt'));
+        on(q(root, '#sd-rename'), 'click', () => {
+            window.HypernetOS.Dialog.prompt(T_('renameBody'), H.hostname(), T_('renameTitle')).then(name => {
+                if (name === null) return;
+                const clean = name.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 15);
+                if (!clean) { window.HypernetOS.Dialog.error(T_('renameBad')); return; }
+                XP.setReg('computerName', clean);
+                q(root, '#sd-name').textContent = clean;
+                window.HypernetOS.Dialog.alert(T_('renameRestart'), T_('renameTitle'));
+            });
+        });
+        on(q(root, '#sd-netid'), 'click', () => window.HypernetOS.Dialog.alert(T_('networkIdBody'), T_('networkId')));
+        on(q(root, '#sd-signing'), 'click', () => window.HypernetOS.Dialog.alert(T_('signingBody'), T_('driverSigning')));
+        on(q(root, '#sd-wupdate'), 'click', () => window.HypernetOS.Dialog.alert(T_('wupdateBody'), T_('windowsUpdate')));
+        on(q(root, '#sd-profiles'), 'click', () => window.HypernetOS.Dialog.alert(T_('profilesBody', { name: esc(H.hostname()) }), T_('profiles')));
+        on(q(root, '#sd-env'), 'click', () => {
+            const env = window.HypernetOS.Shell.newSession().env;
+            window.HypernetOS.Dialog.alert(Object.keys(env).map(k => k + '=' + env[k]).join('\n'), T_('envVars'));
+        });
+        on(q(root, '#sd-errrep'), 'click', () => {
+            window.HypernetOS.Dialog.show({
+                title: T_('errorReporting'), message: T_('errrepBody'), icon: 'info',
+                checkbox: { label: T_('errrepDisable'), checked: XP.reg('errorReportingOff', false) },
+                buttons: [{ id: 'ok', label: T('HypernetOS.xp.dialog.ok'), default: true }, { id: 'cancel', label: T('HypernetOS.xp.dialog.cancel'), cancel: true }]
+            }).then(r => { if (r.button === 'ok') XP.setReg('errorReportingOff', !!r.checked); });
+        });
+        on(q(root, '#sd-restore-create'), 'click', () => {
+            window.HypernetOS.Dialog.prompt(T_('pointDescription'), '', T_('createPoint')).then(desc => {
+                if (desc === null) return;
+                const pts = XP.reg('restorePoints', []) || [];
+                pts.push({ at: window.HypernetOS.clockStamp(), desc: desc });
+                XP.setReg('restorePoints', pts);
+                q(root, '#sd-restore-points').textContent = T_('restorePoints', { n: pts.length });
+                window.HypernetOS.Dialog.alert(T_('pointCreated'), T_('createPoint'));
+            });
+        });
+    });
+
+    // --- Device Manager ----------------------------------------------------------------------
+    xpApp('app-devmgmt', 'devmgmt', 234, [520, 460], (win, root, T_) => {
+        const H = window.HypernetOS.Host;
+        const cats = H.devices();
+        const disabledDevs = XP.reg('disabledDevices', []) || [];
+        root.innerHTML = `
+            <div class="xp-devmgmt">
+                <div class="xp-toolbar">${btn('dm-props', T_('properties'))}${btn('dm-disable', T_('disable'))}${btn('dm-scan', T_('scan'))}${btn('dm-update', T_('updateDriver'))}</div>
+                <div class="xp-tree" id="dm-tree">
+                    <div class="xp-tree-node open">${esc(H.hostname())}</div>
+                    ${cats.map((c, ci) => `<div class="xp-tree-cat focusable" data-cat="${ci}" tabindex="0">+ ${esc(c.label)}</div>
+                        <div class="xp-tree-children" data-children="${ci}">${c.items.map((it, ii) => `<div class="xp-tree-leaf focusable ${disabledDevs.includes(it) ? 'disabled' : ''}" data-dev="${esc(it)}" tabindex="0">${esc(it)}</div>`).join('')}</div>`).join('')}
+                </div>
+                <div class="xp-status" id="dm-status">${T_('count', { n: cats.reduce((s, c) => s + c.items.length, 0) })}</div>
+            </div>`;
+        let selected = null;
+        root.querySelectorAll('.xp-tree-cat').forEach(cat => on(cat, 'click', () => {
+            const kids = root.querySelector(`.xp-tree-children[data-children="${cat.dataset.cat}"]`);
+            kids.classList.toggle('open');
+            cat.textContent = (kids.classList.contains('open') ? '- ' : '+ ') + cat.textContent.slice(2);
+        }));
+        const props = () => {
+            if (!selected) return;
+            const off = (XP.reg('disabledDevices', []) || []).includes(selected);
+            window.HypernetOS.Dialog.alert(T_('propsBody', { name: selected, status: off ? T_('statusDisabled') : T_('statusOk'), vendor: H.profile().vendor }), selected);
+        };
+        root.querySelectorAll('.xp-tree-leaf').forEach(leaf => {
+            on(leaf, 'click', () => { root.querySelectorAll('.xp-tree-leaf').forEach(l => l.classList.toggle('selected', l === leaf)); selected = leaf.dataset.dev; });
+            on(leaf, 'dblclick', () => { selected = leaf.dataset.dev; props(); });
+        });
+        on(q(root, '#dm-props'), 'click', props);
+        on(q(root, '#dm-disable'), 'click', () => {
+            if (!selected) return;
+            const list = XP.reg('disabledDevices', []) || [];
+            const off = list.includes(selected);
+            const next = off ? list.filter(d => d !== selected) : list.concat([selected]);
+            const go = () => {
+                XP.setReg('disabledDevices', next);
+                root.querySelectorAll('.xp-tree-leaf').forEach(l => { if (l.dataset.dev === selected) l.classList.toggle('disabled', !off); });
+                XP.log('system', off ? 'info' : 'warning', 'PlugPlay', T_(off ? 'eventEnabled' : 'eventDisabled', { name: selected }));   // i18n-ignore  source
+            };
+            if (off) go(); else window.HypernetOS.Dialog.confirm(T_('disableConfirm', { name: selected }), T_('appName'), 'warning').then(ok => { if (ok) go(); });
+        });
+        on(q(root, '#dm-scan'), 'click', () => {
+            q(root, '#dm-status').textContent = T_('scanning');
+            setTimeout(() => { q(root, '#dm-status').textContent = T_('scanDone'); }, 1500);
+        });
+        on(q(root, '#dm-update'), 'click', () => {
+            if (!selected) return;
+            window.HypernetOS.Dialog.alert(T_('updateBody', { name: selected }), T_('updateDriver'));
+        });
+    });
+
+    // --- Add or Remove Programs ---------------------------------------------------------------
+    xpApp('app-appwiz', 'appwiz', 191, [620, 460], (win, root, T_) => {
+        const usage = () => XP.reg('appUsage', {}) || {};
+        const sizeOf = app => 1 + (xpHash(app.id) % 40);
+        const freq = n => n >= 10 ? T_('freqOften') : n >= 3 ? T_('freqSometimes') : T_('freqRarely');
+        const listable = () => Object.values(window.HypernetOS._apps).filter(a => !/^sys-|^my-|^control-panel$|^app-run$|^app-recycle$/.test(a.id))
+            .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const components = T.list(XK('appwiz.components'));
+        const compOff = XP.reg('componentsOff', []) || [];
+        const render = (tab) => {
+            const u = usage();
+            const installed = listable().filter(a => window.HypernetOS.isInstalled(a));
+            const removed = listable().filter(a => !window.HypernetOS.isInstalled(a));
+            root.innerHTML = `
+                <div class="xp-appwiz">
+                    <div class="xp-appwiz-side">
+                        <div class="xp-appwiz-btn focusable ${tab === 'change' ? 'active' : ''}" data-tab="change" tabindex="0">${T_('changeRemove')}</div>
+                        <div class="xp-appwiz-btn focusable ${tab === 'add' ? 'active' : ''}" data-tab="add" tabindex="0">${T_('addNew')}</div>
+                        <div class="xp-appwiz-btn focusable ${tab === 'components' ? 'active' : ''}" data-tab="components" tabindex="0">${T_('components')}</div>
+                        <div class="xp-appwiz-btn focusable ${tab === 'defaults' ? 'active' : ''}" data-tab="defaults" tabindex="0">${T_('defaults')}</div>
+                    </div>
+                    <div class="xp-appwiz-main">
+                        ${tab === 'change' ? `<div class="xp-note">${T_('installedIntro')}</div><div class="xp-appwiz-list">${installed.map(a => `
+                            <div class="xp-appwiz-row focusable" data-app="${a.id}" tabindex="0">
+                                <div class="xp-appwiz-head">${window.HypernetOS.getIconHTML(a.icon, 24)}<b>${esc(a.name)}</b><span class="xp-dim">${T_('size', { mb: sizeOf(a) })}</span></div>
+                                <div class="xp-appwiz-detail">
+                                    <span>${T_('used')} ${freq((u[a.id] || {}).count || 0)}</span><span>${T_('lastUsed')} ${(u[a.id] || {}).last || T_('never')}</span>
+                                    ${btn('aw-remove-' + a.id, T_('remove'))}
+                                </div>
+                            </div>`).join('')}</div>` : ''}
+                        ${tab === 'add' ? `<div class="xp-note">${T_('addIntro')}</div><div class="xp-appwiz-list">${removed.length ? removed.map(a => `
+                            <div class="xp-appwiz-row"><div class="xp-appwiz-head">${window.HypernetOS.getIconHTML(a.icon, 24)}<b>${esc(a.name)}</b>${btn('aw-add-' + a.id, T_('install'))}</div></div>`).join('') : `<div class="xp-empty">${T_('nothingToAdd')}</div>`}</div>
+                            <div class="xp-row-right">${btn('aw-cd', T_('cdOrFloppy'))}</div>` : ''}
+                        ${tab === 'components' ? `<div class="xp-note">${T_('componentsIntro')}</div><div class="xp-list">${components.map((c, i) => `<label class="xp-check-row"><input type="checkbox" data-comp="${i}" ${compOff.includes(i) ? '' : 'checked'}> ${esc(c)}<span class="xp-dim">${T_('size', { mb: 1 + (xpHash(c) % 12) })}</span></label>`).join('')}</div>
+                            <div class="xp-row-right">${btn('aw-comp-ok', T_('next'))}</div>` : ''}
+                        ${tab === 'defaults' ? `<div class="xp-note">${T_('defaultsIntro')}</div>
+                            <label class="xp-radio"><input type="radio" name="aw-def" checked> ${T_('defaultsArchways')}</label>
+                            <label class="xp-radio"><input type="radio" name="aw-def"> ${T_('defaultsNonArchways')}</label>
+                            <label class="xp-radio"><input type="radio" name="aw-def"> ${T_('defaultsCustom')}</label>` : ''}
+                    </div>
+                </div>`;
+            root.querySelectorAll('.xp-appwiz-btn').forEach(b => on(b, 'click', () => render(b.dataset.tab)));
+            installed.forEach(a => on(q(root, '#aw-remove-' + a.id), 'click', () => {
+                window.HypernetOS.Dialog.confirm(T_('removeConfirm', { name: a.name }), T_('appName'), 'warning').then(ok => {
+                    if (!ok) return;
+                    window.HypernetOS.setInstalled(a.id, false);
+                    const start = XP.reg('startupApps', []) || [];
+                    XP.setReg('startupApps', start.filter(id => id !== a.id));
+                    XP.log('application', 'info', 'MsiInstaller', T_('eventRemoved', { name: a.name }));   // i18n-ignore  source
+                    if (window.SoundManager) SoundManager.playUseItem();
+                    render('change');
+                });
+            }));
+            removed.forEach(a => on(q(root, '#aw-add-' + a.id), 'click', () => {
+                window.HypernetOS.setInstalled(a.id, true);
+                XP.log('application', 'info', 'MsiInstaller', T_('eventInstalled', { name: a.name }));   // i18n-ignore  source
+                if (window.SoundManager) SoundManager.playOk();
+                render('add');
+            }));
+            on(q(root, '#aw-cd'), 'click', () => window.HypernetOS.Dialog.alert(T_('cdBody'), T_('cdOrFloppy'), 'warning'));
+            on(q(root, '#aw-comp-ok'), 'click', () => {
+                const off = [];
+                root.querySelectorAll('input[data-comp]').forEach(c => { if (!c.checked) off.push(parseInt(c.dataset.comp, 10)); });
+                XP.setReg('componentsOff', off);
+                window.HypernetOS.Dialog.alert(T_('componentsDone'), T_('components'));
+            });
+        };
+        render('change');
+    });
+
+    // --- Recycle Bin ---------------------------------------------------------------------------
+    xpApp('app-recycle', 'recycle', 190, [520, 380], (win, root, T_) => {
+        const fs = window.HypernetFileSystem;
+        const render = () => {
+            const items = fs && fs.recycled ? fs.recycled() : [];
+            root.innerHTML = `
+                <div class="xp-recycle">
+                    <div class="xp-toolbar">${btn('rb-restore', T_('restore'))}${btn('rb-delete', T_('delete'))}${btn('rb-empty', T_('empty'))}${btn('rb-props', T_('properties'))}</div>
+                    <div class="xp-regedit-list">
+                        <div class="xp-regedit-row head"><span>${T_('name')}</span><span>${T_('origin')}</span><span>${T_('deleted')}</span></div>
+                        ${items.length ? items.map(it => `<div class="xp-regedit-row focusable" data-name="${esc(it.name)}" tabindex="0"><span>${esc(it.name)}</span><span>${esc(it.origin)}</span><span>${esc(it.deletedAt)}</span></div>`).join('') : `<div class="xp-empty">${T_('emptyList')}</div>`}
+                    </div>
+                    <div class="xp-status">${T_('count', { n: items.length })}</div>
+                </div>`;
+            let selected = null;
+            root.querySelectorAll('.xp-regedit-row[data-name]').forEach(row => on(row, 'click', () => {
+                root.querySelectorAll('.xp-regedit-row').forEach(r => r.classList.toggle('selected', r === row));
+                selected = row.dataset.name;
+            }));
+            on(q(root, '#rb-restore'), 'click', () => { if (selected && fs.restoreRecycled(selected)) { if (window.SoundManager) SoundManager.playOk(); render(); } });
+            on(q(root, '#rb-delete'), 'click', () => {
+                if (!selected) return;
+                window.HypernetOS.Dialog.confirm(T_('deleteConfirm', { name: selected }), T_('appName'), 'warning').then(ok => {
+                    if (ok && fs.deleteFile('C:/RECYCLER/' + selected)) render();   // i18n-ignore  folder
+                });
+            });
+            on(q(root, '#rb-empty'), 'click', () => {
+                if (!items.length) return;
+                window.HypernetOS.Dialog.confirm(T_('emptyConfirm', { n: items.length }), T_('appName'), 'warning').then(ok => {
+                    if (!ok) return;
+                    fs.emptyRecycler();
+                    if (window.SoundManager) SoundManager.playUseItem();
+                    XP.log('application', 'info', 'Explorer', T_('eventEmptied'));   // i18n-ignore  source
+                    render();
+                });
+            });
+            on(q(root, '#rb-props'), 'click', () => {
+                const p = window.HypernetOS.Host.profile();
+                window.HypernetOS.Dialog.show({
+                    title: T_('propsTitle'), message: T_('propsBody', { size: Math.round(p.disk / 10) }), icon: 'info',
+                    checkbox: { label: T_('propsConfirm'), checked: XP.reg('recycleConfirm', true) },
+                    buttons: [{ id: 'ok', label: T('HypernetOS.xp.dialog.ok'), default: true }, { id: 'cancel', label: T('HypernetOS.xp.dialog.cancel'), cancel: true }]
+                }).then(r => { if (r.button === 'ok') XP.setReg('recycleConfirm', !!r.checked); });
+            });
+        };
+        render();
+        win.addEventListener('hypernet-recycler-changed', render);
+    }, { desktopShortcut: true, desktopAnchor: 'right' });
+
+    // --- Search Companion ----------------------------------------------------------------------
+    xpApp('app-search', 'search', 190, [600, 440], (win, root, T_) => {
+        const fs = window.HypernetFileSystem;
+        root.innerHTML = `
+            <div class="xp-search">
+                <div class="xp-search-side">
+                    <div class="xp-search-dog">${window.HypernetOS.getIconHTML(190, 40)}</div>
+                    <div class="xp-note">${T_('intro')}</div>
+                    <div class="xp-row"><label>${T_('name')}</label><input class="xp-input" id="se-name"></div>
+                    <div class="xp-row"><label>${T_('contains')}</label><input class="xp-input" id="se-text"></div>
+                    <div class="xp-row"><label>${T_('lookIn')}</label><select class="xp-select" id="se-where"><option value="C:">${T_('wholeDrive')}</option><option value="C:/Documents">${T('HypernetOS.myDocuments')}</option><option value="C:/Desktop">${T('MyComputer.desktop')}</option></select></div>
+                    <label class="xp-check-row"><input type="checkbox" id="se-hidden"> ${T_('hidden')}</label>
+                    <div class="xp-row-right">${btn('se-go', T_('search'), 'default')}${btn('se-stop', T_('stop'))}</div>
+                </div>
+                <div class="xp-search-main">
+                    <div class="xp-regedit-list" id="se-results"><div class="xp-empty">${T_('startHint')}</div></div>
+                    <div class="xp-status" id="se-status"></div>
+                </div>
+            </div>`;
+        let timer = null;
+        const run = () => {
+            if (!fs) return;
+            const name = q(root, '#se-name').value.trim().toLowerCase();
+            const text = q(root, '#se-text').value.trim().toLowerCase();
+            const where = q(root, '#se-where').value;
+            const hidden = q(root, '#se-hidden').checked;
+            const results = q(root, '#se-results');
+            const status = q(root, '#se-status');
+            results.innerHTML = '';
+            status.textContent = T_('searching');
+            const all = fs.walk(where);
+            let i = 0, hits = 0;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                for (let n = 0; n < 12 && i < all.length; n++, i++) {
+                    const e = all[i];
+                    if (e.node.type !== 'file') continue;
+                    if (!hidden && /^ARCHWAYS$|^RECYCLER$/i.test(e.path.split('/')[1] || '')) continue;
+                    const nameOk = !name || e.node.name.toLowerCase().includes(name);
+                    const textOk = !text || String(e.node.content || '').toLowerCase().includes(text);
+                    if (!nameOk || !textOk) continue;
+                    hits++;
+                    const row = document.createElement('div');
+                    row.className = 'xp-regedit-row focusable';
+                    row.tabIndex = 0;
+                    row.innerHTML = `<span>${esc(e.node.name)}</span><span>${esc(e.path.slice(0, e.path.lastIndexOf('/')).replace(/\//g, '\\'))}</span><span>${String(e.node.content || '').length}</span>`;
+                    on(row, 'dblclick', () => window.HypernetOS.openFile(e.path));
+                    results.appendChild(row);
+                }
+                if (i >= all.length) { clearInterval(timer); status.textContent = T_('found', { n: hits }); }
+            }, 30);
+        };
+        on(q(root, '#se-go'), 'click', run);
+        on(q(root, '#se-stop'), 'click', () => { clearInterval(timer); q(root, '#se-status').textContent = T_('stopped'); });
+        root.querySelectorAll('input.xp-input').forEach(inp => inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.stopPropagation(); run(); } }));
+        win.addEventListener('hypernet-closed', () => clearInterval(timer));
+    }, { category: 'accessories' });
+
+    // --- Scheduled Tasks ----------------------------------------------------------------------
+    xpApp('app-schedtasks', 'schedtasks', 84, [560, 380], (win, root, T_) => {
+        const render = () => {
+            const tasks = XP.reg('scheduledTasks', []) || [];
+            root.innerHTML = `
+                <div class="xp-schedtasks">
+                    <div class="xp-toolbar">${btn('st-add', T_('add'))}${btn('st-run', T_('runNow'))}${btn('st-toggle', T_('toggle'))}${btn('st-del', T_('delete'))}</div>
+                    <div class="xp-regedit-list">
+                        <div class="xp-regedit-row head"><span>${T_('name')}</span><span>${T_('schedule')}</span><span>${T_('lastRun')}</span><span>${T_('status')}</span></div>
+                        ${tasks.length ? tasks.map((t, i) => `<div class="xp-regedit-row focusable" data-i="${i}" tabindex="0"><span>${esc((window.HypernetOS._apps[t.app] || {}).name || t.app)}</span><span>${T_('daily', { time: t.time })}</span><span>${esc(t.lastRun || T_('never'))}</span><span>${t.enabled === false ? T_('disabled') : T_('ready')}</span></div>`).join('') : `<div class="xp-empty">${T_('empty')}</div>`}
+                    </div>
+                    <div class="xp-status">${T_('count', { n: tasks.length })}</div>
+                </div>`;
+            let sel = -1;
+            root.querySelectorAll('.xp-regedit-row[data-i]').forEach(row => on(row, 'click', () => {
+                root.querySelectorAll('.xp-regedit-row').forEach(r => r.classList.toggle('selected', r === row));
+                sel = parseInt(row.dataset.i, 10);
+            }));
+            on(q(root, '#st-add'), 'click', () => {
+                const apps = Object.values(window.HypernetOS._apps).filter(a => window.HypernetOS.isInstalled(a) && a.id !== 'app-run').sort((a, b) => String(a.name).localeCompare(String(b.name)));
+                window.HypernetOS.Dialog.show({
+                    title: T_('addTitle'), message: T_('addProgram'), icon: 'question',
+                    select: { options: apps.map(a => ({ value: a.id, label: a.name })), value: apps[0] ? apps[0].id : '' },
+                    input: { value: '09:00', placeholder: T_('timeHint') },   // i18n-ignore  default time
+                    buttons: [{ id: 'ok', label: T('HypernetOS.xp.dialog.ok'), default: true }, { id: 'cancel', label: T('HypernetOS.xp.dialog.cancel'), cancel: true }]
+                }).then(r => {
+                    if (r.button !== 'ok') return;
+                    const time = String(r.value || '').trim();
+                    if (!/^\d{2}:\d{2}$/.test(time)) { window.HypernetOS.Dialog.error(T_('badTime')); return; }
+                    const chosen = r.select || (apps[0] ? apps[0].id : '');
+                    tasks.push({ app: chosen, time: time, enabled: true, lastRun: '' });
+                    XP.setReg('scheduledTasks', tasks);
+                    render();
+                });
+            });
+            on(q(root, '#st-run'), 'click', () => { if (sel >= 0 && tasks[sel]) window.HypernetOS.launchApp(tasks[sel].app); });
+            on(q(root, '#st-toggle'), 'click', () => { if (sel >= 0 && tasks[sel]) { tasks[sel].enabled = tasks[sel].enabled === false; XP.setReg('scheduledTasks', tasks); render(); } });
+            on(q(root, '#st-del'), 'click', () => { if (sel >= 0) { tasks.splice(sel, 1); XP.setReg('scheduledTasks', tasks); render(); } });
+        };
+        render();
+    });
+
+    // --- Security Center ------------------------------------------------------------------------
+    xpApp('app-wscui', 'wscui', 233, [560, 420], (win, root, T_) => {
+        const render = () => {
+            const sec = XP.security();
+            const row = (id, on) => `
+                <div class="xp-wsc-row ${on ? 'on' : 'off'}">
+                    <div class="xp-wsc-head"><b>${T_('item.' + id)}</b><span class="xp-wsc-state">${on ? T_('on') : T_('off')}</span></div>
+                    <div class="xp-note">${T_(on ? 'text.' + id + 'On' : 'text.' + id + 'Off')}</div>
+                    <div class="xp-row-right">${btn('wsc-' + id, on ? T_('turnOff') : T_('turnOn'))}</div>
+                </div>`;
+            root.innerHTML = `
+                <div class="xp-wscui">
+                    <div class="xp-wsc-banner">${window.HypernetOS.getIconHTML(233, 32)}<div><b>${T_('appName')}</b><div>${T_('intro')}</div></div></div>
+                    <div class="xp-wsc-list">${row('firewall', sec.firewall)}${row('updates', sec.updates)}${row('antivirus', sec.antivirus)}</div>
+                    <div class="xp-row-right">${btn('wsc-alerts', T_('alertSettings'))}</div>
+                </div>`;
+            ['firewall', 'updates', 'antivirus'].forEach(id => on(q(root, '#wsc-' + id), 'click', () => {
+                const s = XP.security();
+                if (id === 'antivirus' && !s.antivirus) {
+                    window.HypernetOS.Dialog.alert(T_('noAntivirus'), T_('appName'), 'warning').then(() => { s.antivirus = true; XP.setReg('security', s); render(); });
+                    return;
+                }
+                s[id] = !s[id];
+                XP.setReg('security', s);
+                if (id === 'updates') XP.setReg('autoUpdates', s.updates ? 'auto' : 'notify');
+                XP.log('security', 'info', 'SecurityCenter', T_('event', { item: T_('item.' + id), state: s[id] ? T_('on') : T_('off') }));   // i18n-ignore  source
+                render();
+            }));
+            on(q(root, '#wsc-alerts'), 'click', () => {
+                window.HypernetOS.Dialog.show({
+                    title: T_('alertSettings'), message: T_('alertBody'), icon: 'info',
+                    checkbox: { label: T_('alertBalloons'), checked: !XP.reg('securityAlertsOff', false) },
+                    buttons: [{ id: 'ok', label: T('HypernetOS.xp.dialog.ok'), default: true }, { id: 'cancel', label: T('HypernetOS.xp.dialog.cancel'), cancel: true }]
+                }).then(r => { if (r.button === 'ok') XP.setReg('securityAlertsOff', !r.checked); });
+            });
+        };
+        render();
+    });
+
+    // --- Display Properties -----------------------------------------------------------------------
+    xpApp('app-desk', 'desk', 234, [480, 500], (win, root, T_) => {
+        const fs = window.HypernetFileSystem;
+        const wp = fs ? fs.getRegistry('wallpaper', 'bliss') : 'bliss';
+        const pos = XP.reg('wallpaperPosition', 'stretch');
+        const saver = XP.reg('screenSaver', 'none');
+        const scheme = XP.reg('colorScheme', 'blue');
+        // i18n-ignore-start  wallpaper ids
+        const WALLS = ['bliss', 'teal', 'space', 'gold'];
+        // i18n-ignore-end
+        root.innerHTML = `
+            <div class="xp-desk">
+                ${tabBar(T_, ['themes', 'desktop', 'saver', 'appearance', 'settings'])}
+                ${pane('themes', `
+                    <div class="xp-note">${T_('themesIntro')}</div>
+                    <select class="xp-select" id="dk-theme">${['blue', 'olive', 'silver', 'classic'].map(s => `<option value="${s}" ${s === scheme ? 'selected' : ''}>${T_('scheme.' + s)}</option>`).join('')}</select>
+                    <div class="xp-desk-preview xp-scheme-${scheme}" id="dk-preview"><div class="xp-desk-preview-title">${T_('previewTitle')}</div><div class="xp-desk-preview-body">${T_('previewBody')}</div></div>`, true)}
+                ${pane('desktop', `
+                    <div class="xp-desk-walls">${WALLS.map(w => `<div class="wp-card focusable xp-desk-wall ${w === wp ? 'selected' : ''}" data-wp="${w}" tabindex="0"><div class="xp-desk-swatch wp-${w}"></div><span>${T('ControlPanel.wp' + w.charAt(0).toUpperCase() + w.slice(1))}</span></div>`).join('')}</div>
+                    <div class="xp-row"><label>${T_('position')}</label><select class="xp-select" id="dk-pos">${['stretch', 'tile', 'center'].map(p => `<option value="${p}" ${p === pos ? 'selected' : ''}>${T_('pos.' + p)}</option>`).join('')}</select></div>
+                    <div class="xp-row-right">${btn('dk-customize', T_('customizeDesktop'))}</div>`)}
+                ${pane('saver', `
+                    <div class="xp-row"><label>${T_('screenSaver')}</label><select class="xp-select" id="dk-saver">${XP.Saver.KINDS.map(k => `<option value="${k}" ${k === saver ? 'selected' : ''}>${T_('saverKind.' + k)}</option>`).join('')}</select>${btn('dk-preview-saver', T_('preview'))}</div>
+                    <div class="xp-row"><label>${T_('wait')}</label><input class="xp-input short" id="dk-wait" value="${esc(XP.reg('screenSaverWait', 10))}"> ${T_('minutes')}</div>
+                    <div class="xp-row"><label>${T_('marqueeText')}</label><input class="xp-input" id="dk-marquee" value="${esc(XP.reg('marqueeText', T('HypernetOS.xp.saver.marqueeDefault')))}"></div>
+                    <label class="xp-check-row"><input type="checkbox" id="dk-resume-lock" ${XP.reg('saverLock', false) ? 'checked' : ''}> ${T_('resumeLock')}</label>
+                    <div class="xp-group"><div class="xp-group-title">${T_('power')}</div><div class="xp-note">${T_('powerText')}</div><div class="xp-row-right">${btn('dk-power', T_('powerBtn'))}</div></div>`)}
+                ${pane('appearance', `
+                    <div class="xp-row"><label>${T_('windowsAndButtons')}</label><select class="xp-select" id="dk-style"><option>${T_('styleXp')}</option><option>${T_('styleClassic')}</option></select></div>
+                    <div class="xp-row"><label>${T_('fontSize')}</label><select class="xp-select" id="dk-font">${['normal', 'large', 'extra'].map(f => `<option value="${f}" ${f === XP.reg('fontSize', 'normal') ? 'selected' : ''}>${T_('font.' + f)}</option>`).join('')}</select></div>
+                    <div class="xp-row-right">${btn('dk-effects', T_('effects'))}${btn('dk-advanced', T_('advanced'))}</div>`)}
+                ${pane('settings', `
+                    <div class="xp-note">${T_('display', { name: esc(window.HypernetOS.Host.profile().gpu) })}</div>
+                    <div class="xp-row"><label>${T_('resolution')}</label><b>${T_('resolutionValue', { w: Graphics.width, h: Graphics.height })}</b></div>
+                    <div class="xp-row"><label>${T_('colorQuality')}</label><select class="xp-select"><option>${T_('color32')}</option><option>${T_('color16')}</option><option>${T_('color256')}</option></select></div>
+                    <div class="xp-row-right">${btn('dk-troubleshoot', T_('troubleshoot'))}</div>`)}
+                <div class="xp-row-right">${btn('dk-ok', T('HypernetOS.xp.dialog.ok'), 'default')}${btn('dk-cancel', T('HypernetOS.xp.dialog.cancel'))}${btn('dk-apply', T_('apply'))}</div>
+            </div>`;
+        tabsOf(root);
+        let chosenWp = wp;
+        root.querySelectorAll('.xp-desk-wall').forEach(card => on(card, 'click', () => {
+            root.querySelectorAll('.xp-desk-wall').forEach(c => c.classList.toggle('selected', c === card));
+            chosenWp = card.dataset.wp;
+        }));
+        on(q(root, '#dk-theme'), 'change', () => { q(root, '#dk-preview').className = 'xp-desk-preview xp-scheme-' + q(root, '#dk-theme').value; });
+        const apply = () => {
+            if (fs) fs.setRegistry('wallpaper', chosenWp);
+            XP.setReg('wallpaperPosition', q(root, '#dk-pos').value);
+            XP.applyWallpaperPosition();
+            XP.setReg('screenSaver', q(root, '#dk-saver').value);
+            XP.setReg('screenSaverWait', Math.max(1, parseInt(q(root, '#dk-wait').value, 10) || 10));
+            XP.setReg('marqueeText', q(root, '#dk-marquee').value);
+            XP.setReg('saverLock', q(root, '#dk-resume-lock').checked);
+            XP.setReg('colorScheme', q(root, '#dk-theme').value);
+            XP.applyColorScheme();
+            XP.setReg('fontSize', q(root, '#dk-font').value);
+            const host = document.getElementById('hypernet-os-container');
+            if (host) ['normal', 'large', 'extra'].forEach(f => host.classList.toggle('xp-font-' + f, f === q(root, '#dk-font').value));
+            if (window.SoundManager) SoundManager.playOk();
+        };
+        on(q(root, '#dk-apply'), 'click', apply);
+        on(q(root, '#dk-ok'), 'click', () => { apply(); window.HypernetOS.WindowManager.closeWindow(win); });
+        on(q(root, '#dk-cancel'), 'click', () => window.HypernetOS.WindowManager.closeWindow(win));
+        on(q(root, '#dk-preview-saver'), 'click', () => {
+            XP.setReg('marqueeText', q(root, '#dk-marquee').value);
+            XP.Saver.start(q(root, '#dk-saver').value, true);
+        });
+        on(q(root, '#dk-customize'), 'click', () => window.HypernetOS.Dialog.alert(T_('customizeBody'), T_('customizeDesktop')));
+        on(q(root, '#dk-power'), 'click', () => {
+            const p = window.HypernetOS.Host.profile();
+            window.HypernetOS.Dialog.alert(p.origin === 'hyperdeck' ? T_('powerDeck', { hours: p.endurance }) : T_('powerDesktop'), T_('powerBtn'));
+        });
+        on(q(root, '#dk-effects'), 'click', () => window.HypernetOS.launchApp('app-sysdm'));
+        on(q(root, '#dk-advanced'), 'click', () => window.HypernetOS.Dialog.alert(T_('advancedBody'), T_('advanced')));
+        on(q(root, '#dk-troubleshoot'), 'click', () => window.HypernetOS.launchApp('app-help'));
+    });
+
+    // --- Help and Support Center --------------------------------------------------------------------
+    xpApp('app-help', 'help', 190, [640, 460], (win, root, T_) => {
+        const topics = T.obj(XK('help.topics'));
+        const keys = Object.keys(topics);
+        const tips = T.list(XK('help.tips'));
+        const tip = tips[xpHash(window.HypernetOS.clockStamp().slice(0, 10)) % Math.max(1, tips.length)] || '';
+        root.innerHTML = `
+            <div class="xp-help">
+                <div class="xp-help-head"><b>${T_('appName')}</b><input class="xp-input" id="hp-search" placeholder="${esc(T_('searchHint'))}"></div>
+                <div class="xp-help-body">
+                    <div class="xp-help-side" id="hp-topics">${keys.map(k => `<div class="xp-help-topic focusable" data-k="${esc(k)}" tabindex="0">${esc(topics[k].title)}</div>`).join('')}</div>
+                    <div class="xp-help-main" id="hp-main">
+                        <h3>${T_('welcome')}</h3>
+                        <div class="xp-help-tip"><b>${T_('tipOfDay')}</b><div>${esc(tip)}</div></div>
+                        <div class="xp-note">${T_('pickTopic')}</div>
+                    </div>
+                </div>
+            </div>`;
+        const show = k => {
+            const t = topics[k];
+            if (!t) return;
+            q(root, '#hp-main').innerHTML = `<h3>${esc(t.title)}</h3>${(t.body || []).map(par => `<p>${esc(par)}</p>`).join('')}`;
+            root.querySelectorAll('.xp-help-topic').forEach(el => el.classList.toggle('selected', el.dataset.k === k));
+        };
+        root.querySelectorAll('.xp-help-topic').forEach(el => on(el, 'click', () => show(el.dataset.k)));
+        q(root, '#hp-search').addEventListener('input', () => {
+            const needle = q(root, '#hp-search').value.trim().toLowerCase();
+            root.querySelectorAll('.xp-help-topic').forEach(el => {
+                const t = topics[el.dataset.k];
+                const hay = (t.title + ' ' + (t.body || []).join(' ')).toLowerCase();
+                el.style.display = !needle || hay.includes(needle) ? '' : 'none';
+            });
+        });
+    }, { category: 'accessories' });
+
+    // --- On-Screen Keyboard --------------------------------------------------------------------------
+    xpApp('app-osk', 'osk', 84, [640, 250], (win, root, T_) => {
+        // i18n-ignore-start  key rows
+        const ROWS = [
+            ['esc', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'bksp'],
+            ['tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
+            ['caps', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'ent'],
+            ['shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'shift'],
+            ['ctrl', 'win', 'alt', 'space', 'alt', 'win', 'ctrl']
+        ];
+        // i18n-ignore-end
+        let shift = false, caps = false;
+        let target = null;
+        const focusIn = e => {
+            const el = e.target;
+            if (el && ['INPUT', 'TEXTAREA'].includes(el.tagName) && !win.contains(el)) target = el;
+        };
+        document.addEventListener('focusin', focusIn);
+        win.addEventListener('hypernet-closed', () => document.removeEventListener('focusin', focusIn));
+        const render = () => {
+            root.innerHTML = `<div class="xp-osk">${ROWS.map(r => `<div class="xp-osk-row">${r.map(k => {
+                const wide = ['bksp', 'tab', 'caps', 'ent', 'shift', 'space', 'ctrl', 'alt', 'win', 'esc'].includes(k);
+                const label = k.length === 1 ? ((shift || caps) ? k.toUpperCase() : k) : T_('key.' + k);
+                return `<button class="xp-osk-key focusable ${wide ? 'wide' : ''} ${k === 'space' ? 'space' : ''} ${(k === 'shift' && shift) || (k === 'caps' && caps) ? 'lit' : ''}" data-k="${esc(k)}" tabindex="0">${esc(label)}</button>`;
+            }).join('')}</div>`).join('')}<div class="xp-status">${target ? T_('typingInto', { name: target.id || target.tagName.toLowerCase() }) : T_('noTarget')}</div></div>`;
+            root.querySelectorAll('.xp-osk-key').forEach(b => b.addEventListener('mousedown', e => {
+                e.preventDefault(); e.stopPropagation();
+                const k = b.dataset.k;
+                if (k === 'shift') { shift = !shift; render(); return; }
+                if (k === 'caps') { caps = !caps; render(); return; }
+                if (!target || !target.isConnected) return;
+                const insert = txt => {
+                    const s = target.selectionStart == null ? target.value.length : target.selectionStart;
+                    const e2 = target.selectionEnd == null ? s : target.selectionEnd;
+                    target.value = target.value.slice(0, s) + txt + target.value.slice(e2);
+                    target.selectionStart = target.selectionEnd = s + txt.length;
+                    target.dispatchEvent(new Event('input', { bubbles: true }));
+                };
+                if (k === 'bksp') {
+                    const s = target.selectionStart == null ? target.value.length : target.selectionStart;
+                    if (s > 0) { target.value = target.value.slice(0, s - 1) + target.value.slice(s); target.selectionStart = target.selectionEnd = s - 1; }
+                } else if (k === 'space') insert(' ');
+                else if (k === 'tab') insert('\t');
+                else if (k === 'ent') { if (target.tagName === 'TEXTAREA') insert('\n'); else target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); }
+                else if (k.length === 1) { insert((shift || caps) ? k.toUpperCase() : k); if (shift) { shift = false; render(); } }
+            }));
+        };
+        render();
+    }, { category: 'accessories' });
+
+    // --- Event Viewer ---------------------------------------------------------------------------------
+    xpApp('app-eventvwr', 'eventvwr', 191, [640, 440], (win, root, T_) => {
+        let log = 'application';   // i18n-ignore  log id
+        const render = () => {
+            const rows = window.HypernetOS.EventLog.read(log);
+            root.innerHTML = `
+                <div class="xp-eventvwr">
+                    <div class="xp-eventvwr-side">${window.HypernetOS.EventLog.LOGS.map(l => `<div class="xp-tree-leaf focusable ${l === log ? 'selected' : ''}" data-log="${l}" tabindex="0">${T_('log.' + l)}</div>`).join('')}</div>
+                    <div class="xp-eventvwr-main">
+                        <div class="xp-regedit-list">
+                            <div class="xp-regedit-row head"><span>${T_('type')}</span><span>${T_('date')}</span><span>${T_('source')}</span><span>${T_('description')}</span></div>
+                            ${rows.length ? rows.map((r, i) => `<div class="xp-regedit-row focusable lvl-${esc(r.level)}" data-i="${i}" tabindex="0"><span>${T_('level.' + r.level)}</span><span>${esc(r.game)}</span><span>${esc(r.source)}</span><span>${esc(r.text)}</span></div>`).join('') : `<div class="xp-empty">${T_('empty')}</div>`}
+                        </div>
+                        <div class="xp-toolbar">${btn('ev-clear', T_('clear'))}${btn('ev-save', T_('saveAs'))}</div>
+                        <div class="xp-status">${T_('count', { n: rows.length })}</div>
+                    </div>
+                </div>`;
+            root.querySelectorAll('[data-log]').forEach(el => on(el, 'click', () => { log = el.dataset.log; render(); }));
+            root.querySelectorAll('.xp-regedit-row[data-i]').forEach(row => on(row, 'dblclick', () => {
+                const r = rows[parseInt(row.dataset.i, 10)];
+                window.HypernetOS.Dialog.alert(T_('detail', { level: T_('level.' + r.level), date: r.game, source: r.source, text: r.text }), T_('eventProps'));
+            }));
+            on(q(root, '#ev-clear'), 'click', () => window.HypernetOS.Dialog.confirm(T_('clearConfirm'), T_('appName'), 'warning').then(ok => { if (ok) { window.HypernetOS.EventLog.clear(log); render(); } }));
+            on(q(root, '#ev-save'), 'click', () => {
+                const fs = window.HypernetFileSystem;
+                if (!fs) return;
+                const path = 'C:/Documents/' + log + '.evt.txt';   // i18n-ignore  file name
+                fs.writeFile(path, rows.map(r => [r.game, r.level, r.source, r.text].join('\t')).join('\n'));
+                window.HypernetOS.Dialog.alert(T_('saved', { path: path.replace(/\//g, '\\') }), T_('appName'));
+            });
+        };
+        render();
+    });
+
+    // --- Connection Status --------------------------------------------------------------------------
+    xpApp('app-netstat', 'netstat', 188, [380, 330], (win, root, T_) => {
+        const p = window.HypernetOS.Host.profile();
+        const dialup = p.linkKbps && p.linkKbps < 1000;
+        let sent = 1200 + (xpHash(p.hostname) % 5000), recv = 3400 + (xpHash(p.serial) % 9000);
+        const speed = !p.linkKbps ? T_('noLink') : dialup ? T_('kbps', { n: p.linkKbps }) : T_('mbps', { n: p.linkKbps / 1000 });
+        root.innerHTML = `
+            <div class="xp-netstat">
+                ${tabBar(T_, ['general', 'support'])}
+                ${pane('general', `
+                    <div class="xp-group"><div class="xp-group-title">${T_('connection')}</div>
+                        <div class="xp-regedit-row"><span>${T_('status')}</span><span>${p.linkKbps ? T_('connected') : T_('disconnected')}</span></div>
+                        <div class="xp-regedit-row"><span>${T_('duration')}</span><span id="ns-dur"></span></div>
+                        <div class="xp-regedit-row"><span>${T_('speed')}</span><span>${speed}</span></div>
+                    </div>
+                    <div class="xp-group"><div class="xp-group-title">${T_('activity')}</div>
+                        <div class="xp-netstat-activity"><span>${T_('sent')}</span><span class="xp-netstat-pc">${window.HypernetOS.getIconHTML(86, 24)}</span><span class="xp-netstat-wire"></span><span class="xp-netstat-pc">${window.HypernetOS.getIconHTML(188, 24)}</span><span>${T_('received')}</span></div>
+                        <div class="xp-regedit-row"><span>${T_('packets')}</span><span id="ns-sent">${sent}</span><span id="ns-recv">${recv}</span></div>
+                    </div>
+                    <div class="xp-row-right">${btn('ns-props', T_('properties'))}${btn('ns-disable', dialup ? T_('disconnect') : T_('disable'))}</div>`, true)}
+                ${pane('support', `
+                    <div class="xp-regedit-row"><span>${T_('addressType')}</span><span>${dialup ? T_('assignedByServer') : T_('assignedByDhcp')}</span></div>
+                    <div class="xp-regedit-row"><span>${T_('ipAddress')}</span><span>${dialup ? '62.94.' : '192.168.1.'}${(xpHash(p.hostname) % 200) + 10}</span></div>
+                    <div class="xp-regedit-row"><span>${T_('subnet')}</span><span>${dialup ? '255.255.255.255' : '255.255.255.0'}</span></div>
+                    <div class="xp-regedit-row"><span>${T_('gateway')}</span><span>${dialup ? '62.94.0.1' : '192.168.1.1'}</span></div>
+                    <div class="xp-row-right">${btn('ns-repair', T_('repair'))}</div>`)}
+            </div>`;
+        tabsOf(root);
+        const start = Date.now();
+        const timer = setInterval(() => {
+            const s = Math.floor((Date.now() - start) / 1000) + window.HypernetOS.Kernel.uptime();
+            const two = n => String(n).padStart(2, '0');
+            const dur = q(root, '#ns-dur');
+            if (dur) dur.textContent = `${two(Math.floor(s / 3600))}:${two(Math.floor(s % 3600 / 60))}:${two(s % 60)}`;
+            if (p.linkKbps) { sent += Math.floor(Math.random() * 3); recv += Math.floor(Math.random() * 7); }
+            if (q(root, '#ns-sent')) { q(root, '#ns-sent').textContent = sent; q(root, '#ns-recv').textContent = recv; }
+        }, 1000);
+        win.addEventListener('hypernet-closed', () => clearInterval(timer));
+        on(q(root, '#ns-props'), 'click', () => window.HypernetOS.Dialog.alert(T_('propsBody', { name: p.modem || T_('noLink') }), T_('properties')));
+        on(q(root, '#ns-disable'), 'click', () => window.HypernetOS.Dialog.confirm(T_('disableConfirm'), T_('appName'), 'warning').then(ok => { if (ok) window.HypernetOS.WindowManager.closeWindow(win); }));
+        on(q(root, '#ns-repair'), 'click', () => window.HypernetOS.Dialog.alert(T_('repairBody'), T_('repair')));
+    });
+
+    // The Control Panel's classic view lists every applet by these ids.
+    // i18n-ignore-start  app ids
+    XP.APPLETS = ['app-appwiz', 'app-timedate', 'app-desk', 'app-intl', 'app-mmsys', 'app-sysdm', 'app-devmgmt',
+        'app-wscui', 'app-schedtasks', 'app-netstat', 'app-cleanmgr', 'app-defrag', 'app-msconfig', 'app-regedit',
+        'app-eventvwr', 'app-osk', 'app-charmap', 'app-calc', 'app-clipbrd', 'app-winver', 'app-help', 'app-search', 'app-run'];
+    // i18n-ignore-end
 
 })();

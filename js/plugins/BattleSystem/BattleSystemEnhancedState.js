@@ -408,10 +408,10 @@
     };
 
     BattleManager.processDefeat = function() {
-        const _tutorialMaps = [1414, 1415, 1416, 1417];
-        const inTutorial = $gameSwitches.value(75) && _tutorialMaps.includes($gameMap.mapId());
+        const _storyModeMaps = [1414, 1415, 1416, 1417];
+        const inStoryMode = $gameSwitches.value(75) && _storyModeMaps.includes($gameMap.mapId());
         AudioManager.stopBgm();
-        if ($gameSwitches.value(9) && !inTutorial) {
+        if ($gameSwitches.value(9) && !inStoryMode) {
             // Permadeath ON: save death data
             $gameSwitches.setValue(34, true);
             // Whole party down for good: every fallen member gets a date of
@@ -513,7 +513,7 @@
             const troopMember = $gameTroop && $gameTroop.members()[troopIndex];
             const enemyAlive = troopMember && troopMember.hp > 0;
             if (enemyAlive) return;
-            BSE.State.mapCorpses.push({
+            BSE.Functions.dropMapCorpse({
                 mapId: evMapId,
                 x: deadEvent.x,
                 y: deadEvent.y,
@@ -891,6 +891,42 @@
         return sprite;
     };
 
+    // A corpse recorded while the map scene is already up (map battle mode never
+    // leaves Scene_Map, so createCharacters is not run again) has to raise its own
+    // sprite, or the body only shows up after the next spriteset rebuild.
+    BSE.Functions.dropMapCorpse = function(data) {
+        if (!data) return null;
+        if (BSE.State.mapCorpses) BSE.State.mapCorpses.push(data);
+        const scene = SceneManager._scene;
+        const spriteset = scene && scene._spriteset;
+        if (data.mapId === $gameMap.mapId() && spriteset && spriteset.addCorpseSprite) {
+            spriteset.addCorpseSprite(data);
+        }
+        return data;
+    };
+
+    // Burying a body: it leaves the ledger and its sprite leaves the map at
+    // once, so the ground is clear without waiting for a spriteset rebuild.
+    BSE.Functions.removeMapCorpse = function(corpse) {
+        if (!corpse) return false;
+        const list = BSE.State.mapCorpses;
+        const at = list ? list.indexOf(corpse) : -1;
+        if (at >= 0) list.splice(at, 1);
+        const scene = SceneManager._scene;
+        const spriteset = scene && scene._spriteset;
+        const sprites = spriteset && spriteset._corpseSprites;
+        if (sprites) {
+            for (let i = sprites.length - 1; i >= 0; i--) {
+                const sprite = sprites[i];
+                if (!sprite || sprite._data !== corpse) continue;
+                if (sprite.parent) sprite.parent.removeChild(sprite);
+                if (sprite.destroy) sprite.destroy();
+                sprites.splice(i, 1);
+            }
+        }
+        return at >= 0;
+    };
+
     // ========================================================================
     // 9. Rewards popup, shared standardized toast (ParchmentToast.js)
     // ========================================================================
@@ -900,7 +936,7 @@
     // ========================================================================
 
     // Restore HP/MP, body parts, hunger and sleep for the whole party on a
-    // permadeath/tutorial respawn so the player does not wake up already dying
+    // permadeath/story mode respawn so the player does not wake up already dying
     // (issue #155). Mirrors the roguelite (non-permadeath) respawn branch.
     Scene_Map.prototype._refillPartyOnRespawn = function() {
         const leader = $gameParty.members()[0];
@@ -964,10 +1000,10 @@
             let hasRespawned = false;
             $gameSystem.setBattleCooldown(120);
 
-            const _tutorialRespawnMaps = [1414, 1415, 1416, 1417];
-            const _inTutorialRespawn = $gameSwitches.value(75) && _tutorialRespawnMaps.includes($gameMap.mapId());
+            const _storyModeRespawnMaps = [1414, 1415, 1416, 1417];
+            const _inStoryModeRespawn = $gameSwitches.value(75) && _storyModeRespawnMaps.includes($gameMap.mapId());
 
-            if (_inTutorialRespawn && $gameSystem.isFullPartyWipe()) {
+            if (_inStoryModeRespawn && $gameSystem.isFullPartyWipe()) {
                 this._refillPartyOnRespawn();
                 this.handleActor1Respawn();
                 hasRespawned = true;
@@ -1025,12 +1061,18 @@
             });
             $gameSystem.clearEventsToLock();
 
+            // A tactical map battle (MapBattleMode.js) was fought where everyone
+            // stands: putting the party back on its pre-battle tiles would slide
+            // it away from the monsters it just fled, and read as the monsters
+            // teleporting. Everyone keeps the ground they hold.
+            const mapFight = !!(window.MapBattleMode && window.MapBattleMode.isReentering &&
+                window.MapBattleMode.isReentering());
             if (!hasRespawned) {
-                if ($gameSystem._p1PreBattlePos && $gameSystem._p1PreBattlePos.mapId === $gameMap.mapId()) {
+                if (!mapFight && $gameSystem._p1PreBattlePos && $gameSystem._p1PreBattlePos.mapId === $gameMap.mapId()) {
                     $gamePlayer.locate($gameSystem._p1PreBattlePos.x, $gameSystem._p1PreBattlePos.y);
                     $gamePlayer.setDirection($gameSystem._p1PreBattlePos.d);
                 }
-                if ($gameSystem._p2PreBattlePos && $gameSystem._p2PreBattlePos.mapId === $gameMap.mapId()) {
+                if (!mapFight && $gameSystem._p2PreBattlePos && $gameSystem._p2PreBattlePos.mapId === $gameMap.mapId()) {
                     const p2Name = (window.$gameSplitScreen && window.$gameSplitScreen.p2EventName) || "Player 2";
                     const p2 = $gameMap.events().find(ev => ev && ev.event().name === p2Name);
                     if (p2) {

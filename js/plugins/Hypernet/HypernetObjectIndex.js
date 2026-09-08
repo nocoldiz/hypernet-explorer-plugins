@@ -219,35 +219,35 @@
     // Archive terminal circa 2001: institutional grey-green, flat panels, the
     // Luna palette the rest of the desktop uses.
     const S = {
-        app: 'display:flex; flex-direction:column; height:100%; background:#ece9d8; ' +
-             "font-family:'Tahoma',sans-serif; font-size:15px; color:#1b1b1b;",
+        app: 'display:flex; flex-direction:column; height:100%; background:var(--xp-bg); ' +
+             "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
         header: 'display:flex; align-items:center; gap:12px; padding:10px 14px; ' +
-                'background:linear-gradient(to bottom,#4a6a4f,#2f4a35); color:#fff; ' +
+                'background:linear-gradient(to bottom,var(--xp-green-4),var(--xp-green-5)); color:var(--xp-white); ' +
                 'border-bottom:2px solid #1d2f22;',
         body: 'display:flex; flex:1; min-height:0;',
         side: 'width:250px; flex-shrink:0; display:flex; flex-direction:column; ' +
-              'background:#dedbcf; border-right:1px solid #aca899;',
-        searchWrap: 'padding:8px; border-bottom:1px solid #aca899;',
-        search: 'width:100%; box-sizing:border-box; padding:4px 6px; border:1px solid #7f9db9; ' +
-                "background:#fcfcfc; font-family:'Tahoma',sans-serif; font-size:15px;",
+              'background:var(--xp-face-6); border-right:1px solid var(--xp-face-shade);',
+        searchWrap: 'padding:8px; border-bottom:1px solid var(--xp-face-shade);',
+        search: 'width:100%; box-sizing:border-box; padding:4px 6px; border:1px solid var(--xp-border); ' +
+                "background:var(--xp-input); font-family:'Tahoma',sans-serif; font-size:15px;",
         list: 'flex:1; overflow-y:auto; padding:4px 0;',
         groupHead: 'padding:5px 10px 3px; font-size:13px; font-weight:bold; letter-spacing:0.6px; ' +
-                   'color:#4a6a4f; text-transform:uppercase;',
+                   'color:var(--xp-green-4); text-transform:uppercase;',
         row: 'display:flex; align-items:center; gap:6px; padding:4px 10px; cursor:pointer; ' +
              'border-left:4px solid transparent; user-select:none;',
-        panel: 'flex:1; overflow-y:auto; padding:14px 16px; background:#f6f5ee; min-width:0;',
-        status: 'display:flex; gap:16px; align-items:center; border-top:1px solid #aca899; ' +
-                'padding:4px 10px; background:#ece9d8; font-size:14px; color:#333;',
-        card: 'background:#fff; border:1px solid #cdc9bd; border-radius:3px; ' +
+        panel: 'flex:1; overflow-y:auto; padding:14px 16px; background:var(--xp-face-2); min-width:0;',
+        status: 'display:flex; gap:16px; align-items:center; border-top:1px solid var(--xp-face-shade); ' +
+                'padding:4px 10px; background:var(--xp-bg); font-size:14px; color:var(--xp-ink-4);',
+        card: 'background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; ' +
               'padding:10px 12px; margin-bottom:8px;',
-        h: 'margin:0 0 8px; font-size:16px; font-weight:bold; color:#2f4a35;',
-        lore: 'background:#fffdf3; border:1px solid #d8d2be; border-left:3px solid #4a6a4f; ' +
+        h: 'margin:0 0 8px; font-size:16px; font-weight:bold; color:var(--xp-green-5);',
+        lore: 'background:#fffdf3; border:1px solid #d8d2be; border-left:3px solid var(--xp-green-4); ' +
               'border-radius:3px; padding:10px 12px; margin-bottom:8px; ' +
               'font-style: normal; line-height:1.6; color:#33301f;',
         btn: 'display:inline-block; padding:5px 12px; ' +
-             'background:linear-gradient(to bottom,#fdfdfb,#dcd8cc); border:1px solid #8c887c; ' +
-             'border-radius:3px; cursor:pointer; font-size:15px; color:#111; user-select:none;',
-        note: 'color:#5a5a5a; font-size:14px; line-height:1.5;',
+             'background:linear-gradient(to bottom,var(--xp-paper),#dcd8cc); border:1px solid var(--xp-face-4); ' +
+             'border-radius:3px; cursor:pointer; font-size:15px; color:var(--xp-ink); user-select:none;',
+        note: 'color:var(--xp-ink-soft-2); font-size:14px; line-height:1.5;',
         empty: 'padding:32px 16px; text-align:center; color:#6a6a6a; font-size:15px;'
     };
 
@@ -256,7 +256,7 @@
         return '<table style="width:100%; border-collapse:collapse">' +
             rows.map(([k, v]) =>
                 '<tr>' +
-                '<td style="padding:2px 8px 2px 0; color:#5a5a5a; white-space:nowrap; ' +
+                '<td style="padding:2px 8px 2px 0; color:var(--xp-ink-soft-2); white-space:nowrap; ' +
                 'vertical-align:top; width:38%">' + escapeHtml(k) + '</td>' +  // i18n-ignore  css
                 '<td style="padding:2px 0; vertical-align:top">' + escapeHtml(v) + '</td>' +
                 '</tr>'
@@ -318,7 +318,7 @@
                     </div>
                     <div style="${S.status}">
                         <span id="oi-status"></span>
-                        <span id="oi-message" style="margin-left:auto; color:#2f4a35"></span>
+                        <span id="oi-message" style="margin-left:auto; color:var(--xp-green-5)"></span>
                     </div>
                 </div>
             `;
@@ -470,13 +470,13 @@
                 '<div style="display:flex; align-items:center; gap:12px; margin-bottom:10px">' +
                 '<div style="flex-shrink:0">' + iconHTML(item.iconIndex, 40) + '</div>' +
                 '<div style="min-width:0">' +
-                '<div style="font-size:20px; font-weight:bold; color:#1b1b1b">' +
+                '<div style="font-size:20px; font-weight:bold; color:var(--xp-ink-2)">' +
                 escapeHtml(nameOf(item)) + '</div>' +
                 '<div style="' + S.note + '">' + T('ObjectIndex.indexNo', { id: item.id }) +
                 (categoryOf(item) ? ' &middot; ' + escapeHtml(categoryOf(item)) : '') +
-                (rarity && rarity.name ? ' &middot; <span style="color:' +
-                    escapeHtml(rarity.colorCode || '#555') + '; font-weight:bold; ' +  // i18n-ignore  css
-                    'text-shadow:0 0 1px rgba(0,0,0,0.55)">' + escapeHtml(rarity.name) + '</span>' : '') +  // i18n-ignore  css
+                (rarity && rarity.name ? ' &middot; <span class="xp-rarity xp-rarity--' +
+                    escapeHtml(String(rarity.name).toLowerCase()) + '">' +
+                    escapeHtml(rarity.name) + '</span>' : '') +
                 '</div></div></div>'
             );
 

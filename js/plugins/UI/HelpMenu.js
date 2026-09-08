@@ -749,17 +749,16 @@
         const tSelectTopic =T('HelpMenu.selectATopicToStart');
         const backBtnText =T('HelpMenu.back');
 
-        // Ensure the book spread exists
+        // Ensure the book spread exists. Shape A, dealt the way every other
+        // spread in the game is dealt: the contents on the left page (58%,
+        // where the header bar and its one Back button stand) and the entry
+        // being read on the right page (42%).
         let spread = container.querySelector(".book-spread");
         if (!spread) {
-            // The book is laid out contents-first: the narrow column of pages
-            // (.right-page, 42%) is dealt on the LEFT and the page being read
-            // (.left-page, 58%) on the right, which is the way a reader holds
-            // an index open beside the entry it points at.
             container.innerHTML = `
                 <div class="book-spread">
-                    <div class="right-page"></div>
                     <div class="left-page"></div>
+                    <div class="right-page"></div>
                 </div>
             `;
             spread = container.querySelector(".book-spread");
@@ -774,58 +773,49 @@
             }, { passive: false });
         }
 
-        const leftPage = spread.querySelector(".left-page");
-        const rightPage = spread.querySelector(".right-page");
+        // The contents page carries the header, the tabs, the rail and the
+        // list; the entry page carries the detail card.
+        const listPage = spread.querySelector(".left-page");
+        const detailPage = spread.querySelector(".right-page");
 
-        // 1. LEFT PAGE: Detailed Content
-        let rightHTML = "";
+        // 1. RIGHT PAGE: the entry being read, on the shared detail card.
+        let detailHTML = "";
         if (!this._selectedTopic) {
-            rightHTML = `<div class="placeholder-message">${tSelectTopic}</div>`;
+            detailHTML = `<div class="ui-empty"><div class="ui-empty-text">${tSelectTopic}</div></div>`;
         } else {
             const topic = this._selectedTopic;
             const displayTitle = getLocalizedTitle(topic);
             const bodyHtml = parseDescriptionToHtml(getLocalizedDescription(topic));
-            const imageHtml = topic.image ? `<img class="help-image" src="img/pictures/${topic.image}.png" onerror="this.style.display='none';">` : "";
+            const imageHtml = topic.image ? `<img class="help-image" src="img/pictures/${topic.image}.png" onerror="this.classList.add('help-image--missing');">` : "";
 
             const isFocused = this._activeArea === "content";
             const focusClass = isFocused ? "help-content focused" : "help-content";
 
-            rightHTML = `
-                <div class="${focusClass}" id="help-content-scroll">
-                    <h3 class="help-title">${displayTitle}</h3>
-                    <hr class="help-divider">
-                    <div class="help-body">${bodyHtml}</div>
-                    ${imageHtml}
+            detailHTML = `
+                <div class="ui-detail">
+                    <div class="ui-detail-head">
+                        <div class="ui-detail-titles">
+                            <h3 class="help-title">${displayTitle}</h3>
+                        </div>
+                    </div>
+                    <div class="ui-detail-scroll ui-scroll ${focusClass}" id="help-content-scroll">
+                        <div class="help-body ui-prose">${bodyHtml}</div>
+                        ${imageHtml}
+                    </div>
                 </div>
             `;
         }
 
-        // The one setting this book owns, under it rather than in it: whether
-        // the map talks to the player as they walk (the compass targets, the
-        // written tips, the tutorial lines). A press turns it on and off.
-        const hintsOn = $gameSwitches.value(75);
-        const hintsFocused = this._activeArea === "hintsbtn";
-        const hintsHTML = `
-            <div class="help-hints-bar">
-                <div class="help-hints-button${hintsOn ? ' active' : ''}${hintsFocused ? ' focused' : ''}"
-                     id="tutorial-toggle" title="${T('HelpMenu.enableOrDisableRealTime')}">
-                    ${T('HelpMenu.showMapTooltip')}
-                </div>
-            </div>`;
+        // The map-tooltip setting is not the book's: it is a setting, and it is
+        // read and turned with every other one on the Gameplay page of the
+        // Options menu (Core/GameOptions.js, symbol mapTooltips).
 
-        leftPage.innerHTML = `
-            <div class="page-header-bar">
-              <div class="back-button focusable" onclick="SceneManager._scene.popScene()">
-                ${backBtnText}
-              </div>
-              <h2 class="title">${tCodex}</h2>
-            </div>
-            ${rightHTML}
-        `;
+        detailPage.innerHTML = detailHTML;
 
-        // 2. RIGHT PAGE: Sidebar List & Tabs (Updates only when category changes, completely preventing flickering)
+        // 2. LEFT PAGE: the contents, its tabs and its rail (rebuilt only when
+        // the category or the query changes, so nothing flickers).
         const query = this._helpBar ? this._helpBar.query : '';
-        const needsRightPageRedraw = !rightPage.innerHTML
+        const needsRightPageRedraw = !listPage.innerHTML
             || this._lastCategory !== activeCategory || this._lastQuery !== query;
         this._lastCategory = activeCategory;
         this._lastQuery = query;
@@ -843,7 +833,7 @@
             let tabsHTML = "";
             categories.forEach((cat, idx) => {
                 const label = cat === "general" ? tGeneral : cat === "topics" ? tTopics : cat === "lore" ? tLore : tHistory;
-                tabsHTML += `<div class="tab" data-idx="${idx}">${label}</div>`;
+                tabsHTML += `<div class="backpack-tab help-category-tab focusable" data-idx="${idx}">${label}</div>`;
             });
 
             let listHTML = "";
@@ -851,13 +841,13 @@
                 const empty = activeCategory === "topics"
                     ? T('HelpMenu.noTopicsLearnedYet')
                     : T('HelpMenu.noCodexEntriesFoundIn');
-                listHTML = `<div class="placeholder-message">${empty}</div>`;
+                listHTML = `<div class="ui-empty"><div class="ui-empty-text">${empty}</div></div>`;
             } else {
                 // The pages are read in macrocategories, so the list is
                 // headed the way a manual's contents page is. A header is not
                 // a row: the cursor never lands on one, it only tells the
                 // reader which part of the manual they have scrolled into.
-                listHTML = `<div class="topic-list-container">`;
+                listHTML = `<div class="ui-list ui-scroll topic-list-container">`;
                 let lastGroup = null;
                 topics.forEach((topic, idx) => {
                     const titleText = getLocalizedTitle(topic);
@@ -866,7 +856,7 @@
                         listHTML += `<div class="topic-group-header" data-group="${topic.group}">${getGroupLabel(topic.group)}</div>`;
                     }
                     listHTML += `
-                        <div class="topic-item" data-idx="${idx}">
+                        <div class="topic-item focusable" data-idx="${idx}">
                             <span class="topic-title-text">${titleText}</span>
                         </div>
                     `;
@@ -881,25 +871,30 @@
                     `</div>`;
             }
 
-            rightPage.innerHTML = `
-                <div id="help-search-slot" style="display: flex; align-items: center; justify-content: flex-end; border-bottom: 2px dashed var(--border-success); padding-bottom: 8px; margin-bottom: 20px; min-height: 40px; width: 100%"></div>
-                <div class="tabs-bar">
+            listPage.innerHTML = `
+                <div class="page-header-bar">
+                  <div class="back-button focusable" onclick="SceneManager._scene.popScene()">
+                    ${backBtnText}
+                  </div>
+                  <h2 class="title">${tCodex}</h2>
+                </div>
+                <div class="backpack-tabs help-category-tabs">
                     ${tabsHTML}
                 </div>
+                <div id="help-search-slot"></div>
                 ${chipsHTML}
                 ${listHTML}
-                ${hintsHTML}
             `;
 
             // The strip is rebuilt with the page, then handed its caret back.
-            const searchSlot = rightPage.querySelector("#help-search-slot");
+            const searchSlot = listPage.querySelector("#help-search-slot");
             if (searchSlot && this._helpBar) {
                 searchSlot.innerHTML = this._helpBar.fieldHTML();
                 this._helpBar.restoreFocus();
             }
 
             // Bind click events on recreated tabs
-            const tabElements = rightPage.querySelectorAll(".tab");
+            const tabElements = listPage.querySelectorAll(".help-category-tab");
             tabElements.forEach(elem => {
                 elem.addEventListener("click", () => {
                     const idx = parseInt(elem.getAttribute("data-idx"));
@@ -912,7 +907,7 @@
             });
 
             // Bind click events on the macrotopic chips
-            rightPage.querySelectorAll(".help-group-chips .backpack-tab").forEach(elem => {
+            listPage.querySelectorAll(".help-group-chips .backpack-tab").forEach(elem => {
                 elem.addEventListener("click", () => {
                     this.goToGroup(elem.getAttribute("data-group"));
                 });
@@ -920,7 +915,7 @@
 
             // Bind click events on recreated topics
             {
-                const itemElements = rightPage.querySelectorAll(".topic-item");
+                const itemElements = listPage.querySelectorAll(".topic-item");
                 itemElements.forEach(elem => {
                     elem.addEventListener("click", () => {
                         const idx = parseInt(elem.getAttribute("data-idx"));
@@ -935,7 +930,7 @@
         }
 
         // 3. Fast state synchronization (toggles classes, completely eliminating flickering)
-        const tabElements = rightPage.querySelectorAll(".tab");
+        const tabElements = listPage.querySelectorAll(".help-category-tab");
         tabElements.forEach((elem, idx) => {
             const isActive = idx === this._tabIndex;
             const isFocused = this._activeArea === "tabs" && idx === this._tabIndex;
@@ -948,7 +943,7 @@
         });
 
         {
-            const itemElements = rightPage.querySelectorAll(".topic-item");
+            const itemElements = listPage.querySelectorAll(".topic-item");
             itemElements.forEach((elem, idx) => {
                 const isActive = this._selectedTopic === topics[idx];
                 const isFocused = this._activeArea === "list" && idx === this._listIndex;
@@ -963,8 +958,8 @@
 
         {
             const current = this._selectedTopic && this._selectedTopic.group;
-            const rail = rightPage.querySelector(".help-group-chips");
-            rightPage.querySelectorAll(".help-group-chips .backpack-tab").forEach(elem => {
+            const rail = listPage.querySelector(".help-group-chips");
+            listPage.querySelectorAll(".help-group-chips .backpack-tab").forEach(elem => {
                 const on = elem.getAttribute("data-group") === current;
                 elem.classList.toggle("active", on);
                 // The rail is short and scrolls; the chip that is lit has to be
@@ -977,19 +972,6 @@
                     }
                 }
             });
-        }
-
-        const tutorialBtn = rightPage.querySelector("#tutorial-toggle");
-        if (tutorialBtn) {
-            tutorialBtn.classList.toggle("active", $gameSwitches.value(75));
-            tutorialBtn.classList.toggle("focused", this._activeArea === "hintsbtn");
-            if (!tutorialBtn.dataset.bound) {
-                tutorialBtn.dataset.bound = "1";
-                tutorialBtn.addEventListener("click", () => {
-                    this._activeArea = "hintsbtn";
-                    this.toggleTutorialSwitch();
-                });
-            }
         }
     };
 
@@ -1028,12 +1010,6 @@
         const next = at < 0 ? (dir > 0 ? 0 : groups.length - 1)
             : (at + dir + groups.length) % groups.length;
         this.goToGroup(groups[next]);
-    };
-
-    Scene_Help.prototype.toggleTutorialSwitch = function () {
-        $gameSwitches.setValue(75, !$gameSwitches.value(75));
-        SoundManager.playOk();
-        this.refreshUIHelp();
     };
 
     Scene_Help.prototype.updateUIHelpInput = function () {
@@ -1085,10 +1061,6 @@
                     this._listIndex = 0;
                     SoundManager.playCursor();
                     this.refreshUIHelp();
-                } else {
-                    this._activeArea = "hintsbtn";
-                    SoundManager.playCursor();
-                    this.refreshUIHelp();
                 }
             } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                 this.popScene();
@@ -1103,12 +1075,9 @@
                 return;
             }
             if (Input.isRepeated('down')) {
-                if (this._listIndex >= topics.length - 1) {
-                    this._activeArea = "hintsbtn";
-                    SoundManager.playCursor();
-                    this.refreshUIHelp();
-                    return;
-                }
+                // The list is the last thing on the page now, so its last row is
+                // where Down stops.
+                if (this._listIndex >= topics.length - 1) return;
                 this._listIndex = this._listIndex + 1;
                 SoundManager.playCursor();
                 this.refreshUIHelp();
@@ -1160,25 +1129,6 @@
 
             if (Input.isTriggered('cancel') || TouchInput.isCancelled() || Input.isTriggered('left')) {
                 this._activeArea = "list";
-                SoundManager.playCancel();
-                this.refreshUIHelp();
-            }
-        } else if (this._activeArea === "hintsbtn") {
-            // The map-tooltip button, sitting under the list. Up puts the
-            // cursor back on the last page of the list.
-            if (Input.isTriggered('ok')) {
-                this.toggleTutorialSwitch();
-            } else if (Input.isRepeated('up')) {
-                if (topics.length > 0) {
-                    this._activeArea = "list";
-                    this._listIndex = topics.length - 1;
-                } else {
-                    this._activeArea = "tabs";
-                }
-                SoundManager.playCursor();
-                this.refreshUIHelp();
-            } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
-                this._activeArea = "tabs";
                 SoundManager.playCancel();
                 this.refreshUIHelp();
             }

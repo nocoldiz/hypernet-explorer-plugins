@@ -458,7 +458,7 @@
                 flex-direction: column;
                 gap: 2px;
                 margin-top: 3px;
-                padding-left: 26px;
+                padding-left: 34px;
             }
             #party-hud .phud-bars-container .phud-bar {
                 margin-top: 0;
@@ -474,7 +474,7 @@
             }
             #party-hud .phud-mid {
                 position: absolute;
-                left: 10px;
+                left: 4px;
                 top: 50%;
                 transform: translateY(-50%);
                 z-index: 10;

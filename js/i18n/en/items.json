@@ -249,15 +249,15 @@
   },
   "62": {
     "name": "Opium Tincture",
-    "description": "A brown dropper bottle, a spoonful of quiet"
+    "description": "A brown dropper bottle, a spoonful of quiet."
   },
   "63": {
     "name": "Amphetamine Tablets",
-    "description": "Two white tablets, and the night is young again"
+    "description": "Two white tablets, and the night is young again."
   },
   "64": {
     "name": "Withdrawal Suppressant",
-    "description": "Takes the edge off every craving at once"
+    "description": "Takes the edge off every craving at once."
   },
   "72": {
     "name": "<-- Combat -->",
@@ -593,7 +593,7 @@
   },
   "165": {
     "name": "Blade seed",
-    "description": "Contains a blade spirit. Grows into a\nweapon of the shape you choose."
+    "description": "Contains a blade spirit.\nGrows into a weapon of the shape you choose."
   },
   "166": {
     "name": "Low orbit pin",
@@ -617,107 +617,107 @@
   },
   "177": {
     "name": "Relaxation Bath Kit",
-    "description": "Bubble bath, restores hygiene and fun"
+    "description": "Bubble bath, restores hygiene and fun."
   },
   "178": {
     "name": "Cigarette Pack",
-    "description": "Cigarettes, calms nerves, harms health"
+    "description": "Cigarettes, calms nerves, harms health."
   },
   "179": {
     "name": "Extended Life Batteries",
-    "description": "Long-lasting batteries, last 25 days"
+    "description": "Long-lasting batteries, last 25 days."
   },
   "180": {
     "name": "Social Connection Game",
-    "description": "Board game that mines players' secrets"
+    "description": "Board game that mines players' secrets."
   },
   "181": {
     "name": "Scratch and profit",
-    "description": "Scratch card, restores some fun"
+    "description": "Scratch card, restores some fun."
   },
   "182": {
     "name": "Scratch and accumulate",
-    "description": "Scratch card, restores some fun"
+    "description": "Scratch card, restores some fun."
   },
   "183": {
     "name": "Scratch and relax",
-    "description": "Holiday scratch card, restores fun"
+    "description": "Holiday scratch card, restores fun."
   },
   "184": {
     "name": "Stress Relief Program",
-    "description": "Meditation program, clears stress, heals"
+    "description": "Meditation program, clears stress, heals."
   },
   "185": {
     "name": "CD Case",
-    "description": "Portable CD player for music"
+    "description": "Portable CD player for music."
   },
   "186": {
     "name": "Pocket Sound System",
-    "description": "Compact bluetooth speaker"
+    "description": "Compact bluetooth speaker."
   },
   "187": {
     "name": "Scratch and curse",
-    "description": "Esoteric scratch card, restores fun"
+    "description": "Esoteric scratch card, restores fun."
   },
   "188": {
     "name": "Mood-Enhancing Feast",
-    "description": "3-person meal, fills hunger and fun"
+    "description": "3-person meal, fills hunger and fun."
   },
   "189": {
     "name": "Romantic Encounter Kit",
-    "description": "Romance kit, boosts social and mating"
+    "description": "Romance kit, boosts social and mating."
   },
   "190": {
     "name": "Immersive Sound Cancellers",
-    "description": "Noise-cancelling headphones, calms"
+    "description": "Noise-cancelling headphones, calms."
   },
   "191": {
     "name": "Career Package",
-    "description": "Career cassette, boosts skill and stats"
+    "description": "Career cassette, boosts skill and stats."
   },
   "192": {
     "name": "Pocket Bonsai",
-    "description": "Compact indoor decorative plant"
+    "description": "Compact indoor decorative plant."
   },
   "193": {
     "name": "Immersive Entertainment Hub",
-    "description": "VR entertainment system, restores fun"
+    "description": "VR entertainment system, restores fun."
   },
   "194": {
     "name": "Extreme Energy Pack",
-    "description": "Energy drinks, restores 40 sleep need"
+    "description": "Energy drinks, restores 40 sleep need."
   },
   "195": {
     "name": "Home Fitness System",
-    "description": "Single-use workout station, +stats"
+    "description": "Single-use workout station, +stats."
   },
   "196": {
     "name": "Portable Caffeinator",
-    "description": "Portable coffee maker, restores energy"
+    "description": "Portable coffee maker, restores energy."
   },
   "197": {
     "name": "Rolling Tobacco",
-    "description": "A pouch, papers, and patience"
+    "description": "A pouch, papers, and patience."
   },
   "198": {
     "name": "Hand-Rolled Cigar",
-    "description": "Twenty slow minutes of somebody else's weather"
+    "description": "Twenty slow minutes of somebody else's weather."
   },
   "199": {
     "name": "Nicotine Gum",
-    "description": "The habit without the smoke, and without the pleasure"
+    "description": "The habit without the smoke, and without the pleasure."
   },
   "200": {
     "name": "Pocket Hip Flask",
-    "description": "Steel, dented, never quite empty"
+    "description": "Steel, dented, never quite empty."
   },
   "201": {
     "name": "Bookmaker's Slip",
-    "description": "A horse, a number, and the rest of the afternoon"
+    "description": "A horse, a number, and the rest of the afternoon."
   },
   "202": {
     "name": "Slot Machine Token",
-    "description": "Brass, worthless, and worth one more pull"
+    "description": "Brass, worthless, and worth one more pull."
   },
   "207": {
     "name": "<-- Arctic -->",
@@ -773,59 +773,59 @@
   },
   "230": {
     "name": "Scribe's Quill",
-    "description": "Master-cut quill; +1 to skill 190"
+    "description": "Master-cut quill; teaches Wrestling Finisher."
   },
   "231": {
     "name": "Glover's Handwear",
-    "description": "Custom-fitted gloves; +1 defense"
+    "description": "Custom-fitted gloves; +1 defense."
   },
   "232": {
     "name": "Chef's Spice Blend",
-    "description": "Master chef's rare spice blend; +1 skill 65"
+    "description": "Master chef's rare spice blend; teaches Combat Readiness."
   },
   "233": {
     "name": "Optician's Lens",
-    "description": "Crafted glass lens; +1 magic def, +1 skill 30"
+    "description": "Crafted glass lens; +1 magic def, grants Double Money/Items."
   },
   "234": {
     "name": "Navigator's Compass",
-    "description": "Brass and silver compass; +1 to skill 53"
+    "description": "Brass and silver compass; teaches Blinding Screen."
   },
   "235": {
     "name": "Weaver's Cloak",
-    "description": "Woven wool-silk cloak; +1 defense"
+    "description": "Woven wool-silk cloak; +1 defense."
   },
   "236": {
     "name": "Magician's Flute",
-    "description": "Crafted wooden flute; +1 to skill 10"
+    "description": "Crafted wooden flute; inflicts Sleep."
   },
   "237": {
     "name": "Blacksmith's Flux",
-    "description": "Smithing flux; +1 ATK, +1 DEF"
+    "description": "Smithing flux; +1 ATK, +1 DEF."
   },
   "238": {
     "name": "Alchemist's Catalyst",
-    "description": "Alchemical catalyst; +1 ATK, +1 AGI"
+    "description": "Alchemical catalyst; +1 ATK, +1 AGI."
   },
   "239": {
     "name": "Cobbler's Boots",
-    "description": "Hand-stitched leather boots; +1 to skill 6"
+    "description": "Hand-stitched leather boots; inflicts Silence."
   },
   "240": {
     "name": "Botanist's Seed Collection",
-    "description": "Pouch of rare seeds; +1 skill 6, +150 MP"
+    "description": "Pouch of rare seeds; inflicts Silence, +150 MP."
   },
   "241": {
     "name": "Clockmaker's Timepiece",
-    "description": "Precision timepiece; +1 to skill 191"
+    "description": "Precision timepiece; teaches Haymaker."
   },
   "242": {
     "name": "Jeweler's Loupe",
-    "description": "Jeweler's magnifying loupe; +1 skill 64"
+    "description": "Jeweler's magnifying loupe; teaches Energy Restoration."
   },
   "243": {
     "name": "Artisan's Throwing Knife Set",
-    "description": "Set of balanced throwing knives"
+    "description": "Set of balanced throwing knives."
   },
   "244": {
     "name": "Surgical Tools",
@@ -833,27 +833,27 @@
   },
   "245": {
     "name": "Painter's Arcane Palette",
-    "description": "Otherworldly brushes and pigments; +1 skill 66"
+    "description": "Otherworldly brushes and pigments; teaches Rapid Conditioning."
   },
   "246": {
     "name": "Leatherworker's Travel Pack",
-    "description": "Leather pack, secret pockets; +1 skill 5."
+    "description": "Leather pack, secret pockets; inflicts Blind."
   },
   "247": {
     "name": "Woodcarver's Staff",
-    "description": "Carved wooden staff; weapon type 6, +20 HP"
+    "description": "Carved wooden staff; weapon type 6, +20 HP."
   },
   "248": {
     "name": "Bowyer's Bow",
-    "description": "Yew bow carved from a single piece"
+    "description": "Yew bow carved from a single piece."
   },
   "249": {
     "name": "Astronomer's Astrolabe",
-    "description": "Precision astrolabe for celestial positions"
+    "description": "Precision astrolabe for celestial positions."
   },
   "250": {
     "name": "Bladesmith's Dagger",
-    "description": "Balanced ornate-handle dagger"
+    "description": "Balanced ornate-handle dagger."
   },
   "261": {
     "name": "<-- Books -->",
@@ -865,11 +865,11 @@
   },
   "263": {
     "name": "Divine comedy - Purgatory",
-    "description": "A printed copy of Purgatory from Dante Alighieri"
+    "description": "A printed copy of Purgatory from Dante Alighieri."
   },
   "264": {
     "name": "92 Days of Solomon",
-    "description": "A printed copy of The 92 Days of Solomon"
+    "description": "A printed copy of The 92 Days of Solomon."
   },
   "265": {
     "name": "1 Samuel",
@@ -877,51 +877,51 @@
   },
   "266": {
     "name": "Fragment 2",
-    "description": "A printed copy of an illegible fragment"
+    "description": "A printed copy of an illegible fragment."
   },
   "267": {
     "name": "Fragment 3",
-    "description": "A printed copy of an illegible fragment"
+    "description": "A printed copy of an illegible fragment."
   },
   "268": {
     "name": "Best Made Plans",
-    "description": "A printed copy of The Best Made Plans by Everett B. Cole"
+    "description": "A printed copy of The Best Made Plans by Everett B. Cole."
   },
   "269": {
     "name": "The Blazing World",
-    "description": "A printed copy of The Blazing World by Margaret Cavendish"
+    "description": "A printed copy of The Blazing World by Margaret Cavendish."
   },
   "270": {
     "name": "The Carpenter",
-    "description": "A printed copy of The Carpenter by William D. O'Connor"
+    "description": "A printed copy of The Carpenter by William D. O'Connor."
   },
   "271": {
     "name": "Center of the Earth I",
-    "description": "A printed copy of Journey to the Center of the Earth (Vol 1) by Jules Verne"
+    "description": "A printed copy of Journey to the Center\nof the Earth (Vol 1) by Jules Verne."
   },
   "272": {
     "name": "Center of the Earth II",
-    "description": "A printed copy of Journey to the Center of the Earth (Vol 2) by Jules Verne"
+    "description": "A printed copy of Journey to the Center\nof the Earth (Vol 2) by Jules Verne."
   },
   "273": {
     "name": "Decameron I",
-    "description": "A printed copy of The Decameron (Vol 1) by Giovanni Boccaccio"
+    "description": "A printed copy of The Decameron (Vol 1) by Giovanni Boccaccio."
   },
   "274": {
     "name": "Decameron II",
-    "description": "A printed copy of The Decameron (Vol 2) by Giovanni Boccaccio"
+    "description": "A printed copy of The Decameron (Vol 2) by Giovanni Boccaccio."
   },
   "275": {
     "name": "Inferno",
-    "description": "A printed copy of Divine Comedy: Inferno by Dante Alighieri"
+    "description": "A printed copy of Divine Comedy: Inferno by Dante Alighieri."
   },
   "276": {
     "name": "Paradiso",
-    "description": "A printed copy of Divine Comedy: Paradiso by Dante Alighieri"
+    "description": "A printed copy of Divine Comedy: Paradiso by Dante Alighieri."
   },
   "277": {
     "name": "Etiquette",
-    "description": "A printed copy of Etiquette by Emily Post"
+    "description": "A printed copy of Etiquette by Emily Post."
   },
   "278": {
     "name": "Exodus",
@@ -929,15 +929,15 @@
   },
   "279": {
     "name": "Phaedo",
-    "description": "A printed copy of Phaedo by Plato"
+    "description": "A printed copy of Phaedo by Plato."
   },
   "280": {
     "name": "The Fat and the Thin I",
-    "description": "A printed copy of The Fat and the Thin (Vol 1) by Emile Zola"
+    "description": "A printed copy of The Fat and the Thin (Vol 1) by Emile Zola."
   },
   "281": {
     "name": "The Fat and the Thin II",
-    "description": "A printed copy of The Fat and the Thin (Vol 2) by Emile Zola"
+    "description": "A printed copy of The Fat and the Thin (Vol 2) by Emile Zola."
   },
   "282": {
     "name": "Genesis",
@@ -949,23 +949,23 @@
   },
   "284": {
     "name": "The Golden Bowl",
-    "description": "A printed copy of The Golden Bowl by Henry James"
+    "description": "A printed copy of The Golden Bowl by Henry James."
   },
   "285": {
     "name": "Heart of Darkness",
-    "description": "A printed copy of Heart of Darkness by Joseph Conrad"
+    "description": "A printed copy of Heart of Darkness by Joseph Conrad."
   },
   "286": {
     "name": "Henry IV",
-    "description": "A printed copy of Henry IV by William Shakespeare"
+    "description": "A printed copy of Henry IV by William Shakespeare."
   },
   "287": {
     "name": "Lorem Ipsum",
-    "description": "A printed copy of De finibus bonorum et malorum by Cicero"
+    "description": "A printed copy of De finibus bonorum et malorum by Cicero."
   },
   "288": {
     "name": "Marquis of Lossie",
-    "description": "A printed copy of The Marquis of Lossie by George MacDonald"
+    "description": "A printed copy of The Marquis of Lossie by George MacDonald."
   },
   "289": {
     "name": "Mayflower Documents",
@@ -973,15 +973,15 @@
   },
   "290": {
     "name": "The Metal Monster",
-    "description": "A printed copy of The Metal Monster by Abraham Merritt"
+    "description": "A printed copy of The Metal Monster by Abraham Merritt."
   },
   "291": {
     "name": "Pauper of Park Lane",
-    "description": "A printed copy of The Pauper of Park Lane by William Le Queux"
+    "description": "A printed copy of The Pauper of Park Lane by William Le Queux."
   },
   "292": {
     "name": "The Purple Cloud",
-    "description": "A printed copy of The Purple Cloud by M. P. Shiel"
+    "description": "A printed copy of The Purple Cloud by M. P. Shiel."
   },
   "293": {
     "name": "Ruth",
@@ -989,23 +989,23 @@
   },
   "294": {
     "name": "Seats of the Mighty",
-    "description": "A printed copy of The Seats of the Mighty by Gilbert Parker"
+    "description": "A printed copy of The Seats of the Mighty by Gilbert Parker."
   },
   "295": {
     "name": "Test",
-    "description": "A printed copy of a Test Book"
+    "description": "A printed copy of a Test Book."
   },
   "296": {
     "name": "War of the Worlds I",
-    "description": "A printed copy of The War of the Worlds (Vol 1) by H. G. Wells"
+    "description": "A printed copy of The War of the Worlds (Vol 1) by H.\nG. Wells."
   },
   "297": {
     "name": "War of the Worlds II",
-    "description": "A printed copy of The War of the Worlds (Vol 2) by H. G. Wells"
+    "description": "A printed copy of The War of the Worlds (Vol 2) by H.\nG. Wells."
   },
   "298": {
     "name": "War of the Worlds III",
-    "description": "A printed copy of The War of the Worlds (Vol 3) by H. G. Wells"
+    "description": "A printed copy of The War of the Worlds (Vol 3) by H.\nG. Wells."
   },
   "299": {
     "name": "Scholar's Legal Tome",
@@ -1209,7 +1209,7 @@
   },
   "379": {
     "name": "ONU Terminal",
-    "description": "Accessed the ONU assembly from remote"
+    "description": "Accessed the ONU assembly from remote."
   },
   "380": {
     "name": "Street Blend",
@@ -2289,43 +2289,43 @@
   },
   "698": {
     "name": "Demon's Ledger Page",
-    "description": "One page of an infernal account book. Tear it and something comes to collect."
+    "description": "One page of an infernal account book.\nTear it and something comes to collect."
   },
   "699": {
     "name": "Grave Soil Jar",
-    "description": "Consecrated ground, stolen. Opening it raises whatever the soil remembers."
+    "description": "Consecrated ground, stolen.\nOpening it raises whatever the soil remembers."
   },
   "700": {
     "name": "Elemental Anchor Stone",
-    "description": "A stone cut to hold one of the four peoples still long enough to argue with."
+    "description": "A stone cut to hold one of the four\npeoples still long enough to argue with."
   },
   "701": {
     "name": "Seraph Feather",
-    "description": "Shed, not taken. Burning it calls something down that does not stay."
+    "description": "Shed, not taken.\nBurning it calls something down that does not stay."
   },
   "702": {
     "name": "Automaton Crank Key",
-    "description": "Winds up something that was left where it fell. It runs on money afterwards."
+    "description": "Winds up something that was left where it fell.\nIt runs on money afterwards."
   },
   "703": {
     "name": "Beast Whistle",
-    "description": "Silent to you. Your own animal answers first, and the wild answers second."
+    "description": "Silent to you.\nYour own animal answers first, and the wild answers second."
   },
   "704": {
     "name": "Wyrm Tribute Coffer",
-    "description": "A coffer that is the whole negotiation. Opening it buys a wyrm for a while."
+    "description": "A coffer that is the whole negotiation.\nOpening it buys a wyrm for a while."
   },
   "705": {
     "name": "Void Aperture Shard",
-    "description": "A splinter of something that was never a window. It opens anyway."
+    "description": "A splinter of something that was never a window.\nIt opens anyway."
   },
   "706": {
     "name": "Bound Shade Vial",
-    "description": "A shade kept in glass, and the SOUL shares that keep paying for it."
+    "description": "A shade kept in glass, and the SOUL\nshares that keep paying for it."
   },
   "707": {
     "name": "Inverted Elder Sign",
-    "description": "The sign that keeps them out, cut the other way round. It is not balanced. Nothing about it is."
+    "description": "The sign that keeps them out, cut the other way round.\nIt is not balanced. Nothing about it is."
   },
   "708": {
     "name": "<-- Misc -->",
@@ -2397,7 +2397,7 @@
   },
   "725": {
     "name": "Spirit Parasite",
-    "description": "Restores 50 AP, drains all MP, and feeds a shade onto the field."
+    "description": "Restores 50 AP, drains all MP,\nand feeds a shade onto the field."
   },
   "726": {
     "name": "Handheld Gaming Console",
@@ -2593,55 +2593,55 @@
   },
   "804": {
     "name": "Plastic Bowl Set",
-    "description": "Single-use plastic utensil set"
+    "description": "Single-use plastic utensil set."
   },
   "805": {
     "name": "Empty Flask",
-    "description": "Empty leather-and-metal water flask"
+    "description": "Empty leather-and-metal water flask."
   },
   "806": {
     "name": "Walking Stick",
-    "description": "Wooden walking stick, +2 AGI"
+    "description": "Wooden walking stick, +2 AGI."
   },
   "807": {
     "name": "Cooking Pot",
-    "description": "Cooking pot for meals over a fire"
+    "description": "Cooking pot for meals over a fire."
   },
   "808": {
     "name": "Escape kit",
-    "description": "Teleports you to the internet cafe"
+    "description": "Teleports you to the internet cafe."
   },
   "809": {
     "name": "Utensil Set",
-    "description": "Basic eating utensils with a spork"
+    "description": "Basic eating utensils with a spork."
   },
   "810": {
     "name": "Elven Rope",
-    "description": "Strong light enchanted elven rope"
+    "description": "Strong light enchanted elven rope."
   },
   "811": {
     "name": "Whetstone",
-    "description": "Whetstone, +10 ATK to blades"
+    "description": "Whetstone, +10 ATK to blades."
   },
   "812": {
     "name": "Fairy Lantern",
-    "description": "Lantern with a captured fairy, bright light"
+    "description": "Lantern with a captured fairy, bright light."
   },
   "813": {
     "name": "Climbing Rope",
-    "description": "Simple rope, useful for climbing"
+    "description": "Simple rope, useful for climbing."
   },
   "814": {
     "name": "Multi-tool",
-    "description": "Multi-tool with various functions"
+    "description": "Multi-tool with various functions."
   },
   "815": {
     "name": "Comfort Sleeping Bag",
-    "description": "Sleeping bag, full rest and instant sleep"
+    "description": "Sleeping bag, full rest and instant sleep."
   },
   "816": {
     "name": "Bladesmith's Eternal Whetstone",
-    "description": "Whetstone, +5 ATK, never wears down"
+    "description": "Whetstone, +5 ATK, never wears down."
   },
   "827": {
     "name": "<-- Trash -->",
@@ -2689,95 +2689,95 @@
   },
   "849": {
     "name": "Arcane Essence ",
-    "description": "Bottled raw magical energy"
+    "description": "Bottled raw magical energy."
   },
   "850": {
     "name": "Ethereal Shard ",
-    "description": "Shard of crystallized aether"
+    "description": "Shard of crystallized aether."
   },
   "851": {
     "name": "Quantum Core ",
-    "description": "High-grade computing core"
+    "description": "High-grade computing core."
   },
   "852": {
     "name": "Circuit Board ",
-    "description": "Etched electronics board"
+    "description": "Etched electronics board."
   },
   "853": {
     "name": "Microchip ",
-    "description": "Small integrated chip"
+    "description": "Small integrated chip."
   },
   "854": {
     "name": "Battery Cell ",
-    "description": "Rechargeable power cell"
+    "description": "Rechargeable power cell."
   },
   "855": {
     "name": "Plastic Polymer ",
-    "description": "Moldable plastic stock"
+    "description": "Moldable plastic stock."
   },
   "856": {
     "name": "Composite Resin",
-    "description": "Hardened bonding resin"
+    "description": "Hardened bonding resin."
   },
   "857": {
     "name": "Nanotube Module",
-    "description": "Nanotube structural module"
+    "description": "Nanotube structural module."
   },
   "858": {
     "name": "Plant matter",
-    "description": "Bundle of raw plant fiber"
+    "description": "Bundle of raw plant fiber."
   },
   "859": {
     "name": "Wood",
-    "description": "Cut timber for building"
+    "description": "Cut timber for building."
   },
   "860": {
     "name": "Bone",
-    "description": "Dried bone for tools"
+    "description": "Dried bone for tools."
   },
   "861": {
     "name": "Cloth",
-    "description": "Woven fabric scrap"
+    "description": "Woven fabric scrap."
   },
   "862": {
     "name": "Raw Meat",
-    "description": "Raw cut of meat"
+    "description": "Raw cut of meat."
   },
   "863": {
     "name": "Salvaged steel",
-    "description": "Raw steel-bearing ore"
+    "description": "Raw steel-bearing ore."
   },
   "864": {
     "name": "Titanium ore",
-    "description": "Raw titanium-bearing ore"
+    "description": "Raw titanium-bearing ore."
   },
   "865": {
     "name": "Varlenia ore",
-    "description": "Rare varlenia-bearing ore"
+    "description": "Rare varlenia-bearing ore."
   },
   "866": {
     "name": "Crystal",
-    "description": "Raw faceted crystal"
+    "description": "Raw faceted crystal."
   },
   "867": {
     "name": "Glass",
-    "description": "Sheet of clear glass"
+    "description": "Sheet of clear glass."
   },
   "868": {
     "name": "Leather",
-    "description": "Tanned animal leather"
+    "description": "Tanned animal leather."
   },
   "869": {
     "name": "Herb extract",
-    "description": "Concentrated herbal extract"
+    "description": "Concentrated herbal extract."
   },
   "870": {
     "name": "Oil Flask",
-    "description": "Flask of refined oil"
+    "description": "Flask of refined oil."
   },
   "871": {
     "name": "Acidic Solution",
-    "description": "Vial of corrosive acid"
+    "description": "Vial of corrosive acid."
   },
   "882": {
     "name": "<-- Alchemistry -->",
@@ -4889,59 +4889,59 @@
   },
   "1443": {
     "name": "First Aid Kit",
-    "description": "Gauze, tape, tweezers and a leaflet. Sees an ordinary illness through, slowly."
+    "description": "Gauze, tape, tweezers and a leaflet.\nSees an ordinary illness through, slowly."
   },
   "1444": {
     "name": "Herbal Tonic",
-    "description": "Bitter greens boiled down by somebody's grandmother. It genuinely helps."
+    "description": "Bitter greens boiled down by somebody's grandmother.\nIt genuinely helps."
   },
   "1445": {
     "name": "Field Medicine Kit",
-    "description": "The kit an army medic carries. It will not name your illness, but it will carry you."
+    "description": "The kit an army medic carries.\nIt will not name your illness, but it will carry you."
   },
   "1446": {
     "name": "Penicillin Course",
-    "description": "The mould that changed everything, in ten numbered tablets. Finish the course."
+    "description": "The mould that changed everything, in ten numbered tablets.\nFinish the course."
   },
   "1447": {
     "name": "Doxycycline Course",
-    "description": "A tetracycline that goes where penicillin will not: ticks, lungs and the tropics."
+    "description": "A tetracycline that goes where penicillin will not:\nticks, lungs and the tropics."
   },
   "1448": {
     "name": "Broad-Spectrum Antibiotics",
-    "description": "Everything at once. It will clear the infection and most of what was keeping you upright."
+    "description": "Everything at once. It will clear the infection\nand most of what was keeping you upright."
   },
   "1449": {
     "name": "Vancomycin Vial",
-    "description": "The drug of last resort, drawn up when nothing else has worked."
+    "description": "The drug of last resort, drawn\nup when nothing else has worked."
   },
   "1450": {
     "name": "Antiviral Capsules",
-    "description": "It cannot kill a virus. It can stop it copying itself, which comes to the same thing."
+    "description": "It cannot kill a virus.\nIt can stop it copying itself, which comes to the same thing."
   },
   "1451": {
     "name": "Interferon Course",
-    "description": "Your own alarm signal, bottled and given back to you in quantity."
+    "description": "Your own alarm signal, bottled\nand given back to you in quantity."
   },
   "1452": {
     "name": "Antiretroviral Regimen",
-    "description": "Three drugs in one blister pack. It will not cure you. Taken daily, it means you live."
+    "description": "Three drugs in one blister pack.\nIt will not cure you. Taken daily, it means you live."
   },
   "1453": {
     "name": "Antifungal Powder",
-    "description": "Dusted into boots, gloves and everywhere else it has taken hold."
+    "description": "Dusted into boots, gloves and\neverywhere else it has taken hold."
   },
   "1454": {
     "name": "Amphotericin Drip",
-    "description": "Nicknamed amphoterrible by everyone who has ever been given it. It works."
+    "description": "Nicknamed amphoterrible by everyone\nwho has ever been given it. It works."
   },
   "1455": {
     "name": "Permethrin Lotion",
-    "description": "Applied neck to toe, left overnight, and everything you own washed hot."
+    "description": "Applied neck to toe, left overnight,\nand everything you own washed hot."
   },
   "1456": {
     "name": "Delousing Kit",
-    "description": "A fine comb, a foul shampoo and an afternoon of somebody going through your hair."
+    "description": "A fine comb, a foul shampoo and an afternoon\nof somebody going through your hair."
   },
   "1457": {
     "name": "Albendazole Tablets",
@@ -4949,15 +4949,15 @@
   },
   "1458": {
     "name": "Vermifuge Draught",
-    "description": "Wormwood, tansy and a taste that anything living would leave a body to escape."
+    "description": "Wormwood, tansy and a taste that anything\nliving would leave a body to escape."
   },
   "1459": {
     "name": "Metronidazole Tablets",
-    "description": "For the single-celled things in the gut, and the reason you cannot drink for a week."
+    "description": "For the single-celled things in the gut,\nand the reason you cannot drink for a week."
   },
   "1460": {
     "name": "Quinine Tablets",
-    "description": "Bark of the cinchona, pressed into tablets. The ringing in your ears means it is working."
+    "description": "Bark of the cinchona, pressed into tablets.\nThe ringing in your ears means it is working."
   },
   "1461": {
     "name": "Chloroquine Tablets",
@@ -4965,7 +4965,7 @@
   },
   "1462": {
     "name": "Polyvalent Antitoxin",
-    "description": "Antibodies raised in a horse against the toxin, not the germ. It is the toxin that kills."
+    "description": "Antibodies raised in a horse against the toxin, not the germ.\nIt is the toxin that kills."
   },
   "1463": {
     "name": "Rabies Immunoglobulin",
@@ -4985,23 +4985,23 @@
   },
   "1467": {
     "name": "B-Complex Injection",
-    "description": "The whole B family, given where swallowing it would not be enough."
+    "description": "The whole B family, given where\nswallowing it would not be enough."
   },
   "1468": {
     "name": "Cod Liver Oil",
-    "description": "A spoonful a day. It tastes of the sea and everything that has died in it."
+    "description": "A spoonful a day.\nIt tastes of the sea and everything that has died in it."
   },
   "1469": {
     "name": "Iron Sulphate Tablets",
-    "description": "For a blood count that has fallen. It will fix the tiredness and ruin the stomach."
+    "description": "For a blood count that has fallen.\nIt will fix the tiredness and ruin the stomach."
   },
   "1470": {
     "name": "Clotting Factor Vial",
-    "description": "The missing protein, given back. Without it a bruise is a hospital admission."
+    "description": "The missing protein, given back.\nWithout it a bruise is a hospital admission."
   },
   "1471": {
     "name": "Blood Transfusion Kit",
-    "description": "Bag, line and cannula. Somebody else's blood, and a great deal of it."
+    "description": "Bag, line and cannula.\nSomebody else's blood, and a great deal of it."
   },
   "1472": {
     "name": "Insulin Vial",
@@ -5009,11 +5009,11 @@
   },
   "1473": {
     "name": "Corticosteroid Course",
-    "description": "It turns the immune system down. Everything inflamed settles, and everything dormant wakes."
+    "description": "It turns the immune system down.\nEverything inflamed settles, and everything dormant wakes."
   },
   "1474": {
     "name": "Immunosuppressant Course",
-    "description": "For a body that has decided to attack itself, and must be talked out of it."
+    "description": "For a body that has decided to attack\nitself, and must be talked out of it."
   },
   "1475": {
     "name": "Salbutamol Inhaler",
@@ -5025,11 +5025,11 @@
   },
   "1477": {
     "name": "Digitalis Tincture",
-    "description": "Foxglove, measured to the drop. One drop over is a poison and always was."
+    "description": "Foxglove, measured to the drop.\nOne drop over is a poison and always was."
   },
   "1478": {
     "name": "Anticonvulsant Tablets",
-    "description": "It raises the threshold the brain has to cross before it goes off."
+    "description": "It raises the threshold the brain\nhas to cross before it goes off."
   },
   "1479": {
     "name": "Antidepressant Course",
@@ -5037,15 +5037,15 @@
   },
   "1480": {
     "name": "Antipsychotic Course",
-    "description": "It turns the volume down on everything, the useful things included."
+    "description": "It turns the volume down on\neverything, the useful things included."
   },
   "1481": {
     "name": "Lithium Carbonate Tablets",
-    "description": "A salt from a rock. Half a gram either way is the difference between well and poisoned."
+    "description": "A salt from a rock. Half a gram either way\nis the difference between well and poisoned."
   },
   "1482": {
     "name": "Sedative Draught",
-    "description": "It will not solve anything. It will let the person stop, which is often the whole treatment."
+    "description": "It will not solve anything. It will let the\nperson stop, which is often the whole treatment."
   },
   "1483": {
     "name": "Iodine Tincture",
@@ -5053,51 +5053,51 @@
   },
   "1484": {
     "name": "Debridement Kit",
-    "description": "Scalpel, forceps and the unpleasant job of cutting away what has already died."
+    "description": "Scalpel, forceps and the unpleasant job\nof cutting away what has already died."
   },
   "1485": {
     "name": "Proton Pump Inhibitor",
-    "description": "It stops the stomach making acid at all, which is more drastic than it sounds."
+    "description": "It stops the stomach making acid at all,\nwhich is more drastic than it sounds."
   },
   "1486": {
     "name": "Blessed Water Phial",
-    "description": "Water from a font, carried in a phial. It burns exactly one kind of illness."
+    "description": "Water from a font, carried in a phial.\nIt burns exactly one kind of illness."
   },
   "1487": {
     "name": "Rite of Exorcism Kit",
-    "description": "Stole, salt, oil and the Roman text. It is a procedure, and it has a failure rate."
+    "description": "Stole, salt, oil and the Roman text.\nIt is a procedure, and it has a failure rate."
   },
   "1488": {
     "name": "Mana Purgative",
-    "description": "It flushes the channels, which hurts roughly as much as it sounds like it would."
+    "description": "It flushes the channels, which hurts\nroughly as much as it sounds like it would."
   },
   "1489": {
     "name": "Ley Cauterisation Salts",
-    "description": "Salt packed into the ruined channel and lit. The rot stops where the burn starts."
+    "description": "Salt packed into the ruined channel and lit.\nThe rot stops where the burn starts."
   },
   "1490": {
     "name": "Witch's Tincture",
-    "description": "Nine drops under the tongue at the same hour daily, and no one asks what is in it."
+    "description": "Nine drops under the tongue at the same\nhour daily, and no one asks what is in it."
   },
   "1491": {
     "name": "Debugging Nanites",
-    "description": "A swarm small enough to read what has gone wrong and rewrite it in place."
+    "description": "A swarm small enough to read what has\ngone wrong and rewrite it in place."
   },
   "1492": {
     "name": "Firewall Serum",
-    "description": "It puts a boundary back between you and whatever has been addressing you directly."
+    "description": "It puts a boundary back between you and\nwhatever has been addressing you directly."
   },
   "1493": {
     "name": "Null Salve",
-    "description": "Rubbed into the skin, it makes the surface of you slightly less interesting to look at."
+    "description": "Rubbed into the skin, it makes the surface\nof you slightly less interesting to look at."
   },
   "1494": {
     "name": "Anchor Draught",
-    "description": "It gives you back a here and a now, both of which had been optional for a while."
+    "description": "It gives you back a here and a now, both\nof which had been optional for a while."
   },
   "1495": {
     "name": "Panacea Draught",
-    "description": "The alchemist's answer to everything. Nearly everything. It has a list of exceptions and knows it."
+    "description": "The alchemist's answer to everything. Nearly everything.\nIt has a list of exceptions and knows it."
   },
   "1496": {
     "name": "<-- Diseases -->",
@@ -5105,883 +5105,883 @@
   },
   "1497": {
     "name": "Culture Vial: Influenza",
-    "description": "A sealed culture vial of Influenza. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Influenza.\nOpening it gives the disease to somebody in the party."
   },
   "1498": {
     "name": "Culture Vial: Common Cold",
-    "description": "A sealed culture vial of Common Cold. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Common Cold.\nOpening it gives the disease to somebody in the party."
   },
   "1499": {
     "name": "Culture Vial: Novel Coronavirus",
-    "description": "A sealed culture vial of Novel Coronavirus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Novel Coronavirus.\nOpening it gives the disease to somebody in the party."
   },
   "1500": {
     "name": "Culture Vial: Measles",
-    "description": "A sealed culture vial of Measles. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Measles.\nOpening it gives the disease to somebody in the party."
   },
   "1501": {
     "name": "Culture Vial: Mumps",
-    "description": "A sealed culture vial of Mumps. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Mumps.\nOpening it gives the disease to somebody in the party."
   },
   "1502": {
     "name": "Culture Vial: Rubella",
-    "description": "A sealed culture vial of Rubella. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Rubella.\nOpening it gives the disease to somebody in the party."
   },
   "1503": {
     "name": "Culture Vial: Chickenpox",
-    "description": "A sealed culture vial of Chickenpox. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Chickenpox.\nOpening it gives the disease to somebody in the party."
   },
   "1504": {
     "name": "Culture Vial: Shingles",
-    "description": "A sealed culture vial of Shingles. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Shingles.\nOpening it gives the disease to somebody in the party."
   },
   "1505": {
     "name": "Culture Vial: Mononucleosis",
-    "description": "A sealed culture vial of Mononucleosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Mononucleosis.\nOpening it gives the disease to somebody in the party."
   },
   "1506": {
     "name": "Culture Vial: Hepatitis A",
-    "description": "A sealed culture vial of Hepatitis A. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Hepatitis A.\nOpening it gives the disease to somebody in the party."
   },
   "1507": {
     "name": "Culture Vial: Hepatitis B",
-    "description": "A sealed culture vial of Hepatitis B. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Hepatitis B.\nOpening it gives the disease to somebody in the party."
   },
   "1508": {
     "name": "Culture Vial: Hepatitis C",
-    "description": "A sealed culture vial of Hepatitis C. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Hepatitis C.\nOpening it gives the disease to somebody in the party."
   },
   "1509": {
     "name": "Culture Vial: Norovirus",
-    "description": "A sealed culture vial of Norovirus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Norovirus.\nOpening it gives the disease to somebody in the party."
   },
   "1510": {
     "name": "Culture Vial: Rotavirus",
-    "description": "A sealed culture vial of Rotavirus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Rotavirus.\nOpening it gives the disease to somebody in the party."
   },
   "1511": {
     "name": "Culture Vial: Rabies",
-    "description": "A sealed culture vial of Rabies. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Rabies.\nOpening it gives the disease to somebody in the party."
   },
   "1512": {
     "name": "Culture Vial: Poliomyelitis",
-    "description": "A sealed culture vial of Poliomyelitis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Poliomyelitis.\nOpening it gives the disease to somebody in the party."
   },
   "1513": {
     "name": "Culture Vial: Smallpox",
-    "description": "A sealed culture vial of Smallpox. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Smallpox.\nOpening it gives the disease to somebody in the party."
   },
   "1514": {
     "name": "Culture Vial: Ebola",
-    "description": "A sealed culture vial of Ebola. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Ebola.\nOpening it gives the disease to somebody in the party."
   },
   "1515": {
     "name": "Culture Vial: Dengue Fever",
-    "description": "A sealed culture vial of Dengue Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Dengue Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1516": {
     "name": "Culture Vial: Yellow Fever",
-    "description": "A sealed culture vial of Yellow Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Yellow Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1517": {
     "name": "Culture Vial: Zika Virus",
-    "description": "A sealed culture vial of Zika Virus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Zika Virus.\nOpening it gives the disease to somebody in the party."
   },
   "1518": {
     "name": "Culture Vial: West Nile Virus",
-    "description": "A sealed culture vial of West Nile Virus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of West Nile Virus.\nOpening it gives the disease to somebody in the party."
   },
   "1519": {
     "name": "Culture Vial: Hantavirus",
-    "description": "A sealed culture vial of Hantavirus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Hantavirus.\nOpening it gives the disease to somebody in the party."
   },
   "1520": {
     "name": "Culture Vial: HIV",
-    "description": "A sealed culture vial of HIV. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of HIV.\nOpening it gives the disease to somebody in the party."
   },
   "1521": {
     "name": "Culture Vial: Herpes Simplex",
-    "description": "A sealed culture vial of Herpes Simplex. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Herpes Simplex.\nOpening it gives the disease to somebody in the party."
   },
   "1522": {
     "name": "Culture Vial: Human Papillomavirus",
-    "description": "A sealed culture vial of Human Papillomavirus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Human Papillomavirus.\nOpening it gives the disease to somebody in the party."
   },
   "1523": {
     "name": "Culture Vial: Cytomegalovirus",
-    "description": "A sealed culture vial of Cytomegalovirus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Cytomegalovirus.\nOpening it gives the disease to somebody in the party."
   },
   "1524": {
     "name": "Culture Vial: Strep Throat",
-    "description": "A sealed culture vial of Strep Throat. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Strep Throat.\nOpening it gives the disease to somebody in the party."
   },
   "1525": {
     "name": "Culture Vial: Tuberculosis",
-    "description": "A sealed culture vial of Tuberculosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Tuberculosis.\nOpening it gives the disease to somebody in the party."
   },
   "1526": {
     "name": "Culture Vial: Bacterial Pneumonia",
-    "description": "A sealed culture vial of Bacterial Pneumonia. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Bacterial Pneumonia.\nOpening it gives the disease to somebody in the party."
   },
   "1527": {
     "name": "Culture Vial: Cholera",
-    "description": "A sealed culture vial of Cholera. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Cholera.\nOpening it gives the disease to somebody in the party."
   },
   "1528": {
     "name": "Culture Vial: Typhoid Fever",
-    "description": "A sealed culture vial of Typhoid Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Typhoid Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1529": {
     "name": "Culture Vial: Bubonic Plague",
-    "description": "A sealed culture vial of Bubonic Plague. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Bubonic Plague.\nOpening it gives the disease to somebody in the party."
   },
   "1530": {
     "name": "Culture Vial: Tetanus",
-    "description": "A sealed culture vial of Tetanus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Tetanus.\nOpening it gives the disease to somebody in the party."
   },
   "1531": {
     "name": "Culture Vial: Leprosy",
-    "description": "A sealed culture vial of Leprosy. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Leprosy.\nOpening it gives the disease to somebody in the party."
   },
   "1532": {
     "name": "Culture Vial: Lyme Disease",
-    "description": "A sealed culture vial of Lyme Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Lyme Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1533": {
     "name": "Culture Vial: Bacterial Meningitis",
-    "description": "A sealed culture vial of Bacterial Meningitis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Bacterial Meningitis.\nOpening it gives the disease to somebody in the party."
   },
   "1534": {
     "name": "Culture Vial: Gonorrhea",
-    "description": "A sealed culture vial of Gonorrhea. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Gonorrhea.\nOpening it gives the disease to somebody in the party."
   },
   "1535": {
     "name": "Culture Vial: Chlamydia",
-    "description": "A sealed culture vial of Chlamydia. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Chlamydia.\nOpening it gives the disease to somebody in the party."
   },
   "1536": {
     "name": "Culture Vial: Syphilis",
-    "description": "A sealed culture vial of Syphilis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Syphilis.\nOpening it gives the disease to somebody in the party."
   },
   "1537": {
     "name": "Culture Vial: Botulism",
-    "description": "A sealed culture vial of Botulism. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Botulism.\nOpening it gives the disease to somebody in the party."
   },
   "1538": {
     "name": "Culture Vial: MRSA",
-    "description": "A sealed culture vial of MRSA. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of MRSA.\nOpening it gives the disease to somebody in the party."
   },
   "1539": {
     "name": "Culture Vial: Scarlet Fever",
-    "description": "A sealed culture vial of Scarlet Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Scarlet Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1540": {
     "name": "Culture Vial: Whooping Cough",
-    "description": "A sealed culture vial of Whooping Cough. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Whooping Cough.\nOpening it gives the disease to somebody in the party."
   },
   "1541": {
     "name": "Culture Vial: Gangrene",
-    "description": "A sealed culture vial of Gangrene. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Gangrene.\nOpening it gives the disease to somebody in the party."
   },
   "1542": {
     "name": "Culture Vial: Sepsis",
-    "description": "A sealed culture vial of Sepsis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Sepsis.\nOpening it gives the disease to somebody in the party."
   },
   "1543": {
     "name": "Culture Vial: Ringworm",
-    "description": "A sealed culture vial of Ringworm. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Ringworm.\nOpening it gives the disease to somebody in the party."
   },
   "1544": {
     "name": "Culture Vial: Athlete's Foot",
-    "description": "A sealed culture vial of Athlete's Foot. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Athlete's Foot.\nOpening it gives the disease to somebody in the party."
   },
   "1545": {
     "name": "Culture Vial: Candidiasis",
-    "description": "A sealed culture vial of Candidiasis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Candidiasis.\nOpening it gives the disease to somebody in the party."
   },
   "1546": {
     "name": "Culture Vial: Aspergillosis",
-    "description": "A sealed culture vial of Aspergillosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Aspergillosis.\nOpening it gives the disease to somebody in the party."
   },
   "1547": {
     "name": "Culture Vial: Valley Fever",
-    "description": "A sealed culture vial of Valley Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Valley Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1548": {
     "name": "Culture Vial: Cryptococcosis",
-    "description": "A sealed culture vial of Cryptococcosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Cryptococcosis.\nOpening it gives the disease to somebody in the party."
   },
   "1549": {
     "name": "Culture Vial: Black Mold Sickness",
-    "description": "A sealed culture vial of Black Mold Sickness. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Black Mold Sickness.\nOpening it gives the disease to somebody in the party."
   },
   "1550": {
     "name": "Culture Vial: Malaria",
-    "description": "A sealed culture vial of Malaria. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Malaria.\nOpening it gives the disease to somebody in the party."
   },
   "1551": {
     "name": "Culture Vial: Toxoplasmosis",
-    "description": "A sealed culture vial of Toxoplasmosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Toxoplasmosis.\nOpening it gives the disease to somebody in the party."
   },
   "1552": {
     "name": "Culture Vial: Giardiasis",
-    "description": "A sealed culture vial of Giardiasis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Giardiasis.\nOpening it gives the disease to somebody in the party."
   },
   "1553": {
     "name": "Culture Vial: Amoebic Dysentery",
-    "description": "A sealed culture vial of Amoebic Dysentery. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Amoebic Dysentery.\nOpening it gives the disease to somebody in the party."
   },
   "1554": {
     "name": "Culture Vial: Chagas Disease",
-    "description": "A sealed culture vial of Chagas Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Chagas Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1555": {
     "name": "Culture Vial: African Sleeping Sickness",
-    "description": "A sealed culture vial of African Sleeping Sickness. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of African Sleeping Sickness.\nOpening it gives the disease to somebody in the party."
   },
   "1556": {
     "name": "Culture Vial: Leishmaniasis",
-    "description": "A sealed culture vial of Leishmaniasis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Leishmaniasis.\nOpening it gives the disease to somebody in the party."
   },
   "1557": {
     "name": "Specimen Jar: Tapeworm",
-    "description": "A sealed specimen jar of Tapeworm. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Tapeworm.\nOpening it gives the disease to somebody in the party."
   },
   "1558": {
     "name": "Specimen Jar: Hookworm",
-    "description": "A sealed specimen jar of Hookworm. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Hookworm.\nOpening it gives the disease to somebody in the party."
   },
   "1559": {
     "name": "Specimen Jar: Schistosomiasis",
-    "description": "A sealed specimen jar of Schistosomiasis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Schistosomiasis.\nOpening it gives the disease to somebody in the party."
   },
   "1560": {
     "name": "Specimen Jar: Scabies",
-    "description": "A sealed specimen jar of Scabies. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Scabies.\nOpening it gives the disease to somebody in the party."
   },
   "1561": {
     "name": "Specimen Jar: Head Lice",
-    "description": "A sealed specimen jar of Head Lice. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Head Lice.\nOpening it gives the disease to somebody in the party."
   },
   "1562": {
     "name": "Specimen Jar: Lymphatic Filariasis",
-    "description": "A sealed specimen jar of Lymphatic Filariasis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Lymphatic Filariasis.\nOpening it gives the disease to somebody in the party."
   },
   "1563": {
     "name": "Specimen Jar: River Blindness",
-    "description": "A sealed specimen jar of River Blindness. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of River Blindness.\nOpening it gives the disease to somebody in the party."
   },
   "1564": {
     "name": "Prion Ampoule: Creutzfeldt-Jakob Disease",
-    "description": "A sealed prion ampoule of Creutzfeldt-Jakob Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed prion ampoule of Creutzfeldt-Jakob Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1565": {
     "name": "Prion Ampoule: Kuru",
-    "description": "A sealed prion ampoule of Kuru. Opening it gives the disease to somebody in the party."
+    "description": "A sealed prion ampoule of Kuru.\nOpening it gives the disease to somebody in the party."
   },
   "1566": {
     "name": "Prion Ampoule: Fatal Familial Insomnia",
-    "description": "A sealed prion ampoule of Fatal Familial Insomnia. Opening it gives the disease to somebody in the party."
+    "description": "A sealed prion ampoule of Fatal Familial Insomnia.\nOpening it gives the disease to somebody in the party."
   },
   "1567": {
     "name": "Culture Vial: Type 1 Diabetes",
-    "description": "A sealed culture vial of Type 1 Diabetes. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Type 1 Diabetes.\nOpening it gives the disease to somebody in the party."
   },
   "1568": {
     "name": "Culture Vial: Type 2 Diabetes",
-    "description": "A sealed culture vial of Type 2 Diabetes. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Type 2 Diabetes.\nOpening it gives the disease to somebody in the party."
   },
   "1577": {
     "name": "Culture Vial: Lupus",
-    "description": "A sealed culture vial of Lupus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Lupus.\nOpening it gives the disease to somebody in the party."
   },
   "1578": {
     "name": "Culture Vial: Rheumatoid Arthritis",
-    "description": "A sealed culture vial of Rheumatoid Arthritis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Rheumatoid Arthritis.\nOpening it gives the disease to somebody in the party."
   },
   "1579": {
     "name": "Culture Vial: Multiple Sclerosis",
-    "description": "A sealed culture vial of Multiple Sclerosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Multiple Sclerosis.\nOpening it gives the disease to somebody in the party."
   },
   "1580": {
     "name": "Culture Vial: Crohn's Disease",
-    "description": "A sealed culture vial of Crohn's Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Crohn's Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1581": {
     "name": "Culture Vial: Celiac Disease",
-    "description": "A sealed culture vial of Celiac Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Celiac Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1582": {
     "name": "Culture Vial: Psoriasis",
-    "description": "A sealed culture vial of Psoriasis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Psoriasis.\nOpening it gives the disease to somebody in the party."
   },
   "1583": {
     "name": "Culture Vial: Graves' Disease",
-    "description": "A sealed culture vial of Graves' Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Graves' Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1584": {
     "name": "Culture Vial: Hashimoto's Thyroiditis",
-    "description": "A sealed culture vial of Hashimoto's Thyroiditis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Hashimoto's Thyroiditis.\nOpening it gives the disease to somebody in the party."
   },
   "1585": {
     "name": "Culture Vial: Asthma",
-    "description": "A sealed culture vial of Asthma. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Asthma.\nOpening it gives the disease to somebody in the party."
   },
   "1586": {
     "name": "Culture Vial: COPD",
-    "description": "A sealed culture vial of COPD. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of COPD.\nOpening it gives the disease to somebody in the party."
   },
   "1587": {
     "name": "Culture Vial: Hypertension",
-    "description": "A sealed culture vial of Hypertension. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Hypertension.\nOpening it gives the disease to somebody in the party."
   },
   "1588": {
     "name": "Culture Vial: Cardiac Arrhythmia",
-    "description": "A sealed culture vial of Cardiac Arrhythmia. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Cardiac Arrhythmia.\nOpening it gives the disease to somebody in the party."
   },
   "1589": {
     "name": "Deprivation Kit: Iron-Deficiency Anemia",
-    "description": "A sealed deprivation kit of Iron-Deficiency Anemia. Opening it gives the disease to somebody in the party."
+    "description": "A sealed deprivation kit of Iron-Deficiency Anemia.\nOpening it gives the disease to somebody in the party."
   },
   "1590": {
     "name": "Culture Vial: Chronic Migraine",
-    "description": "A sealed culture vial of Chronic Migraine. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Chronic Migraine.\nOpening it gives the disease to somebody in the party."
   },
   "1591": {
     "name": "Culture Vial: Epilepsy",
-    "description": "A sealed culture vial of Epilepsy. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Epilepsy.\nOpening it gives the disease to somebody in the party."
   },
   "1592": {
     "name": "Culture Vial: Parkinson's Disease",
-    "description": "A sealed culture vial of Parkinson's Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Parkinson's Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1593": {
     "name": "Culture Vial: Alzheimer's Disease",
-    "description": "A sealed culture vial of Alzheimer's Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Alzheimer's Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1594": {
     "name": "Culture Vial: Narcolepsy",
-    "description": "A sealed culture vial of Narcolepsy. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Narcolepsy.\nOpening it gives the disease to somebody in the party."
   },
   "1595": {
     "name": "Culture Vial: Chronic GERD",
-    "description": "A sealed culture vial of Chronic GERD. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Chronic GERD.\nOpening it gives the disease to somebody in the party."
   },
   "1596": {
     "name": "Culture Vial: Irritable Bowel Syndrome",
-    "description": "A sealed culture vial of Irritable Bowel Syndrome. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Irritable Bowel Syndrome.\nOpening it gives the disease to somebody in the party."
   },
   "1597": {
     "name": "Culture Vial: Peptic Ulcer",
-    "description": "A sealed culture vial of Peptic Ulcer. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Peptic Ulcer.\nOpening it gives the disease to somebody in the party."
   },
   "1598": {
     "name": "Deprivation Kit: Scurvy",
-    "description": "A sealed deprivation kit of Scurvy. Opening it gives the disease to somebody in the party."
+    "description": "A sealed deprivation kit of Scurvy.\nOpening it gives the disease to somebody in the party."
   },
   "1599": {
     "name": "Deprivation Kit: Rickets",
-    "description": "A sealed deprivation kit of Rickets. Opening it gives the disease to somebody in the party."
+    "description": "A sealed deprivation kit of Rickets.\nOpening it gives the disease to somebody in the party."
   },
   "1600": {
     "name": "Deprivation Kit: Beriberi",
-    "description": "A sealed deprivation kit of Beriberi. Opening it gives the disease to somebody in the party."
+    "description": "A sealed deprivation kit of Beriberi.\nOpening it gives the disease to somebody in the party."
   },
   "1601": {
     "name": "Deprivation Kit: Pellagra",
-    "description": "A sealed deprivation kit of Pellagra. Opening it gives the disease to somebody in the party."
+    "description": "A sealed deprivation kit of Pellagra.\nOpening it gives the disease to somebody in the party."
   },
   "1602": {
     "name": "Deprivation Kit: Kwashiorkor",
-    "description": "A sealed deprivation kit of Kwashiorkor. Opening it gives the disease to somebody in the party."
+    "description": "A sealed deprivation kit of Kwashiorkor.\nOpening it gives the disease to somebody in the party."
   },
   "1603": {
     "name": "Deprivation Kit: Iodine-Deficiency Goiter",
-    "description": "A sealed deprivation kit of Iodine-Deficiency Goiter. Opening it gives the disease to somebody in the party."
+    "description": "A sealed deprivation kit of Iodine-Deficiency Goiter.\nOpening it gives the disease to somebody in the party."
   },
   "1604": {
     "name": "Case Notes: Clinical Depression",
-    "description": "A sealed case notes of Clinical Depression. Opening it gives the disease to somebody in the party."
+    "description": "A sealed case notes of Clinical Depression.\nOpening it gives the disease to somebody in the party."
   },
   "1605": {
     "name": "Case Notes: Generalized Anxiety",
-    "description": "A sealed case notes of Generalized Anxiety. Opening it gives the disease to somebody in the party."
+    "description": "A sealed case notes of Generalized Anxiety.\nOpening it gives the disease to somebody in the party."
   },
   "1606": {
     "name": "Case Notes: PTSD",
-    "description": "A sealed case notes of PTSD. Opening it gives the disease to somebody in the party."
+    "description": "A sealed case notes of PTSD.\nOpening it gives the disease to somebody in the party."
   },
   "1607": {
     "name": "Case Notes: Bipolar Disorder",
-    "description": "A sealed case notes of Bipolar Disorder. Opening it gives the disease to somebody in the party."
+    "description": "A sealed case notes of Bipolar Disorder.\nOpening it gives the disease to somebody in the party."
   },
   "1608": {
     "name": "Case Notes: Schizophrenia",
-    "description": "A sealed case notes of Schizophrenia. Opening it gives the disease to somebody in the party."
+    "description": "A sealed case notes of Schizophrenia.\nOpening it gives the disease to somebody in the party."
   },
   "1609": {
     "name": "Case Notes: Chronic Insomnia",
-    "description": "A sealed case notes of Chronic Insomnia. Opening it gives the disease to somebody in the party."
+    "description": "A sealed case notes of Chronic Insomnia.\nOpening it gives the disease to somebody in the party."
   },
   "1610": {
     "name": "Case Notes: OCD",
-    "description": "A sealed case notes of OCD. Opening it gives the disease to somebody in the party."
+    "description": "A sealed case notes of OCD.\nOpening it gives the disease to somebody in the party."
   },
   "1611": {
     "name": "Warded Phial: Ley Rot",
-    "description": "A sealed warded phial of Ley Rot. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Ley Rot.\nOpening it gives the disease to somebody in the party."
   },
   "1612": {
     "name": "Warded Phial: Mana Plague",
-    "description": "A sealed warded phial of Mana Plague. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Mana Plague.\nOpening it gives the disease to somebody in the party."
   },
   "1613": {
     "name": "Warded Phial: Aether Lung",
-    "description": "A sealed warded phial of Aether Lung. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Aether Lung.\nOpening it gives the disease to somebody in the party."
   },
   "1614": {
     "name": "Reliquary: The Hollowing",
-    "description": "A sealed reliquary of The Hollowing. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of The Hollowing.\nOpening it gives the disease to somebody in the party."
   },
   "1615": {
     "name": "Reliquary: Wendigo Hunger",
-    "description": "A sealed reliquary of Wendigo Hunger. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Wendigo Hunger.\nOpening it gives the disease to somebody in the party."
   },
   "1616": {
     "name": "Reliquary: Stone Flesh",
-    "description": "A sealed reliquary of Stone Flesh. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Stone Flesh.\nOpening it gives the disease to somebody in the party."
   },
   "1617": {
     "name": "Warded Phial: Whisper Fever",
-    "description": "A sealed warded phial of Whisper Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Whisper Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1618": {
     "name": "Warded Phial: Mirror Sickness",
-    "description": "A sealed warded phial of Mirror Sickness. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Mirror Sickness.\nOpening it gives the disease to somebody in the party."
   },
   "1619": {
     "name": "Reliquary: Chronal Ague",
-    "description": "A sealed reliquary of Chronal Ague. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Chronal Ague.\nOpening it gives the disease to somebody in the party."
   },
   "1620": {
     "name": "Reliquary: Void Touch",
-    "description": "A sealed reliquary of Void Touch. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Void Touch.\nOpening it gives the disease to somebody in the party."
   },
   "1621": {
     "name": "Reliquary: Star Madness",
-    "description": "A sealed reliquary of Star Madness. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Star Madness.\nOpening it gives the disease to somebody in the party."
   },
   "1622": {
     "name": "Data Cartridge: Gray Static",
-    "description": "A sealed data cartridge of Gray Static. Opening it gives the disease to somebody in the party."
+    "description": "A sealed data cartridge of Gray Static.\nOpening it gives the disease to somebody in the party."
   },
   "1623": {
     "name": "Data Cartridge: Null Syndrome",
-    "description": "A sealed data cartridge of Null Syndrome. Opening it gives the disease to somebody in the party."
+    "description": "A sealed data cartridge of Null Syndrome.\nOpening it gives the disease to somebody in the party."
   },
   "1624": {
     "name": "Data Cartridge: Data Rot",
-    "description": "A sealed data cartridge of Data Rot. Opening it gives the disease to somebody in the party."
+    "description": "A sealed data cartridge of Data Rot.\nOpening it gives the disease to somebody in the party."
   },
   "1625": {
     "name": "Warded Phial: Dream Plague",
-    "description": "A sealed warded phial of Dream Plague. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Dream Plague.\nOpening it gives the disease to somebody in the party."
   },
   "1626": {
     "name": "Culture Vial: Corpse Bloom",
-    "description": "A sealed culture vial of Corpse Bloom. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Corpse Bloom.\nOpening it gives the disease to somebody in the party."
   },
   "1627": {
     "name": "Reliquary: Iron Lung Curse",
-    "description": "A sealed reliquary of Iron Lung Curse. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Iron Lung Curse.\nOpening it gives the disease to somebody in the party."
   },
   "1628": {
     "name": "Warded Phial: Laughing Pox",
-    "description": "A sealed warded phial of Laughing Pox. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Laughing Pox.\nOpening it gives the disease to somebody in the party."
   },
   "1629": {
     "name": "Warded Phial: Saint's Fire",
-    "description": "A sealed warded phial of Saint's Fire. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Saint's Fire.\nOpening it gives the disease to somebody in the party."
   },
   "1630": {
     "name": "Warded Phial: Cocoon Blight",
-    "description": "A sealed warded phial of Cocoon Blight. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Cocoon Blight.\nOpening it gives the disease to somebody in the party."
   },
   "1631": {
     "name": "Culture Vial: Great Influenza",
-    "description": "A sealed culture vial of Great Influenza. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Great Influenza.\nOpening it gives the disease to somebody in the party."
   },
   "1632": {
     "name": "Culture Vial: Epidemic Typhus",
-    "description": "A sealed culture vial of Epidemic Typhus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Epidemic Typhus.\nOpening it gives the disease to somebody in the party."
   },
   "1633": {
     "name": "Culture Vial: Diphtheria",
-    "description": "A sealed culture vial of Diphtheria. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Diphtheria.\nOpening it gives the disease to somebody in the party."
   },
   "1634": {
     "name": "Culture Vial: Anthrax",
-    "description": "A sealed culture vial of Anthrax. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Anthrax.\nOpening it gives the disease to somebody in the party."
   },
   "1635": {
     "name": "Culture Vial: Marburg Fever",
-    "description": "A sealed culture vial of Marburg Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Marburg Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1636": {
     "name": "Culture Vial: Nipah Encephalitis",
-    "description": "A sealed culture vial of Nipah Encephalitis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Nipah Encephalitis.\nOpening it gives the disease to somebody in the party."
   },
   "1637": {
     "name": "Culture Vial: Atypical Pneumonia",
-    "description": "A sealed culture vial of Atypical Pneumonia. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Atypical Pneumonia.\nOpening it gives the disease to somebody in the party."
   },
   "1638": {
     "name": "Culture Vial: Legionnaires' Disease",
-    "description": "A sealed culture vial of Legionnaires' Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Legionnaires' Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1639": {
     "name": "Culture Vial: Sleeping Sickness of the Brain",
-    "description": "A sealed culture vial of Sleeping Sickness of the Brain. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Sleeping Sickness of the Brain.\nOpening it gives the disease to somebody in the party."
   },
   "1640": {
     "name": "Pamphlet: Dancing Fever",
-    "description": "A sealed pamphlet of Dancing Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Dancing Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1641": {
     "name": "Pamphlet: Genital-Stealing Witch Panic",
-    "description": "A sealed pamphlet of Genital-Stealing Witch Panic. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Genital-Stealing Witch Panic.\nOpening it gives the disease to somebody in the party."
   },
   "1642": {
     "name": "Pamphlet: Laughter Epidemic",
-    "description": "A sealed pamphlet of Laughter Epidemic. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Laughter Epidemic.\nOpening it gives the disease to somebody in the party."
   },
   "1643": {
     "name": "Pamphlet: Tarantism",
-    "description": "A sealed pamphlet of Tarantism. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Tarantism.\nOpening it gives the disease to somebody in the party."
   },
   "1644": {
     "name": "Pamphlet: Convent Mimicry",
-    "description": "A sealed pamphlet of Convent Mimicry. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Convent Mimicry.\nOpening it gives the disease to somebody in the party."
   },
   "1645": {
     "name": "Pamphlet: Phantom Gasser Panic",
-    "description": "A sealed pamphlet of Phantom Gasser Panic. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Phantom Gasser Panic.\nOpening it gives the disease to somebody in the party."
   },
   "1646": {
     "name": "Pamphlet: Fainting Sickness",
-    "description": "A sealed pamphlet of Fainting Sickness. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Fainting Sickness.\nOpening it gives the disease to somebody in the party."
   },
   "1647": {
     "name": "Pamphlet: Windscreen Pitting Delusion",
-    "description": "A sealed pamphlet of Windscreen Pitting Delusion. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Windscreen Pitting Delusion.\nOpening it gives the disease to somebody in the party."
   },
   "1648": {
     "name": "Pamphlet: Phantom Infestation",
-    "description": "A sealed pamphlet of Phantom Infestation. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Phantom Infestation.\nOpening it gives the disease to somebody in the party."
   },
   "1649": {
     "name": "Pamphlet: Satanic Panic",
-    "description": "A sealed pamphlet of Satanic Panic. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Satanic Panic.\nOpening it gives the disease to somebody in the party."
   },
   "1650": {
     "name": "Pamphlet: Doppelganger Panic",
-    "description": "A sealed pamphlet of Doppelganger Panic. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Doppelganger Panic.\nOpening it gives the disease to somebody in the party."
   },
   "1651": {
     "name": "Pamphlet: Name Theft Panic",
-    "description": "A sealed pamphlet of Name Theft Panic. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Name Theft Panic.\nOpening it gives the disease to somebody in the party."
   },
   "1652": {
     "name": "Pamphlet: Speaking Sickness",
-    "description": "A sealed pamphlet of Speaking Sickness. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Speaking Sickness.\nOpening it gives the disease to somebody in the party."
   },
   "1653": {
     "name": "Pamphlet: Sleepwalking Pilgrimage",
-    "description": "A sealed pamphlet of Sleepwalking Pilgrimage. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Sleepwalking Pilgrimage.\nOpening it gives the disease to somebody in the party."
   },
   "1654": {
     "name": "Pamphlet: Collective Vision",
-    "description": "A sealed pamphlet of Collective Vision. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Collective Vision.\nOpening it gives the disease to somebody in the party."
   },
   "1655": {
     "name": "Pamphlet: Number Station Compulsion",
-    "description": "A sealed pamphlet of Number Station Compulsion. Opening it gives the disease to somebody in the party."
+    "description": "A sealed pamphlet of Number Station Compulsion.\nOpening it gives the disease to somebody in the party."
   },
   "1656": {
     "name": "Culture Vial: AIDS",
-    "description": "A sealed culture vial of AIDS. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of AIDS.\nOpening it gives the disease to somebody in the party."
   },
   "1657": {
     "name": "Culture Vial: Tertiary Syphilis",
-    "description": "A sealed culture vial of Tertiary Syphilis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Tertiary Syphilis.\nOpening it gives the disease to somebody in the party."
   },
   "1658": {
     "name": "Culture Vial: Hepatic Cirrhosis",
-    "description": "A sealed culture vial of Hepatic Cirrhosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Hepatic Cirrhosis.\nOpening it gives the disease to somebody in the party."
   },
   "1659": {
     "name": "Culture Vial: Rheumatic Fever",
-    "description": "A sealed culture vial of Rheumatic Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Rheumatic Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1660": {
     "name": "Culture Vial: Late Disseminated Lyme",
-    "description": "A sealed culture vial of Late Disseminated Lyme. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Late Disseminated Lyme.\nOpening it gives the disease to somebody in the party."
   },
   "1661": {
     "name": "Culture Vial: Post-Viral Syndrome",
-    "description": "A sealed culture vial of Post-Viral Syndrome. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Post-Viral Syndrome.\nOpening it gives the disease to somebody in the party."
   },
   "1662": {
     "name": "Culture Vial: Pelvic Inflammatory Disease",
-    "description": "A sealed culture vial of Pelvic Inflammatory Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Pelvic Inflammatory Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1663": {
     "name": "Culture Vial: Miliary Tuberculosis",
-    "description": "A sealed culture vial of Miliary Tuberculosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Miliary Tuberculosis.\nOpening it gives the disease to somebody in the party."
   },
   "1664": {
     "name": "Culture Vial: Diabetic Neuropathy",
-    "description": "A sealed culture vial of Diabetic Neuropathy. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Diabetic Neuropathy.\nOpening it gives the disease to somebody in the party."
   },
   "1665": {
     "name": "Culture Vial: Amoebic Liver Abscess",
-    "description": "A sealed culture vial of Amoebic Liver Abscess. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Amoebic Liver Abscess.\nOpening it gives the disease to somebody in the party."
   },
   "1666": {
     "name": "Warded Phial: Ley Necrosis",
-    "description": "A sealed warded phial of Ley Necrosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Ley Necrosis.\nOpening it gives the disease to somebody in the party."
   },
   "1667": {
     "name": "Reliquary: The Hollow Shell",
-    "description": "A sealed reliquary of The Hollow Shell. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of The Hollow Shell.\nOpening it gives the disease to somebody in the party."
   },
   "1668": {
     "name": "Data Cartridge: Static Communion",
-    "description": "A sealed data cartridge of Static Communion. Opening it gives the disease to somebody in the party."
+    "description": "A sealed data cartridge of Static Communion.\nOpening it gives the disease to somebody in the party."
   },
   "1669": {
     "name": "Specimen Jar: Leech Infestation",
-    "description": "A sealed specimen jar of Leech Infestation. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Leech Infestation.\nOpening it gives the disease to somebody in the party."
   },
   "1670": {
     "name": "Specimen Jar: Bedbugs",
-    "description": "A sealed specimen jar of Bedbugs. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Bedbugs.\nOpening it gives the disease to somebody in the party."
   },
   "1671": {
     "name": "Specimen Jar: Flea Infestation",
-    "description": "A sealed specimen jar of Flea Infestation. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Flea Infestation.\nOpening it gives the disease to somebody in the party."
   },
   "1672": {
     "name": "Specimen Jar: Tick Infestation",
-    "description": "A sealed specimen jar of Tick Infestation. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Tick Infestation.\nOpening it gives the disease to somebody in the party."
   },
   "1673": {
     "name": "Specimen Jar: Pinworm",
-    "description": "A sealed specimen jar of Pinworm. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Pinworm.\nOpening it gives the disease to somebody in the party."
   },
   "1674": {
     "name": "Specimen Jar: Roundworm",
-    "description": "A sealed specimen jar of Roundworm. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Roundworm.\nOpening it gives the disease to somebody in the party."
   },
   "1675": {
     "name": "Specimen Jar: Whipworm",
-    "description": "A sealed specimen jar of Whipworm. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Whipworm.\nOpening it gives the disease to somebody in the party."
   },
   "1676": {
     "name": "Specimen Jar: Guinea Worm",
-    "description": "A sealed specimen jar of Guinea Worm. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Guinea Worm.\nOpening it gives the disease to somebody in the party."
   },
   "1677": {
     "name": "Specimen Jar: Liver Fluke",
-    "description": "A sealed specimen jar of Liver Fluke. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Liver Fluke.\nOpening it gives the disease to somebody in the party."
   },
   "1678": {
     "name": "Specimen Jar: Botfly Myiasis",
-    "description": "A sealed specimen jar of Botfly Myiasis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Botfly Myiasis.\nOpening it gives the disease to somebody in the party."
   },
   "1679": {
     "name": "Specimen Jar: Chigoe Flea",
-    "description": "A sealed specimen jar of Chigoe Flea. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Chigoe Flea.\nOpening it gives the disease to somebody in the party."
   },
   "1680": {
     "name": "Specimen Jar: Crab Lice",
-    "description": "A sealed specimen jar of Crab Lice. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Crab Lice.\nOpening it gives the disease to somebody in the party."
   },
   "1681": {
     "name": "Specimen Jar: Sarcoptic Mange",
-    "description": "A sealed specimen jar of Sarcoptic Mange. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Sarcoptic Mange.\nOpening it gives the disease to somebody in the party."
   },
   "1682": {
     "name": "Culture Vial: Naegleriasis",
-    "description": "A sealed culture vial of Naegleriasis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Naegleriasis.\nOpening it gives the disease to somebody in the party."
   },
   "1683": {
     "name": "Prion Ampoule: Bovine Spongiform Encephalopathy",
-    "description": "A sealed prion ampoule of Bovine Spongiform Encephalopathy. Opening it gives the disease to somebody in the party."
+    "description": "A sealed prion ampoule of Bovine Spongiform Encephalopathy.\nOpening it gives the disease to somebody in the party."
   },
   "1684": {
     "name": "Prion Ampoule: Scrapie Contact",
-    "description": "A sealed prion ampoule of Scrapie Contact. Opening it gives the disease to somebody in the party."
+    "description": "A sealed prion ampoule of Scrapie Contact.\nOpening it gives the disease to somebody in the party."
   },
   "1685": {
     "name": "Culture Vial: Adenovirus",
-    "description": "A sealed culture vial of Adenovirus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Adenovirus.\nOpening it gives the disease to somebody in the party."
   },
   "1686": {
     "name": "Culture Vial: Hand, Foot and Mouth Disease",
-    "description": "A sealed culture vial of Hand, Foot and Mouth Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Hand, Foot and Mouth Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1687": {
     "name": "Culture Vial: Slapped Cheek",
-    "description": "A sealed culture vial of Slapped Cheek. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Slapped Cheek.\nOpening it gives the disease to somebody in the party."
   },
   "1688": {
     "name": "Culture Vial: Chikungunya",
-    "description": "A sealed culture vial of Chikungunya. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Chikungunya.\nOpening it gives the disease to somebody in the party."
   },
   "1689": {
     "name": "Culture Vial: Lassa Fever",
-    "description": "A sealed culture vial of Lassa Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Lassa Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1690": {
     "name": "Culture Vial: Crimean-Congo Hemorrhagic Fever",
-    "description": "A sealed culture vial of Crimean-Congo Hemorrhagic Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Crimean-Congo Hemorrhagic Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1691": {
     "name": "Culture Vial: Monkeypox",
-    "description": "A sealed culture vial of Monkeypox. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Monkeypox.\nOpening it gives the disease to somebody in the party."
   },
   "1692": {
     "name": "Culture Vial: Viral Encephalitis",
-    "description": "A sealed culture vial of Viral Encephalitis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Viral Encephalitis.\nOpening it gives the disease to somebody in the party."
   },
   "1693": {
     "name": "Culture Vial: Brucellosis",
-    "description": "A sealed culture vial of Brucellosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Brucellosis.\nOpening it gives the disease to somebody in the party."
   },
   "1694": {
     "name": "Culture Vial: Q Fever",
-    "description": "A sealed culture vial of Q Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Q Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1695": {
     "name": "Culture Vial: Listeriosis",
-    "description": "A sealed culture vial of Listeriosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Listeriosis.\nOpening it gives the disease to somebody in the party."
   },
   "1696": {
     "name": "Culture Vial: Salmonellosis",
-    "description": "A sealed culture vial of Salmonellosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Salmonellosis.\nOpening it gives the disease to somebody in the party."
   },
   "1697": {
     "name": "Culture Vial: Shigellosis",
-    "description": "A sealed culture vial of Shigellosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Shigellosis.\nOpening it gives the disease to somebody in the party."
   },
   "1698": {
     "name": "Culture Vial: Campylobacteriosis",
-    "description": "A sealed culture vial of Campylobacteriosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Campylobacteriosis.\nOpening it gives the disease to somebody in the party."
   },
   "1699": {
     "name": "Culture Vial: Trachoma",
-    "description": "A sealed culture vial of Trachoma. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Trachoma.\nOpening it gives the disease to somebody in the party."
   },
   "1700": {
     "name": "Culture Vial: Melioidosis",
-    "description": "A sealed culture vial of Melioidosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Melioidosis.\nOpening it gives the disease to somebody in the party."
   },
   "1701": {
     "name": "Culture Vial: Infective Endocarditis",
-    "description": "A sealed culture vial of Infective Endocarditis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Infective Endocarditis.\nOpening it gives the disease to somebody in the party."
   },
   "1702": {
     "name": "Culture Vial: Histoplasmosis",
-    "description": "A sealed culture vial of Histoplasmosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Histoplasmosis.\nOpening it gives the disease to somebody in the party."
   },
   "1703": {
     "name": "Culture Vial: Sporotrichosis",
-    "description": "A sealed culture vial of Sporotrichosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Sporotrichosis.\nOpening it gives the disease to somebody in the party."
   },
   "1704": {
     "name": "Culture Vial: Mucormycosis",
-    "description": "A sealed culture vial of Mucormycosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Mucormycosis.\nOpening it gives the disease to somebody in the party."
   },
   "1705": {
     "name": "Specimen Jar: Trichinosis",
-    "description": "A sealed specimen jar of Trichinosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Trichinosis.\nOpening it gives the disease to somebody in the party."
   },
   "1706": {
     "name": "Specimen Jar: Hydatid Disease",
-    "description": "A sealed specimen jar of Hydatid Disease. Opening it gives the disease to somebody in the party."
+    "description": "A sealed specimen jar of Hydatid Disease.\nOpening it gives the disease to somebody in the party."
   },
   "1707": {
     "name": "Culture Vial: Babesiosis",
-    "description": "A sealed culture vial of Babesiosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Babesiosis.\nOpening it gives the disease to somebody in the party."
   },
   "1708": {
     "name": "Culture Vial: Cryptosporidiosis",
-    "description": "A sealed culture vial of Cryptosporidiosis. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Cryptosporidiosis.\nOpening it gives the disease to somebody in the party."
   },
   "1709": {
     "name": "Deprivation Kit: Vitamin A Deficiency",
-    "description": "A sealed deprivation kit of Vitamin A Deficiency. Opening it gives the disease to somebody in the party."
+    "description": "A sealed deprivation kit of Vitamin A Deficiency.\nOpening it gives the disease to somebody in the party."
   },
   "1710": {
     "name": "Deprivation Kit: B12 Deficiency",
-    "description": "A sealed deprivation kit of B12 Deficiency. Opening it gives the disease to somebody in the party."
+    "description": "A sealed deprivation kit of B12 Deficiency.\nOpening it gives the disease to somebody in the party."
   },
   "1711": {
     "name": "Culture Vial: Bell's Palsy",
-    "description": "A sealed culture vial of Bell's Palsy. Opening it gives the disease to somebody in the party."
+    "description": "A sealed culture vial of Bell's Palsy.\nOpening it gives the disease to somebody in the party."
   },
   "1712": {
     "name": "Reliquary: Soul Sickness",
-    "description": "A sealed reliquary of Soul Sickness. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Soul Sickness.\nOpening it gives the disease to somebody in the party."
   },
   "1713": {
     "name": "Reliquary: Petro Lung",
-    "description": "A sealed reliquary of Petro Lung. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Petro Lung.\nOpening it gives the disease to somebody in the party."
   },
   "1714": {
     "name": "Reliquary: Asphalt Cough",
-    "description": "A sealed reliquary of Asphalt Cough. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Asphalt Cough.\nOpening it gives the disease to somebody in the party."
   },
   "1715": {
     "name": "Reliquary: Tower Vertigo",
-    "description": "A sealed reliquary of Tower Vertigo. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Tower Vertigo.\nOpening it gives the disease to somebody in the party."
   },
   "1716": {
     "name": "Reliquary: Loop Amnesia",
-    "description": "A sealed reliquary of Loop Amnesia. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Loop Amnesia.\nOpening it gives the disease to somebody in the party."
   },
   "1717": {
     "name": "Warded Phial: Sigil Blight",
-    "description": "A sealed warded phial of Sigil Blight. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Sigil Blight.\nOpening it gives the disease to somebody in the party."
   },
   "1718": {
     "name": "Warded Phial: Familiar Fever",
-    "description": "A sealed warded phial of Familiar Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Familiar Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1719": {
     "name": "Warded Phial: Grimoire Tinnitus",
-    "description": "A sealed warded phial of Grimoire Tinnitus. Opening it gives the disease to somebody in the party."
+    "description": "A sealed warded phial of Grimoire Tinnitus.\nOpening it gives the disease to somebody in the party."
   },
   "1720": {
     "name": "Data Cartridge: Packet Fever",
-    "description": "A sealed data cartridge of Packet Fever. Opening it gives the disease to somebody in the party."
+    "description": "A sealed data cartridge of Packet Fever.\nOpening it gives the disease to somebody in the party."
   },
   "1721": {
     "name": "Data Cartridge: Recursion Sickness",
-    "description": "A sealed data cartridge of Recursion Sickness. Opening it gives the disease to somebody in the party."
+    "description": "A sealed data cartridge of Recursion Sickness.\nOpening it gives the disease to somebody in the party."
   },
   "1722": {
     "name": "Reliquary: The Quiet",
-    "description": "A sealed reliquary of The Quiet. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of The Quiet.\nOpening it gives the disease to somebody in the party."
   },
   "1723": {
     "name": "Reliquary: Possession",
-    "description": "A sealed reliquary of Possession. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Possession.\nOpening it gives the disease to somebody in the party."
   },
   "1724": {
     "name": "Reliquary: Lycanthropy",
-    "description": "A sealed reliquary of Lycanthropy. Opening it gives the disease to somebody in the party."
+    "description": "A sealed reliquary of Lycanthropy.\nOpening it gives the disease to somebody in the party."
   },
   "1725": {
     "name": "<-- Wild Food -->",
@@ -6269,11 +6269,11 @@
   },
   "1796": {
     "name": "Hex-9 Quadratus 266",
-    "description": "Refurbished pre Y2K processor. 266 MHz, plenty for a text editor."
+    "description": "Refurbished pre Y2K processor.\n266 MHz, plenty for a text editor."
   },
   "1797": {
     "name": "Aokin Sylph Mobile 233",
-    "description": "Refurbished pre Y2K mobile processor. Slow, and very light on the cell."
+    "description": "Refurbished pre Y2K mobile processor.\nSlow, and very light on the cell."
   },
   "1798": {
     "name": "Crusader Crux 300",
@@ -6281,11 +6281,11 @@
   },
   "1799": {
     "name": "EHI Ordinal 450",
-    "description": "Refurbished pre Y2K processor. The fastest thing of its year, once."
+    "description": "Refurbished pre Y2K processor.\nThe fastest thing of its year, once."
   },
   "1800": {
     "name": "Omni-Lex Meridian 200",
-    "description": "Refurbished pre Y2K processor. Two hundred megahertz of the old century."
+    "description": "Refurbished pre Y2K processor.\nTwo hundred megahertz of the old century."
   },
   "1801": {
     "name": "Aokin PC66 Sliver 16MB",
@@ -6321,11 +6321,11 @@
   },
   "1809": {
     "name": "Zip 100 Sled",
-    "description": "Refurbished pre Y2K drive. A hundred megabytes on a fat diskette."
+    "description": "Refurbished pre Y2K drive.\nA hundred megabytes on a fat diskette."
   },
   "1810": {
     "name": "SmartMedia Cage 16MB",
-    "description": "Refurbished pre Y2K card slot. Sixteen megabytes, no moving parts."
+    "description": "Refurbished pre Y2K card slot.\nSixteen megabytes, no moving parts."
   },
   "1811": {
     "name": "Vireo Rage LT 2MB",
@@ -6333,19 +6333,19 @@
   },
   "1812": {
     "name": "Hex Trident Mobile 1MB",
-    "description": "Refurbished pre Y2K graphics adapter. One megabyte, sixteen colours."
+    "description": "Refurbished pre Y2K graphics adapter.\nOne megabyte, sixteen colours."
   },
   "1813": {
     "name": "Omni-Lex Lynx 4MB",
-    "description": "Refurbished pre Y2K graphics adapter. Four megabytes, ex-workstation."
+    "description": "Refurbished pre Y2K graphics adapter.\nFour megabytes, ex-workstation."
   },
   "1814": {
     "name": "Monochrome VGA Panel",
-    "description": "Refurbished pre Y2K panel. Grey on grey, and readable in the sun."
+    "description": "Refurbished pre Y2K panel.\nGrey on grey, and readable in the sun."
   },
   "1815": {
     "name": "Aokin 6.1in DSTN Panel",
-    "description": "Refurbished pre Y2K panel. Colour, if you look at it straight on."
+    "description": "Refurbished pre Y2K panel.\nColour, if you look at it straight on."
   },
   "1816": {
     "name": "EHI 9.4in Passive Panel",
@@ -6353,11 +6353,11 @@
   },
   "1817": {
     "name": "NiCd Brick 1000",
-    "description": "Refurbished pre Y2K cell. It remembers every charge you gave it."
+    "description": "Refurbished pre Y2K cell.\nIt remembers every charge you gave it."
   },
   "1818": {
     "name": "NiMH Bar 1600",
-    "description": "Refurbished pre Y2K cell. Better than the nickel cadmium it replaced."
+    "description": "Refurbished pre Y2K cell.\nBetter than the nickel cadmium it replaced."
   },
   "1819": {
     "name": "Alkaline Cage",
@@ -6365,7 +6365,7 @@
   },
   "1820": {
     "name": "33.6k Fax Modem",
-    "description": "Refurbished pre Y2K modem. Slower than the fifty-six, and it always connects."
+    "description": "Refurbished pre Y2K modem.\nSlower than the fifty-six, and it always connects."
   },
   "1821": {
     "name": "PCMCIA 10Base-T Card",
@@ -6386,5 +6386,169 @@
   "1825": {
     "name": "OPL2 Synth Chip",
     "description": "Refurbished pre Y2K synthesiser chip. Nine voices of FM."
+  },
+  "1826": {
+    "name": "Apollonius of Tyana",
+    "description": "A life of the wonder-worker of Tyana, argued rather than told."
+  },
+  "1827": {
+    "name": "The Astral Plane",
+    "description": "A surveyor’s report on a country nobody can point to."
+  },
+  "1828": {
+    "name": "The Book of Enoch",
+    "description": "The watchers, their descent, and\nthe names of every one of them."
+  },
+  "1829": {
+    "name": "The Book of the Dead",
+    "description": "The papyrus of Ani, with every spell for getting out again."
+  },
+  "1830": {
+    "name": "Bygone Beliefs",
+    "description": "Excursions in the byways of thought, taken at a stroll."
+  },
+  "1831": {
+    "name": "The Complete Herbal",
+    "description": "Every plant in England, its planet, and what it cures."
+  },
+  "1832": {
+    "name": "The Book of the Law",
+    "description": "Three days of dictation in Cairo, taken down word for word."
+  },
+  "1833": {
+    "name": "Clouds Without Water",
+    "description": "Verses printed for private circulation, and seized anyway."
+  },
+  "1834": {
+    "name": "The Lesser Key of Solomon",
+    "description": "Seventy-two spirits, their seals,\nand the correct way to address them."
+  },
+  "1835": {
+    "name": "The Holy Books of Thelema",
+    "description": "The Class A libri, in which not a letter may be changed."
+  },
+  "1836": {
+    "name": "Household Gods",
+    "description": "A comedy in one act, with more gods than parts."
+  },
+  "1837": {
+    "name": "Tannhäuser",
+    "description": "A story of all men, told in five\nacts and a great deal of verse."
+  },
+  "1838": {
+    "name": "The Discoverie of Witchcraft",
+    "description": "An argument that witches are not\nwitches, with the tricks explained."
+  },
+  "1839": {
+    "name": "A Discourse of Fire and Salt",
+    "description": "Two principles, and everything that follows from them."
+  },
+  "1840": {
+    "name": "The Gnosis of the Light",
+    "description": "A translation from the Codex\nBrucianus, untitled in the original."
+  },
+  "1841": {
+    "name": "The Golden Asse",
+    "description": "A man turned into a donkey by a mistake with an ointment."
+  },
+  "1842": {
+    "name": "The Golden Calf",
+    "description": "A physician’s account of a transmutation he says he watched."
+  },
+  "1843": {
+    "name": "Hidden Symbolism of Alchemy",
+    "description": "The alchemists read as dreamers rather than as chemists."
+  },
+  "1844": {
+    "name": "On the Mysteries of the Egyptians",
+    "description": "A reply to a sceptic, on why the rites work."
+  },
+  "1845": {
+    "name": "The Kabbalah",
+    "description": "Its doctrines, development and literature, set out plainly."
+  },
+  "1846": {
+    "name": "The Kybalion",
+    "description": "Seven principles, by three initiates who gave no other name."
+  },
+  "1847": {
+    "name": "Lives of the Necromancers",
+    "description": "Everyone who ever claimed to command the dead, in order."
+  },
+  "1848": {
+    "name": "The Book of the Lover and the Beloved",
+    "description": "One short verse for every day of the year, and one over."
+  },
+  "1849": {
+    "name": "The Mirror of Alchimy",
+    "description": "Attributed to Roger Bacon, and short enough to be read twice."
+  },
+  "1850": {
+    "name": "Of Natural and Supernatural Things",
+    "description": "On the origin of stones, metals and the fire under both."
+  },
+  "1851": {
+    "name": "A New Light of Alchymie",
+    "description": "Twelve treatises, and a dialogue\nbetween mercury and an alchemist."
+  },
+  "1852": {
+    "name": "The True Prophecies",
+    "description": "Quatrains in four languages at once, and none of them clearly."
+  },
+  "1853": {
+    "name": "On the Nature of the Universe",
+    "description": "A Pythagorean on why the world had no beginning."
+  },
+  "1854": {
+    "name": "On Union with God",
+    "description": "Instructions for emptying the mind,\nby a man who filled libraries."
+  },
+  "1855": {
+    "name": "Pistis Sophia",
+    "description": "Eleven years of questions put to a risen teacher."
+  },
+  "1856": {
+    "name": "Plotinos: Complete Works",
+    "description": "The Enneads, in the order they were written rather than filed."
+  },
+  "1857": {
+    "name": "Revelations of Divine Love",
+    "description": "Sixteen showings, received in one night of illness."
+  },
+  "1858": {
+    "name": "The Rosicrucian Mysteries",
+    "description": "An elementary exposition, for readers starting from nothing."
+  },
+  "1859": {
+    "name": "Studies in Occultism",
+    "description": "Reprints from a magazine, sharpened for the collection."
+  },
+  "1860": {
+    "name": "The Displaying of Supposed Witchcraft",
+    "description": "A physician takes the evidence apart, case by case."
+  },
+  "1861": {
+    "name": "The Tao Teh King",
+    "description": "Eighty-one chapters, none longer than a breath."
+  },
+  "1862": {
+    "name": "Tetrabiblos",
+    "description": "Four books on the influence of the stars, argued as physics."
+  },
+  "1863": {
+    "name": "Thought-Forms",
+    "description": "What a thought looks like, in colour plates."
+  },
+  "1864": {
+    "name": "A Treatise of Witchcraft",
+    "description": "Written around one trial, and published while it was warm."
+  },
+  "1865": {
+    "name": "The Upanishads",
+    "description": "The sitting-down-near, in which the pupil asks and asks."
+  },
+  "1866": {
+    "name": "The Witch-Cult in Western Europe",
+    "description": "An anthropologist argues the covens were real, and organised."
   }
 }

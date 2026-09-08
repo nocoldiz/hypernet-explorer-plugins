@@ -838,13 +838,19 @@
             if (form === 'sentinel' || form === 'construct') {
                 this.body = new THREE.Mesh(form === 'construct' ? new THREE.DodecahedronGeometry(0.55, 0) : new THREE.BoxGeometry(0.7, 0.95, 0.55), mat);
                 this.body.position.y = 1.0; this.bodyGroup.add(this.body); parts.push(this.body);
-                this.head = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.42), mat); this.head.position.y = 1.75; this.bodyGroup.add(this.head); parts.push(this.head);
+                // The head rests on the torso and the arms hang off its sides.
+                // Both used to be set out far enough to leave a gap of air
+                // where the neck and the shoulders should be.
+                this.head = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.42), mat); this.head.position.y = 1.66; this.bodyGroup.add(this.head); parts.push(this.head);
                 this._eyeDot(this.head, -0.1, 0.05, 0.22, 0.05, ac); this._eyeDot(this.head, 0.1, 0.05, 0.22, 0.05, ac);
-                for (const sx of [-1, 1]) { const arm = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.62, 0.18), mat); arm.position.set(sx * 0.52, 1.0, 0); this.bodyGroup.add(arm); parts.push(arm); }
+                for (const sx of [-1, 1]) { const arm = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.62, 0.18), mat); arm.position.set(sx * 0.43, 1.0, 0); this.bodyGroup.add(arm); parts.push(arm); }
                 core.position.set(0, 1.0, 0.32); this.bodyGroup.add(core); parts.push(core); this.core = core;
             } else if (form === 'conduit') {
+                // Each crystal steps by its own half-height plus the next
+                // one's, so the column stays one body as they shrink: a fixed
+                // step left the upper two floating above the conduit.
                 this.body = new THREE.Group(); let y = 0.45, r = 0.32;
-                for (let i = 0; i < 4; i++) { const c = new THREE.Mesh(new THREE.OctahedronGeometry(r, 0), this._mat(ac, 0.85, 0.1, ac)); c.position.y = y; this.body.add(c); y += 0.5; r *= 0.78; }
+                for (let i = 0; i < 4; i++) { const c = new THREE.Mesh(new THREE.OctahedronGeometry(r, 0), this._mat(ac, 0.85, 0.1, ac)); c.position.y = y; this.body.add(c); const next = r * 0.78; y += (r + next) * 0.86; r = next; }
                 this.bodyGroup.add(this.body); parts.push(this.body);
                 core.position.y = 1.0; this.bodyGroup.add(core); parts.push(core); this.core = core; this.head = this.body;
             } else if (form === 'sylph') {

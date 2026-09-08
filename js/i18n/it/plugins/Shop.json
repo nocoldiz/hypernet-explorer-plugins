@@ -60,9 +60,6 @@
   "availableFunds": "Fondi Disponibili: ",
   "acquireGoods": "ACQUISISCI",
   "liquidateAssets": "LIQUIDA",
-  "description": "DESCRIZIONE",
-  "noProductsOnSale": "Nessuna merce in vendita...",
-  "inventoryEmpty": "Inventario vuoto...",
   "item": "Oggetto",
   "itemParameters": "ATTRIBUTI OGGETTO",
   "vitalNutritionMetrics": "VALORI NUTRIZIONALI (DWARF)",
@@ -71,7 +68,6 @@
   "proficiency": "COMPETENZA",
   "buy": "COMPRA",
   "sell": "VENDI",
-  "hoverOrSelectAnItem": "Seleziona un oggetto per esaminarne le proprietà alchemiche...",
   "max": "Max:",
   "totalCost": "Costo Totale:",
   "sellValue": "Valore vendita:",
@@ -85,8 +81,6 @@
   "ownedStock": "Posseduti: {owned} Scorta: {stock}",
   "ownedCount": "Posseduti: {owned}",
   "wornCount": "(indossati: {count})",
-  "sellHint": "Clicca gli oggetti, o l'intestazione di una categoria, per metterli sul banco: poi vendi tutto in una volta.",
-  "buyHint": "Clicca gli oggetti, o l'intestazione di una categoria, per riempire il cesto: poi compra tutto in una volta.",
   "selectionCount": "{lines} voci, {units} oggetti",
   "sellSelected": "VENDI TUTTE ({lines})",
   "buySelected": "COMPRA TUTTE ({lines})",
@@ -151,7 +145,7 @@
   },
   "occasion": {
     "0": "Sempre",
-    "1": "Solo in battaglia",
+    "1": "Battaglia",
     "2": "Solo nel menu",
     "3": "Mai",
     "unknown": "Sconosciuto"
@@ -193,5 +187,6 @@
     "title": "Non serviti",
     "notorious": "Il negoziante guarda la tua faccia, poi la porta. Quanto valga il tuo nome, non vale la seccatura di farsi vedere a venderti qualcosa.",
     "standing": "Il negoziante incrocia le braccia. Qui la voce su di voi ha girato, e il banco resta chiuso."
-  }
+  },
+  "listEmpty": "[Empty]"
 }

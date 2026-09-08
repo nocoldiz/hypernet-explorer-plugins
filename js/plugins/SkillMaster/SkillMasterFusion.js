@@ -217,8 +217,6 @@
                 const ri = parseInt(row.dataset.idx, 10);
                 const on = ri === k;
                 row.classList.toggle('focused', on);
-                row.style.borderColor = on ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)';
-                row.style.background = on ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--accent-gray-2-translucent-0)';
             });
         }
         const label = document.getElementById('anim-preview-label');
@@ -400,16 +398,16 @@
                 const cat = SkillMaster.getSkillCategory(skill.id);
                 const isSkill = cat ? SkillMaster.getCategoryType(cat) !== 'Magic' : false;
                 const bLabel = isSkill ? (typeof T === 'function' ? T('SkillMaster.skill') : 'Skill') : (typeof T === 'function' ? T('SkillMaster.magic') : 'Magic');
-                typeBadge = `<span style="margin-left:6px; font-family:'Lora',serif; font-size:1.081rem; text-transform:uppercase; color:var(--accent-badge-text); background:var(--accent-badge-yellow); padding:1px 5px; font-weight:bold">${bLabel}</span>`;
+                typeBadge = `<span class="spellforge-badge spellforge-badge--inline">${bLabel}</span>`;
             }
             const inner = skill
-                ? `<div style="display:flex; align-items:center; gap:10px"><div style="${SkillMaster.getSkillIconStyle(skill.iconIndex)} transform:scale(0.75); flex-shrink:0; image-rendering:pixelated"></div><span style="font-weight:bold; color:var(--text-primary-hover)">${skill.name}</span><span style="margin-left:auto; font-size:1.081rem; color:var(--text-card-medium)">MP ${skill.mpCost} · AP ${skill.tpCost}</span></div>`
-                : `<span style="color:var(--text-card-medium)">${typeof T === 'function' ? T('SkillMaster.emptyPressToChoose') : '[ Empty - Click to choose ]'}</span>`;
+                ? `<div class="spellforge-slot-filled"><div class="cc-rpg-icon spellforge-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></div><span class="spellforge-slot-name">${skill.name}</span><span class="spellforge-slot-cost">MP ${skill.mpCost} · AP ${skill.tpCost}</span></div>`
+                : `<span class="spellforge-slot-empty">${typeof T === 'function' ? T('SkillMaster.emptyPressToChoose') : '[ Empty - Click to choose ]'}</span>`;
             slotsHTML += `
-                <div class="focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorFocusSlot(${i})" style="display:flex; flex-direction:column; gap:4px; padding:9px 13px; background:${focused ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--bg-card-translucent-5)'}; border:1.5px solid ${focused ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:8px; cursor:pointer; transition:all 0.15s ease">
-                    <span style="font-size:1.081rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary-active); font-weight:bold">${meta.label}${typeBadge}</span>
+                <div class="focusable spellforge-slot ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorFocusSlot(${i})">
+                    <span class="spellforge-slot-label">${meta.label}${typeBadge}</span>
                     ${inner}
-                    <span style="font-size:1.081rem; color:var(--text-card-medium)">${meta.hint}</span>
+                    <span class="spellforge-slot-hint">${meta.hint}</span>
                 </div>`;
         });
 
@@ -418,9 +416,9 @@
         const animName = animData ? `#${animId} · ${animData.name}` : (typeof T === 'function' ? T('SkillMaster.default') : 'Default');
         const animFocused = !animPicking && this._editorFocus === FORGE_ANIM_IDX;
         const animRowHTML = `
-            <div class="focusable ${animFocused ? 'focused' : ''}" onclick="SceneManager._scene.openAnimPicker()" style="display:flex; flex-direction:column; gap:4px; padding:9px 13px; background:${animFocused ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--bg-card-translucent-5)'}; border:1.5px solid ${animFocused ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:8px; cursor:pointer; transition:all 0.15s ease">
-                <span style="font-size:1.081rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary-active); font-weight:bold">${typeof T === 'function' ? T('SkillMaster.animation') : 'Animation'}</span>
-                <span style="font-weight:bold; color:var(--text-primary-hover)">${animName}</span>
+            <div class="focusable spellforge-slot ${animFocused ? 'focused' : ''}" onclick="SceneManager._scene.openAnimPicker()">
+                <span class="spellforge-slot-label">${typeof T === 'function' ? T('SkillMaster.animation') : 'Animation'}</span>
+                <span class="spellforge-slot-name">${animName}</span>
             </div>`;
 
         const allFilled = this._editorSlots.every(x => x != null);
@@ -428,12 +426,12 @@
         const canPay = !allFilled || knowledge >= fuseCost;
         const canForge = allFilled && canPay;
         const createFocused = !animPicking && this._editorFocus === FORGE_CREATE_IDX;
-        const costTag = allFilled ? ` <span style="font-size:1.17rem; opacity:0.85">&middot; ${fuseCost} KP</span>` : '';
+        const costTag = allFilled ? ` <span class="spellforge-cost-tag">&middot; ${fuseCost} KP</span>` : '';
         const createHTML = `
-            <div class="focusable ${createFocused ? 'focused' : ''} ${canForge ? '' : 'disabled'}" onclick="SceneManager._scene.editorCreate()" style="display:flex; justify-content:center; align-items:center; padding:12px; margin-top:4px; background:${canForge ? (createFocused ? 'var(--text-secondary-active)' : 'var(--text-text-alt-3)') : 'var(--shadow-primary-hover-translucent-5)'}; color:${canForge ? 'var(--text-pure-black)' : 'var(--text-text-alt-12)'}; border:1px solid var(--border-secondary-hover-translucent-15); border-radius:8px; cursor:${canForge ? 'pointer' : 'not-allowed'}; font-weight:bold; text-transform:uppercase; font-family:'Lora', serif; transition:all 0.15s ease">
+            <div class="focusable spellforge-button ${createFocused ? 'focused' : ''} ${canForge ? '' : 'disabled'}" onclick="SceneManager._scene.editorCreate()">
                 ${typeof T === 'function' ? T('SkillMaster.fuseSpells2') : 'Fuse Spells'}${costTag}
             </div>
-            <div style="text-align:center; font-family:'Lora',serif; font-size:1.17rem; color:${canPay ? 'var(--text-card-medium)' : 'var(--text-danger-hover)'}">
+            <div class="spellforge-price ${canPay ? '' : 'spellforge-price--short'}">
                 ${typeof T === 'function' ? T('SkillMaster.knowledge') : 'Knowledge'}: <strong>${knowledge} KP</strong>${allFilled && !canPay ? (typeof T === 'function' ? T('SkillMaster.notEnough') : ' (Not enough KP)') : ''}
             </div>`;
 
@@ -443,28 +441,28 @@
             const focusIdx = FORGE_SPLIT_BASE + k;
             const focused = !animPicking && this._editorFocus === focusIdx;
             fusedListHTML += `
-                <div class="focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorSplit(${s.id})" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:${focused ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--bg-card-translucent-5)'}; border:1px solid ${focused ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:pointer">
-                    <span style="display:flex; align-items:center; gap:8px; font-weight:bold; color:var(--text-primary-hover)"><div style="${SkillMaster.getSkillIconStyle(s.iconIndex)} transform:scale(0.7); flex-shrink:0; image-rendering:pixelated"></div>${s.name}</span>
-                    <span style="font-family:'Lora',serif; font-size:1.081rem; text-transform:uppercase; color:var(--text-secondary-active); border:1px solid var(--border-danger-active); border-radius:3px; padding:1px 6px">${typeof T === 'function' ? T('SkillMaster.split') : 'Split'}</span>
+                <div class="focusable spellforge-row ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorSplit(${s.id})">
+                    <span class="spellforge-row-name"><div class="cc-rpg-icon spellforge-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></div>${s.name}</span>
+                    <span class="spellforge-split-tag">${typeof T === 'function' ? T('SkillMaster.split') : 'Split'}</span>
                 </div>`;
         });
-        if (!fusedListHTML) fusedListHTML = `<div style="color:var(--text-card-medium); font-size:1.219rem; padding:4px">${typeof T === 'function' ? T('SkillMaster.noFusedSpellsYet') : 'No fused spells forged yet'}</div>`;
+        if (!fusedListHTML) fusedListHTML = `<div class="spellforge-empty">${typeof T === 'function' ? T('SkillMaster.noFusedSpellsYet') : 'No fused spells forged yet'}</div>`;
 
         const backBtn = typeof T === 'function' ? T('SkillMaster.back') : 'Back';
         const title = typeof T === 'function' ? T('SkillMaster.fuseSpells3') : 'Spell Fusion';
         leftBox.innerHTML = `
-            <div class="page-header-bar" style="margin-bottom:14px">
+            <div class="page-header-bar spellforge-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeSpellEditor()">${backBtn}</div>
-              <h2 class="cc-header-gothic" style="border:none; margin:0; padding:0; text-align:center; font-size:2.344rem">${title}</h2>
+              <h2 class="cc-header-gothic spellforge-title">${title}</h2>
             </div>
-            <div style="display:flex; flex-direction:column; gap:9px">
+            <div class="spellforge-slot-stack">
                 ${slotsHTML}
                 ${animRowHTML}
                 ${createHTML}
             </div>
-            <div style="border-top:1px dashed var(--scroll-thumb-hover-translucent-60); margin:14px 0 8px 0"></div>
-            <h4 style="margin:0 0 8px 0; font-family:'Lora',serif; color:var(--text-secondary-active); font-size:1.463rem; text-align:center">${typeof T === 'function' ? T('SkillMaster.fusedSpells') : 'Forged Spells'}</h4>
-            <div id="fused-scroll-box" class="skill-scroll-box" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding-right:6px; min-height:60px">
+            <div class="spellforge-rule"></div>
+            <h4 class="spellforge-subhead">${typeof T === 'function' ? T('SkillMaster.fusedSpells') : 'Forged Spells'}</h4>
+            <div id="fused-scroll-box" class="skill-scroll-box spellforge-scroll">
                 ${fusedListHTML}
             </div>`;
 
@@ -476,20 +474,20 @@
             candidates.forEach((s, k) => {
                 const focused = this._editorPickIndex === k;
                 candHTML += `
-                    <div class="focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorPickCandidate(${k})" style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:${focused ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--accent-gray-2-translucent-0)'}; border:1px solid ${focused ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:pointer">
-                        <span style="display:flex; align-items:center; gap:8px; font-weight:bold; color:${focused ? 'var(--text-secondary-active)' : 'var(--text-card-medium)'}"><div style="${SkillMaster.getSkillIconStyle(s.iconIndex)} transform:scale(0.72); flex-shrink:0; image-rendering:pixelated"></div>${s.name}</span>
-                        <span style="font-size:1.081rem; color:var(--text-inverse)">MP ${s.mpCost} · AP ${s.tpCost}</span>
+                    <div class="focusable spellforge-row spellforge-row--plain ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorPickCandidate(${k})">
+                        <span class="spellforge-row-name spellforge-row-name--quiet"><div class="cc-rpg-icon spellforge-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></div>${s.name}</span>
+                        <span class="spellforge-row-cost">MP ${s.mpCost} · AP ${s.tpCost}</span>
                     </div>`;
             });
-            if (!candHTML) candHTML = `<div style="color:var(--text-card-medium); text-align:center; margin-top:20px">${typeof T === 'function' ? T('SkillMaster.noAvailableSkillsForThis') : 'No available skills for this slot'}</div>`;
+            if (!candHTML) candHTML = `<div class="spellforge-empty spellforge-empty--centred">${typeof T === 'function' ? T('SkillMaster.noAvailableSkillsForThis') : 'No available skills for this slot'}</div>`;
             const pickTitle = slotIdx === FORGE_DOMINANT_IDX
                 ? (typeof T === 'function' ? T('SkillMaster.chooseDominantSpell') : 'Choose Dominant Spell')
                 : (typeof T === 'function' ? T('SkillMaster.chooseRecessive') : 'Choose Recessive Component');
             rightHTML = `
                 <div class="page-header-bar">
-                  <h2 class="cc-header-gothic" style="text-align:center; font-size:2.064rem">${pickTitle}</h2>
+                  <h2 class="cc-header-gothic spellforge-title spellforge-title--pick">${pickTitle}</h2>
                 </div>
-                <div id="candidates-scroll-box" class="skill-scroll-box" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding-right:6px">
+                <div id="candidates-scroll-box" class="skill-scroll-box spellforge-scroll">
                     ${candHTML}
                 </div>`;
         } else if (animPicking) {
@@ -501,30 +499,30 @@
             list.forEach((a, k) => {
                 const on = this._editorAnimPickIndex === k;
                 rowsHTML += `
-                    <div class="anim-row ${on ? 'focused' : ''}" data-idx="${k}" onclick="SceneManager._scene.editorAnimHighlight(${k})" style="display:flex; align-items:center; justify-content:space-between; padding:6px 10px; background:${on ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--accent-gray-2-translucent-0)'}; border:1px solid ${on ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:5px; cursor:pointer">
-                        <span style="font-weight:bold; color:${on ? 'var(--text-secondary-active)' : 'var(--text-primary-hover)'}; font-size:1.219rem">${a.name}</span>
-                        <span style="font-size:1.081rem; color:var(--text-card-medium)">#${a.id}</span>
+                    <div class="anim-row spellforge-row spellforge-row--plain spellforge-row--tight ${on ? 'focused' : ''}" data-idx="${k}" onclick="SceneManager._scene.editorAnimHighlight(${k})">
+                        <span class="spellforge-anim-name">${a.name}</span>
+                        <span class="spellforge-anim-id">#${a.id}</span>
                     </div>`;
             });
             const pickTitle = typeof T === 'function' ? T('SkillMaster.chooseAnimation') : 'Choose Animation';
             const useLbl = typeof T === 'function' ? T('SkillMaster.use') : 'Use';
             const backLbl = typeof T === 'function' ? T('SkillMaster.cancel') : 'Cancel';
             rightHTML = `
-                <div style="display:flex; flex-direction:column; height:100%; box-sizing:border-box">
+                <div class="spellforge-page">
                     <div class="page-header-bar page-header-bar--compact">
-                      <h2 class="cc-header-gothic" style="text-align:center; font-size:1.854rem">${pickTitle}</h2>
+                      <h2 class="cc-header-gothic spellforge-title spellforge-title--anim">${pickTitle}</h2>
                     </div>
-                    <div style="position:relative; width:100%; height:210px; border-radius:8px; overflow:hidden; border:1.5px solid var(--border-secondary-hover-translucent-15); background:radial-gradient(circle at 50% 40%, var(--bg-tertiary-focus-translucent-45) 0%, rgba(10,8,6,1) 100%); perspective:600px">
-                        <div style="position:absolute; left:50%; bottom:6px; transform:translateX(-50%) rotateX(8deg); width:150px; height:150px; background:url('img/faces/${actor.faceName()}.png') -${faceX}px -${faceY}px no-repeat; image-rendering:pixelated; filter:drop-shadow(0 6px 10px rgba(0,0,0,0.5))"></div>
-                        <canvas id="anim-preview-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none"></canvas>
+                    <div class="spellforge-stage">
+                        <div class="spellforge-stage-face" style="--spellforge-face:${window.UIPanel.assetUrl('img/faces/' + actor.faceName() + '.png')}; --spellforge-face-x:-${faceX}px; --spellforge-face-y:-${faceY}px"></div>
+                        <canvas id="anim-preview-canvas" class="spellforge-stage-canvas"></canvas>
                     </div>
-                    <div id="anim-preview-label" style="text-align:center; font-family:'Lora',serif; font-size:1.219rem; color:var(--text-secondary-active); font-weight:bold; margin:8px 0">${cur ? `#${cur.id} · ${cur.name}` : ''}</div>
-                    <div id="anim-list-box" class="skill-scroll-box" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:5px; padding-right:6px; min-height:60px">
+                    <div id="anim-preview-label" class="spellforge-stage-label">${cur ? `#${cur.id} · ${cur.name}` : ''}</div>
+                    <div id="anim-list-box" class="skill-scroll-box spellforge-scroll spellforge-scroll--tight">
                         ${rowsHTML}
                     </div>
-                    <div style="display:flex; gap:8px; margin-top:8px">
-                        <div class="focusable" onclick="SceneManager._scene.editorConfirmAnim()" style="flex:1; text-align:center; padding:9px; background:var(--text-text-alt-3); color:var(--text-pure-black); border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase; font-family:'Lora',serif">${useLbl}</div>
-                        <div class="focusable" onclick="SceneManager._scene.editorCancelAnim()" style="flex:0 0 auto; text-align:center; padding:9px 14px; background:transparent; color:var(--text-primary-hover); border:1.5px solid var(--text-primary-hover); border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase; font-family:'Lora',serif">${backLbl}</div>
+                    <div class="spellforge-actions">
+                        <div class="focusable spellforge-action spellforge-action--primary" onclick="SceneManager._scene.editorConfirmAnim()">${useLbl}</div>
+                        <div class="focusable spellforge-action" onclick="SceneManager._scene.editorCancelAnim()">${backLbl}</div>
                     </div>
                 </div>`;
         } else {
@@ -541,22 +539,22 @@
                 const resultKind = resultIsSkill ? (typeof T === 'function' ? T('SkillMaster.skill') : 'Skill') : (typeof T === 'function' ? T('SkillMaster.magic') : 'Magic');
                 const previewCost = this.editorFusionCost();
                 rightHTML = `
-                    <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; text-align:center; gap:14px; padding:20px; box-sizing:border-box">
-                        <h3 class="cc-header-gothic" style="font-size:1.924rem; color:var(--text-secondary-active); margin:0">${typeof T === 'function' ? T('SkillMaster.preview2') : 'Preview'}</h3>
-                        <div style="font-size:2.612rem; font-weight:bold; color:var(--text-text-alt-3); font-family:'Lora',serif">${previewName}</div>
-                        <span style="font-family:'Lora',serif; font-size:1.081rem; text-transform:uppercase; color:var(--accent-badge-text); background:var(--accent-badge-yellow); padding:2px 8px; font-weight:bold">${typeof T === 'function' ? T('SkillMaster.becomesA') : 'Becomes a'} ${resultKind}</span>
-                        <div style="display:flex; gap:26px; font-size:1.512rem; color:var(--text-primary-hover)"><div><strong>${typeof T === 'function' ? T('SkillMaster.mpLabel') : 'MP'}</strong> ${mp}</div><div><strong>${typeof T === 'function' ? T('SkillMaster.apLabel') : 'AP'}</strong> ${ap}</div></div>
-                        <div style="font-size:1.463rem; color:${knowledge >= previewCost ? 'var(--text-secondary-active)' : 'var(--text-danger-hover)'};"><strong>${typeof T === 'function' ? T('SkillMaster.fusionCost') : 'Fusion Cost'}</strong> ${previewCost} KP <span style="font-size:1.234rem; color:var(--text-card-medium)">(${typeof T === 'function' ? T('SkillMaster.youHold') : 'You have'} ${knowledge})</span></div>
-                        <div style="border-top:1px dashed var(--scroll-thumb-hover-translucent-60); width:80%"></div>
-                        <div style="font-size:1.292rem; color:var(--text-card-medium)">${typeof T === 'function' ? T('SkillMaster.dominant') : 'Dominant'}: <strong style="color:var(--text-secondary-active)">${dominant.name}</strong> &middot; ${typeof T === 'function' ? T('SkillMaster.recessive') : 'Recessive'}: <strong style="color:var(--text-secondary-active)">${recessive.name}</strong></div>
-                        <div style="font-size:1.234rem; color:var(--text-card-medium); line-height:1.5; max-width:85%">${typeof T === 'function' ? T('SkillMaster.theDominantDefinesDamageAnd') : 'Dominant sets core properties, recessive provides mixed traits.'}</div>
+                    <div class="spellforge-preview">
+                        <h3 class="cc-header-gothic spellforge-preview-head">${typeof T === 'function' ? T('SkillMaster.preview2') : 'Preview'}</h3>
+                        <div class="spellforge-preview-name">${previewName}</div>
+                        <span class="spellforge-badge">${typeof T === 'function' ? T('SkillMaster.becomesA') : 'Becomes a'} ${resultKind}</span>
+                        <div class="spellforge-preview-costs"><div><strong>${typeof T === 'function' ? T('SkillMaster.mpLabel') : 'MP'}</strong> ${mp}</div><div><strong>${typeof T === 'function' ? T('SkillMaster.apLabel') : 'AP'}</strong> ${ap}</div></div>
+                        <div class="spellforge-preview-price ${knowledge >= previewCost ? '' : 'spellforge-price--short'}"><strong>${typeof T === 'function' ? T('SkillMaster.fusionCost') : 'Fusion Cost'}</strong> ${previewCost} KP <span class="spellforge-preview-purse">(${typeof T === 'function' ? T('SkillMaster.youHold') : 'You have'} ${knowledge})</span></div>
+                        <div class="spellforge-rule spellforge-rule--short"></div>
+                        <div class="spellforge-preview-pair">${typeof T === 'function' ? T('SkillMaster.dominant') : 'Dominant'}: <strong class="spellforge-em">${dominant.name}</strong> &middot; ${typeof T === 'function' ? T('SkillMaster.recessive') : 'Recessive'}: <strong class="spellforge-em">${recessive.name}</strong></div>
+                        <div class="spellforge-preview-note">${typeof T === 'function' ? T('SkillMaster.theDominantDefinesDamageAnd') : 'Dominant sets core properties, recessive provides mixed traits.'}</div>
                     </div>`;
             } else {
                 rightHTML = `
-                    <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; text-align:center; gap:16px; padding:24px; box-sizing:border-box">
-                        <div style="${SkillMaster.getCategoryIconStyle('All')} transform:scale(1.8); image-rendering:pixelated"></div>
-                        <h3 class="cc-header-gothic" style="font-size:1.924rem; color:var(--text-secondary-active); margin:0">${typeof T === 'function' ? T('SkillMaster.fuseSpells3') : 'Spell Fusion'}</h3>
-                        <div style="font-size:1.365rem; color:var(--text-card-medium); line-height:1.5; max-width:88%">${typeof T === 'function' ? T('SkillMaster.forgeBlurb', { actor: actor.name(), knowledge: knowledge }) : `Combine two known abilities into a unique spell for ${actor.name()}.`}</div>
+                    <div class="spellforge-preview spellforge-preview--roomy">
+                        <div class="cc-rpg-icon spellforge-crest" style="${SkillMaster.getCategoryIconStyle('All')}"></div>
+                        <h3 class="cc-header-gothic spellforge-preview-head">${typeof T === 'function' ? T('SkillMaster.fuseSpells3') : 'Spell Fusion'}</h3>
+                        <div class="spellforge-preview-note spellforge-preview-note--lead">${typeof T === 'function' ? T('SkillMaster.forgeBlurb', { actor: actor.name(), knowledge: knowledge }) : `Combine two known abilities into a unique spell for ${actor.name()}.`}</div>
                     </div>`;
             }
         }

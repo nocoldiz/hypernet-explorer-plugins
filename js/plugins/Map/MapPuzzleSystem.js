@@ -499,6 +499,14 @@
  * @arg switchId
  * @type switch @text Switch to Set
  *
+ * ─── SCRAMBLER ───────────────────────────────────────────────────────────
+ * No plugin command: put a plain comment "Scrambler" on an event page and the
+ * event glitches its graphic through other tiles of this map, then settles back
+ * on its own. Optional attributes:
+ *   Scrambler mode=flicker|cycle|chaos tiles=5 rate=1
+ * mode is rolled at random when left out: flicker keeps one impostor, cycle
+ * rotates the pool, chaos picks at random. rate scales how often it glitches.
+ *
  */
 
 (() => {
@@ -1352,6 +1360,7 @@
             puzzleLog(`setup ${evLabel(id)} at (${event.x},${event.y})`, parsed.attrs);
             found = true;
         }
+        scanEventScramblerComments(event);
         if (!found && page.list.some(c => c.code === 108 || c.code === 408)) {
             const comments = page.list.filter(c => c.code === 108 || c.code === 408).map(c => c.parameters[0]);
             puzzleLog(`ev${id} has comments but no <puzzle:> tag:`, comments);
@@ -2880,10 +2889,166 @@
         return _Game_CharacterBase_isCollidedWithEvents.call(this, x, y);
     };
 
+
+    // =========================================================================
+    // Scrambler: an event whose graphic glitches through other tile graphics
+    // Tagged with a plain "Scrambler" comment on the active page. Optional
+    // attributes: Scrambler rate=1.5 tiles=6 mode=flicker|cycle|chaos
+    // =========================================================================
+
+    const SCRAMBLER_RE = /^\s*scrambler\b(.*)$/i;
+    const SCRAMBLER_MODES = ['flicker', 'cycle', 'chaos'];
+
+    function parseScramblerTag(text) {
+        const m = String(text || '').match(SCRAMBLER_RE);
+        if (!m) return null;
+        const attrs = {};
+        const re = /(\w+)\s*=\s*(?:"([^"]*)"|(\S+))/g;
+        let a;
+        while ((a = re.exec(m[1])) !== null) {
+            attrs[a[1].toLowerCase()] = a[2] !== undefined ? a[2] : a[3];
+        }
+        return attrs;
+    }
+
+    // A graphic the event can wear: either a tileset tile or another event's
+    // character sheet. Tiles are sampled from the map's own layers so the
+    // glitch always shows something that belongs to this tileset.
+    function collectScramblerGraphics(event, count) {
+        const pool = [];
+        const seen = new Set();
+        const push = (g) => {
+            const key = g.tileId ? 't' + g.tileId : 'c' + g.name + ':' + g.index;
+            if (seen.has(key)) return;
+            seen.add(key);
+            pool.push(g);
+        };
+
+        const w = $gameMap.width(), h = $gameMap.height();
+        const tries = Math.min(600, w * h * 4);
+        for (let i = 0; i < tries && pool.length < count; i++) {
+            const x = Math.floor(Math.random() * w);
+            const y = Math.floor(Math.random() * h);
+            const z = Math.floor(Math.random() * 4);
+            const tileId = $gameMap.tileId(x, y, z);
+            if (tileId >= Tilemap.TILE_ID_A1 || tileId <= 0) continue;
+            push({ tileId });
+        }
+
+        for (const ev of $gameMap.events()) {
+            if (pool.length >= count) break;
+            if (ev === event || ev._erased) continue;
+            if (ev.tileId && ev.tileId() > 0) push({ tileId: ev.tileId() });
+            else if (ev.characterName && ev.characterName()) {
+                push({ name: ev.characterName(), index: ev.characterIndex() });
+            }
+        }
+        return pool;
+    }
+
+    function currentGraphicOf(event) {
+        return event.tileId() > 0
+            ? { tileId: event.tileId() }
+            : { name: event.characterName(), index: event.characterIndex() };
+    }
+
+    function wearGraphic(event, g) {
+        if (!g) return;
+        if (g.tileId) event.setTileImage(g.tileId);
+        else event.setImage(g.name, g.index);
+    }
+
+    function registerScrambler(event, attrs) {
+        const rate = Math.max(0.1, +(attrs.rate || 1) || 1);
+        const count = Math.max(2, Math.min(12, +(attrs.tiles || attrs.count || 5) || 5));
+        const mode = SCRAMBLER_MODES.includes(String(attrs.mode || '').toLowerCase())
+            ? String(attrs.mode).toLowerCase()
+            : SCRAMBLER_MODES[Math.floor(Math.random() * SCRAMBLER_MODES.length)];
+        event._scrambler = {
+            rate, count, mode,
+            base: currentGraphicOf(event),
+            pool: null,
+            wait: Math.floor(Math.random() * 90 / rate),
+            burst: 0,
+            step: 0
+        };
+    }
+
+    function clearScrambler(event) {
+        if (!event._scrambler) return;
+        wearGraphic(event, event._scrambler.base);
+        event._scrambler = null;
+    }
+
+    function updateScrambler(event) {
+        const s = event._scrambler;
+        if (!s || !$gameMap || $gameMap.isEventRunning()) return;
+        if (!s.pool) {
+            s.pool = collectScramblerGraphics(event, s.count);
+            if (!s.pool.length) { event._scrambler = null; return; }
+            // A flickering event keeps one impostor for its whole life, so it
+            // reads as one thing struggling to stay itself.
+            s.pair = s.pool[Math.floor(Math.random() * s.pool.length)];
+        }
+        if (s.wait > 0) { s.wait--; return; }
+
+        if (s.burst <= 0) {
+            // Start a new glitch burst: a handful of rapid swaps, then settle.
+            s.burst = 2 + Math.floor(Math.random() * 8);
+            s.hold = 0;
+        }
+
+        if (s.hold > 0) { s.hold--; return; }
+        s.hold = 1 + Math.floor(Math.random() * 5);
+        s.burst--;
+
+        if (s.burst <= 0) {
+            wearGraphic(event, s.base);
+            s.wait = Math.floor((30 + Math.random() * 150) / s.rate);
+            return;
+        }
+
+        if (s.mode === 'flicker') {
+            s.step ^= 1;
+            wearGraphic(event, s.step ? s.pair : s.base);
+        } else if (s.mode === 'cycle') {
+            s.step = (s.step + 1) % s.pool.length;
+            wearGraphic(event, s.pool[s.step]);
+        } else {
+            wearGraphic(event, s.pool[Math.floor(Math.random() * s.pool.length)]);
+        }
+    }
+
+    function scanEventScramblerComments(event) {
+        const page = event.page && event.page();
+        clearScrambler(event);
+        if (!page || !page.list) return;
+        for (const cmd of page.list) {
+            if (cmd.code !== 108 && cmd.code !== 408) continue;
+            const attrs = parseScramblerTag(cmd.parameters[0] || '');
+            if (attrs) { registerScrambler(event, attrs); return; }
+        }
+    }
+
+    const _Game_Event_update_scrambler = Game_Event.prototype.update;
+    Game_Event.prototype.update = function () {
+        _Game_Event_update_scrambler.call(this);
+        if (this._scrambler) updateScrambler(this);
+    };
+
     window.MapPuzzleSystem = {
         checkPuzzleInteractions,
         updatePuzzleCharacter,
-        tryPush
+        tryPush,
+        Scrambler: {
+            parseTag: parseScramblerTag,
+            register: registerScrambler,
+            clear: clearScrambler,
+            update: updateScrambler,
+            scan: scanEventScramblerComments,
+            collect: collectScramblerGraphics,
+            MODES: SCRAMBLER_MODES
+        }
     };
 
 })();

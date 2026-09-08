@@ -524,6 +524,36 @@
     // sloped tile its far end has to clear the surface it is painted on.
     const ROAD_MARK_LIFT   = 1;
 
+    // ---- The carriageway is a real road, not a run of cubes -----------------
+    // A motorway drawn out of voxels reads as a staircase: the cubes step in
+    // 1.25 m, the paint is a row of grey blocks, and the whole thing looks like
+    // a quarry track. So the ground under a road square is a ROADBED - graded,
+    // dropped by ROAD_BED_DROP, and never seen - and the surface the eye and the
+    // wheels get is a smooth extruded ribbon laid over it: asphalt, hard
+    // shoulder, edge lines, dashed lane lines, a kerbed median with a steel
+    // barrier down it and armco on the verges. VoxelWorldTerrain lays it, the
+    // field answers for its height (VoxelField.heightAt), so the camper drives
+    // on exactly what is drawn.
+    const ROAD_BED_DROP    = 8;    // roadbed cubes sit this far under the paving
+    const ROAD_PAVE_T      = 3;    // thickness of the slab itself, at its edge
+    const ROAD_SKIRT       = 26;   // the embankment dropped from the paved edge
+    const ROAD_SHOULDER_W  = 11;   // hard shoulder, inside the paved width
+    const ROAD_LINE_W      = 2.6;  // painted line
+    const ROAD_DASH_ON     = 20;   // dashed lane line, on/off along the road
+    const ROAD_DASH_OFF    = 15;
+    const ROAD_BARRIER_H   = 13;   // steel barrier and armco height
+    const ROAD_KERB_H      = 3;    // the median kerb the grass sits behind
+    // Colours the ribbon is painted with.
+    const ROAD_COL = {
+        asphalt:  0x38383d,
+        shoulder: 0x33333a,
+        paint:    0xe6e4d8,
+        median:   0x4a5a35,
+        kerb:     0x8f8c84,
+        skirt:    0x5b5340,
+        steel:    0x9aa0a6
+    };
+
     // Fog densities (1/units). Divided by WORLD_SCALE so the haze reaches the same
     // number of tiles as before on the enlarged world.
     const FOG_DAY          = 0.0005   / WORLD_SCALE;   // normal driving haze
@@ -581,6 +611,44 @@
     // floating above the dashboard.
     const DRIVER_SEAT = { x: 1.2, y: 6.4, z: 8.0 };
 
+    // =========================================================================
+    // The ship's bridge
+    // =========================================================================
+    // The camper has a cabin you can get up and walk about in; the ship had a
+    // hull and nowhere to stand in it. The bridge is its counterpart, and it is
+    // built to the same conventions: the vehicle's own frame, forward is +Z,
+    // +X is the pilot's LEFT, four units to the metre.
+    //
+    // A room about five metres across and seven deep: the helm on the centre
+    // line under the forward viewport, four stations round it for the party,
+    // and the walls close enough that walking it feels like a room rather than
+    // a hangar. CAMPER_BOUNDS is the camper's; this is the ship's, and
+    // _walkBounds() picks whichever the party is actually inside.
+    const SHIP_BRIDGE_BOUNDS = {
+        minX: -9.0, maxX: 9.0,
+        minZ: -13.0, maxZ: 13.0
+    };
+    // The helm: where the eye sits when the ship is being flown in first person,
+    // and where the pilot stands up from when they leave it. Level with the
+    // console, looking out of the viewport.
+    const SHIP_HELM_SEAT = { x: 0, y: 6.6, z: 8.0 };
+    // The stations the rest of the party take, in the same frame. Nobody sits
+    // in the pilot's chair but the pilot.
+    const SHIP_BRIDGE_SEATS = [
+        { x:  5.4, y: 6.3, z:  2.6 },   // to the pilot's left, forward
+        { x: -5.4, y: 6.3, z:  2.6 },   // and right
+        { x:  5.4, y: 6.3, z: -4.2 },   // the two aft stations
+        { x: -5.4, y: 6.3, z: -4.2 }
+    ];
+
+    // Setting a ship down. Flying is a cruise at a held clearance; to land, the
+    // pilot brings it low and slow, and at that point the ground takes it.
+    const SHIP_LAND_KMH   = 55;    // no faster than this, or it is a crash landing
+    const SHIP_LAND_CLEAR = 26;    // and no higher than this above the ground
+    const SHIP_FLY_MIN    = 12;    // the lowest a pilot may hold it without landing
+    const SHIP_FLY_MAX    = 900;   // and the highest the cruise will climb to
+    const SHIP_CLIMB_RATE = 260;   // world units per second on the climb/descend keys
+
     // Where everybody else rides, per vehicle, in the vehicle's OWN frame:
     // +z is the way it is pointing, +y is up. The party used to vanish the
     // moment the camper moved off - the followers were simply hidden while
@@ -603,10 +671,10 @@
                    { x: 0, y: 1.4, z: -0.4 },
                    { x: 0, y: 1.4, z: -1.9 },
                    { x: 0, y: 1.4, z: -3.2 }],
-        starship: [{ x: -2.2, y: 1.6, z: 2.0 },
-                   { x:  2.2, y: 1.6, z: 2.0 },
-                   { x: -2.2, y: 1.6, z: -1.0 },
-                   { x:  2.2, y: 1.6, z: -1.0 }]
+        // The ship's are the bridge's own stations: the party is sitting at
+        // the consoles of the room they can get up and walk about in, rather
+        // than at four points in the middle of the hull.
+        starship: SHIP_BRIDGE_SEATS
     };
 
     // Vehicles nobody can ride pillion on: the party keeps up on two more of
@@ -875,6 +943,35 @@
         broom:    { top: 180,  boost: true,  ceiling: 900,  warp: false, fly: true  },
         boat:     { top: 90,   boost: false, ceiling: 90,   warp: false, fly: false }
     };
+    // =========================================================================
+    // What a vehicle is allowed to do to the world
+    // =========================================================================
+    // The ground under this world is destructible, and for a long time anything
+    // with a bumper could take it apart just by being driven at it. It cannot:
+    //
+    //   NOTHING a ground vehicle drives into is destroyed while it is driving
+    //   normally. A tree stops a bike the way it stops a walker.
+    //
+    //   TURBO is the exception, and the only one. Holding the accelerator past
+    //   the vehicle's natural top is the game saying "through it, then": trees
+    //   come down.
+    //
+    //   THE GROUND IS NEVER DESTROYED. No vehicle punches a hole in the terrain
+    //   at any speed, boosting or not. Rock in the way stops it, and the digging
+    //   tools are the only thing out here that takes the world apart.
+    //
+    //   NOT IN A TOWN. A town is somebody's, and a car at nine hundred is not an
+    //   argument about planning permission. Inside a settlement a boosting
+    //   vehicle destroys nothing at all and is stopped by nothing either: it
+    //   goes straight through, and the town is still standing behind it.
+    //
+    //   A SHIP IS NOT A CAR. Flown into a mountainside it loses real condition
+    //   (VehicleSystemRepair's 'airship') at any speed worth the name, boosting
+    //   or not. The mountain is left standing.
+    const SHIP_RAM_KMH      = 60;    // below this it is a scrape, not a ram
+    const SHIP_RAM_DAMAGE   = 14;    // percent knocked off the parts it lands on
+    const SHIP_RAM_EVERY    = 0.6;   // seconds between two rams
+
     // How high the starship has to climb before it is not in the world any more.
     // Mountains top out around 880 units, so this is well clear of the highest
     // ground anybody could fly off.
@@ -1947,6 +2044,8 @@
         AIR_GRAVITY, BODY_BOUNCE_MAX, BODY_PITCH_MAX, BODY_ROLL_MAX,
         BOOST_ACCEL_MULT, BOOST_FUEL_MULT, BOOST_RELEASE_DECAY, BRAKE_DECEL,
         CAMPER_BOUNDS, CAMPER_MAX_FUEL, CRITICAL_PARTS, CRUISE_KMH,
+        SHIP_BRIDGE_BOUNDS, SHIP_HELM_SEAT, SHIP_BRIDGE_SEATS,
+        SHIP_LAND_KMH, SHIP_LAND_CLEAR, SHIP_FLY_MIN, SHIP_FLY_MAX, SHIP_CLIMB_RATE,
         ALONGSIDE_MAX, CharacterBillboard, VehicleBillboard, DOOR_AUTO_OPEN_RANGE, DRAG_K, DRIVER_SEAT,
         RIDER_SEATS, RIDE_ALONGSIDE,
         CAVE_SKY, ENGINE_ACCEL, FOG_CAVE, FOG_DAY, FOG_FREE, FOG_UNDERWATER, FOOT_BODY_R,
@@ -1969,10 +2068,13 @@
         LIMINAL_TOP_KMH, LOOT_RANGE, MAX_KMH, MAX_STEER_LOCK, MOUNTAIN_MAX_H,
         NATURAL_TOP, OVERDRIVE_DECAY, OVERDRIVE_KMHPS, PERSON_H, PLANT_CROPS, TRAFFIC_VEHICLES,
         PLANT_POOL, RECOIL_KICK, REVERSE_ACCEL, REVERSE_MAX_KMH, ROAD_GAP,
-        ROAD_HALF_LANE, ROAD_LANE_OFF, ROAD_LANE_W, ROAD_LINKS, ROAD_MARK_LIFT, ROAD_OPPOSITE,
+        ROAD_BARRIER_H, ROAD_BED_DROP, ROAD_COL, ROAD_DASH_OFF, ROAD_DASH_ON,
+        ROAD_HALF_LANE, ROAD_KERB_H, ROAD_LANE_OFF, ROAD_LANE_W, ROAD_LINE_W, ROAD_LINKS,
+        ROAD_MARK_LIFT, ROAD_OPPOSITE, ROAD_PAVE_T, ROAD_SHOULDER_W, ROAD_SKIRT,
         ROAD_SINK, ROAD_STEP, ROAD_TOTAL_W, ROCK_ASH, ROCK_POOL, SECONDARY_PARTS,
         SHIFT_TIME, SKY_KEYFRAMES, SLOPE_ACCEL, SNOW_LINE, SOLID_PROPS,
         PROP_RADIUS, PROP_MIN_R, PROP_SMASH_KMH,
+        SHIP_RAM_KMH, SHIP_RAM_DAMAGE, SHIP_RAM_EVERY,
         STEER_FALLOFF, STEP_SOUNDS, SURFACES, TALK_RANGE,
         TRAFFIC_CRASH_KMH,
         VOXEL_STEP_MATERIAL,

@@ -67,6 +67,8 @@
  *   trainingDays(id)     → how many days its training would take right now
  *   trainingInfo(id)     → the live drill record, or null
  *   startTraining(id, classId) / stopTraining(id) / promoteTrainee(id)
+ *   hasFreeSlot()        → is there a companion slot open in the party
+ *   inductAsMember(record, classId) → straight into the party, no drill first
  *
  * Abandonment is the only way to be rid of a companion, and it is an offence:
  * leaving a pet behind is filed with the nEuroPolice as pet abandonment, and
@@ -166,7 +168,7 @@ window.Game_PetFollower = Game_PetFollower;
     // window.PetSystem - registry + active-follower management.
     //-------------------------------------------------------------------------
 
-    // Same ceiling the name-entry screen uses for actors (AltNameInput.js), so a
+    // Same ceiling the name-entry screen uses for actors, so a
     // pet name can never be longer than a party member's.
     const PET_NAME_MAX_LENGTH = 16;
 
@@ -482,14 +484,15 @@ window.Game_PetFollower = Game_PetFollower;
     // The graduate. It keeps its name, its level, its face and the skills the
     // monster it was came with; what changes is that it is an actor now, on the
     // class it was drilled into.
-    function _petIntoActor(actorId, pet) {
+    function _petIntoActor(actorId, pet, classId) {
         const actor = $gameActors && $gameActors.actor(actorId);
         if (!actor) return null;
         // Start from the database entry so nothing of a previous occupant of
         // the slot survives into the graduate.
         actor.setup(actorId);
         actor.setName(pet.name);
-        actor.changeClass(pet.training.classId, false);
+        const wearClass = Number(classId || pet.training?.classId || BEAST_CLASS_ID);
+        actor.changeClass(wearClass, false);
         actor.changeLevel(Math.max(1, pet.level || 1), false);
         actor.setCharacterImage(pet.characterName, pet.characterIndex || 0);
         actor.setFaceImage("", 0);
@@ -503,7 +506,7 @@ window.Game_PetFollower = Game_PetFollower;
         // A graduate on a creature class is still a creature, and every system
         // that asks does so through this slot's switch.
         if ($gameSwitches && CREATURE_SWITCHES[actorId]) {
-            $gameSwitches.setValue(CREATURE_SWITCHES[actorId], _isCreatureClass(pet.training.classId));
+            $gameSwitches.setValue(CREATURE_SWITCHES[actorId], _isCreatureClass(wearClass));
         }
         actor.recoverAll();
         $gameParty.addActor(actorId);
@@ -818,6 +821,28 @@ window.Game_PetFollower = Game_PetFollower;
             pet.training = null;
             _toast(T('PetFollower.training.stopped', { name: pet.name }), "warning");
             return pet;
+        },
+
+        // Is there anywhere for somebody new to stand? The answer the two
+        // join offers in the Empathize panel are greyed out on.
+        hasFreeSlot() {
+            return _freeCompanionSlot() > 0;
+        },
+
+        // Taken straight into the party instead of onto the leash. An animal
+        // asked to travel rather than to follow is exactly the record a pet
+        // would have been, wearing its creature class from the first step: it
+        // holds a party slot and it fights, without a drill first. Answers the
+        // actor, or null when nobody has room for it.
+        inductAsMember(record, classId) {
+            const slot = _freeCompanionSlot();
+            if (!slot) return null;
+            const pet = this.registerPet(record);
+            if (!pet) return null;
+            const wanted = Number(classId) || (_trainingOptions(pet)[0] ?? BEAST_CLASS_ID);
+            const actor = _petIntoActor(slot, pet, wanted);
+            this.releasePet(pet.id);
+            return actor || null;
         },
 
         // A finished trainee taking a place in the party. Answers null when

@@ -50,7 +50,6 @@
   "surgicalBlueprint": "PROTOCOLLO INNESTI",
   "graftLimb": "Innesta Parte",
   "amputationProtocol": "CHIRURGIA DI AMPUTAZIONE",
-  "strongStyleColor822d2dBrWarningInstalledImpl": " <strong style='color:#822d2d;'><br>ATTENZIONE: L'impianto installato andrà permanentemente perso!</strong>",
   "criticalVitalPartsCannotBeAmputatedWithoutCa": "CRITICO: Le parti vitali non possono essere amputate senza causare shock letale.",
   "amputate": "Amputa",
   "upgradeProtocol": "CHIRURGIA SOSTITUTIVA",
@@ -67,7 +66,7 @@
   "prostheticUninstalledSuccessfully": "Protesi disinstallata con successo.",
   "installTheAdvancedProstheticMicroDeviceInsid": "Installa il microdispositivo protesico avanzato: {p1} all'interno dello slot compatibile.",
   "performFullSwapOfTheCurrentLimbForACustomize": "Esegui la sostituzione completa dell'arto attuale con un dispositivo archetipo personalizzato: {p1}. La tariffa include la rimozione del vecchio arto.",
-  "surgicallyAmputatingWillRemoveAllItsStatBonu": "L'amputazione chirurgica di {p1} rimuoverà permanentemente tutti i suoi bonus alle statistiche e abilità.{p2}",
+  "surgicallyAmputatingWillRemoveAllItsStatBonu": "L'amputazione chirurgica di {p1} rimuoverà permanentemente tutti i suoi bonus alle statistiche e abilità.",
   "thisSurgeryWillPermanentlyGraftANewOntoSBiol": "Questa operazione innesterà permanentemente un nuovo {p1} nella struttura biologica di {p2}, fornendo bonus standard.",
   "selectAnAdvancedMicroChipOrProstheticImplant": "Seleziona un micro-chip o un impianto protesico avanzato da innestare sul connettore: {p1}.",
   "chooseAReplacementDeviceModelToInstallOntoPa": "Scegli un modello di dispositivo sostitutivo da installare sulla parte: {p1}.",
@@ -99,9 +98,9 @@
     "-1": "Nessuno",
     "0": "Testicoli",
     "1": "Utero",
-    "2": "Oviparo",
-    "3": "Spore Vegetali",
-    "4": "Mitosi"
+    "2": "Ovidotto",
+    "3": "Sporangio",
+    "4": "Ghiandola Mitotica"
   },
   "unknown": "Sconosciuto",
   "classless": "Senza classe",
@@ -157,5 +156,12 @@
   "attachmentPoint": "Punto di innesto",
   "chooseAttachmentPoint": "Scegli l'arto su cui innestare {p1}. Una mano si innesta su una gamba con la stessa facilità con cui si innesta su un braccio.",
   "attachTo": "Innesta qui",
-  "attachedTo": "Innestato su {p1}"
+  "attachedTo": "Innestato su {p1}",
+  "back": "Indietro",
+  "abilities": "CARATTERISTICHE",
+  "vitals": "VITALI",
+  "free": "GRATIS",
+  "implantChip": "Impianto",
+  "implantWarning": "L'impianto installato andrà perduto per sempre.",
+  "nothingHere": "Niente qui."
 }

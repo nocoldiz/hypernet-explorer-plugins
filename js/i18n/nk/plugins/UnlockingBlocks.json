@@ -1,0 +1,9 @@
+{
+  "complexity": "LOCK COMPLEXITY: ",
+  "seconds": "S",
+  "lockPicked": "LOCK PICKED!",
+  "lockJammed": "LOCK JAMMED...",
+  "timeUp": "TIME UP!",
+  "usedSkeletonKey": "USED SKELETON KEY!",
+  "noLockpicks": "YOU NO HAB ANY LOCKPICKS"
+}

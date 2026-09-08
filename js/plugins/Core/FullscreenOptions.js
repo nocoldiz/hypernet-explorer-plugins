@@ -1,4 +1,5 @@
 /*:
+ * @target MZ
  * @plugindesc Makes the options window fill the entire game window and auto-sets fullscreen on distributed builds
  * @author Omni-Lex
  *

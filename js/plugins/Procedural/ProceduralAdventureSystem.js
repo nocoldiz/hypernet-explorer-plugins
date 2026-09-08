@@ -218,7 +218,12 @@
     return _anomDB;
   }
 
-  function anomText(key, params) { return T("Anomaly." + key, params); }
+  // Every line the encounter prints goes out through here, and an i18n entry
+  // is written the way the rest of the prose is: {a | b | c} alternates. The
+  // reward lines used to reach the card with their braces still on.
+  function anomText(key, params) {
+    return anomAlt(Math.random, T("Anomaly." + key, params));
+  }
 
   function anomalyBiomeKey(planet) {
     const PT = (window.GalaxySim && window.GalaxySim.PlanetTypes) || {};
@@ -700,6 +705,54 @@
   const ANOM_MAG = { small: 1, medium: 2.4, large: 5 };
   function anomMag(out) { return ANOM_MAG[out && out.mag] || ANOM_MAG.medium; }
 
+  // ---- Level brackets -----------------------------------------------------
+  // An anomaly is a side road, never a shortcut: what it pays is priced into
+  // the band the party is standing in (1-10, 11-20, 21-30, 31-40, 41 up) and
+  // capped there, so a lucky roll at level 3 cannot hand out a fortune, a
+  // late-game weapon or a level's worth of experience.
+  //   gold / exp / kp  scale the payout, and the caps are the ceiling one
+  //                    ending can ever pay, whatever its magnitude
+  //   gear             the price window kit is drawn from
+  //   mats             how much a haul of materials is worth carrying
+  //   relic            what a minted artifact is worth on the counter
+  const ANOM_BRACKETS = [
+    { max: 10, gold: 0.45, goldCap: 6000, exp: 0.5, expCap: 120, kp: 0.6,
+      gear: [100, 1200], mats: 0.6, relic: [15000, 60000] },
+    { max: 20, gold: 0.7, goldCap: 18000, exp: 0.7, expCap: 400, kp: 0.8,
+      gear: [600, 5000], mats: 0.8, relic: [40000, 200000] },
+    { max: 30, gold: 1, goldCap: 45000, exp: 1, expCap: 1000, kp: 1,
+      gear: [2000, 14000], mats: 1, relic: [150000, 600000] },
+    { max: 40, gold: 1.25, goldCap: 90000, exp: 1.15, expCap: 2000, kp: 1.15,
+      gear: [6000, 30000], mats: 1.2, relic: [400000, 1500000] },
+    { max: Infinity, gold: 1.5, goldCap: 160000, exp: 1.3, expCap: 3500, kp: 1.25,
+      gear: [12000, 60000], mats: 1.4, relic: [800000, 2500000] },
+  ];
+
+  function anomBracket(level) {
+    const lv = level != null ? level : anomPartyLevel();
+    for (let i = 0; i < ANOM_BRACKETS.length; i++) {
+      if (lv <= ANOM_BRACKETS[i].max) return ANOM_BRACKETS[i];
+    }
+    return ANOM_BRACKETS[ANOM_BRACKETS.length - 1];
+  }
+
+  // The one place coin is priced. `base` is what the ending is worth at the
+  // middle of the band; the party's level tilts it inside the band, the
+  // bracket scales it, and the bracket's cap is the last word.
+  function anomGoldPayout(base, mag) {
+    const level = anomPartyLevel();
+    const b = anomBracket(level);
+    const raw = base * mag * (1 + level / 24) * b.gold;
+    return Math.max(1, Math.min(b.goldCap, Math.round(raw)));
+  }
+
+  function anomPayGold(base, mag, lines) {
+    const gold = anomGoldPayout(base, mag);
+    if ($gameParty) $gameParty.gainGold(gold);
+    anomGoldLine(lines, gold);
+    return gold;
+  }
+
   // ---- Reward lines -------------------------------------------------------
   // A payout is a list of things, not a paragraph, so every line it pays out
   // carries the IconSet cell it is drawn with and reads the way a pocket reads
@@ -784,7 +837,10 @@
         { planet: session.placeName }),
       note: "<Category: Artifact>\n<Procedural: true>",   // i18n-ignore: note tags
       iconIndex: 245,
-      price: 250000 + Math.floor(rng() * 2000000),
+      price: (function () {
+        const band = anomBracket().relic;
+        return band[0] + Math.floor(rng() * (band[1] - band[0]));
+      })(),
       itypeId: 1,
       consumable: false,
       occasion: 3,
@@ -811,8 +867,8 @@
   function anomRandomGear(session, kind) {
     const db = kind === "armor" ? $dataArmors : $dataWeapons;
     if (!db) return null;
-    const level = anomPartyLevel();
-    const lo = 200 + level * 120, hi = 4000 + level * 2600;
+    const band = anomBracket().gear;
+    const lo = band[0], hi = band[1];
     const pool = [];
     for (let i = 1; i < db.length && i < 1501; i++) {
       const e = db[i];
@@ -1042,6 +1098,7 @@
     let kp = out && out.kp > 0
       ? Math.round(out.kp)
       : window.KnowledgePoints.forQuest(anomStars(out), levels, anomPartyLevel());
+    kp = Math.round(kp * anomBracket().kp);
     if (!(kp > 0)) return;
     $gameSystem.addKnowledge(kp);
     anomReward(lines, "knowledge", { kp: kp }, { count: "+" + kp });
@@ -1067,9 +1124,7 @@
         // kit and coin rather than leaving the party with a story and nothing.
         const gear = anomRandomGear(session, "weapon");
         if (gear) anomReward(lines, "gear", { name: gear.name }, { icon: gear.iconIndex });
-        const gold = Math.round(1800 * mag * (1 + level / 24));
-        if ($gameParty) $gameParty.gainGold(gold);
-        anomGoldLine(lines, gold);
+        anomPayGold(1800, mag, lines);
       }
       spec(session.earth ? "Archaeology" : "UFOlogy", 3);   // i18n-ignore: specialization id
       spec("Anthropology", 2);       // i18n-ignore: specialization id
@@ -1084,13 +1139,12 @@
       anomReward(lines, "schrodingerite", { units: units }, { count: "×" + units });
       spec("Quantum Cryptography", 2);   // i18n-ignore: specialization id
     } else if (kind === "loot") {
-      const mats = anomGiveMaterials(session, Math.max(1, Math.round(mag / 1.6)), Math.round(2 * mag));
+      const mats = anomGiveMaterials(session, Math.max(1, Math.round(mag / 1.6)),
+        Math.max(1, Math.round(2 * mag * anomBracket(level).mats)));
       if (mats.length) anomReward(lines, "materials", { list: mats.join(", ") });
       spec("Survival", 2);           // i18n-ignore: specialization id
     } else if (kind === "gold") {
-      const gold = Math.round(900 * mag * (1 + level / 24));
-      if ($gameParty) $gameParty.gainGold(gold);
-      anomGoldLine(lines, gold);
+      anomPayGold(900, mag, lines);
     } else if (kind === "harm") {
       const pct = Math.min(0.6, 0.08 * mag);
       ($gameParty ? $gameParty.members() : []).forEach((a) => {
@@ -1114,9 +1168,7 @@
         anomReward(lines, "skill", { who: who.name(), name: skill.name },
           { icon: skill.iconIndex });
       } else {
-        const gold = Math.round(1200 * mag * (1 + level / 24));
-        if ($gameParty) $gameParty.gainGold(gold);
-        anomGoldLine(lines, gold);
+        anomPayGold(1200, mag, lines);
       }
       spec("Anthropology", 2);       // i18n-ignore: specialization id
     } else if (kind === "needs") {
@@ -1127,9 +1179,7 @@
       // Nobody fitted it, or the augment is not one this build ships: the
       // ending still pays, in the coin the party can carry out of a cellar.
       if (!anomApplyAugment(session, out, lines)) {
-        const gold = Math.round(1200 * mag * (1 + level / 24));
-        if ($gameParty) $gameParty.gainGold(gold);
-        anomGoldLine(lines, gold);
+        anomPayGold(1200, mag, lines);
       }
       spec("Cybernetics", 3);        // i18n-ignore: specialization id
     }
@@ -1141,7 +1191,9 @@
     anomApplyCrime(out, lines);
 
     // Every ending teaches the away team something, even the empty ones.
-    const exp = Math.round((out && out.exp != null ? out.exp : 10) * mag * level);
+    const expBand = anomBracket(level);
+    const exp = Math.min(expBand.expCap,
+      Math.round((out && out.exp != null ? out.exp : 10) * mag * level * expBand.exp));
     if (exp > 0 && $gameParty) {
       $gameParty.allMembers().forEach((a) => a.gainExp(exp));
       anomReward(lines, "exp", { exp: exp }, { count: "+" + exp });
@@ -1198,7 +1250,7 @@
     // Tetris lives inside the phone now (HexphoneSystem), which is not a scene
     // that can be handed a contest: the falling-block game that can is the
     // lockpicking one, and it reports through MinigameFun like the rest.
-    tetris: "Scene_LockpickTetris",
+    tetris: "Scene_UnlockingBlocks",
     cards: "Scene_Tarot",
     horses: "Scene_HorseRace",
   };   // i18n-ignore-end
@@ -2326,14 +2378,15 @@
       left: (i) => (6 + i * 62) + "px",
       foeBottom: "-24px", foeSide: "8px", foeHeight: "150px",
     },
-    // Played as the whole screen the card is read at the TOP, so the cast is
-    // drawn short enough that every face still stands clear underneath it.
+    // Played as the whole screen the card sits in the MIDDLE of the picture,
+    // so the cast is drawn tall: the busts stand to either side of it and
+    // their faces are read clear of the card's edges.
     full: {
-      shade: "34vh", topShade: "52vh",
+      shade: "46vh", topShade: "34vh",
       bottomActive: "0", bottomIdle: "-2vh",
-      heightActive: "48vh", heightIdle: "44vh",
-      left: (i) => (1 + i * 13) + "vw",
-      foeBottom: "0", foeSide: "2vw", foeHeight: "46vh",
+      heightActive: "78vh", heightIdle: "70vh",
+      left: (i) => (-2 + i * 11) + "vw",
+      foeBottom: "0", foeSide: "-2vw", foeHeight: "74vh",
     },
   };
 
@@ -2646,15 +2699,10 @@
         rows.push({ label: anomText("ui.walkAway"), run: () => this.walkAway(view) });
         this.setRows(rows);
       }
-      const hint = document.createElement("div");
-      hint.className = "pas-adv-hint";   // i18n-ignore: DOM class
-      hint.textContent = anomText("ui.mapHint");
-      panel.appendChild(hint);
       body.scrollTop = 0;
       // What the node pays, and what it asks, are kept out of sight until the
       // node has finished saying itself.
       if (this._rowsEl) veiled.push(this._rowsEl);
-      veiled.push(hint);
       this.typeOut(typed, veiled, body);
     },
 
@@ -3001,6 +3049,11 @@
     lineText: anomLineText,
     lineIcon: anomLineIcon,
     lineCount: anomLineCount,
+    // What the party's band is worth: the tests (and anything pricing an
+    // ending against it) read the brackets through here.
+    brackets: ANOM_BRACKETS,
+    bracketFor: anomBracket,
+    goldPayout: anomGoldPayout,
   };
 
   // GalaxySim_Scene3D / _Overlay / _Bodies still ask for the star-map encounter

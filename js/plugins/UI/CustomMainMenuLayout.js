@@ -27,7 +27,7 @@
  *     Y    Bestiary                     G  Sandbox (tester only)
  *     1-9  Favourite items (on the map)
  *     1/2/3 Thinker / Multiplayer / Hypernet (inside the menu only)
- *     F5   Quicksave, F9 Quickload (Core/SaveSystem.js)
+ *     F9   Quicksave, F10 Quickload (Core/SaveSystem.js)
  *
  *   W/A/S/D move, Z/X are ok/cancel and Q/E zoom the world map
  *   (Map/WorldMap.js), so none of those are available for commands. T is
@@ -47,10 +47,11 @@
         return String(str ?? "").replace(/[&<>"']/g, c => HTML_ESCAPES[c]);
     }
 
-    // While Em travels with the party the menu picks up her vocabulary: the
-    // needs cards and a handful of tiles answer to her register instead of the
-    // clinical one (CharacterCreationPresets.emLabel). Every other party gets
-    // the fallback passed in here, so this is a no-op on an ordinary run.
+    // While Em travels with the party the needs cards and the workforce tile
+    // answer to her register instead of the clinical one
+    // (CharacterCreationPresets.emLabel). Every other pockets tile keeps its
+    // ordinary label. Every other party gets the fallback passed in here, so
+    // this is a no-op on an ordinary run.
     function emLabel(key, label) {
         return window.CharacterPresets?.emLabel?.(key, label) ?? label;
     }
@@ -74,6 +75,12 @@
     // sense is "return to the world map", which ends the walk or the drive and
     // puts the party down on the square they reached. "Stop travel" would visit
     // that square instead, generating a procedural map nobody asked for.
+    // A map noted <disableReturn> holds the party: WorldMapReturn refuses the
+    // press, so the row is not offered either (Map/WorldMapReturn.js).
+    function returnDisabled() {
+        return !!window.WorldMapReturn?.isReturnDisabled?.();
+    }
+
     function inVoxelWorld() {
         return !!(window.VoxelWorldSystem && window.VoxelWorldSystem.isActive() &&
                   !window.VoxelWorldSystem.isTitleDrive());
@@ -130,19 +137,14 @@
         { symbol: "world_map",   key: "M", input: "world_map_toggle" }, // owned by Map/WorldMap.js
         { symbol: "vehicles",    key: "V", code: 86 },
         { symbol: "build",       key: "B", code: 66 },
-        { symbol: "factions",    key: "F", code: 70 },
-        { symbol: "cooking",     key: "K", code: 75 },
         { symbol: "help",        key: "H", code: 72 },
         { symbol: "training",    key: "N", code: 78 },
-        { symbol: "bestiary",    key: "Y", code: 89 },
         { symbol: "sandbox",     key: "G", code: 71 },
         // Digits stay the favourites hotbar on the map (ItemSystem/
         // ItemSystemInventory.js already maps 1-9 to it, Skyrim-style), so these
-        // three only listen on the symbols that plugin defines and are reachable
+        // one only listens on the symbol that plugin defines and is reachable
         // by key from inside the menu, never from the field.
         { symbol: "thinker",     key: "1", input: "1" },
-        { symbol: "multiplayer", key: "2", input: "2" },
-        { symbol: "hypernet",    key: "3", input: "3" }
     ];
 
     // Input symbol each hotkey listens on, and the badge lookup used by the
@@ -151,6 +153,13 @@
     HOTKEYS.forEach(h => { h.input = h.input || ("letter_" + h.key.toLowerCase()); });
     const HOTKEY_LABELS = {};
     HOTKEYS.forEach(h => { HOTKEY_LABELS[h.symbol] = h.key; });
+
+    // The one key legend the menu is allowed: the letter beside the entry it
+    // belongs to. It names the device actually in use, so a player on a pad is
+    // never shown a key their controller does not have.
+    const hotkeyBadge = label => (label && Input.lastInputDevice && Input.lastInputDevice() === 'pad')
+        ? ""
+        : (label ? `<span class="hotkey-badge">${label}</span>` : "");
 
     // Every index here is a cell of img/system/IconSet.png (16 cells to a row,
     // 464 cells in all). The sheet has been redrawn since these were first
@@ -163,11 +172,11 @@
         skill: 70,
         status1: 188,
         specializations: 87,
+        vector_gun: 115,
         sleep_menu: 205,
         save: 121,
         cooking: 219,
         thinker: 290,
-        blacksmithing: 108,
         alchemistry: 180,
         build: 210,
         quest_log: 231,
@@ -188,8 +197,10 @@
         sandbox: 245,
         multiplayer: 246,
         hypernet: 306,
+        radio: 80,
         gameEnd: 214,
         assets: 313,
+        deeds: 192,
         pets: 298,
         vehicles: 195,
         army: 131
@@ -213,7 +224,8 @@
         dynamicsRoster: 196,
         dynamicsTurnOrder: 220,
         dynamicsWiki: 234,
-        dynamicsHistory: 230
+        dynamicsHistory: 230,
+        deedsRent: 313
     };
 
     // One cell of the sheet, as an inline background. Every icon in the menu
@@ -227,27 +239,19 @@
     // size comes from --icon-size on the element, so one stylesheet rule
     // decides it and the offsets follow; the fallback keeps the icons whole
     // even if the rule is missing.
-    const ICON_CELL = "var(--icon-size, 24px)";
-    const iconStyle = index => {
-        const col = index % 16;
-        const row = Math.floor(index / 16);
-        return "width:" + ICON_CELL + "; height:" + ICON_CELL + ";" +
-            "background-image:url('img/system/IconSet.png');" +
-            "background-repeat:no-repeat;" +
-            "background-size:calc(" + ICON_CELL + " * 16) auto;" +
-            "background-position:calc(" + ICON_CELL + " * -" + col + ") calc(" + ICON_CELL + " * -" + row + ")";
-    };
+    // The cell the icon sits in is handed over as two custom properties and
+    // .menu-icon in css/theme.css does the drawing: the sheet owns the sprite
+    // box, the offsets follow from it, and no call site paints anything.
+    const iconStyle = index =>
+        "--icon-col:" + (index % 16) + ";--icon-row:" + Math.floor(index / 16);
+
 
     // =========================================================================
-    // Resources Loader
+    // Resources Loader & ConfigManager Persistence
     // =========================================================================
-    function loadUIResources() {
-        if (!document.getElementById('stylesheet')) {
 
-        }
-    }
 
-    loadUIResources();
+
 
     // =========================================================================
     // Input tracking fallback for RPG Maker
@@ -379,19 +383,6 @@
             // and "I" must type an i rather than open the backpack.
             const focused = document.activeElement;
             if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA')) return;
-
-            // Keep the TAB/L1-R1 hint honest with whatever input the player is
-            // actually on right now, not just whichever one the menu happened
-            // to open with (a pad player who starts moving the cursor before
-            // ever pressing a shoulder button should still see "L1 / R1").
-            const hintScene = SceneManager._scene;
-            if (hintScene && hintScene._dndContainer && hintScene.uiSwitchHintText) {
-                const hint = hintScene._dndContainer.querySelector(".party-switch-hint");
-                if (hint) {
-                    const text = hintScene.uiSwitchHintText();
-                    if (hint.textContent !== text) hint.textContent = text;
-                }
-            }
 
             // Walking the party comes before the back-out check because TAB is
             // shared between the two: while the roster cards are on the page it
@@ -609,10 +600,9 @@
         // party as a whole. Clicking a member card pins it to that member.
         this._needsActorPinned = false;
         this._isToolsPage = false;
-        this._isWorldMapPage = false;
         this._isDynamicsPage = false;
-        this._dynamicsView = 'hub';
-        this._dynamicsPendingRetireId = null;
+        this._isDeedsPage = false;
+        this._dynamicsDrag = null;
         this._isPetsPage = false;
         this._petAbandonId = null;
         this._isVehiclesPage = false;
@@ -644,26 +634,44 @@
                 existing._dndHideTimer = null;
             }
             existing._dndHideToken = (existing._dndHideToken || 0) + 1;
-            existing.style.zIndex = ""; // restore the CSS stacking order (1000)
-            existing.style.display = ""; // back into the layout if the dissolve finished
+            // Out of backdrop duty: the CSS stacking order (1000) and the
+            // layout are both the stylesheet's again.
+            // "menu-fading-out" and the missing "menu-shown" are the outgoing
+            // dissolve's leftovers: it sets opacity 0 and pointer-events none,
+            // and its rule sits after "menu-snapped-in" in the sheet, so leaving
+            // it on hands back an invisible, unclickable menu that only ESC exits.
+            existing.classList.remove("menu-backdrop", "menu-dissolved", "menu-fading-out");
+            existing.classList.add("menu-shown");
 
             UIMenuInputManager.init(this._dndContainer);
             this.addMenuEventListeners(); // Ensure context menu right-click listener is bound
-            this.refreshUIMenuDOM(false); // Draw instantly in background
 
-            this._dndContainer.style.pointerEvents = "auto";
+            // Preferences is the one submenu that cannot change a single thing
+            // the spread prints: it edits settings, and everything it does to
+            // the look of the menu (theme, UI and font scale) is a CSS custom
+            // property the standing DOM picks up on its own. Rebuilding both
+            // pages for it only throws the drawn parchment away and paints the
+            // portraits again, which is the redraw you see on the way back, so
+            // the pages are left exactly as they were and only the navigator is
+            // bound again.
+            if (SceneManager.isPreviousScene(Scene_Options) &&
+                this._dndContainer.querySelector(".book-spread")) {
+                UIMenuInputManager.activate(4);
+                if (window.MenuSearch) window.MenuSearch.afterRender(this);
+            } else {
+                this.refreshUIMenuDOM(false); // Draw instantly in background
+            }
+
+
 
             // Temporarily disable entrance animation so it doesn't flicker/rustle
             const spread = this._dndContainer.querySelector(".book-spread");
-            if (spread) {
-                spread.style.animation = "none";
-            }
+            if (spread) spread.classList.add("menu-no-entrance");
 
             // Snap the parchment back in instantly (no fade). The content is already
             // drawn above, so it covers the outgoing window's scene change in one frame
             // instead of cross-fading through it.
-            this._dndContainer.style.transition = "none";
-            this._dndContainer.style.opacity = "1";
+            this._dndContainer.classList.add("menu-snapped-in");
         } else {
             // First open: create DOM container fresh
             this.createUIMenuDOM();
@@ -675,7 +683,7 @@
     // just its results list as the player types, see CustomMainMenuSearch.js).
     // Without this the navigator would keep walking DOM nodes that are gone.
     Scene_Menu.prototype.rebindMenuFocus = function () {
-        UIMenuInputManager.activate(this._isWorldMapPage ? 1 : 3);
+        UIMenuInputManager.activate(4);
     };
 
     Scene_Menu.prototype.selectedActor = function () {
@@ -694,10 +702,10 @@
     };
 
     // TAB / L1-R1 and a clicked bio card both land here: only the selection
-    // highlight and the needs/addiction bars actually change, so this patches
-    // those two things in place (letting the CSS transitions already on
-    // .party-bio-card and .survival-bar-fill animate it) instead of fading
-    // out and rebuilding the whole right page for a value change.
+    // highlight and the needs/addiction readings actually change, so this
+    // patches those two things in place (letting the CSS transition already on
+    // .party-bio-card animate it) instead of fading out and rebuilding the
+    // whole right page for a value change.
     Scene_Menu.prototype.updateRightPageSelection = function () {
         const spread = this._dndContainer ? this._dndContainer.querySelector(".book-spread") : null;
         const rightPageContainer = spread ? spread.querySelector(".right-page") : null;
@@ -714,41 +722,15 @@
         partyList.querySelectorAll(".party-bio-card").forEach((el, idx) => {
             el.classList.toggle("selected", idx === this._selectedActorIndex);
         });
+    };
 
-        const hint = rightPageContainer.querySelector(".party-switch-hint");
-        if (hint) hint.textContent = this.uiSwitchHintText();
-
-        const box = rightPageContainer.querySelector(".survival-box");
-        if (!box) return;
-
-        const defs = this.getUINeedsCardDefs($gameParty.members());
-        const existing = new Map();
-        box.querySelectorAll(".survival-card").forEach(el => existing.set(el.dataset.need, el));
-
-        // A card the new member doesn't have (an addiction only the previous
-        // member carried) is dropped; one only the new member has is appended.
-        existing.forEach((el, key) => {
-            if (!defs.some(d => d.key === key)) el.remove();
-        });
-
-        defs.forEach(def => {
-            const el = existing.get(def.key);
-            if (!el) {
-                box.insertAdjacentHTML("beforeend", this.renderUINeedsCardHTML(def));
-                return;
-            }
-            // The band is a class, so an in place refresh swaps the class
-            // rather than repainting the colour by hand.
-            const BANDS = ["gauge-band--bad", "gauge-band--warn", "gauge-band--ok"];
-            const valEl = el.querySelector(".survival-val");
-            valEl.textContent = `${def.val}%`;
-            const fill = el.querySelector(".survival-bar-fill");
-            fill.style.width = `${def.val}%`;
-            for (const target of [valEl, fill]) {
-                target.classList.remove(...BANDS);
-                target.classList.add(def.band);
-            }
-        });
+    // The one way out of the menu, so the Back stamp in the header bar, the
+    // cancel key and the pad's B button all leave by the same door: back one
+    // level if a pocket page is open, out of the menu if none is.
+    Scene_Menu.prototype.uiBackOut = function () {
+        if (this.backOutOneLevel && this.backOutOneLevel()) return;
+        SoundManager.playCancel();
+        this.popScene();
     };
 
     // The roster cards only exist on the sheet that carries the needs panel, so
@@ -756,7 +738,6 @@
     // the travel codex, not while a search has taken the spread over, and not
     // for a party of one.
     Scene_Menu.prototype.canCycleSelectedActor = function () {
-        if (this._isWorldMapPage) return false;
         if (window.MenuSearch && window.MenuSearch.isActive()) return false;
         return $gameParty.members().length > 1;
     };
@@ -833,8 +814,9 @@
     Scene_Menu.prototype.createUIMenuDOM = function () {
         this._dndContainer = document.createElement('div');
         this._dndContainer.id = 'menu-container';
-        this._dndContainer.style.opacity = "0";
-        this._dndContainer.style.transition = "opacity 0.22s ease-out";
+        // Transparent only while the fade below is pending: #menu-container is
+        // shared with two dozen other screens and is visible by default.
+        this._dndContainer.classList.add('menu-entering');
         document.body.appendChild(this._dndContainer);
 
         this.addMenuEventListeners(); // Ensure context menu right-click listener is bound
@@ -845,7 +827,8 @@
         // Force reflow and trigger smooth fade-in
         setTimeout(() => {
             if (this._dndContainer) {
-                this._dndContainer.style.opacity = "1";
+                this._dndContainer.classList.remove("menu-entering");
+                this._dndContainer.classList.add("menu-shown");
             }
         }, 16);
     };
@@ -856,9 +839,9 @@
         const leftPageContainer = spread.querySelector(".left-page");
         if (!leftPageContainer) return;
 
-        leftPageContainer.style.transition = "opacity 0.12s ease-out, transform 0.12s ease-out";
-        leftPageContainer.style.opacity = "0";
-        leftPageContainer.style.transform = "translateX(-6px)";
+        // The page turn is one class; how long it takes and how far the sheet
+        // slides are decided in css/theme.css, not here.
+        leftPageContainer.classList.add("page-turn", "page-turn--out");
 
         setTimeout(() => {
             this._dndLastLeftPageKey = newKey;
@@ -871,15 +854,12 @@
             // Vehicles page renders its sprites on the left page, and stands
             // the selected one on the turntable on the right.
             this.drawAllVehicleSprites();
-            this.refreshGaragePreview();
 
             // Re-bind focusable commands in new list immediately so keyboard/gamepad navigation finds them
-            UIMenuInputManager.activate(this._isWorldMapPage ? 1 : 3);
+            UIMenuInputManager.activate(4);
             if (window.MenuSearch) window.MenuSearch.afterRender(this);
 
-            leftPageContainer.style.transition = "opacity 0.15s ease-in, transform 0.15s ease-in";
-            leftPageContainer.style.opacity = "1";
-            leftPageContainer.style.transform = "translateX(0px)";
+            leftPageContainer.classList.remove("page-turn--out");
         }, 120);
     };
 
@@ -889,9 +869,7 @@
         const rightPageContainer = spread.querySelector(".right-page");
         if (!rightPageContainer) return;
 
-        rightPageContainer.style.transition = "opacity 0.12s ease-out, transform 0.12s ease-out";
-        rightPageContainer.style.opacity = "0";
-        rightPageContainer.style.transform = "translateX(6px)";
+        rightPageContainer.classList.add("page-turn", "page-turn--out");
 
         setTimeout(() => {
             rightPageContainer.innerHTML = newHtml;
@@ -900,9 +878,7 @@
             this.drawAllPartyPortraits();
             if (window.MenuSearch) window.MenuSearch.afterRender(this);
 
-            rightPageContainer.style.transition = "opacity 0.15s ease-in, transform 0.15s ease-in";
-            rightPageContainer.style.opacity = "1";
-            rightPageContainer.style.transform = "translateX(0px)";
+            rightPageContainer.classList.remove("page-turn--out");
         }, 120);
     };
 
@@ -918,12 +894,12 @@
             window.MenuSearch.clear(this);
             return true;
         }
-        if (this._isWorldMapPage) {
-            this.hideWorldMapPage();
-        } else if (this._isToolsPage) {
+        if (this._isToolsPage) {
             this.hideToolsPage();
         } else if (this._isDynamicsPage) {
             this.hideDynamicsPage();
+        } else if (this._isDeedsPage) {
+            this.hideDeedsPage();
         } else if (this._isPetsPage) {
             this.hidePetsPage();
         } else if (this._isVehiclesPage) {
@@ -937,22 +913,151 @@
     Scene_Menu.prototype.showDynamicsPage = function () {
         SoundManager.playOk();
         this._isDynamicsPage = true;
-        this._dynamicsView = 'hub';
-        this._dynamicsPendingRetireId = null;
+        this._dynamicsDrag = null;
         this.refreshUIMenuDOM(true);
     };
 
     Scene_Menu.prototype.hideDynamicsPage = function () {
         SoundManager.playCancel();
-        this._dynamicsPendingRetireId = null;
-        // Backing out of a sub-page lands on the Dynamics hub; only the hub
-        // itself closes back to the pockets.
-        if (this._dynamicsView && this._dynamicsView !== 'hub') {
-            this._dynamicsView = 'hub';
+        this._dynamicsDrag = null;
+        this._isDynamicsPage = false;
+        this.refreshUIMenuDOM(true);
+    };
+
+    // The deeds: every town the party founded, who lives in it and what it
+    // pays them. The register itself belongs to the world folder and is owned
+    // by Crafting/FurnitureSystem.js (window.TownFounding); this page only
+    // reads it and hands over the rent.
+    Scene_Menu.prototype.showDeedsPage = function () {
+        SoundManager.playOk();
+        this._isDeedsPage = true;
+        this.refreshUIMenuDOM(true);
+    };
+
+    Scene_Menu.prototype.hideDeedsPage = function () {
+        SoundManager.playCancel();
+        this._isDeedsPage = false;
+        this.refreshUIMenuDOM(true);
+    };
+
+    Scene_Menu.prototype.collectDeedsRent = function () {
+        const TF = window.TownFounding;
+        if (!TF) return;
+        const total = TF.collectRent();
+        if (total > 0) {
+            SoundManager.playShop();
+            window.ParchmentToast?.show?.(T('Towns.deeds.collected', { amount: TF.formatMoney(total) }));
         } else {
-            this._isDynamicsPage = false;
+            SoundManager.playBuzzer();
+            window.ParchmentToast?.show?.(T('Towns.deeds.nothingDue'));
         }
         this.refreshUIMenuDOM(true);
+    };
+
+    // Every category of property the party can hold gets its own section, and
+    // a section with nothing in it says so rather than vanishing: an empty
+    // register still tells you what there is to own.
+    Scene_Menu.prototype.deedsHouseRows = function () {
+        const re = $gameSystem && $gameSystem.realEstateData;
+        if (!re || !Array.isArray(re.properties) || !Array.isArray(re.ownedProperties)) return '';
+        let rows = '';
+        for (const pid of re.ownedProperties) {
+            const prop = re.properties.find(p => p && p.id === pid);
+            if (!prop) continue;
+            const rent = (prop.currentOccupants || 0) * (prop.rentPerOccupant || 0);
+            rows += `
+                        <div class="deed-row">
+                            <div class="deed-name">${escapeHtml(prop.name || '')}</div>
+                            <div class="deed-where">${escapeHtml(prop.location || '')}</div>
+                            <div class="deed-stat">${T('Towns.deeds.colType')}: ${escapeHtml(prop.type || '')}</div>
+                            <div class="deed-stat">${T('Towns.deeds.colOccupancy')}: ${prop.currentOccupants || 0} / ${prop.maxOccupants || 0}</div>
+                            <div class="deed-stat">${T('Towns.deeds.rentPerDay', { amount: '€' + rent.toLocaleString() })}</div>
+                        </div>`;
+        }
+        return rows;
+    };
+
+    Scene_Menu.prototype.deedsShopRows = function () {
+        const SM = window.ShopManagement;
+        const data = SM && SM.getData ? SM.getData() : null;
+        if (!data || !data.shops) return '';
+        let rows = '';
+        for (const id of Object.keys(data.shops)) {
+            const shop = data.shops[id];
+            if (!shop) continue;
+            const where = SM.getMapDisplayName ? SM.getMapDisplayName(Number(id)) : String(id);
+            rows += `
+                        <div class="deed-row">
+                            <div class="deed-name">${escapeHtml(where)}</div>
+                            <div class="deed-stat">${T('Towns.deeds.colCategory')}: ${escapeHtml(shop.category || '')}</div>
+                            <div class="deed-stat">${T('Towns.deeds.colBalance')}: ${SM.formatEuroPrice ? SM.formatEuroPrice(shop.balance || 0) : (shop.balance || 0)}</div>
+                        </div>`;
+        }
+        return rows;
+    };
+
+    Scene_Menu.prototype.deedsAnimalRows = function () {
+        const AG = window.AnimalGrowthSystem;
+        const owned = (AG && AG.listOwnedAnimals) ? (AG.listOwnedAnimals() || []) : [];
+        let rows = '';
+        for (const animal of owned) {
+            const where = animal.mapName || (AG.mapDisplayName ? AG.mapDisplayName(animal.mapKey) : '');
+            rows += `
+                        <div class="deed-row">
+                            <div class="deed-name">${escapeHtml(animal.animalId || '')}</div>
+                            <div class="deed-where">${escapeHtml(where || '')}</div>
+                            <div class="deed-stat">${T('Towns.deeds.colStage')}: ${escapeHtml(animal.stageName || animal.stage || '')}</div>
+                        </div>`;
+        }
+        return rows;
+    };
+
+    Scene_Menu.prototype.generateUIDeedsPageHTML = function () {
+        const TF = window.TownFounding;
+        const towns = (TF && TF.list) ? TF.list() : [];
+        let townRows = '';
+        let due = 0;
+        for (const town of towns) {
+            const residents = TF.residents(town);
+            const capacity = TF.capacity(town);
+            due += TF.rentDue(town);
+            const where = T('Towns.deeds.square', { x: town.worldX, y: town.worldY }) +
+                (town.planet ? ' ' + T('Towns.deeds.onPlanet', { planet: town.planet }) : '');
+            townRows += `
+                        <div class="deed-row">
+                            <div class="deed-name">${escapeHtml(town.name)}</div>
+                            <div class="deed-where">${escapeHtml(where)}</div>
+                            <div class="deed-stat">${T('Towns.deeds.colHouses')}: ${town.houses || 0}</div>
+                            <div class="deed-stat">${T('Towns.deeds.colShops')}: ${town.shops || 0}</div>
+                            <div class="deed-stat">${T('Towns.deeds.colResidents')}: ${residents} / ${capacity}</div>
+                            <div class="deed-stat">${T('Towns.deeds.rentPerDay', { amount: TF.formatMoney(TF.rentPerDay(town)) })}</div>
+                            <div class="deed-note">${residents >= capacity ? T('Towns.deeds.full') : T('Towns.deeds.growing')}</div>
+                        </div>`;
+        }
+        const sections = [
+            { title: T('Towns.deeds.sectionTowns'), rows: townRows, empty: T('Towns.deeds.empty') },
+            { title: T('Towns.deeds.sectionHouses'), rows: this.deedsHouseRows(), empty: T('Towns.deeds.emptyHouses') },
+            { title: T('Towns.deeds.sectionShops'), rows: this.deedsShopRows(), empty: T('Towns.deeds.emptyShops') },
+            { title: T('Towns.deeds.sectionAnimals'), rows: this.deedsAnimalRows(), empty: T('Towns.deeds.emptyAnimals') }
+        ];
+        const board = sections.map(sec => `
+                        <div class="dyn-section-title">${sec.title}</div>
+                        ${sec.rows || `<div class="roster-empty">${sec.empty}</div>`}`).join('');
+        const collect = towns.length
+            ? `<div class="command-item focusable" onclick="SceneManager._scene?.collectDeedsRent?.()">
+                            <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.deedsRent)}"></span>
+                            <span>${T('Towns.deeds.collect')} · ${TF.formatMoney(due)}</span>
+                        </div>`
+            : '';
+        return `
+                <div class="tools-pockets">
+                    <div class="page-header-bar">
+                        <div class="back-button" onclick="SceneManager._scene?.hideDeedsPage?.()">${T('Towns.deeds.back')}</div>
+                        <h2 class="tools-title">${T('Towns.deeds.title')}</h2>
+                        ${collect}
+                    </div>
+                    <div class="deed-board">${board}</div>
+                </div>`;
     };
 
     Scene_Menu.prototype.showPetsPage = function () {
@@ -985,7 +1090,6 @@
     Scene_Menu.prototype.hideVehiclesPage = function () {
         SoundManager.playCancel();
         this._isVehiclesPage = false;
-        this.closeGaragePreview();
         this.refreshUIMenuDOM(true);
     };
 
@@ -1242,6 +1346,10 @@
         const summon = window.SummonSystem?.mapSummonInfo?.() ?? null;
         if (summon && !summon.petId) this.drawPetPortrait(summon, 'summon-canvas');
         if (!window.PetSystem) return;
+        // The companion being read on the right page wears the same portrait
+        // its row does, on a canvas of its own.
+        const read = window.PetSystem.getPet(this._petsSelected);
+        if (read) this.drawPetPortrait(read, 'pet-sheet-canvas');
         window.PetSystem.getPets().forEach(pet => {
             this.drawPetPortrait(pet, `pet-canvas-${pet.id}`);
         });
@@ -1288,20 +1396,29 @@
     };
 
     // =========================================================================
-    // Party Dynamics page: a hub of four sub-pages
-    //   roster    , promote a leader, bench a member (retiring them into a
-    //               character-creation dossier for this world)
-    //   turnorder , the order the party acts in, member 1 first
-    //   wiki    , the Empathize encyclopedia opened on its Party section
-    //   history , every member who ever travelled along, with the date they
-    //             left and, when it applies, their date of death
+    // Party Dynamics page: one screen, three lists.
+    //   active   , who is travelling right now: leader, turn order, Empathize
+    //   inactive , everyone this world has ever benched, waiting to be called
+    //              back (a character-creation dossier apiece)
+    //   past     , every member who no longer travels along, with the date they
+    //              left and, when it applies, their date of death
+    // A row is dragged from Active into Inactive and back to change the party
+    // on the spot. The road is the only place that allows it: inside a
+    // procedural structure (Dungeon, Crypt, LootCellar and the rest of the
+    // catalogue) or anywhere in the Omega Tower the party is stuck with the
+    // people it walked in with.
     // =========================================================================
 
-    Scene_Menu.prototype.setDynamicsView = function (view) {
-        SoundManager.playOk();
-        this._dynamicsView = view;
-        this._dynamicsPendingRetireId = null;
-        this.refreshUIMenuDOM(true);
+    // Three travellers is the ceiling character creation builds to, so it is
+    // the ceiling here as well.
+    const DYNAMICS_MAX_ACTIVE = 3;
+
+    // '' when the party may be rearranged, otherwise the i18n key under
+    // MainMenu.dynamics that says why it may not.
+    Scene_Menu.prototype.dynamicsSwapLocked = function () {
+        if (window.DungeonFloors?.insideTower?.()) return 'lockedTower';
+        if (window.ProceduralInteriors?.currentStructureBiome?.()) return 'lockedStructure';
+        return '';
     };
 
     Scene_Menu.prototype.openDynamicsWiki = function () {
@@ -1341,25 +1458,19 @@
         this.refreshUIMenuDOM(false);
     };
 
-    // First click arms the row, second one confirms: benching a companion sends
-    // them off the roster for the rest of this playthrough.
-    Scene_Menu.prototype.askRetireUIMember = function (actorId) {
-        SoundManager.playCursor();
-        this._dynamicsPendingRetireId = actorId;
-        this.refreshUIMenuDOM(false);
-    };
-
-    Scene_Menu.prototype.cancelRetireUIMember = function () {
-        SoundManager.playCancel();
-        this._dynamicsPendingRetireId = null;
-        this.refreshUIMenuDOM(false);
-    };
-
+    // Benching a companion: they leave the party and wait on the Inactive list,
+    // where the same page calls them back. Nothing about it is one-way any
+    // more, so it asks no second time.
     Scene_Menu.prototype.retireUIMember = function (actorId) {
         const actor = $gameActors.actor(actorId);
         const name = actor ? actor.name() : '';
+        if (this.dynamicsSwapLocked()) {
+            SoundManager.playBuzzer();
+            window.ParchmentToast?.show?.(T('MainMenu.dynamics.' + this.dynamicsSwapLocked()),
+                { severity: 'warning', duration: 200 });
+            return;
+        }
         const result = window.CharacterPresets?.retirePartyMember?.(actorId);
-        this._dynamicsPendingRetireId = null;
 
         if (!result || !result.ok) {
             SoundManager.playBuzzer();
@@ -1368,7 +1479,9 @@
                 ? T('MainMenu.dynamics.partyEmpty')
                 : reason === 'isLeader'
                     ? T('MainMenu.dynamics.isLeader', { name })
-                    : T('MainMenu.dynamics.cannotRetire', { name: name || T('MainMenu.roster.thatMember') });
+                    : reason === 'storyLocked'
+                        ? T('MainMenu.dynamics.storyLocked', { name })
+                        : T('MainMenu.dynamics.cannotRetire', { name: name || T('MainMenu.roster.thatMember') });
             window.ParchmentToast?.show?.(message, { severity: 'warning', duration: 200 });
             this.refreshUIMenuDOM(false);
             return;
@@ -1389,6 +1502,12 @@
     // savegame of this world has ever benched, and taking one clears them from
     // the bench for all of them.
     Scene_Menu.prototype.reactivateUIMember = function (presetId) {
+        if (this.dynamicsSwapLocked()) {
+            SoundManager.playBuzzer();
+            window.ParchmentToast?.show?.(T('MainMenu.dynamics.' + this.dynamicsSwapLocked()),
+                { severity: 'warning', duration: 200 });
+            return;
+        }
         const result = window.CharacterPresets?.unretirePartyMember?.(presetId);
 
         if (!result || !result.ok) {
@@ -1409,122 +1528,115 @@
         this.refreshUIMenuDOM(false);
     };
 
+    // The board itself: one page, three lists. Active at the top (who is on the
+    // road right now), Inactive under it (everyone this world has ever benched)
+    // and the former members at the foot, read only. A member is moved between
+    // the first two lists by dragging their row into the other one, or with the
+    // button on the row for anyone playing with a pad or the keyboard.
     Scene_Menu.prototype.generateUIDynamicsPageHTML = function () {
-        const view = this._dynamicsView || 'hub';
-        if (view === 'roster') return this.generateUIDynamicsRosterHTML();
-        if (view === 'history') return this.generateUIDynamicsHistoryHTML();
-        if (view === 'turnorder') return this.generateUIDynamicsTurnOrderHTML();
-
-        const partySize = $gameParty.members().length;
-        const pastCount = (window.PartyRoster?.history?.() ?? []).filter(e => e.status !== 'active').length;
-        const wikiEnabled = !!window.NPCEmpathize?.openWiki;
-        const turnOrderEnabled = !!window.BattleTurnOrder;
-        const firstToAct = turnOrderEnabled ? (window.BattleTurnOrder.members()[0] ?? null) : null;
-
-        // The hint ink is left to CSS (.pockets-hint) so each theme can set a
-        // readable colour; a hardcoded brown was unreadable on the dark themes.
-        const tile = (label, hint, iconIndex, action, enabled) => `
-                        <div class="command-item dynamics-tile focusable mainmenu-01" style="opacity:${enabled ? 1 : 0.45}; pointer-events:${enabled ? 'auto' : 'none'}"
-                            onclick="${enabled ? action : ''}/* i18n-ignore: inline handler */">
-                            <span class="icon mainmenu-02" style="${iconStyle(iconIndex)}"></span>
-                            <span class="mainmenu-03">
-                                <span>${label}</span>
-                                <span class="pockets-hint mainmenu-04">${hint}</span>
-                            </span>
-                        </div>`;
-
-        return `
-                <div class="tools-pockets">
-                    <div class="page-header-bar">
-                        <div class="back-button" onclick="SceneManager._scene?.hideDynamicsPage?.()">${T('MainMenu.dynamics.back')}</div>
-                        <h2 class="tools-title">${T('MainMenu.dynamics.title')}</h2>
-                    </div>
-                    <div class="mainmenu-05">
-                        ${tile(T('MainMenu.dynamics.roster'), T('MainMenu.dynamics.rosterSub', { count: partySize }), PAGE_ICONS.dynamicsRoster,
-                            "SceneManager._scene?.setDynamicsView?.('roster')", true)}
-                        ${tile(T('MainMenu.dynamics.turnOrder'),
-                            firstToAct ? T('MainMenu.dynamics.turnOrderSub', { name: escapeHtml(firstToAct.name()) }) : T('MainMenu.dynamics.turnOrderHint'),
-                            PAGE_ICONS.dynamicsTurnOrder, "SceneManager._scene?.setDynamicsView?.('turnorder')", turnOrderEnabled && partySize > 0)}
-                        ${tile(T('MainMenu.dynamics.wiki'), T('MainMenu.dynamics.wikiHint'), PAGE_ICONS.dynamicsWiki,
-                            "SceneManager._scene?.openDynamicsWiki?.()", wikiEnabled)}
-                        ${tile(T('MainMenu.dynamics.history'), pastCount ? T.n('MainMenu.dynamics.historySub', pastCount) : T('MainMenu.dynamics.historyHint'), PAGE_ICONS.dynamicsHistory,
-                            "SceneManager._scene?.setDynamicsView?.('history')", true)}
-                    </div>
-                </div>`;
-    };
-
-    Scene_Menu.prototype.generateUIDynamicsRosterHTML = function () {
         const members = $gameParty.members();
-        const canRetire = members.length > 1;
-        let memberRows = '';
+        const bench   = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
+        const locked  = this.dynamicsSwapLocked();
+        const canBench  = !locked && members.length > 1;
+        const hasRoom   = !locked && members.length < DYNAMICS_MAX_ACTIVE;
+        const wikiEnabled = !!window.NPCEmpathize?.openWiki;
+        const order = window.BattleTurnOrder?.members?.() ?? [];
+        const dexLabel = escapeHtml(TextManager.param(6));
 
+        const drag = (kind, id, movable) => movable
+            ? ` draggable="true" ondragstart="SceneManager._scene?.onDynamicsDragStart?.(event, '${kind}', ${id})" ondragend="SceneManager._scene?.onDynamicsDragEnd?.()"`
+            : '';
+        const zone = (kind) => ` ondragover="SceneManager._scene?.onDynamicsDragOver?.(event)" ondrop="SceneManager._scene?.onDynamicsDrop?.(event, '${kind}')"`;
+
+        // ---- Active -------------------------------------------------------
+        let activeRows = '';
         members.forEach((mem, idx) => {
             const actorId  = mem.actorId();
             const isLeader = (idx === 0);
-            const pending  = this._dynamicsPendingRetireId === actorId;
-            // The leader stays: hand the party over first, then bench them.
-            const canRetireThis = canRetire && !isLeader;
+            const turnIdx  = order.findIndex(m => m.actorId() === actorId);
+            const first    = turnIdx === 0;
+            const last     = turnIdx === order.length - 1;
+            const step = (delta, label, disabled) => (disabled || turnIdx < 0
+                ? `<div class="command-item roster-action--fixed is-disabled">${label}</div>`
+                : `<div class="command-item focusable roster-action--fixed" onclick="SceneManager._scene?.moveUITurnOrder?.(${actorId}, ${delta})">${label}</div>`);
 
+            // Story mode keeps the party in one pair of hands, so the offer to
+            // hand it over is not made (PartyRoster.canSwitchLeader).
+            const canLead = window.PartyRoster?.canSwitchLeader?.() !== false;
             const leaderBtn = isLeader
-                ? `<div class="command-item mainmenu-06">${T('MainMenu.roster.leader')}</div>`
-                : `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.promoteUIPartyLeader?.(${actorId})">${T('MainMenu.roster.makeLeader')}</div>`;
+                ? `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.leader')}</div>`
+                : !canLead
+                    ? `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.makeLeader')}</div>`
+                    : `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.promoteUIPartyLeader?.(${actorId})">${T('MainMenu.roster.makeLeader')}</div>`;
+            // The leader stays: hand the party over first, then bench them. In
+            // the story mode neither Em nor Bubba leaves the party at all.
+            const storyLocked = window.PartyRoster?.isStoryLocked?.(actorId) === true;
+            const benchBtn = (canBench && !isLeader && !storyLocked)
+                ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.retireUIMember?.(${actorId})">${T('MainMenu.roster.setInactive')}</div>`
+                : `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.setInactive')}</div>`;
 
-            // Retiring is a one-way door, so the row asks twice.
-            const retireBtns = pending
-                ? `<div class="command-item focusable mainmenu-08" onclick="SceneManager._scene?.retireUIMember?.(${actorId})">${T('MainMenu.roster.confirm')}</div>
-                            <div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.cancelRetireUIMember?.()">${T('MainMenu.roster.cancel')}</div>`
-                : (canRetireThis
-                    ? `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.askRetireUIMember?.(${actorId})">${T('MainMenu.roster.setInactive')}</div>`
-                    : `<div class="command-item mainmenu-09">${T('MainMenu.roster.setInactive')}</div>`);
-
-            memberRows += `
-                    <div class="npc-dynamics-member mainmenu-10">
-                        <div class="portrait-frame">
-                            <canvas id="roster-canvas-${actorId}" width="48" height="48"></canvas>
-                        </div>
-                        <div class="mainmenu-07">
-                            <div class="mainmenu-11">
-                                ${escapeHtml(mem.name())}
-                                <span class="mainmenu-12">${escapeHtml(mem.currentClass() ? mem.currentClass().name : '')} Lv.${mem.level}${isLeader ? ' · leads the party' : ''}</span>
+            activeRows += `
+                        <div class="npc-dynamics-member dyn-row roster-row"${drag('active', actorId, canBench && !isLeader && !storyLocked)}>
+                            <div class="dyn-order">${turnIdx >= 0 ? turnIdx + 1 : '-'}</div>
+                            <div class="portrait-frame">
+                                <canvas id="roster-canvas-${actorId}" width="48" height="48"></canvas>
                             </div>
-                            <div class="mainmenu-13">
-                                ${leaderBtn}
-                                ${retireBtns}
-                                <div class="command-item focusable mainmenu-07" onclick="window.NPCEmpathize?.openForActor(${actorId})">${T('MainMenu.roster.empathize')}</div>
+                            <div class="roster-action">
+                                <div class="roster-name">
+                                    ${escapeHtml(mem.name())}
+                                    <span class="roster-sub">${escapeHtml(mem.currentClass() ? mem.currentClass().name : '')} ${T('MainMenu.roster.levelAbbr')}${mem.level} · ${dexLabel} ${mem.agi}${isLeader ? ' · ' + T('MainMenu.roster.leader') : ''}</span>
+                                </div>
+                                <div class="roster-actions">
+                                    ${leaderBtn}
+                                    ${benchBtn}
+                                    <div class="command-item focusable roster-action" onclick="window.NPCEmpathize?.openForActor(${actorId})">${T('MainMenu.roster.empathize')}</div>
+                                    ${step(-1, T('MainMenu.dynamics.moveUp'), first)}
+                                    ${step(1, T('MainMenu.dynamics.moveDown'), last)}
+                                </div>
                             </div>
-                        </div>
-                    </div>`;
+                        </div>`;
         });
+        if (!activeRows) activeRows = `<div class="roster-empty">${T('MainMenu.dynamics.noMembers')}</div>`;
 
-        if (!members.length) {
-            memberRows = `<div class="mainmenu-14">${T('MainMenu.dynamics.noMembers')}</div>`;
-        }
+        // ---- Busy ---------------------------------------------------------
+        // Whoever is away on a work contract (Work/WorkSystem.js): out of the
+        // party for the hours the shift runs, not benched and not gone. The
+        // rows are read only, since the only thing that ends a shift is the
+        // clock reaching the end of it.
+        let busyRows = '';
+        (window.WorkSystem?.Shifts?.list?.() ?? []).forEach(entry => {
+            const actor = $gameActors.actor(entry.actorId);
+            if (!actor) return;
+            const left = window.WorkSystem.Shifts.remaining(entry);
+            const hours = Math.floor(left / 60);
+            const mins  = Math.round(left % 60);
+            const className = $dataClasses[actor._classId] ? $dataClasses[actor._classId].name : '';
+            busyRows += `
+                        <div class="npc-dynamics-member dyn-row roster-row">
+                            <div class="portrait-frame">
+                                <canvas id="busy-canvas-${entry.actorId}" width="48" height="48"></canvas>
+                            </div>
+                            <div class="roster-action">
+                                <div class="roster-name">
+                                    ${escapeHtml(actor.name())}
+                                    <span class="roster-sub">${escapeHtml(className)} ${T('MainMenu.roster.levelAbbr')}${actor.level}</span>
+                                </div>
+                                <div class="roster-since">${T('MainMenu.dynamics.busyAt', {
+                                    job: escapeHtml(window.WorkSystem.jobName(entry.job)),
+                                    time: T('MainMenu.dynamics.busyRemaining', { hours: hours, minutes: mins })
+                                })}</div>
+                            </div>
+                        </div>`;
+        });
+        const busySection = busyRows
+            ? `<h3 class="dyn-section-title">${T('MainMenu.dynamics.busyTitle')}</h3>
+                        <div class="dyn-slot">
+                            ${busyRows}
+                        </div>`
+            : '';
 
-        const footNote = canRetire
-            ? T('MainMenu.dynamics.inactiveHint')
-            : T('MainMenu.dynamics.lastMember');
-
-        return `
-                <div class="tools-pockets">
-                    <div class="page-header-bar">
-                        <div class="back-button" onclick="SceneManager._scene?.setDynamicsView?.('hub')">${T('MainMenu.dynamics.back')}</div>
-                        <h2 class="tools-title">${T('MainMenu.dynamics.rosterTitle')}</h2>
-                    </div>
-                    ${memberRows}
-                    <div class="mainmenu-15">${footNote}</div>
-                    ${this.generateUIDynamicsBenchHTML()}
-                </div>`;
-    };
-
-    // The bench: every member any savegame of this world has set inactive, and
-    // the way back into a free party slot. Three travellers is the ceiling
-    // character creation builds to, so it is the ceiling here as well.
-    Scene_Menu.prototype.generateUIDynamicsBenchHTML = function () {
-        const MAX_ACTIVE_PARTY = 3;
-        const bench = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
-        const hasRoom = $gameParty.members().length < MAX_ACTIVE_PARTY;
-
-        let rows = '';
+        // ---- Inactive -----------------------------------------------------
+        let benchRows = '';
         bench.forEach(preset => {
             const className = preset.retiredClassName
                 || ($dataClasses[preset.classId] ? $dataClasses[preset.classId].name : '');
@@ -1532,104 +1644,45 @@
                 ? T('MainMenu.dynamics.inactiveSince', { date: escapeHtml(preset.retiredDate) })
                 : '';
             const recallBtn = hasRoom
-                ? `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.reactivateUIMember?.(${preset.id})">${T('MainMenu.roster.setActive')}</div>`
-                : `<div class="command-item mainmenu-09">${T('MainMenu.roster.setActive')}</div>`;
+                ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.reactivateUIMember?.(${preset.id})">${T('MainMenu.roster.setActive')}</div>`
+                : `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.setActive')}</div>`;
 
-            rows += `
-                    <div class="npc-dynamics-member mainmenu-10">
-                        <div class="portrait-frame">
-                            <canvas id="bench-canvas-${preset.id}" width="48" height="48"></canvas>
-                        </div>
-                        <div class="mainmenu-07">
-                            <div class="mainmenu-11">
-                                ${escapeHtml(preset.name)}
-                                <span class="mainmenu-12">${escapeHtml(className)} ${T('MainMenu.roster.levelAbbr')}${preset.level || 1}</span>
+            benchRows += `
+                        <div class="npc-dynamics-member dyn-row roster-row"${drag('bench', preset.id, hasRoom)}>
+                            <div class="portrait-frame">
+                                <canvas id="bench-canvas-${preset.id}" width="48" height="48"></canvas>
                             </div>
-                            <div class="mainmenu-16">${since}</div>
-                            <div class="mainmenu-13">
-                                ${recallBtn}
+                            <div class="roster-action">
+                                <div class="roster-name">
+                                    ${escapeHtml(preset.name)}
+                                    <span class="roster-sub">${escapeHtml(className)} ${T('MainMenu.roster.levelAbbr')}${preset.level || 1}</span>
+                                </div>
+                                <div class="roster-since">${since}</div>
+                                <div class="roster-actions">${recallBtn}</div>
                             </div>
-                        </div>
-                    </div>`;
+                        </div>`;
         });
+        // An empty bench is the normal state of a world, so the section is not
+        // drawn at all rather than printing a line saying it is empty.
+        // It stays up while somebody can still be dragged onto it.
+        const benchSection = (benchRows || canBench)
+            ? `<h3 class="dyn-section-title">${T('MainMenu.dynamics.inactiveTitle')}</h3>
+                        <div class="dyn-slot" id="dyn-zone-bench"${zone('bench')}>
+                            ${benchRows}
+                        </div>`
+            : '';
 
-        if (!rows) {
-            rows = `<div class="mainmenu-17">${T('MainMenu.dynamics.inactiveEmpty')}</div>`;
-        }
-
-        const benchNote = !bench.length
-            ? ''
-            : (hasRoom ? T('MainMenu.dynamics.inactiveWorldHint') : T('MainMenu.dynamics.inactiveFull'));
-
-        return `
-                    <h2 class="tools-title mainmenu-18">${T('MainMenu.dynamics.inactiveTitle')}</h2>
-                    ${rows}
-                    ${benchNote ? `<div class="mainmenu-15">${benchNote}</div>` : ''}`;
-    };
-
-    // Turn order: the party acts in this order, member 1 first, whatever their
-    // DEX says (window.BattleTurnOrder, in BattleSystem/IndividualBattleTurns.js).
-    // The troop is still ranked by the speed formula, so DEX decides when the
-    // monsters get to answer, not the order among the party.
-    Scene_Menu.prototype.generateUIDynamicsTurnOrderHTML = function () {
-        const order = window.BattleTurnOrder?.members?.() ?? [];
-        // $dataSystem.terms is localised in place (Core/Hendrix_Localization.js),
-        // so the param term is already the label the rest of the sheet prints.
-        const dexLabel = escapeHtml(TextManager.param(6));
-        let rows = '';
-
-        order.forEach((mem, idx) => {
-            const actorId = mem.actorId();
-            const first = (idx === 0);
-            const last = (idx === order.length - 1);
-            const step = (delta, label, disabled) => (disabled
-                ? `<div class="command-item mainmenu-19">${label}</div>`
-                : `<div class="command-item focusable mainmenu-20" onclick="SceneManager._scene?.moveUITurnOrder?.(${actorId}, ${delta})">${label}</div>`);
-
-            rows += `
-                    <div class="npc-dynamics-member mainmenu-10">
-                        <div class="mainmenu-21">${idx + 1}</div>
-                        <div class="portrait-frame">
-                            <canvas id="roster-canvas-${actorId}" width="48" height="48"></canvas>
-                        </div>
-                        <div class="mainmenu-07">
-                            <div class="mainmenu-11">
-                                ${escapeHtml(mem.name())}
-                                <span class="mainmenu-12">${dexLabel} ${mem.agi}${first ? ' · ' + T('MainMenu.dynamics.actsFirst') : ''}</span>
-                            </div>
-                            <div class="mainmenu-13">
-                                ${step(-1, T('MainMenu.dynamics.moveUp'), first)}
-                                ${step(1, T('MainMenu.dynamics.moveDown'), last)}
-                            </div>
-                        </div>
-                    </div>`;
-        });
-
-        if (!rows) {
-            rows = `<div class="mainmenu-14">${T('MainMenu.dynamics.noMembers')}</div>`;
-        }
-
-        return `
-                <div class="tools-pockets">
-                    <div class="page-header-bar">
-                        <div class="back-button" onclick="SceneManager._scene?.setDynamicsView?.('hub')">${T('MainMenu.dynamics.back')}</div>
-                        <h2 class="tools-title">${T('MainMenu.dynamics.turnOrderTitle')}</h2>
-                    </div>
-                    ${rows}
-                    <div class="mainmenu-22">${T('MainMenu.dynamics.turnOrderNote', { stat: dexLabel })}</div>
-                </div>`;
-    };
-
-    Scene_Menu.prototype.generateUIDynamicsHistoryHTML = function () {
+        // ---- Former members ------------------------------------------------
         const STATUS_LABELS = {
             active:  { label: T('MainMenu.roster.travelling'), band: "roster--active" },
             retired: { label: T('MainMenu.roster.inactive'),   band: "roster--retired" },
             left:    { label: T('MainMenu.roster.departed'),   band: "roster--left" },
             died:    { label: T('MainMenu.roster.dead'),       band: "roster--died" },
         };
-        const entries = window.PartyRoster?.history?.() ?? [];
-        let rows = '';
-
+        // Only the people who are no longer travelling: the two lists above
+        // already say everything about the ones who are.
+        const entries = (window.PartyRoster?.history?.() ?? []).filter(e => e.status !== 'active');
+        let pastRows = '';
         entries.forEach(entry => {
             const status = STATUS_LABELS[entry.status] || STATUS_LABELS.left;
             const dates = [];
@@ -1637,47 +1690,97 @@
             if (entry.status === 'died' && entry.deathDate) dates.push(T('MainMenu.roster.died', { date: escapeHtml(entry.deathDate) }));
             else if (entry.status === 'retired' && entry.leftDate) dates.push(T('MainMenu.roster.retired', { date: escapeHtml(entry.leftDate) }));
             else if (entry.status === 'left' && entry.leftDate) dates.push(T('MainMenu.roster.left', { date: escapeHtml(entry.leftDate) }));
-            const dateLine = dates.length
-                ? dates.join(' · ')
-                : (entry.status === 'active' ? T('MainMenu.roster.travellingWithYou') : T('MainMenu.roster.dateUnrecorded'));
+            const dateLine = dates.length ? dates.join(' · ') : T('MainMenu.roster.dateUnrecorded');
 
-            rows += `
-                    <div class="npc-dynamics-member mainmenu-23">
-                        <div class="mainmenu-24">
-                            ${escapeHtml(entry.name)}${entry.status === 'died' ? ' <span class="mainmenu-25">✝</span>' : ''}
-                            <span class="mainmenu-26 ${status.band}">${status.label}</span>
-                        </div>
-                        <div class="mainmenu-27">
-                            ${escapeHtml(entry.className || '')}${entry.className ? ' · ' : ''}${T('MainMenu.roster.levelAbbr')}${entry.level}${entry.isLeader ? T('MainMenu.roster.partyLeader') : ''}
-                        </div>
-                        <div class="mainmenu-28">${dateLine}</div>
-                    </div>`;
+            pastRows += `
+                        <div class="npc-dynamics-member roster-past-row">
+                            <div class="roster-past-name">
+                                ${escapeHtml(entry.name)}${entry.status === 'died' ? ' <span class="roster-past-died">✝</span>' : ''}
+                                <span class="roster-past-status ${status.band}">${status.label}</span>
+                            </div>
+                            <div class="roster-past-detail">
+                                ${escapeHtml(entry.className || '')}${entry.className ? ' · ' : ''}${T('MainMenu.roster.levelAbbr')}${entry.level}${entry.isLeader ? T('MainMenu.roster.partyLeader') : ''}
+                            </div>
+                            <div class="roster-past-date">${dateLine}</div>
+                        </div>`;
         });
+        if (!pastRows) pastRows = `<div class="roster-empty">${T('MainMenu.roster.noRecords')}</div>`;
 
-        if (!rows) {
-            rows = `<div class="mainmenu-14">${T('MainMenu.roster.noRecords')}</div>`;
-        }
+        // Only the reason the board is frozen is worth printing. How to drag a
+        // row is a control hint, and the game prints none of those.
+        const note = locked
+            ? `<div class="dyn-lock">${T('MainMenu.dynamics.' + locked)}</div>`
+            : '';
+
+        const wikiBtn = wikiEnabled
+            ? `<div class="command-item focusable dyn-wiki" onclick="SceneManager._scene?.openDynamicsWiki?.()">
+                            <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.dynamicsWiki)}"></span>
+                            <span>${T('MainMenu.dynamics.wiki')}</span>
+                        </div>`
+            : '';
 
         return `
                 <div class="tools-pockets">
                     <div class="page-header-bar">
-                        <div class="back-button" onclick="SceneManager._scene?.setDynamicsView?.('hub')">${T('MainMenu.dynamics.back')}</div>
-                        <h2 class="tools-title">${T('MainMenu.dynamics.historyTitle')}</h2>
+                        <div class="back-button" onclick="SceneManager._scene?.hideDynamicsPage?.()">${T('MainMenu.dynamics.back')}</div>
+                        <h2 class="tools-title">${T('MainMenu.dynamics.title')}</h2>
+                        ${wikiBtn}
                     </div>
-                    ${rows}
+                    ${note}
+                    <div class="dyn-board">
+                        <h3 class="dyn-section-title">${T('MainMenu.dynamics.activeTitle', { count: members.length, max: DYNAMICS_MAX_ACTIVE })}</h3>
+                        <div class="dyn-slot" id="dyn-zone-active"${zone('active')}>
+                            ${activeRows}
+                        </div>
+                        ${busySection}
+                        ${benchSection}
+                        <h3 class="dyn-section-title">${T('MainMenu.dynamics.pastTitle')}</h3>
+                        <div class="dyn-past">
+                            ${pastRows}
+                        </div>
+                    </div>
                 </div>`;
     };
 
-    Scene_Menu.prototype.showWorldMapPage = function () {
-        SoundManager.playOk();
-        this._isWorldMapPage = true;
-        this.refreshUIMenuDOM(true);
+    // ---- Dragging a member between the two lists ---------------------------
+    // The drop does exactly what the row's own button does, so the two ways in
+    // never drift apart: everything below funnels into retireUIMember and
+    // reactivateUIMember.
+    Scene_Menu.prototype.onDynamicsDragStart = function (event, kind, id) {
+        this._dynamicsDrag = { kind, id };
+        try { event.dataTransfer.setData('text/plain', kind + ':' + id); } catch (e) {}
+        if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
     };
 
-    Scene_Menu.prototype.hideWorldMapPage = function () {
-        SoundManager.playCancel();
-        this._isWorldMapPage = false;
-        this.refreshUIMenuDOM(true);
+    Scene_Menu.prototype.onDynamicsDragEnd = function () {
+        this._dynamicsDrag = null;
+        document.querySelectorAll('.dyn-slot').forEach(el => el.classList.remove('dyn-slot--over'));
+    };
+
+    Scene_Menu.prototype.onDynamicsDragOver = function (event) {
+        if (!this._dynamicsDrag) return;
+        event.preventDefault();
+        if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+        const zone = event.currentTarget;
+        if (zone && zone.classList) zone.classList.add('dyn-slot--over');
+    };
+
+    Scene_Menu.prototype.onDynamicsDrop = function (event, target) {
+        event.preventDefault();
+        const drag = this._dynamicsDrag;
+        this.onDynamicsDragEnd();
+        if (!drag) return;
+        // Dropped back where it came from: nothing to do, and no buzzer for it.
+        if (drag.kind === target) return;
+        if (target === 'bench') this.retireUIMember(drag.id);
+        else this.reactivateUIMember(drag.id);
+    };
+
+    // The World Map pocket has no page of its own: it opens the zoomable map
+    // straight away. The rows that page used to carry live in the pockets (the
+    // return, the layer shifts and the atlas) or in the options (the minimap).
+    Scene_Menu.prototype.showWorldMapPage = function () {
+        this.triggerUITravel("open");
     };
 
     Scene_Menu.prototype.triggerUITravel = function (action) {
@@ -1699,12 +1802,6 @@
                 this.commandGoDown();
             } else {
                 console.warn("commandGoDown is not defined on Scene_Menu!");
-            }
-        } else if (action === "toggleMinimap") {
-            if (typeof this.commandToggleMinimap === "function") {
-                this.commandToggleMinimap();
-            } else {
-                console.warn("commandToggleMinimap is not defined on Scene_Menu!");
             }
         } else if (action === "open") {
             if (typeof this.commandOpenWorldMap === "function") {
@@ -1763,14 +1860,11 @@
     // redraws only the right page, but used to rebuild all ~45 pockets tiles
     // (and every T() lookup behind them) to compare a key and discard the result.
     Scene_Menu.prototype.uiLeftPageKey = function () {
-        // The Dynamics sub-view is part of the key so hub/roster/history swaps
-        // actually redraw the page. Roster edits (a promotion, an armed or
-        // completed retirement, someone called back off the bench) change the
-        // page without changing the view, so they are folded in too.
+        // Every edit on the Dynamics board (a promotion, somebody benched,
+        // somebody called back off the bench) changes the page without changing
+        // which page it is, so all of it is folded into the key.
         const dynamicsKey = this._isDynamicsPage
             ? [
-                this._dynamicsView || 'hub',
-                this._dynamicsPendingRetireId || 0,
                 $gameParty.members().map(mem => mem.actorId()).join('-'),
                 (window.CharacterPresets?.getAvailableRetiredPresets?.() ?? []).map(p => p.id).join('-'),
                 // Reordering the turn order leaves the party itself untouched,
@@ -1790,6 +1884,8 @@
                 this._petRenameId || 0,
                 this._petAbandonId || 0,
                 this._petTrainId || 0,
+                // Which companion the right page is reading.
+                this._petsSelected || 0,
                 // A drill advancing, finishing or being called off changes the
                 // row without changing anything else on the page.
                 (window.PetSystem?.getPets?.() ?? [])
@@ -1802,7 +1898,7 @@
         // filters or the selected row redraws it, so the whole search state is
         // part of the key.
         const searchKey = window.MenuSearch ? window.MenuSearch.stateKey() : '';
-        return `${this._isToolsPage}_${this._isWorldMapPage}_${this._isDynamicsPage}${dynamicsKey}_${this._isPetsPage}${petsKey}_${this._isVehiclesPage}_${searchKey}`;
+        return `${this._isToolsPage}_${this._isDynamicsPage}${dynamicsKey}_${this._isDeedsPage}_${this._isPetsPage}${petsKey}_${this._isVehiclesPage}_${searchKey}`;
     };
 
     // Uniform needs palette: gold when healthy, orange when low, red when
@@ -1815,120 +1911,314 @@
     // list. Shared by the full render (generateUIRightPageHTML) and the TAB
     // in-place update (updateRightPageSelection) below, so the two never
     // drift apart from each other.
-    Scene_Menu.prototype.getUINeedsCardDefs = function (members) {
-        members = members || $gameParty.members();
-        const allMemberNeeds = members.map(m => this.getMemberNeeds(m));
-        const displayNeeds = allMemberNeeds[this._selectedActorIndex] || allMemberNeeds[0] || {};
-        const medHunger  = displayNeeds.hunger  ?? 100;
-        const medSleep   = displayNeeds.sleep   ?? 100;
-        const medHygiene = displayNeeds.hygiene;
-        const medSocial  = displayNeeds.social;
-        const medLeisure = displayNeeds.leisure;
-
+    // Every need (and every craving) of ONE member. The right page prints this
+    // under each roster card, so the panel is per person and there is no
+    // combined party summary to keep in step with it.
+    Scene_Menu.prototype.getUINeedsCardDefs = function (mem) {
+        const needs = this.getMemberNeeds(mem) || {};
         const raw = [
-            { key: 'hunger',  label: emLabel("needHunger",  T('MainMenu.need.hunger')),  val: medHunger },
-            { key: 'sleep',   label: emLabel("needSleep",   T('MainMenu.need.sleep')),   val: medSleep },
-            { key: 'hygiene', label: emLabel("needHygiene", T('MainMenu.need.hygiene')), val: medHygiene },
-            { key: 'social',  label: emLabel("needSocial",  T('MainMenu.need.social')),  val: medSocial },
-            { key: 'leisure', label: emLabel("needLeisure", T('MainMenu.need.fun')),     val: medLeisure }
+            { key: 'hunger',  label: emLabel("needHunger",  T('MainMenu.need.hunger')),  val: needs.hunger ?? 100 },
+            { key: 'sleep',   label: emLabel("needSleep",   T('MainMenu.need.sleep')),   val: needs.sleep ?? 100 },
+            { key: 'hygiene', label: emLabel("needHygiene", T('MainMenu.need.hygiene')), val: needs.hygiene },
+            { key: 'social',  label: emLabel("needSocial",  T('MainMenu.need.social')),  val: needs.social },
+            { key: 'leisure', label: emLabel("needLeisure", T('MainMenu.need.fun')),     val: needs.leisure }
         ];
         const defs = raw
             .filter(n => n.val !== null && n.val !== undefined)
-            .map(n => ({ key: n.key, label: n.label, val: n.val, band: window.NeedGauge.band(n.val) }));
+            .map(n => ({ key: n.key, label: n.label, val: Math.round(n.val), band: window.NeedGauge.band(n.val) }));
 
-        // Until a member has been clicked the panel is the party's, so the
-        // card is one summary line, "Addictions (X)" over the worst craving
-        // anyone is carrying; picking a member opens their own substances one
-        // by one.
+        // Cravings read the other way round: the bar fills with the want, so a
+        // full one is somebody in withdrawal.
         const addictions = window.AddictionSystem;
         if (addictions) {
-            if (this._needsActorPinned) {
-                addictions.cravingsFor(members[this._selectedActorIndex]).forEach(c => {
-                    const val = Math.round(c.value);
-                    defs.push({ key: `addiction-${c.key}`, label: escapeHtml(c.label), val, band: window.NeedGauge.cravingBand(val) });
-                });
-            } else {
-                const count = addictions.partyAddictCount();
-                if (count > 0) {
-                    const worst = addictions.partyWorst();
-                    const val = Math.round(worst ? worst.value : 0);
-                    defs.push({ key: 'addiction-party', label: T('TimeDate.addiction.partyCard', { count }), val, band: window.NeedGauge.cravingBand(val) });
-                }
-            }
+            addictions.cravingsFor(mem).forEach(c => {
+                const val = Math.round(c.value);
+                defs.push({ key: `addiction-${c.key}`, label: escapeHtml(c.label), val, band: window.NeedGauge.cravingBand(val) });
+            });
         }
         return defs;
     };
 
     Scene_Menu.prototype.renderUINeedsCardHTML = function (def) {
+        // Every need of a member on one card: the label and its percentage on
+        // the top line, the meter under them. The number and the bar fill share
+        // the band class, so the reading is the same colour whichever of the two
+        // the eye lands on first.
+        return `<span class="survival-card" data-need="${def.key}">`
+            + `<span class="survival-head"><span class="survival-lbl">${def.label}</span>`
+            + `<span class="survival-val gauge-ink ${def.band}">${def.val}%</span></span>`
+            + `<span class="survival-track"><span class="survival-fill gauge-fill ${def.band}" style="--ui-bar-w:${Math.max(0, Math.min(100, def.val))}%"></span></span>`
+            + `</span>`;
+    };
+
+    // The garage: whichever vehicle is selected on the left page, read the way
+    // the save screen reads a party - the square of the world map it is standing
+    // in, with a pin on its tile - rather than as a 3D turntable. Where a
+    // vehicle is matters more than what it looks like, and the picture of the
+    // place answers it at a glance. The verbs of the fleet (summon it, take it
+    // in for repairs, beam aboard) are the action strip at the foot of the card.
+    Scene_Menu.prototype.canSpawnUIVehicle = function (key) {
+        return !window.MergedVehicleSystem?.canSpawnHere ||
+            window.MergedVehicleSystem.canSpawnHere(key);
+    };
+
+    // The world is 256 tiles square, read as eight sectors of 32 by the same
+    // arithmetic the save screen uses, so both screens name a place alike.
+    Scene_Menu.prototype.vehicleMapSquareHTML = function (v) {
+        const wx = Number(v.parkedWorldX) || 0;
+        const wy = Number(v.parkedWorldY) || 0;
+        if (!v.parkedAt || (!wx && !wy)) return '';
+        const col = Math.max(1, Math.min(8, Math.floor(wx / 32) + 1));
+        const row = Math.max(1, Math.min(8, Math.floor(wy / 32) + 1));
+        const pinX = (((wx % 32) + 0.5) / 32) * 100;
+        const pinY = (((wy % 32) + 0.5) / 32) * 100;
         return `
-                    <div class="survival-card" data-need="${def.key}">
-                        <span class="survival-lbl">${def.label}</span>
-                        <span class="survival-val gauge-ink ${def.band}">${def.val}%</span>
-                        <div class="survival-bar">
-                            <div class="survival-bar-fill gauge-fill ${def.band}" style="width:${def.val}%"></div>
-                        </div>
-                    </div>`;
+            <div class="save-map-section">
+                <div class="save-map-meta-bar">
+                    <div class="save-map-meta-item">
+                        <span class="detail-label">${T('MainMenu.label.worldCoordinates')}</span>
+                        <span class="save-coords-badge">X: ${wx} | Y: ${wy}</span>
+                    </div>
+                    <div class="save-map-meta-item">
+                        <span class="detail-label">${T('MainMenu.label.sector')}</span>
+                        <span class="save-sector-badge">${T('MainMenu.vehicles.sectorValue', { row, col })}</span>
+                    </div>
+                </div>
+                <div class="save-map-segment-frame">
+                    <img class="save-map-segment-img" src="img/worldmap/row-${row}-column-${col}.jpg"
+                         onerror="this.onerror=null; this.src='img/worldmap/row-6-column-3.jpg';" />
+                    <div class="save-map-pin" style="--ui-at-x:${pinX.toFixed(1)}%; --ui-at-y:${pinY.toFixed(1)}%">
+                        <div class="save-pin-dot"></div>
+                        <div class="save-pin-label">${escapeHtml(v.name)}</div>
+                    </div>
+                </div>
+            </div>`;
     };
 
-    // The TAB / L1-R1 party-walk hint reflects whichever input the player
-    // last actually used (see lastInputType above), so a pad player is never
-    // told to press a key their controller doesn't have.
-    Scene_Menu.prototype.uiSwitchHintText = function () {
-        return lastInputType === 'gamepad'
-            ? T('MainMenu.roster.switchHintGamepad')
-            : T('MainMenu.roster.switchHintKeyboard');
+    // The five attributes a companion carries, drawn as a grid of cells rather
+    // than a run of dotted text: the same numbers, read down a column instead
+    // of along a line. Shared by the list row and the right-page sheet.
+    Scene_Menu.prototype.petStatGridHTML = function (pet) {
+        if (!pet) return '';
+        const attrs = pet.attrs || { STR: 10, CON: 10, INT: 10, WIS: 10, PSI: 10 };
+        const SL = window.CCStatLabel || ((k) => k);
+        const cells = ['STR', 'CON', 'INT', 'WIS', 'PSI'].map(key => `
+                <div class="pet-stat-cell">
+                    <span class="pet-stat-key">${escapeHtml(SL(key))}</span>
+                    <span class="pet-stat-val">${attrs[key] ?? 10}</span>
+                </div>`).join('');
+        return `<div class="pet-stat-grid">${cells}</div>`;
     };
 
-    // The garage: whichever vehicle is selected on the left page, stood on a
-    // turntable on the right one. A real 3D model of the thing - the camper, the
-    // car, the bike, the dinghy, the broom, and the party's own starship out of
-    // the galaxy simulation - rather than the walking sprite the list shows.
-    // Where there is no model (or no WebGL to draw it with) the card falls back
-    // to naming the vehicle, and the sprite in the list still carries it.
+    // Clicking a row on the Followers page reads that companion onto the right
+    // page, the way clicking a party card switches the sheet everywhere else.
+    Scene_Menu.prototype.selectPetRow = function (petId) {
+        if (this._petsSelected === petId) return;
+        this._petsSelected = petId;
+        this.refreshUIMenuDOM(true);
+    };
+
+    // The right page of the Followers spread: everything about the one
+    // companion being read, which the list row has no width for. The left page
+    // keeps the verbs; this side is the sheet.
+    Scene_Menu.prototype.generateUIPetSheetHTML = function () {
+        const pets = window.PetSystem ? window.PetSystem.getPets() : [];
+        if (!pets.length) {
+            return `<div class="ui-empty"><span class="ui-empty-text">${T('MainMenu.pets.none')}</span></div>`;
+        }
+        const sel = pets.find(p => p.id === this._petsSelected) || pets[0];
+        this._petsSelected = sel.id;
+
+        const className = (id) => {
+            const data = $dataClasses && $dataClasses[id];
+            if (!data) return '';
+            return window.CCDbName ? window.CCDbName(data) : data.name;
+        };
+        const activeId = window.PetSystem?.getActivePet?.()?.id ?? null;
+        const typeLabel = sel.isChild
+            ? T('MainMenu.roster.child')
+            : (sel.isFollower ? T('MainMenu.roster.follower') : T('MainMenu.roster.pet'));
+
+        const facts = [
+            [T('MainMenu.pets.sheetKind'), typeLabel],
+            [T('MainMenu.pets.sheetLevel'), String(sel.level || 1)],
+            [T('MainMenu.pets.sheetLeash'),
+                sel.id === activeId ? T('MainMenu.roster.following') : T('MainMenu.pets.sheetWaiting')],
+        ];
+        if (sel.enemyName) facts.push([T('MainMenu.pets.sheetOrigin'), sel.enemyName]);
+        if (sel.isChild && sel.parentName) facts.push([T('MainMenu.pets.sheetParent'), sel.parentName]);
+        if (sel.bornOn) facts.push([T('MainMenu.pets.sheetBorn'), sel.bornOn]);
+        const drill = window.PetSystem?.trainingInfo?.(sel.id) ?? null;
+        if (drill) {
+            const percent = drill.ready ? 100
+                : Math.floor(100 * (drill.done || 0) / Math.max(1, drill.need));
+            facts.push([T('MainMenu.pets.sheetTraining'),
+                `${className(drill.classId)} ${percent}%`]);
+        }
+        const factRows = facts.map(([label, value]) => `
+                <div class="pet-sheet-row">
+                    <span class="pet-sheet-label">${label}</span>
+                    <span class="pet-sheet-value">${escapeHtml(String(value))}</span>
+                </div>`).join('');
+
+        const traits = [
+            sel.sentient ? T('MainMenu.pets.traitSentient') : null,
+            sel.magical ? T('MainMenu.pets.traitMagical') : null,
+            sel.geneticFreak ? T('MainMenu.pets.traitGeneticFreak') : null,
+        ].filter(Boolean);
+        const traitPanel = traits.length ? `
+                <div class="pets-group-title">${T('MainMenu.pets.sheetTraits')}</div>
+                <div class="pet-note">${traits.join(' · ')}</div>` : '';
+
+        const skills = (sel.skillIds || [])
+            .map(id => $dataSkills && $dataSkills[id])
+            .filter(Boolean)
+            .map(sk => `<div class="pet-sheet-row"><span class="pet-sheet-label">${escapeHtml(
+                window.CCDbName ? window.CCDbName(sk) : sk.name)}</span></div>`).join('');
+        const skillPanel = skills ? `
+                <div class="pets-group-title">${T('MainMenu.pets.sheetSkills')}</div>
+                ${skills}` : '';
+
+        const notePanel = sel.note && !/^<Talk>$/i.test(String(sel.note).trim())
+            ? `<div class="pet-note">${escapeHtml(sel.note)}</div>` : '';
+
+        return `
+            <div class="ui-detail">
+                <div class="ui-detail-head">
+                    <div class="portrait-frame">
+                        <canvas id="pet-sheet-canvas" width="48" height="48"></canvas>
+                    </div>
+                    <div class="ui-detail-titles">
+                        <h3>${escapeHtml(sel.name)}</h3>
+                        <span class="roster-sub">${typeLabel} · ${T('MainMenu.roster.levelAbbr')}${sel.level || 1}</span>
+                    </div>
+                </div>
+                <div class="ui-detail-scroll">
+                    ${this.petStatGridHTML(sel.isChild ? null : sel)}
+                    <div class="pets-group-title">${T('MainMenu.pets.sheetFacts')}</div>
+                    ${factRows}
+                    ${traitPanel}
+                    ${skillPanel}
+                    ${notePanel}
+                </div>
+            </div>`;
+    };
+
     Scene_Menu.prototype.generateUIGarageHTML = function () {
         const owned = (window.MergedVehicleSystem && window.MergedVehicleSystem.getOwnedVehicles)
             ? window.MergedVehicleSystem.getOwnedVehicles() : [];
         if (!owned.length) {
-            return `<div class="mainmenu-14">${T('MainMenu.vehicles.none')}</div>`;
+            return `<div class="ui-empty"><span class="ui-empty-text">${T('MainMenu.vehicles.none')}</span></div>`;
         }
-        let sel = owned.find(v => v.key === this._vehiclesSelected) || owned[0];
+        const sel = owned.find(v => v.key === this._vehiclesSelected) || owned[0];
         this._vehiclesSelected = sel.key;
-        const has = window.VehicleModels && window.VehicleModels.has(sel.key);
-        const stand = has
-            ? `<canvas id="garage-model-canvas" class="garage-canvas"></canvas>`
-            : `<div class="mainmenu-14">${T('MainMenu.vehicles.noModel')}</div>`;
-        const fuelLine = sel.usesFuel
-            ? `${T('VehicleSystem.status.fuel')} ${Math.floor(sel.fuel)} / ${sel.max}`
-            : T('MainMenu.vehicles.noFuelNeeded');
-        const parked = sel.parkedAt
-            ? `<div class="mainmenu-41">${T('MainMenu.vehicles.parkedAt')} ${escapeHtml(sel.parkedAt)}</div>`
+
+        // The tank, the place and the fleet's own reading of the condition are
+        // all on the card in the list; the right page answers the one question
+        // the card cannot fit, which is the state of every single part.
+        const parts = Array.isArray(sel.parts) ? sel.parts : [];
+        const partRow = (p) => {
+            const pct = Math.round((p.health / p.max) * 100);
+            const band = this.uiVehicleBand(pct);
+            return `
+            <div class="vehicle-part-row${p.critical ? ' is-critical' : ''}">
+                <span class="vehicle-part-name">${escapeHtml(p.label)}${p.critical
+                    ? `<span class="vehicle-part-critical">${T('VehicleRepair.critical')}</span>` : ''}</span>
+                <span class="vehicle-meter"><span class="vehicle-meter-fill ${band}" style="--ui-bar-w:${pct}%"></span></span>
+                <span class="vehicle-part-pct ${band}">${pct}%</span>
+            </div>`;
+        };
+        const partsPanel = parts.length
+            ? `<div class="vehicle-parts-panel">
+                   <div class="pets-group-title">${T('MainMenu.vehicles.partsTitle')}</div>
+                   ${parts.map(partRow).join('')}
+               </div>`
+            : '';
+
+        // A summon that cannot happen is greyed where it stands rather than
+        // taken off the strip, so the row of verbs never moves under the hand.
+        const canSpawn = this.canSpawnUIVehicle(sel.key);
+        const spawnBtn = canSpawn
+            ? `<div class="inspect-btn focusable" onclick="SceneManager._scene?.spawnUIVehicle?.('${sel.key}')">${T('MainMenu.vehicles.spawn')}</div>`
+            : `<div class="inspect-btn unusable" title="${escapeHtml(T('MainMenu.vehicles.spawnIndoors'))}">${T('MainMenu.vehicles.spawn')}</div>`;
+        const repairBtn = sel.hasRepair
+            ? `<div class="inspect-btn focusable" onclick="SceneManager._scene?.repairUIVehicle?.('${sel.key}')">${T('MainMenu.roster.repair')}</div>`
+            : '';
+        const boardBtn = sel.type === 'airship'
+            ? `<div class="inspect-btn focusable" onclick="SceneManager._scene?.teleportToShipUI?.()">${T('MainMenu.cmd.teleportToShip')}</div>`
+            : '';
+
+        return `
+            <div class="ui-detail">
+                <div class="ui-detail-head">
+                    <div class="ui-detail-titles">
+                        <h3>${escapeHtml(sel.name)}</h3>
+                    </div>
+                </div>
+                <div class="ui-detail-scroll">
+                    ${this.vehicleMapSquareHTML(sel)}
+                    ${partsPanel}
+                </div>
+                <div class="inspect-actions inspect-actions--row">
+                    ${spawnBtn}${repairBtn}${boardBtn}
+                </div>
+            </div>`;
+    };
+
+    // One band for every vehicle meter, read the way a need gauge is read, so
+    // fuel, condition and a single part are all inked by the same rule.
+    Scene_Menu.prototype.uiVehicleBand = function (pct) {
+        if (pct >= 70) return 'band-good';
+        if (pct >= 30) return 'band-warn';
+        return 'band-bad';
+    };
+
+    // How sound the vehicle is: the weighted average its status card prints,
+    // with the parts total under it as a bar, and the word for a vehicle that
+    // will not move at all because a critical part is gone.
+    Scene_Menu.prototype.uiVehicleConditionHTML = function (v) {
+        if (v.condition == null) return '';
+        const pct = Math.max(0, Math.min(100, v.condition));
+        const band = this.uiVehicleBand(pct);
+        const hpLine = (v.hp != null && v.mhp)
+            ? T('MainMenu.vehicles.integrity', { hp: Math.round(v.hp), max: Math.round(v.mhp) })
+            : '';
+        const brokenLine = v.broken
+            ? `<span class="vehicle-broken-tag">${T('MainMenu.vehicles.broken')}</span>`
             : '';
         return `
-            <h2 class="cc-header-gothic">${escapeHtml(sel.name)}</h2>
-            <div class="garage-stand">${stand}</div>
-            <div class="mainmenu-38">${fuelLine}</div>
-            ${parked}`;
+            <div class="vehicle-card-line">
+                <span class="vehicle-card-label">${T('VehicleSystem.status.condition')}</span>
+                <span class="vehicle-card-value ${band}">${Math.round(pct)}%${hpLine ? ' · ' + hpLine : ''}</span>
+            </div>
+            <span class="vehicle-meter"><span class="vehicle-meter-fill ${band}" style="--ui-bar-w:${pct.toFixed(0)}%"></span></span>
+            ${brokenLine}`;
     };
 
-    // Put the selected vehicle on the turntable, taking down whatever was on it
-    // before. One live WebGL context at a time, and it is handed back the moment
-    // the page or the scene closes (closeGaragePreview).
-    Scene_Menu.prototype.refreshGaragePreview = function () {
-        this.closeGaragePreview();
-        if (!this._isVehiclesPage || !window.VehicleModels) return;
-        const canvas = document.getElementById('garage-model-canvas');
-        if (!canvas) return;
-        this._garagePreview = window.VehicleModels.createPreview(canvas, this._vehiclesSelected);
-    };
-
-    Scene_Menu.prototype.closeGaragePreview = function () {
-        if (this._garagePreview) {
-            this._garagePreview.dispose();
-            this._garagePreview = null;
+    // The parts worth naming on a card: everything below full, worst first, and
+    // never more than three of them. A whole vehicle says so in one line.
+    Scene_Menu.prototype.uiVehiclePartsSummaryHTML = function (v) {
+        const parts = Array.isArray(v.parts) ? v.parts : [];
+        if (!parts.length) return '';
+        const worn = parts
+            .filter(p => p.health < p.max)
+            .sort((a, b) => a.health - b.health);
+        if (!worn.length) {
+            return `<span class="vehicle-parts-line vehicle-parts-line--sound">${T('MainMenu.vehicles.allPartsSound')}</span>`;
         }
+        const shown = worn.slice(0, 3).map(p => {
+            const pct = Math.round((p.health / p.max) * 100);
+            return `<span class="vehicle-part-chip ${this.uiVehicleBand(pct)}${p.critical ? ' is-critical' : ''}">`
+                + `${escapeHtml(p.label)} ${pct}%</span>`;
+        }).join('');
+        const rest = worn.length - 3;
+        const more = rest > 0
+            ? `<span class="vehicle-part-chip vehicle-part-chip--more">${T('MainMenu.vehicles.morePartsWorn', { count: rest })}</span>`
+            : '';
+        return `<span class="vehicle-parts-line">${shown}${more}</span>`;
     };
 
-    // Clicking a vehicle in the list stands THAT one on the turntable.
+    // Clicking a vehicle in the list puts THAT one on the right page.
     Scene_Menu.prototype.selectUIVehicle = function (key) {
         if (this._vehiclesSelected === key) return;
         SoundManager.playCursor();
@@ -1940,8 +2230,8 @@
         // The world map codex and the search result card are self-contained, so
         // the party cards, the needs bars and the clock block below are only
         // gathered when the sheet they belong to is the one being drawn.
-        if (this._isWorldMapPage) return this.generateUITravelCodexHTML();
         if (this._isVehiclesPage) return this.generateUIGarageHTML();
+        if (this._isPetsPage) return this.generateUIPetSheetHTML();
         if (window.MenuSearch && window.MenuSearch.isActive()) {
             // While searching, the right page is the selected result's own
             // detail card. The field that found it is on the left page with the
@@ -2005,8 +2295,17 @@
             const memHpPct = Math.floor(mem.hpRate() * 100);
             const memHpBand = memHpPct <= 25 ? 'gauge-band--bad'
                 : memHpPct <= 50 ? 'gauge-band--warn' : '';
+            // MP and AP read as plain white numbers; they only take a colour
+            // when the pool is running low, on the same bands as HP.
+            const memMpPct = mem.mmp > 0 ? Math.floor(mem.mpRate() * 100) : 100;
+            const memMpBand = memMpPct <= 25 ? 'gauge-band--bad'
+                : memMpPct <= 50 ? 'gauge-band--warn' : '';
+            const memTpPct = Math.floor(mem.tpRate() * 100);
+            const memTpBand = memTpPct <= 25 ? 'gauge-band--bad'
+                : memTpPct <= 50 ? 'gauge-band--warn' : '';
             const isSelected = (idx === this._selectedActorIndex);
             partyBioHTML += `
+              <div class="party-bio-block">
                 <div class="bio-row party-bio-card${isSelected ? ' selected' : ''}"${''/* i18n-ignore: css classes */}
                      onclick="SceneManager._scene.switchSelectedActor(${idx})">
                     <div class="portrait-frame">
@@ -2018,33 +2317,37 @@
                     </div>
                     <div class="bio-vitals">
                         <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.hp')}</span><span class="bio-vital-val gauge-ink ${memHpBand}">${mem.hp}/${mem.mhp}</span></div>
-                        <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.mp')}</span><span class="bio-vital-val">${mem.mp}/${mem.mmp}</span></div>
-                        <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.ap')}</span><span class="bio-vital-val">${Math.floor(mem.tp)}</span></div>
+                        <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.mp')}</span><span class="bio-vital-val gauge-ink ${memMpBand}">${mem.mp}/${mem.mmp}</span></div>
+                        <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.ap')}</span><span class="bio-vital-val gauge-ink ${memTpBand}">${Math.floor(mem.tp)}</span></div>
                     </div>
                 </div>
+                <div class="survival-box">
+                    ${this.getUINeedsCardDefs(mem).map(def => this.renderUINeedsCardHTML(def)).join('')}
+                </div>
+              </div>
             `;
         });
 
-        // Needs computation: the needs panel reflects the active (selected) member.
-        let needsCardsHTML = "";
-        this.getUINeedsCardDefs(members).forEach(def => {
-            needsCardsHTML += this.renderUINeedsCardHTML(def);
-        });
-
-        // Only worth telling the player about the walk when there is somebody
-        // else to walk to.
-        const switchHintHTML = members.length > 1
-            ? `<div class="party-switch-hint">${this.uiSwitchHintText()}</div>`
-            : '';
 
         return `
             <div class="party-bio-list">
                 ${partyBioHTML}
             </div>
-            ${switchHintHTML}
 
-            <div class="survival-box">
-                ${needsCardsHTML}
+            <div class="right-tools">
+                <div class="right-tools-title">${T('MainMenu.page.tools')}</div>
+                <div class="right-tools-grid">
+                    <div class="command-item focusable" data-symbol="hexphone" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUICommand === 'function') SceneManager._scene.triggerUICommand('hexphone')">
+                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.hexphone)}"></span>
+                        <span>${T('MainMenu.tools.hexphone')}</span>
+                    </div>
+                    ${isAlchemistryAvailable() ? `
+                    <div class="command-item focusable" data-symbol="alchemistry" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUICommand === 'function') SceneManager._scene.triggerUICommand('alchemistry')">
+                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.alchemistryKit)}"></span>
+                        <span>${T('MainMenu.tools.alchemistryKit')}</span>
+                    </div>` : ''}
+                    ${this.generateUIToolItemsListHTML()}
+                </div>
             </div>
 
             <div class="pockets-clock">
@@ -2075,90 +2378,6 @@
             // A live query takes the whole left page: the results list and its
             // filter/sort bar (CustomMainMenuSearch.js).
             leftPageHTML = window.MenuSearch.leftPageHTML();
-        } else if (this._isWorldMapPage) {
-            // Render Travel choices
-            leftPageHTML = `
-                <div class="travel-pockets mainmenu-29">
-                    <div class="tools-header mainmenu-30">
-                        <h2 class="title mainmenu-31">${T('MainMenu.travel.worldMapTitle')}</h2>
-                    </div>
-                    <div class="commands-grid mainmenu-32">
-            `;
-
-            // 1. Return to World Map - planetside the same row opens the
-            // landing-site picker instead (see WorldMapReturn's commandWorldMap).
-            // ...unless the party is out in the 3D world, where this row is the
-            // way back in even though the map underneath is 315 (inVoxelWorld).
-            const canReturn = $gameMap.mapId() !== 315 || inVoxelWorld();
-            if (canReturn) {
-                leftPageHTML += `
-                    <div class="command-item focusable" data-symbol="travel_return" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('return')">
-                        <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.travelReturn)}"></span>
-                        <span>${worldMapReturnLabel()}</span>
-                    </div>
-                `;
-            }
-
-            // 2. Underground layer shifts
-            if ($gameMap.mapId() === 636) { // procedural map
-                const procGenData = $gameSystem._procGenData;
-                const isUnderground = procGenData && procGenData.biomeLayerStack && procGenData.biomeLayerStack.length > 0;
-                const currentBiome = procGenData && procGenData.currentBiome && window.ProcGenUtils ? window.ProcGenUtils.getBiomeByName(procGenData.currentBiome) : null;
-                const hasUnderground = currentBiome && currentBiome.lowerLayer;
-
-                if (isUnderground) {
-                    leftPageHTML += `
-                        <div class="command-item focusable" data-symbol="travel_goUp" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('goUp')">
-                            <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.travelGoUp)}"></span>
-                            <span>${T('MainMenu.travel.goUp')}</span>
-                        </div>
-                    `;
-                } else if (hasUnderground) {
-                    leftPageHTML += `
-                        <div class="command-item focusable" data-symbol="travel_goDown" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('goDown')">
-                            <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.travelGoDown)}"></span>
-                            <span>${T('MainMenu.travel.goDown')}</span>
-                        </div>
-                    `;
-                }
-            }
-
-            // 3. Toggle World Map (Minimap)
-            leftPageHTML += `
-                <div class="command-item focusable" data-symbol="travel_toggleMinimap" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('toggleMinimap')">
-                    <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.travelMinimap)}"></span>
-                    <span>${T('MainMenu.travel.toggleMinimap')}</span>
-                </div>
-            `;
-
-            // 3b. Open World Map (Actual Zoomable Map)
-            leftPageHTML += `
-                <div class="command-item focusable" data-symbol="travel_open" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('open')">
-                    <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.travelOpenMap)}"></span>
-                    <span>${T('MainMenu.travel.openMap')}</span>
-                </div>
-            `;
-
-            // 3c. World Atlas (Map/WorldAtlas.js): the political sheet, who
-            // holds what and what the weather does there. Nothing here travels.
-            if (window.WorldAtlas && window.WorldAtlas.isAvailable()) {
-                leftPageHTML += `
-                    <div class="command-item focusable" data-symbol="travel_atlas" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('atlas')">
-                        <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.travelAtlas)}"></span>
-                        <span>${T('MainMenu.travel.openAtlas')}</span>
-                    </div>
-                `;
-            }
-
-            // 4. Cancel / Back
-            leftPageHTML += `
-                        <div class="command-item focusable" data-symbol="travel_cancel" onclick="if(SceneManager._scene && typeof SceneManager._scene.hideWorldMapPage === 'function') SceneManager._scene.hideWorldMapPage()">
-                            <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.travelResume)}"></span>
-                            <span>${T('MainMenu.travel.resume')}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
         } else if (this._isToolsPage) {
             // Render Tools List
             leftPageHTML = `
@@ -2169,12 +2388,12 @@
                     </div>
                     <div class="commands-grid">
                         <div class="command-item focusable" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUICommand === 'function') SceneManager._scene.triggerUICommand('hexphone')">
-                            <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.hexphone)}"></span>
+                            <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.hexphone)}"></span>
                             <span>${T('MainMenu.tools.hexphone')}</span>
                         </div>
                         ${isAlchemistryAvailable() ? `
                         <div class="command-item focusable" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUICommand === 'function') SceneManager._scene.triggerUICommand('alchemistry')">
-                            <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.alchemistryKit)}"></span>
+                            <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.alchemistryKit)}"></span>
                             <span>${T('MainMenu.tools.alchemistryKit')}</span>
                         </div>` : ''}
                         ${this.generateUIToolItemsListHTML()}
@@ -2183,6 +2402,8 @@
             `;
         } else if (this._isDynamicsPage) {
             leftPageHTML = this.generateUIDynamicsPageHTML();
+        } else if (this._isDeedsPage) {
+            leftPageHTML = this.generateUIDeedsPageHTML();
         } else if (this._isPetsPage) {
             const pets = window.PetSystem ? window.PetSystem.getPets() : [];
             const activePet = window.PetSystem ? window.PetSystem.getActivePet() : null;
@@ -2196,7 +2417,7 @@
             const summonNote = (info) => info.bound
                 ? T('MainMenu.pets.summonBound')
                 : T('MainMenu.pets.summonSteps', { steps: info.stepsLeft });
-            const dismissBtn = `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.dismissSummonUI?.()">${T('MainMenu.pets.dismissSummon')}</div>`;
+            const dismissBtn = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.dismissSummonUI?.()">${T('MainMenu.pets.dismissSummon')}</div>`;
             const className = (id) => {
                 const data = $dataClasses && $dataClasses[id];
                 if (!data) return '';
@@ -2213,8 +2434,8 @@
                     ? T('MainMenu.roster.child')
                     : (pet.isFollower ? T('MainMenu.roster.follower') : T('MainMenu.roster.pet'));
                 const activeBtn = isActive
-                    ? `<div class="command-item mainmenu-06">${T('MainMenu.roster.following')}</div>`
-                    : `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.setActivePet?.(${pet.id})">${T('MainMenu.roster.setActive')}</div>`;
+                    ? `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.following')}</div>`
+                    : `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.setActivePet?.(${pet.id})">${T('MainMenu.roster.setActive')}</div>`;
                 const activeTag = isActive ? ` · ${T('MainMenu.pets.active')}` : '';
                 const isSummoned = (summonPetId === pet.id);
                 const summonTag = isSummoned ? ` · ${T('MainMenu.pets.summoned')}` : '';
@@ -2226,19 +2447,19 @@
                 const maxLen = window.PetSystem?.NAME_MAX_LENGTH ?? 16;
                 let buttons;
                 if (isRenaming) {
-                    buttons = `<input type="text" id="pet-rename-input" class="pet-rename-input mainmenu-33"
+                    buttons = `<input type="text" id="pet-rename-input" class="pet-rename-input pet-rename-field"
                             maxlength="${maxLen}" autocomplete="off" spellcheck="false"
                             value="${escapeHtml(pet.name)}"
                             onkeydown="SceneManager._scene?.onPetRenameKey?.(event)"
                             onkeyup="event.stopPropagation()"
                             onkeypress="event.stopPropagation()">
-                        <div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.confirmPetRename?.()">${T('MainMenu.roster.confirm')}</div>
-                        <div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.cancelPetRename?.()">${T('MainMenu.roster.cancel')}</div>`;
+                        <div class="command-item focusable roster-action" onclick="SceneManager._scene?.confirmPetRename?.()">${T('MainMenu.roster.confirm')}</div>
+                        <div class="command-item focusable roster-action" onclick="SceneManager._scene?.cancelPetRename?.()">${T('MainMenu.roster.cancel')}</div>`;
                 } else if (isAbandoning) {
                     // Walking away from a dependent is an offence, so the row
                     // says which charge and what it costs before it is done.
-                    buttons = `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.confirmPetAbandon?.()">${T('MainMenu.roster.confirm')}</div>
-                        <div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.cancelPetAbandon?.()">${T('MainMenu.roster.cancel')}</div>`;
+                    buttons = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.confirmPetAbandon?.()">${T('MainMenu.roster.confirm')}</div>
+                        <div class="command-item focusable roster-action" onclick="SceneManager._scene?.cancelPetAbandon?.()">${T('MainMenu.roster.cancel')}</div>`;
                 } else if (isChoosingDrill) {
                     // The drills this creature's archetype supports, as chips.
                     // A humanoid that talks is offered the whole civilised
@@ -2246,20 +2467,20 @@
                     // of the page off the parchment.
                     const options = window.PetSystem?.trainingOptions?.(pet.id) ?? [];
                     const chips = options.map(id => `
-                        <div class="command-item focusable mainmenu-20" onclick="SceneManager._scene?.confirmPetTraining?.(${id})">${escapeHtml(className(id))}</div>`).join('');
-                    buttons = `<div class="mainmenu-34">${chips}</div>
-                        <div class="command-item focusable mainmenu-20" onclick="SceneManager._scene?.cancelPetTraining?.()">${T('MainMenu.roster.cancel')}</div>`;
+                        <div class="command-item focusable roster-action--fixed" onclick="SceneManager._scene?.confirmPetTraining?.(${id})">${escapeHtml(className(id))}</div>`).join('');
+                    buttons = `<div class="pet-class-chips">${chips}</div>
+                        <div class="command-item focusable roster-action--fixed" onclick="SceneManager._scene?.cancelPetTraining?.()">${T('MainMenu.roster.cancel')}</div>`;
                 } else {
                     // A companion being drilled is doing one thing only: the
                     // row offers finishing it or calling it off, nothing else.
                     let drillBtns = '';
                     if (drill && drill.ready) {
-                        drillBtns = `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.promotePetTrainee?.(${pet.id})">${T('MainMenu.pets.trainJoin')}</div>
-                        <div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.stopPetTraining?.(${pet.id})">${T('MainMenu.pets.trainStop')}</div>`;
+                        drillBtns = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.promotePetTrainee?.(${pet.id})">${T('MainMenu.pets.trainJoin')}</div>
+                        <div class="command-item focusable roster-action" onclick="SceneManager._scene?.stopPetTraining?.(${pet.id})">${T('MainMenu.pets.trainStop')}</div>`;
                     } else if (drill) {
-                        drillBtns = `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.stopPetTraining?.(${pet.id})">${T('MainMenu.pets.trainStop')}</div>`;
+                        drillBtns = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.stopPetTraining?.(${pet.id})">${T('MainMenu.pets.trainStop')}</div>`;
                     } else if (window.PetSystem?.canTrain?.(pet.id)) {
-                        drillBtns = `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.startPetTraining?.(${pet.id})">${T('MainMenu.pets.train')}</div>`;
+                        drillBtns = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.startPetTraining?.(${pet.id})">${T('MainMenu.pets.train')}</div>`;
                     }
                     // A creature the party can sit on is offered the saddle
                     // instead of a place in the vehicle menu: there is no
@@ -2268,22 +2489,22 @@
                     // on this page at all, so none of them is ever ridable.
                     let rideBtns = '';
                     if (isMounted) {
-                        rideBtns = `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.dismountPet?.()">${T('MainMenu.pets.dismount')}</div>`;
+                        rideBtns = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.dismountPet?.()">${T('MainMenu.pets.dismount')}</div>`;
                     } else if (window.PetSystem?.isRidable?.(pet.id)) {
-                        rideBtns = `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.ridePet?.(${pet.id})">${T('MainMenu.pets.ride')}</div>`;
+                        rideBtns = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.ridePet?.(${pet.id})">${T('MainMenu.pets.ride')}</div>`;
                     }
                     buttons = `${activeBtn}
                         ${isSummoned ? dismissBtn : ''}
                         ${rideBtns}
                         ${drillBtns}
-                        <div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.startPetAbandon?.(${pet.id})">${T('MainMenu.pets.abandon')}</div>
-                        <div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.startPetRename?.(${pet.id})">${T('MainMenu.pets.rename')}</div>`;
+                        <div class="command-item focusable roster-action" onclick="SceneManager._scene?.startPetAbandon?.(${pet.id})">${T('MainMenu.pets.abandon')}</div>
+                        <div class="command-item focusable roster-action" onclick="SceneManager._scene?.startPetRename?.(${pet.id})">${T('MainMenu.pets.rename')}</div>`;
                 }
                 const parentLine = pet.isChild && pet.parentName
-                    ? `<div class="mainmenu-35">${T('MainMenu.pets.childOf', { parent: escapeHtml(pet.parentName) })}</div>`
+                    ? `<div class="pet-note">${T('MainMenu.pets.childOf', { parent: escapeHtml(pet.parentName) })}</div>`
                     : '';
                 const warning = isAbandoning
-                    ? `<div class="mainmenu-36">${this.petAbandonWarning(pet)}</div>`
+                    ? `<div class="pet-warning">${this.petAbandonWarning(pet)}</div>`
                     : '';
                 // What the drill is doing right now, or what one would cost.
                 let drillLine = '';
@@ -2304,7 +2525,7 @@
                     if (!isActive) drillLine += ' ' + T('MainMenu.pets.trainPaused');
                 }
                 const drillNote = drillLine
-                    ? `<div class="mainmenu-37">${escapeHtml(drillLine)}</div>`
+                    ? `<div class="pet-drill">${escapeHtml(drillLine)}</div>`
                     : '';
                 // The three optional traits chosen when the companion was taken
                 // in (or carried over from its <Talk> tag) each lean its base
@@ -2312,32 +2533,32 @@
                 // the line entirely.
                 let traitsLine = '';
                 if (!pet.isChild) {
-                    const attrs = pet.attrs || { STR: 10, CON: 10, INT: 10, WIS: 10, PSI: 10 };
-                    const SL = window.CCStatLabel || ((k) => k);
                     const traitTags = [
                         pet.sentient ? T('MainMenu.pets.traitSentient') : null,
                         pet.magical ? T('MainMenu.pets.traitMagical') : null,
                         pet.geneticFreak ? T('MainMenu.pets.traitGeneticFreak') : null,
                     ].filter(Boolean).join(' · ');
-                    const statLine = `${SL('STR')} ${attrs.STR} · ${SL('CON')} ${attrs.CON} · ${SL('INT')} ${attrs.INT} · ${SL('WIS')} ${attrs.WIS} · ${SL('PSI')} ${attrs.PSI}`;
-                    traitsLine = `<div class="mainmenu-35">${statLine}${traitTags ? ' · ' + traitTags : ''}</div>`;
+                    traitsLine = this.petStatGridHTML(pet)
+                        + (traitTags ? `<div class="pet-note">${traitTags}</div>` : '');
                 }
+                const isRead = (this._petsSelected === pet.id);
                 return `
-                    <div class="npc-dynamics-member mainmenu-10">
+                    <div class="npc-dynamics-member roster-row focusable${isRead ? ' selected' : ''}" tabindex="0"
+                         onclick="SceneManager._scene?.selectPetRow?.(${pet.id})">
                         <div class="portrait-frame">
                             <canvas id="pet-canvas-${pet.id}" width="48" height="48"></canvas>
                         </div>
-                        <div class="mainmenu-07">
-                            <div class="mainmenu-38">
+                        <div class="roster-action">
+                            <div class="entity-name">
                                 ${escapeHtml(pet.name)}
-                                <span class="mainmenu-12">${typeLabel}${activeTag}${summonTag}${mountTag} · ${T('MainMenu.roster.levelAbbr')}${pet.level}</span>
+                                <span class="roster-sub">${typeLabel}${activeTag}${summonTag}${mountTag} · ${T('MainMenu.roster.levelAbbr')}${pet.level}</span>
                             </div>
-                            ${isSummoned ? `<div class="mainmenu-35">${summonNote(summon)}</div>` : ''}
+                            ${isSummoned ? `<div class="pet-note">${summonNote(summon)}</div>` : ''}
                             ${traitsLine}
                             ${drillNote}
                             ${parentLine}
                             ${warning}
-                            <div class="mainmenu-39">
+                            <div class="entity-actions">
                                 ${buttons}
                             </div>
                         </div>
@@ -2348,17 +2569,17 @@
             // registry record of its own, so it is drawn as a row of its own and
             // the only thing that can be done with it is to send it away.
             const summonRows = (summon && !summonPetId) ? `
-                    <div class="npc-dynamics-member mainmenu-10">
+                    <div class="npc-dynamics-member roster-row">
                         <div class="portrait-frame">
                             <canvas id="summon-canvas" width="48" height="48"></canvas>
                         </div>
-                        <div class="mainmenu-07">
-                            <div class="mainmenu-38">
+                        <div class="roster-action">
+                            <div class="entity-name">
                                 ${escapeHtml(summon.name)}
-                                <span class="mainmenu-12">${T('MainMenu.pets.summoned')} · ${T('MainMenu.roster.levelAbbr')}${summon.level}</span>
+                                <span class="roster-sub">${T('MainMenu.pets.summoned')} · ${T('MainMenu.roster.levelAbbr')}${summon.level}</span>
                             </div>
-                            <div class="mainmenu-35">${summonNote(summon)}</div>
-                            <div class="mainmenu-39">
+                            <div class="pet-note">${summonNote(summon)}</div>
+                            <div class="entity-actions">
                                 ${dismissBtn}
                             </div>
                         </div>
@@ -2374,15 +2595,15 @@
             let petRows = groups
                 .filter(g => g.rows.length)
                 .map(g => `
-                    <div class="mainmenu-40">${g.label}</div>
+                    <div class="pets-group-title">${g.label}</div>
                     ${g.rows.map(petRow).join('')}`)
                 .join('');
             if (!pets.length && !summonRows) {
-                petRows = `<div class="mainmenu-14">${T('MainMenu.pets.none')}</div>`;
+                petRows = `<div class="roster-empty">${T('MainMenu.pets.none')}</div>`;
             }
             if (summonRows) {
                 petRows = `
-                    <div class="mainmenu-40">${T('MainMenu.pets.groupSummons')}</div>
+                    <div class="pets-group-title">${T('MainMenu.pets.groupSummons')}</div>
                     ${summonRows}${petRows}`;
             }
             leftPageHTML = `
@@ -2391,91 +2612,126 @@
                         <div class="back-button" onclick="SceneManager._scene?.hidePetsPage?.()">${T('MainMenu.dynamics.back')}</div>
                         <h2 class="tools-title">${T('MainMenu.page.pets')}</h2>
                     </div>
-                    ${petRows}
+                    <div class="ui-list pockets-scroll pets-list">${petRows}</div>
                 </div>`;
         } else if (this._isVehiclesPage) {
             const vehicles = window.MergedVehicleSystem && window.MergedVehicleSystem.getOwnedVehicles
                 ? window.MergedVehicleSystem.getOwnedVehicles() : [];
             // Indoors (a house, a vehicle's own cabin, a procedural interior
             // such as a dungeon, crypt, sewer, loot cellar or cave) only the
-            // bike can be summoned. The others are drawn inert there rather
-            // than left to fail once the menu has already closed.
-            const canSpawnKey = (key) => !window.MergedVehicleSystem?.canSpawnHere ||
-                window.MergedVehicleSystem.canSpawnHere(key);
+            // bike can be summoned. The list still shows every vehicle; it is
+            // the Spawn button on the right page that goes inert there.
             let anyBlocked = false;
             let vehicleRows = '';
             vehicles.forEach(v => {
+                if (!this.canSpawnUIVehicle(v.key)) anyBlocked = true;
+                // A card says everything the fleet is read for before anything
+                // is clicked: which vehicle, what is in the tank, how sound it
+                // is, which parts are worn or gone, and where it was left.
                 const fuelLine = v.usesFuel
-                    ? `<span class="mainmenu-12">Fuel ${Math.floor(v.fuel)}L / ${v.max}L</span>`
-                    : `<span class="mainmenu-12">${T('MainMenu.vehicles.noFuelNeeded')}</span>`;
-                const repairBtn = v.hasRepair
-                    ? `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.repairUIVehicle?.('${v.key}')">${T('MainMenu.roster.repair')}</div>`
-                    : '';
-                // The Starship also offers a direct "Teleport to Ship" into its interior.
-                const boardBtn = v.type === 'airship'
-                    ? `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.teleportToShipUI?.()">${T('MainMenu.cmd.teleportToShip')}</div>`
-                    : '';
-                // Disabled tiles drop `focusable` as well as the handler, so the
-                // menu's focus ring walks straight past them.
-                const canSpawn = canSpawnKey(v.key);
-                if (!canSpawn) anyBlocked = true;
-                const spawnBtn = canSpawn
-                    ? `<div class="command-item focusable mainmenu-07" onclick="SceneManager._scene?.spawnUIVehicle?.('${v.key}')">${T('MainMenu.vehicles.spawn')}</div>`
-                    : `<div class="command-item is-disabled mainmenu-07" title="${escapeHtml(T('MainMenu.vehicles.spawnIndoors'))}">${T('MainMenu.vehicles.spawn')}</div>`;
-                // Where it was left standing: the place and the exact tile, so a
-                // camper parked outside Ghent station can be walked back to as
-                // well as summoned.
+                    ? T('MainMenu.vehicles.fuel', { fuel: Math.floor(v.fuel), max: v.max })
+                    : T('MainMenu.vehicles.noFuelNeeded');
                 const parkedLine = v.parkedAt
-                    ? `<div class="mainmenu-41">${T('MainMenu.vehicles.parkedAt')} ${escapeHtml(v.parkedAt)}</div>`
-                    : '';
+                    ? `${T('MainMenu.vehicles.parkedAt')} ${escapeHtml(v.parkedAt)}`
+                    : T('MainMenu.vehicles.noLocation');
                 const isShown = (this._vehiclesSelected || vehicles[0].key) === v.key;
+
+                const fuelPct = (v.usesFuel && v.max)
+                    ? Math.max(0, Math.min(100, (v.fuel / v.max) * 100)) : null;
+                const fuelBar = fuelPct == null ? '' : `
+                    <span class="vehicle-meter"><span class="vehicle-meter-fill ${this.uiVehicleBand(fuelPct)}"
+                          style="--ui-bar-w:${fuelPct.toFixed(0)}%"></span></span>`;
+                const conditionHTML = this.uiVehicleConditionHTML(v);
+                const partsHTML = this.uiVehiclePartsSummaryHTML(v);
+
                 vehicleRows += `
-                    <div class="npc-dynamics-member mainmenu-10${isShown ? ' garage-shown' : ''}">
-                        <div class="portrait-frame focusable" onclick="SceneManager._scene?.selectUIVehicle?.('${v.key}')" title="${escapeHtml(T('MainMenu.vehicles.show'))}">
-                            <canvas id="vehicle-canvas-${v.key}" width="48" height="48"></canvas>
+                    <div class="vehicle-card focusable${isShown ? ' selected' : ''}${v.broken ? ' vehicle-card--broken' : ''}"
+                         onclick="SceneManager._scene?.selectUIVehicle?.('${v.key}')"
+                         title="${escapeHtml(T('MainMenu.vehicles.show'))}">
+                        <div class="vehicle-card-head">
+                            <canvas id="vehicle-canvas-${v.key}" class="vehicle-row-sprite" width="48" height="48"></canvas>
+                            <span class="entity-name">${escapeHtml(v.name)}</span>
                         </div>
-                        <div class="mainmenu-07">
-                            <div class="mainmenu-38">
-                                ${escapeHtml(v.name)}${fuelLine}
-                            </div>
-                            ${parkedLine}
-                            <div class="mainmenu-42">
-                                ${spawnBtn}
-                                ${repairBtn}
-                                ${boardBtn}
-                            </div>
+                        <div class="vehicle-card-line">
+                            <span class="vehicle-card-label">${T('VehicleSystem.status.fuel')}</span>
+                            <span class="vehicle-card-value">${fuelLine}</span>
                         </div>
+                        ${fuelBar}
+                        ${conditionHTML}
+                        ${partsHTML}
+                        <span class="parked-at">${parkedLine}</span>
                     </div>`;
             });
             if (!vehicles.length) {
-                vehicleRows = `<div class="mainmenu-14">${T('MainMenu.vehicles.none')}</div>`;
+                vehicleRows = `<div class="ui-empty"><span class="ui-empty-text">${T('MainMenu.vehicles.none')}</span></div>`;
             }
             const indoorsNote = anyBlocked
-                ? `<div class="pockets-hint mainmenu-43">${T('MainMenu.vehicles.spawnIndoors')}</div>`
+                ? `<div class="ui-empty-note vehicles-indoors-note">${T('MainMenu.vehicles.spawnIndoors')}</div>`
                 : '';
             leftPageHTML = `
                 <div class="tools-pockets">
                     <div class="page-header-bar">
-                        <div class="back-button" onclick="SceneManager._scene?.hideVehiclesPage?.()">${T('MainMenu.dynamics.back')}</div>
-                        <h2 class="tools-title">${T('MainMenu.page.vehicles')}</h2>
+                        <div class="back-button focusable" onclick="SceneManager._scene?.hideVehiclesPage?.()">${T('MainMenu.dynamics.back')}</div>
+                        <h2 class="title">${T('MainMenu.page.vehicles')}</h2>
                     </div>
                     ${indoorsNote}
-                    ${vehicleRows}
+                    <div class="ui-list vehicles-grid">${vehicleRows}</div>
                 </div>`;
         } else {
             // T jumps straight between the world map and the procedural map
             // (Map/WorldMapReturn.js), skipping the "Visit / Make a camp / Cancel"
             // choice window entirely, so both hand-rolled travel tiles below carry
             // its badge like any other hotkeyed command tile.
-            const worldMapToggleBadge = '<span class="hotkey-badge">T</span>';
+            const worldMapToggleBadge = hotkeyBadge('T');
 
             // On the world map (315) surface the "Stop travel" command as the
             // first pockets entry: it visits whatever tile the party is standing
             // on (settlement, hardcoded location, or a freshly generated
             // procedural map), the same destination the T hotkey reaches directly.
+            // The underground layer shifts, kept from the retired travel page:
+            // on a procedural map with a lower layer they are the only way down
+            // and back up again.
+            let layerShiftHTML = "";
+            if ($gameMap.mapId() === 636) {
+                const procGenData = $gameSystem._procGenData;
+                const isUnderground = !!(procGenData && procGenData.biomeLayerStack && procGenData.biomeLayerStack.length > 0);
+                const currentBiome = procGenData && procGenData.currentBiome && window.ProcGenUtils
+                    ? window.ProcGenUtils.getBiomeByName(procGenData.currentBiome) : null;
+                if (isUnderground) {
+                    layerShiftHTML = `
+                    <div class="command-item focusable" data-symbol="travel_goUp" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('goUp')">
+                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.travelGoUp)}"></span>
+                        <span>${T('MainMenu.travel.goUp')}</span>
+                    </div>`;
+                } else if (currentBiome && currentBiome.lowerLayer) {
+                    layerShiftHTML = `
+                    <div class="command-item focusable" data-symbol="travel_goDown" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('goDown')">
+                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.travelGoDown)}"></span>
+                        <span>${T('MainMenu.travel.goDown')}</span>
+                    </div>`;
+                }
+            }
+
+            // The atlas sits with the records, not with travel: it is the
+            // political sheet, who holds what and what the weather does there.
+            // Nothing travels.
+            const atlasHTML = (window.WorldAtlas && window.WorldAtlas.isAvailable()) ? `
+                    <div class="command-item focusable" data-symbol="travel_atlas" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('atlas')">
+                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.travelAtlas)}"></span>
+                        <span>${T('MainMenu.travel.openAtlas')}</span>
+                    </div>
+            ` : "";
+
+            // Story mode's own entry: Em's vector gun and the two operating
+            // modes it runs. VectorGunSystem.js says whether there is a gun to
+            // open at all, so the tile is absent on every other playthrough.
+            const vectorGunHTML = (window.VectorGun && window.VectorGun.available())
+                ? this.generateUICommandItemHTML(T('VectorGun.menu'), "vector_gun")
+                : "";
+
             const stopTravelHTML = ($gameMap.mapId() === 315 && !inVoxelWorld()) ? `
                     <div class="command-item focusable" data-symbol="travel_stop" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('stop')">
-                        <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.travelStop)}"></span>
+                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.travelStop)}"></span>
                         <span>${T('MainMenu.cmd.stopTravel')}</span>
                         ${worldMapToggleBadge}
                     </div>
@@ -2486,9 +2742,9 @@
             // the player can bail out to map 315 without drilling in. It is not
             // the procedural map's alone: a house, a shop, a cellar or a
             // hand-made town map is left the same way (Map/WorldMapReturn.js).
-            const procReturnHTML = ($gameMap.mapId() !== 315 || inVoxelWorld()) ? `
+            const procReturnHTML = (($gameMap.mapId() !== 315 || inVoxelWorld()) && !returnDisabled()) ? `
                     <div class="command-item focusable" data-symbol="travel_return" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('return')">
-                        <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.travelReturn)}"></span>
+                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.travelReturn)}"></span>
                         <span>${worldMapReturnLabel()}</span>
                         ${worldMapToggleBadge}
                     </div>
@@ -2505,171 +2761,123 @@
             const showReturnToShip = onAlienSurface || awayFromShip || $gameMap.mapId() === 315;
             const returnToShipHTML = showReturnToShip ? `
                     <div class="command-item focusable" data-symbol="return_to_ship" onclick="if(SceneManager._scene && typeof SceneManager._scene.commandReturnToShip === 'function') SceneManager._scene.commandReturnToShip()">
-                        <span class="icon mainmenu-02" style="${iconStyle(PAGE_ICONS.returnToShip)}"></span>
+                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.returnToShip)}"></span>
                         <span>${T('MainMenu.cmd.returnToShip')}</span>
                     </div>
             ` : "";
 
-            // Render Commands Pockets. The tiles are bundled into unlabelled
-            // logical groups separated by a full-width rule, so the 3-column
-            // pockets reads as coherent blocks instead of one long alphabet soup:
-            //   character (self)  ·  party (companions)  ·  travel & rest  ·
-            //   activities  ·  records & standing  ·  system.
-            // The character block is always first; the travel block leads with
-            // whichever escape hatch applies to the current map ("Stop travel"
-            // on the world map, "Return to map" on the procedural map).
-            const commandGroups = [
-                // Sandbox: tester/sandbox-only tools, surfaced as the very first
-                // pockets entry when the player is named "test" or sandbox mode is
-                // active. Collapses away entirely otherwise (the tile returns "").
-                [
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.sandbox'), "sandbox"),
-                ],
-                // Character: your active member's sheet, gear and body
-                [
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.backpack'), "item"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.equip'), "equip"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.skills'), "skill"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.status'), "status1"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.specializations'), "specializations"),
-                    this.generateUICommandItemHTML(emLabel("menuBiologics", T('MainMenu.cmd.biologics')), "biologics"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.augments'), "augments"),
-                    // Opens the results page on everything the party carries,
-                    // knows and can make, with the field that narrows it at its
-                    // head (UI/CustomMainMenuSearch.js).
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.search'), "search"),
-                ],
-                // Party: the people and creatures travelling with you
-                [
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.dynamics'), "dynamics"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.pets'), "pets"),
-                    this.generateUICommandItemHTML(emLabel("menuWorkforce", T('MainMenu.cmd.workforce')), "army"),
-                ],
-                // Travel & rest
-                [
-                    stopTravelHTML,
-                    procReturnHTML,
-                    returnToShipHTML,
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.worldMap'), "world_map"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.vehicles'), "vehicles"),
-                    this.generateUICommandItemHTML(emLabel("menuWait", T('MainMenu.cmd.wait')), "sleep_menu"),
-                ],
-                // Activities: things you do in the world
-                [
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.tools'), "tools"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.cooking'), "cooking"),
-                    // The workbench sits with the other benches, immediately
-                    // ahead of the anvil it shares its recipes with.
-                    this.generateUICommandItemHTML(emLabel("menuThinker", T('MainMenu.cmd.thinker')), "thinker"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.blacksmithing'), "blacksmithing"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.alchemistry'), "alchemistry"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.build'), "build"),
-                    this.generateUICommandItemHTML(emLabel("menuTraining", T('MainMenu.cmd.training')), "training"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.research'), "research"),
-                ],
-                // Records & standing: the pockets you consult
-                [
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.questLog'), "quest_log"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.diary'), "diary"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.hyperdeck'), "hypernet"),
-                    this.generateUICommandItemHTML(emLabel("menuBestiary", T('MainMenu.cmd.bestiary')), "bestiary"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.cards'), "cards"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.archive'), "help"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.factions'), "factions"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.assets'), "assets"),
-                ],
-                // System: meta / out-of-world
-                [
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.save'), "save"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.multiplayer'), "multiplayer"),
-                    this.generateUICommandItemHTML(T('MainMenu.cmd.preferences'), "options"),
-                    this.generateUICommandItemHTML(emLabel("menuResign", T('MainMenu.cmd.resign')), "gameEnd"),
-                ],
-            ];
-            // Hidden tiles (e.g. Sandbox off the tester save) collapse away, so a
-            // group that ends up empty must not leave a dangling separator.
-            const groupSeparatorHTML = `<div class="command-group-separator"></div>`;
-            const commandsHTML = commandGroups
-                .map((group) => group.filter((html) => html && html.trim()).join("\n"))
-                .filter((html) => html)
-                .join(`\n${groupSeparatorHTML}\n`);
-
-            // The search field sits at the head of the pockets, the same place
-            // the Skills scene, the Bestiary, the workbench, the forge and the
-            // trait picker keep theirs (UI/MenuSearchBar.js). Typing in it
-            // replaces this whole page with the results.
-            leftPageHTML = `
-                ${window.MenuSearch ? window.MenuSearch.barHTML() : ''}
-                <div class="commands-grid">
-                    ${commandsHTML}
+            const topHeaderHTML = `
+                <div class="page-header-bar">
+                    <div class="back-button" onclick="SceneManager._scene?.uiBackOut?.()">${T('MainMenu.dynamics.back')}</div>
+                    <h2 class="tools-title">${T('MainMenu.page.main')}</h2>
+                    <div class="menu-top-header-main">
+                        ${window.MenuSearch ? window.MenuSearch.barHTML() : ''}
+                    </div>
                 </div>
             `;
+
+            {
+                // Detailed mode: full 3-column pockets layout
+                const commandGroups = [
+                    // Sandbox: tester/sandbox-only tools
+                    [
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.sandbox'), "sandbox"),
+                    ],
+                    // Character: your active member's sheet, gear and body
+                    [
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.backpack'), "item"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.equip'), "equip"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.skills'), "skill"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.status'), "status1"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.specializations'), "specializations"),
+                        vectorGunHTML,
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.biologics'), "biologics"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.augments'), "augments"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.search'), "search"),
+                    ],
+                    // Travel & rest
+                    [
+                        stopTravelHTML,
+                        procReturnHTML,
+                        returnToShipHTML,
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.worldMap'), "world_map"),
+                        layerShiftHTML,
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.vehicles'), "vehicles"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.wait'), "sleep_menu"),
+                    ],
+                    // Activities: things you do in the world
+                    [
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.cooking'), "cooking"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.thinker'), "thinker"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.alchemistry'), "alchemistry"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.build'), "build"),
+                    ],
+                    // Records & standing: the pockets you consult
+                    [
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.questLog'), "quest_log"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.diary'), "diary"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.hyperdeck'), "hypernet"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.radio'), "radio"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.bestiary'), "bestiary"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.cards'), "cards"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.archive'), "help"),
+                        atlasHTML,
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.factions'), "factions"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.research'), "research"),
+                    ],
+                    // Party: the people and creatures travelling with you
+                    [
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.dynamics'), "dynamics"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.assets'), "assets"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.deeds'), "deeds"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.pets'), "pets"),
+                        this.generateUICommandItemHTML(emLabel("menuWorkforce", T('MainMenu.cmd.workforce')), "army"),
+                    ],
+                    // System: meta / out-of-world
+                    [
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.save'), "save"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.multiplayer'), "multiplayer"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.preferences'), "options"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.resign'), "gameEnd"),
+                    ],
+                ];
+
+                // One heading per group, in the same order as commandGroups
+                // above. The sandbox group is unlabelled (it only ever shows for
+                // testers), so its slot is empty and simply prints no header.
+                const groupTitles = [
+                    "",
+                    T('MainMenu.group.party'),
+                    T('MainMenu.group.worldMap'),
+                    T('MainMenu.group.create'),
+                    T('MainMenu.group.archive'),
+                    T('MainMenu.group.manageParty'),
+                    T('MainMenu.group.game'),
+                ];
+                const commandsHTML = commandGroups
+                    .map((group, i) => {
+                        const items = group.filter((html) => html && html.trim()).join("\n");
+                        if (!items) return "";
+                        const title = groupTitles[i];
+                        const header = title
+                            ? `<div class="command-group-header">${title}</div>\n`
+                            : "";
+                        return header + items;
+                    })
+                    .filter((html) => html)
+                    .join("\n");
+
+                leftPageHTML = `
+                    ${topHeaderHTML}
+                    <div class="commands-grid">
+                        ${commandsHTML}
+                    </div>
+                `;
+            }
         }
 
         return leftPageHTML;
-    };
-
-    // The right page while the Travel pockets are open: where the party is
-    // standing, and the world-map segment it is standing on.
-    Scene_Menu.prototype.generateUITravelCodexHTML = function () {
-        // Get current coordinate and biome details
-        const worldX = ($gameMap.mapId() === 315) ? ($gamePlayer.x || 0) : ($gameVariables.value(43) || 0);
-        const worldY = ($gameMap.mapId() === 315) ? ($gamePlayer.y || 0) : ($gameVariables.value(44) || 0);
-
-        // Calculate which 8x8 block we are in (each block is 32x32 units)
-        const col = Math.max(1, Math.min(8, Math.floor(worldX / 32) + 1));
-        const row = Math.max(1, Math.min(8, Math.floor(worldY / 32) + 1));
-
-        let currentRegionName = T('MainMenu.place.unknownLand');
-
-        if ($gameMap.mapId() === 315) {
-            currentRegionName = T('MainMenu.place.worldWilderness');
-        } else if ($gameMap.mapId() === 636) {
-            // The procedural map tracks the square's biome as `currentBiome`;
-            // the codex shows the name that biome declares for itself.
-            const procGenData = $gameSystem._procGenData;
-            const biome = procGenData && procGenData.currentBiome;
-            currentRegionName = biome ? window.BiomeNames.display(biome) : T('MainMenu.place.proceduralSector');
-        } else {
-            currentRegionName = ($dataMap && $dataMap.displayName) || T('MainMenu.place.localSector');
-        }
-
-        return `
-                <div class="travel-codex mainmenu-44">
-                    
-                    <div class="mainmenu-45">
-                        <div class="mainmenu-46">
-                            <span class="mainmenu-47">${T('MainMenu.label.location')}</span>
-                            <span>${currentRegionName}</span>
-                        </div>
-                        <div class="mainmenu-46">
-                            <span class="mainmenu-47">${T('MainMenu.label.worldCoordinates')}</span>
-                            <span>X: ${worldX} | Y: ${worldY}</span>
-                        </div>
-                        <div class="mainmenu-46">
-                            <span class="mainmenu-47">${T('MainMenu.label.sector')}</span>
-                            <span>${T('MainMenu.label.rowColumn', { row: row, col: col })}</span>
-                        </div>
-                    </div>
-
-                    <!-- Map Segment Image Container -->
-                    <div class="mainmenu-48">
-                        <img class="mainmenu-49" src="img/worldmap/row-${row}-column-${col}.jpg" />
-                        
-                        <!-- Player Indicator Pin Overlay on the local segment map (0-31 range mapped to 0-100%) -->
-                        <div class="mainmenu-50" style="left:${((worldX % 32) / 32) * 100}%; top:${((worldY % 32) / 32) * 100}%"></div>
-                    </div>
-
-                
-                    <style>
-                    @keyframes dndPulse {
-                        0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(198, 40, 40, 0.7); }
-                        70% { transform: translate(-50%, -50%) scale(1.2); box-shadow: 0 0 0 6px rgba(198, 40, 40, 0); }
-                        100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(198, 40, 40, 0); }
-                    }
-                    </style>
-                </div>
-            `;
     };
 
     Scene_Menu.prototype.refreshUIMenuDOM = function (useTransitions = false) {
@@ -2712,7 +2920,7 @@
             this.drawAllVehicleSprites();
 
             // Re-bind input mappings
-            UIMenuInputManager.activate(this._isWorldMapPage ? 1 : 3);
+            UIMenuInputManager.activate(4);
             if (window.MenuSearch) window.MenuSearch.afterRender(this);
         } else {
             // Subsequent updates. The left page is only built when it is going
@@ -2746,7 +2954,7 @@
                 this.drawAllVehicleSprites();
 
                 // Re-bind input mappings
-                UIMenuInputManager.activate(this._isWorldMapPage ? 1 : 3);
+                UIMenuInputManager.activate(4);
                 if (window.MenuSearch) window.MenuSearch.afterRender(this);
             }
         }
@@ -2762,7 +2970,7 @@
         }
 
         const iconIndex = COMMAND_ICONS[symbol] || 0;
-        const hotkey = HOTKEY_LABELS[symbol] ? `<span class="hotkey-badge">${HOTKEY_LABELS[symbol]}</span>` : "";
+        const hotkey = hotkeyBadge(HOTKEY_LABELS[symbol]);
 
         // Check if command is enabled in standard menu list
         // Waiting is always allowed: it only runs the clock forward and never
@@ -2771,9 +2979,17 @@
         if (symbol === "build") enabled = window.FurnitureSystem?.canBuildOnCurrentMap?.() ?? ($gameMap.mapId() !== 315);
         if (symbol === "sandbox") enabled = sandboxTester || sandboxActive;
         if (symbol === "alchemistry") enabled = isAlchemistryAvailable();
+        // Rosters with nothing in them: the tile stays visible so the player
+        // knows the pocket exists, but it cannot be opened onto an empty page.
+        if (symbol === "pets") enabled = (window.PetSystem?.getPets?.() ?? []).length > 0;
+        if (symbol === "vehicles") {
+            enabled = (window.MergedVehicleSystem?.getOwnedVehicles?.() ?? []).length > 0;
+        }
+        if (symbol === "army") enabled = (typeof $gameArmy !== "undefined" && $gameArmy?.getTroopCount?.() > 0);
 
-        const opacity = enabled ? 1 : 0.45;
-        const pointerEvents = enabled ? "auto" : "none";
+        // A pocket that exists but cannot be opened from here reads as the
+        // shared disabled tile; the focus ring already walks past it.
+        const disabledClass = enabled ? "" : " is-disabled";
 
         let clickAction = `if(SceneManager._scene && typeof SceneManager._scene.triggerUICommand === 'function') SceneManager._scene.triggerUICommand('${symbol}')`;
         if (symbol === "tools") {
@@ -2792,8 +3008,8 @@
         }
 
         return `
-            <div class="command-item focusable" data-symbol="${symbol}" style="opacity:${opacity}; pointer-events:${pointerEvents}" onclick="${clickAction}">
-                <span class="icon mainmenu-02" style="${iconStyle(iconIndex)}"></span>
+            <div class="command-item focusable${disabledClass}" data-symbol="${symbol}" onclick="${clickAction}">
+                <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
                 <span>${label}</span>
                 ${hotkey}
             </div>
@@ -2814,7 +3030,7 @@
             const iconIndex = item.iconIndex || 0;
             html += `
                 <div class="command-item focusable" data-symbol="tool_${item.id}" onclick="if(SceneManager._scene && typeof SceneManager._scene.useUIToolItem === 'function') SceneManager._scene.useUIToolItem(${item.id})">
-                    <span class="icon mainmenu-02" style="${iconStyle(iconIndex)}"></span>
+                    <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
                     <span>${item.name}</span>
                 </div>
             `;
@@ -2829,17 +3045,18 @@
         });
     };
 
-    // Dynamics -> Roster renders its own portraits on the left page, keyed by
+    // The Dynamics board renders its own portraits on the left page, keyed by
     // actor id so a leader swap doesn't shuffle the sprites.
     Scene_Menu.prototype.drawAllRosterPortraits = function () {
-        // Turn Order draws the same member rows, under the same canvas ids;
-        // only Roster carries the bench underneath them.
-        const PORTRAIT_VIEWS = ['roster', 'turnorder'];
-        if (!this._isDynamicsPage || !PORTRAIT_VIEWS.includes(this._dynamicsView)) return;
+        if (!this._isDynamicsPage) return;
         $gameParty.members().forEach(mem => {
             this.drawUIActorPortrait(mem, `roster-canvas-${mem.actorId()}`);
         });
-        if (this._dynamicsView !== 'roster') return;
+        // Whoever is out on a shift is a real actor, just not in the party.
+        (window.WorkSystem?.Shifts?.list?.() ?? []).forEach(entry => {
+            const actor = $gameActors.actor(entry.actorId);
+            if (actor) this.drawUIActorPortrait(actor, `busy-canvas-${entry.actorId}`);
+        });
         // The bench has dossiers, not actors: drawUIActorPortrait only ever asks
         // for the sprite sheet and the index, so hand it those two.
         const bench = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
@@ -3005,8 +3222,28 @@
                         console.warn("Scene_HyperDeck is not defined!");
                     }
                     break;
+                case "radio":
+                    // The set is a panel over the live map rather than a scene,
+                    // so the menu closes first and the cabinet is raised on the
+                    // map underneath it.
+                    if (window.TunableRadio) {
+                        this.popScene();
+                        setTimeout(() => {
+                            if (window.TunableRadio) window.TunableRadio.open();
+                        }, 100);
+                    } else {
+                        console.warn("TunableRadio is not defined!");
+                    }
+                    break;
                 case "dynamics":
                     this.showDynamicsPage();
+                    break;
+                case "vector_gun":
+                    if (window.Scene_VectorGun) {
+                        SceneManager.push(window.Scene_VectorGun);
+                    } else {
+                        console.warn("Scene_VectorGun is not defined!");
+                    }
                     break;
                 case "diary":
                     if (window.Scene_Diary) {
@@ -3086,6 +3323,9 @@
                     } else {
                         console.warn("Scene_SandboxMenu is not defined!");
                     }
+                    break;
+                case "deeds":
+                    this.showDeedsPage();
                     break;
                 case "assets":
                     if (typeof Scene_AssetsMenu !== "undefined") {
@@ -3203,7 +3443,6 @@
     const _Scene_Menu_terminate = Scene_Menu.prototype.terminate;
     Scene_Menu.prototype.terminate = function () {
         // The turntable holds a live WebGL context; leaving the menu hands it back.
-        if (this.closeGaragePreview) this.closeGaragePreview();
         _Scene_Menu_terminate.call(this);
         UIMenuInputManager.deactivate();
 
@@ -3222,12 +3461,10 @@
                 // briefly blends two pages), keep the parchment fully visible as a
                 // backdrop so the incoming window fades IN over it. The new scene's own
                 // DOM overlay is appended after this one, so it naturally stacks on top.
-                container.style.transition = "none";
-                container.style.opacity = "1";
-                container.style.pointerEvents = "none";
+                container.classList.add("menu-snapped-in", "menu-backdrop");
                 // Sit just above the game canvas but below any incoming overlay so the
                 // new window always renders on top of the backdrop, whatever its z-index.
-                container.style.zIndex = "2";
+
 
                 // Once the incoming window has settled on top, gently dissolve the
                 // backdrop so it never blocks canvas-only submenus. Re-entering the
@@ -3237,9 +3474,8 @@
                 container._dndHideTimer = setTimeout(() => {
                     if (container._dndHideToken !== token) return; // superseded by re-open
                     container._dndHideTimer = null;
-                    container.style.transition = "opacity 0.4s ease-out";
-                    container.style.opacity = "0";
-                    container.style.pointerEvents = "none";
+                    container.classList.remove("menu-snapped-in", "menu-shown");
+                    container.classList.add("menu-fading-out");
 
                     // Once it has finished dissolving, take it out of the layout
                     // rather than leaving a transparent full-screen parchment
@@ -3251,7 +3487,7 @@
                     container._dndHideTimer = setTimeout(() => {
                         if (container._dndHideToken !== token) return;
                         container._dndHideTimer = null;
-                        container.style.display = "none";
+                        container.classList.add("menu-dissolved");
                     }, 400);
                 }, 250);
             }
@@ -3271,7 +3507,7 @@
 
     // What each hotkey does when pressed on the map. Commands with no entry
     // here are menu-only: World Map is handled by Map/WorldMap.js itself,
-    // Vehicles/Pets open a page inside Scene_Menu, and the digit commands
+    // Pets opens a page inside Scene_Menu, and the digit commands
     // (Thinker, Multiplayer, Hypernet) must not fire on the field because the
     // number row is the favourites hotbar there.
     // Keys live in HOTKEYS, actions live here.
@@ -3283,7 +3519,6 @@
         quest_log:  () => pushMapScene(typeof Scene_KanbanQuest !== "undefined" && Scene_KanbanQuest),
         help:       () => pushMapScene(typeof Scene_Help !== "undefined" && Scene_Help),
         cooking:    () => pushMapScene(typeof Scene_Cooking !== "undefined" && Scene_Cooking),
-        blacksmithing: () => pushMapScene(typeof Scene_Blacksmithing !== "undefined" && Scene_Blacksmithing),
         training:   () => pushMapScene(typeof Scene_SkillEncyclopedia !== "undefined" && Scene_SkillEncyclopedia),
         bestiary:   () => pushMapScene(typeof Scene_CDCollection !== "undefined" && Scene_CDCollection),
         factions:   () => pushMapScene(typeof Scene_FactionStatus !== "undefined" && Scene_FactionStatus),
@@ -3291,6 +3526,14 @@
         augments:   () => pushMapScene(typeof Scene_PartyAugments !== "undefined" && Scene_PartyAugments),
         assets:     () => pushMapScene(typeof Scene_AssetsMenu !== "undefined" && Scene_AssetsMenu),
         options:    () => pushMapScene(typeof Scene_Options !== "undefined" && Scene_Options),
+        // The garage as a choice window rather than a menu page: on the field the
+        // key lists every owned vehicle and either walks up to the one parked
+        // here or calls another one over (Vehicle/VehicleSystem.js).
+        vehicles:   () => {
+            if (!window.MergedVehicleSystem?.showVehicleListMenu) return;
+            SoundManager.playOk();
+            window.MergedVehicleSystem.showVehicleListMenu();
+        },
         sandbox:    () => {
             if ($gameSystem && $gameSystem._isSandboxMode) {
                 pushMapScene(typeof Scene_SandboxMenu !== "undefined" && Scene_SandboxMenu);
@@ -3327,8 +3570,8 @@
     //
     //   list()   every hotkey: { symbol, key, input, code }
     //   run(sym) do what that key does on the map. False when the key opens
-    //            nothing from the field (Vehicles and Pets are pages inside
-    //            Scene_Menu; the digits are the item hotbar out there).
+    //            nothing from the field (Pets is a page inside Scene_Menu; the
+    //            digits are the item hotbar out there).
     window.MenuHotkeys = {
         list: () => HOTKEYS.slice(),
         labels: () => Object.assign({}, HOTKEY_LABELS),
@@ -3508,7 +3751,6 @@
         if (idx !== this._geLastIdx) {
             this._geLastIdx = idx;
             this._geEls.forEach((el, i) => {
-                el.style.background = i === idx ? 'rgba(74,39,17,0.15)' : 'transparent';
                 el.classList.toggle('sprite-frame--picked', i === idx);
             });
         }

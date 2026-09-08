@@ -1,0 +1,290 @@
+{
+  "_comment": "Government policy positions a party's platform resolves to. One entry per field; a field's bands are read against a -100..100 axis and the first band whose range contains the value is the policy that party would enact. 'axis' names the platform axis it is read from; 'science' has no axis of its own and is derived (see NPCPolitics.policyAxes). Text is English only by design: these are data labels, not prose.",
+  "fields": [
+    {
+      "id": "economy",
+      "axis": "econ",
+      "icon": 314,
+      "name": "Economy",
+      "bands": [
+        {
+          "id": "command_economy",
+          "min": -100,
+          "max": -70,
+          "name": "Command economy",
+          "desc": "Every factory, farm and shop is planned and owned by the state."
+        },
+        {
+          "id": "public_ownership",
+          "min": -69,
+          "max": -35,
+          "name": "Public ownership",
+          "desc": "The commanding heights are nationalised; small trade is left alone."
+        },
+        {
+          "id": "social_market",
+          "min": -34,
+          "max": -11,
+          "name": "Social market",
+          "desc": "Private business under heavy taxation and a broad welfare floor."
+        },
+        {
+          "id": "mixed_economy",
+          "min": -10,
+          "max": 10,
+          "name": "Mixed economy",
+          "desc": "A balanced budget, a mid tax rate and no strong doctrine either way."
+        },
+        {
+          "id": "market_liberalism",
+          "min": 11,
+          "max": 34,
+          "name": "Market liberalism",
+          "desc": "Low tariffs, light regulation and a thin safety net."
+        },
+        {
+          "id": "deregulation",
+          "min": 35,
+          "max": 69,
+          "name": "Deregulation",
+          "desc": "State industry sold off, labour law rolled back, capital untaxed."
+        },
+        {
+          "id": "laissez_faire",
+          "min": 70,
+          "max": 100,
+          "name": "Laissez faire",
+          "desc": "The state collects almost nothing and guarantees almost nothing."
+        }
+      ]
+    },
+    {
+      "id": "science",
+      "axis": "sci",
+      "icon": 101,
+      "name": "Science",
+      "bands": [
+        {
+          "id": "revealed_truth",
+          "min": -100,
+          "max": -70,
+          "name": "Revealed truth",
+          "desc": "Inquiry is subordinate to doctrine; heterodox research is suppressed."
+        },
+        {
+          "id": "traditional_learning",
+          "min": -69,
+          "max": -35,
+          "name": "Traditional learning",
+          "desc": "Schooling preserves the canon; new fields wait for permission."
+        },
+        {
+          "id": "applied_research",
+          "min": -34,
+          "max": -11,
+          "name": "Applied research",
+          "desc": "Funding follows industry and defence, rarely curiosity."
+        },
+        {
+          "id": "public_universities",
+          "min": -10,
+          "max": 10,
+          "name": "Public universities",
+          "desc": "Ordinary state funding for schools, faculties and journals."
+        },
+        {
+          "id": "research_state",
+          "min": 11,
+          "max": 34,
+          "name": "Research state",
+          "desc": "Laboratories, grants and technical schools are a budget priority."
+        },
+        {
+          "id": "technocratic_planning",
+          "min": 35,
+          "max": 69,
+          "name": "Technocratic planning",
+          "desc": "Policy is written by expert boards and audited against evidence."
+        },
+        {
+          "id": "scientific_mandate",
+          "min": 70,
+          "max": 100,
+          "name": "Scientific mandate",
+          "desc": "The academy sits in government; every ministry answers to review."
+        }
+      ]
+    },
+    {
+      "id": "tradition",
+      "axis": "trad",
+      "icon": 189,
+      "name": "Tradition",
+      "bands": [
+        {
+          "id": "radical_reform",
+          "min": -100,
+          "max": -70,
+          "name": "Radical reform",
+          "desc": "Old institutions dissolved outright; customs are legislated against."
+        },
+        {
+          "id": "progressive_reform",
+          "min": -69,
+          "max": -35,
+          "name": "Progressive reform",
+          "desc": "Rights extended fast, religious privilege dismantled."
+        },
+        {
+          "id": "secular_civic",
+          "min": -34,
+          "max": -11,
+          "name": "Secular civic order",
+          "desc": "A neutral state, no official creed, reform by ordinary majority."
+        },
+        {
+          "id": "civic_balance",
+          "min": -10,
+          "max": 10,
+          "name": "Civic balance",
+          "desc": "Neither restoration nor reform; the settlement stands as it is."
+        },
+        {
+          "id": "cultural_conservatism",
+          "min": 11,
+          "max": 34,
+          "name": "Cultural conservatism",
+          "desc": "Family, church and custom are written into law and funded."
+        },
+        {
+          "id": "restorationism",
+          "min": 35,
+          "max": 69,
+          "name": "Restorationism",
+          "desc": "Old ranks, offices and calendars are deliberately brought back."
+        },
+        {
+          "id": "sacred_order",
+          "min": 70,
+          "max": 100,
+          "name": "Sacred order",
+          "desc": "Custom is law; deviation from it is prosecuted."
+        }
+      ]
+    },
+    {
+      "id": "militarism",
+      "axis": "mil",
+      "icon": 322,
+      "name": "Militarism",
+      "bands": [
+        {
+          "id": "disarmament",
+          "min": -100,
+          "max": -70,
+          "name": "Disarmament",
+          "desc": "Standing forces abolished; weapons production is illegal."
+        },
+        {
+          "id": "pacifism",
+          "min": -69,
+          "max": -35,
+          "name": "Pacifism",
+          "desc": "A token defence force and a constitutional bar on foreign war."
+        },
+        {
+          "id": "defensive_posture",
+          "min": -34,
+          "max": -11,
+          "name": "Defensive posture",
+          "desc": "A small professional army held strictly for home defence."
+        },
+        {
+          "id": "standing_army",
+          "min": -10,
+          "max": 10,
+          "name": "Standing army",
+          "desc": "An ordinary peacetime force, ordinary spending, no doctrine."
+        },
+        {
+          "id": "rearmament",
+          "min": 11,
+          "max": 34,
+          "name": "Rearmament",
+          "desc": "Budgets rising, reserves called up, industry retooling."
+        },
+        {
+          "id": "conscription_state",
+          "min": 35,
+          "max": 69,
+          "name": "Conscription state",
+          "desc": "Universal service, a war economy and a garrisoned border."
+        },
+        {
+          "id": "total_mobilisation",
+          "min": 70,
+          "max": 100,
+          "name": "Total mobilisation",
+          "desc": "Every institution is organised around the next campaign."
+        }
+      ]
+    },
+    {
+      "id": "mysticism",
+      "axis": "myst",
+      "icon": 193,
+      "name": "Mysticism",
+      "bands": [
+        {
+          "id": "militant_rationalism",
+          "min": -100,
+          "max": -70,
+          "name": "Militant rationalism",
+          "desc": "Occult practice is banned and its practitioners prosecuted."
+        },
+        {
+          "id": "state_secularism",
+          "min": -69,
+          "max": -35,
+          "name": "State secularism",
+          "desc": "No public money and no legal standing for the arcane."
+        },
+        {
+          "id": "regulated_practice",
+          "min": -34,
+          "max": -11,
+          "name": "Regulated practice",
+          "desc": "Arcane work is licensed, taxed and kept out of government."
+        },
+        {
+          "id": "tolerated_practice",
+          "min": -10,
+          "max": 10,
+          "name": "Tolerated practice",
+          "desc": "The state neither funds the arcane nor moves against it."
+        },
+        {
+          "id": "chartered_orders",
+          "min": 11,
+          "max": 34,
+          "name": "Chartered orders",
+          "desc": "Guilds and covens hold charters, seats and public contracts."
+        },
+        {
+          "id": "arcane_establishment",
+          "min": 35,
+          "max": 69,
+          "name": "Arcane establishment",
+          "desc": "An official cult, a state college of magic, sworn officials."
+        },
+        {
+          "id": "theurgic_rule",
+          "min": 70,
+          "max": 100,
+          "name": "Theurgic rule",
+          "desc": "Government is a liturgy; the rite decides what the ministry does."
+        }
+      ]
+    }
+  ]
+}

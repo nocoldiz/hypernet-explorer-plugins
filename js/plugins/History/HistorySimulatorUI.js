@@ -16,8 +16,6 @@
 (function () {
     'use strict';
 
-    const COUNTRIES = window.HistorySimulator_COUNTRIES || {};
-
     // Wire WASD → RMMZ directional inputs (global; maps to standard directions so harmless everywhere)
     Input.keyMapper[87] = 'up';    // W
     Input.keyMapper[83] = 'down';  // S
@@ -197,11 +195,75 @@
             const all = window.HistoryManager
                 ? window.HistoryManager.getEvents()
                 : ($gameSystem._historicalEvents || []);
-            return this._fixedOnly ? all.filter(e => e && e.type === 'fixed') : all;
+            const rows = this._fixedOnly ? all.filter(e => e && e.type === 'fixed') : all;
+            // An archive is read oldest first, and the live chronicle appends
+            // to the same array the century wrote, so the order it arrives in
+            // is only nearly chronological. Sorting here rather than at the
+            // draw keeps the selected index and the visible card in step: both
+            // sides of the screen read exactly this array.
+            const key = rows.length + ':' + (this._fixedOnly ? 1 : 0);
+            if (this._sortedFor !== key) {
+                this._sortedFor = key;
+                this._sorted = rows.slice().sort((a, b) =>
+                    String(a && a.date || '').localeCompare(String(b && b.date || '')));
+            }
+            return this._sorted;
+        }
+
+        // The chronicle as an archive reads it: a shelf of years, each year a
+        // run of months, each month the entries filed under it. The index on
+        // every row is the index into getUIHistoryEvents(), so the keyboard,
+        // the mouse and the dossier all still speak in one number.
+        groupUIHistoryEvents(events) {
+            const years = [];
+            let year = null, month = null;
+            events.forEach((evt, idx) => {
+                const parts = String(evt && evt.date || '').split('-');
+                const y = parts[0] || '?';
+                const m = parts[1] || '?';
+                if (!year || year.year !== y) {
+                    year = { year: y, count: 0, months: [] };
+                    years.push(year);
+                    month = null;
+                }
+                if (!month || month.month !== m) {
+                    month = { month: m, rows: [] };
+                    year.months.push(month);
+                }
+                month.rows.push({ evt, idx, day: parts[2] || '' });
+                year.count++;
+            });
+            return years;
+        }
+
+        // The decades the archive actually holds, for the rail that jumps to
+        // one. A century of entries is not a list anybody scrolls.
+        decadesOf(years) {
+            const out = [];
+            for (const y of years) {
+                const n = Number(y.year);
+                if (!Number.isFinite(n)) continue;
+                const decade = Math.floor(n / 10) * 10;
+                const at = out.find(d => d.decade === decade);
+                if (at) at.count += y.count;
+                else out.push({ decade, count: y.count, year: y.year });
+            }
+            return out;
+        }
+
+        // Jump the list to a decade and put the cursor on its first entry.
+        selectDecade(decade) {
+            const events = this.getUIHistoryEvents();
+            const at = events.findIndex(e => Math.floor(Number(String(e && e.date || '').slice(0, 4)) / 10) * 10 === decade);
+            if (at < 0) return;
+            SoundManager.playCursor();
+            this._historyWindow.select(at);
+            this.syncUIHistoryState();
         }
 
         toggleFixedOnly() {
             this._fixedOnly = !this._fixedOnly;
+            this._sortedFor = null;
             this._lastIndex = -1;
             this._uiSpread = null;
             const container = this._uiContainer || document.getElementById("history-container");
@@ -251,37 +313,37 @@
             const at = Math.max(0, Math.min(this._diseaseIndex || 0, rows.length - 1));
             const selected = rows[at];
             const listHTML = rows.length ? rows.map((d, idx) => `
-                <div class="event-card ${idx === at ? "focused" : ""}" data-disease-idx="${idx}">
-                    <div class="card-header">
-                        <span class="card-date">${d.name}</span>
-                        <span class="card-badge">${T('Diseases.category.' + d.category)}</span>
+                <div class="item-slot hist-row ${idx === at ? "selected" : ""}" data-disease-idx="${idx}">
+                    <div class="item-slot-info">
+                        <div class="item-slot-name">${d.name}</div>
+                        <div class="item-slot-meta">${T('Diseases.category.' + d.category)}</div>
                     </div>
-                    <div class="card-desc">${d.desc}</div>
                 </div>
-            `).join("") : `<div style="text-align:center; margin-top:50px">${T('Diseases.ui.noLibrary')}</div>`;
+            `).join("") : `<p class="hist-empty">${T('Diseases.ui.noLibrary')}</p>`;
 
             const dossierHTML = selected && api && api.diseaseDossierHTML ? `
-                <div class="cc-dossier-card">
-                    <h3 class="cc-subheader">${selected.name}</h3>
+                <div class="item-inspect">
+                    <div class="inspect-section-title">${selected.name}</div>
                     ${api.diseaseDossierHTML(selected.id)}
                 </div>` : "";
 
             container.innerHTML = `
-                <div class="cc-pockets-spread">
-                    <div class="cc-page cc-page-left" style="gap:4px">
-                        <h2 class="cc-header-gothic" style="font-size:1.76rem; margin-bottom:10px">${T('Diseases.ui.library')}</h2>
-                        <div id="history-timeline-list">${listHTML}</div>
+                <div class="book-spread hist-spread">
+                    <div class="left-page">
+                        ${this.archiveHeaderHTML()}
+                        ${this.archiveShelfTabsHTML()}
+                        <div class="ui-list ui-scroll" id="history-timeline-list">${listHTML}</div>
                     </div>
-                    <div class="cc-page cc-page-right">
-                        <div class="dossier-wrapper">${dossierHTML}</div>
-                        <div class="cc-button-panel">
-                            <button class="cc-btn-treaty" id="history-mode-btn">${T('Diseases.ui.showTimeline')}</button>
-                            <button class="cc-btn-treaty confirm" id="history-continue-btn">${T('History.ui.continue')}</button>
+                    <div class="right-page">
+                        <div class="ui-scroll hist-detail">${dossierHTML}</div>
+                        <div class="inspect-actions">
+                            <div class="inspect-btn" role="button" tabindex="0"
+                                 id="history-continue-btn">${T('History.ui.continue')}</div>
                         </div>
                     </div>
                 </div>
             `;
-            this._uiSpread = container.querySelector(".cc-pockets-spread");
+            this._uiSpread = container.querySelector(".hist-spread");
             container.querySelectorAll("[data-disease-idx]").forEach(card => {
                 card.addEventListener("click", () => {
                     this._diseaseIndex = parseInt(card.getAttribute("data-disease-idx"), 10);
@@ -289,10 +351,59 @@
                     this.renderDiseaseLibrary(container);
                 });
             });
-            const modeBtn = container.querySelector("#history-mode-btn");
-            if (modeBtn) modeBtn.addEventListener("click", () => this.setArchiveMode("timeline"));
+            this.bindArchiveChrome(container);
+        }
+
+        // The one header both shelves wear: the way out at the top left of the
+        // left page, where every screen in this game keeps it, and the title.
+        archiveHeaderHTML() {
+            return `
+                <div class="page-header-bar">
+                    <div class="back-button" id="history-back-btn"
+                         role="button" tabindex="0">${T('History.ui.back')}</div>
+                    <h2 class="title">${T('History.ui.archiveTitle')}</h2>
+                </div>`;
+        }
+
+        // The two shelves, as a tab strip rather than as a button at the foot
+        // of the other page that said "show the other one".
+        archiveShelfTabsHTML() {
+            const tab = (id, label) => `
+                <div class="backpack-tab ${this._archiveMode === id ? "active" : ""}"
+                     data-shelf="${id}" role="button" tabindex="0">${label}</div>`;
+            return `
+                <div class="backpack-tabs hist-shelves">
+                    ${tab("timeline", T('Diseases.ui.showTimeline'))}
+                    ${tab("diseases", T('Diseases.ui.showLibrary'))}
+                </div>`;
+        }
+
+        // The controls both shelves share: the shelf tabs, the way out and the
+        // confirm. Bound once per build, from one place, so the two renderers
+        // cannot drift apart on what a button does.
+        bindArchiveChrome(container) {
+            container.querySelectorAll("[data-shelf]").forEach(tab => {
+                tab.addEventListener("click", () => this.setArchiveMode(tab.getAttribute("data-shelf")));
+            });
+            const backBtn = container.querySelector("#history-back-btn");
+            if (backBtn) {
+                backBtn.addEventListener("click", () => {
+                    SoundManager.playCancel();
+                    if (window.Scene_CharacterCreation) {
+                        // Resume creation just before character-type selection
+                        // (interruptedStep + 1 lands on the next interactive step).
+                        Scene_CharacterCreation._interruptedStep =
+                            (window.CCSteps && window.CCSteps.WORLD_HISTORY) != null
+                                ? window.CCSteps.WORLD_HISTORY
+                                : 2;
+                    }
+                    this.popScene();
+                });
+            }
             const contBtn = container.querySelector("#history-continue-btn");
-            if (contBtn) contBtn.addEventListener("click", () => { SoundManager.playOk(); this.popScene(); });
+            if (contBtn) {
+                contBtn.addEventListener("click", () => { SoundManager.playOk(); this.popScene(); });
+            }
         }
 
         syncUIHistoryState() {
@@ -314,270 +425,23 @@
             const currentIndex = this._historyWindow.index();
             let existingSpread = this._uiSpread;
             if (!existingSpread || !existingSpread.isConnected) {
-                existingSpread = this._uiSpread = container.querySelector(".cc-pockets-spread");
+                existingSpread = this._uiSpread = container.querySelector(".hist-spread");
             }
             if (this._lastIndex === currentIndex && existingSpread) return;
-
             this._lastIndex = currentIndex;
 
-            const allEvents = this.getUIHistoryEvents();
-
-            const titleText = T('History.ui.archiveTitle');
-
-            // An event's category is an id on the record and a label on the card.
-            const categoryLabel = (id) => {
-                const key = 'History.category.' + String(id || '');
-                return T.has(key) ? T(key) : String(id || '');
-            };
-            const worldName = (name) => window.WorldNames ? window.WorldNames.any(name) : name;
-
-            function getCategoryVars(category) {
-                const map = {
-                    'military':   { color: 'var(--text-secondary-active, #822d2d)',      bg: 'var(--shadow-soft-active-translucent-25, rgba(130,45,45,0.05))' },
-                    'political':  { color: 'var(--text-text-alt-5-hover, #b05c3c)',      bg: 'var(--border-primary-hover-translucent-15, rgba(176,92,60,0.05))' },
-                    'internal':   { color: 'var(--text-text-alt-5-hover, #b05c3c)',      bg: 'var(--border-primary-hover-translucent-15, rgba(176,92,60,0.05))' },
-                    'economic':   { color: 'var(--text-text-alt-3, #2b5e3c)',            bg: 'var(--bg-bg-alt-7-translucent-12, rgba(43,94,60,0.05))' },
-                    'social':     { color: 'var(--text-text-alt-16, #3d5e75)',           bg: 'var(--bg-bg-alt-6-translucent-12, rgba(61,94,117,0.05))' },
-                    'paranormal': { color: 'var(--bg-bg-alt-14, #5a3d75)',               bg: 'var(--bg-bg-alt-15-translucent-12, rgba(90,61,117,0.05))' },
-                    'royal':      { color: 'var(--text-text-alt-19, #8c4375)',           bg: 'var(--border-primary-hover-translucent-15, rgba(140,67,117,0.05))' },
-                    'occult':     { color: 'var(--bg-bg-alt-14, #5a3d75)',               bg: 'var(--bg-bg-alt-15-translucent-12, rgba(90,61,117,0.05))' },
-                    'scientific': { color: 'var(--text-text-alt-16, #3d5e75)',           bg: 'var(--bg-bg-alt-6-translucent-12, rgba(61,94,117,0.05))' },
-                    'disaster':   { color: 'var(--text-secondary-active, #822d2d)',      bg: 'var(--shadow-soft-active-translucent-25, rgba(130,45,45,0.05))' },
-                    'criminal':   { color: 'var(--text-text-alt-5-hover, #b05c3c)',      bg: 'var(--border-primary-hover-translucent-15, rgba(176,92,60,0.05))' },
-                    'artifact':   { color: 'var(--text-gold-dark)',                      bg: 'var(--accent-gold-translucent-16)' },
-                    'diplomatic': { color: 'var(--text-text-alt-16, #3d5e75)',           bg: 'var(--bg-bg-alt-6-translucent-12, rgba(61,94,117,0.05))' }
-                };
-                return map[category] || { color: 'var(--border-muted-focus, #8b5a2b)', bg: 'var(--border-secondary-hover-translucent-15, rgba(139,90,43,0.05))' };
-            }
-
-            function isArtifactEvent(evt) {
-                return evt.category === 'artifact' || /artifact/i.test(evt.description || '');
-            }
-
-            const artifactBadgeHTML = `<span class="card-badge" style="color:var(--text-gold-dark); background:var(--accent-gold-translucent-16); border:1px solid var(--border-gold-amber-30)">${T('History.ui.artifactBadge')}</span>`;
-
-            let dossierHTML = "";
-            const selectedEvent = allEvents[currentIndex];
-            if (selectedEvent) {
-                const dateParts = selectedEvent.date.split('-');
-                const formattedDate = dateParts.length === 3 ? `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}` : selectedEvent.date;
-                const cv = getCategoryVars(selectedEvent.category);
-                const artifactTag = isArtifactEvent(selectedEvent) ? artifactBadgeHTML : "";
-
-                let consequenceBadges = "";
-                if (selectedEvent.results) {
-                    selectedEvent.results.split(",").forEach(r => {
-                        const trimmed = r.trim();
-                        if (trimmed) {
-                            const isPos = trimmed.includes("+");
-                            const badgeColor = isPos ? 'var(--text-text-alt-3, #2b5e3c)' : 'var(--text-secondary-active, #822d2d)';
-                            const badgeBg = isPos ? 'rgba(43,94,60,0.08)' : 'rgba(130,45,45,0.08)';
-                            consequenceBadges += `<span class="card-badge" style="color:${badgeColor}; background:${badgeBg}; border:1px solid ${badgeColor}; margin-right:4px">${trimmed}</span>`;
-                        }
-                    });
-                } else {
-                    consequenceBadges = `<span style="font-size:0.96rem; color:var(--text-disabled, #5c4b3d)">${T('History.ui.noDelta')}</span>`;
-                }
-
-                dossierHTML = `
-                    <div class="cc-dossier-card">
-                        <div style="display:flex; flex-direction:column; gap:10px; font-size:1.02rem; margin-bottom:12px">
-                            <div class="cc-dossier-row">
-                                <span class="cc-dossier-label">${T('History.ui.dateLbl')}</span>
-                                <span class="cc-dossier-value" style="font-family:'Courier Prime', monospace">${formattedDate}</span>
-                            </div>
-                            <div class="cc-dossier-row">
-                                <span class="cc-dossier-label">${T('History.ui.typeLbl')}</span>
-                                <span class="cc-dossier-value" style="color:${cv.color}; text-transform:uppercase">${categoryLabel(selectedEvent.category)}</span>
-                                ${artifactTag}
-                            </div>
-                        </div>
-                        <div style="background:var(--bg-primary-hover-translucent-35, rgba(255,255,255,0.4)); border:1px dashed var(--scroll-thumb-hover-translucent-60, rgba(139,90,43,0.3)); padding:12px 14px; border-radius:4px; font-family:'Courier Prime', monospace; font-size:0.96rem; color:var(--text-muted-hover, #2b1c11); line-height:1.45; margin-bottom:12px">
-                            ${selectedEvent.description}
-                        </div>
-                        <div>
-                            <div style="font-size:0.915rem; text-transform:uppercase; color:var(--text-disabled, #5c4b3d); font-weight:bold; margin-bottom:6px">${T('History.ui.consequences')}</div>
-                            <div class="conseq-row">
-                                ${consequenceBadges}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
             if (!existingSpread) {
-                // Timeline + standings are only consumed when the spread is first
-                // built, so their (up-to-5000-card / full-standings) HTML is built
-                // here instead of on every selection change.
-                let timelineHTML = "";
-                if (allEvents.length === 0) {
-                    timelineHTML = `<div style="text-align:center; color:var(--text-disabled, #5c4b3d); margin-top:50px; font-size:1.14rem">${T('History.ui.noRecords')}</div>`;
-                } else {
-                    allEvents.forEach((evt, idx) => {
-                        const focused = idx === currentIndex ? "focused" : "";
-                        const cv = getCategoryVars(evt.category);
-                        const dateParts = evt.date.split('-');
-                        const formattedDate = dateParts.length === 3 ? `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}` : evt.date;
-                        const artifactTag = isArtifactEvent(evt) ? artifactBadgeHTML : "";
-
-                        timelineHTML += `
-                            <div class="event-card ${focused}" data-global-idx="${idx}" style="--event-card-accent:${cv.color}">
-                                <div class="card-header">
-                                    <span class="card-date">${formattedDate}</span>
-                                    <span class="card-badge" style="color:${cv.color}; background:${cv.bg}; border:1px solid ${cv.color}30">${evt.category}</span>
-                                    ${artifactTag}
-                                </div>
-                                <div class="card-desc">${evt.description}</div>
-                                ${evt.results ? `
-                                    <div class="card-results">
-                                        <span></span>
-                                        <span>${evt.results}</span>
-                                    </div>
-                                ` : ""}
-                            </div>
-                        `;
-                    });
-                }
-
-                const powersList = Object.entries(window.HistoryManager
-                    ? window.HistoryManager.getHyperpowers()
-                    : ($gameSystem._historicalHyperpowers || {}))
-                    .sort((a, b) => (b[1].military + b[1].economy) - (a[1].military + a[1].economy));
-
-                let standingsHTML = `
-                    <div class="cc-dossier-card">
-                        <h3 class="cc-subheader">${T('History.ui.hyperpowersBalance')}</h3>
-                        <div style="display:flex; flex-direction:column; gap:10px">
-                `;
-
-                powersList.slice(0, 3).forEach(([name, data]) => {
-                    const milPct = Math.min(100, Math.max(5, (data.military / 300) * 100));
-                    const ecoPct = Math.min(100, Math.max(5, (data.economy / 250) * 100));
-
-                    const controlled = [];
-                    for (const [cName, cData] of Object.entries(COUNTRIES)) {
-                        if (cData.controller === name) controlled.push(worldName(cName));
-                    }
-                    const territories = controlled.slice(0, 3).join(", ") + (controlled.length > 3 ? "..." : "");
-
-                    standingsHTML += `
-                        <div style="border-bottom:1px dashed var(--scroll-thumb-hover-translucent-60, rgba(139,90,43,0.25)); padding-bottom:8px">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:4px">
-                                <strong style="font-size:1.02rem; color:var(--text-primary-hover, #2b1c11)">${worldName(name)}</strong>
-                                <span style="font-size:0.854rem; color:var(--text-disabled, #5c4b3d); font-family:'Courier Prime', monospace">${territories}</span>
-                            </div>
-                            <div class="cc-dossier-row">
-                                <span class="cc-dossier-label">${T('History.ui.military')}</span>
-                                <div class="cc-progress-container">
-                                    <div class="cc-progress-fill" style="width:${milPct}%; background:var(--text-secondary-active, #822d2d)"></div>
-                                </div>
-                                <span class="cc-dossier-value" style="color:var(--text-secondary-active, #822d2d)">${Math.floor(data.military)}</span>
-                            </div>
-                            <div class="cc-dossier-row">
-                                <span class="cc-dossier-label">${T('History.ui.economy')}</span>
-                                <div class="cc-progress-container">
-                                    <div class="cc-progress-fill" style="width:${ecoPct}%; background:var(--text-text-alt-3, #2b5e3c)"></div>
-                                </div>
-                                <span class="cc-dossier-value" style="color:var(--text-text-alt-3, #2b5e3c)">${Math.floor(data.economy)}</span>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                standingsHTML += `</div></div>`;
-
-                const backLabel = T('History.ui.back');
-                const continueLabel = T('History.ui.continue');
-                container.innerHTML = `
-                    <div class="cc-pockets-spread">
-                        <div class="cc-page cc-page-left" style="gap:4px">
-                            <h2 class="cc-header-gothic" style="font-size:1.76rem; margin-bottom:10px">${titleText}</h2>
-                            <div id="history-timeline-list">
-                                ${timelineHTML}
-                            </div>
-                        </div>
-                        <div class="cc-page cc-page-right">
-                            <div class="dossier-wrapper">
-                                ${dossierHTML}
-                            </div>
-                            ${standingsHTML}
-                            <div class="cc-button-panel">
-                                <button class="cc-btn-treaty" id="history-back-btn">${backLabel}</button>
-                                <button class="cc-btn-treaty ${this._fixedOnly ? "confirm" : ""}" id="history-canon-btn">${this._fixedOnly ? T('History.ui.showAllEvents') : T('History.ui.showCanonOnly')}</button>
-                                <button class="cc-btn-treaty" id="history-mode-btn">${T('Diseases.ui.showLibrary')}</button>
-                                <button class="cc-btn-treaty confirm" id="history-continue-btn">${continueLabel}</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                // Cache the freshly-built spread + focused card so the update
-                // branch can toggle just two nodes instead of re-querying.
-                this._uiSpread = container.querySelector(".cc-pockets-spread");
-                this._focusedCard = container.querySelector(`.event-card[data-global-idx="${currentIndex}"]`) || null;
-
-                container.querySelectorAll(".event-card").forEach(c => {
-                    c.addEventListener("click", () => {
-                        const idx = parseInt(c.getAttribute("data-global-idx"));
-                        if (this._historyWindow.index() !== idx) {
-                            SoundManager.playCursor();
-                            this._historyWindow.select(idx);
-                            this.syncUIHistoryState();
-                        }
-                    });
-                });
-
-                const modeBtn = container.querySelector("#history-mode-btn");
-                if (modeBtn) modeBtn.addEventListener("click", () => this.setArchiveMode("diseases"));
-
-                const canonBtn = container.querySelector("#history-canon-btn");
-                if (canonBtn) canonBtn.addEventListener("click", () => this.toggleFixedOnly());
-
-                const backBtn = container.querySelector("#history-back-btn");
-                if (backBtn) {
-                    backBtn.addEventListener("click", () => {
-                        SoundManager.playCancel();
-                        if (window.Scene_CharacterCreation) {
-                            // Resume creation just before character-type selection
-                            // (interruptedStep + 1 lands on the next interactive step).
-                            Scene_CharacterCreation._interruptedStep =
-                                (window.CCSteps && window.CCSteps.WORLD_HISTORY) != null
-                                    ? window.CCSteps.WORLD_HISTORY
-                                    : 2;
-                        }
-                        this.popScene();
-                    });
-                }
-
-                const continueBtn = container.querySelector("#history-continue-btn");
-                if (continueBtn) {
-                    continueBtn.addEventListener("click", () => {
-                        SoundManager.playOk();
-                        this.popScene();
-                    });
-                }
-
-                const timelineList = container.querySelector("#history-timeline-list");
-                if (timelineList) {
-                    container.addEventListener("wheel", (e) => {
-                        e.preventDefault();
-                        timelineList.scrollTop += e.deltaY;
-                    }, { passive: false });
-                }
-
+                this.renderTimeline(container, currentIndex);
             } else {
-                // Only the previously- and newly-focused cards change class,
-                // so touch those two nodes instead of every card.
+                // Only the previously- and newly-focused rows change class, so
+                // touch those two nodes instead of every row in the century.
                 const prev = this._focusedCard;
-                const next = container.querySelector(`.event-card[data-global-idx="${currentIndex}"]`);
-                if (prev && prev !== next) prev.classList.remove("focused");
-                if (next) next.classList.add("focused");
+                const next = container.querySelector(`.hist-row[data-global-idx="${currentIndex}"]`);
+                if (prev && prev !== next) prev.classList.remove("selected");
+                if (next) next.classList.add("selected");
                 this._focusedCard = next;
-
-                const dossierWrapper = container.querySelector(".dossier-wrapper");
-                if (dossierWrapper) {
-                    dossierWrapper.innerHTML = dossierHTML;
-                }
+                const detail = container.querySelector(".hist-detail");
+                if (detail) detail.innerHTML = this.entryDetailHTML(currentIndex);
             }
 
             // Keep a single pending scroll: replace any still-queued one so rapid
@@ -586,13 +450,237 @@
             this._scrollTimeout = setTimeout(() => {
                 this._scrollTimeout = null;
                 const activeCard = this._focusedCard ||
-                    (container.isConnected && container.querySelector(`.event-card[data-global-idx="${currentIndex}"]`));
-                if (activeCard) {
-                    activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
+                    (container.isConnected && container.querySelector(`.hist-row[data-global-idx="${currentIndex}"]`));
+                if (activeCard) activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }, 50);
         }
+
+        // An event's category is an id on the record, a word on the row and one
+        // of six inks. The ladder is per theme and lives in the three token
+        // files; nothing here names a colour.
+        categoryLabel(id) {
+            const key = 'History.category.' + String(id || '');
+            return T.has(key) ? T(key) : String(id || '');
+        }
+
+        categoryClass(id) {
+            const band = Scene_History.CATEGORY_BANDS[String(id || '')] || 'other';
+            return 'hist-cat--' + band;
+        }
+
+        // The months, named the way the rest of the game names them.
+        monthName(mm) {
+            if (!this._monthNames) {
+                this._monthNames = (window.T && window.T.list)
+                    ? (window.T.list('TimeDate.months') || []) : [];
+            }
+            const at = Number(mm) - 1;
+            return this._monthNames[at] || String(mm || '?');
+        }
+
+        // ── The left page: a century, filed ─────────────────────────────────
+        //
+        // The archive used to be one flat run of up to five thousand cards with
+        // a reversed date stamped on each of them, which is a log file, not a
+        // shelf. It reads as a book now: years, and inside a year the months
+        // that had anything happen in them, with a rail of decades over the top
+        // for the jump nobody could make by scrolling.
+        renderTimeline(container, currentIndex) {
+            const events = this.getUIHistoryEvents();
+            const years = this.groupUIHistoryEvents(events);
+
+            let listHTML = "";
+            if (!events.length) {
+                listHTML = `<p class="hist-empty">${T('History.ui.noRecords')}</p>`;
+            } else {
+                listHTML = years.map(year => `
+                    <section class="hist-year" id="hist-year-${year.year}">
+                        <header class="hist-year-hdr">
+                            <span class="hist-year-num">${year.year}</span>
+                            <span class="hist-year-count">${year.count}</span>
+                        </header>
+                        ${year.months.map(month => `
+                            <div class="hist-month">
+                                <div class="hist-month-hdr">${this.monthName(month.month)}</div>
+                                ${month.rows.map(row => this.entryRowHTML(row, currentIndex)).join("")}
+                            </div>
+                        `).join("")}
+                    </section>
+                `).join("");
+            }
+
+            const decades = this.decadesOf(years);
+            const railHTML = decades.length > 1 ? `
+                <div class="hist-rail">
+                    ${decades.map(d => `
+                        <span class="hist-decade" role="button" tabindex="0"
+                              data-decade="${d.decade}">${d.decade}</span>`).join("")}
+                </div>` : "";
+
+            container.innerHTML = `
+                <div class="book-spread hist-spread">
+                    <div class="left-page">
+                        ${this.archiveHeaderHTML()}
+                        ${this.archiveShelfTabsHTML()}
+                        ${railHTML}
+                        <div class="ui-list ui-scroll" id="history-timeline-list">${listHTML}</div>
+                    </div>
+                    <div class="right-page">
+                        <div class="ui-scroll hist-detail">${this.entryDetailHTML(currentIndex)}</div>
+                        <div class="inspect-actions">
+                            <div class="inspect-btn ${this._fixedOnly ? "" : "inspect-btn--secondary"}"
+                                 role="button" tabindex="0" id="history-canon-btn">${
+                                this._fixedOnly ? T('History.ui.showAllEvents') : T('History.ui.showCanonOnly')}</div>
+                            <div class="inspect-btn" role="button" tabindex="0"
+                                 id="history-continue-btn">${T('History.ui.continue')}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            this._uiSpread = container.querySelector(".hist-spread");
+            this._focusedCard = container.querySelector(`.hist-row[data-global-idx="${currentIndex}"]`) || null;
+
+            container.querySelectorAll(".hist-row").forEach(row => {
+                row.addEventListener("click", () => {
+                    const idx = parseInt(row.getAttribute("data-global-idx"), 10);
+                    if (this._historyWindow.index() !== idx) {
+                        SoundManager.playCursor();
+                        this._historyWindow.select(idx);
+                        this.syncUIHistoryState();
+                    }
+                });
+            });
+            container.querySelectorAll(".hist-decade").forEach(chip => {
+                chip.addEventListener("click", () =>
+                    this.selectDecade(Number(chip.getAttribute("data-decade"))));
+            });
+            const canonBtn = container.querySelector("#history-canon-btn");
+            if (canonBtn) canonBtn.addEventListener("click", () => this.toggleFixedOnly());
+            this.bindArchiveChrome(container);
+
+            if (!this._wheelBound) {
+                this._wheelBound = true;
+                container.addEventListener("wheel", (e) => {
+                    const list = container.querySelector("#history-timeline-list");
+                    if (!list) return;
+                    e.preventDefault();
+                    list.scrollTop += e.deltaY;
+                }, { passive: false });
+            }
+        }
+
+        // One entry, as a row of the list. The day is the key, the sentence is
+        // the entry and the category is a word: the month and the year are the
+        // headers it sits under, so neither is repeated here.
+        entryRowHTML(row, currentIndex) {
+            const evt = row.evt;
+            const selected = row.idx === currentIndex ? "selected" : "";
+            return `
+                <div class="item-slot hist-row ${selected}" data-global-idx="${row.idx}">
+                    <span class="hist-day">${row.day || "--"}</span>
+                    <div class="item-slot-info">
+                        <div class="item-slot-name hist-line">${evt.description || ""}</div>
+                        <div class="item-slot-meta">
+                            <span class="hist-cat ${this.categoryClass(evt.category)}">${this.categoryLabel(evt.category)}</span>
+                            ${Scene_History.isArtifactEvent(evt)
+                                ? `<span class="hist-cat hist-cat--arcane">${T('History.ui.artifactBadge')}</span>` : ""}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        // ── The right page: the entry, then the balance ─────────────────────
+        entryDetailHTML(currentIndex) {
+            const events = this.getUIHistoryEvents();
+            const evt = events[currentIndex];
+            if (!evt) return "";
+
+            const parts = String(evt.date || '').split('-');
+            const readable = parts.length === 3
+                ? `${Number(parts[2])} ${this.monthName(parts[1])} ${parts[0]}`
+                : (parts.length === 2 ? `${this.monthName(parts[1])} ${parts[0]}` : evt.date);
+
+            let consequences = "";
+            if (evt.results) {
+                consequences = String(evt.results).split(",").map(r => r.trim()).filter(Boolean)
+                    .map(r => {
+                        const good = r.includes("+");
+                        return `<div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${good ? T('History.ui.gain') : T('History.ui.loss')}</span>
+                            <span class="inspect-spec-value ${good ? "hist-delta-up" : "hist-delta-down"}">${r}</span>
+                        </div>`;
+                    }).join("");
+            }
+
+            return `
+                <div class="item-inspect">
+                    <div class="inspect-section-title">${readable}</div>
+                    <div class="inspect-spec-grid">
+                        <div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${T('History.ui.typeLbl')}</span>
+                            <span class="inspect-spec-value ${this.categoryClass(evt.category)}">${this.categoryLabel(evt.category)}</span>
+                        </div>
+                    </div>
+                    <div class="inspect-desc">${evt.description || ""}</div>
+                    ${consequences ? `
+                        <div class="inspect-section-title">${T('History.ui.consequences')}</div>
+                        <div class="inspect-spec-grid">${consequences}</div>` : ""}
+                </div>
+                ${this.balanceHTML()}`;
+        }
+
+        // Every hyperpower, ranked, in the figures a yearbook prints rather
+        // than as gauges with no ceiling on them: how many people it holds, how
+        // many of them are under arms and what the place makes in a year
+        // (HistoryManager.realFigures owns that reading).
+        balanceHTML() {
+            const powers = window.HistoryManager
+                ? window.HistoryManager.getHyperpowers()
+                : ($gameSystem._historicalHyperpowers || {});
+            const worldName = (name) => window.WorldNames ? window.WorldNames.any(name) : name;
+            const ranked = Object.entries(powers || {})
+                .sort((a, b) => (b[1].military + b[1].economy) - (a[1].military + a[1].economy));
+            if (!ranked.length) return "";
+
+            const rows = ranked.map(([name, data]) => {
+                const fig = window.HistoryManager && window.HistoryManager.realFigures
+                    ? window.HistoryManager.realFigures(data) : null;
+                const value = fig
+                    ? T('History.ui.balanceLine', {
+                        soldiers: fig.soldiers.toLocaleString(),
+                        product: Math.round(fig.gdp / 1e9),
+                      })
+                    : `${Math.floor(data.military)} / ${Math.floor(data.economy)}`;
+                return `<div class="inspect-spec-row">
+                    <span class="inspect-spec-label">${worldName(name)}</span>
+                    <span class="inspect-spec-value">${value}</span>
+                </div>`;
+            }).join("");
+
+            return `
+                <div class="item-inspect">
+                    <div class="inspect-section-title">${T('History.ui.hyperpowersBalance')}</div>
+                    <div class="inspect-spec-grid">${rows}</div>
+                </div>`;
+        }
     }
+
+    // The six bands every chronicle category is read in. The ink for each is a
+    // token, defined in all three theme files; this table only says which band
+    // a category belongs to.
+    Scene_History.CATEGORY_BANDS = {
+        military: 'war', disaster: 'war', criminal: 'war',
+        political: 'state', internal: 'state', royal: 'state', diplomatic: 'state',
+        economic: 'trade',
+        social: 'people',
+        paranormal: 'arcane', occult: 'arcane', artifact: 'arcane',
+        scientific: 'science',
+    };
+
+    Scene_History.isArtifactEvent = function (evt) {
+        return !!evt && (evt.category === 'artifact' || /artifact/i.test(evt.description || ''));
+    };
 
     window.Scene_History = Scene_History;
 

@@ -11,6 +11,7 @@
   "backBtn": "Back",
   "empty_backpack": "Your backpack is empty...",
   "empty_container": "The container is empty...",
+  "empty_search": "No item here matches that.",
   "inspect_placeholder": "Select an item to inspect it and choose an action.",
   "common": "Common",
   "uncommon": "Uncommon",
@@ -45,6 +46,9 @@
     "leave": "Leave",
     "alreadyCollected": "Already Collected",
     "partDestroyed": "Part Destroyed",
-    "needTools": "Requires Surgical Tools"
+    "needTools": "Requires Surgical Tools",
+    "examineTitle": "Examine: {name}",
+    "bury": "Bury",
+    "buried": "You bury what is left of the {name}."
   }
 }

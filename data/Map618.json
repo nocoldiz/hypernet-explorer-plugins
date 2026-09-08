@@ -20,7 +20,7 @@
   "encounterList": [],
   "encounterStep": 30,
   "height": 13,
-  "note": "<Interior>\n<MapGroup: Ghent>\n<Coords 84 119>\n<Country: Belgium>\n<BuildRights: Owner>\n<Biome: City>",
+  "note": "<Interior>\n<MapGroup: Ghent>\n<Coords 84 119>\n<Country: Belgium>\n<BuildRights: Free>\n<Biome: City>",
   "parallaxLoopX": false,
   "parallaxLoopY": false,
   "parallaxName": "",

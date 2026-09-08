@@ -308,6 +308,18 @@
        * A slingshot frame: forked yoke, a band down each arm and a pouch
        * hanging between them. `opts.stretch` pulls the pouch back.
        */
+      // A sling band drawn between two points: the fork tip it is tied to and
+      // the pouch it is pulling. Bands built at a fixed length and angle stop
+      // short of the pouch as soon as the draw changes.
+      _slingBand(group, mat, from, to, width) {
+        const dir = to.clone().sub(from);
+        const strap = new THREE.Mesh(new THREE.BoxGeometry(width || 0.008, dir.length(), 0.003), mat);
+        strap.position.copy(from).add(to).multiplyScalar(0.5);
+        strap.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+        group.add(strap);
+        return strap;
+      },
+
       _slingFork(group, frame, band, pouch, opts) {
         const o = opts || {};
         const spread = o.spread || 0.045;
@@ -320,11 +332,9 @@
           const tip = new THREE.Mesh(new THREE.SphereGeometry(0.008, this.seg(8, 5), this.seg(6, 4)), frame);
           tip.position.set(s * spread, 0.21, 0);
           group.add(tip);
-          const strap = new THREE.Mesh(new THREE.BoxGeometry(0.008, o.bandLen || 0.1, 0.003), band);
-          strap.position.set(s * (spread - 0.006), 0.19 - (o.bandLen || 0.1) * 0.35, -(o.stretch || 0.03));
-          strap.rotation.x = 0.5;
-          strap.rotation.z = s * 0.16;
-          group.add(strap);
+          this._slingBand(group, band,
+            new THREE.Vector3(s * spread, 0.205, 0),
+            new THREE.Vector3(s * 0.009, 0.15, -(o.stretch || 0.03) * 1.9));
         }
         const cup = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.026, 0.004), pouch);
         cup.position.set(0, 0.15, -(o.stretch || 0.03) * 1.9);
@@ -470,10 +480,9 @@
           curl.position.set(s * 0.062, 0.225, 0);
           curl.rotation.set(0, Math.PI / 2, s * 0.6);
           group.add(curl);
-          const band = new THREE.Mesh(new THREE.BoxGeometry(0.006, 0.1, 0.003), rubber);
-          band.position.set(s * 0.058, 0.19, -0.035);
-          band.rotation.set(0.5, 0, s * 0.18);
-          group.add(band);
+          this._slingBand(group, rubber,
+            new THREE.Vector3(s * 0.062, 0.225, 0),
+            new THREE.Vector3(s * 0.008, 0.155, -0.068), 0.006);
         }
         const twist = this.isLowDetail() ? 3 : 6;
         for (let i = 0; i < twist; i++) {
@@ -520,10 +529,9 @@
           fork.position.set(s * 0.03, 0.15, 0);
           fork.rotation.z = -s * 0.32;
           group.add(fork);
-          const band = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.09, 0.003), rubber);
-          band.position.set(s * 0.05, 0.18, -0.03);
-          band.rotation.set(0.5, 0, s * 0.18);
-          group.add(band);
+          this._slingBand(group, rubber,
+            new THREE.Vector3(s * 0.049, 0.205, 0),
+            new THREE.Vector3(s * 0.008, 0.15, -0.058));
         }
         const knot = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.03, 0.03), tape);
         knot.position.y = 0.095;
@@ -791,14 +799,19 @@
         loop.position.y = 0.24;
         loop.rotation.x = 0.4;
         group.add(loop);
-        const braid = this.isLowDetail() ? 8 : 14;
+        // The braid runs from inside the loop down to the knot, and each bead
+        // is stretched past the step between beads, so the cord reads as one
+        // continuous line rather than a row of dots.
+        const braid = this.isLowDetail() ? 16 : 30;
+        const braidSpan = 0.35;
+        const braidStep = braidSpan / braid;
         for (const s of [-1, 1]) {
-          for (let i = 0; i < braid; i++) {
+          for (let i = 0; i <= braid; i++) {
             const t = i / braid;
             const bead = new THREE.Mesh(new THREE.SphereGeometry(0.005, this.seg(6, 4), this.seg(5, 4)), cord);
             const spread = Math.sin(t * Math.PI) * 0.04;
-            bead.position.set(s * spread, 0.22 - t * 0.34, Math.sin(t * 6 + s) * 0.008);
-            bead.scale.y = 1.6;
+            bead.position.set(s * spread, 0.24 - t * braidSpan, Math.sin(t * 6 + s) * 0.008);
+            bead.scale.y = Math.max(1.6, (braidStep * 1.3) / 0.01);
             group.add(bead);
           }
           const knot = new THREE.Mesh(new THREE.SphereGeometry(0.008, this.seg(7, 5), this.seg(5, 4)), cord);
@@ -1875,13 +1888,18 @@
         loop.position.y = 0.26;
         loop.rotation.x = 0.35;
         group.add(loop);
+        // The cord spans loop to cradle and its beads overlap, so the sling
+        // hangs as a drawn line of sky rather than as scattered dots.
+        const beadSpan = 0.39;
         for (const s of [-1, 1]) {
-          const beads = this.isLowDetail() ? 6 : 11;
-          for (let i = 0; i < beads; i++) {
+          const beads = this.isLowDetail() ? 20 : 36;
+          const beadStep = beadSpan / beads;
+          for (let i = 0; i <= beads; i++) {
             const t = i / beads;
             const b = new THREE.Mesh(new THREE.SphereGeometry(0.004, this.seg(6, 4), this.seg(5, 4)), i % 3 === 0 ? star : night);
             const spread = Math.sin(t * Math.PI) * 0.038;
-            b.position.set(s * spread, 0.24 - t * 0.36, Math.sin(t * 5 + s) * 0.006);
+            b.scale.y = Math.max(1, (beadStep * 1.3) / 0.008);
+            b.position.set(s * spread, 0.26 - t * beadSpan, Math.sin(t * 5 + s) * 0.006);
             if (i % 3 === 0) b.userData.pulse = { min: 0.2, max: 1.5, freq: 1.2 + t, phase: i };
             group.add(b);
           }

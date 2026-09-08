@@ -1336,6 +1336,24 @@
   }
 
   /**
+   * True when the world-map column carries a bridge marker, i.e. it is a river
+   * crossing rather than plain river. Map 315 paints its bridges as tile
+   * annotations over the river overlay instead of stamping region 12, so the
+   * region rule alone never sees them and every vehicle was turned back at the
+   * water's edge. The column still reads as a river underneath (the Boat keeps
+   * passing beneath the span), so this is a separate answer, not a change to
+   * isWorldRiverTile.
+   */
+  function isWorldBridgeTile(x, y) {
+    if ($gameMap.mapId() !== 315) return false;
+    if (!$gameMap.isValid(x, y)) return false;
+    const utils = window.ProcGenUtils;
+    if (!utils || !utils.classifyWorldColumn) return false;
+    const cls = utils.classifyWorldColumn((z) => $gameMap.tileId(x, y, z));
+    return !!cls.bridge;
+  }
+
+  /**
    * True when the tile is open water in its own right: open-water terrain (tag 3)
    * but ONLY on the world map (315) and the procedural map (636), region 99 water
    * on ANY map, or a world-map river tile. Every other tile (dry land, blocked
@@ -2000,7 +2018,8 @@
       // Game_Vehicle.isMapPassable), so it is a park and return spot for them
       // too: a vehicle left on a bridge is still on it when the party comes
       // back, instead of being evicted the next time the map loads.
-      if ($gameMap.isValid(x, y) && $gameMap.regionId(x, y) === 12) return true;
+      if ($gameMap.isValid(x, y) &&
+        ($gameMap.regionId(x, y) === 12 || isWorldBridgeTile(x, y))) return true;
       // The Boat can only ever park/spawn on navigable water (see isBoatPassableTile).
       if (isBoatSubType(character)) {
         return isBoatPassableTile(x, y);
@@ -2237,7 +2256,8 @@
       // vehicle back would cut the road it carries in half. The two that fly
       // are the exceptions that never needed the rule, the Broom answered just
       // above and the Starship a few lines down.
-      if (!this.isAirship() && $gameMap.regionId(x2, y2) === 12) return true;
+      if (!this.isAirship() &&
+        ($gameMap.regionId(x2, y2) === 12 || isWorldBridgeTile(x2, y2))) return true;
 
       // Indoors (a house, a dungeon, a cave) every vehicle simply goes wherever
       // the player could walk: the outdoor terrain-tag whitelist below describes
@@ -3246,6 +3266,21 @@
    * No "What would you like to do?" prompt is shown; the fuel and the condition
    * of the vehicle being decided about are on the status card above the choices.
    */
+  // The display name of the biome the party's world-map square would open into,
+  // or "" when that cannot be answered (off the world map, no classifier).
+  function biomeNameUnderPlayer() {
+    try {
+      const utils = window.ProcGenUtils;
+      if (!utils || !utils.getBiomeFromWorldCoordinates) return '';
+      if (!window.WorldMapReturn || $gameMap.mapId() !== window.WorldMapReturn.worldMapId) return '';
+      const biome = utils.getBiomeFromWorldCoordinates($gameMap, $gamePlayer.x, $gamePlayer.y);
+      if (!biome) return '';
+      return window.BiomeNames ? window.BiomeNames.display(biome) : biome;
+    } catch (e) {
+      return '';
+    }
+  }
+
   Game_Player.prototype.showVehicleActionMenu = function (vehicle, isRiding) {
     const config = vehicleManager.getConfig(vehicle);
     if (!config || $gameMessage.isBusy()) return;
@@ -3409,10 +3444,15 @@
       handlers.push(() => event.start());
     });
 
-    if (isRiding && window.WorldMapReturn) {
+    // Offered while riding AND while the vehicle only stands there: stepping out
+    // of a vehicle parked on a procedural world square is the moment the party
+    // decides between walking into that biome and staying on the world map.
+    if (window.WorldMapReturn) {
       const currentMapId = $gameMap.mapId();
       if (!vehicle.isAirship() && currentMapId === window.WorldMapReturn.worldMapId) {
-        choices.push(T('VehicleSystem.visitMap'));
+        const biome = biomeNameUnderPlayer();
+        choices.push(biome ? T('VehicleSystem.visitBiome', { biome })
+          : T('VehicleSystem.visitMap'));
         handlers.push(() => window.WorldMapReturn.performVisitMap());
       } else if (currentMapId === window.WorldMapReturn.procMapId) {
         choices.push(T('VehicleSystem.returnToWorldMap'));
@@ -4462,6 +4502,12 @@
   function vehicleMenuInfo(config) {
     const key = upgradeTypeForConfig(config);
     const usesFuel = !!config.usesFuel;
+    // How sound the vehicle is, and the parts that answer for it, so the garage
+    // can say what is wrong with it and not only where it was left.
+    const repair = window.VehicleSystemRepair;
+    const condition = repair?.vehicleCondition?.(key) ?? null;
+    const health = repair?.totalHealth?.(key) || null;
+    const parts = repair?.partsStatus?.(key) || [];
     const item = (typeof $dataItems !== 'undefined') ? $dataItems[config.summonItemId] : null;
     const sprite = (config.sprites && config.sprites.normal) ? config.sprites.normal : null;
     const loc = VehiclePosition.location(key);
@@ -4480,6 +4526,14 @@
       usesFuel,
       canRefuelAtPump: !!config.canRefuelAtPump,
       hasRepair: configHasRepair(config, key),
+      // Condition is the weighted average a status card prints; hp/mhp is the
+      // same record read as a bar. A dead critical part is a vehicle that will
+      // not move at all, so it is answered separately from a low bar.
+      condition,
+      hp: health ? health.current : null,
+      mhp: health ? health.max : null,
+      broken: !!repair?.checkCriticalParts?.(key),
+      parts,
       fuel: usesFuel ? VehicleFuel.get(key) : 0,
       max: usesFuel ? VehicleFuel.max(key) : 0,
       iconIndex: item ? (item.iconIndex || 0) : 0,
@@ -4691,6 +4745,48 @@
       const config = configByVehicleKey(keys.includes(last) ? last : keys[0]);
       if (!config) return false;
       vehicleManager.summon(config.type, config.boatSubType);
+      return true;
+    },
+
+    // The whole garage as one choice window: what the Vehicles hotkey gives on
+    // the map. A vehicle parked where the party stands opens its own action menu
+    // (the same one the action button gives), any other one is summoned over.
+    // Nothing is listed when the party owns nothing to list.
+    showVehicleListMenu() {
+      if (typeof $gameMessage === 'undefined' || $gameMessage.isBusy()) return false;
+      const owned = this.getOwnedVehicles();
+      if (!owned.length) {
+        showLocalizedMessage(T('VehicleSystem.noVehiclesOwned'));
+        return false;
+      }
+      const choices = [];
+      const handlers = [];
+      owned.forEach(info => {
+        const here = !!parkedTileOnCurrentMap(info.key);
+        const label = here
+          ? T('VehicleSystem.listRowHere', { vehicle: info.name })
+          : (info.parkedAt
+            ? T('VehicleSystem.listRow', { vehicle: info.name, location: info.parkedAt })
+            : T('VehicleSystem.listRowUnknown', { vehicle: info.name }));
+        choices.push(label);
+        handlers.push(() => {
+          // A choice list cannot be replaced from inside its own callback, so the
+          // action menu of a vehicle standing right here waits one frame.
+          const parked = materializeVehicle(info.key);
+          if (parked) { pendingVehicleMenu = parked; return; }
+          if (!this.spawnVehicleByKey(info.key)) {
+            showLocalizedMessage(T('VehicleSystem.noSummonIndoors'));
+          }
+        });
+      });
+      choices.push(T('VehicleSystem.cancel'));
+      handlers.push(() => { });
+      const cancelIndex = choices.length - 1;
+      $gameMessage.setChoices(choices, 0, cancelIndex);
+      $gameMessage.setChoiceCallback((choice) => {
+        const handler = handlers[choice];
+        if (handler) handler();
+      });
       return true;
     },
 
@@ -5319,6 +5415,168 @@
       // of it, or the first frames would draw the whole character sheet.
       sprite.visible = !!sprite.bitmap && !!sprite._frameKey;
     }
+  };
+
+
+  // ============================================================================
+  // Vehicle interior backdrop
+  // ============================================================================
+  //
+  // A vehicle interior (the camper's map 327 and its siblings) is a small box of
+  // floor floating in nothing, so everything around the walls draws black. That
+  // reads as a void rather than as a vehicle standing somewhere. Instead, the
+  // interior paints a still of the map the party just left, zoomed in on the
+  // vehicle's own tile there, behind the floor: the camper looks parked where it
+  // actually is. The still is taken at transfer time and lives only for the
+  // session, so an interior entered without one (a loaded save, a debug
+  // teleport) simply falls back to the old black.
+
+  const INTERIOR_BACKDROP_ZOOM = 2.6;
+  // The world map is drawn one square per tile, so a still of it needs far more
+  // magnification than a still of a walkable map before the parked vehicle reads
+  // as a vehicle rather than as a speck.
+  const INTERIOR_BACKDROP_ZOOM_WORLD = 5.2;
+  // Where the parked vehicle sits on the screen behind the interior: on the
+  // right, so the floor of the cabin (which the map itself keeps centred) is not
+  // painted straight over the hull.
+  const INTERIOR_BACKDROP_ANCHOR_X = 0.74;
+  const INTERIOR_BACKDROP_ANCHOR_Y = 0.42;
+  // How much the still slides against the interior's own scrolling, so the
+  // outside world is not painted on perfectly rigid glass.
+  const INTERIOR_BACKDROP_DRIFT = 0.12;
+  const INTERIOR_BACKDROP_TONE = [-30, -30, -20, 40];
+
+  // { bitmap, focusX, focusY, mapId } for the last capture, or null.
+  let interiorBackdrop = null;
+
+  function backdropZoom() {
+    return (interiorBackdrop && interiorBackdrop.worldMap)
+      ? INTERIOR_BACKDROP_ZOOM_WORLD : INTERIOR_BACKDROP_ZOOM;
+  }
+
+  function interiorConfigForMap(mapId) {
+    if (!mapId) return null;
+    const configs = [
+      VehicleConfig.CAMPER, VehicleConfig.CAR, VehicleConfig.AIRSHIP,
+      VehicleConfig.BIKE, VehicleConfig.BOAT, VehicleConfig.BROOM,
+      VehicleConfig.MOUNT
+    ];
+    for (const config of configs) {
+      if (config && config.interior && config.interior.mapId === mapId) return config;
+    }
+    return null;
+  }
+
+  // The character the still is centred on: the vehicle itself when it is parked
+  // on the map being left, and the player when they are riding it (the hull is
+  // under them) or when the vehicle is somewhere else entirely.
+  function backdropFocusCharacter(config) {
+    if ($gamePlayer.isInVehicle()) return $gamePlayer;
+    const vehicle = config && config.type ? vehicleManager.getVehicle(config.type) : null;
+    if (vehicle && vehicle._mapId === $gameMap.mapId()) return vehicle;
+    return $gamePlayer;
+  }
+
+  // Bitmap.snap of the spriteset with the player and the followers taken out of
+  // it, then put back exactly as they were.
+  function snapWithoutParty(spriteset) {
+    const hidden = [];
+    const characters = (spriteset._characterSprites || []);
+    for (const sprite of characters) {
+      const character = sprite._character;
+      if (!character) continue;
+      if (character === $gamePlayer || character instanceof Game_Follower) {
+        hidden.push([sprite, sprite.visible]);
+        sprite.visible = false;
+      }
+    }
+    try {
+      return Bitmap.snap(spriteset);
+    } finally {
+      for (const [sprite, visible] of hidden) sprite.visible = visible;
+    }
+  }
+
+  function captureInteriorBackdrop(mapId) {
+    const config = interiorConfigForMap(mapId);
+    if (!config) return;
+    if (!$gameMap || $gameMap.mapId() === mapId) return;
+    // Never keep a still of another vehicle's inside.
+    if (interiorConfigForMap($gameMap.mapId())) return;
+    const scene = SceneManager._scene;
+    if (!(scene instanceof Scene_Map) || !scene._spriteset) return;
+    try {
+      // The spriteset alone, so no HUD, message window or weather overlay is
+      // baked into the picture.
+      const focus = backdropFocusCharacter(config);
+      // The party is about to be inside, so it must not also be standing in the
+      // picture of the outside: the player and every follower are hidden for the
+      // one frame the still is taken in.
+      const bitmap = snapWithoutParty(scene._spriteset);
+      interiorBackdrop = {
+        bitmap: bitmap,
+        focusX: focus.screenX(),
+        focusY: focus.screenY(),
+        mapId: mapId,
+        worldMap: !!(window.WorldMapReturn && $gameMap.mapId() === window.WorldMapReturn.worldMapId)
+      };
+    } catch (e) {
+      interiorBackdrop = null;
+    }
+  }
+
+  const _Game_Player_reserveTransfer_VSBackdrop = Game_Player.prototype.reserveTransfer;
+  Game_Player.prototype.reserveTransfer = function (mapId, x, y, d, fadeType) {
+    captureInteriorBackdrop(mapId);
+    _Game_Player_reserveTransfer_VSBackdrop.call(this, mapId, x, y, d, fadeType);
+  };
+
+  const _Spriteset_Map_createParallax_VSBackdrop = Spriteset_Map.prototype.createParallax;
+  Spriteset_Map.prototype.createParallax = function () {
+    _Spriteset_Map_createParallax_VSBackdrop.call(this);
+    this.createVehicleInteriorBackdrop();
+  };
+
+  Spriteset_Map.prototype.createVehicleInteriorBackdrop = function () {
+    this._vehicleBackdropSprite = null;
+    if (!interiorBackdrop || !interiorBackdrop.bitmap) return;
+    if (interiorBackdrop.mapId !== $gameMap.mapId()) return;
+    // A map that already dresses its own outside is left alone.
+    if ($dataMap && $dataMap.parallaxName) return;
+    const sprite = new Sprite(interiorBackdrop.bitmap);
+    sprite.anchor.x = 0.5;
+    sprite.anchor.y = 0.5;
+    const zoom = backdropZoom();
+    sprite.scale.x = zoom;
+    sprite.scale.y = zoom;
+    if (sprite.setColorTone) sprite.setColorTone(INTERIOR_BACKDROP_TONE);
+    this._vehicleBackdropSprite = sprite;
+    // Straight after the parallax, so the tilemap and everything on it still
+    // draws over the still.
+    this._baseSprite.addChild(sprite);
+    this.updateVehicleInteriorBackdrop();
+  };
+
+  Spriteset_Map.prototype.updateVehicleInteriorBackdrop = function () {
+    const sprite = this._vehicleBackdropSprite;
+    if (!sprite || !interiorBackdrop) return;
+    const bitmap = interiorBackdrop.bitmap;
+    const zoom = backdropZoom();
+    // The vehicle's tile on the map outside is pinned to the right of the
+    // screen, clear of the cabin floor, then nudged by the interior's own
+    // scroll.
+    const cx = Graphics.width * INTERIOR_BACKDROP_ANCHOR_X;
+    const cy = Graphics.height * INTERIOR_BACKDROP_ANCHOR_Y;
+    const driftX = $gameMap.displayX() * $gameMap.tileWidth() * INTERIOR_BACKDROP_DRIFT;
+    const driftY = $gameMap.displayY() * $gameMap.tileHeight() * INTERIOR_BACKDROP_DRIFT;
+    sprite.x = cx - (interiorBackdrop.focusX - bitmap.width / 2) * zoom - driftX;
+    sprite.y = cy - (interiorBackdrop.focusY - bitmap.height / 2) * zoom - driftY;
+  };
+
+  const _Spriteset_Map_update_VSBackdrop = Spriteset_Map.prototype.update;
+  Spriteset_Map.prototype.update = function () {
+    _Spriteset_Map_update_VSBackdrop.call(this);
+    this.updateVehicleInteriorBackdrop();
   };
 
 })();

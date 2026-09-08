@@ -2200,10 +2200,10 @@
     "name": "Kim Il-sung",
     "ideology": "ideology.juche",
     "country": "North Korea",
-    "moralGuide": true,
-    "protected": true,
+    "moralGuide": false,
+    "protected": false,
     "years": [
-      1948,
+      1966,
       1994
     ],
     "bust": "img/busts/presets/KimIlSung.png",
@@ -2218,13 +2218,14 @@
       173,
       197,
       136
-    ]
+    ],
+    "headOfState": true
   },
   "kim_jong_il": {
     "name": "Kim Jong-il",
     "ideology": "ideology.songun_militarism",
     "country": "North Korea",
-    "moralGuide": true,
+    "moralGuide": false,
     "protected": false,
     "years": [
       1994,
@@ -2242,19 +2243,20 @@
       94,
       174,
       5
-    ]
+    ],
+    "headOfState": true
   },
   "kim_jong_un": {
     "name": "Kim Jong-un",
     "ideology": "ideology.juche",
     "country": "North Korea",
-    "moralGuide": true,
+    "moralGuide": false,
     "protected": false,
     "years": [
       2011,
-      2012
+      2100
     ],
-    "bust": "img/busts/Detective.png",
+    "bust": "img/busts/presets/KimJongUn.png",
     "real": true,
     "birthYear": 1984,
     "hometown": "Pyongyang",
@@ -2266,7 +2268,8 @@
       93,
       174,
       85
-    ]
+    ],
+    "headOfState": true
   },
   "kim_pyong_il": {
     "name": "Kim Pyong-il",

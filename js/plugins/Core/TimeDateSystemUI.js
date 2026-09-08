@@ -728,18 +728,31 @@
   };
 
   Scene_Map.prototype.execSleepMenuCommand = function (key) {
+    // The popup is closed with the player still blocked, so the sequence it
+    // hands over to is the only thing that can unblock them. If starting it
+    // throws, release the player here rather than leaving them frozen.
+    const startSequence = (run) => {
+      try {
+        run();
+      } catch (e) {
+        console.error("TimeDateSystem: could not start the rest sequence", e);
+        $gameTemp._sleepMenuOpen = false;
+        $gameScreen.startFadeIn(30);
+      }
+    };
+
     if (key.startsWith("hours_")) {
       const hours = Number(key.slice(6));
       SoundManager.playOk();
       this.closeSleepMenu(true);
-      this.startSleepSequence(hours);
+      startSequence(() => this.startSleepSequence(hours));
       return;
     }
     if (key.startsWith("wait_")) {
       const hours = Number(key.slice(5));
       SoundManager.playOk();
       this.closeSleepMenu(true);
-      this.startWaitSequence(hours);
+      startSequence(() => this.startWaitSequence(hours));
       return;
     }
     if (key === "cryo_confirm") {
@@ -760,11 +773,11 @@
       }
       SoundManager.playOk();
       this.closeSleepMenu(true);
-      this.startCryoSequence(minutes, {
+      startSequence(() => this.startCryoSequence(minutes, {
         cost: cost,
         days: api.getCryoDays ? api.getCryoDays(date.year, date.month, date.day) : 0,
         wakeDate: Object.assign({}, date),
-      });
+      }));
       return;
     }
     switch (key) {
@@ -798,7 +811,12 @@
       case "dream":
         SoundManager.playOk();
         this.closeSleepMenu();
-        PluginManager.callCommand(this, "DreamSystem", "StartDream", {});
+        // The screen is still black here: fade back in whatever the dream does.
+        try {
+          PluginManager.callCommand(this, "DreamSystem", "StartDream", {});
+        } catch (e) {
+          console.error("TimeDateSystem: the dream could not be entered", e);
+        }
         $gameScreen.startFadeIn(60);
         break;
     }
@@ -973,10 +991,133 @@
     _Scene_Map_terminate_cryo.call(this);
   };
 
+  // $gameTemp._sleepMenuOpen freezes the player, and it is deliberately left
+  // on across the fade so nobody walks off mid-sleep. If the popup and every
+  // sequence that would clear it are gone and it is still set, the player is
+  // stuck standing still with nothing on screen: release them.
+  function sleepBlockIsStale(scene) {
+    if (!$gameTemp || !$gameTemp._sleepMenuOpen) return false;
+    if (scene._sleepMenuEl) return false;
+    return !scene._sleepSequenceState && !scene._sleepAdvance &&
+           !scene._waitAdvance && !scene._cryoSequenceState;
+  }
+
+  //===========================================================================
+  // The rest watchdog
+  //
+  // Every rest freeze is released by the sequence that took it: the wait
+  // timelapse ends, the block ends. That holds as long as the sequence keeps
+  // being stepped, and Scene_Map.update is the only thing that steps it - so
+  // any overlay that short-circuits Scene_Map.update (a picker, a star chart,
+  // a 3D world drawn over the map) parks the sequence forever, with the player
+  // frozen, no menu, and the fast-forward flag still on while the map, the
+  // followers and the DOM HUDs carry on around them. That is the soft-lock
+  // reported aboard the Starship.
+  //
+  // The watchdog is the answer that does not depend on which overlay it was:
+  // it runs off SceneManager.updateMain, which nothing on the map can skip,
+  // and watches the frame counter the sequence bumps on every step. A counter
+  // that has not moved for STALL_MS of real time is a sequence nobody is
+  // driving any more: settle it, hand the clock its hours, and give the player
+  // back. The verdict itself is pure so test/test_wait_watchdog.js can drive
+  // it without a scene.
+  //===========================================================================
+
+  const WATCHDOG_STALL_MS = 3000;
+  // A frame of the watchdog not running at all (the party was in a menu, a
+  // battle, a shop) is not a stall: the mark is thrown away rather than aged.
+  const WATCHDOG_GAP_MS = 500;
+
+  function watchdogVerdict(state, mark, now) {
+    if (mark && now - mark.seen > WATCHDOG_GAP_MS) mark = null;
+    const stalled = (m) => m && now - m.at > WATCHDOG_STALL_MS;
+    const keep = (m, frames) => (m && m.frames === frames)
+      ? { frames: frames, at: m.at, seen: now }
+      : { frames: frames, at: now, seen: now };
+
+    if (state.waitFrames != null) {
+      const next = keep(mark, state.waitFrames);
+      return stalled(next) ? { verdict: "finishWait", mark: null } : { verdict: "none", mark: next };
+    }
+    if (state.sleepFrames != null) {
+      const next = keep(mark, state.sleepFrames);
+      return stalled(next) ? { verdict: "finishSleep", mark: null } : { verdict: "none", mark: next };
+    }
+    // Nothing is advancing any more: the fast-forward flag is nobody's, and it
+    // is what leaves the followers and the NPCs sprinting around the map.
+    if (state.fastForward) return { verdict: "clearFastForward", mark: null };
+    if (state.menuOpen && !state.menuEl && !state.cryoActive && !state.sleepSeq) {
+      const next = keep(mark, -1);
+      return stalled(next) ? { verdict: "release", mark: null } : { verdict: "none", mark: next };
+    }
+    return { verdict: "none", mark: null };
+  }
+  window.TimeDateSystem.watchdogVerdict = watchdogVerdict;
+
+  function runSleepWatchdog() {
+    const scene = SceneManager._scene;
+    if (!(scene instanceof Scene_Map) || !window.$gameTemp) return;
+    const state = {
+      menuOpen: !!$gameTemp._sleepMenuOpen,
+      menuEl: !!scene._sleepMenuEl,
+      cryoActive: !!scene._cryoSequenceState,
+      // The fade before a sleep: no advance object yet, and not a stall.
+      sleepSeq: !!scene._sleepSequenceState,
+      fastForward: !!$gameTemp._isWaitingFastForward,
+      waitFrames: scene._waitAdvance ? (scene._waitAdvance.framesRun || 0) : null,
+      sleepFrames: scene._sleepAdvance ? (scene._sleepAdvance.framesRun || 0) : null,
+    };
+    const out = watchdogVerdict(state, scene._sleepWatchdogMark || null, Date.now());
+    scene._sleepWatchdogMark = out.mark;
+    if (out.verdict === "none") return;
+    console.warn("TimeDateSystem: the rest sequence stopped being driven (" +
+      out.verdict + "), releasing the party");
+    try {
+      if (out.verdict === "finishWait" && scene._finishWaitAdvance) scene._finishWaitAdvance();
+      if (out.verdict === "finishSleep" && scene._finishSleepAdvance) scene._finishSleepAdvance();
+    } catch (e) {
+      console.error("TimeDateSystem: the watchdog could not finish the sequence", e);
+    }
+    $gameTemp._isWaitingFastForward = false;
+    // A finished sleep can legitimately raise the post-sleep menu (the dream
+    // offer): that popup owns the block from here, so it is left standing.
+    if (scene._sleepMenuEl) return;
+    $gameTemp._sleepMenuOpen = false;
+    if ($gameScreen && $gameScreen.brightness && $gameScreen.brightness() < 255) {
+      $gameScreen.startFadeIn(30);
+    }
+  }
+
+  // SceneManager.updateMain, not Scene_Map.update: the whole point is to run
+  // where no map overlay can take the frame away.
+  const _SceneManager_updateMain_sleepUI = SceneManager.updateMain;
+  SceneManager.updateMain = function () {
+    _SceneManager_updateMain_sleepUI.call(this);
+    try {
+      runSleepWatchdog();
+    } catch (e) {
+      console.error("TimeDateSystem: rest watchdog failed", e);
+    }
+  };
+
   const _Scene_Map_update_sleepUI = Scene_Map.prototype.update;
   Scene_Map.prototype.update = function () {
     _Scene_Map_update_sleepUI.call(this);
     SleepMenuInputManager.update();
+    if (sleepBlockIsStale(this)) {
+      this._sleepBlockStaleFrames = (this._sleepBlockStaleFrames || 0) + 1;
+      // A couple of frames of grace: closeSleepMenu fades the popup out before
+      // the sequence it started has begun, and that gap is not a stuck block.
+      if (this._sleepBlockStaleFrames > 30) {
+        $gameTemp._sleepMenuOpen = false;
+        this._sleepBlockStaleFrames = 0;
+        if ($gameScreen && $gameScreen.brightness && $gameScreen.brightness() < 255) {
+          $gameScreen.startFadeIn(30);
+        }
+      }
+    } else {
+      this._sleepBlockStaleFrames = 0;
+    }
   };
 
   // Esc doubles as the "menu" key in MZ, block the main menu while the popup

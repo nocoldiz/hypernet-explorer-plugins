@@ -121,5 +121,27 @@
   },
   "succession": {
     "takesCommand": "{name} takes command of the party."
+  },
+  "pet": {
+    "actionPet": "Pet",
+    "actionTalk": "Talk",
+    "actionEmpathize": "Empathize",
+    "actionCancel": "Never mind",
+    "petted": [
+      "{name} leans into your hand and refuses to be moved.",
+      "{name} makes a low, pleased noise.",
+      "You scratch {name} where it cannot reach. It forgives you everything.",
+      "{name} bumps its head against your leg and settles.",
+      "{name} rolls over. This is apparently the correct response."
+    ],
+    "said": [
+      "I am keeping up. Mostly.",
+      "This road smells wrong to me.",
+      "Say the word and I go first.",
+      "I could eat. When could I not?",
+      "Do not leave me behind again.",
+      "There was something back there. It is gone now.",
+      "I like it better when we walk."
+    ]
   }
 }

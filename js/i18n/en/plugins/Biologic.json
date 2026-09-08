@@ -113,7 +113,10 @@
  "noActiveStates": "No Active States",
  "destroyed": "DESTROYED",
  "statesReactions": "States & Reactions",
+ "additionalAnatomy": "Additional Anatomy",
+ "additionalRegions": "Additional Regions",
  "anatomicalIntegrityLimbOrganHp": "Anatomical Integrity (Limb & Organ HP)",
+ "bodyParts": "Body Parts",
  "bradycardia": "Bradycardia",
  "tachycardia": "Tachycardia",
  "hypertension": "Hypertension",
@@ -139,6 +142,7 @@
  "bloodPressure": "Blood Pressure",
  "bodyTemperature": "Body Temperature",
  "oxygenSaturation": "Oxygen Saturation",
+ "oxygenConsumption": "O₂ Draw",
  "cortisolStress": "Cortisol (Stress)",
  "metabolism": " Metabolism",
  "respiratoryRate": "Respiratory Rate",
@@ -258,11 +262,11 @@
   "diseases": "Diseases"
  },
  "reproductionType": [
-  "Testicles (Male)",
-  "Mammalian (Uterus)",
-  "Oviparous (Egg-laying)",
-  "Plant-based (Seeds)",
-  "Mitosis (Cell division)"
+  "Testicles",
+  "Uterus",
+  "Oviduct",
+  "Sporangium",
+  "Mitotic Gland"
  ],
  "mood": {
   "Enraged": "Enraged",
@@ -279,10 +283,10 @@
  "seedProduced": "Seed produced! Total seeds ready: {count}",
  "pregnancyType": [
   "None",
-  "Mammalian (Uterus)",
-  "Oviparous (Egg-laying)",
-  "Plant-based (Seed production)",
-  "Mitosis (Cell division)"
+  "Uterus",
+  "Oviduct",
+  "Sporangium",
+  "Mitotic Gland"
  ],
  "gestationalAgeLine": "Gestational Age: {days} days ({weeks} weeks)",
  "cycleDayLine": "Day {day} of {length}",

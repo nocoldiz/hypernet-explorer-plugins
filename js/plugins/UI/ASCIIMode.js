@@ -218,6 +218,21 @@
 
     const ASCII_UI_BODY_CLASS = 'ascii-ui-active';
 
+    // Where the ASCII canvas sits in the page. The engine draws the game on a
+    // canvas at z-index 1 and plays video at 2, and every DOM layer the game
+    // puts on top of that starts at 9 (the HUD, the toasts, the quick bar, the
+    // battle menus, the parchment menus). So the ASCII canvas goes at 3: over
+    // the picture it replaces, under everything that is meant to be read on
+    // top of it.
+    //
+    // It used to sit at 1000, over the lot. That was survivable while the game
+    // drew its interface into the engine canvas, but the interface is DOM now:
+    // at 1000 the whole of it - party cards, toasts, the quick bar, the map
+    // battle's own command menu - was painted and then buried under a black
+    // canvas, and the only reason ASCII menus worked at all was the separate
+    // branch that hides the canvas outright when a full-screen menu opens.
+    const ASCII_CANVAS_Z = '3';
+
 
     // True when a full-screen DOM menu overlay is currently visible. Menu-agnostic:
     // checks direct children of <body> that cover most of the screen, skipping the
@@ -270,9 +285,13 @@
             return false;
         }
         const overlay = hasActiveDomOverlay();
-        // asciiHud styles DOM (HUD + menus) at all times; asciiMode styles DOM
-        // only while a full-screen menu is up (so the ASCII map shows otherwise).
-        setAsciiUiClass(asciiHud || overlay);
+        // Both switches style the DOM now. The ASCII map no longer covers the
+        // interface (see ASCII_CANVAS_Z), so everything drawn over it - the
+        // party cards, the toasts, the quick bar, a battle's command menu -
+        // is read on top of the terminal and has to be dressed like it.
+        setAsciiUiClass(asciiHud || !!asciiMode);
+        // A full-screen menu hides the map behind it either way; taking the
+        // canvas down saves drawing a frame nobody sees.
         if (overlay && asciiMode && asciiCanvas) {
             asciiCanvas.style.display = 'none';
         }
@@ -326,7 +345,7 @@
         asciiCanvas.style.left = '0';
         asciiCanvas.style.width = '100vw';
         asciiCanvas.style.height = '100vh';
-        asciiCanvas.style.zIndex = '1000';
+        asciiCanvas.style.zIndex = ASCII_CANVAS_Z;
         asciiCanvas.style.display = 'none';
         asciiCanvas.style.imageRendering = 'pixelated';
 
@@ -1198,6 +1217,16 @@
 
         asciiContext.globalAlpha = 1.0;
 
+        // A tactical map battle (BattleSystem/MapBattleMode.js) paints its
+        // reach and move tiles under the glyphs.
+        const mapBattle = window.MapBattleMode && window.MapBattleMode.asciiOverlay
+            ? window.MapBattleMode.asciiOverlay() : null;
+        const toScreen = (mx, my) => [
+            Math.round(totalOffsetX + (mx - startX) * activeFontSize + activeFontSize / 2),
+            Math.round(totalOffsetY + (my - startY) * activeFontSize + activeFontSize / 2)
+        ];
+        if (mapBattle) renderMapBattleTiles(mapBattle, toScreen, activeFontSize);
+
         $gameMap.events().forEach(event => {
             if (!event || event._erased) return;
             const eventName = event.event().name;
@@ -1258,6 +1287,100 @@
             }
         }
 
+        if (mapBattle) renderMapBattleMarks(mapBattle, toScreen, activeFontSize);
+
+        asciiContext.restore();
+    }
+
+    // =============================================================================
+    // MAP BATTLE LAYER (BattleSystem/MapBattleMode.js)
+    // -----------------------------------------------------------------------------
+    // The tactical fight is fought on this very map, and its whole
+    // presentation is PIXI sprites the ASCII canvas covers. MapBattleMode hands
+    // the layer over as data (asciiOverlay) and it is painted here in the
+    // terminal's own font: reach and move tiles as tinted cells, the cursor as
+    // a boxed cell, the party's other bodies as '@', floating numbers, the
+    // monster bars and the last log lines.
+    // =============================================================================
+
+    function renderMapBattleTiles(layer, toScreen, fs) {
+        for (const t of layer.tiles) {
+            const [sx, sy] = toScreen(t.x, t.y);
+            asciiContext.fillStyle = t.color;
+            asciiContext.fillRect(sx - fs / 2, sy - fs / 2, fs, fs);
+        }
+    }
+
+    function renderMapBattleMarks(layer, toScreen, fs) {
+        asciiContext.save();
+        asciiContext.textAlign = 'center';
+        asciiContext.textBaseline = 'middle';
+        asciiContext.font = fs + 'px ' + FONT_FAMILY;
+        for (const b of layer.bodies) {
+            const [sx, sy] = toScreen(Math.round(b.x), Math.round(b.y));
+            asciiContext.fillStyle = b.alive ? getCharacterColor('player', '@') : '#777777';
+            asciiContext.fillText(b.alive ? '@' : '%', sx, sy);
+        }
+        if (layer.cursor) {
+            const [sx, sy] = toScreen(layer.cursor.x, layer.cursor.y);
+            asciiContext.strokeStyle = '#FFFFFF';
+            asciiContext.lineWidth = 2;
+            asciiContext.strokeRect(sx - fs / 2 + 1, sy - fs / 2 + 1, fs - 2, fs - 2);
+        }
+        asciiContext.font = Math.round(fs * 0.8) + 'px ' + FONT_FAMILY;
+        for (const p of layer.popups) {
+            const [sx, sy] = toScreen(p.x, p.y);
+            asciiContext.globalAlpha = p.alpha;
+            if (p.label) {
+                asciiContext.fillStyle = '#ffd27a';
+                asciiContext.fillText(p.label, sx, sy - fs * 1.6);
+            }
+            asciiContext.fillStyle = p.color;
+            asciiContext.fillText(p.text, sx, sy - fs);
+        }
+        asciiContext.globalAlpha = 1.0;
+        asciiContext.restore();
+    }
+
+    const CONTROL_CODE_RE = /\\[A-Za-z]+\[\d*\]/g;
+
+    function renderMapBattleHud() {
+        const layer = window.MapBattleMode && window.MapBattleMode.asciiOverlay
+            ? window.MapBattleMode.asciiOverlay() : null;
+        if (!layer) return;
+        const fs = FONT_SIZE;
+        const lineHeight = fs + 4;
+        asciiContext.save();
+        asciiContext.textBaseline = 'top';
+        asciiContext.font = fs + 'px ' + FONT_FAMILY;
+
+        // The last log lines, top left.
+        asciiContext.textAlign = 'left';
+        let y = 8;
+        for (const line of layer.log) {
+            const text = String(line || '').replace(CONTROL_CODE_RE, '');
+            if (!text) continue;
+            asciiContext.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            asciiContext.fillRect(8, y, Math.min(CANVAS_WIDTH * 0.5, asciiContext.measureText(text).width + 16), lineHeight);
+            asciiContext.fillStyle = TEXT_COLOR;
+            asciiContext.fillText(text, 16, y + 2);
+            y += lineHeight;
+        }
+
+        // The monster bars, top right, as text meters.
+        asciiContext.textAlign = 'right';
+        let by = 8;
+        for (const bar of layer.bars) {
+            const filled = bar.mhp > 0 ? Math.round((bar.hp / bar.mhp) * 10) : 0;
+            const meter = '[' + '#'.repeat(filled) + '.'.repeat(10 - filled) + ']';
+            const text = bar.name + ' ' + meter + ' ' + Math.floor(bar.hp) + '/' + Math.floor(bar.mhp);
+            const w = asciiContext.measureText(text).width + 16;
+            asciiContext.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            asciiContext.fillRect(CANVAS_WIDTH - 8 - w, by, w, lineHeight);
+            asciiContext.fillStyle = '#ff9a8a';
+            asciiContext.fillText(text, CANVAS_WIDTH - 16, by + 2);
+            by += lineHeight;
+        }
         asciiContext.restore();
     }
 
@@ -1328,6 +1451,7 @@
         } else {
             renderViewport(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, $gameMap.displayX(), $gameMap.displayY());
         }
+        renderMapBattleHud();
 
         asciiContext.font = `${currentFontSize}px ${FONT_FAMILY}`;
         renderDialogue();
@@ -1496,10 +1620,6 @@
     };
     const _Scene_Map_update = Scene_Map.prototype.update;
     Scene_Map.prototype.update = function () {
-        // Check for F9 key press (both by parameter and direct key code)
-        if (Input.isTriggered('f1')) {
-            toggleAsciiMode();
-        }
 
 
 
@@ -1584,7 +1704,15 @@
     };
 
     const OPTION_SYMBOL = 'asciiModeEnabled';
-    const OPTION_NAME = 'ASCII Mode';
+    // Resolved at every read, not once at boot: the player can change language
+    // in the very menu these are drawn in.
+    const OPTION_NAME = () => T('GameOptions.label.asciiMode');
+    // Disabled / Enabled / Only UI, in the order the option cycles through.
+    const stateText = (value) => {
+        const list = T.list('GameOptions.asciiState');
+        const i = value === 2 ? 2 : (value === 1 || value === true) ? 1 : 0;
+        return list[i] || '';
+    };
 
     // Add the option to ConfigManager
     Object.defineProperty(ConfigManager, OPTION_SYMBOL, {
@@ -1610,6 +1738,13 @@
                 if (asciiCanvas) asciiCanvas.style.display = 'none';
                 showAsciiMenu = false; // Reset menu state
                 setAsciiUiClass(false); // Remove ASCII DOM styling
+            }
+
+            // ASCII is a look as well as a mode: while it is on it IS the
+            // theme, and the theme the player had before it comes back when it
+            // is switched off (Core/GameOptions.js owns both halves).
+            if (window.GameOptions && window.GameOptions.onAsciiModeChanged) {
+                window.GameOptions.onAsciiModeChanged(value);
             }
         },
         configurable: true
@@ -1642,7 +1777,7 @@
     // ASCII (map) mode above. Pure boolean.
     // -------------------------------------------------------------------------
     const HUD_SYMBOL = 'asciiHudEnabled';
-    const HUD_NAME = 'ASCII HUD';
+    const HUD_NAME = () => T('GameOptions.label.asciiHud');
 
     Object.defineProperty(ConfigManager, HUD_SYMBOL, {
         get: function () {
@@ -1688,7 +1823,7 @@
         const _Window_Options_makeCommandList_hud = Window_Options.prototype.makeCommandList;
         Window_Options.prototype.makeCommandList = function () {
             _Window_Options_makeCommandList_hud.call(this);
-            this.addCommand(HUD_NAME, HUD_SYMBOL);
+            this.addCommand(HUD_NAME(), HUD_SYMBOL);
         };
     }
 
@@ -1702,9 +1837,7 @@
             },
             'experimental', 'custom',
             function (value) {
-                if (value === 2) return "Only UI";
-                if (value === 1 || value === true) return "Enabled";
-                return "Disabled";
+                return stateText(value);
             },
             function () {
                 let value = ConfigManager[OPTION_SYMBOL];
@@ -1727,17 +1860,14 @@
         const _Window_Options_makeCommandList = Window_Options.prototype.makeCommandList;
         Window_Options.prototype.makeCommandList = function () {
             _Window_Options_makeCommandList.call(this);
-            this.addCommand(OPTION_NAME, OPTION_SYMBOL);
+            this.addCommand(OPTION_NAME(), OPTION_SYMBOL);
         };
 
         const _Window_Options_statusText = Window_Options.prototype.statusText;
         Window_Options.prototype.statusText = function (index) {
             const symbol = this.commandSymbol(index);
             if (symbol === OPTION_SYMBOL) {
-                const value = this.getConfigValue(symbol);
-                if (value === 2) return "Only UI";
-                if (value === 1 || value === true) return "Enabled";
-                return "Disabled";
+                return stateText(this.getConfigValue(symbol));
             }
             return _Window_Options_statusText.call(this, index);
         };
@@ -1792,9 +1922,6 @@
     PluginManager.registerCommand(pluginName, "toggle", args => {
         toggleAsciiMode();
     });
-
-    // Map F1 key to 'f1' action for ASCII mode toggle
-    Input.keyMapper[112] = 'f1';
 
     // Helper function to get key codes
     function getKeyCode(key) {

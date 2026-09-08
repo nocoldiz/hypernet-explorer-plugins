@@ -26,10 +26,10 @@
     "damagedWarning": "The part it sits in is ruined. The augment still works, but the limb does not.",
     "severWarning": "Severing the part takes the augment with it.",
     "need": {
-      "halted": "{need} never depletes.",
-      "slowed": "{need} drains {pct}% slower.",
-      "hastened": "{need} drains {pct}% faster.",
-      "restores": "{need} refills instead of draining, at {pct}% of the usual rate."
+      "halted": "Never depletes",
+      "slowed": "Drains {pct}% slower",
+      "hastened": "Drains {pct}% faster",
+      "restores": "Refills at {pct}% of the usual rate"
     },
     "searchPlaceholder": "Search augments…"
   }

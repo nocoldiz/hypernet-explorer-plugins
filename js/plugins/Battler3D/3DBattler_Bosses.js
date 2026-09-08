@@ -386,7 +386,11 @@
             // FF8 flourish on every colossus: glowing fault-lattice across the
             // torso + chunks of rubble torn loose and orbiting in its gravity.
             const fault = this._mat(p.accent, 0.9, 0.2, p.accent);
-            for (let i = 0; i < 6; i++) { const a = i * 2.39996; const ln = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.45 + (i % 2) * 0.2, 0.05), fault); ln.position.set(Math.cos(a) * 0.5, 1.6 + Math.sin(i) * 0.4, Math.sin(a) * 0.42); ln.rotation.set(Math.cos(a), 0, Math.sin(a)); this.body.add(ln); }
+            // The lattice hangs off the torso, so it is placed in the TORSO's
+            // own space: the body already stands at y 1.6 and carries the
+            // coreScale, so body-space numbers on a child of it threw the
+            // whole lattice up above the colossus's head.
+            for (let i = 0; i < 6; i++) { const a = i * 2.39996; const ln = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.45 + (i % 2) * 0.2, 0.05), fault); ln.position.set(Math.cos(a) * 0.5 / cs[0], (Math.sin(i) * 0.4) / cs[1], Math.sin(a) * 0.42 / cs[2]); ln.rotation.set(Math.cos(a), 0, Math.sin(a)); this.body.add(ln); }
             this.debris = new THREE.Group();
             for (let i = 0; i < 7; i++) { const a = i * 2.39996; const r = 1.0 + (i % 3) * 0.22; const chunk = new THREE.Mesh(new THREE.TetrahedronGeometry(0.12 + this.idRand() * 0.1, 0), mat); chunk.position.set(Math.cos(a) * r, 1.5 + Math.sin(i * 1.7) * 0.9, Math.sin(a) * r); chunk.rotation.set(a, i, 0); this.debris.add(chunk); }
             this.bodyGroup.add(this.debris); this._floaters.push(this.debris);
@@ -1156,7 +1160,7 @@
             if (this._baseY === null) this._baseY = this.model.position.y;
             // A heap of crude does not topple, it loses its hold and spreads.
             if (this.variant === 'petrodemon') {
-                const flat = 1 - prog * 0.88, sh = this.shapeXYZ, s = this.scale;
+                const flat = 1 - prog * 0.88, sh = this._shapeProportions(), s = this.scale;
                 this.model.scale.set(s * sh.x * (1 + prog * 0.7), s * sh.y * flat, s * sh.z * (1 + prog * 0.7));
                 this.model.position.y = this._baseY - prog * 0.2 * this.scale;
                 return;

@@ -1,19 +1,18 @@
 {
+  "workshopTitle": "Officina",
   "title": "Forgiatura",
   "anvil": "Incudine",
   "trades": "Mestieri",
-  "smithable": "Forgiabili",
-  "needMaterials": "Servono materiali",
+  "methods": "Metodi di produzione",
   "tooComplex": "Troppo complessi",
   "tooComplexShort": "Oltre queste mani",
   "materials": "Materiali",
   "forge": "Forgia",
   "forged": "Forgiato!",
   "noMaterials": "Materiali insufficienti",
-  "noTrades": "Nessun mestiere da questo lato del banco...",
   "noRecipes": "Niente qui...",
-  "selectHint": "Scegli un mestiere, poi un pezzo, per vedere cosa serve a farlo.",
   "back": "INDIETRO",
+  "close": "Chiudi",
   "needs": "{trade}, {level}",
   "have": "{who}: {level}",
   "weaponType": "Tipo di arma",
@@ -31,7 +30,6 @@
   "finish": "Finitura",
   "finishStrange": "Strane",
   "finishAuto": "Come viene",
-  "smeltHeld": "Fondi ({n} in sacca)",
   "smeltNone": "Niente da fondere",
   "smelted": "Di nuovo nel crogiolo",
   "madeBy": "Battuto da {smith}",
@@ -50,28 +48,199 @@
   },
   "nameBank": {
     "blade": {
-      "prefix": ["Vedova", "Cupo", "Sangue", "Corvo", "Cenere", "Gelo", "Notte", "Ferro", "Spettro", "Tempesta", "Pallido", "Nero"],
-      "noun": ["Zanna", "Lama", "Spina", "Falciata", "Sussurro", "Morso", "Fendente", "Dente", "Canto", "Squarcio", "Puntura", "Taglio"]
+      "prefix": [
+        "Vedova",
+        "Cupo",
+        "Sangue",
+        "Corvo",
+        "Cenere",
+        "Gelo",
+        "Notte",
+        "Ferro",
+        "Spettro",
+        "Tempesta",
+        "Pallido",
+        "Nero"
+      ],
+      "noun": [
+        "Zanna",
+        "Lama",
+        "Spina",
+        "Falciata",
+        "Sussurro",
+        "Morso",
+        "Fendente",
+        "Dente",
+        "Canto",
+        "Squarcio",
+        "Puntura",
+        "Taglio"
+      ]
     },
     "heavy": {
-      "prefix": ["Ferro", "Pietra", "Teschio", "Tempesta", "Tomba", "Rovina", "Vedova", "Cenere", "Osso", "Tuono", "Nero", "Vecchio"],
-      "noun": ["Spaccaossa", "Frantumatore", "Mazza", "Rovina", "Squarciatore", "Schianto", "Devastatore", "Scossa", "Martello", "Caduta", "Macina", "Sfondatore"]
+      "prefix": [
+        "Ferro",
+        "Pietra",
+        "Teschio",
+        "Tempesta",
+        "Tomba",
+        "Rovina",
+        "Vedova",
+        "Cenere",
+        "Osso",
+        "Tuono",
+        "Nero",
+        "Vecchio"
+      ],
+      "noun": [
+        "Spaccaossa",
+        "Frantumatore",
+        "Mazza",
+        "Rovina",
+        "Squarciatore",
+        "Schianto",
+        "Devastatore",
+        "Scossa",
+        "Martello",
+        "Caduta",
+        "Macina",
+        "Sfondatore"
+      ]
     },
     "gun": {
-      "prefix": ["Rosso", "Ferro", "Notte", "Spettro", "Silenzio", "Morto", "Alto", "Ultimo", "Freddo", "Lungo", "Nero", "Grigio"],
-      "noun": ["Linea", "Fabbro", "Sussurro", "Richiamo", "Redenzione", "Raffica", "Eco", "Guardia", "Colpo", "Marchio", "Latrato", "Canto"]
+      "prefix": [
+        "Rosso",
+        "Ferro",
+        "Notte",
+        "Spettro",
+        "Silenzio",
+        "Morto",
+        "Alto",
+        "Ultimo",
+        "Freddo",
+        "Lungo",
+        "Nero",
+        "Grigio"
+      ],
+      "noun": [
+        "Linea",
+        "Fabbro",
+        "Sussurro",
+        "Richiamo",
+        "Redenzione",
+        "Raffica",
+        "Eco",
+        "Guardia",
+        "Colpo",
+        "Marchio",
+        "Latrato",
+        "Canto"
+      ]
     },
     "wood": {
-      "prefix": ["Salice", "Tempesta", "Vento", "Argento", "Verde", "Luna", "Selvaggio", "Cenere", "Profondo", "Vecchio", "Grigio", "Lungo"],
-      "noun": ["Ramo", "Portata", "Fischio", "Vagante", "Fronda", "Ago", "Spina", "Bruma", "Radice", "Puntura", "Canto", "Cocca"]
+      "prefix": [
+        "Salice",
+        "Tempesta",
+        "Vento",
+        "Argento",
+        "Verde",
+        "Luna",
+        "Selvaggio",
+        "Cenere",
+        "Profondo",
+        "Vecchio",
+        "Grigio",
+        "Lungo"
+      ],
+      "noun": [
+        "Ramo",
+        "Portata",
+        "Fischio",
+        "Vagante",
+        "Fronda",
+        "Ago",
+        "Spina",
+        "Bruma",
+        "Radice",
+        "Puntura",
+        "Canto",
+        "Cocca"
+      ]
     },
     "magic": {
-      "prefix": ["Astrale", "Vuoto", "Arcano", "Brace", "Spettrale", "Runico", "Lunare", "Prismatico", "Arcaico", "Cavo", "Ombroso", "Dorato"],
-      "noun": ["Trama", "Sigillo", "Bagliore", "Maleficio", "Sussurro", "Fioritura", "Velo", "Scintilla", "Faglia", "Canto", "Custodia", "Vincolo"]
+      "prefix": [
+        "Astrale",
+        "Vuoto",
+        "Arcano",
+        "Brace",
+        "Spettrale",
+        "Runico",
+        "Lunare",
+        "Prismatico",
+        "Arcaico",
+        "Cavo",
+        "Ombroso",
+        "Dorato"
+      ],
+      "noun": [
+        "Trama",
+        "Sigillo",
+        "Bagliore",
+        "Maleficio",
+        "Sussurro",
+        "Fioritura",
+        "Velo",
+        "Scintilla",
+        "Faglia",
+        "Canto",
+        "Custodia",
+        "Vincolo"
+      ]
     },
     "default": {
-      "prefix": ["Ferro", "Grigio", "Vecchio", "Vero", "Silenzioso", "Selvaggio", "Lontano", "Solitario", "Alto", "Ultimo", "Quieto", "Semplice"],
-      "noun": ["Mano", "Guardia", "Sentiero", "Marchio", "Richiamo", "Presa", "Custodia", "Portata", "Fermezza", "Riparo", "Stretta", "Linea"]
+      "prefix": [
+        "Ferro",
+        "Grigio",
+        "Vecchio",
+        "Vero",
+        "Silenzioso",
+        "Selvaggio",
+        "Lontano",
+        "Solitario",
+        "Alto",
+        "Ultimo",
+        "Quieto",
+        "Semplice"
+      ],
+      "noun": [
+        "Mano",
+        "Guardia",
+        "Sentiero",
+        "Marchio",
+        "Richiamo",
+        "Presa",
+        "Custodia",
+        "Portata",
+        "Fermezza",
+        "Riparo",
+        "Stretta",
+        "Linea"
+      ]
     }
-  }
+  },
+  "status": {
+    "all": "Tutti",
+    "ready": "Pronti",
+    "short": "Senza materiali",
+    "locked": "Non addestrato",
+    "owned": "In borsa",
+    "forged": "Forgiati"
+  },
+  "allTrades": "Tutti i mestieri",
+  "shortBy": "Senza materiali",
+  "pieceCount": "{n} pezzi",
+  "pickHint": "Scegli un pezzo per vedere cosa serve a farlo.",
+  "smelt": "Fondi",
+  "qtyMax": "Max",
+  "batchCount": "x{n}"
 }

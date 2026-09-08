@@ -8,5 +8,37 @@
   "size": "{size}px",
   "clear": "PULISCI",
   "save": "SALVA",
-  "exit": "ESCI"
+  "exit": "ESCI",
+  "paint": {
+    "appName": "Pain",
+    "untitledTitle": "senza nome - Pain",
+    "title": "{file} - Pain",
+    "new": "Nuovo",
+    "open": "Apri",
+    "save": "Salva",
+    "setWallpaper": "Imposta come sfondo",
+    "undo": "Annulla",
+    "redo": "Ripeti",
+    "custom": "Colore personalizzato",
+    "textPrompt": "Testo da scrivere:",
+    "savePrompt": "Salva immagine come (in C:/Pictures):",
+    "saved": "Salvato {file}",
+    "saveError": "Impossibile salvare l'immagine.",
+    "openPrompt": "Quale immagine aprire? ({list})",
+    "openError": "Impossibile aprire quell'immagine.",
+    "nothingToOpen": "Non ci sono ancora immagini in C:/Pictures.",
+    "opened": "Aperto {file}",
+    "wallpaperSet": "Sfondo impostato.",
+    "tool": {
+      "pencil": "Matita",
+      "brush": "Pennello",
+      "eraser": "Gomma",
+      "line": "Linea",
+      "rect": "Rettangolo",
+      "ellipse": "Ellisse",
+      "fill": "Riempi con colore",
+      "picker": "Preleva colore",
+      "text": "Testo"
+    }
+  }
 }

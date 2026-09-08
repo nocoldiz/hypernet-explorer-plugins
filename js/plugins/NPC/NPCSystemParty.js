@@ -53,6 +53,23 @@
  * @default 0
  * @desc Joining NPC's event ID (0 = derive from the calling interpreter/$gameTemp)
  *
+ * @command PresetJoinParty
+ * @text Preset Character Joins
+ * @desc Puts a preset dossier character (Bubba by default) into a free companion slot
+ *
+ * @arg presetName
+ * @text Preset Name
+ * @type string
+ * @default Bubba
+ * @desc Name of the character preset that joins (matched against the dossier roster)
+ *
+ * @arg level
+ * @text Level
+ * @type number
+ * @min 0
+ * @default 0
+ * @desc Level they join at (0 = match the party leader)
+ *
  * @command SetArchetype
  * @desc Sets body archetype for the specified actor (must match Archetypes key)
  *
@@ -78,12 +95,17 @@
  * @type string
  * @default Humanoid
  * @desc Name of the archetype (e.g. Humanoid, Beast, Dragon, Skeleton, Insectoid, Frog, etc.)
+  *
+ * @command LeadAsEm
+ * @text Switch to Em
+ * @desc Makes Em the party leader when she is in the party. Does nothing otherwise.
  */
 
 (function() {
     "use strict";
     
     const pluginName = "NPCSystemParty";
+    const EM_ACTOR_NAME = "Em";   // i18n-ignore: actor name, matched at runtime
     
     PluginManager.registerCommand(pluginName, "TransformActor2", args => {
         transformActor(2);
@@ -105,10 +127,21 @@
         joinParty(args.markovString || "", Number(args.eventId) || 0);
     });
 
+    PluginManager.registerCommand(pluginName, "PresetJoinParty", args => {
+        presetJoinParty(String(args.presetName || "Bubba"), Number(args.level) || 0);
+    });
+
     PluginManager.registerCommand(pluginName, "SetArchetype", args => {
         const actorId = Number(args.actorId) || 1;
         const archetypeName = String(args.archetypeName || "Humanoid"); // i18n-ignore: Archetypes.json id
         setActorArchetype(actorId, archetypeName);
+    });
+
+    // Hand the lead to Em when she is travelling with the party. Nothing at
+    // all happens when she is not, so the command is safe to call blind.
+    PluginManager.registerCommand(pluginName, "LeadAsEm", () => {
+        const em = ($gameParty?.members() ?? []).find(m => m && m.name() === EM_ACTOR_NAME);
+        if (em) window.PartyRoster.setLeader(em.actorId());
     });
 
     PluginManager.registerCommand(pluginName, "SetJoinedArchetype", args => {
@@ -219,6 +252,9 @@
         delete joinMinutes()[actorId];
     }
 
+    // i18n-ignore: actor names, matched at runtime
+    const STORY_FIXED_NAMES = ["Em", "Bubba"];
+
     const _Game_Party_removeActor = Game_Party.prototype.removeActor;
     Game_Party.prototype.removeActor = function(actorId) {
         const wasInParty = this._actors.includes(actorId);
@@ -228,8 +264,11 @@
         // while CharacterPresets.retirePartyMember flags the benching itself.
         const retiring = $gameTemp && $gameTemp._partyRetiringActorId === actorId;
         const died = !!(actor && actor.isDead());
+        // Somebody away on a work shift (Work/WorkSystem.js) has not left the
+        // party, they are out for the afternoon: no departure is written.
+        const working = $gameTemp && $gameTemp._workShiftActorId === actorId;
         _Game_Party_removeActor.call(this, actorId);
-        if (!wasInParty || actorId === 1 || isSummonProxy(actorId)) return;
+        if (!wasInParty || actorId === 1 || isSummonProxy(actorId) || working) return;
         recordDeparture(actor, retiring ? "retired" : (died ? "died" : "left"));
     };
 
@@ -274,9 +313,29 @@
             return current.concat(past);
         },
 
+        // Whether the party may be handed over at all. Story mode used to be
+        // played as one character and one only, but the lead now moves there
+        // as it does anywhere else, so Tab, the pad triggers and the Dynamics
+        // roster all allow it together rather than each answering for itself.
+        canSwitchLeader() {
+            return true;
+        },
+
+        // The story mode is Em and Bubba's road, not a party the player builds:
+        // neither of the two can be benched, dismissed or removed from the
+        // roster while switch 100 is on. Every seat-changing path asks here,
+        // rather than each of them matching the names for itself.
+        isStoryLocked(actorId) {
+            if (!window.$gameSwitches || !$gameSwitches.value(100)) return false;
+            const actor = actorId != null && $gameActors ? $gameActors.actor(actorId) : null;
+            if (!actor) return false;
+            return STORY_FIXED_NAMES.includes(actor.name());
+        },
+
         // Promote a member to party leader (index 0). Vanilla formation swap, so
         // every leader() reader follows along.
         setLeader(actorId) {
+            if (!this.canSwitchLeader()) return { ok: false, reason: "storyMode" };
             const members = $gameParty?.members() ?? [];
             const index = members.findIndex(mem => mem.actorId() === actorId);
             if (index < 0) return { ok: false, reason: "notInParty" };
@@ -471,6 +530,54 @@
     // Returns true only if the NPC actually joined (actor added + self-switch A
     // set). Callers (e.g. NPCEmpathize's panel) rely on this to avoid claiming a
     // join succeeded when the party was full or the event could not be resolved.
+    // ========================================================================
+    // PRESET CHARACTER JOIN
+    // ========================================================================
+    // A dossier character (Bubba, Em, anyone on the preset roster) walking into
+    // the party from a cutscene, with no NPC event behind them. The sheet is not
+    // built here: the wizard's own applier does it (CCPresetJoin, which handles
+    // the free seat, the Dynamics bench when there is none, and the toast), so a
+    // scripted join and a join from the roster screen produce the same person.
+    // All this command adds is looking the dossier up by name, which is how an
+    // event names them, and setting the switch that says they are on the road.
+    function presetJoinParty(presetName, levelArg) {
+        const join = window.CCPresetJoin?.joinPresetCharacter;
+        if (!join || !$gameParty) return false;
+
+        const wanted = String(presetName || "").toLowerCase();
+        const preset = (window.CharacterPresets?.getCharacterPresets?.() || [])
+            .find(p => p && String(p.name).toLowerCase() === wanted);
+        if (!preset) {
+            console.warn("NPCSystemParty.PresetJoinParty: no dossier named " + presetName);
+            return false;
+        }
+
+        const result = join(preset.id);
+        if (!result || !result.ok) return false;
+
+        // The switch that says this named character is travelling with the
+        // party (Em's 48, Bubba's 49). The rest of a dossier's switches belong
+        // to playing AS them and are none of a companion join's business. Only
+        // set for somebody who actually took a seat: a benched dossier is not
+        // on the road yet.
+        const dossierSwitch = DOSSIER_DEATH_SWITCHES[preset.name];
+        if (dossierSwitch && $gameSwitches && !result.inactive) {
+            $gameSwitches.setValue(dossierSwitch, true);
+        }
+
+        // Level them to the party they just joined, unless the event asked for
+        // a level of its own. The dossier's own starting level is a founding
+        // level and means nothing halfway through an adventure.
+        const actor = result.actorId ? $gameActors.actor(result.actorId) : null;
+        if (actor) {
+            const leader = $gameParty.leader();
+            const level = levelArg > 0 ? levelArg : (leader ? leader.level : actor.level);
+            if (level > 0 && level !== actor.level) actor.changeLevel(Math.min(99, level), false);
+            actor.recoverAll();
+        }
+        return true;
+    }
+
     function joinParty(markovString, eventIdArg) {
         if (!$gameParty || !$gameMap || !$gameTemp) return false;
 
@@ -478,6 +585,7 @@
         // Empathize panel used to report every failure as "party is full").
         $gameTemp._npcJoinFailReason    = null;
         $gameTemp._npcJoinDisplacedName = null;
+        $gameTemp._npcJoinedInactive    = false;
 
         // Explicit eventId first (callers outside a running event, e.g.
         // NPCEmpathize's DOM panel), then the usual interpreter fallbacks.
@@ -486,6 +594,15 @@
 
         const event = $gameMap.event(eventId);
         if (!event) { $gameTemp._npcJoinFailReason = 'noEvent'; return false; }
+
+        // The story mode's companion seat belongs to Bubba: while he is not
+        // walking with the party, nobody else is taken on (the Empathize panel
+        // hides Join for the same reason).
+        if ($gameSwitches.value(100)
+            && !$gameParty.members().some(m => m.name() === 'Bubba')) { // i18n-ignore: actor name, matched at runtime
+            $gameTemp._npcJoinFailReason = 'refused';
+            return false;
+        }
 
         // Bubba never travels in Em's party (Switch 48, her dossier): the camper
         // needs him where he is, and a jealous goddess makes sharing a road with
@@ -531,16 +648,11 @@
         $gameVariables.setValue(29, $gameParty.members().length);
 
         if (!actorId) {
-            $gameTemp._npcJoinFailReason = 'partyFull'; // read by the Empathize panel
-            // No free slot. The Empathize panel shows its own "party full" feedback,
-            // so only pop the RPG Maker message box for the in-event command path.
-            if (!window._npcEmpathizeSilentJoin) {
-                window.skipLocalization = true;
-                const message = T('NPCParty.partyFull');
-                $gameMessage.add(message);
-                window.skipLocalization = false;
-            }
-            return false;
+            // Three on the road is the ceiling, but a fourth is not turned away:
+            // they sign on INACTIVE and wait on the Dynamics board, where the
+            // player calls them up whenever a slot opens. Everything else about
+            // the recruitment happens exactly as it would have.
+            return benchRecruit(eventId, event);
         }
 
         const eventName     = npcNameOf(event);
@@ -580,6 +692,67 @@
         // never respawns.
         window.NPCSystem?.recordProceduralRecruit?.(eventId, eventName);
 
+        return true;
+    }
+
+    // The scratch slot a bench recruit's sheet is built on: one of the map-battle
+    // ally actors (BattleSystem/MapBattleMode.js), never in the party outside a
+    // fight, and handed back blank the moment the dossier has been taken off it.
+    const BENCH_SCRATCH_ACTOR_ID = 8;
+
+    // Sign somebody on with no room left for them: their sheet is built on the
+    // scratch slot, snapshotted into a world dossier (the same one benching a
+    // companion writes) and dropped on the Inactive list. They leave the map,
+    // and the world's books, exactly as a travelling recruit does.
+    function benchRecruit(eventId, event) {
+        const eventName = npcNameOf(event);
+        const scratch = $gameActors.actor(BENCH_SCRATCH_ACTOR_ID);
+        const bench = window.CharacterPresets && window.CharacterPresets.benchActorAsPreset;
+        if (!bench || !scratch || $gameParty._actors.includes(BENCH_SCRATCH_ACTOR_ID)) {
+            $gameTemp._npcJoinFailReason = 'partyFull'; // read by the Empathize panel
+            if (!window._npcEmpathizeSilentJoin) {
+                window.skipLocalization = true;
+                $gameMessage.add(T('NPCParty.partyFull'));
+                window.skipLocalization = false;
+            }
+            return false;
+        }
+
+        transformActor(BENCH_SCRATCH_ACTOR_ID);            // name, class, level, graphics, skills
+        equipNPCActor(BENCH_SCRATCH_ACTOR_ID, eventName);
+        const profile = window.NPCSocietyRegistry?.getProfile(eventName);
+        const result = bench($gameActors.actor(BENCH_SCRATCH_ACTOR_ID), {
+            // The slot itself says nothing about what this person is (switches
+            // 77/78/79 only speak for Actors 1 to 3), so their own profile does.
+            isCreature: !!window.NPCCreature?.isCreatureProfile?.(profile),
+            lore: T('NPCParty.benchedLore', { name: eventName }),
+        });
+        // Scratch space, not a character: leave nothing of them on the slot.
+        $gameActors._data[BENCH_SCRATCH_ACTOR_ID] = null;
+
+        if (!result || !result.ok) {
+            $gameTemp._npcJoinFailReason = 'partyFull';
+            return false;
+        }
+
+        AudioManager.playMe({ name: "Victory2", volume: 90, pitch: 100, pan: 0 });
+        grantNPCPossessions(eventName);                    // money on hand + owned items -> party
+        registerNPCHouse(eventName);                       // owned/resided house -> Assets + build rights
+        $gameSelfSwitches.setValue([$gameMap.mapId(), eventId, 'A'], true);
+        window.NPCGone?.record($gameMap.mapId(), eventId, eventName, 'joined');
+        if (Array.isArray($gameSystem?.npcControllers)) {
+            $gameSystem.npcControllers = $gameSystem.npcControllers.filter(c => !(c && c.eventId === eventId));
+        }
+        window.NPCSystem?.recordProceduralRecruit?.(eventId, eventName);
+
+        // Says how they signed on, so the Empathize panel can word its own
+        // notice rather than claiming they are walking alongside the party.
+        $gameTemp._npcJoinedInactive = true;
+        if (!window._npcEmpathizeSilentJoin) {
+            window.skipLocalization = true;
+            $gameMessage.add(T('NPCParty.joinedInactive', { name: eventName }));
+            window.skipLocalization = false;
+        }
         return true;
     }
 

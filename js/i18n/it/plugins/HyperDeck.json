@@ -204,7 +204,15 @@
     "instr": "Istr",
     "presetHeading": "SCHEMI PRONTI",
     "presetHint": "Scegline uno e viene disegnato dove stai guardando. Tutto cio che posa sono caselle ordinarie: spostale, collegale a qualcosa di piu grande, o incidile cosi come sono.",
-    "placing": "{name} in mano. Clicca per posarlo, tasto destro o Esc per rimetterlo giu."
+    "placing": "{name} in mano. Clicca per posarlo, tasto destro o Esc per rimetterlo giu.",
+    "app": {
+      "name": "Editor di circuiti",
+      "dies": "DIE INCISI",
+      "noDies": "Niente inciso per ora.",
+      "fitted": "sul deck",
+      "inBag": "nello zaino",
+      "gone": "consumato"
+    }
   },
   "bios": {
     "heading": "CONFIGURAZIONE FIRMWARE HYPERDECK",

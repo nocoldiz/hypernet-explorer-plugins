@@ -1353,8 +1353,6 @@
         if (item && this.toggleCart(item, buying)) {
           SoundManager.playOk();
           this.refreshUIShop();
-        } else {
-          SoundManager.playBuzzer();
         }
         return;
       }
@@ -1390,8 +1388,6 @@
         if (key && this.toggleCategoryCart(key, buying)) {
           SoundManager.playOk();
           this.refreshUIShop();
-        } else {
-          SoundManager.playBuzzer();
         }
         return;
       }
@@ -1417,8 +1413,6 @@
             this.changeCartQty(item, step * scale, buying);
             SoundManager.playCursor();
             this.refreshUIShop();
-          } else if (item) {
-            SoundManager.playBuzzer();
           }
           return;
         }
@@ -1545,9 +1539,6 @@
             </div>
             
             <div class="shop-right" style="flex: 2; padding: 10px 20px 10px 30px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; height: 100%;">
-                <div class="page-header-bar">
-                    <h2 class="title">${T('Shop.description')}</h2>
-                </div>
                 <div id="detail-viewport" style="flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;"></div>
             </div>
             
@@ -1776,7 +1767,7 @@
       const data = isBuyMode ? this.buyData() : this.sellData();
       let itemsHTML = "";
       if (data.length === 0) {
-        itemsHTML = `<div style="text-align:center; color:var(--text-brown-medium); margin-top:40px; font-style: normal;">${esc(isBuyMode ? T('Shop.noProductsOnSale') : T('Shop.inventoryEmpty'))}</div>`;
+        itemsHTML = `<div class="shop-empty-note">${esc(T('Shop.listEmpty'))}</div>`;
       } else {
         const cart = this.shopCart(isBuyMode);
         const listFocused = isBuyMode || this._sellWindow.active;
@@ -1804,7 +1795,6 @@
           safe("category header click", () => {
             const key = header.getAttribute("data-cat");
             if (this.toggleCategoryCart(key, this.isShopBuyMode())) SoundManager.playOk();
-            else SoundManager.playBuzzer();
             this.refreshUIShop();
           }, null);
         });
@@ -1827,7 +1817,6 @@
             win.select(idx);
             const item = (buying ? this.buyData() : this.sellData())[idx];
             if (this.toggleCart(item, buying)) SoundManager.playOk();
-            else SoundManager.playBuzzer();
             this.refreshUIShop();
           }, null);
         });
@@ -1944,7 +1933,7 @@
           damageTypeBadgeHTML = `
             <div class="detail-spec-badge">
                 <span class="badge-lbl">${esc(T('Inventory.spec.label.damageCategory') || 'Damage Type')}</span>
-                <span class="badge-val" style="color:var(--text-secondary-active, #e5c07b); font-weight:bold;">${esc(String(dt).trim())}</span>
+                <span class="badge-val" style="color:var(--text-secondary-active); font-weight:bold;">${esc(String(dt).trim())}</span>
             </div>
           `;
         }
@@ -2027,16 +2016,12 @@
           if (val !== 0) {
             hasParams = true;
             const sign = val > 0 ? "+" : "";
-            const barPct = Math.max(5, Math.min(100, (Math.abs(val) / 40) * 100));
-            const color = val > 0 ? "#27ae60" : "#e74c3c";
+            const color = val > 0 ? "var(--text-cost-ok)" : "var(--text-text-alt-10)";
 
             paramsHTML += `
               <div class="gauge-row">
-                  <span style="font-weight:bold; width:50px;">${esc(paramNames[pIdx])}</span>
-                  <div class="gauge-bar-outer">
-                      <div class="gauge-bar-inner" style="width:${barPct}%; background:${color};"></div>
-                  </div>
-                  <span style="font-weight:bold; width:35px; text-align:right; color:${color};">${sign}${val}</span>
+                  <span style="font-weight:bold;">${esc(paramNames[pIdx])}</span>
+                  <span style="font-weight:bold; color:${color};">${sign}${val}</span>
               </div>
             `;
           }
@@ -2046,7 +2031,7 @@
         if (hasParams) {
           combatSectionHTML = `
             <div class="gauges-section">
-                <div class="card-lbl" style="border-bottom: 1px dashed rgba(94,47,23,0.15); padding-bottom:4px; margin-bottom:10px; font-weight:bold; font-size:15px;">
+                <div class="card-lbl" class="shop-sec-hdr">
                     ${T('Shop.itemParameters')}
                 </div>
                 ${paramsHTML}
@@ -2063,38 +2048,26 @@
 
           let nutGauges = "";
           if (calories > 0) {
-            const calPct = Math.max(5, Math.min(100, (calories / 800) * 100));
             nutGauges += `
               <div class="gauge-row">
-                  <span style="font-weight:500; width:70px;">${T('Shop.calories')}</span>
-                  <div class="gauge-bar-outer">
-                      <div class="gauge-bar-inner" style="width:${calPct}%; background:var(--accent-coral);"></div>
-                  </div>
-                  <span style="font-weight:bold; width:60px; text-align:right; color:var(--text-amber-hint);">${calories} kcal</span>
+                  <span class="shop-stat-key">${T('Shop.calories')}</span>
+                  <span style="font-weight:bold; color:var(--text-amber-hint);">${calories} kcal</span>
               </div>
             `;
           }
           if (protein > 0) {
-            const protPct = Math.max(5, Math.min(100, (protein / 30) * 100));
             nutGauges += `
               <div class="gauge-row">
-                  <span style="font-weight:500; width:70px;">${T('Shop.protein')}</span>
-                  <div class="gauge-bar-outer">
-                      <div class="gauge-bar-inner" style="width:${protPct}%; background:var(--text-cost-ok);"></div>
-                  </div>
-                  <span style="font-weight:bold; width:60px; text-align:right; color:var(--text-cost-ok);">${protein}g</span>
+                  <span class="shop-stat-key">${T('Shop.protein')}</span>
+                  <span style="font-weight:bold; color:var(--text-cost-ok);">${protein}g</span>
               </div>
             `;
           }
           if (fat > 0) {
-            const fatPct = Math.max(5, Math.min(100, (fat / 25) * 100));
             nutGauges += `
               <div class="gauge-row">
-                  <span style="font-weight:500; width:70px;">${T('Shop.fat')}</span>
-                  <div class="gauge-bar-outer">
-                      <div class="gauge-bar-inner" style="width:${fatPct}%; background:var(--gauge-warn);"></div>
-                  </div>
-                  <span style="font-weight:bold; width:60px; text-align:right; color:var(--text-gold-dark);">${fat}g</span>
+                  <span class="shop-stat-key">${T('Shop.fat')}</span>
+                  <span style="font-weight:bold; color:var(--text-gold-dark);">${fat}g</span>
               </div>
             `;
           }
@@ -2102,7 +2075,7 @@
           if (nutGauges) {
             nutritionSectionHTML = `
               <div class="gauges-section">
-                  <div class="card-lbl" style="border-bottom: 1px dashed rgba(94,47,23,0.15); padding-bottom:4px; margin-bottom:10px; font-weight:bold; font-size:15px;">
+                  <div class="card-lbl" class="shop-sec-hdr">
                       ${T('Shop.vitalNutritionMetrics')}
                   </div>
                   ${nutGauges}
@@ -2117,15 +2090,12 @@
         if (needRestores.length) {
           const needGauges = needRestores.map(r => `
               <div class="gauge-row">
-                  <span style="font-weight:500; width:70px;">${esc(r.label)}</span>
-                  <div class="gauge-bar-outer">
-                      <div class="gauge-bar-inner" style="width:${r.amount}%; background:${r.color};"></div>
-                  </div>
-                  <span style="font-weight:bold; width:60px; text-align:right; color:${r.color};">+${r.amount}%</span>
+                  <span class="shop-stat-key">${esc(r.label)}</span>
+                  <span style="font-weight:bold; color:${r.color};">+${r.amount}%</span>
               </div>`).join("");
           needsSectionHTML = `
               <div class="gauges-section">
-                  <div class="card-lbl" style="border-bottom: 1px dashed rgba(94,47,23,0.15); padding-bottom:4px; margin-bottom:10px; font-weight:bold; font-size:15px;">
+                  <div class="card-lbl" class="shop-sec-hdr">
                       ${T('Shop.needsRestored')}
                   </div>
                   ${needGauges}
@@ -2140,12 +2110,12 @@
           const rows = medicineLines(medicine, 10)
             .map(r => `
               <div class="gauge-row">
-                  <span style="font-weight:500; width:70px;">${esc(r.label)}</span>
+                  <span class="shop-stat-key">${esc(r.label)}</span>
                   <span style="flex:1 1 auto; text-align:right; font-size:14px;">${esc(r.value)}</span>
               </div>`).join("");
           needsSectionHTML += `
               <div class="gauges-section">
-                  <div class="card-lbl" style="border-bottom: 1px dashed rgba(94,47,23,0.15); padding-bottom:4px; margin-bottom:10px; font-weight:bold; font-size:15px;">
+                  <div class="card-lbl" class="shop-sec-hdr">
                       ${T('Shop.medicineClass')}: ${esc(medicine.label)}
                   </div>
                   ${rows}
@@ -2158,15 +2128,12 @@
         if (cravingRelief.length) {
           const cravingGauges = cravingRelief.map(r => `
               <div class="gauge-row">
-                  <span style="font-weight:500; width:70px;">${esc(r.label)}</span>
-                  <div class="gauge-bar-outer">
-                      <div class="gauge-bar-inner" style="width:${r.amount}%; background:var(--text-caption-brown);"></div>
-                  </div>
-                  <span style="font-weight:bold; width:60px; text-align:right; color:var(--text-caption-brown);">-${r.amount}%</span>
+                  <span class="shop-stat-key">${esc(r.label)}</span>
+                  <span style="font-weight:bold; color:var(--text-caption-brown);">-${r.amount}%</span>
               </div>`).join("");
           needsSectionHTML += `
               <div class="gauges-section">
-                  <div class="card-lbl" style="border-bottom: 1px dashed rgba(94,47,23,0.15); padding-bottom:4px; margin-bottom:10px; font-weight:bold; font-size:15px;">
+                  <div class="card-lbl" class="shop-sec-hdr">
                       ${T('Shop.cravingsFed')}
                   </div>
                   ${cravingGauges}
@@ -2201,10 +2168,10 @@
         if (effectLines.length) {
           effectsSectionHTML = `
             <div style="margin-bottom:18px;">
-                <div class="card-lbl" style="border-bottom: 1px dashed rgba(94,47,23,0.15); padding-bottom:4px; margin-bottom:10px; font-weight:bold; font-size:15px;">
+                <div class="card-lbl" class="shop-sec-hdr">
                     ${T('Shop.signalsChemicalProperties')}
                 </div>
-                <div class="detail-effect-chips" style="background:rgba(0,0,0,0.015); border:1px solid rgba(94,47,23,0.06); border-radius:4px; padding:10px 14px;">
+                <div class="detail-effect-chips" class="shop-plate">
                     ${effectsHTML}
                 </div>
             </div>
@@ -2232,7 +2199,7 @@
             const level = prof.levelFor(actor, selectedItem);
             const trained = level >= prof.PROFICIENT_LEVEL;
             const tier = (specs && specs.ready) ? specs.levelName(level) : "";
-            const color = trained ? "#27ae60" : "rgba(94,47,23,0.55)";
+            const color = trained ? "var(--text-cost-ok)" : "var(--text-disabled)";
 
             rows += `
               <div style="display:flex; align-items:baseline; gap:8px; font-size:16px; color:${color}; font-weight:${trained ? 'bold' : 'normal'};">
@@ -2245,7 +2212,7 @@
 
           proficiencyHTML = `
             <div style="margin-bottom:10px;">
-                <div class="card-lbl" style="border-bottom: 1px dashed rgba(94,47,23,0.15); padding-bottom:4px; margin-bottom:10px; font-weight:bold; font-size:15px; display:flex; justify-content:space-between; gap:10px;">
+                <div class="card-lbl" class="shop-sec-hdr shop-sec-hdr--split">
                     <span>${esc(T('Shop.proficiency'))}</span>
                     <span style="font-weight:normal;">${esc(specName)}</span>
                 </div>
@@ -2337,12 +2304,7 @@
           });
         }
       } else {
-        detailViewport.innerHTML = `
-          <div class="detail-scroll" style="flex: 1; min-height: 0; justify-content:center; align-items:center; text-align:center; color:var(--text-brown-medium); font-style: normal; display: flex; flex-direction: column;">
-              <div style="font-size:40px; margin-bottom:12px; opacity:0.35;"></div>
-              <span>${esc(T('Shop.hoverOrSelectAnItem'))}</span>
-          </div>
-        `;
+        detailViewport.innerHTML = "";
       }
     }
 
@@ -2397,7 +2359,7 @@
 
                   <div style="font-size:15px; color:var(--text-info); margin-bottom:14px;">${esc(T('Shop.max'))} ${modalMax}</div>
 
-                  <div style="border-top:1px dashed var(--border-subtle-translucent-30); padding-top:12px; margin-top:14px;">
+                  <div style="padding-top:12px; margin-top:14px;">
                       <div class="card-lbl">${esc(subLabel)}</div>
                       <div class="card-val" style="font-size:24px; color:${isModalBuyMode ? 'var(--text-cost-bad)' : 'var(--text-cost-ok)'};">${money(totalCost)} €</div>
                   </div>
@@ -2467,7 +2429,7 @@
     const totals = this.cartTotals(isBuyMode);
 
     bar.innerHTML = totals.lines === 0
-      ? `<div class="shop-sell-hint">${esc(T(isBuyMode ? 'Shop.buyHint' : 'Shop.sellHint'))}</div>`
+      ? ``
       : `
       <div class="shop-selection-bar">
           <div class="selection-summary">
@@ -2603,9 +2565,13 @@
   // put it in front of the till (isEnabled, sellSelection, doSell).
   const isKeyItem = (item) => !!(item && DataManager.isItem(item) && item.itypeId === 2);
 
+  // Em's vector gun is never merchandise: VectorGunSystem.js is the one place
+  // that is decided, here and at every other counter it could leave by.
+  const isBoundGear = (item) => !!(window.VectorGun && window.VectorGun.isBound(item));
+
   const _Window_ShopSell_isEnabled = Window_ShopSell.prototype.isEnabled;
   Window_ShopSell.prototype.isEnabled = function (item) {
-    if (isKeyItem(item)) return false;
+    if (isKeyItem(item) || isBoundGear(item)) return false;
     return _Window_ShopSell_isEnabled.call(this, item);
   };
 
@@ -2615,7 +2581,7 @@
   // list groups itself under. Key items are never merchandise whatever is lit.
   const _Window_ShopSell_includes = Window_ShopSell.prototype.includes;
   Window_ShopSell.prototype.includes = function (item) {
-    if (isKeyItem(item)) return false;
+    if (isKeyItem(item) || isBoundGear(item)) return false;
     const scene = SceneManager._scene;
     if (!(scene instanceof Scene_Shop) || typeof scene.passesShopCategory !== "function") {
       return _Window_ShopSell_includes.call(this, item);
@@ -2930,9 +2896,7 @@
     if (!stocks[mapId]) stocks[mapId] = {};
     if (!stocks[mapId][eventId]) stocks[mapId][eventId] = { date: "" };
 
-    const shopData = stocks[mapId][eventId];
-
-    if (shopData.date !== dateKey) {
+    if (stocks[mapId][eventId].date !== dateKey) {
       stocks[mapId][eventId] = { date: dateKey, oilFactor: 1.0, soulFactor: 1.0 };
       const newShopData = stocks[mapId][eventId];
 
@@ -2967,22 +2931,31 @@
         }, null);
       }
 
-      for (const goods of (this._goods || [])) {
-        if (!Array.isArray(goods)) continue;
-        const type = goods[0];
-        const id = goods[1];
-        let item = null;
-        if (type === 0) item = $dataItems[id];
-        else if (type === 1) item = $dataWeapons[id];
-        else if (type === 2) item = $dataArmors[id];
+    }
 
-        const key = getStockKey(item);
-        if (key) newShopData[key] = this.generateRandomStock(item);
-      }
+    // Every row on the shelf is counted, whatever put the record there. The
+    // roll used to happen only on the day the record was made, so a counter
+    // whose stock had already been opened by a shoplifter (window.ShopStock,
+    // which seeds a record without ever showing the shop) came back with
+    // numbers for the lifted rows alone and unlimited stock for the rest.
+    const shopData = stocks[mapId][eventId];
+    for (const goods of (this._goods || [])) {
+      if (!Array.isArray(goods)) continue;
+      const type = goods[0];
+      const id = goods[1];
+      let item = null;
+      if (type === 0) item = $dataItems[id];
+      else if (type === 1) item = $dataWeapons[id];
+      else if (type === 2) item = $dataArmors[id];
+
+      const key = getStockKey(item);
+      if (key && !Number.isFinite(shopData[key])) shopData[key] = rollStock(item);
     }
   };
 
-  Scene_Shop.prototype.generateRandomStock = function (item) {
+  // How deep a shelf is stocked with one thing. A plain function so any
+  // counter can be stocked without a Scene_Shop standing open.
+  const rollStock = function (item) {
     const price = (item && Number.isFinite(item.price)) ? item.price : 0;
     // A course of medicine is taken once a day for a week or more, so a shelf
     // holding two of them is a shelf holding none. Anything carrying the
@@ -3002,6 +2975,10 @@
     return Math.floor(Math.random() * base) + 1;
   };
 
+  Scene_Shop.prototype.generateRandomStock = function (item) {
+    return rollStock(item);
+  };
+
   Scene_Shop.prototype.getStock = function (item) {
     const shopData = currentShopData(this);
     if (!shopData) return UNLIMITED_STOCK;
@@ -3017,6 +2994,72 @@
     const key = getStockKey(item);
     if (!key || !Number.isFinite(shopData[key])) return;
     shopData[key] = Math.max(0, shopData[key] - amount);
+  };
+
+  // ===========================================================================
+  //  window.ShopStock, what is left on a counter, for anyone who is not the
+  //  counter itself
+  // ---------------------------------------------------------------------------
+  //  A shelf used to be counted only while its shop stood open, so a thief
+  //  working a counter he never opened took off a shelf that was never written
+  //  down and could take the same thing forever. The record is the same one
+  //  Scene_Shop keeps ($gameSystem._shopStocks[mapId][eventId], per day, world
+  //  shared through WorldManager), it is simply reachable now without a scene:
+  //  ask for a row and it is rolled on the spot the first time, and what is
+  //  taken off it is taken off the shop's own numbers.
+  // ===========================================================================
+  const UNLIMITED = UNLIMITED_STOCK;
+
+  const stockRecord = function (mapId, eventId, create) {
+    if (!mapId || !eventId || !$gameSystem) return null;
+    const stocks = $gameSystem._shopStocks || (create ? ($gameSystem._shopStocks = {}) : null);
+    if (!stocks) return null;
+    if (!stocks[mapId]) {
+      if (!create) return null;
+      stocks[mapId] = {};
+    }
+    const dateKey = getShopDateKey(mapId, eventId);
+    let record = stocks[mapId][eventId];
+    if (!record) {
+      if (!create) return null;
+      record = stocks[mapId][eventId] = { date: dateKey, oilFactor: 1.0, soulFactor: 1.0 };
+    }
+    // A record left over from another day is a record of nothing: the counter
+    // has been restocked since, so it starts again empty of numbers.
+    if (record.date !== dateKey) {
+      record = stocks[mapId][eventId] = { date: dateKey, oilFactor: 1.0, soulFactor: 1.0 };
+    }
+    return record;
+  };
+
+  window.ShopStock = {
+    UNLIMITED,
+    key: getStockKey,
+    record: (mapId, eventId) => stockRecord(mapId, eventId, false),
+
+    // What is left of one thing on one counter, rolling the shelf the first
+    // time anyone asks. Anything with no key at all (a plugin-made row) is
+    // reported as unlimited rather than as nothing.
+    get(mapId, eventId, item) {
+      const key = getStockKey(item);
+      if (!key) return UNLIMITED;
+      const record = stockRecord(mapId, eventId, true);
+      if (!record) return UNLIMITED;
+      if (!Number.isFinite(record[key])) record[key] = rollStock(item);
+      return record[key];
+    },
+
+    // Take amount off the counter and answer with what is left. A counter that
+    // keeps no record (no map or event behind it) is left alone.
+    reduce(mapId, eventId, item, amount) {
+      const key = getStockKey(item);
+      if (!key) return UNLIMITED;
+      const record = stockRecord(mapId, eventId, true);
+      if (!record) return UNLIMITED;
+      const left = Number.isFinite(record[key]) ? record[key] : rollStock(item);
+      record[key] = Math.max(0, left - (Number.isFinite(amount) ? amount : 1));
+      return record[key];
+    }
   };
 
   // Trading is a skill like any other. Haggling (127) cuts what the party pays,
@@ -3255,7 +3298,7 @@
   // single-item modal exactly as it was.
 
   const isSellableItem = (item) => {
-    if (!item || isKeyItem(item)) return false;
+    if (!item || isKeyItem(item) || isBoundGear(item)) return false;
     const price = Number.isFinite(item.price) ? item.price : 0;
     return price > 0 && sellableCount(item) > 0;
   };

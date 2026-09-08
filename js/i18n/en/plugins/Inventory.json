@@ -10,7 +10,9 @@
  "sort": {
   "name": "Name",
   "weight": "Weight",
-  "price": "Price"
+  "price": "Price",
+  "count": "Count",
+  "rarity": "Rarity"
  },
  "category": {
   "All": "All",
@@ -64,7 +66,7 @@
   ],
   "occasion": [
    "Always",
-   "Battle Screen",
+   "Battle",
    "Outside battle",
    "Never"
   ],
@@ -102,13 +104,15 @@
    "equipSlot": "Equip Slot",
    "slotFallback": "Slot",
    "consumable": "Consumable",
-   "occasion": "Occasion",
+   "occasion": "Usable",
    "scope": "Scope",
    "speedAdjust": "Speed Adjust",
    "successRate": "Success Rate",
    "repeatActions": "Repeat Actions",
    "apGain": "AP Gain",
    "hitClassification": "Hit Classification",
+   "damageCategory": "Damage Class",
+   "scaling": "Scaling",
    "damageType": "Damage Type",
    "attackElement": "Attack Element",
    "formula": "Formula",
@@ -202,6 +206,9 @@
   "Floor Dmg Rate",
   "EXP Rate"
  ],
+ "model": {
+  "fullscreenHint": "Drag to turn, wheel to zoom, middle drag to pan"
+ },
  "section": {
   "specifications": "Specifications",
   "invocationStats": "Invocation Stats",
@@ -292,12 +299,16 @@
   "inspectionPlaceholder": "Select an item from the backpack on the left to inspect its natural properties, chemical composition, and mechanical details.",
   "useItem": "Use Item",
   "equip": "Equip",
+  "favorite": "Favourite",
+  "unfavorite": "Unfavourite",
   "throw": "Throw",
   "discard": "Discard",
   "discardItem": "Discard Item",
   "discardBody": "Remove {qty} of {item} from the backpack? (have {owned})"
  },
  "medicineDoses": "{days} daily doses",
+ "medicineIllnessCount": "{count} illnesses",
+ "medicineInfoButton": "Info",
  "nature": {
   "label": "Nature",
   "mundane": "Mundane",

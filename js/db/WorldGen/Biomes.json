@@ -83,14 +83,13 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgmBattle": [
-      "BattleMusic/The Great Battle"
-    ],
     "bgsNight": [
-      "creepy-dungeon-ambience"
+      "creepy-dungeon-ambience",
+      "eerie-atmos-4"
     ],
     "bgs": [
-      "creepy-dungeon-ambience"
+      "creepy-dungeon-ambience",
+      "eerie-atmos-3"
     ],
     "dayTemperature": 15,
     "nightTemperature": 10,
@@ -201,9 +200,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgmBattle": [
-      "BattleMusic/The Great Battle"
-    ],
     "bgsNight": [
       "room-empty",
       "room-low",
@@ -344,14 +340,13 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "ZaneMusic/shortcuts"
-    ],
     "bgsNight": [
-      "glitch-sounds"
+      "glitch-sounds",
+      "cyber-city-loop"
     ],
     "bgs": [
-      "glitch-sounds"
+      "glitch-sounds",
+      "cyber-city-loop"
     ],
     "dayTemperature": 18,
     "nightTemperature": 14,
@@ -495,11 +490,16 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Moogify/MelodicTechno"
+    "bgsNight": [
+      "space-wind-long",
+      "eerie-atmos-4",
+      "eerie-atmos-1"
     ],
-    "bgsNight": [],
-    "bgs": [],
+    "bgs": [
+      "space-wind-long",
+      "eerie-atmos-3",
+      "park-wind-long"
+    ],
     "dayTemperature": 22,
     "nightTemperature": 16,
     "seasons": {
@@ -654,9 +654,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle8"
-    ],
     "bgsNight": [
       "night-ambience",
       "night-ambience2",
@@ -664,7 +661,9 @@
     ],
     "bgs": [
       "People2",
-      "gym-ambience"
+      "gym-ambience",
+      "funfair-ambience",
+      "crowd-shouting"
     ],
     "dayTemperature": 20,
     "nightTemperature": 15,
@@ -793,9 +792,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "winchester-wind-ambience"
     ],
@@ -948,14 +944,12 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "crickets"
     ],
     "bgs": [
-      "bamboo-creaking-in-wind"
+      "bamboo-creaking-in-wind",
+      "birdsong-ambient"
     ],
     "dayTemperature": 25,
     "nightTemperature": 18,
@@ -1107,9 +1101,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
-    "bgmBattle": [
-      "Battle3"
-    ],
     "bgsNight": [
       "gentle-waves-quiet-beach",
       "ocean-night",
@@ -1270,9 +1261,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "winchester-wind-ambience"
     ],
@@ -1435,9 +1423,6 @@
       238
     ],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "night-ambience",
       "night-ambience2",
@@ -1556,9 +1541,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "room-big",
       "hallway",
@@ -1676,9 +1658,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "KevinMacLeod/Horror/The Descent"
-    ],
     "bgsNight": [
       "ce-cavern-looped",
       "cave-deep",
@@ -1785,14 +1764,13 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "KevinMacLeod/Horror/The Descent"
-    ],
     "bgsNight": [
-      "water-dripping-in-cave"
+      "water-dripping-in-cave",
+      "basement-dripping"
     ],
     "bgs": [
-      "water-dripping-in-cave"
+      "water-dripping-in-cave",
+      "basement-dripping"
     ],
     "dayTemperature": 10,
     "nightTemperature": 8,
@@ -1878,9 +1856,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "CaveIce",
-    "bgmBattle": [
-      "KevinMacLeod/Horror/The Descent"
-    ],
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
@@ -1983,9 +1958,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "room-ambience",
       "room-big",
@@ -2173,50 +2145,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
-    "bgm": [
-      "KevinMacLeod/Jazz/Cool Vibes",
-      "KevinMacLeod/Jazz/Poppers and Prosecco",
-      "KevinMacLeod/Jazz/George Street Shuffle",
-      "KevinMacLeod/Jazz/I Knew a Guy",
-      "KevinMacLeod/Jazz/Fast Talkin",
-      "KevinMacLeod/Jazz/Jazz Brunch",
-      "KevinMacLeod/Jazz/Modern Jazz Samba",
-      "KevinMacLeod/Mysterious/Hidden Agenda",
-      "KevinMacLeod/Techno/Loopster",
-      "KevinMacLeod/Bright/Happy Happy Game Show",
-      "KevinMacLeod/Jazz/Airport Lounge",
-      "KevinMacLeod/Calm/Your Call",
-      "KevinMacLeod/Sad/Decline",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Jazz/Local Forecast",
-      "KevinMacLeod/Jazz/Local Forecast - Slower",
-      "KevinMacLeod/Mysterious/Lost Frontier",
-      "KevinMacLeod/Jazz/Porch Swing Days - faster",
-      "KevinMacLeod/Jazz/Samba Isobel"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Mysterious/Hidden Agenda",
-      "KevinMacLeod/Jazz/Sweeter Vermouth",
-      "KevinMacLeod/Techno/District Four",
-      "KevinMacLeod/Mysterious/Spy Glass",
-      "KevinMacLeod/Sad/Decline",
-      "KevinMacLeod/Jazz/Local Forecast - Slower",
-      "KevinMacLeod/Mysterious/Deadly Roulette",
-      "KevinMacLeod/Calm/Your Call",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Long Note One",
-      "KevinMacLeod/Mysterious/Lost Frontier"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Sad/Decline",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Long Note One",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Atmospheric/Lost Time"
-    ],
-    "bgmBattle": [
-      "RandomMind/Battle"
-    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2230,7 +2158,8 @@
       "city-ambience",
       "city-ambience2",
       "city-soundscape",
-      "city-soundscape2"
+      "city-soundscape2",
+      "crowd-shouting"
     ],
     "dayTemperature": 22,
     "nightTemperature": 16,
@@ -2378,34 +2307,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
-    "bgm": [
-      "KevinMacLeod/Mysterious/Desert City",
-      "KevinMacLeod/Mysterious/Mystery Bazaar",
-      "KevinMacLeod/Mysterious/Ibn Al-Noor",
-      "KevinMacLeod/Mysterious/Curse of the Scarab",
-      "KevinMacLeod/Mysterious/Tabuk",
-      "KevinMacLeod/Mysterious/Tempting Secrets",
-      "KevinMacLeod/Jazz/Cuban Sandwich",
-      "KevinMacLeod/Mysterious/Spy Glass"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Mysterious/Mystery Bazaar",
-      "KevinMacLeod/Mysterious/Tempting Secrets",
-      "KevinMacLeod/Mysterious/Ibn Al-Noor",
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Mysterious/Curse of the Scarab",
-      "KevinMacLeod/Atmospheric/Penumbra"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Atmospheric/Penumbra",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Atmospheric/Lost Time",
-      "KevinMacLeod/Sad/Decline"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Exotic Battle"
-    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2564,33 +2465,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
-    "bgm": [
-      "KevinMacLeod/Dreamy/Winter Chimes",
-      "KevinMacLeod/Jazz/Sweeter Vermouth",
-      "KevinMacLeod/Dreamy/Crinoline Dreams",
-      "KevinMacLeod/Calm/Daybreak",
-      "KevinMacLeod/Jazz/Local Forecast - Slower",
-      "KevinMacLeod/Dreamy/Frost Waltz",
-      "KevinMacLeod/Jazz/Cool Vibes"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Dreamy/Winter Chimes",
-      "KevinMacLeod/Atmospheric/Frozen Star",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Mysterious/Hidden Agenda",
-      "KevinMacLeod/Dark/Ice Demon",
-      "KevinMacLeod/Calm/Night in Venice"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Frozen Star",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Dark/Ice Demon",
-      "KevinMacLeod/Dark/The Ice Giants",
-      "KevinMacLeod/Atmospheric/Penumbra"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2750,35 +2624,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
-    "bgm": [
-      "KevinMacLeod/Bright/Achaidh Cheide",
-      "KevinMacLeod/Bright/Midsummer Sky",
-      "KevinMacLeod/Bright/Island Meet and Greet",
-      "KevinMacLeod/Jazz/Porch Swing Days - faster",
-      "KevinMacLeod/Calm/Morning",
-      "KevinMacLeod/Jazz/Samba Isobel",
-      "KevinMacLeod/Bright/Happy Happy Game Show",
-      "KevinMacLeod/Calm/Brittle Rille",
-      "KevinMacLeod/Jazz/Jazz Brunch"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Calm/Night in Venice",
-      "KevinMacLeod/Jazz/Sweeter Vermouth",
-      "KevinMacLeod/Calm/Tranquility Base",
-      "KevinMacLeod/Mysterious/Comfortable Mystery",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Long Note One"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Long Note One",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Atmospheric/Lost Time",
-      "KevinMacLeod/Sad/Decline"
-    ],
-    "bgmBattle": [
-      "Battle3"
-    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2787,7 +2632,8 @@
     "bgs": [
       "People2",
       "city-soundscape",
-      "village-at-morning"
+      "village-at-morning",
+      "funfair-ambience"
     ],
     "dayTemperature": 22,
     "nightTemperature": 16,
@@ -2930,34 +2776,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
-    "bgm": [
-      "KevinMacLeod/Mysterious/Desert City",
-      "KevinMacLeod/Mysterious/Mystery Bazaar",
-      "KevinMacLeod/Mysterious/Ibn Al-Noor",
-      "KevinMacLeod/Mysterious/Curse of the Scarab",
-      "KevinMacLeod/Mysterious/Tabuk",
-      "KevinMacLeod/Mysterious/Tempting Secrets",
-      "KevinMacLeod/Jazz/Cuban Sandwich",
-      "KevinMacLeod/Mysterious/Spy Glass"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Mysterious/Mystery Bazaar",
-      "KevinMacLeod/Mysterious/Tempting Secrets",
-      "KevinMacLeod/Mysterious/Ibn Al-Noor",
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Mysterious/Curse of the Scarab",
-      "KevinMacLeod/Atmospheric/Penumbra"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Atmospheric/Penumbra",
-      "KevinMacLeod/Sad/Decline",
-      "KevinMacLeod/Sad/Wounded",
-      "KevinMacLeod/Dark/Bent and Broken"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Exotic Battle"
-    ],
     "bgsNight": [
       "desert-ambience",
       "desert-monolit",
@@ -3099,33 +2917,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
-    "bgm": [
-      "KevinMacLeod/Dreamy/Winter Chimes",
-      "KevinMacLeod/Dreamy/Frost Waltz",
-      "KevinMacLeod/Bright/Midsummer Sky",
-      "KevinMacLeod/Dreamy/Fairytale Waltz",
-      "KevinMacLeod/Calm/Daybreak",
-      "KevinMacLeod/Dreamy/Crinoline Dreams",
-      "KevinMacLeod/Bright/Achaidh Cheide"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Dreamy/Winter Chimes",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Frozen Star",
-      "KevinMacLeod/Calm/Night in Venice",
-      "KevinMacLeod/Dark/Ice Demon",
-      "KevinMacLeod/Atmospheric/Long Note Three"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Frozen Star",
-      "KevinMacLeod/Dark/Ice Demon",
-      "KevinMacLeod/Atmospheric/Long Note Three",
-      "KevinMacLeod/Atmospheric/Gloom Horizon"
-    ],
-    "bgmBattle": [
-      "BattleMusic/The Great Battle"
-    ],
     "bgsNight": [
       "cold-wind-loop",
       "wind-soft",
@@ -3209,42 +3000,13 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Horror/Classic Horror 1",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
-      "KevinMacLeod/Horror/Land of Phantoms",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Horror/Darkest Child",
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Dark/Unholy Knight"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Horror/Darkest Child",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Horror/Land of Phantoms",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Horror/Nightmare Machine",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
-      "KevinMacLeod/Horror/The Other Side of the Door"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Horror/Classic Horror 1",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Cartoon Battle"
-    ],
     "bgsNight": [
-      "creepy-dungeon-ambience"
+      "creepy-dungeon-ambience",
+      "eerie-atmos-2"
     ],
     "bgs": [
-      "creepy-dungeon-ambience"
+      "creepy-dungeon-ambience",
+      "eerie-atmos-1"
     ],
     "dayTemperature": 8,
     "nightTemperature": 6,
@@ -3376,9 +3138,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -3539,9 +3298,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Exotic Battle"
-    ],
     "bgsNight": [
       "desert-ambience",
       "desert-monolit"
@@ -3737,9 +3493,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "desert-ambience",
       "desert-monolit",
@@ -3878,14 +3631,13 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
-      "glitch-sounds"
+      "glitch-sounds",
+      "cyber-city-loop"
     ],
     "bgs": [
-      "glitch-sounds"
+      "glitch-sounds",
+      "cyber-city-loop"
     ],
     "dayTemperature": 20,
     "nightTemperature": 18,
@@ -4014,9 +3766,6 @@
     "biomeIds": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Moogify/MelodicTechno"
-    ],
     "bgsNight": [
       "ocean-night",
       "ocean-night2",
@@ -4181,9 +3930,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "dream2"
     ],
@@ -4290,40 +4036,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgm": [
-      "KevinMacLeod/Mysterious/Comfortable Mystery 2",
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Mysterious/Crypto",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Mysterious/Goblin_Tinker_Soldier_Spy",
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Mysterious/Investigations",
-      "KevinMacLeod/Dark/Unholy Knight",
-      "KevinMacLeod/Dark/Bent and Broken"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Dark/Unholy Knight",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Dark/Unholy Knight",
-      "KevinMacLeod/Dark/Bent and Broken"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Hitman",
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Horror/The Other Side of the Door",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Horror/Ghostpocalypse - 7 Master"
-    ],
     "bgsNight": [
       "dungeon-ambiance"
     ],
@@ -4414,33 +4126,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Mysterious/Comfortable Mystery 2",
-      "KevinMacLeod/Mysterious/Investigations",
-      "KevinMacLeod/Mysterious/Crypto",
-      "KevinMacLeod/Mysterious/Tempting Secrets",
-      "KevinMacLeod/Mysterious/Spy Glass",
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Mysterious/Deadly Roulette"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Mysterious/Comfortable Mystery 2",
-      "KevinMacLeod/Mysterious/Tempting Secrets",
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Mysterious/Deadly Roulette",
-      "KevinMacLeod/Dark/Darkling"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dark/Darkling",
-      "KevinMacLeod/Horror/Unseen Horrors"
-    ],
-    "bgmBattle": [
-      "Battle3"
-    ],
     "bgsNight": [
       "dungeon-ambiance"
     ],
@@ -4551,33 +4236,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Mysterious/Comfortable Mystery 2",
-      "KevinMacLeod/Mysterious/Investigations",
-      "KevinMacLeod/Mysterious/Crypto",
-      "KevinMacLeod/Mysterious/Tempting Secrets",
-      "KevinMacLeod/Mysterious/Spy Glass",
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Mysterious/Deadly Roulette"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Mysterious/Comfortable Mystery 2",
-      "KevinMacLeod/Mysterious/Tempting Secrets",
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Mysterious/Deadly Roulette",
-      "KevinMacLeod/Dark/Darkling"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dark/Darkling",
-      "KevinMacLeod/Atmospheric/Deep Haze"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Exotic Battle"
-    ],
     "bgsNight": [
       "dungeon-ambiance"
     ],
@@ -4758,35 +4416,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Crypt",
-    "bgm": [
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Calm/Healing",
-      "KevinMacLeod/Sad/Mourning Song",
-      "KevinMacLeod/Sad/Sad Trio",
-      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
-      "KevinMacLeod/Calm/Eternal Hope",
-      "KevinMacLeod/Dramatic/Echoes of Time",
-      "KevinMacLeod/Calm/Meditation Impromptu 01"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Sad/Mourning Song",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
-      "KevinMacLeod/Sad/Sad Trio",
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Horror/Ghost Story",
-      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Sad/Mourning Song",
-      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
-      "KevinMacLeod/Horror/Ghost Story"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "creepy-dungeon-ambience"
     ],
@@ -4885,9 +4514,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "ce-cavern-looped",
       "cave-deep",
@@ -5040,18 +4666,19 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Exotic Battle"
-    ],
     "bgsNight": [
       "horror",
       "abyss-ambience",
-      "abyss-ambience2"
+      "abyss-ambience2",
+      "eerie-atmos-2",
+      "horror-drone-loop"
     ],
     "bgs": [
       "horror",
       "drone",
-      "unknown-noise"
+      "unknown-noise",
+      "horror-drone-loop",
+      "eerie-atmos-1"
     ],
     "dayTemperature": 14,
     "nightTemperature": 10,
@@ -5183,18 +4810,17 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Boss Battle"
-    ],
     "bgsNight": [
       "industrial-ambience",
       "industrial-machinery",
-      "factory-buzz"
+      "factory-buzz",
+      "boiler-generator-loop"
     ],
     "bgs": [
       "industrial-ambience",
       "industrial-machinery",
-      "factory-buzz"
+      "factory-buzz",
+      "boiler-generator-loop"
     ],
     "dayTemperature": 24,
     "nightTemperature": 18,
@@ -5276,18 +4902,17 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "industrial-machinery",
       "industrial-compressor",
-      "ventilation"
+      "ventilation",
+      "boiler-generator-loop"
     ],
     "bgs": [
       "industrial-machinery",
       "industrial-compressor",
-      "ventilation"
+      "ventilation",
+      "boiler-generator-loop"
     ],
     "dayTemperature": 22,
     "nightTemperature": 16,
@@ -5419,9 +5044,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -5430,7 +5052,8 @@
     "bgs": [
       "forest-birds-ambient-seamless-loop",
       "forest-birds",
-      "birds"
+      "birds",
+      "birdsong-ambient"
     ],
     "dayTemperature": 22,
     "nightTemperature": 16,
@@ -5578,9 +5201,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Moogify/MelodicTechno"
-    ],
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -5590,7 +5210,8 @@
       "farm1",
       "farm2",
       "farm3",
-      "farm4"
+      "farm4",
+      "morning-countryside"
     ],
     "dayTemperature": 24,
     "nightTemperature": 16,
@@ -5818,9 +5439,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "RandomMind/Battle"
-    ],
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -5829,7 +5447,9 @@
     "bgs": [
       "field_tallgrass",
       "openfield_grass_rustlinginsects-",
-      "grass_field_insectbed"
+      "grass_field_insectbed",
+      "morning-countryside",
+      "park-wind-long"
     ],
     "dayTemperature": 25,
     "nightTemperature": 16,
@@ -6001,9 +5621,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Scene7"
-    ],
     "bgsNight": [
       "crickets5",
       "night-crickets2",
@@ -6012,7 +5629,9 @@
     "bgs": [
       "openfield_grass_rustlinginsects-",
       "grass_field_insectbed",
-      "nature-summer"
+      "nature-summer",
+      "morning-countryside",
+      "park-wind-long"
     ],
     "dayTemperature": 24,
     "nightTemperature": 15,
@@ -6169,9 +5788,6 @@
       "SpiritWoods"
     ],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle4"
-    ],
     "bgsNight": [
       "forest-night",
       "forest-night2",
@@ -6180,7 +5796,8 @@
     "bgs": [
       "forest-ambient-loop",
       "forest-birds",
-      "forest-birds-ambient-seamless-loop"
+      "forest-birds-ambient-seamless-loop",
+      "birdsong-ambient"
     ],
     "dayTemperature": 22,
     "nightTemperature": 14,
@@ -6359,9 +5976,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "jungle-night",
       "crickets5",
@@ -6539,9 +6153,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle4"
-    ],
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
@@ -6697,18 +6308,17 @@
       500
     ],
     "lowerLayer": "Crypt",
-    "bgmBattle": [
-      "BattleMusic/Cartoon Battle"
-    ],
     "bgsNight": [
       "dark-graveyard",
       "wind-cemetary",
-      "night-ambience"
+      "night-ambience",
+      "eerie-atmos-2"
     ],
     "bgs": [
       "wind-cemetary",
       "wind-soft",
-      "crickets5"
+      "crickets5",
+      "eerie-atmos-1"
     ],
     "dayTemperature": 16,
     "nightTemperature": 10,
@@ -6856,9 +6466,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Fast Fight"
-    ],
     "bgsNight": [
       "dream2",
       "female-choir",
@@ -7015,9 +6622,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle1"
-    ],
     "bgsNight": [
       "lava-loop-1",
       "lava-loop-2",
@@ -7191,9 +6795,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "night-crickets",
       "crickets5",
@@ -7202,7 +6803,9 @@
     "bgs": [
       "mountain-wind",
       "mountain-ambience",
-      "grass-wind"
+      "grass-wind",
+      "outdoor-breeze-loop",
+      "park-wind-long"
     ],
     "dayTemperature": 18,
     "nightTemperature": 10,
@@ -7313,9 +6916,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -7472,11 +7072,16 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgmBattle": [
-      "BattleMusic/Cartoon Battle"
+    "bgsNight": [
+      "night-countryside",
+      "village-night",
+      "outdoor-breeze-loop"
     ],
-    "bgsNight": [],
-    "bgs": [],
+    "bgs": [
+      "outdoor-breeze-loop",
+      "birdsong-ambient",
+      "morning-countryside"
+    ],
     "dayTemperature": 22,
     "nightTemperature": 15,
     "seasons": {
@@ -7579,9 +7184,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgmBattle": [
-      "BattleMusic/Cartoon Battle"
-    ],
     "bgsNight": [
       "room-low",
       "room-tone-4",
@@ -7792,9 +7394,6 @@
       "Crystals"
     ],
     "lowerLayer": "CaveIce",
-    "bgmBattle": [
-      "BattleMusic/Cartoon Battle"
-    ],
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
@@ -8000,9 +7599,6 @@
       "Crystals"
     ],
     "lowerLayer": "CaveIce",
-    "bgmBattle": [
-      "BattleMusic/Cartoon Battle"
-    ],
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
@@ -8147,9 +7743,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Fast Fight"
-    ],
     "bgsNight": [
       "jungle-night",
       "crickets5",
@@ -8301,18 +7894,17 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle4"
-    ],
     "bgsNight": [
       "room-scifi",
       "ventilation",
-      "hum-loop"
+      "hum-loop",
+      "boiler-generator-loop"
     ],
     "bgs": [
       "room-scifi",
       "room-computer",
-      "ventilation"
+      "ventilation",
+      "boiler-generator-loop"
     ],
     "dayTemperature": 18,
     "nightTemperature": 16,
@@ -8444,9 +8036,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Exotic Battle"
-    ],
     "bgsNight": [
       "dungeon_ambient_1"
     ],
@@ -8583,9 +8172,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "lake-waves",
       "night-ambience",
@@ -8594,7 +8180,8 @@
     "bgs": [
       "lake-waves",
       "water-stream",
-      "water-stream2"
+      "water-stream2",
+      "park-river-long"
     ],
     "dayTemperature": 20,
     "nightTemperature": 14,
@@ -8746,9 +8333,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Exotic Battle"
-    ],
     "bgsNight": [
       "landfill"
     ],
@@ -8905,18 +8489,18 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle2"
-    ],
     "bgsNight": [
       "drone",
       "hum-loop",
-      "unknown-noise"
+      "unknown-noise",
+      "eerie-atmos-4",
+      "horror-drone-loop"
     ],
     "bgs": [
       "drone",
       "hum-loop",
-      "room-tone-4"
+      "room-tone-4",
+      "eerie-atmos-3"
     ],
     "dayTemperature": 20,
     "nightTemperature": 18,
@@ -9040,9 +8624,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle7"
-    ],
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
@@ -9051,7 +8632,8 @@
     "bgs": [
       "forest-swamp",
       "swamp-woods",
-      "water-creek"
+      "water-creek",
+      "swamp-long"
     ],
     "dayTemperature": 28,
     "nightTemperature": 22,
@@ -9203,9 +8785,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/The Great Battle"
-    ],
     "bgsNight": [
       "train",
       "train-station",
@@ -9342,9 +8921,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "RandomMind/Battle"
-    ],
     "bgsNight": [
       "old-mine-ambience",
       "cave-deep",
@@ -9491,9 +9067,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveIce",
-    "bgmBattle": [
-      "Battle4"
-    ],
     "bgsNight": [
       "night-crickets",
       "mountain-wind",
@@ -9693,9 +9266,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveIce",
-    "bgmBattle": [
-      "Battle2"
-    ],
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
@@ -9863,9 +9433,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Boss Battle"
-    ],
     "bgsNight": [
       "forest-night",
       "forest-night2",
@@ -9874,7 +9441,8 @@
     "bgs": [
       "forest-ambient-loop",
       "forest-swamp",
-      "nature-summer"
+      "nature-summer",
+      "birdsong-ambient"
     ],
     "dayTemperature": 16,
     "nightTemperature": 14,
@@ -10003,9 +9571,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "SeaBed",
-    "bgmBattle": [
-      "Battle3"
-    ],
     "bgsNight": [
       "ocean-night",
       "ocean-night2"
@@ -10166,9 +9731,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "room-office",
       "room-office2",
@@ -10309,18 +9871,17 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "Wind5",
       "wind-soft",
-      "hum-loop"
+      "hum-loop",
+      "space-wind-long"
     ],
     "bgs": [
       "Wind5",
       "wind-soft2",
-      "room-scifi"
+      "room-scifi",
+      "cyber-city-loop"
     ],
     "dayTemperature": 20,
     "nightTemperature": 16,
@@ -10440,9 +10001,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/The Great Battle"
-    ],
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -10452,7 +10010,10 @@
       "thrushes-tits-city-dawn",
       "park-central",
       "park-morning",
-      "park-rome"
+      "park-rome",
+      "park-birds-long",
+      "park-wind-long",
+      "birdsong-ambient"
     ],
     "dayTemperature": 24,
     "nightTemperature": 16,
@@ -10607,9 +10168,6 @@
       "Crystals"
     ],
     "lowerLayer": "CaveIce",
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "wind-blizzard",
       "wind-arctic",
@@ -10742,18 +10300,18 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "RiverBank",
-    "bgmBattle": [
-      "Battle3"
-    ],
     "bgsNight": [
       "water-river",
       "water-river2",
-      "night-ambience"
+      "night-ambience",
+      "river-vistula-long"
     ],
     "bgs": [
       "water-river",
       "water-river2",
-      "water-stream"
+      "water-stream",
+      "park-river-long",
+      "river-vistula-long"
     ],
     "dayTemperature": 18,
     "nightTemperature": 12,
@@ -10874,18 +10432,18 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "RiverBank",
-    "bgmBattle": [
-      "Battle6"
-    ],
     "bgsNight": [
       "water-river",
       "water-river2",
-      "night-ambience"
+      "night-ambience",
+      "river-vistula-long"
     ],
     "bgs": [
       "water-river",
       "water-river2",
-      "water-stream"
+      "water-stream",
+      "park-river-long",
+      "river-vistula-long"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -11009,18 +10567,18 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "RiverBank",
-    "bgmBattle": [
-      "Battle1"
-    ],
     "bgsNight": [
       "water-river",
       "water-river2",
-      "night-ambience"
+      "night-ambience",
+      "river-vistula-long"
     ],
     "bgs": [
       "water-river",
       "water-river2",
-      "water-stream"
+      "water-stream",
+      "park-river-long",
+      "river-vistula-long"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -11147,18 +10705,18 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "RiverBank",
-    "bgmBattle": [
-      "BattleMusic/Fast Fight"
-    ],
     "bgsNight": [
       "water-river",
       "water-river2",
-      "night-ambience"
+      "night-ambience",
+      "river-vistula-long"
     ],
     "bgs": [
       "water-river",
       "water-river2",
-      "water-stream"
+      "water-stream",
+      "park-river-long",
+      "river-vistula-long"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -11234,18 +10792,18 @@
     "color": "#20b2aa",
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle6"
-    ],
     "bgsNight": [
       "water-river",
       "water-creek",
-      "night-crickets"
+      "night-crickets",
+      "river-vistula-long"
     ],
     "bgs": [
       "water-river",
       "water-creek",
-      "water-stream-birds"
+      "water-stream-birds",
+      "park-river-long",
+      "river-vistula-long"
     ],
     "dayTemperature": 22,
     "nightTemperature": 15,
@@ -11382,9 +10940,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle3"
-    ],
     "bgsNight": [
       "highway-distant"
     ],
@@ -11464,16 +11019,15 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "RiverBank",
-    "bgmBattle": [
-      "RandomMind/Battle"
-    ],
     "bgsNight": [
       "water-river",
-      "highway-distant"
+      "highway-distant",
+      "river-vistula-long"
     ],
     "bgs": [
       "water-river",
-      "water-river2"
+      "water-river2",
+      "river-vistula-long"
     ],
     "dayTemperature": 22,
     "nightTemperature": 14,
@@ -11608,18 +11162,17 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgmBattle": [
-      "Battle5"
-    ],
     "bgsNight": [
       "night-crickets",
       "crickets5",
-      "night-ambience"
+      "night-ambience",
+      "eerie-atmos-2"
     ],
     "bgs": [
       "winchester-wind-ambience",
       "wind-soft",
-      "old-wood-creaking-building"
+      "old-wood-creaking-building",
+      "outdoor-breeze-loop"
     ],
     "dayTemperature": 20,
     "nightTemperature": 14,
@@ -11767,9 +11320,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "desert-ambience",
       "desert-monolit",
@@ -11890,9 +11440,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle7"
-    ],
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -11901,7 +11448,8 @@
     "bgs": [
       "grass_field_insectbed",
       "openfield_grass_rustlinginsects-",
-      "nature-summer"
+      "nature-summer",
+      "morning-countryside"
     ],
     "dayTemperature": 32,
     "nightTemperature": 22,
@@ -12012,9 +11560,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "abyss-ambience",
       "abyss-ambience2"
@@ -12143,43 +11688,18 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Mysterious/Crypto",
-      "KevinMacLeod/Atmospheric/Dark Fog",
-      "KevinMacLeod/Atmospheric/Deep Haze",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Techno/District Four",
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Dark/Darkling"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Atmospheric/Dark Fog",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dark/Darkling",
-      "KevinMacLeod/Horror/The Other Side of the Door"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Dark Fog",
-      "KevinMacLeod/Atmospheric/Deep Haze",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Dark/Darkling"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "sewer-drain",
       "sewer-drain2",
-      "sewer-water"
+      "sewer-water",
+      "basement-dripping"
     ],
     "bgs": [
       "sewer-drain",
       "sewer-pipe",
       "sewers-pipe",
-      "sewer-north"
+      "sewer-north",
+      "basement-dripping"
     ],
     "dayTemperature": 16,
     "nightTemperature": 14,
@@ -12329,21 +11849,16 @@
       "KevinMacLeod/Atmospheric/Deep Haze"
     ],
     "bgmNight": [],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Frozen Star",
-      "KevinMacLeod/Atmospheric/Floating Cities",
-      "KevinMacLeod/Atmospheric/Interloper",
-      "KevinMacLeod/Atmospheric/Spacial Harvest",
-      "KevinMacLeod/Atmospheric/Long Note Four"
+    "bgsNight": [
+      "space-wind-long",
+      "cyber-city-loop",
+      "drone"
     ],
-    "bgmBattle": [
-      "Battle2"
-    ],
-    "bgsNight": [],
     "bgs": [
       "spaceship",
       "drone",
-      "room-scifi"
+      "room-scifi",
+      "space-wind-long"
     ],
     "dayTemperature": 10,
     "nightTemperature": 5,
@@ -12491,18 +12006,18 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "",
-    "bgmBattle": [
-      "RandomMind/Battle"
-    ],
     "bgsNight": [
       "room-scifi",
       "ventilation",
-      "hum-loop"
+      "hum-loop",
+      "cyber-city-loop"
     ],
     "bgs": [
       "room-scifi",
       "room-computer",
-      "industrial-machinery"
+      "industrial-machinery",
+      "cyber-city-loop",
+      "boiler-generator-loop"
     ],
     "dayTemperature": 18,
     "nightTemperature": 14,
@@ -12630,9 +12145,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Exotic Battle"
-    ],
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
@@ -12641,7 +12153,8 @@
     "bgs": [
       "forest-swamp",
       "swamp-woods",
-      "lost-valley"
+      "lost-valley",
+      "swamp-long"
     ],
     "dayTemperature": 18,
     "nightTemperature": 14,
@@ -12773,9 +12286,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Boss Battle"
-    ],
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -12784,7 +12294,9 @@
     "bgs": [
       "openfield_grass_rustlinginsects-",
       "grass_field_insectbed",
-      "grass-wind"
+      "grass-wind",
+      "morning-countryside",
+      "park-wind-long"
     ],
     "dayTemperature": 28,
     "nightTemperature": 16,
@@ -12987,9 +12499,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "FloodedCave",
-    "bgmBattle": [
-      "Battle7"
-    ],
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
@@ -12998,7 +12507,8 @@
     "bgs": [
       "swamp-woods",
       "forest-swamp",
-      "countryside-swamp9"
+      "countryside-swamp9",
+      "swamp-long"
     ],
     "dayTemperature": 24,
     "nightTemperature": 18,
@@ -13135,9 +12645,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Cartoon Battle"
-    ],
     "bgsNight": [
       "woods-night",
       "wind-soft",
@@ -13146,7 +12653,8 @@
     "bgs": [
       "forest-ambient-loop",
       "forest-birds",
-      "wind-soft2"
+      "wind-soft2",
+      "birdsong-ambient"
     ],
     "dayTemperature": 10,
     "nightTemperature": -5,
@@ -13287,9 +12795,6 @@
       167
     ],
     "lowerLayer": "Dungeon",
-    "bgmBattle": [
-      "Battle8"
-    ],
     "bgsNight": [
       "temple-shadow",
       "night-ambience",
@@ -13453,9 +12958,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgmBattle": [
-      "Battle2"
-    ],
     "bgsNight": [
       "temple-shadow",
       "night-ambience",
@@ -13616,9 +13118,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle3"
-    ],
     "bgsNight": [
       "train",
       "train-station",
@@ -13757,9 +13256,6 @@
       "Crystals"
     ],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle6"
-    ],
     "bgsNight": [
       "wind-blizzard",
       "wind-arctic",
@@ -13906,18 +13402,17 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Boss Battle"
-    ],
     "bgsNight": [
       "cave-deep",
       "abyss-ambience",
-      "cave-forgotten"
+      "cave-forgotten",
+      "eerie-atmos-3"
     ],
     "bgs": [
       "cave-deep",
       "cave-monsters",
-      "abyss-ambience2"
+      "abyss-ambience2",
+      "eerie-atmos-3"
     ],
     "dayTemperature": 10,
     "nightTemperature": 8,
@@ -14049,9 +13544,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Crypt",
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -14060,7 +13552,9 @@
     "bgs": [
       "thrushes-tits-city-dawn",
       "birds",
-      "backyard"
+      "backyard",
+      "morning-countryside",
+      "park-birds-long"
     ],
     "dayTemperature": 24,
     "nightTemperature": 18,
@@ -14249,35 +13743,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Bright/Achaidh Cheide",
-      "KevinMacLeod/Bright/Midsummer Sky",
-      "KevinMacLeod/Bright/Island Meet and Greet",
-      "KevinMacLeod/Jazz/Porch Swing Days - faster",
-      "KevinMacLeod/Calm/Morning",
-      "KevinMacLeod/Jazz/Samba Isobel",
-      "KevinMacLeod/Bright/Happy Happy Game Show",
-      "KevinMacLeod/Calm/Brittle Rille",
-      "KevinMacLeod/Jazz/Jazz Brunch"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Calm/Night in Venice",
-      "KevinMacLeod/Jazz/Sweeter Vermouth",
-      "KevinMacLeod/Calm/Tranquility Base",
-      "KevinMacLeod/Mysterious/Comfortable Mystery",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Long Note One"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Long Note One",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Atmospheric/Gloom Horizon",
-      "KevinMacLeod/Sad/Heavy Heart"
-    ],
-    "bgmBattle": [
-      "Battle8"
-    ],
     "bgsNight": [
       "village-night",
       "village-night2"
@@ -14285,7 +13750,8 @@
     "bgs": [
       "village-at-morning",
       "People2",
-      "backyard"
+      "backyard",
+      "morning-countryside"
     ],
     "dayTemperature": 22,
     "nightTemperature": 15,
@@ -14482,33 +13948,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Dreamy/Winter Chimes",
-      "KevinMacLeod/Dreamy/Frost Waltz",
-      "KevinMacLeod/Bright/Midsummer Sky",
-      "KevinMacLeod/Dreamy/Fairytale Waltz",
-      "KevinMacLeod/Calm/Daybreak",
-      "KevinMacLeod/Dreamy/Crinoline Dreams",
-      "KevinMacLeod/Bright/Achaidh Cheide"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Dreamy/Winter Chimes",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Frozen Star",
-      "KevinMacLeod/Calm/Night in Venice",
-      "KevinMacLeod/Dark/Ice Demon",
-      "KevinMacLeod/Atmospheric/Long Note Three"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Frozen Star",
-      "KevinMacLeod/Dark/Ice Demon",
-      "KevinMacLeod/Atmospheric/Long Note Three",
-      "KevinMacLeod/Atmospheric/Gloom Horizon"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -14699,33 +14138,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Bright/Achaidh Cheide",
-      "KevinMacLeod/Dramatic/Ascending the Vale",
-      "KevinMacLeod/Bright/Midsummer Sky",
-      "KevinMacLeod/Dramatic/Magistar",
-      "KevinMacLeod/Calm/Morning",
-      "KevinMacLeod/Dramatic/Sovereign",
-      "KevinMacLeod/Calm/Brittle Rille"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Atmospheric/Long Note Two",
-      "KevinMacLeod/Calm/Night in Venice",
-      "KevinMacLeod/Dark/Darkling",
-      "KevinMacLeod/Sad/Heavy Heart",
-      "KevinMacLeod/Mysterious/Comfortable Mystery",
-      "KevinMacLeod/Atmospheric/Penumbra"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Long Note Two",
-      "KevinMacLeod/Dark/Darkling",
-      "KevinMacLeod/Sad/Heavy Heart",
-      "KevinMacLeod/Atmospheric/Penumbra",
-      "KevinMacLeod/Dark/Bent and Broken"
-    ],
-    "bgmBattle": [
-      "Battle8"
-    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -14891,33 +14303,6 @@
       217
     ],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Mysterious/Desert City",
-      "KevinMacLeod/Mysterious/Mystery Bazaar",
-      "KevinMacLeod/Mysterious/Ibn Al-Noor",
-      "KevinMacLeod/Mysterious/Tabuk",
-      "KevinMacLeod/Jazz/Cuban Sandwich",
-      "KevinMacLeod/Mysterious/Tempting Secrets",
-      "KevinMacLeod/Bright/Sardana"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Mysterious/Mystery Bazaar",
-      "KevinMacLeod/Mysterious/Tempting Secrets",
-      "KevinMacLeod/Mysterious/Ibn Al-Noor",
-      "KevinMacLeod/Atmospheric/Penumbra",
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Mysterious/Curse of the Scarab"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Penumbra",
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Sad/Decline",
-      "KevinMacLeod/Sad/Wounded",
-      "KevinMacLeod/Dark/Bent and Broken"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Exotic Battle"
-    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -15099,33 +14484,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
-    "bgm": [
-      "KevinMacLeod/Calm/Night in Venice",
-      "KevinMacLeod/Calm/Living Voyage",
-      "KevinMacLeod/Jazz/Sweeter Vermouth",
-      "KevinMacLeod/Calm/Morning",
-      "KevinMacLeod/Bright/Sardana",
-      "KevinMacLeod/Calm/Brittle Rille",
-      "KevinMacLeod/Calm/Aquarium"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Calm/Night in Venice",
-      "KevinMacLeod/Atmospheric/Long Note One",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Calm/Tranquility Base",
-      "KevinMacLeod/Dreamy/Dreamer",
-      "KevinMacLeod/Mysterious/Comfortable Mystery"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Long Note One",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Wisps of Whorls",
-      "KevinMacLeod/Atmospheric/Lithium",
-      "KevinMacLeod/Atmospheric/Distant Tension"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -15134,7 +14492,8 @@
     "bgs": [
       "village-at-morning",
       "water-river",
-      "backyard"
+      "backyard",
+      "park-river-long"
     ],
     "dayTemperature": 20,
     "nightTemperature": 14,
@@ -15292,33 +14651,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
-    "bgm": [
-      "KevinMacLeod/Bright/Island Meet and Greet",
-      "KevinMacLeod/Bright/Sardana",
-      "KevinMacLeod/Bright/Bassa Island Game Loop",
-      "KevinMacLeod/Jazz/Samba Isobel",
-      "KevinMacLeod/Calm/Night in Venice",
-      "KevinMacLeod/Jazz/Cuban Sandwich",
-      "KevinMacLeod/Jazz/George Street Shuffle"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Calm/Night in Venice",
-      "KevinMacLeod/Mysterious/Secret of Tiki Island",
-      "KevinMacLeod/Atmospheric/Long Note One",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Jazz/Sweeter Vermouth",
-      "KevinMacLeod/Atmospheric/Penumbra"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Long Note One",
-      "KevinMacLeod/Sad/Hush",
-      "KevinMacLeod/Atmospheric/Penumbra",
-      "KevinMacLeod/Atmospheric/Long Note Three",
-      "KevinMacLeod/Atmospheric/Deep Haze"
-    ],
-    "bgmBattle": [
-      "Battle7"
-    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -15494,9 +14826,6 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Battle Metal"
-    ],
     "bgsNight": [
       "lava-loop-1",
       "lava-loop-2",
@@ -15595,9 +14924,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15679,9 +15005,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle7"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15763,9 +15086,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle4"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15847,9 +15167,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle2"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15931,9 +15248,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle5"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -16015,9 +15329,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle3"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -16099,9 +15410,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -16183,9 +15491,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle3"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -16267,9 +15572,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Exotic Battle"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -16351,9 +15653,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "Battle5"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -16435,9 +15734,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -16519,44 +15815,15 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Crypt",
-    "bgm": [
-      "KevinMacLeod/Horror/Classic Horror 1",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
-      "KevinMacLeod/Horror/Land of Phantoms",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Horror/Darkest Child",
-      "KevinMacLeod/Dark/Ancient Rite",
-      "KevinMacLeod/Dark/Unholy Knight"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Horror/Darkest Child",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Horror/Land of Phantoms",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Horror/Nightmare Machine",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
-      "KevinMacLeod/Horror/The Other Side of the Door"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Horror/Classic Horror 1",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air"
-    ],
-    "bgmBattle": [
-      "BattleMusic/The Great Battle"
-    ],
     "bgsNight": [
       "creepy-dungeon-ambience",
-      "cave-dripping"
+      "cave-dripping",
+      "basement-dripping"
     ],
     "bgs": [
       "creepy-dungeon-ambience",
-      "cave-dripping"
+      "cave-dripping",
+      "basement-dripping"
     ],
     "dayTemperature": 9,
     "nightTemperature": 8,
@@ -16654,34 +15921,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgm": [
-      "KevinMacLeod/Dramatic/Lord of the Rangs",
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Mysterious/Investigations",
-      "KevinMacLeod/Dramatic/Industrial Cinematic",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Mysterious/Crypto",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dramatic/Impact Prelude"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dark/Lightless Dawn",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dark/Lightless Dawn",
-      "KevinMacLeod/Horror/Unseen Horrors"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "old-mine-ambience",
       "cave-deep"
@@ -16790,9 +16029,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "CaveIce",
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "cold-wind-loop",
       "cave-wind"
@@ -16905,40 +16141,15 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
-    "bgm": [
-      "KevinMacLeod/Mysterious/Crypto",
-      "KevinMacLeod/Atmospheric/Dark Fog",
-      "KevinMacLeod/Atmospheric/Deep Haze",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Techno/District Four",
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Dark/Darkling"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Atmospheric/Dark Fog",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dark/Darkling",
-      "KevinMacLeod/Horror/The Other Side of the Door"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Dark Fog",
-      "KevinMacLeod/Atmospheric/Deep Haze",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Dark/Darkling"
-    ],
-    "bgmBattle": [
-      "Battle1"
-    ],
     "bgsNight": [
       "cave-dripping",
-      "sewer-water"
+      "sewer-water",
+      "basement-dripping"
     ],
     "bgs": [
       "cave-dripping",
-      "sewer-water"
+      "sewer-water",
+      "basement-dripping"
     ],
     "dayTemperature": 13,
     "nightTemperature": 12,
@@ -17032,9 +16243,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Fast Fight"
-    ],
     "bgsNight": [
       "cave-forgotten",
       "cave-dripping"
@@ -17135,9 +16343,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Underdark",
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "ce-cavern-looped",
       "cave-deep"
@@ -17242,43 +16447,15 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Mysterious/Comfortable Mystery 2",
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Mysterious/Crypto",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Mysterious/Goblin_Tinker_Soldier_Spy",
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Mysterious/Investigations",
-      "KevinMacLeod/Dark/Unholy Knight",
-      "KevinMacLeod/Dark/Bent and Broken"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Dark/Unholy Knight",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Dark/Unholy Knight",
-      "KevinMacLeod/Dark/Bent and Broken"
-    ],
-    "bgmBattle": [
-      "Battle1"
-    ],
     "bgsNight": [
       "creepy-dungeon-ambience",
-      "dungeon-air"
+      "dungeon-air",
+      "eerie-atmos-2"
     ],
     "bgs": [
       "creepy-dungeon-ambience",
-      "dungeon-air"
+      "dungeon-air",
+      "eerie-atmos-2"
     ],
     "dayTemperature": 9,
     "nightTemperature": 8,
@@ -17376,44 +16553,15 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Sad/Wounded",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Horror/The House of Leaves",
-      "KevinMacLeod/Horror/Land of Phantoms",
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Sad/Decline",
-      "KevinMacLeod/Atmospheric/Lost Time"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Horror/The House of Leaves",
-      "KevinMacLeod/Horror/Land of Phantoms",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Horror/Ghost Story",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Horror/The Other Side of the Door",
-      "KevinMacLeod/Dark/Darkling"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Sad/Wounded",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Horror/The House of Leaves",
-      "KevinMacLeod/Horror/Land of Phantoms"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Battle of the Creek"
-    ],
     "bgsNight": [
       "dungeon-air",
-      "cabin-wind"
+      "cabin-wind",
+      "basement-dripping"
     ],
     "bgs": [
       "dungeon-air",
-      "cabin-wind"
+      "cabin-wind",
+      "basement-dripping"
     ],
     "dayTemperature": 12,
     "nightTemperature": 11,
@@ -17507,40 +16655,15 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgm": [
-      "KevinMacLeod/Dramatic/Mountain Emperor",
-      "KevinMacLeod/Dramatic/The Pyre",
-      "KevinMacLeod/Dramatic/Impact Prelude",
-      "KevinMacLeod/Action/Rocket Power",
-      "KevinMacLeod/Dramatic/Despair and Triumph",
-      "KevinMacLeod/Dark/Crossing the Chasm",
-      "KevinMacLeod/Dramatic/Industrial Cinematic"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Dramatic/The Pyre",
-      "KevinMacLeod/Horror/Anguish",
-      "KevinMacLeod/Dark/Crossing the Chasm",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Dark/Bent and Broken"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Dark/Crossing the Chasm",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Horror/Anguish",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Dark/Bent and Broken"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Battle Metal"
-    ],
     "bgsNight": [
       "lava-loop-1",
-      "industrial-machinery"
+      "industrial-machinery",
+      "boiler-generator-loop"
     ],
     "bgs": [
       "lava-loop-1",
-      "industrial-machinery"
+      "industrial-machinery",
+      "boiler-generator-loop"
     ],
     "dayTemperature": 42,
     "nightTemperature": 40,
@@ -17634,41 +16757,15 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Dramatic/Industrial Cinematic",
-      "KevinMacLeod/Mysterious/Hidden Agenda",
-      "KevinMacLeod/Jazz/Fast Talkin",
-      "KevinMacLeod/Techno/District Four",
-      "KevinMacLeod/Techno/Bass Walker",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Techno/Funk Game Loop",
-      "KevinMacLeod/Dramatic/Impact Prelude"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Dramatic/Industrial Cinematic",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Techno/District Four",
-      "KevinMacLeod/Mysterious/Hidden Agenda",
-      "KevinMacLeod/Atmospheric/Lost Time",
-      "KevinMacLeod/Horror/Nightmare Machine"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Atmospheric/Lost Time",
-      "KevinMacLeod/Horror/Nightmare Machine",
-      "KevinMacLeod/Atmospheric/Dark Fog",
-      "KevinMacLeod/Atmospheric/Night Cave"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Hitman"
-    ],
     "bgsNight": [
       "industrial-machinery",
-      "dungeon_ambient_1"
+      "dungeon_ambient_1",
+      "boiler-generator-loop"
     ],
     "bgs": [
       "industrial-machinery",
-      "dungeon_ambient_1"
+      "dungeon_ambient_1",
+      "boiler-generator-loop"
     ],
     "dayTemperature": 14,
     "nightTemperature": 13,
@@ -17766,42 +16863,15 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "bgm": [
-      "KevinMacLeod/Techno/Screen Saver",
-      "KevinMacLeod/Techno/Static Motion",
-      "KevinMacLeod/Techno/Volatile Reaction",
-      "KevinMacLeod/Jazz/Thinking Music",
-      "KevinMacLeod/Calm/Concentration",
-      "KevinMacLeod/Techno/Brain Dance",
-      "KevinMacLeod/Techno/Bass Walker",
-      "KevinMacLeod/Mysterious/Investigations",
-      "KevinMacLeod/Techno/Loopster"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Techno/Static Motion",
-      "KevinMacLeod/Horror/Nightmare Machine",
-      "KevinMacLeod/Atmospheric/Lost Time",
-      "KevinMacLeod/Techno/Volatile Reaction",
-      "KevinMacLeod/Horror/Anxiety",
-      "KevinMacLeod/Mysterious/Unnatural Situation"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Horror/Nightmare Machine",
-      "KevinMacLeod/Atmospheric/Lost Time",
-      "KevinMacLeod/Horror/Anxiety",
-      "KevinMacLeod/Atmospheric/Long Note Four",
-      "KevinMacLeod/Dark/Gathering Darkness"
-    ],
-    "bgmBattle": [
-      "BattleMusic/Boss Battle"
-    ],
     "bgsNight": [
       "room-office",
-      "industrial-machinery"
+      "industrial-machinery",
+      "boiler-generator-loop"
     ],
     "bgs": [
       "room-office",
-      "industrial-machinery"
+      "industrial-machinery",
+      "boiler-generator-loop"
     ],
     "dayTemperature": 18,
     "nightTemperature": 17,
@@ -17895,43 +16965,17 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Crypt",
-    "bgm": [
-      "KevinMacLeod/Dark/Mystic Force",
-      "KevinMacLeod/Horror/Anguish",
-      "KevinMacLeod/Dramatic/Despair and Triumph",
-      "KevinMacLeod/Dramatic/The Pyre",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Dark/Unholy Knight",
-      "KevinMacLeod/Dark/Crossing the Chasm",
-      "KevinMacLeod/Horror/Nightmare Machine",
-      "KevinMacLeod/Dark/Bent and Broken"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Horror/Anguish",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Horror/Nightmare Machine",
-      "KevinMacLeod/Dramatic/The Pyre",
-      "KevinMacLeod/Dark/Unholy Knight",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Dark/Mystic Force"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Dark/Mystic Force",
-      "KevinMacLeod/Horror/Anguish",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Dark/Unholy Knight",
-      "KevinMacLeod/Dark/Crossing the Chasm"
-    ],
-    "bgmBattle": [
-      "Battle7"
-    ],
     "bgsNight": [
       "creepy-dungeon-ambience",
-      "abyss-ambience"
+      "abyss-ambience",
+      "eerie-atmos-4",
+      "horror-drone-loop"
     ],
     "bgs": [
       "creepy-dungeon-ambience",
-      "abyss-ambience"
+      "abyss-ambience",
+      "eerie-atmos-4",
+      "horror-drone-loop"
     ],
     "dayTemperature": 15,
     "nightTemperature": 14,
@@ -18029,37 +17073,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgm": [
-      "KevinMacLeod/Sad/Wounded",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Horror/The House of Leaves",
-      "KevinMacLeod/Horror/Land of Phantoms",
-      "KevinMacLeod/Dark/Dark Walk",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Sad/Decline",
-      "KevinMacLeod/Atmospheric/Lost Time"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Horror/The House of Leaves",
-      "KevinMacLeod/Horror/Land of Phantoms",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Horror/Ghost Story",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Horror/The Other Side of the Door",
-      "KevinMacLeod/Dark/Darkling"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Sad/Wounded",
-      "KevinMacLeod/Atmospheric/Aftermath",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Horror/The House of Leaves",
-      "KevinMacLeod/Horror/Land of Phantoms"
-    ],
-    "bgmBattle": [
-      "Battle2"
-    ],
     "bgsNight": [
       "cave-deep",
       "dungeon-air"
@@ -18160,9 +17173,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
-    "bgmBattle": [
-      "BattleMusic/Random Battle"
-    ],
     "bgsNight": [
       "cave-dripping",
       "ce-cavern-looped"
@@ -18271,9 +17281,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgmBattle": [
-      "BattleMusic/Boss Battle"
-    ],
     "bgsNight": [
       "lava-loop-2",
       "cave-deep"
@@ -18374,43 +17381,15 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Crypt",
-    "bgm": [
-      "KevinMacLeod/Horror/Classic Horror 1",
-      "KevinMacLeod/Sad/Heartbreaking",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
-      "KevinMacLeod/Horror/Land of Phantoms",
-      "KevinMacLeod/Sad/Cryptic Sorrow",
-      "KevinMacLeod/Sad/Mourning Song",
-      "KevinMacLeod/Horror/Ghost Story",
-      "KevinMacLeod/Sad/Unanswered Questions"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Horror/Ghost Story",
-      "KevinMacLeod/Horror/Land of Phantoms",
-      "KevinMacLeod/Horror/Darkest Child",
-      "KevinMacLeod/Sad/Mourning Song",
-      "KevinMacLeod/Dark/Gathering Darkness",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Horror/Classic Horror 1",
-      "KevinMacLeod/Sad/Heartbreaking",
-      "KevinMacLeod/Dark/Dark Times",
-      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
-      "KevinMacLeod/Horror/Land of Phantoms"
-    ],
-    "bgmBattle": [
-      "Battle5"
-    ],
     "bgsNight": [
       "cave-forgotten",
-      "creepy-dungeon-ambience"
+      "creepy-dungeon-ambience",
+      "eerie-atmos-1"
     ],
     "bgs": [
       "cave-forgotten",
-      "creepy-dungeon-ambience"
+      "creepy-dungeon-ambience",
+      "eerie-atmos-1"
     ],
     "dayTemperature": 8,
     "nightTemperature": 7,
@@ -18508,34 +17487,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
-    "bgm": [
-      "KevinMacLeod/Techno/District Four",
-      "KevinMacLeod/Dramatic/Industrial Cinematic",
-      "KevinMacLeod/Mysterious/Hidden Agenda",
-      "KevinMacLeod/Techno/Bass Walker",
-      "KevinMacLeod/Mysterious/Spy Glass",
-      "KevinMacLeod/Techno/Loopster",
-      "KevinMacLeod/Jazz/Fast Talkin",
-      "KevinMacLeod/Atmospheric/Distant Tension"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Techno/District Four",
-      "KevinMacLeod/Mysterious/Hidden Agenda",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Mysterious/Deadly Roulette"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Atmospheric/Distant Tension",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Atmospheric/Dark Fog"
-    ],
-    "bgmBattle": [
-      "RandomMind/Battle"
-    ],
     "bgsNight": [
       "sewer-north",
       "dungeon_ambient_1"
@@ -18640,34 +17591,6 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "bgm": [
-      "KevinMacLeod/Dramatic/Lord of the Rangs",
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Mysterious/Investigations",
-      "KevinMacLeod/Dramatic/Industrial Cinematic",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Mysterious/Crypto",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dramatic/Impact Prelude"
-    ],
-    "bgmNight": [
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dark/Lightless Dawn",
-      "KevinMacLeod/Horror/Unseen Horrors",
-      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath"
-    ],
-    "emptyWorldBGM": [
-      "KevinMacLeod/Horror/The Descent",
-      "KevinMacLeod/Dark/Bent and Broken",
-      "KevinMacLeod/Atmospheric/Night Cave",
-      "KevinMacLeod/Dark/Lightless Dawn",
-      "KevinMacLeod/Horror/Unseen Horrors"
-    ],
-    "bgmBattle": [
-      "Moogify/MelodicTechno"
-    ],
     "bgsNight": [
       "old-mine-ambience",
       "cave-wind"

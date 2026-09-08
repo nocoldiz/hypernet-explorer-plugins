@@ -79,5 +79,16 @@
   "drawing": "Drawing...",
   "exp": "EXP",
   "harvestChance": "{chance}% chance",
-  "searchPlaceholder": "Search creatures…"
+  "searchPlaceholder": "Search creatures…",
+  "incanta": {
+    "appName": "Incanta 96",
+    "edition": "Multimedia Bestiary Edition",
+    "find": "Find an article...",
+    "count": "{n} articles",
+    "noMedia": "No specimen footage",
+    "mediaCaption": "Live specimen. Drag to rotate, wheel to zoom.",
+    "vitals": "Vital statistics",
+    "welcomeTitle": "Welcome to Incanta 96",
+    "welcomeBody": "Pick a creature from the contents pane to open its article."
+  }
 }
