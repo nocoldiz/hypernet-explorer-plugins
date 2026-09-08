@@ -709,6 +709,10 @@ window.GameOptions = GameOptions;
     // ConfigManager (Merged from VolumePercentageDisplay)
     //=============================================================================
 
+    // Dialogue voices are on out of the box: the property exists before any
+    // config is loaded so an options row read early never reports it off.
+    ConfigManager.dialogueVoices = true;
+
     const _ConfigManager_applyData = ConfigManager.applyData;
     ConfigManager.applyData = function (config) {
         _ConfigManager_applyData.call(this, config);
@@ -728,7 +732,14 @@ window.GameOptions = GameOptions;
         this.footstepsVolume = volume(config.footstepsVolume, defaultFootstepsVolume);
         // Animalese chattering under the dialogue box (see DialogueSystem's
         // letter voices). On unless the player turns it off.
-        this.dialogueVoices = config.dialogueVoices === undefined ? true : !!config.dialogueVoices;
+        // A config written before the toggle was turned on by default stored a
+        // false the player never chose, so it is opted in once and the flag
+        // below records that the migration has run.
+        if (config.dialogueVoicesDefaultOn) {
+            this.dialogueVoices = config.dialogueVoices === undefined ? true : !!config.dialogueVoices;
+        } else {
+            this.dialogueVoices = true;
+        }
         // How loud those blips are, kept off seVolume so the chatter can be
         // quieted without quieting the rest of the sound effects.
         this.dialogueVoicesVolume = volume(config.dialogueVoicesVolume, defaultDialogueVoicesVolume);
@@ -862,6 +873,7 @@ window.GameOptions = GameOptions;
         const config = _ConfigManager_makeData.call(this);
         config.footstepsVolume = this.footstepsVolume;
         config.dialogueVoices = this.dialogueVoices;
+        config.dialogueVoicesDefaultOn = true;
         config.dialogueVoicesVolume = this.dialogueVoicesVolume;
         config.weatherVolume = this.weatherVolume;
         config.bgmVolumeBeforeMute = this.bgmVolumeBeforeMute;
@@ -1919,7 +1931,7 @@ window.GameOptions = GameOptions;
 
     // Dialogue Voices: each letter of a typed dialogue line is chattered with a
     // vowel or consonant blip, pitched by the speaker's own voice, a keyword's
-    // gold run a third higher. Off by default; the blips live in
+    // gold run a third higher. On by default; the blips live in
     // audio/se/Vowels and audio/se/Consonants.
     GameOptions.registerOption('dialogueVoices', T('GameOptions.label.dialogueVoices'),
         () => !!ConfigManager.dialogueVoices,
