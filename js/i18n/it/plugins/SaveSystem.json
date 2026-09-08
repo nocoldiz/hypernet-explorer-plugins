@@ -35,7 +35,6 @@
   "load": "Carica",
   "delete": "Elimina",
   "thisPageOfHistoryRemains": "Questa pagina del diario è vuota. Premi due volte o premi INVIO per registrare le tue avventure attuali in questo slot.",
-  "thisMemorySlotHasNo": "Questo slot non ha cronologie registrate. Seleziona una PARTY scritta per caricare il tuo viaggio.",
   "deleteParty": "Elimina Party",
   "areYouSureYouWant": "Sei sicuro di voler eliminare questo party? L'azione non può essere annullata.",
   "cannotDeleteCurrent": "Questa è la compagnia con cui stai giocando. Non puoi eliminarla dall'interno della sua stessa storia.",

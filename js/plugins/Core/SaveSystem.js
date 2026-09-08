@@ -1360,7 +1360,7 @@
             const isSave = this.mode() === "save";
             const emptyText = isSave
                 ? (T('SaveSystem.thisPageOfHistoryRemains'))
-                : (T('SaveSystem.thisMemorySlotHasNo'));
+                : "";
 
             let saveBtnHTML = "";
             if (isSave && canSaveTo(this._selectedIndex)) {
@@ -1379,9 +1379,7 @@
                         ${worldHTML}
                         ${mapSegmentHTML}
                     </div>
-                    <div class="save-21">
-                        "${emptyText}"
-                    </div>
+                    ${emptyText ? `<div class="save-21">"${emptyText}"</div>` : ""}
                     ${saveBtnHTML}
                 </div>
             `;

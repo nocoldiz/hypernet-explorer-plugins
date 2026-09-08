@@ -1744,3 +1744,102 @@
     }
   })();
 })();
+
+//=============================================================================
+// Arcane learning gate (window.SkillArcana)
+//=============================================================================
+// One answer to "may this character learn this skill", for every teacher in
+// the game. Two tags on a skill raise a level floor:
+//
+//   <Esoteric>   readable from level 20
+//   <Forbidden>  readable from level 80
+//
+// (a Forbidden skill is also Esoteric; the higher floor wins). The floor is
+// the ONLY gate on that kind of knowledge now: mastering a whole school is no
+// longer asked of anybody.
+//
+// Two characters ignore the tree/book split:
+//
+//   * Sandbox mode learns anything, anywhere.
+//   * The Cultist (class 8) reads anything out of a grimoire or a skill book,
+//     level floors included, and learns NOTHING from the Skill Master's tree.
+//     That is the class gimmick, so it lives here rather than in a menu.
+//=============================================================================
+
+(function () {
+  "use strict";
+
+  const SkillArcana = {
+    ESOTERIC_LEVEL: 20,
+    FORBIDDEN_LEVEL: 80,
+    CULTIST_CLASS_ID: 8,
+
+    skillOf(skill) {
+      if (typeof skill === "number") {
+        return (typeof $dataSkills !== "undefined" && $dataSkills) ? $dataSkills[skill] : null;
+      }
+      return skill || null;
+    },
+
+    // 'forbidden' | 'esoteric' | null
+    rank(skill) {
+      const s = this.skillOf(skill);
+      if (!s) return null;
+      const note = s.note || "";
+      if ((s.meta && s.meta.Forbidden) || /<Forbidden>/i.test(note)) return "forbidden";
+      if ((s.meta && s.meta.Esoteric) || /<Esoteric>/i.test(note)) return "esoteric";
+      return null;
+    },
+
+    isForbidden(skill) { return this.rank(skill) === "forbidden"; },
+    isEsoteric(skill) { return this.rank(skill) !== null; },
+
+    requiredLevel(skill) {
+      const rank = this.rank(skill);
+      if (rank === "forbidden") return this.FORBIDDEN_LEVEL;
+      if (rank === "esoteric") return this.ESOTERIC_LEVEL;
+      return 0;
+    },
+
+    isSandbox() {
+      return !!(typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._isSandboxMode);
+    },
+
+    isCultist(actor) {
+      if (!actor || !actor.currentClass) return false;
+      const cls = actor.currentClass();
+      return !!cls && cls.id === this.CULTIST_CLASS_ID;
+    },
+
+    // The plain level check, nothing else.
+    meetsLevel(actor, skill) {
+      const need = this.requiredLevel(skill);
+      if (need <= 0) return true;
+      return !!actor && (actor.level || 0) >= need;
+    },
+
+    // Grimoires, skill books, and anything else that hands over written
+    // knowledge. A Cultist reads past every floor.
+    canLearnFromBook(actor, skill) {
+      if (this.isSandbox()) return true;
+      if (this.isCultist(actor)) return true;
+      return this.meetsLevel(actor, skill);
+    },
+
+    // The Skill Master's tree. A Cultist learns nothing there at all.
+    canLearnFromTree(actor, skill) {
+      if (this.isSandbox()) return true;
+      if (this.isCultist(actor)) return false;
+      return this.meetsLevel(actor, skill);
+    },
+
+    // Why the tree refuses, for the lock line: 'cultist' | 'level' | null.
+    treeBlockReason(actor, skill) {
+      if (this.isSandbox()) return null;
+      if (this.isCultist(actor)) return "cultist";
+      return this.meetsLevel(actor, skill) ? null : "level";
+    },
+  };
+
+  window.SkillArcana = SkillArcana;
+})();

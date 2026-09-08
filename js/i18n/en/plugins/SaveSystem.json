@@ -35,7 +35,6 @@
   "load": "Load",
   "delete": "Delete",
   "thisPageOfHistoryRemains": "This page of history remains blank. Press twice or press ENTER to record your current adventure into this slot.",
-  "thisMemorySlotHasNo": "This memory slot has no history recorded. Select a party to load your journey.",
   "deleteParty": "Delete Party",
   "areYouSureYouWant": "Are you sure you want to delete this party? This cannot be undone.",
   "cannotDeleteCurrent": "This is the party you are playing. You cannot delete it from inside its own story.",

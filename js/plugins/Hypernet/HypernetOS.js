@@ -1580,7 +1580,10 @@
         document.getElementById('start-btn-logoff').addEventListener('click', () => {
             startMenu.classList.remove('open');
             startBtn.classList.remove('active');
-            if (window.HypernetOS.XP) window.HypernetOS.XP.logOffDialog(); else this.onExitClick();
+            // Log Off leaves at once: no confirmation box, the deck is simply closed.
+            if (window.HypernetOS.Balloon) window.HypernetOS.Balloon.hide();
+            if (window.HypernetOS.XP) window.HypernetOS.XP.clearOverlay();
+            this.onExitClick();
         });
         document.getElementById('start-btn-turnoff').addEventListener('click', () => {
             startMenu.classList.remove('open');

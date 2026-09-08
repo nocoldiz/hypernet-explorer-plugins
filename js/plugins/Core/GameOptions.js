@@ -388,8 +388,8 @@ const GameOptions = {
             categories: ['gameplay'],
             groups: [
                 { key: 'combat', symbols: ['enemyDifficulty', 'mapBattleMode', 'cpuPartyMembers', 'autoIdle'] },
-                { key: 'battleLog', symbols: ['smoothBattleLog', 'battleLogPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] },
-                { key: 'exploration', symbols: ['fowEnabled', 'fogOfWar', 'mapStreaming', 'mapTooltips', 'showMapNotices', 'showControls'] },
+                { key: 'battleLog', symbols: ['smoothBattleLog', 'battleCommandPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] },
+                { key: 'exploration', symbols: ['fowEnabled', 'fogOfWar', 'mapStreaming', 'mapTooltips'] },
                 { key: 'saving', symbols: ['autosaveEnabled', 'autosaveInterval'] },
                 // Language is left out while the game is locked to English; if it
                 // is ever unlocked the registered row lands under "other".
@@ -403,7 +403,7 @@ const GameOptions = {
             groups: [
                 { key: 'display', symbols: ['fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
                 { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'partyHud', 'worldMinimap', 'titleBackground'] },
-                { key: 'battleView', symbols: ['enemyBattlers', 'ebBackgrounds', 'proceduralHitFX'] },
+                { key: 'battleView', symbols: ['enemyBattlers'] },
                 { key: 'lighting', symbols: ['nightLight'] }
             ]
         },
@@ -783,13 +783,6 @@ window.GameOptions = GameOptions;
             ? config.bgmVolumeBeforeMute
             : defaultBgmVolume;
 
-        // Weapon hits drawn as procedural 3D effects (WeaponHitFX) rather
-        // than played out of Animations.json. On by default.
-        this.proceduralHitFX = config.proceduralHitFX !== undefined
-            ? !!config.proceduralHitFX
-            : true;
-        if (window.WeaponHitFX) window.WeaponHitFX.enabled = this.proceduralHitFX;
-
         // MUSH Audio Engine defaults
         if (this.uisVolume === undefined) this.uisVolume = 100;
         if (this.vscVolume === undefined) this.vscVolume = 100;
@@ -828,10 +821,8 @@ window.GameOptions = GameOptions;
         // Procedural map streaming (Map/WorldMapReturn.js, window.ProcStitch): on
         // by default. Off falls back to one square per map, crossed with a pan.
         this.mapStreaming = config.mapStreaming !== undefined ? config.mapStreaming : true;
-        // The controls checklist pinned to the corner of the map (Map/
-        // MapLegend.js). On for a fresh config: it is how a first game learns
-        // the keys, and Bubba's own "controls" topic takes it down again.
-        this.showControls = config.showControls !== undefined ? config.showControls : true;
+        // The map tips (Map/MapLegend.js). No option row: Bubba is the only
+        // one who turns them on and off, so the setting is only stored here.
         this.showMapNotices = config.showMapNotices !== undefined ? config.showMapNotices : 'first';
         // Enemy difficulty slider: 0..100 with 50 = untouched stats. Anything
         // else scales every enemy parameter (see the Game_Enemy.paramBase hook).
@@ -910,14 +901,12 @@ window.GameOptions = GameOptions;
         config.charBasedSprites = this.charBasedSprites;
         config.activeTheme = this.activeTheme;
         config.themeBeforeAscii = this.themeBeforeAscii;
-        config.proceduralHitFX = this.proceduralHitFX;
         config.showFps = this.showFps;
         config.runInBackground = this.runInBackground;
         config.titleBackground = this.titleBackground;
         config.cpuPartyMembers = this.cpuPartyMembers;
         config.mapBattleMode = this.mapBattleMode;
         config.mapStreaming = this.mapStreaming;
-        config.showControls = this.showControls;
         config.showMapNotices = this.showMapNotices;
         config.enemyDifficulty = this.enemyDifficulty;
         config.retroTune = RETRO_TUNE;
@@ -1352,8 +1341,7 @@ window.GameOptions = GameOptions;
         mapBattleMode:   { on: 'MapBattleON',       off: 'MapBattleOFF' },
         // 3D
         battler3d:       { on: 'Battler3DON',       off: 'Battler3DOFF' },
-        enemyBattlerMode: { on: 'EnemyBattlerON',   off: 'EnemyBattlerOFF' },
-        ebBackgrounds:   { on: 'AnimatedBGON',      off: 'AnimatedBGOFF' }
+        enemyBattlerMode: { on: 'EnemyBattlerON',   off: 'EnemyBattlerOFF' }
     };
 
     //=========================================================================
@@ -2028,20 +2016,6 @@ window.GameOptions = GameOptions;
         }
     );
 
-    // Register Procedural Weapon Hits: the 3D impact effect each weapon type
-    // draws where a blow lands. Off falls back to the Effekseer animation the
-    // weapon names in the database.
-    GameOptions.registerOption('proceduralHitFX', T('GameOptions.label.proceduralHitFX'),
-        () => ConfigManager.proceduralHitFX !== false,
-        (value) => {
-            ConfigManager.proceduralHitFX = value;
-            if (window.WeaponHitFX) {
-                window.WeaponHitFX.enabled = value;
-                if (!value) window.WeaponHitFX.clear();
-            }
-        },
-        'video', 'boolean');
-
     // Register Show FPS
     GameOptions.registerOption('showFps', T('GameOptions.label.showFps'),
         () => ConfigManager.showFps,
@@ -2335,60 +2309,6 @@ window.GameOptions = GameOptions;
     // rules of BattleSystemEnhanced already read, so it belongs to the save
     // rather than to ConfigManager. Outside a running game there is nothing to
     // read, and the row reads as off.
-    //=========================================================================
-    // The controls checklist (Map/MapLegend.js)
-    //=========================================================================
-    // The same setting Bubba's "controls" topic writes, so the row and the
-    // conversation are two ways at one list rather than two lists. Turning it
-    // on here pins the paper up on every map, whatever else is happening.
-    GameOptions.registerOption('showControls', T('GameOptions.label.showControls'),
-        () => ConfigManager.showControls !== false,
-        (value) => {
-            if (window.MapLegend && window.MapLegend.setControlsShown) {
-                window.MapLegend.setControlsShown(value);
-            } else {
-                ConfigManager.showControls = !!value;
-            }
-            if (window.MapLegend && window.MapLegend.refresh) window.MapLegend.refresh();
-        },
-        'gameplay', 'boolean');
-
-    // The notices half of the same sheet: the tips Bubba reads off a place.
-    // Three states rather than two, so a tip can be read once and spent.
-    const NOTICE_MODES = ['first', 'always', 'off']; // i18n-ignore: setting values
-
-    function noticeMode() {
-        const legend = window.MapLegend;
-        if (legend && legend.noticesMode) return legend.noticesMode();
-        const raw = ConfigManager.showMapNotices;
-        if (raw === false) return 'off';
-        return NOTICE_MODES.includes(raw) ? raw : 'first';
-    }
-
-    function setNoticeMode(mode) {
-        const value = NOTICE_MODES.includes(mode) ? mode : 'first';
-        if (window.MapLegend && window.MapLegend.setNoticesMode) {
-            window.MapLegend.setNoticesMode(value);
-        } else {
-            ConfigManager.showMapNotices = value;
-        }
-        if (window.MapLegend && window.MapLegend.refresh) window.MapLegend.refresh();
-    }
-
-    function stepNoticeMode(step) {
-        const i = NOTICE_MODES.indexOf(noticeMode());
-        const next = (i + step + NOTICE_MODES.length) % NOTICE_MODES.length;
-        setNoticeMode(NOTICE_MODES[next]);
-    }
-
-    GameOptions.registerOption('showMapNotices', T('GameOptions.label.showMapNotices'),
-        () => NOTICE_MODES.indexOf(noticeMode()),
-        (value) => setNoticeMode(NOTICE_MODES[Number(value) % NOTICE_MODES.length]),
-        'gameplay', 'number',
-        () => T('GameOptions.mapNotices.' + noticeMode()),
-        function () { stepNoticeMode(1); this.redrawCurrentItem && this.redrawCurrentItem(); },
-        function () { stepNoticeMode(-1); this.redrawCurrentItem && this.redrawCurrentItem(); });
-
     GameOptions.registerOption('mapTooltips', T('GameOptions.label.mapTooltips'),
         () => !!(window.$gameSwitches && $gameSwitches.value(75)),
         (value) => { if (window.$gameSwitches) $gameSwitches.setValue(75, !!value); },

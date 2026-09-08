@@ -6,25 +6,9 @@
 * @plugindesc v3.0 Animated-style animated battle backgrounds with realistic moon phases and pixel art dithering
 * @author Omni-Lex (Refactored)
 *
-* @param opacity
-* @desc Opacity of the background overlay (0-255)
-* @default 150
-*
-* @param blendMode
-* @desc Blend mode (0:Normal, 1:Add, 2:Multiply, 3:Screen)
-* @default 1
-*
-* @param animationSpeed
-* @desc Animation speed multiplier (0.1-2.0)
-* @default 0.5
-* 
 * @param optionName
 * @desc Name of the option in the game menu
 * @default Battle BG
-*
-* @param defaultMode
-* @desc Default mode (0:Biome, 1:Trippy, 2:None)
-* @default 0
 *
 * @help
 * v3.0 Features:
@@ -34,10 +18,8 @@
 * - Pixel art dithered sky gradients
 * - Completely refactored codebase
 * 
-* Modes:
-* - Biome: Dynamic sky with sun/moon cycles and biome-based backgrounds
-* - Trippy: Psychedelic patterns with biome backgrounds (no tinting)
-* - None: Disabled
+* The background always follows the map's biome: a dynamic sky with sun and
+* moon cycles over the biome art.
 * 
 * Variables:
 * - Variable 86: Country ID for sunrise/sunset times
@@ -54,17 +36,9 @@
     const params = PluginManager.parameters('AnimatedBattleBackgrounds');
     const CONFIG = {
         optionName: String(params['optionName'] || 'Battle BG'),
-        overlayOpacity: Number(params['opacity'] || 150),
-        overlayBlendMode: Number(params['blendMode'] || 1),
-        speedMultiplier: Math.min(Math.max(Number(params['animationSpeed'] || 0.5), 0.1), 1.0),
-        defaultMode: Number(params['defaultMode'] || 0),
-
         // Moon constants
         LUNAR_CYCLE_DAYS: 29.53059,
         KNOWN_NEW_MOON: new Date('2000-01-06T18:14:00Z'),
-
-        // Pattern types
-        PATTERN_TYPES: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
 
         // Time modes
         TIME_MODES: {
@@ -78,12 +52,7 @@
 
     // Import dependencies
     const { Countries } = window.WorldGen || {};
-    const EG = window.EffectsGenerator;
-
-    if (!EG) throw new Error("EffectsGenerator not loaded");
     if (!Countries) throw new Error("Countries data not loaded");
-
-    Object.assign(Spriteset_Battle.prototype, EG);
 
     const defaultCountry = Countries.find(c => c.id === 102) || Countries[0];
 
@@ -261,8 +230,8 @@
                 return null;
             }
 
-            // Filter by time suffix in Biome mode
-            if (ConfigManager.ebBackgrounds === 0) {
+            // Filter by time suffix
+            {
                 const timeMode = getCurrentTimeMode();
                 const filtered = imageFiles.filter(file => {
                     const suffix = file.replace(/\.[^/.]+$/, '').slice(-2);
@@ -312,8 +281,8 @@
                 return null;
             }
 
-            // Filter by time suffix in Biome mode
-            if (ConfigManager.ebBackgrounds === 0) {
+            // Filter by time suffix
+            {
                 const timeMode = getCurrentTimeMode();
                 const filtered = imageFiles.filter(file => {
                     const suffix = file.replace(/\.[^/.]+$/, '').slice(-2);
@@ -417,7 +386,7 @@
             if (imageFiles.length === 0) return null;
 
             // Match the time-of-day suffix filtering used by the coordinate picker.
-            if (ConfigManager.ebBackgrounds === 0) {
+            {
                 const timeMode = getCurrentTimeMode();
                 const filtered = imageFiles.filter(file => {
                     const suffix = file.replace(/\.[^/.]+$/, '').slice(-2);
@@ -1139,9 +1108,7 @@
         // Always clear screen tint - we apply tint only to backgrounds
         $gameScreen.startTint([0, 0, 0, 0], 0);
 
-        if (ConfigManager.asciiModeEnabled === 1 || ConfigManager.ebBackgrounds !== 2) {
-            this.createAnimatedBackground();
-        }
+        this.createAnimatedBackground();
 
         this._createBattleWeatherSprite();
     };
@@ -1167,7 +1134,6 @@
             return;
         }
 
-        const mode = ConfigManager.ebBackgrounds;
         const isBattleTest = typeof DataManager !== 'undefined' &&
             typeof DataManager.isBattleTest === 'function' && DataManager.isBattleTest();
 
@@ -1192,7 +1158,7 @@
 
         // Region 99 (water) tiles force the RiverBank battleback when biome
         // backgrounds are active. Battle Test has no loaded player/map, so skip it there.
-        if ((mode === 0 || mode === 1) && !isBattleTest &&
+        if (!isBattleTest &&
             typeof $gamePlayer !== 'undefined' && $gamePlayer &&
             $gamePlayer.regionId() === 99) {
             biome = 'RiverBank';
@@ -1210,30 +1176,28 @@
 
         // Battle Test (editor "Battle Test..." button): the test map has no
         // <Biome> tag, so pull the biome straight from the troop's enemy notes.
-        if (!biome && (mode === 0 || mode === 1) && isBattleTest) {
+        if (!biome && isBattleTest) {
             biome = getBiomeFromTroopEnemies();
         }
 
         // Default biome: Dungeon for interiors, Fields for everything else
         // (this also overrides maps that previously relied on a hardcoded battleback)
-        if (!biome && (mode === 0 || mode === 1)) {
+        if (!biome) {
             biome = $gameMap.isInterior() ? 'Dungeon' : 'Fields';
         }
 
-        // Overrides (biome modes only). A forced biome (Biome Trials / gauntlet)
-        // wins over the map biome; otherwise the "Random Battle BG" option rerolls
-        // the biome for every battle. Both want a fresh random image each battle,
-        // not the coordinate-seeded one.
+        // Overrides. A forced biome (Biome Trials / gauntlet) wins over the map
+        // biome; otherwise the "Random Battle BG" option rerolls the biome for
+        // every battle. Both want a fresh random image each battle, not the
+        // coordinate-seeded one.
         let randomizeImage = isBattleTest;
-        if (mode === 0 || mode === 1) {
-            const forcedBiome = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem._forcedBattleBiome : null;
-            if (forcedBiome) {
-                biome = forcedBiome;
-                randomizeImage = true;
-            } else if (ConfigManager.ebRandomBiome && !isBattleTest) {
-                const rb = pickRandomBiomeName();
-                if (rb) { biome = rb; randomizeImage = true; }
-            }
+        const forcedBiome = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem._forcedBattleBiome : null;
+        if (forcedBiome) {
+            biome = forcedBiome;
+            randomizeImage = true;
+        } else if (ConfigManager.ebRandomBiome && !isBattleTest) {
+            const rb = pickRandomBiomeName();
+            if (rb) { biome = rb; randomizeImage = true; }
         }
 
         if (biome) {
@@ -1251,7 +1215,7 @@
             if (biomeBg) {
                 this._back1Sprite.bitmap = ImageManager.loadBattleback1(biomeBg);
                 this.alignBattlebackBottom(this._back1Sprite);
-                if (mode === 0 && !$gameMap.isInterior()) {
+                if (!$gameMap.isInterior()) {
                     this.applyTimeOfDayTintToBackground(this._back1Sprite);
                 } else if ($gameMap.isInterior()) {
                     this.applyInteriorDarkening(this._back1Sprite);
@@ -1393,24 +1357,11 @@
             this._animatedContainer.opacity = 255; // Full opacity for stars/moon in Biome mode
             this._animatedContainer.blendMode = 0; // Normal blend for biome elements
 
-            const isBiomeMode = ConfigManager.ebBackgrounds === 0;
             const parent = this._back1Sprite?.parent || this._battleField?.parent || this;
-
-            if (isBiomeMode) {
-                const backIndex = this._back1Sprite?.parent?.getChildIndex(this._back1Sprite) ?? 0;
-                // Gradient behind everything, then stars/moon layer
-                parent.addChildAt(this._animatedGradientContainer, backIndex);
-                parent.addChildAt(this._animatedContainer, backIndex + 1);
-            } else {
-                // For trippy mode, use configured blend modes
-                this._animatedContainer.opacity = CONFIG.overlayOpacity;
-                this._animatedContainer.blendMode = CONFIG.overlayBlendMode;
-                this._animatedGradientContainer.blendMode = 1;
-
-                const backIndex = this._back1Sprite?.parent?.getChildIndex(this._back1Sprite) ?? 0;
-                parent.addChildAt(this._animatedGradientContainer, backIndex + 1);
-                parent.addChildAt(this._animatedContainer, backIndex + 2);
-            }
+            const backIndex = this._back1Sprite?.parent?.getChildIndex(this._back1Sprite) ?? 0;
+            // Gradient behind everything, then stars/moon layer
+            parent.addChildAt(this._animatedGradientContainer, backIndex);
+            parent.addChildAt(this._animatedContainer, backIndex + 1);
 
             this._animatedContainer.width = Graphics.width;
             this._animatedContainer.height = Graphics.height;
@@ -1426,16 +1377,11 @@
             this._animatedContainer.addChild(this._animatedSprite);
             this._animatedGradientContainer.addChild(this._gradientSprite);
 
-            this._animationCount = 0;
             this._frameCount = 0;
             this._lastDrawTime = 0;
             this._asciiDrawnBiome = undefined;
 
-            if (ConfigManager.ebBackgrounds === 0) {
-                this.initSkyBackground();
-            } else {
-                this.initRandomBackground();
-            }
+            this.initSkyBackground();
         } catch (e) {
             console.error("Error creating Animated background:", e);
         }
@@ -1536,109 +1482,14 @@
         this.drawSkyAnimatedLayer();
     };
 
-    // Random Background Initialization
-    Spriteset_Battle.prototype.initRandomBackground = function () {
-        this._bgType = CONFIG.PATTERN_TYPES[Math.floor(Math.random() * CONFIG.PATTERN_TYPES.length)];
-        this._colorHue1 = Math.floor(Math.random() * 360);
-        this._colorHue2 = Math.floor(Math.random() * 360);
-        this._colorHue3 = Math.floor(Math.random() * 360);
-        this._gradientColorHue1 = Math.floor(Math.random() * 360);
-        this._gradientColorHue2 = Math.floor(Math.random() * 360);
-        this._gradientRotation = Math.floor(Math.random() * 4) * 45;
-        this._gradientSpeed = 0.1 + Math.random() * 0.3;
-
-        this.initPatternProperties(this._bgType);
-        //console.log("Random background initialized - Type:", this._bgType);
-    };
-
-    Spriteset_Battle.prototype.initPatternProperties = function (bgType) {
-        switch (bgType) {
-            case 0:
-                this._waveAmplitude = 5 + Math.floor(Math.random() * 10);
-                this._waveFrequency = 0.02 + Math.random() * 0.03;
-                this._waveSpeed = 0.02 + Math.random() * 0.03;
-                this._numLines = 12 + Math.floor(Math.random() * 6);
-                break;
-            case 1:
-                this._spiralSegments = 8 + Math.floor(Math.random() * 6);
-                this._spiralRotationSpeed = 0.2 + Math.random() * 0.3;
-                this._spiralZoom = 0.02 + Math.random() * 0.03;
-                break;
-            case 2:
-                this._arcaneRings = 2 + Math.floor(Math.random() * 2);
-                this._arcaneSymbols = 5 + Math.floor(Math.random() * 4);
-                this._arcaneRotationSpeed = 0.02 + Math.random() * 0.30;
-                break;
-            case 3:
-                this._checkerSize = 20 + Math.floor(Math.random() * 20);
-                this._checkerScrollSpeed = 0.05 + Math.random() * 0.1;
-                this._checkerAngle = Math.floor(Math.random() * 4) * 45;
-                break;
-            case 4:
-                this._diamondSize = 30 + Math.floor(Math.random() * 20);
-                this._diamondSpeed = 0.02 + Math.random() * 0.03;
-                this._diamondWave = 0.005 + Math.random() * 0.01;
-                break;
-            case 5:
-                this._circleCount = 6 + Math.floor(Math.random() * 6);
-                this._circlePulseSpeed = 0.01 + Math.random() * 0.02;
-                this._circlePulseAmount = 0.2 + Math.random() * 0.3;
-                this._circleRotationSpeed = 0.1 + Math.random() * 0.2;
-                break;
-            case 6:
-                this._gridSize = 30 + Math.floor(Math.random() * 30);
-                this._gridWaveSpeed = 0.01 + Math.random() * 0.02;
-                this._gridWaveIntensity = 5 + Math.floor(Math.random() * 10);
-                this._gridLinesOnly = Math.random() > 0.5;
-                break;
-            case 7:
-                this._plaidSize = 20 + Math.floor(Math.random() * 40);
-                this._plaidSpeed = 0.5 + Math.random() * 1.0;
-                this._plaidRotation = Math.random() * 45;
-                this._plaidHorizontalDensity = 1 + Math.floor(Math.random() * 3);
-                this._plaidVerticalDensity = 1 + Math.floor(Math.random() * 3);
-                break;
-            case 8:
-                this._kaleidoscopeSegments = 4 + Math.floor(Math.random() * 4) * 2;
-                this._kaleidoscopeRotationSpeed = 0.01 + Math.random() * 0.02;
-                this._kaleidoscopeScale = 0.5 + Math.random() * 0.5;
-                this._kaleidoscopeCircles = 3 + Math.floor(Math.random() * 5);
-                break;
-            case 9:
-                this._dotSize = 4 + Math.floor(Math.random() * 6);
-                this._dotDensity = 0.02 + Math.random() * 0.03;
-                this._dotSpeed = 0.5 + Math.random() * 1.0;
-                break;
-            case 10:
-                this._waveCount = 3 + Math.floor(Math.random() * 5);
-                this._waveThickness = 2 + Math.floor(Math.random() * 3);
-                this._waveSpeed = 0.02 + Math.random() * 0.03;
-                this._waveAmplitude = 20 + Math.floor(Math.random() * 20);
-                break;
-            case 11:
-                this._crystalSize = 40 + Math.floor(Math.random() * 30);
-                this._crystalRotationSpeed = 0.01 + Math.random() * 0.02;
-                this._crystalLayers = 2 + Math.floor(Math.random() * 2);
-                this._crystalShininess = Math.random() > 0.5;
-                break;
-        }
-    };
-
     // Update Loop
     const _Spriteset_Battle_update = Spriteset_Battle.prototype.update;
     Spriteset_Battle.prototype.update = function () {
         _Spriteset_Battle_update.call(this);
 
-        // Test mode pattern switcher
-        if ($gameTemp.isPlaytest() && Input.isTriggered('pagedown')) {
-            this.initRandomBackground();
-        }
-
-        if (ConfigManager.ebBackgrounds === 2 && this._animatedContainer && !ConfigManager.asciiModeEnabled) {
-            this.removeAnimatedBackground();
-        } else if ((ConfigManager.asciiModeEnabled || ConfigManager.ebBackgrounds !== 2) && !this._animatedContainer) {
+        if (!this._animatedContainer) {
             this.createAnimatedBackground();
-        } else if (ConfigManager.ebBackgrounds !== 2 && this._animatedBitmap) {
+        } else if (this._animatedBitmap) {
             this.updateAnimatedBackground();
         }
 
@@ -1739,7 +1590,7 @@
         // player switches back to ASCII mode later.
         this._asciiDrawnBiome = undefined;
 
-        if (ConfigManager.ebBackgrounds === 0) {
+        {
             const timeMode = getCurrentTimeMode();
 
             // Check if we need to redraw static elements (time mode changed)
@@ -1768,21 +1619,6 @@
             }
 
             this._frameCount++;
-            return;
-        }
-
-        // Trippy mode
-        this._animationCount += CONFIG.speedMultiplier;
-        this._frameCount++;
-
-        const drawInterval = this.getDrawInterval();
-
-        if (this._frameCount % drawInterval === 0) {
-            if (this._frameCount % (drawInterval * 2) === 0) {
-                this.drawGradient();
-            }
-            this._animatedBitmap.clear();
-            this.drawPattern(this._bgType);
         }
     };
 
@@ -1819,80 +1655,10 @@
         this._skyInitialized = false;
     };
 
-    Spriteset_Battle.prototype.getDrawInterval = function () {
-        // Minimum interval of 2 (30Hz pattern animation) - redrawing these
-        // full-canvas patterns every single frame was pure churn for no visible
-        // gain. Slower patterns keep their higher intervals.
-        const intervals = {
-            0: 2, 1: 2, 5: 2, 8: 2, 12: 2, 13: 2,
-            2: 2, 4: 2, 6: 2, 10: 2, 11: 2, 14: 2,
-            3: 3, 7: 3, 9: 3
-        };
-        return intervals[this._bgType] || 2;
-    };
-
-    Spriteset_Battle.prototype.drawPattern = function (bgType) {
-        this._currentBitmap = this._animatedBitmap;
-        this._currentContext = this._animatedBitmap._context;
-        this._currentContext.imageSmoothingEnabled = false;
-
-        const patterns = {
-            0: 'drawWavyLines',
-            1: 'drawSpiral',
-            2: 'drawArcaneSeal',
-            3: 'drawCheckerboard',
-            4: 'drawDiamondPattern',
-            5: 'drawConcentricCircles',
-            6: 'drawFlowingGrid',
-            7: 'drawPlaids',
-            8: 'drawKaleidoscope',
-            9: 'drawFlowingDots',
-            10: 'drawEnergyWaves',
-            11: 'drawCrystalLattice',
-            12: 'drawRGBGlitch',
-            13: 'drawNebulaSwirl',
-            14: 'drawWarpTunnel'
-        };
-
-        const method = patterns[bgType] || 'drawWavyLines';
-        if (this[method]) this[method]();
-    };
-
-    Spriteset_Battle.prototype.drawGradient = function () {
-        const w = this._gradientBitmap.width;
-        const h = this._gradientBitmap.height;
-        const context = this._gradientBitmap._context;
-
-        this._gradientBitmap.clear();
-
-        const hue1 = (this._gradientColorHue1 + this._animationCount * this._gradientSpeed) % 360;
-        const hue2 = (this._gradientColorHue2 + this._animationCount * this._gradientSpeed * 0.7) % 360;
-
-        const angle = this._gradientRotation * Math.PI / 180;
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-
-        const gradient = context.createLinearGradient(
-            w / 2 - cos * w / 2, h / 2 - sin * h / 2,
-            w / 2 + cos * w / 2, h / 2 + sin * h / 2
-        );
-
-        gradient.addColorStop(0, hueToColor(hue1, 1, 30));
-        gradient.addColorStop(1, hueToColor(hue2, 1, 30));
-
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, w, h);
-    };
-
-    Spriteset_Battle.prototype.hueToColor = function (hue, alpha, lightness) {
-        return hueToColor(hue, alpha, lightness);
-    };
-
     // =============================================================================
     // Config Manager
     // =============================================================================
 
-    ConfigManager.ebBackgrounds = CONFIG.defaultMode;
     // When true, biome battle backgrounds are randomized (a random biome) for
     // every battle instead of following the current map.
     ConfigManager.ebRandomBiome = false;
@@ -1900,7 +1666,6 @@
     const _ConfigManager_makeData = ConfigManager.makeData;
     ConfigManager.makeData = function () {
         const config = _ConfigManager_makeData.call(this);
-        config.ebBackgrounds = this.ebBackgrounds;
         config.ebRandomBiome = this.ebRandomBiome;
         return config;
     };
@@ -1908,94 +1673,14 @@
     const _ConfigManager_applyData = ConfigManager.applyData;
     ConfigManager.applyData = function (config) {
         _ConfigManager_applyData.call(this, config);
-        this.ebBackgrounds = config.ebBackgrounds !== undefined
-            ? Number(config.ebBackgrounds)
-            : CONFIG.defaultMode;
         this.ebRandomBiome = config.ebRandomBiome !== undefined
             ? !!config.ebRandomBiome
             : false;
     };
 
-    // =============================================================================
-    // Window_Options
-    // =============================================================================
-
-    if (window.GameOptions) {
-        window.GameOptions.registerOption('ebBackgrounds', CONFIG.optionName,
-            () => ConfigManager.ebBackgrounds,
-            function(value) {
-                ConfigManager.ebBackgrounds = value;
-                ConfigManager.save();
-            },
-            'video', 'custom',
-            function(value) {
-                const modes = T.list('Battle.option.backgroundModes');
-                return modes[value] || modes[0];
-            },
-            function() {
-                const value = (ConfigManager.ebBackgrounds + 1) % 3;
-                ConfigManager.ebBackgrounds = value;
-                ConfigManager.save();
-            },
-            function() {
-                const value = (ConfigManager.ebBackgrounds + 2) % 3;
-                ConfigManager.ebBackgrounds = value;
-                ConfigManager.save();
-            }
-        );
-        // Random Battle BG has no option row: the battleback always follows the
-        // current map's biome. ConfigManager.ebRandomBiome stays as a stored
-        // flag (default off) for the renderer below.
-    } else {
-        const _Window_Options_addGeneralOptions = Window_Options.prototype.addGeneralOptions;
-        Window_Options.prototype.addGeneralOptions = function () {
-            _Window_Options_addGeneralOptions.call(this);
-            this.addCommand(CONFIG.optionName, 'ebBackgrounds');
-        };
-
-        const _Window_Options_statusText = Window_Options.prototype.statusText;
-        Window_Options.prototype.statusText = function (index) {
-            const symbol = this.commandSymbol(index);
-            if (symbol === 'ebBackgrounds') {
-                const modes = T.list('Battle.option.backgroundModes');
-                return modes[this.getConfigValue(symbol)] || modes[0];
-            }
-            return _Window_Options_statusText.call(this, index);
-        };
-
-        const _Window_Options_processOk = Window_Options.prototype.processOk;
-        Window_Options.prototype.processOk = function () {
-            const symbol = this.commandSymbol(this.index());
-            if (symbol === 'ebBackgrounds') {
-                const value = (this.getConfigValue(symbol) + 1) % 3;
-                this.changeValue(symbol, value);
-            } else {
-                _Window_Options_processOk.call(this);
-            }
-        };
-
-        const _Window_Options_cursorRight = Window_Options.prototype.cursorRight;
-        Window_Options.prototype.cursorRight = function (wrap) {
-            const symbol = this.commandSymbol(this.index());
-            if (symbol === 'ebBackgrounds') {
-                const value = (this.getConfigValue(symbol) + 1) % 3;
-                this.changeValue(symbol, value);
-            } else {
-                _Window_Options_cursorRight.call(this, wrap);
-            }
-        };
-
-        const _Window_Options_cursorLeft = Window_Options.prototype.cursorLeft;
-        Window_Options.prototype.cursorLeft = function (wrap) {
-            const symbol = this.commandSymbol(this.index());
-            if (symbol === 'ebBackgrounds') {
-                const value = (this.getConfigValue(symbol) + 2) % 3;
-                this.changeValue(symbol, value);
-            } else {
-                _Window_Options_cursorLeft.call(this, wrap);
-            }
-        };
-    }
+    // The battle background has no option row: it always follows the current
+    // map's biome. ConfigManager.ebRandomBiome stays as a stored flag
+    // (default off) for the renderer above.
 
     // =============================================================================
     // WeatherSystem BGS compatibility, keep channel 4 audio at reduced volume

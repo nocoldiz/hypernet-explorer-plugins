@@ -27,13 +27,7 @@
     "lastQuarter": "Dernier quartier",
     "waningCrescent": "Dernier croissant"
   },
-  "option": {
-    "backgroundModes": [
-      "Biome",
-      "Psyché",
-      "Aucun"
-    ]
-  },
+  "option": {},
   "unknownMap": "Carte inconnue",
   "popup": {
     "miss": "Manqué",

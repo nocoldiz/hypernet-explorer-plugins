@@ -2294,7 +2294,7 @@
       }
     }
     this.applyCreatureSettings();
-    if (this.startNameInput()) return;
+    this.suggestName();
     if (this.startClassSelection()) return;
     this.popScene();
   };
@@ -2324,42 +2324,21 @@
     }
   }
 
-  // The humanoid branch of the wizard names its character between gender and
-  // class (a generated suggestion, the sprite board, then the name input
-  // screen; see startNamingScreens in CharacterCreation.js). Creatures never go
-  // down that branch, so the name is asked for here instead, once the creature
-  // is built and before its class is picked.
+  // Creatures are named the same way people are: not here. The wizard asks for
+  // the name on its Bio step, in the identity card of the dossier, so this only
+  // seeds a suggestion for that field. It used to open the engine's Name Input
+  // screen between the builder and the class list, which asked the same
+  // question twice, in the old letter grid.
   //
-  // Only the wizard flow names anything: a creature built from the
+  // Only the wizard flow suggests anything: a creature built from the
   // CreateCreature plugin command is an existing character changing shape, and
   // keeps the name it already has.
-  Scene_CreateCreature.prototype.startNameInput = function () {
+  Scene_CreateCreature.prototype.suggestName = function () {
     const wizard = window.Scene_CharacterCreation;
-    if (!wizard || wizard._interruptedStep < 0) return false;
-    if (typeof Scene_Name === "undefined") return false;
-    const stack = SceneManager._stack;
-    if (!stack) return false;
+    if (!wizard || wizard._interruptedStep < 0) return;
     const actor = $gameActors.actor(this._targetActorId);
-    if (!actor) return false;
-
-    // The naming screen returns to exactly where this scene would have gone
-    // without it: the class selector when the wizard routes there, otherwise
-    // the scene that opened the builder.
-    let returnScene;
-    if (this.prepareClassSelection()) {
-      returnScene = window.Scene_ClassSelection;
-    } else if (stack.length) {
-      returnScene = stack.pop();
-    } else {
-      return false;
-    }
-
+    if (!actor) return;
     suggestCreatureName(actor);
-    SceneManager.goto(Scene_Name);
-    // 16 is the engine default the name input screen uses for the max length.
-    SceneManager.prepareNextScene(this._targetActorId, 16);
-    stack.push(returnScene);
-    return true;
   };
 
   // The creature is built: hand over to the class selector, scoped to the

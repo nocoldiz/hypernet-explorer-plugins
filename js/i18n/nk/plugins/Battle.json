@@ -27,13 +27,7 @@
     "lastQuarter": "LAST QUARTER",
     "waningCrescent": "WANIN' CRESCENT"
   },
-  "option": {
-    "backgroundModes": [
-      "BIOME",
-      "TRIPPY",
-      "NONE"
-    ]
-  },
+  "option": {},
   "unknownMap": "UNKNOWN MAP",
   "popup": {
     "miss": "MISS",

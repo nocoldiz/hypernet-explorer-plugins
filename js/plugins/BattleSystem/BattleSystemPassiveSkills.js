@@ -486,7 +486,11 @@
     },
   });
   reg(8, {
-    // Cultist
+    // Cultist. The night half of the passive is scored here; the other half
+    // is a learning rule, not a combat one, so it is enforced by
+    // window.SkillArcana (ItemSystem/ItemSystemUtils.js): a Cultist copies any
+    // skill out of a grimoire or a skill book, level floors included, and the
+    // Skill Master's tree teaches them nothing at all.
     outgoing(actor, target, action, value) {
       return isNightHours() ? value * 1.15 : value;
     },

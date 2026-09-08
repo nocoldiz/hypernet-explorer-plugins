@@ -6736,6 +6736,21 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         if (state) window.UIPanel.open(btn); else window.UIPanel.close(btn);
     };
 
+    // While a build is coming down the notice fills like a bar: the ratio is
+    // painted as a background layer rather than a child, so the label can be
+    // rewritten on every tick without losing it. A null ratio clears the fill.
+    const setUpdateFill = (btn, ratio) => {
+        if (!btn) return;
+        if (typeof ratio !== 'number' || !isFinite(ratio)) {
+            btn.classList.remove('title-update-btn--filling');
+            btn.style.removeProperty('--title-update-fill');
+            return;
+        }
+        const pct = Math.round(Math.max(0, Math.min(1, ratio)) * 100);
+        btn.classList.add('title-update-btn--filling');
+        btn.style.setProperty('--title-update-fill', pct + '%');
+    };
+
     // A major update is one the file patch cannot fully carry, so the notice
     // says the whole game has to be downloaded again: while the update is being
     // offered, and afterwards for as long as the copy has taken one without
@@ -6757,6 +6772,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const btn = this._updateButton;
         if (!btn) return;
         if (this._updateBusy) return;
+        setUpdateFill(btn, null);
         const api = updaterApi();
         const result = api ? updaterCall('autoResult') : null;
         // The launch check answers long after the panels have been faded in, so a
@@ -6895,14 +6911,16 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this._updateBusy = true;
         SoundManager.playOk();
 
-        const say = (text) => {
+        const say = (text, ratio) => {
             if (!btn) return;
             btn.textContent = text;
             setUpdateState(btn, 'busy');
+            setUpdateFill(btn, (ratio === undefined) ? null : ratio);
         };
         const release = (text, dim) => {
             this._updateBusy = false;
             if (!btn) return;
+            setUpdateFill(btn, null);
             btn.textContent = text;
             btn.title = text;
             btn.classList.toggle('title-update-btn--dim', !!dim);
@@ -6911,17 +6929,19 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const onProgress = (p) => {
             if (!p) return;
             if (p.phase === 'download') {
-                const pct = typeof p.ratio === 'number'
-                    ? Math.round(Math.max(0, Math.min(1, p.ratio)) * 100) : 0;
-                say(T('Titlescreen.update.downloading', { percent: pct }));
+                const ratio = typeof p.ratio === 'number'
+                    ? Math.max(0, Math.min(1, p.ratio)) : 0;
+                say(T('Titlescreen.update.downloading', {
+                    percent: Math.round(ratio * 100)
+                }), ratio);
             } else if (p.phase === 'apply' || p.phase === 'done') {
-                say(T('Titlescreen.update.installing'));
+                say(T('Titlescreen.update.installing'), 1);
             } else {
-                say(T('Titlescreen.update.preparing'));
+                say(T('Titlescreen.update.preparing'), 0);
             }
         };
 
-        say(T('Titlescreen.update.preparing'));
+        say(T('Titlescreen.update.preparing'), 0);
 
         // The launch check already measured this build, so the plan is usually
         // in hand; anything else is measured now.

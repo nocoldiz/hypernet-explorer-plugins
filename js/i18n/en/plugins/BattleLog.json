@@ -13,7 +13,6 @@
   "uses": " uses ",
   "and": "and",
   "skillNamesOption": "Skill Names",
-  "positionOption": "Battle Log Position",
   "skillName": "Skill Name",
   "skillAction": "Skill Action",
   "pronouns": {
@@ -38,8 +37,6 @@
       "possessive": "its"
     }
   },
-  "positionLeft": "Left",
-  "positionRight": "Right",
   "statDelta": "{stat} {points}",
   "statUnchanged": "{stats} held where they stand!"
 }

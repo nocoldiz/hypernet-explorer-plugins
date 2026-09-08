@@ -490,8 +490,9 @@
       const phi2 = Math.min(Math.PI - 0.15, Math.max(0.15, phi1 + Math.sin(bearing) * sep));
       const p1 = sphToUnit(theta1, phi1);
       const p2 = sphToUnit(theta2, phi2);
-      // A wider footpoint separation arcs higher, like a real coronal loop.
-      const archHeight = 1.05 + sep * (0.34 + hash(i, 67, seed) * 0.3);
+      // A wider footpoint separation arcs higher, like a real coronal loop,
+      // but the loops stay low and hug the photosphere rather than towering.
+      const archHeight = 1.03 + sep * (0.15 + hash(i, 67, seed) * 0.14);
       const apexDir = p1.clone().add(p2).normalize();
       // Lateral axis the apex sways along while the loop "moves": perpendicular
       // to both the chord and the radial direction, so it reads as the loop

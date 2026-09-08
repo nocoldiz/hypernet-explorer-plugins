@@ -7,8 +7,8 @@
   "schoolTitle": "{school} Grimoire",
   "noSpells": "Nobody here can grasp a spell from these pages.<br>(none within the party's MP reach, or all already known)",
   "ui": {
-  "beyondStat": "✧ Needs {stat} {points}",
-  "requires": "Requires {stat} {points}",
+    "beyondStat": "✧ Needs {stat} {points}",
+    "requires": "Requires {stat} {points}",
     "blurb": "The pages reveal the same five spells to everyone. Choose a reader who can bear one, then claim it.",
     "alreadyKnown": "✧ Already known",
     "beyondReach": "✧ Beyond this reader's MP",
@@ -17,6 +17,9 @@
     "medianPsi": "Median PSI (Luck)",
     "forbiddenSurfacing": "Forbidden Surfacing",
     "forbidden": "✦ Forbidden",
-    "whisperedSpells": "Whispered Spells"
+    "whisperedSpells": "Whispered Spells",
+    "esoteric": "✦ Esoteric",
+    "beyondLevelEsoteric": "✧ Esoteric, needs level {level}",
+    "beyondLevelForbidden": "✧ Forbidden, needs level {level}"
   }
 }

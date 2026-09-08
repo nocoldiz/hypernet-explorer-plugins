@@ -2953,11 +2953,9 @@ Imported.DialogueSystem = true;
     }
 
     // The sheet Map/MapLegend.js pins to the corner of the map is not a topic
-    // Bubba talks through: it is two switches he flips, one for the controls
-    // checklist and one for the tips. They sit in the grid beside the topics
-    // and write the same settings the Gameplay page does, so the two can never
-    // disagree about what is on the paper.
-    const STORY_SHEET_CONTROLS = 'sheet_controls'; // i18n-ignore: toggle name
+    // Bubba talks through: the tips half of it is one switch he flips, and he
+    // is the only one who flips it, since the options page carries no row for
+    // it. The controls list is not his: it is always pinned and H folds it.
     const STORY_SHEET_NOTICES  = 'sheet_notices';  // i18n-ignore: toggle name
 
     // The tips are not a switch but three states, so the entry says which one
@@ -2970,8 +2968,6 @@ Imported.DialogueSystem = true;
     function storyAskToggles() {
         if (!window.MapLegend) return [];
         return [
-            { name: STORY_SHEET_CONTROLS, title: T('Dialogue.askToggleControls'),
-              run: () => window.MapLegend?.toggleControls?.() },
             { name: STORY_SHEET_NOTICES,
               title: `${T('Dialogue.askToggleNotices')}: ${storyNoticeModeLabel()}`,
               run: () => window.MapLegend?.cycleNoticesMode?.() },

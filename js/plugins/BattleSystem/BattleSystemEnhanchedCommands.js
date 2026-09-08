@@ -869,6 +869,60 @@
   // Scene_Battle - Window rect & positioning
   //=============================================================================
 
+  // The one answer to which side of the screen the battle UI stands on. The
+  // command list takes it, and so do the panels that replace the list while
+  // they are open (the skill page, the backpack and the description box above
+  // them, through window.BattleListPage).
+  window.BattleCommandSide = window.BattleCommandSide || {
+    onRight() {
+      return !!(window.ConfigManager && ConfigManager.battleCommandPosition === 1);
+    }
+  };
+
+  // 0 = left (default), 1 = right.
+  Object.defineProperty(ConfigManager, 'battleCommandPosition', {
+    get: function () {
+      return this._battleCommandPosition !== undefined ? this._battleCommandPosition : 0;
+    },
+    set: function (value) { this._battleCommandPosition = value; },
+    configurable: true
+  });
+
+  const _BSE_ConfigManager_makeData = ConfigManager.makeData;
+  ConfigManager.makeData = function () {
+    const config = _BSE_ConfigManager_makeData.call(this);
+    config.battleCommandPosition = this.battleCommandPosition;
+    return config;
+  };
+
+  const _BSE_ConfigManager_applyData = ConfigManager.applyData;
+  ConfigManager.applyData = function (config) {
+    _BSE_ConfigManager_applyData.call(this, config);
+    this.battleCommandPosition =
+      config.battleCommandPosition !== undefined ? config.battleCommandPosition : 0;
+  };
+
+  function _commandPositionText(value) {
+    return value === 1
+      ? T('Battle.cmdPosition.positionRight')
+      : T('Battle.cmdPosition.positionLeft');
+  }
+
+  if (window.GameOptions) {
+    const toggle = function () {
+      ConfigManager.battleCommandPosition = ConfigManager.battleCommandPosition === 1 ? 0 : 1;
+      ConfigManager.save();
+    };
+    window.GameOptions.registerOption('battleCommandPosition',
+      T('Battle.cmdPosition.positionOption'),
+      () => ConfigManager.battleCommandPosition,
+      (value) => ConfigManager.battleCommandPosition = value,
+      'gameplay', 'custom',
+      function (value) { return _commandPositionText(value); },
+      toggle, toggle
+    );
+  }
+
   // Default right-edge placement. Nudge the menu so it sits clear of the weapon
   // sprite while keeping the (sometimes wide) labels fully on-screen.
   Scene_Battle.prototype._bseCommandRightX = function (cmdWidth) {
@@ -883,11 +937,11 @@
     return leftEdge + 30;
   };
 
-  // Which side the commands stand on. The battle log takes a side of its own
-  // (Options > Battle Log Position), so when the player sends the log to the
-  // right the command list moves over to the left and the two never share an
-  // edge. In split-screen the active player's side wins: Player 1 on the left,
-  // Player 2 on the right.
+  // Which side the commands stand on: the player's own choice (Options >
+  // Command Position, 0 = left, the default). The battle log no longer takes a
+  // side of its own, it stands centred above the quick bar, so the two never
+  // share an edge whichever side is picked. In split-screen the active player's
+  // side wins instead: Player 1 on the left, Player 2 on the right.
   Scene_Battle.prototype._bseCommandX = function (cmdWidth) {
     const rightX = this._bseCommandRightX(cmdWidth);
     const split  = window.$gameSplitScreen && window.$gameSplitScreen.active;
@@ -896,8 +950,7 @@
       const onLeft = actor && actor.multiplayerPlayerId && actor.multiplayerPlayerId() === 1;
       return onLeft ? this._bseCommandLeftX() : rightX;
     }
-    const logOnRight = ConfigManager && ConfigManager.battleLogPosition === 1;
-    return logOnRight ? this._bseCommandLeftX() : rightX;
+    return window.BattleCommandSide.onRight() ? rightX : this._bseCommandLeftX();
   };
 
   // The bottom line the command list stands on. It is the bottom edge of the

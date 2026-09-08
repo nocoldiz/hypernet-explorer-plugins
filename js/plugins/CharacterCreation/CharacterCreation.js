@@ -243,9 +243,6 @@
   const CREATION_PAGE_TURN_SE = { name: "PixelUI/PixelUI (1)", volume: 90, pitch: 100, pan: 0 };
   const CREATION_START_GOLD = 2000; // per humanoid member, as the event gave it
   const SWITCH_CREATION_NAMED = 12;
-  // Switch 100 is the story mode's own: while it is on, the name is not the
-  // player's to type (the event asked the same question before its Name Input).
-  const SWITCH_TUTORIAL = 100;
   // The Markov call the event made, argument for argument. Plugin commands are
   // registered under the bare file name (Utils.extractFileName), which is why
   // this says MarkovTextGenerator where the event said UI/MarkovTextGenerator.
@@ -267,13 +264,6 @@
       if (SceneManager._nextScene && SceneManager._nextScene.setActor) {
         SceneManager._nextScene.setActor(actorId);
       }
-      return true;
-    }
-    if (screen === "name") {
-      if (typeof Scene_Name === "undefined" || !$dataActors[actorId]) return false;
-      SceneManager.push(Scene_Name);
-      // The default name scene takes the max length from the caller; the event passed 8.
-      SceneManager.prepareNextScene(actorId, 8);
       return true;
     }
     return false;
@@ -4523,8 +4513,13 @@
 
       this.closeStepUI();
 
+      // Sprite only. The engine's Name Input screen used to be chained on after
+      // it (common event 97 ended on one), but the name is asked for on the Bio
+      // step now, in the identity card of the dossier itself, so opening the
+      // old letter grid here only interrupted the wizard to ask a question it
+      // was going to ask again in its own words. The Markov suggestion above
+      // still runs, so that field opens pre-filled.
       const screens = ["sprite"];
-      if (!$gameSwitches.value(SWITCH_TUTORIAL)) screens.push("name");
       if (!Scene_CharacterCreation.openSubScreens(this._step, screens)) {
         // Neither screen is loaded: nothing to wait for, so carry straight on
         // and put the board back, since nothing is taking the screen after all.

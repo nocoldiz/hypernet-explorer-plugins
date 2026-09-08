@@ -1301,6 +1301,18 @@
             set(width, height) {
                 this.width = width;
                 this.height = height;
+            },
+            // The pages stand on the same side as the command list they
+            // replace (Options > Command Position, left by default), so the
+            // skill page, the backpack and the description box all open there.
+            onRight() {
+                return !!(window.BattleCommandSide && window.BattleCommandSide.onRight());
+            },
+            // Left edge, in screen pixels, for a page of this scaled width.
+            leftPx(scaledW, sc) {
+                return this.onRight()
+                    ? sc.ox + (Graphics.width * sc.sx) - scaledW - (this.MARGIN * sc.sx)
+                    : sc.ox + (this.MARGIN * sc.sx);
             }
         };
     }
@@ -1745,8 +1757,8 @@
             // corner the page ended up occupying.
             page.set(PAGE_WIDTH, scaledH / sc.sy);
 
-            // Right edge, hanging from the shared top line the item page uses.
-            const targetLeft = sc.ox + (Graphics.width * sc.sx) - scaledW - (page.MARGIN * sc.sx);
+            // Its own edge, hanging from the shared top line the item page uses.
+            const targetLeft = page.leftPx(scaledW, sc);
             const targetTop = sc.oy + (page.TOP * sc.sy);
 
             s.left = targetLeft + 'px';

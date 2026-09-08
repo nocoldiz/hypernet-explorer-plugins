@@ -160,10 +160,10 @@
     "lockedBy": "Si sblocca da: {skills}",
     "lockedByCount": "Ne servono ancora {need} fra: {skills}",
     "lockedHint": "Nulla di ciò che conosci confina con questa abilità.",
-    "lockedBySchool": "Devi prima conoscere il resto della scuola, mancano {kind}: {count}",
-    "lockedKindSkills": "abilità",
-    "lockedKindSpells": "incantesimi",
-    "lockedToast": "{skill} non confina con nulla che questo allievo conosca."
+    "lockedToast": "{skill} non confina con nulla che questo allievo conosca.",
+    "lockedEsotericLevel": "Sapere esoterico: livello {level} o superiore.",
+    "lockedForbiddenLevel": "Sapere proibito: livello {level} o superiore.",
+    "lockedCultist": "Un Cultista non impara nulla qui: solo grimori e manuali possono istruirlo."
   },
   "atlas": {
     "progress": "{learned} di {total} apprese",

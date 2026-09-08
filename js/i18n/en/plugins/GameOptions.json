@@ -35,7 +35,6 @@
     "footstepsVolume": "Footsteps Volume",
     "weatherVolume": "Weather Volume",
     "enemyBattlers": "Enemy Battlers",
-    "proceduralHitFX": "Procedural Weapon Hits",
     "runInBackground": "Run In Background",
     "showFps": "Show FPS Counter",
     "activeTheme": "Active Theme",
@@ -62,8 +61,6 @@
     "markovLlmModel": "Local GGUF Model",
     "dialogueMode": "NPC Dialogue Mode",
     "mapTooltips": "Map Tooltips",
-    "showControls": "Controls List",
-    "showMapNotices": "Map Tips",
     "dialogueVoices": "Dialogue Voices",
     "dialogueVoicesVolume": "Dialogue Voices Volume",
     "asciiMode": "ASCII Mode",
@@ -106,7 +103,6 @@
   "desc": {
     "mapStreaming": "Stitches neighbouring procedural squares into one seamless map you can walk straight across. Off loads one square at a time and pans the screen to the next when you reach a border.",
     "runInBackground": "Keeps the game running while its window is not focused, so you can alt tab away without it pausing.",
-    "proceduralHitFX": "3D impact effects drawn for each weapon type where a blow lands. Off plays the animation the weapon names instead.",
     "weatherVolume": "Volume of outdoor ambience: rain, storms, wind and biome sounds. Interiors are unaffected.",
     "partyHud": "A card per party member in the top-left: HP, MP, states and urgent needs.",
     "musicArtistDisplay": "Whether the game tells you what music is playing and who made it.",
@@ -115,11 +111,9 @@
     "markovLlmModel": "Which GGUF language model writes generated dialogue. Off leaves every generated line to the Markov chains. Drop a .gguf file into the game's models folder and it is listed here.",
     "dialogueMode": "How an NPC with nothing scripted to say responds when you talk to them. Empathize plays out a Socialize action from their personality, falling back to a flavour rumour. Markovian generates a fresh line from the NPC's own word bank instead.",
     "mapTooltips": "Real-time tutorial messages, compass quest targets and written context tips while you walk the map.",
-    "showControls": "The list of every control pinned to the corner of the map, each line ticked off the first time you use it. H folds it, L3 on a pad. It stays pinned in the story mode and on the tutorial maps, hidden until asked for anywhere else. Bubba takes it down for you too, if you raise the controls with him.",
-    "showMapNotices": "The notices pinned beside the controls: what Bubba reads off a place, the zone you are standing in and whatever a tooltip is set to. Bubba shows and hides them for you too, if you raise the sheet with him.",
     "dialogueVoices": "Each letter of a typed dialogue line is chattered with a short vowel or consonant blip. The pitch is the speaker's own; a gold keyword is spoken higher.",
     "dialogueVoicesVolume": "How loud the letter blips under a dialogue line are, apart from the other sound effects.",
-    "battleLogPosition": "Where the battle log is printed on the screen."
+    "battleCommandPosition": "Which side of the screen the battle command list, the skill page and the backpack stand on."
   },
   "descState": {
     "musicArtistDisplay": [
@@ -132,10 +126,6 @@
       "Off: plain three.js. Models are drawn clean, with no wobble, banding or downsampling.",
       "SnapVertex: the PlayStation-1 look. Vertices snap to a coarse grid, colours band and the picture is rendered below full resolution.",
       "Pixel Art: the sprite look. Flat cel bands, chunky pixels and an optional limited palette."
-    ],
-    "battleLogPosition": [
-      "Centered: hangs from the top centre, between the party cards and the enemy bars.",
-      "Classic: a left aligned column under the party cards."
     ]
   },
   "shaderMode": {
@@ -156,11 +146,6 @@
   ],
   "resetDefaults": "Reset to Defaults",
   "resetDefaultsDone": "All settings restored to their defaults",
-  "mapNotices": {
-    "first": "First time only",
-    "always": "Always",
-    "off": "Off"
-  },
   "group": {
     "combat": "Combat",
     "battleLog": "Battle Log",

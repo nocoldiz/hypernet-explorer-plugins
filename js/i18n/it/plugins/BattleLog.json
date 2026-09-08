@@ -13,7 +13,6 @@
   "uses": " usa ",
   "and": "e",
   "skillNamesOption": "Nomi Abilità",
-  "positionOption": "Posizione registro",
   "skillName": "Nome Abilità",
   "skillAction": "Azione Abilità",
   "pronouns": {
@@ -38,8 +37,6 @@
       "possessive": "suo"
     }
   },
-  "positionLeft": "Sinistra",
-  "positionRight": "Destra",
   "statDelta": "{stat} {points}",
   "statUnchanged": "{stats} restano dove sono!"
 }

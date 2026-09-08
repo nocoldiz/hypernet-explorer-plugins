@@ -2502,13 +2502,9 @@
     _pending: [],
     _lastTime: 0,
 
-    /** Whether hits are drawn here at all, the Options toggle included. */
+    /** Whether hits are drawn here at all. Always on, bar a runtime override. */
     isEnabled() {
-      if (!this.enabled) return false;
-      if (window.ConfigManager && ConfigManager.proceduralHitFX !== undefined) {
-        return ConfigManager.proceduralHitFX !== false;
-      }
-      return true;
+      return !!this.enabled;
     },
 
     /**

@@ -71,13 +71,7 @@
     "lastQuarter": "Last Quarter",
     "waningCrescent": "Waning Crescent"
   },
-  "option": {
-    "backgroundModes": [
-      "Biome",
-      "Trippy",
-      "None"
-    ]
-  },
+  "option": {},
   "unknownMap": "Unknown Map",
   "popup": {
     "miss": "Miss",
@@ -580,5 +574,10 @@
       "incant": "{actor} reads it out, flat and exact: \"{lore}\"",
       "incantPlain": "{actor} reads {skill} out of the book, word for word."
     }
+  },
+  "cmdPosition": {
+    "positionOption": "Command Position",
+    "positionLeft": "Left",
+    "positionRight": "Right"
   }
 }

@@ -201,19 +201,36 @@
         return val === ('HelpGroups.' + key) ? key : val;
     };
 
-    // The mechanics pages are a reading order, not an index: Controls first,
-    // the minigames last, everything else in the order a player meets it. An
-    // entry that carries no order (the lore, the states, the elements) keeps
-    // the alphabetical listing those categories have always had.
+    // The macrocategories are a reading order, not an index: Controls first,
+    // the minigames last, everything else in the order a player meets it. The
+    // pages INSIDE a macrocategory are an index, so they are listed
+    // alphabetically, which is how a reader looks a page up once they know
+    // which part of the manual it lives in. A section's place is taken from
+    // the lowest order any of its pages carries, so the reading order of the
+    // sections themselves is untouched.
     function sortTopics(topics) {
         if (!topics) return [];
-        return topics.filter(t => t && t.title).sort((a, b) => {
-            const orderA = Number.isFinite(a.order) ? a.order : Infinity;
-            const orderB = Number.isFinite(b.order) ? b.order : Infinity;
-            if (orderA !== orderB) return orderA - orderB;
+        const list = topics.filter(t => t && t.title);
+        const rank = new Map();
+        const seen = new Map();
+        list.forEach((t, i) => {
+            const key = t.group || '';
+            const order = Number.isFinite(t.order) ? t.order : Infinity;
+            if (!rank.has(key) || order < rank.get(key)) rank.set(key, order);
+            if (!seen.has(key)) seen.set(key, i);
+        });
+        return list.sort((a, b) => {
+            const keyA = a.group || '';
+            const keyB = b.group || '';
+            if (keyA !== keyB) {
+                const rankA = rank.get(keyA);
+                const rankB = rank.get(keyB);
+                if (rankA !== rankB) return rankA - rankB;
+                return seen.get(keyA) - seen.get(keyB);
+            }
             const titleA = getLocalizedTitle(a).toLowerCase();
             const titleB = getLocalizedTitle(b).toLowerCase();
-            return titleA < titleB ? -1 : titleA > titleB ? 1 : 0;
+            return titleA.localeCompare(titleB);
         });
     }
 

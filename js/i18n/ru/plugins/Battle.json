@@ -27,13 +27,7 @@
     "lastQuarter": "Последняя четверть",
     "waningCrescent": "Убывающий серп"
   },
-  "option": {
-    "backgroundModes": [
-      "Биом",
-      "Психоделия",
-      "Нет"
-    ]
-  },
+  "option": {},
   "unknownMap": "Неизвестная карта",
   "popup": {
     "miss": "Промах",

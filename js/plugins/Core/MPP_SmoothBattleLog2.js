@@ -708,26 +708,16 @@
         configurable: true
     });
 
-    // Which side the log stands on: 0 = bottom left (default), 1 = bottom right.
-    // It always hangs from the floor of the screen and grows upward, so the
-    // newest line is the one nearest the hotbar. A save written before the log
-    // moved carries 0 (which used to mean centred) and reads as the left.
-    Object.defineProperty(ConfigManager, 'battleLogPosition', {
-        get: function() {
-            return this._battleLogPosition !== undefined ? this._battleLogPosition : 0;
-        },
-        set: function(value) {
-            this._battleLogPosition = value;
-        },
-        configurable: true
-    });
+    // The log has no side of its own any more: it stands in the middle of the
+    // screen, on the floor above the quick bar, and grows upward, so the newest
+    // line is the one nearest the bar. Which side the COMMAND list takes is the
+    // player's choice, and it lives in BattleSystemEnhanchedCommands.js.
 
     const _ConfigManager_makeData = ConfigManager.makeData;
     ConfigManager.makeData = function() {
         const config = _ConfigManager_makeData.call(this);
         config.battleLogBgOpacity = this.battleLogBgOpacity;
         config.battleLogSkillNames = this.battleLogSkillNames;
-        config.battleLogPosition = this.battleLogPosition;
         return config;
     };
 
@@ -736,18 +726,11 @@
         _ConfigManager_applyData.call(this, config);
         this.battleLogBgOpacity = config.battleLogBgOpacity !== undefined ? config.battleLogBgOpacity : CONFIG.battleLogBgOpacity;
         this.battleLogSkillNames = config.battleLogSkillNames !== undefined ? config.battleLogSkillNames : 0;
-        this.battleLogPosition = config.battleLogPosition !== undefined ? config.battleLogPosition : 0;
     };
 
     //-------------------------------------------------------------------------
     // Window_Options - Add Battle Log Options
     //-------------------------------------------------------------------------
-
-    function _battleLogPositionText(value) {
-        return value === 1
-            ? (T('BattleLog.positionRight') || 'Right')
-            : (T('BattleLog.positionLeft') || 'Left');
-    }
 
     if (window.GameOptions) {
         window.GameOptions.registerOption('battleLogBgOpacity', T('BattleLog.bgOpacity'), 
@@ -786,27 +769,12 @@
             }
         );
 
-        window.GameOptions.registerOption('battleLogPosition', T('BattleLog.positionOption') || 'Battle Log Position',
-            () => ConfigManager.battleLogPosition,
-            (value) => ConfigManager.battleLogPosition = value,
-            'gameplay', 'custom',
-            function(value) { return _battleLogPositionText(value); },
-            function() {
-                ConfigManager.battleLogPosition = ConfigManager.battleLogPosition === 1 ? 0 : 1;
-                ConfigManager.save();
-            },
-            function() {
-                ConfigManager.battleLogPosition = ConfigManager.battleLogPosition === 1 ? 0 : 1;
-                ConfigManager.save();
-            }
-        );
     } else {
         const _Window_Options_addGeneralOptions = Window_Options.prototype.addGeneralOptions;
         Window_Options.prototype.addGeneralOptions = function() {
             _Window_Options_addGeneralOptions.call(this);
             this.addCommand(T('BattleLog.bgOpacity'), "battleLogBgOpacity");
             this.addCommand(T('BattleLog.skillNamesOption') || "Skill Names", "battleLogSkillNames");
-            this.addCommand(T('BattleLog.positionOption') || "Battle Log Position", "battleLogPosition");
         };
 
         const _Window_Options_statusText = Window_Options.prototype.statusText;
@@ -818,9 +786,6 @@
             if (symbol === "battleLogSkillNames") {
                 const val = this.getConfigValue(symbol);
                 return val === 1 ? (T('BattleLog.skillAction') || 'Skill Action') : (T('BattleLog.skillName') || 'Skill Name');
-            }
-            if (symbol === "battleLogPosition") {
-                return _battleLogPositionText(this.getConfigValue(symbol));
             }
             return _Window_Options_statusText.call(this, index);
         };
@@ -835,11 +800,6 @@
                 return;
             }
             if (symbol === "battleLogSkillNames") {
-                const value = this.getConfigValue(symbol);
-                this.changeValue(symbol, value === 1 ? 0 : 1);
-                return;
-            }
-            if (symbol === "battleLogPosition") {
                 const value = this.getConfigValue(symbol);
                 this.changeValue(symbol, value === 1 ? 0 : 1);
                 return;
@@ -861,11 +821,6 @@
                 this.changeValue(symbol, value === 1 ? 0 : 1);
                 return;
             }
-            if (symbol === "battleLogPosition") {
-                const value = this.getConfigValue(symbol);
-                this.changeValue(symbol, value === 1 ? 0 : 1);
-                return;
-            }
             _Window_Options_cursorRight.call(this);
         };
 
@@ -879,11 +834,6 @@
                 return;
             }
             if (symbol === "battleLogSkillNames") {
-                const value = this.getConfigValue(symbol);
-                this.changeValue(symbol, value === 1 ? 0 : 1);
-                return;
-            }
-            if (symbol === "battleLogPosition") {
                 const value = this.getConfigValue(symbol);
                 this.changeValue(symbol, value === 1 ? 0 : 1);
                 return;
@@ -1588,14 +1538,12 @@
             const hotbarReserve = (window.BattleHotbar && window.BattleHotbar.reservedHeight) || 75;
             // The log stands on the floor of the screen, above the hotbar, and
             // grows upward: the newest line is always in the same place, at the
-            // bottom, whichever side the player put it on. Left is the default;
-            // Right hands its own side to the log and moves the command list
-            // over to the left (BattleSystemEnhanchedCommands reads the same
-            // setting through window.BattleLogSide).
-            const onRight = ConfigManager.battleLogPosition === 1;
+            // bottom. It takes the side the command list is not on (Options >
+            // Command Position), so the two never share an edge.
             const maxW = Math.round(Graphics.width * 0.52);
             const logW = Math.min(this.width, maxW);
             const margin = 8;
+            const onRight = !(window.BattleCommandSide && window.BattleCommandSide.onRight());
             const leftPx = onRight
                 ? sc.ox + (Graphics.width - logW - margin) * sc.sx
                 : sc.ox + margin * sc.sx;

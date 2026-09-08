@@ -651,12 +651,17 @@
       // stranded halfway up the screen.
       const page = window.BattleListPage || { MARGIN: 20, GAP: 10, TOP: 184, width: 420, height: 460 };
       const fixedW = page.width * sc.sx;
+      // The box shares the page's side: right by default, left once the player
+      // sends the battle log to the right (which is itself the default).
+      const onRight = typeof page.onRight === 'function' ? page.onRight() : true;
 
       // Anchor the box by its bottom-right corner (just above the skill selector)
       // and let width/height grow with the content so the box autosizes to its text.
       // Both pages hang from page.TOP, so the box stands on that one line and
       // does not move when the player switches between them.
-      const rightEdgeX = sc.ox + (Graphics.width * sc.sx) - (page.MARGIN * sc.sx);
+      const rightEdgeX = onRight
+          ? sc.ox + (Graphics.width * sc.sx) - (page.MARGIN * sc.sx)
+          : sc.ox + (page.MARGIN * sc.sx) + fixedW;
       const bottomEdgeY = sc.oy + (page.TOP - page.GAP) * sc.sy;
 
       const rightStr = Math.max(0, window.innerWidth - rightEdgeX) + 'px';
@@ -1120,7 +1125,9 @@
           // The description box stands on this page while it is the open one.
           if (page) page.set(ITEM_W, ITEM_H);
 
-          const targetLeft = sc.ox + (Graphics.width * sc.sx) - scaledW - (20 * sc.sx);
+          const targetLeft = page
+              ? page.leftPx(scaledW, sc)
+              : sc.ox + (Graphics.width * sc.sx) - scaledW - (20 * sc.sx);
           const targetTop = sc.oy + (ITEM_TOP * sc.sy);
 
           // Geometry is handed over as custom properties, the way the rest of

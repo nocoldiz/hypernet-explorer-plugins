@@ -22,16 +22,15 @@
  * end of them while a pad is plugged in, rather than the sheet guessing which
  * device is in the player's hands.
  *
- * It is not the story mode's: it hangs on every map, world map and generated
- * ground alike, for as long as it is switched on. Two things switch it:
- * the "Show/hide controls" entry in Bubba's Ask / Tell grid, and the Controls
- * list row on the Gameplay page of the options. Both write the one setting,
- * ConfigManager.showControls.
+ * It is not the story mode's and it is not a setting: it hangs on every map,
+ * world map and generated ground alike, and H is the only thing that folds it
+ * away or brings it back.
  *
  * The notices beside it answer to their own setting, ConfigManager.showMapNotices,
  * which has three states: "first" reads a tip once and never again, "always"
- * reads it every time the party stands there, "off" reads none. The grid's
- * "Show/hide tips" entry and the Map Tips row step through the same three.
+ * reads it every time the party stands there, "off" reads none. There is no
+ * option row for it: Bubba's "Show/hide tips" entry is the only way to step
+ * through the three.
  *
  * The sheet wears the interface's own theme. Every colour, size and space on
  * it is a token out of css/vars.css and every rule that draws it lives in
@@ -78,14 +77,13 @@
  * remembered on $gameSystem and it starts folded.
  *
  * Folded means two different things depending on where the party stands. In
- * the story mode, and on the tutorial map (1414) and every map filed under it
- * in the editor tree, the sheet is pinned: folded it is a strip carrying the
+ * the story mode, on the map the game starts on and on the tutorial map (1414)
+ * and every map filed under it in the editor tree (the Icebush pool among
+ * them), the sheet is pinned: folded it is a strip carrying the
  * notice title, or the Controls heading, and the fold chip, so the player can
  * always see it is there. Anywhere else a folded sheet is off the screen
  * entirely and the same key brings it up. While the sheet answers to H the
- * help menu does not: it is reached through the pause menu instead. With the
- * list switched off in the options and no notice to show, H is the help
- * menu again.
+ * help menu does not: it is reached through the pause menu instead.
  *
  * ---------------------------------------------------------------------------
  * Where a notice comes from
@@ -366,29 +364,15 @@
   //===========================================================================
   // Whether the list is up, and what is on it
   //===========================================================================
-  // One setting answers it, ConfigManager.showControls, so Bubba's topic and
-  // the options row cannot disagree about whether the list is out. It hangs on
-  // every map until something turns it off; nothing retires it by itself.
+  // Nothing switches it: the list is always there, folded or unfolded, and H
+  // is the only thing that moves it.
 
   function controlsShown() {
-    return typeof ConfigManager !== "undefined" && ConfigManager
-      ? ConfigManager.showControls !== false : true;
-  }
-
-  function setControlsShown(value) {
-    if (typeof ConfigManager === "undefined" || !ConfigManager) return;
-    ConfigManager.showControls = !!value;
-    if (ConfigManager.save) ConfigManager.save();
-  }
-
-  function toggleControls() {
-    setControlsShown(!controlsShown());
-    return controlsShown();
+    return true;
   }
 
   // The notices are the other half of the sheet, and they answer to their own
-  // setting, ConfigManager.showMapNotices, so the tips can be sent away while
-  // the list stays pinned up and the other way round. It is not a switch
+  // setting, ConfigManager.showMapNotices, written by Bubba alone. It is not a switch
   // but three states: a tip read once and never again, a tip read every time
   // the party stands there, or no tips at all.
 
@@ -635,6 +619,42 @@
   // on: the sheet is what teaches those maps.
   const TUTORIAL_ROOT_MAP_ID = 1414;
 
+  // Where the game opened: the sheet stays pinned there too, folded, so a
+  // first game can see there is a controls list to unfold at all. It is not
+  // the database's start map: a game can open anywhere, a generated square
+  // included, so the first map the party ever stood on is remembered on
+  // $gameSystem, with its world square when it was a generated one.
+  function currentPlace() {
+    const mapId = $gameMap ? $gameMap.mapId() : 0;
+    if (!mapId) return null;
+    let world = null;
+    const wt = window.WorldMapTransfer;
+    if (wt && typeof wt.currentWorldCoords === "function") {
+      try {
+        const c = wt.currentWorldCoords();
+        if (c && Number.isFinite(c.x) && Number.isFinite(c.y)) world = { x: c.x, y: c.y };
+      } catch (err) { world = null; }
+    }
+    return { mapId, world };
+  }
+
+  function rememberStartPlace() {
+    if (!$gameSystem || $gameSystem._mapLegendStartPlace) return;
+    const place = currentPlace();
+    if (place) $gameSystem._mapLegendStartPlace = place;
+  }
+
+  function onStartPlace() {
+    if (!$gameSystem) return false;
+    const start = $gameSystem._mapLegendStartPlace;
+    const here = currentPlace();
+    if (!start || !here || start.mapId !== here.mapId) return false;
+    // A generated map is one map id for the whole world, so the square the
+    // game opened on is what tells it apart from every other one.
+    if (!start.world) return true;
+    return !!here.world && here.world.x === start.world.x && here.world.y === start.world.y;
+  }
+
   function mapInfo(mapId) {
     const infos = typeof $dataMapInfos !== "undefined" ? $dataMapInfos : null;
     return infos && infos[mapId] ? infos[mapId] : null;
@@ -653,15 +673,17 @@
 
   // Where the sheet stays on the screen even folded.
   function pinnedContext() {
-    return storyMode() || !!($gameMap && tutorialMap($gameMap.mapId()));
+    if (storyMode()) return true;
+    if (!$gameMap) return false;
+    return tutorialMap($gameMap.mapId()) || onStartPlace();
   }
 
   // Folded is remembered on $gameSystem, so a save reopens the way it was
-  // left, and a fresh one opens unfolded: the first notice of a place has to
-  // be readable without the party knowing about the fold key first.
+  // left, and a fresh one opens folded: the strip says the list is there and
+  // H unfolds it.
   function isFolded() {
-    if (!$gameSystem) return false;
-    return $gameSystem._mapLegendFolded === true;
+    if (!$gameSystem) return true;
+    return $gameSystem._mapLegendFolded !== false;
   }
 
   function toggleFold() {
@@ -670,10 +692,9 @@
     SoundManager.playCursor();
   }
 
-  // Whether there is anything at all for the fold key to bring up: with the
-  // list switched off and no notice running, the key is left alone.
+  // The fold key always has the list to bring up.
   function foldable() {
-    return legendEnabled() || controlsShown();
+    return true;
   }
 
   // The pad's fold button. L3 on every map, the world map included: waiting
@@ -1058,6 +1079,7 @@
   // after every plugin has loaded and before the first frame is updated.
   const _Scene_Map_start = Scene_Map.prototype.start;
   Scene_Map.prototype.start = function () {
+    rememberStartPlace();
     patchFoldHotkey();
     _Scene_Map_start.call(this);
   };
@@ -1114,12 +1136,8 @@
     MENU_HOTKEY_LABELS,
     menuHotkeyControls,
 
-    // The list: whether it is out, what is on it, and what has been
-    // ticked off. Bubba's "controls" topic and the Gameplay options row both
-    // go through toggleControls / setControlsShown and nothing else.
+    // The list is always out; nothing switches it but the fold key.
     controlsShown,
-    setControlsShown,
-    toggleControls,
 
     // The notices, on the same terms, except that they have three states.
     NOTICE_MODES,

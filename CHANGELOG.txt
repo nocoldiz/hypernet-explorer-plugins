@@ -1,3 +1,21 @@
+0.6.8a
+
+Changed:
+- esoteric skills gated at level 20, forbidden at 80
+- money and level granting skills tagged Forbidden
+- monster gold rewards increased 10x
+- hypernet log off exits straight away, no dialog
+- help menu pages alphabetical inside each section
+- removed the empty load slot message
+- removed hit FX, battle BG, controls list and map tips options
+- battle log takes the side opposite the commands, which are now an option
+- title screen update notice fills as the download progresses
+
+Fixed:
+- old name selector no longer appears in character creation
+- battle crash from the removed battle background option
+- shorter magnetic lines on the title screen star
+
 0.6.7a
 
 - faster UI: windowed object index, debounced search, culled voxel figures

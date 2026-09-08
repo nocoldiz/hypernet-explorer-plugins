@@ -35,7 +35,6 @@
     "footstepsVolume": "Volume Passi",
     "weatherVolume": "Volume Meteo",
     "enemyBattlers": "Combattenti Nemici",
-    "proceduralHitFX": "Colpi Arma Procedurali",
     "runInBackground": "Esegui in Secondo Piano",
     "showFps": "Mostra Contatore FPS",
     "activeTheme": "Tema Attivo",
@@ -62,8 +61,6 @@
     "markovLlmModel": "Modello GGUF locale",
     "dialogueMode": "Modalità Dialogo NPC",
     "mapTooltips": "Suggerimenti sulla Mappa",
-    "showControls": "Elenco dei Comandi",
-    "showMapNotices": "Consigli sulla Mappa",
     "dialogueVoices": "Voci dei Dialoghi",
     "dialogueVoicesVolume": "Volume Voci dei Dialoghi",
     "asciiMode": "Modalita ASCII",
@@ -106,7 +103,6 @@
   "desc": {
     "mapStreaming": "Unisce i quadranti procedurali adiacenti in una sola mappa continua da attraversare senza interruzioni. Se disattivato carica un quadrante alla volta e scorre lo schermo verso il successivo quando raggiungi un bordo.",
     "runInBackground": "Mantiene il gioco in esecuzione mentre la finestra non è attiva, così puoi passare ad altre finestre senza metterlo in pausa.",
-    "proceduralHitFX": "Effetti d'impatto 3D disegnati per ogni tipo di arma dove cade il colpo. Disattivato riproduce l'animazione indicata dall'arma.",
     "weatherVolume": "Volume dei suoni ambientali esterni: pioggia, temporali, vento e rumori del bioma. Non tocca gli interni.",
     "partyHud": "Una scheda per ogni membro del gruppo in alto a sinistra: HP, MP, stati e bisogni urgenti.",
     "musicArtistDisplay": "Se mostrare titolo e autore della musica in riproduzione.",
@@ -115,11 +111,9 @@
     "markovLlmModel": "Quale modello linguistico GGUF scrive i dialoghi generati. Spento lascia ogni battuta generata alle catene di Markov. Metti un file .gguf nella cartella models del gioco e comparirà qui.",
     "dialogueMode": "Come risponde un NPC senza nulla di scritto quando gli parli. Empatia esegue un'azione Socializza tratta dalla sua personalità, ripiegando su una battuta di contorno. Markoviano genera invece una nuova frase dal suo stesso archivio di parole.",
     "mapTooltips": "Messaggi dei tutorial in tempo reale, segnaposto della bussola per le missioni e suggerimenti scritti mentre esplori la mappa.",
-    "showControls": "L'elenco di tutti i comandi appuntato nell'angolo della mappa, con ogni riga spuntata la prima volta che la usi. H lo ripiega, L3 sul pad. Resta appuntato in modalità storia e nelle mappe del tutorial, nascosto finché non lo chiedi altrove. Anche Bubba lo toglie, se sollevi con lui l'argomento dei comandi.",
-    "showMapNotices": "Gli avvisi appuntati accanto ai comandi: cio che Bubba legge di un luogo, la zona in cui ti trovi e qualunque cosa sia impostata come suggerimento. Anche Bubba li mostra e li nasconde, se sollevi con lui l'argomento del foglio.",
     "dialogueVoices": "Ogni lettera di una battuta digitata viene cinguettata con un breve suono di vocale o consonante. Il tono è quello di chi parla; una parola chiave dorata suona più acuta.",
     "dialogueVoicesVolume": "Quanto sono forti i suoni delle lettere sotto una battuta di dialogo, separati dagli altri effetti sonori.",
-    "battleLogPosition": "Dove viene stampato il registro di battaglia sullo schermo."
+    "battleCommandPosition": "Su quale lato dello schermo stanno i comandi di battaglia, la pagina delle abilità e lo zaino."
   },
   "descState": {
     "musicArtistDisplay": [
@@ -132,10 +126,6 @@
       "Off: three.js puro. I modelli sono disegnati puliti, senza tremolio, bande o riduzione di risoluzione.",
       "SnapVertex: l'estetica PlayStation-1. I vertici scattano su una griglia grossolana, i colori si dividono in bande e l'immagine e' resa sotto la risoluzione piena.",
       "Pixel Art: l'estetica a sprite. Bande cel piatte, pixel grossi e una tavolozza limitata opzionale."
-    ],
-    "battleLogPosition": [
-      "Centrato: parte dall'alto al centro, tra le carte del gruppo e le barre nemiche.",
-      "Classico: una colonna allineata a sinistra sotto le carte del gruppo."
     ]
   },
   "shaderMode": {
@@ -156,11 +146,6 @@
   ],
   "resetDefaults": "Ripristina Predefiniti",
   "resetDefaultsDone": "Tutte le impostazioni sono tornate ai valori predefiniti",
-  "mapNotices": {
-    "first": "Solo la prima volta",
-    "always": "Sempre",
-    "off": "Mai"
-  },
   "group": {
     "combat": "Combattimento",
     "battleLog": "Registro di battaglia",

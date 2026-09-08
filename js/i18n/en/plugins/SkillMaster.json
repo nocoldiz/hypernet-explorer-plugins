@@ -160,10 +160,10 @@
     "lockedBy": "Unlocked by: {skills}",
     "lockedByCount": "Needs {need} more of: {skills}",
     "lockedHint": "Nothing you know borders this skill yet.",
-    "lockedBySchool": "You need to know the rest of the school first, missing {kind}: {count}",
-    "lockedKindSkills": "skills",
-    "lockedKindSpells": "spells",
-    "lockedToast": "{skill} does not border anything this pupil knows."
+    "lockedToast": "{skill} does not border anything this pupil knows.",
+    "lockedEsotericLevel": "Esoteric knowledge: level {level} or above.",
+    "lockedForbiddenLevel": "Forbidden knowledge: level {level} or above.",
+    "lockedCultist": "A Cultist learns nothing here: only grimoires and skill books will teach them."
   },
   "atlas": {
     "progress": "{learned} of {total} learned",

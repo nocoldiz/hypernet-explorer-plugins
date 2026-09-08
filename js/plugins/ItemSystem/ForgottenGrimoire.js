@@ -15,6 +15,13 @@
  * The party's median Luck (PSI) raises the rare chance that a Forbidden spell
  * surfaces among the offers.
  *
+ * An <Esoteric> or <Forbidden> offer is drawn on a live animated background
+ * (violet / ember, .grim-card.arcane in css/theme.css) so a dangerous page is
+ * recognisable at a glance. It still surfaces for a reader who is too young
+ * for it, greyed out: window.SkillArcana asks level 20 for esoteric knowledge
+ * and level 80 for forbidden knowledge. A Cultist (class 8) is the exception
+ * and copies anything written down, whatever their level or stats.
+ *
  * Styling reuses the shared parchment classes (#menu-container / .book-spread /
  * .left-page / .right-page / .title), so it adapts automatically to the active
  * theme (Omega Tower, Archive Foundation, ...).
@@ -286,9 +293,24 @@
     Scene_ForgottenGrimoire.prototype.blockedReason = function (actor, s) {
         if (!actor || !s) return "mp";
         if (actor.skills().some(k => k && k.id === s.id)) return "known";
+        const arcana = window.SkillArcana;
+        // A Cultist reads anything that is written down: the class gimmick
+        // buys past the stat floor, the MP ceiling and the level floor alike.
+        if (arcana && (arcana.isSandbox() || arcana.isCultist(actor))) return null;
+        // Esoteric and forbidden pages still surface for a reader who is too
+        // young for them; they simply cannot be copied out yet.
+        if (arcana && !arcana.canLearnFromBook(actor, s)) return "level";
         if ((s.mpCost || 0) > actor.mmp) return "mp";
         if (window.SkillStatReq && !window.SkillStatReq.meets(actor, s)) return "stat";
         return null;
+    };
+
+    // What may be OFFERED at all, as opposed to what this reader may take.
+    // The level floor is deliberately ignored here so a forbidden page can be
+    // shown, animated and refused rather than quietly kept out of the book.
+    Scene_ForgottenGrimoire.prototype.canSurface = function (actor, s) {
+        const reason = this.blockedReason(actor, s);
+        return !reason || reason === "level";
     };
 
     // "Requires INT 14", the floor written into the spell itself.
@@ -304,7 +326,7 @@
     // reroll them. A spell out of a given reader's reach is shown greyed.
     Scene_ForgottenGrimoire.prototype.rollOffers = function () {
         const members = $gameParty.members();
-        const affordable = this._pool.filter(s => members.some(a => this.canLearn(a, s)));
+        const affordable = this._pool.filter(s => members.some(a => this.canSurface(a, s)));
         const forb = affordable.filter(s => s.meta && s.meta.Forbidden);
         const norm = affordable.filter(s => !(s.meta && s.meta.Forbidden));
         const chance = forbiddenChance();
@@ -336,6 +358,11 @@
         const reason = this.blockedReason(this._actor, s);
         if (!reason) return "";
         if (reason === "known") return T('Grimoire.ui.alreadyKnown');
+        if (reason === "level") {
+            const arcana = window.SkillArcana;
+            const level = arcana.requiredLevel(s);
+            return T(arcana.isForbidden(s) ? 'Grimoire.ui.beyondLevelForbidden' : 'Grimoire.ui.beyondLevelEsoteric', { level: level });
+        }
         if (reason === "stat") {
             const svc = window.SkillStatReq;
             const req = svc.of(s);
@@ -450,12 +477,16 @@
                 const sel = (this._focus === "spells" && idx === this._spellIdx) ? "sel" : "";
                 const learned = (this._learnedIdx === idx) ? "learned" : "";
                 const blocked = this.blockedReason(this._actor, s) ? "blocked" : "";
-                const forb = (s.meta && s.meta.Forbidden) ? `<span class="grim-forbidden">${T('Grimoire.ui.forbidden')}</span>` : "";
+                const rank = window.SkillArcana ? window.SkillArcana.rank(s) : null;
+                const arcane = rank ? `arcane ${rank}` : "";
+                const forb = rank === "forbidden"
+                    ? `<span class="grim-forbidden">${T('Grimoire.ui.forbidden')}</span>`
+                    : (rank === "esoteric" ? `<span class="grim-esoteric">${T('Grimoire.ui.esoteric')}</span>` : "");
                 const desc = (s.description || "").replace(/\n/g, " ");
                 // The reason line is always in the DOM (empty when the reader
                 // can take the spell) so syncOffers can rewrite it in place.
                 const req = this.requirementLabel(s);
-                cardsHTML += `<div class="grim-card focusable ${sel} ${learned} ${blocked}" onclick="SceneManager._scene.chooseSpell(${idx})">
+                cardsHTML += `<div class="grim-card focusable ${sel} ${learned} ${blocked} ${arcane}" onclick="SceneManager._scene.chooseSpell(${idx})">
                     <div class="grim-name"><span>${s.name}</span><span class="grim-mp">${s.mpCost} MP</span></div>
                     ${forb}<span class="grim-blocked">${this.blockedLabel(s)}</span>
                     ${req ? `<div class="grim-req">${req}</div>` : ""}

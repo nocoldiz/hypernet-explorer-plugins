@@ -71,13 +71,7 @@
     "lastQuarter": "Ultimo quarto",
     "waningCrescent": "Luna calante"
   },
-  "option": {
-    "backgroundModes": [
-      "Bioma",
-      "Psichedelico",
-      "Nessuno"
-    ]
-  },
+  "option": {},
   "unknownMap": "Mappa sconosciuta",
   "popup": {
     "miss": "Mancato",
@@ -580,5 +574,10 @@
       "incant": "{actor} la legge ad alta voce, piatta e precisa: \"{lore}\"",
       "incantPlain": "{actor} legge {skill} dal libro, parola per parola."
     }
+  },
+  "cmdPosition": {
+    "positionOption": "Posizione comandi",
+    "positionLeft": "Sinistra",
+    "positionRight": "Destra"
   }
 }
