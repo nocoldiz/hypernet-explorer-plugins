@@ -640,8 +640,11 @@
         $gameSwitches.setValue(STORY_MODE_SWITCH, true);
         // The story never opens on its landing either: the wizard comes first.
         $gameSystem._pendingCreationCurtain = true;
+        // Switch 100 marks the run as the story's own creation wherever it
+        // opens; only a landing without an event to run the wizard has to ask
+        // for it itself.
+        $gameSwitches.setValue(100, true);
         if (!storyModeAvailable() || !window.StoryModeStart.usesTutorialMap()) {
-            $gameSwitches.setValue(100, true);
             $gameSystem._pendingStoryModeCreation = true;
         }
         $gamePlayer.reserveTransfer(landing.mapId, landing.x, landing.y, landing.dir || 2, 0);
@@ -1699,6 +1702,9 @@
     // Where Em's story opens in the canon year, both when the run begins and
     // when her sheet is finished.
     const STORY_CANON_START = { mapId: 169, x: 67, y: 33, dir: 2 };
+    // The train the story opens on: Em's sheet is written aboard it, and the
+    // run is handed to the map above once she is done.
+    const STORY_TRAIN_START = { mapId: 557, x: 15, y: 6, dir: 2 };
 
     // The year the active world was begun in, which is the only thing that
     // decides which of the three landings above the story uses.
@@ -1727,11 +1733,13 @@
         return Object.assign({}, STORY_EM_LANDING);
     }
 
-    // Where a story run is put down when it begins.
+    // Where a story run is put down when it begins. In the canon year that is
+    // the train, whose own event opens Em's sheet; every other year lands where
+    // the story proper opens, since the train belongs to the canon opening.
     function storyModeLanding() {
         const year = storyStartYear();
         if (year > STORY_EARTH_LOST_YEAR) return storyTowerLanding();
-        if (year === STORY_CANON_YEAR) return Object.assign({}, STORY_CANON_START);
+        if (year === STORY_CANON_YEAR) return Object.assign({}, STORY_TRAIN_START);
         return storyEmLanding();
     }
 
@@ -1752,9 +1760,10 @@
         year: storyStartYear,
         landing: storyModeLanding,
         creationLanding: storyModeCreationLanding,
-        // No landing runs the wizard from an event of its own any more: the
-        // story asks for it on arrival, whatever year it opens in.
-        usesTutorialMap() { return false; }
+        TRAIN_MAP_ID: STORY_TRAIN_START.mapId,
+        // The train is the one landing with an event of its own to run the
+        // wizard; every other landing asks for it on arrival.
+        usesTutorialMap() { return storyModeLanding().mapId === STORY_TRAIN_START.mapId; }
     };
 
     // Builds the canon world (2001, ordinary population, ordinary magic: the
@@ -1827,14 +1836,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // Every classical piece shipped under audio/bgm/Classical is on the dial, so
     // any of them can be the one the title opens on. The entry names the piece playing
     // and steps to the next one, so the pick is made by ear without leaving the
-    // screen. Unpicked, the game opens on Ode to Joy or the New World Symphony.
+    // screen. Unpicked, the game always opens on the New World Symphony.
     // -------------------------------------------------------------------------
     // i18n-ignore-start  bgm tracks, named after their file
     const TITLE_MUSIC_DEFAULTS = [
-        { name: 'Ode to Joy',
-          value: 'Classical/Beethoven - Ode to Joy (Concert Band)' },
         { name: 'New World Symphony',
-          value: "Classical/Antonin Dvorak - symphony no. 9 in e minor 'from the new world', op. 95 - iv. al" }
+          value: "Classical/Antonin Dvorak - symphony no. 9 in e minor 'from the new world', op. 95 - iv. al" },
+        { name: 'Ode to Joy',
+          value: 'Classical/Beethoven - Ode to Joy (Concert Band)' }
     ];
     // i18n-ignore-end
 
@@ -1878,10 +1887,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         scanTitleMusic().filter(t =>
             !TITLE_MUSIC_DEFAULTS.some(d => d.value === t.value)));
 
-    // Nothing is picked yet on a fresh config: the game opens on one of the two
-    // symphonies, drawn once per session.
-    const TITLE_MUSIC_DEFAULT =
-        TITLE_MUSIC_DEFAULTS[Math.floor(Math.random() * TITLE_MUSIC_DEFAULTS.length)].value;
+    // Nothing is picked yet on a fresh config: the game always opens on the
+    // New World Symphony.
+    const TITLE_MUSIC_DEFAULT = TITLE_MUSIC_DEFAULTS[0].value;
 
     Object.defineProperty(ConfigManager, 'titleMusicName', {
         get() {

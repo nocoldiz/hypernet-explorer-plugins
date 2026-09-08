@@ -1,4 +1,16 @@
-0.6.0a
+0.6.1a
+- map 169 lake and river ambience audible from further away
+- controls panel compacted and faded under busts
+- map legend controls moved to their own left window
+- swim sounds quieter, entry splash no longer overlaps
+- story mode starts on the train, lands on map 169 after em's creation
+- ask bubba board fits many topics, first line no longer skipped
+- party members step aside when pushed, walk-through if they cannot
+- title screen always opens on the new world symphony
+- update notice hidden for builds at or below this version
+- talk option in story dialogue, bubba and em voiced apart
+
+0.6.0a MAJOR UPDATE
 - fix diving suit animation
 - camper interior backdrop reframed, parked-vehicle exit offers the biome
 - replaced broken npc sprites with goblin originals

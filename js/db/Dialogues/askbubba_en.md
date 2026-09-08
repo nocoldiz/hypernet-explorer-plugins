@@ -1,21 +1,4 @@
-<!--
-Voice rules for this script (writing note, not dialogue)
 
-BUBBA
-- Do not rewrite his sentences, keep the phrasing as written
-- Ordinary contractions only, isn't, won't, they're, they'll, you'll, it's
-- No dropped g on -ing, no drawl, no Texan contractions
-- He says "you" and "your", never "ya" or "yer"
-- He says "of" and "about", never "o'" or "about"
-- He says "them", never "'em"
-- He calls Em "dear"
-
-EM
-- Do not rewrite her sentences either, same contraction-only pass
-- She is dry and literate, full words, no dropped g and no drawl
-- She keeps her contractions ordinary, I'm, don't, haven't, can't
-- She never picks up Bubba's accent
--->
 ------------------------------------------------------------------------------------------------------------
 new_year_eve
 New year eve
@@ -46,6 +29,7 @@ Me with love and you with murder! Eheh.
 em_name
 My name
 
+
 Em:
 So my name is Em...like the...Em Drive?
 
@@ -71,6 +55,7 @@ Judicial Ghosts
 
 Em:
 What is a judicial ghost?
+
 Bubba:
 Think of them as cops that can phase through walls and they move in a straight line toward your position.
 They'll pursue endlessly until they touch you.
@@ -94,3 +79,15 @@ Why is so hard?
 Bubba:
 [Kessler syndrome] that the whole planet is sick with darlin'.
 It all started when the Envisat satellite crashed into another during the Y2K event.
+Anyway just go to [Greenwitch space center] and ask, they take volunteers.
+------------------------------------------------------------------------------------------------------------
+needs
+Needs
+
+Bubba:
+Use the [Cooking] option in the menu to cook.
+If you are dirty wash yourself by swimming or using a bathroom.
+To socialize just talk to me or other fellas down the road.
+To have fun just punch some holes in monsters and play minigames.
+To sleep use the [Sleep] option in main menu, set up a  [[Camp]] in world map by pressing [[Continue]] or rent a room in a tavern.
+------------------------------------------------------------------------------------------------------------

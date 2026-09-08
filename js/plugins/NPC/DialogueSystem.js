@@ -1222,7 +1222,17 @@ Imported.DialogueSystem = true;
         } catch (err) { return ''; }
     }
 
+    // Whose name is on the tag beside the box. In an exchange (a story scene,
+    // an NPC talk) nothing is ever written into $gameMessage's speaker: the
+    // name travels with the bust, so the tag is read first and the message's
+    // own speaker only where there is no bust to read.
     function _voiceSpeakerName() {
+        try {
+            const bm = SceneManager._scene && SceneManager._scene._bustManager;
+            const nm = bm && bm.nameWindow;
+            const shown = nm && nm._characterName ? String(nm._characterName).trim() : '';
+            if (shown) return shown;
+        } catch (err) { /* no bust manager */ }
         try {
             if ($gameMessage && $gameMessage.speakerName) return $gameMessage.speakerName() || '';
         } catch (err) { /* no message */ }
@@ -1232,7 +1242,10 @@ Imported.DialogueSystem = true;
     // The travelling cast speak in a story scene, where there is no map event
     // and so no sheet to read a pitch off: their voice is written here instead
     // of hashed off their name, so Bubba always answers low.
-    const VOICE_CAST_PITCH = { Bubba: 56, Em: 126 }; // i18n-ignore: actor names matched at runtime
+    // Bubba sits at the bottom of what the blips can carry: against the Low
+    // tier's nominal 85 his 43 plays back at the SE pitch floor, which is the
+    // deepest a letter voice goes.
+    const VOICE_CAST_PITCH = { Bubba: 43, Em: 126 }; // i18n-ignore: actor names matched at runtime
 
     // The base pitch of whoever is speaking: the written cast first, the
     // catalogued sheet after that, hashed last.
@@ -1728,18 +1741,46 @@ Imported.DialogueSystem = true;
         let cell = root;
         let left = 0;
         const sections = grid ? (grid.groups || []).slice() : [];
+        // A group marked `side` is not another bank down the board: it is the
+        // narrow column standing to the right of the topics (the sheet's own
+        // switches), so the board is split in two columns the moment one of
+        // them asks for it.
+        let mainCol  = root;
+        let asideCol = null;
+        if (grid && sections.some(g => g.side)) {
+            const cols = document.createElement('div');
+            cols.className = 'html-choice-cols';
+            mainCol  = document.createElement('div');
+            asideCol = document.createElement('div');
+            mainCol.className  = 'html-choice-col';
+            asideCol.className = 'html-choice-col html-choice-aside';
+            cols.appendChild(mainCol);
+            cols.appendChild(asideCol);
+            root.appendChild(cols);
+        }
         const nextCell = () => {
             if (!grid) return;
             while (left <= 0 && sections.length) {
                 const group  = sections.shift();
+                const column = group.side && asideCol ? asideCol : mainCol;
                 const header = document.createElement('div');
                 header.className   = 'html-choice-group';
                 header.textContent = group.title;
-                root.appendChild(header);
+                column.appendChild(header);
                 cell = document.createElement('div');
                 cell.className = 'html-choice-rows';
-                cell.style.gridTemplateColumns = `repeat(${Math.max(1, grid.cols || 2)}, minmax(0, 1fr))`;
-                root.appendChild(cell);
+                // Equal fractions of a column that is only as wide as its own
+                // content collapse to one word per line, which is what the
+                // board looked like once there were more than a handful of
+                // topics. The columns are sized to what is written in them
+                // instead, and never asked to hold more entries than they fit.
+                const cols = group.side ? 1
+                    : Math.max(1, Math.min(group.count || 1, grid.cols || 2));
+                // minmax(0, max-content): a track is as wide as what is written
+                // in it and no wider, but it may still be squeezed rather than
+                // spilling out of its column over the one beside it.
+                cell.style.gridTemplateColumns = `repeat(${cols}, minmax(0, max-content))`;
+                column.appendChild(cell);
                 left = group.count;
             }
             if (left <= 0) cell = root; // the tail: Cancel
@@ -1856,7 +1897,10 @@ Imported.DialogueSystem = true;
             s.width = (this.width * sc.sx) + 'px';
         }
 
-        const scaledFont = Math.round(((typeof this.standardFontSize === 'function') ? this.standardFontSize() : 26) * sc.sy * 0.85);
+        // The board carries far more entries than a plain choice list, so it is
+        // written a size down from one.
+        const baseFont   = (typeof this.standardFontSize === 'function') ? this.standardFontSize() : 26;
+        const scaledFont = Math.round(baseFont * sc.sy * (this._htmlChoiceGrid ? 0.62 : 0.85));
         const idx        = this._index >= 0 ? this._index : 0;
         if (this._htmlChoiceOriginalIndices) {
             this._htmlChoiceEls.forEach((el, vi) => {
@@ -2292,16 +2336,38 @@ Imported.DialogueSystem = true;
     // Every exchange is staged the way a story scene is: both speakers stand
     // on either side of the box for the whole of it and the one who is not
     // talking is dimmed, rather than one portrait appearing at a time.
+    // A scene can be raised while the box that raised it is still on screen:
+    // the Ask board runs its callback with the choice window still open, and a
+    // plugin command runs with the event's own message still closing. The
+    // clear that follows that box would swallow the first line of the scene,
+    // which is why the opening line used to be missing. So the exchange is
+    // armed but not spoken until the message is free, and the exchange flags
+    // are only raised then, so the closing box cannot advance the queue on its
+    // way out either.
+    const EXCHANGE_WAIT_MS    = 16;
+    const EXCHANGE_WAIT_TRIES = 180; // ~3 seconds, then it plays regardless
+
     function startNPCExchange(steps, story) {
         const scene = SceneManager._scene;
         const bm    = scene && scene._bustManager;
         if (!bm || !steps || !steps.length) return false;
-        bm.setStoryMode(true);
-        bm.setStoryCast(exchangeCast(steps));
-        bm.exchangeMode      = true;
-        bm.batchDialogueMode = true;
-        _npcExchangeQueue    = paginateSteps(steps);
-        advanceNPCExchange();
+        _npcExchangeQueue = paginateSteps(steps);
+        const begin = tries => {
+            const stage = SceneManager._scene && SceneManager._scene._bustManager;
+            if (!stage) { _npcExchangeQueue = []; return; }
+            const busy = typeof $gameMessage !== 'undefined' && $gameMessage
+                && typeof $gameMessage.isBusy === 'function' && $gameMessage.isBusy();
+            if (busy && tries < EXCHANGE_WAIT_TRIES) {
+                setTimeout(() => begin(tries + 1), EXCHANGE_WAIT_MS);
+                return;
+            }
+            stage.setStoryMode(true);
+            stage.setStoryCast(exchangeCast(steps));
+            stage.exchangeMode      = true;
+            stage.batchDialogueMode = true;
+            advanceNPCExchange();
+        };
+        begin(0);
         return true;
     }
 
@@ -2943,6 +3009,19 @@ Imported.DialogueSystem = true;
     const STORY_ASK_TAG    = /<Bubba:\s*([^>]*)>/i; // i18n-ignore: map note tag
     const STORY_ASK_SWITCH = 75;                    // story mode
     const STORY_ASK_COLS   = 2;                     // columns of the grid
+    const STORY_ASK_MAX_COLS = 4;                   // as wide as the board goes
+
+    // The board grows sideways rather than downwards: a couple of topics stand
+    // in two columns, a script that has grown a long bank of them is dealt out
+    // over as many as four, so the whole of it is on screen at once whatever
+    // the writer adds.
+    function storyAskCols(groups) {
+        const most = (groups || []).reduce(
+            (n, g) => (g.side ? n : Math.max(n, g.scenes ? g.scenes.length : 0)), 0);
+        if (most <= 4)  return STORY_ASK_COLS;
+        if (most <= 12) return 3;
+        return STORY_ASK_MAX_COLS;
+    }
 
     function storyAskNote(mapId) {
         const id = mapId || (typeof $gameMap !== 'undefined' && $gameMap ? $gameMap.mapId() : 0);
@@ -2991,7 +3070,7 @@ Imported.DialogueSystem = true;
         const sheet  = storyAskToggles();
         if (fixed.length) groups.push({ title: T('Dialogue.askGroupFixed'), scenes: fixed });
         if (here.length)  groups.push({ title: T('Dialogue.askGroupHere'),  scenes: here  });
-        if (sheet.length) groups.push({ title: T('Dialogue.askGroupSheet'), scenes: sheet });
+        if (sheet.length) groups.push({ title: T('Dialogue.askGroupSheet'), scenes: sheet, side: true });
         return groups;
     }
 
@@ -3055,6 +3134,22 @@ Imported.DialogueSystem = true;
         bm.hideBusts();
     }
 
+    // A toggle flipped from the board brings the board straight back, so both
+    // halves of the sheet can be set in one visit and the entry that was picked
+    // is redrawn saying what it now stands on. The old window has to be all the
+    // way shut first: opening over a message that is still closing leaves the
+    // two boards drawn on top of each other.
+    function reopenStoryAsk(mapId) {
+        const tick = () => {
+            const busy = typeof $gameMessage !== 'undefined' && $gameMessage &&
+                (($gameMessage.isBusy && $gameMessage.isBusy()) ||
+                 ($gameMessage.isChoice && $gameMessage.isChoice()));
+            if (busy) { setTimeout(tick, 16); return; }
+            openStoryAsk(mapId);
+        };
+        setTimeout(tick, 16);
+    }
+
     // The grid itself: the fixed topics under their heading, this place's
     // under theirs, Cancel on its own line at the end.
     function openStoryAsk(mapId) {
@@ -3064,8 +3159,8 @@ Imported.DialogueSystem = true;
         const choices = scenes.map(sc => sc.title);
         choices.push(T('Dialogue.askCancel'));
         setChoiceGrid({
-            cols:   STORY_ASK_COLS,
-            groups: groups.map(g => ({ title: g.title, count: g.scenes.length })),
+            cols:   storyAskCols(groups),
+            groups: groups.map(g => ({ title: g.title, count: g.scenes.length, side: !!g.side })),
         });
         storyAskStage(storyAskPartner());
         $gameMessage.setChoices(choices, 0, choices.length - 1);
@@ -3076,12 +3171,41 @@ Imported.DialogueSystem = true;
             // back up, so both halves of the sheet can be set in one visit.
             if (picked.run) {
                 try { picked.run(); } catch (err) { /* no legend */ }
-                setTimeout(() => openStoryAsk(mapId), 0);
+                reopenStoryAsk(mapId);
                 return;
             }
             playStoryScript(picked.file, picked.name);
         });
         return true;
+    }
+
+    // The other one of the pair, as an actor in the party.
+    function storyAskPartnerActor() {
+        const name = storyAskPartner();
+        if (!name) return null;
+        try {
+            return $gameParty.members().find(a => a && a.name && a.name().trim() === name) || null;
+        } catch (err) { return null; }
+    }
+
+    // Talk is the two of them saying something to each other that is not a
+    // story beat: the ordinary party discussion, put on the same stage the Ask
+    // uses, with the leader on the left and the one being talked to on the
+    // right. Answers false when there is no bank to draw a discussion from.
+    function storyAskTalk() {
+        const leader  = (() => { try { return $gameParty.leader(); } catch (err) { return null; } })();
+        const partner = storyAskPartnerActor();
+        if (!leader || !partner) return false;
+        const beats = window.PartyBanter?.discussion?.([leader, partner]);
+        if (!beats || !beats.length) return false;
+        const cast  = [leader, partner];
+        const steps = beats.map(beat => {
+            const actor = cast[beat.who] || leader;
+            const step  = playerStep(actor, beat.text);
+            step.side   = actor === leader ? 'left' : 'right';
+            return step;
+        });
+        return startNPCExchange(steps, true);
     }
 
     // Bubba walking with the party is not an event: talking to him at the
@@ -3093,6 +3217,7 @@ Imported.DialogueSystem = true;
     function openStoryAskMenu(actorId, mapId) {
         if (!storyAskGroups(mapId).some(g => g.scenes.length > 0)) return false;
         const choices = [
+            T('Dialogue.askTalk'),
             storyAskVerb(),
             T('Dialogue.askEmpathize'),
             T('Dialogue.askCancel'),
@@ -3100,8 +3225,11 @@ Imported.DialogueSystem = true;
         storyAskStage(storyAskPartner());
         $gameMessage.setChoices(choices, 0, choices.length - 1);
         $gameMessage.setChoiceCallback(choice => {
-            if (choice === 0) setTimeout(() => openStoryAsk(mapId), 0);
-            else if (choice === 1) {
+            // Talk is played where it stands; if the party has nothing to say
+            // the cast walks off rather than leaving two portraits waiting.
+            if (choice === 0) setTimeout(() => { if (!storyAskTalk()) storyAskUnstage(); }, 0);
+            else if (choice === 1) setTimeout(() => openStoryAsk(mapId), 0);
+            else if (choice === 2) {
                 storyAskUnstage();
                 setTimeout(() => window.NPCEmpathize?.openForActor?.(actorId), 0);
             } else storyAskUnstage();
@@ -3123,6 +3251,7 @@ Imported.DialogueSystem = true;
         askScenes:  storyAskScenes,
         askFixed:   storyAskFixedScenes,
         askGroups:  storyAskGroups,
+        askCols:    storyAskCols,
         askVerb:    storyAskVerb,
         askPartner: storyAskPartner,
         canAsk:     canAskStory,
@@ -3132,6 +3261,7 @@ Imported.DialogueSystem = true;
         pendingGrid: () => pendingChoiceGrid,
         // The Ask / Empathize / Cancel menu a party-member Bubba offers.
         askMenu:   openStoryAskMenu,
+        askTalk:   storyAskTalk,
         // The sheet's own switches, offered in the grid beside the topics.
         askToggles: storyAskToggles,
         noticeModeLabel: storyNoticeModeLabel,

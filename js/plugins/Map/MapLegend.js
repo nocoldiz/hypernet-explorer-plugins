@@ -809,10 +809,11 @@
   }
 
   // Folded is remembered on $gameSystem, so a save reopens the way it was
-  // left, and a fresh one opens folded: the sheet is asked for, not imposed.
+  // left, and a fresh one opens unfolded: the first notice of a place has to
+  // be readable without the party knowing about the fold key first.
   function isFolded() {
-    if (!$gameSystem) return true;
-    return $gameSystem._mapLegendFolded !== false;
+    if (!$gameSystem) return false;
+    return $gameSystem._mapLegendFolded === true;
   }
 
   function toggleFold() {
@@ -883,9 +884,14 @@
   // The rules themselves live in css/theme.css under "The map legend"; nothing
   // here builds a stylesheet at runtime.
 
+  // Two panels, not one sheet: what the place says stands in the top right
+  // corner where the party reads it, and the controls checklist is its own
+  // window down the left edge, which is where a list that long can stand
+  // without covering the map the notice is about.
   const SHEET_ID = "map-legend";
+  const CONTROLS_ID = "map-legend-controls";
   const SHEET_WIDTH = 336;   // game pixels
-  const SHEET_MARGIN = 16;   // game pixels, from the top right corner
+  const SHEET_MARGIN = 16;   // game pixels, from the corner it is pinned to
 
   function canvasMetrics() {
     const canvas = document.getElementById("gameCanvas");
@@ -899,109 +905,178 @@
   class LegendSheet {
     constructor() {
       this._el = null;
+      this._ctl = null;
       this._signature = "";
+      this._ctlSignature = "";
     }
 
-    element() {
-      if (this._el && document.body.contains(this._el)) return this._el;
-      // The page survives Title <-> Map transitions, so a sheet left behind by
+    // One builder for both panels: they wear the same parchment (.mlg-sheet)
+    // and differ only in the corner they are pinned to.
+    _panel(id, prop, cls) {
+      if (this[prop] && document.body.contains(this[prop])) return this[prop];
+      // The page survives Title <-> Map transitions, so a panel left behind by
       // a previous run is purged rather than layered under a new one.
-      document.querySelectorAll("#" + SHEET_ID).forEach((e) => e.remove());
+      document.querySelectorAll("#" + id).forEach((e) => e.remove());
       const el = document.createElement("div");
-      el.id = SHEET_ID;
+      el.id = id;
+      el.className = cls;
       document.body.appendChild(el);
-      this._el = el;
-      this._signature = "";
+      this[prop] = el;
+      if (prop === "_el") this._signature = ""; else this._ctlSignature = "";
       return el;
     }
 
+    element() {
+      return this._panel(SHEET_ID, "_el", "mlg-sheet");
+    }
+
+    controlsElement() {
+      return this._panel(CONTROLS_ID, "_ctl", "mlg-sheet mlg-controls");
+    }
+
+    _away(el) {
+      if (!el) return;
+      el.classList.remove("mlg-shown");
+      el.classList.add("mlg-away");
+    }
+
     hide() {
-      if (!this._el) return;
-      this._el.classList.remove("mlg-shown");
-      this._el.classList.add("mlg-away");
+      this._away(this._el);
+      this._away(this._ctl);
     }
 
     destroy() {
-      if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
+      for (const el of [this._el, this._ctl]) {
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+      }
       this._el = null;
+      this._ctl = null;
       this._signature = "";
+      this._ctlSignature = "";
     }
 
-    // The sheet is rebuilt only when what it says changes, so a walking party
-    // costs one string compare a frame.
-    draw(notice, rows, state) {
-      const el = this.element();
-      const lit = litRecord();
-      const folded = !!state.folded;
-      // The device is part of the signature: plugging a pad in, or reaching
-      // for the keys again, changes what the rows say and has to redraw them.
-      const signature = JSON.stringify([
-        notice ? [notice.key, notice.title, notice.text] : null,
-        rows.map((entry) => [entry.id, !!lit[entry.id]]),
-        folded, !!state.foldable, !!state.padMode, state.foldChip,
-      ]);
-      if (signature !== this._signature) {
-        this._signature = signature;
-        el.innerHTML = this._html(notice, rows, lit, state);
-        el.classList.toggle("mlg-folded", folded);
-      }
+    // Fading in on the frame after a panel is attached, so the first notice of
+    // a map arrives rather than snapping into place.
+    _show(el, prop) {
       el.classList.remove("mlg-away");
-      this.position();
-      // Fading in on the frame after the sheet is attached, so the first
-      // notice of a map arrives rather than snapping into place.
       if (!el.classList.contains("mlg-shown")) {
         requestAnimationFrame(() => {
-          if (this._el === el) el.classList.add("mlg-shown");
+          if (this[prop] === el) el.classList.add("mlg-shown");
         });
       }
     }
 
-    // Folded, the sheet is its title and nothing else: the paragraph and the
-    // controls checklist are both put away, and only the [H] chip says they
-    // are still there.
-    _html(notice, rows, lit, state) {
-      const parts = [];
-      // A sheet folded over nothing but the checklist says everything it has
-      // to say on the fold line itself, so it grows no title of its own.
-      const bareFold = !notice && !!state.folded;
-      if (notice) parts.push(`<div class="mlg-title">${noticeHtml(notice.title)}</div>`);
-      if (!state.folded) {
-        if (notice && notice.text) {
-          // The notices are Bubba reading the place to the party, so the
-          // paragraph is signed with his name rather than written as a sign.
-          parts.push(`<div class="mlg-text">` +
-            `<span class="mlg-speaker">${escapeHtml(T("MapLegend.speaker"))}:</span> ` +
-            `${noticeHtml(notice.text)}</div>`);
+    // Each panel is rebuilt only when what it says changes, so a walking party
+    // costs two string compares a frame.
+    draw(notice, rows, state) {
+      const lit = litRecord();
+      const folded = !!state.folded;
+
+      // The notice, top right. Folded it is its title alone, and with nothing
+      // to say the panel is off the screen rather than standing empty.
+      const noticeSig = JSON.stringify([
+        notice ? [notice.key, notice.title, notice.text] : null,
+        folded, !!state.foldable, state.foldChip,
+      ]);
+      if (notice) {
+        const el = this.element();
+        if (noticeSig !== this._signature) {
+          this._signature = noticeSig;
+          el.innerHTML = this._noticeHtml(notice, state);
+          el.classList.toggle("mlg-folded", folded);
         }
-        if (rows.length) {
-          if (parts.length) parts.push('<div class="mlg-rule"></div>');
-          parts.push(`<div class="mlg-heading">${escapeHtml(T("MapLegend.controlsHeading"))}</div>`);
-          for (const entry of rows) {
-            const cls = lit[entry.id] ? "mlg-row mlg-lit" : "mlg-row";
-            const face = rowFace(entry);
-            const binds = [];
-            if (face.keys) binds.push(`<span class="mlg-keys">${escapeHtml(face.keys)}</span>`);
-            for (const token of face.pads) {
-              binds.push(`<span class="ui-chip mlg-chip">${escapeHtml(token)}</span>`);
-            }
-            parts.push(
-              `<div class="${cls}">` +
-              `<span class="mlg-label">${escapeHtml(face.label)}</span>` +
-              `<span class="mlg-binds">${binds.join("")}</span>` +
-              `</div>`
-            );
-          }
+        this._show(el, "_el");
+      } else {
+        this._away(this._el);
+      }
+
+      // The checklist, down the left. Folded it is put away whole: the fold
+      // line that brings it back rides on whichever panel is still up.
+      const ctlSig = JSON.stringify([
+        rows.map((entry) => [entry.id, !!lit[entry.id]]),
+        folded, !!state.foldable, !!state.padMode, state.foldChip, !!notice,
+      ]);
+      const wantControls = rows.length || (state.foldable && !notice);
+      if (wantControls) {
+        const ctl = this.controlsElement();
+        if (ctlSig !== this._ctlSignature) {
+          this._ctlSignature = ctlSig;
+          ctl.innerHTML = this._controlsHtml(rows, lit, state, !!notice);
+          ctl.classList.toggle("mlg-folded", folded);
         }
+        this._show(ctl, "_ctl");
+      } else {
+        this._away(this._ctl);
+      }
+
+      this.position();
+    }
+
+    // The fold line: the key that puts the panels away, and what pressing it
+    // does next.
+    _foldHtml(hint, state) {
+      return '<div class="mlg-fold">' +
+        `<span class="ui-chip mlg-chip">${escapeHtml(state.foldChip || FOLD_KEY_LABEL)}</span>` +
+        `<span>${escapeHtml(hint)}</span></div>`;
+    }
+
+    // Folded, the notice is its title and nothing else, and only the [H] chip
+    // says the rest is still there.
+    _noticeHtml(notice, state) {
+      const parts = [`<div class="mlg-title">${noticeHtml(notice.title)}</div>`];
+      if (!state.folded && notice.text) {
+        // The notices are Bubba reading the place to the party, so the
+        // paragraph is signed with his name rather than written as a sign.
+        parts.push(`<div class="mlg-text">` +
+          `<span class="mlg-speaker">${escapeHtml(T("MapLegend.speaker"))}:</span> ` +
+          `${noticeHtml(notice.text)}</div>`);
       }
       if (state.foldable) {
-        const hint = bareFold
-          ? T("MapLegend.controlsHeading")
-          : T(state.folded ? "MapLegend.unfoldHint" : "MapLegend.foldHint");
-        parts.push('<div class="mlg-fold">' +
-          `<span class="ui-chip mlg-chip">${escapeHtml(state.foldChip || FOLD_KEY_LABEL)}</span>` +
-          `<span>${escapeHtml(hint)}</span></div>`);
+        parts.push(this._foldHtml(
+          T(state.folded ? "MapLegend.unfoldHint" : "MapLegend.foldHint"), state));
       }
       return parts.join("");
+    }
+
+    // The checklist window. It carries the fold line itself only when there is
+    // no notice beside it to carry one, so the key is never written twice.
+    _controlsHtml(rows, lit, state, hasNotice) {
+      const parts = [];
+      // A panel folded over nothing but the checklist says everything it has
+      // to say on the fold line itself, so it grows no heading of its own.
+      const bareFold = !!state.folded;
+      if (!state.folded && rows.length) {
+        parts.push(`<div class="mlg-heading">${escapeHtml(T("MapLegend.controlsHeading"))}</div>`);
+        for (const entry of rows) {
+          const cls = lit[entry.id] ? "mlg-row mlg-lit" : "mlg-row";
+          const face = rowFace(entry);
+          const binds = [];
+          if (face.keys) binds.push(`<span class="mlg-keys">${escapeHtml(face.keys)}</span>`);
+          for (const token of face.pads) {
+            binds.push(`<span class="ui-chip mlg-chip">${escapeHtml(token)}</span>`);
+          }
+          parts.push(
+            `<div class="${cls}">` +
+            `<span class="mlg-label">${escapeHtml(face.label)}</span>` +
+            `<span class="mlg-binds">${binds.join("")}</span>` +
+            `</div>`
+          );
+        }
+      }
+      if (state.foldable && !hasNotice) {
+        const hint = bareFold
+          ? T("MapLegend.controlsHeading")
+          : T("MapLegend.foldHint");
+        parts.push(this._foldHtml(hint, state));
+      }
+      return parts.join("");
+    }
+
+    // Stepping back under a portrait: see bustOnScreen above.
+    setBehindBusts(behind) {
+      for (const el of [this._el, this._ctl]) {
+        if (el) el.classList.toggle("mlg-behind", !!behind);
+      }
     }
 
     // Pinned by its right edge rather than its left, so a folded sheet no
@@ -1011,14 +1086,32 @@
     // the four numbers are handed to the stylesheet as custom properties and
     // the rule in theme.css does the drawing.
     position() {
-      const el = this._el;
       const m = canvasMetrics();
-      if (!el || !m) return;
-      el.style.setProperty("--mlg-right", (window.innerWidth - m.right + SHEET_MARGIN * m.sx) + "px");
-      el.style.setProperty("--mlg-top", (m.oy + SHEET_MARGIN * m.sy) + "px");
-      el.style.setProperty("--mlg-sx", m.sx);
-      el.style.setProperty("--mlg-sy", m.sy);
+      if (!m) return;
+      // The notice hangs off the canvas's right edge, the checklist off its
+      // left one and off the floor: the party HUD owns the top left corner,
+      // and a list this long has to grow upwards to stay clear of it.
+      for (const el of [this._el, this._ctl]) {
+        if (!el) continue;
+        el.style.setProperty("--mlg-right", (window.innerWidth - m.right + SHEET_MARGIN * m.sx) + "px");
+        el.style.setProperty("--mlg-top", (m.oy + SHEET_MARGIN * m.sy) + "px");
+        el.style.setProperty("--mlg-left", (m.ox + SHEET_MARGIN * m.sx) + "px");
+        el.style.setProperty("--mlg-bottom",
+          (window.innerHeight - m.oy - m.sy * Graphics.height + SHEET_MARGIN * m.sy) + "px");
+        el.style.setProperty("--mlg-sx", m.sx);
+        el.style.setProperty("--mlg-sy", m.sy);
+      }
     }
+  }
+
+  // A portrait standing on the canvas owns the screen while it speaks. The
+  // panels are DOM and the busts are drawn into the game canvas, so they can
+  // never truly be layered under one: they step back instead, faint enough for
+  // the portrait to read through them, and come back when it leaves.
+  function bustOnScreen() {
+    const scene = typeof SceneManager !== "undefined" && SceneManager._scene;
+    const mgr = scene && scene._bustManager;
+    return !!(mgr && mgr.bustIsVisible);
   }
 
   const sheet = new LegendSheet();
@@ -1099,6 +1192,7 @@
     sheet.draw(notice, rows, {
       folded, foldable: foldable(), padMode: padMode(), foldChip: foldChipLabel(),
     });
+    sheet.setBehindBusts(bustOnScreen());
   }
 
   // The fold is spliced into the hotkey table as the map starts, which is

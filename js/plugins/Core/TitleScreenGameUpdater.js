@@ -829,6 +829,18 @@
         // version has been crossed already, whatever the install record says,
         // and the whole-game download it asks for is not owed any more.
         majorCrossedByVersion(commit) {
+            return this.versionCaughtUp(commit);
+        },
+
+        // Whether a build was published under a version this copy already runs
+        // or has passed. CHANGELOG.txt names the version of the files sitting
+        // here, so a build whose own name reads as the same version, or an
+        // older one, has nothing left to offer however the install record
+        // reads: the launch notice stays silent for it, and a major update at
+        // that version is not owed a whole-game download any more. A build
+        // whose name is not a version at all (the ordinary "fix: ui") cannot
+        // be placed this way and is always offered.
+        versionCaughtUp(commit) {
             const own = this.gameVersion();
             if (!own || !commit) return false;
             const theirs = this._versionName(messageTitle(commit.message)) ||
@@ -1157,9 +1169,16 @@
             // means downloading the whole game again afterwards.
             const major = (plan && plan.changed.length) ? this.majorAhead(latest.sha) : null;
 
+            // A build published under the version this copy already runs is
+            // not an update, whatever its files say: a copy that downloaded
+            // 0.6.0a whole still differs from the branch in generated and
+            // rebuilt files, and offering it its own version back reads as a
+            // second major update that is never done with.
+            const caughtUp = this.versionCaughtUp(latest);
+
             this._auto = {
                 ran: true,
-                available: !!(plan && plan.changed.length),
+                available: !!(plan && plan.changed.length) && !caughtUp,
                 latest: latest.sha,
                 latestDate: latest.date,
                 latestBuild: latestBuild,

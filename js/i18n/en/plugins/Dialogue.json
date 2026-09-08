@@ -1,6 +1,7 @@
 {
   "newTopic": "New topic",
   "learnedTopic": "You learned about {topic}",
+  "askTalk": "Talk",
   "askAsk": "Ask",
   "askEmpathize": "Empathize",
   "askCancel": "Cancel",

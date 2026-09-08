@@ -807,7 +807,8 @@
     const WORLD_UI_IDS = [
         'html-toast-stack',            // Core/ParchmentToast.js
         'party-hud',                   // UI/PartyHud.js
-        'map-legend'                   // Map/MapLegend.js
+        'map-legend',                  // Map/MapLegend.js, the notice
+        'map-legend-controls'          // Map/MapLegend.js, the checklist
     ];
     // Water. A walker wades until the bottom drops away from under them, and
     // swims from there: on the surface with their head out, or under it, where

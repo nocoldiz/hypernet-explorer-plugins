@@ -357,6 +357,18 @@
     // How long somebody the leader walked into stands still after stepping out
     // of the way, so they do not drift back under the player's feet.
     const NUDGE_HOLD = 45;
+    // Nobody steps aside for the first push. Walking into a member once only
+    // presses against them; they move on the SECOND separate attempt, so the
+    // party reads as bodies that have to be asked twice rather than doors.
+    // Nobody gives way the instant they are touched. Keep walking into them for
+    // this long and they step out of the way; keep at it this much longer and
+    // they stop being a body at all, so a member who has nowhere to step is
+    // never the reason the leader cannot get past.
+    const NUDGE_ASIDE_HOLD   = 24;   // 0.4s of pushing before they move
+    const NUDGE_THROUGH_HOLD = 48;   // 0.8s before the leader walks through them
+    // Frames of not pushing that end a push: a held direction key calls in
+    // every frame, so anything longer than this is a fresh shove.
+    const NUDGE_GAP = 2;
     // "Wait for me!" is for the moment they are left behind, not for every
     // sprint: one member says it, rarely, and not again for a good while.
     const RECALL_CRY_ODDS = 0.3;
@@ -4265,7 +4277,10 @@
         blocksLeader(x, y) {
             if (!this.active()) return false;
             if ($gamePlayer.isInVehicle()) return false;
-            if (!this.followerAt(x, y)) return false;
+            const at = this.followerAt(x, y);
+            if (!at) return false;
+            // Leant on long enough, they stop being a wall (see pushedThrough).
+            if (this.pushedThrough(at)) return false;
             for (const d of [2, 4, 6, 8]) {
                 const nx = $gameMap.roundXWithDirection($gamePlayer.x, d);
                 const ny = $gameMap.roundYWithDirection($gamePlayer.y, d);
@@ -4277,19 +4292,23 @@
             return false;
         },
 
-        // Walking into somebody. A member (or the pet) standing where the
+        // Walking into somebody. A member or the companion standing where the
         // leader wants to go steps out of the way instead of being a wall:
         // sideways first, so they clear the lane the leader is walking down,
         // then on ahead, then back the way the leader came. Whatever they were
         // doing is dropped, and they hold still for a beat afterwards so they
-        // do not wander straight back onto the tile.
+        // do not wander straight back onto the tile. They are not a door,
+        // though: it takes a moment of pushing before they budge, unless the
+        // leader is running, and a moment more before they can be walked
+        // through (see holdAgainst).
         nudgeAside(d) {
             if (!this.active() || !d) return false;
             if ($gamePlayer.isInVehicle()) return false;
             const x = $gameMap.roundXWithDirection($gamePlayer.x, d);
             const y = $gameMap.roundYWithDirection($gamePlayer.y, d);
-            const f = this.followerAt(x, y);
+            const f = this.followerAt(x, y) || this.petAt(x, y);
             if (!f || f.isMoving()) return false;
+            if (!this.holdAgainst(f)) return false;
             const side = (d === 2 || d === 8) ? [4, 6] : [2, 8];
             if (Math.random() < 0.5) side.reverse();
             for (const nd of side.concat([d, 10 - d])) {
@@ -4299,7 +4318,8 @@
                 if (!f.canPass(f.x, f.y, nd)) continue;
                 f.moveStraight(nd);
                 if (!f.isMovementSucceeded()) continue;
-                const s = this.stateOf(f);
+                // The companion keeps no errand of its own to drop.
+                const s = this.isPet(f) ? null : this.stateOf(f);
                 if (s) {
                     this.clearGoal(s);
                     s.wait = Math.max(s.wait || 0, NUDGE_HOLD);
@@ -4307,6 +4327,45 @@
                 return true;
             }
             return false;
+        },
+
+        // How long the leader has been leaning on one body. A held direction key
+        // calls in every frame; letting go, turning away or pushing somebody
+        // else starts the count over. Returns true once the push has lasted
+        // long enough for them to give way, which is at once at a run.
+        holdAgainst(f) {
+            const now = Graphics.frameCount;
+            if (this._bumpOn !== f || now - (this._bumpAt || 0) > NUDGE_GAP) {
+                this._bumpOn = f;
+                this._bumpHeld = 0;
+            } else {
+                this._bumpHeld = (this._bumpHeld || 0) + (now - this._bumpAt);
+            }
+            this._bumpAt = now;
+            if ($gamePlayer && $gamePlayer.isDashing && $gamePlayer.isDashing()) return true;
+            return this._bumpHeld >= NUDGE_ASIDE_HOLD;
+        },
+
+        // ...and once it has lasted twice as long, they are no longer a body at
+        // all. A member with nowhere to step aside to (a corridor, a doorway, a
+        // corner) must never pen the leader in, so keeping the key held walks
+        // straight through them.
+        pushedThrough(f) {
+            if (!f || this._bumpOn !== f) return false;
+            if (Graphics.frameCount - (this._bumpAt || 0) > NUDGE_GAP) return false;
+            return (this._bumpHeld || 0) >= NUDGE_THROUGH_HOLD;
+        },
+
+        // The companion at heel, on one tile. It is walked through by everybody,
+        // so it is not a body, but it is still asked to get out of the way.
+        petAt(x, y) {
+            if (!$gamePlayer || !$gamePlayer.followers()) return null;
+            for (const f of $gamePlayer.followers().data()) {
+                if (!this.isPet(f)) continue;
+                if (!f.isVisible() || f.isTransparent()) continue;
+                if (f.pos(x, y)) return f;
+            }
+            return null;
         },
 
         // The same question for a member: the leader is a body to them too.

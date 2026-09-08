@@ -299,6 +299,20 @@
   // --- State ---
   let companionsVisible = true;
   let lastSwimSoundFrame = 0;
+  // Entering and leaving the water is heard once, however many swimmers cross
+  // at the same moment: the player, the followers and a split-screen partner
+  // all enter on the same frame, and playing one splash each stacked them into
+  // a wall of noise. One splash per sound per short window, at a volume that
+  // sits under the stroke loop rather than over it.
+  const swimSplashFrames = {};
+  function playSwimSplash(name) {
+    if (!name) return;
+    const frame = Graphics.frameCount;
+    if (swimSplashFrames[name] !== undefined &&
+        frame - swimSplashFrames[name] < 20) return;
+    swimSplashFrames[name] = frame;
+    AudioManager.playSe({ name: name, volume: 25, pitch: 100, pan: 0 });
+  }
   let lastClimbSoundFrame = 0;
   let reflectionSprites = new Map();
   let reflectionContainer = null;
@@ -621,9 +635,7 @@
       // canPass must not hold them on the bridge as they push off into it.
       character._onBridge = false;
 
-      if (Config.sounds.startSwim) {
-        AudioManager.playSe({ name: Config.sounds.startSwim, volume: 45, pitch: 100, pan: 0 });
-      }
+      playSwimSplash(Config.sounds.startSwim);
 
       // Issue #153: swimming washes the swimmer clean. Cleanliness is the
       // hygiene need (TimeDateSystem), and it comes off a stroke at a time now
@@ -805,9 +817,7 @@
       // the next crossing.
       this.resetSwimStamina(character);
 
-      if (Config.sounds.stopSwim) {
-        AudioManager.playSe({ name: Config.sounds.stopSwim, volume: 45, pitch: 100, pan: 0 });
-      }
+      playSwimSplash(Config.sounds.stopSwim);
 
       this.restoreOriginalAppearance(character);
 
@@ -1921,7 +1931,7 @@
       if (Config.sounds.swimMove && this.isMoving()) {
         const currentFrame = Graphics.frameCount;
         if (currentFrame - lastSwimSoundFrame >= Config.sounds.swimInterval) {
-          AudioManager.playSe({ name: Config.sounds.swimMove, volume: 22, pitch: 100, pan: 0 });
+          AudioManager.playSe({ name: Config.sounds.swimMove, volume: 16, pitch: 100, pan: 0 });
           lastSwimSoundFrame = currentFrame;
         }
       }
@@ -3184,6 +3194,7 @@
     _Scene_Boot_start.call(this);
     companionsVisible = true;
     lastSwimSoundFrame = 0;
+    for (const key of Object.keys(swimSplashFrames)) delete swimSplashFrames[key];
     lastClimbSoundFrame = 0;
 
     if ($gamePlayer) {

@@ -5192,7 +5192,7 @@
     // the story run asked for the wizard itself because it began in a year
     // that has no tutorial to walk (window.StoryModeStart).
     const isStoryMode = $gameSwitches.value(100) &&
-      ($gameMap.mapId() === STORY_TUTORIAL_MAP_ID || !!$gameSystem._pendingStoryModeCreation);
+      (isStoryCreationMap($gameMap.mapId()) || !!$gameSystem._pendingStoryModeCreation);
     $gameSystem._pendingStoryModeCreation = false;
     Scene_CharacterCreation._storyMode = isStoryMode;
     Scene_CharacterCreation._currentPartyMemberIndex = 0;
@@ -5230,6 +5230,13 @@
   // own. Every other story landing asks for it here instead, on the first frame
   // the map is up.
   const STORY_TUTORIAL_MAP_ID = 1414;
+  // The train the story opens on runs the wizard from an event of its own too,
+  // so it counts as a creation map exactly like the tutorial one.
+  function isStoryCreationMap(mapId) {
+    if (mapId === STORY_TUTORIAL_MAP_ID) return true;
+    const train = window.StoryModeStart && window.StoryModeStart.TRAIN_MAP_ID;
+    return !!train && mapId === train;
+  }
 
   const _CC_Scene_Map_start = Scene_Map.prototype.start;
   Scene_Map.prototype.start = function () {
@@ -5239,7 +5246,7 @@
     // to, so the first thing a new player sees is the first page of creation.
     const curtain = !!($gameSystem && $gameSystem._pendingCreationCurtain);
     const pendingStory = !!($gameSystem && $gameSystem._pendingStoryModeCreation &&
-        $gameMap.mapId() !== STORY_TUTORIAL_MAP_ID &&
+        !isStoryCreationMap($gameMap.mapId()) &&
         !(SceneManager._scene instanceof Scene_CharacterCreation));
     _CC_Scene_Map_start.call(this);
     if (curtain || pendingStory) {

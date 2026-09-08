@@ -52,8 +52,10 @@ Bubba:
 You are a witch Em. 
 A wannabe witch to be more precise!
 Isn't that you don't have arcane potential or dedication.
-It's that you just suck at aimin' spells! 
-Remember when you teleported a sunfish inside our [Camper] and the universe decided to resolve the collision problem by drenchin' us with fish guts?
+It's that you just suck at aimin' spells, that's why you use a gun!
+Remember when you teleported a sunfish inside our [Camper]? 
+And then the universe decided to resolve the collision problem by drenchin' us with fish guts.
+Happy times.
 Em:
 Haven't the faintest recollection.
 
@@ -233,7 +235,7 @@ Em:
 That tower goes above the clouds. What is it, some sort of skyscraper?
 
 Bubba:
-It looks like a skyscraper dear, but it's a spear.
+It looks like a skyscraper darlin', but it's a spear.
 [Eris] threw it in 1992 to kill [Maat], the goddess of justice, and it went straight through the crust for hundreds of kilometres.
 Maat's body is still down there at the point, buried and sealed by the thing that killed her.
 
