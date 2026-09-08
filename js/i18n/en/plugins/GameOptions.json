@@ -118,7 +118,8 @@
     "showControls": "The list of every control pinned to the corner of the map, each line ticked off the first time you use it. H folds it, L3 on a pad. It stays pinned in the story mode and on the tutorial maps, hidden until asked for anywhere else. Bubba takes it down for you too, if you raise the controls with him.",
     "showMapNotices": "The notices pinned beside the controls: what Bubba reads off a place, the zone you are standing in and whatever a tooltip is set to. Bubba shows and hides them for you too, if you raise the sheet with him.",
     "dialogueVoices": "Each letter of a typed dialogue line is chattered with a short vowel or consonant blip. The pitch is the speaker's own; a gold keyword is spoken higher.",
-    "dialogueVoicesVolume": "How loud the letter blips under a dialogue line are, apart from the other sound effects."
+    "dialogueVoicesVolume": "How loud the letter blips under a dialogue line are, apart from the other sound effects.",
+    "battleLogPosition": "Where the battle log is printed on the screen."
   },
   "descState": {
     "musicArtistDisplay": [
@@ -131,6 +132,10 @@
       "Off: plain three.js. Models are drawn clean, with no wobble, banding or downsampling.",
       "SnapVertex: the PlayStation-1 look. Vertices snap to a coarse grid, colours band and the picture is rendered below full resolution.",
       "Pixel Art: the sprite look. Flat cel bands, chunky pixels and an optional limited palette."
+    ],
+    "battleLogPosition": [
+      "Centered: hangs from the top centre, between the party cards and the enemy bars.",
+      "Classic: a left aligned column under the party cards."
     ]
   },
   "shaderMode": {
@@ -155,5 +160,25 @@
     "first": "First time only",
     "always": "Always",
     "off": "Off"
+  },
+  "group": {
+    "combat": "Combat",
+    "battleLog": "Battle Log",
+    "exploration": "Exploration",
+    "saving": "Saving",
+    "system": "System",
+    "display": "Display",
+    "interface": "Interface",
+    "battleView": "Battle View",
+    "lighting": "Lighting",
+    "mix": "Volume Mix",
+    "worldSound": "World Sound",
+    "music": "Music",
+    "voices": "Voices",
+    "look": "Look",
+    "snapVertex": "Snap Vertex",
+    "pixelArt": "Pixel Art",
+    "ascii": "ASCII",
+    "other": "Other"
   }
 }

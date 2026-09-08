@@ -4,14 +4,63 @@
 // Version: 2.0.0
 //=============================================================================
 
+const http = require('http');
 const WebSocket = require('ws');
+const dgram = require('dgram');
 
-// Use the PORT environment variable provided by Render.com, or 8080 for local testing.
-const PORT = process.env.PORT || 8080;
+// The UDP port a LAN host answers discovery probes on. A client sweeping the
+// local network broadcasts DISCOVERY_MAGIC here and every host in the same
+// broadcast domain answers with its address, its world and its player count,
+// so nobody ever has to read an IP address out loud.
+const DISCOVERY_PORT = 41235;
+const DISCOVERY_MAGIC = 'HYPERNET_LAN_DISCOVER';
+const DISCOVERY_REPLY = 'HYPERNET_LAN_HOST';
 
-const wss = new WebSocket.Server({ port: PORT });
+// The whole server is one function so the game itself can run it in-process:
+// hosting a LAN session boots this inside NW.js instead of asking the player to
+// start a second program. Called with no options it behaves exactly as the
+// standalone `node server.js` always did.
+function startServer(options = {}) {
 
-console.log(`Starting server on port ${PORT}...`);
+// Use the PORT environment variable provided by the host (Render.com, systemd unit,
+// ...), or 8080 for local testing.
+const PORT = options.port || process.env.PORT || 8080;
+const HOST = options.host || process.env.HOST || '0.0.0.0';
+// A LAN host announces itself over UDP; the public server does not.
+const DISCOVERY = options.discovery === true;
+// What a discovery reply says about this host: who is hosting and which world
+// the session is played in. Guests adopt that world when they join.
+let advertised = Object.assign({ hostName: '', world: null }, options.advertise || {});
+// The host's world, handed to every guest at login so the whole session shares
+// one world: its manifest, its public state and its world data files.
+let worldPayload = options.world || null;
+
+// Session capacity. The client plugin advertises "up to 64 players"; the cap is
+// enforced here, not client-side. Override with MAX_PLAYERS for smaller playtests.
+const MAX_PLAYERS = Math.min(64, Math.max(2, parseInt(options.maxPlayers || process.env.MAX_PLAYERS, 10) || 64));
+
+// Plain HTTP is served alongside the socket so hosts and reverse proxies have a
+// health endpoint to poll, and so a browser hitting the URL gets something back.
+const httpServer = http.createServer((req, res) => {
+    const path = (req.url || '/').split('?')[0];
+    if (path === '/health' || path === '/') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            status: 'ok',
+            players: players.size,
+            maxPlayers: MAX_PLAYERS,
+            parties: parties.size,
+            uptime: Math.round(process.uptime())
+        }));
+        return;
+    }
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not found');
+});
+
+const wss = new WebSocket.Server({ server: httpServer });
+
+console.log(`Starting server on ${HOST}:${PORT} (max ${MAX_PLAYERS} players)...`);
 
 // --- Server State ---
 let nextPlayerId = 1;
@@ -193,19 +242,36 @@ wss.on('connection', (ws) => {
     const playerId = nextPlayerId++;
     ws.playerId = playerId;
 
-    console.log(`Player ${playerId} connected.`);
+    console.log(`Player ${playerId} connected. (${players.size}/${MAX_PLAYERS} logged in)`);
 
     ws.isAlive = true;
     ws.on('pong', () => {
         ws.isAlive = true;
     });
 
+    // Drop sockets that connect but never send a login, so half-open connections
+    // cannot pile up on a public server.
+    const loginTimer = setTimeout(() => {
+        if (!players.has(ws.playerId)) {
+            console.log(`Player ${ws.playerId} never logged in; closing.`);
+            ws.terminate();
+        }
+    }, 30000);
+    ws.on('close', () => clearTimeout(loginTimer));
+
     ws.on('message', (rawMessage) => {
         try {
             const data = JSON.parse(rawMessage);
 
             if (data.type === 'login') {
-                players.set(playerId, { 
+                if (players.size >= MAX_PLAYERS) {
+                    console.log(`Rejected player ${playerId}: server full (${players.size}/${MAX_PLAYERS}).`);
+                    ws.send(JSON.stringify({ type: 'server-full', maxPlayers: MAX_PLAYERS }));
+                    ws.close(4001, 'Server full');
+                    return;
+                }
+
+                players.set(playerId, {
                     ws: ws, 
                     info: data.playerInfo,
                     partyId: null 
@@ -222,7 +288,8 @@ wss.on('connection', (ws) => {
                     type: 'login-success',
                     yourId: playerId,
                     gameState: gameState,
-                    players: otherPlayers
+                    players: otherPlayers,
+                    world: worldPayload
                 }));
 
                 broadcast({
@@ -426,6 +493,26 @@ wss.on('connection', (ws) => {
                     }
                     break;
 
+                // The host client uploads its world once, right after logging
+                // in. Everyone who joins later is handed the same payload, so a
+                // session is always played in the host's world and never in a
+                // guest's own.
+                case 'world-offer':
+                    if (data.world) {
+                        worldPayload = data.world;
+                        if (data.world.name) advertised.world = data.world.name;
+                        broadcast({ type: 'world-sync', world: worldPayload, from: ws.playerId }, ws.playerId);
+                    }
+                    break;
+
+                // Anything the clients agree on between themselves (vehicles,
+                // map battles, world files) travels as a relay, so a new packet
+                // kind never needs a server change.
+                case 'relay':
+                    if (data.to) sendToPlayer(data.to, { ...data, from: ws.playerId });
+                    else broadcast({ ...data, from: ws.playerId }, ws.playerId);
+                    break;
+
                 default:
                     console.log(`Received unknown message type: ${data.type}`);
                     break;
@@ -472,4 +559,90 @@ wss.on('close', () => {
     clearInterval(interval);
 });
 
-console.log('Server is running and waiting for connections.');
+httpServer.listen(PORT, HOST, () => {
+    console.log(`Server is running and waiting for connections.`);
+    console.log(`  WebSocket: ws://${HOST}:${PORT}`);
+    console.log(`  Health:    http://${HOST}:${PORT}/health`);
+    if (options.onListening) options.onListening(PORT);
+});
+
+// Log a clear reason instead of dying silently when the port is taken.
+httpServer.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use. Stop the other process or set PORT.`);
+    } else {
+        console.error('HTTP server error:', error);
+    }
+    // In-process hosts get the error back and keep the game alive; the
+    // standalone server still exits, as a service is expected to.
+    if (options.onError) options.onError(error);
+    else process.exit(1);
+});
+
+// --- LAN discovery beacon ---------------------------------------------------
+// One UDP socket bound to DISCOVERY_PORT, answering probes with everything a
+// client needs to connect: the port, the host's name, the world and how full
+// the session is. The reply goes straight back to the prober's address, so it
+// works whether the probe arrived as a broadcast or as a direct packet.
+let discoverySocket = null;
+if (DISCOVERY) {
+    discoverySocket = dgram.createSocket({ type: 'udp4', reuseAddr: true });
+    discoverySocket.on('error', (e) => {
+        console.error('[LAN] discovery socket error:', e && e.message);
+        try { discoverySocket.close(); } catch (err) { /* already closed */ }
+        discoverySocket = null;
+    });
+    discoverySocket.on('message', (msg, rinfo) => {
+        if (String(msg).indexOf(DISCOVERY_MAGIC) !== 0) return;
+        const reply = Buffer.from(JSON.stringify({
+            magic: DISCOVERY_REPLY,
+            port: PORT,
+            hostName: advertised.hostName || '',
+            world: advertised.world || (worldPayload && worldPayload.name) || '',
+            players: players.size,
+            maxPlayers: MAX_PLAYERS
+        }));
+        try { discoverySocket.send(reply, 0, reply.length, rinfo.port, rinfo.address); } catch (e) { /* prober gone */ }
+    });
+    discoverySocket.bind(DISCOVERY_PORT, () => {
+        try { discoverySocket.setBroadcast(true); } catch (e) { /* not permitted */ }
+        console.log(`[LAN] Announcing on UDP ${DISCOVERY_PORT}.`);
+    });
+}
+
+    return {
+        port: PORT,
+        get playerCount() { return players.size; },
+        setWorld(world) { worldPayload = world; if (world && world.name) advertised.world = world.name; },
+        setAdvertise(info) { advertised = Object.assign(advertised, info || {}); },
+        close() {
+            clearInterval(interval);
+            for (const player of players.values()) {
+                if (player.ws.readyState === WebSocket.OPEN) player.ws.close(1001, 'Host closed the session');
+            }
+            players.clear();
+            parties.clear();
+            try { wss.close(); } catch (e) { /* already closed */ }
+            try { httpServer.close(); } catch (e) { /* already closed */ }
+            if (discoverySocket) {
+                try { discoverySocket.close(); } catch (e) { /* already closed */ }
+                discoverySocket = null;
+            }
+        }
+    };
+}
+
+module.exports = { startServer, DISCOVERY_PORT, DISCOVERY_MAGIC, DISCOVERY_REPLY };
+
+// Standalone: `node server.js` still starts the public server exactly as before.
+if (require.main === module) {
+    const server = startServer();
+    // Clean shutdown so systemd restarts do not leave sockets hanging.
+    for (const signal of ['SIGINT', 'SIGTERM']) {
+        process.on(signal, () => {
+            console.log(`Received ${signal}, shutting down.`);
+            server.close();
+            process.exit(0);
+        });
+    }
+}
