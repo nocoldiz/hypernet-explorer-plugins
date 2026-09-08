@@ -31,6 +31,7 @@
   "tagLatest": "NEWEST",
   "tagInstalled": "INSTALLED",
   "tagMajor": "MAJOR",
+  "tagCurrent": "YOUR VERSION",
   "noBuilds": "No builds listed yet.",
   "noNewer": "Nothing newer has been published. You already have the newest build.",
   "actCheck": "Check this build",

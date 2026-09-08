@@ -14626,6 +14626,24 @@
     font-size: 1.552rem;
 }
 
+/* Settings are printed in titled groups: a small ruled heading introduces each
+   subject so a tab reads as a few short lists instead of one long column. */
+.option-group-header {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: var(--fs-caption);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-detail-heading);
+    padding: var(--sp-2) var(--sp-4) var(--sp-1);
+    margin-top: var(--sp-3);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.option-group-header:first-child {
+    margin-top: 0;
+}
+
 .option-row {
     display: flex;
     justify-content: space-between;
@@ -18865,6 +18883,11 @@ padding: 2px 10px;
    the date and whoever built it on the second. */
 .gu-build .item-slot-meta { font-family: var(--font-mono); }
 .gu-chip--major { color: var(--text-text-alt-5-hover); font-weight: bold; }
+.gu-chip--current { color: var(--text-gold-dark); font-weight: bold; }
+/* The build this copy already is: gold, and locked, since it installs nothing. */
+.gu-build--current { border-color: var(--text-gold-dark); }
+.gu-build--current .item-slot-name,
+.gu-build--current .item-slot-meta { color: var(--text-gold-dark); }
 .gu-badge {
     font-size: var(--fs-caption); font-weight: bold; letter-spacing: 0.05em;
     flex-shrink: 0;
@@ -37086,23 +37109,6 @@ select option:hover {
 .vg-spread > .vg-stage .weapon-preview-card {
     flex: 1 1 0;
     min-height: 0;
-}
-
-/* SWITCH: the one stand shows one shape, and this folds it into the other. */
-.vg-switch {
-    flex: 0 0 auto;
-    text-align: center;
-    padding: var(--sp-2) var(--sp-3);
-    border: 1px solid var(--text-primary-hover);
-    border-radius: var(--radius-sm, 4px);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    cursor: pointer;
-    color: var(--text-primary-hover);
-}
-
-.vg-switch:hover {
-    background: var(--shadow-primary-hover-translucent-5);
 }
 
 /* Every running mode, with the effect it is having, one under the other. */

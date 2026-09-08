@@ -238,19 +238,14 @@
   // every language, so they are written here instead of in the i18n bank.
   // i18n-ignore-start  physical gamepad button labels
   const PAD = {
-    up: "D-Pad ↑",
-    down: "D-Pad ↓",
-    left: "D-Pad ←",
-    right: "D-Pad →",
+    move: "D-Pad",
     ok: "A",
     run: "X",
     menu: "Y",
     hotbarStep: "L1 / R1",
     visitPlace: "Select",
-    wait: "L3",
     zoom: "L2 / R2",
     fold: "L3",
-    foldWorldMap: "R3",
   };
   // i18n-ignore-end
 
@@ -258,10 +253,10 @@
   // not the same control on the two devices, so it shows one face or the other
   // rather than both: see rowFace() below.
   const WALK_CONTROLS = [
-    { id: "up", labelKey: "MapLegend.controls.up", key: "↑", pad: PAD.up },
-    { id: "down", labelKey: "MapLegend.controls.down", key: "↓", pad: PAD.down },
-    { id: "left", labelKey: "MapLegend.controls.left", key: "←", pad: PAD.left },
-    { id: "right", labelKey: "MapLegend.controls.right", key: "→", pad: PAD.right },
+    // The four directions are one control, not four rows: the arrows and WASD
+    // both walk, and on a pad it is the whole D-Pad (and the stick, which
+    // AnalogStickInput feeds into the same symbols).
+    { id: "move", labelKey: "MapLegend.controls.move", key: "↑ ↓ ← → / W A S D", pad: PAD.move },
     { id: "ok", labelKey: "MapLegend.controls.action", key: "Z / Enter", mouseKey: "MapLegend.controls.leftClick", pad: PAD.ok },
     { id: "shift", labelKey: "MapLegend.controls.run", keyKey: "MapLegend.controls.holdShift", pad: PAD.run },
     { id: "menu", labelKey: "MapLegend.controls.menu", key: "Esc", pad: PAD.menu },
@@ -280,7 +275,9 @@
 
   const WORLD_MAP_CONTROLS = [
     { id: "visitPlace", labelKey: "MapLegend.controls.stopTravel", key: "T", pad: PAD.visitPlace },
-    { id: "wait", labelKey: "MapLegend.controls.wait", key: "R", pad: PAD.wait },
+    // No pad button: L3 is the fold everywhere, and the sheet must not name
+    // one button for two different things.
+    { id: "wait", labelKey: "MapLegend.controls.wait", key: "R" },
     {
       id: "worldZoom", labelKey: "MapLegend.controls.zoom",
       key: "+ / -", mouseKey: "MapLegend.controls.scrollWheel", pad: PAD.zoom,
@@ -680,11 +677,10 @@
     return legendEnabled() || controlsShown();
   }
 
-  // The pad's fold button. L3 everywhere, except the world map where L3 is
-  // already the wait sheet.
+  // The pad's fold button. L3 on every map, the world map included: waiting
+  // there is a keyboard control only, so nothing else claims the stick click.
   function foldPadButton() {
-    return $gameMap && $gameMap.mapId() === WORLD_MAP_LEGEND_MAP_ID
-      ? PAD.foldWorldMap : PAD.fold;
+    return PAD.fold;
   }
 
   function foldChipLabel() {

@@ -1881,7 +1881,7 @@
     // catalogue; this one gets a deck rolled from the whole of it.
     try {
       if (window.HyperDeck && window.HyperDeck.rollStartingDeck) {
-        window.HyperDeck.rollStartingDeck(Math.random, { everything: true });
+        window.HyperDeck.rollStartingDeck(Math.random, { everything: true, mustBoot: true });
       }
     } catch (e) {
       console.warn("CharacterCreation: could not re-roll the starting Hyperdeck.", e);

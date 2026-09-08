@@ -56,7 +56,14 @@
   // the stand instead of every shape sharing one guessed distance.
   const STAND_ZOOM = 2.05;
   // How much of the stand is left empty around the piece once it is fitted.
-  const STAND_MARGIN = 1.06;
+  const STAND_MARGIN = 0.94;
+  // How close the stand comes while the piece is folding itself into the other
+  // shape: the morph is the thing being watched, so it is watched from near.
+  const MORPH_ZOOM = 1.35;
+  // The stand holds one of two things: the pistol, or "the other shape",
+  // whichever one the cursor is on. Naming the second half rather than a shape
+  // key is what keeps a cursor step from folding the gun over and over.
+  const ALT_STAND = 'alt';
   const FORM_CHOICES = VG.FORM_CHOICES;
   const GUN_FORM = VG.GUN_FORM;
 
@@ -240,30 +247,48 @@
       return this._stand === GUN_FORM ? GUN_FORM : this.shownShape();
     }
 
+    /** Brings the stand to whatever the open page asks for. */
+    _syncStand() {
+      const want = this.standTarget();
+      if (want !== this._stand) this.morphStand(want);
+      else if (this._tab === 'form') this._mountPreview();
+    }
+
     /**
-     * SWITCH, on the bench: the piece comes apart, is rebuilt as the other
-     * shape and rises again, exactly as it does in a battler's hand
-     * (VectorGun.playSwitchOn). Nothing is fitted by it; it is the screen
-     * looking at the other half of the same weapon.
+     * The shape the stand should be holding for the page that is open: the
+     * form page is the one place the other shape is being chosen, so that is
+     * the one place the gun stands as it. Every other page is about the pistol
+     * and its running gear, so the pistol is what stands there.
      */
-    switchStand() {
-      if (this._switching || !this._el) return;
+    standTarget() {
+      return this._tab === 'form' ? ALT_STAND : GUN_FORM;
+    }
+
+    /**
+     * Folds the piece on the bench into `form` and raises it again, exactly as
+     * it does in a battler's hand (VectorGun.playSwitchOn). Nothing is fitted
+     * by it: it is the screen looking at the other half of the same weapon,
+     * played rather than cut to, and it is the page turn that asks for it.
+     */
+    morphStand(form) {
+      if (this._switching || !this._el || this._stand === form) return;
       this._switching = true;
       const entry = this._previews[0];
       const fold = VG.playSwitchOn(entry ? entry.model : null, 'fold') || 0;
-      // The camera comes in while the piece is coming apart and pulls back once
-      // the new shape has risen: the reconstruction is the thing worth looking
-      // at, so the screen looks at it.
-      this._zoomStand(1.55, fold);
+      // The camera comes in while the piece is coming apart: the reconstruction
+      // is the thing worth looking at, so the screen looks at it.
+      this._zoomStand(MORPH_ZOOM, fold);
       setTimeout(() => {
-        if (!this._el) return;
-        this._stand = this._stand === GUN_FORM ? this.shownShape() : GUN_FORM;
-        this._mountPreview();
+        if (!this._el) { this._switching = false; return; }
+        this._stand = form;
+        this._mountPreview(true);
         const rise = VG.playSwitchOn(
           this._previews[0] ? this._previews[0].model : null, 'rise') || 0;
-        this._zoomStand(1.7, 0);
-        this._fitStand(rise + 260);
         this._switching = false;
+        // The new shape is measured only once it has finished rising: while its
+        // parts are still flying in the bounds are the whole flight, and the
+        // stand would settle far enough back to hold that instead of the gun.
+        setTimeout(() => { if (this._el) this._fitStand(280); }, rise + 60);
       }, fold);
     }
 
@@ -285,12 +310,6 @@
       }
       if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
         this.turnTab(Input.isTriggered('pageup') ? -1 : 1);
-        return;
-      }
-      // Shift changes the hand the gun is held in: the same switch the
-      // strip under the bays offers to the mouse.
-      if (Input.isTriggered('shift')) {
-        this.switchStand();
         return;
       }
       const last = this.rows().length - 1;
@@ -359,6 +378,7 @@
       this._index = 0;
       SoundManager.playCursor();
       this._paint();
+      this._syncStand();
     }
 
     /**
@@ -468,7 +488,6 @@
                 <canvas class="vg-canvas"></canvas>
                 <span class="vg-preview-label"></span>
               </div>
-              <div class="vg-switch focusable" onclick="SceneManager._scene.switchStand()">${T('VectorGun.switch')}</div>
             </div>
           </div>
         </div>`;
@@ -512,8 +531,8 @@
       this._el.querySelector('.ui-detail').innerHTML = this._detailHTML();
       this._scrollToSelection();
       // Walking the form page turns the shape on the right hand stand with the
-      // cursor; on every other page the pair is already what it should be.
-      if (this._tab === 'form' && this._stand !== GUN_FORM) this._mountPreview();
+      // cursor; on every other page the stand is already what it should be.
+      if (this._tab === 'form') this._syncStand();
     }
 
     _scrollToSelection() {
@@ -729,7 +748,11 @@
      * it for the other. A weapon that is one object in two shapes reads best
      * when the change between them is played rather than laid side by side.
      */
-    _mountPreview() {
+    _mountPreview(force) {
+      // A page turn repaints before it morphs, so the shape the new page wants
+      // must not be cut straight in: while the stand still owes a fold, only
+      // the morph itself is allowed to change the piece standing on it.
+      if (!force && this.standTarget() !== this._stand) return;
       const form = this.standShape();
       const key = VG.withForm(form, () => VG.modelKey());
       if (key === this._previewKey) return;

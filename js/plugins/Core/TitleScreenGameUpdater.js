@@ -1938,7 +1938,9 @@
             }
             // Comparing without downloading stays available for a build nobody
             // has looked at yet, so its file list can be read first.
-            if (!plan) list.push({ key: 'check', label: T.actCheck });
+            if (!plan && !GameUpdater.isCurrentVersion(commit)) {
+                list.push({ key: 'check', label: T.actCheck });
+            }
             if (!GameUpdater.historyExhausted()) {
                 list.push({ key: 'more', label: T.actMore });
             }
@@ -1975,8 +1977,14 @@
         _useSelectedBuild() {
             const commit = this._selectedBuild();
             if (!isAvailable() || this._isWorking() || !commit) return;
-            const blocked = GameUpdater.isCurrentVersion(commit);
-            this._runAction((DOWNLOADS_ENABLED && !blocked) ? 'switch' : 'check');
+            // The version this copy runs is locked: comparing it against itself
+            // only ever answers that generated files differ, so the press is
+            // refused outright rather than starting work with nothing in it.
+            if (GameUpdater.isCurrentVersion(commit)) {
+                SoundManager.playBuzzer();
+                return;
+            }
+            this._runAction(DOWNLOADS_ENABLED ? 'switch' : 'check');
         }
 
         // Whether switching to the highlighted build would cross a major
@@ -2367,7 +2375,12 @@
             // applied to the standing nodes afterwards, so moving the cursor or
             // checking a build never rewrites a single row.
             return commits.map((commit, i) => {
-                const tag = GameUpdater.isInstalled(commit.sha) ? T.tagInstalled
+                // The build this copy already is, read off the shipped
+                // CHANGELOG.txt: it wears the gold mark and no press installs
+                // it, since there is nothing in it to fetch.
+                const current = GameUpdater.isCurrentVersion(commit);
+                const tag = current ? T.tagCurrent
+                    : GameUpdater.isInstalled(commit.sha) ? T.tagInstalled
                     : (i === 0 ? T.tagLatest : '');
                 // A major build wears its own mark, beside whichever of the two
                 // above it already carries.
@@ -2377,13 +2390,13 @@
                 const sub = [shortSha(commit.sha), formatDate(commit.date) || T.unknown, commit.author || '']
                     .filter(Boolean).join('  ·  ');
                 return `
-                    <div class="item-slot gu-build focusable" data-idx="${i}" tabindex="0">
+                    <div class="item-slot gu-build focusable${current ? ' gu-build--current' : ''}" data-idx="${i}" tabindex="0">
                         <div class="item-slot-info">
                             <div class="item-slot-name">${esc(name)}</div>
                             <div class="item-slot-meta">${esc(sub)}</div>
                         </div>
                         ${major ? `<span class="ui-chip gu-chip--major">${esc(T.tagMajor)}</span>` : ''}
-                        ${tag ? `<span class="ui-chip">${esc(tag)}</span>` : ''}
+                        ${tag ? `<span class="ui-chip${current ? ' gu-chip--current' : ''}">${esc(tag)}</span>` : ''}
                         <span class="gu-badge"></span>
                     </div>`;
             }).join('');

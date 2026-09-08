@@ -426,9 +426,11 @@
     }
 
     // Every new game owns a deck somebody else already put together: a random
-    // case with a random spread of parts in it. About a quarter of them cannot
-    // boot as handed over, so the first thing some players do with a Hyperdeck
-    // is finish building it.
+    // case with a random spread of parts in it. A roll asked for by hand can
+    // come out short a part, so the first thing some players do with a
+    // Hyperdeck is finish building it; opts.mustBoot, which the deck every new
+    // game starts with is rolled under, forbids that and repairs whatever the
+    // roll left missing until the machine posts.
     //
     // opts.everything opens the whole catalogue, arcane pieces included. That
     // is the Hypernet Explorer's deck: everyone else is dealt cast-offs.
@@ -453,8 +455,9 @@
         // the gap is boards that simply ran out of room. Never the cell: with
         // no supply on the board nothing else can be powered either, and the
         // deck would arrive as a bare case.
+        // A deck that has to boot is never dealt that gap.
         const skippable = REQUIRED.filter(kind => kind !== 'battery');
-        const skipped = r() < 0.2
+        const skipped = (!(opts && opts.mustBoot) && r() < 0.2)
             ? skippable[Math.floor(r() * skippable.length) % skippable.length] : null;
 
         // Placed in one pass with a running budget: before each kind is dealt,
@@ -491,7 +494,114 @@
         if (r() < 0.45) fitWithin(byKind.ram, r, freeCells(), 0, true);
         // Nothing leaves the factory overdrawn.
         trimToPower();
+        if (opts && opts.mustBoot) repairToBoot(byKind, r);
         return d;
+    }
+
+    // The deck the game hands out at the start of a new run has to switch on:
+    // a player who has never seen the machine cannot be asked to finish
+    // building it before it will POST. Whatever the roll left short, the
+    // cheapest part of that kind is forced onto the board, making room by
+    // pulling the extras (anything that is not a required kind) off first, and
+    // then, if the cell still cannot carry it, by taking the heaviest draw off
+    // the way the factory trim does.
+    function repairToBoot(byKind, r) {
+        const d = deck();
+        if (!d) return;
+        for (let guard = 0; guard < 12 && !canBoot(); guard++) {
+            const missing = missingKinds();
+            // Everything is on the board and the cell is the thing that cannot
+            // carry it: a bigger cell before anything comes off, because what
+            // would come off is a part the machine needs.
+            if (!missing.length) {
+                if (upgradeCell(byKind, r)) continue;
+                trimToPower();
+                continue;
+            }
+            const kind = missing[0];
+            const pool = (byKind[kind] && byKind[kind].length)
+                ? byKind[kind]
+                : catalogue().filter(part => part.kind === kind);
+            if (!pool.length) return;
+            // Smallest and lightest first, so the part most likely to fit into
+            // what is left of the board and of the supply is tried first; a
+            // cell is ranked the other way round, by what it can give. Parts
+            // the cell could not carry are tried last rather than dropped, so
+            // a board with no room left still gets something of the kind on it
+            // and the trim below decides what comes off for it.
+            const order = pool.slice().sort((a, b) =>
+                (kind === 'battery'
+                    ? ((a.specs.watt || 0) - (b.specs.watt || 0))
+                    : 0)
+                || ((powerFits(b) ? 1 : 0) - (powerFits(a) ? 1 : 0))
+                || (areaOf(a) - areaOf(b))
+                || ((a.specs.watt || 0) - (b.specs.watt || 0)));
+            let fitted = false;
+            for (const part of order) {
+                if (fitSomewhere(part.id, r)) { fitted = true; break; }
+            }
+            if (fitted) { trimToPower(); continue; }
+            if (!dropOnePart()) return;
+        }
+    }
+
+    // Swaps the fitted cell for the biggest supply that will still go on the
+    // board. Returns false when there is nothing better to swap to, which is
+    // what tells the repair to start taking parts off instead.
+    function upgradeCell(byKind, r) {
+        const d = deck();
+        const pool = (byKind.battery && byKind.battery.length)
+            ? byKind.battery
+            : catalogue().filter(part => part.kind === 'battery');
+        if (!pool.length) return false;
+        const fittedIds = d.placed.map(rec => rec.itemId).filter(id => {
+            const part = parseComponent(id);
+            return part && part.kind === 'battery';
+        });
+        const have = fittedIds.reduce((n, id) => {
+            const part = parseComponent(id);
+            return n + Math.max(0, -(part.specs.watt || 0));
+        }, 0);
+        const better = pool.filter(
+            part => Math.max(0, -(part.specs.watt || 0)) > have)
+            .sort((a, b) => (a.specs.watt || 0) - (b.specs.watt || 0));
+        if (!better.length) return false;
+        const kept = d.placed.filter(rec => {
+            const part = parseComponent(rec.itemId);
+            return !(part && part.kind === 'battery');
+        });
+        const before = d.placed;
+        d.placed = kept;
+        for (const part of better) {
+            if (fitSomewhere(part.id, r)) return true;
+        }
+        d.placed = before;
+        return false;
+    }
+
+    // Takes one part off the board to make room: an extra before a spare of a
+    // required kind, biggest first, and never the last part of a kind the
+    // machine needs.
+    function dropOnePart() {
+        const d = deck();
+        if (!d || !d.placed.length) return false;
+        const count = {};
+        d.placed.forEach(rec => {
+            const part = parseComponent(rec.itemId);
+            if (part) count[part.kind] = (count[part.kind] || 0) + 1;
+        });
+        let worst = null;
+        d.placed.forEach(rec => {
+            const part = parseComponent(rec.itemId);
+            if (!part) return;
+            const required = REQUIRED.indexOf(part.kind) >= 0;
+            if (required && count[part.kind] <= 1) return;
+            const score = (required ? 0 : 1) * 1000 + areaOf(part);
+            if (!worst || score > worst.score) worst = { rec: rec, score: score };
+        });
+        if (!worst) return false;
+        d.placed.splice(d.placed.indexOf(worst.rec), 1);
+        return true;
     }
 
     // The lightest the given pools could possibly draw between them: what a
@@ -610,7 +720,7 @@
     DataManager.setupNewGame = function () {
         _DataManager_setupNewGame.call(this);
         try {
-            rollStartingDeck(Math.random);
+            rollStartingDeck(Math.random, { mustBoot: true });
         } catch (e) {
             console.warn('HyperDeck: could not roll a starting deck.', e);
         }
