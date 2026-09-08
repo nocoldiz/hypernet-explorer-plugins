@@ -2788,12 +2788,11 @@
                         this.generateUICommandItemHTML(T('MainMenu.cmd.backpack'), "item"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.equip'), "equip"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.skills'), "skill"),
+                        vectorGunHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.status'), "status1"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.specializations'), "specializations"),
-                        vectorGunHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.biologics'), "biologics"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.augments'), "augments"),
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.search'), "search"),
                     ],
                     // Travel & rest
                     [
@@ -2821,6 +2820,7 @@
                         this.generateUICommandItemHTML(T('MainMenu.cmd.bestiary'), "bestiary"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.cards'), "cards"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.archive'), "help"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.search'), "search"),
                         atlasHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.factions'), "factions"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),

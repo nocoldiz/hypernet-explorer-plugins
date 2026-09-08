@@ -1,3 +1,8 @@
+0.6.3a
+- story mode now starts on map 169 at 67,33
+- vector gun option restored in story mode main menu
+- folded controls panel is now a bare key strip
+- fix header in deeds menu being black and not gold
 0.6.2a
 - dialogue voices active by default
 0.6.1a

@@ -1563,7 +1563,10 @@
   // either, while the rest of the register is Em's alone.
 
   const EM_SWITCH = 48;
-  const STORY_MODE_SWITCH = 75;
+  // Switch 100 is the one the title screen turns on when a story run starts
+  // (Titlescreen.js). Nothing else marks a save as story mode, so every reader
+  // of isStoryMode() must ask this switch and no other.
+  const STORY_MODE_SWITCH = 100;
   const BUBBA_SWITCH = 49;
   const EM_NAME = "Em";
 

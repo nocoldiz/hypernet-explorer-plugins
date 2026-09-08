@@ -1734,12 +1734,12 @@
     }
 
     // Where a story run is put down when it begins. In the canon year that is
-    // the train, whose own event opens Em's sheet; every other year lands where
-    // the story proper opens, since the train belongs to the canon opening.
+    // the map the story proper opens on, which asks for Em's sheet on arrival;
+    // every other year lands on Em's own square.
     function storyModeLanding() {
         const year = storyStartYear();
         if (year > STORY_EARTH_LOST_YEAR) return storyTowerLanding();
-        if (year === STORY_CANON_YEAR) return Object.assign({}, STORY_TRAIN_START);
+        if (year === STORY_CANON_YEAR) return Object.assign({}, STORY_CANON_START);
         return storyEmLanding();
     }
 
