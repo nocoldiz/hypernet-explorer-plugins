@@ -33682,23 +33682,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     color: var(--text-success-active);
 }
 
-/* A row that has been learnt steps back rather than lighting up. */
-.mlg-sheet .mlg-row.mlg-lit .mlg-label,
-.mlg-sheet .mlg-row.mlg-lit .mlg-keys {
-    color: var(--text-primary-hover);
-    opacity: 0.72;
-}
-
-.mlg-sheet .mlg-row.mlg-lit .mlg-chip {
-    color: var(--text-primary-hover);
-    opacity: 0.72;
-}
-
-.mlg-sheet .mlg-row.mlg-lit .mlg-label::before {
-    content: '\2713\00a0';
-    color: var(--text-primary-hover);
-}
-
 .mlg-sheet .mlg-fold {
     display: flex;
     align-items: center;

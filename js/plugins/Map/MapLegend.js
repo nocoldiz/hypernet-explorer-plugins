@@ -1,6 +1,6 @@
 /*:
  * @target MZ
- * @plugindesc v2.1.0 The parchment legend pinned to the corner of the map: the controls checklist, per-map notices, per-area notices and the variable tooltip. Exposes window.MapLegend.
+ * @plugindesc v2.2.0 The parchment legend pinned to the corner of the map: the controls list, per-map notices, per-area notices and the variable tooltip. Exposes window.MapLegend.
  * @author Hypernet
  *
  * @help MapLegend.js
@@ -8,16 +8,19 @@
  * The one sheet of paper the map screen pins in its top right corner. It used
  * to live inside CharacterCreation.js as a black Window_Base panel listing the
  * story mode's controls; it is its own plugin now and it is drawn as
- * parchment. It carries two things: the notices, and the controls checklist.
+ * parchment. It carries two things: the notices, and the controls list.
  *
  * ---------------------------------------------------------------------------
- * The controls checklist
+ * The controls list
  * ---------------------------------------------------------------------------
  * Every control the party has on the map, walking rows first and then every
  * key UI/CustomMainMenuLayout.js binds, read out of that plugin's own HOTKEYS
  * table (window.MenuHotkeys) rather than copied here, so a rebinding there
- * moves the list too. A row lights the first time the player actually uses
- * that control, which is what makes it a checklist rather than a card.
+ * moves the list too. It is a list and nothing more: no row is watched for
+ * being used and nothing on the sheet lights up, and no input is polled for
+ * it a frame. Every row writes its keys out and hangs its pad buttons off the
+ * end of them while a pad is plugged in, rather than the sheet guessing which
+ * device is in the player's hands.
  *
  * It is not the story mode's: it hangs on every map, world map and generated
  * ground alike, for as long as it is switched on. Two things switch it:
@@ -43,7 +46,7 @@
  * The whole system is the story mode's, and only while Bubba is walking with
  * the party to read the place out: nothing is drawn, and no key is taken,
  * unless the story mode switch (100) AND switch 49, BubbaInParty, are both on.
- * The controls checklist and the H fold do not wait for either: see below.
+ * The controls list and the H fold do not wait for either: see below.
  *
  * ---------------------------------------------------------------------------
  * What the sheet shows
@@ -70,7 +73,7 @@
  * Folding it away
  * ---------------------------------------------------------------------------
  * H folds the sheet and unfolds it, on every map, whether or not Bubba is
- * along: the fold is the checklist's, not the notices'. On a pad it is L3,
+ * along: the fold is the list's, not the notices'. On a pad it is L3,
  * or R3 on the world map where L3 is already Wait. Whether it is folded is
  * remembered on $gameSystem and it starts folded.
  *
@@ -81,7 +84,7 @@
  * always see it is there. Anywhere else a folded sheet is off the screen
  * entirely and the same key brings it up. While the sheet answers to H the
  * help menu does not: it is reached through the pause menu instead. With the
- * checklist switched off in the options and no notice to show, H is the help
+ * list switched off in the options and no notice to show, H is the help
  * menu again.
  *
  * ---------------------------------------------------------------------------
@@ -225,7 +228,7 @@
   }
 
   //===========================================================================
-  // The controls checklist
+  // The controls list
   //===========================================================================
   // Every control the map answers to, each row lighting the first time it is
   // actually used. Any device counts: RPG Maker MZ's Input already merges the
@@ -336,14 +339,12 @@
   }
 
   //===========================================================================
-  // Which device is in the player's hands
+  // Whether a pad is plugged in
   //===========================================================================
-  // Two separate questions, and the sheet asks both. Is a pad plugged in at
-  // all, which is what decides whether the pad chips are drawn beside the
-  // keys; and what was touched last, which is what decides the face of a row
-  // that is a different control on the two devices.
-
-  const deviceWatch = { last: "keyboard" };
+  // One question, asked once per rebuild rather than once per frame: is a pad
+  // plugged in at all, which is what decides whether the pad chips are drawn
+  // beside the keys. Which device was touched last is not asked: the sheet is
+  // a list of the controls, both faces of every row written out together.
 
   function analogStick() {
     return (typeof window !== "undefined" && window.AnalogStickInput) || null;
@@ -366,52 +367,8 @@
     return rawPads().length > 0;
   }
 
-  // Anything at all being done with the pad: a button, a stick, a trigger. The
-  // triggers are read as buttons rather than through AnalogStickInput's analog
-  // readings of them, because reading those CLAIMS the triggers for the frame
-  // and would take the game-wide scroll poll off them on the map.
-  function padTouched() {
-    const stick = analogStick();
-    if (stick && stick.hasPad) {
-      if (!stick.hasPad()) return false;
-      if (stick.isActive && stick.isActive()) return true;
-      if (stick.isButtonPressed) {
-        for (let i = 0; i < 16; i++) if (stick.isButtonPressed(i)) return true;
-      }
-      return false;
-    }
-    for (const pad of rawPads()) {
-      for (const button of pad.buttons || []) if (button && button.pressed) return true;
-      for (const axis of pad.axes || []) if (Math.abs(axis) > 0.5) return true;
-    }
-    return false;
-  }
-
-  // Input says which action was taken, never which device took it. So the pad
-  // is asked first: a fresh press with the pad sitting still is a press on the
-  // keys. A click on the map counts as the keys too, since the sheet's other
-  // face is the one with the mouse written on it.
-  function keysTouched() {
-    if (typeof TouchInput !== "undefined" && TouchInput.isTriggered && TouchInput.isTriggered()) {
-      return true;
-    }
-    return !!(Input._latestButton && Input._pressedTime === 0);
-  }
-
-  function updateDeviceWatch() {
-    if (padTouched()) deviceWatch.last = "pad";
-    else if (keysTouched()) deviceWatch.last = "keyboard";
-  }
-
-  // The pad only speaks for the sheet while it is still plugged in: unplugging
-  // one hands the rows back to the keys rather than leaving them on buttons
-  // that are no longer there.
-  function padMode() {
-    return deviceWatch.last === "pad" && padConnected();
-  }
-
   //===========================================================================
-  // Whether the checklist is up, and what is on it
+  // Whether the list is up, and what is on it
   //===========================================================================
   // One setting answers it, ConfigManager.showControls, so Bubba's topic and
   // the options row cannot disagree about whether the list is out. It hangs on
@@ -435,7 +392,7 @@
 
   // The notices are the other half of the sheet, and they answer to their own
   // setting, ConfigManager.showMapNotices, so the tips can be sent away while
-  // the checklist stays pinned up and the other way round. It is not a switch
+  // the list stays pinned up and the other way round. It is not a switch
   // but three states: a tip read once and never again, a tip read every time
   // the party stands there, or no tips at all.
 
@@ -522,35 +479,15 @@
     return (wmt && wmt.procMapId) || PROCEDURAL_MAP_ID;
   }
 
-  // A row that only the keys can reach is not shown to a player on a pad.
-  function rowsFor(entries) {
-    return padMode() ? entries.filter((entry) => !entry.keyboardOnly) : entries;
-  }
-
   // The list for the ground the party is standing on: the walking rows
   // everywhere, the world map's and the generated ground's on top of them, and
   // the menu keys last because they are the same wherever anybody stands.
   function visibleRows() {
     if (!controlsShown() || !$gameMap) return [];
-    const rows = rowsFor(WALK_CONTROLS);
-    if ($gameMap.mapId() === WORLD_MAP_LEGEND_MAP_ID) rows.push(...rowsFor(WORLD_MAP_CONTROLS));
-    if ($gameMap.mapId() === proceduralMapId()) rows.push(...rowsFor(PROCEDURAL_CONTROLS));
-    return rows.concat(rowsFor(menuHotkeyControls()));
-  }
-
-  // Which rows have been used at least once. One record on $gameSystem, so a
-  // save reopens with the same ticks on the paper.
-  function litRecord() {
-    return ($gameSystem && $gameSystem._mapLegendControlsLit) || {};
-  }
-
-  function markLit(id) {
-    if (!$gameSystem) return false;
-    const lit = litRecord();
-    if (lit[id]) return false;
-    lit[id] = true;
-    $gameSystem._mapLegendControlsLit = lit;
-    return true;
+    const rows = WALK_CONTROLS.slice();
+    if ($gameMap.mapId() === WORLD_MAP_LEGEND_MAP_ID) rows.push(...WORLD_MAP_CONTROLS);
+    if ($gameMap.mapId() === proceduralMapId()) rows.push(...PROCEDURAL_CONTROLS);
+    return rows.concat(menuHotkeyControls());
   }
 
   // What the row says on a keyboard: the key, plus the mouse where one reaches
@@ -566,52 +503,21 @@
     return String(entry.pad).split("/").map((s) => s.trim()).filter(Boolean);
   }
 
-  // The label and the two key columns for one row. A row that is a different
-  // control on the two devices (the item bar: fired by number key, stepped by
-  // shoulder) shows one face or the other; every other row writes its keys out
-  // and hangs the pad chips off the end of them, while a pad is plugged in.
-  // On a pad the sheet is the pad's alone: every row is its buttons and
-  // nothing of the keys or the mouse is written beside them.
-  function rowFace(entry) {
-    const pad = padMode();
-    if (entry.padLabelKey) {
-      return pad
-        ? { label: T(entry.padLabelKey), keys: "", pads: padTokens(entry) }
-        : { label: T(entry.labelKey), keys: rowKeys(entry), pads: [] };
-    }
-    if (pad) return { label: T(entry.labelKey), keys: "", pads: padTokens(entry) };
-    return {
-      label: T(entry.labelKey),
-      keys: rowKeys(entry),
-      pads: padConnected() ? padTokens(entry) : [],
-    };
+  // The label and the two key columns for one row. Nothing watches what the
+  // player is holding: the row writes its keys out and hangs the pad chips off
+  // the end of them while a pad is plugged in, and a row that is a different
+  // control on the two devices names both.
+  function rowFace(entry, hasPad) {
+    const pad = hasPad === undefined ? padConnected() : !!hasPad;
+    const label = entry.padLabelKey && pad
+      ? T(entry.labelKey) + " / " + T(entry.padLabelKey)
+      : T(entry.labelKey);
+    return { label, keys: rowKeys(entry), pads: pad ? padTokens(entry) : [] };
   }
 
   //===========================================================================
-  // Reading the controls as they are used
+  // The pad buttons the sheet reads for itself
   //===========================================================================
-
-  // The camera zoom is not a button press: the wheel, the +/- keys and the
-  // triggers all end up moving Game_Screen's scale, so the sheet watches the
-  // scale itself.
-  let lastLegendZoom = null;
-
-  function zoomControlUsed() {
-    const zoom = $gameScreen ? $gameScreen.zoomScale() : 1;
-    const moved = lastLegendZoom !== null && Math.abs(zoom - lastLegendZoom) > 0.0005;
-    lastLegendZoom = zoom;
-    if (moved) return true;
-    return !!(Input.isRepeated("mapZoomIn") || Input.isRepeated("mapZoomOut") ||
-      Input.isRepeated("zoomIn") || Input.isRepeated("zoomOut"));
-  }
-
-  // The number row fires an item bar slot outright (ItemSystemHotbar.js maps
-  // 1-9 onto the symbols "1".."9"), so any of them counts as the bar being
-  // used.
-  function hotbarSlotKeyTriggered() {
-    for (let i = 1; i <= 9; i++) if (Input.isTriggered(String(i))) return true;
-    return false;
-  }
 
   // A pad button with no Input.gamepadMapper action on it, read raw the way
   // WorldMap.js reads Start.
@@ -620,60 +526,6 @@
     if (!stick || !stick.isButtonTriggered || !stick.BUTTON) return false;
     const index = stick.BUTTON[name];
     return index === undefined ? false : !!stick.isButtonTriggered(index);
-  }
-
-  function readControlUse() {
-    if (!controlsShown() || !$gameMap) return;
-    if (Input.isTriggered("up")) markLit("up");
-    if (Input.isTriggered("down")) markLit("down");
-    if (Input.isTriggered("left")) markLit("left");
-    if (Input.isTriggered("right")) markLit("right");
-    if (Input.isTriggered("ok") || TouchInput.isTriggered()) markLit("ok");
-    // Esc reaches the pause menu through Scene_Map.callMenu, which pushes the
-    // menu scene on the very frame it is pressed: by the time the sheet is
-    // updated the scene is already changing and the press is gone. So the row
-    // is lit from the call itself (see below) rather than from the key, and
-    // these two only cover a pad or a rebind that opened nothing.
-    if (Input.isTriggered("escape") || Input.isTriggered("menu") ||
-      TouchInput.isCancelled()) markLit("menu");
-    if (Input.isPressed("shift")) markLit("shift");
-    // The item bar row is satisfied by either face of it: a number key firing
-    // a slot, or a shoulder stepping the bar.
-    if (Input.isTriggered("pageup") || Input.isTriggered("pagedown") ||
-      Input.isTriggered("tab") || hotbarSlotKeyTriggered()) markLit("hotbar");
-
-    if ($gameMap.mapId() === proceduralMapId()) {
-      // The action button is what works whatever the party is facing, and it
-      // is the same press whether that ends in a choice window or in nothing.
-      if (Input.isTriggered("ok") || TouchInput.isTriggered()) markLit("procInteract");
-      if (Input.isTriggered("wmrToggle")) markLit("procReturn");
-    }
-
-    if ($gameMap.mapId() === WORLD_MAP_LEGEND_MAP_ID) {
-      if (Input.isTriggered("wmrToggle")) markLit("visitPlace");
-      // R is CustomMainMenuLayout's sleep_menu hotkey; the wait sheet it opens
-      // is a popup rather than a scene, so the press is still readable here.
-      if (Input.isTriggered("letter_r") || padButtonTriggered("L3") ||
-        (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp._sleepMenuOpen)) {
-        markLit("wait");
-      }
-      if (zoomControlUsed()) markLit("worldZoom");
-    } else {
-      lastLegendZoom = null;
-    }
-  }
-
-  // A menu key opens its screen on the very frame it is read, so by the time
-  // the sheet is next updated the map is already changing and the press is
-  // gone: the same reason the Menu row is lit from callMenu rather than from
-  // Esc. So they are read one step before whatever they open, inside the
-  // hotkey table itself, and on the symbols that table gives them, so a
-  // rebinding still lights the row.
-  function readMenuHotkeyUse() {
-    if (!controlsShown()) return;
-    for (const row of menuHotkeyControls()) {
-      if (row.input && Input.isTriggered(row.input)) markLit(row.id);
-    }
   }
 
   //===========================================================================
@@ -823,7 +675,7 @@
   }
 
   // Whether there is anything at all for the fold key to bring up: with the
-  // checklist switched off and no notice running, the key is left alone.
+  // list switched off and no notice running, the key is left alone.
   function foldable() {
     return legendEnabled() || controlsShown();
   }
@@ -836,7 +688,7 @@
   }
 
   function foldChipLabel() {
-    return padMode() ? foldPadButton() : FOLD_KEY_LABEL;
+    return FOLD_KEY_LABEL;
   }
 
   // H is the help menu everywhere else, so the fold is spliced in ahead of the
@@ -853,9 +705,6 @@
     if (typeof Scene_Map.prototype.updateMenuHotkeys !== "function") return;
     const base = Scene_Map.prototype.updateMenuHotkeys;
     Scene_Map.prototype.updateMenuHotkeys = function () {
-      // One step before whatever the key opens, which is the last frame the
-      // press is still readable.
-      readMenuHotkeyUse();
       if (foldable() && Input.isTriggered(FOLD_INPUT)) {
         toggleFold();
         return;
@@ -885,7 +734,7 @@
   // here builds a stylesheet at runtime.
 
   // Two panels, not one sheet: what the place says stands in the top right
-  // corner where the party reads it, and the controls checklist is its own
+  // corner where the party reads it, and the controls list is its own
   // window down the left edge, which is where a list that long can stand
   // without covering the map the notice is about.
   const SHEET_ID = "map-legend";
@@ -922,6 +771,7 @@
       el.className = cls;
       document.body.appendChild(el);
       this[prop] = el;
+      this._needsPosition = true;
       if (prop === "_el") this._signature = ""; else this._ctlSignature = "";
       return el;
     }
@@ -943,6 +793,9 @@
     hide() {
       this._away(this._el);
       this._away(this._ctl);
+      // Coming back the page may have moved under it, so the next draw
+      // measures again.
+      this._needsPosition = true;
     }
 
     destroy() {
@@ -953,6 +806,7 @@
       this._ctl = null;
       this._signature = "";
       this._ctlSignature = "";
+      this._needsPosition = true;
     }
 
     // Fading in on the frame after a panel is attached, so the first notice of
@@ -969,19 +823,19 @@
     // Each panel is rebuilt only when what it says changes, so a walking party
     // costs two string compares a frame.
     draw(notice, rows, state) {
-      const lit = litRecord();
       const folded = !!state.folded;
 
       // The notice, top right. Folded it is its title alone, and with nothing
       // to say the panel is off the screen rather than standing empty.
-      const noticeSig = JSON.stringify([
-        notice ? [notice.key, notice.title, notice.text] : null,
-        folded, !!state.foldable, state.foldChip,
-      ]);
+      // A plain string rather than JSON.stringify: this runs every frame the
+      // party is walking, and the notice is four fields.
+      const noticeSig = (notice ? notice.key + "" + notice.title + "" + notice.text : "-") +
+        "" + (folded ? 1 : 0) + (state.foldable ? 1 : 0) + "" + (state.foldChip || "");
       if (notice) {
         const el = this.element();
         if (noticeSig !== this._signature) {
           this._signature = noticeSig;
+          this._needsPosition = true;
           el.innerHTML = this._noticeHtml(notice, state);
           el.classList.toggle("mlg-folded", folded);
         }
@@ -990,18 +844,20 @@
         this._away(this._el);
       }
 
-      // The checklist, down the left. Folded it is put away whole: the fold
+      // The list, down the left. Folded it is put away whole: the fold
       // line that brings it back rides on whichever panel is still up.
-      const ctlSig = JSON.stringify([
-        rows.map((entry) => [entry.id, !!lit[entry.id]]),
-        folded, !!state.foldable, !!state.padMode, state.foldChip, !!notice,
-      ]);
+      // The rows only change when the map does, so their ids alone say it.
+      let ctlSig = "";
+      for (const entry of rows) ctlSig += entry.id + "";
+      ctlSig += "" + (folded ? 1 : 0) + (state.foldable ? 1 : 0) +
+        (state.hasPad ? 1 : 0) + (notice ? 1 : 0) + "" + (state.foldChip || "");
       const wantControls = rows.length || (state.foldable && !notice);
       if (wantControls) {
         const ctl = this.controlsElement();
         if (ctlSig !== this._ctlSignature) {
           this._ctlSignature = ctlSig;
-          ctl.innerHTML = this._controlsHtml(rows, lit, state, !!notice);
+          this._needsPosition = true;
+          ctl.innerHTML = this._controlsHtml(rows, state, !!notice);
           ctl.classList.toggle("mlg-folded", folded);
         }
         this._show(ctl, "_ctl");
@@ -1038,25 +894,24 @@
       return parts.join("");
     }
 
-    // The checklist window. It carries the fold line itself only when there is
+    // The list window. It carries the fold line itself only when there is
     // no notice beside it to carry one, so the key is never written twice.
-    _controlsHtml(rows, lit, state, hasNotice) {
+    _controlsHtml(rows, state, hasNotice) {
       const parts = [];
-      // A panel folded over nothing but the checklist says everything it has
+      // A panel folded over nothing but the list says everything it has
       // to say on the fold line itself, so it grows no heading of its own.
       const bareFold = !!state.folded;
       if (!state.folded && rows.length) {
         parts.push(`<div class="mlg-heading">${escapeHtml(T("MapLegend.controlsHeading"))}</div>`);
         for (const entry of rows) {
-          const cls = lit[entry.id] ? "mlg-row mlg-lit" : "mlg-row";
-          const face = rowFace(entry);
+          const face = rowFace(entry, state.hasPad);
           const binds = [];
           if (face.keys) binds.push(`<span class="mlg-keys">${escapeHtml(face.keys)}</span>`);
           for (const token of face.pads) {
             binds.push(`<span class="ui-chip mlg-chip">${escapeHtml(token)}</span>`);
           }
           parts.push(
-            `<div class="${cls}">` +
+            `<div class="mlg-row">` +
             `<span class="mlg-label">${escapeHtml(face.label)}</span>` +
             `<span class="mlg-binds">${binds.join("")}</span>` +
             `</div>`
@@ -1085,10 +940,14 @@
     // Where the canvas actually sits on the page is measured, not styled, so
     // the four numbers are handed to the stylesheet as custom properties and
     // the rule in theme.css does the drawing.
-    position() {
+    // Measuring the canvas forces a layout, so it is done only when something
+    // has actually moved: a rebuilt panel, or a resized window.
+    position(force) {
+      if (!force && !this._needsPosition) return;
       const m = canvasMetrics();
       if (!m) return;
-      // The notice hangs off the canvas's right edge, the checklist off its
+      this._needsPosition = false;
+      // The notice hangs off the canvas's right edge, the list off its
       // left one and off the floor: the party HUD owns the top left corner,
       // and a list this long has to grow upwards to stay clear of it.
       for (const el of [this._el, this._ctl]) {
@@ -1115,6 +974,13 @@
   }
 
   const sheet = new LegendSheet();
+
+  // The panels are pinned to the canvas, and the canvas moves when the window
+  // does. That is the only thing that moves them, so it is the only thing that
+  // makes them measure again.
+  if (typeof window !== "undefined" && window.addEventListener) {
+    window.addEventListener("resize", () => { sheet._needsPosition = true; });
+  }
 
   //===========================================================================
   // The pamphlet, a hundred steps in
@@ -1156,7 +1022,7 @@
   // the 3D world takes it off the screen rather than leaving it floating over
   // something it was never drawn against.
   function sheetAllowed() {
-    // The notices are the story mode's; the checklist is nobody's, so either
+    // The notices are the story mode's; the list is nobody's, so either
     // one on its own is reason enough to pin the paper up.
     if (!legendEnabled() && !controlsShown()) return false;
     if (!(SceneManager._scene instanceof Scene_Map)) return false;
@@ -1172,8 +1038,6 @@
       return;
     }
     updateTooltipWatch();
-    updateDeviceWatch();
-    readControlUse();
     readFoldKey();
     const notice = legendEnabled() ? allowedNotice(resolveNotice()) : null;
     const folded = isFolded();
@@ -1190,7 +1054,7 @@
       return;
     }
     sheet.draw(notice, rows, {
-      folded, foldable: foldable(), padMode: padMode(), foldChip: foldChipLabel(),
+      folded, foldable: foldable(), hasPad: padConnected(), foldChip: foldChipLabel(),
     });
     sheet.setBehindBusts(bustOnScreen());
   }
@@ -1201,16 +1065,6 @@
   Scene_Map.prototype.start = function () {
     patchFoldHotkey();
     _Scene_Map_start.call(this);
-  };
-
-  // The Menu row is lit by the menu actually opening rather than by the key
-  // that opened it: Esc, the pad's Y, a right click and CustomMainMenuLayout's
-  // own hotkey table all end up here, and none of them are still readable on
-  // the frame the sheet is next updated.
-  const _Scene_Map_callMenu = Scene_Map.prototype.callMenu;
-  Scene_Map.prototype.callMenu = function () {
-    if (controlsShown()) markLit("menu");
-    _Scene_Map_callMenu.call(this);
   };
 
   const _Scene_Map_update = Scene_Map.prototype.update;
@@ -1265,7 +1119,7 @@
     MENU_HOTKEY_LABELS,
     menuHotkeyControls,
 
-    // The checklist: whether it is out, what is on it, and what has been
+    // The list: whether it is out, what is on it, and what has been
     // ticked off. Bubba's "controls" topic and the Gameplay options row both
     // go through toggleControls / setControlsShown and nothing else.
     controlsShown,
@@ -1287,20 +1141,12 @@
     resetNoticesSeen,
     allowedNotice,
     visibleRows,
-    litRecord,
-    markLit,
     rowKeys,
     rowFace,
-    rowsFor,
-    readControlUse,
-    readMenuHotkeyUse,
 
-    // Which device the rows are speaking to, exposed so a test can ask
-    // without a pad in its hands.
-    deviceWatch,
+    // Whether a pad is plugged in, exposed so a test can ask without one in
+    // its hands. Which device was last touched is nobody's question any more.
     padConnected,
-    padMode,
-    updateDeviceWatch,
     TOOLTIP_PRIORITY_FRAMES,
     ERRAND_COMMON_EVENT_ID,
     ERRAND_STEPS,

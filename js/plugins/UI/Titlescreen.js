@@ -1933,7 +1933,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     Scene_Title.prototype.playTitleBgm = function () {
         AudioManager.playBgm({
             name: TITLE_MUSIC[titleMusicIndex()].value,
-            volume: 90, pitch: 100, pan: 0
+            volume: 55, pitch: 100, pan: 0
         });
         AudioManager.stopBgs();
         AudioManager.stopMe();

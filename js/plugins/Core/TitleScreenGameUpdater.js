@@ -546,6 +546,15 @@
         return _ownVersion;
     }
 
+    // The updater swaps CHANGELOG.txt in with the rest of the files, so both
+    // reads above are stale the moment a build is applied: without this the
+    // version badge, the news panel and the "which build am I on" answer all
+    // keep naming the build that was running when the game started.
+    function forgetChangelog() {
+        _ownVersion = undefined;
+        _sections = undefined;
+    }
+
     // The whole changelog, section by section, newest first. The title screen's
     // news panel is the file read out loud: every section is a version header
     // followed by its entries, so it is parsed here rather than there, where the
@@ -847,6 +856,37 @@
                 messageTitle(commit.message);
             const cmp = compareVersions(theirs, own);
             return cmp !== null && cmp <= 0;
+        },
+        // The build this copy already runs: its name reads as exactly the
+        // version written in the shipped CHANGELOG.txt. There is nothing to
+        // fetch from it, so no screen offers to install it.
+        // A hotfix published under the same version ("0.6.3a hotfix 2") is a
+        // later build than the plain one, so it is read by name rather than by
+        // number here: only a build whose name IS this copy's version is the
+        // one already running.
+        isCurrentVersion(commit) {
+            const own = this.gameVersion();
+            if (!own || !commit) return false;
+            const title = messageTitle(commit.message);
+            // "0.6.0a MAJOR UPDATE" names a version too: the marker says what
+            // kind of build it is, not which one.
+            const marked = title.match(/^v?(\d+\.\d+(?:\.\d+)?[A-Za-z]*)\s*[–:,-]?\s*major\s*[-_]?\s*update$/i);
+            const theirs = this._versionName(title) || (marked ? marked[1] : null);
+            if (!theirs) return false;
+            const norm = (v) => String(v).trim().replace(/^v/i, '').toLowerCase();
+            return norm(theirs) === norm(own);
+        },
+
+        // The build this copy is running, found in the history by its version
+        // when nothing has ever been installed by the updater: a copy shipped
+        // or downloaded whole still knows which build it is, because its
+        // changelog names it.
+        currentVersionCommit() {
+            const list = this.commits();
+            for (const commit of list) {
+                if (this.isCurrentVersion(commit)) return commit;
+            }
+            return null;
         },
         _majorHere(commit) {
             return isMajorCommit(commit) && !this.majorCrossedByVersion(commit);
@@ -1203,8 +1243,12 @@
             return this._auto;
         },
         isInstalled(sha) {
+            if (!sha) return false;
             const info = this.installedInfo();
-            return !!(info && sha && info.sha === sha);
+            if (info) return info.sha === sha;
+            // Never updated from here, so the version is the only answer.
+            const own = this.currentVersionCommit();
+            return !!(own && own.sha === sha);
         },
         plan(sha) {
             return this._plans[sha] || null;
@@ -1555,6 +1599,8 @@
                 plan.bytes = 0;
                 this._plans[plan.sha] = plan;
                 this._restartPending = true;
+                // CHANGELOG.txt is one of the files just swapped in.
+                forgetChangelog();
 
                 if (backedUp) {
                     report({ phase: 'apply', text: fmt(T.logBackup, 'save/updater/backup/' + stamp) });
@@ -1833,6 +1879,9 @@
             if (!commit) return { text: T.unchecked, cls: 'gu-badge--idle' };
             if (this._status[commit.sha] === 'checking') return { text: T.checking, cls: 'gu-badge--busy' };
             if (this._status[commit.sha] === 'failed')   return { text: T.failed,   cls: 'gu-badge--bad' };
+            if (GameUpdater.isCurrentVersion(commit)) {
+                return { text: T.upToDate, cls: 'gu-badge--ok' };
+            }
             const plan = GameUpdater.plan(commit.sha);
             if (!plan) return { text: T.unchecked, cls: 'gu-badge--idle' };
             if (plan.changed.length) {
@@ -1873,7 +1922,8 @@
             }
             // A build already known to match the files here has nothing to do,
             // so the one button is only offered while there is work in it.
-            if (DOWNLOADS_ENABLED && !(plan && !plan.changed.length)) {
+            if (DOWNLOADS_ENABLED && !GameUpdater.isCurrentVersion(commit) &&
+                !(plan && !plan.changed.length)) {
                 const isRollback = GameUpdater.indexOf(commit.sha) > 0;
                 const verb = isRollback ? T.actRollback : T.actInstall;
                 // The size is only known once the build has been compared; an
@@ -1925,7 +1975,8 @@
         _useSelectedBuild() {
             const commit = this._selectedBuild();
             if (!isAvailable() || this._isWorking() || !commit) return;
-            this._runAction(DOWNLOADS_ENABLED ? 'switch' : 'check');
+            const blocked = GameUpdater.isCurrentVersion(commit);
+            this._runAction((DOWNLOADS_ENABLED && !blocked) ? 'switch' : 'check');
         }
 
         // Whether switching to the highlighted build would cross a major
@@ -1936,11 +1987,10 @@
             return !!(commit && GameUpdater.majorAhead(commit.sha));
         }
 
-        // Opening the screen IS the request for an update: the build list is
-        // read, the newest build compared, and whatever it holds that this copy
-        // lacks downloaded and applied, with no press at all. Esc stops it
-        // wherever it has got to, and nothing outside save/updater/tmp has been
-        // written until every file is down.
+        // Opening the screen reads the build list and compares the newest
+        // build against the files here, so the list can say straight away
+        // whether an update is owed. Nothing is downloaded until the player
+        // asks for it.
         //
         // Two things hold it back. A build already fetched and waiting only on
         // the game closing has nothing left to download; and the title screen's
@@ -1976,10 +2026,10 @@
             if (!latest) return;
             this._buildIndex = 0;
             this._selectionChanged();
-            if (!DOWNLOADS_ENABLED) { this._runAction('check'); return; }
-            // A copy already on it falls out of the compare with nothing to
-            // fetch and is simply told so, which is the answer it came for.
-            this._runSwitch(latest.sha, true);
+            // Opening the screen only asks the question: the newest build is
+            // compared so the list can say whether anything is owed, and the
+            // download waits for the player to ask for it.
+            this._runAction('check');
         }
 
         // -- channels --------------------------------------------------------
@@ -2370,9 +2420,12 @@
             // with. A build without one simply has no row.
             const ownVersion = GameUpdater.gameVersion();
             if (ownVersion) specs += row(T.version, ownVersion);
+            const ownCommit = installed ? null : GameUpdater.currentVersionCommit();
             specs += row(T.installed, installed
                 ? `${shortSha(installed.sha)}  (${formatDate(installed.at ? new Date(installed.at).toISOString() : null) || T.unknown})`
-                : T.never);
+                : (ownCommit
+                    ? `${shortSha(ownCommit.sha)}  (${formatDate(ownCommit.date) || T.unknown})`
+                    : T.never));
             // The number the version badge wears, when this copy knows it.
             const ownBuild = GameUpdater.buildNumber();
             if (ownBuild !== null) specs += row(T.buildNumber, ownBuild);

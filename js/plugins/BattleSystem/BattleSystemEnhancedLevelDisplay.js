@@ -144,6 +144,18 @@
             if (label.parent) label.parent.removeChild(label);
             container.addChild(label);
         }
+        this.placeEnemyLevelLabel();
+    };
+
+    // Copying the owner's position once per frame is not enough: the map can be
+    // dragged (and the display position pushed) after the spriteset has already
+    // updated, so a plate synced at update time trails its monster by a frame
+    // for as long as the drag lasts. The position is therefore taken again at
+    // render time, in the plate's own updateTransform, where the owner sprite
+    // has its final coordinates for this frame.
+    Sprite_Character.prototype.placeEnemyLevelLabel = function() {
+        const label = this._enemyLevelLabel;
+        if (!label) return;
         label.x = this.x;
         label.y = this.y - 50;
         // The plate sits well above its owner, so a monster standing just past
@@ -225,11 +237,42 @@
         const owner = this;
         this._enemyLevelLabel.update = function() {
             if (!owner.parent || owner._enemyLevelLabel !== this) {
-                if (this.parent) this.parent.removeChild(this);
+                // The tilemap is walking its own child list right now, so the
+                // plate is only hidden here and unhooked a moment later: pulling
+                // it out mid-walk makes the tilemap skip the next child, and the
+                // plate after this one would keep drawing over a monster that is
+                // no longer on the map.
+                this.visible = false;
                 if (owner._enemyLevelLabel === this) owner._enemyLevelLabel = null;
+                orphanedPlates.push(this);
+                return;
             }
+            owner.placeEnemyLevelLabel();
+        };
+        // Invisible children are skipped by the renderer, so the plate cannot
+        // rely on updateTransform alone to bring itself back; update() above
+        // decides visibility, and this only keeps the position honest for a map
+        // that moved after the spriteset had its turn.
+        this._enemyLevelLabel.updateTransform = function() {
+            if (owner._enemyLevelLabel === this) owner.placeEnemyLevelLabel();
+            PIXI.Sprite.prototype.updateTransform.call(this);
         };
         this.syncEnemyLevelLabel();
+    };
+
+    // ========================================================================
+    // 4. Deferred removal of plates whose owner has left the map
+    // ========================================================================
+
+    const orphanedPlates = [];
+
+    const _Spriteset_Map_update_EnemyLevel = Spriteset_Map.prototype.update;
+    Spriteset_Map.prototype.update = function() {
+        _Spriteset_Map_update_EnemyLevel.call(this);
+        while (orphanedPlates.length > 0) {
+            const plate = orphanedPlates.pop();
+            if (plate.parent) plate.parent.removeChild(plate);
+        }
     };
 
 })();

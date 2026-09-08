@@ -322,13 +322,19 @@
 
     PluginManager.registerCommand(pluginName, "showWorldMap", args => {
         currentMapState = 1;
-        if ($gameSystem) $gameSystem._minimapState = 1;
+        if ($gameSystem) {
+            $gameSystem._minimapState = 1;
+            $gameSystem._minimapUserHidden = false;
+        }
         refreshWorldMapDisplay();
     });
 
     PluginManager.registerCommand(pluginName, "hideWorldMap", args => {
         currentMapState = 0;
-        if ($gameSystem) $gameSystem._minimapState = 0;
+        if ($gameSystem) {
+            $gameSystem._minimapState = 0;
+            $gameSystem._minimapUserHidden = true;
+        }
         refreshWorldMapDisplay();
     });
 
@@ -1225,13 +1231,24 @@
             ? config.minimapMode : DEFAULT_MINIMAP_MODE;
     };
 
+    // Generated ground reads itself out: on a procedural map, surface or
+    // underground, and on a planet's landing grid, the corner minimap is up
+    // from the moment the party arrives rather than waiting to be switched on.
+    // Only an explicit hide (the options row, the travel selector, the plugin
+    // command) turns that default off, and it is remembered as such.
+    function defaultMinimapState() {
+        if (permanentMinimap) return 1;
+        if ($gameSystem && $gameSystem._minimapUserHidden) return 0;
+        return (modeAllowsMinimap() && isExploringContext()) ? 1 : 0;
+    }
+
     // The minimap state the map falls back to when the fullscreen map closes.
     function savedMinimapState() {
         if ($gameSystem && typeof $gameSystem._minimapState === 'number' &&
             $gameSystem._minimapState > 0 && $gameSystem._minimapState < 3) {
             return $gameSystem._minimapState;
         }
-        return 0;
+        return defaultMinimapState();
     }
 
     // The travel page's minimap selector: show or hide the corner minimap
@@ -1251,6 +1268,7 @@
             : 0;
         if ($gameSystem) {
             $gameSystem._minimapState = currentMapState;
+            $gameSystem._minimapUserHidden = !visible;
             if (currentMapState > 0) $gameSystem._lastActiveMinimapState = currentMapState;
         }
         refreshWorldMapDisplay();
@@ -2331,9 +2349,10 @@
             travelOrigin = null;
             if (autoOpenedForTravel) {
                 autoOpenedForTravel = false;
-                const savedState = ($gameSystem && typeof $gameSystem._minimapState === 'number')
+                const savedState = ($gameSystem && typeof $gameSystem._minimapState === 'number' &&
+                    $gameSystem._minimapState > 0)
                     ? $gameSystem._minimapState
-                    : (permanentMinimap ? 1 : 0);
+                    : defaultMinimapState();
                 currentMapState = savedState;
                 refreshWorldMapDisplay();
             }
@@ -2539,8 +2558,9 @@
         const noMinimap = !!($dataMap && $dataMap.note && /<NoMinimap>/i.test($dataMap.note));
 
         // Retrieve persistent minimap state (default to state 0: hidden)
-        let savedState = permanentMinimap ? 1 : 0;
-        if ($gameSystem && typeof $gameSystem._minimapState === 'number') {
+        let savedState = defaultMinimapState();
+        if ($gameSystem && typeof $gameSystem._minimapState === 'number' &&
+            $gameSystem._minimapState > 0) {
             savedState = $gameSystem._minimapState;
         }
 

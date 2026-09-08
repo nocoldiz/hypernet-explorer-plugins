@@ -1,3 +1,10 @@
+0.6.4a
+- minimap shows by default on procedural maps, surface and underground
+- controls legend stops redrawing itself on procedural maps, just lists the controls
+- update menu no longer auto-downloads or offers the current build
+- lower title screen music volume
+- map tooltip editor autosaves the json when an area changes
+- enemy level labels no longer detach from their sprites on map drag
 0.6.3a
 - story mode now starts on map 169 at 67,33
 - vector gun option restored in story mode main menu
