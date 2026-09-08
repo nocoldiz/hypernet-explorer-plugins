@@ -708,23 +708,11 @@
         configurable: true
     });
 
-    // 0 = Centered (top center of the screen, default), 1 = Classic (under the party HUD)
-    Object.defineProperty(ConfigManager, 'battleLogPosition', {
-        get: function() {
-            return this._battleLogPosition !== undefined ? this._battleLogPosition : 0;
-        },
-        set: function(value) {
-            this._battleLogPosition = value;
-        },
-        configurable: true
-    });
-
     const _ConfigManager_makeData = ConfigManager.makeData;
     ConfigManager.makeData = function() {
         const config = _ConfigManager_makeData.call(this);
         config.battleLogBgOpacity = this.battleLogBgOpacity;
         config.battleLogSkillNames = this.battleLogSkillNames;
-        config.battleLogPosition = this.battleLogPosition;
         return config;
     };
 
@@ -733,18 +721,11 @@
         _ConfigManager_applyData.call(this, config);
         this.battleLogBgOpacity = config.battleLogBgOpacity !== undefined ? config.battleLogBgOpacity : CONFIG.battleLogBgOpacity;
         this.battleLogSkillNames = config.battleLogSkillNames !== undefined ? config.battleLogSkillNames : 0;
-        this.battleLogPosition = config.battleLogPosition !== undefined ? config.battleLogPosition : 0;
     };
 
     //-------------------------------------------------------------------------
     // Window_Options - Add Battle Log Options
     //-------------------------------------------------------------------------
-
-    function _battleLogPositionText(value) {
-        return value === 1
-            ? (T('BattleLog.positionClassic') || 'Classic')
-            : (T('BattleLog.positionCentered') || 'Centered');
-    }
 
     if (window.GameOptions) {
         window.GameOptions.registerOption('battleLogBgOpacity', T('BattleLog.bgOpacity'), 
@@ -782,28 +763,12 @@
                 ConfigManager.save();
             }
         );
-
-        window.GameOptions.registerOption('battleLogPosition', T('BattleLog.positionOption') || 'Battle Log Position',
-            () => ConfigManager.battleLogPosition,
-            (value) => ConfigManager.battleLogPosition = value,
-            'gameplay', 'custom',
-            function(value) { return _battleLogPositionText(value); },
-            function() {
-                ConfigManager.battleLogPosition = ConfigManager.battleLogPosition === 1 ? 0 : 1;
-                ConfigManager.save();
-            },
-            function() {
-                ConfigManager.battleLogPosition = ConfigManager.battleLogPosition === 1 ? 0 : 1;
-                ConfigManager.save();
-            }
-        );
     } else {
         const _Window_Options_addGeneralOptions = Window_Options.prototype.addGeneralOptions;
         Window_Options.prototype.addGeneralOptions = function() {
             _Window_Options_addGeneralOptions.call(this);
             this.addCommand(T('BattleLog.bgOpacity'), "battleLogBgOpacity");
             this.addCommand(T('BattleLog.skillNamesOption') || "Skill Names", "battleLogSkillNames");
-            this.addCommand(T('BattleLog.positionOption') || "Battle Log Position", "battleLogPosition");
         };
 
         const _Window_Options_statusText = Window_Options.prototype.statusText;
@@ -815,9 +780,6 @@
             if (symbol === "battleLogSkillNames") {
                 const val = this.getConfigValue(symbol);
                 return val === 1 ? (T('BattleLog.skillAction') || 'Skill Action') : (T('BattleLog.skillName') || 'Skill Name');
-            }
-            if (symbol === "battleLogPosition") {
-                return _battleLogPositionText(this.getConfigValue(symbol));
             }
             return _Window_Options_statusText.call(this, index);
         };
@@ -832,11 +794,6 @@
                 return;
             }
             if (symbol === "battleLogSkillNames") {
-                const value = this.getConfigValue(symbol);
-                this.changeValue(symbol, value === 1 ? 0 : 1);
-                return;
-            }
-            if (symbol === "battleLogPosition") {
                 const value = this.getConfigValue(symbol);
                 this.changeValue(symbol, value === 1 ? 0 : 1);
                 return;
@@ -858,11 +815,6 @@
                 this.changeValue(symbol, value === 1 ? 0 : 1);
                 return;
             }
-            if (symbol === "battleLogPosition") {
-                const value = this.getConfigValue(symbol);
-                this.changeValue(symbol, value === 1 ? 0 : 1);
-                return;
-            }
             _Window_Options_cursorRight.call(this);
         };
 
@@ -876,11 +828,6 @@
                 return;
             }
             if (symbol === "battleLogSkillNames") {
-                const value = this.getConfigValue(symbol);
-                this.changeValue(symbol, value === 1 ? 0 : 1);
-                return;
-            }
-            if (symbol === "battleLogPosition") {
                 const value = this.getConfigValue(symbol);
                 this.changeValue(symbol, value === 1 ? 0 : 1);
                 return;
@@ -1582,28 +1529,17 @@
         if (this._htmlBattleLogRoot) {
             const sc = _msgGetScale();
             const root = this._htmlBattleLogRoot;
+            _setStyleIfChanged(root, 'left', (sc.ox + this.x * sc.sx) + 'px');
             const hotbarReserve = (window.BattleHotbar && window.BattleHotbar.reservedHeight) || 75;
-            // Centered (default) hangs the log from the top centre of the screen, in the free
-            // lane between the party HUD on the left and the enemy bars on the right. Classic
-            // keeps the old left aligned column under the party HUD cards.
-            const centered = ConfigManager.battleLogPosition !== 1;
-            const maxW = Math.round(Graphics.width * 0.52);
-            const logW = Math.min(this.width, maxW);
-            const leftPx = centered
-                ? sc.ox + Math.floor((Graphics.width - logW) / 2) * sc.sx
-                : sc.ox + this.x * sc.sx;
-            const topPx = centered
-                ? sc.oy + (yOffset + 8) * sc.sy
-                : sc.oy + (this.y + yOffset) * sc.sy;
-            _setStyleIfChanged(root, 'left', leftPx + 'px');
+            const topPx = sc.oy + (this.y + yOffset) * sc.sy;
 
-            // Available room is bounded by the hotbar below.
+            // The battle log is positioned cleanly beneath the Party HUD cards and never lifts
+            // up over them. Available room is bounded by the hotbar below.
             const room = Math.max(60, (Graphics.height - hotbarReserve) * sc.sy - topPx - 6);
 
             _setStyleIfChanged(root, 'top', topPx + 'px');
-            _setStyleIfChanged(root, 'width', ((centered ? logW : this.width) * sc.sx) + 'px');
-            _setStyleIfChanged(root, 'maxWidth', Math.round(maxW * sc.sx) + 'px');
-            _setStyleIfChanged(root, 'textAlign', centered ? 'center' : 'left');
+            _setStyleIfChanged(root, 'width', (this.width * sc.sx) + 'px');
+            _setStyleIfChanged(root, 'maxWidth', Math.round(Graphics.width * 0.52 * sc.sx) + 'px');
             _setStyleIfChanged(root, 'maxHeight', room + 'px');
             _setStyleIfChanged(root, 'height', 'auto');
             _setStyleIfChanged(root, 'padding', Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px');
@@ -1611,7 +1547,7 @@
                 (this.visible && this._lines && this._lines.length > 0) ? 'flex' : 'none');
             _setStyleIfChanged(root, 'flexDirection', 'column');
             _setStyleIfChanged(root, 'justifyContent', 'flex-start');
-            _setStyleIfChanged(root, 'alignItems', centered ? 'center' : 'flex-start');
+            _setStyleIfChanged(root, 'alignItems', 'flex-start');
             _setStyleIfChanged(root, 'overflowY', 'hidden');
             _setStyleIfChanged(root, 'overflowX', 'visible');
 

@@ -1404,10 +1404,10 @@
              "Weapons/HitPierce5"],
     magic:  ["Weapons/HitMagic1", "Weapons/HitMagic2", "Weapons/HitMagic3"],    // i18n-ignore
     lash:   ["Weapons/HitLash1", "Weapons/HitLash3", "Weapons/HitFlesh1"],      // i18n-ignore
-    bullet: ["Impact/bfh1_hit_07", "Impact/bfh1_hit_02", "Impact/bfh1_hit_06",  // i18n-ignore
-             "Impact/bfh1_hit_08", "Impact/bfh1_hit_10"],
-    casing: ["Impact/bfh1_metal_falling_01", "Impact/bfh1_metal_falling_02",    // i18n-ignore
-             "Impact/bfh1_metal_falling_04"]
+    bullet: ["impact/bfh1_hit_07", "impact/bfh1_hit_02", "impact/bfh1_hit_06",  // i18n-ignore
+             "impact/bfh1_hit_08", "impact/bfh1_hit_10"],
+    casing: ["impact/bfh1_metal_falling_01", "impact/bfh1_metal_falling_02",    // i18n-ignore
+             "impact/bfh1_metal_falling_04"]
   };
 
   // One entry per weapon type id (data/System.json weaponTypes). `shape` picks

@@ -436,13 +436,7 @@
         const base = classData.params[paramId][1];
         const plus = (actor && actor._paramPlus) ? (actor._paramPlus[paramId] || 0) : 0;
         const rate = (actor && typeof actor.paramRate === "function") ? actor.paramRate(paramId) : 1;
-        // The engine never lets a parameter fall below its own floor (1 for
-        // MHP, 0 for the rest), so a pile of negative traits must read as that
-        // floor here too instead of showing an impossible negative HP.
-        const min = (actor && typeof actor.paramMin === "function") ? actor.paramMin(paramId) : (paramId === 0 ? 1 : 0);
-        const value = Math.round((base + plus) * rate);
-        if (!isFinite(value)) return fallback;
-        return Math.max(min, value);
+        return Math.round((base + plus) * rate) || fallback;
       };
       const SL = ccStatLabels();
       const stats = [

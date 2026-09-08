@@ -31,20 +31,6 @@
  * js/asset_decrypt.js has already stripped that suffix on the way out of
  * readdir.
  *
- * The engine's single "is this build encrypted" flag is not trusted either.
- * A build can end up holding "<name>.ogg_" while data/System.json says the audio
- * is plain, or the other way round, and then every affected file fails to load.
- * Each url is therefore checked on disk: whichever of "<name>.ogg" and
- * "<name>.ogg_" is really there is the one requested, and that same answer
- * decides whether the bytes are decrypted on the way in.
- *
- * Finally, a sound that cannot be loaded no longer stops the game. Stock
- * AudioManager.checkErrors throws a LoadError for any errored buffer, which puts
- * up the modal "Failed to load / Retry" screen - during a battle that is a
- * softlock, because retrying a file that is not there never succeeds. The
- * errored buffer is dropped and reported to the console instead, so the fight
- * carries on in silence.
- *
  * Load this first. It needs no parameters, and it does nothing in browser mode,
  * where there is no way to list a directory - there, paths must already match.
  *
@@ -169,112 +155,21 @@
         return out;
     }
 
-    // Whether the file behind an already resolved url is the encrypted twin.
-    // true: only "<name>.ext_" is on disk. false: "<name>.ext" is on disk.
-    // null: neither, so the engine's own flag is as good an answer as any.
-    const twins = Object.create(null);
-
-    function isEncrypted(url) {
-        const cached = twins[url];
-        if (cached !== undefined) {
-            return cached;
-        }
-        const rel = url.split("/").map(decode).join("/");
-        const full = nodePath.join(gameRoot, rel);
-        let answer = null;
-        try {
-            if (fs.existsSync(full)) {
-                answer = false;
-            } else if (fs.existsSync(full + "_")) {
-                answer = true;
-            }
-        } catch (e) {
-            answer = null;
-        }
-        twins[url] = answer;
-        return answer;
-    }
-
     // Every bitmap load funnels through here, whichever way it was requested:
-    // ImageManager.loadBitmap, loadBitmapFromUrl or a bare Bitmap.load. The
-    // body is the stock one with the global flag swapped for the disk answer.
+    // ImageManager.loadBitmap, loadBitmapFromUrl or a bare Bitmap.load.
+    const bitmapStartLoading = Bitmap.prototype._startLoading;
     Bitmap.prototype._startLoading = function() {
         this._url = resolve(this._url);
-        const found = isEncrypted(this._url);
-        this._encrypted = found === null ? Utils.hasEncryptedImages() : found;
-        this._image = new Image();
-        this._image.onload = this._onLoad.bind(this);
-        this._image.onerror = this._onError.bind(this);
-        this._destroyCanvas();
-        this._loadingState = "loading";
-        if (this._encrypted) {
-            this._startDecrypting();
-        } else {
-            this._image.src = this._url;
-            if (this._image.width > 0) {
-                this._image.onload = null;
-                this._onLoad();
-            }
-        }
-    };
-
-    const bitmapOnLoad = Bitmap.prototype._onLoad;
-    Bitmap.prototype._onLoad = function() {
-        if (this._encrypted && !Utils.hasEncryptedImages()) {
-            URL.revokeObjectURL(this._image.src);
-        }
-        bitmapOnLoad.call(this);
+        bitmapStartLoading.call(this);
     };
 
     // WebAudio appends the "_" of an encrypted build here, so correct the url
-    // just before that rather than after, and answer from disk while we are at
-    // it: a build whose flag disagrees with its files loads either way.
+    // just before that rather than after.
+    const audioRealUrl = WebAudio.prototype._realUrl;
     WebAudio.prototype._realUrl = function() {
         this._url = resolve(this._url);
-        const found = isEncrypted(this._url);
-        this._encrypted = found === null ? Utils.hasEncryptedAudio() : found;
-        return this._url + (this._encrypted ? "_" : "");
+        return audioRealUrl.call(this);
     };
 
-    WebAudio.prototype._readableBuffer = function() {
-        if (this._encrypted) {
-            return Utils.decryptArrayBuffer(this._data.buffer);
-        }
-        return this._data.buffer;
-    };
-
-    // A sound that will not load must not stop the game. Stock checkErrors
-    // throws a LoadError, which is the modal Retry screen, which in a battle is
-    // a softlock because the file is not going to appear on a retry.
-    const reported = Object.create(null);
-
-    AudioManager.checkErrors = function() {
-        const drop = buffer => {
-            if (!buffer || !buffer.isError()) {
-                return false;
-            }
-            if (!reported[buffer.url]) {
-                reported[buffer.url] = true;
-                console.error(
-                    "[AssetCaseResolver] " + buffer.url +
-                        " could not be loaded; playing nothing instead."
-                );
-            }
-            try {
-                buffer.stop();
-            } catch (e) {
-                // A buffer that never loaded has nothing to stop.
-            }
-            return true;
-        };
-        for (const key of ["_bgmBuffer", "_bgsBuffer", "_meBuffer"]) {
-            if (drop(this[key])) {
-                this[key] = null;
-            }
-        }
-        this._seBuffers = this._seBuffers.filter(buffer => !drop(buffer));
-        this._staticBuffers = this._staticBuffers.filter(buffer => !drop(buffer));
-    };
-
-    window.AssetCaseResolver = { resolve: resolve, isEncrypted: isEncrypted };
+    window.AssetCaseResolver = { resolve: resolve };
 })();

@@ -376,84 +376,55 @@ const GameOptions = {
     },
 
     // Hardcoded order and categorization. Gameplay is first so it opens by default.
-    // Each tab is a list of titled groups: the settings of one subject sit
-    // together under their own heading instead of one long undivided column.
-    // Anything registered into the tab's category but named in no group is
-    // gathered under the trailing "other" heading, so a plugin's new option
-    // still shows up without being listed here.
     tabs: [
         {
             id: 'gameplay',
             nameKey: 'gameplay',
             categories: ['gameplay'],
-            groups: [
-                { key: 'combat', symbols: ['enemyDifficulty', 'mapBattleMode', 'cpuPartyMembers', 'autoIdle'] },
-                { key: 'battleLog', symbols: ['smoothBattleLog', 'battleLogPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] },
-                { key: 'exploration', symbols: ['fowEnabled', 'fogOfWar', 'mapStreaming', 'mapTooltips', 'showMapNotices', 'showControls'] },
-                { key: 'saving', symbols: ['autosaveEnabled', 'autosaveInterval'] },
-                // Language is left out while the game is locked to English; if it
-                // is ever unlocked the registered row lands under "other".
-                { key: 'system', symbols: ['commandRemember', 'runInBackground'] }
+            // Language is hidden while the game is locked to English, so the
+            // page opens on the world settings instead.
+            symbols: [
+                'fowEnabled', 'enemyDifficulty',
+                'cpuPartyMembers', 'mapBattleMode', 'mapStreaming', 'fogOfWar', 'commandRemember',
+                'smoothBattleLog', 'mapTooltips', 'showControls', 'showMapNotices', 'runInBackground'
             ]
         },
         {
             id: 'video',
             nameKey: 'video',
             categories: ['video'],
-            groups: [
-                { key: 'display', symbols: ['fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
-                { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'partyHud', 'worldMinimap', 'titleBackground'] },
-                { key: 'battleView', symbols: ['enemyBattlers', 'ebBackgrounds', 'proceduralHitFX'] },
-                { key: 'lighting', symbols: ['nightLight'] }
+            symbols: [
+                'enemyBattlers', 'fullscreen', 'uiScale', 'fontScale', 'nightLight',
+                'activeTheme', 'partyHud', 'proceduralHitFX', 'showFps', 'titleBackground'
             ]
         },
         {
             id: 'audio',
             nameKey: 'audio',
             categories: ['audio'],
-            groups: [
-                { key: 'mix', symbols: ['masterVolume', 'bgmMute', 'bgmVolume', 'bgsVolume', 'meVolume', 'seVolume'] },
-                { key: 'worldSound', symbols: ['weatherVolume', 'footstepsVolume', 'uisVolume', 'vscVolume'] },
-                { key: 'music', symbols: ['musicArtistDisplay', 'battleMusicRandom', 'battleMusicName'] },
-                { key: 'voices', symbols: ['dialogueVoices', 'dialogueVoicesVolume'] }
-            ]
+            symbols: ['musicArtistDisplay', 'battleMusicRandom', 'battleMusicName', 'masterVolume', 'bgmMute', 'bgmVolume', 'bgsVolume', 'weatherVolume', 'meVolume', 'seVolume', 'footstepsVolume', 'dialogueVoices', 'dialogueVoicesVolume', 'uisVolume', 'vscVolume']
         },
         {
             id: 'shader',
             nameKey: 'shader',
             categories: ['shader'],
-            groups: [
-                { key: 'look', symbols: ['retroShaderMode'] },
-                { key: 'snapVertex', symbols: ['retroDownscale', 'retroColorLevels', 'retroVertexSnap', 'retroDither'] },
-                { key: 'pixelArt', symbols: ['pixelArtPixelSize', 'pixelArtWeaponDetail', 'pixelArtPalette',
-                    'pixelArtColorLevels', 'pixelArtLightSteps', 'pixelArtSaturation', 'pixelArtInk', 'pixelArtDither'] }
+            symbols: [
+                'retroShaderMode',
+                'retroDownscale', 'retroColorLevels', 'retroVertexSnap', 'retroDither',
+                'pixelArtPixelSize', 'pixelArtWeaponDetail', 'pixelArtPalette',
+                'pixelArtColorLevels', 'pixelArtLightSteps', 'pixelArtSaturation',
+                'pixelArtInk', 'pixelArtDither'
             ]
         },
         {
             id: 'experimental',
             nameKey: 'experimental',
             categories: ['experimental'],
-            groups: [
-                { key: 'ascii', symbols: ['asciiModeEnabled', 'asciiHudEnabled'] }
+            symbols: [
+                'asciiModeEnabled', 'asciiHudEnabled'
             ]
         }
     ]
-};
-
-// `tab.symbols` stays the flat ordered list every older call site reads; the
-// groups are the source of truth for it.
-GameOptions.tabs.forEach(tab => {
-    tab.symbols = tab.groups.reduce((acc, g) => acc.concat(g.symbols), []);
-});
-
-// The groups of a tab, with every registered option of its categories that no
-// group claims gathered into a trailing "other" heading.
-GameOptions.tabGroups = function (tab) {
-    const cats = tab.categories || [tab.id];
-    const claimed = tab.symbols;
-    const rest = Object.keys(this._options).filter(
-        sym => cats.includes(this._options[sym].category) && !claimed.includes(sym));
-    return rest.length ? tab.groups.concat([{ key: 'other', symbols: rest }]) : tab.groups;
 };
 
 window.GameOptions = GameOptions;
@@ -1003,29 +974,30 @@ window.GameOptions = GameOptions;
             try { return !!opt.visible(); } catch (e) { return true; }
         };
 
-        // Rows are emitted group by group. The first row of a group carries the
-        // group's heading, which the DOM list renders above it; the command list
-        // itself stays flat so selection indices are unaffected.
-        GameOptions.tabGroups(tab).forEach(group => {
-            let first = this._list.length;
-            group.symbols.forEach(symbol => {
-                const custom = GameOptions._options[symbol];
-                if (custom && !shown(custom)) return;
-                if (custom) {
-                    this.addCommand(optionName(custom), symbol);
-                } else if (coreSymbols.includes(symbol)) {
-                    let name = symbol;
-                    if (symbol === 'alwaysDash') name = TextManager.alwaysDash;
-                    else if (symbol === 'commandRemember') name = TextManager.commandRemember;
-                    else if (symbol === 'bgmVolume') name = TextManager.bgmVolume;
-                    else if (symbol === 'bgsVolume') name = TextManager.bgsVolume;
-                    else if (symbol === 'meVolume') name = TextManager.meVolume;
-                    else if (symbol === 'seVolume') name = TextManager.seVolume;
-                    this.addCommand(name, symbol);
-                }
-            });
-            if (this._list.length > first) this._list[first].group = group.key;
+        tab.symbols.forEach(symbol => {
+            const custom = GameOptions._options[symbol];
+            if (custom && !shown(custom)) return;
+            if (custom) {
+                this.addCommand(optionName(custom), symbol);
+            } else if (coreSymbols.includes(symbol)) {
+                let name = symbol;
+                if (symbol === 'alwaysDash') name = TextManager.alwaysDash;
+                else if (symbol === 'commandRemember') name = TextManager.commandRemember;
+                else if (symbol === 'bgmVolume') name = TextManager.bgmVolume;
+                else if (symbol === 'bgsVolume') name = TextManager.bgsVolume;
+                else if (symbol === 'meVolume') name = TextManager.meVolume;
+                else if (symbol === 'seVolume') name = TextManager.seVolume;
+                this.addCommand(name, symbol);
+            }
         });
+
+        const tabCategories = tab.categories || [tab.id];
+        for (const symbol in GameOptions._options) {
+            const opt = GameOptions._options[symbol];
+            if (tabCategories.includes(opt.category) && !tab.symbols.includes(symbol) && shown(opt)) {
+                this.addCommand(optionName(opt), symbol);
+            }
+        }
     };
 
     const _Window_Options_getConfigValue = Window_Options.prototype.getConfigValue;
@@ -1510,10 +1482,6 @@ window.GameOptions = GameOptions;
             const custom = GameOptions._options[symbol];
             const value = w.getConfigValue(symbol);
             const labelHTML = `<span class="option-label"><span class="option-name">${name}</span></span>`;
-            // The first row of a group prints the group's heading above itself.
-            const headerHTML = cmd.group
-                ? `<div class="option-group-header">${T('GameOptions.group.' + cmd.group)}</div>`
-                : '';
 
             // Number / volume slider. A slider may provide a statusTextFn when the
             // raw 0..100 position is not what the player should read (e.g. enemy
@@ -1524,7 +1492,7 @@ window.GameOptions = GameOptions;
                 const num = Number(value);
                 const pct = isFinite(num) ? num.clamp(0, 100) : 0;
                 const valueStr = (custom && custom.statusTextFn) ? w.statusText(idx) : `${pct}%`;
-                return headerHTML + `<div class="option-row option-row--slider" data-idx="${idx}" onclick="SceneManager._scene.focusOption(${idx})">
+                return `<div class="option-row option-row--slider" data-idx="${idx}" onclick="SceneManager._scene.focusOption(${idx})">
                             <div class="option-row-head">
                                 ${labelHTML}
                                 <span class="option-value">${valueStr}</span>
@@ -1538,7 +1506,7 @@ window.GameOptions = GameOptions;
             // Custom select-list options (theme, etc.)
             if (custom && custom.cursorLeftFn && custom.cursorRightFn) {
                 const statusStr = w.statusText(idx);
-                return headerHTML + `<div class="option-row" data-idx="${idx}" onclick="SceneManager._scene.focusOption(${idx})">
+                return `<div class="option-row" data-idx="${idx}" onclick="SceneManager._scene.focusOption(${idx})">
                             ${labelHTML}
                             <span class="option-status-toggle enabled option-select">
                                 <span class="arrow-btn" onclick="event.stopPropagation(); SceneManager._scene.decreaseOption(${idx})">◀</span>
@@ -1549,7 +1517,7 @@ window.GameOptions = GameOptions;
             }
 
             // Boolean toggle
-            return headerHTML + `<div class="option-row" data-idx="${idx}" onclick="SceneManager._scene.toggleOption(${idx})">
+            return `<div class="option-row" data-idx="${idx}" onclick="SceneManager._scene.toggleOption(${idx})">
                         ${labelHTML}
                         <span class="option-status-toggle ${value ? 'enabled' : 'disabled'}">${value ? T('GameOptions.active') : T('GameOptions.inactive')}</span>
                     </div>`;

@@ -118,8 +118,7 @@
     "showControls": "L'elenco di tutti i comandi appuntato nell'angolo della mappa, con ogni riga spuntata la prima volta che la usi. H lo ripiega, L3 sul pad. Resta appuntato in modalità storia e nelle mappe del tutorial, nascosto finché non lo chiedi altrove. Anche Bubba lo toglie, se sollevi con lui l'argomento dei comandi.",
     "showMapNotices": "Gli avvisi appuntati accanto ai comandi: cio che Bubba legge di un luogo, la zona in cui ti trovi e qualunque cosa sia impostata come suggerimento. Anche Bubba li mostra e li nasconde, se sollevi con lui l'argomento del foglio.",
     "dialogueVoices": "Ogni lettera di una battuta digitata viene cinguettata con un breve suono di vocale o consonante. Il tono è quello di chi parla; una parola chiave dorata suona più acuta.",
-    "dialogueVoicesVolume": "Quanto sono forti i suoni delle lettere sotto una battuta di dialogo, separati dagli altri effetti sonori.",
-    "battleLogPosition": "Dove viene stampato il registro di battaglia sullo schermo."
+    "dialogueVoicesVolume": "Quanto sono forti i suoni delle lettere sotto una battuta di dialogo, separati dagli altri effetti sonori."
   },
   "descState": {
     "musicArtistDisplay": [
@@ -132,10 +131,6 @@
       "Off: three.js puro. I modelli sono disegnati puliti, senza tremolio, bande o riduzione di risoluzione.",
       "SnapVertex: l'estetica PlayStation-1. I vertici scattano su una griglia grossolana, i colori si dividono in bande e l'immagine e' resa sotto la risoluzione piena.",
       "Pixel Art: l'estetica a sprite. Bande cel piatte, pixel grossi e una tavolozza limitata opzionale."
-    ],
-    "battleLogPosition": [
-      "Centrato: parte dall'alto al centro, tra le carte del gruppo e le barre nemiche.",
-      "Classico: una colonna allineata a sinistra sotto le carte del gruppo."
     ]
   },
   "shaderMode": {
@@ -160,25 +155,5 @@
     "first": "Solo la prima volta",
     "always": "Sempre",
     "off": "Mai"
-  },
-  "group": {
-    "combat": "Combattimento",
-    "battleLog": "Registro di battaglia",
-    "exploration": "Esplorazione",
-    "saving": "Salvataggi",
-    "system": "Sistema",
-    "display": "Schermo",
-    "interface": "Interfaccia",
-    "battleView": "Vista di battaglia",
-    "lighting": "Illuminazione",
-    "mix": "Mix volumi",
-    "worldSound": "Suoni del mondo",
-    "music": "Musica",
-    "voices": "Voci",
-    "look": "Stile",
-    "snapVertex": "Snap Vertex",
-    "pixelArt": "Pixel Art",
-    "ascii": "ASCII",
-    "other": "Altro"
   }
 }

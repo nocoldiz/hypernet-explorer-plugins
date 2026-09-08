@@ -1,11 +1,3 @@
-0.6.5a
-- battle log centered at the top by default, options grouped under headings
-- weapon attack times capped at +1
-- builds ship server.js so multiplayer hosting works
-- character creator no longer shows negative hp
-- fix ogg load failures softlocking combat
-- sync scripts open a new changelog version when the top one has entries
-
 0.6.4a
 - minimap shows by default on procedural maps, surface and underground
 - controls legend stops redrawing itself on procedural maps, just lists the controls

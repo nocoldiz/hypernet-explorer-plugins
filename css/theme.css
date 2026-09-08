@@ -14626,24 +14626,6 @@
     font-size: 1.552rem;
 }
 
-/* Settings are printed in titled groups: a small ruled heading introduces each
-   subject so a tab reads as a few short lists instead of one long column. */
-.option-group-header {
-    font-family: var(--font-ui);
-    font-weight: 700;
-    font-size: var(--fs-caption);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-detail-heading);
-    padding: var(--sp-2) var(--sp-4) var(--sp-1);
-    margin-top: var(--sp-3);
-    border-bottom: 1px solid var(--border-subtle);
-}
-
-.option-group-header:first-child {
-    margin-top: 0;
-}
-
 .option-row {
     display: flex;
     justify-content: space-between;
