@@ -722,12 +722,22 @@
                 if (typeof window !== 'undefined') {
                     window.skipLocalization = true;
                 }
-                $gameMessage.add(T('BladeSeed.leveledUp', { name: spirit.name, level: spirit.level }));
-                
+                // A blade growing is a side effect of a fight the party has
+                // just won: told over the screen, not through a box that has
+                // to be dismissed after every battle.
+                const lines = [T('BladeSeed.leveledUp', { name: spirit.name, level: spirit.level })];
                 if (result.evolved) {
-                    $gameMessage.add(T('BladeSeed.evolved', { name: spirit.name, stage: spirit.getEvolutionStage() }));
+                    lines.push(T('BladeSeed.evolved', { name: spirit.name, stage: spirit.getEvolutionStage() }));
                 }
-                
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(lines.join('<br>'), {
+                        severity: 'good', html: true,
+                        key: 'bladeseed:' + spirit.level  // i18n-ignore  dedupe key
+                    });
+                } else {
+                    lines.forEach(l => $gameMessage.add(l));
+                }
+
                 if (typeof window !== 'undefined') {
                     window.skipLocalization = false;
                 }

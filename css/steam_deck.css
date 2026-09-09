@@ -923,9 +923,11 @@
         margin-top: 2px;
     }
 
-    /* 12. Companion / Pet Step */
+    /* 12. Companion / Pet Step. Wider tracks than the desk, not narrower: a
+           companion is picked off its portrait, and packing more of them into
+           a shorter row is what made the step unreadable on the panel. */
     .cc-pet-grid {
-        grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 5px;
         padding: 3px;
     }
@@ -1924,9 +1926,17 @@
         padding: 6px 8px;
     }
 
+    /* Fewer, larger cards to a row. The desk asks for 124px tracks on a page
+       twice this wide; asking for the same on the panel put six thumbnails
+       across a strip where four are already small. */
     .fbuild-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         padding: 8px;
         gap: 8px;
+    }
+
+    .fbuild-grid.subcats {
+        grid-template-columns: repeat(auto-fill, minmax(138px, 1fr));
     }
 
     .fbuild-card {
@@ -1983,18 +1993,23 @@
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
+    /* Wider tracks than the desk. A card is read off its art, and the 88px
+       this used to ask for fitted more of them across a narrower page than the
+       desktop shows on a wide one, which is the wrong way round. */
     .cgc-grid {
-        grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
         gap: 5px;
     }
 
+    /* The cell stays taller than it is wide, the way a card is: the track above
+       and this height are one shape, and moving either alone flattens it. */
     .cgc-cell {
-        height: 96px;
+        height: 108px;
     }
 
     .cgc-cell canvas,
     .cgc-cell img {
-        max-height: 48px;
+        max-height: 54px;
     }
 
     .cgc-art {
@@ -2048,8 +2063,11 @@
         margin-bottom: 6px;
     }
 
+    /* Wider tracks, not narrower: a faction's row carries its name, its
+       standing and a bar, and 170px across a panel this size fitted more of
+       them than the desk shows on a page twice as wide. */
     .fac-accord-grid {
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
 }
 
@@ -4336,14 +4354,34 @@
         padding: 8px;
     }
 
-    /* The file pane and the drive tiles in it. */
-    .hn-style-0093 {
-        gap: 12px;
-        padding: 10px;
+    /* The bands above the view: the menu bar, the address bar and the status
+       line at the foot. Each is a fixed-height strip the view has to give room
+       to, so what is trimmed here is height the folder gets back. */
+    .explorer-addressbar {
+        padding: 2px 6px;
     }
 
-    .hn-style-0094,
-    .hn-style-0095 {
+    .explorer-statusbar {
+        padding: 2px 6px;
+    }
+
+    /* The file pane itself, and the cells laid out in it. */
+    .explorer-view {
+        padding: 6px;
+    }
+
+    .explorer-view[data-view="thumbnails"],
+    .explorer-view[data-view="icons"] {
+        gap: 7px;
+    }
+
+    /* Fewer, wider tiles: a tile carries a name and a type beside its icon, and
+       the desk's 180px track leaves neither room to be read on the panel. */
+    .explorer-view[data-view="tiles"] {
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    }
+
+    .explorer-empty {
         padding: 7px;
     }
 
@@ -4558,5 +4596,180 @@
 
     .alchemical-stats {
         gap: 4px;
+    }
+}
+
+
+/* ==========================================================================
+   FEWER THINGS TO A ROW
+   --------------------------------------------------------------------------
+   The rest of this file reclaims space so the panel can be scaled down less.
+   This block spends some of it back, in the one place where compaction stops
+   paying: a grid whose track count was chosen for a wide desk. Four monster
+   cards, six ability cards or three columns of item rows fit a 1920px page
+   comfortably and are cramped to the point of illegibility on 1280px, because
+   every track keeps its padding, its icon and its name while losing a third of
+   its width. So these grids are told to draw FEWER, wider cells, and the list
+   scrolls a little further instead.
+
+   Only grids are touched, and only their track count: nothing here shrinks a
+   box, so none of it fights the compaction above.
+
+   A GRID A CURSOR WALKS
+   Three scenes step a cursor across one of these grids and used to restate the
+   track count as a constant beside it. They now read it off the grid that is
+   drawn (window.MenuVirtualList.columnsOf), so narrowing a grid here moves the
+   cursor with it rather than sending it diagonally: the backpack
+   (ItemSystem/ItemSystemInventoryUI.js), the specialization list
+   (UI/SpecializationMenu.js) and the skills page
+   (BattleSystem/CategorizedBattleSkills.js). Anything added below that a
+   cursor walks has to be read the same way.
+   ========================================================================== */
+@media (max-width: 1366px) and (max-height: 860px) {
+
+    /* --- The shared item grid. The backpack's own page, and with it the equip
+           picker, the cooking bench, the alchemistry shelf, the faction roll
+           and the specialization list, all of which are dressed in it. Two
+           across leaves a row wide enough for an icon, a name and its count
+           without the name being clipped mid-word. */
+    .backpack-grid,
+    .inventory-grid--3col,
+    #skill-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* The skill atlas's shelf sizes itself off --sm-skill-cols, written onto
+       the element by SkillMaster.js, so the track list is set outright here
+       rather than by re-declaring a custom property an inline style wins. */
+    .sm-skill-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* --- The main menu (UI/CustomMainMenuLayout.js). The Dynamics hub's rows
+           of commands and the ability cards under them. Six abilities across a
+           1280px page is a strip of glyphs with no room for the word beneath. */
+    .commands-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ability-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* --- The bestiary (Quest/Bestiary.js). Every card carries a 64px sprite
+           that is the whole point of the card, so the sprite sets the floor
+           and the fourth column is what gives. */
+    #bestiary-list-viewport {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* --- The forge shelf (Quest/ThinkerMenu.js). Four columns of name, trade,
+           level and price, where the name is the long one and the other three
+           are a word each: paired up, the name gets the whole first track. */
+    .forge-grid-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* --- The quantity keypad, at the shop counter and on the trading terminal
+           (ItemSystem/ItemSystemShop.js, Economy/StockMarketSystem.js). Four
+           buttons to a row on a narrow panel are four targets too small for a
+           thumb on a Deck's trackpad. */
+    .quantity-expansion,
+    #stock-container .quantity-expansion {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* --- Character creation: the sprite board and the 3D model editor's
+           shelves (CharacterCreation/CharacterCreation3DModel.js). Both are
+           picked from art, and art is what the extra columns were eating. */
+    .cc-presets-board.cc-sprite-board {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .cc3d-shelf {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    /* --- A party card's stat strip (CharacterCreation/CharacterCreation.js).
+           Four label/value pairs on one line wrap their own labels at this
+           width; two lines of two do not. */
+    .cc-party-card-stats-grid {
+        grid-template-columns: repeat(2, max-content);
+    }
+
+    /* --- A leader's eight parameters on the politics sheet
+           (NPC/NPCPolitics.js). The desk fits five 110px cells across the
+           panel a Deck has room for three of. */
+    .npc-param-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    /* --- Hypernet OS. The Control Panel's applet shelf and the wallpaper
+           swatches, both of which are picked off a picture
+           (Hypernet/HypernetControlPanel.js). */
+    .cp-applets {
+        grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+    }
+
+    .xp-desk-walls {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+/* ==========================================================================
+   THE CONTROLLER FACE OF A MENU (Core/MouseControls.js, window.PadUI)
+   --------------------------------------------------------------------------
+   A pad is the device a Deck is held by, so everything window.PadUI puts on
+   screen is on screen the whole time there rather than now and then. It is
+   also the newest layer over these menus and predates none of the compaction
+   above, so this is where it is made to fit.
+
+   Three things it draws, and what each one costs on a 1280x800 panel:
+
+   THE BADGE, the physical button stamped inside the control it works. It rides
+   inside the button, so on a handheld -- where every button above has already
+   given up its padding -- its own 6px margin and 16px floor are the difference
+   between a label on one line and a label wrapped onto two. It keeps its type
+   (it is a glyph, and an unreadable glyph is no badge at all) and gives up the
+   space around it instead, which is the trade the whole file is built on.
+
+   THE RAILS, L2 and R2 over the pane they scroll. PadUI places the lower chip
+   at `box.bottom - 18`, so the chip has to BE 18px tall or it hangs out of the
+   pane it belongs to. It is pinned to that height here rather than left to
+   grow with the caption size a preset happens to carry.
+
+   THE KEYBOARD-ONLY CONTROLS. `body.pad-input` already takes the search field
+   off screen, because there is no way to type a query on a pad. What it does
+   not do is close the gap the field was standing in, which on a panel this
+   short is a whole row of the page left blank at the head of every list.
+   ========================================================================== */
+@media (max-width: 1366px) and (max-height: 860px) {
+
+    /* Tight to its word on both sides. The type is untouched. */
+    .pad-badge {
+        min-width: 13px;
+        margin-left: 4px;
+        padding: 0 3px;
+        line-height: 1.25;
+    }
+
+    .back-button .pad-badge {
+        margin-right: 4px;
+    }
+
+    /* The height PadUI's placement assumes, said out loud so a bigger caption
+       cannot push the chip past the foot of the pane it marks. */
+    #pad-rails .pad-rail-chip {
+        height: 18px;
+        padding: 0 3px;
+        line-height: 18px;
+    }
+
+    /* The row a hidden search field leaves behind. `.msb-field-only` holds the
+       field and its handle and nothing else, so with both taken off screen it
+       is an empty flex row still spending a gap at the head of every list. */
+    body.pad-input .msb-field-only {
+        display: none !important;
     }
 }

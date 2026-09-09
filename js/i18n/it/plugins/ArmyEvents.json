@@ -2,5 +2,30 @@
   "unknownCountry": "Sconosciuto",
   "unknownLeader": "Sconosciuto",
   "independent": "Indipendente",
-  "army": "Esercito"
+  "army": "Esercito",
+  "campaign": {
+    "powerArmy": "Armata di campo di {power}, agli ordini di {leader}",
+    "independentArmy": "La colonna personale di {leader}",
+    "strength": "{count} sotto le armi.",
+    "choiceEmpathize": "Empatizza con il comandante",
+    "choiceParlay": "Chiedi un parlamento",
+    "choiceAttack": "Attacca l'armata",
+    "choiceLeave": "Allontanati",
+    "parlayWelcome": "{leader} vi accoglie come amici e vi apre la strada.",
+    "parlayPassage": "{leader} concede il passaggio, e nulla piu.",
+    "parlayDemand": "{leader} vi ascolta, poi mette un prezzo alla cortesia.",
+    "parlayRefused": "{leader} rifiuta il parlamento e rimette in marcia la colonna.",
+    "parlayAlreadyAnswered": "{leader} vi ha gia dato una risposta oggi.",
+    "noArmy": "Non avete truppe da mandare contro di loro.",
+    "engagedWith": "In campo contro {leader}, {count} in armi.",
+    "choiceHelp": "Combatti per {leader}",
+    "status": {
+      "patrolling": "In pattuglia",
+      "garrisoned": "Di guarnigione",
+      "marching": "In marcia",
+      "reinforcing": "In rinforzo",
+      "battling": "In battaglia",
+      "retreating": "In ritirata"
+    }
+  }
 }

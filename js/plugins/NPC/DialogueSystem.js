@@ -1016,30 +1016,14 @@ Imported.DialogueSystem = true;
     // -------------------------------------------------------------------------
     // Scene_Battle hooks
     // -------------------------------------------------------------------------
-    // Busts are not a map-only thing: a boss that talks mid-fight gets the same
-    // portrait and name tag the overworld gets, instead of a bare message box.
-    // The manager is built per battle and driven by the same update; auto-hide
-    // still works, since out of an event the map interpreter reads as ended and
-    // the bust slides away as soon as the message closes.
-    const _Scene_Battle_start = Scene_Battle.prototype.start;
-    Scene_Battle.prototype.start = function () {
-        _Scene_Battle_start.call(this);
-        this._bustManager = new BustManager();
-        this._bustManager.initialize();
-    };
-
-    const _Scene_Battle_update = Scene_Battle.prototype.update;
-    Scene_Battle.prototype.update = function () {
-        _Scene_Battle_update.call(this);
-        if (this._bustManager) this._bustManager.update();
-    };
-
+    // No portrait ever stands in a fight. A battle is read off the field and
+    // off the command list, and a bust sliding in over either of them hides the
+    // one thing the player is looking at, so Scene_Battle is given no manager
+    // at all: whoever talks mid-fight (Eris, an enemy, the combat tutorial)
+    // speaks out of a plain box with their name inline.
     const _Scene_Battle_terminate = Scene_Battle.prototype.terminate;
     Scene_Battle.prototype.terminate = function () {
-        if (this._bustManager) {
-            try { this._bustManager.hideBusts(); } catch (e) {}
-            this._bustManager = null;
-        }
+        this._bustManager = null;
         _Scene_Battle_terminate.call(this);
     };
 
@@ -1409,7 +1393,8 @@ Imported.DialogueSystem = true;
             // so there's no blank flash between consecutive dialogue boxes.
         }
         const scene = SceneManager._scene;
-        if (scene && scene._bustManager && !scene._bustManager.exchangeMode) scene._bustManager.showBusts();
+        if (scene && scene._bustManager && !scene._bustManager.exchangeMode &&
+            !facelessIsRunning()) scene._bustManager.showBusts();
     };
 
     const _WM_terminateMessage = Window_Message.prototype.terminateMessage;
@@ -1435,6 +1420,8 @@ Imported.DialogueSystem = true;
             $gameMessage.clear();
         }
         if (this._htmlMsgRoot) this._htmlMsgPendingHide = true;
+        // A faceless run owns the box until it is empty, wherever it is played.
+        if (facelessIsRunning()) { advanceFacelessMessage(); return; }
         const scene = SceneManager._scene;
         if (scene && scene._bustManager && scene._bustManager.exchangeMode) {
             advanceNPCExchange();
@@ -2276,7 +2263,43 @@ Imported.DialogueSystem = true;
         window.skipLocalization = false;
     }
 
-    // The portrait file of whoever is at the head of the party, named the way
+    // -------------------------------------------------------------------------
+    // Faceless boxes: a run of lines with nobody drawn beside them
+    // -------------------------------------------------------------------------
+    // An exchange needs a stage and a stage needs a bust manager, which a
+    // battle has none of. A voice that has to be heard there (the combat
+    // tutorial) is queued as plain boxes instead: one line per box, dealt out
+    // of the same terminateMessage the exchange is dealt out of, with no
+    // portrait and no name tag drawn over the field.
+    let _facelessQueue = [];
+
+    function facelessIsRunning() {
+        return _facelessQueue.length > 0;
+    }
+
+    function advanceFacelessMessage() {
+        if (!_facelessQueue.length) return false;
+        const text = _facelessQueue.shift();
+        $gameMessage.setBackground(0);
+        $gameMessage.setPositionType(2);
+        window.skipLocalization = true;
+        $gameMessage.add(markSpokenLine(text));
+        window.skipLocalization = false;
+        return true;
+    }
+
+    // Every line is dealt out over as many boxes as it needs, the same way a
+    // story step is.
+    function sayFaceless(lines) {
+        const list = (Array.isArray(lines) ? lines : [lines])
+            .map(line => resolveStoryKeys(line))
+            .filter(line => String(line || '').trim().length > 0);
+        if (!list.length) return false;
+        _facelessQueue = list.reduce((all, line) => all.concat(paginateMessage(line)), []);
+        return advanceFacelessMessage();
+    }
+
+        // The portrait file of whoever is at the head of the party, named the way
     // showCustomBust files it. A conversation is always between the leader and
     // somebody else, so the left of the stage belongs to them even in a beat
     // they never speak in (a rumour the NPC gives on their own).
@@ -3058,15 +3081,32 @@ Imported.DialogueSystem = true;
             .filter(Boolean);
     }
 
-    // The two banks as the grid draws them, empty ones left out.
+    // What Bubba can teach again rather than tell: the combat tutorial, rearmed
+    // for the next fight. It is his lesson, so it is only offered when he is the
+    // one being asked, never when he is the one asking Em.
+    function storyAskLessons() {
+        if (storyAskPartner() !== STORY_ASK_BUBBA) return [];
+        return [{
+            name:   COMBAT_TUTORIAL_TOPIC,
+            title:  T('Dialogue.askCombat'),
+            // Saying so is what arms it, so the board closes on his answer
+            // instead of coming straight back up.
+            run:    rearmCombatTutorial,
+            reopen: false,
+        }];
+    }
+
+    // The banks as the grid draws them, empty ones left out.
     function storyAskGroups(mapId) {
-        const groups = [];
-        const fixed  = storyAskFixedScenes();
-        const here   = storyAskScenes(mapId);
-        const sheet  = storyAskToggles();
-        if (fixed.length) groups.push({ title: T('Dialogue.askGroupFixed'), scenes: fixed });
-        if (here.length)  groups.push({ title: T('Dialogue.askGroupHere'),  scenes: here  });
-        if (sheet.length) groups.push({ title: T('Dialogue.askGroupSheet'), scenes: sheet, side: true });
+        const groups  = [];
+        const fixed   = storyAskFixedScenes();
+        const here    = storyAskScenes(mapId);
+        const sheet   = storyAskToggles();
+        const lessons = storyAskLessons();
+        if (fixed.length)   groups.push({ title: T('Dialogue.askGroupFixed'), scenes: fixed });
+        if (here.length)    groups.push({ title: T('Dialogue.askGroupHere'),  scenes: here  });
+        if (sheet.length)   groups.push({ title: T('Dialogue.askGroupSheet'), scenes: sheet, side: true });
+        if (lessons.length) groups.push({ title: T('Dialogue.askGroupAgain'), scenes: lessons, side: true });
         return groups;
     }
 
@@ -3167,7 +3207,9 @@ Imported.DialogueSystem = true;
             // back up, so both halves of the sheet can be set in one visit.
             if (picked.run) {
                 try { picked.run(); } catch (err) { /* no legend */ }
-                reopenStoryAsk(mapId);
+                // A switch brings the board back so the next one can be set;
+                // an entry that answers out loud (reopen: false) does not.
+                if (picked.reopen !== false) reopenStoryAsk(mapId);
                 return;
             }
             playStoryScript(picked.file, picked.name);
@@ -3261,6 +3303,107 @@ Imported.DialogueSystem = true;
         // The sheet's own switches, offered in the grid beside the topics.
         askToggles: storyAskToggles,
         noticeModeLabel: storyNoticeModeLabel,
+    };
+
+    // -------------------------------------------------------------------------
+    // The combat tutorial
+    // -------------------------------------------------------------------------
+    // The first fight of a story-mode playthrough with Bubba walking along is
+    // the one place the commands can be explained by somebody who is standing
+    // there: he offers, and the offer can be waved off, in which case the fight
+    // carries on untouched. Shown once and never again on its own; the Ask board
+    // rearms it for exactly one more fight (storyAskLessons above).
+    //
+    // Two lessons are written, because there are two fights: the ordinary one,
+    // read off the command list, and the one played out on the map, where a
+    // range and a cursor come into it (BattleSystem/MapBattleMode.js).
+    //
+    // No portrait: a battle draws none (see the Scene_Battle hooks), so the
+    // whole lesson is faceless boxes with his name inline, the same way Eris
+    // talks mid-fight.
+    const COMBAT_TUTORIAL_TOPIC = 'combat';  // i18n-ignore: the entry's own name
+
+    function combatTutorialWalksWithBubba() {
+        try {
+            return $gameParty.members().some(
+                a => a && a.name && a.name().trim() === STORY_ASK_BUBBA);
+        } catch (err) { return false; }
+    }
+
+    function isCombatTutorialArmed() {
+        try { return !!$gameSystem._combatTutorialArmed; } catch (err) { return false; }
+    }
+
+    function wasCombatTutorialSeen() {
+        try { return !!$gameSystem._combatTutorialSeen; } catch (err) { return false; }
+    }
+
+    // Rearmed by hand from the Ask board: he says so, and the next fight opens
+    // with the offer again.
+    function rearmCombatTutorial() {
+        try { $gameSystem._combatTutorialArmed = true; } catch (err) { return false; }
+        sayFaceless([T('Dialogue.combat.rearm')]);
+        return true;
+    }
+
+    function shouldOfferCombatTutorial() {
+        try {
+            if (!$gameSwitches || !$gameSwitches.value(STORY_ASK_SWITCH)) return false;
+        } catch (err) { return false; }
+        if (!combatTutorialWalksWithBubba()) return false;
+        return isCombatTutorialArmed() || !wasCombatTutorialSeen();
+    }
+
+    // The lesson for the fight that is actually being played.
+    function combatTutorialLines() {
+        const onMap = !!(window.MapBattleMode && window.MapBattleMode.isActive &&
+                         window.MapBattleMode.isActive());
+        const key   = onMap ? 'Dialogue.combat.map' : 'Dialogue.combat.normal';
+        const lines = (typeof T === 'function' && T.list) ? T.list(key) : null;
+        return Array.isArray(lines) ? lines.filter(Boolean) : [];
+    }
+
+    // The offer, then the lesson if it is taken. Either way the tutorial is
+    // spent: waving it off is an answer, not a postponement.
+    function offerCombatTutorial() {
+        if (!shouldOfferCombatTutorial()) return false;
+        const lines = combatTutorialLines();
+        if (!lines.length) return false;
+        try {
+            $gameSystem._combatTutorialArmed = false;
+            $gameSystem._combatTutorialSeen  = true;
+        } catch (err) { /* no system yet */ }
+        sayFaceless([T('Dialogue.combat.offer')]);
+        const choices = [T('Dialogue.combat.yes'), T('Dialogue.combat.no')];
+        $gameMessage.setChoices(choices, 0, 1);
+        $gameMessage.setChoiceCallback(choice => {
+            if (choice === 0) sayFaceless(lines);
+        });
+        return true;
+    }
+
+    // Both presentations open the round through BattleManager.startBattle: the
+    // ordinary fight from Scene_Battle, the tactical one from MapBattleMode's
+    // own opening, which has already raised isActive() by the time it calls.
+    // The box is queued, not shown: BattleManager.isBusy() reads $gameMessage,
+    // so the first round waits for the lesson wherever it is being read.
+    if (typeof BattleManager !== 'undefined' && BattleManager) {
+        const _BattleManager_startBattle_tutorial = BattleManager.startBattle;
+        BattleManager.startBattle = function () {
+            _BattleManager_startBattle_tutorial.call(this);
+            try { offerCombatTutorial(); } catch (err) {
+                console.error('[DialogueSystem] combat tutorial', err);
+            }
+        };
+    }
+
+    window.CombatTutorial = {
+        shouldOffer: shouldOfferCombatTutorial,
+        lines:       combatTutorialLines,
+        offer:       offerCombatTutorial,
+        rearm:       rearmCombatTutorial,
+        isArmed:     isCombatTutorialArmed,
+        wasSeen:     wasCombatTutorialSeen,
     };
 
     // -------------------------------------------------------------------------

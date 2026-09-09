@@ -4,5 +4,12 @@
     "next": "NEXT ▶",
     "masthead": ",  DAILY JOURNAL FOR THE CHRONOMANTIC GRID , ",
     "volumeNo": "VOL. I ... NO. {no}"
+  },
+  "crime": {
+    "headline": "{name} named in {place} manhunt; bounty now {bounty}",
+    "pastHeadline": "{name} still at large; old file reopened, bounty {bounty}",
+    "body": "Prosecutors named {name} in a warrant issued overnight. The charges listed are: {charges}. The day's offences alone are valued at {dayBounty}; the standing bounty is now {bounty}.",
+    "count": "{charge} (x{count})",
+    "unknownSuspect": "an unnamed suspect"
   }
 }

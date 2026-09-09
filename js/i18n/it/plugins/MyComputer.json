@@ -17,5 +17,71 @@
   "propsTitle": "Proprieta' - {name}",
   "propsBody": "{name}\n\nTipo: {type}\nPercorso: {location}\nDimensione: {size} byte",
   "typeFolder": "Cartella di file",
-  "typeFile": "File"
+  "typeFile": "File",
+  "forward": "Avanti",
+  "up": "Su",
+  "views": "Visualizza",
+  "search": "Cerca",
+  "folders": "Cartelle",
+  "view": {
+    "thumbnails": "Anteprime",
+    "tiles": "Riquadri",
+    "icons": "Icone",
+    "list": "Elenco",
+    "details": "Dettagli"
+  },
+  "menu": {
+    "file": "File",
+    "edit": "Modifica",
+    "viewMenu": "Visualizza",
+    "favorites": "Preferiti",
+    "tools": "Strumenti",
+    "help": "Guida"
+  },
+  "col": {
+    "name": "Nome",
+    "size": "Dimensione",
+    "type": "Tipo",
+    "modified": "Ultima modifica"
+  },
+  "tasks": {
+    "fileAndFolder": "Operazioni file e cartella",
+    "otherPlaces": "Altre risorse",
+    "details": "Dettagli",
+    "newFolder": "Crea nuova cartella",
+    "renameItem": "Rinomina il file",
+    "renameFolder": "Rinomina la cartella",
+    "copyItem": "Copia il file",
+    "moveItem": "Sposta il file",
+    "deleteItem": "Elimina il file",
+    "folderTasks": "Operazioni cartella"
+  },
+  "cut": "Taglia",
+  "copy": "Copia",
+  "paste": "Incolla",
+  "rename": "Rinomina",
+  "newFolder": "Nuova cartella",
+  "newFolderName": "Nuova cartella",
+  "selectAll": "Seleziona tutto",
+  "refresh": "Aggiorna",
+  "renamePrompt": "Digitare un nuovo nome per '{name}'.",
+  "renameTaken": "Un file di nome '{name}' e gia presente.",
+  "pasteFailed": "Impossibile spostare o copiare l'elemento.",
+  "status": "{count} oggetti",
+  "statusSelected": "{count} oggetti selezionati",
+  "statusSize": "{count} oggetti, {size} byte",
+  "emptyFolder": "Questa cartella e vuota.",
+  "bytes": "{n} byte",
+  "kb": "{n} KB",
+  "sizeOf": "Dimensione: {size}",
+  "typeOf": "Tipo: {type}",
+  "printers": "Stampanti e fax",
+  "networkPlaces": "Risorse di rete",
+  "typeSystemFolder": "Cartella di sistema",
+  "driveNotReady": "Nessun disco nell'unita {drive}.",
+  "drive": {
+    "fixed": "Disco locale",
+    "floppy": "Floppy da 3,5",
+    "cd": "Unita CD"
+  }
 }

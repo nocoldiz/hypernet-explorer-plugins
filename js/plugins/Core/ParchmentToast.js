@@ -607,6 +607,44 @@
   }
 
   // --------------------------------------------------------------------------
+  // Faction standing
+  // --------------------------------------------------------------------------
+  /**
+   * "Sisters of the Ash 42 up +6" - every reputation change in the game, from
+   * a quest paid out, a theft seen, a trial or a vote in the assembly, reports
+   * in this one format. Crossing into a new band (friendly, hostile, ...) is
+   * called out on a second line, because that is the part that changes how the
+   * world treats the party.
+   *
+   * reputation('Sisters of the Ash', +6, { value, band, bandChanged, note })
+   */
+  function reputation(name, delta, opts = {}) {
+    const d = Math.round(Number(delta) || 0);
+    if (!d) return;
+    const value = opts.value != null ? Math.round(opts.value) : null;
+    const shown = value === null ? "--" : value;
+    const arrow = d > 0 ? "▲" : "▼";
+    const sign = d > 0 ? "+" : "";
+    const cls = d > 0 ? "toast-delta-up" : "toast-delta-down";
+
+    let html = `<div class="toast-row"><span>${escapeHtml(String(name))} ${shown}</span>` +
+      `<span class="${cls}">${arrow} ${sign}${d}</span></div>`;
+    if (opts.bandChanged && opts.band) {
+      html += `<div class="toast-note">${escapeHtml(String(opts.band))}</div>`;
+    }
+    if (opts.note) html += `<div class="toast-note">${escapeHtml(opts.note)}</div>`;
+
+    show(html, {
+      severity: opts.severity || (opts.bandChanged ? (d > 0 ? "good" : "danger")
+                                                   : (d < 0 ? "warning" : "info")),
+      duration: opts.duration || (opts.bandChanged ? 200 : 120),
+      html: true,
+      title: opts.title || null,
+      key: `rep:${name}`  // i18n-ignore  dedupe key
+    });
+  }
+
+  // --------------------------------------------------------------------------
   // Specialization level ups
   // --------------------------------------------------------------------------
   function resolveSpec(spec) {
@@ -918,6 +956,7 @@
     reward,
     gold,
     need,
+    reputation,
     specUp,
     levelUp,
     skillCast,

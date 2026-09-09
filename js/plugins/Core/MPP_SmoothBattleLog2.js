@@ -372,18 +372,20 @@
     //--- entry retention: begin ---
     // The board scales visible entries based on the number of battle party members
     // so it never overlaps the Party HUD cards above.
-    const MAX_VISIBLE_ENTRIES = 3;
+    const MAX_VISIBLE_ENTRIES = 5;
     const ENTRY_EXIT_MS = 320;
 
+    // One box is given up for every battler card standing above the log, so a
+    // solo run reads five actions back and a full party of three plus a summon
+    // reads one. With the Party HUD off nothing is in the way and the board
+    // keeps its full height.
     function getMaxVisibleEntries() {
         if (typeof ConfigManager !== 'undefined' && ConfigManager.partyHud === false) {
-            return 3;
+            return MAX_VISIBLE_ENTRIES;
         }
         if (typeof $gameParty !== 'undefined' && $gameParty && $gameParty.battleMembers) {
             const memberCount = $gameParty.battleMembers().length;
-            if (memberCount >= 4) return 1;
-            if (memberCount >= 3) return 2;
-            return 3;
+            return Math.max(1, MAX_VISIBLE_ENTRIES - memberCount);
         }
         return 3;
     }

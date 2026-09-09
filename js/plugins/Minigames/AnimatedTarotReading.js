@@ -1191,10 +1191,15 @@
             if (shift && !this._shiftHeld) this._shiftMoved = false;
             out.pan = shift;
 
-            // Right stick orbits (or pans while the modifier is down).
+            // Right stick orbits (or pans while the modifier is down), at the
+            // speed and the handedness the controller layer keeps for every
+            // camera in the game (window.Controller).
+            const C = window.Controller;
             if (A) {
-                out.x += A.rightX() * 1.6;
-                out.y -= A.rightY() * 1.6;
+                const gain = C ? C.cameraSpeed() : 1;
+                const invert = (C && C.invertCameraY()) ? -1 : 1;
+                out.x += A.rightX() * 1.6 * gain;
+                out.y -= A.rightY() * 1.6 * gain * invert;
                 out.zoom += (A.leftTrigger() - A.rightTrigger()) * 1.4;
             }
 

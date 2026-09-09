@@ -27,5 +27,9 @@
     "all": "Every craving",
     "label": "Craving",
     "feeds": "Feeds"
+  },
+  "year": {
+    "deepTime": "{years} years ago",
+    "bce": "{year} BCE"
   }
 }

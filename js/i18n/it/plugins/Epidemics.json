@@ -15,7 +15,12 @@
   "discovered": "Focolaio di {disease} ufficialmente scoperto a {place}!",
   "news": {
     "hysteria": "{disease} si diffonde a {place}; le autorità invitano alla calma.",
-    "medical": "Focolaio di {disease} confermato a {place}. Eurodemics alza il livello di allerta."
+    "medical": "Focolaio di {disease} confermato a {place}. Eurodemics alza il livello di allerta.",
+    "daily": "{disease}: {infected} malati in {towns} citta', {dead} morti",
+    "dailyBody": "L'epidemia di {disease} con centro a {place} conta {infected} casi noti in {towns} citta' e {dead} morti. Eurodemics mantiene l'allerta.",
+    "terrorDaily": "Allerta bioterrorismo: {disease} si diffonde da {place}, {infected} malati",
+    "terrorBody": "Gli inquirenti trattano l'epidemia di {disease} a {place} come un rilascio deliberato. {infected} persone sono malate in {towns} citta' e {dead} sono morte. L'allerta resta fino all'ultimo caso.",
+    "over": "Epidemia di {disease} finita a {place}: {cases} casi, {dead} morti"
   },
   "caught": "{actor} ha contratto {disease}.",
   "caughtFrom": "{actor} ha contratto {disease} da {source}.",

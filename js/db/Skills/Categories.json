@@ -319,6 +319,18 @@
     "type": "Magic",
     "icon": 101
   },
+  "Crafted": {
+    "name": { "en": "Crafted", "it": "Creati" },
+    "description": { "en": "The spells you wrote yourself at the workbench.\nBought part by part, answering to nobody.", "it": "Gli incantesimi che hai scritto tu al banco.\nComprati pezzo per pezzo, non rispondono a nessuno." },
+    "type": "Magic",
+    "icon": 101
+  },
+  "Devised": {
+    "name": { "en": "Devised", "it": "Ideate" },
+    "description": { "en": "The techniques you devised yourself at the workbench.\nBought part by part, answering to nobody.", "it": "Le tecniche che hai ideato tu al banco.\nComprate pezzo per pezzo, non rispondono a nessuno." },
+    "type": "Skill",
+    "icon": 101
+  },
   "Favourites": {
     "name": { "en": "Favourites", "it": "Preferiti" },
     "description": { "en": "Your favourite skills.", "it": "Le tue abilità preferite." },

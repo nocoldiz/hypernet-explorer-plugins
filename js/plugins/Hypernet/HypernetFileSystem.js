@@ -173,13 +173,52 @@
             return current;
         },
 
+        // What drives this machine has, in the order My Computer listed them.
+        // A window asks here rather than reading the file system's roots, so
+        // "is there a disc in it" is answered in one place.
+        get DRIVES() { return DRIVES; },
+
+        drives: function() {
+            const vfs = this.getVFS();
+            if (!vfs) return [];
+            return Object.keys(DRIVES).map(letter => {
+                const node = vfs[letter];
+                const spec = DRIVES[letter];
+                const used = node && node.children ? Object.keys(node.children).length : 0;
+                return {
+                    path: letter,
+                    name: letter,
+                    kind: spec.kind,
+                    icon: spec.icon,
+                    removable: spec.removable,
+                    readOnly: spec.readOnly,
+                    capacityKb: spec.capacityKb,
+                    // A removable drive with nothing on it is an empty drive
+                    // rather than a broken one, and says so when it is opened.
+                    ready: !spec.removable || used > 0
+                };
+            });
+        },
+
+        isReadOnly: function(pathStr) {
+            const letter = this._parsePath(pathStr)[0];
+            return !!(DRIVES[letter] && DRIVES[letter].readOnly);
+        },
+
         readDir: function(pathStr) {
             const dir = this.resolvePath(pathStr);
             if (dir && dir.type === 'directory') {
                 return Object.values(dir.children).map(child => ({
                     name: child.name,
                     type: child.type,
-                    mime: child.mime || null
+                    mime: child.mime || null,
+                    // A stand-in executable names the program it stands for, and
+                    // a folder listing has to carry it: it is what puts that
+                    // program's icon on the file and what opens it.
+                    app: child.app || null,
+                    // How big it is, so a listing can say so without reading
+                    // every file back out of the tree itself.
+                    size: child.type === 'file' ? String(child.content || '').length : 0
                 }));
             }
             return null;
@@ -414,6 +453,49 @@
     // library is a stand-in with a name of its own; a file that names an app
     // (`app`) opens that app from My Computer.
     //
+    // --- The rest of the machine ---------------------------------------------
+    // C: was the whole of it, so My Computer had one thing in it and the
+    // shell's own folders had nowhere to live. These are the rest of what stood
+    // in that window: the floppy, the disc drive, the printers and the network.
+    //
+    // A drive is a root of the virtual file system like C:, so everything that
+    // already walks a path reaches them without knowing they were added. What
+    // makes one different from a folder is the `drive` record: what kind it is,
+    // whether anything is in it, and whether it can be written to. A window
+    // asks through window.HypernetFileSystem.drives().
+    // i18n-ignore-start  VFS path keys and file names, matched literally
+    const DRIVES = {
+        'A:': { kind: 'floppy', icon: 234, removable: true, readOnly: false, capacityKb: 1440 },
+        'C:': { kind: 'fixed', icon: 86, removable: false, readOnly: false, capacityKb: 20 * 1024 * 1024 },
+        'D:': { kind: 'cd', icon: 224, removable: true, readOnly: true, capacityKb: 650 * 1024 }
+    };
+
+    // The two shell folders that were not drives and not ordinary folders
+    // either: a place with nothing in it until something is put there.
+    const SHELL_ROOTS = {
+        'Printers': { icon: 234 },
+        'Network': { icon: 188 }
+    };
+    // i18n-ignore-end
+
+    // A drive that nothing has been put in reads as empty rather than missing:
+    // the letter is in My Computer, and opening it says so.
+    function ensureDrives(vfs) {
+        if (!vfs) return false;
+        let planted = false;
+        for (const letter of Object.keys(DRIVES)) {
+            if (vfs[letter]) continue;
+            vfs[letter] = { type: 'directory', name: letter, children: {}, drive: letter };
+            planted = true;
+        }
+        for (const name of Object.keys(SHELL_ROOTS)) {
+            if (vfs[name]) continue;
+            vfs[name] = { type: 'directory', name: name, children: {}, shell: true };
+            planted = true;
+        }
+        return planted;
+    }
+
     // ensureSystemTree() is idempotent and runs on every VFS read, so a save
     // from before the tree existed grows it the first time the OS is opened,
     // and a folder the player emptied is not refilled behind their back:
@@ -435,7 +517,9 @@
                     'winlogoff.exe', 'cursrss.exe', 'lsassy.exe', 'svcghost.exe',
                     'servixes.exe', 'exploder.exe', 'rundll666.exe', 'drwhatson.exe',
                     'mysconfig.exe', 'dxdiagnosis.exe', 'regretedit.exe',
-                    'pong.exe', 'ipconfrig.exe', 'wineminer.exe', 'soul.exe',
+                    'pong.exe', 'ipconfrig.exe',
+                    { name: 'wineminer.exe', app: 'app-minesweeper' },
+                    { name: 'soul.exe', app: 'app-solitaire' },
                     'freehell.exe', 'pinbawl.exe',
                     { name: 'taskmangler.exe', app: 'sys-task-mgr' },
                     { name: 'cmnd.exe', app: 'sys-terminal' },
@@ -510,9 +594,10 @@
 
     // Plants every top-level system folder and root file that is missing.
     function ensureSystemTree(vfs) {
+        // The drives first: C: is one of them, and everything below assumes it.
+        let planted = ensureDrives(vfs);
         const root = vfs && vfs['C:'];
-        if (!root || !root.children) return false;
-        let planted = false;
+        if (!root || !root.children) return planted;
         Object.keys(SYSTEM_TREE).forEach(key => {
             if (key === 'files') {
                 SYSTEM_TREE.files.forEach(f => {

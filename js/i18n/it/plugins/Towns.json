@@ -46,6 +46,7 @@
     "colOccupancy": "Occupazione",
     "colCategory": "Attivita",
     "colBalance": "Saldo",
-    "colStage": "Stadio"
+    "colStage": "Stadio",
+    "manageShop": "Apri il registro del negozio"
   }
 }

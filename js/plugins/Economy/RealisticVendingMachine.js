@@ -256,9 +256,12 @@
         { cat: 'Homeopathy', max: 999999, weight: 2 },
         { cat: 'Survival', max: 1200, weight: 2 },
         { cat: 'Books', max: 900, weight: 2 },
-        { cat: 'Collectibles', max: 500, weight: 1 },
         { cat: 'Crafting', max: 300, weight: 1 }
     ];
+
+    // Collectibles are deliberately absent: a keepsake is never restocked by
+    // anybody, so it reaches a machine no more than it reaches a shelf
+    // (window.ItemCollectibles owns that rule).
 
     // Whole categories that are inherently strange merchandise.
     const WEIRD_BUCKETS = [

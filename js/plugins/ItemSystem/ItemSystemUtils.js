@@ -1746,6 +1746,70 @@
 })();
 
 //=============================================================================
+// Module: ChaosPrices
+//=============================================================================
+/*:
+ * @target MZ
+ * @plugindesc Chaos world pricing: every catalogue price is re-rolled once per world
+ * @author Omni-Lex
+ *
+ * @help
+ * The world of chaos (WorldManager's second alternate timeline) keeps every
+ * item exactly as the database wrote it, and prices none of them the way the
+ * database did: a listed price is multiplied by a factor between a quarter and
+ * four, rolled from the world seed and the item's own id.
+ *
+ * It is done ONCE, to the whole catalogue, before any counter is opened, so a
+ * shop, a sell window, a loot value and a quest reward all quote the same
+ * money for the same thing. A price of zero stays zero: a thing nobody was
+ * ever meant to sell is not given a price here.
+ */
+
+(function () {
+  "use strict";
+
+  let pricedWorld = null;
+
+  const ChaosPrices = {
+    // Re-rolls the catalogue for the active world, once. Cheap to call from
+    // anywhere: a second call for the same world does nothing.
+    ensure() {
+      const CW = window.ChaosWorld;
+      if (!CW || !CW.active()) return;
+      if (typeof $dataItems === "undefined" || !$dataItems) return;
+      const WM = window.WorldManager;
+      const world = String((WM && WM.activeWorldName) || "world");
+      if (pricedWorld === world) return;
+      pricedWorld = world;
+      const tables = [["item", $dataItems], ["weapon", $dataWeapons], ["armor", $dataArmors]];
+      for (const [kind, table] of tables) {
+        if (!table) continue;
+        for (let i = 1; i < table.length; i++) {
+          const data = table[i];
+          if (!data || !data.name) continue;
+          // A collectible is worth what it is worth in every world.
+          if (window.ItemCollectibles && window.ItemCollectibles.isFixed(data)) continue;
+          // The listed price is kept, so re-rolling for another world starts
+          // from the database's own number rather than from the last world's.
+          if (data._chaosBasePrice === undefined) data._chaosBasePrice = data.price;
+          data.price = CW.price(world + ":" + kind + ":" + i, data._chaosBasePrice);
+        }
+      }
+    },
+  };
+
+  window.ChaosPrices = ChaosPrices;
+
+  // The one door every playable minute goes through, so nothing ever reads a
+  // database price before the world has re-rolled it.
+  const _ChaosPrices_Game_Map_setup = Game_Map.prototype.setup;
+  Game_Map.prototype.setup = function (mapId) {
+    ChaosPrices.ensure();
+    _ChaosPrices_Game_Map_setup.call(this, mapId);
+  };
+})();
+
+//=============================================================================
 // Arcane learning gate (window.SkillArcana)
 //=============================================================================
 // One answer to "may this character learn this skill", for every teacher in
@@ -1761,8 +1825,8 @@
 // Two characters ignore the tree/book split:
 //
 //   * Sandbox mode learns anything, anywhere.
-//   * The Cultist (class 8) reads anything out of a grimoire or a skill book,
-//     level floors included, and learns NOTHING from the Skill Master's tree.
+//   * The Cultist (class 8) learns NOTHING from the Skill Master's tree, only
+//     from written pages.
 //     That is the class gimmick, so it lives here rather than in a menu.
 //=============================================================================
 
@@ -1819,11 +1883,10 @@
     },
 
     // Grimoires, skill books, and anything else that hands over written
-    // knowledge. A Cultist reads past every floor.
-    canLearnFromBook(actor, skill) {
-      if (this.isSandbox()) return true;
-      if (this.isCultist(actor)) return true;
-      return this.meetsLevel(actor, skill);
+    // knowledge. Written knowledge has no level floor at all: anybody who
+    // holds the page can copy it. The floors only guard the Skill Master.
+    canLearnFromBook() {
+      return true;
     },
 
     // The Skill Master's tree. A Cultist learns nothing there at all.
@@ -1842,4 +1905,273 @@
   };
 
   window.SkillArcana = SkillArcana;
+})();
+
+//=============================================================================
+// Module: ItemCollectibles
+//=============================================================================
+/*:
+ * @target MZ
+ * @plugindesc Collectibles are priced flat: one number, every counter, forever
+ * @author Omni-Lex
+ *
+ * @help
+ * A collectible is a keepsake, not a commodity. Everything else on a shelf is
+ * moved by the day's OIL and SOUL indices, by Haggling, by the party's
+ * standing and record, by the marketplace tax and its volume ladder, and by
+ * the chaos world's re-roll. A collectible is moved by none of them: it is
+ * bought and sold at the number written in the database, in every shop scene
+ * and on Stockbusters alike, and a shop pays the full sticker for one rather
+ * than the usual tenth.
+ *
+ * This module is the ONE answer to "is this thing price-fixed": never test the
+ * <category:> tag for it anywhere else.
+ */
+
+(function () {
+  "use strict";
+
+  const ItemCollectibles = {
+    // The category whose prices never move. Matched against the <category:>
+    // note tag, which stays English.
+    CATEGORY: "collectibles",  // i18n-ignore  <category:> tag value
+
+    /** Whether this entry's price is fixed. Weapons and armours never are. */
+    isFixed(entry) {
+      if (!entry || !entry.note) return false;
+      const m = /<category:\s*([^>]+)>/i.exec(entry.note);
+      return !!m && m[1].trim().toLowerCase() === this.CATEGORY;
+    },
+
+    /**
+     * The one price such a thing is worth, on either side of any counter. The
+     * chaos world keeps the database price it started from, so a collectible
+     * that was re-rolled before this rule existed still quotes flat.
+     */
+    price(entry) {
+      if (!entry) return 0;
+      const base = entry._chaosBasePrice !== undefined ? entry._chaosBasePrice : entry.price;
+      return Number.isFinite(base) && base > 0 ? Math.floor(base) : 0;
+    },
+
+    /**
+     * The year the thing is from, off `<Year: n>`, the way a book carries
+     * `<Published:>`. Negative is BCE, and a fossil is allowed to be older
+     * than the calendar. Null when the row does not say.
+     */
+    year(entry) {
+      if (!entry || !entry.note) return null;
+      const m = /<Year:\s*(-?\d+)\s*>/i.exec(entry.note);
+      return m ? Number(m[1]) : null;
+    },
+
+    /**
+     * That year as it is written on a label: a plain number, or an era for
+     * anything older than the record keeps.
+     */
+    yearText(entry) {
+      const y = this.year(entry);
+      if (y === null || !Number.isFinite(y)) return "";
+      if (y <= -10000) return T('ItemUtils.year.deepTime', { years: Math.abs(y).toLocaleString() });
+      if (y < 0) return T('ItemUtils.year.bce', { year: Math.abs(y) });
+      return String(y);
+    },
+
+    /**
+     * The fixed price of an entry, or null when the caller should go on and
+     * work the price out the usual way. Every consumer is written as an early
+     * return on this.
+     */
+    fixed(entry) {
+      return this.isFixed(entry) ? this.price(entry) : null;
+    },
+  };
+
+  window.ItemCollectibles = ItemCollectibles;
+})();
+
+//=============================================================================
+// Module: BookLearning
+//=============================================================================
+/*:
+ * @target MZ
+ * @plugindesc A book teaches one specialization, once to each reader
+ * @author Omni-Lex
+ *
+ * @help
+ * Every book in the catalogue is about something, and the something is written
+ * on the item:
+ *
+ *     <Teaches: Theology>
+ *
+ * The value is the English `name` of an entry in js/db/Skills/Specialization.json
+ * and is a LOOKUP KEY, never printed: what the player reads comes back through
+ * window.Specializations.displayName.
+ *
+ * Reading pays twice. Opening the book gives the reader the first points; being
+ * carried all the way to the last page gives the rest, which is the larger
+ * half. Both are paid to the member holding the book (the party leader) and
+ * both are paid once per member per book, so a shelf is worth reading through
+ * and a single volume is not worth reading twice.
+ *
+ * This module is the ONE answer to "what does this book teach" and "has this
+ * member read it": never re-derive either from the note tag anywhere else.
+ */
+
+(function () {
+  "use strict";
+
+  // What one reading is worth, and what finishing it adds on top.
+  const OPEN_POINTS = 2;
+  const FINISH_POINTS = 5;
+
+  const TEACHES_TAG = /<Teaches:\s*([^>]+)>/i;   // i18n-ignore  note tag
+  const BOOK_TAG = /<Book:\s*([^>]+)>/i;         // i18n-ignore  note tag
+  const BOOKS_CATEGORY = /<category:\s*Books\s*>/i;  // i18n-ignore  note tag
+
+  const BookLearning = {
+    OPEN_POINTS,
+    FINISH_POINTS,
+    MAX_BOOKMARKS: 5,
+
+    /** Whether this entry is a book at all. */
+    isBook(entry) {
+      if (!entry || !entry.note) return false;
+      return BOOK_TAG.test(entry.note) || BOOKS_CATEGORY.test(entry.note);
+    },
+
+    /** The English specialization key written on an item, or null. */
+    specName(entry) {
+      if (!entry || !entry.note) return null;
+      const m = TEACHES_TAG.exec(entry.note);
+      return m ? m[1].trim() : null;
+    },
+
+    /** That key resolved to the specialization record, or null. */
+    spec(entry) {
+      const name = this.specName(entry);
+      if (!name) return null;
+      const S = window.Specializations;
+      if (!S || !S.byName) return null;
+      return S.byName.get(name) || null;
+    },
+
+    /**
+     * What the subject is called in the player's language. Empty for an item
+     * that teaches nothing, and for one whose key names no specialization
+     * (Specialization.json loads asynchronously, so this can be empty early).
+     */
+    label(entry) {
+      const def = this.spec(entry);
+      if (!def) return "";
+      const S = window.Specializations;
+      return (S && S.displayName) ? S.displayName(def) : def.name;
+    },
+
+    /** The item that carries a given book file, through the book viewer. */
+    itemForFile(file) {
+      if (!file) return null;
+      const BM = window.BookManager;
+      if (BM && BM.itemForBook) {
+        try { return BM.itemForBook(file); } catch (e) { /* database not up */ }
+      }
+      return null;
+    },
+
+    // -----------------------------------------------------------------------
+    // Who has read what. The ledger lives on $gameSystem, so it belongs to the
+    // save: a book read in one party is unread for the next one.
+    // -----------------------------------------------------------------------
+
+    ledger() {
+      if (typeof $gameSystem === "undefined" || !$gameSystem) return null;
+      if (!$gameSystem._bookLearning) $gameSystem._bookLearning = { open: {}, done: {} };
+      const l = $gameSystem._bookLearning;
+      if (!l.open) l.open = {};
+      if (!l.done) l.done = {};
+      return l;
+    },
+
+    /** Whether this member has already been paid for `stage` of this book. */
+    hasRead(actorId, file, stage) {
+      const l = this.ledger();
+      if (!l || !file) return false;
+      const list = l[stage === "done" ? "done" : "open"][file];
+      return Array.isArray(list) && list.indexOf(actorId) >= 0;
+    },
+
+    _record(actorId, file, stage) {
+      const l = this.ledger();
+      if (!l || !file) return false;
+      const book = l[stage === "done" ? "done" : "open"];
+      if (!Array.isArray(book[file])) book[file] = [];
+      if (book[file].indexOf(actorId) >= 0) return false;
+      book[file].push(actorId);
+      return true;
+    },
+
+    /**
+     * Pay a reader for a book. `stage` is "open" (they started it) or "done"
+     * (they reached the last page). Returns the points actually awarded, which
+     * is zero for a book they have already been paid for, one that teaches
+     * nothing, or a party with nobody in it to read.
+     */
+    award(file, stage) {
+      const item = this.itemForFile(file);
+      const def = this.spec(item);
+      if (!def) return 0;
+      if (typeof $gameParty === "undefined" || !$gameParty) return 0;
+      const reader = $gameParty.leader ? $gameParty.leader() : null;
+      if (!reader) return 0;
+      if (this.hasRead(reader.actorId(), file, stage)) return 0;
+      // An Archmage takes twice as much out of a book as anybody else does
+      // (the Bookworm half of their passive, BattleSystemPassiveSkills).
+      const P = window.BattleSystemPassiveSkills;
+      const bookMult = (P && P.bookPointsMultiplier) ? P.bookPointsMultiplier(reader) : 1;
+      const points = Math.round((stage === "done" ? FINISH_POINTS : OPEN_POINTS) * bookMult);
+      if (!this._record(reader.actorId(), file, stage)) return 0;
+      const XP = window.SpecializationXP;
+      // Reading is a solitary thing: nobody learns theology by watching
+      // somebody else hold a book.
+      if (XP) XP.award(def, points, { actor: reader, soloist: true });
+      return points;
+    },
+
+    // -----------------------------------------------------------------------
+    // Bookmarks. Up to five per book, kept as page indexes on the save so a
+    // reader picks a book back up where they left their ribbons.
+    // -----------------------------------------------------------------------
+
+    bookmarks(file) {
+      if (typeof $gameSystem === "undefined" || !$gameSystem || !file) return [];
+      if (!$gameSystem._bookmarks) $gameSystem._bookmarks = {};
+      const list = $gameSystem._bookmarks[file];
+      return Array.isArray(list) ? list : [];
+    },
+
+    /**
+     * Put a ribbon on a page, or lift the one already there. The sixth ribbon
+     * pushes the oldest one out, because there are only five in the drawer.
+     * Returns "set", "cleared" or "" when there is nowhere to store it.
+     */
+    toggleBookmark(file, page) {
+      if (typeof $gameSystem === "undefined" || !$gameSystem || !file) return "";
+      if (!$gameSystem._bookmarks) $gameSystem._bookmarks = {};
+      const store = $gameSystem._bookmarks;
+      const list = Array.isArray(store[file]) ? store[file].slice() : [];
+      const at = list.indexOf(page);
+      if (at >= 0) {
+        list.splice(at, 1);
+        store[file] = list;
+        return "cleared";
+      }
+      list.push(page);
+      while (list.length > this.MAX_BOOKMARKS) list.shift();
+      list.sort((a, b) => a - b);
+      store[file] = list;
+      return "set";
+    },
+  };
+
+  window.BookLearning = BookLearning;
 })();

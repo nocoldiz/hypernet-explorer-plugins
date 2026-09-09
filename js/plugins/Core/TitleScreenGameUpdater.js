@@ -2387,8 +2387,7 @@
                 const major = isMajorCommit(commit);
                 const title = messageTitle(commit.message) || T.unknown;
                 const name = GameUpdater._versionName(title) || title;
-                const sub = [shortSha(commit.sha), formatDate(commit.date) || T.unknown, commit.author || '']
-                    .filter(Boolean).join('  ·  ');
+                const sub = formatDate(commit.date) || T.unknown;
                 return `
                     <div class="item-slot gu-build focusable${current ? ' gu-build--current' : ''}" data-idx="${i}" tabindex="0">
                         <div class="item-slot-info">
@@ -2418,8 +2417,6 @@
         _specsHTML(T) {
             const commit = this._selectedBuild();
             const plan = commit ? GameUpdater.plan(commit.sha) : null;
-            const installed = GameUpdater.installedInfo();
-            const position = commit ? GameUpdater.indexOf(commit.sha) : -1;
 
             const row = (label, value) => `
                 <div class="inspect-spec-row">
@@ -2428,37 +2425,21 @@
                 </div>`;
 
             let specs = '';
-            specs += row(T.branch, GameUpdater.branchName());
-            // What this copy calls itself, read off the changelog it shipped
-            // with. A build without one simply has no row.
+            // Nothing about the repository is shown here: a player reads a
+            // build by its version, when it was published and what installing
+            // it costs, and nothing else.
             const ownVersion = GameUpdater.gameVersion();
             if (ownVersion) specs += row(T.version, ownVersion);
-            const ownCommit = installed ? null : GameUpdater.currentVersionCommit();
-            specs += row(T.installed, installed
-                ? `${shortSha(installed.sha)}  (${formatDate(installed.at ? new Date(installed.at).toISOString() : null) || T.unknown})`
-                : (ownCommit
-                    ? `${shortSha(ownCommit.sha)}  (${formatDate(ownCommit.date) || T.unknown})`
-                    : T.never));
-            // The number the version badge wears, when this copy knows it.
-            const ownBuild = GameUpdater.buildNumber();
-            if (ownBuild !== null) specs += row(T.buildNumber, ownBuild);
             if (commit) {
-                specs += row(T.selected, shortSha(commit.sha));
+                const title = messageTitle(commit.message) || '';
+                const name = GameUpdater._versionName(title) || title;
+                if (name) specs += row(T.selected, name);
                 specs += row(T.committed, formatDate(commit.date) || T.unknown);
-                if (commit.author) specs += row(T.author, commit.author);
-                if (commit.message) specs += row(T.message, commit.message);
-                specs += row(T.age, position <= 0 ? T.tagLatest : fmt(T.buildsBack, position));
             }
             if (plan) {
-                specs += row(T.tracked, plan.total);
                 specs += row(DOWNLOADS_ENABLED ? T.toUpdate : T.changedFiles, plan.changed.length);
                 if (DOWNLOADS_ENABLED && plan.changed.length) specs += row(T.download, formatBytes(plan.bytes));
             }
-            specs += `
-                <div class="inspect-spec-row">
-                    <span class="inspect-spec-label">${esc(T.source)}</span>
-                    <span class="inspect-spec-value mod-path-value">${esc(GameUpdater.REPO_URL)}</span>
-                </div>`;
             return specs;
         }
 
@@ -2545,7 +2526,10 @@
         _renderInspect(T) {
             const commit = this._selectedBuild();
             const status = this._buildStatus(commit);
-            const heading = commit ? fmt(T.buildName, shortSha(commit.sha)) : this._emptyText(T);
+            const headingTitle = commit ? (messageTitle(commit.message) || '') : '';
+            const heading = commit
+                ? (GameUpdater._versionName(headingTitle) || headingTitle || T.unknown)
+                : this._emptyText(T);
 
             this._setRegion('name', this._dom.name, esc(heading));
             this._setRegion('status', this._dom.status, status.text);

@@ -570,9 +570,27 @@ Game_Factions.prototype.setReputation = function (factionId, value) {
 
 Game_Factions.prototype.changeReputation = function (factionId, change) {
   if (factionId >= 0 && factionId < this._reputations.length) {
-    const newValue = this.getReputation(factionId) + change;
+    const before = this.getReputation(factionId);
+    const newValue = before + change;
     this.setReputation(factionId, newValue);
+    this.announceReputation(factionId, before, this.getReputation(factionId));
   }
+};
+
+// Standing is one of the few numbers the world reads back at the party, so a
+// change to it is told rather than left to be found in a menu. Only the change
+// the party actually caused is announced: the ripple through allied and rival
+// factions would be a wall of popups, so it is suppressed here.
+Game_Factions.prototype.announceReputation = function (factionId, before, after) {
+  if (this._repCascading || before === after || !window.ParchmentToast) return;
+  const faction = this.getFaction(factionId);
+  if (!faction) return;
+  const band = this.reputationBandOf(after);
+  window.ParchmentToast.reputation(faction.name, after - before, {
+    value: after,
+    band: this.reputationLevelOf(after),
+    bandChanged: band !== this.reputationBandOf(before)
+  });
 };
 
 // Applies `change` to a faction AND to the hyperpower it answers to: earning a
@@ -586,6 +604,7 @@ Game_Factions.prototype.changeReputationWithParents = function (factionId, chang
 };
 
 Game_Factions.prototype.updateRelatedFactions = function (factionId, newValue) {
+  if (this._repCascading) return;
   // Skip if relationships aren't initialized
   if (!FactionDataManager.instance || !FactionDataManager.instance._relationships) {
     // Relationships system not set up, skip related faction updates
@@ -598,6 +617,8 @@ Game_Factions.prototype.updateRelatedFactions = function (factionId, newValue) {
 
   // Only update related factions if change is significant (>= 10 points)
   if (Math.abs(change) >= 10) {
+    this._repCascading = true;
+    try {
     for (let i = 0; i < FactionDataManager.instance._factions.length; i++) {
       if (i !== factionId) {
         const relationship = FactionDataManager.instance._relationships[factionId][i];
@@ -611,6 +632,7 @@ Game_Factions.prototype.updateRelatedFactions = function (factionId, newValue) {
         }
       }
     }
+    } finally { this._repCascading = false; }
   }
 };
 

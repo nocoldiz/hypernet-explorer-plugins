@@ -998,6 +998,14 @@
             // early-outs above, so a pardoned or immune crime stays at zero.
             bountyAmount = bountyAfterStreetwise(bountyAmount);
 
+            // ...and an officer of the law signs their own report. A Police
+            // Officer travelling with the party can write off charges worth
+            // 5000 gold a day per level of rank, and a second officer signs for
+            // their own allowance on top. What the badge covers never reaches
+            // the record at all: it was done in the name of the law.
+            const lawful = this.trySelfPardon(bountyAmount);
+            if (lawful) bountyAmount = 0;
+
             // Doing it is the lesson. The leader is the one who did it, so no
             // onlooker share, and nothing is learned from a crime the game has
             // decided did not happen (sandbox self-pardon / Eris immunity).
@@ -1035,12 +1043,164 @@
                 this.raiseHeat(this.getHeat() + Math.max(1, heatForBounty(bountyAmount)));
             }
 
+            // What the papers will make of it, if the day adds up to enough.
+            this.recordForPress(crimeName, bountyAmount);
+
             // Show crime notification
-            if (isSandbox) {
+            if (lawful) {
+                this.showLawfulPardonNotification(crimeName, lawful);
+            } else if (isSandbox) {
                 this.showSelfPardonNotification(crimeName);
             } else {
                 this.showCrimeNotification(crimeName, bountyAmount);
             }
+        }
+
+        // ==================================================================
+        // The badge: charges signed off in the name of the law
+        // ==================================================================
+        // A Police Officer in the party (the Probable Cause passive, class 44)
+        // carries a daily allowance of charges they may write off as lawful
+        // acts: 5000 gold per level of rank, per officer. It is spent charge by
+        // charge, the whole of a charge or none of it, and it fills back up
+        // when the world clock turns over. Everything about the allowance lives
+        // in BattleSystemPassiveSkills; everything about the ledger lives here.
+
+        static pardonLedger() {
+            if (typeof $gameSystem === 'undefined' || !$gameSystem) return null;
+            const day = this.worldDay();
+            const led = $gameSystem._policePardon;
+            if (!led || led.day !== day) {
+                $gameSystem._policePardon = { day, spent: 0 };
+            }
+            return $gameSystem._policePardon;
+        }
+
+        // The day's allowance in gold, and what is left of it.
+        static selfPardonAllowance() {
+            const P = window.BattleSystemPassiveSkills;
+            return (P && P.selfPardonAllowance) ? P.selfPardonAllowance() : 0;
+        }
+
+        static selfPardonRemaining() {
+            const led = this.pardonLedger();
+            if (!led) return 0;
+            return Math.max(0, this.selfPardonAllowance() - (led.spent || 0));
+        }
+
+        // Spend the allowance on one charge, all of it or none. Returns the
+        // name of the officer who signed for it, or null when nobody can.
+        static trySelfPardon(bountyAmount) {
+            const worth = Number(bountyAmount) || 0;
+            if (worth <= 0) return null;
+            const P = window.BattleSystemPassiveSkills;
+            const officer = (P && P.pardonOfficer) ? P.pardonOfficer() : null;
+            if (!officer) return null;
+            if (this.selfPardonRemaining() < worth) return null;
+            const led = this.pardonLedger();
+            if (!led) return null;
+            led.spent = (led.spent || 0) + worth;
+            return officer.name ? officer.name() : '';
+        }
+
+        static showLawfulPardonNotification(crimeName, officerName) {
+            if (!(SceneManager._scene instanceof Scene_Map)) return;
+            if (!window.ParchmentToast) return;
+            window.ParchmentToast.show(
+                T('Crime.text.lawfulPardon', { name: officerName, crime: crimeName }),
+                {
+                    severity: 'info',
+                    duration: displayDuration,
+                    key: `lawful:${crimeName}`
+                }
+            );
+        }
+
+        // ==================================================================
+        // The press
+        // ==================================================================
+        // A day's worth of small thefts is nobody's headline. A day that adds
+        // up to a real bounty is, and the paper runs it the morning after,
+        // with the charges named and the total the party is now wanted for.
+        // The record kept here is the day's tally; NewsSystem drains the queue
+        // and writes the article, so nothing here knows how a paper is set.
+        static PRESS_EUROS = 10000;          // the day's bounty that makes the front page
+
+        static pressEurosToGold(euros) { return euros * 100; }
+
+        // The day the world clock is on, counted from its own zero. Variable
+        // 114 is the world minute every other simulation counts in.
+        static worldDay() {
+            return Math.floor(this.worldMinute() / 1440);
+        }
+
+        static pressLedger() {
+            if (!$gameSystem) return null;
+            if (!$gameSystem._crimePress) {
+                $gameSystem._crimePress = { day: null, gold: 0, charges: {}, reported: false, queue: [] };
+            }
+            const led = $gameSystem._crimePress;
+            if (!Array.isArray(led.queue)) led.queue = [];
+            return led;
+        }
+
+        static recordForPress(crimeName, bountyAmount) {
+            const led = this.pressLedger();
+            if (!led || !(bountyAmount > 0) || this.isEmptyWorld()) return;
+            const day = this.worldDay();
+            if (led.day !== day) {
+                led.day = day;
+                led.gold = 0;
+                led.charges = {};
+                led.reported = false;
+            }
+            led.gold += bountyAmount;
+            led.charges[crimeName] = (led.charges[crimeName] || 0) + 1;
+
+            if (!led.reported && led.gold >= this.pressEurosToGold(this.PRESS_EUROS)) {
+                led.reported = true;
+                this.fileWithPress({ charges: led.charges, dayGold: led.gold, publishDay: day + 1 });
+            }
+        }
+
+        // A dossier the paper has but has not printed yet. `publishDay` is the
+        // world day it runs on: the morning after for a day's work, the day
+        // before for a life the party arrived already carrying.
+        static fileWithPress(dossier) {
+            const led = this.pressLedger();
+            if (!led) return null;
+            const entry = {
+                publishDay: dossier.publishDay != null ? dossier.publishDay : this.worldDay() + 1,
+                charges: Object.entries(dossier.charges || {}).map(([name, count]) => ({ name, count })),
+                dayGold: dossier.dayGold || 0,
+                totalGold: this.getTotalBounty(),
+                pastLife: !!dossier.pastLife
+            };
+            led.queue.push(entry);
+            if (led.queue.length > 8) led.queue.shift();
+            return entry;
+        }
+
+        // The criminal origin: the party walks in already wanted, so the story
+        // ran the day before they did.
+        static filePastLifeWithPress(crimeName, bountyAmount) {
+            return this.fileWithPress({
+                charges: { [crimeName]: 1 },
+                dayGold: bountyAmount,
+                publishDay: this.worldDay() - 1,
+                pastLife: true
+            });
+        }
+
+        // Everything the paper may print by now, taken off the queue.
+        static takePressDossiers() {
+            const led = this.pressLedger();
+            if (!led) return [];
+            const day = this.worldDay();
+            const due = led.queue.filter(e => e.publishDay <= day);
+            if (!due.length) return [];
+            led.queue = led.queue.filter(e => e.publishDay > day);
+            return due;
         }
 
         static showSelfPardonNotification(crimeName) {

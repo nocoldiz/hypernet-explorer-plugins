@@ -180,6 +180,13 @@
         const generalSpecs = [];
         if (isWeapon) {
           generalSpecs.push({ label: T('Inventory.spec.label.weaponType'), val: $dataSystem.weaponTypes[selectedItem.wtypeId] || T('Inventory.spec.label.weaponFallback') });
+          // A keepsake is dated the way a book is: the year is most of what it
+          // is (window.ItemCollectibles reads the <Year:> tag).
+          const keepsakeYear = window.ItemCollectibles
+            ? window.ItemCollectibles.yearText(selectedItem) : "";
+          if (keepsakeYear) {
+            generalSpecs.push({ label: T('Inventory.spec.label.year'), val: keepsakeYear });
+          }
           const dt = (selectedItem.meta && selectedItem.meta.DamageType) ||
               (selectedItem.note && (selectedItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
           if (dt) {
@@ -203,6 +210,12 @@
           generalSpecs.push({ label: T('Inventory.spec.label.consumable'), val: selectedItem.consumable ? T('Inventory.spec.yes') : T('Inventory.spec.no') });
           generalSpecs.push({ label: T('Inventory.spec.label.occasion'),   val: getOccasionName(selectedItem.occasion) });
           generalSpecs.push({ label: T('Inventory.spec.label.scope'),      val: getScopeName(selectedItem.scope) });
+          // A book is about something, and reading it teaches that something
+          // (window.BookLearning owns the <Teaches:> tag and the payout).
+          const teaches = window.BookLearning ? window.BookLearning.label(selectedItem) : '';
+          if (teaches) {
+            generalSpecs.push({ label: T('Inventory.spec.label.teaches'), val: teaches });
+          }
           const dt = (selectedItem.meta && selectedItem.meta.DamageType) ||
               (selectedItem.note && (selectedItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
           if (dt && dt !== 'None' && !(selectedItem.damage && selectedItem.damage.type > 0)) {
@@ -1651,7 +1664,10 @@
         // up in categories: already at top, do nothing
 
       } else if (section === 'items') {
-        const COLS  = 3;   // matches .backpack-grid grid-template-columns
+        // Read off .backpack-grid rather than restated: the handheld sheet
+        // narrows that grid, and the cursor has to step by what is drawn.
+        const COLS  = window.MenuVirtualList
+          ? window.MenuVirtualList.columnsOf('#backpack-grid', 3) : 3;
         const items = scene.getFilteredUIItems();
         const total = items.length;
         const idx   = scene._dndSelectedIndex;

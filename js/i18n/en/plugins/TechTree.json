@@ -283,5 +283,8 @@
     "nobelSuffix": ", and there's talk of a Nobel Prize",
     "credit": " Word credits {who} and their circle.",
     "theotecnical": "the Holy Vatican Empire has promulgated {name}"
+  },
+  "toast": {
+    "title": "Discovery"
   }
 }

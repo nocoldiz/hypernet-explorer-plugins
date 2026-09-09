@@ -623,6 +623,9 @@
                 if (this.shouldProcessDailyNews()) {
                     this.processDailyNews();
                 }
+
+                // A charge sheet filed yesterday runs as soon as its day comes.
+                this.publishCrimeDossiers();
             }, 60000); // Check every minute for more precise timing
         }
 
@@ -752,6 +755,68 @@
             }
 
             return stripUnresolvedTokens(text);
+        }
+
+        // ==================================================================
+        // Stories the rest of the game writes
+        // ==================================================================
+        // A charge sheet, an outbreak bulletin: prose another plugin composed,
+        // filed on the wire like anything else so the paper, the ticker and
+        // the market effects all treat it the same.
+        publishStory(story) {
+            const news = {
+                text: story.text,
+                fullText: story.fullText || '',
+                location: story.location || '',
+                category: story.category || 'negative',
+                type: story.type || 'story',
+                timestamp: story.timestamp || getGameDateAsJSDate(),
+                priceEffect: story.priceEffect != null ? story.priceEffect : 1,
+                occupancyEffect: story.occupancyEffect != null ? story.occupancyEffect : 1,
+                soulTendencyModifier: story.soul || 0,
+                isRealNews: false
+            };
+            this.newsHistory.unshift(news);
+            this.newsHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            if (this.newsHistory.length > 80) this.newsHistory.length = 80;
+            this.applyNewsEffects(news, story.duration || 96);
+            if (story.announce !== false) this.showNewsNotification(news.text);
+            return news;
+        }
+
+        // The party's own charge sheet, once a day of it is worth printing.
+        // CrimeSystem keeps the tally and decides what counts; this only sets
+        // the type.
+        publishCrimeDossiers() {
+            const CS = window.CrimeSystem;
+            if (!CS || typeof CS.takePressDossiers !== 'function') return 0;
+            if (this.isEmptyWorld()) return 0;
+            let printed = 0;
+            for (const dossier of CS.takePressDossiers()) {
+                const charges = (dossier.charges || [])
+                    .map(c => c.count > 1 ? T('News.crime.count', { charge: c.name, count: c.count }) : c.name);
+                if (!charges.length) continue;
+                const name = ($gameParty && $gameParty.leader() && $gameParty.leader().name()) || T('News.crime.unknownSuspect');
+                const locations = window.NewsSystemUtils.getLocations();
+                const location = locations[Math.floor(Math.random() * locations.length)];
+                const euros = amount => (Math.round(amount) / 100).toLocaleString('en-GB') + '€';
+                const text = T(dossier.pastLife ? 'News.crime.pastHeadline' : 'News.crime.headline',
+                    { name: name, place: location, bounty: euros(dossier.totalGold || dossier.dayGold) });
+                const body = T('News.crime.body', {
+                    name: name,
+                    charges: charges.join(', '),
+                    dayBounty: euros(dossier.dayGold),
+                    bounty: euros(dossier.totalGold || dossier.dayGold)
+                });
+                this.publishStory({
+                    text, fullText: body, location,
+                    category: 'negative', type: 'crime',
+                    priceEffect: 1, occupancyEffect: 0.97, soul: -1,
+                    duration: 72
+                });
+                printed++;
+            }
+            return printed;
         }
 
         applyNewsEffects(news, duration) {

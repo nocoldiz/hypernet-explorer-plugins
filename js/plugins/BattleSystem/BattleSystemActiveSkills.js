@@ -1049,6 +1049,64 @@
 
         // Read by the tests and by anything that wants to show the roster.
         registry() { return HYPERS; },
+
+        // ------------------------------------------------------------------
+        // Reading one out of the fight: the card the menus print
+        // ------------------------------------------------------------------
+        // The status screen and the character creator both show a class's
+        // limit break beside its ability, and neither of them knows what a
+        // Hyper is. They ask here and get a name and a sentence, and the
+        // sentence is built from the entry's own numbers through one line per
+        // KIND of Hyper rather than sixty-odd hand-written ones, so a Hyper
+        // that is re-tuned describes itself correctly the same day.
+
+        nameForClass(classId) {
+            const key = 'name.' + classId;
+            return text(key) || text('name.default') || '';
+        },
+
+        // A sentence for one entry, or "" when the class has no Hyper at all
+        // (the creature roster, 63 and up).
+        describeEntry(def) {
+            if (!def) return '';
+            const p = {
+                mult: def.mult != null ? def.mult : 1,
+                hits: def.hits || 1,
+                casts: def.casts || 1,
+                turns: def.turns || 1,
+                slots: def.slots || 0,
+                percent: Math.round((def.threshold || 0) * 100),
+                leech: Math.round((def.leech || 0) * 100),
+                heal: Math.round((def.healRatio || 0) * 100),
+            };
+            // A barrage sweeps the whole enemy line; only some of them sweep it
+            // more than once, and "1 times over" is not a sentence.
+            const leaf = (def.kind === 'barrage' && (def.hits || 1) > 1) ? 'barrageMulti' : def.kind;
+            const line = text('kindDesc.' + leaf, p);
+            return line || text('kindDesc.default', p) || '';
+        },
+
+        /** { name, desc } for a class id, or null when it fields no Hyper. */
+        cardForClass(classId) {
+            const def = HYPERS[classId];
+            if (!def) return null;
+            return { name: this.nameForClass(classId), desc: this.describeEntry(def) };
+        },
+
+        /**
+         * The pact the vector gun opens instead of a class Hyper: Em's own, and
+         * only ever hers (holdsVectorGun already refuses anybody else). Shown
+         * on her card beside whatever her class would otherwise do.
+         */
+        grimoireCard() {
+            return {
+                name: text('name.grimoire') || '',
+                desc: this.describeEntry(GRIMOIRE_HYPER),
+            };
+        },
+
+        /** True when this actor's Hyper is the pact rather than her class's. */
+        usesGrimoire(actor) { return holdsVectorGun(actor); },
     };
 
     window.LimitBreak = LimitBreak;

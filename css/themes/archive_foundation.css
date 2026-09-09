@@ -315,6 +315,8 @@
     --gradient-25: linear-gradient(to right, var(--border-border-alt-5), var(--text-primary-hover));
     --gradient-26: linear-gradient(to right, var(--bg-backdrop) 0%, var(--text-highlight-active) 54%, var(--accent-bronze-2) 57%, var(--text-text-alt-2) 58%, var(--accent-bronze-2) 59%, var(--text-highlight-active) 62%, var(--bg-backdrop) 100%);
     --gradient-27: linear-gradient(to right, var(--accent-gold-4) 0%, var(--bg-bg-alt-11) 40%, var(--accent-yellow) 100%);
+    /* Width of the binding crease. A fold needs room to fall away to either side, or it reads as a drawn line rather than as a curve of the sheet. */
+    --spine-w: 72px;
     --gradient-28: linear-gradient(to right, var(--shadow-primary-hover-translucent-5) 0%, var(--shadow-primary-hover-translucent-5) 30%, var(--shadow-primary-hover-translucent-5) 70%, var(--shadow-primary-hover-translucent-5) 100%);
     --gradient-29: radial-gradient(circle at 10px 15px, var(--bg-primary-hover-translucent-35) 1.5px, transparent 2px);
     --gradient-3: linear-gradient(90deg, var(--text-secondary-active), var(--text-text-alt-10));
@@ -2358,6 +2360,8 @@ body #fbuild-panel {
     background: #17100a;
 }
 
+/* The paper the leaves are cut from. The boards, the fore-edges and the
+   binding that make this a book and not a panel are at the foot of this file. */
 .book-spread,
 .cc-pockets-spread,
 #thinker-container .book-spread,
@@ -2410,3 +2414,149 @@ body #fbuild-panel {
     --actorcmd-ink-cost: #7a4a18;
     --actorcmd-ink-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
 }
+
+
+/* ==========================================================================
+   The binding crease (css/theme.css, .book-spread::before / .cc-pockets-spread::after)
+
+   The paper preset is the only one that draws a book: the dark preset paints
+   the spread flat black and takes the crease off it entirely (see the frame
+   override at the head of that preset). Here the two leaves are real paper, so
+   the seam between them is a real fold - a soft gutter shadow falling away to
+   either side with the darker line of the binding down its middle, which is
+   what makes a menu read as two pages rather than as one panel split by a bar.
+
+   WHERE the crease falls is not set here. Each spread declares its own seam in
+   --spine-x (theme.css), so a screen whose pages are 42/58 binds at 42%; this
+   block only says what the fold looks like.
+   ========================================================================== */
+:root {
+    --gradient-28: linear-gradient(to right,
+        rgba(60, 40, 18, 0) 0%,
+        rgba(60, 40, 18, 0.05) 22%,
+        rgba(60, 40, 18, 0.16) 42%,
+        rgba(46, 30, 12, 0.30) 50%,
+        rgba(60, 40, 18, 0.16) 58%,
+        rgba(255, 248, 226, 0.30) 72%,
+        rgba(255, 248, 226, 0) 100%);
+    --gradient-15: var(--gradient-28);
+}
+
+/* ==========================================================================
+   The book frame (css/theme.css, the .book-spread family)
+
+   The binding is not in the middle of the screen, and on most screens it never
+   was: a spread of a 58% page and a 42% page binds at 58%. Drawn as a flat
+   rectangle with a rule down it at 58%, that reads as a panel someone divided
+   badly. Drawn as a book, it reads as a book held turned a little to one side,
+   which is the only way two leaves of different widths can be seen at once,
+   and then the off-centre binding is the reason rather than the mistake.
+
+   So the frame says which leaf is nearer. A book turned about its spine
+   foreshortens the leaf coming towards you and opens the leaf going away: the
+   near leaf shows a wide page and its fore-edge almost edge-on, the far leaf
+   shows a narrow page and a broad stack of page edges, because that block is
+   being seen obliquely. Both bands are worked out from --spine-x, so a screen
+   that binds at 42% turns the other way on its own and none of this has to be
+   restated per screen.
+
+   Drawn on ::after, under the crease on ::before (the pockets spread has those
+   two the other way round: its crease has always been its ::after).
+   ========================================================================== */
+:root {
+    --book-leather: #46301a;
+    --book-leather-lit: #6b4a26;
+    --book-gilt: #b98f43;
+    --book-page-edge: #e6d8b6;
+    --book-page-line: #b09565;
+
+    /* The cover board, seen square on: the same all round. */
+    --book-board-w: 9px;
+    /* The fore-edges. Each is worked out from the OTHER leaf's width, which is
+       what makes the far, narrow leaf show the broader block of page edges.
+       Clamped so the band still sits inside the page padding at any width. */
+    --book-fore-l: clamp(7px, calc((100% - var(--spine-x, 58%)) * 0.030), 26px);
+    --book-fore-r: clamp(7px, calc(var(--spine-x, 58%) * 0.030), 34px);
+}
+
+/* The covers themselves. The doubled gold rule the shared sheet draws is a
+   frame around a panel; a book has boards, so it becomes one solid band of
+   leather with the gilt tooling line run inside it. The spread is full bleed,
+   so there is nothing outside it to cast a shadow onto: the depth is worked
+   from the inside, the head and tail falling into the boards.
+
+   Written into the paper rule above rather than as a second group of the same
+   selectors, which the sheet's own duplicate-group check would flag. */
+.book-spread,
+.cc-pockets-spread,
+#thinker-container .book-spread,
+#blacksmith-container .book-spread,
+.save-book-spread,
+.shop-spread,
+.mp-spread,
+.travel-book-spread,
+.stock-spread,
+.mp-type-spread {
+    border: var(--book-board-w) solid var(--book-leather);
+    outline: 1px solid var(--book-gilt);
+    outline-offset: calc(-1 * var(--book-board-w) - 4px);
+    box-shadow:
+        inset 0 0 0 1px #2f1f0d,
+        inset 0 14px 30px -14px rgba(70, 48, 26, 0.55),
+        inset 0 -14px 30px -14px rgba(70, 48, 26, 0.55);
+}
+
+/* The page block: leather turn-in, then the stack of page edges, at each
+   fore-edge. Everything is painted in the page's own outer padding, so no line
+   of text ever sits on it. */
+.book-spread::after,
+.save-book-spread::after,
+.shop-spread::after,
+.mp-spread::after,
+.travel-book-spread::after,
+.stock-spread::after,
+.mp-type-spread::after,
+.cc-pockets-spread::before {
+    content: "";
+    position: absolute;
+    /* Longhands, not the inset shorthand: it collapses these overlays in the
+       game runtime (see the CSS notes in docs/task/ui_fixing.md). */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-image:
+        /* the turn-in of the cover over each fore-edge */
+        linear-gradient(to right, var(--book-leather) 0, var(--book-leather-lit) 100%),
+        linear-gradient(to left, var(--book-leather) 0, var(--book-leather-lit) 100%),
+        /* the page block: one line per leaf, closing up towards the board */
+        repeating-linear-gradient(to right,
+            var(--book-page-edge) 0 2px, var(--book-page-line) 2px 3px),
+        repeating-linear-gradient(to left,
+            var(--book-page-edge) 0 2px, var(--book-page-line) 2px 3px);
+    background-size:
+        4px 100%,
+        4px 100%,
+        var(--book-fore-l) 100%,
+        var(--book-fore-r) 100%;
+    background-position:
+        left 0 top 0,
+        right 0 top 0,
+        left 4px top 0,
+        right 4px top 0;
+}
+
+/* A spread with one leaf is a book held square on: no leaf is turned away, so
+   neither fore-edge is opened and the two bands match. */
+.book-spread.spine-none::after,
+.book-spread.options-solo::after,
+.book-spread.skill-fullpage::after,
+.book-spread.mp-type-single::after,
+.cc-pockets-spread:has(> .cc-page-full)::before {
+    --book-fore-l: 10px;
+    --book-fore-r: 10px;
+}
+

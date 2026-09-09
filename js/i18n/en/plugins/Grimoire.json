@@ -21,5 +21,9 @@
     "esoteric": "✦ Esoteric",
     "beyondLevelEsoteric": "✧ Esoteric, needs level {level}",
     "beyondLevelForbidden": "✧ Forbidden, needs level {level}"
+  },
+  "toast": {
+    "title": "Spell Learned",
+    "learned": "{actor} copied {skill} out of the {book}."
   }
 }

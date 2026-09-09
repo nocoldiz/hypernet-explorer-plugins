@@ -941,6 +941,57 @@
             ? WM.populationMode() : "normal";
     };
 
+    // ------------------------------------------------------------------------
+    // The world of chaos: every roster is drawn out of the hat
+    // ------------------------------------------------------------------------
+    // A chaos world keeps every troop it always had, and every rule about where
+    // and when a troop turns up, but the creatures INSIDE a troop are not the
+    // ones the database put there: each member is swapped for a random enemy.
+    // The swap is deterministic (window.ChaosWorld seeds it from the world) and
+    // it is done once, to the whole table, before anything reads it, so the
+    // creature on the map, the creature in the fight and the creature in the
+    // bestiary are always the same creature. What an enemy IS never changes:
+    // its parameters, skills, drops and look are its own.
+    //
+    // Bosses stay out of the hat: a <Boss> is a written encounter, and a world
+    // where every third rat is one is a world nobody can walk across.
+    let chaosPool = null;
+    function chaosEnemyPool() {
+        if (chaosPool) return chaosPool;
+        chaosPool = [];
+        for (let i = 1; i < $dataEnemies.length; i++) {
+            const data = $dataEnemies[i];
+            if (!data || !data.name) continue;
+            if (/<Boss>/i.test(data.note || "")) continue;
+            chaosPool.push(i);
+        }
+        return chaosPool;
+    }
+
+    let chaosTroopsKey = null;
+    BSE.Helpers.ensureChaosTroops = function() {
+        const CW = window.ChaosWorld;
+        if (!CW || !CW.active() || !$dataTroops || !$dataEnemies) return;
+        const WM = window.WorldManager;
+        const key = String((WM && WM.activeWorldName) || "world");
+        if (chaosTroopsKey === key) return;
+        chaosTroopsKey = key;
+        chaosPool = null;
+        const pool = chaosEnemyPool();
+        if (!pool.length) return;
+        for (let i = 1; i < $dataTroops.length; i++) {
+            const troop = $dataTroops[i];
+            if (!troop || !troop.members || !troop.members.length) continue;
+            // The roster the database wrote is kept, so re-rolling for another
+            // world starts from the authored troop rather than from a troop
+            // some earlier world already scrambled.
+            if (!troop._chaosBase) troop._chaosBase = troop.members.map(m => m.enemyId);
+            troop.members.forEach((m, n) => {
+                m.enemyId = pool[Math.floor(CW.roll(key + ":troop:" + i + ":" + n) * pool.length) % pool.length];
+            });
+        }
+    };
+
     // Whether a creature reads as a person. Kept as one list, shared with the
     // sprite wardrobe and the creature-creation board (SpriteCatalog).
     BSE.Helpers.isPeopleArchetype = function(archetype) {
@@ -2083,6 +2134,10 @@
     // Game_Map#setup runs on every transfer and on every procedural rebuild.
     const _BSE_Game_Map_setup = Game_Map.prototype.setup;
     Game_Map.prototype.setup = function(mapId) {
+        // Before a single creature is placed: in a chaos world the whole troop
+        // table is re-rolled once, so the map, the fight and the bestiary all
+        // read the same roster.
+        BSE.Helpers.ensureChaosTroops();
         _BSE_Game_Map_setup.call(this, mapId);
         if ($gameSystem) {
             // setup rebuilds every event from the map file, so the "Enemy" events
@@ -4681,6 +4736,7 @@
     // per member instead of one for the whole troop.
     const _BSE_Game_Troop_setup = Game_Troop.prototype.setup;
     Game_Troop.prototype.setup = function (troopId) {
+        BSE.Helpers.ensureChaosTroops();
         _BSE_Game_Troop_setup.call(this, troopId);
         const troop = $dataTroops[troopId];
         const GS = window.GalaxySim;

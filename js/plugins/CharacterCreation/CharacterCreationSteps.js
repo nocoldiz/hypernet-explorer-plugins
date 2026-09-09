@@ -1278,9 +1278,19 @@
       const secondaryOptionsHtml = `<option value="" ${secondArch ? '' : 'selected'}>${ccT('CharCreate.none', 'None')}</option>` +
         archetypeOptions(secondArch, currentArch);
       // What the spliced body can hold, asked of the one place that answers it.
+      // Two different numbers: how many grips the body has at all (hands, plus
+      // a mouth for the class that fights with a blade in its teeth) and how
+      // many of those may hold a WEAPON, which is half of them unless the class
+      // dual wields. Both are shown, for a person as much as for a creature,
+      // because splicing on a second archetype is what changes them.
       const HS = window.HandSlots;
-      const slots = (HS && HS.layout) ? HS.layout(actor).slots : 0;
-      const slotsHtml = `<div class="cc-bio-note">${ccTp('CharCreate.weaponSlotsHeld', { n: slots }, `Weapons held: ${slots}`)}</div>`;
+      const layout = (HS && HS.layout) ? HS.layout(actor) : null;
+      const slots = layout ? layout.slots : 0;
+      const maxWeapons = (HS && HS.maxWeapons) ? HS.maxWeapons(actor) : 0;
+      const slotsHtml = `<div class="cc-bio-note">` +
+        `${ccTp('CharCreate.weaponSlotsHeld', { n: maxWeapons }, `Weapons held: ${maxWeapons}`)}` +
+        ` <span class="cc-bio-note-dim">${ccTp('CharCreate.handSlotsHeld', { n: slots }, `(${slots} grips)`)}</span>` +
+        `</div>`;
       const primaryHtml = isCreature ? `
           <div class="cc-bio-section-title">${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.primaryArchetype', 'Primary Archetype')}</span></div>
           <select class="cc-bio-select" onchange="SceneManager._scene.onSelectCreatureArchetype(this.value)">
@@ -1748,6 +1758,16 @@
           ${passiveDesc ? `<p class="cc-class-passive-desc">${passiveDesc}</p>` : ''}
         </div>
       ` : "";
+      // ...and the once-a-day act the class pulls off the floor.
+      const limit = window.LimitBreak && window.LimitBreak.cardForClass
+        ? window.LimitBreak.cardForClass(c.id) : null;
+      const limitHtml = limit && limit.name ? `
+        <div class="cc-class-passive cc-gap-above-tight">
+          <div class="cc-class-passive-name">${this._ccIconHtml(76, 18)} <span>${limit.name}</span>
+            <span class="cc-class-passive-tag">${ccT('CharCreate.limitBreak', 'Limit break')}</span></div>
+          ${limit.desc ? `<p class="cc-class-passive-desc">${limit.desc}</p>` : ''}
+        </div>
+      ` : "";
 
       // Weapon proficiencies
       const hasEquipTrait = (code, dataId) =>
@@ -1807,6 +1827,7 @@
           <div class="cc-dossier-card cc-class-section cc-gap-below">
             <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.classProfile', 'Class Skills')}</h4>
             ${passiveHtml}
+            ${limitHtml}
           </div>
 
           ${weaponRows.length ? (
@@ -3327,6 +3348,32 @@
     // Randomize every party slot at once, then jump straight to the origin step
     // instead of asking to add more members. (Settings/difficulty already ran at
     // the start of the flow.)
+    // The world of chaos builds nobody: three characters are rolled and the
+    // wizard opens on the scenario board with them already seated. Rolled once
+    // per visit to the wizard, so re-entering a sub screen does not hand the
+    // player a different party than the one on the page.
+    startChaosParty() {
+      this.createTotalRandomPartyAll();
+      Scene_CharacterCreation._isScenarioMode = true;
+      this._step = STEP.ORIGIN;
+      this._lastStep = -1;
+      this._lastIndex = -1;
+    }
+
+    // The Randomize Party button on the scenario board: three new characters
+    // without leaving the page.
+    onChaosRerollParty() {
+      this.createTotalRandomPartyAll();
+      Scene_CharacterCreation._isScenarioMode = true;
+      this._step = STEP.ORIGIN;
+      // The wizard is silent on a confirm: only the cursor, the refusal and
+      // the cancel are heard on it (test_cc_reachability).
+      SoundManager.playCursor();
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
     createTotalRandomPartyAll() {
       const MAX_PARTY = 3;
 

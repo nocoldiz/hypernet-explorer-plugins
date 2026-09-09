@@ -53,7 +53,9 @@
     "totalShares": "Total Shares",
     "available2": "Available",
     "evicted": "Evicted from \"{name}\": rent unpaid.",
-    "appName": "Real Estate Board"
+    "appName": "Real Estate Board",
+    "manageShop": "Run the shop",
+    "manageFromDeeds": "The shop book opens from the Deeds page."
   },
   "company": {
     "lemoncorp": {

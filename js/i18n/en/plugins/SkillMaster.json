@@ -201,5 +201,431 @@
   "dissolve": "Dissolve",
   "renamePrompt": "Enter a new name for this spell:",
   "dissolveConfirm": "Dissolve {name} back into knowledge?",
-  "pupil": "Pupil"
+  "pupil": "Pupil",
+  "chaosLevelSkill": "{actor} picks up {skill} out of nowhere.",
+  "craft": {
+    "buttonSpell": "Craft Spell",
+    "buttonSkill": "Craft Skill",
+    "titleSpell": "Spell Workbench",
+    "titleSkill": "Skill Workbench",
+    "back": "Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "discard": "Unmake",
+    "write": {
+      "name": "Name it",
+      "description": "Write its description",
+      "lore": "Write its lore",
+      "hint": "Enter saves a name, Escape closes. Shift and Enter break a line."
+    },
+    "rewriteDesc": "Rewrite Description",
+    "rewriteLore": "Rewrite Lore",
+    "writeIt": "Write It",
+    "rewrite": "Rewrite It",
+    "preview": "Preview",
+    "none": "None",
+    "yes": "Yes",
+    "no": "No",
+    "unwritten": "Unwritten",
+    "knowledge": "Knowledge",
+    "cxShort": "CX",
+    "nothingToBuy": "Nothing on this shelf",
+    "noneYet": "Nothing written yet",
+    "yourSpells": "Your Spells",
+    "yourSkills": "Your Skills",
+    "defaultSpellName": "Unnamed Spell",
+    "defaultSkillName": "Unnamed Skill",
+    "spendsMP": "Spends MP",
+    "spendsAP": "Spends AP",
+    "mpLabel": "MP Cost",
+    "apLabel": "AP Cost",
+    "complexity": "Complexity",
+    "statFloor": "Stat Floor",
+    "yourStat": "You Have",
+    "price": "Price",
+    "effectLabel": "Effect",
+    "element": "Element",
+    "formula": "Formula",
+    "repeats": "Repeats",
+    "variance": "Variance",
+    "critical": "Can Crit",
+    "occasionLabel": "Usable",
+    "anywhere": "Anywhere",
+    "battleOnly": "Battle only",
+    "riderCount": "Riders",
+    "benchBlurb": "Every part is bought once. The complexity is paid forever: it sets the cost of every cast and the {stat} the writer must already hold.",
+    "writtenResult": "\\C[3]{name}\\C[0] is written. {cost} KP spent, {left} KP left.",
+    "rewrittenResult": "\\C[3]{name}\\C[0] is rewritten. {cost} KP spent, {left} KP left.",
+    "row": {
+      "name": "Name",
+      "description": "Description",
+      "lore": "Lore",
+      "icon": "Icon",
+      "animation": "Animation",
+      "core": "Core",
+      "power": "Amplifier",
+      "scope": "Shape",
+      "riders": "Riders",
+      "refines": "Refinements",
+      "create": "Write"
+    },
+    "pick": {
+      "core": "Choose a Core",
+      "power": "Choose an Amplifier",
+      "scope": "Choose a Shape",
+      "riders": "Buy Riders",
+      "refines": "Buy Refinements",
+      "icon": "Choose an Icon",
+      "animation": "Choose an Animation"
+    },
+    "blocked": {
+      "incomplete": "The build is not finished.",
+      "mismatch": "That core cannot be aimed that way.",
+      "knowledge": "Not enough knowledge.",
+      "stat": "Needs {stat} {need}, you hold {have}.",
+      "full": "The bench holds {max} already. Unmake one first."
+    },
+    "dmgType": {
+      "0": "No damage",
+      "1": "HP damage",
+      "2": "MP damage",
+      "3": "HP recovery",
+      "4": "MP recovery",
+      "5": "HP drain",
+      "6": "MP drain"
+    },
+    "comp": {
+      "core": {
+        "fire": {
+          "name": "Kindling",
+          "desc": "Fire damage. The cheapest thing that burns."
+        },
+        "ice": {
+          "name": "Rime",
+          "desc": "Ice damage, a shade gentler than fire and steadier."
+        },
+        "thunder": {
+          "name": "Arc",
+          "desc": "Thunder damage that cuts through part of the guard."
+        },
+        "water": {
+          "name": "Torrent",
+          "desc": "Water damage. Blunt, and the easiest to draw."
+        },
+        "stone": {
+          "name": "Shard",
+          "desc": "Petro damage. Heavy, and slow to be turned aside."
+        },
+        "gale": {
+          "name": "Draught",
+          "desc": "Wind damage. Light, quick and cheap to hold."
+        },
+        "sacred": {
+          "name": "Halo",
+          "desc": "Sacred damage that most guards barely blunt."
+        },
+        "cursed": {
+          "name": "Blight",
+          "desc": "Cursed damage. The hardest thing here to stand in front of."
+        },
+        "arcane": {
+          "name": "Sigil",
+          "desc": "Elementless damage nothing on the field resists."
+        },
+        "mend": {
+          "name": "Suture",
+          "desc": "Heals HP off the caster's own learning."
+        },
+        "etherFlow": {
+          "name": "Conduit",
+          "desc": "Gives MP back to whoever it lands on."
+        },
+        "siphon": {
+          "name": "Leech",
+          "desc": "Damage that returns as HP to the caster."
+        },
+        "mindBurn": {
+          "name": "Static",
+          "desc": "Burns MP out of the target instead of blood."
+        },
+        "ward": {
+          "name": "Empty Frame",
+          "desc": "No damage at all. A shell for riders to sit on."
+        },
+        "strike": {
+          "name": "Strike",
+          "desc": "A plain blow off the arm that swings it."
+        },
+        "cleave": {
+          "name": "Cleave",
+          "desc": "A heavier swing that the guard still answers in full."
+        },
+        "thrust": {
+          "name": "Thrust",
+          "desc": "A narrower blow that most of the guard misses."
+        },
+        "brawl": {
+          "name": "Grapple",
+          "desc": "Close work. Nothing fancy, nothing wasted."
+        },
+        "marksman": {
+          "name": "Aimed Shot",
+          "desc": "A shot that cannot be evaded."
+        },
+        "venomEdge": {
+          "name": "Foul Edge",
+          "desc": "A cursed blade rather than a clean one."
+        },
+        "bandage": {
+          "name": "Field Dressing",
+          "desc": "Patches HP without a word of magic."
+        },
+        "secondWind": {
+          "name": "Second Wind",
+          "desc": "A blow that gives back what it takes."
+        },
+        "rally": {
+          "name": "Empty Stance",
+          "desc": "No damage at all. A shell for riders to sit on."
+        }
+      },
+      "power": {
+        "plain": {
+          "name": "Plain",
+          "desc": "The core as written. Costs nothing."
+        },
+        "focused": {
+          "name": "Focused",
+          "desc": "A quarter again as strong."
+        },
+        "potent": {
+          "name": "Potent",
+          "desc": "Half again as strong, and much heavier to hold."
+        },
+        "ruinous": {
+          "name": "Ruinous",
+          "desc": "Twice over. Only a trained mind carries this."
+        }
+      },
+      "scope": {
+        "oneEnemy": {
+          "name": "One Enemy",
+          "desc": "A single target across the field."
+        },
+        "twoRandom": {
+          "name": "Two at Random",
+          "desc": "Twice, wherever it lands."
+        },
+        "threeRandom": {
+          "name": "Three at Random",
+          "desc": "Three times, wherever it lands."
+        },
+        "allEnemies": {
+          "name": "All Enemies",
+          "desc": "The whole opposing line at once."
+        },
+        "oneAlly": {
+          "name": "One Ally",
+          "desc": "A single companion."
+        },
+        "allAllies": {
+          "name": "All Allies",
+          "desc": "The whole party at once."
+        },
+        "theUser": {
+          "name": "The Writer",
+          "desc": "Yourself and nobody else. Costs nothing."
+        },
+        "everyone": {
+          "name": "Everyone",
+          "desc": "Both lines, friend and enemy alike."
+        }
+      },
+      "riders": {
+        "poison": {
+          "name": "Venom",
+          "desc": "Often leaves the target poisoned."
+        },
+        "blind": {
+          "name": "Cinders",
+          "desc": "Often blinds the target."
+        },
+        "silence": {
+          "name": "Gag",
+          "desc": "Sometimes silences the target."
+        },
+        "confusion": {
+          "name": "Muddle",
+          "desc": "Sometimes confuses the target."
+        },
+        "sleep": {
+          "name": "Lullaby",
+          "desc": "Sometimes puts the target to sleep."
+        },
+        "freeze": {
+          "name": "Hoarfrost",
+          "desc": "Sometimes freezes the target."
+        },
+        "paralysis": {
+          "name": "Locking Nerve",
+          "desc": "Sometimes paralyses the target."
+        },
+        "stun": {
+          "name": "Concussion",
+          "desc": "Often stuns the target."
+        },
+        "deathMark": {
+          "name": "Death Mark",
+          "desc": "Rarely marks the target for death. Expensive, and it should be."
+        },
+        "provoke": {
+          "name": "Insult",
+          "desc": "Almost always provokes the target into answering you."
+        },
+        "sapAtk": {
+          "name": "Sap Strength",
+          "desc": "Weakens the target's attack."
+        },
+        "sapDef": {
+          "name": "Sap Guard",
+          "desc": "Weakens the target's defence."
+        },
+        "sapMat": {
+          "name": "Sap Mind",
+          "desc": "Weakens the target's magic."
+        },
+        "sapAgi": {
+          "name": "Sap Step",
+          "desc": "Weakens the target's speed."
+        },
+        "stripBuffs": {
+          "name": "Unwrite",
+          "desc": "Strips the buffs the target is standing behind."
+        },
+        "regenHP": {
+          "name": "Slow Knit",
+          "desc": "Leaves HP regeneration behind."
+        },
+        "regenMP": {
+          "name": "Slow Spring",
+          "desc": "Leaves MP regeneration behind."
+        },
+        "regenAP": {
+          "name": "Slow Breath",
+          "desc": "Leaves AP regeneration behind."
+        },
+        "protect": {
+          "name": "Aegis",
+          "desc": "Leaves the target protected."
+        },
+        "counter": {
+          "name": "Riposte",
+          "desc": "Leaves the target answering blows in kind."
+        },
+        "inspired": {
+          "name": "Kind Word",
+          "desc": "Leaves the target inspired."
+        },
+        "arcaneSurge": {
+          "name": "Surge",
+          "desc": "Leaves an arcane surge on the target."
+        },
+        "divineShield": {
+          "name": "Divine Shield",
+          "desc": "Rarely leaves a divine shield. The dearest thing on the shelf."
+        },
+        "shadowVeil": {
+          "name": "Shadow Veil",
+          "desc": "Leaves the target veiled."
+        },
+        "wardAilments": {
+          "name": "Charm Against Harm",
+          "desc": "Leaves the target blocking status ailments."
+        },
+        "braceAtk": {
+          "name": "Brace Strength",
+          "desc": "Raises the target's attack."
+        },
+        "braceDef": {
+          "name": "Brace Guard",
+          "desc": "Raises the target's defence."
+        },
+        "braceMat": {
+          "name": "Brace Mind",
+          "desc": "Raises the target's magic."
+        },
+        "braceAgi": {
+          "name": "Brace Step",
+          "desc": "Raises the target's speed."
+        },
+        "cleanse": {
+          "name": "Clean Slate",
+          "desc": "Lifts poison, blindness, silence and the rest."
+        },
+        "firstAid": {
+          "name": "Salve",
+          "desc": "Gives back a slice of HP on top of everything else."
+        },
+        "etherSplash": {
+          "name": "Draught",
+          "desc": "Gives back a slice of MP on top of everything else."
+        },
+        "apSurge": {
+          "name": "Adrenaline",
+          "desc": "Hands the target AP outright."
+        }
+      },
+      "refines": {
+        "certain": {
+          "name": "Unerring",
+          "desc": "Never misses, whatever stands in the way."
+        },
+        "twinCast": {
+          "name": "Twinned",
+          "desc": "Lands twice."
+        },
+        "tripleCast": {
+          "name": "Thrice-Written",
+          "desc": "Lands three times. The heaviest thing on the shelf."
+        },
+        "swift": {
+          "name": "Swift",
+          "desc": "Goes earlier in the round."
+        },
+        "precise": {
+          "name": "Precise",
+          "desc": "Never fumbles its own success roll."
+        },
+        "stable": {
+          "name": "Stable",
+          "desc": "Always the same number."
+        },
+        "wild": {
+          "name": "Wild",
+          "desc": "Wildly variable. Cheap, and honest about it."
+        },
+        "keenEdge": {
+          "name": "Keen",
+          "desc": "Can land a critical."
+        },
+        "guardBreak": {
+          "name": "Guard Break",
+          "desc": "Halves the defence counted against it."
+        },
+        "efficient": {
+          "name": "Efficient",
+          "desc": "Costs less to cast, and adds no complexity of its own."
+        },
+        "menuCast": {
+          "name": "Everyday",
+          "desc": "Usable outside battle as well as in it."
+        },
+        "apReturn": {
+          "name": "Feedback",
+          "desc": "Gives the user AP back on use."
+        }
+      }
+    }
+  }
 }

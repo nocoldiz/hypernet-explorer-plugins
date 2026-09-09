@@ -502,7 +502,10 @@ window.Game_PetFollower = Game_PetFollower;
         // both resolved off the creature it was recruited from.
         actor._recruitedEnemyId = pet.enemyId || 0;
         actor._recruitedLook = null;   // the look roll of whoever held the slot before goes with them
-        if (pet.archetype) actor._currentArchetype = pet.archetype;
+        if (pet.archetype) {
+            actor._currentArchetype = pet.archetype;
+            actor._creatureArchetypes = [pet.archetype];
+        }
         // A graduate on a creature class is still a creature, and every system
         // that asks does so through this slot's switch.
         if ($gameSwitches && CREATURE_SWITCHES[actorId]) {

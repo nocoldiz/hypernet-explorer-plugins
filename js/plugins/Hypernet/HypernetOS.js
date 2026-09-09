@@ -86,13 +86,27 @@
         },
 
         registerApp: function(options) {
-            const { id, name, icon, launchFn, desktopShortcut = true, desktopAnchor = 'left' } = options;
+            const { id, name, icon, launchFn, desktopShortcut = true } = options;
             const category = options.category || this.defaultCategory(id);
-            this._apps[id] = { id, name, icon, launchFn, desktopShortcut, desktopAnchor, category };
+            this._apps[id] = { id, name, icon, launchFn, desktopShortcut, category };
 
-            // Proactively refresh desktop and start menu if scene is active
-            this.refreshDesktopIcons();
-            this.refreshStartMenu();
+            // Every plugin registers on load, so a straight refresh here rebuilt
+            // the whole desktop and start menu once per program. One coalesced
+            // rebuild on the next tick does the same work a single time.
+            this.refreshShell();
+        },
+
+        // Desktop and start menu, rebuilt once however many times this is asked
+        // for in the same tick.
+        refreshShell: function() {
+            if (this._shellRefreshPending) return;
+            this._shellRefreshPending = true;
+            setTimeout(() => {
+                this._shellRefreshPending = false;
+                this.refreshDesktopIcons();
+                this.refreshStartMenu();
+                this.refreshAllProgramsWindows();
+            }, 0);
         },
 
         // --- Program categories -------------------------------------------------
@@ -114,6 +128,11 @@
             'app-token-exchange': 'economy', 'app-job-offers': 'economy',
             'app-kanban-quest': 'office',
             'app-colosseum': 'games', 'app-bobnzi': 'games',
+            'app-minesweeper': 'games', 'app-solitaire': 'games',
+            'app-folderopt': 'system', 'app-mouse': 'system', 'app-keyboard': 'system',
+            'app-useracc': 'system', 'app-printers': 'system', 'app-netconn': 'system',
+            'app-access': 'system', 'app-fonts': 'system', 'app-joy': 'system',
+            'app-taskbar': 'system',
             'app-neuropolice': 'civic',
             'app-recycle': 'system', 'app-search': 'accessories', 'app-help': 'accessories',
             'app-chiplab': 'accessories'
@@ -159,11 +178,37 @@
             return $gameSystem._hypernetDesktopPins;
         },
 
+        // The machine boots with a short desktop: the shell's own doors and the
+        // programs the game is actually played through. Everything else lives
+        // in All Programs until the player drags it out.
+        // i18n-ignore-start  app ids
+        DESKTOP_DEFAULT: ['app-all-programs', 'my-computer', 'app-recycle',
+            'app-hypernet-browser', 'control-panel'],
+        // All Programs is the drawer every other shortcut comes out of, so it
+        // is the one icon that cannot be taken off the desktop.
+        DESKTOP_PERMANENT: ['app-all-programs'],
+        // i18n-ignore-end
+
+        isPermanentDesktopApp: function(id) {
+            return this.DESKTOP_PERMANENT.indexOf(id) >= 0;
+        },
+
         isOnDesktop: function(app) {
             if (!app) return false;
+            if (this.isPermanentDesktopApp(app.id)) return true;
             const pins = this.desktopPins();
             if (Object.prototype.hasOwnProperty.call(pins, app.id)) return !!pins[app.id];
-            return app.desktopShortcut !== false;
+            return this.DESKTOP_DEFAULT.indexOf(app.id) >= 0;
+        },
+
+        // Every installed program that is not on the desktop: what the All
+        // Programs window lists, filed under its category.
+        offDesktopByCategory: function() {
+            return this.appsByCategory().map(group => ({
+                category: group.category,
+                label: group.label,
+                apps: group.apps.filter(app => !this.isOnDesktop(app))
+            })).filter(group => group.apps.length);
         },
 
         // Pin (or unpin) a program on the desktop. An optional cell says where
@@ -171,6 +216,7 @@
         setOnDesktop: function(id, on, cell) {
             const app = this._apps[id];
             if (!app) return false;
+            if (!on && this.isPermanentDesktopApp(id)) return false;
             const pins = this.desktopPins();
             pins[id] = !!on;
             const layout = this.DesktopGrid.savedLayout();
@@ -179,6 +225,7 @@
                 if (!on) delete layout[id];
             }
             this.refreshDesktopIcons();
+            this.refreshAllProgramsWindows();
             return true;
         },
         
@@ -213,8 +260,12 @@
                         window.HypernetOS.currentLaunchingPid = proc.pid;
                     }
 
+                    // Which program is opening, so the window it creates can be
+                    // grouped under it on the taskbar. Same handover as the pid.
+                    window.HypernetOS.currentLaunchingApp = id;
                     app.launchFn();
                     window.HypernetOS.currentLaunchingPid = null;
+                    window.HypernetOS.currentLaunchingApp = null;
 
                     if (window.SoundManager) SoundManager.playOk();
                 } catch (err) {
@@ -223,6 +274,7 @@
                     // hand both back so the machine stays consistent.
                     console.error(`Error launching app ${id}:`, err);
                     window.HypernetOS.currentLaunchingPid = null;
+                    window.HypernetOS.currentLaunchingApp = null;
                     if (spawned && window.HypernetOS.Kernel) {
                         window.HypernetOS.Kernel.killProcess(spawned.pid);
                     }
@@ -274,7 +326,6 @@
 
                 const iconDiv = document.createElement('div');
                 iconDiv.className = 'desktop-icon';
-                if (app.desktopAnchor === 'right') iconDiv.classList.add('anchored-right');
                 iconDiv.title = app.name;
                 iconDiv.dataset.appId = app.id;
                 iconDiv.innerHTML = `
@@ -301,10 +352,8 @@
 
         // --- Desktop icon grid -------------------------------------------------
         // Shortcuts sit on a fixed cell grid the player can rearrange by dragging
-        // them with the mouse; each drop is remembered in the save file. The last
-        // column is reserved for right-anchored apps (registerApp
-        // desktopAnchor: 'right'), which keeps them on their own, away from the
-        // general icon field.
+        // them with the mouse; each drop is remembered in the save file. Every
+        // cell is the same: no column is reserved for anything.
         DesktopGrid: {
             CELL_W: 190,
             CELL_H: 200,
@@ -319,27 +368,17 @@
                 const desk = document.getElementById('hypernet-os-desktop');
                 const w = desk ? desk.clientWidth : window.innerWidth;
                 const h = desk ? desk.clientHeight : Math.max(1, window.innerHeight - 40);
-                const anchoredCount = this.icons.filter(i => i.app.desktopAnchor === 'right').length;
-                const leftCount = this.icons.length - anchoredCount;
-                const hasAnchored = anchoredCount > 0;
-
                 const SCALES = [1, 0.92, 0.84, 0.76, 0.68, 0.6, 0.52];
                 let cellW = this.CELL_W, cellH = this.CELL_H, cols = 1, rows = 1;
                 for (let s = 0; s < SCALES.length; s++) {
                     cellW = Math.round(this.CELL_W * SCALES[s]);
                     cellH = Math.round(this.CELL_H * SCALES[s]);
-                    cols = Math.max(hasAnchored ? 2 : 1, Math.floor((w - this.PAD * 2) / cellW));
+                    cols = Math.max(1, Math.floor((w - this.PAD * 2) / cellW));
                     rows = Math.max(1, Math.floor((h - this.PAD * 2) / cellH));
-                    const leftCols = hasAnchored ? cols - 1 : cols;
-                    const fits = leftCols * rows >= leftCount && (!hasAnchored || rows >= anchoredCount);
-                    if (fits) break;
+                    if (cols * rows >= this.icons.length) break;
                 }
 
-                return {
-                    w, h, cols, rows, cellW, cellH, hasAnchored,
-                    reservedCol: hasAnchored ? cols - 1 : -1,
-                    compact: cellW < this.CELL_W - 10
-                };
+                return { w, h, cols, rows, cellW, cellH, compact: cellW < this.CELL_W - 10 };
             },
 
             // Saved positions live on $gameSystem so a rearranged desktop survives
@@ -353,10 +392,7 @@
 
             isLegalCell: function(entry, cell, m) {
                 if (!cell) return false;
-                if (cell.c < 0 || cell.r < 0 || cell.c >= m.cols || cell.r >= m.rows) return false;
-                const anchored = entry.app.desktopAnchor === 'right';
-                if (m.reservedCol < 0) return true;
-                return anchored ? cell.c === m.reservedCol : cell.c !== m.reservedCol;
+                return cell.c >= 0 && cell.r >= 0 && cell.c < m.cols && cell.r < m.rows;
             },
 
             // Honour every valid saved position first, then fill the remaining
@@ -380,10 +416,7 @@
 
                 this.icons.forEach(entry => {
                     if (entry.cell) return;
-                    const anchored = entry.app.desktopAnchor === 'right';
-                    const cols = anchored ? [m.reservedCol < 0 ? m.cols - 1 : m.reservedCol]
-                                          : Array.from({ length: m.cols }, (_, i) => i)
-                                                 .filter(c => c !== m.reservedCol);
+                    const cols = Array.from({ length: m.cols }, (_, i) => i);
                     for (const c of cols) {
                         for (let r = 0; r < m.rows; r++) {
                             if (taken.has(key(c, r))) continue;
@@ -427,20 +460,8 @@
                     entry.el.classList.toggle('compact', m.compact);
                 });
 
-                // Thin rule marking off the reserved column.
-                let divider = container.querySelector('.desktop-icon-divider');
-                if (m.reservedCol > 0) {
-                    if (!divider) {
-                        divider = document.createElement('div');
-                        divider.className = 'desktop-icon-divider';
-                        container.appendChild(divider);
-                    }
-                    divider.style.left = (this.PAD + m.reservedCol * m.cellW - 8) + 'px';
-                    divider.style.top = this.PAD + 'px';
-                    divider.style.height = (m.rows * m.cellH) + 'px';
-                } else if (divider) {
-                    divider.parentNode.removeChild(divider);
-                }
+                const divider = container.querySelector('.desktop-icon-divider');
+                if (divider) divider.parentNode.removeChild(divider);
             },
 
             persist: function() {
@@ -509,10 +530,26 @@
                         this.showGhost(target, targetLegal, m);
                     };
 
-                    const onUp = () => {
+                    const onUp = (ev) => {
                         document.removeEventListener('mousemove', onMove, true);
                         document.removeEventListener('mouseup', onUp, true);
                         if (!dragging) return;
+
+                        // Dropped on the Recycle Bin, or back in the All
+                        // Programs window: the shortcut goes, and the program
+                        // is listed in All Programs again.
+                        if (ev && window.HypernetOS.isUnpinDropTarget(ev, entry.app.id)) {
+                            el.classList.remove('dragging');
+                            this.hideGhost();
+                            el._hnDragged = true;
+                            setTimeout(() => { el._hnDragged = false; }, 0);
+                            if (window.HypernetOS.setOnDesktop(entry.app.id, false)) {
+                                if (window.HypernetOS.XP) window.HypernetOS.XP.playEvent('recycle');   // i18n-ignore  event id
+                                return;
+                            }
+                            this.layout();
+                            return;
+                        }
 
                         el.classList.remove('dragging');
                         this.hideGhost();
@@ -547,11 +584,150 @@
             }
         },
 
+        // --- The left column of the start menu -----------------------------------
+        // What was here was every program the machine had, filed under its
+        // category and all of it on screen at once. The menu of the period was
+        // three things instead: a short pinned list at the top, the programs
+        // actually used under it, and All Programs as a flyout holding the
+        // rest. The categories are still what All Programs files them under,
+        // so nothing is lost, and the flat list is still there for anyone who
+        // preferred it (the Start Menu tab of the taskbar's Properties).
+        //
+        // Pinned is a registry list; most-used is read off the same appUsage
+        // record Add or Remove Programs reads, so the menu learns from the
+        // player rather than from a second tally kept for it.
+        PINNED_DEFAULT: ['app-hypernet-browser', 'app-hypernet-notepad'],   // i18n-ignore  app ids
+        MFU_MAX: 6,
+
+        pinnedIds: function() {
+            const list = this.XP ? this.XP.reg('startPinned', null) : null;
+            return (Array.isArray(list) ? list : this.PINNED_DEFAULT).filter(id => this._apps[id] && this.isInstalled(this._apps[id]));
+        },
+
+        setPinned: function(ids) {
+            if (this.XP) this.XP.setReg('startPinned', ids.slice());
+            this.refreshStartMenu();
+        },
+
+        // The programs this machine reaches for, most first, minus the ones
+        // already pinned above and the shell's own plumbing.
+        mostUsedIds: function() {
+            const fs = window.HypernetFileSystem;
+            const usage = (fs && fs.getRegistry('appUsage', {})) || {};
+            const pinned = new Set(this.pinnedIds());
+            return Object.keys(usage)
+                .filter(id => this._apps[id] && this.isInstalled(this._apps[id]) && !pinned.has(id))
+                .sort((a, b) => (usage[b].count || 0) - (usage[a].count || 0))
+                .slice(0, this.MFU_MAX);
+        },
+
+        // The documents opened lately, newest first. window.HypernetOS.openFile
+        // is the one door every document goes through, so it is what records
+        // them, and a file since deleted drops off the list rather than sitting
+        // on it as an entry that cannot open.
+        RECENT_MAX: 10,
+
+        recentDocs: function() {
+            const fs = window.HypernetFileSystem;
+            if (!fs) return [];
+            const list = fs.getRegistry('recentDocs', []) || [];
+            return list.filter(path => fs.exists(path)).slice(0, this.RECENT_MAX);
+        },
+
+        noteRecentDoc: function(path) {
+            const fs = window.HypernetFileSystem;
+            if (!fs || !path) return;
+            const list = (fs.getRegistry('recentDocs', []) || []).filter(p => p !== path);
+            list.unshift(path);
+            fs.setRegistry('recentDocs', list.slice(0, this.RECENT_MAX));
+        },
+
+        clearRecentDocs: function() {
+            const fs = window.HypernetFileSystem;
+            if (fs) fs.setRegistry('recentDocs', []);
+            this.refreshStartMenu();
+        },
+
+        // One row of the menu, however it was reached.
+        startMenuRow: function(app, className) {
+            const item = document.createElement('div');
+            // The base class is what the focus ring collects rows by
+            // (_getFocusables), so a variant class is added ALONGSIDE it
+            // rather than in place of it: a row given a look of its own was
+            // otherwise reachable with the mouse and with nothing else.
+            item.className = 'start-menu-app-item' + (className ? ' ' + className : '');
+            item.dataset.appId = app.id;
+            item.innerHTML = `
+                <div class="start-menu-app-icon">${this.getIconHTML(app.icon, 24)}</div>
+                <div class="start-menu-app-name">${app.name}</div>
+            `;
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (item._hnDragged) { item._hnDragged = false; return; }
+                this.launchApp(app.id);
+            });
+            item.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const pinned = this.pinnedIds();
+                const on = pinned.includes(app.id);
+                this.ContextMenu.show(e.clientX, e.clientY, [
+                    { label: T('HypernetOS.context.open'), icon: app.icon, bold: true, action: () => this.launchApp(app.id) },
+                    { separator: true },
+                    { label: on ? T('HypernetOS.context.removeFromDesktop') : T('HypernetOS.context.addToDesktop'),
+                      action: () => this.setPinned(on ? pinned.filter(x => x !== app.id) : pinned.concat([app.id])) }
+                ]);
+            });
+            this.attachStartMenuDrag(item, app);
+            return item;
+        },
+
         refreshStartMenu: function() {
             const listContainer = document.getElementById('start-menu-apps-list');
             if (!listContainer) return;
 
             listContainer.innerHTML = '';
+            const K = k => T('HypernetOS.xp.taskbar.' + k);
+
+            // The flat list of every program, filed under its category, is what
+            // this menu always showed. It is now what All Programs shows, and
+            // the Start Menu tab of the bar's Properties can put it back here.
+            const flat = !(this.XP && this.XP.reg('startCategories', true));
+            if (!flat) {
+                const pinned = this.pinnedIds();
+                if (pinned.length) {
+                    const box = document.createElement('div');
+                    box.className = 'start-menu-pinned';
+                    pinned.forEach(id => box.appendChild(this.startMenuRow(this._apps[id])));
+                    listContainer.appendChild(box);
+                }
+                const used = this.mostUsedIds();
+                if (used.length) {
+                    const box = document.createElement('div');
+                    box.className = 'start-menu-mfu';
+                    used.forEach(id => box.appendChild(this.startMenuRow(this._apps[id])));
+                    listContainer.appendChild(box);
+                }
+                const all = document.createElement('div');
+                all.className = 'start-menu-allprograms focusable';
+                all.id = 'start-menu-allprograms';
+                all.tabIndex = 0;
+                all.innerHTML = `<div class="start-menu-app-name">${K('allPrograms')}</div><span class="start-menu-flyout-arrow"></span>`;
+                all.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const box = all.getBoundingClientRect();
+                    // Each category is one entry; opening it lists its programs.
+                    this.ContextMenu.show(box.right, box.bottom, this.appsByCategory().map(group => ({
+                        label: group.label,
+                        action: () => this.ContextMenu.show(box.right, box.bottom, group.apps.map(app => ({
+                            label: app.name, icon: app.icon, action: () => this.launchApp(app.id)
+                        })))
+                    })));
+                });
+                listContainer.appendChild(all);
+                return;
+            }
+
             // Programs are filed under their category headings. A heading
             // folds its group away; the folded set is remembered on the save.
             const folded = this.foldedCategories();
@@ -570,22 +746,7 @@
                 listContainer.appendChild(head);
                 if (folded[group.category]) return;
 
-                group.apps.forEach(app => {
-                    const item = document.createElement('div');
-                    item.className = 'start-menu-app-item';
-                    item.dataset.appId = app.id;
-                    item.innerHTML = `
-                        <div class="start-menu-app-icon">${this.getIconHTML(app.icon, 24)}</div>
-                        <div class="start-menu-app-name">${app.name}</div>
-                    `;
-                    item.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        if (item._hnDragged) { item._hnDragged = false; return; }
-                        this.launchApp(app.id);
-                    });
-                    this.attachStartMenuDrag(item, app);
-                    listContainer.appendChild(item);
-                });
+                group.apps.forEach(app => listContainer.appendChild(this.startMenuRow(app)));
             });
         },
 
@@ -595,10 +756,15 @@
             return $gameSystem._hypernetFoldedCategories;
         },
 
-        // A program dragged out of the start menu and dropped on the desktop
-        // becomes a shortcut in the cell it landed on. The item itself stays
-        // put: a ghost copy travels with the pointer.
         attachStartMenuDrag: function(item, app) {
+            this.attachPinDrag(item, app, true);
+        },
+
+        // A program dragged out of a list (the start menu, the All Programs
+        // window) and dropped on bare desktop becomes a shortcut in the cell it
+        // landed on. The item itself stays put: a ghost copy travels with the
+        // pointer.
+        attachPinDrag: function(item, app, closeMenu) {
             item.addEventListener('mousedown', (e) => {
                 if (e.button !== 0) return;
                 const startX = e.clientX, startY = e.clientY;
@@ -641,12 +807,32 @@
                         if (!this.DesktopGrid.isLegalCell({ app }, cell, m)) cell = null;
                     }
                     this.setOnDesktop(app.id, true, cell);
-                    this.closeStartMenu();
+                    if (closeMenu) this.closeStartMenu();
                     if (window.SoundManager) SoundManager.playOk();
                 };
 
                 document.addEventListener('mousemove', onMove, true);
                 document.addEventListener('mouseup', onUp, true);
+            });
+        },
+
+        // True when a dragged shortcut was let go somewhere that means "take
+        // this off the desktop": the Recycle Bin icon, or an All Programs
+        // window. The permanent icon never answers yes.
+        isUnpinDropTarget: function(ev, appId) {
+            if (this.isPermanentDesktopApp(appId)) return false;
+            const el = document.elementFromPoint(ev.clientX, ev.clientY);
+            if (!el) return false;
+            if (el.closest('#win-app-all-programs')) return true;
+            const icon = el.closest('.desktop-icon');
+            return !!(icon && icon.dataset.appId === 'app-recycle' && appId !== 'app-recycle');   // i18n-ignore  app id
+        },
+
+        // Every open All Programs window, rebuilt: what it lists changes every
+        // time a shortcut is pinned or unpinned.
+        refreshAllProgramsWindows: function() {
+            document.querySelectorAll('.xp-allprograms').forEach(root => {
+                if (typeof root._hnRender === 'function') root._hnRender();
             });
         },
 
@@ -667,39 +853,212 @@
             if (startBtn) startBtn.classList.remove('active');
         },
 
+        // The buttons along the bar. Two things the bar has always done and
+        // this one did not: it groups the windows of one program under a single
+        // button once there is no room left for them all, and every button
+        // answers a right click with the window menu (Restore, Minimize,
+        // Maximize, Close) rather than only a left click.
+        //
+        // Grouping is by the program that opened the window, which is the app
+        // id stamped on it, so two documents of the same program group and two
+        // programs never do. It only kicks in past GROUP_AT windows, the way
+        // the bar only grouped when it ran out of room.
+        GROUP_AT: 6,
+
+        taskbarGroups: function() {
+            const wins = this.WindowManager.windows;
+            const grouping = this.XP ? this.XP.reg('taskbarGroup', true) : true;
+            if (!grouping || wins.length <= this.GROUP_AT) return wins.map(w => ({ windows: [w] }));
+            const byApp = new Map();
+            for (const w of wins) {
+                const key = w.dataset.appId || w.id || String(byApp.size);
+                if (!byApp.has(key)) byApp.set(key, []);
+                byApp.get(key).push(w);
+            }
+            return Array.from(byApp.values()).map(list => ({ windows: list }));
+        },
+
+        // Drop the window menu at a point. Alt+Space, the title bar's right
+        // click and the icon at its left end are the three ways in, and this is
+        // the one that draws it.
+        showWindowMenu: function(win, x, y) {
+            if (!win) return;
+            this.ContextMenu.show(x, y, this.windowMenuItems(win));
+        },
+
+        // The window menu, on a taskbar button or on a title bar. Each verb is
+        // greyed rather than hidden when it cannot apply, the way it was.
+        windowMenuItems: function(win) {
+            const WM = this.WindowManager;
+            const K = k => T('HypernetOS.xp.taskbar.' + k);
+            const maxed = win.classList.contains('maximized');
+            const mini = win.classList.contains('minimized');
+            return [
+                { label: K('restore'), disabled: !maxed && !mini, action: () => {
+                    if (mini) WM.toggleMinimize(win); else if (maxed) WM.toggleMaximize(win);
+                } },
+                { label: K('minimize'), disabled: mini, action: () => WM.toggleMinimize(win) },
+                { label: K('maximize'), disabled: maxed, action: () => {
+                    if (mini) WM.toggleMinimize(win);
+                    if (!win.classList.contains('maximized')) WM.toggleMaximize(win);
+                } },
+                { separator: true },
+                { label: K('close'), bold: true, action: () => WM.closeWindow(win) }
+            ];
+        },
+
+        // Cascade / Tile, the three verbs the bar's menu offers. A minimized
+        // window is left where it is: it is not on the desktop to be arranged.
+        arrangeWindows: function(how) {
+            const WM = this.WindowManager;
+            const wins = WM.windows.filter(w => !w.classList.contains('minimized'));
+            if (!wins.length) return;
+            const host = document.getElementById('hypernet-os-desktop');
+            const W = (host && host.clientWidth) || window.innerWidth || 1280;
+            const H = ((host && host.clientHeight) || window.innerHeight || 800) - TASKBAR_H;
+            const place = (win, x, y, w, h) => {
+                if (win.classList.contains('maximized')) WM.toggleMaximize(win);
+                win.style.left = Math.round(x) + 'px';
+                win.style.top = Math.round(y) + 'px';
+                win.style.width = Math.round(w) + 'px';
+                win.style.height = Math.round(h) + 'px';
+            };
+            if (how === 'cascade') {
+                const step = 26;
+                wins.forEach((win, i) => {
+                    const off = i * step;
+                    place(win, 20 + off, 20 + off, Math.max(320, W * 0.62), Math.max(240, H * 0.62));
+                    WM.bringToFront(win);
+                });
+                return;
+            }
+            const n = wins.length;
+            if (how === 'tileV') {
+                const w = W / n;
+                wins.forEach((win, i) => place(win, i * w, 0, w, H));
+            } else {
+                const h = H / n;
+                wins.forEach((win, i) => place(win, 0, i * h, W, h));
+            }
+        },
+
         refreshTaskbarTabs: function() {
             const bar = document.getElementById('hypernet-taskbar-tabs');
             if (!bar) return;
             bar.innerHTML = '';
-            
-            this.WindowManager.windows.forEach(win => {
-                const title = win.dataset.title || T('HypernetOS.untitledWindow');
-                const iconHTML = win.dataset.iconHTML || '';
-                const isActive = win.classList.contains('active');
-                const isMinimized = win.classList.contains('minimized');
-                
+
+            this.taskbarGroups().forEach(group => {
+                const wins = group.windows;
+                const lead = wins[0];
+                const grouped = wins.length > 1;
+                const title = grouped
+                    ? T('HypernetOS.xp.taskbar.groupOf', {
+                        name: (this._apps[lead.dataset.appId] && this._apps[lead.dataset.appId].name) || lead.dataset.title || T('HypernetOS.untitledWindow'),
+                        count: wins.length })
+                    : (lead.dataset.title || T('HypernetOS.untitledWindow'));
+                const iconHTML = lead.dataset.iconHTML || '';
+                const isActive = wins.some(w => w.classList.contains('active'));
+                const isMinimized = wins.every(w => w.classList.contains('minimized'));
+
                 const tab = document.createElement('div');
-                tab.className = `taskbar-tab ${isActive ? 'active' : ''} ${isMinimized ? 'minimized' : ''}`;
+                tab.className = `taskbar-tab ${isActive ? 'active' : ''} ${isMinimized ? 'minimized' : ''} ${grouped ? 'grouped' : ''}`;
+                tab.dataset.appId = lead.dataset.appId || '';
                 tab.innerHTML = `
                     ${iconHTML ? `<span class="taskbar-tab-icon">${iconHTML}</span>` : ''}
                     <span class="taskbar-tab-text">${title}</span>
                 `;
-                
+
+                // A grouped button opens the list of its windows; a lone one is
+                // the window, and clicking it minimizes and restores as before.
                 tab.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (isActive) {
-                        this.WindowManager.toggleMinimize(win);
-                    } else {
-                        if (isMinimized) {
-                            this.WindowManager.toggleMinimize(win);
-                        } else {
-                            this.WindowManager.bringToFront(win);
-                        }
+                    if (grouped) {
+                        const box = tab.getBoundingClientRect();
+                        this.ContextMenu.show(box.left, box.top, wins.map(w => ({
+                            label: w.dataset.title || T('HypernetOS.untitledWindow'),
+                            icon: this._apps[w.dataset.appId] && this._apps[w.dataset.appId].icon,
+                            action: () => {
+                                if (w.classList.contains('minimized')) this.WindowManager.toggleMinimize(w);
+                                else this.WindowManager.bringToFront(w);
+                            }
+                        })).concat([{ separator: true }, {
+                            label: T('HypernetOS.xp.taskbar.closeGroup'),
+                            action: () => wins.slice().forEach(w => this.WindowManager.closeWindow(w))
+                        }]));
+                        return;
                     }
+                    if (isActive) this.WindowManager.toggleMinimize(lead);
+                    else if (isMinimized) this.WindowManager.toggleMinimize(lead);
+                    else this.WindowManager.bringToFront(lead);
                 });
-                
+
+                tab.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const items = grouped
+                        ? [{ label: T('HypernetOS.xp.taskbar.closeGroup'), bold: true,
+                             action: () => wins.slice().forEach(w => this.WindowManager.closeWindow(w)) }]
+                        : this.windowMenuItems(lead);
+                    this.ContextMenu.show(e.clientX, e.clientY, items);
+                });
+
                 bar.appendChild(tab);
             });
+        },
+
+        // --- Quick Launch -------------------------------------------------------
+        // The strip beside Start: Show Desktop first, then whatever the player
+        // pinned there. It is a registry list so it survives a log off, and it
+        // is drawn from the same app registry every other launcher reads.
+        QUICK_DEFAULT: ['app-hypernet-browser', 'app-hypernet-notepad', 'my-computer'],   // i18n-ignore  app ids
+
+        quickLaunchIds: function() {
+            const list = this.XP ? this.XP.reg('quickLaunch', null) : null;
+            return (Array.isArray(list) ? list : this.QUICK_DEFAULT).filter(id => this._apps[id]);
+        },
+
+        setQuickLaunch: function(ids) {
+            if (this.XP) this.XP.setReg('quickLaunch', ids.slice());
+            this.refreshQuickLaunch();
+        },
+
+        refreshQuickLaunch: function() {
+            const strip = document.getElementById('hypernet-quick-launch');
+            if (!strip) return;
+            const on = this.XP ? this.XP.reg('quickLaunchShown', true) : true;
+            strip.classList.toggle('hidden', !on);
+            strip.innerHTML = '';
+            if (!on) return;
+
+            const K = k => T('HypernetOS.xp.taskbar.' + k);
+            const button = (title, inner, run) => {
+                const b = document.createElement('div');
+                b.className = 'quick-launch-btn focusable';
+                b.tabIndex = 0;
+                b.title = title;
+                b.innerHTML = inner;
+                b.addEventListener('click', e => { e.stopPropagation(); run(); });
+                strip.appendChild(b);
+                return b;
+            };
+            const desk = button(K('showDesktop'), '<span class="quick-showdesk"></span>',
+                () => this.XP && this.XP.showDesktop());
+            desk.id = 'quick-show-desktop';
+            for (const id of this.quickLaunchIds()) {
+                const app = this._apps[id];
+                const b = button(app.name, this.getIconHTML(app.icon, 16), () => this.launchApp(id));
+                b.dataset.appId = id;
+                b.addEventListener('contextmenu', e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.ContextMenu.show(e.clientX, e.clientY, [
+                        { label: T('HypernetOS.context.open'), bold: true, action: () => this.launchApp(id) },
+                        { separator: true },
+                        { label: T('HypernetOS.context.removeFromDesktop'),
+                          action: () => this.setQuickLaunch(this.quickLaunchIds().filter(x => x !== id)) }
+                    ]);
+                });
+            }
         }
     };
 
@@ -918,6 +1277,9 @@
             win.id = id;
             win.className = 'hypernet-os-window';
             win.dataset.title = title;
+            if (window.HypernetOS.currentLaunchingApp) {
+                win.dataset.appId = window.HypernetOS.currentLaunchingApp;
+            }
             if (window.HypernetOS.currentLaunchingPid) {
                 win.dataset.pid = window.HypernetOS.currentLaunchingPid;
             }
@@ -1029,6 +1391,28 @@
             minBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.toggleMinimize(win);
+            });
+
+            // The title bar's own three habits, none of which this window had:
+            // a double click maximizes and restores, a right click drops the
+            // window menu, and so does the icon at its left end (which is where
+            // Alt+Space put it, and Alt+Space is wired in the scene's keys).
+            titlebar.addEventListener('dblclick', (e) => {
+                if (e.target.closest('.hypernet-btn')) return;
+                e.stopPropagation();
+                this.toggleMaximize(win);
+            });
+            titlebar.addEventListener('contextmenu', (e) => {
+                if (e.target.closest('.hypernet-btn')) return;
+                e.preventDefault();
+                e.stopPropagation();
+                window.HypernetOS.showWindowMenu(win, e.clientX, e.clientY);
+            });
+            const sysIcon = win.querySelector('.hypernet-window-icon');
+            if (sysIcon) sysIcon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const box = win.getBoundingClientRect();
+                window.HypernetOS.showWindowMenu(win, box.left + 2, box.top + 24);
             });
 
             // Window Dragging
@@ -1196,6 +1580,10 @@
         },
 
         toggleMinimize: function(win) {
+            if (window.HypernetOS.XP) {
+                window.HypernetOS.XP.playEvent(
+                    win.classList.contains('minimized') ? 'restoreUp' : 'minimize');   // i18n-ignore  event ids
+            }
             if (win.classList.contains('minimized')) {
                 win.classList.remove('minimized');
                 win.style.display = 'block';
@@ -1384,6 +1772,11 @@
                             <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(191, 16)}</div>
                             <div>${T('HypernetOS.myDocuments')}</div>
                         </div>
+                        <div class="start-menu-link" id="link-recent-docs">
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(190, 16)}</div>
+                            <div>${T('HypernetOS.xp.taskbar.recentDocs')}</div>
+                            <span class="start-menu-flyout-arrow"></span>
+                        </div>
                         <div class="start-menu-divider"></div>
                         <div class="start-menu-link" id="link-control-panel">
                             <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(234, 16)}</div>
@@ -1436,8 +1829,10 @@
                     </div>
                     start
                 </button>
+                <div id="hypernet-quick-launch"></div>
                 <div id="hypernet-taskbar-tabs"></div>
                 <div id="hypernet-system-tray">
+                    <div id="tray-chevron" class="focusable" tabindex="0" title="${T('HypernetOS.xp.taskbar.showHidden')}"></div>
                     <div class="tray-icon" title="${T('HypernetOS.networkEstablished')}"></div>
                     <div class="tray-icon" title="${T('HypernetOS.encryptionMax')}"></div>
                     <div id="tray-clock">
@@ -1569,6 +1964,25 @@
         document.getElementById('link-my-documents').addEventListener('click', () => {
             window.HypernetOS.launchApp('my-documents');
         });
+        // My Recent Documents opens as a flyout of what was opened lately, each
+        // entry going back through window.HypernetOS.openFile, so a document
+        // reopened off this list lands in whichever program claims it.
+        const recentLink = document.getElementById('link-recent-docs');
+        if (recentLink) recentLink.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const OS = window.HypernetOS;
+            const box = recentLink.getBoundingClientRect();
+            const docs = OS.recentDocs();
+            const K = k => T('HypernetOS.xp.taskbar.' + k);
+            const items = docs.length
+                ? docs.map(path => ({
+                    label: path.split('/').pop(),
+                    icon: 190,
+                    action: () => OS.openFile(path)
+                  })).concat([{ separator: true }, { label: K('clearRecent'), action: () => OS.clearRecentDocs() }])
+                : [{ label: K('recentEmpty'), disabled: true }];
+            OS.ContextMenu.show(box.right, box.top, items);
+        });
         document.getElementById('link-control-panel').addEventListener('click', () => {
             window.HypernetOS.launchApp('control-panel');
         });
@@ -1588,7 +2002,14 @@
         document.getElementById('start-btn-turnoff').addEventListener('click', () => {
             startMenu.classList.remove('open');
             startBtn.classList.remove('active');
-            if (window.HypernetOS.XP) window.HypernetOS.XP.turnOffDialog(); else this.onTurnOffClick();
+            // Turn Off leaves at once, the deck with it: no power box, no
+            // shutting-down screen, straight back to whatever opened the deck.
+            if (window.HypernetOS.Balloon) window.HypernetOS.Balloon.hide();
+            if (window.HypernetOS.XP) {
+                window.HypernetOS.XP.clearOverlay();
+                window.HypernetOS.XP.playEvent('exitArchways');   // i18n-ignore  event id
+            }
+            this.onTurnOffClick();
         });
         ['run', 'search', 'help'].forEach(k => {
             const link = document.getElementById('link-' + k);
@@ -2030,10 +2451,32 @@
     // exit the OS). Polled via the Gamepad API directly so the raw Escape
     // keydown handler above never double-fires.
     Scene_HypernetOS.prototype.updateGamepadClose = function() {
+        const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+        // A message box is answered before anything else, A on the default
+        // button and B on the cancelling one: a box the pad cannot dismiss
+        // would leave the whole desktop stuck behind it.
+        const dialog = window.HypernetOS.Dialog;
+        if (dialog && dialog.isOpen()) {
+            let a = false, b = false;
+            for (const pad of pads) {
+                if (!pad || !pad.connected) continue;
+                if (pad.buttons[0] && pad.buttons[0].pressed) a = true;
+                if (pad.buttons[1] && pad.buttons[1].pressed) b = true;
+            }
+            if ((a || b) && !this._gamepadBHeld) {
+                this._gamepadBHeld = true;
+                const d = dialog.top();
+                const pick = b ? (d.buttons.find(x => x.cancel) || d.buttons[d.buttons.length - 1])
+                               : (d.buttons.find(x => x.default) || d.buttons[0]);
+                d.finish(pick.id);
+            } else if (!a && !b) {
+                this._gamepadBHeld = false;
+            }
+            return;
+        }
         // A self-nav app handles B (cancel) itself to walk its own stack back and
         // close at the top level, so the OS does not pre-empt it.
         if (this._activeWindowIsSelfNav()) { this._gamepadBHeld = false; return; }
-        const pads = navigator.getGamepads ? navigator.getGamepads() : [];
         let bPressed = false;
         for (const pad of pads) {
             if (pad && pad.connected && pad.buttons[1] && pad.buttons[1].pressed) bPressed = true;
@@ -3272,7 +3715,11 @@
             return !!(this._el && node && this._el.contains(node));
         },
 
-        // items: [{ label, icon, action, disabled, bold, separator }]
+        // items: [{ label, icon, action, disabled, bold, separator, checked }]
+        // `checked` is the tick a shell menu puts beside a setting it toggles
+        // (Lock the Taskbar, Show the Clock): the row keeps its icon column and
+        // the tick stands in it, so a menu of settings and a menu of verbs line
+        // up the same way.
         show: function(x, y, items) {
             this.hide();
             const host = document.getElementById('hypernet-os-container');
@@ -3291,18 +3738,20 @@
                 const row = document.createElement('div');
                 row.className = 'hypernet-context-item focusable' + (item.disabled ? ' disabled' : '') + (item.bold ? ' bold' : '');
                 row.tabIndex = 0;
-                row.innerHTML = `<span class="hypernet-context-icon">${item.icon != null ? window.HypernetOS.getIconHTML(item.icon, 16) : ''}</span><span>${item.label}</span>`;
+                if (item.checked) row.classList.add('checked');
+                row.innerHTML = `<span class="hypernet-context-icon">${item.checked ? '<span class="hypernet-context-tick"></span>' : (item.icon != null ? window.HypernetOS.getIconHTML(item.icon, 16) : '')}</span><span>${item.label}</span>`;
                 row.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (item.disabled) return;
                     this.hide();
-                    if (window.SoundManager) SoundManager.playOk();
+                    if (window.HypernetOS.XP) window.HypernetOS.XP.playEvent('menuCommand');   // i18n-ignore  event id
                     try { item.action(); } catch (err) { console.error('Context menu action failed', err); }
                 });
                 el.appendChild(row);
             });
             host.appendChild(el);
             this._el = el;
+            if (window.HypernetOS.XP) window.HypernetOS.XP.playEvent('menuPopup');   // i18n-ignore  event id
 
             // Keep the whole menu on screen.
             const hr = host.getBoundingClientRect();
@@ -3343,6 +3792,29 @@
                 onDesk
                     ? { label: T('HypernetOS.context.removeFromDesktop'), action: () => OS.setOnDesktop(appId, false) }
                     : { label: T('HypernetOS.context.addToDesktop'), action: () => { OS.setOnDesktop(appId, true); OS.closeStartMenu(); } }
+            ];
+        },
+
+        // The taskbar itself, right-clicked anywhere that is not a button. The
+        // three arranging verbs, the desktop, the manager and the settings, in
+        // the order the bar always listed them.
+        itemsForTaskbar: function() {
+            const OS = window.HypernetOS;
+            const XP = OS.XP;
+            const K = k => T('HypernetOS.xp.taskbar.' + k);
+            const open = OS.WindowManager.windows.filter(w => !w.classList.contains('minimized'));
+            return [
+                { label: K('cascade'), disabled: !open.length, action: () => OS.arrangeWindows('cascade') },
+                { label: K('tileH'), disabled: !open.length, action: () => OS.arrangeWindows('tileH') },
+                { label: K('tileV'), disabled: !open.length, action: () => OS.arrangeWindows('tileV') },
+                { separator: true },
+                { label: K('minimizeAll'), action: () => XP && XP.showDesktop() },
+                { separator: true },
+                { label: K('taskManager'), action: () => OS.launchApp('sys-task-mgr') },
+                { separator: true },
+                { label: K('lock'), checked: !!(XP && XP.reg('taskbarLocked', false)),
+                  action: () => { if (XP) { XP.setReg('taskbarLocked', !XP.reg('taskbarLocked', false)); XP.applyTaskbar(); } } },
+                { label: K('properties'), action: () => OS.launchApp('app-taskbar') }
             ];
         },
 
@@ -3999,8 +4471,8 @@
                 </div>`;
             host.appendChild(shade);
 
-            if (iconKey === 'error' && window.SoundManager) SoundManager.playBuzzer();
-            else if (iconKey !== 'none' && window.SoundManager) SoundManager.playCursor();
+            const XPsvc = window.HypernetOS.XP;
+            if (iconKey !== 'none' && XPsvc) XPsvc.playEvent(XPsvc.DIALOG_EVENTS[iconKey] || 'defaultBeep');   // i18n-ignore  event id
 
             return new Promise(resolve => {
                 const entry = { shade, buttons, resolve, opts };
@@ -4010,6 +4482,7 @@
                     const select = shade.querySelector('.hypernet-dialog-select');
                     const check = shade.querySelector('.hypernet-dialog-check input');
                     this._open = this._open.filter(d => d !== entry);
+                    if (entry.onKey) document.removeEventListener('keydown', entry.onKey, true);
                     if (shade.parentNode) shade.parentNode.removeChild(shade);
                     resolve({
                         button: id,
@@ -4023,7 +4496,22 @@
                     btn.addEventListener('click', e => { e.stopPropagation(); finish(btn.dataset.id); });
                 });
                 shade.addEventListener('mousedown', e => e.stopPropagation());
-                shade.addEventListener('click', e => e.stopPropagation());
+                // Clicking the shade outside the box answers it the way Escape
+                // does, so a box is never left stuck on screen.
+                shade.addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (e.target !== shade) return;
+                    const cancel = buttons.find(b => b.cancel);
+                    if (cancel) finish(cancel.id);
+                });
+                // The scene hands keys here while a box is up, but a box can
+                // also open with no scene hook listening (or over an app that
+                // eats keys itself), so it listens for its own.
+                entry.onKey = ev => {
+                    if (this.top() !== entry) return;
+                    if (this.handleKey(ev)) ev.stopPropagation();
+                };
+                document.addEventListener('keydown', entry.onKey, true);
                 const input = shade.querySelector('.hypernet-dialog-input');
                 const first = input || shade.querySelector('.hypernet-dialog-btn.default') || shade.querySelector('.hypernet-dialog-btn');
                 if (first) setTimeout(() => { first.focus(); if (input) input.select(); }, 0);
@@ -4113,13 +4601,226 @@
                 window.HypernetOS.launchApp(r.value);
                 return r.value;
             });
-        }
+        },
+
+        //---------------------------------------------------------------------
+        // The Open / Save As box
+        //---------------------------------------------------------------------
+        // The second most-seen window of the period after the folder itself,
+        // and the one every program that touches a document has to show. Before
+        // this, a program asked for a file name with a one-line prompt, which
+        // meant a player could neither see what was already saved nor put a
+        // document anywhere but the folder the program had picked for them.
+        //
+        // It is a box rather than a window on purpose: it is modal to the
+        // program that asked, it rides the same `_open` stack as every other
+        // message box (so Escape and the scene's key hook already know about
+        // it), and it is thrown away when it answers.
+        //
+        // opts: { mode: 'open' | 'save', path, fileName, filters, title }
+        //   filters: [{ label, ext }], ext being 'txt' or '*' for everything.
+        // Resolves with the full path picked, or null if the box was cancelled.
+        // In save mode it has already asked about replacing an existing file.
+        FILE_PLACES: [
+            // i18n-ignore-start  VFS paths, matched literally
+            { key: 'desktop', path: 'C:/Desktop', icon: 191 },
+            { key: 'myDocuments', path: 'C:/Documents', icon: 191 },
+            { key: 'myComputer', path: 'C:', icon: 86 }
+            // i18n-ignore-end
+        ],
+
+        file(options) {
+            const opts = options || {};
+            const OS = window.HypernetOS;
+            const fs = window.HypernetFileSystem;
+            const host = document.getElementById('hypernet-os-container');
+            if (!host || !fs) return Promise.resolve(null);
+            const FB = (key, params) => T('HypernetOS.xp.filebox.' + key, params);
+            const save = opts.mode === 'save';
+            const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            const join = (dir, leaf) => (dir === 'C:' ? 'C:/' : dir + '/') + leaf;   // i18n-ignore  VFS path
+
+            const filters = (opts.filters && opts.filters.length) ? opts.filters
+                : [{ label: FB('allFiles'), ext: '*' }];
+            let filterIdx = 0;
+            let cwd = (opts.path && fs.resolvePath(opts.path)) ? opts.path : 'C:/Documents';   // i18n-ignore  VFS path
+            if (!fs.resolvePath(cwd)) cwd = 'C:';   // i18n-ignore  VFS path
+
+            // The chain of folders from the drive down to where we stand: the
+            // "Look in" list is that chain, deepest selected, the way it was.
+            const chainOf = full => {
+                const parts = String(full).split('/').filter(Boolean);
+                return parts.map((name, i) => ({ path: parts.slice(0, i + 1).join('/'), name: name }));
+            };
+            const matches = name => {
+                const ext = filters[filterIdx] && filters[filterIdx].ext;
+                if (!ext || ext === '*') return true;
+                return String(name).toLowerCase().endsWith('.' + String(ext).toLowerCase());
+            };
+
+            const shade = document.createElement('div');
+            shade.className = 'hypernet-dialog-shade';
+            shade.innerHTML = `
+                <div class="hypernet-dialog xp-filebox" role="dialog">
+                    <div class="hypernet-dialog-title">${esc(opts.title || (save ? FB('saveTitle') : FB('openTitle')))}</div>
+                    <div class="xp-filebox-top">
+                        <label>${esc(save ? FB('saveIn') : FB('lookIn'))}</label>
+                        <select class="xp-select xp-fb-look"></select>
+                        <button class="xp-btn xp-fb-up focusable" tabindex="0">${esc(FB('upOneLevel'))}</button>
+                        ${save ? `<button class="xp-btn xp-fb-newdir focusable" tabindex="0">${esc(FB('newFolder'))}</button>` : ''}
+                    </div>
+                    <div class="xp-filebox-body">
+                        <div class="xp-filebox-places">
+                            ${this.FILE_PLACES.map(pl => `<div class="xp-fb-place focusable" data-path="${esc(pl.path)}" tabindex="0">
+                                <div class="xp-fb-place-icon">${OS.getIconHTML(pl.icon, 24)}</div>
+                                <div class="xp-fb-place-name">${esc(T('HypernetOS.xp.filebox.places.' + pl.key))}</div>
+                            </div>`).join('')}
+                        </div>
+                        <div class="xp-filebox-list xp-list"></div>
+                    </div>
+                    <div class="xp-filebox-foot">
+                        <div class="xp-row">
+                            <label>${esc(FB('fileName'))}</label>
+                            <input class="xp-input xp-fb-name" type="text" value="${esc(opts.fileName || '')}">
+                            <button class="hypernet-dialog-btn default focusable xp-fb-accept" tabindex="0">${esc(save ? FB('save') : FB('open'))}</button>
+                        </div>
+                        <div class="xp-row">
+                            <label>${esc(save ? FB('saveAsType') : FB('filesOfType'))}</label>
+                            <select class="xp-select xp-fb-filter">${filters.map((f, i) => `<option value="${i}">${esc(f.label)}</option>`).join('')}</select>
+                            <button class="hypernet-dialog-btn focusable xp-fb-cancel" tabindex="0">${esc(FB('cancel'))}</button>
+                        </div>
+                    </div>
+                </div>`;
+            host.appendChild(shade);
+
+            const q = sel => shade.querySelector(sel);
+            const look = q('.xp-fb-look'), list = q('.xp-filebox-list');
+            const nameInput = q('.xp-fb-name'), filterSel = q('.xp-fb-filter');
+
+            const draw = () => {
+                look.innerHTML = chainOf(cwd).map((c, i) =>
+                    `<option value="${esc(c.path)}" ${c.path === cwd ? 'selected' : ''}>${'&nbsp;&nbsp;'.repeat(i)}${esc(c.name)}</option>`).join('');
+                const rows = (fs.readDir(cwd) || [])
+                    .filter(it => it.type === 'directory' || matches(it.name))
+                    .sort((a, b) => (a.type === b.type)
+                        ? String(a.name).localeCompare(String(b.name))
+                        : (a.type === 'directory' ? -1 : 1));
+                list.innerHTML = rows.length ? rows.map(it =>
+                    `<div class="xp-fb-item focusable" data-name="${esc(it.name)}" data-dir="${it.type === 'directory' ? '1' : ''}" tabindex="0">
+                        <span class="xp-fb-item-icon">${OS.getIconHTML(it.type === 'directory' ? 191 : 190, 16)}</span>
+                        <span class="xp-fb-item-name">${esc(it.name)}</span>
+                    </div>`).join('') : `<div class="xp-fb-empty">${esc(FB('emptyFolder'))}</div>`;
+                list.querySelectorAll('.xp-fb-item').forEach(row => {
+                    row.addEventListener('click', e => {
+                        e.stopPropagation();
+                        list.querySelectorAll('.xp-fb-item').forEach(o => o.classList.toggle('selected', o === row));
+                        if (!row.dataset.dir) nameInput.value = row.dataset.name;
+                    });
+                    row.addEventListener('dblclick', e => { e.stopPropagation(); enter(row); });
+                });
+            };
+
+            const enter = row => {
+                if (row.dataset.dir) {
+                    cwd = join(cwd, row.dataset.name);
+                    nameInput.value = '';
+                    draw();
+                    if (window.SoundManager) SoundManager.playCursor();
+                } else {
+                    nameInput.value = row.dataset.name;
+                    accept();
+                }
+            };
+
+            let finish = null;
+            const accept = () => {
+                const typed = String(nameInput.value || '').trim();
+                const boxTitle = opts.title || (save ? FB('saveTitle') : FB('openTitle'));
+                if (!typed) { this.error(FB('noName'), boxTitle); return; }
+                // A folder name typed into the box walks into it, as it did.
+                const asDir = fs.resolvePath(join(cwd, typed));
+                if (asDir && asDir.type === 'directory') {
+                    cwd = join(cwd, typed);
+                    nameInput.value = '';
+                    draw();
+                    return;
+                }
+                const full = join(cwd, typed);
+                if (!save) {
+                    if (!fs.resolvePath(full)) { this.error(FB('notFound', { file: typed }), boxTitle); return; }
+                    finish(full);
+                    return;
+                }
+                if (fs.exists(full)) {
+                    this.confirm(FB('overwriteBody', { file: typed }), FB('overwriteTitle'), 'warning')
+                        .then(ok => { if (ok) finish(full); });
+                    return;
+                }
+                finish(full);
+            };
+
+            return new Promise(resolve => {
+                const entry = { shade, resolve, opts };
+                // The stack's own key handler answers Enter and Escape through
+                // these, so the box commits and cancels like every other one.
+                entry.buttons = [
+                    { id: 'accept', label: FB(save ? 'save' : 'open'), default: true },
+                    { id: 'cancel', label: FB('cancel'), cancel: true }
+                ];
+                this._open.push(entry);
+                finish = (value) => {
+                    this._open = this._open.filter(d => d !== entry);
+                    if (shade.parentNode) shade.parentNode.removeChild(shade);
+                    resolve(value == null ? null : value);
+                };
+                entry.finish = (id) => { if (id === 'accept') accept(); else finish(null); };
+
+                shade.addEventListener('mousedown', e => e.stopPropagation());
+                shade.addEventListener('click', e => e.stopPropagation());
+                q('.xp-fb-accept').addEventListener('click', e => { e.stopPropagation(); accept(); });
+                q('.xp-fb-cancel').addEventListener('click', e => { e.stopPropagation(); finish(null); });
+                q('.xp-fb-up').addEventListener('click', e => {
+                    e.stopPropagation();
+                    const parts = cwd.split('/').filter(Boolean);
+                    if (parts.length > 1) { parts.pop(); cwd = parts.join('/'); nameInput.value = ''; draw(); }
+                });
+                const newdir = q('.xp-fb-newdir');
+                if (newdir) newdir.addEventListener('click', e => {
+                    e.stopPropagation();
+                    this.prompt(FB('newFolderPrompt'), FB('newFolderName'), FB('newFolder')).then(name => {
+                        if (name && fs.mkdir(join(cwd, name))) draw();
+                    });
+                });
+                look.addEventListener('change', () => { cwd = look.value; nameInput.value = ''; draw(); });
+                filterSel.addEventListener('change', () => { filterIdx = Number(filterSel.value) || 0; draw(); });
+                shade.querySelectorAll('.xp-fb-place').forEach(pl => {
+                    pl.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (fs.resolvePath(pl.dataset.path)) { cwd = pl.dataset.path; nameInput.value = ''; draw(); }
+                    });
+                });
+                nameInput.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); accept(); }
+                });
+                draw();
+                setTimeout(() => { nameInput.focus(); nameInput.select(); }, 0);
+            });
+        },
+
+        // The two an app actually calls.
+        openFileBox(opts) { return this.file(Object.assign({ mode: 'open' }, opts || {})); },
+        saveFileBox(opts) { return this.file(Object.assign({ mode: 'save' }, opts || {})); }
     };
 
     // Opening a document from anywhere (My Computer, Search, the Run box): the
     // program that owns the extension, then the one the player associated, then
     // the "cannot open" box.
     window.HypernetOS.openFile = function(filePath) {
+        // Whatever happens next, the shell remembers it was asked for: My
+        // Recent Documents is that list, and this is the one door in.
+        if (window.HypernetOS.XP && window.HypernetOS.XP.reg('startRecentDocs', true)) {
+            window.HypernetOS.noteRecentDoc(filePath);
+        }
         const name = String(filePath).slice(String(filePath).lastIndexOf('/') + 1);
         const ext = name.toLowerCase().slice(name.lastIndexOf('.') + 1);
         const fs = window.HypernetFileSystem;
@@ -4241,7 +4942,11 @@
             });
             host.appendChild(el);
             this._el = el;
-            if (window.SoundManager) SoundManager.playCursor();
+            // A balloon is a notification unless it is announcing a part the
+            // machine has just found, which is its own event.
+            if (window.HypernetOS.XP) {
+                window.HypernetOS.XP.playEvent(opts.event || 'systemNotification');   // i18n-ignore  event id
+            }
             requestAnimationFrame(() => el.classList.add('open'));
             this._timer = setTimeout(() => this.hide(), opts.timeout || 12000);
         },
@@ -4294,6 +4999,8 @@
             this.applyColorScheme();
             this.applyWallpaperPosition();
             this.buildTray();
+            this.applyTaskbar();
+            window.HypernetOS.refreshQuickLaunch();
             this.log('security', 'info', 'Winlogon', T('HypernetOS.xp.events.logon', { user: this.userName() }));   // i18n-ignore  source
 
             // Any input keeps the screensaver away.
@@ -4340,6 +5047,7 @@
         // --- Boot -------------------------------------------------------------
         startup() {
             const fs = window.HypernetFileSystem;
+            this.playEvent('startArchways');   // i18n-ignore  event id
             // Programs listed in msconfig's Startup tab come up on their own.
             (this.reg('startupApps', []) || []).forEach((id, i) => {
                 this.later(() => { if (window.HypernetOS._apps[id]) window.HypernetOS.launchApp(id); }, 700 + i * 400);
@@ -4354,11 +5062,13 @@
                     this.later(() => window.HypernetOS.Balloon.show({
                         title: T('HypernetOS.xp.balloon.newHardwareTitle'),
                         text: T('HypernetOS.xp.balloon.newHardwareText', { name: p.cpu }),
+                        event: 'deviceConnect',   // i18n-ignore  event id
                         onClick: () => window.HypernetOS.launchApp('app-devmgmt')
                     }), 1800);
                     this.later(() => window.HypernetOS.Balloon.show({
                         title: T('HypernetOS.xp.balloon.newHardwareTitle'),
-                        text: T('HypernetOS.xp.balloon.hardwareReady')
+                        text: T('HypernetOS.xp.balloon.hardwareReady'),
+                        event: 'deviceConnect'   // i18n-ignore  event id
                     }), 7000);
                     this.log('system', 'info', 'PlugPlay', T('HypernetOS.xp.events.newHardware', { name: p.cpu }));   // i18n-ignore  source
                 }
@@ -4446,6 +5156,18 @@
             const lower = String(k).toLowerCase();
 
             if (event.altKey && k === 'Tab') { event.preventDefault(); this.altTabStep(event.shiftKey ? -1 : 1); return true; }
+            // Alt+Space: the window menu of whatever is in front, dropped where
+            // the title bar's own icon would have dropped it.
+            if (event.altKey && (k === ' ' || k === 'Spacebar')) {
+                const front = window.HypernetOS.WindowManager.windows
+                    .filter(w => w.classList.contains('active') && !w.classList.contains('minimized'))[0];
+                if (front) {
+                    const box = front.getBoundingClientRect();
+                    window.HypernetOS.showWindowMenu(front, box.left + 2, box.top + 24);
+                    event.preventDefault();
+                    return true;
+                }
+            }
             if (event.altKey && k === 'F4') { event.preventDefault(); this.altF4(); return true; }
             if (event.ctrlKey && k === 'Escape') { event.preventDefault(); this.toggleStartMenu(); return true; }
             if ((event.ctrlKey && event.shiftKey && k === 'Escape') || (event.ctrlKey && event.altKey && k === 'Delete')) {
@@ -4633,10 +5355,17 @@
         // party members are the accounts on this machine.
         lock() { this.welcomeScreen(true); },
 
+        // Who has an account here. The welcome screen has always believed the
+        // party are the accounts; User Accounts believes it too, so the answer
+        // is given once rather than worked out in each of them.
+        accountNames() {
+            const members = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.members() : [];
+            return members.length ? members.map(m => m.name()) : [this.userName()];
+        },
+
         welcomeScreen(locked) {
             const X = 'HypernetOS.xp.welcome.';
-            const members = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.members() : [];
-            const names = members.length ? members.map(m => m.name()) : [this.userName()];
+            const names = this.accountNames();
             const current = this.userName();
             const tiles = names.map((n, i) => `
                 <div class="hypernet-welcome-user focusable" data-name="${n.replace(/"/g, '&quot;')}" tabindex="0">
@@ -4682,7 +5411,7 @@
             this.log('system', 'info', 'USER32', T(X + (mode === 'off' ? 'eventOff' : mode === 'restart' ? 'eventRestart' : 'eventLogoff')));   // i18n-ignore  source
             const step = (text, cls) => this.overlay('shutdown', `<div class="hypernet-shutdown ${cls || ''}">${text}</div>`);
             step(mode === 'logoff' ? T(X + 'savingSettings') : T(X + 'shuttingDown'));
-            if (window.SoundManager) SoundManager.playCancel();
+            this.playEvent('exitArchways');   // i18n-ignore  event id
             const finishOff = () => {
                 step(T(X + 'safeToTurnOff'), 'safe');
                 this.later(() => { this.clearOverlay(); if (scene) scene.onTurnOffClick(); }, 1400);
@@ -4751,6 +5480,104 @@
         },
 
         // --- The tray -----------------------------------------------------------
+        // --- The sound scheme ---------------------------------------------------
+        // Sounds and Audio Devices has always listed the program events and let
+        // one be auditioned, and nothing but that Test button ever played one:
+        // the machine started, shut down, minimized a window and emptied the
+        // bin in silence. Every one of those now says so through here.
+        //
+        // The table it reads is the applet's own (SOUND_EVENTS), so an event
+        // added to the list is playable from the moment it is listed, and the
+        // scheme and the mute switch are honoured in one place rather than at
+        // seventeen call sites. Scheme 1 is No Sounds, which is the whole of
+        // what that scheme means.
+        SCHEME_SILENT: 1,
+
+        playEvent(id) {
+            if (!window.SoundManager) return false;
+            if (this.reg('audioMuted', false)) return false;
+            if (this.reg('soundScheme', 0) === this.SCHEME_SILENT) return false;
+            const table = (window.HypernetOS.XP && window.HypernetOS.XP.SOUND_EVENTS) || [];
+            const ev = table.find(e => e[0] === id);
+            if (!ev || typeof SoundManager[ev[1]] !== 'function') return false;
+            SoundManager[ev[1]]();
+            return true;
+        },
+
+        // The four message-box faces are program events of their own, so a box
+        // sounds like the box it is rather than like every other box.
+        DIALOG_EVENTS: {
+            // i18n-ignore-start  icon key -> program event id
+            error: 'criticalStop', warning: 'exclamation',
+            question: 'question', info: 'asterisk'
+            // i18n-ignore-end
+        },
+
+        // --- The bar's own settings ---------------------------------------------
+        // Four switches the bar has always had and this one did not: locked,
+        // auto-hidden, the clock shown, and the inactive icons folded behind a
+        // chevron. All four live in the registry, so they outlast a log off,
+        // and all four are applied from here rather than by whoever flipped
+        // them: the Properties page, the bar's own menu and a fresh log on all
+        // end up calling this.
+        applyTaskbar() {
+            const bar = document.getElementById('hypernet-taskbar');
+            if (!bar) return;
+            const locked = this.reg('taskbarLocked', false);
+            const auto = this.reg('taskbarAutoHide', false);
+            bar.classList.toggle('locked', !!locked);
+            bar.classList.toggle('autohide', !!auto);
+
+            const clock = document.getElementById('tray-clock');
+            if (clock) clock.classList.toggle('hidden', !this.reg('trayClock', true));
+
+            this.applyTrayHiding();
+
+            // The bar's right click, hooked once. Anywhere that is not one of
+            // its buttons: a button answers with the window menu instead.
+            if (!bar._xpMenuHooked) {
+                bar._xpMenuHooked = true;
+                bar.addEventListener('contextmenu', e => {
+                    if (e.target.closest('.taskbar-tab') || e.target.closest('.quick-launch-btn')) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.HypernetOS.ContextMenu.show(e.clientX, e.clientY,
+                        window.HypernetOS.ContextMenu.itemsForTaskbar());
+                });
+            }
+            // Auto-hide: the bar comes up when the pointer reaches the foot of
+            // the screen and drops away again when it leaves.
+            if (!bar._xpHideHooked) {
+                bar._xpHideHooked = true;
+                bar.addEventListener('mouseenter', () => bar.classList.add('peek'));
+                bar.addEventListener('mouseleave', () => bar.classList.remove('peek'));
+            }
+        },
+
+        // The chevron folds every tray icon but the clock away, the way the
+        // notification area folded the ones nothing had happened in.
+        applyTrayHiding() {
+            const tray = document.getElementById('hypernet-system-tray');
+            const chevron = document.getElementById('tray-chevron');
+            if (!tray || !chevron) return;
+            const hiding = this.reg('trayHideInactive', false);
+            const shown = !!this._trayExpanded;
+            chevron.classList.toggle('hidden', !hiding);
+            chevron.classList.toggle('expanded', shown);
+            chevron.title = shown ? T('HypernetOS.xp.taskbar.hideInactive') : T('HypernetOS.xp.taskbar.showHidden');
+            tray.querySelectorAll('.tray-icon').forEach(icon => {
+                icon.classList.toggle('folded', !!hiding && !shown);
+            });
+            if (!chevron._xpHooked) {
+                chevron._xpHooked = true;
+                chevron.addEventListener('click', e => {
+                    e.stopPropagation();
+                    this._trayExpanded = !this._trayExpanded;
+                    this.applyTrayHiding();
+                });
+            }
+        },
+
         buildTray() {
             const tray = document.getElementById('hypernet-system-tray');
             if (!tray) return;
@@ -5603,6 +6430,10 @@
         ['lowBattery', 'playBuzzer'], ['systemNotification', 'playSave']
     ];
     // i18n-ignore-end
+    // Hung off XP so window.HypernetOS.XP.playEvent can read the same table the
+    // applet lists, rather than a second copy of it that would drift.
+    XP.SOUND_EVENTS = SOUND_EVENTS;
+
     xpApp('app-mmsys', 'mmsys', 111, [460, 440], (win, root, T_) => {
         const p = window.HypernetOS.Host.profile();
         const CM = window.ConfigManager;
@@ -5647,10 +6478,9 @@
             selectedEv = row.dataset.ev;
             q(root, '#mm-evname').value = T_('event.' + selectedEv) + '.wav';   // i18n-ignore  extension
         }));
-        on(q(root, '#mm-test'), 'click', () => {
-            const ev = SOUND_EVENTS.find(e => e[0] === selectedEv);
-            if (ev && window.SoundManager && typeof SoundManager[ev[1]] === 'function') SoundManager[ev[1]]();
-        });
+        // Test plays it the way the shell plays it, mute and scheme included:
+        // an event that is silent in use has to be silent when auditioned.
+        on(q(root, '#mm-test'), 'click', () => XP.playEvent(selectedEv));
         const apply = () => {
             const v = parseInt(q(root, '#mm-vol').value, 10);
             const mute = q(root, '#mm-mute').checked;
@@ -5961,7 +6791,7 @@
                 window.HypernetOS.Dialog.confirm(T_('emptyConfirm', { n: items.length }), T_('appName'), 'warning').then(ok => {
                     if (!ok) return;
                     fs.emptyRecycler();
-                    if (window.SoundManager) SoundManager.playUseItem();
+                    XP.playEvent('emptyRecycle');   // i18n-ignore  event id
                     XP.log('application', 'info', 'Explorer', T_('eventEmptied'));   // i18n-ignore  source
                     render();
                 });
@@ -5977,7 +6807,50 @@
         };
         render();
         win.addEventListener('hypernet-recycler-changed', render);
-    }, { desktopShortcut: true, desktopAnchor: 'right' });
+    }, { desktopShortcut: true });
+
+    // --- All Programs -------------------------------------------------------------------------
+    // The drawer the desktop is filled from. It lists every installed program
+    // that has no shortcut on the desktop, filed under its category; dragging
+    // one onto the desktop pins it, and dragging a desktop icon back in here
+    // (or onto the Recycle Bin) puts it back on this list. The icon itself
+    // cannot be taken off the desktop.
+    xpApp('app-all-programs', 'allprograms', 230, [560, 420], (win, root, T_) => {
+        const OS = window.HypernetOS;
+        const render = () => {
+            const groups = OS.offDesktopByCategory();
+            root.innerHTML = `
+                <div class="xp-allprograms-hint">${esc(T_('hint'))}</div>
+                <div class="xp-allprograms-list">${groups.length ? '' : `<div class="xp-allprograms-empty">${esc(T_('empty'))}</div>`}</div>`;
+            const list = q(root, '.xp-allprograms-list');
+            groups.forEach(group => {
+                const head = document.createElement('div');
+                head.className = 'xp-allprograms-category';
+                head.textContent = group.label;
+                list.appendChild(head);
+                group.apps.forEach(app => {
+                    const item = document.createElement('div');
+                    item.className = 'xp-allprograms-item focusable';
+                    item.tabIndex = 0;
+                    item.dataset.appId = app.id;
+                    item.innerHTML = `<div class="xp-allprograms-icon">${OS.getIconHTML(app.icon, 32)}</div>`
+                        + `<div class="xp-allprograms-name">${esc(app.name)}</div>`;
+                    item.addEventListener('click', e => { e.stopPropagation(); if (!item._hnDragged) OS.launchApp(app.id); });
+                    item.addEventListener('contextmenu', e => {
+                        e.preventDefault(); e.stopPropagation();
+                        OS.ContextMenu.show(e.clientX, e.clientY, [
+                            { label: T_('open'), bold: true, action: () => OS.launchApp(app.id) },
+                            { label: T_('addToDesktop'), action: () => OS.setOnDesktop(app.id, true) }
+                        ]);
+                    });
+                    OS.attachPinDrag(item, app, false);
+                    list.appendChild(item);
+                });
+            });
+        };
+        root._hnRender = render;
+        render();
+    }, { desktopShortcut: true, category: 'system' });   // i18n-ignore  category id
 
     // --- Search Companion ----------------------------------------------------------------------
     xpApp('app-search', 'search', 190, [600, 440], (win, root, T_) => {
@@ -6359,7 +7232,708 @@
 
     // The Control Panel's classic view lists every applet by these ids.
     // i18n-ignore-start  app ids
-    XP.APPLETS = ['app-appwiz', 'app-timedate', 'app-desk', 'app-intl', 'app-mmsys', 'app-sysdm', 'app-devmgmt',
+    // =========================================================================
+    // The rest of the Control Panel
+    // -------------------------------------------------------------------------
+    // The panel had the settings pages above and a hole where the everyday ones
+    // stood: Folder Options, Mouse, Keyboard, User Accounts, Printers and
+    // Faxes, Network Connections, Accessibility, Fonts and Game Controllers.
+    //
+    // A settings page nobody's setting reaches is furniture, so every switch
+    // here writes a registry key something reads: Folder Options is read by the
+    // folder window, User Accounts by the welcome screen's roll of accounts,
+    // Network Connections by the host profile's uplink, Game Controllers by
+    // whether a pad is actually in hand.
+    // =========================================================================
+
+    // A row of switches, each named by its registry key, its label and what it
+    // falls back to. Shared by the four pages that are nothing else.
+    const switchRows = (list, K) => list.map(([key, label, def]) =>
+        `<label class="xp-check-row"><input type="checkbox" data-reg="${key}" ${XP.reg(key, def) ? 'checked' : ''}> ${esc(K(label))}</label>`).join('');
+
+    const wireSwitches = (root, after) => {
+        root.querySelectorAll('input[data-reg]').forEach(box => on(box, 'change', () => {
+            XP.setReg(box.dataset.reg, box.checked);
+            if (after) after();
+        }));
+    };
+
+    const wireRanges = (root) => {
+        root.querySelectorAll('input[data-range]').forEach(sl => on(sl, 'change', () =>
+            XP.setReg(sl.dataset.range, parseInt(sl.value, 10))));
+    };
+
+    // --- Folder Options ------------------------------------------------------
+    // The only page here whose switches change a window that is already open,
+    // so it redraws every folder on the desktop when one is flipped.
+    xpApp('app-folderopt', 'folderopt', 191, [400, 380], (win, root, T_) => {
+        const K = k => T_(k);
+        root.innerHTML = `
+            ${tabBar(T_, ['general', 'viewTab'])}
+            ${pane('general', `
+                <div class="xp-group"><div class="xp-group-title">${esc(K('tasks'))}</div>
+                    ${switchRows([['folderTasks', 'showTasks', true]], K)}
+                </div>
+                <div class="xp-group"><div class="xp-group-title">${esc(K('clickItems'))}</div>
+                    <label class="xp-radio"><input type="radio" name="fo-click" value="double" ${XP.reg('folderSingleClick', false) ? '' : 'checked'}> ${esc(K('doubleClick'))}</label>
+                    <label class="xp-radio"><input type="radio" name="fo-click" value="single" ${XP.reg('folderSingleClick', false) ? 'checked' : ''}> ${esc(K('singleClick'))}</label>
+                </div>`, true)}
+            ${pane('viewTab', `
+                <div class="xp-group"><div class="xp-group-title">${esc(K('advanced'))}</div>
+                    ${switchRows([
+                        ['folderShowHidden', 'showHidden', false],
+                        ['folderHideExtensions', 'hideExtensions', false],
+                        ['folderFullPath', 'fullPath', true]
+                    ], K)}
+                </div>
+                <div class="xp-row-right">${btn('fo-restore', esc(K('restore')))}</div>`)}`;
+        tabsOf(root);
+        // Every folder on the desktop is redrawn, so a switch is answered by
+        // the window the player was looking at rather than by the next one.
+        const redrawFolders = () => {
+            if (window.HypernetMyComputer && window.HypernetMyComputer.redrawAll) {
+                window.HypernetMyComputer.redrawAll();
+            }
+        };
+        wireSwitches(root, redrawFolders);
+        root.querySelectorAll('input[name="fo-click"]').forEach(radio => on(radio, 'change', () => {
+            XP.setReg('folderSingleClick', radio.value === 'single');   // i18n-ignore  radio value
+            redrawFolders();
+        }));
+        on(q(root, '#fo-restore'), 'click', () => {
+            ['folderTasks', 'folderFullPath'].forEach(k => XP.setReg(k, true));
+            ['folderShowHidden', 'folderHideExtensions', 'folderSingleClick'].forEach(k => XP.setReg(k, false));
+            redrawFolders();
+            window.HypernetOS.launchApp('app-folderopt');
+        });
+    });
+
+    // --- Mouse ---------------------------------------------------------------
+    xpApp('app-mouse', 'mouse', 234, [400, 360], (win, root, T_) => {
+        const K = k => T_(k);
+        const range = (key, def, min, max) =>
+            `<input type="range" class="xp-range" data-range="${key}" min="${min}" max="${max}" value="${XP.reg(key, def)}">`;
+        root.innerHTML = `
+            ${tabBar(T_, ['buttons', 'pointers'])}
+            ${pane('buttons', `
+                <div class="xp-group"><div class="xp-group-title">${esc(K('buttonConfig'))}</div>
+                    ${switchRows([['mouseSwapButtons', 'swap', false]], K)}
+                </div>
+                <div class="xp-group"><div class="xp-group-title">${esc(K('doubleSpeed'))}</div>
+                    <div class="xp-row"><span>${esc(K('slow'))}</span>${range('mouseDoubleSpeed', 5, 1, 10)}<span>${esc(K('fast'))}</span></div>
+                </div>`, true)}
+            ${pane('pointers', `
+                <div class="xp-group"><div class="xp-group-title">${esc(K('motion'))}</div>
+                    <div class="xp-row"><label>${esc(K('pointerSpeed'))}</label>${range('mousePointerSpeed', 5, 1, 10)}</div>
+                    ${switchRows([['mouseTrails', 'trails', false], ['mouseSnapTo', 'snapTo', false]], K)}
+                </div>`)}`;
+        tabsOf(root);
+        wireSwitches(root);
+        wireRanges(root);
+    });
+
+    // --- Keyboard ------------------------------------------------------------
+    xpApp('app-keyboard', 'keyboard', 234, [400, 330], (win, root, T_) => {
+        const K = k => T_(k);
+        const range = (key, def, min, max) =>
+            `<input type="range" class="xp-range" data-range="${key}" min="${min}" max="${max}" value="${XP.reg(key, def)}">`;
+        root.innerHTML = `
+            ${tabBar(T_, ['speed'])}
+            ${pane('speed', `
+                <div class="xp-group"><div class="xp-group-title">${esc(K('repeat'))}</div>
+                    <div class="xp-row"><label>${esc(K('repeatDelay'))}</label><span>${esc(K('long'))}</span>${range('kbRepeatDelay', 3, 1, 5)}<span>${esc(K('short'))}</span></div>
+                    <div class="xp-row"><label>${esc(K('repeatRate'))}</label><span>${esc(K('slow'))}</span>${range('kbRepeatRate', 20, 1, 31)}<span>${esc(K('fast'))}</span></div>
+                    <div class="xp-row"><input class="xp-input" id="kb-test" placeholder="${esc(K('test'))}"></div>
+                </div>
+                <div class="xp-group"><div class="xp-group-title">${esc(K('cursorBlink'))}</div>
+                    <div class="xp-row"><span>${esc(K('none'))}</span>${range('kbBlinkRate', 5, 0, 10)}<span>${esc(K('fast'))}</span></div>
+                </div>`, true)}`;
+        tabsOf(root);
+        wireRanges(root);
+    });
+
+    // --- User Accounts -------------------------------------------------------
+    // The party are the accounts on this machine, which is what the welcome
+    // screen already believed; this is the page that says so and lets the
+    // player say which of them administers it.
+    xpApp('app-useracc', 'useracc', 84, [440, 360], (win, root, T_) => {
+        const K = k => T_(k);
+        const names = XP.accountNames ? XP.accountNames() : [XP.userName()];
+        const admins = XP.reg('accountAdmins', null);
+        const isAdmin = n => Array.isArray(admins) ? admins.includes(n) : n === names[0];
+        root.innerHTML = `
+            <div class="xp-note">${esc(K('pick'))}</div>
+            <div class="xp-list" id="ua-list">
+                ${names.map(n => `
+                    <div class="xp-regedit-row focusable" data-user="${esc(n)}" tabindex="0">
+                        <span>${esc(n)}${n === XP.userName() ? ' (' + esc(K('current')) + ')' : ''}</span>
+                        <span class="xp-dim">${esc(isAdmin(n) ? K('administrator') : K('limited'))}</span>
+                    </div>`).join('')}
+            </div>
+            ${names.length < 2 ? `<div class="xp-note">${esc(K('noParty'))}</div>` : ''}`;
+        root.querySelectorAll('[data-user]').forEach(row => on(row, 'click', () => {
+            const name = row.dataset.user;
+            const list = Array.isArray(admins) ? admins.slice() : [names[0]];
+            const now = list.includes(name);
+            const next = now ? list.filter(x => x !== name) : list.concat([name]);
+            XP.setReg('accountAdmins', next);
+            window.HypernetOS.Dialog.alert(
+                T_('changed', { name: name, type: now ? K('limited') : K('administrator') }), K('changeType'));
+            window.HypernetOS.launchApp('app-useracc');
+        }));
+    });
+
+    // --- Printers and Faxes --------------------------------------------------
+    // A folder rather than a page, so what it lists lives in the file system
+    // under Printers and a printer added here is a file put there.
+    xpApp('app-printers', 'printers', 234, [420, 300], (win, root, T_) => {
+        const K = k => T_(k);
+        const fs = window.HypernetFileSystem;
+        const draw = () => {
+            const list = (fs && fs.readDir('Printers')) || [];   // i18n-ignore  VFS path
+            root.innerHTML = list.length
+                ? `<div class="xp-list">${list.map(pr => `
+                    <div class="xp-regedit-row"><span>${esc(pr.name)}</span><span class="xp-dim">${esc(K('status'))}</span></div>`).join('')}</div>`
+                : `<div class="xp-note">${esc(K('none'))}</div>`;
+            root.innerHTML += `<div class="xp-row-right">${btn('pr-add', esc(K('add')))}</div>`;
+            on(q(root, '#pr-add'), 'click', () => {
+                if (!fs) return;
+                const name = K('added');
+                fs.writeFile('Printers/' + name, K('status'), 'prn');   // i18n-ignore  VFS path and mime
+                window.HypernetOS.Dialog.alert(T_('installed', { name: name }), K('appName'));
+                draw();
+            });
+        };
+        draw();
+    });
+
+    // --- Network Connections -------------------------------------------------
+    // What this machine talks through, read off the host profile rather than
+    // invented here, so a Hyperdeck's own modem is what the page reports.
+    xpApp('app-netconn', 'netconn', 188, [440, 320], (win, root, T_) => {
+        const K = k => T_(k);
+        const p = window.HypernetOS.Host.profile();
+        const up = !window.HypernetOS.isEmptyWorld();
+        const rows = [
+            { group: 'dialup', name: p.modem, on: up },
+            { group: 'lan', name: p.board, on: up }
+        ];
+        root.innerHTML = ['dialup', 'lan'].map(group => `
+            <div class="xp-group"><div class="xp-group-title">${esc(K(group))}</div>
+                <div class="xp-list">${rows.filter(r => r.group === group).map(r => `
+                    <div class="xp-regedit-row focusable" data-conn="${esc(r.name)}" data-on="${r.on ? '1' : ''}" tabindex="0">
+                        <span>${esc(r.name)}</span>
+                        <span class="xp-dim">${esc(r.on ? K('connected') : K('disconnected'))}</span>
+                    </div>`).join('')}</div>
+            </div>`).join('');
+        root.querySelectorAll('[data-conn]').forEach(row => on(row, 'click', () => {
+            const name = row.dataset.conn;
+            const live = !!row.dataset.on;
+            const secs = Math.floor((Date.now() - (XP._scene ? XP._lastInput : Date.now())) / 1000);
+            window.HypernetOS.Dialog.alert(T_('detailsBody', {
+                status: live ? K('connected') : K('disconnected'),
+                duration: window.HypernetOS.Kernel.uptime ? window.HypernetOS.Kernel.uptime() : String(Math.max(0, secs)),
+                speed: p.modem,
+                sent: live ? XP.hash(name + 'sent') % 90000 : 0,       // i18n-ignore  hash salt
+                received: live ? XP.hash(name + 'recv') % 90000 : 0    // i18n-ignore  hash salt
+            }), T_('detailsTitle', { name: name }));
+        }));
+    });
+
+    // --- Accessibility Options -----------------------------------------------
+    xpApp('app-access', 'access', 84, [420, 340], (win, root, T_) => {
+        const K = k => T_(k);
+        const sw = (key, label, body, def) =>
+            `<div class="xp-group"><div class="xp-group-title">${esc(K(label))}</div>
+                <div class="xp-note">${esc(K(body))}</div>
+                ${switchRows([[key, label, def]], K)}
+            </div>`;
+        root.innerHTML = `
+            ${tabBar(T_, ['keyboardTab', 'displayTab'])}
+            ${pane('keyboardTab', `
+                ${sw('accStickyKeys', 'stickyKeys', 'stickyBody', false)}
+                ${sw('accFilterKeys', 'filterKeys', 'filterBody', false)}
+                ${sw('accToggleKeys', 'toggleKeys', 'toggleBody', false)}`, true)}
+            ${pane('displayTab', `
+                ${sw('accHighContrast', 'highContrast', 'highContrastBody', false)}
+                <div class="xp-group"><div class="xp-group-title">${esc(K('cursorWidth'))}</div>
+                    <div class="xp-row"><input type="range" class="xp-range" data-range="accCursorWidth" min="1" max="8" value="${XP.reg('accCursorWidth', 1)}"></div>
+                </div>`)}`;
+        tabsOf(root);
+        // High contrast is the one switch here the desktop can answer, and it
+        // answers it through the colour scheme it already has.
+        wireSwitches(root, () => XP.applyColorScheme && XP.applyColorScheme());
+        wireRanges(root);
+    });
+
+    // --- Fonts ---------------------------------------------------------------
+    // A folder of the faces the shell is drawn in, each shown in itself the way
+    // the folder showed them.
+    const SHELL_FONTS = ['Tahoma', 'Verdana', 'Georgia', 'Times New Roman', 'Courier New',
+        'Lucida Console', 'Trebuchet MS', 'Comic Sans MS', 'Impact', 'Arial'];   // i18n-ignore  font family names
+    xpApp('app-fonts', 'fonts', 190, [440, 360], (win, root, T_) => {
+        const K = k => T_(k);
+        root.innerHTML = `
+            <div class="xp-note">${esc(T_('installed', { n: SHELL_FONTS.length }))}</div>
+            <div class="xp-list">${SHELL_FONTS.map(f => `
+                <div class="xp-regedit-row focusable" data-font="${esc(f)}" tabindex="0">
+                    <span>${esc(f)}</span>
+                    <span class="xp-font-sample" data-family="${esc(f)}">${esc(K('preview'))}</span>
+                </div>`).join('')}</div>`;
+        // The sample is drawn in the face it names, which is the only thing on
+        // the page a stylesheet cannot know in advance.
+        root.querySelectorAll('.xp-font-sample').forEach(el => el.style.setProperty('--xp-font', el.dataset.family));
+        root.querySelectorAll('[data-font]').forEach(row => on(row, 'click', () =>
+            window.HypernetOS.Dialog.alert(K('preview'), row.dataset.font)));
+    });
+
+    // --- Game Controllers ----------------------------------------------------
+    // The one page here that reports something the player can change by picking
+    // a pad up: it asks the engine which device is in hand.
+    xpApp('app-joy', 'joy', 234, [420, 300], (win, root, T_) => {
+        const K = k => T_(k);
+        const pads = (typeof navigator !== 'undefined' && navigator.getGamepads)
+            ? Array.from(navigator.getGamepads() || []).filter(Boolean) : [];
+        root.innerHTML = `
+            <div class="xp-group"><div class="xp-group-title">${esc(K('installed'))}</div>
+                ${pads.length ? `<div class="xp-list">
+                    <div class="xp-regedit-row"><span>${esc(K('controller'))}</span><span class="xp-dim">${esc(K('status'))}</span></div>
+                    ${pads.map(g => `<div class="xp-regedit-row"><span>${esc(g.id || K('controller'))}</span><span class="xp-dim">${esc(K('ok'))}</span></div>`).join('')}
+                </div>` : `<div class="xp-note">${esc(K('none'))}</div>`}
+            </div>`;
+    });
+
+    // =========================================================================
+    // The two games that came in the box
+    // -------------------------------------------------------------------------
+    // Every machine of the period shipped with these, and half of what anyone
+    // remembers doing on one was playing them. They are applets like the rest:
+    // registered under the games category, reached from the start menu, the Run
+    // box and the shell's START, and drawn in an ordinary window.
+    //
+    // Both keep their state on the window they were built into rather than in a
+    // module variable, so two of them open at once are two games.
+    // =========================================================================
+
+    // --- Mineseeker ----------------------------------------------------------
+    // The field is one flat array of cells, each holding whether it is mined,
+    // whether it has been opened, and what the player marked it with. The count
+    // on a cell is computed rather than stored: a field is small and the count
+    // never outlives the layout it was read off.
+    const MINE_LEVELS = {
+        // i18n-ignore-start  level ids
+        beginner: { w: 9, h: 9, mines: 10 },
+        intermediate: { w: 16, h: 16, mines: 40 },
+        expert: { w: 30, h: 16, mines: 99 }
+        // i18n-ignore-end
+    };
+
+    const Mines = {
+        LEVELS: MINE_LEVELS,
+
+        // A fresh field, with the first cell opened guaranteed safe: the mines
+        // are laid after that first click, the way the game always laid them.
+        make(level) {
+            const spec = MINE_LEVELS[level] || MINE_LEVELS.beginner;
+            return {
+                level: level,
+                w: spec.w, h: spec.h, mines: spec.mines,
+                cells: new Array(spec.w * spec.h).fill(0).map(() => ({ mine: false, open: false, mark: 0 })),
+                laid: false, dead: false, won: false, started: 0, elapsed: 0
+            };
+        },
+
+        at(g, x, y) { return (x < 0 || y < 0 || x >= g.w || y >= g.h) ? null : g.cells[y * g.w + x]; },
+
+        neighbours(g, i) {
+            const x = i % g.w, y = Math.floor(i / g.w), out = [];
+            for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+                if (!dx && !dy) continue;
+                const c = this.at(g, x + dx, y + dy);
+                if (c) out.push(c);
+            }
+            return out;
+        },
+
+        count(g, i) { return this.neighbours(g, i).filter(c => c.mine).length; },
+
+        // Lay the mines, keeping the opened cell and everything touching it
+        // clear so the first click always opens a space rather than a number.
+        lay(g, safeIndex) {
+            const safe = new Set([safeIndex]);
+            const x = safeIndex % g.w, y = Math.floor(safeIndex / g.w);
+            for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+                const nx = x + dx, ny = y + dy;
+                if (nx >= 0 && ny >= 0 && nx < g.w && ny < g.h) safe.add(ny * g.w + nx);
+            }
+            const spots = [];
+            for (let i = 0; i < g.cells.length; i++) if (!safe.has(i)) spots.push(i);
+            for (let n = 0; n < g.mines && spots.length; n++) {
+                const pick = Math.floor(Math.random() * spots.length);
+                g.cells[spots.splice(pick, 1)[0]].mine = true;
+            }
+            g.laid = true;
+            g.started = Date.now();
+        },
+
+        // Opening a blank cell opens everything blank around it, the way it did.
+        open(g, i) {
+            if (g.dead || g.won) return;
+            const cell = g.cells[i];
+            if (!cell || cell.open || cell.mark === 1) return;
+            if (!g.laid) this.lay(g, i);
+            cell.open = true;
+            if (cell.mine) { g.dead = true; g.cells.forEach(c => { if (c.mine) c.open = true; }); return; }
+            if (this.count(g, i) === 0) {
+                const x = i % g.w, y = Math.floor(i / g.w);
+                for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+                    const nx = x + dx, ny = y + dy;
+                    if (nx < 0 || ny < 0 || nx >= g.w || ny >= g.h) continue;
+                    const j = ny * g.w + nx;
+                    if (!g.cells[j].open) this.open(g, j);
+                }
+            }
+            this.checkWon(g);
+        },
+
+        // Right click walks flag, query, blank. Query is a setting, as it was.
+        mark(g, i, marksOn) {
+            const cell = g.cells[i];
+            if (!cell || cell.open || g.dead || g.won) return;
+            cell.mark = marksOn ? (cell.mark + 1) % 3 : (cell.mark === 1 ? 0 : 1);
+        },
+
+        flags(g) { return g.cells.filter(c => c.mark === 1).length; },
+
+        checkWon(g) {
+            if (g.dead) return false;
+            const left = g.cells.filter(c => !c.open && !c.mine).length;
+            if (left === 0) {
+                g.won = true;
+                g.cells.forEach(c => { if (c.mine) c.mark = 1; });
+            }
+            return g.won;
+        },
+
+        seconds(g) {
+            if (!g.laid) return 0;
+            return Math.min(999, Math.floor(((g.won || g.dead ? g.elapsed || Date.now() : Date.now()) - g.started) / 1000));
+        }
+    };
+    XP.Mines = Mines;
+
+    xpApp('app-minesweeper', 'minesweeper', 291, [340, 320], (win, root, T_) => {
+        let g = Mines.make(XP.reg('mineLevel', 'beginner'));   // i18n-ignore  level id
+        let tick = null;
+
+        const bestKey = () => 'mineBest_' + g.level;   // i18n-ignore  registry key prefix
+        const fmt = n => String(Math.max(0, Math.min(999, n))).padStart(3, '0');
+
+        const draw = () => {
+            const marksOn = XP.reg('mineMarks', true);
+            root.innerHTML = `
+                <div class="xp-mines">
+                    <div class="xp-mines-bar">
+                        <div class="xp-mines-count">${fmt(g.mines - Mines.flags(g))}</div>
+                        <button class="xp-mines-face ${g.dead ? 'dead' : (g.won ? 'won' : '')}" id="mine-face"></button>
+                        <div class="xp-mines-count">${fmt(Mines.seconds(g))}</div>
+                    </div>
+                    <div class="xp-mines-field" id="mine-field" data-w="${g.w}">
+                        ${g.cells.map((c, i) => {
+                            const n = c.open && !c.mine ? Mines.count(g, i) : 0;
+                            const face = c.open
+                                ? (c.mine ? '*' : (n ? String(n) : ''))   // i18n-ignore  mine glyph
+                                : (c.mark === 1 ? 'F' : (c.mark === 2 ? '?' : ''));   // i18n-ignore  flag glyphs
+                            return `<div class="xp-mine-cell ${c.open ? 'open' : ''} ${c.open && c.mine ? 'boom' : ''} n${n}" data-i="${i}">${face}</div>`;
+                        }).join('')}
+                    </div>
+                </div>`;
+            const field = q(root, '#mine-field');
+            field.dataset.cols = String(g.w);
+            field.style.setProperty('--mine-cols', String(g.w));
+            field.querySelectorAll('.xp-mine-cell').forEach(el => {
+                on(el, 'click', () => { Mines.open(g, Number(el.dataset.i)); after(); });
+                el.addEventListener('contextmenu', e => {
+                    e.preventDefault(); e.stopPropagation();
+                    Mines.mark(g, Number(el.dataset.i), marksOn);
+                    after();
+                });
+            });
+            on(q(root, '#mine-face'), 'click', () => restart(g.level));
+        };
+
+        const after = () => {
+            if ((g.won || g.dead) && !g.elapsed) g.elapsed = Date.now();
+            draw();
+            if (g.won) {
+                const secs = Mines.seconds(g);
+                const best = XP.reg(bestKey(), 0);
+                if (!best || secs < best) {
+                    XP.setReg(bestKey(), secs);
+                    XP.playEvent('newMail');   // i18n-ignore  event id
+                }
+                window.HypernetOS.Dialog.alert(T_('won', { n: secs }), T_('wonTitle'), 'info');
+                stop();
+            } else if (g.dead) {
+                XP.playEvent('criticalStop');   // i18n-ignore  event id
+                window.HypernetOS.Dialog.alert(T_('lost'), T_('lostTitle'), 'warning');
+                stop();
+            }
+        };
+
+        const stop = () => { if (tick) { clearInterval(tick); tick = null; } };
+        const restart = (level) => {
+            stop();
+            g = Mines.make(level);
+            XP.setReg('mineLevel', level);
+            draw();
+            tick = setInterval(() => { if (g.laid && !g.won && !g.dead) draw(); }, 1000);
+        };
+
+        // The Game menu, dropped from the window rather than drawn as chrome:
+        // one menu bar service already exists and this is it.
+        win.addEventListener('contextmenu', e => {
+            if (e.target.closest('.xp-mine-cell')) return;
+            e.preventDefault(); e.stopPropagation();
+            const times = Object.keys(MINE_LEVELS).reduce((acc, lv) => {
+                const t = XP.reg('mineBest_' + lv, 0);   // i18n-ignore  registry key prefix
+                acc[lv] = t ? T_('seconds', { n: t }) : T_('noTime');
+                return acc;
+            }, {});
+            window.HypernetOS.ContextMenu.show(e.clientX, e.clientY, [
+                { label: T_('new'), bold: true, action: () => restart(g.level) },
+                { separator: true },
+                ...Object.keys(MINE_LEVELS).map(lv => ({
+                    label: T_(lv), checked: g.level === lv, action: () => restart(lv)
+                })),
+                { separator: true },
+                { label: T_('marks'), checked: !!XP.reg('mineMarks', true),
+                  action: () => { XP.setReg('mineMarks', !XP.reg('mineMarks', true)); draw(); } },
+                { separator: true },
+                { label: T_('best'), action: () => window.HypernetOS.Dialog.alert(T_('bestBody', times), T_('best')) }
+            ]);
+        });
+        win.addEventListener('hypernet-closed', stop);
+        restart(g.level);
+    }, { category: 'games', desktopShortcut: false });   // i18n-ignore  category id
+
+    // --- Patience ------------------------------------------------------------
+    // Klondike: the stock and its waste, four homes and seven piles. A card is
+    // { r, s, up }, r running 1..13 and s indexing SUITS, so red and black is
+    // (s & 1) and nothing has to look up a colour table.
+    const SUITS = ['S', 'H', 'C', 'D'];   // i18n-ignore  card suit glyphs
+    const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];   // i18n-ignore  card rank glyphs
+
+    const Patience = {
+        SUITS: SUITS,
+        RANKS: RANKS,
+        red(card) { return card.s === 1 || card.s === 3; },
+
+        deal() {
+            const deck = [];
+            for (let s = 0; s < 4; s++) for (let r = 1; r <= 13; r++) deck.push({ r: r, s: s, up: false });
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const t = deck[i]; deck[i] = deck[j]; deck[j] = t;
+            }
+            const g = { stock: [], waste: [], homes: [[], [], [], []], piles: [[], [], [], [], [], [], []], moves: 0, score: 0, started: Date.now(), draw: 1 };
+            for (let p = 0; p < 7; p++) {
+                for (let n = 0; n <= p; n++) {
+                    const card = deck.pop();
+                    card.up = (n === p);
+                    g.piles[p].push(card);
+                }
+            }
+            g.stock = deck;
+            return g;
+        },
+
+        // Turn the stock over onto the waste, and back again when it runs out.
+        drawFrom(g) {
+            if (!g.stock.length) {
+                g.stock = g.waste.reverse().map(c => (c.up = false, c));
+                g.waste = [];
+                return;
+            }
+            for (let n = 0; n < g.draw && g.stock.length; n++) {
+                const card = g.stock.pop();
+                card.up = true;
+                g.waste.push(card);
+            }
+            g.moves++;
+        },
+
+        canHome(card, home) {
+            if (!card) return false;
+            if (!home.length) return card.r === 1;
+            const top = home[home.length - 1];
+            return top.s === card.s && card.r === top.r + 1;
+        },
+
+        canPile(card, pile) {
+            if (!card) return false;
+            if (!pile.length) return card.r === 13;
+            const top = pile[pile.length - 1];
+            return top.up && this.red(top) !== this.red(card) && card.r === top.r - 1;
+        },
+
+        won(g) { return g.homes.every(h => h.length === 13); }
+    };
+    XP.Patience = Patience;
+
+    xpApp('app-solitaire', 'solitaire', 416, [620, 440], (win, root, T_) => {
+        let g = Patience.deal();
+        let held = null;   // { from: 'waste'|'pile'|'home', pile, index }
+
+        const label = card => RANKS[card.r - 1] + SUITS[card.s];
+
+        const cardHTML = (card, extra) => card.up
+            ? `<div class="xp-card ${Patience.red(card) ? 'red' : ''} ${extra || ''}">${label(card)}</div>`
+            : `<div class="xp-card back ${extra || ''}"></div>`;
+
+        const draw = () => {
+            const secs = Math.floor((Date.now() - g.started) / 1000);
+            root.innerHTML = `
+                <div class="xp-patience">
+                    <div class="xp-pat-top">
+                        <div class="xp-pat-slot" data-zone="stock">${g.stock.length ? '<div class="xp-card back"></div>' : '<div class="xp-card empty"></div>'}</div>
+                        <div class="xp-pat-slot" data-zone="waste">${g.waste.length ? cardHTML(g.waste[g.waste.length - 1], 'pick') : '<div class="xp-card empty"></div>'}</div>
+                        <div class="xp-pat-gap"></div>
+                        ${g.homes.map((h, i) => `<div class="xp-pat-slot" data-zone="home" data-pile="${i}">${h.length ? cardHTML(h[h.length - 1], 'pick') : '<div class="xp-card empty"></div>'}</div>`).join('')}
+                    </div>
+                    <div class="xp-pat-piles">
+                        ${g.piles.map((pile, i) => `
+                            <div class="xp-pat-pile" data-zone="pile" data-pile="${i}">
+                                ${pile.length ? pile.map((c, n) => cardHTML(c, 'pick stacked') .replace('<div class="xp-card', `<div data-index="${n}" class="xp-card`)).join('') : '<div class="xp-card empty"></div>'}
+                            </div>`).join('')}
+                    </div>
+                    <div class="xp-pat-status">
+                        <span>${T_('score', { n: g.score })}</span>
+                        <span>${T_('time', { n: secs })}</span>
+                        <span>${T_('moves', { n: g.moves })}</span>
+                    </div>
+                </div>`;
+            wire();
+        };
+
+        // Two clicks rather than a drag: pick a card up, put it down. It is
+        // what a pad and the keyboard can both do, and the shell is driven by
+        // both (see the accessibility note at the head of this plugin).
+        const wire = () => {
+            root.querySelectorAll('[data-zone]').forEach(zone => {
+                on(zone, 'click', (e) => {
+                    const kind = zone.dataset.zone;
+                    const pileNo = Number(zone.dataset.pile);
+                    if (kind === 'stock') { Patience.drawFrom(g); held = null; draw(); return; }
+                    const card = e.target.closest('.xp-card');
+                    const index = card && card.dataset.index !== undefined ? Number(card.dataset.index) : null;
+                    if (!held) { pickUp(kind, pileNo, index); draw(); return; }
+                    putDown(kind, pileNo);
+                    draw();
+                });
+            });
+        };
+
+        const source = () => {
+            if (!held) return null;
+            if (held.from === 'waste') return g.waste;
+            if (held.from === 'home') return g.homes[held.pile];
+            return g.piles[held.pile];
+        };
+
+        const pickUp = (kind, pileNo, index) => {
+            if (kind === 'waste' && g.waste.length) { held = { from: 'waste', pile: 0, index: g.waste.length - 1 }; return; }
+            if (kind === 'home' && g.homes[pileNo].length) { held = { from: 'home', pile: pileNo, index: g.homes[pileNo].length - 1 }; return; }
+            if (kind === 'pile') {
+                const pile = g.piles[pileNo];
+                if (!pile.length) return;
+                const at = index == null ? pile.length - 1 : index;
+                if (!pile[at] || !pile[at].up) return;
+                held = { from: 'pile', pile: pileNo, index: at };
+            }
+        };
+
+        const putDown = (kind, pileNo) => {
+            const from = source();
+            if (!from) { held = null; return; }
+            const run = from.slice(held.index);
+            const card = run[0];
+            let ok = false;
+            if (kind === 'home' && run.length === 1 && Patience.canHome(card, g.homes[pileNo])) {
+                g.homes[pileNo].push(card); from.length = held.index; ok = true; g.score += 10;
+            } else if (kind === 'pile' && Patience.canPile(card, g.piles[pileNo])) {
+                g.piles[pileNo].push(...run); from.length = held.index; ok = true;
+            }
+            if (ok) {
+                g.moves++;
+                if (held.from === 'pile') {
+                    const pile = g.piles[held.pile];
+                    if (pile.length && !pile[pile.length - 1].up) { pile[pile.length - 1].up = true; g.score += 5; }
+                }
+                if (Patience.won(g)) {
+                    XP.playEvent('newMail');   // i18n-ignore  event id
+                    window.HypernetOS.Dialog.alert(T_('won'), T_('wonTitle'), 'info');
+                }
+            }
+            held = null;
+        };
+
+        win.addEventListener('contextmenu', e => {
+            e.preventDefault(); e.stopPropagation();
+            window.HypernetOS.ContextMenu.show(e.clientX, e.clientY, [
+                { label: T_('deal'), bold: true, action: () => { g = Patience.deal(); held = null; draw(); } },
+                { separator: true },
+                { label: T_('draw1'), checked: g.draw === 1, action: () => { g.draw = 1; draw(); } },
+                { label: T_('draw3'), checked: g.draw === 3, action: () => { g.draw = 3; draw(); } }
+            ]);
+        });
+        draw();
+    }, { category: 'games', desktopShortcut: false });   // i18n-ignore  category id
+
+    // Taskbar and Start Menu Properties: the page behind the bar's own
+    // Properties entry, and a Control Panel applet like every other settings
+    // page. Every switch on it writes the registry key applyTaskbar() reads,
+    // so the bar answers the moment the box is ticked.
+    xpApp('app-taskbar', 'taskbar', 234, [420, 340], (win, root, T_) => {
+        const K = k => T('HypernetOS.xp.taskbar.' + k);
+        // Every switch: its registry key, its label, and what it defaults to.
+        const SWITCHES = [
+            // i18n-ignore-start  registry keys
+            ['taskbar', 'taskbarLocked', 'optLock', false],
+            ['taskbar', 'taskbarAutoHide', 'optAutoHide', false],
+            ['taskbar', 'taskbarGroup', 'optGroup', true],
+            ['taskbar', 'quickLaunchShown', 'optQuick', true],
+            ['notify', 'trayClock', 'optClock', true],
+            ['notify', 'trayHideInactive', 'optHide', false],
+            ['start', 'startCategories', 'optCategories', true],
+            ['start', 'startRecentDocs', 'optRecent', true]
+            // i18n-ignore-end
+        ];
+        const rows = group => SWITCHES.filter(sw => sw[0] === group).map(sw =>
+            `<label class="xp-check-row"><input type="checkbox" data-reg="${sw[1]}" ${XP.reg(sw[1], sw[3]) ? 'checked' : ''}> ${esc(K(sw[2]))}</label>`).join('');
+        root.innerHTML = `
+            ${tabBar(T_, ['taskbar', 'startMenu'])}
+            ${pane('taskbar', `
+                <div class="xp-group"><div class="xp-group-title">${esc(K('propsAppearance'))}</div>${rows('taskbar')}</div>
+                <div class="xp-group"><div class="xp-group-title">${esc(K('propsNotify'))}</div>${rows('notify')}</div>`, true)}
+            ${pane('startMenu', `
+                <div class="xp-group"><div class="xp-group-title">${esc(K('propsStart'))}</div>${rows('start')}</div>`)}`;
+        tabsOf(root);
+        root.querySelectorAll('input[data-reg]').forEach(box => on(box, 'change', () => {
+            XP.setReg(box.dataset.reg, box.checked);
+            XP.applyTaskbar();
+            window.HypernetOS.refreshQuickLaunch();
+            window.HypernetOS.refreshTaskbarTabs();
+            window.HypernetOS.refreshStartMenu();
+        }));
+    });
+
+    // The settings programs, kept as a list because Add or Remove Programs and
+    // the Run box still name them together. They are listed and launched from
+    // All Programs like everything else.
+    XP.APPLETS = ['app-folderopt', 'app-mouse', 'app-keyboard', 'app-useracc',
+        'app-printers', 'app-netconn', 'app-access', 'app-fonts', 'app-joy',
+        'app-taskbar', 'app-appwiz', 'app-timedate', 'app-desk', 'app-intl', 'app-mmsys', 'app-sysdm', 'app-devmgmt',
         'app-wscui', 'app-schedtasks', 'app-netstat', 'app-cleanmgr', 'app-defrag', 'app-msconfig', 'app-regedit',
         'app-eventvwr', 'app-osk', 'app-charmap', 'app-calc', 'app-clipbrd', 'app-winver', 'app-help', 'app-search', 'app-run'];
     // i18n-ignore-end

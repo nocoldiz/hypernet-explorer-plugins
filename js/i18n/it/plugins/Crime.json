@@ -9,7 +9,8 @@
     "availableCrimes": "Crimini Disponibili per Categoria",
     "errorUnknown": "Errore: Tipo di crimine sconosciuto:",
     "total": "Totale",
-    "selfPardon": "Ti sei auto-perdonato questo crimine"
+    "selfPardon": "Ti sei auto-perdonato questo crimine",
+    "lawfulPardon": "{name} ha commesso {crime} in nome della legge."
   },
   "nobodyLeftToJudgeYou": "Non è rimasto nessuno a giudicarti"
 }

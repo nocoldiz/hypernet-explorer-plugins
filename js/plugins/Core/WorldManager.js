@@ -157,8 +157,14 @@
     // the encounter system (BattleSystemEnhancedEncounters), on a procedural
     // map or an authored one alike. Read through WorldManager.populationMode()
     // / isEmptyWorld() / isDeathWorld().
+    // "chaos" is a world drawn out of a hat: the roster of every encounter, the
+    // look of every NPC, the stock and the price of every shop and the skill a
+    // character learns on a level up are all rolled instead of authored. What
+    // a thing IS never changes (a weapon keeps its damage, an enemy its
+    // parameters); only which one you meet, and for how much, does. Read
+    // through WorldManager.isChaosWorld() and window.ChaosWorld.
     const DEFAULT_POPULATION_MODE = "normal";
-    const POPULATION_MODES = ["normal", "goblin", "monster", "empty", "zombie", "death"];
+    const POPULATION_MODES = ["normal", "chaos", "goblin", "monster", "empty", "zombie", "death"];
     function clampPopulationMode(mode) {
         return POPULATION_MODES.includes(mode) ? mode : DEFAULT_POPULATION_MODE;
     }
@@ -976,6 +982,7 @@
         },
 
         // Convenience readers, so no caller has to spell the mode strings.
+        isChaosWorld()   { return this.populationMode() === "chaos"; },
         isGoblinWorld() { return this.populationMode() === "goblin"; },
         isMonsterWorld() { return this.populationMode() === "monster"; },
         // "death" is an empty world too (see POPULATION_MODES above), so every
@@ -1356,6 +1363,77 @@
     };
 
     window.WorldManager = WorldManager;
+
+    //=========================================================================
+    // ChaosWorld: the one answer to "is this the world of chaos, and what did
+    // it roll for X". Every consumer asks here rather than keeping its own
+    // idea of the mode or its own RNG, so a given world rolls the same chaos
+    // twice: the stream is seeded from the world seed and a caller's key, and
+    // never from Math.random.
+    //=========================================================================
+
+    function chaosHash(str) {
+        let h = 2166136261 >>> 0;
+        const s = String(str);
+        for (let i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 16777619) >>> 0;
+        }
+        return h >>> 0;
+    }
+
+    const ChaosWorld = {
+        // The mode itself. Kept as one call so a caller never spells "chaos".
+        active() {
+            return !!(window.WorldManager && WorldManager.isChaosWorld && WorldManager.isChaosWorld());
+        },
+
+        // The world's own seed, so two savegames of one world agree.
+        seed() {
+            if (window.NPCShared && typeof window.NPCShared.worldSeed === "function") {
+                return window.NPCShared.worldSeed() >>> 0;
+            }
+            if (window.HistoryManager && window.HistoryManager.getSeed) return window.HistoryManager.getSeed() >>> 0;
+            return chaosHash(DEFAULT_WORLD_SEED);
+        },
+
+        // A deterministic 0..1 stream for one key: the same key always gives
+        // the same run of numbers in the same world.
+        rng(key) {
+            let state = (this.seed() ^ chaosHash(key)) >>> 0 || 1;
+            return function () {
+                state ^= state << 13; state >>>= 0;
+                state ^= state >> 17;
+                state ^= state << 5; state >>>= 0;
+                return state / 4294967296;
+            };
+        },
+
+        // One roll for one key, without holding on to a stream.
+        roll(key) { return this.rng(key)(); },
+        int(key, min, max) { return min + Math.floor(this.roll(key) * (max - min + 1)); },
+        chance(key, p) { return this.roll(key) < p; },
+        pick(key, list) {
+            if (!list || !list.length) return null;
+            return list[Math.floor(this.roll(key) * list.length) % list.length];
+        },
+
+        // How far a chaos price wanders from the one printed in the database:
+        // a quarter of it to four times it, rolled per key and never per call.
+        priceFactor(key) {
+            const r = this.roll("price:" + key);
+            return 0.25 * Math.pow(16, r);
+        },
+
+        // A chaos price for a listed one. A free thing stays free.
+        price(key, base) {
+            const n = Number(base) || 0;
+            if (n <= 0) return n;
+            return Math.max(1, Math.round(n * this.priceFactor(key)));
+        },
+    };
+
+    window.ChaosWorld = ChaosWorld;
 
     //=========================================================================
     // Game_System accessors: world-scoped fields live in the world store

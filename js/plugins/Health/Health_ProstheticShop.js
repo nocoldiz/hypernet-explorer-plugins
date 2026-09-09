@@ -603,7 +603,41 @@
   }
   // --- END Daily randomization ---
 
+  window.ChaosAugmentPrices = function () { ensureChaosAugmentPrices(); };
+
   const INSTALLATION_FEE = 5000; // 50€ flat labor fee for any installation
+
+  // ── The world of chaos: the clinic quotes what it likes ────────────────────
+  // Nothing about a part or an augment changes here, only what is asked for it:
+  // a chaos world re-rolls the price of every augment in the catalogue once,
+  // and every body part is quoted off its own key rather than off its HP share
+  // alone. window.ChaosWorld seeds both from the world, so the same clinic
+  // quotes the same money twice.
+  function chaosCost(key, base) {
+    const CW = window.ChaosWorld;
+    if (!CW || !CW.active()) return base;
+    return CW.price("augment:" + key, base);
+  }
+
+  let chaosAugmentWorld = null;
+  function ensureChaosAugmentPrices() {
+    const CW = window.ChaosWorld;
+    if (!CW || !CW.active()) return;
+    const types = window.Health && window.Health.ProstheticTypes;
+    if (!types) return;
+    const WM = window.WorldManager;
+    const world = String((WM && WM.activeWorldName) || "world");
+    if (chaosAugmentWorld === world) return;
+    chaosAugmentWorld = world;
+    for (const key of Object.keys(types)) {
+      const type = types[key];
+      if (!type) continue;
+      // The catalogue's own price is kept, so another world re-rolls from the
+      // written number rather than from this world's.
+      if (type._chaosBaseCost === undefined) type._chaosBaseCost = type.cost;
+      type.cost = CW.price("augment:type:" + world + ":" + key, type._chaosBaseCost);
+    }
+  }
 
   function buildBodyPartItemLookup() {
     const lookup = {};
@@ -843,8 +877,8 @@
       // A party with a surgeon in it pays for the parts, not for the theatre.
       const surgeonRate = window.SpecializationXP
         ? window.SpecializationXP.discount("Surgery", 0.06, 0.7) : 1;
-      const cost = Math.round((part.hpPercent * 1000 +
-        Math.abs((part.statEffect && part.statEffect.amount) || 0) * 10000) * surgeonRate);
+      const cost = chaosCost(partKey, Math.round((part.hpPercent * 1000 +
+        Math.abs((part.statEffect && part.statEffect.amount) || 0) * 10000) * surgeonRate));
       const statBonus = computeStatBonus(part.statEffect);
 
       this._partList.push({
@@ -976,7 +1010,7 @@
       const part = this._actor._bodyParts[partKey];
       const hasImplant = !!(this._actor._prosthetics && this._actor._prosthetics[partKey]);
       const hpPercent = inferHpPercent(part, this._actor);
-      const cost = hpPercent * 100;
+      const cost = chaosCost("remove:" + partKey, hpPercent * 100);
       const statEffect = lookupStatEffect(partKey, part, this._actor);
       const statBonus = computeStatBonus(statEffect);
 
@@ -2006,6 +2040,7 @@
   };
 
   Scene_ProstheticShop.prototype.create = function () {
+    ensureChaosAugmentPrices();
     Scene_MenuBase.prototype.create.call(this);
     // Name the skill this menu runs on while it is open.
     if (window.SpecBadge) window.SpecBadge.show('Surgery');  // i18n-ignore  Specialization.json id
@@ -2193,8 +2228,8 @@
             if (existingName && partName.includes(existingName)) { alreadyOwned = true; break; }
           }
         }
-        const cost = Math.round((part.hpPercent * 1000 +
-          Math.abs((part.statEffect && part.statEffect.amount) || 0) * 10000) * surgeonRate);
+        const cost = chaosCost(partKey, Math.round((part.hpPercent * 1000 +
+          Math.abs((part.statEffect && part.statEffect.amount) || 0) * 10000) * surgeonRate));
 
         this._activeListItems.push({
           isArchetypePart: true,
@@ -2245,7 +2280,7 @@
           vital: isPartVital(this._selectedActor, partKey, part),
           hasImplant: !!(this._selectedActor._prosthetics && this._selectedActor._prosthetics[partKey]),
           hpPercent,
-          cost: hpPercent * 100,
+          cost: chaosCost("remove:" + partKey, hpPercent * 100),
           statEffect,
           statBonus: computeStatBonus(statEffect),
           skillId: part.skillId || 0

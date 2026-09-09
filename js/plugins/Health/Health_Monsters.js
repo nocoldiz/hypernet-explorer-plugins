@@ -2348,6 +2348,48 @@
   // the rows sit exactly where the player's eye already is. The drawing belongs
   // to BattleSystemEnhanchedCommands (that window is its), and only the list is
   // ours; it calls in through window.Wrestling.
+  // A shelf longer than the command window can show turns a page at a time.
+  // What says so is the pair of black chevrons the window draws on the list's
+  // own middle line (BattleSystemEnhanchedCommands.js), and what turns it is
+  // Left / Right, or a click on one of them. `session.offset` is the row the
+  // page starts at, exactly as it always was.
+  // Redrawing a shelf after its page turned: the cursor lands on the first
+  // row of the page it arrives at, which is where the eye already is.
+  function refreshPagedMenu(win) {
+    if (!win) return;
+    win.refresh();
+    win.select(0);
+    win.activate();
+  }
+
+  function setCommandPager(win, session, total, rows, refresh) {
+    if (!win) return;
+    const pages = Math.max(1, Math.ceil(total / rows));
+    if (pages < 2) {
+      win._cmdPager = null;
+      return;
+    }
+    win._cmdPager = {
+      page: Math.floor(session.offset / rows),
+      pages: pages,
+      turn(step) {
+        const at = (Math.floor(session.offset / rows) + step + pages) % pages;
+        session.offset = at * rows;
+        refresh();
+      },
+    };
+  }
+
+  // Turning the page from the keyboard: the cursor lands on the first row of
+  // the page it arrives at, which is where the eye already is.
+  function turnCommandPage(win, step) {
+    const pager = win && win._cmdPager;
+    if (!pager || pager.pages < 2) return false;
+    pager.turn(step);
+    SoundManager.playCursor();
+    return true;
+  }
+
   const Wrestling = {
     isMenuOpen(win) {
       return !!(win && win._wrestleSession);
@@ -2410,7 +2452,6 @@
       // do it, and both count their page off session.offset.
       const pageOf = (list) => ({
         shown: list.slice(session.offset, session.offset + WRESTLE_PAGE_ROWS),
-        turns: list.length > WRESTLE_PAGE_ROWS,
       });
 
       if (session.page === "finisher") {
@@ -2427,10 +2468,8 @@
                  chance: wrestleFinisherChance(session, entry),
                }), { kind: "finisher", id: entry.id }, true, skill.iconIndex || 77);
         }
-        if (page.turns) {
-          push(T('HealthMonsters.wrestle.menu.more', { count: finishers.length }),
-               { kind: "more", total: finishers.length }, true, 4);
-        }
+        setCommandPager(win, session, finishers.length, WRESTLE_PAGE_ROWS,
+                        () => refreshPagedMenu(win));
         push(T('HealthMonsters.wrestle.menu.back'), { kind: "back" }, true, 140);
         return;
       }
@@ -2450,15 +2489,14 @@
                }), { kind: "limb", side: side, key: entry.key }, true,
                side === "mine" ? 106 : 96);
         }
-        if (page.turns) {
-          push(T('HealthMonsters.wrestle.menu.more', { count: list.length }),
-               { kind: "more", total: list.length }, true, 4);
-        }
+        setCommandPager(win, session, list.length, WRESTLE_PAGE_ROWS,
+                        () => refreshPagedMenu(win));
         push(T('HealthMonsters.wrestle.menu.back'), { kind: "back" }, true, 140);
         return;
       }
 
       // Root: the two limbs, then every hold, then the finisher shelf.
+      win._cmdPager = null;
       const mine = session.myPartData();
       const theirs = session.theirPartData();
       push(mine ? T('HealthMonsters.wrestle.menu.myLimb',
@@ -2580,6 +2618,7 @@
     this.closeWrestleHelpWindow();
     if (!win || !win._wrestleSession) return;
     win._wrestleSession = null;
+    win._cmdPager = null;
     if (win._wrestleSavedHandlers) win._handlers = win._wrestleSavedHandlers;
     win._wrestleSavedHandlers = null;
   };
@@ -2636,10 +2675,6 @@
         session.page = "root";
         session.offset = 0;
         break;
-      case "more":
-        session.offset += WRESTLE_PAGE_ROWS;
-        if (session.offset >= ext.total) session.offset = 0;
-        break;
       case "hold":
       case "finisher": {
         const action = BattleManager.inputtingAction();
@@ -2660,6 +2695,25 @@
         return;
     }
     this._selectWrestleRow(focus);
+  };
+
+  // Left / Right belong to the open shelf while one of these menus is up: they
+  // turn its page instead of handing the keys to the battle quick bar
+  // (BattleSystemEnhancedHUD.js), which is what they do on the ordinary list.
+  const _WACmd_processCursorMove_pager = Window_ActorCommand.prototype.processCursorMove;
+  Window_ActorCommand.prototype.processCursorMove = function () {
+    const paged = (this._wrestleSession || this._aimSession) && this._cmdPager;
+    if (paged && this.isCursorMovable()) {
+      if (Input.isRepeated('left') || Input.isRepeated('pageup')) {
+        turnCommandPage(this, -1);
+        return;
+      }
+      if (Input.isRepeated('right') || Input.isRepeated('pagedown')) {
+        turnCommandPage(this, 1);
+        return;
+      }
+    }
+    _WACmd_processCursorMove_pager.call(this);
   };
 
   Scene_Battle.prototype.onWrestleCancel = function () {
@@ -3308,6 +3362,7 @@
         win.addCommandWithIcon(name, "aimRow", enabled !== false, ext, icon, enabled === false);
 
       if (session.parts.length === 0) {
+        win._cmdPager = null;
         push(T('HealthMonsters.aim.menu.noParts'), { kind: "blocked" }, false, 96);
         push(T('HealthMonsters.aim.menu.back'), { kind: "back" }, true, 140);
         return;
@@ -3329,10 +3384,8 @@
              // one the odds on the row are punishing.
              entry.part.vital ? 84 : 96);
       }
-      if (session.parts.length > AIM_PAGE_ROWS) {
-        push(T('HealthMonsters.aim.menu.more', { count: session.parts.length }),
-             { kind: "more", total: session.parts.length }, true, 4);
-      }
+      setCommandPager(win, session, session.parts.length, AIM_PAGE_ROWS,
+                      () => refreshPagedMenu(win));
       // The whole body: still one named monster, but the blow spreads over it
       // the way an unaimed one does, so nothing is risked on reaching a limb.
       push(T('HealthMonsters.aim.menu.' + (session.key === AIM_WHOLE ? 'wholeRowCurrent' : 'wholeRow')),
@@ -3385,6 +3438,7 @@
     const win = this._actorCommandWindow;
     if (!win || !win._aimSession) return;
     win._aimSession = null;
+    win._cmdPager = null;
     if (win._aimSavedHandlers) win._handlers = win._aimSavedHandlers;
     win._aimSavedHandlers = null;
     // Back to whatever the actor's own plan says should be lit.
@@ -3418,13 +3472,6 @@
       case "clear":
         Aiming.clear(session.actor);
         this._leaveAimMenu("aim");
-        return;
-      case "more":
-        session.offset += AIM_PAGE_ROWS;
-        if (session.offset >= ext.total) session.offset = 0;
-        win.refresh();
-        win.select(0);
-        win.activate();
         return;
       case "back":
         this._leaveAimMenu("aim");

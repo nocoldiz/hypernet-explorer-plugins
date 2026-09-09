@@ -1,0 +1,10 @@
+{
+  "moveRight": "Sposta la'",
+  "moveLeft": "Riporta qui",
+  "moveAll": "Tutti quanti",
+  "empty": "Qui non c'e' niente",
+  "ofMax": "{count} su {max}",
+  "full": "{panel} non ne contiene altri.",
+  "refused": "Quello la' non ci va.",
+  "hint": "Trascina una riga di la', o usa il pulsante sulla riga."
+}

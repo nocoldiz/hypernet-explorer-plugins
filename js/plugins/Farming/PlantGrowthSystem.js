@@ -296,7 +296,11 @@
     // Farming level anyone has - see window.SpecializationXP).
     const skill = window.SpecializationXP
       ? window.SpecializationXP.multiplier("Farming", 0.12) : 1;
-    return Math.max(1, Math.round(base * skill));
+    // ...and an actual Farmer in the party brings off three times as much
+    // again (the Green Thumb passive, BattleSystemPassiveSkills).
+    const P = window.BattleSystemPassiveSkills;
+    const green = (P && P.growthYieldMultiplier) ? P.growthYieldMultiplier() : 1;
+    return Math.max(1, Math.round(base * skill * green));
   }
 
   // Working a plot is how the party learns to farm: sowing and harvesting both
@@ -724,12 +728,23 @@
     const greenhouse = isGreenhouse();
     const inSeason = greenhouse || def.seasons.includes(currentSeason());
 
+    const wasRipe = isRipe(rec);
     if (inSeason) {
       rec.effectiveGrowthMinutes += elapsed * growthMult(greenhouse);
     }
     rec.lastUpdateMinutes = now;
     rec.stage = calcStage(rec.effectiveGrowthMinutes, def.growthDays);
     saveRecord(mapId, eventId, rec);
+    // A crop coming ripe happens while the party is walking past it, with
+    // nothing on screen to say so. Told once, when it crosses over.
+    if (!wasRipe && isRipe(rec) && window.ParchmentToast) {
+      const item = $dataItems[def.itemId];
+      window.ParchmentToast.show(
+        T('PlantGrowth.toast.ripe', { plant: item ? item.name : rec.plantId }),
+        { severity: "good", icon: item ? item.iconIndex : undefined,
+          key: "plant-ripe:" + mapId + ":" + eventId }  // i18n-ignore  dedupe key
+      );
+    }
   }
 
   // A plot standing at 100% is simply picked: interacting with a ripe plant

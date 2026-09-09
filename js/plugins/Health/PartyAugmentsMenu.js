@@ -116,6 +116,9 @@
   class Scene_PartyAugments extends Scene_MenuBase {
     create() {
       super.create();
+      // A chaos world prices the catalogue itself, so the register quotes the
+      // same money the clinic does rather than the database's own.
+      if (window.ChaosAugmentPrices) window.ChaosAugmentPrices();
       this._tab = 0;              // 0 fitted, 1 catalogue
       this._selectedIndex = 0;
       this._activeArea = "tabs";  // 'tabs' | 'list'

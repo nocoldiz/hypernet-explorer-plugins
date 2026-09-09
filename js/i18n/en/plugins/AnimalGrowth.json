@@ -63,5 +63,8 @@
   "wildAnimal": "Wild",
   "actionConvince": "Convince to join",
   "actionJoinPet": "Join as pet",
-  "actionJoinPartyAnimal": "Join party"
+  "actionJoinPartyAnimal": "Join party",
+  "toast": {
+    "grownUp": "The {animal} has grown up."
+  }
 }

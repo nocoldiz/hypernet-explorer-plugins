@@ -39,7 +39,6 @@
   "uplink": "Uplink:",
   "audio": "Audio:",
   "board": "Board:",
-  "tabApplets": "Applets",
   "cpuLine": "{name} ({mhz})",
   "ramLine": "{total} MB RAM, {free} MB free",
   "gpuIntegrated": "{name} (shares {mb} MB of main memory)",

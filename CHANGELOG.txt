@@ -1,3 +1,35 @@
+0.6.9a
+Added:
+ - simplified update menu to version, date and update info
+ - workbench: craft spells and skills from KP-bought components
+ - hovering a battle status tag explains what it does
+ - pain saves the picture into the game folder
+ - armies wiki tab and orders, class abilities with limit breaks
+ - active epidemic count in the save screen and world manager
+ - shops you own: shifts, hand-filled shelves, bubba's combat tutorial
+ - buy a shop and run it from the deeds page
+ - seeded grimoire offers, reseeded when the copy changes
+ - books teach a specialization, with bookmarks
+ - auto-dosed medicine and pregnancy toasts
+ - 100 collectible items, fixed price, only from chests and NPCs
+ - world of chaos timeline
+
+Changed:
+- all programs is a desktop app, minimal starting desktop
+- map tooltip tool reworked as Bubba Dialogues
+- parchment menus are a book: leather boards, fore-edges, crease on the seam
+- centred battle descriptions, chevron paging on hotbar, wrestle and aim
+- all 3d enemies slightly more polygonal
+- job board is an xp app and shows who is away at work
+- no level limit learning esoteric and forbidden from a spellbook
+- status sheet mirrored: sections left and smaller, character right
+ - monster tournament fighting-game hud with 30s round timer
+ - training school badges wear the self-taught outline
+ - hypernet os: file dialogs, real folders, taskbar, start menu, sounds
+ - world-map armies led by living leaders: empathize, parlay or attack
+ - enemies use their own portraits, dream art folded into img/enemies
+ - restored cc0 images for some monsters
+
 0.6.8a
 
 Changed:
@@ -12,6 +44,9 @@ Changed:
 - title screen update notice fills as the download progresses
 
 Fixed:
+- every party member embarks with a sprite
+- fixed model flickering in the hyperdeck
+ - encrypted build installs ws itself, plus build+upload steps
 - old name selector no longer appears in character creation
 - battle crash from the removed battle background option
 - shorter magnetic lines on the title screen star

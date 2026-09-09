@@ -228,17 +228,17 @@
         // Always derive assignments from the real, sorted list of connected indices
         // rather than assuming pads occupy positions 0 and 1 contiguously.
         static getConnectedIndices() {
+            // The controller layer (Core/ControllerSystem.js) is the one place
+            // that decides which pads are real: a disconnected ghost keeps its
+            // slot in navigator.getGamepads(), and on Windows one physical pad
+            // is routinely listed twice (XInput plus a silent DirectInput HID).
+            // Counting those phantoms is what points "P2 = idx[1]" at a dead
+            // device, so the list is asked for rather than rebuilt here.
+            if (window.Controller && window.Controller.ports) return window.Controller.ports();
             const gps = navigator.getGamepads ? navigator.getGamepads() : [];
             const indices = [];
             for (let i = 0; i < gps.length; i++) {
                 const gp = gps[i];
-                // Match the engine's Input._pollGamepads: only count pads that are
-                // actually connected and report inputs. navigator.getGamepads()
-                // routinely returns stale ghosts (connected === false) and, on
-                // Windows, lists one physical pad twice (XInput + DirectInput HID,
-                // the latter with no .buttons activity). Counting those phantoms
-                // inflates the list so "P2 = idx[1]" points at a dead device and
-                // the real second controller never gets read.
                 if (!gp || gp.connected === false) continue;
                 if (!gp.buttons || gp.buttons.length === 0) continue;
                 indices.push(gp.index);

@@ -682,6 +682,31 @@
         hexToRgba: paintHexToRgba,
         _pending: null,
 
+        // Writes a PNG data URL into the game root folder on the real disk.
+        // Returns the full path written, or null when there is no node layer
+        // (a browser build) or the write failed.
+        writeToGameRoot: function(fileName, dataURL) {
+            let nodeFs = null, nodePath = null;
+            if (typeof require !== 'function') return null;
+            try { nodeFs = require('fs'); nodePath = require('path'); } catch (e) { return null; }
+            if (!nodeFs || !nodePath) return null;
+            let base = '';
+            try {
+                if (typeof process !== 'undefined' && process.mainModule) base = nodePath.dirname(process.mainModule.filename);
+                else if (typeof process !== 'undefined' && process.cwd) base = process.cwd();
+            } catch (e) { return null; }
+            if (!base) return null;
+            const safe = String(fileName || 'untitled.png').replace(/[\/:*?"<>|]/g, '_');  // i18n-ignore  default file name
+            const full = nodePath.join(base, /\.png$/i.test(safe) ? safe : safe + '.png');
+            try {
+                nodeFs.writeFileSync(full, String(dataURL).replace(/^data:image\/png;base64,/, ''), 'base64');
+                return full;
+            } catch (e) {
+                console.warn('Pain: could not write picture to the game root:', e);
+                return null;
+            }
+        },
+
         openFile: function(path) {
             const fs = window.HypernetFileSystem;
             const content = fs ? fs.readFile(path) : null;
@@ -710,6 +735,7 @@
                         <span class="pain-menu-item focusable" tabindex="0" id="pain-new">${T_('new')}</span>
                         <span class="pain-menu-item focusable" tabindex="0" id="pain-open">${T_('open')}</span>
                         <span class="pain-menu-item focusable" tabindex="0" id="pain-save">${T_('save')}</span>
+                        <span class="pain-menu-item focusable" tabindex="0" id="pain-export">${T_('export')}</span>
                         <span class="pain-menu-item focusable" tabindex="0" id="pain-wallpaper">${T_('setWallpaper')}</span>
                         <span class="pain-menu-item focusable" tabindex="0" id="pain-undo">${T_('undo')}</span>
                         <span class="pain-menu-item focusable" tabindex="0" id="pain-redo">${T_('redo')}</span>
@@ -848,32 +874,66 @@
             q('#pain-new').addEventListener('click', e => { e.stopPropagation(); snapshot(); clear(); st.path = null; setTitle(); });
             q('#pain-undo').addEventListener('click', e => { e.stopPropagation(); undo(); });
             q('#pain-redo').addEventListener('click', e => { e.stopPropagation(); redo(); });
-            q('#pain-save').addEventListener('click', e => {
-                e.stopPropagation();
+            // Both boxes are the shell's own (window.HypernetOS.Dialog): a
+            // browser prompt() over the desktop is the one thing this OS never
+            // shows, and it cannot see the virtual file system either.
+            const D = () => window.HypernetOS && window.HypernetOS.Dialog;
+            const pngFilters = () => [
+                { label: T('HypernetOS.xp.filebox.imageFiles'), ext: 'png' },
+                { label: T('HypernetOS.xp.filebox.allFiles'), ext: '*' }
+            ];
+            const writeTo = (path) => {
                 const fs = window.HypernetFileSystem;
-                if (!fs) return;
-                let path = st.path;
-                if (!path) {
-                    const typed = prompt(T_('savePrompt'), 'untitled.png');
-                    if (!typed) return;
-                    path = PAINT_DIR + '/' + (typed.toLowerCase().endsWith('.png') ? typed : typed + '.png');
-                }
                 if (!fs.exists(PAINT_DIR)) fs.mkdir(PAINT_DIR);
                 if (fs.writeFile(path, canvas.toDataURL('image/png'), 'png')) {
                     st.path = path; setTitle(); status(T_('saved', { file: path }));
                     if (window.SoundManager) SoundManager.playOk();
-                } else alert(T_('saveError'));
+                    exportToGameRoot(path.slice(path.lastIndexOf('/') + 1), true);
+                } else if (D()) D().error(T_('saveError'), T_('appName'));
+            };
+            // The picture also lands on the real disk, in the game root, so it
+            // can be looked at outside the game. Silent when the save came from
+            // the menu (the VFS save already reported), loud when asked for.
+            const exportToGameRoot = (fileName, quiet) => {
+                const written = window.HypernetPaint.writeToGameRoot(fileName, canvas.toDataURL('image/png'));
+                if (written) {
+                    if (!quiet) {
+                        status(T_('exported', { file: written }));
+                        if (window.SoundManager) SoundManager.playOk();
+                    }
+                } else if (!quiet && D()) {
+                    D().error(T_('exportError'), T_('appName'));
+                }
+                return written;
+            };
+            q('#pain-save').addEventListener('click', e => {
+                e.stopPropagation();
+                const fs = window.HypernetFileSystem;
+                if (!fs || !D()) return;
+                if (st.path) { writeTo(st.path); return; }
+                D().saveFileBox({
+                    title: T_('appName'), path: PAINT_DIR,
+                    fileName: 'untitled.png',   // i18n-ignore  default file name
+                    filters: pngFilters()
+                }).then(picked => {
+                    if (!picked) return;
+                    writeTo(picked.toLowerCase().endsWith('.png') ? picked : picked + '.png');
+                });
+            });
+            q('#pain-export').addEventListener('click', e => {
+                e.stopPropagation();
+                const name = st.path ? st.path.slice(st.path.lastIndexOf('/') + 1) : 'untitled.png';  // i18n-ignore  default file name
+                exportToGameRoot(name, false);
             });
             q('#pain-open').addEventListener('click', e => {
                 e.stopPropagation();
-                const names = this.pictures();
-                if (!names.length) { alert(T_('nothingToOpen')); return; }
-                const typed = prompt(T_('openPrompt', { list: names.join(', ') }), names[0]);
-                if (!typed) return;
-                const path = PAINT_DIR + '/' + typed;
-                const content = window.HypernetFileSystem.readFile(path);
-                if (!content) { alert(T_('openError')); return; }
-                win._painLoad({ path, content });
+                if (!D()) return;
+                D().openFileBox({ title: T_('appName'), path: PAINT_DIR, filters: pngFilters() }).then(path => {
+                    if (!path) return;
+                    const content = window.HypernetFileSystem.readFile(path);
+                    if (!content) { D().error(T_('openError'), T_('appName')); return; }
+                    win._painLoad({ path, content });
+                });
             });
             q('#pain-wallpaper').addEventListener('click', e => {
                 e.stopPropagation();

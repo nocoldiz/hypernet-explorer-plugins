@@ -30,7 +30,7 @@
     },
     "38": {
       "name": "Contractor",
-      "desc": "You earn a gold bounty for each enemy you defeat, and combat jobs pay you more."
+      "desc": "You earn a gold bounty for each enemy you defeat, combat jobs pay you more, and each mercenary in the party cuts your army's weekly upkeep by 5%."
     },
     "32": {
       "name": "Field Marshal",
@@ -86,7 +86,7 @@
     },
     "27": {
       "name": "Arcane Mastery",
-      "desc": "All your spell MP costs are reduced by 20%."
+      "desc": "All your spell MP costs are reduced by 20%, and you take twice as many specialization points out of every book you read."
     },
     "36": {
       "name": "Mirror Image",
@@ -158,7 +158,7 @@
     },
     "51": {
       "name": "Bedside Manner",
-      "desc": "Every potion and healing item you use restores 30% more."
+      "desc": "Every potion and healing item you use restores 30% more, and you diagnose any disease the party catches the day they catch it."
     },
     "61": {
       "name": "Divine Blood",
@@ -186,7 +186,7 @@
     },
     "58": {
       "name": "Forecaster",
-      "desc": "You always foresee current and upcoming weather and its effect on crops and bees."
+      "desc": "You always foresee current and upcoming weather and its effect on crops and bees, and while rain, a storm or snow is falling you regenerate 5% of your MP and 5 TP each turn."
     },
     "46": {
       "name": "Press Pass",
@@ -206,15 +206,15 @@
     },
     "52": {
       "name": "Forager",
-      "desc": "You passively gather wild food and materials and harvest more from plants and spoils."
+      "desc": "You passively gather wild food and materials, harvest more from plants and spoils, and salvage twice as much from anything you take apart on the map."
     },
     "56": {
       "name": "Green Thumb",
-      "desc": "Your crops grow 25% faster and yield more, and animals mature and produce faster."
+      "desc": "Your crops grow 25% faster, animals mature and produce faster, and your plants and animals yield three times as much."
     },
     "57": {
-      "name": "Timberman",
-      "desc": "You gather extra wood and swing axes with bonus damage and a chance to fell large foes."
+      "name": "Lumberjack",
+      "desc": "You gather extra wood, fell trees for ten times the materials, and swing axes with bonus damage and a chance to stagger large foes."
     },
     "43": {
       "name": "Fireproof",
@@ -238,7 +238,7 @@
     },
     "44": {
       "name": "Law",
-      "desc": "You accrue less bounty, get trial leniency and can arrest weakened humanoid foes."
+      "desc": "You accrue less bounty, get trial leniency, can arrest weakened humanoid foes, and sign off your own charges as lawful acts, up to €50 a day for every level of your rank."
     },
     "55": {
       "name": "Merchant",
@@ -246,7 +246,7 @@
     },
     "60": {
       "name": "Showtime",
-      "desc": "You earn gold and goodwill performing, and the party gains morale after any minigame win."
+      "desc": "You earn gold and goodwill performing, the party gains morale after any minigame win, and everybody's Fun climbs on its own while you travel with them."
     },
     "66": {
       "name": "Augmented",
@@ -347,5 +347,21 @@
     "aegis": "Aegis {pct}%",
     "night": "Night +15%",
     "gunFu": "Gun-Fu"
+  },
+  "chipInfo": {
+    "next": "What this monster is about to do, read by an Oracle in the party.",
+    "pin": "Pins held on the current target. The third pin locks it down for good.",
+    "chi": "Chi gathered by the Martial Artist. Every third action comes free.",
+    "combo": "Combo stacks built by dodging. Each one makes the next blow land harder.",
+    "decoys": "Illusory doubles still standing. Each one soaks up one attack meant for you.",
+    "iaido": "The blade is sheathed and ready: the first strike of the fight cuts deep.",
+    "edge": "The element carried on the blade from the last spell cast.",
+    "attuned": "Attuned to the weather: spells of this element are stronger while it holds.",
+    "souls": "Souls harvested from the fallen, spent on necromantic power.",
+    "divineBlood": "The one revival divine blood grants is still unspent.",
+    "rage": "Bloodrage: the closer to death, the harder this one hits.",
+    "aegis": "The ward the Guardian is holding over the party right now.",
+    "night": "Night empowerment: the Cultist is stronger while it is dark.",
+    "gunFu": "A ranged weapon is equipped, so the follow-up shot is armed."
   }
 }

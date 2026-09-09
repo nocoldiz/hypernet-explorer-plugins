@@ -163,7 +163,11 @@
         'Yacht': { minCap: 2, maxCap: 12, basePrice: [780, 7000, 35000, 800000, 1500000] },
         'Restaurant': { minCap: 0, maxCap: 60, basePrice: [760, 6000, 30000, 550000, 850000] },
         'Camper Van': { minCap: 1, maxCap: 4, basePrice: [650, 3000, 10000, 85000, 120000] },
-        'B&B': { minCap: 2, maxCap: 16, basePrice: [700, 4500, 20000, 320000, 500000] }
+        'B&B': { minCap: 2, maxCap: 16, basePrice: [700, 4500, 20000, 320000, 500000] },
+        // A shop is a going concern, not lodgings: its occupants are the staff
+        // behind the counter. Buying the deed hands the party the shop itself,
+        // which ShopManagement.js then runs (see buyProperty).
+        'Shop': { minCap: 0, maxCap: 6, basePrice: [720, 5500, 28000, 450000, 700000] }
     };
     // i18n-ignore-end
 
@@ -396,6 +400,12 @@
             this.ownedProperties.push(property.id);
             this.markTaken(property.id, 'bought');
 
+            // A shop deed comes with the shop. ShopManagement.js opens a trading
+            // register for it, which the Deeds page then manages.
+            if (window.ShopManagement && window.ShopManagement.onPropertyBought) {
+                window.ShopManagement.onPropertyBought(property);
+            }
+
             // Closing on a property is how the trade is learned, and the bigger
             // the deal the more of it there was to learn (specialization 722).
             if (window.SpecializationXP) {
@@ -429,6 +439,10 @@
             const index = this.ownedProperties.indexOf(property.id);
             if (index > -1) this.ownedProperties.splice(index, 1);
             this.releaseTaken(property.id);
+
+            if (window.ShopManagement && window.ShopManagement.onPropertySold) {
+                window.ShopManagement.onPropertySold(property);
+            }
 
             return true;
         }
@@ -589,6 +603,16 @@
             // Convert euros to gold and add to party
             const goldIncome = Math.floor(this.dailyIncome * 100);
             $gameParty.gainGold(goldIncome);
+
+            // Rent that arrives while the party is out walking is announced on
+            // the parchment, the same way a shop's day is (ShopManagement.js):
+            // money that appears with no line to explain it reads as a bug.
+            if (this.dailyIncome > 0 && window.ParchmentToast && window.ParchmentToast.show) {
+                window.ParchmentToast.show(
+                    t('dailyIncomeMsg', { income: this.dailyIncome, gold: goldIncome }),
+                    { title: t('dailyIncome') }
+                );
+            }
 
             // Drift company share prices with a small daily random walk, clamped
             // to a sane band around each company's base listing price.
@@ -1122,6 +1146,25 @@
             }
         }
 
+        // The management book for the shop that came with this deed. On the OS
+        // desktop an RMMZ scene cannot be pushed over the browser, so the party
+        // is pointed at the Deeds page instead.
+        commandManageShop() {
+            const property = this._propertyListWindow.property();
+            const SM = window.ShopManagement;
+            if (!property || !SM || !SM.openManagement) { SoundManager.playBuzzer(); return; }
+            if (this._isAppMode) {
+                SoundManager.playBuzzer();
+                window.ParchmentToast?.show?.(T('RealEstate.ui.manageFromDeeds'));
+                return;
+            }
+            // The shop is opened the first time the deed is looked at on a save
+            // that predates shop deeds.
+            SM.onPropertyBought(property);
+            if (SM.openManagement('prop:' + property.id)) SoundManager.playOk();
+            else SoundManager.playBuzzer();
+        }
+
         commandVacate() {
             const property = this._propertyListWindow.property();
             if ($realEstateManager.vacateProperty(property.id)) {
@@ -1272,6 +1315,10 @@
             const sref = this.sceneRef();
             const commands = [];
             if (selectedProperty.isOwned) {
+                // A shop deed is worth more open than sold, so running it comes first.
+                if (selectedProperty.type === 'Shop') {
+                    commands.push({ label: T('RealEstate.ui.manageShop'), action: "manage" });
+                }
                 commands.push({ label: T('RealEstate.ui.liquidateAsset'), action: "sell", danger: true });
             } else if (selectedProperty.isRentedByPlayer) {
                 commands.push({ label: T('RealEstate.ui.vacateRental'), action: "vacate", danger: true });
@@ -1627,6 +1674,9 @@
                 this.commandRent();
             } else if (action === 'vacate') {
                 this.commandVacate();
+            } else if (action === 'manage') {
+                this.commandManageShop();
+                return;
             } else if (action === 'info') {
                 this.commandInfo();
                 return; // Navigation will handle page transition
@@ -1641,6 +1691,7 @@
         getActiveCommands(property) {
             const commands = [];
             if (property.isOwned) {
+                if (property.type === 'Shop') commands.push('manage');
                 commands.push('sell');
             } else if (property.isRentedByPlayer) {
                 commands.push('vacate');

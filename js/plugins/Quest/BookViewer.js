@@ -46,6 +46,8 @@
  * - Page Up / Page Down (keyboard) or L1 / R1 (gamepad): Jump backward / forward 10 pages
  * - Shift (keyboard) or L2 (gamepad): Jump to the cover
  * - C (keyboard) or R2 (gamepad): Jump to the last page
+ * - Enter / Space (or A on a gamepad): Leave a bookmark on the open page
+ * - Click a bookmark tab: Fall open at that page
  * - Escape / Right Click: Close book
  * - Mouse Wheel: Scroll pages
  *
@@ -81,6 +83,20 @@
  * this stops asking the items:
  *
  *     BookAge.setYearResolver(name => yearThisBookWasPrinted(name));
+ *
+ * ----------------------------------------------------------------------------
+ * What reading it is worth, and where the ribbons go
+ * ----------------------------------------------------------------------------
+ * A book teaches the specialization written on its item as `<Teaches:>`: the
+ * reader is paid on opening it and paid again, more, on reaching the last
+ * page, once each per member per book. window.BookLearning owns that whole
+ * question, and the ribbons below with it; this scene only reports what the
+ * reader did.
+ *
+ * Up to five ribbons can be left in a book. The confirm key drops one on the
+ * page on the right or lifts the one already there, and every ribbon in the
+ * book shows as a tab out of the fore-edge: click one to fall open at it, or
+ * press the menu key to walk through them in order.
  */
 
 (() => {
@@ -120,6 +136,16 @@
         persp: 0.18,   // how much nearer parts of the sheet are drawn larger
         droop: 0.055,  // gravity on the free corner, as a share of page height
         lift: 0.02     // how far the whole sheet rises off the block mid-turn
+    };
+
+    // The ribbons left in a book: how far they stick out of the fore-edge, how
+    // tall each tab is, and the silks they are cut from, one per slot.
+    const BOOKMARK_CONFIG = {
+        stick: 26,      // how far past the page edge the tab shows
+        height: 46,     // the height of one tab
+        gap: 12,        // the space between two tabs
+        top: 0.16,      // where the first tab sits, as a share of page height
+        silks: ['#a8323c', '#2f6ea8', '#3f8a4f', '#c08a2a', '#6a4a8c']
     };
 
     // Tearing a page out: how fast, and how far out, the fling has to be.
@@ -930,6 +956,7 @@
             this.createBackground();
             this.loadBookData();
             this.createBookDisplay();
+            this.createBookmarkLayer();
             this.createPageFlipLayer();
             this.setupEventHandlers();
             this.startOpeningAnimation();
@@ -953,6 +980,8 @@
 
                 this._currentPageIndex = BookManager.getLastPage(this._bookName);
                 this._totalPages = this._pages.length;
+                // Opening it is the first half of what a book is worth.
+                this.rewardReading('open');
             } catch (e) {
                 console.error(e);
                 SceneManager.goto(Scene_Map);
@@ -1153,6 +1182,141 @@
         }
 
         //-------------------------------------------------------------------
+        // What the reader gets out of it
+        //-------------------------------------------------------------------
+
+        /**
+         * Pay the reader for this book. `stage` is 'open' or 'done'; who is
+         * owed what, and whether they have been paid before, is entirely
+         * window.BookLearning's business.
+         */
+        rewardReading(stage) {
+            const B = window.BookLearning;
+            if (!B || !B.award) return;
+            try { B.award(this._bookName, stage); } catch (e) {
+                console.warn('BookViewer: the reading award threw', e);
+            }
+        }
+
+        /** The last page turned is the rest of what the book is worth. */
+        checkFinished() {
+            if (this._totalPages > 2 && this._currentPageIndex >= this._totalPages - 2) {
+                this.rewardReading('done');
+            }
+        }
+
+        //-------------------------------------------------------------------
+        // Bookmarks
+        //-------------------------------------------------------------------
+
+        /** The ribbons left in this book, as page indexes. */
+        bookmarks() {
+            const B = window.BookLearning;
+            return (B && B.bookmarks) ? B.bookmarks(this._bookName) : [];
+        }
+
+        /**
+         * Where each ribbon sits, in the book's own coordinates: one tab out of
+         * the fore-edge of the right-hand half, in the order they were left.
+         */
+        bookmarkRects() {
+            const cfg = BOOKMARK_CONFIG;
+            const half = this._bookWidth / 2;
+            const top = -this._bookHeight / 2 + this._bookHeight * cfg.top;
+            return this.bookmarks().map((page, i) => ({
+                page,
+                x: half + 8,
+                y: top + i * (cfg.height + cfg.gap),
+                w: cfg.stick,
+                h: cfg.height,
+                silk: cfg.silks[i % cfg.silks.length]
+            }));
+        }
+
+        createBookmarkLayer() {
+            const cfg = BOOKMARK_CONFIG;
+            this._bookmarkLayer = new Sprite();
+            this._bookmarkLayer.bitmap = new Bitmap(cfg.stick + 4, this._bookHeight);
+            this._bookmarkLayer.anchor.x = 0;
+            this._bookmarkLayer.anchor.y = 0.5;
+            this._bookmarkLayer.x = this._bookWidth / 2 + 8;
+            this._bookContainer.addChild(this._bookmarkLayer);
+            this.refreshBookmarks();
+        }
+
+        /** Redraw every ribbon. The open one is the one lying wider and paler. */
+        refreshBookmarks() {
+            const layer = this._bookmarkLayer;
+            if (!layer || !layer.bitmap) return;
+            const bitmap = layer.bitmap;
+            bitmap.clear();
+            const ctx = bitmap.context;
+            const originY = this._bookHeight / 2;
+            this.bookmarkRects().forEach(rect => {
+                const here = rect.page === this._currentPageIndex ||
+                             rect.page === this._currentPageIndex + 1;
+                const y = rect.y + originY;
+                const w = here ? rect.w : rect.w - 6;
+                ctx.fillStyle = rect.silk;
+                ctx.fillRect(0, y, w, rect.h);
+                // The notch cut in the free end, and the fold where the silk
+                // goes back over the edge of the page.
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+                ctx.beginPath();
+                ctx.moveTo(w, y);
+                ctx.lineTo(w - 7, y + rect.h / 2);
+                ctx.lineTo(w, y + rect.h);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+                ctx.fillRect(0, y, 4, rect.h);
+                if (here) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.fillRect(0, y, w, 3);
+                }
+            });
+            mark(bitmap);
+        }
+
+        /** Drop a ribbon on the page on show, or lift the one already there. */
+        toggleBookmark() {
+            const B = window.BookLearning;
+            if (!B || !B.toggleBookmark) return;
+            const page = this._currentPageIndex;
+            const result = B.toggleBookmark(this._bookName, page);
+            if (!result) return;
+            this.refreshBookmarks();
+            AudioManager.playSe({
+                name: 'Book1', volume: 45,
+                pitch: result === 'set' ? 130 : 90, pan: 0
+            });
+        }
+
+        /** Fall open at a page a ribbon is marking. */
+        goToBookmark(page) {
+            let target = Math.max(0, Math.min(page, this._totalPages - 2));
+            if (target % 2 !== 0) target--;
+            if (target === this._currentPageIndex) return;
+            this.startFlipAnimation(target > this._currentPageIndex ? 1 : -1, target, 18);
+        }
+
+        /** The next ribbon after the page on show, wrapping round to the first. */
+        nextBookmark() {
+            const marks = this.bookmarks();
+            if (!marks.length) return;
+            const sorted = marks.slice().sort((a, b) => a - b);
+            const next = sorted.find(p => p > this._currentPageIndex + 1);
+            this.goToBookmark(next !== undefined ? next : sorted[0]);
+        }
+
+        /** The ribbon under the pointer, or null. */
+        bookmarkAt(at) {
+            return this.bookmarkRects().find(r =>
+                at.x >= r.x && at.x <= r.x + r.w &&
+                at.y >= r.y && at.y <= r.y + r.h) || null;
+        }
+
+        //-------------------------------------------------------------------
         // Input
         //-------------------------------------------------------------------
 
@@ -1185,6 +1349,8 @@
             const halfW = this._bookWidth / 2;
             const halfH = this._bookHeight / 2;
             if (Math.abs(at.x) > halfW || Math.abs(at.y) > halfH) return;
+
+            if (this.bookmarkAt(at)) return;
 
             const direction = at.x >= 0 ? 1 : -1;
             if (direction > 0 && this._currentPageIndex >= this._totalPages - 2) return;
@@ -1305,6 +1471,10 @@
             if (this._flipAnimation.active || this._isClosing || this._tearAnimation) return;
             // A click that was the end of a drag has already been answered.
             if (this._swallowClick) { this._swallowClick = false; return; }
+
+            // A ribbon is a target, not a page: clicking one falls open at it.
+            const ribbon = this.bookmarkAt(this.pointerAt(event));
+            if (ribbon) { this.goToBookmark(ribbon.page); return; }
 
             const x = Graphics.pageToCanvasX(event.pageX);
             const centerX = Graphics.width / 2;
@@ -1489,6 +1659,10 @@
             // game's gamepad map, reused here as jump-to-cover / jump-to-end.
             if (Input.isTriggered('cancel') || TouchInput.isTriggered() && TouchInput.isLongPressed()) {
                 this.onCancel();
+            } else if (Input.isTriggered('ok')) {
+                this.toggleBookmark();
+            } else if (Input.isTriggered('menu')) {
+                this.nextBookmark();
             } else if (Input.isTriggered('run')) {
                 this.goToStart();
             } else if (Input.isTriggered('kick')) {
@@ -1540,6 +1714,8 @@
                 rightTorn ? '' : (this._pages[this._currentPageIndex + 1] || ''), false);
 
             this.drawPageNumbers();
+            this.refreshBookmarks();
+            this.checkFinished();
         }
 
         /** The words only. The paper they sit on is drawn once, underneath. */
@@ -1860,6 +2036,7 @@
                 this._bookContainer = null;
                 this._flipShadow = null;
                 this._paperLeft = this._paperRight = null;
+                this._bookmarkLayer = null;
                 this._stubLeft = this._stubRight = null;
             }
             if (this._flipContainer) {

@@ -560,6 +560,7 @@
     const durability = getHealthMult(vehicleType);
 
     // Apply damage to selected parts
+    const brokenBefore = checkCriticalParts(vehicleType);
     for (const part of partsToDamage) {
       const currentHealth = health[part] || 100;
       const damage = (partsConfig[part].maxHealth * damagePercent) / 100 / durability;
@@ -567,6 +568,16 @@
     }
 
     updateVehicleStatus(vehicleType);
+    // A critical part giving out strands the party, and nothing else says so
+    // until they try to drive off.
+    if (!brokenBefore && checkCriticalParts(vehicleType) && window.ParchmentToast) {
+      const dead = partsToDamage.filter(p => partsConfig[p].critical && health[p] <= 0)
+                                    .map(p => window.VehicleParts.label(p));
+      window.ParchmentToast.show(
+        T('VehicleRepair.toast.criticalFailure', { part: dead.join(', ') }),
+        { severity: 'danger', key: 'vehicle-broken:' + vehicleType }  // i18n-ignore  dedupe key
+      );
+    }
     return partsToDamage;
   }
 

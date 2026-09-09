@@ -245,6 +245,28 @@
     return SOUL_CATEGORIES.includes(categoryOf(item).toLowerCase());
   };
 
+  // The fixed price of a collectible, or null for everything the indices are
+  // allowed to move. window.ItemCollectibles is the only place that boundary
+  // is drawn.
+  // The year written on a keepsake, ready to print. Empty for anything the
+  // catalogue does not date.
+  const collectibleYear = (item) => safe("collectibleYear", () => {
+    const C = window.ItemCollectibles;
+    return C ? C.yearText(item) : "";
+  }, "") || "";
+
+  // What a book teaches, ready to print. Empty for anything that is not a
+  // book (window.BookLearning owns the <Teaches:> tag).
+  const teachesLabel = (item) => safe("teachesLabel", () => {
+    const B = window.BookLearning;
+    return B ? B.label(item) : "";
+  }, "") || "";
+
+  const fixedPrice = (item) => safe("fixedPrice", () => {
+    const C = window.ItemCollectibles;
+    return C ? C.fixed(item) : null;
+  }, null);
+
   const marketFactor = (shopData, item) => {
     if (!shopData) return 1.0;
     const raw = isSoulPriced(item) ? shopData.soulFactor : shopData.oilFactor;
@@ -258,6 +280,10 @@
   // modal and the till are the same number by construction. Applying either
   // factor anywhere else charges it twice.
   const buyUnitPrice = (item, listed, shopData) => {
+    // A collectible is never moved by an index, by Haggling, by standing or by
+    // a record: it costs what it is worth, here and everywhere else.
+    const flat = fixedPrice(item);
+    if (flat !== null) return flat;
     const base = Number.isFinite(listed)
       ? listed
       : (item && Number.isFinite(item.price) ? item.price : 0);
@@ -433,6 +459,19 @@
     const weight = weightOf(item);
     this.drawKeyValue(T('Shop.weight'), formatWeight(weight), 0, currentY);
     currentY += lineHeight;
+    // A keepsake is dated, the way a book is: what it is worth is mostly when
+    // it is from.
+    const yearText = collectibleYear(item);
+    if (yearText) {
+      this.drawKeyValue(T('Shop.year'), yearText, 0, currentY);
+      currentY += lineHeight;
+    }
+    // And a book is sold on its subject as much as on its age.
+    const teaches = teachesLabel(item);
+    if (teaches) {
+      this.drawKeyValue(T('Shop.teaches'), teaches, 0, currentY);
+      currentY += lineHeight;
+    }
     const nature = natureLabelOf(item);
     if (nature) {
       this.drawKeyValue(T('Shop.nature'), nature, 0, currentY);
@@ -567,6 +606,13 @@
     const weight = weightOf(item);
     this.drawKeyValue(T('Shop.weight'), formatWeight(weight), 0, currentY);
     currentY += lineHeight;
+    // A keepsake is dated, the way a book is: what it is worth is mostly when
+    // it is from.
+    const yearText = collectibleYear(item);
+    if (yearText) {
+      this.drawKeyValue(T('Shop.year'), yearText, 0, currentY);
+      currentY += lineHeight;
+    }
     const nature = natureLabelOf(item);
     if (nature) {
       this.drawKeyValue(T('Shop.nature'), nature, 0, currentY);
@@ -634,6 +680,13 @@
     const weight = weightOf(item);
     this.drawKeyValue(T('Shop.weight'), formatWeight(weight), 0, currentY);
     currentY += lineHeight;
+    // A keepsake is dated, the way a book is: what it is worth is mostly when
+    // it is from.
+    const yearText = collectibleYear(item);
+    if (yearText) {
+      this.drawKeyValue(T('Shop.year'), yearText, 0, currentY);
+      currentY += lineHeight;
+    }
     const nature = natureLabelOf(item);
     if (nature) {
       this.drawKeyValue(T('Shop.nature'), nature, 0, currentY);
@@ -1258,6 +1311,9 @@
     for (const goods of this._shopGoods) {
       const item = safe("goodsToItem", () => this.goodsToItem(goods), null);
       if (!item) continue;
+      // Nobody orders keepsakes in. A collectible is on a shelf only because
+      // the party sold it over this counter, and those rows are added below.
+      if (fixedPrice(item) !== null) continue;
       // Nothing of the wrong nature is ever on a shelf: a severed world sells
       // no charms and an unbound one sells nothing ordinary
       // (window.MagicNature). The line simply is not stocked, rather than
@@ -1271,6 +1327,19 @@
       const listed = goods[2] === 0 ? item.price : goods[3];
       const price = buyUnitPrice(item, listed, shopData);
       items.push({ item: item, price: Math.max(0, price), category: categoryLabelOf(item).toLowerCase() });
+    }
+
+    // What the party has left here on consignment, at the same flat price it
+    // was paid. Added after the shelf so a counter that also stocks the thing
+    // (it cannot, today, but a mod may) never lists it twice.
+    if (scene instanceof Scene_Shop) {
+      const listed = new Set(items.map(o => o.item));
+      for (const item of consignedItems(scene)) {
+        if (listed.has(item)) continue;
+        if (window.MagicNature && !window.MagicNature.allowsData(item)) continue;
+        const price = buyUnitPrice(item, item.price, shopData);
+        items.push({ item: item, price: Math.max(0, price), category: categoryLabelOf(item).toLowerCase() });
+      }
     }
 
     // The shelf is read as categories, alphabetically, with the lines inside
@@ -1532,6 +1601,7 @@
                     <div class="shop-tab-hint" data-pad="0">${esc(tabHintLabel())}</div>
                     <div class="shop-tab" id="tab-buy">${T('Shop.acquireGoods')}</div>
                     <div class="shop-tab" id="tab-sell">${T('Shop.liquidateAssets')}</div>
+                    <div class="shop-tab focusable" id="tab-collect" title="${esc(T('Shop.sellCollectiblesHint'))}">${T('Shop.sellCollectibles')}</div>
                 </div>
                 <div id="shop-categories-container"></div>
                 <div id="shop-selection-bar"></div>
@@ -1580,6 +1650,10 @@
         this.switchToSell();
       }
     });
+
+    // The whole keepsake shelf over the counter in one gesture: collectibles
+    // have no use and one flat price, so there is nothing to weigh up per line.
+    onShopClick("#tab-collect", () => this.sellAllCollectibles());
 
     // Mousewheel Scroll support for catalog viewport
     container.addEventListener("wheel", (e) => {
@@ -2836,9 +2910,49 @@
   // Shop Stock System
   //=============================================================================
 
+  // ── The world of chaos: nobody stocks what they meant to ──────────────────
+  // A chaos shop keeps the SHAPE of the counter it was written as (as many
+  // rows, sold on the same terms) and none of its contents: every row is drawn
+  // from the whole catalogue. The draw is seeded from the world and the shop's
+  // own map and event, so a counter holds the same odd assortment every time
+  // the player walks back into it, and the stock records that hang off those
+  // rows stay meaningful.
+  let chaosShelf = null;
+  function chaosShelfPool() {
+    if (chaosShelf) return chaosShelf;
+    chaosShelf = [];
+    const tables = [[0, $dataItems], [1, $dataWeapons], [2, $dataArmors]];
+    for (const [type, table] of tables) {
+      if (!table) continue;
+      for (let i = 1; i < table.length; i++) {
+        const data = table[i];
+        if (!data || !data.name || !data.price) continue;
+        chaosShelf.push([type, i]);
+      }
+    }
+    return chaosShelf;
+  }
+
+  function chaosGoods(goods, mapId, eventId) {
+    const CW = window.ChaosWorld;
+    if (!CW || !CW.active() || !Array.isArray(goods) || !goods.length) return goods;
+    const pool = chaosShelfPool();
+    if (!pool.length) return goods;
+    const shop = "shop:" + mapId + ":" + eventId + ":";
+    return goods.map((row, i) => {
+      if (!Array.isArray(row)) return row;
+      const [type, id] = pool[Math.floor(CW.roll(shop + i) * pool.length) % pool.length];
+      // Rows 2 and 3 are the price rule (0 = use the item's own price), which
+      // is the counter's terms rather than its contents: they are kept.
+      return [type, id, row[2], row[3]];
+    });
+  }
+
   const _Scene_Shop_prepare = Scene_Shop.prototype.prepare;
   Scene_Shop.prototype.prepare = function (goods, purchaseOnly) {
-    _Scene_Shop_prepare.call(this, goods, purchaseOnly);
+    const mapId = $gameMap ? $gameMap.mapId() : 0;
+    const eventId = ($gameMap && $gameMap._interpreter) ? $gameMap._interpreter.eventId() : 0;
+    _Scene_Shop_prepare.call(this, chaosGoods(goods, mapId, eventId), purchaseOnly);
     // A shop pushed straight from a plugin (an NPC trade, the daily shop) has no
     // event behind it, and then it simply keeps no stock record.
     this._shopMapId = $gameMap ? $gameMap.mapId() : 0;
@@ -2847,6 +2961,82 @@
 
   // A shop that keeps no stock record sells without limit.
   const UNLIMITED_STOCK = 999;
+
+  // ===========================================================================
+  //  Consignment: the only collectibles a counter ever has
+  // ---------------------------------------------------------------------------
+  //  Nobody orders keepsakes in. A collectible reaches a shelf exactly one way:
+  //  the party sold it over that counter, and it sits there afterwards for
+  //  whoever wants to buy it back at the same flat price. The record is kept
+  //  per shop and NOT on the daily stock roll, so a thing left on consignment
+  //  is still there next week.
+  // ===========================================================================
+
+  const consignStore = (create) => {
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return null;
+    if (!$gameSystem._shopConsign) {
+      if (!create) return null;
+      $gameSystem._shopConsign = {};
+    }
+    return $gameSystem._shopConsign;
+  };
+
+  // The counter the scene is standing at, as a place in that record.
+  const consignShelf = (scene, create) => {
+    const s = scene || SceneManager._scene;
+    if (!(s instanceof Scene_Shop) || !s._shopMapId || !s._shopEventId) return null;
+    const store = consignStore(create);
+    if (!store) return null;
+    const map = String(s._shopMapId);
+    const ev = String(s._shopEventId);
+    if (!store[map]) {
+      if (!create) return null;
+      store[map] = {};
+    }
+    if (!store[map][ev]) {
+      if (!create) return null;
+      store[map][ev] = {};
+    }
+    return store[map][ev];
+  };
+
+  // How many copies of one thing this counter is holding on consignment.
+  const consignedCount = (item, scene) => {
+    const shelf = consignShelf(scene, false);
+    const key = shelf ? getStockKey(item) : null;
+    const n = key ? shelf[key] : 0;
+    return Number.isFinite(n) ? Math.max(0, n) : 0;
+  };
+
+  // Everything left over this counter, as database rows.
+  const consignedItems = (scene) => {
+    const shelf = consignShelf(scene, false);
+    if (!shelf) return [];
+    const rows = [];
+    for (const key of Object.keys(shelf)) {
+      if (!(shelf[key] > 0)) continue;
+      const id = Number(key.slice(2));
+      const table = key[0] === "w" ? $dataWeapons : key[0] === "a" ? $dataArmors : $dataItems;
+      const item = table && table[id];
+      if (item) rows.push(item);
+    }
+    return rows;
+  };
+
+  const addConsignment = (item, amount, scene) => {
+    const shelf = consignShelf(scene, true);
+    const key = shelf ? getStockKey(item) : null;
+    if (!key || !(amount > 0)) return;
+    shelf[key] = (Number.isFinite(shelf[key]) ? shelf[key] : 0) + amount;
+  };
+
+  const takeConsignment = (item, amount, scene) => {
+    const shelf = consignShelf(scene, false);
+    const key = shelf ? getStockKey(item) : null;
+    if (!key || !Number.isFinite(shelf[key])) return;
+    shelf[key] = Math.max(0, shelf[key] - amount);
+    if (shelf[key] <= 0) delete shelf[key];
+  };
 
   // What is left of a normal day's run once nobody outside is left to supply
   // it. The shelf still turns over on the same daily key as any other world
@@ -2980,6 +3170,8 @@
   };
 
   Scene_Shop.prototype.getStock = function (item) {
+    // A collectible is never restocked: what is there is what was left there.
+    if (fixedPrice(item) !== null) return consignedCount(item, this);
     const shopData = currentShopData(this);
     if (!shopData) return UNLIMITED_STOCK;
     const key = getStockKey(item);
@@ -2989,6 +3181,7 @@
   };
 
   Scene_Shop.prototype.reduceStock = function (item, amount) {
+    if (fixedPrice(item) !== null) { takeConsignment(item, amount, this); return; }
     const shopData = currentShopData(this);
     if (!shopData) return;
     const key = getStockKey(item);
@@ -3100,6 +3293,9 @@
 
   Scene_Shop.prototype.sellingPrice = function () {
     if (!this._item) return 0;
+    // The counter buys a collectible back for exactly what it sells it for.
+    const flat = fixedPrice(this._item);
+    if (flat !== null) return flat;
     // A shop buys at what the market says the thing is worth today, not at
     // what it was worth when it was written into the database.
     const market = marketFactor(currentShopData(this), this._item);
@@ -3135,7 +3331,8 @@
     const buying = this.isShopBuyMode();
     const price = buying ? this.unitBuyPrice(item) : this.unitSellPrice(item);
     if (!(price > 0)) return null;
-    const factor = marketFactor(currentShopData(this), item);
+    // A collectible has no move to report: it is quoted flat on both sides.
+    const factor = fixedPrice(item) !== null ? 1 : marketFactor(currentShopData(this), item);
     return {
       buying: buying,
       price: price,
@@ -3185,6 +3382,10 @@
   const _Scene_Shop_doSell = Scene_Shop.prototype.doSell;
   Scene_Shop.prototype.doSell = function (number) {
     const earned = number * this.sellingPrice();
+    // What is sold over a counter stays on it: a keepsake handed in is the
+    // only way one ever appears on a shelf, and it can be bought back for
+    // exactly what it paid out.
+    if (fixedPrice(this._item) !== null) addConsignment(this._item, number, this);
     _Scene_Shop_doSell.call(this, number);
     awardTradeXp('Appraising', earned);  // i18n-ignore  Specialization.json id
   };
@@ -3325,6 +3526,8 @@
     }
     // Read outside a shop (the inventory's own item panel): no counter to
     // quote against, so only what the party itself brings to the price.
+    const flat = fixedPrice(item);
+    if (flat !== null) return flat;
     return Math.max(1, Math.floor(baseSellPrice(item) * appraiseFactor()));
   };
 
@@ -3394,6 +3597,33 @@
     }
     if (this._statusWindow) this._statusWindow.refresh();
     this.refreshUIShop();
+    return sold;
+  };
+
+  // Everything in the bag that is only worth what it is worth, handed over in
+  // one go. A keepsake has no use, no modifier and no price to think about, so
+  // there is nothing a per-line sale would let the player decide.
+  Scene_Shop.prototype.sellAllCollectibles = function () {
+    const entries = [];
+    for (const item of $gameParty.allItems()) {
+      if (fixedPrice(item) === null || !isSellableItem(item)) continue;
+      entries.push([item, sellableCount(item)]);
+    }
+    if (!entries.length) {
+      SoundManager.playBuzzer();
+      if (window.ParchmentToast) window.ParchmentToast.show(T('Shop.noCollectibles'));
+      return 0;
+    }
+    if (this.isShopBuyMode()) this.switchToSell();
+    const paid = entries.reduce((sum, [item, qty]) => {
+      this._item = item;
+      return sum + qty * this.sellingPrice();
+    }, 0);
+    this._item = null;
+    const sold = this.commitSale(entries);
+    if (sold > 0 && window.ParchmentToast) {
+      window.ParchmentToast.show(T('Shop.soldCollectibles', { count: sold, money: (window.MoneyFormatter ? window.MoneyFormatter.format(paid) : paid) + ' €' }));
+    }
     return sold;
   };
 

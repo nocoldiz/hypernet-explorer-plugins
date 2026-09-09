@@ -206,8 +206,10 @@
         return Math.max(1, weight);
     }
     
-    // Get random item based on rarity influence
-    function getRandomItem(itemList, salt) {
+    // Get random item based on rarity influence.
+    // `collectibles` flips the pool over: instead of everything BUT the
+    // keepsake shelf, only the keepsake shelf, drawn on a much flatter curve.
+    function getRandomItem(itemList, salt, collectibles) {
         if (!itemList || itemList.length === 0) return null;
 
         const rand = makeLootRNG(salt);
@@ -218,9 +220,14 @@
         // not something a barrel coughs up, so the Diseases shelf is out of
         // the loot pool with the reagents and the offal.
         const EXCLUDED = [/<category:\s*BodyPart\s*>/i, /<category:\s*Alchemistry\s*>/i, /<category:\s*Crafting\s*>/i, /<category:\s*Diseases\s*>/i];
+        const isKeepsake = (item) =>
+            !!(window.ItemCollectibles && window.ItemCollectibles.isFixed(item));
         const validItems = itemList.filter(item =>
             item &&
             isSelectableLootItem(item) &&
+            // Keepsakes are their own draw (see lootItem): out of the ordinary
+            // pool, and the whole of the collectible one.
+            (collectibles ? isKeepsake(item) : !isKeepsake(item)) &&
             // Nothing of the wrong nature is ever found either: a severed
             // world turns up no charms in a crate and an unbound one turns up
             // nothing ordinary (window.MagicNature).
@@ -260,6 +267,12 @@
             // Calculate weight using new algorithm
             let weight = calculateItemWeight(item.price, rarityInfluence);
 
+            // A crate of keepsakes is not graded the way a crate of swords is:
+            // half the weight is levelled flat across the shelf, so the top of
+            // the price range is genuinely reachable at any party level and the
+            // spread is wider than any weapon or armour roll.
+            if (collectibles) weight = weight * 0.5 + COLLECTIBLE_FLAT_WEIGHT;
+
             // Add extreme rarity for artifacts
             if (item.id >= 1500 || (item.note && item.note.toLowerCase().includes('<category: artifact>'))) {
                 if (typeof $gameParty !== 'undefined' && $gameParty.hasItem(item, true)) continue;
@@ -294,6 +307,22 @@
         return validItems[Math.floor(rand() * validItems.length)];
     }
     
+    // A quarter of every item chest holds a keepsake instead of something
+    // useful. It is the only thing that puts one in the world besides an NPC's
+    // own pockets, and it is drawn on its own RNG so the ordinary item a chest
+    // would otherwise have held does not shift when this roll misses.
+    const COLLECTIBLE_CHEST_CHANCE = 0.25;
+    const COLLECTIBLE_FLAT_WEIGHT = 250;
+
+    function lootItem(salt) {
+        const draw = makeLootRNG((salt || 0) + 0x51D);
+        if (draw() < COLLECTIBLE_CHEST_CHANCE) {
+            const keepsake = getRandomItem($dataItems, (salt || 0) + 0xC0, true);
+            if (keepsake) return keepsake;
+        }
+        return getRandomItem($dataItems, salt);
+    }
+
     // Finding loot is a reward like any other, so it goes through the shared
     // popup (ParchmentToast.reward) instead of stopping the player with a
     // message box. The rarity tier becomes the popup's heading.
@@ -346,7 +375,7 @@
         
         switch (command.toLowerCase()) {
             case 'getitem':
-                const randomItem = getRandomItem($dataItems, 1);
+                const randomItem = lootItem(1);
                 if (randomItem) {
                     $gameParty.gainItem(randomItem, 1);
                     showLootMessage(randomItem);
@@ -374,7 +403,7 @@
     // Register plugin commands for MZ
     if (Utils.RPGMAKER_NAME === "MZ") {
         PluginManager.registerCommand("RandomLootSystem", "getItem", args => {
-            const randomItem = getRandomItem($dataItems, 1);
+            const randomItem = lootItem(1);
             if (randomItem) {
                 $gameParty.gainItem(randomItem, 1);
                 showLootMessage(randomItem);

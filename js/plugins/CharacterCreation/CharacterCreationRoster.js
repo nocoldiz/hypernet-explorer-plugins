@@ -248,13 +248,20 @@
       if (!p1 || !p1._classId) {
         if (p1) p1.changeClass(1, false);
       }
-      if (p1 && (!p1.characterName() || !p1.vnBust())) {
-        if (Scene_CharacterCreation && Scene_CharacterCreation.assignRandomSpriteAndBust) {
-          Scene_CharacterCreation.assignRandomSpriteAndBust(p1);
-        } else if (window.selectRandomSpriteForActor) {
-          window.selectRandomSpriteForActor(1);
+      // Every seat, not only the leader: a member added mid-flow, or one built
+      // through the creature scene (which only sets a sprite when the picker
+      // handed it one), could embark with the empty characterName the actor
+      // record ships with and walk the map as nothing at all. This is the last
+      // gate before the party leaves the wizard, so it is asked here of all of
+      // them; ensureSpriteAndBust is a no-op for anyone already dressed.
+      const seats = ($gameParty && $gameParty.members && $gameParty.members()) || [];
+      seats.forEach((actor) => {
+        if (Scene_CharacterCreation && Scene_CharacterCreation.ensureSpriteAndBust) {
+          Scene_CharacterCreation.ensureSpriteAndBust(actor);
+        } else if (window.selectRandomSpriteForActor && actor && !actor.characterName()) {
+          window.selectRandomSpriteForActor(actor.actorId());
         }
-      }
+      });
       if (!$gameSystem._ccOriginSymbol) {
         $gameSystem._ccOriginSymbol = "origin_train";
       }

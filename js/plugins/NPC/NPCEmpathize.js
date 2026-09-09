@@ -2818,7 +2818,7 @@
     // never include the chat tab.
     _tabOrder() {
       if (this._entity) return this._entityTabs || ['overview'];
-      const tabs = ['chat', 'info', 'background', 'routine', 'biologics', 'health', 'romance', 'web', 'lifeHistory', 'wiki', 'more'];
+      const tabs = ['chat', 'info', 'background', 'routine', 'biologics', 'health', 'romance', 'web', 'lifeHistory', 'wiki', 'armies', 'more'];
       // Nothing is courting anybody through a muzzle: the romance tab is not
       // on the table while a non-sentient member is the one doing the talking,
       // nor when the one being talked to is the beast.

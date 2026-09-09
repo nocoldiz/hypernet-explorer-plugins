@@ -1068,6 +1068,9 @@
         // leaving the recruit wearing somebody else's anatomy.
         actor._currentArchetype = (archetypeName && Archetypes && Archetypes[archetypeName])
             ? archetypeName : null;
+        // The spliced pair goes with the body, or the last occupant's second
+        // half would still be read off the slot (getActorArchetypeKeys).
+        actor._creatureArchetypes = actor._currentArchetype ? [actor._currentArchetype] : null;
 
         actor._bodyParts = null;
         actor._statModifiers = {};

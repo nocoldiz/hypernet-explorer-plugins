@@ -667,28 +667,42 @@
 
         const lengthwise = w >= d;
 
+        // A fitted part is flattened by PART_HEIGHT_SCALE, so every gap written
+        // here is worth 0.4 of what it reads as once the part is on the board.
+        // Two horizontal faces that end up level flicker against each other, so
+        // anything standing on the part's own board starts at the SAME y, sunk
+        // below the board's top face: those bottom faces coincide where nobody
+        // can see them, and no visible face is ever level with another.
+        const DECK = 0.035;   // the top face of the part's own board
+        const SEAT = 0.027;   // where everything standing on it begins
+
         // A row of gold contact fingers along one edge: what a card plugs in by.
         const fingers = () => {
             const n = Math.max(4, Math.round((lengthwise ? w : d) / 0.035));
             for (let i = 0; i < n; i++) {
                 const t = (i + 0.5) / n - 0.5;
-                mk.box(lengthwise ? (w / n) * 0.6 : 0.02, 0.006,
+                mk.box(lengthwise ? (w / n) * 0.6 : 0.02, 0.024,
                     lengthwise ? 0.02 : (d / n) * 0.6, goldMat,
-                    lengthwise ? t * w : w / 2 - 0.012, 0.036,
+                    lengthwise ? t * w : w / 2 - 0.012, SEAT + 0.012,
                     lengthwise ? d / 2 - 0.012 : t * d, group);
             }
         };
 
         // A leaded package: a black lid with a leg row down each long side.
-        const pkg = (px, pz, pw, pd, hgt) => {
-            mk.box(pw, hgt, pd, chipMat, px, 0.035 + hgt / 2, pz, group);
+        // `clear` is how much room there is beyond the package before the next
+        // one starts: the leg row is cut to fit it, so two neighbouring rows
+        // never grow into each other and fight over the same space.
+        const pkg = (px, pz, pw, pd, hgt, clear) => {
+            mk.box(pw, hgt + (DECK - SEAT), pd, chipMat,
+                px, SEAT + (hgt + (DECK - SEAT)) / 2, pz, group);
+            const legD = Math.min(0.014, Math.max(0.006, (clear || 0.02) * 0.8));
             const legs = Math.max(3, Math.round(pw / 0.022));
             for (let i = 0; i < legs; i++) {
                 const t = (i + 0.5) / legs - 0.5;
-                mk.box(0.008, 0.006, 0.014, metalMat, px + t * pw * 0.92, 0.038,
-                    pz - pd / 2 - 0.007, group);
-                mk.box(0.008, 0.006, 0.014, metalMat, px + t * pw * 0.92, 0.038,
-                    pz + pd / 2 + 0.007, group);
+                mk.box(0.008, 0.018, legD, metalMat, px + t * pw * 0.92, SEAT + 0.009,
+                    pz - pd / 2 - legD / 2, group);
+                mk.box(0.008, 0.018, legD, metalMat, px + t * pw * 0.92, SEAT + 0.009,
+                    pz + pd / 2 + legD / 2, group);
             }
         };
 
@@ -700,17 +714,25 @@
             const n = Math.max(2, Math.round((lengthwise ? w : d) / 0.13));
             for (let i = 0; i < n; i++) {
                 const t = (i + 0.5) / n - 0.5;
+                const pitch = (lengthwise ? w : d) * 0.82 / n;
+                const depth = lengthwise ? d * 0.42 : (d / n) * 0.66;
                 pkg(lengthwise ? t * w * 0.82 : 0,
                     lengthwise ? -d * 0.08 : t * d * 0.82,
                     lengthwise ? (w / n) * 0.66 : w * 0.46,
-                    lengthwise ? d * 0.42 : (d / n) * 0.66, 0.026);
+                    depth, 0.026,
+                    lengthwise ? 0.02 : (pitch - depth) / 2);
             }
             // Decoupling capacitors, because every board has a row of them.
+            // Spaced along the board rather than scattered at random, so two of
+            // them can never land in the same place and fight over it.
             for (let i = 0; i < 6; i++) {
-                mk.box(0.018, 0.012, 0.011, capMat,
-                    (rng() - 0.5) * w * 0.8, 0.041, (rng() - 0.5) * d * 0.7, group);
+                const t = (i + 0.5) / 6 - 0.5;
+                mk.box(0.018, 0.028, 0.011, capMat,
+                    lengthwise ? t * w * 0.8 : (rng() - 0.5) * w * 0.6,
+                    SEAT + 0.014,
+                    lengthwise ? (rng() - 0.5) * d * 0.6 : t * d * 0.8, group);
             }
-            if (kind === 'gpu') mk.box(w * 0.42, 0.05, d * 0.42, metalMat, 0, 0.078, 0, group);
+            if (kind === 'gpu') mk.box(w * 0.42, 0.044, d * 0.42, metalMat, 0, 0.089, 0, group);
             if (kind === 'modem') {
                 const a = mk.cyl(0.011, 0.011, Math.min(w, d) * 0.9, 6, metalMat, 0, 0.07, d * 0.3, group);
                 a.rotation.z = Math.PI / 2;
@@ -718,9 +740,9 @@
         } else if (kind === 'cpu') {
             // A substrate, a lidded die and a pin field underneath.
             mk.box(w, 0.026, d, pcbMat, 0, 0.018, 0, group);
-            mk.box(w * 0.66, 0.03, d * 0.66, chipMat, 0, 0.046, 0, group);
-            mk.box(w * 0.44, 0.02, d * 0.44, metalMat, 0, 0.07, 0, group);
-            mk.box(w * 0.18, 0.006, d * 0.18, glowMat, 0, 0.081, 0, group);
+            mk.box(w * 0.66, 0.036, d * 0.66, chipMat, 0, 0.041, 0, group);
+            mk.box(w * 0.44, 0.024, d * 0.44, metalMat, 0, 0.065, 0, group);
+            mk.box(w * 0.18, 0.012, d * 0.18, glowMat, 0, 0.077, 0, group);
             const grid = 5;
             for (let i = 0; i < grid; i++) {
                 for (let j = 0; j < grid; j++) {
@@ -733,7 +755,7 @@
         } else if (kind === 'storage') {
             // A sealed housing, a label, a connector edge and four case screws.
             mk.box(w, 0.075, d, metalMat, 0, 0.045, 0, group);
-            mk.box(w * 0.68, 0.01, d * 0.5, mk.mat({ color: 0xd9d4c8 }), 0, 0.088, 0, group);
+            mk.box(w * 0.68, 0.016, d * 0.5, mk.mat({ color: 0xd9d4c8 }), 0, 0.0825, 0, group);
             mk.box(w * 0.78, 0.026, 0.03, chipMat, 0, 0.03, d / 2 - 0.018, group);
             [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz]) => {
                 mk.cyl(0.009, 0.009, 0.008, 6, chipMat, sx * w * 0.42, 0.085, sz * d * 0.4, group);
@@ -741,19 +763,19 @@
         } else if (kind === 'display') {
             mk.box(w, 0.028, d, chipMat, 0, 0.018, 0, group);
             const face = panelFaceTexture(mk, arcane ? '#181425' : hybrid ? '#122028' : '#16211c');
-            mk.box(w * 0.9, 0.01, d * 0.86, mk.mat({
+            mk.box(w * 0.9, 0.022, d * 0.86, mk.mat({
                 color: 0xffffff,
                 map: face.texture,
                 emissive: arcane ? 0x1a1226 : 0x081210
-            }), 0, 0.04, 0, group);
+            }), 0, 0.035, 0, group);
             // The flat ribbon every panel is fed by.
-            mk.box(w * 0.3, 0.005, 0.06, mk.mat({ color: 0xc8a05a }), 0, 0.03, d / 2 - 0.012, group);
+            mk.box(w * 0.3, 0.016, 0.06, mk.mat({ color: 0xc8a05a }), 0, 0.032, d / 2 - 0.012, group);
         } else if (kind === 'battery') {
             const cells = Math.max(1, Math.round(Math.min(w, d) / 0.13));
             if (cells <= 1 || arcane) {
                 mk.box(w, 0.09, d, mk.mat({ color: arcane ? 0x2b3f4a : 0x2f3236 }), 0, 0.05, 0, group);
-                mk.box(w * 0.5, 0.014, d * 0.5, glowMat, 0, 0.1, 0, group);
-                mk.box(w * 0.34, 0.006, 0.02, goldMat, -w * 0.2, 0.098, d * 0.34, group);
+                mk.box(w * 0.5, 0.02, d * 0.5, glowMat, 0, 0.097, 0, group);
+                mk.box(w * 0.34, 0.014, 0.02, goldMat, -w * 0.2, 0.094, d * 0.34, group);
             } else {
                 for (let i = 0; i < cells; i++) {
                     const t = (i + 0.5) / cells - 0.5;
@@ -770,7 +792,7 @@
             const fins = Math.max(3, Math.round(w / 0.04));
             for (let i = 0; i < fins; i++) {
                 const t = (i + 0.5) / fins - 0.5;
-                mk.box(0.011, 0.07, d * 0.9, metalMat, t * w * 0.94, 0.055, 0, group);
+                mk.box(0.011, 0.078, d * 0.9, metalMat, t * w * 0.94, 0.052, 0, group);
             }
             if (rng() < 0.5) {
                 const hub = mk.cyl(Math.min(w, d) * 0.2, Math.min(w, d) * 0.2, 0.026, 10,
@@ -787,7 +809,7 @@
             for (let i = 0; i < 5; i++) {
                 const a = (i / 5) * Math.PI * 2;
                 mk.box(0.022, 0.022, 0.022, glowMat,
-                    Math.cos(a) * r, 0.11 + Math.sin(i) * 0.01, Math.sin(a) * r, group);
+                    Math.cos(a) * r, 0.135 + Math.sin(i) * 0.01, Math.sin(a) * r, group);
             }
         }
 

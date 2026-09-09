@@ -775,6 +775,9 @@
             if (!entry) return false;
             if (!entry.name || entry.name.trim() === '') return false;
             if (!isShopSellable(entry)) return false;
+            // Keepsakes are not traded here. A collectible changes hands with a
+            // person, never through a marketplace listing.
+            if (window.ItemCollectibles && window.ItemCollectibles.isFixed(entry)) return false;
             // A world without magic has no spellbooks or charms on the shelf,
             // and a world where magic won never invented the technology
             // (window.MagicNature is the one answer for both).

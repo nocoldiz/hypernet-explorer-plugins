@@ -63,5 +63,8 @@
   "wildAnimal": "Selvatico",
   "actionConvince": "Convinci a unirsi",
   "actionJoinPet": "Unisciti come animale",
-  "actionJoinPartyAnimal": "Unisciti al gruppo"
+  "actionJoinPartyAnimal": "Unisciti al gruppo",
+  "toast": {
+    "grownUp": "Il {animal} è cresciuto."
+  }
 }

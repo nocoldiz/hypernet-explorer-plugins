@@ -62,5 +62,8 @@
     "honeyProduced": "Honey Produced",
     "enemiesRepelled": "Enemies Repelled",
     "swarms": "Swarms"
+  },
+  "toast": {
+    "swarmed": "The hive swarmed: {bees} bees left with the old queen."
   }
 }

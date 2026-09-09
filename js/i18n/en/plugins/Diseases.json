@@ -1347,6 +1347,7 @@
     "dosed": "{actor} took {item} for {disease}",
     "dosedManage": "{actor} took {item} to hold {disease} in check",
     "needsMedicine": "{actor} needs {item} to treat {disease}",
+    "needsMedicinePriced": "{actor} needs {item} ({price}) to treat {disease}",
     "courseLost": "{actor} missed too many doses: the course against {disease} starts over",
     "progressed": "{actor}'s {from} has become {to}"
   },

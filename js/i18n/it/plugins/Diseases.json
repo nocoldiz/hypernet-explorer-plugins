@@ -1347,6 +1347,7 @@
     "dosed": "{actor} ha preso {item} per {disease}",
     "dosedManage": "{actor} ha preso {item} per tenere a bada {disease}",
     "needsMedicine": "A {actor} serve {item} per curare {disease}",
+    "needsMedicinePriced": "A {actor} serve {item} ({price}) per curare {disease}",
     "courseLost": "{actor} ha saltato troppe dosi: il ciclo contro {disease} riparte da capo",
     "progressed": "{from} di {actor} è diventata {to}"
   },

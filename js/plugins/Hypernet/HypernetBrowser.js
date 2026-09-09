@@ -2834,10 +2834,7 @@
             name: t('appName'),
             icon: APP_ICON,
             launchFn: function () { window.HypernetBrowserApp.launch(); },
-            desktopShortcut: true,
-            // The browser is the machine's headline app: it gets the reserved
-            // right-hand column of the desktop, on its own.
-            desktopAnchor: 'right'
+            desktopShortcut: true
         });
     }
 

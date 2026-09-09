@@ -260,6 +260,19 @@
           ${passiveDesc ? `<p class="cc-class-passive-desc">${passiveDesc}</p>` : ''}
         </div>
       ` : "";
+      // The other half of what a class IS: the one act it can pull off the
+      // floor, once a day (window.LimitBreak, BattleSystemActiveSkills). The
+      // ability says what the class always does; this says what it does when
+      // it has nothing left.
+      const limit = window.LimitBreak && window.LimitBreak.cardForClass
+        ? window.LimitBreak.cardForClass(c.id) : null;
+      const limitHtml = limit && limit.name ? `
+        <div class="cc-class-passive">
+          <div class="cc-class-passive-name">${this._ccIconHtml(76, 18)} <span>${limit.name}</span>
+            <span class="cc-class-passive-tag">${T('CharCreate.limitBreak')}</span></div>
+          ${limit.desc ? `<p class="cc-class-passive-desc">${limit.desc}</p>` : ''}
+        </div>
+      ` : "";
 
       // Weapon proficiencies read as a list of arms, one per line with its own
       // icon, exactly like the skills below them: a row of word chips made the
@@ -329,7 +342,7 @@
           </div>
 
           <div class="cc-class-detail-body">
-            ${card(ccT('CharCreate.classProfile', 'Class Skills'), metaRows + passiveHtml)}
+            ${card(ccT('CharCreate.classAbilities', 'Class Abilities'), metaRows + passiveHtml + limitHtml)}
             ${this._ccLoadoutSectionHtml(
               T('CharCreate.startingWeaponProficiencies'),
               weaponRows.join(""),

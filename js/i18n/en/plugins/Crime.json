@@ -9,7 +9,8 @@
     "availableCrimes": "Available Crimes by Category",
     "errorUnknown": "Error: Unknown crime type:",
     "total": "Total",
-    "selfPardon": "You self pardon this crime"
+    "selfPardon": "You self pardon this crime",
+    "lawfulPardon": "{name} committed {crime} in the name of the law."
   },
   "nobodyLeftToJudgeYou": "Nobody left to judge you"
 }

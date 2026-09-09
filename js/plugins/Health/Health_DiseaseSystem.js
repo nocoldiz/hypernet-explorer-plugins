@@ -380,6 +380,7 @@
     IGNITE_MEDICAL: 1 / 90,      // per-day chance a new medical outbreak starts
     IGNITE_HYSTERIA: 1 / 110,    // per-day chance a new panic starts
     IGNITE_LOAD: 0.45,           // how much each running outbreak suppresses new ones
+    IGNITE_WEEKLY: 0.22,         // the continent's own roll, once every seven days
     SEED_CASES: 12,              // index cluster a fresh site starts with
     // An outbreak is not just the disease: it is a strain that travels, in a
     // town that lets it (bad water, a crowded ward, a hot rumour). The rolled
@@ -902,10 +903,130 @@
     }
   }
 
+  // ── The daily bulletin ────────────────────────────────────────────────────
+  // An outbreak is not one headline: it is a story the paper carries every day
+  // until it is over. One line a day per running outbreak, with the day's dead
+  // and the towns it has reached, and a different register entirely when the
+  // party is the one who started it: an epidemic somebody released on purpose
+  // is reported as bioterrorism, and the wire says so until it burns out.
+  const BULLETIN = {
+    MIN_INFECTED: 20,     // below this nobody has noticed yet
+    BACKFILL_DAYS: 2,     // a long sleep prints the last days, not the last year
+  };
+
+  function _bulletinNews(epidemic, day) {
+    const mgr = window.$newsManager;
+    if (!mgr || typeof mgr.publishStory !== 'function') return;
+    if (epidemic.covert && !(epidemic.revealDay != null && day >= epidemic.revealDay)) return;
+
+    let infected = 0, dead = 0, towns = 0;
+    for (const site of Object.values(epidemic.sites)) {
+      infected += site.infected;
+      dead += site.dead;
+      if (site.infected >= 1) towns++;
+    }
+    if (infected < BULLETIN.MIN_INFECTED) return;
+    if (epidemic.lastBulletinDay === day) return;
+    epidemic.lastBulletinDay = day;
+
+    const label = epidemic.diseaseName || (DB.byId[epidemic.diseaseId] || {}).name || _textOf(epidemic.name);
+    const worst = Object.entries(epidemic.sites)
+      .sort((a, b) => b[1].infected - a[1].infected)[0];
+    const place = worst ? _placeLabel(worst[0]) : _placeLabel(epidemic.origin);
+    // Released on purpose: by the party, or from a party member carrying it.
+    const terror = !!(epidemic.playerStarted || epidemic.fromParty);
+    const params = {
+      disease: label, place: place, towns: towns,
+      infected: Math.round(infected), dead: Math.round(dead),
+    };
+    try {
+      mgr.publishStory({
+        text: T(terror ? 'Epidemics.news.terrorDaily' : 'Epidemics.news.daily', params),
+        fullText: T(terror ? 'Epidemics.news.terrorBody' : 'Epidemics.news.dailyBody', params),
+        location: place,
+        category: 'negative',
+        type: terror ? 'bioterror' : 'epidemic',
+        timestamp: _dateOfDay(day),
+        priceEffect: terror ? 0.88 : 0.94,
+        occupancyEffect: terror ? 0.7 : 0.85,
+        soul: terror ? -2 : -1,
+        duration: 24,
+        announce: false,
+      });
+    } catch (e) { /* the ticker is optional */ }
+  }
+
+  // The last word: the day an outbreak closes is reported too.
+  function _bulletinOver(epidemic, day) {
+    const mgr = window.$newsManager;
+    if (!mgr || typeof mgr.publishStory !== 'function') return;
+    if (epidemic.covert) return;
+    if (epidemic.totals.cases < BULLETIN.MIN_INFECTED) return;
+    const label = epidemic.diseaseName || (DB.byId[epidemic.diseaseId] || {}).name || _textOf(epidemic.name);
+    try {
+      mgr.publishStory({
+        text: T('Epidemics.news.over', {
+          disease: label, place: _placeLabel(epidemic.origin),
+          cases: Math.round(epidemic.totals.cases), dead: Math.round(epidemic.totals.dead),
+        }),
+        location: _placeLabel(epidemic.origin),
+        category: 'positive', type: 'epidemic',
+        timestamp: _dateOfDay(day),
+        priceEffect: 1.02, occupancyEffect: 1.05, duration: 48, announce: false,
+      });
+    } catch (e) { /* the ticker is optional */ }
+  }
+
+  // ── The weekly roll ───────────────────────────────────────────────────────
+  // The per-day ignition is a slow background hiss. On top of it the continent
+  // gets one roll a week for an outbreak of its own, so a world left alone
+  // still has an epidemic season rather than a flat year.
+  function _maybeWeeklyIgnite(state, day) {
+    if (day % 7 !== 0) return;
+    if (state.active.length >= EPI.MAX_ACTIVE) return;
+    const rng = _rng(`epidemic:week:${day}`);
+    const load = 1 / (1 + state.active.length * EPI.IGNITE_LOAD);
+    if (rng.next() >= EPI.IGNITE_WEEKLY * load) return;
+    const kind = rng.next() < 0.75 ? 'medical' : 'hysteria';
+    const disease = _pickWeighted(rng, _epidemicPool(kind));
+    const towns = Places.list.filter(p => p.isDestination);
+    const pool = towns.length ? towns : Places.list;
+    const place = pool[Math.floor(rng.next() * pool.length)];
+    if (disease && place) _startEpidemic(state, disease, place, day);
+  }
+
   // The settlement pulse already drives mood, hiring, shop traffic, need drain
   // and NPC gossip off episodes.epidemic. Publishing into it means the whole
   // world web feels a Eurodemics outbreak without any of it knowing about us.
+  // The outbreak ledger lives on the savegame, but "how many epidemics burn in
+  // this world" is a question the save list and the world dossier ask about
+  // worlds that are not loaded. A summary is mirrored into the world folder
+  // every time the ledger moves, so those screens can answer it from disk.
+  function _syncWorldSummary(state, day) {
+    const WM = window.WorldManager;
+    if (!WM || !WM.activeWorldName || !state) return;
+    let infected = 0, dead = 0;
+    const towns = new Set();
+    const visible = state.active.filter(e => !e.covert || (e.revealDay != null && day >= e.revealDay));
+    for (const e of visible) {
+      for (const [key, site] of Object.entries(e.sites)) {
+        infected += site.infected;
+        if (site.infected >= 1) towns.add(key);
+      }
+      dead += e.totals.dead;
+    }
+    WM.setField('state', 'epidemics', {
+      active: visible.length,
+      infected: Math.round(infected),
+      dead: Math.round(dead),
+      towns: towns.size,
+      past: state.past.length,
+      day,
+    });
+  }
+
   function _syncWorldWeb(state, day) {
+    _syncWorldSummary(state, day);
     const web = window.$gameSystem && $gameSystem._npcWorldWeb;
     if (!web || !web.settlements) return;
     const minute = day * MINUTES_PER_DAY;
@@ -1608,6 +1729,19 @@
     // The dose the party would take this morning: a cure before a suppressant,
     // the shortest course before a longer one.
     bestHeldFor(diseaseId) { return this.heldFor(diseaseId)[0] || null; },
+    // The remedy to send somebody to the shop for: the cheapest thing on the
+    // shelf that actually clears the illness, and only if nothing cures it the
+    // cheapest thing that holds it down. Price beats course length here, which
+    // is the opposite of bestHeldFor: what is already in the pack costs
+    // nothing, what is not has to be bought.
+    cheapestFor(diseaseId) {
+      const priced = this.forDisease(diseaseId).map(r => {
+        const item = window.$dataItems && $dataItems[r.itemId];
+        return Object.assign({ price: item ? (item.price || 0) : Infinity }, r);
+      });
+      const pick = bag => bag.sort((a, b) => (a.price - b.price) || (a.days - b.days))[0] || null;
+      return pick(priced.filter(r => r.kind === 'cure')) || pick(priced);
+    },
     className(cls) {
       const key = 'Diseases.drug.' + String(cls || '');
       const label = T(key);
@@ -1627,9 +1761,16 @@
   const _phasesOf = d => (d && d.phases) || { incubation: 0, window: 0, peakStart: 0, peakEnd: 9999, latent: 1, peak: 1 };
   const _treatOf = d => (d && d.treatment) || {};
 
+  // Is somebody in the party trained to recognise an illness on sight?
+  function _nurseOnHand() {
+    const P = window.BattleSystemPassiveSkills;
+    return !!(P && P.diagnosesImmediately && P.diagnosesImmediately());
+  }
+
   // Where a carried illness has got to, as one object every reader shares.
   //   days        days since it was caught
-  //   known       the party can name it (the window period has passed)
+  //   known       the party can name it (the window period has passed, or a
+  //               nurse is travelling and named it the day it was caught)
   //   symptomatic past the incubation, so it is doing something
   //   stage       0..1, how far along it is. Params and need drain are
   //               multiplied by 1 + stage, so an untreated illness genuinely
@@ -1657,8 +1798,10 @@
       disease: d,
       days,
       // Time tells the party what they are carrying eventually; a doctor tells
-      // them now. Either way, once an illness has a name it keeps it.
-      known: !!entry.diagnosed || days >= (ph.window || 0),
+      // them now, and so does a nurse travelling with them (the Bedside Manner
+      // passive, BattleSystemPassiveSkills.diagnosesImmediately). Either way,
+      // once an illness has a name it keeps it.
+      known: !!entry.diagnosed || days >= (ph.window || 0) || _nurseOnHand(),
       symptomatic: days >= (ph.incubation || 0),
       infectivity: days < (ph.incubation || 0) ? 0
         : (days >= (ph.peakStart || 0) && days <= (ph.peakEnd != null ? ph.peakEnd : 9999)
@@ -1702,14 +1845,14 @@
   // Every medicine the party holds, taken this morning by whoever needs it,
   // even when nobody is ill enough to have asked. Returns what happened so the
   // caller can put it on screen.
-  function _doseActor(actor, entry, day, report) {
+  function _doseActor(actor, entry, day, report, forced) {
     const st = courseState(actor, entry);
     if (!st) return;
     const name = st.disease.name;
     // A disease still inside its window period has not been diagnosed: nobody
     // knows to treat it, which is the whole danger of a long window.
     if (!st.known) return;
-    const pick = window.Medicines.bestHeldFor(entry.id);
+    const pick = forced || window.Medicines.bestHeldFor(entry.id);
     if (!pick) {
       entry.missed = (entry.missed || 0) + 1;
       if (entry.missed > st.missTolerance && entry.dosed) {
@@ -1717,7 +1860,8 @@
         entry.need = null;
         report.reset.push({ actor, disease: st.disease });
       }
-      if (st.remedies.length) report.wanted.push({ actor, disease: st.disease, remedy: st.remedies[0] });
+      const shop = window.Medicines.cheapestFor(entry.id);
+      if (shop) report.wanted.push({ actor, disease: st.disease, remedy: shop });
       return;
     }
     if (!_swallow(actor, pick.itemId)) return;
@@ -1824,10 +1968,14 @@
     }
     for (const r of report.wanted) {
       const item = $dataItems[r.remedy.itemId];
+      // The party is told what to buy and what it costs, so the notice is
+      // something they can act on at the next counter.
+      const price = item && item.price > 0 && window.MoneyFormatter
+        ? window.MoneyFormatter.format(item.price) : null;
       once('want:' + r.actor.actorId() + r.disease.name, () => window.ParchmentToast.show(
-        T('Diseases.toast.needsMedicine', {
+        T(price ? 'Diseases.toast.needsMedicinePriced' : 'Diseases.toast.needsMedicine', {
           actor: r.actor.name(), item: item ? item.name : window.Medicines.className(r.remedy.cls),
-          disease: r.disease.name,
+          disease: r.disease.name, price,
         }),
         { severity: 'warning', duration: 260, icon: item ? item.iconIndex : undefined,
           key: 'disease-want:' + r.actor.actorId() + r.disease.name })); // i18n-ignore: toast dedupe key
@@ -1884,6 +2032,42 @@
       if (actor.refresh) actor.refresh();
       _announceHealthDay(report);
       return report;
+    },
+
+    // Which of this character's known illnesses one particular medicine
+    // answers. Empty when the bottle has nothing to do with what they carry.
+    treatableWith(actor, itemOrId) {
+      if (!ensureDb() || !actor) return [];
+      const med = window.Medicines.info(itemOrId);
+      if (!med) return [];
+      const out = [];
+      for (const entry of (actor._diseases || [])) {
+        const st = courseState(actor, entry);
+        if (!st || !st.known) continue;
+        if (med.cures[entry.id] != null) out.push({ entry, kind: 'cure', days: med.cures[entry.id] });
+        else if (med.treats.indexOf(entry.id) >= 0) out.push({ entry, kind: 'manage', days: 0 });
+      }
+      return out;
+    },
+
+    // Take one dose of a named medicine by hand, off the morning round. The
+    // dose itself consumes the item, so the caller must not consume it again.
+    // A course counts one dose a day: a second bottle the same day is refused
+    // rather than swallowed for nothing.
+    doseWithItem(actor, itemOrId) {
+      const id = itemOrId && itemOrId.id != null ? itemOrId.id : itemOrId;
+      const matches = this.treatableWith(actor, id);
+      if (!matches.length) return null;
+      const day = _dayIndex(nowMin());
+      const target = matches.find(m => m.entry.lastDoseDay !== day);
+      if (!target) return { used: false, already: true };
+      const report = { day, dosed: [], wanted: [], cured: [], reset: [], progressed: [], states: [] };
+      _doseActor(actor, target.entry, day, report,
+        { itemId: id, cls: (window.Medicines.info(id) || {}).cls, kind: target.kind, days: target.days });
+      if (!report.dosed.length) return { used: false };
+      if (actor.refresh) actor.refresh();
+      _announceHealthDay(report);
+      return { used: true, report };
     },
 
     // How much faster this character's needs drain for being ill. Read by
@@ -2239,14 +2423,21 @@
             _announce(epidemic, placeObj, d);
           }
           _stepEpidemic(epidemic, d);
+          // A skip of months resolves in one go, but only the last days of it
+          // are printed: the paper reports the outbreak, not the archive.
+          if (d >= day - BULLETIN.BACKFILL_DAYS) _bulletinNews(epidemic, d);
         }
         const finished = state.active.filter(e => e.status !== 'active');
         if (finished.length) {
           state.active = state.active.filter(e => e.status === 'active');
-          for (const e of finished) state.past.unshift(_archive(e));
+          for (const e of finished) {
+            if (d >= day - BULLETIN.BACKFILL_DAYS) _bulletinOver(e, d);
+            state.past.unshift(_archive(e));
+          }
           if (state.past.length > 40) state.past.length = 40;
         }
         _maybeIgnite(state, d);
+        _maybeWeeklyIgnite(state, d);
       }
       state.lastDay = day;
       _syncWorldWeb(state, day);
@@ -2356,6 +2547,22 @@
         totalDead: Math.round(dead + pastDead), totalCases: Math.round(cases + pastCases),
         day: s.lastDay, date: s.lastDay != null ? _dateStr(s.lastDay) : null,
       };
+    },
+
+    // How many outbreaks burn in a world, asked of a world that may not be the
+    // loaded one. The active world answers live, any other from the summary
+    // mirrored into its folder (see _syncWorldSummary).
+    worldSummary(worldName) {
+      const WM = window.WorldManager;
+      const active = WM && WM.activeWorldName;
+      if (!worldName || worldName === active) {
+        if (epiState()) return this.stats();
+      }
+      const target = worldName || active;
+      const file = (WM && target && typeof WM.readWorldFile === 'function')
+        ? WM.readWorldFile(target, 'state') : null;
+      const stored = file && file.epidemics;
+      return stored || null;
     },
 
     // Worst-hit towns right now, for the situation table.

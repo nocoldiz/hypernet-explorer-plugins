@@ -1,4 +1,11 @@
 {
+  "toast": {
+    "fetusStage": "{actor}: {stage}, week {week}",
+    "birth": "{actor} has given birth",
+    "eggProgress": "{actor}'s clutch is {percent}% formed",
+    "seedProgress": "{actor}'s seed is {percent}% grown",
+    "mitosisProgress": "{actor}'s division is {percent}% complete"
+  },
  "mitosisCompleteAPerfectCloneHasBeenCreated": "Mitosis complete! A perfect clone has been created.",
  "noReproductiveSystemPresent": "No reproductive system present",
  "type": "Type:",

@@ -202,6 +202,7 @@
             recruitedLook: actor._recruitedLook || null,
             creatureSwitch: creatureSwitchValue(actor),
             archetypeName: actor._currentArchetype || null,
+            archetypePair: Array.isArray(actor._creatureArchetypes) ? actor._creatureArchetypes.slice() : null,
             bodyParts: actor._bodyParts ? JSON.parse(JSON.stringify(actor._bodyParts)) : null,
             statModifiers: actor._statModifiers ? Object.assign({}, actor._statModifiers) : {},
             severedParts: actor._severedParts ? Object.assign({}, actor._severedParts) : {},
@@ -254,6 +255,7 @@
         actor._recruitedLook = snap.recruitedLook;
         setCreatureSwitch(actor, snap.creatureSwitch);
         actor._currentArchetype = snap.archetypeName;
+        actor._creatureArchetypes = snap.archetypePair;
         if (snap.bodyParts) actor._bodyParts = JSON.parse(JSON.stringify(snap.bodyParts));
         actor._statModifiers = Object.assign({}, snap.statModifiers);
         actor._severedParts = Object.assign({}, snap.severedParts);
@@ -564,6 +566,7 @@
         actor._statModifiers = {};
         actor._bodyParts = {};
         actor._currentArchetype = key1 + ' / ' + key2;
+        actor._creatureArchetypes = [key1, key2];
 
         // Build body parts with hpPercent scaling against actor's current mhp.
         const getArchText = (typeof window.getArchetypeText === 'function')

@@ -282,6 +282,81 @@
       "cannotOpenBody": "Archways non e' in grado di aprire il file:\n\n  File: {file}\n\nPer aprire il file, Archways deve sapere quale programma lo ha creato. Selezionare il programma dall'elenco.",
       "alwaysUse": "Usa sempre il programma selezionato per aprire questo tipo di file"
     },
+    "filebox": {
+      "openTitle": "Apri",
+      "saveTitle": "Salva con nome",
+      "lookIn": "Cerca in:",
+      "saveIn": "Salva in:",
+      "fileName": "Nome file:",
+      "filesOfType": "Tipo file:",
+      "saveAsType": "Salva come:",
+      "open": "Apri",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "upOneLevel": "Livello superiore",
+      "newFolder": "Crea nuova cartella",
+      "newFolderName": "Nuova cartella",
+      "newFolderPrompt": "Assegna un nome alla nuova cartella.",
+      "places": {
+        "desktop": "Desktop",
+        "myDocuments": "Documenti",
+        "myComputer": "Risorse del computer",
+        "recent": "Documenti recenti"
+      },
+      "allFiles": "Tutti i file (*.*)",
+      "textFiles": "Documenti di testo (*.txt)",
+      "docFiles": "Documenti Wyrd (*.md)",
+      "sheetFiles": "Fogli Hexcel (*.csv)",
+      "imageFiles": "Immagini (*.png)",
+      "emptyFolder": "Questa cartella e vuota.",
+      "noName": "E necessario digitare un nome file.",
+      "notFound": "{file}\nFile non trovato. Controllare il nome del file e riprovare.",
+      "overwriteTitle": "Salva con nome",
+      "overwriteBody": "{file} esiste gia.\nSostituirlo?"
+    },
+    "taskbar": {
+      "appName": "Barra delle applicazioni e menu Start",
+      "showDesktop": "Mostra desktop",
+      "quickLaunch": "Avvio veloce",
+      "cascade": "Sovrapponi finestre",
+      "tileH": "Affianca finestre orizzontalmente",
+      "tileV": "Affianca finestre verticalmente",
+      "minimizeAll": "Mostra il desktop",
+      "lock": "Blocca la barra delle applicazioni",
+      "autoHide": "Nascondi automaticamente la barra",
+      "properties": "Proprieta",
+      "taskManager": "Task Manager",
+      "restore": "Ripristina",
+      "move": "Sposta",
+      "size": "Ridimensiona",
+      "minimize": "Riduci a icona",
+      "maximize": "Ingrandisci",
+      "close": "Chiudi",
+      "closeGroup": "Chiudi gruppo",
+      "groupOf": "{name} ({count})",
+      "showHidden": "Mostra icone nascoste",
+      "hideInactive": "Nascondi icone inattive",
+      "propsTitle": "Proprieta della barra delle applicazioni e del menu Start",
+      "tab": {
+        "taskbar": "Barra delle applicazioni",
+        "startMenu": "Menu Start"
+      },
+      "propsAppearance": "Aspetto della barra",
+      "optLock": "Blocca la barra delle applicazioni",
+      "optAutoHide": "Nascondi automaticamente la barra",
+      "optGroup": "Raggruppa pulsanti simili",
+      "optQuick": "Mostra Avvio veloce",
+      "propsNotify": "Area di notifica",
+      "optClock": "Mostra l'orologio",
+      "optHide": "Nascondi icone inattive",
+      "propsStart": "Menu Start",
+      "optCategories": "Ordina i programmi per categoria",
+      "optRecent": "Elenca i documenti aperti di recente",
+      "recentDocs": "Documenti recenti",
+      "recentEmpty": "(Vuoto)",
+      "clearRecent": "Cancella elenco",
+      "allPrograms": "Tutti i programmi"
+    },
     "balloon": {
       "riskTitle": "Il computer potrebbe essere a rischio",
       "riskText": "Potrebbe non essere installato un antivirus. Fare clic sul fumetto per risolvere il problema.",
@@ -1217,6 +1292,155 @@
       "gateway": "Gateway predefinito:",
       "repair": "Ripristina",
       "repairBody": "Archways ha rinnovato il lease, svuotato una cache, ri-registrato un nome e segnalato successo. La connessione e' come prima."
+    },
+    "minesweeper": {
+      "appName": "Cercamine",
+      "menuGame": "Partita",
+      "new": "Nuova",
+      "beginner": "Principiante",
+      "intermediate": "Intermedio",
+      "expert": "Esperto",
+      "marks": "Contrassegni (?)",
+      "best": "Tempi migliori",
+      "bestBody": "Principiante: {beginner}\nIntermedio: {intermediate}\nEsperto: {expert}",
+      "noTime": "nessuno",
+      "seconds": "{n} secondi",
+      "won": "Campo bonificato in {n} secondi.",
+      "wonTitle": "Completato",
+      "lost": "Hai colpito una mina.",
+      "lostTitle": "Partita persa",
+      "newBest": "Hai il tempo migliore per {level}."
+    },
+    "solitaire": {
+      "appName": "Solitario",
+      "menuGame": "Partita",
+      "deal": "Distribuisci",
+      "undo": "Annulla",
+      "draw1": "Pesca una carta",
+      "draw3": "Pesca tre carte",
+      "score": "Punteggio: {n}",
+      "time": "Tempo: {n}",
+      "moves": "Mosse: {n}",
+      "won": "Tutti e quattro i mazzi sono completi.",
+      "wonTitle": "Solitario",
+      "noMove": "La carta non puo andare li."
+    },
+    "folderopt": {
+      "appName": "Opzioni cartella",
+      "tab": {
+        "general": "Generale",
+        "viewTab": "Visualizzazione"
+      },
+      "tasks": "Operazioni",
+      "showTasks": "Mostra le operazioni comuni nelle cartelle",
+      "classicFolders": "Usa le cartelle classiche",
+      "clickItems": "Fare clic sugli elementi come segue",
+      "doubleClick": "Doppio clic per aprire un elemento",
+      "singleClick": "Clic singolo per aprire un elemento",
+      "advanced": "Impostazioni avanzate",
+      "showHidden": "Mostra file e cartelle nascosti",
+      "hideExtensions": "Nascondi le estensioni per i tipi di file conosciuti",
+      "fullPath": "Visualizza il percorso completo nella barra degli indirizzi",
+      "restore": "Ripristina predefinite"
+    },
+    "mouse": {
+      "appName": "Mouse",
+      "tab": {
+        "buttons": "Pulsanti",
+        "pointers": "Opzioni puntatore"
+      },
+      "buttonConfig": "Configurazione pulsanti",
+      "swap": "Scambia i pulsanti primario e secondario",
+      "doubleSpeed": "Velocita del doppio clic",
+      "slow": "Lenta",
+      "fast": "Veloce",
+      "motion": "Movimento",
+      "pointerSpeed": "Selezionare la velocita del puntatore",
+      "trails": "Visualizza scia del puntatore",
+      "snapTo": "Sposta sul pulsante predefinito nelle finestre di dialogo"
+    },
+    "keyboard": {
+      "appName": "Tastiera",
+      "tab": {
+        "speed": "Velocita"
+      },
+      "repeat": "Ripetizione caratteri",
+      "repeatDelay": "Ritardo di ripetizione",
+      "repeatRate": "Velocita di ripetizione",
+      "long": "Lungo",
+      "short": "Breve",
+      "cursorBlink": "Velocita intermittenza cursore",
+      "none": "Nessuna",
+      "test": "Fare clic qui e tenere premuto un tasto per provare",
+      "slow": "Lenta",
+      "fast": "Veloce"
+    },
+    "useracc": {
+      "appName": "Account utente",
+      "pick": "Scegliere un account da modificare",
+      "administrator": "Amministratore del computer",
+      "limited": "Account limitato",
+      "current": "Connesso",
+      "noParty": "Questo computer ha un solo account.",
+      "changeType": "Cambia il tipo di account",
+      "changed": "{name} ora e un {type}."
+    },
+    "printers": {
+      "appName": "Stampanti e fax",
+      "none": "Nessuna stampante installata in questo computer.",
+      "add": "Aggiungi stampante",
+      "added": "Stampante a impatto aeterico",
+      "status": "Pronta",
+      "installed": "{name} e installata e pronta."
+    },
+    "netconn": {
+      "appName": "Connessioni di rete",
+      "dialup": "Accesso remoto",
+      "lan": "LAN o Internet ad alta velocita",
+      "connected": "Connesso",
+      "disconnected": "Non connesso",
+      "speedOf": "{speed}",
+      "detailsTitle": "Stato di {name}",
+      "detailsBody": "Stato: {status}\nDurata: {duration}\nVelocita: {speed}\n\nPacchetti inviati: {sent}\nPacchetti ricevuti: {received}"
+    },
+    "access": {
+      "appName": "Opzioni accessibilita",
+      "tab": {
+        "keyboardTab": "Tastiera",
+        "displayTab": "Schermo"
+      },
+      "stickyKeys": "Usa Tasti permanenti",
+      "stickyBody": "Premere un tasto alla volta per una combinazione.",
+      "filterKeys": "Usa Filtro tasti",
+      "filterBody": "Ignora le pressioni brevi o ripetute.",
+      "toggleKeys": "Usa Segnali acustici",
+      "toggleBody": "Emette un suono alla pressione di un tasto di blocco.",
+      "highContrast": "Usa Contrasto elevato",
+      "highContrastBody": "Disegna il desktop nella combinazione a contrasto massimo.",
+      "cursorWidth": "Spessore del cursore"
+    },
+    "fonts": {
+      "appName": "Tipi di carattere",
+      "installed": "{n} tipi di carattere installati",
+      "preview": "Ma la volpe col suo balzo ha raggiunto il quieto Fido.",
+      "sizeLabel": "Dimensione"
+    },
+    "joy": {
+      "appName": "Periferiche di gioco",
+      "installed": "Periferiche di gioco installate",
+      "controller": "Periferica",
+      "status": "Stato",
+      "ok": "OK",
+      "notConnected": "Non connessa",
+      "none": "Nessuna periferica di gioco collegata.",
+      "attached": "{name} e collegata."
+    },
+    "allprograms": {
+      "appName": "Tutti i programmi",
+      "hint": "Ogni programma che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
+      "empty": "Ogni programma e' gia' sul desktop.",
+      "open": "Apri",
+      "addToDesktop": "Aggiungi al desktop"
     }
   }
 }

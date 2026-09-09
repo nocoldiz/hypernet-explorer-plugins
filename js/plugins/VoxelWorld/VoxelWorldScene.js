@@ -3332,6 +3332,12 @@
         }
 
         _handleInput() {
+            // What the pad is doing right now: on foot the buttons are a walk,
+            // behind the wheel they are a drive. The controller layer keeps the
+            // table, so the tip strip and every reader agree (window.Controller).
+            if (window.Controller) {
+                window.Controller.setMode(this._viewMode === 'foot' ? 'walk' : 'drive');
+            }
             if (this._titleMode) return;   // the title screen owns the controls
             if (this._locked) return;      // a fight has the party
             if (typeof Input === 'undefined') return;

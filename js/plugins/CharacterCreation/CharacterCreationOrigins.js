@@ -52,6 +52,8 @@
   const STARTER_HEALING_POTION = [648, 6]; // Health Potion
   const STARTER_MANA_TONIC = [21, 3];      // Mana Tonic
   const STARTER_FOOD_QTY = 6;
+  // The story mode starts on four different cheap foods instead of one.
+  const STORY_STARTER_FOOD_TYPES = 4;
   // Ceiling on the rolled food, in gold (100 gold = €1): a starting meal, not a
   // delicacy. Keeps the roll among the mundane end of the Food category.
   const STARTER_FOOD_PRICE_CAP = 300;
@@ -97,10 +99,33 @@
    * @returns {object|null} An $dataItems entry, or null if even the fallback is missing
    */
   function rollStarterFood() {
-    const pool = starterFoodPool();
-    if (pool.length > 0) return pool[Math.floor(Math.random() * pool.length)];
-    const fallback = STARTER_FOOD_FALLBACK.map((id) => $dataItems[id]).filter(Boolean);
-    return fallback.length > 0 ? fallback[Math.floor(Math.random() * fallback.length)] : null;
+    return rollStarterFoods(1)[0] || null;
+  }
+
+  /**
+   * Roll up to `count` DIFFERENT foods out of the same pool.
+   * @param {number} count how many distinct types to draw
+   * @returns {array} $dataItems entries (fewer than `count` if the pool is small)
+   */
+  function rollStarterFoods(count) {
+    let pool = starterFoodPool();
+    if (pool.length === 0) {
+      pool = STARTER_FOOD_FALLBACK.map((id) => $dataItems[id]).filter(Boolean);
+    }
+    const picks = [];
+    const bag = pool.slice();
+    while (picks.length < count && bag.length > 0) {
+      picks.push(bag.splice(Math.floor(Math.random() * bag.length), 1)[0]);
+    }
+    return picks;
+  }
+
+  // The story mode opens on a fuller pantry: four different cheap meals rather
+  // than one packed lunch, so the tutorial run has something to eat while it
+  // learns what hunger is.
+  function isStoryModeStart() {
+    if (typeof Scene_CharacterCreation !== "undefined" && Scene_CharacterCreation._storyMode) return true;
+    return !!($gameSwitches && $gameSwitches.value(100));
   }
 
   /**
@@ -120,9 +145,9 @@
       bind.push(item);
     });
 
-    const food = rollStarterFood();
-    if (food) $gameParty.gainItem(food, STARTER_FOOD_QTY);
-    bind.push(food);
+    const foods = rollStarterFoods(isStoryModeStart() ? STORY_STARTER_FOOD_TYPES : 1);
+    foods.forEach((food) => $gameParty.gainItem(food, STARTER_FOOD_QTY));
+    bind.push(foods[0] || null);
 
     const hotbar = window.ItemHotbar;
     if (!hotbar) return;
@@ -460,6 +485,13 @@
     if (window.CrimeSystem && window.CrimeSystem.addCrime) {
       const crimeName = T('CharCreate.pastLife');
       window.CrimeSystem.addCrime(crimeName, CRIMINAL_START_BOUNTY_GOLD);
+      // The party arrives already wanted, so the story is old news: the paper
+      // ran it the day before, not the morning after.
+      if (window.CrimeSystem.filePastLifeWithPress) {
+        const led = window.CrimeSystem.pressLedger();
+        if (led) led.queue.length = 0;
+        window.CrimeSystem.filePastLifeWithPress(crimeName, CRIMINAL_START_BOUNTY_GOLD);
+      }
     } else {
       console.warn("CharacterCreation: CrimeSystem unavailable; criminal start bounty not applied.");
     }
@@ -2204,6 +2236,8 @@
 
   window.CCOrigins = {
     giveStartingSupplies,
+    rollStarterFoods,
+    starterFoodPool,
     CC_START_LOAD_TARGET,
     cullStartingOverload,
     CC_BASE_START_GOLD,

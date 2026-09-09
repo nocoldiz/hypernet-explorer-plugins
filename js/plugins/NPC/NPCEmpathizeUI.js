@@ -1742,6 +1742,8 @@
       rightHTML = this._buildLifeHistoryHTML(T, profile, npcName);
     } else if (this._activeTab === 'wiki') {
       rightHTML = this._buildWikiTabHTML(T);
+    } else if (this._activeTab === 'armies') {
+      rightHTML = this._buildArmiesTabHTML(T);
     } else {
       rightHTML = this._buildMoreHTML(T);
     }
@@ -1821,6 +1823,7 @@
       { id: 'web',         label: T.socialWeb },
       { id: 'lifeHistory', label: T.lifeHistory },
       { id: 'wiki',        label: T.wikiTab },
+      { id: 'armies',      label: T.armiesTab },
       { id: 'more',        label: T.more },
     ];
     // _tabOrder() is what the keyboard cycles through and it already drops the
@@ -5066,6 +5069,7 @@
     const tabs = view ? (ENTITY_TAB_SETS[view.type]?.(T) ?? [{ id: 'overview', label: T.overview }])
                       : [{ id: 'overview', label: T.overview }];
     tabs.push({ id: 'wiki', label: T.wikiTab });
+    tabs.push({ id: 'armies', label: T.armiesTab });
     this._entityTabs = tabs.map(t => t.id);
     if (!this._entityTabs.includes(this._activeTab)) this._activeTab = this._entityTabs[0];
 
@@ -5088,7 +5092,9 @@
         <div class="npc-entity-title">${_escapeHtml(String(ent.id))}</div>`;
       this._rightEl.innerHTML = this._activeTab === 'wiki'
         ? this._buildWikiTabHTML(T)
-        : `<p class="npc-empty">${_escapeHtml(T.noRecords)}</p>`;
+        : this._activeTab === 'armies'
+          ? this._buildArmiesTabHTML(T)
+          : `<p class="npc-empty">${_escapeHtml(T.noRecords)}</p>`;
       return;
     }
 
@@ -5098,6 +5104,8 @@
     const tab = this._activeTab;
     if (tab === 'wiki') {
       rightHTML = this._buildWikiTabHTML(T);
+    } else if (tab === 'armies') {
+      rightHTML = this._buildArmiesTabHTML(T);
     } else if (view.type === 'nation') {
       rightHTML = tab === 'govHistory' ? this._buildNationGovHistoryHTML(view, T)
         : tab === 'elections' ? this._buildElectionsHTML(view.power, T)
@@ -5681,6 +5689,9 @@
     // traits they carry and the trades they are credited with. Drawn by the
     // same builder a pre-made character's dossier uses, because for the leaders
     // who ARE pre-made characters this is literally that dossier.
+    // The columns this leader holds today, if any: a seated head marches their
+    // power's field army, a recorded leader out of office marches their own.
+    html += this._buildArmyHoldingHTML(view.kind === 'politician' && view.pol ? view.pol.name : (view.name || _viewName(view)), T);
     html += this._buildLeaderDossierHTML(view, T);
     // ...and the sheet and the life behind the dates, which is the whole of
     // what a procedural leader used to have on their page: nothing.
@@ -6035,6 +6046,118 @@
         ${subHTML ? `<span class="npc-wiki-entry-sub">${subHTML}</span>` : ''}
       </div>`;
   }
+
+
+  // ============================================================================
+  // THE ARMIES SHELF
+  // ============================================================================
+  // Who is under arms today, and under whom. The roster itself is
+  // window.ArmyCampaign (ArmyEventsManager): one column per seated head of a
+  // hyperpower, a private column for the recorded leaders who hold no seat,
+  // and the party's own army standing beside them. Every one of them answers
+  // the same four questions - formation, strength, upkeep and morale - so a
+  // state army and the party's dozen hirelings can be read off the same page.
+
+  function _armyApi() { return window.ArmyCampaign || null; }
+
+  function _armyText(key) {
+    const api = _armyApi();
+    if (api && typeof api.factionText === 'function') return api.factionText(key);
+    const s = String(key || '');
+    const i = s.lastIndexOf('.');
+    return i >= 0 ? s.slice(i + 1) : s;
+  }
+
+  // Cents a week, written the way every other price in these menus is written.
+  function _armyMoney(cents) {
+    return `€${((Number(cents) || 0) / 100).toFixed(2)}`;
+  }
+
+  // What the column is doing today: patrolling its own ground, garrisoned on a
+  // city, marching somewhere, reinforcing another column or in the field
+  // against one. The roster is the one that decides (ArmyEventsManager); this
+  // only puts the word to it.
+  function _armyStatusLabel(army, T) {
+    const key = 'armyStatus' + String(army.status || 'idle').replace(/^./, c => c.toUpperCase());
+    return T[key] || T.armyStatusIdle || String(army.status || '');
+  }
+
+  function _armyTitle(army, T) {
+    if (army.kind === 'party') return T.armyPartyColumn || 'Your army';
+    if (army.kind === 'power') return `${_worldName('power', army.powerName)} ${T.armyFieldArmy}`;
+    return T.armyPrivateColumn;
+  }
+
+  // The bar every army stat is drawn as: the same shape the needs bars use, so
+  // morale and coherence read as the gauges they are rather than as numbers.
+  function _armyBar(pct, cls) {
+    const v = Math.max(0, Math.min(100, Math.round(Number(pct) || 0)));
+    return `<span class="npc-army-bar"><span class="npc-army-bar-fill ${cls || ''}" style="width:${v}%"></span></span>`;
+  }
+
+  function _armyFormationHTML(army, T) {
+    const groups = army.formation || [];
+    if (!groups.length) return `<div class="npc-sub">${_escapeHtml(T.armyNoFormation)}</div>`;
+    return `<div class="npc-army-formation">${groups.map(g => `
+      <div class="npc-army-unit">
+        <span class="npc-army-unit-name">${_escapeHtml(_armyText(g.name))}</span>
+        <span class="npc-army-unit-drill">${_escapeHtml(_armyText(g.formation))}</span>
+        <span class="npc-army-unit-count">${g.count}</span>
+      </div>`).join('')}</div>`;
+  }
+
+  // One army, drawn whole: who leads it, what it is made of and what it costs.
+  function _armyCardHTML(army, T, opts) {
+    const leaderHTML = army.leaderName
+      ? (army.kind === 'party'
+        ? _escapeHtml(army.leaderName)
+        : _wikiLink('leader', army.leaderName))
+      : `<span class="npc-sub">${_escapeHtml(T.unknown || '?')}</span>`;
+    const head = (opts && opts.hideTitle) ? '' : `
+      <div class="npc-army-card-hdr">
+        <span class="npc-army-card-title">${_escapeHtml(_armyTitle(army, T))}</span>
+        <span class="npc-sub">${leaderHTML}</span>
+      </div>`;
+    return `
+      <div class="npc-army-card">
+        ${head}
+        <div class="npc-ident-row">${_iconSpan(220, 17)}<span class="npc-sub">${_escapeHtml(T.armyStatus)}:</span>&nbsp;${_escapeHtml(_armyStatusLabel(army, T))}</div>
+        <div class="npc-ident-row">${_iconSpan(322, 17)}<span class="npc-sub">${_escapeHtml(T.armyStrength)}:</span>&nbsp;<strong>${army.troopCount}</strong>&nbsp;<span class="npc-sub">${_escapeHtml(T.armySoldiers)}</span></div>
+        <div class="npc-ident-row">${_iconSpan(314, 17)}<span class="npc-sub">${_escapeHtml(T.armyUpkeep)}:</span>&nbsp;${_armyMoney(army.upkeep)}&nbsp;<span class="npc-sub">${_escapeHtml(T.armyPerWeek)}</span></div>
+        <div class="npc-ident-row">${_iconSpan(176, 17)}<span class="npc-sub">${_escapeHtml(T.armyMorale)}:</span>&nbsp;${_armyBar(army.morale, 'npc-army-bar-morale')}&nbsp;${Math.round(army.morale)}%</div>
+        <div class="npc-ident-row">${_iconSpan(187, 17)}<span class="npc-sub">${_escapeHtml(T.armyCoherence)}:</span>&nbsp;${_armyBar(army.coherence, 'npc-army-bar-coherence')}&nbsp;${Math.round(army.coherence)}%</div>
+        <div class="npc-sec-hdr npc-mt-1">${_escapeHtml(T.armyFormation)}</div>
+        ${_armyFormationHTML(army, T)}
+      </div>`;
+  }
+
+  // The block that hangs off a leader's own article: the columns THEY hold.
+  // Most of the political class holds none, and says so in one line rather
+  // than in an empty panel.
+  Scene_NPCEmpathize.prototype._buildArmyHoldingHTML = function (name, T) {
+    const api = _armyApi();
+    if (!api || typeof api.armiesOfLeader !== 'function') return '';
+    let held = [];
+    try { held = api.armiesOfLeader(name) || []; } catch (e) { return ''; }
+    if (!held.length) return '';
+    return `<hr class="npc-r-sep"><div class="npc-sec-hdr">${_escapeHtml(T.armiesTab)}</div>`
+      + held.map(a => _armyCardHTML(a, T)).join('');
+  };
+
+  // The tab itself: every column standing in the world today, the party's own
+  // among them, biggest first.
+  Scene_NPCEmpathize.prototype._buildArmiesTabHTML = function (T) {
+    const api = _armyApi();
+    let armies = [];
+    try { armies = (api && api.listArmies) ? api.listArmies() : []; } catch (e) { armies = []; }
+    const header = `
+      <div class="npc-wiki-hdr">
+        <div class="npc-sec-hdr">${_escapeHtml(T.armiesTab)} (${armies.length})</div>
+        <hr class="npc-r-sep">
+      </div>`;
+    if (!armies.length) return header + `<p class="npc-empty">${_escapeHtml(T.armiesNone)}</p>`;
+    return header + armies.map(a => _armyCardHTML(a, T)).join('');
+  };
 
   // ============================================================================
   // SCREEN 5 OF 5: THE WIKI INDEX

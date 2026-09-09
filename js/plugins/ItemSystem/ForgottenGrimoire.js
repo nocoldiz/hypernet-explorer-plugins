@@ -166,6 +166,99 @@
     }
 
     // ---------------------------------------------------------------------
+    // Module: GrimoireMemory
+    //
+    // A book shows the same pages every time it is opened. The five offers are
+    // rolled from a seed kept against the book itself, so closing it and
+    // opening it again reveals exactly the same spells. The seed is thrown
+    // away, and the book reseeded, only when the copy in the backpack changes:
+    // reading one out, discarding it, selling it or picking a fresh one up.
+    // That is detected by remembering how many copies were held when the seed
+    // was struck rather than by hooking every place an item can leave.
+    //
+    // Whatever a book last showed is kept in a small ledger, so the party can
+    // always be told which spells were on offer and which one was taken.
+    // ---------------------------------------------------------------------
+    const HISTORY_MAX = 20;
+
+    function mulberry32(a) {
+        return function () {
+            a |= 0; a = (a + 0x6D2B79F5) | 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    const GrimoireMemory = {
+        books() {
+            if (!$gameSystem._grimoireBooks) $gameSystem._grimoireBooks = {};
+            return $gameSystem._grimoireBooks;
+        },
+        history() {
+            if (!$gameSystem._grimoireHistory) $gameSystem._grimoireHistory = [];
+            return $gameSystem._grimoireHistory;
+        },
+        // A book is identified by the item it was read from when there is one,
+        // and otherwise by what it is a book of, so an event-driven lectern is
+        // still stable across openings.
+        key(mode, category, itemId) {
+            return itemId ? ("item:" + itemId) : (mode + ":" + (category || "Random"));
+        },
+        owned(itemId) {
+            if (!itemId || typeof $dataItems === "undefined") return -1;
+            const obj = $dataItems[itemId];
+            return obj ? $gameParty.numItems(obj) : -1;
+        },
+        // The seed this book is currently written with, struck fresh whenever
+        // the held copies no longer match the ones the seed was struck against.
+        seed(key, itemId) {
+            const books = this.books();
+            const owned = this.owned(itemId);
+            const entry = books[key];
+            if (entry && entry.owned === owned) return entry.seed;
+            const seed = Math.floor(Math.random() * 0xFFFFFFFF);
+            books[key] = { seed: seed, owned: owned, offers: [], title: "" };
+            return seed;
+        },
+        // What the book showed this time, kept both against the book and at the
+        // top of the ledger.
+        record(key, title, offers, itemId) {
+            const ids = offers.map(s => s.id);
+            const books = this.books();
+            const entry = books[key] || (books[key] = { seed: 0, owned: this.owned(itemId) });
+            entry.offers = ids;
+            entry.title = title;
+            entry.owned = this.owned(itemId);
+            const log = this.history();
+            const names = offers.map(s => s.name);
+            const head = log[0];
+            if (head && head.key === key && head.learned == null) {
+                head.title = title; head.offers = ids; head.names = names;
+            } else {
+                log.unshift({ key: key, title: title, offers: ids, names: names, learned: null });
+                if (log.length > HISTORY_MAX) log.length = HISTORY_MAX;
+            }
+        },
+        // Reading a spell out spends the book: the next copy opens on new pages.
+        learned(key, skillId, actorName) {
+            const log = this.history();
+            if (log[0] && log[0].key === key) {
+                log[0].learned = skillId;
+                log[0].reader = actorName;
+            }
+            delete this.books()[key];
+        },
+        // The last pages seen, for anything that wants to print them.
+        last(key) {
+            const log = this.history();
+            for (const e of log) if (!key || e.key === key) return e;
+            return null;
+        }
+    };
+    window.GrimoireMemory = GrimoireMemory;
+
+    // ---------------------------------------------------------------------
     // Input manager (keyboard / gamepad), two focus panels
     // ---------------------------------------------------------------------
     const GrimInput = {
@@ -232,9 +325,13 @@
         this._spellIdx = 0;
         this._busy = false;
 
+        this._itemId = p.itemId || 0;
+        this._bookKey = GrimoireMemory.key(this._mode, this._category, this._itemId);
+
         this._pool = this.buildPool();
         this._actor = $gameParty.members()[0] || $gameParty.leader();
         this.rollOffers();
+        GrimoireMemory.record(this._bookKey, this.headerTitle(), this._offered, this._itemId);
 
         GrimInput.init(this);
         this.createDOM();
@@ -327,13 +424,16 @@
     Scene_ForgottenGrimoire.prototype.rollOffers = function () {
         const members = $gameParty.members();
         const affordable = this._pool.filter(s => members.some(a => this.canSurface(a, s)));
+        // The same seed against the same shelf gives the same five pages back,
+        // so the book is not a slot machine that is re-pulled by closing it.
+        const rng = mulberry32(GrimoireMemory.seed(this._bookKey, this._itemId));
         const forb = affordable.filter(s => s.meta && s.meta.Forbidden);
         const norm = affordable.filter(s => !(s.meta && s.meta.Forbidden));
         const chance = forbiddenChance();
         const pickFrom = (arr, used) => {
             const pool = arr.filter(s => !used.has(s.id));
             if (!pool.length) return null;
-            return pool[Math.floor(Math.random() * pool.length)];
+            return pool[Math.floor(rng() * pool.length)];
         };
         const used = new Set();
         const out = [];
@@ -342,7 +442,7 @@
             if (this._mode === "forbidden") {
                 pick = pickFrom(affordable, used);
             } else {
-                const wantForb = Math.random() < chance && forb.length > 0;
+                const wantForb = rng() < chance && forb.length > 0;
                 pick = wantForb ? pickFrom(forb, used) : pickFrom(norm, used);
                 if (!pick) pick = pickFrom(affordable, used);   // fallback
             }
@@ -416,6 +516,15 @@
         this._busy = true;
         this._actor.learnSkill(s.id);
         SoundManager.playUseSkill();
+        GrimoireMemory.learned(this._bookKey, s.id, this._actor.name());
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(
+                T('Grimoire.toast.learned', {
+                    actor: this._actor.name(), skill: s.name, book: this.headerTitle()
+                }),
+                { severity: "good", icon: s.iconIndex, title: T('Grimoire.toast.title') }
+            );
+        }
         this._learnedIdx = i;
         const card = this._dom && this._dom.querySelectorAll(".grim-card")[i];
         if (card) card.classList.add("learned");
@@ -508,9 +617,26 @@
     // Plugin commands
     // ---------------------------------------------------------------------
     function launch(mode, category) {
-        $gameTemp._grimoireParams = { mode, category: category || "Random" };
+        const item = $gameTemp._grimoireSourceItem;
+        $gameTemp._grimoireSourceItem = null;
+        $gameTemp._grimoireParams = {
+            mode, category: category || "Random", itemId: item ? item.id : 0
+        };
         SceneManager.push(Scene_ForgottenGrimoire);
     }
+
+    // Which book was opened. Every route into these commands is an item with a
+    // common event on it, and applyGlobal is the one place every use passes
+    // through, in the menu and in battle alike.
+    const _Game_Action_applyGlobal_grimoire = Game_Action.prototype.applyGlobal;
+    Game_Action.prototype.applyGlobal = function () {
+        const item = this.item();
+        if (item && DataManager.isItem(item) && item.effects &&
+            item.effects.some(e => e && e.code === Game_Action.EFFECT_COMMON_EVENT)) {
+            $gameTemp._grimoireSourceItem = item;
+        }
+        _Game_Action_applyGlobal_grimoire.call(this);
+    };
     PluginManager.registerCommand(PLUGIN, "openForbidden", () => launch("forbidden", null));
     PluginManager.registerCommand(PLUGIN, "openGrimoire", (args) => launch("grimoire", args.category || "Random"));
     PluginManager.registerCommand(PLUGIN, "openSkillBook", (args) => launch("skillbook", args.category || ""));

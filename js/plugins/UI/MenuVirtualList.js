@@ -321,6 +321,25 @@
     }
 
     window.MenuVirtualList = {
+        // How many across a grid is drawing right now, read off the live
+        // stylesheet rather than restated in the scene. A cursor that steps by
+        // a hardcoded 3 walks diagonally the moment a media query narrows the
+        // grid to 2, so every scene that walks a grid with a cursor asks here
+        // instead. `el` may be an element or a selector; `fallback` is what to
+        // answer before the grid is on screen.
+        columnsOf(el, fallback) {
+            const node = typeof el === 'string'
+                ? (typeof document !== 'undefined' && document.querySelector(el))
+                : el;
+            const guess = fallback > 0 ? fallback : 1;
+            if (!node || typeof getComputedStyle !== 'function') return guess;
+            try {
+                return readLayout(node).columns || guess;
+            } catch (e) {
+                return guess;
+            }
+        },
+
         // Mount (or re-draw) `container` as a windowed list. Safe to call on
         // every refresh: the DOM around the rows survives, so the scroll
         // position does too.

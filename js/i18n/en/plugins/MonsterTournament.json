@@ -18,6 +18,10 @@
   "skillFinish": "Finish",
   "ui": {
     "bet": "Bet:",
-    "keepCurrentBet": "Keep current bet"
+    "keepCurrentBet": "Keep current bet",
+    "hp": "HP",
+    "mp": "MP",
+    "tp": "TP",
+    "time": "TIME"
   }
 }

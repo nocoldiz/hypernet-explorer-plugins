@@ -317,6 +317,7 @@
             out.push({
                 key: 'state:' + state.id,
                 text: dbName(state.name),
+                stateId: state.id,
                 debuff: !!(state.restriction && state.restriction > 0)
             });
         }
@@ -734,6 +735,12 @@
                 el.style.borderColor = chip.color;
             }
             el.textContent = chip.text;
+            // What the tag means, on hover. A status reads out of the state
+            // compendium; a class gimmick brings its own line with it.
+            if (window.StateTip) {
+                if (chip.stateId) window.StateTip.mark(el, { stateId: chip.stateId });
+                else if (chip.tip) window.StateTip.mark(el, { title: chip.text, text: chip.tip, ink: chip.color });
+            }
             // The name half of a stat chip is lifted out into its own span so
             // it can stay white while the multiplier keeps the change's colour.
             if (chip.nameText && chip.text.startsWith(chip.nameText)) {
@@ -889,11 +896,11 @@
                 battle ? [] : urgentAlertsFor(actor, needs), 'phud-need');
             this._writeChips(card.stats, 'statsKey', card,
                 battle ? classChipsFor(actor).map(c => ({
-                    key: 'class:' + c.label, text: c.label, color: c.color
+                    key: 'class:' + c.label, text: c.label, color: c.color, tip: c.info
                 })) : [], 'phud-stat');
             this._writeChips(card.states, 'statesKey', card,
                 MAX_STATES > 0 ? stateLabelsFor(actor).map(s => ({
-                    key: s.key, text: s.text, down: s.debuff
+                    key: s.key, text: s.text, down: s.debuff, stateId: s.stateId
                 })) : [], 'phud-state');
         }
         if (this._needTimer >= NEED_REFRESH_FRAMES) this._needTimer = 0;

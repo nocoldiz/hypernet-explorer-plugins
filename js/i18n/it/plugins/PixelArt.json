@@ -16,6 +16,7 @@
     "new": "Nuovo",
     "open": "Apri",
     "save": "Salva",
+    "export": "Esporta nella cartella del gioco",
     "setWallpaper": "Imposta come sfondo",
     "undo": "Annulla",
     "redo": "Ripeti",
@@ -39,6 +40,8 @@
       "fill": "Riempi con colore",
       "picker": "Preleva colore",
       "text": "Testo"
-    }
+    },
+    "exported": "Salvato in {file}",
+    "exportError": "Impossibile scrivere l'immagine nella cartella del gioco."
   }
 }

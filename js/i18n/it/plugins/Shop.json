@@ -188,5 +188,11 @@
     "notorious": "Il negoziante guarda la tua faccia, poi la porta. Quanto valga il tuo nome, non vale la seccatura di farsi vedere a venderti qualcosa.",
     "standing": "Il negoziante incrocia le braccia. Qui la voce su di voi ha girato, e il banco resta chiuso."
   },
-  "listEmpty": "[Empty]"
+  "listEmpty": "[Empty]",
+  "sellCollectibles": "VENDI CIMELI",
+  "sellCollectiblesHint": "Consegna in una volta sola ogni oggetto da collezione nello zaino. Hanno un prezzo fisso e nessun altro uso.",
+  "noCollectibles": "Nello zaino non c'e altro che roba che serve davvero a qualcosa.",
+  "soldCollectibles": "Consegnati {count} cimeli per {money}.",
+  "year": "Anno",
+  "teaches": "Insegna"
 }

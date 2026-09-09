@@ -81,5 +81,8 @@
     "harvest": "Harvest",
     "remove": "Remove",
     "check": "Check"
+  },
+  "toast": {
+    "ripe": "{plant} is ripe for picking."
   }
 }

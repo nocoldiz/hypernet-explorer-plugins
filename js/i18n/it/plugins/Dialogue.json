@@ -12,5 +12,30 @@
   "askToggleNotices": "Mostra/nascondi consigli",
   "askNotice_first": "Solo la prima volta",
   "askNotice_always": "Sempre",
-  "askNotice_off": "Mai"
+  "askNotice_off": "Mai",
+  "askGroupAgain": "Insegnami di nuovo",
+  "askCombat": "Combattimento",
+  "combat": {
+    "offer": "Bubba: Aspetta, tesoro. Prima di menare fendenti a qualcuno, vuoi che ti rispieghi i comandi?",
+    "yes": "Rispiegami tutto",
+    "no": "Me la cavo da sola",
+    "normal": [
+      "Bubba: Un'azione a testa per round, in ordine di velocita'. Scegli dalla lista e premi [CONTINUE].",
+      "Bubba: Attacco mena quello che hai in mano contro chi decidi tu. Non si spegne mai: e' l'unica cosa che non ti manca mai.",
+      "Bubba: Difesa ti mette in guardia e taglia quello che ti arriva addosso per il round. Con una pistola in mano quella riga diventa Ricarica: riempie il caricatore e ti copre comunque.",
+      "Bubba: Abilita' e' l'assortimento che ti sei preparata, ogni riga col suo prezzo in MP o TP. Base e' il repertorio essenziale che porti addosso qualunque cosa dimentichi.",
+      "Bubba: Mira sceglie un arto prima del colpo e non ti costa il turno. Lotta afferra la bestia a mani nude.",
+      "Bubba: Parla serve a parlare, e qualcuno davvero ascolta. Oggetto e' lo zaino, e Lancia e' lo stesso zaino tirato in testa a qualcuno.",
+      "Bubba: Fuga funziona sempre, tesoro. E non c'e' vergogna: un cadavere non impara niente."
+    ],
+    "map": [
+      "Bubba: Questa si gioca dove siamo in piedi, quindi la mappa e' l'arena. Sempre un'azione a testa per round, in ordine di velocita'.",
+      "Bubba: Muovi ti porta in giro per le caselle prima di agire, una volta per round, fin dove ti portano le gambe e la tua DES.",
+      "Bubba: Attacco arriva solo fin dove dice la portata scritta sulla riga, quindi conta le caselle prima di menare.",
+      "Bubba: Abilita', Base, Mira, Lotta, Parla, lo zaino e Lancia funzionano come al chiuso, solo puntati su una casella.",
+      "Bubba: Il cursore serve a scegliere quella casella: portalo su cio' che vuoi e premi [CONTINUE].",
+      "Bubba: Fuga porta fuori tutto il gruppo, a meno che qualcosa non ci tenga stretti."
+    ],
+    "rearm": "Bubba: Nessun problema tesoro, non sono un esperto di magia ma posso rispiegarti come si spara con la pistola! Il resto lo devi capire da sola"
+  }
 }

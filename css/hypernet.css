@@ -322,24 +322,6 @@
 .hn-style-0077 { height: 70px; border-radius: 4px; background: #008080; border: 1px solid #aaa; margin-bottom: 6px; }
 .hn-style-0078 { height: 70px; border-radius: 4px; background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%); border: 1px solid #aaa; margin-bottom: 6px; }
 .hn-style-0079 { height: 70px; border-radius: 4px; background: linear-gradient(135deg, #1f1a16 0%, #3d2f25 100%); border: 1px solid #c5a059; margin-bottom: 6px; }
-.hn-style-0080 { display: flex; flex-direction: column; width: 100%; height: 100%; font-family: 'Tahoma', sans-serif; font-size: 14px; color: var(--text-pure-black); background: var(--xp-bg); box-sizing: border-box; }
-.hn-style-0081 { display: flex; align-items: center; gap: 6px; padding: 5px 10px; background: var(--xp-bg); border-bottom: 1px solid var(--xp-parchment); box-sizing: border-box; }
-.hn-style-0082 { display: flex; align-items: center; gap: 4px; padding: 3px 8px; background: linear-gradient(to bottom, var(--text-pure-white) 0%, var(--xp-bg) 100%); border: 1px solid var(--xp-border); border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 14px; }
-.hn-style-0083 { font-size: 17px; font-weight: bold; color: #555; }
-.hn-style-0084 { width: 1px; background: var(--xp-scroll-thumb); height: 18px; margin: 0 4px; }
-.hn-style-0085 { flex-grow: 1; height: 21px; border: 1px solid var(--xp-border); border-radius: 2px; padding: 0 6px; font-family: sans-serif; font-size: 14px; background: var(--text-pure-white); color: var(--text-pure-black); }
-.hn-style-0086 { padding: 3px 10px; background: linear-gradient(to bottom, var(--text-pure-white) 0%, var(--xp-bg) 100%); border: 1px solid var(--xp-border); border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 14px; }
-.hn-style-0087 { flex-grow: 1; display: flex; width: 100%; height: calc(100% - 32px); box-sizing: border-box; }
-.hn-style-0088 { width: 160px; background: linear-gradient(180deg, #7497d8 0%, #5880c5 100%); border-right: 1px solid var(--xp-link-active); padding: 12px 10px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; }
-.hn-style-0089 { background: var(--bg-white-translucent-72); border-radius: 4px; border: 1px solid var(--xp-link-active); overflow: hidden; box-shadow: 1px 1px 3px var(--shadow-black-translucent-15); }
-.hn-style-0090 { background: linear-gradient(90deg, var(--xp-blue-btn) 0%, #3b74ca 100%); color: white; padding: 4px 8px; font-weight: bold; font-size: 14px; }
-.hn-style-0091 { padding: 6px; display: flex; flex-direction: column; gap: 6px; }
-.hn-style-0092 { cursor: pointer; color: var(--xp-blue-dark); font-weight: 500; }
-.hn-style-0093 { flex-grow: 1; background: var(--text-pure-white); padding: 15px; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 18px; overflow-y: auto; box-sizing: border-box; }
-.hn-style-0094 { color: red; padding: 10px; }
-.hn-style-0095 { color: #666; padding: 10px; }
-.hn-style-0096 { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
-.hn-style-0097 { font-size: 14px; text-align: center; word-wrap: break-word; width: 100%; line-height: 1.2; color: #333; }
 .hn-style-0098 { display: flex; flex-direction: column; width: 100%; height: 100%; background: var(--text-pure-white); color: var(--text-pure-black); box-sizing: border-box; }
 .hn-style-0099 { display: flex; gap: 12px; padding: 3px 10px; background: var(--xp-bg); border-bottom: 1px solid var(--xp-parchment); font-family: 'Tahoma', sans-serif; font-size: 14px; color: var(--text-pure-black); user-select: none; box-sizing: border-box; }
 .hn-style-0100 { cursor: pointer; position: relative; }
@@ -475,16 +457,6 @@
                 .desktop-icon-ghost.illegal {
                     border-color: rgba(255, 90, 90, 0.75);
                     background: rgba(255, 90, 90, 0.15);
-                }
-
-                /* Rule separating the reserved (right-anchored) column */
-                .desktop-icon-divider {
-                    position: absolute;
-                    width: 1px;
-                    background: linear-gradient(to bottom,
-                        transparent, var(--bg-white-translucent-25) 15%,
-                        var(--bg-white-translucent-25) 85%, transparent);
-                    pointer-events: none;
                 }
 
                 .desktop-icon:hover {
@@ -1548,7 +1520,10 @@
     outline: none;
     position: relative;
 }
-#stock-container .stock-spread::before {
+/* Neither the binding crease nor the book frame: inside the window chrome
+   this is a page of an app, not a leaf of a book. */
+#stock-container .stock-spread::before,
+#stock-container .stock-spread::after {
     display: none !important;
 }
 #stock-container .stock-top {
@@ -1798,10 +1773,12 @@
 #job-offers-content .book-spread > div[style*="linear-gradient"] {
     display: none !important;
 }
-/* The jobs scene tags its DOM root id="menu-container", which globally means
-   "fullscreen parchment overlay" (position:absolute, dark gradient bg, 24px
-   padding, z-index:1000). Inside the OS window that paints a dark/black frame.
-   Neutralize it so the content sits flush in the standard window chrome. */
+/* The board's root no longer takes id="menu-container" in app mode (that id
+   globally means "fullscreen parchment overlay": position:absolute, dark
+   gradient, 24px padding, z-index:1000, i.e. a dark frame inside the window).
+   The sizing that rule used to supply is kept here on the root's own class,
+   and the id is still matched so an older layout is neutralized either way. */
+#job-offers-content .joboffers-root,
 #job-offers-content #menu-container {
     position: relative !important;
     top: auto !important;
@@ -1818,6 +1795,7 @@
 }
 /* The panel inside a #menu-container is zoomed to fit the VIEWPORT; in a window
    it has to be the window instead. */
+#job-offers-content .joboffers-root > *,
 #job-offers-content #menu-container > * {
     zoom: 1 !important;
 }
@@ -1961,6 +1939,40 @@
     border: 2px solid var(--xp-border) !important;
     background-color: var(--xp-blue) !important;
     color: var(--text-pure-white) !important;
+}
+
+
+/* Who is away on a contract, and what this one would do to the party. The
+   board sends a member out of the party for the hours a job runs
+   (Work/WorkSystem.js, WorkSystem.Shifts), so it also has to show the ones
+   already gone: read-only rows, greyed apart from the candidates that can
+   still be picked. */
+#job-offers-content .roster-item--away {
+    background: var(--xp-bg) !important;
+    border-style: dashed !important;
+    cursor: default;
+    opacity: 0.85;
+}
+#job-offers-content .roster-item--away:hover {
+    background: var(--xp-bg) !important;
+    border-color: var(--xp-disabled) !important;
+}
+#job-offers-content .job-away-clock {
+    color: var(--xp-blue-dark) !important;
+    font-weight: bold;
+}
+#job-offers-content .job-party-impact {
+    border: 1px solid var(--xp-border);
+    background: var(--xp-tooltip);
+    padding: 6px 8px;
+    margin-top: 8px;
+    line-height: 1.4;
+    font-size: 12px;
+}
+#job-offers-content .job-party-impact.job-deficit {
+    background: var(--xp-remote-bg);
+    border-color: var(--xp-warn);
+    color: var(--xp-bad) !important;
 }
 
 /* ==========================================================================
@@ -2130,7 +2142,9 @@
     z-index: auto !important;
     overflow: hidden !important;
 }
-/* Hide the decorative leather spine shading between the two pages in app mode. */
+/* Hide the decorative leather spine shading between the two pages in app mode.
+   (The pockets spread draws its crease on ::after and its book frame on
+   ::before; the frame is taken off further up.) */
 #news-history-content .cc-pockets-spread::after {
     display: none !important;
 }
@@ -3839,6 +3853,401 @@
 .xp-status { border-top: 1px solid var(--xp-border); padding-top: 4px; font-size: 12px; color: #444; flex: 0 0 auto; }
 .xp-empty { padding: 20px; text-align: center; color: #777; }
 .xp-list { display: flex; flex-direction: column; border: 1px solid var(--xp-border); background: var(--text-pure-white); overflow: auto; flex: 1 1 auto; min-height: 60px; }
+/* The Fonts folder's sample line. The face is the one thing on that page a
+   stylesheet cannot know in advance, so the applet hands it over as a custom
+   property and the rule reads it (the theme tests hold every screen to that:
+   markup sets custom properties, never a style). */
+.xp-font-sample {
+    font-family: var(--xp-font), Tahoma, sans-serif;
+    color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    max-width: 60%;
+}
+
+/* Accessibility's cursor-width sample and the sliders the settings pages use
+   are the shared .xp-range, already styled above. */
+
+/* ==========================================================================
+   THE TWO GAMES THAT CAME IN THE BOX
+   --------------------------------------------------------------------------
+   Mineseeker's field and Patience's table. Both are drawn out of the same grey
+   the rest of the shell is drawn in, with the sunken borders the period put
+   round anything you could press.
+   ========================================================================== */
+.xp-mines { display: flex; flex-direction: column; gap: 6px; padding: 6px; height: 100%; box-sizing: border-box; }
+.xp-mines-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 6px; flex: 0 0 auto;
+    border: 2px inset var(--xp-gray-mid); background: var(--xp-bg);
+}
+.xp-mines-count {
+    font: bold 17px 'Lucida Console', Consolas, monospace;
+    color: #f33; background: #200; padding: 1px 4px; letter-spacing: 1px;
+    border: 1px inset var(--xp-gray-mid);
+}
+.xp-mines-face {
+    width: 26px; height: 26px; cursor: pointer; font-size: 14px; line-height: 1;
+    border: 2px outset var(--xp-gray-mid); background: var(--xp-bg);
+}
+.xp-mines-face::before { content: ':)'; }
+.xp-mines-face.dead::before { content: 'x('; }
+.xp-mines-face.won::before { content: 'B)'; }
+
+.xp-mines-field {
+    display: grid;
+    grid-template-columns: repeat(var(--mine-cols, 9), 18px);
+    gap: 0; align-content: start; justify-content: center;
+    border: 2px inset var(--xp-gray-mid); padding: 3px;
+    background: var(--xp-bg); overflow: auto; flex: 1 1 auto;
+}
+.xp-mine-cell {
+    width: 18px; height: 18px; box-sizing: border-box;
+    display: flex; align-items: center; justify-content: center;
+    font: bold 12px Tahoma, sans-serif; cursor: pointer;
+    border: 2px outset var(--xp-gray-mid); background: var(--xp-bg);
+    color: var(--text-pure-black); user-select: none;
+}
+.xp-mine-cell.open { border: 1px solid var(--xp-gray-mid); }
+.xp-mine-cell.boom { background: #d33; color: var(--text-pure-white); }
+/* The count colours the field always used, so a number is read by its colour
+   before it is read as a number. */
+.xp-mine-cell.n1 { color: #0000d0; }
+.xp-mine-cell.n2 { color: #007b00; }
+.xp-mine-cell.n3 { color: #d00000; }
+.xp-mine-cell.n4 { color: #000080; }
+.xp-mine-cell.n5 { color: #800000; }
+.xp-mine-cell.n6 { color: #008080; }
+.xp-mine-cell.n7 { color: var(--text-pure-black); }
+.xp-mine-cell.n8 { color: #808080; }
+
+/* --- Patience --- */
+.xp-patience {
+    display: flex; flex-direction: column; gap: 8px; padding: 8px;
+    height: 100%; box-sizing: border-box; background: #1f7a3d;
+}
+.xp-pat-top { display: flex; gap: 8px; flex: 0 0 auto; }
+.xp-pat-gap { flex: 1 1 auto; }
+.xp-pat-slot { width: 44px; height: 62px; flex: 0 0 auto; }
+.xp-pat-piles { display: flex; gap: 8px; flex: 1 1 auto; min-height: 0; }
+.xp-pat-pile { width: 44px; position: relative; flex: 0 0 auto; }
+.xp-card {
+    width: 44px; height: 62px; box-sizing: border-box; cursor: pointer;
+    border: 1px solid #333; border-radius: 4px; background: var(--text-pure-white);
+    color: var(--text-pure-black); font: bold 13px Tahoma, sans-serif;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 3px; user-select: none;
+}
+.xp-card.red { color: #c00; }
+.xp-card.back { background: repeating-linear-gradient(45deg, #2a4d9b 0 4px, #1d3a7d 4px 8px), #2a4d9b; }
+.xp-card.empty { background: rgba(255, 255, 255, 0.12); border-style: dashed; border-color: rgba(255, 255, 255, 0.4); }
+/* A pile is a fan: every card but the first is pulled up over the one before,
+   so its corner alone shows the way a dealt pile shows it. */
+.xp-card.stacked { margin-top: -46px; }
+.xp-pat-pile .xp-card.stacked:first-child { margin-top: 0; }
+.xp-pat-status {
+    display: flex; gap: 18px; flex: 0 0 auto; padding: 3px 4px;
+    color: var(--text-pure-white); font-size: 12px;
+}
+
+/* ==========================================================================
+   THE START MENU'S TWO LISTS AND ITS FLYOUTS
+   --------------------------------------------------------------------------
+   The left column was one long list of every program the machine had. It is
+   two short ones now, the way the menu of the period was built: what the
+   player pinned there, a rule, and what the machine actually reaches for under
+   it, with All Programs at the foot holding everything else. Both lists are
+   the same row as before, so nothing but the grouping changed.
+   ========================================================================== */
+.start-menu-pinned { display: flex; flex-direction: column; }
+.start-menu-mfu { display: flex; flex-direction: column; }
+.start-menu-pinned + .start-menu-mfu {
+    margin-top: 4px; padding-top: 4px;
+    border-top: 1px solid var(--xp-scroll-thumb);
+}
+.start-menu-allprograms {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 4px; padding: 6px; cursor: pointer; border-radius: 3px;
+    font-weight: bold; color: var(--xp-blue-dark);
+    border-top: 1px solid var(--xp-scroll-thumb);
+}
+.start-menu-allprograms:hover { background: var(--xp-blue-btn); color: var(--text-pure-white); }
+
+/* The mark on anything that opens a list beside it rather than a window. */
+.start-menu-flyout-arrow {
+    margin-left: auto; flex: 0 0 auto;
+    border: 4px solid transparent; border-left-color: currentColor;
+}
+
+/* ==========================================================================
+   THE FOLDER WINDOW (Hypernet/HypernetMyComputer.js)
+   --------------------------------------------------------------------------
+   Six bands down the window, the way a folder of the period was built: the
+   menu bar, the toolbar, the address bar, the body (a left pane and the view
+   beside it) and the status bar. The view is the only band that scrolls.
+
+   The five views are one markup wearing five layouts, switched by data-view on
+   the pane, so changing view never rebuilds anything but the class it reads.
+   ========================================================================== */
+.explorer-container {
+    display: flex; flex-direction: column; width: 100%; height: 100%;
+    font-family: Tahoma, sans-serif; font-size: 13px;
+    color: var(--text-pure-black); background: var(--xp-bg);
+    box-sizing: border-box; user-select: none;
+}
+
+/* --- The menu bar --- */
+.explorer-menubar {
+    display: flex; align-items: center; gap: 2px; flex: 0 0 auto;
+    padding: 2px 4px; border-bottom: 1px solid var(--xp-gray-mid);
+    background: var(--xp-bg);
+}
+.explorer-menu { padding: 2px 8px; cursor: pointer; border-radius: 2px; }
+.explorer-menu:hover { background: var(--xp-blue); color: var(--text-pure-white); }
+
+/* --- The toolbar --- */
+.explorer-toolbar {
+    display: flex; align-items: center; gap: 4px; flex: 0 0 auto;
+    padding: 5px 8px; border-bottom: 1px solid var(--xp-gray-mid);
+    background: linear-gradient(to bottom, var(--text-pure-white), #ecebe5);
+}
+.explorer-tbtn {
+    font: 12px Tahoma, sans-serif; padding: 3px 9px; cursor: pointer;
+    background: transparent; border: 1px solid transparent; border-radius: 3px;
+    color: var(--text-pure-black);
+}
+.explorer-tbtn:hover:not(:disabled) { background: #eef3fb; border-color: #adcbf3; }
+.explorer-tbtn.pressed { background: #c5dcf7; border-color: var(--xp-blue); }
+.explorer-tbtn:disabled { opacity: 0.45; cursor: default; }
+.explorer-tsep { width: 1px; height: 18px; background: var(--xp-gray-mid); margin: 0 2px; }
+
+/* --- The address bar --- */
+.explorer-addressbar {
+    display: flex; align-items: center; gap: 6px; flex: 0 0 auto;
+    padding: 4px 8px; border-bottom: 1px solid var(--xp-gray-mid);
+}
+.explorer-address-label { flex: 0 0 auto; color: #444; }
+#explorer-address-bar {
+    flex: 1 1 auto; min-width: 0; font: 12px Tahoma, sans-serif;
+    padding: 3px 5px; border: 1px solid var(--xp-border);
+    background: var(--xp-input); user-select: text;
+}
+
+/* --- The body: left pane and view --- */
+.explorer-body { display: flex; flex: 1 1 auto; min-height: 0; }
+.explorer-sidebar {
+    flex: 0 0 168px; overflow: auto; padding: 10px 8px;
+    display: flex; flex-direction: column; gap: 10px;
+    background: linear-gradient(to bottom, #7ba4db 0%, #a8c2e8 12%, #d6e5f5 100%);
+    border-right: 1px solid var(--xp-gray-mid);
+}
+.explorer-panel { border-radius: 4px; overflow: hidden; background: rgba(255, 255, 255, 0.75); }
+.explorer-panel-head {
+    padding: 4px 8px; font-weight: bold; font-size: 12px;
+    color: #14417f; background: linear-gradient(to right, #dce9f9, #f0f6ff);
+}
+.explorer-panel-body { padding: 6px 8px; display: flex; flex-direction: column; gap: 3px; }
+.explorer-task, .explorer-side-link {
+    cursor: pointer; padding: 1px 0; color: #14417f; font-size: 12px; line-height: 1.25;
+}
+.explorer-task:hover, .explorer-side-link:hover { color: #cc6600; text-decoration: underline; }
+.explorer-detail-name { font-weight: bold; font-size: 12px; }
+.explorer-detail-line { font-size: 11px; color: #333; }
+
+/* The folder tree, in place of the task pane. Depth is a custom property so a
+   row indents without a rule per level. */
+.explorer-tree { display: flex; flex-direction: column; }
+.explorer-tree-row {
+    display: flex; align-items: center; gap: 4px; padding: 1px 2px;
+    cursor: pointer; white-space: nowrap; font-size: 12px;
+}
+.explorer-tree-row:hover { background: rgba(255, 255, 255, 0.6); }
+.explorer-tree-row.selected { background: var(--xp-blue); color: var(--text-pure-white); }
+.explorer-tree-indent { flex: 0 0 auto; }
+.explorer-tree-indent[data-indent="1"] { width: 12px; }
+.explorer-tree-indent[data-indent="2"] { width: 24px; }
+.explorer-tree-indent[data-indent="3"] { width: 36px; }
+.explorer-tree-indent[data-indent="4"] { width: 48px; }
+.explorer-tree-icon { display: flex; flex: 0 0 auto; }
+
+.explorer-view {
+    flex: 1 1 auto; min-width: 0; overflow: auto; padding: 8px;
+    background: var(--text-pure-white); align-content: start;
+}
+.explorer-empty { padding: 10px; color: #666; }
+
+/* --- One item, in whichever view --- */
+.explorer-item {
+    display: flex; align-items: center; gap: 6px; padding: 3px;
+    border: 1px solid transparent; border-radius: 3px; cursor: pointer;
+    min-width: 0;
+}
+.explorer-item:hover { background: #eef3fb; border-color: #adcbf3; }
+.explorer-item.selected { background: #c5dcf7; border-color: #7f9db9; }
+.explorer-item-icon { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+.explorer-item-label { min-width: 0; }
+.explorer-item-name { overflow: hidden; text-overflow: ellipsis; }
+.explorer-item-sub { font-size: 11px; color: #555; }
+
+/* Thumbnails and Icons stack the label under the picture; Tiles and List keep
+   it beside. Only the pane's data-view changes between them. */
+.explorer-view[data-view="thumbnails"], .explorer-view[data-view="icons"] {
+    display: grid; gap: 10px;
+}
+.explorer-view[data-view="thumbnails"] { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+.explorer-view[data-view="icons"] { grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); }
+.explorer-view[data-view="thumbnails"] .explorer-item,
+.explorer-view[data-view="icons"] .explorer-item {
+    flex-direction: column; text-align: center; gap: 3px;
+}
+.explorer-view[data-view="thumbnails"] .explorer-item-name,
+.explorer-view[data-view="icons"] .explorer-item-name { word-break: break-word; white-space: normal; }
+.explorer-view[data-view="tiles"] { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; }
+.explorer-view[data-view="list"] { display: flex; flex-direction: column; }
+
+/* Details: a sortable table, the one view that names what it is showing. */
+.explorer-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.explorer-col {
+    text-align: left; font-weight: normal; padding: 3px 6px; cursor: pointer;
+    background: linear-gradient(to bottom, var(--text-pure-white), #e8e8e0);
+    border: 1px solid var(--xp-gray-mid); border-left: none; white-space: nowrap;
+}
+.explorer-col:first-child { border-left: 1px solid var(--xp-gray-mid); }
+.explorer-col:hover { background: #eef3fb; }
+.explorer-col.asc::after { content: ' \25B2'; font-size: 9px; }
+.explorer-col.desc::after { content: ' \25BC'; font-size: 9px; }
+.explorer-row { cursor: pointer; }
+.explorer-row:hover { background: #eef3fb; }
+.explorer-row.selected { background: var(--xp-blue); color: var(--text-pure-white); }
+.explorer-row td { padding: 2px 6px; white-space: nowrap; }
+.explorer-row-icon { display: inline-flex; vertical-align: middle; margin-right: 5px; }
+.explorer-cell-num { text-align: right; }
+
+/* --- The status bar --- */
+.explorer-statusbar {
+    flex: 0 0 auto; padding: 3px 8px; font-size: 11px; color: #333;
+    border-top: 1px solid var(--xp-gray-mid);
+    background: linear-gradient(to bottom, var(--xp-bg), #e4e2da);
+}
+
+/* ==========================================================================
+   THE TASKBAR'S OWN FURNITURE
+   --------------------------------------------------------------------------
+   The bar itself is styled up in the desktop block; these are the four things
+   added to it later, each of which the bar of the period had and this one did
+   not: the Quick Launch strip beside Start, a button that stands for a group
+   of windows rather than one, the chevron that folds the tray away, and the
+   bar dropping off the foot of the screen when it is told to hide itself.
+   ========================================================================== */
+#hypernet-quick-launch {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 100%;
+    padding: 0 6px;
+    flex: 0 0 auto;
+    border-right: 1px solid rgba(0, 0, 0, 0.35);
+    box-shadow: 1px 0 0 rgba(255, 255, 255, 0.12);
+}
+#hypernet-quick-launch.hidden { display: none; }
+.quick-launch-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 3px; cursor: pointer;
+    border: 1px solid transparent;
+}
+.quick-launch-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.45);
+}
+/* Show Desktop is drawn rather than iconned: a blotter and a pencil, the way
+   it always was, at a size that survives the panel being scaled down. */
+.quick-showdesk {
+    width: 14px; height: 14px; border: 1px solid #dbe6ff; border-radius: 1px;
+    background: linear-gradient(to bottom right, #9fc0f0 0%, #6d93cf 100%);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+/* A button standing for several windows carries the count in its label and a
+   fold mark at its right edge, so it reads as a stack rather than a window. */
+.taskbar-tab.grouped { padding-right: 16px; position: relative; }
+.taskbar-tab.grouped::after {
+    content: ''; position: absolute; right: 5px; top: 50%;
+    margin-top: -2px; border: 4px solid transparent; border-top-color: currentColor;
+}
+
+/* The notification area's chevron, and the icons it folds away. */
+#tray-chevron {
+    width: 13px; height: 16px; cursor: pointer; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    color: #dbe6ff; font-size: 11px; line-height: 1;
+    border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 2px;
+    background: rgba(0, 0, 0, 0.18);
+}
+#tray-chevron::before { content: '\00AB'; }
+#tray-chevron.expanded::before { content: '\00BB'; }
+#tray-chevron.hidden { display: none; }
+#hypernet-system-tray .tray-icon.folded { display: none; }
+#tray-clock.hidden { display: none; }
+
+/* Auto-hide: the bar sits one height below the foot of the screen and comes
+   back when the pointer reaches it. Nothing else moves, so a maximized window
+   keeps the room it was given rather than jumping every time the bar hides. */
+#hypernet-taskbar { transition: transform 0.18s ease-out; }
+#hypernet-taskbar.autohide { transform: translateY(36px); }
+#hypernet-taskbar.autohide:hover,
+#hypernet-taskbar.autohide.peek { transform: translateY(0); }
+
+/* A locked bar says so by refusing the grip cursor on its dividers. */
+#hypernet-taskbar.locked #hypernet-quick-launch { cursor: default; }
+
+/* The tick a settings menu puts where a verb menu puts its icon. */
+.hypernet-context-item.checked .hypernet-context-icon { color: var(--text-pure-black); }
+.hypernet-context-tick {
+    display: inline-block; width: 5px; height: 9px; margin-bottom: 2px;
+    border: solid currentColor; border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* The Open / Save As box (window.HypernetOS.Dialog.file).
+   Wider than a message box and taller, because it is a folder rather than a
+   sentence: a "Look in" chain across the top, the places bar down the left,
+   the folder's contents beside it, and the name and type rows at the foot. */
+.hypernet-dialog.xp-filebox { min-width: 520px; max-width: 560px; }
+.xp-filebox-top {
+    display: flex; align-items: center; gap: 6px; padding: 10px 12px 6px 12px;
+}
+.xp-filebox-top > label { flex: 0 0 auto; }
+.xp-filebox-top .xp-select { flex: 1 1 auto; min-width: 0; }
+.xp-filebox-top .xp-btn { flex: 0 0 auto; }
+.xp-filebox-body { display: flex; gap: 8px; padding: 0 12px; height: 232px; }
+.xp-filebox-places {
+    flex: 0 0 108px; display: flex; flex-direction: column; gap: 2px;
+    padding: 6px 4px; overflow: auto;
+    background: linear-gradient(to right, #7590ae, #5b7695);
+    border: 1px solid var(--xp-border);
+}
+.xp-fb-place {
+    display: flex; align-items: center; gap: 6px; padding: 4px 5px;
+    border: 1px solid transparent; border-radius: 3px; cursor: pointer;
+    color: var(--text-pure-white); font-size: 11px; line-height: 1.15;
+}
+.xp-fb-place:hover, .xp-fb-place.selected {
+    background: rgba(255, 255, 255, 0.22); border-color: rgba(255, 255, 255, 0.5);
+}
+.xp-fb-place-icon { flex: 0 0 auto; display: flex; }
+.xp-fb-place-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.xp-filebox-list { flex: 1 1 auto; min-width: 0; padding: 2px; }
+.xp-fb-item {
+    display: flex; align-items: center; gap: 6px; padding: 2px 5px;
+    border: 1px solid transparent; cursor: pointer; white-space: nowrap;
+}
+.xp-fb-item:hover { background: #eef3fb; border-color: #adcbf3; }
+.xp-fb-item.selected { background: var(--xp-blue); color: var(--text-pure-white); }
+.xp-fb-item-icon { flex: 0 0 auto; display: flex; }
+.xp-fb-item-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.xp-fb-empty { padding: 8px 10px; color: #666; }
+.xp-filebox-foot { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px 14px 12px; }
+.xp-filebox-foot .xp-row > label { min-width: 76px; flex: 0 0 auto; }
+.xp-filebox-foot .hypernet-dialog-btn { flex: 0 0 84px; }
+
 .xp-check-row, .xp-radio { display: flex; align-items: center; gap: 8px; padding: 3px 6px; cursor: pointer; }
 .xp-check-row:hover { background: #eef3fb; }
 .xp-ini { flex: 1 1 auto; margin: 0; overflow: auto; font: 12px 'Lucida Console', Consolas, monospace; background: var(--text-pure-white); border: 1px solid var(--xp-border); padding: 6px; user-select: text; }
@@ -4031,8 +4440,20 @@
 /* Control Panel additions */
 .cp-origin { font-size: 12px; color: #444; margin-top: 4px; }
 .cp-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; margin-top: auto; }
-.cp-applets { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; overflow: auto; padding: 4px; flex: 1 1 auto; }
-.cp-applet { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border: 1px solid transparent; border-radius: 4px; cursor: pointer; text-align: center; font-size: 11px; line-height: 1.2; }
-.cp-applet:hover { background: #eef3fb; border-color: #adcbf3; }
-.cp-applet.selected { background: #c5dcf7; border-color: var(--xp-blue); }
 #pane-applets { display: none; flex-direction: column; height: 100%; }
+
+/* --- All Programs ---------------------------------------------------------- */
+.xp-allprograms { display: flex; flex-direction: column; height: 100%; }
+.xp-allprograms-hint { padding: 8px 10px; color: #333; font-size: 11px; border-bottom: 1px solid var(--xp-border); }
+.xp-allprograms-list { flex: 1 1 auto; overflow-y: auto; padding: 6px 4px; }
+.xp-allprograms-category {
+    font-weight: bold; color: #0a246a; padding: 8px 8px 3px 8px;
+    border-bottom: 1px solid var(--xp-border); margin-bottom: 3px;
+}
+.xp-allprograms-item {
+    display: flex; align-items: center; gap: 8px; padding: 4px 8px;
+    cursor: pointer; border: 1px solid transparent;
+}
+.xp-allprograms-item:hover, .xp-allprograms-item:focus { background: #d9e8fb; border-color: #7da2ce; outline: none; }
+.xp-allprograms-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xp-allprograms-empty { padding: 14px; color: #555; }

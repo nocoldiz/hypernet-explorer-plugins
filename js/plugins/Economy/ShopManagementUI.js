@@ -19,7 +19,15 @@
   if (!window.ShopManagement) throw new Error('ShopManagementUI.js requires ShopManagement.js!');
 
   const SM = window.ShopManagement;
-  const _TABS = ['overview', 'stock', 'warehouse', 'catalog'];
+  const _TABS = ['overview', 'staff', 'shelves', 'stock', 'warehouse', 'catalog'];
+
+  // The roster page is the shared two-panel picker (UI/TwoPanelPicker.js): the
+  // people who could take a shift on one side, the ones who have on the other,
+  // dragged across or moved with the button on the row.
+  const _STAFF_PICKER = 'shop-staff';
+  // The shelves page is the same widget again: what can go out for sale on one
+  // side, what is out for sale on the other.
+  const _SHELF_PICKER = 'shop-shelves';
 
   // The name an item is listed under. Window text is localized on its way to
   // the bitmap, but this book-spread is DOM, which that hook never sees, so
@@ -122,6 +130,15 @@
         return;
       }
 
+      if (s._activeTab === 'overview') {
+        s._takeTakings();
+        return;
+      }
+
+      // The roster and the shelves are the picker's own boards: their rows
+      // carry their own buttons, so OK has nothing to confirm there.
+      if (s._activeTab === 'staff' || s._activeTab === 'shelves') return;
+
       if (s._activeTab === 'stock') {
         const items = s._getListItems();
         const slot  = items[s._selectedIndex];
@@ -157,10 +174,16 @@
     create() {
       super.create();
 
+      // Back from the workbench: whatever it made has been shelved, and the
+      // bench goes back to filling the party's own bags.
+      if (SM.endConsignment) SM.endConsignment();
+
       this._activeTab    = window._shopMgmtInitTab || 'overview';
       window._shopMgmtInitTab = null;
       this._selectedIndex = 0;
       this._changingSlot  = null;
+      // The shelves page fills from the bags first; the wholesaler is a click away.
+      this._shelfSource   = 'bag';
 
       this._wasdPending    = { up: false, down: false };
       this._wasdHeld       = { up: false, down: false };
@@ -179,6 +202,10 @@
       };
       window.addEventListener('keydown', this._onKeyDown);
       window.addEventListener('keyup',   this._onKeyUp);
+
+      // Whatever the shop traded while the party was elsewhere is settled
+      // before the book is drawn, so the balance on the page is current.
+      if (SM.refreshEconomy) SM.refreshEconomy();
 
       this._el = document.createElement('div');
       this._el.id = 'shop-mgmt-container';
@@ -271,7 +298,7 @@
         ? `<div class="shop-assign-banner">${T.selectProd} ${this._changingSlot}, ${T.escCancel}</div>`
         : '';
 
-      const shopName = shop ? shop.id : T.title;
+      const shopName = shop ? (SM.shopDisplayName ? SM.shopDisplayName(shop) : shop.id) : T.title;
       const roleBadge = shop ? `<span class="shop-role-badge shop-role-${shop.currentRole.toLowerCase()}">${shop.currentRole}</span>` : '';
 
       this._el.innerHTML = `
@@ -311,6 +338,9 @@
         });
       });
 
+      this._el.querySelector('.shop-take-btn')
+        ?.addEventListener('mousedown', () => this._takeTakings());
+
       this._el.querySelectorAll('.item-slot').forEach((el, i) => {
         el.addEventListener('mouseenter', () => {
           // Hover steers only while the mouse is what is moving: the list
@@ -328,12 +358,18 @@
       });
 
       this._drawIcons();
+      if (window.TwoPanelPicker) {
+        if (this._activeTab === 'staff')   window.TwoPanelPicker.mounted(this._el, _STAFF_PICKER);
+        if (this._activeTab === 'shelves') window.TwoPanelPicker.mounted(this._el, _SHELF_PICKER);
+      }
     }
 
     _buildLeft(shop, T) {
       if (this._activeTab === 'overview') {
         return `<div class="shop-status-rows">${this._buildStatusRows(shop, T)}</div>`;
       }
+      if (this._activeTab === 'staff')   return this._buildStaff(shop, T);
+      if (this._activeTab === 'shelves') return this._buildShelves(shop, T);
 
       const items = this._getListItems();
       if (items.length === 0) return `<p class="item-grid-empty">${T.noShop}</p>`;
@@ -393,6 +429,186 @@
       return '';
     }
 
+    // Who stands behind the counter, and for which eight hours. A shop the
+    // party does not own has a keeper of its own, so there is nothing to roster.
+    _buildStaff(shop, T) {
+      if (!shop.owned) return `<p class="item-grid-empty">${T('ShopManagement.staff.notOurs')}</p>`;
+      if (!window.TwoPanelPicker) return `<p class="item-grid-empty">${T('ShopManagement.staff.title')}</p>`;
+
+      const shopId = shop.id;
+      const hours = (entry) => T('ShopManagement.staff.shift', {
+        start: entry.shift.start, end: entry.shift.end,
+      });
+      window.TwoPanelPicker.register({
+        id: _STAFF_PICKER,
+        title: T('ShopManagement.staff.title'),
+        hint:  T('ShopManagement.staff.hint'),
+        left: {
+          key:   'available',
+          title: T('ShopManagement.staff.candidatesTitle'),
+          items: () => SM.staffCandidates(SM.getShop(shopId)).map(c => ({
+            id:   `${c.kind}:${c.id}`,
+            name: c.name,
+            sub:  T('ShopManagement.ui.levelAbbr', { level: c.level }),
+          })),
+        },
+        right: {
+          key:   'roster',
+          title: T('ShopManagement.staff.rosterTitle'),
+          max:   SM.MAX_STAFF,
+          empty: T('ShopManagement.staff.closed'),
+          items: () => SM.staffRoster(shopId).map(entry => ({
+            id:   `${entry.kind}:${entry.id}`,
+            name: entry.name,
+            sub:  hours(entry),
+          })),
+        },
+        move: (rowId, from, to) => {
+          const [kind, id] = String(rowId).split(':');
+          const result = to === 'roster'
+            ? SM.assignStaff(shopId, kind, id)
+            : SM.dismissStaff(shopId, kind, id);
+          if (!result.ok) {
+            return { ok: false, message: result.reason === 'rosterFull'
+              ? T('ShopManagement.staff.full') : T('ShopManagement.staff.notOurs') };
+          }
+          return true;
+        },
+        onChange: () => this._refreshDOM(),
+      });
+      return window.TwoPanelPicker.html(_STAFF_PICKER);
+    }
+
+    // Filling the shelves by hand. Nobody restocks a shop the party owns, so
+    // this is where its stock comes from: the bags they are carrying, or a
+    // wholesaler who sells the trade's own goods under the counter price.
+    // Anything stocked can always come back off the shelf again.
+    _buildShelves(shop, T) {
+      if (!shop.owned) return `<p class="item-grid-empty">${T('ShopManagement.shelves.notOurs')}</p>`;
+      if (!window.TwoPanelPicker) return `<p class="item-grid-empty">${T('ShopManagement.shelves.title')}</p>`;
+
+      const shopId = shop.id;
+      const fromMarket = this._shelfSource === 'market';
+      const source = fromMarket
+        ? {
+            key:   'market',
+            title: T('ShopManagement.shelves.marketTitle', { trade: SM.shopTrade(shop) }),
+            empty: T('ShopManagement.shelves.marketEmpty'),
+            items: () => SM.wholesaleOffers(SM.getShop(shopId)).map(offer => ({
+              id:        String(offer.item.id),
+              name:      _itemName(offer.item),
+              sub:       SM.formatEuroPrice(offer.price),
+              iconIndex: offer.item.iconIndex,
+            })),
+          }
+        : {
+            key:   'bag',
+            title: T('ShopManagement.shelves.bagTitle'),
+            empty: T('ShopManagement.shelves.bagEmpty'),
+            items: () => SM.stockableItems().map(entry => ({
+              id:        String(entry.item.id),
+              name:      _itemName(entry.item),
+              count:     entry.amount,
+              iconIndex: entry.item.iconIndex,
+            })),
+          };
+
+      window.TwoPanelPicker.register({
+        id: _SHELF_PICKER,
+        title: T('ShopManagement.shelves.title'),
+        hint:  fromMarket
+          ? T('ShopManagement.shelves.marketHint')
+          : T('ShopManagement.shelves.bagHint'),
+        moveLabel: {
+          toRight: fromMarket ? T('ShopManagement.shelves.buy') : T('ShopManagement.shelves.shelve'),
+          toLeft:  T('ShopManagement.shelves.takeBack'),
+        },
+        left: source,
+        right: {
+          key:   'shelf',
+          title: T('ShopManagement.shelves.shelfTitle'),
+          empty: T('ShopManagement.shelves.shelfEmpty'),
+          items: () => {
+            const live = SM.getShop(shopId);
+            const rows = [];
+            for (let slot = 1; slot <= 7; slot++) {
+              const row = live.stockInventory[slot];
+              if (!row || !row.amount) continue;
+              const item = $dataItems[row.itemId];
+              if (!item) continue;
+              const price = live.menuPrices[row.itemId];
+              rows.push({
+                id:        String(row.itemId),
+                name:      _itemName(item),
+                count:     row.amount,
+                sub:       price ? SM.formatEuroPrice(price) : '',
+                iconIndex: item.iconIndex,
+              });
+            }
+            return rows;
+          },
+        },
+        move: (rowId, from, to, amount) => {
+          const itemId = Number(rowId);
+          let result;
+          if (to === 'shelf') {
+            result = from === 'market'
+              ? SM.buyStock(shopId, itemId, amount)
+              : SM.stockFromBag(shopId, itemId, amount);
+          } else if (from === 'shelf' && to === 'market') {
+            // The wholesaler does not buy back: the shelf empties into the bags.
+            result = SM.pullFromStock(shopId, itemId, amount);
+          } else {
+            result = SM.pullFromStock(shopId, itemId, amount);
+          }
+          if (!result.ok) {
+            const reason = result.reason === 'shelvesFull' ? 'shelvesFull'
+              : result.reason === 'tooDear' ? 'tooDear' : 'refused';
+            return { ok: false, message: T('ShopManagement.shelves.' + reason) };
+          }
+          return true;
+        },
+        onChange: () => this._refreshDOM(),
+      });
+
+      const tab = (key, label) => {
+        const on = (this._shelfSource || 'bag') === key ? ' active' : '';
+        return `<div class="backpack-tab focusable${on}" tabindex="0"` +
+               ` onclick="SceneManager._scene?.setShelfSource?.('${key}')">${label}</div>`;
+      };
+      return `
+        <div class="backpack-tabs shop-shelf-sources">
+          ${tab('bag',    T('ShopManagement.shelves.bagTitle'))}
+          ${tab('market', T('ShopManagement.shelves.wholesaler'))}
+        </div>
+        ${window.TwoPanelPicker.html(_SHELF_PICKER)}`;
+    }
+
+    // The Thinker's bench, opened for this shop: whatever is fabricated while
+    // the consignment is open goes onto the shelves rather than into the bags
+    // (ShopManagement.beginConsignment). Coming back out of the bench rebuilds
+    // this scene, and that is where the consignment is closed again.
+    openShopWorkshop() {
+      const shop = SM.getCurrentShop();
+      if (!shop || !shop.owned || !window.Scene_Thinker) {
+        SoundManager.playBuzzer();
+        return;
+      }
+      SM.beginConsignment(shop.id);
+      SoundManager.playOk();
+      window._shopMgmtInitTab = 'shelves';
+      SceneManager.push(window.Scene_Thinker);
+    }
+
+    // Which side the shelves are filled from: the party's bags, or the
+    // wholesaler's list.
+    setShelfSource(key) {
+      if (this._shelfSource === key) return;
+      this._shelfSource = key;
+      SoundManager.playCursor();
+      this._refreshDOM();
+    }
+
     _buildStatusRows(shop, T) {
       const bal        = SM.formatEuroPrice(shop.balance || 0);
       const statusText = shop.isWorking ? T.working : T.offDuty;
@@ -442,11 +658,91 @@
     }
 
     _buildRight(shop, T) {
+      if (this._activeTab === 'shelves') {
+        const name  = SM.shopDisplayName ? SM.shopDisplayName(shop) : shop.id;
+        const trade = SM.shopTrade(shop);
+        const onSale = [];
+        for (let slot = 1; slot <= 7; slot++) {
+          const row = shop.stockInventory[slot];
+          if (!row || !row.amount) continue;
+          const item = $dataItems[row.itemId];
+          if (item) onSale.push({ item, row });
+        }
+        const worth = onSale.reduce(
+          (sum, e) => sum + (shop.menuPrices[e.row.itemId] || 0) * e.row.amount, 0);
+        const rows = onSale.length
+          ? onSale.map(e => `
+              <div class="inspect-spec-row">
+                <span class="inspect-spec-label">${_itemName(e.item)}</span>
+                <span class="inspect-spec-value">&times;${e.row.amount}</span>
+              </div>`).join('')
+          : `<div class="inspect-spec-row">
+                <span class="inspect-spec-value">${T('ShopManagement.shelves.shelfEmpty')}</span>
+              </div>`;
+        return `
+          <div class="inspect-header">
+            <div class="inspect-title-box">
+              <div class="inspect-name">${name}</div>
+              <div class="inspect-rarity">${SM.formatEuroPrice(worth)}</div>
+            </div>
+          </div>
+          <div class="inspect-lore">
+            <div class="inspect-section-title">${T('ShopManagement.shelves.shelfTitle')}</div>
+            ${rows}
+            <div class="inspect-spec-row">
+              <span class="inspect-spec-label">${T('ShopManagement.category')}</span>
+              <span class="inspect-spec-value">${trade}</span>
+            </div>
+            ${window.ThinkerMenu ? `<div class="command-item focusable" tabindex="0"
+                onclick="SceneManager._scene?.openShopWorkshop?.()">${T('ShopManagement.shelves.fabricate')}</div>` : ''}
+          </div>`;
+      }
+      if (this._activeTab === 'staff') {
+        const name  = SM.shopDisplayName ? SM.shopDisplayName(shop) : shop.id;
+        const staff = shop.owned ? SM.staffRoster(shop.id) : [];
+        const hours = staff.length * SM.SHIFT_HOURS;
+        const rows  = staff.length
+          ? staff.map(entry => `
+              <div class="inspect-spec-row">
+                <span class="inspect-spec-label">${entry.name}</span>
+                <span class="inspect-spec-value">${T('ShopManagement.staff.shift', {
+                  start: entry.shift.start, end: entry.shift.end })}</span>
+              </div>`).join('')
+          : `<div class="inspect-spec-row">
+                <span class="inspect-spec-value">${T('ShopManagement.staff.closed')}</span>
+              </div>`;
+        return `
+          <div class="inspect-header">
+            <div class="inspect-title-box">
+              <div class="inspect-name">${name}</div>
+              <div class="inspect-rarity">${T('ShopManagement.staff.coverage', {
+                hours: Math.min(24, hours) })}</div>
+            </div>
+          </div>
+          <div class="inspect-lore">
+            <div class="inspect-section-title">${T('ShopManagement.staff.rosterTitle')}</div>
+            ${rows}
+          </div>`;
+      }
       if (this._activeTab === 'overview') {
-        return `<div class="item-inspect--empty">
-          <div class="inspect-placeholder-icon"></div>
-          <p class="inspect-placeholder-text">${shop.id}</p>
-        </div>`;
+        // Overview's right page is where the shop pays out: the balance the
+        // simulation has been building up is drawn into the party's purse.
+        const name = SM.shopDisplayName ? SM.shopDisplayName(shop) : shop.id;
+        const canTake = (shop.balance || 0) > 0;
+        return `
+          <div class="inspect-header">
+            <div class="inspect-title-box">
+              <div class="inspect-name">${name}</div>
+              <div class="inspect-rarity">${SM.formatEuroPrice(shop.balance || 0)}</div>
+            </div>
+          </div>
+          <div class="inspect-lore">
+            <div class="inspect-section-title">${T('ShopManagement.ui.takings')}</div>
+            <p class="inspect-bullet-item">${T('ShopManagement.ui.takingsHint')}</p>
+            <div class="inspect-btn${canTake ? '' : ' inspect-btn--secondary'} shop-take-btn">
+              ${T('ShopManagement.ui.takeTakings')}
+            </div>
+          </div>`;
       }
 
       const items    = this._getListItems();
@@ -504,6 +800,22 @@
           <div class="inspect-section-title">${T.recipe}</div>
           ${recipeHtml}
         </div>`;
+    }
+
+    // The shop banks its own earnings; this is the counter where the party
+    // collects them. The balance is in gold, the same units as the purse.
+    _takeTakings() {
+      const shop = SM.getCurrentShop();
+      if (!shop || (shop.balance || 0) <= 0) { SoundManager.playBuzzer(); return; }
+      const amount = Math.floor(shop.balance);
+      shop.balance -= amount;
+      $gameParty.gainGold(amount);
+      SoundManager.playShop();
+      window.ParchmentToast?.show?.(
+        T('ShopManagement.ui.tookTakings', { amount: SM.formatEuroPrice(amount) }),
+        { title: T('ShopManagement.title') }
+      );
+      this._refreshDOM();
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────

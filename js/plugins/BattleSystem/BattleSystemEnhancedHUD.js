@@ -349,6 +349,9 @@
       el.className = 'bse-hud-text' +
         (bold ? ' bse-hud-text--bold' : '') +
         (outlineColor && outlineWidth > 0 ? ' bse-hud-text--outlined' : '');
+      // The same reason the class is reset: the node may have been a status
+      // chip with a hover explanation on it a frame ago.
+      if (window.StateTip) window.StateTip.clear(el);
       const st = el.style;
       st.setProperty('--hud-x', x + 'px');
       st.setProperty('--hud-y', y + 'px');
@@ -495,6 +498,7 @@
         const isDebuff = state.restriction && state.restriction > 0;
         const hex = getStateHexColor(state);
         return {
+          stateId: state.id,
           text: window.translateText ? window.translateText(state.name) : state.name,
           color: hex || (isDebuff ? "#ffd0d0" : "#ffe9c2"),
           background: isDebuff
@@ -651,20 +655,17 @@
       // stranded halfway up the screen.
       const page = window.BattleListPage || { MARGIN: 20, GAP: 10, TOP: 184, width: 420, height: 460 };
       const fixedW = page.width * sc.sx;
-      // The box shares the page's side: right by default, left once the player
-      // sends the battle log to the right (which is itself the default).
-      const onRight = typeof page.onRight === 'function' ? page.onRight() : true;
 
-      // Anchor the box by its bottom-right corner (just above the skill selector)
-      // and let width/height grow with the content so the box autosizes to its text.
+      // The description always reads from the middle of the screen, whichever
+      // side the list page itself is on and whatever the control mode: it is
+      // the one thing the player has to read, so it never hides in a corner.
       // Both pages hang from page.TOP, so the box stands on that one line and
       // does not move when the player switches between them.
-      const rightEdgeX = onRight
-          ? sc.ox + (Graphics.width * sc.sx) - (page.MARGIN * sc.sx)
-          : sc.ox + (page.MARGIN * sc.sx) + fixedW;
+      const centreX = sc.ox + (Graphics.width * sc.sx) / 2;
+      const leftEdgeX = centreX - fixedW / 2;
       const bottomEdgeY = sc.oy + (page.TOP - page.GAP) * sc.sy;
 
-      const rightStr = Math.max(0, window.innerWidth - rightEdgeX) + 'px';
+      const leftStr = Math.max(0, leftEdgeX) + 'px';
       const bottomStr = Math.max(0, window.innerHeight - bottomEdgeY) + 'px';
       const widthStr = fixedW + 'px';
       const paddingStr = Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px';
@@ -674,11 +675,11 @@
       const scaledFont = Math.round(baseFontSize * sc.sy * 0.85);
       const fontSizeStr = scaledFont + 'px';
 
-      if (s.left !== '') s.left = '';
+      if (s.right !== '') s.right = '';
       if (s.top !== '') s.top = '';
       if (s.width !== widthStr) s.width = widthStr;
       if (s.height !== 'auto') s.height = 'auto';
-      if (s.right !== rightStr) s.right = rightStr;
+      if (s.left !== leftStr) s.left = leftStr;
       if (s.bottom !== bottomStr) s.bottom = bottomStr;
       if (s.maxWidth !== widthStr) s.maxWidth = widthStr;
       if (s.padding !== paddingStr) s.padding = paddingStr;
@@ -1623,6 +1624,12 @@
           );
           if (el) {
             el.classList.add("bse-hud-chip");
+            // What the ailment actually does, on hover. An element chip is
+            // already its own sentence, so only a state carries one.
+            if (window.StateTip) {
+              if (chip.stateId) window.StateTip.mark(el, { stateId: chip.stateId });
+              else window.StateTip.clear(el);
+            }
             el.style.setProperty("--hud-chip-h", chipH + "px");
             el.style.setProperty("--hud-chip-pad", chipPadX + "px");
             el.style.setProperty("--hud-chip-bg", chip.background);
@@ -2383,6 +2390,10 @@
 
   let _hotbarActive = false; // true once the bar, rather than the command list, owns direction input
   let _hotbarIndex = 0;
+  // A member carrying more skills than the row has slots reads them a page of
+  // nine at a time; the chevrons at either end of the row say so, and Left /
+  // Right turns the page once the cursor walks off the end of the one shown.
+  let _hotbarPage = 0;
   let _hotbarActor = null;
   // Window_ActorCommand.processCursorMove hands off focus on the same Left/
   // Right press that updateBattleHotbar (later in the very same frame) would
@@ -2401,17 +2412,55 @@
     showLabel: true,
     onSlotClick: (i) => {
       const actor = BattleManager.actor();
-      const skills = _hotbarSkills(actor);
-      if (skills[i]) _hotbarUseSkill(actor, skills[i]);
-    }
+      const page = _hotbarPageSkills(_hotbarSkills(actor));
+      if (page[i]) _hotbarUseSkill(actor, page[i]);
+    },
+    onPagePrev: () => _hotbarTurnPage(-1),
+    onPageNext: () => _hotbarTurnPage(1)
   });
 
+  // The carried loadout first, then the skills that cost it no slot (the
+  // basics, and whatever a piece of kit or a state lends the member): those
+  // are castable too, so the bar reaches them rather than pretending they are
+  // not there. A body's own limb moves are left out; they belong to the parts
+  // menu, not to the quick bar.
   function _hotbarSkills(actor) {
     if (!actor || !window.BattleLoadout) return [];
-    return window.BattleLoadout.ids(actor)
-      .slice(0, HOTBAR_SLOTS)
-      .map(id => $dataSkills[id])
-      .filter(Boolean);
+    const LO = window.BattleLoadout;
+    const carried = LO.ids(actor).map(id => $dataSkills[id]).filter(Boolean);
+    const seen = new Set(carried.map(skill => skill.id));
+    const anatomy = (window.HealthCore && window.HealthCore.anatomySkillIds)
+      ? window.HealthCore.anatomySkillIds(actor) : null;
+    const known = typeof actor.skills === 'function' ? actor.skills() : [];
+    const extra = typeof LO.isAlwaysCarried !== 'function' ? [] : known.filter(skill =>
+      skill && !seen.has(skill.id) && LO.isAlwaysCarried(actor, skill) &&
+      !(anatomy && anatomy.has(skill.id)));
+    return carried.concat(extra);
+  }
+
+  // How many pages of nine the carried skills fill, and the slice standing on
+  // the row right now. A bar that fits in one page never shows a chevron.
+  function _hotbarPageCount(skills) {
+    return Math.max(1, Math.ceil(skills.length / HOTBAR_SLOTS));
+  }
+
+  function _hotbarPageSkills(skills) {
+    const pages = _hotbarPageCount(skills);
+    if (_hotbarPage >= pages) _hotbarPage = 0;
+    return skills.slice(_hotbarPage * HOTBAR_SLOTS, (_hotbarPage + 1) * HOTBAR_SLOTS);
+  }
+
+  // Turn to the next / previous page, wrapping at either end, and land the
+  // cursor on the edge the player came in from.
+  function _hotbarTurnPage(step) {
+    const skills = _hotbarSkills(BattleManager.actor() || _hotbarActor);
+    const pages = _hotbarPageCount(skills);
+    if (pages < 2) return false;
+    _hotbarPage = (_hotbarPage + step + pages) % pages;
+    const shown = _hotbarPageSkills(skills);
+    _hotbarIndex = step > 0 ? 0 : Math.max(0, shown.length - 1);
+    SoundManager.playCursor();
+    return true;
   }
 
   // The tooltip shows the skill's name and its cost only, nothing else.
@@ -2427,8 +2476,9 @@
 
   function _hotbarEntries(actor, skills) {
     const entries = [];
+    const shown = _hotbarPageSkills(skills);
     for (let i = 0; i < HOTBAR_SLOTS; i++) {
-      const skill = skills[i];
+      const skill = shown[i];
       entries.push(skill ? {
         iconIndex: skill.iconIndex,
         enabled: actor.canUse(skill),
@@ -2496,7 +2546,9 @@
     const armed = _hotbarKeyArmed !== null;
     _hotbarBar.render(_hotbarEntries(actor, skills), {
       selected: armed ? _hotbarKeyArmed : _hotbarIndex,
-      active: _hotbarActive || armed
+      active: _hotbarActive || armed,
+      page: _hotbarPage,
+      pages: _hotbarPageCount(skills)
     });
 
     // Dim the command list while the bar holds direction focus, so it never
@@ -2528,7 +2580,8 @@
   }
 
   // Returns true once a held key has been released and its skill cast.
-  function _updateHotbarKeyHold(actor, skills) {
+  function _updateHotbarKeyHold(actor, allSkills) {
+    const skills = _hotbarPageSkills(allSkills);
     for (let i = 0; i < HOTBAR_SLOTS; i++) {
       if (!skills[i] || !Input.isTriggered(String(i + 1))) continue;
       // Whatever was armed before is now just a key waiting to be let go.
@@ -2582,6 +2635,7 @@
       _clearHotbarKeys();
       _hotbarActive = false;
       _hotbarIndex = 0;
+      _hotbarPage = 0;
     }
     const skills = _hotbarSkills(actor);
     if (skills.length === 0) {
@@ -2613,13 +2667,27 @@
         SoundManager.playCancel();
       } else if (Input.isRepeated('left') || Input.isRepeated('pageup')) {
         // pageup/pagedown are the shoulder buttons L1/R1 (CustomCommandMapper.js).
-        _hotbarIndex = (_hotbarIndex - 1 + skills.length) % skills.length;
-        SoundManager.playCursor();
+        // Walking off the near end of a paged row turns to the page before it.
+        const shown = _hotbarPageSkills(skills);
+        if (_hotbarIndex <= 0 && !_hotbarTurnPage(-1)) {
+          _hotbarIndex = shown.length - 1;
+          SoundManager.playCursor();
+        } else if (_hotbarIndex > 0) {
+          _hotbarIndex -= 1;
+          SoundManager.playCursor();
+        }
       } else if (Input.isRepeated('right') || Input.isRepeated('pagedown')) {
-        _hotbarIndex = (_hotbarIndex + 1) % skills.length;
-        SoundManager.playCursor();
+        const shown = _hotbarPageSkills(skills);
+        if (_hotbarIndex >= shown.length - 1 && !_hotbarTurnPage(1)) {
+          _hotbarIndex = 0;
+          SoundManager.playCursor();
+        } else if (_hotbarIndex < shown.length - 1) {
+          _hotbarIndex += 1;
+          SoundManager.playCursor();
+        }
       } else if (Input.isTriggered('ok')) {
-        _hotbarUseSkill(actor, skills[_hotbarIndex]);
+        const shown = _hotbarPageSkills(skills);
+        if (shown[_hotbarIndex]) _hotbarUseSkill(actor, shown[_hotbarIndex]);
       }
     }
 

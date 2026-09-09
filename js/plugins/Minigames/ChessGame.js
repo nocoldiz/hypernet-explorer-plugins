@@ -1847,6 +1847,18 @@
             const flat = Math.cos(pitch) * dist;
             this.camera.position.set(Math.sin(this._yaw) * flat, y, Math.cos(this._yaw) * flat);
             this.camera.lookAt(0, 0.35, 0);
+            // The right stick looks around the board without turning it: the
+            // turn is a move of its own (L1 / R1) and stays where it was put.
+            this._padOrbit(dt);
+        }
+
+        _padOrbit(dt) {
+            if (!this._orbit && window.Controller) {
+                this._orbit = window.Controller.orbit({ minPitch: -0.5, maxPitch: 0.5 });
+            }
+            if (!this._orbit) return;
+            this._orbit.update(dt);
+            this._orbit.applyTo(this.camera, { x: 0, y: 0.35, z: 0 });
         }
 
         // Which square the pointer is over, by dropping its ray onto the board

@@ -291,16 +291,23 @@
 
     createUIJobOffersDOM() {
       this._dndContainer = document.createElement('div');
-      this._dndContainer.id = 'menu-container';
       this._dndContainer.classList.add('joboffers-root');
 
       if (this._isAppMode) {
         const parent = document.getElementById('job-offers-content');
         if (parent) {
+          // No id="menu-container" here: that id carries the fullscreen
+          // parchment frame, which paints a dark border inside an OS window
+          // and makes the board the one app that does not look like Archways.
+          // In the OS the board wears the shell's own chrome instead.
+          this._dndContainer.classList.add('xp-app', 'joboffers-xp');
           parent.appendChild(this._dndContainer);
           return;
         }
       }
+
+      // Only the fullscreen scene is the parchment menu, so only it takes the id.
+      this._dndContainer.id = 'menu-container';
 
       // Standalone the board IS the screen; in a Hypernet window it fills the
       // window. Both looks are in the stylesheet, off one class.
@@ -364,9 +371,9 @@
     // The two pages of this screen, as the shared tab strip.
     getSectionTabsHTML(sref, hasJob) {
       const tab = (key, label, on) =>
-        `<div class="backpack-tab focusable${on ? ' selected' : ''}" tabindex="0"` +
+        `<div class="backpack-tab${this.xpc('xp-tab')}${on ? ' selected active' : ''} focusable" tabindex="0"` +
         ` data-focus-key="tab-${key}" onclick="${sref}.showSection('${key}')">${label}</div>`;
-      return `<div class="backpack-tabs">
+      return `<div class="backpack-tabs${this.xpc('xp-tabs')}">
         ${tab('list', T('WorkSystem.jobBoardOffers'), this._dndFocusSection === 'list')}
         ${hasJob ? tab('actors', T('WorkSystem.candidateRoster'), this._dndFocusSection === 'actors') : ''}
       </div>`;
@@ -385,7 +392,7 @@
 
       let listHTML = "";
       if (jobs.length === 0) {
-        listHTML = `<div class="ui-empty"><div class="ui-empty-text">${T('WorkSystem.noJobOffersCurrentlyAvailable')}</div></div>`;
+        listHTML = `<div class="ui-empty${this.xpc('xp-empty')}"><div class="ui-empty-text">${T('WorkSystem.noJobOffersCurrentlyAvailable')}</div></div>`;
       } else {
         jobs.forEach((job, idx) => {
           const isSelected = idx === selectedIndex;
@@ -405,13 +412,13 @@
 
       return `
         <div class="page-header-bar">
-          <div class="back-button focusable" tabindex="0" data-focus-key="back-btn" onclick="${sref}.popScene()">
+          <div class="back-button${this.xpc('xp-btn')} focusable" tabindex="0" data-focus-key="back-btn" onclick="${sref}.popScene()">
             ${T('WorkSystem.dismiss')}
           </div>
           <h2 class="title">${T('WorkSystem.jobBoardOffers')}</h2>
         </div>
         ${this.getSectionTabsHTML(sref, !!jobs[selectedIndex])}
-        <div class="ui-list ui-scroll" id="jobs-list">${listHTML}</div>`;
+        <div class="ui-list ui-scroll${this.xpc('xp-list')}" id="jobs-list">${listHTML}</div>`;
     }
 
     getLocationName(mapId) {
@@ -420,7 +427,7 @@
 
     getJobOfferContractHTML(job, actor) {
       if (!job) {
-        return `<div class="ui-empty"><div class="ui-empty-text">${T('WorkSystem.selectAJobOfferTo')}</div></div>`;
+        return `<div class="ui-empty${this.xpc('xp-empty')}"><div class="ui-empty-text">${T('WorkSystem.selectAJobOfferTo')}</div></div>`;
       }
 
       const jobName = window.WorkSystem.jobName(job);
@@ -497,7 +504,7 @@
             </div>
             ${locationsHTML}
             <div class="inspect-section-title">${T('WorkSystem.requiredStats')} (${actor.name()})</div>
-            <div class="inspect-spec-grid">${requirementsHTML}</div>
+            <div class="inspect-spec-grid${this.xpc('xp-group')}">${requirementsHTML}</div>
             <div class="inspect-spec-row">
               <span class="inspect-spec-label">${T('WorkSystem.estimatedSuccessRate')}</span>
               <span class="inspect-spec-value ${chanceClass}">${chancePercent}%</span>
@@ -505,6 +512,7 @@
             ${!reqCheck.meets
               ? `<div class="ui-prose job-deficit">${T('WorkSystem.deficitWarning')}</div>` : ''}
           </div>
+          ${this.getPartyImpactHTML()}
           ${this.getChooseCandidateButtonHTML()}
         </div>`;
     }
@@ -516,8 +524,8 @@
     getChooseCandidateButtonHTML() {
       if (this._dndFocusSection !== 'list') return '';
       const sref = this._isAppMode ? 'window.HypernetJobsApp.appInstance' : 'SceneManager._scene';
-      return `<div class="inspect-actions">
-        <div class="inspect-btn focusable" tabindex="0" data-focus-key="choose-btn"
+      return `<div class="inspect-actions${this.xpc('xp-row-right')}">
+        <div class="inspect-btn${this.xpc('xp-btn')} focusable" tabindex="0" data-focus-key="choose-btn"
              onclick="${sref}.openCandidateRoster()">${T('WorkSystem.chooseCandidate')}</div>
       </div>`;
     }
@@ -531,7 +539,7 @@
 
     getRemoteWorkButtonHTML(job, sref) {
       if (!this.isRemoteJob(job)) return '';
-      return `<div class="inspect-btn focusable" tabindex="0" data-focus-key="remote-btn"
+      return `<div class="inspect-btn${this.xpc('xp-btn')} focusable" tabindex="0" data-focus-key="remote-btn"
                    onclick="${sref}.confirmRemoteWork()">${T('WorkSystem.remoteWork')}</div>`;
     }
 
@@ -600,12 +608,12 @@
               <h3 class="job-contract-title">${T('WorkSystem.candidateRoster')}</h3>
             </div>
           </div>
-          <div class="ui-detail-scroll ui-scroll" id="roster-list">${listHTML}</div>
-          <div class="inspect-actions">
-            <div class="inspect-btn focusable" tabindex="0" data-focus-key="accept-btn"
+          <div class="ui-detail-scroll ui-scroll${this.xpc('xp-list')}" id="roster-list">${listHTML}${this.getAwayRosterHTML()}</div>
+          <div class="inspect-actions${this.xpc('xp-row-right')}">
+            <div class="inspect-btn${this.xpc('xp-btn default')} focusable" tabindex="0" data-focus-key="accept-btn"
                  onclick="${sref}.confirmActorSelection()">${T('WorkSystem.acceptJobOffer')}</div>
             ${this.getRemoteWorkButtonHTML(selectedJob, sref)}
-            <div class="inspect-btn inspect-btn--secondary focusable" tabindex="0"
+            <div class="inspect-btn inspect-btn--secondary${this.xpc('xp-btn')} focusable" tabindex="0"
                  onclick="${sref}.retractActorSelection()">${T('WorkSystem.retractCandidate')}</div>
           </div>
         </div>`;
@@ -668,11 +676,17 @@
     }
 
     update() {
-      // In OS app mode the Scene_HypernetOS focus ring also drives keyboard
-      // navigation, but we still process Input here as a fallback so arrow/WASD
-      // keys and Enter work reliably. The dual path is safe because the OS ring
-      // handles tab-order focusing while this handles selection/confirmation.
       super.update();
+
+      // In the OS the focus ring already walks every .focusable control and
+      // presses it, so reading Input here as well moves the cursor twice for
+      // one key. The ring is the only navigation in app mode; the board just
+      // keeps the shift clock running so somebody's hours can end while the
+      // player is sitting in front of the terminal.
+      if (this._isAppMode) {
+        this.updateWorkShiftClock();
+        return;
+      }
 
       if (this._dndContainer) {
         let moved = false;
@@ -747,6 +761,88 @@
           this.refreshUIJobOffersDOM();
         }
       }
+    }
+
+    // ------------------------------------------------------------------
+    // Shifts and the party
+    //
+    // Taking a contract on site does not fast forward the day: the candidate
+    // LEAVES the party for the hours it runs (WorkSystem.Shifts.dispatch) and
+    // walks back in when they are up. The board therefore has to say who is
+    // already out, how long they have left, and what will happen to the party
+    // if this offer is taken, because none of that is visible from the desk.
+    // ------------------------------------------------------------------
+
+    workShifts() {
+      return (window.WorkSystem && window.WorkSystem.Shifts) || null;
+    }
+
+    // Anybody away is a real actor who is simply not in $gameParty, so the
+    // roster cannot show them and the board has to ask the shift ledger.
+    awayEntries() {
+      const shifts = this.workShifts();
+      return shifts && shifts.list ? shifts.list() : [];
+    }
+
+    // The clock only ticks on the map, so a shift that ends while the player
+    // is in the OS would leave its worker away until the map came back. The
+    // app keeps it running, and redraws when somebody actually returns.
+    updateWorkShiftClock() {
+      const shifts = this.workShifts();
+      if (!shifts || !shifts.update) return;
+      const before = this.awayEntries().length;
+      shifts.update();
+      const after = this.awayEntries().length;
+      if (after !== before) this.refreshUIJobOffersDOM();
+    }
+
+    // Somebody has to be left to play as: Shifts.dispatch refuses the last
+    // member standing, and the contract is then worked the old way, behind a
+    // fade with the hours skipped. That is a different afternoon, so it is
+    // said on the contract rather than discovered afterwards.
+    wouldEmptyParty() {
+      return $gameParty.members().length <= 1;
+    }
+
+    // The Busy list the party menu shows, on the board that sent them away.
+    getAwayRosterHTML() {
+      const entries = this.awayEntries();
+      if (entries.length === 0) return '';
+      const shifts = this.workShifts();
+      const rows = entries.map(entry => {
+        const actor = $gameActors.actor(entry.actorId);
+        if (!actor) return '';
+        const left = shifts.remaining(entry);
+        const hours = Math.floor(left / 60);
+        const mins = Math.round(left % 60);
+        return `
+          <div class="item-slot roster-item roster-item--away">
+            ${this.getActorFaceHTML(actor, 44)}
+            <div class="roster-item-info">
+              <div class="roster-item-head">
+                <strong class="roster-item-name">${actor.name()}</strong>
+                <span class="roster-item-chance job-away-clock">${T('WorkSystem.shift.remaining', { hours: hours, minutes: mins })}</span>
+              </div>
+              <div class="roster-item-reqs">${T('WorkSystem.shift.awayOn', { job: window.WorkSystem.jobName(entry.job) })}</div>
+            </div>
+          </div>`;
+      }).join('');
+      return `<div class="inspect-section-title">${T('WorkSystem.shift.awayTitle')}</div>${rows}`;
+    }
+
+    // What taking this contract does to the party, said before it is taken.
+    getPartyImpactHTML() {
+      const text = this.wouldEmptyParty()
+        ? T('WorkSystem.shift.lastMemberWarning')
+        : T('WorkSystem.shift.leavesParty');
+      return `<div class="ui-prose job-party-impact${this.wouldEmptyParty() ? ' job-deficit' : ''}">${text}</div>`;
+    }
+
+    // In the OS the board wears Archways' own controls (the .xp-* vocabulary
+    // in css/hypernet.css) so it reads like a program and not like the
+    // parchment menu; the fullscreen scene keeps the parchment.
+    xpc(names) {
+      return this._isAppMode ? ' ' + names : '';
     }
 
     isKeyPressed(key) {

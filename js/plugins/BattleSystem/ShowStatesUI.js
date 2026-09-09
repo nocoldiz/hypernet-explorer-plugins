@@ -155,6 +155,156 @@
   }
 
   // ============================================================
+  //  window.StateTip, the hover explanation
+  // ============================================================
+  // A status tag on a battle card is one word, and one word never said what
+  // the status DOES. The compendium page already knows how to read a state,
+  // so the same readers answer the hover: the authored line first, then the
+  // effects the traits spell out, how long it lasts and what lifts it.
+  //
+  // A chip is marked with StateTip.mark(el, ...) rather than given listeners
+  // of its own: the HUD pools its elements and hands the same node back as a
+  // different chip a frame later, so the listening is done once, on the
+  // document, and the chip only ever carries the data.
+
+  const TIP_ID = 'state-tip-popup';
+  const TIP_MARGIN = 12;
+
+  // The authored sentence for a state, keyed by its English database name the
+  // way every other database bank is keyed. Falls back to whatever prose an
+  // author left in the note field.
+  function stateDescription(s) {
+    if (!s) return '';
+    let bank = {};
+    try { bank = (window.T && window.T.obj) ? window.T.obj('Battle.states.desc') : {}; } catch (e) { bank = {}; }
+    const line = bank && (bank[s.name] || bank[String(s.id)]);
+    return line || stateProse(s);
+  }
+
+  // Everything the hover says about a state, as rows of { label, text }.
+  function stateTipRows(s) {
+    const rows = [];
+    const effects = traitLines(s);
+    if (effects.length) rows.push({ label: T('Battle.states.effectsHeader'), text: effects.join(', ') });
+    rows.push({ label: T('Battle.states.duration'), text: durationText(s) });
+    const conds = removalLines(s);
+    if (conds.length) rows.push({ label: SS().L.removalHeader, text: conds.join(', ') });
+    return rows;
+  }
+
+  function tipBodyFor(s) {
+    const desc = stateDescription(s);
+    const parts = [];
+    if (desc) parts.push(`<div class="state-tip-desc">${escHtml(desc)}</div>`);
+    for (const row of stateTipRows(s)) {
+      parts.push(`<div class="state-tip-row"><span class="state-tip-label">${escHtml(row.label)}</span>${escHtml(row.text)}</div>`);
+    }
+    return parts.join('');
+  }
+
+  function tipElement() {
+    let el = document.getElementById(TIP_ID);
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = TIP_ID;
+    el.className = 'state-tip';
+    document.body.appendChild(el);
+    return el;
+  }
+
+  function hideTip() {
+    const el = document.getElementById(TIP_ID);
+    if (el) el.classList.remove('state-tip--on');
+  }
+
+  // Pinned to the marked chip, above it when there is room and below it when
+  // there is not, and never off the side of the window.
+  function placeTip(el, anchor) {
+    const r = anchor.getBoundingClientRect();
+    el.style.left = '0px';
+    el.style.top = '0px';
+    const w = el.offsetWidth;
+    const h = el.offsetHeight;
+    let x = r.left + r.width / 2 - w / 2;
+    x = Math.max(TIP_MARGIN, Math.min(x, window.innerWidth - w - TIP_MARGIN));
+    let y = r.top - h - 8;
+    if (y < TIP_MARGIN) y = Math.min(r.bottom + 8, window.innerHeight - h - TIP_MARGIN);
+    el.style.left = Math.round(x) + 'px';
+    el.style.top = Math.round(y) + 'px';
+  }
+
+  function showTip(anchor) {
+    const title = anchor.getAttribute('data-tip-title') || '';
+    const body = anchor.getAttribute('data-tip-body') || '';
+    if (!title && !body) return;
+    const el = tipElement();
+    el.innerHTML =
+      (title ? `<div class="state-tip-title">${escHtml(title)}</div>` : '') +
+      (body || '');
+    const ink = anchor.getAttribute('data-tip-ink');
+    if (ink) el.style.setProperty('--state-tip-ink', ink);
+    else el.style.removeProperty('--state-tip-ink');
+    el.classList.add('state-tip--on');
+    placeTip(el, anchor);
+  }
+
+  let _listening = false;
+  function listen() {
+    if (_listening || typeof document === 'undefined') return;
+    _listening = true;
+    const marked = (node) => (node && node.closest) ? node.closest('[data-tip-title],[data-tip-body]') : null;
+    document.addEventListener('mouseover', (ev) => {
+      const el = marked(ev.target);
+      if (el) showTip(el); else hideTip();
+    }, true);
+    document.addEventListener('mouseout', (ev) => {
+      if (marked(ev.target)) hideTip();
+    }, true);
+    // A chip that is torn down or scrolled away under a still hand leaves the
+    // hover standing, so any click and any wheel puts it away too.
+    document.addEventListener('mousedown', hideTip, true);
+    document.addEventListener('wheel', hideTip, true);
+  }
+
+  window.StateTip = {
+    // Mark an element as explainable. Either { stateId } for a database state,
+    // or { title, body } for anything else that wears a chip (the class
+    // gimmick counters live in BattleSystemPassiveSkills and pass their own).
+    mark(el, opts) {
+      if (!el || !opts) return el;
+      listen();
+      if (opts.stateId) {
+        const s = $dataStates && $dataStates[opts.stateId];
+        if (!s) return el;
+        el.setAttribute('data-tip-title', tr(s.name));
+        el.setAttribute('data-tip-body', tipBodyFor(s));
+        const hex = stateColor(s);
+        if (hex) el.setAttribute('data-tip-ink', hex);
+        else el.removeAttribute('data-tip-ink');
+        return el;
+      }
+      if (opts.title) el.setAttribute('data-tip-title', opts.title);
+      else el.removeAttribute('data-tip-title');
+      if (opts.text) el.setAttribute('data-tip-body', `<div class="state-tip-desc">${escHtml(opts.text)}</div>`);
+      else if (opts.body) el.setAttribute('data-tip-body', opts.body);
+      else el.removeAttribute('data-tip-body');
+      if (opts.ink) el.setAttribute('data-tip-ink', opts.ink);
+      else el.removeAttribute('data-tip-ink');
+      return el;
+    },
+    // The pooled HUD elements come back as something else a frame later.
+    clear(el) {
+      if (!el) return el;
+      el.removeAttribute('data-tip-title');
+      el.removeAttribute('data-tip-body');
+      el.removeAttribute('data-tip-ink');
+      return el;
+    },
+    describe: stateDescription,
+    hide: hideTip,
+  };
+
+  // ============================================================
   //  Scene_StateList, book-spread state inspector
   // ============================================================
 
@@ -224,7 +374,7 @@
       const s = this._states[this._idx];
       if (!s) return `<p class="item-grid-empty">${T('Battle.states.selectPrompt')}</p>`;
 
-      const prose  = stateProse(s);
+      const prose  = stateDescription(s);
       const traits = traitLines(s);
       const conds  = removalLines(s);
       const msgs   = messageLines(s);

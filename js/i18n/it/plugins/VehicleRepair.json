@@ -109,5 +109,8 @@
     "starship": "L'astronave",
     "bike": "La moto",
     "boat": "Il gommone"
+  },
+  "toast": {
+    "criticalFailure": "{part} si è guastato. Il veicolo non si muove più."
   }
 }

@@ -2359,6 +2359,157 @@
         return merged;
     }
 
+    // ---------------------------------------------------------------------
+    // Pass 0: the low-poly look.
+    //
+    // Every family builds its model out of THREE primitives at whatever
+    // resolution read well in isolation, which across the whole roster averages
+    // out to smooth plastic. Rebuilding each primitive at a coarser segment
+    // count and shading it flat gives every battler the same faceted,
+    // hand-cut silhouette without touching a single family file. The caps are
+    // deliberately mild: the shape a builder asked for survives, it just shows
+    // its facets.
+    const _FACET_CAPS = {
+        SphereGeometry: [10, 7],
+        SphereBufferGeometry: [10, 7],
+        CapsuleGeometry: [4, 8],
+        CylinderGeometry: [9, 1],
+        ConeGeometry: [9, 1],
+        TorusGeometry: [8, 10],
+        TorusKnotGeometry: [48, 6],
+        LatheGeometry: [9],
+        CircleGeometry: [10],
+        RingGeometry: [10, 1],
+        TubeGeometry: [24, 6]
+    };
+    // Constructor argument names, in order, per geometry type.
+    const _FACET_ARGS = {
+        SphereGeometry: ['radius', 'widthSegments', 'heightSegments', 'phiStart', 'phiLength', 'thetaStart', 'thetaLength'],
+        SphereBufferGeometry: ['radius', 'widthSegments', 'heightSegments', 'phiStart', 'phiLength', 'thetaStart', 'thetaLength'],
+        CapsuleGeometry: ['radius', 'length', 'capSegments', 'radialSegments'],
+        CylinderGeometry: ['radiusTop', 'radiusBottom', 'height', 'radialSegments', 'heightSegments', 'openEnded', 'thetaStart', 'thetaLength'],
+        ConeGeometry: ['radius', 'height', 'radialSegments', 'heightSegments', 'openEnded', 'thetaStart', 'thetaLength'],
+        TorusGeometry: ['radius', 'tube', 'radialSegments', 'tubularSegments', 'arc'],
+        TorusKnotGeometry: ['radius', 'tube', 'tubularSegments', 'radialSegments', 'p', 'q'],
+        LatheGeometry: ['points', 'segments', 'phiStart', 'phiLength'],
+        CircleGeometry: ['radius', 'segments', 'thetaStart', 'thetaLength'],
+        RingGeometry: ['innerRadius', 'outerRadius', 'thetaSegments', 'phiSegments', 'thetaStart', 'thetaLength'],
+        TubeGeometry: ['path', 'tubularSegments', 'radius', 'radialSegments', 'closed']
+    };
+    // Which argument slots the caps above apply to, in cap order.
+    const _FACET_SLOTS = {
+        SphereGeometry: ['widthSegments', 'heightSegments'],
+        SphereBufferGeometry: ['widthSegments', 'heightSegments'],
+        CapsuleGeometry: ['capSegments', 'radialSegments'],
+        CylinderGeometry: ['radialSegments', 'heightSegments'],
+        ConeGeometry: ['radialSegments', 'heightSegments'],
+        TorusGeometry: ['radialSegments', 'tubularSegments'],
+        TorusKnotGeometry: ['tubularSegments', 'radialSegments'],
+        LatheGeometry: ['segments'],
+        CircleGeometry: ['segments'],
+        RingGeometry: ['thetaSegments', 'phiSegments'],
+        TubeGeometry: ['tubularSegments', 'radialSegments']
+    };
+    // A geometry can be shared by several meshes (families cache and clone
+    // parts), so each source is coarsened once and the result handed to every
+    // user. The originals are never disposed: another live model may still be
+    // drawing one.
+    const _facetCache = typeof WeakMap === 'function' ? new WeakMap() : null;
+
+    function isPristinePrimitive(geo, Ctor, names) {
+        const mine = geo.getAttribute && geo.getAttribute('position');
+        if (!mine) return false;
+        let ref = null;
+        try {
+            ref = new Ctor(...names.map(n => geo.parameters[n]));
+        } catch (e) {
+            return false;
+        }
+        try {
+            const theirs = ref.getAttribute('position');
+            if (!theirs || theirs.count !== mine.count) return false;
+            const a = mine.array, b = theirs.array;
+            if (a.length !== b.length) return false;
+            for (let i = 0; i < a.length; i++) {
+                if (Math.abs(a[i] - b[i]) > 1e-5) return false;
+            }
+            return true;
+        } finally {
+            ref.dispose();
+        }
+    }
+
+    function coarsenGeometry(geo) {
+        if (!geo || !geo.parameters || geo.morphAttributes && Object.keys(geo.morphAttributes).length) return null;
+        const type = geo.type;
+        const caps = _FACET_CAPS[type];
+        const names = _FACET_ARGS[type];
+        const slots = _FACET_SLOTS[type];
+        if (!caps || !names || !slots) return null;
+        const Ctor = THREE[type];
+        if (typeof Ctor !== 'function') return null;
+        if (_facetCache && _facetCache.has(geo)) return _facetCache.get(geo);
+
+        const params = Object.assign({}, geo.parameters);
+        let changed = false;
+        for (let i = 0; i < slots.length; i++) {
+            const name = slots[i];
+            const cap = caps[i];
+            const cur = params[name];
+            if (typeof cur !== 'number') continue;
+            // Most of the way down, never past the cap: a builder that already
+            // asked for something blocky keeps exactly what it asked for.
+            const want = Math.max(cap, Math.round(cur * 0.6));
+            const next = Math.min(cur, want);
+            if (next !== cur) { params[name] = next; changed = true; }
+        }
+        if (!changed) { if (_facetCache) _facetCache.set(geo, null); return null; }
+
+        // .parameters survives a builder editing the vertices in place, so it
+        // is not on its own proof that this geometry is still the primitive it
+        // says it is. Rebuild it at its OWN parameters and compare: a pristine
+        // primitive matches vertex for vertex, a sculpted one does not, and a
+        // sculpted one must be left alone or the sculpting is thrown away.
+        if (!isPristinePrimitive(geo, Ctor, names)) {
+            if (_facetCache) _facetCache.set(geo, null);
+            return null;
+        }
+
+        let out = null;
+        try {
+            out = new Ctor(...names.map(n => params[n]));
+        } catch (e) {
+            out = null;
+        }
+        if (out && geo.userData) out.userData = Object.assign({}, geo.userData);
+        if (_facetCache) _facetCache.set(geo, out);
+        return out;
+    }
+
+    // Walk the model, coarsen every parametric primitive in it and shade the
+    // meshes that carry one flat. Skinned meshes and loaded GLB geometry have
+    // no .parameters and are left exactly as they are, and so is anything a
+    // builder has already edited vertex by vertex.
+    function facetBattlerModel(root) {
+        let touched = 0;
+        const flattened = new Set();
+        root.traverse(obj => {
+            if (!obj.isMesh || obj.isSkinnedMesh || !obj.geometry) return;
+            const next = coarsenGeometry(obj.geometry);
+            if (next) { obj.geometry = next; touched++; }
+            if (!obj.geometry.parameters) return;
+            const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+            for (const mat of mats) {
+                if (!mat || mat.isShaderMaterial || mat.flatShading || flattened.has(mat)) continue;
+                if (mat.map || mat.normalMap) continue; // painted sheets read wrong faceted
+                mat.flatShading = true;
+                mat.needsUpdate = true;
+                flattened.add(mat);
+            }
+        });
+        return touched;
+    }
+
     // Run both passes over a battler that has finished load(). Safe to call more
     // than once: the second call finds nothing left to do.
     function optimiseBattlerModel(battlerModel) {
@@ -2366,10 +2517,11 @@
         if (!root || battlerModel._optimised) return null;
         battlerModel._optimised = true;
         try {
+            const facets = facetBattlerModel(root);
             const protectedMeshes = collectProtectedMeshes(battlerModel);
             const materials = shareIdenticalMaterials(root, protectedMeshes);
             const meshes = mergeStaticDecor(root, protectedMeshes);
-            return { materials, meshes };
+            return { facets, materials, meshes };
         } catch (e) {
             console.warn('[3D Battler] draw-call pass failed, model left as built', e);
             return null;
@@ -3195,6 +3347,7 @@
     window.Battler3D.registerNamed = registerNamed;
     // Exposed for the headless draw-call harness (test/test_battle_3d_perf.js).
     window.Battler3D.optimiseModel = optimiseBattlerModel;
+    window.Battler3D.facetModel = facetBattlerModel;
     window.Battler3D.debugLog = debugLog;
     // Shared with the first person weapon overlay, which runs its own scene in
     // its own context but must be lit by the same sun. See DayNightRig.

@@ -27,5 +27,9 @@
     "all": "Ogni voglia",
     "label": "Voglia",
     "feeds": "Soddisfa"
+  },
+  "year": {
+    "deepTime": "{years} anni fa",
+    "bce": "{year} a.C."
   }
 }

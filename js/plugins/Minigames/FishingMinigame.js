@@ -2200,6 +2200,19 @@
             } else {
                 this._lastTouch = null;
             }
+            // The right stick looks around, the way it does in every other 3D
+            // scene: the speed and the handedness come from the controller
+            // layer, so one setting moves them all (window.Controller).
+            const C = window.Controller;
+            if (C) {
+                const stick = C.stick('right');
+                if (stick.x || stick.y) {
+                    const gain = C.cameraSpeed();
+                    const invert = C.invertCameraY() ? -1 : 1;
+                    dy -= stick.x * 0.045 * gain;
+                    dp -= stick.y * 0.030 * gain * invert;
+                }
+            }
             if (dy || dp) W.applyLook(dy, dp);
         }
 

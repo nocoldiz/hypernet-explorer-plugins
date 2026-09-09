@@ -827,6 +827,12 @@ body {
     color: var(--text-blood-red);
     border-color: var(--text-blood-red);
 }
+/* A chip that explains itself on hover takes the mouse back, even though the
+   strip around it does not (BattleSystem/ShowStatesUI.js). */
+#party-hud .phud-alert[data-tip-title] {
+    pointer-events: auto;
+    cursor: help;
+}
 #party-hud .phud-alert-critical {
     color: #ffe9e9;
     background: var(--text-blood-red);

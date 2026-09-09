@@ -624,6 +624,20 @@
                 this._camPos.z
             );
             this.camera.lookAt(this._camLook.x, this._camLook.y, this._camLook.z);
+            // The right stick swings the shot the game just picked around the
+            // point it is looking at, and lets it go again when the stick is
+            // released. One object does that in every 3D game (window.Controller),
+            // so the speed and the inverted Y are the player's setting, once.
+            this._padOrbit(dt);
+        }
+
+        // Made on first use: a scene built before the controller layer had a
+        // chance to load would otherwise never get one.
+        _padOrbit(dt) {
+            if (!this._orbit && window.Controller) this._orbit = window.Controller.orbit({});
+            if (!this._orbit) return;
+            this._orbit.update(dt);
+            this._orbit.applyTo(this.camera, this._camLook);
         }
 
         render() {

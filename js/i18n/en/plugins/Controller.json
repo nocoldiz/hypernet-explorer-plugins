@@ -1,0 +1,36 @@
+{
+  "options": {
+    "cameraSpeed": "Camera speed",
+    "invertY": "Invert camera Y"
+  },
+  "verbs": {
+    "confirm": ["confirm", "ok", "accept", "apply", "done", "yes", "start", "select"],
+    "use": ["use", "read", "eat", "drink", "wear", "learn", "read it"],
+    "buy": ["buy", "purchase", "order", "hire", "rent"],
+    "sell": ["sell", "trade", "deliver"],
+    "equip": ["equip", "wield", "fit", "install"],
+    "craft": ["craft", "cook", "brew", "forge", "build", "make", "research"],
+    "continue": ["continue", "proceed", "go", "travel", "enter", "play", "deal", "roll"],
+    "cancel": ["cancel", "no", "stop"],
+    "back": ["back", "return", "go back"],
+    "close": ["close", "dismiss", "ok, close"],
+    "exit": ["exit", "leave", "quit", "log off", "hang up"],
+    "discard": ["discard", "throw away", "junk"],
+    "drop": ["drop", "put down", "release"],
+    "delete": ["delete", "erase", "wipe", "clear"],
+    "remove": ["remove", "unequip", "take off", "eject"],
+    "sort": ["sort", "reorder", "arrange"],
+    "filter": ["filter", "search", "find"],
+    "favorite": ["favourite", "favorite", "pin", "star"],
+    "prev": ["previous", "prev", "back one", "earlier"],
+    "next": ["next", "forward", "later", "skip"]
+  },
+  "tips": {
+    "camera": "Camera",
+    "zoom": "Zoom",
+    "recentre": "Recentre",
+    "leave": "Leave",
+    "act": "Act",
+    "view": "View"
+  }
+}

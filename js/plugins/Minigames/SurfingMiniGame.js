@@ -1913,6 +1913,20 @@
                 this._lastTouch = null;
             }
 
+            // The right stick, at the game-wide camera speed and handedness
+            // (window.Controller), so looking down the wave feels the same as
+            // looking around any other 3D scene.
+            const C = window.Controller;
+            if (C) {
+                const stick = C.stick('right');
+                if (stick.x || stick.y) {
+                    const gain = C.cameraSpeed();
+                    const invert = C.invertCameraY() ? -1 : 1;
+                    dy -= stick.x * k * 1.1 * gain;
+                    dp -= stick.y * k * 0.7 * gain * invert;
+                }
+            }
+
             this._lookYaw = clamp(this._lookYaw + dy, -LOOK_YAW_LIM, LOOK_YAW_LIM);
             this._lookPitch = clamp(this._lookPitch + dp, LOOK_PITCH_MIN, LOOK_PITCH_MAX);
             // The head drifts back to looking down the line when it is let go.

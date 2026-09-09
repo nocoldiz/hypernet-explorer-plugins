@@ -1868,6 +1868,13 @@
     static _currentPartyMemberIndex = 0; // Track which party member is being created (0=first, 1=second, 2=third)
     static _lastMemberWasRandom = false; // True when the current member was built via "Total Random" (enables Reroll on the add-member step)
     static _storyMode = false; // Story mode: streamlined single-character creation
+    static _chaosPartyRolled = false; // A chaos world rolls its party once per wizard visit
+
+    // Is this the world of chaos (WorldManager's second alternate timeline)?
+    // Asked here so no page in the wizard spells the mode string itself.
+    static isChaosWorld() {
+      return !!(window.ChaosWorld && window.ChaosWorld.active());
+    }
     static _isVehicleMode = false; // Vehicles tab: the garage the party sets out with
     static _isSimpleMode = true;  // Simple mode (default) vs Detailed mode
     static _settingsRowIndex = 0; // Currently focused row in the initial settings step
@@ -2393,6 +2400,13 @@
       if (Scene_CharacterCreation._storyMode &&
           !(Scene_CharacterCreation.getCurrentActor() || {})._isPresetActor) {
         this.startStoryModeDossier();
+      } else if (Scene_CharacterCreation.isChaosWorld() &&
+                 !Scene_CharacterCreation._chaosPartyRolled) {
+        // The world of chaos is not built, it is drawn: three characters are
+        // rolled on the way in and the wizard opens on the scenario board with
+        // them already seated, where they can be rolled again.
+        Scene_CharacterCreation._chaosPartyRolled = true;
+        this.startChaosParty();
       } else {
         this.setupStep();
       }
@@ -2433,16 +2447,48 @@
     // because the bust is read off the sprite, an empty portrait beside it.
     // Every seat is answered here instead of only the first, and the panels
     // ask again as they draw, so no page can open on a blank frame.
+    // Whether a member is a monster, asked of the member rather than of the
+    // wizard's static mode flag (which is about the seat being edited, not
+    // about this actor). Three things can say so and any one of them is
+    // enough: the flag the creature branch writes, a creature class, and the
+    // seat switch the older paths set.
+    static isCreatureActor(actor) {
+      if (!actor) return false;
+      if (actor._isCreatureActor) return true;
+      const CC = window.CreatureClasses;
+      if (CC && CC.isCreatureClass && actor._classId && CC.isCreatureClass(actor._classId)) return true;
+      const members = ($gameParty && $gameParty.members && $gameParty.members()) || [];
+      const slot = members.indexOf(actor);
+      if (slot >= 0 && typeof $gameSwitches !== "undefined" && $gameSwitches.value(77 + slot)) return true;
+      return false;
+    }
+
     static ensureSpriteAndBust(actor) {
       if (!actor || actor._isPresetActor) return false;
       const hasSprite = !!actor.characterName();
-      const hasBust = typeof actor.vnBust === "function" ? !!actor.vnBust() : true;
+      // A monster is drawn as the model it was sculpted from and carries no
+      // bust at all (_getActorBust refuses one), so asking it for one rolled a
+      // stranger's portrait onto it on every redraw. Its sprite is asked for
+      // exactly as a person's is; only the bust half is skipped.
+      const isCreature = Scene_CharacterCreation.isCreatureActor(actor);
+      const hasBust = isCreature ||
+        (typeof actor.vnBust === "function" ? !!actor.vnBust() : true);
       if (hasSprite && hasBust) {
         actor._ccSpriteSeeded = true;
         return false;
       }
       if (!hasSprite) {
-        Scene_CharacterCreation.assignRandomSpriteAndBust(actor);
+        if (isCreature && window.selectRandomSpriteForActor) {
+          // The grid's own roll, which is the one that knows a monster is
+          // never offered a humanoid NPC's sheet (optionsForAudience). The
+          // portrait style it may set on the way is put back: a creature is
+          // portrayed by its model, not by whatever bust the sheet carries.
+          const mode = actor.portraitMode ? actor.portraitMode() : null;
+          window.selectRandomSpriteForActor(actor.actorId());
+          if (mode && actor.setPortraitMode) actor.setPortraitMode(mode);
+        } else {
+          Scene_CharacterCreation.assignRandomSpriteAndBust(actor);
+        }
       } else if (window.selectRandomBustForActor) {
         window.selectRandomBustForActor(actor.actorId());
       }
@@ -2761,14 +2807,7 @@
 
     // ── Helper methods for connected busts and currency ──
     _isCreatureActorFor(actor) {
-      if (!actor) return false;
-      if (actor._isCreatureActor) return true;
-      const CC = window.CreatureClasses;
-      if (CC && CC.isCreatureClass && actor._classId && CC.isCreatureClass(actor._classId)) return true;
-      const members = ($gameParty && $gameParty.members()) || [];
-      const slot = members.indexOf(actor);
-      if (slot >= 0 && typeof $gameSwitches !== "undefined" && $gameSwitches.value(77 + slot)) return true;
-      return false;
+      return Scene_CharacterCreation.isCreatureActor(actor);
     }
 
     _getActorBust(actor) {
@@ -4037,6 +4076,7 @@
         // is put down here too: it outlives the scene, and a later run of the
         // wizard would otherwise open on the story mode's dossier board again.
         Scene_CharacterCreation._storyMode = false;
+        Scene_CharacterCreation._chaosPartyRolled = false;
         this.popScene();
         return;
       }
@@ -4437,6 +4477,7 @@
       Scene_CharacterCreation._currentPartyMemberIndex = 0;
       Scene_CharacterCreation._lastMemberWasRandom = false;
       Scene_CharacterCreation._storyMode = false;
+      Scene_CharacterCreation._chaosPartyRolled = false;
       Scene_CharacterCreation._settingsRowIndex = 0;
       Scene_CharacterCreation._creationMode = null;
       Scene_CharacterCreation._randomizedAllParty = false;

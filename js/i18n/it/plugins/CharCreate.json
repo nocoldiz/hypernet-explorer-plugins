@@ -814,6 +814,7 @@
   "entryCount": "{n} voci",
   "primaryArchetype": "Archetipo primario",
   "weaponSlotsHeld": "Armi impugnabili: {n}",
+  "handSlotsHeld": "({n} prese)",
   "deletePreset": "Elimina dossier",
   "deletePresetBody": "Eliminare il dossier di {name}? Non si potrà tornare indietro.",
   "secondaryArchetype": "Archetipo secondario",
@@ -1003,5 +1004,7 @@
   "vehicleGarage": "Il tuo garage",
   "vehicleRequired": "La modalità storia richiede un veicolo prima di partire.",
   "vehicleTake": "Prendi questo veicolo",
-  "vehicleDrop": "Lascialo indietro"
+  "vehicleDrop": "Lascialo indietro",
+  "classAbilities": "Abilità di Classe",
+  "limitBreak": "Limit break"
 }

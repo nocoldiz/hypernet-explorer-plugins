@@ -4,5 +4,12 @@
     "next": "SUCC ▶",
     "masthead": ",  GIORNALE QUOTIDIANO DELLA GRIGLIA CRONOMANTICA , ",
     "volumeNo": "VOL. I ... N. {no}"
+  },
+  "crime": {
+    "headline": "{name} ricercato a {place}; taglia ora {bounty}",
+    "pastHeadline": "{name} ancora latitante; vecchio fascicolo riaperto, taglia {bounty}",
+    "body": "La procura ha emesso nella notte un mandato a nome di {name}. I capi d'accusa sono: {charges}. I soli reati della giornata valgono {dayBounty}; la taglia complessiva e' ora di {bounty}.",
+    "count": "{charge} (x{count})",
+    "unknownSuspect": "un sospetto senza nome"
   }
 }

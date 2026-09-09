@@ -192,5 +192,8 @@
    "Far Shore",
    "Nine Gates"
   ]
- }
+ },
+ "armiesLbl": "Armies in the field ({count})",
+ "armyLine": "{leader}, {count} ({status})",
+ "noArmies": "Nothing in the field today"
 }

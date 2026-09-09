@@ -1,0 +1,36 @@
+{
+  "options": {
+    "cameraSpeed": "Velocita telecamera",
+    "invertY": "Inverti asse Y telecamera"
+  },
+  "verbs": {
+    "confirm": ["conferma", "ok", "accetta", "applica", "fatto", "si", "avvia", "seleziona"],
+    "use": ["usa", "leggi", "mangia", "bevi", "indossa", "impara"],
+    "buy": ["compra", "acquista", "ordina", "assumi", "affitta"],
+    "sell": ["vendi", "scambia", "consegna"],
+    "equip": ["equipaggia", "impugna", "monta", "installa"],
+    "craft": ["crea", "cucina", "fermenta", "forgia", "costruisci", "produci", "ricerca"],
+    "continue": ["continua", "prosegui", "vai", "viaggia", "entra", "gioca", "distribuisci", "lancia"],
+    "cancel": ["annulla", "no", "ferma"],
+    "back": ["indietro", "torna", "ritorna"],
+    "close": ["chiudi", "congeda"],
+    "exit": ["esci", "abbandona", "disconnetti", "riaggancia"],
+    "discard": ["scarta", "getta"],
+    "drop": ["lascia", "posa", "rilascia"],
+    "delete": ["elimina", "cancella", "azzera"],
+    "remove": ["rimuovi", "togli", "espelli"],
+    "sort": ["ordina", "riordina", "disponi"],
+    "filter": ["filtra", "cerca", "trova"],
+    "favorite": ["preferito", "fissa", "stella"],
+    "prev": ["precedente", "prima"],
+    "next": ["successivo", "avanti", "dopo", "salta"]
+  },
+  "tips": {
+    "camera": "Telecamera",
+    "zoom": "Zoom",
+    "recentre": "Ricentra",
+    "leave": "Esci",
+    "act": "Agisci",
+    "view": "Vista"
+  }
+}

@@ -211,7 +211,14 @@ Game_Army.prototype.removeTroop = function (troopId) {
 };
 
 Game_Army.prototype.getTotalWeeklyCost = function () {
-  return this._troops.reduce((sum, troop) => sum + troop.weeklyCost, 0);
+  const wages = this._troops.reduce((sum, troop) => sum + troop.weeklyCost, 0);
+  // A mercenary in the party is somebody who has been on the other side of
+  // this ledger: each of them takes 5% off the bill (the Contractor passive,
+  // BattleSystemPassiveSkills.armyUpkeepMultiplier, which is the one answer to
+  // how much of a discount the company is getting).
+  const P = window.BattleSystemPassiveSkills;
+  const mult = (P && P.armyUpkeepMultiplier) ? P.armyUpkeepMultiplier() : 1;
+  return Math.round(wages * mult);
 };
 
 Game_Army.prototype.getCoherence = function () {
@@ -228,6 +235,26 @@ Game_Army.prototype.getCoherence = function () {
 
   // Coherence is percentage of largest faction group
   return Math.floor((maxCount / this._troops.length) * 100);
+};
+
+// Morale: what the party's own column is worth on the day, asked the same way
+// the campaign armies of the powers are asked it (ArmyEventsManager, window
+// .ArmyCampaign.moraleOf) so the wiki can stand them side by side. A coherent
+// column whose wages the purse can cover, under a leader worth following, is a
+// confident one; one that costs more a week than the party holds is not.
+Game_Army.prototype.getMorale = function () {
+  if (this._troops.length === 0) return 100;
+  let morale = 45;
+  morale += (this.getCoherence() - 50) * 0.12;
+  const leader = (typeof $gameParty !== "undefined" && $gameParty && $gameParty.leader())
+    ? $gameParty.leader() : null;
+  morale += leader ? Math.min(25, leader.level * 0.4) : 0;
+  const purse = (typeof $gameParty !== "undefined" && $gameParty) ? $gameParty.gold() : 0;
+  const weekly = this.getTotalWeeklyCost();
+  if (weekly > 0) morale += purse >= weekly * 4 ? 12 : purse >= weekly ? 4 : -14;
+  const perHead = weekly / this._troops.length;
+  if (perHead > 12000) morale -= 8;
+  return Math.max(5, Math.min(100, Math.round(morale)));
 };
 
 Game_Army.prototype.getFactionBreakdown = function () {

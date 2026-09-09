@@ -405,6 +405,10 @@
     }
 
     const FUSION_CATEGORY = 'Fusion';
+    // Every category whose entries live on $gameSystem rather than in the
+    // database: the forge's fusions and the two benches' own writing. They are
+    // read out of the save, never scanned for in $dataSkills.
+    const CUSTOM_CATEGORIES = ['Fusion', 'Crafted', 'Devised'];
 
     const actorCategoryManager = {
         _primary: [],
@@ -520,7 +524,9 @@
                 }
             }
         }
-        if (getSkillsByCategory(FUSION_CATEGORY).length) categories.add(FUSION_CATEGORY);
+        for (const custom of CUSTOM_CATEGORIES) {
+            if (getSkillsByCategory(custom).length) categories.add(custom);
+        }
         return Array.from(categories);
     }
 
@@ -564,11 +570,12 @@
             }
             return out;
         }
-        if (category === FUSION_CATEGORY) {
+        if (CUSTOM_CATEGORIES.includes(category)) {
             const actorId = (SceneManager._scene && SceneManager._scene._teachActorId) || 0;
             if (typeof $gameSystem === 'undefined' || !$gameSystem) return [];
             return $gameSystem.getCustomSpells()
-                .filter(s => s && s.name && s._ownerActorId === actorId)
+                .filter(s => s && s.name && s._ownerActorId === actorId &&
+                    (s._customCategory || FUSION_CATEGORY) === category)
                 .map(s => $dataSkills[s.id] || s)
                 .filter(Boolean);
         }
@@ -625,6 +632,7 @@
     SkillMaster.getSplitSkillCategories = getSplitSkillCategories;
     SkillMaster.getSkillsByCategory = getSkillsByCategory;
     SkillMaster.FUSION_CATEGORY = FUSION_CATEGORY;
+    SkillMaster.CUSTOM_CATEGORIES = CUSTOM_CATEGORIES;
 
     //=============================================================================
     // Game_System - Shared Knowledge Points
@@ -1589,6 +1597,7 @@
     const GROVE_MIN = 4;
     const GROVE_FANOUT = 3;
     const FUSION_CATEGORY = 'Fusion';
+    const CUSTOM_CATEGORIES = (window.SkillMaster && window.SkillMaster.CUSTOM_CATEGORIES) || ['Fusion', 'Crafted', 'Devised'];
     const ROLE_RE = /<role:\s*([^>]+)>/i;
 
     const SKY_SCHOOLS = {
@@ -1679,7 +1688,7 @@
         _key: function (category) {
             const MN = window.MagicNature;
             const level = (MN && MN.level && MN.level()) || 'normal';
-            if (category === FUSION_CATEGORY) {
+            if (CUSTOM_CATEGORIES.includes(category)) {
                 const scene = SceneManager._scene;
                 return `${category}|${level}|${(scene && scene._teachActorId) || 0}`;
             }
@@ -3974,6 +3983,10 @@
     // in .sm-school-grid (css/theme.css); this is the cursor's copy of it and the
     // two move together.
     const CATEGORY_PAGE_COLS = 3;
+
+    // The action buttons under the two school grids, in the order the ring
+    // walks them: the fusion forge, the spell bench, the skill bench.
+    const CATEGORY_ACTION_BTNS = ['.fuse-spells-btn', '.craft-spell-btn', '.craft-skill-btn'];
     const SKILL_GRID_COLS = 2;
     const ATLAS_ZOOM_DEFAULT = 1.0;
     const ATLAS_ZOOM_WHOLE = 0.65;
@@ -4571,6 +4584,7 @@
                     </div>
                 `;
                 actionsListHTML += this.carryToggleHTML(actor, skill, allowActionFocus);
+                actionsListHTML += this.rewriteActionsHTML(skill);
                 actionsListHTML += this.fusionActionsHTML(actor, skill);
             } else if (!isOpen) {
                 const graph = window.SkillGraph;
@@ -4726,7 +4740,7 @@
         const compRow = document.getElementById('skillmaster-companion-row');
         if (compRow) {
             const members = getSwitchableMembers();
-            if (this._viewMode === 'spellEditor' || members.length <= 1) {
+            if (this._viewMode === 'spellEditor' || this._viewMode === 'craft' || members.length <= 1) {
                 compRow.classList.add('is-hidden');
                 compRow.innerHTML = '';
             } else {
@@ -4767,6 +4781,11 @@
 
         if (this._viewMode === 'spellEditor') {
             this.renderSpellEditor(useItalian, knowledge);
+            return;
+        }
+
+        if (this._viewMode === 'craft') {
+            this.renderCraftBench(knowledge);
             return;
         }
 
@@ -4817,6 +4836,7 @@
                 const backBtnText = typeof T === 'function' ? T('SkillMaster.back') : 'Back';
                 const skillsTitle = typeof T === 'function' ? T('SkillMaster.skills') : 'Skills';
 
+                const craftSkillLabel = typeof T === 'function' ? T('SkillMaster.craft.buttonSkill') : 'Craft Skill';
                 leftPageHTML = `
                     <div class="page-header-bar">
                       <div class="back-button focusable" onclick="SceneManager._scene.categoryBack()">${backBtnText}</div>
@@ -4824,6 +4844,9 @@
                     </div>
                     <div id="category-scroll-box-left" class="skill-scroll-box sm-school-grid">
                         ${categoriesListHTML}
+                    </div>
+                    <div class="inspect-actions sm-magic-actions">
+                        <div class="inspect-btn craft-skill-btn focusable" onclick="SceneManager._scene.openCraftBench('skill')">${craftSkillLabel}</div>
                     </div>
                 `;
             } else {
@@ -4857,13 +4880,16 @@
             };
             applyFocus('category-scroll-box-left', 0);
             applyFocus('category-scroll-box-right', 1);
-            const fuseEl = document.querySelector('.fuse-spells-btn');
-            if (fuseEl) {
-                const on = !!this._categoryFuseFocused;
-                fuseEl.classList.toggle('focused', on);
-                fuseEl.classList.toggle('selected', on);
-                if (on && fuseEl.scrollIntoView) fuseEl.scrollIntoView({ block: 'nearest' });
-            }
+            // The three buttons under the schools are one ring: the forge, the
+            // spell bench and the skill bench, walked left and right.
+            CATEGORY_ACTION_BTNS.forEach((sel, i) => {
+                const el = document.querySelector(sel);
+                if (!el) return;
+                const on = !!this._categoryFuseFocused && (this._categoryActionIndex || 0) === i;
+                el.classList.toggle('focused', on);
+                el.classList.toggle('selected', on);
+                if (on && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+            });
         } else if (this.usesGraphView()) {
             this.syncAtlasSky();
             this.repaintAtlasFocus();
@@ -4911,8 +4937,10 @@
                 const fuseLabel = typeof T === 'function' ? T('SkillMaster.fuseSpells') : 'Fuse Spells';
                 const magicSysLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.tabLabel') : 'Magical Systems Wheel';
 
+                const craftSpellLabel = typeof T === 'function' ? T('SkillMaster.craft.buttonSpell') : 'Craft Spell';
                 const fuseBtn = `
-                    <div class="inspect-btn fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()">${fuseLabel}</div>`;
+                    <div class="inspect-btn fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()">${fuseLabel}</div>
+                    <div class="inspect-btn craft-spell-btn focusable" onclick="SceneManager._scene.openCraftBench('spell')">${craftSpellLabel}</div>`;
                 const magicSystemsBtn = `
                     <div class="inspect-btn magic-systems-btn focusable" onclick="SceneManager._scene.openMagicSystems()">${magicSysLabel}</div>`;
 
@@ -5224,10 +5252,14 @@
     Scene_SkillEncyclopedia.prototype.update = function () {
         Scene_MenuBase.prototype.update.call(this);
 
+        // A field has focus somewhere on the sheet: every letter belongs to it
+        // and nothing else on the page may read the keyboard.
+        if (this._craftTyping) return;
+
         if (window.CCNav && window.CCNav.update()) return;
         if (window.CCScroll) window.CCScroll.update(this._dndContainer);
 
-        if (this._viewMode !== 'spellEditor' && this._viewMode !== 'preview' && getSwitchableMembers().length > 1) {
+        if (this._viewMode !== 'spellEditor' && this._viewMode !== 'craft' && this._viewMode !== 'preview' && getSwitchableMembers().length > 1) {
             if (Input.isTriggered('pagedown')) { this.cycleTeachActor(1); return; }
             if (Input.isTriggered('pageup')) { this.cycleTeachActor(-1); return; }
         }
@@ -5242,16 +5274,34 @@
             const curLen = lists[pane].length;
 
             if (this._categoryFuseFocused) {
+                const act = this._categoryActionIndex || 0;
                 if (Input.isTriggered('ok')) {
-                    this.openSpellEditor();
+                    if (act === 1) this.openCraftBench('spell');
+                    else if (act === 2) this.openCraftBench('skill');
+                    else this.openSpellEditor();
                     return;
                 }
                 if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
                     this.categoryBack();
                     return;
                 }
+                if (Input.isTriggered('right') || Input.isRepeated('right')) {
+                    this._categoryActionIndex = (act + 1) % CATEGORY_ACTION_BTNS.length;
+                    SoundManager.playCursor();
+                    this.refreshUISkillDOM();
+                    return;
+                }
+                if (Input.isTriggered('left') || Input.isRepeated('left')) {
+                    if (act > 0) {
+                        this._categoryActionIndex = act - 1;
+                        SoundManager.playCursor();
+                        this.refreshUISkillDOM();
+                        return;
+                    }
+                }
                 if (Input.isTriggered('up') || Input.isRepeated('up') || Input.isTriggered('left') || Input.isRepeated('left')) {
                     this._categoryFuseFocused = false;
+                    this._categoryActionIndex = 0;
                     SoundManager.playCursor();
                     this.refreshUISkillDOM();
                 }
@@ -5290,6 +5340,7 @@
                     idx += cols;
                 } else if (pane === 1 && idx === curLen - 1) {
                     this._categoryFuseFocused = true;
+                    this._categoryActionIndex = 0;
                     SoundManager.playCursor();
                     this.refreshUISkillDOM();
                     return;
@@ -5430,6 +5481,8 @@
             }
         } else if (this._viewMode === 'spellEditor') {
             this.updateSpellEditorInput();
+        } else if (this._viewMode === 'craft') {
+            this.updateCraftBenchInput();
         } else if (this._viewMode === 'magicSystems') {
             if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
                 this.closeMagicSystems();
@@ -5452,3 +5505,1183 @@
 })();
 
 
+
+//=============================================================================
+// Module: SkillMasterChaos.js
+//=============================================================================
+/*:
+ * @target MZ
+ * @plugindesc v1.0.0 SkillMaster - the world of chaos teaches a random skill on every level up
+ * @author Omni-Lex
+ *
+ * @help
+ * In a chaos world (WorldManager's second alternate timeline) nobody studies:
+ * every level up simply hands the character one more skill, drawn at random
+ * from everything the game knows and everything they do not.
+ *
+ * Two floors stand in the way of the deep end of the book, and they are the
+ * only rules the draw obeys:
+ *
+ *   esoteric   never before level 50
+ *   forbidden  never before level 80
+ *
+ * A skill's rank is read off window.SkillArcana, which is the one authority on
+ * what is esoteric and what is forbidden; the floors here are the chaos
+ * world's own and are deliberately higher than the ordinary ones.
+ */
+
+(function () {
+    "use strict";
+
+    const CHAOS_ESOTERIC_LEVEL = 50;
+    const CHAOS_FORBIDDEN_LEVEL = 80;
+
+    function chaosActive() {
+        return !!(window.ChaosWorld && window.ChaosWorld.active());
+    }
+
+    // Every skill a character can be handed. Attack and Guard (skill type 0)
+    // are not skills anybody learns, and a skill without a name is a database
+    // hole rather than an entry.
+    let chaosSkillPool = null;
+    function chaosSkillIds() {
+        if (chaosSkillPool) return chaosSkillPool;
+        chaosSkillPool = [];
+        for (let i = 1; i < $dataSkills.length; i++) {
+            const skill = $dataSkills[i];
+            if (!skill || !skill.name || !skill.stypeId) continue;
+            chaosSkillPool.push(i);
+        }
+        return chaosSkillPool;
+    }
+
+    // Is this character deep enough into the book for this skill? The rank is
+    // SkillArcana's answer; the floors are the chaos world's.
+    function chaosAllowsSkill(actor, skillId) {
+        const arcana = window.SkillArcana;
+        if (!arcana || !arcana.rank) return true;
+        const rank = arcana.rank(skillId);
+        if (rank === "forbidden") return actor.level >= CHAOS_FORBIDDEN_LEVEL;
+        if (rank === "esoteric") return actor.level >= CHAOS_ESOTERIC_LEVEL;
+        return true;
+    }
+
+    function chaosLearnOnLevelUp(actor) {
+        if (!chaosActive() || !actor || typeof $dataSkills === "undefined") return;
+        const candidates = chaosSkillIds().filter(id =>
+            !actor.isLearnedSkill(id) && chaosAllowsSkill(actor, id));
+        if (!candidates.length) return;
+        // Rolled off the world, the character and the level reached, so the
+        // same character reaching the same level in the same world always
+        // picks up the same thing.
+        const CW = window.ChaosWorld;
+        const key = "levelup:" + actor.actorId() + ":" + actor.level;
+        const skillId = candidates[Math.floor(CW.roll(key) * candidates.length) % candidates.length];
+        actor.learnSkill(skillId);
+        if (typeof window.T === "function") {
+            $gameMessage.add(window.T("SkillMaster.chaosLevelSkill", {
+                actor: actor.name(), skill: $dataSkills[skillId].name,
+            }));
+        }
+    }
+
+    const _SkillMasterChaos_levelUp = Game_Actor.prototype.levelUp;
+    Game_Actor.prototype.levelUp = function () {
+        _SkillMasterChaos_levelUp.call(this);
+        chaosLearnOnLevelUp(this);
+    };
+})();
+
+
+//=============================================================================
+// Module: SkillMasterCraft.js
+//=============================================================================
+/*:
+ * @target MZ
+ * @plugindesc v1.0.0 SkillMaster - the Workbench: writing a spell or a skill from bought components.
+ * @author Omni-Lex
+ *
+ * @help
+ * The Fusion forge welds together two things somebody else wrote. The
+ * Workbench is the other half of the bench: nothing is melted down, every part
+ * is bought, and what comes off it is a skill entry written field by field,
+ * the same fields the editor itself writes.
+ *
+ * A build is a core, a shape, an optional amplifier, any number of riders and
+ * any number of refinements. Each part carries two numbers: what it costs in
+ * knowledge, and how much complexity it adds. The knowledge is paid once, at
+ * the moment the entry is written. The complexity is paid forever:
+ *
+ *   resource cost    a spell spends MP, a skill spends AP, and both scale
+ *                    with the complexity of the build
+ *   stat floor       the build stamps <StatReq: INT n> on a spell and
+ *                    <StatReq: WIS n> on a skill, and the bench refuses to
+ *                    write an entry whose floor the character cannot reach
+ *
+ * That floor is the balance: knowledge alone never buys an ultimate, because
+ * the only characters who can hold a complicated build are the ones who
+ * studied the stat it leans on. Under the floor a skill still slips in battle
+ * exactly as every shipped skill does (window.SkillStatReq owns that, and this
+ * bench does not re-derive it).
+ *
+ * The name, the description, the lore, the icon and the animation are the
+ * writer's own, and any of them can be rewritten later for nothing. A crafted
+ * entry can also be re-opened and rebuilt: the bench charges only the
+ * difference in price and never refunds.
+ *
+ * The bench also rewrites the description and the lore of ordinary skills the
+ * character already knows. Those overrides live on $gameSystem and are laid
+ * back over $dataSkills every time a save is loaded.
+ */
+
+(() => {
+    'use strict';
+
+    window.SkillMaster = window.SkillMaster || {};
+
+    const CRAFT_SPELL_CATEGORY = 'Crafted';
+    const CRAFT_SKILL_CATEGORY = 'Devised';
+    SkillMaster.CRAFT_SPELL_CATEGORY = CRAFT_SPELL_CATEGORY;
+    SkillMaster.CRAFT_SKILL_CATEGORY = CRAFT_SKILL_CATEGORY;
+
+    // How many entries one character may keep on the bench at a time. The cap
+    // is the bench's, not the party's: it stops a character carrying forty
+    // near-identical builds and turning the list into something unreadable.
+    const CRAFT_MAX_PER_ACTOR = 12;
+    const CRAFT_MAX_RIDERS = 4;
+    const CRAFT_MAX_REFINES = 5;
+
+    const PARAM_INT = 4;
+    const PARAM_WIS = 5;
+
+    const tr = (key, params) => (typeof T === 'function' ? T('SkillMaster.craft.' + key, params) : key);
+
+    //=========================================================================
+    // The catalogue
+    //
+    // Every component is one row of these tables. `kp` is what it costs to
+    // buy, `cx` the complexity it adds, and `use` which bench it belongs to.
+    // Nothing else in the module knows a component by name.
+    //=========================================================================
+
+    // Cores. `dmg` is the damage type an entry with this core writes
+    // (1 HP damage, 2 MP damage, 3 HP recovery, 4 MP recovery, 5 HP drain,
+    // 6 MP drain, 0 nothing at all), `power` the multiplier on the caster's
+    // attacking stat and `pierce` the share of the target's defence that
+    // still counts against it.
+    const CORES = [
+        { key: 'fire',       use: 'spell', kp: 140, cx: 1.0, dmg: 1, element: 2, power: 2.4, pierce: 1.0, hit: 2 },
+        { key: 'ice',        use: 'spell', kp: 140, cx: 1.0, dmg: 1, element: 3, power: 2.3, pierce: 1.0, hit: 2 },
+        { key: 'thunder',    use: 'spell', kp: 150, cx: 1.1, dmg: 1, element: 4, power: 2.6, pierce: 0.8, hit: 2 },
+        { key: 'water',      use: 'spell', kp: 135, cx: 1.0, dmg: 1, element: 5, power: 2.2, pierce: 1.1, hit: 2 },
+        { key: 'stone',      use: 'spell', kp: 145, cx: 1.0, dmg: 1, element: 6, power: 2.5, pierce: 0.9, hit: 2 },
+        { key: 'gale',       use: 'spell', kp: 135, cx: 1.0, dmg: 1, element: 7, power: 2.2, pierce: 1.0, hit: 2 },
+        { key: 'sacred',     use: 'spell', kp: 200, cx: 1.5, dmg: 1, element: 8, power: 2.8, pierce: 0.7, hit: 2 },
+        { key: 'cursed',     use: 'spell', kp: 220, cx: 1.6, dmg: 1, element: 9, power: 3.0, pierce: 0.6, hit: 2 },
+        { key: 'arcane',     use: 'spell', kp: 180, cx: 1.3, dmg: 1, element: 0, power: 2.5, pierce: 0.8, hit: 2 },
+        { key: 'mend',       use: 'spell', kp: 160, cx: 1.1, dmg: 3, element: 0, power: 2.6, pierce: 0.0, hit: 0 },
+        { key: 'etherFlow',  use: 'spell', kp: 190, cx: 1.3, dmg: 4, element: 0, power: 0.9, pierce: 0.0, hit: 0 },
+        { key: 'siphon',     use: 'spell', kp: 260, cx: 1.9, dmg: 5, element: 9, power: 1.8, pierce: 0.8, hit: 2 },
+        { key: 'mindBurn',   use: 'spell', kp: 210, cx: 1.4, dmg: 2, element: 0, power: 1.2, pierce: 0.5, hit: 2 },
+        { key: 'ward',       use: 'spell', kp: 90,  cx: 0.5, dmg: 0, element: 0, power: 0.0, pierce: 0.0, hit: 0 },
+
+        { key: 'strike',     use: 'skill', kp: 120, cx: 0.9, dmg: 1, element: 1, power: 3.0, pierce: 1.0, hit: 1 },
+        { key: 'cleave',     use: 'skill', kp: 150, cx: 1.1, dmg: 1, element: 1, power: 3.4, pierce: 1.2, hit: 1 },
+        { key: 'thrust',     use: 'skill', kp: 165, cx: 1.2, dmg: 1, element: 1, power: 2.8, pierce: 0.5, hit: 1 },
+        { key: 'brawl',      use: 'skill', kp: 130, cx: 1.0, dmg: 1, element: 1, power: 3.1, pierce: 0.9, hit: 1 },
+        { key: 'marksman',   use: 'skill', kp: 175, cx: 1.2, dmg: 1, element: 1, power: 2.9, pierce: 0.7, hit: 0 },
+        { key: 'venomEdge',  use: 'skill', kp: 190, cx: 1.3, dmg: 1, element: 9, power: 2.6, pierce: 0.8, hit: 1 },
+        { key: 'bandage',    use: 'skill', kp: 140, cx: 1.0, dmg: 3, element: 0, power: 1.6, pierce: 0.0, hit: 0 },
+        { key: 'secondWind', use: 'skill', kp: 200, cx: 1.4, dmg: 5, element: 1, power: 1.6, pierce: 0.9, hit: 1 },
+        { key: 'rally',      use: 'skill', kp: 80,  cx: 0.5, dmg: 0, element: 0, power: 0.0, pierce: 0.0, hit: 0 }
+    ];
+
+    // Amplifiers. One at most, and the multiplier lands on the core's power.
+    const POWERS = [
+        { key: 'plain',   kp: 0,   cx: 0.0, mult: 1.00 },
+        { key: 'focused', kp: 140, cx: 0.8, mult: 1.25 },
+        { key: 'potent',  kp: 380, cx: 1.8, mult: 1.60 },
+        { key: 'ruinous', kp: 900, cx: 3.4, mult: 2.10 }
+    ];
+
+    // Shapes. `side` is the line the shape points at, so the bench can refuse
+    // a healing core aimed across the field.
+    const SCOPES = [
+        { key: 'oneEnemy',    kp: 0,   cx: 0.0, scope: 1,  side: 'enemy' },
+        { key: 'twoRandom',   kp: 160, cx: 0.9, scope: 4,  side: 'enemy' },
+        { key: 'threeRandom', kp: 300, cx: 1.5, scope: 5,  side: 'enemy' },
+        { key: 'allEnemies',  kp: 520, cx: 2.3, scope: 2,  side: 'enemy' },
+        { key: 'oneAlly',     kp: 0,   cx: 0.0, scope: 7,  side: 'ally' },
+        { key: 'allAllies',   kp: 420, cx: 2.0, scope: 8,  side: 'ally' },
+        { key: 'theUser',     kp: 0,   cx: 0.0, scope: 11, side: 'ally' },
+        { key: 'everyone',    kp: 780, cx: 3.0, scope: 14, side: 'both' }
+    ];
+
+    // Riders. Each writes effects onto the entry. `side` is the line the rider
+    // makes sense on, and the bench bars the ones the shape cannot reach.
+    const RIDERS = [
+        { key: 'poison',       kp: 150, cx: 0.7, side: 'enemy', effects: [{ code: 21, dataId: 4,  value1: 0.60, value2: 0 }] },
+        { key: 'blind',        kp: 150, cx: 0.7, side: 'enemy', effects: [{ code: 21, dataId: 5,  value1: 0.55, value2: 0 }] },
+        { key: 'silence',      kp: 210, cx: 1.0, side: 'enemy', effects: [{ code: 21, dataId: 6,  value1: 0.45, value2: 0 }] },
+        { key: 'confusion',    kp: 230, cx: 1.1, side: 'enemy', effects: [{ code: 21, dataId: 8,  value1: 0.35, value2: 0 }] },
+        { key: 'sleep',        kp: 250, cx: 1.2, side: 'enemy', effects: [{ code: 21, dataId: 10, value1: 0.35, value2: 0 }] },
+        { key: 'freeze',       kp: 260, cx: 1.2, side: 'enemy', effects: [{ code: 21, dataId: 11, value1: 0.32, value2: 0 }] },
+        { key: 'paralysis',    kp: 300, cx: 1.4, side: 'enemy', effects: [{ code: 21, dataId: 12, value1: 0.30, value2: 0 }] },
+        { key: 'stun',         kp: 240, cx: 1.1, side: 'enemy', effects: [{ code: 21, dataId: 13, value1: 0.40, value2: 0 }] },
+        { key: 'deathMark',    kp: 620, cx: 2.6, side: 'enemy', effects: [{ code: 21, dataId: 33, value1: 0.22, value2: 0 }] },
+        { key: 'provoke',      kp: 120, cx: 0.5, side: 'enemy', effects: [{ code: 21, dataId: 20, value1: 0.90, value2: 0 }] },
+        { key: 'sapAtk',       kp: 170, cx: 0.8, side: 'enemy', effects: [{ code: 32, dataId: 2,  value1: 5, value2: 0 }] },
+        { key: 'sapDef',       kp: 170, cx: 0.8, side: 'enemy', effects: [{ code: 32, dataId: 3,  value1: 5, value2: 0 }] },
+        { key: 'sapMat',       kp: 170, cx: 0.8, side: 'enemy', effects: [{ code: 32, dataId: 4,  value1: 5, value2: 0 }] },
+        { key: 'sapAgi',       kp: 190, cx: 0.9, side: 'enemy', effects: [{ code: 32, dataId: 6,  value1: 5, value2: 0 }] },
+        { key: 'stripBuffs',   kp: 260, cx: 1.1, side: 'enemy', effects: [{ code: 33, dataId: 2, value1: 0, value2: 0 }, { code: 33, dataId: 3, value1: 0, value2: 0 }, { code: 33, dataId: 4, value1: 0, value2: 0 }] },
+
+        { key: 'regenHP',      kp: 260, cx: 1.2, side: 'ally',  effects: [{ code: 21, dataId: 15, value1: 1.0, value2: 0 }] },
+        { key: 'regenMP',      kp: 280, cx: 1.3, side: 'ally',  effects: [{ code: 21, dataId: 16, value1: 1.0, value2: 0 }] },
+        { key: 'regenAP',      kp: 280, cx: 1.3, side: 'ally',  effects: [{ code: 21, dataId: 17, value1: 1.0, value2: 0 }] },
+        { key: 'protect',      kp: 300, cx: 1.4, side: 'ally',  effects: [{ code: 21, dataId: 19, value1: 1.0, value2: 0 }] },
+        { key: 'counter',      kp: 330, cx: 1.5, side: 'ally',  effects: [{ code: 21, dataId: 22, value1: 0.90, value2: 0 }] },
+        { key: 'inspired',     kp: 280, cx: 1.2, side: 'ally',  effects: [{ code: 21, dataId: 24, value1: 1.0, value2: 0 }] },
+        { key: 'arcaneSurge',  kp: 480, cx: 2.1, side: 'ally',  effects: [{ code: 21, dataId: 36, value1: 0.80, value2: 0 }] },
+        { key: 'divineShield', kp: 700, cx: 2.9, side: 'ally',  effects: [{ code: 21, dataId: 32, value1: 0.35, value2: 0 }] },
+        { key: 'shadowVeil',   kp: 340, cx: 1.5, side: 'ally',  effects: [{ code: 21, dataId: 35, value1: 0.85, value2: 0 }] },
+        { key: 'wardAilments', kp: 360, cx: 1.6, side: 'ally',  effects: [{ code: 21, dataId: 23, value1: 0.90, value2: 0 }] },
+        { key: 'braceAtk',     kp: 170, cx: 0.8, side: 'ally',  effects: [{ code: 31, dataId: 2, value1: 5, value2: 0 }] },
+        { key: 'braceDef',     kp: 170, cx: 0.8, side: 'ally',  effects: [{ code: 31, dataId: 3, value1: 5, value2: 0 }] },
+        { key: 'braceMat',     kp: 170, cx: 0.8, side: 'ally',  effects: [{ code: 31, dataId: 4, value1: 5, value2: 0 }] },
+        { key: 'braceAgi',     kp: 190, cx: 0.9, side: 'ally',  effects: [{ code: 31, dataId: 6, value1: 5, value2: 0 }] },
+        { key: 'cleanse',      kp: 320, cx: 1.3, side: 'ally',  effects: [4, 5, 6, 8, 10, 11, 12, 13].map(id => ({ code: 22, dataId: id, value1: 1.0, value2: 0 })) },
+        { key: 'firstAid',     kp: 240, cx: 1.0, side: 'ally',  effects: [{ code: 11, dataId: 0, value1: 0.15, value2: 0 }] },
+        { key: 'etherSplash',  kp: 300, cx: 1.3, side: 'ally',  effects: [{ code: 12, dataId: 0, value1: 0.12, value2: 0 }] },
+        { key: 'apSurge',      kp: 220, cx: 1.0, side: 'ally',  effects: [{ code: 13, dataId: 0, value1: 15, value2: 0 }] }
+    ];
+
+    // Refinements write the plain fields of the entry rather than its effects,
+    // and each one is a single named change, so the readout can say exactly
+    // what the build did to the sheet.
+    const REFINES = [
+        { key: 'certain',    kp: 260, cx: 1.1, apply: sk => { sk.hitType = 0; } },
+        { key: 'twinCast',   kp: 420, cx: 2.0, apply: sk => { sk.repeats = 2; } },
+        { key: 'tripleCast', kp: 900, cx: 3.6, apply: sk => { sk.repeats = 3; } },
+        { key: 'swift',      kp: 200, cx: 0.9, apply: sk => { sk.speed = (sk.speed || 0) + 25; } },
+        { key: 'precise',    kp: 150, cx: 0.6, apply: sk => { sk.successRate = 100; } },
+        { key: 'stable',     kp: 130, cx: 0.5, apply: sk => { if (sk.damage) sk.damage.variance = 0; } },
+        { key: 'wild',       kp: 60,  cx: 0.2, apply: sk => { if (sk.damage) sk.damage.variance = 50; } },
+        { key: 'keenEdge',   kp: 340, cx: 1.5, apply: sk => { if (sk.damage) sk.damage.critical = true; } },
+        { key: 'guardBreak', kp: 300, cx: 1.3, apply: (sk, ctx) => { ctx.pierce *= 0.5; } },
+        { key: 'efficient',  kp: 380, cx: 0.0, apply: (sk, ctx) => { ctx.costMult *= 0.7; } },
+        { key: 'menuCast',   kp: 260, cx: 1.0, apply: sk => { sk.occasion = 0; } },
+        { key: 'apReturn',   kp: 200, cx: 0.8, apply: sk => { sk.tpGain = (sk.tpGain || 0) + 12; } }
+    ];
+
+    const byKey = (list, key) => list.find(c => c.key === key) || null;
+
+    SkillMaster.CraftCatalogue = { CORES, POWERS, SCOPES, RIDERS, REFINES };
+
+    //=========================================================================
+    // Pricing
+    //
+    // One place answers what a build costs and what it asks of the character.
+    // Nothing else in the module works it out a second time.
+    //=========================================================================
+
+    function craftParts(build) {
+        const parts = [];
+        const core = byKey(CORES, build.core);
+        const power = byKey(POWERS, build.power) || POWERS[0];
+        const scope = byKey(SCOPES, build.scope);
+        if (core) parts.push(core);
+        if (power && power.kp) parts.push(power);
+        if (scope) parts.push(scope);
+        for (const k of (build.riders || [])) { const r = byKey(RIDERS, k); if (r) parts.push(r); }
+        for (const k of (build.refines || [])) { const r = byKey(REFINES, k); if (r) parts.push(r); }
+        return parts;
+    }
+
+    function craftQuote(build) {
+        const parts = craftParts(build);
+        const spell = build.kind !== 'skill';
+        let kp = 0, cx = 0;
+        for (const p of parts) { kp += p.kp || 0; cx += p.cx || 0; }
+
+        // A long build is worth more than the sum of its parts: every
+        // component past the second asks the bench to reconcile it with
+        // everything already on the slab, and that is what is being paid for.
+        const stacking = 1 + 0.12 * Math.max(0, parts.length - 2);
+        let costMult = 1;
+        if ((build.refines || []).includes('efficient')) costMult *= 0.7;
+
+        const resourceRaw = spell ? (3 + cx * 3.4) : (4 + cx * 4.2);
+        const resource = Math.max(1, Math.round(resourceRaw * costMult));
+
+        return {
+            parts: parts,
+            complexity: Math.round(cx * 100) / 100,
+            price: Math.max(50, Math.round(kp * stacking * (spell ? 1.0 : 0.9))),
+            // A spell spends MP and a skill spends AP. AP is the battler's
+            // hundred point pool, so a skill can never ask for more than all
+            // of it; MP has no such ceiling.
+            mpCost: spell ? resource : 0,
+            tpCost: spell ? 0 : Math.min(100, resource),
+            statKey: spell ? 'INT' : 'WIS',
+            paramId: spell ? PARAM_INT : PARAM_WIS,
+            statReq: Math.max(3, Math.min(20, Math.round(5 + cx * 1.15)))
+        };
+    }
+
+    SkillMaster.craftQuote = craftQuote;
+
+    // What the character brings to the floor. SkillStatReq is the one
+    // authority on which points count, so it is asked rather than copied.
+    function craftBaseStat(actor, paramId) {
+        if (!actor) return 0;
+        if (window.SkillStatReq && window.SkillStatReq.baseStat) {
+            return window.SkillStatReq.baseStat(actor, paramId);
+        }
+        return Math.floor(actor.paramBase ? actor.paramBase(paramId) : 0);
+    }
+    SkillMaster.craftBaseStat = craftBaseStat;
+
+    function scopeSide(build) {
+        const scope = byKey(SCOPES, build.scope);
+        return scope ? scope.side : 'enemy';
+    }
+
+    // A rider aimed at the line the shape never reaches is not an error, it
+    // simply never lands, so the bench refuses to sell it rather than letting
+    // it be bought and wasted.
+    function riderAllowed(build, rider) {
+        const side = scopeSide(build);
+        return side === 'both' || rider.side === side;
+    }
+
+    // A healing core pointed at the enemy line, or a damaging core pointed at
+    // the party, is the other half of the same rule.
+    function coreMatchesScope(build) {
+        const core = byKey(CORES, build.core);
+        if (!core) return false;
+        if (core.dmg === 0) return true;
+        const side = scopeSide(build);
+        if (side === 'both') return true;
+        const heals = (core.dmg === 3 || core.dmg === 4);
+        return heals ? side === 'ally' : side === 'enemy';
+    }
+
+    SkillMaster.craftRiderAllowed = riderAllowed;
+    SkillMaster.craftCoreMatchesScope = coreMatchesScope;
+
+    //=========================================================================
+    // Writing the entry
+    //=========================================================================
+
+    function craftFormula(build, ctx) {
+        const core = byKey(CORES, build.core);
+        const power = byKey(POWERS, build.power) || POWERS[0];
+        if (!core || core.dmg === 0) return '0';
+        const spell = build.kind !== 'skill';
+        const atkStat = spell ? 'a.mat' : 'a.atk';
+        const defStat = spell ? 'b.mdf' : 'b.def';
+        const mult = Math.round(core.power * power.mult * 100) / 100;
+
+        if (core.dmg === 3) return `${atkStat} * ${mult} + a.level * 2`;
+        if (core.dmg === 4) return `${atkStat} * ${mult} + a.level`;
+        const pierce = Math.round(ctx.pierce * 100) / 100;
+        if (pierce <= 0) return `${atkStat} * ${mult}`;
+        return `${atkStat} * ${mult} - ${defStat} * ${pierce}`;
+    }
+
+    // The entry itself, field by field. Everything the bench decides is
+    // decided here and nowhere else, so a build reads back the same way
+    // whether it is being previewed or written for good.
+    function buildCraftedSkill(build, actorId, existing) {
+        const core = byKey(CORES, build.core);
+        const scope = byKey(SCOPES, build.scope);
+        const quote = craftQuote(build);
+        const spell = build.kind !== 'skill';
+        const ctx = { pierce: core ? core.pierce : 1.0, costMult: 1 };
+
+        const sk = {
+            id: existing ? existing.id : $gameSystem.allocCustomSkillId(),
+            name: build.name || tr(spell ? 'defaultSpellName' : 'defaultSkillName'),
+            iconIndex: build.iconIndex || 0,
+            description: build.description || '',
+            animationId: build.animationId || 0,
+            stypeId: spell ? 1 : 2,
+            mpCost: quote.mpCost,
+            tpCost: quote.tpCost,
+            scope: scope ? scope.scope : 1,
+            occasion: 1,
+            speed: 0,
+            successRate: 95,
+            repeats: 1,
+            tpGain: spell ? 0 : 5,
+            hitType: core ? core.hit : 1,
+            requiredWtypeId1: 0,
+            requiredWtypeId2: 0,
+            message1: '',
+            message2: '',
+            messageType: 0,
+            damage: {
+                type: core ? core.dmg : 0,
+                elementId: core ? core.element : 0,
+                formula: '0',
+                variance: 20,
+                critical: false
+            },
+            effects: []
+        };
+
+        for (const k of (build.refines || [])) {
+            const r = byKey(REFINES, k);
+            if (r && r.apply) r.apply(sk, ctx);
+        }
+        sk.damage.formula = craftFormula(build, ctx);
+
+        for (const k of (build.riders || [])) {
+            const r = byKey(RIDERS, k);
+            if (!r) continue;
+            for (const e of r.effects) sk.effects.push(Object.assign({}, e));
+        }
+
+        const category = spell ? CRAFT_SPELL_CATEGORY : CRAFT_SKILL_CATEGORY;
+        const lore = String(build.lore || '').replace(/[<>]/g, '').trim();
+        let note = '<customSpell>\n<category:' + category + '>\n'
+            + '<StatReq: ' + quote.statKey + ' ' + quote.statReq + '>';
+        if (lore) note += '\n<Lore: ' + lore + '>';
+        sk.note = note;
+        sk.meta = { customSpell: true };
+        if (lore) sk.meta.Lore = lore;
+
+        sk._customSpell = true;
+        sk._crafted = true;
+        sk._craftKind = spell ? 'spell' : 'skill';
+        sk._customCategory = category;
+        sk._ownerActorId = actorId;
+        sk._craftBuild = {
+            kind: build.kind, core: build.core, power: build.power, scope: build.scope,
+            riders: (build.riders || []).slice(), refines: (build.refines || []).slice(),
+            name: sk.name, description: sk.description, lore: build.lore || '',
+            iconIndex: sk.iconIndex, animationId: sk.animationId
+        };
+        sk._animationId = sk.animationId;
+        return sk;
+    }
+
+    SkillMaster.buildCraftedSkill = buildCraftedSkill;
+
+    //=========================================================================
+    // Persistence: rebuilt entries and rewritten stock skills
+    //=========================================================================
+
+    Game_System.prototype.updateCustomSpell = function (skill) {
+        const arr = this.getCustomSpells();
+        const idx = arr.findIndex(s => s && s.id === skill.id);
+        if (idx >= 0) {
+            const node = /<Node:[^>]*>/i.exec(arr[idx].note || '');
+            if (node) skill.note = String(skill.note || '') + '\n' + node[0];
+            arr[idx] = skill;
+        } else {
+            arr.push(skill);
+        }
+        if (typeof $dataSkills !== 'undefined' && $dataSkills) $dataSkills[skill.id] = skill;
+    };
+
+    // The description and the lore a player wrote over a shipped skill. The
+    // entry in the database is not theirs to keep, so only the two strings are
+    // stored and they are laid back on after every load.
+    Game_System.prototype.getSkillTextOverrides = function () {
+        if (!this._skillTextOverrides) this._skillTextOverrides = {};
+        return this._skillTextOverrides;
+    };
+
+    Game_System.prototype.setSkillTextOverride = function (skillId, description, lore) {
+        const all = this.getSkillTextOverrides();
+        const desc = String(description == null ? '' : description);
+        const loreText = String(lore == null ? '' : lore).replace(/[<>]/g, '').trim();
+        if (!desc && !loreText) delete all[skillId];
+        else all[skillId] = { description: desc, lore: loreText };
+        applySkillTextOverrides();
+    };
+
+    function applySkillTextOverrides() {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
+        if (typeof $dataSkills === 'undefined' || !$dataSkills) return;
+        if (!$gameSystem.getSkillTextOverrides) return;
+        const all = $gameSystem.getSkillTextOverrides();
+        for (const id of Object.keys(all)) {
+            const skill = $dataSkills[Number(id)];
+            if (!skill) continue;
+            const over = all[id];
+            if (over.description) skill.description = over.description;
+            if (over.lore) {
+                skill.meta = skill.meta || {};
+                skill.meta.Lore = over.lore;
+                skill.note = String(skill.note || '').replace(/\n?<Lore:[^>]*>/i, '') + '\n<Lore: ' + over.lore + '>';
+            }
+        }
+    }
+    SkillMaster.applySkillTextOverrides = applySkillTextOverrides;
+
+    const _SkillMasterCraft_extract = DataManager.extractSaveContents;
+    DataManager.extractSaveContents = function (contents) {
+        _SkillMasterCraft_extract.call(this, contents);
+        applySkillTextOverrides();
+    };
+
+    //=========================================================================
+    // The bench
+    //=========================================================================
+
+    if (!window.Scene_SkillEncyclopedia) {
+        window.Scene_SkillEncyclopedia = function () { this.initialize(...arguments); };
+        window.Scene_SkillEncyclopedia.prototype = Object.create(Scene_MenuBase.prototype);
+        window.Scene_SkillEncyclopedia.prototype.constructor = window.Scene_SkillEncyclopedia;
+    }
+    const Proto = window.Scene_SkillEncyclopedia.prototype;
+
+    // The rows of the bench, in the order they are drawn and walked.
+    const CRAFT_ROWS = ['name', 'description', 'lore', 'icon', 'animation',
+        'core', 'power', 'scope', 'riders', 'refines', 'create'];
+    SkillMaster.CRAFT_ROWS = CRAFT_ROWS;
+
+    Proto.craftDefaultBuild = function (kind) {
+        const spell = kind !== 'skill';
+        return {
+            kind: spell ? 'spell' : 'skill',
+            name: '',
+            description: '',
+            lore: '',
+            iconIndex: 0,
+            animationId: 0,
+            core: spell ? 'fire' : 'strike',
+            power: 'plain',
+            scope: 'oneEnemy',
+            riders: [],
+            refines: []
+        };
+    };
+
+    Proto.openCraftBench = function (kind, editId) {
+        this._viewMode = 'craft';
+        this._craftEditingId = editId || null;
+        this._craftBaseQuote = null;
+        const source = editId && $dataSkills[editId] ? $dataSkills[editId]._craftBuild : null;
+        if (source) {
+            this._craft = {
+                kind: source.kind, name: source.name, description: source.description, lore: source.lore,
+                iconIndex: source.iconIndex, animationId: source.animationId,
+                core: source.core, power: source.power, scope: source.scope,
+                riders: (source.riders || []).slice(), refines: (source.refines || []).slice()
+            };
+            this._craftBaseQuote = craftQuote(this._craft);
+        } else {
+            this._craftEditingId = null;
+            this._craft = this.craftDefaultBuild(kind);
+        }
+        this._craftFocus = 0;
+        this._craftPicker = null;
+        this._craftPickIndex = 0;
+        this._craftTyping = false;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.closeCraftBench = function () {
+        this.closeCraftTextSheet();
+        this._viewMode = 'category';
+        this._craftPicker = null;
+        this._lastLeftMode = null;
+        this._lastLeftCategory = null;
+        this._lastRightMode = null;
+        this._lastRightSkillId = null;
+        this._lastRightKnowledge = null;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.craftedEntries = function (kind) {
+        const actor = this.getTeachActor();
+        if (!actor || typeof $gameSystem === 'undefined') return [];
+        return $gameSystem.getCustomSpells().filter(s =>
+            s && s._crafted && s._ownerActorId === actor.actorId() &&
+            (!kind || s._craftKind === kind));
+    };
+
+    //--- pickers -------------------------------------------------------------
+
+    Proto.craftPickerRows = function (group) {
+        const build = this._craft;
+        if (group === 'core') return CORES.filter(c => c.use === build.kind);
+        if (group === 'power') return POWERS;
+        if (group === 'scope') return SCOPES;
+        if (group === 'riders') return RIDERS;
+        if (group === 'refines') return REFINES;
+        if (group === 'icon') return this.craftIconChoices();
+        if (group === 'animation') return this.getAvailableAnimations();
+        return [];
+    };
+
+    // The icons a build may wear are the ones the book already uses, which is
+    // the only list guaranteed to exist in this project's IconSet whatever it
+    // has been redrawn to.
+    Proto.craftIconChoices = function () {
+        if (!this._craftIcons) {
+            const seen = new Set();
+            const out = [];
+            if (typeof $dataSkills !== 'undefined' && $dataSkills) {
+                for (const s of $dataSkills) {
+                    if (!s || !s.name || !s.iconIndex) continue;
+                    if (seen.has(s.iconIndex)) continue;
+                    seen.add(s.iconIndex);
+                    out.push({ key: 'icon' + s.iconIndex, iconIndex: s.iconIndex });
+                    if (out.length >= 400) break;
+                }
+            }
+            this._craftIcons = out;
+        }
+        return this._craftIcons;
+    };
+
+    Proto.openCraftPicker = function (group) {
+        const rows = this.craftPickerRows(group);
+        if (!rows.length) { SoundManager.playBuzzer(); return; }
+        this._craftPicker = group;
+        const build = this._craft;
+        let idx = 0;
+        if (group === 'core' || group === 'power' || group === 'scope') {
+            idx = rows.findIndex(r => r.key === build[group]);
+        } else if (group === 'icon') {
+            idx = rows.findIndex(r => r.iconIndex === build.iconIndex);
+        } else if (group === 'animation') {
+            idx = rows.findIndex(r => r.id === build.animationId);
+        }
+        this._craftPickIndex = Math.max(0, idx);
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.craftChoose = function (group, k) {
+        const rows = this.craftPickerRows(group);
+        const row = rows[k];
+        if (!row) { SoundManager.playBuzzer(); return; }
+        const build = this._craft;
+        this._craftPickIndex = k;
+
+        if (group === 'riders' || group === 'refines') {
+            const list = build[group];
+            const cap = group === 'riders' ? CRAFT_MAX_RIDERS : CRAFT_MAX_REFINES;
+            if (group === 'riders' && !riderAllowed(build, row)) { SoundManager.playBuzzer(); return; }
+            const at = list.indexOf(row.key);
+            if (at >= 0) list.splice(at, 1);
+            else if (list.length >= cap) { SoundManager.playBuzzer(); return; }
+            else list.push(row.key);
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            return;
+        }
+
+        if (group === 'core') {
+            build.core = row.key;
+            // A core that heals cannot keep an enemy shape, and the other way
+            // about. Rather than refuse the pick, the bench moves the shape to
+            // the nearest one that makes sense.
+            if (!coreMatchesScope(build)) {
+                build.scope = (row.dmg === 3 || row.dmg === 4) ? 'oneAlly' : 'oneEnemy';
+            }
+            this.craftDropInvalidRiders();
+        } else if (group === 'power') {
+            build.power = row.key;
+        } else if (group === 'scope') {
+            const before = build.scope;
+            build.scope = row.key;
+            if (!coreMatchesScope(build)) {
+                const wantsHealing = row.side === 'ally';
+                const fallback = CORES.find(c => c.use === build.kind &&
+                    (wantsHealing ? (c.dmg === 3 || c.dmg === 0) : (c.dmg === 1)));
+                if (fallback) build.core = fallback.key;
+                else build.scope = before;
+            }
+            this.craftDropInvalidRiders();
+        } else if (group === 'icon') {
+            build.iconIndex = row.iconIndex;
+        } else if (group === 'animation') {
+            build.animationId = row.id;
+        }
+
+        this._craftPicker = null;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.craftDropInvalidRiders = function () {
+        const build = this._craft;
+        build.riders = build.riders.filter(k => {
+            const r = byKey(RIDERS, k);
+            return r && riderAllowed(build, r);
+        });
+    };
+
+    Proto.closeCraftPicker = function () {
+        this._craftPicker = null;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    //--- writing the text ----------------------------------------------------
+
+    // Name, description and lore are typed into a real field. The sheet is
+    // opened over the book rather than inside a page the bench re-renders, and
+    // a capture phase guard runs ahead of every always-on plugin so nothing
+    // else can swallow a letter.
+    Proto.openCraftTextSheet = function (field, targetSkillId) {
+        if (!this._dndContainer || this._craftTyping) return;
+        const single = (field === 'name');
+        const current = targetSkillId
+            ? this.craftOverrideText(targetSkillId, field)
+            : String((this._craft && this._craft[field]) || '');
+        const sheet = document.createElement('div');
+        sheet.className = 'sm-craft-write-backdrop';
+        sheet.innerHTML = `
+            <div class="sm-craft-write">
+                <div class="sm-craft-write-title">${tr('write.' + field)}</div>
+                ${single
+                ? `<input id="sm-craft-write-input" class="sm-craft-write-input" type="text" maxlength="40" autocomplete="off" spellcheck="false">`
+                : `<textarea id="sm-craft-write-input" class="sm-craft-write-input" rows="5" maxlength="400" autocomplete="off" spellcheck="false"></textarea>`}
+                <div class="sm-craft-write-hint">${tr('write.hint')}</div>
+                <div class="sm-craft-write-btns">
+                    <button type="button" class="sm-craft-write-btn focusable" onclick="SceneManager._scene.closeCraftTextSheet()">${tr('cancel')}</button>
+                    <button type="button" class="sm-craft-write-btn focusable" onclick="SceneManager._scene.submitCraftText()">${tr('save')}</button>
+                </div>
+            </div>`;
+        this._dndContainer.appendChild(sheet);
+        this._craftWriteEl = sheet;
+        this._craftWriteField = field;
+        this._craftWriteTarget = targetSkillId || null;
+        this._craftTyping = true;
+
+        const el = sheet.querySelector('#sm-craft-write-input');
+        if (el) {
+            el.value = current;
+            requestAnimationFrame(() => {
+                el.focus();
+                try { el.setSelectionRange(el.value.length, el.value.length); } catch (e) { /* focus is enough */ }
+            });
+        }
+        this.bindCraftKeyGuard();
+        SoundManager.playOk();
+    };
+
+    Proto.craftOverrideText = function (skillId, field) {
+        const skill = $dataSkills[skillId];
+        if (!skill) return '';
+        const over = $gameSystem.getSkillTextOverrides()[skillId];
+        if (field === 'lore') return over ? over.lore : String((skill.meta && skill.meta.Lore) || '');
+        return over ? over.description : String(skill.description || '');
+    };
+
+    Proto.bindCraftKeyGuard = function () {
+        if (this._craftKeyGuard) return;
+        this._craftKeyGuard = (e) => {
+            const active = document.activeElement;
+            if (!active || (active.tagName !== 'INPUT' && active.tagName !== 'TEXTAREA')) return;
+            e.stopImmediatePropagation();
+            if (e.type !== 'keydown' || active.id !== 'sm-craft-write-input') return;
+            if (e.key === 'Enter' && !e.shiftKey && active.tagName === 'INPUT') {
+                e.preventDefault();
+                this.submitCraftText();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                this.closeCraftTextSheet();
+            }
+        };
+        window.addEventListener('keydown', this._craftKeyGuard, true);
+        window.addEventListener('keyup', this._craftKeyGuard, true);
+        window.addEventListener('keypress', this._craftKeyGuard, true);
+    };
+
+    Proto.closeCraftTextSheet = function () {
+        if (this._craftKeyGuard) {
+            window.removeEventListener('keydown', this._craftKeyGuard, true);
+            window.removeEventListener('keyup', this._craftKeyGuard, true);
+            window.removeEventListener('keypress', this._craftKeyGuard, true);
+            this._craftKeyGuard = null;
+        }
+        if (this._craftWriteEl && this._craftWriteEl.parentNode) this._craftWriteEl.remove();
+        this._craftWriteEl = null;
+        if (!this._craftTyping) return;
+        this._craftTyping = false;
+        Input.clear();
+        TouchInput.clear();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.submitCraftText = function () {
+        const el = this._craftWriteEl && this._craftWriteEl.querySelector('#sm-craft-write-input');
+        const value = el ? String(el.value) : '';
+        const field = this._craftWriteField;
+        const target = this._craftWriteTarget;
+        if (target) {
+            const desc = field === 'description' ? value : this.craftOverrideText(target, 'description');
+            const lore = field === 'lore' ? value : this.craftOverrideText(target, 'lore');
+            $gameSystem.setSkillTextOverride(target, desc, lore);
+            const owned = $dataSkills[target];
+            if (owned && owned._crafted && owned._craftBuild) {
+                owned._craftBuild.description = desc;
+                owned._craftBuild.lore = lore;
+                $gameSystem.updateCustomSpell(owned);
+            }
+        } else if (field && this._craft) {
+            this._craft[field] = field === 'name' ? value.slice(0, 40) : value;
+        }
+        SoundManager.playSave();
+        this.closeCraftTextSheet();
+    };
+
+    //--- writing the entry ---------------------------------------------------
+
+    Proto.craftCanWrite = function () {
+        const actor = this.getTeachActor();
+        const build = this._craft;
+        if (!actor || !build) return { ok: false, reason: 'incomplete' };
+        if (!byKey(CORES, build.core) || !byKey(SCOPES, build.scope)) return { ok: false, reason: 'incomplete' };
+        const quote = craftQuote(build);
+        const owed = (this._craftEditingId && this._craftBaseQuote)
+            ? Math.max(0, quote.price - this._craftBaseQuote.price)
+            : quote.price;
+        const have = craftBaseStat(actor, quote.paramId);
+        if (!coreMatchesScope(build)) return { ok: false, reason: 'mismatch', quote, owed, have };
+        if ($gameSystem.getKnowledge() < owed) return { ok: false, reason: 'knowledge', quote, owed, have };
+        if (have < quote.statReq) return { ok: false, reason: 'stat', quote, owed, have };
+        if (!this._craftEditingId && this.craftedEntries(build.kind).length >= CRAFT_MAX_PER_ACTOR) {
+            return { ok: false, reason: 'full', quote, owed, have };
+        }
+        return { ok: true, quote, owed, have };
+    };
+
+    Proto.craftWrite = function () {
+        const verdict = this.craftCanWrite();
+        if (!verdict.ok) { SoundManager.playBuzzer(); this.refreshUISkillDOM(); return; }
+        const actor = this.getTeachActor();
+        const existing = this._craftEditingId ? $dataSkills[this._craftEditingId] : null;
+
+        if (verdict.owed > 0) $gameSystem.spendKnowledge(verdict.owed);
+        const entry = buildCraftedSkill(this._craft, actor.actorId(), existing);
+
+        if (existing) $gameSystem.updateCustomSpell(entry);
+        else $gameSystem.addCustomSpell(entry);
+
+        if (!actor.isLearnedSkill(entry.id)) actor.learnSkill(entry.id);
+        if (this.invalidateLearnedSkillCaches) this.invalidateLearnedSkillCaches();
+        this._craftIcons = null;
+        this._craftEditingId = entry.id;
+        this._craftBaseQuote = verdict.quote;
+        SoundManager.playRecovery();
+
+        window.skipLocalization = true;
+        if (typeof T === 'function') {
+            $gameMessage.add(tr(existing ? 'rewrittenResult' : 'writtenResult', {
+                name: entry.name, cost: verdict.owed, left: $gameSystem.getKnowledge()
+            }));
+        }
+        window.skipLocalization = false;
+        this.refreshUISkillDOM();
+    };
+
+    // Unmaking a crafted entry hands back nothing: the components were spent
+    // on the writing, not lent to it. It exists so a full bench can be cleared.
+    Proto.craftDiscard = function (skillId) {
+        const actor = this.getTeachActor();
+        const entry = $dataSkills[skillId];
+        if (!actor || !entry || !entry._crafted) { SoundManager.playBuzzer(); return; }
+        actor.forgetSkill(skillId);
+        $gameSystem.removeCustomSpell(skillId);
+        if (this.invalidateLearnedSkillCaches) this.invalidateLearnedSkillCaches();
+        if (this._craftEditingId === skillId) {
+            this._craftEditingId = null;
+            this._craftBaseQuote = null;
+        }
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    //=========================================================================
+    // Drawing
+    //=========================================================================
+
+    function esc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    const componentName = (group, key) => tr('comp.' + group + '.' + key + '.name');
+    const componentDesc = (group, key) => tr('comp.' + group + '.' + key + '.desc');
+
+    Proto.renderCraftBench = function (knowledge) {
+        const leftBox = document.getElementById('left-page-content');
+        const rightBox = document.getElementById('right-page-content');
+        if (!leftBox || !rightBox) return;
+        const actor = this.getTeachActor();
+        const build = this._craft;
+        if (!actor || !build) return;
+
+        const spell = build.kind !== 'skill';
+        const quote = craftQuote(build);
+        const verdict = this.craftCanWrite();
+        const picking = this._craftPicker;
+
+        const plain = (text, muted) =>
+            `<span class="inspect-spec-value ${muted ? 'inspect-spec-value--muted' : ''}">${esc(text)}</span>`;
+        const rowHTML = (idx, label, value, hint) => {
+            const focused = !picking && this._craftFocus === idx;
+            return `
+                <div class="sm-forge-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.craftActivateRow(${idx})">
+                    <span class="inspect-spec-label">${esc(label)}</span>
+                    <span class="sm-forge-answer">${value}</span>
+                    ${hint ? `<span class="sm-forge-hint">${esc(hint)}</span>` : ''}
+                </div>`;
+        };
+
+        let rowsHTML = '';
+        CRAFT_ROWS.forEach((row, idx) => {
+            if (row === 'create') return;
+            let value = '', hint = '';
+            if (row === 'name') {
+                value = plain(build.name || tr(spell ? 'defaultSpellName' : 'defaultSkillName'), !build.name);
+            } else if (row === 'description' || row === 'lore') {
+                value = plain(build[row] || tr('unwritten'), !build[row]);
+            } else if (row === 'icon') {
+                value = build.iconIndex
+                    ? `<span class="sm-forge-icon" style="${SkillMaster.getSkillIconStyle(build.iconIndex)}"></span>${plain('#' + build.iconIndex)}`
+                    : plain(tr('none'), true);
+            } else if (row === 'animation') {
+                const a = (build.animationId && typeof $dataAnimations !== 'undefined' && $dataAnimations)
+                    ? $dataAnimations[build.animationId] : null;
+                value = plain(a ? `#${a.id} · ${a.name}` : tr('none'), !a);
+            } else if (row === 'core') {
+                value = plain(componentName('core', build.core));
+                hint = componentDesc('core', build.core);
+            } else if (row === 'power' || row === 'scope') {
+                value = plain(componentName(row, build[row] || 'plain'));
+            } else if (row === 'riders' || row === 'refines') {
+                value = build[row].length
+                    ? plain(build[row].map(k => componentName(row, k)).join(', '))
+                    : plain(tr('none'), true);
+                hint = `${build[row].length}/${row === 'riders' ? CRAFT_MAX_RIDERS : CRAFT_MAX_REFINES}`;
+            }
+            rowsHTML += rowHTML(idx, tr('row.' + row), value, hint);
+        });
+
+        const createIdx = CRAFT_ROWS.indexOf('create');
+        const createFocused = !picking && this._craftFocus === createIdx;
+        const owed = verdict.owed !== undefined ? verdict.owed : quote.price;
+        const statName = window.SkillStatReq ? window.SkillStatReq.statName(quote.statKey) : quote.statKey;
+        const blockText = verdict.ok ? '' : tr('blocked.' + verdict.reason, {
+            stat: statName, need: quote.statReq,
+            have: verdict.have !== undefined ? verdict.have : 0, max: CRAFT_MAX_PER_ACTOR
+        });
+        const createHTML = `
+            <div class="inspect-actions sm-forge-actions">
+                <div class="inspect-btn focusable ${createFocused ? 'selected' : ''} ${verdict.ok ? '' : 'unusable'}" onclick="SceneManager._scene.craftWrite()">
+                    ${esc(this._craftEditingId ? tr('rewrite') : tr('writeIt'))} <span class="sm-forge-cost">· ${owed} KP</span>
+                </div>
+            </div>
+            <div class="sm-forge-knowledge ${verdict.reason === 'knowledge' ? 'sm-forge-knowledge--short' : ''}">
+                ${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong>
+                ${blockText ? `<span class="sm-craft-block">${esc(blockText)}</span>` : ''}
+            </div>`;
+
+        let listHTML = '';
+        for (const s of this.craftedEntries(build.kind)) {
+            const on = this._craftEditingId === s.id;
+            listHTML += `
+                <div class="sm-skill-row sm-craft-entry focusable ${on ? 'focused' : ''}">
+                    <span class="sm-skill-ident" onclick="SceneManager._scene.openCraftBench('${build.kind}', ${s.id})"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${esc(s.name)}</span></span>
+                    <span class="ui-chip sm-skill-badge" onclick="SceneManager._scene.openCraftBench('${build.kind}', ${s.id})">${esc(tr('edit'))}</span>
+                    <span class="ui-chip sm-skill-badge sm-craft-discard" onclick="SceneManager._scene.craftDiscard(${s.id})">${esc(tr('discard'))}</span>
+                </div>`;
+        }
+        if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noneYet'))}</div></div>`;
+
+        leftBox.innerHTML = `
+            <div class="page-header-bar">
+              <div class="back-button focusable" onclick="SceneManager._scene.closeCraftBench()">${esc(tr('back'))}</div>
+              <h2 class="title">${esc(spell ? tr('titleSpell') : tr('titleSkill'))}</h2>
+            </div>
+            <div class="sm-forge-rows sm-craft-rows">
+                ${rowsHTML}
+                ${createHTML}
+            </div>
+            <div class="ui-section sm-forged-section">
+                <h4 class="inspect-section-title">${esc(spell ? tr('yourSpells') : tr('yourSkills'))}</h4>
+            </div>
+            <div id="craft-scroll-box" class="ui-list ui-scroll sm-forged-list">
+                ${listHTML}
+            </div>`;
+
+        rightBox.innerHTML = picking
+            ? this.renderCraftPickerHTML(picking)
+            : this.renderCraftPreviewHTML(quote, verdict);
+    };
+
+    Proto.renderCraftPickerHTML = function (group) {
+        const build = this._craft;
+        const rows = this.craftPickerRows(group);
+        let html = '';
+        rows.forEach((row, k) => {
+            const focused = this._craftPickIndex === k;
+            if (group === 'icon') {
+                html += `
+                    <div class="sm-skill-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.craftChoose('icon', ${k})">
+                        <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(row.iconIndex)}"></span><span class="sm-skill-name">#${row.iconIndex}</span></span>
+                    </div>`;
+                return;
+            }
+            if (group === 'animation') {
+                html += `
+                    <div class="sm-skill-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.craftChoose('animation', ${k})">
+                        <span class="sm-skill-name">${esc(row.name)}</span>
+                        <span class="sm-skill-cost">#${row.id}</span>
+                    </div>`;
+                return;
+            }
+            const chosen = (group === 'riders' || group === 'refines')
+                ? build[group].includes(row.key)
+                : build[group] === row.key;
+            const barred = group === 'riders' && !riderAllowed(build, row);
+            html += `
+                <div class="sm-skill-row focusable ${focused ? 'focused' : ''} ${chosen ? 'selected' : ''} ${barred ? 'is-shut' : ''}" onclick="SceneManager._scene.craftChoose('${group}', ${k})">
+                    <span class="sm-skill-ident"><span class="sm-skill-name">${chosen ? '✓ ' : ''}${esc(componentName(group, row.key))}</span></span>
+                    <span class="sm-skill-cost">${row.kp || 0} KP · ${esc(tr('cxShort'))} ${(row.cx || 0).toFixed(1)}</span>
+                </div>`;
+        });
+        if (!html) html = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingToBuy'))}</div></div>`;
+
+        const focusedRow = rows[this._craftPickIndex];
+        const blurb = (focusedRow && focusedRow.key && group !== 'icon' && group !== 'animation')
+            ? `<div class="ui-prose">${esc(componentDesc(group, focusedRow.key))}</div>` : '';
+        return `
+            <div class="ui-detail">
+                <div class="ui-detail-head">
+                    <div class="ui-detail-titles"><h3 class="sm-detail-name">${esc(tr('pick.' + group))}</h3></div>
+                </div>
+                ${blurb}
+                <div id="craft-pick-box" class="ui-detail-scroll ui-scroll sm-candidate-list">${html}</div>
+            </div>`;
+    };
+
+    Proto.renderCraftPreviewHTML = function (quote, verdict) {
+        const build = this._craft;
+        const actor = this.getTeachActor();
+        const spell = build.kind !== 'skill';
+        const preview = buildCraftedSkill(build, actor.actorId(), { id: 0 });
+        const statName = window.SkillStatReq ? window.SkillStatReq.statName(quote.statKey) : quote.statKey;
+        const have = verdict.have !== undefined ? verdict.have : craftBaseStat(actor, quote.paramId);
+        const short = have < quote.statReq;
+        const elName = (preview.damage.elementId && typeof $dataSystem !== 'undefined' && $dataSystem && $dataSystem.elements)
+            ? $dataSystem.elements[preview.damage.elementId] : '';
+
+        const spec = (label, value, bad) =>
+            `<div class="inspect-spec-row"><span class="inspect-spec-label">${esc(label)}</span><span class="inspect-spec-value ${bad ? 'sm-value--short' : ''}">${esc(value)}</span></div>`;
+
+        return `
+            <div class="ui-detail sm-fuse-preview">
+                <div class="ui-detail-head">
+                    <div class="ui-detail-titles">
+                        <h3 class="sm-detail-name">${esc(preview.name)}</h3>
+                        <div class="sm-detail-meta">${esc(tr('preview'))}</div>
+                    </div>
+                    <span class="ui-chip sm-result-chip">${esc(spell ? tr('spendsMP') : tr('spendsAP'))}</span>
+                </div>
+                <div class="ui-detail-scroll ui-scroll">
+                    <div class="inspect-spec-grid">
+                        ${spec(spell ? tr('mpLabel') : tr('apLabel'), spell ? preview.mpCost : preview.tpCost)}
+                        ${spec(tr('complexity'), quote.complexity.toFixed(1))}
+                        ${spec(tr('statFloor'), `${statName} ${quote.statReq}`, short)}
+                        ${spec(tr('yourStat'), `${statName} ${have}`, short)}
+                        ${spec(tr('price'), `${verdict.owed !== undefined ? verdict.owed : quote.price} KP`, verdict.reason === 'knowledge')}
+                        ${spec(tr('effectLabel'), tr('dmgType.' + preview.damage.type))}
+                        ${spec(tr('element'), elName || tr('none'))}
+                        ${spec(tr('formula'), preview.damage.formula)}
+                        ${spec(tr('repeats'), preview.repeats)}
+                        ${spec(tr('variance'), preview.damage.variance + '%')}
+                        ${spec(tr('critical'), preview.damage.critical ? tr('yes') : tr('no'))}
+                        ${spec(tr('occasionLabel'), preview.occasion === 0 ? tr('anywhere') : tr('battleOnly'))}
+                        ${spec(tr('riderCount'), preview.effects.length)}
+                    </div>
+                    ${preview.description ? `<div class="ui-prose">${esc(preview.description)}</div>` : ''}
+                    ${build.lore ? `<div class="inspect-flavour">${esc(build.lore)}</div>` : ''}
+                    <div class="ui-prose">${esc(tr('benchBlurb', { stat: statName }))}</div>
+                </div>
+            </div>`;
+    };
+
+    //=========================================================================
+    // Input
+    //=========================================================================
+
+    Proto.craftActivateRow = function (idx) {
+        this._craftFocus = idx;
+        const row = CRAFT_ROWS[idx];
+        if (row === 'name' || row === 'description' || row === 'lore') this.openCraftTextSheet(row);
+        else if (row === 'create') this.craftWrite();
+        else this.openCraftPicker(row);
+    };
+
+    Proto.updateCraftBenchInput = function () {
+        if (this._craftTyping) return;
+
+        if (this._craftPicker) {
+            const rows = this.craftPickerRows(this._craftPicker);
+            const max = rows.length;
+            if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+                this.closeCraftPicker();
+                return;
+            }
+            if (!max) return;
+            if (Input.isTriggered('ok')) { this.craftChoose(this._craftPicker, this._craftPickIndex); return; }
+            const prev = this._craftPickIndex;
+            if (Input.isTriggered('down') || Input.isRepeated('down')) this._craftPickIndex = (this._craftPickIndex + 1) % max;
+            else if (Input.isTriggered('up') || Input.isRepeated('up')) this._craftPickIndex = (this._craftPickIndex - 1 + max) % max;
+            if (this._craftPickIndex !== prev) {
+                SoundManager.playCursor();
+                this.refreshUISkillDOM();
+                this.scrollToActiveItem('craft-pick-box', '#craft-pick-box .focused');
+            }
+            return;
+        }
+
+        const max = CRAFT_ROWS.length;
+        const prev = this._craftFocus;
+        if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+            this.closeCraftBench();
+            return;
+        } else if (Input.isTriggered('ok')) {
+            this.craftActivateRow(this._craftFocus);
+            return;
+        } else if (Input.isTriggered('down') || Input.isRepeated('down')) {
+            this._craftFocus = (this._craftFocus + 1) % max;
+        } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
+            this._craftFocus = (this._craftFocus - 1 + max) % max;
+        }
+        if (this._craftFocus !== prev) {
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            this.scrollToActiveItem('craft-scroll-box', '.sm-craft-rows .focused');
+        }
+    };
+
+    // Any skill the character already knows can be given a description and a
+    // piece of lore in the player's own words. The entry in the database is
+    // not theirs to keep, so only the two strings are stored, and they are
+    // laid back over $dataSkills on every load.
+    Proto.rewriteActionsHTML = function (skill) {
+        if (!skill || skill.id === 1 || skill.id === 2) return '';
+        return `
+            <div class="inspect-actions ui-panel-actions sm-rewrite-actions">
+                <div class="inspect-btn focusable" onclick="SceneManager._scene.openCraftTextSheet('description', ${skill.id})">${esc(tr('rewriteDesc'))}</div>
+                <div class="inspect-btn focusable" onclick="SceneManager._scene.openCraftTextSheet('lore', ${skill.id})">${esc(tr('rewriteLore'))}</div>
+            </div>`;
+    };
+
+})();

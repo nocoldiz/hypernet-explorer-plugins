@@ -814,6 +814,7 @@
   "entryCount": "{n} entries",
   "primaryArchetype": "Primary Archetype",
   "weaponSlotsHeld": "Weapons held: {n}",
+  "handSlotsHeld": "({n} grips)",
   "deletePreset": "Delete Dossier",
   "deletePresetBody": "Delete the dossier of {name}? This cannot be undone.",
   "secondaryArchetype": "Secondary Archetype",
@@ -1003,5 +1004,7 @@
   "vehicleGarage": "Your garage",
   "vehicleRequired": "Story mode needs one vehicle before you can set out.",
   "vehicleTake": "Take this vehicle",
-  "vehicleDrop": "Leave it behind"
+  "vehicleDrop": "Leave it behind",
+  "classAbilities": "Class Abilities",
+  "limitBreak": "Limit break"
 }

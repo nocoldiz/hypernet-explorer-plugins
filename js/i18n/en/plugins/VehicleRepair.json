@@ -109,5 +109,8 @@
     "starship": "starship",
     "bike": "bike",
     "boat": "boat"
+  },
+  "toast": {
+    "criticalFailure": "{part} has failed. The vehicle will not move."
   }
 }

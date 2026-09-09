@@ -3972,6 +3972,7 @@
             this.layEggs();
             return;
           }
+          noteDevelopment(this._actor, uterus, 'egg', uterus.eggDevelopment);
           this.applyOviparousEffects();
           break;
 
@@ -3981,6 +3982,7 @@
             this.produceSeed();
             return;
           }
+          noteDevelopment(this._actor, uterus, 'seed', uterus.seedDevelopment);
           this.applyPlantEffects();
           break;
 
@@ -3990,6 +3992,7 @@
             this.completeMitosis();
             return;
           }
+          noteDevelopment(this._actor, uterus, 'mitosis', uterus.mitosisDevelopment);
           this.applyMitosisEffects();
           break;
       }
@@ -4002,18 +4005,62 @@
     }
   };
 
+  // ==========================================================================
+  // Pregnancy notices
+  // ==========================================================================
+  // A pregnancy is the one part of the biologic simulation that moves while
+  // nobody is looking at it, so every step it takes is announced the same way
+  // everything else transient is: one parchment toast, keyed per actor so a
+  // catch-up pass over several days never stacks the same notice twice.
+  function pregToast(actor, text, opts) {
+    if (!text || !window.ParchmentToast || !actor) return;
+    var o = opts || {};
+    try {
+      window.ParchmentToast.show(text, {
+        severity: o.severity || 'info',
+        duration: o.duration || 220,
+        icon: o.icon,
+        key: 'pregnancy:' + actor.actorId() + ':' + (o.key || 'update'), // i18n-ignore: toast dedupe key
+      });
+    } catch (e) { /* toasts are optional */ }
+  }
+
+  // Egg, seed and mitosis have no fetal bands to cross, so their progress is
+  // announced at the quarters instead. The last quarter announced is kept on
+  // the record, so a jump from 10% to 80% reports once rather than three times.
+  function noteDevelopment(actor, uterus, kind, percent) {
+    var quarter = Math.min(3, Math.floor((Number(percent) || 0) / 25));
+    if (quarter <= 0) return;
+    var seen = uterus.notedQuarter || 0;
+    if (quarter <= seen) return;
+    uterus.notedQuarter = quarter;
+    pregToast(actor, T('Biologic.toast.' + kind + 'Progress', {
+      actor: actor.name(), percent: quarter * 25,
+    }), { key: kind + 'Progress' });
+  }
+
   // The record keeps the band id; the prose is re-resolved on every update,
   // so a language change is picked up without touching the save.
-  function applyFetusStage(fetus, stageId) {
+  function applyFetusStage(fetus, stageId, actor) {
+    var moved = fetus.stageId !== stageId;
     fetus.stageId = stageId;
     fetus.stage = T('Biologic.fetusStage.' + stageId + '.stage');
     fetus.description = T('Biologic.fetusStage.' + stageId + '.description');
+    // Each band the fetus crosses is worth telling the party about once.
+    if (moved && actor) {
+      pregToast(actor, T('Biologic.toast.fetusStage', {
+        actor: actor.name(), stage: fetus.stage, week: fetus.week,
+      }), { key: 'stage:' + stageId });
+    }
     fetus.developments = T.list('Biologic.fetusStage.' + stageId + '.developments');
   }
 
   Window_BiologicSimulation.prototype.updateFetusData = function () {
     var age = toHumanScaleAge(this._actor, this._actor._uterusData.gestationalAge);
+    var previous = this._actor._uterusData.fetus;
+    var actor = this._actor;
     var fetus = {
+      stageId: previous ? previous.stageId : null,
       stage: "",
       week: Math.floor(age / 7),
       description: "",
@@ -4024,32 +4071,32 @@
 
     if (age < 14) {
       // Weeks 0-2
-      applyFetusStage(fetus, "implantation");
+      applyFetusStage(fetus, "implantation", actor);
       fetus.size = T('Biologic.fetusStage.implantation.size');
       fetus.weight = T('Biologic.fetusStage.implantation.weight');
     } else if (age < 56) {
       // Weeks 2-8
-      applyFetusStage(fetus, "embryonic");
+      applyFetusStage(fetus, "embryonic", actor);
       var sizeProgress = ((age - 14) / 42) * 15;
       fetus.size = (0.5 + sizeProgress).toFixed(1) + " mm";
       fetus.weight = "< 1 g";
     } else if (age < 84) {
       // Weeks 8-12
-      applyFetusStage(fetus, "earlyFetal");
+      applyFetusStage(fetus, "earlyFetal", actor);
       var sizeProgress = ((age - 56) / 28) * 45;
       fetus.size = (16 + sizeProgress).toFixed(1) + " mm";
       var weightProgress = ((age - 56) / 28) * 14;
       fetus.weight = weightProgress.toFixed(1) + " g";
     } else if (age < 168) {
       // Weeks 12-24
-      applyFetusStage(fetus, "midFetal");
+      applyFetusStage(fetus, "midFetal", actor);
       var sizeProgress = ((age - 84) / 84) * 239;
       fetus.size = (61 + sizeProgress).toFixed(0) + " mm";
       var weightProgress = ((age - 84) / 84) * 586;
       fetus.weight = (14 + weightProgress).toFixed(0) + " g";
     } else {
       // Weeks 24-38+
-      applyFetusStage(fetus, "lateFetal");
+      applyFetusStage(fetus, "lateFetal", actor);
       var sizeProgress = ((age - 168) / 102) * 200;
       fetus.size = (300 + sizeProgress).toFixed(0) + " mm";
       var weightProgress = ((age - 168) / 102) * 2700;
@@ -4208,7 +4255,10 @@
     uterus.gestationalAge = 0;
     uterus.fetus = null;
     uterus.birthReady = true;
+    uterus.notedQuarter = 0;
 
+    pregToast(this._actor, T('Biologic.toast.birth', { actor: this._actor.name() }),
+      { severity: 'good', duration: 300, key: 'birth' });
     registerOffspring(this._actor);
   };
   Window_BiologicSimulation.prototype.layEggs = function () {
@@ -4221,10 +4271,9 @@
     uterus.eggDevelopment = 0;
     uterus.birthReady = true;
 
-    var message = T.n('Biologic.eggsReadyToLay', uterus.eggsToLay);
-    window.skipLocalization = true;
-    $gameMessage.add(message);
-    window.skipLocalization = false;
+    uterus.notedQuarter = 0;
+    pregToast(this._actor, T.n('Biologic.eggsReadyToLay', uterus.eggsToLay),
+      { severity: 'good', duration: 300, key: 'eggs' });
 
     // A clutch is a clutch: every egg is one of the family.
     for (var i = 0; i < uterus.eggsToLay; i++) {
@@ -4244,10 +4293,9 @@
     uterus.seedDevelopment = 0;
     // Keep isPregnant = true so it continues producing
 
-    var message = T('Biologic.seedProduced', { count: uterus.seedsReady });
-    window.skipLocalization = true;
-    $gameMessage.add(message);
-    window.skipLocalization = false;
+    uterus.notedQuarter = 0;
+    pregToast(this._actor, T('Biologic.seedProduced', { count: uterus.seedsReady }),
+      { severity: 'good', duration: 300, key: 'seed' });
   };
 
   Window_BiologicSimulation.prototype.completeMitosis = function () {
@@ -4259,10 +4307,9 @@
     uterus.mitosisDevelopment = 0;
     uterus.birthReady = true;
 
-    var message = T('Biologic.mitosisCompleteAPerfectCloneHasBeenCreated');
-    window.skipLocalization = true;
-    $gameMessage.add(message);
-    window.skipLocalization = false;
+    uterus.notedQuarter = 0;
+    pregToast(this._actor, T('Biologic.mitosisCompleteAPerfectCloneHasBeenCreated'),
+      { severity: 'good', duration: 300, key: 'mitosis' });
 
     // A copy of a traveller is a traveller: it takes a place in the party while
     // there is one free, and only falls back to walking behind when the party is
@@ -6266,6 +6313,7 @@
     // The term belongs to the actor's archetype, whatever the reproduction is.
     var term = getPregnancyDuration(actor);
     uterus.dueDate = currentGameDate + term;
+    uterus.notedQuarter = 0;
 
     var message = "";
 
@@ -6421,6 +6469,7 @@
     window.skipLocalization = true;
     $gameMessage.add(message);
     window.skipLocalization = false;
+    pregToast(actor, message, { severity: 'good', duration: 300, key: 'conceived' });
 
     // A planted seed is where a plant pregnancy actually produces somebody, so
     // the sprout joins the family here rather than when the seed was grown.
@@ -6449,6 +6498,54 @@
       }
     );
   }
+  // ==========================================================================
+  // The clock
+  // ==========================================================================
+  // Gestation used to advance only while the biologic panel was open, so a
+  // pregnancy waited for the player to look at it. It runs off the game clock
+  // now, once an hour and again on every map load, which is what a night's
+  // sleep or a fast travel crosses. The panel's own methods do the work: they
+  // touch nothing but `this._actor`, so a bare object standing in for the
+  // window is enough.
+  function tickPregnancies() {
+    if (!window.$gameParty || !window.$gameVariables) return;
+    for (const actor of $gameParty.members()) {
+      const uterus = actor && actor._uterusData;
+      if (!uterus || !uterus.isPregnant) continue;
+      const proxy = Object.create(Window_BiologicSimulation.prototype);
+      proxy._actor = actor;
+      try { proxy.updatePregnancy(); }
+      catch (e) { console.warn('[Health_BiologicSimulation] pregnancy tick failed', e); }
+    }
+  }
+
+  // One stamp per game hour, off the same date variable the gestational clock
+  // is measured against.
+  function gameHourStamp() {
+    const d = getGameDateFromVariable();
+    return Math.floor(convertGameDateToTimestamp(d) * 24);
+  }
+
+  if (typeof Scene_Map !== 'undefined') {
+    const _Scene_Map_onMapLoaded = Scene_Map.prototype.onMapLoaded;
+    Scene_Map.prototype.onMapLoaded = function () {
+      _Scene_Map_onMapLoaded.call(this);
+      tickPregnancies();
+    };
+  }
+
+  if (typeof Game_Map !== 'undefined') {
+    const _Game_Map_update = Game_Map.prototype.update;
+    Game_Map.prototype.update = function (sceneActive) {
+      _Game_Map_update.call(this, sceneActive);
+      if (!sceneActive || !window.$gameVariables) return;
+      const hourStamp = gameHourStamp();
+      if (hourStamp === this._lastPregnancyHour) return;
+      this._lastPregnancyHour = hourStamp;
+      tickPregnancies();
+    };
+  }
+
   // Add compatibility methods for MV if running in MZ
   if (Utils.RPGMAKER_NAME === "MZ") {
     if (!Window_BiologicSimulation.prototype.drawActorName) {

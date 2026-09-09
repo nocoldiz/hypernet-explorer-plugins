@@ -1142,6 +1142,17 @@
 
         // The two axes a world is made on, named as the creation form names
         // them (see UI/WorldManagerUI.js).
+        // How many outbreaks are burning in this world right now (Health/
+        // Health_DiseaseSystem.js keeps the summary in the world folder).
+        const ES = window.EpidemicSystem;
+        const epidemics = (ES && typeof ES.worldSummary === "function")
+            ? ES.worldSummary(WM.activeWorldName) : null;
+        const epidemicHTML = epidemics ? `
+                <div class="detail-row">
+                    <span class="detail-label">${T('SaveSystem.epidemics')}</span>
+                    <span>${epidemics.active || 0}</span>
+                </div>` : "";
+
         const mode = typeof WM.populationMode === "function" ? WM.populationMode() : "normal";
         const magic = typeof WM.magicalLevel === "function" ? WM.magicalLevel() : "normal";
         const startYear = info.startYear;
@@ -1170,6 +1181,7 @@
                     <span class="detail-label">${T('SaveSystem.artifacts')}</span>
                     <span>${artifactCount}</span>
                 </div>
+                ${epidemicHTML}
                 ${destinyLineHTML()}
                 </div>
             </div>

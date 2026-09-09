@@ -193,6 +193,7 @@ Scene_ArmyBattle.prototype.update = function () {
   if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
     SoundManager.playCancel();
     $gameTemp._battleEnemyArmy = null;
+    $gameTemp._battleAllyArmy = null;
     $gameTemp._battleArmyEventId = null;
     $gameTemp._armyPracticeBattle = false;
     this.safePop();
@@ -223,6 +224,13 @@ Scene_ArmyBattle.prototype.endBattle = function () {
         }
       }
 
+      // A battle the party joined on somebody's side is settled on the
+      // campaign roster rather than on this map: the beaten column is off the
+      // board and the one they stood with holds the field.
+      if (window.ArmyCampaign && window.ArmyCampaign.resolveJoinedBattle) {
+        window.ArmyCampaign.resolveJoinedBattle("victory");
+      }
+
       // Decrease reputation by 25 for defeating a faction army
       // Independent armies don't affect reputation
       if (enemyArmy && !enemyArmy.isIndependent() && $gameFactions) {
@@ -233,11 +241,14 @@ Scene_ArmyBattle.prototype.endBattle = function () {
       }
     } else if (this._battleResult === "defeat") {
       // Player lost - game over or retreat
-      // For now, just return to map
+      if (window.ArmyCampaign && window.ArmyCampaign.resolveJoinedBattle) {
+        window.ArmyCampaign.resolveJoinedBattle("defeat");
+      }
     }
 
     // Clean up temp data
     $gameTemp._battleEnemyArmy = null;
+    $gameTemp._battleAllyArmy = null;
     $gameTemp._battleArmyEventId = null;
     $gameTemp._armyPracticeBattle = false;
 
@@ -301,9 +312,11 @@ ArmyBattleField.prototype.initialize = function () {
 
 ArmyBattleField.prototype._calculateBattlefieldSize = function () {
   // Count total troops
+  const allyArmy = $gameTemp._battleAllyArmy;
   const playerTroopCount = this._practice
     ? $gameArmy.getTroopCount()
-    : $gameParty.members().length + $gameArmy.getTroopCount();
+    : $gameParty.members().length + $gameArmy.getTroopCount() +
+      (allyArmy ? allyArmy.getTroopCount() : 0);
   const enemyArmy = $gameTemp._battleEnemyArmy;
   const enemyTroopCount = enemyArmy ? enemyArmy.getTroopCount() : 0;
   const totalTroops = playerTroopCount + enemyTroopCount;
@@ -631,7 +644,13 @@ ArmyBattleField.prototype._setupPlayerArmy = function () {
   // Scientist-role troops stay behind working the tech tree (see
   // ArmyManager.js produceDailyMaterials); they never take the field.
   const combatTroops = $gameArmy.getTroops().filter(t => !/scientist/i.test(String(t.role || "")));
-  const allTroops = [...partyMembers, ...combatTroops];
+  // A column the party came in on the side of (ArmyEventsManager: helping one
+  // army of two already in the field) forms up with them, and takes its own
+  // losses rather than the player's: nothing about it is written back.
+  const allyArmy = $gameTemp._battleAllyArmy;
+  const allyTroops = allyArmy
+    ? allyArmy.getTroops().filter(t => !/scientist/i.test(String(t.role || ""))) : [];
+  const allTroops = [...partyMembers, ...combatTroops, ...allyTroops];
 
 
   // Group by name to keep specific squads together

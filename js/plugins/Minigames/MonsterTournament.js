@@ -67,6 +67,9 @@
     const pluginName = 'MonsterTournament';
     const parameters = PluginManager.parameters(pluginName);
     const bettingItemId = Number(parameters['bettingItemId'] || 124);
+    // A fighting game's round clock: a bout is shown for at most this many
+    // seconds, after which it is settled where it stands.
+    const MT_ROUND_SECONDS = 30;
 
     PluginManager.registerCommand(pluginName, "startTournament", () => {
         SceneManager.push(Scene_MonsterTournament);
@@ -145,6 +148,18 @@
             $gameParty._inBattle = true;
 
             const sideOf = b => (b === L ? -1 : 1);
+            // What the fighting-game gauges read: every recorded beat carries a
+            // snapshot of both fighters' HP / MP / TP taken right after it
+            // resolved, so the bars in the arena follow the very battle the
+            // engine already fought instead of guessing at it.
+            const snap = (b) => ({
+                hp: b.hp, mhp: Math.max(1, b.mhp),
+                mp: b.mp, mmp: Math.max(0, b.mmp),
+                tp: Math.round(b.tp || 0), mtp: Math.max(1, b.maxTp ? b.maxTp() : 100)
+            });
+            const gauges = () => ({ '-1': snap(L), '1': snap(R) });
+            const pushBeat = (beat) => { beat.gauges = gauges(); out.beats.push(beat); };
+            out.startGauges = gauges();
             const oppOf = b => (b === L ? R : L);
             const MAX_TURNS = 16;
             let turn = 0;
@@ -166,7 +181,7 @@
                     subject.makeActions(); // engine AI picks skills by rating/conditions
                     const actions = subject._actions || [];
                     if (actions.length === 0) { // stunned / asleep / cannot move
-                        if (record) out.beats.push({ kind: 'skip', side: sideOf(subject) });
+                        if (record) pushBeat({ kind: 'skip', side: sideOf(subject) });
                         continue;
                     }
 
@@ -215,7 +230,7 @@
                         }
 
                         if (!targetB.isAlive() && beat) beat.results.push({ kind: 'death', side: sideOf(targetB) });
-                        if (beat) out.beats.push(beat);
+                        if (beat) pushBeat(beat);
                         if (!oppOf(subject).isAlive()) break;
                     }
                 }
@@ -225,8 +240,8 @@
                     if (!b.isAlive()) return;
                     b.onTurnEnd();
                     const r = b.result();
-                    if (record && r.hpDamage) out.beats.push({ kind: 'slip', side: sideOf(b), value: r.hpDamage });
-                    if (!b.isAlive() && record) out.beats.push({ kind: 'slipdeath', side: sideOf(b) });
+                    if (record && r.hpDamage) pushBeat({ kind: 'slip', side: sideOf(b), value: r.hpDamage });
+                    if (!b.isAlive() && record) pushBeat({ kind: 'slipdeath', side: sideOf(b) });
                 });
             }
 
@@ -238,9 +253,10 @@
                 // a decisive faint on the loser so the visual still resolves.
                 const lr = L.hp / Math.max(1, L.mhp), rr = R.hp / Math.max(1, R.mhp);
                 winner = lr >= rr ? L : R;
-                if (record && L.isAlive() && R.isAlive()) out.beats.push({ kind: 'decision', side: sideOf(winner === L ? R : L) });
+                if (record && L.isAlive() && R.isAlive()) pushBeat({ kind: 'decision', side: sideOf(winner === L ? R : L) });
             }
             out.winnerSide = sideOf(winner);
+            out.finalGauges = gauges();
         } catch (e) {
             console.error('[MonsterTournament] duel sim failed; using stat fallback', e);
             out.winnerSide = statWinnerSide(leftData, rightData);
@@ -294,6 +310,7 @@
             this.onAnimation = null; // (side, animationId) -> play MZ animation
             this.onPopup = null;     // (side, {text,color})  -> floating popup
             this.onAnnounce = null;  // (text) -> "X uses Skill!" banner
+            this.onGauges = null;    // (gauges) -> refresh the HP/MP/TP bars
 
             // Free-orbit camera the player drives (mouse drag / WASD / right stick).
             this._center = CAM_CENTER();
@@ -476,17 +493,16 @@
             if (this._keys.has('KeyW')) dPitch += kspeed;
             if (this._keys.has('KeyS')) dPitch -= kspeed;
 
-            // Gamepad right stick (axes 2/3) with a small deadzone.
-            const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-            for (let i = 0; i < pads.length; i++) {
-                const pad = pads[i];
-                if (pad && pad.axes && pad.axes.length >= 4) {
-                    const rx = Math.abs(pad.axes[2]) > 0.15 ? pad.axes[2] : 0;
-                    const ry = Math.abs(pad.axes[3]) > 0.15 ? pad.axes[3] : 0;
-                    dYaw   -= rx * 2.2 * dt;
-                    dPitch -= ry * 1.7 * dt;
-                    if (rx || ry) break;
-                }
+            // The right stick, through the one controller layer: the same
+            // deadzone, the same speed setting and the same inverted Y as every
+            // other camera in the game (window.Controller).
+            const C = window.Controller;
+            if (C) {
+                const stick = C.stick('right');
+                const gain = C.cameraSpeed();
+                const invert = C.invertCameraY() ? -1 : 1;
+                dYaw -= stick.x * 2.2 * gain * dt;
+                dPitch -= stick.y * 1.7 * gain * invert * dt;
             }
 
             if (dYaw || dPitch) this.applyPan(dYaw, dPitch);
@@ -608,9 +624,29 @@
                         this._impacted = true;
                         if (beat.animationId && arena.onAnimation) arena.onAnimation(beat.targetSide, beat.animationId);
                         arena._applyBeatResults(beat);
+                        arena._reportGauges(beat);
                     }
                 }
             };
+        }
+
+        // Hand the beat's recorded HP / MP / TP snapshot to the HUD gauges.
+        _reportGauges(beat) {
+            if (this.onGauges && beat && beat.gauges) this.onGauges(beat.gauges);
+        }
+
+        // The round clock ran out: settle the fight where it stands. The loser
+        // goes down and the choreography jumps to its closing flourish, so the
+        // 30 seconds are a real limit and not just a decoration.
+        finishDuelNow(loserSide) {
+            if (!this._seq) return;
+            const f = this.fighters[loserSide];
+            if (f && f.battler && f.battler.currentAnimation !== 'death') {
+                f.battler.playAnimation('death', false);
+                if (this.onPopup) this.onPopup(loserSide, { text: 'DOWN', color: '#ff5555' });
+            }
+            this._seqI = this._seq.length - 1;
+            this._stepT = 0;
         }
 
         // Apply a beat's resolved results: defender reactions, sparks, popups.
@@ -659,6 +695,7 @@
                         if (arena.onPopup) arena.onPopup(beat.side, { text: (dmg ? '' : '+') + Math.abs(beat.value), color: dmg ? '#ff8c8c' : '#7CFF7C' });
                         const f = arena.fighters[beat.side];
                         if (dmg && f && f.battler) arena.flashRandomPart(f.battler);
+                        arena._reportGauges(beat);
                     }
                 }
             };
@@ -671,6 +708,7 @@
                     const f = this.fighters[beat.side];
                     if (f && f.battler) f.battler.playAnimation('death', false);
                     if (this.onPopup) this.onPopup(beat.side, { text: 'DOWN', color: '#ff5555' });
+                    this._reportGauges(beat);
                 },
                 update: () => {}
             };
@@ -865,6 +903,7 @@
             this._arena.onAnimation = (side, animId) => this.playMZAnimation(side, animId);
             this._arena.onPopup = (side, payload) => this.addPopup(side, payload);
             this._arena.onAnnounce = (text) => this.showAnnounce(text);
+            this._arena.onGauges = (gauges) => this.setGauges(gauges);
         }
 
         // Center-top "EnemyName uses SkillName!" banner, refreshed each action.
@@ -979,6 +1018,28 @@
                     <div class="mt-opt" data-i="0"></div>
                     <div class="mt-opt" data-i="1">${T('MonsterTournament.ui.keepCurrentBet')}</div>
                 </div>
+                <div id="mt-fight" style="display:none">
+                    <div class="mt-fighter mt-side-left">
+                        <div class="mt-fname"></div>
+                        <div class="mt-gauges">
+                            <div class="mt-gauge mt-hp"><i></i><span></span></div>
+                            <div class="mt-gauge mt-mp"><i></i><span></span></div>
+                        </div>
+                        <div class="mt-tp"><b></b></div>
+                    </div>
+                    <div class="mt-clock">
+                        <div class="mt-clock-num">${MT_ROUND_SECONDS}</div>
+                        <div class="mt-clock-lbl">${T('MonsterTournament.ui.time')}</div>
+                    </div>
+                    <div class="mt-fighter mt-side-right">
+                        <div class="mt-fname"></div>
+                        <div class="mt-gauges">
+                            <div class="mt-gauge mt-hp"><i></i><span></span></div>
+                            <div class="mt-gauge mt-mp"><i></i><span></span></div>
+                        </div>
+                        <div class="mt-tp"><b></b></div>
+                    </div>
+                </div>
                 <div id="mt-banner" style="display:none"></div>
             `;
             document.body.appendChild(root);
@@ -989,6 +1050,12 @@
             this._betEl = root.querySelector('#mt-bet');
             this._addbetEl = root.querySelector('#mt-addbet');
             this._bannerEl = root.querySelector('#mt-banner');
+            this._fightEl = root.querySelector('#mt-fight');
+            this._clockEl = root.querySelector('.mt-clock-num');
+            this._fighterEls = {
+                '-1': root.querySelector('.mt-side-left'),
+                '1': root.querySelector('.mt-side-right')
+            };
 
             // Mouse support for the add-bet choice (keyboard flow unchanged)
             this._addbetEl.querySelectorAll('.mt-opt').forEach(opt => {
@@ -1019,6 +1086,87 @@
             this._bannerEl.style.display = '';
         }
         hideBanner() { if (this._bannerEl) this._bannerEl.style.display = 'none'; }
+
+        //--- the fighting-game gauges ------------------------------------------
+        // The same three readings a real battle shows - an HP bar, an MP bar and
+        // the TP orb - one card per corner with the round clock between them.
+
+        showFightHud(leftData, rightData, gauges) {
+            if (!this._fightEl) return;
+            const names = { '-1': leftData && leftData.name, '1': rightData && rightData.name };
+            ['-1', '1'].forEach(side => {
+                const el = this._fighterEls[side];
+                if (!el) return;
+                el.querySelector('.mt-fname').textContent = names[side] || '';
+                el.classList.remove('mt-down');
+            });
+            this._fightEl.style.display = '';
+            this.setGauges(gauges);
+            this.setClock(MT_ROUND_SECONDS);
+        }
+
+        hideFightHud() { if (this._fightEl) this._fightEl.style.display = 'none'; }
+
+        setGauges(gauges) {
+            if (!this._fightEl || !gauges) return;
+            ['-1', '1'].forEach(side => {
+                const el = this._fighterEls[side];
+                const g = gauges[side];
+                if (!el || !g) return;
+                const hpRatio = Math.max(0, Math.min(1, g.hp / Math.max(1, g.mhp)));
+                const mpRatio = g.mmp > 0 ? Math.max(0, Math.min(1, g.mp / g.mmp)) : 0;
+                const tpRatio = Math.max(0, Math.min(1, g.tp / Math.max(1, g.mtp)));
+                const hp = el.querySelector('.mt-hp');
+                hp.querySelector('i').style.width = (hpRatio * 100) + '%';
+                hp.querySelector('span').textContent =
+                    T('MonsterTournament.ui.hp') + ' ' + g.hp + ' / ' + g.mhp;
+                hp.classList.toggle('mt-low', hpRatio <= 0.25);
+                const mp = el.querySelector('.mt-mp');
+                mp.querySelector('i').style.width = (mpRatio * 100) + '%';
+                mp.querySelector('span').textContent =
+                    T('MonsterTournament.ui.mp') + ' ' + g.mp + ' / ' + g.mmp;
+                // The orb fills as a pie: one conic sweep is the whole of it, so
+                // there is no second element to keep in step.
+                const tp = el.querySelector('.mt-tp');
+                tp.style.setProperty('--mt-tp-fill', (tpRatio * 360) + 'deg');
+                tp.querySelector('b').textContent = T('MonsterTournament.ui.tp') + ' ' + g.tp;
+                el.classList.toggle('mt-down', g.hp <= 0);
+            });
+        }
+
+        setClock(seconds) {
+            if (!this._clockEl) return;
+            const shown = Math.max(0, Math.ceil(seconds));
+            this._clockEl.textContent = String(shown);
+            this._clockEl.classList.toggle('mt-urgent', shown <= 10);
+        }
+
+        // The round clock runs only while a bout is on screen; when it reaches
+        // zero the arena settles the fight where it stands. Nothing is re-rolled:
+        // the winner was decided by the simulation before the first punch.
+        startFightClock(onTimeout) {
+            this._fightClock = MT_ROUND_SECONDS;
+            this._fightClockAt = performance.now();
+            this._onClockOut = onTimeout;
+            this.setClock(MT_ROUND_SECONDS);
+        }
+
+        stopFightClock() { this._fightClock = null; this._onClockOut = null; }
+
+        updateFightClock() {
+            if (this._fightClock === null || this._fightClock === undefined) return;
+            const now = performance.now();
+            const last = this._fightClockAt || now;
+            this._fightClockAt = now;
+            this._fightClock = Math.max(0, this._fightClock - (now - last) / 1000);
+            this.setClock(this._fightClock);
+            if (this._fightClock <= 0) {
+                const timeout = this._onClockOut;
+                this._fightClock = null;
+                this._onClockOut = null;
+                if (timeout) timeout();
+            }
+        }
 
         refreshStats() {
             const m = this.selectedMonsters[this.currentMonsterIndex];
@@ -1093,6 +1241,7 @@
                 this.updateEffects();
             }
 
+            this.updateFightClock();
             this.updateInput();
         }
 
@@ -1259,13 +1408,23 @@
             const roundName = this.roundLabel(this.tournamentBracket.length);
             this.setTitle(`${roundName}: ${playerMonster.name}  VS  ${opponentMonster.name}`);
 
+            // The fighting-game board: both fighters' HP, MP and TP and the round
+            // clock, live for as long as the bout is on screen.
+            this.showFightHud(playerMonster, opponentMonster, sim.startGauges);
+            this.startFightClock(() => {
+                this.setGauges(sim.finalGauges);
+                this._arena.finishDuelNow(-sim.winnerSide);
+            });
+
             this._arena.startDuel(playerMonster, opponentMonster, sim.beats, () => {
+                this.stopFightClock();
                 this.showBanner(
                     playerWon ? T('MonsterTournament.wins', { name: playerMonster.name }) : T('MonsterTournament.defeated', { name: playerMonster.name }),
                     playerWon ? 'win' : 'lose'
                 );
                 this._after(1600, () => {
                     this.hideBanner();
+                    this.hideFightHud();
                     callback(winnerIndex);
                 });
             });

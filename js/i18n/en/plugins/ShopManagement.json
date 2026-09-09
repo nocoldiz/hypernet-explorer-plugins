@@ -5,7 +5,9 @@
     "overview": "Overview",
     "stock": "Stock",
     "warehouse": "Warehouse",
-    "catalog": "Catalog"
+    "catalog": "Catalog",
+    "staff": "Roster",
+    "shelves": "Shelves"
   },
   "role": "Role",
   "status": "Status",
@@ -65,6 +67,53 @@
   "ui": {
     "okAssign": "OK → assign",
     "destination": "Destination",
-    "okAssignItem": "OK → assign item"
+    "okAssignItem": "OK → assign item",
+    "takings": "Takings",
+    "takingsHint": "What the shop has earned since it was last emptied.",
+    "takeTakings": "Take the takings",
+    "tookTakings": "{amount} taken from the till.",
+    "levelAbbr": "Lv{level}"
+  },
+  "owned": {
+    "title": "Shop deed",
+    "bought": "{shop} is yours: a {trade} shop. Run it from the Deeds page.",
+    "dayTitle": "The day's takings",
+    "dayProfit": "{shop} sold {sold} and took {amount} today.",
+    "dayLoss": "{shop} is down {amount} today.",
+    "dayQuiet": "{shop} sold nothing today."
+  },
+  "staff": {
+    "title": "Behind the counter",
+    "rosterTitle": "On the roster",
+    "candidatesTitle": "Who could take a shift",
+    "shift": "{start}:00 to {end}:00",
+    "coverage": "{hours} of the 24 hours covered",
+    "closed": "Nobody is behind the counter, so nothing is sold.",
+    "full": "Three shifts is the whole day.",
+    "hint": "One name covers eight hours. Three keep the door open all day.",
+    "assigned": "{name} takes the {start}:00 shift at {shop}.",
+    "dismissed": "{name} steps off the roster at {shop}.",
+    "notOurs": "This shop has a keeper of its own."
+  },
+  "shelves": {
+    "title": "Filling the shelves",
+    "notOurs": "This shop stocks itself.",
+    "bagTitle": "Your bags",
+    "bagEmpty": "Nothing in the bags is worth selling.",
+    "bagHint": "Anything you carry can go out for sale, bar key items and raw materials.",
+    "wholesaler": "Wholesaler",
+    "marketTitle": "Wholesaler: {trade}",
+    "marketEmpty": "The wholesaler deals in nothing this shop can sell.",
+    "marketHint": "Bought under the counter price, straight onto the shelf.",
+    "shelfTitle": "Out for sale",
+    "shelfEmpty": "The shelves are bare, so there is nothing to sell.",
+    "shelve": "Shelve it",
+    "buy": "Buy it",
+    "takeBack": "Take it back",
+    "shelvesFull": "Seven shelves is all this shop has.",
+    "tooDear": "There is not enough in the purse for that.",
+    "refused": "That will not go on a shelf.",
+    "fabricate": "Work the bench for this shop",
+    "consigned": "{item} goes on the shelves at {shop}."
   }
 }

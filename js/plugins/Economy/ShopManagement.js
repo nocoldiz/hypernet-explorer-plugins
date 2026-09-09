@@ -264,6 +264,7 @@
   const randomQuantityMax = Number(parameters["randomQuantityMax"] || 10);
   const defaultStockItems = Number(parameters["defaultStockItems"] || 5);
   function refreshEconomy() {
+    reviveShops();
     const currentShop = getCurrentShop();
     if (currentShop && currentShop.isAutoOperating) {
         currentShop.refreshEconomy();
@@ -378,10 +379,20 @@
 
         if (hoursElapsed < 0.1) return; // Skip if less than 6 game-minutes passed
 
-        // Process automatic operations
-        this.simulateSales(hoursElapsed);
-        this.simulateProduction(hoursElapsed);
-        this.simulateRestocking(hoursElapsed);
+        // A shop the party owns earns off the counter and nothing else: what it
+        // sells is what the player put on the shelves, and nobody refills them
+        // overnight. So the two automatic halves (free production out of thin
+        // air, and a warehouse that restocks itself at cost) are for the event
+        // shops the world runs, not for a business with the party's name on the
+        // deed. The hours it can sell in are the hours somebody is behind the
+        // counter (staffHours below), which is why the shifts matter.
+        if (this.owned) {
+            this.simulateSales(hoursElapsed * staffCoverage(this));
+        } else {
+            this.simulateSales(hoursElapsed);
+            this.simulateProduction(hoursElapsed);
+            this.simulateRestocking(hoursElapsed);
+        }
 
         // Update last update markers
         this.lastUpdateGameMin = nowMin;
@@ -417,6 +428,7 @@
         }
         
         // Simulate sales
+        let earned = 0;
         for (let i = 0; i < expectedSales && availableSlots.length > 0; i++) {
             // Select random item to sell (weighted by availability)
             const randomSlot = availableSlots[Math.floor(Math.random() * availableSlots.length)];
@@ -424,6 +436,7 @@
             // Sell one unit
             this.stockInventory[randomSlot.slotIndex].amount--;
             this.balance += randomSlot.price;
+            earned += randomSlot.price;
             actualSales++;
             
             // Remove from available slots if sold out
@@ -440,6 +453,11 @@
         }
         
         if (actualSales > 0) {
+            // What the day's toast reads (announceDailyProfits): the counter, not
+            // the balance, so money moved in or out by hand is never announced
+            // as trade.
+            this.soldToday   = (Number(this.soldToday)   || 0) + actualSales;
+            this.earnedToday = (Number(this.earnedToday) || 0) + earned;
             const revenue = actualSales * 1200; // Average price estimate
             debugLog(`${this.id}: Sold ${actualSales} items, earned ${formatEuroPrice(revenue)}`);
             // Running a shop that actually sells things is how the trade is
@@ -693,6 +711,58 @@
     }
   }
 
+  // -------------------------------------------------------------------------
+  // The shops belong to the world
+  // -------------------------------------------------------------------------
+  // A shop is a place, and a place does not change because somebody loaded an
+  // older save: the deed, the roster, the shelves and the till are written to
+  // the world folder (save/worlds/<name>/shops.json), the same way a town's
+  // furniture is (Crafting/FurnitureSystem.js). Every savegame of that world
+  // opens the same shop, in the state the last one left it.
+  //
+  // The savegame still carries a copy, so a world folder that has not been
+  // written yet (or a browser build with no worlds at all) loses nothing.
+  const SHOP_WORLD_FILE = 'shops';
+
+  function shopWorldName() {
+    const wm = window.WorldManager;
+    return (wm && wm.activeWorldName) || null;
+  }
+
+  function persistShops() {
+    const wm = window.WorldManager;
+    const world = shopWorldName();
+    if (!wm || !world || !wm.writeWorldFile) return false;
+    try {
+      return wm.writeWorldFile(world, SHOP_WORLD_FILE, {
+        shops: shopData.shops,
+        currentShopId: shopData.currentShopId,
+      });
+    } catch (err) {
+      console.error('[ShopManagement] could not write the world shop file', err);
+      return false;
+    }
+  }
+
+  // What the world knows wins over what the savegame remembers, since another
+  // savegame of the same world may have moved the shelves since.
+  function adoptWorldShops() {
+    const wm = window.WorldManager;
+    const world = shopWorldName();
+    if (!wm || !world || !wm.readWorldFile) return false;
+    let data = null;
+    try { data = wm.readWorldFile(world, SHOP_WORLD_FILE); }
+    catch (err) { data = null; }
+    if (!data || !data.shops) return false;
+    shopData.shops = data.shops;
+    if (data.currentShopId && data.shops[data.currentShopId]) {
+      shopData.currentShopId = data.currentShopId;
+    }
+    reviveShops();
+    window.$shopData = shopData;
+    return true;
+  }
+
   // Save/Load System
   const _DataManager_makeSaveContents = DataManager.makeSaveContents;
   DataManager.makeSaveContents = function () {
@@ -706,8 +776,26 @@
     _DataManager_extractSaveContents.call(this, contents);
     if (contents.shopManagement) {
       shopData = contents.shopManagement;
+      reviveShops();
     }
+    window.$shopData = shopData;
+    // The world's own copy is the one the party walks into.
+    adoptWorldShops();
   };
+
+  // A save carries the shops as plain objects, so every method the simulation
+  // calls on them (refreshEconomy and the rest) is gone the moment a game is
+  // loaded. They are put back on the prototype here rather than guarded at each
+  // call site, which is what used to make an autosaved shop throw on the first
+  // map update after loading.
+  function reviveShops() {
+    if (!shopData || !shopData.shops) return;
+    for (const id of Object.keys(shopData.shops)) {
+      const raw = shopData.shops[id];
+      if (!raw || raw instanceof Shop) continue;
+      shopData.shops[id] = Object.assign(Object.create(Shop.prototype), raw);
+    }
+  }
 
   // Get current shop
   function getCurrentShop() {
@@ -1198,7 +1286,392 @@
     if (shop && shop.isWorking) {
       updateNPCProducing(shop);
     }
+
+    // Shops the party owns trade whether or not an event says so: without this
+    // a bought shop only ever moved stock when a plugin command happened to
+    // call refreshEconomy. The accrual itself is game-time based (see
+    // Shop.refreshEconomy), so this only decides how often it is checked.
+    if (Graphics.frameCount % producingInterval === 0) {
+      refreshEconomy();
+      checkShopDay();
+    }
   };
+
+  // -------------------------------------------------------------------------
+  // Filling the shelves
+  // -------------------------------------------------------------------------
+  // Nobody refills a shop the party owns (Shop.refreshEconomy), so the shelves
+  // are filled by hand, out of two places: the bags the party is carrying, and
+  // a wholesaler who sells the trade's own goods under the counter price.
+  //
+  // Anything the party owns may be put out for sale, with two exceptions that
+  // are never listed: a key item, which is not merchandise, and a crafting
+  // material, which belongs in the back room rather than on the shelf.
+  const WHOLESALE_RATE = 0.6;   // what the wholesaler charges, against list
+  // A shop whose trade cannot be read off the deed is a hardware store: tools
+  // are the one stock every settlement will buy.
+  const FALLBACK_TRADE = 'Tools';   // i18n-ignore: a <Category:> note tag
+
+  function isMaterialId(itemId) {
+    const id = Number(itemId);
+    return id >= materialStartId && id <= materialEndId;
+  }
+
+  // A key item is itypeId 2 in the editor, and a <Restricted> row is granted by
+  // the system that owns it rather than sold by anybody.
+  function isStockable(item) {
+    if (!item) return false;
+    if (item.itypeId === 2) return false;
+    if (isMaterialId(item.id)) return false;
+    if (window.ItemSystemUtils && window.ItemSystemUtils.isRestrictedEntry(item)) return false;
+    return true;
+  }
+
+  // What the party is carrying that could go on a shelf, with how many.
+  function stockableItems() {
+    let items = [];
+    try { items = $gameParty.items() || []; } catch (err) { return []; }
+    return items.filter(isStockable).map(item => ({
+      item,
+      amount: (() => { try { return $gameParty.numItems(item); } catch (err) { return 0; } })(),
+    })).filter(entry => entry.amount > 0);
+  }
+
+  // The trade the wholesaler deals in for this shop: its own, or the hardware
+  // store's when the shop has no readable trade or nothing is written in it.
+  function shopTrade(shop) {
+    const named = shop && shop.category;
+    if (named && getCategoryItems(named).length > 0) return named;
+    return FALLBACK_TRADE;
+  }
+
+  function wholesalePrice(item) {
+    return Math.max(1, Math.floor((Number(item && item.price) || 0) * WHOLESALE_RATE));
+  }
+
+  // What the wholesaler has: the trade's goods, priced under the counter.
+  function wholesaleOffers(shop) {
+    return getCategoryItems(shopTrade(shop))
+      .filter(isStockable)
+      .map(item => ({ item, price: wholesalePrice(item) }));
+  }
+
+  // Out of the bags and onto the shelf.
+  function stockFromBag(shopId, itemId, amount = 1) {
+    const shop = getShop(shopId);
+    const item = $dataItems[Number(itemId)];
+    if (!shop || !item || !isStockable(item)) return { ok: false, reason: 'notStockable' };
+    let held = 0;
+    try { held = $gameParty.numItems(item); } catch (err) { held = 0; }
+    const moving = Math.max(1, Math.min(Number(amount) || 1, held));
+    if (moving <= 0) return { ok: false, reason: 'noneHeld' };
+    if (!addToStock(item.id, moving, shop)) return { ok: false, reason: 'shelvesFull' };
+    if (!shop.menuPrices[item.id]) {
+      shop.menuPrices[item.id] = Math.floor(item.price * defaultPriceMultiplier);
+    }
+    try { $gameParty.loseItem(item, moving); } catch (err) { /* no party */ }
+    persistShops();
+    return { ok: true, amount: moving };
+  }
+
+  // Off the shelf and back into the bags. Whatever is stocked can always come
+  // back: the shelf is the party's own, not a one-way chute.
+  function pullFromStock(shopId, itemId, amount = 1) {
+    const shop = getShop(shopId);
+    const item = $dataItems[Number(itemId)];
+    if (!shop || !item) return { ok: false, reason: 'notFound' };
+    let held = 0;
+    for (let slot = 1; slot <= 7; slot++) {
+      const row = shop.stockInventory[slot];
+      if (row && row.itemId === item.id) held += row.amount;
+    }
+    const moving = Math.max(1, Math.min(Number(amount) || 1, held));
+    if (moving <= 0) return { ok: false, reason: 'noneStocked' };
+    let taken = 0;
+    for (let slot = 1; slot <= 7 && taken < moving; slot++) {
+      const row = shop.stockInventory[slot];
+      if (!row || row.itemId !== item.id) continue;
+      const off = Math.min(row.amount, moving - taken);
+      if (removeFromStock(item.id, off, shop, slot)) taken += off;
+    }
+    if (taken <= 0) return { ok: false, reason: 'noneStocked' };
+    try { $gameParty.gainItem(item, taken); } catch (err) { /* no party */ }
+    persistShops();
+    return { ok: true, amount: taken };
+  }
+
+  // Bought from the wholesaler and shelved in one act, paid for out of the
+  // party's purse (the till is emptied into it anyway, on the overview page).
+  function buyStock(shopId, itemId, amount = 1) {
+    const shop = getShop(shopId);
+    const item = $dataItems[Number(itemId)];
+    if (!shop || !item || !isStockable(item)) return { ok: false, reason: 'notStockable' };
+    const each = wholesalePrice(item);
+    const wanted = Math.max(1, Number(amount) || 1);
+    let purse = 0;
+    try { purse = $gameParty.gold(); } catch (err) { purse = 0; }
+    const affordable = Math.min(wanted, Math.floor(purse / each));
+    if (affordable <= 0) return { ok: false, reason: 'tooDear' };
+    if (!addToStock(item.id, affordable, shop)) return { ok: false, reason: 'shelvesFull' };
+    if (!shop.menuPrices[item.id]) {
+      shop.menuPrices[item.id] = Math.floor(item.price * defaultPriceMultiplier);
+    }
+    try { $gameParty.loseGold(each * affordable); } catch (err) { /* no purse */ }
+    persistShops();
+    return { ok: true, amount: affordable, spent: each * affordable };
+  }
+
+  // -------------------------------------------------------------------------
+  // The workshop, worked for the shop
+  // -------------------------------------------------------------------------
+  // The Thinker's bench (Quest/ThinkerMenu.js) is opened from inside the
+  // management book, and what comes off it goes straight onto the shelves
+  // instead of into the party's bags. Nothing about the bench itself changes:
+  // it hands the piece to the party as it always does, and while a consignment
+  // is open that hand-over is intercepted here. Materials handed back (a saved
+  // reagent, a teardown) are not merchandise, so they stay in the bags.
+  let _consignTo = null;
+
+  function beginConsignment(shopId) {
+    const shop = getShop(shopId);
+    if (!shop || !shop.owned) return false;
+    _consignTo = shop.id;
+    return true;
+  }
+
+  function endConsignment() {
+    const was = _consignTo;
+    _consignTo = null;
+    if (was) persistShops();
+    return was;
+  }
+
+  function consignmentShop() {
+    return _consignTo ? getShop(_consignTo) : null;
+  }
+
+  if (typeof Game_Party !== 'undefined' && Game_Party.prototype) {
+  const _Game_Party_gainItem_shop = Game_Party.prototype.gainItem;
+  Game_Party.prototype.gainItem = function (item, amount, includeEquip) {
+    const shop = consignmentShop();
+    if (!shop || !item || !(Number(amount) > 0) || !isStockable(item)) {
+      return _Game_Party_gainItem_shop.call(this, item, amount, includeEquip);
+    }
+    const shelved = addToStock(item.id, Number(amount), shop);
+    if (!shelved) {
+      // The shelves are full, so it goes in the bag after all rather than
+      // vanishing off the workbench.
+      return _Game_Party_gainItem_shop.call(this, item, amount, includeEquip);
+    }
+    if (!shop.menuPrices[item.id]) {
+      shop.menuPrices[item.id] = Math.floor(item.price * defaultPriceMultiplier);
+    }
+    if (window.ParchmentToast && window.ParchmentToast.show) {
+      window.ParchmentToast.show(
+        T('ShopManagement.shelves.consigned', {
+          item: item.name, shop: shopDisplayName(shop),
+        }),
+        { title: T('ShopManagement.shelves.title') }
+      );
+    }
+    return true;
+  };
+  }
+
+  // -------------------------------------------------------------------------
+  // Who stands behind the counter
+  // -------------------------------------------------------------------------
+  // A bought shop has no shopkeeper: the one who was there worked for whoever
+  // owned it before. The party staffs it themselves, out of the people they
+  // travel with and the ones waiting on the bench (the Party Dynamics board's
+  // Inactive list), one to three of them.
+  //
+  // A day is three eight-hour shifts. One name covers the morning, two cover
+  // two thirds of the day, three keep the door open around the clock: the
+  // shop only trades in the hours somebody is standing in it, so the roster is
+  // what decides how much it can possibly sell (Shop.refreshEconomy).
+  const SHOP_SHIFT_HOURS = 8;
+  const SHOP_MAX_STAFF   = 3;
+
+  // An entry is an actor (somebody travelling) or a preset (somebody benched),
+  // since both are offered and the two are numbered separately.
+  function staffList(shop) {
+    if (!shop) return [];
+    if (!Array.isArray(shop.staff)) shop.staff = [];
+    return shop.staff;
+  }
+
+  function staffKey(entry) {
+    return entry ? `${entry.kind}:${entry.id}` : '';
+  }
+
+  // The hours this entry covers, by its place on the roster.
+  function staffShift(shop, index) {
+    const start = (index * SHOP_SHIFT_HOURS) % 24;
+    return { start, end: (start + SHOP_SHIFT_HOURS) % 24 };
+  }
+
+  // How much of the day is covered, 0 to 1. Three names is the whole clock.
+  function staffCoverage(shop) {
+    const staffed = staffList(shop).length;
+    if (staffed <= 0) return 0;
+    return Math.min(1, (staffed * SHOP_SHIFT_HOURS) / 24);
+  }
+
+  // The name a roster entry answers to, wherever it is filed.
+  function staffName(entry) {
+    if (!entry) return '';
+    if (entry.kind === 'actor') {
+      const actor = $gameActors ? $gameActors.actor(Number(entry.id)) : null;
+      return actor ? actor.name() : '';
+    }
+    const bench = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
+    const preset = bench.find(p => String(p.id) === String(entry.id));
+    return preset ? preset.name : '';
+  }
+
+  // Everybody who could take a shift: the party as it travels, and the bench.
+  // Whoever is already on this shop's roster, or on another shop's, is not
+  // offered twice.
+  function staffCandidates(shop) {
+    const taken = new Set();
+    reviveShops();
+    for (const id of Object.keys(shopData.shops)) {
+      const other = shopData.shops[id];
+      if (!other || !other.owned) continue;
+      staffList(other).forEach(entry => taken.add(staffKey(entry)));
+    }
+    const out = [];
+    try {
+      $gameParty.members().forEach(actor => {
+        if (!actor) return;
+        const entry = { kind: 'actor', id: actor.actorId() };
+        if (taken.has(staffKey(entry))) return;
+        out.push(Object.assign({ name: actor.name(), level: actor.level }, entry));
+      });
+    } catch (err) { /* no party */ }
+    const bench = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
+    bench.forEach(preset => {
+      const entry = { kind: 'preset', id: preset.id };
+      if (taken.has(staffKey(entry))) return;
+      out.push(Object.assign({ name: preset.name, level: preset.level || 1 }, entry));
+    });
+    return out;
+  }
+
+  // Putting somebody on, and taking them off. Answers { ok } so a picker can
+  // say why it refused.
+  function assignStaff(shopId, kind, id) {
+    const shop = getShop(shopId);
+    if (!shop || !shop.owned) return { ok: false, reason: 'noShop' };
+    const list = staffList(shop);
+    if (list.length >= SHOP_MAX_STAFF) return { ok: false, reason: 'rosterFull' };
+    const entry = { kind: String(kind), id: (kind === 'actor' ? Number(id) : id) };
+    if (list.some(e => staffKey(e) === staffKey(entry))) return { ok: false, reason: 'already' };
+    if (!staffName(entry)) return { ok: false, reason: 'unknown' };
+    list.push(entry);
+    persistShops();
+    return { ok: true, entry };
+  }
+
+  function dismissStaff(shopId, kind, id) {
+    const shop = getShop(shopId);
+    if (!shop) return { ok: false, reason: 'noShop' };
+    const list = staffList(shop);
+    const key = staffKey({ kind: String(kind), id: (kind === 'actor' ? Number(id) : id) });
+    const at = list.findIndex(e => staffKey(e) === key);
+    if (at < 0) return { ok: false, reason: 'notOnRoster' };
+    list.splice(at, 1);
+    persistShops();
+    return { ok: true };
+  }
+
+  // The roster as a page reads it: a name, the hours it covers, and whether
+  // the clock is covered at all.
+  function staffRoster(shopId) {
+    const shop = typeof shopId === 'object' ? shopId : getShop(shopId);
+    if (!shop) return [];
+    return staffList(shop).map((entry, index) => Object.assign({}, entry, {
+      name:  staffName(entry),
+      shift: staffShift(shop, index),
+    }));
+  }
+
+  // -------------------------------------------------------------------------
+  // The day's takings
+  // -------------------------------------------------------------------------
+  // A shop the party owns trades on its own while they are elsewhere, and the
+  // only sign of it used to be a balance that had quietly moved. Once per game
+  // day the difference is added up and put on the parchment, one line per shop
+  // that made or lost anything, so a business is legible without opening the
+  // book. The rent side of the same day is announced by RealEstateMarket.js.
+  function shopDayKey() {
+    const raw = ($gameVariables ? $gameVariables.value(113) : '') || '';
+    // "01 JAN 2001 12:00" -> "01 JAN 2001": the clock is not part of the day.
+    return String(raw).split(' ').slice(0, 3).join(' ');
+  }
+
+  function ownedShops() {
+    reviveShops();
+    return Object.keys(shopData.shops)
+      .map(id => shopData.shops[id])
+      .filter(shop => shop && shop.owned);
+  }
+
+  // What each owned shop's till stood at when the day opened, and the profit
+  // since. A shop bought today opens its ledger at its own balance, so the
+  // first line it ever prints is a day's trade rather than the whole float.
+  function shopDailyProfits() {
+    const out = [];
+    for (const shop of ownedShops()) {
+      // Only what went over the counter counts as the day's takings: a shop
+      // earns by selling (Shop.simulateSales), so money the player moved in or
+      // out by hand is never reported as trade.
+      const earned = Number(shop.earnedToday) || 0;
+      const sold   = Number(shop.soldToday)   || 0;
+      shop.earnedToday = 0;
+      shop.soldToday   = 0;
+      if (earned !== 0 || sold !== 0) out.push({ shop, profit: earned, sold });
+    }
+    return out;
+  }
+
+  function announceDailyProfits() {
+    const takings = shopDailyProfits();
+    if (!takings.length) return takings;
+    if (!window.ParchmentToast || !window.ParchmentToast.show) return takings;
+    for (const entry of takings) {
+      const key = entry.profit > 0 ? 'ShopManagement.owned.dayProfit'
+                                   : 'ShopManagement.owned.dayQuiet';
+      window.ParchmentToast.show(
+        T(key, {
+          shop:   shopDisplayName(entry.shop),
+          amount: formatEuroPrice(Math.abs(entry.profit)),
+          sold:   entry.sold || 0,
+        }),
+        { title: T('ShopManagement.owned.dayTitle') }
+      );
+    }
+    return takings;
+  }
+
+  // Once per day, wherever the party is standing. The first check of a fresh
+  // game only writes the day down: there is no yesterday to compare with.
+  function checkShopDay() {
+    const key = shopDayKey();
+    if (!key) return false;
+    if (!shopData.globalData) shopData.globalData = {};
+    if (!shopData.globalData.lastProfitDay) {
+      shopData.globalData.lastProfitDay = key;
+      shopDailyProfits();
+      return false;
+    }
+    if (shopData.globalData.lastProfitDay === key) return false;
+    shopData.globalData.lastProfitDay = key;
+    announceDailyProfits();
+    persistShops();
+    return true;
+  }
 
   function updateNPCProducing(shop) {
     // Check if NPC producer event exists and is on the producing tile
@@ -1323,6 +1796,108 @@
     return { toShop: qty, toParty: 0, shopId: delivery.shopId };
   }
 
+  // ── Ownership ─────────────────────────────────────────────────────────────
+  // A shop the party bought on the property market is the same Shop the event
+  // driven ones are, only it is not tied to a map switch and it knows which
+  // deed it came with. The Deeds page reads this register and opens the
+  // management book on whichever one is picked.
+
+  // Trades a bought shop can be in. Each is a <Category:> the item database
+  // already stocks, so the shelves are never empty on the first morning.
+  const PROPERTY_TRADES = [
+    'Food', 'Medical', 'Alchemistry', 'Books', 'Magic',
+    'Tools', 'Component', 'Artisan', 'Collectibles', 'Combat',
+  ];
+
+  // The trade is the property's, not the roll of the day: the same deed is
+  // always the same kind of shop, in every savegame of the world.
+  function tradeForProperty(property) {
+    const id = Number(property && property.id) || 0;
+    return PROPERTY_TRADES[Math.abs(id) % PROPERTY_TRADES.length];
+  }
+
+  function propertyShopId(property) {
+    return 'prop:' + (property && property.id);
+  }
+
+  function getShops() {
+    reviveShops();
+    return shopData.shops;
+  }
+
+  function getShop(shopId) {
+    reviveShops();
+    return shopData.shops[shopId] || null;
+  }
+
+  function setCurrentShopId(shopId) {
+    if (!shopData.shops[shopId]) return false;
+    shopData.currentShopId = shopId;
+    return true;
+  }
+
+  // What the shop is called on a page. Event shops are keyed by their map id,
+  // bought ones carry the name off the deed.
+  function shopDisplayName(shop) {
+    if (!shop) return '';
+    if (shop.displayName) return shop.displayName;
+    const asMap = Number(shop.id);
+    if (Number.isFinite(asMap) && asMap > 0) return getMapDisplayName(asMap) || String(shop.id);
+    return String(shop.id);
+  }
+
+  // Called by RealEstateMarket.js the moment a deed changes hands.
+  function onPropertyBought(property) {
+    if (!property || property.type !== 'Shop') return null;
+    const id = propertyShopId(property);
+    if (shopData.shops[id]) return shopData.shops[id];
+
+    const shop = new Shop(id, tradeForProperty(property), 0);
+    shop.owned = true;
+    shop.propertyId = property.id;
+    shop.displayName = property.name;
+    shop.location = property.location;
+    // Whoever used to stand behind that counter worked for the last owner and
+    // leaves with them (shopkeeperGone below). The party names their own.
+    shop.staff = [];
+    shop.keeperDismissed = true;
+    shop.soldToday   = 0;
+    shop.earnedToday = 0;
+    shopData.shops[id] = shop;
+    if (!shopData.currentShopId) shopData.currentShopId = id;
+    persistShops();
+
+    if (window.ParchmentToast && window.ParchmentToast.show) {
+      window.ParchmentToast.show(
+        T('ShopManagement.owned.bought', { shop: shop.displayName, trade: shop.category }),
+        { title: T('ShopManagement.owned.title') }
+      );
+    }
+    return shop;
+  }
+
+  function onPropertySold(property) {
+    if (!property) return;
+    const id = propertyShopId(property);
+    if (!shopData.shops[id]) return;
+    delete shopData.shops[id];
+    if (shopData.currentShopId === id) {
+      const rest = Object.keys(shopData.shops);
+      shopData.currentShopId = rest.length ? rest[0] : null;
+    }
+    persistShops();
+  }
+
+  // The one way into the management book: pick the shop, then push the scene.
+  function openManagement(shopId, tab) {
+    if (shopId && !setCurrentShopId(shopId)) return false;
+    if (!getCurrentShop()) return false;
+    window._shopMgmtInitTab = tab || 'overview';
+    if (!window.Scene_ShopManagement) return false;
+    SceneManager.push(window.Scene_ShopManagement);
+    return true;
+  }
+
   window.ShopManagement = {
     getData:               () => shopData,
     getCurrentShop,
@@ -1338,6 +1913,48 @@
     defaultPriceMultiplier,
     deliverToWarehouse,
     deliverProduce,
+    getShops,
+    getShop,
+    setCurrentShopId,
+    shopDisplayName,
+    onPropertyBought,
+    onPropertySold,
+    tradeForProperty,
+    openManagement,
+    refreshEconomy,
+    // The bench, worked for the shop: what it makes is shelved, not pocketed.
+    beginConsignment,
+    endConsignment,
+    consignmentShop,
+    // Filling the shelves by hand: the bags, and the wholesaler.
+    isStockable,
+    stockableItems,
+    shopTrade,
+    wholesalePrice,
+    wholesaleOffers,
+    stockFromBag,
+    pullFromStock,
+    buyStock,
+    WHOLESALE_RATE,
+    FALLBACK_TRADE,
+    // Who stands behind the counter, and for which eight hours.
+    SHIFT_HOURS:       SHOP_SHIFT_HOURS,
+    MAX_STAFF:         SHOP_MAX_STAFF,
+    staffRoster,
+    staffCandidates,
+    staffCoverage,
+    staffShift,
+    staffName,
+    assignStaff,
+    dismissStaff,
+    // The world's own copy of every shop (save/worlds/<name>/shops.json).
+    persist:           persistShops,
+    adoptWorldShops,
+    // The day's takings, announced once per game day (see checkShopDay).
+    ownedShops,
+    dailyProfits:      shopDailyProfits,
+    announceProfits:   announceDailyProfits,
+    checkDay:          checkShopDay,
   };
 
   // Debug globals

@@ -116,14 +116,19 @@
                 e.stopPropagation();
                 fileDropdown.style.display = 'none';
                 
-                // The name is asked for in the OS's own box, so the save
-                // finishes when the box does.
+                // The name is asked for in the shell's Save As box, so the
+                // save finishes when the box does. A document that already has
+                // a name is written straight back over itself.
                 const ask = path ? Promise.resolve(path)
-                    : window.HypernetOS.Dialog.prompt(T('HypernetNotepad.savePrompt'), 'note.txt', T('HypernetNotepad.saveTitle')).then(typedName => {   // i18n-ignore  default file name
-                        if (!typedName) return null;
-                        const finalName = typedName.toLowerCase().endsWith('.txt') ? typedName : typedName + '.txt';
-                        return `C:/Documents/${finalName}`;
-                    });
+                    : window.HypernetOS.Dialog.saveFileBox({
+                        title: T('HypernetNotepad.saveTitle'),
+                        path: NOTEPAD_DIR,
+                        fileName: 'note.txt',   // i18n-ignore  default file name
+                        filters: [
+                            { label: T('HypernetOS.xp.filebox.textFiles'), ext: 'txt' },
+                            { label: T('HypernetOS.xp.filebox.allFiles'), ext: '*' }
+                        ]
+                    }).then(picked => picked && (picked.toLowerCase().endsWith('.txt') ? picked : picked + '.txt'));
                 ask.then(targetPath => {
                 if (!targetPath) return; // Cancelled
 
@@ -158,6 +163,10 @@
             }, 250);
         }
     };
+
+    // Where a plain text document lives unless the player says otherwise. The
+    // Save As box opens here and walks anywhere from there.
+    const NOTEPAD_DIR = 'C:/Documents';  // i18n-ignore  VFS path
 
     // Register Notepad application inside HypernetOS App registry
     if (window.HypernetOS) {
@@ -352,12 +361,6 @@
     }
 
     // ---- The two windows --------------------------------------------------------
-    function officeDocs(ext) {
-        const fs = window.HypernetFileSystem;
-        if (!fs) return [];
-        return (fs.readDir(OFFICE_DIR) || []).filter(f => f.type === 'file' && f.name.toLowerCase().endsWith('.' + ext)).map(f => f.name);
-    }
-
     function retitle(win, title) {
         win.dataset.title = title;
         const tt = win.querySelector('.hypernet-window-title');
@@ -373,8 +376,12 @@
         if (!fs) return Promise.resolve(false);
         const D = window.HypernetOS.Dialog;
         const ask = st.path ? Promise.resolve(st.path)
-            : D.prompt(T_('savePrompt'), T_('untitledFile') + '.' + ext, T_('appName')).then(typed =>
-                typed ? OFFICE_DIR + '/' + (typed.toLowerCase().endsWith('.' + ext) ? typed : typed + '.' + ext) : null);
+            : D.saveFileBox({
+                title: T_('appName'),
+                path: OFFICE_DIR,
+                fileName: T_('untitledFile') + '.' + ext,
+                filters: officeFilters(ext)
+            }).then(picked => picked && (picked.toLowerCase().endsWith('.' + ext) ? picked : picked + '.' + ext));
         return ask.then(path => {
             if (!path) return false;
             if (!fs.writeFile(path, content, mime)) { D.error(T('HypernetNotepad.writeError')); return false; }
@@ -385,20 +392,25 @@
         });
     }
 
+    // The type row of the Open and Save As boxes: this program's own documents
+    // first, everything else under it, the way a program of the period listed
+    // what it could read.
+    function officeFilters(ext) {
+        const own = { txt: 'textFiles', md: 'docFiles', csv: 'sheetFiles', png: 'imageFiles' }[ext];
+        const out = [];
+        if (own) out.push({ label: T('HypernetOS.xp.filebox.' + own), ext: ext });
+        out.push({ label: T('HypernetOS.xp.filebox.allFiles'), ext: '*' });
+        return out;
+    }
+
     function officeOpen(ext, T_) {
         const D = window.HypernetOS.Dialog;
-        const names = officeDocs(ext);
-        if (!names.length) return D.alert(T_('nothingToOpen'), T_('appName')).then(() => null);
-        return D.show({
-            title: T_('appName'), message: T_('openPrompt', { list: '' }).trim(), icon: 'question',
-            select: { options: names.map(n => ({ value: n, label: n })), value: names[0] },
-            buttons: [
-                { id: 'ok', label: T('HypernetOS.xp.dialog.ok'), default: true },
-                { id: 'cancel', label: T('HypernetOS.xp.dialog.cancel'), cancel: true }
-            ]
-        }).then(r => {
-            if (r.button !== 'ok' || !r.value) return null;
-            const path = OFFICE_DIR + '/' + r.value;
+        return D.openFileBox({
+            title: T_('appName'),
+            path: OFFICE_DIR,
+            filters: officeFilters(ext)
+        }).then(path => {
+            if (!path) return null;
             const content = window.HypernetFileSystem.readFile(path);
             if (content == null) { D.error(T_('openError')); return null; }
             return { path, content };

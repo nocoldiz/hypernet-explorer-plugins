@@ -15,7 +15,12 @@
   "discovered": "Outbreak of {disease} officially discovered in {place}!",
   "news": {
     "hysteria": "{disease} spreads through {place}; officials appeal for calm.",
-    "medical": "Outbreak of {disease} confirmed in {place}. Eurodemics raises the alert."
+    "medical": "Outbreak of {disease} confirmed in {place}. Eurodemics raises the alert.",
+    "daily": "{disease}: {infected} ill in {towns} towns, {dead} dead",
+    "dailyBody": "The {disease} outbreak centred on {place} stands at {infected} known cases across {towns} towns, with {dead} dead. Eurodemics keeps the alert in force.",
+    "terrorDaily": "Bioterror alert: {disease} spreading from {place}, {infected} ill",
+    "terrorBody": "Investigators treat the {disease} outbreak at {place} as a deliberate release. {infected} are ill across {towns} towns and {dead} have died. The alert stands until the last case is closed.",
+    "over": "{disease} outbreak over in {place}: {cases} cases, {dead} dead"
   },
   "caught": "{actor} caught {disease}.",
   "caughtFrom": "{actor} caught {disease} from {source}.",

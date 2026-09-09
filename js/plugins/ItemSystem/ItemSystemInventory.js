@@ -920,6 +920,21 @@
     return commonEventId;
   }
 
+  // One dose of a medicine against an illness the character is carrying.
+  // Returns true when the disease system took the dose (and the item with it).
+  function medicineDose(actor, item) {
+    const sys = window.DiseaseSystem;
+    if (!sys || !sys.doseWithItem || !actor || !item) return false;
+    if (!$gameParty.numItems(item)) return false;
+    try {
+      const result = sys.doseWithItem(actor, item);
+      return !!(result && result.used);
+    } catch (e) {
+      console.error("[ItemSystemInventory] medicine dose failed", e);
+      return false;
+    }
+  }
+
   const ItemUse = {
     /** One ally: the target picker's answer, wherever it was asked. */
     onActor(actor, item) {
@@ -944,6 +959,19 @@
         reserveFoodCommonEvent(actor, item, false);
 
         return { used: true, commonEvent: reserveItemCommonEvent(item) };
+      }
+
+      // Medicine taken against an illness this character actually carries: the
+      // disease system swallows the dose itself (it consumes the bottle and
+      // hands back the HP and MP the medicine gives), so a full-health patient
+      // can still take their course instead of being refused.
+      const dose = medicineDose(actor, item);
+      if (dose) {
+        playItemSound(item);
+        utils.applyNeedRestores(actor, item);
+        const doseEvent = reserveItemCommonEvent(item);
+        actor.refresh();
+        return { used: true, commonEvent: doseEvent };
       }
 
       const action = new Game_Action(actor);
@@ -2071,7 +2099,11 @@
   Window_ItemTarget.prototype.canUse = function (actor, item) {
     if (!actor || !item) return false;
     if (DataManager.isItem(item) && (item.scope === 9 || item.scope === 10)) {
-      return actor.isDead();
+      // A revival item that is also medicine may be prescribed to a living
+      // patient: the illness it treats is reason enough to hand it over.
+      const sys = window.DiseaseSystem;
+      const treats = sys && sys.treatableWith ? sys.treatableWith(actor, item) : [];
+      return actor.isDead() || (treats && treats.length > 0);
     }
     // HP/MP recovery items stay usable at full HP/MP: a lot of them (like
     // disease medicine) carry a secondary effect worth taking regardless.

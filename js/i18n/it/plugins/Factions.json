@@ -192,5 +192,8 @@
       "Lido Lontano",
       "Nove Porte"
     ]
-  }
+  },
+  "armiesLbl": "Eserciti in campo ({count})",
+  "armyLine": "{leader}, {count} ({status})",
+  "noArmies": "Oggi nulla in campo"
 }

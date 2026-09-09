@@ -5,7 +5,9 @@
     "overview": "Panoramica",
     "stock": "Scorte",
     "warehouse": "Magazzino",
-    "catalog": "Catalogo"
+    "catalog": "Catalogo",
+    "staff": "Turni",
+    "shelves": "Scaffali"
   },
   "role": "Ruolo",
   "status": "Stato",
@@ -65,6 +67,53 @@
   "ui": {
     "okAssign": "OK → assegna",
     "destination": "Destinazione",
-    "okAssignItem": "OK → assegna un oggetto"
+    "okAssignItem": "OK → assegna un oggetto",
+    "takings": "Incassi",
+    "takingsHint": "Quanto ha guadagnato il negozio dall ultimo prelievo.",
+    "takeTakings": "Preleva gli incassi",
+    "tookTakings": "{amount} prelevati dalla cassa.",
+    "levelAbbr": "Liv{level}"
+  },
+  "owned": {
+    "title": "Atto del negozio",
+    "bought": "{shop} e tuo: un negozio di {trade}. Gestiscilo dalla pagina Atti.",
+    "dayTitle": "L'incasso del giorno",
+    "dayProfit": "{shop} ha venduto {sold} pezzi e incassato {amount} oggi.",
+    "dayLoss": "{shop} ha perso {amount} oggi.",
+    "dayQuiet": "{shop} non ha venduto niente oggi."
+  },
+  "staff": {
+    "title": "Dietro il banco",
+    "rosterTitle": "In servizio",
+    "candidatesTitle": "Chi puo' coprire un turno",
+    "shift": "dalle {start}:00 alle {end}:00",
+    "coverage": "{hours} ore su 24 coperte",
+    "closed": "Non c'e' nessuno dietro il banco, quindi non si vende niente.",
+    "full": "Tre turni sono l'intera giornata.",
+    "hint": "Un nome copre otto ore. Tre tengono aperto tutto il giorno.",
+    "assigned": "{name} prende il turno delle {start}:00 a {shop}.",
+    "dismissed": "{name} lascia il turno a {shop}.",
+    "notOurs": "Questo negozio ha un suo commesso."
+  },
+  "shelves": {
+    "title": "Riempire gli scaffali",
+    "notOurs": "Questo negozio si rifornisce da solo.",
+    "bagTitle": "Le tue borse",
+    "bagEmpty": "Nelle borse non c'e' niente da vendere.",
+    "bagHint": "Tutto quello che porti puo' andare in vendita, tranne oggetti chiave e materiali.",
+    "wholesaler": "Grossista",
+    "marketTitle": "Grossista: {trade}",
+    "marketEmpty": "Il grossista non tratta niente che questo negozio possa vendere.",
+    "marketHint": "Comprato sotto il prezzo di banco, direttamente sullo scaffale.",
+    "shelfTitle": "In vendita",
+    "shelfEmpty": "Gli scaffali sono vuoti, non c'e' niente da vendere.",
+    "shelve": "Mettilo in vendita",
+    "buy": "Compralo",
+    "takeBack": "Riprendilo",
+    "shelvesFull": "Sette scaffali sono tutto quello che ha questo negozio.",
+    "tooDear": "Nel borsellino non c'e' abbastanza.",
+    "refused": "Quello non va su uno scaffale.",
+    "fabricate": "Lavora al banco per il negozio",
+    "consigned": "{item} finisce sugli scaffali di {shop}."
   }
 }

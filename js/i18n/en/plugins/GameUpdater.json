@@ -14,7 +14,7 @@
   "failed": "CHECK FAILED",
   "installed": "Installed build",
   "buildNumber": "Build number",
-  "selected": "Selected build",
+  "selected": "Selected version",
   "committed": "Published",
   "author": "Built by",
   "message": "Notes",

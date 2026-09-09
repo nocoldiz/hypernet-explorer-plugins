@@ -18,6 +18,10 @@
   "skillFinish": "Colpo finale",
   "ui": {
     "bet": "Puntata:",
-    "keepCurrentBet": "Mantieni la puntata attuale"
+    "keepCurrentBet": "Mantieni la puntata attuale",
+    "hp": "PV",
+    "mp": "PM",
+    "tp": "PT",
+    "time": "TEMPO"
   }
 }

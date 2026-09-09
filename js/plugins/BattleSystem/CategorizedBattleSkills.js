@@ -3355,7 +3355,12 @@
     };
 
     // Keyboard and Gamepad Interceptor for Skills/Spellbook Screen
-    const SKILL_COLS = 3;   // matches #skill-grid grid-template-columns
+    // Read off #skill-grid rather than restated: the handheld sheet narrows
+    // it, and the cursor has to step by what is drawn.
+    function skillCols() {
+        return window.MenuVirtualList
+            ? window.MenuVirtualList.columnsOf('#skill-grid', 3) : 3;
+    }
 
     const UISkillInputManager = {
         _scene: null,
@@ -3509,9 +3514,9 @@
                     // The roll is three across (.backpack-grid), so down is a
                     // row, not a page: it only leaves the list from the last
                     // row of it. Matches the backpack exactly.
-                    if (scene._dndSelectedIndex + SKILL_COLS < list.length) {
+                    if (scene._dndSelectedIndex + skillCols() < list.length) {
                         SoundManager.playCursor();
-                        scene._dndSelectedIndex += SKILL_COLS;
+                        scene._dndSelectedIndex += skillCols();
                         scene.refreshUISkill();
                     } else if (list[scene._dndSelectedIndex]) {
                         const actions = scene.getUISkillActions();
@@ -3523,9 +3528,9 @@
                         }
                     }
                 } else if (dir === "up") {
-                    if (scene._dndSelectedIndex - SKILL_COLS >= 0) {
+                    if (scene._dndSelectedIndex - skillCols() >= 0) {
                         SoundManager.playCursor();
-                        scene._dndSelectedIndex -= SKILL_COLS;
+                        scene._dndSelectedIndex -= skillCols();
                         scene.refreshUISkill();
                     } else {
                         SoundManager.playCursor();

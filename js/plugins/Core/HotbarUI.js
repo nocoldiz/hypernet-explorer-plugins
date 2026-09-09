@@ -128,6 +128,11 @@
       this.onSlotContext = o.onSlotContext || null;
       this.onSlotDrop = o.onSlotDrop || null;
       this.onSlotDragStart = o.onSlotDragStart || null;
+      // A bar holding more entries than it has slots turns a page at a time:
+      // the chevrons flanking the row are what says so, and clicking one is
+      // the same as the Left / Right the keyboard turns pages with.
+      this.onPagePrev = o.onPagePrev || null;
+      this.onPageNext = o.onPageNext || null;
       this._root = null;
       this._labelEl = null;
       this._entries = [];
@@ -204,7 +209,8 @@
         const e = entries[i];
         parts.push(e ? `${e.swatch || e.iconIndex}${e.enabled ? 'u' : 'd'}${e.count != null ? 'x' + e.count : ''}` : '-');
       }
-      return parts.join(',') + '|' + (state.selected != null ? state.selected : -1) + '|' + (state.active ? 1 : 0);
+      return parts.join(',') + '|' + (state.selected != null ? state.selected : -1) + '|' + (state.active ? 1 : 0) +
+        '|' + (state.pages > 1 ? (state.page || 0) + '/' + state.pages : '');
     }
 
     /** The name the line under the row should be showing, '' for none. */
@@ -358,6 +364,24 @@
         }
 
         rowEl.appendChild(slot);
+      }
+      // Chevrons only appear once there is a second page to turn to, and they
+      // sit on the row's own middle line, one at either end of the slots.
+      if (state.pages > 1) {
+        const chevron = (dir, handler) => {
+          const el = document.createElement('div');
+          el.className = 'hotbar-chev hotbar-chev-' + dir;
+          el.style.height = this.slotPx + 'px';
+          el.textContent = dir === 'prev' ? '‹' : '›';
+          el.style.cursor = 'pointer';
+          el.addEventListener('pointerup', (e) => {
+            if (e.button !== undefined && e.button !== 0) return;
+            if (handler) handler(e);
+          });
+          return el;
+        };
+        rowEl.insertBefore(chevron('prev', this.onPagePrev), rowEl.firstChild);
+        rowEl.appendChild(chevron('next', this.onPageNext));
       }
       root.appendChild(rowEl);
 

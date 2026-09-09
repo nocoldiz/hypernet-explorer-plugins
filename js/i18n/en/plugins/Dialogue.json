@@ -12,5 +12,30 @@
   "askToggleNotices": "Show/hide tips",
   "askNotice_first": "First time only",
   "askNotice_always": "Always",
-  "askNotice_off": "Off"
+  "askNotice_off": "Off",
+  "askGroupAgain": "Teach me again",
+  "askCombat": "Combat",
+  "combat": {
+    "offer": "Bubba: Hold on, darlin'. Before you swing at anything, do you want me to walk you through the buttons?",
+    "yes": "Walk me through it",
+    "no": "I will work it out",
+    "normal": [
+      "Bubba: One action each per round, in order of speed. Pick it off the list and press [CONTINUE].",
+      "Bubba: Attack swings whatever you are holding at whoever you point it at. It never greys out: it is the one thing you are never left without.",
+      "Bubba: Defense braces you and cuts what lands on you for the round. Carrying a gun, that row is Reload instead: it fills the magazine and covers you all the same.",
+      "Bubba: Skills is the loadout you packed, each row priced in MP or TP. Basic is the plain kit you carry whatever you forget.",
+      "Bubba: Aim names a limb before the swing and costs you no turn. Wrestle takes hold of the thing with your bare hands.",
+      "Bubba: Talk is talking, and some of them do listen. Item is the backpack, and Throw is the same bag hurled at somebody's head.",
+      "Bubba: Run always works, darlin'. No shame in it either: a corpse learns nothing."
+    ],
+    "map": [
+      "Bubba: This one plays out where we are standing, so the map is the arena. Still one action each per round, in order of speed.",
+      "Bubba: Move walks you across the tiles before you act, once per round, as far as your legs and your DEX carry you.",
+      "Bubba: Attack only reaches as far as the range written on its row, so count the tiles between you and it before you swing.",
+      "Bubba: Skills, Basic, Aim, Wrestle, Talk, the backpack and Throw all work the way they do indoors, only pointed at a tile.",
+      "Bubba: The cursor is how you name that tile: step it onto what you want and press [CONTINUE].",
+      "Bubba: Run walks the whole party out, unless something has hold of us."
+    ],
+    "rearm": "Bubba: No problem darlin', I'm no magic expert but i can reteach you how to shoot your gun! You need to figure out the rest yourself"
+  }
 }

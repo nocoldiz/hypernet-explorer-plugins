@@ -1106,6 +1106,11 @@
                 : null;
             const worldDate = dateTime ? dateTime.fullDate : "?";
             const savesCount = window.WorldManager.countSaves(world.name);
+            // Outbreaks burning in that world: live for the loaded one, off the
+            // world folder for any other (Health/Health_DiseaseSystem.js).
+            const ES = window.EpidemicSystem;
+            const epidemics = (ES && typeof ES.worldSummary === "function")
+                ? ES.worldSummary(world.name) : null;
 
             return `
                 <div class="item-inspect">
@@ -1122,6 +1127,10 @@
                         <div class="inspect-spec-row">
                             <span class="inspect-spec-label">${T('WorldManagerUI.savegames')}</span>
                             <span class="inspect-spec-value">${savesCount === null ? "?" : savesCount}</span>
+                        </div>
+                        <div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${T('WorldManagerUI.epidemics')}</span>
+                            <span class="inspect-spec-value">${epidemics ? (epidemics.active || 0) : T('WorldManagerUI.noData')}</span>
                         </div>
                         <div class="inspect-spec-row">
                             <span class="inspect-spec-label">${T('WorldManagerUI.seed')}</span>

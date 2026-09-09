@@ -51,7 +51,6 @@
     "menu": {
       "partRow": "{part}  {percent}%  hit {chance}%",
       "partRowCurrent": "{part}  {percent}%  hit {chance}%  (aimed)",
-      "more": "More... ({count})",
       "clear": "Aim nowhere",
       "back": "Back",
       "noParts": "Nothing left to aim at",
@@ -73,7 +72,6 @@
       "noLimb": "No limb free",
       "noTarget": "Nothing to take hold of",
       "back": "Back",
-      "more": "More... ({count})",
       "holdRow": "{name}  {chance}%",
       "holdBlocked": "{name}  ({reason})",
       "blocked": {

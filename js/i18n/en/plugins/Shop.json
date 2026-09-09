@@ -188,5 +188,11 @@
     "notorious": "The shopkeeper looks at your face, then at the door. Whatever your name is worth, it is not worth the trouble of being seen selling to it.",
     "standing": "The shopkeeper folds their arms. Word has gone around about you here, and the counter stays shut."
   },
-  "listEmpty": "[Empty]"
+  "listEmpty": "[Empty]",
+  "sellCollectibles": "SELL KEEPSAKES",
+  "sellCollectiblesHint": "Hand over every collectible in the bag at once. They have one flat price and no other use.",
+  "noCollectibles": "Nothing in the bag but things that are actually good for something.",
+  "soldCollectibles": "Handed over {count} keepsakes for {money}.",
+  "year": "Year",
+  "teaches": "Teaches"
 }

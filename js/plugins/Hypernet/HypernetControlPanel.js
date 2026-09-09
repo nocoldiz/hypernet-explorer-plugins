@@ -70,18 +70,11 @@
                                             <td  class="hn-style-0065">${escapeHtml(value)}</td>
                                         </tr>`).join('');
 
-            // The classic view: every applet the OS registered, as an icon.
-            const applets = ((window.HypernetOS.XP && window.HypernetOS.XP.APPLETS) || [])
-                .map(appId => window.HypernetOS._apps[appId])
-                .filter(app => app && window.HypernetOS.isInstalled(app))
-                .sort((a, b) => String(a.name).localeCompare(String(b.name)));
-
             const contentHTML = `
                 <div class="control-panel-container hn-style-0051" >
                     <!-- Tab Headers -->
                     <div class="cp-tabs hn-style-0052" >
                         <div class="cp-tab active focusable hn-style-0053" data-pane="general" tabindex="0" >${T('ControlPanel.tabSpecs')}</div>
-                        <div class="cp-tab focusable hn-style-0054" data-pane="applets" tabindex="0" >${T('ControlPanel.tabApplets')}</div>
                         <div class="cp-tab focusable hn-style-0054" data-pane="display" tabindex="0" >${T('ControlPanel.tabWallpaper')}</div>
                     </div>
 
@@ -119,17 +112,6 @@
                                 <button class="xp-btn focusable" id="cp-sysdm" tabindex="0">${T('ControlPanel.openSysdm')}</button>
                                 <button class="xp-btn focusable" id="cp-devmgmt" tabindex="0">${T('ControlPanel.openDevmgmt')}</button>
                                 <button class="xp-btn focusable" id="cp-bios" tabindex="0">${T('HypernetOS.bios')}</button>
-                            </div>
-                        </div>
-
-                        <!-- APPLETS TAB (classic view) -->
-                        <div class="cp-tab-pane hn-style-0069" id="pane-applets" >
-                            <div class="cp-applets">
-                                ${applets.map(app => `
-                                <div class="cp-applet focusable" data-app="${app.id}" tabindex="0" title="${escapeHtml(app.name)}">
-                                    <div class="cp-applet-icon">${window.HypernetOS.getIconHTML(app.icon, 32)}</div>
-                                    <div class="cp-applet-name">${escapeHtml(app.name)}</div>
-                                </div>`).join('')}
                             </div>
                         </div>
 
@@ -203,16 +185,6 @@
             };
             tabs.forEach(tab => tab.addEventListener('click', e => { e.stopPropagation(); showPane(tab.dataset.pane); }));
 
-            // The classic view launches applets.
-            win.querySelectorAll('.cp-applet').forEach(el => {
-                const open = e => { e.stopPropagation(); window.HypernetOS.launchApp(el.dataset.app); };
-                el.addEventListener('dblclick', open);
-                el.addEventListener('click', e => {
-                    e.stopPropagation();
-                    win.querySelectorAll('.cp-applet').forEach(o => o.classList.toggle('selected', o === el));
-                });
-                el.addEventListener('keydown', e => { if (e.key === 'Enter') open(e); });
-            });
             const link = (sel, appId) => {
                 const el = win.querySelector(sel);
                 if (el) el.addEventListener('click', e => { e.stopPropagation(); window.HypernetOS.launchApp(appId); });

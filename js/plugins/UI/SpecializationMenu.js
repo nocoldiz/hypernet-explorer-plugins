@@ -83,10 +83,13 @@
     const LEVEL_NAMES_FALLBACK = ["Untrained", "Beginner", "Intermediate", "Advanced", "Master"];
     // i18n-ignore-end
 
-    // Columns on the left page. Kept in step with the `.backpack-grid` track
-    // count in css/theme.css: MenuVirtualList reads the layout off the
-    // stylesheet, the cursor reads it off here, and the two must agree.
-    const SPEC_COLS = 3;
+    // Columns on the left page, read off the grid that is drawn rather than
+    // restated here: the handheld sheet narrows `.backpack-grid`, and a cursor
+    // stepping by a stale 3 would walk diagonally on a Deck.
+    function specCols() {
+        return window.MenuVirtualList
+            ? window.MenuVirtualList.columnsOf('#spec-list-content', 3) : 3;
+    }
 
     // The filter row is ['Trained', 'All', ...categories]; the first two are the
     // menu's own tabs and the rest are category ids, which stay English because
@@ -1574,14 +1577,14 @@
             };
 
             if (Input.isTriggered('down') || Input.isRepeated('down')) {
-                if (this._selectedIndex < last) moveTo(this._selectedIndex + SPEC_COLS);
+                if (this._selectedIndex < last) moveTo(this._selectedIndex + specCols());
             } else if (Input.isTriggered('right') || Input.isRepeated('right')) {
                 if (this._selectedIndex < last) moveTo(this._selectedIndex + 1);
             } else if (Input.isTriggered('left') || Input.isRepeated('left')) {
                 if (this._selectedIndex > 0) moveTo(this._selectedIndex - 1);
             } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
-                if (this._selectedIndex >= SPEC_COLS) {
-                    moveTo(this._selectedIndex - SPEC_COLS);
+                if (this._selectedIndex >= specCols()) {
+                    moveTo(this._selectedIndex - specCols());
                 } else {
                     this._activeArea = 'categories';
                     SoundManager.playCursor();

@@ -201,5 +201,431 @@
   "dissolve": "Dissolvi",
   "renamePrompt": "Inserisci un nuovo nome per questa magia:",
   "dissolveConfirm": "Dissolvere {name} in conoscenza?",
-  "pupil": "Allievo"
+  "pupil": "Allievo",
+  "chaosLevelSkill": "{actor} impara {skill} dal nulla.",
+  "craft": {
+    "buttonSpell": "Crea Incantesimo",
+    "buttonSkill": "Crea Abilita",
+    "titleSpell": "Banco degli Incantesimi",
+    "titleSkill": "Banco delle Abilita",
+    "back": "Indietro",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "edit": "Modifica",
+    "discard": "Disfa",
+    "write": {
+      "name": "Dagli un nome",
+      "description": "Scrivi la descrizione",
+      "lore": "Scrivi la storia",
+      "hint": "Invio salva un nome, Esc chiude. Maiusc e Invio vanno a capo."
+    },
+    "rewriteDesc": "Riscrivi descrizione",
+    "rewriteLore": "Riscrivi storia",
+    "writeIt": "Scrivilo",
+    "rewrite": "Riscrivilo",
+    "preview": "Anteprima",
+    "none": "Nessuno",
+    "yes": "Si",
+    "no": "No",
+    "unwritten": "Non scritto",
+    "knowledge": "Conoscenza",
+    "cxShort": "CX",
+    "nothingToBuy": "Niente su questo scaffale",
+    "noneYet": "Non hai ancora scritto nulla",
+    "yourSpells": "I tuoi incantesimi",
+    "yourSkills": "Le tue abilita",
+    "defaultSpellName": "Incantesimo senza nome",
+    "defaultSkillName": "Abilita senza nome",
+    "spendsMP": "Consuma PM",
+    "spendsAP": "Consuma PA",
+    "mpLabel": "Costo PM",
+    "apLabel": "Costo PA",
+    "complexity": "Complessita",
+    "statFloor": "Soglia",
+    "yourStat": "Hai",
+    "price": "Prezzo",
+    "effectLabel": "Effetto",
+    "element": "Elemento",
+    "formula": "Formula",
+    "repeats": "Ripetizioni",
+    "variance": "Varianza",
+    "critical": "Puo essere critico",
+    "occasionLabel": "Utilizzabile",
+    "anywhere": "Ovunque",
+    "battleOnly": "Solo in battaglia",
+    "riderCount": "Innesti",
+    "benchBlurb": "Ogni pezzo si paga una volta sola. La complessita si paga per sempre: decide il costo di ogni lancio e la {stat} che chi scrive deve gia possedere.",
+    "writtenResult": "\\C[3]{name}\\C[0] e scritto. {cost} PC spesi, {left} PC rimasti.",
+    "rewrittenResult": "\\C[3]{name}\\C[0] e riscritto. {cost} PC spesi, {left} PC rimasti.",
+    "row": {
+      "name": "Nome",
+      "description": "Descrizione",
+      "lore": "Storia",
+      "icon": "Icona",
+      "animation": "Animazione",
+      "core": "Nucleo",
+      "power": "Amplificatore",
+      "scope": "Forma",
+      "riders": "Innesti",
+      "refines": "Rifiniture",
+      "create": "Scrivi"
+    },
+    "pick": {
+      "core": "Scegli un nucleo",
+      "power": "Scegli un amplificatore",
+      "scope": "Scegli una forma",
+      "riders": "Compra innesti",
+      "refines": "Compra rifiniture",
+      "icon": "Scegli un'icona",
+      "animation": "Scegli un'animazione"
+    },
+    "blocked": {
+      "incomplete": "Il progetto non e finito.",
+      "mismatch": "Quel nucleo non si puo puntare in quel modo.",
+      "knowledge": "Conoscenza insufficiente.",
+      "stat": "Richiede {stat} {need}, tu hai {have}.",
+      "full": "Il banco ne tiene gia {max}. Disfane uno prima."
+    },
+    "dmgType": {
+      "0": "Nessun danno",
+      "1": "Danno PS",
+      "2": "Danno PM",
+      "3": "Recupero PS",
+      "4": "Recupero PM",
+      "5": "Assorbimento PS",
+      "6": "Assorbimento PM"
+    },
+    "comp": {
+      "core": {
+        "fire": {
+          "name": "Esca",
+          "desc": "Danno di fuoco. La cosa piu economica che bruci."
+        },
+        "ice": {
+          "name": "Brina",
+          "desc": "Danno di ghiaccio, un poco piu gentile del fuoco e piu costante."
+        },
+        "thunder": {
+          "name": "Arco",
+          "desc": "Danno di fulmine che taglia parte della guardia."
+        },
+        "water": {
+          "name": "Torrente",
+          "desc": "Danno d'acqua. Ottuso, e il piu facile da tracciare."
+        },
+        "stone": {
+          "name": "Scheggia",
+          "desc": "Danno di pietra. Pesante, e lento da deviare."
+        },
+        "gale": {
+          "name": "Spiffero",
+          "desc": "Danno di vento. Leggero, rapido ed economico da reggere."
+        },
+        "sacred": {
+          "name": "Aureola",
+          "desc": "Danno sacro che quasi nessuna guardia smorza."
+        },
+        "cursed": {
+          "name": "Piaga",
+          "desc": "Danno maledetto. La cosa piu dura qui davanti a cui stare."
+        },
+        "arcane": {
+          "name": "Sigillo",
+          "desc": "Danno senza elemento a cui nulla sul campo resiste."
+        },
+        "mend": {
+          "name": "Sutura",
+          "desc": "Cura PS attingendo allo studio di chi lancia."
+        },
+        "etherFlow": {
+          "name": "Condotto",
+          "desc": "Restituisce PM a chiunque colpisca."
+        },
+        "siphon": {
+          "name": "Sanguisuga",
+          "desc": "Danno che torna come PS a chi lancia."
+        },
+        "mindBurn": {
+          "name": "Scarica",
+          "desc": "Brucia PM invece che sangue."
+        },
+        "ward": {
+          "name": "Cornice Vuota",
+          "desc": "Nessun danno. Un guscio su cui posare gli innesti."
+        },
+        "strike": {
+          "name": "Colpo",
+          "desc": "Un colpo netto dal braccio che lo tira."
+        },
+        "cleave": {
+          "name": "Fendente",
+          "desc": "Un colpo piu pesante a cui la guardia risponde per intero."
+        },
+        "thrust": {
+          "name": "Affondo",
+          "desc": "Un colpo piu stretto che gran parte della guardia manca."
+        },
+        "brawl": {
+          "name": "Presa",
+          "desc": "Lavoro ravvicinato. Niente fronzoli, niente sprechi."
+        },
+        "marksman": {
+          "name": "Tiro Mirato",
+          "desc": "Un tiro che non si puo schivare."
+        },
+        "venomEdge": {
+          "name": "Lama Sporca",
+          "desc": "Una lama maledetta invece che pulita."
+        },
+        "bandage": {
+          "name": "Fasciatura",
+          "desc": "Rattoppa PS senza una parola di magia."
+        },
+        "secondWind": {
+          "name": "Secondo Fiato",
+          "desc": "Un colpo che restituisce cio che toglie."
+        },
+        "rally": {
+          "name": "Guardia Vuota",
+          "desc": "Nessun danno. Un guscio su cui posare gli innesti."
+        }
+      },
+      "power": {
+        "plain": {
+          "name": "Semplice",
+          "desc": "Il nucleo come sta scritto. Non costa nulla."
+        },
+        "focused": {
+          "name": "Concentrato",
+          "desc": "Un quarto piu forte."
+        },
+        "potent": {
+          "name": "Potente",
+          "desc": "Meta piu forte, e molto piu pesante da reggere."
+        },
+        "ruinous": {
+          "name": "Rovinoso",
+          "desc": "Il doppio. Solo una mente addestrata lo porta."
+        }
+      },
+      "scope": {
+        "oneEnemy": {
+          "name": "Un nemico",
+          "desc": "Un solo bersaglio dall'altra parte del campo."
+        },
+        "twoRandom": {
+          "name": "Due a caso",
+          "desc": "Due volte, dove capita."
+        },
+        "threeRandom": {
+          "name": "Tre a caso",
+          "desc": "Tre volte, dove capita."
+        },
+        "allEnemies": {
+          "name": "Tutti i nemici",
+          "desc": "Tutta la linea avversaria in una volta."
+        },
+        "oneAlly": {
+          "name": "Un alleato",
+          "desc": "Un solo compagno."
+        },
+        "allAllies": {
+          "name": "Tutti gli alleati",
+          "desc": "Tutto il gruppo in una volta."
+        },
+        "theUser": {
+          "name": "Chi scrive",
+          "desc": "Te stesso e nessun altro. Non costa nulla."
+        },
+        "everyone": {
+          "name": "Tutti quanti",
+          "desc": "Entrambe le linee, amici e nemici."
+        }
+      },
+      "riders": {
+        "poison": {
+          "name": "Veleno",
+          "desc": "Spesso lascia il bersaglio avvelenato."
+        },
+        "blind": {
+          "name": "Braci",
+          "desc": "Spesso acceca il bersaglio."
+        },
+        "silence": {
+          "name": "Bavaglio",
+          "desc": "A volte zittisce il bersaglio."
+        },
+        "confusion": {
+          "name": "Confusione",
+          "desc": "A volte confonde il bersaglio."
+        },
+        "sleep": {
+          "name": "Ninnananna",
+          "desc": "A volte addormenta il bersaglio."
+        },
+        "freeze": {
+          "name": "Galaverna",
+          "desc": "A volte congela il bersaglio."
+        },
+        "paralysis": {
+          "name": "Nervo Bloccato",
+          "desc": "A volte paralizza il bersaglio."
+        },
+        "stun": {
+          "name": "Commozione",
+          "desc": "Spesso stordisce il bersaglio."
+        },
+        "deathMark": {
+          "name": "Marchio di Morte",
+          "desc": "Di rado marchia il bersaglio per la morte. Caro, e giusto che lo sia."
+        },
+        "provoke": {
+          "name": "Insulto",
+          "desc": "Quasi sempre provoca il bersaglio a rispondere a te."
+        },
+        "sapAtk": {
+          "name": "Fiacca Forza",
+          "desc": "Indebolisce l'attacco del bersaglio."
+        },
+        "sapDef": {
+          "name": "Fiacca Guardia",
+          "desc": "Indebolisce la difesa del bersaglio."
+        },
+        "sapMat": {
+          "name": "Fiacca Mente",
+          "desc": "Indebolisce la magia del bersaglio."
+        },
+        "sapAgi": {
+          "name": "Fiacca Passo",
+          "desc": "Indebolisce la velocita del bersaglio."
+        },
+        "stripBuffs": {
+          "name": "Cancellatura",
+          "desc": "Strappa via i potenziamenti dietro cui sta il bersaglio."
+        },
+        "regenHP": {
+          "name": "Ricucitura Lenta",
+          "desc": "Lascia rigenerazione di PS."
+        },
+        "regenMP": {
+          "name": "Sorgente Lenta",
+          "desc": "Lascia rigenerazione di PM."
+        },
+        "regenAP": {
+          "name": "Respiro Lento",
+          "desc": "Lascia rigenerazione di PA."
+        },
+        "protect": {
+          "name": "Egida",
+          "desc": "Lascia il bersaglio protetto."
+        },
+        "counter": {
+          "name": "Risposta",
+          "desc": "Lascia il bersaglio a rendere i colpi."
+        },
+        "inspired": {
+          "name": "Buona Parola",
+          "desc": "Lascia il bersaglio ispirato."
+        },
+        "arcaneSurge": {
+          "name": "Impeto",
+          "desc": "Lascia un impeto arcano sul bersaglio."
+        },
+        "divineShield": {
+          "name": "Scudo Divino",
+          "desc": "Di rado lascia uno scudo divino. La cosa piu cara sullo scaffale."
+        },
+        "shadowVeil": {
+          "name": "Velo d'Ombra",
+          "desc": "Lascia il bersaglio velato."
+        },
+        "wardAilments": {
+          "name": "Amuleto",
+          "desc": "Lascia il bersaglio a bloccare le alterazioni."
+        },
+        "braceAtk": {
+          "name": "Rinforza Forza",
+          "desc": "Alza l'attacco del bersaglio."
+        },
+        "braceDef": {
+          "name": "Rinforza Guardia",
+          "desc": "Alza la difesa del bersaglio."
+        },
+        "braceMat": {
+          "name": "Rinforza Mente",
+          "desc": "Alza la magia del bersaglio."
+        },
+        "braceAgi": {
+          "name": "Rinforza Passo",
+          "desc": "Alza la velocita del bersaglio."
+        },
+        "cleanse": {
+          "name": "Tabula Rasa",
+          "desc": "Toglie veleno, cecita, silenzio e il resto."
+        },
+        "firstAid": {
+          "name": "Unguento",
+          "desc": "Restituisce una fetta di PS oltre a tutto il resto."
+        },
+        "etherSplash": {
+          "name": "Sorso",
+          "desc": "Restituisce una fetta di PM oltre a tutto il resto."
+        },
+        "apSurge": {
+          "name": "Adrenalina",
+          "desc": "Consegna PA al bersaglio senza condizioni."
+        }
+      },
+      "refines": {
+        "certain": {
+          "name": "Infallibile",
+          "desc": "Non manca mai, qualunque cosa ci sia in mezzo."
+        },
+        "twinCast": {
+          "name": "Gemello",
+          "desc": "Colpisce due volte."
+        },
+        "tripleCast": {
+          "name": "Scritto Tre Volte",
+          "desc": "Colpisce tre volte. La cosa piu pesante sullo scaffale."
+        },
+        "swift": {
+          "name": "Rapido",
+          "desc": "Agisce prima nel round."
+        },
+        "precise": {
+          "name": "Preciso",
+          "desc": "Non fallisce mai il proprio tiro di riuscita."
+        },
+        "stable": {
+          "name": "Stabile",
+          "desc": "Sempre lo stesso numero."
+        },
+        "wild": {
+          "name": "Selvaggio",
+          "desc": "Selvaggiamente variabile. Economico, e onesto in questo."
+        },
+        "keenEdge": {
+          "name": "Affilato",
+          "desc": "Puo mettere a segno un critico."
+        },
+        "guardBreak": {
+          "name": "Spezzaguardia",
+          "desc": "Dimezza la difesa contata contro di lui."
+        },
+        "efficient": {
+          "name": "Efficiente",
+          "desc": "Costa meno da lanciare, e non aggiunge complessita."
+        },
+        "menuCast": {
+          "name": "Quotidiano",
+          "desc": "Utilizzabile anche fuori dalla battaglia."
+        },
+        "apReturn": {
+          "name": "Ritorno",
+          "desc": "Restituisce PA a chi lo usa."
+        }
+      }
+    }
+  }
 }

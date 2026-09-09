@@ -282,6 +282,81 @@
       "cannotOpenBody": "Archways cannot open this file:\n\n  File: {file}\n\nTo open this file, Archways needs to know what program created it. Select the program from the list below.",
       "alwaysUse": "Always use the selected program to open this kind of file"
     },
+    "filebox": {
+      "openTitle": "Open",
+      "saveTitle": "Save As",
+      "lookIn": "Look in:",
+      "saveIn": "Save in:",
+      "fileName": "File name:",
+      "filesOfType": "Files of type:",
+      "saveAsType": "Save as type:",
+      "open": "Open",
+      "save": "Save",
+      "cancel": "Cancel",
+      "upOneLevel": "Up One Level",
+      "newFolder": "Create New Folder",
+      "newFolderName": "New Folder",
+      "newFolderPrompt": "Name the new folder.",
+      "places": {
+        "desktop": "Desktop",
+        "myDocuments": "My Documents",
+        "myComputer": "My Computer",
+        "recent": "My Recent Documents"
+      },
+      "allFiles": "All Files (*.*)",
+      "textFiles": "Text Documents (*.txt)",
+      "docFiles": "Wyrd Documents (*.md)",
+      "sheetFiles": "Hexcel Sheets (*.csv)",
+      "imageFiles": "Pictures (*.png)",
+      "emptyFolder": "This folder is empty.",
+      "noName": "You must type a file name.",
+      "notFound": "{file}\nFile not found. Check the file name and try again.",
+      "overwriteTitle": "Save As",
+      "overwriteBody": "{file} already exists.\nDo you want to replace it?"
+    },
+    "taskbar": {
+      "appName": "Taskbar and Start Menu",
+      "showDesktop": "Show Desktop",
+      "quickLaunch": "Quick Launch",
+      "cascade": "Cascade Windows",
+      "tileH": "Tile Windows Horizontally",
+      "tileV": "Tile Windows Vertically",
+      "minimizeAll": "Show the Desktop",
+      "lock": "Lock the Taskbar",
+      "autoHide": "Auto-hide the taskbar",
+      "properties": "Properties",
+      "taskManager": "Task Manager",
+      "restore": "Restore",
+      "move": "Move",
+      "size": "Size",
+      "minimize": "Minimize",
+      "maximize": "Maximize",
+      "close": "Close",
+      "closeGroup": "Close Group",
+      "groupOf": "{name} ({count})",
+      "showHidden": "Show hidden icons",
+      "hideInactive": "Hide inactive icons",
+      "propsTitle": "Taskbar and Start Menu Properties",
+      "tab": {
+        "taskbar": "Taskbar",
+        "startMenu": "Start Menu"
+      },
+      "propsAppearance": "Taskbar appearance",
+      "optLock": "Lock the taskbar",
+      "optAutoHide": "Auto-hide the taskbar",
+      "optGroup": "Group similar taskbar buttons",
+      "optQuick": "Show Quick Launch",
+      "propsNotify": "Notification area",
+      "optClock": "Show the clock",
+      "optHide": "Hide inactive icons",
+      "propsStart": "Start menu",
+      "optCategories": "File programs under their category",
+      "optRecent": "List my most recently opened documents",
+      "recentDocs": "My Recent Documents",
+      "recentEmpty": "(Empty)",
+      "clearRecent": "Clear List",
+      "allPrograms": "All Programs"
+    },
     "balloon": {
       "riskTitle": "Your computer might be at risk",
       "riskText": "Antivirus software might not be installed. Click this balloon to fix this problem.",
@@ -1217,6 +1292,155 @@
       "gateway": "Default Gateway:",
       "repair": "Repair",
       "repairBody": "Archways renewed the lease, flushed a cache, re-registered a name and reported success. The connection is as it was."
+    },
+    "minesweeper": {
+      "appName": "Mineseeker",
+      "menuGame": "Game",
+      "new": "New",
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "expert": "Expert",
+      "marks": "Marks (?)",
+      "best": "Best Times",
+      "bestBody": "Beginner: {beginner}\nIntermediate: {intermediate}\nExpert: {expert}",
+      "noTime": "none",
+      "seconds": "{n} seconds",
+      "won": "You cleared the field in {n} seconds.",
+      "wonTitle": "Cleared",
+      "lost": "You struck a mine.",
+      "lostTitle": "Lost",
+      "newBest": "You have the fastest time for {level}."
+    },
+    "solitaire": {
+      "appName": "Patience",
+      "menuGame": "Game",
+      "deal": "Deal",
+      "undo": "Undo",
+      "draw1": "Draw One",
+      "draw3": "Draw Three",
+      "score": "Score: {n}",
+      "time": "Time: {n}",
+      "moves": "Moves: {n}",
+      "won": "All four piles are home.",
+      "wonTitle": "Patience",
+      "noMove": "That card will not go there."
+    },
+    "folderopt": {
+      "appName": "Folder Options",
+      "tab": {
+        "general": "General",
+        "viewTab": "View"
+      },
+      "tasks": "Tasks",
+      "showTasks": "Show common tasks in folders",
+      "classicFolders": "Use Classic Folders",
+      "clickItems": "Click items as follows",
+      "doubleClick": "Double-click to open an item",
+      "singleClick": "Single-click to open an item",
+      "advanced": "Advanced settings",
+      "showHidden": "Show hidden files and folders",
+      "hideExtensions": "Hide extensions for known file types",
+      "fullPath": "Display the full path in the address bar",
+      "restore": "Restore Defaults"
+    },
+    "mouse": {
+      "appName": "Mouse",
+      "tab": {
+        "buttons": "Buttons",
+        "pointers": "Pointer Options"
+      },
+      "buttonConfig": "Button configuration",
+      "swap": "Switch primary and secondary buttons",
+      "doubleSpeed": "Double-click speed",
+      "slow": "Slow",
+      "fast": "Fast",
+      "motion": "Motion",
+      "pointerSpeed": "Select a pointer speed",
+      "trails": "Display pointer trails",
+      "snapTo": "Snap to the default button in a dialog box"
+    },
+    "keyboard": {
+      "appName": "Keyboard",
+      "tab": {
+        "speed": "Speed"
+      },
+      "repeat": "Character repeat",
+      "repeatDelay": "Repeat delay",
+      "repeatRate": "Repeat rate",
+      "long": "Long",
+      "short": "Short",
+      "cursorBlink": "Cursor blink rate",
+      "none": "None",
+      "test": "Click here and hold down a key to test",
+      "slow": "Slow",
+      "fast": "Fast"
+    },
+    "useracc": {
+      "appName": "User Accounts",
+      "pick": "Pick an account to change",
+      "administrator": "Computer administrator",
+      "limited": "Limited account",
+      "current": "Currently logged on",
+      "noParty": "This machine has one account.",
+      "changeType": "Change the account type",
+      "changed": "{name} is now a {type}."
+    },
+    "printers": {
+      "appName": "Printers and Faxes",
+      "none": "There are no printers installed on this computer.",
+      "add": "Add a printer",
+      "added": "Aetheric Impact Printer",
+      "status": "Ready",
+      "installed": "{name} is installed and ready."
+    },
+    "netconn": {
+      "appName": "Network Connections",
+      "dialup": "Dial-up",
+      "lan": "LAN or High-Speed Internet",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "speedOf": "{speed}",
+      "detailsTitle": "{name} Status",
+      "detailsBody": "Status: {status}\nDuration: {duration}\nSpeed: {speed}\n\nPackets sent: {sent}\nPackets received: {received}"
+    },
+    "access": {
+      "appName": "Accessibility Options",
+      "tab": {
+        "keyboardTab": "Keyboard",
+        "displayTab": "Display"
+      },
+      "stickyKeys": "Use StickyKeys",
+      "stickyBody": "Press one key at a time for a shortcut.",
+      "filterKeys": "Use FilterKeys",
+      "filterBody": "Ignore brief or repeated keystrokes.",
+      "toggleKeys": "Use ToggleKeys",
+      "toggleBody": "Hear a tone when a locking key is pressed.",
+      "highContrast": "Use High Contrast",
+      "highContrastBody": "Draw the desktop in the highest contrast scheme.",
+      "cursorWidth": "Cursor width"
+    },
+    "fonts": {
+      "appName": "Fonts",
+      "installed": "{n} fonts installed",
+      "preview": "The quick brown fox jumps over the lazy dog.",
+      "sizeLabel": "Size"
+    },
+    "joy": {
+      "appName": "Game Controllers",
+      "installed": "Installed game controllers",
+      "controller": "Controller",
+      "status": "Status",
+      "ok": "OK",
+      "notConnected": "Not connected",
+      "none": "No game controllers are attached.",
+      "attached": "{name} is attached."
+    },
+    "allprograms": {
+      "appName": "All Programs",
+      "hint": "Every program that is not on the desktop. Drag one onto the desktop to keep it there; drag a desktop shortcut back here, or onto the Recycle Bin, to put it away.",
+      "empty": "Every program is already on the desktop.",
+      "open": "Open",
+      "addToDesktop": "Add to Desktop"
     }
   }
 }

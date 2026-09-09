@@ -19,14 +19,14 @@
     "rentStatus": "Rent Status",
     "dailyIncome": "Daily Income",
     "market": "Market",
-    "hot": "\u2191 Hot",
-    "cold": "\u2193 Cold",
-    "stable": "\u2192 Stable",
+    "hot": "↑ Hot",
+    "cold": "↓ Cold",
+    "stable": "→ Stable",
     "activeEvents": "active events",
     "justNow": "Now",
     "hoursAgo": "h ago",
     "daysAgo": "d ago",
-    "dailyIncomeMsg": "Today's rental income: \u20ac{income} ({gold} gold)",
+    "dailyIncomeMsg": "Today's rental income: €{income} ({gold} gold)",
     "propertiesOwnedMsg": "Total properties owned: {count}",
     "marketUpdatedMsg": "Market updated! Check your properties for changes.",
     "newsEventMsg": "News event generated! Check the news window.",
@@ -41,7 +41,8 @@
       "Yacht": "Yacht",
       "Restaurant": "Restaurant",
       "Camper Van": "Camper Van",
-      "B&B": "B&B"
+      "B&B": "B&B",
+      "Shop": "Shop"
     },
     "starLevels": [
       "Budget",
@@ -84,7 +85,7 @@
       "Castle": [
         "Castle",
         "Fortress",
-        "Ch\u00e2teau",
+        "Château",
         "Palace"
       ],
       "Yacht": [
@@ -110,12 +111,18 @@
         "Guesthouse",
         "Inn",
         "Lodge"
+      ],
+      "Shop": [
+        "Shop",
+        "Store",
+        "Emporium",
+        "Trading Post"
       ]
     }
   },
   "it": {
-    "menuTitle": "Gestione Immobiliare - Compra, vendi e affitta propriet\u00e0",
-    "newsTitle": "Notizie del Mercato Immobiliare - Eventi recenti che influenzano i valori delle propriet\u00e0",
+    "menuTitle": "Gestione Immobiliare - Compra, vendi e affitta proprietà",
+    "newsTitle": "Notizie del Mercato Immobiliare - Eventi recenti che influenzano i valori delle proprietà",
     "owned": "Posseduta",
     "available": "Disponibile",
     "forRent": "In Affitto",
@@ -133,16 +140,16 @@
     "rentStatus": "Stato Affitto",
     "dailyIncome": "Reddito Giornaliero",
     "market": "Mercato",
-    "hot": "\u2191 Caldo",
-    "cold": "\u2193 Freddo",
-    "stable": "\u2192 Stabile",
+    "hot": "↑ Caldo",
+    "cold": "↓ Freddo",
+    "stable": "→ Stabile",
     "activeEvents": "eventi attivi",
     "justNow": "Ora",
     "hoursAgo": "h fa",
     "daysAgo": "g fa",
-    "dailyIncomeMsg": "Reddito da affitti di oggi: \u20ac{income} ({gold} oro)",
-    "propertiesOwnedMsg": "Propriet\u00e0 totali possedute: {count}",
-    "marketUpdatedMsg": "Mercato aggiornato! Controlla le tue propriet\u00e0 per i cambiamenti.",
+    "dailyIncomeMsg": "Reddito da affitti di oggi: €{income} ({gold} oro)",
+    "propertiesOwnedMsg": "Proprietà totali possedute: {count}",
+    "marketUpdatedMsg": "Mercato aggiornato! Controlla le tue proprietà per i cambiamenti.",
     "newsEventMsg": "Evento di cronaca generato! Controlla la finestra delle notizie.",
     "breakingNews": "ULTIME NOTIZIE",
     "propertyTypes": {
@@ -155,12 +162,13 @@
       "Yacht": "Yacht",
       "Restaurant": "Ristorante",
       "Camper Van": "Camper",
-      "B&B": "B&B"
+      "B&B": "B&B",
+      "Shop": "Negozio"
     },
     "starLevels": [
       "Economico",
       "Standard",
-      "Qualit\u00e0",
+      "Qualità",
       "Premium",
       "Lusso"
     ],
@@ -198,7 +206,7 @@
       "Castle": [
         "Castello",
         "Fortezza",
-        "Ch\u00e2teau",
+        "Château",
         "Palazzo"
       ],
       "Yacht": [
@@ -224,6 +232,12 @@
         "Pensione",
         "Locanda",
         "Lodge"
+      ],
+      "Shop": [
+        "Negozio",
+        "Bottega",
+        "Emporio",
+        "Mercantile"
       ]
     }
   }

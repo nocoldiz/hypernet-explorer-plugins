@@ -38,14 +38,14 @@
   "attributesAbilities": "Attributi e abilità",
   "characterTraits": "Tratti del personaggio",
   "classAbility": "Abilità di classe",
-  "tabPassives": "Passive",
+  "tabPassives": "Abilità di Classe",
   "tabTraits": "Tratti",
   "tabAnatomy": "Anatomia",
   "tabAttributes": "Attributi",
   "tabBio": "Bio",
   "tabBackstory": "Storia",
-  "passiveAbilities": "Abilità passive",
-  "noPassives": "Nessuna abilità passiva...",
+  "passiveAbilities": "Abilità di Classe",
+  "noPassives": "Nessuna abilità di classe...",
   "sourceClass": "Classe",
   "sourceTrait": "Tratto",
   "empathize": "Empatizza",
@@ -85,7 +85,8 @@
   "statGear": "Equip.",
   "statTraits": "Tratti/Buff",
   "statInjuries": "Lesioni",
-  "statMod": "Mod"
+  "statMod": "Mod",
+  "sourceLimit": "Limit Break"
  },
  "trait": {
   "category": "Categoria:",

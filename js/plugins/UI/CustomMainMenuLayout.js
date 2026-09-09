@@ -976,23 +976,36 @@
         return rows;
     };
 
+    // Shops are the one deed that is also a place of work: a row here opens the
+    // shop's management book (Economy/ShopManagementUI.js) on that shop rather
+    // than on whichever one an event last made current.
     Scene_Menu.prototype.deedsShopRows = function () {
         const SM = window.ShopManagement;
-        const data = SM && SM.getData ? SM.getData() : null;
-        if (!data || !data.shops) return '';
+        const shops = SM && SM.getShops ? SM.getShops() : null;
+        if (!shops) return '';
         let rows = '';
-        for (const id of Object.keys(data.shops)) {
-            const shop = data.shops[id];
+        for (const id of Object.keys(shops)) {
+            const shop = shops[id];
             if (!shop) continue;
-            const where = SM.getMapDisplayName ? SM.getMapDisplayName(Number(id)) : String(id);
+            const where = SM.shopDisplayName ? SM.shopDisplayName(shop) : String(id);
+            const place = shop.location ? `<div class="deed-where">${escapeHtml(shop.location)}</div>` : '';
             rows += `
-                        <div class="deed-row">
+                        <div class="deed-row command-item focusable" tabindex="0" onclick="SceneManager._scene?.openShopDeed?.('${escapeHtml(String(id))}')">
                             <div class="deed-name">${escapeHtml(where)}</div>
+                            ${place}
                             <div class="deed-stat">${T('Towns.deeds.colCategory')}: ${escapeHtml(shop.category || '')}</div>
                             <div class="deed-stat">${T('Towns.deeds.colBalance')}: ${SM.formatEuroPrice ? SM.formatEuroPrice(shop.balance || 0) : (shop.balance || 0)}</div>
+                            <div class="deed-note">${T('Towns.deeds.manageShop')}</div>
                         </div>`;
         }
         return rows;
+    };
+
+    Scene_Menu.prototype.openShopDeed = function (shopId) {
+        const SM = window.ShopManagement;
+        if (!SM || !SM.openManagement) { SoundManager.playBuzzer(); return; }
+        if (SM.openManagement(shopId)) SoundManager.playOk();
+        else SoundManager.playBuzzer();
     };
 
     Scene_Menu.prototype.deedsAnimalRows = function () {

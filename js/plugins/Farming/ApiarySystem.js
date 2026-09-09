@@ -811,6 +811,14 @@
             
             this.colony.stats.swarms++;
             this.colony.state = ColonyState.STABLE;
+            // Half the hive walking out with the old queen is a loss, and the
+            // colony panel is not usually open when it happens.
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(
+                    T('Apiary.toast.swarmed', { bees: leavingBees }),
+                    { severity: 'warning', key: 'apiary-swarm' }  // i18n-ignore  dedupe key
+                );
+            }
         }
         
         raiseNewQueen() {

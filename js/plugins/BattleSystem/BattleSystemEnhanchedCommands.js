@@ -763,6 +763,31 @@
 
       root.appendChild(item);
     }
+
+    // A shelf that runs past what the window has room for (the grapple plan's
+    // limbs, the aim menu's parts) turns a page at a time, and the two black
+    // chevrons on the list's own middle line are what says so. Left / Right
+    // turns the page; a click on a chevron does the same.
+    const pager = this._cmdPager;
+    if (pager && pager.pages > 1) {
+      const chevron = (dir) => {
+        const el = document.createElement('div');
+        el.className = 'actorcmd-chev actorcmd-chev-' + dir;
+        el.textContent = dir === 'prev' ? '‹' : '›';
+        el.style.pointerEvents = 'auto';
+        el.style.cursor = 'pointer';
+        el.addEventListener('pointerup', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (e.button !== undefined && e.button !== 0) return;
+          TouchInput.clear();
+          if (typeof pager.turn === 'function') pager.turn(dir === 'prev' ? -1 : 1);
+        });
+        return el;
+      };
+      root.appendChild(chevron('prev'));
+      root.appendChild(chevron('next'));
+    }
   };
 
   //=============================================================================
@@ -879,10 +904,10 @@
     }
   };
 
-  // 0 = left (default), 1 = right.
+  // 0 = left, 1 = right (default: the battle log takes the left side).
   Object.defineProperty(ConfigManager, 'battleCommandPosition', {
     get: function () {
-      return this._battleCommandPosition !== undefined ? this._battleCommandPosition : 0;
+      return this._battleCommandPosition !== undefined ? this._battleCommandPosition : 1;
     },
     set: function (value) { this._battleCommandPosition = value; },
     configurable: true
@@ -899,7 +924,7 @@
   ConfigManager.applyData = function (config) {
     _BSE_ConfigManager_applyData.call(this, config);
     this.battleCommandPosition =
-      config.battleCommandPosition !== undefined ? config.battleCommandPosition : 0;
+      config.battleCommandPosition !== undefined ? config.battleCommandPosition : 1;
   };
 
   function _commandPositionText(value) {

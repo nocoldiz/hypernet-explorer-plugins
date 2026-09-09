@@ -46,6 +46,7 @@
     "colOccupancy": "Occupancy",
     "colCategory": "Trade",
     "colBalance": "Balance",
-    "colStage": "Stage"
+    "colStage": "Stage",
+    "manageShop": "Open the shop book"
   }
 }

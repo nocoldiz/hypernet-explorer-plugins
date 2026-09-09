@@ -101,9 +101,9 @@
     content: '';
     position: absolute;
     top: 0;
-    left: 55%;
+    left: var(--spine-x, 55%);
     transform: translateX(-50%);
-    width: 24px;
+    width: var(--spine-w, 24px);
     height: 100%;
     background: var(--gradient-15);
     pointer-events: none;
@@ -2856,6 +2856,17 @@
     font-size: var(--fs-body);
 }
 
+/* Which of the two a row is: the always-on ability, or the limit break. */
+.cc-class-passive-tag {
+    margin-left: auto;
+    font-family: var(--font-ui);
+    font-weight: normal;
+    font-size: var(--fs-label);
+    color: var(--text-card-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
 .cc-class-passive-desc {
     margin: 3px 0 0 0;
     font-size: var(--fs-label);
@@ -3157,6 +3168,16 @@
 }
 
 /* The roster needs the room more than the dossier does. */
+.cc-pockets-spread { --spine-x: 55%; }
+
+/* The pockets spread widens its board for the class, trait and specialization
+   steps, so the crease moves to each of those seams; a full-width page has no
+   seam at all. */
+.cc-pockets-spread:has(> .cc-page-left.cc-class-board) { --spine-x: 58%; }
+.cc-pockets-spread:has(> .cc-page-left.cc-trait-board) { --spine-x: 68%; }
+.cc-pockets-spread:has(> .cc-page-left.cc-spec-board) { --spine-x: 78%; }
+.cc-pockets-spread:has(> .cc-page-full)::after { display: none; }
+
 .cc-content-pane .cc-pockets-spread > .cc-page-left.cc-class-board {
     width: 58%;
     flex: 1 1 58%;
@@ -3765,9 +3786,11 @@
     }
 }
 
-/* Center Binding Spine Shader */
+/* Center Binding Spine Shader.
+   The pockets spread is NOT in this list: it draws its own crease on ::after
+   (at the head of this file), and being in both drew the binding twice, three
+   percent apart. Its ::before is the book frame instead. */
 .book-spread::before,
-.cc-pockets-spread::before,
 #thinker-container .book-spread::before,
 #blacksmith-container .book-spread::before,
 .shop-spread::before,
@@ -3778,13 +3801,25 @@
     content: '';
     position: absolute;
     top: 0;
-    left: 57.5%;
-    width: 30px;
+    /* The crease is drawn at the seam BETWEEN the two leaves, and the seam is
+       not the same on every screen: a spread whose pages are 42/58 has its
+       binding at 42%, not at the shared default. Each spread declares where
+       its own seam falls in --spine-x rather than restating this block with a
+       different `left`, so a page split and the crease over it can never drift
+       apart again. --spine-w is the width of the shadow. */
+    left: var(--spine-x, 58%);
+    width: var(--spine-w, 30px);
     height: 100%;
     background: var(--gradient-28);
     pointer-events: none;
     z-index: 10;
     transform: translateX(-50%);
+}
+
+/* A spread with only one leaf has nothing to bind. */
+.book-spread.spine-none::before,
+.cc-pockets-spread.spine-none::after {
+    display: none;
 }
 
 /* SkillMaster full-page list mode: left page spans the whole spread, no center crease. */
@@ -4408,6 +4443,12 @@
     font-family: var(--font-ui);
     font-size: var(--fs-caption);
     font-style: italic;
+}
+
+/* The second half of that line: the grip count, quieter than the weapon count
+   it follows. */
+.cc-bio-note-dim {
+    opacity: 0.7;
 }
 
 .cc-bio-select {
@@ -5045,16 +5086,21 @@
 }
 
 /* Action rows sit right-aligned and auto-width, the same plate the rest of
-   character creation's buttons use, instead of stretching edge to edge. */
+   character creation's buttons use, instead of stretching edge to edge. Every
+   button on the scenario board stands in this one row, in the left bar under
+   the list: Embark leads and the second button (return to the party, or a
+   chaos world's reroll) follows it. */
 .cc-scenario-list-actions,
 .cc-scenario-brief-actions {
     flex: 0 0 auto;
     display: flex;
     justify-content: flex-end;
+    gap: 6px;
     margin-top: 8px;
 }
 
-.cc-scenario-back {
+.cc-scenario-back,
+.cc-scenario-reroll {
     height: 38px;
     font-size: var(--fs-heading);
 }
@@ -7770,9 +7816,9 @@
     padding-left: 2.5%;
 }
 
-#thinker-container .book-spread::before,
-#blacksmith-container .book-spread::before {
-    left: 30%;
+#thinker-container .book-spread,
+#blacksmith-container .book-spread {
+    --spine-x: 30%;
 }
 
 /* Dynamic Craft Mode Tabs, styled like the backpack category bookmark tabs */
@@ -11672,20 +11718,17 @@
 /* The KP multiplier a school is worth to this pupil. A filled chip never
    carries muted ink, so the affinity chips take the bright inversion and the
    foreign mark stays transparent with the label ink. */
+/* Every school badge, Primary and Secondary included, wears the outline the
+   Self-taught one wears: no filled plate on the page. */
 .sm-school-badge {
     font-family: var(--font-ui);
     font-size: var(--fs-caption);
-    background: var(--text-secondary-active);
-    color: var(--bg-secondary-hover);
-    padding: 1px 5px;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-}
-
-.sm-school-badge--foreign {
     background: transparent;
     color: var(--text-text-alt-4);
     border: 1px solid var(--border-primary-hover-translucent-15);
+    padding: 1px 5px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
 }
 
 .sm-pupil-line {
@@ -12968,8 +13011,8 @@
     width: 58%;
 }
 
-#equip-container .book-spread::before {
-    left: 58.5%;
+#equip-container .book-spread {
+    --spine-x: 58%;
 }
 
 /* Right page layout. The companion switcher sits above this block in the
@@ -13169,10 +13212,7 @@
    other way round, and the binding spine moves with it. */
 .travel-book-spread {
     overflow: hidden;
-}
-
-.travel-book-spread::before {
-    left: 42%;
+    --spine-x: 42%;
 }
 
 .travel-left-page {
@@ -13781,6 +13821,10 @@
         opacity: 1;
     }
 }
+
+/* Both leaves are flex: 1, so this spread's seam is the middle of the sheet
+   and not the shared 58%. */
+.shop-spread { --spine-x: 50%; }
 
 .shop-left,
 .shop-right {
@@ -14966,6 +15010,8 @@
 /* Preferences spread: the option list needs less room than the inspect page,
    which carries the illustration, so the left sheet is the narrower of the two.
    The pair still adds up to the whole spread, keeping the binding centred. */
+.book-spread.options-spread { --spine-x: 42%; }
+
 .book-spread.options-spread .left-page {
     width: 42%;
 }
@@ -15115,12 +15161,17 @@
     /* was 24px: the backdrop inset that letterboxed the panel */
 }
 
+/* The pages are set 57.5/42.5 by .save-01 / .save-05 below, which is later in
+   the sheet than .save-left-page's 38% and so is what the screen actually
+   draws: the crease belongs on THAT seam. */
+.save-book-spread { --spine-x: 57.5%; }
+
 .save-book-spread::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 38%;
-    width: 30px;
+    left: var(--spine-x);
+    width: var(--spine-w, 30px);
     height: 100%;
     background: var(--gradient-28);
     pointer-events: none;
@@ -16296,6 +16347,8 @@
     user-select: none;
 }
 
+#apiary-container .book-spread { --spine-x: 58%; }
+
 #apiary-container .left-page {
     width: 58%;
     flex: none;
@@ -16565,6 +16618,8 @@
     box-sizing: border-box;
     user-select: none;
 }
+
+#brewery-container .book-spread { --spine-x: 55%; }
 
 #brewery-container .left-page {
     width: 55%;
@@ -18695,6 +18750,46 @@ padding: 2px 10px;
       font-size: var(--fs-label); color: var(--text-text-alt-4);
       flex: 0 0 auto; margin-left: auto;
     }
+    /* --- The armies shelf: one card per column standing in the world, drawn
+       the same whether it is a hyperpower's field army or the party's own. */
+    .npc-army-card {
+      border: 1px solid var(--border-secondary);
+      border-radius: 4px;
+      padding: 6px 8px;
+      margin-bottom: 8px;
+      background: none;
+    }
+    .npc-army-card-hdr {
+      display: flex; flex-direction: row; align-items: baseline; gap: 8px;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+    .npc-army-card-title {
+      font-size: var(--fs-body); font-weight: bold; color: var(--text-primary-hover);
+      min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .npc-army-bar {
+      display: inline-block; position: relative;
+      width: 90px; height: 7px;
+      border: 1px solid var(--border-secondary);
+      border-radius: 3px;
+      overflow: hidden;
+      vertical-align: middle;
+    }
+    .npc-army-bar-fill { display: block; height: 100%; }
+    .npc-army-bar-morale { background: var(--accent-green); }
+    .npc-army-bar-coherence { background: var(--accent-blue); }
+    .npc-army-formation {
+      display: flex; flex-direction: column; gap: 1px;
+    }
+    .npc-army-unit {
+      display: flex; flex-direction: row; align-items: baseline; gap: 6px;
+      font-size: var(--fs-label);
+    }
+    .npc-army-unit-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .npc-army-unit-drill { flex: 0 0 auto; color: var(--text-text-alt-4); }
+    .npc-army-unit-count { flex: 0 0 auto; font-weight: bold; min-width: 3ch; text-align: right; }
+
     /* Party rows sit indented under their nation's heading in a bloc's chamber */
     .npc-wiki-party-row { padding-left: 16px; }
     .npc-wiki-entry {
@@ -20756,6 +20851,23 @@ body, canvas {
     flex-direction: column;
     gap: 0;
 }
+/* Page arrows for a command shelf too long to stand on one page: black
+   glyphs on the list's own middle line, one outside either edge. */
+.actorcmd-chev {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-ui);
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-pure-black);
+    text-shadow: 0 0 4px var(--shadow-black-translucent-80);
+    user-select: none;
+}
+.actorcmd-chev-prev { left: -26px; }
+.actorcmd-chev-next { right: -26px; }
+
 .actorcmd-item {
     position: relative;
     display: flex;
@@ -21189,6 +21301,24 @@ body, canvas {
     flex-direction: row;
     align-items: center;
 }
+/* Page arrows, one at either end of a row that holds more than it can show.
+   Black glyphs on the row's own middle line, the same ones the battle command
+   list turns its long shelves with. */
+.hotbar-chev {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    font-family: var(--font-ui);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-pure-black);
+    text-shadow: 0 0 3px var(--shadow-black-translucent-80);
+    user-select: none;
+}
+.hotbar-chev-prev { margin-right: 2px; }
+.hotbar-chev-next { margin-left: 2px; }
 /* The armed or hovered slot's name, on its own line under the row. Its height
    is reserved whether or not anything is showing (HotbarUI.LABEL_BLOCK_PX =
    20 + 4), so the slots never shift as names come and go. */
@@ -22013,8 +22143,15 @@ body.ascii-ui-active #title-menu-container {
 
 /* ==========================================================================
    ASCIIMode, full CSS variable remap for monochrome terminal aesthetic
-   Active only when body.ascii-ui-active is present (toggled by ASCIIMode.js)
-   MUST stay last in this file, remaps variables relied on by all other sections
+   Active only when body.ascii-ui-active is present (toggled by ASCIIMode.js).
+
+   This remaps the tokens every other section draws with. It no longer has to
+   be the last block in the file to do that: body.ascii-ui-active outweighs the
+   :root a preset declares its tokens on, so order does not decide it. What
+   DOES decide it is coverage - ASCII is layered over whichever preset is
+   active, so any token missing from the list below is painted in that preset's
+   own colours, which on the paper preset means parchment inks on a black
+   terminal. Anything added to a preset belongs here too.
    ========================================================================== */
 body.ascii-ui-active {
     /* --- Backgrounds: everything goes black/near-black --- */
@@ -22140,6 +22277,25 @@ body.ascii-ui-active {
     --gradient-39: linear-gradient(#000000, #000000);
     --gradient-40: linear-gradient(#000000, #000000);
     --gradient-41: linear-gradient(#000000, #000000);
+
+    /* The binding crease. A terminal has no paper to fold, so the parchment
+       gutter shadow (a warm brown and cream wash in the paper preset) becomes
+       what a terminal would draw at a seam: one dim rule, two cells wide. */
+    --gradient-15: linear-gradient(#5a4a2a, #5a4a2a);
+    --gradient-28: linear-gradient(#5a4a2a, #5a4a2a);
+    --spine-w: 2px;
+
+    /* The book frame, for the same reason: leather boards and a stack of page
+       edges are things a paper book has and a terminal does not. What is left
+       is the one dim rule a terminal draws round a panel. */
+    --book-leather: #5a4a2a;
+    --book-leather-lit: #5a4a2a;
+    --book-gilt: transparent;
+    --book-page-edge: transparent;
+    --book-page-line: transparent;
+    --book-board-w: 2px;
+    --book-fore-l: 0px;
+    --book-fore-r: 0px;
 }
 
 /* Monospace terminal font + flat chrome everywhere inside an ASCII menu. */
@@ -22175,6 +22331,22 @@ body.ascii-ui-active .travel-book-spread,
 body.ascii-ui-active .stock-spread,
 body.ascii-ui-active .mp-type-spread {
     background: #000000 !important;
+}
+
+/* ...but not every element whose id or class ends in -overlay is a menu. These
+   float over the live map, battlefield or title screen and are transparent by
+   design: the battle log is a box more than half the screen wide, the command
+   rail and the target list stand over the battlefield, and the title logo is a
+   cut-out image. The blanket rule above painted each of them a solid black
+   slab over the game. Ids and the later class rule both outrank it.
+
+   A new pass-through layer takes .ascii-passthrough rather than a line here. */
+body.ascii-ui-active #html-battlelog-overlay,
+body.ascii-ui-active #html-actorcmd-overlay,
+body.ascii-ui-active #html-enemytarget-overlay,
+body.ascii-ui-active .title-logo-overlay,
+body.ascii-ui-active .ascii-passthrough {
+    background: transparent !important;
 }
 
 /* =========================================================================
@@ -25324,6 +25496,91 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 #mt-banner.mt-win { color: var(--text-forest-complete); border-color: var(--accent-green-3); }
 #mt-banner.mt-lose { color: var(--accent-red-3); border-color: var(--accent-red-2); }
+
+/* The fight board: the same three readings a real battle shows (HP bar, MP bar,
+   TP orb) for both fighters, cut as a fighting game's corner plates with the
+   round clock between them. Mirrored on the right so both bars drain inward. */
+#mt-fight {
+    position: absolute; top: 62px; left: 0; width: 100%;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 14px; padding: 0 18px; box-sizing: border-box;
+}
+#mt-fight .mt-fighter {
+    flex: 1 1 0; max-width: 40%;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-dark-overlay-78);
+    border: 2px solid var(--border-focus-hover);
+    border-radius: 6px;
+    padding: 8px 12px;
+    transform: skewX(-8deg);
+}
+#mt-fight .mt-side-right { transform: skewX(8deg); flex-direction: row-reverse; }
+#mt-fight .mt-fighter > * { transform: skewX(8deg); }
+#mt-fight .mt-side-right > * { transform: skewX(-8deg); }
+#mt-fight .mt-fighter.mt-down { opacity: .55; border-color: var(--accent-red-2); }
+#mt-fight .mt-gauges { flex: 1 1 auto; min-width: 0; }
+#mt-fight .mt-fname {
+    position: absolute; top: -22px;
+    font-size: 16px; font-weight: bold; letter-spacing: 1px;
+    text-transform: uppercase; white-space: nowrap;
+    color: var(--text-primary-hover);
+    text-shadow: 0 1px 4px var(--shadow-black-translucent-75);
+}
+#mt-fight .mt-side-left .mt-fname { left: 12px; }
+#mt-fight .mt-side-right .mt-fname { right: 12px; }
+#mt-fight .mt-fighter { position: relative; margin-top: 22px; }
+#mt-fight .mt-gauge {
+    position: relative; height: 18px; margin: 3px 0;
+    background: var(--bg-tertiary-focus-translucent-45);
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+}
+#mt-fight .mt-gauge i {
+    position: absolute; top: 0; left: 0; bottom: 0; width: 100%;
+    display: block; transition: width .25s ease;
+}
+#mt-fight .mt-side-right .mt-gauge i { left: auto; right: 0; }
+#mt-fight .mt-gauge span {
+    position: absolute; top: 0; left: 6px; right: 6px; bottom: 0;
+    font-size: 11px; line-height: 18px; letter-spacing: .5px;
+    color: var(--text-text-alt-2);
+    text-shadow: 0 1px 2px var(--shadow-black-translucent-75);
+}
+#mt-fight .mt-side-right .mt-gauge span { text-align: right; }
+#mt-fight .mt-hp i { background: linear-gradient(180deg, var(--accent-gold-pure), var(--accent-green-3)); }
+#mt-fight .mt-hp.mt-low i { background: linear-gradient(180deg, var(--accent-red-2), var(--accent-red-3)); }
+#mt-fight .mt-mp i { background: linear-gradient(180deg, var(--accent-blue-3), var(--accent-blue)); }
+#mt-fight .mt-mp { height: 12px; }
+#mt-fight .mt-mp span { line-height: 12px; }
+#mt-fight .mt-tp {
+    flex: 0 0 auto;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: conic-gradient(var(--accent-amber-glow) var(--mt-tp-fill, 0deg),
+                               var(--bg-tertiary-focus-translucent-45) 0);
+    border: 2px solid var(--border-gold-amber-30);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 10px var(--shadow-gold-amber-50);
+}
+#mt-fight .mt-tp b {
+    font-size: 11px; font-weight: bold;
+    color: var(--text-primary-hover);
+    text-shadow: 0 1px 3px var(--shadow-black-translucent-75);
+}
+#mt-fight .mt-clock {
+    flex: 0 0 auto; text-align: center; min-width: 92px;
+    background: var(--bg-dark-overlay-78);
+    border: 2px solid var(--border-focus-hover);
+    border-radius: 6px; padding: 4px 10px;
+}
+#mt-fight .mt-clock-num {
+    font-size: 40px; font-weight: bold; line-height: 1;
+    color: var(--accent-amber-glow);
+    text-shadow: 0 2px 8px var(--shadow-black-translucent-75);
+}
+#mt-fight .mt-clock-num.mt-urgent { color: var(--accent-red-3); }
+#mt-fight .mt-clock-lbl {
+    font-size: 11px; letter-spacing: 2px; color: var(--text-info);
+}
 
 
 /* ==========================================================================
@@ -32360,13 +32617,57 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     box-shadow: none !important;
 }
 
-/* The left page reads top to bottom: who this is, what they look like, how
-   they are holding up, and then the body itself part by part. The anatomy
-   block is the only thing allowed to scroll, so the portrait and the gauges
-   never move as a character is read. */
+/* The spread is mirrored against every other book menu in the game: the
+   sections (attributes, bio, backstory, traits, passives, illnesses) are the
+   narrow leaf on the left, and the character themself - portrait, gauges,
+   needs and the body part by part - takes the wide leaf on the right, which is
+   what all of that content actually needed. The margins swap with the pages so
+   the outer edge stays the deep one, and the crease moves to the new seam.
+
+   BACK and the character's name stay at the top left of the spread, and the
+   companion switcher at the top right, because that is where every other
+   parchment menu puts them. */
 #status-menu-container .left-page {
+    width: 42%;
+    padding: 35px 45px 35px 50px;
     justify-content: flex-start;
 }
+
+#status-menu-container .right-page {
+    width: 58%;
+    padding: 35px 50px 35px 45px;
+    justify-content: flex-start;
+}
+
+#status-menu-container .book-spread {
+    --spine-x: 42%;
+}
+
+/* The name shares the narrow leaf with the Back button now, so it is set a
+   size down from the shared page title and is allowed to take a second line
+   rather than run off the edge of the page. */
+#status-menu-container .page-header-bar {
+    gap: var(--sp-3);
+}
+
+/* The switcher keeps the top right of the right page it has in every other
+   book menu, now that the right page is the character themself. */
+#status-menu-container .status-right-header,
+#status-menu-container .status-right-header .companion-switcher {
+    justify-content: flex-end;
+}
+
+#status-menu-container .status-12 {
+    font-size: 1.5em;
+    line-height: 1.15;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* The right page reads top to bottom: what they look like, how they are
+   holding up, and then the body itself part by part. The anatomy block is the
+   only thing allowed to scroll, so the portrait and the gauges never move as a
+   character is read. */
 
 #status-menu-container .status-left-body {
     display: flex;
@@ -33278,6 +33579,112 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .sm-forge-knowledge strong { color: var(--text-success-active); }
 .sm-forge-knowledge--short strong { color: var(--text-danger-dark); }
+
+/* -------------------------------------------------------------------------
+ * The Workbench: the bench where a spell or a skill is written from bought
+ * components. It borrows the forge's rows wholesale; only the things the
+ * forge has no equivalent for are drawn here.
+ * ---------------------------------------------------------------------- */
+
+/* The bench has ten rows where the forge has three, so its list of parts
+   scrolls rather than pushing the written entries off the page. */
+.sm-craft-rows {
+    max-height: 58%;
+    overflow-y: auto;
+    padding-right: var(--sp-2);
+}
+
+/* Why the bench will not write the entry, said on the same line as the purse
+   so the reason and the price are read together. */
+.sm-craft-block {
+    display: block;
+    margin-top: 2px;
+    color: var(--text-danger-dark);
+}
+
+.sm-craft-entry .sm-skill-ident { cursor: pointer; }
+.sm-craft-discard { color: var(--text-danger-dark); }
+
+/* The field a name, a description or a piece of lore is typed into. It is a
+   sheet over the whole book rather than part of a page, because every page of
+   the bench is rebuilt on each keystroke and a re-rendered field loses focus. */
+.sm-craft-write-backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.62);
+    z-index: 40;
+}
+
+.sm-craft-write {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    width: min(60ch, 80%);
+    padding: var(--sp-4);
+    background: var(--bg-black-translucent-92);
+    border: 1px solid var(--border-gold-amber);
+    border-radius: 6px;
+    font-family: var(--font-ui);
+}
+
+.sm-craft-write-title {
+    font-size: var(--fs-h4, 1.06rem);
+    text-transform: uppercase;
+    color: var(--text-primary-hover);
+}
+
+.sm-craft-write-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--sp-2);
+    border: 1px solid var(--border-gold-amber-30);
+    border-radius: 3px;
+    color: var(--ink-deep);
+    background: var(--paper);
+    font: inherit;
+    resize: none;
+}
+
+.sm-craft-write-input:focus {
+    outline: none;
+    border-color: var(--text-primary-hover);
+}
+
+.sm-craft-write-hint {
+    font-size: var(--fs-caption);
+    color: var(--text-detail-label);
+}
+
+.sm-craft-write-btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--sp-2);
+}
+
+.sm-craft-write-btn {
+    padding: var(--sp-1) var(--sp-3);
+    background: transparent;
+    border: 1px solid var(--border-gold-amber-30);
+    border-radius: 3px;
+    color: var(--text-detail-label);
+    font: inherit;
+    font-size: var(--fs-caption);
+    cursor: pointer;
+}
+
+.sm-craft-write-btn:hover,
+.sm-craft-write-btn.focused {
+    border-color: var(--text-primary-hover);
+    color: var(--text-primary-hover);
+}
 
 .sm-forged-section { flex: 0 0 auto; }
 
@@ -35980,6 +36387,53 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     box-shadow: 0 1px 2px var(--shadow-black-translucent-55);
 }
 
+/* A chip that can explain itself takes the mouse back, even though the HUD
+   layer over the canvas does not (BattleSystem/ShowStatesUI.js). */
+.bse-hud-chip[data-tip-title] {
+    pointer-events: auto;
+    cursor: help;
+}
+
+/* The hover explanation of a status tag. Parchment, pinned to the chip, and
+   above everything the battle draws. */
+.state-tip {
+    position: fixed;
+    z-index: 100000;
+    display: none;
+    max-width: 320px;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-detail-label);
+    background: var(--bg-panel);
+    border: 1px solid var(--state-tip-ink, var(--border-subtle));
+    border-radius: 4px;
+    box-shadow: 0 4px 14px var(--shadow-black-translucent-55);
+    pointer-events: none;
+    text-align: left;
+}
+
+.state-tip.state-tip--on { display: block; }
+
+.state-tip-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: var(--state-tip-ink, var(--text-primary-hover));
+}
+
+.state-tip-desc { margin-bottom: 5px; }
+
+.state-tip-row { opacity: 0.85; }
+
+.state-tip-label {
+    font-weight: 700;
+    margin-right: 5px;
+    opacity: 0.75;
+}
+
 /* The help and item panels slide in from the right edge. */
 .bse-slide-panel {
     position: fixed;
@@ -36011,6 +36465,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    text-align: center;
     padding: 16px 20px;
     font-family: var(--font-ui);
     font-weight: bold;
@@ -37230,9 +37685,7 @@ select option:hover {
     padding-left: 24px;
 }
 
-.book-spread.vg-book::before {
-    left: 58%;
-}
+.book-spread.vg-book { --spine-x: 58%; }
 
 /* The three pages sit on ONE line. Four names wrapped onto a second line and
    the strip stopped reading as a strip. */
@@ -37614,6 +38067,38 @@ select option:hover {
     opacity: 0.35;
 }
 
+/* The tip strip: what the buttons do on a screen that has no controls to stamp
+   a badge inside (a 3D minigame, the voxel world). Written by the controller
+   layer (Core/ControllerSystem.js) and only while a pad is the device in hand. */
+#pad-tips {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    pointer-events: none;
+    z-index: 12000;
+}
+
+#pad-tips .pad-tip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    font-size: var(--fs-caption);
+    color: var(--text-primary-hover);
+    background: var(--shadow-primary-hover-translucent-5);
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 4px;
+}
+
+#pad-tips .pad-tip-label {
+    letter-spacing: 0.02em;
+}
+
 /* The search field is a keyboard control: there is no way to type a query on a
    pad, so its handle is neither shown nor walked to while one is in hand
    (window.PadUI marks the document). */
@@ -37642,4 +38127,137 @@ body.pad-input .kb-only {
 
 .skill-detail-columns .inspect-spec-row {
     max-width: none;
+}
+
+
+/* =========================================================================
+   Two-panel picker (UI/TwoPanelPicker.js)
+   Two lists side by side and a row that moves between them: who travels and
+   who is benched, who takes a shift, what comes out of the bag and onto the
+   shelves. One widget, so it looks the same wherever it is drawn.
+   ========================================================================= */
+.tpp-board {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.tpp-title {
+    font-family: var(--font-ui);
+    font-size: var(--fs-heading);
+    font-weight: bold;
+    color: var(--text-detail-heading);
+    margin: 0;
+    letter-spacing: 0.04em;
+}
+
+.tpp-panels {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    min-width: 0;
+}
+
+.tpp-panel {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tpp-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    font-family: var(--font-ui);
+    border-bottom: 1px solid var(--border-subtle, var(--text-text-alt-4));
+    padding-bottom: 3px;
+}
+
+.tpp-panel-title {
+    font-size: var(--fs-heading);
+    font-weight: bold;
+}
+
+.tpp-panel-count {
+    font-size: var(--fs-caption);
+    color: var(--text-text-alt-4);
+}
+
+/* The drop target. No dashed borders anywhere: the zone is held by its own
+   spacing, and a row dragged over it draws the one gold hairline. */
+.tpp-zone {
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 6px 6px 0;
+    min-height: 56px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.tpp-zone--over {
+    border-color: var(--text-primary-hover);
+}
+
+.tpp-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 6px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+}
+
+.tpp-row[draggable="true"] { cursor: grab; }
+.tpp-row[draggable="true"]:active { cursor: grabbing; }
+.tpp-row.is-disabled { opacity: 0.55; }
+
+.tpp-icon {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+}
+
+.tpp-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.tpp-name {
+    font-family: var(--font-ui);
+    font-size: var(--fs-body);
+    font-weight: bold;
+}
+
+.tpp-count {
+    margin-left: 5px;
+    font-weight: normal;
+    color: var(--text-text-alt-4);
+}
+
+.tpp-sub,
+.tpp-note {
+    font-size: var(--fs-caption);
+    font-weight: normal;
+    color: var(--text-text-alt-4);
+}
+
+.tpp-sub { margin-left: 6px; }
+
+.tpp-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 6px;
+}
+
+.tpp-move { white-space: nowrap; }
+
+.tpp-empty,
+.tpp-hint {
+    font-size: var(--fs-caption);
+    color: var(--text-text-alt-4);
+    padding: 4px 2px 8px;
 }

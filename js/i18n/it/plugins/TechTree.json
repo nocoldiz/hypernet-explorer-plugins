@@ -283,5 +283,8 @@
     "nobelSuffix": ", e si parla già di un premio Nobel",
     "credit": " Il merito va a {who} e alla sua cerchia.",
     "theotecnical": "il Santo Impero Vaticano ha promulgato {name}"
+  },
+  "toast": {
+    "title": "Scoperta"
   }
 }

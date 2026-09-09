@@ -870,6 +870,18 @@
     // Broadcast a discovery so NPC/news systems can weave it into dialogue.
     function dispatchDiscovery(tree, node, disc) {
         announceDiscovery(tree, node, disc);
+        // A discovery is world-shared and lands whether the party made it or
+        // read about it, so it is told the moment it happens rather than only
+        // in the archive.
+        try {
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(discoveryNews(tree, node, disc && disc.leader), {
+                    severity: 'good',
+                    title: T('TechTree.toast.title'),
+                    key: 'tech:' + tree.id + ':' + node.id  // i18n-ignore  dedupe key
+                });
+            }
+        } catch (e) { /* ignore */ }
         try {
             if (typeof window.TechTreeNPCHook === 'function') {
                 window.TechTreeNPCHook(tree, node, disc);

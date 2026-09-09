@@ -2,5 +2,30 @@
   "unknownCountry": "Unknown",
   "unknownLeader": "Unknown",
   "independent": "Independent",
-  "army": "Army"
+  "army": "Army",
+  "campaign": {
+    "powerArmy": "{power} field army, under {leader}",
+    "independentArmy": "{leader}'s own column",
+    "strength": "{count} under arms.",
+    "choiceEmpathize": "Empathize with the leader",
+    "choiceParlay": "Ask for a parlay",
+    "choiceAttack": "Attack the army",
+    "choiceLeave": "Walk away",
+    "parlayWelcome": "{leader} receives you as a friend, and the road ahead is opened.",
+    "parlayPassage": "{leader} grants passage, and nothing more.",
+    "parlayDemand": "{leader} hears you out, then names a price for the courtesy.",
+    "parlayRefused": "{leader} refuses the parlay and orders the column on.",
+    "parlayAlreadyAnswered": "{leader} has given you an answer today already.",
+    "noArmy": "You have no troops to send against them.",
+    "engagedWith": "In the field against {leader}, {count} under arms.",
+    "choiceHelp": "Fight for {leader}",
+    "status": {
+      "patrolling": "Patrolling",
+      "garrisoned": "Garrisoned",
+      "marching": "Marching",
+      "reinforcing": "Reinforcing",
+      "battling": "In battle",
+      "retreating": "Retreating"
+    }
+  }
 }

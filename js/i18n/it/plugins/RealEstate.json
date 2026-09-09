@@ -53,7 +53,9 @@
     "totalShares": "Azioni Totali",
     "available2": "Disponibili",
     "evicted": "Sfrattato da \"{name}\": affitto non pagato.",
-    "appName": "Borsa Immobiliare"
+    "appName": "Borsa Immobiliare",
+    "manageShop": "Gestisci il negozio",
+    "manageFromDeeds": "Il registro del negozio si apre dalla pagina Atti."
   },
   "company": {
     "lemoncorp": {

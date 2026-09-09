@@ -1305,6 +1305,14 @@
             this._camLook.lerp(this._wantLook, Math.min(1, k * 2.2));
             this.camera.position.copy(this._camPos);
             this.camera.lookAt(this._camLook);
+            // The race directs its own shots; the right stick lets the player
+            // look around whichever one is running (window.Controller), and the
+            // shot springs back the moment the stick is let go.
+            if (!this._orbit && window.Controller) this._orbit = window.Controller.orbit({});
+            if (this._orbit) {
+                this._orbit.update(dt);
+                this._orbit.applyTo(this.camera, this._camLook);
+            }
         }
 
         // A camera that has to be somewhere sensible on the very first frame,

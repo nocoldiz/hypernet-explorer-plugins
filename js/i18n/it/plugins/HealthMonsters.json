@@ -51,7 +51,6 @@
     "menu": {
       "partRow": "{part}  {percent}%  colpo {chance}%",
       "partRowCurrent": "{part}  {percent}%  colpo {chance}%  (mirato)",
-      "more": "Altro... ({count})",
       "clear": "Non mirare",
       "back": "Indietro",
       "noParts": "Non resta nulla da mirare",
@@ -73,7 +72,6 @@
       "noLimb": "Nessun arto libero",
       "noTarget": "Niente da afferrare",
       "back": "Indietro",
-      "more": "Altro... ({count})",
       "holdRow": "{name}  {chance}%",
       "holdBlocked": "{name}  ({reason})",
       "blocked": {

@@ -1047,8 +1047,78 @@
             // face has to be the same face in every savegame of the world) still
             // gets both the exact share and a uniform pick inside the pool.
             // options: { mapId, filter }.
+            // ── The world of chaos ─────────────────────────────────────
+            // Every sheet in the wardrobe is fair game and nothing narrows it:
+            // the crowd is drawn from people, animals, creatures, aliens, the
+            // dead and the goblins alike. What each of those is WORTH is rolled
+            // once per world, so one chaos world is overrun with animals and
+            // the next with the dead, rather than every one of them settling on
+            // the same average mix. Beta and VIP sheets stay out, exactly as
+            // they do everywhere else: a face drawn for one person is still
+            // that person's.
+            chaosBuckets() {
+                const slot = "chaos:buckets";
+                if (!poolCache[slot]) {
+                    const data = db();
+                    const buckets = { people: [], animal: [], creature: [], zombie: [], goblin: [], alien: [] };
+                    Object.keys(data).forEach(k => {
+                        const e = data[k];
+                        if (!e || e.npc !== true || e.beta === true || e.vip === true) return;
+                        if (e.aliens === true) buckets.alien.push(k);
+                        else if (e.animal === true) buckets.animal.push(k);
+                        else if (e.creature === true) buckets.creature.push(k);
+                        else if (e.zombie === true) buckets.zombie.push(k);
+                        else if (this.isGoblinSheet(k)) buckets.goblin.push(k);
+                        else buckets.people.push(k);
+                    });
+                    poolCache[slot] = buckets;
+                }
+                return poolCache[slot];
+            },
+
+            // One sheet for a chaos world, off the same single seeded float
+            // every other pick is made from: the draw chooses the bucket by its
+            // rolled weight and what is left of it chooses inside the bucket.
+            chaosNpcKey(r, options) {
+                const CW = window.ChaosWorld;
+                if (!CW) return null;
+                const opts = options || {};
+                const buckets = this.chaosBuckets();
+                const names = [];
+                const weights = [];
+                let total = 0;
+                Object.keys(buckets).forEach(name => {
+                    let list = buckets[name];
+                    if (typeof opts.filter === "function") list = list.filter(opts.filter);
+                    if (!list.length) return;
+                    // Never zero: a bucket that exists is always reachable, it
+                    // is only ever rare.
+                    const w = 0.05 + CW.roll("npcmix:" + name) * 0.95;
+                    names.push(list);
+                    weights.push(w);
+                    total += w;
+                });
+                if (!names.length) return null;
+                let draw = (typeof r === "number" && r >= 0 && r < 1) ? r : Math.random();
+                let acc = 0;
+                for (let i = 0; i < names.length; i++) {
+                    const share = weights[i] / total;
+                    if (draw < acc + share || i === names.length - 1) {
+                        const inner = Math.min(0.999999, Math.max(0, (draw - acc) / share));
+                        const list = names[i];
+                        return list[Math.min(list.length - 1, Math.floor(inner * list.length))];
+                    }
+                    acc += share;
+                }
+                return null;
+            },
+
             pickNpcKey(r, options) {
                 const opts = options || {};
+                if (window.ChaosWorld && window.ChaosWorld.active()) {
+                    const chaosKey = this.chaosNpcKey(r, opts);
+                    if (chaosKey) return chaosKey;
+                }
                 const mode = opts.populationMode || this.populationMode();
                 // Goblin country (see GOBLIN_SHARE). A world that already
                 // answers for who its people are settles it instead: everybody

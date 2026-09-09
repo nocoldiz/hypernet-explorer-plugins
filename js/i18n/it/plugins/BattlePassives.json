@@ -30,7 +30,7 @@
     },
     "38": {
       "name": "Contraente",
-      "desc": "Guadagni una taglia in oro per ogni nemico sconfitto e i lavori di combattimento pagano di più."
+      "desc": "Guadagni una taglia in oro per ogni nemico sconfitto, i lavori di combattimento pagano di più e ogni mercenario nel gruppo taglia del 5% il mantenimento settimanale del tuo esercito."
     },
     "32": {
       "name": "Feldmaresciallo",
@@ -86,7 +86,7 @@
     },
     "27": {
       "name": "Maestria Arcana",
-      "desc": "Tutti i costi MP dei tuoi incantesimi sono ridotti del 20%."
+      "desc": "Tutti i costi MP dei tuoi incantesimi sono ridotti del 20% e ottieni il doppio dei punti specializzazione da ogni libro che leggi."
     },
     "36": {
       "name": "Immagine Speculare",
@@ -158,7 +158,7 @@
     },
     "51": {
       "name": "Cura Premurosa",
-      "desc": "Ogni pozione e oggetto curativo che usi ristora il 30% in più."
+      "desc": "Ogni pozione e oggetto curativo che usi ristora il 30% in più, e diagnostichi ogni malattia del gruppo il giorno stesso in cui viene contratta."
     },
     "61": {
       "name": "Sangue Divino",
@@ -186,7 +186,7 @@
     },
     "58": {
       "name": "Meteorologo",
-      "desc": "Prevedi sempre il clima attuale e futuro e il suo effetto su raccolti e api."
+      "desc": "Prevedi sempre il clima attuale e futuro e il suo effetto su raccolti e api, e mentre cadono pioggia, tempesta o neve rigeneri il 5% dei tuoi MP e 5 TP a turno."
     },
     "46": {
       "name": "Pass Stampa",
@@ -206,15 +206,15 @@
     },
     "52": {
       "name": "Raccoglitore",
-      "desc": "Raccogli passivamente cibo e materiali selvatici e ottieni di più da piante e bottini."
+      "desc": "Raccogli passivamente cibo e materiali selvatici, ottieni di più da piante e bottini e recuperi il doppio dei materiali da ciò che smonti sulla mappa."
     },
     "56": {
       "name": "Pollice Verde",
-      "desc": "I tuoi raccolti crescono il 25% più in fretta e rendono di più, e gli animali maturano e producono prima."
+      "desc": "I tuoi raccolti crescono il 25% più in fretta, gli animali maturano e producono prima e le tue piante e i tuoi animali rendono il triplo."
     },
     "57": {
       "name": "Boscaiolo",
-      "desc": "Raccogli legno extra e maneggi le asce con danno bonus e una probabilita di abbattere nemici grossi."
+      "desc": "Raccogli legno extra, abbattendo un albero ottieni dieci volte i materiali e maneggi le asce con danno bonus e una probabilità di abbattere nemici grossi."
     },
     "43": {
       "name": "Ignifugo",
@@ -238,7 +238,7 @@
     },
     "44": {
       "name": "Legge",
-      "desc": "Accumuli meno taglia, ottieni clemenza nei processi e puoi arrestare nemici umanoidi indeboliti."
+      "desc": "Accumuli meno taglia, ottieni clemenza nei processi, puoi arrestare nemici umanoidi indeboliti e firmi le tue stesse accuse come atti legittimi, fino a 50€ al giorno per ogni livello del tuo grado."
     },
     "55": {
       "name": "Mercante",
@@ -246,7 +246,7 @@
     },
     "60": {
       "name": "Spettacolo",
-      "desc": "Guadagni oro e simpatia esibendoti, e la squadra guadagna morale dopo ogni vittoria ai minigiochi."
+      "desc": "Guadagni oro e simpatia esibendoti, il gruppo guadagna morale dopo ogni vittoria nei minigiochi e il Divertimento di tutti sale da solo finché viaggi con loro."
     },
     "66": {
       "name": "Potenziato",
@@ -347,5 +347,21 @@
     "aegis": "Egida {pct}%",
     "night": "Notte +15%",
     "gunFu": "Gun-Fu"
+  },
+  "chipInfo": {
+    "next": "Cosa sta per fare questo mostro, letto da un Oracolo nel gruppo.",
+    "pin": "Prese mantenute sul bersaglio attuale. La terza lo immobilizza del tutto.",
+    "chi": "Chi accumulato dall'Artista Marziale. Ogni terza azione è gratuita.",
+    "combo": "Combo accumulate schivando. Ognuna rende il colpo successivo più forte.",
+    "decoys": "Doppi illusori ancora in piedi. Ognuno assorbe un attacco diretto a te.",
+    "iaido": "La lama è nel fodero e pronta: il primo colpo dello scontro affonda.",
+    "edge": "L'elemento portato dalla lama dall'ultimo incantesimo lanciato.",
+    "attuned": "In sintonia con il meteo: gli incantesimi di questo elemento sono più forti.",
+    "souls": "Anime raccolte dai caduti, spese in potere negromantico.",
+    "divineBlood": "L'unica resurrezione concessa dal sangue divino è ancora intatta.",
+    "rage": "Furia di sangue: più è vicino alla morte, più forte colpisce.",
+    "aegis": "La protezione che il Guardiano sta mantenendo sul gruppo adesso.",
+    "night": "Potenziamento notturno: il Cultista è più forte quando è buio.",
+    "gunFu": "Un'arma a distanza è equipaggiata, quindi il colpo di rimessa è pronto."
   }
 }

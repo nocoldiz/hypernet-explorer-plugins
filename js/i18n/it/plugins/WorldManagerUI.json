@@ -28,6 +28,7 @@
   "created": "Creato",
   "worldDate": "Data del mondo",
   "savegames": "Salvataggi",
+  "epidemics": "Epidemie attive",
   "setActive": "IMPOSTA ATTIVO",
   "delete": "ELIMINA",
   "historicalArchive": "ARCHIVIO STORICO",
@@ -68,6 +69,7 @@
   "nextPopulation": "Popolazione successiva",
   "populationModes": {
     "normal": "Normale",
+    "chaos": "Mondo del caos",
     "goblin": "Modalità goblin",
     "monster": "Mondo di mostri",
     "empty": "Mondo vuoto",
@@ -76,6 +78,7 @@
   },
   "populationNotes": {
     "normal": "La storia com'è andata. Ognuno è chi è e il mondo è popolato come è stato scritto.",
+    "chaos": "Niente sta dove era stato messo. Ogni incontro e' pescato dall'intero bestiario, ogni volto nella folla e' quello di uno sconosciuto, ogni negozio ha merce e prezzi casuali, e un livello insegna quello che il mondo ha voglia di insegnare. Cosa sia una cosa non cambia mai: cambia solo quale incontri, e quanto costa.",
     "goblin": "Sono tutti goblin. Esistono solo volti, busti e archetipi goblin, ogni personaggio che crei lo è, e i goblin sono di gran lunga la cosa più comune che si aggira sulla mappa.",
     "monster": "Qui non cammina nulla di umano. Persone, elfi e goblin sono spariti dalla folla, dal guardaroba e dalla fauna; il mondo è popolato da ogni altro archetipo esistente.",
     "empty": "Non è rimasto nessuno. Niente persone, niente negozianti, niente notizie, niente epidemie, niente legge e niente lavoro; la storia si ferma al 1 gennaio 2000, gli immobili non valgono nulla e le città stanno tornando verdi.",

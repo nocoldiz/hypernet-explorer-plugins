@@ -199,7 +199,7 @@
  * Apparitions
  * ============================================================================
  *
- * Figures stand about in a dream: monster art out of img/enemies/Dreams and
+ * Figures stand about in a dream: monster art out of img/enemies and
  * the game's own walking sprites (every sheet in the NPC catalogue, betas
  * included), each one a camera-facing billboard. A walking sprite is
  * DIRECTIONAL, so circling one shows its back, its flank and its face in turn
@@ -1730,7 +1730,7 @@
     // Apparitions: the faces a dream borrows.
     //
     // Two sources, drawn the same way. The first is the monster art in
-    // img/enemies/Dreams, which nothing else in the game uses: one flat card
+    // img/enemies, the game's own monster art: one flat card
     // turned at the sleeper, as tall as the dream feels like making it. The
     // second is the game's own walking sprites, every sheet the NPC catalogue
     // knows, betas included, and those are DIRECTIONAL: the sheet holds four
@@ -1740,54 +1740,56 @@
     // Neither is instanced. There are a couple of dozen, each carries its own
     // frame of its own sheet, and each has to be able to answer a blow.
     // =========================================================================
-    // i18n-ignore-start: file names under img/enemies/Dreams, not display text.
+    // i18n-ignore-start: file names under img/enemies, not display text.
     const DREAM_FACES = [
-        '10 Backwards Bird.png', '10 Sewers slime.png', '1007 Arctic Fox.png',
-        '101 Pregnant Seahorse.png', '1011 Seal Pup.png', '103 Rabid Hyena.png',
-        '104 Reanimated Guard.png', '105 Reef Guppy.png', '1050 Pyroshell Tortoise.png',
-        '108 Rubber Reality Blob.png', '11 Bi Human.png', '11 Thunder Sprite.png',
-        '111 Sewer Rat.png', '112 Skin Balloon.png', '115 Slow Turtle.png',
-        '116 Snow Werewolf.png', '117 Spore Wanderer.png', '118 Squeaky Turnip Fiend.png',
-        '120 Stone Shifter.png', '121 Surveillance Drone.png', '125 Tax Collector.png',
-        '126 Taxidoggo.png', '127 Thirsty Camel.png', '128 Tide Crab.png', '129 Tiny Chick.png',
-        '13 Blood Initiate.png', '130 Tomb Guardian.png', '131 Tongue Leech.png',
-        '133 Totemic Sprout.png', '134 Tourist Skeleton.png', '136 Undead Archer.png',
-        '138 Wandering Eyeball.png', '139 Wasteland Beaver.png', '14 Blood Mosquito.png',
-        '140 Weeping Mask.png', '155 Abyssal Serpent.png', '156 Acid Ant.png',
-        '157 Amateur Pugilist.png', '16 Bog Hatchling.png', '161 Azure Slime.png',
-        '162 Baby Doll Head.png', '166 Bandit Chief.png', '167 Bandit Cleric.png',
-        '168 Bandit Crossbowman.png', '17 Bone Warrior.png', '171 Bandit Pyromancer.png',
-        '176 Black Panther.png', '177 Blizzard Owl.png', '178 Bloated Whale.png',
-        '18 Boneyard Hunter.png', '183 Boxing Elemental.png', '185 Brown Bear.png',
-        '187 Cave Gnome.png', '19 Bubble Squid.png', '191 Coral Guardian.png',
-        '192 Cautious Opossum .png', '2 Abandoned Novice.png', '2 Goblin Warrior.png',
-        '20 Bubble Squid.png', '200 Death\'s Head.png', '202 Dire Pig.png', '206 Gun Burger.png',
-        '207 Dream Weaver.png', '209 Dryad Protector.png', '21 Buzzing Bumblebee.png',
-        '213 Elven Frost Mage.png', '22 Caffeinated Squirrel.png', '222 Ember Caster.png',
-        '226 Eyeless Bat.png', '23 Catfish.png', '232 Forest Stag.png', '24 Catican.png',
-        '25 Catizard.png', '26 Cautious Opossum.png', '27 Cotton Fox.png', '28 Crawling Hand.png',
-        '29 Crypt Sentinel.png', '3 Ancient Skeleton.png', '30 Cultist Acolyte.png',
-        '32 Decaying Corpse.png', '33 Desert Raider.png', '34 Desperate Pufferfish.png',
-        '35 Disco Beetle.png', '36 Double Singer.png', '37 Draconic Dragonfly.png',
-        '39 Electromagnetic Ghoul.png', '4 Anxiety Elemental.png', '4 Goblin Chieftain.png',
-        '40 Ember Imp.png', '41 Expired Ooze.png', '411 Ghost Wisp.png', '420 Lingering Spirit.png',
-        '43 Fallen Warrior.png', '44 Fear Siphon.png', '45 Feral Alley Cat.png',
-        '46 Festering Corpse.png', '47 Fidget Sprite.png', '473 Curious Rabbit.png',
-        '476 Crimson Fish.png', '478 Ladybug.png', '479 Squirrel.png', '48 Field Mouse.png',
-        '480 Earthworm.png', '481 Quacking Duck.png', '483 Blue Jay.png', '484 Skunk.png',
-        '485 Grasshopper.png', '49 Finger Worm.png', '5 Apprentice Pyromancer.png',
-        '5 Forest Treant.png', '50 Flamingo Sentinel.png', '51 Flower Pixie.png',
-        '52 Forest Poacher.png', '53 Forest Rat.png', '54 Forgotten Acolyte.png',
-        '55 Free Lobster.png', '57 Frost-Touched Thrall.png', '58 Iron Horse.png',
-        '59 Garden Frog.png', '6 Apprentice\'s Remains.png', '6 Dodger Imp.png',
-        '61 Giggling Skull.png', '624 Wild Rabbit.png', '63 Golden Seahorse.png',
-        '66 Graveyard Shambler.png', '679 Rotvulture.png', '717 Spectral Songbird.png',
-        '74 Ice Wolf Pup.png', '748 Timeworn Owlbear.png', '75 Inside-Out Critter.png',
-        '76 Karaoke Banshee.png', '77 Kazoo Imp.png', '79 Lazy Cat.png', '8 Armored Remains.png',
-        '8 Desert Scorpion.png', '81 Lizard Sniper.png', '82 Lost Memory.png',
-        '83 Maggot Slail.png', '86 Mine Slave.png', '88 Mischievous Sprite.png', '89 Mole.png',
-        '9 Compressed air.png', '90 Mr. Inadequate.png', '91 Novice Boxer.png',
-        '93 Origami Crane.png', '97 Pillow Guardian.png', 'Reganite.png', 'pistola burger.png'
+        "10 - Backwards Bird.png", "101 - Pregnant Seahorse.png", "102 - Quacking Duck.png",
+        "103 - Rabid Hyena.png", "104 - Reanimated Guard.png", "105 - Reef Guppy.png",
+        "1050 - Pyroshell Tortoise.png", "108 - Rubber Reality Blob.png", "11 - Bi Human.png",
+        "110 - Seal Pup.png", "111 - Sewer Rat.png", "112 - Skin Balloon.png",
+        "113 - Skunk.png", "115 - Slow Turtle.png", "116 - Snow Werewolf.png",
+        "117 - Spore Wanderer.png", "118 - Squeaky Turnip Fiend.png", "119 - Squirrel.png",
+        "120 - Stone Shifter.png", "121 - Surveillance Drone.png", "125 - Tax Collector.png",
+        "126 - Taxidoggo.png", "127 - Thirsty Camel.png", "128 - Tide Crab.png",
+        "129 - Tiny Chick.png", "13 - Blood Initiate.png", "130 - Tomb Guardian.png",
+        "131 - Tongue Leech.png", "133 - Totemic Sprout.png", "134 - Tourist Skeleton.png",
+        "136 - Undead Archer.png", "138 - Wandering Eyeball.png", "139 - Wasteland Beaver.png",
+        "14 - Blood Mosquito.png", "140 - Weeping Mask.png", "15 - Blue Jay.png",
+        "155 - Abyssal Serpent.png", "156 - Acid Ant.png", "157 - Amateur Pugilist.png",
+        "16 - Bog Hatchling.png", "161 - Azure Slime.png", "162 - Baby Doll Head.png",
+        "166 - Bandit Chief.png", "167 - Bandit Cleric.png", "168 - Bandit Crossbowman.png",
+        "17 - Bone Warrior.png", "171 - Bandit Pyromancer.png", "176 - Black Panther.png",
+        "177 - Blizzard Owl.png", "178 - Bloated Whale.png", "18 - Boneyard Hunter.png",
+        "183 - Boxing Elemental.png", "185 - Brown Bear.png", "187 - Cave Gnome.png",
+        "189 - Compressed air.png", "19 - Bubble Squid.png", "191 - Coral Guardian.png",
+        "2 - Abandoned Novice.png", "200 - Death's Head.png", "201 - Desert Scorpion.png",
+        "202 - Dire Pig.png", "205 - Dodger Imp.png", "206 - Gun Burger.png",
+        "207 - Dream Weaver.png", "209 - Dryad Protector.png", "21 - Buzzing Bumblebee.png",
+        "213 - Elven Frost Mage.png", "22 - Caffeinated Squirrel.png", "222 - Ember Caster.png",
+        "226 - Eyeless Bat.png", "23 - Catfish.png", "232 - Forest Stag.png",
+        "233 - Forest Treant.png", "24 - Catican.png", "25 - Catizard.png",
+        "258 - Goblin Chieftain.png", "26 - Cautious Opossum.png", "267 - Goblin Warrior.png",
+        "27 - Cotton Fox.png", "28 - Crawling Hand.png", "29 - Crypt Sentinel.png",
+        "3 - Ancient Skeleton.png", "30 - Cultist Acolyte.png", "31 - Curious Rabbit.png",
+        "32 - Decaying Corpse.png", "33 - Desert Raider.png", "34 - Desperate Pufferfish.png",
+        "35 - Disco Beetle.png", "36 - Double Singer.png", "360 - Thunder Sprite.png",
+        "37 - Draconic Dragonfly.png", "38 - Earthworm.png", "39 - Electromagnetic Ghoul.png",
+        "390 - Wild Rabbit.png", "4 - Anxiety Elemental.png", "40 - Ember Imp.png",
+        "41 - Expired Ooze.png", "43 - Fallen Warrior.png", "44 - Fear Siphon.png",
+        "45 - Feral Alley Cat.png", "46 - Festering Corpse.png", "47 - Fidget Sprite.png",
+        "476 - Crimson Fish.png", "48 - Field Mouse.png", "49 - Finger Worm.png",
+        "5 - Apprentice Pyromancer.png", "50 - Flamingo Sentinel.png", "51 - Flower Pixie.png",
+        "52 - Forest Poacher.png", "53 - Forest Rat.png", "54 - Forgotten Acolyte.png",
+        "55 - Free Lobster.png", "57 - Frost-Touched Thrall.png", "576 - Iron Horse.png",
+        "59 - Garden Frog.png", "6 - Apprentice's Remains.png", "60 - Ghost Wisp.png",
+        "61 - Giggling Skull.png", "63 - Golden Seahorse.png", "64 - Grasshopper.png",
+        "66 - Graveyard Shambler.png", "679 - Rotvulture.png", "7 - Arctic Fox.png",
+        "717 - Spectral Songbird.png", "74 - Ice Wolf Pup.png", "748 - Timeworn Owlbear.png",
+        "75 - Inside-Out Critter.png", "76 - Karaoke Banshee.png", "77 - Kazoo Imp.png",
+        "78 - Ladybug.png", "79 - Lazy Cat.png", "8 - Armored Remains.png",
+        "80 - Lingering Spirit.png", "81 - Lizard Sniper.png", "82 - Lost Memory.png",
+        "83 - Maggot Slail.png", "86 - Mine Slave.png", "88 - Mischievous Sprite.png",
+        "89 - Mole.png", "90 - Mr. Inadequate.png", "91 - Novice Boxer.png",
+        "93 - Origami Crane.png", "956 - Sewers slime.png", "97 - Pillow Guardian.png"
     ];
     // i18n-ignore-end
 
@@ -1847,7 +1849,7 @@
         if (t !== undefined) return t;
         t = null;
         if (THREE.TextureLoader) {
-            t = new THREE.TextureLoader().load(encodeURI('img/enemies/Dreams/' + file));
+            t = new THREE.TextureLoader().load(encodeURI('img/enemies/' + file));
             if (THREE.SRGBColorSpace !== undefined) t.colorSpace = THREE.SRGBColorSpace;
             else if (THREE.sRGBEncoding !== undefined) t.encoding = THREE.sRGBEncoding;
             t.magFilter = THREE.LinearFilter;
@@ -2982,7 +2984,7 @@
             // The figures standing about in it, and how much of the art each
             // source supplies. A dream with no walking sprites is all monsters.
             // The figures standing about, and where each one's art comes from.
-            // The monster cards under img/enemies/Dreams are the dream's own
+            // The monster cards under img/enemies are the dream's own
             // art and nothing else in the game shows them, so the mix is tilted
             // their way: a walking sprite is a face the player has met already.
             apparitions: {
@@ -3366,15 +3368,24 @@
             const rx = p.rightX(), ry = p.rightY();
             if (rx || ry) {
                 // Squared response: the middle of the stick's throw is for
-                // aiming and the edge of it is for turning round.
-                this.yaw.rotation.y -= rx * Math.abs(rx) * PAD_LOOK_X * delta;
-                this.pitch.rotation.x -= ry * Math.abs(ry) * PAD_LOOK_Y * delta;
+                // aiming and the edge of it is for turning round. How fast that
+                // is, and which way up it reads, is the player's own setting and
+                // is asked of the controller layer so the dream turns its head
+                // at the same speed as everything else does.
+                const C = window.Controller;
+                const gain = C ? C.cameraSpeed() : 1;
+                const invert = (C && C.invertCameraY()) ? -1 : 1;
+                this.yaw.rotation.y -= rx * Math.abs(rx) * PAD_LOOK_X * gain * delta;
+                this.pitch.rotation.x -= ry * Math.abs(ry) * PAD_LOOK_Y * gain * invert * delta;
                 this.pitch.rotation.x = Math.max(-Math.PI / 2 + 0.05,
                     Math.min(Math.PI / 2 - 0.05, this.pitch.rotation.x));
             }
         }
 
         update(delta) {
+            // Dreaming has its own button table (window.Controller): B wakes,
+            // X runs, R1 swings whatever is in hand.
+            if (window.Controller) window.Controller.setMode('dream');
             const pad = padHelper();
             // The d-pad is the weapon rack in here, so a press on it is not a
             // request to walk anywhere, even though the engine folds the same
@@ -4793,7 +4804,7 @@
         // =====================================================================
         // Apparitions: the figures standing about in a dream.
         //
-        // Monster art out of img/enemies/Dreams (one flat card, no facing) and
+        // Monster art out of img/enemies (one flat card, no facing) and
         // the game's own walking sprites (four facings off the sheet, chosen
         // from where the sleeper is standing, so circling one walks round it).
         // Both are camera-facing, both talk when approached, and both can be

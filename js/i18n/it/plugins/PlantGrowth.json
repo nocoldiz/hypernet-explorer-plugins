@@ -81,5 +81,8 @@
     "harvest": "Raccogli",
     "remove": "Rimuovi",
     "check": "Controlla"
+  },
+  "toast": {
+    "ripe": "{plant} è pronto per il raccolto."
   }
 }

@@ -583,6 +583,29 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
           : T("Factions.holdsNothing"), true);
     }
 
+    // What it has in the field today. The campaign roster (ArmyCampaign, in
+    // ArmyEventsManager) rolls the standing columns of every power once a day;
+    // this is that list, read from the power's side: how many columns it has
+    // out, how many soldiers they add up to and who is commanding each of them.
+    // A power at peace on the day has none, and the row simply says so.
+    let armiesHTML = "";
+    if (isPower && window.ArmyCampaign && typeof window.ArmyCampaign.listArmies === "function") {
+      let columns = [];
+      try {
+        columns = window.ArmyCampaign.listArmies({ includeParty: false })
+          .filter(a => a.powerName === hp.name);
+      } catch (e) { columns = []; }
+      const soldiers = columns.reduce((sum, a) => sum + (a.troopCount || 0), 0);
+      armiesHTML = fact(T("Factions.armiesLbl", { count: columns.length }),
+        columns.length
+          ? columns.map(a => T("Factions.armyLine", {
+            leader: FRS.escapeText(String(a.leaderName || "")),
+            count: a.troopCount,
+            status: window.ArmyCampaign.statusLabel ? window.ArmyCampaign.statusLabel(a) : "",
+          })).join(", ")
+          : T("Factions.noArmies"), true);
+    }
+
     // What the party's own banner holds: who has joined it, who it answers to,
     // and the way back into the screen where both are changed.
     let ownFactionHTML = "";
@@ -678,12 +701,13 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
                 ${leadersHTML}
               </div>` : ""}
 
-            ${branchesHTML || countriesHTML || ownFactionHTML ? `
+            ${branchesHTML || countriesHTML || ownFactionHTML || armiesHTML ? `
               <div class="inspect-section-title">${T("Factions.holdingsTitle")}</div>
               <div class="ui-fact-grid">
                 ${ownFactionHTML}
                 ${branchesHTML}
                 ${countriesHTML}
+                ${armiesHTML}
               </div>` : ""}
 
             <div class="inspect-section-title">${T("Factions.diplomaticAgreements")}</div>

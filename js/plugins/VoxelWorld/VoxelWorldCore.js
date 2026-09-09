@@ -464,34 +464,22 @@
     const ZOOM_MAX         = 32000 * WORLD_SCALE;
 
     // -------------------------------------------------------------------------
-    // Raw gamepad access for the shoulder triggers and Y button. RPG Maker's
-    // gamepadMapper only exposes the analog sticks/face buttons through Input
-    // and ignores the triggers, so these are polled directly: L2/R2 zoom the
-    // chase/free camera, Y toggles first/third person (mirrors TAB).
+    // The pad, through the one controller layer (window.Controller). The world
+    // keeps this name because half the world reads it, but every answer comes
+    // from Core/ControllerSystem.js now, so the world and the menus agree about
+    // which port the player is on and what a trigger is worth.
     // -------------------------------------------------------------------------
     const GamepadRaw = {
         L2: 6, R2: 7, Y: 3,
         _heldY: false,
         pads() { return navigator.getGamepads ? (navigator.getGamepads() || []) : []; },
-        connected() {
-            for (const p of this.pads()) if (p && p.connected) return true;
-            return false;
-        },
+        connected() { return !!(window.Controller && window.Controller.connected()); },
         // Analog value 0..1 (digital buttons report 0 or 1).
-        value(index) {
-            let v = 0;
-            for (const p of this.pads()) {
-                if (!p || !p.connected || !p.buttons) continue;
-                const b = p.buttons[index];
-                if (!b) continue;
-                const bv = typeof b.value === 'number' ? b.value : (b.pressed ? 1 : 0);
-                if (bv > v) v = bv;
-            }
-            return v;
-        },
+        value(index) { return window.Controller ? window.Controller.value(index) : 0; },
         pressed(index) { return this.value(index) > 0.25; },
         // Edge-triggered: true only on the frame Y goes down.
         triggeredY() {
+            if (window.Controller) return window.Controller.triggered(this.Y);
             const now = this.pressed(this.Y);
             const was = this._heldY;
             this._heldY = now;

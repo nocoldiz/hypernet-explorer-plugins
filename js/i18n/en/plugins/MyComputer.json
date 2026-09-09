@@ -17,5 +17,71 @@
   "propsTitle": "{name} Properties",
   "propsBody": "{name}\n\nType: {type}\nLocation: {location}\nSize: {size} bytes",
   "typeFolder": "File Folder",
-  "typeFile": "File"
+  "typeFile": "File",
+  "forward": "Forward",
+  "up": "Up",
+  "views": "Views",
+  "search": "Search",
+  "folders": "Folders",
+  "view": {
+    "thumbnails": "Thumbnails",
+    "tiles": "Tiles",
+    "icons": "Icons",
+    "list": "List",
+    "details": "Details"
+  },
+  "menu": {
+    "file": "File",
+    "edit": "Edit",
+    "viewMenu": "View",
+    "favorites": "Favorites",
+    "tools": "Tools",
+    "help": "Help"
+  },
+  "col": {
+    "name": "Name",
+    "size": "Size",
+    "type": "Type",
+    "modified": "Date Modified"
+  },
+  "tasks": {
+    "fileAndFolder": "File and Folder Tasks",
+    "otherPlaces": "Other Places",
+    "details": "Details",
+    "newFolder": "Make a new folder",
+    "renameItem": "Rename this file",
+    "renameFolder": "Rename this folder",
+    "copyItem": "Copy this file",
+    "moveItem": "Move this file",
+    "deleteItem": "Delete this file",
+    "folderTasks": "Folder Tasks"
+  },
+  "cut": "Cut",
+  "copy": "Copy",
+  "paste": "Paste",
+  "rename": "Rename",
+  "newFolder": "New Folder",
+  "newFolderName": "New Folder",
+  "selectAll": "Select All",
+  "refresh": "Refresh",
+  "renamePrompt": "Type a new name for '{name}'.",
+  "renameTaken": "A file named '{name}' is already here.",
+  "pasteFailed": "The item could not be moved or copied.",
+  "status": "{count} objects",
+  "statusSelected": "{count} objects selected",
+  "statusSize": "{count} objects, {size} bytes",
+  "emptyFolder": "This folder is empty.",
+  "bytes": "{n} bytes",
+  "kb": "{n} KB",
+  "sizeOf": "Size: {size}",
+  "typeOf": "Type: {type}",
+  "printers": "Printers and Faxes",
+  "networkPlaces": "My Network Places",
+  "typeSystemFolder": "System Folder",
+  "driveNotReady": "There is no disk in drive {drive}.",
+  "drive": {
+    "fixed": "Local Disk",
+    "floppy": "3.5 Floppy",
+    "cd": "CD Drive"
+  }
 }

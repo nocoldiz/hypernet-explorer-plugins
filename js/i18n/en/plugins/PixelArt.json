@@ -16,6 +16,7 @@
     "new": "New",
     "open": "Open",
     "save": "Save",
+    "export": "Export to game folder",
     "setWallpaper": "Set as wallpaper",
     "undo": "Undo",
     "redo": "Redo",
@@ -39,6 +40,8 @@
       "fill": "Fill with colour",
       "picker": "Pick colour",
       "text": "Text"
-    }
+    },
+    "exported": "Saved to {file}",
+    "exportError": "Could not write the picture to the game folder."
   }
 }

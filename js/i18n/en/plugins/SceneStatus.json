@@ -38,14 +38,14 @@
   "attributesAbilities": "Attributes & Abilities",
   "characterTraits": "Character Traits",
   "classAbility": "Class Ability",
-  "tabPassives": "Passives",
+  "tabPassives": "Class Abilities",
   "tabTraits": "Traits",
   "tabAnatomy": "Anatomy",
   "tabAttributes": "Attributes",
   "tabBio": "Bio",
   "tabBackstory": "Backstory",
-  "passiveAbilities": "Passive Abilities",
-  "noPassives": "No passive abilities...",
+  "passiveAbilities": "Class Abilities",
+  "noPassives": "No class abilities...",
   "sourceClass": "Class",
   "sourceTrait": "Trait",
   "empathize": "Empathize",
@@ -85,7 +85,8 @@
   "statGear": "Gear",
   "statTraits": "Traits/Buffs",
   "statInjuries": "Injuries",
-  "statMod": "Mod"
+  "statMod": "Mod",
+  "sourceLimit": "Limit Break"
  },
  "trait": {
   "category": "Category:",

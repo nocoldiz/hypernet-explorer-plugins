@@ -995,6 +995,21 @@
   // by changeArchetype below and by the creature builder. An actor that never
   // went through either is a plain humanoid.
   function getActorArchetypeKeys(actor) {
+    // The spliced pair lives on _creatureArchetypes (what the creation wizard
+    // and every archetype setter write); _currentArchetype only ever holds the
+    // primary, so reading it alone silently threw the second half away and a
+    // robot-spliced humanoid came out with a plain human anatomy. The legacy
+    // "A / B" spelling is still understood for bodies written before the pair
+    // was stored as a list.
+    const pair = actor && actor._creatureArchetypes;
+    if (Array.isArray(pair) && pair.length) {
+      const list = [];
+      for (const key of pair) {
+        const one = String(key || "").trim();
+        if (one && !list.includes(one)) list.push(one);
+      }
+      if (list.length) return list;
+    }
     const stored = actor && actor._currentArchetype;
     const keys = String(stored || DEFAULT_ARCHETYPE)
       .split("/")
@@ -1098,6 +1113,9 @@
     // Initialize new body parts from archetype
     actor._bodyParts = {};
     actor._currentArchetype = archetypeName;
+    // A whole new body is built from this archetype alone: the spliced pair is
+    // rewritten with it, never left behind for getActorArchetypeKeys to find.
+    actor._creatureArchetypes = [archetypeName];
 
     for (const partKey in archetype.parts) {
       const archetypePart = archetype.parts[partKey];

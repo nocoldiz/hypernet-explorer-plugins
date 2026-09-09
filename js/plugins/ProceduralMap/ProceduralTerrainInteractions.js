@@ -512,6 +512,14 @@
       const food = rollForage(name, cfg.forage);
       if (food) addGain(gained, food, 1);
     }
+    // What the party is able to get out of the thing it just took apart. A
+    // Hunter-Gatherer strips anything twice over and a Lumberjack takes a
+    // whole tree rather than a few branches of it: the class passives own
+    // that answer (BattleSystemPassiveSkills.salvageMultiplier), not this
+    // table.
+    const P = window.BattleSystemPassiveSkills;
+    const mult = (P && P.salvageMultiplier) ? P.salvageMultiplier(cfg.spec) : 1;
+    if (mult > 1) for (const g of gained) g.qty *= mult;
     return gained;
   }
 

@@ -1481,6 +1481,20 @@
       leader.reduceLeisure(sleepRate * 0.5 * baseMultiplier * needAugmentRate(leader, "leisure"));
     }
 
+    // An Entertainer travelling with the party is a show that never stops:
+    // every member's Fun climbs while they are on the strength, and a second
+    // entertainer is a second act (BattleSystemPassiveSkills.leisureGainRate,
+    // the one answer to how big the show is). It is given to everybody, not
+    // only the leader, because everybody is watching it.
+    const showRate = (window.BattleSystemPassiveSkills &&
+      window.BattleSystemPassiveSkills.leisureGainRate)
+      ? window.BattleSystemPassiveSkills.leisureGainRate() : 0;
+    if (showRate > 0) {
+      for (const member of $gameParty.members()) {
+        if (member) member.addLeisure(sleepRate * 0.5 * showRate);
+      }
+    }
+
     // Apply legacy mechanics (debuffs, HP/MP drain, etc.) to all party members
     for (const actor of $gameParty.members()) {
       if (!actor) continue;

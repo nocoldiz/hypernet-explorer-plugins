@@ -28,6 +28,7 @@
   "created": "Created",
   "worldDate": "World date",
   "savegames": "Savegames",
+  "epidemics": "Active epidemics",
   "setActive": "SET ACTIVE",
   "delete": "DELETE",
   "historicalArchive": "HISTORICAL ARCHIVE",
@@ -68,6 +69,7 @@
   "nextPopulation": "Next population",
   "populationModes": {
     "normal": "Normal",
+    "chaos": "World of chaos",
     "goblin": "Goblin mode",
     "monster": "Monster world",
     "empty": "Empty world",
@@ -76,6 +78,7 @@
   },
   "populationNotes": {
     "normal": "History as it happened. Everyone is who they are and the world is populated as it was written.",
+    "chaos": "Nothing is where it was put. Every encounter is drawn from the whole bestiary, every face in the crowd is a stranger's, every shop is stocked and priced at random, and a level up teaches whatever the world feels like teaching. What a thing is never changes: only which one you meet, and what it costs.",
     "goblin": "Everyone is a goblin. Only goblin faces, busts and archetypes exist, every character you build is one, and goblins are far the commonest thing roaming the map.",
     "monster": "Nothing human walks here. People, elves and goblins are gone from the crowd, from the wardrobe and from the fauna; the world is populated from every other archetype there is.",
     "empty": "Nobody is left. No people, no shopkeepers, no news, no plagues, no law and no work; history stops on 1 January 2000, property is worth nothing, and the cities are going back to green.",

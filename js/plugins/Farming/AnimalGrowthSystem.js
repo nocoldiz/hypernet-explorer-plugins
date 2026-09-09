@@ -535,10 +535,14 @@
     // better at it by doing the round (see window.SpecializationXP).
     const skill = window.SpecializationXP
       ? window.SpecializationXP.multiplier("Animal Husbandry", 0.1) : 1;
+    // ...and a Farmer in the party gets three times as much out of the same
+    // pen (the Green Thumb passive, BattleSystemPassiveSkills).
+    const P = window.BattleSystemPassiveSkills;
+    const green = (P && P.growthYieldMultiplier) ? P.growthYieldMultiplier() : 1;
     for (const r of items) {
       const item = $dataItems[r.itemId];
       if (item) {
-        r.qty = Math.max(1, Math.round(r.qty * skill));
+        r.qty = Math.max(1, Math.round(r.qty * skill * green));
         deliverFarmProduce(item, r.qty);
       }
     }
@@ -673,6 +677,13 @@
       for (let i = 0; i < (def.produces || []).length; i++) {
         rec.produceTimers[`p${i}`] = now;
       }
+    }
+    // Growing up happens off screen, on a farm the party may be nowhere near.
+    if (oldStage !== rec.stage && rec.stage === "adult" && window.ParchmentToast) {
+      window.ParchmentToast.show(
+        T('AnimalGrowth.toast.grownUp', { animal: rec.animalId }),
+        { severity: "good", key: "animal-adult:" + rec.animalId }  // i18n-ignore  dedupe key
+      );
     }
     return oldStage !== rec.stage;
   }

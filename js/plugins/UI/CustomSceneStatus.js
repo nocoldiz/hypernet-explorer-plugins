@@ -52,7 +52,7 @@
  * - Right-page sections (Attributes / Traits / Passives / Anatomy), the last one
  *   read being the one the sheet opens on next time
  * - Scrollable biological limb-health vitals tracking (Dwarf Fortress limb damage)
- * - Fast, flicker-free rendering with left-page caching
+ * - Fast, flicker-free rendering with page caching
  */
 
 (() => {
@@ -984,9 +984,12 @@
         return ELEMENT_ICONS[parseInt(match[1], 10)] || 0;
     };
 
-    // Everything that is always on for this character: the class's signature
-    // passive and the passive each selected trait carries, both read from
-    // BattleSystemPassiveSkills so the wording matches the creation screens.
+    // Everything this character IS outside a fight and inside one: the class's
+    // own ability, the ability each selected trait carries (both read from
+    // BattleSystemPassiveSkills, so the wording matches the creation screens)
+    // and the limit break the class pulls off the floor once a day
+    // (window.LimitBreak). Em, carrying the vector gun, opens the pact book
+    // instead of her class's, and her card says so.
     function buildPassivesHTML(actor) {
         const api = window.BattleSystemPassiveSkills;
         const actorClass = actor.currentClass();
@@ -1014,6 +1017,31 @@
                     tag: T("SceneStatus.ui.sourceTrait")
                 });
             });
+        }
+
+        const LB = window.LimitBreak;
+        if (LB && actorClass) {
+            const card = LB.cardForClass ? LB.cardForClass(actorClass.id) : null;
+            if (card && card.name) {
+                rows.push({
+                    icon: 76,
+                    name: card.name,
+                    desc: card.desc,
+                    tag: T("SceneStatus.ui.sourceLimit")
+                });
+            }
+            // The pact the gun opens instead, which is nobody's but hers.
+            if (LB.usesGrimoire && LB.usesGrimoire(actor) && LB.grimoireCard) {
+                const pact = LB.grimoireCard();
+                if (pact && pact.name) {
+                    rows.push({
+                        icon: 76,
+                        name: pact.name,
+                        desc: pact.desc,
+                        tag: T("SceneStatus.ui.sourceLimit")
+                    });
+                }
+            }
         }
 
         if (!rows.length) {
@@ -1271,7 +1299,7 @@
         if (!spread) {
             this._dndContainer.innerHTML = `
                 <div class="book-spread">
-                    <div class="left-page">
+                    <div class="left-page status-13">
                         <div class="page-header-bar status-10">
                             <div class="back-button focusable status-11" onclick="SceneManager._scene.popScene()">
                                 ${backBtnText}
@@ -1279,6 +1307,62 @@
                             <h2 class="title status-12" id="status-actor-name"></h2>
                         </div>
                         
+                        <div class="backpack-tabs status-tabs" id="status-tabs"></div>
+
+                        <div id="status-lower-cards">
+                            <div class="status-tab-panel" data-status-tab="passives">
+                                <div class="bodyparts-card">
+                                    <div class="card-label">${T('SceneStatus.ui.passiveAbilities')}</div>
+                                    <div class="bodyparts-list" id="status-passives-list"></div>
+                                </div>
+                            </div>
+
+                            <div class="status-tab-panel" data-status-tab="backstory">
+                                <div class="bodyparts-card status-16">
+                                    <div class="status-bio-scroll" id="status-backstory-scroll"></div>
+                                </div>
+                            </div>
+
+                            <div class="status-tab-panel" data-status-tab="attributes">
+                                <div id="status-attr-cards">
+                                    <div class="stats-medallions-grid" id="status-medallions"></div>
+                                    <div id="status-stat-breakdown"></div>
+                                </div>
+
+                                <div class="status-alignment-row">
+                                    <div class="status-15" id="status-alignment-container"></div>
+                                    <div class="status-15" id="status-magicsystem-container"></div>
+                                </div>
+                            </div>
+
+                            <div class="status-tab-panel" data-status-tab="bio">
+                                <div class="bodyparts-card status-16">
+                                    <div class="status-bio-scroll" id="status-bio-scroll"></div>
+                                </div>
+                            </div>
+
+                            <div class="status-tab-panel" data-status-tab="traits">
+                                <div class="bodyparts-card">
+                                    <div class="card-label">${T('SceneStatus.ui.characterTraits')}</div>
+                                    <div class="status-traits-full" id="status-traits"></div>
+                                </div>
+                            </div>
+
+                            <div class="status-tab-panel" data-status-tab="diseases">
+                                <div class="bodyparts-card">
+                                    <div class="card-label">${T('SceneStatus.ui.tabDiseases')}</div>
+                                    <div class="bodyparts-list" id="status-diseases"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="status-actions" id="status-actions"></div>
+                    </div>
+                    <div class="right-page">
+                        <div class="status-right-header">
+                            <div class="companion-switcher" id="status-companion-switcher"></div>
+                        </div>
+
                         <div class="status-left-body">
                         <div class="status-bust-wrapper">
                             <canvas id="status-bust" width="440" height="500"></canvas>
@@ -1334,62 +1418,6 @@
                             <div class="anatomy-grid" id="bodyparts-scroll-container"></div>
                         </div>
                         </div>
-                    </div>
-                    <div class="right-page status-13">
-                        <div class="status-right-header">
-                            <div class="companion-switcher" id="status-companion-switcher"></div>
-                        </div>
-
-                        <div class="backpack-tabs status-tabs" id="status-tabs"></div>
-
-                        <div id="status-lower-cards">
-                            <div class="status-tab-panel" data-status-tab="passives">
-                                <div class="bodyparts-card">
-                                    <div class="card-label">${T('SceneStatus.ui.passiveAbilities')}</div>
-                                    <div class="bodyparts-list" id="status-passives-list"></div>
-                                </div>
-                            </div>
-
-                            <div class="status-tab-panel" data-status-tab="backstory">
-                                <div class="bodyparts-card status-16">
-                                    <div class="status-bio-scroll" id="status-backstory-scroll"></div>
-                                </div>
-                            </div>
-
-                            <div class="status-tab-panel" data-status-tab="attributes">
-                                <div id="status-attr-cards">
-                                    <div class="stats-medallions-grid" id="status-medallions"></div>
-                                    <div id="status-stat-breakdown"></div>
-                                </div>
-
-                                <div class="status-alignment-row">
-                                    <div class="status-15" id="status-alignment-container"></div>
-                                    <div class="status-15" id="status-magicsystem-container"></div>
-                                </div>
-                            </div>
-
-                            <div class="status-tab-panel" data-status-tab="bio">
-                                <div class="bodyparts-card status-16">
-                                    <div class="status-bio-scroll" id="status-bio-scroll"></div>
-                                </div>
-                            </div>
-
-                            <div class="status-tab-panel" data-status-tab="traits">
-                                <div class="bodyparts-card">
-                                    <div class="card-label">${T('SceneStatus.ui.characterTraits')}</div>
-                                    <div class="status-traits-full" id="status-traits"></div>
-                                </div>
-                            </div>
-
-                            <div class="status-tab-panel" data-status-tab="diseases">
-                                <div class="bodyparts-card">
-                                    <div class="card-label">${T('SceneStatus.ui.tabDiseases')}</div>
-                                    <div class="bodyparts-list" id="status-diseases"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="status-actions" id="status-actions"></div>
                     </div>
                 </div>
             `;
@@ -1762,9 +1790,10 @@
         this._dndActiveTab = tabId;
         rememberStatusTab(tabId);
         if (!silent) SoundManager.playCursor();
-        // Only the right page changes. Every panel is filled on refresh and then
-        // hidden, so showing another one is a class toggle: a full refresh here
-        // would redraw the left page and tear the 3D portrait down with it.
+        // Only the sections page changes. Every panel is filled on refresh and
+        // then hidden, so showing another one is a class toggle: a full refresh
+        // here would redraw the portrait page and tear the 3D model down with
+        // it.
         this.applyStatusTab();
     };
 
@@ -2324,7 +2353,7 @@
 
         // The shoulder buttons keep the party switcher they have on every other
         // book spread; left / right now turn the page's own tabs, which is the
-        // only thing those keys can mean once the right page has sections.
+        // only thing those keys can mean once the left page has sections.
         if (Input.isTriggered('pagedown')) {
             this.nextActor();
             return;
@@ -2373,8 +2402,8 @@
             return;
         }
 
-        // The anatomy grid lives on the left page now, so its cursor answers to
-        // up / down whichever section of the right page is being read.
+        // The anatomy grid lives on the right page, so its cursor answers to
+        // up / down whichever section of the left page is being read.
         const actor = this.actor();
         if (actor && actor._bodyParts) {
             const bodyParts = [];

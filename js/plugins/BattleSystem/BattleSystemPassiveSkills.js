@@ -599,6 +599,17 @@
   });
   reg(58, {
     // Meteorologist
+    // Weather they can read is weather they can work in: rain, a storm or snow
+    // falling on them is worth 5% of their MP and 5 TP a turn. `weatherType()`
+    // is the engine's own answer and the one every other plugin asks
+    // (NPCConversation, the fishing and surfing games).
+    xparam(actor, xparamId, base) {
+      if (xparamId !== 8 && xparamId !== 9) return base;   // MRG, TRG
+      const w = (typeof $gameScreen !== "undefined" && $gameScreen &&
+        ($gameScreen.weatherType ? $gameScreen.weatherType() : $gameScreen._weatherType)) || "none";
+      if (w !== "rain" && w !== "storm" && w !== "snow") return base;
+      return base + 0.05;
+    },
   });
   reg(46, {
     // Journalist
@@ -1527,6 +1538,14 @@
 
   // Live, per-actor class-gimmick state, formatted as HUD chips ({label,color}).
   // Only the first three members (the passive contributors) return chips.
+  // What a class gimmick chip means, for the hover explanation the HUD hangs
+  // on it (BattleSystem/ShowStatesUI.js). A counter on a card says how many;
+  // this says what they are for.
+  const chipInfo = (key) => {
+    const full = "BattlePassives.chipInfo." + key;
+    return T.has(full) ? T(full) : "";
+  };
+
   const elemShort = (id) => {
     const key = "BattlePassives.elem." + id;
     return T.has(key) ? T(key) : "";
@@ -1545,19 +1564,21 @@
         ) {
           chips.push({
             label: T("BattlePassives.chip.pin", { count: actor._pinCount }),
+            info: chipInfo("pin"),
             color: "#ff9f43",
           });
         }
         break;
       case 11: { // Martial Artist - Chi build toward the 3rd-action refund
         const c = (actor._chiCount || 0) % 3;
-        chips.push({ label: T("BattlePassives.chip.chi", { count: c }), color: "#66e0ff" });
+        chips.push({ label: T("BattlePassives.chip.chi", { count: c }), info: chipInfo("chi"), color: "#66e0ff" });
         break;
       }
       case 17: // Boxer - Combo stacks from dodging
         if (actor._comboStacks > 0) {
           chips.push({
             label: T("BattlePassives.chip.combo", { count: actor._comboStacks }),
+            info: chipInfo("combo"),
             color: "#ff9f43",
           });
         }
@@ -1566,19 +1587,21 @@
         if (actor._decoys > 0) {
           chips.push({
             label: T("BattlePassives.chip.decoys", { count: actor._decoys }),
+            info: chipInfo("decoys"),
             color: "#9ad0ff",
           });
         }
         break;
       case 26: // Samurai - Iaido first-strike ready
         if (actor._iaidoReady) {
-          chips.push({ label: T("BattlePassives.chip.iaido"), color: "#ffd166" });
+          chips.push({ label: T("BattlePassives.chip.iaido"), info: chipInfo("iaido"), color: "#ffd166" });
         }
         break;
       case 34: // Spellblade - carried spell element
         if (actor._spellEdgeElement) {
           chips.push({
             label: T("BattlePassives.chip.edge", { elem: elemShort(actor._spellEdgeElement) }),
+            info: chipInfo("edge"),
             color: "#c48cff",
           });
         }
@@ -1587,6 +1610,7 @@
         if (actor._attuneElement) {
           chips.push({
             label: T("BattlePassives.chip.attuned", { elem: elemShort(actor._attuneElement) }),
+            info: chipInfo("attuned"),
             color: "#8fe388",
           });
         }
@@ -1595,32 +1619,33 @@
         if (actor._soulCharges > 0) {
           chips.push({
             label: T("BattlePassives.chip.souls", { count: actor._soulCharges }),
+            info: chipInfo("souls"),
             color: "#c48cff",
           });
         }
         break;
       case 61: // Demigod - divine blood revive still available
         if (actor._divineBloodReady) {
-          chips.push({ label: T("BattlePassives.chip.divineBlood"), color: "#ffe07a" });
+          chips.push({ label: T("BattlePassives.chip.divineBlood"), info: chipInfo("divineBlood"), color: "#ffe07a" });
         }
         break;
       case 13: { // Berserker - current Bloodrage bonus
         const bonus = Math.round(40 * (1 - actor.hp / Math.max(1, actor.mhp)));
         if (bonus > 0) {
-          chips.push({ label: T("BattlePassives.chip.rage", { bonus: bonus }), color: "#ff6b6b" });
+          chips.push({ label: T("BattlePassives.chip.rage", { bonus: bonus }), info: chipInfo("rage"), color: "#ff6b6b" });
         }
         break;
       }
       case 33: { // Guardian - live Aegis ward strength
         const pct = Math.round(guardianWardFraction() * 100);
         if (pct > 0) {
-          chips.push({ label: T("BattlePassives.chip.aegis", { pct: pct }), color: "#7ec8ff" });
+          chips.push({ label: T("BattlePassives.chip.aegis", { pct: pct }), info: chipInfo("aegis"), color: "#7ec8ff" });
         }
         break;
       }
       case 8: // Cultist - night empowerment
         if (isNightHours()) {
-          chips.push({ label: T("BattlePassives.chip.night"), color: "#a99bff" });
+          chips.push({ label: T("BattlePassives.chip.night"), info: chipInfo("night"), color: "#a99bff" });
         }
         break;
     }
@@ -1638,7 +1663,7 @@
   // the player when the follow-up shot is actually online.
   TRAIT_PASSIVES[GUNFU_TRAIT_ID].chips = (actor) =>
     hasRangedWeapon(actor)
-      ? [{ label: T("BattlePassives.chip.gunFu"), color: "#ff9f43" }]
+      ? [{ label: T("BattlePassives.chip.gunFu"), info: chipInfo("gunFu"), color: "#ff9f43" }]
       : [];
 
   // How much the party's Convokers strengthen a summoned battler. Bonuses from
@@ -1725,6 +1750,81 @@
     // Raw effect text without the passive's name prefix.
     getPassiveEffect(classId) {
       return PASSIVES[classId] ? passiveText(classId, "desc") : "";
+    },
+
+    // ----------------------------------------------------------------------
+    // The passives that are felt OUTSIDE a battle
+    // ----------------------------------------------------------------------
+    // A class passive is not only a damage number. These four are read by the
+    // systems they belong to - the army's paymaster, the reading ledger, the
+    // salvage table and the growth menus - and each is the ONE answer to its
+    // question, so nobody re-derives "is there a farmer in the party" from a
+    // class id of their own. All of them obey the same first-three-members
+    // scope every other passive here obeys.
+
+    // Mercenaries know what a company is worth and what it should cost: every
+    // one of them in the party takes 5% off the army's weekly wage bill.
+    armyUpkeepMultiplier() {
+      const mercs = countLivingClassInParty(38);
+      return mercs > 0 ? Math.pow(0.95, mercs) : 1;
+    },
+
+    // An Archmage reads for the marrow of a thing, and gets twice as much out
+    // of a book as anybody else does.
+    bookPointsMultiplier(reader) {
+      return reader && isPassiveActor(reader) && classIdOf(reader) === 27 ? 2 : 1;
+    },
+
+    // What the party pulls out of a terrain feature. A Hunter-Gatherer strips
+    // anything worth stripping twice over; a Lumberjack takes a whole tree
+    // apart rather than a few branches of it, and only a tree.
+    salvageMultiplier(spec) {
+      let mult = 1;
+      if (countLivingClassInParty(52) > 0) mult *= 2;
+      if (String(spec || "") === "Lumberjacking" && countLivingClassInParty(57) > 0) mult *= 10;
+      return mult;
+    },
+
+    // A Farmer's beds and pens give three times what anybody else's do.
+    growthYieldMultiplier() {
+      return countLivingClassInParty(56) > 0 ? 3 : 1;
+    },
+
+    // A Police Officer can write off what they did as done in the name of the
+    // law - up to 5000 gold of charges a day per officer, scaled by rank
+    // (their level), and two officers on the strength sign for twice as much.
+    // CrimeSystem owns the ledger and the wording; this is only the day's
+    // allowance, in gold.
+    POLICE_PARDON_PER_LEVEL: 5000,
+    selfPardonAllowance() {
+      return livingMembersOfClass(44)
+        .reduce((sum, a) => sum + Math.max(1, a.level || 1) * 5000, 0);
+    },
+
+    // Who is signing it: the highest-ranking officer travelling, since it is
+    // their name that goes on the report.
+    pardonOfficer() {
+      const officers = livingMembersOfClass(44);
+      if (!officers.length) return null;
+      return officers.slice().sort((a, b) => (b.level || 0) - (a.level || 0))[0];
+    },
+
+    // An Entertainer is never off. Travelling with one is company, a song and
+    // something to look at, so the whole party's Fun climbs on its own instead
+    // of draining: half the leisure a tick would have taken, per entertainer,
+    // given back to every member. TimeDateSystem owns the needs and the clock;
+    // this only says how much of a show is being put on.
+    leisureGainRate() {
+      return livingMembersOfClass(60)
+        .reduce((sum, a) => sum + 0.5 + Math.min(0.5, (a.level || 1) * 0.01), 0);
+    },
+
+    // A Nurse knows what she is looking at. Anybody else has to wait out the
+    // window period of an illness before it has a name (Health_DiseaseSystem);
+    // with a nurse travelling, every illness the party is carrying is named
+    // the day it is caught, which is also the day it can start being treated.
+    diagnosesImmediately() {
+      return countLivingClassInParty(51) > 0;
     },
   };
 })();

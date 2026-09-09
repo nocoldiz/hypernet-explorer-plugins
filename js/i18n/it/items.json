@@ -6550,5 +6550,405 @@
   "1866": {
     "name": "Il Culto delle Streghe in Europa",
     "description": "Un’antropologa sostiene che le\ncongreghe erano reali e organizzate."
+  },
+  "1867": {
+    "name": "Mucchio di Tappi",
+    "description": "Un sacchetto di tappi ondulati, nessuno dello stesso birrificio."
+  },
+  "1868": {
+    "name": "Blocchetto di Biglietti del Tram",
+    "description": "Talloncini obliterati di una linea che non esiste piu."
+  },
+  "1869": {
+    "name": "Barattolo di Monete Estere",
+    "description": "Spiccioli di nove paesi, nessuno spendibile."
+  },
+  "1870": {
+    "name": "Collezione di Fiammiferi",
+    "description": "Fiammiferi d'albergo, ogni copertina un locale chiuso."
+  },
+  "1871": {
+    "name": "Album di Fiori Pressati",
+    "description": "Corolle appiattite tra pagine cerate, etichettate a matita."
+  },
+  "1872": {
+    "name": "Serie di Bustine di Zucchero",
+    "description": "Bustine da bar tenute chiuse solo per la stampa."
+  },
+  "1873": {
+    "name": "Portafoglio di Schede Telefoniche",
+    "description": "Schede esaurite, la banda magnetica consumata."
+  },
+  "1874": {
+    "name": "Album di Figurine di Calcio",
+    "description": "Manca meta della rosa, ci sono tutti gli scudetti lucidi."
+  },
+  "1875": {
+    "name": "Pila di Sottobicchieri",
+    "description": "Cartoncini, aloni umidi e un numero di telefono."
+  },
+  "1876": {
+    "name": "Serie di Figurine da Sigarette",
+    "description": "Una raccolta completa di macchinisti, con un elastico intorno."
+  },
+  "1877": {
+    "name": "Rastrelliera di Cucchiaini Ricordo",
+    "description": "Manici smaltati di dodici citta di mare."
+  },
+  "1878": {
+    "name": "Mazzo di Cartoline",
+    "description": "Scritte, affrancate e mai spedite."
+  },
+  "1879": {
+    "name": "Robot di Latta",
+    "description": "Lo carichi, fa due passi e cade."
+  },
+  "1880": {
+    "name": "Sacchetto di Biglie",
+    "description": "Vetri ritorti, una boccia d'acciaio, un occhio di gatto crepato."
+  },
+  "1881": {
+    "name": "Fila di Palle di Vetro",
+    "description": "Sei citta sotto sei bufere sulla stessa mensola."
+  },
+  "1882": {
+    "name": "Pannello di Spille Smaltate",
+    "description": "Distintivi sindacali, stemmi turistici, uno che non significa nulla."
+  },
+  "1883": {
+    "name": "Album di Francobolli",
+    "description": "Dentellati in file, con linguelle, e la pagina rara vuota."
+  },
+  "1884": {
+    "name": "Banconota con Errore di Stampa",
+    "description": "Il numero di serie e doppio, ed e per questo che vale di piu."
+  },
+  "1885": {
+    "name": "Vinile di Prima Stampa",
+    "description": "Matrice incisa nel solco cieco, copertina non plastificata."
+  },
+  "1886": {
+    "name": "Nastro Pirata di un Concerto",
+    "description": "Registrato in mezzo al pubblico, e il pubblico si sente."
+  },
+  "1887": {
+    "name": "Cassetta Demo",
+    "description": "Quattro pezzi, un gruppo mai messo sotto contratto, etichetta scritta a mano."
+  },
+  "1888": {
+    "name": "Tascabile Autografato",
+    "description": "Con dedica a qualcuno che lo ha rivenduto lo stesso."
+  },
+  "1889": {
+    "name": "Fotogramma di Pellicola",
+    "description": "Ventiquattro di questi facevano un secondo di film."
+  },
+  "1890": {
+    "name": "Manifesto Originale del Film",
+    "description": "Piegato una volta sola, come lo spedivano ai cinema."
+  },
+  "1891": {
+    "name": "Serie di Fotobuste",
+    "description": "Otto scene, una delle quali tagliata dal montaggio."
+  },
+  "1892": {
+    "name": "Acetato di Prova",
+    "description": "Etichetta bianca, sopra solo una data."
+  },
+  "1893": {
+    "name": "Primo Numero a Fumetti",
+    "description": "In busta e cartoncino, il dorso ancora squadrato."
+  },
+  "1894": {
+    "name": "Bobina Master di Studio",
+    "description": "Dieci pollici di nastro e l'unico missaggio sopravvissuto."
+  },
+  "1895": {
+    "name": "Insegna da Sala Giochi",
+    "description": "Plastica retroilluminata, crepata su un foro di vite."
+  },
+  "1896": {
+    "name": "Console Portatile Sigillata",
+    "description": "Sigillata, e non vale piu niente appena non lo e."
+  },
+  "1897": {
+    "name": "Cartuccia Prototipo",
+    "description": "Una EPROM, un'etichetta di debug, un gioco uscito diverso."
+  },
+  "1898": {
+    "name": "Tastiera da Terminale d'Epoca",
+    "description": "Molle a compressione, e tutta la stanza ti sente scrivere."
+  },
+  "1899": {
+    "name": "Scatola di Software Raro",
+    "description": "Scatola grande, mappa di stoffa, ruota dei codici mai usata."
+  },
+  "1900": {
+    "name": "Scheda Elettronica Firmata",
+    "description": "Gli ingegneri hanno scritto i loro nomi nel rame."
+  },
+  "1901": {
+    "name": "Piano di Memoria a Nuclei",
+    "description": "Anelli di ferrite intessuti a mano, un kilobyte di memoria."
+  },
+  "1902": {
+    "name": "Primo Prototipo di Hyperdeck",
+    "description": "Matricola 000, e su questo la cerniera era sbagliata."
+  },
+  "1903": {
+    "name": "Gagliardetto della Squadra",
+    "description": "Feltro, cucito, sbiadito sul lato rivolto alla finestra."
+  },
+  "1904": {
+    "name": "Maglia Indossata in Partita",
+    "description": "Erba sul gomito, il numero che si stacca a un angolo."
+  },
+  "1905": {
+    "name": "Programma della Finale di Coppa",
+    "description": "Le formazioni come stampate, prima del cambio dell'ultima ora."
+  },
+  "1906": {
+    "name": "Casco del Vincitore",
+    "description": "Graffiato sulla calotta, visiera opacizzata dai segni."
+  },
+  "1907": {
+    "name": "Torcia Olimpica",
+    "description": "Mai accesa, e piu pesante di quanto sembri."
+  },
+  "1908": {
+    "name": "Ammonite Fossile",
+    "description": "Pietra avvolta a spirale, spaccata e lucidata su una faccia."
+  },
+  "1909": {
+    "name": "Fetta di Meteorite",
+    "description": "Incisa per mostrare le figure che il raffreddamento ha cristallizzato."
+  },
+  "1910": {
+    "name": "Teca di Farfalle",
+    "description": "Infilzate in file sotto vetro, le etichette in latino."
+  },
+  "1911": {
+    "name": "Gufo Imbalsamato",
+    "description": "Occhi di vetro, un'ala socchiusa, la campana crepata."
+  },
+  "1912": {
+    "name": "Lastra di Trilobiti",
+    "description": "Nove sulla stessa lastra, tutti rivolti nella stessa direzione."
+  },
+  "1913": {
+    "name": "Ambra con Inclusione",
+    "description": "Un moscerino che cade da quaranta milioni di anni."
+  },
+  "1914": {
+    "name": "Sezione di Zanna di Mammut",
+    "description": "Tagliata di traverso, gli anelli come un albero abbattuto."
+  },
+  "1915": {
+    "name": "Tromba da Seduta Spiritica",
+    "description": "Cono di alluminio attraverso cui gli spiriti dovevano parlare."
+  },
+  "1916": {
+    "name": "Mazzo di Tarocchi Completo",
+    "description": "Colorato a mano, e alla Torre manca un angolo."
+  },
+  "1917": {
+    "name": "Scheggia da Reliquiario",
+    "description": "Un santo con un nome, una fiala sigillata, nessuna prova."
+  },
+  "1918": {
+    "name": "Placca Sigillare dell'Alchimista",
+    "description": "Rame, incisa, e l'incisione e sbagliata di proposito."
+  },
+  "1919": {
+    "name": "Frammento di Grimorio",
+    "description": "Quattro fogli di pergamena, in una grafia che nessuno ha identificato."
+  },
+  "1920": {
+    "name": "Specchio Divinatorio",
+    "description": "Vetro nero, convesso, e mostra la stanza con una persona in meno."
+  },
+  "1921": {
+    "name": "Bottiglia da Strega Sigillata",
+    "description": "Spilli di ferro e qualcosa che erano capelli. Non aprirla."
+  },
+  "1922": {
+    "name": "Serie di Toppe di Squadriglia",
+    "description": "Ricamate, e due di questi reparti non sono mai esistiti."
+  },
+  "1923": {
+    "name": "Libretto di Volo",
+    "description": "Ore, meteo, e una voce in un'altra grafia."
+  },
+  "1924": {
+    "name": "Tubetto di Razione da Cosmonauta",
+    "description": "Mai aperto, e l'etichetta dice borscht."
+  },
+  "1925": {
+    "name": "Ruota Cifrante della Guerra Fredda",
+    "description": "Due dischi, un rivetto, un decennio intero di segreti."
+  },
+  "1926": {
+    "name": "Maniglia del Seggiolino Eiettabile",
+    "description": "Gialla e nera, tirata una volta, per davvero."
+  },
+  "1927": {
+    "name": "Lista di Controllo della Missione Lunare",
+    "description": "Con il velcro dietro, e qualcuno ha spuntato ogni casella."
+  },
+  "1928": {
+    "name": "Studio Preparatorio d'Artista",
+    "description": "Carboncino, non firmato, e la mano e inconfondibile."
+  },
+  "1929": {
+    "name": "Tavola di Icona Dorata",
+    "description": "Tempera all'uovo su legno, l'oro consumato dove passavano i pollici."
+  },
+  "1930": {
+    "name": "Spilla con Cammeo",
+    "description": "Conchiglia intagliata, il profilo di qualcuno che nessuno ricorda."
+  },
+  "1931": {
+    "name": "Uccello Canterino Automatico",
+    "description": "Si carica, canta quattro battute, e il becco si apre ancora."
+  },
+  "1932": {
+    "name": "Orologio da Tasca del Maestro",
+    "description": "Ripetizione dei minuti, e va ancora in orario."
+  },
+  "1933": {
+    "name": "Uovo Imperiale Smaltato",
+    "description": "Si apre su un cardine a una sorpresa rubata nel 1918."
+  },
+  "1934": {
+    "name": "Diamante Azzurro Perfetto",
+    "description": "Puro, quindici carati, e una provenienza che nessuno mettera per iscritto."
+  },
+  "1935": {
+    "name": "Penny Black",
+    "description": "Il primo francobollo gommato della storia, con il profilo della giovane regina."
+  },
+  "1936": {
+    "name": "Jenny Capovolta",
+    "description": "Il biplano e stampato a rovescio ed e tutto li il suo valore."
+  },
+  "1937": {
+    "name": "Treskilling Giallo",
+    "description": "Stampato con il cliche sbagliato nel colore sbagliato. Ne esiste uno."
+  },
+  "1938": {
+    "name": "Un Centesimo della Guiana Britannica",
+    "description": "Magenta, ottagonale, siglato dal direttore postale che non si fidava."
+  },
+  "1939": {
+    "name": "Nichelino Testa di Liberta",
+    "description": "Ne furono coniati cinque in un anno in cui la zecca dice di non averne coniati."
+  },
+  "1940": {
+    "name": "Dollaro col Busto Drappeggiato",
+    "description": "Coniato decenni dopo la data che porta, per una serie diplomatica in dono."
+  },
+  "1941": {
+    "name": "Doppia Aquila d'Oro",
+    "description": "L'anno in cui il paese lascio l'oro, quindi nessuna fu mai legale."
+  },
+  "1942": {
+    "name": "Figurina Wagner",
+    "description": "Fece ritirare la serie, ed e per questo che ne restano cosi poche."
+  },
+  "1943": {
+    "name": "Action Comics Numero Uno",
+    "description": "Il primo uomo in mantello, su carta da giornale, per dieci centesimi."
+  },
+  "1944": {
+    "name": "Detective Comics Numero 27",
+    "description": "La prima uscita del pipistrello, e la copertina rovina il finale."
+  },
+  "1945": {
+    "name": "Amazing Fantasy Quindici",
+    "description": "Un ragazzo morso, sull'ultimo numero di una testata in chiusura."
+  },
+  "1946": {
+    "name": "Foglio della Bibbia di Gutenberg",
+    "description": "Un foglio del primo libro uscito da un torchio, rubricato a mano."
+  },
+  "1947": {
+    "name": "Primo Folio di Shakespeare",
+    "description": "Trentasei opere, meta delle quali non esistono altrove."
+  },
+  "1948": {
+    "name": "Tavola Ornitologica di Audubon",
+    "description": "Formato doppio elefante, l'uccello disegnato a grandezza naturale."
+  },
+  "1949": {
+    "name": "Violino Stradivari",
+    "description": "Duecento anni di vernice e nessuno sa dire cosa ci mise dentro."
+  },
+  "1950": {
+    "name": "Chitarra Broadcaster",
+    "description": "Il nome duro pochi mesi prima che una ditta di batterie protestasse."
+  },
+  "1951": {
+    "name": "Bandiera Andata sulla Luna",
+    "description": "E andata, e tornata, e il tessuto e rigido di vuoto."
+  },
+  "1952": {
+    "name": "Sfera di Prova dello Sputnik",
+    "description": "Il gemello di collaudo, lucidato per farsi vedere dai radar."
+  },
+  "1953": {
+    "name": "Macchina Enigma",
+    "description": "Tre rotori, un pannello a spine, e una guerra che ci giro intorno."
+  },
+  "1954": {
+    "name": "Scheda Madre Apple",
+    "description": "Una scheda nuda, senza scocca, e la tastiera dovevi metterla tu."
+  },
+  "1955": {
+    "name": "Sedia da Ponte del Transatlantico",
+    "description": "Teak, pieghevole, ed e stata ripescata dall'acqua al mattino."
+  },
+  "1956": {
+    "name": "Calco della Stele di Rosetta",
+    "description": "Inchiostro tirato dalla pietra l'anno in cui arrivo al museo."
+  },
+  "1957": {
+    "name": "Locandina del Teatro",
+    "description": "Il programma della serata, e il presidente non vide il terzo atto."
+  },
+  "1958": {
+    "name": "Cacciatore di Taglie con Razzo",
+    "description": "Lo zaino sparante fu ritirato prima che ne partisse uno solo."
+  },
+  "1959": {
+    "name": "Disco dalla Copertina Ritirata",
+    "description": "Ritirato in un giorno, e quasi tutti furono ricoperti invece."
+  },
+  "1960": {
+    "name": "Rodovetro del Battello a Vapore",
+    "description": "Celluloide inchiostrata a mano dal primo cartone che si sentisse."
+  },
+  "1961": {
+    "name": "Carta Illustratore",
+    "description": "Data a venti artisti in un concorso di una rivista, e a nessun altro."
+  },
+  "1962": {
+    "name": "Abito Indossato sul Set",
+    "description": "Souffle di seta, cucito addosso, e poi glielo tagliarono via."
+  },
+  "1963": {
+    "name": "Manifesto dell'Indipendenza",
+    "description": "Stampato di notte, letto ad alta voce nelle piazze il mattino dopo."
+  },
+  "1964": {
+    "name": "Foglio della Cronaca di Norimberga",
+    "description": "Una mappa xilografica del mondo, colorata da una mano che tirava a indovinare ai bordi."
+  },
+  "1965": {
+    "name": "Disco Vergine del Voyager",
+    "description": "Rame dorato, la stampa che tennero a terra."
+  },
+  "1966": {
+    "name": "Stemma da Radiatore Bugatti",
+    "description": "Smalto e calandra a ferro di cavallo, da un'auto mai ritrovata."
   }
 }

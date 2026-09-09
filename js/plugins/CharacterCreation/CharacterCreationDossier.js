@@ -898,6 +898,11 @@
         }
       });
 
+      // A chaos world skipped creation outright, so there is no party
+      // configuration to return to: that seat in the left bar is a reroll of
+      // the three characters instead.
+      const chaos = Scene_CharacterCreation.isChaosWorld();
+
       const renderCard = (choice, index) => `
         <div class="cc-card-option cc-scenario-card ${index === activeIndex ? 'selected' : ''}"
              onclick="SceneManager._scene.onOptionCardClick(${index})">
@@ -927,9 +932,14 @@
               ${scenarioSectionsHtml}
             </div>
             <div class="cc-scenario-list-actions">
+              <button class="cc-compact-btn primary cc-scenario-embark" onclick="SceneManager._scene.onFinishPartyCreation()">${ccT('CharCreate.embark', "Embark")}</button>
+              ${chaos ? `
+              <button class="cc-compact-btn cc-scenario-reroll" onclick="SceneManager._scene.onChaosRerollParty()">
+                ${this._ccIconHtml(136, 16)} <span>${ccT('CharCreate.randomizeParty', 'Randomize Party')}</span>
+              </button>` : `
               <button class="cc-compact-btn cc-scenario-back" onclick="SceneManager._scene.onReturnToPartyDossier()">
                 ${this._ccIconHtml(82, 16)} <span>${ccT('CharCreate.returnToParty', 'Return to Party Configuration')}</span>
-              </button>
+              </button>`}
             </div>
           </div>
 
@@ -962,9 +972,6 @@
               </div>
             </div>
 
-            <div class="cc-scenario-brief-actions">
-              <button class="cc-compact-btn primary cc-scenario-embark" onclick="SceneManager._scene.onFinishPartyCreation()">${ccT('CharCreate.embark', "Embark & Begin Journey")}</button>
-            </div>
           </div>
 
           <div class="cc-page cc-scenario-roster-col">

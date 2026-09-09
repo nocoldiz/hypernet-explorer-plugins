@@ -602,6 +602,20 @@
     --gradient-25: linear-gradient(to right, var(--border-border-alt-5), var(--text-primary-hover));
     --gradient-26: linear-gradient(#000000, #000000);
     --gradient-27: linear-gradient(to right, var(--accent-gold-4) 0%, var(--bg-bg-alt-11) 40%, var(--accent-yellow) 100%);
+    /* Width of the binding crease. The dark preset hides the crease outright, so this is only here to keep full token parity with the paper preset. */
+    /* The book frame (boards, fore-edges, page block) is the paper preset's:
+       this preset paints the spread as one flat black panel and draws none of
+       it. The tokens are declared so the two presets keep full parity, which
+       is what makes a live theme swap safe. */
+    --book-leather: transparent;
+    --book-leather-lit: transparent;
+    --book-gilt: transparent;
+    --book-page-edge: transparent;
+    --book-page-line: transparent;
+    --book-board-w: 0px;
+    --book-fore-l: 0px;
+    --book-fore-r: 0px;
+    --spine-w: 30px;
     --gradient-28: linear-gradient(to right, var(--shadow-primary-hover-translucent-5) 0%, var(--shadow-primary-hover-translucent-5) 30%, var(--shadow-primary-hover-translucent-5) 70%, var(--shadow-primary-hover-translucent-5) 100%);
     --gradient-29: none;
     --gradient-3: linear-gradient(90deg, var(--text-secondary-active), var(--text-text-alt-10));
