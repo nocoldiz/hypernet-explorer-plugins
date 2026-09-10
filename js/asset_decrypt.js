@@ -19,9 +19,10 @@
  * Encrypted assets are read straight off the disk, decrypted in memory and
  * handed to the page as blob: URLs, so no plaintext asset is ever written out.
  *
- * Must be loaded before js/main.js. This is the template shipped by
- * encrypted_build.bat, which stamps the key in as it installs the file; on an
- * unencrypted build nothing resolves and every reference is left untouched.
+ * Must be loaded before js/main.js. This is the template, and the KEY below is
+ * the placeholder tools/build/install_decrypt_shim.js replaces with the real
+ * key as it copies the file into a build; on an unencrypted build nothing
+ * resolves and every reference is left untouched.
  */
 
 (function () {
@@ -196,45 +197,8 @@
         if (!mayContainAsset(text)) {
             return text;
         }
-        text = rewriteAbsolute(text);
         return text.replace(ASSET_URL_RE, function (all, dots, rel) {
             var resolved = normalize((baseDir ? baseDir + "/" : "") + dots + rel);
-            if (!resolved) {
-                return all;
-            }
-            return blobUrlFor(resolved) || all;
-        });
-    }
-
-    // The same reference, handed over already absolute. window.UIPanel.assetUrl
-    // (and CCArt.url, which mirrors it) resolve every path against
-    // document.baseURI before it goes into a custom property, because a
-    // relative url() inside one resolves against the stylesheet that reads it
-    // back rather than the page that wrote it. The relative form above cannot
-    // see those, so every bust, sprite, portrait and icon painted that way
-    // asked for a plain file that an encrypted build does not have. Only urls
-    // under the game's own base are touched.
-    var ABS_ASSET_URL_RE =
-        /[A-Za-z][A-Za-z0-9+.-]*:\/\/[^"'()<>\?#\s]*?(?:img|audio)\/[^"'()<>\?#\s]+?\.(?:png|jpe?g|ogg|m4a)(?![A-Za-z0-9_])/gi;
-
-    function baseUrlDir() {
-        try {
-            return document.baseURI.replace(/[^/]*$/, "");
-        } catch (e) {
-            return null;
-        }
-    }
-
-    function rewriteAbsolute(text) {
-        var base = baseUrlDir();
-        if (!base) {
-            return text;
-        }
-        return text.replace(ABS_ASSET_URL_RE, function (all) {
-            if (all.lastIndexOf(base, 0) !== 0) {
-                return all;
-            }
-            var resolved = normalize(all.slice(base.length));
             if (!resolved) {
                 return all;
             }
@@ -442,71 +406,6 @@
         scanThisDocument();
     }
     window.addEventListener("load", scanThisDocument);
-
-    // A stylesheet that arrives AFTER the page has loaded has to be scanned
-    // too. The theme is one: GameOptions.applyTheme swaps css/vars.css for the
-    // chosen preset from inside the running game, long past window load, and
-    // every url('../img/system/IconSet.png') in the sheet that replaces it
-    // would otherwise be left pointing at a file the encryption pass renamed -
-    // which is every CSS-drawn icon in the interface gone at once. So new
-    // <link> and <style> nodes are watched for, and each is scanned once its
-    // rules are readable.
-    // A sheet whose rules could not be read yet (still parsing, or a browser
-    // that refuses cssRules on a file: url until it is settled) is not marked
-    // as scanned, so a handful of retries after load pick it up. Bounded: this
-    // is a fallback, not a poll.
-    if (window.setTimeout) {
-        var retries = [250, 1000, 3000, 10000];
-        for (var r = 0; r < retries.length; r++) {
-            window.setTimeout(scanThisDocument, retries[r]);
-        }
-    }
-
-    if (window.MutationObserver && document.documentElement) {
-        var rescanSoon = function () {
-            scanThisDocument();
-            // A <link> has no rules until it has fetched, and its load event is
-            // the only reliable moment; a second pass on the next frame covers
-            // a sheet swapped in without one.
-            if (window.requestAnimationFrame) {
-                window.requestAnimationFrame(scanThisDocument);
-            } else {
-                setTimeout(scanThisDocument, 0);
-            }
-        };
-        var watchNode = function (node) {
-            if (!node || !node.tagName) {
-                return;
-            }
-            var tag = node.tagName.toUpperCase();
-            if (tag !== "LINK" && tag !== "STYLE") {
-                return;
-            }
-            if (tag === "LINK" && node.addEventListener) {
-                node.addEventListener("load", scanThisDocument, { once: true });
-            }
-            rescanSoon();
-        };
-        var observer = new window.MutationObserver(function (records) {
-            for (var i = 0; i < records.length; i++) {
-                var added = records[i].addedNodes;
-                for (var j = 0; added && j < added.length; j++) {
-                    watchNode(added[j]);
-                }
-                // An existing <link> re-pointed at another file (the theme
-                // swap does exactly that) is a new sheet under an old node.
-                if (records[i].type === "attributes") {
-                    watchNode(records[i].target);
-                }
-            }
-        });
-        observer.observe(document.documentElement, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ["href"]
-        });
-    }
 
     //-------------------------------------------------------------------------
     // fs, for the plugins that scan img/ and audio/ directly

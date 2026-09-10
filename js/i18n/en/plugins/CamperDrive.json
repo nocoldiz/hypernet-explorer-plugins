@@ -52,6 +52,7 @@
     "destination": "Destination",
     "time": "TIME",
     "distance": "DISTANCE",
+    "kmh": "km/h",
     "view": "VIEW:",
     "mode": "MODE:",
     "cmdDrive": "Drive / steer",
@@ -96,7 +97,6 @@
     "water": "AFLOAT",
     "underwater": "SUBMERGED"
   },
-  "weapon": "Now holding: {name}",
   "driverSave": {
     "avoided": "[Driver DEX save: {roll}{mod}={total}] Expertly countersteered, crash avoided!",
     "failed": "[Driver DEX save: {roll}{mod}={total} vs DC {dc}] Reflex save failed, the vehicle hits!"

@@ -25,6 +25,11 @@
     "titlePostSleep": "Risveglio",
     "titleCryo": "Risveglio in che data?",
     "titleWait": "Aspetta quanto?",
+    "titleRoughSleep": "Dormi all'aperto per quanto?",
+    "roughHint": "Nessun letto qui: solo il %1% del riposo di una notte.",
+    "beddingHint": "Con %1: riposo completo di una notte.",
+    "titleCamp": "Accampamento",
+    "titleCampSleep": "Dormi all'accampamento",
     "sleep": "Dormi",
     "wait": "Aspetta",
     "hoursWait": "%1 ore",
@@ -68,6 +73,11 @@
     "cryoHunger": "Cibo",
     "cryoSleep": "Riposo",
     "cryoHeld": "Bloccato"
+  },
+  "camp": {
+    "tended": "All'accampamento ci si lava e si chiacchiera per ore.",
+    "ate": "Una pentola va sul fuoco: {items}.",
+    "noFood": "All'accampamento non resta nulla da cucinare."
   },
   "hud": {
     "food": "Cibo",
@@ -119,8 +129,8 @@
     "hygiene": "{name}: Igiene +{percent}%"
   },
   "mood": {
-    "victory": "Lo scontro \u00e8 vinto",
-    "lost": "{name} non c'\u00e8 pi\u00f9",
+    "victory": "Lo scontro è vinto",
+    "lost": "{name} non c'è più",
     "member": "{name} {delta}"
   },
   "months": [
@@ -140,5 +150,10 @@
   "opponent": {
     "subconscious": "Subconscio",
     "funShared": "{name} ha apprezzato la partita"
+  },
+  "partyLife": {
+    "talk": "{name} sta parlando con {other}",
+    "wash": "{name} sta andando in bagno",
+    "idle": "{name} si sta sgranchendo le gambe"
   }
 }

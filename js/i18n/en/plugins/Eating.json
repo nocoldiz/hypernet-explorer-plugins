@@ -3,5 +3,6 @@
   "current": "Current: {who}",
   "allSelected": "All selected",
   "confirm": "Confirm",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "served": "Served"
 }

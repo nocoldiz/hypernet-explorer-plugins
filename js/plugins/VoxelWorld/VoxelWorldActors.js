@@ -258,9 +258,9 @@
             if (this.drivingSeat) return;   // seated at the wheel: look only
             // Merge raw WASD (key events above) with arrow keys / d-pad via the
             // Input API, so movement works on keyboard and controller alike.
-            // UP and DOWN ON THE PAD'S CROSS are the exception: on foot they are
-            // the weapon rack (VW.CamperWeapon.step), so they are taken back off
-            // the walk. The stick is untouched, and so are the arrow keys: core
+            // UP and DOWN ON THE PAD'S CROSS are the exception: on foot they
+            // run along the quick bar (VoxelWorldScene#_updateBarInput), so they
+            // are taken back off the walk. The stick is untouched, and so are the arrow keys: core
             // folds all three into the same Input actions, and only the raw
             // button tells them apart.
             const pads = window.AnalogStickInput;

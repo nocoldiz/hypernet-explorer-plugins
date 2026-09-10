@@ -41,6 +41,8 @@
   "safeToTurnOff": "It is now safe to turn off your computer.",
   "taskManager": "Task Manager",
   "taskManagerTitle": "Esoteric Task Manager",
+  "oomTitle": "Out of Memory",
+  "oomMessage": "There is not enough memory to start {name}. Close a program and try again.",
   "systemLoad": "System Load:",
   "memory": "Memory:",
   "colPid": "PID",

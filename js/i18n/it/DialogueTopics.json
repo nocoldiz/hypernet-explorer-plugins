@@ -1,0 +1,412 @@
+{
+  "DialogueTopics": {
+    "topicHardwareStore": {
+      "title": "Ferramenta",
+      "description": "Acciaio di recupero, legno, chiodi, cavo e tutto il resto che una ricetta del Costruisci o del Pensatore richiede, venduto al banco invece che strappato a una rovina. Ogni città di una certa dimensione ne ha uno, e la merce cambia col giorno."
+    },
+    "topicEsotericHeavyParticles": {
+      "title": "Particelle Esoteriche Pesanti",
+      "description": "Di questo è fatta una leylinea. Troppo pesanti per allontanarsi dal petrolio con cui affiorano, abbastanza pesanti da piegare uno strumento nel passare. Misurarle è il modo in cui un mago distingue una leylinea viva da una morta, ed è come il CERN passa l'anno."
+    },
+    "topicCERN": {
+      "title": "CERN",
+      "description": "L'anello sotto Ginevra, passato dalla fisica delle particelle all'unica fisica che rende dalle Falkland: particelle esoteriche pesanti, e attraverso di esse le leylinee.\n\nL'unico posto del continente dove la Gilda dei Maghi e un libro paga di atei lavorano nello stesso corridoio."
+    },
+    "squishing": {
+      "title": "Lo Squishing",
+      "description": "Il 21 dicembre 2012 la dea della discordia Eris ucciderà la dea della giustizia Maat scagliandole contro la Torre Omega. È già accaduto, nel futuro. Ciò che ha raggiunto noi è l'eco del colpo, rispedita vent'anni indietro e attraverso novantadue dimensioni, atterrata il 21 dicembre 1992 nel cielo della dimensione tre.\n\nDa allora il paradosso sfalda la linea temporale. Lo spaziotempo si annoda in bolle di loop temporale locali (vedi: la Regola degli 80), e frammenti di altre dimensioni collassano in questa, l'Impero Vuoto di Varlenia primo fra tutti. Per il 2012, quando il colpo arriverà davvero, si prevede che la distorsione renda questa dimensione inabitabile.\n\nNon cade in modo uniforme. Più alto è il numero di una dimensione, più in fretta si sfalda: i Campi Verdi, dimensione 77, sono già quasi perduti. La Torre Omega, conficcata nella terra dallo stesso colpo, è l'unica cosa che tiene separate le novantadue."
+    },
+    "ruleOf80": {
+      "title": "La Regola degli 80",
+      "description": "Dallo Squishing, tutto ciò che si muove oltre gli 80 chilometri orari viene tirato dentro la bolla di loop temporale più vicina: una porzione di spaziotempo, da pochi metri a centinaia di chilometri, dove il giorno si azzera alla sua fine. Dentro, la regola si inverte. L'unica uscita è superare di nuovo gli 80 andando fuori, e restare sotto significa continuare a ripetere.\n\nLe bolle sono poco più di un tremolio dell'aria da vicino, perciò le carte stradali le segnano. Numero e dimensioni crescono dal 1992.\n\nIl loop ha i suoi conforti. L'unico modo di morire davvero là dentro è morire sopra gli 80, o essere colpiti da qualcosa che va più veloce; tutto il resto si azzera. Il prezzo è la stagnazione, e chi resta in loop conserva la memoria di ogni giorno precedente mentre il mondo dimentica.\n\nNessun segnale attraversa il bordo di una bolla, elettronico, mentale o magico. I piccioni viaggiatori con una chiavetta USB legata addosso arrivano a 90-100 con il vento a favore, il che li rende la posta più veloce e affidabile tra un loop e l'altro, ed è la ragione per cui esiste la Società dei Camionisti. Il motore liminale di Bubba è l'unico modo noto di attraversare una bolla senza mai rallentare."
+    },
+    "encompassingRoad": {
+      "title": "La Strada Avvolgente",
+      "description": "Ogni strada di ogni mondo del multiverso è, sotto sotto, la stessa strada. Il motore liminale di Bubba comprime il tratto davanti al veicolo, e tarato bene si apre sulla Strada Onnicomprensiva stessa, dove un'uscita qualunque può portare in un altro luogo, in un'altra dimensione, in un altro tempo, o negli Scarti della Creazione.\n\nLa strada precede ogni guidatore che la percorre. Miliardi di anni fa il concetto di strada nacque dal Dio dell'Asfalto, che ne lastricò la prima e fu la prima vittima di un pirata della strada."
+    },
+    "magesGuild": {
+      "title": "La Gilda dei Maghi",
+      "description": "Fondata nel 950 a.C. da re Salomone, la Gilda dei Maghi ha custodito l'equilibrio nascosto del mondo per millenni, finché Margaret Thatcher non ha rivelato la magia all'intero pianeta, in diretta, usandola alle Falkland. All'inizio del Novecento Sir Aleister Crowley la rifondò sotto la casa reale britannica come ordine pseudo-cavalleresco, ed è per questo che i suoi vertici portano ancora Sir e Lady.\n\nOltre a ricostruire tecnologia perduta con la magia per conto dei governi, la Gilda esiste per difendere la realtà da ciò che lo Squishing lascia entrare. Dentro è divisa in tante correnti quante sono le scuole di magia, ma ogni decisione importante passa dai Tre Pilastri, che stanno per passato, presente e futuro. Nel 2001 i seggi sono di Sir Aleister Crowley, Lady Margaret Thatcher e 'il Padre', Shoko Asahara.\n\nUn Pilastro non invecchia finché tiene il seggio, e un mandato dura cinquant'anni. Crowley non si è mai dimesso, e in Gilda non è rimasto nessuno in grado di costringerlo."
+    },
+    "hypercapitalistCollective": {
+      "title": "Collettivo Ipercapitalista",
+      "description": "Uno schema piramidale grande quanto un continente, che gestisce il commercio tra dimensioni. I suoi membri hanno preso la Regola degli 80 e ne hanno fatto dottrina: restare sopra la soglia abbastanza a lungo e il corpo smette di azzerarsi anche da fermo. Mentre il resto del mondo ripete e dimentica, il Collettivo ricorda.\n\nQuella memoria è il modello di business. Vendono vie di fuga a chi è intrappolato in un loop e commerciano qualsiasi altra cosa, memorie ed emozioni comprese. Controllano anche ogni fonte di acqua pulita rimasta; tutto ciò che sta fuori dalla loro portata è tagliato con LSD.\n\nIn guerra aperta con la Fondazione Archivio, la cui trasparenza radicale è pessima per un impero commerciale costruito sulla leva. Alleati con gli Dèi."
+    },
+    "emTheMemoryWitch": {
+      "title": "Em, la Strega della Memoria",
+      "description": "Nata nel 1984 a Wimbledon, Britannia, con la voglia di essere una strega in un'epoca che aveva archiviato la magia tra le favole. Le cose cambiarono quando Margaret Thatcher, in silenzio potentissima nella Gilda dei Maghi, ebbe bisogno di un fulcro per il Rituale di Salomone e scelse lei.\n\nIl prezzo fu il 92% dei suoi ricordi. Non svanirono: furono forgiati nella Lancia della Memoria, l'arma con cui Eris uccise poi l'aspetto Padre di YHWH. Em si svegliò sola sull'Isola del Rituale il 1 gennaio 2001, senza un passato a cui arrivare e con un potere che sta ancora imparando a reggere.\n\nDa allora è sulla strada, su un camper che divide con Bubba, diretta a un appuntamento a Beagle che ricorda a malapena di aver accettato."
+    },
+    "camelcaseMagic": {
+      "title": "Magia CamelCase",
+      "description": "Ogni incantesimo lanciato dopo lo Squishing va scritto e pronunciato in CamelCase: parole attaccate, una maiuscola ad aprire ciascuna. PallaDiFuoco funziona. 'Palla di fuoco' no, e pronunciarlo si paga.\n\nLe formule a più parole sono un altro piano: i trascendentali, potenti abbastanza da riscrivere la realtà a comando, e appannaggio degli dèi. Un mortale che spezza un incantesimo in parole separate se lo vede letto dall'universo come tentato trascendentale, e ne riceve il conto: dalla perdita della voce in su.\n\nI grimori rendono la regola visibile. Un incantesimo scritto male infetta le parole vicine con copie di sé, e un libro non bruciato divora quello che ha accanto.\n\nGli incantesimi attivi si scelgono dormendo, ciascuno con il proprio limite di usi giornalieri. Due nello stesso slot si fondono in un incantesimo temporaneo finché regge. Versioni permanenti delle combinazioni collaudate si comprano ai distributori automatici, o si ottengono per rituale."
+    },
+    "alagaddaCityOfMasks": {
+      "title": "Alagadda, Città delle Maschere",
+      "description": "[Dossier Fondazione Archivio, incompleto]\n\nAlagadda non compare su nessuna mappa che la Gilda o la Fondazione siano riuscite a fissare, e ogni squadra mandata a cercarla è tornata con una versione diversa di come ci sia entrata, quando è tornata.\n\nCiò che sopravvive a ogni racconto è la regola che la città applica senza eccezioni: ogni visitatore porta una maschera, e la maschera non si toglie.\n\nToglierla, per qualsiasi motivo e per qualsiasi durata, e la città smette di considerarti una persona. La condizione è archiviata come Innominato: invisibile, intoccabile, incapace di andarsene, alla deriva per strade che non registrano più la tua esistenza.\n\nTotale Divulgazione o no, questo è tutto ciò che la Fondazione firma. Maschera indossata, maschera assicurata, maschera mai rimossa."
+    },
+    "ruleOfHeight": {
+      "title": "La Regola dell'Altezza",
+      "description": "Da quando la Torre è caduta vale una nuova regola: qualunque edificio a più piani diventa più strano man mano che si sale. La geometria si distorce, le piante smettono di avere senso, e i livelli alti scivolano nell'anomalia.\n\nSi può aggirare impastando i materiali da costruzione con schegge di Fantablack raschiate dalla pelle esterna della Torre Omega. Nella ricostruzione dopo il Y2K le iperpotenze hanno fortificato così grattacieli e infrastrutture pubbliche, e quelli reggono.\n\nLe case comuni non hanno avuto lo stesso trattamento. Se il proprietario non si è procurato del Fantablack per ridipingere i piani alti, una casa normale diventa più imprevedibile e più pericolosa a ogni rampa di scale."
+    },
+    "omegaTower": {
+      "title": "La Torre Omega",
+      "description": "Da fuori sembra un grattacielo che sale oltre la stratosfera. È una lancia divina: quella che Eris scagliò nel 1992 per uccidere la dea della giustizia Maat. Si è conficcata per centinaia di chilometri nella crosta, e sulla punta, sprofondato e sigillato dentro, giace il corpo di Maat.\n\nLa Torre attraversa e collega tutte le novantadue dimensioni, così un mortale può salire fino al trono celeste di chiunque regni sugli dèi. Quel seggio è di Eris, ma può cambiare mentre sei altrove: lascia la Torre in pace troppo a lungo e qualcun altro potrebbe salire a prenderselo, e con esso lo scontro finale.\n\nEra pensata come un'arca, capace di portare l'umanità in un'altra dimensione se il mondo fosse finito. Conficcata nella Terra, non si può più muovere, ed è ora l'unica cosa che impedisce alle novantadue dimensioni di collassare l'una nell'altra. Sigillata fino al 31 dicembre 1999, la sua porta si è aperta da sola la notte in cui morirono due miliardi di persone.\n\nDentro è caos, e terreno neutrale per ogni fazione della Terra: grandi magazzini accanto a giungle sotterranee, reattori grandi come una città, corridoi pieni di tende da campeggio. La Fondazione Archivio l'ha esplorata e abitata per prima, e tiene la pace tra gli uffici che sono arrivati dopo."
+    },
+    "eris": {
+      "title": "Eris",
+      "description": "Per millenni Eris è stata giudicata una divinità di terza fila, e il rancore si è rappreso in una campagna per il trono celeste. Poi, negli anni Novanta, si è innamorata perdutamente di un meccanico nuevo-texano di nome Bubba.\n\nHanno passato anni sulla strada nel suo camper malandato, rapinando banche lungo la Route 666, con il suo dono per piegare la probabilità ad aprire qualsiasi cassaforte sul posto. È finita nel dicembre 1992, quando una versione futura di Eris uccise Maat, retroattivamente, e la Eris presente fu costretta a rimettersi sulla strada dell'ascesa perché il paradosso non peggiorasse. La teoria era che trovarsi in posizione di uccidere Maat nel 2012 le avrebbe forse permesso, un giorno, di scegliere di non farlo.\n\nRitrovatasi in mano il sistema giudiziario di ogni dimensione senza alcuna preparazione, lo gestisce a modo suo: caotico e arbitrario, e peggiorato da quando Bubba viaggia con l'aspirante strega Em, che detesta e a cui rende la vita impossibile piegando legge cosmica e probabilità.\n\nDopo la morte dell'aspetto Padre di YHWH, il 31 dicembre 2001, Eris si è seduta sul trono vuoto e nessun altro dio ha avuto il fegato di obiettare. Chiunque, in qualsiasi dimensione, commetta un crimine davanti a un testimone si guadagna una taglia da lei, e se preso viene teletrasportato nella sua corte, dove celebra miliardi di processi insieme. Per i peggiori libera fantasmi giudiziari che viaggiano in linea retta finché non prendono il bersaglio.\n\nUn imputato può dichiararsi colpevole, innocente, o accusare Eris stessa, che è una sfida per il trono celeste. Ucciderla lì svuota il seggio e lascia la Torre libera per qualche giorno."
+    },
+    "theGods": {
+      "title": "Gli Dei",
+      "description": "Gli dèi sono in guerra aperta con la Gilda dei Maghi, che sospettano stia preparando un altro Rituale di Salomone. Un dio esiste in proporzione a quanta gente crede ancora in lui, ed è per questo che dell'antichità è rimasto così poco.\n\nUn dio che muore di abbandono si pietrifica e cade nel Deserto Bianco, e non se ne cura nessuno. Il deicidio è un'altra cosa: il corpo resta ancorato alla realtà fisica e marcisce, con la coscienza sveglia dentro. Maat è un caso recente, trafitta dalla Torre Omega e sepolta a centinaia di chilometri di profondità. L'aspetto Padre di YHWH è un altro: il suo corpo orbita ancora la Terra dentro i detriti che la Sindrome di Kessler ha liberato. Ogni impatto ne stacca un pezzo, e sono quei pezzi a cadere. Chi ne tocca uno prende una parte del suo potere, abbastanza da dare capacità a chi non sa lanciare un incantesimo."
+    },
+    "scrapsOfCreation": {
+      "title": "Gli Scarti della Creazione",
+      "description": "Piccole dimensioni tascabili che gli dèi usavano, ere fa, per provare i propri poteri e la propria creatività. Sono rimaste sigillate fino allo Squishing: dopo il 1992 alcune hanno cominciato a cadere da sole nel mondo fisico, e altre sono diventate raggiungibili per la prima volta grazie al motore liminale di Bubba."
+    },
+    "liminalEngine": {
+      "title": "Il Motore Liminale",
+      "description": "Invenzione di Bubba. Acceso, comprime la strada davanti al veicolo, attraversa un continente in minuti e ignora sia la Regola degli 80 sia le bolle locali. Il primo prototipo girò nel 1996 e arrivò in produzione nel 2001. Oggi è montato su quasi ogni mezzo pubblico della Terra, il che ha reso Bubba disgustosamente ricco.\n\nTarato bene può portare un veicolo sott'acqua, in aria aperta o nello spazio. Solo Bubba conosce la configurazione che squarcia lo spaziotempo e raggiunge altre dimensioni."
+    },
+    "naguka": {
+      "title": "I Naguka",
+      "description": "Decine di milioni di anni fa un antenato comune dell'Homo sapiens si trasferì stabilmente sottoterra, nel sistema di caverne che Magamui aveva scavato ere prima. I Naguka si sono evoluti accanto agli umani di superficie e sono rimasti abbastanza umani da incrociarsi con loro; gli ibridi si chiamano orchi.\n\nNel maggio 1970 gli ingegneri sovietici scavarono troppo a fondo con il Pozzo Superprofondo di Kola, e i Naguka risalirono. Facendo campagna in Scandinavia negli anni Novanta scoprirono il black metal norvegese, e gran parte della tribù prese a venerare i Junehem come dèi, dipingendosi il volto di corpse paint prima della battaglia.\n\nIl Sacro Impero Vaticano è l'unica iperpotenza con rapporti formali con loro, e il suo lavoro missionario è in realtà un tentativo di allevare un esercito permanente.\n\nOgni Naguka condivide l'inconscio collettivo goblin. Ferirne uno e la specie intera ti si rivolta contro."
+    },
+    "verden": {
+      "title": "I Verden",
+      "description": "Somigliano molto ai Naguka, lineamenti più gentili, pelle con una sfumatura blu. Ma dove i Naguka sono umani nel profondo, i Verden sono veri goblin, evoluti in un'altra dimensione, con una biologia adeguata: depongono uova, si riproducono per scissione, e un arto reciso piantato nel terreno diventa un nuovo Verden.\n\nVivevano nei Campi Verdi, dimensione 77, tra le specie più avanzate del multiverso, finché per ragioni che nessuno oggi conosce rinunciarono a tutta la loro tecnologia, la lanciarono nella loro stella e si diedero a una vita bucolica dedita allo studio della magia. Cacciati via dallo Squishing, hanno trovato casa sulla Terra e si sono innamorati a loro volta della sua tecnologia. Quasi tutti sono ben integrati e parlano un MarkovSpeak fluente, a differenza dei cugini Naguka, che parlano ancora come bambini.\n\nAvendo studiato i Naguka, hanno imparato a leggere l'inconscio collettivo goblin e a prevederne le mosse. L'accesso è in sola lettura: non possono impiantarci nulla."
+    },
+    "junehem": {
+      "title": "Junehem",
+      "description": "La band black metal norvegese è a metà strada dalla deificazione, spinta dal culto di massa dei Naguka. Hanno imparato a guidare l'inconscio collettivo goblin con la propria musica, e ora guidano le orde che premono in Europa dalla Scandinavia.\n\nLa formazione classica è un piccolo pantheon. Hieronymus, chitarra, è quello che se n'è andato e viene venerato lo stesso, in absentia, cosa che i Naguka considerano una santità più forte del presentarsi. Mark Bitterness, basso e poi voce, è il più venerato, con santuari che trattano la sua fedina penale da martirio. Dauði, il primo cantante, è morto giovane ed è venerato come psicopompo, pregato prima di un'incursione più che durante. Jarnhand tiene il tempo dietro a tutti e tre ed è l'unico che trova la faccenda sfiancante.\n\nOgni governo della Terra ha provato a ucciderli. Un dio del metal non muore finché un solo goblin crede, e crederci sono diversi milioni."
+    },
+    "hieronymus": {
+      "title": "Hieronymus",
+      "description": "È sopravvissuto a una coltellata del suo stesso compagno di band Mark Bitterness, e il trauma cranico gli ha lasciato una sindrome del savant acquisita, facendone uno dei più potenti psionici viventi.\n\nA differenza del resto dei Junehem, che vivono da dèi venerati da un'intera specie, Hieronymus ha lasciato la musica, e l'Orda non gliel'ha mai davvero perdonato.\n\nNon ha solo smesso di suonare. Nessun indirizzo, nessun contatto noto da anni, niente che sfiori una leylinea in modo che i veggenti della Gilda possano seguire. Le teorie vanno dal monastero a un'altra dimensione, fino alla possibilità più probabile e più noiosa: che sia da qualche parte in silenzio, lasciato in pace per la prima volta in vita sua."
+    },
+    "petrodemons": {
+      "title": "I Petrodemoni",
+      "description": "Entità fatte di greggio senziente, di fatto indistruttibili finché restano vicine a una leylinea, che continua a rigenerarle. I dinosauri, così va la teoria, erano praticanti arcani naturali capaci di lanciare senza leylinee, e parte di quel potere è rimasta legata al petrolio in cui i loro corpi si sono trasformati.\n\nL'unico modo di ucciderne uno è spezzare prima la leylinea a cui attinge, e anche allora serve un esercito.\n\nQuasi tutte le iperpotenze preferiscono firmare contratti che combattere. I petrodemoni sanno deviare le leylinee, e questo vale più della vittoria."
+    },
+    "matteiLegend": {
+      "title": "La Leggenda di Enrico Mattei",
+      "description": "Si racconta che Enrico Mattei, fondatore dell'ENI, trovò in una tomba libica una pergamena con il rituale per evocare e vincolare i petrodemoni. Si dice che ci provò per dare all'Italia la piena indipendenza energetica, e che qualcosa andò storto: il suo aereo cadde nel 1962.\n\nChe i petrodemoni esistano o no, la storia è rimasta come la metafora più pulita che ci sia dell'industria petrolifera."
+    },
+    "kesslerSyndrome": {
+      "title": "La Sindrome di Kessler",
+      "description": "Durante il Y2K il satellite ENVISAT perse il controllo e ne colpì un altro, e la cascata di detriti non si è più fermata. Entro un anno dal 31 dicembre 1999 era abbastanza densa da rendere quasi suicida uscire dall'atmosfera. Attraversare il guscio viene paragonato a camminare dentro un tritacarne, e la mortalità al lancio supera il novanta per cento.\n\nL'Agenzia Spaziale Europea, guidata da Margherita Hack, sta provando razzi costruiti quasi interamente con corazza sacrificale, pensata per essere fatta a pezzi mantenendo l'equipaggio vivo abbastanza da uscire dall'orbita. Non possono lasciare il sistema solare; servono ad attraccare a una delle poche navi ancora ferme oltre la nube. Spazioporti come il GreenWitch Space Center e quello pugliese di Taranto accettano ancora volontari, gratis.\n\nIl campo ha un lato buono. Il corpo pietrificato dell'aspetto Padre di YHWH è ancora in orbita, e ogni impatto ne stacca un frammento, facendo piovere pezzi di un dio morto sulla superficie."
+    },
+    "canadafrica": {
+      "title": "Canadafrica",
+      "description": "Uno dei primi effetti visibili dello Squishing. Nel giro di un solo giorno l'intero Messico e il Sud America si sono rimodellati per combaciare con il profilo dell'Africa visto dallo spazio, città, confini e tutti i loro abitanti lasciati esattamente dov'erano."
+    },
+    "serpentineRoad": {
+      "title": "La Strada Serpentina",
+      "description": "Un tunnel a spirale che si apre da qualche parte in Antartide e collega la superficie al nucleo terrestre e alla Cittadella Invertita. Magamui lo scavò centinaia di milioni di anni fa scendendo."
+    },
+    "magamui": {
+      "title": "Magamui",
+      "description": "Una larva aliena grande un quarto della Luna, avvolta attorno al nucleo terrestre da milioni di anni, che si nutre del calore e dell'elettromagnetismo che il nucleo produce.\n\nPur dormiente, può prendere il controllo mentale di una persona alla volta, soprattutto per proteggersi. C'è motivo di pensare che a piena maturità la cosa si estenderebbe all'intera popolazione umana, e che se lasciasse la Terra sarebbe una catastrofe.\n\nParte del lavoro della Gilda dei Maghi è trovare chi è sotto il suo controllo e ucciderlo, perché prendere un nuovo ospite costa a Magamui tempo che preferirebbe non spendere."
+    },
+    "invertedCitadel": {
+      "title": "La Cittadella Invertita",
+      "description": "Costruita dentro una vasta caverna che Magamui ha scavato attorno al nucleo terrestre, con il nucleo appeso al centro come un sole. La città lo avvolge del tutto, così guardando in alto si vedono altri quartieri della stessa città dall'altra parte.\n\nLa eresse una civiltà avanzata vissuta sulla Terra tra i dinosauri e l'umanità, e scomparsa senza lasciare un documento scritto o un frammento di tecnologia, solo una città vuota. È diventata la capitale sotterranea dei goblin."
+    },
+    "vaticanEmpire": {
+      "title": "Il Sacro Vaticano Impero",
+      "description": "Una teocrazia cattolica che governa Italia, Spagna, Polonia e Germania Est, erede diretta del Sacro Romano Impero. Il potere è diviso tra trono e altare: il Papa tiene insieme l'impero, il governo locale resta ai politici di ogni stato membro.\n\nSono permesse solo magia sacra e tecnomanzia. Gli arcanisti finiscono al rogo, o più raramente vengono arruolati nell'Umbra Excidii, l'ordine che dà la caccia agli altri arcanisti su suolo vaticano.\n\nL'attuale Papa ha preso il nome di Pietro II. Nato Joseph Ratzinger, fu eletto dopo la morte di Giovanni Paolo II nell'attentato del 13 maggio 1981.\n\nLa Città del Vaticano monta una batteria di motori liminali, e dopo la morte dell'aspetto Padre di YHWH è stata militarizzata nella Cittadella Vaticana, sospesa a circa 800 metri sopra Roma dietro una batteria di cannoni Gauss. Pietro II ha dichiarato Jenna di Northpoint l'Anticristo e le ha mosso guerra piuttosto che riconoscerla come Seconda Venuta."
+    },
+    "okeanus": {
+      "title": "Okeanus",
+      "description": "L'incantesimo d'acqua definitivo, quello che ha traumatizzato il pianeta in diretta televisiva durante la guerra delle Falkland. Permette a chi lo lancia di controllare un'intera massa d'acqua, e fu usato per annientare la flotta argentina, inghiottendo navi intere e tagliando in due gli uomini con getti in pressione.\n\nIl suo uso ha rivelato al mondo che la magia era reale, e ha innescato una corsa agli armamenti magici tra tutte le iperpotenze della Terra."
+    },
+    "theonuclearBombingNewYork": {
+      "title": "Il Bombardamento Teonucleare di New York",
+      "description": "L'11 settembre 2001 una cellula thatcherista fece detonare tre ordigni teonucleari nel cuore di New York. Le esplosioni non causarono quasi danni strutturali. Disintegrarono ogni anima nel loro raggio, lasciando i corpi ancora in movimento per istinto e biologia, e nulla dentro.\n\nL'attentato fu attribuito ad Al-Qaeda. Solo i Tre Pilastri sanno che le bombe furono costruite con artefatti consumati dal Rituale di Salomone, il loro potenziale inespresso trasformato in arma invece che scartato."
+    },
+    "solomonRitual": {
+      "title": "Il Rituale di Salomone",
+      "description": "Un rito lungo una notte intera, che richiede i Tre Pilastri della Gilda, un sacrificio e sette artefatti di reale peso storico o esoterico. Ogni artefatto usato perde tutto il suo potere, anche se il potenziale mai speso può essere convertito in un ordigno teonucleare.\n\nL'ultima esecuzione fu il 31 dicembre 2001, con la Corona Ferrea dei Sacri Romani Imperatori, la Lancia di Longino, la spada norrena Tyrfing, argilla del Golem di Praga, il fermaglio draconico degli Xia e un corno d'osso neolitico.\n\nIl rituale riscrive il codice sorgente della magia nella dimensione in cui è lanciato. Può rendere il lancio banale per chiunque, riservarlo a pochi eletti o spegnerlo del tutto. La magia è rimasta una favola per tutto il Rinascimento proprio perché in pochi vi avevano accesso; Crowley riscoprì il rituale all'inizio del Novecento e aprì la magia al mondo in sordina.\n\nL'esecuzione del 2001 aveva un altro scopo: drenare ogni ricordo e ogni scampolo di potenziale futuro da Em, che si offrì come sacrificio, e forgiarli in una lancia capace di uccidere l'aspetto Padre di YHWH. Lei è sopravvissuta, ha perso il novantadue per cento dei ricordi, ed è uscita con molto più potenziale di quanto ne avesse. Quella parte nessuno l'ha spiegata.\n\nEsistono versioni minori, che rimodellano la magia in locale con un artefatto invece di sette. Gli effetti non durano, e chi lancia rischia ogni volta la morte o la memoria."
+    },
+    "fantablack": {
+      "title": "Fantablack",
+      "description": "Un pigmento raschiato dalla pelle esterna della Torre Omega. Ciò che ne è dipinto è immune alle bolle temporali, e ogni veicolo con un motore liminale ne è foderato dentro. Costa caro, e proiettili e lame trattate possono uccidere una persona dentro un loop.\n\nLo stesso pigmento è macinato nelle banconote in euro, il che, insieme alla regola per cui i nomi hanno potere, è ciò che ha permesso a Mario Draghi di ascendere."
+    },
+    "anokiPhones": {
+      "title": "I Telefoni Anoki",
+      "description": "Il primo esempio funzionante di tecnologia ricostruita con la magia. Questi mattoni attingono alle leylinee per raggiungersi, e tarati bene possono chiamare l'aldilà, o direttamente gli dèi.\n\nNessun camionista esce di casa senza."
+    },
+    "arcaneMagic": {
+      "title": "La Magia Arcana",
+      "description": "La magia piega la realtà all'intenzione, e nessuno l'ha mai spiegata in modo pulito. Più la si studia, meno risulta razionale, anche se qualche regola regge da decenni, il CamelCase in testa.\n\nCorre lungo le leylinee, fiumi invisibili di potere che affiorano dai giacimenti di petrolio e collegano luoghi di peso storico, religioso o arcano. Più vicino si sta, più potere grezzo porta un incantesimo e più è difficile controllarlo. Lanciare sopra una leylinea senza preparazione può spezzarla, e dove è spezzata anche un incantesimo semplice diventa una lotta. La magia divina fa eccezione, perché segue regole sue. Lontano da ogni leylinea gli incantesimi funzionano comunque, solo più deboli, ed è per questo che gran parte del mestiere di un mago è geografia.\n\nCi sono tre modi di lanciare.\n\nLa magia rituale è aperta a chiunque non sia un idiota: segui i passaggi senza un errore e l'incantesimo parte senza costo in MP. La più potente, e quasi impossibile da annullare senza un contro-rituale.\n\nLa magia simpatica comprime un rituale in parole, gesti e catalizzatori, scambiando ore per secondi al costo di MP. Più debole, ma rapida.\n\nLa metamagia sostituisce ogni componente fisico con pura immaginazione, e i suoi effetti si moltiplicano tra loro per creare nuovi incantesimi. La più debole delle tre, ma silenziosa e lanciabile col solo pensiero. Viene spesso scambiata per psionica, che non è magia affatto."
+    },
+    "sacredMagic": {
+      "title": "La Magia Sacra",
+      "description": "Dove la magia arcana sale dai giacimenti di petrolio e corre sulle leylinee, la magia sacra scende dagli dèi, concessa a chi li venera e li invoca.\n\nCondivide i tre modi di lancio, rituale, simpatico e meta, ma può anche prendere la forma di miracoli veri e propri senza alcuna spiegazione, violando ogni regola che tutto il resto deve rispettare.\n\nSmette di funzionare nel momento in cui il suo dio muore. Quasi tutti gli incantesimi sacri su cui il Vaticano contava sono inutili dal 31 dicembre 2001."
+    },
+    "truckersSociety": {
+      "title": "La Società dei Camionisti",
+      "description": "I veri cavalieri della Strada. Non trasportano solo merci: tengono vivi i collegamenti tra comunità che vivono in realtà reciprocamente inaccessibili, con una gerarchia propria e una rete fitta per scambiarsi notizie su cosa aspetta più avanti.\n\nNessuno di loro esce di casa senza un vecchio telefono Anoki."
+    },
+    "marioDraghi": {
+      "title": "Mario Draghi",
+      "description": "Il nome di Mario Draghi è stampato su decine di miliardi di banconote e registrato in più transazioni di quante volte il nome di Dio compaia in tutte le Bibbie stampate sulla Terra.\n\nLa banda di sicurezza di ogni banconota in euro è macinata da Fantablack raschiato dalla Torre Omega. Tra questo e la regola per cui i nomi hanno potere, Draghi è asceso a dio dei mercati, perdendo nello scambio il corpo e l'identità individuale e diventando un concetto astratto: il motore finanziario che gestisce in silenzio l'economia del multiverso.\n\nGli altri dèi muoiono quando la fede finisce. Uccidere Draghi richiederebbe bruciare ogni banconota che porta il suo nome."
+    },
+    "ladyThatcher": {
+      "title": "Lady Margaret Thatcher",
+      "description": "Molto prima di mettersi davanti alle telecamere durante la guerra delle Falkland e affogare la flotta argentina con Okeanus, Thatcher era già dentro la Gilda dei Maghi. Quando i Tre Pilastri ebbero bisogno di un nuovo volto per il presente, il suo era la scelta ovvia.\n\nAnni prima del Rituale di Salomone accolse una ragazza che più di ogni altra cosa voleva essere una strega, e le insegnò magia vera di persona. Non fu mai gentilezza. Stava dando a Em la forma e il potenziale esatti per essere prosciugata durante il rituale, scelta e costruita per la parte con anni di anticipo.\n\nCiò che non aveva previsto fu il seguito. Privata del novantadue per cento dei ricordi, Em ne uscì con molto più potenziale grezzo di quanto ne avesse, e da qualche parte tra le macerie si insegnò la metamagia da sola, cosa che gli archivi della Gilda definiscono quasi inaudita.\n\nThatcher osserva ora la sua ex allieva con qualcosa di più simile all'inquietudine che all'orgoglio. Una metamaga arrivata lì da sola non risponde a nessuna dottrina che la Gilda le abbia dato."
+    },
+    "aleisterCrowley": {
+      "title": "Sir Aleister Crowley",
+      "description": "Crowley rifondò la Gilda dei Maghi all'inizio del Novecento sotto la casa reale britannica, come ordine pseudo-cavalleresco, ed è per questo che i suoi vertici portano ancora Sir e Lady. Da allora tiene il seggio del Passato e non ha mai accettato di lasciarlo. In Gilda non è rimasto nessuno in grado di costringerlo: conosce incantesimi di cui nemmeno gli dèi hanno mai sentito parlare.\n\nPrima di tutto questo, nell'aprile 1900, tentò di impadronirsi della Volta degli Adepti dell'Ordine Ermetico dell'Alba Dorata, marciando su Blythe Road 36 vestito da highlander, maschera nera e croce celtica dorata. Yeats e altri due lo buttarono giù dalle scale. Ogni resoconto che si possa leggere finisce lì. Ciò che accadde dopo che Crowley si rialzò dal marciapiede è [OMISSIS] dalla notte stessa in cui fu scritto, e qualunque cosa abbia chiamato su Blythe Road è l'unica opera della sua carriera che la Gilda non ha mai catalogato.\n\nUn Pilastro non invecchia finché tiene il seggio, ma il corpo sotto si consuma per altre vie. Il guscio attuale di Crowley sta cedendo, e tutti sanno che gliene serve un altro. Cosa intenda diventare, e dentro cosa, è una domanda a cui gli altri due Pilastri vorrebbero risposta prima.\n\nNel 1918 evocò Lam, uno della specie che lui chiama Turisti. L'operazione funzionò in un solo senso: Lam passò e nulla riuscì a rimandarlo indietro. Crowley non ha mai detto cosa gli abbia chiesto, né cosa gli sia stato risposto."
+    },
+    "shokoAsahara": {
+      "title": "Il Padre, Shoko Asahara",
+      "description": "Prima di essere uno dei Tre Pilastri, Shoko Asahara guidava una setta responsabile di uno degli attentati più letali a memoria d'uomo. Dentro la Gilda è noto più sottovoce come maestro di levitazione, un praticante autentico il cui potere non è mai stato in discussione anche quando i metodi lo erano.\n\nIl suo seggio, che rappresenta il futuro, è la nomina più contestata della Gilda: nessuno fuori dalla cerchia ristretta ha mai avuto una risposta chiara sul perché a un pluriomicida condannato sia stata data voce su cosa diventerà la magia.\n\nCrowley lo disprezza apertamente e non si è mai preso la briga di nasconderlo, anche se nessuno ha mai verificato se quel disprezzo vada oltre le parole."
+    },
+    "blytheRoadBattle": {
+      "title": "La Battaglia di Blythe Road",
+      "description": "La sera del 17 aprile 1900 il poeta W. B. Yeats si piazzò sulle scale di Blythe Road 36, a Londra, e impedì il passaggio a un giovane occultista che si faceva chiamare conte Vladimir Svareff. L'uomo sulle scale era Aleister Crowley, in tartan highlander, maschera nera e croce celtica dorata, venuto a prendersi con la forza la Volta degli Adepti dopo uno scisma su chi avesse diritto di guidare l'Ordine. Yeats non discusse. Lui e altri due Adepti lo sollevarono e lo buttarono giù per le scale.\n\nI verbali dell'Ordine registrano il resto come una formalità: polizia chiamata, nessuna denuncia, Crowley interdetto. Yeats su quella notte non scrisse quasi nulla, cosa che chi lo conosceva prese come una dichiarazione a sé.\n\nGli storici della Gilda leggono quel silenzio diversamente. Ogni resoconto superstite finisce ai piedi delle scale, nell'istante in cui Crowley si rialza, e qualunque cosa i verbali dicessero in origine su cosa venne dopo è [OMISSIS] da allora, in una grafia che nessuno ammette di riconoscere."
+    },
+    "theTourists": {
+      "title": "I Turisti",
+      "description": "Turisti è come si chiamano gli Zeta Reticuliani; Grigi è come li chiamano tutti gli altri. Il loro mondo dista trentanove anni luce, che è esattamente il tempo che le prime trasmissioni terrestri hanno impiegato ad arrivarci. Hanno scoperto l'umanità nel 1975. Ufficialmente, il primo contatto è del 1999.\n\nSono ossessionati dall'umanità, e in particolare dalla sua televisione. Da qualche parte fuori dalla Terra hanno costruito un monumento enorme alla specie, che i diplomatici della Gilda descrivono meno come una statua che come un'ovazione fusa in qualcosa che non è del tutto metallo. Non vogliono male a nessuno qui, e si sono fatti in quattro per evitarlo anche quando sarebbe stato più comodo non curarsene.\n\nCiò in cui sono bravi è un elenco corto, e riguarda tutto lo spaziotempo: viaggio più veloce della luce, manipolazione della gravità e due sfere di Dyson funzionanti attorno alla loro stella. Ogni nave umana che arriva a Zeta Reticuli ottiene rifornimento gratis, senza domande.\n\nHanno provato una terza sfera attorno al Sole, più come regalo che per un bisogno terrestre. Il primo specchio è durato quanto ci ha messo un frammento di detrito Kessler a trovarlo. Il relitto è ancora lassù.\n\nFuori da gravità e velocità della luce sono quasi inetti, e si appoggiano alla scienza e alla magia umane per tutto il resto, il che rende i loro tentativi di ripulire il campo di detriti dolorosi da guardare. Ci provano più o meno di continuo da quando l'orbita bassa si è chiusa. Sono solo scarsi, e un numero deprimente di missioni finisce con un vascello turista colpito dai detriti che era venuto a raccogliere."
+    },
+    "theDargos": {
+      "title": "I Dargos",
+      "description": "Dove i Turisti sono arrivati da poco, i Dargos sanno della Terra da prima che esistessero parole per ciò che le stavano facendo.\n\nNessuno in Gilda è mai riuscito ad avere una vera conversazione con uno. Il contatto che esiste passa per rapimenti, e per scherzi abbastanza specifici e abbastanza crudeli che 'trolling' è diventato il termine educato nei rapporti ufficiali.\n\nNon sembrano volere altro che la reazione. Un incontro raramente lascia danni permanenti e altrettanto raramente lascia la vittima creduta da chi non c'era, cosa che diversi ricercatori sospettano sia più vicina al punto di qualunque teoria su campionamento genetico o ricognizione d'invasione."
+    },
+    "hillIncident": {
+      "title": "L'Incidente Hill",
+      "description": "La notte del 19 settembre 1961 Betty e Barney Hill tornavano a casa attraverso le White Mountains quando un velivolo fermò la loro auto, e entrambi persero quasi due ore di cui non hanno mai saputo rendere conto. La loro storia divenne il primo caso di rapimento di larga diffusione nel paese, e la mappa stellare disegnata da Betty è discussa da decenni.\n\nUn dettaglio che ogni resoconto pubblicato sbaglia, perché nessuno poteva saperlo: quel velivolo non tornò mai a casa. Nel tentativo di rientrare a Zeta Reticuli fu abbattuto dalle protezioni che Crowley aveva già steso sugli approcci alla Terra, e non riferì mai cosa aveva trovato.\n\nI Turisti avrebbero scoperto la Terra solo quattordici anni dopo, e via radio."
+    },
+    "zanfrettaIncident": {
+      "title": "L'Incidente Zanfretta",
+      "description": "Pier Fortunato Zanfretta faceva un tranquillo turno di notte come guardia giurata fuori Genova il 6 dicembre 1978 quando avvenne il primo incontro, e non finì lì. Negli anni successivi riferì di essere stato visitato più volte, da esseri sempre più alti, più strani e più difficili da credere a ogni racconto.\n\nI ricercatori della Gilda hanno smesso di trattarlo come un evento singolo e hanno cominciato a trattarlo come una gag ricorrente. Il consenso indica i Dargos: niente del caso somiglia a un vero tentativo di contatto, e tutto somiglia a una specie che ha trovato qualcuno credulone e telegenico ed è tornata a vedere cosa avrebbe detto dopo."
+    },
+    "jennaOfNorthpoint": {
+      "title": "Jenna di Northpoint",
+      "description": "Jenna di Northpoint sostiene di essere la Seconda Venuta, e abbastanza gente le crede perché la cosa pesi davvero in un mondo dove la fede tiene in vita un dio.\n\nNon è arrivata predicando. È arrivata con un'attività, e la prima cosa che ne ha fatto è stata svuotare dall'interno l'arena di Northpoint. Per decenni ci si erano combattuti incontri all'ultimo sangue. Lei ha tenuto il pubblico, le scommesse e tutto lo spettacolo, e ha tolto le morti, mettendo coreografia e vera abilità atletica dove prima c'erano i cadaveri.\n\nPietro II l'ha dichiarata Anticristo e ha mosso guerra al Sacro Impero Vaticano per il solo rifiuto. Jenna non ha risposto. Continua a gestire la sua arena senza sangue e lascia che sia la guerra di lui a perorare la sua causa."
+    },
+    "popePetrusII": {
+      "title": "Papa Pietro II",
+      "description": "Nato Joseph Ratzinger, prese il nome di Pietro II dopo che Giovanni Paolo II fu ucciso nell'attentato del 13 maggio 1981, a cui l'intervento della Gilda non arrivò in tempo. Dove il predecessore è ricordato come protetto dal destino, Pietro II è ricordato come il papa che lo ha militarizzato.\n\nDopo la morte dell'aspetto Padre di YHWH nel 2001 fece ricostruire la Città del Vaticano nella Cittadella Vaticana, una fortezza sospesa a circa 800 metri sopra Roma dietro una batteria di cannoni Gauss.\n\nHa dichiarato Jenna di Northpoint l'Anticristo e ha portato l'impero in guerra piuttosto che accettare la sua pretesa, una guerra combattuta finora soprattutto a comunicati stampa e scaramucce di confine, dato che Jenna non ha mostrato alcun interesse a rispondere."
+    },
+    "maat": {
+      "title": "Maat",
+      "description": "Dea egizia della giustizia, dell'ordine e della verità, pesava i cuori dei morti contro una sola piuma trovandone quasi tutti insufficienti. È sopravvissuta a millenni di culto in calo meglio dei suoi contemporanei, finché Eris, in una versione del 2012 che tecnicamente non è ancora avvenuta, non l'ha uccisa scagliandole contro la Torre Omega.\n\nQuell'omicidio è il peccato originale dello Squishing. Il corpo di Maat giace sulla punta della Torre, a centinaia di chilometri sotto la crosta e sigillato lì dal 1992, con la coscienza intatta dentro un cadavere che non può muoversi né morire due volte.\n\nNessuno ha trovato un modo di liberarla, né un rituale che non rischi di peggiorare il paradosso."
+    },
+    "falklandsWar": {
+      "title": "La Guerra delle Falkland",
+      "description": "Una disputa coloniale minore su un pugno di isole che non interessavano a nessuno fuori da Argentina e Britannia, fino al momento in cui Margaret Thatcher si mise davanti alle telecamere e lanciò Okeanus. In diretta, davanti al pianeta intero, affogò la flotta argentina in un muro d'acqua in pressione.\n\nQuella trasmissione è il giorno in cui il mondo ha scoperto che la magia era reale. I governi che per decenni avevano fatto finta di niente corsero ai ripari, e la corsa agli armamenti magici che ne seguì risale a quei pochi minuti di filmato più che a qualsiasi cosa per cui la guerra fu combattuta."
+    },
+    "varlenia": {
+      "title": "Il Continente Vuoto di Varlenia",
+      "description": "Una nazione in un'altra dimensione, e una delle prime vittime dell'abitudine dello Squishing di far collassare frammenti di altre realtà in questa.\n\nCiò che ne resta qui non è tanto un luogo quanto un'assenza: strade, edifici e maglie urbane che si comportano come quelle di Varlenia senza un solo varleniano a spiegare perché.\n\nLe squadre di rilevamento della Gilda trattano un frammento come una delle cose più pericolose prodotte dallo Squishing, non perché qualcosa lì attacchi, ma perché lì niente fa niente, e il silenzio entra dentro chi resta troppo a lungo."
+    },
+    "threeAmericas": {
+      "title": "Le Tre Americhe",
+      "description": "L'indipendenza non è mai avvenuta del tutto, e il continente si è diviso in tre. La costa est è la Repubblica di Cascadia. Il centro sono gli Stati Liberi del Midwest, con una linea ininterrotta di Lincoln sulle banconote e Bill Clinton attualmente in carica. La costa ovest non si è mai staccata dalla Britannia: è il Protettorato Atlantico, retto da una dinastia di Cornwallis coloniali arrivata alla nona generazione di una guerra che qui non è mai finita. Nessuno si è preso la briga di sistemare i punti cardinali in nessuno dei tre nomi.\n\nI tre a stento si riconoscono a vicenda. Quel che passa per identità condivisa viaggia sulle strade in mezzo, portato dagli stessi camionisti che portano tutto il resto."
+    },
+    "goblinHorde": {
+      "title": "L'Orda Goblin",
+      "description": "Ciò che i Naguka sono diventati una volta avuto un governo. I vertici somigliano meno a un gabinetto che a un bestiario: il Gran Goblin in cima, e sotto di lui un carosello di capitani, Griznak, Krazz, Zog, Skab, Blight e una dozzina d'altri che rispondono solo a lui, e non a lungo.\n\nOggi opera dall'Islanda, la terraferma più vicina al Pozzo Superprofondo di Kola da cui risalirono nel maggio 1970.\n\nL'Orda non fa diplomazia, fa incursioni che ogni tanto si fermano. L'unica iperpotenza con un rapporto funzionante è il Sacro Impero Vaticano, i cui missionari continuano a voler convertire una specie che vuole soprattutto essere lasciata in pace con i suoi dischi dei Junehem."
+    },
+    "kukulkanAscendancy": {
+      "title": "L'Ascendancy di Kukulkan",
+      "description": "L'iperpotenza messicana risponde, sulla carta, a una linea che comincia con un dio-imperatore vero e proprio: Kukulkan, poi una processione di Ajaw divini, generali giaguaro e custodi del calendario che risale più indietro di quanto chiunque possa verificare. Poi, senza troppo clamore sul passaggio, il registro prosegue dritto con Porfirio Diaz, Madero, Zapata e Villa, come se il Novecento fosse l'ultimo capitolo della stessa successione.\n\nNell'Ascendenza nessuno lo trova strano, e se Kukulkan sieda ancora dietro la presidenza moderna non è una domanda a cui i suoi cittadini dedichino tempo."
+    },
+    "dprkorea": {
+      "title": "La Repubblica Popolare Democratica di Corea",
+      "description": "La linea Kim governa la Repubblica Popolare Democratica di Corea come ha sempre fatto, di padre in figlio in nipote, con una piccola panchina permanente di uomini di partito a coprire ciò di cui la famiglia non vuole occuparsi direttamente.\n\nCiò che distingue questa versione non è la politica, che nessuno da fuori vede abbastanza chiaramente da giudicare, ma quanto il culto della personalità sia diventato portante. I media di stato non si limitano a lodare i Kim. Affermano di loro cose impossibili, controllo del tempo, maestria istantanea, vittoria senza sforzo, con una coerenza che comincia a sembrare meno propaganda e più una rivendicazione."
+    },
+    "dharmaDirectorate": {
+      "title": "Il Direttorato del Dharma",
+      "description": "Il governo cinese porta due facce cucite insieme e non ne vede la giuntura.\n\nUna è familiare: Sun Yat-sen, Chiang Kai-shek, Mao e la lunga fila di Segretari Generali dopo di lui, alla guida della più grande burocrazia del continente esattamente come la storia la ricorda. L'altra sta mezzo passo indietro, in titoli che fuori si sentono di rado: un Gran Precettore, un Abate Cancelliere, un Reggente dell'Armonia, un clero ombra di invenzione del Direttorato, che benedice decisioni già prese dal Politburo.\n\nQuale faccia governi il paese in un dato giorno dipende da chi lo chiedi, e il Direttorato non ha mai visto motivo di chiarirlo agli estranei."
+    },
+    "illuminatedKhanate": {
+      "title": "Il Khanato Illuminato",
+      "description": "La Mongolia si governa come una fusione che nessuno aveva progettato: metà khanato, metà teocrazia buddhista, con un Khan Illuminato da un lato del trono e una linea di Bogd Khan e reggenti lama dall'altro, ciascuno a fornire una legittimità che l'altro non può fabbricare da solo.\n\nÈ una piccola iperpotenza sotto ogni misura materiale, e resta iperpotenza per la forza di una tradizione monastica che tratta la magia come preghiera, e la preghiera come una disciplina che fuori dal Khanato nessuno ha padroneggiato altrettanto bene."
+    },
+    "solomonicRepublic": {
+      "title": "La Repubblica Solomonica",
+      "description": "Il governo israeliano è, letteralmente, la corte di re Salomone, ancora in sessione tremila anni dopo.\n\nI suoi ministri non sono politici in alcun senso riconoscibile: il Nasi Principe Sitri, lo Scriba del Tempio Duca Bathin, il Custode del Sigillo Conte Bifrons, entità della stessa tradizione goetica che Salomone è famoso per aver vincolato al servizio. Ancora vincolate, ancora legiferanti.\n\nLa Repubblica è la prova superstite più chiara che l'opera originale non fu mai solo teoria: settantadue spiriti a cui è stata data una carica invece di un esorcismo, che reggono uno stato sulla forza di un contratto vecchio tremila anni che nessuno di loro è riuscito a rompere."
+    },
+    "petroKingdomOfArabia": {
+      "title": "Il Regno Petrolifero d'Arabia",
+      "description": "La monarchia araba corre sulla risorsa da cui prendono nome i suoi titoli: un Emiro del Petrolio, uno Sceicco del Pozzo, un Reggente della Concessione, prima che la linea si assesti sulla Casa dei Saud.\n\nCiò che i titoli non dicono è quanto letteralmente parte di quel petrolio risponda. I petrodemoni sono più fitti sotto la sabbia araba, e la politica estera del Regno corre, più di quanto ammetta, su contratti rinnovati con cose che erano vecchie prima dell'Islam e sopravvivranno alla monarchia che firma le carte."
+    },
+    "sanatanaRashtra": {
+      "title": "Sanatana Rashtra",
+      "description": "L'India si governa come un Direttorato del Dharma tutto suo, anche se lì nessuno lo chiama così. Un Reggente del Dharma e un Acharya siedono accanto, non sopra, a una linea parlamentare che passa per Nehru, Indira Gandhi e Vajpayee, ciascuno accettato come espressione politica dello stesso ordine che il Reggente rappresenta nel rito.\n\nÈ l'unica iperpotenza che non si è mai presa la briga di separare la magia dal governo, sulla teoria che uno stato senza dharma non sia uno stato che valga la pena tenere."
+    },
+    "longChile": {
+      "title": "Il Lungo Cile",
+      "description": "Il Cile si definisce il Lungo Sud e lo intende soprattutto in senso geografico: un'unica striscia impossibilmente stretta, tracciata prima da un Maresciallo del Lungo Sud e da un Generale della Cordigliera, prima che i presidenti veri del Novecento, Ibanez, Alessandri e Pinochet tra loro, prendano il registro.\n\nI titoli militari non sono mai spariti quando sono arrivati quelli civili. Si sono spostati in un piano onorifico che l'iperpotenza tiene spolverato per le cerimonie, e per i momenti in cui la cerimonia non basta più."
+    },
+    "imperialStatePersia": {
+      "title": "Lo Stato Imperiale di Persia",
+      "description": "La monarchia persiana non ha mai avuto la rivoluzione che la storia ricorda. Gli shah Qajar passano il testimone ai Pahlavi senza strappi, Reza Shah a Mohammad Reza a Reza Pahlavi II, con il governo di Mossadegh archiviato come interruzione e non come rottura. La Shahbanu Farah compare nella successione come più di una consorte: capo di stato operativo ogni volta che il trono ne ha avuto bisogno.\n\nLo Stato Imperiale tratta la propria continuità come principale esportazione: la prova, per chi lo chieda, che una monarchia cade solo quando accetta di farlo."
+    },
+    "topicApuliaSpaceCenter": {
+      "title": "Centro spaziale di Puglia",
+      "description": "Uno dei due centri di lancio che mandano ancora qualcuno in orbita, giù sul tacco d'Italia. Dopo la cascata di Kessler gli equipaggi sono volontari presi dalla strada: alla reception ti danno moduli invece che domande, perché la fila è corta e la disperazione no."
+    },
+    "topicArchiveMenu": {
+      "title": "L'Archivio",
+      "description": "L'opzione Archivio del menu principale, il libro che Bubba dice a Em di leggere per reimparare la strada. Ogni regola, fazione, creatura e luogo di cui il gruppo ha sentito parlare è schedato lì dentro, questa pagina compresa."
+    },
+    "topicArchiveFoundation": {
+      "title": "La Fondazione Archivio",
+      "description": "Bibliotecari paramilitari nati dalle ceneri dell'Internet Archive, ossessionati dal catalogare tutto e dal pubblicarlo. Tengono la Torre Omega come terreno neutrale fra le iperpotenze, e ti fermano a un posto di blocco per pubblicare i messaggi del tuo telefono."
+    },
+    "topicBritannia": {
+      "title": "Britannia",
+      "description": "La casa reale che sostenne Sir Aleister Crowley quando rifondò la Gilda dei Maghi come ordine cavalleresco all'inizio del Novecento, ed è da lì che vengono ancora i titoli di Sir e Lady. Tiene anche il Protettorato Atlantico dall'altra parte delle tre Americhe."
+    },
+    "topicBuildMenu": {
+      "title": "Costruzione",
+      "description": "Il menu Costruzione. Acciaio, legno e pietra di recupero tornano fuori come muri, mobili e qualunque altra cosa il gruppo voglia in piedi dove si ferma per la notte."
+    },
+    "topicCamp": {
+      "title": "Accampamento",
+      "description": "Un campo piantato ovunque sulla mappa del mondo dal prompt di Continua, o dal menu di qualunque veicolo accanto a cui la squadra si trovi. Passa la notte senza il conto della locanda, che lungo quasi tutta la Strada Onnicomprensiva è l'unica offerta disponibile. La serata vale più del letto: ci si lava, si parla e si mette una pentola sul fuoco quando il cibo scarseggia."
+    },
+    "topicCamper": {
+      "title": "Il Camper",
+      "description": "La casa ammaccata su ruote di Bubba: foderata di Fantablack all'interno perché i loop temporali non possano toccarla, e montata con l'unico motore liminale calibrato per la Strada Avvolgente. Tre persone hanno provato a rubarlo e nessuna è riuscita a guidarlo."
+    },
+    "topicCedrataMassoni": {
+      "title": "Cedrata Massoni",
+      "description": "Una bibita al cedro, gialla e torbida. Il gusto di Em per la cedrata è sopravvissuto alla perdita di tutto il resto, così Bubba la archivia accanto alla patente come prova di chi era."
+    },
+    "topicContinue": {
+      "title": "Continua",
+      "description": "Il comando di conferma. Puntato su una persona, un animale o un oggetto apre tutto ciò che il gruppo può farci, da Empatia al piantare un accampamento."
+    },
+    "topicCookingMenu": {
+      "title": "Cucina",
+      "description": "L'opzione Cucina nel menu: ingredienti crudi combinati in pasti. È l'unica cosa fra il gruppo e la lenta aritmetica della fame."
+    },
+    "topicCrimsonAnalyzers": {
+      "title": "Gli Analisti Cremisi",
+      "description": "La casta scientifica dei Turisti, per cui nulla è compreso finché non è stato aperto, e che portano katane perché un bisturi è lento e l'universo è grande. Nel 1999 volevano vivisezionare Em, non avevano il permesso, e la lasciarono girare per la loro nave."
+    },
+    "topicEmpathize": {
+      "title": "Empatia",
+      "description": "Il pannello Empatia: leggere una persona o un animale, convincerla e, se si affeziona al gruppo, chiederle di unirsi, come animale o come membro a pieno titolo."
+    },
+    "topicEsotericHeavyIndustries": {
+      "title": "Esoteric Heavy Industries",
+      "description": "Fabbricano scope volanti, reattori a fusione e tutto quello che sta in mezzo. La loro merce ignora la Regola degli 80: muovi un oggetto EHI sotto gli ottanta e non si azzera lo stesso. Nessuno ha mai visto una fabbrica o un operaio, la merce compare in magazzino quando nessuno guarda."
+    },
+    "topicEuronymous": {
+      "title": "Euronymous",
+      "description": "Il chitarrista dei Mahyem sopravvissuto al coltello di Varg, uscito dal trauma cranico con una sindrome del savant acquisita e oggi uno degli psionici più potenti in circolazione. Il resto della band vive da dèi; lui è sceso dal palco del tutto e nessuno sa dove sia finito."
+    },
+    "topicGiulioAndreotti": {
+      "title": "Giulio Andreotti",
+      "description": "Il politico italiano che Em ha trovato a bordo di una nave madre dei Turisti sopra Roccalonga la notte dell'evento Y2K, in fitta conversazione con Marco Marco Marco. Nessuno ha spiegato che cosa ci facessero lassù, né l'uno né l'altro."
+    },
+    "topicGreenFields": {
+      "title": "I Campi Verdi",
+      "description": "La dimensione 77, casa dei Verden e un tempo uno dei mondi più avanzati del multiverso, finché non gettarono ogni macchina che avevano nella loro stella e si misero a coltivare la terra. Lo Squishing morde più forte alle dimensioni alte, e i Campi Verdi sono già in gran parte invivibili."
+    },
+    "topicGreenwitchSpaceCenter": {
+      "title": "Centro spaziale di Greenwitch",
+      "description": "L'altro posto del continente che porta su un volontario attraverso il guscio di detriti. L'Agenzia Spaziale Europea fa partire da qui i suoi razzi corazzati, e ne tornano giù parecchi meno di quanti ne salgano."
+    },
+    "topicJudicialDimension": {
+      "title": "La Dimensione Giudiziaria",
+      "description": "Dove un fantasma giudiziario porta chiunque riesca a toccare. Eris ci gestisce miliardi di processi in una volta, quindi non aspettarti tutta la sua attenzione. Puoi dichiararti colpevole, dichiararti innocente, o dichiarare colpevole lei, il che è una sfida per il trono celeste."
+    },
+    "topicLeylines": {
+      "title": "Linee di ley",
+      "description": "Fiumi invisibili di potere arcano che affiorano dai pozzi di petrolio e collegano luoghi di peso storico, religioso o arcano. Più vicino sta un incantatore, più forte è l'incantesimo e più è difficile tenerlo, e mettersi sopra una linea senza addestramento la spezza: dove una linea di ley è rotta nessuno riaccende più nemmeno una candela con la magia."
+    },
+    "topicMahyem": {
+      "title": "Mahyem",
+      "description": "La band norvegese di black metal che i Naguka hanno preso per dèi negli anni Novanta, e l'adorazione di massa è tutto ciò che serve. Guidano l'inconscio collettivo goblin con la loro musica e le orde che spingono giù dalla Scandinavia, e ogni governo del pianeta ha fallito nell'ucciderli."
+    },
+    "topicMainMenu": {
+      "title": "Il Menu Principale",
+      "description": "Non un menu fisico ma, come dice Bubba, una tecnica di meditazione trascendentale per deframmentare i ricordi. L'Archivio, il Pensatore, Costruzione, Ricerca, Sonno e tutto il resto pendono da lì."
+    },
+    "topicMarcoMarcoMarco": {
+      "title": "Marco Marco Marco",
+      "description": "Un Turista, trovato a discutere con Giulio Andreotti a bordo della nave madre che prese Em sopra Roccalonga l'ultima notte del 1999."
+    },
+    "topicMargheritaHack": {
+      "title": "Margherita Hack",
+      "description": "L'astrofisica a capo dell'Agenzia Spaziale Europea. La sua risposta alla cascata di Kessler sono razzi fatti quasi interamente di corazza sacrificale, pensati per essere sbriciolati durante la salita e per arrivare comunque."
+    },
+    "topicMoonlitStation": {
+      "title": "Moonlit Station",
+      "description": "Una sosta olandese sul ciglio della strada in riva a un lago, e l'ultima sera normale del gruppo: un picnic di capodanno, fuochi d'artificio tecnomagici fatti in casa, e una mano gigante d'acqua uscita dal lago che si è portata via Em."
+    },
+    "topicNobelPrize": {
+      "title": "Il Premio Nobel",
+      "description": "Il comitato svedese che ha consegnato a Bubba uno dei suoi premi, e che il padre di Em, a detta di Bubba, ha corrotto per intero per far passare l'Em Drive alla revisione paritaria."
+    },
+    "topicOverviewEffect": {
+      "title": "L'effetto veduta d'insieme",
+      "description": "Ciò che prende una persona che vede tutta la Terra in una volta dall'orbita. Pare che si rifiuti di far visita ai miliardari, e nessuno ha offerto una spiegazione convincente."
+    },
+    "topicPet": {
+      "title": "Accarezzare",
+      "description": "L'opzione di Empatia per gli animali. Abbastanza carezze e la bestia seguirà il gruppo lungo la strada, come animale o, se si affeziona davvero, come membro a pieno titolo."
+    },
+    "topicResearchMenu": {
+      "title": "Ricerca",
+      "description": "Il menu Ricerca: materiali accumulati spesi in scoperte. Ciò che un gruppo mette a punto appartiene all'intero mondo in cui è stato messo a punto, non a un singolo salvataggio."
+    },
+    "topicRoccalonga": {
+      "title": "Roccalonga",
+      "description": "Un paese rurale italiano, e il posto dove una nave madre triangolare si posò la notte dell'evento Y2K mentre Bubba ed Em davano la caccia agli alieni. Presero Em per studiarla, e poi la restituirono."
+    },
+    "topicRoute666": {
+      "title": "Route 666",
+      "description": "L'autostrada che percorre tutte e tre le Americhe. Bubba ci è cresciuto in gran parte, e ci ha rapinato in gran parte le banche insieme a Eris."
+    },
+    "topicSleepMenu": {
+      "title": "Sonno",
+      "description": "L'opzione Sonno nel menu principale. Un accampamento, una stanza in affitto o un letto qualunque fanno passare le ore, ed è dormendo che si scelgono gli incantesimi attivi del giorno."
+    },
+    "topicThinkerMenu": {
+      "title": "Il Pensatore",
+      "description": "Il banco da lavoro nel menu: una sola schermata per ogni ricetta di oggetti, armi e armature che i mestieri del gruppo hanno sbloccato, forgiata con il materiale di recupero."
+    },
+    "topicUmbraExcidii": {
+      "title": "L'Umbra Excidii",
+      "description": "Il corpo arcano del Sacro Vaticano Impero, il cui compito è dare la caccia ai praticanti arcani in suolo imperiale. Nell'Impero la magia arcana porta al rogo, così l'Impero ha trovato l'unica scappatoia nella propria legge e l'ha riempita di personale."
+    },
+    "topicWhiteDesert": {
+      "title": "Il Deserto Bianco",
+      "description": "Dove finisce un dio quando la fede si esaurisce: il corpo si fa pietra e cade, e a nessuno importa granché. Il deserto è fatto di quelli morti di fame, distesi dove sono caduti."
+    },
+    "topicWimbledon": {
+      "title": "Wimbledon",
+      "description": "Il sobborgo di Londra dove vive il padre di Em: l'uomo che ha brevettato l'Em Drive da cui lei prende il nome e che, insiste Bubba, si è comprato ogni revisore fra sé e un Nobel."
+    },
+    "topicY2KEvent": {
+      "title": "L'evento Y2K",
+      "description": "La notte del 31 dicembre 1999, quando morirono due miliardi di persone e nessuno ha spiegato come. La stessa notte la porta sigillata della Torre Omega si aprì da sola, come una macchinetta che ha finalmente contato abbastanza monete, e il satellite ENVISAT perse il controllo dando inizio alla cascata di Kessler."
+    },
+    "topicYHWH": {
+      "title": "YHWH",
+      "description": "Il dio che Em ha ucciso con una lancia forgiata dai suoi stessi ricordi. Il suo aspetto paterno era già morto, lasciando il trono celeste vuoto perché Eris ci si sedesse. Quel che ne resta orbita attorno alla Terra sabbiato dai detriti satellitari, e i pezzi che ricadono concedono una parte di potere divino a chi li raccoglie."
+    },
+    "topicArmy": {
+      "title": "Esercito",
+      "description": "Fino a cento soldati, arruolati da un capitano di fazione e marciati dietro il gruppo sulla mappa del mondo. Combattono le battaglie campali che il gruppo non può combattere in quattro, e mangiano che ci sia una guerra o meno."
+    },
+    "topicOptionsMenu": {
+      "title": "Opzioni",
+      "description": "Dove si imposta tutto ciò che riguarda come il gioco appare, suona e risponde al controller: dimensione del testo, lo shader retrò, la musica di battaglia, i suggerimenti e ogni tasto con cui si guida il gruppo."
+    },
+    "topicFriday": {
+      "title": "Venerdì",
+      "description": "Il giorno della settimana che Em ha perso per mesi a causa di una fusione di incantesimi finita male, che è la prova permanente che una fusione toglie oltre a dare. Bubba all'epoca trovò l'intero episodio molto divertente."
+    }
+  }
+}

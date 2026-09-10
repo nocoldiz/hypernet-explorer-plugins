@@ -863,6 +863,19 @@
     const WHEELBASE         = 18;     // world units between axles
     const MAX_STEER_LOCK    = 0.52;   // rad of steering lock at standstill
     const STEER_FALLOFF     = 0.011;  // lock shrinks with speed: lock/(1+v*k)
+    // What the ground will actually hold in a turn, in units/s^2 (UNITS_PER_M
+    // is 4, so a shade under 1.4 g on asphalt and proportionally less on dirt,
+    // sand or snow). The bicycle model on its own has no such limit: its yaw
+    // rate climbs with speed while the lock only shrinks by a tenth of that,
+    // so past the natural top the camper turned HARDER the faster it went and
+    // a tap of left or right at liminal speed spun it on the spot. The turn is
+    // capped at v * yawRate <= this instead, which is the one thing a wheel on
+    // a surface can promise: sharp at walking pace, a long sweep at speed.
+    const LAT_ACCEL_MAX     = 55;
+    // How fast the front wheels answer the wheel, per second of easing. A
+    // digital left / right is a full lock the instant it is pressed, so the
+    // ease is what stands in for a wrist; an analog stick brings its own.
+    const STEER_EASE        = 8;
     // The camper pulls far harder than a real van and keeps pulling: the engine
     // force is high, the gearbox is spaced wide and air drag is light, so it
     // reaches its natural top (see NATURAL_TOP) in a handful of seconds rather
@@ -945,9 +958,13 @@
     //   the vehicle's natural top is the game saying "through it, then": trees
     //   come down.
     //
-    //   THE GROUND IS NEVER DESTROYED. No vehicle punches a hole in the terrain
-    //   at any speed, boosting or not. Rock in the way stops it, and the digging
-    //   tools are the only thing out here that takes the world apart.
+    //   THE GROUND IS ONLY BROKEN UNDER TURBO, and this said for a long time
+    //   that it was never broken at all while the bumper went on ploughing
+    //   through banks at any speed with the throttle open (the scene's
+    //   _ploughAhead). It does not: off the boost a bank stops a vehicle the
+    //   way a tree does, and only the held accelerator turns the bumper into a
+    //   plough. Everywhere else the digging tools are still the only thing out
+    //   here that takes the world apart.
     //
     //   NOT IN A TOWN. A town is somebody's, and a car at nine hundred is not an
     //   argument about planning permission. Inside a settlement a boosting
@@ -2061,7 +2078,7 @@
         SWIM_RISE, SWIM_SINK, SWIM_SPEED, SWIM_SPRINT_MULT,
         FUEL_PER_KM, FUEL_PER_UNIT, FUEL_VAR, GEARS, GEAR_FORCE,
         GamepadRaw, HANDBRAKE_DECEL, HANDBRAKE_GRIP, HEADLIGHT_BEAM_OPACITY,
-        HEADLIGHT_INTENSITY, HEADLIGHT_NIGHT, KMH_TO_UNITS, LAT_SCRUB,
+        HEADLIGHT_INTENSITY, HEADLIGHT_NIGHT, KMH_TO_UNITS, LAT_ACCEL_MAX, LAT_SCRUB,
         LAUNCH_GRADE, LAUNCH_KMH, LIMINAL_ACCEL_SEC, LIMINAL_BOOST_FUEL_MULT,
         LIMINAL_BUILD_BUDGET, LIMINAL_FUEL_PER_SEC, LIMINAL_TERRAIN_RADIUS,
         LIMINAL_TOP_KMH, LOOT_RANGE, MAX_KMH, MAX_STEER_LOCK, MOUNTAIN_MAX_H,
@@ -2074,7 +2091,7 @@
         SHIFT_TIME, SKY_KEYFRAMES, SLOPE_ACCEL, SNOW_LINE, SOLID_PROPS,
         PROP_RADIUS, PROP_MIN_R, PROP_SMASH_KMH,
         SHIP_RAM_KMH, SHIP_RAM_DAMAGE, SHIP_RAM_EVERY,
-        STEER_FALLOFF, STEP_SOUNDS, SURFACES, TALK_RANGE,
+        STEER_EASE, STEER_FALLOFF, STEP_SOUNDS, SURFACES, TALK_RANGE,
         TRAFFIC_CRASH_KMH,
         VOXEL_STEP_MATERIAL,
         TRAFFIC_MAX, TRAFFIC_RING_MAX, TRAFFIC_RING_MIN, TREE_POOLS, UNITS_PER_M,

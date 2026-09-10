@@ -1024,6 +1024,32 @@
       }).map(ev => ({ eventData: ev, eventId: ev.id, mapId }));
     },
 
+    // Every template a pool hands out is drawn with a sheet that is still on
+    // disk. A pool is harvested off map JSON once and then cached, both for the
+    // session and in the world folder (poolCache) and js/db/WorldGen/NPCPools.json,
+    // so a pool built before a sprite was moved or renamed keeps dealing the
+    // name it was harvested under long after the file stopped answering to it.
+    // The wardrobe knows where every one of them went (SpriteCatalog), so the
+    // templates are put right on the way out rather than 404-ing one by one on
+    // whatever map the NPC is transplanted onto. Done once per pool: the flag
+    // rides on the array itself, which is what the cache holds.
+    validSprites: (pool) => {
+      const SC = window.SpriteCatalog;
+      if (!Array.isArray(pool) || pool._spritesChecked || !SC?.legacySheet) return pool;
+      pool._spritesChecked = true;
+      for (const tpl of pool) {
+        for (const page of (tpl?.eventData?.pages || [])) {
+          const img = page?.image;
+          if (!img?.characterName) continue;
+          const now = SC.legacySheet(img.characterName, img.characterIndex || 0);
+          if (!now) continue;
+          img.characterName = now.name;
+          img.characterIndex = now.index;
+        }
+      }
+      return pool;
+    },
+
     // Indexes every "shop-like" event on a map: <Shop>-tagged counters, events
     // with a standard Shop Processing (code 302), and RandomDailyShop plugin
     // command events (code 357). Persisted alongside the template pools in
@@ -1168,7 +1194,7 @@
       // are edited, in which case deleting NPCPools.json forces a rebuild.
       $gameSystem._npcPoolCache = $gameSystem._npcPoolCache || {};
       if ($gameSystem._npcPoolCache[groupName]) {
-        return SpawnManager.keepLocalsHome(SpawnManager.keepVarlenianHome($gameSystem._npcPoolCache[groupName]), groupName);
+        return SpawnManager.keepLocalsHome(SpawnManager.keepVarlenianHome(SpawnManager.validSprites($gameSystem._npcPoolCache[groupName])), groupName);
       }
 
       // Every procedural settlement reads and writes the one shared entry, so
@@ -1185,7 +1211,7 @@
         const pool = fromManifest[manifestKey].filter(t => !Utils.hasStoryTag(t?.eventData?.note));
         $gameSystem._npcPoolCache[groupName] = pool;
         Utils.debug(`NPC pool for "${groupName}" loaded from js/db/WorldGen/NPCPools.json: ${pool.length} templates.`);
-        return SpawnManager.keepLocalsHome(SpawnManager.keepVarlenianHome(pool), groupName);
+        return SpawnManager.keepLocalsHome(SpawnManager.keepVarlenianHome(SpawnManager.validSprites(pool)), groupName);
       }
 
       const npcPool = [];
@@ -1226,7 +1252,7 @@
       manifest.__shops = Object.assign(manifest.__shops || {}, shopIndex);
       NPCPoolStore.save(manifest);
       Utils.debug(`NPC pool for "${groupName}" built: ${npcPool.length} templates from ${seenMapIds.size} maps.`);
-      return SpawnManager.keepLocalsHome(SpawnManager.keepVarlenianHome(npcPool), groupName);
+      return SpawnManager.keepLocalsHome(SpawnManager.keepVarlenianHome(SpawnManager.validSprites(npcPool)), groupName);
     },
     getPlaceholders: (includePlayers = false) => {
       const p2Active = window.$gameSplitScreen && window.$gameSplitScreen.active;
@@ -3443,6 +3469,55 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       return this.memberKey(this.currentSlot(), id);
     },
 
+    // The playthrough itself, told apart from the slot it happens to be
+    // written to. A slot is not an identity: a run saved into a second slot
+    // (a playtest build may write any of them) rebinds and leaves the old
+    // entry standing, and that entry is this same party, which is then met as
+    // a stranger. The uid is minted once and travels in the savegame.
+    selfId() {
+      if (typeof $gameSystem === "undefined" || !$gameSystem) return "";
+      if (!$gameSystem._playthroughUid) {
+        $gameSystem._playthroughUid =
+          `w${Date.now().toString(36)}${Math.floor(Math.random() * 1e6).toString(36)}`;
+      }
+      return $gameSystem._playthroughUid;
+    },
+
+    // The names walking with this savegame right now, the bench included, plus
+    // whatever pet is at heel. Nobody on this list is ever spawned as somebody
+    // else's visitor.
+    ownNames() {
+      const names = new Set();
+      try {
+        const all = typeof $gameParty.allMembers === "function"
+          ? $gameParty.allMembers() : $gameParty.members();
+        for (const actor of all || []) {
+          if (actor && actor.name()) names.add(actor.name());
+        }
+      } catch (e) { /* an empty set only means nothing is filtered out */ }
+      try {
+        const pet = window.PetSystem && window.PetSystem.getActivePet
+          ? window.PetSystem.getActivePet() : null;
+        if (pet && pet.name) names.add(pet.name);
+      } catch (e) { /* same */ }
+      return names;
+    },
+
+    // Whether a record on file is this very playthrough rather than another
+    // one, asked in order of how much each answer can be trusted: the slot it
+    // is filed under, the playthrough uid it carries, and - for a record
+    // written before the uid existed - the party it names being the party
+    // standing here.
+    isMine(slot, party) {
+      if (Number(slot) === this.currentSlot()) return true;
+      if (!party) return false;
+      if (party.uid) return party.uid === this.selfId();
+      const mine = this.ownNames();
+      if (!mine.size) return false;
+      const theirs = (party.members || []).map(m => m && m.name).filter(Boolean);
+      return theirs.length > 0 && theirs.every(name => mine.has(name));
+    },
+
     store(create) {
       if (typeof $gameSystem === "undefined" || !$gameSystem) return null;
       const held = $gameSystem._partyPresence;
@@ -3458,11 +3533,12 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // Everybody else's party. The savegame doing the looking is never its own
     // visitor, and neither is a playthrough that has since been deleted.
     otherParties() {
-      const mine = this.currentSlot();
       const out = [];
       for (const [slot, party] of Object.entries(this.parties())) {
         const id = Number(slot);
-        if (id === mine || !party || !party.location) continue;
+        if (!party || !party.location) continue;
+        // Never oneself, whichever slot the record is filed under (isMine).
+        if (this.isMine(id, party)) continue;
         // Only a playthrough's own slot stands for a party in the world. The
         // autosaves and the quicksave rotation are not playthroughs, and a
         // slot that has since been deleted is nobody: party.json is merged
@@ -3568,10 +3644,20 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
 
       store[slot] = {
         slot,
+        uid: this.selfId(),
         leaderName: ($gameParty.leader() && $gameParty.leader().name()) || null,
         savedAtMin: ($gameVariables && $gameVariables.value(114)) || 0,
         location, members, pets
       };
+      // Whatever slot this playthrough used to be filed under is not another
+      // party standing in the world: it is this one, and leaving it on file is
+      // how a party walks into a copy of itself. party.json is merged and
+      // never pruned, so the pruning happens here, at the one moment the
+      // playthrough is known to be somewhere else.
+      for (const key of Object.keys(store)) {
+        if (Number(key) === slot) continue;
+        if (this.isMine(key, store[key])) delete store[key];
+      }
       $gameSystem._partyPresence = store;
       return true;
     },
@@ -3691,9 +3777,8 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // world? Read by the Empathize panel, which strips itself down for them.
     isVisitorName(name) {
       if (!name) return false;
-      const mine = this.currentSlot();
       for (const [slot, party] of Object.entries(this.parties())) {
-        if (Number(slot) === mine || !party) continue;
+        if (!party || this.isMine(slot, party)) continue;
         if ((party.members || []).some(m => m && m.name === name)) return true;
         if ((party.pets || []).some(p => p && p.name === name)) return true;
       }
@@ -3712,10 +3797,15 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       const visitors = this.visitorsHere();
       if (!visitors.length) return 0;
       if (!$dataMap.events) $dataMap.events = [null];
+      // Last guard before anybody is put on the ground: a name that is already
+      // walking with this savegame is never spawned as a visitor, whatever the
+      // record says.
+      const ours = this.ownNames();
       let spawned = 0;
       for (const party of visitors) {
         for (const person of (party.members || []).concat(party.pets || [])) {
           if (!person || !person.name) continue;
+          if (ours.has(person.name)) continue;
           if (this.findEvent(person.key)) continue;
           if (this.spawnOne(person, party)) spawned++;
         }

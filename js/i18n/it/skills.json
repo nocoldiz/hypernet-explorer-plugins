@@ -217,7 +217,7 @@
   },
   "45": {
     "name": "Leggi l'Avversario",
-    "description": "Infligge danni fisici a un nemico e riduce COS.\nPuò applicare Bloccato su. Colpisce per primo.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Punto Vitale Esposto.",
     "message1": "%1 studia il suo avversario!",
     "message2": ""
   },
@@ -271,7 +271,7 @@
   },
   "54": {
     "name": "Guardia Muscolare",
-    "description": "Aumenta PSI di chi la usa. Colpisce per primo.",
+    "description": "Aumenta COS di chi la usa. Colpisce per primo.",
     "message1": "%1 flette i muscoli ed è nel vuoto!",
     "message2": ""
   },
@@ -301,7 +301,7 @@
   },
   "59": {
     "name": "Analisi di Combattimento",
-    "description": "Infligge danni fisici a un nemico e riduce COS.\nPuò applicare Bloccato su. Colpisce per primo.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Punto Vitale Esposto.",
     "message1": "%1 analizza il suo avversario!",
     "message2": ""
   },
@@ -715,7 +715,7 @@
   },
   "128": {
     "name": "Palmo di Brina",
-    "description": "Infligge danni di Ghiaccio pesanti a un nemico.",
+    "description": "Infligge danni di Ghiaccio a un nemico e può\napplicare Congelare.",
     "message1": "%1 palmi irradiano freddo!",
     "message2": ""
   },
@@ -727,7 +727,7 @@
   },
   "130": {
     "name": "Colpo Fulmineo",
-    "description": "Infligge danni fisici a un nemico e riduce COS.\nPuò applicare Bloccato su. Colpisce per primo.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Punto Vitale Esposto.",
     "message1": "%1 colpisce come un fulmine!",
     "message2": ""
   },
@@ -1345,7 +1345,7 @@
   },
   "243": {
     "name": "Colpo al Punto Debole",
-    "description": "Infligge danni lievi a un nemico e ne riduce\nCOS. Precisione 85%.",
+    "description": "Infligge danni a un nemico e ne riduce COS. Può\napplicare Punto Vitale Esposto.",
     "message1": "%1 colpisce un punto debole!",
     "message2": ""
   },
@@ -1393,7 +1393,7 @@
   },
   "251": {
     "name": "Spazzata Bassa",
-    "description": "Infligge danni minimi a un nemico e ne riduce\nDES. Precisione 90%.",
+    "description": "Infligge danni a un nemico e ne riduce DES. Può\napplicare Sbilanciato.",
     "message1": "%1 esegue una spazzata di gamba!",
     "message2": ""
   },
@@ -1537,7 +1537,7 @@
   },
   "275": {
     "name": "Posizione della Fanciulla",
-    "description": "Infligge danni a un nemico.",
+    "description": "Infligge danni pesanti a un nemico e può\napplicare Guardia Rotta.",
     "message1": "%1 usa %2",
     "message2": ""
   },
@@ -1639,7 +1639,7 @@
   },
   "302": {
     "name": "Modalità Berserker",
-    "description": "Aumenta FRZ di chi la usa. Applica Messa a fuoco\nperfetta.",
+    "description": "Aumenta FRZ di chi la usa. Applica Berserk.",
     "message1": "%1 entra in modalità berserker!",
     "message2": ""
   },
@@ -1657,7 +1657,7 @@
   },
   "305": {
     "name": "Intrappola",
-    "description": "Riduce DES di un nemico. Può applicare Paralisi.\nPrecisione 80%.",
+    "description": "Riduce DES di un nemico. Può applicare In\nposizione. Va a segno l'80% delle volte.",
     "message1": "%1 intrappola il bersaglio!",
     "message2": ""
   },
@@ -1675,7 +1675,7 @@
   },
   "308": {
     "name": "Mimetismo",
-    "description": "Aumenta PSI di chi la usa.",
+    "description": "Aumenta PSI di chi la usa. Applica Velo d'ombra.",
     "message1": "%1 si mimetizza!",
     "message2": ""
   },
@@ -1687,13 +1687,13 @@
   },
   "310": {
     "name": "Lampo",
-    "description": "Aumenta DES e INT di tutti i nemici. Ripristina\n20 AP.",
+    "description": "Riduce DES e INT di tutti i nemici. Può\napplicare Acceca.",
     "message1": "%1 usa %2",
     "message2": ""
   },
   "311": {
     "name": "Nebbia Tossica",
-    "description": "Infligge danni fisici minimi a tutti i nemici e\nne riduce PSI e FRZ. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici minimi a tutti i nemici e\nne riduce PSI e FRZ. Può applicare Veleno.",
     "message1": "%1 rilascia una nebbia tossica!",
     "message2": ""
   },
@@ -2749,7 +2749,7 @@
   },
   "495": {
     "name": "RinvenimentoReliquia",
-    "description": "Aumenta SAG e PSI di tutti i nemici. Applica\nIspirato.",
+    "description": "Riduce SAG e PSI di tutti i nemici. Può\napplicare Punto Vitale Esposto.",
     "message1": "%1 usa RinvenimentoReliquia!",
     "message2": ""
   },
@@ -2791,7 +2791,7 @@
   },
   "502": {
     "name": "SaccheggiatoreDiCripte",
-    "description": "Aumenta FRZ/COS/DES di tutti i nemici. Applica\nIspirato.",
+    "description": "Riduce FRZ/COS/DES di tutti i nemici. Può\napplicare Punto Vitale Esposto.",
     "message1": "%1 usa PredatoreDiCripte!",
     "message2": ""
   },
@@ -2965,7 +2965,7 @@
   },
   "541": {
     "name": "CampoBenedetto",
-    "description": "Aumenta INT di tutti i nemici.",
+    "description": "Aumenta INT di tutti gli alleati.",
     "message1": "%1 crea un campo di benedizione!",
     "message2": ""
   },
@@ -3067,7 +3067,7 @@
   },
   "558": {
     "name": "Santifica",
-    "description": "Infligge danni a un nemico e cura diversi stati\nnegativi.",
+    "description": "Infligge danni minimi a un nemico.",
     "message1": "%1 casta %2",
     "message2": ""
   },
@@ -3589,7 +3589,7 @@
   },
   "675": {
     "name": "LameDiMalizia",
-    "description": "Infligge danni minimi a un nemico e ne aumenta\nDES. Colpisce per ultimo. Precisione 95%.",
+    "description": "Infligge danni a un nemico e ne riduce DES.\nColpisce per ultimo.",
     "message1": "%1 evoca lame di malizia!",
     "message2": ""
   },
@@ -3685,7 +3685,7 @@
   },
   "691": {
     "name": "TempestasOmnium",
-    "description": "Infligge danni di Vento a un nemico a caso e ne\naumenta FRZ.",
+    "description": "Assorbe HP da un nemico a caso e ne riduce\nFRZ/COS. Può applicare Confusione.",
     "message1": "%1 evoca una tempesta caotica!",
     "message2": ""
   },
@@ -3745,7 +3745,7 @@
   },
   "701": {
     "name": "LuxDivinus",
-    "description": "Infligge danni sacri a un nemico a caso e ne\naumenta FRZ/COS/INT. Può applicare Morto.",
+    "description": "Infligge danni sacri a un nemico a caso e ne\nriduce FRZ/COS/INT. Può applicare Morto.",
     "message1": "%1 invoca il giudizio divino!",
     "message2": ""
   },
@@ -3775,7 +3775,7 @@
   },
   "706": {
     "name": "UltimatumDelCaos",
-    "description": "Infligge danni a un nemico a caso e ne aumenta\nFRZ/COS.",
+    "description": "Infligge danni a un nemico a caso e ne riduce\nFRZ/COS/INT/SAG. Può applicare diversi malus.",
     "message1": "%1 scatena il caos più assoluto!",
     "message2": ""
   },
@@ -3799,7 +3799,7 @@
   },
   "710": {
     "name": "IgnisViventis",
-    "description": "Infligge danni di Fuoco a un nemico a caso e ne\naumenta FRZ/INT. Ne riduce COS/SAG.",
+    "description": "Infligge danni di Fuoco a un nemico a caso e ne\nriduce FRZ/INT/COS/SAG. Colpisce per ultimo.",
     "message1": "%1 diventa una fiamma del caos vivente!",
     "message2": ""
   },
@@ -3943,7 +3943,7 @@
   },
   "744": {
     "name": "ParadossoCurativo",
-    "description": "Infligge danni a un nemico. Rischio di Incontri\na metà. Colpisce per ultimo. Precisione 85%.",
+    "description": "Assorbe HP da un nemico. Colpisce per ultimo. Va\na segno l'85% delle volte.",
     "message1": "%1 inverte il flusso della vita!",
     "message2": ""
   },
@@ -4393,7 +4393,7 @@
   },
   "839": {
     "name": "RitoDiMaledizione",
-    "description": "Trasferisce i malus di chi la usa a un nemico.",
+    "description": "Può applicare Veleno/Acceca/Silenzio a un\nnemico. Colpisce per ultimo.",
     "message1": "%1 esegue un rituale di trasferimento della\r\nmaledizione!",
     "message2": ""
   },
@@ -4615,13 +4615,13 @@
   },
   "887": {
     "name": "Radici Avviluppanti",
-    "description": "Riduce DES di un nemico. Precisione 90%.",
+    "description": "Riduce DES di un nemico. Può applicare In\nposizione. Va a segno il 90% delle volte.",
     "message1": "%1 intrappola %2 nelle radici!",
     "message2": ""
   },
   "888": {
     "name": "Armatura di Spine",
-    "description": "Aumenta SAG di chi la usa. Può applicare\nStordire.",
+    "description": "Aumenta COS di chi la usa.",
     "message1": "%1 si circonda di spine!",
     "message2": ""
   },
@@ -4735,7 +4735,7 @@
   },
   "917": {
     "name": "Raccolto Abbondante",
-    "description": "Infligge danni a tutti i nemici e applica\nRigenerazione HP.",
+    "description": "Infligge danni minimi a tutti i nemici e può\napplicare Sanguinamento.",
     "message1": "%1 usa Raccolto Abbondante!",
     "message2": ""
   },
@@ -4879,7 +4879,7 @@
   },
   "951": {
     "name": "Focus da Combattimento PSI",
-    "description": "Aumenta FRZ di chi la usa.",
+    "description": "Aumenta FRZ di chi la usa. Applica Messa a fuoco\nperfetta.",
     "message1": "%1 si concentra sulle tecniche di combattimento!",
     "message2": ""
   },
@@ -4957,7 +4957,7 @@
   },
   "964": {
     "name": "Criocongelamento PSI",
-    "description": "Infligge danni di Ghiaccio lievi a un nemico e\nne riduce DES. Precisione 95%.",
+    "description": "Infligge danni di Ghiaccio a un nemico e ne\nriduce DES. Può applicare Congelare.",
     "message1": "%1 rallenta il movimento molecolare!",
     "message2": ""
   },
@@ -5083,7 +5083,7 @@
   },
   "995": {
     "name": "Agente Paralizzante",
-    "description": "Aumenta FRZ/COS/DES di chi la usa.",
+    "description": "Riduce DES di tutti i nemici. Può applicare\nParalisi.",
     "message1": "%1 applica un agente paralizzante!",
     "message2": ""
   },
@@ -5143,7 +5143,7 @@
   },
   "1005": {
     "name": "Composto Esplosivo",
-    "description": "Infligge danni ingenti a tutti i nemici e cura\ndiversi stati negativi.",
+    "description": "Infligge danni a tutti i nemici e può applicare\nBruciato.",
     "message1": "%1 lancia un composto esplosivo!",
     "message2": ""
   },
@@ -5263,13 +5263,13 @@
   },
   "1035": {
     "name": "Focus di Precisione",
-    "description": "Aumenta PSI di un alleato. Ne riduce FRZ.\nColpisce per ultimo.",
+    "description": "Aumenta PSI di un alleato. Ne riduce FRZ e\napplica Messa a fuoco perfetta.",
     "message1": "%1 focalizza il bersaglio!",
     "message2": ""
   },
   "1036": {
     "name": "Mira Assistita",
-    "description": "Aumenta PSI di un alleato. Colpisce per ultimo.",
+    "description": "Aumenta PSI di un alleato. Applica Messa a fuoco\nperfetta. Colpisce per ultimo.",
     "message1": "%1 garantisce una precisione soprannaturale!",
     "message2": ""
   },
@@ -5293,7 +5293,7 @@
   },
   "1040": {
     "name": "Colpo Mirato",
-    "description": "Infligge danni fisici lievi a un nemico e può\napplicare Bloccato su.",
+    "description": "Infligge danni fisici lievi a un nemico e può\napplicare Punto Vitale Esposto.",
     "message1": "%1 usa Colpo Mirato Lungo!",
     "message2": ""
   },
@@ -5371,7 +5371,7 @@
   },
   "1053": {
     "name": "Proiettile Stordente",
-    "description": "Infligge danni a un nemico e può applicare\nParalisi. Colpisce per primo.",
+    "description": "Infligge danni a un nemico e può applicare\nStordire. Colpisce per primo.",
     "message1": "%1 spara un colpo stordente!",
     "message2": ""
   },
@@ -5425,7 +5425,7 @@
   },
   "1072": {
     "name": "Olio in Fiamme",
-    "description": "Infligge danni a tutti i nemici e applica\nRigenerazione HP.",
+    "description": "Infligge danni lievi a tutti i nemici e può\napplicare Bruciato.",
     "message1": "%1 lancia olio infuocato!",
     "message2": ""
   },
@@ -5473,7 +5473,7 @@
   },
   "1090": {
     "name": "Ninnananna Ingannevole",
-    "description": "Aumenta SAG di tutti i nemici. Può applicare\nSonno. Colpisce per ultimo. Precisione 65%.",
+    "description": "Riduce SAG di tutti i nemici. Può applicare\nSonno. Colpisce per ultimo.",
     "message1": "%1 canta una ninna nanna!",
     "message2": ""
   },
@@ -5539,7 +5539,7 @@
   },
   "1101": {
     "name": "Canto del Silenzio",
-    "description": "Aumenta COS e DES di tutti i nemici.",
+    "description": "Riduce COS e DES di tutti i nemici. Può\napplicare Silenzio.",
     "message1": "%1 canta una canzone del silenzio!",
     "message2": ""
   },
@@ -5665,7 +5665,7 @@
   },
   "1132": {
     "name": "Titolo Scandalistico",
-    "description": "Aumenta COS e DES di tutti i nemici.",
+    "description": "Riduce COS e DES di tutti i nemici.",
     "message1": "%1 pubblica un rapporto feroce!",
     "message2": ""
   },
@@ -5689,7 +5689,7 @@
   },
   "1136": {
     "name": "Semina Discordia",
-    "description": "Aumenta PSI e FRZ di tutti i nemici. Ripristina\n25 AP.",
+    "description": "Riduce PSI e FRZ di tutti i nemici. Può\napplicare Confusione.",
     "message1": "%1 semina discordia tra i nemici!",
     "message2": ""
   },
@@ -5791,7 +5791,7 @@
   },
   "1153": {
     "name": "Complimento Spiazzante",
-    "description": "Aumenta FRZ di un nemico. Ne riduce COS.\nColpisce per ultimo. Precisione 80%.",
+    "description": "Riduce COS di un nemico. Può applicare\nConfusione. Colpisce per ultimo.",
     "message1": "%1 fa un complimento confuso!",
     "message2": ""
   },
@@ -5815,13 +5815,13 @@
   },
   "1157": {
     "name": "Incoraggiamento Sincero",
-    "description": "Aumenta tutte le statistiche di un nemico.\nColpisce per ultimo.",
+    "description": "Aumenta FRZ/INT/DES di un nemico. Ne riduce COS\ne SAG. Colpisce per ultimo.",
     "message1": "%1 incoraggia davvero il nemico!",
     "message2": ""
   },
   "1158": {
     "name": "Alleanza Temporanea",
-    "description": "Aumenta COS e SAG di un nemico. Colpisce per\nultimo. Precisione 70%.",
+    "description": "Può applicare Fascino a un nemico. Colpisce per\nultimo. Va a segno il 70% delle volte.",
     "message1": "%1 propone un'alleanza temporanea!",
     "message2": ""
   },
@@ -5899,7 +5899,7 @@
   },
   "1171": {
     "name": "Cacciatore di Taglie",
-    "description": "Infligge danni fisici a un nemico e riduce DES.\nPuò applicare Bloccato su. Colpisce per primo.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nDES. Può applicare Punto Vitale Esposto.",
     "message1": "%1 usa Cacciatore di Taglie!",
     "message2": ""
   },
@@ -5995,7 +5995,7 @@
   },
   "1187": {
     "name": "Dominio di Mercato",
-    "description": "Aumenta SAG/PSI/FRZ di tutti i nemici.\nRipristina 40 AP.",
+    "description": "Riduce SAG/PSI/FRZ di tutti i nemici.",
     "message1": "%1 esercita un dominio psichico!",
     "message2": ""
   },
@@ -6049,7 +6049,7 @@
   },
   "1206": {
     "name": "Cura delle Ustioni",
-    "description": "Ripristina HP a tutti gli alleati.",
+    "description": "Cura Bruciato a tutti gli alleati. Ripristina\nHP.",
     "message1": "%1 distribuisce materiale di primo soccorso!",
     "message2": ""
   },
@@ -6079,13 +6079,13 @@
   },
   "1211": {
     "name": "Ordine di Fermo",
-    "description": "Può applicare Silenzio a un nemico. Colpisce per\nprimo. Precisione 95%.",
+    "description": "Può applicare In posizione a un nemico. Colpisce\nper primo. Va a segno il 95% delle volte.",
     "message1": "%1 grida: Fermo!",
     "message2": ""
   },
   "1212": {
     "name": "Manette Psichiche",
-    "description": "Può applicare Rigenerazione HP a un nemico.\nColpisce per primo. Precisione 90%.",
+    "description": "Può applicare Paralisi a un nemico. Colpisce per\nprimo. Va a segno il 90% delle volte.",
     "message1": "%1 tenta un arresto psichico!",
     "message2": ""
   },
@@ -6097,7 +6097,7 @@
   },
   "1214": {
     "name": "Granata Accecante",
-    "description": "Riduce PSI di tutti i nemici. Colpisce per\nprimo.",
+    "description": "Riduce PSI di tutti i nemici. Può applicare\nAcceca. Colpisce per primo.",
     "message1": "%1 lancia una granata stordente!",
     "message2": ""
   },
@@ -6193,7 +6193,7 @@
   },
   "1230": {
     "name": "Allenta la Tensione",
-    "description": "Infligge danni a un nemico e ripristina 10 AP.\nColpisce per primo.",
+    "description": "Infligge danni a un nemico e ne riduce FRZ.\nColpisce per primo.",
     "message1": "%1 disinnesca l'incontro!",
     "message2": ""
   },
@@ -6301,7 +6301,7 @@
   },
   "1258": {
     "name": "Nasconditi",
-    "description": "Aumenta DES e INT di chi la usa.",
+    "description": "Aumenta DES e INT di chi la usa. Applica\nNasconditi.",
     "message1": "%1 si è nascost*.",
     "message2": ""
   },
@@ -6355,7 +6355,7 @@
   },
   "1267": {
     "name": "Razzo Accecante",
-    "description": "Aumenta SAG e PSI di tutti i nemici. Ripristina\n25 AP.",
+    "description": "Riduce SAG e PSI di tutti i nemici. Può\napplicare Acceca.",
     "message1": "%1 usa %2",
     "message2": ""
   },
@@ -6373,7 +6373,7 @@
   },
   "1270": {
     "name": "Colpo Vitale",
-    "description": "Infligge danni fisici a un nemico. Precisione\n95%.",
+    "description": "Infligge danni fisici a un nemico e può\napplicare Punto Vitale Esposto.",
     "message1": "%1 prende di mira un punto debole!",
     "message2": ""
   },
@@ -6725,12 +6725,6 @@
     "message1": "%1 scruta i titoli del giorno!",
     "message2": ""
   },
-  "1405": {
-    "name": "LetturaDiCarte",
-    "description": "Legge i tarocchi per intravedere il futuro.",
-    "message1": "%1 gira i tarocchi!",
-    "message2": ""
-  },
   "1406": {
     "name": "CronacaDelleAnime",
     "description": "Legge la storia vissuta di un'anima vicina.",
@@ -6745,7 +6739,7 @@
   },
   "1408": {
     "name": "MappaDeiFili",
-    "description": "Traccia i fili di leyline tra i luoghi.",
+    "description": "Apre la mappa del mondo, zoom compreso.",
     "message1": "%1 traccia i fili delle linee di forza!",
     "message2": ""
   },
@@ -6779,12 +6773,6 @@
     "message1": "%1 apre il bazar infernale!",
     "message2": ""
   },
-  "1414": {
-    "name": "FarmaciaFaustiana",
-    "description": "Apre un'apoteca dannata che baratta salute.",
-    "message1": "%1 baratta la salute da uno speziale dannato!",
-    "message2": ""
-  },
   "1415": {
     "name": "ArmeriaInfernale",
     "description": "Apre il negozio d'armature del furiere cornuto.",
@@ -6797,102 +6785,6 @@
     "message1": "%1 apre un arsenale forgiato nell'abisso!",
     "message2": ""
   },
-  "1417": {
-    "name": "ArcanumDiMefisto",
-    "description": "Apre un negozio che scambia anime per merci\narcane.",
-    "message1": "%1 baratta anime per merci arcane!",
-    "message2": ""
-  },
-  "1418": {
-    "name": "TavernaDiZolfo",
-    "description": "Apre una taverna che serve i dannati.",
-    "message1": "%1 ordina da bere tra i dannati!",
-    "message2": ""
-  },
-  "1419": {
-    "name": "LussiDiLuxe",
-    "description": "Apre la bancarella di lusso di un demone.",
-    "message1": "%1 indugia alla bancarella di lusso di un demone!",
-    "message2": ""
-  },
-  "1420": {
-    "name": "GiuramentoDelFornitore",
-    "description": "Apre l'equipaggiatore degli avventurieri.",
-    "message1": "%1 pronuncia il giuramento del fornitore!",
-    "message2": ""
-  },
-  "1421": {
-    "name": "DecimaDellAttrezzista",
-    "description": "Apre un attrezzaio che vende per una decima.",
-    "message1": "%1 paga la decima dell'attrezzista!",
-    "message2": ""
-  },
-  "1422": {
-    "name": "AccordoDellAlchimista",
-    "description": "Apre il negozio dell'alchimista del giorno.",
-    "message1": "%1 stringe l'accordo dell'alchimista!",
-    "message2": ""
-  },
-  "1423": {
-    "name": "PegnoDelBibliotecario",
-    "description": "Presta libri proibiti a caro prezzo.",
-    "message1": "%1 firma il pegno del bibliotecario!",
-    "message2": ""
-  },
-  "1424": {
-    "name": "MercanteDiOrgani",
-    "description": "Apre il mercante d'organi, che compra carne.",
-    "message1": "%1 chiama il mercante d'organi!",
-    "message2": ""
-  },
-  "1425": {
-    "name": "MercatoDiMammona",
-    "description": "Apre la borsa dell'avidità.",
-    "message1": "%1 apre la borsa dell'avidità!",
-    "message2": ""
-  },
-  "1426": {
-    "name": "PattoDelBanchiere",
-    "description": "Apre la banca del diavolo e i suoi debiti.",
-    "message1": "%1 firma alla banca del diavolo!",
-    "message2": ""
-  },
-  "1427": {
-    "name": "RovinaDelMediatore",
-    "description": "Apre l'agenzia immobiliare.",
-    "message1": "%1 tratta con il mediatore!",
-    "message2": ""
-  },
-  "1428": {
-    "name": "MaleficioDelMercante",
-    "description": "Apre il bazar ricercabile per contrattare.",
-    "message1": "%1 contratta al bazar!",
-    "message2": ""
-  },
-  "1429": {
-    "name": "VizioDelVenditore",
-    "description": "Apre un distributore automatico posseduto.",
-    "message1": "%1 infila monete in una macchina posseduta!",
-    "message2": ""
-  },
-  "1430": {
-    "name": "CommercioAlCrocevia",
-    "description": "Scambia oro per gettoni al crocevia.",
-    "message1": "%1 commercia al crocevia!",
-    "message2": ""
-  },
-  "1431": {
-    "name": "ConsegnaDeiDannati",
-    "description": "Apre le tasche-negozio dei dannati.",
-    "message1": "%1 apre le tasche dei dannati!",
-    "message2": ""
-  },
-  "1432": {
-    "name": "MagazzinoMalvagio",
-    "description": "Apre il magazzino maledetto per l'ispezione.",
-    "message1": "%1 ispeziona il magazzino maledetto!",
-    "message2": ""
-  },
   "1433": {
     "name": "PattoDellAbbondanza",
     "description": "Concede una fortuna, credito pieno e ogni\nrendita.",
@@ -6903,12 +6795,6 @@
     "name": "<-- Pastoral -->",
     "description": "",
     "message1": "",
-    "message2": ""
-  },
-  "1435": {
-    "name": "Pollice Verde",
-    "description": "Apre il menu di coltivazione delle piante.",
-    "message1": "%1 mette mano alla terra!",
     "message2": ""
   },
   "1436": {
@@ -6929,34 +6815,10 @@
     "message1": "%1 riversa tempo nell'alveare!",
     "message2": ""
   },
-  "1439": {
-    "name": "Pesca Esoterica",
-    "description": "Getta una lenza incantata nelle acque.",
-    "message1": "%1 lancia una lenza incantata!",
-    "message2": ""
-  },
-  "1440": {
-    "name": "Convegno del Domatore",
-    "description": "Lega una creatura con il rito del domatore.",
-    "message1": "%1 compie il rito del domatore!",
-    "message2": ""
-  },
-  "1441": {
-    "name": "Pausa Pastorale",
-    "description": "Apre le tasche dell'allevamento.",
-    "message1": "%1 apre le tasche dell'allevatore!",
-    "message2": ""
-  },
   "1442": {
     "name": "Vespro Verdeggiante",
     "description": "Invecchia l'alveare e raccoglie da ogni bestia.",
     "message1": "%1 spinge alveare e mandria attraverso le ere!",
-    "message2": ""
-  },
-  "1443": {
-    "name": "Pausa Pastorale",
-    "description": "Apre le tasche dell'allevamento.",
-    "message1": "%1 apre le tasche dell'allevatore!",
     "message2": ""
   },
   "1444": {
@@ -6969,12 +6831,6 @@
     "name": "Lettura della Fedina",
     "description": "Elenca i crimini registrati del gruppo.",
     "message1": "%1 legge la propria fedina!",
-    "message2": ""
-  },
-  "1446": {
-    "name": "Piccolo Furto",
-    "description": "Apre la finestra di furto.",
-    "message1": "%1 fruga nelle tasche altrui!",
     "message2": ""
   },
   "1447": {
@@ -7153,7 +7009,7 @@
   },
   "1476": {
     "name": "CorsaAlTramonto",
-    "description": "Fa avanzare il giorno fino al tramonto.",
+    "description": "Sposta l'orologio avanti di sei ore.",
     "message1": "%1 spinge il giorno verso il tramonto!",
     "message2": ""
   },
@@ -7247,12 +7103,6 @@
     "message1": "%1 convoca un tesoro dentro un contenitore!",
     "message2": ""
   },
-  "1492": {
-    "name": "ConvocaCaveau",
-    "description": "Convoca un caveau extradimensionale.",
-    "message1": "%1 convoca un caveau extradimensionale!",
-    "message2": ""
-  },
   "1493": {
     "name": "ConvocaBestie",
     "description": "Convoca una bestia da allevare.",
@@ -7343,54 +7193,6 @@
     "message1": "%1 convoca una torre da scalare!",
     "message2": ""
   },
-  "1508": {
-    "name": "ConvocaFucina",
-    "description": "Convoca il banco dell'alchimista.",
-    "message1": "%1 convoca il banco dell'alchimista!",
-    "message2": ""
-  },
-  "1509": {
-    "name": "ConvocaCostruttore",
-    "description": "Convoca il costruttore di mobili.",
-    "message1": "%1 convoca gli attrezzi del costruttore!",
-    "message2": ""
-  },
-  "1510": {
-    "name": "ConvocaBirrificio",
-    "description": "Convoca una birreria per i reagenti del gruppo.",
-    "message1": "%1 convoca una distilleria per i propri reagenti!",
-    "message2": ""
-  },
-  "1511": {
-    "name": "ConvocaFocolare",
-    "description": "Convoca un focolare per combinare ingredienti.",
-    "message1": "%1 convoca un focolare su cui cucinare!",
-    "message2": ""
-  },
-  "1512": {
-    "name": "ConvocaMappaStellare",
-    "description": "Convoca il cielo come mappa navigabile.",
-    "message1": "%1 convoca i cieli come una mappa!",
-    "message2": ""
-  },
-  "1513": {
-    "name": "ConvocaScacchi",
-    "description": "Convoca scacchiera e pezzi per gli scacchi.",
-    "message1": "%1 convoca una scacchiera!",
-    "message2": ""
-  },
-  "1514": {
-    "name": "ConvocaScacchiCaotici",
-    "description": "Convoca una scacchiera di scacchi caotici.",
-    "message1": "%1 convoca una scacchiera del caos!",
-    "message2": ""
-  },
-  "1515": {
-    "name": "ConvocaFortuna",
-    "description": "Convoca un pacchetto del fato.",
-    "message1": "%1 convoca un pacchetto di fato!",
-    "message2": ""
-  },
   "1516": {
     "name": "ConvocaLegione",
     "description": "Convoca cento soldati sotto le insegne.",
@@ -7425,30 +7227,6 @@
     "name": "<-- Dominion -->",
     "description": "",
     "message1": "",
-    "message2": ""
-  },
-  "1522": {
-    "name": "Grazia della Gilda",
-    "description": "Aumenta la reputazione con la Gilda dei Maghi.",
-    "message1": "%1 si ingrazia la Gilda dei Maghi!",
-    "message2": ""
-  },
-  "1523": {
-    "name": "Rancore della Gilda",
-    "description": "Riduce la reputazione del gruppo con la Gilda.",
-    "message1": "%1 semina discordia contro la Gilda!",
-    "message2": ""
-  },
-  "1524": {
-    "name": "Accordo d'Archivio",
-    "description": "Aumenta la reputazione con la Fondazione\nArchivio.",
-    "message1": "%1 si ingrazia la Fondazione dell'Archivio!",
-    "message2": ""
-  },
-  "1525": {
-    "name": "Cortesia del Collettivo",
-    "description": "Aumenta la reputazione con il Collettivo\nIpercapitalista.",
-    "message1": "%1 si ingrazia il Collettivo!",
     "message2": ""
   },
   "1526": {
@@ -7487,28 +7265,10 @@
     "message1": "%1 apre un canale verso un'altra mente!",
     "message2": ""
   },
-  "1532": {
-    "name": "Incoronazione",
-    "description": "Incorona il gruppo beniamino della Gilda, con\nuna schiera.",
-    "message1": "%1 riceve la corona alla testa di una schiera!",
-    "message2": ""
-  },
-  "1533": {
-    "name": "Anatema",
-    "description": "Rende il gruppo il fuorilegge odiato dal mondo.",
-    "message1": "Su %1 cade l'anatema!",
-    "message2": ""
-  },
   "1534": {
     "name": "Grazia Assoluta",
     "description": "Cancella la taglia e la fedina del gruppo.",
     "message1": "%1 ottiene il perdono assoluto!",
-    "message2": ""
-  },
-  "1535": {
-    "name": "Decreto del Tiranno",
-    "description": "Massimizza il favore, alza una legione e perdona\ni crimini.",
-    "message1": "%1 emana un decreto da tiranno!",
     "message2": ""
   },
   "1536": {
@@ -7605,42 +7365,6 @@
     "name": "CalmaIlRimescolio",
     "description": "Placa il ribollire della generazione.",
     "message1": "%1 placa il ribollire del mondo!",
-    "message2": ""
-  },
-  "1552": {
-    "name": "ScartoDiStrato",
-    "description": "Sposta il gruppo allo strato adiacente del\nmondo.",
-    "message1": "%1 sobbalza allo strato di mondo accanto!",
-    "message2": ""
-  },
-  "1553": {
-    "name": "RichiamoDiStrada",
-    "description": "Richiama il gruppo sulla Strada Avvolgente.",
-    "message1": "%1 si richiama sulla Strada!",
-    "message2": ""
-  },
-  "1554": {
-    "name": "CadutaDiPiano",
-    "description": "Scende al piano inferiore.",
-    "message1": "%1 scende al piano di sotto!",
-    "message2": ""
-  },
-  "1555": {
-    "name": "VoloDiPiano",
-    "description": "Sale al piano superiore.",
-    "message1": "%1 sale al piano di sopra!",
-    "message2": ""
-  },
-  "1556": {
-    "name": "VersoLaScala",
-    "description": "Porta alla scala che sale.",
-    "message1": "%1 raggiunge la scala che sale!",
-    "message2": ""
-  },
-  "1557": {
-    "name": "VersoIlFondo",
-    "description": "Porta alla scala che scende.",
-    "message1": "%1 raggiunge la scala che scende!",
     "message2": ""
   },
   "1558": {
@@ -7793,12 +7517,6 @@
     "message1": "%1 evoca il chirurgo!",
     "message2": ""
   },
-  "1583": {
-    "name": "ChiamataClinica",
-    "description": "Apre il pannello di simulazione biologica.",
-    "message1": "%1 apre la clinica!",
-    "message2": ""
-  },
   "1584": {
     "name": "Panacea",
     "description": "Risana ogni carne e ristora corpo e mente.",
@@ -7851,12 +7569,6 @@
     "name": "FintaDiNebbia",
     "description": "Avvolge la terra in una nebbia mutevole.",
     "message1": "%1 avvolge la terra in una nebbia mutevole!",
-    "message2": ""
-  },
-  "1593": {
-    "name": "MarciaDiMiraggio",
-    "description": "Fa passare il gruppo per un miraggio\nteletrasportante.",
-    "message1": "%1 attraversa un miraggio!",
     "message2": ""
   },
   "1594": {
@@ -7931,12 +7643,6 @@
     "message1": "%1 passa alla riproduzione per mitosi!",
     "message2": ""
   },
-  "1606": {
-    "name": "PattoProtesico",
-    "description": "Evoca il chirurgo protesico.",
-    "message1": "%1 sigla il patto protesico!",
-    "message2": ""
-  },
   "1607": {
     "name": "Apoteosi",
     "description": "Riforgia il capogruppo in semidio, del tutto\nristorato.",
@@ -7959,12 +7665,6 @@
     "name": "EvocaAnima",
     "description": "Invoca il rito dell'evocazione d'anime.",
     "message1": "%1 compie il rito di evocazione delle anime!",
-    "message2": ""
-  },
-  "1611": {
-    "name": "OblazioneDiOrgani",
-    "description": "Vende carne al mercante d'organi.",
-    "message1": "%1 offre carne al mercante d'organi!",
     "message2": ""
   },
   "1612": {
@@ -8017,7 +7717,7 @@
   },
   "1620": {
     "name": "PresentimentoInterno",
-    "description": "Ascolta i pensieri interiori.",
+    "description": "Apre il banco del Pensatore.",
     "message1": "%1 ascolta i pensieri interiori!",
     "message2": ""
   },
@@ -8159,76 +7859,10 @@
     "message1": "",
     "message2": ""
   },
-  "1644": {
-    "name": "VistaDiGlifi",
-    "description": "Rende la realtà come reticolo di glifi ASCII.",
-    "message1": "%1 vede la realtà come un reticolo di glifi!",
-    "message2": ""
-  },
-  "1645": {
-    "name": "TavolozzaDiPixel",
-    "description": "Tesse pixel in un'immagine composta.",
-    "message1": "%1 tesse i pixel in un'immagine!",
-    "message2": ""
-  },
-  "1646": {
-    "name": "ScansioneSpettrale",
-    "description": "Scansiona la materia con luce Raman.",
-    "message1": "%1 scandaglia la materia davanti a sé!",
-    "message2": ""
-  },
-  "1647": {
-    "name": "ReticoloElementale",
-    "description": "Legge il reticolo degli elementi.",
-    "message1": "%1 legge il reticolo degli elementi!",
-    "message2": ""
-  },
-  "1648": {
-    "name": "BiforcaFuturo",
-    "description": "Apre l'albero ramificato dell'invenzione.",
-    "message1": "%1 apre l'albero ramificato dell'invenzione!",
-    "message2": ""
-  },
-  "1649": {
-    "name": "RonzioDiHypernet",
-    "description": "Avvia il sistema operativo Hypernet.",
-    "message1": "%1 avvia l'Hypernet!",
-    "message2": ""
-  },
-  "1650": {
-    "name": "RichiamoDelBrowser",
-    "description": "Scruta l'Hypernet attraverso un browser.",
-    "message1": "%1 scruta l'Hypernet!",
-    "message2": ""
-  },
-  "1651": {
-    "name": "QuadranteCrono",
-    "description": "Manifesta l'orologio analogico procedurale.",
-    "message1": "%1 fa comparire un orologio dal nulla!",
-    "message2": ""
-  },
-  "1652": {
-    "name": "FermaLaMusica",
-    "description": "Zittisce la musica procedurale.",
-    "message1": "%1 fa tacere la musica!",
-    "message2": ""
-  },
-  "1653": {
-    "name": "RiffDiRadio",
-    "description": "Sintonizza la radio errante.",
-    "message1": "%1 sintonizza la radio errante!",
-    "message2": ""
-  },
   "1654": {
     "name": "FucinaDelFuturo",
     "description": "Forgia un albero dell'invenzione del tutto\nnuovo.",
     "message1": "%1 forgia un nuovo albero dell'invenzione!",
-    "message2": ""
-  },
-  "1655": {
-    "name": "RotturaDellaQuartaParete",
-    "description": "Rende la realtà in ASCII, solleva la nebbia e\napre il terminale.",
-    "message1": "%1 rompe la quarta parete!",
     "message2": ""
   },
   "1656": {
@@ -8381,30 +8015,6 @@
     "message1": "",
     "message2": ""
   },
-  "1681": {
-    "name": "Cerca Lavoro",
-    "description": "Apre la bacheca del lavoro.",
-    "message1": "%1 va in cerca di lavoro!",
-    "message2": ""
-  },
-  "1682": {
-    "name": "Leggi gli Annunci",
-    "description": "Apre la bacheca delle offerte di lavoro.",
-    "message1": "%1 legge gli annunci!",
-    "message2": ""
-  },
-  "1683": {
-    "name": "Contratto di Combattimento",
-    "description": "Accetta un lavoro di combattimento.",
-    "message1": "%1 accetta un contratto di combattimento!",
-    "message2": ""
-  },
-  "1684": {
-    "name": "Contratto Arcano",
-    "description": "Accetta un lavoro magico.",
-    "message1": "%1 accetta un contratto arcano!",
-    "message2": ""
-  },
   "1685": {
     "name": "Chiamata all'Arena",
     "description": "Iscrive il gruppo all'arena.",
@@ -8421,30 +8031,6 @@
     "name": "Prova del Guanto",
     "description": "Avvia il guanto di sfida infinito.",
     "message1": "%1 dà inizio alla sfida senza fine!",
-    "message2": ""
-  },
-  "1688": {
-    "name": "Chiamata al Torneo",
-    "description": "Indice un torneo di mostri.",
-    "message1": "%1 fa nascere un torneo!",
-    "message2": ""
-  },
-  "1689": {
-    "name": "Prendi il Turno",
-    "description": "Prende un turno di lavoro al negozio.",
-    "message1": "%1 prende un turno al negozio!",
-    "message2": ""
-  },
-  "1690": {
-    "name": "Spinta alla Produzione",
-    "description": "Avvia la linea di produzione.",
-    "message1": "%1 avvia la linea di produzione!",
-    "message2": ""
-  },
-  "1691": {
-    "name": "Campione della Fossa",
-    "description": "Affronta il guanto di sfida e un torneo intero.",
-    "message1": "%1 risponde da campione della fossa!",
     "message2": ""
   },
   "1692": {
@@ -8465,36 +8051,6 @@
     "message1": "%1 torna a toccare terra!",
     "message2": ""
   },
-  "1695": {
-    "name": "Cammino del Viandante",
-    "description": "Fa viaggiare il gruppo lungo la Strada.",
-    "message1": "%1 si incammina lungo la Strada!",
-    "message2": ""
-  },
-  "1696": {
-    "name": "Volo nel Cielo",
-    "description": "Percorre la Strada in elicottero.",
-    "message1": "%1 si alza in volo con l'elicottero!",
-    "message2": ""
-  },
-  "1697": {
-    "name": "Congedo Quantistico",
-    "description": "Salta la Strada con teletrasporto quantistico.",
-    "message1": "%1 salta la Strada per via quantistica!",
-    "message2": ""
-  },
-  "1698": {
-    "name": "Monta in Sella",
-    "description": "Porta il gruppo al veicolo più vicino.",
-    "message1": "%1 raggiunge di colpo il proprio veicolo!",
-    "message2": ""
-  },
-  "1699": {
-    "name": "Rotta per Bologna",
-    "description": "Apre la Strada per Bologna.",
-    "message1": "%1 apre la Strada per Bologna!",
-    "message2": ""
-  },
   "1700": {
     "name": "Porta dei Sogni",
     "description": "Fa scivolare il gruppo in una mappa-sogno.",
@@ -8505,66 +8061,6 @@
     "name": "<-- ChaosMagic -->",
     "description": "",
     "message1": "",
-    "message2": ""
-  },
-  "1702": {
-    "name": "Fortuna alla Leva",
-    "description": "Tira la leva del bandito monco.",
-    "message1": "%1 tira la leva del bandito!",
-    "message2": ""
-  },
-  "1703": {
-    "name": "Fantasia di Corsa",
-    "description": "Scommette sulla corsa dei cavalli.",
-    "message1": "%1 scommette sui cavalli!",
-    "message2": ""
-  },
-  "1704": {
-    "name": "Baldoria di Pista",
-    "description": "Lancia sulle piste da bowling.",
-    "message1": "%1 fa rotolare la palla sulla pista!",
-    "message2": ""
-  },
-  "1705": {
-    "name": "Partita a Biliardo",
-    "description": "Prepara una partita a biliardo.",
-    "message1": "%1 prepara una partita a biliardo!",
-    "message2": ""
-  },
-  "1706": {
-    "name": "Cavalcaonde",
-    "description": "Cavalca le onde esoteriche.",
-    "message1": "%1 cavalca le onde esoteriche!",
-    "message2": ""
-  },
-  "1707": {
-    "name": "Baldoria da Scasso",
-    "description": "Scassina una serratura col rito dei cilindri.",
-    "message1": "%1 lavora sulle serrature!",
-    "message2": ""
-  },
-  "1708": {
-    "name": "Capriccio di Tasti",
-    "description": "Suona il pianoforte visivo.",
-    "message1": "%1 si siede al pianoforte!",
-    "message2": ""
-  },
-  "1709": {
-    "name": "Raffica di Gratta e Vinci",
-    "description": "Gratta una carta esoterica del fato.",
-    "message1": "%1 gratta una carta del fato!",
-    "message2": ""
-  },
-  "1710": {
-    "name": "Appunto di Diario",
-    "description": "Apre il diario di viaggio del gruppo.",
-    "message1": "%1 annota sul diario di viaggio!",
-    "message2": ""
-  },
-  "1711": {
-    "name": "Caos da Luna Park",
-    "description": "Apre slot, corse e tavolo da biliardo.",
-    "message1": "%1 spalanca l'intero luna park!",
     "message2": ""
   },
   "1712": {
@@ -9031,7 +8527,7 @@
   },
   "1789": {
     "name": "Testata",
-    "description": "Infligge danni fisici a un nemico e riduce INT.\nPuò applicare Sbilanciato. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nINT. Può applicare Commozione Cerebrale.",
     "message1": "%1 usa Testata!",
     "message2": ""
   },
@@ -9043,7 +8539,7 @@
   },
   "1791": {
     "name": "Colpo di Pomo",
-    "description": "Infligge danni fisici a un nemico e può\napplicare Sbilanciato.",
+    "description": "Infligge danni fisici pesanti a un nemico e può\napplicare Stordire.",
     "message1": "%1 usa Colpo di Pomo!",
     "message2": ""
   },

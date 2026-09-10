@@ -3,6 +3,15 @@
   "foldHint": "richiudi il foglio",
   "unfoldHint": "leggi il foglio",
   "controlsHeading": "Comandi",
+  "setting": {
+    "label": "Descrizioni della mappa",
+    "desc": "Il foglio appuntato nell'angolo della mappa, che dice dove sta il gruppo.",
+    "mode": {
+      "first": "La prima volta",
+      "always": "Sempre",
+      "off": "Mai"
+    }
+  },
   "controls": {
     "action": "Azione",
     "holdShift": "Tieni premuto Shift",
@@ -20,175 +29,351 @@
     "zoom": "Ingrandisci e rimpicciolisci"
   },
   "areas": {
+    "m721_zone": {
+      "title": "Hydroponic naus",
+      "text": "Verdure sotto le lampade, su per tutta la parete. Qualunque cosa coltivino quassù, è l'unica roba fresca a bordo.",
+      "generic": {
+        "title": "Naus idroponica",
+        "text": "Scaffali di colture sotto le lampade, innaffiate senza terra. La nave mangia quello che cresce in questa stanza."
+      }
+    },
     "storyModeVillage": {
       "title": "Villaggio",
-      "text": "Testo di prova del villaggio"
+      "text": "Testo di prova del villaggio",
+      "generic": {
+        "title": "Villaggio",
+        "text": "Quattro tetti attorno a un pozzo. Qui c'è sempre qualcuno con del lavoro da far fare."
+      }
     },
     "storyModeWaterfall": {
       "title": "Cascata Segreta",
-      "text": "Testo di prova della cascata segreta"
+      "text": "Testo di prova della cascata segreta",
+      "generic": {
+        "title": "Cascata segreta",
+        "text": "Un'acqua così rumorosa nasconde quello che ha dietro. Vale la pena passare dietro a ogni cascata."
+      }
     },
     "m1006_zone": {
       "title": "Horse betting",
-      "text": "Use this screen to bet on horses"
+      "text": "Use this screen to bet on horses",
+      "generic": {
+        "title": "Scommesse sui cavalli",
+        "text": "Uno schermo per le corse. Scegli un cavallo e punta i tuoi euro."
+      }
     },
     "m1006_zone2": {
       "title": "Monster tournament",
-      "text": "Use this terminal to watch and bet monster fights"
+      "text": "Use this terminal to watch and bet monster fights",
+      "generic": {
+        "title": "Torneo dei mostri",
+        "text": "Un terminale affacciato sull'arena: si guardano i combattimenti e ci si scommette."
+      }
     },
     "m1006_zone3": {
       "title": "Coin conversion",
-      "text": "Use this machine to convert euros to tokens used for minigames and slot machines"
+      "text": "Use this machine to convert euros to tokens used for minigames and slot machines",
+      "generic": {
+        "title": "Cambio monete",
+        "text": "Un cambiavalute fra euro e gettoni. I minigiochi e le slot machine prendono solo gettoni."
+      }
     },
     "m1006_zone4": {
       "title": "Slot machine",
-      "text": "Use tokens to plays"
+      "text": "Use tokens to plays",
+      "generic": {
+        "title": "Slot machine",
+        "text": "Una slot machine. Si gioca con i gettoni da sala giochi."
+      }
     },
     "m1023_zone": {
       "title": "Ghent Hospital",
-      "text": "Visit hospitals to get your diseases diagnosed, install augments, change bodyparts and access to the [Fertility database]"
+      "text": "Visit hospitals to get your diseases diagnosed, install augments, change bodyparts and access to the [Fertility database]",
+      "generic": {
+        "title": "Ospedale di Ghent",
+        "text": "Un ospedale: qui si diagnosticano le malattie, si installano gli innesti, si sostituiscono le parti del corpo e si accede al [Fertility database]."
+      }
     },
     "m1414_zone": {
       "title": "Inn",
-      "text": "Visit inns around the world to recruit new companions and rest"
+      "text": "Visit inns around the world to recruit new companions and rest",
+      "generic": {
+        "title": "Locanda",
+        "text": "Una locanda. I letti si affittano e ai tavoli c'è gente disposta a partire con chi glielo chiede."
+      }
     },
     "m1414_zone2": {
       "title": "Hypermetro trains",
-      "text": "Move between hub cities using the hypermetro! Your final destination is the Omega Tower, but you should stop at Ghent for stocking up on items."
+      "text": "Move between hub cities using the hypermetro! Your final destination is the Omega Tower, but you should stop at Ghent for stocking up on items.",
+      "generic": {
+        "title": "Treni hypermetro",
+        "text": "L'hypermetro collega le città principali. La linea finisce alla Torre Omega, e Ghent è la fermata giusta per fare scorta."
+      }
     },
     "m1414_zone3": {
       "title": "Crafting",
-      "text": "In this shack  you can find some materials, use the [Thinker] option in pause menu to assembly items and [Blacksmithing] to smelt and forge new ones"
+      "text": "In this shack  you can find some materials, use the [Thinker] option in pause menu to assembly items and [Blacksmithing] to smelt and forge new ones",
+      "generic": {
+        "title": "Artigianato",
+        "text": "Una baracca con dei materiali in giro. L'opzione [Thinker] nel menu di pausa assembla oggetti, [Blacksmithing] fonde e forgia."
+      }
     },
     "m1414_zone4": {
       "title": "Farming plots",
-      "text": "Use farming plots to grow your own plants"
+      "text": "Use farming plots to grow your own plants",
+      "generic": {
+        "title": "Orti",
+        "text": "Terra smossa, seminata e raccolta da chi la lavora."
+      }
     },
     "m1414_zone5": {
       "title": "High level enemis",
-      "text": "Some enemies are too powerful for your current party. when you are outside dungeons you can freely escape only in the first tur."
+      "text": "Some enemies are too powerful for your current party. when you are outside dungeons you can freely escape only in the first tur.",
+      "generic": {
+        "title": "Nemici di alto livello",
+        "text": "Da questa parte ci sono cose fuori portata per il gruppo. Fuori dai sotterranei la fuga è sicura solo al primo turno."
+      }
     },
     "m1414_zone6": {
       "title": "Shop",
-      "text": ""
+      "text": "",
+      "generic": {
+        "title": "Negozio",
+        "text": "Un bancone con della merce dietro."
+      }
     },
     "m1414_zone7": {
       "title": "Dungeon",
-      "text": "Explore dungeons to recover rare loot"
+      "text": "Explore dungeons to recover rare loot",
+      "generic": {
+        "title": "Sotterraneo",
+        "text": "Una via verso il buio. È da posti così che si riporta su il bottino raro."
+      }
     },
     "m1414_zone8": {
       "title": "Trash",
-      "text": "Dive in the trash to recover hidden pre Y2K gems, but be wary of nausea."
+      "text": "Dive in the trash to recover hidden pre Y2K gems, but be wary of nausea.",
+      "generic": {
+        "title": "Immondizia",
+        "text": "Un cumulo in cui vale la pena frugare: finiscono qui i cimeli pre Y2K. La nausea è compresa nel prezzo."
+      }
     },
     "m1414_zone10": {
       "title": "Apiary",
-      "text": "Use apiaries to manage a bee colony and collect honey"
+      "text": "Use apiaries to manage a bee colony and collect honey",
+      "generic": {
+        "title": "Apiario",
+        "text": "Arnie tenute per il miele, una colonia alla volta."
+      }
     },
     "m1414_zone11": {
       "title": "Farm",
-      "text": "You can take over this abandoned farm: it's owner was recently killed by getting hit via a satellite debris and nobody has claimed it yet.\nUse the [Build] option in pause menu to buy animals and personalize this farm."
+      "text": "You can take over this abandoned farm: it's owner was recently killed by getting hit via a satellite debris and nobody has claimed it yet.\nUse the [Build] option in pause menu to buy animals and personalize this farm.",
+      "generic": {
+        "title": "Fattoria",
+        "text": "Una fattoria abbandonata, libera da occupare: il proprietario è stato ucciso da un rottame di satellite e da allora nessuno l'ha reclamata.\nL'opzione [Build] nel menu di pausa compra animali e arreda il posto."
+      }
     },
     "m1414_zone9": {
       "title": "Library",
-      "text": "Visit libraries to buy book and grimories"
+      "text": "Visit libraries to buy book and grimories",
+      "generic": {
+        "title": "Biblioteca",
+        "text": "Una biblioteca. Al banco si comprano libri e grimori."
+      }
     },
     "m1414_zone12": {
       "title": "Clinic",
-      "text": "Visit clinics to diagnose diseases, install augments, install or remove bodyparts or get medical training."
+      "text": "Visit clinics to diagnose diseases, install augments, install or remove bodyparts or get medical training.",
+      "generic": {
+        "title": "Clinica",
+        "text": "Una clinica: diagnosi, innesti, parti del corpo montate o rimosse e addestramento medico."
+      }
     },
     "m1416_zone": {
       "title": "PC",
-      "text": "Use this PC to access Hypernet"
+      "text": "Use this PC to access Hypernet",
+      "generic": {
+        "title": "PC",
+        "text": "Una macchina collegata alla Hypernet."
+      }
     },
     "m1416_zone2": {
       "title": "Quest board",
-      "text": "Uset the quest board to accept quests"
+      "text": "Uset the quest board to accept quests",
+      "generic": {
+        "title": "Bacheca degli incarichi",
+        "text": "Una bacheca di sughero piena di avvisi. Ne stacchi uno e l'incarico è tuo."
+      }
     },
     "m1416_zone3": {
       "title": "Bowling alley",
-      "text": "Interact with the bowling alley to play bowling"
+      "text": "Interact with the bowling alley to play bowling",
+      "generic": {
+        "title": "Pista da bowling",
+        "text": "Una pista da bowling, aperta a chiunque ci si avvicini."
+      }
     },
     "m1416_zone4": {
       "title": "Bathroom",
-      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it."
+      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it.",
+      "generic": {
+        "title": "Bagno",
+        "text": "Un bagno. Lavarsi alza l'igiene, e l'igiene la nota chiunque ti rivolga la parola, tranne chi non se ne cura affatto."
+      }
     },
     "m1416_zone5": {
       "title": "Innkeeper",
-      "text": "Talk to the innkeeper to rent a room, buy food or recruit troops"
+      "text": "Talk to the innkeeper to rent a room, buy food or recruit troops",
+      "generic": {
+        "title": "Oste",
+        "text": "L'oste: stanze, cibo e truppe da assoldare."
+      }
     },
     "m1416_zone6": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sonno",
+        "text": "Un letto. Un gruppo che dorme poco comincia a perdere MP, quindi si riposa ogni giorno; il caffè rimanda soltanto."
+      }
     },
     "m1416_zone7": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sonno",
+        "text": "Un letto. Un gruppo che dorme poco comincia a perdere MP, quindi si riposa ogni giorno; il caffè rimanda soltanto."
+      }
     },
     "m1416_zone8": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sonno",
+        "text": "Un letto. Un gruppo che dorme poco comincia a perdere MP, quindi si riposa ogni giorno; il caffè rimanda soltanto."
+      }
     },
     "m1416_zone9": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sonno",
+        "text": "Un letto. Un gruppo che dorme poco comincia a perdere MP, quindi si riposa ogni giorno; il caffè rimanda soltanto."
+      }
     },
     "m1416_zone11": {
       "title": "Sleeè",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sonno",
+        "text": "Un letto. Un gruppo che dorme poco comincia a perdere MP, quindi si riposa ogni giorno; il caffè rimanda soltanto."
+      }
     },
     "m1416_zone12": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sonno",
+        "text": "Un letto. Un gruppo che dorme poco comincia a perdere MP, quindi si riposa ogni giorno; il caffè rimanda soltanto."
+      }
     },
     "m1416_zone13": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sonno",
+        "text": "Un letto. Un gruppo che dorme poco comincia a perdere MP, quindi si riposa ogni giorno; il caffè rimanda soltanto."
+      }
     },
     "m1416_zone14": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sonno",
+        "text": "Un letto. Un gruppo che dorme poco comincia a perdere MP, quindi si riposa ogni giorno; il caffè rimanda soltanto."
+      }
     },
     "m1416_zone15": {
       "title": "Bathroom",
-      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it."
+      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it.",
+      "generic": {
+        "title": "Bagno",
+        "text": "Un bagno. Lavarsi alza l'igiene, e l'igiene la nota chiunque ti rivolga la parola, tranne chi non se ne cura affatto."
+      }
     },
     "m1416_zone16": {
       "title": "Bathroom",
-      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it."
+      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it.",
+      "generic": {
+        "title": "Bagno",
+        "text": "Un bagno. Lavarsi alza l'igiene, e l'igiene la nota chiunque ti rivolga la parola, tranne chi non se ne cura affatto."
+      }
     },
     "m1416_zone17": {
       "title": "Bathroom",
-      "text": ""
+      "text": "",
+      "generic": {
+        "title": "Bagno",
+        "text": "Un bagno. Lavarsi alza l'igiene, e l'igiene la nota chiunque ti rivolga la parola, tranne chi non se ne cura affatto."
+      }
     },
     "m1416_zone19": {
       "title": "Minigames",
-      "text": "Minigames use arcade coins to play but some are free. Use the arcade converter to get coins."
+      "text": "Minigames use arcade coins to play but some are free. Use the arcade converter to get coins.",
+      "generic": {
+        "title": "Minigiochi",
+        "text": "Cabinati e tavoli. Quasi tutti prendono gettoni, qualcuno è gratis, e il convertitore i gettoni li dà."
+      }
     },
     "m1416_zone10": {
       "title": "Renting",
-      "text": "Interact with the door or talk to innkeeper to  rent a room"
+      "text": "Interact with the door or talk to innkeeper to  rent a room",
+      "generic": {
+        "title": "Affitto",
+        "text": "Una stanza in affitto, dalla porta o passando dall'oste."
+      }
     }
   },
   "tips": {
     "findTheInn": {
       "title": "Un posto dove dormire",
-      "text": "La locanda sta in mezzo alla stazione. Segui le finestre illuminate e chiedi un letto all'oste."
+      "text": "La locanda sta in mezzo alla stazione. Segui le finestre illuminate e chiedi un letto all'oste.",
+      "generic": {
+        "title": "Un posto dove dormire",
+        "text": "La locanda sta in mezzo alla stazione, sotto le finestre illuminate. È l'oste ad affittare i letti."
+      }
     },
     "seeTheDoctor": {
       "title": "Vai dal dottore",
-      "text": "L'ambulatorio e' l'edificio basso con la porta bianca. Qualunque cosa sia rotta, la rimettono a posto li' dentro."
+      "text": "L'ambulatorio e' l'edificio basso con la porta bianca. Qualunque cosa sia rotta, la rimettono a posto li' dentro.",
+      "generic": {
+        "title": "Dal dottore",
+        "text": "La clinica è l'edificio basso con la porta bianca. Lì dentro si aggiusta quello che si è rotto."
+      }
     },
     "searchTheWagons": {
       "title": "Fruga nei vagoni",
-      "text": "Il binario morto non e' stato ripulito del tutto. Apri ogni cassa prima che vada via la luce."
+      "text": "Il binario morto non e' stato ripulito del tutto. Apri ogni cassa prima che vada via la luce.",
+      "generic": {
+        "title": "Fruga nei vagoni",
+        "text": "Il binario morto non è stato ripulito del tutto. Conviene aprire le casse prima che cali la luce."
+      }
     },
     "intoTheCaves": {
       "title": "Dentro le grotte",
-      "text": "La bocca nella collina scende piu' a fondo di quanto sembri. Portati una luce, e qualcosa da menare."
+      "text": "La bocca nella collina scende piu' a fondo di quanto sembri. Portati una luce, e qualcosa da menare.",
+      "generic": {
+        "title": "Nelle grotte",
+        "text": "La bocca nella collina va più a fondo di quanto sembri. Serve una luce, e qualcosa da menare."
+      }
     },
     "headOutside": {
       "title": "Esci fuori",
-      "text": "Al chiuso non c'e' piu' niente per te. Esci e prendi la strada."
+      "text": "Al chiuso non c'e' piu' niente per te. Esci e prendi la strada.",
+      "generic": {
+        "title": "Esci",
+        "text": "Al chiuso non c'è altro. La strada comincia fuori dalla porta."
+      }
     }
   }
 }

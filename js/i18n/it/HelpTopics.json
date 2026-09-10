@@ -19,7 +19,8 @@
     "topics": "Argomenti",
     "lore": "Tradizioni",
     "diseases": "Malattie",
-    "history": "Cronaca"
+    "history": "Cronaca",
+    "rumors": "Voci"
   },
   "HelpTopics": {
     "controlsMoving": {
@@ -272,7 +273,7 @@
     },
     "combatDamageTypes": {
       "title": "Tipi di Danno e Meccaniche Perforanti",
-      "description": "Ogni attacco, abilità e arma ha un Tipo di Danno: Explosive (Esplosivo), Piercing (Perforante), Cutting (Tagliente), Blunt (Contundente), Area, Abstract (Astratto) o None (Nessuno).\n\nSmembramento e Diffusione:\n\n- I danni Esplosivi, Perforanti e Taglienti possono amputare o recidere parti del corpo sui colpi letali. I danni Contundenti, ad Area, Astratti e Nessuno rompono o danneggiano le parti sul posto senza reciderle\n- I danni ad Area ed Esplosivi si diffondono su più parti del corpo (da 2 a 4 parti). I danni Perforanti, Taglienti, Contundenti e Astratti concentrano il 100% del danno su un'unica parte del corpo mirata\n\nMeccaniche Perforanti (Piercing):\n\n- Difesa (Status 2 / Guard): Gli attacchi perforanti penetrano la guardia infliggendo la metà del danno pieno invece della pesante riduzione della guardia\n- Protezione (Status 19 / Protect - Sostituto): Quando un alleato è protetto da un sostituto, gli attacchi perforanti colpiscono il protettore con danno pieno E penetrano colpendo l'alleato protetto con metà danno\n- Scudo Divino (Status 32 / Divine Shield): Gli attacchi perforanti ignorano completamente lo Scudo Divino, superando il 100% di evasione fisica e tutte le riduzioni di danno elementale\n- Riflessione Magica (Status 18 / Magic Reflection): Le magie e abilità perforanti trapassano gli scudi riflettenti, colpendo direttamente il bersaglio senza essere riflesse"
+      "description": "Ogni attacco, abilità e arma porta un tipo di danno: Esplosivo, Perforante, Tagliente, Contundente, Ad area, Astratto o Nessuno.\n\nEsplosivo, Perforante e Tagliente possono recidere una parte con un colpo letale; gli altri la rovinano sul posto. Ad area ed Esplosivo si distribuiscono su due o quattro parti, tutti gli altri concentrano tutto sulla parte mirata.\n\nIl Perforante ignora anche quasi ogni difesa. Attraversa la Guardia per metà danno, colpisce a pieno il sostituto di Protezione e prosegue sull'alleato dietro per metà, ignora del tutto lo Scudo Divino e passa attraverso il Riflesso Magico colpendo direttamente il bersaglio."
     },
     "combatWrestle": {
       "title": "",
@@ -850,18 +851,6 @@
       "title": "",
       "description": ""
     },
-    "topicHardwareStore": {
-      "title": "",
-      "description": ""
-    },
-    "topicEsotericHeavyParticles": {
-      "title": "",
-      "description": ""
-    },
-    "topicCERN": {
-      "title": "",
-      "description": ""
-    },
     "arcaneSurge": {
       "title": "Stato: Impeto Arcano",
       "description": "Aumenta il potere magico ma consuma MP a ogni turno. Aumenta INT del 50%, aumenta SAG del 50% e consuma il 10% degli MP massimi ogni turno. Dura 3-5 azioni.",
@@ -1029,12 +1018,12 @@
     },
     "divineShield": {
       "title": "Stato: Scudo Divino",
-      "description": "Riduce ogni danno in entrata e impedisce i colpi critici. Riduce il danno fisico subito del 30%, riduce il danno fuoco subito del 30%, riduce il danno ghiaccio subito del 30%, riduce il danno fulmine subito del 30%, riduce il danno acqua subito del 30%, riduce il danno petrolio subito del 30%, riduce il danno vento subito del 30%, riduce il danno sacro subito del 30%, riduce il danno maledetto subito del 30% e aumenta evasione dei critici del 100%. Dura 3-5 turni.",
+      "description": "Riduce del 30% ogni elemento in arrivo e rende impossibili i colpi critici. Dura 3-5 turni.",
       "type": "state"
     },
     "deathMark": {
       "title": "Stato: Marchio di Morte",
-      "description": "Il bersaglio subisce più danno da ogni fonte ed è più facile da colpire. Aumenta il danno fisico subito del 30%, aumenta il danno fuoco subito del 30%, aumenta il danno ghiaccio subito del 30%, aumenta il danno fulmine subito del 30%, aumenta il danno acqua subito del 30%, aumenta il danno petrolio subito del 30%, aumenta il danno vento subito del 30%, aumenta il danno sacro subito del 30%, aumenta il danno maledetto subito del 30% e aumenta quanto spesso viene bersagliato del 900%. Dura 2-3 azioni.",
+      "description": "Aumenta del 30% ogni danno subito e attira quasi ogni attacco sul bersaglio. Dura 2-3 azioni.",
       "type": "state"
     },
     "perfectFocus": {
@@ -1044,7 +1033,7 @@
     },
     "ethereal": {
       "title": "Stato: Etereo",
-      "description": "Il bersaglio non subisce danno fisico ma il doppio di quello magico. Rende innocuo il danno fisico, aumenta il danno fuoco subito del 100%, aumenta il danno ghiaccio subito del 100%, aumenta il danno fulmine subito del 100%, aumenta il danno acqua subito del 100%, aumenta il danno petrolio subito del 100%, aumenta il danno vento subito del 100%, aumenta il danno sacro subito del 100% e aumenta il danno maledetto subito del 100%. Dura 3-5 turni.",
+      "description": "Il danno fisico passa attraverso senza effetto, ogni elemento magico colpisce il doppio. Dura 3-5 turni.",
       "type": "state"
     },
     "lifeLink": {

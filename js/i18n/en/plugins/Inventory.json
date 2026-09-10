@@ -46,7 +46,8 @@
     "Plants": "Plants",
     "Survival": "Survival",
     "Trash": "Trash",
-    "Vehicles": "Vehicles"
+    "Vehicles": "Vehicles",
+    "Leisure": "Leisure"
   },
   "itemType": {
     "standard": "Standard Item",
@@ -288,7 +289,18 @@
     "Enchant": "Enchant",
     "Transmute": "Transmute",
     "Absorb": "Absorb",
-    "Reflect": "Reflect"
+    "Reflect": "Reflect",
+    "Study": "Study"
+  },
+  "study": {
+    "title": "Study",
+    "who": "Who studies \"{item}\"? ({duration})",
+    "done": "{name} studied \"{item}\" for {duration}. {subject} +{points}",
+    "known": "{name} has already taken everything \"{item}\" had to give.",
+    "nothing": "There is nothing in \"{item}\" to study.",
+    "hours": "{hours}h",
+    "minutes": "{minutes}min",
+    "hoursMinutes": "{hours}h {minutes}min"
   },
   "ui": {
     "carryWeight": "Carry Weight",

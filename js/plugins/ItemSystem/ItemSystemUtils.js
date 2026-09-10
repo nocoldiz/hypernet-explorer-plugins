@@ -2014,8 +2014,15 @@
  * both are paid once per member per book, so a shelf is worth reading through
  * and a single volume is not worth reading twice.
  *
- * This module is the ONE answer to "what does this book teach" and "has this
- * member read it": never re-derive either from the note tag anywhere else.
+ * A book can also be STUDIED instead of read. Studying turns no pages: it
+ * spends the hours the book is long, and pays out in one go exactly what
+ * reading the whole thing cover to cover would have paid. It is the same
+ * knowledge bought with time rather than with three hundred page turns, so a
+ * volume already read through is worth nothing to study.
+ *
+ * This module is the ONE answer to "what does this book teach", "has this
+ * member read it" and "how long is it to study": never re-derive any of them
+ * from the note tag anywhere else.
  */
 
 (function () {
@@ -2112,16 +2119,16 @@
 
     /**
      * Pay a reader for a book. `stage` is "open" (they started it) or "done"
-     * (they reached the last page). Returns the points actually awarded, which
-     * is zero for a book they have already been paid for, one that teaches
-     * nothing, or a party with nobody in it to read.
+     * (they reached the last page), and `actor` names the reader when somebody
+     * other than the leader is holding it. Returns the points actually
+     * awarded, which is zero for a book they have already been paid for, one
+     * that teaches nothing, or a party with nobody in it to read.
      */
-    award(file, stage) {
+    award(file, stage, actor) {
       const item = this.itemForFile(file);
       const def = this.spec(item);
       if (!def) return 0;
-      if (typeof $gameParty === "undefined" || !$gameParty) return 0;
-      const reader = $gameParty.leader ? $gameParty.leader() : null;
+      const reader = actor || this.reader();
       if (!reader) return 0;
       if (this.hasRead(reader.actorId(), file, stage)) return 0;
       // An Archmage takes twice as much out of a book as anybody else does
@@ -2135,6 +2142,97 @@
       // somebody else hold a book.
       if (XP) XP.award(def, points, { actor: reader, soloist: true });
       return points;
+    },
+
+    // -----------------------------------------------------------------------
+    // Studying: the same book, bought with hours instead of page turns.
+    // -----------------------------------------------------------------------
+
+    // How long one page takes to work through, and the floor and the ceiling on
+    // a sitting: a pamphlet is still an afternoon's work, and no book eats a
+    // whole day whatever Gutenberg put in front of it.
+    MINUTES_PER_PAGE: 1.5,
+    MIN_STUDY_MINUTES: 60,
+    MAX_STUDY_MINUTES: 480,
+
+    /** The book file an item is, or null for anything that is not a book. */
+    fileOf(entry) {
+      if (!entry || !entry.note) return null;
+      const m = BOOK_TAG.exec(entry.note);
+      return m ? m[1].trim() : null;
+    },
+
+    /** How long studying this book takes, in minutes. */
+    studyMinutes(entry) {
+      const file = this.fileOf(entry);
+      const BM = window.BookManager;
+      let pages = 0;
+      if (file && BM && BM.pageCount) {
+        try { pages = Number(BM.pageCount(file)) || 0; } catch (e) { pages = 0; }
+      }
+      const raw = Math.round(pages * this.MINUTES_PER_PAGE);
+      return Math.min(this.MAX_STUDY_MINUTES, Math.max(this.MIN_STUDY_MINUTES, raw));
+    },
+
+    /**
+     * What this member has still to get out of this book, in points: the whole
+     * of it for a book they have never opened, the finishing half for one they
+     * started and put down, nothing for one they have been all the way through.
+     */
+    studyPoints(entry, actor) {
+      const def = this.spec(entry);
+      const file = this.fileOf(entry);
+      if (!def || !file || !actor) return 0;
+      const id = actor.actorId();
+      let base = 0;
+      if (!this.hasRead(id, file, "open")) base += OPEN_POINTS;
+      if (!this.hasRead(id, file, "done")) base += FINISH_POINTS;
+      if (base <= 0) return 0;
+      const P = window.BattleSystemPassiveSkills;
+      const mult = (P && P.bookPointsMultiplier) ? P.bookPointsMultiplier(actor) : 1;
+      return Math.round(base * mult);
+    },
+
+    /** Whether sitting down with this book would teach this member anything. */
+    canStudy(entry, actor) {
+      return this.studyPoints(entry, actor || this.reader()) > 0;
+    },
+
+    /**
+     * Sit down with a book instead of turning its pages. The hours go by, the
+     * reader is taught everything the book had in it, and the book is marked
+     * read at both stages so it cannot then be read for a second helping.
+     * Returns { ok, reason, minutes, points, label, actor }, where reason is
+     * "notabook", "nothing", "noreader" or "known".
+     */
+    study(entry, actor) {
+      const reader = actor || this.reader();
+      const file = this.fileOf(entry);
+      if (!file) return { ok: false, reason: "notabook" };
+      const def = this.spec(entry);
+      if (!def) return { ok: false, reason: "nothing" };
+      if (!reader) return { ok: false, reason: "noreader" };
+      const points = this.studyPoints(entry, reader);
+      if (points <= 0) return { ok: false, reason: "known", actor: reader };
+
+      const minutes = this.studyMinutes(entry);
+      this._record(reader.actorId(), file, "open");
+      this._record(reader.actorId(), file, "done");
+      const XP = window.SpecializationXP;
+      // Studying is as solitary as reading: nobody learns theology by watching
+      // somebody else frown at a page.
+      if (XP) XP.award(def, points, { actor: reader, soloist: true });
+      const TDS = window.TimeDateSystem;
+      if (TDS && TDS.passTime) {
+        try { TDS.passTime(minutes); } catch (e) { /* no clock in this scene */ }
+      }
+      return { ok: true, minutes, points, label: this.label(entry), actor: reader };
+    },
+
+    /** The member a book is read to and paid for, the leader unless named. */
+    reader() {
+      if (typeof $gameParty === "undefined" || !$gameParty) return null;
+      return $gameParty.leader ? $gameParty.leader() : null;
     },
 
     // -----------------------------------------------------------------------
@@ -2174,4 +2272,127 @@
   };
 
   window.BookLearning = BookLearning;
+})();
+
+//=============================================================================
+// Module: ItemLeisure
+//=============================================================================
+/*:
+ * @target MZ
+ * @plugindesc A pastime is an item somebody can enjoy: the <Leisure:> tag
+ * @author Omni-Lex
+ *
+ * @help
+ * Some things in the pack are not eaten, worn or swung: they are enjoyed. A
+ * book, an mp3 player, a handheld console, a saxophone. Those carry
+ *
+ *     <Leisure: music, 10>
+ *
+ * where the word is WHAT IS DONE WITH IT and the number is how much Mood one
+ * sitting with it is worth. Both halves may be written in either order and
+ * either may be left out: a bare <Leisure> is the default pastime at the
+ * default worth.
+ *
+ * The word is a LOOKUP KEY, never printed. What the player reads comes back
+ * through line(), out of ItemUtils.leisure.action.<key>, so every pastime has
+ * a sentence of its own ("Lyra is listening to the Mp3 Player") and a tag
+ * nobody has written a sentence for falls back on the generic one.
+ *
+ * This module is the ONE answer to "is this thing a pastime", "what is done
+ * with it" and "what is that worth": never test the tag anywhere else.
+ *
+ * A CONSUMABLE pastime (a newspaper, a scratch card) is shelved and priced as
+ * one but is never picked up by a companion looking for something to do: what
+ * is spent out of the pack is the player's to spend, so pick() only ever
+ * answers with something that survives being used.
+ */
+
+(function () {
+  "use strict";
+
+  const LEISURE_TAG = /<Leisure(?::\s*([^>]*))?>/i;   // i18n-ignore  note tag
+
+  const ItemLeisure = {
+    // What a pastime nobody described is worth, and what it is called.
+    DEFAULT_AMOUNT: 8,
+    DEFAULT_ACTION: "enjoy",  // i18n-ignore  <Leisure:> tag value
+
+    /** Whether this entry is a pastime at all. */
+    isLeisure(entry) {
+      return !!(entry && entry.note && LEISURE_TAG.test(entry.note));
+    },
+
+    /**
+     * { action, amount } for a pastime, null for anything else. The tag's two
+     * halves are read by shape rather than by position, so "read, 8", "8 read"
+     * and "read" all say the same thing.
+     */
+    info(entry) {
+      if (!entry || !entry.note) return null;
+      const m = LEISURE_TAG.exec(entry.note);
+      if (!m) return null;
+      let action = this.DEFAULT_ACTION;
+      let amount = this.DEFAULT_AMOUNT;
+      for (const part of String(m[1] || "").split(/[,\s]+/)) {
+        if (!part) continue;
+        if (/^\d+(?:\.\d+)?$/.test(part)) amount = Number(part);
+        else action = part.toLowerCase();
+      }
+      return { action, amount: Math.max(0, amount) };
+    },
+
+    /** How much Mood one sitting with this is worth, 0 for anything else. */
+    amount(entry) {
+      const info = this.info(entry);
+      return info ? info.amount : 0;
+    },
+
+    /** The shelf caption a pastime is filed under, in the player's language. */
+    label() {
+      return T('ItemUtils.leisure.label');
+    },
+
+    /** "Mood +10", the line a counter and the backpack print under it. */
+    gainText(entry) {
+      const info = this.info(entry);
+      return info ? T('ItemUtils.leisure.gain', { amount: Math.round(info.amount) }) : "";
+    },
+
+    /**
+     * What this member is doing with it, as the popup says it. Every pastime
+     * has its own sentence; one whose tag names an action nobody has written
+     * reads as the generic one rather than as nothing.
+     */
+    line(actorName, entry) {
+      const info = this.info(entry);
+      if (!info) return "";
+      const args = { name: String(actorName || ""), item: entry.name || "" };
+      const key = 'ItemUtils.leisure.action.' + info.action;
+      return T.has(key) ? T(key, args) : T('ItemUtils.leisure.action.enjoy', args);
+    },
+
+    /** Every pastime in the pack that survives being enjoyed, richest first. */
+    inParty() {
+      if (typeof $gameParty === "undefined" || !$gameParty) return [];
+      return $gameParty.items()
+        .filter((it) => it && !it.consumable && this.isLeisure(it))
+        .sort((a, b) => this.amount(b) - this.amount(a));
+    },
+
+    /**
+     * The one thing a companion reaches for when they are at a loose end.
+     */
+    pick() {
+      const shelf = this.inParty();
+      if (!shelf.length) return null;
+      // The best pastime in the pack, most of the time; now and then whatever
+      // else is in there, so a party with a library is not one book.
+      if (shelf.length > 1 && Math.random() < 0.5) {
+        return shelf[Math.floor(Math.random() * shelf.length)];
+      }
+      return shelf[0];
+    },
+  };
+
+  window.ItemLeisure = ItemLeisure;
 })();

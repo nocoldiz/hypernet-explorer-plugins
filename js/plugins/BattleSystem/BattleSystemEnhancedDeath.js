@@ -364,7 +364,92 @@
     };
 
     // ========================================================================
-    // 6. Game_Player - performTransfer
+    // 6. Coming round - a knock-out is not a death
+    // ========================================================================
+    // Outside the terminal-death modes (Switch 9: Hardcore and Blood and Oil,
+    // where a fallen member is removed for good) being knocked out is a spell
+    // of unconsciousness, not the end of a character. An hour of TimeDateSystem
+    // clock after going down, a downed member comes round on their own at one
+    // hit point: enough to walk, not enough to fight, and no reason to break
+    // camp and march back to a temple.
+    //
+    // The hour is read off the game clock rather than counted in frames, so it
+    // passes at whatever rate the rest of the world does: sleeping, waiting and
+    // a fast-travel leg all carry it, and a battle - where the clock stands
+    // still - carries none of it. Nothing needs to hook the moment of death:
+    // a body that is down and unstamped is stamped where it is found, which is
+    // also what makes a save loaded mid-knockout behave.
+    const KO_WAKE_MINUTES = 60;
+    const KO_WAKE_CHECK_FRAMES = 30;
+    let _koWakeFrames = 0;
+
+    function gameClockMinutes() {
+        const TDS = window.TimeDateSystem;
+        if (!TDS || typeof TDS.getGameTimeMinutes !== 'function') return null;
+        const now = Number(TDS.getGameTimeMinutes());
+        return isFinite(now) ? now : null;
+    }
+
+    // One member: stamp them, wake them, or clear a stamp somebody else's heal
+    // has already made meaningless.
+    function updateKnockoutWake(actor, now) {
+        if (!actor) return;
+        if (!actor.isDead()) {
+            if (actor._koDownedAtMinutes != null) actor._koDownedAtMinutes = null;
+            return;
+        }
+        if (actor._koDownedAtMinutes == null) {
+            actor._koDownedAtMinutes = now;
+            return;
+        }
+        // The clock can be wound backwards (a load, a cryo pod put back), and a
+        // stamp from the future would never come due: treat it as now.
+        if (actor._koDownedAtMinutes > now) {
+            actor._koDownedAtMinutes = now;
+            return;
+        }
+        if (now - actor._koDownedAtMinutes < KO_WAKE_MINUTES) return;
+        actor._koDownedAtMinutes = null;
+        actor.removeState(actor.deathStateId());
+        actor.setHp(1);
+        actor.refresh();
+        // The "this one fell" flags are what the end of a battle reads to decide
+        // who is buried and who is respawned. A member back on their feet is not
+        // one of them, so the flag is taken back down with the death state.
+        const slot = $gameParty.members().indexOf(actor);
+        if (slot === 0 && $gameSystem.setActor1Died) $gameSystem.setActor1Died(false);
+        else if (slot === 1 && $gameSystem.setActor2Died) $gameSystem.setActor2Died(false, '');
+        else if (slot === 2 && $gameSystem.setActor3Died) $gameSystem.setActor3Died(false, '');
+        if (window.ParchmentToast && typeof window.ParchmentToast.show === 'function') {
+            window.ParchmentToast.show(T('Battle.knockout.cameRound', { actor: actor.name() }));
+        }
+    }
+
+    // Checked twice a second on the map only: a fight has its own rules for who
+    // is standing, and the clock does not move inside one anyway.
+    function updateKnockoutWakes() {
+        if (!window.$gameParty || $gameParty.inBattle()) return;
+        if ($gameSwitches.value(9)) return;
+        const now = gameClockMinutes();
+        if (now == null) return;
+        for (const member of $gameParty.members()) updateKnockoutWake(member, now);
+    }
+
+    const _Scene_Map_update_koWake = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function() {
+        _Scene_Map_update_koWake.call(this);
+        if (++_koWakeFrames < KO_WAKE_CHECK_FRAMES) return;
+        _koWakeFrames = 0;
+        try { updateKnockoutWakes(); } catch (e) {
+            console.error('BattleSystemEnhancedDeath: waking the knocked out failed', e);
+        }
+    };
+
+    BSE.Helpers.KO_WAKE_MINUTES = KO_WAKE_MINUTES;
+    BSE.Helpers.updateKnockoutWake = updateKnockoutWake;
+
+    // ========================================================================
+    // 7. Game_Player - performTransfer
     // ========================================================================
 
     const _Game_Player_performTransfer = Game_Player.prototype.performTransfer;

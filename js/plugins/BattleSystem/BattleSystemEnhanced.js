@@ -1831,10 +1831,12 @@
     //   are the end of somebody's road.
     //
     //   What counts towards it is deliberately narrow: the class curve, the
-    //   points spent at character creation and by traits, and any augment
-    //   fitted in the body. A weapon does not lend the arm that swings it the
-    //   wit to cast, and a buff that lasts three turns is not learning, so
-    //   equipment, states, buffs and disease modifiers are all left out.
+    //   points spent at character creation and by traits, and any augment or
+    //   grafted body part fitted in the body. A weapon does not lend the arm
+    //   that swings it the wit to cast, and a buff that lasts three turns is
+    //   not learning, so equipment, states, buffs and disease modifiers are all
+    //   left out. This is why a sheet reading INT 20 can still fall under an
+    //   INT 13 floor: most of that 20 is worn, not held.
     //
     //   Nothing is barred by this: a skill can always be learned, carried and
     //   used. Under the floor it simply starts to slip, and
@@ -1884,8 +1886,15 @@
             if (Game_Battler.prototype.paramPlus) {
                 value += Game_Battler.prototype.paramPlus.call(battler, paramId) || 0;
             }
+            // Both halves of what surgery leaves behind: the augments bolted in
+            // (Health_ProstheticShop keeps them in _prostheticEffects) and the
+            // body parts grafted on (_bodyPartStatEffects). Game_Actor.param
+            // adds both, and so does the floor: a limb that raises the sheet
+            // raises what the caster brings to a spell.
             const augments = battler._prostheticEffects;
             if (augments && augments[paramId]) value += augments[paramId];
+            const grafts = battler._bodyPartStatEffects;
+            if (grafts && grafts[paramId]) value += grafts[paramId];
             return Math.floor(Math.max(0, value));
         },
 
@@ -1922,6 +1931,17 @@
         label(skill) {
             const req = this.of(skill);
             return req ? this.statName(req.stat) + ' ' + req.points : '';
+        },
+
+        // "INT 8/14", the floor AND what this battler actually holds. Every
+        // chip that flags a shortfall prints this rather than the bare floor:
+        // a reader looking at a sheet that says INT 20 has no way of guessing
+        // that only the base 8 of it counts, so the chip says the number the
+        // check is really made against.
+        standingLabel(battler, skill) {
+            const c = this.check(battler, skill);
+            if (!c) return this.label(skill);
+            return this.statName(c.stat) + ' ' + c.have + '/' + c.points;
         }
     };
 

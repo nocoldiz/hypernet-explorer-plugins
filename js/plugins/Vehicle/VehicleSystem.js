@@ -3419,6 +3419,10 @@
       handlers.push(() => window.TunableRadio.open());
     }
 
+    if (canMakeCampHere(config, isRiding)) {
+      pushCampRow(choices, handlers);
+    }
+
     // Boat only: fishing over the side. A dinghy is sitting on open water
     // wherever it is, so the only question is whether anybody in the party is
     // carrying something to fish with - which Map/MovementInteractionSystem.js
@@ -3477,6 +3481,28 @@
     });
   };
 
+  // Making camp from a vehicle: the same evening the world map's "Make a camp"
+  // buys (Core/TimeDateSystem.js owns what a camp is worth), pitched beside the
+  // vehicle or laid out in its bunk. Never offered in the air: a tent needs
+  // ground under it, and never while the party is riding out a 3D drive, which
+  // owns the screen itself.
+  function canMakeCampHere(config, isRiding) {
+    if (!window.CampRest) return false;
+    if (isRiding && isFlyingConfig(config)) return false;
+    if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive && window.VoxelWorldSystem.isActive()) return false;
+    return SceneManager._scene instanceof Scene_Map;
+  }
+
+  // The choice list is still closing when the handler runs, so the rest menu is
+  // opened on the first frame the message system is free again (as fast travel
+  // and the star map are).
+  function pushCampRow(choices, handlers) {
+    choices.push(T('VehicleSystem.makeCamp'));
+    handlers.push(() => {
+      setTimeout(() => window.CampRest.pitch(), 100);
+    });
+  }
+
   /**
    * Travel/utility menu shown while the player is INSIDE a vehicle's interior map.
    * The offered options depend on which interior the player is standing in (a
@@ -3529,6 +3555,10 @@
     if (config.name !== 'Bike' && window.TunableRadio) {  // i18n-ignore  vehicle id
       choices.push(T('VehicleSystem.radio'));
       handlers.push(() => window.TunableRadio.open());
+    }
+
+    if (canMakeCampHere(config, false)) {
+      pushCampRow(choices, handlers);
     }
 
     choices.push(T('VehicleSystem.cancel'));

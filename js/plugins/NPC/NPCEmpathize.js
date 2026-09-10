@@ -1691,13 +1691,13 @@
     return v > 0 ? Math.max(1, Math.round(v)) : Math.min(-1, Math.round(v));
   }
 
+  // Company is paid silently. Talking to somebody is what the meter is FOR, so
+  // a popup on every exchange would be a popup on every line of dialogue: the
+  // bar moves, the conversation carries on, and nothing interrupts it.
   function _paySocial(actorId, step) {
     if (!step || !window.PartyNeeds?.addSocialToAll) return;
     const focus = ($gameParty?.members() ?? []).find(m => m && m.actorId() === actorId) || null;
     window.PartyNeeds.addSocialToAll(step, { focus, focusBonus: SOCIAL_TALKER_BONUS });
-    try {
-      window.ParchmentToast?.need('social', step);
-    } catch (e) { /* a popup never breaks a conversation */ }
   }
 
   // Company on its own, for the actions that never touch an opinion: haggling,
@@ -6164,6 +6164,9 @@
       _diseaseVialId, _diseaseVialItems, _infectChance,
       // Social/romance maths, shared with the UI layer's romance submenu.
       _socialLines, _rand, _vary: vary, vary, _addNpcOpinion, _npcEffectiveOpinion,
+      // Company on its own, for an exchange that moves no opinion at all: a
+      // rumour passed on in the street is still time spent with somebody.
+      _gainSocialFromCompany,
       // Which Socialize moves are entertainment, so the submenu can mark the
       // ones that feed Fun as well as opinion.
       FUN_ACTIONS,

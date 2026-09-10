@@ -1,0 +1,412 @@
+{
+  "DialogueTopics": {
+    "topicHardwareStore": {
+      "title": "Hardware Store",
+      "description": "Salvaged steel, wood, nails, cable and the rest of what a Build or Thinker recipe asks for, sold over a counter instead of prised off a ruin. Every town of any size has one, and the stock is rerolled with the day."
+    },
+    "topicEsotericHeavyParticles": {
+      "title": "Esoteric Heavy Particles",
+      "description": "What a leyline is made of. Too heavy to travel far from the oil they surface with, heavy enough to bend an instrument on the way past. Measuring them is how a wizard tells a live leyline from a dead one, and how CERN spends its year."
+    },
+    "topicCERN": {
+      "title": "CERN",
+      "description": "The ring under Geneva, turned from particle physics to the only physics that pays since the Falklands: esoteric heavy particles, and through them the leylines.\n\nThe one place on the continent where the Guild of Wizards and a payroll of atheists work the same corridor."
+    },
+    "squishing": {
+      "title": "The Squishing",
+      "description": "On 21 December 2012 the goddess of discord Eris will kill the goddess of justice Maat by hurling the Omega Tower at her. That has already happened, in the future. What reached us was the echo of the throw, sent twenty years back and across ninety-two dimensions, landing on 21 December 1992 in the sky of dimension three.\n\nThe paradox has been fraying the timeline ever since. Spacetime knots itself into local time-loop bubbles (see: the Rule of 80), and fragments of other dimensions collapse into this one, the Empty Empire of Varlenia foremost among them. By 2012, when the throw lands for real, the distortion is expected to leave this dimension uninhabitable.\n\nIt does not fall evenly. The higher a dimension's number, the faster it unravels: the Green Fields, dimension 77, are already mostly gone. The Omega Tower, driven into the earth by the same throw, is the one thing holding the ninety-two apart."
+    },
+    "ruleOf80": {
+      "title": "The Rule of 80",
+      "description": "Since the Squishing, anything moving faster than 80 kilometres an hour is pulled into the nearest time-loop bubble: a patch of spacetime, a few metres to hundreds of kilometres across, where the day resets at its end. Inside, the rule inverts. The only way out is to pass 80 again on the way out, and staying under it keeps you looping.\n\nBubbles are little more than a shimmer at close range, so road maps mark them. Their number and size have been growing since 1992.\n\nLooping has its comforts. The only way to die for good inside one is to die above 80, or be struck by something that is; everything else resets. The cost is stagnation, and a looper keeps every previous day's memories while the world forgets.\n\nNo signal crosses a bubble's edge, electronic, mental or magical. Carrier pigeons fitted with USB drives manage 90 to 100 with a tailwind, which makes them the fastest reliable post between loops, and it is why the Truckers Society exists at all. Bubba's liminal engine is the one known way to drive straight through without slowing."
+    },
+    "encompassingRoad": {
+      "title": "The Encompassing Road",
+      "description": "Every road in every world of the multiverse is, underneath, the same road. Bubba's liminal engine compresses the stretch ahead of a vehicle, and calibrated right it opens onto the Encompassing Road itself, where an ordinary exit can lead to another place, another dimension, another time, or the Scraps of Creation.\n\nThe road predates every driver on it. Trillions of years ago the concept of a road was born from the God of Asphalt, who paved the first one and became the first victim of a hit-and-run."
+    },
+    "magesGuild": {
+      "title": "The Mages Guild",
+      "description": "Founded in 950 BC by King Solomon, the Mages Guild kept the world's hidden balance for millennia, until Margaret Thatcher revealed magic to the whole planet, live, by using it in the Falklands. In the early 1900s Sir Aleister Crowley refounded it under the British royal house as a pseudo-chivalric order, which is why its leadership still carries Sir and Lady.\n\nBesides rebuilding lost technology with magic for the world's governments, the Guild exists to defend reality from what the Squishing lets in. Inside it is split into as many currents as there are schools of magic, but every major decision runs through the Three Pillars, who stand for past, present and future. In 2001 the seats belong to Sir Aleister Crowley, Lady Margaret Thatcher and 'the Father', Shoko Asahara.\n\nA Pillar does not age while they hold the seat, and a term runs fifty years. Crowley has never stepped down, and nobody left in the Guild is in a position to make him."
+    },
+    "hypercapitalistCollective": {
+      "title": "Hypercapitalist Collective",
+      "description": "A pyramid scheme the size of a continent, running the trade between dimensions. Its members took the Rule of 80 and made it doctrine: stay above the threshold long enough and the body stops resetting even at a standstill. While the rest of the world loops and forgets, the Collective remembers.\n\nThat memory is the business model. They sell escapes to people trapped in loops and trade anything else, memories and emotions included. They also hold every source of clean water left; everything outside their reach is cut with LSD.\n\nAt open war with the Archive Foundation, whose radical transparency is bad for a trade empire built on leverage. Allied with the Gods."
+    },
+    "emTheMemoryWitch": {
+      "title": "Em, the Memory Witch",
+      "description": "Born in 1984 in Wimbledon, Britannia, wanting to be a witch in an age that had filed magic among the fairy tales. That changed when Margaret Thatcher, quietly a power broker in the Mages Guild, needed a focal point for the Solomon Ritual and picked her.\n\nThe price was 92% of her memories. They did not vanish; they were forged into the Spear of Memory, the weapon Eris later used to kill the Father aspect of YHWH. Em woke alone on Ritual Island on 1 January 2001 with no past she could reach and a power she is still learning to hold.\n\nShe has been on the road since, in a camper she shares with Bubba, heading to a meeting in Beagle she barely remembers agreeing to."
+    },
+    "camelcaseMagic": {
+      "title": "CamelCase Magic",
+      "description": "Every spell cast since the Squishing must be written and spoken in CamelCase: words run together, a capital opening each. FireBall works. 'Fire ball' does not, and saying it costs the caster.\n\nMulti-word formulas are a different tier: transcendentals, powerful enough to reshape reality on command, and the province of gods. A mortal who breaks a spell into separate words has the universe read it as an attempted transcendental and bill them for it, from the loss of their voice upward.\n\nGrimoires make the rule visible. A spell written wrong infects the words beside it with copies of itself, and a book left unburned will eat whatever is next to it.\n\nActive spells are chosen while the caster sleeps, each with its own cap on daily uses. Two in one slot fuse into a temporary spell for as long as it holds. Permanent versions of proven combinations can be bought from vending machines, or earned by ritual."
+    },
+    "alagaddaCityOfMasks": {
+      "title": "Alagadda, City of Masks",
+      "description": "[Archive Foundation dossier, incomplete]\n\nAlagadda appears on no map the Guild or the Foundation has managed to fix in place, and every field team sent looking has come back with a different account of how they got in, if they came back.\n\nWhat survives every retelling is the rule the city enforces without exception: every visitor wears a mask, and it does not come off.\n\nRemove it, for any reason, for any length of time, and the city stops counting you as a person. The condition is filed as Unperson: invisible, untouchable, unable to leave, drifting through streets that no longer register you.\n\nTotal Disclosure or not, this is all the Foundation will put its name to. Mask on, mask secured, mask never removed."
+    },
+    "ruleOfHeight": {
+      "title": "The Rule of Height",
+      "description": "Since the Tower fell, a new rule holds: any building with multiple floors gets stranger the higher you climb. Geometry distorts, layouts stop making sense, and the upper levels drift into anomaly.\n\nIt can be overridden by lacing construction materials with Fantablack shards scraped from the Omega Tower's outer skin. In the rebuilding after Y2K, the hyperpowers fortified skyscrapers and civic infrastructure with it, and those stand stable.\n\nOrdinary houses got no such treatment. Unless an owner has gone out of their way to find Fantablack and repaint the upper floors, a normal home grows more unpredictable and more hazardous the further up you go."
+    },
+    "omegaTower": {
+      "title": "The Omega Tower",
+      "description": "From outside it looks like a skyscraper climbing past the stratosphere. It is a divine spear: the one Eris hurled in 1992 to kill the goddess of justice Maat. It drove hundreds of kilometres into the crust, and at the tip, sunk and sealed inside it, lies Maat's body.\n\nThe Tower pierces all ninety-two dimensions and connects them, so mortals can climb to the celestial throne of whichever deity reigns over the gods. That seat is Eris's, though it can change while you are elsewhere: leave the Tower alone long enough and someone else may climb it and take the seat, and the fight at the top with it.\n\nIt was meant as an ark, able to carry humanity into another dimension if the world ended. Driven into the Earth, it cannot be moved, and it is now the only thing keeping the ninety-two dimensions from collapsing into each other. Sealed until 31 December 1999, its door opened on its own the night two billion people died.\n\nInside is chaos, and neutral ground for every faction on Earth: department stores beside underground jungles, reactors the size of a city, corridors lined with camping tents. The Archive Foundation explored and settled it first, and keeps the peace between the offices that followed."
+    },
+    "eris": {
+      "title": "Eris",
+      "description": "For millennia Eris was judged a third-rate deity, and the resentment curdled into a campaign for the celestial throne. Then, sometime in the 1990s, she fell hopelessly in love with a Nuevo-Texan mechanic named Bubba.\n\nThey spent years on the road in his battered camper, robbing banks along Route 666, her gift for bending probability cracking any safe on the spot. It ended in December 1992, when a future version of Eris killed Maat, retroactively, and the present one was forced back onto the path to ascension so the paradox would not worsen. The theory was that being in position to kill Maat in 2012 might one day let her choose not to.\n\nHanded the judicial system of every dimension with no training for it, she runs it her way: chaotic, arbitrary, and worse since Bubba started travelling with the witch-wannabe Em, whom she loathes and whose life she makes miserable through cosmic law and probability alike.\n\nAfter the Father aspect of YHWH died on 31 December 2001 during the Solomon Ritual, Eris sat down on the empty throne and no other god had the nerve to object. Anyone in any dimension who commits a crime in view of a witness earns a bounty from her, and if caught is teleported into her court, where she runs billions of trials at once. For the worst she looses judicial ghosts that travel in a straight line until they catch their target.\n\nA defendant can plead guilty, plead innocent, or accuse Eris herself and challenge her for the throne. Killing her there empties the seat and leaves the Tower open for a few days."
+    },
+    "theGods": {
+      "title": "The Gods",
+      "description": "The gods are at open war with the Mages Guild, whom they suspect of preparing another Solomon Ritual. A god exists in proportion to how many people still believe in it, which is why so few from antiquity are left.\n\nA god that dies of neglect turns to stone and falls into the White Desert, and nobody minds. Deicide is different: the body stays anchored to physical reality and rots, with the consciousness still awake inside it. Maat is one recent case, pierced by the Omega Tower and buried hundreds of kilometres down. The Father aspect of YHWH is another: his body still orbits the Earth in the debris the Kessler Syndrome set loose. Every impact knocks another piece off the corpse, and it is those pieces that fall. Whoever touches one takes a share of his power, enough to grant abilities to someone who cannot cast a spell."
+    },
+    "scrapsOfCreation": {
+      "title": "The Scraps of Creation",
+      "description": "Small pocket dimensions the gods once used, eons ago, to test their powers and their creativity. They stayed sealed off until the Squishing: after 1992 some began falling into the physical world on their own, and others became reachable for the first time through Bubba's liminal engine."
+    },
+    "liminalEngine": {
+      "title": "The Liminal Engine",
+      "description": "Bubba's own invention. Switched on, it compresses the road ahead of the vehicle, crossing a continent in minutes and ignoring both the Rule of 80 and the local bubbles. The first prototype ran in 1996 and it reached production in 2001. It is now fitted to nearly every public transport vehicle on Earth, which has made Bubba disgustingly rich.\n\nCalibrated properly it can carry a vehicle underwater, through open air, or into space. Only Bubba knows the configuration that tears through spacetime and reaches other dimensions."
+    },
+    "naguka": {
+      "title": "The Naguka",
+      "description": "Tens of millions of years ago a common ancestor of Homo sapiens moved permanently underground, into the cave system Magamui had dug ages before. The Naguka evolved alongside surface humans and stayed human enough to interbreed with them; the hybrids are called orcs.\n\nIn May 1970 Soviet engineers drilled too deep with the Kola Superdeep Borehole, and the Naguka climbed back up it. Campaigning through Scandinavia in the 1990s they discovered Norwegian black metal, and much of the tribe took to worshipping the band Junehem as gods, painting their faces with corpse paint before battle.\n\nThe Holy Vatican Empire is the only hyperpower with formal ties to them, and its missionary work is really an attempt to raise a standing army.\n\nEvery Naguka shares the Goblin collective unconscious. Hurt one and the species turns against you."
+    },
+    "verden": {
+      "title": "The Verden",
+      "description": "They look much like the Naguka, gentler featured, skin with a blue tint. But where the Naguka are human at heart, the Verden are true goblins, evolved in another dimension, with a biology to match: they lay eggs, reproduce by fission, and a severed limb planted in soil grows into a new Verden.\n\nThey once lived in the Green Fields, dimension 77, among the most advanced species in the multiverse, until for reasons nobody now knows they gave up all their technology, launched it into their home star, and settled into a bucolic life studying magic. Driven out by the Squishing, they found a new home on Earth and fell in love with its technology in turn. Most are well integrated and speak fluent MarkovSpeak, unlike their Naguka cousins, who still talk like children.\n\nHaving studied the Naguka, they learned to read the Goblin collective unconscious and see their moves coming. The access is read-only: they cannot plant anything in it."
+    },
+    "junehem": {
+      "title": "Junehem",
+      "description": "The Norwegian black metal band is midway through deification, driven by mass Naguka worship. They have learned to steer the Goblin collective unconscious through their own music, and now lead the hordes pushing into Europe out of Scandinavia.\n\nThe classic lineup is a small pantheon. Hieronymus, guitar, is the one who walked away and is worshipped anyway, in absentia, which the Naguka hold to be a stronger holiness than showing up. Mark Bitterness, bass and later vocals, is worshipped loudest, with shrines treating his prison record as martyrdom. Dauði, the original vocalist, died young and is worshipped as a psychopomp, prayed to before a raid rather than during one. Jarnhand keeps the beat and is the only member who finds the whole thing exhausting.\n\nEvery government on Earth has tried to kill them. A god of metal cannot die while a single goblin believes, and several million do."
+    },
+    "hieronymus": {
+      "title": "Hieronymus",
+      "description": "He survived being stabbed by his own bandmate Mark Bitterness, and the brain trauma left him with acquired savant syndrome and made him one of the most powerful psionics alive.\n\nUnlike the rest of Junehem, who live as gods worshipped by an entire species, Hieronymus walked away from music, and the Horde has never quite forgiven him for it.\n\nHe did not just stop playing. No address, no known contact in years, nothing that brushes a leyline in a way the Guild's scryers can follow. The theories run from a monastery to another dimension to the likelier and duller possibility that he is somewhere quiet, being left alone for the first time in his life."
+    },
+    "petrodemons": {
+      "title": "Petrodemons",
+      "description": "Entities made of sentient crude oil, effectively indestructible while near a leyline, which keeps regenerating them. Dinosaurs, so the theory goes, were natural arcane practitioners able to cast without leylines, and some of that power stayed bound to the oil their bodies became.\n\nThe only way to kill one is to break the leyline it draws on first, and even then it takes an army.\n\nMost hyperpowers would rather sign contracts than fight. Petrodemons can redirect leylines, and that is worth more than the win."
+    },
+    "matteiLegend": {
+      "title": "The Legend of Enrico Mattei",
+      "description": "The story goes that Enrico Mattei, founder of ENI, found a scroll in a Libyan tomb holding the ritual to summon and bind Petrodemons. He is said to have attempted it to win Italy full energy independence, and something went wrong: his plane went down in 1962.\n\nWhether the Petrodemons are real or not, the story has stuck as the tidiest metaphor going for the oil industry."
+    },
+    "kesslerSyndrome": {
+      "title": "The Kessler Syndrome",
+      "description": "During the Y2K event the ENVISAT satellite lost control and hit another, and the cascade of debris has not stopped since. Within a year of 31 December 1999 it had grown dense enough that leaving the atmosphere was close to suicide. Crossing the shell is compared to walking through a meat grinder, and launch fatality now runs above ninety percent.\n\nThe European Space Agency, under Margherita Hack, is testing rockets built almost entirely from sacrificial armour plating, meant to be shredded while keeping the crew alive long enough to clear orbit. They cannot leave the solar system; the point is docking with one of the few ships still stationed beyond the cloud. Spaceports like the GreenWitch Space Center and the Apulian one at Taranto still take volunteers, free of charge.\n\nThe field has one silver lining. The petrified corpse of the Father aspect of YHWH still hangs in orbit, and every strike knocks another fragment loose, raining pieces of a dead god onto the surface."
+    },
+    "canadafrica": {
+      "title": "Canadafrica",
+      "description": "One of the first visible effects of the Squishing. Over a single day the whole of Mexico and South America reshaped itself to match the outline of Africa seen from space, cities, borders and all their people left exactly where they were."
+    },
+    "serpentineRoad": {
+      "title": "The Serpentine Road",
+      "description": "A spiralling tunnel opening somewhere in Antarctica, connecting the surface to the Earth's core and to the Inverted Citadel. Magamui dug it hundreds of millions of years ago on its way down."
+    },
+    "magamui": {
+      "title": "Magamui",
+      "description": "An alien larva a quarter the size of the Moon, wrapped around the Earth's core for millions of years, feeding on the heat and electromagnetism it produces.\n\nDormant as it is, it can still take mental control of one person at a time, mostly to keep itself safe. There is reason to think that would extend to the whole human population at full maturity, and that its leaving the Earth would be catastrophic.\n\nPart of the Mages Guild's job is finding whoever is currently under its control and killing them, since taking a new host costs Magamui time it would rather not spend."
+    },
+    "invertedCitadel": {
+      "title": "The Inverted Citadel",
+      "description": "Built inside a vast cavern Magamui carved around the Earth's core, with the core hanging at the centre like a sun. The city wraps entirely around it, so looking straight up shows other districts on the far side.\n\nIt was raised by an advanced civilization that lived on Earth somewhere between the dinosaurs and humanity, and vanished without leaving a written record or a scrap of technology, just an empty city. It became the underground capital of the Goblins."
+    },
+    "vaticanEmpire": {
+      "title": "The Holy Vatican Empire",
+      "description": "A Catholic theocracy ruling Italy, Spain, Poland and East Germany, direct successor to the Holy Roman Empire. Power is split between throne and altar: the Pope holds the empire together, local government is left to each member state.\n\nOnly sacred magic and technomancy are permitted. Arcane casters are burned at the stake, or more rarely recruited into the Umbra Excidii, the order that hunts other arcane casters on Vatican soil.\n\nThe current Pope took the name Peter II. Born Joseph Ratzinger, he was elected after John Paul II was killed in the assassination attempt of 13 May 1981.\n\nVatican City carries a battery of liminal engines, and after the death of the Father aspect of YHWH it was militarized into the Vatican Citadel, hovering some 800 metres above Rome behind Gauss cannons. Peter II has declared Jenna of Northpoint the Antichrist and gone to war with her rather than recognize her as the Second Coming."
+    },
+    "okeanus": {
+      "title": "Okeanus",
+      "description": "The ultimate water spell, the one that traumatized the planet live on television during the Falklands War. It lets the caster control an entire mass of water at once, and it was used to annihilate the Argentine fleet, swallowing ships whole and cutting men in half with pressurized jets.\n\nIts use revealed to the world that magic was real, and set off an arms race in battle magic among every hyperpower on Earth."
+    },
+    "theonuclearBombingNewYork": {
+      "title": "The Theonuclear Bombing of New York",
+      "description": "On 11 September 2001 a Thatcherist cell detonated three theonuclear devices in the heart of New York. The blasts did almost no structural damage. They disintegrated every soul within their radius, leaving the bodies still moving on instinct and biology with nothing inside them.\n\nThe attack was blamed on Al-Qaeda. Only the Three Pillars know that the bombs were built from artifacts consumed by the Solomon Ritual, their spent potential turned into a weapon instead of discarded."
+    },
+    "solomonRitual": {
+      "title": "The Solomon Ritual",
+      "description": "A rite spanning a full night, requiring the Guild's Three Pillars, one sacrifice, and seven artifacts of real historical or esoteric weight. Every artifact used loses all its power, though the potential it never spent can be converted into a theonuclear device.\n\nIt was last performed on 31 December 2001, with the Iron Crown of the Holy Roman Emperors, the Spear of Longinus, the Norse sword Tyrfing, clay from the Golem of Prague, the draconic clasp of Xia, and a Neolithic bone horn.\n\nThe ritual rewrites magic's own source code within the dimension it is cast in. It can make casting trivial for anyone, restrict it to a chosen few, or shut it off entirely. Magic stayed a fairy tale through the Renaissance precisely because so few had access; Crowley rediscovered the ritual early in the 1900s and quietly opened magic to the world.\n\nThe 2001 casting had another purpose: draining every memory and every scrap of future potential out of Em, who volunteered as the sacrifice, and forging them into a spear able to kill the Father aspect of YHWH. She survived, lost ninety-two percent of her memories, and came out with far more potential than she went in with. Nobody has explained that part.\n\nSmaller versions exist, reshaping magic locally with one artifact instead of seven. The effects do not last, and the caster risks death or memory loss each time."
+    },
+    "fantablack": {
+      "title": "Fantablack",
+      "description": "A pigment scraped from the outer skin of the Omega Tower. Anything painted with it is immune to time-loop bubbles, and every vehicle fitted with a liminal engine is lined with it. It is expensive, and bullets and blades coated in it can kill a person inside a loop.\n\nThe same pigment is milled into euro banknotes, which, with the rule that names carry power, is what let Mario Draghi ascend to godhood."
+    },
+    "anokiPhones": {
+      "title": "Anoki Phones",
+      "description": "The first working example of technology rebuilt through magic. The bricks draw on leylines to reach each other, and tuned properly they can call the afterlife, or the gods directly.\n\nNo trucker leaves home without one."
+    },
+    "arcaneMagic": {
+      "title": "Arcane Magic",
+      "description": "Magic bends reality to intent, and nobody has explained it cleanly. The harder anyone studies it the less rational it gets, though a few rules have held for decades, CamelCase chief among them.\n\nIt runs along leylines, invisible rivers of power rising out of oil deposits and connecting places of historical, religious or arcane weight. The closer a caster stands, the more raw power a spell carries and the harder it is to control. Casting on top of a leyline without training can snap it, and a broken leyline makes even a simple spell a fight. Divine magic is the exception, running on rules of its own. Spells cast far from any leyline still work, just weaker, which is why so much of a mage's job is geography.\n\nThere are three ways to cast.\n\nRitual magic is open to anyone who is not an idiot: follow the steps without a mistake and the spell goes off at no MP cost. The most powerful kind, and nearly impossible to undo short of a counter-ritual.\n\nSympathetic magic compresses a ritual into words, gestures and catalysts, trading hours for seconds at the cost of MP. Weaker, but fast.\n\nMetamagic replaces every physical component with pure imagination, and its effects can be multiplied together into new spells. The weakest of the three, but silent and castable by thought alone. It is often mistaken for psionics, which is not magic at all."
+    },
+    "sacredMagic": {
+      "title": "Sacred Magic",
+      "description": "Where arcane magic rises out of oil deposits and runs along leylines, sacred magic comes down from the gods, granted to whoever worships and calls on them.\n\nIt shares the three casting methods, ritual, sympathetic and meta, but can also take the form of outright miracles with no explanation at all, violating every rule everything else has to follow.\n\nIt stops working the moment its god dies. Most of the sacred spells the Vatican relied on have been useless since 31 December 2001."
+    },
+    "truckersSociety": {
+      "title": "The Truckers Society",
+      "description": "The real knights of the Road. They do not just haul cargo; they keep the connections alive between communities living in mutually inaccessible realities, with their own hierarchy and a dense network for trading word of what waits further down the highway.\n\nNone of them leave home without an old Anoki phone."
+    },
+    "marioDraghi": {
+      "title": "Mario Draghi",
+      "description": "Mario Draghi's name is printed on tens of billions of banknotes and logged across more transactions than God's name appears in every printed Bible on Earth.\n\nThe security strip in every euro note is milled from Fantablack scraped off the Omega Tower. Between that and the rule that names carry power, Draghi ascended to become the god of markets, losing his body and his individual identity in the exchange and becoming an abstract concept: the financial engine quietly running the multiverse's economy.\n\nOther gods die when belief runs out. Killing Draghi would take burning every banknote that carries his name."
+    },
+    "ladyThatcher": {
+      "title": "Lady Margaret Thatcher",
+      "description": "Long before she stood in front of the cameras during the Falklands War and drowned the Argentine fleet with Okeanus, Thatcher was already deep inside the Mages Guild. When the Three Pillars needed a new face for the present, hers was the obvious choice.\n\nYears before the Solomon Ritual she took in a girl who wanted, more than anything, to be a witch, and taught her real magic herself. It was never kindness. She was shaping Em into a vessel of exactly the right shape and potential to be drained clean during the ritual, chosen and built for the part years in advance.\n\nWhat she had not planned for was the aftermath. Stripped of ninety-two percent of her memories, Em came out with far more raw potential than she went in with, and somewhere in the wreckage taught herself metamagic with no lessons at all, which the Guild's own records call next to unheard of.\n\nThatcher watches her former student now with something closer to unease than pride. A metamagician who got there alone answers to no doctrine the Guild ever gave her."
+    },
+    "aleisterCrowley": {
+      "title": "Sir Aleister Crowley",
+      "description": "Crowley refounded the Mages Guild early in the 1900s under the patronage of the British royal house, as a pseudo-chivalric order, which is why its leadership still carries Sir and Lady. He has held the Past seat ever since and has never agreed to step down. Nobody left in the Guild is in a position to make him; he knows spells even the gods have never heard of.\n\nBefore any of that, in April 1900, he tried to seize the Vault of the Adepti from the Hermetic Order of the Golden Dawn, marching on 36 Blythe Road dressed as a Highlander in a black mask with a golden Celtic cross. Yeats and a few others threw him down the stairs. Every account anyone is allowed to read ends there. What happened after Crowley picked himself up off the pavement has been [REDACTED] since the night it was written, and whatever he called up onto Blythe Road is the one working of his career the Guild has never catalogued.\n\nA Pillar does not age while holding the seat, but the body underneath wears out by other means. Crowley's current vessel is failing, and everyone knows he needs a new one. What he intends to become, and in what, is a question the other two Pillars would like answered first.\n\nIn 1918 he summoned Lam, one of the species he calls the Tourists. The working only ran one way: Lam came through and nothing could send it back. Crowley has never said what he asked it, or what it told him."
+    },
+    "shokoAsahara": {
+      "title": "The Father, Shoko Asahara",
+      "description": "Before he was one of the Three Pillars, Shoko Asahara led a cult responsible for one of the deadliest terrorist attacks in living memory. Inside the Guild he is known more quietly as a master of levitation, a genuine practitioner whose power was never in doubt even when his methods were.\n\nHis seat, representing the future, is the Guild's most disputed appointment: nobody outside the inner circle has had a straight answer for why a convicted mass murderer was handed a say over what magic becomes next.\n\nCrowley despises him openly and has never bothered to hide it, though whether that runs deeper than words has never been tested."
+    },
+    "blytheRoadBattle": {
+      "title": "The Battle of Blythe Road",
+      "description": "On the evening of 17 April 1900 the poet W. B. Yeats stood on the stairs at 36 Blythe Road, London, and refused to let a young occultist calling himself Count Vladimir Svareff past him. The man on the stairs was Aleister Crowley, in Highland tartan, a black mask and a golden Celtic cross, come to seize the Vault of the Adepti by force after a schism over who had the right to run the Order. Yeats did not argue. He and two other Adepti picked Crowley up and threw him down the stairs.\n\nThe Order's minutes record the rest as a formality: police called, no charges filed, Crowley barred. Yeats wrote almost nothing about that night afterward, which those who knew him took as its own statement.\n\nGuild historians read the silence differently. Every surviving account ends at the bottom of the stairs, at the moment Crowley got back up, and whatever the minutes originally said about what came next has been [REDACTED] ever since, in a hand nobody will admit to recognizing."
+    },
+    "theTourists": {
+      "title": "The Tourists",
+      "description": "The Tourists is what the Zeta Reticulans call themselves; Greys is what everyone else calls them. Their homeworld sits thirty-nine light years out, which is exactly how long Earth's first broadcasts took to reach it. They learned humanity existed in 1975. Officially, first contact came in 1999.\n\nThey are obsessed with humanity, and especially with its television. Somewhere off Earth they have built an enormous monument to the species, which Guild diplomats describe less as a statue than as a standing ovation cast in something not quite metal. They mean nobody here any harm, and have gone out of their way to avoid it even when it was easier not to bother.\n\nWhat they are good at is a short list, and all of it is spacetime: faster-than-light travel, gravity manipulation, and two working Dyson spheres around their home star. Any human ship that reaches Zeta Reticuli gets a free refuel, no questions asked.\n\nThey tried a third sphere around the Sun, meant as a gift more than anything Earth needed. The first mirror lasted about as long as it took a stray piece of Kessler debris to find it. The wreckage is still up there.\n\nOutside gravity and light speed they are close to hopeless, and lean on human science and human magic for everything else, which makes their attempts to clear the debris field painful to watch. They have been trying more or less continuously since low orbit closed. They are just bad at it, and a disappointing number of cleanup runs end with a Tourist vessel clipped by the debris it came to collect."
+    },
+    "theDargos": {
+      "title": "The Dargos",
+      "description": "Where the Tourists are recent arrivals, the Dargos have known about Earth since before there were words for what they were doing to it.\n\nNobody in the Guild has managed a real conversation with one. What contact exists comes through abduction, and through pranks specific and cruel enough that 'trolling' has become the polite term in official reports.\n\nThey do not seem to want anything beyond the reaction. An encounter rarely leaves lasting harm and just as rarely leaves the victim believed by anyone who was not there, which several researchers suspect is closer to the point than any theory about genetic sampling or invasion scouting."
+    },
+    "hillIncident": {
+      "title": "The Hill Incident",
+      "description": "On the night of 19 September 1961 Betty and Barney Hill were driving home through the White Mountains when a craft forced their car to stop, and both lost close to two hours they could never account for. Their story became the first widely publicized abduction case in the country, and Betty's sketch of a star map has been argued over for decades.\n\nOne detail every published account gets wrong, because none of them could have known it: the craft never made it home. Trying to return to Zeta Reticuli, it was shot down by the wards Crowley had already laid across Earth's approaches, and never reported what it found.\n\nThe Tourists would not learn Earth existed for another fourteen years, and when they did it was over the radio."
+    },
+    "zanfrettaIncident": {
+      "title": "The Zanfretta Incident",
+      "description": "Pier Fortunato Zanfretta was working a quiet night shift as a security guard outside Genoa on 6 December 1978 when the first encounter happened, and it did not stop there. Over the following years he reported being visited again and again, by beings that got taller, stranger and harder to believe with every retelling.\n\nGuild researchers stopped treating it as a single event and started treating it as a running bit. The consensus points to the Dargos: nothing about the case fits a genuine contact effort, and all of it fits a species that found someone gullible and telegenic and kept coming back to see what he would say next."
+    },
+    "jennaOfNorthpoint": {
+      "title": "Jenna of Northpoint",
+      "description": "Jenna of Northpoint claims to be the Second Coming, and enough people believe her that the claim carries real weight in a world where belief keeps a god alive.\n\nShe did not arrive preaching. She arrived running a business, and the first thing she did with it was gut Northpoint's arena from the inside. It had spent decades running death matches. She kept the crowds, the wagering and every bit of the spectacle, and cut out the killing, putting choreography and real athletic skill where the body count used to be.\n\nPeter II has declared her the Antichrist and taken the Holy Vatican Empire to war over the refusal alone. Jenna has not answered in kind. She keeps running her bloodless arena and lets his war make her case for her."
+    },
+    "popePetrusII": {
+      "title": "Pope Petrus II",
+      "description": "Born Joseph Ratzinger, he took the name Petrus II after John Paul II was killed in the assassination attempt of 13 May 1981, an attack Guild intervention could not reach in time. Where his predecessor is remembered as protected by destiny, Petrus II is remembered as the pope who militarized it.\n\nAfter the Father aspect of YHWH died in 2001 he had Vatican City rebuilt into the Vatican Citadel, a fortress hovering some 800 metres over Rome behind a battery of Gauss cannons.\n\nHe has declared Jenna of Northpoint the Antichrist and taken the empire to war rather than accept her claim, a war fought so far mostly in press releases and border skirmishes, since Jenna has shown no interest in fighting back."
+    },
+    "maat": {
+      "title": "Maat",
+      "description": "The Egyptian goddess of justice, order and truth, weighing the hearts of the dead against a single feather and finding most of them wanting. She survived millennia of shrinking worship better than her contemporaries, until Eris, in a version of 2012 that has technically not happened yet, killed her by throwing the Omega Tower at her.\n\nThat murder is the Squishing's original sin. Maat's body lies at the Tower's tip, hundreds of kilometres under the crust and sealed there since 1992, her consciousness intact inside a corpse that cannot move and cannot die twice.\n\nNobody has found a way to free her, or a ritual that would not risk making the paradox worse."
+    },
+    "falklandsWar": {
+      "title": "The Falklands War",
+      "description": "A minor colonial dispute over a scatter of islands nobody outside Argentina and Britannia much cared about, right up until Margaret Thatcher stepped in front of the cameras and cast Okeanus. Live, in front of the watching planet, she drowned the Argentine fleet in a wall of pressurized water.\n\nThat broadcast is the day the world found out magic was real. Governments that had spent decades pretending otherwise scrambled to catch up, and the arms race in battle magic that followed traces back to those few minutes of footage rather than to anything the war was fought over."
+    },
+    "varlenia": {
+      "title": "The Empty Empire of Varlenia",
+      "description": "A nation in some other dimension, and one of the first casualties of the Squishing's habit of collapsing fragments of other realities into this one.\n\nWhat is left of it here is not a place so much as an absence: streets, buildings and city grids that behave like Varlenia's without a single Varlenian left to explain why.\n\nGuild survey teams treat a fragment as one of the more dangerous things the Squishing has produced, not because anything in it attacks, but because nothing in it does anything at all, and the silence gets into people who stay too long."
+    },
+    "threeAmericas": {
+      "title": "The Three Americas",
+      "description": "Independence never fully happened here, and the continent split three ways. The east coast is the Republic of Cascadia. The centre is the Free States of Midwest, an unbroken line of Lincolns on the currency with Bill Clinton presently in the chair. The west coast never broke from Britannia at all: the Atlantic Protectorate, run by a dynasty of colonial Cornwallises nine generations deep into a war that here never ended. Nobody has bothered fixing the compass directions on any of the three names.\n\nThe three barely acknowledge each other. What passes for a shared identity travels the roads between them, carried by the same truckers who carry everything else."
+    },
+    "goblinHorde": {
+      "title": "The Goblin Horde",
+      "description": "What the Naguka became once they had a government. The leadership reads less like a cabinet than like a monster manual: the Great Goblin at the top, and under him a rotating cast of chieftains, Griznak, Krazz, Zog, Skab, Blight and a dozen others who answer to nobody but him, and not for long.\n\nIt runs out of Iceland now, the closest solid ground to the Kola Superdeep Borehole they first climbed out of in May 1970.\n\nThe Horde does not do diplomacy so much as raids that occasionally stop. The only hyperpower with a working relationship to it is the Holy Vatican Empire, whose missionaries keep trying to convert a species that mostly wants to be left alone with its Junehem records."
+    },
+    "kukulkanAscendancy": {
+      "title": "The Kukulkan Ascendancy",
+      "description": "Mexico's hyperpower answers, on paper, to a lineage that starts with a literal god-emperor: Kukulkan, then a procession of divine Ajaws, jaguar generals and calendar keepers stretching back further than anyone can verify. Then, without much fuss made of the transition, the record rolls straight into Porfirio Diaz, Madero, Zapata and Villa, as if the twentieth century were the latest chapter of the same succession.\n\nNobody in the Ascendancy treats this as strange, and whether Kukulkan still sits behind the modern presidency is not a question its citizens spend time on."
+    },
+    "dprkorea": {
+      "title": "The Democratic People's Republic of Korea",
+      "description": "The Kim line runs the Democratic People's Republic of Korea the way it always has, father to son to grandson, with a small permanent bench of party men filling out whatever the family does not want to handle directly.\n\nWhat sets this timeline's version apart is not the politics, which nobody outside sees clearly enough to judge, but how load-bearing the personality cult has become. State media does not just praise the Kims. It insists on impossible things about them, weather control, instant mastery, effortless victory, with a consistency that starts to look less like propaganda and more like a claim."
+    },
+    "dharmaDirectorate": {
+      "title": "The Dharma Directorate",
+      "description": "China's government wears two faces stitched together and does not see the seam.\n\nOne is familiar: Sun Yat-sen, Chiang Kai-shek, Mao and the long line of General Secretaries after him, running the largest bureaucracy on the continent exactly as history remembers it. The other sits half a step behind, in titles the outside world rarely hears: a Grand Preceptor, an Abbot Chancellor, a Harmony Regent, a shadow clergy of the Directorate's own invention, blessing decisions the Politburo has already made.\n\nWhich face runs the country on a given day depends on who you ask, and the Directorate has never seen a reason to settle it for outsiders."
+    },
+    "illuminatedKhanate": {
+      "title": "The Illuminated Khanate",
+      "description": "Mongolia rules itself as a fusion nobody planned: half khanate, half Buddhist theocracy, with an Illuminated Khan on one side of the throne and a line of Bogd Khans and lama regents on the other, each supplying legitimacy the other cannot manufacture alone.\n\nIt is a small hyperpower by every material measure, and stays one on the strength of a monastic tradition that treats spellcraft as prayer, and prayer as a discipline nobody outside the Khanate has mastered half as well."
+    },
+    "solomonicRepublic": {
+      "title": "The Solomonic Republic",
+      "description": "Israel's government is, literally, the court of King Solomon, still in session three thousand years later.\n\nIts ministers are not politicians in any sense the rest of the world would recognize: Nasi Prince Sitri, Temple Scribe Duke Bathin, Keeper of the Seal Earl Bifrons, entities out of the same Goetic tradition Solomon is famous for binding into service. Still bound, still legislating.\n\nThe Republic is the clearest surviving proof that the original working was never just theory: seventy-two spirits given office instead of exorcism, running a state on a three-thousand-year-old contract none of them have managed to break."
+    },
+    "petroKingdomOfArabia": {
+      "title": "The Petro Kingdom of Arabia",
+      "description": "Arabia's monarchy runs on the resource its titles are named after: an Oil Emir, a Well Sheikh, a Concession Regent, before the line settles into the House of Saud.\n\nWhat the titles do not advertise is how literally some of that oil talks back. Petrodemons cluster thickest under Arabian sand, and the Kingdom's foreign policy runs, more than it admits, on contracts renewed with things that were old before Islam and will outlast the monarchy that signs the paperwork."
+    },
+    "sanatanaRashtra": {
+      "title": "Sanatana Rashtra",
+      "description": "India governs itself as a Dharma Directorate of its own kind, though nobody there calls it that. A Dharma Regent and an Acharya sit alongside, not above, a parliamentary line running through Nehru, Indira Gandhi and Vajpayee, each accepted as the political expression of the same order the Regent represents in ritual.\n\nIt is the one hyperpower that never bothered separating its magic from its government, on the theory that a state without dharma is not a state worth keeping."
+    },
+    "longChile": {
+      "title": "Long Chile",
+      "description": "Chile calls itself the Long South and mostly means it geographically: a single impossibly narrow strip, mapped out first by a Marshal of the Long South and a Cordillera General before the twentieth century's real presidents, Ibanez, Alessandri and Pinochet among them, take over the record.\n\nThe military titles never went away when the civilian ones arrived. They moved into an honorary tier the hyperpower keeps dusted off for ceremony, and for the moments when ceremony stops being enough."
+    },
+    "imperialStatePersia": {
+      "title": "The Imperial State of Persia",
+      "description": "Persia's monarchy never had the revolution history remembers. The Qajar shahs hand off cleanly to the Pahlavis, Reza Shah to Mohammad Reza to Reza Pahlavi II, with Mossadegh's premiership filed as an interruption rather than a rupture. Shahbanu Farah appears in the succession as more than a consort, a working head of state whenever the throne needed one.\n\nThe Imperial State treats its own continuity as its main export: proof, to anyone who asks, that a monarchy only falls when it agrees to."
+    },
+    "topicApuliaSpaceCenter": {
+      "title": "Apulia Space Center",
+      "description": "One of the two launch sites that will still put a person into orbit, down on the Italian heel. Since the Kessler cascade the crews are volunteers taken off the street: the receptionist hands out forms rather than questions, because the queue is short and the desperation is not."
+    },
+    "topicArchiveMenu": {
+      "title": "The Archive",
+      "description": "The Archive option of the main menu, the book Bubba tells Em to read to relearn the road. Every rule, faction, creature and place the party has been told about is filed in it, this page included."
+    },
+    "topicArchiveFoundation": {
+      "title": "The Archive Foundation",
+      "description": "Paramilitary librarians grown out of the ashes of the Internet Archive, obsessed with cataloguing everything and publishing all of it. They hold the Omega Tower as neutral ground between the hyperpowers, and they will stop you at a checkpoint to publish your phone messages."
+    },
+    "topicBritannia": {
+      "title": "Britannia",
+      "description": "The royal house that backed Sir Aleister Crowley when he refounded the Guild of Wizards as a knightly order at the start of the 1900s, which is where the Sir and the Lady still come from. It also holds the Atlantic Protectorate on the far side of the three Americas."
+    },
+    "topicBuildMenu": {
+      "title": "Build",
+      "description": "The Build menu. Salvaged steel, wood and stone go back out as walls, furniture and whatever else the party wants standing where it stops for the night."
+    },
+    "topicCamp": {
+      "title": "Camp",
+      "description": "A camp pitched anywhere on the world map from the Continue prompt, or from the menu of any vehicle the party is standing by. It passes the night without a tavern bill, which along most of the Encompassing Road is the only offer going. The evening is worth more than the bed: the party washes, talks and puts a pot on the fire when the food is running low."
+    },
+    "topicCamper": {
+      "title": "The Camper",
+      "description": "Bubba's battered home on wheels: lined inside with Fantablack so the time loops cannot touch it, and fitted with the only liminal engine calibrated for the Encompassing Road. Three people have tried to steal it and none of them managed to drive it."
+    },
+    "topicCedrataMassoni": {
+      "title": "Cedrata Massoni",
+      "description": "A cloudy yellow citron soda. Em's taste for it survived the loss of everything else she was, so Bubba files it beside her driving licence as evidence of who she used to be."
+    },
+    "topicContinue": {
+      "title": "Continue",
+      "description": "The confirm command. Pointed at a person, an animal or an object it opens whatever the party can do with it, from Empathize to pitching a camp."
+    },
+    "topicCookingMenu": {
+      "title": "Cooking",
+      "description": "The Cooking option in the menu: raw ingredients combined into meals. It is the only thing standing between the party and the slow arithmetic of hunger."
+    },
+    "topicCrimsonAnalyzers": {
+      "title": "The Crimson Analyzers",
+      "description": "The scientific caste of the Tourists, who hold that nothing is understood until it has been opened, and who carry katanas because a scalpel is slow and the universe is large. In 1999 they wanted Em vivisected, lacked the permit, and left her to wander their ship instead."
+    },
+    "topicEmpathize": {
+      "title": "Empathize",
+      "description": "The Empathize panel: read a person or an animal, talk them round, and if they warm to the party, ask them along, as a pet or as a member in their own right."
+    },
+    "topicEsotericHeavyIndustries": {
+      "title": "Esoteric Heavy Industries",
+      "description": "Makers of flying broomsticks, fusion reactors and everything in between. Their goods ignore the Rule of 80: move an EHI object slower than eighty and it still does not reset. Nobody has ever seen a factory or a worker, the stock simply appears in the warehouse when nobody is looking."
+    },
+    "topicEuronymous": {
+      "title": "Euronymous",
+      "description": "The Mahyem guitarist who survived Varg's knife and came out of the brain trauma with acquired savant syndrome, now one of the most powerful psionics alive. The rest of the band live as gods; he walked off the stage entirely and nobody knows where he went."
+    },
+    "topicGiulioAndreotti": {
+      "title": "Giulio Andreotti",
+      "description": "The Italian politician Em found aboard a Tourist mothership over Roccalonga on the night of the Y2K event, deep in conversation with Marco Marco Marco. Nobody has explained what either of them was doing up there."
+    },
+    "topicGreenFields": {
+      "title": "The Green Fields",
+      "description": "Dimension 77, home of the Verden and once one of the most advanced worlds in the multiverse, until they threw every machine they had into their own star and took up farming. The Squishing bites hardest at the higher dimensions, and the Green Fields are already mostly unlivable."
+    },
+    "topicGreenwitchSpaceCenter": {
+      "title": "Greenwitch Space Center",
+      "description": "The other place on the continent that will take a volunteer up through the debris shell. The European Space Agency flies its armour plated rockets from here, and rather fewer of them come back down than go up."
+    },
+    "topicJudicialDimension": {
+      "title": "The Judicial Dimension",
+      "description": "Where a judicial ghost takes whoever it manages to touch. Eris runs billions of trials at once in there, so do not expect her full attention. You may plead guilty, plead innocent, or declare her guilty, which is a challenge for the celestial throne."
+    },
+    "topicLeylines": {
+      "title": "Leylines",
+      "description": "Invisible rivers of arcane power that surface at oil wells and connect places of historical, religious or arcane weight. The closer a caster stands the stronger the spell and the harder it is to hold, and standing directly on one without the training snaps it: where a leyline is broken nobody lights so much as a candle by magic again."
+    },
+    "topicMahyem": {
+      "title": "Mahyem",
+      "description": "The Norwegian black metal band the Naguka took up as gods in the nineties, and mass worship is all it takes. They steer the goblin collective unconscious with their music and lead the hordes pushing down through Scandinavia, and every government on the planet has failed to kill them."
+    },
+    "topicMainMenu": {
+      "title": "The Main Menu",
+      "description": "Not a physical menu but, as Bubba puts it, a transcendental meditation technique for defragmenting your memories. The Archive, the Thinker, Build, Research, Sleep and everything else hang off it."
+    },
+    "topicMarcoMarcoMarco": {
+      "title": "Marco Marco Marco",
+      "description": "A Tourist, found arguing with Giulio Andreotti aboard the mothership that took Em over Roccalonga on the last night of 1999."
+    },
+    "topicMargheritaHack": {
+      "title": "Margherita Hack",
+      "description": "The astrophysicist running the European Space Agency. Her answer to the Kessler cascade is rockets built almost entirely out of sacrificial armour plating, meant to be shredded on the way up and to arrive anyway."
+    },
+    "topicMoonlitStation": {
+      "title": "Moonlit Station",
+      "description": "A Dutch roadside stop by a lake, and the last ordinary evening the party had: a New Year's Eve picnic, homemade technomagical fireworks, and a giant hand made of water that came out of the water and took Em with it."
+    },
+    "topicNobelPrize": {
+      "title": "The Nobel Prize",
+      "description": "The Swedish committee that handed Bubba one of its prizes, and that Em's father, by Bubba's account, bribed in its entirety to get the Em Drive past peer review."
+    },
+    "topicOverviewEffect": {
+      "title": "The Overview Effect",
+      "description": "What takes hold of a person who sees the whole Earth at once from orbit. It reportedly declines to visit billionaires, and nobody has offered a convincing explanation for that."
+    },
+    "topicPet": {
+      "title": "Pet",
+      "description": "The Empathize option for animals. Enough of it and the creature will follow the party down the road, as a pet or, if it really takes to you, as a member in its own right."
+    },
+    "topicResearchMenu": {
+      "title": "Research",
+      "description": "The Research menu: stockpiled materials spent on discoveries. What one party works out belongs to the whole world it was worked out in, not to a single savegame."
+    },
+    "topicRoccalonga": {
+      "title": "Roccalonga",
+      "description": "A rural Italian village, and the place a triangular mothership set down on the night of the Y2K event while Bubba and Em were hunting aliens there. They took Em to study her, and then gave her back."
+    },
+    "topicRoute666": {
+      "title": "Route 666",
+      "description": "The highway running the length of all three Americas. Bubba did most of his growing up on it, and most of his bank robberies with Eris."
+    },
+    "topicSleepMenu": {
+      "title": "Sleep",
+      "description": "The Sleep option in the main menu. A camp, a rented room or any bed will pass the hours, and sleep is also when the day's active spells are chosen."
+    },
+    "topicThinkerMenu": {
+      "title": "The Thinker",
+      "description": "The workshop bench in the menu: one screen for every item, weapon and armour recipe the party's trades have unlocked, forged out of salvage."
+    },
+    "topicUmbraExcidii": {
+      "title": "The Umbra Excidii",
+      "description": "The Holy Vatican Empire's arcane corps, whose job is hunting arcane practitioners on imperial soil. Arcane magic carries the stake in the Empire, so the Empire found the one loophole in its own law and staffed it."
+    },
+    "topicWhiteDesert": {
+      "title": "The White Desert",
+      "description": "Where a god goes when the belief runs out: the body turns to stone and drops, and nobody much minds. The desert is made of the ones who starved, lying where they landed."
+    },
+    "topicWimbledon": {
+      "title": "Wimbledon",
+      "description": "The London suburb where Em's father lives: the man who patented the Em Drive she was named after and, Bubba insists, bought his way past every peer reviewer between him and a Nobel."
+    },
+    "topicY2KEvent": {
+      "title": "The Y2K Event",
+      "description": "The night of 31 December 1999, when two billion people died and nobody has explained how. The same night the Omega Tower's sealed door opened by itself, like a coin machine that had finally counted enough coins, and the ENVISAT satellite lost control and started the Kessler cascade."
+    },
+    "topicYHWH": {
+      "title": "YHWH",
+      "description": "The god Em killed with a lance forged out of her own memories. His father aspect had already died, leaving the celestial throne empty for Eris to sit in. What is left of him orbits the Earth being sandblasted by satellite debris, and the pieces that fall back grant a share of divine power to whoever picks them up."
+    },
+    "topicArmy": {
+      "title": "Army",
+      "description": "Up to a hundred troops, taken on from a faction captain and marched behind the party on the world map. They fight the field battles the party cannot fight four-handed, and they eat whether or not there is a war on."
+    },
+    "topicOptionsMenu": {
+      "title": "Options",
+      "description": "Where everything about how the game looks, sounds and answers to a controller is set: text size, the retro shader, the battle music, the tooltips, and every key the party is steered with."
+    },
+    "topicFriday": {
+      "title": "Friday",
+      "description": "The day of the week Em lost for months to a spell fusion that went wrong, which is the standing proof that a fusion takes something away as well as giving something back. Bubba found the whole episode very funny at the time."
+    }
+  }
+}

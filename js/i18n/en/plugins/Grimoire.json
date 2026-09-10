@@ -7,7 +7,7 @@
   "schoolTitle": "{school} Grimoire",
   "noSpells": "Nobody here can grasp a spell from these pages.<br>(none within the party's MP reach, or all already known)",
   "ui": {
-    "beyondStat": "✧ Needs {stat} {points}",
+    "beyondStat": "✧ Needs {stat} {points}, has {value}",
     "requires": "Requires {stat} {points}",
     "blurb": "The pages reveal the same five spells to everyone. Choose a reader who can bear one, then claim it.",
     "alreadyKnown": "✧ Already known",

@@ -1503,6 +1503,9 @@ select option:hover {
     color: var(--text-pure-white) !important;        /* item lore -> white */
     opacity: 1 !important;
 }
+#equip-container .equip-lore-name {
+    color: var(--text-primary-hover) !important;    /* selected piece -> bright gold */
+}
 
 /* --- Workbench (ThinkerMenu, #thinker-container). Item names + category rows
        are already forced white above; here the flavour description and the
@@ -2151,7 +2154,6 @@ body #fbuild-panel .fbuild-folder.fbcursor { color: var(--accent-amber-glow); bo
     color: var(--text-text-alt-12);
 }
 #camper-drive-hud .cds-val,
-#camper-drive-hud .cds-speed-text,
 #camper-drive-hud .cds-large-val,
 #camper-drive-hud .cds-map-coords,
 #camper-drive-hud .cds-full-coords {
@@ -2164,15 +2166,6 @@ body #fbuild-panel .fbuild-folder.fbcursor { color: var(--accent-amber-glow); bo
     background: var(--bg-tertiary-focus-translucent-45);
     border-color: var(--border-gold-amber-30);
     color: var(--accent-amber-glow);
-}
-#camper-drive-hud .cds-gear-text {
-    color: var(--accent-amber-light);
-}
-#camper-drive-hud .cds-rpm-track {
-    background: rgba(255, 255, 255, 0.1);
-}
-#camper-drive-hud .cds-rpm-bar {
-    background: var(--accent-amber-glow);
 }
 #camper-drive-hud .cds-dig-track {
     background: rgba(0, 0, 0, 0.5);

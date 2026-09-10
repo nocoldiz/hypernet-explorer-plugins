@@ -182,8 +182,9 @@
         // programs the game is actually played through. Everything else lives
         // in All Programs until the player drags it out.
         // i18n-ignore-start  app ids
-        DESKTOP_DEFAULT: ['app-all-programs', 'my-computer', 'app-recycle',
-            'app-hypernet-browser', 'control-panel'],
+        DESKTOP_DEFAULT: ['app-all-programs', 'app-hypernet-browser', 'app-hypernet-shop',
+            'app-stock-market', 'app-neuropolice', 'app-card-arena', 'app-hexcel',
+            'app-hypernet-paint'],
         // All Programs is the drawer every other shortcut comes out of, so it
         // is the one icon that cannot be taken off the desktop.
         DESKTOP_PERMANENT: ['app-all-programs'],
@@ -255,17 +256,38 @@
                     
                     if (window.HypernetOS.Kernel) {
                         const proc = window.HypernetOS.Kernel.spawnProcess(app.name || id, app);
-                        if (!proc) return; // OOM or spawn failure
+                        // Out of memory is a thing the machine says out loud.
+                        // It used to be a buzz and nothing else, which read as
+                        // an app that simply refused to open.
+                        if (!proc) {
+                            if (window.SoundManager) SoundManager.playBuzzer();
+                            if (this.Dialog) {
+                                this.Dialog.error(T('HypernetOS.oomMessage', { name: app.name || id }),
+                                    T('HypernetOS.oomTitle'));
+                            }
+                            return;
+                        }
                         spawned = proc;
                         window.HypernetOS.currentLaunchingPid = proc.pid;
+                        window.HypernetOS.currentLaunchingPidAdopted = false;
                     }
 
                     // Which program is opening, so the window it creates can be
                     // grouped under it on the taskbar. Same handover as the pid.
                     window.HypernetOS.currentLaunchingApp = id;
                     app.launchFn();
+                    // A launch that opened no window of its own (a program
+                    // already on screen, or one that leaves the desktop for a
+                    // scene) has nothing to hand its process back on close, so
+                    // it is handed back here instead of leaking its memory.
+                    const adopted = window.HypernetOS.currentLaunchingPidAdopted;
                     window.HypernetOS.currentLaunchingPid = null;
+                    window.HypernetOS.currentLaunchingPidAdopted = false;
                     window.HypernetOS.currentLaunchingApp = null;
+                    if (spawned && !adopted && window.HypernetOS.Kernel) {
+                        window.HypernetOS.Kernel.killProcess(spawned.pid);
+                        spawned = null;
+                    }
 
                     if (window.SoundManager) SoundManager.playOk();
                 } catch (err) {
@@ -1067,13 +1089,17 @@
     const path = (typeof require !== 'undefined') ? require('path') : null;
 
     class Process {
-        constructor(pid, name, executable) {
+        constructor(pid, name, executable, footprint) {
             this.pid = pid;
             this.name = name;
             this.executable = executable; // function or object
             this.status = 'READY'; // READY, RUNNING, SUSPENDED, KILLED
             this.cpuUsage = 0; // Simulated %
-            this.memoryUsage = Math.floor(Math.random() * 20) + 5; // Simulating 5-25MB usage
+            this.memoryUsage = footprint;
+            // When the desktop handed this process out. A program that never
+            // opened a window is only reclaimed once its grace period is over,
+            // so an app that builds its frame a tick late still keeps its pid.
+            this.startedAt = Date.now();
         }
         tick() {
             if (this.status === 'RUNNING' && this.executable && typeof this.executable.update === 'function') {
@@ -1088,16 +1114,51 @@
         totalRAM: 512, // MB (2001 computer)
         totalCPU: 0,
         
+        // How much a program weighs on this machine. The footprint is still the
+        // 5 to 25MB of a 2001 desktop, but it is never allowed past a sixteenth
+        // of the fitted memory: a 128MB deck could otherwise seat four windows
+        // before the kernel started refusing to open anything at all.
+        MIN_FOOTPRINT: 4,
+        footprintFor: function() {
+            const cap = Math.max(this.MIN_FOOTPRINT, Math.floor(this.totalRAM / 16));
+            return Math.min(cap, Math.floor(Math.random() * 20) + 5);
+        },
+
+        // Processes whose window is gone are dead weight: the memory they hold
+        // is never freed by anything else, so a desktop that had been opened a
+        // few times reported itself full and buzzed at every launch. Anything
+        // past the grace period with no frame of its own on screen is dropped.
+        RECLAIM_GRACE_MS: 1500,
+        reclaim: function() {
+            const now = Date.now();
+            const alive = new Set();
+            if (typeof document !== 'undefined') {
+                document.querySelectorAll('.hypernet-os-window[data-pid]').forEach(w => alive.add(String(w.dataset.pid)));
+            }
+            const kept = this.processes.filter(p =>
+                alive.has(String(p.pid)) || (now - p.startedAt) < this.RECLAIM_GRACE_MS);
+            const freed = this.processes.length - kept.length;
+            this.processes = kept;
+            return freed;
+        },
+
+        // A cold boot: the kernel is a singleton that outlives the scene, so
+        // the desktop coming up has to start from an empty process table and a
+        // fresh uptime rather than from whatever the last session left behind.
+        reset: function() {
+            this.processes = [];
+            this.totalCPU = 0;
+            this.bootTime = Date.now();
+        },
+
         spawnProcess: function(name, executable) {
-            const usedRAM = this.getUsedRAM();
-            const process = new Process(this.pidCounter++, name, executable);
-            
-            if (usedRAM + process.memoryUsage > this.totalRAM) {
-                console.error(`OOM: Cannot allocate ${process.memoryUsage}MB for ${name}.`);
-                if (window.SoundManager) SoundManager.playBuzzer();
+            this.reclaim();
+            const footprint = this.footprintFor();
+            if (this.getUsedRAM() + footprint > this.totalRAM) {
+                console.error(`OOM: Cannot allocate ${footprint}MB for ${name}.`);
                 return null;
             }
-            
+            const process = new Process(this.pidCounter++, name, executable, footprint);
             process.status = 'RUNNING';
             this.processes.push(process);
             return process;
@@ -1282,6 +1343,7 @@
             }
             if (window.HypernetOS.currentLaunchingPid) {
                 win.dataset.pid = window.HypernetOS.currentLaunchingPid;
+                window.HypernetOS.currentLaunchingPidAdopted = true;
             }
             
             const iconHTML = window.HypernetOS.getIconHTML(icon, 16);
@@ -1627,6 +1689,12 @@
         closeAll: function() {
             const closed = this.windows.slice();
             closed.forEach(win => {
+                // Shutting the machine down still ends every process it was
+                // running; skipping this left their memory allocated for the
+                // next session, which found itself full before it began.
+                if (win.dataset.pid && window.HypernetOS.Kernel) {
+                    window.HypernetOS.Kernel.killProcess(win.dataset.pid);
+                }
                 if (win.parentNode) win.parentNode.removeChild(win);
             });
             this.windows = [];
@@ -1692,6 +1760,9 @@
 
     Scene_HypernetOS.prototype.create = function() {
         Scene_MenuBase.prototype.create.call(this);
+        // A cold boot. The kernel outlives the scene, so without this the
+        // desktop came up with the last session's processes still allocated.
+        if (window.HypernetOS.Kernel) window.HypernetOS.Kernel.reset();
         this.createBackground();
         this.loadFontsAndStylesheets();
         this.createDesktop();

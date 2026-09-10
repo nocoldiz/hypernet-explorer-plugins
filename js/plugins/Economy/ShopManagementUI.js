@@ -40,11 +40,19 @@
 
   // Copy lives in js/i18n/<lang>/plugins/ShopManagement.json. Kept behind the
   // original `_T[_lang()]` shape because the call sites bind the result to a
-  // local `T`, which would otherwise shadow the global resolver.
-  const _shopText = new Proxy({}, {
-    get: (_, key) => (key === 'tabs'
-      ? new Proxy({}, { get: (__, tab) => T('ShopManagement.tabs.' + String(tab)) })
-      : T('ShopManagement.' + String(key)))
+  // local `T`, which would otherwise shadow the global resolver. Those call
+  // sites came out of the rewrite in two shapes: `T.back` for a bare key under
+  // ShopManagement, and `T('ShopManagement.back')` straight at the resolver, so
+  // this stands in for both. The target is a function: a plain object would
+  // throw "T is not a function" on the second shape.
+  const _shopText = new Proxy(function (key, params) { return T(key, params); }, {
+    get: (_, key) => {
+      if (typeof key !== 'string') return undefined;
+      if (key === 'tabs') {
+        return new Proxy({}, { get: (__, tab) => T('ShopManagement.tabs.' + String(tab)) });
+      }
+      return T('ShopManagement.' + key);
+    }
   });
   const _T = new Proxy({}, { get: () => _shopText });
 
@@ -639,7 +647,7 @@
           ? SM.getMapDisplayName(del.mapId)
           : (($dataMapInfos && $dataMapInfos[del.mapId])
             ? $dataMapInfos[del.mapId].name : T('ShopManagement.mapN', { id: del.mapId }));
-        html += `<div class="inspect-section-title">${T.delivery}</div>
+        html += `<div class="inspect-section-title">${T('ShopManagement.ui.delivery')}</div>
           <div class="inspect-spec-row">
             <span class="inspect-spec-label">${T('ShopManagement.ui.destination')}</span>
             <span class="inspect-spec-value">${destName}</span>

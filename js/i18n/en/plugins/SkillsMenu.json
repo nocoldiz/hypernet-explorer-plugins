@@ -86,15 +86,17 @@
   "category": "[Empty]"
  },
  "spec": {
-  "statMet": "{value} (met)",
-  "statShort": "{value} ({percent}% to fumble)",
+  "statMet": "{value} of {points} base (met)",
+  "statShort": "{value} of {points} base ({percent}% to fumble)",
+  "statBaseNote": "Base stat only: gear, buffs and states do not count.",
   "trains": "Trains",
   "bonus": "Skill bonus",
   "label": {
    "damage": "Damage",
    "damageCategory": "Damage Class",
    "statReq": "Requires",
-   "statHeld": "Base stat",
+   "statHeld": "Base held",
+   "statCounts": "What counts",
    "grantedBy": "Granted by",
    "range": "Range"
   },
@@ -119,7 +121,7 @@
   "random": "Random",
   "bestApplied": "Synced the {n} most useful skills.",
   "randomApplied": "Synced {n} random skills.",
-  "statLocked": "{name} needs {stat} to sync."
+  "statLocked": "{name} needs {stat} base; this one has {value}."
  },
  "tag": {
   "field": "Field"

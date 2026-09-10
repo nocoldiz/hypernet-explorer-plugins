@@ -2859,14 +2859,28 @@
     };
   }
 
+  // A skill has no map event to read a power off, so both report commands are
+  // called with no argument at all. Falling back to whoever controls the ground
+  // the party is standing on is what "surveys the realm" has to mean from a
+  // skill; without it the command returned in silence and the skill looked dead.
+  function powerArgOrHere(raw) {
+    const named = String(raw || "").trim();
+    if (named) return named;
+    const country = (typeof $gameWeather !== "undefined" && $gameWeather)
+      ? $gameWeather.currentCountry?.country : null;
+    if (!country) return "";
+    const holder = controllerOfCountry(country);
+    return holder && holder !== "Neutral" ? holder : "";
+  }
+
   if (typeof PluginManager !== "undefined") {
     PluginManager.registerCommand(pluginName, "PoliticsReport", args => {
-      const power = String(args.power || "").trim();
+      const power = powerArgOrHere(args.power);
       if (power) $gameMessage.add(buildPowerReport(power));
     });
 
     PluginManager.registerCommand(pluginName, "PoliticsElections", args => {
-      const power = String(args.power || "").trim();
+      const power = powerArgOrHere(args.power);
       if (power) $gameMessage.add(buildElectionReport(power));
     });
 

@@ -289,6 +289,43 @@
             return $gameParty.leader() || null;
         },
 
+        //=====================================================================
+        // Cookware
+        //=====================================================================
+        // A pot to cook in and a set of utensils to cook with are the
+        // difference between a meal and something eaten off a stick. Any item
+        // in the pack tagged <Cookware: n> is a piece of kit the kitchen can
+        // use, and n is what it is worth as a percentage on top of whatever the
+        // dish would have been. They stack, up to COOKWARE_CAP, and each piece
+        // counts once however many of it the party is hauling: two pots do not
+        // cook twice as well.
+        //
+        // The tag is the whole rule, so a mod adding a copper cauldron only has
+        // to tag it. Nothing here names an item.
+        COOKWARE_CAP: 50,
+
+        cookwareValue: function (item) {
+            if (!item || !item.note) return 0;
+            const m = item.note.match(/<cookware:\s*(\d+)>/i);   // i18n-ignore  note tag
+            return m ? Number(m[1]) : 0;
+        },
+
+        // Every distinct piece of kit in the pack, best first, with the total
+        // it is worth after the cap. The menu prints the list and the dish is
+        // multiplied by the total.
+        cookware: function () {
+            if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.items) {
+                return { pieces: [], bonus: 0, multiplier: 1 };
+            }
+            const pieces = ($gameParty.items() || [])
+                .map(item => ({ item, value: this.cookwareValue(item) }))
+                .filter(entry => entry.value > 0)
+                .sort((a, b) => b.value - a.value);
+            const raw = pieces.reduce((sum, entry) => sum + entry.value, 0);
+            const bonus = Math.min(this.COOKWARE_CAP, raw);
+            return { pieces, bonus, multiplier: 1 + bonus / 100 };
+        },
+
         // What the cook's Wisdom is worth on a d20, read the way every other
         // check in the game reads it: the D&D modifier of a bounded score, not
         // the raw MDF param (which is in the hundreds late on and would have
@@ -427,6 +464,12 @@
                 }
             }
 
+            // The kit in the pack multiplies the dish alongside the roll: the
+            // same two ingredients go further out of a proper pot than off a
+            // stick over the fire.
+            const kit = this.cookware();
+            culinaryMult *= kit.multiplier;
+
             let totalCalories, totalProtein, totalFat;
             if (fixedRecipe) {
                 // The finished item's own nutrition, not the doubled raw total.
@@ -466,8 +509,11 @@
                  (totalProtein * proteinFactor) +
                  (totalFat * fatFactor)) * cookSkill;
 
-            // Distribute recovery proportionally to each member's hunger deficit
-            const { partySize, hungerPerMember } = this.distributeHungerToParty(totalHungerRecovery, maxHunger);
+            const { partySize, hungerGained, report } = this.serveToParty(totalHungerRecovery);
+
+            // What the dish did to every meter it touched, drawn as bars that
+            // run up from where each one stood before it.
+            if (window.PartyMeal) window.PartyMeal.announce(report, { title: cookedName });
 
             // Show message with recovery amounts and flavor text for same-item cooking
             let recoverMsg = _ci18n('messages.prepared', { name: cookedName });
@@ -483,14 +529,17 @@
                 }
             }
 
-            // Convert hunger to percentage (per member, after split)
-            const hungerPercent = Math.floor((hungerPerMember / maxHunger) * 100);
+            // What the party's one food meter gained, as a percentage of a full one.
+            const hungerPercent = Math.floor((hungerGained / maxHunger) * 100);
 
             if (hungerPercent > 0) {
                 recoverMsg += _ci18n('messages.recoveredHunger', { percent: hungerPercent });
             }
 
-            recoverMsg += _ci18n('messages.splitAmong', { count: partySize });
+            recoverMsg += _ci18n('messages.fedParty', { count: partySize });
+            if (kit.bonus > 0) {
+                recoverMsg += _ci18n('messages.cookware', { percent: kit.bonus });
+            }
             // Everything a cooked dish did is reported through the shared
             // notification service: the dish itself, the Hunger it restored,
             // and the Cooking tier if this one pushed the cook over the line.
@@ -535,31 +584,28 @@
             }
         },
 
-        // Distribute a total hunger recovery amount proportionally across the
-        // party's hunger deficits. Returns { partySize, hungerPerMember }.
-        distributeHungerToParty: function (totalHungerRecovery, maxHunger) {
-            if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.members) {
-                return { partySize: 0, hungerPerMember: 0 };
-            }
-            const members = ($gameParty.members() || []).filter(a => a);
-            const partySize = members.length;
-            members.forEach(a => { if (a._hunger === undefined) a._hunger = maxHunger; });
+        // The pot goes to the table, and the table is window.PartyMeal's. The
+        // kitchen used to share the dish out itself, between every party slot
+        // and never past a full meter: it fed the summon holding the fourth
+        // slot, and it threw away the whole surplus of a big dish, which is why
+        // a fed party could eat a feast and see nothing move. Hunger is one
+        // meter for the whole party, so the dish is served to it once and can
+        // now carry into the overeating range, which is what the amber and the
+        // red on the bars are for.
+        //
+        // Returns { partySize, hungerGained, report } - the last being the
+        // before-and-after the serving card draws.
+        serveToParty: function (totalHungerRecovery) {
+            const meal = window.PartyMeal;
+            if (!meal) return { partySize: 0, hungerGained: 0, report: null };
+            const report = meal.serve(totalHungerRecovery);
+            return { partySize: report.members.length, hungerGained: report.total, report };
+        },
 
-            const deficits = members.map(a => Math.max(0, maxHunger - a._hunger));
-            const totalDeficit = deficits.reduce((s, d) => s + d, 0);
-
-            let totalActualRecovery = 0;
-            if (totalDeficit > 0) {
-                const effectiveRecovery = Math.min(totalHungerRecovery, totalDeficit);
-                members.forEach((actor, i) => {
-                    const share = effectiveRecovery * (deficits[i] / totalDeficit);
-                    actor._hunger = Math.min(maxHunger, actor._hunger + share);
-                    totalActualRecovery += share;
-                });
-            }
-
-            const hungerPerMember = partySize > 0 ? totalActualRecovery / partySize : 0;
-            return { partySize, hungerPerMember };
+        // Everyone the pot is shared between, for the preview card: the same
+        // table the meal itself is served to.
+        mealMembers: function () {
+            return window.PartyMeal ? window.PartyMeal.eaters() : [];
         },
 
         // Eat a single raw ingredient, splitting its nutrition across the party.
@@ -591,16 +637,18 @@
                 (nutrition.tp * proteinFactor) +
                 (nutrition.mp * fatFactor);
 
-            const { partySize, hungerPerMember } = this.distributeHungerToParty(totalHungerRecovery, maxHunger);
+            const { partySize, hungerGained, report } = this.serveToParty(totalHungerRecovery);
 
             const itemName = window.translateText ? window.translateText(item.name) : item.name;
+            // Raw off the shelf is still a meal: the same card, the same bars.
+            if (window.PartyMeal) window.PartyMeal.announce(report, { title: itemName });
             let recoverMsg = _ci18n('messages.ate', { name: itemName });
 
-            const hungerPercent = Math.floor((hungerPerMember / maxHunger) * 100);
+            const hungerPercent = Math.floor((hungerGained / maxHunger) * 100);
             if (hungerPercent > 0) {
                 recoverMsg += _ci18n('messages.recoveredHunger', { percent: hungerPercent });
             }
-            recoverMsg += _ci18n('messages.splitAmong', { count: partySize });
+            recoverMsg += _ci18n('messages.fedParty', { count: partySize });
 
             // Same pairing as a cooked dish: what was eaten, then what it did
             // to the party's Hunger.
@@ -1641,18 +1689,24 @@
                 const proteinFactor = Number(params['proteinFactor'] || 2.00);
                 const fatFactor = Number(params['fatFactor'] || 1.50);
 
+                // The kit in the pack is part of the dish before it is cooked,
+                // so the card shows what it will be worth, not what it would
+                // have been without a pot.
+                const kit = CookingSystem.cookware();
+                totalCalories *= kit.multiplier;
+                totalProtein *= kit.multiplier;
+                totalFat *= kit.multiplier;
+
                 const totalHungerRecovery =
                     (totalCalories * calorieFactor) +
                     (totalProtein * proteinFactor) +
                     (totalFat * fatFactor);
 
-                const previewMembers = $gameParty.members().filter(a => a);
-                const partySize = previewMembers.length;
-                const previewDeficits = previewMembers.map(a => Math.max(0, maxHunger - (a._hunger === undefined ? maxHunger : a._hunger)));
-                const previewTotalDeficit = previewDeficits.reduce((s, d) => s + d, 0);
-                const previewEffective = previewTotalDeficit > 0 ? Math.min(totalHungerRecovery, previewTotalDeficit) : 0;
-                const hungerPerMember = partySize > 0 ? previewEffective / partySize : 0;
-                const hungerPercent = Math.floor((hungerPerMember / maxHunger) * 100);
+                // Hunger is one meter for the whole party, and it can now be
+                // filled past full, so the card shows the whole dish instead of
+                // only the part that would have fitted under 100%.
+                const partySize = CookingSystem.mealMembers().length;
+                const hungerPercent = Math.floor((totalHungerRecovery / maxHunger) * 100);
 
                 let adjectiveMsg = "";
                 if (isSameItem) {
@@ -1678,7 +1732,13 @@
                             <span class="inspect-spec-value">${Math.floor(totalFat)}g</span>
                             <span class="inspect-spec-label">${_T('Cooking.satietyPerMember')}</span>
                             <span class="inspect-spec-value inspect-spec-value--gain">+${hungerPercent}% (${_T('Cooking.split')} ${partySize})</span>
+                            ${kit.bonus > 0 ? `
+                            <span class="inspect-spec-label">${_T('Cooking.cookware')}</span>
+                            <span class="inspect-spec-value inspect-spec-value--gain">+${kit.bonus}%</span>` : ''}
                         </div>
+                        ${kit.bonus > 0 ? `<div class="cook-kit-line">${kit.pieces.map(p =>
+                            window.translateText ? window.translateText(p.item.name) : p.item.name
+                        ).join(' · ')}</div>` : ''}
                     </div>
                 `;
             } else {

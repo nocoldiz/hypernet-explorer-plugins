@@ -27,7 +27,7 @@
     "elementTitle": "Elemento",
     "formTitle": "Forma",
     "range": "Portata",
-    "magazine": "Caricatore"
+    "magazine": "Colpi"
   },
   "mode": {
     "mana": {
@@ -63,7 +63,7 @@
     "burst": {
       "name": "Raffica",
       "desc": "Due colpi per attacco al 70% del danno.",
-      "effect": "Ogni attacco spara due volte al 70% del danno. Entrambi i colpi consumano munizioni."
+      "effect": "Ogni attacco spara due volte al 70% del danno."
     },
     "pierce": {
       "name": "Vettori perforanti",
@@ -92,8 +92,8 @@
     },
     "overload": {
       "name": "Sovraccarico",
-      "desc": "Caricatore doppio, danno all'85%.",
-      "effect": "Capacita del caricatore raddoppiata. Tutti i colpi infliggono l'85% del danno."
+      "desc": "Raffica del coilgun doppia, danno all'85%.",
+      "effect": "La raffica di colpi del coilgun e raddoppiata. Tutti i colpi infliggono l'85% del danno."
     },
     "hex": {
       "name": "Proiettili maledetti",
@@ -142,8 +142,8 @@
     },
     "overpressure": {
       "name": "Sovrapressione",
-      "desc": "135% di danno, 2 munizioni per colpo.",
-      "effect": "Ogni colpo infligge il 135% del danno e consuma 2 munizioni invece di 1."
+      "desc": "135% di danno, 2 colpi del coilgun per sparo.",
+      "effect": "Ogni sparo infligge il 135% del danno e vale 2 colpi del coilgun."
     },
     "hollowPoint": {
       "name": "Punta cava",
@@ -152,8 +152,8 @@
     },
     "deepMagazine": {
       "name": "Caricatore profondo",
-      "desc": "+4 di capacita del caricatore.",
-      "effect": "Capacita del caricatore +4 in qualsiasi forma. Danno invariato."
+      "desc": "+4 colpi del coilgun.",
+      "effect": "Il coilgun tiene 4 colpi in piu prima di richiudersi. Danno invariato."
     }
   },
   "spell": {
@@ -173,7 +173,7 @@
     "element": "Elemento impostato su {element}.",
     "swapped": "{mode} attiva, {old} inattiva.",
     "form": "Forma impostata su {form}.",
-    "unracked": "Coilgun senza munizioni, torna pistola."
+    "unracked": "Coilgun esaurito, torna pistola."
   },
   "locked": {
     "equip": "Solo Em puo equipaggiare la pistola vettoriale.",
@@ -216,62 +216,62 @@
     "gun": {
       "name": "Coilgun",
       "desc": "Forma predefinita.",
-      "effect": "Senza altre forme montate, TRASFORMA converte la pistola in un fucile di precisione coilgun: 3 colpi, portata 4x sulla mappa di battaglia. Il terzo colpo la riporta a pistola e la ricarica."
+      "effect": "Senza altre forme montate, TRASFORMA converte la pistola in un fucile di precisione coilgun: 3 colpi, portata 4x sulla mappa di battaglia. Il terzo colpo la riporta a pistola. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round."
     },
     "abrasax": {
       "name": "Athame di Abrasax",
       "desc": "Forma alternativa: pugnale.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e pugnale. Nella forma pugnale l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e pugnale. Nella forma pugnale l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "thelema": {
       "name": "Lama di Thelema",
       "desc": "Forma alternativa: machete.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e machete. Nella forma machete l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e machete. Nella forma machete l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "choronzon": {
       "name": "Maglio di Choronzon",
       "desc": "Forma alternativa: maglio.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e maglio. Nella forma maglio l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e maglio. Nella forma maglio l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "babalon": {
       "name": "Ascia di Babalon",
       "desc": "Forma alternativa: ascia.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e ascia. Nella forma ascia l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e ascia. Nella forma ascia l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "nuit": {
       "name": "Flagello di Nuit",
       "desc": "Forma alternativa: frusta.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e frusta. Nella forma frusta l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e frusta. Nella forma frusta l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "hadit": {
       "name": "Bastone di Hadit",
       "desc": "Forma alternativa: bastone.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e bastone. Nella forma bastone l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e bastone. Nella forma bastone l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "aiwass": {
       "name": "Arco di Aiwass",
       "desc": "Forma alternativa: arco.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e arco. Nella forma arco l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e arco. Nella forma arco l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "zos": {
       "name": "Dardi di Zos",
       "desc": "Forma alternativa: dardi da lancio.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e dardi. Nella forma dardi l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e dardi. Nella forma dardi l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "baphomet": {
       "name": "Artigli di Baphomet",
       "desc": "Forma alternativa: artigli.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e artigli. Nella forma artigli l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e artigli. Nella forma artigli l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "kia": {
       "name": "Guanto di Kia",
       "desc": "Forma alternativa: guanto d'arme.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e guanto d'arme. Nella forma guanto l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e guanto d'arme. Nella forma guanto l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "longinus": {
       "name": "Lancia di Longino",
       "desc": "Forma alternativa: lancia.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e lancia. Nella forma lancia l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Ogni trasformazione riempie il caricatore. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e lancia. Nella forma lancia l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
     },
     "sniper": {
       "name": "Coilgun",

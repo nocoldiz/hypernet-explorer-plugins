@@ -291,8 +291,16 @@
                             label: T("SkillsMenu.spec.label.statHeld"),
                             val: T("SkillsMenu.spec.statShort", {
                                 value: stand.have,
+                                points: stand.points,
                                 percent: Math.round(stand.failChance * 100)
                             })
+                        });
+                        // Why the sheet and this row disagree, said once: the
+                        // total on the status screen counts gear and buffs, and
+                        // the floor counts neither.
+                        specs.push({
+                            label: T("SkillsMenu.spec.label.statCounts"),
+                            val: T("SkillsMenu.spec.statBaseNote")
                         });
                     }
                 }
@@ -1009,13 +1017,18 @@
             const known = new Set(actor.skills().map(s => s.id));
             return loadoutIds(actor).filter(id => {
                 const skill = $dataSkills[id];
-                return skill && !isDummySkill(skill) && known.has(id) && !isAlwaysCarried(actor, skill);
+                // A stat floor the character has fallen under (a graft removed,
+                // an augment pulled) puts the skill down on its own: what was
+                // carried when the sheet was higher is not carried now.
+                return skill && !isDummySkill(skill) && known.has(id) &&
+                    !isAlwaysCarried(actor, skill) && !isStatLocked(actor, skill);
             });
         },
 
         isActive(actor, skill) {
             if (!actor || !skill) return false;
             if (isAlwaysCarried(actor, skill)) return true;
+            if (isStatLocked(actor, skill)) return false;
             return loadoutIds(actor).includes(skill.id);
         },
 
@@ -1554,8 +1567,8 @@
             text += (text ? '\n' : '') + T('SkillsMenu.spec.label.statReq') + ': ' +
                 svc.statName(stand.stat) + ' ' + stand.points + '. ' +
                 T('SkillsMenu.spec.statShort', {
-                    value: stand.have, percent: Math.round(stand.failChance * 100)
-                });
+                    value: stand.have, points: stand.points, percent: Math.round(stand.failChance * 100)
+                }) + ' ' + T('SkillsMenu.spec.statBaseNote');
         }
         return text;
     }
@@ -1644,9 +1657,9 @@
             if (stand && !stand.met) {
                 const reqSpan = document.createElement('span');
                 reqSpan.style.cssText = 'color:var(--text-danger-dark);font-weight:bold;margin-left:8px;';
-                reqSpan.textContent = statSvc.statName(stand.stat) + ' ' + stand.points;
+                reqSpan.textContent = statSvc.standingLabel(this._actor, skill);
                 reqSpan.title = T('SkillsMenu.spec.statShort', {
-                    value: stand.have, percent: Math.round(stand.failChance * 100)
+                    value: stand.have, points: stand.points, percent: Math.round(stand.failChance * 100)
                 });
                 rightDiv.appendChild(reqSpan);
             }
@@ -2589,7 +2602,8 @@
             if (window.ParchmentToast && stand) {
                 window.ParchmentToast.show(T('SkillsMenu.loadout.statLocked', {
                     name: skill.name,
-                    stat: svc.statName(stand.stat) + ' ' + stand.points
+                    stat: svc.statName(stand.stat) + ' ' + stand.points,
+                    value: stand.have
                 }), { severity: "warning" });
             }
             return;
@@ -2695,7 +2709,8 @@
     Scene_Skill.prototype.onUISkillDragStart = function (event, idx) {
         const list = this.getUISkillsOnlyList();
         const skill = this.uiSkillOf(list[idx]);
-        if (!skill || this.isUILevelUpTab() || BattleLoadout.isAlwaysCarried(this.actor(), skill)) {
+        if (!skill || this.isUILevelUpTab() || BattleLoadout.isAlwaysCarried(this.actor(), skill) ||
+            BattleLoadout.isStatLocked(this.actor(), skill)) {
             event.preventDefault();
             return;
         }
@@ -3179,7 +3194,7 @@
         const svc = statSvc;
         const stand = standing;
         const reqFlag = (stand && !stand.met)
-            ? `<span class="skill-req-flag" title="${escapeHtml(T('SkillsMenu.spec.statShort', { value: stand.have, percent: Math.round(stand.failChance * 100) }))}">${escapeHtml(svc.statName(stand.stat) + ' ' + stand.points)}</span>`
+            ? `<span class="skill-req-flag" title="${escapeHtml(T('SkillsMenu.spec.statShort', { value: stand.have, points: stand.points, percent: Math.round(stand.failChance * 100) }))}">${escapeHtml(svc.standingLabel(actor, item))}</span>`
             : "";
 
         // A card can be picked up and dropped on the carried row. The ledger

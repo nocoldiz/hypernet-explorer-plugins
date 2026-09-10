@@ -598,6 +598,83 @@
     // How far one press of up / down moves the traits page, in pixels.
     const TRAIT_SCROLL_STEP = 48;
 
+    // ------------------------------------------------------------------
+    // Attribute points
+    // ------------------------------------------------------------------
+    // A class param curve here climbs about two points across the whole of
+    // levels 1 to 99, and the sheet reads on the D&D scale where a stat of 10
+    // is the average and every two points are one modifier step. One free
+    // point every four levels is therefore already generous: 24 points by
+    // level 99, four per attribute if they are spread evenly, which is +2
+    // modifier on every line. The gap is kept at four (any wider and the
+    // reward stops landing often enough to feel like progress, any tighter
+    // and the curve outruns every enemy in the book) and a per attribute cap
+    // stops the whole pool being dumped into one stat.
+    const STAT_POINT_LEVEL_GAP = 4;
+    const STAT_POINT_PER_STAT_CAP = 8;
+    const STAT_POINT_PARAM_IDS = [2, 3, 4, 5, 6, 7];
+
+    // Points are permanent: spending one writes it into the actor's own
+    // _paramPlus, which is saved with the actor and never expires. The ledger
+    // beside it is only there so the sheet can tell an awarded point from a
+    // trait bonus and so the per attribute cap can be enforced.
+    function statNameForParam(paramId) {
+        switch (Number(paramId)) {
+            case 2: return _si18n("ATT", "STR");
+            case 3: return _si18n("DEF", "CON");
+            case 4: return _si18n("M.ATT", "INT");
+            case 5: return _si18n("M.DEF", "WIS");
+            case 6: return _si18n("AGILITY", "DEX");
+            case 7: return _si18n("LUCK", "PSI");
+            default: return "";
+        }
+    }
+
+    window.StatPoints = {
+        levelGap: STAT_POINT_LEVEL_GAP,
+        perStatCap: STAT_POINT_PER_STAT_CAP,
+        paramIds: STAT_POINT_PARAM_IDS.slice(),
+
+        earned(actor) {
+            if (!actor) return 0;
+            return Math.floor(actor.level / STAT_POINT_LEVEL_GAP);
+        },
+
+        ledger(actor) {
+            if (!actor) return {};
+            if (!actor._statPointsSpent) actor._statPointsSpent = {};
+            return actor._statPointsSpent;
+        },
+
+        spentOn(actor, paramId) {
+            return this.ledger(actor)[paramId] || 0;
+        },
+
+        totalSpent(actor) {
+            const led = this.ledger(actor);
+            return STAT_POINT_PARAM_IDS.reduce((sum, id) => sum + (led[id] || 0), 0);
+        },
+
+        available(actor) {
+            return Math.max(0, this.earned(actor) - this.totalSpent(actor));
+        },
+
+        canSpend(actor, paramId) {
+            if (!actor || STAT_POINT_PARAM_IDS.indexOf(Number(paramId)) < 0) return false;
+            if (this.available(actor) <= 0) return false;
+            return this.spentOn(actor, paramId) < STAT_POINT_PER_STAT_CAP;
+        },
+
+        spend(actor, paramId) {
+            paramId = Number(paramId);
+            if (!this.canSpend(actor, paramId)) return false;
+            const led = this.ledger(actor);
+            led[paramId] = (led[paramId] || 0) + 1;
+            actor.addParam(paramId, 1);
+            return true;
+        }
+    };
+
     // Build the stat bonuses and modifier breakdown table for the Attributes tab
     function buildStatBreakdownHTML(actor) {
         if (!actor) return "";
@@ -613,7 +690,8 @@
         const rows = params.map(p => {
             const baseVal = actor.paramBase(p.id);
             const equipVal = actor.equips().reduce((acc, eq) => acc + (eq && eq.params ? (eq.params[p.id] || 0) : 0), 0);
-            const traitVal = (actor._paramPlus && actor._paramPlus[p.id]) || 0;
+            const awardedVal = window.StatPoints.spentOn(actor, p.id);
+            const traitVal = ((actor._paramPlus && actor._paramPlus[p.id]) || 0) - awardedVal;
             const limbMod = (actor._statModifiers && actor._statModifiers[p.id]) || 0;
             const totalVal = actor.param(p.id);
             const dndModNum = Math.floor((totalVal - 10) / 2);
@@ -621,10 +699,12 @@
 
             const equipClass = equipVal > 0 ? "status-stat-bonus-positive" : (equipVal < 0 ? "status-stat-bonus-negative" : "status-stat-bonus-zero");
             const traitClass = traitVal > 0 ? "status-stat-bonus-positive" : (traitVal < 0 ? "status-stat-bonus-negative" : "status-stat-bonus-zero");
+            const awardedClass = awardedVal > 0 ? "status-stat-bonus-positive" : "status-stat-bonus-zero";
             const limbClass = limbMod > 0 ? "status-stat-bonus-positive" : (limbMod < 0 ? "status-stat-bonus-negative" : "status-stat-bonus-zero");
 
             const equipStr = equipVal > 0 ? `+${equipVal}` : String(equipVal);
             const traitStr = traitVal > 0 ? `+${traitVal}` : String(traitVal);
+            const awardedStr = awardedVal > 0 ? `+${awardedVal}` : "0";
             const limbStr = limbMod !== 0 ? `${limbMod > 0 ? '+' : ''}${limbMod}%` : "0%";
 
             return `
@@ -633,6 +713,7 @@
                     <td class="status-02">${baseVal}</td>
                     <td class="${equipClass}">${equipStr}</td>
                     <td class="${traitClass}">${traitStr}</td>
+                    <td class="${awardedClass}">${awardedStr}</td>
                     <td class="${limbClass}">${limbStr}</td>
                     <td class="status-03">${totalVal}</td>
                     <td><span class="status-stat-mod-badge">${dndModText}</span></td>
@@ -650,6 +731,7 @@
                             <th>${T('SceneStatus.ui.statBase') || "Base"}</th>
                             <th>${T('SceneStatus.ui.statGear') || "Gear"}</th>
                             <th>${T('SceneStatus.ui.statTraits') || "Traits"}</th>
+                            <th>${T('SceneStatus.ui.statAwarded') || "Points"}</th>
                             <th>${T('SceneStatus.ui.statInjuries') || "Injuries"}</th>
                             <th>${T('SceneStatus.total') || "Total"}</th>
                             <th>${T('SceneStatus.ui.statMod') || "Mod"}</th>
@@ -1538,8 +1620,16 @@
             let needsHTML = "";
             needDefs.forEach(need => {
                 if (typeof actor[need.fn] !== "function") return;
-                const pct = Math.max(0, Math.min(100, Math.round(actor[need.fn]())));
-                const band = window.NeedGauge.band(pct);
+                // Hunger is the one meter that reads past full: a big meal
+                // carries into the overeating range and the number says so,
+                // amber over 100% and red at the line the state is applied on
+                // (window.NeedGauge.hungerBand). The bar itself still stops at
+                // its own width; it is the colour that carries the surplus.
+                const over = need.cls === "hunger";
+                const raw = Math.max(0, Math.round(actor[need.fn]()));
+                const pct = over ? raw : Math.min(100, raw);
+                const band = over ? window.NeedGauge.hungerBand(pct) : window.NeedGauge.band(pct);
+                const width = Math.max(0, Math.min(100, pct));
                 needsHTML += `
                     <div class="status-gauge-row">
                         <div class="status-gauge-meta">
@@ -1547,7 +1637,7 @@
                             <span class="gauge-value gauge-ink ${band}">${pct}%</span>
                         </div>
                         <div class="status-gauge-bar-outer">
-                            <div class="status-gauge-bar-inner gauge-fill ${need.cls} ${band}" style="width:${pct}%"></div>
+                            <div class="status-gauge-bar-inner gauge-fill ${need.cls} ${band}" style="width:${width}%"></div>
                         </div>
                     </div>
                 `;
@@ -1607,18 +1697,36 @@
                 `;
             }
 
+            const spent = window.StatPoints.spentOn(actor, p.id);
+            const spentHTML = spent > 0
+                ? `<div class="stat-medallion-spent">+${spent}</div>`
+                : "";
+            const raiseHTML = window.StatPoints.canSpend(actor, p.id)
+                ? `<div class="stat-medallion-raise focusable" title="${escapeAttr(T('SceneStatus.ui.raiseAttribute'))}" onclick="SceneManager._scene.spendStatPoint(${p.id})">+</div>`
+                : "";
+
             paramsGridHTML += `
                 <div class="stat-medallion">
                     <div class="stat-medallion-lbl">${p.name}</div>
                     <div class="stat-medallion-row">
                         <div class="stat-medallion-val">${displayValHTML}</div>
                         <div class="stat-medallion-mod">${mod}</div>
+                        ${raiseHTML}
                     </div>
+                    ${spentHTML}
                 </div>
             `;
         });
+
+        // The unspent pool, announced above the medallions so the points are
+        // not missed while the sheet is on another tab.
+        const pointsLeft = window.StatPoints.available(actor);
+        const pointsHTML = pointsLeft > 0
+            ? `<div class="stat-points-banner">${T('SceneStatus.ui.attributePoints').replace("{points}", pointsLeft)}</div>`
+            : "";
+
         const medallionsEl = spread.querySelector("#status-medallions");
-        if (medallionsEl) medallionsEl.innerHTML = paramsGridHTML;
+        if (medallionsEl) medallionsEl.innerHTML = pointsHTML + paramsGridHTML;
 
         const breakdownEl = spread.querySelector("#status-stat-breakdown");
         if (breakdownEl) breakdownEl.innerHTML = buildStatBreakdownHTML(actor);
@@ -2313,6 +2421,25 @@
             SoundManager.playCursor();
             this.refreshActor();
         }
+    };
+
+    // Spending an attribute point from the medallion grid. Permanent: the
+    // point is written into the actor and the sheet is redrawn under it.
+    Scene_Status.prototype.spendStatPoint = function (paramId) {
+        const actor = this.actor();
+        if (!actor || !window.StatPoints.spend(actor, paramId)) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        SoundManager.playEquip();
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(
+                T('SceneStatus.ui.attributeRaised')
+                    .replace("{stat}", statNameForParam(paramId))
+                    .replace("{value}", actor.param(paramId))
+            );
+        }
+        this.refreshUIStatus();
     };
 
     Scene_Status.prototype.selectUIBodyPart = function (index) {

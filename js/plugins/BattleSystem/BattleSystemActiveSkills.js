@@ -660,6 +660,9 @@
             if (skill.occasion !== 0 && skill.occasion !== 1) return false;
             if (!skill.damage || skill.damage.type <= 0) return false;
             if ((skill.mpCost || 0) > ceiling) return false;
+            // Nor a page whose <StatReq:> floor she is under: the book deals
+            // her spells she can hold, not ones that come apart in her hands.
+            if (window.SkillStatReq && !window.SkillStatReq.meets(actor, skill)) return false;
             if (isForbiddenSkill(skill)) return forbidden;
             if (skill.id >= ESOTERIC_FROM) return esoteric;
             return true;

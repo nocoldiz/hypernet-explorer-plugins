@@ -43,9 +43,10 @@
     "sameItemNeutral": "\nNon è niente di speciale, ma commestibile.",
     "sameItemNegative": "\nForse non avresti dovuto provarlo...",
     "recoveredHunger": "\nRecuperati {percent}% Fame per membro",
-    "splitAmong": " (diviso tra {count} membri)",
     "ate": "Hai mangiato {name} crudo.",
-    "cannotCombine": "Carne cruda e materia vegetale non possono essere cucinate insieme."
+    "cannotCombine": "Carne cruda e materia vegetale non possono essere cucinate insieme.",
+    "cookware": "\nBonus utensili +{percent}%",
+    "fedParty": "\n (un gruppo di {count} a tavola)"
   },
   "names": {
     "meaty": "{name} alla carne",
@@ -76,8 +77,8 @@
   "calories": "Calorie",
   "protein": "Proteine",
   "fat": "Grassi",
-  "satietyPerMember": "Sazietà per Membro",
-  "split": "Diviso",
+  "satietyPerMember": "Sazieta del gruppo",
+  "split": "A tavola",
   "clearSelection": "Pulisci",
   "nutrition": {
     "calories": "Calorie",
@@ -93,5 +94,6 @@
     "masterpiece": "[Tiro Culinario NAT 20] Capolavoro gastronomico! {dish} ha guadagnato +50% di nutrizione!",
     "scorched": "[Tiro Culinario NAT 1] Piatto bruciato! {dish} ha perso nutrizione!",
     "delicious": "[Tiro Culinario: {roll}{mod}={total}] {dish} preparato in modo delizioso!"
-  }
+  },
+  "cookware": "Utensili"
 }

@@ -15,7 +15,8 @@
     "governingStat": "Statistica di riferimento: {stat}",
     "statLabel": "Statistica di riferimento",
     "category": "Categoria",
-    "tier": "Grado {n}"
+    "tier": "Grado {n}",
+    "notImplemented": "Non implementate"
   },
   "rankNames": [
     "Non addestrato",

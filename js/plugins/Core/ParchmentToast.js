@@ -19,7 +19,7 @@
  *   ParchmentToast.show("You are hungry", { severity: "warning" });
  *
  *   severity  'info' (default) | 'warning' | 'danger' | 'good'
- *   duration  display time in frames (default 180 = 3s), excludes fades
+ *   duration  display time in frames (default 120 = 2s), excludes fades
  *   html      true to inject the string as HTML (default: plain text)
  *   key       de-duplication key (defaults to the text itself)
  *   title     optional bold heading line above the text
@@ -112,6 +112,9 @@
   const FRAME_MS = 1000 / 60;
   const MAX_TOASTS = 6;
   const GROUP_STAGGER_MS = 130;
+  // A popup is read at a glance over a moving map, so it says its piece and
+  // gets out of the way: two seconds for a plain one, less for a meter change.
+  const DEFAULT_DURATION = 120;
 
   // An event named for what it hands over says it in the popup, not in a
   // message box. Matched case-insensitively on the prefix, so "Treasure
@@ -163,7 +166,7 @@
     s.left = "auto";
     s.right = (window.innerWidth - r.right) + 20 * sx + "px";
     s.top = r.top + 20 * sy + "px";
-    s.fontSize = Math.round(19 * sy) + "px";
+    s.fontSize = Math.round(16 * sy) + "px";
   }
 
   function tick() {
@@ -335,7 +338,7 @@
       }
     }
 
-    const durationMs = (opts.duration || 180) * FRAME_MS;
+    const durationMs = (opts.duration || DEFAULT_DURATION) * FRAME_MS;
     const key = String(opts.key != null ? opts.key : text);
     const hideAt = persist ? Infinity : Date.now() + durationMs;
 
@@ -598,7 +601,7 @@
 
     show(html, {
       severity: opts.severity || (d < 0 ? "warning" : "info"),
-      duration: opts.duration || 110,
+      duration: opts.duration || 80,
       html: true,
       // Keyed per need so a Fun change and a Hunger change coexist, but two
       // Fun changes in a row refresh one another rather than piling up.

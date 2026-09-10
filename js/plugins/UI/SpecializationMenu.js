@@ -100,6 +100,21 @@
         return window.Specializations.categoryLabel(cat);
     }
 
+    // Each of the two sections is read in two runs: the disciplines the game
+    // actually does something with first, then the ones that are still only a
+    // line on the sheet, under their own heading. The order inside each run is
+    // whatever the caller settled on, and nothing is hidden: an unfinished
+    // specialization is trained, spent on and inspected exactly as before.
+    function splitSections(trained, untrained) {
+        const done = list => list.filter(s => window.Specializations.isImplemented(s));
+        const todo = list => list.filter(s => !window.Specializations.isImplemented(s));
+        const section = { trained: done(trained), trainedTodo: todo(trained),
+            untrained: done(untrained), untrainedTodo: todo(untrained) };
+        section.order = [...section.trained, ...section.trainedTodo,
+            ...section.untrained, ...section.untrainedTodo];
+        return section;
+    }
+
     // Experience needed to climb out of each level, indexed by current level.
     //
     // Weapons train through combat and stay deliberately slow: roughly one point
@@ -208,6 +223,18 @@
             this.syncI18n();
             const t = this.i18n && this.i18n.category && this.i18n.category[category];
             return t || category;
+        },
+
+        // Whether the discipline is actually wired into a game mechanic, or is
+        // still only a line on the sheet. The db carries the flag ("implemented"
+        // in Specialization.json); anything without one is read as implemented,
+        // so an entry added later never silently drops into the unfinished pile.
+        // Every list that shows specializations groups on this: the trained and
+        // untrained runs alike, and the character creation board.
+        isImplemented(spec) {
+            const def = typeof spec === 'object' && spec ? spec
+                : (this.byId.get(spec) || this.byName.get(spec));
+            return !def || def.implemented !== false;
         },
 
         // The specialization's name as the player reads it. Takes a spec object,
@@ -1249,15 +1276,11 @@
                 const trainedSet = new Set(trained);
                 const keptTrained = kept.filter(s => trainedSet.has(s));
                 const keptUntrained = kept.filter(s => !trainedSet.has(s));
-                return {
-                    trained: keptTrained,
-                    untrained: keptUntrained,
-                    order: [...keptTrained, ...keptUntrained]
-                };
+                return splitSections(keptTrained, keptUntrained);
             }
             trained.sort((a, b) => a.name.localeCompare(b.name));
             untrained.sort((a, b) => a.name.localeCompare(b.name));
-            return { trained, untrained, order: [...trained, ...untrained] };
+            return splitSections(trained, untrained);
         }
 
         levelPipsHTML(level) {
@@ -1356,7 +1379,8 @@
                 }
             }
 
-            const { trained, untrained, order } = this.buildListOrder(actor);
+            const sections = this.buildListOrder(actor);
+            const { trained, trainedTodo, untrained, untrainedTodo, order } = sections;
             this._listOrder = order;
             if (this._selectedIndex >= order.length) this._selectedIndex = Math.max(0, order.length - 1);
 
@@ -1404,17 +1428,27 @@
             };
 
             if (searching && !order.length) pushFull(() => note(T('SpecMenu.ui.noMatches')));
-            if (trained.length > 0 || !searching) {
+            // The cursor walks `order`, which is the four runs one after the
+            // other, so each run is laid down at its own offset in that order.
+            let at = 0;
+            const run = (list, label) => {
+                if (!list.length) return;
+                if (label) pushFull(() => header(label));
+                list.forEach(spec => pushRow(spec, at++));
+            };
+            if (trained.length + trainedTodo.length > 0 || !searching) {
                 pushFull(() => header(T('SpecMenu.ui.trained')));
             }
-            if (trained.length === 0) {
+            if (trained.length + trainedTodo.length === 0) {
                 if (!searching) pushFull(() => note(T('SpecMenu.ui.noneTrained')));
             } else {
-                trained.forEach((spec, i) => pushRow(spec, i));
+                run(trained, null);
+                run(trainedTodo, T('SpecMenu.ui.notImplemented'));
             }
-            if (untrained.length > 0) {
+            if (untrained.length + untrainedTodo.length > 0) {
                 pushFull(() => header(T('SpecMenu.ui.untrained')));
-                untrained.forEach((spec, i) => pushRow(spec, trained.length + i));
+                run(untrained, null);
+                run(untrainedTodo, T('SpecMenu.ui.notImplemented'));
             }
 
             const listBox = document.getElementById('spec-list-content');

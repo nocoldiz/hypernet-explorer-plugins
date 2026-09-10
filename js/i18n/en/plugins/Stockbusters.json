@@ -83,7 +83,7 @@
     "tuitionFor": "Tuition For",
     "tuitionRequires": "This spell is written in {stat} {points}. A reader under that floor cannot be billed for it.",
     "learnerKnows": "already knows it",
-    "learnerStat": "{stat} {value} / {points}",
+    "learnerStat": "{stat} {value} / {points} base",
     "welcomeHeadline": "Welcome to Stockbusters",
     "welcomeBlurb": "Everything anybody is willing to part with, listed by the crate. Order any quantity you like: the more units, the cheaper each one gets, and a courier brings the lot to you.",
     "theArchmageSBazaar": "The Archmage's Bazaar",
@@ -190,6 +190,7 @@
     "noProductsAvailable": "Nothing is listed on this shelf.",
     "searchResultsFor": "Search: \"{query}\" ({count})",
     "noSearchResults": "Nothing in the catalogue matches \"{query}\".",
-    "searchTruncated": "Showing the first {count} matches. Refine the search to see more."
+    "searchTruncated": "Showing the first {count} matches. Refine the search to see more.",
+    "leisure": "Leisure"
   }
 }

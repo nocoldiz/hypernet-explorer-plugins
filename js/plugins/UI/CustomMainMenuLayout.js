@@ -160,6 +160,18 @@
         ? ""
         : (label ? `<span class="hotkey-badge">${label}</span>` : "");
 
+    // Attribute points are handed out one every few levels and are only spent
+    // from the Status sheet, so the pockets page is the last place a player
+    // sees before forgetting them. window.StatPoints (Status scene) is the
+    // only authority on what is still unspent: this just sums the pool over
+    // the whole active party so one badge speaks for everybody.
+    const partyStatPointsAvailable = () => {
+        const points = window.StatPoints;
+        if (!points || typeof $gameParty === "undefined" || !$gameParty) return 0;
+        return ($gameParty.members() || []).reduce(
+            (sum, member) => sum + (points.available(member) || 0), 0);
+    };
+
     // Every index here is a cell of img/system/IconSet.png (16 cells to a row,
     // 464 cells in all). The sheet has been redrawn since these were first
     // picked, so they are chosen from what the cell actually shows today, not
@@ -1937,7 +1949,17 @@
         ];
         const defs = raw
             .filter(n => n.val !== null && n.val !== undefined)
-            .map(n => ({ key: n.key, label: n.label, val: Math.round(n.val), band: window.NeedGauge.band(n.val) }));
+            // Hunger reads past full: over 100% the card keeps printing the
+            // real number and turns amber, red at the overeating line
+            // (window.NeedGauge.hungerBand). Every other meter stops at 100.
+            .map(n => ({
+                key: n.key,
+                label: n.label,
+                val: Math.round(n.val),
+                band: n.key === 'hunger'
+                    ? window.NeedGauge.hungerBand(n.val)
+                    : window.NeedGauge.band(n.val),
+            }));
 
         // Cravings read the other way round: the bar fills with the want, so a
         // full one is somebody in withdrawal.
@@ -2823,6 +2845,7 @@
                     ],
                     // Records & standing: the pockets you consult
                     [
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.find'), "search"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.questLog'), "quest_log"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.diary'), "diary"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.hyperdeck'), "hypernet"),
@@ -2832,7 +2855,6 @@
                         this.generateUICommandItemHTML(T('MainMenu.cmd.archive'), "help"),
                         atlasHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.factions'), "factions"),
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.research'), "research"),
                     ],
                     // Party: the people and creatures travelling with you
@@ -2841,11 +2863,11 @@
                         this.generateUICommandItemHTML(T('MainMenu.cmd.assets'), "assets"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.deeds'), "deeds"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.pets'), "pets"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),
                         this.generateUICommandItemHTML(emLabel("menuWorkforce", T('MainMenu.cmd.workforce')), "army"),
                     ],
                     // System: meta / out-of-world
                     [
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.find'), "search"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.save'), "save"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.multiplayer'), "multiplayer"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.preferences'), "options"),
@@ -3017,10 +3039,23 @@
             clickAction = `if(SceneManager._scene && typeof SceneManager._scene.showDynamicsPage === 'function') SceneManager._scene.showDynamicsPage()`;
         }
 
+        // The Status tile carries the party's unspent attribute points, so a
+        // level up that handed one out is visible without opening the sheet.
+        let pointsAlert = "";
+        if (symbol === "status1") {
+            const pending = partyStatPointsAvailable();
+            if (pending > 0) {
+                const hint = escapeHtml(T('MainMenu.cmd.statusPointsHint', { points: pending }));
+                pointsAlert = `<span class="command-item-alert" title="${hint}">` +
+                    `${escapeHtml(T('MainMenu.cmd.statusPoints', { points: pending }))}</span>`;
+            }
+        }
+
         return `
             <div class="command-item focusable${disabledClass}" data-symbol="${symbol}" onclick="${clickAction}">
                 <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
                 <span>${label}</span>
+                ${pointsAlert}
                 ${hotkey}
             </div>
         `;
@@ -3317,7 +3352,7 @@
                     }
                     break;
                 case "search":
-                    // The Find entry in the Game group: the search bar itself no
+                    // The Find entry in the Archive group: the search bar itself no
                     // longer sits in the header, so this command is the way onto
                     // the search page.
                     if (window.MenuSearch && window.MenuSearch.open) {
@@ -3356,8 +3391,9 @@
                     setTimeout(() => {
                         const map = SceneManager._scene;
                         if (!(map instanceof Scene_Map)) return;
-                        // Waiting only: resting is reached from a bed, campfire,
-                        // tent or a world-map camp, never from the menu.
+                        // Waiting, with a rough sleep reachable from the same
+                        // popup: a full night's rest still needs a bed,
+                        // campfire, tent or a world-map camp.
                         if (map.openWaitMenu) map.openWaitMenu();
                     }, 200);
                     break;
@@ -3553,8 +3589,8 @@
                 PluginManager.callCommand(scene, 'FurnitureSystem', 'openBuilder', {});
             }
         },
-        // Bethesda's T: passes the clock without resting, so it never refills
-        // the sleep meter (see Core/TimeDateSystemUI.js).
+        // Bethesda's wait key: passes the clock, and may also lie down where
+        // the party stands for part of a night's rest (Core/TimeDateSystemUI.js).
         sleep_menu: scene => {
             if (!scene.openWaitMenu) return;
             SoundManager.playOk();

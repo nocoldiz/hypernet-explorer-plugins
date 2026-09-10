@@ -3,6 +3,15 @@
   "foldHint": "fold this away",
   "unfoldHint": "read this",
   "controlsHeading": "Controls",
+  "setting": {
+    "label": "Map tooltips",
+    "desc": "The sheet pinned to the corner of the map, naming the ground the party is standing on.",
+    "mode": {
+      "first": "First time",
+      "always": "Always",
+      "off": "Off"
+    }
+  },
   "controls": {
     "action": "Action",
     "holdShift": "Hold Shift",
@@ -20,175 +29,351 @@
     "zoom": "Zoom in and out"
   },
   "areas": {
+    "m721_zone": {
+      "title": "Hydroponic naus",
+      "text": "Greens under lamps, all the way up the wall. Whatever they are growing up here, it is the only fresh thing on board.",
+      "generic": {
+        "title": "Hydroponic naus",
+        "text": "Racks of crops under lamps, watered without soil. The ship eats what this room grows."
+      }
+    },
     "storyModeVillage": {
       "title": "Village",
-      "text": "Village sample text"
+      "text": "Village sample text",
+      "generic": {
+        "title": "Village",
+        "text": "A handful of roofs around a well. Somebody here always has work that needs doing."
+      }
     },
     "storyModeWaterfall": {
       "title": "Secret Waterfall",
-      "text": "You should check behind every waterfall"
+      "text": "You should check behind every waterfall",
+      "generic": {
+        "title": "Secret Waterfall",
+        "text": "Water this loud hides what is behind it. Every waterfall is worth walking behind."
+      }
     },
     "m1006_zone": {
       "title": "Horse betting",
-      "text": "Use this screen to bet on horses"
+      "text": "Use this screen to bet on horses",
+      "generic": {
+        "title": "Horse betting",
+        "text": "A betting screen for the races. Pick a runner and stake your euros on it."
+      }
     },
     "m1006_zone2": {
       "title": "Monster tournament",
-      "text": "Use this terminal to watch and bet monster fights"
+      "text": "Use this terminal to watch and bet monster fights",
+      "generic": {
+        "title": "Monster tournament",
+        "text": "A terminal onto the arena: watch the fights and bet on them."
+      }
     },
     "m1006_zone3": {
       "title": "Coin conversion",
-      "text": "Use this machine to convert euros to tokens used for minigames and slot machines"
+      "text": "Use this machine to convert euros to tokens used for minigames and slot machines",
+      "generic": {
+        "title": "Coin conversion",
+        "text": "A changer for euros and arcade tokens. Tokens are what the minigames and the slot machines take."
+      }
     },
     "m1006_zone4": {
       "title": "Slot machine",
-      "text": "Use tokens to plays"
+      "text": "Use tokens to plays",
+      "generic": {
+        "title": "Slot machine",
+        "text": "A slot machine. It is played with arcade tokens."
+      }
     },
     "m1023_zone": {
       "title": "Ghent Hospital",
-      "text": "Visit hospitals to get your diseases diagnosed, install augments, change bodyparts and access to the [Fertility database]"
+      "text": "Visit hospitals to get your diseases diagnosed, install augments, change bodyparts and access to the [Fertility database]",
+      "generic": {
+        "title": "Ghent Hospital",
+        "text": "A hospital: diseases are diagnosed here, augments are fitted, body parts are replaced, and the [Fertility database] is open to visitors."
+      }
     },
     "m1414_zone": {
       "title": "Inn",
-      "text": "Visit inns around the world to recruit new companions and rest"
+      "text": "Visit inns around the world to recruit new companions and rest",
+      "generic": {
+        "title": "Inn",
+        "text": "An inn. Beds are for rent and there are people at the tables who will travel with a party that asks."
+      }
     },
     "m1414_zone2": {
       "title": "Hypermetro trains",
-      "text": "Move between hub cities using the hypermetro! Your final destination is the Omega Tower, but you should stop at Ghent for stocking up on items."
+      "text": "Move between hub cities using the hypermetro! Your final destination is the Omega Tower, but you should stop at Ghent for stocking up on items.",
+      "generic": {
+        "title": "Hypermetro trains",
+        "text": "The hypermetro runs between the hub cities. The line ends at the Omega Tower, and Ghent is the stop worth breaking the journey at to stock up."
+      }
     },
     "m1414_zone3": {
       "title": "Crafting",
-      "text": "In this shack  you can find some materials, use the [Thinker] option in pause menu to assembly items and [Blacksmithing] to smelt and forge new ones"
+      "text": "In this shack  you can find some materials, use the [Thinker] option in pause menu to assembly items and [Blacksmithing] to smelt and forge new ones",
+      "generic": {
+        "title": "Crafting",
+        "text": "A shack with materials lying about. The [Thinker] option in the pause menu assembles items, [Blacksmithing] smelts and forges them."
+      }
     },
     "m1414_zone4": {
       "title": "Farming plots",
-      "text": "Use farming plots to grow your own plants"
+      "text": "Use farming plots to grow your own plants",
+      "generic": {
+        "title": "Farming plots",
+        "text": "Turned soil, planted and harvested by whoever works it."
+      }
     },
     "m1414_zone5": {
       "title": "High level enemis",
-      "text": "Some enemies are too powerful for your current party. when you are outside dungeons you can freely escape only in the first tur."
+      "text": "Some enemies are too powerful for your current party. when you are outside dungeons you can freely escape only in the first tur.",
+      "generic": {
+        "title": "High level enemies",
+        "text": "The things down this way are above the party's weight. Outside a dungeon an escape is free on the first turn only."
+      }
     },
     "m1414_zone6": {
       "title": "Shop",
-      "text": ""
+      "text": "",
+      "generic": {
+        "title": "Shop",
+        "text": "A counter with goods behind it."
+      }
     },
     "m1414_zone7": {
       "title": "Dungeon",
-      "text": "Explore dungeons to recover rare loot"
+      "text": "Explore dungeons to recover rare loot",
+      "generic": {
+        "title": "Dungeon",
+        "text": "A way down into the dark. Rare loot is carried back out of places like this."
+      }
     },
     "m1414_zone8": {
       "title": "Trash",
-      "text": "Dive in the trash to recover hidden pre Y2K gems, but be wary of nausea."
+      "text": "Dive in the trash to recover hidden pre Y2K gems, but be wary of nausea.",
+      "generic": {
+        "title": "Trash",
+        "text": "A heap worth diving through: pre-Y2K gems end up in these. It comes with the nausea."
+      }
     },
     "m1414_zone10": {
       "title": "Apiary",
-      "text": "Use apiaries to manage a bee colony and collect honey"
+      "text": "Use apiaries to manage a bee colony and collect honey",
+      "generic": {
+        "title": "Apiary",
+        "text": "Hives kept for their honey, colony by colony."
+      }
     },
     "m1414_zone11": {
       "title": "Farm",
-      "text": "You can take over this abandoned farm: it's owner was recently killed by getting hit via a satellite debris and nobody has claimed it yet.\nUse the [Build] option in pause menu to buy animals and personalize this farm."
+      "text": "You can take over this abandoned farm: it's owner was recently killed by getting hit via a satellite debris and nobody has claimed it yet.\nUse the [Build] option in pause menu to buy animals and personalize this farm.",
+      "generic": {
+        "title": "Farm",
+        "text": "An abandoned farm, free to take over: the owner was killed by falling satellite debris and nobody has claimed it since.\nThe [Build] option in the pause menu buys animals and furnishes the place."
+      }
     },
     "m1414_zone9": {
       "title": "Library",
-      "text": "Visit libraries to buy book and grimories"
+      "text": "Visit libraries to buy book and grimories",
+      "generic": {
+        "title": "Library",
+        "text": "A library. Books and grimoires are sold over the desk."
+      }
     },
     "m1414_zone12": {
       "title": "Clinic",
-      "text": "Visit clinics to diagnose diseases, install augments, install or remove bodyparts or get medical training."
+      "text": "Visit clinics to diagnose diseases, install augments, install or remove bodyparts or get medical training.",
+      "generic": {
+        "title": "Clinic",
+        "text": "A clinic: diagnoses, augments, body parts fitted or taken off, and medical training."
+      }
     },
     "m1416_zone": {
       "title": "PC",
-      "text": "Use this PC to access Hypernet"
+      "text": "Use this PC to access Hypernet",
+      "generic": {
+        "title": "PC",
+        "text": "A machine wired into the Hypernet."
+      }
     },
     "m1416_zone2": {
       "title": "Quest board",
-      "text": "Uset the quest board to accept quests"
+      "text": "Uset the quest board to accept quests",
+      "generic": {
+        "title": "Quest board",
+        "text": "A cork board of notices. Take one and the errand is yours."
+      }
     },
     "m1416_zone3": {
       "title": "Bowling alley",
-      "text": "Interact with the bowling alley to play bowling"
+      "text": "Interact with the bowling alley to play bowling",
+      "generic": {
+        "title": "Bowling alley",
+        "text": "A bowling lane, open to anyone who walks up to it."
+      }
     },
     "m1416_zone4": {
       "title": "Bathroom",
-      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it."
+      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it.",
+      "generic": {
+        "title": "Bathroom",
+        "text": "A bathroom. Washing raises hygiene, and hygiene is read by everyone the party talks to, apart from those who could not care less."
+      }
     },
     "m1416_zone5": {
       "title": "Innkeeper",
-      "text": "Talk to the innkeeper to rent a room, buy food or recruit troops"
+      "text": "Talk to the innkeeper to rent a room, buy food or recruit troops",
+      "generic": {
+        "title": "Innkeeper",
+        "text": "The innkeeper: rooms, food, and troops for hire."
+      }
     },
     "m1416_zone6": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sleep",
+        "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
+      }
     },
     "m1416_zone7": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sleep",
+        "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
+      }
     },
     "m1416_zone8": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sleep",
+        "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
+      }
     },
     "m1416_zone9": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sleep",
+        "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
+      }
     },
     "m1416_zone11": {
       "title": "Sleeè",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sleep",
+        "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
+      }
     },
     "m1416_zone12": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sleep",
+        "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
+      }
     },
     "m1416_zone13": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sleep",
+        "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
+      }
     },
     "m1416_zone14": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake."
+      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "generic": {
+        "title": "Sleep",
+        "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
+      }
     },
     "m1416_zone15": {
       "title": "Bathroom",
-      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it."
+      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it.",
+      "generic": {
+        "title": "Bathroom",
+        "text": "A bathroom. Washing raises hygiene, and hygiene is read by everyone the party talks to, apart from those who could not care less."
+      }
     },
     "m1416_zone16": {
       "title": "Bathroom",
-      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it."
+      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it.",
+      "generic": {
+        "title": "Bathroom",
+        "text": "A bathroom. Washing raises hygiene, and hygiene is read by everyone the party talks to, apart from those who could not care less."
+      }
     },
     "m1416_zone17": {
       "title": "Bathroom",
-      "text": ""
+      "text": "",
+      "generic": {
+        "title": "Bathroom",
+        "text": "A bathroom. Washing raises hygiene, and hygiene is read by everyone the party talks to, apart from those who could not care less."
+      }
     },
     "m1416_zone19": {
       "title": "Minigames",
-      "text": "Minigames use arcade coins to play but some are free. Use the arcade converter to get coins."
+      "text": "Minigames use arcade coins to play but some are free. Use the arcade converter to get coins.",
+      "generic": {
+        "title": "Minigames",
+        "text": "Cabinets and tables. Most of them take arcade tokens, a few are free, and the converter hands the tokens out."
+      }
     },
     "m1416_zone10": {
       "title": "Renting",
-      "text": "Interact with the door or talk to innkeeper to  rent a room"
+      "text": "Interact with the door or talk to innkeeper to  rent a room",
+      "generic": {
+        "title": "Renting",
+        "text": "A room to rent, through the door or through the innkeeper."
+      }
     }
   },
   "tips": {
     "findTheInn": {
       "title": "Somewhere to sleep",
-      "text": "The inn stands at the middle of the station. Follow the lit windows and ask the landlord for a bed."
+      "text": "The inn stands at the middle of the station. Follow the lit windows and ask the landlord for a bed.",
+      "generic": {
+        "title": "Somewhere to sleep",
+        "text": "The inn stands at the middle of the station, under the lit windows. The landlord rents the beds."
+      }
     },
     "seeTheDoctor": {
       "title": "See the doctor",
-      "text": "The clinic is the low building with the white door. Whatever is broken gets set in there."
+      "text": "The clinic is the low building with the white door. Whatever is broken gets set in there.",
+      "generic": {
+        "title": "See the doctor",
+        "text": "The clinic is the low building with the white door. Whatever is broken gets set in there."
+      }
     },
     "searchTheWagons": {
       "title": "Search the wagons",
-      "text": "The siding has not been picked clean. Open every crate before the light goes."
+      "text": "The siding has not been picked clean. Open every crate before the light goes.",
+      "generic": {
+        "title": "Search the wagons",
+        "text": "The siding has not been picked clean. The crates are worth opening before the light goes."
+      }
     },
     "intoTheCaves": {
       "title": "Into the caves",
-      "text": "The mouth in the hill runs deeper than it looks. Take a light, and something to swing."
+      "text": "The mouth in the hill runs deeper than it looks. Take a light, and something to swing.",
+      "generic": {
+        "title": "Into the caves",
+        "text": "The mouth in the hill runs deeper than it looks. It wants a light, and something to swing."
+      }
     },
     "headOutside": {
       "title": "Head outside",
-      "text": "There is nothing more for you indoors. Step out and take the road."
+      "text": "There is nothing more for you indoors. Step out and take the road.",
+      "generic": {
+        "title": "Head outside",
+        "text": "There is nothing more indoors. The road starts outside the door."
+      }
     }
   }
 }

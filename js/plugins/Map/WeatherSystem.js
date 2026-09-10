@@ -2151,9 +2151,23 @@
       // Invalidate tile cache so next rain recalculates from scratch
       invalidatePuddleTileCache();
 
-      // Refresh spriteset to remove puddle sprites
-      if (SceneManager._scene && SceneManager._scene._spriteset) {
-        SceneManager._scene._spriteset.createCharacters();
+      // Take the puddle sprites off the map one by one. This used to rebuild the
+      // whole character spriteset instead, and Spriteset_Map.createCharacters
+      // only ever ADDS: every sprite the previous build made stayed in the
+      // tilemap, so each pass (this runs on every battle or menu return that
+      // rained) left another full copy of every event, player and follower
+      // standing on the map, each copy carrying its own enemy level plate.
+      const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
+      const sprites = spriteset && spriteset._characterSprites;
+      if (sprites) {
+        for (let i = sprites.length - 1; i >= 0; i--) {
+          const sprite = sprites[i];
+          const ch = sprite && sprite._character;
+          if (!ch || !ch._isWeatherPuddle) continue;
+          if (sprite.removeEnemyLevelLabel) sprite.removeEnemyLevelLabel();
+          if (sprite.parent) sprite.parent.removeChild(sprite);
+          sprites.splice(i, 1);
+        }
       }
 
       if (enableTimeDebug && puddleCount > 0) {

@@ -168,6 +168,10 @@
     // The one event every book item runs. Which book is on the item, not here.
     PluginManager.registerCommand(pluginName, "openBookFromItem", () => {
         const item = BookManager.lastReadItem();
+        // A Special verb names its item by leaving an id behind, and that id is
+        // spent here: left lying around it would open the same book forever,
+        // whatever the party actually opened next.
+        if (typeof $gameTemp !== 'undefined' && $gameTemp) $gameTemp._specialActionItemId = 0;
         const file = BookManager.bookFileForItem(item);
         if (!file) {
             console.warn('BookViewer: nothing with a <Book:> tag opened this event');
@@ -825,6 +829,22 @@
 
             this._bookCache[bookName] = bookData;
             return bookData;
+        }
+
+        /**
+         * How many pages this book runs to, which is what a reader is really
+         * being asked for when they sit down with it. Zero for a book that
+         * cannot be read off the disk at all.
+         */
+        static pageCount(bookName) {
+            if (!bookName) return 0;
+            let data;
+            try { data = this.loadBook(bookName); } catch (e) { return 0; }
+            if (!data) return 0;
+            if (Array.isArray(data.pages)) return data.pages.length;
+            const text = data.text || '';
+            if (!text) return 0;
+            return Math.max(1, Math.ceil(text.length / BOOK_CONFIG.charsPerPage));
         }
 
         static getLastPage(bookName) {

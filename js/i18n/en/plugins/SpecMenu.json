@@ -15,7 +15,8 @@
     "governingStat": "Governing stat: {stat}",
     "statLabel": "Governing stat",
     "category": "Category",
-    "tier": "Tier {n}"
+    "tier": "Tier {n}",
+    "notImplemented": "Not implemented"
   },
   "rankNames": [
     "Untrained",

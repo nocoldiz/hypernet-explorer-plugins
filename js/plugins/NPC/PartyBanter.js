@@ -201,6 +201,12 @@
     // telling what, so a generic word about it is rationed hard.
     const DEED_COMMAND_GAP = 60 * 210;
 
+    // An exchange between two members IS the party's social life: whoever took
+    // part in one has spent that stretch of road in company, and their social
+    // meter says so. Paid silently - the bubbles are the conversation, and a
+    // popup on top of them would be the same thing said twice.
+    const BANTER_SOCIAL = 6;
+
     const NEED_LINE = 35;      // a meter under this is on that member's mind
     const NEED_FLOOR = 30;     // ...and under this for everybody is the party's
     const HP_FLOOR = 0.4;      // everybody under this is a party in trouble
@@ -890,6 +896,14 @@
     // comes out of the same hull, so each one is prefixed with the name of
     // whoever said it; standing in a cabin, people have their own bodies and need
     // no label.
+    // What an exchange is worth to the people who had it. Everyone standing
+    // there took part in it, so everyone is paid.
+    function paySocial(people) {
+        for (const actor of people || []) {
+            if (actor && actor.addSocial) actor.addSocial(BANTER_SOCIAL);
+        }
+    }
+
     function enqueue(beats, people, overVehicle) {
         const vehicle = overVehicle ? ridingVehicle() : null;
         const queue = [];
@@ -904,6 +918,7 @@
             queue.push({ char, text });
         }
         if (!queue.length) return false;
+        paySocial(people);
         travel.queue = queue;
         travel.next = Graphics.frameCount;
         // Remembered so the exchange can be dropped if the party gets out halfway

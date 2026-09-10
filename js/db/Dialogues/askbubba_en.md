@@ -59,7 +59,7 @@ What is a judicial ghost?
 Bubba:
 Think of them as cops that can phase through walls and they move in a straight line toward your position.
 They'll pursue endlessly until they touch you.
-And if it touches you it's over: you'll be transported to the [Judicial Dimenson] and will face Eris.
+And if it touches you it's over: you'll be transported to the [Judicial Dimension] and will face Eris.
 
 
 ------------------------------------------------------------------------------------------------------------
@@ -79,7 +79,21 @@ Why is so hard?
 Bubba:
 [Kessler syndrome] that the whole planet is sick with darlin'.
 It all started when the Envisat satellite crashed into another during the Y2K event.
-Anyway just go to [Greenwitch space center] and ask, they take volunteers.
+The European space agency, under [Margherita Hack], is building rockets that are almost entirely armour plating, to resist the impact with the debris field.
+And when in orbit they use my [Liminal Engine] to leave this forsaken planet.
+Anyway just go to [Greenwitch space center] or [Apulia space center] and ask the receptionist, they take volunteers and they are desperate.
+
+Em:
+Will you come with me to space?
+
+Bubba:
+Of course! I don't mind getting my body pierced with quadrillion of orbital debris if that means experiencing the [Overview effect] with you at my side,
+
+Em:
+It's true that billionaires don't experience the [Overview effect] when in space?
+
+Bubba:
+Yes, those hypercapitalistic bastards can go hex themselves.
 ------------------------------------------------------------------------------------------------------------
 needs
 Needs
@@ -89,5 +103,51 @@ Use the [Cooking] option in the menu to cook.
 If you are dirty wash yourself by swimming or using a bathroom.
 To socialize just talk to me or other fellas down the road.
 To have fun just punch some holes in monsters and play minigames.
-To sleep use the [Sleep] option in main menu, set up a  [[Camp]] in world map by pressing [[Continue]] or rent a room in a tavern.
+To sleep use the [Sleep] option in main menu, set up a  [Camp] in world map by pressing [Continue] or rent a room in a tavern.
+------------------------------------------------------------------------------------------------------------
+
+y2k_event
+Y2K event
+unlock: y2k_event_bubba_em
+
+Em:
+What happened during the this [Y2K Event]?
+
+Bubba:
+Two billion people died in one night Em.
+
+Em:
+You mean millions?
+
+Bubba:
+Billions Em.
+------------------------------------------------------------------------------------------------------------
+y2k_event_bubba_em
+Us during the Y2K event.
+
+
+Em: 
+What we wre doing during the [Y2K Event]?
+
+Bubba:
+We were in [Roccalonga] hunting aliens Em.
+A swarm of UFOs passed over that village and a gigantic triangular mothership landed and they kidnapped you to study you or something...it all resolved in nothing.
+A faction of the [Tourists] called the [Crimson Analyzers] wanted just to vivisect you up with their katanas, but they lacked permission so they let you wander around their ship.
+While exploring the ship you encountered [Giulio Andreotti] discussing with [Marco Marco Marco] of the [Tourists]
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------
+liminal_engine
+The Liminal Engine
+
+Em:
+So...how this Liminal engine of your even work?
+
+Bubba:
+
+
+
 ------------------------------------------------------------------------------------------------------------

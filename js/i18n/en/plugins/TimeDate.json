@@ -25,6 +25,11 @@
     "titlePostSleep": "Awakening",
     "titleCryo": "Wake on which date?",
     "titleWait": "Wait how long?",
+    "titleRoughSleep": "Sleep rough how long?",
+    "roughHint": "No bed here: only %1% of a night's rest.",
+    "beddingHint": "With %1: a full night's rest.",
+    "titleCamp": "Camp",
+    "titleCampSleep": "Sleep at the camp",
     "sleep": "Sleep",
     "wait": "Wait",
     "hoursWait": "%1 Hours",
@@ -68,6 +73,11 @@
     "cryoHunger": "Food",
     "cryoSleep": "Rest",
     "cryoHeld": "Held"
+  },
+  "camp": {
+    "tended": "The camp washes and talks the hours away.",
+    "ate": "A pot goes on the fire: {items}.",
+    "noFood": "The camp has nothing left to cook."
   },
   "hud": {
     "food": "Food",
@@ -140,5 +150,10 @@
   "opponent": {
     "subconscious": "Subconscious",
     "funShared": "{name} enjoyed the game"
+  },
+  "partyLife": {
+    "talk": "{name} is talking to {other}",
+    "wash": "{name} is going to the bathroom",
+    "idle": "{name} is stretching their legs"
   }
 }

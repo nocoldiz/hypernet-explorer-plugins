@@ -38,7 +38,7 @@
         FOOT_VAN_HALF_LEN, FOOT_WALK, FUEL_PER_UNIT, FirstPersonController,
         FollowerCrowd, GEARS, GEAR_FORCE, GamepadRaw, HANDBRAKE_DECEL,
         HANDBRAKE_GRIP, HEADLIGHT_BEAM_OPACITY, HEADLIGHT_INTENSITY,
-        HEADLIGHT_NIGHT, KMH_TO_UNITS, LAT_SCRUB, LAUNCH_GRADE, LAUNCH_KMH,
+        HEADLIGHT_NIGHT, KMH_TO_UNITS, LAT_ACCEL_MAX, LAT_SCRUB, LAUNCH_GRADE, LAUNCH_KMH,
         LIMINAL_ACCEL_SEC, LIMINAL_BOOST_FUEL_MULT, LIMINAL_BUILD_BUDGET,
         LIMINAL_FUEL_PER_SEC, LIMINAL_TERRAIN_RADIUS, LIMINAL_TOP_KMH, LOOT_RANGE,
         LiminalFx, MAX_KMH, MAX_STEER_LOCK, NATURAL_TOP, OVERDRIVE_DECAY,
@@ -51,7 +51,7 @@
         ALONGSIDE_MAX, RIDER_SEATS, RIDE_ALONGSIDE, VEHICLE_DRIVE, SHIP_ATMOSPHERE_Y,
         SHIP_BRIDGE_BOUNDS, SHIP_HELM_SEAT, SHIP_LAND_KMH, SHIP_LAND_CLEAR,
         SHIP_FLY_MIN, SHIP_FLY_MAX, SHIP_CLIMB_RATE,
-        STEER_FALLOFF, STEP_SOUNDS, SURFACES, SkyFx, SolomonRitualFx, SpeedWarpFx, TALK_RANGE,
+        STEER_EASE, STEER_FALLOFF, STEP_SOUNDS, SURFACES, SkyFx, SolomonRitualFx, SpeedWarpFx, TALK_RANGE,
         SpellCaster, SpellFx, SPELL_SLOTS, BAR_MODES, isHealingSkill,
         ParkedVehicles, TrafficManager, UnderwaterFx, VanModel, VoxelTerrain,
         WALK_LANTERN_INTENSITY, WARP_START_KMH, WHEELBASE, WORLD_MAP_ID,
@@ -1165,6 +1165,36 @@
         // and gamepad X by default, so this works on controller too.
         _isAcceleratePressed() {
             return typeof Input !== 'undefined' && Input.isPressed('shift');
+        }
+
+        // How far the wheel is turned, -1 (left) to 1 (right).
+        //
+        // A pad's LEFT STICK is read as the analog thing it is and comes first:
+        // core folds it into the 'left' / 'right' actions, which is why the
+        // stick used to arrive here as a full lock the moment it left the
+        // deadzone and a gentle lean through a bend was not something the wheel
+        // could be asked for. Its own reading is proportional, and squared so
+        // that the middle of its travel is where the small corrections live.
+        //
+        // A key, an arrow or the d-pad is all or nothing, as it has to be, and
+        // is eased by the caller instead. Left and right pressed together
+        // cancel rather than one of them silently winning.
+        _steerInput() {
+            const ASI = window.AnalogStickInput;
+            if (ASI && ASI.hasPad && ASI.hasPad() && ASI.leftX) {
+                const x = ASI.leftX();
+                if (Math.abs(x) > 0.001) {
+                    this._steerAnalog = true;
+                    const v = Math.max(-1, Math.min(1, x));
+                    return v * Math.abs(v);
+                }
+            }
+            this._steerAnalog = false;
+            const left  = this._freeMoveKeys.has('KeyA') ||
+                (typeof Input !== 'undefined' && Input.isPressed('left'));
+            const right = this._freeMoveKeys.has('KeyD') ||
+                (typeof Input !== 'undefined' && Input.isPressed('right'));
+            return (right ? 1 : 0) - (left ? 1 : 0);
         }
 
         _setMode(mode) {
@@ -2775,7 +2805,12 @@
                 window.SpecializationXP.tick('RV Driving', 1, 40, { key: 'camperdrive' });
                 window.SpecializationXP.tick('Car Driving', 1, 40, { key: 'camperdrive' });
             }
-            this._hud.update(this._vanX, this._vanZ, this._speedKmh, this._gearLabel, this._rpm, this._driveAngle);
+            // The dial's scale is the vehicle's own natural top, not the ceiling
+            // it can be boosted to: a camper reads to 400 and pegs while the
+            // liminal boost is carrying it past that, which is the whole point
+            // of reading it there.
+            this._hud.update(this._vanX, this._vanZ, this._speedKmh, this._gearLabel,
+                this._rpm, this._driveAngle, (this._drive && this._drive.top) || NATURAL_TOP);
             this._hud.updateEnvLabel(this._env);
             this._updateActionPrompt();
             this._hud.updateControllerHint(!this._titleMode && GamepadRaw.connected());
@@ -3583,18 +3618,22 @@
             }
         }
 
-        // Which menu a back press opens out here. On foot it is the party's
-        // own - the whole game menu, laid out as it always is - and that is
-        // where the world is left from. Aboard the camper it is the vehicle's
-        // own options, which is what the driver actually wants in the middle of
-        // a drive; the party menu is a step outside away.
+        // The menu button, out here. It opens the party's own menu - the whole
+        // game menu, laid out as it always is (UI/CustomMainMenuLayout.js) -
+        // whether the party is walking or at the wheel, and the world stops
+        // dead behind it (see _openMainMenu, and _suspended in the loop).
+        //
+        // It used to answer two different things: on foot the party menu, and
+        // aboard the camper the VEHICLE's options instead. One button, two
+        // menus, and which one you got depended on where you happened to be
+        // sitting. The vehicle options are on OK now and only there, the same
+        // button that opens them everywhere else in this world.
         _openEscMenu() {
             // Free play (the Minigames menu) has no party menu to open and no
             // world map to go back to: back quits straight to the list it was
             // started from.
             if (this._standalone) { this._requestExit(); return; }
-            if (this._viewMode === 'foot') this._openMainMenu();
-            else this._openDriveMenu();
+            this._openMainMenu();
         }
 
         // Opens the normal game main menu (CustomMainMenuLayout) over the scene.
@@ -4002,13 +4041,17 @@
             this._boostActive = boost;
             const airborne = this._airborne;   // set by _updateRideHeight last frame
             const turnInput = auto ? auto.steer
-                : !readInput ? 0
-                : (this._freeMoveKeys.has('KeyA') || Input.isPressed('left'))  ? -1
-                : (this._freeMoveKeys.has('KeyD') || Input.isPressed('right')) ?  1 : 0;
+                : !readInput ? 0 : this._steerInput();
             const handbrake = !auto && readInput && this._handbrake;
 
             this._throttle01 += (throttleTarget - this._throttle01) * Math.min(1, delta * 5);
-            this._steerSmooth += (turnInput - this._steerSmooth) * Math.min(1, delta * 8);
+            // An analog stick is already the wrist: easing it a second time is
+            // what made a pad feel like it was steering through treacle, so the
+            // ease is only laid over a key, which arrives as a full lock.
+            this._steerSmooth = this._steerAnalog
+                ? turnInput
+                : this._steerSmooth + (turnInput - this._steerSmooth) *
+                    Math.min(1, delta * STEER_EASE);
 
             // Handling parameters for the surface / environment underfoot.
             const surf = this._env === 'road' ? this._surfaceAt(this._vanX, this._vanZ)
@@ -4113,10 +4156,27 @@
 
                 // Steering: lock shrinks with speed; yaw follows the wheelbase.
                 // Negative fwd flips the yaw, so reversing steers realistically.
+                //
+                // The bicycle model alone is not enough at these speeds. Its
+                // yaw rate is proportional to v while the lock only falls off
+                // by a tenth of that, so the faster the camper went the harder
+                // it turned: at liminal speed a touch of left or right threw it
+                // round on the spot and the wheel was unusable. The turn is
+                // held to what the surface can hold instead - a turn asks for
+                // v * yawRate of lateral acceleration, and nothing under the
+                // wheels will lend more than LAT_ACCEL_MAX of it - so steering
+                // stays sharp where it is slow and opens into a long sweep
+                // where it is fast, which is what a wheel does.
                 if (Math.abs(fwd) > 0.4) {
                     const lock = MAX_STEER_LOCK / (1 + Math.abs(fwd) * STEER_FALLOFF);
                     let yawRate = (fwd / WHEELBASE) * Math.tan(this._steerSmooth * lock);
-                    yawRate = Math.max(-2.2, Math.min(2.2, yawRate));
+                    // The SURFACE's own grip, not the handbrake's: a rear axle
+                    // locked on purpose is meant to bring the tail round, and
+                    // capping the yaw with it would have taken the one turn a
+                    // handbrake is pulled for.
+                    const hold = LAT_ACCEL_MAX * Math.min(1, surf.grip / SURFACES.asphalt.grip);
+                    const cap  = Math.min(2.2, hold / Math.max(1, Math.abs(fwd)));
+                    yawRate = Math.max(-cap, Math.min(cap, yawRate));
                     this._driveAngle += yawRate * dt;
                 }
 
@@ -6100,11 +6160,19 @@
                 this._steerSmooth *= Math.max(0, 1 - delta * 6);
             }
 
-            // The bumper as a plough. A voxel bank in front of a camper under
-            // power is not a wall to be wedged against any more: it comes out in
-            // cubes, and taking it out costs the speed it was worth.
+            // The bumper as a plough, and ONLY under the liminal boost.
+            //
+            // Any camper with its foot down used to take a voxel bank apart just
+            // by meeting it, so an ordinary drive across country left a trench
+            // behind it: ground that came out in cubes and stayed out, nowhere
+            // near anything the driver meant to dig. Holding Shift is the game
+            // being asked - it is what already brings a tree down at speed, and
+            // it is what turns the bumper back into a plough. Off the boost a
+            // bank is a wall: the camper is stopped by it and backs out or goes
+            // round, and the world is still standing behind it.
             const drivingNow = (this._viewMode === 'car' || this._viewMode === 'fpdrive');
-            if (drivingNow && !ftActive && !fuelEmpty && this._throttle01 > 0.3) {
+            if (drivingNow && this._boostActive && !ftActive && !fuelEmpty &&
+                this._throttle01 > 0.3) {
                 this._ploughAhead(delta);
             }
 
@@ -6373,19 +6441,32 @@
             // the same way too.
             const padDig = (typeof Input !== 'undefined' && Input.isPressed &&
                             Input.isPressed('pagedown'));
-            // L1 / R1 step the quick bar, the pad's answer to the wheel. R1 is
-            // also the swing, so the bar is stepped with a TAP of it and the
-            // swing is the hold - which is how it reads in the hand anyway.
-            if (typeof Input !== 'undefined' && Input.isTriggered) {
-                if (Input.isTriggered('pageup')) this._cycleReq = -1;
+            // L1 is the bar itself: one press walks blocks -> spells -> items,
+            // the pad's Tab. It used to step along the cells of whichever bar
+            // was up and the bars themselves were on L2, which left the two
+            // shoulder buttons doing halves of the same job and the triggers,
+            // which are the camera's, doing a third. The cells are stepped with
+            // the d-pad now (below), so one button answers each question.
+            if (typeof Input !== 'undefined' && Input.isTriggered &&
+                Input.isTriggered('pageup')) {
+                this._cycleBarMode(1);
             }
 
-            // L2 walks the three bars the way Tab does, so a pad never has to
-            // reach for a key that is not on it.
+            // UP and DOWN on the d-pad run along the cells of the bar in hand,
+            // the pad's answer to the wheel and to the number keys. Read raw:
+            // core folds the left stick into those same directions, and a walk
+            // must not step the bar.
             const ASI = window.AnalogStickInput;
-            const l2 = !!(ASI && ASI.leftTrigger && ASI.leftTrigger() > 0.5);
-            if (l2 && !this._l2Held) this._cycleBarMode(1);
-            this._l2Held = l2;
+            if (ASI && ASI.hasPad && ASI.hasPad() && ASI.isButtonPressed && ASI.BUTTON) {
+                const was  = this._padBarWas || {};
+                const up   = ASI.isButtonPressed(ASI.BUTTON.DPAD_UP);
+                const down = ASI.isButtonPressed(ASI.BUTTON.DPAD_DOWN);
+                if (up && !was.up)     this._cycleReq = -1;
+                if (down && !was.down) this._cycleReq =  1;
+                this._padBarWas = { up: up, down: down };
+            } else {
+                this._padBarWas = null;
+            }
 
             this._tool.update(delta, onBlocks ? {
                 origin: this._digOrigin,

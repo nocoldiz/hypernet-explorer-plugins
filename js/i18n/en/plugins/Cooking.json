@@ -43,9 +43,10 @@
     "sameItemNeutral": "\nIt's nothing special, but edible.",
     "sameItemNegative": "\nPerhaps you shouldn't have tried that...",
     "recoveredHunger": "\nRecovered {percent}% Hunger per member",
-    "splitAmong": " (split among {count} members)",
     "ate": "You ate {name} raw.",
-    "cannotCombine": "Raw meat and plant matter can't be cooked together."
+    "cannotCombine": "Raw meat and plant matter can't be cooked together.",
+    "cookware": "\nCookware bonus +{percent}%",
+    "fedParty": "\n (a party of {count} at table)"
   },
   "names": {
     "meaty": "Meaty {name}",
@@ -76,8 +77,8 @@
   "calories": "Calories",
   "protein": "Protein",
   "fat": "Fat",
-  "satietyPerMember": "Satiety per Member",
-  "split": "Split",
+  "satietyPerMember": "Party Satiety",
+  "split": "At table",
   "clearSelection": "Clear Selection",
   "nutrition": {
     "calories": "Calories",
@@ -93,5 +94,6 @@
     "masterpiece": "[NAT 20 Culinary Roll] Gourmet masterpiece! {dish} gained +50% nutrition!",
     "scorched": "[NAT 1 Culinary Roll] Scorched dish! {dish} lost nutrition!",
     "delicious": "[Culinary Roll: {roll}{mod}={total}] Deliciously prepared {dish}!"
-  }
+  },
+  "cookware": "Cookware"
 }

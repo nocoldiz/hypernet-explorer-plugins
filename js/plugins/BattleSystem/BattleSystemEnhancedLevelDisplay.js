@@ -79,6 +79,23 @@
     // owner sprite by hand every frame.
     const LEVEL_PLATE_Z = 8;
 
+    // Every plate currently standing on the map, whoever owns it. A plate is an
+    // extra sprite the engine knows nothing about, so it only lives as long as
+    // its owner keeps saying, once a frame, that it should: the stamp below is
+    // that word, and the sweep in Spriteset_Map.update takes off anything that
+    // stopped hearing it. That is what a level of a monster long gone was doing
+    // hanging over empty ground - the sprite behind it had quietly stopped
+    // being updated, and nothing was left to notice.
+    const livePlates = new Set();
+
+    // Two frames of slack, so a second spriteset that updates after this one
+    // (split screen) does not lose plates it is about to refresh.
+    const PLATE_STALE_FRAMES = 2;
+
+    function plateFrame() {
+        return typeof Graphics !== 'undefined' ? (Graphics.frameCount || 0) : 0;
+    }
+
     const _Sprite_Character_update_EnemyLevel = Sprite_Character.prototype.update;
     Sprite_Character.prototype.update = function() {
         _Sprite_Character_update_EnemyLevel.call(this);
@@ -87,24 +104,29 @@
 
     Sprite_Character.prototype.updateEnemyLevelLabel = function() {
         const character = this._character;
-        if (!character || !character.eventId) return;
+        if (!character || !character.eventId) return this.dropEnemyLevelLabel();
         const eventId = character.eventId();
-        if (!eventId) return;
+        if (!eventId) return this.dropEnemyLevelLabel();
         // For an event sprite, this._character IS the Game_Event, so use it
         // directly instead of re-resolving $gameMap.event(eventId) every frame
         // for every character sprite on the map.
         const event = character;
         const eventData = event.event ? event.event() : null;
-        if (!eventData) return;
+        if (!eventData) return this.dropEnemyLevelLabel();
+
+        // The sprite has to be showing the map's OWN event. A spriteset built a
+        // second time under a live scene, or an event dropped from $gameMap and
+        // replaced, leaves sprites bound to a Game_Event nothing moves any more:
+        // they stand frozen where the creature was last seen, and their plate
+        // stands there with them. An erased event goes the same way.
+        const live = $gameMap && $gameMap.event ? $gameMap.event(eventId) : event;
+        if (live !== event || event._erased) return this.dropEnemyLevelLabel();
 
         // Only show for events with a fixed troop ID assigned. If the troop was
         // cleared (e.g. the enemy was defeated), remove any stale label instead
         // of leaving it floating on the map.
         if (!event._fixedTroopId || event._fixedTroopId === 0) {
-            this.removeEnemyLevelLabel();
-            this._lastEnemyTroopId = 0;
-            this._lastEnemyLevelBand = -1;
-            return;
+            return this.dropEnemyLevelLabel();
         }
 
         // Rebuild when the troop changes, and also when the party has crossed
@@ -126,6 +148,18 @@
         }
 
         this.syncEnemyLevelLabel();
+        // The owner's word for this frame: without it the sweep below assumes
+        // the sprite has stopped being updated and takes the plate off the map.
+        if (this._enemyLevelLabel) this._enemyLevelLabel._plateFrame = plateFrame();
+    };
+
+    // Dropping the plate AND the memory of what it was drawn for, so a sprite
+    // that comes back to life (an event slot re-dealt to another monster) builds
+    // a fresh one instead of trusting the cache.
+    Sprite_Character.prototype.dropEnemyLevelLabel = function() {
+        this.removeEnemyLevelLabel();
+        this._lastEnemyTroopId = 0;
+        this._lastEnemyLevelBand = -1;
     };
 
     // The plate rides in the sprite's own container, so it has to be told where
@@ -178,6 +212,11 @@
     Sprite_Character.prototype.removeEnemyLevelLabel = function() {
         const label = this._enemyLevelLabel;
         if (!label) return;
+        livePlates.delete(label);
+        label._plateOwner = null;
+        // Hidden as well as detached: anything still holding this plate (the
+        // tilemap mid-walk, the deferred list below) must not draw it again.
+        label.visible = false;
         if (label.parent) label.parent.removeChild(label);
         this._enemyLevelLabel = null;
     };
@@ -214,6 +253,9 @@
         const color = LEVEL_PLATE_COLORS[tier] || '#FFFFFF';
 
         this._enemyLevelLabel = new Sprite();
+        this._enemyLevelLabel._plateOwner = this;
+        this._enemyLevelLabel._plateFrame = plateFrame();
+        livePlates.add(this._enemyLevelLabel);
         this._enemyLevelLabel.bitmap = new Bitmap(80, 30);
         this._enemyLevelLabel.anchor.x = 0.5;
         this._enemyLevelLabel.anchor.y = 1;
@@ -243,8 +285,20 @@
                 // plate after this one would keep drawing over a monster that is
                 // no longer on the map.
                 this.visible = false;
-                if (owner._enemyLevelLabel === this) owner._enemyLevelLabel = null;
+                livePlates.delete(this);
+                if (owner._enemyLevelLabel === this) {
+                    owner._enemyLevelLabel = null;
+                    owner._lastEnemyTroopId = 0;
+                    owner._lastEnemyLevelBand = -1;
+                }
                 orphanedPlates.push(this);
+                return;
+            }
+            // The owner is walked before the plates (z 3 against z 8), so by now
+            // it has either stamped this frame or it has stopped being updated
+            // at all. An unstamped plate draws nothing while the sweep decides.
+            if (this._plateFrame !== plateFrame()) {
+                this.visible = false;
                 return;
             }
             owner.placeEnemyLevelLabel();
@@ -271,6 +325,23 @@
         _Spriteset_Map_update_EnemyLevel.call(this);
         while (orphanedPlates.length > 0) {
             const plate = orphanedPlates.pop();
+            livePlates.delete(plate);
+            if (plate.parent) plate.parent.removeChild(plate);
+        }
+        // Everything above runs off a sprite that is still being updated. This
+        // does not: it walks the plates themselves and takes off any the owner
+        // has stopped placing, whatever the reason - a sprite pulled out of the
+        // map, one left over from a spriteset built a second time, one bound to
+        // an event that no longer exists. Deleting from a Set while walking it
+        // is safe.
+        const now = plateFrame();
+        for (const plate of livePlates) {
+            if (now - (plate._plateFrame || 0) < PLATE_STALE_FRAMES) continue;
+            livePlates.delete(plate);
+            plate.visible = false;
+            const owner = plate._plateOwner;
+            plate._plateOwner = null;
+            if (owner && owner._enemyLevelLabel === plate) owner.dropEnemyLevelLabel();
             if (plate.parent) plate.parent.removeChild(plate);
         }
     };

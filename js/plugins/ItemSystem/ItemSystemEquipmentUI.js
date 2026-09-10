@@ -793,8 +793,19 @@
         } else if (this._slotIndex != null) {
             loreItem = actor.equips()[this._slotIndex];
         }
-        // Short description (what it does) above the combinatorial lore.
+        // Short description (what it does) above the combinatorial lore, under
+        // the name of whatever the cursor is on so the page always says which
+        // piece it is describing.
         let loreHTML = '';
+        if (loreItem) {
+            let loreName = String(loreItem.name || '');
+            if (window.translateText) loreName = window.translateText(loreName);
+            loreHTML += `<div class="equip-lore-name">${escapeHtml(loreName)}</div>`;
+        } else if (this._activeArea !== 'inventory' && this._slotIndex != null) {
+            const slotName = actor.equipSlotName(this._slotIndex) || t.emptySlot;
+            loreHTML += `<div class="equip-lore-name">${escapeHtml(slotName)}</div>` +
+                        `<div class="equip-desc equip-desc--empty">${escapeHtml(t.emptySlot)}</div>`;
+        }
         if (loreItem) {
             const dt = (loreItem.meta && loreItem.meta.DamageType) ||
                 (loreItem.note && (loreItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
@@ -1075,6 +1086,13 @@
 
         if (this._activeArea !== 'inventory') {
             container.querySelectorAll('.equip-slot-row').forEach(row => {
+                row.addEventListener('mouseover', () => {
+                    const idx = parseInt(row.getAttribute('data-idx'));
+                    if (idx === this._slotIndex && this._activeArea === 'slots') return;
+                    this._slotIndex  = idx;
+                    this._activeArea = 'slots';
+                    this._updateSlotHighlight();
+                });
                 row.addEventListener('click', () => {
                     this._slotIndex  = parseInt(row.getAttribute('data-idx'));
                     this._activeArea = 'slots';
@@ -1111,6 +1129,19 @@
     // Selective highlight updates (avoids full DOM rebuild on navigation)
     // =============================================================================
 
+    // The right page is rebuilt whenever the cursor moves, so it always reads
+    // the piece under the cursor rather than the one it was built with.
+    Scene_Equip.prototype._refreshRightPage = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        const rightArea = container.querySelector('.right-content-area');
+        if (!rightArea) return;
+        this.cleanup3DWeaponPreview();
+        rightArea.innerHTML = this._buildRightPageHTML();
+        this.init3DWeaponPreview();
+        this._bindStatTooltips();
+    };
+
     Scene_Equip.prototype._updateSlotHighlight = function () {
         const container = document.getElementById('equip-container');
         if (!container) return;
@@ -1119,6 +1150,7 @@
         });
         const focused = container.querySelector('.equip-slot-row.focused');
         if (focused) focused.scrollIntoView({ block: 'nearest' });
+        this._refreshRightPage();
         SoundManager.playCursor();
     };
 
@@ -1147,11 +1179,7 @@
         if (focused) focused.scrollIntoView({ block: 'nearest' });
 
         // Rebuild only the right page (stat deltas change per selected item)
-        this.cleanup3DWeaponPreview();
-        const rightArea = container.querySelector('.right-content-area');
-        if (rightArea) rightArea.innerHTML = this._buildRightPageHTML();
-        this.init3DWeaponPreview();
-        this._bindStatTooltips();
+        this._refreshRightPage();
         SoundManager.playCursor();
     };
 

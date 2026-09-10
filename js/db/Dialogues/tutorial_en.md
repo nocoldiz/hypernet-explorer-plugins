@@ -1884,7 +1884,7 @@ m_talking
 Talking to people
 
 Bubba:
-Walk up and press [CONTINUE]. They will say something, and half of it will be worth hearing.
+Walk up and press [CONTINUE | Continue]. They will say something, and half of it will be worth hearing.
 
 Em:
 And the other half?
@@ -2250,7 +2250,7 @@ m_mainmenu
 The menu
 
 Bubba:
-[MENU] opens everything. Items, skills, the party, the world, and a search box if you cannot remember where a thing lives.
+[MENU | Main menu] opens everything. Items, skills, the party, the world, and a search box if you cannot remember where a thing lives.
 
 Em:
 I cannot remember where anything lives.

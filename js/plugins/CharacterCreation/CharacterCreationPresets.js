@@ -600,7 +600,7 @@
       weapons: [],
       armors: [{ id: 531, amount: 1 }], // Robes of the Great Beast
       equips: [null, null, null, 531, null],
-      skills: [1404, 1405, 1477, 1492, 1513, 1558, 1567, 1570, 1580, 1600, 1617, 1655, 1668, 1679, 1685, 1700, 1707],
+      skills: [1404, 1477, 1558, 1567, 1570, 1580, 1600, 1617, 1668, 1679, 1685, 1700],
       traits: [81, 118, 104, 174], // Charismatic, Heretic, Drug Dependent, Infamous
       specializations: [
         { id: 165, level: 5 }, // Magic Theory (Master)

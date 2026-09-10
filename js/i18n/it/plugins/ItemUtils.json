@@ -31,5 +31,36 @@
   "year": {
     "deepTime": "{years} anni fa",
     "bce": "{year} a.C."
+  },
+  "leisure": {
+    "label": "Svago",
+    "gain": "Umore +{amount}",
+    "action": {
+      "enjoy": "{name} si gode {item}",
+      "read": "{name} sta leggendo {item}",
+      "music": "{name} sta ascoltando {item}",
+      "instrument": "{name} sta suonando {item}",
+      "videogame": "{name} sta giocando ai videogiochi con {item}",
+      "boardgame": "{name} sta preparando {item}",
+      "cards": "{name} sta distribuendo {item}",
+      "toy": "{name} sta giocherellando con {item}",
+      "album": "{name} sta sfogliando {item}",
+      "art": "{name} sta studiando {item}",
+      "garden": "{name} sta curando {item}",
+      "photo": "{name} sta scattando foto con {item}",
+      "stargaze": "{name} sta guardando le stelle con {item}",
+      "fish": "{name} sta lanciando {item}",
+      "phone": "{name} è incollato a {item}",
+      "write": "{name} sta scarabocchiando su {item}",
+      "bath": "{name} si sta rilassando con {item}",
+      "scratch": "{name} sta grattando {item}",
+      "relax": "{name} si sta distendendo con {item}",
+      "feast": "{name} si sta abbuffando con {item}",
+      "watch": "{name} sta guardando {item}",
+      "exercise": "{name} si sta allenando con {item}",
+      "smoke": "{name} sta fumando {item}",
+      "bet": "{name} sta studiando le quote di {item}",
+      "gamble": "{name} sta giocando {item}"
+    }
   }
 }

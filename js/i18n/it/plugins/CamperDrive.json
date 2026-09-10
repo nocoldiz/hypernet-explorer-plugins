@@ -52,6 +52,7 @@
     "destination": "Destinazione",
     "time": "ORA",
     "distance": "DISTANZA",
+    "kmh": "km/h",
     "view": "VISTA:",
     "mode": "MODO:",
     "cmdDrive": "Guida / sterza",
@@ -96,7 +97,6 @@
     "water": "A GALLA",
     "underwater": "IN IMMERSIONE"
   },
-  "weapon": "Ora impugni: {name}",
   "driverSave": {
     "avoided": "[Tiro su DES del guidatore: {roll}{mod}={total}] Controsterzata magistrale, incidente evitato!",
     "failed": "[Tiro su DES del guidatore: {roll}{mod}={total} contro CD {dc}] Riflessi insufficienti, il veicolo va a sbattere!"

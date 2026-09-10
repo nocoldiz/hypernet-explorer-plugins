@@ -1886,6 +1886,44 @@
     // DATAMANAGER OVERRIDE
     // ============================================================================
 
+    // The tileset the square under the party is drawn with, off _procGenData:
+    // the id it carries, and the biome's own only as a fallback for a record
+    // written before the id was kept. Zero when neither answers, which is the
+    // one case where Map636's own tileset is the honest answer.
+    function procSurfaceTilesetId() {
+        const pg = $gameSystem && $gameSystem._procGenData;
+        if (!pg) return 0;
+        if (pg.currentBiomeTileset) return pg.currentBiomeTileset;
+        const biome = getBiomeByName(pg.currentBiome);
+        return (biome && biome.tilesetId) || 0;
+    }
+
+    // Map636.json's own tileset is a placeholder (300, the Fields set) and must
+    // never be left standing under a square that belongs to another biome:
+    // Game_Map.setup copies $dataMap.tilesetId into _tilesetId, and everything
+    // that reads the tileset without going through the override above ends up on
+    // it. So the id is written whenever there is one to write.
+    function applyTilesetToDataMap(tilesetId) {
+        if ($dataMap && tilesetId) $dataMap.tilesetId = tilesetId;
+    }
+
+    // Put the square's own tileset back on map 636, on $dataMap AND on the
+    // Game_Map that has already copied it out of there. Called on every load of
+    // the procedural map, so a route that laid tiles down without saying which
+    // tileset they belong to cannot leave Map636's placeholder standing under
+    // them: that is a city street drawn in grass. Answers whether anything
+    // actually had to change, so a caller can refresh the tilemap.
+    function syncProcSurfaceTileset() {
+        if (!$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return false;
+        const tilesetId = procSurfaceTilesetId();
+        if (!tilesetId) return false;
+        const changed = $gameMap._tilesetId !== tilesetId ||
+            !!($dataMap && $dataMap.tilesetId !== tilesetId);
+        applyTilesetToDataMap(tilesetId);
+        $gameMap._tilesetId = tilesetId;
+        return changed;
+    }
+
     // Lay the generated tiles over whatever base Map636.json the engine loaded.
     // Answers false when there is no $dataMap yet to lay them on, which is the
     // usual case right after a load has been asked for: the engine's loadMapData
@@ -1939,7 +1977,7 @@
         $dataMap.data   = pg.generatedMapData;
         $dataMap.width  = PROC_MAP_WIDTH;
         $dataMap.height = PROC_MAP_HEIGHT;
-        if (pg.currentBiomeTileset) $dataMap.tilesetId = pg.currentBiomeTileset;
+        applyTilesetToDataMap(procSurfaceTilesetId());
         // The map name window reads the biome's declared name, not its id
         // ("ForestTropical" -> "Tropical Forest"), and a generated structure is
         // named outright.
@@ -2078,14 +2116,29 @@
         }
     };
 
+    // The tileset map 636 is drawn with. Map636.json carries a tileset of its own
+    // (300, the Fields set), and it is only ever a placeholder: the square laid
+    // over it belongs to whatever biome the party is standing in. So the answer
+    // is taken off _procGenData, and the field that is asked FIRST is
+    // currentBiomeTileset rather than the biome NAME.
+    //
+    // The two are written together everywhere, so this changes nothing while they
+    // agree. It matters on the way back out of a submap: snapshotProcSurface /
+    // restoreProcSurface carry currentBiomeTileset across a house visit precisely
+    // so the square can be put back, and deriving the tileset from the name alone
+    // threw that answer away the moment the name did not resolve to a biome (a
+    // structure or forced biome the database does not hold, a description cleared
+    // while the party was inside). The square's own tiles were still laid down, so
+    // the fall-through to Map636's stock 300 drew a city street in grass.
     const _Game_Map_tileset = Game_Map.prototype.tileset;
     Game_Map.prototype.tileset = function() {
-        if ($gameMap.mapId() === PROC_MAP_ID && $gameSystem._procGenData) {
-            const biomeObj = getBiomeByName($gameSystem._procGenData.currentBiome);
-            if (biomeObj && biomeObj.tilesetId) {
-                const tilesetData = $dataTilesets[biomeObj.tilesetId];
-                if (tilesetData) return tilesetData;
-            }
+        const pg = $gameMap.mapId() === PROC_MAP_ID ? $gameSystem._procGenData : null;
+        if (pg) {
+            const biomeObj = getBiomeByName(pg.currentBiome);
+            const tilesetId = pg.currentBiomeTileset ||
+                (biomeObj && biomeObj.tilesetId) || 0;
+            const tilesetData = tilesetId ? $dataTilesets[tilesetId] : null;
+            if (tilesetData) return tilesetData;
         }
         return _Game_Map_tileset.call(this);
     };
@@ -3515,7 +3568,7 @@
         $dataMap.data = win.data;
         $dataMap.width = win.width;
         $dataMap.height = win.height;
-        if (win.tilesetId) $dataMap.tilesetId = win.tilesetId;
+        applyTilesetToDataMap(win.tilesetId || procSurfaceTilesetId());
         $dataMap.displayName = procMapDisplayName();
         return true;
     }
@@ -6207,10 +6260,17 @@
         if ($gamePlayer) $gamePlayer.clearProcGenBorderArrows();
         if ($gamePlayer) $gamePlayer.clearP2Arrows();
 
-        // Apply proc map tileset if we just transferred to map 636
-        if ($gameMap.mapId() === procMapId && $gameSystem.applyProceduralMapTileset) {
-            $gameSystem.applyProceduralMapTileset();
-        }
+        // Map 636 is one map slot reused for the whole world, and the tileset
+        // Map636.json declares (300, the Fields set) is a placeholder: the square
+        // laid over it belongs to whatever biome the party is standing in. Put
+        // that square's own tileset back before the tilemap is built.
+        //
+        // What stood here asked for $gameSystem.applyProceduralMapTileset, which
+        // exists nowhere: the guard was always false and nothing was re-asserted
+        // at all. Any route that laid the tiles down without also writing the
+        // tileset -- coming back out of a building onto a city square, for one --
+        // then drew the street it restored with the placeholder.
+        syncProcSurfaceTileset();
 
         // Build biome cache on world map load
         if ($gameMap.mapId() === WORLD_MAP_ID && $gameSystem._procGenData) {
@@ -6909,7 +6969,10 @@
             } else if (cmd === 'goUp') {
                 PluginManager.callCommand($gameMap._interpreter, PLUGIN_PMT, 'goUp', {});
             } else if (cmd === 'makeCamp') {
-                PluginManager.callCommand($gameMap._interpreter, 'TimeDateSystem', 'SleepMenu', {});
+                // A camp, not a room: the rest menu opens the same way, but the
+                // night also washes, feeds and reunites the party (CampRest, in
+                // Core/TimeDateSystem.js).
+                PluginManager.callCommand($gameMap._interpreter, 'TimeDateSystem', 'MakeCamp', {});
             } else if (cmd === 'freeWalk') {
                 PluginManager.callCommand($gameMap._interpreter, 'VoxelWorldSystem', 'StartFreeWalk', {});
             }
@@ -7254,6 +7317,9 @@
         // forced-biome structures for cellars, sewers, temples, dens and vaults.
         snapshotProcSurface,
         restoreProcSurface,
+        // Put the square's own tileset back on map 636. Exposed for anything that
+        // lays tiles on $dataMap itself rather than going through the load hook.
+        syncProcSurfaceTileset,
         // The same pair, in the form a respawn point stores and puts back: no
         // tiles (they are rebuilt), no descent and no structure session. Used by
         // everything that registers where a death sends the party back to.

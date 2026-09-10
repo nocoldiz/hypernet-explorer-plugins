@@ -129,11 +129,11 @@
   },
   "32": {
     "name": "Gender Shake",
-    "description": "Restores 1500 HP."
+    "description": "Restores 1500 HP, and the body settles the other way."
   },
   "33": {
     "name": "Endurance Injection",
-    "description": "Raises max HP by 50."
+    "description": "Permanently raises max HP by 10."
   },
   "34": {
     "name": "Wisdom Elixir",
@@ -145,7 +145,7 @@
   },
   "36": {
     "name": "Penta Protein Program",
-    "description": "Raises max HP by 100."
+    "description": "Permanently raises max HP by 10."
   },
   "37": {
     "name": "Black Market Cocktail",
@@ -161,11 +161,11 @@
   },
   "40": {
     "name": "Power Enhancer",
-    "description": "Raises max STR and CON by 5."
+    "description": "Permanently raises STR by 1 and CON by 1."
   },
   "41": {
     "name": "Reflex Enhancer",
-    "description": "Raises max DEX by 8."
+    "description": "Permanently raises DEX by 1."
   },
   "42": {
     "name": "Regeneration Herb",
@@ -209,23 +209,23 @@
   },
   "52": {
     "name": "Steroids",
-    "description": "Raises max STR by 3."
+    "description": "Permanently raises STR by 1."
   },
   "53": {
     "name": "Ironskin Steroid",
-    "description": "Raises max CON by 3."
+    "description": "Permanently raises CON by 1."
   },
   "54": {
     "name": "Chi Training",
-    "description": "Raises max INT by 3."
+    "description": "Permanently raises INT by 1."
   },
   "55": {
     "name": "Speed Training",
-    "description": "Raises max DEX by 3."
+    "description": "Permanently raises DEX by 1."
   },
   "56": {
     "name": "Imperial Jing",
-    "description": "Raises max HP by 200."
+    "description": "Permanently raises max HP by 10."
   },
   "57": {
     "name": "Champion's Essence",
@@ -273,7 +273,7 @@
   },
   "75": {
     "name": "Defensive Stance Pill",
-    "description": "Pill: +5 CON, -3 DEX."
+    "description": "Pill: raises CON, lowers DEX."
   },
   "76": {
     "name": "Caltrops",
@@ -337,7 +337,7 @@
   },
   "91": {
     "name": "Crystal Running Shoes",
-    "description": "Shoes: +10 AGI, break after 10 turns."
+    "description": "Shoes that briefly raise DEX."
   },
   "92": {
     "name": "Eight Pillars EP:",
@@ -673,7 +673,7 @@
   },
   "191": {
     "name": "Career Package",
-    "description": "Career cassette, boosts skill and stats."
+    "description": "Permanently raises INT by 1."
   },
   "192": {
     "name": "Pocket Bonsai",
@@ -685,11 +685,11 @@
   },
   "194": {
     "name": "Extreme Energy Pack",
-    "description": "Energy drinks, restores 40 sleep need."
+    "description": "Energy drinks; restores 30 of the sleep need."
   },
   "195": {
     "name": "Home Fitness System",
-    "description": "Single-use workout station, +stats."
+    "description": "Permanently raises STR by 1 and DEX by 1."
   },
   "196": {
     "name": "Portable Caffeinator",
@@ -773,23 +773,23 @@
   },
   "230": {
     "name": "Scribe's Quill",
-    "description": "Master-cut quill; teaches Wrestling Finisher."
+    "description": "Master-cut quill; opens the travel journal."
   },
   "231": {
     "name": "Glover's Handwear",
-    "description": "Custom-fitted gloves; +1 defense."
+    "description": "Custom-fitted gloves; sets an ally guarding."
   },
   "232": {
     "name": "Chef's Spice Blend",
-    "description": "Master chef's rare spice blend; teaches Combat Readiness."
+    "description": "Master chef's rare spice blend; opens the cooking menu."
   },
   "233": {
     "name": "Optician's Lens",
-    "description": "Crafted glass lens; +1 magic def, grants Double Money/Items."
+    "description": "Crafted glass lens; brings out what the map is hiding."
   },
   "234": {
     "name": "Navigator's Compass",
-    "description": "Brass and silver compass; teaches Blinding Screen."
+    "description": "Brass and silver compass; names the place and the spot."
   },
   "235": {
     "name": "Weaver's Cloak",
@@ -801,27 +801,27 @@
   },
   "237": {
     "name": "Blacksmith's Flux",
-    "description": "Smithing flux; +1 ATK, +1 DEF."
+    "description": "Permanently raises STR by 1 and CON by 1."
   },
   "238": {
     "name": "Alchemist's Catalyst",
-    "description": "Alchemical catalyst; +1 ATK, +1 AGI."
+    "description": "Permanently raises STR by 1 and DEX by 1."
   },
   "239": {
     "name": "Cobbler's Boots",
-    "description": "Hand-stitched leather boots; inflicts Silence."
+    "description": "Hand-stitched leather boots; briefly raises DEX."
   },
   "240": {
     "name": "Botanist's Seed Collection",
-    "description": "Pouch of rare seeds; inflicts Silence, +150 MP."
+    "description": "Pouch of rare seeds; restores 150 MP."
   },
   "241": {
     "name": "Clockmaker's Timepiece",
-    "description": "Precision timepiece; teaches Haymaker."
+    "description": "Precision timepiece; shows the hour on its face."
   },
   "242": {
     "name": "Jeweler's Loupe",
-    "description": "Jeweler's magnifying loupe; teaches Energy Restoration."
+    "description": "Jeweler's magnifying loupe; brings out what is hidden."
   },
   "243": {
     "name": "Artisan's Throwing Knife Set",
@@ -833,15 +833,15 @@
   },
   "245": {
     "name": "Painter's Arcane Palette",
-    "description": "Otherworldly brushes and pigments; teaches Rapid Conditioning."
+    "description": "Otherworldly brushes and pigments; paints a world."
   },
   "246": {
     "name": "Leatherworker's Travel Pack",
-    "description": "Leather pack, secret pockets; inflicts Blind."
+    "description": "Leather pack with secret pockets; opens the backpack."
   },
   "247": {
     "name": "Woodcarver's Staff",
-    "description": "Carved wooden staff; weapon type 6, +20 HP."
+    "description": "Carved wooden staff; restores 20 HP."
   },
   "248": {
     "name": "Bowyer's Bow",
@@ -1033,7 +1033,7 @@
   },
   "315": {
     "name": "Grip Powder",
-    "description": "Lowers enemy DEX."
+    "description": "Chalk for the hands; steadies the user's grip."
   },
   "316": {
     "name": "Sword Keychain",
@@ -1089,11 +1089,11 @@
   },
   "329": {
     "name": "Master's Gloves",
-    "description": "Fuses with user, STR +1."
+    "description": "Permanently raises STR by 1."
   },
   "330": {
     "name": "Thunder Dragon Boots",
-    "description": "Fuses with user, raises evasion."
+    "description": "Permanently raises DEX by 1."
   },
   "331": {
     "name": "Antique Weight",
@@ -1173,7 +1173,7 @@
   },
   "360": {
     "name": "Fake Dragon Egg",
-    "description": "Fake egg, teaches a skill."
+    "description": "Fake egg. Cracking it proves the thing is empty."
   },
   "361": {
     "name": "Ring of Minor Acoustics",
@@ -1221,7 +1221,7 @@
   },
   "382": {
     "name": "Press Badge Collection",
-    "description": "Press credentials from many outlets."
+    "description": "Press credentials; people tell you things."
   },
   "383": {
     "name": "Product Testing Kit",
@@ -1249,7 +1249,7 @@
   },
   "389": {
     "name": "False Identity Kit",
-    "description": "Fake IDs, licenses, and credentials."
+    "description": "Fake IDs and licenses; a clean name to wear."
   },
   "390": {
     "name": "Alchemistry Kit",
@@ -1945,7 +1945,7 @@
   },
   "583": {
     "name": "Golden Apple",
-    "description": "Golden apple, permanently raises max HP."
+    "description": "Permanently raises max HP by 10."
   },
   "584": {
     "name": "Mana Pomegranate",
@@ -1981,7 +1981,7 @@
   },
   "592": {
     "name": "Fruit of Yggdrasil",
-    "description": "Divine fruit. Huge level/stat boost."
+    "description": "Permanently raises every stat by 1."
   },
   "593": {
     "name": "Raw Chicken",
@@ -2237,7 +2237,7 @@
   },
   "685": {
     "name": "Mage's Crystal",
-    "description": "Permanently raises INT by 10."
+    "description": "Permanently raises INT by 1."
   },
   "686": {
     "name": "Bag of Things",
@@ -2261,7 +2261,7 @@
   },
   "691": {
     "name": "Sorcerer's Soul Crystal",
-    "description": "Fully restores MP."
+    "description": "Fully restores MP and yields one SOUL share."
   },
   "692": {
     "name": "Ambrosia",
@@ -2353,7 +2353,7 @@
   },
   "714": {
     "name": "Pocket Sand",
-    "description": "POCKET SAND! Stuns the target."
+    "description": "POCKET SAND! Blinds every enemy."
   },
   "715": {
     "name": "Pro Statusguard",
@@ -2385,7 +2385,7 @@
   },
   "722": {
     "name": "Mental Focus Training",
-    "description": "Permanently raises max MP by 10."
+    "description": "Permanently raises max MP by 5."
   },
   "723": {
     "name": "Fighter's Focus",
@@ -2393,7 +2393,7 @@
   },
   "724": {
     "name": "Floating skull",
-    "description": "Grants immunity to critical hits."
+    "description": "Floating skull; it takes the blows meant for allies."
   },
   "725": {
     "name": "Spirit Parasite",
@@ -2405,11 +2405,11 @@
   },
   "727": {
     "name": "Psionic Training",
-    "description": "Permanently increases PSI by 3."
+    "description": "Permanently raises PSI by 1."
   },
   "728": {
     "name": "Practical Training",
-    "description": "Permanently increases WIS by 3."
+    "description": "Permanently raises WIS by 1."
   },
   "729": {
     "name": "Human sperm sample",
@@ -2429,11 +2429,11 @@
   },
   "733": {
     "name": "Genome Optimator",
-    "description": "Permanently boosts all stats by 50."
+    "description": "Permanently raises every stat by 1."
   },
   "734": {
     "name": "Potential Catalyst",
-    "description": "Grants extreme luck and a power surge."
+    "description": "Permanently raises PSI by 1."
   },
   "735": {
     "name": "Quantum Resurrection Protocol",
@@ -2601,7 +2601,7 @@
   },
   "806": {
     "name": "Walking Stick",
-    "description": "Wooden walking stick, +2 AGI."
+    "description": "Wooden walking stick; briefly raises DEX."
   },
   "807": {
     "name": "Cooking Pot",
@@ -2621,7 +2621,7 @@
   },
   "811": {
     "name": "Whetstone",
-    "description": "Whetstone, +10 ATK to blades."
+    "description": "Whetstone; briefly raises STR."
   },
   "812": {
     "name": "Fairy Lantern",
@@ -2641,7 +2641,7 @@
   },
   "816": {
     "name": "Bladesmith's Eternal Whetstone",
-    "description": "Whetstone, +5 ATK, never wears down."
+    "description": "Whetstone that never wears down; raises STR."
   },
   "827": {
     "name": "<-- Trash -->",

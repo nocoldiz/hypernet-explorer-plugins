@@ -880,11 +880,46 @@
       // A full or partial magazine still caps the repeat count at what's
       // left; an empty one no longer caps it at zero hits, that's the Bash.
       if (current !== null && current > 0) return Math.min(repeats, current);
+      // Dry: the Bash is one swing of the thing itself, never a burst of them.
+      if (current !== null) return 1;
       return repeats;
     }
 
     return _Game_Action_numRepeats.call(this);
   };
+
+  //=============================================================================
+  // Game_Action - What a Shot and a Bash Are Worth
+  //=============================================================================
+
+  // A gun held by the barrel is a poor club: the Bash lands with a fraction of
+  // what the weapon is worth when it is doing what it was built to do.
+  const BASH_DAMAGE_RATE = 0.4;
+
+  /**
+   * A burst is not free damage. Every round of it rolls the weapon's full
+   * damage on its own, so a six round rate would otherwise be six times the
+   * one swing a sword gets in the same turn. Each round is worth less the
+   * faster they leave the barrel, so the whole burst grows with the square
+   * root of the rate: 6 rounds hit about 2.4 times as hard as a single shot,
+   * not 6 times.
+   */
+  const burstDamageRate = (rate) => (rate > 1 ? 1 / Math.sqrt(rate) : 1);
+
+  const _Game_Action_makeDamageValue = Game_Action.prototype.makeDamageValue;
+  Game_Action.prototype.makeDamageValue = function (target, critical) {
+    let value = _Game_Action_makeDamageValue.call(this, target, critical);
+    const subject = this.subject();
+    if (!this.isAttack() || !subject || !subject.isActor()) return value;
+
+    const weapon = subject.weapons()[0];
+    if (!weapon || !RANGED_WTYPES.includes(weapon.wtypeId)) return value;
+
+    if (subject.isOutOfBullets()) return Math.round(value * BASH_DAMAGE_RATE);
+    return Math.round(value * burstDamageRate(subject.fireRate()));
+  };
+
+  window.WeaponDamageRates = { bash: BASH_DAMAGE_RATE, burst: burstDamageRate };
 
   //=============================================================================
   // Window_BattleLog - Weapon Sounds

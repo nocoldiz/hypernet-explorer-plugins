@@ -161,9 +161,9 @@
 
         // Standard gamepad mapping (Xbox layout labels). The four d-pad
         // buttons are here as themselves: core folds the LEFT STICK into the
-        // same Input directions, so a scene that wants the d-pad alone (a
-        // weapon rack stepped with up/down while the stick still walks) can
-        // only get it by reading the raw buttons.
+        // same Input directions, so a scene that wants the d-pad alone (the 3D
+        // world's quick bar, stepped with up/down while the stick still walks)
+        // can only get it by reading the raw buttons.
         // i18n-ignore-start: physical controller button ids
         BUTTON: {
             A: 0, B: 1, X: 2, Y: 3, LB: 4, RB: 5, LT: 6, RT: 7,

@@ -117,6 +117,11 @@
     const SEARCH_RESULT_LIMIT = 240;
     // The daily rarities have a shelf of their own.
     const RARITY_CATEGORY = "rarities";
+    // The pastimes shelf: everything the party can enjoy rather than eat, wear
+    // or swing. It cuts across the <category:> tags (a book, an mp3 player and
+    // a saxophone are filed under three different ones), so it is its own
+    // symbol and window.ItemLeisure answers what belongs on it.
+    const LEISURE_CATEGORY = "leisure";  // i18n-ignore  shelf symbol
 
     const ROWS_PER_PAGE = 24;
 
@@ -742,6 +747,9 @@
                 out.push({ name: T('Stockbusters.text.rarities'), symbol: RARITY_CATEGORY, icon: 163 });
             }
             out.push({ name: T('Stockbusters.text.allItems'), symbol: "all_items", icon: 209 });
+            if (has(LEISURE_CATEGORY)) {
+                out.push({ name: T('Stockbusters.text.leisure'), symbol: LEISURE_CATEGORY, icon: 84 });
+            }
             if (has("skills")) out.push({ name: T('Stockbusters.text.skills'), symbol: "skills", icon: 64 });
             if (has("spells")) out.push({ name: T('Stockbusters.text.spells'), symbol: "spells", icon: 101 });
             if (has("all_weapons")) out.push({ name: T('Stockbusters.text.weapons'), symbol: "all_weapons", icon: 322 });
@@ -803,6 +811,9 @@
             if (symbol.startsWith("armor_")) {
                 return DataManager.isArmor(entry) && entry.atypeId === parseInt(symbol.split("_")[1], 10);
             }
+            if (symbol === LEISURE_CATEGORY) {
+                return !!(window.ItemLeisure && window.ItemLeisure.isLeisure(entry));
+            }
             if (symbol.startsWith("custom_")) {
                 return this.hasCustomCategory(entry, symbol.replace("custom_", ""));
             }
@@ -851,7 +862,7 @@
                 }
             } else {
                 const lists = [];
-                if (symbol === "all_items" || symbol.startsWith("custom_")) lists.push($dataItems);
+                if (symbol === "all_items" || symbol === LEISURE_CATEGORY || symbol.startsWith("custom_")) lists.push($dataItems);
                 if (symbol === "all_weapons" || symbol.startsWith("weapon_") || symbol.startsWith("custom_")) lists.push($dataWeapons);
                 if (symbol === "all_armors" || symbol === "shields" || symbol.startsWith("armor_") || symbol.startsWith("custom_")) lists.push($dataArmors);
                 if (symbol === "skills" || symbol === "spells") lists.push($dataSkills);
@@ -891,6 +902,9 @@
                 } else if (entry.stypeId === 1) availableMap.set("skills", true);
                 else if (entry.stypeId === 2) availableMap.set("spells", true);
 
+                if (window.ItemLeisure && window.ItemLeisure.isLeisure(entry)) {
+                    availableMap.set(LEISURE_CATEGORY, true);
+                }
                 if (entry.note) {
                     const regex = /<category:([^>]*)>/gi;
                     let match;

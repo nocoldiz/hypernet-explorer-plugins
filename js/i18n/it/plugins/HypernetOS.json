@@ -41,6 +41,8 @@
   "safeToTurnOff": "Ora puoi spegnere il computer.",
   "taskManager": "Gestione attività",
   "taskManagerTitle": "Gestione attività esoterica",
+  "oomTitle": "Memoria esaurita",
+  "oomMessage": "Memoria insufficiente per avviare {name}. Chiudi un programma e riprova.",
   "systemLoad": "Carico di sistema:",
   "memory": "Memoria:",
   "colPid": "PID",

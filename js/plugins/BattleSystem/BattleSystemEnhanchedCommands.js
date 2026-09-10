@@ -271,12 +271,18 @@
       ? this._actor.getWeaponBulletConfig()
       : null;
     const hasRanged = !!bulletConfig;
+    // The vector gun reports no magazine at all (it condenses its own rounds,
+    // Weapon/VectorGunSystem.js), so it is ranged without being counted: it
+    // takes the weapon's icon and the SWITCH row, and no ammo rides on Attack.
+    const vectorSwitchReady = !!(window.VectorGun && window.VectorGun.bladeReady(this._actor));
 
     let attackIcon = 97;
     let attackExt = null;
-    if (hasRanged) {
+    if (hasRanged || vectorSwitchReady) {
       const weapon = this._actor.weapons()[0];
       if (weapon && weapon.iconIndex > 0) attackIcon = weapon.iconIndex;
+    }
+    if (hasRanged) {
       // The live projectile count rides on the Attack command itself.
       attackExt = { current: this._actor.getCurrentBullets(), max: bulletConfig.max };
     }
@@ -304,19 +310,18 @@
       // can be shown (the ammo counter on the command, the miss in the log).
       this.addCommandWithIcon("", "attack", true, attackExt, attackIcon);
 
-      if (hasRanged) {
+      if (hyperReady && (hasRanged || vectorSwitchReady)) {
+        this.addCommandWithIcon("", "hyper", true, null, 87);
+      } else if (vectorSwitchReady) {
+        // The vector gun takes that row for its own SWITCH: folding the frame
+        // into the fitted shape and back (Weapon/VectorGunSystem.js). It is
+        // free - it neither spends the round nor raises a guard - so the row
+        // stays on the window and may be pressed again straight away.
+        this.addCommandWithIcon("", "vectorSwitch", true, null, 118);
+      } else if (hasRanged) {
         // Reload doubles as Defense for ranged actors: commandReload both recharges
         // projectiles and guards. The bullet count now shows on Attack instead.
-        // The vector gun running the Blade of Thelema takes that row for its own
-        // SWITCH instead: folding the gun into the machete (and back) is what
-        // loads it (Weapon/VectorGunSystem.js).
-        if (hyperReady) {
-          this.addCommandWithIcon("", "hyper", true, null, 87);
-        } else if (window.VectorGun && window.VectorGun.bladeReady(this._actor)) {
-          this.addCommandWithIcon("", "vectorSwitch", true, null, 118);
-        } else {
-          this.addCommandWithIcon("", "reload", true, null, 115);
-        }
+        this.addCommandWithIcon("", "reload", true, null, 115);
       } else if (hyperReady) {
         this.addCommandWithIcon("", "hyper", true, null, 87);
       } else {
@@ -1232,7 +1237,12 @@
     this._vectorSwitchWait = framesFor(rise || 300);
   };
 
-  /** Passes the turn once the reconstruction has finished. */
+  /**
+   * Hands the window back once the reconstruction has finished. The switch is
+   * not an action: it neither spends the round nor raises a guard, so the same
+   * battler is still choosing and may fold the frame again as many times as she
+   * likes before doing something with it.
+   */
   Scene_Battle.prototype.finishVectorSwitch = function () {
     this._vectorSwitchWait = 0;
     this._vectorSwitchStage = null;
@@ -1240,18 +1250,16 @@
     this._vectorSwitchActorId = null;
     const actor = BattleManager.actor();
     // The turn may have been taken away from under the animation (a forced
-    // action, the actor going down); only the battler that asked for the switch
-    // gets its command spent on it.
+    // action, the actor going down): there is then nothing to hand back to.
     if (!actor || actor.actorId() !== actorId) return;
-    const action = BattleManager.inputtingAction();
-    if (!action) return;
-    const defenseSkill = $dataSkills[2];
-    if (defenseSkill && actor.canUse(defenseSkill)) {
-      action.setSkill(2);
-    } else {
-      action.setGuard();
-    }
-    this.selectNextCommand();
+    const win = this._actorCommandWindow;
+    if (!win) return;
+    // The list is rebuilt (the icon and the row's own word follow the shape),
+    // so the cursor is put back on SWITCH by symbol rather than by index.
+    win.refresh();
+    const index = win.findSymbol("vectorSwitch");
+    if (index >= 0) win.select(index);
+    win.activate();
   };
 
   /**

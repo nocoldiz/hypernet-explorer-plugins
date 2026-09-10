@@ -396,50 +396,93 @@
             return legacyIndex;
         }
 
-        // ── The folder moves ────────────────────────────────────────────────
+        // ── The folder moves and the renames ────────────────────────────────
         // A sheet also travels when it changes FOLDER rather than being cut in
-        // two. Two moves have happened: the Varlenian sheets were lifted out of
+        // two, and it travels again when it is RENAMED. Both have happened more
+        // than once. The Varlenian sheets were lifted out of
         // img/characters/NPCs/ into img/characters/Varlenian/, so that folder
-        // holds exactly what the `varlenian` flag marks and nothing else; and
-        // the pose sheets (a sheet of stances rather than a walk cycle) were
-        // gathered into img/characters/Animations/. Every map, prefab and preset
-        // in the repository was repointed with them, but a stored name records
-        // nothing about the folder it was written under, so a world folder's
-        // poolCache or a savegame written before a move still names the old
-        // folder, which is a 404.
+        // holds exactly what the `varlenian` flag marks and nothing else; the
+        // pose sheets were gathered into img/characters/Animations/; the faces
+        // NPCs/ held a second copy of were sorted out into Animals/, Creatures/,
+        // Zombies/ and Mecha/; and a shelf of beasts was renamed off its sheet
+        // number onto what it actually is (!$DogTail1 -> !$Dog1). Every map,
+        // prefab and preset in the repository was repointed each time, but a
+        // stored name records nothing about the folder or the spelling it was
+        // written under, so a world folder's poolCache or a savegame written
+        // before a move still names the old one - and a character sheet that
+        // 404s is not a missing face, it is the modal "Failed to load / Retry"
+        // screen thrown at the next scene that starts (ImageManager.isReady).
         //
-        // The moves are stated as this one table rather than derived from bare
-        // sheet names, because a name-only rule is not safe here:
-        // img/characters/Skab/Originals holds a second copy of most of the Skab
-        // folder under the SAME sheet name, and matching on the name alone
-        // would drag every deliberate Originals reference out of that folder.
+        // The wardrobe answers all of it, so no table has to be kept in step
+        // with the folders: a bare sheet name is unique across it, so the same
+        // name in another folder is the same sheet moved, and the name minus
+        // its trailing number is the family it was renamed inside.
         //
-        // A folder lists every folder its sheets may have gone to, in the order
-        // they are tried, so a sheet that moved twice (out of NPCs/ into
-        // Varlenian/ and on into Animations/) is still answered from the name
-        // the oldest save holds. A name is only answered when the wardrobe knows
-        // the destination and does not know the stored name, so a sheet that
-        // still exists where it was written is never touched.
-        const MOVED_FOLDERS = {
-            "NPCs/": ["Varlenian/", "Animations/"],
-            "Varlenian/": ["Animations/"],
-            "Skab/": ["Animations/"],
-        };
+        // A name is only answered when the wardrobe does not know it AND it
+        // stands in a folder the wardrobe ITSELF uses, which is what keeps a
+        // name-only rule safe here: a door, a chest, a light, a monster and
+        // img/characters/Skab/Originals (a second copy of most of the Skab
+        // folder under the same sheet names) are none of them in the wardrobe,
+        // so nothing of theirs is ever dragged out of its own folder by a name
+        // that happens to match.
+        //
+        // The index is rebuilt when the wardrobe object itself is replaced,
+        // which is what a mod adding sheets does (see ModManager), and never
+        // otherwise.
+        let sheetIndex = null;
+        let sheetIndexOf = null;
+        function wardrobeIndex() {
+            const data = db();
+            if (sheetIndex && sheetIndexOf === data) return sheetIndex;
+            const bare = {}, family = {}, folders = {};
+            for (const key of Object.keys(data)) {
+                const cut = key.lastIndexOf("/");
+                if (cut < 0) continue;
+                folders[key.slice(0, cut + 1)] = true;
+                const sheet = key.slice(cut + 1);
+                if (bare[sheet] === undefined) bare[sheet] = key;
+                const stem = sheet.replace(/\d+$/, "");
+                (family[stem] || (family[stem] = [])).push(key);
+            }
+            for (const stem of Object.keys(family)) family[stem].sort();
+            sheetIndex = { bare: bare, family: family, folders: folders };
+            sheetIndexOf = data;
+            return sheetIndex;
+        }
+
+        // The folder a stored name stands in, or null when it names no folder
+        // at all or one the wardrobe does not use.
+        function wardrobeFolder(name) {
+            if (typeof name !== "string" || !name) return null;
+            const cut = name.lastIndexOf("/");
+            if (cut < 0) return null;
+            const folder = name.slice(0, cut + 1);
+            return wardrobeIndex().folders[folder] ? folder : null;
+        }
+
+        // A stable choice out of a list of sheets, so a name that has to be
+        // answered with another face is answered with the SAME other face every
+        // time: one lost NPC is one person, not a different one per session.
+        function pickStable(keys, seed) {
+            let h = 0;
+            for (let i = 0; i < seed.length; i++) {
+                h = (Math.imul(h, 31) + seed.charCodeAt(i)) | 0;
+            }
+            return keys[Math.abs(h) % keys.length];
+        }
 
         // Where a stored sheet name lives now, or null when the name is one the
-        // wardrobe still knows (which is every name written since the moves).
+        // wardrobe still knows (which is every name written since the moves) or
+        // one it was never asked about (a door, a chest, a monster).
         function movedSheet(name) {
             if (typeof name !== "string" || !name) return null;
-            const data = db();
-            if (data[name]) return null;
-            for (const [from, folders] of Object.entries(MOVED_FOLDERS)) {
-                if (!name.startsWith(from)) continue;
-                const sheet = name.slice(from.length);
-                for (const to of folders) {
-                    if (data[to + sheet]) return to + sheet;
-                }
-            }
-            return null;
+            if (db()[name]) return null;
+            if (!wardrobeFolder(name)) return null;
+            const index = wardrobeIndex();
+            const sheet = name.slice(name.lastIndexOf("/") + 1);
+            if (index.bare[sheet]) return index.bare[sheet];
+            const family = index.family[sheet.replace(/\d+$/, "")];
+            return (family && family.length) ? pickStable(family, name) : null;
         }
 
         // ====================================================================
@@ -575,6 +618,49 @@
                 const cell = Number(index);
                 const key = slots[Number.isFinite(cell) ? cell : 0];
                 return { name: key || "", index: 0 };
+            },
+
+            // Is this a sheet the wardrobe knows by that exact name? Every key
+            // it holds is a file that is on disk (test/test_sprite_fallback.js
+            // asserts it), so this is also the answer to "will this name load?"
+            // for anything the wardrobe is responsible for.
+            knowsSheet(name) {
+                return !!db()[name];
+            },
+
+            // What to draw when a stored sheet name is not on disk AT ALL: the
+            // load has already failed, so something has to stand in for it or
+            // the scene puts up the Retry screen and the game stops.
+            //
+            // The wardrobe is asked first, because the file is usually not gone
+            // but moved or renamed, and then a face is only ever stood in for a
+            // face: a name that is not in one of the wardrobe's own folders is
+            // left alone, since a door with a person drawn on it is worse than
+            // a door with nothing on it. The stand-in is drawn from the lost
+            // sheet's OWN folder where that folder is in the pool (a zombie is
+            // replaced by a zombie, an animal by an animal), and it is picked
+            // from the name, so the same lost sheet is always the same face.
+            substituteSheet(name) {
+                const now = this.legacySheet(name, 0);
+                if (now && now.name && now.name !== name) return now.name;
+                const folder = wardrobeFolder(name);
+                if (!folder) return null;
+                let pool = [];
+                try {
+                    pool = this.npcKeys() || [];
+                } catch (e) {
+                    pool = [];
+                }
+                if (!pool.length) {
+                    const data = db();
+                    pool = Object.keys(data).filter(k => {
+                        const e = data[k];
+                        return e && e.npc === true && e.beta !== true && e.vip !== true;
+                    });
+                }
+                if (!pool.length) return null;
+                const home = pool.filter(k => k.startsWith(folder));
+                return pickStable(home.length ? home : pool, name);
             },
 
             // The full record for a sheet, or null when the sheet is unknown.
@@ -1247,6 +1333,95 @@
         ImageManager.loadCharacter = function (filename) {
             const now = repoint(filename, 0);
             return _loadCharacter.call(this, now ? now.name : filename);
+        };
+    })();
+
+    // ── A character sheet that is not there must not stop the game ──────────
+    // Repointing above answers every name the wardrobe can account for. What is
+    // left is the name it cannot: a sheet deleted outright, a mod that shipped
+    // half its art, a file that failed to read. Stock RMMZ turns any one of them
+    // into the modal "Failed to load / Retry" screen, and it does not do it
+    // where the sprite is drawn - the errored bitmap simply sits in
+    // ImageManager's cache until the NEXT scene asks isReady(), which is why a
+    // face that has been quietly missing on the map since the world was walked
+    // into puts the Retry screen up at the moment a battle starts. Retrying
+    // never helps: the file is not going to appear.
+    //
+    // So a character bitmap that will not load is given another sheet to be
+    // (SpriteCatalog.substituteSheet) and, if even that will not load, is
+    // dropped from the cache with a line in the console. Nothing else changes:
+    // an errored bitmap that is NOT a character sheet still throws, because a
+    // missing tileset or window skin is a broken build, not a lost face.
+    // The same rule as AssetCaseResolver's, which already does it for sound.
+    (function () {
+        if (typeof Bitmap !== "function" || !Bitmap.prototype || !ImageManager) return;
+
+        const FOLDER = "img/characters/";
+        const reported = Object.create(null);
+
+        // The sheet name behind a bitmap url, or null when the url is not a
+        // character sheet at all.
+        function sheetOf(url) {
+            if (typeof url !== "string" || !url.startsWith(FOLDER) || !url.endsWith(".png")) return null;
+            const raw = url.slice(FOLDER.length, -4);
+            return raw.split("/").map(part => {
+                try { return decodeURIComponent(part); } catch (e) { return part; }
+            }).join("/");
+        }
+
+        function urlOf(sheet) {
+            const encode = (typeof Utils === "object" && Utils.encodeURI)
+                ? Utils.encodeURI.bind(Utils)
+                : encodeURIComponent;
+            return FOLDER + encode(sheet) + ".png";
+        }
+
+        function report(message) {
+            if (reported[message]) return;
+            reported[message] = true;
+            console.warn("[DataService] " + message);
+        }
+
+        // One substitution per bitmap: the stand-in is a sheet the wardrobe
+        // knows, so if that will not load either the build is broken and there
+        // is nothing left to try.
+        const _onError = Bitmap.prototype._onError;
+        Bitmap.prototype._onError = function () {
+            const sheet = sheetOf(this._url);
+            const SC = window.SpriteCatalog;
+            if (sheet && SC && SC.substituteSheet && !this._sheetSubstituted) {
+                const other = SC.substituteSheet(sheet);
+                if (other && other !== sheet) {
+                    this._sheetSubstituted = true;
+                    report(sheet + " could not be loaded; drawing " + other + " instead.");
+                    this._url = urlOf(other);
+                    this._startLoading();
+                    return;
+                }
+            }
+            return _onError.call(this);
+        };
+
+        // Stock isReady() throws on the first errored bitmap it walks past. This
+        // is the same walk with the character sheets taken out of the cache
+        // instead, so the scene starts and the rest of the world is drawn.
+        ImageManager.isReady = function () {
+            for (const cache of [this._cache, this._system]) {
+                for (const url in cache) {
+                    const bitmap = cache[url];
+                    if (bitmap.isError()) {
+                        const sheet = sheetOf(url);
+                        if (sheet) {
+                            report(sheet + " is not on disk; nothing is drawn for it.");
+                            delete cache[url];
+                            continue;
+                        }
+                        this.throwLoadError(bitmap);
+                    }
+                    if (!bitmap.isReady()) return false;
+                }
+            }
+            return true;
         };
     })();
 

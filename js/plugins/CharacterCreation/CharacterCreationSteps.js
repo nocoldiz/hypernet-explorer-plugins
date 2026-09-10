@@ -753,7 +753,20 @@
     _specGridInnerHtml() {
       const actor = Scene_CharacterCreation.getCurrentActor();
       const remaining = this._specsRemaining(actor);
-      const cards = this._specCardsHtml(this._filteredSpecs(), actor, remaining);
+      // The same division the specialization menu draws: what the game already
+      // does something with, then the disciplines that are still only a line on
+      // the sheet, under their own heading. Points are spent on either side of
+      // it exactly the same way, it is a reading order and nothing more.
+      const S = window.Specializations || {};
+      const isDone = (sp) => (S.isImplemented ? S.isImplemented(sp) : sp.implemented !== false);
+      const all = this._filteredSpecs();
+      const done = all.filter(isDone);
+      const todo = all.filter((sp) => !isDone(sp));
+      let cards = this._specCardsHtml(done, actor, remaining);
+      if (todo.length) {
+        cards += `<div class="cc-spec-group-title">${T('SpecMenu.ui.notImplemented')}</div>`;
+        cards += this._specCardsHtml(todo, actor, remaining);
+      }
       if (cards.length > 0) return cards;
       return `<div class="cc-empty-note">${T('SpecMenu.ui.noMatches')}</div>`;
     }

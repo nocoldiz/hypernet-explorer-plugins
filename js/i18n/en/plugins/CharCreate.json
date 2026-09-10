@@ -709,7 +709,8 @@
     "partyNote": "A made character joins no party unless you pick one here. Only parties standing in their home nation are listed.",
     "partyMatch": "Same creed",
     "wealthNote": "What this character brings to the party purse.",
-    "moreMatches": "{n} more , narrow the search to see them."
+    "moreMatches": "{n} more , narrow the search to see them.",
+    "specNotImplemented": "Not implemented"
   },
   "augments": "Augments",
   "augmentsPerMember": "{min}-{max} per member, fitted to their own sockets",

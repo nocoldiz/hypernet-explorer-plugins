@@ -10,17 +10,21 @@
  * popup following the unified D&D pockets design language.
  *
  * Defines on Scene_Map:
- *   openSleepMenu(mode)      - "main" (default), "sleep", "wait", "post_sleep"
- *   openWaitMenu()           - the wait list on its own, resting not offered
+ *   openSleepMenu(mode, opts) - "main" (default), "sleep", "wait", "post_sleep"
+ *   openWaitMenu()           - the wait list, with a rough sleep offered
  *   openCryogenicSleepMenu() - opens directly to cryo year selection
  *   closeSleepMenu(keepBlocking)
  *   execSleepMenuCommand(key)
  *   cancelSleepMenu()
  *
- * Resting is an entry-point decision. Beds, campfires, tents and world-map
- * camps open the menu as a rest ("main"), where Sleep refills the sleep meter
- * in full whatever wake-up hour is picked. The menu tile and the T hotkey open
- * openWaitMenu(), which only runs the clock forward and never rests the party.
+ * How well the party rests is an entry-point decision. Beds, campfires, tents
+ * and world-map camps open the menu as a rest ("main"), where Sleep refills
+ * the sleep meter in full whatever wake-up hour is picked. The menu tile and
+ * the R hotkey open openWaitMenu(), which passes the clock and may also lie
+ * down where it stands: a rough sleep, worth only part of a night
+ * (ROUGH_REST_FACTOR in TimeDateSystem.js). Bedding in the packs (any item
+ * tagged <FullSleep>) lifts that penalty, since it is a bed wherever it is
+ * unrolled. Neither list runs past MAX_REST_HOURS.
  *
  * Must be placed AFTER Core/TimeDateSystem in the plugin manager.
  * Requires css/theme.css (.army-dialog-overlay / .army-dialog /
@@ -54,12 +58,33 @@
     });
   }
 
-  // Sleeping is decided by the entry point, not by proximity: a bed, a
-  // campfire, a tent or a world-map camp opens the menu as a rest (mode
-  // "main", sleeping allowed), while the menu tile and the T hotkey open the
-  // wait list directly, where the clock runs forward but nobody rests.
+  // Where the party rests is decided by the entry point, not by proximity: a
+  // bed, a campfire, a tent or a world-map camp opens the menu as a proper
+  // rest (mode "main"), while the menu tile and the R hotkey open the wait
+  // list, which may also lie down where it stands - a rough sleep, worth only
+  // part of a night (see ROUGH_REST_FACTOR in TimeDateSystem.js).
   function sleepAllowedFor(scene) {
     return !!(scene && scene._sleepMenuAllowSleep);
+  }
+
+  // Bedding in the packs (any item tagged <FullSleep>) is a bed wherever it is
+  // unrolled, so the wait menu's sleep stops being a rough one.
+  function beddingItem() {
+    const TDS = window.TimeDateSystem;
+    return TDS && TDS.getPartyBedding ? TDS.getPartyBedding() : null;
+  }
+
+  // The raw field says the entry point offered a rough sleep; this says the
+  // party will actually get one, which the packs have the last word on.
+  function roughRestFor(scene) {
+    if (!scene || !scene._sleepMenuRoughRest) return false;
+    const TDS = window.TimeDateSystem;
+    return TDS && TDS.isRoughRest ? TDS.isRoughRest(true) : !beddingItem();
+  }
+
+  function roughFactorPercent() {
+    const f = window.TimeDateSystem && window.TimeDateSystem.ROUGH_REST_FACTOR;
+    return Math.round((f > 0 ? f : 0.5) * 100);
   }
 
   // Duration label for a possibly fractional hour count (0.5 -> "30 Minutes").
@@ -79,17 +104,21 @@
     return dt && dt.time24 ? dt.time24 : "";
   }
 
-  // Both Sleep and Wait now share the same duration range: a half-hour nap
-  // up to a full 24-hour day, at every hour mark (no more sparse jumps, no
-  // more six-hour cap on waiting).
-  const ALL_HOURS = [0.5].concat(
-    Array.from({ length: 24 }, (_, i) => i + 1)
-  );
+  // Both Sleep and Wait share the same duration range: a half-hour nap up to
+  // the half-day cap TimeDateSystem sets (MAX_REST_HOURS), at every hour mark.
+  function maxRestHours() {
+    const h = window.TimeDateSystem && window.TimeDateSystem.MAX_REST_HOURS;
+    return h > 0 ? h : 12;
+  }
+
+  function restHours() {
+    return [0.5].concat(Array.from({ length: maxRestHours() }, (_, i) => i + 1));
+  }
 
   function commandsForMode(mode, allowSleep) {
     const t = sleepLabels();
     if (mode === "sleep") {
-      const cmds = ALL_HOURS.map((h) => ({
+      const cmds = restHours().map((h) => ({
         key: "hours_" + h,
         label: durationLabel(t, h),
         rightLabel: wakeTimeLabel(h),
@@ -97,10 +126,10 @@
       cmds.push({ key: "cancel_sleep", label: t.cancel });
       return cmds;
     }
-    // Bethesda-style waiting: available anywhere (T on the map), passes the
+    // Bethesda-style waiting: available anywhere (R on the map), passes the
     // clock without resting the party, so it never refills the sleep meter.
     if (mode === "wait") {
-      const cmds = ALL_HOURS.map((h) => ({
+      const cmds = restHours().map((h) => ({
         key: "wait_" + h,
         label: durationLabel(t, h),
         rightLabel: wakeTimeLabel(h),
@@ -243,9 +272,18 @@
     );
   }
 
-  function titleForMode(mode) {
+  function titleForMode(mode, scene) {
     const t = sleepLabels();
-    if (mode === "sleep") return t.titleSleep;
+    // A pitched camp says so at the top of the menu: the rows underneath are
+    // the same ones a bed offers, and only the header tells the party where
+    // they are about to spend the night (window.CampRest).
+    const camping = !!(window.CampRest && window.CampRest.isPitched());
+    if (camping && (mode === "main" || mode === "sleep")) {
+      return mode === "main" ? t.titleCamp : t.titleCampSleep;
+    }
+    // Lying down where the party stands is its own header, so a rough sleep is
+    // never mistaken for the full night a bed offers.
+    if (mode === "sleep") return roughRestFor(scene) ? t.titleRoughSleep : t.titleSleep;
     if (mode === "wait") return t.titleWait;
     if (mode === "post_sleep") return t.titlePostSleep;
     if (mode === "cryo") return t.titleCryo;
@@ -412,16 +450,18 @@
     return !!scene._sleepMenuEl;
   }
 
-  Scene_Map.prototype.openSleepMenu = function (mode) {
+  Scene_Map.prototype.openSleepMenu = function (mode, opts) {
     if (alreadyOpen(this)) return;
     this._sleepMenuMode = mode || "main";
     this._sleepMenuIndex = 0;
-    // Remember whether the wait list is the entry point (T with no bed nearby)
+    // Remember whether the wait list is the entry point (R with no bed nearby)
     // or a page under the rest menu, so Cancel goes back to the right place.
     this._sleepMenuDirectWait = this._sleepMenuMode === "wait";
-    // Resting is an entry-point decision: everything but the direct wait list
-    // was opened from a bed, a campfire, a tent or a camp, so it may sleep.
-    this._sleepMenuAllowSleep = !this._sleepMenuDirectWait;
+    // A direct wait list may still lie down, but only as a rough sleep; every
+    // other entry point was opened from a bed, a campfire, a tent or a camp
+    // and rests the party in full.
+    this._sleepMenuRoughRest = !!(opts && opts.roughRest);
+    this._sleepMenuAllowSleep = !this._sleepMenuDirectWait || this._sleepMenuRoughRest;
     $gameTemp._sleepMenuOpen = true;
     if (!this._sleepMenuEl) {
       const el = document.createElement("div");
@@ -439,11 +479,12 @@
     SleepMenuInputManager.activate(this);
   };
 
-  // The T hotkey / menu tile: pure Bethesda waiting. The clock runs forward
-  // and the needs wear down, but the party never rests, so this entry point
-  // can neither refill the sleep meter nor reach the sleep list.
+  // The R hotkey / menu tile / hotbar: waiting where the party stands, with
+  // the Sleep page reachable by flipping the selector. Waiting runs the clock
+  // and wears the needs down; sleeping here is sleeping rough, so it refills
+  // only part of the sleep meter and mends nobody's bones.
   Scene_Map.prototype.openWaitMenu = function () {
-    this.openSleepMenu("wait");
+    this.openSleepMenu("wait", { roughRest: true });
   };
 
   // Opens directly to cryogenic sleep year selection (bypassing the main menu)
@@ -452,6 +493,7 @@
     this._sleepMenuMode = "cryo";
     this._sleepMenuIndex = 0;
     this._sleepMenuDirectWait = false;
+    this._sleepMenuRoughRest = false;
     this._sleepMenuAllowSleep = true;
     $gameTemp._sleepMenuOpen = true;
     if (!this._sleepMenuEl) {
@@ -492,7 +534,7 @@
     const cryoHTML = mode === "cryo" ? this._cryoPickerHTML() : "";
     this._sleepMenuEl.innerHTML = `
       <div class="army-dialog${mode === "cryo" ? " army-dialog--cryo" : ""}">
-        <h3>${titleForMode(mode)}</h3>
+        <h3>${titleForMode(mode, this)}</h3>
         ${typeSelectorHTML}
         ${cryoHTML}
         <div class="army-dialog-options${isDuration ? " army-dialog-options--scroll" : ""}">${optionsHTML}</div>
@@ -645,11 +687,23 @@
     const t = sleepLabels();
     if (!sleepAllowedFor(this)) return "";
     const label = this._sleepMenuMode === "sleep" ? t.sleep : t.wait;
+    // The sleep page of a wait list says what it is worth right under the
+    // selector: what the bedding in the packs buys, or, with nothing to lie on,
+    // how little of a night sleeping rough is worth.
+    let hint = "";
+    if (this._sleepMenuMode === "sleep" && this._sleepMenuRoughRest) {
+      const bedding = beddingItem();
+      if (bedding && t.beddingHint) {
+        hint = `<div class="army-dialog-type-hint">${t.beddingHint.format(bedding.name)}</div>`;
+      } else if (!bedding && t.roughHint) {
+        hint = `<div class="army-dialog-type-hint">${t.roughHint.format(roughFactorPercent())}</div>`;
+      }
+    }
     return `<div class="army-dialog-type-selector">
       <span class="army-dialog-type-arrow" data-dir="left">&#9668;</span>
       <span class="army-dialog-type-label">${label}</span>
       <span class="army-dialog-type-arrow" data-dir="right">&#9658;</span>
-    </div>`;
+    </div>${hint}`;
   };
 
   // Flips between the Sleep and Wait duration lists in place, keeping the
@@ -691,6 +745,11 @@
   Scene_Map.prototype.closeSleepMenu = function (keepBlocking) {
     SleepMenuInputManager.deactivate();
     if (!keepBlocking) $gameTemp._sleepMenuOpen = false;
+    // keepBlocking is the menu handing over to a rest sequence, which is the
+    // only way a camp is ever slept in: any other close is the party walking
+    // away from it, so the camp is struck rather than left standing for
+    // whatever bed they lie down in next.
+    if (!keepBlocking && window.CampRest) window.CampRest.strike();
     if (this._sleepMenuEl) {
       const el = this._sleepMenuEl;
       this._sleepMenuEl = null;
@@ -706,7 +765,10 @@
   Scene_Map.prototype.cancelSleepMenu = function () {
     SoundManager.playCancel();
     if (this._sleepMenuMode === "sleep") {
-      this._setSleepMenuMode("main");
+      // Backing out of a rough sleep closes the menu: the wait list it was
+      // flipped from is itself the entry point, there is no rest menu behind.
+      if (this._sleepMenuDirectWait) this.closeSleepMenu();
+      else this._setSleepMenuMode("main");
     } else if (this._sleepMenuMode === "wait") {
       // Backing out returns to the rest menu when that is where waiting was
       // picked from, and closes outright when T opened the wait list directly.
@@ -743,9 +805,10 @@
 
     if (key.startsWith("hours_")) {
       const hours = Number(key.slice(6));
+      const rough = roughRestFor(this);
       SoundManager.playOk();
       this.closeSleepMenu(true);
-      startSequence(() => this.startSleepSequence(hours));
+      startSequence(() => this.startSleepSequence(hours, false, { rough: rough }));
       return;
     }
     if (key.startsWith("wait_")) {
@@ -1138,4 +1201,131 @@
     }
     _Scene_Map_terminate_sleepUI.call(this);
   };
+
+  //=============================================================================
+  // MealBars - the serving card
+  //=============================================================================
+  // What a meal did, drawn rather than described. One row per eater, each bar
+  // starting where that meter stood before the food and running up to where it
+  // stands after, so the party can be watched being fed. A summon is not on the
+  // card because it is not at the table (window.PartyMeal.eaters).
+  //
+  // It is a plain DOM overlay on document.body, which is what lets it be shown
+  // from inside a menu: eating no longer has to drop the player back onto the
+  // map for a common event to run, so the card appears over whatever screen the
+  // food was eaten on and fades on its own.
+  //
+  // Past 100% the bar is full and the colour carries the surplus: amber over
+  // full, red at the overeating line (window.NeedGauge.hungerBand).
+  //=============================================================================
+  const MEAL_OVERLAY_ID = "meal-bars-overlay";   // i18n-ignore  element id
+  const MEAL_FILL_FRAMES = 42;                   // how long a bar takes to run up
+  const MEAL_HOLD_MS = 2600;                     // how long the card stays after
+
+  function mealMax() {
+    const TDS = window.TimeDateSystem || {};
+    return Number(TDS.overeatMaxHunger) || 350;
+  }
+
+  function mealEscape(text) {
+    return String(text == null ? "" : text).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    })[c]);
+  }
+
+  // The width of one reading on a track that runs to the overeating ceiling,
+  // not to 100%: that is what makes a surplus visible as length instead of only
+  // as colour, and it keeps the full mark in the same place on every row.
+  function mealWidth(pct) {
+    const ceiling = (mealMax() / (window.TimeDateSystem.maxHunger || 100)) * 100;
+    return Math.max(0, Math.min(100, (pct / ceiling) * 100));
+  }
+
+  function mealBand(pct) {
+    const gauge = window.NeedGauge;
+    return gauge && gauge.hungerBand ? gauge.hungerBand(pct) : "gauge-band--ok";
+  }
+
+  window.MealBars = {
+    // report is window.PartyMeal.serve()'s answer; opts.title names the dish.
+    show(report, opts = {}) {
+      if (typeof document === "undefined" || !document || !document.body) return null;
+      const rows = (report && report.members) || [];
+      if (!rows.length) return null;
+
+      this.hide();
+
+      const el = document.createElement("div");
+      el.id = MEAL_OVERLAY_ID;
+      el.className = "meal-card";
+
+      // The dish names the card when there is a dish; otherwise the one word
+      // that says what just happened. Guarded like every other lookup in this
+      // file: a card that cannot read its own heading still draws its bars.
+      const heading = opts.title ||
+        (typeof window.T === "function" ? window.T("Eating.served") : "");
+      const title = heading
+        ? `<div class="meal-card-title">${mealEscape(heading)}</div>` : "";
+
+      // The full mark sits where 100% falls on a track that runs to the
+      // ceiling, so a bar past it is read as past full at a glance.
+      const fullAt = mealWidth(100);
+      let body = "";
+      rows.forEach((row) => {
+        const band = mealBand(row.toPct);
+        const from = mealWidth(row.fromPct);
+        const to = mealWidth(row.toPct);
+        const delta = Math.round(row.toPct - row.fromPct);
+        const sign = delta > 0 ? "+" : "";
+        body +=
+          `<div class="meal-row">` +
+            `<div class="meal-row-head">` +
+              `<span class="meal-row-name">${mealEscape(row.name)}</span>` +
+              `<span class="meal-row-val gauge-ink ${band}">${Math.round(row.toPct)}%` +
+                `<span class="meal-row-delta">${sign}${delta}</span>` +
+              `</span>` +
+            `</div>` +
+            `<div class="meal-row-track">` +
+              `<div class="meal-row-mark" style="left:${fullAt}%"></div>` +
+              `<div class="meal-row-fill gauge-fill ${band}" ` +
+                `style="width:${from}%" data-to="${to}"></div>` +
+            `</div>` +
+          `</div>`;
+      });
+
+      el.innerHTML = title + `<div class="meal-rows">${body}</div>`;
+      document.body.appendChild(el);
+
+      // The run-up is done on the next frame so the browser has laid the bars
+      // out at their starting width first: set both in one paint and there is
+      // no transition to see.
+      const runUp = () => {
+        el.querySelectorAll(".meal-row-fill").forEach((fill) => {
+          fill.style.transitionDuration = `${Math.round(MEAL_FILL_FRAMES / 60 * 1000)}ms`;
+          fill.style.width = `${fill.getAttribute("data-to")}%`;
+        });
+      };
+      if (typeof requestAnimationFrame === "function") requestAnimationFrame(runUp);
+      else runUp();
+
+      this._el = el;
+      this._timer = setTimeout(() => {
+        el.classList.add("meal-card--out");
+        this._timer = setTimeout(() => this.hide(), 400);
+      }, MEAL_HOLD_MS);
+      return el;
+    },
+
+    hide() {
+      if (this._timer) { clearTimeout(this._timer); this._timer = null; }
+      const el = this._el || (typeof document !== "undefined" && document
+        ? document.getElementById(MEAL_OVERLAY_ID) : null);
+      this._el = null;
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+    },
+
+    _el: null,
+    _timer: null,
+  };
+
 })();

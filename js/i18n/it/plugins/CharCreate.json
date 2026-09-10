@@ -709,7 +709,8 @@
     "partyNote": "Un personaggio creato non si iscrive ad alcun partito se non ne scegli uno qui. Sono elencati solo i partiti della sua nazione d'origine.",
     "partyMatch": "Stesso credo",
     "wealthNote": "Quanto questo personaggio porta alla cassa del gruppo.",
-    "moreMatches": "Altri {n} , affina la ricerca per vederli."
+    "moreMatches": "Altri {n} , affina la ricerca per vederli.",
+    "specNotImplemented": "Non implementate"
   },
   "augments": "Innesti",
   "augmentsPerMember": "{min}-{max} a testa, montati sulle proprie sedi",

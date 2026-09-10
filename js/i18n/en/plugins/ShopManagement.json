@@ -67,6 +67,7 @@
   "ui": {
     "okAssign": "OK → assign",
     "destination": "Destination",
+    "delivery": "Delivery",
     "okAssignItem": "OK → assign item",
     "takings": "Takings",
     "takingsHint": "What the shop has earned since it was last emptied.",

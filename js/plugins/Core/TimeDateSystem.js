@@ -12,8 +12,8 @@
  *
  * --- What's New in v1.2.0 ---
  * - Added overeating system:
- * - Hunger indicator can exceed 100% (up to 150% by default).
- * - If it exceeds 300%, the player suffers a state (default: 41).
+ * - Hunger indicator can exceed 100% (up to 350% by default).
+ * - If it exceeds 250%, the player suffers a state (default: 41).
  * - The state is removed when hunger drops below 100%.
  * - Hunger consumption is much faster when above 100%.
  *
@@ -73,7 +73,7 @@
  *
  * @param overeatStateId
  * @text Overeating State ID
- * @desc The ID of the state applied when overeating (>300%).
+ * @desc The ID of the state applied when overeating (>250%).
  * @type state
  * @default 41
  * @parent --- Hunger/Sleep Settings ---
@@ -324,6 +324,10 @@
  * @text Sleep Menu
  * @desc Opens the dedicated sleep and management menu.
  *
+ * @command MakeCamp
+ * @text Make a Camp
+ * @desc Pitches a camp and opens the rest menu. A night at a camp also washes, feeds and reunites the party.
+ *
  * @command CryogenicSleep
  * @text Cryogenic Sleep
  * @desc Opens the cryogenic pod date picker. The party is frozen exactly as it went in while the world runs on (up to 1 Jan 2012).
@@ -393,6 +397,11 @@
   const overeatDepletionMultiplier = Number(
     parameters.overeatDepletionMultiplier || 3.0
   );
+  // Where a full stomach becomes too full. The meter reads past 100% long
+  // before it hurts: the bar turns amber the moment it crosses full and only
+  // turns red, and only then applies the overeating state, at this line. One
+  // constant so the colour and the penalty can never disagree.
+  const OVEREAT_RATE = 2.5;          // 250% of a full meter
 
   const maxSleep = Number(parameters.maxSleep || 100);
 
@@ -457,6 +466,15 @@
 
   // Maps where hunger/sleep should not deplete (prison, transport maps, etc.).
   const NO_DEPLETION_MAPS = [718, 719, 720, 327, 1094, 317, 1102];
+
+  // The one map id every procedural square reuses.
+  const PROC_MAP_ID = 636;
+
+  // How many steps buy one game minute on foot. A procedural square is a whole
+  // world tile blown up to walkable size, so crossing one is hundreds of steps:
+  // it gets its own, far slower rate, otherwise a single square eats an hour.
+  const STEPS_PER_MINUTE = 10;
+  const PROC_STEPS_PER_MINUTE = 60;
 
   // The interior maps of a vehicle (train, bus, taxi, camper, car). The travel
   // window (MapInfoHUD) only counts one of these as "inside a vehicle" - the
@@ -533,6 +551,36 @@
 
     updateGameDateVariable();
     return currentTime;
+  }
+
+  // What living through a stretch of time costs the party: hunger and sleep
+  // drain as if this many minutes of regular-map walking had passed (1 min =
+  // 10 steps at the configured decrease rate), with the same walk-drain
+  // multipliers (temperature stress + overeating), so a time skip and a walk
+  // are never worth different amounts.
+  function drainNeedsOverMinutes(totalMinutes) {
+    const leader = $gameParty?.leader();
+    if (!leader) return;
+    let hungerMultiplier = 1;
+    if (leader.hunger() > maxHunger) {
+      hungerMultiplier *= overeatDepletionMultiplier;
+    }
+    hungerMultiplier *= temperatureHungerMultiplier($gameVariables.value(temperatureVariable));
+    leader.reduceHunger(hungerDecreaseRate * 10 * totalMinutes * hungerMultiplier);
+    leader.reduceSleep(sleepDecreaseRate   * 10 * totalMinutes);
+  }
+
+  // Hours spent doing one thing, and everything that follows from them: the
+  // needs drain, an addict feels the gap, the world simulates forward. This is
+  // the ONE way a system outside this plugin puts the clock forward (studying a
+  // book, SimulateTime); sleeping has its own recovery and does not come here.
+  // Pass { drain: false } for time that costs the body nothing.
+  function passTime(minutes, opts) {
+    const totalMinutes = Math.max(0, Math.round(Number(minutes) || 0));
+    if (totalMinutes <= 0) return getGameTimeMinutes();
+    if (!opts || opts.drain !== false) drainNeedsOverMinutes(totalMinutes);
+    if (window.AddictionSystem) window.AddictionSystem.advanceMinutes(totalMinutes);
+    return advanceGameTimeSimulated(totalMinutes);
   }
 
   // Runs the hourly NPC schedule passes an advancing sequence (sleep, waiting)
@@ -741,21 +789,16 @@
       const fat = $gameVariables.value(fatVariableId) || 0;
       const caffeine = $gameVariables.value(caffeineVariableId) || 0;
 
-      // Calculate hunger recovery based on nutritional values
-      const recoveryAmount = (calories * calorieFactor) + (protein * proteinFactor) + (fat * fatFactor);
+      // Hunger recovery, the serving card and the caffeine are all PartyMeal's
+      // now: an event that feeds one character shows the same bars the backpack
+      // and the kitchen do.
+      const recoveryAmount = window.PartyMeal.recoveryOf({ calories, protein, fat });
 
       debug(
         `Eating food for actor ${actorId}: C=${calories}, P=${protein}, F=${fat}, Caffeine=${caffeine}. Recovering ${recoveryAmount.toFixed(2)} hunger.`
       );
 
-      actor.addHunger(recoveryAmount);
-
-      // Handle caffeine effect on sleep
-      if (caffeine > 0) {
-        const sleepReduction = caffeine * caffeineFactor;
-        actor.reduceSleep(sleepReduction);
-        debug(`Caffeine reduced sleep by ${sleepReduction.toFixed(2)} points.`);
-      }
+      window.PartyMeal.eat(recoveryAmount, { actors: [actor], caffeine });
 
       // Reset nutrient variables to 0 after consumption
       $gameVariables.setValue(calorieVariableId, 0);
@@ -874,25 +917,9 @@
     ));
     if (totalMinutes <= 0) return;
 
-    // Drain player hunger and sleep as if this many minutes of regular-map
-    // walking passed (1 min = 10 steps at the configured decrease rate).
-    // Mirror the walk-drain multipliers (temperature stress + overeating) so
-    // time-skips and walking stay consistent.
-    const leader = $gameParty?.leader();
-    if (leader) {
-      let hungerMultiplier = 1;
-      if (leader.hunger() > maxHunger) {
-        hungerMultiplier *= overeatDepletionMultiplier;
-      }
-      hungerMultiplier *= temperatureHungerMultiplier($gameVariables.value(temperatureVariable));
-      leader.reduceHunger(hungerDecreaseRate * 10 * totalMinutes * hungerMultiplier);
-      leader.reduceSleep(sleepDecreaseRate   * 10 * totalMinutes);
-    }
-
-    // Simulated time is still time an addict spends without their substance.
-    if (window.AddictionSystem) window.AddictionSystem.advanceMinutes(totalMinutes);
-
-    const newTime = advanceGameTimeSimulated(totalMinutes);
+    // Simulated time is still time lived through: the needs drain and an
+    // addict feels the gap, exactly as any other hours would.
+    const newTime = passTime(totalMinutes);
     debug(`SimulateTime: advanced ${totalMinutes} min. New time: ${getDateTimeFromMinutes(newTime).fullDate}`);
   });
 
@@ -952,6 +979,14 @@
   PluginManager.registerCommand(pluginName, "SleepMenu", function (args) {
     if (SceneManager._scene instanceof Scene_Map) {
       SceneManager._scene.openSleepMenu();
+    }
+  });
+
+  // The camp: the same rest menu, opened as an evening in the open rather than
+  // a room paid for. window.CampRest owns what that buys (see its section).
+  PluginManager.registerCommand(pluginName, "MakeCamp", function (args) {
+    if (SceneManager._scene instanceof Scene_Map) {
+      window.CampRest.pitch();
     }
   });
 
@@ -1218,9 +1253,167 @@
     this.setExtendedNeed("leisure", this.leisure() - amount);
   };
 
+  //===========================================================================
+  // Company - the road is the party's social life
+  //===========================================================================
+  // Social is the one meter travelling FILLS instead of emptying. A party on
+  // the move spends every hour of the journey in each other's company: walking
+  // a road, riding a camper, crossing the world map. So the meter only runs
+  // down for somebody travelling ALONE, and climbs back, slowly, for everybody
+  // the moment there is anybody else on the strength. A pet trailing the party
+  // is company too, worth half a person.
+  //
+  // None of this announces itself. Company is the normal state of a party, and
+  // a popup every few steps saying so is noise: the meter simply sits where a
+  // party that travels together would keep it, and the only time anybody has
+  // to think about it is when they are on the road on their own.
+  const SOCIAL_COMPANY_GAIN = 0.75;   // share of the lone drain rate, per companion
+  const SOCIAL_COMPANY_CAP  = 2;      // a crowd is no better company than a pair
+
+  function petIsAlong() {
+    try {
+      return !!(window.PetSystem && window.PetSystem.getActivePet && window.PetSystem.getActivePet());
+    } catch (e) {
+      return false;   // a pet nobody can look up is nobody
+    }
+  }
+
+  // How much company the party is to itself right now: 0 for somebody on their
+  // own, 1 for one companion, half a point for a pet at their heels.
+  function partyCompany() {
+    if (typeof $gameParty === "undefined" || !$gameParty) return 0;
+    const people = $gameParty.members().filter((m) => !!m).length;
+    return Math.max(0, people - 1) + (petIsAlong() ? 0.5 : 0);
+  }
+
+  // One step of the social meter for the whole party: down for a lone
+  // traveller, up while there is somebody to travel with.
+  function stepSocialCompany(rate) {
+    if (typeof $gameParty === "undefined" || !$gameParty) return;
+    const company = Math.min(partyCompany(), SOCIAL_COMPANY_CAP);
+    for (const actor of $gameParty.members()) {
+      if (!actor) continue;
+      if (company <= 0) {
+        if (actor.reduceSocial) actor.reduceSocial(rate * needAugmentRate(actor, "social"));
+      } else if (actor.addSocial) {
+        actor.addSocial(rate * SOCIAL_COMPANY_GAIN * company);
+      }
+    }
+  }
+
+  //===========================================================================
+  // PartyLife - a companion doing something about it
+  //===========================================================================
+  // The leader is the player: what they do about a need is the player's own
+  // business, taken in a menu. Everybody else looks after themselves, and the
+  // popup is the only place that decision is visible ("Lyra is playing
+  // videogames", "Bruno is washing up", "Ada is talking to Bruno").
+  //
+  // An act pays the meter it was for and nothing else. It never spends
+  // anything out of the pack: a companion reads their own book and puts it
+  // back, and a consumable is the player's to spend (ItemLeisure.pick refuses
+  // one). A non-sentient member is left out of all of it - a beast keeps no
+  // pastimes and washes nobody's hands - which window.NPCCreature answers, not
+  // a class id written out here.
+  const ACT_INTERVAL_MIN = 60;   // game minutes between one member's acts
+  const ACT_THRESHOLD    = 45;   // the meter has to be under this to be worth acting on
+  const ACT_GAIN = { hygiene: 14, social: 16, leisure: 12 };
+  const IDLE_LEISURE_SHARE = 0.5;   // a pastime with nothing in the pack is worth less
+
+  function isNonSentientMember(actor) {
+    try {
+      return !!(window.NPCCreature && window.NPCCreature.isNonSentientActor
+        && window.NPCCreature.isNonSentientActor(actor));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  window.PartyLife = {
+    ACT_INTERVAL_MIN, ACT_THRESHOLD, ACT_GAIN,
+
+    // Whoever in the party is not the player and is somebody rather than
+    // something: the members who look after themselves.
+    companions() {
+      if (typeof $gameParty === "undefined" || !$gameParty) return [];
+      const leader = $gameParty.leader();
+      return $gameParty.members().filter(
+        (m) => m && m !== leader && !isNonSentientMember(m));
+    },
+
+    // The worst extended need this member has, once it is low enough to be
+    // worth doing something about. Null while they are comfortable.
+    pressingNeed(actor) {
+      if (!actor || !window.PartyNeeds) return null;
+      const needs = window.PartyNeeds.getMemberNeeds(actor);
+      let worst = null;
+      for (const key of Object.keys(ACT_GAIN)) {
+        const pct = needs[key];
+        if (pct === null || pct === undefined || pct >= ACT_THRESHOLD) continue;
+        if (!worst || pct < worst.pct) worst = { key, pct };
+      }
+      return worst ? worst.key : null;
+    },
+
+    // What this member does about it, as the popup says it, or null when there
+    // is nothing to be done (nobody to talk to, no pastime and no line).
+    act(actor, key) {
+      if (!actor) return null;
+      const name = actor.name();
+      if (key === "leisure") {
+        const item = window.ItemLeisure ? window.ItemLeisure.pick() : null;
+        if (item) {
+          const line = window.ItemLeisure.line(name, item);
+          const gain = Math.max(ACT_GAIN.leisure, window.ItemLeisure.amount(item));
+          if (actor.addLeisure) actor.addLeisure(gain);
+          return line;
+        }
+        // Nothing in the pack to do it with: they find something to do anyway,
+        // and it is worth less than a pastime somebody actually packed.
+        if (actor.addLeisure) actor.addLeisure(ACT_GAIN.leisure * IDLE_LEISURE_SHARE);
+        return T('TimeDate.partyLife.idle', { name });
+      }
+      if (key === "social") {
+        const others = ($gameParty ? $gameParty.members() : [])
+          .filter((m) => m && m !== actor && !isNonSentientMember(m));
+        if (!others.length) return null;   // there is nobody to talk to
+        const other = others[Math.floor(Math.random() * others.length)];
+        if (actor.addSocial) actor.addSocial(ACT_GAIN.social);
+        if (other.addSocial) other.addSocial(ACT_GAIN.social);
+        return T('TimeDate.partyLife.talk', { name, other: other.name() });
+      }
+      if (key === "hygiene") {
+        if (actor.addHygiene) actor.addHygiene(ACT_GAIN.hygiene);
+        return T('TimeDate.partyLife.wash', { name });
+      }
+      return null;
+    },
+
+    // One member, at most, per pass: the party is a group of people, not a
+    // queue of announcements. The clock the interval is measured on is the
+    // world's, so a member who saw to themselves an hour ago is left alone
+    // whether that hour was walked, driven or slept through.
+    update() {
+      const now = getGameTimeMinutes();
+      for (const actor of this.companions()) {
+        if (actor._lastNeedAct != null && now - actor._lastNeedAct < ACT_INTERVAL_MIN) continue;
+        const key = this.pressingNeed(actor);
+        if (!key) continue;
+        const line = this.act(actor, key);
+        if (!line) continue;
+        actor._lastNeedAct = now;
+        try {
+          window.ParchmentToast?.show(line, { key: 'partyLife:' + actor.actorId() });
+        } catch (e) { /* a popup never breaks a journey */ }
+        return true;
+      }
+      return false;
+    },
+  };
+
   // New method for handling overeating state
   Game_Actor.prototype.updateOvereatState = function () {
-    const overeatThreshold = maxHunger * 3.0; // 300%
+    const overeatThreshold = maxHunger * OVEREAT_RATE; // 250%
     const normalThreshold = maxHunger; // 100%
 
     const isOvereating = this.isStateAffected(overeatStateId);
@@ -1449,8 +1642,10 @@
       }
       setGameTimeMinutes(currentTime + minutesToAdd);
     } else {
-      // On all other maps, time advances by 1 minute every 10 steps.
-      if ($gameParty.steps() % 10 === 0) {
+      // On foot, time advances by 1 minute every STEPS_PER_MINUTE steps, and
+      // much more slowly than that inside a procedural square.
+      const stepsPerMinute = (mapId === PROC_MAP_ID) ? PROC_STEPS_PER_MINUTE : STEPS_PER_MINUTE;
+      if ($gameParty.steps() % stepsPerMinute === 0) {
         setGameTimeMinutes(currentTime + 1);
       }
     }
@@ -1477,9 +1672,13 @@
       // Extended needs drain alongside sleep, at the NPC-meter ratios
       // (hygiene 0.05, social 0.03, leisure 0.03 per minute vs sleep 0.06).
       leader.reduceHygiene(sleepRate * 0.83 * baseMultiplier * needAugmentRate(leader, "hygiene"));
-      leader.reduceSocial(sleepRate * 0.5 * baseMultiplier * needAugmentRate(leader, "social"));
       leader.reduceLeisure(sleepRate * 0.5 * baseMultiplier * needAugmentRate(leader, "leisure"));
     }
+
+    // Social is not the leader's meter alone: it is the party's, and the road
+    // fills it as long as there is somebody to travel with. Only a lone
+    // traveller watches it run down (see Company, above).
+    stepSocialCompany(sleepRate * 0.5 * baseMultiplier);
 
     // An Entertainer travelling with the party is a show that never stops:
     // every member's Fun climbs while they are on the strength, and a second
@@ -1549,6 +1748,10 @@
         }
       }
     }
+
+    // What the party does about its own needs, as opposed to what the player
+    // does about the leader's: one companion, at most, sees to themselves.
+    if (window.PartyLife) window.PartyLife.update();
   };
 
   //=============================================================================
@@ -2450,6 +2653,24 @@
       if (pct >= 50) return "gauge-band--warn";
       return "gauge-band--ok";
     },
+    // Hunger is the one meter that keeps going after it is full: a big meal
+    // carries past 100% and sits there being digested. So it reads on a longer
+    // scale than the others. Under full it bands like anything else; over full
+    // it turns amber to say the surplus is there, and at the overeating line it
+    // turns red, which is the same line updateOvereatState() applies the state
+    // on. Nothing reading this has to know either number.
+    hungerBand(pct) {
+      if (pct > this.GORGED_PCT) return "gauge-band--gorged";
+      if (pct > 100) return "gauge-band--over";
+      return this.band(pct);
+    },
+    // How much of the track a hunger reading fills. The bar itself never grows
+    // past its own width: past full it is the colour that carries the surplus.
+    hungerWidth(pct) {
+      return Math.max(0, Math.min(100, pct));
+    },
+    get FULL_PCT() { return 100; },
+    get GORGED_PCT() { return Math.round(OVEREAT_RATE * 100); },
   };
 
   window.PartyNeeds = {
@@ -2519,6 +2740,293 @@
 
     addLeisureToAll(delta, opts) { this.addNeedToAll('leisure', delta, opts); },
     addSocialToAll(delta, opts)  { this.addNeedToAll('social',  delta, opts); }
+  };
+
+  //=============================================================================
+  // PartyMeal - one table, one formula, one serving card
+  //=============================================================================
+  // Four plugins used to work out what a meal does: the EatFood command, the
+  // backpack, the kitchen and the camp. They read the same three tags and
+  // multiplied them by the same three factors, but they disagreed on who was
+  // fed and on whether a surplus could carry past a full meter. So the meal
+  // itself lives here now, and every one of them serves through it.
+  //
+  // The serving is reported as a card of bars, one per eater, filling from what
+  // the meter said before the food to what it says after (Core/TimeDateSystemUI
+  // draws it). A meal is a thing that happens to the whole party, and the party
+  // is what the card shows.
+  //=============================================================================
+  // The player keeps their meters on the actor; a recruited companion keeps
+  // theirs on their NPC society profile, which is the copy the menu draws for
+  // party slots 2 and 3. Hunger is written to both.
+  function mirrorHungerToProfile(actor, gained) {
+    if (!actor || !gained || !actor.actorId || actor.actorId() === 1) return;
+    const profile = window.NPCSocietyRegistry?.getProfile?.(actor.name());
+    if (!profile || typeof profile.hunger !== "number") return;
+    const pct = (gained / maxHunger) * 100;
+    profile.hunger = Math.max(0, Math.min(100, profile.hunger + pct));
+  }
+
+  window.PartyMeal = {
+    // Who is at the table. A summon is a rite that lasts a battle, not a mouth
+    // to feed: it holds the fourth party slot while it is out, so it has to be
+    // taken back out of every list a meal is shared between, and it never gets
+    // a bar on the card either.
+    eaters() {
+      if (!window.$gameParty || !$gameParty.members) return [];
+      const summons = window.SummonSystem;
+      return $gameParty.members().filter((mem) => {
+        if (!mem || typeof mem.addHunger !== "function") return false;
+        if (summons && summons.isProxyActor && mem.actorId &&
+            summons.isProxyActor(mem.actorId())) return false;
+        return true;
+      });
+    },
+
+    // The nutrition tags of one item, read once, here.
+    nutritionOf(item) {
+      const read = (tag) => {
+        if (!item || !item.note) return 0;
+        const m = item.note.match(new RegExp("<" + tag + ":\\s*(\\d+)>", "i"));
+        return m ? Number(m[1]) : 0;
+      };
+      return {
+        calories: read("calories"),   // i18n-ignore  note tag
+        protein:  read("protein"),    // i18n-ignore  note tag
+        fat:      read("fat"),        // i18n-ignore  note tag
+        caffeine: read("caffeine"),   // i18n-ignore  note tag
+      };
+    },
+
+    // Hunger points from a nutrition reading: the EatFood formula, and the only
+    // copy of it left.
+    recoveryOf(nutrition) {
+      const n = nutrition || {};
+      return ((Number(n.calories) || 0) * calorieFactor) +
+             ((Number(n.protein)  || 0) * proteinFactor) +
+             ((Number(n.fat)      || 0) * fatFactor);
+    },
+
+    /**
+     * Serve a meal and report what it did.
+     *
+     * Hunger is ONE meter for the whole party, not one per member: Game_Actor's
+     * _hunger is a prototype accessor onto $gameSystem._globalHunger, so a
+     * spoonful fed to anybody is fed to everybody. That is why the food is
+     * applied once, through whoever is holding the plate, and why every row of
+     * the card reads the same before and after. What the eaters list decides is
+     * not who gets a share, it is whose face is on the card.
+     *
+     * opts.actors    who is at the table (defaults to eaters())
+     * opts.caffeine  ground off the sleep meter of whoever ate
+     *
+     * Returns { members: [{ actor, name, from, to, delta, fromPct, toPct }] },
+     * the before and after of every bar the card is about to draw.
+     */
+    serve(recovery, opts = {}) {
+      const amount = Math.max(0, Number(recovery) || 0);
+      const actors = (opts.actors || this.eaters()).filter((a) => a);
+      const report = { members: [], total: 0 };
+      if (!actors.length) return report;
+
+      const eater = actors[0];
+      if (eater._hunger === undefined) eater._hunger = maxHunger;
+      const from = eater._hunger;
+      if (amount > 0) eater.addHunger(amount);
+      const to = eater._hunger;
+      report.total = to - from;
+
+      // Sleep is shared the same way hunger is, so the coffee is drunk once
+      // too: grinding it off every member in turn would make one cup worth as
+      // many as the party has people.
+      if (opts.caffeine > 0 && eater.reduceSleep) {
+        eater.reduceSleep(opts.caffeine * caffeineFactor);
+      }
+
+      actors.forEach((actor) => {
+        // A recruited companion's meters are read off their society profile in
+        // the parchment menu, so the meal is written there too. Same mirror the
+        // <NeedRestore:> tags make (ItemSystemUtils.applyNeedRestores): without
+        // it the serving card and the menu card would disagree about who ate.
+        mirrorHungerToProfile(actor, report.total);
+        report.members.push({
+          actor,
+          name: actor.name ? actor.name() : "",
+          from, to,
+          delta: report.total,
+          fromPct: Math.floor((from / maxHunger) * 100),
+          toPct: Math.floor((to / maxHunger) * 100),
+        });
+      });
+      return report;
+    },
+
+    // The card, when there is a screen to draw it on. Everything that serves a
+    // meal calls this and nothing has to know whether the UI plugin is loaded.
+    announce(report, opts = {}) {
+      if (!report || !report.members.length) return;
+      try {
+        if (window.MealBars && window.MealBars.show) window.MealBars.show(report, opts);
+      } catch (e) {
+        console.error("TimeDateSystem: the serving card failed", e);
+      }
+    },
+
+    // Serve and report in one call: what almost every caller wants.
+    eat(recovery, opts = {}) {
+      const report = this.serve(recovery, opts);
+      this.announce(report, opts);
+      return report;
+    },
+  };
+
+  //=============================================================================
+  // CampRest - a camp is not a bed
+  //=============================================================================
+  // An inn sells a room and nothing else. A camp is the party's own evening:
+  // water is boiled, clothes and bodies are washed, somebody cooks, and the
+  // hours before sleep are spent talking to each other. So a night under
+  // canvas pays back three meters instead of one, on top of the rest the
+  // sleeping itself gives.
+  //
+  // The camp is PITCHED first (the world-map "Make a camp" row, the same row in
+  // the vehicle menu), which is what makes the rest menu a camp rather than a
+  // bed, and it is STRUCK either when the party leaves the menu without resting
+  // or when the hours it slept have been paid out. Nothing else in the game
+  // grants these, so a bed can never be mistaken for a camp.
+  //=============================================================================
+  window.CampRest = {
+    // Per hour spent at the camp, as a share of a whole meter. A full night
+    // (8h) washes about two thirds of the hygiene bar back and half the social
+    // one: enough to matter, never enough to make sleeping outdoors the best
+    // way to live.
+    HYGIENE_PER_HOUR: 0.085,
+    SOCIAL_PER_HOUR: 0.06,
+    // Somebody eats when the pot goes on, which is to say when the party's
+    // food meter is under EAT_BELOW of full; they keep eating until it is back
+    // over EAT_TARGET or the pack is empty.
+    EAT_BELOW: 0.5,
+    EAT_TARGET: 0.9,
+    // A camp only feeds so many mouths before the stock has to be shopped for
+    // again: a hard stop, so an empty meter can never swallow the whole pack.
+    MAX_MEALS: 4,
+
+    pitch() {
+      if (!window.$gameTemp) return false;
+      $gameTemp._campRestPitched = true;
+      const scene = SceneManager._scene;
+      if (scene && scene.openSleepMenu) scene.openSleepMenu();
+      return true;
+    },
+
+    isPitched() {
+      return !!(window.$gameTemp && $gameTemp._campRestPitched);
+    },
+
+    strike() {
+      if (window.$gameTemp) $gameTemp._campRestPitched = false;
+    },
+
+    // The nutrition of one item, by the same tags and the same formula the
+    // EatFood command uses, so a tin restores exactly as much at a camp as it
+    // does eaten out of the menu.
+    nutritionOf(item) {
+      if (!item || !item.note) return 0;
+      const cal = item.note.match(/<calories:(\d+)>/i);
+      const fat = item.note.match(/<fat:(\d+)>/i);
+      const pro = item.note.match(/<protein:(\d+)>/i);
+      const utils = window.ItemSystemUtils;
+      // i18n-ignore-start  item category tag
+      const isFood = (utils && utils.hasItemCategory && utils.hasItemCategory(item, 'Food'))
+        || cal || pro || fat;
+      // i18n-ignore-end
+      if (!isFood) return 0;
+      return (cal ? Number(cal[1]) : 0) * calorieFactor +
+             (pro ? Number(pro[1]) : 0) * proteinFactor +
+             (fat ? Number(fat[1]) : 0) * fatFactor;
+    },
+
+    // Everything in the pack worth cooking, smallest meal first: the camp eats
+    // its way up from the scraps, so the one good ration is still there for the
+    // road tomorrow.
+    foodStock() {
+      if (!window.$gameParty) return [];
+      return $gameParty.items()
+        .map(item => ({ item, value: this.nutritionOf(item) }))
+        .filter(entry => entry.value > 0 && $gameParty.numItems(entry.item) > 0)
+        .sort((a, b) => a.value - b.value);
+    },
+
+    // Hunger is one meter for the whole party (it is read off the leader
+    // everywhere else), so the pot is filled once and everyone eats from it.
+    // Returns the items that went into it, which is what the toast reports.
+    cookMeal() {
+      const leader = window.$gameParty && $gameParty.leader();
+      if (!leader || !leader.hunger) return [];
+      if (leader.hunger() >= maxHunger * this.EAT_BELOW) return [];
+      const eaten = [];
+      let stock = this.foodStock();
+      while (eaten.length < this.MAX_MEALS &&
+             leader.hunger() < maxHunger * this.EAT_TARGET &&
+             stock.length) {
+        const entry = stock[0];
+        leader.addHunger(entry.value);
+        $gameParty.loseItem(entry.item, 1);
+        eaten.push(entry.item);
+        if ($gameParty.numItems(entry.item) <= 0) stock.shift();
+      }
+      return eaten;
+    },
+
+    // The hours are already over by the time this runs: the sleep sequence
+    // calls it once, on waking, with the length of the night behind it.
+    resolve(hours) {
+      if (!this.isPitched()) return null;
+      this.strike();
+      const h = Math.max(0, Number(hours) || 0);
+      const report = { hours: h, hygiene: 0, social: 0, eaten: [] };
+      if (!window.$gameParty || !$gameParty.members().length) return report;
+      const needs = window.PartyNeeds;
+      if (needs) {
+        report.hygiene = maxNeed * this.HYGIENE_PER_HOUR * h;
+        report.social  = maxNeed * this.SOCIAL_PER_HOUR * h;
+        needs.addNeedToAll('hygiene', report.hygiene);
+        needs.addSocialToAll(report.social);
+      }
+      const leader = $gameParty.leader();
+      const wasHungry = !!(leader && leader.hunger && leader.hunger() < maxHunger * this.EAT_BELOW);
+      try {
+        report.eaten = this.cookMeal();
+        report.hungry = wasHungry && !report.eaten.length;
+      } catch (e) {
+        console.error("TimeDateSystem: the camp meal failed", e);
+      }
+      this.announce(report);
+      return report;
+    },
+
+    // Washing and company are need changes like any other, so they are
+    // reported in the one format every need change in the game uses; the meal
+    // is not a meter but a list of what went in the pot, so it is its own line.
+    announce(report) {
+      const toast = window.ParchmentToast;
+      if (!report || !toast) return;
+      if (report.hygiene > 0 && toast.need) {
+        toast.need('hygiene', report.hygiene, { note: T('TimeDate.camp.tended') });
+      }
+      if (report.social > 0 && toast.need) {
+        toast.need('social', report.social);
+      }
+      if (report.eaten.length) {
+        const names = report.eaten.map(item =>
+          window.translateText ? window.translateText(item.name) : item.name);
+        toast.show(T('TimeDate.camp.ate', { items: [...new Set(names)].join(', ') }),
+          { severity: 'good', key: 'camp-ate' });  // i18n-ignore  dedupe key
+      } else if (report.hungry) {
+        toast.show(T('TimeDate.camp.noFood'),
+          { severity: 'warning', key: 'camp-nofood' });  // i18n-ignore  dedupe key
+      }
+    }
   };
 
   //=============================================================================
@@ -3319,6 +3827,13 @@
   };
 
   MapInfoHUD.prototype._fillClass = function (need, pct) {
+    // Hunger is the one meter that reads past full: over 100% the bar goes
+    // amber and at the overeating line it goes red, the same two marks the
+    // menu and the status sheet use (window.NeedGauge.hungerBand).
+    if (need === 'hunger') {
+      if (pct > window.NeedGauge.GORGED_PCT) return 'mih-red';
+      if (pct > 100) return 'mih-amber';
+    }
     if (pct <= 20) return 'mih-red';
     if (pct < 40)  return 'mih-amber';
     return MapInfoHUD.NEED_COLORS[need] || 'mih-green';
@@ -3484,6 +3999,118 @@
   const DREAM_MIN_HOURS = 5;
   const DREAM_CHANCE = 0.5;
 
+  // Nobody sleeps or waits away more than half a day in one go: the duration
+  // list stops here (Core/TimeDateSystemUI.js reads it) and every sequence
+  // clamps to it, so a stale caller cannot hand the clock a longer night.
+  const MAX_REST_HOURS = 12;
+
+  // Sleeping rough: the wait menu (the menu tile, R, the hotbar) may lie down
+  // as well as pass the time, but with no bed, no fire and no camp it pays
+  // back only this share of a proper night's rest.
+  const ROUGH_REST_FACTOR = 0.5;
+
+  //---------------------------------------------------------------------------
+  // What a rest is worth
+  //---------------------------------------------------------------------------
+  // Eight hours is a whole night: hit points, magic and stamina all the way
+  // back, every state slept off and every broken part set. Anything shorter
+  // buys its share of that and no more, so lying down for one hour is worth
+  // one hour.
+  //
+  // The shares ADD UP. Hit points and magic add up on their own, an eighth of
+  // the bar at a time; the states and the bones cannot be given in eighths, so
+  // the hours are banked on the sleeper instead and paid out the moment the
+  // bank comes to a full night. Five hours now and three later mend exactly
+  // what one stretch of eight would have.
+  //
+  // Blood and Oil is the one mode a bed does not treat: a body keeps what was
+  // taken from it there, so nothing but the mind and the legs rest off a night
+  // - magic and stamina come back, flesh, states and bones do not.
+  const FULL_REST_HOURS = 8;
+
+  // The share of a whole night this stretch of sleep is worth, 0..1.
+  function restShare(hours) {
+    const h = Math.max(0, Number(hours) || 0);
+    return Math.min(1, h / FULL_REST_HOURS);
+  }
+
+  // Bank the hours and say whether they came to a full night. The bank is
+  // emptied by paying out, never by waking: a party that keeps taking naps
+  // keeps closing on the night it owes itself.
+  function reachedFullRest(actor, hours) {
+    if (!actor) return false;
+    const banked = (Number(actor._restBankedHours) || 0) +
+      Math.max(0, Number(hours) || 0);
+    if (banked < FULL_REST_HOURS) {
+      actor._restBankedHours = banked;
+      return false;
+    }
+    actor._restBankedHours = 0;
+    return true;
+  }
+
+  // Everything a rest gives back, in one place. The sleep sequence pays out
+  // through here and so does anything else that puts the party down for a
+  // stretch of hours; `rough` is a night without bedding, worth a fraction of
+  // one with it (ROUGH_REST_FACTOR) and never worth a treatment.
+  function applyRestRecovery(hours, rough) {
+    if (!window.$gameParty) return;
+    const bloodAndOil = !!(window.$gameSystem && $gameSystem._bloodAndOilMode);
+    const share = restShare(hours) * (rough ? ROUGH_REST_FACTOR : 1);
+    const members = $gameParty.members();
+
+    members.forEach((actor) => {
+      // Magic and stamina come back on every difficulty, Blood and Oil
+      // included: the mind and the legs rest wherever the body lies.
+      actor.gainMp(Math.round(actor.mmp * share));
+      actor.gainTp(Math.round(100 * share));
+      if (!bloodAndOil) actor.gainHp(Math.round(actor.mhp * share));
+    });
+
+    if (window.Insomnia) window.Insomnia.markSlept();
+
+    // Sleeping rough is rest, not treatment: no bones are set out where the
+    // party dropped, so those hours buy no bank either.
+    if (rough || bloodAndOil) return;
+
+    members.forEach((actor) => {
+      if (!reachedFullRest(actor, hours)) return;
+      actor.clearStates();
+      if (window.HealthCore && window.HealthCore.restoreAllBodyParts) {
+        window.HealthCore.restoreAllBodyParts(actor);
+      }
+      actor.refresh();
+    });
+  }
+
+
+  // Bedding carried in the packs: any item tagged <FullSleep> (the Bedroll,
+  // the Comfort Sleeping Bag) is a bed wherever it is unrolled, so a party
+  // holding one never sleeps rough. Held, not spent: rolling it out and
+  // rolling it back up again costs nothing.
+  const BEDDING_TAG = /<FullSleep>/i;
+
+  function getPartyBedding() {
+    if (!window.$gameParty || !$gameParty.items) return null;
+    const held = $gameParty.items();
+    for (let i = 0; i < held.length; i++) {
+      const item = held[i];
+      if (item && item.note && BEDDING_TAG.test(item.note)) return item;
+    }
+    return null;
+  }
+
+  // The one authority on whether a rest is a rough one: the entry point asks
+  // for it, the packs can answer no.
+  function isRoughRest(requested) {
+    return !!requested && !getPartyBedding();
+  }
+
+  function clampRestHours(hours) {
+    const h = Number(hours) || 0;
+    return Math.max(0, Math.min(MAX_REST_HOURS, h));
+  }
+
   Scene_Map.prototype.setSleepRespawnPoint = function () {
     $gameVariables.setValue(112, $gameVariables.value(86)); // RespawnCountryID = CurrentCountryID
     $gameVariables.setValue(25, $gameMap.mapId());          // RespawnMapID
@@ -3502,7 +4129,8 @@
   };
 
   // Standard sleep sequence (beds/inns): fades the screen, heals the party, restores sleep meter.
-  Scene_Map.prototype.startSleepSequence = function (hours, isWait) {
+  // opts.rough marks a night spent without a bed (see ROUGH_REST_FACTOR).
+  Scene_Map.prototype.startSleepSequence = function (hours, isWait, opts) {
     if (isWait) {
       this.startWaitSequence(hours);
       return;
@@ -3510,8 +4138,9 @@
     $gameScreen.startFadeOut(60);
     this._sleepSequenceState = 1;
     this._sleepSequenceTimer = 60;
-    this._sleepHours = hours;
+    this._sleepHours = clampRestHours(hours);
     this._sleepIsWait = false;
+    this._sleepIsRough = !!(opts && opts.rough);
   };
 
   // The light dim drawn under the DOM HUDs while waiting.
@@ -3541,6 +4170,7 @@
   // Time-of-day lighting,
   // NPCs, cars, enemies, and autonomous party members move and simulate at super speed.
   Scene_Map.prototype.startWaitSequence = function (hours) {
+    hours = clampRestHours(hours);
     if (this.closeSleepMenu) this.closeSleepMenu(true);
     // The timelapse is a flourish, not a wait: a whole day used to run for
     // 2160 frames (36 real seconds) of accelerated map updates, which reads as
@@ -3705,6 +4335,12 @@
       $gameTemp._sleepMenuOpen = false;
     }
 
+    // Waiting out the hours at a pitched camp buys the same evening a night
+    // there does (see window.CampRest).
+    try { window.CampRest.resolve(a ? a.hours : 0); } catch (e) {
+      console.error("TimeDateSystem: the camp watch failed", e);
+    }
+
     // Weather and the day/night tint are part of the hours passing, so they are
     // recomputed on every tick rather than left to the once-per-in-game-minute
     // gate in the weather system's own update.
@@ -3750,7 +4386,7 @@
           if (!this._sleepIsWait) {
             AudioManager.playMe({ name: "Inn1", volume: 90, pitch: 100, pan: 0 });
           }
-          this._beginSleepAdvance(this._sleepHours, this._sleepIsWait);
+          this._beginSleepAdvance(this._sleepHours, this._sleepIsWait, this._sleepIsRough);
           this._sleepSequenceState = 2;
           break;
 
@@ -3765,14 +4401,19 @@
 
   // Set up the frame-by-frame sleep advance. The night is spread over a fixed
   // number of frames so the HUD animates regardless of how many hours are slept.
-  Scene_Map.prototype._beginSleepAdvance = function (hours, isWait) {
+  Scene_Map.prototype._beginSleepAdvance = function (hours, isWait, isRough) {
     const FRAMES = 45;
+    hours = clampRestHours(hours);
+    // Bedding in the packs settles it here as well as in the menu, so a caller
+    // that asks for a rough night while the party carries a bedroll is refused.
+    isRough = isRoughRest(isRough);
     const totalMinutes = hours * 60;
     const startTime = getGameTimeMinutes();
     const leader = $gameParty.leader();
     const sleepStart = leader ? leader._sleep : 0;
     this._sleepAdvance = {
       isWait: !!isWait,
+      rough: !!isRough,
       hours: hours,
       totalMinutes: totalMinutes,
       totalFrames: FRAMES,
@@ -3782,13 +4423,16 @@
       // NPC schedules still tick once per simulated hour as the night passes.
       nextNpcTick: startTime + 60,
       sleepStart: sleepStart,
-      // Sleeping always wakes the party fully rested, whatever wake-up hour was
-      // picked. Waiting is time spent awake: the sleep meter drains with the
-      // hours instead of filling, at the same rate the other needs wear down.
+      // A bed wakes the party fully rested, whatever wake-up hour was picked.
+      // Sleeping rough only closes part of the gap (ROUGH_REST_FACTOR).
+      // Waiting is time spent awake: the sleep meter drains with the hours
+      // instead of filling, at the same rate the other needs wear down.
       sleepTarget: leader
         ? (isWait
             ? Math.max(0, sleepStart - (maxSleep * 0.0004) * totalMinutes)
-            : maxSleep)
+            : (isRough
+                ? sleepStart + (maxSleep - sleepStart) * ROUGH_REST_FACTOR
+                : maxSleep))
         : 0,
     };
   };
@@ -3877,6 +4521,9 @@
     // Waiting only burns the clock: no healing, no awakening menu, just fade
     // back in where the party was standing.
     if (a && a.isWait) {
+      // Hours spent at a camp are hours at the camp whether or not anybody lay
+      // down for them, so they buy the same evening.
+      try { window.CampRest.resolve(a.hours); } catch (_) {}
       if (this._mapInfoHUD && this._mapInfoHUD._refresh) {
         this._mapInfoHUD._refresh();
       }
@@ -3884,29 +4531,19 @@
       $gameScreen.startFadeIn(60);
       this._sleepSequenceState = 0;
       this._sleepIsWait = false;
+      this._sleepIsRough = false;
       return;
     }
 
-    // Restorative effects. The sleep meter was already filled gradually above;
-    // recoverAll() only touches HP/MP/states, so it leaves it intact. Healing
+    // Restorative effects. The sleep meter was already filled gradually above
+    // and applyRestRecovery does not touch it, so it stays intact. Healing
     // reaches into Health_Core and the insomnia clock, so it is guarded too:
     // a black screen the player cannot leave is worse than a missed heal.
     try {
-      $gameParty.members().forEach(actor => actor.recoverAll());
-
-      // The one thing that stops the insomnia clock, and takes the mind back
-      // off whatever it had started doing without one.
-      if (window.Insomnia) window.Insomnia.markSlept();
-
-      // A night's sleep sets every bone: each member's broken parts are put
-      // back whole and the penalties they owed lift with them. Blood and Oil
-      // keeps what it took - a part cut off or ruined there never grows back.
-      PluginManager.callCommand(this, "Health_Core", "HealBodyParts", {});
-
-      $gameParty.members().forEach(actor => {
-        actor.gainMp(9999);
-        actor.gainTp(100);
-      });
+      // What the night is worth is the number of hours that were actually
+      // slept, and nothing else: see applyRestRecovery, the one place a rest
+      // is paid out. A bed and a camp both come through here.
+      applyRestRecovery(a ? a.hours : 0, !!(a && a.rough));
 
       if (this._mapInfoHUD && this._mapInfoHUD._refresh) {
         this._mapInfoHUD._refresh();
@@ -3919,6 +4556,13 @@
     // the Dream / Cancel prompt, and it only shows up on that roll. Every other
     // sleep just fades back in on the spot.
     const sleptHours = a ? a.hours : 0;
+
+    // A camp pays out its evening on waking: the washing, the talking and the
+    // pot that went on the fire. A bed pays nothing here, because nothing
+    // pitched a camp (window.CampRest).
+    try { window.CampRest.resolve(sleptHours); } catch (e) {
+      console.error("TimeDateSystem: the camp night failed", e);
+    }
     let dreamed = false;
     if (sleptHours > DREAM_MIN_HOURS && Math.random() < DREAM_CHANCE && this.openSleepMenu) {
       try {
@@ -3933,6 +4577,7 @@
       $gameScreen.startFadeIn(60);
     }
     this._sleepSequenceState = 0;
+    this._sleepIsRough = false;
   };
 
   //=============================================================================
@@ -4408,14 +5053,24 @@
   window.TimeDateSystem.solveDayNightLight = solveDayNightLight;
   window.TimeDateSystem.maxHunger = maxHunger;
   window.TimeDateSystem.maxSleep = maxSleep;
+  // The overeating ceiling and the line the state is applied on, so the bars
+  // and the tests read the same two numbers the meter is clamped by.
+  window.TimeDateSystem.overeatMaxHunger = overeatMaxHunger;
+  window.TimeDateSystem.overeatRate = OVEREAT_RATE;
   // Ceiling shared by the extended needs (Hygiene / Social / Fun).
   window.TimeDateSystem.maxNeed = maxNeed;
+  // Company: how much of one the party is, and the step the social meter takes
+  // because of it. Bared so the rule can be read and tested from outside.
+  window.TimeDateSystem.partyCompany = partyCompany;
+  window.TimeDateSystem.stepSocialCompany = stepSocialCompany;
   window.TimeDateSystem.getDateTimeFromMinutes = getDateTimeFromMinutes;
   window.TimeDateSystem.getGameTimeMinutes = getGameTimeMinutes;
   // For sequences that run the clock forward themselves, a slice per frame, so
   // the map-info card animates instead of jumping (sleeping, waiting, and the
   // remote work shifts in WorkSystem.js).
   window.TimeDateSystem.setGameTimeMinutes = setGameTimeMinutes;
+  // Hours spent on one occupation, simulated forward with their cost paid.
+  window.TimeDateSystem.passTime = passTime;
   window.TimeDateSystem.updateGameDateVariable = updateGameDateVariable;
   // The cryogenic pod, read by the date picker in TimeDateSystemUI.
   window.TimeDateSystem.getCryoDateRange = getCryoDateRange;
@@ -4426,6 +5081,16 @@
   window.TimeDateSystem.getCryoDaysInMonth = cryoDaysInMonth;
   window.TimeDateSystem.getCryoDayStamp = cryoDayStamp;
   window.TimeDateSystem.getCurrentDateObj = getCurrentDateObj;
+  // The rest menu builds its duration list off these two, so the cap and the
+  // rough-sleep share live in one place (Core/TimeDateSystemUI.js).
+  window.TimeDateSystem.MAX_REST_HOURS = MAX_REST_HOURS;
+  window.TimeDateSystem.ROUGH_REST_FACTOR = ROUGH_REST_FACTOR;
+  window.TimeDateSystem.FULL_REST_HOURS = FULL_REST_HOURS;
+  window.TimeDateSystem.restShare = restShare;
+  window.TimeDateSystem.applyRestRecovery = applyRestRecovery;
+  // Bedding: the menu names the item it is resting on and drops the penalty.
+  window.TimeDateSystem.getPartyBedding = getPartyBedding;
+  window.TimeDateSystem.isRoughRest = isRoughRest;
   // Resolved on every read, so a language switch reaches the rest menu without
   // either plugin holding on to a stale table.
   Object.defineProperty(window.TimeDateSystem, "sleepMenuI18n", {

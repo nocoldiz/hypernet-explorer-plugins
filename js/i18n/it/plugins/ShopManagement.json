@@ -67,6 +67,7 @@
   "ui": {
     "okAssign": "OK → assegna",
     "destination": "Destinazione",
+    "delivery": "Consegna",
     "okAssignItem": "OK → assegna un oggetto",
     "takings": "Incassi",
     "takingsHint": "Quanto ha guadagnato il negozio dall ultimo prelievo.",

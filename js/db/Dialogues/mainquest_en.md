@@ -74,7 +74,7 @@ On the menu, are we ordering food?
 
 Bubba:
 Oh it's an abstract menu not a physical one! 
-But you can access it anytime by pressing [MENU], just visualize a JRPG menu in your head.
+But you can access it anytime by pressing [MENU | Main menu], just visualize a JRPG menu in your head.
 It's a  trascendental meditation tecnique to defrag your memories,
 I also have your car license with me, we can start rebuilding your identity from there and your love for [Cedrata massoni]
 
@@ -91,7 +91,7 @@ Em:
 Somewhere I'm not the main course at a barbecue would be lovely.
 
 Bubba:
-Then the answer is the Omega Tower! It's a neutral space between Hyperpowers managed by the [Archive foundation] those atheist nerds won't care less that you killed the almighty God.
+Then the answer is the Omega Tower! It's a neutral space between Hyperpowers managed by the [Archive Foundation] those atheist nerds won't care less that you killed the almighty God.
 Talk to me anytime you need to recollect something, until we find a way to restore your memories i'll be a walkin' tutorial machine!
 
 
@@ -152,7 +152,7 @@ I have a slight problem, i don't remember how to pet that thing.
 
 Bubba:
 That thing is called a "Dog".
-Go next to him and press [CONTINUE], select [Empathize] and the [Pet].
+Go next to him and press [CONTINUE | Continue], select [Empathize] and the [Pet].
 If he likes you enough we can ask him to join our party as a pet or a proper party member.
 
 Em:
@@ -174,43 +174,19 @@ Yeah who puts an unopened chest in the middle of a forest?
 Let's take instead the salvaged steel and wood around the mimic.
 You can use them in many ways, from craftin' item in [Thinker] menu to usin' 'em as build materials in [Build] menu.
 If you want to do some scientific stuff we need to stockpile a large amount of materials that we can use in the [Research] menu.
-Who knows?  Maybe one day you will be awarded a [Nobel prize] like me!
+Who knows?  Maybe one day you will be awarded a [Nobel Prize] like me!
 
 Em:
 What we should do with the mimic?
 
 Bubba:
 Just leave him be!
-------------------------------------------------------------------------------------------------------------
-other other
-
-
-Em:
-So the sky is a minefield and the mine is the sky.
-
-Bubba:
-That's the size of it dear.
-The European space agency, under [Margherita Hack], is building rockets that are almost entirely armour plating.
-They are designed to be shredded on the way up and keep the crew breathing just long enough to clear the debris.
-They can't leave the solar system, they just dock with the few ships still parked outside the cloud.
-
-Em:
-And people volunteer for that?
-
-Bubba:
-Volunteer? The [GreenWitch Space Center] and the spaceport at Taranto take you for free!
-That's how you can tell a ticket is a bad deal, dear.
-Nobody charges you for a ride they expect you to survive.
 
 ------------------------------------------------------------------------------------------------------------
-y2k_event
-Y2K event
 
-Em:
-What happened during the Millenium bug Bubba?
 
 Bubba:
-Two billion people died in one night, the 31st of December 1999.
+the 31st of December 1999.
 Not a bug in the computers dear, a bug in the world.
 
 Em:
@@ -254,7 +230,7 @@ Charming. And the climbing?
 Bubba:
 Anyone can climb it, all the way to the celestial throne at the top, where whichever god is currently in charge sits.
 Right now that is Eris.
-It's supposed to be neutral ground, so the [Archive foundation] keeps the peace and everybody else keeps an office.
+It's supposed to be neutral ground, so the [Archive Foundation] keeps the peace and everybody else keeps an office.
 Inside it makes no sense at all: department stores next to underground jungles, reactors the size of a small town, corridors full of camping tents.
 
 Em:

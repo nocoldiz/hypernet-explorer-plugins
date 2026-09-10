@@ -1655,33 +1655,6 @@
     "description": "HelpTopics.gamesPeriodic.description",
     "image": ""
   },
-  "topicHardwareStore": {
-    "type": "topic",
-    "group": "topics",
-    "order": 16010,
-    "keyword": "Hardware store",
-    "title": "HelpTopics.topicHardwareStore.title",
-    "description": "HelpTopics.topicHardwareStore.description",
-    "image": ""
-  },
-  "topicEsotericHeavyParticles": {
-    "type": "topic",
-    "group": "topics",
-    "order": 16020,
-    "keyword": "Esoteric Heavy Particles",
-    "title": "HelpTopics.topicEsotericHeavyParticles.title",
-    "description": "HelpTopics.topicEsotericHeavyParticles.description",
-    "image": ""
-  },
-  "topicCERN": {
-    "type": "topic",
-    "group": "topics",
-    "order": 16030,
-    "keyword": "CERN",
-    "title": "HelpTopics.topicCERN.title",
-    "description": "HelpTopics.topicCERN.description",
-    "image": ""
-  },
   "arcaneSurge": {
     "type": "state",
     "group": "states",
@@ -2128,69 +2101,6 @@
     "order": 6000,
     "title": "HelpTopics.concussed.title",
     "description": "HelpTopics.concussed.description",
-    "image": ""
-  },
-  "squishing": {
-    "type": "lore",
-    "group": "lore",
-    "title": "HelpLore.squishing.title",
-    "description": "HelpLore.squishing.description",
-    "image": ""
-  },
-  "ruleOf80": {
-    "type": "lore",
-    "group": "lore",
-    "title": "HelpLore.ruleOf80.title",
-    "description": "HelpLore.ruleOf80.description",
-    "image": ""
-  },
-  "encompassingRoad": {
-    "type": "lore",
-    "group": "lore",
-    "title": "HelpLore.encompassingRoad.title",
-    "description": "HelpLore.encompassingRoad.description",
-    "image": ""
-  },
-  "magesGuild": {
-    "type": "lore",
-    "group": "lore",
-    "title": "HelpLore.magesGuild.title",
-    "description": "HelpLore.magesGuild.description",
-    "image": ""
-  },
-  "hypercapitalistCollective": {
-    "type": "lore",
-    "group": "lore",
-    "title": "HelpLore.hypercapitalistCollective.title",
-    "description": "HelpLore.hypercapitalistCollective.description",
-    "image": ""
-  },
-  "emTheMemoryWitch": {
-    "type": "lore",
-    "group": "lore",
-    "title": "HelpLore.emTheMemoryWitch.title",
-    "description": "HelpLore.emTheMemoryWitch.description",
-    "image": ""
-  },
-  "camelcaseMagic": {
-    "type": "lore",
-    "group": "lore",
-    "title": "HelpLore.camelcaseMagic.title",
-    "description": "HelpLore.camelcaseMagic.description",
-    "image": ""
-  },
-  "alagaddaCityOfMasks": {
-    "type": "lore",
-    "group": "lore",
-    "title": "HelpLore.alagaddaCityOfMasks.title",
-    "description": "HelpLore.alagaddaCityOfMasks.description",
-    "image": ""
-  },
-  "ruleOfHeight": {
-    "type": "lore",
-    "group": "lore",
-    "title": "HelpLore.ruleOfHeight.title",
-    "description": "HelpLore.ruleOfHeight.description",
     "image": ""
   }
 }

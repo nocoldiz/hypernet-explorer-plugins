@@ -216,6 +216,15 @@
           if (teaches) {
             generalSpecs.push({ label: T('Inventory.spec.label.teaches'), val: teaches });
           }
+          // A pastime says what a sitting with it is worth, in the same words
+          // the shelf it stands on is captioned (window.ItemLeisure owns the
+          // <Leisure:> tag, here and on every counter).
+          if (window.ItemLeisure && window.ItemLeisure.isLeisure(selectedItem)) {
+            generalSpecs.push({
+              label: window.ItemLeisure.label(),
+              val: window.ItemLeisure.gainText(selectedItem),
+            });
+          }
           const dt = (selectedItem.meta && selectedItem.meta.DamageType) ||
               (selectedItem.note && (selectedItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
           if (dt && dt !== 'None' && !(selectedItem.damage && selectedItem.damage.type > 0)) {
@@ -301,6 +310,7 @@
               // repeated the same answer once per stat.
               if (nl === 'scale') return;
               if (nl === 'needrestore') return; // rendered as its own "Needs Restored" section below
+              if (nl === 'leisure') return;     // printed as its own spec row above
               // <Medicine:>, <Cures:> and <Treats:> are already rendered as
               // their own "Medicine" section above (getMedicineInfo); listing
               // them again here just repeats the same facts under the wrong
@@ -616,6 +626,7 @@
     this._selectedActionIndex = 0;
     this._selectedTargetIndex = 0;
     this._dndTargetingMode    = false;
+    this._dndStudyPicking     = false;
     this._dndTargetingItem    = null;
     this._dndActionsList      = [];
     this._discardModalOpen    = false;
@@ -874,12 +885,16 @@
 
     if (this._dndTargetingMode && this._dndTargetingItem) {
       const item = this._dndTargetingItem;
+      // Studying names its reader first: the hours are one member's, and the
+      // knowledge is theirs, so the list is asking who sits down with it.
+      const studyPick = !!this._dndStudyPicking;
       let targetsHTML = '';
       $gameParty.members().forEach((actor, idx) => {
         const isFocused = (this._dndActiveSection === 'targets' && this._selectedTargetIndex === idx) ? 'selected' : '';
-        targetsHTML += `<div class="target-option ${isFocused}" onclick="SceneManager._scene.applyUITarget(${idx})">${actor.name()} (HP: ${actor.hp}/${actor.mhp})</div>`;
+        const call = studyPick ? `applyUIStudy(${idx})` : `applyUITarget(${idx})`;
+        targetsHTML += `<div class="target-option ${isFocused}" onclick="SceneManager._scene.${call}">${actor.name()} (HP: ${actor.hp}/${actor.mhp})</div>`;
       });
-      if (item.scope === 8 || item.scope === 10) {
+      if (!studyPick && (item.scope === 8 || item.scope === 10)) {
         const allFocused = (this._dndActiveSection === 'targets' && this._selectedTargetIndex === $gameParty.members().length) ? 'selected' : '';
         targetsHTML += `<div class="target-option ${allFocused}" onclick="SceneManager._scene.applyUITarget(${$gameParty.members().length})">${T('Inventory.ui.allPartyCompanions')}</div>`;
       }
@@ -887,14 +902,17 @@
       // hotbar's own target card does.
       const isFood = !!(window.ItemSystemUtils &&
         window.ItemSystemUtils.hasItemCategory(item, 'Food' /* i18n-ignore: category tag */));
-      const targetTitle = isFood
-        ? T('Inventory.ui.eatItem', { item: item.name })
-        : T('Inventory.ui.useItemOn', { item: item.name });
-      const specialCommands = this.parseSpecialCommands(item);
+      const targetTitle = studyPick
+        ? T('Inventory.study.who', { item: item.name, duration: this.studyDurationLabel(item) })
+        : isFood
+          ? T('Inventory.ui.eatItem', { item: item.name })
+          : T('Inventory.ui.useItemOn', { item: item.name });
+      const specialCommands = studyPick ? [] : this.parseSpecialCommands(item);
       specialCommands.forEach((specCmd, sIdx) => {
         const globalIdx = $gameParty.members().length + (item.scope === 8 || item.scope === 10 ? 1 : 0) + sIdx;
         const isFocused = (this._dndActiveSection === 'targets' && this._selectedTargetIndex === globalIdx) ? 'selected' : '';
-        targetsHTML += `<div class="target-option target-option--special ${isFocused}" onclick="SceneManager._scene.triggerUISpecialAction('${specCmd}')">${T('Inventory.ui.special', { command: specCmd })}</div>`;
+        const label = T('Inventory.ui.special', { command: this.translateSpecialCommand(specCmd) });
+        targetsHTML += `<div class="target-option target-option--special ${isFocused}" onclick="SceneManager._scene.triggerUISpecialAction('${specCmd}')">${label}</div>`;
       });
       rightPageInnerHTML = `
         <div class="target-overlay">
@@ -1203,6 +1221,7 @@
   Scene_EnhancedItem.prototype.cancelUITargeting = function () {
     this._dndTargetingMode  = false;
     this._dndTargetingItem  = null;
+    this._dndStudyPicking   = false;
     this._dndActiveSection  = 'actions';
     this.refreshUIbackpack();
   };
@@ -1332,18 +1351,70 @@
     this.refreshUIbackpack();
   };
 
+  // The verb as the player reads it. Copy lives in js/i18n/<lang>/plugins/
+  // Inventory.json under `special`; a verb nobody has translated keeps its id.
+  Scene_EnhancedItem.prototype.translateSpecialCommand = function (name) {
+    const key = 'Inventory.special.' + String(name || '');
+    return T.has(key) ? T(key) : String(name || '');
+  };
+
+  // How long this book is to study, said as the panel says it.
+  Scene_EnhancedItem.prototype.studyDurationLabel = function (item) {
+    const B = window.BookLearning;
+    if (!B || !B.studyMinutes) return '';
+    const minutes = B.studyMinutes(item);
+    const h = Math.floor(minutes / 60);
+    const m = Math.round(minutes % 60);
+    if (!h) return T('Inventory.study.minutes', { minutes: m });
+    if (!m) return T('Inventory.study.hours', { hours: h });
+    return T('Inventory.study.hoursMinutes', { hours: h, minutes: m });
+  };
+
+  // A member has been picked to sit down with the book.
+  Scene_EnhancedItem.prototype.applyUIStudy = function (targetIdx) {
+    const item  = this._dndTargetingItem;
+    const actor = $gameParty.members()[targetIdx];
+    if (!item || !actor || !window._InventoryStudyBook) { SoundManager.playBuzzer(); return; }
+    this._dndStudyPicking = false;
+    if (!window._InventoryStudyBook(item, actor)) {
+      SoundManager.playBuzzer();
+      this.cancelUITargeting();
+      return;
+    }
+    // Hours went by: the map has a new time of day to show for them.
+    SoundManager.playOk();
+    this._dndTargetingMode = false;
+    this._dndTargetingItem = null;
+    this.popScene();
+    SceneManager.goto(Scene_Map);
+  };
+
   Scene_EnhancedItem.prototype.triggerUISpecialAction = function (specialName) {
     const item = this._dndTargetingItem || this._dndSelectedItem;
     if (!item) return;
     // SPECIAL_COMMANDS is defined in ItemSystemInventory.js; access via closure
     if (window._InventorySpecialCommands) {
       const cfg = window._InventorySpecialCommands[specialName];
-      if (cfg && cfg.commonEventId) {
-        SoundManager.playOk();
+      if (cfg) {
+        // Studying asks whose hours these are before spending any of them.
+        if (specialName === "Study") {   // i18n-ignore: verb id
+          SoundManager.playOk();
+          this._dndTargetingMode = true; this._dndTargetingItem = item;
+          this._dndStudyPicking = true;
+          this._dndActiveSection = 'targets'; this._selectedTargetIndex = 0;
+          this.refreshUIbackpack();
+          return;
+        }
         $gameTemp._specialActionItemId = item.id;
         // Books quote themselves; everything else runs the verb's common event.
-        const quoted = specialName === "Read" && // i18n-ignore: verb id window._InventoryQueueBookExcerpt &&
+        const quoted = specialName === "Read" &&   // i18n-ignore: verb id
+                       window._InventoryQueueBookExcerpt &&
                        window._InventoryQueueBookExcerpt(item);
+        if (!quoted && !(cfg.commonEventId > 0)) {
+          SoundManager.playBuzzer();
+          return;
+        }
+        SoundManager.playOk();
         if (!quoted) {
           $gameTemp.reserveCommonEvent(cfg.commonEventId);
         }
@@ -1732,8 +1803,9 @@
       } else if (section === 'targets') {
         const item         = scene._dndTargetingItem;
         const partySize    = $gameParty.members().length;
-        const specCmds     = scene.parseSpecialCommands(item);
-        const hasAllParty  = (item.scope === 8 || item.scope === 10);
+        const studyPick    = !!scene._dndStudyPicking;
+        const specCmds     = studyPick ? [] : scene.parseSpecialCommands(item);
+        const hasAllParty  = !studyPick && (item.scope === 8 || item.scope === 10);
         const totalTargets = partySize + (hasAllParty ? 1 : 0) + specCmds.length;
 
         if (dir === 'up' && scene._selectedTargetIndex > 0) {
@@ -1765,6 +1837,10 @@
       } else if (section === 'targets') {
         const item          = scene._dndTargetingItem;
         const partySize     = $gameParty.members().length;
+        if (scene._dndStudyPicking) {
+          scene.applyUIStudy(scene._selectedTargetIndex);
+          return;
+        }
         const hasAllParty   = (item.scope === 8 || item.scope === 10);
         const specialStart  = partySize + (hasAllParty ? 1 : 0);
         if (scene._selectedTargetIndex < specialStart) {

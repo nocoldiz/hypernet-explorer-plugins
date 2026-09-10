@@ -398,6 +398,9 @@
     "empowered": "[INT +{mod}] The summoning ritual empowered {name} with combat buffs!"
   },
   "actorDied": "{actor} has died.",
+  "knockout": {
+    "cameRound": "{actor} comes round, barely standing."
+  },
   "bulletHellDamage": "Total bullet hell damage: {amount}",
   "petrodemon": {
     "name": "{first}{second}, {epithet}",
@@ -501,7 +504,7 @@
     "elementChip": "{element} {rate}x"
   },
   "statReq": {
-    "fumble": "{actor} loses the thread of {skill}: not enough {stat}!"
+    "fumble": "{actor} loses the thread of {skill}: not enough base {stat}!"
   },
   "critSever": {
     "roll": "Killing blow on {enemy}: d20 {roll} {mod} = {total}/{dc}",

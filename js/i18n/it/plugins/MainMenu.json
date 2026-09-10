@@ -5,6 +5,8 @@
     "equip": "Equipaggiamento",
     "skills": "Abilità",
     "status": "Stato",
+    "statusPoints": "+{points}",
+    "statusPointsHint": "{points} punti attributo da spendere",
     "specializations": "Specializzazioni",
     "biologics": "Biologia",
     "augments": "Innesti",

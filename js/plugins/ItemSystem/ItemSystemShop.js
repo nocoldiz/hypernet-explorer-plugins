@@ -262,6 +262,13 @@
     return B ? B.label(item) : "";
   }, "") || "";
 
+  // What a sitting with a pastime is worth, for the row under the counter's
+  // type line. window.ItemLeisure owns the <Leisure:> tag everywhere.
+  const leisureGain = (item) => safe("leisureGain", () => {
+    const L = window.ItemLeisure;
+    return L && L.isLeisure(item) ? L.gainText(item) : "";
+  }, "") || "";
+
   const fixedPrice = (item) => safe("fixedPrice", () => {
     const C = window.ItemCollectibles;
     return C ? C.fixed(item) : null;
@@ -470,6 +477,12 @@
     const teaches = teachesLabel(item);
     if (teaches) {
       this.drawKeyValue(T('Shop.teaches'), teaches, 0, currentY);
+      currentY += lineHeight;
+    }
+    // A pastime is sold on what it does for the party's mood.
+    const leisure = leisureGain(item);
+    if (leisure) {
+      this.drawKeyValue(window.ItemLeisure.label(), leisure, 0, currentY);
       currentY += lineHeight;
     }
     const nature = natureLabelOf(item);

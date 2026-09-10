@@ -1869,30 +1869,16 @@
     return _Game_Player_checkEventTriggerThere.call(this, triggers);
   };
 
-  // A body that has lost legs walks slower. HealthCore reads the loss in the
-  // anatomy's own terms, so half a set of legs is half a set whether the
-  // walker has two of them or six, and the answer is floored well above zero:
-  // a maiming is a limp home, never a character who cannot move at all.
-  const MIN_MOBILITY_SPEED = 0.55;
-
-  function leaderMobility() {
-    const HC = window.HealthCore;
-    const leader = $gameParty && $gameParty.leader ? $gameParty.leader() : null;
-    if (!leader || !HC || typeof HC.mobility !== 'function') return 1;
-    try {
-      const share = Number(HC.mobility(leader));
-      if (!isFinite(share)) return 1;
-      return Math.max(MIN_MOBILITY_SPEED, Math.min(1, share));
-    } catch (e) {
-      return 1;
-    }
-  }
-
+  // A hurt body walks no slower than a whole one. Wounds, broken legs and a
+  // hit point bar down to its last sliver are read everywhere else in the
+  // game, but never off the walking speed: crossing the map at a crawl is a
+  // punishment the player cannot act on, so the terrain alone decides the
+  // pace. HealthCore.mobility is still the authority on what a body has left,
+  // it simply no longer reaches this function.
   const _Game_Player_realMoveSpeed = Game_Player.prototype.realMoveSpeed;
   Game_Player.prototype.realMoveSpeed = function () {
     let speed = _Game_Player_realMoveSpeed.call(this);
     if (this._isClimbing) speed *= Config.climbSpeed;
-    speed *= leaderMobility();
     return speed;
   };
 
@@ -3413,12 +3399,9 @@
     // Is there anything left to run on? Asked of a member about to break into
     // a run of their own; the leader never asks.
     canSprint(actor) {
+      // Stamina is the only thing a run is charged against: an injury slows
+      // nobody down, so a limp still runs for as long as there is AP for it.
       if (!actor || !(actor.tp > 0)) return false;
-      // Half a set of legs is a limp, and a limp is not a run.
-      const HC = window.HealthCore;
-      if (HC && typeof HC.mobility === 'function') {
-        try { if (HC.mobility(actor) < 0.5) return false; } catch (e) { /* run */ }
-      }
       return true;
     },
 

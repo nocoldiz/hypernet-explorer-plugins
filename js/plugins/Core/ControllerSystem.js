@@ -336,7 +336,7 @@
                 back: { face: 'B', key: 'cancel' },
                 run: { face: 'X', key: 'shift' },
                 view: { face: 'Y' },
-                slot: { face: 'L1', key: 'pageup' },
+                bar: { face: 'L1', key: 'pageup' },
                 dig: { face: 'R1', key: 'pagedown' },
                 zoomOut: { face: 'L2' },
                 zoomIn: { face: 'R2' },

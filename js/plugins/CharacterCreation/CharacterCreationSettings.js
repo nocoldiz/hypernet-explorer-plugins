@@ -326,6 +326,33 @@
           prev() { this._changeBy(-1); },
         },
         {
+          // The map tooltips (Map/MapLegend.js): the sheet pinned to the corner
+          // of the map that names the ground the party is standing on. On from
+          // the first game, in one of three states. It is hidden in the story
+          // mode, where the tooltips are Bubba reading the place out loud and
+          // are always on: there they are turned off from his ask menu or from
+          // Options > Gameplay > Exploration instead.
+          key: 'mapNotices',
+          label: T('MapLegend.setting.label'),
+          description: T('MapLegend.setting.desc'),
+          get _values() { return ['first', 'always', 'off']; },  // i18n-ignore: setting values
+          get _modes() { return this._values.map(v => T('MapLegend.setting.mode.' + v)); },
+          get currentIndex() {
+            const mode = window.MapLegend ? window.MapLegend.noticesMode() : ConfigManager.showMapNotices;
+            const i = this._values.indexOf(mode);
+            return i >= 0 ? i : 0;
+          },
+          get currentLabel() { return this._modes[this.currentIndex] || this._modes[0] || ''; },
+          _changeBy(delta) {
+            const values = this._values;
+            const next = values[(this.currentIndex + delta + values.length) % values.length];
+            if (window.MapLegend) window.MapLegend.setNoticesMode(next);
+            else ConfigManager.showMapNotices = next;
+          },
+          next() { this._changeBy(1); },
+          prev() { this._changeBy(-1); },
+        },
+        {
           // Still a work in progress (hence the label), so it sits low on the
           // page and starts off; the options menu owns the same setting.
           key: 'fogOfWar',
@@ -398,7 +425,12 @@
         },
       ];
 
-      return storyMode ? rows.filter(r => r.key !== 'difficulty') : rows;
+      // The story mode picks neither of these: the difficulty is locked to
+      // roguelite and the map tooltips are Bubba's, always on while he walks
+      // with the party, so both rows are dropped from the page rather than
+      // shown as a choice that is not one.
+      if (storyMode && window.MapLegend) window.MapLegend.setNoticesMode('first');  // i18n-ignore: setting value
+      return storyMode ? rows.filter(r => r.key !== 'difficulty' && r.key !== 'mapNotices') : rows;
     }
 
     _settingsStateHash() {

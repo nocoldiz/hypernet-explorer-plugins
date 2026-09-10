@@ -27,7 +27,7 @@
     "elementTitle": "Element",
     "formTitle": "Weapon form",
     "range": "Range",
-    "magazine": "Magazine"
+    "magazine": "Shots"
   },
   "mode": {
     "mana": {
@@ -63,7 +63,7 @@
     "burst": {
       "name": "Burst fire",
       "desc": "Two shots per attack at 70% damage.",
-      "effect": "Each attack fires twice at 70% damage. Both shots consume ammo."
+      "effect": "Each attack fires twice at 70% damage."
     },
     "pierce": {
       "name": "Piercing vectors",
@@ -92,8 +92,8 @@
     },
     "overload": {
       "name": "Overload",
-      "desc": "Double magazine, 85% damage.",
-      "effect": "Magazine capacity doubled. All shots deal 85% damage."
+      "desc": "Double coilgun rack, 85% damage.",
+      "effect": "The coilgun's rack of shots is doubled. All shots deal 85% damage."
     },
     "hex": {
       "name": "Hexed rounds",
@@ -142,8 +142,8 @@
     },
     "overpressure": {
       "name": "Overpressure",
-      "desc": "135% damage, 2 ammo per shot.",
-      "effect": "Each shot deals 135% damage and consumes 2 rounds instead of 1."
+      "desc": "135% damage, 2 coilgun shots per round fired.",
+      "effect": "Each shot deals 135% damage and counts as 2 of the coilgun's shots."
     },
     "hollowPoint": {
       "name": "Hollow point",
@@ -152,8 +152,8 @@
     },
     "deepMagazine": {
       "name": "Deep magazine",
-      "desc": "+4 magazine capacity.",
-      "effect": "Magazine capacity +4 in any weapon form. Damage unchanged."
+      "desc": "+4 coilgun shots.",
+      "effect": "The coilgun holds 4 more shots before it folds back. Damage unchanged."
     }
   },
   "spell": {
@@ -173,7 +173,7 @@
     "element": "Element set to {element}.",
     "swapped": "{mode} is running, {old} is idle.",
     "form": "Form set to {form}.",
-    "unracked": "Coilgun out of ammo, reverted to pistol."
+    "unracked": "Coilgun spent, folded back into the pistol."
   },
   "locked": {
     "equip": "Only Em can equip the vector gun.",
@@ -216,62 +216,62 @@
     "gun": {
       "name": "Coilgun",
       "desc": "Default form.",
-      "effect": "With no other form fitted, SWITCH converts the pistol into a coilgun sniper rifle: 3 shots, 4x range on the battle map. The third shot reverts it to the pistol and reloads."
+      "effect": "With no other form fitted, SWITCH converts the pistol into a coilgun sniper rifle: 3 shots, 4x range on the battle map. The third shot folds it back into the pistol. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round."
     },
     "abrasax": {
       "name": "Athame of Abrasax",
       "desc": "Alternate form: dagger.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and dagger. In dagger form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and dagger. In dagger form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "thelema": {
       "name": "Blade of Thelema",
       "desc": "Alternate form: machete.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and machete. In machete form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and machete. In machete form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "choronzon": {
       "name": "Maul of Choronzon",
       "desc": "Alternate form: maul.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and maul. In maul form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and maul. In maul form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "babalon": {
       "name": "Axe of Babalon",
       "desc": "Alternate form: axe.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and axe. In axe form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and axe. In axe form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "nuit": {
       "name": "Scourge of Nuit",
       "desc": "Alternate form: whip.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and whip. In whip form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and whip. In whip form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "hadit": {
       "name": "Staff of Hadit",
       "desc": "Alternate form: staff.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and staff. In staff form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and staff. In staff form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "aiwass": {
       "name": "Bow of Aiwass",
       "desc": "Alternate form: bow.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and bow. In bow form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and bow. In bow form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "zos": {
       "name": "Darts of Zos",
       "desc": "Alternate form: throwing darts.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and darts. In dart form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and darts. In dart form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "baphomet": {
       "name": "Talons of Baphomet",
       "desc": "Alternate form: claws.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and claws. In claw form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and claws. In claw form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "kia": {
       "name": "Gauntlet of Kia",
       "desc": "Alternate form: gauntlet.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and gauntlet. In gauntlet form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and gauntlet. In gauntlet form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "longinus": {
       "name": "Lance of Longinus",
       "desc": "Alternate form: lance.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and lance. In lance form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Every switch refills the magazine. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and lance. In lance form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
     },
     "sniper": {
       "name": "Coilgun",

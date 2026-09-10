@@ -31,14 +31,14 @@
     //=============================================================================
     let _helpI18n = null;
 
-    // The manual and the lore are written in two banks, because they are two
-    // different jobs: HelpTopics.json is how the game WORKS (the states
-    // included, since those are rules), HelpLore.json is what the world IS.
-    // Both are read into one map, so a key resolves the same way whichever
-    // bank it was written in. What lives in neither is the macrocategory a
-    // page belongs to: that is a key in js/db/Messages/HelpTopics.json, the
-    // same in every language, and only the label it prints is translated.
-    const HELP_I18N_FILES = ['HelpTopics.json', 'HelpLore.json'];
+    // Two banks, because they are two jobs: HelpTopics.json is how the game
+    // WORKS (the states included, since those are rules) and DialogueTopics.json
+    // is what the world IS, one page per thing the party can be told about.
+    // Both are read into one map, so a key resolves the same way whichever bank
+    // it was written in. What lives in neither is the macrocategory a page
+    // belongs to: that is a key in js/db/Messages/, the same in every language,
+    // and only the label it prints is translated.
+    const HELP_I18N_FILES = ['HelpTopics.json', 'DialogueTopics.json'];
     const HELP_I18N_FALLBACK = 'en';
 
     // English is always read first and the played language is laid over it, one
@@ -115,11 +115,16 @@
         if (!_helpI18n) return path;
         const direct = _read(path);
         if (direct !== null) return direct;
-        // The lore used to live in the help bank. A language that was
-        // translated before the split still has it filed there, so a missing
-        // HelpLore key is looked for under its old name before giving up.
-        if (path.startsWith('HelpLore.')) {
-            const legacy = _read('HelpTopics.' + path.slice('HelpLore.'.length));
+        // The world pages have been filed under two other namespaces before
+        // this one: they began in the help bank and spent a while in a HelpLore
+        // bank of their own. A language translated under either still has them
+        // there, so a key that does not answer is looked for under its old
+        // names before it is given up on.
+        if (path.startsWith('DialogueTopics.')) {
+            const tail = path.slice('DialogueTopics.'.length);
+            const lore = _read('HelpLore.' + tail);
+            if (lore !== null) return lore;
+            const legacy = _read('HelpTopics.' + tail);
             if (legacy !== null) return legacy;
         }
         return path;
@@ -152,16 +157,41 @@
         return key;
     };
 
-    // Read topics dynamically from Messages
+    // Read the pages dynamically from Messages: the manual out of HelpTopics,
+    // the world out of DialogueTopics, one list.
+    const _bankRows = (bank) => {
+        if (!bank) return [];
+        return Array.isArray(bank) ? bank : Object.values(bank);
+    };
+
     const getHelpTopics = () => {
-        if (window.Messages && window.Messages.HelpTopics) {
-            if (Array.isArray(window.Messages.HelpTopics)) {
-                return window.Messages.HelpTopics;
-            } else {
-                return Object.values(window.Messages.HelpTopics);
-            }
-        }
-        return [];
+        const messages = window.Messages;
+        if (!messages) return [];
+        return _bankRows(messages.HelpTopics).concat(_bankRows(messages.DialogueTopics));
+    };
+
+    // What the rest of the game needs to know about the codex. A topic is filed
+    // under one keyword forever, because that is what a savegame stores, but it
+    // is PRINTED under the title of its page in the language being played:
+    // NPC/DialogueSystem.js reads this so a topic picked up from a synonym is
+    // announced by the page's own name and not by the words that taught it.
+    window.HelpCodex = {
+        pageFor(keyword) {
+            if (!keyword) return null;
+            const wanted = String(keyword).toLowerCase();
+            return getHelpTopics().find(t => t && t.type === 'topic' && t.keyword &&
+                String(t.keyword).toLowerCase() === wanted) || null;
+        },
+        // Before the banks have finished loading a title still reads as its own
+        // key, which is not a name anybody should be shown: the keyword stands
+        // in until the book can answer.
+        titleOf(keyword) {
+            const page = this.pageFor(keyword);
+            if (!page) return String(keyword || '');
+            const title = getLocalizedTitle(page);
+            if (!title || title === page.title) return String(keyword || '');
+            return title;
+        },
     };
 
     // Parse and display control tags based on input method
@@ -402,7 +432,12 @@
     };
 
     Scene_Help.prototype.categories = function () {
-        return this._hideTopics ? ["general", "lore", "history"] : ["general", "topics", "lore", "history"];
+        // The illnesses are a shelf of their own, not a corner of the topics
+        // page: a player looking one up should not have to walk past every
+        // faction and rumour the party has heard first.
+        return this._hideTopics
+            ? ["general", "history", "diseases"]
+            : ["topics", "rumors", "general", "history", "diseases"];
     };
 
     Scene_Help.prototype.create = function () {
@@ -627,66 +662,111 @@
             }));
     }
 
-    // What the party has been TOLD. A line of dialogue written with a topic in
-    // square brackets, [Hardware], teaches that topic to everyone present, and
-    // a conversation option that needs it stays out of sight until somebody
-    // knows it (NPC/DialogueSystem.js keeps them on the actor, _keywords).
-    // This page is the list of the ones they have picked up, and who knows
-    // each: nothing here is written in advance, a topic exists because it was
-    // said to them.
-    function conversationTopics() {
-        if (typeof $gameParty === "undefined" || !$gameParty) return [];
+    // What the party has been TOLD. A topic reaches them two ways: a line
+    // written with it in square brackets, [Hardware], and a line that simply
+    // NAMES it, since every page carries the words it answers to
+    // (NPC/DialogueSystem.js does both, and keeps what was learned on the
+    // actor, _keywords). A conversation option that needs a topic stays out of
+    // sight until somebody knows it.
+    //
+    // Nothing on this shelf is written in advance: a page is here because it
+    // was said to them.
+    const authoredPages = () => {
+        const pages = new Map();
+        getHelpTopics().forEach((t) => {
+            if (t && t.type === 'topic' && t.keyword) pages.set(String(t.keyword).toLowerCase(), t);
+        });
+        return pages;
+    };
+
+    const keywordOwners = () => {
         const owners = new Map();
+        if (typeof $gameParty === "undefined" || !$gameParty) return owners;
         $gameParty.members().forEach((actor) => {
             (actor._keywords || []).forEach((word) => {
                 if (!owners.has(word)) owners.set(word, []);
                 owners.get(word).push(actor.name());
             });
         });
-        // A topic that has a page written for it (a `topic` entry in
-        // js/db/Messages/HelpTopics.json, matched on its keyword) prints that
-        // page; one that has none is still listed, with who knows it, because
-        // what this shelf is for is what the party has been told.
-        const authored = new Map();
-        getHelpTopics().forEach((t) => {
-            if (t && t.type === 'topic' && t.keyword) authored.set(String(t.keyword).toLowerCase(), t);
+        return owners;
+    };
+
+    // A name the world knows can be an article in the Empathize wiki: a nation,
+    // a hyperpower, a faction, a party, a leader. The button that opens it is
+    // offered on any page whose subject resolves to one, written or not.
+    const wikiEntity = (name) => {
+        const wiki = window.NPCEmpathize && window.NPCEmpathize.Wiki;
+        if (!wiki || typeof wiki.resolve !== 'function' || !name) return null;
+        try { return wiki.resolve(String(name)) || null; } catch (e) { return null; }
+    };
+
+    // The pages the party has been told about and that somebody has written.
+    function conversationTopics() {
+        const owners = keywordOwners();
+        if (!owners.size) return [];
+        const authored = authoredPages();
+        const out = [];
+        owners.forEach((names, word) => {
+            const page = authored.get(String(word).toLowerCase());
+            if (!page) return;
+            out.push(Object.assign({}, page, {
+                group: 'topics',
+                known: T('HelpMenu.topicKnownBy', { names: names.join(", ") }),
+                wiki: wikiEntity(page.keyword) || wikiEntity(getLocalizedTitle(page)),
+            }));
         });
-        return Array.from(owners.keys())
+        return sortTopics(out);
+    }
+
+    // The other half: what the party has heard named and nobody has written a
+    // page for. Topics picked up from a line that has no article behind them,
+    // and every name the world knows that was said where they could hear it
+    // (NPC/DialogueSystem.js remembers those as it marks them). A rumour that
+    // turns out to be a nation, a power, a faction, a party or a leader carries
+    // the button through to its article.
+    function rumorTopics() {
+        const authored = authoredPages();
+        const owners = keywordOwners();
+        const rows = new Map();
+        owners.forEach((names, word) => {
+            if (authored.has(String(word).toLowerCase())) return;
+            rows.set(word, T('HelpMenu.topicKnownBy', { names: names.join(", ") }));
+        });
+        let heard = [];
+        try { heard = (window.DialogueTopics && window.DialogueTopics.rumors()) || []; } catch (e) { heard = []; }
+        heard.forEach((name) => {
+            if (authored.has(String(name).toLowerCase())) return;
+            if (!rows.has(name)) rows.set(name, "");
+        });
+        return Array.from(rows.keys())
             .sort((a, b) => String(a).localeCompare(String(b)))
             .map((word) => {
-                const known = T('HelpMenu.topicKnownBy', { names: owners.get(word).join(", ") });
-                const page = authored.get(String(word).toLowerCase());
-                if (page) {
-                    return {
-                        raw: true,
-                        type: "topic",
-                        title: getLocalizedTitle(page),
-                        description: getLocalizedDescription(page) + "\n\n" + known
-                    };
-                }
+                const known = rows.get(word);
+                const body = known ? known + "\n\n" + T('HelpMenu.topicExplainer')
+                                   : T('HelpMenu.rumorExplainer');
                 return {
                     raw: true,
-                    type: "topic",
+                    type: "rumor",
+                    group: "rumors",
                     title: word,
-                    description: known + "\n\n" + T('HelpMenu.topicExplainer')
+                    description: body,
+                    wiki: wikiEntity(word),
                 };
             });
     }
 
     Scene_Help.prototype.getFilteredTopics = function (category) {
-        if (category === "topics") return conversationTopics();
-        if (category === "lore") {
-            // One shelf, two macrocategories: what the world is, and what it
-            // can catch. The world's chronicle used to be appended here too;
-            // it now has its own tab (see "history" below), so a player
-            // looking for a single event does not have to wade through every
-            // spell and faction first.
-            const written = sortTopics(getHelpTopics().filter(t => t && t.title && t.type === 'lore'))
-                .map(t => Object.assign({}, t, { group: 'lore' }));
-            const sick = diseaseTopics().map(t => Object.assign({}, t, { group: 'diseases' }));
-            return written.concat(sick);
+        if (category === "topics") {
+            // What the party has been TOLD, and nothing else. The world's
+            // chronicle and the illnesses used to be appended here too; each
+            // has its own tab now (see "history" and "diseases" below), so a
+            // player looking for a single event or a single fever does not
+            // have to wade through every spell and faction first.
+            return conversationTopics();
         }
+        if (category === "rumors") return rumorTopics();
         if (category === "history") return historyTopics();
+        if (category === "diseases") return diseaseTopics();
         const all = getHelpTopics();
         let filtered = [];
         if (category === "general") {
@@ -761,9 +841,19 @@
         const tCodex =T('HelpMenu.archiveEntry');
         const tGeneral =T('HelpMenu.general');
         const tTopics =T('HelpMenu.topics');
-        const tLore =T('HelpMenu.lore');
+        const tRumors =T('HelpMenu.rumors');
         const tHistory =T('HelpMenu.history');
+        const tDiseases =T('HelpMenu.diseases');
         const tSelectTopic =T('HelpMenu.selectATopicToStart');
+        // One tab, one label, looked up by name: a shelf added to categories()
+        // is named here and nowhere else.
+        const TAB_LABELS = {
+            general: tGeneral,
+            topics: tTopics,
+            rumors: tRumors,
+            history: tHistory,
+            diseases: tDiseases,
+        };
         const backBtnText =T('HelpMenu.back');
 
         // Ensure the book spread exists. Shape A, dealt the way every other
@@ -808,15 +898,29 @@
             const isFocused = this._activeArea === "content";
             const focusClass = isFocused ? "help-content focused" : "help-content";
 
+            // A page whose subject the world itself knows carries a way
+            // through to its article: the Empathize wiki already writes nations,
+            // hyperpowers, factions, parties and leaders, and there is no sense
+            // in the codex writing them a second time. The button is offered on
+            // a written page and on a bare rumour alike.
+            const wikiHTML = topic.wiki
+                ? `<div class="back-button focusable" id="help-wiki-btn">${T('HelpMenu.openWiki')}</div>`
+                : "";
+            const knownHTML = topic.known
+                ? `<div class="help-body ui-prose help-known">${paragraphsToHtml(topic.known)}</div>`
+                : "";
+
             detailHTML = `
                 <div class="ui-detail">
                     <div class="ui-detail-head">
                         <div class="ui-detail-titles">
                             <h3 class="help-title">${displayTitle}</h3>
                         </div>
+                        ${wikiHTML}
                     </div>
                     <div class="ui-detail-scroll ui-scroll ${focusClass}" id="help-content-scroll">
                         <div class="help-body ui-prose">${bodyHtml}</div>
+                        ${knownHTML}
                         ${imageHtml}
                     </div>
                 </div>
@@ -828,6 +932,16 @@
         // Options menu (Core/GameOptions.js, symbol mapTooltips).
 
         detailPage.innerHTML = detailHTML;
+
+        const wikiButton = detailPage.querySelector("#help-wiki-btn");
+        if (wikiButton) {
+            wikiButton.addEventListener("click", () => {
+                const entity = this._selectedTopic && this._selectedTopic.wiki;
+                if (!entity || !window.NPCEmpathize || !window.NPCEmpathize.openEntity) return;
+                SoundManager.playOk();
+                window.NPCEmpathize.openEntity(entity.type, entity.id);
+            });
+        }
 
         // 2. LEFT PAGE: the contents, its tabs and its rail (rebuilt only when
         // the category or the query changes, so nothing flickers).
@@ -849,13 +963,13 @@
         if (needsRightPageRedraw) {
             let tabsHTML = "";
             categories.forEach((cat, idx) => {
-                const label = cat === "general" ? tGeneral : cat === "topics" ? tTopics : cat === "lore" ? tLore : tHistory;
+                const label = TAB_LABELS[cat] || cat;
                 tabsHTML += `<div class="backpack-tab help-category-tab focusable" data-idx="${idx}">${label}</div>`;
             });
 
             let listHTML = "";
             if (topics.length === 0) {
-                const empty = activeCategory === "topics"
+                const empty = (activeCategory === "topics" || activeCategory === "rumors")
                     ? T('HelpMenu.noTopicsLearnedYet')
                     : T('HelpMenu.noCodexEntriesFoundIn');
                 listHTML = `<div class="ui-empty"><div class="ui-empty-text">${empty}</div></div>`;

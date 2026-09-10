@@ -2146,7 +2146,6 @@
     color: var(--text-text-alt-12);
 }
 #camper-drive-hud .cds-val,
-#camper-drive-hud .cds-speed-text,
 #camper-drive-hud .cds-large-val,
 #camper-drive-hud .cds-map-coords,
 #camper-drive-hud .cds-full-coords {
@@ -2159,15 +2158,6 @@
     background: var(--bg-parchment-warm-60);
     border-color: var(--border-focus-hover);
     color: var(--text-primary-hover);
-}
-#camper-drive-hud .cds-gear-text {
-    color: var(--text-text-alt-15);
-}
-#camper-drive-hud .cds-rpm-track {
-    background: rgba(43, 28, 17, 0.15);
-}
-#camper-drive-hud .cds-rpm-bar {
-    background: var(--border-focus-hover);
 }
 #camper-drive-hud .cds-dig-track {
     background: rgba(43, 28, 17, 0.15);

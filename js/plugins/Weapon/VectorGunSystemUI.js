@@ -57,6 +57,12 @@
   const FORM_CHOICES = VG.FORM_CHOICES;
   const GUN_FORM = VG.GUN_FORM;
 
+  // How long the cursor must rest before the stand is rebuilt. Every step on
+  // the form page tears a WebGL model down and builds another, and a pad's key
+  // repeat asks for that several times a second: holding a direction used to
+  // walk the page one stuttering card at a time.
+  const STAND_SETTLE = 140;
+
   // The shapes and the element are one page: both answer "what is this weapon",
   // where the modes answer "what is it doing" and the spell "what rides on it".
   const TABS = ['modes', 'form', 'spell'];
@@ -186,6 +192,7 @@
       // battle command plays.
       this._stand = GUN_FORM;
       this._switching = false;
+      this._standTimer = 0;
       // The overlay is the shared one every screen the main menu opens uses
       // (#menu-container, UI/CustomMainMenuLayout.js createUIMenuDOM).
       this._el = document.createElement('div');
@@ -225,6 +232,8 @@
     terminate() {
       if (this._zoomTimer) clearInterval(this._zoomTimer);
       this._zoomTimer = 0;
+      if (this._standTimer) clearTimeout(this._standTimer);
+      this._standTimer = 0;
       this._disposePreview();
       if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
       this._el = null;
@@ -309,9 +318,26 @@
 
     /** Brings the stand to whatever the cursor asks for. */
     _syncStand() {
+      // A fold already running owns the stand: cutting a new model in halfway
+      // through leaves the piece standing as the shape the cursor has left.
+      // morphStand asks again once it has finished.
+      if (this._switching) return;
       const want = this.standTarget();
       if (want !== this._stand) this.morphStand(want);
       else this._mountPreview();
+    }
+
+    /**
+     * The stand follows the cursor only once the cursor has come to rest. A
+     * held direction repeats every few frames and each step would otherwise
+     * dispose a WebGL model and build the next one.
+     */
+    _queueStand() {
+      if (this._standTimer) clearTimeout(this._standTimer);
+      this._standTimer = setTimeout(() => {
+        this._standTimer = 0;
+        if (this._el) this._syncStand();
+      }, STAND_SETTLE);
     }
 
     /**
@@ -332,6 +358,9 @@
         const rise = VG.playSwitchOn(
           this._previews[0] ? this._previews[0].model : null, 'rise') || 0;
         this._switching = false;
+        // The cursor may have walked off this shape while it was folding: the
+        // request that was refused mid-morph is served now.
+        if (this.standTarget() !== this._stand) { this._syncStand(); return; }
         // The new shape is measured only once it has finished rising: while its
         // parts are still flying in the bounds are the whole flight.
         setTimeout(() => { if (this._el) this._fitStand(280); }, rise + 60);
@@ -356,19 +385,69 @@
       }
       const last = this.pickable().length - 1;
       if (last < 0) return;
+      // Confirm is read BEFORE the directions and not as the tail of their
+      // chain: a stick held off centre repeats a direction every few frames,
+      // and the chain swallowed every press of OK made while it was held.
+      if (Input.isTriggered('ok')) { this.confirmRow(this._index); return; }
       // The page is a grid: up and down step a whole line, left and right one
       // card. The pages are turned with L1 / R1 and the tab strip only.
-      if (Input.isRepeated('down')) this.moveCursor(COLS);
-      else if (Input.isRepeated('up')) this.moveCursor(-COLS);
+      if (Input.isRepeated('down')) this.moveLine(1);
+      else if (Input.isRepeated('up')) this.moveLine(-1);
       else if (Input.isRepeated('right')) this.moveCursor(1);
       else if (Input.isRepeated('left')) this.moveCursor(-1);
-      else if (Input.isTriggered('ok')) this.confirmRow(this._index);
+    }
+
+    /**
+     * The page as the eye sees it: one entry per line of the grid, holding the
+     * cursor indices of the cards standing on that line. A heading spans the
+     * whole line (.vg-grid-head is grid-column 1 / -1), so it BREAKS the run:
+     * the cards after it start a fresh line, and a section that does not fill
+     * its last line leaves it short. Stepping `_index` by COLS knew about
+     * neither, which sent Down diagonally down the form page.
+     */
+    lines() {
+      const out = [];
+      let line = null;
+      let pick = -1;
+      this.rows().forEach((row) => {
+        if (row.kind === 'head') { line = null; return; }
+        pick++;
+        if (!line || line.length >= COLS) { line = []; out.push(line); }
+        line.push(pick);
+      });
+      return out;
+    }
+
+    /** Walks one line of the real grid, keeping the column it was standing in. */
+    moveLine(dir) {
+      const lines = this.lines();
+      let at = -1;
+      let col = 0;
+      for (let i = 0; i < lines.length; i++) {
+        const found = lines[i].indexOf(this._index);
+        if (found >= 0) { at = i; col = found; break; }
+      }
+      if (at < 0) return;
+      const next = lines[at + dir];
+      if (next) {
+        // A short line is still landed on, at its last card.
+        this.setIndex(next[Math.min(col, next.length - 1)]);
+        return;
+      }
+      // Off the top or the bottom the cursor goes to the nearest end rather
+      // than sitting still, so a last line of one card is always reachable.
+      const edge = dir > 0 ? lines[lines.length - 1] : lines[0];
+      this.setIndex(dir > 0 ? edge[edge.length - 1] : edge[0]);
     }
 
     moveCursor(step) {
       const last = this.pickable().length - 1;
-      const next = Math.max(0, Math.min(last, this._index + step));
-      if (next === this._index) return;
+      this.setIndex(Math.max(0, Math.min(last, this._index + step)));
+    }
+
+    /** Puts the cursor on a card, once, with the one sound and the one repaint. */
+    setIndex(next) {
+      if (typeof next !== 'number' || next === this._index) return;
       this._index = next;
       SoundManager.playCursor();
       this._paintSelection();
@@ -562,12 +641,21 @@
         .forEach((slot, i) => slot.classList.toggle('selected', i === this._index));
       this._el.querySelector('.vg-detail').innerHTML = this._detailHTML();
       this._scrollToSelection();
-      if (this._tab === 'form') this._syncStand();
+      if (this._tab === 'form') this._queueStand();
     }
 
     _scrollToSelection() {
-      const selected = this._el ? this._el.querySelector('.vg-grid .item-slot.selected') : null;
-      if (selected && selected.scrollIntoView) selected.scrollIntoView({ block: 'nearest' });
+      const box = this._el ? this._el.querySelector('.vg-grid') : null;
+      const selected = box ? box.querySelector('.item-slot.selected') : null;
+      if (!box || !selected || !selected.getBoundingClientRect) return;
+      // Scrolled by hand rather than with scrollIntoView: the overlay is a page
+      // of its own, and asking the browser to reveal a card scrolled every
+      // scrollable ancestor around it too, which on a pad read as the whole
+      // spread jumping on each step.
+      const outer = box.getBoundingClientRect();
+      const card = selected.getBoundingClientRect();
+      if (card.top < outer.top) box.scrollTop -= (outer.top - card.top);
+      else if (card.bottom > outer.bottom) box.scrollTop += (card.bottom - outer.bottom);
     }
 
     /**
@@ -757,7 +845,10 @@
       const specs = [];
       VG.withForm(folded, () => {
         specs.push([T('VectorGun.detail.range'), String(VG.weaponReach(Number(baseRange)))]);
-        if (!VG.inMeleeForm()) {
+        // The frame condenses its own rounds, so no shape carries ammunition:
+        // the only count left is the coilgun's rack, and it is the only card
+        // that has a number to show.
+        if (folded === VG.SNIPER_FORM) {
           specs.push([T('VectorGun.detail.magazine'),
             String(VG.magazineSize(Number(baseBullets)))]);
         }

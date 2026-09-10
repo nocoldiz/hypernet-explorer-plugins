@@ -398,6 +398,9 @@
     "empowered": "[INT +{mod}] Il rituale di evocazione ha potenziato {name} con bonus da combattimento!"
   },
   "actorDied": "{actor} è morto.",
+  "knockout": {
+    "cameRound": "{actor} riprende i sensi, a malapena in piedi."
+  },
   "bulletHellDamage": "Danno totale del bullet hell: {amount}",
   "petrodemon": {
     "name": "{first}{second}, {epithet}",
@@ -501,7 +504,7 @@
     "elementChip": "{element} {rate}x"
   },
   "statReq": {
-    "fumble": "{actor} perde il filo di {skill}: {stat} insufficiente!"
+    "fumble": "{actor} perde il filo di {skill}: {stat} base insufficiente!"
   },
   "critSever": {
     "roll": "Colpo mortale su {enemy}: d20 {roll} {mod} = {total}/{dc}",

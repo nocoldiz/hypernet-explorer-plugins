@@ -1310,13 +1310,40 @@
       : null;
 
   // --- 1. Reload feeds the caster -----------------------------------------
+  // Em's vector gun carries no magazine at all, so nothing it does is a reload
+  // in WeaponSystem's sense; the reconstruction it does instead (SWITCH,
+  // Weapon/VectorGunSystem.js) calls this and IS the casting motion. Since that
+  // switch is free and may be done over and over in one round, the chamber only
+  // pays out once a round, whichever motion fed it.
+  /** Which round it is, or -1 when there are no rounds to count. */
+  const chamberTurn = () => {
+    if (typeof $gameTroop === "undefined" || !$gameTroop) return -1;
+    if (typeof $gameTroop.turnCount !== "function") return -1;
+    if (typeof $gameTroop.inBattle === "function" && !$gameTroop.inBattle()) return -1;
+    return $gameTroop.turnCount();
+  };
+
+  /** Whether this chamber has already been paid this round. */
+  const chamberFedThisTurn = (actor) => {
+    const turn = chamberTurn();
+    // Out of battle there are no rounds: every reload feeds, as it always did.
+    if (turn < 0) return false;
+    return actor._gunmancerChamberTurn === turn;
+  };
+
+  const markChamberFed = (actor) => {
+    const turn = chamberTurn();
+    if (turn >= 0) actor._gunmancerChamberTurn = turn;
+  };
+
   if (typeof Game_Actor.prototype.reloadBullets === "function") {
     const _reloadBullets = Game_Actor.prototype.reloadBullets;
     Game_Actor.prototype.reloadBullets = function () {
       const armed = isArmedGunmancer(this);
       const before = this.mp;
       _reloadBullets.call(this);
-      if (!armed) return;
+      if (!armed || chamberFedThisTurn(this)) return;
+      markChamberFed(this);
       this.gainMp(Math.ceil(this.mmp * RELOAD_MP_FRACTION));
       if (this.mp > before) {
         battleLog(T("BattlePassives.log.chamberedReload", { actor: this.name() }));

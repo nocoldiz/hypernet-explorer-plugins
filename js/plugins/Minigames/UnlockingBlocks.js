@@ -267,6 +267,20 @@ UnlockingBlocks.version = 3.0;
     });
     const SHAPES = UnlockingBlocks.SHAPES;
 
+    // The largest cell count any bit in the catalogue has, so a renderer can
+    // size its pools once instead of assuming a four cell piece.
+    UnlockingBlocks.maxShapeCells = function () {
+        let most = 1;
+        for (const shape of SHAPES) {
+            let count = 0;
+            for (const row of shape) {
+                for (const kind of row) if (kind) count++;
+            }
+            if (count > most) most = count;
+        }
+        return most;
+    };
+
     // Which tiers a lock of this complexity feeds the pick. One more tier
     // every three steps, so a garden gate deals pins and a vault deals combs.
     UnlockingBlocks.shapeTierCount = function (difficulty) {
@@ -989,19 +1003,27 @@ UnlockingBlocks.version = 3.0;
                 }
             }
 
-            // Four for the falling piece, four for where it would land.
+            // One pair per cell of the falling piece: the pin itself and the
+            // outline of where it would land. Bits run from one cell up to the
+            // eight of a collar or a comb, so the pool grows to fit the piece
+            // that needs it rather than stopping at four.
             this._pieceMeshes = [];
             this._ghostMeshes = [];
-            const ghostMat = this._track(new THREE.MeshBasicMaterial({
+            this._ghostMat = this._track(new THREE.MeshBasicMaterial({
                 color: 0xe6c273, wireframe: true, transparent: true, opacity: 0.42
             }));
-            for (let i = 0; i < 4; i++) {
+            this._growPiecePool(UnlockingBlocks.maxShapeCells());
+        }
+
+        // Grows the falling piece pool until it holds at least `count` pairs.
+        _growPiecePool(count) {
+            while (this._pieceMeshes.length < count) {
                 const mesh = new THREE.Mesh(this._blockGeo, this._mats[1]);
                 mesh.visible = false;
                 this.root.add(mesh);
                 this._pieceMeshes.push(mesh);
 
-                const ghost = new THREE.Mesh(this._blockGeo, ghostMat);
+                const ghost = new THREE.Mesh(this._blockGeo, this._ghostMat);
                 ghost.visible = false;
                 this.root.add(ghost);
                 this._ghostMeshes.push(ghost);
@@ -1034,7 +1056,8 @@ UnlockingBlocks.version = 3.0;
             if (snap || Math.abs(this._fallY - target) > 3) this._fallY = target;
             this._fallY += (target - this._fallY) * 0.42;
 
-            for (let i = 0; i < 4; i++) {
+            this._growPiecePool(cells.length);
+            for (let i = 0; i < this._pieceMeshes.length; i++) {
                 const mesh = this._pieceMeshes[i];
                 const ghost = this._ghostMeshes[i];
                 const cell = cells[i];

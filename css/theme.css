@@ -4034,6 +4034,21 @@
     align-content: start;
 }
 
+/* The "Not implemented" divider on the character creation board: one line
+   across the whole grid, the way the specialization menu heads its groups. */
+.cc-spec-group-title {
+    grid-column: 1 / -1;
+    font-family: var(--font-ui);
+    font-size: var(--fs-caption);
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    border-bottom: 1px solid var(--border-subtle);
+    margin-top: 8px;
+    padding-bottom: 3px;
+}
+
 .cc-spec-card {
     display: flex;
     flex-direction: column;
@@ -5311,6 +5326,22 @@
     border: 1px solid var(--border-primary-hover-translucent-15);
 }
 
+/* The only other mark a pockets line is allowed: a count of something waiting
+   behind it, such as unspent attribute points on the Status entry. It sits
+   right of the label and leaves the hotkey letter on the far margin. */
+.command-item .command-item-alert {
+    flex-shrink: 0;
+    margin-left: 6px;
+    font-family: var(--font-ui);
+    font-size: var(--fs-caption);
+    font-weight: bold;
+    color: var(--text-primary-hover);
+    border: 1px solid var(--text-primary-hover);
+    border-radius: 8px;
+    padding: 0 6px;
+    line-height: 1.4;
+}
+
 /* Selection / Hover States: the line changes colour, nothing else. No plate,
    no frame, no glow behind the words. */
 .command-item:hover,
@@ -5617,6 +5648,9 @@
 }
 
 /* Survival Exhausion Levels */
+/* Three needs to a row, always. A fourth reading (a craving, an illness, an
+   addiction) opens a new row underneath rather than squeezing the row thinner,
+   so a need keeps the same width whatever else the member is carrying. */
 .survival-box {
     display: flex;
     flex-direction: row;
@@ -5624,6 +5658,11 @@
     align-items: flex-start;
     gap: 6px 18px;
     margin-bottom: 0;
+}
+
+.survival-box > .survival-card {
+    flex: 0 0 calc((100% - 36px) / 3);
+    max-width: calc((100% - 36px) / 3);
 }
 
 .survival-card {
@@ -8933,6 +8972,16 @@
     margin-top: 12px;
 }
 
+/* What the party is cooking with: every piece of kit in the pack that the
+   dish is worth more for (<Cookware: n>, js/plugins/Crafting/CookingSystem.js).
+   The bonus itself is a row in the spec grid above; this only names them. */
+.cook-kit-line {
+    font-size: var(--fs-caption);
+    color: var(--text-detail-label);
+    line-height: 1.35;
+    margin-top: 4px;
+}
+
 /* The one row on the pantry list that is already in the pot. */
 .pantry-list .item-slot.selected-ingredient {
     border-color: var(--text-primary-hover);
@@ -9506,6 +9555,16 @@
 .army-dialog-type-arrow:hover {
     opacity: 1;
     background: var(--bg-primary-hover-translucent-35);
+}
+
+/* One line under the selector when the sleep on offer is a rough one. */
+.army-dialog-type-hint {
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 0.95em;
+    opacity: 0.8;
+    margin: -4px 0 8px;
+    line-height: 1.3;
 }
 
 /* Scrollable variant for long choice lists (floor list, etc.) */
@@ -10391,6 +10450,44 @@
     font-size: 1.19em;
     font-weight: bold;
     color: var(--text-muted-hover);
+}
+
+/* Attribute points: the unspent pool and the raise button on a medallion. */
+.stat-points-banner {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 0.9em;
+    font-weight: bold;
+    color: var(--text-primary-hover);
+    border: 1px solid var(--text-primary-hover);
+    border-radius: 10px;
+    padding: 3px 8px;
+    margin-bottom: 6px;
+}
+
+.stat-medallion-raise {
+    font-family: var(--font-ui);
+    font-size: 0.9em;
+    font-weight: bold;
+    line-height: 1;
+    color: var(--bg-secondary-hover);
+    background: var(--text-primary-hover);
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.stat-medallion-spent {
+    font-family: var(--font-ui);
+    font-size: 0.72em;
+    font-weight: bold;
+    color: var(--text-primary-hover);
+    opacity: 0.75;
 }
 
 .stat-medallion-mod {
@@ -12960,6 +13057,19 @@
     margin-top: 6px;
     font-family: var(--font-ui);
     line-height: 1.35;
+    color: var(--text-card-medium);
+}
+
+/* The name of whatever the cursor is on, heading its description. */
+.equip-lore-name {
+    font-family: var(--font-ui);
+    font-weight: bold;
+    color: var(--text-card-dark);
+    margin-bottom: 2px;
+}
+
+.equip-desc--empty {
+    font-style: italic;
     color: var(--text-card-medium);
 }
 
@@ -16947,8 +17057,10 @@
     visibility: hidden;
 }
 
-/* A [Keyword] the party can ask about: the only gold in the line. */
-#html-msg-text .msg-keyword {
+/* A [Keyword] the party can ask about: the only gold in the line. The same
+   gold wherever else a topic is named, the Empathize log included. */
+#html-msg-text .msg-keyword,
+.msg-keyword {
     color: var(--text-primary-hover);
 }
 
@@ -19244,11 +19356,11 @@ padding: 2px 10px;
 }
 #html-toast-stack .html-toast {
     position: static;
-    padding: 0.55em 1.05em;
+    padding: 0.4em 0.8em;
     border-width: 2px;
-    outline-offset: -5px;
+    outline-offset: -4px;
     transition: opacity 0.4s ease;
-    max-width: 24em;
+    max-width: 20em;
     /* No colour here: the severity class below carries it, and an id rule
        would outrank it. */
     line-height: 1.3;
@@ -19306,6 +19418,87 @@ padding: 2px 10px;
 .toast-rarity--legendary .toast-item-name { color: var(--rarity-legendary); }
 .toast-delta-up   { color: var(--text-success-active); font-weight: bold; }
 .toast-delta-down { color: var(--text-text-alt-10); font-weight: bold; }
+
+/* ==========================================================================
+   Serving card (window.MealBars, js/plugins/Core/TimeDateSystemUI.js)
+   --------------------------------------------------------------------------
+   What a meal did, one bar per eater, running up from the meter before the
+   food to the meter after it. Shown wherever the food was eaten - the map, the
+   backpack, the kitchen - which is why it hangs off document.body rather than
+   off any one scene. The track runs to the overeating ceiling, not to 100%, so
+   the surplus of a big meal has somewhere to go; the tick is where full falls.
+   ========================================================================== */
+#meal-bars-overlay {
+    position: fixed;
+    left: 50%;
+    bottom: 6%;
+    /* Over the full-screen menu overlays (#menu-container and friends sit at
+       1000), because the whole point is that a meal can now be eaten inside
+       one and watched land. Below the modal dialogs above them. */
+    transform: translateX(-50%);
+    z-index: 1200;
+    pointer-events: none;
+    min-width: 18em;
+    max-width: 26em;
+    padding: 0.6em 0.9em;
+    background: var(--bg-panel);
+    border: 2px solid var(--border-primary-hover-translucent-15);
+    border-radius: 4px;
+    font-family: var(--font-ui);
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+#meal-bars-overlay.meal-card--out { opacity: 0; }
+
+.meal-card-title {
+    color: var(--text-gold-dark);
+    font-weight: bold;
+    font-size: 1.05em;
+    margin-bottom: 0.4em;
+}
+
+.meal-rows { display: flex; flex-direction: column; gap: 0.35em; }
+
+.meal-row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.9em;
+}
+
+.meal-row-name { color: var(--toast-text); }
+.meal-row-val  { font-weight: bold; }
+.meal-row-delta {
+    margin-left: 0.4em;
+    color: var(--text-success-active);
+    font-size: 0.9em;
+}
+
+.meal-row-track {
+    position: relative;
+    height: 7px;
+    margin-top: 2px;
+    background: var(--bg-primary-hover-translucent-10);
+    border: 1px solid var(--border-primary-hover-translucent-5);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+/* Where a full meter falls on a track that keeps going past it. */
+.meal-row-mark {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-primary-hover-translucent-15);
+}
+
+.meal-row-fill {
+    height: 100%;
+    transition-property: width;
+    transition-timing-function: ease-out;
+}
 
 /* ==========================================================================
    Shop Management UI (ShopManagementUI.js)
@@ -22654,21 +22847,21 @@ body.ascii-ui-active .ascii-passthrough {
 .dz-name {
     font-weight: bold;
     font-size: 1.019em;
-    color: var(--text-text-alt-2);
+    color: var(--text-detail-heading);
 }
 
 .dz-cat {
     font-size: 0.82em;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--text-text-alt-9-translucent-50);
+    color: var(--text-detail-label);
 }
 
 .dz-desc {
     font-size: 0.892em;
     font-style: normal;
     margin: 4px 0 6px;
-    color: var(--text-text-alt-16);
+    color: var(--text-success-active);
 }
 
 .dz-chips {
@@ -22682,7 +22875,7 @@ body.ascii-ui-active .ascii-passthrough {
     font-size: 0.798em;
     padding: 1px 6px;
     border: 1px solid var(--border-primary-hover-translucent-15);
-    color: var(--text-text-alt-16);
+    color: var(--text-success-active);
 }
 
 .dz-chip-hot { border-color: var(--accent-gold-pure); color: var(--accent-gold-pure); }
@@ -22699,8 +22892,8 @@ body.ascii-ui-active .ascii-passthrough {
 }
 
 .dz-line.dz-warn .dz-val { color: var(--text-text-alt-10); }
-.dz-key { color: var(--text-text-alt-9-translucent-50); }
-.dz-val { color: var(--text-text-alt-2); text-align: right; }
+.dz-key { color: var(--text-detail-label); }
+.dz-val { color: var(--text-success-active); text-align: right; }
 
 .dz-bar {
     height: 6px;
@@ -22722,7 +22915,7 @@ body.ascii-ui-active .ascii-passthrough {
     font-size: 0.798em;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--text-text-alt-9-translucent-50);
+    color: var(--text-detail-heading);
     margin-bottom: 3px;
 }
 
@@ -22744,8 +22937,8 @@ body.ascii-ui-active .ascii-passthrough {
 }
 
 .dz-remedy-none { font-style: normal; opacity: 0.7; }
-.dz-remedy-name { flex: 1 1 auto; color: var(--text-text-alt-2); }
-.dz-remedy-course { color: var(--text-text-alt-9-translucent-50); }
+.dz-remedy-name { flex: 1 1 auto; color: var(--text-success-active); }
+.dz-remedy-course { color: var(--text-detail-label); }
 .dz-remedy-have { min-width: 3.2em; text-align: right; }
 
 .dz-icon {
@@ -22758,7 +22951,7 @@ body.ascii-ui-active .ascii-passthrough {
     font-size: 0.82em;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--text-text-alt-9-translucent-50);
+    color: var(--text-detail-heading);
     border-bottom: 1px solid var(--border-primary-hover-translucent-15);
     padding-bottom: 2px;
     margin-top: 4px;
@@ -22766,7 +22959,7 @@ body.ascii-ui-active .ascii-passthrough {
 
 .dz-past, .dz-empty {
     font-size: 0.892em;
-    color: var(--text-text-alt-16);
+    color: var(--text-success-active);
     font-style: normal;
 }
 
@@ -23273,25 +23466,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #camper-drive-hud .cds-env-row {
     margin-top: 4px; font-size: var(--fs-chip); color: var(--text-text-alt-12);
 }
-#camper-drive-hud .cds-speed-text {
-    font-size: var(--fs-title); font-weight: bold; text-align: center;
-}
-#camper-drive-hud .cds-rpm-row {
-    display: flex; align-items: center; justify-content: center;
-    gap: 8px; margin-top: 2px;
-}
-#camper-drive-hud .cds-gear-text {
-    font-size: var(--fs-label); font-weight: bold; color: var(--accent-amber-light);
-    min-width: 14px;
-}
-#camper-drive-hud .cds-rpm-track {
-    display: inline-block; width: 70px; height: 6px;
-    background: rgba(255, 255, 255, 0.1); border-radius: 3px;
-    overflow: hidden;
-}
-#camper-drive-hud .cds-rpm-bar {
-    display: block; height: 100%; width: var(--ui-bar-w, 10%);
-    background: var(--accent-amber-glow);
+/* The speedometer is a canvas drawn at twice its shown size, so the needle and
+   the tick hairlines stay crisp; the panel is only the rim around it. */
+#camper-drive-hud .cds-speedo-canvas {
+    display: block; width: 132px; height: 132px;
 }
 #camper-drive-hud .cds-ab-row {
     display: flex; gap: 9px; justify-content: center;
@@ -31935,16 +32113,26 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .gauge-band--warn { --gauge-ink: var(--gauge-warn); }
 .gauge-band--ok   { --gauge-ink: var(--gauge-ok); }
 
+/* Hunger is the one meter that reads past full: window.NeedGauge.hungerBand
+   turns it amber over 100% and red at the overeating line, which is the same
+   line the overeating state is applied on. */
+.gauge-band--over   { --gauge-ink: var(--gauge-warn); }
+.gauge-band--gorged { --gauge-ink: var(--gauge-bad); }
+
 /* Paired with the band class on purpose: the per-need gradients above
    (.status-gauge-bar-inner.hunger and friends) are two classes deep, and the
    band has to beat them the way the inline colour used to. */
 .gauge-ink.gauge-band--bad,
 .gauge-ink.gauge-band--warn,
-.gauge-ink.gauge-band--ok { color: var(--gauge-ink); }
+.gauge-ink.gauge-band--ok,
+.gauge-ink.gauge-band--over,
+.gauge-ink.gauge-band--gorged { color: var(--gauge-ink); }
 
 .gauge-fill.gauge-band--bad,
 .gauge-fill.gauge-band--warn,
-.gauge-fill.gauge-band--ok { background: var(--gauge-ink); }
+.gauge-fill.gauge-band--ok,
+.gauge-fill.gauge-band--over,
+.gauge-fill.gauge-band--gorged { background: var(--gauge-ink); }
 
 /* EEG bands on the biologic panel. The band names the class; the colour is
    the theme's (js/plugins/Health/Health_BiologicSimulation.js). */
@@ -32532,8 +32720,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     outline: 1px solid var(--border-subtle-translucent-40);
     outline-offset: -7px;
     box-shadow: none;
-    padding: 10px 8px;
-    width: 320px;
+    padding: 12px 10px;
+    width: 380px;
     text-align: left;
 }
 
@@ -32544,7 +32732,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     text-align: center;
     margin: 0;
     padding: 2px 18px 8px;
-    font-size: 1.142em;
+    font-size: 1.45em;
     letter-spacing: 0.04em;
     text-shadow: none;
 }
@@ -32556,7 +32744,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #sleep-menu-overlay .army-dialog-btn {
     font-family: var(--font-ui);
     font-weight: bold;
-    font-size: 1.048em;
+    font-size: 1.33em;
     padding: 5px 18px;
     border: 2px solid transparent;
     border-radius: 0;
@@ -32582,6 +32770,12 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 #sleep-menu-overlay .army-dialog-btn__wake {
     opacity: 0.75;
+    font-size: 0.82em;
+}
+
+#sleep-menu-overlay .army-dialog-type-hint {
+    color: var(--accent-orange);
+    font-size: 0.95em;
 }
 
 /* The Sleep <-> Wait flip and the cryo picker sit inside the same frame, so
@@ -32592,6 +32786,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 #sleep-menu-overlay .army-dialog-type-label {
     color: var(--text-primary-hover);
+    font-size: 1.25em;
 }
 
 #sleep-menu-overlay .army-dialog-type-arrow {
@@ -35660,25 +35855,27 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    The panel names where it is and what state it is in; this says the rest.
    ========================================================================== */
 
-#camper-drive-hud .cds-mini-panel { top: 16px; right: 16px; }
+/* The four corners. The map is bottom left and the instruments are bottom
+   right, which is where this game puts both of them everywhere else; the party
+   cards own the top left (UI/PartyHud.js) and the legend the top right. The
+   middle of the bottom edge is left clear for the quick bar. */
+#camper-drive-hud .cds-mini-panel { bottom: 16px; left: 16px; }
 
 #camper-drive-hud .cds-journey-panel {
-    bottom: 20px; left: 50%; transform: translateX(-50%);
+    top: 16px; left: 50%; transform: translateX(-50%);
     min-width: 260px; text-align: center;
 }
 
 #camper-drive-hud .cds-mode-panel {
-    position: absolute; bottom: 20px; left: 16px; pointer-events: auto;
+    position: absolute; top: 16px; right: 16px; pointer-events: auto;
 }
 
 #camper-drive-hud .cds-speed-panel {
-    top: 16px; left: 50%; transform: translateX(-50%);
-    min-width: 130px; text-align: center;
+    bottom: 16px; right: 16px; padding: 8px;
 }
 
 #camper-drive-hud .cds-status-panel {
-    top: 88px; left: 50%; transform: translateX(-50%);
-    min-width: 150px; text-align: center;
+    bottom: 168px; right: 16px; min-width: 150px; text-align: center;
 }
 
 #camper-drive-hud .cds-clickable { cursor: pointer; }
@@ -35718,7 +35915,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #camper-drive-hud .cds-cond--good { color: var(--text-forest-green); }
 #camper-drive-hud .cds-cond--warn { color: var(--accent-amber-glow); }
 #camper-drive-hud .cds-cond--bad { color: var(--accent-red-3); }
-#camper-drive-hud .cds-rpm-bar.cds-rpm--redline { background: var(--accent-red-3); }
 
 /* Split screen: one HUD to a viewport. */
 .camper-drive-hud.cds-half-w { width: 50%; }

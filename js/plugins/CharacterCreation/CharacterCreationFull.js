@@ -1153,6 +1153,10 @@
       : "";
     return {
       key: String(spec.id),
+      // Whether the discipline is wired into a mechanic yet. The picker draws
+      // the ones that are not under their own heading; they are picked, raised
+      // and sold back exactly like the rest.
+      notImplemented: !window.Specializations.isImplemented(spec),
       label: window.Specializations.displayName(spec),
       sub: `${window.Specializations.levelName(level)} · ${cost}${granted}`,
       disabled: level < 5 && specStepCost(level) > specPointsLeft(),
@@ -1160,6 +1164,14 @@
       // handed over, and the points go back in the pot.
       lower: level > 1 ? T("detailed.specLower", { n: specStepCost(level - 1) }) : null,
     };
+  }
+
+  // A run of specializations, the implemented ones first and the ones that are
+  // still only a line on the sheet after them. The picker heads the second run
+  // with "Not implemented"; the split is a reading order, not a restriction.
+  function specOptions(specs) {
+    const rows = specs.map(specOption);
+    return [...rows.filter((r) => !r.notImplemented), ...rows.filter((r) => r.notImplemented)];
   }
 
   // Every picker answers with a flat list of { key, label, sub }. The scene
@@ -1306,7 +1318,7 @@
             return {
               title: T("detailed.pickCategory"),
               note: budget,
-              options: window.Specializations.list.map(specOption),
+              options: specOptions(window.Specializations.list),
             };
           }
           const categories = window.Specializations.categories && window.Specializations.categories.length
@@ -1323,9 +1335,7 @@
           title: arg,
           arg: arg,
           note: budget,
-          options: window.Specializations.list
-            .filter((spec) => spec.category === arg)
-            .map(specOption),
+          options: specOptions(window.Specializations.list.filter((spec) => spec.category === arg)),
         };
       }
       default:
@@ -1722,7 +1732,13 @@
     const options = matches.slice(0, PICKER_MAX_ROWS);
     const hidden = matches.length - options.length;
 
+    // The first unimplemented row in the run gets the heading that names them.
+    let notImplHdr = false;
     options.forEach((option) => {
+      if (option.notImplemented && !notImplHdr) {
+        notImplHdr = true;
+        html += `<div class="npc-sec-hdr npc-sec-hdr--spaced">${esc(T("detailed.specNotImplemented"))}</div>`;
+      }
       // Town and nation keys carry spaces and apostrophes, so the key travels
       // through the inline handler encoded and is decoded on the way back.
       // encodeURIComponent leaves an apostrophe alone, which would close the

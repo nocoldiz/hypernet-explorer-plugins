@@ -46,7 +46,8 @@
     "Plants": "Piante",
     "Survival": "Sopravvivenza",
     "Trash": "Rifiuti",
-    "Vehicles": "Veicoli"
+    "Vehicles": "Veicoli",
+    "Leisure": "Svago"
   },
   "itemType": {
     "standard": "Oggetto",
@@ -288,7 +289,18 @@
     "Enchant": "Incanta",
     "Transmute": "Tramuta",
     "Absorb": "Assorbi",
-    "Reflect": "Rifletti"
+    "Reflect": "Rifletti",
+    "Study": "Studia"
+  },
+  "study": {
+    "title": "Studio",
+    "who": "Chi studia \"{item}\"? ({duration})",
+    "done": "{name} ha studiato \"{item}\" per {duration}. {subject} +{points}",
+    "known": "{name} ha già preso tutto quello che \"{item}\" aveva da dare.",
+    "nothing": "In \"{item}\" non c'è nulla da studiare.",
+    "hours": "{hours}h",
+    "minutes": "{minutes}min",
+    "hoursMinutes": "{hours}h {minutes}min"
   },
   "ui": {
     "carryWeight": "Peso trasportato",

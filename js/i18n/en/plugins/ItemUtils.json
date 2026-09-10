@@ -31,5 +31,36 @@
   "year": {
     "deepTime": "{years} years ago",
     "bce": "{year} BCE"
+  },
+  "leisure": {
+    "label": "Leisure",
+    "gain": "Mood +{amount}",
+    "action": {
+      "enjoy": "{name} is enjoying the {item}",
+      "read": "{name} is reading the {item}",
+      "music": "{name} is listening to the {item}",
+      "instrument": "{name} is playing the {item}",
+      "videogame": "{name} is playing videogames on the {item}",
+      "boardgame": "{name} is setting up the {item}",
+      "cards": "{name} is dealing out the {item}",
+      "toy": "{name} is fiddling with the {item}",
+      "album": "{name} is leafing through the {item}",
+      "art": "{name} is studying the {item}",
+      "garden": "{name} is tending the {item}",
+      "photo": "{name} is taking pictures with the {item}",
+      "stargaze": "{name} is stargazing through the {item}",
+      "fish": "{name} is casting the {item}",
+      "phone": "{name} is glued to the {item}",
+      "write": "{name} is scribbling in the {item}",
+      "bath": "{name} is soaking with the {item}",
+      "scratch": "{name} is scratching the {item}",
+      "relax": "{name} is unwinding with the {item}",
+      "feast": "{name} is tucking into the {item}",
+      "watch": "{name} is watching the {item}",
+      "exercise": "{name} is working out with the {item}",
+      "smoke": "{name} is smoking the {item}",
+      "bet": "{name} is studying the odds on the {item}",
+      "gamble": "{name} is playing the {item}"
+    }
   }
 }

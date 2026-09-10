@@ -217,7 +217,7 @@
   },
   "45": {
     "name": "Read Opponent",
-    "description": "Deals Physical damage to one enemy and lowers\nCON. May inflict Locked on. Strikes first.",
+    "description": "Deals Physical damage to one enemy and lowers\nCON. May inflict Vital Exposed. Strikes first.",
     "message1": "%1 studies their opponent!",
     "message2": ""
   },
@@ -271,7 +271,7 @@
   },
   "54": {
     "name": "Muscle Guard",
-    "description": "Raises the user's PSI. Strikes first.",
+    "description": "Raises the user's CON. Strikes first.",
     "message1": "%1 tenses their muscles!",
     "message2": ""
   },
@@ -301,7 +301,7 @@
   },
   "59": {
     "name": "Combat Analysis",
-    "description": "Deals Physical damage to one enemy and lowers\nCON. May inflict Locked on. Strikes first.",
+    "description": "Deals Physical damage to one enemy and lowers\nCON. May inflict Vital Exposed. Strikes first.",
     "message1": "%1 analyzes their opponent!",
     "message2": ""
   },
@@ -715,7 +715,7 @@
   },
   "128": {
     "name": "Frost Palm",
-    "description": "Deals heavy Ice damage to one enemy.",
+    "description": "Deals Ice damage to one enemy and may inflict\nFreeze.",
     "message1": "%1 palms radiate cold!",
     "message2": ""
   },
@@ -727,7 +727,7 @@
   },
   "130": {
     "name": "Lightning Strike",
-    "description": "Deals Physical damage to one enemy and lowers\nCON. May inflict Locked on. Strikes first.",
+    "description": "Deals Physical damage to one enemy and lowers\nCON. May inflict Vital Exposed. Strikes first.",
     "message1": "%1 strikes like lightning!",
     "message2": ""
   },
@@ -1345,7 +1345,7 @@
   },
   "243": {
     "name": "Weak Point Strike",
-    "description": "Deals light damage to one enemy and lowers their\nCON. Lands 85% of the time.",
+    "description": "Deals damage to one enemy and lowers CON. May\ninflict Vital Exposed. Lands 85% of the time.",
     "message1": "%1 strikes a weak point!",
     "message2": ""
   },
@@ -1393,7 +1393,7 @@
   },
   "251": {
     "name": "Ground Sweep",
-    "description": "Deals minor damage to one enemy and lowers their\nDEX. Lands 90% of the time.",
+    "description": "Deals light damage to one enemy and lowers DEX.\nMay inflict Unbalanced. Lands 90% of the time.",
     "message1": "%1 performs a leg sweep!",
     "message2": ""
   },
@@ -1537,7 +1537,7 @@
   },
   "275": {
     "name": "Maiden’s Stance",
-    "description": "Deals damage to one enemy.",
+    "description": "Deals heavy damage to one enemy and may inflict\nGuard Broken.",
     "message1": "%1 does %2!",
     "message2": ""
   },
@@ -1639,7 +1639,7 @@
   },
   "302": {
     "name": "Berserker Mode",
-    "description": "Raises the user's STR. Grants Perfect Focus.",
+    "description": "Raises the user's STR. Grants Berserk.",
     "message1": "%1 enters berserker mode!",
     "message2": ""
   },
@@ -1657,7 +1657,7 @@
   },
   "305": {
     "name": "Entangle",
-    "description": "Lowers one enemy's DEX. May inflict Paralysis.\nLands 80% of the time.",
+    "description": "Lowers one enemy's DEX. May inflict Rooted\nStance. Lands 80% of the time.",
     "message1": "%1 entangles the target!",
     "message2": ""
   },
@@ -1675,7 +1675,7 @@
   },
   "308": {
     "name": "Camouflage",
-    "description": "Raises the user's PSI.",
+    "description": "Raises the user's PSI. Grants Shadow Veil.",
     "message1": "%1 camouflages itself!",
     "message2": ""
   },
@@ -1687,13 +1687,13 @@
   },
   "310": {
     "name": "Flash",
-    "description": "Raises all enemies' DEX and INT. Restores 20 AP.",
+    "description": "Lowers all enemies' DEX and INT. May inflict\nBlind.",
     "message1": "%1 does %2!",
     "message2": ""
   },
   "311": {
     "name": "Toxic Fog",
-    "description": "Deals minor Physical damage to all enemies and\nlowers their PSI/STR. May inflict Unbalanced.",
+    "description": "Deals minor Physical damage to all enemies and\nlowers their PSI and STR. May inflict Poison.",
     "message1": "%1 releases a toxic fog!",
     "message2": ""
   },
@@ -2749,7 +2749,7 @@
   },
   "495": {
     "name": "RelicDiscovery",
-    "description": "Raises all enemies' WIS and PSI. Inflicts\nInspired.",
+    "description": "Lowers all enemies' WIS and PSI. May inflict\nVital Exposed.",
     "message1": "%1 uses Relic Discovery!",
     "message2": ""
   },
@@ -2791,7 +2791,7 @@
   },
   "502": {
     "name": "CryptPlunderer",
-    "description": "Raises all enemies' STR/CON/DEX. Inflicts\nInspired.",
+    "description": "Lowers all enemies' STR/CON/DEX. May inflict\nVital Exposed.",
     "message1": "%1 uses Crypt Plunderer!",
     "message2": ""
   },
@@ -2965,7 +2965,7 @@
   },
   "541": {
     "name": "BlessingField",
-    "description": "Raises all enemies' INT.",
+    "description": "Raises all allies' INT.",
     "message1": "%1 creates a blessing void!",
     "message2": ""
   },
@@ -3067,7 +3067,7 @@
   },
   "558": {
     "name": "Sanctify",
-    "description": "Deals damage to one enemy and cures several\nnegative states.",
+    "description": "Deals minor damage to one enemy.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
@@ -3589,7 +3589,7 @@
   },
   "675": {
     "name": "MaliceBlades",
-    "description": "Deals minor damage to one enemy and raises their\nDEX. Strikes last. Lands 95% of the time.",
+    "description": "Deals light damage to one enemy and lowers their\nDEX. Strikes last. Lands 95% of the time.",
     "message1": "%1 summons blades of malice!",
     "message2": ""
   },
@@ -3685,7 +3685,7 @@
   },
   "691": {
     "name": "TempestasOmnium",
-    "description": "Deals Wind damage to one random enemy and raises\ntheir STR.",
+    "description": "Drains HP from one random enemy and lowers their\nSTR/CON. May inflict Confusion. Strikes last.",
     "message1": "%1 summons a chaotic tempest!",
     "message2": ""
   },
@@ -3745,7 +3745,7 @@
   },
   "701": {
     "name": "LuxDivinus",
-    "description": "Deals Sacred damage to one random enemy and\nraises their STR/CON/INT. May inflict Dead.",
+    "description": "Deals Sacred damage to one random enemy and\nlowers their STR/CON/INT. May inflict Dead.",
     "message1": "%1 calls divine judgment!",
     "message2": ""
   },
@@ -3775,7 +3775,7 @@
   },
   "706": {
     "name": "ChaosUltimatum",
-    "description": "Deals damage to one random enemy and raises\ntheir STR/CON.",
+    "description": "Deals damage to one random enemy and lowers\ntheir STR/CON/INT/WIS.",
     "message1": "%1 unleashes absolute chaos!",
     "message2": ""
   },
@@ -3799,7 +3799,7 @@
   },
   "710": {
     "name": "IgnisViventis",
-    "description": "Deals Fire damage to one random enemy and raises\ntheir STR/INT. Lowers their CON/WIS.",
+    "description": "Deals Fire damage to one random enemy and lowers\ntheir STR/INT/CON/WIS. Strikes last.",
     "message1": "%1 becomes living chaos flame!",
     "message2": ""
   },
@@ -3943,7 +3943,7 @@
   },
   "744": {
     "name": "HealingParadox",
-    "description": "Deals damage to one enemy and may inflict Half\nEncounters. Strikes last. Lands 85% of the time.",
+    "description": "Drains HP from one enemy. Strikes last. Lands\n85% of the time.",
     "message1": "%1 reverses the flow of life!",
     "message2": ""
   },
@@ -4393,7 +4393,7 @@
   },
   "839": {
     "name": "CurseRitual",
-    "description": "Transfers the user's ailments to one enemy.",
+    "description": "May inflict Poison/Blind/Silence on one enemy.\nStrikes last. Lands 90% of the time.",
     "message1": "%1 performs a curse transfer ritual!",
     "message2": ""
   },
@@ -4615,13 +4615,13 @@
   },
   "887": {
     "name": "Entangling Roots",
-    "description": "Lowers one enemy's DEX. Lands 90% of the time.",
+    "description": "Lowers one enemy's DEX. May inflict Rooted\nStance. Lands 90% of the time.",
     "message1": "%1 ensnares %2 in roots!",
     "message2": ""
   },
   "888": {
     "name": "Thorn Armor",
-    "description": "Raises the user's WIS. May grant Stun.",
+    "description": "Raises the user's CON.",
     "message1": "%1 surrounds itself with thorns!",
     "message2": ""
   },
@@ -4735,7 +4735,7 @@
   },
   "917": {
     "name": "Bountiful Harvest",
-    "description": "Deals damage to all enemies and inflicts HP\nRegeneration.",
+    "description": "Deals minor damage to all enemies and may\ninflict Bleeding.",
     "message1": "%1 uses Bountiful Harvest!",
     "message2": ""
   },
@@ -4879,7 +4879,7 @@
   },
   "951": {
     "name": "PSI Combat Focus",
-    "description": "Raises the user's STR.",
+    "description": "Raises the user's STR. Grants Perfect Focus.",
     "message1": "%1 focuses on combat techniques!",
     "message2": ""
   },
@@ -4957,7 +4957,7 @@
   },
   "964": {
     "name": "PSI Cryo Freezing",
-    "description": "Deals light Ice damage to one enemy and lowers\ntheir DEX. Lands 95% of the time.",
+    "description": "Deals light Ice damage to one enemy and lowers\nDEX. May inflict Freeze. Lands 95% of the time.",
     "message1": "%1 slows molecular movement!",
     "message2": ""
   },
@@ -5083,7 +5083,7 @@
   },
   "995": {
     "name": "Paralytic Agent",
-    "description": "Raises the user's STR/CON/DEX.",
+    "description": "Lowers all enemies' DEX. May inflict Paralysis.",
     "message1": "%1 applies a paralytic agent!",
     "message2": ""
   },
@@ -5143,7 +5143,7 @@
   },
   "1005": {
     "name": "Explosive Compound",
-    "description": "Deals heavy damage to all enemies and cures\nseveral negative states.",
+    "description": "Deals damage to all enemies and may inflict\nBurned.",
     "message1": "%1 throws an explosive compound!",
     "message2": ""
   },
@@ -5263,13 +5263,13 @@
   },
   "1035": {
     "name": "Precision Focus",
-    "description": "Raises one ally's PSI. Lowers their STR. Strikes\nlast.",
+    "description": "Raises one ally's PSI. Lowers their STR and\ngrants Perfect Focus. Strikes last.",
     "message1": "%1 activates precise mode!",
     "message2": ""
   },
   "1036": {
     "name": "Assisted aim",
-    "description": "Raises one ally's PSI. Strikes last.",
+    "description": "Raises one ally's PSI. Grants Perfect Focus.\nStrikes last.",
     "message1": "%1 grants supernatural precision!",
     "message2": ""
   },
@@ -5293,7 +5293,7 @@
   },
   "1040": {
     "name": "Aimed Shot",
-    "description": "Deals light Physical damage to one enemy and may\ninflict Locked on.",
+    "description": "Deals light Physical damage to one enemy and may\ninflict Vital Exposed.",
     "message1": "%1 uses Aimed Shot!",
     "message2": ""
   },
@@ -5371,7 +5371,7 @@
   },
   "1053": {
     "name": "Stun Round",
-    "description": "Deals damage to one enemy and may inflict\nParalysis. Strikes first.",
+    "description": "Deals damage to one enemy and may inflict Stun.\nStrikes first.",
     "message1": "%1 fires a stun shot!",
     "message2": ""
   },
@@ -5425,7 +5425,7 @@
   },
   "1072": {
     "name": "Flaming Oil",
-    "description": "Deals damage to all enemies and inflicts HP\nRegeneration.",
+    "description": "Deals light damage to all enemies and may\ninflict Burned.",
     "message1": "%1 throws flaming oil!",
     "message2": ""
   },
@@ -5473,7 +5473,7 @@
   },
   "1090": {
     "name": "Deceptive Lullaby",
-    "description": "Raises all enemies' WIS. May inflict Sleep.\nStrikes last. Lands 65% of the time.",
+    "description": "Lowers all enemies' WIS. May inflict Sleep.\nStrikes last. Lands 65% of the time.",
     "message1": "%1 sings a lullaby!",
     "message2": ""
   },
@@ -5539,7 +5539,7 @@
   },
   "1101": {
     "name": "Song of Silence",
-    "description": "Raises all enemies' CON and DEX.",
+    "description": "Lowers all enemies' CON and DEX. May inflict\nSilence.",
     "message1": "%1 sings a song of silence!",
     "message2": ""
   },
@@ -5665,7 +5665,7 @@
   },
   "1132": {
     "name": "Scandalous Headline",
-    "description": "Raises all enemies' CON and DEX.",
+    "description": "Lowers all enemies' CON and DEX.",
     "message1": "%1 publishes a scathing report!",
     "message2": ""
   },
@@ -5689,7 +5689,7 @@
   },
   "1136": {
     "name": "Sow Discord",
-    "description": "Raises all enemies' PSI and STR. Restores 25 AP.",
+    "description": "Lowers all enemies' PSI and STR. May inflict\nConfusion.",
     "message1": "%1 sows discord among enemies!",
     "message2": ""
   },
@@ -5791,7 +5791,7 @@
   },
   "1153": {
     "name": "Confusing Compliment",
-    "description": "Raises one enemy's STR. Lowers their CON.\nStrikes last. Lands 80% of the time.",
+    "description": "Lowers one enemy's CON. May inflict Confusion.\nStrikes last. Lands 80% of the time.",
     "message1": "%1 gives a confusing compliment!",
     "message2": ""
   },
@@ -5815,13 +5815,13 @@
   },
   "1157": {
     "name": "Genuine Encouragement",
-    "description": "Raises all stats for one enemy. Strikes last.",
+    "description": "Raises one enemy's STR/INT/DEX. Lowers their CON\nand WIS. Strikes last.",
     "message1": "%1 genuinely encourages the enemy!",
     "message2": ""
   },
   "1158": {
     "name": "Temporary Alliance",
-    "description": "Raises one enemy's CON and WIS. Strikes last.\nLands 70% of the time.",
+    "description": "May inflict Charm on one enemy. Strikes last.\nLands 70% of the time.",
     "message1": "%1 proposes a temporary alliance!",
     "message2": ""
   },
@@ -5899,7 +5899,7 @@
   },
   "1171": {
     "name": "Bounty Hunter",
-    "description": "Deals Physical damage to one enemy and lowers\nDEX. May inflict Locked on. Strikes first.",
+    "description": "Deals Physical damage to one enemy and lowers\nDEX. May inflict Vital Exposed. Strikes first.",
     "message1": "%1 uses Bounty Hunter!",
     "message2": ""
   },
@@ -5995,7 +5995,7 @@
   },
   "1187": {
     "name": "Market Domination",
-    "description": "Raises all enemies' WIS/PSI/STR. Restores 40 AP.",
+    "description": "Lowers all enemies' WIS/PSI/STR.",
     "message1": "%1 exerts psychic dominance!",
     "message2": ""
   },
@@ -6049,7 +6049,7 @@
   },
   "1206": {
     "name": "Burn Treatment",
-    "description": "Restores HP to all allies.",
+    "description": "Cures Burned on all allies. Restores HP.",
     "message1": "%1 distributes first aid supplies!",
     "message2": ""
   },
@@ -6079,13 +6079,13 @@
   },
   "1211": {
     "name": "Freeze Command",
-    "description": "May inflict Silence on one enemy. Strikes first.\nLands 95% of the time.",
+    "description": "May inflict Rooted Stance on one enemy. Strikes\nfirst. Lands 95% of the time.",
     "message1": "%1 shouts: Freeze!",
     "message2": ""
   },
   "1212": {
     "name": "Psychic Cuffs",
-    "description": "May inflict HP Regeneration on one enemy.\nStrikes first. Lands 90% of the time.",
+    "description": "May inflict Paralysis on one enemy. Strikes\nfirst. Lands 90% of the time.",
     "message1": "%1 attempts a psychic arrest!",
     "message2": ""
   },
@@ -6097,7 +6097,7 @@
   },
   "1214": {
     "name": "Flashbang",
-    "description": "Lowers all enemies' PSI. Strikes first.",
+    "description": "Lowers all enemies' PSI. May inflict Blind.\nStrikes first.",
     "message1": "%1 hurls a flashbang!",
     "message2": ""
   },
@@ -6193,7 +6193,7 @@
   },
   "1230": {
     "name": "De-Escalate",
-    "description": "Deals damage to one enemy and restores 10 AP.\nStrikes first.",
+    "description": "Deals damage to one enemy and lowers their STR.\nStrikes first.",
     "message1": "%1 defuses the encounter!",
     "message2": ""
   },
@@ -6301,7 +6301,7 @@
   },
   "1258": {
     "name": "Hide",
-    "description": "Raises the user's DEX and INT.",
+    "description": "Raises the user's DEX and INT. Grants Hide.",
     "message1": "%1 hid.",
     "message2": ""
   },
@@ -6355,7 +6355,7 @@
   },
   "1267": {
     "name": "Blinding Flare",
-    "description": "Raises all enemies' WIS and PSI. Restores 25 AP.",
+    "description": "Lowers all enemies' WIS and PSI. May inflict\nBlind.",
     "message1": "%1 does %2!",
     "message2": ""
   },
@@ -6373,7 +6373,7 @@
   },
   "1270": {
     "name": "Vital Strike",
-    "description": "Deals Physical damage to one enemy. Lands 95% of\nthe time.",
+    "description": "Deals Physical damage to one enemy and may\ninflict Vital Exposed. Lands 95% of the time.",
     "message1": "%1 targets a weak point!",
     "message2": ""
   },
@@ -6725,12 +6725,6 @@
     "message1": "%1 scries the day's headlines!",
     "message2": ""
   },
-  "1405": {
-    "name": "CardRead",
-    "description": "Reads the tarot for a glimpse of what comes.",
-    "message1": "%1 turns the tarot!",
-    "message2": ""
-  },
   "1406": {
     "name": "SoulChronicle",
     "description": "Reads the lived history of a nearby soul.",
@@ -6745,7 +6739,7 @@
   },
   "1408": {
     "name": "ThreadMap",
-    "description": "Traces the leyline threads between places.",
+    "description": "Opens the world map, zoom and all.",
     "message1": "%1 traces the leyline threads!",
     "message2": ""
   },
@@ -6779,12 +6773,6 @@
     "message1": "%1 opens the infernal bazaar!",
     "message2": ""
   },
-  "1414": {
-    "name": "FaustianPharmacy",
-    "description": "Opens a damned apothecary that trades in health.",
-    "message1": "%1 barters health at a damned apothecary!",
-    "message2": ""
-  },
   "1415": {
     "name": "InfernalArmory",
     "description": "Opens a horned quartermaster's armor shop.",
@@ -6797,102 +6785,6 @@
     "message1": "%1 opens an arsenal forged in the pit!",
     "message2": ""
   },
-  "1417": {
-    "name": "MephistosArcanum",
-    "description": "Opens a shop that trades souls for arcane wares.",
-    "message1": "%1 trades souls for arcane wares!",
-    "message2": ""
-  },
-  "1418": {
-    "name": "BrimstoneTavern",
-    "description": "Opens a tavern that serves the damned.",
-    "message1": "%1 orders a drink among the damned!",
-    "message2": ""
-  },
-  "1419": {
-    "name": "LuxesLuxuries",
-    "description": "Opens a demon's luxury stall.",
-    "message1": "%1 lingers at a demon's luxury stall!",
-    "message2": ""
-  },
-  "1420": {
-    "name": "OutfittersOath",
-    "description": "Opens an adventurer's outfitter.",
-    "message1": "%1 swears the outfitter's oath!",
-    "message2": ""
-  },
-  "1421": {
-    "name": "ToolsmithsTithe",
-    "description": "Opens a toolsmith that sells for a tithe.",
-    "message1": "%1 pays the toolsmith's tithe!",
-    "message2": ""
-  },
-  "1422": {
-    "name": "AlchemistsAccord",
-    "description": "Opens the daily alchemist's shop.",
-    "message1": "%1 strikes the alchemist's accord!",
-    "message2": ""
-  },
-  "1423": {
-    "name": "LibrariansLien",
-    "description": "Lends forbidden books at a price.",
-    "message1": "%1 signs the librarian's lien!",
-    "message2": ""
-  },
-  "1424": {
-    "name": "OrganGrinder",
-    "description": "Opens the organ trader, who buys flesh.",
-    "message1": "%1 calls on the organ trader!",
-    "message2": ""
-  },
-  "1425": {
-    "name": "MammonsMarket",
-    "description": "Opens the stock exchange of greed.",
-    "message1": "%1 opens the exchange of greed!",
-    "message2": ""
-  },
-  "1426": {
-    "name": "BankersBargain",
-    "description": "Opens the devil's bank and its debts.",
-    "message1": "%1 signs at the devil's bank!",
-    "message2": ""
-  },
-  "1427": {
-    "name": "BrokersBlight",
-    "description": "Opens the real-estate broker.",
-    "message1": "%1 treats with the broker!",
-    "message2": ""
-  },
-  "1428": {
-    "name": "HagglersHex",
-    "description": "Opens the searchable bazaar for haggling.",
-    "message1": "%1 haggles at the bazaar!",
-    "message2": ""
-  },
-  "1429": {
-    "name": "VendorsVice",
-    "description": "Opens a possessed vending machine.",
-    "message1": "%1 feeds coin to a possessed machine!",
-    "message2": ""
-  },
-  "1430": {
-    "name": "CrossroadsCommerce",
-    "description": "Trades gold for tokens at the crossroads.",
-    "message1": "%1 trades at the crossroads!",
-    "message2": ""
-  },
-  "1431": {
-    "name": "DamnedDelivery",
-    "description": "Opens the shop pockets of the damned.",
-    "message1": "%1 opens the pockets of the damned!",
-    "message2": ""
-  },
-  "1432": {
-    "name": "WickedWarehouse",
-    "description": "Opens the cursed warehouse for inspection.",
-    "message1": "%1 inspects the cursed warehouse!",
-    "message2": ""
-  },
   "1433": {
     "name": "PactOfPlenty",
     "description": "Grants a fortune, full credit and every rent.",
@@ -6903,12 +6795,6 @@
     "name": "<-- Pastoral -->",
     "description": "",
     "message1": "",
-    "message2": ""
-  },
-  "1435": {
-    "name": "Green Thumb",
-    "description": "Opens the plant cultivation menu.",
-    "message1": "%1 turns a green thumb to the soil!",
     "message2": ""
   },
   "1436": {
@@ -6929,34 +6815,10 @@
     "message1": "%1 pours time into the hive!",
     "message2": ""
   },
-  "1439": {
-    "name": "Esoteric Fishing",
-    "description": "Casts an enchanted line into the waters.",
-    "message1": "%1 casts an enchanted line!",
-    "message2": ""
-  },
-  "1440": {
-    "name": "Tamer Tryst",
-    "description": "Bonds with a creature through the tamer's rite.",
-    "message1": "%1 performs the tamer's rite!",
-    "message2": ""
-  },
-  "1441": {
-    "name": "Pastoral Pause",
-    "description": "Opens the husbandry pockets.",
-    "message1": "%1 opens the husbandry pockets!",
-    "message2": ""
-  },
   "1442": {
     "name": "Verdant Vesper",
     "description": "Ages the hive and harvests every beast at once.",
     "message1": "%1 drives hive and herd through the ages!",
-    "message2": ""
-  },
-  "1443": {
-    "name": "Pastoral Pause",
-    "description": "Opens the husbandry pockets.",
-    "message1": "%1 opens the husbandry pockets!",
     "message2": ""
   },
   "1444": {
@@ -6969,12 +6831,6 @@
     "name": "Rap Sheet Read",
     "description": "Lists the party's recorded crimes.",
     "message1": "%1 reads their own rap sheet!",
-    "message2": ""
-  },
-  "1446": {
-    "name": "Petty Pilfer",
-    "description": "Opens the stealing window.",
-    "message1": "%1 goes for someone's pockets!",
     "message2": ""
   },
   "1447": {
@@ -7153,7 +7009,7 @@
   },
   "1476": {
     "name": "DuskDash",
-    "description": "Hastens the day forward to dusk.",
+    "description": "Pushes the clock six hours on.",
     "message1": "%1 hurries the day toward dusk!",
     "message2": ""
   },
@@ -7247,12 +7103,6 @@
     "message1": "%1 convokes a hoard into a container!",
     "message2": ""
   },
-  "1492": {
-    "name": "ConvokeVault",
-    "description": "Convokes an extradimensional vault.",
-    "message1": "%1 convokes an extradimensional vault!",
-    "message2": ""
-  },
   "1493": {
     "name": "ConvokeBeasts",
     "description": "Convokes a beast for the party to raise.",
@@ -7343,54 +7193,6 @@
     "message1": "%1 convokes a tower to climb!",
     "message2": ""
   },
-  "1508": {
-    "name": "ConvokeForge",
-    "description": "Convokes the alchemist's bench.",
-    "message1": "%1 convokes the alchemist's bench!",
-    "message2": ""
-  },
-  "1509": {
-    "name": "ConvokeBuilder",
-    "description": "Convokes the furniture builder.",
-    "message1": "%1 convokes the builder's tools!",
-    "message2": ""
-  },
-  "1510": {
-    "name": "ConvokeBrewery",
-    "description": "Convokes a brewery for the party's reagents.",
-    "message1": "%1 convokes a brewery for their reagents!",
-    "message2": ""
-  },
-  "1511": {
-    "name": "ConvokeHearth",
-    "description": "Convokes a hearth for combining ingredients.",
-    "message1": "%1 convokes a hearth to cook on!",
-    "message2": ""
-  },
-  "1512": {
-    "name": "ConvokeStarmap",
-    "description": "Convokes the heavens as a navigable map.",
-    "message1": "%1 convokes the heavens as a map!",
-    "message2": ""
-  },
-  "1513": {
-    "name": "ConvokeChess",
-    "description": "Convokes a board and pieces for chess.",
-    "message1": "%1 convokes a chessboard!",
-    "message2": ""
-  },
-  "1514": {
-    "name": "ConvokeChaosChess",
-    "description": "Convokes a board of chaos chess.",
-    "message1": "%1 convokes a board of chaos chess!",
-    "message2": ""
-  },
-  "1515": {
-    "name": "ConvokeFortune",
-    "description": "Convokes a booster pack of fate.",
-    "message1": "%1 convokes a booster pack of fate!",
-    "message2": ""
-  },
   "1516": {
     "name": "ConvokeLegion",
     "description": "Convokes a hundred soldiers to the banner.",
@@ -7425,30 +7227,6 @@
     "name": "<-- Dominion -->",
     "description": "",
     "message1": "",
-    "message2": ""
-  },
-  "1522": {
-    "name": "Guild Grace",
-    "description": "Raises the party's standing with the Mages'\nGuild.",
-    "message1": "%1 curries favor with the Mages' Guild!",
-    "message2": ""
-  },
-  "1523": {
-    "name": "Guild Grudge",
-    "description": "Lowers the party's standing with the Guild.",
-    "message1": "%1 sows discord against the Guild!",
-    "message2": ""
-  },
-  "1524": {
-    "name": "Archive Accord",
-    "description": "Raises standing with the Archive Foundation.",
-    "message1": "%1 curries favor with the Archive Foundation!",
-    "message2": ""
-  },
-  "1525": {
-    "name": "Collective Courtesy",
-    "description": "Raises standing with the Hypercapitalist\nCollective.",
-    "message1": "%1 curries favor with the Collective!",
     "message2": ""
   },
   "1526": {
@@ -7487,28 +7265,10 @@
     "message1": "%1 opens a channel to another mind!",
     "message2": ""
   },
-  "1532": {
-    "name": "Coronation",
-    "description": "Crowns the party beloved of the Guild, with a\nhost.",
-    "message1": "%1 takes the crown at the head of a host!",
-    "message2": ""
-  },
-  "1533": {
-    "name": "Anathema",
-    "description": "Makes the party the world's hated outlaw.",
-    "message1": "The anathema falls on %1!",
-    "message2": ""
-  },
   "1534": {
     "name": "Absolute Pardon",
     "description": "Erases the party's bounty and clears its record.",
     "message1": "%1 takes an absolute pardon!",
-    "message2": ""
-  },
-  "1535": {
-    "name": "Tyrant Decree",
-    "description": "Maxes favor, raises a legion and forgives all\ncrime.",
-    "message1": "%1 issues a tyrant's decree!",
     "message2": ""
   },
   "1536": {
@@ -7605,42 +7365,6 @@
     "name": "ChurnCalm",
     "description": "Stills the churning of world generation.",
     "message1": "%1 stills the churning of the world!",
-    "message2": ""
-  },
-  "1552": {
-    "name": "LayerLurch",
-    "description": "Shifts the party to the adjacent world layer.",
-    "message1": "%1 lurches to the next world layer!",
-    "message2": ""
-  },
-  "1553": {
-    "name": "RoadRecall",
-    "description": "Recalls the party onto the Encompassing Road.",
-    "message1": "%1 recalls themselves onto the Road!",
-    "message2": ""
-  },
-  "1554": {
-    "name": "FloorFall",
-    "description": "Descends to the floor below.",
-    "message1": "%1 drops to the floor below!",
-    "message2": ""
-  },
-  "1555": {
-    "name": "FloorFlight",
-    "description": "Ascends to the floor above.",
-    "message1": "%1 rises to the floor above!",
-    "message2": ""
-  },
-  "1556": {
-    "name": "Stairward",
-    "description": "Steps to the upward stair.",
-    "message1": "%1 steps to the upward stair!",
-    "message2": ""
-  },
-  "1557": {
-    "name": "Deepward",
-    "description": "Steps to the downward stair.",
-    "message1": "%1 steps to the downward stair!",
     "message2": ""
   },
   "1558": {
@@ -7793,12 +7517,6 @@
     "message1": "%1 summons the sawbones!",
     "message2": ""
   },
-  "1583": {
-    "name": "ClinicCall",
-    "description": "Opens the biologic simulation panel.",
-    "message1": "%1 opens the clinic!",
-    "message2": ""
-  },
   "1584": {
     "name": "Panacea",
     "description": "Knits all flesh and restores body and mind.",
@@ -7851,12 +7569,6 @@
     "name": "FogFeint",
     "description": "Cloaks the land in shifting fog.",
     "message1": "%1 cloaks the land in shifting fog!",
-    "message2": ""
-  },
-  "1593": {
-    "name": "MirageMarch",
-    "description": "Steps the party through a teleporting mirage.",
-    "message1": "%1 steps through a mirage!",
     "message2": ""
   },
   "1594": {
@@ -7931,12 +7643,6 @@
     "message1": "%1 turns to reproduction by mitosis!",
     "message2": ""
   },
-  "1606": {
-    "name": "ProstheticPact",
-    "description": "Summons the prosthetic surgeon.",
-    "message1": "%1 seals the prosthetic pact!",
-    "message2": ""
-  },
   "1607": {
     "name": "Apotheosis",
     "description": "Reforges the leader into a demigod, fully\nrestored.",
@@ -7959,12 +7665,6 @@
     "name": "SoulSummon",
     "description": "Invokes the rite of soul-summoning.",
     "message1": "%1 works the rite of soul-summoning!",
-    "message2": ""
-  },
-  "1611": {
-    "name": "OrganOblation",
-    "description": "Sells flesh to the organ trader.",
-    "message1": "%1 offers flesh to the organ trader!",
     "message2": ""
   },
   "1612": {
@@ -8017,7 +7717,7 @@
   },
   "1620": {
     "name": "InnerInkling",
-    "description": "Listens to the thoughts within.",
+    "description": "Opens the Thinker's bench.",
     "message1": "%1 listens to the thoughts within!",
     "message2": ""
   },
@@ -8159,76 +7859,10 @@
     "message1": "",
     "message2": ""
   },
-  "1644": {
-    "name": "Glyphsight",
-    "description": "Renders reality as a lattice of ASCII glyphs.",
-    "message1": "%1 sees reality as a lattice of glyphs!",
-    "message2": ""
-  },
-  "1645": {
-    "name": "PixelPalette",
-    "description": "Weaves pixels into a crafted image.",
-    "message1": "%1 weaves pixels into an image!",
-    "message2": ""
-  },
-  "1646": {
-    "name": "SpectraScan",
-    "description": "Scans the matter ahead with Raman light.",
-    "message1": "%1 scans the matter ahead!",
-    "message2": ""
-  },
-  "1647": {
-    "name": "ElementLattice",
-    "description": "Reads the lattice of the elements.",
-    "message1": "%1 reads the lattice of the elements!",
-    "message2": ""
-  },
-  "1648": {
-    "name": "FutureFork",
-    "description": "Opens the branching tree of invention.",
-    "message1": "%1 opens the branching tree of invention!",
-    "message2": ""
-  },
-  "1649": {
-    "name": "HypernetHum",
-    "description": "Boots the Hypernet operating system.",
-    "message1": "%1 boots the Hypernet!",
-    "message2": ""
-  },
-  "1650": {
-    "name": "BrowserBeckon",
-    "description": "Scries the Hypernet through a browser.",
-    "message1": "%1 scries the Hypernet!",
-    "message2": ""
-  },
-  "1651": {
-    "name": "ChronoDial",
-    "description": "Manifests the procedural analog clock.",
-    "message1": "%1 pulls a clock out of the air!",
-    "message2": ""
-  },
-  "1652": {
-    "name": "StopTheMusic",
-    "description": "Silences the procedural music.",
-    "message1": "%1 silences the music!",
-    "message2": ""
-  },
-  "1653": {
-    "name": "RadioRiff",
-    "description": "Tunes the wandering radio.",
-    "message1": "%1 tunes the wandering radio!",
-    "message2": ""
-  },
   "1654": {
     "name": "FutureForge",
     "description": "Forges an entirely new tree of invention.",
     "message1": "%1 forges a new tree of invention!",
-    "message2": ""
-  },
-  "1655": {
-    "name": "FourthWallBreak",
-    "description": "Renders ASCII reality, lifts the fog, bares the\nterminal.",
-    "message1": "%1 breaks the fourth wall!",
     "message2": ""
   },
   "1656": {
@@ -8381,30 +8015,6 @@
     "message1": "",
     "message2": ""
   },
-  "1681": {
-    "name": "Work Seek",
-    "description": "Opens the work board.",
-    "message1": "%1 goes looking for work!",
-    "message2": ""
-  },
-  "1682": {
-    "name": "Postings Read",
-    "description": "Opens the job offers board.",
-    "message1": "%1 reads the postings!",
-    "message2": ""
-  },
-  "1683": {
-    "name": "Combat Contract",
-    "description": "Takes up combat work.",
-    "message1": "%1 takes up a combat contract!",
-    "message2": ""
-  },
-  "1684": {
-    "name": "Arcane Contract",
-    "description": "Takes up magical work.",
-    "message1": "%1 takes up an arcane contract!",
-    "message2": ""
-  },
   "1685": {
     "name": "Arena Call",
     "description": "Enters the party into the arena.",
@@ -8421,30 +8031,6 @@
     "name": "Gauntlet Run",
     "description": "Begins the endless gauntlet.",
     "message1": "%1 begins the endless gauntlet!",
-    "message2": ""
-  },
-  "1688": {
-    "name": "Tournament Call",
-    "description": "Calls a monster tournament into being.",
-    "message1": "%1 calls a tournament into being!",
-    "message2": ""
-  },
-  "1689": {
-    "name": "Shift Take",
-    "description": "Takes a working shift at the shop.",
-    "message1": "%1 takes a shift at the shop!",
-    "message2": ""
-  },
-  "1690": {
-    "name": "Production Push",
-    "description": "Fires up the production line.",
-    "message1": "%1 fires up the production line!",
-    "message2": ""
-  },
-  "1691": {
-    "name": "Pit Champion",
-    "description": "Runs the gauntlet and a full tournament.",
-    "message1": "%1 answers as champion of the pit!",
     "message2": ""
   },
   "1692": {
@@ -8465,36 +8051,6 @@
     "message1": "%1 touches back down!",
     "message2": ""
   },
-  "1695": {
-    "name": "Wayfarers Walk",
-    "description": "Fast travels the party along the Road.",
-    "message1": "%1 sets out along the Road!",
-    "message2": ""
-  },
-  "1696": {
-    "name": "Sky Soar",
-    "description": "Travels the Road by helicopter.",
-    "message1": "%1 soars off by helicopter!",
-    "message2": ""
-  },
-  "1697": {
-    "name": "Quantum Quit",
-    "description": "Leaps the Road by quantum teleportation.",
-    "message1": "%1 leaps the Road by quantum!",
-    "message2": ""
-  },
-  "1698": {
-    "name": "Mount Myself",
-    "description": "Steps the party to its nearest vehicle.",
-    "message1": "%1 steps straight to their vehicle!",
-    "message2": ""
-  },
-  "1699": {
-    "name": "Bologna Bound",
-    "description": "Opens the Road to Bologna.",
-    "message1": "%1 opens the Road to Bologna!",
-    "message2": ""
-  },
   "1700": {
     "name": "Dream Door",
     "description": "Slips the party away into a dream-map.",
@@ -8505,66 +8061,6 @@
     "name": "<-- ChaosMagic -->",
     "description": "",
     "message1": "",
-    "message2": ""
-  },
-  "1702": {
-    "name": "Lever Luck",
-    "description": "Pulls the one-armed bandit's lever.",
-    "message1": "%1 pulls the bandit's lever!",
-    "message2": ""
-  },
-  "1703": {
-    "name": "Race Reverie",
-    "description": "Wagers on the horse race.",
-    "message1": "%1 wagers on the horses!",
-    "message2": ""
-  },
-  "1704": {
-    "name": "Lane Lark",
-    "description": "Rolls down the bowling lanes.",
-    "message1": "%1 rolls down the lane!",
-    "message2": ""
-  },
-  "1705": {
-    "name": "Pool Play",
-    "description": "Racks up a game of pool.",
-    "message1": "%1 racks up a game of pool!",
-    "message2": ""
-  },
-  "1706": {
-    "name": "Wave Rider",
-    "description": "Rides the esoteric waves.",
-    "message1": "%1 rides the esoteric waves!",
-    "message2": ""
-  },
-  "1707": {
-    "name": "Lock Lark",
-    "description": "Picks a lock through the tumbling rite.",
-    "message1": "%1 works the tumblers!",
-    "message2": ""
-  },
-  "1708": {
-    "name": "Key Kaprice",
-    "description": "Plays the visual piano.",
-    "message1": "%1 sits down at the piano!",
-    "message2": ""
-  },
-  "1709": {
-    "name": "Scratch Spree",
-    "description": "Scratches an esoteric fate card.",
-    "message1": "%1 scratches a card of fate!",
-    "message2": ""
-  },
-  "1710": {
-    "name": "Journal Jot",
-    "description": "Opens the party's travel journal.",
-    "message1": "%1 jots in the travel journal!",
-    "message2": ""
-  },
-  "1711": {
-    "name": "Carnival Chaos",
-    "description": "Opens the slots, the races and the pool table.",
-    "message1": "%1 throws the whole carnival open!",
     "message2": ""
   },
   "1712": {
@@ -9031,7 +8527,7 @@
   },
   "1789": {
     "name": "Headbutt",
-    "description": "Deals Physical damage to one enemy and lowers\nINT. May inflict Unbalanced. Strikes last.",
+    "description": "Deals heavy Physical damage to one enemy and\nlowers INT. May inflict Concussed. Strikes last.",
     "message1": "%1 uses Headbutt!",
     "message2": ""
   },
@@ -9043,7 +8539,7 @@
   },
   "1791": {
     "name": "Pommel Strike",
-    "description": "Deals Physical damage to one enemy and may\ninflict Unbalanced.",
+    "description": "Deals heavy Physical damage to one enemy and may\ninflict Stun.",
     "message1": "%1 uses Pommel Strike!",
     "message2": ""
   },

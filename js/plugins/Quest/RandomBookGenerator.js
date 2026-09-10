@@ -240,10 +240,15 @@
         _onMessageComplete = onComplete || null;
         const prefix = colorPrefix || '';
 
+        // The parchment box takes the whole reading in one go and wraps it
+        // itself, so it is not paginated. It still has to be added the way
+        // addPagedMessage adds: a plain Game_Message.add parks the line in the
+        // localization buffer, which only an interpreter Show Text ever
+        // flushes, and a reading raised from a choice callback would sit there
+        // unread with the box never opening.
         const isHtmlMsg = typeof document !== 'undefined' && !!document.getElementById('html-msg-text');
         if (isHtmlMsg) {
-            const formatted = prefix ? prefix + text : text;
-            $gameMessage.add(formatted);
+            addPagedMessage(prefix ? prefix + text : text);
             return;
         }
 
@@ -656,6 +661,20 @@ function createSeededRNG(eventId = null) {
         return false;
     }
 
+    // The books the party is actually carrying. Putting a book on a shelf is
+    // only offered when there is one in the backpack to put there, so the same
+    // list decides whether the choice is written and what it then offers.
+    function getOwnedCategoryBooks() {
+        const owned = [];
+        if (typeof $gameParty === 'undefined' || !$gameParty || typeof $gameParty.items !== 'function') {
+            return owned;
+        }
+        for (const item of $gameParty.items()) {
+            if (isCategoryBook(item) && $gameParty.numItems(item) > 0) owned.push(item);
+        }
+        return owned;
+    }
+
     function getCategoryBookItems() {
         if (typeof $dataItems === 'undefined' || !$dataItems) return [];
         const list = [];
@@ -861,14 +880,7 @@ function createSeededRNG(eventId = null) {
             return;
         }
 
-        const ownedBooks = [];
-        if ($gameParty && typeof $gameParty.items === 'function') {
-            for (const item of $gameParty.items()) {
-                if (isCategoryBook(item) && $gameParty.numItems(item) > 0) {
-                    ownedBooks.push(item);
-                }
-            }
-        }
+        const ownedBooks = getOwnedCategoryBooks();
 
         if (ownedBooks.length === 0) {
             const msg = T.language() === 'it'
@@ -963,10 +975,14 @@ function createSeededRNG(eventId = null) {
             choiceActions.push({ type: 'item', item: item, isPlaced: isPlaced });
         }
 
-        // Add "Put book" choice before cancel
-        const putBookLabel = T.language() === 'it' ? 'Riponi libro' : 'Put book';
-        choiceLabels.push(putBookLabel);
-        choiceActions.push({ type: 'put_book' });
+        // Add "Put book" choice before cancel, but only for a party that is
+        // carrying a book: an empty backpack has nothing to shelve, and the
+        // choice would open on a refusal.
+        if (getOwnedCategoryBooks().length > 0) {
+            const putBookLabel = T.language() === 'it' ? 'Riponi libro' : 'Put book';
+            choiceLabels.push(putBookLabel);
+            choiceActions.push({ type: 'put_book' });
+        }
 
         // Add "Cancel" choice
         const cancelLabel = T.language() === 'it' ? 'Annulla' : 'Cancel';

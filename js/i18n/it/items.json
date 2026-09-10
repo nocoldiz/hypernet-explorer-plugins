@@ -133,7 +133,7 @@
   },
   "33": {
     "name": "Iniezione di resistenza",
-    "description": "Aumenta gli HP massimi di 50."
+    "description": "Aumenta per sempre HP massimi di 10."
   },
   "34": {
     "name": "Elisir di saggezza",
@@ -145,7 +145,7 @@
   },
   "36": {
     "name": "Programma Penta Protein",
-    "description": "Aumenta gli HP massimi di 100."
+    "description": "Aumenta per sempre HP massimi di 10."
   },
   "37": {
     "name": "Cocktail del mercato nero",
@@ -161,11 +161,11 @@
   },
   "40": {
     "name": "Potenziatore di potenza",
-    "description": "Aumenta FRZ e COS massime di 5."
+    "description": "Aumenta per sempre FRZ di 1 e COS di 1."
   },
   "41": {
     "name": "Potenziatore dei riflessi",
-    "description": "Aumenta la DES massima di 8."
+    "description": "Aumenta per sempre DES di 1."
   },
   "42": {
     "name": "Erba rigenerante",
@@ -209,23 +209,23 @@
   },
   "52": {
     "name": "Steroidi",
-    "description": "Aumenta la FRZ massima di 3."
+    "description": "Aumenta per sempre FRZ di 1."
   },
   "53": {
     "name": "Steroide pelle d’acciaio",
-    "description": "Aumenta la COS massima di 3."
+    "description": "Aumenta per sempre COS di 1."
   },
   "54": {
     "name": "Allenamento Chi",
-    "description": "Aumenta l'INT massima di 3."
+    "description": "Aumenta per sempre INT di 1."
   },
   "55": {
     "name": "Allenamento di velocità",
-    "description": "Aumenta la DES massima di 3."
+    "description": "Aumenta per sempre DES di 1."
   },
   "56": {
     "name": "Jing imperiale",
-    "description": "Aumenta gli HP massimi di 200."
+    "description": "Aumenta per sempre HP massimi di 10."
   },
   "57": {
     "name": "Essenza del Campione",
@@ -673,7 +673,7 @@
   },
   "191": {
     "name": "Pacchetto Carriera",
-    "description": "Cassetta di carriera, migliora abilità e statistiche."
+    "description": "Aumenta per sempre INT di 1."
   },
   "192": {
     "name": "Bonsai tascabile",
@@ -689,7 +689,7 @@
   },
   "195": {
     "name": "Sistema di fitness domestico",
-    "description": "Stazione da allenamento monouso, +statistiche."
+    "description": "Aumenta per sempre FRZ di 1 e DES di 1."
   },
   "196": {
     "name": "Caffeinatore portatile",
@@ -801,11 +801,11 @@
   },
   "237": {
     "name": "Flusso del fabbro",
-    "description": "Fondente da forgia; +1 FRZ, +1 COS."
+    "description": "Aumenta per sempre FRZ di 1 e COS di 1."
   },
   "238": {
     "name": "Catalizzatore dell'alchimista",
-    "description": "Catalizzatore alchemico; +1 FRZ, +1 DES."
+    "description": "Aumenta per sempre FRZ di 1 e DES di 1."
   },
   "239": {
     "name": "Stivali del calzolaio",
@@ -1089,11 +1089,11 @@
   },
   "329": {
     "name": "Guanti del Maestro",
-    "description": "Si fonde con chi lo usa, FRZ +1."
+    "description": "Aumenta per sempre FRZ di 1."
   },
   "330": {
     "name": "Stivali del Drago del Tuono",
-    "description": "Si fonde con chi lo usa, aumenta l'evasione."
+    "description": "Aumenta per sempre DES di 1."
   },
   "331": {
     "name": "Antico peso",
@@ -1945,7 +1945,7 @@
   },
   "583": {
     "name": "Mela d'oro",
-    "description": "Mela d'oro, aumenta per sempre gli HP massimi."
+    "description": "Aumenta per sempre HP massimi di 10."
   },
   "584": {
     "name": "Melomano",
@@ -1981,7 +1981,7 @@
   },
   "592": {
     "name": "Frutto di Yggdrasil",
-    "description": "Frutto divino. Enorme aumento di livello e statistiche."
+    "description": "Aumenta per sempre ogni statistica di 1."
   },
   "593": {
     "name": "Pollo Crudo",
@@ -2237,7 +2237,7 @@
   },
   "685": {
     "name": "Cristallo del mago",
-    "description": "Aumenta per sempre l'INT di 10."
+    "description": "Aumenta per sempre INT di 1."
   },
   "686": {
     "name": "Sacca delle Cose",
@@ -2385,7 +2385,7 @@
   },
   "722": {
     "name": "Allenamento focus mentale",
-    "description": "Aumenta per sempre gli MP massimi di 10."
+    "description": "Aumenta per sempre MP massimi di 5."
   },
   "723": {
     "name": "Focus del combattente",
@@ -2405,11 +2405,11 @@
   },
   "727": {
     "name": "Addestramento PSIonico",
-    "description": "Aumenta per sempre il PSI di 3."
+    "description": "Aumenta per sempre PSI di 1."
   },
   "728": {
     "name": "Formazione pratica",
-    "description": "Aumenta per sempre la SAG di 3."
+    "description": "Aumenta per sempre SAG di 1."
   },
   "729": {
     "name": "Campione di sperma umano",
@@ -2429,11 +2429,11 @@
   },
   "733": {
     "name": "Ottimizzatore Genomico",
-    "description": "Aumenta per sempre tutte le statistiche di 50."
+    "description": "Aumenta per sempre ogni statistica di 1."
   },
   "734": {
     "name": "Catalizzatore di Potenziale",
-    "description": "Concede una fortuna estrema e un'impennata di potenza."
+    "description": "Aumenta per sempre PSI di 1."
   },
   "735": {
     "name": "Protocollo di Resurrezione Quantistica",

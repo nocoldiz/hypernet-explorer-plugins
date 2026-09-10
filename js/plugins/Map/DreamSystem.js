@@ -6319,7 +6319,11 @@
          *   and `arrival` for how they get there: `{ flying, alt }`.
          */
         changeDream(opts) {
-            if (!this._scene || this._scene._transitioning) return;
+            // Cast from outside a dream there is no scene to drift out of, and
+            // the command returned in silence. Drifting into the first dream is
+            // what the caster asked for, so fall through to start().
+            if (!this._scene) { this.start(); return; }
+            if (this._scene._transitioning) return;
             opts = opts || {};
             const old = this._scene;
             old._transitioning = true;        // block re-entry (e.g. repeat collisions)

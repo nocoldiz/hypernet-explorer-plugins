@@ -5,6 +5,8 @@
     "equip": "Equip",
     "skills": "Skills",
     "status": "Status",
+    "statusPoints": "+{points}",
+    "statusPointsHint": "{points} attribute points to spend",
     "specializations": "Specializations",
     "biologics": "Biologics",
     "augments": "Augments",

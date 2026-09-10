@@ -4751,6 +4751,15 @@
             // end that asks (PartyRoster.canSwitchLeader), story mode included.
             if (window.PartyRoster?.canSwitchLeader?.() === false) return false;
             if (!(SceneManager._scene instanceof Scene_Map)) return false;
+            // The 3D world is a DOM overlay drawn over a Scene_Map that never
+            // went away (VoxelWorld/VoxelWorldSystem.js), so this read used to
+            // go on happening underneath a drive: Tab, and a tap of L2 or R2,
+            // handed the party to somebody else while the camper was at speed
+            // or the leader was walking with the quick bar up. Out there those
+            // buttons belong to the world - the bar and the camera - and the
+            // lead does not change hands at all.
+            if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive &&
+                window.VoxelWorldSystem.isActive()) return false;
             if (SceneManager.isSceneChanging()) return false;
             if ($gameParty.inBattle() || Loose.inMapBattle()) return false;
             if ($gameMessage.isBusy() || $gameMap.isEventRunning()) return false;
@@ -5529,10 +5538,37 @@
 
     // --- 2. Follower Carrying for Downed Members ---
 
+    // Hauling a body needs a spare pair of hands, not the last one. Two
+    // travellers alone cannot manage it: the one still standing has the map,
+    // the pack and the road to deal with, so a downed partner is left where
+    // they fell until they come round. Three is enough, because one can carry
+    // while the other walks. A summon out on the map is a body like any other
+    // and counts toward the three, which is what makes calling one the answer
+    // to a two-handed party.
+    const CARRY_MIN_BODIES = 3;
+
+    function carryingBodies() {
+        let bodies = $gameParty ? $gameParty.size() : 0;
+        if (window.SummonSystem && window.SummonSystem.isMapActive &&
+            window.SummonSystem.isMapActive()) bodies++;
+        return bodies;
+    }
+
+    function partyCanCarryDowned() {
+        return carryingBodies() >= CARRY_MIN_BODIES;
+    }
+
     const _Loose_updateFollower_downed = Loose.updateFollower;
     Loose.updateFollower = function (f) {
         const actor = f && f.actor && f.actor();
         if (actor && actor.isDead()) {
+            // Too few of them to lift anybody: the body stays on the tile it
+            // went down on, and the loose layer is left to its own devices for
+            // it rather than being short-circuited here.
+            if (!partyCanCarryDowned()) {
+                _Loose_updateFollower_downed.call(this, f);
+                return;
+            }
             // Find a living party member to carry this downed member
             const followers = $gamePlayer.followers().data();
             let carrier = null;

@@ -33624,5 +33624,515 @@
       "ridable": false
     },
     "pitch": 124
+  },
+  "Mecha/!$BotActor1": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": false,
+    "busts": [
+      "BotActor"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 1,
+    "chars": [
+      "R"
+    ],
+    "color": "golden",
+    "classes": [
+      7,
+      10,
+      12,
+      15,
+      60
+    ],
+    "markovDB": "zombie_alien",
+    "source": "Occult_Enemies#5",
+    "theme": "Bards",
+    "pitch": 101
+  },
+  "Mecha/!$BotMage1": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "BotMage"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 1,
+    "chars": [
+      "R"
+    ],
+    "color": "golden",
+    "classes": [
+      7,
+      10,
+      12,
+      15,
+      60
+    ],
+    "markovDB": "zombie_alien",
+    "source": "Occult_Enemies#4",
+    "theme": "Space",
+    "pitch": 107
+  },
+  "Mecha/!$BotMage2": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "BotMage"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "R"
+    ],
+    "color": "golden",
+    "classes": [
+      10
+    ],
+    "markovDB": "futuristic",
+    "source": "Occult_Golem#0",
+    "theme": "Space",
+    "pitch": 107
+  },
+  "Mecha/!$BotMage3": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "BotMage"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "R"
+    ],
+    "color": "golden",
+    "classes": [
+      10
+    ],
+    "markovDB": "futuristic",
+    "source": "Occult_Golem#1",
+    "theme": "Space",
+    "pitch": 107
+  },
+  "Mecha/!$BotMage4": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "BotMage"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 2,
+    "chars": [
+      "R"
+    ],
+    "color": "golden",
+    "classes": [
+      10
+    ],
+    "markovDB": "futuristic",
+    "source": "Occult_Mech#0",
+    "theme": "Space",
+    "pitch": 107
+  },
+  "Mecha/!$BotMage5": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "BotMage"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 2,
+    "chars": [
+      "R"
+    ],
+    "color": "golden",
+    "classes": [
+      10
+    ],
+    "markovDB": "futuristic",
+    "source": "Occult_Mech#1",
+    "theme": "Space",
+    "pitch": 107
+  },
+  "Mecha/!$BotMage6": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "BotMage"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 2,
+    "chars": [
+      "R"
+    ],
+    "color": "golden",
+    "classes": [
+      10
+    ],
+    "markovDB": "futuristic",
+    "source": "Occult_Mech#2",
+    "theme": "Space",
+    "pitch": 107
+  },
+  "Mecha/!$BotMage7": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "BotMage"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 2,
+    "chars": [
+      "R"
+    ],
+    "color": "golden",
+    "classes": [
+      10
+    ],
+    "markovDB": "futuristic",
+    "source": "Occult_Mech#3",
+    "theme": "Space",
+    "pitch": 107
+  },
+  "Mecha/!$BotMage8": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "BotMage"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 2,
+    "chars": [
+      "R"
+    ],
+    "color": "golden",
+    "classes": [
+      10
+    ],
+    "markovDB": "futuristic",
+    "source": "Occult_Mech#4",
+    "theme": "Space",
+    "pitch": 107
+  },
+  "Mecha/!$Occult_Golem3": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "7"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "E"
+    ],
+    "color": "golden",
+    "classes": [
+      10
+    ],
+    "markovDB": "futuristic",
+    "source": "Occult_Golem#2",
+    "theme": "Space",
+    "pitch": 96
+  },
+  "Animations/!$AndreottiSitting": {
+    "varlenian": false,
+    "npc": false,
+    "animal": false,
+    "vip": true,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": false,
+    "busts": [
+      "presets/AndreottiSitting"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "@"
+    ],
+    "color": "golden",
+    "classes": [],
+    "markovDB": "npc",
+    "theme": "Urban",
+    "pitch": 75
+  },
+  "Animations/!$RatzingerAngelus": {
+    "varlenian": false,
+    "npc": false,
+    "animal": false,
+    "vip": true,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "presets/RatzingerAngelus"
+    ],
+    "beta": false,
+    "animations": true,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "@"
+    ],
+    "color": "golden",
+    "classes": [],
+    "markovDB": "npc",
+    "theme": "Urban",
+    "pitch": 87
+  },
+  "Animations/!$RichardBensonGuitar": {
+    "varlenian": false,
+    "npc": false,
+    "animal": false,
+    "vip": true,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": false,
+    "busts": [
+      "presets/RichardBensonGuitar"
+    ],
+    "beta": false,
+    "animations": true,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "@"
+    ],
+    "color": "golden",
+    "classes": [],
+    "markovDB": "npc",
+    "theme": "Urban",
+    "pitch": 76
+  },
+  "Animations/!$CarPilot4": {
+    "varlenian": true,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": false,
+    "busts": [
+      "CarPilot"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "P"
+    ],
+    "color": "purple",
+    "classes": [
+      28,
+      30
+    ],
+    "markovDB": "dungeon_explorer",
+    "source": "Dungeon_HeroMan1#3",
+    "theme": "Space",
+    "pitch": 81
+  },
+  "Animations/!$CarPilot5": {
+    "varlenian": true,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": false,
+    "busts": [
+      "CarPilot"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "P"
+    ],
+    "color": "purple",
+    "classes": [
+      28,
+      30
+    ],
+    "markovDB": "dungeon_explorer",
+    "source": "Dungeon_HeroMan1#4",
+    "theme": "Space",
+    "pitch": 81
+  },
+  "Animations/!$CarPilot6": {
+    "varlenian": true,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": false,
+    "busts": [
+      "CarPilot"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "P"
+    ],
+    "color": "purple",
+    "classes": [
+      28,
+      30
+    ],
+    "markovDB": "dungeon_explorer",
+    "source": "Dungeon_HeroMan1#5",
+    "theme": "Space",
+    "pitch": 81
+  },
+  "Animations/!$Fantasy_Characters26": {
+    "varlenian": true,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": false,
+    "busts": [
+      "7"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "@"
+    ],
+    "color": "golden",
+    "classes": [
+      39
+    ],
+    "markovDB": "medieval",
+    "source": "Fantasy_Characters2#5",
+    "theme": "Urban",
+    "pitch": 90
+  },
+  "Animations/!$GoblinArtist1": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": true,
+    "busts": [
+      "GoblinArtist"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "g"
+    ],
+    "color": "purple",
+    "classes": [
+      11,
+      16
+    ],
+    "markovDB": "zombie_alien",
+    "goblin": true,
+    "source": "Dungeon_Monsters2#1",
+    "pitch": 127
   }
 }

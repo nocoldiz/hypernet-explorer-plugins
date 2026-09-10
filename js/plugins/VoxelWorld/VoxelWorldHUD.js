@@ -45,6 +45,33 @@
     // makes the number keys 1..9 mean what they look like they mean.
     const BAR_SLOTS_TOTAL = 9;
 
+    // =========================================================================
+    // The speedometer
+    // =========================================================================
+    // Drawn into a canvas at twice its own size and scaled back down by the
+    // stylesheet, which is what keeps a needle and a hairline tick crisp. The
+    // colours are literals here for the same reason the minimap's are: this is
+    // a picture, not a panel, and it carries its own palette rather than asking
+    // the stylesheet for one per frame.
+    const SPEEDO_PX    = 132;             // the dial's own square, in CSS pixels
+    const SPEEDO_A0    = Math.PI * 0.75;  // where the scale starts (bottom left)
+    const SPEEDO_SWEEP = Math.PI * 1.5;   // 270 degrees of it
+    const SPEEDO_FACE  = '#0d0f14';
+    const SPEEDO_RING  = 'rgba(255, 196, 84, 0.35)';
+    const SPEEDO_TICK  = 'rgba(255, 255, 255, 0.55)';
+    const SPEEDO_TEXT  = '#f2f4f8';
+    const SPEEDO_AMBER = '#ffc454';
+    const SPEEDO_RED   = '#e5484d';
+    const SPEEDO_OVER  = '#b57bff';       // past the end of the scale (liminal)
+    // The face is lettered in the game's own UI face (--font-ui in css/vars.css),
+    // with the same fallbacks, so the dial reads as part of the HUD around it.
+    const SPEEDO_FONT  = "'Bitter', Georgia, serif";
+    // The scale is a round number a driver can read off, never a raw top speed
+    // like 407: the first of these that covers the vehicle's natural top wins.
+    const SPEEDO_SCALES = [60, 120, 200, 300, 400, 600, 900, 1200, 2000, 4000];
+    const speedoScale = (top) => SPEEDO_SCALES.find(v => v >= top) ||
+        SPEEDO_SCALES[SPEEDO_SCALES.length - 1];
+
     class CamperHUD {
         // `silent` builds no HUD at all (title-screen background drive): every
         // panel is skipped and the per-frame updates become no-ops. `walk` is the
@@ -182,7 +209,8 @@
                 ['SHIFT', T('CamperDrive.hud.cmdTurbo')],
                 ['E', T('CamperDrive.hud.cmdDoor')],
                 ['TAB', T('CamperDrive.hud.cmdView')],
-                ['ESC', T('CamperDrive.hud.cmdVehicle')],
+                ['Z', T('CamperDrive.hud.cmdVehicle')],
+                ['ESC', T('CamperDrive.hud.cmdMenu')],
                 ['T', T('CamperDrive.hud.cmdExit')]
             ];
             const cmdRowHTML = ([key, label]) => `
@@ -217,14 +245,20 @@
                 };
             }
 
-            this._speedPanel = this._walk ? null : panel(`
-                <div id="cds-speed-text" class="cds-val cds-speed-text">0 km/h</div>
-                <div class="cds-rpm-row">
-                    <span id="cds-gear-text" class="cds-gear-text">N</span>
-                    <span class="cds-rpm-track">
-                        <span id="cds-rpm-bar" class="cds-rpm-bar" style="--ui-bar-w:10%"></span>
-                    </span>
-                </div>`,
+            // The speedometer, bottom right. It used to be a number and a
+            // word - "128 km/h" - over a hairline rpm bar, which told a driver
+            // what they were doing but never how close to the end of it they
+            // were. It is a dial now: a swept scale to the vehicle's own
+            // natural top, the rpm laid inside it as a second arc, the gear in
+            // the face, and the number still in the middle, because a number is
+            // the one thing a needle is bad at. Past the end of the scale - the
+            // liminal boost, or a fast-travel cruise - the needle pegs and the
+            // whole dial lights, so being over the top of it reads at a glance.
+            this._speedoPx = SPEEDO_PX;
+            this._speedTop = 0;      // what the scale reads up to, set on the first frame
+            this._speedPanel = this._walk ? null : panel(
+                `<canvas id="cds-speedo" class="cds-speedo-canvas"
+                         width="${SPEEDO_PX * 2}" height="${SPEEDO_PX * 2}"></canvas>`,
                 'cds-speed-panel'
             );
 
@@ -332,9 +366,7 @@
             this._els = {
                 timeEl:   document.getElementById('cds-time-text'),
                 distEl:   document.getElementById('cds-dist-text'),
-                speedEl:  document.getElementById('cds-speed-text'),
-                gearEl:   document.getElementById('cds-gear-text'),
-                rpmEl:    document.getElementById('cds-rpm-bar'),
+                speedoEl: document.getElementById('cds-speedo'),
                 abFly:    document.getElementById('cds-ab-fly'),
                 abFloat:  document.getElementById('cds-ab-float'),
                 abDive:   document.getElementById('cds-ab-dive'),
@@ -457,7 +489,7 @@
             }
         }
 
-        update(vanX, vanZ, speedKmh, gearLabel, rpm01, heading) {
+        update(vanX, vanZ, speedKmh, gearLabel, rpm01, heading, topKmh) {
             if (this._silent) return;
             this._heading = heading || 0;
             const els  = this._els || {};
@@ -479,25 +511,123 @@
                 if (t !== last.distTxt) { els.distEl.textContent = t; last.distTxt = t; }
             }
 
-            const kmh       = Math.round(typeof speedKmh === 'number' ? speedKmh : 0);
-            if (els.speedEl) {
-                const t = `${kmh} km/h`;
-                if (t !== last.speedTxt) { els.speedEl.textContent = t; last.speedTxt = t; }
+            // The dial. Its scale is the vehicle's own natural top rounded up
+            // to a round number, asked for once and kept: a bike reads to 60
+            // and a starship to 900, and neither of them is re-scaled under the
+            // driver mid-corner.
+            if (topKmh > 0) {
+                const scale = speedoScale(topKmh);
+                if (scale !== this._speedTop) { this._speedTop = scale; last.speedoKey = null; }
             }
-            if (els.gearEl && gearLabel != null) {
-                if (gearLabel !== last.gearTxt) { els.gearEl.textContent = gearLabel; last.gearTxt = gearLabel; }
-            }
-            if (els.rpmEl && rpm01 != null) {
-                const w = Math.round(Math.max(4, Math.min(100, rpm01 * 100)));
-                if (w !== last.rpmW) { window.UIPanel.setBar(els.rpmEl, w); last.rpmW = w; }
-                const red = rpm01 > 0.85;
-                if (red !== last.rpmRed) { els.rpmEl.classList.toggle('cds-rpm--redline', red); last.rpmRed = red; }
-            }
+            this._drawSpeedo(Math.abs(typeof speedKmh === 'number' ? speedKmh : 0),
+                gearLabel, rpm01);
 
             // The minimap canvas does not need a full 60fps redraw; every 3rd
             // frame is smooth enough and saves a clear + drawImage each frame.
             this._miniTick = (this._miniTick || 0) + 1;
             if (this._miniTick % 3 === 0) this._drawMiniMap(vanX, vanZ);
+        }
+
+        // ---------------------------------------------------------------------
+        // The dial
+        // ---------------------------------------------------------------------
+        // Redrawn only when something on its face would actually change: the
+        // needle moves in whole km/h, the rpm in hundredths, and a camper
+        // sitting still redraws nothing at all.
+        _drawSpeedo(kmh, gearLabel, rpm01) {
+            const cv = (this._els || {}).speedoEl;
+            if (!cv || !this._speedTop) return;
+            const rpm = Math.max(0, Math.min(1, typeof rpm01 === 'number' ? rpm01 : 0));
+            const key = Math.round(kmh) + '|' + (gearLabel == null ? '' : gearLabel) +
+                '|' + Math.round(rpm * 100);
+            const last = this._last || (this._last = {});
+            if (key === last.speedoKey) return;
+            last.speedoKey = key;
+
+            const ctx = cv.getContext('2d');
+            if (!ctx) return;
+            const S = this._speedoPx;
+            const top = this._speedTop;
+            const over = kmh > top;                       // past the end of the scale
+            ctx.setTransform(2, 0, 0, 2, 0, 0);           // drawn at 2x, shown at 1x
+            ctx.clearRect(0, 0, S, S);
+
+            const cx = S / 2, cy = S / 2;
+            const r  = S / 2 - 6;
+            const at = (v) => SPEEDO_A0 + SPEEDO_SWEEP * Math.max(0, Math.min(1, v / top));
+
+            // The face, and the arc the needle runs along.
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fillStyle = SPEEDO_FACE;
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = over ? SPEEDO_OVER : SPEEDO_RING;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r - 1, SPEEDO_A0, SPEEDO_A0 + SPEEDO_SWEEP);
+            ctx.stroke();
+
+            // Ticks: eight of them across the sweep, numbered, with the last
+            // fifth of the scale marked out as the part a road is not for.
+            ctx.strokeStyle = SPEEDO_RED;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r - 5, at(top * 0.8), at(top));
+            ctx.stroke();
+            ctx.font = 'bold 9px ' + SPEEDO_FONT;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            for (let i = 0; i <= 8; i++) {
+                const v = (top / 8) * i;
+                const a = at(v);
+                const ca = Math.cos(a), sa = Math.sin(a);
+                ctx.strokeStyle = SPEEDO_TICK;
+                ctx.lineWidth = i % 2 ? 1 : 2;
+                ctx.beginPath();
+                ctx.moveTo(cx + ca * (r - 8), cy + sa * (r - 8));
+                ctx.lineTo(cx + ca * (r - (i % 2 ? 12 : 15)), cy + sa * (r - (i % 2 ? 12 : 15)));
+                ctx.stroke();
+                if (i % 2) continue;
+                ctx.fillStyle = SPEEDO_TICK;
+                ctx.fillText(String(Math.round(v)),
+                    cx + ca * (r - 24), cy + sa * (r - 24));
+            }
+
+            // The rpm, laid inside the scale as a second arc: it is the engine's
+            // own reading and it belongs on the engine's own instrument.
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = rpm > 0.85 ? SPEEDO_RED : SPEEDO_AMBER;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r - 30, SPEEDO_A0, at(top * rpm) + 0.001);
+            ctx.stroke();
+
+            // The needle. Pegged at the end of the scale rather than swung off
+            // it, because a speed the dial cannot show is still a real speed and
+            // the number in the face is what says how much of one.
+            const a = at(kmh);
+            ctx.strokeStyle = over ? SPEEDO_OVER : SPEEDO_AMBER;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(cx - Math.cos(a) * 7, cy - Math.sin(a) * 7);
+            ctx.lineTo(cx + Math.cos(a) * (r - 14), cy + Math.sin(a) * (r - 14));
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+            ctx.fillStyle = over ? SPEEDO_OVER : SPEEDO_AMBER;
+            ctx.fill();
+
+            // What the needle is bad at: the number, the unit, and the gear.
+            ctx.fillStyle = over ? SPEEDO_OVER : SPEEDO_TEXT;
+            ctx.font = 'bold 22px ' + SPEEDO_FONT;
+            ctx.fillText(String(Math.round(kmh)), cx, cy + 24);
+            ctx.fillStyle = SPEEDO_TICK;
+            ctx.font = '9px ' + SPEEDO_FONT;
+            ctx.fillText(T('CamperDrive.hud.kmh'), cx, cy + 40);
+            if (gearLabel != null) {
+                ctx.fillStyle = SPEEDO_AMBER;
+                ctx.font = 'bold 12px ' + SPEEDO_FONT;
+                ctx.fillText(String(gearLabel), cx, cy - 26);
+            }
         }
 
         // Which world the map is of. Off Earth it is the planet's own unwrapped

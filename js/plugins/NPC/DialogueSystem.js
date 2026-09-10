@@ -100,20 +100,16 @@ Imported.DialogueSystem = true;
     const bustOpacity      = 255;
     const bustAspect       = 0.74;  // every portrait in img/busts is about 3:4
     const bustMaxHeight    = 615;   // the tallest a portrait is ever drawn
-    const bustMinHeight    = 240;   // and the shortest, however low the box sits
-    const bustBoxGap       = 0;     // portrait meets the textbox seamlessly without gap
-    const bustOverlap      = 2;     // slight overlap behind textbox border to prevent subpixel seams
+    const bustMinHeight    = 240;   // and the shortest, on a very short screen
     const bustTopMargin    = 6;     // air above its head
-    const bustXOffset_16_9 = 245;   // side margin used when there is no box to align to
-    // A story scene stages both of its speakers on the left of the box, side by
-    // side and standing on its top edge, and dims whoever is not talking.
+    const bustEdgeMargin   = 0;     // portraits stand flush against the screen edges
+    // A story scene stages one of its speakers against either edge of the
+    // screen and dims whoever is not talking.
     // The listener of a story scene is not made see-through, it is taken out of
     // the light: full opacity, the brightness pulled down. A transparent
     // portrait shows the map through somebody's face.
     const storyDimTone     = [-96, -96, -96, 0];
     const storyLitTone     = [0, 0, 0, 0];
-    const storyEdgeMargin  = 0;     // portraits sit flush against the screen edges
-    const storyMaxHeight   = 545;   // the tallest a story portrait is ever drawn
     const fadeInDuration   = 12;
     const fadeOutDuration  = 12;
 
@@ -122,39 +118,28 @@ Imported.DialogueSystem = true;
     // -------------------------------------------------------------------------
     // Bust size helpers
     // -------------------------------------------------------------------------
-    // The portrait is measured against the dialogue box it belongs to: it stands
-    // on the box's top edge and shares the box's outer side, so the two read as
-    // one block. Both limits are hard. The box is a DOM overlay drawn over the
-    // canvas, so anything the portrait puts below its top edge is swallowed; and
-    // the photographic busts are drawn all the way to the top of their own file,
-    // so anything spent above the screen's top edge is a decapitated head. What
-    // is left is the strip between them, and the portrait is sized to fit it.
-    function messageBoxTop() {
-        const win   = SceneManager._scene && SceneManager._scene._messageWindow;
-        const floor = Graphics.height - bottomBarReserve();
-        if (!win || !(win.width > 0) || !(win.height > 0)) return floor;
-        // A box pinned to the top of the screen is not something to stand on.
-        if (win.y < Graphics.height * 0.45) return floor;
-        return win.y;
+    // Every portrait in the game is staged the same way, whether it is one
+    // speaker or a whole story cast: feet on the bottom edge of the screen,
+    // head clear of the top of it, flush against the screen edge on its own
+    // side. The message box is a DOM overlay drawn over the canvas, so whatever
+    // a portrait puts behind the box is simply swallowed by it and the two read
+    // as one block. Standing on the box's top edge instead, as the single
+    // speaker used to, cut the portrait straight across in mid air wherever the
+    // box was narrower than the side it hangs on, and squeezed its head against
+    // the top of the screen whenever the box sat high.
+    function bustFloor() { return Graphics.height; }
+
+    // The tallest a portrait can be drawn: what is left of the screen above the
+    // floor, and what the slice of screen width it is allowed to fill can hold.
+    // The photographic busts are drawn all the way to the top of their own
+    // file, so anything spent above the screen's top edge is a decapitated head.
+    function bustHeightFor(halfWidth) {
+        const room = Math.max(0, bustFloor() - bustTopMargin);
+        const wide = Math.max(0, halfWidth) / bustAspect;
+        return Math.round(Math.max(bustMinHeight, Math.min(bustMaxHeight, room, wide)));
     }
 
-    // The box is drawn centred on the screen whatever the window's own x says
-    // (see Window_Message.update below), so one half-width answers both sides.
-    function messageBoxHalfWidth() {
-        const win = SceneManager._scene && SceneManager._scene._messageWindow;
-        if (!win || !(win.width > 0)) {
-            return Math.max(0, Graphics.width / 2 - bustXOffset_16_9);
-        }
-        return Math.min(Graphics.width, win.width) / 2;
-    }
-
-    function messageBoxRight() { return Graphics.width / 2 + messageBoxHalfWidth(); }
-    function messageBoxLeft()  { return Graphics.width / 2 - messageBoxHalfWidth(); }
-
-    function getBustHeight() {
-        const room = messageBoxTop() + bustOverlap - bustTopMargin;
-        return Math.round(Math.max(bustMinHeight, Math.min(bustMaxHeight, room)));
-    }
+    function getBustHeight() { return bustHeightFor(Graphics.width / 2 - bustEdgeMargin); }
     function getBustWidth()  { return Math.round(getBustHeight() * bustAspect); }
 
     function addBustToScene(bust, scene) {
@@ -466,28 +451,22 @@ Imported.DialogueSystem = true;
         }
 
         // The cast stands beside the box, not over it: one portrait against the
-        // left edge of the screen and one against the right, in the strip the
-        // box leaves free on either side of itself, with their feet on the
-        // floor of the screen rather than on the box's top edge.
+        // left edge of the screen and one against the right, staged exactly as
+        // a single speaker is (bustFloor / getBustHeight above), so a story
+        // scene and an ordinary conversation draw the same portrait in the same
+        // place. Only the middle of the screen is out of bounds, so the two of
+        // them never run into each other.
         storyLayout() {
-            // Feet on the bottom edge of the screen itself, under the quick bar
-            // and under the box: the cast is drawn as tall as the screen allows
-            // and the box, a DOM overlay over the canvas, hides whatever reaches
-            // in behind it. Only the middle of the screen is out of bounds, so
-            // the two of them never run into each other.
-            const floor  = Graphics.height;
-            const room   = Math.max(0, floor - bustTopMargin);
-            const half   = Math.max(0, Graphics.width / 2 - storyEdgeMargin);
-            const height = Math.min(storyMaxHeight, room, Math.round(half / bustAspect));
+            const height = getBustHeight();
             const width  = Math.round(height * bustAspect);
             return {
                 width,
                 height,
-                x: i => (i === 0 ? storyEdgeMargin : Graphics.width - storyEdgeMargin - width),
+                x: i => (i === 0 ? bustEdgeMargin : Graphics.width - bustEdgeMargin - width),
                 // The edge each slot walks in from and retires to: the left one
                 // off the left of the screen, the right one off the right.
                 hiddenX: i => (i === 0 ? -width : Graphics.width + width),
-                y: floor,
+                y: bustFloor(),
             };
         }
 
@@ -540,7 +519,8 @@ Imported.DialogueSystem = true;
                 this.characterBust._targetX = (Graphics.width - width) / 2;
             } else {
                 // Flush with the screen edge on its own side, no margin.
-                this.characterBust._targetX = left ? 0 : Graphics.width - width;
+                this.characterBust._targetX = left
+                    ? bustEdgeMargin : Graphics.width - bustEdgeMargin - width;
             }
         }
 
@@ -573,23 +553,18 @@ Imported.DialogueSystem = true;
             return 'right';
         }
 
-        // The floor the portrait stands on: the top edge of the message box, or,
-        // when there is no box below it, the real bottom of the screen less
-        // whatever the item quick bar is holding down there (see
-        // bottomBarReserve and Window_Message.updatePlacement below).
-        getBustY() { return messageBoxTop() + bustOverlap; }
+        // The floor the portrait stands on: the bottom edge of the screen, the
+        // same one the story cast stands on, whatever the box below is doing.
+        getBustY() { return bustFloor(); }
 
         setupBustPosition(sprite) { sprite.y = this.getBustY(); }
 
-        // The box moves and resizes under the portrait (a top-positioned
-        // message, the quick bar appearing, a resolution change), so the fit is
-        // redone whenever the geometry it was measured against has actually
-        // changed, and never otherwise.
+        // The portrait is measured against the screen alone, so the fit is redone
+        // when the screen changes (a resolution change, split screen coming and
+        // going) or when it changes ends, and never otherwise.
         layoutSignature() {
-            const win = SceneManager._scene && SceneManager._scene._messageWindow;
             return Graphics.width + 'x' + Graphics.height + '|' +
-                   (win ? win.y + ',' + win.width + ',' + win.height : '-') + '|' +
-                   bottomBarReserve() + '|' + this.bustSide + '|' + (this.storyMode ? 's' : '-') + '|' +
+                   this.bustSide + '|' + (this.storyMode ? 's' : '-') + '|' +
                    (window.$gameSplitScreen && window.$gameSplitScreen.active ? '1' : '0');
         }
 
@@ -1451,9 +1426,9 @@ Imported.DialogueSystem = true;
     // on the same floor the portrait stands on.
     // The box never touches the screen edge: it is inset on both sides and
     // lifted off the floor by the same margin, so it reads as a card laid on
-    // the scene rather than a bar welded to the frame. Every portrait is
-    // measured against this box (messageBoxTop / messageBoxLeft / messageBoxRight
-    // above), so the busts move in with it and keep standing on its top edge.
+    // the scene rather than a bar welded to the frame. The portraits stand on
+    // the floor of the screen behind it (bustFloor above) and are not measured
+    // against it, so the box is free to move without resizing anybody.
     const msgEdgeMargin = 20;
 
     const _WM_updatePlacement = Window_Message.prototype.updatePlacement;
@@ -1959,7 +1934,11 @@ Imported.DialogueSystem = true;
     function announceKeywords(learned) {
         if (!learned.length || !window.ParchmentToast) return;
         window.ParchmentToast.group(learned.map(keyword => () => {
-            window.ParchmentToast.show(T('Dialogue.learnedTopic', { topic: keyword }), {
+            // A topic is filed under the one name the codex knows it by, but a
+            // line can have named it with a synonym, so the popup reads the
+            // page's own title rather than the words that happened to teach it.
+            const shown = topicDisplayName(keyword);
+            window.ParchmentToast.show(T('Dialogue.learnedTopic', { topic: shown }), {
                 severity: 'good',
                 duration: 600,
                 key: `keyword:${keyword}`
@@ -1985,6 +1964,19 @@ Imported.DialogueSystem = true;
 
     // Teach every [Keyword] in `text` to the whole party, and hand back only
     // the ones nobody knew yet, so a topic is announced once and never again.
+    function teachKeyword(keyword) {
+        if (!keyword || typeof $gameParty === 'undefined' || !$gameParty) return false;
+        let isNew = false;
+        $gameParty.members().forEach(actor => {
+            if (!actor._keywords) actor._keywords = [];
+            if (!actor._keywords.includes(keyword)) {
+                actor._keywords.push(keyword);
+                isNew = true;
+            }
+        });
+        return isNew;
+    }
+
     function learnKeywords(text) {
         const learned = [];
         const keywordRegex = keywordRe();
@@ -1992,17 +1984,110 @@ Imported.DialogueSystem = true;
         while ((match = keywordRegex.exec(text)) !== null) {
             const keyword = splitKeyword(match[1]).topic;
             if (!keyword) continue;
-            let isNew = false;
-            $gameParty.members().forEach(actor => {
-                if (!actor._keywords) actor._keywords = [];
-                if (!actor._keywords.includes(keyword)) {
-                    actor._keywords.push(keyword);
-                    isNew = true;
-                }
-            });
-            if (isNew && !learned.includes(keyword)) learned.push(keyword);
+            if (teachKeyword(keyword) && !learned.includes(keyword)) learned.push(keyword);
         }
         return learned;
+    }
+
+    // -------------------------------------------------------------------------
+    // Keyword System: topics a line NAMES rather than brackets
+    // -------------------------------------------------------------------------
+    // A topic used to have to be written [in brackets] to be taught. It still
+    // can be, and [Display | Topic] still says one thing and files another, but
+    // the codex now carries the words each of its pages answers to
+    // (js/db/Messages/HelpTopics.json: `keyword`, and `synonyms` for the other
+    // names the same thing goes by), so simply NAMING one teaches it. The
+    // phrase is marked where it stands, whatever wording was used, and the
+    // popup announces the page's own title rather than the synonym.
+    //
+    // A page written for a menu command rather than for the world (Sleep,
+    // Build, Continue) carries "autoDetect": false: those words are ordinary
+    // prose and would light up in every second line. They are still taught the
+    // old way, by being bracketed.
+    const TOPIC_MIN_ALIAS = 3;
+
+    let _topicAliases = null;   // lower-cased alias -> the page's own keyword
+    let _topicNames   = null;   // keyword           -> the page's own title
+    let _topicRegex   = null;
+    let _topicLang    = null;
+
+    function topicPages() {
+        const bank = window.Messages && window.Messages.DialogueTopics;
+        if (!bank) return [];
+        return Array.isArray(bank) ? bank : Object.values(bank);
+    }
+
+    // The codex is read in the language being played, so the index is keyed in
+    // it too and rebuilt when the language changes under it.
+    function topicIndex() {
+        const lang = (typeof ConfigManager !== 'undefined' && ConfigManager.language) || 'en';
+        if (_topicAliases && _topicLang === lang) return _topicAliases;
+        const aliases = new Map();
+        const names   = new Map();
+        const add = (alias, primary) => {
+            const word = String(alias == null ? '' : alias).trim();
+            if (word.length < TOPIC_MIN_ALIAS) return;
+            const key = word.toLowerCase();
+            if (!aliases.has(key)) aliases.set(key, primary);
+        };
+        topicPages().forEach(page => {
+            if (!page || page.type !== 'topic' || !page.keyword) return;
+            const primary = String(page.keyword);
+            const title = window.HelpCodex && window.HelpCodex.titleOf(primary);
+            names.set(primary, title || primary);
+            if (page.autoDetect === false) return;
+            add(primary, primary);
+            (page.synonyms || []).forEach(word => add(word, primary));
+            // The page's title in the language being played answers to itself,
+            // so an Italian line teaches the same page an English one does.
+            add(title, primary);
+        });
+        _topicAliases = aliases;
+        _topicNames   = names;
+        _topicRegex   = null;
+        _topicLang    = lang;
+        return aliases;
+    }
+
+    function topicDisplayName(keyword) {
+        topicIndex();
+        return (_topicNames && _topicNames.get(keyword)) || keyword;
+    }
+
+    // Longest alias first, so "Holy Vatican Empire" is matched before "Vatican"
+    // and the page a line really names is the page it teaches.
+    function topicMatcher() {
+        topicIndex();
+        if (_topicRegex !== null) return _topicRegex || null;
+        const alts = Array.from(_topicAliases.keys())
+            .sort((a, b) => b.length - a.length)
+            .map(a => a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        _topicRegex = alts.length ? new RegExp('\\b(' + alts.join('|') + ')\\b', 'gi') : false;
+        return _topicRegex || null;
+    }
+
+    // Teach and mark every topic a line names. What is already marked is
+    // stepped over rather than read again, so a [Bracket] that was just
+    // resolved is never matched a second time inside its own gold.
+    function markNamedTopics(text) {
+        const line = String(text == null ? '' : text);
+        if (!line) return line;
+        const re = topicMatcher();
+        if (!re) return line;
+        const learned = [];
+        const marked = new RegExp('(' + NAME_OPEN + '[^' + NAME_CLOSE + ']*' + NAME_CLOSE + ')');
+        const out = line.split(marked).map(part => {
+            if (!part || part.charAt(0) === NAME_OPEN) return part || '';
+            re.lastIndex = 0;
+            return part.replace(re, (word) => {
+                const primary = _topicAliases.get(word.toLowerCase());
+                if (!primary) return word;
+                if (teachKeyword(primary) && !learned.includes(primary)) learned.push(primary);
+                return NAME_OPEN + word + NAME_CLOSE;
+            });
+        }).join('');
+        announceKeywords(learned);
+        return out;
     }
 
     // -------------------------------------------------------------------------
@@ -2027,10 +2112,10 @@ Imported.DialogueSystem = true;
         announceKeywords(learnKeywords(translatedText));
 
         const wrappedText   = autoWrapText(translatedText);
-        const displayedText = wrappedText.replace(
+        const displayedText = markNamedTopics(wrappedText.replace(
             keywordRe(),
             (_m, inner) => NAME_OPEN + splitKeyword(inner).display + NAME_CLOSE
-        );
+        ));
         displayedText.split('\n').forEach(line => this._texts.push(line));
     };
 
@@ -2138,7 +2223,26 @@ Imported.DialogueSystem = true;
         'Say', 'Said', 'See', 'Look', 'Know', 'Think', 'Take', 'Make', 'Give',
     ];
 
-    function _nameRoster() {
+    // A record's own id is written in snake_case ("giulio_andreotti"), a
+    // sentence writes the same person out in words, and either spelling has to
+    // be recognized: both are registered, and the id is registered as it stands
+    // as well, since a generated line can quote one verbatim.
+    function _idSpellings(id) {
+        const raw = String(id == null ? '' : id).trim();
+        if (!raw) return [];
+        if (raw.indexOf('_') < 0) return [raw];
+        const spaced = raw.split('_')
+            .map(part => part ? part.charAt(0).toUpperCase() + part.slice(1) : part)
+            .join(' ');
+        return [raw, spaced];
+    }
+
+    // Everything the world itself knows a name for: nations, hyperpowers,
+    // factions, parties, settlements, destinations and the people who lead
+    // them. The party's own members are NOT in here: they are marked in a line
+    // like any other name (see _nameRoster) but nobody picks up a rumour by
+    // hearing their travelling companion's name said out loud.
+    function _worldRoster() {
         const names = new Set();
         const add = v => {
             const name = String(v == null ? '' : v).trim();
@@ -2147,7 +2251,6 @@ Imported.DialogueSystem = true;
             if (NAME_STOPWORDS.includes(name)) return;
             names.add(name);
         };
-        try { ($gameParty?.allMembers?.() || []).forEach(a => add(a && a.name && a.name())); } catch (e) {}
         try { Object.keys($gameSystem?._npcSociety || {}).forEach(add); } catch (e) {}
         try { Object.keys($gameSystem?._npcMapGroups || {}).forEach(add); } catch (e) {}
         try { (window.NPCPolitics?.listPowers?.() || []).forEach(add); } catch (e) {}
@@ -2158,6 +2261,38 @@ Imported.DialogueSystem = true;
         try {
             ($gameFactions?.getAllFactions?.() || []).forEach(f => add(f && f.name));
         } catch (e) {}
+        try {
+            Object.entries(window.WorldGen?.Leaders || {}).forEach(([id, leader]) => {
+                add(leader && leader.name);
+                _idSpellings(id).forEach(add);
+            });
+        } catch (e) {}
+        try { Object.keys(window.WorkSystem?.Destinations || {}).forEach(add); } catch (e) {}
+        try {
+            Object.values($gameSystem?._npcPolitics?.powers || {}).forEach(power => {
+                (power?.parties || []).forEach(party => add(party && party.name));
+                Object.values(power?.politicians || {}).forEach(pol => add(pol && pol.name));
+            });
+        } catch (e) {}
+        try {
+            Object.entries(window.WorldGen?.Parties || {}).forEach(([country, roster]) => {
+                if (!Array.isArray(roster)) return;
+                roster.forEach(party => add(party && party.name));
+            });
+        } catch (e) {}
+        return names;
+    }
+
+    function _nameRoster() {
+        const names = _worldRoster();
+        const add = v => {
+            const name = String(v == null ? '' : v).trim();
+            if (name.length < 2 || name.length > 48) return;
+            if (!/^[\wÀ-ÿ].*[\wÀ-ÿ]$/.test(name)) return;
+            if (NAME_STOPWORDS.includes(name)) return;
+            names.add(name);
+        };
+        try { ($gameParty?.allMembers?.() || []).forEach(a => add(a && a.name && a.name())); } catch (e) {}
         return names;
     }
 
@@ -2166,6 +2301,7 @@ Imported.DialogueSystem = true;
     // rather than on every line spoken.
     let _nameRegex = null;
     let _nameSig   = null;
+    let _worldNames = null;
 
     function _nameSignature() {
         let party = '';
@@ -2179,6 +2315,7 @@ Imported.DialogueSystem = true;
         const sig = _nameSignature();
         if (_nameRegex && sig === _nameSig) return _nameRegex;
         _nameSig = sig;
+        _worldNames = _worldRoster();
         const names = Array.from(_nameRoster()).sort((a, b) => b.length - a.length);
         if (!names.length) { _nameRegex = null; return null; }
         const alts = names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
@@ -2198,8 +2335,23 @@ Imported.DialogueSystem = true;
         return line.split(marked).map(part => {
             if (!part || part.charAt(0) === NAME_OPEN) return part || '';
             re.lastIndex = 0;
-            return part.replace(re, m => NAME_OPEN + m + NAME_CLOSE);
+            return part.replace(re, m => { rememberRumor(m); return NAME_OPEN + m + NAME_CLOSE; });
         }).join('');
+    }
+
+    // A name the world knows, said out loud where the party can hear it, is
+    // worth remembering even when nobody has written a codex page for it. The
+    // Rumors shelf of the Archive is the list of them (UI/HelpMenu.js), and the
+    // Empathize wiki answers for the ones that turn out to be a nation, a
+    // hyperpower, a faction, a party or a leader. It belongs to the savegame,
+    // not to the world: it is what THIS party has heard.
+    function rememberRumor(name) {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return false;
+        if (!_worldNames || !_worldNames.has(name)) return false;
+        if (!$gameSystem._helpRumors) $gameSystem._helpRumors = {};
+        if ($gameSystem._helpRumors[name]) return false;
+        $gameSystem._helpRumors[name] = true;
+        return true;
     }
 
     // Teach the party every [Topic] a line carries and mark it for the box.
@@ -2208,9 +2360,12 @@ Imported.DialogueSystem = true;
     // by processMessageBuffer.
     function markKeywords(text) {
         const line = String(text == null ? '' : text);
-        if (!line || line.indexOf('[') < 0) return line;
+        if (!line) return line;
+        if (line.indexOf('[') < 0) return markNamedTopics(line);
         announceKeywords(learnKeywords(line));
-        return line.replace(keywordRe(), (_m, inner) => NAME_OPEN + splitKeyword(inner).display + NAME_CLOSE);
+        return markNamedTopics(
+            line.replace(keywordRe(), (_m, inner) => NAME_OPEN + splitKeyword(inner).display + NAME_CLOSE)
+        );
     }
 
     // A spoken line as the box should print it: its topics taught and marked,
@@ -2230,6 +2385,34 @@ Imported.DialogueSystem = true;
         mark: markSpokenLine,
         strip: stripNameMarks,
         roster: _nameRoster,
+        worldRoster: _worldRoster,
+    };
+
+    // The same reading, for a panel that paints its own HTML rather than
+    // handing a line to the message box. The Empathize log speaks: what an NPC
+    // answers there teaches a topic exactly as a line in the box does, and the
+    // popup fires over the open panel. A thought bubble drifting over somebody
+    // in the street is not somebody speaking TO the party, so nothing routed
+    // through here is fed one.
+    window.DialogueTopics = {
+        // The line as it should be READ: topics taught and marked, every name
+        // the world knows marked around them.
+        mark: markSpokenLine,
+        // The same, escaped and wrapped in the spans a DOM panel paints gold.
+        html(text) {
+            const marked = markSpokenLine(String(text == null ? '' : text));
+            const escaped = marked
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            return escaped
+                .split(NAME_OPEN).join('<span class="msg-keyword">')
+                .split(NAME_CLOSE).join('</span>');
+        },
+        displayName: topicDisplayName,
+        // What this party has heard named but has no page for.
+        rumors() {
+            try { return Object.keys($gameSystem._helpRumors || {}); } catch (e) { return []; }
+        },
     };
 
     // -------------------------------------------------------------------------
@@ -2684,6 +2867,21 @@ Imported.DialogueSystem = true;
         return steps;
     }
 
+    // Standing and talking to somebody is what the social meter is for, and it
+    // is paid whatever the exchange was about. Every other kind of talk pays it
+    // through _addNpcOpinion, which has an opinion to move; a rumour has none,
+    // so it pays the company on its own. A beast has no conversation to give
+    // and pays nothing: window.NPCEmpathize answers which is which.
+    function payCompany(ev, npcName) {
+        const EM = window.NPCEmpathize;
+        const H  = EM && EM._helpers;
+        if (!npcName || !H || !H._gainSocialFromCompany) return;
+        if (EM.isNonSentientNPC?.(npcName)) return;
+        const actorId = $gameParty?.leader?.()?.actorId();
+        if (actorId == null) return;
+        H._gainSocialFromCompany(actorId, ensureNpcProfile(ev, npcName));
+    }
+
     // The third thing that can happen: no social move at all, just the rumour
     // bank, spoken over the NPC's own bust like anything else they say. This is
     // also the whole of what a beast or an unregistered event has to offer.
@@ -2696,6 +2894,7 @@ Imported.DialogueSystem = true;
         // it would have spoken.
         if (npcName && EM?.isNonSentientNPC?.(npcName)) line = EM.growlFor(line, npcName) || line;
         if (npcName) EM?.recordNPCLine?.(npcName, line, 'npc');
+        payCompany(ev, npcName);
         return [npcStep(ev, npcName, line)];
     }
 
@@ -3491,6 +3690,7 @@ Imported.DialogueSystem = true;
         if (!line) return;
         if (npcName && EM?.isNonSentientNPC?.(npcName)) line = EM.growlFor(line, npcName) || line;
         if (npcName) EM?.recordNPCLine?.(npcName, line);
+        payCompany(ev, npcName);
 
         $gameMessage.setBackground(0);
         $gameMessage.setPositionType(2);

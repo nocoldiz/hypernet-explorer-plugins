@@ -2,7 +2,6 @@
   "archive": "Help",
   "archiveEntry": "Help",
   "general": "Help",
-  "lore": "Lore",
   "states": "States",
   "elements": "Elements",
   "diseases": "Diseases",
@@ -21,5 +20,8 @@
   "topicKnownBy": "Known by {names}.",
   "topicExplainer": "A topic is something the party has been told. Once one of them has heard it, it can be raised with anybody: conversation options that need a topic stay out of sight until somebody in the party knows it.",
   "noTopicsLearnedYet": "Nobody has told the party anything worth writing down yet.",
-  "noHistoryThisYear": "No notable events were recorded this year."
+  "noHistoryThisYear": "No notable events were recorded this year.",
+  "rumors": "Rumors",
+  "openWiki": "Open article",
+  "rumorExplainer": "A name the party has heard said out loud, with no page written for it. Where it turns out to be a nation, a hyperpower, a faction, a party or one of the people who lead them, the article on it can be opened from here."
 }

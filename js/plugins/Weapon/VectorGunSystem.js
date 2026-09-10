@@ -20,8 +20,9 @@
  *   THE FORM         what the gun is. One shape fitted at a time, out of the
  *                    gun's own and the eleven weapon types it folds into. In
  *                    battle the reload row is SWITCH: it reconstructs the
- *                    weapon as the fitted shape and back, and every switch
- *                    fills the magazine. Left as the gun, SWITCH racks it out
+ *                    weapon as the fitted shape and back, costs no turn and can
+ *                    be done as often as she likes. Left as the gun, SWITCH
+ *                    racks it out
  *                    into a coilgun sniper rifle instead: three shots, four
  *                    times the reach, and the third round spent folds it back.
  *
@@ -111,7 +112,8 @@
   // knows. ONE of them is fitted at a time, in a selector of its own, and the
   // gun's own shape is the default: fitting a shape does not spend a mode bay.
   // In battle the reload row becomes SWITCH, which folds the weapon into the
-  // fitted shape and back, and every switch fills the magazine.
+  // fitted shape and back. It costs no turn and may be done as many times in a
+  // round as she likes; the gun carries no ammunition to fill.
   const GUN_FORM = 'gun';         // the shape it always comes back to
   const GUN_WTYPE = 9;
   const SNIPER_SHOTS = 3;         // what the coilgun holds before it must reload
@@ -300,6 +302,7 @@
     if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
     $gameSystem._vectorGunForm = null;
     $gameSystem._vectorGunBlade = false;
+    $gameSystem._vectorGunSniperShots = 0;
   }
 
   function boundSpellId() {
@@ -845,6 +848,11 @@
     $gameSystem._vectorGunBlade = folded && target === 'thelema';
     // The element goes on with the shape and comes off with it.
     stampElement();
+    // The rack is counted from zero every time the coilgun is built.
+    setSniperShotsFired(0);
+    // There is no magazine to fill (the frame makes its own rounds), but the
+    // reconstruction IS the reload motion: a Gunmancer's chamber reads it as
+    // one and is paid for it, once a round (BattleSystemPassiveSkills.js).
     const holder = actor || wielder();
     if (holder && holder.reloadBullets) holder.reloadBullets();
     return folded;
@@ -942,19 +950,24 @@
     return _Game_Actor_attackAnimationId1_VG.call(this);
   };
 
-  // A machete has no magazine to empty: the rounds are spent only by the shapes
-  // that shoot. The coilgun does shoot, and the round that empties it puts the
-  // weapon back together as the pistol, because reloading it IS unracking it.
+  // Nothing the gun does costs a round: the frame carries no magazine at all
+  // (getWeaponBulletConfig below). The one count it keeps is the coilgun's
+  // rack, and the shot that ends it puts the weapon back together as the
+  // pistol, because reloading it IS unracking it.
   const _Game_Actor_consumeBullet_VG = Game_Actor.prototype.consumeBullet;
   Game_Actor.prototype.consumeBullet = function () {
     const holdsGun = this.weapons && this.weapons().some(isVectorGun);
-    if (holdsGun && inMeleeForm()) return;
-    _Game_Actor_consumeBullet_VG.call(this);
-    // Overpressure packs two rounds behind one shot.
-    if (holdsGun && hasMode('overpressure')) _Game_Actor_consumeBullet_VG.call(this);
-    if (holdsGun && inSniper() && this.getCurrentBullets && this.getCurrentBullets() <= 0) {
+    if (!holdsGun) { _Game_Actor_consumeBullet_VG.call(this); return; }
+    // The frame builds its own rounds: nothing it does spends a magazine, and
+    // no shape it stands in can be caught empty. The only count it still keeps
+    // is the coilgun's, which is not ammunition but the length of the rack.
+    if (inMeleeForm()) return;
+    if (inSniper()) {
+      const spent = sniperShotsFired() + (hasMode('overpressure') ? 2 : 1);
+      setSniperShotsFired(spent);
+      if (spent < magazineSize(SNIPER_SHOTS)) return;
+      setSniperShotsFired(0);
       unfold();
-      if (this.reloadBullets) this.reloadBullets();
       // The coilgun folding itself back is the same machine doing the same
       // thing, so it is shown the same way rather than blinking into a pistol.
       const scene = typeof SceneManager !== 'undefined' ? SceneManager._scene : null;
@@ -968,14 +981,30 @@
     }
   };
 
-  // The magazine the weapon stands with: the coilgun's three, or the row's own
-  // doubled by Overload.
+  //--------------------------------------------------------------------------
+  // The magazine it does not have
+  //--------------------------------------------------------------------------
+  // The frame condenses its own rounds, so the gun is never out and no count is
+  // ever worn on the attack row: it reports no magazine at all, which is how
+  // WeaponSystem says a weapon carries no ammunition. The coilgun's three shots
+  // are counted here instead of out of a magazine (consumeBullet above), so
+  // racking out still ends by folding the pistol back together.
   const _Game_Actor_getWeaponBulletConfig_VG = Game_Actor.prototype.getWeaponBulletConfig;
   Game_Actor.prototype.getWeaponBulletConfig = function () {
-    const config = _Game_Actor_getWeaponBulletConfig_VG.call(this);
-    if (!config || !this.weapons().some(isVectorGun)) return config;
-    return { max: magazineSize(config.max), weaponId: config.weaponId };
+    if (this.weapons && this.weapons().some(isVectorGun)) return null;
+    return _Game_Actor_getWeaponBulletConfig_VG.call(this);
   };
+
+  /** How many rounds the coilgun has put downrange since it was racked out. */
+  function sniperShotsFired() {
+    if (typeof $gameSystem === 'undefined' || !$gameSystem) return 0;
+    return Number($gameSystem._vectorGunSniperShots) || 0;
+  }
+
+  function setSniperShotsFired(count) {
+    if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
+    $gameSystem._vectorGunSniperShots = Math.max(0, Number(count) || 0);
+  }
 
   //--------------------------------------------------------------------------
   // What the modes change about a shot
@@ -1092,6 +1121,7 @@
     BLADE_SOUNDS, BLADE_ANIMATION, bladeReady, inBlade, switchForm,
     FORM_MODES, FORM_KEYS, FORM_CHOICES, GUN_FORM, GUN_WTYPE, SNIPER_FORM,
     SNIPER_SHOTS, isFormMode, fittedForm, setForm, switchTarget,
+    sniperShotsFired, setSniperShotsFired,
     formKey, formWeaponType, formBuilder, formAnimationId, formSounds,
     GRIMOIRE_FORM, openGrimoire, closeGrimoire, inGrimoire,
     SOLOMON_FORM, solomonFitted,

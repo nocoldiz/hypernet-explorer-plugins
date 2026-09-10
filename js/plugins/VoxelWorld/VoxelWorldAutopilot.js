@@ -391,46 +391,13 @@
         },
 
         /**
-         * The rack the d-pad steps through: whatever the leader is holding,
-         * followed by every other weapon in the party's bags they are allowed
-         * to hold. There is no dream weapon here and no imaginary one - the
-         * driver is armed with their own equipment, so stepping the rack really
-         * does change it, exactly as the equip menu would.
+         * The weapon in the leader's hands is their EQUIPMENT and nothing else.
+         * The d-pad used to step a rack out here - every weapon in the party's
+         * bags, cycled in the field and equipped on the spot - which meant the
+         * blade you were fighting with could change under a thumb that meant to
+         * pick a block. It changes in one place now, the equip screen, and this
+         * layer only draws whatever is found there (see refresh()).
          */
-        rack() {
-            const actor = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.leader() : null;
-            if (!actor) return [];
-            const list = [];
-            const held = actor.weapons()[0];
-            if (held) list.push(held);
-            for (const item of $gameParty.weapons()) {
-                if (item && list.indexOf(item) < 0 && actor.canEquip(item)) list.push(item);
-            }
-            return list;
-        },
-
-        /**
-         * @param {number} dir -1 for d-pad up, 1 for d-pad down.
-         */
-        step(dir) {
-            if (!this._visible) return;
-            const actor = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.leader() : null;
-            if (!actor) return;
-            const list = this.rack();
-            if (list.length < 2) return;
-            const held = actor.weapons()[0];
-            let i = Math.max(0, list.indexOf(held));
-            i = ((i + dir) % list.length + list.length) % list.length;
-            const next = list[i];
-            if (!next || next === held) return;
-            actor.changeEquip(0, next);   // slot 0 is the weapon hand
-            this.refresh();
-            if (typeof SoundManager !== 'undefined') SoundManager.playEquip();
-            if (window.ParchmentToast) {
-                window.ParchmentToast.show(T('CamperDrive.weapon', { name: next.name }),
-                    { duration: 120 });
-            }
-        },
 
         /** One blow at a time, out of whichever hand is holding something. */
         swing() {
@@ -494,25 +461,15 @@
         },
 
         /**
-         * The pad, walking about outside the van. UP and DOWN on the d-pad step
-         * the rack and R2 is the trigger finger, the same as they are in a
-         * dream and on the shooting range. Both have to be read raw: core folds
-         * the left stick into the d-pad directions, and its mapper does not
-         * carry the analog triggers at all.
+         * The pad, walking about outside the van. R2 is the trigger finger, the
+         * same as it is in a dream and on the shooting range, and it has to be
+         * read raw: core's mapper does not carry the analog triggers at all.
+         * The d-pad is the quick bar's (VoxelWorldScene#_updateBarInput), not a
+         * weapon rack's - nothing out here changes what is equipped.
          */
         _updatePad() {
             const pads = window.AnalogStickInput;
-            if (!pads || !pads.hasPad || !pads.hasPad()) { this._padWas = null; return; }
-            // Edged against the DRIVE's own loop rather than against the
-            // engine's: the helper's isButtonTriggered is edged on Input.update,
-            // and whenever two drive frames fall inside one engine frame the
-            // same press would step the rack twice.
-            const was = this._padWas || {};
-            const up = pads.isButtonPressed(pads.BUTTON.DPAD_UP);
-            const down = pads.isButtonPressed(pads.BUTTON.DPAD_DOWN);
-            if (up && !was.up) this.step(-1);
-            if (down && !was.down) this.step(1);
-            this._padWas = { up: up, down: down };
+            if (!pads || !pads.hasPad || !pads.hasPad()) return;
             const rt = pads.rightTrigger ? pads.rightTrigger() : 0;
             if (!this._rtDown && rt > 0.55) { this._rtDown = true; this.swing(); }
             else if (this._rtDown && rt < 0.30) this._rtDown = false;

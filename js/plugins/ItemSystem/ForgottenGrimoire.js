@@ -464,9 +464,16 @@
             return T(arcana.isForbidden(s) ? 'Grimoire.ui.beyondLevelForbidden' : 'Grimoire.ui.beyondLevelEsoteric', { level: level });
         }
         if (reason === "stat") {
+            // The floor AND the base the reader brings to it: a sheet reading
+            // INT 20 is mostly worn, and the page counts none of that.
             const svc = window.SkillStatReq;
+            const stand = svc.check(this._actor, s);
             const req = svc.of(s);
-            return T('Grimoire.ui.beyondStat', { stat: svc.statName(req.stat), points: req.points });
+            return T('Grimoire.ui.beyondStat', {
+                stat: svc.statName(req.stat),
+                points: req.points,
+                value: stand ? stand.have : 0
+            });
         }
         return T('Grimoire.ui.beyondReach');
     };

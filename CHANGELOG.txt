@@ -1,5 +1,41 @@
+0.6.10a
+
+Added:
+ - study verb for books, learn the specialization instead of reading
+ - cooking pot and utensils increase cooked food quality
+ - status menu shows +X unspent party stat points
+
+Changed:
+ - rework all help menu and lore descriptions, shorter
+ - rework skills and items, fixed effects, missing events and descriptions
+ - enemy skill rates all equal, RPG Maker default
+ - sleep and knock-out recovery tied to hours slept, no injury slowdown
+ - party members raise social by interacting and travelling together
+ - wait and sleep capped at 12 hours, sleep rough without a sleeping bag
+ - three needs bars per row, find and training moved groups
+ - diseases moved to their own help tab, standard colors
+ - rework voxel world driving controls and HUD
+ - equipment screen shows the selected slot's item description
+ - rework the make a camp option, also in vehicle options
+ - much lower time passing per step on procedural maps
+ - map tooltips on outside story mode, with generic descriptions
+
+Fixed:
+ - enemy levels no longer get stuck on screen
+ - party no longer meets a duplicate of itself after saving
+ - lockpicking draws only four blocks of a bigger falling piece
+ - clicking a purchased deed no longer crashes the game
+ - hypernet os apps not opening and playing buzzer sound
+ - missing npc sprite no longer crashes the game
+ - bust for normal dialogue rendered wrong
+ - debug the book menu
+ - city tileset not restored when leaving a house
+ - controller controls in the vectorgun menu
+
+
 0.6.9a
 Added:
+ - one permanent stat point every 4 levels, spent in the status screen
  - simplified update menu to version, date and update info
  - workbench: craft spells and skills from KP-bought components
  - hovering a battle status tag explains what it does
@@ -15,6 +51,10 @@ Added:
  - world of chaos timeline
 
 Changed:
+- specializations split into implemented and not implemented
+- vector gun: infinite ammo, free switch, gunmancer mana once a turn
+- skill stat floors read as held/required base, grafts now count
+- guns nerfed: bursts scale sublinearly, bashing hits far weaker
 - all programs is a desktop app, minimal starting desktop
 - map tooltip tool reworked as Bubba Dialogues
 - parchment menus are a book: leather boards, fore-edges, crease on the seam
@@ -44,6 +84,8 @@ Changed:
 - title screen update notice fills as the download progresses
 
 Fixed:
+- skills below their required stat level can no longer be carried
+- gamebreaking item stat gains and armour traits reined in
 - every party member embarks with a sprite
 - fixed model flickering in the hyperdeck
  - encrypted build installs ws itself, plus build+upload steps

@@ -88,6 +88,15 @@
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
+  // A line somebody says in the panel, read the way the message box reads one:
+  // every topic and every known name in it taught, and painted gold. Falls back
+  // to plain escaped text when DialogueSystem is not loaded.
+  function _topicHtml(str) {
+    const api = window.DialogueTopics;
+    if (!api || typeof api.html !== 'function') return _escapeHtml(str);
+    try { return api.html(str); } catch (e) { return _escapeHtml(str); }
+  }
+
   // ============================================================================
   // Creature portraits
   // ============================================================================
@@ -2314,7 +2323,12 @@
         // The speaker of a left-hand bubble is never in doubt - the portrait,
         // the header and the side of the log all say it - so the name is not
         // stamped on every one of their lines.
-        : `<div class="npc-bubble npc-bubble-npc">${_escapeHtml(text)}</div>`;
+        //
+        // What the person across the table SAYS is a source like any other: a
+        // topic or a name the codex knows is picked up here exactly as it is
+        // in the message box, marked gold where it stands, and the popup
+        // announcing it fires over the open panel.
+        : `<div class="npc-bubble npc-bubble-npc">${_topicHtml(text)}</div>`;
     }).join('');
     const typingHTML = this._isTyping
       ? `<div class="npc-bubble npc-bubble-npc npc-typing">…</div>` : '';

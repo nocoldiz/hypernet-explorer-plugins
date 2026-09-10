@@ -38,11 +38,6 @@
 
   // Import utilities from ItemSystemUtils
   const utils = window.ItemSystemUtils;
-  const {
-    FOOD_COMMON_EVENT_ACTOR1,
-    FOOD_COMMON_EVENT_ACTOR2,
-    FOOD_COMMON_EVENT_ACTOR3
-  } = window.ItemSystemUtils;
 
   //=============================================================================
   // Special Commands Configuration
@@ -62,7 +57,10 @@
     "Plant":   { commonEventId: 291 },
     "Bury":    { commonEventId: 292 },
     "Wear":    { commonEventId: 293 },
-    "Glow":    { commonEventId: 294 }
+    "Glow":    { commonEventId: 294 },
+    // Studying has no common event behind it: the backpack answers it itself,
+    // the way Read answers a book with a passage rather than with the reader.
+    "Study":   { commonEventId: 0 }
   };
   // i18n-ignore-end
   window._InventorySpecialCommands = SPECIAL_COMMANDS;
@@ -192,6 +190,83 @@
   }
 
   window._InventoryQueueBookExcerpt = queueBookExcerpt;
+
+  //=============================================================================
+  // Studying a book (the "Study" verb)
+  //=============================================================================
+
+  // Reading a three hundred page book one page turn at a time is a thing the
+  // player may not want to do twice. Studying is the other way in: the hours
+  // the book is long go by and the reader comes out of it knowing what the
+  // book had to teach. window.BookLearning owns the whole rule; this only
+  // reports what happened.
+  function studyDurationText(minutes) {
+    const h = Math.floor(minutes / 60);
+    const m = Math.round(minutes % 60);
+    if (!h) return T('Inventory.study.minutes', { minutes: m });
+    if (!m) return T('Inventory.study.hours', { hours: h });
+    return T('Inventory.study.hoursMinutes', { hours: h, minutes: m });
+  }
+
+  function studyToast(text, severity) {
+    if (window.ParchmentToast && window.ParchmentToast.show) {
+      window.ParchmentToast.show(text, { severity: severity || 'info', title: T('Inventory.study.title') });
+    } else if (typeof $gameMessage !== 'undefined' && $gameMessage && !$gameMessage.isBusy()) {
+      $gameMessage.add(text);
+    }
+  }
+
+  // Returns true when hours were actually spent, so the caller knows to get out
+  // of the menu and let the map show the new time of day.
+  function studyBook(item, actor) {
+    const B = window.BookLearning;
+    if (!B || !B.study) return false;
+    const result = B.study(item, actor);
+    const name = result.actor ? result.actor.name() : '';
+    if (!result.ok) {
+      const key = result.reason === 'known' ? 'Inventory.study.known' : 'Inventory.study.nothing';
+      studyToast(T(key, { name, item: item.name }), 'warning');
+      return false;
+    }
+    studyToast(T('Inventory.study.done', {
+      name,
+      item: item.name,
+      subject: result.label,
+      points: result.points,
+      duration: studyDurationText(result.minutes),
+    }), 'good');
+    return true;
+  }
+
+  window._InventoryStudyBook = studyBook;
+
+  // The verbs the backpack answers by itself, with no common event behind them.
+  // Each is given the item and says whether it dealt with it.
+  // i18n-ignore-start  verb ids, matched against SPECIAL_COMMANDS
+  const INLINE_VERBS = {
+    "Read":  (item) => queueBookExcerpt(item),
+    "Study": (item) => studyBook(item),
+  };
+  // i18n-ignore-end
+
+  // Every verb offered on an item: the ones written on it, plus the ones it
+  // qualifies for by what it is. A book that teaches something can always be
+  // studied, so the tag does not have to be repeated across the whole shelf.
+  function specialCommandsFor(item) {
+    if (!item || !item.note) return [];
+    const commands = [];
+    const regex = /<Special:\s*(.+?)>/gi;   // i18n-ignore: note tag
+    let match;
+    while ((match = regex.exec(item.note)) !== null) {
+      commands.push(match[1].trim());
+    }
+    const B = window.BookLearning;
+    const studiable = !!(B && B.isBook(item) && B.specName(item) && B.fileOf(item));
+    if (studiable && commands.indexOf("Study") < 0) commands.push("Study");  // i18n-ignore: verb id
+    return commands;
+  }
+
+  window._InventorySpecialCommandsFor = specialCommandsFor;
 
   // Map number keys 1-9
   Input.keyMapper[49] = "1";
@@ -368,6 +443,7 @@
   const USABLE_CATEGORY = "Usable";
   const COMBAT_CATEGORY = "Combat";
   const BOOKS_CATEGORY = "Books";
+  const LEISURE_CATEGORY = "Leisure";
   const WEAPONS_CATEGORY = "Weapons";
   const ARMOR_CATEGORY = "Armor";
   // i18n-ignore-end
@@ -375,8 +451,8 @@
   // The shelves, in the order the row reads them.
   const UI_CATEGORIES = [
     ALL_CATEGORY, FAVORITES_CATEGORY, MEDICAL_CATEGORY, FOOD_CATEGORY,
-    USABLE_CATEGORY, COMBAT_CATEGORY, BOOKS_CATEGORY, MISC_CATEGORY,
-    WEAPONS_CATEGORY, ARMOR_CATEGORY
+    USABLE_CATEGORY, COMBAT_CATEGORY, BOOKS_CATEGORY, LEISURE_CATEGORY,
+    MISC_CATEGORY, WEAPONS_CATEGORY, ARMOR_CATEGORY
   ];
 
   const rawCategoryOf = (item) => {
@@ -428,6 +504,9 @@
       return FOOD_CATEGORY;
     }
     if (isMedicalItem(item)) return MEDICAL_CATEGORY;
+    // A pastime is what it is for: an mp3 player is not a tool and a saxophone
+    // is not a curiosity (window.ItemLeisure owns the <Leisure:> tag).
+    if (window.ItemLeisure && window.ItemLeisure.isLeisure(item)) return LEISURE_CATEGORY;
     if (item.occasion === 1) return COMBAT_CATEGORY;
     if (item.occasion === 0 || item.occasion === 2) return USABLE_CATEGORY;
     return MISC_CATEGORY;
@@ -706,12 +785,22 @@
       const specialName = specialCommands[index];
       const specialConfig = SPECIAL_COMMANDS[specialName];
 
-      if (specialConfig && specialConfig.commonEventId) {
-        SoundManager.playOk();
+      if (specialConfig) {
         $gameTemp._specialActionItemId = item.id;
-        // Books quote themselves; everything else runs the verb's common event.
-        if (!(specialName === "Read" && queueBookExcerpt(item))) {  // i18n-ignore  verb id
+        // A verb the backpack answers itself (a book quotes a passage, or is
+        // studied) never reaches a common event; everything else runs one.
+        const inline = INLINE_VERBS[specialName];
+        const handled = !!(inline && inline(item));
+        if (!handled && specialConfig.commonEventId > 0) {
+          SoundManager.playOk();
           $gameTemp.reserveCommonEvent(specialConfig.commonEventId);
+        } else if (!handled) {
+          // The verb declined the item and there is nothing else to run.
+          SoundManager.playBuzzer();
+          this._itemWindow.activate();
+          return;
+        } else {
+          SoundManager.playOk();
         }
         this.popScene();
         SceneManager.goto(Scene_Map);
@@ -724,17 +813,7 @@
   };
 
   Scene_EnhancedItem.prototype.parseSpecialCommands = function (item) {
-    if (!item || !item.note) return [];
-
-    const specialCommands = [];
-    const regex = /<Special:\s*(.+?)>/gi;
-    let match;
-
-    while ((match = regex.exec(item.note)) !== null) {
-      specialCommands.push(match[1].trim());
-    }
-
-    return specialCommands;
+    return specialCommandsFor(item);
   };
 
   Scene_EnhancedItem.prototype.equipItemToActor = function (item, actor) {
@@ -883,24 +962,34 @@
     return effect ? effect.dataId : 0;
   }
 
-  // Nutrition into the variables the food events read, then the eating event
-  // of whoever ate. The party case is credited to the leader's event.
-  function reserveFoodCommonEvent(actor, item, isParty) {
-    const caloriesMatch = item.note.match(/<calories:(\d+)>/);
-    const fatMatch = item.note.match(/<fat:(\d+)>/);
-    const proteinMatch = item.note.match(/<protein:(\d+)>/);
+  // A meal is eaten where it is picked up. It used to be handed to one of the
+  // EatFood common events (23/24/25), which meant the backpack had to close and
+  // drop the player back onto the map for the food to do anything at all: a
+  // menu could not feed anybody. window.PartyMeal applies the same three tags
+  // by the same formula the command does, so eating happens in the menu, and
+  // the serving card draws what it did to every meter it touched.
+  //
+  // Only the party's own mouths are served: a summon holds the fourth slot
+  // while it is out, and it is not fed (window.PartyMeal.eaters).
+  function eatFoodItem(actor, item, isParty) {
+    const meal = window.PartyMeal;
+    if (!meal) return null;
 
-    if (caloriesMatch) $gameVariables.setValue(88, Number(caloriesMatch[1]));
-    if (fatMatch) $gameVariables.setValue(89, Number(fatMatch[1]));
-    if (proteinMatch) $gameVariables.setValue(90, Number(proteinMatch[1]));
+    const nutrition = meal.nutritionOf(item);
+    const recovery = meal.recoveryOf(nutrition);
+    // A party-scope item is passed round the table; a single-target one is
+    // eaten by the character it was given to. Either way the food meter it
+    // moves is the party's one meter, so the list only says whose bars the card
+    // draws, and a summon holding the fourth slot is on neither.
+    const actors = (isParty || !actor) ? meal.eaters()
+      : (meal.eaters().includes(actor) ? [actor] : []);
+    if (!actors.length) return null;
 
-    let commonEventId = 0;
-    if (isParty || !actor) commonEventId = FOOD_COMMON_EVENT_ACTOR1;
-    else if (actor.actorId() === 1) commonEventId = FOOD_COMMON_EVENT_ACTOR1;
-    else if (actor.actorId() === 2) commonEventId = FOOD_COMMON_EVENT_ACTOR2;
-    else if (actor.actorId() === 3) commonEventId = FOOD_COMMON_EVENT_ACTOR3;
-
-    if (commonEventId > 0) $gameTemp.reserveCommonEvent(commonEventId);
+    return meal.eat(recovery, {
+      actors,
+      caffeine: nutrition.caffeine,
+      title: window.translateText ? window.translateText(item.name) : item.name,
+    });
   }
 
   // The item's own common event, if it carries one. Reserving it is what tells
@@ -915,8 +1004,14 @@
     // one common event now serves every book, and it reads the book off the
     // item. Scene_ItemBase does this for the default menu; this menu is the
     // one the game actually uses.
-    if (commonEventId > 0) $gameParty.setLastItem(item);
-    if (commonEventId > 0) $gameTemp.reserveCommonEvent(commonEventId);
+    if (commonEventId > 0) {
+      $gameParty.setLastItem(item);
+      // A Special verb leaves the id of its own item behind for the event to
+      // read. An ordinary use is the newer claim and clears it: left standing,
+      // it would open the same book again however many others were used after.
+      $gameTemp._specialActionItemId = 0;
+      $gameTemp.reserveCommonEvent(commonEventId);
+    }
     return commonEventId;
   }
 
@@ -956,7 +1051,7 @@
         // "Consume" flag (issue #144).
         $gameParty.loseItem(item, 1);
         utils.applyNeedRestores(actor, item);
-        reserveFoodCommonEvent(actor, item, false);
+        eatFoodItem(actor, item, false);
 
         return { used: true, commonEvent: reserveItemCommonEvent(item) };
       }
@@ -1020,7 +1115,7 @@
           utils.applyNeedRestores(actor, item);
         }
 
-        reserveFoodCommonEvent(null, item, true);
+        eatFoodItem(null, item, true);
         return { used: true, commonEvent: reserveItemCommonEvent(item) };
       }
 
@@ -1062,8 +1157,10 @@
       $gameParty.consumeItem(item);
 
       if (commonEventId > 0) {
-        $gameTemp.reserveCommonEvent(commonEventId);
-        return { used: true, commonEvent: commonEventId };
+        // Through reserveItemCommonEvent, not straight to $gameTemp: the event
+        // that runs next asks what was used to run it (one common event serves
+        // every book in the game), and a scope-0 item comes through here.
+        return { used: true, commonEvent: reserveItemCommonEvent(item) };
       }
 
       if (scope === 0) {
@@ -1190,7 +1287,7 @@
   // Kept as the scene's own names for these; the work itself is ItemUse's, so
   // there is one reading of a food tag and one item sound in the plugin.
   Scene_EnhancedItem.prototype.handleFoodItem = function (actor, item, isParty = false) {
-    reserveFoodCommonEvent(actor, item, isParty);
+    eatFoodItem(actor, item, isParty);
   };
 
   Scene_EnhancedItem.prototype.getCommonEventEffect = function (item) {
@@ -1230,20 +1327,6 @@
       return false;
     }
 
-    // Extract nutrition values from item notes
-    const caloriesMatch = foodItem.note.match(/<calories:(\d+)>/);
-    const fatMatch = foodItem.note.match(/<fat:(\d+)>/);
-    const proteinMatch = foodItem.note.match(/<protein:(\d+)>/);
-
-    const calories = caloriesMatch ? Number(caloriesMatch[1]) : 0;
-    const fat = fatMatch ? Number(fatMatch[1]) : 0;
-    const protein = proteinMatch ? Number(proteinMatch[1]) : 0;
-
-    // Set nutrition variables (Variable IDs from ItemSystemUtils)
-    $gameVariables.setValue(88, calories);
-    $gameVariables.setValue(89, fat);
-    $gameVariables.setValue(90, protein);
-
     // Play eat sound
     const animationSound = foodItem.animationId && $dataAnimations[foodItem.animationId]
       ? ($dataAnimations[foodItem.animationId].soundTimings || []).find(st => st.se && st.se.name)
@@ -1258,26 +1341,14 @@
     // Consume the item
     $gameParty.consumeItem(foodItem);
 
-    // Manually trigger hunger recovery (instead of using plugin command)
-    // Use the EatFood plugin command logic
-    const calorieFactor = 0.10;
-    const proteinFactor = 2.00;
-    const fatFactor = 1.50;
-    const recoveryAmount = (calories * calorieFactor) + (protein * proteinFactor) + (fat * fatFactor);
-
-    actor.addHunger(recoveryAmount);
-
-    // The meal is applied right here, so the EatFood common event is NOT
-    // reserved as well: it would read the same nutrition variables and add the
-    // meal a second time. Worse, a reserved common event only runs once the map
-    // interpreter gets a turn, so a starving party walking through a scene that
-    // never runs one used to queue one EatFood per member per step and then
-    // apply the whole stack at once, slamming hunger up to the overeating
-    // ceiling where it looked frozen for a thousand steps. The variables are
-    // cleared for the same reason.
-    $gameVariables.setValue(88, 0);
-    $gameVariables.setValue(89, 0);
-    $gameVariables.setValue(90, 0);
+    // The meal is applied right here, through window.PartyMeal, and the EatFood
+    // common event is NOT reserved as well: it would read the same nutrition
+    // and add the meal a second time. Worse, a reserved common event only runs
+    // once the map interpreter gets a turn, so a starving party walking through
+    // a scene that never runs one used to queue one EatFood per member per step
+    // and then apply the whole stack at once, slamming hunger up to the
+    // overeating ceiling where it looked frozen for a thousand steps.
+    eatFoodItem(actor, foodItem, false);
 
     // Add notification
     const itemName = window.translateText ? window.translateText(foodItem.name) : foodItem.name;
@@ -1955,17 +2026,7 @@
   };
 
   Window_ItemContextMenu.prototype.parseSpecialCommands = function (item) {
-    if (!item || !item.note) return [];
-
-    const specialCommands = [];
-    const regex = /<Special:\s*(.+?)>/gi;
-    let match;
-
-    while ((match = regex.exec(item.note)) !== null) {
-      specialCommands.push(match[1].trim());
-    }
-
-    return specialCommands;
+    return specialCommandsFor(item);
   };
 
   Window_ItemContextMenu.prototype.translateSpecialCommand = function (commandName) {

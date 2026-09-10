@@ -2,7 +2,6 @@
   "archive": "Archivio",
   "archiveEntry": "Voce dell'Archivio",
   "general": "Generale",
-  "lore": "Codice",
   "states": "Stati",
   "elements": "Elementi",
   "diseases": "Malattie",
@@ -21,5 +20,8 @@
   "searchPlaceholder": "Cerca nel manuale...",
   "topicKnownBy": "Conosciuto da {names}.",
   "topicExplainer": "Un argomento è qualcosa che è stato raccontato al gruppo. Una volta che uno di loro ne ha sentito parlare, se ne può discutere con chiunque: le opzioni di conversazione che richiedono un argomento restano nascoste finché qualcuno del gruppo non lo conosce.",
-  "noTopicsLearnedYet": "Nessuno ha ancora detto al gruppo qualcosa che valga la pena annotare."
+  "noTopicsLearnedYet": "Nessuno ha ancora detto al gruppo qualcosa che valga la pena annotare.",
+  "rumors": "Voci",
+  "openWiki": "Apri la voce",
+  "rumorExplainer": "Un nome che il gruppo ha sentito dire ad alta voce, senza una pagina scritta per lui. Quando si rivela essere una nazione, un'iperpotenza, una fazione, un partito o una delle persone che li guidano, la sua voce si può aprire da qui."
 }

@@ -28,9 +28,10 @@
  *
  * The notices beside it answer to their own setting, ConfigManager.showMapNotices,
  * which has three states: "first" reads a tip once and never again, "always"
- * reads it every time the party stands there, "off" reads none. There is no
- * option row for it: Bubba's "Show/hide tips" entry is the only way to step
- * through the three.
+ * reads it every time the party stands there, "off" reads none. It is on
+ * ("first") from the first game on, it is offered on the initial settings page
+ * of character creation, it has a row of its own in Options > Gameplay >
+ * Exploration, and Bubba's "Show/hide tips" entry steps through the same three.
  *
  * The sheet wears the interface's own theme. Every colour, size and space on
  * it is a token out of css/vars.css and every rule that draws it lives in
@@ -42,23 +43,33 @@
  * ---------------------------------------------------------------------------
  * When the sheet exists at all
  * ---------------------------------------------------------------------------
- * The whole system is the story mode's, and only while Bubba is walking with
- * the party to read the place out: nothing is drawn, and no key is taken,
- * unless the story mode switch (100) AND switch 49, BubbaInParty, are both on.
- * The controls list and the H fold do not wait for either: see below.
+ * The notices are not the story mode's any more: they hang on every game, and
+ * the setting above is the only thing that takes them off. What changes with
+ * the story mode is the VOICE they are written in, not whether they exist.
+ *
+ * ---------------------------------------------------------------------------
+ * The two voices
+ * ---------------------------------------------------------------------------
+ * While the story mode switch (100) and switch 49, BubbaInParty, are both on,
+ * a notice is Bubba reading the place out loud and the paragraph is signed
+ * with his name (the i18n key MapLegend.speaker). Anywhere else the same zone
+ * speaks in the place's own voice, unsigned, out of the notice's "generic"
+ * sub-key: "<key>.generic.title" and "<key>.generic.text".
+ *
+ * Neither voice falls back on the other. A zone Bubba has nothing to say about
+ * is silent in the story mode, and a zone with no generic copy is silent
+ * outside it: a missing voice draws no sheet rather than borrowing the other
+ * one's words.
  *
  * ---------------------------------------------------------------------------
  * What the sheet shows
  * ---------------------------------------------------------------------------
- * A notice, in Bubba's voice: one title and one paragraph, and the paragraph
- * opens with his name, because the notices are his reading of the place rather
- * than the place's own sign. The name is the i18n key MapLegend.speaker, so it
- * is written once and never inside a notice. Every notice must have a title,
- * because the title is what is left of it once the sheet is folded. A notice
- * that sends the party to a menu names it in square brackets - "use the
- * [Thinker] option in pause menu" - and the sheet draws that name bold,
- * without the brackets. Every translation of a notice must keep the brackets
- * around the same name.
+ * One title and one paragraph. Every notice must have a title in the voice it
+ * is being read in, because the title is what is left of it once the sheet is
+ * folded. A notice that sends the party to a menu names it in square brackets
+ * - "use the [Thinker] option in pause menu" - and the sheet draws that name
+ * bold, without the brackets. Every translation of a notice must keep the
+ * brackets around the same name.
  *
  * ---------------------------------------------------------------------------
  * The pamphlet
@@ -516,13 +527,28 @@
   // title is what the sheet keeps when it is folded, so a notice without one
   // is treated as nothing registered at all rather than folding into a blank
   // strip; the paragraph under it is optional.
-  function readNotice(baseKey) {
+  // The voice a notice is read in. Bubba's own words while he is walking with
+  // the party in the story mode, the place's own sign anywhere else, and the
+  // two are separate banks: neither is fallen back on when the other is
+  // missing, so a zone only one of them was written for stays silent in the
+  // other. See bubbaVoice() below.
+  const VOICE_BUBBA = "bubba";       // i18n-ignore: voice name
+  const VOICE_GENERIC = "generic";   // i18n-ignore: voice name, and the i18n sub-key
+
+  function currentVoice() {
+    return bubbaVoice() ? VOICE_BUBBA : VOICE_GENERIC;
+  }
+
+  function readNotice(baseKey, voice) {
     if (!baseKey) return null;
-    const titleKey = baseKey + ".title";
-    const textKey = baseKey + ".text";
+    const said = voice || currentVoice();
+    const stem = said === VOICE_BUBBA ? baseKey : baseKey + "." + VOICE_GENERIC;
+    const titleKey = stem + ".title";
+    const textKey = stem + ".text";
     if (!has(titleKey)) return null;
     return {
       key: baseKey,
+      voice: said,
       title: T(titleKey),
       text: has(textKey) ? T(textKey) : "",
     };
@@ -596,9 +622,9 @@
   // Folding the sheet away
   //===========================================================================
   // Switch 100 is the story mode, the same switch character creation, the death
-  // handler and the world map return all read. Switch 49 is BubbaInParty, and
-  // the notices are Bubba's own reading of the place: the sheet, and the fold
-  // that takes H off the help menu for it, exist only while both are on.
+  // handler and the world map return all read. Switch 49 is BubbaInParty. The
+  // two together decide the voice the notices are read in, not whether there
+  // are any: the sheet hangs on every game and only the setting takes it off.
 
   const STORY_MODE_SWITCH_ID = 100;
   const LEGEND_SWITCH_ID = 49;
@@ -609,9 +635,17 @@
     return !!($gameSwitches && $gameSwitches.value(STORY_MODE_SWITCH_ID));
   }
 
-  // The one answer to "is any of this running at all".
-  function legendEnabled() {
+  // Whether the notices are Bubba's. Both switches, because he only reads the
+  // place out while he is actually walking with the party.
+  function bubbaVoice() {
     return storyMode() && !!($gameSwitches && $gameSwitches.value(LEGEND_SWITCH_ID));
+  }
+
+  // The one answer to "is any of this running at all". It is the setting and
+  // nothing else now: the notices are every game's, and "off" is the only
+  // thing that takes them away.
+  function legendEnabled() {
+    return noticesShown();
   }
 
   // The tutorial map and everything filed under it in the editor tree keep
@@ -897,11 +931,11 @@
     _noticeHtml(notice, state) {
       const parts = [`<div class="mlg-title">${noticeHtml(notice.title)}</div>`];
       if (!state.folded && notice.text) {
-        // The notices are Bubba reading the place to the party, so the
-        // paragraph is signed with his name rather than written as a sign.
-        parts.push(`<div class="mlg-text">` +
-          `<span class="mlg-speaker">${escapeHtml(T("MapLegend.speaker"))}:</span> ` +
-          `${noticeHtml(notice.text)}</div>`);
+        // Bubba's reading of the place is signed with his name; the place's
+        // own sign is not signed at all, it just says what it says.
+        const speaker = notice.voice === VOICE_GENERIC ? "" :
+          `<span class="mlg-speaker">${escapeHtml(T("MapLegend.speaker"))}:</span> `;
+        parts.push(`<div class="mlg-text">${speaker}${noticeHtml(notice.text)}</div>`);
       }
       if (state.foldable) {
         parts.push(this._foldHtml(
@@ -1038,8 +1072,8 @@
   // the 3D world takes it off the screen rather than leaving it floating over
   // something it was never drawn against.
   function sheetAllowed() {
-    // The notices are the story mode's; the list is nobody's, so either
-    // one on its own is reason enough to pin the paper up.
+    // The notices answer to their setting and the list to nothing at all, so
+    // either one on its own is reason enough to pin the paper up.
     if (!legendEnabled() && !controlsShown()) return false;
     if (!(SceneManager._scene instanceof Scene_Map)) return false;
     if (SceneManager.isSceneChanging && SceneManager.isSceneChanging()) return false;
@@ -1187,8 +1221,12 @@
 
     STORY_MODE_SWITCH_ID,
     LEGEND_SWITCH_ID,
+    VOICE_BUBBA,
+    VOICE_GENERIC,
     TUTORIAL_ROOT_MAP_ID,
     storyMode,
+    bubbaVoice,
+    currentVoice,
     legendEnabled,
     tutorialMap,
     pinnedContext,

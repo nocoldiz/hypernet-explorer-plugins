@@ -821,8 +821,9 @@ window.GameOptions = GameOptions;
         // Procedural map streaming (Map/WorldMapReturn.js, window.ProcStitch): on
         // by default. Off falls back to one square per map, crossed with a pan.
         this.mapStreaming = config.mapStreaming !== undefined ? config.mapStreaming : true;
-        // The map tips (Map/MapLegend.js). No option row: Bubba is the only
-        // one who turns them on and off, so the setting is only stored here.
+        // The map tips (Map/MapLegend.js): three states rather than a toggle,
+        // on from the first game. The row below, the initial settings page of
+        // character creation and Bubba's ask menu all write this one key.
         this.showMapNotices = config.showMapNotices !== undefined ? config.showMapNotices : 'first';
         // Enemy difficulty slider: 0..100 with 50 = untouched stats. Anything
         // else scales every enemy parameter (see the Game_Enemy.paramBase hook).
@@ -2309,10 +2310,33 @@ window.GameOptions = GameOptions;
     // rules of BattleSystemEnhanced already read, so it belongs to the save
     // rather than to ConfigManager. Outside a running game there is nothing to
     // read, and the row reads as off.
+    // Three states, not a toggle: a tip read once and never again, a tip read
+    // every time the party stands there, or none at all. ConfigManager.
+    // showMapNotices is the setting; switch 75, which the map hints and the
+    // story-mode rules of BattleSystemEnhanced read, follows it so the two
+    // never disagree about whether the map is talking.
+    const MAP_NOTICE_MODES = ['first', 'always', 'off'];   // i18n-ignore: setting values
+
+    const mapNoticeMode = () => (window.MapLegend ? window.MapLegend.noticesMode()
+        : (MAP_NOTICE_MODES.includes(ConfigManager.showMapNotices) ? ConfigManager.showMapNotices : 'first'));
+
+    const setMapNoticeMode = (mode) => {
+        if (window.MapLegend) window.MapLegend.setNoticesMode(mode);
+        else ConfigManager.showMapNotices = mode;
+        if (window.$gameSwitches) $gameSwitches.setValue(75, mode !== 'off');
+    };
+
+    const stepMapNotices = (dir) => function () {
+        const i = Math.max(0, MAP_NOTICE_MODES.indexOf(mapNoticeMode()));
+        setMapNoticeMode(MAP_NOTICE_MODES[(i + dir + MAP_NOTICE_MODES.length) % MAP_NOTICE_MODES.length]);
+    };
+
     GameOptions.registerOption('mapTooltips', T('GameOptions.label.mapTooltips'),
-        () => !!(window.$gameSwitches && $gameSwitches.value(75)),
-        (value) => { if (window.$gameSwitches) $gameSwitches.setValue(75, !!value); },
-        'gameplay', 'boolean');
+        mapNoticeMode,
+        setMapNoticeMode,
+        'gameplay', 'boolean',
+        (value) => T('MapLegend.setting.mode.' + (MAP_NOTICE_MODES.includes(value) ? value : 'first')),
+        stepMapNotices(1), stepMapNotices(-1));
 
     //=========================================================================
     // CPU Party Members (auto-control every party member except the leader)
