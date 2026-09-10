@@ -1437,6 +1437,29 @@
     // the ceiling here as well.
     const DYNAMICS_MAX_ACTIVE = 3;
 
+    // Every board action is called from an onclick in the parchment, which is a
+    // DOM handler and not a frame of the game loop. RMMZ only guards the loop:
+    // an error raised out here reaches window.onerror instead, which stops the
+    // loop, calls AudioManager.stopAll and draws its error box ON THE CANVAS,
+    // under this overlay. The player is left with a menu that no longer answers
+    // anything, no music and no way out but Alt+F4, and no message saying what
+    // happened. So a board action that fails says so and leaves the menu
+    // working; the error itself goes to the console, and from there into
+    // debug-log.txt (Debug/ForceConsole.js), where it can be read.
+    const guardedBoardAction = (fn) => function (...args) {
+        try {
+            return fn.apply(this, args);
+        } catch (e) {
+            console.error("[Dynamics] roster action failed", e);
+            SoundManager.playBuzzer();
+            window.ParchmentToast?.show?.(T('MainMenu.dynamics.actionFailed'),
+                { severity: 'warning', duration: 220 });
+            // The party may have changed before the throw, so the board is
+            // redrawn from what it actually holds now rather than left lying.
+            try { this.refreshUIMenuDOM(false); } catch (e2) { /* beyond redrawing */ }
+        }
+    };
+
     // '' when the party may be rearranged, otherwise the i18n key under
     // MainMenu.dynamics that says why it may not.
     Scene_Menu.prototype.dynamicsSwapLocked = function () {
@@ -1451,7 +1474,7 @@
         window.NPCEmpathize.openWiki('party');
     };
 
-    Scene_Menu.prototype.promoteUIPartyLeader = function (actorId) {
+    Scene_Menu.prototype.promoteUIPartyLeader = guardedBoardAction(function (actorId) {
         // Handing over the lead is the same act here as it is with Tab out on
         // the map (Core/AutoIdleExplorer.js): the two of them exchange tiles, so
         // the party is standing where it was once the menu closes again. That
@@ -1469,23 +1492,23 @@
         // The leader is the menu's default actor, so keep the right page in sync.
         this._selectedActorIndex = 0;
         this.refreshUIMenuDOM(false);
-    };
+    });
 
     // Turn order is the party's own marching order; the first nudge pins the
     // order the player is looking at, so nothing jumps about.
-    Scene_Menu.prototype.moveUITurnOrder = function (actorId, delta) {
+    Scene_Menu.prototype.moveUITurnOrder = guardedBoardAction(function (actorId, delta) {
         if (!window.BattleTurnOrder?.move?.(actorId, delta)) {
             SoundManager.playBuzzer();
             return;
         }
         SoundManager.playCursor();
         this.refreshUIMenuDOM(false);
-    };
+    });
 
     // Benching a companion: they leave the party and wait on the Inactive list,
     // where the same page calls them back. Nothing about it is one-way any
     // more, so it asks no second time.
-    Scene_Menu.prototype.retireUIMember = function (actorId) {
+    Scene_Menu.prototype.retireUIMember = guardedBoardAction(function (actorId) {
         const actor = $gameActors.actor(actorId);
         const name = actor ? actor.name() : '';
         if (this.dynamicsSwapLocked()) {
@@ -1519,13 +1542,13 @@
         // The roster shrank, so the right-page selection may point past the end.
         this._selectedActorIndex = Math.min(this._selectedActorIndex, $gameParty.members().length - 1);
         this.refreshUIMenuDOM(false);
-    };
+    });
 
     // Calls an inactive member back into a free party slot. The bench is
     // world-scoped (world.json "retiredCharacters"), so it holds everyone every
     // savegame of this world has ever benched, and taking one clears them from
     // the bench for all of them.
-    Scene_Menu.prototype.reactivateUIMember = function (presetId) {
+    Scene_Menu.prototype.reactivateUIMember = guardedBoardAction(function (presetId) {
         if (this.dynamicsSwapLocked()) {
             SoundManager.playBuzzer();
             window.ParchmentToast?.show?.(T('MainMenu.dynamics.' + this.dynamicsSwapLocked()),
@@ -1550,7 +1573,7 @@
             { severity: 'info', duration: 220 }
         );
         this.refreshUIMenuDOM(false);
-    };
+    });
 
     // The board itself: one page, three lists. Active at the top (who is on the
     // road right now), Inactive under it (everyone this world has ever benched)
@@ -1789,7 +1812,7 @@
         if (zone && zone.classList) zone.classList.add('dyn-slot--over');
     };
 
-    Scene_Menu.prototype.onDynamicsDrop = function (event, target) {
+    Scene_Menu.prototype.onDynamicsDrop = guardedBoardAction(function (event, target) {
         event.preventDefault();
         const drag = this._dynamicsDrag;
         this.onDynamicsDragEnd();
@@ -1798,7 +1821,7 @@
         if (drag.kind === target) return;
         if (target === 'bench') this.retireUIMember(drag.id);
         else this.reactivateUIMember(drag.id);
-    };
+    });
 
     // The World Map pocket has no page of its own: it opens the zoomable map
     // straight away. The rows that page used to carry live in the pockets (the
@@ -3123,6 +3146,15 @@
         const drawPortrait = () => {
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
+            // A sheet that never arrived leaves a bitmap with no size behind
+            // it, and drawImage throws on a source of width or height zero.
+            // This runs from the bitmap's own load listener, outside the game
+            // loop, so that throw would take the whole game down with it (see
+            // guardedBoardAction): draw nothing at all instead. An inactive
+            // dossier is the likeliest one to hit it, since it carries the
+            // name of a sheet from the world folder that this build of the
+            // game may no longer ship.
+            if (!bitmap.width || !bitmap.height) return;
 
             ctx.imageSmoothingEnabled = false;
 

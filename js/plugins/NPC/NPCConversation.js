@@ -159,6 +159,16 @@
   // Every line is delivered through its speaker's PERSONALITY_VOICE (II.1), so
   // the same positive/negative/neutral/debate/ambient script reads differently
   // depending on which two personalities are having the conversation.
+  //
+  // THESE ARE THE TOWN'S SCRIPTS, and the town is full of people who barely
+  // know each other: two NPCs who met by a market stall, or an NPC the party
+  // walked up to a minute ago (NPC/DialogueSystem.js stages the same banks with
+  // the party leader standing in for speaker 0). So nothing that presumes a
+  // shared camp belongs in here: whose rations those were, who was snoring,
+  // who took the watch, who took the better weapon out of the loot. That
+  // material is the party's, it lives in NPC/PartyBanter.json under
+  // script.companion, and only party members can reach it. Adding a line of it
+  // back here puts it in a stranger's mouth.
 
   const POSITIVE_SCRIPTS = () => bank('ConvScripts.positive');
 

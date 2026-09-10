@@ -1639,6 +1639,24 @@
       }
     }
 
+    // And the same question asked of the roster page: the party's own creature
+    // (a creature class, 63+) is a creature wherever it is standing. Being
+    // recruited does not hand an animal a vocabulary, so socialising with it,
+    // courting it and asking it the way all leave the board here exactly as
+    // they do on the street, and what is left is what it understands, a hand
+    // laid on it and whatever the player types at it, which comes back as
+    // noise (see _isNonSentientSubject in NPCEmpathize.js).
+    // Feeding is NOT offered: the tray pays a society profile's hunger, and a
+    // party member has none, so it would burn the meal for a line of text.
+    if (actorMode && this._isNonSentientSubject?.()) {
+      const MEMBER_BEAST_KEEP = new Set(['freeChat', 'infect']);
+      const kept = this._chatActions.filter(a => MEMBER_BEAST_KEEP.has(a.id));
+      this._chatActions = [
+        { id: 'pet', label: T.beastLabelPet },
+        ...kept,
+      ];
+    }
+
     // Somebody else's party member, standing here because that playthrough was
     // saved on this spot (NPCSystem.js, VisitingParties). Nothing done to them
     // may reach into the savegame they belong to, so everything transactional

@@ -1487,6 +1487,44 @@
     background: var(--xp-blue-hover) !important;
 }
 
+/* The teller's figures and panels carry parchment tokens written for a dark
+   page: --text-muted-hover is pure white in the default preset, so the wallet
+   and the interest rate were white ink on the XP card and simply were not
+   there. Inside the OS window every one of them is repainted in the desktop's
+   own ink, and the black-backed callouts become XP notices. */
+#bank-system-content .bank-04,
+#bank-system-content .bank-39,
+#bank-system-content .bank-41 {
+    color: var(--xp-text-muted) !important;
+}
+#bank-system-content .bank-05,
+#bank-system-content .bank-07,
+#bank-system-content .bank-09,
+#bank-system-content .bank-10,
+#bank-system-content .bank-37,
+#bank-system-content .bank-58 {
+    color: var(--text-pure-black) !important;
+}
+#bank-system-content .bank-06 {
+    color: var(--xp-ok) !important;
+}
+#bank-system-content .bank-40,
+#bank-system-content .bank-59 {
+    color: var(--xp-blue-dark) !important;
+}
+#bank-system-content .bank-11,
+#bank-system-content .bank-17,
+#bank-system-content .bank-36 {
+    background: var(--xp-link-bg) !important;
+    border: 1px solid var(--xp-border) !important;
+    color: var(--xp-blue-dark) !important;
+}
+#bank-system-content .bank-45 {
+    background: var(--xp-gray-light) !important;
+    border: 1px solid var(--xp-border) !important;
+    color: var(--text-pure-black) !important;
+}
+
 /* ==========================================================================
    StockMarketSystem, Archways XP-style stock market UI
    ========================================================================== */
@@ -1864,7 +1902,6 @@
     border-color: var(--xp-blue) !important;
     border-left: 3px solid var(--xp-blue) !important;
 }
-#job-offers-content .back-button,
 #job-offers-content .inspect-btn {
     background: var(--xp-border-light) !important;
     border: 1px solid var(--xp-border) !important;
@@ -1880,7 +1917,6 @@
     text-transform: uppercase;
     transition: none;
 }
-#job-offers-content .back-button:hover,
 #job-offers-content .inspect-btn:hover {
     background: var(--xp-link-hover) !important;
     border-color: var(--xp-blue) !important;
@@ -2108,21 +2144,6 @@
     border-color: var(--xp-blue) !important;
     border-left-width: 3px !important;
 }
-#news-history-content .back-button {
-    background: var(--xp-border-light) !important;
-    border: 1px solid var(--xp-border) !important;
-    color: var(--text-pure-black) !important;
-    font-weight: bold !important;
-    font-family: 'Tahoma', sans-serif !important;
-    box-shadow: none !important;
-    border-radius: 3px !important;
-    font-size: 14px !important;
-    padding: 4px 12px !important;
-}
-#news-history-content .back-button:hover {
-    background: var(--xp-link-hover) !important;
-    border-color: var(--xp-blue) !important;
-}
 /* The news scene tags its DOM root id="menu-container", which globally (theme.css)
    means "fullscreen parchment overlay": position:absolute, dark gradient bg, 24px
    padding and z-index:1000. Inside the OS window that paints a dark frame around the
@@ -2172,10 +2193,6 @@
 }
 #news-history-content .news-headline-loc {
     font-size: 16px !important;
-}
-#news-history-content .back-button {
-    font-size: 17px !important;
-    padding: 6px 16px !important;
 }
 
 /* The parchment layout (theme.css, "The Hypernet Chronicle") is written for a
@@ -4457,3 +4474,34 @@
 .xp-allprograms-item:hover, .xp-allprograms-item:focus { background: #d9e8fb; border-color: #7da2ce; outline: none; }
 .xp-allprograms-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .xp-allprograms-empty { padding: 14px; color: #555; }
+
+/* ==========================================================================
+   OS window furniture: no gold, no Back
+   --------------------------------------------------------------------------
+   An app hosted in a HypernetOS window wears the desktop's chrome, never the
+   parchment book's. The gold page heading and the Back / Dismiss button belong
+   to the game's own menus: in here the titlebar already names the app and
+   carries the close box, so Back is redundant and the heading is set in the
+   desktop's ink. One rule for every app, current and future, so no embedded
+   scene has to remember to dress itself down.
+   ========================================================================== */
+.hypernet-window-content .back-button {
+    display: none !important;
+}
+.hypernet-window-content .page-header-bar {
+    justify-content: flex-start;
+    min-height: 0;
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+}
+.hypernet-window-content .title,
+.hypernet-window-content .cc-header-gothic,
+.hypernet-window-content .cc-subheader {
+    color: var(--xp-blue-dark);
+    text-shadow: none;
+    letter-spacing: 0;
+}
+.hypernet-window-content .page-header-bar .title {
+    font-size: 17px;
+    text-align: left;
+}

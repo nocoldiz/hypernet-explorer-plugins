@@ -582,6 +582,7 @@
     jaywalking: "Streetwise",
     littering: "Streetwise",
     noisePollution: "Streetwise",
+    fareEvasion: "Streetwise",
     disturbing: "Streetwise",
     publicDisturbance: "Streetwise",
     disorderlyConduct: "Streetwise",

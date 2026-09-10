@@ -44,21 +44,44 @@
 
     // How tall a creature stands out here, in world units.
     //
-    // The battle models carry no real size at all - every one of them is
-    // normalised to fit the battle view - so the world has to decide for
-    // itself. Small creatures stand noticeably larger than the player and
-    // apex beasts stand giant and towering.
-    const CREATURE_MIN_H = PERSON_H * 1.8;
-    const CREATURE_MAX_H = PERSON_H * 5.8;
-    function creatureHeight(data, level) {
+    // Off the creature's OWN size, which the game already knows: every
+    // archetype is registered with a scale (3DBattlerSystem's registry - a
+    // goblin is 2.5, an orc 3.1, an ogre 4.2) and that is the size the battle
+    // view builds it at. A plain human is 2.6 and a plain human out here
+    // stands PERSON_H, which pins the whole of that table to this world - so a
+    // creature is the same size beside the party as it is across the battle
+    // view, and neither has to be bent to suit the other.
+    //
+    // It used to be a hash of the enemy's id spread over 1.8 to 5.8 times a
+    // person. Nothing in that knew what the creature WAS: it made everything
+    // in the world at least twice human height, and a goblin whose id rolled
+    // high stood eleven metres over the camper while an ogre beside it came
+    // out waist high.
+    const HUMANOID_SCALE = 2.6;        // the plain human of the registry
+    const CREATURE_MIN_H = PERSON_H * 0.40;
+    const CREATURE_MAX_H = PERSON_H * 2.6;
+    // How much of its height a creature owes to its level: a veteran of a
+    // species is a bigger specimen of it, not a different animal.
+    const CREATURE_LVL_GAIN = 0.25;
+    function creatureHeight(data, level, archKey) {
+        let arch = 0;
+        if (window.Battler3D && typeof window.Battler3D.archetypeScale === 'function') {
+            arch = window.Battler3D.archetypeScale(archKey);
+        }
+        // Nothing registered under that key: stand it at a person's height
+        // rather than at a guess, which is the least wrong thing to be.
+        let h = PERSON_H * ((arch || HUMANOID_SCALE) / HUMANOID_SCALE);
         // A stable hash of the species, not a die roll: come back tomorrow and
-        // the same animal is the same size.
-        let h = ((data && data.id) | 0) * 2654435761;
-        h = Math.imul(h ^ (h >>> 15), 2246822519);
-        const own = ((h ^ (h >>> 13)) >>> 0) / 4294967296;
+        // the same animal is the same size. Only a few per cent of it, so that
+        // a line of one species is not a row of clones - the battle view keeps
+        // the same hint of the roll for the same reason.
+        let n = ((data && data.id) | 0) * 2654435761;
+        n = Math.imul(n ^ (n >>> 15), 2246822519);
+        const own = ((n ^ (n >>> 13)) >>> 0) / 4294967296;
+        h *= 0.95 + own * 0.10;
         const lvl = Math.max(0, Math.min(1, ((level | 0) - 1) / 70));
-        const mix = Math.max(0, Math.min(1, own * 0.6 + lvl * 0.4));
-        return CREATURE_MIN_H + (CREATURE_MAX_H - CREATURE_MIN_H) * (mix * 0.65 + Math.sqrt(mix) * 0.35);
+        h *= 1 + CREATURE_LVL_GAIN * lvl;
+        return Math.max(CREATURE_MIN_H, Math.min(CREATURE_MAX_H, h));
     }
     const ENEMY_3D_DESPAWN   = 1250;   // world units before an enemy recycles
     const ENEMY_3D_SPAWN_INT = 0.5;    // seconds between spawn attempts
@@ -942,7 +965,7 @@
             };
             this._ents.push(ent);
             const baseY = swims ? spawnY : gy;
-            const wantH = creatureHeight(data, ent.level);
+            const wantH = creatureHeight(data, ent.level, key);
             Promise.resolve(model.load(null, x, baseY, z)).then(() => {
                 if (!ent.alive || !model.model) return;
                 const root = model.model;

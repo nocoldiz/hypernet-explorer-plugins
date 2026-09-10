@@ -64,6 +64,15 @@
     // height off this factor instead and the model is rescaled onto it.
     const GOBLIN_HEIGHT_PER_SCALE = 1.20;
 
+    // Where the top of the shared rig sits at scale 1: torso 1.1, head riding
+    // 0.65 over it, and the head's own 0.35 of radius above that. This is what
+    // _normalizeHeight measures a profile's top at, so a profile's real build
+    // scale is its standHeight divided by this - which is the number the
+    // overworld needs to stand the same creature on real ground beside a party
+    // (see worldScale below).
+    const HEAD_Y   = 1.75;
+    const RIG_TOP  = HEAD_Y + 0.35;
+
     // Hair (see _applyHair): surfaces that never grow it, and the gear pieces
     // that already cover the scalp.
     const BALD_POOLS = ['bone', 'metal', 'stone'];
@@ -330,6 +339,14 @@
         const p = CREATURE_PROFILES[k];
         p.goblinoid = 1;
         p.standHeight = (p.scale || 2.5) * GOBLIN_HEIGHT_PER_SCALE;
+        // ...and what that works out to as a build scale. A goblinoid is built
+        // at `scale` and then rescaled onto `standHeight`, so `scale` is not
+        // what it ends up at: a goblin is registered at 2.5, the same as a
+        // skeleton and all but level with a plain human at 2.6, but the battle
+        // view shows it at little over half a man. Nothing in the battle view
+        // reads this - it is here so anything standing the creature somewhere
+        // else can show it at the size the battle view does.
+        p.worldScale = p.standHeight / RIG_TOP;
     }
     Object.assign(window.Battler3D.CREATURE_PROFILES, CREATURE_PROFILES);
 
@@ -815,7 +832,6 @@
         _normalizeHeight() {
             const target = this.profile.standHeight;
             if (!target || !this.model || !this.scale || typeof THREE.Box3 === 'undefined') return;
-            const HEAD_Y = 1.75;              // torso 1.1 + head ride 0.65
             let top = HEAD_Y + 0.35 * ((this.profile.headScale || 1) * (this.headMul || 1));
             if (this.head) {
                 this.model.updateMatrixWorld(true);
@@ -1590,7 +1606,13 @@
     const make = (scale, offsetY, enemy, weaponType, key) =>
         new HumanoidBattler3D(scale, offsetY, enemy, weaponType, key);
 
-    const reg = window.Battler3D.registerArchetype;
+    // Every archetype in this family is registered through here so that a
+    // profile which is rescaled after it is built (see worldScale) says so.
+    const reg = (key, def) => {
+        const p = CREATURE_PROFILES[key];
+        if (p && p.worldScale) def.worldScale = p.worldScale;
+        return window.Battler3D.registerArchetype(key, def);
+    };
     reg('goblin',    { aliases: ['goblin', 'goblins'],       scale: CREATURE_PROFILES.goblin.scale,    create: make });
     reg('hobgoblin', { aliases: ['hobgoblin', 'hobgoblins'], scale: CREATURE_PROFILES.hobgoblin.scale, create: make });
     reg('orc',       { aliases: ['orc', 'orcs'],             scale: CREATURE_PROFILES.orc.scale,       create: make });

@@ -1,3 +1,29 @@
+0.6.11a
+
+Added:
+ - travel with no ticket, fined if the inspector catches you
+
+Changed:
+ - incantation text rewritten as real chanting
+ - incantation removed from physical skills, magical only
+ - refactor voxel mode rendering and creature sizes
+ - rework the npc dialogue system, personal group talk is party only
+ - rework the new party button in titlescreen, creates a world
+
+Fixed:
+ - build scripts now include the sh and bat run files
+ - fix lighting system, no bright flash when closing the menu
+ - sluggish ui controls on steam deck
+ - giant goblins model in voxel mode
+ - set inactive no longer softlocks the menu
+ - rumors with empathize option no longer show markovian text
+ - gun-fu passive badge no longer appears on party HUD
+ - bank wallet balance no longer white in the hypernet os
+ - removed resist death from 3 different enemies
+ - feral creature in the party no longer talks
+ - only goblin mode removes portraits from selection
+
+
 0.6.10a
 
 Added:
@@ -21,7 +47,6 @@ Changed:
  - map tooltips on outside story mode, with generic descriptions
 
 Fixed:
- - enemy levels no longer get stuck on screen
  - party no longer meets a duplicate of itself after saving
  - lockpicking draws only four blocks of a bigger falling piece
  - clicking a purchased deed no longer crashes the game

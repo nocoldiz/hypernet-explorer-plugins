@@ -2180,6 +2180,14 @@
 
     // Register plugin command for NPC-specific dialogue generation
     PluginManager.registerCommand(pluginName, "generateNPCDialogue", function (args) {
+        // Talking to an NPC belongs to DialogueSystem's Rumors command, which
+        // is the only place Options > Dialogue Mode is read and the only one
+        // that stages the exchange over busts. Events still carrying this
+        // older command (an old map, a mod, a runtime-minted slot) are handed
+        // straight over to it, so Empathize mode never falls through to the
+        // faceless Markov box; markovian mode reaches its Markov line through
+        // the same exchange.
+        if (window.NPCTalk && window.NPCTalk.play(this) !== false) return;
         const evId = this._eventId;
         if (evId) {
             const ev = $gameMap.event(evId);

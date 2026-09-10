@@ -395,6 +395,12 @@
             travelCompleted: false,
             currentTravelMapId: null,
 
+            // A fare that was never paid. The journey runs exactly as a paid
+            // one does; what rides along with it is the chance of an inspector
+            // walking the aisle, and the record of whether they already came.
+            ticketless: false,
+            ticketlessFined: false,
+
             // Timer specific data
             timerActive: false,
             timerStartTime: 0,
@@ -478,6 +484,12 @@
             $gameVariables.setValue(114, Math.floor(newGameTime)); // Variable 114 = gameTimeVariable
         }
 
+        // The inspector's round. A journey boarded without paying is checked
+        // once per second, and the first check that lands writes the fare
+        // evasion up. One fine per journey: the aisle is walked again, but the
+        // party already has their ticket to the magistrate.
+        chargeTicketlessFare(data);
+
         // Update all timer windows
         this.updateAllTravelTimerWindows();
 
@@ -496,6 +508,7 @@
         }
 
         data.travelCompleted = true;
+        data.ticketless = false;
         $gameSwitches.setValue(55, false);
 
         if (window.ParchmentToast) {
@@ -512,6 +525,7 @@
         data.timerActive = false;
         data.timerRemainingTime = 0;
         data.travelCompleted = false;
+        data.ticketless = false;
 
         if (globalTravelTimer) {
             clearInterval(globalTravelTimer);
@@ -1181,6 +1195,43 @@
         return null;
     }
 
+    // ---- Riding without paying ---------------------------------------------
+    // A fare the party cannot meet does not close the counter: the seat is
+    // taken anyway and the journey runs as it always does. What changes is that
+    // somebody may walk the aisle. The odds are read once a second by the
+    // travel timer, so a short hop is usually got away with and a long haul
+    // almost never is.
+    const TICKETLESS_FINE_CHANCE = 0.05;
+
+    // True when the fare is paid in money rather than in fuel: the only kind of
+    // journey that can be ridden without a ticket. A camper with a dry tank is
+    // not fare dodging, it is simply not going anywhere.
+    function isFaredTransport(transportType) {
+        return transportType !== 'carsharing' && transportType !== 'camper';
+    }
+
+    // Whether the confirmation button offers the seat without the fare.
+    function isTicketlessOption(destination, transportType) {
+        if ($gameTemp && $gameTemp._characterCreationTravelMode) return false;
+        if (!isFaredTransport(transportType)) return false;
+        if (calculateTravelCost(destination, transportType) <= 0) return false;
+        return !canAffordTravel(destination, transportType);
+    }
+
+    // One inspector per journey. The roll is taken every tick of the travel
+    // timer until it lands, and once it has the party is left alone: a single
+    // ride earns a single charge, however long the rest of it takes.
+    function chargeTicketlessFare(data) {
+        if (!data || !data.ticketless || data.ticketlessFined) return;
+        if (Math.random() >= TICKETLESS_FINE_CHANCE) return;
+        data.ticketlessFined = true;
+        data.ticketless = false;
+        const c = window.CrimeSystem;
+        if (c && typeof c.addPresetCrime === 'function') {
+            c.addPresetCrime('fareEvasion');
+        }
+    }
+
     function canAffordTravel(destination, transportType) {
         if ($gameTemp && $gameTemp._characterCreationTravelMode) {
             return true;
@@ -1194,7 +1245,7 @@
         return $gameParty.gold() >= cost;
     }
 
-    function executeTravel(destination, cost) {
+    function executeTravel(destination, cost, ticketless) {
         const data = getFastTravelData();
 
         if ($gameTemp && $gameTemp._characterCreationTravelMode) {
@@ -1265,6 +1316,13 @@
 
         $gameSwitches.setValue(55, true);
 
+        // Every journey starts with a clean sheet: whatever the last one was
+        // ridden on, this one is paid for until the counter below says it is
+        // not. A flag left standing would put an inspector on a party that
+        // holds a ticket.
+        data.ticketless = false;
+        data.ticketlessFined = false;
+
         if (data.selectedTransport === 'camper') {
             const currentFuel = getCurrentFuel();
             setCurrentFuel(currentFuel - cost);
@@ -1278,6 +1336,11 @@
             const actualDest = getActualDestination(destination, data.selectedTransport);
             setVehiclePos('car', 315, actualDest.x, actualDest.y, actualDest.x, actualDest.y);
 
+        } else if (ticketless) {
+            // Nothing changes hands at the counter. The fare is owed to whoever
+            // runs the line and collected, if at all, by the law: see
+            // chargeTicketlessFare on the travel timer's tick.
+            data.ticketless = true;
         } else {
             $gameParty.loseGold(cost);
         }
@@ -2167,9 +2230,13 @@
                 enabled = currentFuelForTransport(transportType) >= fuelNeeded;
                 costText = `${fuelNeeded.toFixed(1)}L`;
             } else {
+                // A fare the purse cannot meet no longer greys the stop out.
+                // Every place reachable by this line stays selectable, and the
+                // confirmation panel offers the seat without a ticket instead
+                // (isTicketlessOption). Only fuel, above, can still refuse.
                 const cost = calculateTravelCostFromDistance(distanceInTiles, transportType);
                 const costEuros = goldToEuros(cost);
-                enabled = $gameParty.gold() >= cost;
+                enabled = true;
                 costText = `${costEuros}€`;
             }
 
@@ -2839,8 +2906,18 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         document.getElementById('sidebar-time-val').innerText =
             this._travelPickHandler ? '-' : timeText;
 
+        // A purse too light for the fare is not a refusal any more: the button
+        // says so and boards the party anyway. The label is written on every
+        // pass, not only the picker's, so moving from a stop they cannot afford
+        // to one they can does not leave the old wording behind.
+        const ticketless = !this._travelPickHandler && isTicketlessOption(dest, transportType);
         const confirmBtn = document.getElementById('sidebar-confirm-action-btn');
-        if (this._travelPickHandler) confirmBtn.textContent = T('FastTravel.ui.startHere');
+        if (this._travelPickHandler) {
+            confirmBtn.textContent = T('FastTravel.ui.startHere');
+        } else {
+            confirmBtn.textContent = ticketless
+                ? T('FastTravel.ui.travelNoTicket') : T('FastTravel.ui.travel');
+        }
         confirmBtn.onclick = () => {
             // Lent out as a chooser: the answer is the place itself. The overlay
             // comes down and whoever borrowed it is handed the entry and the
@@ -2866,9 +2943,9 @@ Scene_Map.prototype.printTravelCoordinates = function () {
                 }
                 return;
             }
-            if (ccFree || canAffordTravel(dest, transportType)) {
+            if (ccFree || ticketless || canAffordTravel(dest, transportType)) {
                 SoundManager.playOk();
-                executeTravel(dest, cost);
+                executeTravel(dest, cost, ticketless);
                 this.closeTravelUIOverlay(true); // Don't play cancel sound, travel was confirmed!
             } else {
                 SoundManager.playBuzzer();

@@ -63,7 +63,8 @@
     "cancel": "Cancel",
     "travel": "Travel",
     "free": "Free",
-    "startHere": "Start Here"
+    "startHere": "Start Here",
+    "travelNoTicket": "Travel With No Ticket"
   },
   "refused": {
     "title": "Turned away at the counter",

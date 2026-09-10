@@ -372,12 +372,24 @@ Imported.DialogueSystem = true;
             this.clearStoryCast();
             if (!this.storyMode || !cast || !cast.length) return;
             const scene = SceneManager._scene;
-            this.storySlots = cast.slice(0, 2).map(entry => {
+            const seated = cast.slice(0, 2);
+            // Which end of the stage each of them stands on. A cast that says
+            // so is obeyed, which is what keeps a lone speaker on their own
+            // side (an NPC passing on a rumour with nobody answering stands on
+            // the right, where an NPC always stands, rather than sliding over
+            // to the empty left end). A cast that says nothing, or one that
+            // seats two people on the same side, falls back to the order they
+            // speak in, since the two ends cannot both be the left one.
+            const sides = seated.map((entry, i) =>
+                (entry.side === 'left' || entry.side === 'right') ? entry.side : (i === 0 ? 'left' : 'right'));
+            if (sides.length === 2 && sides[0] === sides[1]) { sides[0] = 'left'; sides[1] = 'right'; }
+            this.storySlots = seated.map((entry, i) => {
                 const sprite    = new Sprite();
                 sprite.anchor.x = 0;
                 sprite.anchor.y = 1;
                 sprite.opacity  = bustOpacity;
                 sprite.storyKey = entry.key;
+                sprite.storySide = sides[i];
                 const path      = this.resolveBustPath(entry.imageName);
                 try {
                     const bitmap = ImageManager.loadBitmap('img/', path);
@@ -391,8 +403,50 @@ Imported.DialogueSystem = true;
                 return sprite;
             });
             this.layoutStoryCast();
-            this.slideStoryCastIn();
+            // Parked off their own edges, invisible, until every one of them can
+            // be drawn: a cast that walked in while still decoding walked in as
+            // nothing at all and appeared, standing at its marks, when the last
+            // load finished. A slide already spent cannot be replayed.
+            (this.storySlots || []).forEach(sprite => {
+                sprite.opacity = 0;
+                if (sprite._hiddenX != null) sprite.x = sprite._hiddenX;
+            });
+            this._castPending = this.storySlots.slice();
             this.setStoryActive(null);
+            this._updatePendingStoryCast();
+        }
+
+        // They walk in together, and only once all of them have pixels: one
+        // portrait still decoding would otherwise cost the whole stage its
+        // entrance. Polled from update(), like the single portrait's own load.
+        _updatePendingStoryCast() {
+            const pending = this._castPending;
+            if (!pending) return;
+            const slots = this.storySlots || [];
+            // The scene moved on while they were loading (a new cast, or the
+            // end of the scene): whatever is on stage now owns it.
+            if (!pending.length || !pending.every(sprite => slots.includes(sprite))) {
+                this._castPending = null;
+                return;
+            }
+            if (pending.some(sprite => !this._bitmapReady(sprite.bitmap)
+                && !this._bitmapFailed(sprite.bitmap) && sprite.bitmap)) return;
+
+            // One of them has no portrait to show: it stands in the fallback and
+            // waits on that the same way, once.
+            let swapped = false;
+            for (const sprite of pending) {
+                if (sprite.bitmap && !this._bitmapFailed(sprite.bitmap)) continue;
+                if (sprite._bustFallbackTried) continue;
+                sprite._bustFallbackTried = true;
+                sprite.bitmap = this._loadFallback();
+                swapped = true;
+            }
+            if (swapped) return;
+
+            this._castPending = null;
+            this.layoutStoryCast();
+            this.slideStoryCastIn();
         }
 
         // The cast is not simply switched on: each of them walks in from their
@@ -475,9 +529,11 @@ Imported.DialogueSystem = true;
             if (!slots.length) return;
             const layout = this.storyLayout();
             slots.forEach((sprite, i) => {
+                // The place is the side they stand on, not their turn order.
+                const end = sprite.storySide === 'right' ? 1 : sprite.storySide === 'left' ? 0 : i;
                 this.scaleBustToFit(sprite, layout.width, layout.height);
-                sprite._targetX = layout.x(i);
-                sprite._hiddenX = layout.hiddenX(i);
+                sprite._targetX = layout.x(end);
+                sprite._hiddenX = layout.hiddenX(end);
                 sprite.y        = layout.y;
                 if (sprite._slideDuration > 0) {
                     sprite._slideTarget = sprite._slideType === 'out'
@@ -497,14 +553,18 @@ Imported.DialogueSystem = true;
             // the stage while the other end talks.
             if (this.nameWindow && key) {
                 const idx = slots.findIndex(s => s.storyKey === key);
-                if (idx >= 0) this.nameWindow.setSide(idx === 0 ? 'left' : 'right');
+                if (idx >= 0) {
+                    const side = slots[idx].storySide;
+                    this.nameWindow.setSide(side || (idx === 0 ? 'left' : 'right'));
+                }
             }
             slots.forEach(sprite => {
                 const lit = !!key && sprite.storyKey === key;
                 if (sprite.setColorTone) sprite.setColorTone(lit ? storyLitTone : storyDimTone);
-                // A portrait still walking in keeps its fade; only one already
+                // A portrait still walking in keeps its fade, and one still
+                // waiting on its pixels keeps its edge; only one already
                 // standing there is held at full opacity.
-                if (!(sprite._slideDuration > 0)) sprite.opacity = bustOpacity;
+                if (!(sprite._slideDuration > 0) && !this._castPending) sprite.opacity = bustOpacity;
                 if (lit && sprite.parent && sprite.parent.addChild) sprite.parent.addChild(sprite);
             });
         }
@@ -599,6 +659,63 @@ Imported.DialogueSystem = true;
 
         _loadFallback() {
             try { return ImageManager.loadBitmap('img/busts/', '7'); } catch (e) { return null; }
+        }
+
+        // A bitmap that cannot answer whether it is ready (a stub, an odd
+        // loader) counts as ready rather than holding the stage forever.
+        _bitmapReady(bitmap) {
+            if (!bitmap) return false;
+            if (typeof bitmap.isReady === 'function') return bitmap.isReady();
+            return bitmap.width > 0 && bitmap.height > 0;
+        }
+
+        _bitmapFailed(bitmap) {
+            return !!bitmap && typeof bitmap.isError === 'function' && bitmap.isError();
+        }
+
+        // A portrait that is not in ImageManager's cache yet needs a few frames
+        // to decode, and the walk-in used to start the moment the load was
+        // ASKED for: the slide played out on an empty sprite and the bust
+        // appeared already parked at its mark when the bitmap finally landed.
+        // Only a cached portrait, which is every show after the first, ever
+        // slid. So the walk waits for the pixels. Polled from update() rather
+        // than hung off addLoadListener, which never fires for a bitmap that
+        // failed to load.
+        _beginBustLoad(bitmap, key, fallback, path) {
+            this._pendingBust = { bitmap, key, fallback: fallback || null, path };
+            // Off its own edge and invisible until then, so a portrait waiting
+            // on its pixels is not a blank sprite standing in the slot.
+            this.characterBust.opacity = 0;
+            this.characterBust.x       = this.characterBust._hiddenX;
+            this._updatePendingBust();
+        }
+
+        _updatePendingBust() {
+            const pending = this._pendingBust;
+            if (!pending) return;
+            const { bitmap, key, fallback, path } = pending;
+            if (!this._bitmapReady(bitmap) && !this._bitmapFailed(bitmap)) return;
+
+            // Another line asked for a different portrait while this one was
+            // decoding: that load owns the sprite now.
+            if (this.currentCharacterKey !== key) { this._pendingBust = null; return; }
+
+            if (this._bitmapReady(bitmap) && bitmap.width > 0 && bitmap.height > 0) {
+                this._pendingBust = null;
+                this._applyBitmap(bitmap, fallback, path);
+            } else if (fallback) {
+                // Wait on the fallback exactly the same way rather than walking
+                // a sprite that still has nothing to draw.
+                this._pendingBust = { bitmap: fallback, key, fallback: null, path };
+                this._updatePendingBust();
+                return;
+            } else {
+                console.error("Bust image and fallback both unavailable:", path);
+                this._pendingBust = null;
+                this.bustIsVisible = false;
+                return;
+            }
+            this.slideIn();
         }
 
         _applyBitmap(bitmap, fallback, path) {
@@ -812,18 +929,18 @@ Imported.DialogueSystem = true;
                 return;
             }
 
-            try {
-                const bitmap = ImageManager.loadBitmap('img/', path);
-                bitmap.addLoadListener(() => this._applyBitmap(bitmap, fallback, path));
-            } catch (err) {
-                console.warn("Failed to load custom bust:", path, err);
-                if (fallback) { this.characterBust.bitmap = fallback; this.scaleBustToFit(this.characterBust); }
-            }
-
+            // The key is claimed before the load is asked for: it is what the
+            // poll below checks its own portrait against.
             this.currentCharacterKey = key;
             const scene = SceneManager._scene;
             if (!this.characterBust.parent && scene) addBustToScene(this.characterBust, scene);
-            this.slideIn();
+
+            try {
+                this._beginBustLoad(ImageManager.loadBitmap('img/', path), key, fallback, path);
+            } catch (err) {
+                console.warn("Failed to load custom bust:", path, err);
+                if (fallback) this._beginBustLoad(fallback, key, null, path);
+            }
             this.bustIsVisible = true;
             this.activeEventId = 'custom';
             this.hideScheduled = false;
@@ -871,14 +988,6 @@ Imported.DialogueSystem = true;
             if (!path) return;
             if (!this.checkImageExists(path)) { console.warn(`Bust not found: ${path}, using fallback`); path = `busts/7`; }
 
-            try {
-                const bitmap = ImageManager.loadBitmap('img/', path);
-                bitmap.addLoadListener(() => this._applyBitmap(bitmap, fallback, path));
-            } catch (err) {
-                console.warn("Failed to load bust:", path, err);
-                if (fallback) { this.characterBust.bitmap = fallback; this.scaleBustToFit(this.characterBust); }
-            }
-
             this.currentCharacterKey = key;
             const scene = SceneManager._scene;
             if (!this.characterBust.parent && scene) addBustToScene(this.characterBust, scene);
@@ -889,7 +998,12 @@ Imported.DialogueSystem = true;
                 this.nameIsVisible = true;
             }
 
-            this.slideIn();
+            try {
+                this._beginBustLoad(ImageManager.loadBitmap('img/', path), key, fallback, path);
+            } catch (err) {
+                console.warn("Failed to load bust:", path, err);
+                if (fallback) this._beginBustLoad(fallback, key, null, path);
+            }
             this.bustIsVisible = true;
         }
 
@@ -936,10 +1050,18 @@ Imported.DialogueSystem = true;
         }
 
         slideIn() {
+            const s = this.characterBust;
+            // The walk is declared BEFORE the layout is refreshed: a refresh
+            // with nothing sliding parks a visible portrait on its mark, which
+            // left this walk to play out from the finish line.
+            s._slideType     = 'in';
+            s._slideDuration = fadeInDuration;
             this.refreshLayout(true);
-            this.characterBust._slideTarget  = this.characterBust._targetX;
-            this.characterBust._slideDuration = fadeInDuration;
-            this.characterBust._slideType     = 'in';
+            // Nothing drawn means nothing to walk from, so it starts off its
+            // own edge instead of fading in place: a resolution change or an
+            // interrupted walk-out can leave the sprite anywhere.
+            if (s.opacity <= 0) s.x = s._hiddenX;
+            s._slideTarget = s._targetX;
         }
 
         slideOut() {
@@ -950,6 +1072,8 @@ Imported.DialogueSystem = true;
 
         update() {
             this.refreshLayout(false);
+            this._updatePendingBust();
+            this._updatePendingStoryCast();
             this.updateStorySlots();
             const s = this.characterBust;
             if (s._slideDuration > 0) {
@@ -2502,7 +2626,7 @@ Imported.DialogueSystem = true;
     // portrait under. A scene with more than two voices falls back to the order
     // they first speak in, since sides cannot seat three.
     function exchangeCast(steps) {
-        const keyed = step => ({ key: `custom_${step.imageName}`, imageName: step.imageName });
+        const keyed = step => ({ key: `custom_${step.imageName}`, imageName: step.imageName, side: step.side });
         const uniq  = [];
         for (const step of steps) {
             const entry = keyed(step);
@@ -2521,10 +2645,11 @@ Imported.DialogueSystem = true;
             return uniq[1].key === leaderKey ? [uniq[1], uniq[0]] : uniq;
         }
         if (!left && !right) return uniq;
-        const leftEntry  = left  ? keyed(left)  : keyed({ imageName: leaderBustName() });
-        const rightEntry = right ? keyed(right) : null;
-        return rightEntry && rightEntry.key !== leftEntry.key
-            ? [leftEntry, rightEntry] : [leftEntry];
+        // Only one of them talks: a rumour the NPC passes on, or a line the
+        // party says to nobody. Nobody is stood opposite them for it. Two
+        // portraits mean two voices, so the leader is only put on stage when
+        // the leader actually answers.
+        return [left, right].filter(Boolean).map(keyed);
     }
 
     // A step whose line is longer than the box is dealt out over as many
@@ -3634,7 +3759,7 @@ Imported.DialogueSystem = true;
     // flat, faceless message box the command used to draw is gone; it survives
     // only where there is no bust manager to draw into (a scene that is not the
     // map), which is the one case none of the three can be staged.
-    PluginManager.registerCommand(PLUGIN_NAME, "Rumors", function () {
+    function playNpcTalk() {
         const evId = this._eventId;
         const ev   = evId ? $gameMap.event(evId) : null;
         if (ev) ev.turnTowardPlayer();
@@ -3642,7 +3767,7 @@ Imported.DialogueSystem = true;
         const npcName = _npcNameForEvent(ev);
         // Bubba standing as an event on a <Bubba: ...> map is asked, not
         // chatted with: the map's scenes are the whole of what he has to say.
-        if (canAskStory(npcName) && openStoryAsk()) return;
+        if (canAskStory(npcName) && openStoryAsk()) return true;
         const EM      = window.NPCEmpathize;
         const profile = ensureNpcProfile(ev, npcName);
         const sentient = !!(profile && profile.personalityIndex != null && !EM?.isNonSentientNPC?.(npcName));
@@ -3676,18 +3801,23 @@ Imported.DialogueSystem = true;
             // costs nothing.
             for (const build of builders) {
                 const steps = build();
-                // Staged the way a written scene is: the leader and the NPC
-                // both on stage from the first line, the listener dimmed.
+                // Staged the way a written scene is: everybody who speaks in
+                // it on stage from the first line, the listener dimmed. A beat
+                // the leader answers in is two portraits; a rumour nobody
+                // answers is the NPC alone.
                 if (steps && startNPCExchange(steps, true)) {
                     this.setWaitMode('message');
-                    return;
+                    return true;
                 }
             }
         }
 
         // Nowhere to stage a bust: the bare line, so the NPC is never mute.
         let line = pickRumor(rumorPersonalityKey(evId));
-        if (!line) return;
+        // Nothing at all to say: the caller is told so, since an older event
+        // that came in through the Markov command still has its own line to
+        // fall back on.
+        if (!line) return false;
         if (npcName && EM?.isNonSentientNPC?.(npcName)) line = EM.growlFor(line, npcName) || line;
         if (npcName) EM?.recordNPCLine?.(npcName, line);
         payCompany(ev, npcName);
@@ -3700,7 +3830,18 @@ Imported.DialogueSystem = true;
         $gameMessage.add(markSpokenLine(line));
         window.skipLocalization = false;
         this.setWaitMode('message');
-    });
+        return true;
+    }
+
+    PluginManager.registerCommand(PLUGIN_NAME, "Rumors", playNpcTalk);
+
+    // The one way an NPC is talked to. Events minted at runtime (the
+    // procedural NPC slots in NPC/NPCSystem.js, the Bologna ones) and the
+    // handful of map events still carrying the old Markov command reach the
+    // same staging through here, so Options > Dialogue Mode is obeyed
+    // wherever the talk started: empathize plays the written exchange, and
+    // markovian only swaps the NPC's own half for a Markov line.
+    window.NPCTalk = { play: interpreter => playNpcTalk.call(interpreter) };
 
     // A written scene, played out as a bust conversation.
     PluginManager.registerCommand(PLUGIN_NAME, "playStory", function (args) {

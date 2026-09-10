@@ -64,17 +64,22 @@
     const CAVE_RADIUS   = 3;   // tiles streamed while underground (surface: 5)
     const CAVE_DRAW_R   = 1;   // ...and how many of them are actually drawn
 
-    // How long a frame may spend meshing patches.
-    //
-    // A patch measures 2.5 ms of ordinary ground and 4 ms of cave against the
-    // real mesher, and the clock is only checked BETWEEN patches - so the worst
-    // a frame can cost is this plus one patch. Three milliseconds lands the
-    // worst frame at nine on the surface and fourteen underground, against
-    // seventy-five and a hundred and thirty when a tile was one indivisible
-    // job. Raising it does not empty the queue any sooner (the queue is a
-    // burst of forty-eight patches every twenty frames, and it drains inside
-    // that either way); it only makes the worst frame worse.
-    const DRAIN_MS = 3;
+    // How far past a LOD boundary a tile has to be before it takes the change,
+    // in tiles. Without a dead band the bands are decided by a rounded distance
+    // and a camera loitering on a boundary flips a whole ring of tiles back and
+    // forth several times a second - which, before a change of detail became
+    // seamless, was the thing that made parts of a mountain wink in and out.
+    const LOD_HYST = 0.35;
+
+    // Give back everything a subtree holds. An InstancedMesh keeps a buffer of
+    // its own on top of its geometry, and a streaming world builds and drops
+    // thousands of them.
+    function disposeTree(root) {
+        root.traverse(o => {
+            if (o.geometry) o.geometry.dispose();
+            if (o.isInstancedMesh && o.dispose) o.dispose();
+        });
+    }
 
     // =========================================================================
     // VoxelTerrain
@@ -97,6 +102,13 @@
             this.field.onEdit = (wx, wy, lx, lz) => this._markDirty(wx, wy, lx, lz);
             this._dirty = new Set();            // "wx,wy,si,sj" patches to re-mesh
             this._pendingBuilds = false;
+            // Where the ring was last read from, and how fast and which way the
+            // camera was going: what the build order and the look-ahead are
+            // worked out from (see _lookAhead, _orderDirty).
+            this._camX = this._camZ = 0;
+            this._ndx = this._ndy = 0;
+            this._speed = 0;
+            this._lastEvalSpeed = 0;
             // The sea is one endless sheet, so it has to be taken away whenever
             // there is no sea about: otherwise it shows at the bottom of every
             // hole anybody digs in a field.
@@ -133,8 +145,8 @@
             // geometry replaces it, patch by patch.
             for (const ch of this._chunks.values()) {
                 if (ch.step !== 1) continue;
-                for (let sj = 0; sj < VOX.SUB; sj++) {
-                    for (let si = 0; si < VOX.SUB; si++) {
+                for (let sj = 0; sj < ch.sub; sj++) {
+                    for (let si = 0; si < ch.sub; si++) {
                         this._dirty.add(ch.wx + ',' + ch.wy + ',' + si + ',' + sj);
                     }
                 }
@@ -146,6 +158,7 @@
             // The ring the streaming loop keeps is a different size now, so the
             // "nothing has moved" early-out must not hold it at the old one.
             this._lastCwx = this._lastCwy = undefined;
+            this._lastEvalX = this._lastEvalZ = undefined;
         }
         cavesVisible() { return this._caves; }
 
@@ -287,6 +300,57 @@
             return Math.max(0, top - this.field.blockTopAt(x, z));
         }
 
+        // Roughly what a chunk costs to bring in, in credits. Its GEOMETRY is
+        // not paid for here any more - that goes on the patch queue and is
+        // rationed by the clock (see _drainDirty) - so what this rations is the
+        // one thing a chunk still builds on the spot: its dressing. A settled
+        // square plans a town and instances every sprite standing on it.
+        _chunkCost(step) {
+            return step === 1 ? 1 : 0.45;
+        }
+
+        // ---------------------------------------------------------------------
+        // The patch grid
+        // ---------------------------------------------------------------------
+        // Every chunk in the world, near or far, is cut into patches of at most
+        // SUB_N blocks a side, and nothing is ever meshed in a bigger job than
+        // one of those.
+        //
+        // This used to be true only of the full-detail ring. A coarse tile was
+        // meshed as one indivisible geometry, and a step-2 tile measures 28 ms
+        // against the real field: the streaming loop's millisecond budget could
+        // not touch it, because the clock is only read BETWEEN jobs and the
+        // first job of a frame runs unconditionally. So every coarse tile that
+        // came into the ring cost a two-frame stall, and crossing one tile line
+        // at speed brings in a whole row of them - which is what made fast
+        // driving stutter tile line by tile line.
+        //
+        // A hundred columns divide into four patches of twenty-five blocks at
+        // step 1, two of twenty-five at step 2, and one at step 4 and coarser.
+        // Every patch in the world is twenty-five blocks square or less, and
+        // none of them is more than about two milliseconds of work.
+        _patchGrid(step) {
+            const blocks = Math.max(1, Math.round(VOX.PER_TILE / step));
+            const sub = Math.max(1, Math.min(VOX.SUB, Math.round(blocks / VOX.SUB_N)));
+            return {
+                sub,
+                n:    Math.max(1, Math.round(blocks / sub)),
+                span: Math.max(1, Math.round(VOX.PER_TILE / sub))
+            };
+        }
+
+        _setGrid(ch, step) {
+            const g = this._patchGrid(step);
+            ch.step = step; ch.sub = g.sub; ch.n = g.n; ch.span = g.span;
+        }
+
+        // The voxel square a patch of a chunk's CURRENT grid covers, local to
+        // the tile. What the covering test below is written in terms of.
+        _patchBox(ch, si, sj) {
+            const s = ch.span;
+            return { x0: si * s, x1: (si + 1) * s, z0: sj * s, z1: (sj + 1) * s };
+        }
+
         // ---------------------------------------------------------------------
         // Level of detail
         // ---------------------------------------------------------------------
@@ -311,94 +375,154 @@
             return false;
         }
 
-        // Roughly what a chunk costs to mesh, in patches: the column count scales
-        // with the square of the block size.
-        _chunkCost(step) {
-            const n = VOX.PER_TILE / step;
-            return Math.max(0.15, (n * n) / (VOX.SUB_N * VOX.SUB_N));
+        // How much coarser than its distance a tile is drawn, in bands, because
+        // of how fast the camera is travelling.
+        //
+        // A tile two squares ahead at two hundred kilometres an hour is under
+        // the wheels in a second and gone again in the next: nothing on it can
+        // be looked at and nothing in it can be dug, and meshing it at full
+        // detail is four times the columns of meshing it a band out. The tile
+        // the camera is IN and the ring immediately round it are never pushed -
+        // that is the ground the wheels are actually on - so what this thins is
+        // the middle distance, which at speed is scenery going past.
+        //
+        // It moves with the smoothed speed rather than the instantaneous one:
+        // a change of band is cheap now but it is not free, and a throttle
+        // being feathered should not keep re-deciding the horizon.
+        _lodPush(fd) {
+            if (this._lodMode || fd <= 1.5) return 0;
+            return Math.min(1.5, this._speed / 140);
         }
 
-        _stepFor(dist) {
-            if (this._lodMode) return Math.max(10, VOX.lodStep(dist));
-            return VOX.lodStep(dist);
+        // Block size by distance - measured in tiles, BUT NOT IN WHOLE ONES. A
+        // tile whose centre is a tile and a half off is at 1.5, not at 1.
+        _bandStep(fd) {
+            const step = VOX.lodStep(Math.round(fd + this._lodPush(fd)));
+            return this._lodMode ? Math.max(10, step) : step;
+        }
+
+        // ...and the step a tile should actually be at, given the one it is at
+        // now: a change is only taken once the tile is LOD_HYST clear of the
+        // boundary that would send it straight back.
+        //
+        // Rounded to whole tiles and with no dead band, the answer flipped the
+        // moment the camera stepped over a tile line. A player walking up and
+        // down a boundary - or a camper wandering across one - had a whole ring
+        // of tiles changing detail several times a second, and each change threw
+        // that tile's geometry away and built it again.
+        _stepFor(fd, cur) {
+            const want = this._bandStep(fd);
+            if (!cur || want === cur) return want;
+            const stable = this._bandStep(want < cur ? fd + LOD_HYST : fd - LOD_HYST);
+            return (want < cur ? stable < cur : stable > cur) ? want : cur;
+        }
+
+        // How far ahead of the camper the ring is filled before what is behind
+        // it. At a walk this is barely a bias; at two hundred it is most of the
+        // ring, because at two hundred everything behind the windscreen has
+        // already been driven past.
+        _lookAhead() {
+            return 1.6 + Math.min(2.6, (this._speed || 0) / 85);
         }
 
         // ---------------------------------------------------------------------
         // Streaming
         // ---------------------------------------------------------------------
         update(camperX, camperZ, buildAll = false, dirX = 0, dirZ = 0) {
-            const cwx = Math.floor(camperX / this._ts);
-            const cwy = Math.floor(camperZ / this._ts);
+            const ts  = this._ts;
+            const cwx = Math.floor(camperX / ts);
+            const cwy = Math.floor(camperZ / ts);
+            this._camX = camperX;
+            this._camZ = camperZ;
+
+            const hasDir = dirX !== 0 || dirZ !== 0;
+            // dirX/dirZ carry the heading AT ITS SPEED, so this length is km/h.
+            const dirLen = hasDir ? Math.hypot(dirX, dirZ) : 0;
+            // Followed rather than taken: what the look-ahead and the detail
+            // bands are decided by should not jump about with the throttle.
+            this._speed += (dirLen - this._speed) * 0.08;
+            if (Math.abs(dirLen - this._speed) < 0.5) this._speed = dirLen;
+            this._ndx = dirLen > 0.001 ? dirX / dirLen : 0;
+            this._ndy = dirLen > 0.001 ? dirZ / dirLen : 0;
+
+            // One budget for the whole of the frame's world building, split
+            // between meshing and dressing rather than handed to each in turn:
+            // two separate five-millisecond budgets is a ten-millisecond frame,
+            // which at sixty is most of it.
+            const clock = () => ((typeof performance !== 'undefined') ? performance.now() : Date.now());
+            const tStart = clock();
+            const frameMs = this._lodMode ? 8.0 : (this._speed > 40 ? 7.0 : 5.0);
 
             // Re-mesh anything waiting first: a hole the player is still looking
             // at matters more than a tile on the horizon, and the patches of a
-            // tile just streamed in are what the ground round them is made of.
-            //
-            // This is where nearly all the meshing in the world now happens, so
-            // it gets nearly all of the frame's build time: several patches a
-            // frame while there is room for them, and never more than one patch
-            // past the budget.
-            this._drainDirty(buildAll ? 4096 : 8, buildAll ? Infinity : DRAIN_MS);
+            // tile just streamed in are what the ground round it is made of.
+            this._drainDirty(buildAll ? 4096 : 12,
+                             buildAll ? Infinity : frameMs * 0.7);
 
-            if (!buildAll && cwx === this._lastCwx && cwy === this._lastCwy &&
-                this._radius === this._lastRadius && !this._pendingBuilds) {
+            // The ring is re-read on movement rather than on tile crossings.
+            // The LOD bands are fractional now, so a tile can be due a change
+            // without the camera having changed square - and at a tile a second
+            // the crossing itself is far too coarse a heartbeat to fill a ring
+            // on.
+            const moved = this._lastEvalX === undefined ||
+                Math.abs(camperX - this._lastEvalX) > ts * 0.1 ||
+                Math.abs(camperZ - this._lastEvalZ) > ts * 0.1 ||
+                // ...or slowed down enough to be owed the detail speed took
+                // away, which a party set down by a fast travel has without
+                // having moved an inch since.
+                Math.abs(this._speed - this._lastEvalSpeed) > 25;
+            if (!buildAll && !moved && this._radius === this._lastRadius &&
+                !this._pendingBuilds) {
                 return;
             }
-            this._lastCwx = cwx;
-            this._lastCwy = cwy;
+            this._lastEvalX = camperX;
+            this._lastEvalZ = camperZ;
+            this._lastEvalSpeed = this._speed;
             this._lastRadius = this._radius;
-            this.seaNear = this._seaWithin(cwx, cwy, 3);
+            if (cwx !== this._lastCwx || cwy !== this._lastCwy) {
+                this._lastCwx = cwx;
+                this._lastCwy = cwy;
+                this.seaNear = this._seaWithin(cwx, cwy, 3);
+            }
 
-            const hasDir = dirX !== 0 || dirZ !== 0;
-            const dirLen = hasDir ? Math.hypot(dirX, dirZ) : 0;
-            const ndx = dirLen > 0.001 ? dirX / dirLen : 0;
-            const ndy = dirLen > 0.001 ? dirZ / dirLen : 0;
-
+            const lead = this._lookAhead();
             const needed = [];
-            for (let dx = -this._radius; dx <= this._radius; dx++) {
-                for (let dy = -this._radius; dy <= this._radius; dy++) {
+            for (let dy = -this._radius; dy <= this._radius; dy++) {
+                for (let dx = -this._radius; dx <= this._radius; dx++) {
                     const wx = cwx + dx, wy = cwy + dy;
                     const key  = wx + ',' + wy;
-                    const step = this._stepFor(Math.max(Math.abs(dx), Math.abs(dy)));
                     const have = this._chunks.get(key);
+                    const fd = Math.max(
+                        Math.abs((wx + 0.5) * ts - camperX),
+                        Math.abs((wy + 0.5) * ts - camperZ)) / ts;
+                    const step = this._stepFor(fd, have ? have.step : 0);
                     if (have && have.step === step) continue;
-                    const distSq = dx * dx + dy * dy;
-                    let prio = Math.sqrt(distSq);
-                    if (hasDir) {
-                        const forwardDot = dx * ndx + dy * ndy;
-                        prio -= forwardDot * 1.6;
-                    }
-                    needed.push({ wx, wy, key, step, dist: distSq, prio, rebuild: !!have });
+                    let prio = fd;
+                    if (hasDir) prio -= (dx * this._ndx + dy * this._ndy) * lead;
+                    needed.push({ wx, wy, key, step, prio, have });
                 }
             }
-            needed.sort((a, b) => (hasDir ? (a.prio - b.prio) : (a.dist - b.dist)));
+            needed.sort((a, b) => a.prio - b.prio);
 
-            // The budget is in patches and execution time: a full-detail tile is sixteen
-            // twenty-five column patches and a far one is a fraction of one.
-            // Using a strict millisecond budget alongside patch credits guarantees smooth 60 FPS.
-            //
-            // A full-detail tile's SHELL is cheap now - its scenery and its
-            // streetlights, no meshing at all - because its sixteen patches go
-            // on the dirty queue instead (see _buildChunk). What is still worth
-            // rationing here is that scenery: a settled square plans a town and
-            // instances every sprite on it.
-            const isDriving = hasDir && dirLen > 0.5;
             const credits = buildAll ? Infinity
-                : Math.max(1, (this._lodMode ? 12 : this._buildBudget)) * (isDriving ? 6 : 4);
-            const maxMs = buildAll ? Infinity : (this._lodMode ? 7.0 : (isDriving ? 6.5 : 5.0));
-            const clock = () => ((typeof performance !== 'undefined') ? performance.now() : Date.now());
-            const tStart = clock();
+                : Math.max(1, (this._lodMode ? 12 : this._buildBudget)) *
+                  (this._speed > 40 ? 6 : 4);
+            // Whatever the drain left of the frame, and never nothing: a tile
+            // that is never dressed is a tile with no trees on it.
+            const maxMs = buildAll ? Infinity
+                : Math.max(1.5, frameMs - (clock() - tStart));
+            const tDress = clock();
             let spent = 0, built = 0;
             for (const job of needed) {
-                if (built > 0 && (clock() - tStart >= maxMs || spent >= credits)) break;
+                if (built > 0 && (clock() - tDress >= maxMs || spent >= credits)) break;
                 spent += this._chunkCost(job.step);
                 built++;
-                if (job.rebuild) this._disposeChunk(job.key);
                 // Behind a transition the whole neighbourhood is meshed on the
                 // spot: the fade must not lift on a world with no ground in it.
-                this._chunks.set(job.key, this._buildChunk(job.wx, job.wy, job.step, buildAll));
+                if (job.have) this._relod(job.have, job.step, buildAll);
+                else this._chunks.set(job.key,
+                    this._buildChunk(job.wx, job.wy, job.step, buildAll));
             }
-            this._pendingBuilds = needed.length > built || this._dirty.size > 0;
 
             for (const [key, ch] of this._chunks) {
                 if (Math.abs(ch.wx - cwx) > this._radius + 2 ||
@@ -406,6 +530,9 @@
                     this._disposeChunk(key);
                 }
             }
+            // Behind a transition nothing may be left on the queue.
+            if (buildAll) this._drainDirty(4096, Infinity);
+            this._pendingBuilds = needed.length > built || this._dirty.size > 0;
             this._applyCaveDrawRing(cwx, cwy);
         }
 
@@ -428,24 +555,21 @@
         // ---------------------------------------------------------------------
         // Chunk building
         // ---------------------------------------------------------------------
-        // A tile is NOT meshed here any more, and that is the whole point.
+        // A tile is NOT meshed here, and that is the whole point.
         //
-        // A full-detail tile is sixteen patches and costs 41 ms to mesh on the
-        // surface and 98 ms with the caves on. The streaming loop's time budget
-        // could not touch any of it, because a tile was one indivisible job: it
-        // checked the clock BETWEEN jobs, and the first job of a frame runs
+        // A full-detail tile measures a hundred and thirty milliseconds against
+        // the real field on a mountain square. The streaming loop's time budget
+        // could not touch any of it while a tile was one indivisible job: it
+        // reads the clock BETWEEN jobs, and the first job of a frame runs
         // unconditionally. So every time the camera crossed into a new square
-        // the frame that noticed paid the whole tile - a four to eight frame
-        // freeze, once per square, for as long as anybody kept driving.
+        // the frame that noticed paid for whole tiles.
         //
-        // One patch is 2.5 ms (4 ms with caves), which fits inside the budget
-        // several times over. So the shell of the tile is built here - its
-        // group, its scenery, its streetlights - and the sixteen patches go on
-        // the same dirty queue a dig uses, to be drained a few milliseconds at
-        // a time (see _drainDirty). Nothing about the world's SHAPE waits on
-        // that: heights, collision and raycasts all come from the field, not
-        // from the mesh, so a patch that has not been drawn yet is a patch you
-        // can still stand on.
+        // What is built here is the shell - the group, the scenery, the road and
+        // its lamps - and every patch of the tile goes on the same queue a dig
+        // uses, to be drained a couple of milliseconds at a time (_drainDirty).
+        // Nothing about the world's SHAPE waits on that: heights, collision and
+        // raycasts all come from the field, not from the mesh, so a patch that
+        // has not been drawn yet is still a patch you can stand on.
         //
         // `now` forces the old behaviour, for the one case that needs it: the
         // scene builds its whole neighbourhood up front behind a transition,
@@ -457,57 +581,74 @@
             const grp   = new THREE.Group();
             const px = wx * ts + ts * 0.5, pz = wy * ts + ts * 0.5;
             grp.position.set(px, 0, pz);
+            // A chunk never moves once it is placed. Composing its matrix here
+            // and standing three.js down from doing it again takes a few hundred
+            // static meshes out of the per-frame scene walk, which had nothing
+            // to say about any of them.
+            grp.updateMatrix();
+            grp.matrixAutoUpdate = false;
 
-            const ch = { grp, wx, wy, step, px, pz, subs: new Map() };
-
-            if (step === 1) {
-                // Sixteen patches, so a dig re-meshes one of them.
-                for (let sj = 0; sj < VOX.SUB; sj++) {
-                    for (let si = 0; si < VOX.SUB; si++) {
-                        if (now) this._buildSub(ch, si, sj);
-                        else this._dirty.add(wx + ',' + wy + ',' + si + ',' + sj);
-                    }
-                }
-                if (!now) this._pendingBuilds = true;
-            } else {
-                const n = Math.max(1, Math.round(VOX.PER_TILE / step));
-                // Far chunks are drawn in blocks several voxels across; a
-                // passage is finer than that, so the caves are never in them.
-                this._addMesh(ch, 'all', VoxelMesher.build(this.field, wx, wy, 0, 0, n, step, px, pz, false));
-            }
-
-            // The carriageway is a real road: a ribbon extruded over the graded
-            // roadbed, with its paint, its median and its barriers, rather than
-            // a run of grey cubes with grey cubes painted on it.
-            if (type === 'road') {
-                this._buildRoadRibbon(grp, wx, wy, step);
-                if (step === 1) this._buildStreetlights(grp, wx, wy);
-            }
-
-            // 2D billboard vegetation, rocks, props and settlements, unchanged:
-            // they stand on the voxel surface the same way they stood on the
-            // height mesh.
-            // ...and none of it underground: every tree, rock and building of a
-            // tile is scattered on its SURFACE, which is the one part of the
-            // world nobody in a cave can see. Decorating the ring down there was
-            // most of what a cave cost and none of what it showed.
-            // Water is no longer skipped: the bed of the sea is furnished like
-            // anywhere else, and the rare island standing out of it is dressed
-            // and lived on. Only the near, full-detail ring pays for it - a weed
-            // on the sea floor cannot be seen from the surface, let alone from
-            // three tiles off - so it is gated on the LOD step as well.
-            const wet = (type === 'water');
-            if (type !== 'road' && !this._lodMode && !this._caves &&
-                (!wet || step === 1)) {
-                this._decorator.decorate(grp, wx, wy, biome, ts,
-                    (gx, gz) => this.getTerrainHeight(gx, gz),
-                    (x, z) => this.waterSurfaceAt(x, z));
-            }
-
-            this._dressCave(ch);
+            const ch = {
+                grp, wx, wy, step, px, pz, biome, type,
+                subs: new Map(),   // the live patches, "si:sj" -> record
+                old:  null,        // the step being left, until it is covered
+                done: null,        // which patches of the new step have landed
+                stamp: 0,
+                sub: 0, n: 0, span: 0,
+                decorated: false, dressed: false, road: null, roadFine: null
+            };
+            this._setGrid(ch, step);
+            this._queuePatches(ch, now);
+            this._dressChunk(ch);
 
             this._scene.add(grp);
             return ch;
+        }
+
+        _queuePatches(ch, now) {
+            ch.done = new Set();
+            for (let sj = 0; sj < ch.sub; sj++) {
+                for (let si = 0; si < ch.sub; si++) {
+                    if (now) this._buildSub(ch, si, sj);
+                    else this._dirty.add(ch.wx + ',' + ch.wy + ',' + si + ',' + sj);
+                }
+            }
+            if (!now) this._pendingBuilds = true;
+        }
+
+        // ---------------------------------------------------------------------
+        // Changing detail without ever showing a hole
+        // ---------------------------------------------------------------------
+        // The old geometry is NOT thrown away first. It is stood aside, and each
+        // patch of it is dropped only once every patch of the new step that
+        // covers it has actually been meshed - which is also the moment those
+        // new patches are shown, so the two are never both on screen either. A
+        // tile driven toward refines a quarter at a time, a tile driven away
+        // from coarsens the same way, and at no point is there nothing there.
+        //
+        // Throwing it away first is what made parts of a mountain wink out and
+        // come back. A full-detail tile is sixteen patches drained a couple of
+        // milliseconds a frame, so the hole stood open for the best part of a
+        // second - and a camera wandering over a LOD boundary tore it open again
+        // every single time it crossed.
+        _relod(ch, step, now) {
+            if (ch.step === step) return;
+            // Whatever is still queued for the step it is leaving means nothing.
+            this._dropDirty(ch.wx + ',' + ch.wy);
+            const stash = ch.old || (ch.old = new Map());
+            for (const [k, rec] of ch.subs) {
+                // A patch that was never shown - it was still waiting on the
+                // one under it - can go: dropping it changes nothing on screen,
+                // and keeping it would leave two surfaces drawn through each
+                // other for as long as the next change took.
+                if (!rec.shown) { this._dropRec(ch, rec); continue; }
+                stash.set(ch.stamp + '#' + k, rec);
+            }
+            ch.subs.clear();
+            ch.stamp++;
+            this._setGrid(ch, step);
+            this._queuePatches(ch, now);
+            this._dressChunk(ch);
         }
 
         // What stands in the passages of a tile. Underground the SURFACE is not
@@ -515,11 +656,6 @@
         // decorating the ring down there was most of what a cave cost and none
         // of what it showed - so this is the whole of what a cave is furnished
         // with, and it goes down once per tile.
-        //
-        // Split out of _buildChunk because the caves are switched on and off
-        // under tiles that are already built (see setCavesVisible): those tiles
-        // are re-meshed in place rather than thrown away now, so something has
-        // to dress them that is not the constructor.
         _dressCave(ch) {
             if (!this._caves || ch.step !== 1 || ch.dressed) return;
             const D = this._decorator;
@@ -543,73 +679,182 @@
             }
         }
 
+        // Everything on a tile that is not the ground itself. Safe to call
+        // again when a tile changes detail: each piece knows whether it has
+        // already been put down, and only the road cares about the step.
+        _dressChunk(ch) {
+            // The carriageway is a real road: a ribbon extruded over the graded
+            // roadbed, with its paint, its median and its barriers, rather than
+            // a run of grey cubes with grey cubes painted on it.
+            if (ch.type === 'road') this._buildRoad(ch);
+
+            // 2D billboard vegetation, rocks, props and settlements: they stand
+            // on the voxel surface the same way they stood on the height mesh.
+            // ...and none of it underground: every tree, rock and building of a
+            // tile is scattered on its SURFACE, which is the one part of the
+            // world nobody in a cave can see.
+            // Water is not skipped: the bed of the sea is furnished like
+            // anywhere else, and the rare island standing out of it is dressed
+            // and lived on. Only the near, full-detail ring pays for it - a weed
+            // on the sea floor cannot be seen from the surface, let alone from
+            // three tiles off - so it is gated on the LOD step as well.
+            const wet = (ch.type === 'water');
+            if (ch.type !== 'road' && !ch.decorated && !this._lodMode && !this._caves &&
+                (!wet || ch.step === 1)) {
+                ch.decorated = true;
+                this._decorator.decorate(ch.grp, ch.wx, ch.wy, ch.biome, this._ts,
+                    (gx, gz) => this.getTerrainHeight(gx, gz),
+                    (x, z) => this.waterSurfaceAt(x, z));
+            }
+
+            this._dressCave(ch);
+        }
+
+        // The road surface and its lamps, in a group of their own so a change
+        // of detail can lift the lot in one move. Rebuilt only when the tile
+        // crosses between full detail and coarse, which is the only thing about
+        // a road that its LOD step decides.
+        _buildRoad(ch) {
+            const fine = ch.step === 1;
+            if (ch.roadFine === fine) return;
+            ch.roadFine = fine;
+            if (ch.road) {
+                ch.grp.remove(ch.road);
+                disposeTree(ch.road);
+                ch.road = null;
+            }
+            const g = new THREE.Group();
+            this._buildRoadRibbon(g, ch.wx, ch.wy, ch.step);
+            if (fine) this._buildStreetlights(g, ch.wx, ch.wy);
+            if (!g.children.length) return;
+            ch.grp.add(g);
+            g.matrixAutoUpdate = false;
+            g.matrixWorldNeedsUpdate = true;
+            ch.road = g;
+        }
+
         _buildSub(ch, si, sj) {
-            const n = VOX.SUB_N;
+            if (si >= ch.sub || sj >= ch.sub) return;
             const geo = VoxelMesher.build(this.field, ch.wx, ch.wy,
-                si * n, sj * n, n, 1, ch.px, ch.pz, this._caves);
-            this._addMesh(ch, si + ':' + sj, geo);
+                si * ch.span, sj * ch.span, ch.n, ch.step, ch.px, ch.pz,
+                this._caves && ch.step === 1);
+            const box = this._patchBox(ch, si, sj);
+            // Held back while the step it is replacing still stands under it, so
+            // no two surfaces are ever drawn through each other. _settle shows
+            // it the moment the patch it covers is dropped.
+            const shown = !(ch.old && ch.old.size && this._overlapsOld(ch, box));
+            this._addMesh(ch, si + ':' + sj, geo, box, shown);
+            ch.done.add(si + ':' + sj);
+            this._settle(ch);
+        }
+
+        // Drop every stood-aside patch the new step has now covered, and show
+        // whatever was waiting on it.
+        _settle(ch) {
+            const old = ch.old;
+            if (!old || !old.size) return;
+            for (const [k, rec] of old) {
+                if (!this._covered(ch, rec)) continue;
+                this._dropRec(ch, rec);
+                old.delete(k);
+            }
+            if (!old.size) {
+                ch.old = null;
+                for (const rec of ch.subs.values()) this._showRec(rec);
+                return;
+            }
+            for (const rec of ch.subs.values()) {
+                if (!rec.shown && !this._overlapsOld(ch, rec)) this._showRec(rec);
+            }
+        }
+
+        // Is every patch of the current grid that touches this square meshed?
+        _covered(ch, box) {
+            const s = ch.span;
+            const i1 = Math.ceil(box.x1 / s), j1 = Math.ceil(box.z1 / s);
+            for (let j = Math.floor(box.z0 / s); j < j1; j++) {
+                for (let i = Math.floor(box.x0 / s); i < i1; i++) {
+                    if (!ch.done.has(i + ':' + j)) return false;
+                }
+            }
+            return true;
+        }
+
+        _overlapsOld(ch, box) {
+            for (const rec of ch.old.values()) {
+                if (box.x0 < rec.x1 && box.x1 > rec.x0 &&
+                    box.z0 < rec.z1 && box.z1 > rec.z0) return true;
+            }
+            return false;
+        }
+
+        _showRec(rec) {
+            rec.shown = true;
+            for (const m of rec.meshes) m.visible = true;
+        }
+
+        _dropRec(ch, rec) {
+            for (const m of rec.meshes) {
+                ch.grp.remove(m);
+                if (m.geometry) m.geometry.dispose();
+            }
+            rec.meshes.length = 0;
         }
 
         // A patch is the ground, the turf on top of it, one mesh for each kind
         // of block it shows (brick, marble, a seam of ore - each with its own
         // picture), and the sheet of standing water where a river or a lake
         // runs above sea level.
-        _addMesh(ch, key, res) {
+        _addMesh(ch, key, res, box, shown) {
             const old = ch.subs.get(key);
             if (old) {
-                for (const m of old) {
-                    ch.grp.remove(m);
-                    if (m.geometry) m.geometry.dispose();
-                }
+                this._dropRec(ch, old);
                 ch.subs.delete(key);
             }
-            if (!res) return;
-            const made = [];
-            if (res.solid) {
-                const mesh = new THREE.Mesh(res.solid, voxelMaterial());
+            const meshes = [];
+            const put = (geo, mat, order) => {
+                const mesh = new THREE.Mesh(geo, mat);
                 mesh.receiveShadow = true;
+                if (order !== undefined) mesh.renderOrder = order;
+                mesh.visible = shown;
                 ch.grp.add(mesh);
-                made.push(mesh);
+                // The patch sits at its chunk's own origin and never moves, so
+                // its world matrix is worked out once here rather than composed
+                // again on every frame of the drive.
+                mesh.matrixAutoUpdate = false;
+                mesh.matrixWorldNeedsUpdate = true;
+                meshes.push(mesh);
+            };
+            if (res) {
+                if (res.solid) put(res.solid, voxelMaterial());
+                if (res.grass) put(res.grass, voxelGrassMaterial());
+                // One mesh per KIND of block the patch actually shows, each drawn
+                // with that block's own picture. Ordinary ground carries none at
+                // all; a cave wall carries the country rock, whatever lens is in
+                // it and the seams, and nothing else.
+                if (res.blocks) for (const b of res.blocks) put(b.geo, voxelBlockMaterial(b.mat));
+                if (res.water) put(res.water, voxelWaterMaterial(), 2);
             }
-            if (res.grass) {
-                const mesh = new THREE.Mesh(res.grass, voxelGrassMaterial());
-                mesh.receiveShadow = true;
-                ch.grp.add(mesh);
-                made.push(mesh);
-            }
-            // One mesh per KIND of block the patch actually shows, each drawn
-            // with that block's own picture. Ordinary ground carries none at
-            // all; a cave wall carries the country rock, whatever lens is in it
-            // and the seams, and nothing else.
-            if (res.blocks) {
-                for (const b of res.blocks) {
-                    const mesh = new THREE.Mesh(b.geo, voxelBlockMaterial(b.mat));
-                    mesh.receiveShadow = true;
-                    ch.grp.add(mesh);
-                    made.push(mesh);
-                }
-            }
-            if (res.water) {
-                const mesh = new THREE.Mesh(res.water, voxelWaterMaterial());
-                mesh.renderOrder = 2;
-                ch.grp.add(mesh);
-                made.push(mesh);
-            }
-            if (made.length) ch.subs.set(key, made);
+            ch.subs.set(key, {
+                meshes, shown: !!shown,
+                x0: box.x0, x1: box.x1, z0: box.z0, z1: box.z1
+            });
         }
 
         _disposeChunk(key) {
             const ch = this._chunks.get(key);
             if (!ch) return;
             this._scene.remove(ch.grp);
-            ch.grp.traverse(o => { if (o.geometry) o.geometry.dispose(); });
+            disposeTree(ch.grp);
             ch.subs.clear();
+            if (ch.old) ch.old.clear();
+            ch.old = null;
             this._chunks.delete(key);
             // Anything still queued for it is queued for a tile that no longer
             // exists. _drainDirty would skip those entries anyway, but a tile
             // streamed out and back in at a different detail level would leave
-            // sixteen of them behind every time, and the queue is walked in
-            // order: the dead entries would sit in front of the live ones.
+            // its patches behind every time, and the queue is walked in order:
+            // the dead entries would sit in front of the live ones.
             this._dropDirty(key);
         }
 
@@ -626,64 +871,101 @@
             for (const key of [...this._chunks.keys()]) this._disposeChunk(key);
             this._pendingBuilds = true;
             this._lastCwx = this._lastCwy = undefined;
+            this._lastEvalX = this._lastEvalZ = undefined;
         }
 
         // ---------------------------------------------------------------------
         // Digging: which patch a change landed in
         // ---------------------------------------------------------------------
+        // Resolved against the chunk's OWN grid rather than against a fixed one:
+        // a coarse tile is cut into fewer, wider patches than a near one, and
+        // marking a near tile's patch number on a far tile would re-mesh the
+        // wrong quarter of it - or a quarter it does not have.
         _markDirty(wx, wy, lx, lz) {
-            const n  = VOX.SUB_N;
-            const si = Math.floor(lx / n), sj = Math.floor(lz / n);
-            // A cube on a patch border shows a face into the patch next door.
-            const di = (lx % n === 0) ? -1 : (lx % n === n - 1) ? 1 : 0;
-            const dj = (lz % n === 0) ? -1 : (lz % n === n - 1) ? 1 : 0;
-            for (const ii of di ? [si, si + di] : [si]) {
-                for (const jj of dj ? [sj, sj + dj] : [sj]) {
-                    if (ii < 0 || ii >= VOX.SUB || jj < 0 || jj >= VOX.SUB) {
-                        // Spilled into the neighbouring tile: rebuild it whole,
-                        // it is rare enough not to be worth a finer path.
-                        const nwx = wx + (ii < 0 ? -1 : ii >= VOX.SUB ? 1 : 0);
-                        const nwy = wy + (jj < 0 ? -1 : jj >= VOX.SUB ? 1 : 0);
-                        this._dirty.add(nwx + ',' + nwy + ',*,*');
-                        continue;
-                    }
-                    this._dirty.add(wx + ',' + wy + ',' + ii + ',' + jj);
+            // A cube on a patch border shows a face into the patch next door,
+            // and a cube on the edge of a tile shows one into the tile next
+            // door, so the ring around the column is marked with it.
+            for (let dj = -1; dj <= 1; dj++) {
+                for (let di = -1; di <= 1; di++) {
+                    const gx = wx * VOX.PER_TILE + lx + di;
+                    const gz = wy * VOX.PER_TILE + lz + dj;
+                    const twx = Math.floor(gx / VOX.PER_TILE);
+                    const twy = Math.floor(gz / VOX.PER_TILE);
+                    const ch = this._chunks.get(twx + ',' + twy);
+                    if (!ch || !ch.span) continue;
+                    const si = Math.min(ch.sub - 1,
+                        Math.floor((gx - twx * VOX.PER_TILE) / ch.span));
+                    const sj = Math.min(ch.sub - 1,
+                        Math.floor((gz - twy * VOX.PER_TILE) / ch.span));
+                    this._dirty.add(twx + ',' + twy + ',' + si + ',' + sj);
                 }
             }
+            this._pendingBuilds = true;
+        }
+
+        // Nearest first, and what is ahead of the camper before what is behind
+        // it. The queue is a set, so it drains in the order things were added to
+        // it - which while driving is the order the RING was walked, not the
+        // order the eye needs them in. Without this the frame's build time went
+        // on tiles in the mirror while the ground ahead was still missing.
+        _orderDirty() {
+            const ts = this._ts;
+            const cx = (this._camX || 0) / ts, cz = (this._camZ || 0) / ts;
+            const lead = this._lookAhead();
+            const out = [];
+            for (const key of this._dirty) {
+                const a = key.indexOf(',');
+                const b = key.indexOf(',', a + 1);
+                const dx = Number(key.slice(0, a)) + 0.5 - cx;
+                const dy = Number(key.slice(a + 1, b)) + 0.5 - cz;
+                out.push({
+                    key,
+                    p: Math.max(Math.abs(dx), Math.abs(dy)) -
+                       (dx * this._ndx + dy * this._ndy) * lead
+                });
+            }
+            out.sort((a, b) => a.p - b.p);
+            return out;
         }
 
         // Work the queue of patches waiting to be meshed: the ones a dig
         // touched, and every patch of every tile that has just been streamed in
-        // (see _buildChunk).
+        // or has just changed detail.
         //
-        // Bounded by TIME as well as by count. The count alone could not bound
-        // it: a patch is 2.5 ms of ordinary ground and 4 ms of cave, but a
-        // wholesale '*' entry is a whole tile, and two of those in a frame is
-        // eighty milliseconds. The clock is checked between patches, so the
-        // worst a frame can overrun by is one patch.
+        // Bounded by TIME as well as by count, because a patch is not a fixed
+        // price: half a millisecond of flat grass, a couple of milliseconds of
+        // mountain, more with the caves on. The clock is read between patches,
+        // so the worst a frame can overrun by is one patch.
         _drainDirty(budget, maxMs) {
-            if (!this._dirty.size) return;
+            const dirty = this._dirty;
+            if (!dirty.size) return;
             const clock = () => ((typeof performance !== 'undefined') ? performance.now() : Date.now());
             const tStart = clock();
             const cap = maxMs === undefined ? Infinity : maxMs;
+            const order = (dirty.size > 1 && budget < 4096) ? this._orderDirty() : null;
             let n = budget, done = 0;
-            for (const key of this._dirty) {
-                if (n-- <= 0) break;
-                if (done > 0 && clock() - tStart >= cap) break;
+            const take = (key) => {
+                if (!dirty.delete(key)) return true;
                 done++;
-                this._dirty.delete(key);
-                const [sx, sy, si, sj] = key.split(',');
-                const ch = this._chunks.get(sx + ',' + sy);
-                if (!ch) continue;
-                if (ch.step !== 1 || si === '*') {
-                    // Coarse or wholesale: rebuild the tile at its current step.
-                    // Meshed on the spot rather than re-queued - this is the one
-                    // path that means "this whole tile is wrong now".
-                    const step = ch.step;
-                    this._disposeChunk(sx + ',' + sy);
-                    this._chunks.set(sx + ',' + sy, this._buildChunk(Number(sx), Number(sy), step, true));
-                } else {
-                    this._buildSub(ch, Number(si), Number(sj));
+                const a = key.indexOf(',');
+                const b = key.indexOf(',', a + 1);
+                const c = key.indexOf(',', b + 1);
+                const ch = this._chunks.get(key.slice(0, b));
+                if (!ch) return true;
+                this._buildSub(ch, Number(key.slice(b + 1, c)), Number(key.slice(c + 1)));
+                return true;
+            };
+            if (order) {
+                for (const e of order) {
+                    if (n-- <= 0) break;
+                    if (done > 0 && clock() - tStart >= cap) break;
+                    take(e.key);
+                }
+            } else {
+                for (const key of [...dirty]) {
+                    if (n-- <= 0) break;
+                    if (done > 0 && clock() - tStart >= cap) break;
+                    take(key);
                 }
             }
         }

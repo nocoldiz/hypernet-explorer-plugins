@@ -71,6 +71,16 @@
         REACH: 46,
     };
     VOX.SUB_N   = Math.max(1, Math.round(VOX.PER_TILE / VOX.SUB));
+
+    // How many generated columns are kept, per generation, and there are two of
+    // them (see VoxelField.column). The ring around the camera works out at
+    // some two hundred and thirty thousand columns across the detail levels it
+    // is drawn in - ninety thousand full-detail, a hundred thousand at step 2,
+    // forty-five at step 4 - so two generations of a hundred and twenty
+    // thousand hold the whole of what is on screen and a column is generated
+    // once per visit rather than once per look.
+    const COL_CACHE  = 120000;
+    const CAVE_CACHE = 120000;
     VOX.TILE_Y  = VOX.MAX_Y - VOX.MIN_Y;
 
     // Block size by chebyshev tile distance from the camera. Index past the end
@@ -1571,7 +1581,9 @@
             // passages through it, the room it may open into and the shaft that
             // may drop through it (see columnCaves). Cleared with the tops.
             this._colCache = new Map();
+            this._colOld   = new Map();
             this._caveCache = new Map();
+            this._caveOld   = new Map();
         }
 
         // ---------------------------------------------------------------------
@@ -1925,6 +1937,11 @@
             const key = (vx + 65536) * 131072 + (vz + 65536);
             const hit = this._colCache.get(key);
             if (hit !== undefined) return hit;
+            // The generation before this one. A column that is still being
+            // asked for is promoted back into the live half and survives;
+            // everything else dies with its generation.
+            const stale = this._colOld.get(key);
+            if (stale !== undefined) { this._colCache.set(key, stale); return stale; }
             const c = this.sampleColumn((vx + 0.5) * VOX.SIZE, (vz + 0.5) * VOX.SIZE);
             // A copy: sampleColumn hands back the same scratch object every time
             // it is called without one of its own.
@@ -1940,12 +1957,20 @@
             };
             const band = sewerBandAt(vx, vz, rec.top, 1);
             if (band) rec.sewerHi = band.hi;
-            if (this._colCache.size > 80000) {
-                let count = 0;
-                for (const k of this._colCache.keys()) {
-                    this._colCache.delete(k);
-                    if (++count >= 10000) break;
-                }
+            // Two generations, turned over whole, rather than a queue with
+            // its oldest ten thousand dropped off the front.
+            //
+            // The ring around the camera is some two hundred and thirty
+            // thousand columns at the detail levels it is drawn in, against a
+            // cache of eighty thousand - so the old queue was ALWAYS full and
+            // ALWAYS evicting, and what it evicted was whatever had been
+            // there longest. The ground under the party's own feet is exactly
+            // that: generated once when its tile streamed in, and then asked
+            // for by every height query, every footfall and every wheel, on
+            // every frame, at three microseconds a miss.
+            if (this._colCache.size >= COL_CACHE) {
+                this._colOld = this._colCache;
+                this._colCache = new Map();
             }
             this._colCache.set(key, rec);
             return rec;
@@ -1960,7 +1985,9 @@
         // ground where two generations meet.
         clearCache() {
             this._colCache.clear();
+            this._colOld.clear();
             this._caveCache.clear();
+            this._caveOld.clear();
             clearTerrainCaches();
         }
 
@@ -2016,8 +2043,13 @@
             const key = (vx + 65536) * 131072 + (vz + 65536);
             const hit = this._caveCache.get(key);
             if (hit !== undefined) return hit;
+            const stale = this._caveOld.get(key);
+            if (stale !== undefined) { this._caveCache.set(key, stale); return stale; }
             const out = this._genColumnCaves(vx, vz);
-            if (this._caveCache.size > 200000) this._caveCache.clear();
+            if (this._caveCache.size >= CAVE_CACHE) {
+                this._caveOld = this._caveCache;
+                this._caveCache = new Map();
+            }
             this._caveCache.set(key, out);
             return out;
         }
@@ -2487,7 +2519,12 @@
             return { count: n, mat: last };
         }
 
-        reset() { this.edits.clear(); this._colCache.clear(); this._caveCache.clear(); this.version++; }
+        reset() {
+            this.edits.clear();
+            this._colCache.clear(); this._colOld.clear();
+            this._caveCache.clear(); this._caveOld.clear();
+            this.version++;
+        }
     }
     VoxelField._hexCache = new Map();
 
@@ -2571,12 +2608,12 @@
                 }
             }
 
-            const B = new MeshBuffer();
+            const B = MeshBuffer.get();
             // Grass tops are drawn with their own surface (see voxelGrassMaterial)
             // rather than the ground's, so a field is grass and not a green stain
             // over cracked mud. Everything else stays in B - the sides of that
             // same column included, since those are the soil under the turf.
-            const G = new MeshBuffer();
+            const G = MeshBuffer.get();
             // The blocks: every cube that has a picture of its own - brick,
             // glass, marble, a seam of ore, the melt at the bottom of the
             // world. One buffer per KIND of block, made the first time a face
@@ -2640,12 +2677,17 @@
                 if (buf.empty) continue;
                 (blockGeo || (blockGeo = [])).push({ mat: m, geo: buf.finish() });
             }
-            return {
+            const out = {
                 solid: B.finish(),
                 grass: G.empty ? null : G.finish(),
                 blocks: blockGeo,
                 water
             };
+            // The geometries have their own copies now, so the storage goes
+            // back on the pool for the next patch instead of to the collector.
+            B.release(); G.release();
+            for (const buf of blocks.values()) buf.release();
+            return out;
         }
 
         // --- greedy height field pass -------------------------------------
@@ -2965,7 +3007,7 @@
         static _water(field, top, wat, w, n, ox, oz, step, bs, bias) {
             const S = VOX.SIZE;
             const at = (i, j) => (j + 1) * w + (i + 1);
-            const B = new MeshBuffer();
+            const B = MeshBuffer.get();
             const done = new Uint8Array(n * n);
             // Deeper water reads darker; the shallows keep the bed's colour.
             const shade = d => {
@@ -3018,7 +3060,9 @@
                     }
                 }
             }
-            return B.finish();
+            const geo = B.finish();
+            B.release();
+            return geo;
         }
 
         // Which buffer one cube's faces belong in. A block with a picture of
@@ -3030,7 +3074,7 @@
         static bufFor(B, blocks, def) {
             if (!blocks || !def.tex) return B;
             let Q = blocks.get(def.id);
-            if (!Q) { Q = new MeshBuffer(); blocks.set(def.id, Q); }
+            if (!Q) { Q = MeshBuffer.get(); blocks.set(def.id, Q); }
             return Q;
         }
 
@@ -3119,27 +3163,100 @@
     // =========================================================================
     // MeshBuffer, the growable vertex sink the mesher writes into.
     // =========================================================================
+    // Where a patch's triangles are written before they become a geometry.
+    //
+    // Typed arrays, grown by doubling and handed back to a pool when the patch
+    // is done with them, rather than the plain JS arrays this used to be. A
+    // mountain patch writes some fifty thousand numbers in here; as JS arrays
+    // every one of them was a boxed double appended to a growing object, and
+    // the whole lot was copied into a typed array again at the end. That was a
+    // quarter of the meshing time - and, worse for a world you drive through,
+    // it was all garbage, enough of it and often enough to show as a hitch of
+    // its own every time the collector caught up.
+    const _bufPool = [];
+    const BUF_POOL_MAX  = 16;      // buffers kept
+    const BUF_KEEP_VERT = 16384;   // ...and how big one may be and still be kept
+    function _grow(a, n) { const b = new a.constructor(n); b.set(a); return b; }
+
     class MeshBuffer {
         constructor() {
-            this.pos = []; this.nor = []; this.col = []; this.uv = []; this.idx = [];
+            const V = 512;                       // vertices it starts out able to hold
+            this.pos = new Float32Array(V * 3);
+            this.nor = new Float32Array(V * 3);
+            this.col = new Float32Array(V * 3);
+            this.uv  = new Float32Array(V * 2);
+            this.idx = new Uint32Array(V * 2);
+            this.nv = 0;                         // vertices written
+            this.ni = 0;                         // indices written
+        }
+        // Take one out of the pool, or make one. Every buffer in the mesher
+        // comes from here so the storage outlives the patch that used it.
+        static get() {
+            const b = _bufPool.pop();
+            if (!b) return new MeshBuffer();
+            b.nv = 0; b.ni = 0;
+            return b;
+        }
+        release() {
+            this.nv = 0; this.ni = 0;
+            // A buffer that had to grow enormous for one wall of one cave does
+            // not sit in the pool holding that memory for the rest of the
+            // drive: it is let go, and the next patch starts from the usual
+            // size again.
+            if (this.pos.length > BUF_KEEP_VERT * 3) return;
+            if (_bufPool.length < BUF_POOL_MAX) _bufPool.push(this);
         }
         // Nothing was written into it, so there is no mesh to make of it.
-        get empty() { return this.pos.length === 0; }
+        get empty() { return this.nv === 0; }
+
+        // Room for `v` more vertices and `i` more indices.
+        _room(v, i) {
+            let cap = this.pos.length / 3;
+            if (this.nv + v > cap) {
+                while (cap < this.nv + v) cap *= 2;
+                this.pos = _grow(this.pos, cap * 3);
+                this.nor = _grow(this.nor, cap * 3);
+                this.col = _grow(this.col, cap * 3);
+                this.uv  = _grow(this.uv,  cap * 2);
+            }
+            if (this.ni + i > this.idx.length) {
+                let ic = this.idx.length;
+                while (ic < this.ni + i) ic *= 2;
+                this.idx = _grow(this.idx, ic);
+            }
+        }
         _quad(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, nx, ny, nz, r, g, b, uw, uh) {
-            const i = this.pos.length / 3;
-            this.pos.push(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz);
-            this.nor.push(nx, ny, nz, nx, ny, nz, nx, ny, nz, nx, ny, nz);
-            this.col.push(r, g, b, r, g, b, r, g, b, r, g, b);
-            this.uv.push(0, 0, uw, 0, uw, uh, 0, uh);
-            this.idx.push(i, i + 1, i + 2, i, i + 2, i + 3);
+            this._room(4, 6);
+            const v = this.nv, p = v * 3, u = v * 2, k = this.ni;
+            const P = this.pos, N = this.nor, C = this.col, U = this.uv, I = this.idx;
+            P[p] = ax; P[p + 1] = ay; P[p + 2] = az;
+            P[p + 3] = bx; P[p + 4] = by; P[p + 5] = bz;
+            P[p + 6] = cx; P[p + 7] = cy; P[p + 8] = cz;
+            P[p + 9] = dx; P[p + 10] = dy; P[p + 11] = dz;
+            for (let q = 0; q < 12; q += 3) {
+                N[p + q] = nx; N[p + q + 1] = ny; N[p + q + 2] = nz;
+                C[p + q] = r;  C[p + q + 1] = g;  C[p + q + 2] = b;
+            }
+            U[u] = 0; U[u + 1] = 0; U[u + 2] = uw; U[u + 3] = 0;
+            U[u + 4] = uw; U[u + 5] = uh; U[u + 6] = 0; U[u + 7] = uh;
+            I[k] = v; I[k + 1] = v + 1; I[k + 2] = v + 2;
+            I[k + 3] = v; I[k + 4] = v + 2; I[k + 5] = v + 3;
+            this.nv = v + 4; this.ni = k + 6;
         }
         tri(ax, ay, az, bx, by, bz, cx, cy, cz, nx, ny, nz, r, g, b, uA, vA, uB, vB, uC, vC) {
-            const i = this.pos.length / 3;
-            this.pos.push(ax, ay, az, bx, by, bz, cx, cy, cz);
-            this.nor.push(nx, ny, nz, nx, ny, nz, nx, ny, nz);
-            this.col.push(r, g, b, r, g, b, r, g, b);
-            this.uv.push(uA, vA, uB, vB, uC, vC);
-            this.idx.push(i, i + 1, i + 2);
+            this._room(3, 3);
+            const v = this.nv, p = v * 3, u = v * 2, k = this.ni;
+            const P = this.pos, N = this.nor, C = this.col, U = this.uv, I = this.idx;
+            P[p] = ax; P[p + 1] = ay; P[p + 2] = az;
+            P[p + 3] = bx; P[p + 4] = by; P[p + 5] = bz;
+            P[p + 6] = cx; P[p + 7] = cy; P[p + 8] = cz;
+            for (let q = 0; q < 9; q += 3) {
+                N[p + q] = nx; N[p + q + 1] = ny; N[p + q + 2] = nz;
+                C[p + q] = r;  C[p + q + 1] = g;  C[p + q + 2] = b;
+            }
+            U[u] = uA; U[u + 1] = vA; U[u + 2] = uB; U[u + 3] = vB; U[u + 4] = uC; U[u + 5] = vC;
+            I[k] = v; I[k + 1] = v + 1; I[k + 2] = v + 2;
+            this.nv = v + 3; this.ni = k + 3;
         }
         quadSlope(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, r, g, b, uw, uh) {
             const ux = bx - ax, uy = by - ay, uz = bz - az;
@@ -3149,20 +3266,40 @@
             let nz = ux * vy - uy * vx;
             const len = Math.hypot(nx, ny, nz) || 1;
             nx /= len; ny /= len; nz /= len;
-            const i = this.pos.length / 3;
-            this.pos.push(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz);
-            this.nor.push(nx, ny, nz, nx, ny, nz, nx, ny, nz, nx, ny, nz);
-            this.col.push(r, g, b, r, g, b, r, g, b, r, g, b);
-            this.uv.push(0, 0, 0, uh, uw, uh, uw, 0);
-            this.idx.push(i, i + 1, i + 2, i, i + 2, i + 3);
+            this._room(4, 6);
+            const v = this.nv, p = v * 3, u = v * 2, k = this.ni;
+            const P = this.pos, N = this.nor, C = this.col, U = this.uv, I = this.idx;
+            P[p] = ax; P[p + 1] = ay; P[p + 2] = az;
+            P[p + 3] = bx; P[p + 4] = by; P[p + 5] = bz;
+            P[p + 6] = cx; P[p + 7] = cy; P[p + 8] = cz;
+            P[p + 9] = dx; P[p + 10] = dy; P[p + 11] = dz;
+            for (let q = 0; q < 12; q += 3) {
+                N[p + q] = nx; N[p + q + 1] = ny; N[p + q + 2] = nz;
+                C[p + q] = r;  C[p + q + 1] = g;  C[p + q + 2] = b;
+            }
+            U[u] = 0; U[u + 1] = 0; U[u + 2] = 0; U[u + 3] = uh;
+            U[u + 4] = uw; U[u + 5] = uh; U[u + 6] = uw; U[u + 7] = 0;
+            I[k] = v; I[k + 1] = v + 1; I[k + 2] = v + 2;
+            I[k + 3] = v; I[k + 4] = v + 2; I[k + 5] = v + 3;
+            this.nv = v + 4; this.ni = k + 6;
         }
         quadWall(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, nx, ny, nz, r, g, b, uw, uh) {
-            const i = this.pos.length / 3;
-            this.pos.push(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz);
-            this.nor.push(nx, ny, nz, nx, ny, nz, nx, ny, nz, nx, ny, nz);
-            this.col.push(r, g, b, r, g, b, r, g, b, r, g, b);
-            this.uv.push(0, 0, 0, uh, uw, uh, uw, 0);
-            this.idx.push(i, i + 1, i + 2, i, i + 2, i + 3);
+            this._room(4, 6);
+            const v = this.nv, p = v * 3, u = v * 2, k = this.ni;
+            const P = this.pos, N = this.nor, C = this.col, U = this.uv, I = this.idx;
+            P[p] = ax; P[p + 1] = ay; P[p + 2] = az;
+            P[p + 3] = bx; P[p + 4] = by; P[p + 5] = bz;
+            P[p + 6] = cx; P[p + 7] = cy; P[p + 8] = cz;
+            P[p + 9] = dx; P[p + 10] = dy; P[p + 11] = dz;
+            for (let q = 0; q < 12; q += 3) {
+                N[p + q] = nx; N[p + q + 1] = ny; N[p + q + 2] = nz;
+                C[p + q] = r;  C[p + q + 1] = g;  C[p + q + 2] = b;
+            }
+            U[u] = 0; U[u + 1] = 0; U[u + 2] = 0; U[u + 3] = uh;
+            U[u + 4] = uw; U[u + 5] = uh; U[u + 6] = uw; U[u + 7] = 0;
+            I[k] = v; I[k + 1] = v + 1; I[k + 2] = v + 2;
+            I[k + 3] = v; I[k + 4] = v + 2; I[k + 5] = v + 3;
+            this.nv = v + 4; this.ni = k + 6;
         }
         // Horizontal face at height y over a w by d footprint. `up` is +1 for a
         // top face, -1 for the underside of an overhang. `uw` is how many
@@ -3202,16 +3339,40 @@
             }
         }
         finish() {
-            if (!this.idx.length) return null;
+            if (!this.ni) return null;
+            const nv = this.nv, ni = this.ni;
             const geo = new THREE.BufferGeometry();
-            geo.setAttribute('position', new THREE.Float32BufferAttribute(this.pos, 3));
-            geo.setAttribute('normal',   new THREE.Float32BufferAttribute(this.nor, 3));
-            geo.setAttribute('color',    new THREE.Float32BufferAttribute(this.col, 3));
-            geo.setAttribute('uv',       new THREE.Float32BufferAttribute(this.uv, 2));
-            geo.setIndex(this.idx.length > 65000
-                ? new THREE.Uint32BufferAttribute(this.idx, 1)
-                : new THREE.Uint16BufferAttribute(this.idx, 1));
-            geo.computeBoundingSphere();
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(this.pos.slice(0, nv * 3), 3));
+            geo.setAttribute('normal',   new THREE.Float32BufferAttribute(this.nor.slice(0, nv * 3), 3));
+            geo.setAttribute('color',    new THREE.Float32BufferAttribute(this.col.slice(0, nv * 3), 3));
+            geo.setAttribute('uv',       new THREE.Float32BufferAttribute(this.uv.slice(0, nv * 2), 2));
+            // Sixteen-bit indices wherever the patch fits in them, which is
+            // nearly always: half the index buffer, and the card likes them.
+            if (nv > 65535) {
+                geo.setIndex(new THREE.Uint32BufferAttribute(this.idx.slice(0, ni), 1));
+            } else {
+                const u16 = new Uint16Array(ni);
+                u16.set(this.idx.subarray(0, ni));
+                geo.setIndex(new THREE.Uint16BufferAttribute(u16, 1));
+            }
+            // The bounding sphere off one pass of our own. three's walks the
+            // positions twice - once to box them and once to measure the
+            // radius - and every patch of ground in the world goes through
+            // here. The box corner is a hair wider than the tightest sphere,
+            // which costs a draw call at the very edge of the frustum and
+            // saves a pass over fifty thousand numbers.
+            const P = this.pos;
+            let x0 = Infinity, y0 = Infinity, z0 = Infinity;
+            let x1 = -Infinity, y1 = -Infinity, z1 = -Infinity;
+            for (let i = 0, e = nv * 3; i < e; i += 3) {
+                const x = P[i], y = P[i + 1], z = P[i + 2];
+                if (x < x0) x0 = x; if (x > x1) x1 = x;
+                if (y < y0) y0 = y; if (y > y1) y1 = y;
+                if (z < z0) z0 = z; if (z > z1) z1 = z;
+            }
+            const cx = (x0 + x1) * 0.5, cy = (y0 + y1) * 0.5, cz = (z0 + z1) * 0.5;
+            geo.boundingSphere = new THREE.Sphere(
+                new THREE.Vector3(cx, cy, cz), Math.hypot(x1 - cx, y1 - cy, z1 - cz));
             return geo;
         }
     }

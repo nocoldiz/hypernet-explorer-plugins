@@ -314,7 +314,7 @@
     return [makePage([
       { code: 102, indent: 0, parameters: [["Talk", "Empathize", "Cancel"], 3, 0, 2, 0] },  // i18n-ignore: choice labels are localized by the engine's own pass
       { code: 402, indent: 0, parameters: [0, "Talk"] },
-      { code: 357, indent: 1, parameters: ["UI/MarkovTextGenerator", "generateNPCDialogue", "Generate NPC Dialogue", { background: "0", position: "2" }] },
+      { code: 357, indent: 1, parameters: ["NPC/DialogueSystem", "Rumors", "Rumors", {}] },
       { code: 0, indent: 1, parameters: [] },
       { code: 402, indent: 0, parameters: [1, "Empathize"] },
       { code: 357, indent: 1, parameters: ["NPC/NPCEmpathize", "Open", "Open", { eventName: "" }] },

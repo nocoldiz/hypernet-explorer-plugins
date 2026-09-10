@@ -383,6 +383,20 @@
         return win && win.active ? win : null;
     };
 
+    // The game view's box on the page. Reading it out of the DOM forces a
+    // synchronous layout, so it goes through the shared per-frame read
+    // (window.FrameBudget, Core/ParchmentToast.js) that every overlay in the
+    // game shares one layout hit on, and falls back to its own read only where
+    // the budget is not loaded.
+    const viewRect = () => {
+        const shared = window.FrameBudget && window.FrameBudget.canvasRect();
+        if (shared) return shared;
+        const canvas = document.getElementById('gameCanvas');
+        if (!canvas) return null;
+        const r = canvas.getBoundingClientRect();
+        return (r.width > 0 && r.height > 0) ? r : null;
+    };
+
     //=========================================================================
     // PartyHudOverlay
     //=========================================================================
@@ -928,10 +942,8 @@
     // custom property because the transform itself also carries the fade-in
     // slide, and the two would otherwise overwrite each other.
     PartyHudOverlay.prototype._followCanvas = function () {
-        const canvas = document.getElementById('gameCanvas');
-        if (!canvas) return;
-        const view = canvas.getBoundingClientRect();
-        if (!(view.width > 0) || !(view.height > 0)) return;
+        const view = viewRect();
+        if (!view) return;
         const sx = view.width / Graphics.width;
         const sy = view.height / Graphics.height;
         const key = [view.left, view.top, sx, sy].join('|');
@@ -944,6 +956,12 @@
 
     PartyHudOverlay.prototype.update = function () {
         if (!this._el) return;
+        // Below 60fps the engine runs the logic two or three times per drawn
+        // frame (Core/ParchmentToast.js, window.FrameBudget), and the cards
+        // written on the ticks in between are never shown to anyone. The
+        // cadence counters below therefore pace off drawn frames rather than
+        // logic ticks, which is what they were always meant to measure.
+        if (window.FrameBudget && !window.FrameBudget.isPresented()) return;
         const wanted = this.isWanted();
         if (wanted !== this._visible) {
             this._visible = wanted;
@@ -969,10 +987,8 @@
         if (!this._el || !this._visible || !actor) return null;
         const card = this._cards.get(actor.actorId());
         if (!card) return null;
-        const canvas = document.getElementById('gameCanvas');
-        if (!canvas) return null;
-        const view = canvas.getBoundingClientRect();
-        if (!(view.width > 0) || !(view.height > 0)) return null;
+        const view = viewRect();
+        if (!view) return null;
         // Measured, not computed: the box already carries the canvas scale the
         // overlay is standing at, so dividing it back out lands in game units.
         const box = card.root.getBoundingClientRect();
@@ -994,10 +1010,8 @@
         if (!this._el || !this._visible) return null;
         const cards = Array.from(this._cards.values());
         if (cards.length === 0) return null;
-        const canvas = document.getElementById('gameCanvas');
-        if (!canvas) return null;
-        const view = canvas.getBoundingClientRect();
-        if (!(view.width > 0) || !(view.height > 0)) return null;
+        const view = viewRect();
+        if (!view) return null;
         const sy = view.height / Graphics.height;
         if (!(sy > 0)) return null;
         // Measured rather than computed: the cards carry the canvas' own scale,

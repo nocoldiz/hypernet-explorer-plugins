@@ -266,6 +266,9 @@
     },
     "crimesagainsthumanity": {
       "name": "Crimes Against Humanity"
+    },
+    "fareevasion": {
+      "name": "Fare Evasion"
     }
   }
 }

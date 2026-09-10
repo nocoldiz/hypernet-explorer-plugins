@@ -102,6 +102,9 @@
         window.SkillDetails = (() => {
             const esc = escapeHtml;
 
+            // $dataSystem.skillTypes: 1 is Magic, 2 is Skills.
+            const MAGIC_STYPE_ID = 1;
+
             // The item inspect panel spells out the same engine enums and stat
             // names, so both read one vocabulary: Inventory.spec / Equip.
             const PARAM_KEYS = ["hp", "mp", "str", "con", "int", "wis", "dex", "psi"];
@@ -198,6 +201,22 @@
             const isBasic = (skill) => {
                 if (!skill || !skill.note) return false;
                 return /<[Cc]ategory\s*:\s*Basic>/i.test(skill.note);
+            };
+
+            // Is this skill a spell? THE one place that line is drawn, for
+            // every panel that needs it: the incantation printed on the card,
+            // the pages the Grimoire of Solomon deals. A <Nature: Magical> tag
+            // says so outright and settles it; any other tag ("mundane", or
+            // "both", the ordinary things that exist with or without magic)
+            // says it is not a spell, however strange the move looks; an
+            // untagged skill falls back to the Magic skill type. Never
+            // re-derive this from a category name.
+            const isMagical = (skill) => {
+                if (!skill) return false;
+                const nature = (window.MagicNature && typeof window.MagicNature.natureOf === "function")
+                    ? window.MagicNature.natureOf(skill) : null;
+                if (nature) return nature === "magical";
+                return skill.stypeId === MAGIC_STYPE_ID;
             };
 
             // Human label for the subtitle under the skill name.
@@ -477,8 +496,22 @@
                 return rows;
             };
 
-            function build(skill, actor) {
+            // The words a spell is said over, resolved for this skill, or "" for
+            // anything that is not a spell. The card below prints it last; the
+            // encyclopedia's tree panel prints it under the name instead, and
+            // both ask here so the two can never disagree about what a spell
+            // says.
+            const incantationOf = (skill) => {
+                if (!isMagical(skill)) return "";
+                const utils = window.ItemSystemUtils;
+                if (!utils || !utils.loreFor) return "";
+                try { return utils.loreFor(skill) || ""; } catch (e) { return ""; }
+            };
+
+            //   opts.skipLore  the caller prints the incantation itself
+            function build(skill, actor, opts) {
                 if (!skill) return "";
+                const o = opts || {};
                 const combat = combatSpecsOf(skill, actor);
                 const damage = damageSpecsOf(skill, actor);
                 const effects = effectsOf(skill);
@@ -508,8 +541,10 @@
                 }
                 // The skill's lore closes the card, under every number, the way
                 // an item's does on the backpack page: flavour is read last.
-                const lore = (window.ItemSystemUtils && window.ItemSystemUtils.loreFor)
-                    ? window.ItemSystemUtils.loreFor(skill) : "";
+                // Only a spell has words to say over it: a sword swing, a kick
+                // or a cooked meal is never incanted, so a skill that is not
+                // magic closes on its numbers.
+                const lore = o.skipLore ? "" : incantationOf(skill);
                 if (lore) html += section(T("SkillsMenu.section.incantation"), `<div class="inspect-flavour">${esc(lore)}</div>`);
                 return html;
             }
@@ -575,8 +610,10 @@
             return {
                 build,
                 card,
+                incantationOf,
                 costTextOf,
                 scaleOf,
+                isMagical,
                 categoryOf,
                 isBasic,
                 typeLabelOf,

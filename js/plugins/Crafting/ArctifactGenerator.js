@@ -998,18 +998,6 @@ function generateArmorTraits(level) {
                 value: 1.1 + ((level - 50) / 100) // 10% to 60% boost
             });
         }
-        
-        // Chance for automatic state (e.g., auto-regen, etc.)
-        if (Math.random() < 0.05) {
-            const goodStates = [1, 2, 3]; // Beneficial states like auto-regen
-            const state = goodStates[Math.floor(Math.random() * goodStates.length)];
-            
-            traits.push({
-                code: 14, // State Immunity
-                dataId: state,
-                value: 1.0
-            });
-        }
     }
     
     return traits;

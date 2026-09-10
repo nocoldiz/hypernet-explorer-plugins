@@ -535,7 +535,28 @@
     // database carries, so a new game begins on the intro train.
     const EXPLORE_START = { mapId: 557, x: 13, y: 5, dir: 2 };
 
+    // A new party, like a new story, builds its own world when the folder is
+    // still empty, so a first-time player never has to pass through the Worlds
+    // screen before playing.
     Scene_Title.prototype.commandNewGame = function () {
+        this._commandWindow.close();
+        this.fadeOutAll();
+        if (!hasActiveWorld()) {
+            createDefaultWorld().then(() => {
+                this.startExploreRun();
+            }).catch(e => {
+                console.error('[Titlescreen] World creation failed', e);
+                SoundManager.playBuzzer();
+                this._commandWindow.open();
+                this.startFadeIn(this.slowFadeSpeed(), false);
+            });
+            return;
+        }
+        this.startExploreRun();
+    };
+
+    // The explore run itself, once a world is standing.
+    Scene_Title.prototype.startExploreRun = function () {
         DataManager.setupNewGame();
         // Straight into character creation: the start map's own event runs
         // the wizard at once, and the curtain keeps the map hidden until it
@@ -543,8 +564,6 @@
         $gameSystem._pendingCreationCurtain = true;
         $gamePlayer.reserveTransfer(
             EXPLORE_START.mapId, EXPLORE_START.x, EXPLORE_START.y, EXPLORE_START.dir, 0);
-        this._commandWindow.close();
-        this.fadeOutAll();
         SceneManager.goto(Scene_Map);
     };
 
@@ -611,7 +630,7 @@
         this._commandWindow.close();
         this.fadeOutAll();
         if (!hasActiveWorld()) {
-            createStoryWorld().then(() => {
+            createDefaultWorld().then(() => {
                 this.startStoryRun();
             }).catch(e => {
                 console.error('[Titlescreen] Story world creation failed', e);
@@ -1640,14 +1659,20 @@
         this.contents.fontFace = 'Square';
     };
 
-    // Nothing that starts or continues a game can run without a world to put it
-    // in: the history, the people, the dungeon and the savegame all live in the
-    // world folder, and none is invented on the player's behalf any more. With
-    // an empty world folder Explore, Reconnect, Story mode and Sandbox are greyed
-    // out until one is made from the Worlds screen. The minigame arcade runs on
-    // its own throwaway context and stays playable regardless.
+    // Nothing that continues a game can run without a world to put it in: the
+    // history, the people, the dungeon and the savegame all live in the world
+    // folder. With an empty world folder Reconnect and Sandbox are greyed out
+    // until one is made; New party and New story stay open and build one of
+    // their own. The minigame arcade runs on its own throwaway context and
+    // stays playable regardless.
     function hasActiveWorld() {
         return !!(window.WorldManager && window.WorldManager.activeWorldName);
+    }
+
+    // New party makes its own world when there is none, exactly as New story
+    // does, so the entry is open as long as the world layer is loaded.
+    function newPartyAvailable() {
+        return !!window.WorldManager;
     }
 
     // Whether there is any save at all (autosave, playthrough slot or
@@ -1671,10 +1696,11 @@
             this.selectSymbol('quickContinue');
         } else if (this.isContinueEnabled()) {
             this.selectSymbol('continue');
-        } else if (hasActiveWorld()) {
+        } else if (newPartyAvailable()) {
+            // With no world yet this is still the entry to land on: New party
+            // makes one for itself.
             this.selectSymbol('newGame');
         } else if (storyModeAvailable()) {
-            // No world yet: Story mode is the one entry that makes one.
             this.selectSymbol('storymode');
         } else {
             this.selectSymbol('worlds');
@@ -1768,8 +1794,9 @@
 
     // Builds the canon world (2001, ordinary population, ordinary magic: the
     // creation defaults) and populates it the same way the Worlds screen does,
-    // so a first-time player reaches the story without passing through it.
-    async function createStoryWorld() {
+    // so a first-time player reaches the game without passing through it. Both
+    // New story and New party start here when the world folder is empty.
+    async function createDefaultWorld() {
         const WM = window.WorldManager;
         let base = (WM.randomWorldName && WM.randomWorldName()) || 'Story';
         let name = base;
@@ -1810,7 +1837,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         worldReady && hasQuickContinueSave());
 
     if (!hideStartOptions) {
-        this.addCommand(T('Titlescreen.menu.explore'), 'newGame', worldReady);
+        this.addCommand(T('Titlescreen.menu.explore'), 'newGame', newPartyAvailable());
     }
 
     this.addCommand(T('Titlescreen.menu.reconnect'), 'continue', this.isContinueEnabled());
@@ -7683,9 +7710,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
     Scene_Title.prototype.getTitleCommandText = function () {
         const commands = [];
-        // Mirrors Window_TitleCommand.makeCommandList: with no world there is
-        // nowhere to start a game, so every entry that would need one is shown
-        // greyed out rather than silently kicking the player to another screen.
+        // Mirrors Window_TitleCommand.makeCommandList: an entry that needs a
+        // world already standing is shown greyed out rather than silently
+        // kicking the player to another screen. New party and New story are not
+        // among them, since they make a world of their own.
         const worldReady = hasActiveWorld();
 
         commands.push({
@@ -7698,7 +7726,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             commands.push({
                 text: T('Titlescreen.menuOverlay.explore'),
                 symbol: 'newGame',
-                enabled: worldReady
+                enabled: newPartyAvailable()
             });
         }
 

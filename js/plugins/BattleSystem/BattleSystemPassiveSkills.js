@@ -1686,12 +1686,11 @@
     return chips;
   }
 
-  // Gun-Fu is armed only while a gun / projectile / bow is equipped, so show
-  // the player when the follow-up shot is actually online.
-  TRAIT_PASSIVES[GUNFU_TRAIT_ID].chips = (actor) =>
-    hasRangedWeapon(actor)
-      ? [{ label: T("BattlePassives.chip.gunFu"), info: chipInfo("gunFu"), color: "#ff9f43" }]
-      : [];
+  // Gun-Fu contributes no chip. The party HUD row is for live counters that
+  // change from action to action (pins, combo, chi, souls); "a gun is equipped"
+  // is already visible in the equip menu and in the actor's own hands, so a
+  // permanent badge only crowded the card. The follow-up shot still announces
+  // itself in the battle log when it lands.
 
   // How much the party's Convokers strengthen a summoned battler. Bonuses from
   // several eligible Convokers add up, so a coven calls up sturdier creatures.

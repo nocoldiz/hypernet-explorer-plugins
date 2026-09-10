@@ -226,6 +226,44 @@
         });
     }
 
+    //=========================================================================
+    // A fatal error under a DOM overlay
+    //=========================================================================
+    // Every menu in this game is a DOM overlay standing over the game canvas,
+    // and RMMZ answers an error it cannot survive by stopping the loop, cutting
+    // the audio and drawing its error box ON THE CANVAS. With a menu open that
+    // box is behind the parchment: the music has gone, nothing answers a key or
+    // a click, nothing says why, and the only way out of the window is Alt+F4.
+    // The box is the way out (it names the fault, and F5 reloads from it), so
+    // when the game stops, every overlay comes down and the box is put on top
+    // of whatever is left.
+    function uncoverErrorScreen() {
+        if (typeof document === 'undefined' || !document.body) return;
+        const printer = document.getElementById('errorPrinter');
+        for (const el of Array.from(document.body.children)) {
+            if (el === printer || el.tagName === 'CANVAS' || el.tagName === 'SCRIPT') continue;
+            el.style.display = 'none';
+        }
+        if (printer) {
+            printer.style.zIndex = '2147483647';
+            printer.style.pointerEvents = 'auto';
+        }
+    }
+
+    if (typeof SceneManager !== 'undefined') {
+        const _catchException = SceneManager.catchException;
+        SceneManager.catchException = function(e) {
+            _catchException.call(this, e);
+            try { uncoverErrorScreen(); } catch (err) { /* nothing left to do */ }
+        };
+
+        const _onError = SceneManager.onError;
+        SceneManager.onError = function(event) {
+            _onError.call(this, event);
+            try { uncoverErrorScreen(); } catch (err) { /* nothing left to do */ }
+        };
+    }
+
     // Session separator on game start
     appendLog('');
     appendLog('*'.repeat(60));

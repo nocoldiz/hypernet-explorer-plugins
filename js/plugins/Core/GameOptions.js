@@ -403,8 +403,7 @@ const GameOptions = {
             groups: [
                 { key: 'display', symbols: ['fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
                 { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'partyHud', 'worldMinimap', 'titleBackground'] },
-                { key: 'battleView', symbols: ['enemyBattlers'] },
-                { key: 'lighting', symbols: ['nightLight'] }
+                { key: 'battleView', symbols: ['enemyBattlers'] }
             ]
         },
         {
@@ -1313,7 +1312,6 @@ window.GameOptions = GameOptions;
         enemyBattlers:   { states: [null, 'EnemyBattlers3D', 'EnemyBattlersSprites', 'EnemyBattlers2D'] },
         fullscreen:      { on: 'FullscreenON',      off: 'FullscreenOFF' },
         globalLighting:  { on: 'GlobalLightingON',  off: 'GlobalLightingOFF' },
-        nightLight:      { on: 'NightLightON',      off: 'NightLightOFF' },
         charBasedSprites: { on: 'CharSpritesON',    off: 'CharSpritesOFF' },
         showFps:         { on: 'ShowFpsON',         off: 'ShowFpsOFF' },
         partyHud:        { on: 'PartyHudON',        off: 'PartyHudOFF' },

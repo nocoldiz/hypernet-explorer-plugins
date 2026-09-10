@@ -757,25 +757,29 @@
             },
 
             // The faces a narrowed world may wear, as a Set of bust names, or
-            // null where every bust in the folder is fair game (normal and
-            // empty worlds). The bust gallery reads the img/busts folder rather
-            // than this file, so it cannot derive the answer itself: a bust
-            // belongs to a world when some sheet that world allows lists it.
-            // Falls back to null rather than an empty gallery if the wardrobe
-            // has nothing to say, so a data gap is never a locked door.
+            // null where every bust in the folder is fair game. The bust
+            // gallery reads the img/busts folder rather than this file, so it
+            // cannot derive the answer itself: a bust belongs to a world when
+            // some sheet that world allows lists it. Falls back to null rather
+            // than an empty gallery if the wardrobe has nothing to say, so a
+            // data gap is never a locked door.
+            //
+            // A GOBLIN world is the only one that narrows the faces. The magic
+            // level (severed / unbound) never does: it decides what the world
+            // OFFERS, and a face is not a thing offered, so a world of working
+            // spells and a world with none are both drawn from the whole
+            // gallery. Neither does a monster world, which narrows the sheet
+            // and leaves the portrait alone.
             allowedBustNames(mode) {
                 const m = mode || this.populationMode();
-                const magic = (window.MagicNature && window.MagicNature.level()) || "normal";
-                const narrowed = (m === "goblin" || m === "monster") || magic !== "normal";
-                if (!narrowed) return null;
-                const slot = "bustNames:" + m + ":" + magic;
+                if (m !== "goblin") return null;
+                const slot = "bustNames:" + m;
                 if (!poolCache[slot]) {
                     const data = db();
                     const names = new Set();
                     Object.keys(data).forEach(k => {
                         const e = data[k];
-                        if (!e || !this.allowedInMagic(k, e)) return;
-                        if (!this.allowedInPopulation(k, e, m)) return;
+                        if (!e || !this.allowedInPopulation(k, e, m)) return;
                         (e.busts || []).forEach(b => { if (b) names.add(String(b)); });
                     });
                     poolCache[slot] = names.size ? names : null;

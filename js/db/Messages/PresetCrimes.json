@@ -532,5 +532,11 @@
     "bounty": 250000,
     "category": "State Crimes",
     "name_int": "crime.crimesagainsthumanity.name"
+  },
+  "fareEvasion": {
+    "name": "Fare Evasion",
+    "bounty": 8000,
+    "category": "Minor Offenses",
+    "name_int": "crime.fareevasion.name"
   }
 }

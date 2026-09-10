@@ -1712,11 +1712,22 @@
     // at least one weapon model is visible, plus one last pass on the frame the
     // last one goes: the overlay canvas keeps whatever was drawn into it, so
     // without it a faded-out weapon would stay painted over the battle.
-    if ((anyModelVisible || fxActive || this._weaponOverlayDrawn) && window.WeaponThreeScene &&
+    // Below 60fps the engine runs the logic two or three times per drawn frame
+    // (window.FrameBudget in Core/ParchmentToast.js) and only the last of them
+    // is shown, so a pass on any of the others is thrown away at full price.
+    // The pass that clears the overlay after the last weapon has gone is never
+    // skipped: the canvas keeps what was drawn into it, so skipping that one
+    // would leave a faded-out weapon painted over the battle. A skipped pass
+    // also leaves the "something is painted" flag alone, since the canvas still
+    // holds the frame before it.
+    const clearingOverlay = !anyModelVisible && !fxActive;
+    const presented = !window.FrameBudget || window.FrameBudget.isPresented();
+    if ((anyModelVisible || fxActive || this._weaponOverlayDrawn) &&
+        (presented || clearingOverlay) && window.WeaponThreeScene &&
         typeof window.WeaponThreeScene.render === 'function') {
       window.WeaponThreeScene.render();
+      this._weaponOverlayDrawn = anyModelVisible || fxActive;
     }
-    this._weaponOverlayDrawn = anyModelVisible || fxActive;
   };
   //=============================================================================
   // Scene_Battle - Command Handling and Updates

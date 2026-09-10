@@ -4839,6 +4839,260 @@
         ]
       ]
     },
+    "companion": {
+      "warm": [
+        [
+          "Ehi {other}, ti va di dividere questo cibo che ho trovato?",
+          "Sei un pezzo di pane, {name}! Grazie!",
+          "Ci si guarda le spalle a vicenda, no?"
+        ],
+        [
+          "{other}, fammi fasciare quella ferita.",
+          "Io... grazie. Non volevo chiedertelo.",
+          "Non c'è bisogno che lo chiedi. Ci badiamo l'un l'altro.",
+          "Sono fortunato ad averti qui."
+        ],
+        [
+          "Neanche tu riesci a dormire?",
+          "Di nuovo brutti sogni. Questa vita... ti si attacca addosso.",
+          "Vuoi parlarne? Io ci sono.",
+          "Grazie. Già solo averti qui aiuta."
+        ],
+        [
+          "La mia borraccia è vuota...",
+          "Tieni, prendi la mia. L'ho riempita all'ultimo ruscello.",
+          "E tu come fai?",
+          "L'acqua la troviamo. A te serve adesso."
+        ],
+        [
+          "Là dietro mi hai coperto. Te ne devo una.",
+          "Tu avresti fatto lo stesso. Non parliamone più.",
+          "Comunque. Ha voluto dire qualcosa.",
+          "Allora siamo pari quando servirà."
+        ],
+        [
+          "Ho portato razioni in più. Ho pensato che stasera potevamo mangiare insieme.",
+          "Non eri mica obbligato.",
+          "Ne avevo voglia. Sembravi uno che ha bisogno di un pasto come si deve.",
+          "Ne avevo bisogno eccome. Grazie, {name}."
+        ],
+        [
+          "Ce l'abbiamo fatta. Sinceramente non credevo.",
+          "Nemmeno io, a essere onesto.",
+          "E allora perché hai continuato a spingere?",
+          "Perché tu ti muovevi ancora."
+        ],
+        [
+          "Ti capita mai di sentirti solo, qui fuori?",
+          "Ogni tanto. Meno di prima.",
+          "Per via degli altri?",
+          "Per via tua, soprattutto."
+        ],
+        [
+          "Ti ho tenuto da parte il pane buono.",
+          "Non dovevi.",
+          "Lo so. È proprio quello il punto."
+        ],
+        [
+          "Fai un pezzo di strada con me? Non ho voglia di farla da solo.",
+          "Volentieri. In due è una strada migliore."
+        ],
+        [
+          "Ieri notte ho fatto il tuo turno di guardia. Quelle ore servivano a te più che a me.",
+          "Dovevi svegliarmi.",
+          "Lo so. L'ho fatto comunque."
+        ],
+        [
+          "Il tuo zaino è più leggero di stamattina.",
+          "Perché metà è finita nel tuo.",
+          "Allora non ne parliamo."
+        ],
+        [
+          "Siediti. Al fuoco ci penso io.",
+          "L'hai acceso anche ieri sera.",
+          "E so come si fa. Siediti."
+        ],
+        [
+          "Hai parlato di nuovo nel sonno.",
+          "Cosa ho detto?",
+          "Niente che ripeterò. Sembrava però una cosa a cui tieni."
+        ],
+        [
+          "Mangia prima tu. Alla guardia penso io.",
+          "Non hai mangiato nemmeno tu.",
+          "Lo farò, quando avrai finito."
+        ],
+        [
+          "Dammi gli stivali. Quella cucitura non regge un altro giorno.",
+          "Sai farlo?",
+          "L'ho fatto per piedi peggiori dei tuoi."
+        ],
+        [
+          "Qualunque cosa ci aspetti lassù, da lì esco con te.",
+          "Non promettermelo.",
+          "Non sto promettendo. Ti sto dicendo cosa intendo fare."
+        ],
+        [
+          "L'ultimo miglio mi hai portato tu, vero?",
+          "Mezzo miglio. Pesi più di quanto sembri.",
+          "Grazie comunque."
+        ]
+      ],
+      "sore": [
+        [
+          "Ultimamente ci stai rallentando.",
+          "Mica siamo tutti perfetti come credi di essere tu.",
+          "Dico solo che dobbiamo restare concentrati..."
+        ],
+        [
+          "Hai frugato nel mio zaino?!",
+          "Cercavo qualcosa per curare. Rilassati.",
+          "Quella è roba mia! Non ne avevi il diritto!",
+          "Va bene. La prossima volta ti lascio dissanguare."
+        ],
+        [
+          "È esattamente come quella volta nelle grotte.",
+          "Ma la stai tirando fuori un'altra volta sul serio?",
+          "Non ti sei mai scusato!",
+          "Perché non era colpa mia!"
+        ],
+        [
+          "QUANTO hai speso alla taverna?!",
+          "Mi serviva un'informazione. Era necessario.",
+          "Ti serviva la birra, è quello che ti serviva!",
+          "Non farmi la lezione sui soldi."
+        ],
+        [
+          "Quella era la MIA parte di razioni!",
+          "La tua l'hai mangiata stamattina.",
+          "Quello era ieri! Ma ci stai con la testa?",
+          "Non usare quel tono con me."
+        ],
+        [
+          "Con quel russare non mi hai fatto chiudere occhio!",
+          "Io non russo!",
+          "Sembri un drago con il raffreddore!",
+          "E tu ti rigiravi tanto che non ho dormito IO!"
+        ],
+        [
+          "Quand'è l'ultima volta che ti sei lavato?",
+          "Sono stato occupato, va bene?",
+          "Non è una scusa per puzzare come un troll!",
+          "Senti da che pulpito!"
+        ],
+        [
+          "Perché ti sei preso tu l'arma migliore?",
+          "L'ho trovata io. Chi trova, tiene.",
+          "Dovremmo dividere le cose equamente!",
+          "E allora la prossima volta trovatene una tua."
+        ],
+        [
+          "Non sopporto il modo in cui mangi.",
+          "Io non sopporto il modo in cui respiri, quindi siamo pari.",
+          "Questa non ha nemmeno senso.",
+          "Nemmeno lamentarsi di come mangia uno."
+        ],
+        [
+          "Hai lasciato spegnere il fuoco.",
+          "Mi sono addormentato.",
+          "Ci siamo addormentati tutti. Io sono quello che si è svegliato al freddo."
+        ],
+        [
+          "Smetti di camminare avanti. Da dietro non ti guardo le spalle.",
+          "E allora sta' al passo.",
+          "Non è questo il punto e lo sai."
+        ],
+        [
+          "La borsa è più leggera di quanto dovrebbe.",
+          "Mi stai accusando?",
+          "Sto chiedendo. Siamo in tre e la borsa è una."
+        ],
+        [
+          "Hai bevuto l'ultima acqua.",
+          "Era rimasto un sorso.",
+          "Era rimasto il mio sorso."
+        ],
+        [
+          "Non usare il mio coltello per quello.",
+          "Era il più affilato che c'era.",
+          "È il più affilato perché sono io che lo affilo."
+        ],
+        [
+          "Non fai un turno di guardia da quattro notti.",
+          "Nessuno me l'ha chiesto.",
+          "Nessuno dovrebbe doverlo chiedere."
+        ],
+        [
+          "Lava la pentola quando hai finito.",
+          "Ci penso.",
+          "L'hai detto anche ieri e ci ho pensato io."
+        ],
+        [
+          "Ogni volta che ci accampiamo sparisci per un'ora.",
+          "Mi serve un'ora per me.",
+          "Allora dillo, invece di lasciarmi a cercarti lungo gli alberi."
+        ]
+      ],
+      "road": [
+        [
+          "Ti chiedi mai perché lo stiamo facendo davvero?",
+          "Ogni tanto. Ma rimuginarci non cambia niente.",
+          "Avrai ragione. Pensavo ad alta voce."
+        ],
+        [
+          "Stasera tocca a te cucinare.",
+          "Di già? Mi sembra di aver cucinato ieri.",
+          "Quello era tre giorni fa.",
+          "Il tempo si impasta tutto, eh?"
+        ],
+        [
+          "Guarda, impronte di cervo.",
+          "E pure fresche.",
+          "Vuol dire che l'acqua è probabilmente qui vicino.",
+          "Buona osservazione."
+        ],
+        [
+          "Quanto manca prima di fermarci?",
+          "Finché c'è luce, se il terreno resta così."
+        ],
+        [
+          "A chi tocca stare davanti?",
+          "A te. Tocca a te dal guado."
+        ],
+        [
+          "Dovremmo contare quello che resta prima di comprare qualcosa.",
+          "Ho contato stamattina. Ci basta per tre giorni."
+        ],
+        [
+          "Vuoi dormire vicino al fuoco o vicino alla strada?",
+          "Alla strada. Preferisco sentirla arrivare."
+        ],
+        [
+          "Ho segnato sulla mappa dove abbiamo svoltato.",
+          "Bene. Non l'avrei ritrovato una seconda volta."
+        ],
+        [
+          "E se il passo è chiuso?",
+          "Giriamo intorno, e ce ne lamentiamo per una settimana."
+        ],
+        [
+          "Svegliami per il secondo turno.",
+          "Ti sveglio per il terzo. Ieri notte ne hai fatti due."
+        ],
+        [
+          "Siamo persi, o stiamo esplorando?",
+          "Le due parole vogliono dire la stessa cosa fino a cena."
+        ],
+        [
+          "Prima o poi cedono i tuoi stivali o i miei, e dico i miei.",
+          "I miei. I tuoi hanno ancora un inverno dentro."
+        ],
+        [
+          "Non abbiamo parlato di cosa succede quando tutto questo sarà finito.",
+          "No. E non ne parleremo, stanotte."
+        ]
+      ]
+    },
     "driving": [
       [
         "A chi tocca guardare la strada? Guardarla davvero.",

@@ -3,20 +3,6 @@
     [
       [
         0,
-        "Hey {b}, want to share this food I found?"
-      ],
-      [
-        1,
-        "That's really kind of you, {a}! Thanks!"
-      ],
-      [
-        0,
-        "Got to look out for each other!"
-      ]
-    ],
-    [
-      [
-        0,
         "*tells a silly joke*"
       ],
       [
@@ -26,24 +12,6 @@
       [
         0,
         "Sometimes you need to find humor in the chaos!"
-      ]
-    ],
-    [
-      [
-        0,
-        "{b}, let me help bandage that wound."
-      ],
-      [
-        1,
-        "I... thank you. I didn't want to ask."
-      ],
-      [
-        0,
-        "You don't need to ask. We look after each other."
-      ],
-      [
-        1,
-        "I'm lucky to have you around."
       ]
     ],
     [
@@ -103,24 +71,6 @@
     [
       [
         0,
-        "Couldn't sleep either?"
-      ],
-      [
-        1,
-        "Bad dreams again. This life... it gets to you."
-      ],
-      [
-        0,
-        "Want to talk about it? I'm here."
-      ],
-      [
-        1,
-        "Thanks. Just having you here helps."
-      ]
-    ],
-    [
-      [
-        0,
         "You seem down today. Everything okay?"
       ],
       [
@@ -134,24 +84,6 @@
       [
         1,
         "You really mean that? Thank you..."
-      ]
-    ],
-    [
-      [
-        0,
-        "My waterskin is empty..."
-      ],
-      [
-        1,
-        "Here, take mine. I filled it at the last stream."
-      ],
-      [
-        0,
-        "But what about you?"
-      ],
-      [
-        1,
-        "We'll find more water. You need it now."
       ]
     ],
     [
@@ -184,42 +116,6 @@
       [
         0,
         "I'd love to learn from you!"
-      ]
-    ],
-    [
-      [
-        0,
-        "You covered for me back there. I owe you one."
-      ],
-      [
-        1,
-        "You'd have done the same. Don't mention it."
-      ],
-      [
-        0,
-        "Still. It meant something."
-      ],
-      [
-        1,
-        "Then call it even when the time comes."
-      ]
-    ],
-    [
-      [
-        0,
-        "I brought extra rations. Figured we could eat together tonight."
-      ],
-      [
-        1,
-        "You didn't have to do that."
-      ],
-      [
-        0,
-        "I wanted to. You looked like you needed a good meal."
-      ],
-      [
-        1,
-        "I really did. Thank you, {a}."
       ]
     ],
     [
@@ -369,24 +265,6 @@
     [
       [
         0,
-        "We made it. I actually didn't think we would."
-      ],
-      [
-        1,
-        "Neither did I, if I'm honest."
-      ],
-      [
-        0,
-        "Then why did you keep pushing?"
-      ],
-      [
-        1,
-        "Because you were still moving."
-      ]
-    ],
-    [
-      [
-        0,
         "I used to think people like you only existed in stories."
       ],
       [
@@ -400,24 +278,6 @@
       [
         1,
         "I just do what I say. It should be ordinary."
-      ]
-    ],
-    [
-      [
-        0,
-        "Do you ever get lonely out here?"
-      ],
-      [
-        1,
-        "Sometimes. Less than I used to."
-      ],
-      [
-        0,
-        "Because of the others?"
-      ],
-      [
-        1,
-        "Because of you, mostly."
       ]
     ],
     [
@@ -469,20 +329,6 @@
     [
       [
         0,
-        "I kept the good bread back for you."
-      ],
-      [
-        1,
-        "You did not have to do that."
-      ],
-      [
-        0,
-        "I know. That is rather the point."
-      ]
-    ],
-    [
-      [
-        0,
         "I have been telling people what you did."
       ],
       [
@@ -492,16 +338,6 @@
       [
         0,
         "Too late. Half the street knows."
-      ]
-    ],
-    [
-      [
-        0,
-        "Walk with me a while? I do not want the road on my own."
-      ],
-      [
-        1,
-        "Gladly. It is a better road with two."
       ]
     ],
     [
@@ -529,38 +365,6 @@
     [
       [
         0,
-        "You've been slowing us down lately."
-      ],
-      [
-        1,
-        "Not everyone can be perfect like you think you are."
-      ],
-      [
-        0,
-        "I'm just saying we need to stay focused..."
-      ]
-    ],
-    [
-      [
-        0,
-        "You went through my pack?!"
-      ],
-      [
-        1,
-        "I was looking for healing items. Relax."
-      ],
-      [
-        0,
-        "That's my private stuff! You had no right!"
-      ],
-      [
-        1,
-        "Fine. Next time I'll let you bleed out."
-      ]
-    ],
-    [
-      [
-        0,
         "Do you ever stop talking?"
       ],
       [
@@ -574,114 +378,6 @@
       [
         1,
         "Yeah, you overthink everything."
-      ]
-    ],
-    [
-      [
-        0,
-        "This is just like that time in the caves."
-      ],
-      [
-        1,
-        "Are you seriously bringing that up again?"
-      ],
-      [
-        0,
-        "You never apologized!"
-      ],
-      [
-        1,
-        "Because it wasn't my fault!"
-      ]
-    ],
-    [
-      [
-        0,
-        "You spent HOW much at the tavern?!"
-      ],
-      [
-        1,
-        "I needed information. It was necessary."
-      ],
-      [
-        0,
-        "You needed ale is what you needed!"
-      ],
-      [
-        1,
-        "Don't lecture me about money."
-      ]
-    ],
-    [
-      [
-        0,
-        "That was MY portion of the rations!"
-      ],
-      [
-        1,
-        "You had yours this morning."
-      ],
-      [
-        0,
-        "That was yesterday! Are you even paying attention?"
-      ],
-      [
-        1,
-        "Don't take that tone with me."
-      ]
-    ],
-    [
-      [
-        0,
-        "Your snoring kept me up all night!"
-      ],
-      [
-        1,
-        "I don't snore!"
-      ],
-      [
-        0,
-        "You sound like a dragon with a cold!"
-      ],
-      [
-        1,
-        "Well, your tossing and turning kept ME awake!"
-      ]
-    ],
-    [
-      [
-        0,
-        "When's the last time you bathed?"
-      ],
-      [
-        1,
-        "I've been busy, alright?"
-      ],
-      [
-        0,
-        "That's no excuse to smell like a troll!"
-      ],
-      [
-        1,
-        "You're one to talk!"
-      ]
-    ],
-    [
-      [
-        0,
-        "Why did you take the better weapon?"
-      ],
-      [
-        1,
-        "I found it. Finders keepers."
-      ],
-      [
-        0,
-        "We're supposed to share equally!"
-      ],
-      [
-        1,
-        "Then find your own next time."
       ]
     ],
     [
@@ -794,24 +490,6 @@
       [
         1,
         "I prefer to call it positioning."
-      ]
-    ],
-    [
-      [
-        0,
-        "I cannot stand how you eat."
-      ],
-      [
-        1,
-        "I cannot stand how you breathe, so we are even."
-      ],
-      [
-        0,
-        "That does not even make sense."
-      ],
-      [
-        1,
-        "Neither does complaining about someone eating."
       ]
     ],
     [
@@ -1029,38 +707,6 @@
     [
       [
         0,
-        "Do you ever wonder why we're really doing this?"
-      ],
-      [
-        1,
-        "Sometimes. But dwelling on it won't change anything."
-      ],
-      [
-        0,
-        "I suppose you're right. Just thinking out loud."
-      ]
-    ],
-    [
-      [
-        0,
-        "It's your turn to cook tonight."
-      ],
-      [
-        1,
-        "Already? Feels like I just cooked yesterday."
-      ],
-      [
-        0,
-        "That was three days ago."
-      ],
-      [
-        1,
-        "Time really blurs, doesn't it?"
-      ]
-    ],
-    [
-      [
-        0,
         "Clear night. The stars are bright."
       ],
       [
@@ -1196,24 +842,6 @@
       [
         1,
         "If you can afford it."
-      ]
-    ],
-    [
-      [
-        0,
-        "Look, deer tracks."
-      ],
-      [
-        1,
-        "Fresh ones too."
-      ],
-      [
-        0,
-        "Means water's probably nearby."
-      ],
-      [
-        1,
-        "Good observation."
       ]
     ],
     [

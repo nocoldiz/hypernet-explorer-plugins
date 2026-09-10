@@ -3276,6 +3276,14 @@
 
         render() {
             this._lastDrew = false;
+            // Below 60fps the engine runs the logic two or three times per drawn
+            // frame (window.FrameBudget in Core/ParchmentToast.js) and only the
+            // last of them reaches the screen, so a whole three.js pass on any
+            // of the others is drawn at full price into a frame nobody gets.
+            // Like the frame cap below, this leaves the clock alone: the delta
+            // rolls into the pass that is actually drawn, so the animation
+            // advances by the true elapsed time.
+            if (window.FrameBudget && !window.FrameBudget.isPresented()) return;
             // Nothing on the 3D layer (e.g. 2D/Sprites mode, or before models
             // finish loading) -> skip the whole pass. Keep the clock current so
             // the first real frame doesn't get a huge accumulated delta.
@@ -3378,6 +3386,26 @@
 
     // List every registered archetype key (used by the title screen preview).
     window.Battler3D.list = () => Object.keys(ArchetypeRegistry);
+
+    // How big an archetype actually ends up.
+    //
+    // The registered `scale` is what the model is BUILT at - an orc is 3.1, an
+    // ogre 4.2, a plain human 2.6 - and for most archetypes that is also the
+    // size it is shown at, so it is the game's own statement of how big the
+    // creature is. A family that rescales its models after building them says
+    // so with `worldScale`, which wins: the goblinoids are all built at about
+    // a human's scale and then stood on a height of their own, so a goblin's
+    // 2.5 is not a goblin's size and its worldScale of 1.43 is.
+    //
+    // Read by the overworld, which has to stand the same creature on real
+    // ground beside a party and wants it the size the battle view shows. Zero
+    // for a key nobody registered, so a caller can tell "no answer" from
+    // "small".
+    window.Battler3D.archetypeScale = function (key) {
+        const def = ArchetypeRegistry[String(key || '').toLowerCase()];
+        if (!def) return 0;
+        return Number(def.worldScale) || Number(def.scale) || 1.0;
+    };
 
     // Instantiate a procedural model for a registered archetype. Pass a null
     // battler for decorative previews (no body parts -> no dismemberment), and a

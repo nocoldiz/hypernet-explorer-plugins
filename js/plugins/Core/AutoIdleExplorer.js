@@ -3498,6 +3498,11 @@
                 const add = (char) => {
                     const actor = this.partyActorOf(char);
                     if (!actor || cast.includes(actor)) return;
+                    // A companion on one of the creature classes has no line to
+                    // add to a discussion, so it is never cast in one: it drifts
+                    // along with the rest and says nothing (PartyBanter.canSpeak,
+                    // NPCCreature owns the boundary).
+                    if (window.PartyBanter?.canSpeak && !window.PartyBanter.canSpeak(actor)) return;
                     cast.push(actor);
                     chars.push(char);
                 };

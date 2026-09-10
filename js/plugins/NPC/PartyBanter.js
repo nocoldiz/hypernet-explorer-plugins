@@ -56,6 +56,14 @@
  *   biome      where they are standing, by FAMILY rather than by biome id, so
  *              one bank covers Forest, Jungle and Bamboo and a biome nobody
  *              has written for still lands somewhere sensible.
+ *   companion  what only people who share a camp say to each other: whose
+ *              rations those were, who took the watch, who was snoring, who
+ *              took the better weapon out of the loot. This used to sit in the
+ *              town's bank (NPC/NPCConversation.js), where a shopkeeper the
+ *              party had met a minute ago could open with it; it is the party's
+ *              now, and nothing outside the party can reach it. Split three
+ *              ways by how the two of them are actually getting on: `warm`,
+ *              `sore`, and `road` for the practical middle.
  *   general    the road, the money, the leader, the plan. Always available.
  *   personality one member's own PERSONALITY opens (their archetype from
  *              js/db/Health/PersonalityData.json), the other's personality
@@ -267,6 +275,16 @@
         } catch (e) {
             return null;
         }
+    }
+
+    // A member on one of the creature classes (63+, NPCCreature owns the
+    // boundary) holds no conversation, so it is not cast in one. Recruiting an
+    // animal does not hand it a vocabulary: it walks with the party and it
+    // stays quiet, here and in every other bank that puts words in a
+    // companion's mouth.
+    function nonSentient(actor) {
+        const NC = window.NPCCreature;
+        return !!(actor && NC && NC.isNonSentientActor && NC.isNonSentientActor(actor));
     }
 
     // 'cynical', 'nurturing', ... A member whose society profile carries no
@@ -611,6 +629,47 @@
         return merged;
     }
 
+    // ------------------------------------------------------------ companions
+    // What these two think of each other, as one figure: both directions of the
+    // ledger averaged, since a conversation has two sides to it. It is the same
+    // number the Empathize panel keeps and the same one NPCConversation weighs
+    // the town's tones with. No profile, or no helper to read one with, means no
+    // history to read: zero, rather than a guess.
+    function mutualOpinion(a, b) {
+        const helpers = window.NPCEmpathize && window.NPCEmpathize._helpers;
+        const reg = window.NPCSocietyRegistry;
+        if (!a || !b || !helpers || !helpers._npcBaseOpinion || !reg || !reg.getProfile) return 0;
+        let sum = 0;
+        let seen = 0;
+        const read = (from, about) => {
+            try {
+                const profile = reg.getProfile(from.name());
+                if (!profile) return;
+                sum += Number(helpers._npcBaseOpinion(profile, about.actorId())) || 0;
+                seen++;
+            } catch (e) { /* a chat never breaks on a missing ledger */ }
+        };
+        read(a, b);
+        read(b, a);
+        return seen ? sum / seen : 0;
+    }
+
+    // Which half of the companion bank they are in. Whose rations those were and
+    // who was snoring is not small talk: it is only said by people who share a
+    // camp, and how it is said depends on how the two of them are getting on.
+    // `road` is the middle of it, the practical talk of two people with the same
+    // map, and it is where a pair with no history between them mostly lands.
+    function companionTone(cast) {
+        const rel = mutualOpinion(cast[0], cast[1]);
+        const w = rel >= 20 ? { warm: 60, road: 32, sore: 8 }
+            : rel <= -10 ? { warm: 15, road: 30, sore: 55 }
+                : { warm: 40, road: 40, sore: 20 };
+        let roll = Math.random() * (w.warm + w.road + w.sore);
+        if ((roll -= w.warm) <= 0) return 'warm';
+        if ((roll -= w.road) <= 0) return 'road';
+        return 'sore';
+    }
+
     // ---------------------------------------------------------------- topics
     // Where the conversation is happening, when that is not simply "outdoors, on
     // foot". A setting brings its own bank in at a strong weight, because a party
@@ -626,8 +685,11 @@
     function chooseTopic(cast, setting) {
         const options = [];
         const where = SETTINGS[setting] || null;
-        const add = (weight, path, extra) => {
-            if (weight > 0 && has(path)) options.push({ weight, path, extra: extra || null });
+        // `voices` caps how many of the cast a script is shared out between: a
+        // companion exchange is an argument or a kindness between TWO of them,
+        // and handing its third line to a third member turns it into nonsense.
+        const add = (weight, path, extra, voices) => {
+            if (weight > 0 && has(path)) options.push({ weight, path, extra: extra || null, voices: voices || 0 });
         };
 
         // News first, and only once: it stops being news the moment it is out.
@@ -653,6 +715,10 @@
 
         const family = (!where || where.outdoors) ? biomeFamily(biomeId()) : null;
         if (family) add(24, 'script.biome.' + family);
+
+        // The party's own subjects: the watch, the rations, the purse, the pack,
+        // who snores. Nobody outside the party can reach this bank.
+        add(24, 'script.companion.' + companionTone(cast), null, 2);
 
         add(26, 'script.general');
 
@@ -696,13 +762,14 @@
         if (line) beats.push({ who, text: line });
     }
 
-    function scriptBeats(entry, cast, ctx) {
+    function scriptBeats(entry, cast, ctx, voices) {
         const lines = Array.isArray(entry) ? entry : [entry];
+        const mouths = Math.max(1, Math.min(voices || cast.length, cast.length));
         const beats = [];
         for (let i = 0; i < lines.length; i++) {
             const text = fill(String(lines[i]), ctx);
             if (unresolved(text)) return null;   // a token nothing answered
-            beats.push({ who: i % cast.length, text });
+            beats.push({ who: i % mouths, text });
         }
         return beats;
     }
@@ -846,7 +913,7 @@
     // Up to three of them, the one at the wheel first: they are the one with
     // something to say about the road.
     function travelCast() {
-        const list = members().filter((a) => !!a && (!a.isDead || !a.isDead()));
+        const list = members().filter((a) => !!a && (!a.isDead || !a.isDead()) && !nonSentient(a));
         if (list.length < 2) return null;
         const driver = (window.VehicleCrew && window.VehicleCrew.driver && window.VehicleCrew.driver())
             || ($gameParty && $gameParty.leader());
@@ -1146,7 +1213,7 @@
                 } else {
                     const entry = pick(pool(topic.path));
                     if (!entry) continue;
-                    beats = scriptBeats(entry, people, merged);
+                    beats = scriptBeats(entry, people, merged, topic.voices);
                     if (beats && topic.extra && topic.extra._sig) _lastRecent = topic.extra._sig;
                 }
                 if (!beats || beats.length < 2) continue;
@@ -1168,6 +1235,7 @@
         // the caller on its own generic bank.
         solo(actor, key) {
             if (!active() || !actor || !key) return null;
+            if (nonSentient(actor)) return null;
             const kind = String(key).replace(/^AutoIdle\.loose\./, '');
             if (kind === 'reply') return null;            // that is the town's line
             if (kind === 'greet') return this.strangerGreet(actor);
@@ -1186,6 +1254,7 @@
         // party's.
         strangerGreet(actor) {
             if (!active() || !actor) return null;
+            if (nonSentient(actor)) return null;
             const line = pick(personalPool(actor, 'stranger'));
             if (!line) return null;
             const text = fill(line, baseContext([actor]));
@@ -1240,6 +1309,11 @@
         // Testing seams.
         _travel: travel,
         _travelCast: travelCast,
+        // Whether this member has any conversation in them at all. A cast is
+        // built by the caller and the beats come back indexed into the array it
+        // handed over, so a beast has to be left out at source rather than
+        // filtered here (see AutoIdleExplorer's loose-chatter cast).
+        canSpeak(actor) { return !!actor && !nonSentient(actor); },
     };
 
     window.PartyBanter = PartyBanter;

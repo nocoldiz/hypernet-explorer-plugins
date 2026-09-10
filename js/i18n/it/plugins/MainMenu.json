@@ -97,6 +97,7 @@
     "partyEmpty": "Qualcuno deve continuare a viaggiare: il gruppo non può restare vuoto.",
     "isLeader": "{name} guida il gruppo. Nomina prima un altro capogruppo.",
     "cannotRetire": "{name} non può essere messo a riposo adesso.",
+    "actionFailed": "Qualcosa è andato storto: non è stato cambiato nulla.",
     "storyLocked": "{name} non va da nessuna parte: questa strada è sua fino alla fine.",
     "nowInactive": "{name} è ora inattivo e può essere scelto come personaggio in questo mondo.",
     "back": "Indietro",

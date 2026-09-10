@@ -97,6 +97,7 @@
     "partyEmpty": "Someone has to keep travelling: the party cannot be left empty.",
     "isLeader": "{name} leads the party. Make someone else leader first.",
     "cannotRetire": "{name} cannot be set inactive right now.",
+    "actionFailed": "Something went wrong with that: nothing was changed.",
     "storyLocked": "{name} is not going anywhere: this road is theirs to the end.",
     "nowInactive": "{name} is now inactive and can be picked as a character in this world.",
     "back": "Back",

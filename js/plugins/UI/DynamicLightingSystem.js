@@ -247,8 +247,9 @@
 
     // Player Light Sprite Class
     class Sprite_PlayerLight extends Sprite {
-        constructor() {
+        constructor(snap = false) {
             super();
+            this._snap = snap;
             this.anchor.set(0.5, 0.5);
             this.blendMode = lightBlendMode;
             this._targetOpacity = flashlightOpacity;
@@ -261,7 +262,9 @@
             this.loadBitmap();
             this.updatePosition();
             this.updateRotation();
-            this.opacity = 0; // Start faded out
+            // Faded out when the light is first acquired, already burning when
+            // the sprite is only being rebuilt with the scene.
+            this.opacity = this._snap ? this._targetOpacity : 0;
         }
 
         loadBitmap() {
@@ -372,6 +375,9 @@
             this.loadBitmap();
             this.updatePosition();
             this.updateVisibility();
+            // Lights are rebuilt with the scene, so they start at the brightness
+            // they had rather than fading in again every time the menu closes.
+            this.opacity = this._targetOpacity;
         }
 
         parseLightType() {
@@ -621,6 +627,7 @@
             this.loadBitmap();
             this.updatePosition();
             this.updateVisibility();
+            this.opacity = this._targetOpacity;
         }
 
         loadBitmap() {
@@ -785,7 +792,7 @@
 
             // Recreate player light if it should exist
             if ($gameLighting && $gameLighting.hasPlayerLight()) {
-                this.createPlayerLight();
+                this.createPlayerLight(true);
             }
         }
 
@@ -849,11 +856,11 @@
             const TD = window.TerrainInteractions;
             if (!TD || typeof TD.getLitTiles !== "function") return;
             for (const t of TD.getLitTiles()) {
-                this.setAdHocLight(`${t.x},${t.y}`, t.x, t.y, true);
+                this.setAdHocLight(`${t.x},${t.y}`, t.x, t.y, true, true);
             }
         }
 
-        setAdHocLight(key, x, y, on) {
+        setAdHocLight(key, x, y, on, snap = false) {
             this._adHocLights = this._adHocLights || {};
             const existing = this._adHocLights[key];
             if (!on) {
@@ -869,17 +876,19 @@
             const light = new Sprite_TileLight(x, y, 0);
             light._lightType = LightTypes.ALWAYS; // manually toggled, not time-of-day driven
             light.updateVisibility();
+            // A torch just struck flares up; one restored on map load is already lit.
+            light.opacity = snap ? light._targetOpacity : 0;
             this._adHocLights[key] = light;
             this._lightSprites.push(light);
             this.addChild(light);
         }
 
-        createPlayerLight() {
+        createPlayerLight(snap = false) {
             if (this._playerLight) {
                 this.removeChild(this._playerLight);
             }
 
-            this._playerLight = new Sprite_PlayerLight();
+            this._playerLight = new Sprite_PlayerLight(snap);
             this.addChild(this._playerLight);
 
             if (enableDebug) {
@@ -1000,9 +1009,9 @@
 
         // Instantly reflects a Torch/Candle toggle on the live map (persistence
         // across visits is handled separately, see Spriteset_Lighting.createAdHocLights).
-        setAdHocLight(key, x, y, on) {
+        setAdHocLight(key, x, y, on, snap = false) {
             if (this._lightingLayer) {
-                this._lightingLayer.setAdHocLight(key, x, y, on);
+                this._lightingLayer.setAdHocLight(key, x, y, on, snap);
             }
         }
 
@@ -1083,6 +1092,12 @@
             this._currentIntensity = 0;
             this._fadeSpeed = fadeSpeed || 30;
             this._visCheck = 1;
+            // A new sprite is built every time Scene_Map is rebuilt, and closing
+            // the menu rebuilds it. Fading up from zero there washed the whole
+            // room out for half a second before the dark came back, so the very
+            // first frame snaps to whatever the map already is; the fade below
+            // is only for the light changing while the map is being played.
+            this._snapIntensity = true;
             this._resizeCanvas();
         }
 
@@ -1267,6 +1282,11 @@
                 this._visCheck = VISIBILITY_REFRESH_INTERVAL;
             }
 
+            if (this._snapIntensity) {
+                this._currentIntensity = this._targetIntensity;
+                this._snapIntensity = false;
+            }
+
             // Smooth transition
             const step = 1 / (this._fadeSpeed || 30);
             if (this._currentIntensity < this._targetIntensity) {
@@ -1282,6 +1302,13 @@
 
             if (!this.visible) this.visible = true;
             this.alpha = this._currentIntensity;
+            // A full-screen repaint plus a texture upload, and the flicker means
+            // it is a fresh one every frame. Below 60fps the engine runs the
+            // logic two or three times per drawn frame (window.FrameBudget in
+            // Core/ParchmentToast.js), and a repaint on a tick that is not the
+            // drawn one is thrown away at full price. The fade above still
+            // steps on every tick, so the light comes up at the same speed.
+            if (window.FrameBudget && !window.FrameBudget.isPresented()) return;
             this._resizeCanvas();
             this.renderLighting();
         }
@@ -1665,22 +1692,13 @@
     const _ConfigManager_applyData_lighting = ConfigManager.applyData;
     ConfigManager.applyData = function (config) {
         _ConfigManager_applyData_lighting.call(this, config);
-        this.nightLight = this.readFlag(config, 'nightLight', true);
+        // Forced on, both of them: there is no Options row left to turn them
+        // back on with, so an old config that once said off is ignored.
+        this.nightLight = true;
         this.globalLighting = true;
     };
 
-    // Add night light option to the Options menu (Dynamic Lighting is always ON)
-    if (window.GameOptions) {
-        window.GameOptions.registerOption('nightLight', T('DynamicLighting.nightLight'),
-            () => ConfigManager.nightLight,
-            (value) => ConfigManager.nightLight = value,
-            'video', 'boolean');
-    } else {
-        const _Window_Options_addGeneralOptions_lighting = Window_Options.prototype.addGeneralOptions;
-        Window_Options.prototype.addGeneralOptions = function () {
-            _Window_Options_addGeneralOptions_lighting.call(this);
-            this.addCommand(T('DynamicLighting.nightLight'), 'nightLight');
-        };
-    }
+    // The night light has no Options row any more: it is always on, like the
+    // dynamic lighting itself.
 
 })();

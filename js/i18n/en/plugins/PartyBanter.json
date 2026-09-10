@@ -4839,6 +4839,260 @@
         ]
       ]
     },
+    "companion": {
+      "warm": [
+        [
+          "Hey {other}, want to share this food I found?",
+          "That's really kind of you, {name}! Thanks!",
+          "Got to look out for each other!"
+        ],
+        [
+          "{other}, let me help bandage that wound.",
+          "I... thank you. I didn't want to ask.",
+          "You don't need to ask. We look after each other.",
+          "I'm lucky to have you around."
+        ],
+        [
+          "Couldn't sleep either?",
+          "Bad dreams again. This life... it gets to you.",
+          "Want to talk about it? I'm here.",
+          "Thanks. Just having you here helps."
+        ],
+        [
+          "My waterskin is empty...",
+          "Here, take mine. I filled it at the last stream.",
+          "But what about you?",
+          "We'll find more water. You need it now."
+        ],
+        [
+          "You covered for me back there. I owe you one.",
+          "You'd have done the same. Don't mention it.",
+          "Still. It meant something.",
+          "Then call it even when the time comes."
+        ],
+        [
+          "I brought extra rations. Figured we could eat together tonight.",
+          "You didn't have to do that.",
+          "I wanted to. You looked like you needed a good meal.",
+          "I really did. Thank you, {name}."
+        ],
+        [
+          "We made it. I actually didn't think we would.",
+          "Neither did I, if I'm honest.",
+          "Then why did you keep pushing?",
+          "Because you were still moving."
+        ],
+        [
+          "Do you ever get lonely out here?",
+          "Sometimes. Less than I used to.",
+          "Because of the others?",
+          "Because of you, mostly."
+        ],
+        [
+          "I kept the good bread back for you.",
+          "You did not have to do that.",
+          "I know. That is rather the point."
+        ],
+        [
+          "Walk with me a while? I do not want the road on my own.",
+          "Gladly. It is a better road with two."
+        ],
+        [
+          "I took your watch last night. You needed the hours more than I did.",
+          "You should have woken me.",
+          "I know. I did it anyway."
+        ],
+        [
+          "Your pack is lighter than it was this morning.",
+          "That is because half of it is in yours.",
+          "Then we will say nothing about it."
+        ],
+        [
+          "Sit. I will get the fire going.",
+          "You did it last night as well.",
+          "And I know how it is done. Sit down."
+        ],
+        [
+          "You were talking in your sleep again.",
+          "What did I say?",
+          "Nothing I will repeat. It sounded like it mattered to you, though."
+        ],
+        [
+          "Eat first. I will keep watch.",
+          "You have not eaten either.",
+          "I will, when you have."
+        ],
+        [
+          "Give me your boots. That stitching will not last another day.",
+          "You can do that?",
+          "I have done it for worse feet than yours."
+        ],
+        [
+          "Whatever is waiting up there, I am walking back out with you.",
+          "Do not promise that.",
+          "I am not promising. I am telling you what I intend."
+        ],
+        [
+          "You carried me the last mile, did you not.",
+          "Half a mile. You are heavier than you look.",
+          "Thank you all the same."
+        ]
+      ],
+      "sore": [
+        [
+          "You've been slowing us down lately.",
+          "Not everyone can be perfect like you think you are.",
+          "I'm just saying we need to stay focused..."
+        ],
+        [
+          "You went through my pack?!",
+          "I was looking for healing items. Relax.",
+          "That's my private stuff! You had no right!",
+          "Fine. Next time I'll let you bleed out."
+        ],
+        [
+          "This is just like that time in the caves.",
+          "Are you seriously bringing that up again?",
+          "You never apologized!",
+          "Because it wasn't my fault!"
+        ],
+        [
+          "You spent HOW much at the tavern?!",
+          "I needed information. It was necessary.",
+          "You needed ale is what you needed!",
+          "Don't lecture me about money."
+        ],
+        [
+          "That was MY portion of the rations!",
+          "You had yours this morning.",
+          "That was yesterday! Are you even paying attention?",
+          "Don't take that tone with me."
+        ],
+        [
+          "Your snoring kept me up all night!",
+          "I don't snore!",
+          "You sound like a dragon with a cold!",
+          "Well, your tossing and turning kept ME awake!"
+        ],
+        [
+          "When's the last time you bathed?",
+          "I've been busy, alright?",
+          "That's no excuse to smell like a troll!",
+          "You're one to talk!"
+        ],
+        [
+          "Why did you take the better weapon?",
+          "I found it. Finders keepers.",
+          "We're supposed to share equally!",
+          "Then find your own next time."
+        ],
+        [
+          "I cannot stand how you eat.",
+          "I cannot stand how you breathe, so we are even.",
+          "That does not even make sense.",
+          "Neither does complaining about someone eating."
+        ],
+        [
+          "You left the fire to go out.",
+          "I fell asleep.",
+          "We all fell asleep. I am the one who woke up cold."
+        ],
+        [
+          "Stop walking ahead. I cannot watch your back from behind it.",
+          "Then keep up.",
+          "That is not the point and you know it."
+        ],
+        [
+          "The purse is lighter than it should be.",
+          "Are you accusing me?",
+          "I am asking. There are three of us and one purse."
+        ],
+        [
+          "You drank the last of the water.",
+          "There was a mouthful left.",
+          "There was my mouthful left."
+        ],
+        [
+          "Do not use my knife for that.",
+          "It was the sharpest one there.",
+          "It is the sharpest one because I am the one who sharpens it."
+        ],
+        [
+          "You have not taken a watch in four nights.",
+          "Nobody asked me to.",
+          "Nobody should have to ask."
+        ],
+        [
+          "Wash the pot when you are done with it.",
+          "I will get to it.",
+          "You said that yesterday and I got to it instead."
+        ],
+        [
+          "Every time we make camp you vanish for an hour.",
+          "I need an hour to myself.",
+          "Then say so, instead of leaving me to search the treeline."
+        ]
+      ],
+      "road": [
+        [
+          "Do you ever wonder why we're really doing this?",
+          "Sometimes. But dwelling on it won't change anything.",
+          "I suppose you're right. Just thinking out loud."
+        ],
+        [
+          "It's your turn to cook tonight.",
+          "Already? Feels like I just cooked yesterday.",
+          "That was three days ago.",
+          "Time really blurs, doesn't it?"
+        ],
+        [
+          "Look, deer tracks.",
+          "Fresh ones too.",
+          "Means water's probably nearby.",
+          "Good observation."
+        ],
+        [
+          "How much further before we stop?",
+          "Until the light goes, if the ground stays like this."
+        ],
+        [
+          "Whose turn is it at the front?",
+          "Yours. It has been yours since the ford."
+        ],
+        [
+          "We should count what is left before we buy anything.",
+          "I counted this morning. It holds for three days."
+        ],
+        [
+          "Do you want to sleep near the fire or near the road?",
+          "The road. I would rather hear it coming."
+        ],
+        [
+          "I marked the map where we turned off.",
+          "Good. I could not have found that twice."
+        ],
+        [
+          "What do we do if the pass is closed?",
+          "We go around, and we complain about it for a week."
+        ],
+        [
+          "Wake me for the second watch.",
+          "I will wake you for the third. You did two last night."
+        ],
+        [
+          "Are we lost, or are we exploring?",
+          "The two words mean the same thing until supper."
+        ],
+        [
+          "Your boots or mine will go first, and I say mine.",
+          "Mine. Yours have another winter in them."
+        ],
+        [
+          "We have not talked about what happens when this is over.",
+          "No. And we are not going to, tonight."
+        ]
+      ]
+    },
     "driving": [
       [
         "Whose turn is it to watch the road? Properly watch it.",

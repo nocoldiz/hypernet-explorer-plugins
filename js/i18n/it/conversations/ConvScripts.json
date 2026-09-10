@@ -3,20 +3,6 @@
     [
       [
         0,
-        "Ehi {b}, ti va di dividere questo cibo che ho trovato?"
-      ],
-      [
-        1,
-        "Sei un pezzo di pane, {a}! Grazie!"
-      ],
-      [
-        0,
-        "Ci si guarda le spalle a vicenda, no?"
-      ]
-    ],
-    [
-      [
-        0,
         "*racconta una barzelletta pessima*"
       ],
       [
@@ -26,24 +12,6 @@
       [
         0,
         "Ogni tanto nel casino bisogna trovarci da ridere!"
-      ]
-    ],
-    [
-      [
-        0,
-        "{b}, fammi fasciare quella ferita."
-      ],
-      [
-        1,
-        "Io... grazie. Non volevo chiedertelo."
-      ],
-      [
-        0,
-        "Non c'è bisogno che lo chiedi. Ci badiamo l'un l'altro."
-      ],
-      [
-        1,
-        "Sono fortunato ad averti qui."
       ]
     ],
     [
@@ -103,24 +71,6 @@
     [
       [
         0,
-        "Neanche tu riesci a dormire?"
-      ],
-      [
-        1,
-        "Di nuovo brutti sogni. Questa vita... ti si attacca addosso."
-      ],
-      [
-        0,
-        "Vuoi parlarne? Io ci sono."
-      ],
-      [
-        1,
-        "Grazie. Già solo averti qui aiuta."
-      ]
-    ],
-    [
-      [
-        0,
         "Ti vedo giù oggi. Va tutto bene?"
       ],
       [
@@ -134,24 +84,6 @@
       [
         1,
         "Lo pensi davvero? Grazie..."
-      ]
-    ],
-    [
-      [
-        0,
-        "La mia borraccia è vuota..."
-      ],
-      [
-        1,
-        "Tieni, prendi la mia. L'ho riempita all'ultimo ruscello."
-      ],
-      [
-        0,
-        "E tu come fai?"
-      ],
-      [
-        1,
-        "L'acqua la troviamo. A te serve adesso."
       ]
     ],
     [
@@ -184,42 +116,6 @@
       [
         0,
         "Imparare da te sarebbe bellissimo!"
-      ]
-    ],
-    [
-      [
-        0,
-        "Là dietro mi hai coperto. Te ne devo una."
-      ],
-      [
-        1,
-        "Tu avresti fatto lo stesso. Non parliamone più."
-      ],
-      [
-        0,
-        "Comunque. Ha voluto dire qualcosa."
-      ],
-      [
-        1,
-        "Allora siamo pari quando servirà."
-      ]
-    ],
-    [
-      [
-        0,
-        "Ho portato razioni in più. Ho pensato che stasera potevamo mangiare insieme."
-      ],
-      [
-        1,
-        "Non eri mica obbligato."
-      ],
-      [
-        0,
-        "Ne avevo voglia. Sembravi uno che ha bisogno di un pasto come si deve."
-      ],
-      [
-        1,
-        "Ne avevo bisogno eccome. Grazie, {a}."
       ]
     ],
     [
@@ -369,24 +265,6 @@
     [
       [
         0,
-        "Ce l'abbiamo fatta. Sinceramente non credevo."
-      ],
-      [
-        1,
-        "Nemmeno io, a essere onesto."
-      ],
-      [
-        0,
-        "E allora perché hai continuato a spingere?"
-      ],
-      [
-        1,
-        "Perché tu ti muovevi ancora."
-      ]
-    ],
-    [
-      [
-        0,
         "Pensavo che la gente come te esistesse solo nei racconti."
       ],
       [
@@ -400,24 +278,6 @@
       [
         1,
         "Faccio solo quello che dico. Dovrebbe essere normale."
-      ]
-    ],
-    [
-      [
-        0,
-        "Ti capita mai di sentirti solo, qui fuori?"
-      ],
-      [
-        1,
-        "Ogni tanto. Meno di prima."
-      ],
-      [
-        0,
-        "Per via degli altri?"
-      ],
-      [
-        1,
-        "Per via tua, soprattutto."
       ]
     ],
     [
@@ -469,20 +329,6 @@
     [
       [
         0,
-        "Ti ho tenuto da parte il pane buono."
-      ],
-      [
-        1,
-        "Non dovevi."
-      ],
-      [
-        0,
-        "Lo so. È proprio quello il punto."
-      ]
-    ],
-    [
-      [
-        0,
         "Vado dicendo in giro quello che hai fatto."
       ],
       [
@@ -492,16 +338,6 @@
       [
         0,
         "Troppo tardi. Lo sa mezza strada."
-      ]
-    ],
-    [
-      [
-        0,
-        "Fai un pezzo di strada con me? Non ho voglia di farla da solo."
-      ],
-      [
-        1,
-        "Volentieri. In due è una strada migliore."
       ]
     ],
     [
@@ -529,38 +365,6 @@
     [
       [
         0,
-        "Ultimamente ci stai rallentando."
-      ],
-      [
-        1,
-        "Mica siamo tutti perfetti come credi di essere tu."
-      ],
-      [
-        0,
-        "Dico solo che dobbiamo restare concentrati..."
-      ]
-    ],
-    [
-      [
-        0,
-        "Hai frugato nel mio zaino?!"
-      ],
-      [
-        1,
-        "Cercavo qualcosa per curare. Rilassati."
-      ],
-      [
-        0,
-        "Quella è roba mia! Non ne avevi il diritto!"
-      ],
-      [
-        1,
-        "Va bene. La prossima volta ti lascio dissanguare."
-      ]
-    ],
-    [
-      [
-        0,
         "Ma non smetti mai di parlare?"
       ],
       [
@@ -574,114 +378,6 @@
       [
         1,
         "Sì, tu ci pensi troppo su tutto."
-      ]
-    ],
-    [
-      [
-        0,
-        "È esattamente come quella volta nelle grotte."
-      ],
-      [
-        1,
-        "Ma la stai tirando fuori un'altra volta sul serio?"
-      ],
-      [
-        0,
-        "Non ti sei mai scusato!"
-      ],
-      [
-        1,
-        "Perché non era colpa mia!"
-      ]
-    ],
-    [
-      [
-        0,
-        "QUANTO hai speso alla taverna?!"
-      ],
-      [
-        1,
-        "Mi serviva un'informazione. Era necessario."
-      ],
-      [
-        0,
-        "Ti serviva la birra, è quello che ti serviva!"
-      ],
-      [
-        1,
-        "Non farmi la lezione sui soldi."
-      ]
-    ],
-    [
-      [
-        0,
-        "Quella era la MIA parte di razioni!"
-      ],
-      [
-        1,
-        "La tua l'hai mangiata stamattina."
-      ],
-      [
-        0,
-        "Quello era ieri! Ma ci stai con la testa?"
-      ],
-      [
-        1,
-        "Non usare quel tono con me."
-      ]
-    ],
-    [
-      [
-        0,
-        "Con quel russare non mi hai fatto chiudere occhio!"
-      ],
-      [
-        1,
-        "Io non russo!"
-      ],
-      [
-        0,
-        "Sembri un drago con il raffreddore!"
-      ],
-      [
-        1,
-        "E tu ti rigiravi tanto che non ho dormito IO!"
-      ]
-    ],
-    [
-      [
-        0,
-        "Quand'è l'ultima volta che ti sei lavato?"
-      ],
-      [
-        1,
-        "Sono stato occupato, va bene?"
-      ],
-      [
-        0,
-        "Non è una scusa per puzzare come un troll!"
-      ],
-      [
-        1,
-        "Senti da che pulpito!"
-      ]
-    ],
-    [
-      [
-        0,
-        "Perché ti sei preso tu l'arma migliore?"
-      ],
-      [
-        1,
-        "L'ho trovata io. Chi trova, tiene."
-      ],
-      [
-        0,
-        "Dovremmo dividere le cose equamente!"
-      ],
-      [
-        1,
-        "E allora la prossima volta trovatene una tua."
       ]
     ],
     [
@@ -794,24 +490,6 @@
       [
         1,
         "Io preferisco chiamarlo posizionamento."
-      ]
-    ],
-    [
-      [
-        0,
-        "Non sopporto il modo in cui mangi."
-      ],
-      [
-        1,
-        "Io non sopporto il modo in cui respiri, quindi siamo pari."
-      ],
-      [
-        0,
-        "Questa non ha nemmeno senso."
-      ],
-      [
-        1,
-        "Nemmeno lamentarsi di come mangia uno."
       ]
     ],
     [
@@ -1029,38 +707,6 @@
     [
       [
         0,
-        "Ti chiedi mai perché lo stiamo facendo davvero?"
-      ],
-      [
-        1,
-        "Ogni tanto. Ma rimuginarci non cambia niente."
-      ],
-      [
-        0,
-        "Avrai ragione. Pensavo ad alta voce."
-      ]
-    ],
-    [
-      [
-        0,
-        "Stasera tocca a te cucinare."
-      ],
-      [
-        1,
-        "Di già? Mi sembra di aver cucinato ieri."
-      ],
-      [
-        0,
-        "Quello era tre giorni fa."
-      ],
-      [
-        1,
-        "Il tempo si impasta tutto, eh?"
-      ]
-    ],
-    [
-      [
-        0,
         "Notte limpida. Le stelle si vedono bene."
       ],
       [
@@ -1196,24 +842,6 @@
       [
         1,
         "Se te le puoi permettere."
-      ]
-    ],
-    [
-      [
-        0,
-        "Guarda, impronte di cervo."
-      ],
-      [
-        1,
-        "E pure fresche."
-      ],
-      [
-        0,
-        "Vuol dire che l'acqua è probabilmente qui vicino."
-      ],
-      [
-        1,
-        "Buona osservazione."
       ]
     ],
     [

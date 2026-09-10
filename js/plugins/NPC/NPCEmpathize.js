@@ -3521,7 +3521,10 @@
     // makes at whoever has just walked up to it, drawn from the same syllable
     // bank every other answer of its comes out of.
     _prepareBeastMeeting() {
-      if (this._entity || this._actorId != null) return;
+      // Actor mode is included: a creature on the roster is opened on the same
+      // way a creature on the street is, and it has no more of a greeting in
+      // it than the other one does.
+      if (this._entity) return;
       if (this._beastGreeted) return;
       if (!this._isNonSentientSubject()) return;
       const line = _feralNoise(2, this._subjectCreatureClass());
@@ -4064,6 +4067,15 @@
         const faction = (profile.factionIndex >= 0 && dl?.factions) ? dl.factions[profile.factionIndex] : null;
         if (faction != null && delta !== 0 && window.$gameFactions?.changeReputation)
           window.$gameFactions.changeReputation(profile.factionIndex, Math.round(delta / 6));
+      }
+
+      // Whatever the pools wrote back, a beast has no sentence to say it in.
+      // Same rule as _feralAct and the free-chat path, and the backstop for
+      // every route that reaches a non-sentient subject holding prose: the
+      // party's own creature is a creature too, so the roster panel answers
+      // in the voice of its class exactly as a beast met on the street does.
+      if (npcLine && this._isNonSentientSubject()) {
+        npcLine = _feralGrowlFor(npcLine, this._subjectCreatureClass());
       }
 
       // Present it as a chat exchange (player line, then the NPC's reaction).

@@ -510,8 +510,11 @@
             const deadTroop = deadEvent._fixedTroopId ? $dataTroops[deadEvent._fixedTroopId] : null;
             const deadEnemy = (deadTroop && deadTroop.members.length > 0)
                 ? $dataEnemies[deadTroop.members[0].enemyId] : null;
+            // Still standing is not the same as still having HP: a monster kept
+            // up by Immortal sits at 0 and would otherwise leave a body behind
+            // on every flee while its map event lives on.
             const troopMember = $gameTroop && $gameTroop.members()[troopIndex];
-            const enemyAlive = troopMember && troopMember.hp > 0;
+            const enemyAlive = troopMember && troopMember.isAlive();
             if (enemyAlive) return;
             BSE.Functions.dropMapCorpse({
                 mapId: evMapId,
@@ -659,6 +662,25 @@
                 });
             });
         }
+    };
+
+    // ------------------------------------------------------------------
+    // A monster that cannot take the Death state never dies: refresh() erases
+    // the state it has just tried to add, so the body stands at 0 HP for good
+    // and every flee from it leaves another corpse behind. A resist handed out
+    // by a state (Immortal) lasts only as long as that state does and is left
+    // alone; one written into the monster's own data is a mistake and is
+    // ignored, so no database row can make something unkillable.
+    // ------------------------------------------------------------------
+    const _Game_Enemy_stateResistSet = Game_Enemy.prototype.stateResistSet;
+    Game_Enemy.prototype.stateResistSet = function() {
+        const set = _Game_Enemy_stateResistSet.call(this);
+        const deathId = this.deathStateId();
+        if (!set.includes(deathId)) return set;
+        const fromState = this.states().some(state => state && state.traits &&
+            state.traits.some(t => t.code === Game_BattlerBase.TRAIT_STATE_RESIST &&
+                t.dataId === deathId));
+        return fromState ? set : set.filter(id => id !== deathId);
     };
 
     const _Game_Enemy_die = Game_Enemy.prototype.die;

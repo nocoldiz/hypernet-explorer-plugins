@@ -63,7 +63,8 @@
     "cancel": "Annulla",
     "travel": "Viaggia",
     "free": "Gratis",
-    "startHere": "Parti da Qui"
+    "startHere": "Parti da Qui",
+    "travelNoTicket": "Viaggia Senza Biglietto"
   },
   "refused": {
     "title": "Respinti allo sportello",

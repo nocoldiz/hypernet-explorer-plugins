@@ -4624,7 +4624,24 @@
             }
         }
 
-        const detailedInfoHTML = window.SkillDetails ? window.SkillDetails.build(skill, actor) : '';
+        // The words the spell is said over, drawn from the same service the
+        // skills menu reads them from (window.SkillDetails, CategorizedBattleSkills.js).
+        // On a tree panel they are printed under the name, where the branch is
+        // being read, rather than at the foot of the numbers; the block below
+        // therefore asks build() not to print them a second time.
+        const incantation = (window.SkillDetails && window.SkillDetails.incantationOf)
+            ? window.SkillDetails.incantationOf(skill) : '';
+        const escText = (str) => String(str == null ? '' : str)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const incantationLabel = typeof T === 'function' ? T('SkillsMenu.section.incantation') : 'Incantation';
+        const incantationHTML = incantation
+            ? `<div class="ui-section sm-detail-incantation">
+                   <h4 class="inspect-section-title">${escText(incantationLabel)}</h4>
+                   <div class="inspect-flavour">${escText(incantation)}</div>
+               </div>`
+            : '';
+        const detailedInfoHTML = window.SkillDetails
+            ? window.SkillDetails.build(skill, actor, { skipLore: !!incantation }) : '';
 
         let descriptionText = skill.description || (typeof T === 'function' ? T('SkillMaster.noDescriptionAvailable') : 'No description available');
         if (window.translateText) descriptionText = window.translateText(descriptionText);
@@ -4669,6 +4686,7 @@
 
                 <div class="ui-detail-scroll ui-scroll sm-detail-body">
                     <div class="ui-prose sm-detail-desc">${descriptionText}</div>
+                    ${incantationHTML}
                     ${detailedInfoHTML}
                 </div>
 

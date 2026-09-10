@@ -244,6 +244,13 @@
     let _domOverlayCache = false;
     let _domOverlayFrame = -1;
     function hasActiveDomOverlay() {
+        // The same scan, cached the same way, now that the engine's own render
+        // rate is decided by it too (window.FrameBudget in
+        // Core/ParchmentToast.js). Half the window is enough here: this only
+        // decides whether the terminal canvas gets out of the page's way.
+        if (window.FrameBudget && window.FrameBudget.isCanvasCovered) {
+            return window.FrameBudget.isCanvasCovered(0.5);
+        }
         if (Graphics.frameCount - _domOverlayFrame < 10) return _domOverlayCache;
         _domOverlayFrame = Graphics.frameCount;
         _domOverlayCache = _computeActiveDomOverlay();
@@ -1640,6 +1647,12 @@
             if (asciiMode === 1 && asciiCanvas && asciiCanvas.style.display === 'none') {
                 asciiCanvas.style.display = 'block';
             }
+            // The whole screen is rebuilt cell by cell here. Below 60fps the
+            // engine runs the logic two or three times per drawn frame
+            // (window.FrameBudget in Core/ParchmentToast.js) and only the last
+            // of them is ever seen, so the others are skipped rather than drawn
+            // into a frame nobody gets.
+            if (window.FrameBudget && !window.FrameBudget.isPresented()) return;
             renderAsciiMap();
         }
     };

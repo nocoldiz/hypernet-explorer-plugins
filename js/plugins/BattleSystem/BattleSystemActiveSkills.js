@@ -637,13 +637,19 @@
     const isForbiddenSkill = (skill) => !!(skill && skill.meta && skill.meta.Forbidden !== undefined);
 
     // The Grimoire of Solomon deals spells and nothing else: a page of it is
-    // never a sword swing. Magic is the skill's own <Nature:> tag where it
-    // carries one (window.MagicNature), and the Magic skill type otherwise.
+    // never a sword swing. What counts as a spell is not decided here:
+    // window.SkillDetails.isMagical (CategorizedBattleSkills.js) draws that
+    // line once for the whole game, and this is the same answer the skill card
+    // prints its incantation on. The fallback below is only for a load order
+    // where that service is not up yet.
     function isMagicalSkill(skill) {
         if (!skill) return false;
+        if (window.SkillDetails && typeof window.SkillDetails.isMagical === 'function') {
+            return window.SkillDetails.isMagical(skill);
+        }
         const nature = window.MagicNature && typeof window.MagicNature.natureOf === 'function'
             ? window.MagicNature.natureOf(skill) : null;
-        if (nature) return nature === 'magical' || nature === 'both';
+        if (nature) return nature === 'magical';
         return skill.stypeId === MAGIC_STYPE_ID;
     }
 
@@ -706,13 +712,16 @@
     /**
      * The incantation of whatever she is about to cast, read out. A spell's
      * words are its <Lore:> text (ItemSystemUtils.loreFor, the generative
-     * grammar in js/db/Skills/Lore.json); a spell with none is named instead.
+     * grammar in js/db/Skills/Lore.json); a spell with none, and anything that
+     * is not a spell at all, is named instead. Nobody incants a sword swing.
      */
     function emIncant(actor, skill) {
         if (!skill || !skill.name) return;
         const utils = window.ItemSystemUtils;
         let lore = '';
-        try { lore = (utils && utils.loreFor) ? utils.loreFor(skill) : ''; } catch (e) { lore = ''; }
+        try {
+            lore = (isMagicalSkill(skill) && utils && utils.loreFor) ? utils.loreFor(skill) : '';
+        } catch (e) { lore = ''; }
         announce(lore
             ? text('em.incant', { actor: actor.name(), skill: skill.name, lore })
             : text('em.incantPlain', { actor: actor.name(), skill: skill.name }));

@@ -142,6 +142,201 @@
   const _live = new Map(); // key -> { el, hideAt, fading }
 
   // ==========================================================================
+  // Frame budget  (window.FrameBudget)
+  // --------------------------------------------------------------------------
+  // Not about notifications, and it may well deserve a plugin of its own: it
+  // sits here because this is the earliest Core plugin that already owns a
+  // shared DOM overlay layer, so every overlay in the game can reach it before
+  // its own first frame.
+  //
+  // WHY IT EXISTS
+  // The engine holds game speed steady by running the logic more than once per
+  // drawn frame: SceneManager.determineRepeatNumber returns 2 at 30fps, so
+  // updateMain, and every Scene_Map.update hook behind it, runs twice while
+  // only the second one is ever rendered. On a desk that never shows. On a
+  // handheld it means half of the cosmetic work in the game is paid for and
+  // then thrown away, and paying for it is what put the frame rate under 60 in
+  // the first place.
+  //
+  // So gameplay keeps running on every tick, as the engine intends, and
+  // cosmetics (a HUD rewrite, an overlay follow, a lighting repaint) run only
+  // on the tick that is about to be drawn:
+  //
+  //     if (!FrameBudget.isPresented()) return;   // nothing would be seen
+  //
+  // Two more helpers, same reason:
+  //
+  //     FrameBudget.canvasRect()    the #gameCanvas rect, read from the DOM at
+  //                                 most once per drawn frame. Every read is a
+  //                                 forced synchronous layout, and a dozen
+  //                                 overlays were each taking their own.
+  //     FrameBudget.every(key, hz)  true at most hz times a second, for the
+  //                                 overlays that never needed 60. One key per
+  //                                 call site: two sites sharing a key share
+  //                                 the budget.
+  //
+  // Every call is safe before the engine exists and outside a logic tick: the
+  // answer defaults to "yes, do the work", so a caller that starts guarding
+  // with it can never end up doing less than it did before.
+  // ==========================================================================
+  let _tickTotal = 1;
+  let _tickIndex = 1;
+  let _framePresented = 0;
+  let _rectCache = null;
+  let _rectFrame = -1;
+  const _everyMarks = new Map();
+
+  function isPresented() {
+    return _tickIndex >= _tickTotal;
+  }
+
+  function nowMs() {
+    return typeof performance !== "undefined" && performance.now
+      ? performance.now()
+      : Date.now();
+  }
+
+  function every(key, hz) {
+    const rate = Number(hz) > 0 ? Number(hz) : 1;
+    const period = 1000 / rate;
+    const now = nowMs();
+    const last = _everyMarks.get(key);
+    if (last !== undefined && now - last < period) return false;
+    _everyMarks.set(key, now);
+    return true;
+  }
+
+  function invalidateRect() {
+    _rectCache = null;
+    _rectFrame = -1;
+  }
+
+  function canvasRect() {
+    if (_rectFrame === _framePresented && _rectCache) return _rectCache;
+    if (typeof document === "undefined" || !document.getElementById) return null;
+    const canvas = document.getElementById("gameCanvas");
+    if (!canvas || typeof canvas.getBoundingClientRect !== "function") return null;
+    const r = canvas.getBoundingClientRect();
+    if (!r || !(r.width > 0) || !(r.height > 0)) return null;
+    // The live DOMRect, handed out as read only: a caller that needs to keep it
+    // past this frame copies the numbers it wants out of it.
+    _rectCache = r;
+    _rectFrame = _framePresented;
+    return r;
+  }
+
+  // determineRepeatNumber is called exactly once per drawn frame, before the
+  // batch of logic ticks that frame is going to run, which makes it the one
+  // place that knows how many ticks are about to share the frame. updateMain
+  // then counts them off. A tick that arrives from anywhere else leaves the
+  // index clamped at the total, so isPresented() stays true and nothing is
+  // silently skipped.
+  function hookEngine() {
+    if (typeof SceneManager === "undefined" || !SceneManager) return false;
+    if (SceneManager._frameBudgetHooked) return true;
+    const determine = SceneManager.determineRepeatNumber;
+    const updateMain = SceneManager.updateMain;
+    if (typeof determine !== "function" || typeof updateMain !== "function") return false;
+    SceneManager._frameBudgetHooked = true;
+    SceneManager.determineRepeatNumber = function (deltaTime) {
+      const n = determine.call(this, deltaTime);
+      _tickTotal = n > 0 ? n : 1;
+      // A frame that owes no logic tick at all runs nothing, so it is left
+      // counted as done: a caller that asks between batches, off a
+      // requestAnimationFrame loop of its own, is told yes rather than being
+      // stalled until the next tick arrives.
+      _tickIndex = n > 0 ? 0 : _tickTotal;
+      _framePresented++;
+      invalidateRect();
+      return n;
+    };
+    SceneManager.updateMain = function () {
+      if (_tickIndex < _tickTotal) _tickIndex++;
+      updateMain.call(this);
+    };
+    return true;
+  }
+
+  // The scan below reads offsetWidth/offsetHeight and getComputedStyle over
+  // every child of <body>, which is a layout each time, so its answer is
+  // cached. A DOM page opening or closing a few frames before the render rate
+  // follows it is not something anyone can see.
+  const COVERED_RECHECK_FRAMES = 10;
+  const _coveredCache = new Map(); // fraction -> { frame, value }
+
+  // Is a full-screen DOM page standing over the game view? Menu agnostic on
+  // purpose: it asks the page, not a list of plugins, so a menu written next
+  // year counts without registering anything. `fraction` is how much of the
+  // window a child of <body> has to cover to count as one, which is why
+  // UI/ASCIIMode.js can share this scan while asking a looser question of it.
+  function isCanvasCovered(fraction) {
+    const frac = Number(fraction) > 0 ? Number(fraction) : 0.8;
+    if (typeof document === "undefined" || !document.body) return false;
+    const frame = typeof Graphics !== "undefined" && Graphics ? (Graphics.frameCount || 0) : 0;
+    const hit = _coveredCache.get(frac);
+    if (hit && frame - hit.frame < COVERED_RECHECK_FRAMES) return hit.value;
+    const value = computeCovered(frac);
+    _coveredCache.set(frac, { frame, value });
+    return value;
+  }
+
+  function computeCovered(frac) {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    if (!(w > 0) || !(h > 0)) return false;
+    const kids = document.body.children || [];
+    for (let i = 0; i < kids.length; i++) {
+      const el = kids[i];
+      if (!el) continue;
+      const tag = el.tagName;
+      // The engine's own furniture, and anything that is not a box: the canvas
+      // being covered cannot count as the thing covering it.
+      if (tag === "SCRIPT" || tag === "STYLE" || tag === "LINK" || tag === "CANVAS" ||
+          tag === "VIDEO" || tag === "IMG") continue;
+      if (el.id === "gameCanvas" || el.id === "errorPrinter" || el.id === "fpsCounter") continue;
+      if (!(el.offsetWidth >= w * frac) || !(el.offsetHeight >= h * frac)) continue;
+      const cs = window.getComputedStyle ? window.getComputedStyle(el) : null;
+      if (!cs) return true;
+      if (cs.display === "none" || cs.visibility === "hidden") continue;
+      if (parseFloat(cs.opacity || "1") <= 0.01) continue;
+      return true;
+    }
+    return false;
+  }
+
+  // The engine's own render rate is deliberately NOT touched from here. Drawing
+  // the scene behind a full-screen DOM page at a fraction of the frame rate
+  // looks like a saving on paper, and it reads as the game running weirdly:
+  // a parchment page is often translucent, so the map behind it is on show and
+  // stutters. isCanvasCovered() stays as a question overlays can ask about
+  // themselves.
+
+  if (typeof window !== "undefined" && window.addEventListener) {
+    // A resize lands between frames, so the cached rect is stale before the
+    // next batch clears it.
+    window.addEventListener("resize", invalidateRect);
+  }
+
+  window.FrameBudget = {
+    isPresented,
+    canvasRect,
+    invalidateRect,
+    every,
+    isCanvasCovered,
+    hookEngine,
+    // For tests and for the console: what the budget thinks this frame is.
+    stats() {
+      return {
+        tickIndex: _tickIndex,
+        tickTotal: _tickTotal,
+        frame: _framePresented,
+        presented: isPresented()
+      };
+    }
+  };
+  hookEngine();
+
+  // ==========================================================================
   // Stack plumbing
   // ==========================================================================
   function ensureStack() {
@@ -155,9 +350,11 @@
   }
 
   function syncPosition() {
-    const canvas = document.getElementById("gameCanvas");
-    if (!canvas || !_stackEl) return;
-    const r = canvas.getBoundingClientRect();
+    if (!_stackEl) return;
+    // Shared read: the stack is one of a dozen overlays that all want the
+    // canvas box, and the budget takes the layout hit once for all of them.
+    const r = canvasRect();
+    if (!r) return;
     const sx = r.width / Graphics.width;
     const sy = r.height / Graphics.height;
     const s = _stackEl.style;

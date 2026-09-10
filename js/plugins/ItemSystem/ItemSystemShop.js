@@ -2520,7 +2520,7 @@
       : `
       <div class="shop-selection-bar">
           <div class="selection-summary">
-              <span class="selection-count">${esc(T('Shop.selectionCount', { lines: totals.lines, units: totals.units }))}</span>
+              <span class="selection-count">${esc(T('Shop.selectionCount', { units: totals.units }))}</span>
               <span class="selection-value ${isBuyMode ? 'cost' : ''}">${money(totals.value)} €</span>
           </div>
           <div class="selection-actions">
@@ -4084,7 +4084,7 @@
     const state = group.picked === 0 ? "none"
       : (group.picked >= group.pickable ? "all" : "some");
     const mark = state === "all" ? "✓" : (state === "some" ? "–" : "");
-    const summary = T('Shop.categorySummary', { lines: group.indices.length, value: money(group.value) });
+    const summary = T('Shop.categorySummary', { value: money(group.value) });
     return `
       <div class="shop-cat-header ${state}" data-cat="${esc(group.key)}" title="${esc(T('Shop.categoryToggleHint'))}">
           <span class="shop-cat-box">${esc(mark)}</span>
