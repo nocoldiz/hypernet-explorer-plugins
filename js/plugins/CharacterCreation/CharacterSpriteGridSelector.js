@@ -1228,6 +1228,20 @@
   // Placeholder art ships at ~4 KB; a real bust is half a megabyte.
   const BUST_MIN_BYTES = 50000;
 
+  // A bust that names a folder is never the gallery's to offer. img/busts holds
+  // the faces anybody may wear; img/busts/presets holds the plates drawn for one
+  // dossier or one species (a leader's portrait, a cow's photograph), and handing
+  // one to somebody building a character would put a stranger's face on them.
+  // Every list the board and the Random button are built from passes through
+  // here, however it was read: the folder scan drops the folder by itself
+  // (readdir names it and it fails the extension test), while the sprite
+  // catalogue fallback and the synchronous read behind Random go by names rather
+  // than files, and NPCs.json names those plates as "presets/<name>".
+  const isGalleryBust = (name) => {
+    const raw = String(name == null ? "" : name).trim();
+    return raw.length > 0 && !raw.includes("/") && !raw.includes("\\");
+  };
+
   // Six across fills the full-width page (see cc-page-full) at roughly the
   // same card size the old three-column half-page board used.
   const BUST_GRID_COLS = 6;
@@ -1316,7 +1330,7 @@
             }),
           );
           for (const entry of scanned) {
-            if (!entry) continue;
+            if (!entry || !isGalleryBust(entry.name)) continue;
             names.push(entry.name);
             sizes.set(entry.name, entry.size);
           }
@@ -1332,11 +1346,8 @@
       return this._data;
     },
 
-    // A bust naming a folder ("presets/Andreotti") is the face of a pre-made
-    // character and belongs to that dossier alone, so it is never offered here
-    // however the list was built. The file-system scan drops them by itself
-    // (readdir returns the folder, which fails the extension test); this is the
-    // browser fallback, which reads names rather than files.
+    // The browser fallback, which reads names rather than files: every portrait
+    // the sheets name, minus the ones isGalleryBust keeps off the board.
     _fromSpriteCatalogue() {
       const assoc = window.Sprites && window.Sprites.SpritesAssociation;
       if (!assoc) return [];
@@ -1345,7 +1356,7 @@
         const busts = assoc[sheet];
         if (!Array.isArray(busts)) continue;
         for (const bust of busts) {
-          if (bust && !String(bust).includes("/")) found.add(String(bust));
+          if (isGalleryBust(bust)) found.add(String(bust).trim());
         }
       }
       return Array.from(found);
@@ -1783,7 +1794,7 @@
 
     //-- input ----------------------------------------------------------------
 
-    // CCScroll drives L2/R2 at whichever board holds the cursor.
+    // CCScroll drives the right stick at whichever board holds the cursor.
     ccScrollTarget() {
       return this._gridEl;
     }
@@ -2095,14 +2106,17 @@
         if (!/\.(png|jpg|jpeg|gif|webp)$/i.test(file)) continue;
         const stat = fs.statSync(path.join(bustsPath, file));
         // Skip the placeholder art, as the gallery does.
-        if (stat.isFile() && stat.size > BUST_MIN_BYTES) {
-          names.push(file.replace(/\.[^.]+$/, ""));
+        const base = file.replace(/\.[^.]+$/, "");
+        if (stat.isFile() && stat.size > BUST_MIN_BYTES && isGalleryBust(base)) {
+          names.push(base);
         }
       }
     } catch (error) {
       const assoc = window.Sprites && window.Sprites.SpritesAssociation;
       for (const sheet of Object.keys(assoc || {})) {
-        for (const bust of assoc[sheet] || []) if (bust) names.push(String(bust));
+        for (const bust of assoc[sheet] || []) {
+          if (isGalleryBust(bust)) names.push(String(bust).trim());
+        }
       }
     }
     randomBustPool = narrowBustPool(names);

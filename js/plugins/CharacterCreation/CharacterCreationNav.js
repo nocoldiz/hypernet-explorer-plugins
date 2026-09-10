@@ -70,7 +70,7 @@
  * all turn on the same four inputs, and CCNav.railDir() is the one place that
  * reads them: L1/PageUp back, R1/PageDown forward, Tab forward, Shift+Tab
  * back. Scrolling long text is CCScroll's half of the same story (the wheel,
- * and L2/R2 on a pad); see CharacterCreationShared.js.
+ * and the right stick on a pad); see CharacterCreationShared.js.
  *
  * Wiring a scene
  * --------------

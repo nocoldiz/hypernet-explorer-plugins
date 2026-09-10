@@ -37,7 +37,7 @@
     },
     "controlsGamepad": {
       "title": "Controls: Controller",
-      "description": "A controller works everywhere, menus, star map and 3D minigames included.\n\n- left stick moves and navigates, right stick pans\n- R3 labels every event on screen\n- L2 / R2 zoom the world map and scroll long overlays\n- L1 / R1 cycle tabs, change character, step the quick bar\n\nOne thing still needs a mouse: opening a search field."
+      "description": "A controller works everywhere, menus, star map and 3D minigames included.\n\n- left stick moves and navigates, right stick pans\n- R3 labels every event on screen\n- L2 / R2 zoom the world map, the right stick scrolls long overlays\n- L1 / R1 cycle tabs, change character, step the quick bar\n\nOne thing still needs a mouse: opening a search field."
     },
     "controlsRemap": {
       "title": "Controls: Remapping",

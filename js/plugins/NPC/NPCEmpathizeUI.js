@@ -316,7 +316,11 @@
     const byKey = new Map();
     for (const e of entries) {
       const day = Math.floor((e.min || 0) / 1440);
-      const key = `${day} ${e.text}`;
+      // A separator that cannot occur in a written line. It used to be a
+      // literal NUL, which made every plain grep treat this whole file as
+      // binary and silently skip it: a search for a key used here came back
+      // empty and the key read as dead. U+001F does the same job in text.
+      const key = `${day}\u001f${e.text}`;
       const hit = byKey.get(key);
       if (hit) { hit.count++; continue; }
       const g = { text: e.text, count: 1, min: e.min || 0, day };

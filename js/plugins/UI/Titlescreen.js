@@ -6685,7 +6685,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             e.stopPropagation();
             e.preventDefault();
             if (SceneManager._scene !== this) return;
-            if (btn.style.cursor !== 'pointer') return;
+            // What the notice is for right now IS whether it can be pressed:
+            // the states that do nothing (checking, downloading, silence) set
+            // no action at all. Reading btn.style.cursor here instead, as this
+            // once did, asked an inline style nothing ever writes, so every
+            // press was swallowed.
+            if (!this._updateAction) return;
             // A major update is waiting and this copy is behind it. Patching
             // across it would leave the game half on the old build, so the
             // notice never offers the update itself: the press goes straight
@@ -6707,6 +6712,16 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 }
                 return;
             }
+            // A build swapped in already: all that is left is the close.
+            if (this._updateAction === 'restart') {
+                this.startUpdateRestart();
+                return;
+            }
+            // The build is already down: the press is the install itself.
+            if (this._updateAction === 'install') {
+                this.startUpdateInstall();
+                return;
+            }
             this.startUpdateDownload();
         });
 
@@ -6717,18 +6732,41 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // title screen starts to look like a paragraph.
     const UPDATE_NAME_MAX = 34;
 
+    // What the branch calls the build being offered, cut to a length the corner
+    // of the title screen can carry. Null when the build has no name, which is
+    // the one case the labels fall back to a number.
+    const updateBuildName = (result) => {
+        const raw = result && result.latestName ? String(result.latestName).trim() : '';
+        if (!raw) return null;
+        // "0.6.13a hotfix" names a build; "fix: busts" is the whole message.
+        // The updater already knows how to tell them apart.
+        const named = updaterCall('_versionName', raw);
+        const name = (typeof named === 'string' && named) ? named : raw;
+        return name.length > UPDATE_NAME_MAX
+            ? name.slice(0, UPDATE_NAME_MAX - 1).trimEnd() + '…'
+            : name;
+    };
+
     const updateBuildLabel = (result) => {
-        const name = result && result.latestName ? String(result.latestName).trim() : '';
-        if (name) {
-            const short = name.length > UPDATE_NAME_MAX
-                ? name.slice(0, UPDATE_NAME_MAX - 1).trimEnd() + '…'
-                : name;
-            return T('Titlescreen.update.download', { name: short });
-        }
+        const name = updateBuildName(result);
+        if (name) return T('Titlescreen.update.download', { name: name });
         const build = result ? result.latestBuild : null;
         return (typeof build === 'number')
             ? T('Titlescreen.update.downloadBuild', { build: build })
             : T('Titlescreen.update.readyPlain');
+    };
+
+    // The same, for the build already sitting in the staging folder: that one
+    // is named by the updater rather than by the launch check, since it may
+    // have been fetched in an entirely different session.
+    const stagedLabel = () => {
+        const raw = updaterCall('stagedName');
+        const name = (typeof raw === 'string' && raw) ? raw : '';
+        if (!name) return T('Titlescreen.update.installReadyPlain');
+        const short = name.length > UPDATE_NAME_MAX
+            ? name.slice(0, UPDATE_NAME_MAX - 1).trimEnd() + '…'
+            : name;
+        return T('Titlescreen.update.installReady', { name: short });
     };
 
     // The button is one line of text, except when it also has to say the whole
@@ -6789,12 +6827,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return !!updaterCall('majorInstalled');
     };
 
-    // Four states, and one of them is silence: checking says so quietly, a build
-    // waiting is a real button, a copy that has taken a major update says so
-    // until it is downloaded whole, and an up-to-date copy (or one that could
-    // not reach the branch) shows nothing at all. While the build is being
-    // fetched the button becomes its own progress readout, so nothing else has
-    // to open.
+    // One plate, read from top to bottom as the update itself moves: it says it
+    // is checking, then that it is downloading the build it found, then that
+    // the build is here and can be installed. Only that last state is a press,
+    // and it is the only press the whole update ever asks for. Beside those sit
+    // the ones nothing can be done about from here: a copy that has taken a
+    // major update says so until it is downloaded whole, and an up-to-date copy
+    // (or one that could not reach the branch) shows nothing at all.
     Scene_Title.prototype.refreshUpdateButton = function () {
         const btn = this._updateButton;
         if (!btn) return;
@@ -6829,6 +6868,53 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             return;
         }
 
+        // The branch has not answered yet: the first check of a fresh copy
+        // hashes the whole game folder, so this is a state the player really
+        // does sit in for a moment.
+        if (!result) {
+            this._updateAction = null;
+            setUpdateLabel(btn, T('Titlescreen.update.checking'), '');
+            btn.title = T('Titlescreen.update.checkingTip');
+            setUpdateState(btn, 'dim');
+            this.layoutUpdateButton();
+            fadeIn();
+            return;
+        }
+
+        // The updater is working for somebody else: a download this screen
+        // started before it was rebuilt, or one the updater's own screen is
+        // running. Say so rather than offering a button that would be refused.
+        if (updaterCall('isBusy')) {
+            this._updateAction = null;
+            setUpdateLabel(btn, T('Titlescreen.update.preparing'), '');
+            btn.title = T('Titlescreen.update.checkingTip');
+            setUpdateState(btn, 'busy');
+            this.layoutUpdateButton();
+            fadeIn();
+            return;
+        }
+
+        // The build is already down, verified and waiting in the staging
+        // folder. That is the whole of what the automatic download does, and
+        // this is the one press it leaves for the player: installing is a file
+        // move and the game closes afterwards.
+        //
+        // A staged build the branch has since moved past is not the one to
+        // offer: the newer one is fetched instead and this becomes the install
+        // button again when it lands.
+        const staged = updaterCall('stagedInfo');
+        const stagedIsCurrent = !!staged &&
+            (!result.available || !result.latest || result.latest === staged.sha);
+        if (stagedIsCurrent && !this._updateDone) {
+            this._updateAction = 'install';
+            setUpdateLabel(btn, stagedLabel(), majorTaken(result) ? majorTakenLine() : '');
+            btn.title = T('Titlescreen.update.installReadyTip');
+            setUpdateState(btn, 'ready');
+            this.layoutUpdateButton();
+            fadeIn();
+            return;
+        }
+
         // A build is waiting, but taking it would cross a major update and this
         // copy is behind that update. A patch cannot finish the job, so the
         // notice does not offer one: it sends the player to the full download
@@ -6841,9 +6927,11 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             btn.title = T('Titlescreen.update.redownloadTip');
             setUpdateState(btn, 'warn');
         } else if (result && result.available && !this._updateDone) {
-            // An ordinary build: the one above has already taken every major
-            // one, so nothing here needs the second line.
-            this._updateAction = 'install';
+            // An ordinary build that has not been fetched yet. The download
+            // starts on its own the moment the check lands, so this label is
+            // only ever read for the moment before it does, or after one that
+            // failed and is waiting to be tried again by hand.
+            this._updateAction = 'download';
             setUpdateLabel(btn, updateBuildLabel(result), '');
             btn.title = T('Titlescreen.update.tip');
             setUpdateState(btn, 'ready');
@@ -6856,11 +6944,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             setUpdateLabel(btn, T('Titlescreen.update.majorInstalled'), majorTakenLine());
             btn.title = T('Titlescreen.update.majorInstalledTip');
             setUpdateState(btn, 'notice');
-        } else if (!result) {
-            this._updateAction = null;
-            setUpdateLabel(btn, T('Titlescreen.update.checking'), '');
-            btn.title = T('Titlescreen.update.checkingTip');
-            setUpdateState(btn, 'dim');
         } else {
             this._updateAction = null;
             setUpdateState(btn, null);
@@ -6885,29 +6968,50 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
     };
 
-    // Pressing the notice installs the build there and then: the newest commit
-    // is fetched, swapped in and the game closed so it comes back up onto it,
-    // with the button itself reporting every step. The updater screen is still
-    // there under the menu for anyone who wants to read a build before taking
-    // it, or to go back to an older one, but the ordinary case never has to
-    // open it.
+    // The two halves of an update, and only one of them is a press.
+    //
+    // Fetching the build happens on its own: the launch check answers, the
+    // notice starts downloading straight away and fills like a bar while it
+    // does, and nothing in the game folder is touched by any of it. What is
+    // left afterwards is one button saying the build can be installed, which is
+    // the only thing the player is ever asked to decide. The updater screen is
+    // still there under the menu for anyone who wants to read a build before
+    // taking it, or to go back to an older one, but the ordinary case never has
+    // to open it.
+
+    // One place to paint the notice while it is working, and one to let it go
+    // again. Both are shared by the download and the install.
+    Scene_Title.prototype._updateSay = function (text, ratio) {
+        const btn = this._updateButton;
+        if (!btn) return;
+        btn.textContent = text;
+        setUpdateState(btn, 'busy');
+        setUpdateFill(btn, (ratio === undefined) ? null : ratio);
+    };
+
+    Scene_Title.prototype._updateRelease = function (text, dim) {
+        const btn = this._updateButton;
+        this._updateBusy = false;
+        if (!btn) return;
+        setUpdateFill(btn, null);
+        btn.textContent = text;
+        btn.title = text;
+        btn.classList.toggle('title-update-btn--dim', !!dim);
+    };
+
+    // Started by the launch check the moment it finds a build, and by a press
+    // only when that automatic run failed and the notice is offering to try
+    // again. Everything it writes goes into the staging folder: when it ends,
+    // the copy being played is the copy that was played before and the notice
+    // has turned into the install button.
     Scene_Title.prototype.startUpdateDownload = function () {
         if (this._updateBusy) return;
         const api = updaterApi();
         if (!api) return;
-        // Already fetched, waiting only on the close. The label change is the
-        // player's warning that the game is about to shut down on its own;
-        // the delay holds it on screen long enough to be read before it does.
-        if (updaterCall('needsRestart')) {
-            SoundManager.playOk();
-            this._updateBusy = true;
-            if (this._updateButton) this._updateButton.textContent = T('Titlescreen.update.restarting');
-            setTimeout(() => updaterCall('restart'), 1600);
-            return;
-        }
-        // The updater is working for somebody else (a check left running, or an
-        // install started before the screen was rebuilt): let it finish.
+        // The updater is working for somebody else (a check left running, or a
+        // download started before the screen was rebuilt): let it finish.
         if (updaterCall('isBusy')) return;
+        if (updaterCall('needsRestart')) return;
         const result = updaterCall('autoResult');
         if (!result || !result.available || !result.latest) return;
         // Never patch across a major update from here, whatever route reached
@@ -6921,7 +7025,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         }
         // An updater that cannot fetch (an older one, or one loaded without its
         // download half) has nothing this button can drive.
-        if (typeof api.check !== 'function' || typeof api.install !== 'function') return;
+        if (typeof api.check !== 'function' || typeof api.download !== 'function') return;
 
         // Downloads switched off in the plugin parameters: only the updater
         // screen can explain that, so hand over to it.
@@ -6935,34 +7039,22 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
         const btn = this._updateButton;
         const sha = result.latest;
+        const name = updateBuildName(result);
         this._updateBusy = true;
-        SoundManager.playOk();
 
-        const say = (text, ratio) => {
-            if (!btn) return;
-            btn.textContent = text;
-            setUpdateState(btn, 'busy');
-            setUpdateFill(btn, (ratio === undefined) ? null : ratio);
-        };
-        const release = (text, dim) => {
-            this._updateBusy = false;
-            if (!btn) return;
-            setUpdateFill(btn, null);
-            btn.textContent = text;
-            btn.title = text;
-            btn.classList.toggle('title-update-btn--dim', !!dim);
-        };
+        const say = (text, ratio) => this._updateSay(text, ratio);
+        const release = (text, dim) => this._updateRelease(text, dim);
 
         const onProgress = (p) => {
             if (!p) return;
             if (p.phase === 'download') {
                 const ratio = typeof p.ratio === 'number'
                     ? Math.max(0, Math.min(1, p.ratio)) : 0;
-                say(T('Titlescreen.update.downloading', {
-                    percent: Math.round(ratio * 100)
-                }), ratio);
-            } else if (p.phase === 'apply' || p.phase === 'done') {
-                say(T('Titlescreen.update.installing'), 1);
+                say(name
+                    ? T('Titlescreen.update.downloading', { name: name })
+                    : T('Titlescreen.update.downloadingPlain', {
+                        percent: Math.round(ratio * 100)
+                    }), ratio);
             } else {
                 say(T('Titlescreen.update.preparing'), 0);
             }
@@ -6986,9 +7078,47 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 setTimeout(() => setUpdateState(btn, null), 2500);
                 return null;
             }
-            return api.install(sha, onProgress);
-        }).then((done) => {
-            if (!done) return;
+            return api.download(sha, onProgress);
+        }).then((got) => {
+            this._updateBusy = false;
+            if (!got) return;
+            // The build is in hand. The notice reads itself again and comes
+            // back as the install button.
+            setUpdateFill(btn, null);
+            if (btn) btn.classList.remove('title-update-btn--dim');
+            this.refreshUpdateButton();
+        }).catch((err) => {
+            console.warn('Titlescreen: the update could not be downloaded', err);
+            release(T('Titlescreen.update.failed'), false);
+            if (btn) {
+                setUpdateState(btn, 'notice');
+            }
+        });
+    };
+
+    // The press: what is already down is moved into place and the game closes
+    // so it comes back up onto it. Nothing here can fail on a network, since
+    // every byte was fetched and verified before this button appeared.
+    Scene_Title.prototype.startUpdateInstall = function () {
+        if (this._updateBusy) return;
+        const api = updaterApi();
+        if (!api || typeof api.applyStaged !== 'function') return;
+        if (updaterCall('isBusy')) return;
+        if (!updaterCall('stagedInfo')) return;
+
+        const btn = this._updateButton;
+        this._updateBusy = true;
+        SoundManager.playOk();
+
+        this._updateSay(T('Titlescreen.update.installing'), 1);
+
+        api.applyStaged().then((done) => {
+            if (!done) {
+                this._updateBusy = false;
+                setUpdateFill(btn, null);
+                this.refreshUpdateButton();
+                return;
+            }
             // A major update is not finished by closing: the copy is patched
             // but not whole, so say it here and hold the notice long enough to
             // be read. It stands under the flags on the next launch as well.
@@ -7003,16 +7133,47 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 }
                 this.layoutUpdateButton();
             } else {
-                say(T('Titlescreen.update.restarting'));
+                this._updateSay(T('Titlescreen.update.restarting'));
             }
             setTimeout(() => updaterCall('restart'), major ? 3000 : 1600);
         }).catch((err) => {
             console.warn('Titlescreen: the update could not be installed', err);
-            release(T('Titlescreen.update.failed'), false);
+            this._updateRelease(T('Titlescreen.update.failed'), false);
             if (btn) {
                 setUpdateState(btn, 'notice');
             }
         });
+    };
+
+    // A build already swapped in by an earlier press only wants the game
+    // closed. The label change is the player's warning that it is about to shut
+    // down on its own; the delay holds it on screen long enough to be read.
+    Scene_Title.prototype.startUpdateRestart = function () {
+        if (this._updateBusy) return;
+        if (!updaterCall('needsRestart')) return;
+        SoundManager.playOk();
+        this._updateBusy = true;
+        if (this._updateButton) {
+            this._updateButton.textContent = T('Titlescreen.update.restarting');
+        }
+        setTimeout(() => updaterCall('restart'), 1600);
+    };
+
+    // The download nobody presses for. It runs once the launch check has an
+    // answer, and only when there is something to fetch that is not already in
+    // hand and not a major update, which no patch can carry.
+    Scene_Title.prototype.maybeAutoDownload = function () {
+        if (this._updateBusy || this._updateDone) return;
+        const api = updaterApi();
+        if (!api || typeof api.download !== 'function') return;
+        if (updaterCall('needsRestart')) return;
+        if (api.downloadsEnabled && !api.downloadsEnabled()) return;
+        const result = updaterCall('autoResult');
+        if (!result || !result.available || !result.latest || result.major) return;
+        // Already down from this session or an earlier one: the notice is
+        // offering to install it, not to fetch it again.
+        if (updaterCall('stagedFor', result.latest)) return;
+        this.startUpdateDownload();
     };
 
     Scene_Title.prototype.removeUpdateButton = function () {
@@ -7050,6 +7211,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 this.createVersionBadge();
                 this.refreshUpdateButton();
                 this.layoutOverlays();
+                // Whatever the branch turned out to hold is fetched right away.
+                // The player is never asked whether to download, only whether
+                // to install what came down.
+                this.maybeAutoDownload();
             }).catch(() => { /* the updater already reports its own failures */ });
         };
 

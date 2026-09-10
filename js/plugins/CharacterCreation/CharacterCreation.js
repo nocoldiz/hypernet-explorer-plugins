@@ -2559,7 +2559,7 @@
       // Re-apply any previously chosen random backdrop so it survives scene/DOM rebuilds.
       this.applySceneBackground(Scene_CharacterCreation._sceneBgImage);
       // Wheel scrolling for every pane of the spread (the details page above
-      // all), with L2/R2 doing the same from a controller. See CCScroll.
+      // all), with the right stick doing the same from a controller. See CCScroll.
       if (window.CCScroll) window.CCScroll.bindWheel(this._dndContainer);
       // Everything on the spread that is not a card on a board - the sidebar
       // buttons, the bio chips, the talent board's +/-, the portraits - is

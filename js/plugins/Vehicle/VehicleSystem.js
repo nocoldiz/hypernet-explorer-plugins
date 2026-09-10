@@ -555,9 +555,19 @@
    * anyone whose class carries `<Nature: Magical>` and in a workman's hard hat
    * by everyone else. The PARTY LEADER decides it, not each rider, so a flight
    * reads as one party under one broom-master rather than a costume per body.
+   *
+   * A rider who has a sheet of their own for this machine is drawn on it
+   * instead, whatever the leader wears: Em was drawn on her own bike and her
+   * own broom before the party had either, and CharacterPresets owns which
+   * sheet that is (emRidingSheet). `rider` is the actor in the saddle, and a
+   * caller that does not know who that is passes nothing.
    */
-  function ridingSprite(config) {
+  function ridingSprite(config, rider) {
     if (!config || !config.sprites || !config.sprites.riding) return null;
+    const CP = window.CharacterPresets;
+    const own = (rider && CP && CP.emRidingSheet)
+      ? CP.emRidingSheet(rider, config.boatSubType) : null;
+    if (own) return own;
     const arcane = config.sprites.ridingArcane;
     if (arcane && isMagicalLeader()) return arcane;
     return config.sprites.riding;
@@ -2221,16 +2231,37 @@
     }
   };
 
+  // A vehicle stands on its standing frame rather than idling on the spot: the
+  // engine gives every one of them step animation the moment it is boarded
+  // (Game_Vehicle#getOn), which had a parked car shuffling and a moored boat
+  // rocking with nobody aboard them.
+  //
+  // But the gap BETWEEN two steps is not standing still. Zeroing the clock on
+  // those one or two frames - which is what this used to do - reset it before it
+  // could ever reach animationWait: a step at riding speed lasts about four
+  // frames and the clock needs six, so the machine under the LEADER never
+  // advanced a frame in its life, while the party's own machines, drawn as
+  // followers on the engine's own clock, flapped and pedalled the whole way.
+  // The frozen broom under the broom-master was this. So the settle waits out
+  // VEHICLE_SETTLE_FRAMES of real stillness, and a flight animates.
+  const VEHICLE_SETTLE_FRAMES = 12;   // a fifth of a second
+
   const _Game_Vehicle_updateAnimation = Game_Vehicle.prototype.updateAnimation;
   Game_Vehicle.prototype.updateAnimation = function () {
     if (isPlayerRidingCustomVehicle() && $gamePlayer.vehicle() === this) {
       if (this.isMoving()) {
+        this._vsStillFrames = 0;
+      } else {
+        this._vsStillFrames = (this._vsStillFrames || 0) + 1;
+      }
+      if (this._vsStillFrames <= VEHICLE_SETTLE_FRAMES) {
         _Game_Vehicle_updateAnimation.call(this);
       } else {
         this._animationCount = 0;
         this._pattern = 1;
       }
     } else {
+      this._vsStillFrames = 0;
       _Game_Vehicle_updateAnimation.call(this);
     }
   };
@@ -4929,8 +4960,10 @@
     if (config) {
       if (this._driving) {
         // A vehicle that is ridden rather than sat in (the Bike, the Broom) has
-        // a second sheet showing it with its rider aboard.
-        const ridden = ridingSprite(config);
+        // a second sheet showing it with its rider aboard. The one in the
+        // saddle is the party leader: the followers are drawn separately, each
+        // on a machine of their own (followerRidingSprite).
+        const ridden = ridingSprite(config, $gameParty && $gameParty.leader());
         if (ridden) {
           return ridden.name;
         }
@@ -4948,7 +4981,7 @@
     const config = vehicleManager.getConfig(this);
     if (config) {
       if (this._driving) {
-        const ridden = ridingSprite(config);
+        const ridden = ridingSprite(config, $gameParty && $gameParty.leader());
         if (ridden) {
           return ridden.index || 0;
         }
@@ -4991,7 +5024,8 @@
     // accord (Map/MovementInteractionSystem.js) is swimming or climbing, not
     // cycling: a bicycle drawn in the middle of a lake is worse than no bicycle.
     if (follower && (follower._isSwimming || follower._isClimbing)) return null;
-    return ridingSprite(riddenPortableConfig());
+    return ridingSprite(riddenPortableConfig(),
+      (follower && follower.actor) ? follower.actor() : null);
   }
 
   const _Game_Follower_characterName = Game_Follower.prototype.characterName;
@@ -5224,6 +5258,41 @@
     if (!vehicle) return true;
     return !!character && !character.isMoving() && character.pos(vehicle.x, vehicle.y);
   }
+
+  // ---------------------------------------------------------------------------
+  // Nobody is waited for longer than this
+  // ---------------------------------------------------------------------------
+  //
+  // The walk to the vehicle is worth watching only while it is short. The engine
+  // will not start anything until the LAST member has reached the hull, so one of
+  // them wedged behind a fence, sat on a chair, or half a map away in Loose
+  // formation used to keep the party standing at the door for as long as it took
+  // them - and if that member could not get there at all, for ever.
+  //
+  // So the vehicle waits BOARD_WAIT and no longer, whatever it is and however the
+  // boarding was started. After that whoever has not arrived is taken aboard from
+  // wherever they are standing and the party pulls away: nobody is left behind on
+  // the map (a party member is not a body that can be), they are simply not
+  // watched walking over any more.
+  const BOARD_WAIT = 120;   // 2 seconds at 60fps
+
+  const _Game_Player_updateVehicle_wait = Game_Player.prototype.updateVehicle;
+  Game_Player.prototype.updateVehicle = function () {
+    if (this._vehicleGettingOn) {
+      if (this._boardWaitFrom === undefined) this._boardWaitFrom = Graphics.frameCount;
+      if (Graphics.frameCount - this._boardWaitFrom >= BOARD_WAIT) {
+        const followers = this.followers && this.followers();
+        // Put on the leader's own tile, which is the vehicle's: the gather ends
+        // on its own the moment the engine sees them all standing there.
+        if (followers && followers.synchronize) {
+          followers.synchronize(this.x, this.y, this.direction());
+        }
+      }
+    } else if (this._boardWaitFrom !== undefined) {
+      this._boardWaitFrom = undefined;
+    }
+    _Game_Player_updateVehicle_wait.call(this);
+  };
 
   // ---------------------------------------------------------------------------
   // The shadow of the moored Starship

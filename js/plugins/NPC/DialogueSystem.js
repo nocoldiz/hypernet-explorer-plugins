@@ -2737,6 +2737,110 @@ Imported.DialogueSystem = true;
         };
     }
 
+    // -------------------------------------------------------------------------
+    // Em, Bubba, and the two of them to each other
+    // -------------------------------------------------------------------------
+    // Three banks in js/db/NPC/SocialLines.json answer for who is doing the
+    // TALKING rather than for who is being talked to: `em`, how the world
+    // treats the woman whose own memories were forged into the spear that
+    // killed the Father; `bubba`, how it treats the man who handed everybody
+    // the Liminal Engine back; and the pair, `em.bubba` and `bubba.em`, which
+    // is the two of them with nobody else in the room.
+    //
+    // The Empathize panel has always read all three (_socialInteract). The map
+    // talk did not, so the same townsman greeted her as a stranger in the
+    // street and as the god-killer the moment the panel was opened, and the two
+    // of them passed each other town gossip when the Rumors command was pointed
+    // at either. Every builder below asks this one resolver, in the panel's own
+    // order of precedence: the pair owns the exchange outright (the world's
+    // opinion of either of them has nothing to do with it), then Em's stance,
+    // then Bubba's admiration.
+    // Winding each other up is time spent together and nothing else: a point of
+    // standing, never a loss, whichever way the jab went. The same handful the
+    // panel's own Bicker action pays (NPCEmpathize._bicker).
+    const PAIR_BICKER_BOND_MIN = 1;
+    const PAIR_BICKER_BOND_MAX = 3;
+    const pairBickerBond = () => PAIR_BICKER_BOND_MIN +
+        Math.floor(Math.random() * (PAIR_BICKER_BOND_MAX - PAIR_BICKER_BOND_MIN + 1));
+
+    function talkLayer(ev, npcName, profile) {
+        const H = window.NPCEmpathize?._helpers;
+        const actor = (() => { try { return $gameParty.leader(); } catch (err) { return null; } })();
+        if (!H || !actor || !npcName) return null;
+        const pair = H._pairContext?.(actor, npcName, ev);
+        if (pair) return pair;
+        const em = H._emContext?.(profile, npcName, ev, actor);
+        if (em) {
+            // A stance is how the NPC answers HER, so it holds no voice for
+            // her; hers is the `player` pool of the `em` block itself, one
+            // register per tone, exactly where the panel reads it from
+            // (_socialInteract: `_emDb().player?.[emTone]`). Talking to Bubba
+            // is the exception: that stance is the pair bank, which carries
+            // both voices.
+            const own = em.data && em.data.player;
+            return Object.assign({}, em, { voice: own || H._socialLines?.().em?.player || null });
+        }
+        return H._bubbaContext?.(actor) || null;
+    }
+
+    // What the talker says, in their own voice. `player` is keyed by tone where
+    // the bank writes three registers for it (Em's, and both directions of the
+    // pair) and is one flat pool where it writes one: Bubba deflects the same
+    // modest way whatever was said to him.
+    function layerPlayerLine(layer, tone) {
+        const H = window.NPCEmpathize?._helpers;
+        const pool = layer && (layer.voice || (layer.data && layer.data.player));
+        if (!H || !pool) return '';
+        return H._rand(Array.isArray(pool) ? pool : (pool[tone] || pool.neutral)) || '';
+    }
+
+    // What the other one says back, in that tone.
+    function layerReplyLine(layer, tone) {
+        const H = window.NPCEmpathize?._helpers;
+        if (!H || !layer || !layer.data) return '';
+        return H._rand(layer.data[tone] || layer.data.neutral) || '';
+    }
+
+    // How the other one opens: their greeting, or - for the pair, who have been
+    // in the same camper for twelve years and greet each other by remarking on
+    // the weather - a word about wherever the two of them are standing, when
+    // the bank has one written for it (rain, a forest, a town, the small hours,
+    // no money left).
+    function layerGreetingLine(layer) {
+        const H = window.NPCEmpathize?._helpers;
+        if (!H || !layer || !layer.data) return '';
+        const situation = layer.pair ? (H._pairSituationLine?.(layer.data) || '') : '';
+        return situation || H._rand(layer.data.greeting) || '';
+    }
+
+    // What this exchange is worth. The pair keep one uncapped bond between them
+    // and are on nobody's faction books for teasing each other, so whatever the
+    // move was meant to cost, between those two it comes out the same way: up.
+    function payLayer(layer, tone, delta) {
+        const H = window.NPCEmpathize?._helpers;
+        const mult = H?._stanceToneMult ? H._stanceToneMult(layer, tone) : 1;
+        if (layer && layer.pair) {
+            const bond = Math.round(Math.abs(delta) * mult);
+            H?._addPairBond?.(bond);
+            return bond;
+        }
+        return Math.round(delta * mult);
+    }
+
+    // Meeting somebody in the street is meeting them: the standing either of
+    // them starts from is written on the first meeting wherever it happens, so
+    // the panel opened afterwards displays what the street already decided.
+    // Both halves are idempotent and gate on their own switch.
+    function seedLayerMeeting(ev, npcName, profile) {
+        const H = window.NPCEmpathize?._helpers;
+        const actor = (() => { try { return $gameParty.leader(); } catch (err) { return null; } })();
+        if (!H || !actor) return;
+        try {
+            H._emSeedFirstImpression?.(profile, npcName, ev);
+            H._bubbaSeedFirstImpression?.(profile, actor);
+        } catch (err) { /* no society profile to seed */ }
+    }
+
     // A short, personality-flavoured beat between the party leader and an NPC,
     // picking one random action out of the same catalogue the Empathize panel's
     // Socialize submenu offers (praise, small talk, comment on weather, insult,
@@ -2761,7 +2865,11 @@ Imported.DialogueSystem = true;
         const def = interactions[Math.floor(Math.random() * interactions.length)];
 
         const fill       = s => vary(String(s || '').replace(/\{name\}/g, npcName));
-        const playerLine = fill(H._rand(def.player));
+        // Em says it in her words, Bubba in his, and the two of them to each
+        // other in theirs; anybody else says the move's own line.
+        const layer      = talkLayer(ev, npcName, profile);
+        if (layer) seedLayerMeeting(ev, npcName, profile);
+        const playerLine = fill(layerPlayerLine(layer, def.tone)) || fill(H._rand(def.player));
         if (!playerLine) return null;
 
         const mult   = tone => H._personalitySocialMult ? H._personalitySocialMult(profile, tone) : 1;
@@ -2803,10 +2911,18 @@ Imported.DialogueSystem = true;
             const pool = def.tone === 'negative' ? def.responseBad : (sincere ? def.responseGood : def.responseBad);
             npcLine = fill(H._rand(pool)) || fill(H._rand(def.responseGood)) || fill(H._rand(def.responseBad));
         }
+        // The stance owns the reply, the same way it does in the panel: praise
+        // from the god-killer lands very differently on a zealot and on an
+        // invasive fan, and neither of them sounds like the generic pool. It
+        // beats the markovian dialogue mode too, since a written character has
+        // no word bank to be generated out of.
+        const layerBack = layer ? fill(layerReplyLine(layer, def.tone)) : '';
+        if (layerBack) npcLine = layerBack;
         if (!npcLine) return null;
         npcLine = vary(npcLine);
 
-        if (profile && actorId != null && H._addNpcOpinion) {
+        delta = payLayer(layer, def.tone, delta);
+        if (profile && actorId != null && H._addNpcOpinion && !(layer && layer.pair)) {
             H._addNpcOpinion(profile, actorId, delta);
             (profile.eventLog ??= []).push({
                 tag: 'social_' + def.id, desc: `${def.id} (${delta >= 0 ? '+' : ''}${delta})`, // i18n-ignore: event-log record id
@@ -2858,8 +2974,16 @@ Imported.DialogueSystem = true;
         const fillNpc    = s => vary(String(s || '').replace(/\{name\}/g, actor ? actor.name() : ''));
         const fillPlayer = s => vary(String(s || '').replace(/\{name\}/g, npcName));
 
-        let npcLine;
-        if (ConfigManager.dialogueMode === 'markovian') {
+        // Whoever the leader is, this is the beat where somebody walks up and
+        // opens their mouth, so it is the one the greeting banks were written
+        // for: the stance an NPC holds Em in, the admiration Bubba is met with,
+        // or - between those two - a word about the weather and the road, which
+        // is how twelve years of the same camper greet each other.
+        const layer = talkLayer(ev, npcName, profile);
+        if (layer) seedLayerMeeting(ev, npcName, profile);
+
+        let npcLine = layer ? fillNpc(layerGreetingLine(layer)) : '';
+        if (!npcLine && ConfigManager.dialogueMode === 'markovian') {
             npcLine = window.MarkovNPCDialogue?.generateLine?.(npcName) || '';
         }
         // Gossip reversed is the NPC fishing for news, and the party is the one
@@ -2870,7 +2994,8 @@ Imported.DialogueSystem = true;
         npcLine = vary(npcLine);
 
         const warm       = def.tone !== 'negative';
-        let playerLine   = fillPlayer(H._rand(warm ? def.responseGood : def.responseBad))
+        let playerLine   = fillPlayer(layerPlayerLine(layer, warm ? 'positive' : 'negative'))
+                        || fillPlayer(H._rand(warm ? def.responseGood : def.responseBad))
                         || fillPlayer(H._rand(def.responseGood));
         if (!playerLine) return null;
         // The beast's half of it. The line above is what a person would have
@@ -2886,7 +3011,8 @@ Imported.DialogueSystem = true;
         let delta  = Math.round(Math.sign(def.baseDelta) * Math.ceil(Math.abs(def.baseDelta) / 3) * mult(def.tone));
         if (def.tone === 'neutral') delta = Math.max(0, delta);
 
-        if (profile && actorId != null && H._addNpcOpinion) {
+        delta = payLayer(layer, def.tone, delta);
+        if (profile && actorId != null && H._addNpcOpinion && !(layer && layer.pair)) {
             H._addNpcOpinion(profile, actorId, delta);
             (profile.eventLog ??= []).push({
                 tag: 'npc_social_' + def.id, desc: `${def.id} (${delta >= 0 ? '+' : ''}${delta})`, // i18n-ignore: event-log record id
@@ -2938,6 +3064,11 @@ Imported.DialogueSystem = true;
         const actorId = actor && actor.actorId();
         // A beast at the head of the party has no half of a debate to hold.
         if (!actor || (H?._isNonSentientActor && H._isNonSentientActor(actor))) return null;
+
+        // Em and Bubba do not debate the banks at each other out of the town's
+        // script bank. What they do instead is bicker, which is its own written
+        // exchange (buildPairBickerExchange below).
+        if (H?._pairContext?.(actor, npcName, ev)) return null;
 
         const leaderName    = actor.name();
         const leaderProfile = window.NPCSocietyRegistry?.getProfile?.(leaderName) || null;
@@ -3010,17 +3141,52 @@ Imported.DialogueSystem = true;
     // The third thing that can happen: no social move at all, just the rumour
     // bank, spoken over the NPC's own bust like anything else they say. This is
     // also the whole of what a beast or an unregistered event has to offer.
-    function buildRumorExchange(ev, npcName) {
-        let line = pickRumor(rumorPersonalityKey(ev.eventId()));
-        if (!line) return null;
-        line = vary(line);
+    function buildRumorExchange(ev, npcName, profile) {
         const EM = window.NPCEmpathize;
+        // Who is standing there is not lost on the person passing the rumour
+        // on: they greet the god-killer, or the man who built the Liminal
+        // Engine, and then they tell them what they heard. The two of them
+        // between themselves have no town gossip to trade at all, so the
+        // greeting - or a word about the road they are on - is the whole beat.
+        const layer   = talkLayer(ev, npcName, profile ?? null);
+        if (layer) seedLayerMeeting(ev, npcName, profile ?? null);
+        const hello   = layer ? vary(String(layerGreetingLine(layer))
+                                     .replace(/\{name\}/g, npcName || '')) : '';
+        let line = pickRumor(rumorPersonalityKey(ev.eventId()));
+        if (layer && layer.pair) line = '';
+        if (!line && !hello) return null;
+        line = line ? vary(line) : '';
         // A non-sentient creature has no words, only a noise as long as the line
         // it would have spoken.
-        if (npcName && EM?.isNonSentientNPC?.(npcName)) line = EM.growlFor(line, npcName) || line;
-        if (npcName) EM?.recordNPCLine?.(npcName, line, 'npc');
+        if (line && npcName && EM?.isNonSentientNPC?.(npcName)) line = EM.growlFor(line, npcName) || line;
+        const said = [hello, line].filter(Boolean).join(' ');
+        if (npcName) EM?.recordNPCLine?.(npcName, said, 'npc');
         payCompany(ev, npcName);
-        return [npcStep(ev, npcName, line)];
+        return [npcStep(ev, npcName, said)];
+    }
+
+    // The two of them, teasing. `bicker` is written as the exchange it is - a
+    // line and the answer to it - so it needs no tone, no opinion and no
+    // personality lookup: it is the only pair of people in the game who already
+    // know exactly how the other one will take it. Whoever is leading says the
+    // `player` half, the other one answers, and the bond goes up either way.
+    function buildPairBickerExchange(ev, npcName, profile) {
+        const H = window.NPCEmpathize?._helpers;
+        const actor = (() => { try { return $gameParty.leader(); } catch (err) { return null; } })();
+        if (!H || !actor) return null;
+        const layer = H._pairContext?.(actor, npcName, ev);
+        const beat  = layer && H._rand?.(layer.data.bicker);
+        if (!beat || !beat.player || !beat.reply) return null;
+        const fill = s => vary(String(s || '').replace(/\{name\}/g, npcName || ''));
+        const said = fill(beat.player);
+        const back = fill(beat.reply);
+        if (!said || !back) return null;
+        const EM = window.NPCEmpathize;
+        EM?.recordNPCLine?.(npcName, said, 'player');
+        EM?.recordNPCLine?.(npcName, back, 'npc');
+        H._addPairBond?.(pairBickerBond());
+        payCompany(ev, npcName);
+        return [playerStep(actor, said), npcStep(ev, npcName, back)];
     }
 
     // -------------------------------------------------------------------------
@@ -3146,7 +3312,7 @@ Imported.DialogueSystem = true;
         BACK:        { keyboard: 'ESC',         pad: 'B'           },
         MENU:        { keyboard: 'ESC',         pad: 'Y'           },
         SPRINT:      { keyboard: 'SHIFT',       pad: 'X'           },
-        SCROLLWHEEL: { keyboard: 'SCROLLWHEEL', pad: 'L2/R2'       },
+        SCROLLWHEEL: { keyboard: 'SCROLLWHEEL', pad: 'RIGHT STICK' },
         TAB:         { keyboard: 'TAB',         pad: 'L1/R1'       },
         MOVE:        { keyboard: 'WASD',        pad: 'LEFT STICK'  },
         LOOK:        { keyboard: 'MOUSE',       pad: 'RIGHT STICK' },
@@ -3350,7 +3516,13 @@ Imported.DialogueSystem = true;
     const STORY_ASK_FILE   = 'mainquest';           // i18n-ignore: script file name
     const STORY_ASK_FIXED  = 'askbubba';            // i18n-ignore: script file name
     const STORY_ASK_TAG    = /<Bubba:\s*([^>]*)>/i; // i18n-ignore: map note tag
-    const STORY_ASK_SWITCH = 75;                    // story mode
+    // Story mode is switch 100 and nothing else: the title screen turns it on
+    // when a story run starts and every other reader of it (Core/WorldManager.js,
+    // CharacterCreation/CharacterCreationPresets.js, Map/MapLegend.js) asks this
+    // one. Switch 75 is the map-tooltips setting written by Core/GameOptions.js,
+    // off in a fresh game and turned off again whenever the player takes the map
+    // notices away, so gating the board on it hid the whole of it.
+    const STORY_ASK_SWITCH = 100;                   // story mode
     const STORY_ASK_COLS   = 2;                     // columns of the grid
     const STORY_ASK_MAX_COLS = 4;                   // as wide as the board goes
 
@@ -3558,6 +3730,18 @@ Imported.DialogueSystem = true;
         const leader  = (() => { try { return $gameParty.leader(); } catch (err) { return null; } })();
         const partner = storyAskPartnerActor();
         if (!leader || !partner) return false;
+        // These two have a bank of their own for talking to each other, so the
+        // party's generic discussion is the fallback rather than the first
+        // thing tried: the Talk entry plays them bickering the way the panel's
+        // own Bicker action does (js/db/NPC/SocialLines.json).
+        const jab = window.NPCEmpathize?.pairBickerBeat?.(leader);
+        if (jab) {
+            const said = playerStep(leader, jab.player);
+            const back = playerStep(partner, jab.reply);
+            said.side = 'left';
+            back.side = 'right';
+            return startNPCExchange([said, back], true);
+        }
         const beats = window.PartyBanter?.discussion?.([leader, partner]);
         if (!beats || !beats.length) return false;
         const cast  = [leader, partner];
@@ -3617,6 +3801,8 @@ Imported.DialogueSystem = true;
         askVerb:    storyAskVerb,
         askPartner: storyAskPartner,
         canAsk:     canAskStory,
+        // The one switch the board answers to, so nothing has to guess at it.
+        askSwitch:  STORY_ASK_SWITCH,
         ask:        openStoryAsk,
         askStage:   storyAskStage,
         // The layout the board was handed, readable until the window opens.
@@ -3781,8 +3967,29 @@ Imported.DialogueSystem = true;
             // a proper conversation, the multi-beat scripts two NPCs trade,
             // with the greeting-sized social beats behind them as the fallback.
             let builders;
-            if (!sentient || !EM || Math.random() < RUMOR_CHANCE) {
-                builders = [() => buildRumorExchange(ev, npcName)];
+            // Em standing in front of Bubba, or Bubba in front of Em, is not a
+            // person meeting a townsman: there is no rumour to pass, no opinion
+            // to move and no debate to hold, only the two of them. They bicker,
+            // they greet each other by remarking on the weather, or one of them
+            // says something and the other answers it - all three out of the
+            // pair banks (buildPairBickerExchange, and the layer inside the two
+            // builders below).
+            const pair = !!talkLayer(ev, npcName, profile)?.pair;
+            if (pair) {
+                const beats = [
+                    () => buildPairBickerExchange(ev, npcName, profile),
+                    () => buildSocialExchange(ev, npcName, profile),
+                    () => buildNpcOpeningExchange(ev, npcName, profile),
+                ];
+                // Whichever of the three comes up first; the other two are
+                // still there behind it if that one has nothing written.
+                for (let i = beats.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [beats[i], beats[j]] = [beats[j], beats[i]];
+                }
+                builders = [...beats, () => buildRumorExchange(ev, npcName, profile)];
+            } else if (!sentient || !EM || Math.random() < RUMOR_CHANCE) {
+                builders = [() => buildRumorExchange(ev, npcName, profile)];
                 if (sentient && EM) {
                     builders.push(() => buildNpcOpeningExchange(ev, npcName, profile));
                     builders.push(() => buildSocialExchange(ev, npcName, profile));
@@ -3794,7 +4001,7 @@ Imported.DialogueSystem = true;
                 ];
                 if (Math.random() < 0.5) beats.reverse();
                 builders = [() => buildTopicalExchange(ev, npcName, profile), ...beats,
-                            () => buildRumorExchange(ev, npcName)];
+                            () => buildRumorExchange(ev, npcName, profile)];
             }
             // A builder that has nothing written to work with returns null
             // before it moves anything, so falling through to the next one
@@ -3812,8 +4019,15 @@ Imported.DialogueSystem = true;
             }
         }
 
-        // Nowhere to stage a bust: the bare line, so the NPC is never mute.
-        let line = pickRumor(rumorPersonalityKey(evId));
+        // Nowhere to stage a bust: the bare line, so the NPC is never mute. The
+        // voices still hold here - it is the portraits there is no room for,
+        // not the person - so whoever is talking is greeted as themselves.
+        const bareLayer = talkLayer(ev, npcName, profile);
+        const bareHello = bareLayer
+            ? vary(String(layerGreetingLine(bareLayer)).replace(/\{name\}/g, npcName || ''))
+            : '';
+        let line = (bareLayer && bareLayer.pair) ? '' : pickRumor(rumorPersonalityKey(evId));
+        line = [bareHello, line].filter(Boolean).join(' ');
         // Nothing at all to say: the caller is told so, since an older event
         // that came in through the Markov command still has its own line to
         // fall back on.

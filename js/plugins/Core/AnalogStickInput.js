@@ -33,7 +33,11 @@
  *
  * API (window.AnalogStickInput):
  *   leftX()/leftY()    deadzone-scaled [-1,1]  (Y positive = down)
- *   rightX()/rightY()  right stick
+ *   rightX()/rightY()  right stick. Reading it CLAIMS it for the frame, the
+ *                      way the triggers below are claimed: the game-wide
+ *                      scroll poll (UIScroll in MouseControls.js) drives the
+ *                      open pane with this stick and has to stand down when a
+ *                      scene is already swinging a camera with it
  *   leftTrigger()/rightTrigger()  L2/R2 analog triggers, [0,1] (standard
  *                      gamepad mapping buttons[6]/[7].value; 0 when absent)
  *   isActive()         left stick outside deadzone this frame
@@ -120,8 +124,10 @@
         _lx: 0, _ly: 0, _rx: 0, _ry: 0,
         _lt: 0, _rt: 0,
         // Which frame the triggers were last read on, and how often (see
-        // leftTrigger below).
+        // leftTrigger below). The right stick is claimed the same way, for the
+        // same reason (see rightX below).
         _triggerFrame: -1, _triggerReads: 0,
+        _rStickFrame: -1, _rStickReads: 0,
         _padOn: false,
         // Raw button state this frame and last, for edge detection.
         _btn: [], _btnPrev: [],
@@ -132,8 +138,13 @@
 
         leftX() { return this._lx; },
         leftY() { return this._ly; },
-        rightX() { return this._rx; },
-        rightY() { return this._ry; },
+        // Reading the right stick CLAIMS it for this frame. The stick swings
+        // a camera in every 3D scene and scrolls the open pane in every DOM
+        // menu, and one push must never do both: the game-wide scroll poll
+        // asks whether anybody else has read the stick already and stands down
+        // if they have. Nobody has to declare anything: asking is the claim.
+        rightX() { this._claimRightStick(); return this._rx; },
+        rightY() { this._claimRightStick(); return this._ry; },
         // Reading a trigger CLAIMS it for this frame. MZ has no name for the
         // analog triggers, so every screen that wants them reads them raw from
         // here - and the game-wide scroll poll (UIScroll in MouseControls.js)
@@ -157,6 +168,27 @@
         triggerReadsThisFrame() {
             const frame = (typeof Graphics !== "undefined" && Graphics.frameCount) || 0;
             return frame === this._triggerFrame ? this._triggerReads : 0;
+        },
+
+        _claimRightStick() {
+            const frame = (typeof Graphics !== "undefined" && Graphics.frameCount) || 0;
+            if (frame !== this._rStickFrame) {
+                this._rStickFrame = frame;
+                this._rStickReads = 0;
+            }
+            this._rStickReads++;
+        },
+
+        // Whether the right stick is centred, WITHOUT claiming it: a screen
+        // that has to decide whether the stick is even in play before deciding
+        // whether it is its own to read (the map's pan, which hands it to a
+        // pane the player is reading) asks this first.
+        rightStickIdle() { return this._rx === 0 && this._ry === 0; },
+
+        // The same count for the right stick.
+        rightStickReadsThisFrame() {
+            const frame = (typeof Graphics !== "undefined" && Graphics.frameCount) || 0;
+            return frame === this._rStickFrame ? this._rStickReads : 0;
         },
 
         // Standard gamepad mapping (Xbox layout labels). The four d-pad
@@ -356,9 +388,14 @@
             return;
         }
         // The sticks and the analog triggers, neither of which sets
-        // _latestButton on its own for every menu that reads them raw.
+        // _latestButton on its own for every menu that reads them raw. Read off
+        // the raw fields rather than through the accessors: those CLAIM what
+        // they read, and a claim made here, once a frame for every frame the
+        // game runs, would tell every screen that somebody else already has
+        // the triggers and the right stick.
         if (AnalogStickInput.isActive() ||
-            AnalogStickInput.leftTrigger() > 0.5 || AnalogStickInput.rightTrigger() > 0.5) {
+            AnalogStickInput._lt > 0.5 || AnalogStickInput._rt > 0.5 ||
+            AnalogStickInput._rx !== 0 || AnalogStickInput._ry !== 0) {
             PointerSteering.release();
         }
     }

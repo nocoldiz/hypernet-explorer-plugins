@@ -81,32 +81,30 @@
  * says so.
  *
  * How an update runs
- *   Opening the screen runs one on its own: the branch is read, the newest
- *   build compared and, when it holds anything this copy lacks, downloaded and
- *   applied, all without a press. Esc stops it at any point and nothing outside
- *   save/updater/tmp has been touched until every file is down. The one thing
- *   it will not do by itself is cross a major update (below): there it stops
- *   after the comparison and says what has to be downloaded instead, since a
- *   patched copy is not a whole one.
+ *   Downloading a build and installing it are two separate things, and only the
+ *   first of them happens on its own. The title screen and this screen both
+ *   fetch the newest build the moment they hear of one, into save/updater/tmp,
+ *   and stop there: no file in the game folder is touched and the copy being
+ *   played is exactly the copy that was played before. What the player then
+ *   sees is one button offering to install the build that is already in hand,
+ *   which is a file move and takes a moment rather than a download.
  *
- *   Switching to a build by hand is a single action too. The player highlights
- *   it and confirms once, on the build itself or on the one button in the
- *   action list, and everything below happens without another press.
- *   1. The branch history is read from the GitHub API and the player picks a
- *      build. The newest one is picked and compared on opening the screen, so
- *      the button already knows how large the switch will be.
+ *   1. The branch history is read from the GitHub API. The newest build is
+ *      taken automatically; any older one is taken by highlighting it.
  *   2. Every file in that build is compared with the local one by git blob
  *      hash, so only files that really differ are downloaded, and only those
  *      count toward the download size. A text file whose only difference is
  *      CRLF line endings holds the same content as the LF blob the repository
  *      stores, so it is left alone as well. Going back to an older build works
- *      the same way, it just replaces newer files with the older ones. A build
- *      already compared skips this step and goes straight to the download.
+ *      the same way, it just replaces newer files with the older ones.
  *   3. All of them are fetched into save/updater/tmp and verified against the
- *      hash the repository declared.
- *   4. Only once every file is downloaded and verified are they moved into
- *      place. The replaced files are copied to save/updater/backup/<time>
- *      first, and the three most recent backups are kept.
+ *      hash the repository declared. save/updater/staged.json records what came
+ *      down, so a build fetched in one session is still in hand in the next one
+ *      and is never fetched twice.
+ *   4. Installing is the press that follows: the staged files are moved into
+ *      place, the replaced ones copied to save/updater/backup/<time> first, and
+ *      the three most recent backups kept. Nothing here can fail halfway on a
+ *      network, since every byte is already on disk.
  *   5. The game must be closed and reopened for the new files to load. The
  *      updater warns the player and closes it for them; it never reloads in
  *      place, since that leaves some replaced files loaded from the old copy.
@@ -114,9 +112,11 @@
  *      held for a second first, so the window going away is plainly the update
  *      finishing rather than a crash.
  *
- *   A build that turns out to hold nothing this copy lacks stops after step 2
- *   and says so, and "Check this build" still compares a build without touching
- *   anything, for a player who wants to read the file list first.
+ *   Esc stops a download at any point and clears what came down; nothing
+ *   outside save/updater has been touched either way. The one thing the
+ *   automatic download will not do is cross a major update (below): there it
+ *   stops after the comparison and says what has to be downloaded instead,
+ *   since a patched copy is not a whole one.
  *
  * Nothing is ever deleted: files that exist here but not in the repository are
  * left alone, and so is everything under save/. Going back to an older build
@@ -174,7 +174,8 @@
  *   Right / D          , enter the action list
  *   Left / A           , back to the build list
  *   PageUp / PageDown  , switch between the STABLE and UNSTABLE tabs
- *   OK / Enter         , switch to the highlighted build, or run the action
+ *   OK / Enter         , download the highlighted build, install it once it is
+ *                        down, or run the action
  *   Cancel / Esc       , back to the title (aborts a running download)
  * ============================================================================
  */
@@ -328,7 +329,8 @@
     })();
 
     let fs = null, nodePath = null, https = null, crypto = null;
-    let BASE_DIR = '', WORK_DIR = '', TMP_DIR = '', BACKUP_DIR = '', STATE_FILE = '', HASH_FILE = '';
+    let BASE_DIR = '', WORK_DIR = '', TMP_DIR = '', BACKUP_DIR = '', STATE_FILE = '', HASH_FILE = '',
+        STAGE_FILE = '';
 
     if (hasNode) {
         try {
@@ -342,6 +344,8 @@
             BACKUP_DIR = nodePath.join(WORK_DIR, 'backup');
             STATE_FILE = nodePath.join(WORK_DIR, 'state.json');
             HASH_FILE  = nodePath.join(WORK_DIR, 'hashes.json');
+            // What has been downloaded and is waiting to be swapped in.
+            STAGE_FILE = nodePath.join(WORK_DIR, 'staged.json');
         } catch (e) {
             console.warn(PLUGIN_NAME + ': node modules unavailable, updater disabled.', e);
             fs = null;
@@ -704,6 +708,7 @@
         _state: null,
         _hashes: null,
         _plans: {},          // commit sha -> last check result
+        _staged: undefined,  // the build waiting in save/updater/tmp, read on first ask
         _channel: null,      // 'stable' | 'unstable', read from the state file
         // channel key -> { commits (newest first), page, end }. Each tab keeps
         // its own list, so going back to one already read costs no request.
@@ -1477,9 +1482,69 @@
         },
 
         // ---------------------------------------------------------------------
-        // Install, download everything first, replace only when all of it is here
+        // Download and install, the two halves a build comes in
+        //
+        // Fetching a build and taking it are separate acts. `download` pulls
+        // every file that differs into save/updater/tmp, verifies it and leaves
+        // it there; nothing outside that folder is touched, so a copy can carry
+        // a whole build around without running a line of it. `applyStaged` is
+        // the move that follows, and the only step that writes into the game
+        // folder. That split is what lets the title screen fetch the newest
+        // build the moment it hears of one and still leave installing it to the
+        // player, who presses one button when the download is already in hand.
         // ---------------------------------------------------------------------
-        async install(commitSha, onProgress) {
+
+        // What is sitting in the staging folder, or null when nothing is. The
+        // record is only believed while every file it names is still on disk, so
+        // a staging folder emptied by hand, or one left half written by a close
+        // in the middle of a download, reads as nothing staged rather than as a
+        // build that cannot be installed.
+        stagedInfo() {
+            if (!isAvailable()) return null;
+            if (this._staged === undefined) {
+                const rec = readJson(STAGE_FILE, null);
+                this._staged = (rec && rec.sha && Array.isArray(rec.files) && rec.files.length) ? rec : null;
+                if (this._staged) {
+                    for (const entry of this._staged.files) {
+                        if (!fs.existsSync(nodePath.join(TMP_DIR, entry.path))) {
+                            this.clearStaged();
+                            break;
+                        }
+                    }
+                }
+            }
+            return this._staged;
+        },
+
+        // The staged build, but only when it is the one asked about.
+        stagedFor(sha) {
+            const rec = this.stagedInfo();
+            return (rec && sha && rec.sha === sha) ? rec : null;
+        },
+
+        // The name the staged build goes by, which is what a button offering to
+        // install it says.
+        stagedName() {
+            const rec = this.stagedInfo();
+            if (!rec) return null;
+            const title = messageTitle(rec.name || '');
+            return this._versionName(title) || title || null;
+        },
+
+        clearStaged() {
+            this._staged = null;
+            rmrf(TMP_DIR);
+            try {
+                if (STAGE_FILE && fs.existsSync(STAGE_FILE)) fs.unlinkSync(STAGE_FILE);
+            } catch (e) {
+                console.warn(PLUGIN_NAME + ': could not clear the staged build', e);
+            }
+        },
+
+        // Fetch everything the build holds that this copy lacks, into the
+        // staging folder. The plan has to have been measured first; a build
+        // already staged is not fetched twice.
+        async download(commitSha, onProgress) {
             const T = getT();
             const plan = this._plans[commitSha];
             const report = onProgress || function () {};
@@ -1488,15 +1553,17 @@
                 return null;
             }
             if (!plan || !plan.changed.length) return null;
-
-            // What this switch crosses has to be read while the installed record
-            // still names the build being left behind.
-            const majorCrossed = this.majorAhead(plan.sha);
+            if (this.stagedFor(commitSha)) {
+                report({ phase: 'staged', text: fmt(T.logStaged, plan.message || shortSha(plan.sha)), ratio: 1 });
+                return plan;
+            }
 
             this._busy = true;
             this._cancelled = false;
             try {
-                rmrf(TMP_DIR);
+                // Whatever was staged before is a different build, and its files
+                // are of no use to this one.
+                this.clearStaged();
                 mkdirp(TMP_DIR);
 
                 const queue = plan.changed.slice();
@@ -1537,22 +1604,55 @@
 
                 if (failure) {
                     // Nothing has been touched outside the staging folder yet.
-                    rmrf(TMP_DIR);
+                    this.clearStaged();
                     throw failure;
                 }
                 if (this._cancelled) {
-                    rmrf(TMP_DIR);
+                    this.clearStaged();
                     report({ phase: 'cancelled', text: T.logCancel, ratio: 0 });
                     return null;
                 }
 
-                // Every file is on disk and verified: now swap them in.
+                // Every file is down and verified. The record is what a later
+                // launch reads to know a build is already in hand.
+                this._staged = {
+                    sha: plan.sha,
+                    date: plan.date,
+                    name: plan.message || null,
+                    at: Date.now(),
+                    bytes: plan.bytes,
+                    files: plan.changed.map(c => ({ path: c.path, sha: c.sha }))
+                };
+                writeJson(STAGE_FILE, this._staged);
+                report({ phase: 'staged', text: fmt(T.logStaged, plan.message || shortSha(plan.sha)), ratio: 1 });
+                return plan;
+            } finally {
+                this._busy = false;
+            }
+        },
+
+        // Move the staged build into place. This is the only step that writes
+        // into the game folder, and it only ever writes files that are already
+        // down and verified, so it cannot leave the copy half patched by a
+        // network that gave out halfway.
+        async applyStaged(onProgress) {
+            const T = getT();
+            const report = onProgress || function () {};
+            const rec = this.stagedInfo();
+            if (!rec) return null;
+
+            // What this switch crosses has to be read while the installed record
+            // still names the build being left behind.
+            const majorCrossed = this.majorAhead(rec.sha);
+
+            this._busy = true;
+            try {
                 report({ phase: 'apply', text: T.logApplying, ratio: 1 });
                 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
                 const backupRoot = nodePath.join(BACKUP_DIR, stamp);
                 let backedUp = 0;
 
-                for (const entry of plan.changed) {
+                for (const entry of rec.files) {
                     const target = nodePath.join(BASE_DIR, entry.path);
                     const staged = nodePath.join(TMP_DIR, entry.path);
                     if (!fs.existsSync(staged)) continue;
@@ -1573,14 +1673,14 @@
                 }
 
                 this.saveHashes();
-                rmrf(TMP_DIR);
+                this.clearStaged();
                 this.pruneBackups();
 
-                this._markInstalled(plan.sha, plan.date, plan.message, majorCrossed);
+                this._markInstalled(rec.sha, rec.date, rec.name, majorCrossed);
                 // The badge is numbered from the state file, so the build just
                 // installed is numbered now rather than on the next launch.
                 try {
-                    await this.buildCountFor(plan.sha);
+                    await this.buildCountFor(rec.sha);
                 } catch (e) {
                     console.warn(PLUGIN_NAME + ': could not resolve the build number', e);
                 }
@@ -1592,12 +1692,9 @@
                     this._auto.majorInstalled = this.majorInstalled();
                 }
 
-                // Every other plan was measured against the files we just
-                // replaced, so they have to be checked again.
+                // Every plan was measured against the files we just replaced, so
+                // they have to be measured again.
                 this._plans = {};
-                plan.changed = [];
-                plan.bytes = 0;
-                this._plans[plan.sha] = plan;
                 this._restartPending = true;
                 // CHANGELOG.txt is one of the files just swapped in.
                 forgetChangelog();
@@ -1607,10 +1704,18 @@
                 }
                 report({ phase: 'done', text: T.logDone, ratio: 1 });
                 if (majorCrossed) report({ phase: 'done', text: T.logMajor, ratio: 1 });
-                return plan;
+                return rec;
             } finally {
                 this._busy = false;
             }
+        },
+
+        // Both halves back to back, for a caller that means to take the build
+        // outright rather than hold it.
+        async install(commitSha, onProgress) {
+            const got = await this.download(commitSha, onProgress);
+            if (!got) return null;
+            return this.applyStaged(onProgress);
         },
 
         pruneBackups() {
@@ -1874,26 +1979,28 @@
             GameUpdater.cancel();
         }
 
+        // What a build is doing right now, and nothing else. Whether it has
+        // been compared, and whether its files happen to match this copy, is
+        // not a question the player is asked any more: every build in the list
+        // is simply one to download and switch to. The badge therefore stays
+        // empty unless the build is being worked on or is already in hand.
         _buildStatus(commit) {
             const T = getT();
-            if (!commit) return { text: T.unchecked, cls: 'gu-badge--idle' };
-            if (this._status[commit.sha] === 'checking') return { text: T.checking, cls: 'gu-badge--busy' };
-            if (this._status[commit.sha] === 'failed')   return { text: T.failed,   cls: 'gu-badge--bad' };
-            if (GameUpdater.isCurrentVersion(commit)) {
-                return { text: T.upToDate, cls: 'gu-badge--ok' };
-            }
-            const plan = GameUpdater.plan(commit.sha);
-            if (!plan) return { text: T.unchecked, cls: 'gu-badge--idle' };
-            if (plan.changed.length) {
-                // Going back down the list is a rollback, not an update.
-                const older = GameUpdater.indexOf(commit.sha) > 0;
-                return { text: older ? T.differs : T.available, cls: 'gu-badge--new' };
-            }
-            return { text: T.upToDate, cls: 'gu-badge--ok' };
+            const idle = { text: '', cls: 'gu-badge--idle' };
+            if (!commit) return idle;
+            const state = this._status[commit.sha];
+            if (state === 'checking')    return { text: T.checking,    cls: 'gu-badge--busy' };
+            if (state === 'downloading') return { text: T.downloading, cls: 'gu-badge--busy' };
+            if (state === 'failed')      return { text: T.failed,      cls: 'gu-badge--bad' };
+            if (GameUpdater.stagedFor(commit.sha)) return { text: T.ready, cls: 'gu-badge--new' };
+            return idle;
         }
 
-        // Switching to a build is one action: it compares the files and, when
-        // any of them differ, downloads and applies them without asking again.
+        // A build is taken in two presses, never fewer and never more: the first
+        // fetches it into the staging folder, the second swaps it in. Which of
+        // the two the button offers depends only on whether the build is
+        // already down, so a build in hand always reads as "install" and one
+        // that is not always reads as "download".
         _actions() {
             const T = getT();
             const commit = this._selectedBuild();
@@ -1922,24 +2029,24 @@
             }
             // A build already known to match the files here has nothing to do,
             // so the one button is only offered while there is work in it.
-            if (DOWNLOADS_ENABLED && !GameUpdater.isCurrentVersion(commit) &&
+            if (DOWNLOADS_ENABLED && commit && !GameUpdater.isCurrentVersion(commit) &&
                 !(plan && !plan.changed.length)) {
-                const isRollback = GameUpdater.indexOf(commit.sha) > 0;
-                const verb = isRollback ? T.actRollback : T.actInstall;
-                // The size is only known once the build has been compared; an
-                // unchecked one is switched to just the same, it simply cannot
-                // say beforehand how much of it will come down.
-                list.push({
-                    key: 'switch',
-                    label: (plan && plan.changed.length)
-                        ? fmt('%1 (%2)', verb, formatBytes(plan.bytes))
-                        : verb
-                });
-            }
-            // Comparing without downloading stays available for a build nobody
-            // has looked at yet, so its file list can be read first.
-            if (!plan && !GameUpdater.isCurrentVersion(commit)) {
-                list.push({ key: 'check', label: T.actCheck });
+                if (GameUpdater.stagedFor(commit.sha)) {
+                    // Already down and verified: the press is the swap itself.
+                    list.push({ key: 'install', label: T.actInstallStaged });
+                } else {
+                    const older = GameUpdater.indexOf(commit.sha) > 0;
+                    const verb = older ? T.actDownloadOlder : T.actDownload;
+                    // The size is only known once the build has been compared;
+                    // one nobody has looked at is downloaded just the same, it
+                    // simply cannot say beforehand how much will come down.
+                    list.push({
+                        key: 'download',
+                        label: (plan && plan.changed.length)
+                            ? fmt('%1 (%2)', verb, formatBytes(plan.bytes))
+                            : verb
+                    });
+                }
             }
             if (!GameUpdater.historyExhausted()) {
                 list.push({ key: 'more', label: T.actMore });
@@ -1972,19 +2079,19 @@
 
         // -- actions ---------------------------------------------------------
 
-        // OK on a build switches the game to it: comparing, downloading and
-        // applying are one press, whether or not it has been checked before.
+        // OK on a build does whatever that build is waiting for: fetching it
+        // when it is not here yet, installing it when it already is.
         _useSelectedBuild() {
             const commit = this._selectedBuild();
             if (!isAvailable() || this._isWorking() || !commit) return;
             // The version this copy runs is locked: comparing it against itself
             // only ever answers that generated files differ, so the press is
             // refused outright rather than starting work with nothing in it.
-            if (GameUpdater.isCurrentVersion(commit)) {
+            if (GameUpdater.isCurrentVersion(commit) || !DOWNLOADS_ENABLED) {
                 SoundManager.playBuzzer();
                 return;
             }
-            this._runAction(DOWNLOADS_ENABLED ? 'switch' : 'check');
+            this._runAction(GameUpdater.stagedFor(commit.sha) ? 'install' : 'download');
         }
 
         // Whether switching to the highlighted build would cross a major
@@ -1995,10 +2102,11 @@
             return !!(commit && GameUpdater.majorAhead(commit.sha));
         }
 
-        // Opening the screen reads the build list and compares the newest
-        // build against the files here, so the list can say straight away
-        // whether an update is owed. Nothing is downloaded until the player
-        // asks for it.
+        // Opening the screen reads the build list, compares the newest build
+        // against the files here and fetches whatever it holds that this copy
+        // lacks, all without a press. Nothing is installed: the download sits
+        // in the staging folder and the action list turns into one button that
+        // swaps it in when the player wants it.
         //
         // Two things hold it back. A build already fetched and waiting only on
         // the game closing has nothing left to download; and the title screen's
@@ -2024,20 +2132,21 @@
             else this._loadHistory(false, () => this._autoRun());
         }
 
-        // Take the newest build of the branch on show: compare it, then install
-        // whatever differs. The one thing this will not do is cross a major
-        // update, which _runSwitch stops at because a patched copy is not a
-        // whole one.
+        // Take the newest build of the branch on show: compare it, then fetch
+        // whatever differs into the staging folder. Installing it is never
+        // automatic, and neither is crossing a major update, which _runDownload
+        // stops at because a patched copy is not a whole one.
         _autoRun() {
             if (!isAvailable() || this._isWorking()) return;
             const latest = GameUpdater.commits()[0];
             if (!latest) return;
             this._buildIndex = 0;
             this._selectionChanged();
-            // Opening the screen only asks the question: the newest build is
-            // compared so the list can say whether anything is owed, and the
-            // download waits for the player to ask for it.
-            this._runAction('check');
+            // Already down from an earlier visit, or already the build being
+            // played: either way there is nothing left to fetch.
+            if (GameUpdater.stagedFor(latest.sha)) return;
+            if (GameUpdater.isCurrentVersion(latest)) return;
+            this._runDownload(latest.sha, true);
         }
 
         // -- channels --------------------------------------------------------
@@ -2153,26 +2262,7 @@
                 return;
             }
             const sha = commit.sha;
-            if (key === 'check') {
-                SoundManager.playOk();
-                this._status[sha] = 'checking';
-                this._progress = 0;
-                this._refreshDOM();
-                GameUpdater.check(sha, (info) => this._onProgress(info))
-                    .then(() => {
-                        delete this._status[sha];
-                        this._progress = null;
-                        this._refreshDOM();
-                    })
-                    .catch((err) => {
-                        this._status[sha] = 'failed';
-                        this._progress = null;
-                        this._pushLog(fmt(T.logError, err.message));
-                        this._refreshDOM();
-                    });
-                return;
-            }
-            if (key === 'switch' || key === 'install') {
+            if (key === 'download' || key === 'install') {
                 if (!DOWNLOADS_ENABLED) {
                     SoundManager.playBuzzer();
                     this._pushLog(T.downloadsOff);
@@ -2180,22 +2270,23 @@
                     return;
                 }
                 SoundManager.playOk();
-                this._runSwitch(sha);
+                if (key === 'install') this._runInstall();
+                else this._runDownload(sha);
             }
         }
 
-        // The whole switch, in one press: compare the build with what is here,
-        // then download and apply whatever differs. A build already compared
-        // skips straight to the download, and one that holds nothing new simply
-        // reports so.
+        // Fetching a build: compare it with what is here, then pull whatever
+        // differs into the staging folder. Nothing in the game folder is
+        // touched, so this can run on its own without ever changing the copy
+        // being played; installing what came down is a separate press.
         //
         // `auto` marks the run nobody asked for by name, the one opening the
-        // screen or switching tab starts. That one stops short of installing
+        // screen or switching tab starts. That one stops short of fetching
         // across a major update: patching a copy over one leaves it half on the
         // old build, and the only thing that finishes it is a download this
         // screen cannot do. The player is told so and the buttons under the
         // notice, the whole game first, are left for them to choose from.
-        _runSwitch(sha, auto) {
+        _runDownload(sha, auto) {
             const T = getT();
             const onProgress = (info) => this._onProgress(info);
             const finish = () => {
@@ -2217,7 +2308,6 @@
             const compared = known ? Promise.resolve(known) : GameUpdater.check(sha, onProgress);
             compared
                 .then((plan) => {
-                    delete this._status[sha];
                     if (this._cancelRequested) {
                         this._pushLog(T.logCancel);
                         return null;
@@ -2231,23 +2321,47 @@
                         this._pushLog(fmt(T.logFullDownloadHint, GameUpdater.fullDownloadUrl()));
                         return null;
                     }
+                    this._status[sha] = 'downloading';
                     this._progress = 0;
                     this._refreshDOM();
-                    return GameUpdater.install(sha, onProgress);
+                    return GameUpdater.download(sha, onProgress);
                 })
                 .then(finish)
                 .catch((err) => {
-                    // A compare stopped by the player is not a failure: it is
-                    // simply unanswered, so the badge goes back to unchecked.
+                    // A run stopped by the player is not a failure: it is
+                    // simply unanswered, so the badge goes back to empty.
                     const aborted = this._cancelRequested;
-                    // A build that never got compared has no answer to show, so
-                    // its badge says so; one that failed while downloading keeps
-                    // the answer the compare gave and reports the error in the log.
                     if (!aborted && !GameUpdater.plan(sha)) this._status[sha] = 'failed';
                     else delete this._status[sha];
                     this._pushLog(aborted ? T.logCancel : fmt(T.logError, err.message));
                     this._working = false;
                     this._cancelRequested = false;
+                    this._progress = null;
+                    this._refreshDOM();
+                });
+        }
+
+        // Taking the build that is already down: the staged files are moved
+        // into place and the game asks to be closed. Everything this writes has
+        // been fetched and verified beforehand, so there is nothing here that a
+        // network can interrupt halfway.
+        _runInstall() {
+            const T = getT();
+            if (!GameUpdater.stagedInfo()) return;
+            this._working = true;
+            this._cancelRequested = false;
+            this._progress = 1;
+            this._refreshDOM();
+            GameUpdater.applyStaged((info) => this._onProgress(info))
+                .then(() => {
+                    this._working = false;
+                    this._progress = null;
+                    this._actionIndex = 0;
+                    this._refreshDOM();
+                })
+                .catch((err) => {
+                    this._pushLog(fmt(T.logError, err.message));
+                    this._working = false;
                     this._progress = null;
                     this._refreshDOM();
                 });
@@ -2292,7 +2406,6 @@
                                 <div class="gu-note" id="gu-note" hidden></div>
                                 <div class="inspect-spec-grid" id="gu-specs"></div>
                                 <div class="gu-changelog" id="gu-changelog" hidden></div>
-                                <div class="gu-files" id="gu-files" hidden></div>
                             </div>
                             <div class="inspect-actions" id="gu-actions"></div>
                         </div>
@@ -2313,8 +2426,7 @@
                 note:     q('#gu-note'),
                 specs:    q('#gu-specs'),
                 changelog: q('#gu-changelog'),
-                actions:  q('#gu-actions'),
-                files:    q('#gu-files')
+                actions:  q('#gu-actions')
             };
             this._cache = {};
 
@@ -2377,10 +2489,11 @@
             return commits.map((commit, i) => {
                 // The build this copy already is, read off the shipped
                 // CHANGELOG.txt: it wears the gold mark and no press installs
-                // it, since there is nothing in it to fetch.
+                // it, since there is nothing in it to fetch. It says INSTALLED
+                // like any other build this copy holds, rather than naming
+                // itself a second way.
                 const current = GameUpdater.isCurrentVersion(commit);
-                const tag = current ? T.tagCurrent
-                    : GameUpdater.isInstalled(commit.sha) ? T.tagInstalled
+                const tag = (current || GameUpdater.isInstalled(commit.sha)) ? T.tagInstalled
                     : (i === 0 ? T.tagLatest : '');
                 // A major build wears its own mark, beside whichever of the two
                 // above it already carries.
@@ -2436,9 +2549,11 @@
                 if (name) specs += row(T.selected, name);
                 specs += row(T.committed, formatDate(commit.date) || T.unknown);
             }
-            if (plan) {
-                specs += row(DOWNLOADS_ENABLED ? T.toUpdate : T.changedFiles, plan.changed.length);
-                if (DOWNLOADS_ENABLED && plan.changed.length) specs += row(T.download, formatBytes(plan.bytes));
+            // How large the download is, and not which files it holds: the
+            // paths mean nothing to a player and the count only ever read as a
+            // warning about work they are not being asked to do.
+            if (plan && DOWNLOADS_ENABLED && plan.changed.length) {
+                specs += row(T.download, formatBytes(plan.bytes));
             }
             return specs;
         }
@@ -2460,18 +2575,6 @@
                     const text = item ? line.replace(/^\s*[-*•]\s+/, '') : line.trim();
                     return `<div class="gu-changelog-line${item ? ' gu-changelog-line--item' : ''}">${esc(text)}</div>`;
                 }).join('')}`;
-        }
-
-        _filesHTML(T) {
-            const commit = this._selectedBuild();
-            const plan = commit ? GameUpdater.plan(commit.sha) : null;
-            if (!plan || !plan.changed.length) return '';
-            const shown = plan.changed.slice(0, 60);
-            const rest  = plan.changed.length - shown.length;
-            return `
-                <div class="inspect-section-title">${DOWNLOADS_ENABLED ? T.listHeader : T.listHeaderChanged}</div>
-                ${shown.map(c => `<div class="gu-file-row"><span class="gu-file-flag">${c.isNew ? '+' : '~'}</span><span class="gu-file-path">${esc(c.path)}</span><span class="gu-file-size">${formatBytes(c.size)}</span></div>`).join('')}
-                ${rest > 0 ? `<div class="gu-file-more">${fmt(T.andMore, rest)}</div>` : ''}`;
         }
 
         // Why the whole game has to be downloaded again: either the selected
@@ -2548,12 +2651,6 @@
                 this._dom.changelog.scrollTop = 0;
             }
             if (this._dom.changelog) this._dom.changelog.hidden = !changelog;
-
-            const files = this._filesHTML(T);
-            if (this._setRegion('files', this._dom.files, files) && this._dom.files) {
-                this._dom.files.scrollTop = 0;
-            }
-            if (this._dom.files) this._dom.files.hidden = !files;
 
             // The cursor is a class, so the button list only ever changes when
             // the actions themselves do.

@@ -195,22 +195,29 @@
       return CG().countOf(key) - this.inDeck(key);
     }
 
+    // Both answer whether the shelf actually moved, so a caller that has just
+    // moved the cursor knows whether the page has already been redrawn for it
+    // or whether it still owes the player a repaint. A click that lands on a
+    // card it cannot take used to leave the screen exactly as it was, which
+    // reads as a dead mouse rather than as a refusal.
     addToDeck(key) {
       const CGx = CG();
-      if (!key) return;
-      if (this._working.length >= CGx.DECK_MAX) { SoundManager.playBuzzer(); return; }
-      if (this.spare(key) <= 0) { SoundManager.playBuzzer(); return; }
+      if (!key) return false;
+      if (this._working.length >= CGx.DECK_MAX) { SoundManager.playBuzzer(); return false; }
+      if (this.spare(key) <= 0) { SoundManager.playBuzzer(); return false; }
       this._working.push(key);
       playSe("Casino/card_place_2", 65, 115);
       this.render();
+      return true;
     }
 
     removeFromDeck(key) {
       const at = this._working.lastIndexOf(key);
-      if (at < 0) { SoundManager.playBuzzer(); return; }
+      if (at < 0) { SoundManager.playBuzzer(); return false; }
       this._working.splice(at, 1);
       playSe("Casino/card_slide_3", 55, 100);
       this.render();
+      return true;
     }
 
     //-------------------------------------------------------------------------
@@ -347,6 +354,24 @@
       this._flourish = true;
     }
 
+    // Move the cursor onto a card without redrawing the shelf: the frames and
+    // the dossier are all that a selection changes, and the grid is the one
+    // part of the page that is expensive to build.
+    selectAt(i) {
+      if (this._area === "grid" && this._index === i) return;
+      const container = document.getElementById("cardcol-container");
+      if (!container) return;
+      this._area = "grid";
+      this._index = i;
+      container.querySelectorAll("#cgc-grid .cgc-cell").forEach((el, n) => {
+        el.classList.toggle("selected", n === i);
+      });
+      container.querySelectorAll("#cgc-actions .inspect-btn").forEach((el) => {
+        el.classList.remove("selected");
+      });
+      this.renderDossier(container);
+    }
+
     moveIndex(delta, length) {
       if (!length) return;
       this._index = Math.max(0, Math.min(length - 1, this._index + delta));
@@ -436,15 +461,31 @@
         return;
       }
 
+      // A shelf entry is the same card face the duel deals into the hand
+      // (Cards/CardGameDuel.js renderHand): the rarity frame, the head with
+      // how many are owned and what kind it is, the name, the art well and the
+      // five figures under it. An effect prints its rule where a creature
+      // prints its numbers.
       const isDeckTab = FILTERS[this._filter] === "deck";
       grid.innerHTML = keys.map((key, i) => {
         const qty = isDeckTab ? this.inDeck(key) : CGx.countOf(key);
         const rare = CGx.rarityKey(CGx.rarityOf(key));
         const spent = !isDeckTab && this.spare(key) <= 0 ? " cgc-cell--spent" : "";
+        const effect = CGx.isEffect(key);
+        const type = effect ? T("CardGame.type.effect")
+          : CGx.isMonster(key) ? T("CardGame.type.monster")
+            : CGx.isWeapon(key) ? T("CardGame.type.weapon") : T("CardGame.type.armor");
+        const stats = CGx.statsFor(key);
+        const foot = effect
+          ? `<div class="cgc-fxrule">${escapeHtml(CGx.cardText(key, this.seedFor(key)))}</div>`
+          : `<div class="cgc-cstats">${CGx.STATS.map((id) =>
+            `<div>${escapeHtml(CGx.statLabel(id))}<b>${stats[id]}</b></div>`).join("")}</div>`;
         return `<div class="cgc-cell rarity--${rare}${i === this._index ? " selected" : ""}${spent}" data-i="${i}" style="--d:${Math.min(i, 40)}">
-            <div class="cgc-artcell"></div>
+            <div class="cgc-shine"></div>
+            <div class="cgc-chead"><span class="cgc-qty">x${qty}</span><span class="cgc-ctype">${escapeHtml(type)}</span></div>
             <div class="cgc-lbl">${escapeHtml(CGx.nameOf(key))}</div>
-            <span class="cgc-qty">x${qty}</span>
+            <div class="cgc-artcell"></div>
+            ${foot}
           </div>`;
       }).join("");
 
@@ -461,11 +502,11 @@
         const host = el.querySelector(".cgc-artcell");
         if (CGx.isEquip(key) || CGx.isEffect(key)) {
           const glyph = document.createElement("span");
-          glyph.setAttribute("style", CGx.Art.iconStyle(key, 40));
+          glyph.setAttribute("style", CGx.Art.iconStyle(key, 56));
           host.appendChild(glyph);
         } else {
           const canvas = document.createElement("canvas");
-          canvas.width = 40; canvas.height = 40;
+          canvas.width = 56; canvas.height = 56;
           canvas.className = "cgc-cell-canvas";
           // Keyed, not positional: gear and effect cells carry a glyph rather
           // than a canvas, so the nth canvas is not the nth card.
@@ -473,18 +514,28 @@
           host.appendChild(canvas);
           CGx.Art.drawTileSprite(canvas, key, this._spriteFrame);
         }
+        // Pointing at a card reads it, the way the cursor does. Only the
+        // dossier and the frames are repainted for it: rebuilding the shelf on
+        // every pixel the mouse crosses would fight the pointer.
+        el.addEventListener("mouseenter", () => this.selectAt(i));
         el.addEventListener("click", () => {
-          this._index = i;
           this._area = "grid";
-          if (isDeckTab) this.removeFromDeck(key); else this.addToDeck(key);
+          this._index = i;
+          const moved = isDeckTab ? this.removeFromDeck(key) : this.addToDeck(key);
+          // A refusal still owes the player the card it was pointed at.
+          if (!moved) this.render();
         });
       });
 
-      // The real column count, so up/down walks the grid the player sees.
+      // The real column count, so up/down walks the grid the player sees. The
+      // gutter is read off the stylesheet rather than guessed at: a wrong one
+      // walks the cursor a column short on every row, and the track is not the
+      // same width on the desk as it is on the handheld.
       const first = grid.querySelector(".cgc-cell");
       if (first) {
         const width = grid.clientWidth || 1;
-        this._cols = Math.max(1, Math.floor(width / (first.offsetWidth + 6)));
+        const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+        this._cols = Math.max(1, Math.round((width + gap) / (first.offsetWidth + gap)));
       }
     }
 
@@ -560,6 +611,15 @@
         return `<button class="${cls}" data-i="${i}">${escapeHtml(item.label)}</button>`;
       }).join("");
       host.querySelectorAll(".inspect-btn").forEach((el) => {
+        el.addEventListener("mouseenter", () => {
+          const at = parseInt(el.dataset.i, 10);
+          if (this._area === "actions" && this._actionIndex === at) return;
+          this._area = "actions";
+          this._actionIndex = at;
+          host.querySelectorAll(".inspect-btn").forEach((b, n) => b.classList.toggle("selected", n === at));
+          const grid = document.querySelector("#cardcol-container #cgc-grid");
+          if (grid) grid.querySelectorAll(".cgc-cell").forEach((c) => c.classList.remove("selected"));
+        });
         el.addEventListener("click", () => {
           const item = list[parseInt(el.dataset.i, 10)];
           this._area = "actions";

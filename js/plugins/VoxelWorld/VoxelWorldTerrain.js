@@ -36,7 +36,7 @@
 
     const {
         MAT, PLACEABLE, ProceduralDecorator, ROAD_SINK, ROAD_TOTAL_W, SEA_LEVEL,
-        ROAD_BARRIER_H, ROAD_BED_DROP, ROAD_COL, ROAD_DASH_OFF, ROAD_DASH_ON, ROAD_GAP, ROAD_KERB_H,
+        ROAD_BED_DROP, ROAD_COL, ROAD_DASH_OFF, ROAD_DASH_ON, ROAD_GAP, ROAD_KERB_H,
         ROAD_LANE_OFF, ROAD_LINE_W, ROAD_MARK_LIFT, ROAD_SHOULDER_W, ROAD_SKIRT,
         VOX, VoxelField, VoxelMesher, WORLD_TILE_SIZE, getRenderType, profileFor,
         getRoadDirectionAt, loadTex, loadVoxelTex, sampleBiomeAt, voxelMaterial, VoxelWorldState,
@@ -684,7 +684,7 @@
         // already been put down, and only the road cares about the step.
         _dressChunk(ch) {
             // The carriageway is a real road: a ribbon extruded over the graded
-            // roadbed, with its paint, its median and its barriers, rather than
+            // roadbed, with its paint and its median, rather than
             // a run of grey cubes with grey cubes painted on it.
             if (ch.type === 'road') this._buildRoad(ch);
 
@@ -1009,8 +1009,8 @@
         // at; what is drawn over it is this: a ribbon extruded along the
         // centreline of the square, cross-section by cross-section, carrying
         // asphalt, a hard shoulder, solid edge lines, a dashed lane line down
-        // each carriageway, a kerbed green median with a steel barrier along it
-        // and armco on both verges. The paving follows the same smooth height
+        // each carriageway and a kerbed green median, with the verges and the
+        // median left open. The paving follows the same smooth height
         // the camper drives at (VoxelField.heightAt answers with the paving on a
         // road column), so what is under the wheels is exactly what is drawn.
         //
@@ -1123,17 +1123,6 @@
             return this._roadBandCache;
         }
 
-        // The ironmongery: a steel barrier down the median and armco on both
-        // verges. Written as walls rather than bands, one quad tall.
-        _roadWalls() {
-            const half = ROAD_TOTAL_W / 2;
-            return [
-                { at: 0,         y0: ROAD_KERB_H, y1: ROAD_KERB_H + ROAD_BARRIER_H, col: ROAD_COL.steel },
-                { at: half + 5,  y0: 4, y1: 4 + ROAD_BARRIER_H, col: ROAD_COL.steel },
-                { at: -half - 5, y0: 4, y1: 4 + ROAD_BARRIER_H, col: ROAD_COL.steel }
-            ];
-        }
-
         _getRoadMat() {
             if (!this._roadMat) {
                 this._roadMat = new THREE.MeshLambertMaterial({
@@ -1214,21 +1203,6 @@
                     // the dashes are dropped and the solid lines kept.
                     if (band.dash && !fine) continue;
                     strip(band);
-                }
-
-                if (fine) {
-                    for (const wall of this._roadWalls()) {
-                        for (let i = 0; i + 1 < S.length; i++) {
-                            const a = S[i], b = S[i + 1];
-                            const ax = a.x + a.nx * wall.at, az = a.z + a.nz * wall.at;
-                            const bx = b.x + b.nx * wall.at, bz = b.z + b.nz * wall.at;
-                            const v0 = push(ax, a.y + wall.y0, az, wall.col);
-                            const v1 = push(bx, b.y + wall.y0, bz, wall.col);
-                            const v2 = push(bx, b.y + wall.y1, bz, wall.col);
-                            const v3 = push(ax, a.y + wall.y1, az, wall.col);
-                            quad(v0, v1, v2, v3);
-                        }
-                    }
                 }
             }
 

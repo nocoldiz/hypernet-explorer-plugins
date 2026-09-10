@@ -17,8 +17,8 @@
  * - Mouse wheel, the + and - keys, or L2/R2 on a controller zoom the camera,
  *   on the world map (315) only.
  * - Right stick pans the camera, the controller twin of click & drag.
- * - Hold ALT, or click the right stick (R3), to label every event on screen
- *   at once instead of only the one under the cursor.
+ * - One event is named at a time, the one under the cursor. There is no
+ *   modifier that labels the whole screen at once, on either device.
  *
  * Note: If you move the player character using the keyboard or a gamepad
  * after panning away, the camera will naturally snap back to center on
@@ -727,9 +727,30 @@
     const STICK_PAN_DEADZONE = 0.2;
     const STICK_PAN_SPEED = 0.35; // tiles per frame at full tilt, before zoom
 
+    // True while an overlay over the map has a pane the stick would scroll.
+    function uiPaneOwnsStick() {
+        const scroll = window.UIScroll;
+        if (!scroll || typeof scroll.activePane !== 'function') return false;
+        return !!(scroll.activePane(1) || scroll.activePane(-1));
+    }
+
     Scene_Map.prototype.updateStickPan = function () {
         const pad = window.AnalogStickInput;
         if (!pad || !pad.rightX) {
+            isStickPanning = false;
+            return;
+        }
+        // The same stick scrolls whatever pane an overlay over the map is
+        // showing (UIScroll in Core/MouseControls.js), and a player reading a
+        // page means the page, not the camera behind it. Both questions are
+        // asked before the stick is READ, because reading it is the claim: the
+        // idle check costs nothing, and the walk for a pane only runs on the
+        // frames the stick is actually off centre.
+        if (pad.rightStickIdle && pad.rightStickIdle()) {
+            isStickPanning = false;
+            return;
+        }
+        if (uiPaneOwnsStick()) {
             isStickPanning = false;
             return;
         }
@@ -816,26 +837,13 @@
     };
 
     // ------------------------------------------------------------------------
-    // Hover Window for Event Names (updated for ALT reveal)
+    // Hover Window for Event Names
     // ------------------------------------------------------------------------
 
-    // Held down, the reveal modifier labels every event on screen at once
-    // instead of only the one under the cursor: ALT on the keyboard, R3 (right
-    // stick click) on a controller - the stick that pans the camera, so the
-    // hand already looking around is the one that names what it finds.
-    //
-    // ALT is registered under its own action name rather than core's unmapped
-    // 'alt' for the same reason the zoom keys are (see ZOOM_KEY_MAP above):
-    // CustomCommandMapper.js drops the keys of every action it manages on each
-    // Input.clear(), and a name it does not know survives that.
-    const REVEAL_NAMES_KEY = 18; // ALT
-    if (!Input.keyMapper[REVEAL_NAMES_KEY]) Input.keyMapper[REVEAL_NAMES_KEY] = 'mapRevealNames';
-
-    function isRevealNamesHeld() {
-        if (Input.isPressed('mapRevealNames')) return true;
-        const pad = window.AnalogStickInput;
-        return !!(pad && pad.isButtonPressed && pad.isButtonPressed(pad.BUTTON.R3));
-    }
+    // One name at a time: whatever the cursor is over. There is no modifier
+    // that labels every event on screen at once, on either device - ALT and
+    // the right stick click both used to and neither does any more, so ALT is
+    // free and R3 belongs to the map legend's fold alone.
 
     let _classI18n = null;
 
@@ -1100,8 +1108,6 @@
         const rect = new Rectangle(10, 10, 300, 70);
         this._eventHoverWindow = new Window_EventHover(rect);
         this.addWindow(this._eventHoverWindow);
-        // Pool for the ALT / R3 reveal windows
-        this._eventHoverWindows = [];
     };
 
     Scene_Map.prototype.updateEventHover = function () {
@@ -1155,79 +1161,6 @@
         // Disable in split-screen, and on the world map entirely
         if (($gameMap && $gameMap.mapId() === WORLD_MAP_ID) ||
             (window.$gameSplitScreen && window.$gameSplitScreen.active)) {
-            this._eventHoverWindow.hide();
-            if (this._eventHoverWindows) {
-                this._eventHoverWindows.forEach(win => win.hide());
-            }
-            return;
-        }
-
-        // ALT (or R3) reveals every event name on screen
-        if (isRevealNamesHeld()) {
-            const allEvents = $gameMap.events();
-            let used = 0;
-            for (const ev of allEvents) {
-                // Filter same as singleâ€‘hover logic, but allow events with no graphic
-                if (ev.isTransparent()) continue;
-                const name = ev.event().name;
-                if (shouldHideEvent(name)) continue;
-                if ($gameMap.fogOfWarState && $gameMap.fogOfWarState(ev.x, ev.y) < 2) continue;
-
-                // Only what is actually in view: an off-screen event would
-                // otherwise have its label clamped onto the nearest screen edge,
-                // stacking the whole map's names in a pile there.
-                const tilePos = getTileScreenPosition(ev._realX, ev._realY);
-                if (tilePos.x < 0 || tilePos.x > Graphics.boxWidth) continue;
-                if (tilePos.y < 0 || tilePos.y > Graphics.boxHeight + 70) continue;
-
-                // Ensure a window exists for this event
-                let win = this._eventHoverWindows[used];
-                if (!win) {
-                    const dummyRect = new Rectangle(0, 0, 100, 70);
-                    win = new Window_EventHover(dummyRect);
-                    this.addWindow(win);
-                    this._eventHoverWindows[used] = win;
-                }
-
-                // Build display text
-                let displayName = formatEventName(name);
-                const enemyName = enemyDisplayName(ev);
-                if (enemyName) {
-                    displayName = enemyName;
-                } else {
-                    const notes = ev.event().note;
-                    const npcMatch = notes.match(/NPC-(\d+)/);
-                    const shopPersona = npcMatch ? null : shopPersonaDisplay(ev);
-                    if (npcMatch) {
-                        const classId = parseInt(npcMatch[1]);
-                        const className = (_classI18n && _classI18n[classId] ? _classI18n[classId].name : null) || classNames[classId] || "Unknown";
-                        displayName = `${displayName}, ${className.trim()}`;
-                    } else if (shopPersona) {
-                        displayName = shopPersona.className ? `${shopPersona.name}, ${shopPersona.className.trim()}` : shopPersona.name;
-                    }
-                }
-                win.setText(displayName);
-
-                // Position window above the event sprite's map tile
-                const winWidth = win._neededWidth;
-                const winHeight = 70;
-                const eventOffset = Number((ev.event().meta || {}).xOffset || X_OFFSET);
-
-                let x = tilePos.x - winWidth / 2 + eventOffset;
-                let y = tilePos.y - winHeight - 8;
-                
-                // Clamp to screen bounds
-                x = Math.max(0, Math.min(x, Graphics.boxWidth - winWidth));
-                y = Math.max(0, Math.min(y, Graphics.boxHeight - winHeight));
-                win.updatePosition(x, y, winWidth);
-                win.show();
-                used++;
-            }
-            // Hide any surplus windows from previous frame
-            for (let i = used; i < this._eventHoverWindows.length; i++) {
-                this._eventHoverWindows[i].hide();
-            }
-            // Also hide the singleâ€‘hover window while ALT is active
             this._eventHoverWindow.hide();
             return;
         }

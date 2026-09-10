@@ -83,9 +83,11 @@
  * Folding it away
  * ---------------------------------------------------------------------------
  * H folds the sheet and unfolds it, on every map, whether or not Bubba is
- * along: the fold is the list's, not the notices'. On a pad it is L3,
- * or R3 on the world map where L3 is already Wait. Whether it is folded is
- * remembered on $gameSystem and it starts folded.
+ * along: the fold is the list's, not the notices'. On a pad it is R3, on
+ * every map alike, because L3 is the wait sheet everywhere. The fold line
+ * writes the key out and hangs R3 off the end of it while a pad is plugged
+ * in, the way every row does. Whether it is folded is remembered on
+ * $gameSystem and it starts folded.
  *
  * Folded means two different things depending on where the party stands. In
  * the story mode, on the map the game starts on and on the tutorial map (1414)
@@ -254,7 +256,8 @@
     hotbarStep: "L1 / R1",
     visitPlace: "Select",
     zoom: "L2 / R2",
-    fold: "L3",
+    wait: "L3",
+    fold: "R3",
   };
   // i18n-ignore-end
 
@@ -284,9 +287,10 @@
 
   const WORLD_MAP_CONTROLS = [
     { id: "visitPlace", labelKey: "MapLegend.controls.stopTravel", key: "T", pad: PAD.visitPlace },
-    // No pad button: L3 is the fold everywhere, and the sheet must not name
-    // one button for two different things.
-    { id: "wait", labelKey: "MapLegend.controls.wait", key: "R" },
+    // L3 is the wait sheet's, on the world map and everywhere else: the pad
+    // half of R is polled raw by UI/CustomMainMenuLayout.js and drawn here.
+    // The fold is R3, so no button is named for two different things.
+    { id: "wait", labelKey: "MapLegend.controls.wait", key: "R", pad: PAD.wait },
     {
       id: "worldZoom", labelKey: "MapLegend.controls.zoom",
       key: "+ / -", mouseKey: "MapLegend.controls.scrollWheel", pad: PAD.zoom,
@@ -731,14 +735,21 @@
     return true;
   }
 
-  // The pad's fold button. L3 on every map, the world map included: waiting
-  // there is a keyboard control only, so nothing else claims the stick click.
+  // The pad's fold button. R3 on every map, the world map included: L3 is the
+  // wait sheet's everywhere, so the right stick click is the one left free.
   function foldPadButton() {
     return PAD.fold;
   }
 
   function foldChipLabel() {
     return FOLD_KEY_LABEL;
+  }
+
+  // The fold line hangs its pad button off the end of the key the same way
+  // every row does, so a player holding a pad reads R3 rather than a key they
+  // are not touching. Nothing is drawn while no pad is plugged in.
+  function foldPadChip() {
+    return padConnected() ? foldPadButton() : "";
   }
 
   // H is the help menu everywhere else, so the fold is spliced in ahead of the
@@ -921,8 +932,11 @@
     // The fold line: the key that puts the panels away, and what pressing it
     // does next.
     _foldHtml(hint, state) {
+      const pad = state.foldPad
+        ? `<span class="ui-chip mlg-chip">${escapeHtml(state.foldPad)}</span>` : "";
       return '<div class="mlg-fold">' +
         `<span class="ui-chip mlg-chip">${escapeHtml(state.foldChip || FOLD_KEY_LABEL)}</span>` +
+        pad +
         `<span>${escapeHtml(hint)}</span></div>`;
     }
 
@@ -1105,6 +1119,7 @@
     }
     sheet.draw(notice, rows, {
       folded, foldable: foldable(), hasPad: padConnected(), foldChip: foldChipLabel(),
+      foldPad: foldPadChip(),
     });
     sheet.setBehindBusts(bustOnScreen());
   }
@@ -1234,6 +1249,7 @@
     toggleFold,
     foldable,
     foldPadButton,
+    foldPadChip,
 
     refresh() { sheet.destroy(); updateLegend(); },
     hide() { sheet.hide(); },

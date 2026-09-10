@@ -995,19 +995,16 @@
     this.selectUICategory((this._category + dir + n) % n);
   };
 
-  // L2/R2 analog triggers scroll the open page, R2 down and L2 up. Analog, so
-  // the further the trigger is pulled the faster the page runs.
-  Scene_BiologicSimulation.prototype.updateUITriggerScroll = function (page) {
+  // The right stick scrolls the open page, pushed the way the page should go.
+  // Analog, so the further it is pushed the faster the page runs.
+  Scene_BiologicSimulation.prototype.updateUIStickScroll = function (page) {
     if (!page) return;
     const pads = window.AnalogStickInput;
-    if (!pads || typeof pads.leftTrigger !== 'function') return;
+    if (!pads || typeof pads.rightY !== 'function') return;
     const dz = 0.15;
-    const down = pads.rightTrigger();
-    const up = pads.leftTrigger();
-    let amount = 0;
-    if (down > dz) amount += (down - dz) / (1 - dz);
-    if (up > dz) amount -= (up - dz) / (1 - dz);
-    if (amount === 0) return;
+    const y = pads.rightY();
+    if (Math.abs(y) <= dz) return;
+    const amount = ((Math.abs(y) - dz) / (1 - dz)) * Math.sign(y);
     page.scrollTop += amount * 16;
     this.syncUIScrollVar(page);
   };
@@ -1030,7 +1027,7 @@
 
     const chapter = this._dndContainer ? this._dndContainer.querySelector(".bio-chapter") : null;
     if (chapter) {
-      this.updateUITriggerScroll(chapter);
+      this.updateUIStickScroll(chapter);
       if (Input.isPressed('down')) {
         chapter.scrollTop += 8;
         this.syncUIScrollVar(chapter);

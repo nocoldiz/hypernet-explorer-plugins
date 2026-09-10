@@ -423,7 +423,7 @@
 
       this._sig = { category: null, selection: null, cursor: -1, hover: -1, specsReady: null, confirm: null };
       this._gridCount = 0;
-      // Wheel + L2/R2 scrolling for the pages. See CCScroll.
+      // Wheel + right stick scrolling for the pages. See CCScroll.
       if (window.CCScroll) window.CCScroll.bindWheel(this._dndContainer);
       // Reset, Random and Continue sit under the board, and the picked chips
       // beside it: none of them is a card, so the grid cursor cannot reach

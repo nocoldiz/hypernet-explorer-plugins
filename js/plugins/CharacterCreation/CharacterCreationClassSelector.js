@@ -554,7 +554,7 @@
 
       this._lastIndex = -1;
       this._lastShowSub = false;
-      // Wheel + L2/R2 scrolling for the detail panes. See CCScroll.
+      // Wheel + right stick scrolling for the detail panes. See CCScroll.
       if (window.CCScroll) window.CCScroll.bindWheel(this._dndContainer);
       // The dossier facing the list has buttons and chips of its own, walked
       // with the focus ring. See CharacterCreationNav.js.

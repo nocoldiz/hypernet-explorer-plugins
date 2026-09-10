@@ -656,17 +656,17 @@
       const page = window.BattleListPage || { MARGIN: 20, GAP: 10, TOP: 184, width: 420, height: 460 };
       const fixedW = page.width * sc.sx;
 
-      // The description always reads from the middle of the screen, whichever
-      // side the list page itself is on and whatever the control mode: it is
-      // the one thing the player has to read, so it never hides in a corner.
-      // Both pages hang from page.TOP, so the box stands on that one line and
-      // does not move when the player switches between them.
+      // The description always reads from the top centre of the screen,
+      // whichever side the list page itself is on and whatever the control
+      // mode: it is the one thing the player has to read, so it never hides in
+      // a corner and never moves when the player switches between the skill
+      // page and the backpack.
       const centreX = sc.ox + (Graphics.width * sc.sx) / 2;
       const leftEdgeX = centreX - fixedW / 2;
-      const bottomEdgeY = sc.oy + (page.TOP - page.GAP) * sc.sy;
+      const topEdgeY = sc.oy + page.MARGIN * sc.sy;
 
       const leftStr = Math.max(0, leftEdgeX) + 'px';
-      const bottomStr = Math.max(0, window.innerHeight - bottomEdgeY) + 'px';
+      const topStr = Math.max(0, topEdgeY) + 'px';
       const widthStr = fixedW + 'px';
       const paddingStr = Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px';
 
@@ -676,11 +676,11 @@
       const fontSizeStr = scaledFont + 'px';
 
       if (s.right !== '') s.right = '';
-      if (s.top !== '') s.top = '';
+      if (s.bottom !== '') s.bottom = '';
       if (s.width !== widthStr) s.width = widthStr;
       if (s.height !== 'auto') s.height = 'auto';
       if (s.left !== leftStr) s.left = leftStr;
-      if (s.bottom !== bottomStr) s.bottom = bottomStr;
+      if (s.top !== topStr) s.top = topStr;
       if (s.maxWidth !== widthStr) s.maxWidth = widthStr;
       if (s.padding !== paddingStr) s.padding = paddingStr;
       if (s.fontSize !== fontSizeStr) s.fontSize = fontSizeStr;

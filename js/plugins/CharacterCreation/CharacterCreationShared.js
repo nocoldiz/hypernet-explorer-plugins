@@ -563,29 +563,29 @@
   };
 
   //=============================================================================
-  // Scrolling for the DOM overlays (mouse wheel + L2/R2 triggers)
+  // Scrolling for the DOM overlays (mouse wheel + the right stick)
   //=============================================================================
   // RMMZ swallows every wheel event at the document level (rmmz_core.js,
   // TouchInput._onWheel calls preventDefault), so no DOM overlay ever scrolls
   // on its own: each scrollable pane needs an explicit handler. CCScroll is
   // that handler, shared by every character creation scene, plus a per-frame
-  // poll of the analog triggers so L2/R2 scroll exactly what a wheel would.
+  // poll of the right stick so a pad scrolls exactly what a wheel would.
   //
   // The wheel handler is bound once per container element and resolves
   // everything live from the DOM, so it survives the scene swaps that reuse
   // the shared #character-creation-container without leaking stale closures.
   //
   // A scene can steer it by defining either of these methods:
-  //   ccScrollTarget()  -> Element the triggers (and a wheel that lands outside
+  //   ccScrollTarget()  -> Element the stick (and a wheel that lands outside
   //                        any pane) should scroll
   //   ccScrollStep(dir) -> handle one notch itself (dir is -1 up / +1 down);
   //                        return true when consumed, e.g. to move a selection
   //                        instead of scrolling
   const CCScroll = {
-    // Pixels per frame at a fully pulled trigger, and the pull below which a
-    // trigger reads as released (some pads rest slightly above zero).
-    TRIGGER_SPEED: 26,
-    TRIGGER_DEADZONE: 0.15,
+    // Pixels per frame at a fully pushed stick, and the push below which the
+    // stick reads as centred (on top of the helper's own radial deadzone).
+    STICK_SPEED: 26,
+    STICK_DEADZONE: 0.15,
     // Key-repeat cadence, in frames, for scenes that take discrete steps.
     STEP_WAIT: 20,
     STEP_INTERVAL: 5,
@@ -649,7 +649,7 @@
       return this.regionAt(el, root);
     },
 
-    // The pane L2/R2 act on: whatever the scene names, else the one under the
+    // The pane the stick acts on: whatever the scene names, else the one under the
     // pointer, else the details page (the right page of a spread, which the
     // selection cursor never scrolls for you), else the first pane there is.
     target(root) {
@@ -697,25 +697,27 @@
       });
     },
 
-    // Per-frame trigger poll. Call from the scene's update() while the overlay
-    // is visible: L2 scrolls up, R2 scrolls down.
+    // Per-frame stick poll. Call from the scene's update() while the overlay
+    // is visible: the right stick pushed up scrolls up, pushed down scrolls
+    // down.
     //
-    // The triggers are now read for the WHOLE game, once a frame, by UIScroll
+    // The stick is now read for the WHOLE game, once a frame, by UIScroll
     // in Core/MouseControls.js - the same walk that answers the wheel there.
     // It asks a scene for ccScrollTarget() and ccScrollStep() exactly as this
     // did, so the creation screens keep the panes they name; this stands down
     // when it is present rather than scrolling the same pane a second time.
     // The body below is what a build without that plugin falls back on.
     update(container) {
-      if (window.UIScroll && typeof window.UIScroll.updateTriggers === "function") return;
+      if (window.UIScroll && typeof window.UIScroll.updateScroll === "function") return;
       // Hidden either way: the class CCPanel writes, or a display of its own
       // (the overlay is not always ours to have opened).
       if (!container || CCPanel.isHidden(container)) return;
       const pads = window.AnalogStickInput;
-      if (!pads) return;
-      const dz = this.TRIGGER_DEADZONE;
-      const pull = (v) => (v > dz ? (v - dz) / (1 - dz) : 0);
-      const amount = (pull(pads.rightTrigger()) - pull(pads.leftTrigger())) * this.TRIGGER_SPEED;
+      if (!pads || typeof pads.rightY !== "function") return;
+      const dz = this.STICK_DEADZONE;
+      const y = pads.rightY();
+      const push = Math.abs(y) > dz ? ((Math.abs(y) - dz) / (1 - dz)) * Math.sign(y) : 0;
+      const amount = push * this.STICK_SPEED;
       if (!amount) {
         this._hold = 0;
         return;

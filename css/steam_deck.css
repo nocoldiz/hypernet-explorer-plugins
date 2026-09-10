@@ -1989,27 +1989,28 @@
    The card collection (Cards/CardGameCollection.js)
    --------------------------------------------------------------------------
    The grid is auto-fill, so it answers a narrower page by itself; what does
-   not is the cell height and the dossier's art box on the right page.
+   not is the track width the card faces are cut to, nor the dossier's art box
+   on the right page.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    /* Wider tracks than the desk. A card is read off its art, and the 88px
-       this used to ask for fitted more of them across a narrower page than the
-       desktop shows on a wide one, which is the wrong way round. */
+    /* Wider tracks than the desk, so fewer and larger faces cross the page: the
+       spread lays out at its design size and is then scaled down to the
+       handheld, and a card small enough to fit six across survives that badly.
+       The face keeps its 5:7 cut from the desktop rule, so the track is the
+       only thing the handheld moves and the height follows it. */
     .cgc-grid {
-        grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
-        gap: 5px;
+        grid-template-columns: repeat(auto-fill, minmax(164px, 1fr));
+        gap: 10px;
     }
 
-    /* The cell stays taller than it is wide, the way a card is: the track above
-       and this height are one shape, and moving either alone flattens it. */
     .cgc-cell {
-        height: 108px;
+        padding: 4px 4px 3px;
     }
 
-    .cgc-cell canvas,
-    .cgc-cell img {
-        max-height: 54px;
+    .cgc-cell-canvas {
+        width: 46px;
+        height: 46px;
     }
 
     .cgc-art {

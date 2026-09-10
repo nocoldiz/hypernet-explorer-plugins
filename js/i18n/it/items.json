@@ -3169,1279 +3169,1279 @@
   },
   "999": {
     "name": "Testa di Umanoide",
-    "description": "Testa presa da un umanoide."
+    "description": "Testa presa dalla carcassa."
   },
   "1000": {
     "name": "Torso di Umanoide",
-    "description": "Torso preso da un umanoide."
+    "description": "Torso preso dalla carcassa."
   },
   "1001": {
     "name": "Braccio Sinistro",
-    "description": "Braccio sinistro preso da un umanoide."
+    "description": "Braccio sinistro preso dalla carcassa."
   },
   "1002": {
     "name": "Braccio Destro",
-    "description": "Braccio destro preso da un umanoide."
+    "description": "Braccio destro preso dalla carcassa."
   },
   "1003": {
     "name": "Gamba Sinistra",
-    "description": "Gamba sinistra presa da un umanoide."
+    "description": "Gamba sinistra presa dalla carcassa."
   },
   "1004": {
     "name": "Gamba Destra",
-    "description": "Gamba destra presa da un umanoide."
+    "description": "Gamba destra presa dalla carcassa."
   },
   "1005": {
     "name": "Cervello",
-    "description": "Cervello preso da un umanoide."
+    "description": "Cervello preso dalla carcassa."
   },
   "1006": {
     "name": "Occhio Sinistro",
-    "description": "Occhio sinistro preso da un umanoide."
+    "description": "Occhio sinistro preso dalla carcassa."
   },
   "1007": {
     "name": "Occhio Destro",
-    "description": "Occhio destro preso da un umanoide."
+    "description": "Occhio destro preso dalla carcassa."
   },
   "1008": {
     "name": "Naso",
-    "description": "Naso preso da un umanoide."
+    "description": "Naso preso dalla carcassa."
   },
   "1009": {
     "name": "Orecchio Sinistro",
-    "description": "Orecchio sinistro preso da un umanoide."
+    "description": "Orecchio sinistro preso dalla carcassa."
   },
   "1010": {
     "name": "Orecchio Destro",
-    "description": "Orecchio destro preso da un umanoide."
+    "description": "Orecchio destro preso dalla carcassa."
   },
   "1011": {
     "name": "Bocca",
-    "description": "Bocca presa da un umanoide."
+    "description": "Bocca presa dalla carcassa."
   },
   "1012": {
     "name": "Denti",
-    "description": "Denti presi da un umanoide."
+    "description": "Denti presi dalla carcassa."
   },
   "1013": {
     "name": "Genitali",
-    "description": "Genitali presi da un umanoide."
+    "description": "Genitali presi dalla carcassa."
   },
   "1014": {
     "name": "Cuore",
-    "description": "Cuore preso da un umanoide."
+    "description": "Cuore preso dalla carcassa."
   },
   "1015": {
     "name": "Polmone Sinistro",
-    "description": "Polmone sinistro preso da un umanoide."
+    "description": "Polmone sinistro preso dalla carcassa."
   },
   "1016": {
     "name": "Polmone Destro",
-    "description": "Polmone destro preso da un umanoide."
+    "description": "Polmone destro preso dalla carcassa."
   },
   "1017": {
     "name": "Fegato",
-    "description": "Fegato preso da un umanoide."
+    "description": "Fegato preso dalla carcassa."
   },
   "1018": {
     "name": "Stomaco",
-    "description": "Stomaco preso da un umanoide."
+    "description": "Stomaco preso dalla carcassa."
   },
   "1019": {
     "name": "Milza",
-    "description": "Milza presa da un umanoide."
+    "description": "Milza presa dalla carcassa."
   },
   "1020": {
     "name": "Intestini",
-    "description": "Intestini presi da un umanoide."
+    "description": "Intestini presi dalla carcassa."
   },
   "1021": {
     "name": "Mano Sinistra",
-    "description": "Mano sinistra presa da un umanoide."
+    "description": "Mano sinistra presa dalla carcassa."
   },
   "1022": {
     "name": "Dita Della Mano Sinistra",
-    "description": "Dita della mano sinistra prese da un umanoide."
+    "description": "Dita della mano sinistra prese dalla carcassa."
   },
   "1023": {
     "name": "Mano Destra",
-    "description": "Mano destra presa da un umanoide."
+    "description": "Mano destra presa dalla carcassa."
   },
   "1024": {
     "name": "Dita Della Mano Destra",
-    "description": "Dita della mano destra prese da un umanoide."
+    "description": "Dita della mano destra prese dalla carcassa."
   },
   "1025": {
     "name": "Piede Sinistro",
-    "description": "Piede sinistro preso da un umanoide."
+    "description": "Piede sinistro preso dalla carcassa."
   },
   "1026": {
     "name": "Dita del Piede Sinistro",
-    "description": "Dita del piede sinistro prese da un umanoide."
+    "description": "Dita del piede sinistro prese dalla carcassa."
   },
   "1027": {
     "name": "Piede Destro",
-    "description": "Piede destro preso da un umanoide."
+    "description": "Piede destro preso dalla carcassa."
   },
   "1028": {
     "name": "Dita del Piede Destro",
-    "description": "Dita del piede destro prese da un umanoide."
+    "description": "Dita del piede destro prese dalla carcassa."
   },
   "1029": {
     "name": "Testa di Bestia",
-    "description": "Testa presa da una bestia."
+    "description": "Testa presa dalla carcassa."
   },
   "1030": {
     "name": "Corpo di Bestia",
-    "description": "Corpo preso da una bestia."
+    "description": "Corpo preso dalla carcassa."
   },
   "1031": {
     "name": "Zampa Anteriore Sinistra",
-    "description": "Gamba sinistra presa da una bestia."
+    "description": "Gamba sinistra presa dalla carcassa."
   },
   "1032": {
     "name": "Zampa Anteriore Destra",
-    "description": "Gamba destra presa da una bestia."
+    "description": "Gamba destra presa dalla carcassa."
   },
   "1033": {
     "name": "Zampa Posteriore Sinistra",
-    "description": "Zampa posteriore sinistra presa da una bestia."
+    "description": "Zampa posteriore sinistra presa dalla carcassa."
   },
   "1034": {
     "name": "Zampa Posteriore Destra",
-    "description": "Zampa posteriore destra presa da una bestia."
+    "description": "Zampa posteriore destra presa dalla carcassa."
   },
   "1035": {
     "name": "Coda",
-    "description": "Coda presa da una bestia."
+    "description": "Coda presa dalla carcassa."
   },
   "1036": {
     "name": "Testa di Insettoide",
-    "description": "Testa presa da un insettoide."
+    "description": "Testa presa dalla carcassa."
   },
   "1037": {
     "name": "Torace",
-    "description": "Torace preso da un insettoide."
+    "description": "Torace preso dalla carcassa."
   },
   "1038": {
     "name": "Addome",
-    "description": "Addome preso da un insettoide."
+    "description": "Addome preso dalla carcassa."
   },
   "1039": {
     "name": "Zampa Mediana Sinistra",
-    "description": "Zampa mediana sinistra presa da un insettoide."
+    "description": "Zampa mediana sinistra presa dalla carcassa."
   },
   "1040": {
     "name": "Zampa Mediana Destra",
-    "description": "Zampa mediana destra presa da un insettoide."
+    "description": "Zampa mediana destra presa dalla carcassa."
   },
   "1041": {
     "name": "Mandibole",
-    "description": "Mandibole prese da un insettoide."
+    "description": "Mandibole prese dalla carcassa."
   },
   "1042": {
     "name": "Testa di Rana",
-    "description": "Testa presa da una rana."
+    "description": "Testa presa dalla carcassa."
   },
   "1043": {
     "name": "Corpo di Rana",
-    "description": "Corpo preso da una rana."
+    "description": "Corpo preso dalla carcassa."
   },
   "1044": {
     "name": "Lingua",
-    "description": "Lingua presa da una rana."
+    "description": "Lingua presa dalla carcassa."
   },
   "1045": {
     "name": "Sacca Vocale",
-    "description": "Sacca vocale presa da una rana."
+    "description": "Sacca vocale presa dalla carcassa."
   },
   "1046": {
     "name": "Zampa Saltatoria Sinistra",
-    "description": "Zampa saltatoria sinistra presa da una rana."
+    "description": "Zampa saltatoria sinistra presa dalla carcassa."
   },
   "1047": {
     "name": "Zampa Saltatoria Destra",
-    "description": "Zampa saltatoria destra presa da una rana."
+    "description": "Zampa saltatoria destra presa dalla carcassa."
   },
   "1048": {
     "name": "Testa di Drago",
-    "description": "Testa presa da un drago."
+    "description": "Testa presa dalla carcassa."
   },
   "1049": {
     "name": "Organo del Soffio di Fuoco",
-    "description": "Organo del soffio di fuoco preso da un drago."
+    "description": "Organo del soffio di fuoco preso dalla carcassa."
   },
   "1050": {
     "name": "Collo",
-    "description": "Collo preso da un drago."
+    "description": "Collo preso dalla carcassa."
   },
   "1051": {
     "name": "Corpo di Drago",
-    "description": "Corpo preso da un drago."
+    "description": "Corpo preso dalla carcassa."
   },
   "1052": {
     "name": "ala Sinistra",
-    "description": "Ala sinistra presa da un drago."
+    "description": "Ala sinistra presa dalla carcassa."
   },
   "1053": {
     "name": "ala Destra",
-    "description": "Ala destra presa da un drago."
+    "description": "Ala destra presa dalla carcassa."
   },
   "1054": {
     "name": "Testa di Scheletro",
-    "description": "Testa presa da uno scheletro."
+    "description": "Testa presa dalla carcassa."
   },
   "1055": {
     "name": "Torso di Scheletro",
-    "description": "Torso preso da uno scheletro."
+    "description": "Torso preso dalla carcassa."
   },
   "1056": {
     "name": "Testa di Fata",
-    "description": "Testa presa da una fata."
+    "description": "Testa presa dal residuo."
   },
   "1057": {
     "name": "Torso di Fata",
-    "description": "Torso preso da una fata."
+    "description": "Torso preso dal residuo."
   },
   "1058": {
     "name": "Sacca di Polvere Fatata",
-    "description": "Sacca di polvere fatata presa da una fata."
+    "description": "Sacca di polvere fatata presa dal residuo."
   },
   "1059": {
     "name": "Nucleo di Melma",
-    "description": "Nucleo preso da una melma."
+    "description": "Nucleo preso dal guscio."
   },
   "1060": {
     "name": "Parte Superiore del Corpo",
-    "description": "Parte superiore del corpo presa da una melma."
+    "description": "Parte superiore del corpo presa dal guscio."
   },
   "1061": {
     "name": "Parte Inferiore del Corpo",
-    "description": "Parte inferiore del corpo presa da una melma."
+    "description": "Parte inferiore del corpo presa dal guscio."
   },
   "1062": {
     "name": "Pseudopodo",
-    "description": "Pseudopodo preso da una melma."
+    "description": "Pseudopodo preso dal guscio."
   },
   "1063": {
     "name": "Cranio",
-    "description": "Cranio preso da una melma."
+    "description": "Cranio preso dal guscio."
   },
   "1064": {
     "name": "Gabbia Toracica",
-    "description": "Gabbia toracica presa da una melma."
+    "description": "Gabbia toracica presa dal guscio."
   },
   "1065": {
     "name": "Testa di Scorpione",
-    "description": "Testa presa da uno scorpione."
+    "description": "Testa presa dalla carcassa."
   },
   "1066": {
     "name": "Cefalotorace",
-    "description": "Cefalotorace preso da uno scorpione."
+    "description": "Cefalotorace preso dalla carcassa."
   },
   "1067": {
     "name": "Pungiglione",
-    "description": "Pungiglione preso da uno scorpione."
+    "description": "Pungiglione preso dalla carcassa."
   },
   "1068": {
     "name": "Chela Sinistra",
-    "description": "Chela sinistra presa da uno scorpione."
+    "description": "Chela sinistra presa dalla carcassa."
   },
   "1069": {
     "name": "Chela Destra",
-    "description": "Chela destra presa da uno scorpione."
+    "description": "Chela destra presa dalla carcassa."
   },
   "1070": {
     "name": "Zampa Medio-Anteriore Sinistra",
-    "description": "Zampa medio-anteriore sinistra presa da uno scorpione."
+    "description": "Zampa medio-anteriore sinistra presa dalla carcassa."
   },
   "1071": {
     "name": "Zampa Medio-Anteriore Destra",
-    "description": "Zampa medio-anteriore destra presa da uno scorpione."
+    "description": "Zampa medio-anteriore destra presa dalla carcassa."
   },
   "1072": {
     "name": "Zampa Medio-Posteriore Sinistra",
-    "description": "Zampa medio-posteriore sinistra presa da uno scorpione."
+    "description": "Zampa medio-posteriore sinistra presa dalla carcassa."
   },
   "1073": {
     "name": "Zampa Medio-Posteriore Destra",
-    "description": "Zampa medio-posteriore destra presa da uno scorpione."
+    "description": "Zampa medio-posteriore destra presa dalla carcassa."
   },
   "1074": {
     "name": "Testa di Ragno",
-    "description": "Testa presa da un ragno."
+    "description": "Testa presa dalla carcassa."
   },
   "1075": {
     "name": "Zanne",
-    "description": "Zanne prese da un ragno."
+    "description": "Zanne prese dalla carcassa."
   },
   "1076": {
     "name": "Filiere",
-    "description": "Filiere prese da un ragno."
+    "description": "Filiere prese dalla carcassa."
   },
   "1077": {
     "name": "Fiore",
-    "description": "Fiore preso da un ragno."
+    "description": "Fiore preso dalla carcassa."
   },
   "1078": {
     "name": "Stelo",
-    "description": "Stelo preso da un ragno."
+    "description": "Stelo preso dalla carcassa."
   },
   "1079": {
     "name": "Radici",
-    "description": "Radici prese da un ragno."
+    "description": "Radici prese dalla carcassa."
   },
   "1080": {
     "name": "Liana",
-    "description": "Liana presa da un ragno."
+    "description": "Liana presa dalla carcassa."
   },
   "1081": {
     "name": "Nucleo Elementale",
-    "description": "Nucleo preso da un elementale."
+    "description": "Nucleo preso dal guscio."
   },
   "1082": {
     "name": "Forma Superiore",
-    "description": "Forma superiore presa da un elementale."
+    "description": "Forma superiore presa dal guscio."
   },
   "1083": {
     "name": "Forma Inferiore",
-    "description": "Forma inferiore presa da un elementale."
+    "description": "Forma inferiore presa dal guscio."
   },
   "1084": {
     "name": "Appendice Sinistra",
-    "description": "Appendice sinistra presa da un elementale."
+    "description": "Appendice sinistra presa dal guscio."
   },
   "1085": {
     "name": "Appendice Destra",
-    "description": "Appendice destra presa da un elementale."
+    "description": "Appendice destra presa dal guscio."
   },
   "1086": {
     "name": "Testa di Pesce",
-    "description": "Testa presa da un pesce acquatico."
+    "description": "Testa presa dalla carcassa."
   },
   "1087": {
     "name": "Corpo di Pesce",
-    "description": "Corpo preso da un pesce acquatico."
+    "description": "Corpo preso dalla carcassa."
   },
   "1088": {
     "name": "Pinna Caudale",
-    "description": "Pinna caudale presa da un pesce acquatico."
+    "description": "Pinna caudale presa dalla carcassa."
   },
   "1089": {
     "name": "Pinna Dorsale",
-    "description": "Pinna dorsale presa da un pesce acquatico."
+    "description": "Pinna dorsale presa dalla carcassa."
   },
   "1090": {
     "name": "Pinna Pettorale Sinistra",
-    "description": "Pinna pettorale sinistra presa da un pesce acquatico."
+    "description": "Pinna pettorale sinistra presa dalla carcassa."
   },
   "1091": {
     "name": "Pinna Pettorale Destra",
-    "description": "Pinna pettorale destra presa da un pesce acquatico."
+    "description": "Pinna pettorale destra presa dalla carcassa."
   },
   "1092": {
     "name": "Testa di Polpo",
-    "description": "Testa presa da un polpo."
+    "description": "Testa presa dalla carcassa."
   },
   "1093": {
     "name": "Mantello",
-    "description": "Mantello preso da un polpo."
+    "description": "Mantello preso dalla carcassa."
   },
   "1094": {
     "name": "Tentacolo",
-    "description": "Tentacolo preso da un polpo."
+    "description": "Tentacolo preso dalla carcassa."
   },
   "1095": {
     "name": "Testa di Robot",
-    "description": "Testa presa da un robot."
+    "description": "Testa presa dal relitto."
   },
   "1096": {
     "name": "Nucleo di Robot",
-    "description": "Nucleo preso da un robot."
+    "description": "Nucleo preso dal relitto."
   },
   "1097": {
     "name": "Testa di Uccello",
-    "description": "Testa presa da un uccello."
+    "description": "Testa presa dalla carcassa."
   },
   "1098": {
     "name": "Corpo di Uccello",
-    "description": "Corpo preso da un uccello."
+    "description": "Corpo preso dalla carcassa."
   },
   "1099": {
     "name": "Becco",
-    "description": "Becco preso da un uccello."
+    "description": "Becco preso dalla carcassa."
   },
   "1100": {
     "name": "Artigli",
-    "description": "Artigli presi da un uccello."
+    "description": "Artigli presi dalla carcassa."
   },
   "1101": {
     "name": "Testa di Rettiliano",
-    "description": "Testa presa da un rettiliano."
+    "description": "Testa presa dalla carcassa."
   },
   "1102": {
     "name": "Torso di Rettiliano",
-    "description": "Torso preso da un rettiliano."
+    "description": "Torso preso dalla carcassa."
   },
   "1103": {
     "name": "Cappello",
-    "description": "Cappello preso da un rettiliano."
+    "description": "Cappello preso dalla carcassa."
   },
   "1104": {
     "name": "Gambo",
-    "description": "Gambo preso da un rettiliano."
+    "description": "Gambo preso dalla carcassa."
   },
   "1105": {
     "name": "Sacche di Spore",
-    "description": "Sacche di spore prese da un rettiliano."
+    "description": "Sacche di spore prese dalla carcassa."
   },
   "1106": {
     "name": "Chioma",
-    "description": "Chioma presa da un rettiliano."
+    "description": "Chioma presa dal caduto."
   },
   "1107": {
     "name": "Tronco",
-    "description": "Tronco preso da un rettiliano."
+    "description": "Tronco preso dalla carcassa."
   },
   "1108": {
     "name": "Ramo",
-    "description": "Ramo preso da un rettiliano."
+    "description": "Ramo preso dalla carcassa."
   },
   "1109": {
     "name": "Nucleo",
-    "description": "Nucleo preso da un rettiliano."
+    "description": "Nucleo preso dalla carcassa."
   },
   "1110": {
     "name": "Membrana",
-    "description": "Membrana presa da un rettiliano."
+    "description": "Membrana presa dalla carcassa."
   },
   "1111": {
     "name": "Flagello",
-    "description": "Flagello preso da un rettiliano."
+    "description": "Flagello preso dalla carcassa."
   },
   "1112": {
     "name": "Sacche di Tossine",
-    "description": "Sacche di tossine prese da un rettiliano."
+    "description": "Sacche di tossine prese dalla carcassa."
   },
   "1113": {
     "name": "Testa Sinistra",
-    "description": "Testa sinistra presa da un rettiliano."
+    "description": "Testa sinistra presa dalla carcassa."
   },
   "1114": {
     "name": "Testa Destra",
-    "description": "Testa destra presa da un rettiliano."
+    "description": "Testa destra presa dalla carcassa."
   },
   "1115": {
     "name": "Torso di Umanoide Bicefalo",
-    "description": "Torso preso da un umanoide bicefalo."
+    "description": "Torso preso dalla carcassa."
   },
   "1116": {
     "name": "Testa di Serpente",
-    "description": "Testa presa da un serpente."
+    "description": "Testa presa dalla carcassa."
   },
   "1117": {
     "name": "Segmento del Corpo",
-    "description": "Segmento del corpo preso da un serpente."
+    "description": "Segmento del corpo preso dalla carcassa."
   },
   "1118": {
     "name": "Nucleo di Golem",
-    "description": "Nucleo preso da un golem."
+    "description": "Nucleo preso dal relitto."
   },
   "1119": {
     "name": "Testa di Demone",
-    "description": "Testa presa da un demone."
+    "description": "Testa presa dal residuo."
   },
   "1120": {
     "name": "Corna",
-    "description": "Corna prese da un demone."
+    "description": "Corna prese dal residuo."
   },
   "1121": {
     "name": "Torso di Demone",
-    "description": "Torso preso da un demone."
+    "description": "Torso preso dal residuo."
   },
   "1122": {
     "name": "Volto",
-    "description": "Volto preso da un demone."
+    "description": "Volto preso dal residuo."
   },
   "1123": {
     "name": "Nucleo d'Essenza Spettrale",
-    "description": "Nucleo preso da un fantasma."
+    "description": "Nucleo preso dal residuo."
   },
   "1124": {
     "name": "Fuoco Fatuo Sinistro",
-    "description": "Fuoco fatuo sinistro preso da un fantasma."
+    "description": "Fuoco fatuo sinistro preso dal residuo."
   },
   "1125": {
     "name": "Fuoco Fatuo Destro",
-    "description": "Fuoco fatuo destro preso da un fantasma."
+    "description": "Fuoco fatuo destro preso dal residuo."
   },
   "1126": {
     "name": "Schiera di Sensori",
-    "description": "Schiera di sensori presa da un fantasma."
+    "description": "Schiera di sensori presa dal residuo."
   },
   "1127": {
     "name": "Telaio",
-    "description": "Telaio preso da un fantasma."
+    "description": "Telaio preso dal residuo."
   },
   "1128": {
     "name": "Elica Sinistra",
-    "description": "Elica sinistra presa da un fantasma."
+    "description": "Elica sinistra presa dal residuo."
   },
   "1129": {
     "name": "Elica Destra",
-    "description": "Elica destra presa da un fantasma."
+    "description": "Elica destra presa dal residuo."
   },
   "1130": {
     "name": "Occhio Abissale",
-    "description": "Occhio abissale preso da un fantasma."
+    "description": "Occhio abissale preso dal residuo."
   },
   "1131": {
     "name": "Fauci",
-    "description": "Fauci prese da un fantasma."
+    "description": "Fauci prese dal residuo."
   },
   "1132": {
     "name": "Viticcio del Vuoto",
-    "description": "Viticcio del vuoto preso da un fantasma."
+    "description": "Viticcio del vuoto preso dal residuo."
   },
   "1133": {
     "name": "Scheggia del Nucleo del Vuoto",
-    "description": "Nucleo preso da un nato del vuoto."
+    "description": "Nucleo preso dal residuo."
   },
   "1134": {
     "name": "Testa di Mutante",
-    "description": "Testa presa da un mutante."
+    "description": "Testa presa dalla carcassa."
   },
   "1135": {
     "name": "Massa Mutevole",
-    "description": "Massa presa da un mutante."
+    "description": "Massa presa dalla carcassa."
   },
   "1136": {
     "name": "Arto in più",
-    "description": "Arto in più preso da un mutante."
+    "description": "Arto in più preso dalla carcassa."
   },
   "1137": {
     "name": "Grappolo di Occhi",
-    "description": "Grappolo di occhi preso da un mutante."
+    "description": "Grappolo di occhi preso dalla carcassa."
   },
   "1138": {
     "name": "Aculeo Caudale",
-    "description": "Aculeo caudale preso da un mutante."
+    "description": "Aculeo caudale preso dalla carcassa."
   },
   "1139": {
     "name": "Nucleo di Cristallo",
-    "description": "Nucleo preso da un'entità di cristallo."
+    "description": "Nucleo preso dal guscio."
   },
   "1140": {
     "name": "Guglia Sinistra",
-    "description": "Guglia sinistra presa da un'entità di cristallo."
+    "description": "Guglia sinistra presa dal guscio."
   },
   "1141": {
     "name": "Guglia Destra",
-    "description": "Guglia destra presa da un'entità di cristallo."
+    "description": "Guglia destra presa dal guscio."
   },
   "1142": {
     "name": "Gemma di Focalizzazione",
-    "description": "Gemma di focalizzazione presa da un'entità di cristallo."
+    "description": "Gemma di focalizzazione presa dal guscio."
   },
   "1143": {
     "name": "Cristallo di Scudo",
-    "description": "Cristallo di scudo preso da un'entità di cristallo."
+    "description": "Cristallo di scudo preso dal caduto."
   },
   "1144": {
     "name": "Testa di Anfibio",
-    "description": "Testa presa da un anfibio."
+    "description": "Testa presa dalla carcassa."
   },
   "1145": {
     "name": "Torso di Anfibio",
-    "description": "Torso preso da un anfibio."
+    "description": "Torso preso dalla carcassa."
   },
   "1146": {
     "name": "Testa di Nonmorto Costruito",
-    "description": "Testa presa da un nonmorto costruito."
+    "description": "Testa presa dal relitto."
   },
   "1147": {
     "name": "Torso Cucito di Nonmorto",
-    "description": "Torso preso da un nonmorto costruito."
+    "description": "Torso preso dal relitto."
   },
   "1148": {
     "name": "Cucitura di Potenza",
-    "description": "Cucitura di potenza presa da un nonmorto costruito."
+    "description": "Cucitura di potenza presa dal relitto."
   },
   "1149": {
     "name": "Testa di Minotauro",
-    "description": "Testa presa da un minotauro."
+    "description": "Testa presa dalla carcassa."
   },
   "1150": {
     "name": "Torso di Minotauro",
-    "description": "Torso preso da un minotauro."
+    "description": "Torso preso dalla carcassa."
   },
   "1151": {
     "name": "Zampa Taurina Sinistra",
-    "description": "Gamba sinistra presa da un minotauro."
+    "description": "Gamba sinistra presa dalla carcassa."
   },
   "1152": {
     "name": "Zampa Taurina Destra",
-    "description": "Gamba destra presa da un minotauro."
+    "description": "Gamba destra presa dalla carcassa."
   },
   "1153": {
     "name": "Vertebre Cervicali",
-    "description": "Vertebre cervicali prese da un minotauro."
+    "description": "Vertebre cervicali prese dalla carcassa."
   },
   "1154": {
     "name": "Vertebre Toraciche",
-    "description": "Vertebre toraciche prese da un minotauro."
+    "description": "Vertebre toraciche prese dalla carcassa."
   },
   "1155": {
     "name": "Vertebre Lombari",
-    "description": "Vertebre lombari prese da un minotauro."
+    "description": "Vertebre lombari prese dalla carcassa."
   },
   "1156": {
     "name": "Gabbia Toracica",
-    "description": "Gabbia toracica presa da un minotauro."
+    "description": "Gabbia toracica presa dalla carcassa."
   },
   "1157": {
     "name": "Bacino",
-    "description": "Bacino preso da un minotauro."
+    "description": "Bacino preso dalla carcassa."
   },
   "1158": {
     "name": "Polmoni",
-    "description": "Polmoni presi da un minotauro."
+    "description": "Polmoni presi dalla carcassa."
   },
   "1159": {
     "name": "Reni",
-    "description": "Reni presi da un minotauro."
+    "description": "Reni presi dalla carcassa."
   },
   "1160": {
     "name": "Intestino Tenue",
-    "description": "Intestino tenue preso da un minotauro."
+    "description": "Intestino tenue preso dalla carcassa."
   },
   "1161": {
     "name": "Intestino Crasso",
-    "description": "Intestino crasso preso da un minotauro."
+    "description": "Intestino crasso preso dalla carcassa."
   },
   "1162": {
     "name": "Pancreas",
-    "description": "Pancreas preso da un minotauro."
+    "description": "Pancreas preso dalla carcassa."
   },
   "1163": {
     "name": "Omero Sinistro",
-    "description": "Omero sinistro preso da un minotauro."
+    "description": "Omero sinistro preso dalla carcassa."
   },
   "1164": {
     "name": "Avambraccio Sinistro",
-    "description": "Avambraccio sinistro preso da un minotauro."
+    "description": "Avambraccio sinistro preso dalla carcassa."
   },
   "1165": {
     "name": "Omero Destro",
-    "description": "Omero destro preso da un minotauro."
+    "description": "Omero destro preso dalla carcassa."
   },
   "1166": {
     "name": "Avambraccio Destro",
-    "description": "Avambraccio destro preso da un minotauro."
+    "description": "Avambraccio destro preso dalla carcassa."
   },
   "1167": {
     "name": "Coscia Sinistra",
-    "description": "Coscia sinistra presa da un minotauro."
+    "description": "Coscia sinistra presa dalla carcassa."
   },
   "1168": {
     "name": "Stinco Sinistro",
-    "description": "Stinco sinistro preso da un minotauro."
+    "description": "Stinco sinistro preso dalla carcassa."
   },
   "1169": {
     "name": "Coscia Destra",
-    "description": "Coscia destra presa da un minotauro."
+    "description": "Coscia destra presa dalla carcassa."
   },
   "1170": {
     "name": "Stinco Destro",
-    "description": "Stinco destro preso da un minotauro."
+    "description": "Stinco destro preso dalla carcassa."
   },
   "1171": {
     "name": "Artiglio Sinistro",
-    "description": "Artiglio sinistro preso da un minotauro."
+    "description": "Artiglio sinistro preso dalla carcassa."
   },
   "1172": {
     "name": "Artiglio Destro",
-    "description": "Artiglio destro preso da un minotauro."
+    "description": "Artiglio destro preso dalla carcassa."
   },
   "1173": {
     "name": "Carapace",
-    "description": "Carapace preso da un minotauro."
+    "description": "Carapace preso dalla carcassa."
   },
   "1174": {
     "name": "Zampa Anteriore",
-    "description": "Zampa anteriore presa da un minotauro."
+    "description": "Zampa anteriore presa dalla carcassa."
   },
   "1175": {
     "name": "Zampa Posteriore",
-    "description": "Zampa posteriore presa da un minotauro."
+    "description": "Zampa posteriore presa dalla carcassa."
   },
   "1176": {
     "name": "Antenne",
-    "description": "Antenne prese da un minotauro."
+    "description": "Antenne prese dalla carcassa."
   },
   "1177": {
     "name": "Nucleo Sferico",
-    "description": "Nucleo preso da uno sferoide."
+    "description": "Nucleo preso dal guscio."
   },
   "1178": {
     "name": "Guscio Esterno",
-    "description": "Guscio preso da uno sferoide."
+    "description": "Guscio preso dal guscio."
   },
   "1179": {
     "name": "Aculei Rotanti",
-    "description": "Aculei rotanti presi da uno sferoide."
+    "description": "Aculei rotanti presi dal guscio."
   },
   "1180": {
     "name": "Propulsori Ausiliari",
-    "description": "Propulsori ausiliari presi da uno sferoide."
+    "description": "Propulsori ausiliari presi dal guscio."
   },
   "1181": {
     "name": "Guscio",
-    "description": "Guscio preso da uno sferoide."
+    "description": "Guscio preso dal guscio."
   },
   "1182": {
     "name": "Testa di Tartaruga",
-    "description": "Testa presa da una tartaruga."
+    "description": "Testa presa dalla carcassa."
   },
   "1183": {
     "name": "Spina Dorsale",
-    "description": "Spina dorsale presa da una tartaruga."
+    "description": "Spina dorsale presa dalla carcassa."
   },
   "1184": {
     "name": "Zampa Anteriore Sinistra",
-    "description": "Zampa anteriore sinistra presa da una tartaruga."
+    "description": "Zampa anteriore sinistra presa dalla carcassa."
   },
   "1185": {
     "name": "Zampa Anteriore Destra",
-    "description": "Zampa anteriore destra presa da una tartaruga."
+    "description": "Zampa anteriore destra presa dalla carcassa."
   },
   "1186": {
     "name": "Nucleo Molle del Mimic",
-    "description": "Nucleo preso da un mimic forziere."
+    "description": "Nucleo preso dal relitto."
   },
   "1187": {
     "name": "Coperchio del Forziere",
-    "description": "Coperchio preso da un mimic forziere."
+    "description": "Coperchio preso dal relitto."
   },
   "1188": {
     "name": "Denti Frastagliati",
-    "description": "Denti presi da un mimic forziere."
+    "description": "Denti presi dal relitto."
   },
   "1189": {
     "name": "Lingua di Melma",
-    "description": "Lingua presa da un mimic forziere."
+    "description": "Lingua presa dal relitto."
   },
   "1190": {
     "name": "Piedi Tozzi",
-    "description": "Piedi presi da un mimic forziere."
+    "description": "Piedi presi dal relitto."
   },
   "1191": {
     "name": "Nucleo di Cenere di Fenice",
-    "description": "Nucleo preso da una fenice."
+    "description": "Nucleo preso dal residuo."
   },
   "1192": {
     "name": "Piume Fiammeggianti",
-    "description": "Piume prese da una fenice."
+    "description": "Piume prese dal residuo."
   },
   "1193": {
     "name": "Occhio di Brace Sinistro",
-    "description": "Occhio sinistro preso da una fenice."
+    "description": "Occhio sinistro preso dal residuo."
   },
   "1194": {
     "name": "Occhio di Brace Destro",
-    "description": "Occhio destro preso da una fenice."
+    "description": "Occhio destro preso dal residuo."
   },
   "1195": {
     "name": "Testa di Ogre",
-    "description": "Testa presa da un ogre."
+    "description": "Testa presa dalla carcassa."
   },
   "1196": {
     "name": "Torso di Ogre",
-    "description": "Torso preso da un ogre."
+    "description": "Torso preso dalla carcassa."
   },
   "1197": {
     "name": "Testa di Spaventapasseri",
-    "description": "Testa presa da uno spaventapasseri."
+    "description": "Testa presa dal relitto."
   },
   "1198": {
     "name": "Torso di Spaventapasseri",
-    "description": "Torso preso da uno spaventapasseri."
+    "description": "Torso preso dal relitto."
   },
   "1199": {
     "name": "Testa di Verme a Segmenti",
-    "description": "Testa presa da un verme a segmenti."
+    "description": "Testa presa dalla carcassa."
   },
   "1200": {
     "name": "Segmento Cardiaco",
-    "description": "Segmento cardiaco preso da un verme a segmenti."
+    "description": "Segmento cardiaco preso dalla carcassa."
   },
   "1201": {
     "name": "Nucleo Minerale",
-    "description": "Nucleo preso da un minerale."
+    "description": "Nucleo preso dal guscio."
   },
   "1202": {
     "name": "Cristalli",
-    "description": "Cristalli presi da un minerale."
+    "description": "Cristalli presi dal guscio."
   },
   "1203": {
     "name": "Vene",
-    "description": "Vene prese da un minerale."
+    "description": "Vene prese dal guscio."
   },
   "1204": {
     "name": "Testa Sinistra",
-    "description": "Testa presa da un minerale."
+    "description": "Testa presa dal guscio."
   },
   "1205": {
     "name": "Testa Centrale",
-    "description": "Testa presa da un minerale."
+    "description": "Testa presa dal guscio."
   },
   "1206": {
     "name": "Testa Destra",
-    "description": "Testa presa da un minerale."
+    "description": "Testa presa dal guscio."
   },
   "1207": {
     "name": "Corpo di Idra",
-    "description": "Corpo preso da un'idra."
+    "description": "Corpo preso dalla carcassa."
   },
   "1208": {
     "name": "Testa di Vampiro",
-    "description": "Testa presa da un vampiro."
+    "description": "Testa presa dalla carcassa."
   },
   "1209": {
     "name": "Testa di Pipistrello",
-    "description": "Testa presa da un pipistrello."
+    "description": "Testa presa dalla carcassa."
   },
   "1210": {
     "name": "Corpo di Pipistrello",
-    "description": "Corpo preso da un pipistrello."
+    "description": "Corpo preso dalla carcassa."
   },
   "1211": {
     "name": "Testa di Coniglio",
-    "description": "Testa presa da un coniglio."
+    "description": "Testa presa dalla carcassa."
   },
   "1212": {
     "name": "Corpo di Coniglio",
-    "description": "Corpo preso da un coniglio."
+    "description": "Corpo preso dalla carcassa."
   },
   "1213": {
     "name": "Orecchie",
-    "description": "Orecchie prese da un coniglio."
+    "description": "Orecchie prese dalla carcassa."
   },
   "1214": {
     "name": "Elmo",
-    "description": "Elmo preso da un coniglio."
+    "description": "Elmo preso dal caduto."
   },
   "1215": {
     "name": "Pettorale",
-    "description": "Pettorale preso da un coniglio."
+    "description": "Pettorale preso dal caduto."
   },
   "1216": {
     "name": "Spallaccio Sinistro",
-    "description": "Spallaccio sinistro preso da un coniglio."
+    "description": "Spallaccio sinistro preso dal caduto."
   },
   "1217": {
     "name": "Spallaccio Destro",
-    "description": "Spallaccio destro preso da un coniglio."
+    "description": "Spallaccio destro preso dal caduto."
   },
   "1218": {
     "name": "Gambali Sinistri",
-    "description": "Gambali sinistri presi da un coniglio."
+    "description": "Gambali sinistri presi dal caduto."
   },
   "1219": {
     "name": "Gambali Destri",
-    "description": "Gambali destri presi da un coniglio."
+    "description": "Gambali destri presi dal caduto."
   },
   "1220": {
     "name": "Testa di Centauro",
-    "description": "Testa presa da un centauro."
+    "description": "Testa presa dalla carcassa."
   },
   "1221": {
     "name": "Torso Umano di Centauro",
-    "description": "Torso preso da un centauro."
+    "description": "Torso preso dalla carcassa."
   },
   "1222": {
     "name": "Corpo Equino di Centauro",
-    "description": "Corpo preso da un centauro."
+    "description": "Corpo preso dalla carcassa."
   },
   "1223": {
     "name": "Grappolo di Mandibole",
-    "description": "Mandibole prese da un centauro."
+    "description": "Mandibole prese dalla carcassa."
   },
   "1224": {
     "name": "Sciame di Ali",
-    "description": "Ali prese da un centauro."
+    "description": "Ali prese dalla carcassa."
   },
   "1225": {
     "name": "Grappolo di Zampe",
-    "description": "Zampe prese da un centauro."
+    "description": "Zampe prese dalla carcassa."
   },
   "1226": {
     "name": "Grappolo di Addomi",
-    "description": "Addome preso da un centauro."
+    "description": "Addome preso dalla carcassa."
   },
   "1227": {
     "name": "Sciame di Pungiglioni",
-    "description": "Pungiglioni presi da un centauro."
+    "description": "Pungiglioni presi dalla carcassa."
   },
   "1228": {
     "name": "Testa di Difensore Robotico",
-    "description": "Testa presa da un difensore robotico."
+    "description": "Testa presa dal relitto."
   },
   "1229": {
     "name": "Cannone da Braccio",
-    "description": "Cannone da braccio preso da un difensore robotico."
+    "description": "Cannone dal relitto."
   },
   "1230": {
     "name": "Torso di Difensore Robotico",
-    "description": "Torso preso da un difensore robotico."
+    "description": "Torso preso dal relitto."
   },
   "1231": {
     "name": "Giunti Delle Gambe",
-    "description": "Giunti delle gambe presi da un difensore robotico."
+    "description": "Giunti delle gambe presi dal relitto."
   },
   "1232": {
     "name": "Sensori",
-    "description": "Sensori presi da un difensore robotico."
+    "description": "Sensori presi dal relitto."
   },
   "1233": {
     "name": "Nucleo di Torretta",
-    "description": "Nucleo preso da una torretta."
+    "description": "Nucleo preso dal relitto."
   },
   "1234": {
     "name": "Canna del Cannone",
-    "description": "Canna del cannone presa da una torretta."
+    "description": "Canna del cannone presa dal relitto."
   },
   "1235": {
     "name": "Meccanismo di Rotazione",
-    "description": "Meccanismo di rotazione preso da una torretta."
+    "description": "Meccanismo di rotazione preso dal relitto."
   },
   "1236": {
     "name": "Camera di Caricamento",
-    "description": "Camera di caricamento presa da una torretta."
+    "description": "Camera di caricamento presa dal relitto."
   },
   "1237": {
     "name": "Occhi",
-    "description": "Occhi presi da una torretta."
+    "description": "Occhi presi dal relitto."
   },
   "1238": {
     "name": "Capigliatura di Serpenti",
-    "description": "Capigliatura di serpenti presa da una torretta."
+    "description": "Capigliatura di serpenti presa dal relitto."
   },
   "1239": {
     "name": "Occhio Gigante",
-    "description": "Occhio preso da una torretta."
+    "description": "Occhio preso dal relitto."
   },
   "1240": {
     "name": "Placche Dorsali",
-    "description": "Placche dorsali prese da una torretta."
+    "description": "Placche dorsali prese dal caduto."
   },
   "1241": {
     "name": "Tentacoli",
-    "description": "Tentacoli presi da una torretta."
+    "description": "Tentacoli presi dal relitto."
   },
   "1242": {
     "name": "Camera Cardiaca",
-    "description": "Camera cardiaca presa da una torretta."
+    "description": "Camera cardiaca presa dal relitto."
   },
   "1243": {
     "name": "Occhio",
-    "description": "Occhio preso da una torretta."
+    "description": "Occhio preso dal relitto."
   },
   "1244": {
     "name": "Piede",
-    "description": "Piede preso da una torretta."
+    "description": "Piede preso dal relitto."
   },
   "1245": {
     "name": "Nucleo d'Elementale d'Acqua",
-    "description": "Nucleo preso da un elementale d'acqua."
+    "description": "Nucleo preso dal guscio."
   },
   "1246": {
     "name": "Corpo d'Acqua dell'Elementale",
-    "description": "Corpo preso da un elementale d'acqua."
+    "description": "Corpo preso dal guscio."
   },
   "1247": {
     "name": "Braccia D'acqua",
-    "description": "Braccia d'acqua prese da un elementale d'acqua."
+    "description": "Braccia dal guscio."
   },
   "1248": {
     "name": "Gamba D'acqua Sinistra",
-    "description": "Gamba d'acqua sinistra presa da un elementale d'acqua."
+    "description": "Gamba dal guscio."
   },
   "1249": {
     "name": "Gamba D'acqua Destra",
-    "description": "Gamba d'acqua destra presa da un elementale d'acqua."
+    "description": "Gamba dal guscio."
   },
   "1250": {
     "name": "Nucleo d'Elementale di Fulmine",
-    "description": "Nucleo preso da un elementale di fulmine."
+    "description": "Nucleo preso dal guscio."
   },
   "1251": {
     "name": "Corpo Elettrico dell'Elementale",
-    "description": "Corpo preso da un elementale di fulmine."
+    "description": "Corpo preso dal guscio."
   },
   "1252": {
     "name": "Braccio Elettrico Sinistro",
-    "description": "Braccio elettrico sinistro preso da un elementale di fulmine."
+    "description": "Braccio elettrico sinistro preso dal guscio."
   },
   "1253": {
     "name": "Braccio Elettrico Destro",
-    "description": "Braccio elettrico destro preso da un elementale di fulmine."
+    "description": "Braccio elettrico destro preso dal guscio."
   },
   "1254": {
     "name": "Gamba Elettrica Sinistra",
-    "description": "Gamba elettrica sinistra presa da un elementale di fulmine."
+    "description": "Gamba elettrica sinistra presa dal guscio."
   },
   "1255": {
     "name": "Gamba Elettrica Destra",
-    "description": "Gamba elettrica destra presa da un elementale di fulmine."
+    "description": "Gamba elettrica destra presa dal guscio."
   },
   "1256": {
     "name": "Nucleo d'Elementale di Tempesta",
-    "description": "Nucleo preso da un elementale di tempesta."
+    "description": "Nucleo preso dal guscio."
   },
   "1257": {
     "name": "Corpo di Vento dell'Elementale",
-    "description": "Corpo preso da un elementale di tempesta."
+    "description": "Corpo preso dal guscio."
   },
   "1258": {
     "name": "Braccio di Pioggia Sinistro",
-    "description": "Braccio di pioggia sinistro preso\nda un elementale di tempesta."
+    "description": "Braccio di pioggia sinistro preso dal guscio."
   },
   "1259": {
     "name": "Braccio di Pioggia Destro",
-    "description": "Braccio di pioggia destro preso da un elementale di tempesta."
+    "description": "Braccio di pioggia destro preso dal guscio."
   },
   "1260": {
     "name": "Gamba di Tuono Sinistra",
-    "description": "Gamba di tuono sinistra presa da un elementale di tempesta."
+    "description": "Gamba di tuono sinistra presa dal guscio."
   },
   "1261": {
     "name": "Gamba di Tuono Destra",
-    "description": "Gamba di tuono destra presa da un elementale di tempesta."
+    "description": "Gamba di tuono destra presa dal guscio."
   },
   "1262": {
     "name": "Nucleo d'Elementale di Fuoco",
-    "description": "Nucleo preso da un elementale di fuoco."
+    "description": "Nucleo preso dal guscio."
   },
   "1263": {
     "name": "Corpo di Fiamma dell'Elementale",
-    "description": "Corpo preso da un elementale di fuoco."
+    "description": "Corpo preso dal guscio."
   },
   "1264": {
     "name": "Braccia di Brace",
-    "description": "Braccia di brace prese da un elementale di fuoco."
+    "description": "Braccia di brace prese dal guscio."
   },
   "1265": {
     "name": "Gambe di Cenere",
-    "description": "Gambe di cenere prese da un elementale di fuoco."
+    "description": "Gambe di cenere prese dal guscio."
   },
   "1266": {
     "name": "Nucleo d'Elementale di Metallo",
-    "description": "Nucleo preso da un elementale di metallo."
+    "description": "Nucleo preso dal guscio."
   },
   "1267": {
     "name": "Armatura a Piastre",
-    "description": "Armatura a piastre presa da un elementale di metallo."
+    "description": "Armatura a piastre presa dal caduto."
   },
   "1268": {
     "name": "Braccia Irte di Punte",
-    "description": "Braccia irte di punte prese da un elementale di metallo."
+    "description": "Braccia irte di punte prese dal guscio."
   },
   "1269": {
     "name": "Gambe a Ingranaggi",
-    "description": "Gambe a ingranaggi prese da un elementale di metallo."
+    "description": "Gambe a ingranaggi prese dal guscio."
   },
   "1270": {
     "name": "Nucleo d'Elementale Oscuro",
-    "description": "Nucleo preso da un elementale oscuro."
+    "description": "Nucleo preso dal guscio."
   },
   "1271": {
     "name": "Corpo d'Ombra dell'Elementale",
-    "description": "Corpo preso da un elementale oscuro."
+    "description": "Corpo preso dal guscio."
   },
   "1272": {
     "name": "Braccio Spettrale Sinistro",
-    "description": "Braccio sinistro preso da un elementale oscuro."
+    "description": "Braccio sinistro preso dal guscio."
   },
   "1273": {
     "name": "Braccio Spettrale Destro",
-    "description": "Braccio destro preso da un elementale oscuro."
+    "description": "Braccio destro preso dal guscio."
   },
   "1274": {
     "name": "Gamba Maledetta Sinistra",
-    "description": "Gamba sinistra presa da un elementale oscuro."
+    "description": "Gamba sinistra presa dal guscio."
   },
   "1275": {
     "name": "Gamba Maledetta Destra",
-    "description": "Gamba destra presa da un elementale oscuro."
+    "description": "Gamba destra presa dal guscio."
   },
   "1276": {
     "name": "Nucleo d'Elementale Sacro",
-    "description": "Nucleo preso da un elementale sacro."
+    "description": "Nucleo preso dal guscio."
   },
   "1277": {
     "name": "Corpo di Luce dell'Elementale",
-    "description": "Corpo preso da un elementale sacro."
+    "description": "Corpo preso dal guscio."
   },
   "1278": {
     "name": "Braccio Radiante Sinistro",
-    "description": "Braccio sinistro preso da un elementale sacro."
+    "description": "Braccio sinistro preso dal guscio."
   },
   "1279": {
     "name": "Braccio Radiante Destro",
-    "description": "Braccio destro preso da un elementale sacro."
+    "description": "Braccio destro preso dal guscio."
   },
   "1280": {
     "name": "Gamba d'Aura Sinistra",
-    "description": "Gamba sinistra presa da un elementale sacro."
+    "description": "Gamba sinistra presa dal guscio."
   },
   "1281": {
     "name": "Gamba d'Aura Destra",
-    "description": "Gamba destra presa da un elementale sacro."
+    "description": "Gamba destra presa dal guscio."
   },
   "1282": {
     "name": "Nucleo Spirituale di Totem",
-    "description": "Nucleo preso da un totem."
+    "description": "Nucleo preso dal relitto."
   },
   "1283": {
     "name": "Occhi di Totem",
-    "description": "Occhi presi da un totem."
+    "description": "Occhi presi dal relitto."
   },
   "1284": {
     "name": "Base",
-    "description": "Base presa da un totem."
+    "description": "Base presa dal relitto."
   },
   "1285": {
     "name": "Ruota",
-    "description": "Ruota presa da un totem."
+    "description": "Ruota presa dal relitto."
   },
   "1286": {
     "name": "Anello di Occhi",
-    "description": "Anello di occhi preso da un totem."
+    "description": "Anello di occhi preso dal relitto."
   },
   "1287": {
     "name": "Aureola",
-    "description": "Aureola presa da un totem."
+    "description": "Aureola presa dal relitto."
   },
   "1288": {
     "name": "Nucleo del Cuore d'Angelo",
-    "description": "Nucleo preso da un angelo."
+    "description": "Nucleo preso dal residuo."
   },
   "1289": {
     "name": "Veste",
-    "description": "Veste presa da un angelo."
+    "description": "Veste presa dal residuo."
   },
   "1290": {
     "name": "Testa di Elfo",
-    "description": "Testa presa da un elfo."
+    "description": "Testa presa dalla carcassa."
   },
   "1291": {
     "name": "Arco",
-    "description": "Arco preso da un elfo."
+    "description": "Arco preso dalla carcassa."
   },
   "1292": {
     "name": "Testa di Gnomo",
-    "description": "Testa presa da uno gnomo."
+    "description": "Testa presa dalla carcassa."
   },
   "1293": {
     "name": "Barba",
-    "description": "Barba presa da uno gnomo."
+    "description": "Barba presa dalla carcassa."
   },
   "1294": {
     "name": "Cappello",
-    "description": "Cappello preso da uno gnomo."
+    "description": "Cappello preso dal caduto."
   },
   "1295": {
     "name": "Testa di Elefante",
-    "description": "Testa presa da un elefante."
+    "description": "Testa presa dalla carcassa."
   },
   "1296": {
     "name": "Tronco",
-    "description": "Tronco preso da un elefante."
+    "description": "Tronco preso dalla carcassa."
   },
   "1297": {
     "name": "Zanne",
-    "description": "Zanne prese da un elefante."
+    "description": "Zanne prese dalla carcassa."
   },
   "1298": {
     "name": "Corpo di Elefante",
-    "description": "Corpo preso da un elefante."
+    "description": "Corpo preso dalla carcassa."
   },
   "1299": {
     "name": "Occhio Centrale",
-    "description": "Occhio preso da un elefante."
+    "description": "Occhio preso dalla carcassa."
   },
   "1300": {
     "name": "Corpo di Creatura Tentacolare",
-    "description": "Corpo preso da una creatura tentacolare."
+    "description": "Corpo preso dalla carcassa."
   },
   "1301": {
     "name": "Corpo di Ragno dell'Ibrido",
-    "description": "Corpo preso da un ibrido ragno-umano."
+    "description": "Corpo preso dalla carcassa."
   },
   "1302": {
     "name": "Torso Umano dell'Ibrido",
-    "description": "Torso preso da un ibrido ragno-umano."
+    "description": "Torso preso dalla carcassa."
   },
   "1303": {
     "name": "Testa Umana dell'Ibrido",
-    "description": "Testa presa da un ibrido ragno-umano."
+    "description": "Testa presa dalla carcassa."
   },
   "1304": {
     "name": "Punte",
-    "description": "Punte prese da un ibrido ragno-umano."
+    "description": "Punte prese dalla carcassa."
   },
   "1305": {
     "name": "Corpo di Mostro Irto di Punte",
-    "description": "Corpo preso da un mostro irto di punte."
+    "description": "Corpo preso dal guscio."
   },
   "1306": {
     "name": "Testa di Cavallo",
-    "description": "Testa presa da un cavallo."
+    "description": "Testa presa dalla carcassa."
   },
   "1307": {
     "name": "Corpo di Cavallo",
-    "description": "Corpo preso da un cavallo."
+    "description": "Corpo preso dalla carcassa."
   },
   "1308": {
     "name": "Corno",
-    "description": "Corno preso da un cavallo."
+    "description": "Corno preso dalla carcassa."
   },
   "1309": {
     "name": "Corpo di Unicorno",
-    "description": "Corpo preso da un unicorno."
+    "description": "Corpo preso dalla carcassa."
   },
   "1310": {
     "name": "Testa di Mastino Infernale",
-    "description": "Testa presa da un mastino infernale."
+    "description": "Testa presa dal residuo."
   },
   "1311": {
     "name": "Collare",
-    "description": "Collare preso da un mastino infernale."
+    "description": "Collare preso dal residuo."
   },
   "1312": {
     "name": "Corpo di Mastino Infernale",
-    "description": "Corpo preso da un mastino infernale."
+    "description": "Corpo preso dal residuo."
   },
   "1313": {
     "name": "Testa di Demone Alato",
-    "description": "Testa presa da un demone alato."
+    "description": "Testa presa dal residuo."
   },
   "1314": {
     "name": "Nucleo Infernale di Demone Alato",
-    "description": "Nucleo preso da un demone alato."
+    "description": "Nucleo preso dal residuo."
   },
   "1315": {
     "name": "Artigli",
-    "description": "Artigli presi da un demone alato."
+    "description": "Artigli presi dal residuo."
   },
   "1316": {
     "name": "Cumulo di Rifiuti",
-    "description": "Cumulo di rifiuti preso da un demone alato."
+    "description": "Cumulo di rifiuti preso dal residuo."
   },
   "1317": {
     "name": "Arti",
-    "description": "Arti presi da un demone alato."
+    "description": "Arti presi dal residuo."
   },
   "1318": {
     "name": "Hex-9 Celer 500",

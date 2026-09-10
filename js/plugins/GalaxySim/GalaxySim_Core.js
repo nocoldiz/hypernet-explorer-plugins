@@ -576,11 +576,20 @@
   // surface (any transfer off map 636).
   // ============================================================================
   const EVA_SPRITE = "Skab/Originals/!$MargheritaHackEVA";
+  // Em is not handed one of the party's spare suits: she has a sealed sheet of
+  // her own and a wardrobe that already reads the ground she is standing on
+  // (CharacterPresets.emSheet), so writing the shared suit over her would put
+  // the party's vac-suit in the savegame where her dossier's face belongs.
+  function wearsPartyEVASuit(actor) {
+    const CP = window.CharacterPresets;
+    return !(actor && CP && CP.isEmActor && CP.isEmActor(actor));
+  }
   function applyEVASuits() {
     if (typeof $gameParty === "undefined" || !$gameParty || !$gameSystem) return;
     if ($gameSystem._evaSuitActive) return;
     const backup = [];
     $gameParty.members().forEach((a) => {
+      if (!wearsPartyEVASuit(a)) return;
       backup.push({ id: a.actorId(), name: a.characterName(), index: a.characterIndex() });
       a.setCharacterImage(EVA_SPRITE, 0);
     });

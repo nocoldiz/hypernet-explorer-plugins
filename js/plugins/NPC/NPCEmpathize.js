@@ -2205,14 +2205,16 @@
   // ============================================================================
 
   // How far one arrow / d-pad press scrolls a tab that has nothing to select,
-  // and how fast a fully pulled trigger scrolls, in pixels per frame.
+  // and how fast a fully pushed right stick scrolls, in pixels per frame.
   const SCROLL_KEY_STEP  = 64;
+  const STICK_SPEED      = 26;
+  const STICK_DEADZONE   = 0.15;
   const TRIGGER_SPEED    = 26;
   const TRIGGER_DEADZONE = 0.15;
   // Standard-mapping index of the pad's Select / Back button, which changes who
   // in the party is doing the talking. Input.gamepadMapper has no action on it
-  // at all, so it is read raw through AnalogStickInput (the same route L2/R2
-  // take below).
+  // at all, so it is read raw through AnalogStickInput (the same route the
+  // right stick and the triggers take below).
   const PAD_SELECT_BUTTON = 8;
 
   const NPCEmpathizeInputManager = {
@@ -2246,24 +2248,28 @@
       // i18n-ignore-end
     },
 
-    // L2/R2 scroll the open tab's pane, the controller's mouse wheel. MZ's
-    // gamepadMapper does not cover the analog triggers (buttons 6/7), so they
-    // are read raw through the shared AnalogStickInput helper. On the Social
-    // Web the same pull zooms the graph instead (R2 in, L2 out), since there
-    // is no text to scroll there and the wheel over the graph already zooms.
-    _updateTriggerScroll(scene) {
+    // The right stick scrolls the open tab's pane, the controller's mouse
+    // wheel. MZ's gamepadMapper names neither the stick's axes nor the analog
+    // triggers (buttons 6/7), so both are read raw through the shared
+    // AnalogStickInput helper. L2/R2 stay a zoom: on the Social Web they zoom
+    // the graph (R2 in, L2 out), which is what the wheel over the graph does.
+    _updateStickScroll(scene) {
       const pads = window.AnalogStickInput;
-      if (!pads || typeof pads.leftTrigger !== 'function') return;
-      const pull   = v => (v > TRIGGER_DEADZONE ? (v - TRIGGER_DEADZONE) / (1 - TRIGGER_DEADZONE) : 0);
-      const amount = (pull(pads.rightTrigger()) - pull(pads.leftTrigger())) * TRIGGER_SPEED;
-      if (!amount) return;
+      if (!pads || typeof pads.rightY !== 'function') return;
       if (scene._activeTab === 'web' && typeof scene.setWebZoom === 'function') {
-        // amount tops out at TRIGGER_SPEED (26); this rate roughly doubles the
-        // zoom over one second at a fully pulled trigger, the pixel-scroll
-        // constant above being tuned for text, not for a multiplicative zoom.
-        scene.setWebZoom(scene.webZoom() * (1 + amount * 0.0005));
+        const pull   = v => (v > TRIGGER_DEADZONE ? (v - TRIGGER_DEADZONE) / (1 - TRIGGER_DEADZONE) : 0);
+        const zoom   = (pull(pads.rightTrigger()) - pull(pads.leftTrigger())) * TRIGGER_SPEED;
+        // zoom tops out at TRIGGER_SPEED (26); this rate roughly doubles the
+        // view over one second at a fully pulled trigger, the pixel-scroll
+        // constant below being tuned for text, not for a multiplicative zoom.
+        if (zoom) scene.setWebZoom(scene.webZoom() * (1 + zoom * 0.0005));
         return;
       }
+      const y      = pads.rightY();
+      const push   = Math.abs(y) > STICK_DEADZONE
+        ? ((Math.abs(y) - STICK_DEADZONE) / (1 - STICK_DEADZONE)) * Math.sign(y) : 0;
+      const amount = push * STICK_SPEED;
+      if (!amount) return;
       scene._scrollActivePane?.(amount);
     },
 
@@ -2314,8 +2320,9 @@
         return;
       }
 
-      // L2/R2 scroll whatever the open tab is showing, every frame they are held
-      this._updateTriggerScroll(scene);
+      // The right stick scrolls whatever the open tab is showing, every frame
+      // it is held off centre
+      this._updateStickScroll(scene);
 
       // Who in the party is doing the talking: SELECT on a pad, SHIFT on a
       // keyboard, both stepping to the next member (the chip beside the
@@ -6126,6 +6133,43 @@
     // has to be able to ask both questions without reaching into the panel's
     // private helpers.
     isNonSentientNPC(npcName) { return _isNonSentientNpc(npcName); },
+    // ── Em and Bubba, out loud on the map ──────────────────────────────────
+    // The pair banks are not only for the panel. A bubble over one of their
+    // heads while the party walks is the `situations` bank talking, and the
+    // trick of it is that a speaker's own lines live in the bank of the
+    // direction where they are the one being TALKED TO: `em.bubba` is what
+    // Bubba says while Em holds the conversation, so it is Bubba's voice.
+    // Answers null unless both of them are actually walking together, since
+    // neither of them says any of it to nobody.
+    //
+    // Public because the party's bubbles are drawn somewhere else entirely
+    // (Core/AutoIdleExplorer.js), the way the growl bank already is.
+    pairAmbientLine(actor) {
+      const name = String(actor?.name?.() || '').trim().toLowerCase();
+      const side = name === EM_NAME.toLowerCase()    ? 'bubba'
+                 : name === BUBBA_NAME.toLowerCase() ? 'em'
+                 : null;
+      if (!side) return null;
+      // `side` names the bank, which is the direction the OTHER one is the
+      // talker in: Bubba's own lines are the em.bubba bank ('em'), so the
+      // person who has to be walking alongside him is Em, and the mirror.
+      const other = side === 'em' ? EM_NAME : BUBBA_NAME;
+      const walking = ($gameParty?.members?.() ?? [])
+        .some(m => m && String(m.name() || '').trim().toLowerCase() === other.toLowerCase());
+      if (!walking) return null;
+      const line = _pairSituationLine(_pairData(side));
+      return line ? vary(String(line)) : null;
+    },
+    // The two of them winding each other up, as a pair of lines the caller can
+    // put in two bubbles or two message boxes. `leader` is the one who starts
+    // it; the other one always answers.
+    pairBickerBeat(leader) {
+      const ctx = _pairContext(leader, leader && String(leader.name?.() || '').trim().toLowerCase() === EM_NAME.toLowerCase()
+        ? BUBBA_NAME : EM_NAME, null);
+      const beat = ctx && _rand(ctx.data.bicker || []);
+      if (!beat || !beat.player || !beat.reply) return null;
+      return { player: vary(String(beat.player)), reply: vary(String(beat.reply)) };
+    },
     // `npcName` is what decides which of the eight voices the noise comes out
     // in; without it the Feral bank answers, which is what every caller written
     // before the classes had voices of their own expects.
@@ -6199,6 +6243,12 @@
       _bubbaPlaythrough, _isBubbaActor, _bubbaContext, _bubbaDb,
       _isEmNpc, _pairSide, _pairContext, _pairSituationKeys, _pairSituationLine,
       _pairBond, _addPairBond,
+      // The three above are read on the map as well as in the panel now
+      // (NPC/DialogueSystem.js stages the same voices in a bust exchange), so
+      // the tone scaling and the two first-impression seeds travel with them:
+      // whichever of the two the player meets first, the standing it writes is
+      // the one the panel then displays.
+      _stanceToneMult, _emSeedFirstImpression, _bubbaSeedFirstImpression,
       // Non-sentient members (classes 63+): the UI layer builds their action
       // list out of these and hides everything a beast cannot do.
       _animalJoinChance, _wisMod, _recruitAnimalAsPet, _recruitAnimalAsMember,

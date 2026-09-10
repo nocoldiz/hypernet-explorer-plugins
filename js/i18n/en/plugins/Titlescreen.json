@@ -139,27 +139,31 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.6.11a"
+    "text": "0.6.13a"
   },
   "language": {
     "label": "✦ LANG"
   },
   "update": {
-    "checking": "✦ CHECKING BUILDS",
+    "checking": "✦ CHECKING BUILDS…",
     "checkingTip": "Asking the update server what the newest build is.",
     "ready": "✦ BUILD {build} READY",
     "readyPlain": "✦ NEW BUILD READY",
     "download": "✦ DOWNLOAD {name}",
     "downloadBuild": "✦ DOWNLOAD BUILD {build}",
     "preparing": "✦ PREPARING UPDATE",
-    "downloading": "✦ DOWNLOADING {percent}%",
+    "downloading": "✦ DOWNLOADING {name}…",
+    "downloadingPlain": "✦ DOWNLOADING {percent}%",
     "installing": "✦ INSTALLING UPDATE",
+    "installReady": "✦ INSTALL {name}",
+    "installReadyPlain": "✦ INSTALL THE NEW BUILD",
+    "installReadyTip": "The new build is downloaded and waiting. Click to install it; the game will close afterwards so you can reopen it.",
     "restarting": "✦ CLOSING THE GAME",
     "restartReady": "✦ CLOSE TO FINISH",
     "restartTip": "The new build is installed. Click to close the game, then reopen it yourself to finish.",
     "upToDate": "✦ ALREADY UP TO DATE",
     "failed": "✦ UPDATE FAILED, RETRY",
-    "tip": "A newer build is waiting. Click to install it; the game will close afterwards so you can reopen it.",
+    "tip": "A newer build is waiting. Click to download it; installing is the press after that.",
     "majorLine": "MAJOR UPDATE, DOWNLOAD THE FULL GAME AFTERWARDS",
     "majorTip": "This build is a major update. It installs from here, but the whole game must be downloaded again for full compatibility.",
     "majorInstalled": "MAJOR UPDATE INSTALLED",

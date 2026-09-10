@@ -45,7 +45,9 @@
  *     Controller.value(face, p)     analog 0..1 (a digital button is 0 or 1)
  *     Controller.pressed(face, p)
  *     Controller.triggered(face, p) the frame it went down, per player
- *     Controller.stick(side, p)     {x, y}, deadzoned; side 'left' | 'right'
+ *     Controller.stick(side, p)     {x, y}, deadzoned; side 'left' | 'right',
+ *                                   and reading the right one CLAIMS it for
+ *                                   the frame (see AnalogStickInput)
  *     Controller.trigger('L2', p)   the analog pull, and it CLAIMS the trigger
  *                                   for this frame (see AnalogStickInput)
  *
@@ -62,7 +64,7 @@
  *   ON-SCREEN TIPS
  *     Controller.UI is the badge layer (window.PadUI is kept as its alias): it
  *     stamps the physical face inside every control that declares a role, at
- *     the two ends of every tab strip, and on the pane the triggers scroll. A
+ *     the two ends of every tab strip, and on the pane the right stick moves. A
  *     screen opts a control in by naming the ROLE it plays,
  *
  *       <div class="inspect-btn" data-pad="discard">Discard</div>
@@ -279,8 +281,10 @@
         },
 
         // Pulling a trigger claims it for the frame, the way the analog helper
-        // has always defined it: a scene zooming with R2 and the game-wide
-        // scroll rail must not both act on one pull.
+        // has always defined it: a scene zooming with R2 and a screen counting
+        // a quantity must not both act on one pull. The right stick is claimed
+        // the same way, by stick() above: a camera swinging with it and the
+        // game-wide scroll rail must not both act on one push.
         trigger(face, player) {
             const A = window.AnalogStickInput;
             if ((player || 0) === 0 && !this.isSplitScreen() && A) {
@@ -316,8 +320,10 @@
                 extra: { face: 'Y', key: 'menu' },
                 tabPrev: { face: 'L1', key: 'pageup' },
                 tabNext: { face: 'R1', key: 'pagedown' },
-                scrollUp: { face: 'L2' },
-                scrollDown: { face: 'R2' }
+                // Scrolling is not a button: the right stick moves whatever
+                // pane the page is reading, pushed the way the page should go
+                // (UIScroll in Core/MouseControls.js). Read it with axis().
+                scroll: { stick: 'right' }
             },
             drive: {
                 accelerate: { face: 'A', key: 'ok' },
@@ -395,10 +401,20 @@
                 typeof Input !== 'undefined' && Input.isTriggered(bind.key));
         },
 
+        // An action worked by a stick rather than by a button: {x, y} of the
+        // stick it names, and reading it claims that stick for the frame.
+        axis(name, player) {
+            const bind = this.binding(name);
+            if (!bind || !bind.stick) return { x: 0, y: 0 };
+            return this.stick(bind.stick, player);
+        },
+
         // The face an action wears, for a tip strip or a badge.
         faceOf(action, mode) {
             const bind = this.binding(action, mode);
-            return bind && bind.face ? bind.face : '';
+            if (bind && bind.face) return bind.face;
+            if (bind && bind.stick) return bind.stick === 'right' ? 'RS' : 'LS';
+            return '';
         },
 
         //=====================================================================
@@ -563,8 +579,9 @@
             extra: 'Y',
             tabPrev: 'L1',
             tabNext: 'R1',
-            scrollUp: 'L2',
-            scrollDown: 'R2',
+            scroll: 'RS',
+            scrollUp: 'RS\u2191',
+            scrollDown: 'RS\u2193',
             stick: 'L3',
             select: 'Select',
             start: 'Start'
@@ -774,12 +791,13 @@
         },
 
         //---------------------------------------------------------------------
-        // L2 and R2, on the pane they scroll
+        // The right stick, on the pane it scrolls
         //---------------------------------------------------------------------
-        // The triggers scroll whatever pane the page is reading (UIScroll), and
-        // that is the one thing about them a player cannot guess. So while a
-        // pad is in hand the pane says so itself: L2 at the top edge, R2 at the
-        // bottom, each one lit only while there is somewhere to go that way.
+        // The right stick moves whatever pane the page is reading (UIScroll),
+        // and that is the one thing about it a player cannot guess. So while a
+        // pad is in hand the pane says so itself: the stick pushed up at the
+        // top edge, pushed down at the bottom, each one lit only while there is
+        // somewhere to go that way.
         RAIL_ID: 'pad-rails',
 
         railLayer() {

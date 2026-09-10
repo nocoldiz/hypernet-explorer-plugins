@@ -65,6 +65,8 @@
  * - window.CharacterPresets.getActorPresetModel(actor)
  * - window.CharacterPresets.getEmBackstory()
  * - window.CharacterPresets.isEmPlaythrough()
+ * - window.CharacterPresets.emSheet(actor)
+ * - window.CharacterPresets.emRidingSheet(actor, boatSubType)
  * - window.CharacterPresets.isBeastCrew()
  * - window.CharacterPresets.emLabel(key, fallback)
  * - window.CharacterPresets.camperName(fallback)
@@ -1692,6 +1694,99 @@
     return String(name || "").trim() === EM_NAME;
   }
 
+  // ── Em's wardrobe ──────────────────────────────────────────────────────────
+  // Em is drawn on her own sheets rather than on the one her dossier stores,
+  // and WHICH of them is read off where she is standing rather than written
+  // onto her: a stored sheet would freeze whichever world she was on when the
+  // game was saved, and would have to be put back by hand every time she got
+  // off a bike. `Other/!$Em` stays her catalogued face (the wardrobe entry the
+  // busts hang off); these are what she wears over it.
+  //
+  //   base   Earth, on her feet
+  //   space  air that is breathable but is not Earth's: a <Biome: Space> map
+  //          (the ship, a station) or a world with an atmosphere
+  //   eva    a world with no atmosphere, where the suit has to be sealed
+  //   bike   riding the bike
+  //   broom  flying the broom
+  //
+  // Nothing outside this table may name one of these files: emSheet answers
+  // for the body that walks, emRidingSheet for the one that rides.
+  const EM_SHEETS = {
+    base: { name: "Em/!$EM", index: 0 },         // i18n-ignore  sprite asset path
+    space: { name: "Em/!$EMSpace", index: 0 },   // i18n-ignore  sprite asset path
+    eva: { name: "Em/!$EmEVA", index: 0 },       // i18n-ignore  sprite asset path
+    bike: { name: "Em/!$EM_Bike", index: 0 },    // i18n-ignore  sprite asset path
+    broom: { name: "Em/!$EM_Scopa", index: 0 }   // i18n-ignore  sprite asset path
+  };
+
+  /**
+   * What the ground underfoot asks Em to wear: "eva" where there is no air to
+   * breathe, "space" where there is but it is not Earth's, "base" at home.
+   *
+   * A landing is asked first and the map second. Standing on a world is a fact
+   * about the ground, and the map it is reached through (the surface itself, a
+   * cave under it, a building on it) does not change whether there is air.
+   * @returns {string} Key into EM_SHEETS
+   */
+  function emGroundKey() {
+    const G = window.GalaxySim;
+    const planet = (G && typeof G.getOffEarthPlanet === "function")
+      ? G.getOffEarthPlanet() : null;
+    const landed = planet ||
+      ((typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._landedPlanet : null);
+    if (landed) {
+      const breathable = !!(G && typeof G.planetBreathable === "function" &&
+        G.planetBreathable(landed));
+      return breathable ? "space" : "eva";
+    }
+    const SC = window.SpriteCatalog;
+    if (SC && typeof SC.isSpaceBiomeMap === "function" && SC.isSpaceBiomeMap()) return "space";
+    return "base";
+  }
+
+  /**
+   * The sheet Em walks in where she is standing, or null for anybody who is
+   * not Em.
+   * @param {object} actor - Actor to dress
+   * @returns {?{name: string, index: number}} Sheet and cell, or null
+   */
+  function emSheet(actor) {
+    if (!isEmActor(actor)) return null;
+    return EM_SHEETS[emGroundKey()] || EM_SHEETS.base;
+  }
+
+  /**
+   * The sheet Em rides in, or null when this is not Em or the vehicle is not
+   * one she has a sheet of her own for. She is drawn with the machine under
+   * her, so a rider's sheet replaces the vehicle's own rather than sitting
+   * beside it.
+   * @param {object} actor - The rider
+   * @param {string} key - VehicleSystem's boat sub-type ('bike', 'broom', ...)
+   * @returns {?{name: string, index: number}} Sheet and cell, or null
+   */
+  function emRidingSheet(actor, key) {
+    if (!isEmActor(actor)) return null;
+    return (key === "bike" || key === "broom") ? EM_SHEETS[key] : null;
+  }
+
+  // The two doors the map, the followers and the menus read a body's sheet
+  // through. Answering here rather than calling setCharacterImage keeps the
+  // wardrobe out of the savegame: what is stored stays her dossier's face, and
+  // what is drawn is whatever she is wearing this minute.
+  if (typeof Game_Actor !== "undefined" && Game_Actor.prototype) {
+    const _emCharacterName = Game_Actor.prototype.characterName;
+    Game_Actor.prototype.characterName = function () {
+      const sheet = emSheet(this);
+      return sheet ? sheet.name : _emCharacterName.call(this);
+    };
+
+    const _emCharacterIndex = Game_Actor.prototype.characterIndex;
+    Game_Actor.prototype.characterIndex = function () {
+      const sheet = emSheet(this);
+      return sheet ? sheet.index : _emCharacterIndex.call(this);
+    };
+  }
+
   /**
    * Whether the camper is The Beast for this party: Em's dossier, Bubba's, or
    * either of them travelling with it.
@@ -3149,6 +3244,8 @@
     getEmBackstory,
     isEmPlaythrough,
     isEmActor,
+    emSheet,
+    emRidingSheet,
     isStoryMode,
     isStoryModeEm,
     storyModeEmLocks,

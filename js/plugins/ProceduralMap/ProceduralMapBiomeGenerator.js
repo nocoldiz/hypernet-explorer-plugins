@@ -1523,6 +1523,37 @@
   }
 
   /**
+   * Strip whatever sits on top of a drawn carriageway.
+   *
+   * The plain road biome draws its road first and keeps every later feature pass
+   * ROAD_FEATURE_MARGIN tiles away from it, so it never needs this. A bridge is
+   * the other way round: the river biome runs first and dresses the whole map
+   * with its reeds and water rocks on the overlay layer, and only then is the
+   * deck painted over the channel on layer 0. Every rock that fell where the
+   * deck landed stayed there, sitting on the road and blocking the lane.
+   *
+   * Clears layers 1 to 3 on each road surface tile, keeping the dashed centre
+   * line the road generator just put on layer 1, and drops the region 99 water
+   * marking the river left under the deck so the party walks the crossing
+   * instead of swimming across it.
+   */
+  function clearRoadSurfaceOverlays(mapData, width, height, roadProtect) {
+    if (!roadProtect || roadProtect.roadTileId == null) return;
+    const dashed = roadProtect.dashedTileIds || [];
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (mapData[calculateIndex(x, y, 0, width, height)] !== roadProtect.roadTileId) continue;
+        for (let z = 1; z <= 3; z++) {
+          const idx = calculateIndex(x, y, z, width, height);
+          if (z === 1 && dashed.includes(mapData[idx])) continue;
+          mapData[idx] = 0;
+        }
+        if (mapData.regiondata) mapData.regiondata[y * width + x] = 0;
+      }
+    }
+  }
+
+  /**
    * Generate procedural terrain for a road biome
    * Uses road generation utilities from ProceduralMapRoadGenerator
    * Handles water edge drawing and biome blending
@@ -1929,6 +1960,10 @@
 
     const dashedLines = getDashedLineTileIds(allFeatures);
     generateRoadBiomeUtil(mapData, biome, roadTileId, bridgeDirection, dashedLines, width, height, roadAdjacent);
+
+    // 3. The deck is the last thing drawn, so the river's own decoration is
+    // still lying on top of it. Sweep the carriageway clear.
+    clearRoadSurfaceOverlays(mapData, width, height, getRoadProtectTiles(biome, allFeatures));
 
     log(`[ProceduralMapBiomeGenerator] Bridge: ${bridgeDirection} road over ${riverDirection} river`);
 

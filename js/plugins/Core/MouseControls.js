@@ -386,31 +386,35 @@
             return found && this.canScroll(found, delta) ? found : null;
         },
 
-        // ---- L2 / R2, the controller's wheel ------------------------------
+        // ---- The right stick, the controller's wheel ----------------------
         // The walk above answers a notch of the wheel. A pad has no notch: MZ's
-        // gamepad map has no name for the analog triggers at all (they are
-        // buttons 6 and 7, read raw through Core/AnalogStickInput), so nothing
-        // in the engine ever turns a pulled trigger into anything. Without this
-        // a player on a pad cannot read a page of text that does not fit: the
-        // cursor walks the cards, and the prose beside them stays where it is.
+        // gamepad map folds the LEFT stick into the d-pad and names nothing
+        // else, so without this poll a player on a pad cannot read a page of
+        // text that does not fit: the cursor walks the cards, and the prose
+        // beside them stays where it is.
+        //
+        // The right stick is what moves it, pushed the way the page should go.
+        // It used to be L2 / R2, which read as a zoom everywhere else in the
+        // game and left the stick, the one control a player already treats as
+        // "look at the rest of it", doing nothing on a menu.
         //
         // Same pane, same rules, polled once a frame instead of once a notch.
-        TRIGGER_SPEED: 26,      // pixels a frame at a fully pulled trigger
-        TRIGGER_DEADZONE: 0.15, // some pads rest a little above zero
-        STEP_WAIT: 20,          // frames before a held trigger starts repeating
-        STEP_INTERVAL: 5,       // and how often it repeats after that
+        STICK_SPEED: 26,      // pixels a frame at a fully pushed stick
+        STICK_DEADZONE: 0.15, // on top of the helper's own radial deadzone
+        STEP_WAIT: 20,        // frames before a held push starts repeating
+        STEP_INTERVAL: 5,     // and how often it repeats after that
         _hold: 0,
         _px: -1,
         _py: -1,
 
-        // Where the mouse last was, so a pulled trigger scrolls the pane the
+        // Where the mouse last was, so a pushed stick scrolls the pane the
         // player is pointing at, exactly as their wheel would.
         trackPointer(event) {
             this._px = event.clientX;
             this._py = event.clientY;
         },
 
-        // The pane a trigger should move, in the order a player means it:
+        // The pane the stick should move, in the order a player means it:
         //   the pane the open scene names, for a screen that knows which of its
         //   panes is the one being read;
         //   the pane under the pointer, if the mouse is over the overlay;
@@ -419,7 +423,7 @@
         //   else the one pane of the overlay that can still move, and failing
         //   that the right page of a book spread, which is the page a menu in
         //   this game puts its prose on.
-        triggerPane(delta) {
+        activePane(delta) {
             const scene = SceneManager._scene;
             const named = scene && (scene.onUIScrollTarget || scene.ccScrollTarget);
             if (named) {
@@ -476,27 +480,28 @@
         },
 
         // Read once a frame while any overlay is up, AFTER the open scene has
-        // had its turn: a screen that wants the triggers for something of its
-        // own - the conversation panel's social web zooms with them, the shop
-        // counts a quantity with them, the hyperdeck turns its case - has read
-        // them by now, and reading is the claim (see AnalogStickInput). This
-        // poll stands down whenever somebody else has already asked, so one
-        // pull never does two things at once.
-        updateTriggers() {
+        // had its turn: a screen that wants the right stick for something of
+        // its own - a 3D scene swinging its camera, the star map panning, the
+        // hyperdeck turning its case over - has read it by now, and reading is
+        // the claim (see AnalogStickInput). This poll stands down whenever
+        // somebody else has already asked, so one push never does two things
+        // at once.
+        updateScroll() {
             const pads = window.AnalogStickInput;
-            if (!pads || typeof pads.leftTrigger !== 'function') return;
-            if (typeof pads.triggerReadsThisFrame === 'function' &&
-                pads.triggerReadsThisFrame() > 0) return;
-            const dz = this.TRIGGER_DEADZONE;
-            const pull = (v) => (v > dz ? (v - dz) / (1 - dz) : 0);
-            const amount = (pull(pads.rightTrigger()) - pull(pads.leftTrigger())) * this.TRIGGER_SPEED;
+            if (!pads || typeof pads.rightY !== 'function') return;
+            if (typeof pads.rightStickReadsThisFrame === 'function' &&
+                pads.rightStickReadsThisFrame() > 0) return;
+            const dz = this.STICK_DEADZONE;
+            const y = pads.rightY();
+            const push = Math.abs(y) > dz ? (Math.abs(y) - dz) / (1 - dz) * Math.sign(y) : 0;
+            const amount = push * this.STICK_SPEED;
             if (!amount) {
                 this._hold = 0;
                 return;
             }
             this._hold++;
-            // A scene that takes a notch to move a selection takes a pulled
-            // trigger the same way, on the cadence of a held direction rather
+            // A scene that takes a notch to move a selection takes a held
+            // stick the same way, on the cadence of a held direction rather
             // than sixty times a second.
             const scene = SceneManager._scene;
             const step = scene && (scene.onUIWheelStep || scene.ccScrollStep);
@@ -506,9 +511,14 @@
                 if (fires && step.call(scene, amount > 0 ? 1 : -1)) return;
                 if (!fires) return;
             }
-            const pane = this.triggerPane(amount);
+            const pane = this.activePane(amount);
             if (pane) pane.scrollTop += amount;
         },
+
+        // The name the poll was born with, when it was the triggers that
+        // scrolled. Kept so anything outside this repository still calling it
+        // reaches the poll rather than nothing.
+        updateTriggers() { return this.updateScroll(); },
 
         onWheel(event) {
             if (event.defaultPrevented) return;
@@ -559,13 +569,13 @@
             document.addEventListener('wheel', (e) => this.onWheel(e), { capture: true, passive: false });
             document.addEventListener('pointermove', (e) => this.trackPointer(e), { passive: true });
             // Once a frame, for the whole game, after the scene has updated:
-            // the triggers are polled rather than delivered, so there is
-            // nothing to listen for, and going last is what lets a scene that
-            // wants them for itself have them (see updateTriggers).
+            // the stick is polled rather than delivered, so there is nothing
+            // to listen for, and going last is what lets a scene that wants it
+            // for itself have it (see updateScroll).
             const _updateScene = SceneManager.updateScene;
             SceneManager.updateScene = function () {
                 _updateScene.apply(this, arguments);
-                if (this.isCurrentSceneStarted && this.isCurrentSceneStarted()) UIScroll.updateTriggers();
+                if (this.isCurrentSceneStarted && this.isCurrentSceneStarted()) UIScroll.updateScroll();
             };
         }
     };
@@ -577,7 +587,7 @@
     //=========================================================================
     // It used to be written here. It is one part of the controller layer now
     // and lives with the rest of it in Core/ControllerSystem.js, which is what
-    // publishes window.PadUI: the badges, the tab strips, the L2 / R2 rails and
+    // publishes window.PadUI: the badges, the tab strips, the right-stick rails and
     // the tip strip are all stamped from there, over this file's UIScroll.
 
     //=========================================================================

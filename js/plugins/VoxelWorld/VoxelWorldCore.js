@@ -518,10 +518,10 @@
     // a quarry track. So the ground under a road square is a ROADBED - graded,
     // dropped by ROAD_BED_DROP, and never seen - and the surface the eye and the
     // wheels get is a smooth extruded ribbon laid over it: asphalt, hard
-    // shoulder, edge lines, dashed lane lines, a kerbed median with a steel
-    // barrier down it and armco on the verges. VoxelWorldTerrain lays it, the
-    // field answers for its height (VoxelField.heightAt), so the camper drives
-    // on exactly what is drawn.
+    // shoulder, edge lines, dashed lane lines and a kerbed median, with the
+    // verges left open and nothing fenced. VoxelWorldTerrain lays it, the field
+    // answers for its height (VoxelField.heightAt), so the camper drives on
+    // exactly what is drawn.
     const ROAD_BED_DROP    = 8;    // roadbed cubes sit this far under the paving
     const ROAD_PAVE_T      = 3;    // thickness of the slab itself, at its edge
     const ROAD_SKIRT       = 26;   // the embankment dropped from the paved edge
@@ -529,7 +529,6 @@
     const ROAD_LINE_W      = 2.6;  // painted line
     const ROAD_DASH_ON     = 20;   // dashed lane line, on/off along the road
     const ROAD_DASH_OFF    = 15;
-    const ROAD_BARRIER_H   = 13;   // steel barrier and armco height
     const ROAD_KERB_H      = 3;    // the median kerb the grass sits behind
     // Colours the ribbon is painted with.
     const ROAD_COL = {
@@ -538,8 +537,7 @@
         paint:    0xe6e4d8,
         median:   0x4a5a35,
         kerb:     0x8f8c84,
-        skirt:    0x5b5340,
-        steel:    0x9aa0a6
+        skirt:    0x5b5340
     };
 
     // Fog densities (1/units). Divided by WORLD_SCALE so the haze reaches the same
@@ -2084,7 +2082,7 @@
         LIMINAL_TOP_KMH, LOOT_RANGE, MAX_KMH, MAX_STEER_LOCK, MOUNTAIN_MAX_H,
         NATURAL_TOP, OVERDRIVE_DECAY, OVERDRIVE_KMHPS, PERSON_H, PLANT_CROPS, TRAFFIC_VEHICLES,
         PLANT_POOL, RECOIL_KICK, REVERSE_ACCEL, REVERSE_MAX_KMH, ROAD_GAP,
-        ROAD_BARRIER_H, ROAD_BED_DROP, ROAD_COL, ROAD_DASH_OFF, ROAD_DASH_ON,
+        ROAD_BED_DROP, ROAD_COL, ROAD_DASH_OFF, ROAD_DASH_ON,
         ROAD_HALF_LANE, ROAD_KERB_H, ROAD_LANE_OFF, ROAD_LANE_W, ROAD_LINE_W, ROAD_LINKS,
         ROAD_MARK_LIFT, ROAD_OPPOSITE, ROAD_PAVE_T, ROAD_SHOULDER_W, ROAD_SKIRT,
         ROAD_SINK, ROAD_STEP, ROAD_TOTAL_W, ROCK_ASH, ROCK_POOL, SECONDARY_PARTS,

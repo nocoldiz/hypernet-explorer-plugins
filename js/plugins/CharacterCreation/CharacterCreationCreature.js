@@ -867,7 +867,7 @@
     this._lastIndex = -1;
     this._lastStepDOM = -1;
 
-    // Wheel + L2/R2 scrolling for the card boards. See CCScroll.
+    // Wheel + right stick scrolling for the card boards. See CCScroll.
     if (window.CCScroll) window.CCScroll.bindWheel(this._dndContainer);
     // Everything on the page that is not a card on a board - the buttons under
     // the boards above all - is walked with the focus ring. See

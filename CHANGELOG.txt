@@ -1,3 +1,26 @@
+0.6.13a
+
+Added:
+ - em and bubba special lines now trigger also in map talk, rumors and bubbles
+
+Changed:
+ - removed road barriers in the liminal drive voxel mode
+ - scrollbars now scrolled with the right analog stick, not L2 R2
+ - rework updater, downloads automatically and installs on request
+ - H controls tooltip now bound to R3 on controller
+ - reworked storymode em sprites
+ - skill descriptions in battle moved to top center, aligned left
+ - rework body part descriptions to not name the source animal
+
+Fixed:
+ - mounting a vehicle no longer waits more than 2 seconds for the party
+ - rocks and terrain features no longer placed on road on bridges
+ - cards ui layout, offscreen buttons and mouse input
+ - img/busts/presets no longer appears in the bust selector
+
+0.6.12a
+- fix assets decrypt
+
 0.6.11a
 
 Added:

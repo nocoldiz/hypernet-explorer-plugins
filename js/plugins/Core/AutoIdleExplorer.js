@@ -2863,6 +2863,20 @@
             // A lone traveller has no banter to be part of and falls back to the
             // plain pool below, which is what they always had.
             const actor = this.partyActorOf(char);
+            // Em and Bubba walking together have their own bank for exactly
+            // this: a word about the rain, the trees, the town or the hour,
+            // written for the two of them and nobody else (the `situations`
+            // pools of js/db/NPC/SocialLines.json, read through
+            // NPCEmpathize.pairAmbientLine). It is not every bubble - the bank
+            // answers with nothing most of the time - so their ordinary
+            // personality chatter is still what they mostly say.
+            const pairLine = (actor && window.NPCEmpathize?.pairAmbientLine)
+                ? window.NPCEmpathize.pairAmbientLine(actor) : null;
+            if (pairLine) {
+                this._stampTalk(char);
+                Bubbles.show(char, pairLine);
+                return true;
+            }
             const own = (actor && window.PartyBanter) ? window.PartyBanter.solo(actor, key) : null;
             if (own) {
                 this._stampTalk(char);
@@ -4945,11 +4959,11 @@
         // Anything longer is a zoom and is left to MousePan.
         padStep() {
             // Asked before anything is read: reading a trigger claims it for
-            // the frame (AnalogStickInput), and the game-wide scroll poll in
-            // MouseControls stands down when somebody else has. Claiming it on
-            // a map where the party cannot cycle anyway - mid-message, in a
+            // the frame (AnalogStickInput), and a screen that wants the same
+            // pull for itself stands down when somebody else has. Claiming it
+            // on a map where the party cannot cycle anyway - mid-message, in a
             // vehicle, while an event runs - would cost every overlay open over
-            // that map its L2/R2 scrolling for nothing.
+            // that map its own use of the triggers for nothing.
             if (!this.available() || this.typing()) {
                 this._padDir = 0;
                 this._padHold = 0;
