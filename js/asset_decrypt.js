@@ -40,11 +40,54 @@
     };
     var ENCRYPTED_EXT = /\.(png|jpe?g|ogg|m4a)_$/i;
     var PLAIN_EXT = /\.(png|jpe?g|ogg|m4a)$/i;
+    var ASSET_TAIL =
+        "((?:img|audio)/[^\"'()<>\\\\?#]+?\\.(?:png|jpe?g|ogg|m4a))(?![A-Za-z0-9_])";
     var ASSET_URL_RE = new RegExp(
-        "(?<![A-Za-z0-9_.\\-/])((?:\\.\\./)*)((?:img|audio)/[^\"'()<>\\\\?#]+?" +
-            "\\.(?:png|jpe?g|ogg|m4a))(?![A-Za-z0-9_])",
+        "(?<![A-Za-z0-9_.\\-/])((?:\\.\\./)*)" + ASSET_TAIL,
         "gi"
     );
+
+    // The same reference written out in full. UIPanel.assetUrl and CCArt.url
+    // resolve every path against document.baseURI before it goes into a custom
+    // property (a relative url() inside one resolves against the STYLESHEET
+    // that reads it back, not against the page that wrote it), so every bust,
+    // sprite, portrait and icon in the character creation wizard arrives here
+    // already absolute. ASSET_URL_RE cannot see those: the "/" in front of
+    // "img/" is exactly what its lookbehind refuses, so the whole wizard
+    // painted nothing at all in an encrypted build.
+    //
+    // Only this document's own folder counts. A url under someone else's
+    // origin names a file that is not on this disk and is left alone.
+    function escapeRe(text) {
+        return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    var ABS_URL_RES = (function () {
+        var out = [];
+        var base;
+        try {
+            base = String(document.baseURI || "").replace(/[^/]*$/, "");
+        } catch (e) {
+            base = "";
+        }
+        if (!base) {
+            return out;
+        }
+        var spellings = [base];
+        // UIPanel.escapeCssUrl writes the href unquoted, percent encoding what
+        // an unquoted url() cannot carry. A game root holding a space or a
+        // bracket therefore arrives in that form instead.
+        var escaped = base.replace(/[()'"\s]/g, function (c) {
+            return "%" + c.charCodeAt(0).toString(16).toUpperCase();
+        });
+        if (escaped !== base) {
+            spellings.push(escaped);
+        }
+        for (var i = 0; i < spellings.length; i++) {
+            out.push(new RegExp(escapeRe(spellings[i]) + ASSET_TAIL, "gi"));
+        }
+        return out;
+    })();
 
     var keyBytes = [];
     for (var k = 0; k < 16; k++) {
@@ -196,6 +239,17 @@
     function rewrite(text, baseDir) {
         if (!mayContainAsset(text)) {
             return text;
+        }
+        // An absolute reference already names its file from the game root, so
+        // baseDir has nothing to say about it.
+        for (var i = 0; i < ABS_URL_RES.length; i++) {
+            text = text.replace(ABS_URL_RES[i], function (all, rel) {
+                var resolved = normalize(rel);
+                if (!resolved) {
+                    return all;
+                }
+                return blobUrlFor(resolved) || all;
+            });
         }
         return text.replace(ASSET_URL_RE, function (all, dots, rel) {
             var resolved = normalize((baseDir ? baseDir + "/" : "") + dots + rel);
@@ -406,6 +460,52 @@
         scanThisDocument();
     }
     window.addEventListener("load", scanThisDocument);
+
+    // A sheet can arrive long past window load: the theme is swapped from
+    // inside the running game (GameOptions.applyTheme), and every DOM menu
+    // brings its own <style> with it. Scanning only at load left those rules
+    // pointing at the plain name the encryption pass had renamed, which is a
+    // CSS-drawn IconSet glyph painting nothing. A sheet is scanned once, so a
+    // rescan costs only what is new.
+    var scanQueued = false;
+    function queueScan() {
+        if (scanQueued) {
+            return;
+        }
+        scanQueued = true;
+        var run = function () {
+            scanQueued = false;
+            scanThisDocument();
+        };
+        // A <link> that has only just been added has no cssRules yet, so the
+        // scan waits for the frame the browser parses it in.
+        if (typeof requestAnimationFrame === "function") {
+            requestAnimationFrame(run);
+        } else {
+            setTimeout(run, 0);
+        }
+    }
+
+    if (typeof MutationObserver === "function" && document.documentElement) {
+        new MutationObserver(function (records) {
+            for (var r = 0; r < records.length; r++) {
+                var added = records[r].addedNodes;
+                for (var n = 0; added && n < added.length; n++) {
+                    var node = added[n];
+                    var tag = node && node.tagName;
+                    if (tag !== "LINK" && tag !== "STYLE") {
+                        continue;
+                    }
+                    // A linked sheet is not readable until it has loaded.
+                    if (tag === "LINK" && node.addEventListener) {
+                        node.addEventListener("load", queueScan);
+                    }
+                    queueScan();
+                    return;
+                }
+            }
+        }).observe(document.documentElement, { childList: true, subtree: true });
+    }
 
     //-------------------------------------------------------------------------
     // fs, for the plugins that scan img/ and audio/ directly

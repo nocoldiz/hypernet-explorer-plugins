@@ -11,6 +11,9 @@ Changed:
  - rework the new party button in titlescreen, creates a world
 
 Fixed:
+ - readd the missing gen_biomes_map.js build script
+ - busts and sprites gone on character creation in encrypted builds
+ - readd the missing gen_npc_pools.js build script
  - build scripts now include the sh and bat run files
  - fix lighting system, no bright flash when closing the menu
  - sluggish ui controls on steam deck
