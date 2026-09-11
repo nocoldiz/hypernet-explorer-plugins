@@ -6725,6 +6725,12 @@
     "message1": "%1 scruta i titoli del giorno!",
     "message2": ""
   },
+  "1405": {
+      "name": "LetturaDiCarte",
+      "description": "Legge i tarocchi per intravedere il futuro.",
+      "message1": "%1 gira i tarocchi!",
+      "message2": ""
+  },
   "1406": {
     "name": "CronacaDelleAnime",
     "description": "Legge la storia vissuta di un'anima vicina.",

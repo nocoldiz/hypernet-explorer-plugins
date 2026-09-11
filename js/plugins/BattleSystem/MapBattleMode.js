@@ -358,6 +358,7 @@
     MBM._cmdWindow = null;
     MBM._skillWindow = null;
     MBM._itemWindow = null;
+    MBM._throwWindow = null;
     MBM._hpBars = [];
     MBM._hpBarKey = "";
     MBM._tileSprites = [];
@@ -2164,7 +2165,7 @@
         if (MBM._windowsDeaf === deaf) return;
         MBM._windowsDeaf = deaf;
         if (deaf) {
-            MBM._deafened = [MBM._cmdWindow, MBM._skillWindow, MBM._itemWindow]
+            MBM._deafened = [MBM._cmdWindow, MBM._skillWindow, MBM._itemWindow, MBM._throwWindow]
                 .filter(w => w && w.active);
             MBM._deafened.forEach(w => w.deactivate());
         } else {
@@ -2178,7 +2179,7 @@
     MBM._isAnyInputActive = function () {
         if (MBM._activeWalk || MBM._cursorState) return true;
         if (MBM.isTalkMenuOpen()) return true;
-        return [MBM._cmdWindow, MBM._skillWindow, MBM._itemWindow]
+        return [MBM._cmdWindow, MBM._skillWindow, MBM._itemWindow, MBM._throwWindow]
             .some(w => w && w.active && w.visible);
     };
 
@@ -2273,7 +2274,7 @@
     };
 
     MBM._closeSubWindows = function () {
-        [MBM._skillWindow, MBM._itemWindow].forEach(w => {
+        [MBM._skillWindow, MBM._itemWindow, MBM._throwWindow].forEach(w => {
             if (!w) return;
             w.hide();
             w.deactivate();
@@ -2282,7 +2283,7 @@
     };
 
     MBM._destroyCommandWindows = function () {
-        [MBM._cmdWindow, MBM._skillWindow, MBM._itemWindow].forEach(w => {
+        [MBM._cmdWindow, MBM._skillWindow, MBM._itemWindow, MBM._throwWindow].forEach(w => {
             if (!w) return;
             if (w.parent) w.parent.removeChild(w);
             if (w.destroy) w.destroy();
@@ -2290,6 +2291,9 @@
         MBM._cmdWindow = null;
         MBM._skillWindow = null;
         MBM._itemWindow = null;
+        // The throw list is built on the same window as the backpack and owns
+        // a panel of its own: left behind, it points at a dead scene.
+        MBM._throwWindow = null;
     };
 
     MBM.canUseMoveCommand = function (actor) {
@@ -2813,9 +2817,11 @@
         }
         if (!MBM._throwWindow) {
             MBM._throwWindow = new Window_BattleItem(subWindowRect());
-            // The same bag, judged by what may be hurled rather than used.
+            // The same bag, judged by what may be hurled rather than used, and
+            // listed object by object: a short list needs no category step.
             MBM._throwWindow.includes = item => window.ThrowItem.isThrowable(item);
             MBM._throwWindow.isEnabled = item => !!item && $gameParty.numItems(item) > 0;
+            MBM._throwWindow.isCategorized = () => false;
             MBM._throwWindow.setHandler("ok", MBM._onThrowOk);
             MBM._throwWindow.setHandler("cancel", MBM._onThrowCancel);
             SceneManager._scene.addWindow(MBM._throwWindow);

@@ -494,7 +494,7 @@
   // still a sword; then the library; then what it is made of; and only then
   // when it can be used, so an item nothing can be done with falls to Misc.
   // occasion: 0 always, 1 battle only, 2 menu only, 3 never.
-  const uiCategoryOf = (item) => {
+  const classifyUICategory = (item) => {
     if (!item) return MISC_CATEGORY;
     if (DataManager.isWeapon(item)) return WEAPONS_CATEGORY;
     if (DataManager.isArmor(item)) return ARMOR_CATEGORY;
@@ -510,6 +510,51 @@
     if (item.occasion === 1) return COMBAT_CATEGORY;
     if (item.occasion === 0 || item.occasion === 2) return USABLE_CATEGORY;
     return MISC_CATEGORY;
+  };
+
+  // Filing one item reads its notes, its name and every one of its effects, and
+  // the pockets ask the same question of the same item over and over: once per
+  // item for the tab row, once per item for the filter, and twice per
+  // comparison for the grouped sort. The answer is remembered against the
+  // database entry it was read off, and thrown away the moment that entry is
+  // rewritten, since procedural artifacts reuse database ids.
+  const _categoryMemo = new WeakMap();
+
+  const uiCategoryOf = (item) => {
+    if (!item) return MISC_CATEGORY;
+    const memo = _categoryMemo.get(item);
+    if (memo && memo.note === item.note && memo.occasion === item.occasion) return memo.category;
+    const category = classifyUICategory(item);
+    _categoryMemo.set(item, { note: item.note, occasion: item.occasion, category });
+    return category;
+  };
+
+  // The pockets as one short string: every stack carried and the nine quick
+  // slots, since a star on a row is part of what the grid shows. Read off
+  // $gameParty's own containers rather than allItems(), so asking whether
+  // anything has changed never builds an array of everything the party owns.
+  const pocketStamp = () => {
+    let stamp = '';
+    const push = (prefix, bag) => {
+      if (!bag) return;
+      for (const id in bag) {
+        const n = bag[id];
+        if (n > 0) stamp += prefix + id + ':' + n + ',';
+      }
+    };
+    push('i', $gameParty._items);
+    push('w', $gameParty._weapons);
+    push('a', $gameParty._armors);
+    stamp += '|';
+    const slots = window.ItemHotbar ? window.ItemHotbar.SLOTS : 0;
+    for (let i = 0; i < slots; i++) stamp += ($gameSystem.getFavoriteItem(String(i + 1)) || 0) + ',';
+    return stamp;
+  };
+
+  // What the page's caches are keyed on, so the scene can ask the same question
+  // the memos below ask without restating how the pockets are read.
+  Scene_EnhancedItem.prototype.uiPocketStamp = function () {
+    return pocketStamp();
   };
 
   const categoryRank = (label) => {
@@ -533,10 +578,16 @@
   // empty, in the fixed order above. Favourites earns its place whatever is
   // carried, it is a shelf the player builds rather than one the loot decides.
   Scene_EnhancedItem.prototype.uiCategories = function () {
+    const stamp = pocketStamp();
+    if (this._uiCategoriesMemo && this._uiCategoriesMemo.stamp === stamp) {
+      return this._uiCategoriesMemo.value;
+    }
     const present = new Set();
     for (const item of $gameParty.allItems()) present.add(uiCategoryOf(item));
-    return UI_CATEGORIES.filter((cat) =>
+    const value = UI_CATEGORIES.filter((cat) =>
       cat === ALL_CATEGORY || cat === FAVORITES_CATEGORY || present.has(cat));
+    this._uiCategoriesMemo = { stamp, value };
+    return value;
   };
 
   // The caption a tab or a heading is printed under. Inventory.category is the
@@ -558,7 +609,15 @@
     return this._activeUICategory === ALL_CATEGORY;
   };
 
+  // The roll is rebuilt only when what goes on it changes. A cursor step, a
+  // button walked, a card redrawn: none of those touch the pockets, and the
+  // list they are read against is the one already sorted. Callers read the
+  // array, they never write to it.
   Scene_EnhancedItem.prototype.getFilteredUIItems = function () {
+    const memoKey = [this._activeUICategory, this._searchText || '', this._dndSortKey || '',
+      this._dndSortDirection || '', pocketStamp()].join('|');
+    if (this._uiItemsMemo && this._uiItemsMemo.key === memoKey) return this._uiItemsMemo.value;
+
     const allItems = $gameParty.allItems();
     const category = this._activeUICategory;
 
@@ -601,6 +660,7 @@
       items.sort((a, b) => compareCategories(this.uiGroupOf(a), this.uiGroupOf(b)));
     }
 
+    this._uiItemsMemo = { key: memoKey, value: items };
     return items;
   };
 

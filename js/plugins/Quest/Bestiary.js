@@ -47,6 +47,10 @@
 
     const pluginName = "Bestiary"; // i18n-ignore: plugin id
 
+    // How long the cursor must stand still on a creature before its 3D specimen
+    // is grown. See initBestiary3D().
+    const SPECIMEN_SETTLE_MS = 110;
+
     // An ecology note-tag value, named for the panel. The value stays the id,
     // so an unlisted (modded) tag still reads as written.
     function ecologyLabel(group, id) {
@@ -575,16 +579,30 @@
             return resolved || stored;
         }
 
+        // A specimen is a WebGL context and a Battler3D model grown from scratch:
+        // it is the most expensive thing on this page by a wide margin. Walking
+        // the codex with a held key would ask for one per creature passed over,
+        // and the browser force-loses the game's own context once the cap of
+        // live ones is passed, so the build waits for the cursor to come to
+        // rest. The frame stays empty for that moment and nothing else does.
         initBestiary3D(enemyData, archKey, seedKey) {
             this.cleanupBestiary3D();
-            const canvas = document.getElementById('bestiary-3d-canvas');
-            // Build under this entry's generation seed (world seed unless the
-            // player re-rolled it).
-            const entrySeed = this.bestiaryGenSeed(seedKey != null ? seedKey : String(enemyData.id));
-            this._bestiary3D = buildBestiary3D(canvas, enemyData, archKey, entrySeed);
+            this._bestiary3DTimer = setTimeout(() => {
+                this._bestiary3DTimer = 0;
+                const canvas = document.getElementById('bestiary-3d-canvas');
+                if (!canvas) return;
+                // Build under this entry's generation seed (world seed unless
+                // the player re-rolled it).
+                const entrySeed = this.bestiaryGenSeed(seedKey != null ? seedKey : String(enemyData.id));
+                this._bestiary3D = buildBestiary3D(canvas, enemyData, archKey, entrySeed);
+            }, SPECIMEN_SETTLE_MS);
         }
 
         cleanupBestiary3D() {
+            if (this._bestiary3DTimer) {
+                clearTimeout(this._bestiary3DTimer);
+                this._bestiary3DTimer = 0;
+            }
             if (!this._bestiary3D) return;
             disposeBestiary3D(this._bestiary3D);
             this._bestiary3D = null;
@@ -725,6 +743,18 @@
                     count: this._monsterList.length,
                     renderItem: idx => this.bestiaryCardHTML(this._monsterList[idx], idx),
                     emptyHTML: `<div class="bestiary-list-empty">${T('Bestiary.noMonstersEncountered')}</div>`,
+                    // Walking the codex moves two marks and nothing else: the
+                    // cards on screen already say everything the page changes
+                    // do not touch, so they are left exactly as they are rather
+                    // than rebuilt, rebound and redrawn a sprite at a time.
+                    focus: {
+                        index: this._selectedIndex,
+                        selector: '.monster-card',
+                        classes: {
+                            selected: this._selectedIndex,
+                            focused: this._activeArea === 'list' ? this._selectedIndex : -1
+                        }
+                    },
                     onWindow: (win, from, to) => {
                         win.querySelectorAll(".monster-card").forEach(card => {
                             card.addEventListener("click", () => {

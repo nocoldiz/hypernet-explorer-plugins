@@ -362,7 +362,7 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
     const reputationClass = $gameFactions.reputationClassOf(reputation);
 
     return `
-      <div class="faction-row ${isFocused} ${isSub}" onclick="SceneManager._scene.selectUIFaction(${idx})">
+      <div class="faction-row ${isFocused} ${isSub}" data-idx="${idx}" onclick="SceneManager._scene.selectUIFaction(${idx})">
         ${fold}
         ${subMarker}
         ${!item.isSub && item.iconIndex ? `
@@ -753,6 +753,10 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
       key: leftPageKey,
       count: factionList.length,
       renderItem: (idx) => factionRowHTML(factionList[idx], idx),
+      // Walking the roll moves one mark. Every standing and every emblem on
+      // screen already reads right, so the window is left as it is rather than
+      // rebuilt and its emblems redrawn a canvas at a time.
+      focus: { index: this._dndSelectedIndex, selector: '.faction-row', className: 'selected' },
       onWindow: (win, from, to) => {
         for (let idx = from; idx < to; idx++) {
           const item = factionList[idx];

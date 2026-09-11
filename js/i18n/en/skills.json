@@ -6725,6 +6725,12 @@
     "message1": "%1 scries the day's headlines!",
     "message2": ""
   },
+  "1405": {
+      "name": "CardRead",
+      "description": "Reads the tarot for a glimpse of what comes.",
+      "message1": "%1 turns the tarot!",
+      "message2": ""
+  },
   "1406": {
     "name": "SoulChronicle",
     "description": "Reads the lived history of a nearby soul.",

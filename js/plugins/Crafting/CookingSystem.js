@@ -1499,8 +1499,21 @@
         const item2 = CookingSystem.getSecondItem();
 
         // 1. Render Pantry List
+        // The shelf is built out of what the party is carrying and what is
+        // already on the board; walking it changes neither, and only moves two
+        // marks. Rebuilding it for that would also rebind a click handler per
+        // row on every step of the cursor.
+        const pantryStamp = `${itemsList.map(it => it.id + 'x' + $gameParty.numItems(it)).join(',')}` +
+            `|${item1 ? item1.id : 0}|${item2 ? item2.id : 0}`;
         const pantryListContainer = container.querySelector(".pantry-list-container");
-        if (pantryListContainer) {
+        if (pantryListContainer && this._pantryStamp === pantryStamp && pantryListContainer.innerHTML) {
+            const onPantry = this._activeArea === "pantry";
+            pantryListContainer.querySelectorAll(".pantry-row").forEach((node) => {
+                const idx = parseInt(node.getAttribute("data-idx"), 10);
+                node.classList.toggle("selected", onPantry && this._pantryIndex === idx);
+            });
+        } else if (pantryListContainer) {
+            this._pantryStamp = pantryStamp;
             let pantryHTML = "";
             if (itemsList.length === 0) {
                 pantryHTML = `

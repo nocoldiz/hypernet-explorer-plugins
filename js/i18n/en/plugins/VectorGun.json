@@ -284,11 +284,6 @@
       "effect": "Fitted, the book is already open when the fight starts: Em begins every battle reading, with a row of spells out of the grimoire instead of her own. It is a pact, not a gift. Graceful Death buys no turn of invulnerability with it, and the book gives back no health: it takes health for every spell read, priced on what the spell costs to cast. Only one alternate form can be fitted."
     }
   },
-  "growth": {
-    "footer": "Frame at level {level}: +{damage}% a shot, +{atk} ATK and AGI, +{rounds} rounds",
-    "label": "Growth",
-    "desc": "The weapon's stats scale with Em's level."
-  },
   "section": {
     "forms": "Weapon forms",
     "elements": "Elements"

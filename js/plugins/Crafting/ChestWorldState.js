@@ -44,6 +44,19 @@
  * the same answer every time the square is built, and it is written into the
  * world record on the first visit so it stays true even if the rule changes.
  *
+ * ----------------------------------------------------------------------------
+ * Why the tiles have to be written down too
+ * ----------------------------------------------------------------------------
+ * A chest is addressed by the tile it stands on, and the pass that places it
+ * only LOOKS deterministic: it rejects tiles that are occupied by an event or
+ * that the party is standing on, and neither of those is the same twice. A
+ * savegame restored on the square brings its events back wherever they were
+ * saved - the chests included, each one standing on the very tile its seed
+ * would pick again - so the second pass sent every chest somewhere else, and a
+ * chest the party had already emptied came back shut and full under its new
+ * address. The tiles of the first pass are therefore kept with the rest of the
+ * square's chest state and handed back to every later pass.
+ *
  * No plugin commands: the record is driven off self switches being set.
  * ============================================================================
  */
@@ -65,7 +78,8 @@
     // The world record
     //=========================================================================
     // save/worlds/<name>/chests.json:
-    //   { opened: { "<placeKey>": { "<chestKey>": 1 } } }
+    //   { opened: { "<placeKey>": { "<chestKey>": 1 } },
+    //     placed: { "<placeKey>": ["<chestKey>", ...] } }
     // Plain objects (no Set/Map) so JsonEx serialises them on flush.
 
     function worldStore() {
@@ -109,6 +123,32 @@
         requestFlush();
     }
 
+    // The tiles this square's chests were placed on the first time it was
+    // populated, in the order the placement pass dealt them, or null when the
+    // square has never been populated (or holds no chest at all).
+    function recallPlacement(placeKey) {
+        const store = worldStore();
+        if (!store || !placeKey || !store.placed) return null;
+        const tiles = store.placed[placeKey];
+        if (!Array.isArray(tiles)) return null;
+        const out = [];
+        for (const tile of tiles) {
+            const parts = String(tile).split(',');
+            const x = Number(parts[0]), y = Number(parts[1]);
+            if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+            out.push({ x, y });
+        }
+        return out;
+    }
+
+    function recordPlacement(placeKey, tiles) {
+        const store = worldStore();
+        if (!store || !placeKey || !Array.isArray(tiles)) return;
+        if (!store.placed) store.placed = {};
+        store.placed[placeKey] = tiles.map(t => procChestKey(t.x, t.y));
+        requestFlush();
+    }
+
     //=========================================================================
     // Addressing a chest
     //=========================================================================
@@ -128,10 +168,26 @@
     }
 
     // A procedural chest is addressed by the tile it stands on, not by which
-    // template event happens to be playing it: placement is seeded, so the tile
-    // is the same on every visit, while the event ids shuffle.
+    // template event happens to be playing it: the placement pass deals the same
+    // tiles on every visit (see above), while the event ids shuffle.
     function procChestKey(x, y) {
         return `${x},${y}`;
+    }
+
+    // A chest's tile, as the square it belongs to counts tiles. The placement
+    // pass runs with the world looking like that one square, so the tiles it
+    // deals - and the record written from them - are square-local; an event read
+    // outside the pass reports its position on the loaded map instead, which is
+    // a different number as soon as neighbouring squares are stitched alongside.
+    function procChestTile(event) {
+        const S = window.ProcStitch;
+        if (S && typeof S.localToParty === 'function') {
+            try {
+                const tile = S.localToParty(event.x, event.y);
+                if (tile) return tile;
+            } catch (e) { /* fall back to the raw position */ }
+        }
+        return { x: event.x, y: event.y };
     }
 
     function isProcChestEvent(mapId, eventId) {
@@ -186,33 +242,64 @@
         return (h ^ (h >>> 15)) >>> 0;
     }
 
+    /**
+     * The tiles the square's chests were given the first time it was populated,
+     * for the placement pass to deal again, or null when there is nothing
+     * written down (a square never populated, or no world to write into).
+     */
+    function recallProcPlacement() {
+        return recallPlacement(procPlaceKey());
+    }
+
+    /**
+     * Called by placeChestEvents with the tiles it just dealt, in its own order
+     * and one entry per chest it placed, so every later pass over this square
+     * puts the same chests back on the same tiles. (0,0) is the parking spot and
+     * is written down like any other answer: a chest the pass could not find a
+     * tile for must stay parked rather than turn up somewhere new.
+     */
+    function rememberProcPlacement(tiles) {
+        recordPlacement(procPlaceKey(), tiles);
+    }
+
+    // Raising a switch from the record is not the party opening a chest, so the
+    // recording hook stands down for the length of the rewrite. Without this the
+    // tiles would be read back through procChestTile while the placement pass
+    // still has the world looking like the square, and shifted a second time.
+    let applyingProcState = false;
+
     function applyProcChestState(chestEvents, baseSeed) {
         if (!$gameSelfSwitches || !$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return;
         const mapId = $gameMap.mapId();
         const placeKey = procPlaceKey();
         const rngFor = (window.ProcGenUtils && window.ProcGenUtils.createSeededRandom) || null;
 
-        for (const event of chestEvents || []) {
-            if (!event) continue;
-            const id = event._eventId;
-            const placed = event.x > 0 || event.y > 0;
-            if (!placed) {
-                $gameSelfSwitches.setValue([mapId, id, CHEST_SWITCH], false);
-                continue;
-            }
-            const chestKey = procChestKey(event.x, event.y);
-            let opened = isOpened(placeKey, chestKey);
-            if (!opened && placeKey && rngFor) {
-                // Somebody got here first. Seeded from the square and the tile so
-                // the same chest is derelict on every visit, then written down so
-                // it stays derelict whatever this roll becomes later.
-                const rng = rngFor(mixSeed(baseSeed, event.x, event.y));
-                if (rng() < BORN_OPEN_CHANCE) {
-                    opened = true;
-                    recordOpened(placeKey, chestKey);
+        applyingProcState = true;
+        try {
+            for (const event of chestEvents || []) {
+                if (!event) continue;
+                const id = event._eventId;
+                const placed = event.x > 0 || event.y > 0;
+                if (!placed) {
+                    $gameSelfSwitches.setValue([mapId, id, CHEST_SWITCH], false);
+                    continue;
                 }
+                const chestKey = procChestKey(event.x, event.y);
+                let opened = isOpened(placeKey, chestKey);
+                if (!opened && placeKey && rngFor) {
+                    // Somebody got here first. Seeded from the square and the tile so
+                    // the same chest is derelict on every visit, then written down so
+                    // it stays derelict whatever this roll becomes later.
+                    const rng = rngFor(mixSeed(baseSeed, event.x, event.y));
+                    if (rng() < BORN_OPEN_CHANCE) {
+                        opened = true;
+                        recordOpened(placeKey, chestKey);
+                    }
+                }
+                $gameSelfSwitches.setValue([mapId, id, CHEST_SWITCH], opened);
             }
-            $gameSelfSwitches.setValue([mapId, id, CHEST_SWITCH], opened);
+        } finally {
+            applyingProcState = false;
         }
         // Take the page swap now rather than on the next frame, so no chest is
         // ever drawn shut for a frame before the record says it is open.
@@ -266,7 +353,7 @@
     };
 
     function noteChestOpened(mapId, eventId) {
-        if (!$dataMap || !$dataMap.events) return;
+        if (applyingProcState || !$dataMap || !$dataMap.events) return;
         // Only the map the party is actually on: a self switch set for some other
         // map cannot be read against $dataMap, which is this map's.
         if (!$gameMap || $gameMap.mapId() !== mapId) return;
@@ -275,7 +362,8 @@
             if (!isProcChestEvent(mapId, eventId)) return;
             const event = $gameMap.event(eventId);
             if (!event || (event.x <= 0 && event.y <= 0)) return;   // parked: not a chest anybody found
-            recordOpened(procPlaceKey(), procChestKey(event.x, event.y));
+            const tile = procChestTile(event);
+            recordOpened(procPlaceKey(), procChestKey(tile.x, tile.y));
             return;
         }
 
@@ -291,6 +379,8 @@
     window.ChestWorldState = {
         applyProcChestState,
         applyAuthoredChestState,
+        recallProcPlacement,
+        rememberProcPlacement,
         isProcChestOpened: (x, y) => isOpened(procPlaceKey(), procChestKey(x, y)),
         BORN_OPEN_CHANCE,
     };

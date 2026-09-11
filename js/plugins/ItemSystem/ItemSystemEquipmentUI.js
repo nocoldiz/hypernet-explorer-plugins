@@ -521,6 +521,13 @@
     // service, so it is there whichever plugin happened to create it.
     window.Weapon3DPreview.modelFor = previewModelFor;
 
+    // A preview card is a fresh WebGL context and a weapon model built from
+    // scratch by the procedural pipeline, and there are two of them. Walking
+    // the bench with a held key would ask for a pair per step, and the browser
+    // force-loses the game's own context once the cap of live ones is passed,
+    // so the pieces are only put on the stand once the cursor comes to rest.
+    const PREVIEW_SETTLE_MS = 90;
+
     Scene_Equip.prototype.init3DWeaponPreview = function () {
         this.cleanup3DWeaponPreview();
 
@@ -537,14 +544,23 @@
         });
         if (weapons.length === 0) return;
 
-        this._previewRenderers = [];
-        weapons.forEach(wData => {
-            const entry = window.Weapon3DPreview.mount(document.getElementById(wData.canvasId), wData.item);
-            if (entry) this._previewRenderers.push(entry);
-        });
+        this._previewTimer = setTimeout(() => {
+            this._previewTimer = 0;
+            this._previewRenderers = [];
+            weapons.forEach(wData => {
+                const canvas = document.getElementById(wData.canvasId);
+                if (!canvas) return;
+                const entry = window.Weapon3DPreview.mount(canvas, wData.item);
+                if (entry) this._previewRenderers.push(entry);
+            });
+        }, PREVIEW_SETTLE_MS);
     };
 
     Scene_Equip.prototype.cleanup3DWeaponPreview = function () {
+        if (this._previewTimer) {
+            clearTimeout(this._previewTimer);
+            this._previewTimer = 0;
+        }
         window.Weapon3DPreview.disposeAll(this._previewRenderers);
         this._previewRenderers = [];
     };
@@ -575,10 +591,49 @@
     // Inventory helpers
     // =============================================================================
 
+    // Who is at the bench. A dummy standing in for a character (the equip
+    // preview windows other menus open) carries no id of its own.
+    const actorKey = (actor) => (actor && actor.actorId ? actor.actorId() : 0);
+
+    // What the bench is standing on, as one short string: who is being fitted,
+    // which slot is open, what they are already wearing and what the party has
+    // to offer. Everything the list below is built out of, and nothing the
+    // cursor moves.
+    Scene_Equip.prototype.benchStamp = function () {
+        const actor = this._actor;
+        let stamp = `${actorKey(actor)}|${this._slotIndex}|`;
+        if (actor) stamp += actor.equips().map(e => (e ? e.id : 0)).join('.');
+        stamp += '|';
+        const push = (prefix, bag) => {
+            if (!bag) return;
+            for (const id in bag) { const n = bag[id]; if (n > 0) stamp += prefix + id + ':' + n + ','; }
+        };
+        push('w', $gameParty._weapons);
+        push('a', $gameParty._armors);
+        return stamp;
+    };
+
+    // Offering the slot means scanning every weapon and every piece of armour
+    // the party owns, asking the character whether each can be worn, and
+    // sorting the survivors twice. The right page asks for the list two or
+    // three times over while it is built, and it is built again on every
+    // cursor step, so the answer is kept until the bench itself moves. Callers
+    // read the array; they never write to it.
     Scene_Equip.prototype.getInventoryItemsForSlot = function () {
         const actor   = this._actor;
         const slotId  = this._slotIndex;
         if (slotId < 0) return [];
+
+        const stamp = this.benchStamp();
+        if (this._benchListMemo && this._benchListMemo.stamp === stamp) return this._benchListMemo.value;
+        const value = this.buildInventoryItemsForSlot();
+        this._benchListMemo = { stamp, value };
+        return value;
+    };
+
+    Scene_Equip.prototype.buildInventoryItemsForSlot = function () {
+        const actor   = this._actor;
+        const slotId  = this._slotIndex;
 
         const lang    = ConfigManager.language || 'en';
         const t       = i18n[lang] || i18n['en'];
@@ -630,6 +685,22 @@
     // Right-page HTML builder (extracted for selective updates)
     // =============================================================================
 
+    // The stand-in the page tries a piece on, so the numbers beside the real
+    // ones are what the character WOULD have. Cloning a Game_Actor serialises
+    // its whole object graph, and the page is built again on every cursor step,
+    // so one stand-in is kept for as long as it still stands for the same
+    // character wearing the same things; only the slot being fitted is changed
+    // on it, which is what forceChangeEquip is for.
+    Scene_Equip.prototype.standInActor = function () {
+        const actor = this._actor;
+        const stamp = `${actorKey(actor)}|${actor.equips().map(e => (e ? e.id : 0)).join('.')}|${actor.level || 0}`;
+        if (!this._standIn || this._standInStamp !== stamp) {
+            this._standIn      = JsonEx.makeDeepCopy(actor);
+            this._standInStamp = stamp;
+        }
+        return this._standIn;
+    };
+
     Scene_Equip.prototype._buildRightPageHTML = function () {
         const actor = this._actor;
         const lang  = ConfigManager.language || 'en';
@@ -642,7 +713,7 @@
             if (itemList.length > 0) {
                 this._inventoryIndex = Math.max(0, Math.min(itemList.length - 1, this._inventoryIndex));
                 const selectedItem   = itemList[this._inventoryIndex];
-                tempActor = JsonEx.makeDeepCopy(actor);
+                tempActor = this.standInActor();
                 tempActor.forceChangeEquip(this._slotIndex, selectedItem.isRemoveOption ? null : selectedItem);
             }
         }

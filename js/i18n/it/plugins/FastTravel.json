@@ -48,7 +48,6 @@
   "destCost": "{place} ({cost}€, {km} km)",
   "ui": {
     "back": "Indietro",
-    "backToOrigin": "Torna alla scelta dell'origine",
     "edit": "Modifica",
     "print": "Stampa",
     "stations": "Stazioni Hypermetro",

@@ -1,7 +1,33 @@
+0.6.14a
+
+Added:
+ - readded the open tarot spell deleted from skills.json
+ - headlights at night on player vehicles
+
+Changed:
+ - village biomes prioritize village prefabs, max 2 landmarks
+ - titlescreen performance increased, minigame menu is a grid
+ - inventory and menu performance increased
+ - battlelog stat change joins the line that triggered it
+ - normal attacks rebalanced to be weaker than skills
+ - Em base sprite halved to the house sprite size
+
+Fixed:
+ - backpack opens in battle again, as a centered window
+ - tileset switch into a procedural interior hidden behind the fade
+ - Em and Bubba map dialogue is no longer only bickering
+ - saving and reloading on dungeon floors no longer resets chests
+ - minesweeper loss box now closes when you click OK
+ - fix drawing of dashed road lines in cities and villages
+ - skills menu and combat no longer crash on a deleted skill
+ - no route line in the character creation starting map selection
+ - coffee no longer sets the party sleep need to 0
+
+
 0.6.13a
 
 Added:
- - em and bubba special lines now trigger also in map talk, rumors and bubbles
+ - Em and bubba special lines now trigger also in map talk, rumors and bubbles
 
 Changed:
  - removed road barriers in the liminal drive voxel mode

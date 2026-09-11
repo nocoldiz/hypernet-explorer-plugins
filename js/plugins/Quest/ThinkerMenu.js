@@ -839,6 +839,10 @@
     // choice about it (its look, its name, how many) is made.
     const GRID_COLS = 4;
 
+    // How long the cursor must stand still on a piece before its model is put
+    // on the stand. See mount3D().
+    const PREVIEW_SETTLE_MS = 90;
+
     function bench() {
         return window.ThinkerBench || null;
     }
@@ -1605,6 +1609,7 @@
                 items: items
             };
             this._boardKey = key;
+            this._boardGen = (this._boardGen || 0) + 1;
             this._listDirty = false;
             return this._board;
         }
@@ -1886,8 +1891,22 @@
             const focusedRow = this._activeArea === 'items' ? Math.floor(this._itemIndex / GRID_COLS) : -1;
 
             window.MenuVirtualList.render(el, {
-                key: `${this._status}|${this._trade}|${this._smithIndex}|${this._forgeBar ? this._forgeBar.query : ''}`,
+                // The board's own generation, not just the chips it was built
+                // under: forging, salvaging and melting all change what a card
+                // says without changing the filter it was found by.
+                key: `${this._status}|${this._trade}|${this._smithIndex}|${this._forgeBar ? this._forgeBar.query : ''}|${this._boardGen || 0}`,
                 count: rows,
+                // Walking the grid moves one card's mark. Nothing else on a
+                // card can change without the generation above changing with
+                // it, so the window is left exactly as it is.
+                focus: {
+                    index: focusedRow,
+                    selector: '.forge-slot',
+                    classes: {
+                        selected: this._activeArea === 'items' ? this._itemIndex : -1,
+                        focused: this._activeArea === 'items' ? this._itemIndex : -1
+                    }
+                },
                 renderItem: r => {
                     let cells = '';
                     for (let c = 0; c < GRID_COLS; c++) {
@@ -2419,9 +2438,22 @@
             return html + '</div>';
         }
 
+        // Putting the piece on the stand means a fresh WebGL context and a
+        // weapon built from scratch by the procedural pipeline, and the window
+        // is drawn again for every button the cursor walks onto and every turn
+        // of the batch dial. The model therefore waits for the cursor to come
+        // to rest; see dispose3D() on why a context per keypress is worse than
+        // slow.
         mount3D(baseItem) {
             this.dispose3D();
             if (typeof THREE === 'undefined' || !DataManager.isWeapon(baseItem)) return;
+            this._previewTimer = setTimeout(() => {
+                this._previewTimer = 0;
+                this.mount3DNow(baseItem);
+            }, PREVIEW_SETTLE_MS);
+        }
+
+        mount3DNow(baseItem) {
             const item = this.previewItem(baseItem);
             const canvas = document.getElementById('forge-preview-canvas');
             if (!canvas) return;
@@ -2508,6 +2540,10 @@
         }
 
         dispose3D() {
+            if (this._previewTimer) {
+                clearTimeout(this._previewTimer);
+                this._previewTimer = 0;
+            }
             const s = this._preview;
             if (!s) return;
             if (s.raf) cancelAnimationFrame(s.raf);

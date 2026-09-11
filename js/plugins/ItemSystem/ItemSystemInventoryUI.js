@@ -730,6 +730,9 @@
   Scene_EnhancedItem.prototype.refreshUIbackpack = function () {
     if (!this._dndContainer) return;
 
+    // The category the roll below is read against: the fallback further down may
+    // move it, and the grid key has to name the list that was actually built.
+    const listCategory = this._activeUICategory;
     const itemsList = this.getFilteredUIItems();
 
     if (this._dndSelectedIndex >= itemsList.length) {
@@ -768,67 +771,46 @@
     // paints only their icons (UI/MenuVirtualList.js). Every line is a closure,
     // so a slot costs nothing until it is on screen.
     //
-    // Signature of what the grid actually shows (identity, order, stack size,
-    // favorite mark). Equipping swaps one weapon out and the replaced one back
-    // in, so the list length alone never notices the change and the slots keep
-    // their stale onclick indices.
-    let gridSignature = '';
-    itemsList.forEach(item => {
-      const kind = DataManager.isWeapon(item) ? 'w' : DataManager.isArmor(item) ? 'a' : 'i';
-      gridSignature += `${kind}${item.id}x${$gameParty.numItems(item)}${this.isItemFavorited(item) ? '*' : ''},`;
-    });
+    // What the grid actually shows, as one key: which pockets, in which order,
+    // how deep each stack is and which rows wear a star. Equipping swaps one
+    // weapon out and the replaced one back in, so the list length alone never
+    // notices the change and the slots keep their stale onclick indices.
+    // Everything that only the cursor moves - the mark on a slot, the card on
+    // the right page - is deliberately NOT in this key: walking the pockets
+    // with a held key must not rebuild them.
+    const gridDataKey = `${listCategory}_${this._searchText || ''}_${this._dndSortKey}_${this._dndSortDirection}_${this.uiPocketStamp()}`;
+    const gridChanged = !this._gridCache || this._gridCache.key !== gridDataKey;
 
-    // Under All the pockets are read as a categorized list: a full-width
-    // heading opens each group. The headings are not .item-slot elements, so
-    // the slot indices the grid is navigated and clicked by stay untouched.
-    const grouped = this.isUIGroupedView();
-    const gridLines = [];
-    // Which of those lines are headings rather than slots: they span both
-    // columns, so the window has to give them a line of their own.
-    const gridHeadings = [];
-    // Where each item sits among the lines, so the cursor can scroll onto a
-    // slot that has not been built yet.
-    const gridLineOf = [];
-    let lastGroup = null;
-    itemsList.forEach((item, idx) => {
-      if (grouped) {
-        const group = this.uiGroupOf(item);
-        if (group !== lastGroup) {
-          lastGroup = group;
-          gridHeadings[gridLines.length] = true;
-          gridLines.push(() => `<div class="backpack-group-title">${escapeHtml(this.uiCategoryLabel(group))}</div>`);
+    if (gridChanged) {
+      // Under All the pockets are read as a categorized list: a full-width
+      // heading opens each group. The headings are not .item-slot elements, so
+      // the slot indices the grid is navigated and clicked by stay untouched.
+      const grouped = this.isUIGroupedView();
+      const lines = [];
+      // Which of those lines are headings rather than slots: they span both
+      // columns, so the window has to give them a line of their own.
+      const headings = [];
+      // Where each item sits among the lines, so the cursor can scroll onto a
+      // slot that has not been built yet.
+      const lineOf = [];
+      let lastGroup = null;
+      itemsList.forEach((item, idx) => {
+        if (grouped) {
+          const group = this.uiGroupOf(item);
+          if (group !== lastGroup) {
+            lastGroup = group;
+            headings[lines.length] = true;
+            lines.push(() => `<div class="backpack-group-title">${escapeHtml(this.uiCategoryLabel(group))}</div>`);
+          }
         }
-      }
-      gridLineOf[idx] = gridLines.length;
-      gridLines.push(() => {
-        const isFocused  = (this._dndActiveSection === 'items' && this._dndSelectedIndex === idx) ? 'selected' : '';
-        const count      = $gameParty.numItems(item);
-        const canvasId   = `item-canvas-${idx}`;
-        const rarity     = this.getUIItemRarity(item);
-        // The pocket is the skills page's row, part for part: mark, icon, name
-        // and a meta line under it. Where a skill prints what it costs to cast,
-        // an item prints what the whole stack weighs, with the count on the
-        // right of the same line.
-        const stackGrams = (window.ItemSystemUtils && window.ItemSystemUtils.getItemWeight
-          ? window.ItemSystemUtils.getItemWeight(item) : 0) * count;
-        const stackKg = stackGrams / 1000;
-        const weightText = stackKg >= 0.01 ? `${stackKg.toFixed(2)} kg` : `${stackGrams} g` /* i18n-ignore: unit */;
-        return `
-          <div class="item-slot ${isFocused}" data-icon-index="${item.iconIndex}" data-canvas-id="${canvasId}" draggable="true" onclick="SceneManager._scene.selectUIItem(${idx})" onmouseenter="SceneManager._scene.hoverUIItem(${idx})" ondragstart="SceneManager._scene.onUIItemDragStart(event, ${idx})" ondragend="SceneManager._scene.onUIItemDragEnd(event)">
-            <div class="item-rarity-bar" style="background:${rarity.color};"></div>
-            <div class="item-slot-icon">
-              <canvas id="${canvasId}" class="item-slot-icon-canvas--sm" width="32" height="32"></canvas>
-            </div>
-            <div class="item-slot-info">
-              <div class="item-slot-name">${this.isItemFavorited(item) ? '★ ' : ''}${item.name}</div>
-              <div class="item-slot-meta">
-                <span>${weightText}</span>
-                <span class="item-slot-count">x${count}</span>
-              </div>
-            </div>
-          </div>`;
+        lineOf[idx] = lines.length;
+        lines.push(() => this.itemSlotHTML(item, idx));
       });
-    });
+      this._gridCache = { key: gridDataKey, lines, headings, lineOf };
+    }
+    const gridLines    = this._gridCache.lines;
+    const gridHeadings = this._gridCache.headings;
+    const gridLineOf   = this._gridCache.lineOf;
 
     // ---- Weight bar ----
     const currentWeight  = (window.ItemSystemUtils ? window.ItemSystemUtils.calculateTotalWeight() : 0) / 1000;
@@ -877,13 +859,32 @@
         ${window.ItemHotbar ? window.ItemHotbar.inventoryBarHTML(weightGaugeHTML) : `<div class="backpack-hotbar"><div class="backpack-hotbar-head">${weightGaugeHTML}</div></div>`}
       </div>`;
 
-    const gridDataKey = `${this._activeUICategory}_${this._searchText || ''}_${this._dndSortKey}_${this._dndSortDirection}_${itemsList.length}_${gridSignature}`;
     const leftPageContainer = this._dndContainer.querySelector('.left-page');
 
     // ---- Right page HTML ----
+    // The card is torn down and built again only when the piece it describes
+    // changes. A button walked along the strip, a slot marked, a stack counted:
+    // none of those change a word on it, and rebuilding it would take the 3D
+    // viewport's WebGL context down with it on every keypress. The focus marks
+    // are moved afterwards instead, by markUIRightFocus().
+    const selRef = selectedItem
+      ? `${DataManager.isWeapon(selectedItem) ? 'w' : DataManager.isArmor(selectedItem) ? 'a' : 'i'}${selectedItem.id}${this.isItemFavorited(selectedItem) ? '*' : ''}`
+      : '-';
+    // While the picker is up the party's own HP is printed beside each name, so
+    // it is part of what the page says.
+    const targetRef = (this._dndTargetingMode && this._dndTargetingItem)
+      ? `${this._dndTargetingItem.id}:${this._dndStudyPicking ? 's' : 'u'}:` +
+        $gameParty.members().map(a => `${a.hp}/${a.mhp}`).join('.')
+      : '-';
+    const rightKey     = `${selRef}|${targetRef}`;
+    const rightChanged = !leftPageContainer || this._lastRightKey !== rightKey;
+    this._lastRightKey = rightKey;
+
     let rightPageInnerHTML = '';
 
-    if (this._dndTargetingMode && this._dndTargetingItem) {
+    if (!rightChanged) {
+      // nothing to build: the card on the page already says this
+    } else if (this._dndTargetingMode && this._dndTargetingItem) {
       const item = this._dndTargetingItem;
       // Studying names its reader first: the hours are one member's, and the
       // knowledge is theirs, so the list is asking who sits down with it.
@@ -1014,17 +1015,22 @@
         tab.classList.toggle('selected',  this._dndActiveSection === 'categories' && this._activeCategoryIndex === idx);
       });
 
-      // Sort tags + weight bar
-      const sortTagsContainer = leftPageContainer.querySelector('.backpack-sort-tags');
-      if (sortTagsContainer) sortTagsContainer.innerHTML = sortTagsHTML;
-      const weightValueEl = leftPageContainer.querySelector('.weight-lbl-row span:last-child');
-      if (weightValueEl) weightValueEl.textContent = `${currentWeight.toFixed(2)} / ${maxWeight.toFixed(2)} kg` /* i18n-ignore: unit */;
-      const weightFillEl = leftPageContainer.querySelector('.weight-progress-fill');
-      if (weightFillEl) weightFillEl.style.width = `${weightPercent}%`;
+      // Sort tags + weight bar. Neither can move without the pockets or the
+      // sort moving with them, both of which are in the grid key.
+      if (gridChanged) {
+        const sortTagsContainer = leftPageContainer.querySelector('.backpack-sort-tags');
+        if (sortTagsContainer) sortTagsContainer.innerHTML = sortTagsHTML;
+        const weightValueEl = leftPageContainer.querySelector('.weight-lbl-row span:last-child');
+        if (weightValueEl) weightValueEl.textContent = `${currentWeight.toFixed(2)} / ${maxWeight.toFixed(2)} kg` /* i18n-ignore: unit */;
+        const weightFillEl = leftPageContainer.querySelector('.weight-progress-fill');
+        if (weightFillEl) weightFillEl.style.width = `${weightPercent}%`;
+      }
 
       // Right page
-      const rightPageContainer = this._dndContainer.querySelector('.right-page');
-      if (rightPageContainer) rightPageContainer.innerHTML = rightPageInnerHTML;
+      if (rightChanged) {
+        const rightPageContainer = this._dndContainer.querySelector('.right-page');
+        if (rightPageContainer) rightPageContainer.innerHTML = rightPageInnerHTML;
+      }
     }
 
     // The pockets themselves, drawn as a window over the roll. Slot clicks are
@@ -1032,27 +1038,39 @@
     // needs no wiring of its own.
     const gridContainer = this._dndContainer.querySelector('#backpack-grid');
     if (gridContainer) {
-      window.MenuVirtualList.render(gridContainer, {
-        key: gridDataKey,
-        count: gridLines.length,
-        renderItem: idx => gridLines[idx](),
-        fullWidth: idx => !!gridHeadings[idx],
-        emptyHTML: `<div class="item-grid-empty">${T('Inventory.empty')}</div>`,
-        onWindow: (win) => {
-          win.querySelectorAll('.item-slot').forEach(slot => {
-            this.drawUIItemIcon(parseInt(slot.getAttribute('data-icon-index'), 10),
-              slot.getAttribute('data-canvas-id'));
-          });
-        }
-      });
+      if (gridChanged || !gridContainer.__mvl) {
+        window.MenuVirtualList.render(gridContainer, {
+          key: gridDataKey,
+          count: gridLines.length,
+          renderItem: idx => gridLines[idx](),
+          fullWidth: idx => !!gridHeadings[idx],
+          emptyHTML: `<div class="item-grid-empty">${T('Inventory.empty')}</div>`,
+          onWindow: (win) => {
+            win.querySelectorAll('.item-slot').forEach(slot => {
+              this.drawUIItemIcon(parseInt(slot.getAttribute('data-icon-index'), 10),
+                slot.getAttribute('data-canvas-id'));
+            });
+          }
+        });
+      } else {
+        // Same pockets, same order: the cursor moved and nothing else. Redrawing
+        // the window would repaint every icon canvas on screen and force two
+        // layout passes to measure rows whose heights are already known, so the
+        // mark is simply moved from one slot to another.
+        this.markUIGridFocus(gridContainer);
+      }
     }
 
     // The mount point survives the in-place updates above, so the bar is only
     // ever re-rendered into it, never rebuilt from scratch with the page.
     if (window.ItemHotbar) window.ItemHotbar.renderInventoryBar(this);
 
-    if (selectedItem) this.drawUIItemIcon(selectedItem.iconIndex, 'inspect-canvas');
-    this.mountUIItemViewport(selectedItem);
+    this.markUIRightFocus();
+
+    if (rightChanged) {
+      if (selectedItem) this.drawUIItemIcon(selectedItem.iconIndex, 'inspect-canvas');
+      this.mountUIItemViewport(selectedItem);
+    }
 
     if (this._dndActiveSection === 'items' && gridContainer) {
       const line = gridLineOf[this._dndSelectedIndex];
@@ -1063,6 +1081,65 @@
   // =========================================================================
   // Helper rendering methods
   // =========================================================================
+
+  // One pocket. The row is the skills page's row, part for part: mark, icon,
+  // name and a meta line under it. Where a skill prints what it costs to cast,
+  // an item prints what the whole stack weighs, with the count on the right of
+  // the same line. Only the slots the window can show are ever asked for one.
+  Scene_EnhancedItem.prototype.itemSlotHTML = function (item, idx) {
+    const isFocused  = (this._dndActiveSection === 'items' && this._dndSelectedIndex === idx) ? 'selected' : '';
+    const count      = $gameParty.numItems(item);
+    const canvasId   = `item-canvas-${idx}`;
+    const rarity     = this.getUIItemRarity(item);
+    const stackGrams = (window.ItemSystemUtils && window.ItemSystemUtils.getItemWeight
+      ? window.ItemSystemUtils.getItemWeight(item) : 0) * count;
+    const stackKg    = stackGrams / 1000;
+    const weightText = stackKg >= 0.01 ? `${stackKg.toFixed(2)} kg` : `${stackGrams} g` /* i18n-ignore: unit */;
+    return `
+          <div class="item-slot ${isFocused}" data-idx="${idx}" data-icon-index="${item.iconIndex}" data-canvas-id="${canvasId}" draggable="true" onclick="SceneManager._scene.selectUIItem(${idx})" onmouseenter="SceneManager._scene.hoverUIItem(${idx})" ondragstart="SceneManager._scene.onUIItemDragStart(event, ${idx})" ondragend="SceneManager._scene.onUIItemDragEnd(event)">
+            <div class="item-rarity-bar" style="background:${rarity.color};"></div>
+            <div class="item-slot-icon">
+              <canvas id="${canvasId}" class="item-slot-icon-canvas--sm" width="32" height="32"></canvas>
+            </div>
+            <div class="item-slot-info">
+              <div class="item-slot-name">${this.isItemFavorited(item) ? '★ ' : ''}${item.name}</div>
+              <div class="item-slot-meta">
+                <span>${weightText}</span>
+                <span class="item-slot-count">x${count}</span>
+              </div>
+            </div>
+          </div>`;
+  };
+
+  // Where the cursor is, as two class marks rather than as a redrawn page. The
+  // slots carry their own index, so the mark is moved without asking the list
+  // what is in it.
+  Scene_EnhancedItem.prototype.markUIGridFocus = function (gridContainer) {
+    const onItems = this._dndActiveSection === 'items';
+    gridContainer.querySelectorAll('.item-slot').forEach((slot) => {
+      const idx = parseInt(slot.getAttribute('data-idx'), 10);
+      slot.classList.toggle('selected', onItems && idx === this._dndSelectedIndex);
+    });
+  };
+
+  // The same, for the right page: the button strip under the card, or the list
+  // of who the item is being used on. Both are drawn in the order the cursor
+  // walks them, so the index is the position in the row.
+  Scene_EnhancedItem.prototype.markUIRightFocus = function () {
+    const rightPage = this._dndContainer && this._dndContainer.querySelector('.right-page');
+    if (!rightPage) return;
+    if (this._dndTargetingMode) {
+      rightPage.querySelectorAll('.target-option').forEach((el, idx) => {
+        el.classList.toggle('selected',
+          this._dndActiveSection === 'targets' && this._selectedTargetIndex === idx);
+      });
+      return;
+    }
+    rightPage.querySelectorAll('.inspect-actions .inspect-btn').forEach((el, idx) => {
+      el.classList.toggle('selected',
+        this._dndActiveSection === 'actions' && this._selectedActionIndex === idx);
+    });
+  };
 
   // ---- the 3D piece on the right page --------------------------------------
   // Every entry in the database has a model (ItemSystem/Item3D_*.js), so the
@@ -1075,12 +1152,27 @@
     return '<div class="item-3d-viewport item-3d-viewport--borderless"><canvas id="backpack-item-canvas"></canvas></div>';
   };
 
+  // A mounted viewport is a fresh WebGL context and a model built from scratch
+  // by the procedural pipeline. Walking the pockets with a held key would ask
+  // for one per step, and the browser force-loses the game's own context once
+  // the cap of live ones is passed. The mount therefore waits for the cursor to
+  // come to rest; the square is empty for that moment and nothing else is.
+  const VIEWPORT_SETTLE_MS = 90;
+
   Scene_EnhancedItem.prototype.mountUIItemViewport = function (item) {
     // The old viewport goes first: its canvas has just been replaced by the
     // page re-render, and its WebGL context has to be released or the browser
     // force-loses the game's own once the cap is passed.
     this.disposeUIItemViewport();
     if (!item || !window.Weapon3DPreview) return;
+    this._itemViewportTimer = setTimeout(() => {
+      this._itemViewportTimer = 0;
+      // The scene may have been left, or the cursor moved on, while it waited.
+      if (this._dndContainer && this._dndSelectedItem === item) this.mountUIItemViewportNow(item);
+    }, VIEWPORT_SETTLE_MS);
+  };
+
+  Scene_EnhancedItem.prototype.mountUIItemViewportNow = function (item) {
     const canvas = document.getElementById('backpack-item-canvas');
     if (!canvas) return;
     const entry = window.Weapon3DPreview.mount(canvas, item);
@@ -1101,6 +1193,10 @@
   };
 
   Scene_EnhancedItem.prototype.disposeUIItemViewport = function () {
+    if (this._itemViewportTimer) {
+      clearTimeout(this._itemViewportTimer);
+      this._itemViewportTimer = 0;
+    }
     if (!this._itemPreviews) return;
     if (window.Weapon3DPreview) window.Weapon3DPreview.disposeAll(this._itemPreviews);
     this._itemPreviews = null;

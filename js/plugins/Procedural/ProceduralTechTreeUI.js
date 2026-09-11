@@ -259,9 +259,47 @@
             }).join('');
         }
 
+        // Everything the tree and its detail panel are drawn out of, as one
+        // string: which discipline is open, how much of it is done, what the
+        // party is holding to pay for the next node with, and which project is
+        // running. Not the cursor: that only moves a mark.
+        _boardStamp() {
+            const t = this.activeTree;
+            const counts = (t && PTT.treeCounts) ? PTT.treeCounts(t) : { done: 0, total: 0 };
+            const proj = PTT.getActiveProject ? PTT.getActiveProject() : null;
+            let stamp = `${this._treeIndex}|${counts.done}/${counts.total}|` +
+                `${proj ? proj.treeId + ':' + proj.nodeId : '-'}|`;
+            const bag = $gameParty._items;
+            for (const id in bag) { const n = bag[id]; if (n > 0) stamp += id + ':' + n + ','; }
+            return stamp;
+        }
+
+        // The cursor's tile, as a class moved rather than a tree rebuilt.
+        _markTreeSelection(treeEl) {
+            const onTree = this._section === 'tree';
+            treeEl.querySelectorAll('.tt-node').forEach(el => {
+                const r = parseInt(el.getAttribute('data-row'), 10);
+                const l = parseInt(el.getAttribute('data-lane'), 10);
+                el.classList.toggle('selected', onTree && r === this._selRow && l === this._selLane);
+            });
+        }
+
         _renderTree() {
             const treeEl = this._container.querySelector('.tt-tree');
             if (!treeEl) return;
+
+            // Laying the tree out again means measuring every tile on the page
+            // twice per connector to redraw the links (_drawLinks), and walking
+            // the cursor over the tiles changes none of them. Only a discovery,
+            // a material spent or a change of discipline does.
+            const stamp = this._boardStamp();
+            if (this._lastTreeStamp === stamp && treeEl.querySelector('.tt-node')) {
+                this._markTreeSelection(treeEl);
+                this._scrollToSelected();
+                return;
+            }
+            this._lastTreeStamp = stamp;
+
             let html = `<svg class="tt-links" xmlns="http://www.w3.org/2000/svg"></svg>`;
             this._grid.forEach((row, r) => {
                 html += `<div class="tt-depth-row" data-row="${r}">`;
@@ -500,6 +538,13 @@
         _updateRight() {
             const rp = this._container && this._container.querySelector('.tt-right');
             if (!rp) return;
+            // The panel describes one node; walking the rail or scrolling the
+            // panel itself leaves every word on it the same, and rebuilding it
+            // would throw the reader back to the top of a page they had
+            // scrolled into.
+            const key = `${this._selRow}|${this._selLane}|${this._section}|${this._boardStamp()}`;
+            if (this._lastRightKey === key && rp.innerHTML) return;
+            this._lastRightKey = key;
             rp.innerHTML = this._buildRight();
             rp.scrollTop = 0;
         }

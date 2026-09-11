@@ -3730,11 +3730,15 @@ Imported.DialogueSystem = true;
         const leader  = (() => { try { return $gameParty.leader(); } catch (err) { return null; } })();
         const partner = storyAskPartnerActor();
         if (!leader || !partner) return false;
-        // These two have a bank of their own for talking to each other, so the
+        // These two have banks of their own for talking to each other, so the
         // party's generic discussion is the fallback rather than the first
-        // thing tried: the Talk entry plays them bickering the way the panel's
-        // own Bicker action does (js/db/NPC/SocialLines.json).
-        const jab = window.NPCEmpathize?.pairBickerBeat?.(leader);
+        // thing tried. Which of their interactions comes up is picked at
+        // random, the same catalogue the Empathize panel offers between them:
+        // the jab, any of the Socialize moves, or her raising Court and him
+        // turning it down (js/db/NPC/SocialLines.json). pairBickerBeat is the
+        // older, jab-only entry point and stands behind it.
+        const EMP = window.NPCEmpathize;
+        const jab = EMP?.pairTalkBeat?.(leader) || EMP?.pairBickerBeat?.(leader);
         if (jab) {
             const said = playerStep(leader, jab.player);
             const back = playerStep(partner, jab.reply);

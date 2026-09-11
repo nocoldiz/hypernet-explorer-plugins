@@ -284,11 +284,6 @@
       "effect": "Montato, il libro è già aperto quando comincia lo scontro: Em entra in ogni battaglia leggendo, con una fila di incantesimi presi dal grimorio al posto dei suoi. È un patto, non un regalo. Con questa forma Morte Aggraziata non concede alcun turno di invulnerabilità, e il libro non restituisce salute: la prende, per ogni incantesimo letto, in proporzione a quanto costa lanciarlo. Si può montare una sola forma alternativa."
     }
   },
-  "growth": {
-    "footer": "Telaio al livello {level}: +{damage}% a colpo, +{atk} ATT e AGI, +{rounds} munizioni",
-    "label": "Crescita",
-    "desc": "Le statistiche dell'arma scalano col livello di Em."
-  },
   "section": {
     "forms": "Forme dell'arma",
     "elements": "Elementi"

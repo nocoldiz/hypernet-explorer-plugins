@@ -1458,6 +1458,14 @@
                     count: entries.length,
                     renderItem: idx => entries[idx](),
                     fullWidth: idx => !!fullWidth[idx],
+                    // Walking the ladder moves one hairline. The rows on screen
+                    // already say the rest, so they are left as they are rather
+                    // than rebuilt and rebound a row at a time.
+                    focus: {
+                        index: this._selectedIndex,
+                        selector: '.spec-slot',
+                        classes: { selected: this._activeArea === 'list' ? this._selectedIndex : -1 }
+                    },
                     onWindow: win => {
                         win.querySelectorAll('.spec-slot').forEach(row => {
                             row.addEventListener('click', () => {

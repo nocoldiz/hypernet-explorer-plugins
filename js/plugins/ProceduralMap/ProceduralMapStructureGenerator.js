@@ -2892,7 +2892,7 @@
     // up with the border roads and with the neighbouring map square.
     const dashStep = n => window.ProcGenRoads && window.ProcGenRoads.isDashStep
       ? window.ProcGenRoads.isDashStep(n)
-      : ((n % 4) + 4) % 4 < 3;
+      : ((n % 2) + 2) % 2 < 1;
     if (streetIsPaved) {
       for (let r = 0; r < GRID; r++) {
         for (let c = 0; c < GRID; c++) {
@@ -3076,9 +3076,8 @@
   function drawBorderConnectionRoad(mapData, centerX, centerY, direction, roadTile, dashedLines, width, height, zebra, rng) {
     const roadWidth = 7;  // Single 7-tile wide road centered on border
     const halfRoad = Math.floor(roadWidth / 2);
-    const DASH_LENGTH = 3;
-    const DASH_GAP = 1;
-    const DASH_CYCLE = DASH_LENGTH + DASH_GAP;
+    const DASH_LENGTH = window.ProcGenRoads?.DASH_LENGTH ?? 1;
+    const DASH_CYCLE = window.ProcGenRoads?.DASH_CYCLE ?? 2;
     // The phase of the paint is read off the absolute coordinate, never off
     // where this particular run happens to start. Each of the four runs used
     // to count from its own end - south and east from the map centre, west
@@ -3281,9 +3280,8 @@
     const centerY = Math.floor(height / 2);
     const roadWidth = 3;  // Thinner roads for internal branching
     const halfRoad = Math.floor(roadWidth / 2);
-    const DASH_LENGTH = 3;
-    const DASH_GAP = 1;
-    const DASH_CYCLE = DASH_LENGTH + DASH_GAP;
+    const DASH_LENGTH = window.ProcGenRoads?.DASH_LENGTH ?? 1;
+    const DASH_CYCLE = window.ProcGenRoads?.DASH_CYCLE ?? 2;
     const dl = dashedLines || { horizontal: null, vertical: null };
 
     /**
@@ -4361,7 +4359,8 @@
     // Centre lines: only a carriageway wide enough to have two lanes gets one,
     // and only where it is not standing on a junction (a dash across a crossing
     // reads as a lane marking that runs into the traffic it crosses).
-    const DASH_CYCLE = 4, DASH_LENGTH = 3;
+    const DASH_CYCLE = window.ProcGenRoads?.DASH_CYCLE ?? 2;
+    const DASH_LENGTH = window.ProcGenRoads?.DASH_LENGTH ?? 1;
     if (dashedLines.vertical) {
       for (const c of vCuts) {
         if (c.w < 5) continue;

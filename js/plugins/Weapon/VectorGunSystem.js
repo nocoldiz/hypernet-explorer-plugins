@@ -71,14 +71,12 @@
   const HOLLOW_CRIT_BONUS = 0.75; // added to what a critical shot is worth
   const DEEP_MAGAZINE_ROUNDS = 4; // more rounds in the well, at no cost
 
-  // How the gun keeps up with her. The frame rewrites itself as she does, so
-  // the weapon she is handed at the start of the story is still the weapon
-  // worth carrying at the end of it: nothing here is bought, fitted or found.
-  const GROWTH_PER_LEVEL = 0.008;   // of a shot, per level of the hand holding it
-  const GROWTH_CAP = 1.8;           // and never more than this much of one
-  const GROWTH_PARAM_STEP = 8;      // one point of ATK and AGI every this many levels
-  const GROWTH_ROUND_STEP = 30;     // one more round in the well every this many
-  const GROWTH_MAX_ROUNDS = 3;      // and never more than this many extra
+  // The frame does NOT grow with her. It used to rewrite itself as Em levelled
+  // - a shot worth up to 1.8 times itself, free ATK and AGI on the row, deeper
+  // magazines - which made the plain shot the strongest thing she owned and
+  // left every mode and every skill in her list looking like a downgrade. What
+  // the gun is worth is what is fitted to it: the modes, the form and the
+  // element, all of them chosen. Nothing is handed over for standing still.
 
   // The rounds that are loaded with something. Each one is one mode, each puts
   // ONE affliction on what it hits, and they roll one at a time, so a gun set
@@ -383,11 +381,10 @@
     // Only the gun's own shot is rewritten; a skill fired by the same hand is
     // the skill's own business.
     if (!action || typeof action.isAttack !== 'function' || !action.isAttack()) return 1;
-    // Nothing but the gun's own shot grows: another hand's weapon is its own
-    // weapon whoever is standing next to it.
+    // Only the frame itself folds: another hand's weapon is its own weapon
+    // whoever is standing next to it.
     const holdsGun = !!subject && !!subject.weapons && subject.weapons().some(isVectorGun);
     let rate = (damageTypeOverride(subject, action) ? WIDE_DAMAGE_RATE : 1);
-    if (holdsGun) rate *= growthRate();
     // Folded, the whole frame is behind the blow: every shape strikes harder
     // than the pistol does, which is what makes SWITCH worth the round.
     if (holdsGun && formKey()) rate *= 1 + FORM_DAMAGE_BONUS;
@@ -701,63 +698,17 @@
 
   /**
    * How many rounds the magazine holds as the weapon stands: three in the
-   * coilgun, double with Overload fitted, the row's own otherwise.
+   * coilgun, double with Overload fitted, the row's own otherwise. Nothing
+   * here reads anybody's level: the frame does not grow with the hand holding
+   * it, so a level 1 well is a level 99 well.
    * @param {number} base - What the weapon row says
    */
-  //--------------------------------------------------------------------------
-  // How it grows with her
-  //--------------------------------------------------------------------------
-  // The gun is not upgraded and is never replaced: it tracks the level of the
-  // hand it answers to, which is Em's. Everything the growth touches is worked
-  // out from that one number here, so no other file decides when the weapon is
-  // still worth carrying.
-
-  /** The level the gun stands at: the wielder's own, or Em's when it is stowed. */
-  function gunLevel() {
-    const holder = wielder() || emActor();
-    const level = holder && typeof holder.level === 'number' ? holder.level : 1;
-    return Math.max(1, level);
-  }
-
-  /** What a shot is multiplied by for the level behind it. */
-  function growthRate() {
-    return Math.min(GROWTH_CAP, 1 + gunLevel() * GROWTH_PER_LEVEL);
-  }
-
-  /** The ATK and AGI the frame carries at this level, added to the row's own. */
-  function growthParams() {
-    const step = Math.floor(gunLevel() / GROWTH_PARAM_STEP);
-    return { atk: step, agi: step };
-  }
-
-  /** The rounds the well has gained, on top of whatever shape is fitted. */
-  function growthRounds() {
-    return Math.min(GROWTH_MAX_ROUNDS, Math.floor(gunLevel() / GROWTH_ROUND_STEP));
-  }
-
-  // The parameters of the weapon row are read straight out of the database
-  // wherever equipment is totalled, so the growth is added on top of it here:
-  // one hook, on the actor holding the gun, rather than a rewritten row that
-  // every other screen would then have to un-read.
-  const _Game_Actor_paramPlus_VG = Game_Actor.prototype.paramPlus;
-  Game_Actor.prototype.paramPlus = function (paramId) {
-    let value = _Game_Actor_paramPlus_VG.call(this, paramId);
-    if (this.weapons && this.weapons().some(isVectorGun)) {
-      const grown = growthParams();
-      if (paramId === 2) value += grown.atk;
-      if (paramId === 6) value += grown.agi;
-    }
-    return value;
-  };
-
   function magazineSize(base) {
     const key = formKey();
     let shots = (key && FORM_MODES[key].bullets) || base;
     // A deeper well is four more rounds wherever they fit, and Overload doubles
     // whatever is in there: fitted together the coilgun carries fourteen.
     if (hasMode('deepMagazine')) shots += DEEP_MAGAZINE_ROUNDS;
-    // And the well the frame has grown for itself.
-    shots += growthRounds();
     if (hasMode('overload')) shots *= 2;
     return shots;
   }
@@ -1127,7 +1078,7 @@
     SOLOMON_FORM, solomonFitted,
     inMeleeForm, inSniper, rangeMultiplier, weaponReach, shootsAtRange,
     magazineSize, withForm,
-    gunLevel, growthRate, growthParams, growthRounds, STATUS_MODES, STATUS_CHANCE, HEX_STATES,
+    STATUS_MODES, STATUS_CHANCE, HEX_STATES,
     playSwitchFx, playSwitchOn,
     ELEMENT_IDS, elementId, setElement, elementColor, modelKey,
     elementActive, activeElementId, FORM_DAMAGE_BONUS,

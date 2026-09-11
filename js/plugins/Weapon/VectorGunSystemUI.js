@@ -659,21 +659,17 @@
     }
 
     /**
-     * The one line over the grid: how many bays are taken, what the frame has
-     * grown into and what shape it is fitted as. It sat in a footer under the
-     * list before, where it fought the list for the last inch of the page.
+     * The one line over the grid: how many bays are taken, what shape the frame
+     * is fitted as and what it is carrying. It sat in a footer under the list
+     * before, where it fought the list for the last inch of the page. The frame
+     * does not grow with Em, so there is nothing here about a level: what the
+     * gun is worth is what is fitted to it.
      */
     _statusHTML() {
-      const grown = VG.growthParams();
       const chips = [
         T('VectorGun.slots', { used: modes().length, max: MAX_MODES }),
         shapeText(VG.fittedForm(), 'name'),
         elementName(elementId()),
-        T('VectorGun.growth.footer', {
-          level: VG.gunLevel(),
-          damage: Math.round((VG.growthRate() - 1) * 100),
-          atk: grown.atk, rounds: VG.growthRounds(),
-        }),
       ];
       return chips.map((chip) => `<span class="vg-status-chip">${esc(chip)}</span>`).join('');
     }

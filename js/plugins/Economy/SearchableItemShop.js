@@ -2631,22 +2631,33 @@
         return null;
     };
 
-    Scene_SearchableShop.prototype.mountMedia = function (entry) {
-        const canvas = document.getElementById('sb-canvas');
-        if (!canvas) return;
+    // A viewport is a fresh WebGL context and a model built from scratch by the
+    // procedural pipeline. Walking the lots with a held key would ask for one
+    // per lot passed over, and the browser force-loses the oldest live context -
+    // the game's own - once its cap is passed, so the piece is only put on the
+    // stand once the cursor comes to rest.
+    const MEDIA_SETTLE_MS = 90;
 
-        const model = this.previewModelFor(entry);
-        if (model) {
-            const preview = window.Weapon3DPreview.mount(canvas, model);
-            if (preview) this._weaponPreviews.push(preview);
-            return;
-        }
-        if (isSkillEntry(entry)) {
-            this._spellMounted = SpellPreview.mount(canvas, entry);
-        }
+    Scene_SearchableShop.prototype.mountMedia = function (entry) {
+        this._mediaTimer = setTimeout(() => {
+            this._mediaTimer = 0;
+            const canvas = document.getElementById('sb-canvas');
+            if (!canvas) return;
+
+            const model = this.previewModelFor(entry);
+            if (model) {
+                const preview = window.Weapon3DPreview.mount(canvas, model);
+                if (preview) this._weaponPreviews.push(preview);
+                return;
+            }
+            if (isSkillEntry(entry)) {
+                this._spellMounted = SpellPreview.mount(canvas, entry);
+            }
+        }, MEDIA_SETTLE_MS);
     };
 
     Scene_SearchableShop.prototype.disposeMedia = function () {
+        if (this._mediaTimer) { clearTimeout(this._mediaTimer); this._mediaTimer = 0; }
         if (this._weaponPreviews.length) {
             window.Weapon3DPreview.disposeAll(this._weaponPreviews);
             this._weaponPreviews = [];

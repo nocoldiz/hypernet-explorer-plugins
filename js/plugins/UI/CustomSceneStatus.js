@@ -2442,11 +2442,29 @@
         this.refreshUIStatus();
     };
 
+    // Walking the anatomy moves one frame around one cell. The whole sheet -
+    // the medallions, the stat breakdown, the needs, the bio, the backstory,
+    // the passives, the ailments - says exactly the same thing before and
+    // after, so it is left standing and only the frame is moved.
+    Scene_Status.prototype.markUIBodyPart = function () {
+        const spread = this._dndContainer && this._dndContainer.querySelector(".book-spread");
+        if (!spread) return false;
+        const cells = spread.querySelectorAll(".anatomy-cell");
+        if (!cells.length) return false;
+        const on = this._dndActiveSection === "bodyparts";
+        cells.forEach((cell, idx) => {
+            cell.classList.toggle("selected", on && idx === this._dndSelectedIndex);
+        });
+        const selected = spread.querySelector(".anatomy-cell.selected");
+        if (selected) selected.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        return true;
+    };
+
     Scene_Status.prototype.selectUIBodyPart = function (index) {
         this._dndActiveSection = "bodyparts";
         this._dndSelectedIndex = index;
         SoundManager.playCursor();
-        this.refreshUIStatus();
+        if (!this.markUIBodyPart()) this.refreshUIStatus();
     };
 
     Scene_Status.prototype.getUIReproductionName = function (type) {
@@ -2543,14 +2561,14 @@
                     this._dndActiveSection = "bodyparts";
                     this._dndSelectedIndex = (this._dndSelectedIndex + 1) % bodyParts.length;
                     SoundManager.playCursor();
-                    this.refreshUIStatus();
+                    if (!this.markUIBodyPart()) this.refreshUIStatus();
                     return;
                 }
                 if (Input.isRepeated('up')) {
                     this._dndActiveSection = "bodyparts";
                     this._dndSelectedIndex = (this._dndSelectedIndex - 1 + bodyParts.length) % bodyParts.length;
                     SoundManager.playCursor();
-                    this.refreshUIStatus();
+                    if (!this.markUIBodyPart()) this.refreshUIStatus();
                     return;
                 }
             }

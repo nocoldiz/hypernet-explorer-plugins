@@ -35,6 +35,34 @@
  *
  *     window.MenuVirtualList.scrollToIndex(listBox, this._selectedIndex);
  *
+ * A host that redraws its whole page on every cursor step - which is most of
+ * them - would otherwise repaint the window, rebind its handlers and redraw
+ * every canvas in it for a mark that moved one row. Such a host says where the
+ * cursor is instead, and promises that nothing ELSE about a row can change
+ * without `key` changing with it:
+ *
+ *     window.MenuVirtualList.render(listBox, {
+ *         key: this._tab + '|' + bar.query,
+ *         count: rows.length,
+ *         renderItem: idx => this.rowHTML(rows[idx], idx),   // still marks row `idx`
+ *         focus: { index: this._selectedIndex, selector: '.my-row', className: 'selected' },
+ *         onWindow: ...
+ *     });
+ *
+ * A row that wears more than one mark - picked out AND holding the cursor -
+ * names them together instead, each with the row it belongs on (-1 for none):
+ *
+ *         focus: { index: this._selectedIndex, selector: '.my-row', classes: {
+ *             selected: this._selectedIndex,
+ *             focused:  this._area === 'list' ? this._selectedIndex : -1 } }
+ *
+ * The rows it matches must carry `data-idx="<their index>"` - or whatever
+ * attribute `focus.attr` names - since a window is a subrange and a list may
+ * hold headings that are not rows. When only the focus has moved, the mark is
+ * toggled on the rows already on screen and nothing is repainted; when anything
+ * in `key` moves, the window is drawn again as before, and `renderItem` marks
+ * the focused row itself.
+ *
  * Row heights are measured, never assumed, so a list may mix section headers,
  * one-line rows and two-line rows freely. Grid scrollers (.backpack-grid and
  * friends) keep their columns: the window inherits the container's track count
@@ -181,7 +209,8 @@
             count: 0,
             first: -1, last: -1,  // the line range currently in the DOM
             key: null,
-            cfg: null
+            cfg: null,
+            focus: null          // signature of the marks, when the host tracks them
         };
         container.__mvl = st;
 
@@ -243,6 +272,35 @@
             if (seen) st.estimate = sum / seen;
         }
         return changed;
+    }
+
+    // Every mark the host wants moved, as className -> the row it belongs on.
+    const focusMarks = (focus) =>
+        focus.classes || { [focus.className || 'selected']: focus.index };
+
+    // Everything about the focus that can change what the rows look like, as
+    // one string: a mark that moved without the cursor moving (the cursor
+    // leaving the list for the page beside it) has to count as a change too.
+    function focusSignature(focus) {
+        if (!focus || !focus.selector) return null;
+        const marks = focusMarks(focus);
+        let sig = focus.selector + '#' + (focus.attr || 'data-idx');
+        for (const className in marks) sig += '|' + className + ':' + marks[className];
+        return sig;
+    }
+
+    // Move those marks over the rows already on screen. The window is a
+    // subrange of the list and may hold headings that are not rows at all, so a
+    // row is found by the index it carries rather than by its position.
+    function applyFocus(st) {
+        const focus = st.cfg && st.cfg.focus;
+        if (!focus || !focus.selector) return;
+        const marks = focusMarks(focus);
+        const attr  = focus.attr || 'data-idx';
+        st.win.querySelectorAll(focus.selector).forEach((row) => {
+            const idx = parseInt(row.getAttribute(attr), 10);
+            for (const className in marks) row.classList.toggle(className, idx === marks[className]);
+        });
     }
 
     function paint(st, force) {
@@ -317,6 +375,7 @@
             last = nextLast;
         }
 
+        applyFocus(st);
         if (cfg.onWindow) cfg.onWindow(st.win, lineStart(st, st.first), st.lines[st.last - 1]);
     }
 
@@ -348,6 +407,24 @@
             const st = ensure(container);
             const key = config.key === undefined ? String(config.count) : String(config.key);
             const sameList = key === st.key && config.count === st.count;
+
+            // A host that tracks its cursor has promised that nothing but the
+            // cursor can move while `key` stands still. Take it at its word: the
+            // rows on screen already say everything else, so the mark is moved
+            // over them and the window is left exactly as it is - no markup
+            // rebuilt, no handlers rebound, no canvas redrawn, no layout
+            // measured. Only a window that is actually painted qualifies.
+            const wasFocus = st.focus;
+            st.focus = focusSignature(config.focus);
+            if (sameList && st.focus && st.first >= 0 && st.cfg && st.cfg.focus) {
+                const moved = wasFocus !== st.focus;
+                st.cfg = config;
+                applyFocus(st);
+                if (moved && typeof config.focus.index === 'number' && config.focus.index >= 0) {
+                    this.scrollToIndex(container, config.focus.index);
+                }
+                return st;
+            }
 
             st.cfg = config;
             st.count = config.count || 0;

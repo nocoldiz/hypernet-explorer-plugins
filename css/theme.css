@@ -22225,31 +22225,39 @@ body.ascii-ui-active #title-menu-container {
     min-height: 0;
 }
 /* --------------------------------------------------------------------------
-   The catalogue itself is a gallery, not a list: one card per game, read left
-   to right, each with a placeholder cover drawn from its own name by
-   minigameThumb() in Titlescreen.js. The strip scrolls sideways and the
-   selected card is scrolled to the middle of it.
+   The catalogue itself is a grid, not a list and not a sideways strip: one card
+   per game, each with a placeholder cover drawn from its own name by
+   minigameThumb() in Titlescreen.js. The whole cabinet is on screen at once,
+   read left to right and top to bottom, and only a catalogue taller than the
+   panel scrolls, downward. How many columns the row of cards is dealt into is
+   the browser's call (auto-fill against the card's minimum width), and
+   Titlescreen.js measures the answer back off the laid-out cards so the cursor
+   walks the grid that is actually on screen.
    -------------------------------------------------------------------------- */
-.mg-menu-gallery {
+.mg-menu-grid {
     width: 96%;
+    min-height: 0; /* so the grid below can shrink into the overlay's cap */
 }
-.mg-gallery {
+.mg-grid {
     pointer-events: auto;
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(118px * var(--ts-ui-scale, 1)), 1fr));
+    align-content: start;
     gap: calc(10px * var(--ts-ui-scale, 1));
     padding: calc(12px * var(--ts-ui-scale, 1));
     width: 100%;
     background: var(--shadow-black-translucent-55);
     border: 1px solid var(--accent-gold-pure-translucent-18);
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     scroll-behavior: smooth;
+    /* Shrink into whatever the panel has left under the title rather than
+       taking its own height and having the last row clipped by the overlay. */
+    flex: 0 1 auto;
+    min-height: 0;
 }
 .mg-card {
-    flex: 0 0 auto;
-    width: calc(128px * var(--ts-ui-scale, 1));
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22288,10 +22296,10 @@ body.ascii-ui-active #title-menu-container {
 .mg-card.selected .mg-card-label {
     text-shadow: 0 0 6px var(--accent-gold-pure-translucent-30);
 }
-.mg-gallery::-webkit-scrollbar {
-    height: 8px;
+.mg-grid::-webkit-scrollbar {
+    width: 8px;
 }
-.mg-gallery::-webkit-scrollbar-thumb {
+.mg-grid::-webkit-scrollbar-thumb {
     background: var(--accent-gold-pure-translucent-30);
 }
 .mg-menu-list::-webkit-scrollbar {
@@ -31508,6 +31516,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .augment-11 {
     font-family: var(--font-ui);
+    color: var(--text-card-medium);
+}
+
+/* The row the cursor is reading. Written as a rule rather than an inline
+   colour on the name so the list can move the mark without rebuilding the row
+   (UI/MenuVirtualList.js, the `focus` contract). */
+.aug-row.selected .augment-11 {
+    color: var(--text-secondary-active);
 }
 
 /* The right page is the shared detail card (docs/task/ui_fixing.md): the
@@ -36718,9 +36734,12 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     line-height: 1.2;
 }
 
-/* The battle item panel: where it stands and how big it is comes in as
-   custom properties from the window that owns it, so nothing writes a
-   layout property onto the element itself. */
+/* The battle item panel: the backpack and the throw list, a window standing
+   in the middle of the screen. Where it stands and how wide it is comes in as
+   custom properties from the window that owns it, so nothing writes a layout
+   property onto the element itself; its height follows the rows it holds and
+   it is placed by its middle, so it grows around the centre rather than down
+   from a line, and it fades up on the spot instead of sliding in from an edge. */
 .bse-item-panel {
     display: grid;
     grid-template-columns: 1fr;
@@ -36729,9 +36748,13 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     left: var(--bse-item-x, auto);
     top: var(--bse-item-y, auto);
     width: var(--bse-item-w, auto);
-    height: var(--bse-item-h, auto);
+    height: auto;
+    max-height: var(--bse-item-maxh, 60vh);
     padding: var(--bse-item-pad, 16px 12px);
+    transform: translateY(-50%) scale(0.96);
 }
+
+.bse-item-panel.bse-slide-panel--in { transform: translateY(-50%) scale(1); }
 
 /* One item in that panel. */
 .bse-item-row {

@@ -464,6 +464,16 @@
     // Standard Attack (Skill 1) dynamically reads the weapon's scaling tags to
     // evaluate damage formula based on the character's corresponding attributes.
 
+    // What a plain swing is worth. A normal attack costs nothing, needs no
+    // resource and is available every single round, so it is the FLOOR of the
+    // damage scale rather than a competitor to the skill list: the median
+    // damaging skill in the database is worth about two of it, and the heaviest
+    // are worth what the one-shot ceiling allows. Raising these two numbers
+    // does not make attacking hit harder in absolute terms - the pace layer
+    // holds the size of a hit - it makes every skill in the game worth less.
+    const ATTACK_COEFFICIENT = 3;
+    const ATTACK_DEF_COEFFICIENT = 0.5;
+
     function getWeaponScalingStats(subject) {
         // The vector gun's modes can rewrite what the shot is worked out from
         // (Mana bullets reads INT), and VectorGunSystem.js is the only place
@@ -549,7 +559,15 @@
                 const targetDef = (isMagicDef && b) ? b.mdf : ((b && b.def) ? b.def : 0);
                 const level = (typeof a.level === 'number' && Number.isFinite(a.level)) ? a.level : 1;
                 const sign = [3, 4].includes(item.damage.type) ? -1 : 1;
-                const val = Math.max((attackerStat * 9.6) * (1 + level * 0.05) - targetDef * 1.5, 1) * sign;
+                // ATTACK_COEFFICIENT and ATTACK_DEF_COEFFICIENT are the same two
+                // numbers Skills.json 1 carries, and they have to stay the same
+                // two: the D&D layer weighs every skill against the plain attack
+                // by evaluating THAT row (dndReferenceDamage), so a swing written
+                // heavier here than there would read as a skill worth less than
+                // one. They are deliberately low - a free swing is the floor the
+                // whole skill list is measured against, not a rival to it.
+                const val = Math.max((attackerStat * ATTACK_COEFFICIENT) * (1 + level * 0.05) -
+                    targetDef * ATTACK_DEF_COEFFICIENT, 1) * sign;
                 return isNaN(val) ? 0 : val;
             }
         }

@@ -118,8 +118,13 @@
 
     // Live 3D weapon viewports, handed back to the shared service on teardown.
     let previews = [];
+    // How long the cursor must stand still on a weapon before its model is
+    // built. See mountVisuals().
+    const PREVIEW_SETTLE_MS = 90;
+    let previewTimer = 0;
 
     function disposePreviews() {
+        if (previewTimer) { clearTimeout(previewTimer); previewTimer = 0; }
         if (!previews.length) return;
         if (window.Weapon3DPreview) window.Weapon3DPreview.disposeAll(previews);
         previews = [];
@@ -377,7 +382,7 @@
         // menu's own navigator a second, competing highlight would only
         // fight the row the player is actually on.
         return `
-            <div class="item-slot${selected}" onclick="window.MenuSearch.select(${i})">
+            <div class="item-slot${selected}" data-idx="${i}" onclick="window.MenuSearch.select(${i})">
                 <div class="item-slot-icon"><canvas id="menu-search-canvas-${i}" width="32" height="32" style="width:32px;height:32px;"></canvas></div>
                 <div class="item-slot-info">
                     <div class="item-slot-name">${escapeHtml(row.name)}</div>
@@ -398,6 +403,12 @@
             count: state.results.length,
             renderItem: rowHTML,
             emptyHTML: `<div class="item-grid-empty" style="grid-column:1/-1;">${T('MainMenu.search.noResults', { query: escapeHtml(b ? b.query : '') })}</div>`,
+            // Walking the results moves one mark. Nothing else about a row can
+            // change without the query, the kind, the category or the sort
+            // changing with it, and those are all in the key above, so the
+            // window is left alone rather than repainted and every icon and
+            // creature sprite in it drawn again.
+            focus: { index: state.selected, selector: '.item-slot', className: 'selected' },
             onWindow: (win, from, to) => {
                 for (let i = from; i < to; i++) {
                     const row = state.results[i];
@@ -606,10 +617,19 @@
         }
         if (window.ItemInspect) window.ItemInspect.drawIcon(row.iconIndex, 'menu-search-inspect-canvas');
 
+        // A viewport is a fresh WebGL context and a weapon built from scratch by
+        // the procedural pipeline. Walking the results with a held key would ask
+        // for one per row passed over, and the browser force-loses the game's
+        // own context once the cap of live ones is passed, so the piece is only
+        // put on the stand once the cursor comes to rest.
         if (row.item && DataManager.isWeapon(row.item) && window.Weapon3DPreview) {
-            const canvas = document.getElementById('menu-search-weapon-canvas');
-            const entry = window.Weapon3DPreview.mount(canvas, row.item);
-            if (entry) previews.push(entry);
+            previewTimer = setTimeout(() => {
+                previewTimer = 0;
+                const canvas = document.getElementById('menu-search-weapon-canvas');
+                if (!canvas) return;
+                const entry = window.Weapon3DPreview.mount(canvas, row.item);
+                if (entry) previews.push(entry);
+            }, PREVIEW_SETTLE_MS);
         }
     }
 

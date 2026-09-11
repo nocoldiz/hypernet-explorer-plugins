@@ -896,6 +896,15 @@
   // what the weapon is worth when it is doing what it was built to do.
   const BASH_DAMAGE_RATE = 0.4;
 
+  // What pulling a trigger is worth against swinging something. A firearm
+  // shoots from the far end of the map, fires several rounds on one turn and
+  // spends no stamina doing it, so the round itself lands for less than the
+  // blow a melee weapon has to walk into range to deliver. A plain shot is
+  // still the cheapest thing in the game and still the thing a gunfighter does
+  // when nothing better is loaded: it is not meant to out-damage her skills.
+  const FIREARM_DAMAGE_RATE = 0.8;
+  const FIREARM_WTYPE = 9;
+
   /**
    * A burst is not free damage. Every round of it rolls the weapon's full
    * damage on its own, so a six round rate would otherwise be six times the
@@ -903,6 +912,15 @@
    * faster they leave the barrel, so the whole burst grows with the square
    * root of the rate: 6 rounds hit about 2.4 times as hard as a single shot,
    * not 6 times.
+   *
+   * This is NOT the only reading of that rule. BattleSystemEnhancedMechanics
+   * holds a second one (burstShareFor, BURST_TOTAL), which shares one strike
+   * out over however many times ANY attack repeats, a melee flurry included,
+   * and the two multiply: a four round burst lands for 1.6 / sqrt(4) of a
+   * single swing in the game itself, not for the 2 this rate alone says. They
+   * are left as they are rather than merged, because this one is the only one
+   * that knows a magazine is involved, but nothing here may be tuned without
+   * reading that one as well.
    */
   const burstDamageRate = (rate) => (rate > 1 ? 1 / Math.sqrt(rate) : 1);
 
@@ -915,11 +933,16 @@
     const weapon = subject.weapons()[0];
     if (!weapon || !RANGED_WTYPES.includes(weapon.wtypeId)) return value;
 
+    // A dry gun is a club, and a club is not a firearm: the Bash is read on
+    // its own rather than on top of what a shot would have been worth.
     if (subject.isOutOfBullets()) return Math.round(value * BASH_DAMAGE_RATE);
-    return Math.round(value * burstDamageRate(subject.fireRate()));
+    const firearm = weapon.wtypeId === FIREARM_WTYPE ? FIREARM_DAMAGE_RATE : 1;
+    return Math.round(value * firearm * burstDamageRate(subject.fireRate()));
   };
 
-  window.WeaponDamageRates = { bash: BASH_DAMAGE_RATE, burst: burstDamageRate };
+  window.WeaponDamageRates = {
+    bash: BASH_DAMAGE_RATE, burst: burstDamageRate, firearm: FIREARM_DAMAGE_RATE,
+  };
 
   //=============================================================================
   // Window_BattleLog - Weapon Sounds

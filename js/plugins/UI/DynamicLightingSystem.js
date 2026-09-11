@@ -152,6 +152,36 @@
         return _cachedSunlightMode;
     }
 
+    // ── What a player vehicle hangs at night ────────────────────────────────
+    // Keyed by VehicleSystem's own maintenance key
+    // (MergedVehicleSystem.riddenVehicleKey), so which vehicle this is is asked
+    // of the plugin that owns it rather than re-derived from a sprite or a
+    // slot here:
+    //
+    //   'beams'  the wide pair of beams a road vehicle throws down the road
+    //   'beam'   one lamp on the handlebars: a single narrow beam from the
+    //            centre, shorter and tighter than a car's
+    //   'glow'   no lamp at all, only the standard circle of light the crew
+    //            carries. The leader is transparent aboard anything (the
+    //            vehicle sprite is drawn in their place), so the circle their
+    //            own body would have cast is not drawn: this is it.
+    //
+    // A vehicle that is absent from this table shows nothing: the Starship
+    // does not drive down anything, and a mount carries no lamp.
+    const VEHICLE_LAMPS = {
+        camper: 'beams',
+        car: 'beams',
+        bike: 'beam',
+        boat: 'glow',
+        broom: 'glow'
+    };
+
+    // The world map draws a whole province to the tile and every vehicle on it
+    // is a map icon, so a beam thrown off one would light up a country. The
+    // overlay is already held at zero intensity there (computeTargetIntensity);
+    // this is the same answer said where the lamps are chosen.
+    const WORLD_MAP_ID = 315;
+
     // Light types enum
     // i18n-ignore-start  these are the Map636TileEvents keys and the map
     // note-tag names the lighting pass matches, not labels
@@ -1396,10 +1426,22 @@
             // the party is riding, and every NPC car in traffic (RoadCarAI marks
             // its events with _isRoadCar). Only the vehicles that are actually
             // out on the road, never a parked hull.
-            if ($gamePlayer && typeof $gamePlayer.isInVehicle === 'function' &&
-                $gamePlayer.isInVehicle() && !$gamePlayer.isTransparent()) {
-                this.drawHeadlights(ctx, $gamePlayer.screenX() * s, ($gamePlayer.screenY() - th / 2) * s,
-                    $gamePlayer.direction(), s);
+            //
+            // The party's own lamp is the one its vehicle hangs (VEHICLE_LAMPS),
+            // not a car's beam for everything with wheels. It is NOT gated on
+            // the leader being drawn: the engine makes them transparent the
+            // moment they board anything at all, which is exactly when the
+            // headlights are wanted, so every player vehicle used to drive the
+            // night road with its lights off.
+            const lamp = this.playerVehicleLamp();
+            if (lamp) {
+                const vx = $gamePlayer.screenX() * s;
+                const vy = ($gamePlayer.screenY() - th / 2) * s;
+                if (lamp === 'glow') {
+                    this.drawLightCircle(ctx, vx, vy, basePartyRadius * this.getFlicker(1.1), 1.0, 'party');
+                } else {
+                    this.drawHeadlights(ctx, vx, vy, $gamePlayer.direction(), s, lamp === 'beam');
+                }
             }
             if ($gameMap && typeof $gameMap.events === 'function') {
                 const traffic = $gameMap.events();
@@ -1544,16 +1586,30 @@
             this._texture.update();
         }
 
-        // The pair of beams a vehicle throws in the direction it faces, plus the
-        // small pool of spill light under the lamps themselves.
-        drawHeadlights(ctx, x, y, direction, s) {
+        // Which lamp the vehicle the party is riding hangs, or null when they
+        // are on foot, on the world map, or aboard something that carries none.
+        // WHICH vehicle it is is VehicleSystem's answer, never re-derived here.
+        playerVehicleLamp() {
+            if ($gameMap && $gameMap.mapId() === WORLD_MAP_ID) return null;
+            if (!$gamePlayer || typeof $gamePlayer.isInVehicle !== 'function') return null;
+            if (!$gamePlayer.isInVehicle()) return null;
+            const VS = window.MergedVehicleSystem;
+            const key = (VS && typeof VS.riddenVehicleKey === 'function') ? VS.riddenVehicleKey() : null;
+            return (key && VEHICLE_LAMPS[key]) || null;
+        }
+
+        // The beam a vehicle throws in the direction it faces, plus the small
+        // pool of spill light under the lamp itself. `single` draws the one
+        // central lamp of a bicycle instead of a car's wide pair: the same beam
+        // narrowed to a point at the hub, thrown two thirds as far.
+        drawHeadlights(ctx, x, y, direction, s, single) {
             const angles = { 2: Math.PI / 2, 4: Math.PI, 6: 0, 8: -Math.PI / 2 };
             const angle = angles[direction];
             if (angle === undefined) return;
 
-            const len = 300 * s;
-            const nearHalf = 22 * s;
-            const farHalf = 130 * s;
+            const len = (single ? 190 : 300) * s;
+            const nearHalf = (single ? 6 : 22) * s;
+            const farHalf = (single ? 58 : 130) * s;
 
             ctx.save();
             ctx.translate(x, y);
@@ -1574,7 +1630,7 @@
             ctx.fill();
             ctx.restore();
 
-            this.drawLightCircle(ctx, x, y, 70 * s, 0.55, 'torch');
+            this.drawLightCircle(ctx, x, y, (single ? 46 : 70) * s, single ? 0.5 : 0.55, 'torch');
         }
 
         drawLightCircle(ctx, x, y, radius, intensity = 1.0, type = 'party') {

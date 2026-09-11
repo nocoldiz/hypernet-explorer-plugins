@@ -270,6 +270,17 @@
           count: this._rows.length,
           renderItem: (idx) => this.buildRowHTML(this._rows[idx], idx),
           emptyHTML: `<div class="augment-06">${empty}</div>`,
+          // Walking the register moves two marks. The rows on screen already
+          // say the rest, so they are left as they are rather than rebuilt and
+          // rebound a row at a time.
+          focus: {
+            index: this._selectedIndex,
+            selector: '.aug-row',
+            classes: {
+              selected: this._selectedIndex,
+              focused: this._activeArea === 'list' ? this._selectedIndex : -1
+            }
+          },
           onWindow: (win) => {
             win.querySelectorAll(".aug-row").forEach((row) => {
               row.addEventListener("click", () => {
@@ -299,9 +310,9 @@
         ? `<span class="augment-07">${T('Augments.ui.damagedHost')}</span>`
         : `<span class="augment-08">${escapeHtml(priceLabel(row.prosthetic.cost))}</span>`;
       return `
-        <div class="aug-row focusable ${isFocused ? 'focused' : ''} augment-09" data-idx="${idx}">
+        <div class="aug-row focusable ${isSel ? 'selected ' : ''}${isFocused ? 'focused' : ''} augment-09" data-idx="${idx}">
           <span class="augment-10">
-            <span class="augment-11" style="color:${isSel ? 'var(--text-secondary-active)' : 'var(--text-card-medium)'}">${escapeHtml(name)}</span>
+            <span class="augment-11">${escapeHtml(name)}</span>
             <span class="augment-08">${escapeHtml(sub)}</span>
           </span>
           ${flag}

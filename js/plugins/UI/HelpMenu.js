@@ -886,8 +886,22 @@
         const detailPage = spread.querySelector(".right-page");
 
         // 1. RIGHT PAGE: the entry being read, on the shared detail card.
+        // An article is parsed, paragraphed and laid out with its plate; the
+        // page is refreshed on every step of the cursor down the contents, and
+        // most of those steps change nothing on it. It is therefore only built
+        // again when the entry it is showing, or the frame around it, actually
+        // moves.
+        const detailKey = this._selectedTopic
+            ? `${activeCategory}|${this._helpBar ? this._helpBar.query : ''}|${this._listIndex}|` +
+              `${this._activeArea === "content" ? 'f' : '-'}|${this._selectedTopic.known ? 'k' : '-'}`
+            : '-';
+        const detailChanged = !detailPage.innerHTML || this._lastDetailKey !== detailKey;
+        this._lastDetailKey = detailKey;
+
         let detailHTML = "";
-        if (!this._selectedTopic) {
+        if (!detailChanged) {
+            // nothing to build: the card on the page already says this
+        } else if (!this._selectedTopic) {
             detailHTML = `<div class="ui-empty"><div class="ui-empty-text">${tSelectTopic}</div></div>`;
         } else {
             const topic = this._selectedTopic;
@@ -931,9 +945,9 @@
         // read and turned with every other one on the Gameplay page of the
         // Options menu (Core/GameOptions.js, symbol mapTooltips).
 
-        detailPage.innerHTML = detailHTML;
+        if (detailChanged) detailPage.innerHTML = detailHTML;
 
-        const wikiButton = detailPage.querySelector("#help-wiki-btn");
+        const wikiButton = detailChanged ? detailPage.querySelector("#help-wiki-btn") : null;
         if (wikiButton) {
             wikiButton.addEventListener("click", () => {
                 const entity = this._selectedTopic && this._selectedTopic.wiki;

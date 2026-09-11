@@ -262,6 +262,13 @@
         };
     }
 
+    // The picker opened by character creation is choosing where the party BEGINS,
+    // so there is no journey to draw: the pin the route would start from is a
+    // leftover position nobody has travelled from yet.
+    function isCreationTravel() {
+        return !!($gameTemp && $gameTemp._characterCreationTravelMode);
+    }
+
     let _travelSelectedIndex = 0;
     // Cached reference to the travel overlay element, set when it is created and
     // cleared when removed, so the per-frame Scene_Map hooks below avoid a
@@ -2302,7 +2309,7 @@
                 && window.CharacterCreationOrigin.canReopen
                 && window.CharacterCreationOrigin.canReopen());
 
-        const backButtonLabel = isCCTravel ? T('FastTravel.ui.backToOrigin') : T('FastTravel.ui.back');
+        const backButtonLabel = T('FastTravel.ui.back');
         const backButtonAction = isCCTravel
             ? "SceneManager._scene.reopenCreationOriginStep()"
             : "SceneManager._scene.closeTravelUIOverlay()";
@@ -2724,7 +2731,10 @@ Scene_Map.prototype.printTravelCoordinates = function () {
 
         const routeLine = document.getElementById('travel-route');
         const routeLineBg = document.getElementById('travel-route-bg');
-        if (routeLine && routeLineBg) {
+        if (routeLine && routeLineBg && isCreationTravel()) {
+            routeLine.setAttribute('d', '');
+            routeLineBg.setAttribute('d', '');
+        } else if (routeLine && routeLineBg) {
             const d = `M ${playerPixelX} ${playerPixelY} L ${destPixelX} ${destPixelY}`;
             routeLine.setAttribute('d', d);
             routeLineBg.setAttribute('d', d);
@@ -2826,7 +2836,10 @@ Scene_Map.prototype.printTravelCoordinates = function () {
 
         const routeLine = document.getElementById('travel-route');
         const routeLineBg = document.getElementById('travel-route-bg');
-        if (routeLine && routeLineBg) {
+        if (routeLine && routeLineBg && isCreationTravel()) {
+            routeLine.setAttribute('d', '');
+            routeLineBg.setAttribute('d', '');
+        } else if (routeLine && routeLineBg) {
             const d = `M ${playerPixelX} ${playerPixelY} L ${destPixelX} ${destPixelY}`;
             routeLine.setAttribute('d', d);
             routeLineBg.setAttribute('d', d);

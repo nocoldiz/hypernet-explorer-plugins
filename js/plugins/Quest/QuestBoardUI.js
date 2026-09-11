@@ -264,6 +264,40 @@
         `<div class="backpack-tab focusable qb-tab${this._tab === key ? " selected" : ""}"` +
         ` tabindex="0" data-tab="${key}">${label} ${n}</div>`;
 
+      // Walking the notices moves one pin and reads a different sheet. The
+      // board behind them only changes when what is pinned to it does, so it is
+      // put up again for that and for nothing else; every handler on this page
+      // is delegated on the root, so the markup under it can be swapped freely.
+      // A notice can change what it says without leaving the board: a posted
+      // one is taken up and then finished, a contract advances a step. Both are
+      // on the card, so both are in the key.
+      const boardKey = `${this._tab}|${postedCount}|${slots}|` +
+        cards.map(c => `${(c && (c.id || c.title)) || '?'}:${(c && (c.status || c.stepIndex)) || ''}`).join(',');
+      const rightHTML = this._detailHTML();
+      const composerHTML = this._composerHTML();
+
+      if (this._el.querySelector('.qb-spread') && this._lastBoardKey === boardKey) {
+        this._el.querySelectorAll('.qb-note').forEach(note => {
+          const i = parseInt(note.getAttribute('data-card'), 10);
+          note.classList.toggle('selected', i === this._focus);
+        });
+        if (this._lastRightHTML !== rightHTML) {
+          this._lastRightHTML = rightHTML;
+          const right = this._el.querySelector('.right-page');
+          if (right) right.innerHTML = rightHTML;
+        }
+        if (this._lastComposerHTML !== composerHTML) {
+          this._lastComposerHTML = composerHTML;
+          const slot = this._el.querySelector('#qb-composer-slot');
+          if (slot) slot.innerHTML = composerHTML;
+        }
+        this._scrollToFocus();
+        return;
+      }
+      this._lastBoardKey = boardKey;
+      this._lastRightHTML = rightHTML;
+      this._lastComposerHTML = composerHTML;
+
       this._el.innerHTML = `
         <div class="book-spread qb-spread">
           <div class="left-page">
@@ -279,9 +313,9 @@
             </div>
             <div class="ui-list ui-scroll" id="qb-cards">${rowsHTML}</div>
           </div>
-          <div class="right-page">${this._detailHTML()}</div>
+          <div class="right-page">${rightHTML}</div>
         </div>
-        ${this._composerHTML()}`;
+        <div id="qb-composer-slot">${composerHTML}</div>`;
       this._scrollToFocus();
     }
 

@@ -2130,17 +2130,46 @@
     // structure or forced biome the database does not hold, a description cleared
     // while the party was inside). The square's own tiles were still laid down, so
     // the fall-through to Map636's stock 300 drew a city street in grass.
+    // The tileset the party can SEE right now, remembered on every frame the map
+    // is drawn with it. Spriteset_Map.updateTileset asks the function below once
+    // a frame and reloads the tile bitmaps the moment the answer changes, and
+    // every route into a procedural interior -- a dungeon door, a grate, a cave
+    // mouth, a staircase, goDown -- writes currentBiomeTileset the instant its
+    // command runs, a good ten frames before the fade it started has reached
+    // black. So the surface square was repainted in dungeon graphics while the
+    // surface was still in plain view, and only then did the screen go dark.
+    let _shownTileset = null;
+
+    // True while a transition has begun its fade-out but the screen is not black
+    // yet: the window in which a tileset swap would be visible. A screen with no
+    // brightness to read (the Node harness) counts as not black, which holds the
+    // old answer rather than showing the new one early.
+    function tilesetSwapWouldShow(pg) {
+        if (!pg || !pg._edgeTransitionScheduled) return false;
+        if (!$gameScreen || typeof $gameScreen.brightness !== 'function') return true;
+        return $gameScreen.brightness() > 0;
+    }
+
     const _Game_Map_tileset = Game_Map.prototype.tileset;
     Game_Map.prototype.tileset = function() {
         const pg = $gameMap.mapId() === PROC_MAP_ID ? $gameSystem._procGenData : null;
         if (pg) {
+            // Hold the answer at what is already on screen until the fade has
+            // finished; the dispatcher clears _edgeTransitionScheduled before it
+            // reserves the transfer, so the swap lands on a black screen.
+            if (_shownTileset && tilesetSwapWouldShow(pg)) return _shownTileset;
             const biomeObj = getBiomeByName(pg.currentBiome);
             const tilesetId = pg.currentBiomeTileset ||
                 (biomeObj && biomeObj.tilesetId) || 0;
             const tilesetData = tilesetId ? $dataTilesets[tilesetId] : null;
-            if (tilesetData) return tilesetData;
+            if (tilesetData) {
+                _shownTileset = tilesetData;
+                return tilesetData;
+            }
         }
-        return _Game_Map_tileset.call(this);
+        const fallback = _Game_Map_tileset.call(this);
+        if (pg && fallback) _shownTileset = fallback;
+        return fallback;
     };
 
     // ============================================================================

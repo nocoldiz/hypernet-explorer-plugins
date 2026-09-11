@@ -830,17 +830,28 @@
     }
   };
 
+  // Every list built on this window gets its OWN panel: the backpack, the
+  // throw list under it (Window_BattleThrow, BattleSystemEnhanchedCommands.js)
+  // and the map-fight copies of both. They used to share one element id, so
+  // the second list to be built pulled the first one's panel out of the page
+  // and the backpack opened onto nothing at all.
+  let _itemRootSeq = 0;
+
   const _Window_BattleItem_initialize = Window_BattleItem.prototype.initialize;
   Window_BattleItem.prototype.initialize = function (rect) {
     _Window_BattleItem_initialize.call(this, rect);
-    
-    // Remove old overlay if any
-    const old = document.getElementById('html-battle-item-overlay');
-    if (old) old.remove();
+
+    // Sweep panels whose window is gone (a scene torn down without destroy()
+    // reaching it), never one belonging to a list that is still standing.
+    document.querySelectorAll('.bse-item-panel').forEach(el => {
+        const owner = el._bseOwner;
+        if (!owner || !owner.parent) el.remove();
+    });
 
     const root = document.createElement('div');
-    root.id = 'html-battle-item-overlay';
+    root.id = 'html-battle-item-overlay-' + (++_itemRootSeq);
     root.className = 'bse-slide-panel bse-item-panel';
+    root._bseOwner = this;
     
     // Right click to cancel / back out
     root.addEventListener('contextmenu', (e) => {
@@ -1114,22 +1125,22 @@
           this._lastSx = sc.sx;
           this._lastSy = sc.sy;
 
-          // The page hangs from the top line both battle lists share
-          // (window.BattleListPage), so switching between items and skills
-          // never moves the panel, and reaches down to the bottom margin.
-          const page = window.BattleListPage;
-          const ITEM_W = 340;
-          const ITEM_H = page ? page.maxHeight() : 420;
-          const ITEM_TOP = page ? page.TOP : 184;
+          // The backpack is a window in the MIDDLE of the screen, not a page
+          // slid against an edge: it is placed by its centre and grows around
+          // it, so the throw list and the backpack are the same panel in the
+          // same place whatever either of them holds. Its height follows the
+          // rows it carries, capped so the panel never climbs into the
+          // description box that reads from the top centre.
+          const ITEM_W = 420;
+          const ITEM_TOP = (window.BattleListPage && window.BattleListPage.TOP) || 184;
+          const ITEM_H = Math.max(160, Graphics.height - ITEM_TOP * 2);
           const scaledW = ITEM_W * sc.sx;
           const scaledH = ITEM_H * sc.sy;
-          // The description box stands on this page while it is the open one.
-          if (page) page.set(ITEM_W, ITEM_H);
+          // The description box takes its width from whichever list is open.
+          if (window.BattleListPage) window.BattleListPage.set(ITEM_W, ITEM_H);
 
-          const targetLeft = page
-              ? page.leftPx(scaledW, sc)
-              : sc.ox + (Graphics.width * sc.sx) - scaledW - (20 * sc.sx);
-          const targetTop = sc.oy + (ITEM_TOP * sc.sy);
+          const targetLeft = sc.ox + ((Graphics.width * sc.sx) - scaledW) / 2;
+          const targetTop = sc.oy + (Graphics.height * sc.sy) / 2;
 
           // Geometry is handed over as custom properties, the way the rest of
           // the HUD does it; the slid-in state itself is the panel's own class,
@@ -1137,7 +1148,7 @@
           s.setProperty('--bse-item-x', targetLeft + 'px');
           s.setProperty('--bse-item-y', targetTop + 'px');
           s.setProperty('--bse-item-w', scaledW + 'px');
-          s.setProperty('--bse-item-h', scaledH + 'px');
+          s.setProperty('--bse-item-maxh', scaledH + 'px');
           s.setProperty('--bse-item-pad',
               Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px');
           this._htmlItemRoot.classList.add('bse-slide-panel--in');

@@ -22,6 +22,10 @@
 
   const BD = window.BladeSeed;
 
+  // How long the cursor must stand still on a look before the blade under it is
+  // forged. See _mountWeaponPreview().
+  const PREVIEW_SETTLE_MS = 90;
+
   // Element accent colours (CSS var references)
   const _EL_CLR = {
     1: 'var(--text-text-alt-8)',
@@ -214,6 +218,7 @@
     }
 
     _disposePreview() {
+      if (this._previewTimer) { clearTimeout(this._previewTimer); this._previewTimer = 0; }
       if (window.Weapon3DPreview && this._preview && this._preview.length) {
         window.Weapon3DPreview.disposeAll(this._preview);
       }
@@ -227,11 +232,19 @@
     _mountWeaponPreview() {
       this._disposePreview();
       if (!this._el || !window.Weapon3DPreview) return;
-      const canvas = this._el.querySelector('#bsb-weapon-3d');
-      if (!canvas) return;
-      const item = BD.previewWithAppearance(parseInt(this._wt.weaponId), this._looks[this._lookIdx]);
-      const entry = window.Weapon3DPreview.mount(canvas, item);
-      if (entry) this._preview.push(entry);
+      // Walking the looks with a held key would ask for a fresh WebGL context
+      // and a rebuilt weapon per step, and the browser force-loses the oldest
+      // live context - the game's own - once its cap is passed. The blade is
+      // forged once the cursor comes to rest.
+      this._previewTimer = setTimeout(() => {
+        this._previewTimer = 0;
+        if (!this._el) return;
+        const canvas = this._el.querySelector('#bsb-weapon-3d');
+        if (!canvas) return;
+        const item = BD.previewWithAppearance(parseInt(this._wt.weaponId), this._looks[this._lookIdx]);
+        const entry = window.Weapon3DPreview.mount(canvas, item);
+        if (entry) this._preview.push(entry);
+      }, PREVIEW_SETTLE_MS);
     }
 
     _onReshuffle() {

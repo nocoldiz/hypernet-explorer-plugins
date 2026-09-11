@@ -332,17 +332,40 @@
         ? this.getActorSelectionHTML(actors, this._dndActorIndex, selectedJob)
         : this.getJobOfferContractHTML(selectedJob, selectedActor);
 
-      this._dndContainer.innerHTML = `
-        <div class="book-spread joboffers-spread">
-          <div class="left-page">
-            ${this.getJobsOffersBoardHTML(jobs, selectedIndex)}
-          </div>
-          <div class="right-page">
-            ${rightPageHTML}
-          </div>
-        </div>`;
+      // The board itself is only pinned up again when the offers on it change,
+      // or when the tab strip over them does. Walking the offers moves one mark
+      // and reads a different contract: rebuilding the whole spread for that
+      // would lay out every offer again and repaint every candidate's face.
+      const boardKey = `${jobs.map(j => window.WorkSystem.jobName(j) + ':' + j.duration + ':' + j.basePay).join('|')}` +
+        `#${this._dndFocusSection}#${selectedJob ? '1' : '0'}`;
+      const spread = this._dndContainer.querySelector('.joboffers-spread');
 
-      this.applyActorFaces();
+      if (!spread || this._boardKey !== boardKey) {
+        this._boardKey = boardKey;
+        this._rightPageHTML = rightPageHTML;
+        this._dndContainer.innerHTML = `
+          <div class="book-spread joboffers-spread">
+            <div class="left-page">
+              ${this.getJobsOffersBoardHTML(jobs, selectedIndex)}
+            </div>
+            <div class="right-page">
+              ${rightPageHTML}
+            </div>
+          </div>`;
+        this.applyActorFaces();
+      } else {
+        // Same board: move the mark over the offers already pinned to it, and
+        // write only the page that reads the one under the cursor.
+        spread.querySelectorAll('.job-item').forEach((el, idx) => {
+          el.classList.toggle('selected', idx === selectedIndex);
+        });
+        const rightPage = spread.querySelector('.right-page');
+        if (rightPage && this._rightPageHTML !== rightPageHTML) {
+          this._rightPageHTML = rightPageHTML;
+          rightPage.innerHTML = rightPageHTML;
+          this.applyActorFaces();
+        }
+      }
 
       // Scroll whatever the cursor is on into view.
       setTimeout(() => {

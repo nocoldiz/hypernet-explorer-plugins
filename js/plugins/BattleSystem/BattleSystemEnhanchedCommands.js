@@ -1882,6 +1882,13 @@
     return !!item && $gameParty.numItems(item) > 0;
   };
 
+  // The backpack sorts a long bag into categories first (BattleSystemEnhancedHUD.js).
+  // What may be hurled is already a short list, so the throw window shows the
+  // objects themselves and never a category step in front of them.
+  Window_BattleThrow.prototype.isCategorized = function () {
+    return false;
+  };
+
   Window_BattleThrow.prototype.needsNumber = function () {
     return true;
   };

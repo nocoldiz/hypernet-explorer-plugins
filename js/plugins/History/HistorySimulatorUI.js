@@ -312,6 +312,31 @@
             const rows = this.archiveDiseases();
             const at = Math.max(0, Math.min(this._diseaseIndex || 0, rows.length - 1));
             const selected = rows[at];
+
+            // The shelf holds two hundred and twenty-eight illnesses. Walking it
+            // moves one mark and reads a different dossier, so the shelf itself
+            // is only pinned up again when what is on it changes, and its click
+            // handlers with it.
+            const shelfKey = rows.map(d => d.id).join(',');
+            const spread = container.querySelector(".hist-spread");
+            if (spread && this._diseaseShelfKey === shelfKey) {
+                container.querySelectorAll("[data-disease-idx]").forEach((card, idx) => {
+                    card.classList.toggle("selected", idx === at);
+                });
+                const detail = container.querySelector(".hist-detail");
+                if (detail) {
+                    detail.innerHTML = (selected && api && api.diseaseDossierHTML) ? `
+                <div class="item-inspect">
+                    <div class="inspect-section-title">${selected.name}</div>
+                    ${api.diseaseDossierHTML(selected.id)}
+                </div>` : "";
+                }
+                const focused = container.querySelector("[data-disease-idx].selected");
+                if (focused) focused.scrollIntoView({ block: "nearest" });
+                return;
+            }
+            this._diseaseShelfKey = shelfKey;
+
             const listHTML = rows.length ? rows.map((d, idx) => `
                 <div class="item-slot hist-row ${idx === at ? "selected" : ""}" data-disease-idx="${idx}">
                     <div class="item-slot-info">

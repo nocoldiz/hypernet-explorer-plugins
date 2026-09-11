@@ -6170,6 +6170,52 @@
       if (!beat || !beat.player || !beat.reply) return null;
       return { player: vary(String(beat.player)), reply: vary(String(beat.reply)) };
     },
+    // Everything the two of them can do to each other in the panel, as one beat
+    // the map can play: the jab, any of the Socialize moves in their own two
+    // voices, and - only when SHE is the one asking, the way the panel only
+    // ever offers her Court - the question he turns down the same way every
+    // time. Which kind it is is picked at random, so talking to him on the road
+    // is no longer the same bickering loop over and over.
+    //
+    // `leader` is the one who starts it; the other one always answers, and the
+    // bond is paid exactly as the matching panel action pays it.
+    pairTalkBeat(leader) {
+      const meIsEm  = String(leader?.name?.() || '').trim().toLowerCase() === EM_NAME.toLowerCase();
+      const other   = meIsEm ? BUBBA_NAME : EM_NAME;
+      const ctx     = _pairContext(leader, other, null);
+      if (!ctx) return null;
+      const db   = _socialLines();
+      const data = ctx.data;
+      const fill = s => vary(String(s || '').replace(/\{name\}/g, other));
+
+      // Court is NOT on this list, and it is the one interaction of theirs that
+      // never will be: she raises it in the panel because she chose to, and the
+      // bond it costs is hers to spend. Nothing picked at random on the road is
+      // allowed to spend it for her.
+      const kinds = [];
+      if ((data.bicker || []).length)     kinds.push('bicker');
+      if ((db.interactions || []).length) kinds.push('social');
+      if (!kinds.length) return null;
+      const kind = kinds[Math.floor(Math.random() * kinds.length)];
+
+      if (kind === 'bicker') {
+        const beat = _rand(data.bicker);
+        if (!beat || !beat.player || !beat.reply) return null;
+        _addPairBond(1 + Math.floor(Math.random() * 3));
+        return { kind, player: fill(beat.player), reply: fill(beat.reply) };
+      }
+
+      const def  = _rand(db.interactions);
+      const tone = (def && def.tone) || 'neutral';
+      const said = _rand(data.player?.[tone] || data.player?.neutral);
+      const back = _rand(data[tone] || data.neutral);
+      if (!said || !back) return null;
+      // Insulting each other is the friendliest thing either of them does:
+      // whatever the move was meant to be worth, between those two it comes out
+      // the same way the panel settles it, as bond and never as an opinion.
+      _addPairBond(Math.round(Math.abs(Number(def.baseDelta) || 1) * _stanceToneMult(ctx, tone)));
+      return { kind, player: fill(said), reply: fill(back) };
+    },
     // `npcName` is what decides which of the eight voices the noise comes out
     // in; without it the Feral bank answers, which is what every caller written
     // before the classes had voices of their own expects.

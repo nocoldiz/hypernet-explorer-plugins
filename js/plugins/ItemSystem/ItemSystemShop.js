@@ -1524,17 +1524,30 @@
   // here -- the shelf can hold hundreds of blades, and one context per line
   // would exhaust the browser's supply and take the game's own canvas with it.
 
+  // Walking the shelf with a held key picks a new blade every few frames, and
+  // each one is a fresh WebGL context and a procedurally built model. The piece
+  // is therefore only put on the stand once the cursor comes to rest; the
+  // square stays empty for that moment and nothing else does.
+  const SHOP_PREVIEW_SETTLE_MS = 90;
+
   Scene_Shop.prototype.mountShopWeaponPreview = function () {
     const model = this._pendingPreviewModel;
     this._pendingPreviewModel = null;
     if (!model || !window.Weapon3DPreview) return;
-    const canvas = document.getElementById("shop-preview-canvas");
-    if (!canvas) return;
-    const entry = window.Weapon3DPreview.mount(canvas, model);
-    this._shopPreviewRenderers = entry ? [entry] : [];
+    this._shopPreviewTimer = setTimeout(() => {
+      this._shopPreviewTimer = 0;
+      const canvas = document.getElementById("shop-preview-canvas");
+      if (!canvas) return;
+      const entry = window.Weapon3DPreview.mount(canvas, model);
+      this._shopPreviewRenderers = entry ? [entry] : [];
+    }, SHOP_PREVIEW_SETTLE_MS);
   };
 
   Scene_Shop.prototype.cleanupShopWeaponPreview = function () {
+    if (this._shopPreviewTimer) {
+      clearTimeout(this._shopPreviewTimer);
+      this._shopPreviewTimer = 0;
+    }
     if (!this._shopPreviewRenderers || !window.Weapon3DPreview) return;
     window.Weapon3DPreview.disposeAll(this._shopPreviewRenderers);
     this._shopPreviewRenderers = [];

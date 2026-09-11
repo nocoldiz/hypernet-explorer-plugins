@@ -268,7 +268,19 @@
     const PAD = {
         L1: 4, R1: 5, L2: 6, R2: 7, L3: 10, R3: 11,
         _held: {},
-        pads() { return navigator.getGamepads ? (navigator.getGamepads() || []) : []; },
+        _padFrame: -1,
+        _padList: null,
+        // navigator.getGamepads() takes a fresh snapshot of every pad's buttons
+        // and axes on each call, and the title asks six or seven times a frame
+        // (two switchers, the Hyperverse controls, the label refresh). The
+        // snapshot cannot change within a frame, so it is taken once and shared.
+        pads() {
+            const frame = Graphics.frameCount;
+            if (this._padList && this._padFrame === frame) return this._padList;
+            this._padList = navigator.getGamepads ? (navigator.getGamepads() || []) : [];
+            this._padFrame = frame;
+            return this._padList;
+        },
         connected() {
             for (const p of this.pads()) if (p && p.connected) return true;
             return false;
@@ -308,19 +320,40 @@
     // is given in design pixels, multiplied by the canvas scale.
     // -------------------------------------------------------------------------
     const TitleLayout = {
+        // getBoundingClientRect() forces the browser to flush layout, and the
+        // title asks for the canvas rect several times a frame (the resize
+        // signature, every panel placement, the logo pin, the 3D projections).
+        // The canvas cannot move within a single frame, so the measurement is
+        // taken once per frame and handed out from here: one forced layout per
+        // frame instead of one per caller.
+        _cachedRect: null,
+        _cachedFrame: -1,
+
         // On-screen rectangle of the game canvas. Falls back to the whole window
         // while the canvas is not measurable yet (very early boot).
         rect() {
+            const frame = Graphics.frameCount;
+            if (this._cachedRect && this._cachedFrame === frame) return this._cachedRect;
             const canvas = Graphics._canvas;
             const r = canvas ? canvas.getBoundingClientRect() : null;
-            if (r && r.width > 0 && r.height > 0) {
-                return { left: r.left, top: r.top, width: r.width, height: r.height };
-            }
-            return {
-                left: 0, top: 0,
-                width: window.innerWidth || Graphics.width,
-                height: window.innerHeight || Graphics.height
-            };
+            const out = (r && r.width > 0 && r.height > 0)
+                ? { left: r.left, top: r.top, width: r.width, height: r.height }
+                : {
+                    left: 0, top: 0,
+                    width: window.innerWidth || Graphics.width,
+                    height: window.innerHeight || Graphics.height
+                };
+            this._cachedRect = out;
+            this._cachedFrame = frame;
+            return out;
+        },
+
+        // Drop the measurement held for this frame. Called after anything that
+        // moves the canvas within a frame (a resolution switch, a fullscreen
+        // toggle) so the next read measures again instead of trusting the cache.
+        invalidate() {
+            this._cachedRect = null;
+            this._cachedFrame = -1;
         },
 
         // How far the canvas is blown up from the 1280x720 design space. Clamped
@@ -1269,10 +1302,11 @@
                 + ` onclick="SceneManager._scene && SceneManager._scene.onMinigameClick && SceneManager._scene.onMinigameClick(${i})"`;
 
             if (this._mode === 'list') {
-                // The catalogue is a gallery, read left to right: one card per
-                // game, its cover above its name, the strip scrolling sideways
-                // under the cursor. Nothing is stacked into columns any more,
-                // so no title is ever painted on top of its neighbour.
+                // The catalogue is a grid, read left to right and top to bottom:
+                // one card per game, its cover above its name, the whole cabinet
+                // on screen at once. The stylesheet deals the columns (auto-fill
+                // against the card's minimum width); how many it settled on is
+                // measured back below, since that is what the cursor walks.
                 const cards = rows.map(r => (r.index === page.rows.length
                     ? `<div class="mg-card mg-card-back" ${hooks(r.index)}>
                            <img class="mg-card-cover" src="${minigameThumb(r.text)}" alt="">
@@ -1283,14 +1317,13 @@
                            <div class="mg-card-label">${r.text}</div>
                        </div>`)).join('');
                 this._menuContainer.innerHTML = `
-                <div class="mg-menu-overlay mg-menu-gallery">
+                <div class="mg-menu-overlay mg-menu-grid">
                     <div class="mg-menu-title">${String(page.title).toUpperCase()}</div>
-                    <div class="mg-gallery">${cards}</div>
+                    <div class="mg-grid">${cards}</div>
                 </div>`;
-                // A single strip: one row, every card its own column.
-                this._rows = 1;
-                this._cols = total;
                 this._itemNodes = Array.from(this._menuContainer.querySelectorAll('.mg-card'));
+                this._cols = this.measureColumns();
+                this._rows = Math.ceil(total / Math.max(1, this._cols));
                 this._selectedNode = null;
                 this._layoutSig = this._menuContainer.clientWidth + 'x' + this._menuContainer.clientHeight;
                 this.syncSelection();
@@ -1318,6 +1351,24 @@
             this.syncSelection();
         }
 
+        // How many cards the browser actually put on the first row. Counted off
+        // the laid-out nodes rather than worked out from widths and gaps,
+        // because auto-fill is the stylesheet's arithmetic and not ours. Falls
+        // back to one column while the panel has no layout yet (a hidden or
+        // zero-sized overlay), which leaves the cursor walking the flat list
+        // until the resize pass in update() deals it again.
+        measureColumns() {
+            const nodes = this._itemNodes;
+            if (!nodes || !nodes.length) return 1;
+            const top = nodes[0].offsetTop;
+            let cols = 0;
+            for (const node of nodes) {
+                if (node.offsetTop !== top) break;
+                cols++;
+            }
+            return Math.max(1, cols);
+        }
+
         syncSelection() {
             const nodes = this._itemNodes;
             if (!nodes || !nodes.length) return;
@@ -1327,13 +1378,9 @@
             this._selectedNode = node;
             if (!node) return;
             node.classList.add('selected');
-            // Only a column taller than the panel scrolls; a grid that fits does
-            // not move, so this never yanks the page about under the cursor.
-            if (node.scrollIntoView) {
-                node.scrollIntoView(this._mode === 'list'
-                    ? { block: 'nearest', inline: 'center' }
-                    : { block: 'nearest' });
-            }
+            // Only a catalogue taller than the panel scrolls; a grid that fits
+            // does not move, so this never yanks the page about under the cursor.
+            if (node.scrollIntoView) node.scrollIntoView({ block: 'nearest' });
         }
 
         // The grid is filled down its columns (grid-auto-flow: column over a
@@ -1341,11 +1388,22 @@
         // one column while left/right step between them, keeping the row and
         // clamping onto the last entry of a short final column.
         moveCursor(dx, dy, max) {
-            // The gallery is one strip, so both axes are the same step: left and
-            // right walk it, up and down do the same thing rather than nothing.
+            // The catalogue is a grid filled along its rows, so left and right
+            // read it the way the eye does (off the end of one row and on to the
+            // start of the next, wrapping at both ends) while up and down stay
+            // in their column and wrap top to bottom, which keeps a short last
+            // row from swallowing the cursor.
             if (this._mode === 'list') {
-                const step = dx || dy;
-                const next = (this._selectedIndex + step + max) % max;
+                const cols = Math.max(1, Math.min(this._cols || 1, max));
+                let next = this._selectedIndex;
+                if (dx) {
+                    next = (next + dx + max) % max;
+                } else if (dy) {
+                    const col = next % cols;
+                    const tall = Math.ceil((max - col) / cols); // cards in this column
+                    const row = (Math.floor(next / cols) + dy + tall) % tall;
+                    next = row * cols + col;
+                }
                 if (next === this._selectedIndex) return;
                 this._selectedIndex = next;
                 SoundManager.playCursor();
@@ -2434,6 +2492,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._speed = 1.5 + Math.random() * 1.5;
             this._cardId = cardId;
             this._planet = makeRandomPlanet();
+            this._phase = cardId % 3;
             this._radius = 85 + Math.random() * 55;
             this._size = Math.ceil(this._radius * 2.8);
             this._time = Math.random() * 100;
@@ -2505,9 +2564,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
         update() {
             this.y -= this._speed;
-            // Re-render only every 3rd frame to keep the WebGL cost low
+            // Re-render only every 3rd frame to keep the WebGL cost low, and on
+            // a phase of its own so two planets on screen never repaint (and
+            // re-upload their texture) on the same frame: the work per frame is
+            // the same on average but it no longer arrives in spikes.
             this._frame = (this._frame || 0) + 1;
-            if (this._frame % 3 === 0) {
+            if (this._frame % 3 === this._phase) {
                 this._time += 0.15;
                 this._renderPlanet();
                 if (this._texture && this._texture.baseTexture) {
@@ -3180,6 +3242,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._renderFn = renderFn;
             this._animated = !!(opts && opts.animated);
             this._radius = data.radius || 80;
+            this._phase = cardId % 3;
             this._size = Math.ceil(this._radius * 2.6);
             this._time = Math.random() * 100;
             this._seed = Math.floor(Math.random() * 1e6);
@@ -3215,8 +3278,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         update() {
             this.y -= this._speed;
             if (this._animated) {
+                // Same staggered third as the planets, so the animated stars and
+                // the planets spread their repaints across frames between them.
                 this._frame = (this._frame || 0) + 1;
-                if (this._frame % 3 === 0) {
+                if (this._frame % 3 === this._phase) {
                     this._time += 0.15;
                     this._renderCanvas();
                     if (this._texture && this._texture.baseTexture) this._texture.baseTexture.update();
@@ -3420,6 +3485,61 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     }
 
     // -------------------------------------------------------------------------
+    // Shared cost control for the two 3D backgrounds
+    // -------------------------------------------------------------------------
+    // Both 3D backgrounds render the whole window, and both hand their frame to
+    // PSXShader when a retro look is on. That path rasterises into an offscreen
+    // target and blits the result back, so the canvas' multisample buffer only
+    // ever antialiases a fullscreen quad: pure cost, no picture. MSAA is
+    // therefore asked for only when nothing is downsampling behind us.
+    function titleRetroActive() {
+        const shader = window.PSXShader;
+        return !!(shader && shader.enabled && (shader.downscale || 1) < 0.999);
+    }
+
+    // Device pixels a title background is allowed to rasterise. A HiDPI screen
+    // reports devicePixelRatio 2, and a maximised window on a 1440p panel then
+    // asks for a 5120x2880 buffer for a background that sits behind a menu.
+    // The ratio is lowered until the buffer fits the budget, so a big screen
+    // costs the same as a small one instead of four times as much.
+    const TITLE_PIXEL_BUDGET = 2600000; // ~1920x1350, comfortably above 1080p
+
+    function titlePixelRatio(w, h) {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const area = Math.max(1, w * h);
+        const fitted = Math.sqrt(TITLE_PIXEL_BUDGET / area);
+        return Math.max(0.75, Math.min(dpr, fitted));
+    }
+
+    // The gold strand mesh both 3D backgrounds draw is a handful of thin lines
+    // over a transparent sheet, and it was being rasterised at the full window
+    // resolution every single frame: on a 4K screen that is ~8M pixels cleared
+    // and blended per frame for perhaps a dozen strokes. The canvas is stretched
+    // to the window by the stylesheet (.title-strand-canvas is width/height
+    // 100%), so its backing store is capped at the game's own 1280x720 design
+    // resolution instead and the coordinates are scaled into it. The strokes are
+    // two pixels wide over a black sky: the cap is invisible, the fill cost is
+    // a quarter of what it was or less.
+    const STRAND_MAX_W = 1280;
+
+    // Size a strand canvas for a w x h window and return the factor window
+    // coordinates have to be multiplied by to land on it. The context is left
+    // with that factor already applied, so callers keep drawing in window px.
+    function fitStrandCanvas(canvas, ctx, w, h) {
+        const k = Math.min(1, STRAND_MAX_W / Math.max(1, w));
+        const bw = Math.max(1, Math.round(w * k));
+        const bh = Math.max(1, Math.round(h * k));
+        if (canvas.width !== bw || canvas.height !== bh) {
+            canvas.width = bw;
+            canvas.height = bh;
+        }
+        // setTransform rather than scale(): it is absolute, so it can be
+        // reasserted every frame without compounding.
+        ctx.setTransform(k, 0, 0, k, 0, 0);
+        return k;
+    }
+
+    // -------------------------------------------------------------------------
     // Alternative background: this world's history artifacts as 3D models that
     // slide upward, each tagged with its name, weapon type and world price.
     // Reuses the shared WeaponThreeScene (THREE overlay) used by the FPS view.
@@ -3565,8 +3685,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // pixels, for the DOM label layer and strand canvas which both cover
         // the whole window.
         _projection() {
-            const canvas = document.getElementById('gameCanvas');
-            const r = canvas ? canvas.getBoundingClientRect() : null;
+            // The shared per-frame canvas measurement, so the strand pass and
+            // the label pass do not each force their own layout flush.
+            const r = TitleLayout.rect();
             const { w, h } = this._viewSize();
             return {
                 left: r ? r.left : 0,
@@ -3624,11 +3745,11 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             // projected onto it rather than used raw.
             const w = window.innerWidth;
             const h = window.innerHeight;
-            if (this._strandCanvas.width !== w || this._strandCanvas.height !== h) {
-                this._strandCanvas.width = w;
-                this._strandCanvas.height = h;
-            }
+            fitStrandCanvas(this._strandCanvas, ctx, w, h);
             ctx.clearRect(0, 0, w, h);
+            // Two points are the fewest that can make a strand: below that the
+            // clear above is the whole job.
+            if (this._items.length < 2) return;
             const pts = this._items.map(it => this._project(proj, it.worldX, it.worldY));
             for (let i = 0; i < pts.length; i++) {
                 for (let j = i + 1; j < pts.length; j++) {
@@ -3896,8 +4017,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._camera.position.set(0, 0, 1000);
             this._camera.lookAt(0, 0, 0);
 
-            this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !titleRetroActive() });
             this._renderer.setSize(w, h);
+            this._renderer.setPixelRatio(titlePixelRatio(w, h));
             this._renderer.setClearColor(0x000000, 0);
             const cv = this._renderer.domElement;
             cv.id = 'title-enemies3d-canvas';
@@ -3940,10 +4062,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         _drawStrands(w, h) {
             const ctx = this._strandCtx;
             if (!ctx) return;
-            if (this._strandCanvas.width !== w || this._strandCanvas.height !== h) {
-                this._strandCanvas.width = w;
-                this._strandCanvas.height = h;
-            }
+            fitStrandCanvas(this._strandCanvas, ctx, w, h);
             ctx.clearRect(0, 0, w, h);
             const pts = this._items.filter(it => it.spawned).map(it => ({
                 x: it.worldX + w / 2,
@@ -4064,7 +4183,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const { w, h } = this._viewSize();
             const dt = this._clock ? this._clock.getDelta() : 1 / 60;
 
-            if (this._renderer && (this._canvasEl.width !== w || this._canvasEl.height !== h)) {
+            // The canvas' backing store is the CSS size times the pixel ratio, so
+            // the last size asked for is what the resize is tested against.
+            if (this._renderer && (this._renderer._lastW !== w || this._renderer._lastH !== h)) {
+                this._renderer._lastW = w;
+                this._renderer._lastH = h;
+                this._renderer.setPixelRatio(titlePixelRatio(w, h));
                 this._renderer.setSize(w, h);
                 this._camera.left = -w / 2; this._camera.right = w / 2;
                 this._camera.top = h / 2; this._camera.bottom = -h / 2;
@@ -4622,9 +4746,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._camera.position.set(0, 0, 10);
             this._camera.lookAt(0, 0, 0);
 
-            this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !titleRetroActive() });
             this._renderer.setSize(w, h);
-            this._renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            this._renderer.setPixelRatio(titlePixelRatio(w, h));
             this._renderer.setClearColor(0x000000, 0);
             const cv = this._renderer.domElement;
             cv.id = 'title-hyperverse-canvas';
@@ -5586,6 +5710,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const t = this._clock ? this._clock.getElapsedTime() : 0;
 
             if (this._renderer && (this._renderer._lastW !== w || this._renderer._lastH !== h)) {
+                this._renderer.setPixelRatio(titlePixelRatio(w, h));
                 this._renderer.setSize(w, h);
                 this._camera.aspect = w / h;
                 this._camera.updateProjectionMatrix();
@@ -6005,6 +6130,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this._veilLifted = false;
         _Scene_Title_create.call(this);
         this._connections = {};
+        // Kept alongside the map so the per-frame pass can tell "no strands at
+        // all" from "strands still fading" without walking the keys.
+        this._connectionCount = 0;
         this._cardIdCounter = 0; // Counter for unique card IDs
         this._lineGraphics = new PIXI.Graphics();
         this.addChildAt(this._lineGraphics, 0);
@@ -7610,17 +7738,26 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         if (!img || window.UIPanel.isClosed(img) || !sprite || !sprite.bitmap) return;
         const bmp = sprite.bitmap;
         if (!bmp.isReady || !bmp.isReady() || !bmp.width) return;
-        const canvas = Graphics._canvas;
-        const rect = canvas ? canvas.getBoundingClientRect() : null;
+        const rect = TitleLayout.rect();
         if (!rect || !rect.width) return;
         const sx = rect.width / Graphics.width;
         const sy = rect.height / Graphics.height;
         const w = bmp.width * sprite.scale.x;
         const h = bmp.height * sprite.scale.y;
-        window.UIPanel.placeAt(img, Math.round(rect.left + sprite.x * sx),
-            Math.round(rect.top + sprite.y * sy));
-        img.style.setProperty('--title-w', Math.round(w * sx) + 'px');
-        img.style.setProperty('--title-h', Math.round(h * sy) + 'px');
+        const px = Math.round(rect.left + sprite.x * sx);
+        const py = Math.round(rect.top + sprite.y * sy);
+        const pw = Math.round(w * sx);
+        const ph = Math.round(h * sy);
+        // This runs every frame so the logo tracks the canvas, but the canvas
+        // and the sprite only move on a resize. Writing the same four custom
+        // properties again would invalidate style and layout for nothing, so a
+        // frame that changes none of them stops here.
+        const stamp = px + ':' + py + ':' + pw + ':' + ph;
+        if (stamp === this._logoOverlayStamp) return;
+        this._logoOverlayStamp = stamp;
+        window.UIPanel.placeAt(img, px, py);
+        img.style.setProperty('--title-w', pw + 'px');
+        img.style.setProperty('--title-h', ph + 'px');
         // Now that it has a box, it can be shown. Every early return above leaves
         // it transparent, so it is never painted at its natural size. The PIXI
         // logo it stands in for is covered by the scene's own fade-in; this one
@@ -7672,16 +7809,30 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         'title-enemies3d-labels'
     ];
 
+    // Fourteen getElementById calls, asked for on every frame of the settle
+    // hold. The set only changes when a background puts up a panel of its own,
+    // so the lookup is repeated a few times a second rather than sixty.
+    const OVERLAY_NODE_RESCAN = 4;
+
     Scene_Title.prototype.scaledOverlayNodes = function () {
-        return SCALED_OVERLAY_IDS
+        const frame = Graphics.frameCount;
+        if (this._overlayNodes && frame - this._overlayNodeFrame < OVERLAY_NODE_RESCAN) {
+            return this._overlayNodes;
+        }
+        this._overlayNodeFrame = frame;
+        this._overlayNodes = SCALED_OVERLAY_IDS
             .map(id => document.getElementById(id))
             .filter(Boolean);
+        return this._overlayNodes;
     };
 
     // visibility rather than display or opacity: the panels keep their box so the
     // layout pass can still measure them (the disclaimer is docked under the
     // measured height of the switcher), and their own fade-ins are left alone.
     Scene_Title.prototype.setScaledOverlaysVisible = function (visible) {
+        // Showing them is the one pass that must see every panel, including one
+        // put up a frame ago by a background, so it never reads a stale list.
+        if (visible) this._overlayNodes = null;
         for (const el of this.scaledOverlayNodes()) {
             el.classList.toggle('title-invisible', !visible);
         }
@@ -7707,6 +7858,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             return;
         }
         this._overlaysSettled = true;
+        this._overlayNodes = null;
         this.layoutOverlays();
         this.setScaledOverlaysVisible(true);
         this.fadeInOverlays();
@@ -7737,6 +7889,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // resize, fullscreen toggle, resolution change), which is what keeps the
     // title readable and correctly framed at any resolution.
     Scene_Title.prototype.layoutOverlays = function () {
+        // This is the "something moved, place everything again" entry point, and
+        // it is also reached from async callbacks (the update check, a language
+        // change) that can land between frames, so the frame's held measurement
+        // is dropped and taken fresh here.
+        TitleLayout.invalidate();
+        this._logoOverlayStamp = null;
         const rect = TitleLayout.rect();
         const scale = TitleLayout.scale(rect);
         this._layoutSignature = TitleLayout.signature();
@@ -7873,7 +8031,39 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this.refreshUIOverlayDOM();
     };
 
+    // The list is rebuilt from scratch on every call: eleven localisation
+    // lookups, a scan of the global save info and a string concat for the world
+    // name. update() asks for it every frame (input handling) and so does the
+    // DOM refresh, so the built list is kept and handed back until something it
+    // actually depends on moves. The dependencies are cheap to sample; the
+    // build is not.
+    Scene_Title.prototype.titleCommandSignature = function () {
+        const WM = window.WorldManager;
+        const cw = this._commandWindow;
+        return [
+            WM ? (WM.activeWorldName || '') : '\u0000',
+            hasQuickContinueSave() ? 1 : 0,
+            cw && cw.isContinueEnabled() ? 1 : 0,
+            hideStartOptions ? 1 : 0,
+            activeLanguage()
+        ].join('|');
+    };
+
     Scene_Title.prototype.getTitleCommandText = function () {
+        const sig = this.titleCommandSignature();
+        if (!this._commandTextCache || this._commandTextSig !== sig) {
+            this._commandTextSig = sig;
+            this._commandTextCache = this.buildTitleCommandText();
+        }
+        // A fresh array of fresh entries every call, never the held one. Other
+        // plugins wrap this method and splice their own entry into whatever it
+        // hands back (Credits, Updates, Help all do), so a caller that was given
+        // the cache itself would grow it by one entry on every single frame.
+        // Copying ten small objects is still nothing next to the build above.
+        return this._commandTextCache.map(c => Object.assign({}, c));
+    };
+
+    Scene_Title.prototype.buildTitleCommandText = function () {
         const commands = [];
         // Mirrors Window_TitleCommand.makeCommandList: an entry that needs a
         // world already standing is shown greyed out rather than silently
@@ -7957,8 +8147,20 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const commands = this.getTitleCommandText();
         const activeIndex = this._selectedCommandIndex;
 
-        if (this._lastCommandIndex === activeIndex) return;
-
+        // The markup only depends on which entry is highlighted and on the list
+        // as it finally stands, so a frame that moves neither rebuilds nothing.
+        // The key is read off the finished list rather than off this screen's
+        // own signature, because the entries other plugins splice in (Credits,
+        // Updates, Help) are not in that signature and must still repaint when
+        // they change. _lastCommandIndex === -1 is the existing "force a
+        // repaint" flag every caller that changes the selection sets, and it
+        // still wins here.
+        let paintKey = String(activeIndex);
+        for (const cmd of commands) {
+            paintKey += '\u0001' + cmd.text + '\u0002' + (cmd.enabled === false ? 0 : 1);
+        }
+        if (this._lastCommandIndex !== -1 && this._lastCommandPaint === paintKey) return;
+        this._lastCommandPaint = paintKey;
         this._lastCommandIndex = activeIndex;
 
         const menuItems = commands.map((cmd, index) => {
@@ -8239,9 +8441,22 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._bgSpawnCd = 45;       // ~0.75s between attempts, so gaps refill fast
         }
 
+        // The menu's own keyboard and pad handling, kept ahead of the connection
+        // mesh below: that pass returns early for every background that floats
+        // nothing through the container, and the menu still has to answer.
+        if (this._menuContainer) {
+            this.updateUIInput();
+        }
+
         if (!this._floatingContainer) return;
 
         const cards = this._floatingContainer.children;
+        // The 3D backgrounds (Hyperverse, Camper Drive, Artifacts, Weapons and
+        // the 3D bestiary) float nothing through this container and draw their
+        // own mesh, so the whole pass below is dead weight for them. Clearing an
+        // already-empty Graphics still dirties its geometry and re-uploads it,
+        // so the frame stops here instead.
+        if (cards.length === 0 && this._connectionCount === 0) return;
         const fadeSpeed = 0.03; // Slightly faster fade for better visibility
 
         // The pair set only changes when a card spawns or despawns, so the O(n²)
@@ -8272,6 +8487,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                     let conn = this._connections[key];
                     if (!conn) {
                         conn = this._connections[key] = { a: cardA, b: cardB, alpha: 0 };
+                        this._connectionCount++;
                     }
                     conn.shouldExist = true;
                 }
@@ -8290,6 +8506,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 conn.alpha -= fadeSpeed;
                 if (conn.alpha <= 0) {
                     delete this._connections[key];
+                    this._connectionCount--;
                     continue;
                 }
             }
@@ -8305,10 +8522,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             }
         }
 
-        // Update HTML UI input
-        if (this._menuContainer) {
-            this.updateUIInput();
-        }
     };
 })();
 

@@ -5420,21 +5420,49 @@
       return null;
     };
 
+    // Where the chests of this square stood the first time it was populated. A
+    // square is populated again on every arrival and on every savegame restored
+    // on it, and pickTile is only deterministic on paper: it rejects tiles that
+    // carry an event or that the party is standing on, and neither of those is
+    // the same twice. Without the memory a reload moved every chest, and since
+    // the world record addresses a chest by its tile, one already emptied came
+    // back shut and full at its new address.
+    const CWS = window.ChestWorldState;
+    const remembered = (CWS && typeof CWS.recallProcPlacement === "function")
+      ? CWS.recallProcPlacement() : null;
+    let dealt = !remembered || remembered.length !== numChests;
+
+    // Park the whole set before placing any of it: a chest still standing on the
+    // tile its own seed is about to pick would make pickTile reject that tile.
+    for (const event of order) event.setPosition(0, 0);
+
+    const tiles = [];
     order.forEach((event, i) => {
-      if (i < numChests) {
-        const srng = Utils2.createSeededRandom(baseSeed + event._eventId * 31);
-        const tile = pickTile(srng);
-        event.setPosition(tile ? tile.x : 0, tile ? tile.y : 0);
-      } else {
-        event.setPosition(0, 0); // parked / hidden
+      if (i >= numChests) return;        // parked / hidden, already
+      let tile = dealt ? null : remembered[i];
+      // A tile written down before the square's layout changed under it.
+      if (tile && (tile.x || tile.y) && !$gameMap.isPassable(tile.x, tile.y, 2)) {
+        tile = null;
+        dealt = true;
       }
+      if (!tile) {
+        const srng = Utils2.createSeededRandom(baseSeed + event._eventId * 31);
+        tile = pickTile(srng) || { x: 0, y: 0 };
+      }
+      event.setPosition(tile.x, tile.y);
+      tiles.push(tile);
     });
+    // Squares carrying no chest at all are the common case and have nothing to
+    // remember: writing an empty list for each of them would grow the world file
+    // by every square the party ever walked across.
+    if (dealt && tiles.length && CWS && typeof CWS.rememberProcPlacement === "function") {
+      CWS.rememberProcPlacement(tiles);
+    }
 
     // Positions are final: hand the whole set to the world record, which decides
     // which of them stand open. Map 636 is one map reused for every square, so
     // the self switches left by the LAST square's chests are still raised here -
     // this is also what puts them down again.
-    const CWS = window.ChestWorldState;
     if (CWS && typeof CWS.applyProcChestState === "function") {
       CWS.applyProcChestState(chestEvents, baseSeed);
     }

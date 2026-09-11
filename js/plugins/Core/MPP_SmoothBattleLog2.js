@@ -1455,6 +1455,40 @@
         this._clearDuration = 0;
     };
 
+    // A reaction that belongs to the line that triggered it (a stat change next
+    // to the state that caused it) is written onto the END of that line instead
+    // of starting a row of its own.
+    Window_BattleLog.prototype.appendToLastLineInline = function(text) {
+        if (!this._lines || this._lines.length === 0) {
+            this.addText(text);
+            return;
+        }
+        if (typeof translateText === 'function') text = translateText(text);
+        if (this._currentSubject) text = _replaceStars(text, this._currentSubject);
+        text = colorizeLimbAndEntityNames(text);
+        const lastIndex = this._lines.length - 1;
+        this._lines[lastIndex] += ' ' + text;
+
+        // The entry being written is the last child; its last bar holds the line
+        // this reaction is joining, so only that bar's content grows.
+        if (this._htmlBattleLogRoot && this._htmlBattleLogRoot.lastElementChild) {
+            const bars = this._htmlBattleLogRoot.lastElementChild.querySelectorAll('.battlelog-line');
+            const lastBar = bars.length > 0 ? bars[bars.length - 1] : null;
+            if (lastBar) {
+                const temp = document.createElement('div');
+                temp.innerHTML = parseBattleLogTextToHtml(text);
+                const inner = temp.querySelector('.battlelog-line');
+                const span = document.createElement('span');
+                span.innerHTML = '&nbsp;' + (inner ? inner.innerHTML : '');
+                lastBar.appendChild(span);
+            }
+        }
+
+        this.scrollToBottom();
+        this.wait();
+        this._clearDuration = 0;
+    };
+
     Window_BattleLog.prototype.shiftLine = function() {
     };
 
@@ -1965,21 +1999,24 @@
         this.paramDeltas = [];
     };
 
-    // "INT +4", coloured green up and red down, the sign always written so a
-    // gain and a loss read the same way round.
+    // "INT +4", the sign always written so a gain and a loss read the same way
+    // round. The figure is coloured, green up and red down; the stat's name is
+    // left in the log's own colour so the colour only ever means direction.
     Window_BattleLog.prototype._statDeltaText = function(id, points) {
         const color = points > 0 ? 23 : 24;
-        return `\\c[${color}]` + T('BattleLog.statDelta', {
+        return T('BattleLog.statDelta', {
             stat: TextManager.param(id),
-            points: (points > 0 ? '+' : '') + points
-        }) + `\\c[0]`;
+            points: `\\c[${color}]` + (points > 0 ? '+' : '') + points + `\\c[0]`
+        });
     };
 
     Window_BattleLog.prototype.displayChangedBuffs = function(target) {
         const result = target.result();
         const deltas = result.paramDeltas || [];
         if (deltas.length > 0) {
-            this.push('appendToActionLine', this._formatParamList(
+            // The change rides on the line that triggered it, the state message
+            // or the blow itself, rather than standing on a line of its own.
+            this.push('appendToLastLineInline', this._formatParamList(
                 deltas.map(d => this._statDeltaText(d.id, d.points))));
             return;
         }

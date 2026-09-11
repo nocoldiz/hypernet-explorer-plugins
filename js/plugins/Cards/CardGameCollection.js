@@ -372,12 +372,28 @@
       this.renderDossier(container);
     }
 
+    // Walking the shelf changes which card is framed and which one the dossier
+    // reads, and nothing else. Rebuilding the shelf for it would lay out a card
+    // face per key and hand every one of them a fresh canvas with its sprite
+    // drawn into it, so the keyboard takes the same in-place path the pointer
+    // already takes (selectAt).
     moveIndex(delta, length) {
       if (!length) return;
-      this._index = Math.max(0, Math.min(length - 1, this._index + delta));
+      const next = Math.max(0, Math.min(length - 1, this._index + delta));
       SoundManager.playCursor();
-      this.render();
-      const cell = document.querySelector("#cardcol-container .cgc-cell.selected");
+      if (next === this._index && this._area === "grid") return;
+      this._index = next;
+      this._area = "grid";
+      const container = document.getElementById("cardcol-container");
+      if (!container) { this.render(); return; }
+      container.querySelectorAll("#cgc-grid .cgc-cell").forEach((el, n) => {
+        el.classList.toggle("selected", n === next);
+      });
+      container.querySelectorAll("#cgc-actions .inspect-btn").forEach((el) => {
+        el.classList.remove("selected");
+      });
+      this.renderDossier(container);
+      const cell = container.querySelector(".cgc-cell.selected");
       if (cell) cell.scrollIntoView({ block: "nearest" });
     }
 

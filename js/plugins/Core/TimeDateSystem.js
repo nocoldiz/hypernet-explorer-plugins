@@ -134,7 +134,7 @@
  *
  * @param caffeineVariableId
  * @text Caffeine Variable ID
- * @desc The ID of the game variable that stores food caffeine.
+ * @desc The ID of the game variable that stores food caffeine, in mg.
  * @type variable
  * @default 91
  * @parent --- Realistic Hunger Recovery ---
@@ -166,7 +166,7 @@
  *
  * @param caffeineFactor
  * @text Caffeine Factor
- * @desc Multiplier for caffeine in hunger recovery calculation.
+ * @desc Multiplier on the rest a caffeinated drink gives back.
  * @type number
  * @decimals 2
  * @default 1.50
@@ -2758,13 +2758,17 @@
   //=============================================================================
   // The player keeps their meters on the actor; a recruited companion keeps
   // theirs on their NPC society profile, which is the copy the menu draws for
-  // party slots 2 and 3. Hunger is written to both.
-  function mirrorHungerToProfile(actor, gained) {
+  // party slots 2 and 3. Hunger and rest are written to both.
+  function mirrorNeedToProfile(actor, key, gained, max) {
     if (!actor || !gained || !actor.actorId || actor.actorId() === 1) return;
     const profile = window.NPCSocietyRegistry?.getProfile?.(actor.name());
-    if (!profile || typeof profile.hunger !== "number") return;
-    const pct = (gained / maxHunger) * 100;
-    profile.hunger = Math.max(0, Math.min(100, profile.hunger + pct));
+    if (!profile || typeof profile[key] !== "number") return;
+    const pct = (gained / max) * 100;
+    profile[key] = Math.max(0, Math.min(100, profile[key] + pct));
+  }
+
+  function mirrorHungerToProfile(actor, gained) {
+    mirrorNeedToProfile(actor, "hunger", gained, maxHunger);
   }
 
   window.PartyMeal = {
@@ -2798,6 +2802,23 @@
       };
     },
 
+    // A cup of coffee is a pick-me-up, not a night in a bed. The <caffeine:>
+    // tag is milligrams, so it cannot be spent straight on the rest meter: a
+    // coffee (80mg) used to be TAKEN OFF that meter, and at 80 * 1.5 = 120
+    // points of a 100 point bar it put the whole party's rest at zero in one
+    // sip. Milligrams are turned into meter points here, and no single drink
+    // is worth more than a share of the bar however strong it is brewed.
+    CAFFEINE_MG_PER_POINT: 8,
+    CAFFEINE_MAX_REST: 25,
+
+    // Rest points a caffeine reading is worth.
+    restOf(caffeineMg) {
+      const mg = Math.max(0, Number(caffeineMg) || 0);
+      if (!mg) return 0;
+      const points = (mg / this.CAFFEINE_MG_PER_POINT) * caffeineFactor;
+      return Math.min(this.CAFFEINE_MAX_REST, points);
+    },
+
     // Hunger points from a nutrition reading: the EatFood formula, and the only
     // copy of it left.
     recoveryOf(nutrition) {
@@ -2818,15 +2839,16 @@
      * not who gets a share, it is whose face is on the card.
      *
      * opts.actors    who is at the table (defaults to eaters())
-     * opts.caffeine  ground off the sleep meter of whoever ate
+     * opts.caffeine  milligrams of caffeine, paid back onto the rest meter
      *
-     * Returns { members: [{ actor, name, from, to, delta, fromPct, toPct }] },
-     * the before and after of every bar the card is about to draw.
+     * Returns { members: [{ actor, name, from, to, delta, fromPct, toPct }],
+     * total, rest }, the before and after of every bar the card is about to
+     * draw plus the rest the caffeine gave back.
      */
     serve(recovery, opts = {}) {
       const amount = Math.max(0, Number(recovery) || 0);
       const actors = (opts.actors || this.eaters()).filter((a) => a);
-      const report = { members: [], total: 0 };
+      const report = { members: [], total: 0, rest: 0 };
       if (!actors.length) return report;
 
       const eater = actors[0];
@@ -2837,10 +2859,16 @@
       report.total = to - from;
 
       // Sleep is shared the same way hunger is, so the coffee is drunk once
-      // too: grinding it off every member in turn would make one cup worth as
+      // too: giving it to every member in turn would make one cup worth as
       // many as the party has people.
-      if (opts.caffeine > 0 && eater.reduceSleep) {
-        eater.reduceSleep(opts.caffeine * caffeineFactor);
+      const rest = this.restOf(opts.caffeine);
+      if (rest > 0 && eater.addSleep) {
+        // What the bar actually took, not what the cup offered: a party that
+        // is already wide awake gains nothing from another espresso, and the
+        // profile mirror below must not be told otherwise.
+        const restFrom = eater._sleep;
+        eater.addSleep(rest);
+        report.rest = eater._sleep - restFrom;
       }
 
       actors.forEach((actor) => {
@@ -2849,6 +2877,7 @@
         // <NeedRestore:> tags make (ItemSystemUtils.applyNeedRestores): without
         // it the serving card and the menu card would disagree about who ate.
         mirrorHungerToProfile(actor, report.total);
+        mirrorNeedToProfile(actor, "sleep", report.rest, maxSleep);
         report.members.push({
           actor,
           name: actor.name ? actor.name() : "",

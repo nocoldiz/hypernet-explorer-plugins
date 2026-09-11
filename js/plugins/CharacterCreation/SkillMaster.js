@@ -897,6 +897,43 @@
         injectAllCustomSpells();
     };
 
+    //=============================================================================
+    // Known skills that no longer exist
+    //
+    // A character keeps skill ids, not skill objects, so an id whose entry has
+    // since left data/Skills.json resolves to null and every reader of skills()
+    // takes .id off nothing. The known list therefore answers with real skills
+    // only. An id that sits inside the database yet points at a hole is gone
+    // for good and is dropped from the character, so an old save heals itself;
+    // a custom spell still recorded in the save is only missing until it is
+    // injected back, and is kept.
+    //=============================================================================
+
+    function isPendingCustomSpell(id) {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return true;
+        if (typeof $gameSystem.getCustomSpells !== 'function') return true;
+        return $gameSystem.getCustomSpells().some(s => s && s.id === id);
+    }
+
+    Game_Actor.prototype.skills = function () {
+        const db = (typeof $dataSkills !== 'undefined' && $dataSkills) ? $dataSkills : null;
+        const list = [];
+        let stale = null;
+        for (const id of this._skills.concat(this.addedSkills())) {
+            const skill = db ? db[id] : null;
+            if (!skill) {
+                const known = this._skills.includes(id);
+                if (known && db && id < db.length && !isPendingCustomSpell(id)) {
+                    (stale || (stale = [])).push(id);
+                }
+                continue;
+            }
+            if (!list.includes(skill)) list.push(skill);
+        }
+        if (stale) this._skills = this._skills.filter(id => !stale.includes(id));
+        return list;
+    };
+
     function isWorkshopMode() {
         if ($gameSystem && ($gameSystem._isSandboxMode || $gameSystem._sandboxKnowledgePointsGiven)) return true;
         const leader = $gameParty && $gameParty.allMembers && $gameParty.allMembers()[0];

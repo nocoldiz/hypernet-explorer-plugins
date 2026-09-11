@@ -3154,6 +3154,15 @@
                 count: list.length,
                 renderItem: (idx) => this._uiSkillCardHTML(actor, list[idx], idx, isLevelUp),
                 emptyHTML: `<div class="item-grid-empty">${T('SkillsMenu.empty.section')}</div>`,
+                // Walking the cards moves one mark. Everything else a card says
+                // is in leftPageKey above, so the window is left as it is and
+                // its icons are not redrawn a canvas at a time.
+                focus: {
+                    index: this._dndSelectedIndex,
+                    selector: '[data-skill-idx]',
+                    attr: 'data-skill-idx',
+                    classes: { selected: this._dndActiveSection === 'skills' ? this._dndSelectedIndex : -1 }
+                },
                 onWindow: (win, from, to) => {
                     for (let idx = from; idx < to; idx++) {
                         const entry = list[idx];

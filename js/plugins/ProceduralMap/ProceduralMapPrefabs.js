@@ -72,7 +72,35 @@
   // there are more landmarks than houses -- so villages kept coming out as a
   // scatter of standing stones and ruins with barely a house among them.
   // Landmarks stay in, as the occasional garnish they were meant to be.
+  //
+  // A per-draw chance alone was not enough: a village asks for 14-21 prefabs
+  // and retries every duplicate, so even a one-in-five roll handed out a
+  // fistful of landmarks per map. The chance decides WHERE in the draw a
+  // landmark turns up, a hard quota decides HOW MANY: one or two, never more,
+  // and every other lot in the village belongs to a house.
   const VILLAGE_LANDMARK_CHANCE = 0.2;
+  const VILLAGE_MAX_LANDMARKS = 2;
+
+  // 1 or 2 landmarks per village map, decided once from the map's own rng.
+  function rollVillageLandmarkQuota(rng) {
+    return 1 + Math.floor(rng() * VILLAGE_MAX_LANDMARKS);
+  }
+
+  // One draw of the village prefab pool: a landmark only while the quota holds,
+  // a house every other time.
+  function pickVillagePrefabId(rng, housePool, landmarkPool, landmarksTaken, quota) {
+    const canTakeLandmark = landmarkPool && landmarkPool.length > 0 && landmarksTaken < quota;
+    if (canTakeLandmark && rng() < VILLAGE_LANDMARK_CHANCE) {
+      return randomChoice(landmarkPool, rng);
+    }
+    return randomChoice(housePool, rng);
+  }
+
+  // What the last generated map actually ended up with, in placement order:
+  // read by the tile debugger and by the test harness, which is how the village
+  // landmark quota above is checked against a real generated map rather than
+  // against a copy of the rule.
+  let lastPrefabPlacement = null;
 
   // OPTIMIZATION: In-memory cache for map data to avoid disk reads
   const prefabCache = new Map();
@@ -529,6 +557,10 @@
           for (let ci = 0; ci < byAreaDesc.length && finalX === null; ci++) {
             const candidate = byAreaDesc[ci];
             if (pass === 0 && usedMapIds.has(candidate.mapId)) continue;
+            // The repeat pass fills leftover lots with prefabs already
+            // standing, which would copy a landmark around the village and
+            // undo the quota. Houses may repeat, landmarks never do.
+            if (pass === 1 && candidate.isLandmark && usedMapIds.has(candidate.mapId)) continue;
 
             // A village hint now carries the LOT it stands in, not just its
             // centre point (the block plan in the structure generator hands
@@ -1161,9 +1193,12 @@
     const weightVillageHouses = lowerBiome.includes("village") && prefabGroups.length > 1;
     const housePool = weightVillageHouses ? prefabGroups[0] : null;
     const landmarkPool = weightVillageHouses ? prefabGroups[prefabGroups.length - 1] : null;
+    const landmarkIds = weightVillageHouses ? new Set(landmarkPool) : null;
+    const landmarkQuota = weightVillageHouses ? rollVillageLandmarkQuota(rng) : 0;
+    let landmarksSelected = 0;
     const pickPrefabId = () => {
       if (!weightVillageHouses) return randomChoice(availablePrefabs, rng);
-      return randomChoice(rng() < VILLAGE_LANDMARK_CHANCE ? landmarkPool : housePool, rng);
+      return pickVillagePrefabId(rng, housePool, landmarkPool, landmarksSelected, landmarkQuota);
     };
 
     // Gas-station prefabs (detected by GasPump tiles, see getGasPumpTileIds)
@@ -1199,12 +1234,16 @@
           }
           if (isGasStation) gasStationPlaced = true;
 
+          const isLandmark = !!(landmarkIds && landmarkIds.has(prefabMapId));
+          if (isLandmark) landmarksSelected++;
+
           prefabsWithSizes.push({
             mapId: prefabMapId,
             width: prefabMap.width,
             height: prefabMap.height,
             data: prefabMap,
-            isGasStation
+            isGasStation,
+            isLandmark
           });
           selectedMapIds.add(prefabMapId);
         }
@@ -1342,6 +1381,12 @@
 
     // Generate positions (satData is null if not in City/Road biome, waterSatData is null if in Ocean biome)
     const positions = generatePrefabPositions(prefabCount, rng, prefabsWithSizes, biomeName, blockHints, satData, waterSatData, placementHints, roomHints, roadsidePair);
+
+    lastPrefabPlacement = {
+      biomeName,
+      worldCoords: { x: worldCoords.x, y: worldCoords.y },
+      mapIds: positions.map(p => p.mapId)
+    };
 
     yield;
 
@@ -1513,6 +1558,10 @@
     getGasPumpTileIds,
     prefabHasGasPump,
     tryPlaceRoadsidePair,
+    rollVillageLandmarkQuota,
+    pickVillagePrefabId,
+    getLastPrefabPlacement: () => lastPrefabPlacement,
+    VILLAGE_MAX_LANDMARKS,
     carveCaveSpaceForPrefab,
     findNearestCaveFloor,
   };

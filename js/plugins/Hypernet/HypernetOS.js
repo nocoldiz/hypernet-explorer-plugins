@@ -7733,9 +7733,14 @@
             on(q(root, '#mine-face'), 'click', () => restart(g.level));
         };
 
+        // A game ends once. Every later click on the field still redraws it, but
+        // the clock, the sound and the message box belong to the move that
+        // ended the game, not to the clicks that come after it.
         const after = () => {
-            if ((g.won || g.dead) && !g.elapsed) g.elapsed = Date.now();
+            const ended = (g.won || g.dead) && !g.elapsed;
+            if (ended) g.elapsed = Date.now();
             draw();
+            if (!ended) return;
             if (g.won) {
                 const secs = Mines.seconds(g);
                 const best = XP.reg(bestKey(), 0);
