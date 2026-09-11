@@ -918,7 +918,7 @@
 
     activateActorSelection() {
       this._actorSelectMode = true;
-      this._actors = $gameParty.members();
+      this._actors = ($gameParty ? $gameParty.members() : []).filter(m => m && m.name() !== "Bubba");
       this.activate();
       this.select(0);
       this.setHandler('ok', this.onActorOk.bind(this));
@@ -1258,7 +1258,12 @@
       // Handled by our custom UI navigation
     }
 
+    availableWorkers() {
+      return ($gameParty ? $gameParty.members() : []).filter(m => m && m.name() !== "Bubba");
+    }
+
     onActorSelected(actor) {
+      if (!actor || actor.name() === "Bubba") return;
       const job = this._singleJobMode ? window.WorkSystem.getJob(this._singleJobId) : this._jobListWindow.item();
       if (job && actor) {
         this.startWork(actor, job);
@@ -1270,6 +1275,7 @@
     }
 
     startWork(actor, job) {
+      if (!actor || actor.name() === "Bubba") return;
       // Store work data and return to map
       $gameTemp._pendingWork = {
         actorId: actor.actorId(),
@@ -1325,8 +1331,8 @@
       const selectedIndex = this._jobListWindow ? this._jobListWindow.index() : 0;
       const selectedJob = this._singleJobMode ? window.WorkSystem.getJob(this._singleJobId) : (jobs[selectedIndex] || null);
 
-      const actors = $gameParty.members();
-      const selectedActorIndex = this._dndActorIndex;
+      const actors = this.availableWorkers();
+      const selectedActorIndex = Math.min(this._dndActorIndex, Math.max(0, actors.length - 1));
       const selectedActor = actors[selectedActorIndex] || actors[0];
 
       // Every job trains its own specialization, and that specialization is
@@ -1683,8 +1689,9 @@
     }
 
     confirmActorSelection() {
-      const actor = $gameParty.members()[this._dndActorIndex];
-      if (actor) {
+      const actors = this.availableWorkers();
+      const actor = actors[this._dndActorIndex];
+      if (actor && actor.name() !== "Bubba") {
         SoundManager.playOk();
         this.onActorSelected(actor);
       } else {
@@ -1775,13 +1782,15 @@
       // Sync details panel internally in the background
       if (!this._singleJobMode && this._jobListWindow) {
         const job = this._jobListWindow.item();
-        const actor = $gameParty.members()[this._dndActorIndex] || $gameParty.leader();
+        const actors = this.availableWorkers();
+        const actor = actors[this._dndActorIndex] || actors[0];
         if (job && actor) {
           this._detailsPanel.setJob(job);
           this._detailsPanel.setActor(actor);
         }
       } else if (this._singleJobMode) {
-        const actor = $gameParty.members()[this._dndActorIndex] || $gameParty.leader();
+        const actors = this.availableWorkers();
+        const actor = actors[this._dndActorIndex] || actors[0];
         if (actor) {
           this._detailsPanel.setActor(actor);
         }
@@ -1843,6 +1852,7 @@
     // way, watched from behind the fade.
     dispatch(actor, job, remote) {
       if (!actor || !job) return false;
+      if (actor.name && actor.name() === "Bubba") return false;
       const actorId = actor.actorId();
       if (this.isBusy(actorId)) return false;
       if (!$gameParty.members().some(m => m.actorId() === actorId)) return false;

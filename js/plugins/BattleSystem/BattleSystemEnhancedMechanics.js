@@ -59,7 +59,7 @@
     //   deletable in one blow.
     // ========================================================================
 
-    const HEALTH_PROTECTION_MIN_HP_RATE = 0.80;
+    const HEALTH_PROTECTION_MIN_HP_RATE = 1.00;
 
     BSE.State._healthProtectionUsed = {};
 
@@ -78,13 +78,15 @@
 
     /**
      * Whether the blow that just landed is the one the save exists for: a
-     * battle hit, on a member who stood at HEALTH_PROTECTION_MIN_HP_RATE or
-     * better a moment ago, who still holds their charge.
+     * battle hit, on a member who stood at full health (100% of max HP)
+     * a moment ago, who still holds their charge for this battle.
      */
     function oneShotSaveApplies(actor, hpBeforeHit) {
-        if (!$gameParty || !$gameParty.inBattle()) return false;
+        const inBattle = ($gameParty && $gameParty.inBattle()) ||
+            (typeof window !== 'undefined' && window.MapBattleMode && window.MapBattleMode.isActive && window.MapBattleMode.isActive());
+        if (!inBattle) return false;
         if (!(actor.mhp > 0)) return false;
-        if (hpBeforeHit / actor.mhp < HEALTH_PROTECTION_MIN_HP_RATE) return false;
+        if (hpBeforeHit < actor.mhp || hpBeforeHit / actor.mhp < HEALTH_PROTECTION_MIN_HP_RATE) return false;
         return BSE.Helpers.hasHealthProtection(actor.actorId());
     }
 
@@ -113,6 +115,9 @@
         } else if (wasAlive && this.isDead() && oldHp > 1 && oneShotSaveApplies(this, oldHp)) {
             BSE.Helpers.useHealthProtection(this.actorId());
             _Game_Actor_setHp.call(this, 1);
+            if (this.result && this.result()) {
+                this.result().hpDamage = oldHp - 1;
+            }
         }
 
         // Handle map deaths

@@ -4020,21 +4020,47 @@
     };
 
     MBM._createHpBars = function () {
-        MBM._destroyHpBars();
         const scene = SceneManager._scene;
-        if (!window.Sprite_BattleBar || !scene) return;
+        if (!window.Sprite_BattleBar || !scene) {
+            MBM._destroyHpBars();
+            return;
+        }
         const enemyW = 260, enemyStep = 70, enemyTop = 40;
         const maxRows = Math.max(1, Math.floor((Graphics.height - enemyTop) / enemyStep));
+
+        const aliveEnemies = $gameTroop.members().filter(enemy => enemy && enemy.isAlive()).slice(0, maxRows);
+        const aliveSet = new Set(aliveEnemies);
+
+        const survivingBars = [];
+        for (const sprite of MBM._hpBars) {
+            if (sprite._battler && aliveSet.has(sprite._battler) && sprite.parent === scene) {
+                survivingBars.push(sprite);
+            } else {
+                if (sprite.parent) sprite.parent.removeChild(sprite);
+                if (sprite.destroy) sprite.destroy();
+            }
+        }
+
+        const barByBattler = new Map();
+        for (const sprite of survivingBars) {
+            barByBattler.set(sprite._battler, sprite);
+        }
+
+        const newBars = [];
         let row = 0;
-        $gameTroop.members().forEach(enemy => {
-            if (!enemy.isAlive() || row >= maxRows) return;
-            const sprite = new window.Sprite_BattleBar(enemy, enemyW);
+        for (const enemy of aliveEnemies) {
+            let sprite = barByBattler.get(enemy);
+            if (!sprite) {
+                sprite = new window.Sprite_BattleBar(enemy, enemyW);
+                scene.addChild(sprite);
+            }
             sprite.x = Graphics.width - enemyW - 40;
             sprite.y = enemyTop + row * enemyStep;
-            scene.addChild(sprite);
-            MBM._hpBars.push(sprite);
+            newBars.push(sprite);
             row++;
-        });
+        }
+
+        MBM._hpBars = newBars;
     };
 
     MBM._hpBarTick = 0;

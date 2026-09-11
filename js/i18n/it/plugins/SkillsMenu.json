@@ -18,6 +18,14 @@
     "none": "Niente da lanciare",
     "elementNone": "Non elementale"
   },
+  "weapon": {
+    "melee": "Richiede un'arma da mischia",
+    "ranged": "Richiede un'arma a distanza",
+    "chip": {
+      "melee": "Serve mischia",
+      "ranged": "Serve distanza"
+    }
+  },
   "discipline": {
     "basic": "Disciplina di base",
     "standard": "Disciplina ordinaria"

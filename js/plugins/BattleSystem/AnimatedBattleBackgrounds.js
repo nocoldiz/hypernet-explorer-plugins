@@ -1652,8 +1652,8 @@
             // Update animated stars in night sky
             if (timeMode === CONFIG.TIME_MODES.NIGHT) {
                 this._starAnimationTime = (this._starAnimationTime || 0) + 0.016;
-                // Reduced frequency: only update every 6 frames (from 3) - 50% less work
-                if (this._frameCount % 6 === 0) {
+                // Cadence aligned with cloud updates (16 frames) to conserve GPU bandwidth
+                if (this._frameCount % 16 === 0) {
                     this.updateSkyAnimation();
                 }
             }
@@ -1702,11 +1702,34 @@
             this._animatedGradientContainer.parent.removeChild(this._animatedGradientContainer);
         }
 
-        this._animatedContainer = null;
-        this._animatedGradientContainer = null;
-        this._animatedBitmap = null;
-        this._gradientBitmap = null;
+        if (this._animatedContainer) {
+            this._animatedContainer.destroy({ children: true });
+            this._animatedContainer = null;
+        }
+        if (this._animatedGradientContainer) {
+            this._animatedGradientContainer.destroy({ children: true });
+            this._animatedGradientContainer = null;
+        }
+        if (this._animatedBitmap) {
+            this._animatedBitmap.destroy();
+            this._animatedBitmap = null;
+        }
+        if (this._gradientBitmap) {
+            this._gradientBitmap.destroy();
+            this._gradientBitmap = null;
+        }
+        this._animatedSprite = null;
+        this._animatedGradientSprite = null;
+        this._battleWeatherSprite = null;
         this._skyInitialized = false;
+    };
+
+    const _Spriteset_Battle_destroy_ABB = Spriteset_Battle.prototype.destroy;
+    Spriteset_Battle.prototype.destroy = function (options) {
+        this.removeAnimatedBackground();
+        if (_Spriteset_Battle_destroy_ABB) {
+            _Spriteset_Battle_destroy_ABB.call(this, options);
+        }
     };
 
     // =============================================================================

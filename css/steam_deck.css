@@ -2511,48 +2511,6 @@
 }
 
 
-/* ==========================================================================
-   The quest board (Quest/QuestBoardUI.js)
-   --------------------------------------------------------------------------
-   A spread now, so the shared page rules do most of the work. What is left is
-   the notice row and the two panels the party writes and shops on, which are
-   the only parts authored at desk size.
-   ========================================================================== */
-@media (max-width: 1366px) and (max-height: 860px) {
-
-    .qb-note {
-        padding: 4px 10px;
-    }
-
-    .qb-place {
-        margin-bottom: 4px;
-    }
-
-    .qb-c-intro {
-        margin-bottom: 12px;
-    }
-
-    .qb-c-row {
-        gap: 12px;
-        padding: 4px 8px;
-        min-height: 30px;
-    }
-
-    /* A quarter of the sheet was standing empty to the right of the labels. */
-    .qb-c-label {
-        flex: 0 0 170px;
-    }
-
-    .qb-c-preview {
-        margin-top: 7px;
-        padding: 8px 12px;
-    }
-
-    .qb-p-row {
-        padding: 3px 8px;
-    }
-}
-
 
 /* ==========================================================================
    Fast travel (Vehicle/FastTravelSystem.js)

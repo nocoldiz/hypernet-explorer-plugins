@@ -6244,7 +6244,8 @@
       // person who has to be walking alongside him is Em, and the mirror.
       const other = side === 'em' ? EM_NAME : BUBBA_NAME;
       const walking = ($gameParty?.members?.() ?? [])
-        .some(m => m && String(m.name() || '').trim().toLowerCase() === other.toLowerCase());
+        .some(m => m && String(m.name() || '').trim().toLowerCase() === other.toLowerCase())
+        || (other.toLowerCase() === BUBBA_NAME.toLowerCase() && !!(window.$gameSwitches?.value(100)));
       if (!walking) return null;
       const line = _pairSituationLine(_pairData(side));
       return line ? vary(String(line)) : null;
@@ -6277,13 +6278,17 @@
       const data = ctx.data;
       const fill = s => vary(String(s || '').replace(/\{name\}/g, other));
 
-      // Court is NOT on this list, and it is the one interaction of theirs that
-      // never will be: she raises it in the panel because she chose to, and the
-      // bond it costs is hers to spend. Nothing picked at random on the road is
-      // allowed to spend it for her.
+      // Any conversation available in the Empathize UI between Em and Bubba:
+      // bicker jabs, Socialize moves (praise/smalltalk/etc.), joke performances,
+      // stories, poems, situational remarks, and her raising Court and him turning it down.
       const kinds = [];
-      if ((data.bicker || []).length)     kinds.push('bicker');
+      if ((data.bicker || []).length) kinds.push('bicker');
       if ((db.interactions || []).length) kinds.push('social');
+      if (typeof _genJoke === 'function' || db.jokes) kinds.push('joke');
+      if ((db.performances?.story?.player || []).length) kinds.push('story');
+      if ((db.performances?.poem?.player || []).length) kinds.push('poem');
+      if (meIsEm && (db.romance?.actions || []).length && (db.romance?.rejection?.bubbaHimself?.lines || []).length) kinds.push('court');
+      if ((data.greeting || []).length || data.situations) kinds.push('situation');
       if (!kinds.length) return null;
       const kind = kinds[Math.floor(Math.random() * kinds.length)];
 
@@ -6294,16 +6299,70 @@
         return { kind, player: fill(beat.player), reply: fill(beat.reply) };
       }
 
-      const def  = _rand(db.interactions);
-      const tone = (def && def.tone) || 'neutral';
-      const said = _rand(data.player?.[tone] || data.player?.neutral);
-      const back = _rand(data[tone] || data.neutral);
-      if (!said || !back) return null;
-      // Insulting each other is the friendliest thing either of them does:
-      // whatever the move was meant to be worth, between those two it comes out
-      // the same way the panel settles it, as bond and never as an opinion.
-      _addPairBond(Math.round(Math.abs(Number(def.baseDelta) || 1) * _stanceToneMult(ctx, tone)));
-      return { kind, player: fill(said), reply: fill(back) };
+      if (kind === 'social') {
+        const def  = _rand(db.interactions || []);
+        const tone = (def && def.tone) || 'neutral';
+        const said = _rand(data.player?.[tone] || data.player?.neutral || data.player);
+        const back = _rand(data[tone] || data.neutral);
+        if (!said || !back) return null;
+        _addPairBond(Math.round(Math.abs(Number(def?.baseDelta) || 1) * _stanceToneMult(ctx, tone)));
+        return { kind, player: fill(said), reply: fill(back) };
+      }
+
+      if (kind === 'joke') {
+        const joke = (typeof _genJoke === 'function' ? _genJoke() : null)
+          || _rand(db.jokes?.landGood || []) || "Why did the chicken cross the road?";
+        const back = _rand(data.positive || data.neutral || data);
+        if (!joke || !back) return null;
+        _addPairBond(1 + Math.floor(Math.random() * 3));
+        return { kind, player: fill(joke), reply: fill(back) };
+      }
+
+      if (kind === 'story') {
+        const perf = db.performances?.story;
+        const subject = (typeof window !== 'undefined' && window.RandomBookGenerator?.generateTitle?.())
+          || (typeof vary === 'function' ? vary('The Legend of the Road') : 'The Legend of the Road');
+        const raw = _rand(perf?.player || []);
+        if (!raw) return null;
+        const said = vary(String(raw).replace(/\{subject\}/g, subject).replace(/\{name\}/g, other));
+        const back = _rand(data.positive || data.neutral || perf?.good || []);
+        if (!said || !back) return null;
+        _addPairBond(1 + Math.floor(Math.random() * 3));
+        return { kind, player: fill(said), reply: fill(back) };
+      }
+
+      if (kind === 'poem') {
+        const perf = db.performances?.poem;
+        const subject = (typeof window !== 'undefined' && window.RandomBookGenerator?.generateTitle?.())
+          || (typeof vary === 'function' ? vary('The Open Road') : 'The Open Road');
+        const raw = _rand(perf?.player || []);
+        if (!raw) return null;
+        const said = vary(String(raw).replace(/\{subject\}/g, subject).replace(/\{name\}/g, other));
+        const back = _rand(data.positive || data.neutral || perf?.good || []);
+        if (!said || !back) return null;
+        _addPairBond(1 + Math.floor(Math.random() * 3));
+        return { kind, player: fill(said), reply: fill(back) };
+      }
+
+      if (kind === 'court') {
+        const act = _rand(db.romance?.actions || []);
+        const said = _rand(act?.player || []);
+        const back = _rand(db.romance?.rejection?.bubbaHimself?.lines || []);
+        if (!said || !back) return null;
+        _addPairBond(1);
+        return { kind, player: fill(said), reply: fill(back) };
+      }
+
+      if (kind === 'situation') {
+        const sit = (typeof _pairSituationLine === 'function' ? _pairSituationLine(data) : null)
+          || _rand(data.greeting || []);
+        const ans = _rand(data.player?.neutral || data.player?.positive || data.player);
+        if (!sit || !ans) return null;
+        _addPairBond(1 + Math.floor(Math.random() * 2));
+        return { kind, player: fill(ans), reply: fill(sit), reverse: true };
+      }
+
+      return null;
     },
     // `npcName` is what decides which of the eight voices the noise comes out
     // in; without it the Feral bank answers, which is what every caller written

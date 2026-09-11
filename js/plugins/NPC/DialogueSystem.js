@@ -3258,17 +3258,31 @@ Imported.DialogueSystem = true;
     // know exactly how the other one will take it. Whoever is leading says the
     // `player` half, the other one answers, and the bond goes up either way.
     function buildPairBickerExchange(ev, npcName, profile) {
-        const H = window.NPCEmpathize?._helpers;
-        const actor = (() => { try { return $gameParty.leader(); } catch (err) { return null; } })();
-        if (!H || !actor) return null;
-        const layer = H._pairContext?.(actor, npcName, ev);
-        const beat  = layer && H._rand?.(layer.data.bicker);
-        if (!beat || !beat.player || !beat.reply) return null;
-        const fill = s => vary(String(s || '').replace(/\{name\}/g, npcName || ''));
-        const said = fill(beat.player);
-        const back = fill(beat.reply);
-        if (!said || !back) return null;
         const EM = window.NPCEmpathize;
+        const H  = EM?._helpers;
+        const actor = (() => { try { return $gameParty.leader(); } catch (err) { return null; } })();
+        if (!actor) return null;
+        const beat = EM?.pairTalkBeat?.(actor);
+        if (beat && beat.player && beat.reply) {
+            const fill = s => vary(String(s || '').replace(/\{name\}/g, npcName || ''));
+            const pText = fill(beat.player);
+            const rText = fill(beat.reply);
+            EM?.recordNPCLine?.(npcName, pText, 'player');
+            EM?.recordNPCLine?.(npcName, rText, 'npc');
+            payCompany(ev, npcName);
+            if (beat.reverse) {
+                return [npcStep(ev, npcName, rText), playerStep(actor, pText)];
+            }
+            return [playerStep(actor, pText), npcStep(ev, npcName, rText)];
+        }
+        if (!H) return null;
+        const layer = H._pairContext?.(actor, npcName, ev);
+        const rawBeat = layer && H._rand?.(layer.data.bicker);
+        if (!rawBeat || !rawBeat.player || !rawBeat.reply) return null;
+        const fill = s => vary(String(s || '').replace(/\{name\}/g, npcName || ''));
+        const said = fill(rawBeat.player);
+        const back = fill(rawBeat.reply);
+        if (!said || !back) return null;
         EM?.recordNPCLine?.(npcName, said, 'player');
         EM?.recordNPCLine?.(npcName, back, 'npc');
         H._addPairBond?.(pairBickerBond());
@@ -3805,7 +3819,12 @@ Imported.DialogueSystem = true;
         const name = storyAskPartner();
         if (!name) return null;
         try {
-            return $gameParty.members().find(a => a && a.name && a.name().trim() === name) || null;
+            const inParty = $gameParty.members().find(a => a && a.name && a.name().trim() === name);
+            if (inParty) return inParty;
+            if (name === STORY_ASK_BUBBA && $gameSwitches && $gameSwitches.value(STORY_ASK_SWITCH)) {
+                return window.PartyRoster?.getBubbaActor?.() || ($gameActors ? $gameActors.actor(2) : null);
+            }
+            return null;
         } catch (err) { return null; }
     }
 
@@ -3827,10 +3846,14 @@ Imported.DialogueSystem = true;
         const EMP = window.NPCEmpathize;
         const jab = EMP?.pairTalkBeat?.(leader) || EMP?.pairBickerBeat?.(leader);
         if (jab) {
-            const said = playerStep(leader, jab.player);
-            const back = playerStep(partner, jab.reply);
-            said.side = 'left';
-            back.side = 'right';
+            const firstActor  = jab.reverse ? partner : leader;
+            const secondActor = jab.reverse ? leader : partner;
+            const firstText   = jab.reverse ? jab.reply : jab.player;
+            const secondText  = jab.reverse ? jab.player : jab.reply;
+            const said = playerStep(firstActor, firstText);
+            const back = playerStep(secondActor, secondText);
+            said.side = firstActor === leader ? 'left' : 'right';
+            back.side = secondActor === leader ? 'left' : 'right';
             return startNPCExchange([said, back], true);
         }
         const beats = window.PartyBanter?.discussion?.([leader, partner]);
@@ -3926,6 +3949,7 @@ Imported.DialogueSystem = true;
 
     function combatTutorialWalksWithBubba() {
         try {
+            if ($gameSwitches && $gameSwitches.value(STORY_ASK_SWITCH)) return true;
             return $gameParty.members().some(
                 a => a && a.name && a.name().trim() === STORY_ASK_BUBBA);
         } catch (err) { return false; }

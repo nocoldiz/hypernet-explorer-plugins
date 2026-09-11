@@ -381,7 +381,15 @@
 
     // ------------------------------------------------------------ the people
     function members() {
-        return ($gameParty && $gameParty.members && $gameParty.members()) || [];
+        const party = ($gameParty && $gameParty.members && $gameParty.members()) || [];
+        if (typeof $gameSwitches !== "undefined" && $gameSwitches && $gameSwitches.value(100)) {
+            const hasBubba = party.some(a => a && a.name && a.name().trim() === "Bubba");
+            if (!hasBubba) {
+                const bubbaActor = window.PartyRoster?.getBubbaActor?.() || ($gameActors ? $gameActors.actor(2) : null);
+                if (bubbaActor) return party.concat(bubbaActor);
+            }
+        }
+        return party;
     }
 
     function active() {

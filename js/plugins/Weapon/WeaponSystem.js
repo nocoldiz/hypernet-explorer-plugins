@@ -206,7 +206,11 @@
   // Bow, projectile and gun: the weapon types whose attack is a shot rather
   // than a swing. One shot is one discrete round, which is why they are heard
   // whether or not the round connects.
-  const RANGED_WTYPES = [7, 8, 9];
+  // The list itself lives in BattleSystem/BattleSystemEnhanced.js
+  // (window.SkillWeaponReq), which loads first and is the one authority on
+  // which weapon types shoot; the literal here is only what is left if that
+  // plugin is switched off.
+  const RANGED_WTYPES = (window.SkillWeaponReq && window.SkillWeaponReq.RANGED_WTYPES) || [7, 8, 9];
 
   const DEFAULT_WEAPON_SOUNDS = {
     // Chosen by measuring every candidate in audio/se/Weapons rather than by
@@ -717,9 +721,21 @@
   // the same noise the same weapon makes in the party's hands.
   window.WeaponSounds = { soundsFor: weaponSoundsFor, play: playWeaponSoundFor };
 
-  Game_Actor.prototype.getWeaponSounds = function () {
-    if (this.isOutOfBullets()) return BASH_SOUNDS;
-    return weaponSoundsFor(this.weapons()[0]);
+  /**
+   * @param {object} [weapon] - the weapon this blow is struck with, when it is
+   *   not the leading hand's: a skill whose school is a weapon is performed
+   *   with THAT weapon (window.SkillWeaponReq), so a shot fired by someone
+   *   wearing a sword in the right hand is still heard as a gun.
+   */
+  Game_Actor.prototype.getWeaponSounds = function (weapon) {
+    const held = weapon || this.weapons()[0];
+    // A dry magazine turns the shot into a Bash, but only for the weapon that
+    // ran dry: a sword drawn for a skill while the gun on the other hip is
+    // empty still rings as a sword.
+    const dry = this.isOutOfBullets() &&
+      (!weapon || RANGED_WTYPES.includes(held && held.wtypeId));
+    if (dry) return BASH_SOUNDS;
+    return weaponSoundsFor(held);
   };
 
   /**
@@ -748,8 +764,8 @@
     return weapon && weapon.noMultiAttackSound === true;
   };
 
-  Game_Actor.prototype.playWeaponSound = function () {
-    const pitch = playSoundList(this.getWeaponSounds());
+  Game_Actor.prototype.playWeaponSound = function (weapon) {
+    const pitch = playSoundList(this.getWeaponSounds(weapon));
     // Layer the elemental shimmer SE over the weapon sound when applicable.
     if (pitch) this.playWeaponShimmerSE(pitch);
   };
@@ -956,11 +972,22 @@
         this._lastAttacker = subject;
         this._multiAttackHitCount = 0;
         this._skillAnimations = null;
+        this._skillWeaponIndex = null;
         debugLog(`Tracking attacker: ${subject.name()}`);
       } else if (action.isSkill()) {
         const skill = action.item();
         const weapons = subject.weapons();
-        const wtypeId = (weapons.length && weapons[0]) ? weapons[0].wtypeId : 0;
+        // A character with a sword on the hip AND a gun in the holster keeps
+        // both schools (window.SkillWeaponReq bars neither), so the hand the
+        // blow is thrown with is the one the school asks for: a shot leaves
+        // the gun and a slash is cut with the sword, rather than both being
+        // played on whatever hangs in the right hand. -1, and every skill that
+        // asks for no weapon at all, keeps the leading hand.
+        const reqIndex = window.SkillWeaponReq
+          ? window.SkillWeaponReq.indexIn(weapons, skill) : -1;
+        this._skillWeaponIndex = reqIndex >= 0 ? reqIndex : null;
+        const hand = reqIndex >= 0 ? reqIndex : 0;
+        const wtypeId = (weapons.length && weapons[hand]) ? weapons[hand].wtypeId : 0;
         // A weapon that shoots plays its own shot for a skill as well as for a
         // plain attack. What a bow, a sling or a gun does is decided by the
         // weapon and not by the name the skill asked for
@@ -996,11 +1023,13 @@
         this._lastAttacker = null;
         this._multiAttackHitCount = 0;
         this._skillAnimations = null;
+        this._skillWeaponIndex = null;
       }
     } else {
       this._lastAttacker = null;
       this._multiAttackHitCount = 0;
       this._skillAnimations = null;
+      this._skillWeaponIndex = null;
     }
 
     // A plain weapon attack is drawn by WeaponHitFX now, so the database
@@ -1044,7 +1073,14 @@
 
       // Determine weapon index for dual wield
       let weaponIndex = 0;
-      if (isDualWielding) {
+      if (this._skillWeaponIndex !== null && this._skillWeaponIndex !== undefined) {
+        // A skill whose school is a weapon is performed with THAT weapon, in
+        // whichever hand it hangs (startAction resolved it): a sword and a gun
+        // worn together no longer take it in turns to answer for a shot. The
+        // motion, the model that moves, the hit mark and the sound all follow
+        // this index.
+        weaponIndex = this._skillWeaponIndex;
+      } else if (isDualWielding) {
         this._multiAttackHitCount = this._multiAttackHitCount || 0;
         const weapon1Repeats = weapons[0] ? actor.attackTimesAdd() + 1 : 1;
         weaponIndex = this._multiAttackHitCount < weapon1Repeats ? 0 : 1;
@@ -1108,7 +1144,11 @@
         this._multiAttackHitCount = this._multiAttackHitCount || 0;
 
         if (this._multiAttackHitCount === 0 || !noMultiSound) {
-          actor.playWeaponSound();
+          // The hand the school asked for, when it asked for one: the sound
+          // follows the model that moved rather than the leading hand.
+          const skillHand = (this._skillWeaponIndex !== null &&
+            this._skillWeaponIndex !== undefined) ? heldWeapon : null;
+          actor.playWeaponSound(skillHand);
         }
       }
 
@@ -1567,7 +1607,12 @@
     }
     // Both of those are battlefield-local; the weapon overlay is in game pixels.
     const field = this._battleField;
-    return { x: p.x + (field ? field.x : 0), y: p.y + (field ? field.y : 0) };
+    const fx = field ? field.x : 0;
+    const fy = field ? field.y : 0;
+    const pt = this._cachedAimPoint || (this._cachedAimPoint = { x: 0, y: 0 });
+    pt.x = p.x + fx;
+    pt.y = p.y + fy;
+    return pt;
   };
 
   /**

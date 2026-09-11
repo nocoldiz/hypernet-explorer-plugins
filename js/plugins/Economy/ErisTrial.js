@@ -889,7 +889,7 @@
     // Switch 49 is his dossier's; the name check covers a Bubba who joined
     // outside character creation, or a run whose switches were reset.
     inPlay() {
-      if (window.$gameSwitches && $gameSwitches.value(49)) return true;
+      if (window.$gameSwitches && ($gameSwitches.value(49) || $gameSwitches.value(100))) return true;
       return !!(window.$gameParty && $gameParty.members &&
         $gameParty.members().some(m => m && m.name() === "Bubba"));  // i18n-ignore  actor name match
     },

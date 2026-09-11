@@ -1584,7 +1584,18 @@
     // lay the page out again for every single one. It goes through the shared
     // per-frame read (Core/ParchmentToast.js), which the whole game's overlays
     // take ONE layout between them, and falls back to its own only without it.
+    DamagePopupDOM._cachedView = { left: 0, top: 0, sx: 1, sy: 1 };
+    DamagePopupDOM._cachedFrame = -1;
+
     DamagePopupDOM.view = function() {
+        if (!this._cachedView) {
+            this._cachedView = { left: 0, top: 0, sx: 1, sy: 1 };
+            this._cachedFrame = -1;
+        }
+        const frame = (typeof Graphics !== 'undefined' && typeof Graphics.frameCount === 'number') ? Graphics.frameCount : -1;
+        if (frame >= 0 && this._cachedFrame === frame) {
+            return this._cachedView;
+        }
         const shared = window.FrameBudget && window.FrameBudget.canvasRect();
         const r = shared || (() => {
             const canvas = typeof Graphics !== 'undefined' ? Graphics._canvas : null;
@@ -1592,12 +1603,13 @@
             return canvas.getBoundingClientRect();
         })();
         if (!r || !(r.width > 0) || !(r.height > 0)) return null;
-        return {
-            left: r.left,
-            top: r.top,
-            sx: r.width / Graphics.width,
-            sy: r.height / Graphics.height
-        };
+        if (typeof Graphics === 'undefined' || !Graphics.width || !Graphics.height) return null;
+        this._cachedView.left = r.left;
+        this._cachedView.top = r.top;
+        this._cachedView.sx = r.width / Graphics.width;
+        this._cachedView.sy = r.height / Graphics.height;
+        this._cachedFrame = frame;
+        return this._cachedView;
     };
 
     // The punch-in curve: a small overshoot that settles back to 1 and holds.
@@ -1674,14 +1686,29 @@
         const gy = (wt && wt.ty !== undefined) ? wt.ty : this.y;
         const x = view.left + (gx + shake) * view.sx;
         const y = view.top + (gy - DMG_ANCHOR_UP - rise) * view.sy;
-        el.style.fontSize = (this.fontSize() * view.sy).toFixed(2) + 'px';
-        el.style.transform = 'translate(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px) scale(' + k.toFixed(3) + ')';
-        el.style.opacity = (this.opacity / 255).toFixed(3);
+        const fsStr = (this.fontSize() * view.sy).toFixed(2) + 'px';
+        if (this._lastFontSize !== fsStr) {
+            el.style.fontSize = fsStr;
+            this._lastFontSize = fsStr;
+        }
+        const trans = 'translate(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px) scale(' + k.toFixed(3) + ')';
+        if (this._lastTrans !== trans) {
+            el.style.transform = trans;
+            this._lastTrans = trans;
+        }
+        const op = (this.opacity / 255).toFixed(3);
+        if (this._lastOp !== op) {
+            el.style.opacity = op;
+            this._lastOp = op;
+        }
     };
 
     Sprite_Damage.prototype.removeDomPopup = function() {
         if (this._domEl && this._domEl.parentNode) this._domEl.parentNode.removeChild(this._domEl);
         this._domEl = null;
+        this._lastFontSize = null;
+        this._lastTrans = null;
+        this._lastOp = null;
     };
 
     const _Sprite_Damage_update = Sprite_Damage.prototype.update;

@@ -1993,7 +1993,7 @@
     // filtered out of the board only, so lookups by id, a save that already
     // carries the character, and the story mode's own flow are untouched.
     return getCharacterPresets().filter(
-      (preset) => !preset.hidden && (preset.endless || used.indexOf(preset.id) < 0)
+      (preset) => !preset.hidden && preset.name !== "Bubba" && (preset.endless || used.indexOf(preset.id) < 0)
     );
   }
 
@@ -2548,6 +2548,7 @@
       enemyId: actor._recruitedEnemyId || 0,
       isCreature: isCreatureSlot(actor),
       gender: actor.gender ? actor.gender() : 0,
+      hidden: !!(actor && typeof actor.name === "function" && actor.name() === "Bubba"),
       retired: true,
       retiredAtMin: minute,
       retiredDate: dateStr,
@@ -2638,6 +2639,16 @@
     return 0;
   }
 
+  function isEmStoryParty() {
+    if (typeof $gameSwitches === "undefined" || !$gameSwitches || !$gameSwitches.value(100)) {
+      return false;
+    }
+    if (typeof $gameParty !== "undefined" && $gameParty && $gameParty.leader()) {
+      return $gameParty.leader().name() === "Em";
+    }
+    return true;
+  }
+
   /**
    * Inactive dossiers this world can still call back. One already played in
    * character creation is spent, so it stays out of the roster's bench too.
@@ -2645,7 +2656,12 @@
    */
   function getAvailableRetiredPresets() {
     const used = getUsedPresetIds();
-    return getRetiredPresets().filter((preset) => used.indexOf(preset.id) < 0);
+    const allowBubba = isEmStoryParty();
+    return getRetiredPresets().filter((preset) => {
+      if (used.indexOf(preset.id) >= 0) return false;
+      if (preset.name === "Bubba" && !allowBubba) return false;
+      return true;
+    });
   }
 
   /**
@@ -2749,6 +2765,9 @@
 
     const preset = getAvailableRetiredPresets().find((entry) => entry.id === presetId);
     if (!preset) return { ok: false, reason: "notRetired" };
+    if (preset.name === "Bubba" && !isEmStoryParty()) {
+      return { ok: false, reason: "storyLocked" };
+    }
     if ($gameParty.members().some((mem) => mem.name() === preset.name)) {
       return { ok: false, reason: "alreadyHere" };
     }

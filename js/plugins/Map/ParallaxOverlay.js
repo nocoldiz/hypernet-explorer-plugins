@@ -507,7 +507,9 @@
             
             if (data.looping) {
                 // TilingSprite - update size and origin for looping
-                sprite.move(0, 0, Graphics.width, Graphics.height);
+                if (sprite.x !== 0 || sprite.y !== 0 || sprite.width !== Graphics.width || sprite.height !== Graphics.height) {
+                    sprite.move(0, 0, Graphics.width, Graphics.height);
+                }
                 
                 if (data.fixed) {
                     sprite.origin.x = 0;

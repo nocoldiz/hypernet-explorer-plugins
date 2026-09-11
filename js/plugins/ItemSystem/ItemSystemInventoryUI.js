@@ -928,7 +928,6 @@
         <div class="item-inspect item-inspect--empty">
           <div class="inspect-placeholder-icon"></div>
           <h3 class="title">${T('Inventory.ui.inspectionLog')}</h3>
-          <p class="inspect-placeholder-text">${T('Inventory.ui.inspectionPlaceholder')}</p>
         </div>`;
     } else {
       const isWeapon = DataManager.isWeapon(selectedItem);

@@ -1445,11 +1445,15 @@
     };
 
     Scene_File.prototype.drawUICharacters = function () {
+        if (!this._dndContainer) return;
         const canvases = this._dndContainer.querySelectorAll('.char-sprite-canvas');
         canvases.forEach(canvas => {
             const charName = canvas.getAttribute('data-name');
             const charIndex = parseInt(canvas.getAttribute('data-index'));
             if (charName) {
+                const key = `${charName}:${charIndex}`;
+                if (canvas.dataset.rendered === key) return;
+                canvas.dataset.rendered = key;
                 drawCharacterOnCanvas(canvas, charName, charIndex);
             }
         });

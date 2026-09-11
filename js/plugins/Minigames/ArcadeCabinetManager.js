@@ -620,7 +620,7 @@
             this._onTitleScreen = true;
             this._demoTimer = 0;
             this.updateTitleScreen();
-            this.updateCoinDisplay();
+            this.updateCoinDisplay(true);
             this.updateInfoDisplay();
         }
         
@@ -652,10 +652,12 @@
             }
         }
         
-        updateCoinDisplay() {
+        updateCoinDisplay(force = false) {
+            const coins = ArcadeManager.getCoins();
+            if (!force && this._lastCoins === coins) return;
+            this._lastCoins = coins;
             this._coinSprite.bitmap.clear();
             this._coinSprite.bitmap.textColor = '#ffff00';
-            const coins = ArcadeManager.getCoins();
             const text = `${ArcadeManager.getText('coins')}: ${coins}`;
             this._coinSprite.bitmap.drawText(text, 0, 0, 250, 50, 'center');
         }

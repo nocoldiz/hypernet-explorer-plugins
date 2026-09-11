@@ -309,7 +309,7 @@
     "useItemOn": "Use {item} on",
     "eatItem": "Eat {item}",
     "cancel": "Cancel",
-    "inspectionLog": "Inspection Log",
+    "inspectionLog": "Details",
     "inspectionPlaceholder": "Select an item from the backpack on the left to inspect its natural properties, chemical composition, and mechanical details.",
     "useItem": "Use Item",
     "equip": "Equip",

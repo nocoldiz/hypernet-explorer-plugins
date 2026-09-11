@@ -253,7 +253,7 @@
     }
 
     // i18n-ignore: actor names, matched at runtime
-    const STORY_FIXED_NAMES = ["Em", "Bubba"];
+    const STORY_FIXED_NAMES = ["Em"];
 
     const _Game_Party_removeActor = Game_Party.prototype.removeActor;
     Game_Party.prototype.removeActor = function(actorId) {
@@ -943,4 +943,108 @@
         window.skipLocalization = false;
 
     }
+
+    // -------------------------------------------------------------------------
+    // Story Follower: Bubba following Em's party even when not in active party
+    // -------------------------------------------------------------------------
+    function getBubbaActor() {
+        if (typeof $gameActors !== 'undefined' && $gameActors) {
+            for (let i = 1; i <= 3; i++) {
+                const a = $gameActors.actor(i);
+                if (a && a.name && a.name() === 'Bubba') return a;
+            }
+            const any = ($gameActors._data || []).find(a => a && a.name && a.name() === 'Bubba');
+            if (any) return any;
+            const a2 = $gameActors.actor(2);
+            if (a2) return a2;
+        }
+        return null;
+    }
+
+    function Game_BubbaFollower() {
+        this.initialize(...arguments);
+    }
+
+    Game_BubbaFollower.prototype = Object.create(Game_Follower.prototype);
+    Game_BubbaFollower.prototype.constructor = Game_BubbaFollower;
+
+    Game_BubbaFollower.prototype.initialize = function(memberIndex) {
+        Game_Follower.prototype.initialize.call(this, memberIndex);
+    };
+
+    Game_BubbaFollower.prototype.isStoryMode = function() {
+        return !!(window.$gameSwitches && $gameSwitches.value(100));
+    };
+
+    Game_BubbaFollower.prototype.isBubbaInParty = function() {
+        return !!($gameParty && $gameParty.members && $gameParty.members().some(m => m && m.name && m.name() === 'Bubba'));
+    };
+
+    Game_BubbaFollower.prototype.isVisible = function() {
+        if (!this.isStoryMode()) return false;
+        if (this.isBubbaInParty()) return false;
+        return !!($gamePlayer && $gamePlayer.followers && $gamePlayer.followers().isVisible());
+    };
+
+    Game_BubbaFollower.prototype.actor = function() {
+        if (!this.isVisible()) return null;
+        return getBubbaActor();
+    };
+
+    Game_BubbaFollower.prototype.refresh = function() {
+        if (this.isVisible()) {
+            const a = this.actor();
+            const charName = a ? a.characterName() : "NPCs/!$Bubba1";
+            const charIndex = a ? a.characterIndex() : 0;
+            this.setImage(charName, charIndex);
+        } else {
+            this.setImage("", 0);
+        }
+    };
+
+    Game_BubbaFollower.prototype.chaseCharacter = function(character) {
+        if (!this.isVisible()) return;
+        let target = character;
+        if (!target || !target.isVisible || !target.isVisible()) {
+            const followers = ($gamePlayer && $gamePlayer.followers()) ? $gamePlayer.followers().data() : [];
+            const myIndex = followers.indexOf(this);
+            target = $gamePlayer;
+            for (let i = myIndex - 1; i >= 0; i--) {
+                const f = followers[i];
+                if (f && f.isVisible && f.isVisible()) {
+                    target = f;
+                    break;
+                }
+            }
+        }
+        Game_Follower.prototype.chaseCharacter.call(this, target);
+    };
+
+    window.Game_BubbaFollower = Game_BubbaFollower;
+
+    Game_Followers.prototype.ensureBubbaFollower = function() {
+        if (!this._data) this._data = [];
+        if (!this._data.some(f => f instanceof Game_BubbaFollower)) {
+            const bf = new Game_BubbaFollower(this._data.length);
+            if (typeof $dataMap !== "undefined" && $dataMap &&
+                typeof $gamePlayer !== "undefined" && $gamePlayer && $gamePlayer.locate) {
+                bf.locate($gamePlayer.x, $gamePlayer.y);
+            }
+            this._data.push(bf);
+        }
+    };
+
+    const _Game_Followers_setup_bubba = Game_Followers.prototype.setup;
+    Game_Followers.prototype.setup = function() {
+        _Game_Followers_setup_bubba.call(this);
+        this.ensureBubbaFollower();
+    };
+
+    const _Spriteset_Map_createCharacters_bubba = Spriteset_Map.prototype.createCharacters;
+    Spriteset_Map.prototype.createCharacters = function() {
+        if ($gamePlayer && $gamePlayer.followers()) {
+            $gamePlayer.followers().ensureBubbaFollower();
+        }
+        _Spriteset_Map_createCharacters_bubba.call(this);
+    };
 })();

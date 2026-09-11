@@ -1719,13 +1719,35 @@
   Scene_Shop.prototype.getShopStateHash = function () {
     const isBuyMode = this.isShopBuyMode();
     const isSellMode = this.isShopSellMode();
-    const buyIdx = this._buyWindow.index();
-    const sellIdx = this._sellWindow.index();
+    const buyIdx = this._buyWindow ? this._buyWindow.index() : -1;
+    const sellIdx = this._sellWindow ? this._sellWindow.index() : -1;
     const catIdx = this.shopCategoryFilter(isBuyMode);
-    const numActive = this._numberWindow.active;
-    const numVal = this._numberWindow.number();
-    const numMax = this._numberWindow.max();
-    const partyGold = $gameParty.gold();
+    const numActive = this._numberWindow ? this._numberWindow.active : false;
+    const numVal = this._numberWindow ? this._numberWindow.number() : 0;
+    const numMax = this._numberWindow ? this._numberWindow.max() : 0;
+    const partyGold = $gameParty ? $gameParty.gold() : 0;
+    const chipFocus = this._chipFocus || false;
+    const selHash = this.cartHash(isBuyMode);
+    const stockRev = this._shopStockRevision || 0;
+
+    if (
+      this._lastHashState &&
+      this._lastHashState.isBuyMode === isBuyMode &&
+      this._lastHashState.isSellMode === isSellMode &&
+      this._lastHashState.buyIdx === buyIdx &&
+      this._lastHashState.sellIdx === sellIdx &&
+      this._lastHashState.catIdx === catIdx &&
+      this._lastHashState.numActive === numActive &&
+      this._lastHashState.numVal === numVal &&
+      this._lastHashState.numMax === numMax &&
+      this._lastHashState.partyGold === partyGold &&
+      this._lastHashState.chipFocus === chipFocus &&
+      this._lastHashState.selHash === selHash &&
+      this._lastHashState.stockRev === stockRev
+    ) {
+      return this._lastHashState.hash;
+    }
+
     const buyData = this.buyData();
     const sellData = this.sellData();
     const stockHash = buyData.map(item => this.getStock(item)).join(",");
@@ -1733,9 +1755,13 @@
     const worn = wornCounts();
     const ownedHash = sellData.map(item => $gameParty.numItems(item) + (worn.get(item) || 0)).join(",");
 
-    const chipFocus = this._chipFocus || false;
-    const selHash = this.cartHash(isBuyMode);
-    return `${isBuyMode}_${isSellMode}_${buyIdx}_${sellIdx}_${catIdx}_${numActive}_${numVal}_${numMax}_${partyGold}_${buyData.length}_${sellData.length}_${stockHash}_${ownedHash}_${chipFocus}_${selHash}`;
+    const hash = `${isBuyMode}_${isSellMode}_${buyIdx}_${sellIdx}_${catIdx}_${numActive}_${numVal}_${numMax}_${partyGold}_${buyData.length}_${sellData.length}_${stockHash}_${ownedHash}_${chipFocus}_${selHash}`;
+    this._lastHashState = {
+      isBuyMode, isSellMode, buyIdx, sellIdx, catIdx,
+      numActive, numVal, numMax, partyGold, chipFocus,
+      selHash, stockRev, hash
+    };
+    return hash;
   };
 
   Scene_Shop.prototype.syncUIShopState = function () {
@@ -3392,6 +3418,7 @@
 
   const _Scene_Shop_doBuy = Scene_Shop.prototype.doBuy;
   Scene_Shop.prototype.doBuy = function (number) {
+    this._shopStockRevision = (this._shopStockRevision || 0) + 1;
     const spent = number * this.buyingPrice();
     _Scene_Shop_doBuy.call(this, number);
     this.reduceStock(this._item, number);
@@ -3407,6 +3434,7 @@
 
   const _Scene_Shop_doSell = Scene_Shop.prototype.doSell;
   Scene_Shop.prototype.doSell = function (number) {
+    this._shopStockRevision = (this._shopStockRevision || 0) + 1;
     const earned = number * this.sellingPrice();
     // What is sold over a counter stays on it: a keepsake handed in is the
     // only way one ever appears on a shelf, and it can be bought back for

@@ -130,6 +130,7 @@
     const HOTKEYS = [
         { symbol: "item",        key: "I", code: 73 },
         { symbol: "quest_log",   key: "J", code: 74 },
+        { symbol: "cooking",     key: "K", code: 75 },
         { symbol: "skill",       key: "U", code: 85 },
         { symbol: "status1",     key: "C", code: 67 },
         { symbol: "equip",       key: "O", code: 79 },

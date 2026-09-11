@@ -482,8 +482,13 @@
   // The R hotkey / menu tile / hotbar: waiting where the party stands, with
   // the Sleep page reachable by flipping the selector. Waiting runs the clock
   // and wears the needs down; sleeping here is sleeping rough, so it refills
-  // only part of the sleep meter and mends nobody's bones.
+  // only part of the sleep meter and mends nobody's bones. On the world map
+  // (315) waiting opens the camp rest instead (window.CampRest).
   Scene_Map.prototype.openWaitMenu = function () {
+    if ($gameMap && $gameMap.mapId() === 315 && window.CampRest) {
+      window.CampRest.pitch(this);
+      return;
+    }
     this.openSleepMenu("wait", { roughRest: true });
   };
 

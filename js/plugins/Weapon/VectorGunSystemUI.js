@@ -12,19 +12,18 @@
  * Scene_VectorGun, the screen the main menu opens in story mode.
  *
  * The shared kit and nothing of its own: one .book-spread, a .page-header-bar
- * carrying the one .back-button, a .backpack-tabs strip of THREE pages, and a
+ * carrying the one .back-button, a .backpack-tabs strip of TWO pages, and a
  * .backpack-grid of .item-slot cards on the left page, written exactly as the
  * skills menu writes a skill (a stripe, an icon, a name, a cost or a state).
  * The right page is the gun on the shared 3D viewer (window.Weapon3DPreview)
  * with the card for the row under the cursor beneath it, and the three bays the
  * gun is running along the bottom.
  *
- * The three pages:
+ * The two pages:
  *   modes  - the twenty odd operating modes, three across
  *   form   - the shapes the gun folds into AND the element it carries, one
  *            page because both are "what the weapon is" rather than what it
  *            is running
- *   spell  - the bound spell, written like the skills menu writes one
  *
  * The grid is the control: every card is a button. Confirming a mode LOADS it
  * into the first free bay of the three the gun runs, and with all three taken
@@ -46,11 +45,6 @@
   const MODE_KEYS = VG.MODE_KEYS;
   const MAX_MODES = VG.MAX_MODES;
   const modes = VG.modes;
-  const boundSpellId = VG.boundSpellId;
-  const setBoundSpell = VG.setBoundSpell;
-  const spellChoices = VG.spellChoices;
-  const wielder = VG.wielder;
-  const emActor = VG.emActor;
   const elementId = VG.elementId;
   const setElement = VG.setElement;
   const ELEMENT_IDS = VG.ELEMENT_IDS;
@@ -64,8 +58,8 @@
   const STAND_SETTLE = 140;
 
   // The shapes and the element are one page: both answer "what is this weapon",
-  // where the modes answer "what is it doing" and the spell "what rides on it".
-  const TABS = ['modes', 'form', 'spell'];
+  // where the modes answer "what is it doing".
+  const TABS = ['modes', 'form'];
   // How many cards a line of the grid holds. Must match .vg-grid's
   // grid-template-columns in css/theme.css, the way every other grid scene
   // keeps its own COLS in step with the sheet.
@@ -261,18 +255,12 @@
         return byName(MODE_KEYS, (key) => T('VectorGun.mode.' + key + '.name'))
           .map((key) => ({ kind: 'mode', key: key }));
       }
-      if (this._tab === 'form') {
-        return [{ kind: 'head', text: T('VectorGun.section.forms') }]
-          .concat(byName(FORM_CHOICES, (key) => shapeText(key, 'name'))
-            .map((key) => ({ kind: 'form', key: key })))
-          .concat([{ kind: 'head', text: T('VectorGun.section.elements') }])
-          .concat(byName(ELEMENT_IDS, elementName)
-            .map((id) => ({ kind: 'element', id: id })));
-      }
-      return [{ kind: 'spell', id: 0 }].concat(
-        byName(spellChoices().map((skill) => skill.id),
-          (id) => ($dataSkills[id] ? $dataSkills[id].name : ''))
-          .map((id) => ({ kind: 'spell', id: id })));
+      return [{ kind: 'head', text: T('VectorGun.section.forms') }]
+        .concat(byName(FORM_CHOICES, (key) => shapeText(key, 'name'))
+          .map((key) => ({ kind: 'form', key: key })))
+        .concat([{ kind: 'head', text: T('VectorGun.section.elements') }])
+        .concat(byName(ELEMENT_IDS, elementName)
+          .map((id) => ({ kind: 'element', id: id })));
     }
 
     /** The cards a cursor can actually land on, in grid order. */
@@ -456,7 +444,7 @@
     /**
      * Works the card under the cursor: a mode is loaded into a bay (pushing the
      * oldest out when all three are taken) or unloaded, a shape or an element is
-     * fitted, a spell is bound.
+     * fitted.
      */
     confirmRow(index) {
       this._index = index;
@@ -471,12 +459,6 @@
         setElement(row.id);
         SoundManager.playOk();
         this._toast(T('VectorGun.toast.element', { element: elementName(row.id) }), 'vgelement');
-      } else {
-        setBoundSpell(row.id);
-        SoundManager.playOk();
-        const skill = $dataSkills[row.id];
-        this._toast(skill ? T('VectorGun.toast.bound', { spell: skill.name })
-          : T('VectorGun.toast.cleared'), 'vgspell');
       }
       this._paint();
     }
@@ -680,9 +662,6 @@
 
     _gridHTML() {
       const rows = this.rows();
-      if (this._tab === 'spell' && !spellChoices().length && rows.length <= 1) {
-        return `<div class="item-grid-empty">${esc(T('VectorGun.spell.empty'))}</div>`;
-      }
       let pick = -1;
       return rows.map((row) => {
         if (row.kind === 'head') {
@@ -691,8 +670,7 @@
         pick++;
         const card = row.kind === 'mode' ? this._modeCard(row.key)
           : row.kind === 'form' ? this._formCard(row.key)
-          : row.kind === 'element' ? this._elementCard(row.id)
-          : this._spellCard(row.id);
+          : this._elementCard(row.id);
         const index = pick;
         return `
           <div class="item-slot focusable${index === this._index ? ' selected' : ''}${card.on ? ' vg-on' : ''}"
@@ -748,22 +726,6 @@
       };
     }
 
-    /** A bound spell reads exactly as it reads in the skills menu. */
-    _spellCard(skillId) {
-      const skill = $dataSkills[skillId];
-      const actor = wielder() || emActor();
-      const cost = skill && actor ? VG.spellCost(actor, skill) : 0;
-      const on = boundSpellId() === skillId;
-      return {
-        name: skill ? skill.name : T('VectorGun.spell.none'),
-        icon: skill ? skill.iconIndex : 0,
-        meta: skill ? T('VectorGun.spell.fired', { cost: cost }) : '',
-        chip: on ? T('VectorGun.state.on') : '',
-        stripe: on ? STRIPE_ON : STRIPE_OFF,
-        on: on,
-      };
-    }
-
     //------------------------------------------------------------------------
     // The right page: the gun, the card under the cursor, the three bays
     //------------------------------------------------------------------------
@@ -773,8 +735,7 @@
       if (!row) return '';
       const card = row.kind === 'mode' ? this._modeDetail(row.key)
         : row.kind === 'form' ? this._formDetail(row.key)
-        : row.kind === 'element' ? this._elementDetail(row.id)
-        : this._spellDetail(row.id);
+        : this._elementDetail(row.id);
       return `
         <div class="ui-detail-head">
           <div class="ui-detail-titles">
@@ -869,19 +830,6 @@
       };
     }
 
-    _spellDetail(skillId) {
-      const skill = $dataSkills[skillId];
-      const actor = wielder() || emActor();
-      const cost = skill && actor ? VG.spellCost(actor, skill) : 0;
-      return {
-        name: skill ? skill.name : T('VectorGun.spell.none'),
-        kind: T('VectorGun.detail.spellTitle'),
-        prose: skill ? (skill.description || line('VectorGun.spell.hint')) : line('VectorGun.spell.noneDesc'),
-        specs: [
-          [T('VectorGun.detail.cost'), skill ? T('VectorGun.spell.mp', { cost: cost }) : T('VectorGun.detail.unbound')],
-        ],
-      };
-    }
 
     //------------------------------------------------------------------------
     // The gun in 3D

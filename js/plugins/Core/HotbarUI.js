@@ -411,13 +411,22 @@
       // The name line sits between the slots and that edge, so the block that
       // has to fit above the bottom is the row plus the line.
       const y = Graphics.height - this.height() - this.marginBottom;
-      root.style.left = (sc.ox + x * sc.sx) + 'px';
-      root.style.top = (sc.oy + y * sc.sy) + 'px';
-      // Scale from the corner the left/top above describe: the default
-      // (centre) origin shifts the box by half its unscaled size, which is
-      // what kept the bar floating short of the bottom edge.
-      root.style.transformOrigin = '0 0';
-      root.style.transform = `scale(${sc.sx}, ${sc.sy})`;
+      const left = (sc.ox + x * sc.sx) + 'px';
+      const top = (sc.oy + y * sc.sy) + 'px';
+      const transform = `scale(${sc.sx}, ${sc.sy})`;
+      if (this._lastPosLeft !== left) {
+        root.style.left = left;
+        this._lastPosLeft = left;
+      }
+      if (this._lastPosTop !== top) {
+        root.style.top = top;
+        this._lastPosTop = top;
+      }
+      if (this._lastPosTransform !== transform) {
+        root.style.transformOrigin = '0 0';
+        root.style.transform = transform;
+        this._lastPosTransform = transform;
+      }
     }
 
     /**
@@ -449,7 +458,7 @@
         this._hoverIndex = -1;
         hideTooltip();
       }
-      root.style.display = 'flex';
+      if (root.style.display !== 'flex') root.style.display = 'flex';
       if (!this.inline) this._position();
     }
 

@@ -254,7 +254,7 @@
     "useItemOn": "USE {item} ON",
     "eatItem": "EAT {item}",
     "cancel": "CANCEL",
-    "inspectionLog": "INSPECTION LOG",
+    "inspectionLog": "DETAILS",
     "inspectionPlaceholder": "SELECT AN ITEM FROM DA BACKPACK ON DA LEFT TA INSPECT ITS NATURAL PROPERTIES, CHEMICAL COMPOSITION, AN' MECHANICAL DETAILS!",
     "useItem": "USE ITEM",
     "equip": "EQUIP",

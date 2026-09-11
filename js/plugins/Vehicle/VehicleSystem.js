@@ -3162,6 +3162,65 @@
   }
 
   /**
+   * Returns true if the map with the given id is a space biome map.
+   */
+  function isSpaceBiomeMap(mapId) {
+    if (!mapId) return false;
+    if (mapId === VehicleConfig.AIRSHIP.interior.mapId) return true;
+    if (typeof $gameMap !== 'undefined' && $gameMap && $gameMap.mapId() === mapId) {
+      if (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.note &&
+          /<Biome:\s*Space\s*>/i.test($dataMap.note)) {
+        return true;
+      }
+      if (mapId === proceduralMapId()) {
+        const pg = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem._procGenData : null;
+        if (pg && /^space$/i.test(String(pg.currentBiome || ''))) return true;
+      }
+    }
+    const knownSpaceMaps = [372, 377, 379, 380, 381, 382, 392, 437, 486, 721, 1409, 1421];
+    return knownSpaceMaps.includes(mapId);
+  }
+
+  /**
+   * True when the player/vehicle is currently in space (on a space biome map,
+   * inside the Starship interior, or inside a vehicle parked in space).
+   */
+  function isInSpace() {
+    if (typeof $gameMap === 'undefined' || !$gameMap) return false;
+    if (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.note &&
+        /<Biome:\s*Space\s*>/i.test($dataMap.note)) {
+      return true;
+    }
+    if ($gameMap.mapId() === proceduralMapId()) {
+      const pg = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem._procGenData : null;
+      if (pg && /^space$/i.test(String(pg.currentBiome || ''))) return true;
+    }
+    if (isSpaceBiomeMap($gameMap.mapId())) return true;
+
+    // When inside a vehicle's interior (e.g. camper or car), check where
+    // that vehicle is parked or where the player entered from.
+    const interiorCfg = getConfigByInteriorMapId($gameMap.mapId());
+    if (interiorCfg) {
+      if (interiorCfg.name === 'Starship') return true;
+      const key = upgradeTypeForConfig(interiorCfg);
+      const loc = key && VehiclePosition.location(key);
+      if (loc && isSpaceBiomeMap(loc.mapId)) return true;
+      const exit = key && VehiclePosition.exit(key);
+      if (exit && isSpaceBiomeMap(exit.mapId)) return true;
+    }
+    return false;
+  }
+
+  /**
+   * True only when fast travel is available for the given config and the party
+   * is not currently in space.
+   */
+  function canFastTravel(config) {
+    if (!config || isInSpace()) return false;
+    return !!getFastTravelType(config);
+  }
+
+  /**
    * Returns the vehicle config whose interior map matches the given map id, or
    * null if the map is not a known vehicle interior. (The bike has no interior.)
    */
@@ -3207,6 +3266,7 @@
   // draw each of them (window.VehicleModels).
   function canEngageLiminalDrive(config) {
     if (!config || !window.VoxelWorldSystem) return false;
+    if (isInSpace()) return false;
     const key = upgradeTypeForConfig(config);
     const drive = window.VoxelWorld && window.VoxelWorld.VEHICLE_DRIVE;
     return !!(key && (!drive || drive[key]));
@@ -3365,7 +3425,7 @@
       });
     }
 
-    const fastTravelType = getFastTravelType(config);
+    const fastTravelType = canFastTravel(config) ? getFastTravelType(config) : null;
     if (fastTravelType) {
       choices.push(T('VehicleSystem.fastTravel'));
       handlers.push(() => {
@@ -3547,7 +3607,7 @@
     const choices = [];
     const handlers = [];
 
-    const fastTravelType = getFastTravelType(config);
+    const fastTravelType = canFastTravel(config) ? getFastTravelType(config) : null;
     if (fastTravelType) {
       choices.push(T('VehicleSystem.fastTravel'));
       handlers.push(() => {
@@ -4687,6 +4747,11 @@
     isOnVehicleInteriorMap() {
       if (typeof $gameMap === 'undefined' || !$gameMap) return false;
       return !!getConfigByInteriorMapId($gameMap.mapId());
+    },
+
+    // True while the player or vehicle is in space.
+    isInSpace() {
+      return isInSpace();
     },
 
     // True while the leader is on a vehicle that is RIDDEN rather than sat in:

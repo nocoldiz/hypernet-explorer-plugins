@@ -1602,162 +1602,169 @@
         if (eatBtn) {
             const focusedItem = itemsList[this._pantryIndex];
             eatBtn.className = "inspect-btn inspect-btn--secondary focusable" + (focusedItem ? "" : " unusable");
-            const newEatBtn = eatBtn.cloneNode(true);
-            eatBtn.parentNode.replaceChild(newEatBtn, eatBtn);
-            newEatBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                if (!focusedItem) { SoundManager.playBuzzer(); return; }
-                if (CookingSystem.eatSingleItem(focusedItem)) {
-                    CookingSystem.clearSelectedItems();
-                    this.popScene();
-                }
-            });
-        }
-
-        // 2. Render Slots
-        const slotContainer1 = container.querySelector(".slot-container-1");
-        if (slotContainer1) {
-            let slot1HTML = `
-                <div class="ui-empty">${_T('Cooking.selectBase')}</div>
-            `;
-            if (item1) {
-                const iconIdx = item1.iconIndex;
-                const iconStyle = `background: url('img/system/IconSet.png') -${(iconIdx % 16) * 32}px -${Math.floor(iconIdx / 16) * 32}px no-repeat;`;
-                slot1HTML = `
-                    <div class="item-slot item-slot--compact">
-                        <div class="item-icon" style="${iconStyle}"></div>
-                        <div class="item-slot-info">
-                            <div class="item-slot-name">${window.translateText ? window.translateText(item1.name) : item1.name}</div>
-                            <div class="cook-nutrition-line">${_ci18n('nutritionShort.calories')}: ${item1.meta.calories || 0} | ${_ci18n('nutritionShort.protein')}: ${item1.meta.protein || 0} | ${_ci18n('nutritionShort.fat')}: ${item1.meta.fat || 0}</div>
-                        </div>
-                    </div>
-                `;
+            if (!eatBtn._hasClickListener) {
+                eatBtn._hasClickListener = true;
+                eatBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const currentList = this.getCachedFoodList();
+                    const currentFocused = currentList[this._pantryIndex];
+                    if (!currentFocused) { SoundManager.playBuzzer(); return; }
+                    if (CookingSystem.eatSingleItem(currentFocused)) {
+                        CookingSystem.clearSelectedItems();
+                        this.popScene();
+                    }
+                });
             }
-            slotContainer1.innerHTML = slot1HTML;
         }
 
-        const slotContainer2 = container.querySelector(".slot-container-2");
-        if (slotContainer2) {
-            let slot2HTML = `
-                <div class="ui-empty">${_T('Cooking.selectBinder')}</div>
-            `;
-            if (item2) {
-                const iconIdx = item2.iconIndex;
-                const iconStyle = `background: url('img/system/IconSet.png') -${(iconIdx % 16) * 32}px -${Math.floor(iconIdx / 16) * 32}px no-repeat;`;
-                slot2HTML = `
-                    <div class="item-slot item-slot--compact">
-                        <div class="item-icon" style="${iconStyle}"></div>
-                        <div class="item-slot-info">
-                            <div class="item-slot-name">${window.translateText ? window.translateText(item2.name) : item2.name}</div>
-                            <div class="cook-nutrition-line">${_ci18n('nutritionShort.calories')}: ${item2.meta.calories || 0} | ${_ci18n('nutritionShort.protein')}: ${item2.meta.protein || 0} | ${_ci18n('nutritionShort.fat')}: ${item2.meta.fat || 0}</div>
-                        </div>
-                    </div>
+        // 2. Render Slots and Result Card (only when selected ingredients change)
+        const slotsKey = `${item1 ? item1.id : 0}|${item2 ? item2.id : 0}|${CookingSystem._lastAdjectiveEffect || ''}`;
+        if (this._slotsKey !== slotsKey) {
+            this._slotsKey = slotsKey;
+            const slotContainer1 = container.querySelector(".slot-container-1");
+            if (slotContainer1) {
+                let slot1HTML = `
+                    <div class="ui-empty">${_T('Cooking.selectBase')}</div>
                 `;
-            }
-            slotContainer2.innerHTML = slot2HTML;
-        }
-
-        // 3. Render Result Card
-        const resultCardContainer = container.querySelector(".result-card-container");
-        if (resultCardContainer) {
-            let resultCardHTML = "";
-            if (item1 && item2) {
-                const cookedName = CookingSystem.createCookedItemName(item1, item2);
-                const item1Nutrition = CookingSystem.getRecoveryValues(item1);
-                const item2Nutrition = CookingSystem.getRecoveryValues(item2);
-
-                const fixedRecipe = CookingSystem.fixedRecipeFor(item1, item2);
-                const isSameItem = item1 === item2 && !fixedRecipe;
-                let multiplier = 1.0;
-                if (isSameItem) {
-                    multiplier = CookingSystem.getMultiplierForSameItem();
+                if (item1) {
+                    const iconIdx = item1.iconIndex;
+                    const iconStyle = `background: url('img/system/IconSet.png') -${(iconIdx % 16) * 32}px -${Math.floor(iconIdx / 16) * 32}px no-repeat;`;
+                    slot1HTML = `
+                        <div class="item-slot item-slot--compact">
+                            <div class="item-icon" style="${iconStyle}"></div>
+                            <div class="item-slot-info">
+                                <div class="item-slot-name">${window.translateText ? window.translateText(item1.name) : item1.name}</div>
+                                <div class="cook-nutrition-line">${_ci18n('nutritionShort.calories')}: ${item1.meta.calories || 0} | ${_ci18n('nutritionShort.protein')}: ${item1.meta.protein || 0} | ${_ci18n('nutritionShort.fat')}: ${item1.meta.fat || 0}</div>
+                            </div>
+                        </div>
+                    `;
                 }
+                slotContainer1.innerHTML = slot1HTML;
+            }
 
-                let totalCalories, totalProtein, totalFat;
-                if (fixedRecipe) {
-                    const recipeNutrition = CookingSystem.getRecoveryValues(fixedRecipe);
-                    totalCalories = recipeNutrition.hunger;
-                    totalProtein = recipeNutrition.tp;
-                    totalFat = recipeNutrition.mp;
-                } else {
-                    totalCalories = item1Nutrition.hunger * 2;
-                    totalProtein = item1Nutrition.tp * 2;
-                    totalFat = item1Nutrition.mp * 2;
+            const slotContainer2 = container.querySelector(".slot-container-2");
+            if (slotContainer2) {
+                let slot2HTML = `
+                    <div class="ui-empty">${_T('Cooking.selectBinder')}</div>
+                `;
+                if (item2) {
+                    const iconIdx = item2.iconIndex;
+                    const iconStyle = `background: url('img/system/IconSet.png') -${(iconIdx % 16) * 32}px -${Math.floor(iconIdx / 16) * 32}px no-repeat;`;
+                    slot2HTML = `
+                        <div class="item-slot item-slot--compact">
+                            <div class="item-icon" style="${iconStyle}"></div>
+                            <div class="item-slot-info">
+                                <div class="item-slot-name">${window.translateText ? window.translateText(item2.name) : item2.name}</div>
+                                <div class="cook-nutrition-line">${_ci18n('nutritionShort.calories')}: ${item2.meta.calories || 0} | ${_ci18n('nutritionShort.protein')}: ${item2.meta.protein || 0} | ${_ci18n('nutritionShort.fat')}: ${item2.meta.fat || 0}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                slotContainer2.innerHTML = slot2HTML;
+            }
 
+            // 3. Render Result Card
+            const resultCardContainer = container.querySelector(".result-card-container");
+            if (resultCardContainer) {
+                let resultCardHTML = "";
+                if (item1 && item2) {
+                    const cookedName = CookingSystem.createCookedItemName(item1, item2);
+                    const item1Nutrition = CookingSystem.getRecoveryValues(item1);
+                    const item2Nutrition = CookingSystem.getRecoveryValues(item2);
+
+                    const fixedRecipe = CookingSystem.fixedRecipeFor(item1, item2);
+                    const isSameItem = item1 === item2 && !fixedRecipe;
+                    let multiplier = 1.0;
                     if (isSameItem) {
-                        totalCalories += item2Nutrition.hunger * multiplier;
-                        totalProtein += item2Nutrition.tp * multiplier;
-                        totalFat += item2Nutrition.mp * multiplier;
-                    } else {
-                        totalCalories += item2Nutrition.hunger;
-                        totalProtein += item2Nutrition.tp;
-                        totalFat += item2Nutrition.mp;
+                        multiplier = CookingSystem.getMultiplierForSameItem();
                     }
-                }
 
-                // Get formula params
-                const params = PluginManager.parameters('TimeDateSystem');
-                const maxHunger = Number(params['maxHunger'] || 100);
-                const calorieFactor = Number(params['calorieFactor'] || 0.10);
-                const proteinFactor = Number(params['proteinFactor'] || 2.00);
-                const fatFactor = Number(params['fatFactor'] || 1.50);
-
-                // The kit in the pack is part of the dish before it is cooked,
-                // so the card shows what it will be worth, not what it would
-                // have been without a pot.
-                const kit = CookingSystem.cookware();
-                totalCalories *= kit.multiplier;
-                totalProtein *= kit.multiplier;
-                totalFat *= kit.multiplier;
-
-                const totalHungerRecovery =
-                    (totalCalories * calorieFactor) +
-                    (totalProtein * proteinFactor) +
-                    (totalFat * fatFactor);
-
-                // Hunger is one meter for the whole party, and it can now be
-                // filled past full, so the card shows the whole dish instead of
-                // only the part that would have fitted under 100%.
-                const partySize = CookingSystem.mealMembers().length;
-                const hungerPercent = Math.floor((totalHungerRecovery / maxHunger) * 100);
-
-                let adjectiveMsg = "";
-                if (isSameItem) {
-                    if (CookingSystem._lastAdjectiveEffect === 'positive') {
-                        adjectiveMsg = `<div class="cook-verdict gauge-ink gauge-band--ok">${_T('Cooking.extraordinaryEffect50')}</div>`;
-                    } else if (CookingSystem._lastAdjectiveEffect === 'neutral') {
-                        adjectiveMsg = `<div class="cook-verdict gauge-ink gauge-band--warn">${_T('Cooking.minorEffect25')}</div>`;
+                    let totalCalories, totalProtein, totalFat;
+                    if (fixedRecipe) {
+                        const recipeNutrition = CookingSystem.getRecoveryValues(fixedRecipe);
+                        totalCalories = recipeNutrition.hunger;
+                        totalProtein = recipeNutrition.tp;
+                        totalFat = recipeNutrition.mp;
                     } else {
-                        adjectiveMsg = `<div class="cook-verdict gauge-ink gauge-band--bad">${_T('Cooking.disastrousEffect75')}</div>`;
-                    }
-                }
+                        totalCalories = item1Nutrition.hunger * 2;
+                        totalProtein = item1Nutrition.tp * 2;
+                        totalFat = item1Nutrition.mp * 2;
 
-                resultCardHTML = `
-                    <div class="cook-result">
-                        <h3 class="inspect-section-title">${cookedName}</h3>
-                        ${adjectiveMsg}
-                        <div class="inspect-spec-grid">
-                            <span class="inspect-spec-label">${_T('Cooking.calories')}</span>
-                            <span class="inspect-spec-value">${Math.floor(totalCalories)}</span>
-                            <span class="inspect-spec-label">${_T('Cooking.protein')}</span>
-                            <span class="inspect-spec-value">${Math.floor(totalProtein)}g</span>
-                            <span class="inspect-spec-label">${_T('Cooking.fat')}</span>
-                            <span class="inspect-spec-value">${Math.floor(totalFat)}g</span>
-                            <span class="inspect-spec-label">${_T('Cooking.satietyPerMember')}</span>
-                            <span class="inspect-spec-value inspect-spec-value--gain">+${hungerPercent}% (${_T('Cooking.split')} ${partySize})</span>
-                            ${kit.bonus > 0 ? `
-                            <span class="inspect-spec-label">${_T('Cooking.cookware')}</span>
-                            <span class="inspect-spec-value inspect-spec-value--gain">+${kit.bonus}%</span>` : ''}
+                        if (isSameItem) {
+                            totalCalories += item2Nutrition.hunger * multiplier;
+                            totalProtein += item2Nutrition.tp * multiplier;
+                            totalFat += item2Nutrition.mp * multiplier;
+                        } else {
+                            totalCalories += item2Nutrition.hunger;
+                            totalProtein += item2Nutrition.tp;
+                            totalFat += item2Nutrition.mp;
+                        }
+                    }
+
+                    // Get formula params
+                    const params = PluginManager.parameters('TimeDateSystem');
+                    const maxHunger = Number(params['maxHunger'] || 100);
+                    const calorieFactor = Number(params['calorieFactor'] || 0.10);
+                    const proteinFactor = Number(params['proteinFactor'] || 2.00);
+                    const fatFactor = Number(params['fatFactor'] || 1.50);
+
+                    // The kit in the pack is part of the dish before it is cooked,
+                    // so the card shows what it will be worth, not what it would
+                    // have been without a pot.
+                    const kit = CookingSystem.cookware();
+                    totalCalories *= kit.multiplier;
+                    totalProtein *= kit.multiplier;
+                    totalFat *= kit.multiplier;
+
+                    const totalHungerRecovery =
+                        (totalCalories * calorieFactor) +
+                        (totalProtein * proteinFactor) +
+                        (totalFat * fatFactor);
+
+                    // Hunger is one meter for the whole party, and it can now be
+                    // filled past full, so the card shows the whole dish instead of
+                    // only the part that would have fitted under 100%.
+                    const partySize = CookingSystem.mealMembers().length;
+                    const hungerPercent = Math.floor((totalHungerRecovery / maxHunger) * 100);
+
+                    let adjectiveMsg = "";
+                    if (isSameItem) {
+                        if (CookingSystem._lastAdjectiveEffect === 'positive') {
+                            adjectiveMsg = `<div class="cook-verdict gauge-ink gauge-band--ok">${_T('Cooking.extraordinaryEffect50')}</div>`;
+                        } else if (CookingSystem._lastAdjectiveEffect === 'neutral') {
+                            adjectiveMsg = `<div class="cook-verdict gauge-ink gauge-band--warn">${_T('Cooking.minorEffect25')}</div>`;
+                        } else {
+                            adjectiveMsg = `<div class="cook-verdict gauge-ink gauge-band--bad">${_T('Cooking.disastrousEffect75')}</div>`;
+                        }
+                    }
+
+                    resultCardHTML = `
+                        <div class="cook-result">
+                            <h3 class="inspect-section-title">${cookedName}</h3>
+                            ${adjectiveMsg}
+                            <div class="inspect-spec-grid">
+                                <span class="inspect-spec-label">${_T('Cooking.calories')}</span>
+                                <span class="inspect-spec-value">${Math.floor(totalCalories)}</span>
+                                <span class="inspect-spec-label">${_T('Cooking.protein')}</span>
+                                <span class="inspect-spec-value">${Math.floor(totalProtein)}g</span>
+                                <span class="inspect-spec-label">${_T('Cooking.fat')}</span>
+                                <span class="inspect-spec-value">${Math.floor(totalFat)}g</span>
+                                <span class="inspect-spec-label">${_T('Cooking.satietyPerMember')}</span>
+                                <span class="inspect-spec-value inspect-spec-value--gain">+${hungerPercent}% (${_T('Cooking.split')} ${partySize})</span>
+                                ${kit.bonus > 0 ? `
+                                <span class="inspect-spec-label">${_T('Cooking.cookware')}</span>
+                                <span class="inspect-spec-value inspect-spec-value--gain">+${kit.bonus}%</span>` : ''}
+                            </div>
+                            ${kit.bonus > 0 ? `<div class="cook-kit-line">${kit.pieces.map(p =>
+                                window.translateText ? window.translateText(p.item.name) : p.item.name
+                            ).join(' · ')}</div>` : ''}
                         </div>
-                        ${kit.bonus > 0 ? `<div class="cook-kit-line">${kit.pieces.map(p =>
-                            window.translateText ? window.translateText(p.item.name) : p.item.name
-                        ).join(' · ')}</div>` : ''}
-                    </div>
-                `;
-            } else {
-                resultCardHTML = "";
+                    `;
+                } else {
+                    resultCardHTML = "";
+                }
+                resultCardContainer.innerHTML = resultCardHTML;
             }
-            resultCardContainer.innerHTML = resultCardHTML;
         }
 
         // 4. Update Actions Buttons
@@ -1769,16 +1776,16 @@
         if (cookBtn) {
             cookBtn.className = "inspect-btn focusable" + (isCookEnabled ? "" : " unusable") + (isCookFocused ? " selected" : "");
             cookBtn.textContent = _ci18n('ui.cookButton');
-            // Re-bind click handler
-            const newCookBtn = cookBtn.cloneNode(true);
-            cookBtn.parentNode.replaceChild(newCookBtn, cookBtn);
-            newCookBtn.addEventListener("click", () => {
-                if (isCookEnabled) {
-                    this.onCookOk();
-                } else {
-                    SoundManager.playBuzzer();
-                }
-            });
+            if (!cookBtn._hasClickListener) {
+                cookBtn._hasClickListener = true;
+                cookBtn.addEventListener("click", () => {
+                    if (CookingSystem.getFirstItem() && CookingSystem.getSecondItem()) {
+                        this.onCookOk();
+                    } else {
+                        SoundManager.playBuzzer();
+                    }
+                });
+            }
         }
 
     };

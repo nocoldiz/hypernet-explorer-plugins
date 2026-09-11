@@ -1,9 +1,28 @@
+0.6.16a
+Added:
+ - Sync button in skills
+Changed:
+ - Bubba can be set inactive in story mode
+ - waiting on map 315 brings camping mode for sleep menu
+ - bound K to cooking in custom main menu
+ - Restore old questboard UI
+ - Restored old kanban UI
+ - Battle system perfomance improvements
+ - Higher level enemy inflict more damage to low level party
+
+Fixed:
+ - fixed performance bottlenecks across menus and weather system
+ - Pickaxe detection when equipped for mining
+ - Camper interior collisions
+ - Disabled fast travel and liminal drive when riding vehicles in other planets or in spaceship
+
 0.6.15a
 
 Added:
  - world creation warns that a year other than 2001 disables the story tutorial
 
 Changed:
+ - swordsmanship and firearms skills disabled without the matching weapon
  - download button fills like a bar, then installs and closes the game
  - reworked battle hud
  - banks editor preview collapses, pool list moved under its bank

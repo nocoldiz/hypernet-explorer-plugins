@@ -1128,6 +1128,12 @@
             // first frame snaps to whatever the map already is; the fade below
             // is only for the light changing while the map is being played.
             this._snapIntensity = true;
+            this._cachedStreetlightDataRef = null;
+            this._cachedStreetlightTilesetId = null;
+            this._cachedStreetlights = null;
+            this._cachedCaveDataRef = null;
+            this._cachedCaveTilesetId = null;
+            this._cachedCaveLights = null;
             this._resizeCanvas();
         }
 
@@ -1495,34 +1501,14 @@
                     const minY = Math.floor(oy) - 2;
                     const maxY = Math.ceil(oy + $gameMap.screenTileY()) + 2;
 
-                    for (let x = Math.max(0, minX); x < Math.min($gameMap.width(), maxX); x++) {
-                        for (let y = Math.max(0, minY); y < Math.min($gameMap.height(), maxY); y++) {
-                            let isLamp = false;
-                            for (const layer of [4, 3, 2]) {
-                                const tileId = $gameMap.tileId(x, y, layer);
-                                if (tileId !== 0 && streetlightTileIds.has(tileId)) {
-                                    isLamp = true;
-                                    break;
-                                }
-                            }
-                            if (isLamp) {
-                                let aboveIsLamp = false;
-                                if (y > 0) {
-                                    for (const layer of [4, 3, 2]) {
-                                        const tid = $gameMap.tileId(x, y - 1, layer);
-                                        if (tid !== 0 && streetlightTileIds.has(tid)) {
-                                            aboveIsLamp = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (!aboveIsLamp) {
-                                    const lx = ($gameMap.adjustX(x) + 0.5) * tw * s;
-                                    const ly = ($gameMap.adjustY(y) + 0.5) * th * s;
-                                    const flicker = this.getFlicker(x * 31 + y * 17);
-                                    this.drawLightCircle(ctx, lx, ly, basePartyRadius * 1.3 * flicker, 1.0, 'torch');
-                                }
-                            }
+                    const lamps = this._getStreetlightCoords(tilesetId, streetlightTileIds);
+                    for (let i = 0; i < lamps.length; i++) {
+                        const pt = lamps[i];
+                        if (pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY) {
+                            const lx = ($gameMap.adjustX(pt.x) + 0.5) * tw * s;
+                            const ly = ($gameMap.adjustY(pt.y) + 0.5) * th * s;
+                            const flicker = this.getFlicker(pt.x * 31 + pt.y * 17);
+                            this.drawLightCircle(ctx, lx, ly, basePartyRadius * 1.3 * flicker, 1.0, 'torch');
                         }
                     }
                 }
@@ -1540,29 +1526,20 @@
                     const maxX2 = Math.min($gameMap.width(), Math.ceil(ox2 + $gameMap.screenTileX()) + 2);
                     const minY2 = Math.max(0, Math.floor(oy2) - 2);
                     const maxY2 = Math.min($gameMap.height(), Math.ceil(oy2 + $gameMap.screenTileY()) + 2);
-                    for (const feature of CAVE_LIGHT_FEATURES) {
-                        const isTorch = feature === 'Torch';  // i18n-ignore  feature name
-                        if (isTorch && deadWorld) continue;
-                        const ids = featureTileIdsFor(tilesetId, feature);
-                        if (!ids || !ids.size) continue;
-                        for (let x = minX2; x < maxX2; x++) {
-                            for (let y = minY2; y < maxY2; y++) {
-                                let lit = false;
-                                for (const layer of [3, 2, 1]) {
-                                    const tid = $gameMap.tileId(x, y, layer);
-                                    if (tid !== 0 && ids.has(tid)) { lit = true; break; }
-                                }
-                                if (!lit) continue;
-                                const lx = ($gameMap.adjustX(x) + 0.5) * tw2 * s;
-                                const ly = ($gameMap.adjustY(y) + 0.5) * th * s;
-                                const flicker = this.getFlicker(x * 7 + y * 23);
-                                if (isTorch) {
-                                    this.drawLightCircle(ctx, lx, ly, basePartyRadius * 0.85 * flicker, 1.0, 'torch');
-                                } else {
-                                    // A mushroom pulses slowly instead of guttering.
-                                    const pulse = 1.0 + Math.sin(Graphics.frameCount * 0.03 + x * 0.7 + y * 1.3) * 0.10;
-                                    this.drawLightCircle(ctx, lx, ly, basePartyRadius * 0.45 * pulse, 0.85, 'mushroom');
-                                }
+                    const caveLights = this._getCaveLightCoords(tilesetId);
+                    for (let i = 0; i < caveLights.length; i++) {
+                        const cl = caveLights[i];
+                        if (cl.isTorch && deadWorld) continue;
+                        if (cl.x >= minX2 && cl.x < maxX2 && cl.y >= minY2 && cl.y < maxY2) {
+                            const lx = ($gameMap.adjustX(cl.x) + 0.5) * tw2 * s;
+                            const ly = ($gameMap.adjustY(cl.y) + 0.5) * th * s;
+                            const flicker = this.getFlicker(cl.x * 7 + cl.y * 23);
+                            if (cl.isTorch) {
+                                this.drawLightCircle(ctx, lx, ly, basePartyRadius * 0.85 * flicker, 1.0, 'torch');
+                            } else {
+                                // A mushroom pulses slowly instead of guttering.
+                                const pulse = 1.0 + Math.sin(Graphics.frameCount * 0.03 + cl.x * 0.7 + cl.y * 1.3) * 0.10;
+                                this.drawLightCircle(ctx, lx, ly, basePartyRadius * 0.45 * pulse, 0.85, 'mushroom');
                             }
                         }
                     }
@@ -1584,6 +1561,82 @@
             }
 
             this._texture.update();
+        }
+
+        _getStreetlightCoords(tilesetId, streetlightTileIds) {
+            const map = $gameMap;
+            if (!map || !streetlightTileIds || streetlightTileIds.size === 0) return [];
+            const dataRef = map.data ? map.data() : null;
+            if (this._cachedStreetlightDataRef === dataRef && this._cachedStreetlightTilesetId === tilesetId && this._cachedStreetlights) {
+                return this._cachedStreetlights;
+            }
+            this._cachedStreetlightDataRef = dataRef;
+            this._cachedStreetlightTilesetId = tilesetId;
+            const coords = [];
+            const mw = typeof map.width === 'function' ? map.width() : 0;
+            const mh = typeof map.height === 'function' ? map.height() : 0;
+            for (let x = 0; x < mw; x++) {
+                for (let y = 0; y < mh; y++) {
+                    let isLamp = false;
+                    for (const layer of [4, 3, 2]) {
+                        const tileId = map.tileId(x, y, layer);
+                        if (tileId !== 0 && streetlightTileIds.has(tileId)) {
+                            isLamp = true;
+                            break;
+                        }
+                    }
+                    if (isLamp) {
+                        let aboveIsLamp = false;
+                        if (y > 0) {
+                            for (const layer of [4, 3, 2]) {
+                                const tid = map.tileId(x, y - 1, layer);
+                                if (tid !== 0 && streetlightTileIds.has(tid)) {
+                                    aboveIsLamp = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!aboveIsLamp) {
+                            coords.push({ x, y });
+                        }
+                    }
+                }
+            }
+            this._cachedStreetlights = coords;
+            return coords;
+        }
+
+        _getCaveLightCoords(tilesetId) {
+            const map = $gameMap;
+            if (!map) return [];
+            const dataRef = map.data ? map.data() : null;
+            if (this._cachedCaveDataRef === dataRef && this._cachedCaveTilesetId === tilesetId && this._cachedCaveLights) {
+                return this._cachedCaveLights;
+            }
+            this._cachedCaveDataRef = dataRef;
+            this._cachedCaveTilesetId = tilesetId;
+            const coords = [];
+            const mw = typeof map.width === 'function' ? map.width() : 0;
+            const mh = typeof map.height === 'function' ? map.height() : 0;
+            for (const feature of CAVE_LIGHT_FEATURES) {
+                const isTorch = feature === 'Torch';
+                const ids = featureTileIdsFor(tilesetId, feature);
+                if (!ids || !ids.size) continue;
+                for (let x = 0; x < mw; x++) {
+                    for (let y = 0; y < mh; y++) {
+                        let lit = false;
+                        for (const layer of [3, 2, 1]) {
+                            const tid = map.tileId(x, y, layer);
+                            if (tid !== 0 && ids.has(tid)) { lit = true; break; }
+                        }
+                        if (lit) {
+                            coords.push({ x, y, isTorch });
+                        }
+                    }
+                }
+            }
+            this._cachedCaveLights = coords;
+            return coords;
         }
 
         // Which lamp the vehicle the party is riding hangs, or null when they

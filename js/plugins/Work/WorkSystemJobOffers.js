@@ -236,7 +236,12 @@
       // Handled by custom D&D navigation
     }
 
+    availableWorkers() {
+      return ($gameParty ? $gameParty.members() : []).filter(m => m && m.name() !== "Bubba");
+    }
+
     onActorSelected(actor, remote) {
+      if (!actor || actor.name() === "Bubba") return;
       const job = this._jobListWindow.currentJob();
       if (job && actor) {
         this.startWork(actor, job, remote);
@@ -244,6 +249,7 @@
     }
 
     startWork(actor, job, remote) {
+      if (!actor || actor.name() === "Bubba") return;
       // Store work data and return to map
       $gameTemp._pendingWork = {
         actorId: actor.actorId(),
@@ -322,14 +328,15 @@
       const selectedIndex = this._jobListWindow ? this._jobListWindow.index() : 0;
       const selectedJob = jobs[selectedIndex] || null;
 
-      const actors = $gameParty.members();
-      const selectedActor = actors[this._dndActorIndex] || actors[0];
+      const actors = this.availableWorkers();
+      const selectedActorIndex = Math.min(this._dndActorIndex, Math.max(0, actors.length - 1));
+      const selectedActor = actors[selectedActorIndex] || actors[0];
 
       // One markup, both modes. The left page always lists the offers; the
       // right page reads the contract, or the roster once a job is being
       // filled. The two pages of the screen are the tab strip.
       const rightPageHTML = this._dndFocusSection === 'actors'
-        ? this.getActorSelectionHTML(actors, this._dndActorIndex, selectedJob)
+        ? this.getActorSelectionHTML(actors, selectedActorIndex, selectedJob)
         : this.getJobOfferContractHTML(selectedJob, selectedActor);
 
       // The board itself is only pinned up again when the offers on it change,
@@ -670,8 +677,9 @@
     }
 
     confirmActorSelection() {
-      const actor = $gameParty.members()[this._dndActorIndex];
-      if (actor) {
+      const actors = this.availableWorkers();
+      const actor = actors[this._dndActorIndex];
+      if (actor && actor.name() !== "Bubba") {
         SoundManager.playOk();
         this.onActorSelected(actor);
       } else {
@@ -683,8 +691,9 @@
     // for the jobs that carry "remote": true in Jobs.json.
     confirmRemoteWork() {
       const job = this._jobListWindow ? this._jobListWindow.currentJob() : null;
-      const actor = $gameParty.members()[this._dndActorIndex];
-      if (job && job.remote && actor) {
+      const actors = this.availableWorkers();
+      const actor = actors[this._dndActorIndex];
+      if (job && job.remote && actor && actor.name() !== "Bubba") {
         SoundManager.playOk();
         this.onActorSelected(actor, true);
       } else {

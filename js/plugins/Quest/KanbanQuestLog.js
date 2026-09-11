@@ -117,8 +117,10 @@
     ];
 
 
-    // The wax seal and the pin went with the cork board: a card is flat now, and
-    // its only ornament is the marker colour on its left edge.
+    // Seal colours and hashing shared with QuestBoardUI so a note pinned to the
+    // cork board and the same note on the log look like the same piece of paper.
+    const SEAL_COLORS = ['#8b263e', '#1f4e79', '#3e6b2f', '#6b4a1f', '#4a2f6b', '#2f6b62', '#7a3b17', '#41414d'];
+    const PIN_COLORS = ['#b03030', '#2f5db0', '#2f8a45', '#a88a1f'];
 
     function hashStr(s) {
         let h = 0x811c9dc5;
@@ -182,6 +184,11 @@
         const done = o.colId === 'done' || (q.column === 'done' && !o.colId);
         const failed = o.colId === 'failed' || (q.column === 'failed' && !o.colId);
         const latest = q.updates && q.updates.length ? q.updates[0].text : '';
+        const rot = o.flat ? 0 : ((hashStr(q.id) % 9) - 4) * 0.9;
+        const pin = PIN_COLORS[hashStr(q.id + 'p') % PIN_COLORS.length];
+        const seal = SEAL_COLORS[hashStr(q.id + 's') % SEAL_COLORS.length];
+        const sealSrc = String(meta.giver || q.title || '?').replace(/^(a|an|the)\s+/i, '');
+        const sealCh = esc(sealSrc.charAt(0).toUpperCase() || '?');
         const stamp = done ? (T('Kanban.resolved'))
             : failed ? (T('Kanban.failed')) : '';
         const stars = meta.diff > 0
@@ -193,7 +200,8 @@
 
         return `<div class="kb-card${o.focused ? ' focused' : ''}${o.grabbed ? ' kb-grabbed' : ''}${done || failed ? ' kb-done' : ''}"
                      ${o.attrs || ''}
-                     style="--marker:${markerColor}">
+                     style="--rot:${rot}deg; --note-bg:${q.color || '#faf2d3'}; --pin:${pin}; --seal:${seal}; --marker:${markerColor}">
+          <div class="kb-pin"></div>
           <div class="kb-quest-icon" style="${markerIconCss}" title="${T('Kanban.mapMarker') || ''}"></div>
           ${urgent}
           <span class="kb-card-title">${esc(q.title)}</span>
@@ -203,7 +211,9 @@
           ${o.progressHTML || ''}
           ${stars ? `<div class="kb-diff">${stars}</div>` : ''}
           ${stamp ? `<span class="kb-resolved-stamp${failed ? ' failed' : ''}">${stamp}</span>` : ''}
+          <div class="kb-seal">${sealCh}</div>
         </div>`;
+
     }
 
     // Helper function to get date string with year 2001
@@ -971,9 +981,10 @@
             this._el.querySelectorAll('#kb-board-header, #kb-columns, #kb-detail-backdrop')
                 .forEach(n => n.remove());
             this._el.insertAdjacentHTML('beforeend', `
-              <div id="kb-board-header" class="page-header-bar">
-                <div class="back-button focusable kb-board-back">${T('Kanban.back')}</div>
-                <span class="kb-board-title title">${T('Kanban.questLog')}</span>
+              <div id="kb-board-header">
+                <div class="back-button kb-board-back">${T('Kanban.back')}</div>
+                <span class="kb-board-title">${T('Kanban.questLog')}</span>
+                <div class="kb-board-hint">${T('Kanban.boardHint')}</div>
               </div>
               <div id="kb-columns">
                 ${colsHTML.join('<div class="kb-col-divider"></div>')}

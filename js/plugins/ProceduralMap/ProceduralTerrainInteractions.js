@@ -446,6 +446,30 @@
     );
   }
 
+  function partyHasSpecificWeapon(weaponId) {
+    if (!$gameParty) return false;
+    const weapon = $dataWeapons[weaponId];
+    if (!weapon) return false;
+    // Unequipped inventory.
+    if ($gameParty.weapons().some(w => w && w.id === weaponId)) return true;
+    // Equipped on any party member.
+    return $gameParty.members().some(a =>
+      a.equips().some(e => e && e === weapon)
+    );
+  }
+
+  function partyHasSpecificArmor(armorId) {
+    if (!$gameParty) return false;
+    const armor = $dataArmors[armorId];
+    if (!armor) return false;
+    // Unequipped inventory.
+    if ($gameParty.armors().some(a => a && a.id === armorId)) return true;
+    // Equipped on any party member.
+    return $gameParty.members().some(a =>
+      a.equips().some(e => e && e === armor)
+    );
+  }
+
   function meetsRequirement(req) {
     if (!req) return true;
     if ($gameSystem && $gameSystem._isSandboxMode) return true;
@@ -454,9 +478,9 @@
     }
     if (req === REQ.ROCK) {
       return (
-        ($dataWeapons[PICK_WEAPON_ID] && $gameParty.hasItem($dataWeapons[PICK_WEAPON_ID], true)) ||
+        partyHasSpecificWeapon(PICK_WEAPON_ID) ||
         partyHasWeaponType(WTYPE_HEAVY) ||
-        ($dataArmors[PICK_ARMOR_ID] && $gameParty.hasItem($dataArmors[PICK_ARMOR_ID], true))
+        partyHasSpecificArmor(PICK_ARMOR_ID)
       );
     }
     return true;

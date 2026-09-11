@@ -3143,6 +3143,35 @@
     "source": "Dungeon_Slimes1#7",
     "pitch": 75
   },
+    "Em/!$EM": {
+    "varlenian": false,
+    "npc": true,
+    "animal": false,
+    "vip": true,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": false,
+    "busts": [
+      "presets/Em"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 2,
+    "chars": [
+      "E"
+    ],
+    "color": "golden",
+    "classes": [
+      1
+    ],
+    "markovDB": "em",
+    "source": "emPath#0",
+    "theme": "Urban",
+    "pitch": 110
+  },
   "NPCs/!$Em1": {
     "varlenian": false,
     "npc": true,

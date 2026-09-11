@@ -1013,7 +1013,19 @@
 
         _updateActionBar() {
             const bar = this._domContainer && this._domContainer.querySelector('#hv-actbar');
-            if (bar) bar.innerHTML = this._buildActionButtons(this._partKeys[this._selectedIndex]);
+            if (!bar) return;
+            const selectedKey = this._partKeys[this._selectedIndex];
+            const actionsKey = (selectedKey || '') + ':' + (this._actions || []).map(a => a.type).join(',');
+            if (bar._actionsKey === actionsKey) {
+                const actButtons = bar.querySelectorAll('.cs-actbtn:not(.disabled)');
+                actButtons.forEach((btn, i) => {
+                    const focused = this._activeSection === 'actions' && this._actionIndex === i;
+                    btn.classList.toggle('selected', focused);
+                });
+                return;
+            }
+            bar._actionsKey = actionsKey;
+            bar.innerHTML = this._buildActionButtons(selectedKey);
         }
 
         _enterActions() {

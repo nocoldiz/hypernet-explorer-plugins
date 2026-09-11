@@ -275,13 +275,16 @@
   function _hudGetScale() {
     if (_cachedScale) return _cachedScale;
     const el = document.getElementById('gameCanvas');
-    if (!el) return { sx: 1, sy: 1, ox: 0, oy: 0 };
+    if (!el) return { sx: 1, sy: 1, ox: 0, oy: 0, transformStr: 'scale(1.0000, 1.0000)' };
     const r = el.getBoundingClientRect();
+    const sx = r.width / Graphics.width;
+    const sy = r.height / Graphics.height;
     _cachedScale = {
-      sx: r.width / Graphics.width,
-      sy: r.height / Graphics.height,
+      sx: sx,
+      sy: sy,
       ox: r.left,
-      oy: r.top
+      oy: r.top,
+      transformStr: `scale(${sx.toFixed(4)}, ${sy.toFixed(4)})`
     };
     return _cachedScale;
   }
@@ -308,36 +311,48 @@
       }
 
       const sc = _hudGetScale();
-      let pt = { x: 0, y: 0 };
+      let ptX = 0, ptY = 0;
       if (typeof this.parentSprite.getGlobalPosition === 'function') {
-        pt = this.parentSprite.getGlobalPosition();
+        if (!HtmlTextOverlay._scratchPt) {
+          HtmlTextOverlay._scratchPt = (typeof Point !== 'undefined') ? new Point(0, 0) : { x: 0, y: 0 };
+        }
+        const p = this.parentSprite.getGlobalPosition(HtmlTextOverlay._scratchPt, false);
+        ptX = p.x;
+        ptY = p.y;
       } else {
         let node = this.parentSprite;
         while (node) {
-          pt.x += node.x;
-          pt.y += node.y;
+          ptX += node.x;
+          ptY += node.y;
           node = node.parent;
         }
       }
 
-      const left = (sc.ox + pt.x * sc.sx).toFixed(1);
-      const top  = (sc.oy + pt.y * sc.sy).toFixed(1);
-      const transform = `scale(${sc.sx.toFixed(4)}, ${sc.sy.toFixed(4)})`;
       const opacity = this.parentSprite.worldAlpha;
-
-      if (this._lastVisible !== true || this._lastLeft !== left ||
-          this._lastTop !== top || this._lastTransform !== transform ||
-          this._lastOpacity !== opacity) {
-        window.UIPanel.open(this.root);
-        window.UIPanel.placeAt(this.root, left, top);
-        this.root.style.setProperty('--hud-transform', transform);
-        this.root.style.setProperty('--hud-fade', opacity);
-        this._lastVisible   = true;
-        this._lastLeft      = left;
-        this._lastTop       = top;
-        this._lastTransform = transform;
-        this._lastOpacity   = opacity;
+      if (this._lastVisible === true &&
+          this._lastRawX === ptX &&
+          this._lastRawY === ptY &&
+          this._lastScale === sc &&
+          this._lastOpacity === opacity) {
+        return;
       }
+
+      const left = (sc.ox + ptX * sc.sx).toFixed(1);
+      const top  = (sc.oy + ptY * sc.sy).toFixed(1);
+      const transform = sc.transformStr || `scale(${sc.sx.toFixed(4)}, ${sc.sy.toFixed(4)})`;
+
+      window.UIPanel.open(this.root);
+      window.UIPanel.placeAt(this.root, left, top);
+      this.root.style.setProperty('--hud-transform', transform);
+      this.root.style.setProperty('--hud-fade', opacity);
+      this._lastVisible   = true;
+      this._lastRawX      = ptX;
+      this._lastRawY      = ptY;
+      this._lastScale     = sc;
+      this._lastOpacity   = opacity;
+      this._lastLeft      = left;
+      this._lastTop       = top;
+      this._lastTransform = transform;
     }
 
     clear() {
@@ -1396,18 +1411,33 @@
     }
     if (!this.isHpPulsing()) return;
     this._refreshCounter = (this._refreshCounter || 0) + 1;
-    if (this._refreshCounter % 4 === 0) this.refresh(true);
+    if (this._refreshCounter % 10 === 0) this.refresh(true);
   };
 
   Sprite_BattleBar.prototype.updateDamageOverlay = function () {
     if (!this._damageOverlay) return;
     const b = this._battler;
     const geo = miniBarGaugeGeometry(this.bitmap.width);
-    const hpWidth = geo.w * (this._displayHp / Math.max(1, b.mhp));
-    const dmgWidth = geo.w * (this._damageChunkHp / Math.max(1, b.mhp));
-    this._damageOverlay.bitmap.clear();
-    if (dmgWidth <= hpWidth) return;
-    const ctx = this._damageOverlay.bitmap.context;
+    const hpWidth = Math.round(geo.w * (this._displayHp / Math.max(1, b.mhp)));
+    const dmgWidth = Math.round(geo.w * (this._damageChunkHp / Math.max(1, b.mhp)));
+    if (dmgWidth <= hpWidth) {
+      if (this._damageOverlay.visible) {
+        this._damageOverlay.bitmap.clear();
+        this._damageOverlay.visible = false;
+        this._lastHpWidth = -1;
+        this._lastDmgWidth = -1;
+      }
+      return;
+    }
+    if (this._lastHpWidth === hpWidth && this._lastDmgWidth === dmgWidth && this._damageOverlay.visible) {
+      return;
+    }
+    this._lastHpWidth = hpWidth;
+    this._lastDmgWidth = dmgWidth;
+    this._damageOverlay.visible = true;
+    const bm = this._damageOverlay.bitmap;
+    bm.clear();
+    const ctx = bm.context;
     ctx.fillStyle = damageColor;
     ctx.beginPath();
     ctx.moveTo(geo.x + hpWidth, 0);
@@ -1416,6 +1446,7 @@
     ctx.lineTo(geo.x + hpWidth - MINI.ang, MINI.thickness);
     ctx.closePath();
     ctx.fill();
+    bm._baseTexture.update();
   };
 
   // The depletion chunk that trails a hit: the slice of the bar the monster has
@@ -1425,6 +1456,7 @@
     this._damageOverlay = new Sprite();
     this._damageOverlay.bitmap = new Bitmap(this._barBitmapWidth, MINI.thickness);
     this._damageOverlay.y = MINI.hpY;
+    this._damageOverlay.visible = false;
     this.addChild(this._damageOverlay);
   };
 
@@ -1822,10 +1854,20 @@
     // front, and it is the one that keeps the place its own head gives it.
     row.sort((a, b) => b.head.y - a.head.y);
     const M = ENEMY_BAR_SCREEN_MARGIN;
+    // A lone monster's bar is centred on the SCREEN, not on the creature. With
+    // one bar there is nothing to tell apart, so the reading it gives is worth
+    // more than the pointing: the middle is where the eye already is, and it is
+    // the one place the bar is legible whatever is being fought. A giant
+    // standing with its head off the top of the frame was the case that forced
+    // it - its measured head projects to a corner, and the bar went and stood
+    // in that corner, over the party's own cards.
+    const lone = row.length === 1;
     for (const entry of row) {
       const sprite = entry.sprite;
       const w = sprite.bitmap ? sprite.bitmap.width : miniBarWidth;
-      let x = Math.round(entry.head.x - w / 2);
+      let x = lone
+        ? Math.round((Graphics.width - w) / 2)
+        : Math.round(entry.head.x - w / 2);
       let y = Math.round(entry.head.y - miniBarBitmapHeight - ENEMY_BAR_HEAD_GAP);
       x = Math.max(M, Math.min(Graphics.width - w - M, x));
       for (let guard = 0; guard < placed.length; guard++) {
@@ -2681,7 +2723,10 @@
     return true;
   }
 
-  // The tooltip shows the skill's name and its cost only, nothing else.
+  // The tooltip shows the skill's name and its cost, plus the weapon a school
+  // of blows cannot be practised without when that weapon is not in hand: the
+  // slot is already drawn dark (entries read canUse below, which asks
+  // window.SkillWeaponReq), and this is where it says why.
   function _hotbarTooltipText(actor, skill) {
     let costText = '';
     if (actor.skillTpCost(skill) > 0) {
@@ -2689,7 +2734,11 @@
     } else if (actor.skillMpCost(skill) > 0) {
       costText = `${actor.skillMpCost(skill)} ${TextManager.mp}`;
     }
-    return costText ? `${skill.name} - ${costText}` : skill.name;
+    let text = costText ? `${skill.name} - ${costText}` : skill.name;
+    const wpn = window.SkillWeaponReq;
+    const hands = wpn ? wpn.check(actor, skill) : null;
+    if (hands && !hands.met) text += ` - ${wpn.label(hands.need)}`;
+    return text;
   }
 
   function _hotbarEntries(actor, skills) {

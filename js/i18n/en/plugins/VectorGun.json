@@ -204,8 +204,8 @@
     "gun": "Gun",
     "blade": "Blade of Thelema",
     "fitted": "Fitted",
-    "gain": "Melee form: +{bonus}% damage, {element} element. Gun form has no bonus and is the only form that can fire the bound spell.",
-    "gunGain": "Base form: normal shots, and the only form that can fire the bound spell. SWITCH converts it into the coilgun."
+    "gain": "Melee form: +{bonus}% damage, {element} element. Gun form has no bonus.",
+    "gunGain": "Base form: normal shots. SWITCH converts it into the coilgun."
   },
   "bay": {
     "slot": "Bay {n}",

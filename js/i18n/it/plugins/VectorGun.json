@@ -204,8 +204,8 @@
     "gun": "Pistola",
     "blade": "Lama di Thelema",
     "fitted": "Montata",
-    "gain": "Forma da mischia: +{bonus}% di danno, elemento {element}. La forma pistola non ha bonus ed e' l'unica che puo sparare l'incantesimo caricato.",
-    "gunGain": "Forma base: colpi normali, e l'unica forma che puo sparare l'incantesimo caricato. TRASFORMA la converte nel coilgun."
+    "gain": "Forma da mischia: +{bonus}% di danno, elemento {element}. La forma pistola non ha bonus.",
+    "gunGain": "Forma base: colpi normali. TRASFORMA la converte nel coilgun."
   },
   "bay": {
     "slot": "Alloggiamento {n}",

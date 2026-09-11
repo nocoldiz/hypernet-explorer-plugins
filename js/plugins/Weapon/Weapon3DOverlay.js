@@ -549,7 +549,7 @@
     };
 
     root.traverse((obj) => {
-      if (obj.geometry && typeof obj.geometry.dispose === 'function') {
+      if (obj.geometry && !obj.geometry._fxShared && typeof obj.geometry.dispose === 'function') {
         obj.geometry.dispose();
       }
       if (obj.material) {
@@ -692,8 +692,12 @@
     sample(model, tip, base, now) {
       if (!this._live || !model) return;
       model.updateMatrixWorld(true);
-      const a = tip.clone();
-      const b = base.clone();
+      if (!this._scratchTip) {
+        this._scratchTip = new THREE.Vector3();
+        this._scratchBase = new THREE.Vector3();
+      }
+      const a = this._scratchTip.set(tip.x, tip.y, tip.z);
+      const b = this._scratchBase.set(base.x, base.y, base.z);
       if (this.offset) { a.add(this.offset); b.add(this.offset); }
       a.applyMatrix4(model.matrixWorld);
       b.applyMatrix4(model.matrixWorld);
@@ -712,7 +716,7 @@
             last.born + (now - last.born) * t);
         }
       }
-      this._push(a, b, now);
+      this._push(a.clone(), b.clone(), now);
     }
 
     _push(tip, base, born) {
@@ -1530,6 +1534,24 @@
     });
   }
 
+  let _fxUnitPlaneGeo = null;
+  function fxUnitPlane() {
+    if (!_fxUnitPlaneGeo && typeof THREE !== 'undefined') {
+      _fxUnitPlaneGeo = new THREE.PlaneGeometry(1, 1);
+      _fxUnitPlaneGeo._fxShared = true;
+    }
+    return _fxUnitPlaneGeo;
+  }
+
+  let _fxUnitBoxGeo = null;
+  function fxUnitBox() {
+    if (!_fxUnitBoxGeo && typeof THREE !== 'undefined') {
+      _fxUnitBoxGeo = new THREE.BoxGeometry(1, 1, 1);
+      _fxUnitBoxGeo._fxShared = true;
+    }
+    return _fxUnitBoxGeo;
+  }
+
   // Every blow is drawn at this much of its profile size. The profiles are
   // written as relative shapes; this is the one knob that says how much of the
   // screen a hit takes up.
@@ -1802,11 +1824,13 @@
 
     _addSparks(profile, color, scale) {
       const n = Math.round((profile.sparks || 0) * (this.opts.crit ? 1.6 : 1));
+      const geo = fxUnitPlane();
       for (let i = 0; i < n; i++) {
         const a = fxRand(0, Math.PI * 2);
         const speed = fxRand(0.10, 0.42) * profile.size * scale;
         const size = fxRand(3, 8) * scale;
-        const m = new THREE.Mesh(new THREE.PlaneGeometry(size, size), fxMaterial(color, "spark"));
+        const m = new THREE.Mesh(geo, fxMaterial(color, "spark"));
+        m.scale.set(size, size, 1);
         m.position.set(0, 0, 2);
         this.add(m, {
           vx: Math.cos(a) * speed / 100,
@@ -1818,10 +1842,12 @@
     }
 
     _addPuffs(count, color, radius, drift) {
+      const geo = fxUnitPlane();
       for (let i = 0; i < count; i++) {
         const a = fxRand(0, Math.PI * 2);
         const size = fxRand(radius * 0.6, radius * 1.4);
-        const m = new THREE.Mesh(new THREE.PlaneGeometry(size, size), fxMaterial(color, "spark"));
+        const m = new THREE.Mesh(geo, fxMaterial(color, "spark"));
+        m.scale.set(size, size, 1);
         m.material.blending = THREE.NormalBlending;
         m.material.opacity = 0.5;
         m.position.set(Math.cos(a) * radius * 0.3, Math.sin(a) * radius * 0.3, -2);
@@ -1836,9 +1862,9 @@
     // The brass a firearm throws: a little box tumbling out to the side and
     // down, landing about when the sound of it does.
     _addCasing(scale) {
-      const geo = new THREE.BoxGeometry(3 * scale, 8 * scale, 3 * scale);
       const mat = new THREE.MeshBasicMaterial({ color: 0xd8b25a, transparent: true, depthTest: false });
-      const m = new THREE.Mesh(geo, mat);
+      const m = new THREE.Mesh(fxUnitBox(), mat);
+      m.scale.set(3 * scale, 8 * scale, 3 * scale);
       m.position.set(fxRand(-8, 8), 0, 6);
       this.add(m, { vx: fxRand(0.06, 0.16), vy: 0.16, vr: fxRand(0.02, 0.05), gravity: 0.0016 });
     }

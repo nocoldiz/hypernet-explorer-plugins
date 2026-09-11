@@ -1544,7 +1544,7 @@
     const out = [];
     try {
       $gameParty.members().forEach(actor => {
-        if (!actor) return;
+        if (!actor || actor.name() === 'Bubba') return;
         const entry = { kind: 'actor', id: actor.actorId() };
         if (taken.has(staffKey(entry))) return;
         out.push(Object.assign({ name: actor.name(), level: actor.level }, entry));
@@ -1552,6 +1552,7 @@
     } catch (err) { /* no party */ }
     const bench = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
     bench.forEach(preset => {
+      if (!preset || preset.name === 'Bubba') return;
       const entry = { kind: 'preset', id: preset.id };
       if (taken.has(staffKey(entry))) return;
       out.push(Object.assign({ name: preset.name, level: preset.level || 1 }, entry));
@@ -1568,7 +1569,9 @@
     if (list.length >= SHOP_MAX_STAFF) return { ok: false, reason: 'rosterFull' };
     const entry = { kind: String(kind), id: (kind === 'actor' ? Number(id) : id) };
     if (list.some(e => staffKey(e) === staffKey(entry))) return { ok: false, reason: 'already' };
-    if (!staffName(entry)) return { ok: false, reason: 'unknown' };
+    const name = staffName(entry);
+    if (!name) return { ok: false, reason: 'unknown' };
+    if (name === 'Bubba') return { ok: false, reason: 'restricted' };
     list.push(entry);
     persistShops();
     return { ok: true, entry };

@@ -969,7 +969,17 @@
         // creation for every member it finishes; a world made before the
         // option existed answers 1, exactly as it always did.
         startingLevel() {
-            return clampStartLevel(this.worldInfo().startLevel);
+            if (!this.hasActiveWorld()) return DEFAULT_START_LEVEL;
+            const info = this.worldInfo();
+            return clampStartLevel(info ? info.startLevel : DEFAULT_START_LEVEL);
+        },
+
+        // Canonical starting year for this world (2001-2013). Defaults to 2001.
+        startingYear() {
+            if (!this.hasActiveWorld()) return DEFAULT_START_YEAR;
+            const info = this.worldInfo();
+            const y = info && info.startYear !== undefined ? Number(info.startYear) : DEFAULT_START_YEAR;
+            return Number.isFinite(y) ? y : DEFAULT_START_YEAR;
         },
 
         // Who this world is populated with (see clampPopulationMode). Asked

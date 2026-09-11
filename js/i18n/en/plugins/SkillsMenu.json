@@ -18,6 +18,14 @@
   "none": "Nothing to cast",
   "elementNone": "Non-elemental"
  },
+ "weapon": {
+  "melee": "Needs a melee weapon",
+  "ranged": "Needs a ranged weapon",
+  "chip": {
+   "melee": "Needs melee",
+   "ranged": "Needs ranged"
+  }
+ },
  "discipline": {
   "basic": "Basic Discipline",
   "standard": "Standard Discipline"

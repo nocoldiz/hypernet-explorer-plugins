@@ -31,6 +31,10 @@
   // drawn at exactly the same height or a click lands on the wrong command:
   // both come from ROW_HEIGHT, and theme.css owns the colours only.
   const ROW_HEIGHT = 40;
+  // How far the command list steps back while the action it was given plays out
+  // (see _updateCmdHtmlPos). Far enough to read as out of the way, not so far
+  // that the player loses track of what they picked.
+  const INERT_OPACITY = 0.45;
   const ICON_PX    = 22;   // IconSet cells are 32px, scaled down to this
   const LABEL_PX   = 16;
   // The menu is as wide as the longest row it is showing, between these two.
@@ -832,7 +836,12 @@
 
     // Once the command has been chosen the window stops taking input, so the
     // row it left behind should stop wearing the cursor border too: the plate
-    // stays readable, the highlight goes.
+    // stays readable, the highlight goes - and the whole list steps back, at
+    // INERT_OPACITY below. It is left STANDING on purpose (see
+    // endCommandSelection) rather than popped out and back in for whoever acts
+    // next, but a list at full strength while the blow it ordered is landing
+    // reads as a list still waiting to be used. Faded, it reads as what it is:
+    // the order already given, and the fight in front of it.
     const live = this.active ||
       !!(this._targetSession && this._targetSession.activeWindow &&
          this._targetSession.activeWindow.active);
@@ -861,7 +870,9 @@
     const left       = (sc.ox + (pt.x + pad) * sc.sx) + 'px';
     const top        = (sc.oy + (pt.y + pad) * sc.sy) + 'px';
     const transform  = `scale(${sc.sx}, ${sc.sy})`;
-    const opacityStr = String(opacity);
+    // The window's own open/close animation, stepped back while the list is not
+    // the thing being used.
+    const opacityStr = String(opacity * (live ? 1 : INERT_OPACITY));
 
     if (this._cmdLastDisplay !== 'block') { s.display = 'block'; this._cmdLastDisplay = 'block'; }
     if (this._cmdLastLeft !== left)           { s.left = left; this._cmdLastLeft = left; }
@@ -886,13 +897,30 @@
   };
 
   //=============================================================================
-  // Window_ActorCommand - Selection triggers rebuild
+  // Window_ActorCommand - Selection update (fast class toggle, avoiding DOM rebuilds)
   //=============================================================================
+
+  Window_ActorCommand.prototype._updateCmdHtmlSelection = function () {
+    if (!this._cmdHtmlRoot) return;
+    const items = this._cmdHtmlRoot.children;
+    const curIdx = this.index();
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const isSel = (i === curIdx);
+      item.classList.toggle('unsel', !isSel);
+      const stripe = item.querySelector('.actorcmd-stripe');
+      if (stripe) stripe.classList.toggle('sel', isSel);
+    }
+  };
 
   const _Window_ActorCommand_select = Window_ActorCommand.prototype.select;
   Window_ActorCommand.prototype.select = function (index) {
     _Window_ActorCommand_select.call(this, index);
-    if (this._list && this._list.length > 0) this.refresh();
+    if (this._cmdHtmlRoot && this._cmdHtmlRoot.children.length > 0) {
+      this._updateCmdHtmlSelection();
+    } else if (this._list && this._list.length > 0) {
+      this.refresh();
+    }
   };
 
   //=============================================================================

@@ -60,6 +60,8 @@
     })[c]);
   }
 
+  const NOTE_COLORS = ["#faf2d3", "#e6ebd7", "#ebd7d7", "#d7ebeb", "#e9e0f0", "#f0e0e9", "#ebdcd0", "#d2e0db"];
+  const SEAL_COLORS = ["#8b263e", "#1f4e79", "#3e6b2f", "#6b4a1f", "#4a2f6b", "#2f6b62", "#7a3b17", "#41414d"];
 
   // One IconSet cell, through the notification service that owns the sprite.
   // Silent if it is not loaded: an icon is decoration, and the sheet still reads.
@@ -84,7 +86,9 @@
       super.create();
       this._tab = "offers";        // offers | contracts | posted
       this._focus = 0;
-      this._btn = -1;               // cursor over the sheet's action strip
+      this._detail = null;          // offer, quest or posted notice being inspected
+      this._detailIsOffer = false;
+      this._detailIsPosted = false;
       this._confirmAbandon = null;  // qid pending abandon confirmation
       this._composer = null;        // the notice the party is writing, if any
       this._el = null;
@@ -138,13 +142,17 @@
 
       el.addEventListener("click", ev => {
         const t = ev.target;
-        if (t.closest(".qb-back")) { this._closeBoard(); return; }
-        const sheetAct = t.closest("[data-act]");
-        if (sheetAct) {
-          this._btn = Number(sheetAct.dataset.btn) || 0;
-          this._runSheetAction(sheetAct.dataset.act);
-          return;
-        }
+        if (t.closest("[data-close-detail]")) { this._closeDetail(); return; }
+        if (t.id === "qb-detail-backdrop") { this._closeDetail(); return; }
+        if (t.closest("[data-show-map]")) { this._showOnMap(); return; }
+        const accept = t.closest("[data-accept]");
+        if (accept) { this._acceptCurrent(); return; }
+        const claim = t.closest("[data-claim]");
+        if (claim) { this._claim(claim.dataset.claim); return; }
+        const abandon = t.closest("[data-abandon]");
+        if (abandon) { this._askAbandon(abandon.dataset.abandon); return; }
+        const confirmAb = t.closest("[data-confirm-abandon]");
+        if (confirmAb) { this._doAbandon(confirmAb.dataset.confirmAbandon); return; }
         if (t.closest("[data-close-compose]")) { this._closeComposer(); return; }
         if (t.closest("[data-close-picker]")) { this._composer.picker = null; SoundManager.playCancel(); this._refresh(); return; }
         const pick = t.closest("[data-cpick]");
@@ -181,17 +189,18 @@
           this._refresh();
           return;
         }
+        const take = t.closest("[data-take]");
+        if (take) { this._takePosted(take.dataset.take); return; }
+        const withdraw = t.closest("[data-withdraw]");
+        if (withdraw) { this._withdrawPosted(withdraw.dataset.withdraw); return; }
+        const collect = t.closest("[data-collect]");
+        if (collect) { this._collectPosted(collect.dataset.collect); return; }
         const tab = t.closest("[data-tab]");
         if (tab) { this._switchTab(tab.dataset.tab); return; }
         const card = t.closest("[data-card]");
         if (card) {
-          const idx = Number(card.dataset.card) || 0;
-          if (idx !== this._focus) {
-            this._focus = idx;
-            this._btn = -1;
-            SoundManager.playCursor();
-            this._refresh();
-          }
+          this._focus = Number(card.dataset.card) || 0;
+          this._openDetail();
           return;
         }
       });
@@ -223,9 +232,9 @@
 
       el.addEventListener("mouseover", ev => {
         const card = ev.target.closest("[data-card]");
-        if (card && !this._composer) {
+        if (card && !this._detail && !this._composer) {
           const idx = Number(card.dataset.card) || 0;
-          if (idx !== this._focus) { this._focus = idx; this._btn = -1; this._refresh(); }
+          if (idx !== this._focus) { this._focus = idx; this._paintFocus(); }
         }
       });
     }
@@ -237,20 +246,24 @@
       const slots = this._tab === "posted" ? cards.length + 1 : cards.length;
       this._focus = Math.max(0, Math.min(this._focus, slots - 1));
 
+      const offersLabel = T('QuestBoard.offers');
+      const contractsLabel = T('QuestBoard.contracts');
+      const postedLabel = T('QuestBoard.posted');
       const postedCount = api ? api.postedForBoard().length : 0;
+      const hint = T('QuestBoard.arrowsMoveOkReadTabSwitchEscClose');
 
-      let rowsHTML = "";
+      let cardsHTML = "";
       if (this._tab === "posted") {
-        // Never empty: the blank sheet is always the first entry.
-        rowsHTML = this._postedCardsHTML(cards);
+        // Never empty: the blank sheet is always pinned there.
+        cardsHTML = this._postedCardsHTML(cards);
       } else if (!cards.length) {
-        rowsHTML = `<div class="ui-empty"><div class="ui-empty-text">${this._tab === "offers"
+        cardsHTML = `<div class="qb-empty">${this._tab === "offers"
           ? T('QuestBoard.nothingButRustyPinsAndOlderRegretsComeBackTo')
-          : T('QuestBoard.noSignedContracts')}</div></div>`;
+          : T('QuestBoard.noSignedContracts')}</div>`;
       } else if (this._tab === "offers") {
-        rowsHTML = cards.map((o, i) => this._offerNoteHTML(o, i)).join("");
+        cardsHTML = cards.map((o, i) => this._offerNoteHTML(o, i)).join("");
       } else {
-        rowsHTML = cards.map((q, i) => this._contractNoteHTML(q, i)).join("");
+        cardsHTML = cards.map((q, i) => this._contractNoteHTML(q, i)).join("");
       }
 
       // The board key is a map group or a destination key; the header reads the
@@ -260,288 +273,141 @@
           ? window.WorkSystem.destinationName(this._boardKey)
           : (this._boardKey || "?"));
 
-      const tab = (key, label, n) =>
-        `<div class="backpack-tab focusable qb-tab${this._tab === key ? " selected" : ""}"` +
-        ` tabindex="0" data-tab="${key}">${label} ${n}</div>`;
-
-      // Walking the notices moves one pin and reads a different sheet. The
-      // board behind them only changes when what is pinned to it does, so it is
-      // put up again for that and for nothing else; every handler on this page
-      // is delegated on the root, so the markup under it can be swapped freely.
-      // A notice can change what it says without leaving the board: a posted
-      // one is taken up and then finished, a contract advances a step. Both are
-      // on the card, so both are in the key.
-      const boardKey = `${this._tab}|${postedCount}|${slots}|` +
-        cards.map(c => `${(c && (c.id || c.title)) || '?'}:${(c && (c.status || c.stepIndex)) || ''}`).join(',');
-      const rightHTML = this._detailHTML();
-      const composerHTML = this._composerHTML();
-
-      if (this._el.querySelector('.qb-spread') && this._lastBoardKey === boardKey) {
-        this._el.querySelectorAll('.qb-note').forEach(note => {
-          const i = parseInt(note.getAttribute('data-card'), 10);
-          note.classList.toggle('selected', i === this._focus);
-        });
-        if (this._lastRightHTML !== rightHTML) {
-          this._lastRightHTML = rightHTML;
-          const right = this._el.querySelector('.right-page');
-          if (right) right.innerHTML = rightHTML;
-        }
-        if (this._lastComposerHTML !== composerHTML) {
-          this._lastComposerHTML = composerHTML;
-          const slot = this._el.querySelector('#qb-composer-slot');
-          if (slot) slot.innerHTML = composerHTML;
-        }
-        this._scrollToFocus();
+      const boardKey = `${this._boardKey || "?"}#${this._tab}#${cards.length}#${this._detail ? (this._detail.qid || this._detail.id || "1") : "0"}#${this._composer ? (this._composer.picker ? "p" : "c") + this._composer.row : "0"}#${this._confirmAbandon || "0"}`;
+      const cardsEl = this._el.querySelector("#qb-cards");
+      if (cardsEl && this._lastBoardKey === boardKey) {
+        this._paintFocus();
         return;
       }
       this._lastBoardKey = boardKey;
-      this._lastRightHTML = rightHTML;
-      this._lastComposerHTML = composerHTML;
 
-      this._el.innerHTML = `
-        <div class="book-spread qb-spread">
-          <div class="left-page">
-            <div class="page-header-bar" id="qb-header">
-              <div class="back-button focusable qb-back" tabindex="0">${T('QuestBoard.back')}</div>
-              <h2 class="title" id="qb-title">${T('QuestBoard.questBoard')}</h2>
-            </div>
-            <div class="qb-place" id="qb-sub">${boardName}</div>
-            <div class="backpack-tabs" id="qb-tabs">
-              ${tab("offers", T('QuestBoard.offers'), this._offers.length)}
-              ${tab("contracts", T('QuestBoard.contracts'), api ? api.activeQuests().length : 0)}
-              ${tab("posted", T('QuestBoard.posted'), postedCount)}
-            </div>
-            <div class="ui-list ui-scroll" id="qb-cards">${rowsHTML}</div>
-          </div>
-          <div class="right-page">${rightHTML}</div>
+      this._el.querySelectorAll("#qb-header, #qb-tabs, #qb-cards, #qb-detail-backdrop, #qb-compose-backdrop, #qb-pick-backdrop")
+        .forEach(n => n.remove());
+      this._el.insertAdjacentHTML("beforeend", `
+        <div id="qb-header">
+          <span id="qb-title">${T('QuestBoard.questBoard')}</span>
+          <span id="qb-sub">${boardName}</span>
+          <span id="qb-hint">${hint}</span>
         </div>
-        <div id="qb-composer-slot">${composerHTML}</div>`;
-      this._scrollToFocus();
-    }
-
-    _scrollToFocus() {
-      if (!this._el) return;
-      const f = this._el.querySelector(".qb-note.selected");
-      if (f) f.scrollIntoView({ block: "nearest" });
+        <div id="qb-tabs">
+          <span class="qb-tab ${this._tab === "offers" ? "active" : ""}" data-tab="offers">${offersLabel} (${this._offers.length})</span>
+          <span class="qb-tab ${this._tab === "contracts" ? "active" : ""}" data-tab="contracts">${contractsLabel} (${api ? api.activeQuests().length : 0})</span>
+          <span class="qb-tab ${this._tab === "posted" ? "active" : ""}" data-tab="posted">${postedLabel} (${postedCount})</span>
+        </div>
+        <div id="qb-cards">${cardsHTML}</div>
+        ${this._detailHTML()}
+        ${this._composerHTML()}`);
     }
 
     _offerNoteHTML(o, i) {
       const api = PQ();
+      const rot = ((hashStr(o.qid) % 9) - 4) * 0.9;
+      const bg = NOTE_COLORS[hashStr(o.qid + "c") % NOTE_COLORS.length];
+      const pin = ["#b03030", "#2f5db0", "#2f8a45", "#a88a1f"][hashStr(o.qid + "p") % 4];
+      const seal = SEAL_COLORS[(o.giverFaction != null ? o.giverFaction : hashStr(o.qid)) % SEAL_COLORS.length];
+      const sealCh = esc(String(o.giverLabel || "?").replace(/^(a|an|the)\s+/i, "").charAt(0).toUpperCase());
       const stars = '<span class="qb-star"></span>'.repeat(Math.max(0, Math.min(5, o.diff)));
       const stepsNote = o.steps.length > 1
         ? `<div class="qb-note-steps">${o.steps.length} ${T('QuestBoard.objectives')} ${o.stepMode === "seq" ? T('QuestBoard.inOrder') : T('QuestBoard.anyOrder')}</div>` : "";
-      return `<div class="item-slot qb-note focusable ${i === this._focus ? "selected" : ""}"
-        tabindex="0" data-card="${i}">
-        <div class="qb-note-info">
-          <div class="qb-note-head">
-            <span class="qb-note-title">${esc(o.title)}</span>
-            ${o.deadlineHours ? `<span class="ui-chip qb-urgent">${T('QuestBoard.urgent')} ${o.deadlineHours}h</span>` : ""}
-          </div>
-          <div class="qb-note-giver">${esc(o.giverLabel)}</div>
-          <div class="qb-note-reward">${T('QuestBoard.reward')}${esc(api.rewardText(o, false))}</div>
-          ${o.payGold > 0 ? `<div class="qb-note-deadline">${T('QuestBoard.costs')}${esc(api.euros(o.payGold))}</div>` : ""}
-          ${stepsNote}
-          <div class="qb-diff">${stars}</div>
-        </div>
+      return `<div class="qb-note ${i === this._focus && !this._detail ? "focused" : ""}"
+        data-card="${i}" style="--rot:${rot}deg; --note-bg:${bg}; --pin:${pin}; --seal:${seal}">
+        <div class="qb-pin"></div>
+        ${o.deadlineHours ? `<div class="qb-urgent">${T('QuestBoard.urgent')} ${o.deadlineHours}h</div>` : ""}
+        <div class="qb-note-title">${esc(o.title)}</div>
+        <div class="qb-note-giver">${esc(o.giverLabel)}</div>
+        <div class="qb-note-reward">${T('QuestBoard.reward')}${esc(api.rewardText(o, false))}</div>
+        ${o.payGold > 0 ? `<div class="qb-note-deadline">${T('QuestBoard.costs')}${esc(api.euros(o.payGold))}</div>` : ""}
+        ${stepsNote}
+        <div class="qb-diff">${stars}</div>
+        <div class="qb-seal">${sealCh}</div>
       </div>`;
     }
 
     _contractNoteHTML(q, i) {
       const api = PQ();
+      const rot = ((hashStr(q.qid) % 7) - 3) * 0.7;
+      const bg = NOTE_COLORS[hashStr(q.qid + "c") % NOTE_COLORS.length];
       const claimable = q.status === "claimable";
       const statusText = claimable
         ? T('QuestBoard.readyCollectYourReward')
         : (q.deadlineAt ? T('QuestBoard.timeLeft') + api.hoursLeftText(q.deadlineAt) : T('QuestBoard.inProgress'));
-      return `<div class="item-slot qb-note qb-contract focusable ${i === this._focus ? "selected" : ""}"
-        tabindex="0" data-card="${i}">
-        <div class="qb-note-info">
-          <div class="qb-note-head">
-            <span class="qb-note-title">${esc(q.title)}</span>
-            <span class="ui-chip qb-status ${claimable ? "qb-status--ready" : "qb-status--active"}">${esc(statusText)}</span>
-          </div>
-          <div class="qb-note-giver">${esc(q.giverLabel)}</div>
-          <div class="qb-note-steps">${esc(api.objectiveText(q)).replace(/\n/g, "<br>")}</div>
-        </div>
+      const supplyBlocked = claimable && q.steps.some(s => s.kind === "supply_items"
+        && $gameParty.numItems($dataItems[s.itemId]) < s.qty);
+      const btns = [];
+      if (claimable && !supplyBlocked) {
+        btns.push(`<span class="qb-btn claim" data-claim="${esc(q.qid)}">${T('QuestBoard.collect')} ${esc(api.rewardText(q, false))}</span>`);
+      } else if (supplyBlocked) {
+        btns.push(`<span class="qb-status">${T('QuestBoard.bringTheGoodsToCollect')}</span>`);
+      }
+      if (this._confirmAbandon === q.qid) {
+        btns.push(`<span class="qb-btn danger" data-confirm-abandon="${esc(q.qid)}">${T('QuestBoard.confirmAbandonPenaltiesApply')}</span>`);
+      } else {
+        btns.push(`<span class="qb-btn danger" data-abandon="${esc(q.qid)}">${T('QuestBoard.abandon')}</span>`);
+      }
+      return `<div class="qb-note qb-contract ${i === this._focus && !this._detail ? "focused" : ""}"
+        data-card="${i}" style="--rot:${rot}deg; --note-bg:${bg}">
+        <div class="qb-pin"></div>
+        <div class="qb-note-title">${esc(q.title)}</div>
+        <div class="qb-note-giver">${esc(q.giverLabel)}</div>
+        <div class="qb-status ${claimable ? "claimable" : "active"}">${esc(statusText)}</div>
+        <div class="qb-note-steps">${esc(api.objectiveText(q)).replace(/\n/g, "<br>")}</div>
+        <div class="qb-btnrow">${btns.join("")}</div>
       </div>`;
-    }
-
-    // The record the cursor stands on, and what kind of thing it is. Every
-    // panel and every action on this screen is answered from this one place.
-    _current() {
-      if (this._tab === "posted") {
-        if (this._focus === 0) return { kind: "new", rec: null };
-        const rec = this._postedAt(this._focus);
-        return rec ? { kind: "posted", rec } : { kind: "none", rec: null };
-      }
-      const rec = this._cards()[this._focus];
-      if (!rec) return { kind: "none", rec: null };
-      return { kind: this._tab === "offers" ? "offer" : "contract", rec };
-    }
-
-    // Everything the sheet on the right page can be acted on with, declared
-    // once: the markup, the cursor and Confirm all read this one list.
-    _sheetButtons() {
-      const api = PQ();
-      const { kind, rec } = this._current();
-      const out = [];
-      if (!api) return out;
-      if (kind === "new") {
-        out.push({ key: "compose", label: T('QuestBoard.writeANotice'), cls: "" });
-        return out;
-      }
-      if (kind === "offer") {
-        out.push({
-          key: "accept",
-          label: rec.payGold > 0
-            ? T('QuestBoard.signAndPay') + api.euros(rec.payGold)
-            : T('QuestBoard.signTheContract'),
-          cls: "",
-        });
-      } else if (kind === "contract") {
-        const claimable = rec.status === "claimable";
-        const supplyBlocked = claimable && rec.steps.some(st => st.kind === "supply_items"
-          && $gameParty.numItems($dataItems[st.itemId]) < st.qty);
-        if (claimable && !supplyBlocked) {
-          out.push({ key: "claim", label: `${T('QuestBoard.collect')} ${api.rewardText(rec, false)}`, cls: "" });
-        }
-        out.push({
-          key: this._confirmAbandon === rec.qid ? "abandon-confirm" : "abandon",
-          label: this._confirmAbandon === rec.qid
-            ? T('QuestBoard.confirmAbandonPenaltiesApply')
-            : T('QuestBoard.abandon'),
-          cls: " inspect-btn--danger",
-        });
-      } else if (kind === "posted") {
-        const mine = api.isOwnPost(rec);
-        if (mine && rec.status === "open") {
-          out.push({ key: "withdraw", label: T('QuestBoard.withdrawNotice'), cls: " inspect-btn--danger" });
-        } else if (mine && (rec.status === "done" || rec.status === "expired")) {
-          out.push({ key: "collect", label: T('QuestBoard.collectNotice'), cls: "" });
-        } else if (!mine && rec.status === "open"
-          && $gameParty.members().length >= (rec.minParty || 1)) {
-          out.push({ key: "take", label: T('QuestBoard.takeNotice'), cls: "" });
-        }
-      }
-      const loc = this._detailLocation();
-      if (loc) {
-        out.push({ key: "map", label: T('QuestBoard.showOnMapAt', { x: loc.wx, y: loc.wy }), cls: " inspect-btn--secondary" });
-      }
-      return out;
-    }
-
-    _runSheetAction(key) {
-      const { kind, rec } = this._current();
-      switch (key) {
-        case "compose": this._openComposer(); break;
-        case "accept": this._acceptCurrent(); break;
-        case "claim": this._claim(rec.qid); break;
-        case "abandon": this._askAbandon(rec.qid); break;
-        case "abandon-confirm": this._doAbandon(rec.qid); break;
-        case "take": this._takePosted(rec.id); break;
-        case "withdraw": this._withdrawPosted(rec.id); break;
-        case "collect": this._collectPosted(rec.id); break;
-        case "map": this._showOnMap(); break;
-        default: break;
-      }
-    }
-
-    _moveSheetButton(delta) {
-      const btns = this._sheetButtons();
-      if (!btns.length) return false;
-      const at = this._btn;
-      this._btn = at < 0
-        ? (delta > 0 ? 0 : btns.length - 1)
-        : (at + delta + btns.length) % btns.length;
-      SoundManager.playCursor();
-      this._refresh();
-      return true;
-    }
-
-    _triggerSheetButton() {
-      const btns = this._sheetButtons();
-      const b = btns[this._btn] || btns[0];
-      if (!b) return false;
-      this._runSheetAction(b.key);
-      return true;
-    }
-
-    _actionsHTML() {
-      const btns = this._sheetButtons();
-      if (!btns.length) return "";
-      const html = btns.map((b, i) => {
-        const on = i === this._btn ? " selected" : "";
-        return `<div class="inspect-btn qb-action focusable${b.cls}${on}" tabindex="0"` +
-          ` data-act="${esc(b.key)}" data-btn="${i}">${esc(b.label)}</div>`;
-      }).join("");
-      return `<div class="inspect-actions">${html}</div>`;
     }
 
     _detailHTML() {
+      if (!this._detail) return "";
       const api = PQ();
-      const { kind, rec } = this._current();
-      if (kind === "new") {
-        return `<div class="ui-detail qb-detail">
-          <div class="ui-detail-head">
-            <div class="ui-detail-titles">
-              <h3 class="qb-d-title">${T('QuestBoard.writeANotice')}</h3>
-            </div>
-          </div>
-          <div class="ui-detail-scroll ui-scroll">
-            <div class="ui-prose">${T('QuestBoard.writeANoticeHint')}</div>
-          </div>
-          ${this._actionsHTML()}
-        </div>`;
-      }
-      if (!rec || !api) {
-        return `<div class="ui-empty"><div class="ui-empty-text">${T('QuestBoard.selectANotice')}</div></div>`;
-      }
-      const termLines = kind === "posted" ? api.postedTerms(rec) : api.termsLines(rec);
+      const o = this._detail;
+      const termLines = this._detailIsPosted ? api.postedTerms(o) : api.termsLines(o);
       const terms = termLines.map(line => {
         const warn = /Penalty|Penale|prosecuted|perseguito|cost|Costo/i.test(line);
-        return `<div class="qb-d-line${warn ? " qb-d-line--warn" : ""}">${esc(line)}</div>`;
+        return `<div class="qb-d-line ${warn ? "warn" : ""}">${esc(line)}</div>`;
       }).join("");
-      const crew = kind === "posted" && (rec.minParty || 1) > 1
-        ? `<div class="ui-chip-row"><span class="ui-chip">${T('QuestBoard.crewOf', { n: rec.minParty })}</span>` +
-          (api.isOwnPost(rec) ? `<span class="ui-chip qb-mine">${T('QuestBoard.yourNotice')}</span>` : "") +
-          `</div>`
-        : (kind === "posted" && api.isOwnPost(rec)
-          ? `<div class="ui-chip-row"><span class="ui-chip qb-mine">${T('QuestBoard.yourNotice')}</span></div>` : "");
-      const shortCrew = kind === "posted" && !api.isOwnPost(rec) && rec.status === "open"
-        && $gameParty.members().length < (rec.minParty || 1)
-        ? `<div class="qb-d-line qb-d-line--warn">${T('QuestBoard.needsCrew', { n: rec.minParty })}</div>` : "";
-      const supplyNote = kind === "contract" && rec.status === "claimable"
-        && rec.steps.some(st => st.kind === "supply_items"
-          && $gameParty.numItems($dataItems[st.itemId]) < st.qty)
-        ? `<div class="qb-d-line qb-d-line--warn">${T('QuestBoard.bringTheGoodsToCollect')}</div>` : "";
-
-      return `<div class="ui-detail qb-detail">
-        <div class="ui-detail-head">
-          <div class="ui-detail-titles">
-            <h3 class="qb-d-title">${esc(rec.title)}</h3>
-            <div class="qb-d-giver">${T('QuestBoard.postedBy')}${esc(rec.giverLabel || "")}</div>
-          </div>
+      const steps = esc(api.objectiveText(o));
+      let acceptBtn = "";
+      if (this._detailIsOffer) {
+        acceptBtn = `<span class="qb-btn claim" data-accept="1">${o.payGold > 0
+          ? T('QuestBoard.signAndPay') + esc(api.euros(o.payGold))
+          : T('QuestBoard.signTheContract')}</span>`;
+      } else if (this._detailIsPosted) {
+        const mine = api.isOwnPost(o);
+        if (mine && o.status === "open") {
+          acceptBtn = `<span class="qb-btn danger" data-withdraw="${esc(o.id)}">${T('QuestBoard.withdrawNotice')}</span>`;
+        } else if (mine && (o.status === "done" || o.status === "expired")) {
+          acceptBtn = `<span class="qb-btn claim" data-collect="${esc(o.id)}">${T('QuestBoard.collectNotice')}</span>`;
+        } else if (!mine && o.status === "open") {
+          acceptBtn = $gameParty.members().length < (o.minParty || 1)
+            ? `<span class="qb-status">${T('QuestBoard.needsCrew', { n: o.minParty })}</span>`
+            : `<span class="qb-btn claim" data-take="${esc(o.id)}">${T('QuestBoard.takeNotice')}</span>`;
+        }
+      }
+      const loc = this._detailLocation();
+      const mapBtn = loc
+        ? `<span class="qb-btn map" data-show-map="1">${T('QuestBoard.showOnMapAt', { x: loc.wx, y: loc.wy })}</span>`
+        : "";
+      return `<div id="qb-detail-backdrop"><div id="qb-detail"><div class="qb-d-page">
+        <h2>${esc(o.title)}</h2>
+        <div class="qb-d-giver">${T('QuestBoard.postedBy')}${esc(o.giverLabel)}</div>
+        <div class="qb-d-body">${esc(o.body)}</div>
+        <div class="qb-d-sec">${T('QuestBoard.objectives2')}</div>
+        <div class="qb-d-steps">${steps}</div>
+        <div class="qb-d-sec">${T('QuestBoard.terms')}</div>
+        ${terms}
+        <div class="qb-d-btns">
+          ${acceptBtn}
+          ${mapBtn}
+          <span class="qb-btn" data-close-detail="1">${T('QuestBoard.back')}</span>
         </div>
-        <div class="ui-detail-scroll ui-scroll">
-          ${crew}
-          <div class="ui-prose qb-d-body">${esc(rec.body || "")}</div>
-          <div class="inspect-section-title">${T('QuestBoard.objectives2')}</div>
-          <div class="ui-prose qb-d-steps">${esc(api.objectiveText(rec))}</div>
-          <div class="inspect-section-title">${T('QuestBoard.terms')}</div>
-          ${terms}
-          ${shortCrew}
-          ${supplyNote}
-        </div>
-        ${this._actionsHTML()}
-      </div>`;
+      </div></div></div>`;
     }
 
     // The world tile the open sheet points at, or null for contracts with nothing
     // to pin (supply runs, arena bouts, market positions).
     _detailLocation() {
       const api = PQ();
-      const { rec } = this._current();
-      if (!rec || !api || typeof api.questLocation !== "function") return null;
-      return api.questLocation(rec);
+      if (!this._detail || !api || typeof api.questLocation !== "function") return null;
+      return api.questLocation(this._detail);
     }
 
     // Leave the board and open the world map (the M map) centred on the site.
@@ -554,27 +420,83 @@
       }
       window.WorldMapView.requestFocusAt(loc.wx, loc.wy);
       SoundManager.playOk();
+      this._detail = null;
       // Straight to the map rather than popScene: the request can only be
       // carried out by Scene_Map, and the board may sit above a menu stack.
       SceneManager.goto(Scene_Map);
     }
 
+    // Notes wrap freely across the full-screen board, so the column count is
+    // whatever the layout ended up with: count the notes sharing the top row.
+    _perRow() {
+      if (!this._el) return 1;
+      const notes = this._el.querySelectorAll("[data-card]");
+      if (!notes.length) return 1;
+      const top = notes[0].offsetTop;
+      let n = 0;
+      for (const note of notes) {
+        if (note.offsetTop !== top) break;
+        n++;
+      }
+      return Math.max(1, n);
+    }
+
+    _paintFocus() {
+      if (!this._el) return;
+      this._el.querySelectorAll("[data-card]").forEach(n => {
+        n.classList.toggle("focused", Number(n.dataset.card) === this._focus && !this._detail);
+      });
+      const f = this._el.querySelector(".qb-note.focused");
+      if (f) f.scrollIntoView({ block: "nearest" });
+    }
 
     // ---- actions ----
     _switchTab(tab) {
       if (tab === this._tab) return;
       this._tab = tab;
       this._focus = 0;
-      this._btn = -1;
+      this._detail = null;
+      this._detailIsPosted = false;
       this._composer = null;
       this._confirmAbandon = null;
       SoundManager.playCursor();
       this._refresh();
     }
 
+    _openDetail() {
+      if (this._tab === "posted") {
+        // Card 0 is the blank sheet, not a notice: it opens the composer.
+        if (this._focus === 0) { this._openComposer(); return; }
+        const rec = this._postedAt(this._focus);
+        if (!rec) return;
+        this._detail = rec;
+        this._detailIsOffer = false;
+        this._detailIsPosted = true;
+        SoundManager.playOk();
+        this._refresh();
+        return;
+      }
+      const cards = this._cards();
+      const item = cards[this._focus];
+      if (!item) return;
+      this._detail = item;
+      this._detailIsOffer = this._tab === "offers";
+      this._detailIsPosted = false;
+      SoundManager.playOk();
+      this._refresh();
+    }
+
+    _closeDetail() {
+      if (!this._detail) return;
+      this._detail = null;
+      SoundManager.playCancel();
+      this._refresh();
+    }
+
     // One step back, whatever is on screen: sheet, pending confirmation, board.
     _back() {
       if (this._composer) { this._closeComposer(); return; }
+      if (this._detail) { this._closeDetail(); return; }
       if (this._confirmAbandon) {
         this._confirmAbandon = null;
         SoundManager.playCancel();
@@ -593,9 +515,8 @@
 
     _acceptCurrent() {
       const api = PQ();
-      const { kind, rec } = this._current();
-      if (!api || kind !== "offer") return;
-      const res = api.acceptOffer(rec);
+      if (!api || !this._detail || !this._detailIsOffer) return;
+      const res = api.acceptOffer(this._detail);
       if (!res.ok) {
         SoundManager.playBuzzer();
         if (window.ParchmentToast && res.reason) {
@@ -604,7 +525,7 @@
         return;
       }
       SoundManager.playOk();
-      this._btn = -1;
+      this._detail = null;
       this._offers = api.offersForBoard(this._boardKey);
       this._refresh();
     }
@@ -644,12 +565,12 @@
     // The first card is always the blank sheet: a board the party can write on
     // is only useful if writing on it is the obvious thing to do there.
     _postedCardsHTML(recs) {
-      let html = `<div class="item-slot qb-note qb-post-new focusable ${this._focus === 0 ? "selected" : ""}"
-        tabindex="0" data-card="0">
-        <div class="qb-note-info">
-          <div class="qb-note-title">${T('QuestBoard.writeANotice')}</div>
-          <div class="qb-note-steps">${T('QuestBoard.writeANoticeHint')}</div>
-        </div>
+      let html = `<div class="qb-note qb-post-new ${this._focus === 0 && !this._detail && !this._composer ? "focused" : ""}"
+        data-card="0" style="--rot:-1.2deg">
+        <div class="qb-pin"></div>
+        <div class="qb-post-plus">+</div>
+        <div class="qb-note-title">${T('QuestBoard.writeANotice')}</div>
+        <div class="qb-note-steps">${T('QuestBoard.writeANoticeHint')}</div>
       </div>`;
       html += recs.map((rec, i) => this._postedNoteHTML(rec, i + 1)).join("");
       return html;
@@ -657,23 +578,37 @@
 
     _postedNoteHTML(rec, i) {
       const api = PQ();
+      const rot = ((hashStr(rec.id) % 7) - 3) * 0.8;
+      const bg = NOTE_COLORS[hashStr(rec.id + "c") % NOTE_COLORS.length];
+      const pin = ["#b03030", "#2f5db0", "#2f8a45", "#a88a1f"][hashStr(rec.id + "p") % 4];
       const mine = api.isOwnPost(rec);
       const stars = '<span class="qb-star"></span>'.repeat(Math.max(0, Math.min(5, rec.diff)));
+      const btns = [];
+      if (mine && rec.status === "open") {
+        btns.push(`<span class="qb-btn danger" data-withdraw="${esc(rec.id)}">${T('QuestBoard.withdrawNotice')}</span>`);
+      }
+      if (mine && (rec.status === "done" || rec.status === "expired")) {
+        btns.push(`<span class="qb-btn claim" data-collect="${esc(rec.id)}">${T('QuestBoard.collectNotice')}</span>`);
+      }
+      if (!mine && rec.status === "open") {
+        const short = $gameParty.members().length < (rec.minParty || 1);
+        btns.push(short
+          ? `<span class="qb-status">${T('QuestBoard.needsCrew', { n: rec.minParty })}</span>`
+          : `<span class="qb-btn claim" data-take="${esc(rec.id)}">${T('QuestBoard.takeNotice')}</span>`);
+      }
       const crew = (rec.minParty || 1) > 1
         ? `<div class="qb-note-crew">${T('QuestBoard.crewOf', { n: rec.minParty })}</div>` : "";
-      return `<div class="item-slot qb-note qb-posted focusable ${i === this._focus ? "selected" : ""}"
-        tabindex="0" data-card="${i}">
-        <div class="qb-note-info">
-          <div class="qb-note-head">
-            <span class="qb-note-title">${esc(rec.title)}</span>
-            ${mine ? `<span class="ui-chip qb-mine">${T('QuestBoard.yourNotice')}</span>` : ""}
-          </div>
-          <div class="qb-note-giver">${esc(rec.giverLabel || "")}</div>
-          <div class="qb-note-reward">${T('QuestBoard.reward')}${esc(api.rewardText(rec, true))}</div>
-          <div class="qb-status ${rec.status === "open" ? "qb-status--active" : "qb-status--ready"}">${esc(api.postedStatusLine(rec))}</div>
-          ${crew}
-          <div class="qb-diff">${stars}</div>
-        </div>
+      return `<div class="qb-note qb-posted ${i === this._focus && !this._detail && !this._composer ? "focused" : ""}"
+        data-card="${i}" style="--rot:${rot}deg; --note-bg:${bg}; --pin:${pin}">
+        <div class="qb-pin"></div>
+        ${mine ? `<div class="qb-urgent qb-mine">${T('QuestBoard.yourNotice')}</div>` : ""}
+        <div class="qb-note-title">${esc(rec.title)}</div>
+        <div class="qb-note-giver">${esc(rec.giverLabel || "")}</div>
+        <div class="qb-note-reward">${T('QuestBoard.reward')}${esc(api.rewardText(rec, true))}</div>
+        <div class="qb-status ${rec.status === "open" ? "active" : "claimable"}">${esc(api.postedStatusLine(rec))}</div>
+        ${crew}
+        <div class="qb-diff">${stars}</div>
+        <div class="qb-btnrow">${btns.join("")}</div>
       </div>`;
     }
 
@@ -773,14 +708,14 @@
       };
 
       const rowsHTML = rows.map((r, i) => {
-        const focused = i === c.row && !c.picker ? " selected" : "";
+        const focused = i === c.row && !c.picker ? " focused" : "";
         const act = (r.kind === "action" || r.kind === "list") ? ` data-crow-act="${r.id}"` : "";
         const arrows = (r.kind === "cycle" || r.kind === "stars" || r.kind === "number" || r.kind === "money")
           ? `<span class="qb-c-arrow" data-cdelta="${r.id}:-1">&lsaquo;</span>` +
             `<span class="qb-c-val">${value(r.id)}</span>` +
             `<span class="qb-c-arrow" data-cdelta="${r.id}:1">&rsaquo;</span>`
           : `<span class="qb-c-val">${value(r.id)}</span>`;
-        return `<div class="item-slot qb-c-row focusable${focused} qb-c-${r.kind}" tabindex="0" data-crow="${i}"${act}>
+        return `<div class="qb-c-row${focused} qb-c-${r.kind}" data-crow="${i}"${act}>
           <span class="qb-c-label">${esc(r.label)}</span>
           <span class="qb-c-field">${arrows}</span>
         </div>`;
@@ -794,16 +729,12 @@
       }
       const rateClass = gen >= 1 ? "good" : (gen >= 0.6 ? "warn" : "bad");
 
-      return `<div class="ui-overlay" id="qb-compose-backdrop"><div class="ui-panel" id="qb-compose">
-        <div class="page-header-bar">
-          <div class="back-button focusable" tabindex="0" data-close-compose="1">${T('QuestBoard.back')}</div>
-          <h2 class="title">${T('QuestBoard.composeTitle')}</h2>
-        </div>
-        <div class="ui-panel-body ui-scroll qb-c-page">
-        <div class="ui-prose qb-c-intro">${T('QuestBoard.composeIntro')}</div>
+      return `<div id="qb-compose-backdrop"><div id="qb-compose"><div class="qb-c-page">
+        <h2>${T('QuestBoard.composeTitle')}</h2>
+        <div class="qb-c-intro">${T('QuestBoard.composeIntro')}</div>
         <div class="qb-c-rows">${rowsHTML}</div>
-        <div class="inspect-section-title">${T('QuestBoard.composeRate')}</div>
-        <div class="qb-c-rate qb-c-rate--${rateClass}">
+        <div class="qb-d-sec">${T('QuestBoard.composeRate')}</div>
+        <div class="qb-c-rate ${rateClass}">
           ${T('QuestBoard.composeRateLine', {
             offered: api.euros(offered), asking: api.euros(asking),
             pct: Math.round(gen * 100),
@@ -812,18 +743,18 @@
         <div class="qb-c-note">${T('QuestBoard.composeRateHint')}</div>
         ${isRequest ? `<div class="qb-c-note qb-c-derived">${T('QuestBoard.composeDerivedDiff')}
           <span class="qb-c-val">${'<span class="qb-star"></span>'.repeat(diff)}</span></div>` : ""}
-        <div class="inspect-section-title">${T('QuestBoard.composeEscrow')}</div>
+        <div class="qb-d-sec">${T('QuestBoard.composeEscrow')}</div>
         <div class="qb-c-note">${esc(escrowLines.join("  ·  "))}</div>
-        <div class="inspect-section-title">${T('QuestBoard.composePreview')}</div>
+        <div class="qb-d-sec">${T('QuestBoard.composePreview')}</div>
         ${preview ? `<div class="qb-c-preview">
           <div class="qb-c-prev-title">${esc(preview.title)}</div>
           <div class="qb-c-prev-giver">${esc(preview.giverLabel || "")}</div>
           <div class="qb-c-prev-body">${esc(preview.body)}</div>
           <div class="qb-c-prev-steps">${esc(api.objectiveText(preview)).replace(/\n/g, "<br>")}</div>
         </div>` : `<div class="qb-c-note">${T('QuestBoard.composeNothingYet')}</div>`}
-        </div>
-        <div class="inspect-actions">
-          <div class="inspect-btn focusable" tabindex="0" data-crow-act="post">${T('QuestBoard.composePost')}</div>
+        <div class="qb-d-btns">
+          <span class="qb-btn claim" data-crow-act="post">${T('QuestBoard.composePost')}</span>
+          <span class="qb-btn" data-close-compose="1">${T('QuestBoard.back')}</span>
         </div>
       </div></div>${this._pickerHTML()}`;
     }
@@ -911,26 +842,24 @@
       const slice = all.slice(p.page * PER, p.page * PER + PER);
       const rows = slice.map(e => {
         const held = $gameParty.numItems(e.obj);
-        return `<div class="item-slot qb-p-row focusable" tabindex="0" data-cpick="${e.kind}:${e.id}">
+        return `<div class="qb-p-row" data-cpick="${e.kind}:${e.id}">
           ${iconHTML(e.obj.iconIndex)}
           <span class="qb-p-name">${esc(e.obj.name)}</span>
           <span class="qb-p-price">${esc(api.euros(e.obj.price || 0))}</span>
           <span class="qb-p-held">${held > 0 ? T('QuestBoard.composeHeld', { n: held }) : ""}</span>
         </div>`;
       }).join("") || `<div class="qb-c-note">${T('QuestBoard.composeNoMatch')}</div>`;
-      return `<div class="ui-overlay" id="qb-pick-backdrop"><div class="ui-panel" id="qb-pick">
-        <div class="page-header-bar">
-          <div class="back-button focusable" tabindex="0" data-close-picker="1">${T('QuestBoard.back')}</div>
-          <h2 class="title">${p.which === "wanted" ? T('QuestBoard.composePickWanted') : T('QuestBoard.composePickGoods')}</h2>
-        </div>
+      return `<div id="qb-pick-backdrop"><div id="qb-pick">
         <div class="qb-p-head">
+          <span>${p.which === "wanted" ? T('QuestBoard.composePickWanted') : T('QuestBoard.composePickGoods')}</span>
           <span class="qb-p-search">${T('QuestBoard.composeSearch')}: <b>${esc(p.query) || "&hellip;"}</b></span>
           <span class="qb-p-page">${p.page + 1}/${pages}</span>
         </div>
-        <div class="ui-panel-body ui-scroll qb-p-list">${rows}</div>
-        <div class="inspect-actions">
-          <div class="inspect-btn focusable" tabindex="0" data-cpage="-1">&lsaquo;</div>
-          <div class="inspect-btn focusable" tabindex="0" data-cpage="1">&rsaquo;</div>
+        <div class="qb-p-list">${rows}</div>
+        <div class="qb-d-btns">
+          <span class="qb-btn" data-cpage="-1">&lsaquo;</span>
+          <span class="qb-btn" data-cpage="1">&rsaquo;</span>
+          <span class="qb-btn" data-close-picker="1">${T('QuestBoard.back')}</span>
         </div>
       </div></div>`;
     }
@@ -1040,7 +969,7 @@
         return;
       }
       SoundManager.playOk();
-      this._btn = -1;
+      this._detail = null;
       this._refresh();
     }
 
@@ -1055,7 +984,7 @@
         return;
       }
       SoundManager.playCancel();
-      this._btn = -1;
+      this._detail = null;
       this._refresh();
     }
 
@@ -1064,7 +993,7 @@
       const res = api.collectPostedDelivery(id);
       if (!res.ok) { SoundManager.playBuzzer(); return; }
       SoundManager.playShop();
-      this._btn = -1;
+      this._detail = null;
       this._refresh();
     }
 
@@ -1078,39 +1007,47 @@
       // TouchInput as well would back out twice on one click.
       if (this._composer) { this._updateComposer(); return; }
 
+      if (this._detail) {
+        if (Input.isTriggered("cancel")) this._closeDetail();
+        else if (Input.isTriggered("shift")) this._showOnMap();
+        else if (Input.isTriggered("ok") && this._detailIsOffer) this._acceptCurrent();
+        return;
+      }
+
       if (Input.isTriggered("cancel")) {
         this._back();
         return;
       }
-
-      // L1 / R1 step the board strip, as they do on every tabbed page.
-      if (Input.isTriggered("pagedown") || Input.isTriggered("pageup")) {
+      if (Input.isTriggered("tab") || Input.isTriggered("pagedown") || Input.isTriggered("pageup")) {
         const order = ["offers", "contracts", "posted"];
         const back = Input.isTriggered("pageup");
         const i = order.indexOf(this._tab);
         this._switchTab(order[(i + (back ? order.length - 1 : 1)) % order.length]);
         return;
       }
-
-      const count = this._tab === "posted" ? this._cards().length + 1 : this._cards().length;
-
-      // Up and down walk the notices, and the sheet on the right follows.
-      let moved = false;
-      if (count) {
-        if (Input.isRepeated("down")) { this._focus = Math.min(count - 1, this._focus + 1); moved = true; }
-        else if (Input.isRepeated("up")) { this._focus = Math.max(0, this._focus - 1); moved = true; }
-      }
-      if (moved) {
-        this._btn = -1;
-        SoundManager.playCursor();
-        this._refresh();
+      if (Input.isTriggered("ok")) {
+        if (this._tab === "posted") { this._openDetail(); return; }
+        if (this._tab === "contracts") {
+          // OK on a claimable contract collects it directly.
+          const q = this._cards()[this._focus];
+          if (q && q.status === "claimable") { this._claim(q.qid); return; }
+        }
+        this._openDetail();
         return;
       }
 
-      // Left and right walk the sheet's action strip, Confirm fires it.
-      if (Input.isRepeated("right")) { if (this._moveSheetButton(1)) return; }
-      else if (Input.isRepeated("left")) { if (this._moveSheetButton(-1)) return; }
-      if (Input.isTriggered("ok")) { this._triggerSheetButton(); }
+      const count = this._tab === "posted" ? this._cards().length + 1 : this._cards().length;
+      if (!count) return;
+      let moved = false;
+      const perRow = this._perRow();
+      if (Input.isRepeated("right")) { this._focus = (this._focus + 1) % count; moved = true; }
+      else if (Input.isRepeated("left")) { this._focus = (this._focus - 1 + count) % count; moved = true; }
+      else if (Input.isRepeated("down")) { this._focus = Math.min(count - 1, this._focus + perRow); moved = true; }
+      else if (Input.isRepeated("up")) { this._focus = Math.max(0, this._focus - perRow); moved = true; }
+      if (moved) {
+        SoundManager.playCursor();
+        this._paintFocus();
+      }
     }
 
     // The sheet is a flat list of controls: up and down walk them, left and

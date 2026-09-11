@@ -812,12 +812,10 @@
         return ROLE_STRIPE[getSkillRole(skill)] || 'var(--role-basic)';
     }
 
-    // A skill a body part or an installed augment grants is carried the way a
-    // weapon's is: the anatomy teaches it, so it spends no loadout slot and
-    // cannot be benched. It is learned rather than added, which is why it needs
-    // asking for by name here. Losing the part is what takes it away, and only
-    // Blood and Oil severs a part; on every other difficulty a ruined limb is
-    // broken, not gone, and keeps its moves.
+    // Body part and implant skills (anatomy skills) are not always carried:
+    // they are learned via the anatomy, but must be synced with the hotbar before
+    // they can be used in battle. They do not auto-activate or seed into the
+    // hotbar automatically.
     // Asked once per skill row and once per carried id, so the answer is held
     // for the frame rather than walking every body part each time.
     const _anatomyCache = new WeakMap();
@@ -842,7 +840,6 @@
         if (!skill) return false;
         if (isBasicSkill(skill)) return true;
         if (!actor) return false;
-        if (isAnatomySkill(actor, skill)) return true;
         return !actor.isLearnedSkill(skill.id) && actor.addedSkills().includes(skill.id);
     }
 
@@ -866,7 +863,7 @@
     function seedLoadout(actor) {
         const picked = [];
         for (const skill of actor.skills()) {
-            if (!skill || isDummySkill(skill) || isAlwaysCarried(actor, skill)) continue;
+            if (!skill || isDummySkill(skill) || isAlwaysCarried(actor, skill) || isAnatomySkill(actor, skill)) continue;
             if (picked.length >= LOADOUT_MAX) break;
             picked.push(skill.id);
         }
@@ -1125,11 +1122,13 @@
 
         // A freshly learned skill is taken up at once while the loadout has
         // room; past that it is learned and left on the bench.
+        // Skills gained from anatomy (body parts or implants) are never auto-activated.
         autoActivate(actor, skillId) {
             const skill = $dataSkills[skillId];
             if (!actor || !skill || isDummySkill(skill)) return false;
             if (isAlwaysCarried(actor, skill)) return false;
             if (isStatLocked(actor, skill)) return false;
+            if (isAnatomySkill(actor, skill)) return false;
             const list = loadoutIds(actor);
             if (list.includes(skillId)) return false;
             if (list.length >= LOADOUT_MAX) return false;
@@ -1647,6 +1646,15 @@
                     value: stand.have, points: stand.points, percent: Math.round(stand.failChance * 100)
                 }) + ' ' + T('SkillsMenu.spec.statBaseNote');
         }
+        // The weapon the school IS, when it is not in hand: a shot with no gun
+        // and a slash with nothing but a bow are refused outright rather than
+        // fumbled, so this says which weapon would light the row back up
+        // (window.SkillWeaponReq).
+        const wpn = window.SkillWeaponReq;
+        const hands = wpn && actor ? wpn.check(actor, skill) : null;
+        if (hands && !hands.met) {
+            text += (text ? '\n' : '') + wpn.label(hands.need);
+        }
         return text;
     }
 
@@ -1739,6 +1747,20 @@
                     value: stand.have, points: stand.points, percent: Math.round(stand.failChance * 100)
                 });
                 rightDiv.appendChild(reqSpan);
+            }
+
+            // The weapon a school of blows cannot be practised without. This
+            // one DOES refuse the pick (canUse is false above, so the row is
+            // already faded and OK buzzes): the chip says why the skill the
+            // player synced is standing there greyed out.
+            const wpnSvc = window.SkillWeaponReq;
+            const hands = wpnSvc && this._actor ? wpnSvc.check(this._actor, skill) : null;
+            if (hands && !hands.met) {
+                const wpnSpan = document.createElement('span');
+                wpnSpan.style.cssText = 'color:var(--text-danger-dark);font-weight:bold;margin-left:8px;';
+                wpnSpan.textContent = wpnSvc.chipLabel(hands.need);
+                wpnSpan.title = wpnSvc.label(hands.need);
+                rightDiv.appendChild(wpnSpan);
             }
 
             if (this._actor) {
@@ -2354,6 +2376,79 @@
     // --- UI UI Overlay Engine for Skills ---
 
     Scene_Skill.prototype.createUISkillOverlay = function () {
+        if (!document.getElementById("skill-sync-btn-style")) {
+            const style = document.createElement("style");
+            style.id = "skill-sync-btn-style";
+            style.textContent = `
+                .skill-sync-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 4px;
+                    font-family: var(--font-ui, sans-serif);
+                    font-size: 0.74em;
+                    font-weight: bold;
+                    padding: 1px 6px;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    line-height: 1.25;
+                    user-select: none;
+                    flex: 0 0 auto;
+                    transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+                    box-sizing: border-box;
+                    background: transparent;
+                    white-space: nowrap;
+                    text-decoration: none;
+                }
+                .skill-sync-btn--synced {
+                    background: var(--bg-primary-hover-translucent-20, rgba(240, 198, 116, 0.18));
+                    border: 1px solid var(--text-primary-hover, #f0c674);
+                    color: var(--text-primary-hover, #f0c674);
+                }
+                .skill-sync-btn--synced:hover {
+                    background: rgba(220, 53, 69, 0.25);
+                    border-color: var(--text-danger-dark, #dc3545);
+                    color: var(--text-danger-dark, #dc3545);
+                }
+                .skill-sync-btn--desynced {
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid var(--border-primary-hover-translucent-15, rgba(240, 198, 116, 0.25));
+                    color: var(--text-text-alt-4, #b0a898);
+                }
+                .skill-sync-btn--desynced:hover {
+                    background: var(--bg-primary-hover-translucent-20, rgba(240, 198, 116, 0.18));
+                    border-color: var(--text-primary-hover, #f0c674);
+                    color: var(--text-primary-hover, #f0c674);
+                }
+                .skill-sync-btn--always {
+                    background: transparent;
+                    border: 1px solid rgba(255, 255, 255, 0.12);
+                    color: var(--text-text-alt-4, #888);
+                    cursor: default;
+                    opacity: 0.65;
+                }
+                .skill-sync-btn--locked {
+                    opacity: 0.55;
+                }
+                .skill-sync-svg {
+                    display: inline-block;
+                    vertical-align: middle;
+                    flex-shrink: 0;
+                }
+                .item-slot-cost {
+                    font-family: var(--font-ui);
+                    font-size: 0.9em;
+                    font-weight: bold;
+                    color: var(--text-text-alt-4);
+                    white-space: nowrap;
+                }
+                .item-slot:hover .item-slot-cost,
+                .item-slot.selected .item-slot-cost {
+                    color: var(--text-primary-hover, #f0c674);
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
         // Create overlay container
         this._dndContainer = document.createElement("div");
         this._dndContainer.id = "menu-container";
@@ -3280,7 +3375,7 @@
         const svc = statSvc;
         const stand = standing;
         const reqFlag = (stand && !stand.met)
-            ? `<span class="skill-req-flag" title="${escapeHtml(T('SkillsMenu.spec.statShort', { value: stand.have, points: stand.points, percent: Math.round(stand.failChance * 100) }))}">${escapeHtml(svc.standingLabel(actor, item))}</span>`
+            ? `<span class="skill-req-flag" title="${escapeHtml(T('SkillsMenu.spec.statShort', { value: stand.have, points: stand.points, percent: Math.round(stand.failChance * 100) }))}">${(costText || fieldFlag) ? ' · ' : ''}${escapeHtml(svc.standingLabel(actor, item))}</span>`
             : "";
 
         // A card can be picked up and dropped on the carried row. The ledger
@@ -3290,6 +3385,29 @@
             ? ` draggable="true" ondragstart="SceneManager._scene.onUISkillDragStart(event, ${idx})" ondragend="SceneManager._scene.onUISkillDragEnd(event)"`
             : "";
 
+        const SYNC_SVG = '<svg class="skill-sync-svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>';
+        const DESYNC_SVG = '<svg class="skill-sync-svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+        const LOCK_SVG = '<svg class="skill-sync-svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+
+        let syncBtnHTML = "";
+        if (isLevelUp) {
+            syncBtnHTML = `<span class="skill-sync-btn skill-sync-btn--always">Lv ${entry.level}</span>`;
+        } else if (BattleLoadout.isAlwaysCarried(actor, item)) {
+            const alwaysLabel = typeof T === 'function' && T.has && T.has('SkillsMenu.loadout.always') ? T('SkillsMenu.loadout.always') : 'Always';
+            syncBtnHTML = `<span class="skill-sync-btn skill-sync-btn--always" title="${escapeHtml(alwaysLabel)}">${LOCK_SVG} <span class="skill-sync-label">${escapeHtml(alwaysLabel)}</span></span>`;
+        } else if (!isStatLocked) {
+            const isSynced = BattleLoadout.isActive(actor, item);
+            const carryLabel = typeof T === 'function' && T.has && T.has('SkillsMenu.cmd.carry') ? T('SkillsMenu.cmd.carry') : 'Sync';
+            const benchLabel = typeof T === 'function' && T.has && T.has('SkillsMenu.cmd.bench') ? T('SkillsMenu.cmd.bench') : 'Desync';
+            const btnLabel = isSynced ? benchLabel : carryLabel;
+            const btnTitle = isSynced
+                ? (typeof T === 'function' && T.has && T.has('SkillsMenu.action.bench') ? T('SkillsMenu.action.bench') : 'Desync')
+                : (typeof T === 'function' && T.has && T.has('SkillsMenu.action.carry') ? T('SkillsMenu.action.carry') : 'Sync');
+            const iconGlyph = isSynced ? DESYNC_SVG : SYNC_SVG;
+            const btnCls = isSynced ? 'skill-sync-btn skill-sync-btn--synced' : 'skill-sync-btn skill-sync-btn--desynced';
+            syncBtnHTML = `<span class="${btnCls}" role="button" onclick="event.stopPropagation(); SceneManager._scene.clickUILoadout(${idx})" title="${escapeHtml(btnTitle)}">${iconGlyph} <span class="skill-sync-label">${escapeHtml(btnLabel)}</span></span>`;
+        }
+
         return `
             <div class="item-slot ${isFocused}${syncedClass}${isStatLocked ? " skill-stat-locked" : ""}"${dimStyle} data-skill-idx="${idx}"${dragAttrs} onclick="SceneManager._scene.clickUISkill(${idx})" ondblclick="SceneManager._scene.dblClickUISkill(${idx})">
                 <div class="item-rarity-bar" style="background:${skillStripeColor(item)};"></div>
@@ -3297,10 +3415,10 @@
                     <canvas id="skill-canvas-${idx}" width="32" height="32" style="width:32px;height:32px;"></canvas>
                 </div>
                 <div class="item-slot-info">
-                    <div class="item-slot-name">${escapeHtml(item.name)}</div>
-                    <div class="item-slot-meta">
-                        <span>${escapeHtml(costText)}${fieldFlag}${reqFlag}</span>
-                        ${chipHTML}
+                    <div class="item-slot-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+                    <div class="item-slot-meta" style="display:flex; align-items:center; justify-content:space-between;">
+                        <span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><span class="item-slot-cost">${escapeHtml(costText)}</span>${fieldFlag}${reqFlag}</span>
+                        ${syncBtnHTML ? `<span style="flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center;">${syncBtnHTML}</span>` : ""}
                     </div>
                 </div>
             </div>

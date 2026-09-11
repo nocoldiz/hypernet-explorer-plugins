@@ -1542,19 +1542,27 @@
         _resolveAimMesh(key) {
             const map = this._partMeshMap || {};
             if (map[key]) return map[key];
+            if (!this._resolvedAimCache) this._resolvedAimCache = Object.create(null);
+            if (this._resolvedAimCache[key] !== undefined) return this._resolvedAimCache[key];
+
             const upper = String(key).toUpperCase();
             const words = upper.split(/[^A-Z0-9]+/).filter(Boolean);
             let best = null, bestScore = 0;
             for (const k in map) {
                 if (!map[k]) continue;
                 const other = String(k).toUpperCase();
-                if (other === upper) return map[k];
+                if (other === upper) {
+                    this._resolvedAimCache[key] = map[k];
+                    return map[k];
+                }
                 const otherWords = other.split(/[^A-Z0-9]+/).filter(Boolean);
                 let score = 0;
                 for (const w of words) if (otherWords.indexOf(w) >= 0) score++;
                 if (score > bestScore) { bestScore = score; best = map[k]; }
             }
-            return bestScore > 0 ? best : null;
+            const res = bestScore > 0 ? best : null;
+            this._resolvedAimCache[key] = res;
+            return res;
         }
 
         _captureAimHighlight(key) {
@@ -1786,7 +1794,10 @@
                 }
                 if (k <= 0) {
                     f.obj.visible = false;
-                    for (const m of f.mats) { if (m.emissive) m.emissive.setRGB(0, 0, 0); }
+                    for (const m of f.mats) {
+                        if (m.emissive) m.emissive.setRGB(0, 0, 0);
+                        if (typeof m.dispose === 'function') m.dispose();
+                    }
                     this._destroyFades.splice(i, 1);
                 }
             }

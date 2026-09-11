@@ -80,17 +80,17 @@
  *
  * @param levelPressurePerLevel
  * @text Level Pressure Per Level
- * @desc Extra damage a monster deals to the party per level it outranks them past the fair gap (0.10 = +10%).
+ * @desc Extra damage a monster deals to the party per level it outranks them past the fair gap (0.50 = +50%).
  * @type number
  * @decimals 3
- * @default 0.100
+ * @default 0.500
  *
  * @param levelPressureCap
  * @text Level Pressure Cap
  * @desc Ceiling on that multiplier, so an absurd gap cannot scale without end.
  * @type number
  * @decimals 2
- * @default 2.60
+ * @default 15.00
  *
  * @param levelPressureOutnumber
  * @text Level Pressure: Outnumbered Monster
@@ -484,8 +484,8 @@
     BSE.Params.levelDampFloor       = Number(parameters['levelDampFloor'] || 0.005);
     BSE.Params.levelDampLeverageCap = Number(parameters['levelDampLeverageCap'] || 0.40);
     BSE.Params.levelDampLeverageFalloff = Number(parameters['levelDampLeverageFalloff'] || 3.5);
-    BSE.Params.levelPressurePerLevel    = Number(parameters['levelPressurePerLevel'] || 0.100);
-    BSE.Params.levelPressureCap         = Number(parameters['levelPressureCap'] || 2.60);
+    BSE.Params.levelPressurePerLevel    = Number(parameters['levelPressurePerLevel'] || 0.500);
+    BSE.Params.levelPressureCap         = Number(parameters['levelPressureCap'] || 15.00);
     BSE.Params.levelPressureOutnumber   = Number(parameters['levelPressureOutnumber'] || 0.45);
     BSE.Params.invisibleHandChipFloorPercent      = Number(parameters['invisibleHandChipFloorPercent'] || 0.0050);
     BSE.Params.invisibleHandEnabled               = (parameters['invisibleHandEnabled'] !== 'false');
@@ -1337,9 +1337,7 @@
             // bounded the hit, so a lifted one is re-bounded here - otherwise
             // the ceiling would simply swallow the whole pressure term.
             const pressure = BSE.Helpers.levelPressureFactor(this.subject(), target);
-            if (pressure > 1) {
-                finalValue = BSE.Helpers.capActorHit(target, finalValue * pressure);
-            } else if (pressure < 1) {
+            if (pressure !== 1) {
                 finalValue = Math.max(1, finalValue * pressure);
             }
         }
@@ -1943,6 +1941,140 @@
             if (!c) return this.label(skill);
             return this.statName(c.stat) + ' ' + c.have + '/' + c.points;
         }
+    };
+
+    // ------------------------------------------------------------------
+    // 5c. Weapon requirements  ,  window.SkillWeaponReq
+    //   A school that IS a weapon cannot be practised without it. Swordsmanship
+    //   is every blow struck at arm's length, so a character holding nothing
+    //   but a bow, a sling or a gun has no Cross Slash to give; Firearms is
+    //   every shot taken, so a character with no bow, sling or gun in hand has
+    //   nothing to fire. Both schools stay SYNCED through it: the loadout is
+    //   what the character carries, not what their hands can do this minute,
+    //   so the skill keeps its slot and is simply greyed until the right
+    //   weapon is drawn. Swapping the weapon lights it back up with no visit
+    //   to the skills menu.
+    //
+    //   Bare hands are not a ranged weapon: a character holding nothing still
+    //   swings, so only what is actually equipped can bar a melee school.
+    //
+    //   Carrying both (a sword on the hip and a pistol in the holster) bars
+    //   neither: weaponFor() is then what says which of the two the blow is
+    //   thrown with, so a shot is fired from the gun and a slash cut with the
+    //   sword rather than whichever hand the engine reached for first
+    //   (Weapon/WeaponSystem.js reads it for the motion, the model and the
+    //   sound).
+    //
+    //   This is the one answer: the battle skill list, the battle hotbar and
+    //   canUse() all ask here, and nothing re-derives the boundary from a
+    //   weapon type literal.
+    // ------------------------------------------------------------------
+    // Bow, Projectile, Gun (data/System.json weaponTypes). Weapon/WeaponSystem.js
+    // reads this rather than keeping a second copy of the list.
+    const RANGED_WTYPE_IDS = [7, 8, 9];
+    // The schools that are a weapon rather than a technique. 'ranged' asks for
+    // one of the three above, 'melee' refuses to be practised with only those.
+    const WEAPON_REQ_SCHOOLS = { Swordsmanship: 'melee', Firearms: 'ranged' };
+
+    const weaponReqCache = new Map();
+
+    window.SkillWeaponReq = {
+        RANGED_WTYPES: RANGED_WTYPE_IDS,
+
+        isRanged(weapon) {
+            return !!weapon && RANGED_WTYPE_IDS.includes(weapon.wtypeId);
+        },
+
+        // 'melee' / 'ranged' for the two schools that need a weapon, null for
+        // every other skill. Read off the <category:> tag the skill carries.
+        needOf(skill) {
+            if (!skill || skill.id === undefined) return null;
+            if (weaponReqCache.has(skill.id)) return weaponReqCache.get(skill.id);
+            const m = /<category:\s*([A-Za-z]+)\s*>/i.exec(skill.note || '');
+            const school = m ? m[1] : '';
+            let need = null;
+            for (const key in WEAPON_REQ_SCHOOLS) {
+                if (key.toLowerCase() === school.toLowerCase()) {
+                    need = WEAPON_REQ_SCHOOLS[key];
+                    break;
+                }
+            }
+            weaponReqCache.set(skill.id, need);
+            return need;
+        },
+
+        // Everything equipped, not the pair drawn for this turn: what the
+        // player can cast is decided by what they put on, so the menu does not
+        // change its mind between turns for a character with six arms
+        // (Game_Actor#weapons narrows to the turn pair mid-battle).
+        weaponsOf(battler) {
+            if (!battler || !battler.isActor || !battler.isActor()) return [];
+            if (typeof battler.allWeapons === 'function') return battler.allWeapons() || [];
+            return typeof battler.weapons === 'function' ? battler.weapons() || [] : [];
+        },
+
+        // How this battler stands against one skill, or null when the skill
+        // asks for no weapon (or the battler is not an actor: an enemy's
+        // "weapon" is its own body).
+        check(battler, skill) {
+            const need = this.needOf(skill);
+            if (!need || !battler || !battler.isActor || !battler.isActor()) return null;
+            const held = this.weaponsOf(battler);
+            const ranged = held.filter(w => this.isRanged(w));
+            const melee = held.filter(w => w && !this.isRanged(w));
+            const met = need === 'ranged'
+                ? ranged.length > 0
+                // Empty hands are hands: only a hand already full of something
+                // that shoots can bar a blow struck at arm's length.
+                : melee.length > 0 || held.length === 0;
+            return { need, met, weapon: (need === 'ranged' ? ranged[0] : melee[0]) || null };
+        },
+
+        meets(battler, skill) {
+            const c = this.check(battler, skill);
+            return !c || c.met;
+        },
+
+        // Which of the weapons in `list` this skill is performed with, or -1
+        // when none of them fits (and so the caller keeps whatever hand it
+        // would have used). `list` is the caller's own view of the hands: the
+        // battle log passes the pair swinging this turn.
+        indexIn(list, skill) {
+            const need = this.needOf(skill);
+            if (!need || !list || !list.length) return -1;
+            for (let i = 0; i < list.length; i++) {
+                const weapon = list[i];
+                if (!weapon) continue;
+                if (need === 'ranged' ? this.isRanged(weapon) : !this.isRanged(weapon)) return i;
+            }
+            return -1;
+        },
+
+        // The weapon the blow is actually thrown with, or null.
+        weaponFor(battler, skill) {
+            const c = this.check(battler, skill);
+            return c ? c.weapon : null;
+        },
+
+        // "Needs a melee weapon" / "Needs a ranged weapon", and the short chip
+        // that says the same thing in a list row.
+        label(need) {
+            return need ? T('SkillsMenu.weapon.' + need) : '';
+        },
+
+        chipLabel(need) {
+            return need ? T('SkillsMenu.weapon.chip.' + need) : '';
+        }
+    };
+
+    // A skill whose school is a weapon cannot be used without it. This is the
+    // one gate: canUse() runs through here, so the battle skill list, the
+    // battle hotbar, the map battle menu and the AI all refuse the same skills
+    // without any of them asking about weapon types themselves.
+    const _Game_BattlerBase_meetsSkillConditions_weaponReq = Game_BattlerBase.prototype.meetsSkillConditions;
+    Game_BattlerBase.prototype.meetsSkillConditions = function(skill) {
+        if (!_Game_BattlerBase_meetsSkillConditions_weaponReq.call(this, skill)) return false;
+        return window.SkillWeaponReq.meets(this, skill);
     };
 
     // ------------------------------------------------------------------

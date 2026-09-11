@@ -121,10 +121,78 @@
         return climbed + descended;
     }
 
+    const START_YEAR_MIN = 2001;
+    const START_YEAR_MAX_LOOT = 2012;
+
+    function getWorldStartingYear() {
+        if (window.WorldManager && typeof window.WorldManager.startingYear === 'function') {
+            return window.WorldManager.startingYear();
+        }
+        if (window.WorldManager && typeof window.WorldManager.worldInfo === 'function') {
+            const info = window.WorldManager.worldInfo();
+            if (info && info.startYear !== undefined) {
+                const y = Number(info.startYear);
+                if (Number.isFinite(y)) return y;
+            }
+        }
+        return START_YEAR_MIN;
+    }
+
+    function getWorldStartingLevel() {
+        if (window.WorldManager && typeof window.WorldManager.startingLevel === 'function') {
+            return window.WorldManager.startingLevel();
+        }
+        if (window.WorldManager && typeof window.WorldManager.worldInfo === 'function') {
+            const info = window.WorldManager.worldInfo();
+            if (info && info.startLevel !== undefined) {
+                const l = Number(info.startLevel);
+                if (Number.isFinite(l)) return Math.max(1, l);
+            }
+        }
+        return 1;
+    }
+
+    // 2001 gives default value (0 bonus), 2012 gives max (100 bonus),
+    // intermediate years scale in between.
+    function getYearLootBonus() {
+        const year = getWorldStartingYear();
+        if (year <= START_YEAR_MIN) return 0;
+        if (year >= START_YEAR_MAX_LOOT) return 100;
+        return Math.round(((year - START_YEAR_MIN) / (START_YEAR_MAX_LOOT - START_YEAR_MIN)) * 100);
+    }
+
+    // --- Calculate Party Median Level & Effective Loot Level ---
+    function getPartyMedianLevel() {
+        if (typeof $gameParty === 'undefined' || !$gameParty || typeof $gameParty.battleMembers !== 'function') {
+            return 1;
+        }
+        // Get battle members
+        const members = $gameParty.battleMembers();
+        if (!members || members.length === 0) return 1;
+
+        // Extract levels and sort numerically
+        const levels = members.map(actor => actor.level).sort((a, b) => a - b);
+        
+        const mid = Math.floor(levels.length / 2);
+
+        // Calculate median
+        if (levels.length % 2 !== 0) {
+            // Odd number of members, pick middle
+            return levels[mid];
+        } else {
+            // Even number of members, average the two middle ones
+            return Math.floor((levels[mid - 1] + levels[mid]) / 2);
+        }
+    }
+
+    function getEffectiveLootLevel() {
+        return Math.max(getPartyMedianLevel(), getWorldStartingLevel());
+    }
+
     // 10-level brackets: Lv 1-10 -> 0, 11-20 -> 1, ... Higher brackets unlock rarer tiers
     // AND reshuffle the loot pool, so the same spot yields a different/rarer item per bracket.
     function getLevelBracket() {
-        return Math.floor(getPartyMedianLevel() / 10);
+        return Math.floor(getEffectiveLootLevel() / 10);
     }
 
     // Build an RNG seeded from world seed + current location + level bracket.
@@ -155,27 +223,6 @@
             }
         }
         return RARITY_TIERS[0]; // Default to Common if something goes wrong
-    }
-
-    // --- NEW: Calculate Party Median Level ---
-    function getPartyMedianLevel() {
-        // Get battle members
-        const members = $gameParty.battleMembers();
-        if (members.length === 0) return 1;
-
-        // Extract levels and sort numerically
-        const levels = members.map(actor => actor.level).sort((a, b) => a - b);
-        
-        const mid = Math.floor(levels.length / 2);
-
-        // Calculate median
-        if (levels.length % 2 !== 0) {
-            // Odd number of members, pick middle
-            return levels[mid];
-        } else {
-            // Even number of members, average the two middle ones
-            return Math.floor((levels[mid - 1] + levels[mid]) / 2);
-        }
     }
     
     // WEIGHT CALCULATION
@@ -253,7 +300,8 @@
         // pile rather than the first thing (Appraising, specialization 496).
         const appraisal = window.SpecializationXP
             ? (window.SpecializationXP.partyLevel('Appraising') - 1) * 4 : 0;
-        let rarityInfluence = levelBracket * 10 + maxFloor + lootBonus + appraisal;
+        const yearBonus = getYearLootBonus();
+        let rarityInfluence = levelBracket * 10 + maxFloor + lootBonus + appraisal + yearBonus;
         rarityInfluence = Math.max(0, Math.min(100, rarityInfluence));
         
         // Calculate weighted probability for each item

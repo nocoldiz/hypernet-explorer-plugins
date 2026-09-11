@@ -1362,6 +1362,11 @@
       console.error(`CharacterCreation: no dossier with id ${presetId} to sign on`);
       return { ok: false, reason: "unknownPreset" };
     }
+    const isEmStoryParty = (typeof $gameSwitches !== "undefined" && $gameSwitches && $gameSwitches.value(100)) &&
+      (typeof $gameParty !== "undefined" && $gameParty && $gameParty.leader() ? $gameParty.leader().name() === "Em" : true);
+    if (preset.name === "Bubba" && !isEmStoryParty) {
+      return { ok: false, reason: "storyLocked" };
+    }
     if ($gameParty.members().some((mem) => mem.name() === preset.name)) {
       return { ok: false, reason: "alreadyHere" };
     }

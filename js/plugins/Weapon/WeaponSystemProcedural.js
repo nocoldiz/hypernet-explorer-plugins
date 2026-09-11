@@ -2580,45 +2580,40 @@ var WeaponSystemProcedural = {
    * @returns {{dx:number, dy:number, drx:number, drz:number}} pixel offsets and
    *   radian offsets to add to the resting pose.
    */
-  idleSway(weapon, idleMs) {
+  idleSway(weapon, idleMs, out) {
+    const res = out || { dx: 0, dy: 0, drz: 0, drx: 0 };
     const freq = idleMs * 0.0025;
     if (weapon && (weapon.shieldArmorId || weapon.id === 166)) {
-      return {
-        dx: Math.cos(freq * 0.4) * 2.2, dy: Math.sin(freq * 0.8) * 3.0,
-        drz: Math.sin(freq * 0.4) * 0.009, drx: Math.cos(freq * 0.8) * 0.007
-      };
+      res.dx = Math.cos(freq * 0.4) * 2.2; res.dy = Math.sin(freq * 0.8) * 3.0;
+      res.drz = Math.sin(freq * 0.4) * 0.009; res.drx = Math.cos(freq * 0.8) * 0.007;
+      return res;
     }
     const t = weapon ? (weapon.wtypeId || 1) : 1;
     if (t === 9) {
-      return {
-        dx: Math.cos(freq * 0.4) * 2.2, dy: Math.sin(freq * 0.8) * 3.0,
-        drz: Math.sin(freq * 0.4) * 0.009, drx: Math.cos(freq * 0.8) * 0.007
-      };
+      res.dx = Math.cos(freq * 0.4) * 2.2; res.dy = Math.sin(freq * 0.8) * 3.0;
+      res.drz = Math.sin(freq * 0.4) * 0.009; res.drx = Math.cos(freq * 0.8) * 0.007;
+      return res;
     }
     if (t === 3 || t === 4) {
-      return {
-        dx: Math.cos(freq * 0.35) * 5.5,
-        dy: Math.sin(freq * 0.7) * 6.5 + Math.sin(freq * 0.3) * 1.5,
-        drz: Math.sin(freq * 0.35) * 0.024, drx: Math.cos(freq * 0.7) * 0.016
-      };
+      res.dx = Math.cos(freq * 0.35) * 5.5;
+      res.dy = Math.sin(freq * 0.7) * 6.5 + Math.sin(freq * 0.3) * 1.5;
+      res.drz = Math.sin(freq * 0.35) * 0.024; res.drx = Math.cos(freq * 0.7) * 0.016;
+      return res;
     }
     if (t === 6) {
-      return {
-        dx: Math.cos(freq * 0.55) * 5.0 + Math.sin(freq * 1.1) * 1.8,
-        dy: Math.sin(freq * 0.45) * 7.5 + Math.cos(freq * 1.3) * 2.2,
-        drz: Math.sin(freq * 0.55) * 0.022, drx: Math.cos(freq * 0.45) * 0.016
-      };
+      res.dx = Math.cos(freq * 0.55) * 5.0 + Math.sin(freq * 1.1) * 1.8;
+      res.dy = Math.sin(freq * 0.45) * 7.5 + Math.cos(freq * 1.3) * 2.2;
+      res.drz = Math.sin(freq * 0.55) * 0.022; res.drx = Math.cos(freq * 0.45) * 0.016;
+      return res;
     }
     if (t === 12) {
-      return {
-        dx: Math.cos(freq * 0.5) * 3.0, dy: Math.sin(freq * 0.9) * 5.0,
-        drz: Math.sin(freq * 0.5) * 0.014, drx: Math.cos(freq * 0.9) * 0.010
-      };
+      res.dx = Math.cos(freq * 0.5) * 3.0; res.dy = Math.sin(freq * 0.9) * 5.0;
+      res.drz = Math.sin(freq * 0.5) * 0.014; res.drx = Math.cos(freq * 0.9) * 0.010;
+      return res;
     }
-    return {
-      dx: Math.cos(freq * 0.5) * 4.2, dy: Math.sin(freq) * 5.8,
-      drz: Math.sin(freq * 0.5) * 0.019, drx: Math.cos(freq) * 0.013
-    };
+    res.dx = Math.cos(freq * 0.5) * 4.2; res.dy = Math.sin(freq) * 5.8;
+    res.drz = Math.sin(freq * 0.5) * 0.019; res.drx = Math.cos(freq) * 0.013;
+    return res;
   },
 
   // Segment easings. A keyframe's `ease` governs the segment that STARTS at
@@ -6368,8 +6363,12 @@ var WeaponSystemProcedural = {
       } else if (!this._clipPlaying) {
         // First-person idle breathing, tuned per weapon type.
         this._idleTime = (this._idleTime || 0) + deltaMs;
-        const sway = WeaponSystemProcedural.idleSway(this._weapon, this._idleTime);
-        const off = WeaponSystemProcedural.anchorOffsetFor(this._weapon);
+        const sway = WeaponSystemProcedural.idleSway(
+          this._weapon,
+          this._idleTime,
+          (this._swayScratch || (this._swayScratch = { dx: 0, dy: 0, drz: 0, drx: 0 }))
+        );
+        const off = this._cachedAnchorOffset || (this._cachedAnchorOffset = WeaponSystemProcedural.anchorOffsetFor(this._weapon));
 
         this._model.position.set(
           this._worldX(this._screenX) + off.x + sway.dx,

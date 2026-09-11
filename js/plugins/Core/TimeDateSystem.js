@@ -2940,11 +2940,11 @@
     // again: a hard stop, so an empty meter can never swallow the whole pack.
     MAX_MEALS: 4,
 
-    pitch() {
+    pitch(scene) {
       if (!window.$gameTemp) return false;
       $gameTemp._campRestPitched = true;
-      const scene = SceneManager._scene;
-      if (scene && scene.openSleepMenu) scene.openSleepMenu();
+      const target = scene || (typeof SceneManager !== "undefined" && SceneManager._scene);
+      if (target && target.openSleepMenu) target.openSleepMenu();
       return true;
     },
 

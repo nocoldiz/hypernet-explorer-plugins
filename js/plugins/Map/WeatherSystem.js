@@ -1713,7 +1713,7 @@
     // on map load so the correct lighting shows immediately on entry rather than
     // only after the player takes a step.
     checkWorldMapCountry() {
-      if ($gameMap.mapId() === 315) {
+      if ($gameMap && typeof $gameMap.mapId === 'function' && $gameMap.mapId() === 315 && $gamePlayer && typeof $gamePlayer.regionId === 'function') {
         const regionId = $gamePlayer.regionId();
 
         if (regionId > 0 && regionId !== this._lastCheckedRegionId) {
@@ -1876,7 +1876,7 @@
     // Stop weather BGS on channel 4
     stopWeatherBgs() {
       // Don't stop rain BGS if player is in any vehicle
-      if ($gamePlayer.isInVehicle() && $gamePlayer.vehicle().isShip()) {
+      if ($gamePlayer && typeof $gamePlayer.isInVehicle === 'function' && $gamePlayer.isInVehicle() && $gamePlayer.vehicle() && typeof $gamePlayer.vehicle().isShip === 'function' && $gamePlayer.vehicle().isShip()) {
         if (enableTimeDebug) {
           console.log("[MUSH Audio] Weather BGS kept playing - player in vehicle");
         }
@@ -2090,7 +2090,7 @@
 
       // Spawn puddles
       let spawnedCount = 0;
-      for (let i = 0; i < actualCount && i < validTiles.length; i++) {
+      for (let i = 0; i < validTiles.length && spawnedCount < actualCount; i++) {
         const tile = validTiles[i];
 
         // Check if there's already a puddle nearby (avoid clustering)
@@ -2933,6 +2933,9 @@
     // Inside is inside. A roofed map is tinted by temperature but nobody
     // standing in it is out in the weather.
     isSheltered() {
+      if (window.$gameWeather && typeof window.$gameWeather.isInterior !== 'undefined') {
+        return window.$gameWeather.isInterior;
+      }
       if (typeof $gameMap === 'undefined' || !$gameMap) return true;
       try {
         const meta = ($dataMap && $dataMap.meta) || {};
@@ -2960,18 +2963,37 @@
     // they are wearing already taken into account.
     exposureOf(actor) {
       const none = { kind: null, severity: 0 };
-      if (this.isSheltered()) return none;
+      if (!actor) return none;
       const t = this.temperature();
       if (t === null) return none;
+      const frame = (typeof Graphics !== 'undefined' && Graphics.frameCount) || 0;
+      if (actor._weatherExpCache && actor._weatherExpFrame === frame && actor._weatherExpTemp === t) {
+        return actor._weatherExpCache;
+      }
+      if (this.isSheltered()) {
+        actor._weatherExpCache = none;
+        actor._weatherExpFrame = frame;
+        actor._weatherExpTemp = t;
+        return none;
+      }
       const kind = t < COMFORT_MIN ? 'cold' : (t > COMFORT_MAX ? 'heat' : null);
-      if (!kind) return none;
+      if (!kind) {
+        actor._weatherExpCache = none;
+        actor._weatherExpFrame = frame;
+        actor._weatherExpTemp = t;
+        return none;
+      }
       const past = kind === 'cold' ? COMFORT_MIN - t : t - COMFORT_MAX;
       let severity = Math.max(0, Math.min(1, past / EXPOSURE_RANGE));
       const insulation = this.insulationOf(actor);
       severity *= kind === 'cold'
         ? (1 - INSULATION_RELIEF * insulation)
         : (1 + INSULATION_PENALTY * insulation);
-      return { kind, severity: Math.max(0, Math.min(1, severity)) };
+      const res = { kind, severity: Math.max(0, Math.min(1, severity)) };
+      actor._weatherExpCache = res;
+      actor._weatherExpFrame = frame;
+      actor._weatherExpTemp = t;
+      return res;
     },
 
     // What exposure costs one param. Rounded away from zero so the first bite of
@@ -3073,13 +3095,20 @@
     return `<span class="whether-glyph whether-glyph--${cls}"></span>`;
   }
 
+  let _cachedSortedWhetherCountries = null;
+
   window.WhetherChannel = {
     hash: whetherHash,
     seasonOf: whetherSeasonOf,
     forecastDay: whetherForecastDay,
     forecast: whetherForecast,
 
-    countries: () => Countries.filter(c => c && c.seasons).slice().sort((a, b) => String(a.country).localeCompare(String(b.country))),
+    countries: () => {
+      if (!_cachedSortedWhetherCountries) {
+        _cachedSortedWhetherCountries = Countries.filter(c => c && c.seasons).slice().sort((a, b) => String(a.country).localeCompare(String(b.country)));
+      }
+      return _cachedSortedWhetherCountries;
+    },
 
     current: function() {
       const gw = typeof $gameWeather !== 'undefined' ? $gameWeather : null;
