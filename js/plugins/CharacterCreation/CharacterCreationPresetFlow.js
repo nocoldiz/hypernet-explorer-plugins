@@ -638,7 +638,11 @@
         return;
       }
       try {
-        this._applyPreset(preset, actor, presetSkins(preset)[0] || preset);
+        // Seat 0 by name, not by whatever the wizard's static happens to hold:
+        // the story mode is played as Em and she is always the leader, so her
+        // body, her gender and her bio belong in the first seat's variables
+        // (38 / 87) rather than in a seat left over from an earlier party.
+        this._applyPreset(preset, actor, presetSkins(preset)[0] || preset, { memberIndex: 0 });
       } catch (e) {
         console.error('CharacterCreation: failed to apply the story mode dossier "Em"', e);
         return;
@@ -1365,8 +1369,15 @@
     const actorId = (typeof api.freeCompanionActorId === "function") ? api.freeCompanionActorId() : 0;
     if (actorId && $gameActors.actor(actorId)) {
       const actor = $gameActors.actor(actorId);
-      stampPreset(preset, actor, $gameParty.members().length);
+      // Seated first, then written. The seat a dossier's gender, body and
+      // creature flag are filed under (variables 38+, 87 / 115 / 116, switches
+      // 77+) has to be the seat the party actually gives them, which is what
+      // every reader of those indexes by: the status sheet, the biologic
+      // simulation and the Empathize panel all ask the party where somebody
+      // sits. Counting the seats before the join guessed the same number in
+      // the ordinary case and the wrong one whenever it did not.
       $gameParty.addActor(actorId);
+      stampPreset(preset, actor, $gameParty.members().indexOf(actor));
       if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
       if (typeof markPresetUsed === "function" && !preset.storyModeOnly) markPresetUsed(preset.id);
       window.ParchmentToast?.show?.(T("CharPresets.dossierJoined", { name: preset.name }));

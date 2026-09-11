@@ -1585,17 +1585,57 @@
         }
     };
 
+    // The one localised bank of element names in the game lives with the
+    // Bestiary, which is the page that lays the whole affinity table out; the
+    // description box borrows it rather than reading the database entries,
+    // which are English whatever the player is playing in.
+    function battleElementName(id) {
+        const named = (window.T && window.T.list) ? window.T.list('Bestiary.elements') : [];
+        const bank = named.length > 1 ? named : ($dataSystem.elements || []);
+        return bank[id] || '';
+    }
+
+    // Damage types that land ON somebody: HP and MP damage and the two drains.
+    // A heal has no element to name, so it is left out of this entirely.
+    const ELEMENTAL_DAMAGE_TYPES = [1, 2, 5, 6];
+
+    // What a skill's damage lands AS, spelled out for every skill that deals
+    // any: an elementId of -1 is "whatever this battler swings as", so the
+    // wielder's own attack element is read off the actor, and a skill that
+    // belongs to no element says so rather than saying nothing. Returns the
+    // finished line (icon plus name) or '' when the skill deals no damage.
+    function battleSkillElementLine(skill, actor) {
+        const dmg = skill && skill.damage;
+        if (!dmg || ELEMENTAL_DAMAGE_TYPES.indexOf(dmg.type) < 0) return '';
+        let ids = [];
+        if (dmg.elementId < 0) {
+            ids = actor && actor.attackElements ? actor.attackElements() : [];
+        } else if (dmg.elementId > 0) {
+            ids = [dmg.elementId];
+        }
+        const named = ids.filter(id => id > 0 && battleElementName(id));
+        if (!named.length) {
+            return T('SkillsMenu.battle.elementNone');
+        }
+        return named
+            .map(id => '\\I[' + (63 + id - 1) + ']' + battleElementName(id))
+            .join(' ');
+    }
+
     // Builds the battle help/description text for a skill, appending its element
     // (icon + name) so the player sees it in the description box. The MP/AP cost is
     // intentionally omitted here, it is already shown on each skill list entry.
     function buildBattleSkillHelpText(skill, actor) {
-        let text = skill.description || '';
-        if (skill.damage && skill.damage.elementId > 0 &&
-            $dataSystem.elements && $dataSystem.elements[skill.damage.elementId]) {
-            const iconIndex = 63 + skill.damage.elementId - 1;
-            text += (text ? '\n' : '') +
-                '\\I[' + iconIndex + ']' + $dataSystem.elements[skill.damage.elementId];
-        }
+        // Translated FIRST and folded after: the localisation bank is keyed on
+        // the English description exactly as the editor wrote it, hard line
+        // breaks and all, so a description taken apart before the lookup would
+        // never be found. Those breaks were folded for the old fixed-width
+        // canvas help window; the box this text goes to sizes itself to its
+        // longest line and wraps on its own, so they are closed up rather than
+        // left to split a sentence in the wrong place.
+        let text = dbText(skill.description).replace(/\s*\n\s*/g, ' ').trim();
+        const element = battleSkillElementLine(skill, actor);
+        if (element) text += (text ? '\n' : '') + element;
         // What this battler is short of, spelled out under the description:
         // the row's red chip says WHICH stat, this says how badly it will tell.
         const svc = window.SkillStatReq;

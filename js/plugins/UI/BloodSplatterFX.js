@@ -1,29 +1,26 @@
 /*:
  * @target MZ
- * @plugindesc Blood Splatter FX v1.1.0
+ * @plugindesc Blood Splatter FX v2.0.0
  * @author Omni-Lex
  * @url https://nocoldiz.itch.io/hypernet-explorer
  * @help
  * ============================================================================
  * Blood Splatter FX Plugin for RPG Maker MZ
  * ============================================================================
- * * This plugin creates blood splatter effects when enemies take damage from
- * physical attacks or skills during battle. It automatically prevents blood
- * effects from skills designated as magical.
+ *
+ * This plugin owns ONE effect: the blood thrown out when an enemy loses a body
+ * part. The ordinary per-hit damage spray belongs to ReactiveEnemyBattler, so
+ * a single blow never pays for two particle systems at once.
+ *
+ * Everything here is pooled, capped and deliberately sparse: a short burst of
+ * drops plus a couple of lasting puddles, nothing more.
  *
  * ============================================================================
  * SETUP:
  * ============================================================================
  *
- * 1.  Define Magic Skill Types:
- * Go to the Plugin Manager, select this plugin, and find the parameter
- * "Magic Skill Type IDs". Enter the ID numbers of the Skill Types you
- * want to be considered magical (e.g., "Magic", "Holy", "Dark").
- * You can find these IDs in your project's Database > Types tab.
- * By default, this is set to [2], which is the standard ID for "Magic".
- *
- * 2.  Set Enemy Archetypes (Optional):
- * To give different enemies different colored blood, add a notetag to the
+ * Set Enemy Archetypes (Optional):
+ * To give different enemies different coloured blood, add a notetag to the
  * enemy's note box in the Database > Enemies tab.
  *
  * <Archetype: TypeName>
@@ -41,11 +38,6 @@
  * @type struct<ArchetypeColor>[]
  * @desc Configure blood colors for different enemy archetypes.
  * @default ["{\"archetype\":\"Goblin\",\"color\":\"#00ff00\"}","{\"archetype\":\"Insectoid\",\"color\":\"#0080ff\"}","{\"archetype\":\"Undead\",\"color\":\"#800080\"}","{\"archetype\":\"Machine\",\"color\":\"#404040\"}"]
- * * @param magicSkillTypeIds
- * @text Magic Skill Type IDs
- * @type number[]
- * @desc List of Skill Type IDs that are considered magic and won't cause blood. Find IDs in Database > Types.
- * @default ["2"]
  *
  * @param defaultBloodColor
  * @text Default Blood Color
@@ -55,22 +47,22 @@
  * * @param particleCount
  * @text Particle Count
  * @type number
- * @min 5
- * @max 50
- * @desc Number of blood particles per splatter.
- * @default 15
+ * @min 2
+ * @max 24
+ * @desc Number of blood particles thrown by a lost body part.
+ * @default 12
  * * @param particleSize
  * @text Particle Size Range
  * @type string
  * @desc Min and max particle size (format: min,max).
- * @default 2,8
+ * @default 2,6
  * * @param splatterDuration
  * @text Splatter Duration
  * @type number
  * @min 10
- * @max 120
+ * @max 90
  * @desc Duration of the splatter animation in frames.
- * @default 60
+ * @default 40
  * * @param gravityStrength
  * @text Gravity Strength
  * @type number
@@ -90,11 +82,11 @@
  * @text Initial Speed Range
  * @type string
  * @desc Min and max initial speed (format: min,max).
- * @default 5,15
+ * @default 4,10
  * * @param enableBloodStains
  * @text Enable Blood Stains
  * @type boolean
- * @desc If true, leaves blood stains on the battlefield after the effect.
+ * @desc If true, a lost body part leaves a puddle on the battlefield.
  * @default true
  * * @param stainOpacity
  * @text Stain Opacity
@@ -119,71 +111,55 @@
 
 (() => {
     'use strict';
-    
-    const pluginName = 'BloodSplatterFX';
-    const parameters = PluginManager.parameters(pluginName);
-    
+
+    // The plugin is registered under its folder ("UI/BloodSplatterFX"), so ask
+    // for both spellings rather than silently falling back to every default.
+    const parameters = Object.assign(
+        {},
+        PluginManager.parameters('BloodSplatterFX'),
+        PluginManager.parameters('UI/BloodSplatterFX')
+    );
+
     // Parse parameters
     const archetypeColors = JSON.parse(parameters.archetypeColors || '[]').map(str => JSON.parse(str));
-    const magicSkillTypeIds = JSON.parse(parameters.magicSkillTypeIds || '[]').map(Number);
     const defaultBloodColor = parameters.defaultBloodColor || '#ff0000';
-    const particleCount = Number(parameters.particleCount) || 15;
-    const particleSize = (parameters.particleSize || '2,8').split(',').map(n => Number(n));
-    const splatterDuration = Number(parameters.splatterDuration) || 60;
+    const particleCount = Number(parameters.particleCount) || 12;
+    const particleSize = (parameters.particleSize || '2,6').split(',').map(n => Number(n));
+    const splatterDuration = Number(parameters.splatterDuration) || 40;
     const gravityStrength = Number(parameters.gravityStrength) || 0.5;
     const spreadAngle = Number(parameters.spreadAngle) || 90;
-    const initialSpeed = (parameters.initialSpeed || '5,15').split(',').map(n => Number(n));
-    const enableBloodStains = parameters.enableBloodStains === 'true';
+    const initialSpeed = (parameters.initialSpeed || '4,10').split(',').map(n => Number(n));
+    const enableBloodStains = parameters.enableBloodStains !== 'false';
     const stainOpacity = Number(parameters.stainOpacity) || 30;
-    
+
     // Create archetype color map for quick lookup
     const colorMap = {};
     archetypeColors.forEach(ac => {
         colorMap[ac.archetype.toLowerCase()] = ac.color;
     });
 
-    // Texture Cache
-    let _bloodTextures = [];
-    let _stainTextures = [];
+    // Texture Cache: one drop shape and one puddle shape, tinted per archetype.
+    let _bloodTexture = null;
+    let _stainTexture = null;
 
     function createBloodTextures() {
-        if (_bloodTextures.length > 0) return;
-        
+        if (_bloodTexture) return;
+
         const renderer = Graphics.app.renderer;
         const g = new PIXI.Graphics();
-        
-        // Particle textures (white for tinting)
+
         g.beginFill(0xFFFFFF);
         g.drawCircle(0, 0, 10);
         g.endFill();
-        _bloodTextures.push(renderer.generateTexture(g));
-        
-        g.clear();
-        g.beginFill(0xFFFFFF);
-        g.drawEllipse(0, 0, 12, 8);
-        g.endFill();
-        _bloodTextures.push(renderer.generateTexture(g));
-
-        // Stain textures
-        g.clear();
-        g.beginFill(0xFFFFFF);
-        g.drawCircle(0, 0, 20);
-        g.endFill();
-        _stainTextures.push(renderer.generateTexture(g));
+        _bloodTexture = renderer.generateTexture(g);
 
         g.clear();
         g.beginFill(0xFFFFFF);
         g.drawEllipse(0, 0, 30, 20);
         g.endFill();
-        _stainTextures.push(renderer.generateTexture(g));
-
-        g.clear();
-        g.beginFill(0xFFFFFF);
-        g.drawPolygon([-20, 0, -10, -20, 10, -10, 20, 0, 10, 20, -10, 10]);
-        g.endFill();
-        _stainTextures.push(renderer.generateTexture(g));
+        _stainTexture = renderer.generateTexture(g);
     }
-    
+
     //=============================================================================
     // BloodParticle
     // Class for an individual blood particle (Optimized with Sprites).
@@ -212,26 +188,26 @@
             this.maxLife = splatterDuration;
             this.gravity = gravityStrength;
         }
-        
+
         update() {
             this.life--;
             if (this.life <= 0) {
                 return false;
             }
-            
+
             this.velocityY += this.gravity;
             this.x += this.velocityX;
             this.y += this.velocityY;
-            
+
             this.alpha = this.life / this.maxLife;
-            
+
             this.velocityX *= 0.98;
             this.velocityY *= 0.98;
-            
+
             return true;
         }
     }
-    
+
     //=============================================================================
     // BloodStain
     // Class for a persistent blood stain (Optimized with Sprites).
@@ -253,10 +229,10 @@
             this.scale.set(size);
         }
     }
-    
+
     //=============================================================================
     // BloodEffectManager
-    // Manages all blood particles and stains during battle with pooling.
+    // Manages the limb-loss bursts and their puddles, with pooling and caps.
     //=============================================================================
     class BloodEffectManager {
         constructor() {
@@ -266,91 +242,33 @@
             this.stains = [];
             this.particlePool = [];
             this.stainPool = [];
-            this.maxStains = 60; // Reduced cap for persistent stains
-            this.maxParticles = 400; // Hard cap for active particles
-            this._lastSplatterFrame = 0;
-            this._splattersThisFrame = 0;
+            this.maxStains = 12;     // puddles kept on the field at once
+            this.maxParticles = 48;  // hard cap for active particles
         }
-        
+
         setup(parent) {
             if (parent) {
                 parent.addChild(this.stainContainer);
                 parent.addChild(this.container);
             }
         }
-        
-        createSplatter(x, y, color, damageRatio = 1) {
-            // Throttling: Check how many splatters happened this frame
-            const currentFrame = Graphics.frameCount;
-            if (this._lastSplatterFrame !== currentFrame) {
-                this._lastSplatterFrame = currentFrame;
-                this._splattersThisFrame = 0;
-            }
-            this._splattersThisFrame++;
 
-            // If too many splatters in one frame, skip or reduce
-            if (this._splattersThisFrame > 5) return; 
-
-            // Hard limit check
-            if (this.particles.length >= this.maxParticles) {
-                // Recycle some oldest particles early to make room, or just skip
-                const toRemove = Math.floor(this.maxParticles * 0.1);
-                for (let i = 0; i < toRemove; i++) {
-                    const p = this.particles.shift();
-                    if (p) {
-                        this.container.removeChild(p);
-                        this.particlePool.push(p);
-                    }
-                }
-            }
-
-            createBloodTextures();
-            
-            // Scaled count based on frame pressure
-            let count = Math.floor(particleCount * Math.min(damageRatio, 1.5));
-            if (this._splattersThisFrame > 2) count = Math.floor(count / 2);
-            
-            for (let i = 0; i < count; i++) {
-                let particle = this.particlePool.pop();
-                if (!particle) {
-                    particle = new BloodParticle();
-                }
-                const texture = _bloodTextures[Math.floor(Math.random() * _bloodTextures.length)];
-                particle.init(texture, color, x, y);
-                this.container.addChild(particle);
-                this.particles.push(particle);
-            }
-
-            // Regular hits no longer leave permanent stains: only losing a body
-            // part produces a lasting puddle (see createGib).
-        }
-
-        // A severed/destroyed body part: a big, fast blood spray plus a permanent
-        // puddle of several overlapping stains. Not subject to the per-frame
-        // splatter throttle since limb loss is a rare, deliberate moment.
+        // A severed/destroyed body part: a short spray plus a puddle of a couple
+        // of overlapping stains. Limb loss is rare and deliberate, so it is the
+        // only thing left that bleeds through this plugin.
         createGib(x, y, color) {
             createBloodTextures();
 
-            // Make room if we're at the hard particle cap.
-            if (this.particles.length >= this.maxParticles) {
-                const toRemove = Math.floor(this.maxParticles * 0.25);
-                for (let i = 0; i < toRemove; i++) {
-                    const p = this.particles.shift();
-                    if (p) { this.container.removeChild(p); this.particlePool.push(p); }
-                }
-            }
-
-            const count = Math.min(this.maxParticles, particleCount * 3);
+            const count = Math.min(particleCount, Math.max(0, this.maxParticles - this.particles.length));
             for (let i = 0; i < count; i++) {
                 const particle = this.particlePool.pop() || new BloodParticle();
-                const texture = _bloodTextures[Math.floor(Math.random() * _bloodTextures.length)];
-                particle.init(texture, color, x, y, 1.8, 1.6); // bigger, faster
+                particle.init(_bloodTexture, color, x, y, 1.4, 1.3); // bigger, faster
                 this.container.addChild(particle);
                 this.particles.push(particle);
             }
 
             if (enableBloodStains) {
-                const stainCount = 4;
+                const stainCount = 2;
                 for (let i = 0; i < stainCount; i++) {
                     let stain;
                     if (this.stains.length >= this.maxStains) {
@@ -359,14 +277,16 @@
                         stain = this.stainPool.pop() || new BloodStain();
                         this.stainContainer.addChild(stain);
                     }
-                    const texture = _stainTextures[Math.floor(Math.random() * _stainTextures.length)];
-                    stain.init(texture, color, x, y, 1.6);
+                    stain.init(_stainTexture, color, x, y, 1.4);
                     this.stains.push(stain);
                 }
             }
         }
 
         update() {
+            // Nothing in flight means nothing to walk: the common case costs one
+            // length check per frame.
+            if (this.particles.length === 0) return;
             for (let i = this.particles.length - 1; i >= 0; i--) {
                 const p = this.particles[i];
                 if (!p.update()) {
@@ -376,7 +296,7 @@
                 }
             }
         }
-        
+
         clear() {
             this.particles.forEach(p => {
                 this.container.removeChild(p);
@@ -390,7 +310,7 @@
             this.stains = [];
         }
     }
-    
+
     //=============================================================================
     // Plugin Integration
     //=============================================================================
@@ -401,7 +321,7 @@
         this._bloodEffectManager = new BloodEffectManager();
         this._bloodEffectManager.setup(this._battleField);
     };
-    
+
     const _Spriteset_Battle_update = Spriteset_Battle.prototype.update;
     Spriteset_Battle.prototype.update = function() {
         _Spriteset_Battle_update.call(this);
@@ -409,32 +329,13 @@
             this._bloodEffectManager.update();
         }
     };
-    
-    Game_Action.prototype.isConsideredMagicForBloodEffect = function() {
-        if (!this.item()) return false;
-        if (this.isMagical()) return true;
-        if (this.isSkill()) {
-            const skillTypeId = this.item().stypeId;
-            if (magicSkillTypeIds.includes(skillTypeId)) return true;
-        }
-        return false;
-    };
 
-    const _Game_Enemy_performDamage = Game_Enemy.prototype.performDamage;
-    Game_Enemy.prototype.performDamage = function() {
-        _Game_Enemy_performDamage.call(this);
-        const action = BattleManager._action;
-        if (action && !action.isConsideredMagicForBloodEffect() && this.isAlive()) {
-            this.createBloodSplatter();
-        }
-    };
-    
     Game_Enemy.prototype.getArchetype = function() {
         const note = this.enemy().note;
         const match = note.match(/<Archetype:\s*(.+?)>/i);
         return match ? match[1].trim().toLowerCase() : null;
     };
-    
+
     // colorMap is keyed by the lowercased archetype token. getArchetype is shared
     // with EnemyTalkSystem, which loads later and returns the tag verbatim, so the
     // key is normalised here rather than trusting whichever plugin defined it last.
@@ -444,7 +345,7 @@
         const key = String(archetype).trim().toLowerCase();
         return colorMap[key] || defaultBloodColor;
     };
-    
+
     // Resolve the screen position to bleed from: the struck body part when we are
     // rendering this enemy in 3D, otherwise the centre of its battler sprite.
     Game_Enemy.prototype.bloodOriginPosition = function(spriteset, partKey) {
@@ -456,20 +357,8 @@
         return sprite ? { x: sprite.x, y: sprite.y } : null;
     };
 
-    Game_Enemy.prototype.createBloodSplatter = function() {
-        const spriteset = SceneManager._scene._spriteset;
-        if (!spriteset || !spriteset._bloodEffectManager) return;
-
-        const pos = this.bloodOriginPosition(spriteset);
-        if (pos) {
-            const color = this.getBloodColor();
-            const damageRatio = this.result().hpDamage / this.mhp;
-            spriteset._bloodEffectManager.createSplatter(pos.x, pos.y, color, damageRatio);
-        }
-    };
-
-    // Called by Health_Monsters when a limb is severed/destroyed: a big spray and
-    // a permanent puddle, localised to the lost part (3D) or the sprite (2D).
+    // Called by Health_Monsters when a limb is severed/destroyed: a spray and a
+    // puddle, localised to the lost part (3D) or the sprite (2D).
     Game_Enemy.prototype.spawnBodyPartLoss = function(partKey) {
         const scene = SceneManager._scene;
         const spriteset = scene && scene._spriteset;
@@ -496,6 +385,5 @@
         }
         _BattleManager_endBattle.call(this, result);
     };
-    
-})();
 
+})();

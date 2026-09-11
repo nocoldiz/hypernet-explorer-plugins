@@ -101,6 +101,16 @@
     const pluginName = 'MPP_SmoothBattleLog2_FadeEnhancements';
     const params = PluginManager.parameters(pluginName);
     
+    // How much of the screen the log's corner may take: a narrow column down
+    // the right-hand side, short of the command list standing against the same
+    // edge lower down. A running commentary is glanced at, not read, so it is
+    // given a shape the eye can take in at a glance.
+    const LOG_MAX_W_RATIO = 0.32;
+    const LOG_MAX_H_RATIO = 0.34;
+    // The clear air kept between the lowest line of the log and the top of the
+    // command list standing against the same edge under it.
+    const LOG_COMMAND_GAP = 20;
+
     const CONFIG = {
         logType: params['Log Type'] || '1-line',
         maxLines: 4,
@@ -369,26 +379,18 @@
     // One indent step, shared by every line an action produces after its header.
     const REACTION_INDENT_PX = 26;
 
+    // The air around the rule that separates one action from the one before it.
+    const TURN_BREAK_GAP_PX = 4;
+    const TURN_BREAK_PAD_PX = 2;
+
     //--- entry retention: begin ---
-    // The board scales visible entries based on the number of battle party members
-    // so it never overlaps the Party HUD cards above.
+    // How many actions the board reads back. It used to give one box up for
+    // every battler card standing under it, which left a full party of three
+    // and a summon reading a single line; the log has gone to the top-right
+    // corner, the opposite one from the cards (UI/PartyHud.js), so nothing
+    // stands in its way any more and every party reads the same five.
     const MAX_VISIBLE_ENTRIES = 5;
     const ENTRY_EXIT_MS = 320;
-
-    // One box is given up for every battler card standing above the log, so a
-    // solo run reads five actions back and a full party of three plus a summon
-    // reads one. With the Party HUD off nothing is in the way and the board
-    // keeps its full height.
-    function getMaxVisibleEntries() {
-        if (typeof ConfigManager !== 'undefined' && ConfigManager.partyHud === false) {
-            return MAX_VISIBLE_ENTRIES;
-        }
-        if (typeof $gameParty !== 'undefined' && $gameParty && $gameParty.battleMembers) {
-            const memberCount = $gameParty.battleMembers().length;
-            return Math.max(1, MAX_VISIBLE_ENTRIES - memberCount);
-        }
-        return 3;
-    }
 
     function isExitingEntry(el) {
         return !rootOrNull(el) && !!(el && el.dataset && el.dataset.battlelogExiting === '1');
@@ -423,7 +425,7 @@
         const root = log && log._htmlBattleLogRoot;
         if (!root) return 0;
         const live = liveEntries(root);
-        const maxEntries = getMaxVisibleEntries();
+        const maxEntries = MAX_VISIBLE_ENTRIES;
         const excess = live.length - maxEntries;
         if (excess > 0) {
             for (let i = 0; i < excess; i++) slideEntryOff(live[i]);
@@ -1402,10 +1404,14 @@
             el.style.fontSize = scaledFont + 'px';
             el.innerHTML = parseBattleLogTextToHtml(indentText);
 
+            // The rule between one action and the next. It is a hairline and a
+            // breath, not a paragraph break: five actions each paying a full
+            // line of air twice over is most of the board's height spent on
+            // nothing, in a corner that has none to spare.
             if (isTurnBreak && liveEntries(this._htmlBattleLogRoot).length > 0) {
                 el.style.borderTop = '1px solid rgba(255,255,255,0.22)';
-                el.style.paddingTop = Math.round(4 * sc.sy) + 'px';
-                el.style.marginTop = Math.round(8 * sc.sy) + 'px';
+                el.style.paddingTop = Math.round(TURN_BREAK_PAD_PX * sc.sy) + 'px';
+                el.style.marginTop = Math.round(TURN_BREAK_GAP_PX * sc.sy) + 'px';
             }
 
             this._htmlBattleLogRoot.appendChild(el);
@@ -1418,7 +1424,11 @@
 
         this.visible = true;
         this.openness = 255;
-        this.wait();
+        // One line per action may go unheld: the one naming what the player
+        // just ordered (see startAction). It is a one-shot, so the damage and
+        // everything after it is paced as it always was.
+        if (this._skipNextLineHold) this._skipNextLineHold = false;
+        else this.wait();
         this._clearDuration = 0;
     };
 
@@ -1501,28 +1511,14 @@
     Window_BattleLog.prototype.updateScaleAnimation = function() {
     };
 
-    Window_BattleLog.prototype._calculateFixedLogY = function() {
-        if (!window.PartyHud) return null;
-        const overlay = window.PartyHud.overlay();
-        if (!overlay || !overlay._el || !overlay._visible) return null;
-
-        const yOffset = Math.floor((Graphics.height - Graphics.boxHeight) / 2);
-        const canvas = document.getElementById('gameCanvas');
-        if (!canvas) return null;
-        const view = canvas.getBoundingClientRect();
-        if (!(view.width > 0) || !(view.height > 0)) return null;
-        const sy = view.height / Graphics.height;
-
-        const cards = Array.from(overlay._cards.values());
-        if (cards.length === 0) return null;
-
-        const lastCard = cards[cards.length - 1];
-        if (!lastCard || !lastCard.row) return null;
-        const rect = lastCard.row.getBoundingClientRect();
-        const bottom = (rect.bottom - view.top) / sy;
-
-        return Math.max(0, bottom - yOffset + 6);
-    };
+    // The PIXI window itself draws nothing: every line goes into the HTML
+    // overlay below. Where it hangs used to be a MEASUREMENT of the party cards
+    // - a getBoundingClientRect, and so a layout of the whole document, taken a
+    // few times a second in the one scene whose HUD writes to those very cards
+    // every frame - so that the log could sit under them. It no longer sits
+    // under anything: the log has the top-right corner to itself now, clear of
+    // the party's cards in the opposite one, so the invisible window is simply
+    // parked and nothing measures anything.
 
     // Update methods
     const _Window_BattleLog_update = Window_BattleLog.prototype.update;
@@ -1530,28 +1526,10 @@
         const yOffset = Math.floor((Graphics.height - Graphics.boxHeight) / 2);
         const pad = this.padding || 12;
 
-        const fixedY = this._calculateFixedLogY();
-        if (fixedY !== null) {
-            this._originalY = fixedY;
-        } else {
-            this._originalY = Math.max(0, 100 - yOffset);
-        }
+        this._originalY = Math.max(0, 100 - yOffset);
         this.y = this._originalY;
+        this.x = 0;
 
-        let targetX = 4;
-        try {
-            const hudParams = PluginManager.parameters('UI/PartyHud');
-            if (hudParams && hudParams['hudX']) {
-                targetX = Number(hudParams['hudX']) || 4;
-            }
-        } catch (e) {
-            targetX = 4;
-        }
-        if (window.$gameSplitScreen && window.$gameSplitScreen.active) {
-            targetX = Math.floor((Graphics.width - this.width) / 2);
-        }
-        this.x = targetX;
-        
         _Window_BattleLog_update.apply(this, arguments);
 
         // Keep canvas elements invisible
@@ -1571,41 +1549,61 @@
         if (this._htmlBattleLogRoot) {
             const sc = _msgGetScale();
             const root = this._htmlBattleLogRoot;
-            const hotbarReserve = (window.BattleHotbar && window.BattleHotbar.reservedHeight) || 75;
-            // The log stands on the floor of the screen, above the hotbar, and
-            // grows upward: the newest line is always in the same place, at the
-            // bottom. It takes the side the command list is not on (Options >
-            // Command Position), so the two never share an edge.
-            const maxW = Math.round(Graphics.width * 0.52);
+            // The log hangs in the TOP-RIGHT corner and grows downward from
+            // it, the corner the monster bars used to fill before every monster
+            // started wearing its own over its head
+            // (BattleSystem/BattleSystemEnhancedHUD.js). The party's cards hold
+            // the opposite corner (UI/PartyHud.js), the foot of the screen is
+            // the quick bar's and the description box's, and the command list
+            // only reaches the right edge from halfway down, so the top right is
+            // the one place a running commentary can sit without covering
+            // something the player is reading. It takes that corner whichever side the commands are
+            // on: the log is read in passing, and a box that swaps corners with
+            // an option is a box the eye has to look for. What is IN the box
+            // still reads from the left, as it always did.
+            const maxW = Math.round(Graphics.width * LOG_MAX_W_RATIO);
             const logW = Math.min(this.width, maxW);
             const margin = 8;
-            const onRight = !(window.BattleCommandSide && window.BattleCommandSide.onRight());
-            const leftPx = onRight
-                ? sc.ox + (Graphics.width - logW - margin) * sc.sx
-                : sc.ox + margin * sc.sx;
-            // The floor: everything the hotbar reserves is left free under it.
-            const bottomPx = Math.round((hotbarReserve + margin) * sc.sy);
+            const leftPx = sc.ox + (Graphics.width - logW - margin) * sc.sx;
+            const topPx = sc.oy + margin * sc.sy;
             _setStyleIfChanged(root, 'left', leftPx + 'px');
             _setStyleIfChanged(root, 'right', 'auto');
 
-            // Available room is everything between the top of the screen and
-            // the floor the log stands on.
-            const room = Math.max(60, (Graphics.height * sc.sy) - bottomPx - sc.oy - 6);
+            // How far down the corner it may reach before the oldest lines are
+            // pushed out of the top of it. Not the number of lines the board
+            // happens to be holding, and not the size of the party either: the
+            // room there actually IS between the top margin and the command list
+            // standing against the same edge lower down, less a clear gap, so a
+            // line can never be written over the Attack row. Its own share of
+            // the screen is the other half of the answer, and the smaller of the
+            // two wins - the log is a running commentary glanced at in passing,
+            // and a tall command list is no reason to give it half the screen.
+            const ratioRoom = Graphics.height * LOG_MAX_H_RATIO;
+            const cmdTop = (window.BattleCommandSide && window.BattleCommandSide.topY)
+                ? window.BattleCommandSide.topY() : null;
+            const clearRoom = (cmdTop === null || cmdTop === undefined)
+                ? ratioRoom
+                : cmdTop - margin - LOG_COMMAND_GAP;
+            const room = Math.max(60, Math.min(ratioRoom, clearRoom) * sc.sy);
 
-            _setStyleIfChanged(root, 'top', 'auto');
-            _setStyleIfChanged(root, 'bottom', bottomPx + 'px');
+            _setStyleIfChanged(root, 'bottom', 'auto');
+            _setStyleIfChanged(root, 'top', topPx + 'px');
             _setStyleIfChanged(root, 'width', (logW * sc.sx) + 'px');
             _setStyleIfChanged(root, 'maxWidth', Math.round(maxW * sc.sx) + 'px');
-            _setStyleIfChanged(root, 'textAlign', onRight ? 'right' : 'left');
+            // The box takes the right-hand corner; its LINES read from the
+            // left, the way a line of prose does.
+            _setStyleIfChanged(root, 'textAlign', 'left');
             _setStyleIfChanged(root, 'maxHeight', room + 'px');
             _setStyleIfChanged(root, 'height', 'auto');
             _setStyleIfChanged(root, 'padding', Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px');
             _setStyleIfChanged(root, 'display',
                 (this.visible && this._lines && this._lines.length > 0) ? 'flex' : 'none');
             _setStyleIfChanged(root, 'flexDirection', 'column');
-            // Growing upward off the floor: the column is packed at its end.
+            // The box hugs its lines until it reaches the cap above; past it,
+            // packing the column at its END is what sends the oldest line off
+            // the top of the box rather than the newest off the bottom.
             _setStyleIfChanged(root, 'justifyContent', 'flex-end');
-            _setStyleIfChanged(root, 'alignItems', onRight ? 'flex-end' : 'flex-start');
+            _setStyleIfChanged(root, 'alignItems', 'flex-start');
             _setStyleIfChanged(root, 'overflowY', 'hidden');
             _setStyleIfChanged(root, 'overflowX', 'visible');
 
@@ -1673,11 +1671,20 @@
         }
     };
 
-    // Track action targets and mark new turn at the start of every action
+    // Track action targets and mark new turn at the start of every action.
+    //
+    // The line that names the player's own action is WRITTEN but not HELD: the
+    // player pressed Attack and already knows what was ordered, so holding
+    // "Novan attacks!" on the board for a message's worth of frames before the
+    // weapon so much as moves is four tenths of a second of being told what one
+    // just typed. The blow now follows the press. Every other line keeps its
+    // pace, this one included when the subject is a monster: there the line IS
+    // the news, and the player has to be given time to read whose turn it is.
     const _Window_BattleLog_startAction = Window_BattleLog.prototype.startAction;
     Window_BattleLog.prototype.startAction = function(subject, action, targets) {
         this._pendingTurnBreak = true;
         this._actionTargets = (targets && targets.length > 0) ? targets.slice() : [];
+        this._skipNextLineHold = !!(subject && subject.isActor && subject.isActor());
         _Window_BattleLog_startAction.apply(this, arguments);
     };
 

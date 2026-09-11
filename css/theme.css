@@ -5357,7 +5357,7 @@
 .command-item.selected::before {
     /* Wax seal or gothic cursor mark */
     position: absolute;
-    left: -12px;
+    left: -14px;
     font-size: var(--fs-label);
     top: 50%;
     transform: translateY(-50%);
@@ -5365,13 +5365,17 @@
     animation: bounceSeal 0.6s infinite alternate;
 }
 
+/* The seal nods on its transform, not on `left`. This is the main menu, the
+   screen the game is looked at from most, and an animated `left` makes the
+   browser lay the tile out and paint the drop-shadow again on every frame it
+   is up; a transform is handed to the compositor and costs nothing. */
 @keyframes bounceSeal {
     from {
-        left: -14px;
+        transform: translate(0, -50%);
     }
 
     to {
-        left: -9px;
+        transform: translate(5px, -50%);
     }
 }
 
@@ -20930,6 +20934,9 @@ body, canvas {
     }
 }
 
+/* One entry of the log. The BOX hangs in the top-right corner of the fight
+   (Core/MPP_SmoothBattleLog2.js), but what is in it reads from the left the way
+   a line of prose does: the corner is where the log lives, not how it is read. */
 .battlelog-line-container {
     display: flex !important;
     flex-direction: column !important;
@@ -20940,7 +20947,9 @@ body, canvas {
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
-    margin-bottom: 8px;
+    /* One breath between actions, not a paragraph break: the board holds five
+       of these in a corner with no height to spare. */
+    margin-bottom: 4px;
     width: 100%;
     flex-shrink: 0;
 }
@@ -21117,6 +21126,13 @@ body, canvas {
 }
 #html-actorcmd-overlay.inert .actorcmd-item:not(.typed) .actorcmd-stripe.sel {
     opacity: 0;
+}
+/* And it drops the cursor's INK with them. The list is left standing while the
+   action it was given plays out, so a row still wearing the gold of the
+   cursor goes on announcing a choice that has already been made and been acted
+   on - "Attack" burning gold over the log line saying the blow has landed. */
+#html-actorcmd-overlay.inert .actorcmd-item:not(.unsel) .actorcmd-label {
+    color: var(--actorcmd-ink, var(--text-pure-white));
 }
 .actorcmd-sep {
     position: absolute;
@@ -26285,9 +26301,13 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     50%  { background-position:100% 50%; }
     100% { background-position:0% 50%; }
 }
+/* Crossed on a transform rather than on `left`: the sheen runs for as long as
+   the card is on the page, and a moving `left` lays the card out again every
+   frame of it. The offsets are the same distance, read off the strip's own
+   width (45%): -60% to 120% of the card is 400% of the strip. */
 @keyframes grim-arcane-sheen {
-    0%   { left:-60%; }
-    100% { left:120%; }
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(400%); }
 }
 #menu-container .grim-esoteric { color:#8f6fd6; font-weight:bold; letter-spacing:0.5px; font-size:0.798em; text-transform:uppercase; }
 
@@ -36607,8 +36627,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
         0 var(--w) 0 var(--hud-outline);
 }
 
-/* The enemy card mirrors the party card, so its name row and bar labels wear
-   the same shapes theirs do. */
+/* The enemy card carries the same shapes the party card does, but it is worn
+   by the creature rather than pinned to a corner, so its name row is centred
+   over the head it names instead of hugging an edge. */
 .bse-mini-name { overflow: hidden; text-overflow: ellipsis; }
 
 .bse-mini-name--targeted {
@@ -36619,7 +36640,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .bse-mini-name--tagged {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: baseline;
     gap: 5px;
 }
@@ -36721,18 +36742,37 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .bse-slide-panel--quick { transition: transform 0.2s ease, opacity 0.2s ease; }
 
+/* The battle description box: it stands over the quick bar at the foot of the
+   screen, placed by its BOTTOM MIDDLE (--bse-help-y is the line its floor rests
+   on, and the panel translates itself back by its own height off it) and
+   shrinking to its longest line, so a short description keeps to one line
+   instead of being folded to the width of the list beside it. Where it stands,
+   how wide it may grow and how big it reads come in as custom properties from
+   the window that owns it, so nothing writes a layout property onto the element
+   itself, and it rises off the bar rather than sliding in from the right. */
 .bse-help-panel {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
     text-align: left;
-    padding: 16px 20px;
+    left: var(--bse-help-x, 50%);
+    top: var(--bse-help-y, calc(100% - 100px));
+    right: auto;
+    bottom: auto;
+    width: max-content;
+    height: auto;
+    max-width: var(--bse-help-maxw, 62vw);
+    padding: var(--bse-help-pad, 16px 20px);
     font-family: var(--font-ui);
     font-weight: bold;
+    font-size: var(--bse-help-size, 16px);
     color: var(--text-primary-hover);
     line-height: 1.2;
+    transform: translateX(-50%) translateY(-100%) translateY(14px);
 }
+
+.bse-help-panel.bse-slide-panel--in { transform: translateX(-50%) translateY(-100%); }
 
 /* The battle item panel: the backpack and the throw list, a window standing
    in the middle of the screen. Where it stands and how wide it is comes in as

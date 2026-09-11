@@ -862,7 +862,7 @@
             categoryList.forEach((el, idx) => {
                 if (onLeft && idx === this.scene._focusedCategoryIndex) {
                     el.classList.add('selected');
-                    el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                    el.scrollIntoView({ block: 'nearest' });
                 } else {
                     el.classList.remove('selected');
                 }
@@ -872,7 +872,7 @@
             actionList.forEach((el, idx) => {
                 if (!onLeft && idx === this.scene._focusedActionIndex) {
                     el.classList.add('selected');
-                    el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                    el.scrollIntoView({ block: 'nearest' });
                 } else {
                     el.classList.remove('selected');
                 }

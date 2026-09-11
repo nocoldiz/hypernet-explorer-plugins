@@ -1872,7 +1872,7 @@
         if (this._dndActiveSection === "bodyparts") {
             const selectedPart = spread.querySelector(".anatomy-cell.selected");
             if (selectedPart) {
-                selectedPart.scrollIntoView({ block: "nearest", behavior: "smooth" });
+                selectedPart.scrollIntoView({ block: "nearest" });
             }
         }
     };
@@ -2456,7 +2456,7 @@
             cell.classList.toggle("selected", on && idx === this._dndSelectedIndex);
         });
         const selected = spread.querySelector(".anatomy-cell.selected");
-        if (selected) selected.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        if (selected) selected.scrollIntoView({ block: "nearest" });
         return true;
     };
 

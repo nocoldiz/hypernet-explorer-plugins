@@ -28,27 +28,37 @@
   const tpSkillColor = String(parameters["TPSkillColor"] || "#ff9900");
   const animationSpeed = Number(parameters["AnimationSpeed"] || 5);
 
-  // Enemy bars. Every monster wears the same small bar, alone or in a pack, and
-  // they are stacked in one column in the top-right corner. They used to be
-  // drawn under each monster's own feet, which put text over the creatures,
-  // moved with every lunge and stagger, and left the troop unreadable the
-  // moment two of them stood close together; and a lone monster used to get a
-  // large bar of its own carrying a full affinity table, an AP orb and a list
-  // of its severed limbs, none of which the field needs said twice over. What
-  // survived of that table is the part worth acting on: the elements the
-  // monster is soft to, as chips in the row under its gauges.
-  // The gauges are exactly as long as the party's own: UI/PartyHud.js gives a
-  // card 264px and spends 26 of them on the orb gutter, leaving this. The
-  // bitmap around them is that length plus the padding and the gutter this
-  // side carves out for its own orb (worked out under MINI, below).
-  const PARTY_GAUGE_W = 238;
+  // Enemy bars. Every monster wears the same small bar and the bar rides over
+  // the monster itself: centred on the model and standing just clear of its
+  // head, so which creature a reading belongs to is never in question. They
+  // used to be stacked in one column in the top-right corner, lined up with the
+  // party's cards; that column read as a list of strangers, and nothing on it
+  // said which of the three creatures on the field was the one at 12 HP. The
+  // corner it left behind is the battle log's now (Core/MPP_SmoothBattleLog2.js).
+  // The gauges are shorter than the party's own (UI/PartyHud.js spends 238px on
+  // its card's): a label worn by a creature has to be narrower than the creature
+  // is wide to read as its name rather than as scenery. Not much shorter,
+  // though - a monster carries four and five figure pools by the end, and a
+  // gauge too short to write 1750/1750 inside says nothing at all.
+  const ON_MODEL_GAUGE_W = 195;
   const miniBarBitmapHeight = 78;
-  const miniBarRightMargin = 40; // clear air kept off the right edge
-  // Same top edge as the party cards (UI/PartyHud.js hudY, set in plugins.js),
-  // so the two columns start at the same height in their opposite corners.
-  const miniBarColumnTop = 34;
-  const miniBarStackStep = 70; // vertical distance between stacked bars
-  const miniBarColumnBottom = 24; // air kept under the lowest bar
+  // Clear air between the floor of the bar and the top of the head it stands on.
+  const ENEMY_BAR_HEAD_GAP = 10;
+  // How close a bar may come to an edge of the screen before it is pushed back.
+  const ENEMY_BAR_SCREEN_MARGIN = 6;
+  // Two creatures standing close together wear two bars that would otherwise be
+  // drawn one through the other; the second one is lifted by this much, which is
+  // the height the bar's own rows actually occupy, until it stands clear.
+  const ENEMY_BAR_STACK_STEP = 62;
+  // Frames between two attempts to put the bars over a troop whose models are
+  // still loading in. Once they are all standing, nothing asks again.
+  const ENEMY_BAR_SETTLE_RETRY = 6;
+  // How long the bars will wait for the field to say it has stopped moving
+  // before giving up and standing wherever the creatures can be measured now.
+  // A monster the player cannot read the health of is worse than one whose bar
+  // is a few pixels out, and a field can fail to settle for reasons none of this
+  // can see: a model that never loaded, a scene torn down mid-build.
+  const ENEMY_BAR_SETTLE_PATIENCE = 90;
   // The AP/TP orb's own footprint (22px plus its 2px border on both sides),
   // matching UI/PartyHud.js's .phud-orb exactly.
   const ORB_SIZE = 22;
@@ -70,7 +80,7 @@
   MINI.mpY = MINI.hpY + MINI.thickness + 3;
   MINI.chipY = MINI.mpY + MINI.thickness + 5;
   const miniBarWidth = Math.round(
-    PARTY_GAUGE_W + ORB_GUTTER + MINI.padX * 2 + MINI.ang
+    ON_MODEL_GAUGE_W + ORB_GUTTER + MINI.padX * 2 + MINI.ang
   );
 
   // The same HP thresholds the party cards switch colour at
@@ -149,14 +159,22 @@
   // actually occupies, projected through the battle camera) rather than assumed,
   // since a duck and a giant do not wear a marker at the same height; a 2D
   // battler answers with the top of its own bitmap.
-  let _headBoxScratch = null;
   let _headPosScratch = null;
-  let _headBoxOwner = null;    // whose box _headBoxScratch currently holds
-  let _headBoxFrame = -999;
+  // One held box PER MODEL rather than one shared slot: every monster on the
+  // field asks for its own head on every frame now that each wears its bar
+  // there, and a single slot handed from one creature to the next would measure
+  // the whole troop afresh sixty times a second. Keyed weakly on the model root,
+  // so a troop that leaves takes its boxes with it.
+  const _headBoxes = new WeakMap();
   const HEAD_BOX_TTL = 10;     // frames a measured head box is trusted for
   const HEAD_FALLBACK_H = 120; // when nothing can be measured
 
-  function battlerHeadPosition(battler) {
+  // `fresh` throws away whatever box is being held for this model and measures
+  // it again. The bar over a creature's head is placed ONCE and then kept, so
+  // that one reading cannot be a box taken up to ten frames ago - the whole
+  // difference between a name over a creature's head and a name across its
+  // belly is a model that had not finished building itself when it was asked.
+  function battlerHeadPosition(battler, fresh) {
     const scene = SceneManager._scene;
     const spriteset = scene && scene._spriteset;
     if (!battler || !spriteset) return null;
@@ -172,18 +190,23 @@
       const model = spriteset.get3DModel(battler);
       const root = model && model.model;
       if (root && root.visible) {
-        const box = _headBoxScratch || (_headBoxScratch = new THREE.Box3());
         // Measuring the box walks every mesh of the model and updates the whole
-        // subtree's world matrices, and the chevron asks for it on every frame the
-        // target picker is open. A breathing idle does not change how tall a
+        // subtree's world matrices, and the bar over its head asks for it on
+        // every frame of every fight. A breathing idle does not change how tall a
         // creature is from one frame to the next, so the reading is held for a few
-        // frames per model; the chevron's own bob is what the eye reads anyway.
-        const now = Graphics.frameCount;
-        if (_headBoxOwner !== root || now - _headBoxFrame >= HEAD_BOX_TTL) {
-          box.setFromObject(root);
-          _headBoxOwner = root;
-          _headBoxFrame = now;
+        // frames per model; the bar's own place on the screen is what the eye
+        // reads anyway.
+        let held = _headBoxes.get(root);
+        if (!held) {
+          held = { box: new THREE.Box3(), frame: -999 };
+          _headBoxes.set(root, held);
         }
+        const now = Graphics.frameCount;
+        if (fresh || now - held.frame >= HEAD_BOX_TTL) {
+          held.box.setFromObject(root);
+          held.frame = now;
+        }
+        const box = held.box;
         if (!box.isEmpty()) {
           const v = _headPosScratch || (_headPosScratch = new THREE.Vector3());
           v.set(
@@ -374,6 +397,11 @@
     }
   }
 
+  // How wide the battle description box may grow, and how much air is kept
+  // between its floor and the quick bar it stands on.
+  const HELP_MAX_W = 560;
+  const HELP_HOTBAR_GAP = 10;
+
   const helpWindowHeightBonus = Number(
     parameters["HelpWindowHeightBonus"] || 20
   );
@@ -551,11 +579,22 @@
   // that hands the keys back) stops those updates mid-frame and used to leave
   // the last description standing on screen; every one of those exits calls
   // this instead.
-  function hideBattleHelpOverlay() {
-      const root = document.getElementById('html-battle-help-overlay');
+  function hideBattleHelpOverlay(el) {
+      // A window that owns a box of its own hands it over; everyone else means
+      // the one currently in the page.
+      const root = el || document.getElementById('html-battle-help-overlay');
       if (!root) return;
       root.classList.add('bse-slide-panel--quick');
       root.classList.remove('bse-slide-panel--in');
+      // Older builds slid the box in by writing transform and opacity straight
+      // onto the element, and an inline style outranks the stylesheet: dropping
+      // the class alone left the description standing on screen after the skill
+      // was cast. Whatever is still written there is wiped, so the class is
+      // once again the only thing that says whether the box is up.
+      const s = root.style;
+      if (s.transform) s.transform = '';
+      if (s.opacity) s.opacity = '';
+      if (s.pointerEvents) s.pointerEvents = '';
   }
   window.BattleHelpOverlay = { hide: hideBattleHelpOverlay };
 
@@ -564,7 +603,7 @@
       _Window_Help_hide.call(this);
       this._htmlHelpSlideState = 'hidden';
       this._lastRawHelpText = null;
-      hideBattleHelpOverlay();
+      hideBattleHelpOverlay(this._htmlHelpRoot);
   };
 
   // Leaving a scene, and the end of a battle played out on the map, both drop
@@ -610,8 +649,7 @@
       if (!inBattle || !this.visible || this.height === 0 || this.width === 0 || !txt) {
           if (this._htmlHelpSlideState !== 'hidden') {
               this._htmlHelpSlideState = 'hidden';
-              this._htmlHelpRoot.classList.add('bse-slide-panel--quick');
-              this._htmlHelpRoot.classList.remove('bse-slide-panel--in');
+              hideBattleHelpOverlay(this._htmlHelpRoot);
           }
           this._lastRawHelpText = null;
           return;
@@ -648,50 +686,59 @@
       const pad = this.padding || 12;
       const s = this._htmlHelpRoot.style;
 
-      // The box belongs to the list page under it, so it takes that page's
-      // width and stands directly on its top edge (window.BattleListPage,
-      // published by whichever of the skill / item pages is open). A page whose
-      // height follows its contents would otherwise leave the description
-      // stranded halfway up the screen.
-      const page = window.BattleListPage || { MARGIN: 20, GAP: 10, TOP: 184, width: 420, height: 460 };
-      const fixedW = page.width * sc.sx;
-
-      // The description always reads from the top centre of the screen,
-      // whichever side the list page itself is on and whatever the control
-      // mode: it is the one thing the player has to read, so it never hides in
-      // a corner and never moves when the player switches between the skill
-      // page and the backpack.
+      // The description reads from just over the quick bar, at the foot of the
+      // screen: the eye is already down there, on the slot the skill sits in
+      // and on the list it was picked from, so the one thing the player has to
+      // read no longer asks for a trip to the far top of the screen and back.
+      // It is placed by its BOTTOM MIDDLE and shrinks to its longest line (see
+      // .bse-help-panel), whichever side the list page is on and whatever the
+      // control mode, so it never moves when the player switches between the
+      // skill page and the backpack.
+      //
+      // Its width is capped well short of the screen rather than left to run
+      // the whole way across: a sentence read at a glance mid-fight wants to be
+      // a short column over the bar it belongs to, not a single line stretched
+      // from one edge to the other.
+      const hotbarReserve =
+        (window.BattleHotbar && window.BattleHotbar.reservedHeight) || 75;
+      const maxW = Math.round(
+        Math.min(HELP_MAX_W, Graphics.width * 0.52) * sc.sx
+      );
       const centreX = sc.ox + (Graphics.width * sc.sx) / 2;
-      const leftEdgeX = centreX - fixedW / 2;
-      const topEdgeY = sc.oy + page.MARGIN * sc.sy;
-
-      const leftStr = Math.max(0, leftEdgeX) + 'px';
-      const topStr = Math.max(0, topEdgeY) + 'px';
-      const widthStr = fixedW + 'px';
-      const paddingStr = Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px';
+      // The line the box's floor rests on; the panel itself is drawn upwards
+      // from it (.bse-help-panel translates itself back by its own height).
+      const topEdgeY =
+        sc.oy + (Graphics.height - hotbarReserve - HELP_HOTBAR_GAP) * sc.sy;
 
       const baseFontSize = (typeof this.standardFontSize === 'function')
           ? this.standardFontSize() : 24;
       const scaledFont = Math.round(baseFontSize * sc.sy * 0.85);
-      const fontSizeStr = scaledFont + 'px';
 
-      if (s.right !== '') s.right = '';
-      if (s.bottom !== '') s.bottom = '';
-      if (s.width !== widthStr) s.width = widthStr;
-      if (s.height !== 'auto') s.height = 'auto';
-      if (s.left !== leftStr) s.left = leftStr;
-      if (s.top !== topStr) s.top = topStr;
-      if (s.maxWidth !== widthStr) s.maxWidth = widthStr;
-      if (s.padding !== paddingStr) s.padding = paddingStr;
-      if (s.fontSize !== fontSizeStr) s.fontSize = fontSizeStr;
+      // Geometry is handed over as custom properties, the way the rest of the
+      // HUD does it; the slid-in state itself is the panel's own class, so
+      // nothing writes transform or opacity onto the element and dropping the
+      // class is enough to take the box away again.
+      //
+      // None of these five move unless the window is resized or the list under
+      // the box changes width, so they are written when they change rather than
+      // on every frame the description is on screen: each one is a style
+      // invalidation on a panel that is up for most of the input phase.
+      const geoKey = Math.max(0, centreX) + '|' + Math.max(0, topEdgeY) + '|' +
+          maxW + '|' + pad + '|' + sc.sx + '|' + sc.sy + '|' + scaledFont;
+      if (this._htmlHelpGeoKey !== geoKey) {
+          this._htmlHelpGeoKey = geoKey;
+          s.setProperty('--bse-help-x', Math.max(0, centreX) + 'px');
+          s.setProperty('--bse-help-y', Math.max(0, topEdgeY) + 'px');
+          s.setProperty('--bse-help-maxw', maxW + 'px');
+          s.setProperty('--bse-help-pad',
+              Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px');
+          s.setProperty('--bse-help-size', scaledFont + 'px');
+      }
 
-      // Apply the slide-in animation transition
       if (this._htmlHelpSlideState !== 'shown') {
           this._htmlHelpSlideState = 'shown';
-          s.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease';
-          s.transform = 'translateX(0)';
-          s.opacity = '1';
-          s.pointerEvents = 'auto';
+          this._htmlHelpRoot.classList.remove('bse-slide-panel--quick');
+          this._htmlHelpRoot.classList.add('bse-slide-panel--in');
       }
   };
 
@@ -1189,23 +1236,13 @@
     return _Window_ItemList_maxCols.call(this);
   };
 
-  // Ensure help window text wrapping works properly with increased height
+  // New text is built by update(), which is the only place that knows how to
+  // turn an \I[n] into an icon; refresh only says the box is out of date, so a
+  // new description does not flash past stripped of its element icon first.
   const _Window_Help_refresh = Window_Help.prototype.refresh;
   Window_Help.prototype.refresh = function () {
     _Window_Help_refresh.call(this);
-    if (this._htmlHelpRoot) {
-      let text = this._text || '';
-      // Strip common raw RPG Maker MZ canvas color and icon text codes
-      text = text.replace(/\\C\[\d+\]/gi, '');
-      text = text.replace(/\\I\[\d+\]/gi, '');
-      text = text.replace(/\\V\[\d+\]/gi, '');
-      text = text.replace(/\\N\[\d+\]/gi, '');
-      text = text.replace(/\\P\[\d+\]/gi, '');
-      text = text.replace(/\\G/gi, '');
-
-      // Render double newlines or single newlines cleanly as <br/>
-      this._htmlHelpRoot.innerHTML = text.replace(/\n/g, '<br/>');
-    }
+    if (this._htmlHelpRoot) this._lastRawHelpText = null;
   };
 
   //=========================================================================
@@ -1272,7 +1309,9 @@
     // is driving the scene (Health_Monsters' Check panel), so the bar and the DOM
     // text it carries would outlive the creature by a frame or by a whole panel.
     // Decided here, they go in the same frame the battler does.
-    if (this._battler) this.visible = this._battler.isAlive();
+    if (this._battler) {
+      this.visible = this._battler.isAlive() && this._barPlaced !== false;
+    }
     if (this._htmlOverlay) this._htmlOverlay.update();
     if (!this._battler) return;
 
@@ -1312,16 +1351,52 @@
       this._lastTp = b.tp;
     }
   };
-  // The bar is redrawn a few times a second so its gradient stays alive, and
-  // no more often: at every other frame this was a major source of canvas and
-  // DOM churn. Nothing is drawn at all while the bar cannot be seen or the
-  // creature is already dead (a fallen monster's bar is hidden by the scene in
-  // the same frame, so there is no death animation to keep feeding).
+  // Everything the bar draws that its own HP/MP/TP watch does not already
+  // catch, boiled down to one integer: the ailments it carries, whether the
+  // target cursor is on it, and which of the two bar styles is in force.
+  // Cheap enough to ask every frame, and it reads the raw state id list rather
+  // than states(), which would build an array of database objects each time.
+  Sprite_BattleBar.prototype.miniBarStamp = function () {
+    const b = this._battler;
+    let stamp = 0;
+    const st = b._states;
+    if (st) {
+      for (let i = 0; i < st.length; i++) stamp = (stamp * 31 + st[i]) | 0;
+    }
+    const scene = SceneManager._scene;
+    const targeted = !!(
+      scene && scene._enemyWindow && scene._enemyWindow.active && b.isSelected()
+    );
+    const ascii = !!(window.AsciiMode && window.AsciiMode.active);
+    return stamp * 4 + (targeted ? 2 : 0) + (ascii ? 1 : 0);
+  };
+
+  // A monster's HP is low enough that the gauge pulses on its own.
+  Sprite_BattleBar.prototype.isHpPulsing = function () {
+    const b = this._battler;
+    const rate = this._displayHp / Math.max(1, b.mhp);
+    return rate > 0 && rate <= CRIT_PCT / 100;
+  };
+
+  // The bar used to be redrawn on a timer, four times a second, whether or not
+  // anything on it had moved: a canvas repaint, a texture upload and a rebuilt
+  // row of DOM text per monster per redraw, for pixels that came out identical.
+  // Now it is redrawn when it would come out DIFFERENT - a state gained or
+  // lost, the target cursor arriving - and the timer is left to the one thing
+  // that really does animate by itself, the critical pulse, which repaints the
+  // gauges alone. Value changes come in through update() as they always did.
   Sprite_BattleBar.prototype.updateGaugeAnimation = function () {
     if (!this.visible || this.worldVisible === false) return;
     if (this._battler.isDead()) return;
+    const stamp = this.miniBarStamp();
+    if (stamp !== this._lastMiniBarStamp) {
+      this._lastMiniBarStamp = stamp;
+      this.refresh();
+      return;
+    }
+    if (!this.isHpPulsing()) return;
     this._refreshCounter = (this._refreshCounter || 0) + 1;
-    if (this._refreshCounter % 4 === 0) this.refresh();
+    if (this._refreshCounter % 4 === 0) this.refresh(true);
   };
 
   Sprite_BattleBar.prototype.updateDamageOverlay = function () {
@@ -1362,17 +1437,23 @@
   // now missing from the model itself and a stat change is called out in the
   // battle log as it happens, so neither had anything left to say that the
   // field was not already saying.
-  Sprite_BattleBar.prototype.refresh = function () {
+  // `canvasOnly` repaints the gauges and leaves the DOM half of the bar - the
+  // name, the two labels, the orb and the chip row - exactly as it stands.
+  // Rewriting those costs an innerHTML parse and ten custom properties per
+  // element, which is most of what a redraw is worth, and none of it changes
+  // while only the critical pulse is moving.
+  Sprite_BattleBar.prototype.refresh = function (canvasOnly) {
     if (!this._battler) return;
     this.bitmap.clear();
-    if (this._htmlOverlay) this._htmlOverlay.clear();
     if (window.AsciiMode && window.AsciiMode.active) {
+      if (this._htmlOverlay) this._htmlOverlay.clear();
       if (this._orb) window.UIPanel.close(this._orb.orb);
       this.refreshAsciiEnemyBar();
       return;
     }
+    if (!canvasOnly && this._htmlOverlay) this._htmlOverlay.clear();
     if (this._orb) window.UIPanel.open(this._orb.orb);
-    this.refreshMinimalEnemyBar();
+    this.refreshMinimalEnemyBar(canvasOnly);
   };
 
   // The same bar written as text, for ASCII mode: the name and level, a short
@@ -1415,7 +1496,7 @@
   // No severed limbs: a severed limb is now missing from the model itself, and
   // a stat change is called out in the battle log as it happens, so neither had
   // anything left to say that the field was not already saying.
-  Sprite_BattleBar.prototype.refreshMinimalEnemyBar = function () {
+  Sprite_BattleBar.prototype.refreshMinimalEnemyBar = function (canvasOnly) {
     const b = this._battler;
     const bitmap = this.bitmap;
     const ctx = bitmap.context;
@@ -1517,6 +1598,8 @@
     // (absent on the very first draw, which runs before the overlay is created)
     if (this._damageOverlay && chunkRate > hpRate) this.updateDamageOverlay();
 
+    if (canvasOnly) return;
+
     const isTargeted = !!(
       SceneManager._scene &&
       SceneManager._scene._enemyWindow &&
@@ -1529,6 +1612,9 @@
 
     if (this._htmlOverlay) {
       const nameBoxW = Math.max(40, geo.w + MINI.ang);
+      // Centred, not mirrored to an edge: the whole bar now stands over the
+      // creature's head, so its name belongs over the head too rather than
+      // trailing off one end of the gauges.
       const nameEl = this._htmlOverlay.addText(
         level
           ? `<span>${rawName}</span><span class="bse-mini-level" style="--hud-ink:${enemyLevelColor(b)}">${level}</span>`
@@ -1536,7 +1622,7 @@
         geo.x - MINI.ang,
         -2,
         nameBoxW,
-        "right",
+        "center",
         15,
         isTargeted ? "#fff0b0" : "#ffffff",
         true,
@@ -1602,23 +1688,33 @@
       // The chip row: what the monster is soft to, then what is currently
       // wrong with it. Both read as the party cards' own chips do, and both
       // share the one row under the gauges, so a monster that picks up four
-      // ailments mid-fight never grows a second row and never shoves the
-      // monster stacked below it down the column.
+      // ailments mid-fight never grows a second row and never grows a taller
+      // bar than the creature under it has air for.
       const chips = elementChipsFor(b).concat(stateChipsFor(b));
       if (chips.length > 0) {
         const chipFont = 11;
         const chipPadX = 6;
         const chipH = 16;
-        const rowStartX = geo.x - MINI.ang;
+        const rowLeft = geo.x - MINI.ang;
         const rowMaxX = geo.x + geo.w;
-        let rowX = rowStartX;
         const rowY = hasMp ? MINI.chipY : MINI.mpY;
         bitmap.fontSize = chipFont;
         bitmap.fontBold = true;
+        // Measured before any of it is drawn, so the row can be centred under
+        // the gauges the way the name is centred over them: a single chip on a
+        // bar worn by a creature reads as that creature's, and a chip pinned to
+        // one end of the bar reads as its neighbour's.
+        const shown = [];
+        let rowW = 0;
         for (const chip of chips) {
           const chipW = Math.ceil(bitmap.measureTextWidth(chip.text)) + chipPadX * 2;
           // One row only: the rest of it stays on the Check screen
-          if (rowX > rowStartX && rowX + chipW > rowMaxX) break;
+          if (shown.length > 0 && rowLeft + rowW + 4 + chipW > rowMaxX) break;
+          rowW += (shown.length > 0 ? 4 : 0) + chipW;
+          shown.push({ chip, chipW });
+        }
+        let rowX = Math.round(rowLeft + (rowMaxX - rowLeft - rowW) / 2);
+        for (const { chip, chipW } of shown) {
           const el = this._htmlOverlay.addText(
             chip.text,
             rowX,
@@ -1652,45 +1748,112 @@
     }
   };
 
-  // Frames between two attempts to line the monster column up with the party
-  // cards, while the cards are still being laid out by the browser.
-  const MINI_BAR_ALIGN_RETRY = 6;
-
-  // Where the compact bars stand: one column in the top-right corner, the same
-  // corner the large single-enemy bar occupies, in troop order.
+  // Where the compact bars stand: each one over the monster it belongs to,
+  // centred on the model and resting just above its head.
   //
-  // The column stands level with the party's own cards rather than at a height
-  // of its own: the first monster's gauges line up with the first member's,
-  // and the stack takes the party's row pitch, so the two corners read as one
-  // row of pairs. The party HUD is measured for it (UI/PartyHud.js
-  // barRowMetrics), since its cards are HTML and their real height depends on
-  // the font the language is set in. With the HUD switched off there is
-  // nothing to line up with and the column falls back to its own top. The step
-  // is squeezed when a big troop would otherwise run off the bottom.
-  // Returns whether it managed to line the column up with the party, so the
-  // caller can ask again next frame while the cards are still being laid out.
-  function layoutMinimalEnemyBars(sprites) {
+  // The head is MEASURED, not assumed (battlerHeadPosition): a duck and a giant
+  // do not wear their name at the same height. It is measured ONCE and the bar
+  // is then left exactly where it was put (see updateBattleHealthBars): a bar
+  // that rode its model would swim through every breath, lunge and stagger the
+  // creature makes, and a reading that will not hold still is a reading nobody
+  // can take. A monster whose model has not loaded yet, or that stands behind
+  // the camera, has nowhere to put a bar and goes without one until it has.
+  // Returns whether every bar found a place, so the caller knows to ask again.
+  //
+  // Two creatures standing shoulder to shoulder would wear two bars drawn one
+  // through the other, which is exactly what sent this column into a corner the
+  // last time it was tried; so a bar that lands on one already placed is lifted
+  // clear of it, again and again until it stands alone. The nearest creature is
+  // placed first and keeps its natural height, and the ones behind it, already
+  // higher up the screen, are the ones that give way.
+  // Whether the field has stopped moving: the models are all in the scene, have
+  // built whatever sub-meshes they build on their first tick, and have been laid
+  // out by their measured width (3DBattlerSystem.js spreadEnemyModels sets it).
+  // Asked before a bar is placed, because a creature measured while it is still
+  // a stub answers with a stub's height and wears its name across its belly for
+  // the rest of the fight. A field with no 3D scene at all - a sprite battle,
+  // ASCII mode - never moved in the first place and counts as settled.
+  function enemyFieldSettled() {
+    const scene = SceneManager._scene;
+    const spriteset = scene && scene._spriteset;
+    if (!spriteset) return false;
+    // Nothing builds a field here at all (the 3D battler plugin is not loaded):
+    // there is nothing to wait for. Otherwise the flag has to say true outright
+    // - it is undefined for the frames between the troop being created and the
+    // models being asked for, which is exactly the window a bar must not be
+    // placed in.
+    if (typeof spriteset.create3DEnemies !== "function") return true;
+    return spriteset._3dEnemyLayoutSettled === true;
+  }
+
+  function enemyBarViewKey() {
+    return Graphics.width + "x" + Graphics.height;
+  }
+
+  function layoutEnemyBarsOnModels(sprites, impatient) {
     if (!sprites || sprites.length === 0) return true;
-    const w = sprites[0].bitmap ? sprites[0].bitmap.width : miniBarWidth;
-    const x = Math.round(Math.max(4, Graphics.width - w - miniBarRightMargin));
-    const party = window.PartyHud && window.PartyHud.barRowMetrics
-      ? window.PartyHud.barRowMetrics()
-      : null;
-    // The sprite's own y is the top of its bitmap, while the gauge inside it
-    // is drawn MINI.hpY lower down, so the offset is taken back off here.
-    const top = party ? party.top - MINI.hpY : miniBarColumnTop;
-    const pitch = party && party.step > 0 ? party.step : miniBarStackStep;
-    const room =
-      Graphics.height - top - miniBarColumnBottom - miniBarBitmapHeight;
-    const step =
-      sprites.length > 1
-        ? Math.min(pitch, Math.max(28, room / (sprites.length - 1)))
-        : pitch;
-    for (let i = 0; i < sprites.length; i++) {
-      sprites[i].x = x;
-      sprites[i].y = Math.round(top + i * step);
+    if (!impatient && !enemyFieldSettled()) {
+      for (const sprite of sprites) {
+        sprite._barPlaced = false;
+        sprite.visible = false;
+      }
+      return false;
     }
-    return !!party;
+    const placed = [];
+    const row = [];
+    let settled = true;
+    for (const sprite of sprites) {
+      const head = sprite._battler
+        ? battlerHeadPosition(sprite._battler, true)
+        : null;
+      if (!head) {
+        // No model yet, or nothing of it in front of the camera: the bar is not
+        // shown at a place it was never given rather than left standing at its
+        // last one. `_barPlaced` is only ever written here, so a bar dealt out
+        // by somebody else (MapBattleMode) is untouched by it.
+        sprite._barPlaced = false;
+        sprite.visible = false;
+        settled = false;
+        continue;
+      }
+      row.push({ sprite, head });
+    }
+    // Nearest first: the creature standing lowest on the screen is the one in
+    // front, and it is the one that keeps the place its own head gives it.
+    row.sort((a, b) => b.head.y - a.head.y);
+    const M = ENEMY_BAR_SCREEN_MARGIN;
+    for (const entry of row) {
+      const sprite = entry.sprite;
+      const w = sprite.bitmap ? sprite.bitmap.width : miniBarWidth;
+      let x = Math.round(entry.head.x - w / 2);
+      let y = Math.round(entry.head.y - miniBarBitmapHeight - ENEMY_BAR_HEAD_GAP);
+      x = Math.max(M, Math.min(Graphics.width - w - M, x));
+      for (let guard = 0; guard < placed.length; guard++) {
+        const clash = placed.find(
+          (p) =>
+            x < p.x + p.w &&
+            p.x < x + w &&
+            y < p.y + ENEMY_BAR_STACK_STEP &&
+            p.y < y + ENEMY_BAR_STACK_STEP
+        );
+        if (!clash) break;
+        y = clash.y - ENEMY_BAR_STACK_STEP;
+      }
+      // Kept on the screen at BOTH ends: a creature standing below the bottom
+      // edge (a model whose feet are off-camera, a head projected past the
+      // frame) would otherwise wear its bar somewhere nobody can look at it.
+      y = Math.max(M, Math.min(Graphics.height - miniBarBitmapHeight - M, y));
+      sprite.x = x;
+      sprite.y = y;
+      // Shown in the same breath it is placed: this function is the one that
+      // takes a bar off the field for want of a place (above), so it is the one
+      // that puts it back, rather than leaving it dark for a frame until the
+      // sprite's own update notices.
+      sprite._barPlaced = true;
+      sprite.visible = true;
+      placed.push({ x, y, w });
+    }
+    return settled;
   }
 
   // ==========================================================================
@@ -2095,10 +2258,10 @@
     // under whatever window happens to be open.
     this.createTargetChevron();
   };
-  // The bars this scene owns are the monsters', all of them, in one column in
-  // the top-right corner. The party stands on the shared HUD cards over on the
-  // left (UI/PartyHud.js), the same ones the map puts them on, so nothing here
-  // draws a party member any more.
+  // The bars this scene owns are the monsters', all of them, each worn by the
+  // monster it belongs to. The party stands on the shared HUD cards over in the
+  // top-left corner (UI/PartyHud.js), the same ones the map puts them on, so
+  // nothing here draws a party member any more.
   Scene_Battle.prototype.createBattleHealthBars = function () {
     this._battleHealthBarSprites = [];
     const miniBars = [];
@@ -2109,7 +2272,15 @@
       this._battleHealthBarSprites.push(sprite);
       miniBars.push(sprite);
     }
-    layoutMinimalEnemyBars(miniBars);
+    // The models are never up this early, so this first pass almost always comes
+    // back unsettled and leaves every bar dark rather than flashing it at the
+    // corner of the screen for a frame. What it answers is REMEMBERED, so the
+    // scene's own update knows to ask again; throwing it away left the bars
+    // hidden and the scene believing they were placed.
+    this._enemyBarCount = miniBars.length;
+    this._enemyBarViewKey = enemyBarViewKey();
+    this._enemyBarPatience = 0;
+    this._enemyBarsUnsettled = !layoutEnemyBarsOnModels(miniBars);
   };
 
   Scene_Battle.prototype.createEnemyHPSprite = function (enemy) {
@@ -2170,49 +2341,67 @@
 
   const _Scene_Battle_update = Scene_Battle.prototype.update;
   Scene_Battle.prototype.update = function () {
-    _Scene_Battle_update.call(this);
+    // The bars are placed BEFORE the children update, not after. Half of a bar
+    // is DOM (the name, the two labels, the orb, the chip row) and that half
+    // syncs itself to wherever its sprite stands during that very child update,
+    // so a bar placed afterwards would have its text trailing its own gauges by
+    // a frame every time the creature wearing it lunged.
     this.updateBattleHealthBars();
+    _Scene_Battle_update.call(this);
     this.updateTargetChevron();
     this.updateEnemyTargetButtons();
   };
   Scene_Battle.prototype.updateBattleHealthBars = function () {
     const sprites = this._battleHealthBarSprites;
     if (!sprites) return;
-    let living = 0;
+    // Which bars there are to place: the ones whose monster is still standing.
+    // NOT the ones on screen - a bar that has not been placed yet is dark by
+    // definition, so taking the candidates from what is visible meant a field
+    // that was not ready on the first frame could never become ready: the list
+    // came back empty, the scene recorded "no bars, all placed", and every
+    // monster went the whole fight without one. Visibility is what placement
+    // PRODUCES; it can never be what placement reads.
+    const living = [];
     for (let i = 0; i < sprites.length; i++) {
       const sprite = sprites[i];
       if (!sprite) continue;
-      if (sprite._battler) sprite.visible = sprite._battler.isAlive();
-      if (sprite.visible) living++;
+      if (sprite._battler && !sprite._battler.isAlive()) {
+        sprite._barPlaced = false;
+        sprite.visible = false;
+        continue;
+      }
+      living.push(sprite);
     }
 
-    // Every monster's bar stacks in one column in the top-right corner,
-    // never above its own sprite, standing level with the party's own cards
-    // over on the left (UI/PartyHud.js). Those cards are HTML and cannot be
-    // measured until the browser has laid them out, which is a frame or two
-    // after the battle opens, so an unaligned column simply asks again next
-    // frame rather than settling for a height of its own.
-    //
-    // The column only moves when a monster dies, so the list of bars is built
-    // here rather than allocated every frame of every fight to compare one
-    // integer against the last one.
-    if (living === this._miniBarColumnCount && !this._miniBarNeedsAlign) return;
-    // Measuring the party's cards forces the browser to lay the whole document
-    // out (UI/PartyHud.js barRowMetrics is four getBoundingClientRect calls),
-    // and the retry runs precisely while the fight is opening and the DOM is at
-    // its most expensive to measure. Asking every frame bought nothing: the
-    // cards need a frame or two either way, so the retry is put on its own
-    // slower clock. A real change (a monster died) still lands the same frame,
-    // since that comes in through the count above.
-    if (this._miniBarNeedsAlign && living === this._miniBarColumnCount) {
-      this._miniBarAlignWait = (this._miniBarAlignWait || 0) + 1;
-      if (this._miniBarAlignWait < MINI_BAR_ALIGN_RETRY) return;
+    // The bars are put over the creatures once and then LEFT there. Placing
+    // them every frame would have them ride the models, and a name that swims
+    // about with the creature wearing it is harder to read than one in a corner
+    // ever was. They are re-placed only when the field itself changes: a
+    // monster dies and the bar that was lifted over its neighbour's is free to
+    // drop back down, or the view is resized under them. While the models are
+    // still loading in there is nothing to stand on yet, so an unsettled field
+    // asks again on a slower clock - measuring a whole troop is the one
+    // expensive thing here, and it is asked for precisely while the fight is
+    // opening and everything else is at its most expensive too.
+    const viewKey = enemyBarViewKey();
+    const changed =
+      living.length !== this._enemyBarCount || viewKey !== this._enemyBarViewKey;
+    if (changed) {
+      this._enemyBarPatience = 0;
+    } else {
+      if (!this._enemyBarsUnsettled) return;
+      this._enemyBarPatience = (this._enemyBarPatience || 0) + 1;
+      this._enemyBarSettleWait = (this._enemyBarSettleWait || 0) + 1;
+      if (this._enemyBarSettleWait < ENEMY_BAR_SETTLE_RETRY) return;
     }
-    this._miniBarAlignWait = 0;
-    const miniBars = sprites.filter((s) => s && s.visible);
-    this._miniBarColumnCount = miniBars.length;
-    this._miniBarNeedsAlign =
-      !layoutMinimalEnemyBars(miniBars) && !!ConfigManager.partyHud;
+    this._enemyBarSettleWait = 0;
+    this._enemyBarCount = living.length;
+    this._enemyBarViewKey = viewKey;
+    // Out of patience: stand the bars wherever the creatures can be measured
+    // rather than leave the player with no health to read at all. A field that
+    // has not settled by now is one that is never going to say it has.
+    const impatient = this._enemyBarPatience >= ENEMY_BAR_SETTLE_PATIENCE;
+    this._enemyBarsUnsettled = !layoutEnemyBarsOnModels(living, impatient);
   };
   const _Window_ActorCommand_initialize =
     Window_ActorCommand.prototype.initialize;
@@ -2435,8 +2624,24 @@
   // are castable too, so the bar reaches them rather than pretending they are
   // not there. A body's own limb moves are left out; they belong to the parts
   // menu, not to the quick bar.
+  // What the bar carries. This is the single most expensive thing the input
+  // phase used to do sixty times a second: Game_Actor#skills is quadratic in
+  // the number of skills a character knows and walks every trait object that
+  // grants one, and isAlwaysCarried walks them again for each candidate. The
+  // answer only changes when the player edits the loadout or learns a skill,
+  // so it is held per actor and re-read a few times a second; the actor
+  // changing hands drops it at once.
+  const _hotbarSkillCache = new Map();
+
+  function _hotbarSkillsClear() {
+    _hotbarSkillCache.clear();
+  }
+
   function _hotbarSkills(actor) {
     if (!actor || !window.BattleLoadout) return [];
+    const cached = _hotbarSkillCache.get(actor);
+    const stale = !window.FrameBudget || window.FrameBudget.every('hotbarSkills', 6);
+    if (cached && !stale) return cached;
     const LO = window.BattleLoadout;
     const carried = LO.ids(actor).map(id => $dataSkills[id]).filter(Boolean);
     const seen = new Set(carried.map(skill => skill.id));
@@ -2446,7 +2651,9 @@
     const extra = typeof LO.isAlwaysCarried !== 'function' ? [] : known.filter(skill =>
       skill && !seen.has(skill.id) && LO.isAlwaysCarried(actor, skill) &&
       !(anatomy && anatomy.has(skill.id)));
-    return carried.concat(extra);
+    const list = carried.concat(extra);
+    _hotbarSkillCache.set(actor, list);
+    return list;
   }
 
   // How many pages of nine the carried skills fill, and the slice standing on
@@ -2643,6 +2850,7 @@
     }
     if (actor !== _hotbarActor) {
       _hotbarActor = actor;
+      _hotbarSkillsClear();
       _clearHotbarKeys();
       _hotbarActive = false;
       _hotbarIndex = 0;
@@ -2721,6 +2929,7 @@
   const _Scene_Battle_terminate_hotbar = Scene_Battle.prototype.terminate;
   Scene_Battle.prototype.terminate = function () {
     _hotbarActive = false;
+    _hotbarSkillsClear();
     _clearHotbarKeys();
     _hotbarActor = null;
     _hideHotbar();

@@ -6850,7 +6850,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 this.startUpdateInstall();
                 return;
             }
-            this.startUpdateDownload();
+            // A press on the download notice is a press on the whole update:
+            // the plate fills as the build comes down, installs itself when it
+            // lands and closes the game onto the new files. The player decides
+            // once, here, and is not asked again.
+            SoundManager.playOk();
+            this.startUpdateDownload({ install: true });
         });
 
         this.refreshUpdateButton();
@@ -6928,6 +6933,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         }
         if (state) window.UIPanel.open(btn); else window.UIPanel.close(btn);
     };
+
+    // How much of the bar the files themselves are worth when one press runs
+    // the whole update. The rest is the install that follows them.
+    const DOWNLOAD_FILL_SHARE = 0.9;
+    // Where the bar stands while the staged files are moved into place. It only
+    // reaches the end when the game is actually closing.
+    const INSTALL_FILL = 0.96;
 
     // While a build is coming down the notice fills like a bar: the ratio is
     // painted as a background layer rather than a child, so the label can be
@@ -7132,7 +7144,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // again. Everything it writes goes into the staging folder: when it ends,
     // the copy being played is the copy that was played before and the notice
     // has turned into the install button.
-    Scene_Title.prototype.startUpdateDownload = function () {
+    //
+    // opts.install carries the press through to the end: the plate keeps
+    // filling, the build installs itself the moment it is down and the game
+    // closes onto it. The automatic run never passes it, so a download nobody
+    // asked for still stops at the staging folder and waits to be installed.
+    Scene_Title.prototype.startUpdateDownload = function (opts) {
         if (this._updateBusy) return;
         const api = updaterApi();
         if (!api) return;
@@ -7168,10 +7185,16 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const btn = this._updateButton;
         const sha = result.latest;
         const name = updateBuildName(result);
+        const chain = !!(opts && opts.install);
         this._updateBusy = true;
 
         const say = (text, ratio) => this._updateSay(text, ratio);
         const release = (text, dim) => this._updateRelease(text, dim);
+
+        // One bar for the whole press: the files are the long part of it, so
+        // they take the first nine tenths and the install takes the last one,
+        // rather than the plate filling up twice.
+        const fillOf = (ratio) => chain ? ratio * DOWNLOAD_FILL_SHARE : ratio;
 
         const onProgress = (p) => {
             if (!p) return;
@@ -7182,7 +7205,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                     ? T('Titlescreen.update.downloading', { name: name })
                     : T('Titlescreen.update.downloadingPlain', {
                         percent: Math.round(ratio * 100)
-                    }), ratio);
+                    }), fillOf(ratio));
             } else {
                 say(T('Titlescreen.update.preparing'), 0);
             }
@@ -7210,10 +7233,16 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         }).then((got) => {
             this._updateBusy = false;
             if (!got) return;
+            if (btn) btn.classList.remove('title-update-btn--dim');
+            // The press carries on: the bar does not reset, the build goes into
+            // place and the game closes onto it without a second press.
+            if (chain) {
+                this.startUpdateInstall({ silent: true });
+                return;
+            }
             // The build is in hand. The notice reads itself again and comes
             // back as the install button.
             setUpdateFill(btn, null);
-            if (btn) btn.classList.remove('title-update-btn--dim');
             this.refreshUpdateButton();
         }).catch((err) => {
             console.warn('Titlescreen: the update could not be downloaded', err);
@@ -7227,7 +7256,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // The press: what is already down is moved into place and the game closes
     // so it comes back up onto it. Nothing here can fail on a network, since
     // every byte was fetched and verified before this button appeared.
-    Scene_Title.prototype.startUpdateInstall = function () {
+    Scene_Title.prototype.startUpdateInstall = function (opts) {
         if (this._updateBusy) return;
         const api = updaterApi();
         if (!api || typeof api.applyStaged !== 'function') return;
@@ -7236,9 +7265,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
         const btn = this._updateButton;
         this._updateBusy = true;
-        SoundManager.playOk();
+        // The chained run was already answered by the press that started the
+        // download, so it does not click a second time.
+        if (!(opts && opts.silent)) SoundManager.playOk();
 
-        this._updateSay(T('Titlescreen.update.installing'), 1);
+        // The last tenth of the bar: the files are already down, so what is
+        // left is the move into place and the window going away.
+        this._updateSay(T('Titlescreen.update.installing'), INSTALL_FILL);
 
         api.applyStaged().then((done) => {
             if (!done) {
@@ -7258,10 +7291,11 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 setUpdateLabel(btn, T('Titlescreen.update.restarting'), majorTakenLine());
                 if (btn) {
                     setUpdateState(btn, 'busy');
+                    setUpdateFill(btn, 1);
                 }
                 this.layoutUpdateButton();
             } else {
-                this._updateSay(T('Titlescreen.update.restarting'));
+                this._updateSay(T('Titlescreen.update.restarting'), 1);
             }
             setTimeout(() => updaterCall('restart'), major ? 3000 : 1600);
         }).catch((err) => {
@@ -7301,6 +7335,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // Already down from this session or an earlier one: the notice is
         // offering to install it, not to fetch it again.
         if (updaterCall('stagedFor', result.latest)) return;
+        // No press behind this one, so it stops at the staging folder: the
+        // game is never closed on a player who did not ask for it.
         this.startUpdateDownload();
     };
 

@@ -127,6 +127,8 @@
       birthDate: "1968-07-14", // Date of birth
       nationId: "Texas", // Nation of birth (key into HistorySimulator_COUNTRIES)
       gender: 0, // 0=Male 1=Female 2=Non-binary 3=Cocoon
+      reproduction: 0, // REPRODUCTION_TYPES.TESTICLES. Stated, not derived: the
+      // dossier answers for his body the way Em's answers for hers.
       sexualOrientation: "heterosexual", // key into js/db/NPC/Orientations.json (sexual)
       romanticOrientation: "heteroromantic", // key into js/db/NPC/Orientations.json (romantic)
       money: 90000,

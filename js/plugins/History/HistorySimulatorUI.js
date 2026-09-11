@@ -476,7 +476,7 @@
                 this._scrollTimeout = null;
                 const activeCard = this._focusedCard ||
                     (container.isConnected && container.querySelector(`.hist-row[data-global-idx="${currentIndex}"]`));
-                if (activeCard) activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                if (activeCard) activeCard.scrollIntoView({ block: 'nearest' });
             }, 50);
         }
 

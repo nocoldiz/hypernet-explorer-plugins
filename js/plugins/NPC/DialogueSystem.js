@@ -2252,34 +2252,13 @@ Imported.DialogueSystem = true;
     // -------------------------------------------------------------------------
     // What an NPC says when the player talks to them and the event has nothing
     // scripted to say. The line is written, not generated: it comes out of the
-    // bank held under the personality NPCSociety dealt that person when they
-    // were minted, so a Paranoid shopkeeper and a Sanguine one pass on the same
-    // town in two different voices.
-    //
-    // An event with nobody behind it (a cat, a signpost, a body double in a
-    // cutscene) has no society profile to read, and speaks from the generic
-    // bank instead, which is also where a personality with no written lines
-    // falls back to.
+    // one generic bank, which everybody speaks from, whoever they are and
+    // whether or not there is anybody behind the event at all (a cat, a
+    // signpost, a body double in a cutscene).
 
     // How often talking to somebody is answered with the plain rumour rather
     // than a conversation. Everything else they could say is longer.
     const RUMOR_CHANCE = 0.25;
-
-    function rumorPersonalityKey(eventId) {
-        if (!eventId || typeof $gameMap === 'undefined') return null;
-        const npcName = _npcNameForEvent($gameMap.event(eventId));
-        if (!npcName) return null;
-        const profile = window.NPCSocietyRegistry?.getProfile?.(npcName);
-        if (!profile || profile.personalityIndex == null) return null;
-        const list = window._NPCSocietyDataLoader?.personalities
-                  || window.Health?.PersonalityData?.list
-                  || window.Health?.PersonalityData;
-        if (!Array.isArray(list)) return null;
-        // A personality's English `name` in PersonalityData.json is its id, and
-        // the bank is keyed by that id in lower case.
-        const name = list[profile.personalityIndex]?.name;
-        return name ? String(name).toLowerCase() : null;
-    }
 
     function vary(text) {
         if (typeof text !== 'string' || text.indexOf('{') < 0) return text;
@@ -2296,10 +2275,8 @@ Imported.DialogueSystem = true;
         return out;
     }
 
-    function pickRumor(personalityKey) {
-        const key = personalityKey ? `Rumors.personality.${personalityKey}` : null;
-        let pool = (key && T.has(key)) ? T.pool(key) : [];
-        if (!pool.length) pool = T.pool('Rumors.generic');
+    function pickRumor() {
+        const pool = T.pool('Rumors.generic');
         if (!pool.length) return '';
         const raw = pool[Math.floor(Math.random() * pool.length)];
         return vary(raw);
@@ -2849,6 +2826,91 @@ Imported.DialogueSystem = true;
     // the same system whether or not the panel was ever opened. Returns two
     // exchange steps (player line, then NPC line) or null if the pieces needed
     // aren't available.
+    // The Socialize catalogue exactly as the panel's action row offers it
+    // (NPCEmpathize._socialCatalog): the twelve tone-keyed interactions of the
+    // bank, and with them the three entertainment moves - a story, a poem and a
+    // joke - which are written in blocks of their own in SocialLines.json and
+    // so were the three buttons on that row the street could never draw.
+    function socialCatalog(db) {
+        const out = (db.interactions || []).map(def => ({ id: def.id, def }));
+        ['story', 'poem'].forEach(id => {
+            const perf = db.performances && db.performances[id];
+            if (perf) out.push({ id, perf });
+        });
+        if (db.jokes) out.push({ id: 'joke', joke: true });
+        return out;
+    }
+
+    // Roll one catalogue move against this NPC with the panel's own maths
+    // (_socialInteract): an interaction on its tone and on how often it has
+    // been tried lately, a story or a poem on the NPC's personality lean and
+    // their trait affinity with the performer, a joke on whether it lands at
+    // all. Returns the two raw lines, the tone the stance banks answer in and
+    // what the exchange is worth. An entertainment move has no tone of its own,
+    // so it takes the sign of its own result, exactly as the panel reads it.
+    function rollSocialMove(move, profile, actor, npcName) {
+        const H = window.NPCEmpathize?._helpers;
+        if (!H) return null;
+        const db     = H._socialLines();
+        const recent = H._countRecentInteractions ? H._countRecentInteractions(profile, 'social_' + move.id, 3) : 0;
+        const mult   = tone => H._personalitySocialMult ? H._personalitySocialMult(profile, tone) : 1;
+        let tone = '', delta = 0, playerLine = '', npcLine = '', sincere = true, subject = '';
+
+        if (move.joke) {
+            // The joke is built word by word out of the grammar in the bank, so
+            // it comes out already in the language the game is played in.
+            playerLine = H._genJoke ? H._genJoke() : '';
+            if (Math.random() < Math.max(0.15, 0.7 - recent * 0.18)) {
+                delta   = Math.round(Math.max(1, 5 - recent) * mult('positive'));
+                npcLine = H._rand(Math.random() < 0.5 ? db.jokes?.landGood : db.jokes?.landGroan);
+            } else {
+                delta   = Math.round((recent >= 2 ? -(2 + recent) : -1) * mult('negative'));
+                npcLine = H._rand(db.jokes?.flop);
+                sincere = false;
+            }
+        } else if (move.perf) {
+            const perf = move.perf;
+            subject = window.RandomBookGenerator?.generateTitle?.() || T('Empathize.oldLegend');
+            const lean   = (((profile?.personalityIndex ?? 0) % 7) - 3) * 2;
+            const compat = Math.round((H._traitCompatBonus ? H._traitCompatBonus(profile, actor) : 0) / 10);
+            const whim   = Math.floor(Math.random() * 11) - 5;
+            const raw    = (perf.base || 5) + lean + compat + whim - recent * 2;
+            if (raw > 0) {
+                delta   = Math.max(1, Math.round(raw / 2 * mult('positive')));
+                npcLine = H._rand(perf.good);
+            } else {
+                delta   = Math.min(-1, Math.round(raw / 2 * mult('negative')));
+                npcLine = H._rand(perf.bad);
+                sincere = false;
+            }
+            playerLine = H._rand(perf.player);
+        } else {
+            const def = move.def;
+            tone       = def.tone;
+            playerLine = H._rand(def.player);
+            if (def.tone === 'positive') {
+                delta = def.baseDelta - recent * Math.max(2, Math.ceil(def.baseDelta / 2.5));
+                delta = Math.round(delta * mult('positive'));
+                sincere = delta > 0;
+                if (!sincere) delta = -Math.min(8, 2 + recent * 2);
+            } else if (def.tone === 'neutral') {
+                delta   = Math.max(0, (def.baseDelta || 1) - recent);
+                delta   = Math.round(delta * mult('neutral'));
+                sincere = delta > 0;
+            } else { // negative
+                delta   = def.baseDelta - Math.min(6, Math.max(0, recent - 1) * 2);
+                delta   = Math.round(delta * mult('negative'));
+                sincere = false;
+            }
+            const pool = def.tone === 'negative' ? def.responseBad : (sincere ? def.responseGood : def.responseBad);
+            npcLine = H._rand(pool) || H._rand(def.responseGood) || H._rand(def.responseBad);
+        }
+        // A story, a poem and a joke are content the talker chose rather than a
+        // register they spoke in, which is why the stance banks below answer
+        // them without taking the line away (the panel does the same).
+        return { id: move.id, tone, delta, playerLine, npcLine, sincere, subject, perf: !!(move.perf || move.joke) };
+    }
+
     function buildSocialExchange(ev, npcName, profile) {
         const EM = window.NPCEmpathize;
         const H  = EM && EM._helpers;
@@ -2859,36 +2921,36 @@ Imported.DialogueSystem = true;
         // A beast at the head of the party has no prose to trade, only the
         // feral bank the old rumour path already knows how to read from.
         if (H._isNonSentientActor && H._isNonSentientActor(actor)) return null;
-        const db          = H._socialLines();
-        const interactions = db.interactions || [];
-        if (!interactions.length) return null;
-        const def = interactions[Math.floor(Math.random() * interactions.length)];
+        const db  = H._socialLines();
+        const cat = socialCatalog(db);
+        if (!cat.length) return null;
+        const move = cat[Math.floor(Math.random() * cat.length)];
+        const roll = rollSocialMove(move, profile, actor, npcName);
+        if (!roll) return null;
+        // The move as the rest of this builder reads it: its own pools where it
+        // has them, and the tone the stance banks answer in - the move's own
+        // where it has one, the sign of the result where it has not.
+        const def = Object.assign({}, move.def, {
+            id: roll.id,
+            tone: roll.tone || (roll.delta >= 0 ? 'positive' : 'negative'),
+        });
+        const sincere = roll.sincere;
+        let delta     = roll.delta;
 
-        const fill       = s => vary(String(s || '').replace(/\{name\}/g, npcName));
+        const fill       = s => vary(String(s || '')
+            .replace(/\{name\}/g, npcName)
+            .replace(/\{subject\}/g, roll.subject || ''));
         // Em says it in her words, Bubba in his, and the two of them to each
-        // other in theirs; anybody else says the move's own line.
+        // other in theirs; anybody else says the move's own line. What the
+        // talker chose to perform is theirs either way: a joke, a story and a
+        // poem keep the line they generated, which is the rule the panel plays
+        // by too, so Em tells the joke she built rather than a stance line.
         const layer      = talkLayer(ev, npcName, profile);
         if (layer) seedLayerMeeting(ev, npcName, profile);
-        const playerLine = fill(layerPlayerLine(layer, def.tone)) || fill(H._rand(def.player));
+        const playerLine = (!roll.perf && fill(layerPlayerLine(layer, def.tone)))
+            || fill(roll.playerLine);
         if (!playerLine) return null;
 
-        const mult   = tone => H._personalitySocialMult ? H._personalitySocialMult(profile, tone) : 1;
-        const recent = H._countRecentInteractions ? H._countRecentInteractions(profile, 'social_' + def.id, 3) : 0;
-        let delta, sincere;
-        if (def.tone === 'positive') {
-            delta = def.baseDelta - recent * Math.max(2, Math.ceil(def.baseDelta / 2.5));
-            delta = Math.round(delta * mult('positive'));
-            sincere = delta > 0;
-            if (!sincere) delta = -Math.min(8, 2 + recent * 2);
-        } else if (def.tone === 'neutral') {
-            delta   = Math.max(0, (def.baseDelta || 1) - recent);
-            delta   = Math.round(delta * mult('neutral'));
-            sincere = delta > 0;
-        } else { // negative
-            delta   = def.baseDelta - Math.min(6, Math.max(0, recent - 1) * 2);
-            delta   = Math.round(delta * mult('negative'));
-            sincere = false;
-        }
         // Dialogue mode option: markovian sources the NPC's half of the
         // exchange from their own Markov word bank instead of the templated
         // Socialize response pools below. The player's line, the busts and the
@@ -2900,17 +2962,14 @@ Imported.DialogueSystem = true;
         }
         // Gossip's own payoff is a teaser ("Well, since you asked...") with
         // nothing to actually tell: when it lands, the real content comes out
-        // of the Rumors bank (same personality-keyed pools the old Rumors
-        // command read from), tacked on after the teaser.
+        // of the Rumors bank (the same generic pool the old Rumors command
+        // read from), tacked on after the teaser.
         if (!npcLine && def.id === 'gossip' && sincere) {
             const teaser = fill(H._rand(def.responseGood));
-            const rumor  = pickRumor(rumorPersonalityKey(ev.eventId()));
+            const rumor  = pickRumor();
             npcLine = rumor ? (teaser ? `${teaser} ${rumor}` : rumor) : teaser;
         }
-        if (!npcLine) {
-            const pool = def.tone === 'negative' ? def.responseBad : (sincere ? def.responseGood : def.responseBad);
-            npcLine = fill(H._rand(pool)) || fill(H._rand(def.responseGood)) || fill(H._rand(def.responseBad));
-        }
+        if (!npcLine) npcLine = fill(roll.npcLine);
         // The stance owns the reply, the same way it does in the panel: praise
         // from the god-killer lands very differently on a zealot and on an
         // invasive fan, and neither of them sounds like the generic pool. It
@@ -2929,6 +2988,11 @@ Imported.DialogueSystem = true;
                 timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
             });
         }
+        // Entertainment that landed is worth something to everybody who was
+        // standing there, in the street exactly as in the panel: the party's
+        // Fun meter and the NPC's own boredom. A move that is not
+        // entertainment, or one that flopped, pays nobody and returns 0.
+        H._payFun?.(actorId, profile, npcName, def.id, delta);
 
         EM.recordNPCLine?.(npcName, playerLine, 'player');
         EM.recordNPCLine?.(npcName, npcLine, 'npc');
@@ -2958,21 +3022,41 @@ Imported.DialogueSystem = true;
         // class makes (see the playerLine below).
         const beastLeader = !!(H._isNonSentientActor && H._isNonSentientActor(actor));
 
-        const interactions = H._socialLines().interactions || [];
-        if (!interactions.length) return null;
-
         const opinion = H._npcEffectiveOpinion ? H._npcEffectiveOpinion(profile, actor) : 0;
         const tones   = opinion >= 25 ? ['positive', 'neutral']
                       : opinion <= -25 ? ['negative', 'neutral']
                       : ['neutral', 'positive'];
-        const pool    = interactions.filter(i => tones.includes(i.tone));
-        const choices = pool.length ? pool : interactions;
-        const def     = choices[Math.floor(Math.random() * choices.length)];
+        // The same catalogue the party picks from, read the other way round.
+        // Somebody who cannot stand the leader does not stop them in the street
+        // to recite a poem at them, so the entertainment moves are offered only
+        // where the bucket is not the hostile one.
+        const cat     = socialCatalog(H._socialLines());
+        if (!cat.length) return null;
+        const pool    = cat.filter(m => m.def ? tones.includes(m.def.tone) : !tones.includes('negative'));
+        const choices = pool.length ? pool : cat;
+        const move    = choices[Math.floor(Math.random() * choices.length)];
+        // An entertainment move has no tone written on it, and somebody who
+        // stops you to perform is approaching warmly, so it opens as one: the
+        // NPC says the line the party would have said, and the party answers
+        // out of the pools that bank keeps for a turn that landed or flopped.
+        // The joke is built on the spot, the way it is on the other side.
+        const subject = move.perf
+            ? (window.RandomBookGenerator?.generateTitle?.() || T('Empathize.oldLegend')) : '';
+        const def     = move.def || {
+            id: move.id,
+            tone: 'positive',
+            baseDelta: move.perf ? (move.perf.base || 5) : 4,
+            player: move.perf ? move.perf.player : [H._genJoke ? H._genJoke() : ''],
+            responseGood: move.perf ? move.perf.good : H._socialLines().jokes?.landGood,
+            responseBad:  move.perf ? move.perf.bad  : H._socialLines().jokes?.flop,
+        };
 
         // The NPC's opener names the person they are talking to; the party's
         // answer names the person who just spoke to them.
-        const fillNpc    = s => vary(String(s || '').replace(/\{name\}/g, actor ? actor.name() : ''));
-        const fillPlayer = s => vary(String(s || '').replace(/\{name\}/g, npcName));
+        const fillNpc    = s => vary(String(s || '')
+            .replace(/\{name\}/g, actor ? actor.name() : '').replace(/\{subject\}/g, subject));
+        const fillPlayer = s => vary(String(s || '')
+            .replace(/\{name\}/g, npcName).replace(/\{subject\}/g, subject));
 
         // Whoever the leader is, this is the beat where somebody walks up and
         // opens their mouth, so it is the one the greeting banks were written
@@ -3019,6 +3103,9 @@ Imported.DialogueSystem = true;
                 timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
             });
         }
+        // Being told a good one is as entertaining as telling it: the Fun meter
+        // is paid whichever side of the exchange the performance came from.
+        H._payFun?.(actorId, profile, npcName, def.id, delta);
 
         EM.recordNPCLine?.(npcName, npcLine, 'npc');
         EM.recordNPCLine?.(npcName, playerLine, 'player');
@@ -3152,7 +3239,7 @@ Imported.DialogueSystem = true;
         if (layer) seedLayerMeeting(ev, npcName, profile ?? null);
         const hello   = layer ? vary(String(layerGreetingLine(layer))
                                      .replace(/\{name\}/g, npcName || '')) : '';
-        let line = pickRumor(rumorPersonalityKey(ev.eventId()));
+        let line = pickRumor();
         if (layer && layer.pair) line = '';
         if (!line && !hello) return null;
         line = line ? vary(line) : '';
@@ -4030,7 +4117,7 @@ Imported.DialogueSystem = true;
         const bareHello = bareLayer
             ? vary(String(layerGreetingLine(bareLayer)).replace(/\{name\}/g, npcName || ''))
             : '';
-        let line = (bareLayer && bareLayer.pair) ? '' : pickRumor(rumorPersonalityKey(evId));
+        let line = (bareLayer && bareLayer.pair) ? '' : pickRumor();
         line = [bareHello, line].filter(Boolean).join(' ');
         // Nothing at all to say: the caller is told so, since an older event
         // that came in through the Markov command still has its own line to

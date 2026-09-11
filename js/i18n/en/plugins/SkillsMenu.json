@@ -15,7 +15,8 @@
  },
  "battle": {
   "back": "Back",
-  "none": "Nothing to cast"
+  "none": "Nothing to cast",
+  "elementNone": "Non-elemental"
  },
  "discipline": {
   "basic": "Basic Discipline",

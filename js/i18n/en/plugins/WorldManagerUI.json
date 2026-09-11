@@ -59,7 +59,7 @@
   "enemyFloor": "The Squishing has run for a while: roaming enemies start at level {level} here, whatever spawn mode you play on.",
   "enemyFloorOpen": "The fauna is out of hand: anything from level 1 to {level} roams the whole world.",
   "enemyFloorCollapse": "The paradox has completed: nothing below level {level} is left, and there is no upper limit at all.",
-  "storyDisabled": "Story mode is written for the year 2001, an ordinary population and ordinary magic. With these settings story mode will be disabled: this world can still be played through Explore, Reconnect and Sandbox.",
+  "storyTutorialDisabled": "Story mode is written for the year 2001. Beginning in {year} disables the tutorial: the story opens straight on its own landing, with none of the scripted introduction.",
   "earthLost": "There is no Earth. Nibiru struck it on 21 December 2012 and the world map went with it: what stands in its orbit is the Omega Tower, and everything that would have taken you out onto the surface takes you there instead.",
   "startingLevel": "Starting level",
   "lowerLevel": "Lower level",

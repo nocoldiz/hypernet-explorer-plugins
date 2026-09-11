@@ -711,7 +711,9 @@
         }
       }
 
-      // Losing a limb erupts a big blood spray and leaves a permanent puddle.
+      // A part lost, or merely destroyed where it sits, erupts a blood spray and
+      // leaves a puddle. This is the ONLY thing that bleeds: ordinary damage no
+      // longer sprays at all.
       // Point the FX at this exact part and let BloodSplatterFX (if present)
       // localise the gib onto it (3D mode) or onto the battler sprite (2D mode).
       enemy._fxLastHitPart = partKey;
@@ -721,7 +723,7 @@
       // Flag the impact so the 3D battler plays its whole-body stagger/recoil
       // (reserved for critical hits and limb loss; cleared once consumed).
       enemy._partLostStagger = true;
-      if (cut && window.BloodSplatterFX && window.BloodSplatterFX.onBodyPartLost) {
+      if (window.BloodSplatterFX && window.BloodSplatterFX.onBodyPartLost) {
         window.BloodSplatterFX.onBodyPartLost(enemy, partKey);
       }
 

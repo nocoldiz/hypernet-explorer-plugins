@@ -186,10 +186,22 @@
 
     // Story mode used to be refused outside the canon world (2001, an ordinary
     // population, ordinary magic) and the form warned about it here. It runs in
-    // every world now: the year only decides where the run begins
-    // (window.StoryModeStart), so there is nothing left to warn about.
-    function storyDisabledNoticeFor() {
-        return "";
+    // every world now, but the year still decides where the run is put down
+    // (window.StoryModeStart, in Titlescreen.js): only the canon year opens on
+    // the authored start, and every other one drops the party on its own
+    // landing with the tutorial skipped. The population and the magic decide
+    // nothing, so the year is the whole of this notice.
+    const STORY_CANON_YEAR = 2001;
+
+    function storyCanonYear() {
+        const canon = window.StoryModeStart && window.StoryModeStart.CANON_YEAR;
+        return Number.isFinite(canon) ? canon : STORY_CANON_YEAR;
+    }
+
+    // The line shown under the world settings, or "" for the canon year.
+    function storyDisabledNoticeFor(year) {
+        if (year === storyCanonYear()) return "";
+        return T("WorldManagerUI.storyTutorialDisabled", { year: year });
     }
 
     // Months since January 2001, the single ordering the two spinners clamp on.
@@ -641,14 +653,13 @@
             this._refreshStoryNotice();
         }
 
-        // Repaints the "story mode will be disabled" line. Called by every
-        // spinner that feeds it rather than rebuilding the form, which would
+        // Repaints the "the tutorial will be skipped" line. Called by the date
+        // spinners that feed it rather than rebuilding the form, which would
         // drop the name being typed.
         _refreshStoryNotice() {
             const el = document.getElementById("wm-story-disabled");
             if (!el) return;
-            const notice = storyDisabledNoticeFor(
-                this._startYear, this._populationMode, this._magicalLevel);
+            const notice = storyDisabledNoticeFor(this._startYear);
             el.textContent = notice;
             el.classList.toggle("wm-hidden", !notice);
         }
@@ -691,7 +702,6 @@
                 noteEl.textContent = note;
                 noteEl.classList.toggle("wm-hidden", !note);
             }
-            this._refreshStoryNotice();
             SoundManager.playCursor();
         }
 
@@ -716,7 +726,6 @@
                 noteEl.textContent = note;
                 noteEl.classList.toggle("wm-hidden", !note);
             }
-            this._refreshStoryNotice();
             SoundManager.playCursor();
         }
 
@@ -985,8 +994,8 @@
                                  class="wm-enemy-floor${magicalNoteFor(magicalLevel) ? "" : " wm-hidden"}"
                             >${escapeHtml(magicalNoteFor(magicalLevel))}</div>
                             <div id="wm-story-disabled" role="status"
-                                 class="wm-enemy-floor wm-story-disabled${storyDisabledNoticeFor(start.year, populationMode, magicalLevel) ? "" : " wm-hidden"}"
-                            >${escapeHtml(storyDisabledNoticeFor(start.year, populationMode, magicalLevel))}</div>
+                                 class="wm-enemy-floor wm-story-disabled${storyDisabledNoticeFor(start.year) ? "" : " wm-hidden"}"
+                            >${escapeHtml(storyDisabledNoticeFor(start.year))}</div>
                             <label>${T('WorldManagerUI.seed')}</label>
                             <div class="wm-seed-row">
                                 <input id="wm-seed-input" type="text" maxlength="40"

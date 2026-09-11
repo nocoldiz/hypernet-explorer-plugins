@@ -2684,7 +2684,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         items.forEach(item => {
             if (item.getAttribute('data-name') === destName) {
                 item.classList.add('selected');
-                item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                item.scrollIntoView({ block: 'nearest' });
             } else {
                 item.classList.remove('selected');
             }
@@ -2774,7 +2774,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         items.forEach(item => {
             if (item.getAttribute('data-name') === destName) {
                 item.classList.add('selected');
-                item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                item.scrollIntoView({ block: 'nearest' });
             } else {
                 item.classList.remove('selected');
             }

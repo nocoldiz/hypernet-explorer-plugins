@@ -1,3 +1,22 @@
+0.6.15a
+
+Added:
+ - world creation warns that a year other than 2001 disables the story tutorial
+
+Changed:
+ - download button fills like a bar, then installs and closes the game
+ - reworked battle hud
+ - banks editor preview collapses, pool list moved under its bank
+ - reworked skill description to show the attack element
+ - battle system performance and minimal blood fx
+ - removed personality bound rumors, quotes out of Em and Bubba banks
+ - banks editor in tools, armies moved to a wiki tab
+ - menu drawing performance increased
+
+Fixed:
+ - Bubba and Em no longer start with each other's reproductive organs
+
+
 0.6.14a
 
 Added:

@@ -1391,7 +1391,7 @@
           if (listEl) {
             const selectedEl = listEl.querySelector('[style*="background: rgba(74, 29, 15, 0.08)"]');
             if (selectedEl) {
-              selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+              selectedEl.scrollIntoView({ block: 'nearest' });
             }
           }
 
@@ -1399,7 +1399,7 @@
           if (rosterEl) {
             const selectedEl = rosterEl.querySelector('.roster-item.focused');
             if (selectedEl) {
-              selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+              selectedEl.scrollIntoView({ block: 'nearest' });
             }
           }
         }

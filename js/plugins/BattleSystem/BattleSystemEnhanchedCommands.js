@@ -909,6 +909,21 @@
     }
   };
 
+  // The line the list's TOP edge stands on, in canvas pixels, so anything
+  // sharing its corner can stop short of it rather than be written over it.
+  // The list is pinned to the bottom and grows upward (actorCommandWindowRect),
+  // so its top is one row higher for every command the acting member carries -
+  // a member with a Wrestle and a Talk to their name pushes it further up than
+  // one without. The battle log in the same corner reads this
+  // (Core/MPP_SmoothBattleLog2.js). Answers null while no list is standing.
+  window.BattleCommandSide.topY = function () {
+    const scene = SceneManager._scene;
+    const win = scene && scene._actorCommandWindow;
+    if (!win || !(win.height > 0)) return null;
+    const boxOffsetY = Math.floor((Graphics.height - Graphics.boxHeight) / 2);
+    return boxOffsetY + win.y;
+  };
+
   // 0 = left, 1 = right (default: the battle log takes the left side).
   Object.defineProperty(ConfigManager, 'battleCommandPosition', {
     get: function () {

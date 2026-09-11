@@ -1000,32 +1000,6 @@
         );
     };
 
-    // Where the cards' bars are standing, in the game's own coordinates: the
-    // top of the first member's HP bar and the distance from one member's to
-    // the next. The monster column in the opposite corner lines its own bars
-    // up with these (BattleSystem/BattleSystemEnhancedHUD.js), so the two
-    // columns read as one row of pairs rather than as two lists that happen to
-    // share a screen. Returns null while the cards are not up.
-    PartyHudOverlay.prototype.barRowMetrics = function () {
-        if (!this._el || !this._visible) return null;
-        const cards = Array.from(this._cards.values());
-        if (cards.length === 0) return null;
-        const view = viewRect();
-        if (!view) return null;
-        const sy = view.height / Graphics.height;
-        if (!(sy > 0)) return null;
-        // Measured rather than computed: the cards carry the canvas' own scale,
-        // so the reading is divided back out into game units.
-        const first = cards[0].hp.bar.getBoundingClientRect();
-        if (!(first.height > 0)) return null;
-        const metrics = { top: (first.top - view.top) / sy, step: null };
-        if (cards.length > 1) {
-            const second = cards[1].hp.bar.getBoundingClientRect();
-            if (second.height > 0) metrics.step = (second.top - first.top) / sy;
-        }
-        return metrics;
-    };
-
     // The AP a skill the player is looking at would leave the caster with, so
     // the orb can show the cost before it is paid. Called with null to clear.
     PartyHudOverlay.prototype.setProjectedAp = function (actor, value) {
@@ -1050,7 +1024,6 @@
     window.PartyHud = {
         overlay: () => _overlay,
         canvasPointFor: (actor) => (_overlay ? _overlay.canvasPointFor(actor) : null),
-        barRowMetrics: () => (_overlay ? _overlay.barRowMetrics() : null),
         setProjectedAp: (actor, value) => { if (_overlay) _overlay.setProjectedAp(actor, value); }
     };
 

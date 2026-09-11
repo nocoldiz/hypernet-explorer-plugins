@@ -245,7 +245,13 @@
 
                 const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
                 renderer.setSize(width, height);
-                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                // Render at 1:1 device pixels. This is a small pane beside a
+                // page of text, and the hi-DPI multiplier (up to four times the
+                // fragment work on a Retina screen) is the single biggest cost
+                // here and buys almost nothing visually - the same call the
+                // codex's specimen viewer settled on. The equip bench puts two
+                // of these up at once, beside the game's own render loop.
+                renderer.setPixelRatio(1);
 
                 const scene = new THREE.Scene();
                 scene.add(new THREE.AmbientLight(0xffffff, 0.95));
@@ -376,13 +382,23 @@
                 const _scratchDeltaRot = new THREE.Euler();
                 const _scratchDeltaPos = new THREE.Vector3();
 
+                // Capped to ~30fps for the same reason: the piece turning on the
+                // stand is drawn alongside the map's own loop, and at the
+                // screen's full rate it competes with it for no visible gain.
+                // The whole frame's worth of time is handed to the tick when it
+                // does run, so everything on the model moves at its own speed.
+                const PREVIEW_FRAME_MS = 1000 / 30;
+                let _frameAcc = 0;
                 let _previewLastTime = performance.now();
                 const animate = () => {
                     previewEntry.rafId = requestAnimationFrame(animate);
 
-                    const now     = performance.now();
-                    const deltaMs = Math.min(now - _previewLastTime, 50);
+                    const now = performance.now();
+                    _frameAcc += Math.min(now - _previewLastTime, 50);
                     _previewLastTime = now;
+                    if (_frameAcc < PREVIEW_FRAME_MS) return;
+                    const deltaMs = _frameAcc;
+                    _frameAcc = 0;
 
                     if (model) {
                         if (!model.userData._prevRot) {

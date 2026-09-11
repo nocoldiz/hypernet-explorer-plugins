@@ -139,7 +139,7 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.6.14a"
+    "text": "0.6.15a"
   },
   "language": {
     "label": "✦ LANG"
@@ -163,7 +163,7 @@
     "restartTip": "The new build is installed. Click to close the game, then reopen it yourself to finish.",
     "upToDate": "✦ ALREADY UP TO DATE",
     "failed": "✦ UPDATE FAILED, RETRY",
-    "tip": "A newer build is waiting. Click to download it; installing is the press after that.",
+    "tip": "A newer build is waiting. Click to download and install it; the game closes on its own when it is done, so you can reopen it on the new build.",
     "majorLine": "MAJOR UPDATE, DOWNLOAD THE FULL GAME AFTERWARDS",
     "majorTip": "This build is a major update. It installs from here, but the whole game must be downloaded again for full compatibility.",
     "majorInstalled": "MAJOR UPDATE INSTALLED",

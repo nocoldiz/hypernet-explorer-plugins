@@ -361,6 +361,68 @@
     return '';
   }
 
+  // Build a procedural joke from the grammar in SocialLines.json. Slots are
+  // drawn once and reused, so a template naming the same pool twice tells one
+  // joke about one goblin, and an article or an adjective sitting next to a
+  // drawn word is inflected to fit it (see _jokeSurface and _jokeArticle).
+  function _genJoke() {
+    const j    = _socialLines().jokes || {};
+    const base = (window.NPC && window.NPC.SocialLines && window.NPC.SocialLines.jokes) || {};
+    // A language that has not translated a pool leaves it full of blanks, so
+    // fall back to the source pool rather than tell a joke made of nothing.
+    const pool = k => {
+      const own = (j[k] || []).filter(w => String(w).trim());
+      return own.length ? own : (base[k] || []).filter(w => String(w).trim());
+    };
+    const gram = j.grammar || base.grammar || {};
+    const tmpl = _rand(pool('templates'));
+    if (!tmpl) return T('Empathize.jokeFallback');
+
+    const slots = {};   // slot key -> { word, g, pl }
+    const drawn = {};   // pool name -> entries already spent in this joke
+
+    // Resolve a slot, drawing it the first time it is asked for. Two slots on
+    // the same pool are kept apart, or the punchline compares a thing to
+    // itself.
+    const slot = (poolName, key, pl) => {
+      if (slots[key]) {
+        if (pl) slots[key].pl = true;
+        return slots[key];
+      }
+      const list = pool(poolName);
+      if (!list.length) return null;
+      const spent = (drawn[poolName] = drawn[poolName] || []);
+      let entry = '';
+      for (let i = 0; i < 8; i++) { entry = _rand(list); if (spent.indexOf(entry) < 0) break; }
+      spent.push(entry);
+      const word = _jokeWord(entry);
+      return (slots[key] = { word, g: word.g, pl: !!pl });
+    };
+
+    return String(tmpl).replace(/\{([^{}]+)\}/g, (m, spec) => {
+      const p = _JOKE_SPEC.exec(String(spec).trim());
+      if (!p) return m;
+      const [, caps, art, poolName, tag, plural, ref, refPlural] = p;
+      let g = 'm', pl = !!plural;
+      // An agreeing word takes gender and number from the slot it points at,
+      // drawing that slot first if the template has not reached it yet. A
+      // determiner that comes before its noun says so with ~noun*, since it
+      // has to know the number before the noun's own slot has declared one.
+      if (ref) {
+        const target = slot(ref.split('#')[0], ref, !!refPlural);
+        if (target) { g = target.g; pl = pl || target.pl; }
+      }
+      const key  = (poolName + (tag ? '#' + tag : '')) + (ref ? '~' + ref : '');
+      const cell = slot(poolName, key, pl);
+      if (!cell) return '';
+      if (!ref) g = cell.g;
+      pl = pl || cell.pl;
+      let out = _jokeSurface(cell.word, poolName, g, pl, gram);
+      if (art) out = _jokeArticle(art, g, pl, out, gram) + out;
+      return caps ? out.charAt(0).toUpperCase() + out.slice(1) : out;
+    });
+  }
+
 
   // Debug/sandbox recruiting aid: force the party-join chance to 95% when the
   // player character (actor 1) is named "Test" or sandbox mode is active.
@@ -2825,7 +2887,7 @@
     // never include the chat tab.
     _tabOrder() {
       if (this._entity) return this._entityTabs || ['overview'];
-      const tabs = ['chat', 'info', 'background', 'routine', 'biologics', 'health', 'romance', 'web', 'lifeHistory', 'wiki', 'armies', 'more'];
+      const tabs = ['chat', 'info', 'background', 'routine', 'biologics', 'health', 'romance', 'web', 'lifeHistory', 'wiki', 'more'];
       // Nothing is courting anybody through a muzzle: the romance tab is not
       // on the table while a non-sentient member is the one doing the talking,
       // nor when the one being talked to is the beast.
@@ -2905,39 +2967,95 @@
 
     // ── Selection highlight ────────────────────────────────────────────────────
 
+    // The two lists the cursor walks, as they stand in the DOM right now. Both
+    // are re-queried only when the panel has actually been rebuilt: the Wiki's
+    // entry grid can hold thousands of tiles, and asking the document for all
+    // of them on every arrow press was most of what the panel spent its frame
+    // on. A cached list whose first element has left the document is stale
+    // whatever the token says, so that is checked too rather than trusted.
+    _navCache(key, root, selector) {
+      const cache = (this._navLists ||= {});
+      const hit   = cache[key];
+      if (hit && hit.token === this._renderToken &&
+          (!hit.list.length || hit.list[0].isConnected)) return hit.list;
+      const list = root ? Array.from(root.querySelectorAll(selector)) : [];
+      cache[key] = { token: this._renderToken, list, bound: false, swept: false };
+      return list;
+    }
+
+    // Called by the render path the moment new markup lands, so the next
+    // cursor move re-reads the panel instead of the panel that was there.
+    _invalidateNavCache() {
+      this._renderToken = (this._renderToken || 0) + 1;
+      this._navLists    = null;
+      this._focusedBtn  = null;
+      this._focusedItem = null;
+    }
+
+    _actionButtons() {
+      return this._navCache('btns', this._overlay, '.npc-chat-action-btn');
+    }
+
     _updateSelectionHighlight() {
       if (!this._overlay) return;
       const inActions = this._activeArea === 'actions';
-      const btns      = this._overlay.querySelectorAll('.npc-chat-action-btn');
+      const btns      = this._actionButtons();
       // A submenu is usually shorter than the verb list it was opened from, so
       // pull the cursor back onto the last row rather than leave it past the
       // end of the list, where nothing at all would look selected.
       if (inActions && this._menuIndex >= btns.length)
         this._menuIndex = Math.max(0, btns.length - 1);
-      btns.forEach((el, i) => {
-        const on = inActions && i === this._menuIndex;
-        el.classList.toggle('npc-action-focused', on);
+      // One pass over fresh markup does the two things that have to be done
+      // once. The mouse moves this same cursor rather than drawing a look of
+      // its own: without a hover handler, hovering quietly parked _menuIndex
+      // somewhere the highlight never showed, so the next arrow press moved it
+      // one step off from wherever the player's eye actually was. And the
+      // action row is drawn with the cursor already baked into whichever
+      // button _menuIndex named, so every other one is cleared here. After
+      // this pass the two rows that change are the only two touched.
+      const btnCell = this._navLists?.btns;
+      if (btnCell && !btnCell.bound) {
+        btnCell.bound = true;
+        btns.forEach((el, i) => {
+          if (!inActions || i !== this._menuIndex) el.classList.remove('npc-action-focused');
+          el.onmouseenter = () => {
+            if (this._activeArea === 'actions' && this._menuIndex === i) return;
+            this._activeArea = 'actions';
+            this._menuIndex  = i;
+            this._updateSelectionHighlight();
+          };
+        });
+      }
+      // Only the row losing the cursor and the row taking it are touched.
+      const btn = inActions ? (btns[this._menuIndex] || null) : null;
+      if (this._focusedBtn && this._focusedBtn !== btn)
+        this._focusedBtn.classList.remove('npc-action-focused');
+      if (btn) {
+        btn.classList.add('npc-action-focused');
         // The pickers are capped at 45% of the panel and scroll, so the cursor
         // can walk off the bottom of the visible strip; keep it in the strip.
-        if (on && btns.length > 1) el.scrollIntoView({ block: 'nearest' });
-        // The mouse moves this same cursor rather than drawing a look of its
-        // own: without this, hovering quietly parked _menuIndex somewhere the
-        // highlight never showed, so the next arrow press moved it one step
-        // off from wherever the player's eye actually was.
-        el.onmouseenter = () => {
-          if (this._activeArea === 'actions' && this._menuIndex === i) return;
-          this._activeArea = 'actions';
-          this._menuIndex  = i;
-          this._updateSelectionHighlight();
-        };
-      });
+        if (btns.length > 1) btn.scrollIntoView({ block: 'nearest' });
+      }
+      this._focusedBtn = btn;
+
       const inContent = this._activeArea === 'content';
       const items = this._contentItems();
-      items.forEach((el, i) => {
-        const on = inContent && i === this._contentIndex;
-        el.classList.toggle('npc-content-focused', on);
-        if (on) el.scrollIntoView({ block: 'nearest' });
-      });
+      const item  = inContent ? (items[this._contentIndex] || null) : null;
+      // Same first pass for the Wiki grid, which is the list that can hold
+      // thousands of tiles and the reason none of this is swept every time.
+      const itemCell = this._navLists?.content;
+      if (itemCell && !itemCell.swept) {
+        itemCell.swept = true;
+        items.forEach(el => { if (el !== item) el.classList.remove('npc-content-focused'); });
+      }
+      if (this._focusedItem && this._focusedItem !== item)
+        this._focusedItem.classList.remove('npc-content-focused');
+      if (item) {
+        item.classList.add('npc-content-focused');
+        item.scrollIntoView({ block: 'nearest' });
+      }
+      this._focusedItem = item;
+
       if (this._tabBarEl)
         this._tabBarEl.classList.toggle('npc-tab-bar--focused', this._activeArea === 'tabs');
     }
@@ -2953,7 +3071,8 @@
     // category cards, the per-category entry tiles, and the "back" chip.
     _contentItems() {
       if (!this._contentNavEnabled() || !this._rightEl) return [];
-      return Array.from(this._rightEl.querySelectorAll('.npc-wiki-card, .npc-wiki-entry, .npc-back-btn'));
+      return this._navCache('content', this._rightEl,
+        '.npc-wiki-card, .npc-wiki-entry, .npc-back-btn');
     }
 
     _enterContentArea() {
@@ -3001,7 +3120,7 @@
     // has to be found by where the buttons actually landed. Returns false when
     // nothing lies that way, which is how the caller knows to leave the strip.
     _moveAction(dir) {
-      const btns = this._overlay?.querySelectorAll('.npc-chat-action-btn');
+      const btns = this._overlay ? this._actionButtons() : null;
       if (!btns || btns.length === 0) return false;
       const curEl = btns[this._menuIndex] || btns[0];
       const cur   = curEl.getBoundingClientRect();
@@ -3883,67 +4002,10 @@
       return out;
     }
 
-    // Build a procedural joke from the grammar in SocialLines.json. Slots are
-    // drawn once and reused, so a template naming the same pool twice tells one
-    // joke about one goblin, and an article or an adjective sitting next to a
-    // drawn word is inflected to fit it (see _jokeSurface and _jokeArticle).
-    _genJoke() {
-      const j    = _socialLines().jokes || {};
-      const base = (window.NPC && window.NPC.SocialLines && window.NPC.SocialLines.jokes) || {};
-      // A language that has not translated a pool leaves it full of blanks, so
-      // fall back to the source pool rather than tell a joke made of nothing.
-      const pool = k => {
-        const own = (j[k] || []).filter(w => String(w).trim());
-        return own.length ? own : (base[k] || []).filter(w => String(w).trim());
-      };
-      const gram = j.grammar || base.grammar || {};
-      const tmpl = _rand(pool('templates'));
-      if (!tmpl) return T('Empathize.jokeFallback');
-
-      const slots = {};   // slot key -> { word, g, pl }
-      const drawn = {};   // pool name -> entries already spent in this joke
-
-      // Resolve a slot, drawing it the first time it is asked for. Two slots on
-      // the same pool are kept apart, or the punchline compares a thing to
-      // itself.
-      const slot = (poolName, key, pl) => {
-        if (slots[key]) {
-          if (pl) slots[key].pl = true;
-          return slots[key];
-        }
-        const list = pool(poolName);
-        if (!list.length) return null;
-        const spent = (drawn[poolName] = drawn[poolName] || []);
-        let entry = '';
-        for (let i = 0; i < 8; i++) { entry = _rand(list); if (spent.indexOf(entry) < 0) break; }
-        spent.push(entry);
-        const word = _jokeWord(entry);
-        return (slots[key] = { word, g: word.g, pl: !!pl });
-      };
-
-      return String(tmpl).replace(/\{([^{}]+)\}/g, (m, spec) => {
-        const p = _JOKE_SPEC.exec(String(spec).trim());
-        if (!p) return m;
-        const [, caps, art, poolName, tag, plural, ref, refPlural] = p;
-        let g = 'm', pl = !!plural;
-        // An agreeing word takes gender and number from the slot it points at,
-        // drawing that slot first if the template has not reached it yet. A
-        // determiner that comes before its noun says so with ~noun*, since it
-        // has to know the number before the noun's own slot has declared one.
-        if (ref) {
-          const target = slot(ref.split('#')[0], ref, !!refPlural);
-          if (target) { g = target.g; pl = pl || target.pl; }
-        }
-        const key  = (poolName + (tag ? '#' + tag : '')) + (ref ? '~' + ref : '');
-        const cell = slot(poolName, key, pl);
-        if (!cell) return '';
-        if (!ref) g = cell.g;
-        pl = pl || cell.pl;
-        let out = _jokeSurface(cell.word, poolName, g, pl, gram);
-        if (art) out = _jokeArticle(art, g, pl, out, gram) + out;
-        return caps ? out.charAt(0).toUpperCase() + out.slice(1) : out;
-      });
-    }
+    // Build a procedural joke from the grammar in SocialLines.json. The whole
+    // of it is module level now (_genJoke below the joke grammar), because the
+    // map talk tells the same jokes with no panel open to tell them from.
+    _genJoke() { return _genJoke(); }
 
     _socialInteract(id) {
       const npcName = this._targetName();
@@ -5447,11 +5509,27 @@
     _linkRegex: null,
     _indexLang: null, // language the index was keyed in
 
+    // Every shelf of the index, as it was last rolled. The rolls are not
+    // cheap: listAllLeaders walks the whole book of leaders and sorts it by
+    // its localized label, listPeople walks every society profile the world
+    // holds, and the Wiki tab asks for ALL of them on every render just to
+    // print the count on each card. None of it can change while a panel is
+    // open, so each roll is made once per panel and handed back afterwards.
+    _lists: null,
+
     invalidate() {
       this._index = null;
       this._escIndex = null;
       this._linkRegex = null;
       this._indexLang = null;
+      this._lists = null;
+    },
+
+    // Roll `key` if it has not been rolled since the last invalidate.
+    _roll(key, build) {
+      const cache = (this._lists ||= {});
+      if (cache[key] === undefined) cache[key] = build.call(this);
+      return cache[key];
     },
 
     _hm() { return window.HistoryManager; },
@@ -5760,7 +5838,8 @@
     // Every known NPC: society profiles (anyone ever met/simulated) plus the
     // template pools of every map group, so the whole population is browsable
     // and remotely inspectable even before being encountered.
-    listPeople() {
+    listPeople() { return this._roll('people', this._listPeople); },
+    _listPeople() {
       const people = new Map(); // name → { name, group }
       const society = (typeof $gameSystem !== 'undefined' && $gameSystem?._npcSociety) || {};
       for (const [name, prof] of Object.entries(society)) {
@@ -5779,7 +5858,8 @@
 
     // Everybody who ever held an office in this world, book or not. The two
     // wiki shelves above are cut out of this one roll.
-    listAllLeaders() {
+    listAllLeaders() { return this._roll('allLeaders', this._listAllLeaders); },
+    _listAllLeaders() {
       const hm = this._hm();
       const deaths = hm?.getLeaderDeaths?.() || {};
       const deadList = new Set(hm?.getDeadLeaders?.() || []);
@@ -5829,13 +5909,15 @@
       catch (e) { return false; }
     },
 
-    listMainPlayers() {
+    listMainPlayers() { return this._roll('mainPlayers', this._listMainPlayers); },
+    _listMainPlayers() {
       return this.listAllLeaders().filter(l => this._isBookLeader(l.name));
     },
 
     // The wiki's Leaders shelf: the procedural half of the cast, whose lives
     // the world simulated rather than a writer writing them.
-    listLeaders() {
+    listLeaders() { return this._roll('leaders', this._listLeaders); },
+    _listLeaders() {
       return this.listAllLeaders().filter(l => !this._isBookLeader(l.name));
     },
 
@@ -5844,7 +5926,8 @@
     // politician who IS in the book (a real leader the world seated, see
     // NPCPolitics.makePolitician) is listed under Leaders instead, so nobody
     // appears twice.
-    listPoliticians() {
+    listPoliticians() { return this._roll('politicians', this._listPoliticians); },
+    _listPoliticians() {
       const state = (typeof $gameSystem !== 'undefined' && $gameSystem?._npcPolitics) || {};
       const book = this._hm();
       const out = new Map();
@@ -5866,7 +5949,8 @@
       return [...out.values()].sort((a, b) => label(a.name).localeCompare(label(b.name)));
     },
 
-    listPowerNames() {
+    listPowerNames() { return this._roll('powers', this._listPowerNames); },
+    _listPowerNames() {
       const set = new Set(Object.keys(this._hm()?.getHyperpowers?.() || {}));
       for (const n of (window.NPCPolitics?.listPowers?.() || [])) set.add(n);
       // Sorted by the label, not the id: see listLeaders.
@@ -5874,7 +5958,8 @@
       return [...set].sort((a, b) => label(a).localeCompare(label(b)));
     },
 
-    listNations() {
+    listNations() { return this._roll('nations', this._listNations); },
+    _listNations() {
       const states = this._hm()?.getNationsState?.() || {};
       const label = n => (window.WorldNames ? window.WorldNames.nation(n) : n);
       return this.listNationNames()
@@ -5882,7 +5967,8 @@
         .sort((a, b) => label(a.name).localeCompare(label(b.name)));
     },
 
-    listFactionNames() {
+    listFactionNames() { return this._roll('factions', this._listFactionNames); },
+    _listFactionNames() {
       const set = new Set(Object.keys(this._hm()?.getHistoricalFactions?.() || {}));
       const dl = window._NPCSocietyDataLoader;
       for (const f of (dl?.factions || [])) {
@@ -5905,7 +5991,8 @@
 
     // Every party currently seated anywhere (power attached), for the wiki's
     // Political Parties index; multiple entries can and do share an ideology.
-    listPartyNames() {
+    listPartyNames() { return this._roll('parties', this._listPartyNames); },
+    _listPartyNames() {
       return (window.NPCPolitics?.listAllParties?.() || [])
         .map(({ party, powerName }) => ({ id: party.id, name: party.name, powerName, ideologyId: party.ideologyId }))
         .sort((a, b) => a.name.localeCompare(b.name));
@@ -5914,7 +6001,8 @@
     // Every non-alien creed in Ideology.json, so the Ideologies index is the
     // whole shelf and not only the handful presently in office; each carries
     // how many live parties currently hold it.
-    listIdeologyNames() {
+    listIdeologyNames() { return this._roll('ideologies', this._listIdeologyNames); },
+    _listIdeologyNames() {
       const list = window.NPCShared?.ideologyList?.() || [];
       const parties = window.NPCPolitics?.listAllParties?.() || [];
       const label = e => (window.T ? window.T(e.name) : e.id);
@@ -5927,7 +6015,8 @@
         .sort((a, b) => (b.partyCount - a.partyCount) || label(a).localeCompare(label(b)));
     },
 
-    listArtifacts() {
+    listArtifacts() { return this._roll('artifacts', this._listArtifacts); },
+    _listArtifacts() {
       const out = [];
       const seen = new Set();
       const generated = this._generatedArtifacts();
@@ -6270,8 +6359,11 @@
       // rumour passed on in the street is still time spent with somebody.
       _gainSocialFromCompany,
       // Which Socialize moves are entertainment, so the submenu can mark the
-      // ones that feed Fun as well as opinion.
-      FUN_ACTIONS,
+      // ones that feed Fun as well as opinion. The joke grammar and the Fun
+      // payout travel with them: the map talk plays the same three
+      // entertainment moves the panel does (NPC/DialogueSystem.js), so it has
+      // to be able to build a joke and to pay for one that landed.
+      FUN_ACTIONS, _genJoke, _payFun,
       // The ledger underneath _addNpcOpinion, for a caller that has already
       // paid the company for this exchange and only wants the number moved
       // (AutoIdleExplorer's two-sided party conversations).

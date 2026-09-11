@@ -1482,6 +1482,15 @@ Sprite_ArmyLabel.prototype.refresh = function () {
     return roll().filter(a => String(a.leaderName || "").trim().toLowerCase() === wanted);
   }
 
+  // The columns a hyperpower has in the field, by the name its article is
+  // written under. The party's own column belongs to nobody and is never in
+  // here; a power whose head holds no army answers with an empty list.
+  function armiesOfPower(name) {
+    if (!name) return [];
+    const wanted = String(name).trim().toLowerCase();
+    return roll().filter(a => String(a.powerName || "").trim().toLowerCase() === wanted);
+  }
+
   //---------------------------------------------------------------------------
   // The cast: living main players, and which of them is seated
   //---------------------------------------------------------------------------
@@ -2480,6 +2489,7 @@ Sprite_ArmyLabel.prototype.refresh = function () {
     syncPlacedEvents,
     listArmies,
     armiesOfLeader,
+    armiesOfPower,
     playerArmy,
     rollFormation,
     upkeepOf,

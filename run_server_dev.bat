@@ -1,0 +1,3 @@
+@echo off
+echo Starting multiplayer server with auto-reload (Nodemon)...
+npx nodemon server.js

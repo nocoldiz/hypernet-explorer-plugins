@@ -15,7 +15,8 @@
   },
   "battle": {
     "back": "Indietro",
-    "none": "Niente da lanciare"
+    "none": "Niente da lanciare",
+    "elementNone": "Non elementale"
   },
   "discipline": {
     "basic": "Disciplina di base",

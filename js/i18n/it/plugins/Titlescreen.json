@@ -139,7 +139,7 @@
     "curvature": "CURVATURA SPAZIALE RILEVATA"
   },
   "version": {
-    "text": "0.6.14a"
+    "text": "0.6.15a"
   },
   "language": {
     "label": "✦ LINGUA"
@@ -163,7 +163,7 @@
     "restartTip": "La nuova build è installata. Clicca per chiudere il gioco, poi riaprilo tu per finire.",
     "upToDate": "✦ GIÀ AGGIORNATO",
     "failed": "✦ AGGIORNAMENTO FALLITO, RIPROVA",
-    "tip": "C'è una build più recente in attesa. Clicca per scaricarla; installarla è il clic successivo.",
+    "tip": "C'è una build più recente in attesa. Clicca per scaricarla e installarla; alla fine il gioco si chiude da solo, così lo riapri sulla build nuova.",
     "majorLine": "AGGIORNAMENTO MAJOR, POI RISCARICA IL GIOCO INTERO",
     "majorTip": "Questa build è un aggiornamento major. Si installa da qui, ma per la piena compatibilità va riscaricato l'intero gioco.",
     "majorInstalled": "AGGIORNAMENTO MAJOR INSTALLATO",

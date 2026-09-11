@@ -1462,7 +1462,7 @@
                     if (listEl) {
                         const selectedEl = listEl.querySelector('.selected');
                         if (selectedEl) {
-                            selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                            selectedEl.scrollIntoView({ block: 'nearest' });
                         }
                     }
                 }

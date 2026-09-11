@@ -1253,6 +1253,10 @@
 
   Scene_NPCEmpathize.prototype._render = function () {
     if (!this._overlay) return;
+    // Whatever this render draws, the rows the cursor walks are about to be
+    // replaced: drop the cached lists of them so the next cursor move reads
+    // the panel that is actually there (see _navCache).
+    this._invalidateNavCache?.();
     // While a picker is open (Socialize, Court, gifts, steal, ...) its list IS
     // what the player is reading, so the cursor belongs to it however it was
     // opened. Clicking "Socialize" with the mouse used to leave the focus on
@@ -1773,8 +1777,6 @@
       rightHTML = this._buildLifeHistoryHTML(T, profile, npcName);
     } else if (this._activeTab === 'wiki') {
       rightHTML = this._buildWikiTabHTML(T);
-    } else if (this._activeTab === 'armies') {
-      rightHTML = this._buildArmiesTabHTML(T);
     } else {
       rightHTML = this._buildMoreHTML(T);
     }
@@ -1854,7 +1856,6 @@
       { id: 'web',         label: T.socialWeb },
       { id: 'lifeHistory', label: T.lifeHistory },
       { id: 'wiki',        label: T.wikiTab },
-      { id: 'armies',      label: T.armiesTab },
       { id: 'more',        label: T.more },
     ];
     // _tabOrder() is what the keyboard cycles through and it already drops the
@@ -3883,7 +3884,31 @@
   // testes, whatever gender it rolled: alien biology is its own thing.
   const _GENITAL_ALIEN = [-1, 2, 3, 4];
 
+  // A party member is not rolled: their body was answered on the Bio page (or
+  // stated by the dossier they arrived on) and lives in the reproduction
+  // variable for their seat, 87 / 115 / 116 by party index, the very variable
+  // the status sheet and the biologic simulation read. Rolling one here made
+  // the panel contradict both, so Em could be shown testes and Bubba a uterus.
+  function _partyGenitalCode(npcName) {
+    if (!npcName || typeof $gameParty === 'undefined' || !$gameParty) return null;
+    const members = $gameParty.allMembers ? $gameParty.allMembers() : [];
+    // Only the three seats own one of these variables; a fourth companion
+    // (a pet, a summon) has no seat of its own to read and is rolled like
+    // anybody else.
+    const index = members.findIndex((member) => member && member.name() === npcName);
+    if (index < 0 || index > 2) return null;
+    const CCU = window.CharacterCreationUtils;
+    const varId = CCU && CCU.getReproductiveVariableId
+      ? CCU.getReproductiveVariableId(index)
+      : (index === 1 ? 115 : index === 2 ? 116 : 87);
+    const code = $gameVariables ? $gameVariables.value(varId) : null;
+    return _GENITAL_ALL.includes(code) ? code : null;
+  }
+
   function _npcGenitalCode(npcName, profile) {
+    const owned = _partyGenitalCode(npcName);
+    if (owned !== null) return owned;
+
     const Shared = window.NPCShared;
     const rng    = Shared ? new Shared.Rng(Shared.nameHash(npcName + '_genitals') ^ Shared.worldSeed()) : null;
     const pick   = list => (rng ? rng.pick(list) : list[0]);
@@ -5105,7 +5130,6 @@
     const tabs = view ? (ENTITY_TAB_SETS[view.type]?.(T) ?? [{ id: 'overview', label: T.overview }])
                       : [{ id: 'overview', label: T.overview }];
     tabs.push({ id: 'wiki', label: T.wikiTab });
-    tabs.push({ id: 'armies', label: T.armiesTab });
     this._entityTabs = tabs.map(t => t.id);
     if (!this._entityTabs.includes(this._activeTab)) this._activeTab = this._entityTabs[0];
 
@@ -5128,9 +5152,7 @@
         <div class="npc-entity-title">${_escapeHtml(String(ent.id))}</div>`;
       this._rightEl.innerHTML = this._activeTab === 'wiki'
         ? this._buildWikiTabHTML(T)
-        : this._activeTab === 'armies'
-          ? this._buildArmiesTabHTML(T)
-          : `<p class="npc-empty">${_escapeHtml(T.noRecords)}</p>`;
+        : `<p class="npc-empty">${_escapeHtml(T.noRecords)}</p>`;
       return;
     }
 
@@ -5140,8 +5162,6 @@
     const tab = this._activeTab;
     if (tab === 'wiki') {
       rightHTML = this._buildWikiTabHTML(T);
-    } else if (tab === 'armies') {
-      rightHTML = this._buildArmiesTabHTML(T);
     } else if (view.type === 'nation') {
       rightHTML = tab === 'govHistory' ? this._buildNationGovHistoryHTML(view, T)
         : tab === 'elections' ? this._buildElectionsHTML(view.power, T)
@@ -5565,6 +5585,27 @@
           _escapeHtml(`${fig.freedom}/100${rank ? ` (#${rank.rank}/${rank.of})` : ''}`));
       } else {
         html += `<p class="npc-empty">${_escapeHtml(T.noRecords)}</p>`;
+      }
+    }
+
+    // What this power actually has in the field, as against the yearbook's
+    // count of everybody of military age: the columns the roster is moving
+    // around the map right now (ArmyEventsManager), who holds each one and how
+    // many men are standing in it. A power whose head has raised nothing says
+    // so in a line rather than in an empty section.
+    {
+      const held  = _armiesOfPower(view.name || _viewName(view));
+      const men   = held.reduce((n, a) => n + (Number(a.troopCount) || 0), 0);
+      html += `<hr class="npc-r-sep"><div class="npc-sec-hdr">${_escapeHtml(T.armiesTab)} (${held.length})</div>`;
+      if (!held.length) {
+        html += `<p class="npc-empty">${_escapeHtml(T.armiesNone)}</p>`;
+      } else {
+        html += _kvRow(322, T.armyStrength,
+          _escapeHtml(`${men.toLocaleString()} ${T.armySoldiers}`));
+        html += held.map(a => `
+          <div class="npc-ident-row">${_iconSpan(220, 17)}<span class="npc-sub">${_escapeHtml(_armyStatusLabel(a, T))}:</span>&nbsp;${
+            a.leaderName ? _wikiLink('leader', a.leaderName) : `<span class="npc-sub">${_escapeHtml(T.unknown || '?')}</span>`
+          }<span class="npc-sub">&nbsp;·&nbsp;${_escapeHtml(`${a.troopCount} ${T.armySoldiers}`)}</span></div>`).join('');
       }
     }
 
@@ -6065,6 +6106,7 @@
     { id: 'factions',         glyph: '⚜', labelKey: 'wikiFactions' },
     { id: 'politicalParties', glyph: '⚖', labelKey: 'wikiPoliticalParties' },
     { id: 'ideologies',       glyph: '✪', labelKey: 'wikiIdeologies' },
+    { id: 'armies',           glyph: '⚔', labelKey: 'armiesTab' },
   ];
 
   // Past party members (NPCSystemParty's removeActor snapshots), excluding
@@ -6180,20 +6222,22 @@
       + held.map(a => _armyCardHTML(a, T)).join('');
   };
 
-  // The tab itself: every column standing in the world today, the party's own
-  // among them, biggest first.
-  Scene_NPCEmpathize.prototype._buildArmiesTabHTML = function (T) {
+  // Every column standing in the world today, the party's own among them,
+  // biggest first. The Wiki's Armies shelf is built off this, and so is the
+  // count on its card; a world with no roster at all answers with an empty
+  // list rather than throwing the panel open on an error page.
+  function _listArmies() {
     const api = _armyApi();
-    let armies = [];
-    try { armies = (api && api.listArmies) ? api.listArmies() : []; } catch (e) { armies = []; }
-    const header = `
-      <div class="npc-wiki-hdr">
-        <div class="npc-sec-hdr">${_escapeHtml(T.armiesTab)} (${armies.length})</div>
-        <hr class="npc-r-sep">
-      </div>`;
-    if (!armies.length) return header + `<p class="npc-empty">${_escapeHtml(T.armiesNone)}</p>`;
-    return header + armies.map(a => _armyCardHTML(a, T)).join('');
-  };
+    try { return (api && api.listArmies) ? api.listArmies() : []; } catch (e) { return []; }
+  }
+
+  // The columns one hyperpower has in the field, for the block its article
+  // prints under its own figures.
+  function _armiesOfPower(name) {
+    const api = _armyApi();
+    if (!api || typeof api.armiesOfPower !== 'function') return [];
+    try { return api.armiesOfPower(name) || []; } catch (e) { return []; }
+  }
 
   // ============================================================================
   // SCREEN 5 OF 5: THE WIKI INDEX
@@ -6215,6 +6259,7 @@
       factions:  Wiki.listFactionNames().length,
       politicalParties: Wiki.listPartyNames().length,
       ideologies:       Wiki.listIdeologyNames().length,
+      armies:           _listArmies().length,
     };
 
     // ── Category grid ─────────────────────────────────────────────────────────
@@ -6375,6 +6420,26 @@
           const ideoLabel = _ideologyLabel(p.ideologyId);
           const sub = [_worldName('power', p.powerName), ideoLabel].filter(Boolean).join(' · ');
           return _wikiEntryTile('party', p.id, `⚖ ${_escapeHtml(p.name)}`, _escapeHtml(sub));
+        }).join('');
+        break;
+      case 'armies':
+        // Every column standing today, biggest first, each under the name of
+        // whoever holds it. The tile opens that leader's article, where the
+        // column itself is written out in full (_buildArmyHoldingHTML); the
+        // party's own army is led by a party member with no article to open,
+        // so its tile is a plain row like a pet's.
+        tiles = _listArmies().map(a => {
+          const men   = `${a.troopCount} ${T.armySoldiers}`;
+          const label = `⚔ ${_escapeHtml(_armyTitle(a, T))}`;
+          if (a.kind === 'party' || !a.leaderName) {
+            return `
+          <div class="npc-wiki-entry">
+            <span class="npc-wiki-entry-name">${label}</span>
+            <span class="npc-wiki-entry-sub">${_escapeHtml(a.leaderName || T.unknown || '?')} · ${_escapeHtml(men)}</span>
+          </div>`;
+          }
+          return _wikiEntryTile('leader', a.leaderName, label,
+            `${_escapeHtml(_worldName('leader', a.leaderName))} · ${_escapeHtml(men)}`);
         }).join('');
         break;
       case 'ideologies':

@@ -86,55 +86,39 @@
         return true;
     }
 
-    // HP-based particle configurations
+    // HP-based particle configurations.
+    // Blood is deliberately sparse: a handful of short-lived drops, no mist and
+    // no secondary shower, so even a round of multi-hit blows stays cheap.
     const hpScaledSprayConfig = {
         minimal: {     // 0-5% HP
-            count: [5, 10],
+            count: [2, 4],
             speed: [3, 6],
-            spread: 120,
-            secondaryChance: 0.1,
-            stainChance: 0.3,
-            mistCount: 0
+            spread: 120
         },
         light: {       // 5-10% HP
-            count: [10, 20],
+            count: [3, 5],
             speed: [4, 8],
-            spread: 130,
-            secondaryChance: 0.2,
-            stainChance: 0.5,
-            mistCount: 2
+            spread: 130
         },
         medium: {      // 10-20% HP
-            count: [20, 35],
+            count: [4, 7],
             speed: [5, 10],
-            spread: 140,
-            secondaryChance: 0.3,
-            stainChance: 0.7,
-            mistCount: 4
+            spread: 140
         },
         heavy: {       // 20-35% HP
-            count: [35, 55],
+            count: [6, 9],
             speed: [7, 12],
-            spread: 150,
-            secondaryChance: 0.4,
-            stainChance: 0.85,
-            mistCount: 6
+            spread: 150
         },
         brutal: {      // 35-50% HP
-            count: [55, 75],
+            count: [8, 11],
             speed: [8, 14],
-            spread: 160,
-            secondaryChance: 0.5,
-            stainChance: 0.95,
-            mistCount: 8
+            spread: 160
         },
         devastating: { // 50%+ HP
-            count: [75, 100],
+            count: [10, 14],
             speed: [9, 16],
-            spread: 170,
-            secondaryChance: 0.6,
-            stainChance: 1.0,
-            mistCount: 12
+            spread: 170
         }
     };
 
@@ -229,6 +213,60 @@
     }
 
     //-----------------------------------------------------------------------------
+    // Particle pool and spawn budget
+    //
+    // Damage sprays are the single most frequent thing this plugin puts on the
+    // battle field, so the sprites are recycled rather than allocated, and both
+    // the live count and the number spawned in one frame are capped. A round of
+    // multi-hit blows lands inside the same budget as a single strike.
+    //-----------------------------------------------------------------------------
+
+    const MAX_LIVE_PARTICLES = 48;
+    const MAX_PARTICLES_PER_FRAME = 14;
+    const _particlePool = [];
+    let _liveParticles = 0;
+    let _budgetFrame = -1;
+    let _spawnedThisFrame = 0;
+
+    function grantParticleBudget(requested) {
+        const frame = (typeof Graphics !== 'undefined' && Graphics.frameCount) || 0;
+        if (frame !== _budgetFrame) {
+            _budgetFrame = frame;
+            _spawnedThisFrame = 0;
+        }
+        const room = Math.min(
+            MAX_LIVE_PARTICLES - _liveParticles,
+            MAX_PARTICLES_PER_FRAME - _spawnedThisFrame
+        );
+        const granted = Math.max(0, Math.min(requested, room));
+        _spawnedThisFrame += granted;
+        return granted;
+    }
+
+    function acquireParticle() {
+        _liveParticles++;
+        const particle = _particlePool.pop();
+        if (!particle) return new Sprite();
+        particle.scale.x = 1;
+        particle.scale.y = 1;
+        particle.rotation = 0;
+        particle.opacity = 255;
+        particle.blendMode = 0;
+        return particle;
+    }
+
+    // The sprite stops being a particle. `keep` is for one that stays on screen
+    // as a ground stain: it leaves the live count but is not recycled.
+    function releaseParticle(particle, keep) {
+        _liveParticles = Math.max(0, _liveParticles - 1);
+        if (keep) return;
+        if (particle.parent) particle.parent.removeChild(particle);
+        particle._particleData = null;
+        // Note: bitmap is shared/cached, do not destroy it here
+        if (_particlePool.length < MAX_LIVE_PARTICLES) _particlePool.push(particle);
+    }
+
+    //-----------------------------------------------------------------------------
     // Scene_Battle - Initialize blood stain container
     //-----------------------------------------------------------------------------
 
@@ -236,6 +274,10 @@
     Scene_Battle.prototype.createSpriteset = function () {
         _Scene_Battle_createSpriteset.call(this);
         this._bloodStains = [];
+        // Last battle's sprites died with its scene: start the count clean.
+        _liveParticles = 0;
+        _spawnedThisFrame = 0;
+        _particlePool.length = 0;
     };
 
     //-----------------------------------------------------------------------------
@@ -620,6 +662,12 @@
         const config = particleTypes[particleType];
         if (!config || !this.parent) return;
 
+        // Blood is shown for one thing only: a limb lost or destroyed, sprayed by
+        // BloodSplatterFX from Health_Monsters. An ordinary blow draws none, so a
+        // bleeding archetype leaves here before it costs anything. Bark, sparks
+        // and rock chips are debris, not blood, and still fly on every hit.
+        if (config.accumulates) return;
+
         // Use HP-based intensity calculation
         const intensity = this.determineSprayIntensityByHP(damage, this._enemy);
         const sprayData = hpScaledSprayConfig[intensity];
@@ -643,58 +691,22 @@
             if (_p) { spriteCenterX = _p.x; spriteCenterY = _p.y; }
         }
 
-        // Create multiple spawn points for devastating hits
-        const spawnPoints = [];
-        if (intensity === 'devastating' || intensity === 'brutal') {
-            // Multiple impact points for massive damage
-            const numPoints = intensity === 'devastating' ? 3 : 2;
-            for (let i = 0; i < numPoints; i++) {
-                const angle = (Math.PI * 2 * i) / numPoints + Math.random() * 0.5;
-                const distance = Math.random() * maxSpread * 0.7;
-                spawnPoints.push({
-                    x: spriteCenterX + Math.cos(angle) * distance,
-                    y: spriteCenterY + Math.sin(angle) * distance
-                });
-            }
-        } else {
-            // Single spawn point for lighter damage
-            const angle = Math.random() * Math.PI * 2;
-            const distance = Math.random() * maxSpread;
-            spawnPoints.push({
-                x: spriteCenterX + Math.cos(angle) * distance,
-                y: spriteCenterY + Math.sin(angle) * distance
-            });
-        }
+        // One impact point, always: extra spawn points tripled the sprite count
+        // for no readable gain on screen.
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * maxSpread;
+        const pointX = spriteCenterX + Math.cos(angle) * distance;
+        const pointY = spriteCenterY + Math.sin(angle) * distance;
 
-        // Distribute particles across spawn points
-        const particlesPerPoint = Math.ceil(particleCount / spawnPoints.length);
-
-        for (const point of spawnPoints) {
-            // Main particles
-            for (let i = 0; i < particlesPerPoint; i++) {
-                this.createParticle(point.x, point.y, config, sprayData, false, intensity);
-            }
-
-            // Secondary particles (smaller, more numerous for heavy hits)
-            if (Math.random() < sprayData.secondaryChance) {
-                const secondaryCount = Math.floor(particlesPerPoint * 0.4);
-                for (let i = 0; i < secondaryCount; i++) {
-                    this.createParticle(point.x, point.y, config, sprayData, true, intensity);
-                }
-            }
-
-            // Mist particles for blood effects
-            if (config.accumulates && sprayData.mistCount > 0) {
-                for (let i = 0; i < sprayData.mistCount; i++) {
-                    this.createMistParticle(point.x, point.y, config, intensity);
-                }
-            }
+        const granted = grantParticleBudget(particleCount);
+        for (let i = 0; i < granted; i++) {
+            this.createParticle(pointX, pointY, config, sprayData, false, intensity);
         }
     };
 
     // MODIFIED: Enhanced particle creation with intensity parameter
     Sprite_Enemy.prototype.createParticle = function (centerX, centerY, config, sprayData, isSecondary, intensity) {
-        const particle = new Sprite();
+        const particle = acquireParticle();
         const particleType = this._enemy.getParticleType();
 
         // Determine particle visual type
@@ -768,8 +780,8 @@
             vy: Math.sin(angle) * speed - (isSecondary ? 2 : 4),
             gravity: config.gravity * (isSecondary ? 0.8 : 1),
             airResistance: config.airResistance,
-            life: Math.floor((isSecondary ? 60 : 90) * lifeMultiplier),
-            maxLife: Math.floor((isSecondary ? 60 : 90) * lifeMultiplier),
+            life: Math.floor((isSecondary ? 30 : 45) * lifeMultiplier),
+            maxLife: Math.floor((isSecondary ? 30 : 45) * lifeMultiplier),
             rotation: Math.random() * Math.PI * 2,
             rotationSpeed: (Math.random() - 0.5) * (isSecondary ? 0.2 : 0.4),
             isGrounded: false,
@@ -782,50 +794,7 @@
             enemyX: centerX,
             isSecondary: isSecondary,
             initialSpeed: speed,
-            stainChance: sprayData.stainChance,
-            intensity: intensity
-        };
-
-        this._bloodParticles.push(particle);
-
-        _addToBattleField(particle);
-    };
-
-    // NEW: Create mist particles for atmospheric blood spray
-    Sprite_Enemy.prototype.createMistParticle = function (centerX, centerY, config, intensity) {
-        const particle = new Sprite();
-
-        const size = 15 + Math.random() * 10;
-        const sizeBucket = Math.round(size);
-        const color = config.colors[Math.floor(Math.random() * config.colors.length)];
-        const cacheKey = `mist_${color}_${sizeBucket}`; // i18n-ignore: bitmap cache key
-        particle.bitmap = getCachedBitmap(cacheKey, sizeBucket * 2, (bmp) => {
-            this.drawMist(bmp, sizeBucket, color);
-        });
-
-        particle.anchor.x = 0.5;
-        particle.anchor.y = 0.5;
-        particle.x = centerX + (Math.random() - 0.5) * 40;
-        particle.y = centerY + (Math.random() - 0.5) * 40;
-        particle.blendMode = 0;
-        particle.opacity = 40 + Math.random() * 40;
-
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 0.5 + Math.random() * 1.5;
-
-        particle._particleData = {
-            vx: Math.cos(angle) * speed,
-            vy: -Math.abs(Math.sin(angle) * speed) - 1,
-            gravity: -0.05,
-            airResistance: 0.99,
-            life: 40 + Math.random() * 20,
-            maxLife: 60,
-            rotation: 0,
-            rotationSpeed: 0,
-            isGrounded: false,
-            type: 'mist',
-            visualType: 'mist',
-            accumulates: false,
+            stainChance: 0,
             intensity: intensity
         };
 
@@ -946,6 +915,8 @@
 
     // MODIFIED: Enhanced particle update with stain chance based on intensity
     Sprite_Enemy.prototype.updateBloodParticles = function () {
+        // The common case, a battler with nothing in flight, costs one check.
+        if (!this._bloodParticles || this._bloodParticles.length === 0) return;
         for (let i = this._bloodParticles.length - 1; i >= 0; i--) {
             const particle = this._bloodParticles[i];
             const data = particle._particleData;
@@ -953,7 +924,7 @@
             // A sprite with no particle data can never age out through the
             // paths below, so it would tick for the rest of the fight. Drop it.
             if (!data) {
-                if (particle.parent) particle.parent.removeChild(particle);
+                releaseParticle(particle, false);
                 this._bloodParticles.splice(i, 1);
                 continue;
             }
@@ -965,6 +936,7 @@
                 particle.y = groundLevel;
 
                 this.convertToGroundStain(particle, data);
+                releaseParticle(particle, true);
                 this._bloodParticles.splice(i, 1);
                 continue;
             }
@@ -1020,10 +992,7 @@
                     ? (data.life < -180 || particle.y > groundLevel + 100)
                     : (data.life <= 0 || particle.y > groundLevel + 100);
                 if (gone) {
-                    if (particle.parent) {
-                        particle.parent.removeChild(particle);
-                    }
-                    // Note: bitmap is shared/cached, do not destroy it here
+                    releaseParticle(particle, false);
                     this._bloodParticles.splice(i, 1);
                 }
             }
@@ -1032,7 +1001,7 @@
 
     // Cap the number of accumulated ground stains so they don't grow unbounded
     // across a long battle. When over the cap, drop the oldest sprite.
-    const MAX_BLOOD_STAINS = 100;
+    const MAX_BLOOD_STAINS = 24;
     function enforceBloodStainCap() {
         const scene = SceneManager._scene;
         if (!scene || !scene._bloodStains) return;
@@ -1610,11 +1579,19 @@
 
     // Where the canvas is on the page and how far it has been scaled up, so a
     // popup written in game pixels lands on the body it came from.
+    // Every popup on screen asks for this every frame, and each popup writes its
+    // own transform in between: read from the DOM each time, the browser has to
+    // lay the page out again for every single one. It goes through the shared
+    // per-frame read (Core/ParchmentToast.js), which the whole game's overlays
+    // take ONE layout between them, and falls back to its own only without it.
     DamagePopupDOM.view = function() {
-        const canvas = typeof Graphics !== 'undefined' ? Graphics._canvas : null;
-        if (!canvas || !canvas.getBoundingClientRect) return null;
-        const r = canvas.getBoundingClientRect();
-        if (!(r.width > 0) || !(r.height > 0)) return null;
+        const shared = window.FrameBudget && window.FrameBudget.canvasRect();
+        const r = shared || (() => {
+            const canvas = typeof Graphics !== 'undefined' ? Graphics._canvas : null;
+            if (!canvas || !canvas.getBoundingClientRect) return null;
+            return canvas.getBoundingClientRect();
+        })();
+        if (!r || !(r.width > 0) || !(r.height > 0)) return null;
         return {
             left: r.left,
             top: r.top,

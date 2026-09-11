@@ -777,7 +777,7 @@
                 if (saveId === this.scene._selectedIndex) {
                     el.classList.add('selected');
                     if (this._focusMode === 'slots') {
-                        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                        el.scrollIntoView({ block: 'nearest' });
                     }
                 } else {
                     el.classList.remove('selected');
@@ -1323,7 +1323,7 @@
             const saveId = parseInt(el.getAttribute('data-id'));
             if (saveId === this._selectedIndex) {
                 el.classList.add('selected');
-                el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                el.scrollIntoView({ block: 'nearest' });
             } else {
                 el.classList.remove('selected');
             }

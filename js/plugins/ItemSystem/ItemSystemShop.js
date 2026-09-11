@@ -1958,7 +1958,7 @@
         if (idx === activeIndex) {
           card.classList.add("focused");
           // Smooth scroll into viewport if not visible
-          card.scrollIntoView({ block: "nearest", behavior: "smooth" });
+          card.scrollIntoView({ block: "nearest" });
         } else {
           card.classList.remove("focused");
         }

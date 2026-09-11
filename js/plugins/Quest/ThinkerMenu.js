@@ -2463,7 +2463,12 @@
             const height = rect.height || 440;
             const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
             renderer.setSize(width, height);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            // 1:1 device pixels. The window is a pane over a page of text, and
+            // the hi-DPI multiplier (up to four times the fragment work on a
+            // Retina screen) is the biggest cost in it and buys almost nothing
+            // visually, which is the call the codex's specimen viewer and the
+            // shared weapon stand both settled on.
+            renderer.setPixelRatio(1);
 
             const scene = new THREE.Scene();
             scene.add(new THREE.AmbientLight(0xffffff, 0.95));
@@ -2527,14 +2532,28 @@
             canvas.addEventListener('wheel', wheel, { passive: false });
             state.listeners = { canvas, down, move, up, wheel };
 
+            // Capped to ~30fps: the piece is drawn beside the game's own render
+            // loop, and at the screen's full rate it competes with the map for
+            // the GPU for no visible gain. The frame's whole worth of time goes
+            // to the tick when it runs, so the model's own parts move at the
+            // speed they were written to.
+            const FRAME_MS = 1000 / 30;
+            let last = performance.now();
+            let acc = 0;
             const tick = () => {
                 if (!state.renderer) return;
+                state.raf = requestAnimationFrame(tick);
+                const now = performance.now();
+                acc += Math.min(now - last, 50);
+                last = now;
+                if (acc < FRAME_MS) return;
+                const dt = acc;
+                acc = 0;
                 // Moving parts the procedural model declares for itself.
                 if (state.model && window.WeaponSystemProcedural) {
-                    WeaponSystemProcedural.tickModelParts(state.model, 16);
+                    WeaponSystemProcedural.tickModelParts(state.model, dt);
                 }
                 state.renderer.render(state.scene, state.camera);
-                state.raf = requestAnimationFrame(tick);
             };
             tick();
         }

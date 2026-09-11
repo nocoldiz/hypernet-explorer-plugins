@@ -374,7 +374,7 @@
           const listEl = this._dndContainer.querySelector(sel);
           if (!listEl) return;
           const selectedEl = listEl.querySelector('.selected');
-          if (selectedEl) selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          if (selectedEl) selectedEl.scrollIntoView({ block: 'nearest' });
         });
       }, 50);
     }

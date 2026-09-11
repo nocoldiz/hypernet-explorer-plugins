@@ -103,12 +103,21 @@
 
             this.state = st;
 
+            // Capped to ~30fps, the rate every other live view in the menus
+            // draws at: the atlas repaints its whole sky, every edge and every
+            // node each frame, beside the game's own render loop, and at the
+            // screen's full rate it competes with it for no visible gain.
+            const FRAME = 1 / 30;
             let lastTimestamp = performance.now();
+            let acc = 0;
             const loop = (timestamp) => {
                 if (st.disposed) return;
                 st.rafId = requestAnimationFrame(loop);
-                const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+                acc += Math.min((timestamp - lastTimestamp) / 1000, 0.1);
                 lastTimestamp = timestamp;
+                if (acc < FRAME) return;
+                const dt = acc;
+                acc = 0;
                 this._frame(st, dt);
             };
             st.rafId = requestAnimationFrame(loop);
@@ -164,6 +173,7 @@
             }
 
             this.resize(true);
+            this.watchResize(st);
             this.fitToScreen(false);
             this._buildLabels(st, figure);
         },
@@ -327,6 +337,17 @@
             return 0;
         },
 
+        // Measuring the canvas is a forced layout read, and the frame loop below
+        // used to ask for one sixty times a second for a box that only changes
+        // when the window does. The observer says when that happens; without one
+        // the loop still checks, but a few times a second rather than every
+        // frame, which no eye can tell apart from immediate.
+        watchResize: function (st) {
+            if (typeof ResizeObserver !== 'function' || !st.canvas) return;
+            st.resizeObserver = new ResizeObserver(() => this.resize(true));
+            st.resizeObserver.observe(st.canvas);
+        },
+
         resize: function (force) {
             const st = this.state;
             if (!st || !st.canvas) return;
@@ -351,7 +372,12 @@
             st.camY += (st.targetY - st.camY) * lerpSpeed;
             st.zoom += (st.targetZoom - st.zoom) * lerpSpeed;
 
-            this.resize(false);
+            // Only when nobody is watching the box for us, and then only a few
+            // times a second (see watchResize).
+            if (!st.resizeObserver) {
+                st.resizeTick = (st.resizeTick || 0) + 1;
+                if (st.resizeTick >= 10) { st.resizeTick = 0; this.resize(false); }
+            }
             const ctx = st.ctx;
             const W = st.sized.w;
             const H = st.sized.h;
@@ -673,6 +699,10 @@
             if (st.rafId) {
                 cancelAnimationFrame(st.rafId);
                 st.rafId = 0;
+            }
+            if (st.resizeObserver) {
+                st.resizeObserver.disconnect();
+                st.resizeObserver = null;
             }
             if (st.stubGeo && st.stubGeo.dispose) st.stubGeo.dispose();
             if (st.stubMat && st.stubMat.dispose) st.stubMat.dispose();

@@ -998,54 +998,104 @@
         context.globalAlpha = 1;
     }
 
-    function drawClouds(context, width, height, timeMode, animTime = 0) {
+    // The cloud bank is drawn from ONE fixed seed, so no cloud ever changes
+    // shape: the whole thing only slides sideways. Painting some two hundred
+    // stretched ellipses into the full-screen sky bitmap several times a second
+    // was the most expensive thing on the battle background, so each cloud is
+    // painted ONCE into a small canvas of its own and blitted from then on.
+    // Every shape in a cloud is white, and compositing a group of white shapes
+    // in one go gives the same pixels as compositing them one by one, so the
+    // sky comes out exactly as it did.
+    let _cloudBank = null;
+    let _cloudBankKey = "";
+
+    function cloudBank(width, height, timeMode) {
+        const key = width + "x" + height + ":" + timeMode; // i18n-ignore: cache key
+        if (_cloudBank && _cloudBankKey === key) return _cloudBank;
+
         const opacity = timeMode === CONFIG.TIME_MODES.DAWN ? 0.5
             : timeMode === CONFIG.TIME_MODES.DUSK ? 0.4
                 : 0.35;
 
         const random = createSeededRandom(54321);
         const cloudCount = 8 + Math.floor(random() * 6); // Fewer clouds
+        const bank = [];
 
         for (let i = 0; i < cloudCount; i++) {
             // Slower movement
             const baseX = random() * width * 1.2 - width * 0.1;
             const baseY = random() * (height * 0.6);
             const cloudSpeed = 0.2 + random() * 0.1; // Much slower (was 0.1-0.4)
-            const x = (baseX + animTime * cloudSpeed * 10) % (width * 1.2) - width * 0.1;
-            const y = baseY;
 
             const size = random() * 50 + 20; // Larger base size
             const puffCount = 5 + Math.floor(random() * 8); // More puffs for smoother shape
             const cloudOpacity = opacity * (0.6 + random() * 0.4);
             const stretch = 1.5 + random() * 1.0; // Much more horizontal stretch
 
-            context.fillStyle = `rgba(255, 255, 255, ${cloudOpacity})`;
-
-            // Draw more overlapping puffs for smoother, realistic clouds
+            // Offsets from the cloud's own origin, which is the only thing the
+            // animation moves. Drawn in the same order as before: the puffs
+            // that make the body, then the wispy edges over them.
+            const shapes = [];
+            // The seeded rolls are taken in the order the old loop took them,
+            // so every cloud comes out of the same seed as the same cloud.
             for (let j = 0; j < puffCount; j++) {
                 // Arrange puffs more horizontally
-                const puffX = x + ((j / puffCount) - 0.5) * size * 3 * stretch;
-                const puffY = y + (random() - 0.5) * size * 0.4; // Less vertical variation
+                const dx = ((j / puffCount) - 0.5) * size * 3 * stretch;
+                const dy = (random() - 0.5) * size * 0.4; // Less vertical variation
                 const puffSize = size * (0.5 + random() * 0.5);
-
-                // Draw elongated ellipses for wispy clouds
-                context.beginPath();
-                context.ellipse(puffX, puffY, puffSize * stretch, puffSize * 0.6, 0, 0, Math.PI * 2);
-                context.fill();
+                shapes.push({
+                    dx, dy,
+                    rx: puffSize * stretch,
+                    ry: puffSize * 0.6,
+                    alpha: 1
+                });
             }
-
-            // Add some wispy edges
-            context.globalAlpha = cloudOpacity * 0.3;
             for (let j = 0; j < 3; j++) {
-                const wispX = x + (random() - 0.5) * size * 2.5 * stretch;
-                const wispY = y + (random() - 0.5) * size * 0.5;
+                const dx = (random() - 0.5) * size * 2.5 * stretch;
+                const dy = (random() - 0.5) * size * 0.5;
                 const wispSize = size * (0.3 + random() * 0.4);
-
-                context.beginPath();
-                context.ellipse(wispX, wispY, wispSize * stretch * 1.5, wispSize * 0.4, 0, 0, Math.PI * 2);
-                context.fill();
+                shapes.push({
+                    dx, dy,
+                    rx: wispSize * stretch * 1.5,
+                    ry: wispSize * 0.4,
+                    alpha: cloudOpacity * 0.3
+                });
             }
-            context.globalAlpha = 1.0;
+
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            for (const sh of shapes) {
+                if (sh.dx - sh.rx < minX) minX = sh.dx - sh.rx;
+                if (sh.dy - sh.ry < minY) minY = sh.dy - sh.ry;
+                if (sh.dx + sh.rx > maxX) maxX = sh.dx + sh.rx;
+                if (sh.dy + sh.ry > maxY) maxY = sh.dy + sh.ry;
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.ceil(maxX - minX));
+            canvas.height = Math.max(1, Math.ceil(maxY - minY));
+            const cx = canvas.getContext("2d");
+            cx.fillStyle = `rgba(255, 255, 255, ${cloudOpacity})`;
+            for (const sh of shapes) {
+                cx.globalAlpha = sh.alpha;
+                cx.beginPath();
+                cx.ellipse(sh.dx - minX, sh.dy - minY, sh.rx, sh.ry, 0, 0, Math.PI * 2);
+                cx.fill();
+            }
+
+            bank.push({ canvas, baseX, baseY, cloudSpeed, offX: minX, offY: minY });
+        }
+
+        _cloudBank = bank;
+        _cloudBankKey = key;
+        return bank;
+    }
+
+    function drawClouds(context, width, height, timeMode, animTime = 0) {
+        const bank = cloudBank(width, height, timeMode);
+        for (let i = 0; i < bank.length; i++) {
+            const c = bank[i];
+            const x = (c.baseX + animTime * c.cloudSpeed * 10) % (width * 1.2) - width * 0.1;
+            context.drawImage(c.canvas, x + c.offX, c.baseY + c.offY);
         }
     }
 
@@ -1612,8 +1662,12 @@
                 timeMode === CONFIG.TIME_MODES.DUSK ||
                 timeMode === CONFIG.TIME_MODES.DAWN) {
                 this._cloudAnimationTime = (this._cloudAnimationTime || 0) + 0.016;
-                // Reduced frequency: only update every 4 frames (from 2) - 50% less work
-                if (this._frameCount % 4 === 0) {
+                // A cloud drifts about a twentieth of a pixel per frame, so the
+                // old four-frame cadence was repainting and re-uploading the
+                // whole sky bitmap for a sixth of a pixel of movement. A quarter
+                // of a second between steps is still under a pixel each time,
+                // and costs a quarter of the texture uploads.
+                if (this._frameCount % 15 === 0) {
                     this.updateSkyAnimation();
                 }
             }

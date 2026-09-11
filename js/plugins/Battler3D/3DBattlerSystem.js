@@ -2766,6 +2766,15 @@
     // a fight already has the shadows roughly under the feet rather than
     // sliding into place.
     const DEFAULT_GROUND_Y = -1.5;
+    // How high up the creatures' own height the battle camera aims. It used to
+    // aim at 1, which sat the troop low in the frame with a band of empty sky
+    // over it; every monster now wears its bar over its own head
+    // (BattleSystem/BattleSystemEnhancedHUD.js), so that air is what the bars
+    // stand in and the row is lifted into it. Dropping the aim rather than
+    // moving the models keeps every reading taken through this camera
+    // (battlerFootPosition, battlerHeadPosition, the target chevron) correct
+    // for free.
+    const CAMERA_AIM_Y = 0.35;
 
     function buildSkyEquirect(light) {
         const w = ENV_TEX_W, h = ENV_TEX_H;
@@ -3109,7 +3118,7 @@
             // Camera
             this.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
             this.camera.position.set(0, config.cameraHeight, config.cameraDistance);
-            this.camera.lookAt(0, 1, 0);
+            this.camera.lookAt(0, CAMERA_AIM_Y, 0);
 
             this.renderer = acquireBattleRenderer();
             this._viewW = width;
@@ -3999,7 +4008,13 @@
 
     Spriteset_Battle.prototype.create3DEnemies = function() {
         // Scene may have been disposed/nulled between the setTimeout and now.
-        if (!this._battle3DScene || this._battle3DScene._disposed) return;
+        // Settled either way: nothing is going to move on a field that was never
+        // built, and whatever is waiting for the field to stop (the HUD's bars,
+        // BattleSystemEnhancedHUD.js) would otherwise wait for ever.
+        if (!this._battle3DScene || this._battle3DScene._disposed) {
+            this._3dEnemyLayoutSettled = true;
+            return;
+        }
         // A sprite field never moves after it is built, so it counts as settled.
         this._3dEnemyLayoutSettled = false;
         // Only render 3D enemy models when the Enemy Battlers option is set to
@@ -4018,18 +4033,17 @@
         const pending = [];
 
         // Pre-count procedural creatures so we can spread them across the field.
-        const procCount = enemies.filter(e => battleArchetype(e)).length;
-        let procSlot = 0;
-
         // A crowd is drawn a little smaller than a lone monster (see
         // troopScaleFactor). Counted over the creatures that actually get a
         // model, so a troop member with no 3D body never shrinks the ones beside
         // it. Every model in the fight takes the same factor, procedural or
-        // authored GLB, so the troop keeps its relative sizes.
+        // authored GLB, so the troop keeps its relative sizes. The same count is
+        // the row every one of them stands in, and the same slot walks along it.
         const modelCount = enemies.filter(
             e => battleArchetype(e) || e.enemy().meta['3d_model']
         ).length;
         const crowdScale = troopScaleFactor(modelCount);
+        let modelSlot = 0;
 
         for (let i = 0; i < enemies.length; i++) {
             const enemy = enemies[i];
@@ -4083,33 +4097,33 @@
                     continue;
                 }
 
-                let posX, posY, posZ = 0;
-                if (def) {
-                    // Spread multiple procedural creatures evenly around centre.
-                    // This is only the opening guess: spreadEnemyModels re-lays
-                    // them out by their measured width once they have loaded.
-                    if (procCount === 3) {
-                        const trioGuess = [
-                            { x: -4.5, z: -4.5 },
-                            { x: 0,    z: 0 },
-                            { x: 4.5,  z: -4.5 }
-                        ];
-                        const slot = trioGuess[procSlot] || { x: 0, z: 0 };
-                        posX = slot.x;
-                        posZ = slot.z;
-                        posY = -1.5;
-                        procSlot++;
-                    } else {
-                        posX = procCount > 1 ? (procSlot - (procCount - 1) / 2) * ENEMY_SPREAD_GUESS : 0;
-                        posY = -1.5;
-                        posZ = 0;
-                        procSlot++;
-                    }
+                // Every creature that gets a model stands in ONE row around the
+                // CENTRE of the field, authored GLB and procedural alike, with
+                // its feet on the same ground. An authored enemy used to be
+                // placed from the troop editor's own 2D slot instead
+                // ((sprite.x / Graphics.width) * 4 - 2), which dropped it
+                // wherever that layout happened to put it - off to one side, and
+                // at a height of its own - while the procedural creatures beside
+                // it stood centred on the ground. Two ways of reading one field.
+                // This is only the opening guess: spreadEnemyModels re-lays the
+                // whole row out by measured width once the models have loaded.
+                let posX, posZ = 0;
+                const posY = DEFAULT_GROUND_Y;
+                if (modelCount === 3) {
+                    const trioGuess = [
+                        { x: -4.5, z: -4.5 },
+                        { x: 0,    z: 0 },
+                        { x: 4.5,  z: -4.5 }
+                    ];
+                    const slot = trioGuess[modelSlot] || { x: 0, z: 0 };
+                    posX = slot.x;
+                    posZ = slot.z;
                 } else {
-                    posX = (sprite.x / Graphics.width) * 4 - 2;
-                    posY = -((sprite.y / Graphics.height) * 4 - 2);
-                    posZ = 0;
+                    posX = modelCount > 1
+                        ? (modelSlot - (modelCount - 1) / 2) * ENEMY_SPREAD_GUESS
+                        : 0;
                 }
+                modelSlot++;
 
                 debugLog(`Enemy ${i} 3D pos: (${posX}, ${posY}, ${posZ})`);
 
@@ -4130,11 +4144,20 @@
             // Second pass on the next frame: some GLB models or procedural
             // sub-meshes only land in the scene graph after the first render tick,
             // so a deferred re-spread catches them and produces a clean layout.
+            // Only THAT pass calls the field settled: the first one still moves
+            // the models, and whatever reads the flag to pin something to a
+            // creature (the HUD's bars, BattleSystemEnhancedHUD.js) would be
+            // pinning it to a place the creature is about to leave, at a height
+            // it has not finished growing to.
             requestAnimationFrame(() => {
                 if (this._battle3DScene && !this._battle3DScene._disposed) {
-                    this.spreadEnemyModels();
+                    this.spreadEnemyModels(true);
                 }
             });
+        }).catch(() => {
+            // A model that failed to load must not leave the field permanently
+            // unsettled: whatever survived is what the fight is fought with.
+            this.spreadEnemyModels(true);
         });
     };
 
@@ -4153,10 +4176,12 @@
     const ENEMY_SPREAD_FALLBACK_W = 2.2; // for a model that measures as nothing
 
     // A row of three or more used the whole half-span, which walks the outer
-    // creatures out under the battle log running across the middle of the
-    // screen. From three up the line is pulled in towards the centre instead,
-    // and the air between neighbours with it, so the whole pack stands in the
-    // clear band the log leaves; the z stagger below is what keeps them apart.
+    // creatures out to the edges of the view, where a creature's own bar
+    // (BattleSystem/BattleSystemEnhancedHUD.js) can no longer be centred on it
+    // without being pushed back off the edge. From three up the line is pulled
+    // in towards the centre instead, and the air between neighbours with it, so
+    // the whole pack stands where it can be labelled; the z stagger below is
+    // what keeps them apart.
     const ENEMY_SPREAD_PACK_FROM = 3;
     const ENEMY_SPREAD_PACK_SPAN = 0.72; // of the half-span, for a pack
     const ENEMY_SPREAD_PACK_GAP = 0.55;  // of the gap, for a pack
@@ -4174,7 +4199,7 @@
     }
     let _spreadBoxScratch = null;        // one box, reused (the pass runs twice)
 
-    Spriteset_Battle.prototype.spreadEnemyModels = function() {
+    Spriteset_Battle.prototype.spreadEnemyModels = function(final) {
         const scene3d = this._battle3DScene;
         if (!scene3d || scene3d._disposed || typeof THREE === 'undefined') return;
 
@@ -4183,9 +4208,9 @@
         let zSlot = 0;
         const box = _spreadBoxScratch || (_spreadBoxScratch = new THREE.Box3());
         for (let i = 0; i < enemies.length; i++) {
-            // Enemies placed from their 2D slot (authored GLB models) keep the
-            // troop layout they were given; only the procedural row is spread.
-            if (!resolveArchetype(enemies[i])) continue;
+            // Every model on the field is spread, authored GLB and procedural
+            // alike: they all stand in one row around the centre now, so they
+            // are all laid out by the width they actually measure.
             const battlerModel = scene3d.getModel(`enemy_${i}`);
             const root = battlerModel && battlerModel.model;
             if (!root) continue;
@@ -4260,8 +4285,8 @@
         }
 
         // The HUD reads this to know the field has stopped moving and its
-        // compact enemy bars can be locked in place.
-        this._3dEnemyLayoutSettled = true;
+        // compact enemy bars can be locked in place. Only the last pass says so.
+        if (final) this._3dEnemyLayoutSettled = true;
     };
 
     const _Spriteset_Battle_createActors = Spriteset_Battle.prototype.createActors;
