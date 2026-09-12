@@ -100,6 +100,27 @@
     "moreDays": "+1 giorno",
     "extendStay": "Proroga {days}g ({cost})",
     "stayNotAfforded": "Euro insufficienti per prorogare il soggiorno",
-    "stayExtended": "Soggiorno prorogato di {days}g, {time} rimasti"
+    "stayExtended": "Soggiorno prorogato di {days}g, {time} rimasti",
+    "titleCombined": "Patrimonio & Atti",
+    "towns": "Citta",
+    "shops": "Negozi",
+    "collectRent": "Riscuoti affitto",
+    "collectAllRent": "Riscuoti affitti ({amount})",
+    "rentDue": "Affitto maturato",
+    "dailyIncome": "Entrate giornaliere",
+    "manageShop": "Gestisci negozio",
+    "openShopBook": "Apri grimorio negozio",
+    "townCharter": "Atto di Fondazione",
+    "businessDeed": "Atto Commerciale",
+    "propertyDeed": "Atto di Proprieta",
+    "livestockRegister": "Registro Bestiame",
+    "tenancyAgreement": "Accordo di Locazione",
+    "diplomaticCredentials": "Credenziali Diplomatiche",
+    "bankingStatement": "Estratto Conto",
+    "houses": "Case",
+    "residents": "Residenti",
+    "trade": "Attivita",
+    "registerBalance": "Fondo cassa",
+    "noHoldingsInCategory": "Nessun atto o bene in questa categoria."
   }
 }

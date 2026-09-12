@@ -100,6 +100,27 @@
   "moreDays": "+1 day",
   "extendStay": "Extend {days}d ({cost})",
   "stayNotAfforded": "Not enough euro to extend the stay",
-  "stayExtended": "Stay extended by {days}d, {time} left"
+  "stayExtended": "Stay extended by {days}d, {time} left",
+  "titleCombined": "Assets & Deeds",
+  "towns": "Towns",
+  "shops": "Shops",
+  "collectRent": "Collect Rent",
+  "collectAllRent": "Collect All Rent ({amount})",
+  "rentDue": "Rent Due",
+  "dailyIncome": "Daily Income",
+  "manageShop": "Manage Shop",
+  "openShopBook": "Open Shop Grimorie",
+  "townCharter": "Town Charter",
+  "businessDeed": "Business Deed",
+  "propertyDeed": "Property Deed",
+  "livestockRegister": "Livestock Register",
+  "tenancyAgreement": "Tenancy Agreement",
+  "diplomaticCredentials": "Diplomatic Credentials",
+  "bankingStatement": "Account Statement",
+  "houses": "Houses",
+  "residents": "Residents",
+  "trade": "Trade",
+  "registerBalance": "Register Balance",
+  "noHoldingsInCategory": "No deeds or assets held in this category."
  }
 }

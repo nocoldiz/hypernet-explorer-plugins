@@ -221,11 +221,27 @@
   // ==========================================================================
   // UTILITIES
   // ==========================================================================
+  // The same four as direction numbers on their own, for the many read-only
+  // walks over them. Shared so a tile check inside a flood fill does not
+  // allocate a fresh four-element array every tile.
+  const ORTHO_DIRS = [2, 4, 6, 8];
+
+  // The four orthogonal steps, in RMMZ direction numbers. Module scope so the
+  // pathfinder's inner loop reads them rather than rebuilding them.
+  const NEIGHBOR_DX  = [0, 0, -1, 1];
+  const NEIGHBOR_DY  = [-1, 1, 0, 0];
+  const NEIGHBOR_DIR = [8, 2, 4, 6];
+
   const Utils = {
     debug: (message) => {
       if (Config.debugMode) console.log(`[NPC System] ${message}`);
     },
     distance: (a, b) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y),
+    // The same measure taken on loose numbers. findPath's heuristic is
+    // evaluated once per node it opens - up to two thousand times inside a
+    // single pathfind - and the object form allocated two throwaway points
+    // every one of those.
+    manhattan: (ax, ay, bx, by) => Math.abs(ax - bx) + Math.abs(ay - by),
     euclideanDistance: (a, b) => {
       const dx = a.x - b.x;
       const dy = a.y - b.y;
@@ -323,6 +339,25 @@
       }
       return null;
     },
+    isAnyShopEvent: (ev) => {
+      const data = ev && ev.event ? ev.event() : ev;
+      if (!data) return false;
+      return Utils.hasShopTag(data.note) || /^shop$/i.test(data.name || "");
+    },
+    // Returns the direction to face if an adjacent tile has the counter flag, else null.
+    // Checks Down (2), Left (4), Right (6), Up (8) in order.
+    counterFacingDir: (event) => {
+      if (!event || !$gameMap || typeof $gameMap.isCounter !== "function") return null;
+      const x = typeof event.x === "number" ? event.x : (typeof event._x === "number" ? event._x : null);
+      const y = typeof event.y === "number" ? event.y : (typeof event._y === "number" ? event._y : null);
+      if (x == null || y == null) return null;
+      const isValid = typeof $gameMap.isValid === "function" ? (tx, ty) => $gameMap.isValid(tx, ty) : () => true;
+      if (isValid(x, y + 1) && $gameMap.isCounter(x, y + 1)) return 2;
+      if (isValid(x - 1, y) && $gameMap.isCounter(x - 1, y)) return 4;
+      if (isValid(x + 1, y) && $gameMap.isCounter(x + 1, y)) return 6;
+      if (isValid(x, y - 1) && $gameMap.isCounter(x, y - 1)) return 8;
+      return null;
+    },
     // True when an authored map event may be driven around the map as an NPC.
     // Two things disqualify one whatever its note says:
     //   - it carries no character sheet on any page. A graphic-less event is a
@@ -370,7 +405,7 @@
         for (let dy = 0; dy <= 1; dy++) {
           const tx = x + dx, ty = y + dy;
           if (tx >= $gameMap.width() || ty >= $gameMap.height()) return false;
-          if (![2, 4, 6, 8].every(dir => $gameMap.isPassable(tx, ty, dir))) return false;
+          if (!ORTHO_DIRS.every(dir => $gameMap.isPassable(tx, ty, dir))) return false;
           if ($gameMap.eventsXy(tx, ty).length > 0) return false;
         }
       }
@@ -450,7 +485,7 @@
 
       for (let x = 0; x < w; x++) {
         for (let y = 0; y < h; y++) {
-          if (![2, 4, 6, 8].some(dir => $gameMap.isPassable(x, y, dir))) continue;
+          if (!ORTHO_DIRS.some(dir => $gameMap.isPassable(x, y, dir))) continue;
 
           const regionId = $gameMap.regionId(x, y);
           // Region 10/103: blocked tiles. Region 99: water (CLAUDE.md). Region 11
@@ -1837,7 +1872,7 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
       const mem = $gameSystem._npcGroupMemory?.[groupName]?.[npcName];
       if (!mem || mem.mapId !== mapId) return null;
       if (!$gameMap.isValid(mem.x, mem.y)) return null;
-      if (![2, 4, 6, 8].some(dir => $gameMap.isPassable(mem.x, mem.y, dir))) return null;
+      if (!ORTHO_DIRS.some(dir => $gameMap.isPassable(mem.x, mem.y, dir))) return null;
       // A spot remembered from an older save may sit on terrain NPCs are no
       // longer allowed to occupy, so re-check it rather than trusting memory.
       if (Utils.isBlockedTerrain(mem.x, mem.y)) return null;
@@ -2702,9 +2737,14 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // on every visit and in every savegame of the world. Nothing is persisted:
     // map 636 is rebuilt from the template each time it is entered, and these
     // are re-dealt with it, the same volatility every procedural citizen has.
-    WILD_CREATURE_MAX: 4,            // head of creature a square can carry
+    WILD_CREATURE_MAX: 3,            // head of creature a square can carry
     WILD_CREATURE_SETTLEMENT_MAX: 1, // a town is for people; one stray, at most
     WILD_CREATURE_ZOMBIE_MAX: 8,     // and a dead world belongs to the wildlife
+    // On top of the cap, a share of squares carry nothing loose at all. Four
+    // head on every square out of town, dealt on top of the creatures the
+    // population pass already puts in the NPC slots, made the country busier
+    // with beasts than with people: a quiet square is the point of a wild one.
+    WILD_CREATURE_QUIET_CHANCE: 0.25,
 
     scatterWildCreatures: (baseSeed, settlementGroup, worldX, worldY, biomeName) => {
       const NC = window.NPCCreature;
@@ -2725,6 +2765,10 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         : inTown
           ? ProceduralManager.WILD_CREATURE_SETTLEMENT_MAX
           : ProceduralManager.WILD_CREATURE_MAX;
+      // A quarter of squares are quiet, whatever the cap allows (the zombie
+      // world's overrun fields excepted).
+      if (!Config.isZombieWorld() &&
+        rng.next() < ProceduralManager.WILD_CREATURE_QUIET_CHANCE) return 0;
       const count = Math.floor(rng.next() * (cap + 1));
       if (count === 0) return 0;
 
@@ -4018,7 +4062,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
 
     openNeighbourCount(x, y) {
       let n = 0;
-      for (const dir of [2, 4, 6, 8]) if (this.canStepTerrain(x, y, dir)) n++;
+      for (const dir of ORTHO_DIRS) if (this.canStepTerrain(x, y, dir)) n++;
       return n;
     },
 
@@ -4071,7 +4115,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         const d = dist.get(cK);
         if (d >= this.MAX_SEARCH) continue;
         const cx = cK % mapW, cy = Math.floor(cK / mapW);
-        for (const dir of [2, 4, 6, 8]) {
+        for (const dir of ORTHO_DIRS) {
           const nx = $gameMap.roundXWithDirection(cx, dir);
           const ny = $gameMap.roundYWithDirection(cy, dir);
           const nK = key(nx, ny);
@@ -4128,7 +4172,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       while (head < queue.length && queue.length < this.CORRIDOR_MAX) {
         const { x, y } = queue[head++];
         if (!this.isNarrow(x, y)) continue;
-        for (const dir of [2, 4, 6, 8]) {
+        for (const dir of ORTHO_DIRS) {
           const nx = $gameMap.roundXWithDirection(x, dir);
           const ny = $gameMap.roundYWithDirection(y, dir);
           const k = key(nx, ny);
@@ -4177,7 +4221,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       if (ev && ev !== this.character) return false;
 
       if (d) return this.character.canPass(x, y, d);
-      return [2, 4, 6, 8].some(dir => $gameMap.isPassable(x, y, dir));
+      return ORTHO_DIRS.some(dir => $gameMap.isPassable(x, y, dir));
     }
 
     findPath(startX, startY, goalX, goalY, avoidEnemies = true, avoidNPCs = true) {
@@ -4192,7 +4236,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       const goalK  = getKey(goalX, goalY);
 
       gScore.set(startK, 0);
-      fScore.set(startK, Utils.distance({ x: startX, y: startY }, { x: goalX, y: goalY }));
+      fScore.set(startK, Utils.manhattan(startX, startY, goalX, goalY));
       openHeap.push(startK);
 
       let iterations = 0;
@@ -4202,9 +4246,14 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         closedSet.add(currentK);
 
         const cx = currentK % mapW, cy = Math.floor(currentK / mapW);
-        const neighbors = [{ x: cx, y: cy - 1, d: 8 }, { x: cx, y: cy + 1, d: 2 }, { x: cx - 1, y: cy, d: 4 }, { x: cx + 1, y: cy, d: 6 }];
 
-        for (const { x: nx, y: ny, d: dir } of neighbors) {
+        // Walked off the tables above rather than built as an array of four
+        // objects: this loop runs up to 500 times per pathfind, and every NPC
+        // re-paths whenever its state changes.
+        for (let n = 0; n < 4; n++) {
+          const nx = cx + NEIGHBOR_DX[n];
+          const ny = cy + NEIGHBOR_DY[n];
+          const dir = NEIGHBOR_DIR[n];
           const nK = getKey(nx, ny);
           if (!$gameMap.isValid(nx, ny) || closedSet.has(nK)) continue;
           const hasDoor = doorKeys.has(nK);
@@ -4217,7 +4266,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
 
           cameFrom.set(nK, { pos: currentK, dir });
           gScore.set(nK, tGScore);
-          fScore.set(nK, tGScore + Utils.distance({ x: nx, y: ny }, { x: goalX, y: goalY }));
+          fScore.set(nK, tGScore + Utils.manhattan(nx, ny, goalX, goalY));
 
           if (!openHeap.has(nK)) openHeap.push(nK);
           else openHeap.update(nK);
@@ -4253,7 +4302,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       while (head < queue.length && head < 1200) {
         const currentK = queue[head++];
         const cx = currentK % mapW, cy = Math.floor(currentK / mapW);
-        for (const dir of [2, 4, 6, 8]) {
+        for (const dir of ORTHO_DIRS) {
           const nx = $gameMap.roundXWithDirection(cx, dir);
           const ny = $gameMap.roundYWithDirection(cy, dir);
           const nK = getKey(nx, ny);
@@ -4905,13 +4954,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // Returns the direction to face if an adjacent tile has the counter flag, else null.
     // Used to lock shop workers toward the customer side of their counter.
     _counterFacingDir() {
-      if (!this.event) return null;
-      const x = this.event.x, y = this.event.y;
-      if ($gameMap.isCounter(x, y + 1)) return 2;
-      if ($gameMap.isCounter(x - 1, y)) return 4;
-      if ($gameMap.isCounter(x + 1, y)) return 6;
-      if ($gameMap.isCounter(x, y - 1)) return 8;
-      return null;
+      return Utils.counterFacingDir(this.event);
     }
 
     // ── NPCSim states injected by NPCSimulationCore ───────────────────────────
@@ -5043,7 +5086,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       for (const [dx, dy] of offsets) {
         const tx = x + dx, ty = y + dy;
         if ($gameMap.isValid(tx, ty) &&
-            [2, 4, 6, 8].some(dir => $gameMap.isPassable(tx, ty, dir)) &&
+            ORTHO_DIRS.some(dir => $gameMap.isPassable(tx, ty, dir)) &&
             $gameMap.eventsXy(tx, ty).length === 0) {
           return { x: tx, y: ty };
         }
@@ -5067,7 +5110,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
           if (!$gameMap.isValid(x, y)) continue;
           if ([10, 103, 99, 11].includes($gameMap.regionId(x, y))) continue;
           if (Utils.isBlockedTerrain(x, y)) continue;
-          if (![2, 4, 6, 8].some(dir => $gameMap.isPassable(x, y, dir))) continue;
+          if (!ORTHO_DIRS.some(dir => $gameMap.isPassable(x, y, dir))) continue;
           const d = Math.abs(x - ex) + Math.abs(y - ey);
           if (d < bestD) { bestD = d; best = { x, y }; }
         }
@@ -5145,6 +5188,25 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       this._characterName = "";
       this._characterIndex = 0;
     }
+    if (Utils.isAnyShopEvent(this)) {
+      this._priorityType = 1;
+      this._through = false;
+      const cDir = Utils.counterFacingDir(this);
+      if (cDir) {
+        this._direction = cDir;
+        this._originalDirection = cDir;
+        this._prelockDirection = cDir;
+      }
+    }
+  };
+
+  const _Game_Event_unlock = Game_Event.prototype.unlock;
+  Game_Event.prototype.unlock = function () {
+    _Game_Event_unlock.call(this);
+    if (Utils.isAnyShopEvent(this)) {
+      const cDir = Utils.counterFacingDir(this);
+      if (cDir) this.setDirection(cDir);
+    }
   };
 
   // Action-button interaction with NPCs that are mid-step.
@@ -5184,6 +5246,9 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     const dir = this.direction();
     const fx = $gameMap.roundXWithDirection(this.x, dir);
     const fy = $gameMap.roundYWithDirection(this.y, dir);
+    const isCounter = typeof $gameMap.isCounter === "function" && $gameMap.isCounter(fx, fy);
+    const cx = isCounter ? $gameMap.roundXWithDirection(fx, dir) : fx;
+    const cy = isCounter ? $gameMap.roundYWithDirection(fy, dir) : fy;
     // Runnable = has an action/touch-triggerable page with real commands. We do
     // NOT require isNormalPriority(): a transplanted/pre-placed NPC page left at
     // "below/above characters" priority is invisible to the engine's own facing
@@ -5205,10 +5270,11 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       }
       return false;
     };
+    const matchesFacing = (ev) => occupies(ev, fx, fy) || (isCounter && occupies(ev, cx, cy));
     const events = $gameMap.events();
     // 1) Anything the player is facing (roster NPCs first, then any event).
-    for (const ev of events) { if (ev && ev._npcRosterSpawn && runnable(ev) && occupies(ev, fx, fy)) { ev.start(); return; } }
-    for (const ev of events) { if (ev && !ev._npcRosterSpawn && runnable(ev) && occupies(ev, fx, fy)) { ev.start(); return; } }
+    for (const ev of events) { if (ev && ev._npcRosterSpawn && runnable(ev) && matchesFacing(ev)) { ev.start(); return; } }
+    for (const ev of events) { if (ev && !ev._npcRosterSpawn && runnable(ev) && matchesFacing(ev)) { ev.start(); return; } }
     // 2) Last-resort generosity: a roster NPC standing directly next to the
     //    player (its sprite may straddle tiles so the faced tile never matched
     //    exactly). Prefer one in the facing direction. Only roster NPCs, so we
@@ -5219,7 +5285,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       const ex = Math.round(ev._realX), ey = Math.round(ev._realY);
       const man = Math.abs(ex - this.x) + Math.abs(ey - this.y);
       if (man !== 1) continue;
-      const score = (ex === fx && ey === fy) ? 2 : 1; // in facing dir scores higher
+      const score = (ex === fx && ey === fy) ? 2 : ((isCounter && ex === cx && ey === cy) ? 2 : 1); // in facing dir scores higher
       if (score > bestScore) { bestScore = score; best = ev; }
     }
     if (best) best.start();
@@ -5950,7 +6016,70 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     }
   }
 
+  // Sanitizes a shop event so stray page conditions (such as requiring item 1
+  // or specific hour variables) or stray self-switches never drop it into an
+  // un-interactable, through=true ghost state. Ensures normal priority (collision)
+  // and turns its sprite to face any adjacent counter tile.
+  function sanitizeShopEvent(ev) {
+    if (!ev || ev._erased) return;
+    const data = ev.event ? ev.event() : null;
+    if (!data || !Utils.isAnyShopEvent(data)) return;
+
+    for (const page of (data.pages || [])) {
+      if ((page?.list?.length ?? 0) > 1) {
+        if (page.conditions) {
+          page.conditions.itemValid = false;
+          page.conditions.variableValid = false;
+          page.conditions.switch1Valid = false;
+          page.conditions.switch2Valid = false;
+          page.conditions.actorValid = false;
+        }
+        page.priorityType = 1;
+        page.through = false;
+        page.trigger = 0;
+      }
+    }
+
+    if ($gameMap && $gameSelfSwitches) {
+      const mapId = $gameMap.mapId();
+      const evId = ev.eventId();
+      for (const ch of ['A', 'B', 'C', 'D']) {
+        if ($gameSelfSwitches.value([mapId, evId, ch])) {
+          $gameSelfSwitches.setValue([mapId, evId, ch], false);
+        }
+      }
+    }
+
+    if (ev._pageIndex < 0 || (ev.page()?.list?.length ?? 0) <= 1) {
+      ev.refresh();
+      ev.setupPage();
+    }
+
+    ev.setThrough(false);
+    ev.setPriorityType(1);
+
+    const cDir = Utils.counterFacingDir(ev);
+    if (cDir) {
+      ev.setDirection(cDir);
+      ev._originalDirection = cDir;
+      ev._prelockDirection = cDir;
+      for (const page of (data.pages || [])) {
+        if (page?.image) page.image.direction = cDir;
+      }
+    }
+  }
+
+  function sanitizeMapShopEvents() {
+    if (!$gameMap) return;
+    for (const ev of $gameMap.events()) {
+      if (ev && Utils.isAnyShopEvent(ev)) {
+        sanitizeShopEvent(ev);
+      }
+    }
+  }
+
   function stageShopPersonas() {
+    sanitizeMapShopEvents();
     // Nobody is behind any counter in an empty world.
     if (Config.isEmptyWorld()) return;
     const SSM = window.NPCSim?.ShopShiftManager;
@@ -6567,6 +6696,11 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     requestZombieBattle: (ev) => requestZombieBattle(ev),
     generateSeededPersona: SpawnManager.generateSeededPersona,
     hasShopTag: Utils.hasShopTag,
+    isAnyShopEvent: Utils.isAnyShopEvent,
+    counterFacingDir: Utils.counterFacingDir,
+    getCounterFacingDir: Utils.counterFacingDir,
+    sanitizeShopEvent: sanitizeShopEvent,
+    sanitizeMapShopEvents: sanitizeMapShopEvents,
     // Tells a rota counter (no graphic) apart from a Shop event whose
     // shopkeeper the author drew and who is therefore always on duty.
     hasOwnGraphic: Utils.hasOwnGraphic,

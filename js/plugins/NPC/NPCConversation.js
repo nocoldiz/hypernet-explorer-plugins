@@ -1207,9 +1207,16 @@
     let _scaleFrame = -1;
     function _msgGetScale() {
       if (_scaleCache && _scaleFrame === Graphics.frameCount) return _scaleCache;
-      const el = document.getElementById('gameCanvas');
-      if (!el) return { sx: 1, sy: 1, ox: 0, oy: 0 };
-      const r = el.getBoundingClientRect();
+      // Reading the canvas box forces a synchronous layout, and a dozen
+      // overlays all want it on the same frame, so it is taken from the shared
+      // frame budget (Core/ParchmentToast.js), which pays that once for all of
+      // them. Reading it here is the fallback for when the budget is absent.
+      let r = window.FrameBudget && window.FrameBudget.canvasRect();
+      if (!r) {
+        const el = document.getElementById('gameCanvas');
+        if (!el) return { sx: 1, sy: 1, ox: 0, oy: 0 };
+        r = el.getBoundingClientRect();
+      }
       _scaleFrame = Graphics.frameCount;
       _scaleCache = { sx: r.width / Graphics.width, sy: r.height / Graphics.height, ox: r.left, oy: r.top };
       return _scaleCache;
@@ -1384,6 +1391,17 @@
 
       update() {
         if (!$gameMap) return;
+        // Nothing on screen, nothing to place. This runs on every frame of
+        // every map, and everything below it costs something worth not paying
+        // for an empty screen: _msgGetScale reads the canvas box out of the
+        // DOM, and the filter and the sort each allocate. A plain loop rather
+        // than .some(), so the check itself allocates no closure either.
+        let anyLive = false;
+        for (let i = 0; i < this._bubbles.length; i++) {
+          if (this._bubbles[i].npcName) { anyLive = true; break; }
+        }
+        if (!anyLive) return;
+
         const mapId = $gameMap.mapId();
         const sc = _msgGetScale();
         // Oldest first: whoever has been on screen longest keeps its spot and

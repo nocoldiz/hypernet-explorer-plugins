@@ -138,7 +138,16 @@
     // in reading. It is a pact, not a gift, so her limit break buys no turn of
     // invulnerability with it and the book takes its own price out of her for
     // every spell she reads (BattleSystemActiveSkills.js, window.LimitBreak).
-    solomon:   { wtypeId: 6, range: 1, builder: 'createVectorGrimoireModel' },
+    //
+    // The one shape that is not swung at anybody: a book has no edge to bring
+    // round, so a plain attack with it is the book driven open and a volley of
+    // its own pages going downrange off the clasp. That is why it carries a
+    // shot's reach, a motion of its own, paper for a sound and a mark of its
+    // own where the pages land, instead of borrowing a staff's.
+    solomon:   { wtypeId: 6, range: 4, builder: 'createVectorGrimoireModel',
+                 shoots: true, motion: 'cast', hitFX: 'pages',
+                 sounds: ['Items/bookFlip1', 'Items/bookFlip2', 'Items/bookFlip3',
+                          'Items/paper_02'] },
     // What the gun itself folds into, and the only shape nobody fits: with the
     // frame left as the gun, SWITCH racks the barrel out into a coilgun sniper
     // rifle. It holds three shots, reaches four times as far, and the third
@@ -149,7 +158,10 @@
     // grimoire only when Em's limit break says so (window.LimitBreak, the
     // Hyper), whatever it was standing as a moment earlier, and it closes
     // again when the fight ends.
-    grimoire:  { wtypeId: 6, range: 1, builder: 'createVectorGrimoireModel', derived: true },
+    grimoire:  { wtypeId: 6, range: 4, builder: 'createVectorGrimoireModel', derived: true,
+                 shoots: true, motion: 'cast', hitFX: 'pages',
+                 sounds: ['Items/bookFlip1', 'Items/bookFlip2', 'Items/bookFlip3',
+                          'Items/paper_02'] },
   };
   const FORM_KEYS = Object.keys(FORM_MODES).filter((k) => !FORM_MODES[k].derived);
   const SNIPER_FORM = 'sniper';
@@ -662,11 +674,91 @@
     return _formAnimCache[key];
   }
 
-  /** The sound bank the shape makes when it lands. */
-  const formSounds = () => (FORM_SOUNDS[formWeaponType()] || BLADE_SOUNDS).slice();
+  /**
+   * The sound bank the shape makes when it lands: the bank of the weapon type
+   * it is standing as, or the shape's own when what it does is not that type's
+   * noise at all (the book, which is paper rather than a staff).
+   */
+  const formSounds = () => {
+    const key = formKey();
+    const own = key && FORM_MODES[key].sounds;
+    return (own || FORM_SOUNDS[formWeaponType()] || BLADE_SOUNDS).slice();
+  };
 
   /** Whether what the weapon is standing as puts a shot downrange at all. */
-  const shootsAtRange = () => RANGED_WTYPES.includes(formWeaponType());
+  const shootsAtRange = () => {
+    const key = formKey();
+    if (key && FORM_MODES[key].shoots) return true;
+    return RANGED_WTYPES.includes(formWeaponType());
+  };
+
+  //--------------------------------------------------------------------------
+  // How the shape is held and how it is swung
+  //--------------------------------------------------------------------------
+  // Every pose the weapon overlay puts the thing in hand through - where it
+  // rests, how it sways, where on screen it hangs, whether it turns to face an
+  // enemy and what movement its blow is - is read off the row's weapon type in
+  // WeaponSystemProcedural. Folded, the row is still the pistol's, so every
+  // shape was carried like a firearm, levelled across the battlefield and made
+  // to KICK instead of swinging, with no trail off it because a gun leaves
+  // none. What those readings are handed instead is this: the gun's own row
+  // with the shape's weapon type on it.
+  //
+  // The gun's weight comes off it as well, so a maul is swung with a maul's
+  // mass rather than a pistol's, and so does the magazine, which nothing the
+  // frame folds into carries.
+
+  // The readings in WeaponSystemProcedural that answer off the weapon type and
+  // are handed the stand-in row instead of the gun's own (installed at boot,
+  // below). Every one of them takes the weapon first and three arguments at
+  // most. The two that decide the MOVEMENT are wrapped on their own, because a
+  // shape may name its own.
+  const FORM_POSE_READINGS = [
+    'baseRotationFor',   // how it is held at rest
+    'anchorOffsetFor',   // where on screen it hangs
+    'screenFractionFor', // how large it is drawn
+    'aimsAtTarget',      // whether it turns to face an enemy
+    'idleSway',          // how it breathes between blows
+    'weaponMetrics',     // its reach and its mass, which pace the swing
+    'weightOf',
+  ];
+
+  // The movements only a firearm makes. A shape that does not shoot is never
+  // built with one of them, whatever the row's own tag asks for.
+  const GUN_MOTION_KINDS = { recoil: true, crossbow: true, draw: true };
+
+  const _formRows = {};
+
+  /** The row the overlay reads the shape off: the gun's own until it folds. */
+  function formWeaponRow() {
+    const key = formKey();
+    const gun = gunData();
+    if (!key || !gun) return gun;
+    const cached = _formRows[key];
+    if (cached && cached._vectorGunFrom === gun) return cached;
+    const row = Object.assign({}, gun, {
+      wtypeId: FORM_MODES[key].wtypeId,
+      note: String(gun.note || '')
+        .replace(/<Weight:[^>]*>\s*/ig, '')
+        .replace(/<Bullets:[^>]*>\s*/ig, ''),
+      _vectorGunFrom: gun,
+    });
+    delete row.maxBullets;
+    _formRows[key] = row;
+    return row;
+  }
+
+  /** The movement the shape strikes with, when its type's own is not it. */
+  const formMotion = () => {
+    const key = formKey();
+    return (key && FORM_MODES[key].motion) || null;
+  };
+
+  /** The mark the shape leaves, when its type's own is not it. */
+  const formHitFX = () => {
+    const key = formKey();
+    return (key && FORM_MODES[key].hitFX) || null;
+  };
 
   /**
    * How much further than the pistol the weapon carries: four times as far
@@ -1034,9 +1126,6 @@
   Scene_Boot.prototype.start = function () {
     _Scene_Boot_start_VG.call(this);
     stampElement();
-    const FX = window.WeaponHitFX;
-    if (!FX || FX._vectorGunWrapped) return;
-    FX._vectorGunWrapped = true;
     // How far the weapon reaches on a battle map: the coilgun's four times, Long
     // shot's two, or both. MapBattleMode asks this of every weapon, so hooking
     // its one reading is enough for the reach, the preview and the row's label.
@@ -1049,15 +1138,85 @@
         return isVectorGun(weapon) ? weaponReach(range) : range;
       };
     }
-    const inner = FX.profileFor.bind(FX);
-    FX.profileFor = function (weapon) {
-      // Whatever the gun has folded into hits like that weapon type does.
-      if (isVectorGun(weapon) && inBlade() && FX.PROFILES && FX.BY_WTYPE) {
-        const profile = FX.PROFILES[FX.BY_WTYPE[formWeaponType()]];
-        if (profile) return profile;
+    const FX = window.WeaponHitFX;
+    if (FX && !FX._vectorGunWrapped) {
+      FX._vectorGunWrapped = true;
+      const inner = FX.profileFor.bind(FX);
+      FX.profileFor = function (weapon) {
+        // Whatever the gun has folded into hits like that weapon type does,
+        // unless the shape leaves a mark of its own: the book does not cut, it
+        // puts pages through whatever it is pointed at.
+        if (isVectorGun(weapon) && inBlade() && FX.PROFILES && FX.BY_WTYPE) {
+          const profile = FX.PROFILES[formHitFX() || FX.BY_WTYPE[formWeaponType()]];
+          if (profile) return profile;
+        }
+        return inner(weapon);
+      };
+    }
+
+    // The weapon overlay reads every pose off the row's weapon type, and the
+    // row is the pistol's whatever the frame is standing as: each of these is
+    // handed the shape's stand-in row instead (formWeaponRow), so a folded
+    // maul hangs off its grip, sways with its own mass and sweeps at what it
+    // is aimed at with a trail off the head, while the bow and the darts still
+    // shoot. Nothing here re-derives the shape: it is asked for.
+    const WSP = window.WeaponSystemProcedural;
+    if (WSP && !WSP._vectorGunWrapped) {
+      WSP._vectorGunWrapped = true;
+      for (const name of FORM_POSE_READINGS) {
+        const readAs = WSP[name];
+        if (typeof readAs !== 'function') continue;
+        // Three arguments covers every reading in the list, and the wrapper is
+        // on the frame path: nothing is allocated to pass them on.
+        WSP[name] = function (weapon, a, b) {
+          if (isVectorGun(weapon) && inBlade()) {
+            const row = formWeaponRow();
+            if (row) return readAs.call(this, row, a, b);
+          }
+          return readAs.call(this, weapon, a, b);
+        };
       }
-      return inner(weapon);
-    };
+      // What the blow IS, which is the one reading the weapon type cannot
+      // always answer: a book is filed as a staff and neither casts nor
+      // sweeps, it fires its own pages. A shape that names its movement is
+      // swung with that and nothing else, and one that does not is left to the
+      // stand-in row above.
+      const innerMotion = WSP.motionForWeapon;
+      WSP.motionForWeapon = function (weapon, model) {
+        if (isVectorGun(weapon) && inBlade()) {
+          return formMotion() || innerMotion.call(this, formWeaponRow(), model);
+        }
+        return innerMotion.call(this, weapon, model);
+      };
+      // buildAttack asks this one directly and lets it override whatever
+      // movement was asked for, so a shape that shoots has to answer here as
+      // well as above, and a shape that strikes has to answer NOTHING or the
+      // pistol's recoil would come back over the swing.
+      const innerRanged = WSP.rangedMotionFor;
+      WSP.rangedMotionFor = function (weapon, model) {
+        if (isVectorGun(weapon) && inBlade()) {
+          if (!shootsAtRange()) return null;
+          return formMotion() || innerRanged.call(this, formWeaponRow(), model);
+        }
+        return innerRanged.call(this, weapon, model);
+      };
+      // And the tag itself. The row carries <Movement: Recoil>, which is the
+      // PISTOL's blow: asked for by name it is built as authored and no rule
+      // below ever reaches it, which is why every shape was kicking. Folded,
+      // the name is dropped and the shape is swung the way it moves of its own
+      // accord. A movement a SKILL named is left alone: only what a gun does
+      // is taken off a thing that is no longer one.
+      const innerBuild = WSP.buildAttack;
+      WSP.buildAttack = function (weapon, name, model, opts) {
+        if (name && isVectorGun(weapon) && inBlade()) {
+          const asked = this.ATTACK_MOTIONS && this.ATTACK_MOTIONS[name];
+          if (formMotion() || (asked && GUN_MOTION_KINDS[asked.kind] && !shootsAtRange())) {
+            name = null;
+          }
+        }
+        return innerBuild.call(this, weapon, name, model, opts);
+      };
+    }
   };
 
   window.VectorGun = {
@@ -1074,6 +1233,7 @@
     SNIPER_SHOTS, isFormMode, fittedForm, setForm, switchTarget,
     sniperShotsFired, setSniperShotsFired,
     formKey, formWeaponType, formBuilder, formAnimationId, formSounds,
+    formWeaponRow, formMotion, formHitFX, FORM_POSE_READINGS,
     GRIMOIRE_FORM, openGrimoire, closeGrimoire, inGrimoire,
     SOLOMON_FORM, solomonFitted,
     inMeleeForm, inSniper, rangeMultiplier, weaponReach, shootsAtRange,

@@ -340,6 +340,13 @@
             this._scale = new THREE.Vector3(1, 1, 1);
             this._one = new THREE.Vector3(1, 1, 1);
             this._hidden = new THREE.Vector3(0, -1e6, 0);
+            // Whether there is anything in the air, and whether there was last
+            // frame: update() sends the instance buffer only while one of the
+            // two is true. Nothing has been thrown yet, so the shower starts out
+            // of frame rather than parked at the origin.
+            this._live = false;
+            this._wasLive = false;
+            this._mesh.visible = false;
         }
 
         burst(x, y, z, r, g, b, n) {
@@ -358,9 +365,17 @@
                 if (this._mesh.instanceColor) this._mesh.instanceColor.setXYZ(idx, r, g, b);
             }
             if (this._mesh.instanceColor) this._mesh.instanceColor.needsUpdate = true;
+            // Something is in the air again: the next frame has work to do.
+            this._live = true;
         }
 
         update(dt) {
+            // Nothing in the air and nothing was last frame either: there is no
+            // matrix to compose and nothing to send. Without this the whole
+            // instance buffer - a hundred and sixty matrices - was rewritten and
+            // re-uploaded every single frame for an effect that is idle almost
+            // all of the time, the chips having been parked off screen long ago.
+            if (!this._live && !this._wasLive) return;
             let live = false;
             for (let i = 0; i < CHIP_MAX; i++) {
                 const p = this._p[i];
@@ -379,8 +394,12 @@
                 this._m.compose(this._v, this._q, this._scale);
                 this._mesh.setMatrixAt(i, this._m);
             }
+            // The frame a burst dies still has to be sent, to park the last of
+            // the chips; the frames after it do not.
             this._mesh.instanceMatrix.needsUpdate = true;
             this._mesh.visible = live;
+            this._wasLive = this._live;
+            this._live = live;
         }
 
         dispose() {
@@ -673,6 +692,17 @@
             const n = BAR_MODES.length;
             this._barMode = (((this._barMode || 0) + step) % n + n) % n;
             return this.barMode;
+        }
+        // Put the bar on a named view and hand back the one it was on, so a
+        // caller that borrows it can give it back. A fight borrows it: the
+        // spell view carries the leader's nine carried skills, which is the
+        // same loadout the battle's own bar is built from, so the strip the
+        // player is looking at does not change under them when the fight opens.
+        setBarMode(name) {
+            const was = this.barMode;
+            const i = BAR_MODES.indexOf(name);
+            if (i >= 0) this._barMode = i;
+            return was;
         }
         get onBlocks() { return (this._barMode || 0) === 0; }
 

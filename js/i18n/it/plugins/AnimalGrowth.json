@@ -55,6 +55,13 @@
   "actionPet": "Accarezza",
   "actionEmpathize": "Empatizza",
   "actionCancel": "Annulla",
+  "petting": [
+    "Ti accovacci e gratti il {animal} dietro le orecchie.",
+    "Passi una mano sulla schiena del {animal} e lo lasci appoggiare a te.",
+    "Resti un po' con il {animal}, senza dire niente di particolare.",
+    "Gratti il {animal} sotto il mento finche' non chiude gli occhi.",
+    "Accarezzi il {animal} e lui decide che puoi restare."
+  ],
   "fed": "Il \\c[14]{animal}\\c[0] mangia dalla tua mano.",
   "notHungry": "Il \\c[14]{animal}\\c[0] ne ha avuto abbastanza.",
   "tooHungryToProduce": "Il \\c[14]{animal}\\c[0] e troppo affamato per dare qualcosa.",

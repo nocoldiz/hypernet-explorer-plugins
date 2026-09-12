@@ -65,9 +65,9 @@
  * parameter). Only one of them is read at a time, whichever tab is on, and the
  * choice is remembered in save/updater/state.json so a copy stays on the
  * channel it was put on. Each tab keeps its own build list, so switching back
- * and forth costs nothing after the first read; switching tabs starts the same
- * automatic update the screen runs when it opens, against the branch just
- * chosen. Every build carries its own commit hash whichever branch lists it, so
+ * and forth costs nothing after the first read; switching tabs reads the build
+ * list of the branch just chosen and stops there, fetching nothing. Every build
+ * carries its own commit hash whichever branch lists it, so
  * moving between the two is an ordinary switch: the files of the build picked
  * replace whatever is here.
  *
@@ -82,15 +82,22 @@
  *
  * How an update runs
  *   Downloading a build and installing it are two separate things, and only the
- *   first of them happens on its own. The title screen and this screen both
- *   fetch the newest build the moment they hear of one, into save/updater/tmp,
- *   and stop there: no file in the game folder is touched and the copy being
- *   played is exactly the copy that was played before. What the player then
- *   sees is one button offering to install the build that is already in hand,
- *   which is a file move and takes a moment rather than a download.
+ *   first of them happens on its own, and only on the title screen. The launch
+ *   check reads the branch there and fetches the newest build into
+ *   save/updater/tmp, and stops: no file in the game folder is touched and the
+ *   copy being played is exactly the copy that was played before. What the
+ *   player then sees, on the title notice and on this screen alike, is one
+ *   button offering to install the build that is already in hand, which is a
+ *   file move and takes a moment rather than a download.
  *
- *   1. The branch history is read from the GitHub API. The newest build is
- *      taken automatically; any older one is taken by highlighting it.
+ *   This screen itself starts nothing. Opening it reads no branch, compares no
+ *   build and fetches nothing: it shows the list the launch check already read,
+ *   with whatever came down marked as ready to install, and every other build
+ *   waiting on a press.
+ *
+ *   1. The branch history is read from the GitHub API. On the title screen the
+ *      newest build is taken automatically; here any build is taken by
+ *      highlighting it and pressing.
  *   2. Every file in that build is compared with the local one by git blob
  *      hash, so only files that really differ are downloaded, and only those
  *      count toward the download size. A text file whose only difference is
@@ -114,9 +121,9 @@
  *
  *   Esc stops a download at any point and clears what came down; nothing
  *   outside save/updater has been touched either way. The one thing the
- *   automatic download will not do is cross a major update (below): there it
- *   stops after the comparison and says what has to be downloaded instead,
- *   since a patched copy is not a whole one.
+ *   automatic download will not do is cross a major update (below): the title
+ *   screen names it instead and offers the whole game, since a patched copy is
+ *   not a whole one.
  *
  * Nothing is ever deleted: files that exist here but not in the repository are
  * left alone, and so is everything under save/. Going back to an older build
@@ -137,9 +144,9 @@
  *   so both screens offer the whole game instead of only naming it: a DOWNLOAD
  *   THE FULL GAME button, on the title screen under the update notice and in
  *   the updater's action list, opens the fullDownloadUrl parameter in the
- *   player's own browser. The automatic update stops there rather than patching
- *   across it on its own; the ordinary install is still offered under it for a
- *   player who wants the files anyway.
+ *   player's own browser. The automatic download on the title screen stops
+ *   there rather than patching across it on its own; the ordinary download is
+ *   still offered under it for a player who wants the files anyway.
  *
  * The build number and the build name
  *   Whichever build is installed is also a number: how many commits on the
@@ -595,8 +602,17 @@
             const group = line.match(/^#+\s+(.*)$/);
             if (group) { current.entries.push({ heading: group[1].trim() }); continue; }
             const entry = line.match(/^[-*]\s+(.*)$/);
-            if (entry) current.entries.push(entry[1].trim());
-            else if (typeof current.entries[current.entries.length - 1] === 'string') {
+            if (entry) { current.entries.push(entry[1].trim()); continue; }
+            // The changelog writes its groups as bare "Added:", "Changed:" and
+            // "Fixed:" lines rather than as markdown headings. Read on its own
+            // that is neither a heading nor an entry, so it used to fall to the
+            // wrap-up branch below and be glued onto the end of the entry above
+            // it: the update list showed "patreon vault Changed:" as one line.
+            // Tested for AFTER the entry match, so an entry that happens to end
+            // in a colon is still an entry.
+            const named = line.match(/^([A-Za-z][A-Za-z ]{0,30}):$/);
+            if (named) { current.entries.push({ heading: named[1].trim() }); continue; }
+            if (typeof current.entries[current.entries.length - 1] === 'string') {
                 const last = current.entries.length - 1;
                 current.entries[last] += ' ' + line;
             }
@@ -1904,9 +1920,6 @@
             this._buildIndex   = 0;
             this._section      = 'builds';
             this._actionIndex  = 0;
-            // The automatic update runs once per opening, and once again for
-            // each tab the player switches to.
-            this._autoRan      = false;
             this._log          = [];
             this._progress     = null;
             this._status       = {};   // commit sha -> 'checking' | 'failed'
@@ -1926,9 +1939,10 @@
             UpdaterInput.activate(this);
             setTimeout(() => { if (this._container) this._container.classList.add('gu-shown'); }, 16);
 
-            // Opening the screen is itself the request for an update: the
-            // branch is read and the newest build taken, without a press.
-            this._autoStart();
+            // Opening the screen starts nothing: no branch is read, no build is
+            // compared and nothing is fetched until the player presses for it.
+            // The title screen is where an update happens on its own, and what
+            // it fetched is already waiting here as one button that installs it.
         }
 
         update() {
@@ -2102,53 +2116,6 @@
             return !!(commit && GameUpdater.majorAhead(commit.sha));
         }
 
-        // Opening the screen reads the build list, compares the newest build
-        // against the files here and fetches whatever it holds that this copy
-        // lacks, all without a press. Nothing is installed: the download sits
-        // in the staging folder and the action list turns into one button that
-        // swaps it in when the player wants it.
-        //
-        // Two things hold it back. A build already fetched and waiting only on
-        // the game closing has nothing left to download; and the title screen's
-        // own launch check may still be reading the branch, in which case this
-        // takes that answer when it lands rather than asking GitHub the same
-        // question a second time.
-        _autoStart() {
-            if (!isAvailable() || this._autoRan) return;
-            this._autoRan = true;
-            if (GameUpdater.needsRestart()) return;
-            if (GameUpdater.autoPending()) {
-                GameUpdater.autoCheck().then(() => {
-                    if (SceneManager._scene !== this || !this._container) return;
-                    this._refreshDOM();
-                    this._autoRun();
-                });
-                return;
-            }
-            // A list already read for this tab (by the launch check, or by an
-            // earlier visit to this screen) is the same list a fresh read would
-            // return, so it is used as it stands.
-            if (GameUpdater.commits().length) this._autoRun();
-            else this._loadHistory(false, () => this._autoRun());
-        }
-
-        // Take the newest build of the branch on show: compare it, then fetch
-        // whatever differs into the staging folder. Installing it is never
-        // automatic, and neither is crossing a major update, which _runDownload
-        // stops at because a patched copy is not a whole one.
-        _autoRun() {
-            if (!isAvailable() || this._isWorking()) return;
-            const latest = GameUpdater.commits()[0];
-            if (!latest) return;
-            this._buildIndex = 0;
-            this._selectionChanged();
-            // Already down from an earlier visit, or already the build being
-            // played: either way there is nothing left to fetch.
-            if (GameUpdater.stagedFor(latest.sha)) return;
-            if (GameUpdater.isCurrentVersion(latest)) return;
-            this._runDownload(latest.sha, true);
-        }
-
         // -- channels --------------------------------------------------------
 
         _stepChannel(delta) {
@@ -2159,9 +2126,9 @@
             this._switchChannel(next.key);
         }
 
-        // Moving to the other tab reads that branch and takes its newest build
-        // the same way opening the screen does, so choosing UNSTABLE is the
-        // whole of switching to it rather than the first half.
+        // Moving to the other tab reads that branch's build list, since that is
+        // what the press asked to see. It stops there: no build is compared and
+        // nothing is fetched, exactly as when the screen was opened.
         _switchChannel(key) {
             const T = getT();
             if (!isAvailable() || this._isWorking()) return;
@@ -2174,14 +2141,12 @@
             this._progress    = null;
             this._pushLog(fmt(T.logChannel, GameUpdater.branchName()));
             this._refreshDOM();
-            this._autoRan = false;
-            this._autoStart();
+            if (!GameUpdater.commits().length) this._loadHistory(false);
         }
 
-        // `thenCheck` chains what happens once the list is in: a function is
-        // called, anything else truthy runs the ordinary check. That is how
-        // opening the screen answers "is there a new build" on its own.
-        _loadHistory(more, thenCheck) {
+        // `then` chains what happens once the list is in, and is the only way
+        // anything follows a read: the list itself is all a read ever does.
+        _loadHistory(more, then) {
             const T = getT();
             if (!isAvailable() || this._isWorking()) return;
             const before = GameUpdater.commits().length;
@@ -2197,9 +2162,7 @@
                         this._pushLog(T.logNoMore);
                     }
                     this._refreshDOM();
-                    if (!thenCheck || !GameUpdater.commits().length) return;
-                    if (typeof thenCheck === 'function') thenCheck();
-                    else this._runAction('check');
+                    if (typeof then === 'function' && GameUpdater.commits().length) then();
                 })
                 .catch((err) => {
                     this._progress = null;
@@ -2227,7 +2190,7 @@
 
             if (key === 'history' || key === 'more') {
                 SoundManager.playOk();
-                this._loadHistory(key === 'more', key === 'history');
+                this._loadHistory(key === 'more');
                 return;
             }
             // The one thing this screen cannot do for the player: the whole
@@ -2277,16 +2240,14 @@
 
         // Fetching a build: compare it with what is here, then pull whatever
         // differs into the staging folder. Nothing in the game folder is
-        // touched, so this can run on its own without ever changing the copy
-        // being played; installing what came down is a separate press.
+        // touched, so a download never changes the copy being played;
+        // installing what came down is a separate press.
         //
-        // `auto` marks the run nobody asked for by name, the one opening the
-        // screen or switching tab starts. That one stops short of fetching
-        // across a major update: patching a copy over one leaves it half on the
-        // old build, and the only thing that finishes it is a download this
-        // screen cannot do. The player is told so and the buttons under the
-        // notice, the whole game first, are left for them to choose from.
-        _runDownload(sha, auto) {
+        // Every run here has a press behind it, so nothing is held back: a
+        // build that crosses a major update is fetched when the player asks for
+        // it, with the whole-game button sitting above it in the action list
+        // saying that the files are only half of that update.
+        _runDownload(sha) {
             const T = getT();
             const onProgress = (info) => this._onProgress(info);
             const finish = () => {
@@ -2315,12 +2276,6 @@
                     // Nothing to fetch: the compare has already recorded this
                     // build as the one running.
                     if (!plan || !plan.changed.length) return null;
-                    const major = auto ? GameUpdater.majorAhead(sha) : null;
-                    if (major) {
-                        this._pushLog(fmt(T.logMajorHold, major.message || shortSha(major.sha)));
-                        this._pushLog(fmt(T.logFullDownloadHint, GameUpdater.fullDownloadUrl()));
-                        return null;
-                    }
                     this._status[sha] = 'downloading';
                     this._progress = 0;
                     this._refreshDOM();

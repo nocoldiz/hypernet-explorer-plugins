@@ -210,19 +210,26 @@
         `${T('Galaxy.hud.sbBridge')}</span>` +
         `<span class="gx-btn focusable" tabindex="0" data-action="return-earth-toggle" ` +
         `data-role="return-earth-btn">${T('Galaxy.hud.returnToEarth')}</span>` +
-        `<span class="gx-btn gx-land focusable" tabindex="0" data-action="return-earth-course" ` +
-        `data-role="return-earth-course-btn" class="ui-closed" ` +
+        // Folded away until Return to Earth is opened. The `ui-closed` used to
+        // sit in a SECOND class attribute, which HTML drops on the floor - the
+        // button was permanently on screen, one of a rail full of controls that
+        // were never meant to all be showing at once.
+        `<span class="gx-btn gx-land focusable ui-closed" tabindex="0" data-action="return-earth-course" ` +
+        `data-role="return-earth-course-btn" ` +
         `title="${T('Galaxy.hud.plotACourseHomeMilky')}">` +
         `${T('Galaxy.hud.setCourse')}</span>` +
-        `<span class="gx-btn gx-sb focusable" tabindex="0" data-action="return-earth-eb" ` +
-        `data-role="return-earth-eb-btn" class="ui-closed" ` +
-        `title="${T('Galaxy.hud.quantumBridgeStraightHomeCosts')}">${T('Galaxy.hud.ebBridge')}</span>` +
+        // Refuelling is an action like any other on this rail, so it stands
+        // with them rather than buried in the corner of the fuel readout.
+        `<span class="gx-btn gx-refuel focusable" tabindex="0" data-action="refuel-auto" ` +
+        `data-role="refuel-btn" title="${T('Galaxy.hud.refuelTooltip')}">` +
+        `${T('Galaxy.hud.refuel')}</span>` +
         `<span class="gx-btn focusable" tabindex="0" data-action="close-map" ` +
         `data-role="close-map-btn" title="${T('Galaxy.hud.closeMapTooltip')}">${T('Galaxy.hud.closeMap')}</span>`;
 
       const catalog = document.createElement("div");
       catalog.id = "gx-catalog";
       catalog.className = "gx-panel";
+      catalog.style.display = "none";
 
       const info = document.createElement("div");
       info.id = "gx-info";
@@ -260,15 +267,19 @@
         `<div class="gx-fuel-row"><span class="gx-fuel-name">${T('Galaxy.hud.hyperflux')}</span>` +
         `<span class="gx-fuel-bar"><span class="gx-fuel-fill hyperflux" data-role="hf-fill"></span></span>` +
         `<span class="gx-fuel-val" data-role="hf-val">-</span></div>` +
+        // Schrödingerite was a strip of up to 46 little pellets, rebuilt as
+        // innerHTML every time a single charge moved. It is a count, so it
+        // reads as one: the same bar and number the other two rows use.
         `<div class="gx-fuel-row"><span class="gx-fuel-name">${T('Galaxy.hud.schrD')}</span>` +
-        `<span class="gx-sb-pips" data-role="sb-pips"></span>` +
+        `<span class="gx-fuel-bar"><span class="gx-fuel-fill schrod" data-role="sb-fill"></span></span>` +
         `<span class="gx-fuel-val" data-role="sb-val">-</span></div>` +
         `<div class="gx-fuel-row"><span class="gx-fuel-name">${T('Galaxy.hud.mapFuel')}</span>` +
         `<span class="gx-fuel-bar"><span class="gx-fuel-fill mapfuel" data-role="mf-fill"></span></span>` +
         `<span class="gx-fuel-val" data-role="mf-val">-</span></div>` +
+        // The Refuel button itself now stands on the left rail with the other
+        // actions; what stays here is the line saying where the fuel is coming
+        // from, which belongs beside the gauges it explains.
         `<div class="gx-refuel-row">` +
-        `<span class="gx-btn gx-refuel focusable" tabindex="0" data-action="refuel-auto" ` +
-        `data-role="refuel-btn" title="${T('Galaxy.hud.refuelTooltip')}">${T('Galaxy.hud.refuel')}</span>` +
         `<span class="gx-refuel-hint" data-role="refuel-hint"></span></div>`;
 
       const mode = document.createElement("div");
@@ -396,9 +407,8 @@
       this.els.hfVal = fuel.querySelector('[data-role="hf-val"]');
       this.els.hfPct = fuel.querySelector('[data-role="hf-pct"]');
       this.els.fuelSub = fuel.querySelector('[data-role="fuel-sub"]');
-      this.els.refuelBtn = fuel.querySelector('[data-role="refuel-btn"]');
       this.els.refuelHint = fuel.querySelector('[data-role="refuel-hint"]');
-      this.els.sbPips = fuel.querySelector('[data-role="sb-pips"]');
+      this.els.sbFill = fuel.querySelector('[data-role="sb-fill"]');
       this.els.sbVal = fuel.querySelector('[data-role="sb-val"]');
       this.els.mfFill = fuel.querySelector('[data-role="mf-fill"]');
       this.els.mfVal = fuel.querySelector('[data-role="mf-val"]');
@@ -415,7 +425,7 @@
       this.els.sbBtn = catToggle.querySelector('[data-role="sb-btn"]');
       this.els.returnEarthBtn = catToggle.querySelector('[data-role="return-earth-btn"]');
       this.els.returnEarthCourseBtn = catToggle.querySelector('[data-role="return-earth-course-btn"]');
-      this.els.returnEarthEbBtn = catToggle.querySelector('[data-role="return-earth-eb-btn"]');
+      this.els.refuelBtn = catToggle.querySelector('[data-role="refuel-btn"]');
       this.els.warp = warp;
       this.els.warpFlash = warp.querySelector('[data-role="warp-flash"]');
       this.els.warpBox = warp.querySelector('[data-role="warp-box"]');
@@ -685,6 +695,9 @@
     }
 
     isCatalogOpen() {
+      if (window.GalaxySim && typeof window.GalaxySim.isShipControlsOpen === "function") {
+        return window.GalaxySim.isShipControlsOpen();
+      }
       return window.UIPanel.isOpen(this.els.catalog);
     }
 
@@ -694,6 +707,10 @@
     }
 
     setCatalogOpen(open) {
+      if (window.GalaxySim && typeof window.GalaxySim.openShipControls === "function") {
+        if (open) window.GalaxySim.openShipControls();
+        else if (typeof window.GalaxySim.closeShipControls === "function") window.GalaxySim.closeShipControls();
+      }
       if (!this.els.catalog) return;
       window.UIPanel.toggle(this.els.catalog, open);
       if (open) {
@@ -790,17 +807,9 @@
       const sbMax = f.schrodingeriteMax || 92;
       const sb = Math.max(0, Math.min(sbMax, Math.floor(f.schrodingerite || 0)));
       if (this.els.sbVal) this.els.sbVal.textContent = sb + " / " + sbMax;
-      if (this.els.sbPips) {
-        // A compact pip strip (capped at 46 pips so it never overflows the row);
-        // each pip is worth ceil(max/shown) charges when the cap is hit.
-        const shown = Math.min(sbMax, 46);
-        const per = sbMax / shown;
-        let html = "";
-        for (let i = 0; i < shown; i++) {
-          const on = sb >= Math.ceil((i + 1) * per);
-          html += `<span class="gx-sb-pip${on ? " on" : ""}"></span>`;
-        }
-        if (html !== this._sbPipHtml) { this._sbPipHtml = html; this.els.sbPips.innerHTML = html; }
+      if (this.els.sbFill) {
+        window.UIPanel.setBar(this.els.sbFill,
+          (sbMax > 0 ? (sb / sbMax) * 100 : 0).toFixed(1));
       }
 
       const mfMax = f.mapFuelMax || 10000;
@@ -853,24 +862,23 @@
       if (text !== this._sbLabel) { this._sbLabel = text; btn.textContent = text; }
     }
 
-    // ---- Return to Earth: toggling the button reveals its two sub-actions --
+    // ---- Return to Earth: toggling the button reveals the course it plots ---
+    // There used to be a second sub-action here, EB Bridge, which was the
+    // Schrödinger-Bohr bridge pointed at Earth - the same jump the SB-Bridge
+    // button already makes, under a second name. Going home is one button now.
     isReturnEarthOpen() { return !!this._returnEarthOpen; }
 
     setReturnEarthOpen(open) {
       this._returnEarthOpen = !!open;
       const show = this._returnEarthOpen ? "" : "none";
       window.UIPanel.toggle(this.els.returnEarthCourseBtn, show);
-      window.UIPanel.toggle(this.els.returnEarthEbBtn, show);
       this._invalidateFocusables();
     }
 
-    /** @param {boolean} canCourse @param {boolean} canEb */
-    setReturnEarthOptions(canCourse, canEb) {
+    /** @param {boolean} canCourse */
+    setReturnEarthOptions(canCourse) {
       if (this.els.returnEarthCourseBtn) {
         this.els.returnEarthCourseBtn.classList.toggle("gx-disabled", !canCourse);
-      }
-      if (this.els.returnEarthEbBtn) {
-        this.els.returnEarthEbBtn.classList.toggle("gx-disabled", !canEb);
       }
     }
 
@@ -1594,8 +1602,6 @@
         cb.onReturnEarthToggle();
       } else if (action === "return-earth-course" && cb.onReturnEarthCourse) {
         cb.onReturnEarthCourse();
-      } else if (action === "return-earth-eb" && cb.onReturnEarthEb) {
-        cb.onReturnEarthEb();
       } else if (action === "catalog" && cb.onCatalogToggle) {
         cb.onCatalogToggle();
       } else if (action === "cat-zoom" && cb.onCatalogZoom) {

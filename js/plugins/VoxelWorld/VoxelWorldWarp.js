@@ -252,6 +252,18 @@
         update(o) {
             const { camera, van, renderer, intensity: i, time, delta, baseExposure, scene, viewMode } = o;
 
+            // The overdrive is off (the scene pins the intensity at 0), and off
+            // it still cost a full pass every frame: a DOM write, an exposure
+            // write, an UNCONDITIONAL camera.updateProjectionMatrix - a matrix
+            // rebuild and a uniform upload for nothing - a scale written onto
+            // the camper that dirtied its whole subtree's world matrices, a walk
+            // over fourteen eldritch meshes to set visible = false on each of
+            // them again, and an emissive write. Once everything it had touched
+            // is back where it found it there is nothing left to do until
+            // somebody turns it on, so it stops here.
+            if (i <= 0 && this._quiet) return;
+            this._quiet = (i <= 0);
+
             // --- DOM tint / vignette: violet at mid, blood red at the limit ---
             this._dom.style.opacity = i <= 0 ? '0' : String(Math.min(0.92, 0.22 + i * i * 0.88));
             if (i > 0) {

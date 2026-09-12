@@ -46,26 +46,63 @@ class Main {
     }
 
     setupNwjsWindow() {
-        // [Note] NW.js opens the window before any game code runs, so asking
-        //   for fullscreen from here only takes effect seconds later, after a
-        //   windowed frame has already been shown. package.json declares the
-        //   window fullscreen instead, which the OS honours from the very
-        //   first paint; all this has to do is undo it for a playtest.
+        // [Note] This is the ONLY place the OS window is put into its boot
+        //   state, and it runs before the first frame is painted. Nothing
+        //   later may resize or re-fullscreen it: on NW.js every programmatic
+        //   window change drops fullscreen, which is what used to make the
+        //   boot screen shrink to a black window and jump back.
+        //   UI/ResolutionSwitcher.js therefore neutralises Scene_Boot's own
+        //   window resize and only ever corrects a state that disagrees here.
         if (typeof nw !== "object") {
             return;
         }
         const win = nw.Window.get();
         Main.nwWindow = win;
         Main.isNwFullscreen = !!win.isFullscreen;
+        Main.wantsFullscreen = this.readFullscreenPreference();
         win.on("enter-fullscreen", () => (Main.isNwFullscreen = true));
         win.on("leave-fullscreen", () => (Main.isNwFullscreen = false));
-        if (this.isPlaytest()) {
-            win.leaveFullscreen();
+        if (this.isPlaytest() || !Main.wantsFullscreen) {
+            // A saved "windowed" answer is honoured from the very first paint,
+            // so a player who asked for a window never sees a fullscreen flash.
+            // Maximized rather than the bare package.json size, so the window
+            // still matches the canvas.
+            if (win.isFullscreen) {
+                win.leaveFullscreen();
+            }
             win.maximize();
         } else if (!win.isFullscreen) {
             win.enterFullscreen();
         }
         win.focus();
+    }
+
+    readFullscreenPreference() {
+        // [Note] ConfigManager only loads seconds from now, long after the
+        //   window has been shown, so the saved answer is read straight off
+        //   disk here. save/config.rmmzsave is pako-deflated JSON written as
+        //   a binary string; Node's own zlib reads the same bytes back.
+        //   Anything unreadable, absent or malformed means "no answer yet",
+        //   and fullscreen is the default a first run gets.
+        try {
+            const fs = require("fs");
+            const path = require("path");
+            const zlib = require("zlib");
+            const base = path.dirname(process.mainModule.filename);
+            const file = path.join(base, "save", "config.rmmzsave");
+            if (!fs.existsSync(file)) {
+                return true;
+            }
+            const zip = fs.readFileSync(file, { encoding: "utf8" });
+            const json = zlib.inflateSync(Buffer.from(zip, "latin1")).toString("utf8");
+            const config = JSON.parse(json);
+            if (!config || typeof config !== "object" || !("fullscreen" in config)) {
+                return true;
+            }
+            return !!config.fullscreen;
+        } catch (e) {
+            return true;
+        }
     }
 
     showLoadingSpinner() {
@@ -239,9 +276,23 @@ class Main {
         if (!win) {
             return;
         }
-        Graphics._isFullScreen = () => Main.isNwFullscreen;
-        Graphics._requestFullScreen = () => win.enterFullscreen();
-        Graphics._cancelFullScreen = () => win.leaveFullscreen();
+        // The live window property, not the cached flag: NW.js delivers
+        // enter/leave-fullscreen asynchronously, so a caller that changed the
+        // state and asked about it in the same tick used to read the old
+        // answer and skip the correction it had just earned.
+        Graphics._isFullScreen = () =>
+            typeof win.isFullscreen === "boolean" ? win.isFullscreen : Main.isNwFullscreen;
+        Graphics._requestFullScreen = () => {
+            if (!Graphics._isFullScreen()) {
+                win.enterFullscreen();
+            }
+        };
+        Graphics._cancelFullScreen = () => {
+            if (Graphics._isFullScreen()) {
+                win.leaveFullscreen();
+            }
+            win.maximize();
+        };
     }
 
     onScriptError(e) {

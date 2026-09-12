@@ -135,6 +135,15 @@
     .filter((k) => PLANET_TYPES[k] && PLANET_TYPES[k].supportLife);
 
   const GALAXY_SYSTEM_COUNT = 220;   // travelable systems generated per procedural (non-Milky-Way) galaxy
+  // A procedural galaxy's OWN lazy field. The Milky Way has streamed a dense
+  // star cloud into the disk around the camera since the lazy chunks went in
+  // (see generateLazyChunk); every other galaxy had nothing but the 220 named
+  // systems above and its central hole, so zooming into one landed in near
+  // empty space. These are the same idea in that galaxy's local frame, which
+  // buildProceduralGalaxy keeps in WORLD units rather than light-years.
+  const GALAXY_LAZY_CHUNK = 60;      // disk-plane cell size (world units)
+  const GALAXY_LAZY_PER_CHUNK = 5;   // systems per chunk at the core's density
+  const GALAXY_LAZY_CACHE = 256;     // generated galaxy chunks kept in memory (LRU)
   const GAL_SUN_R_LY = 26000;        // Sun distance from the galactic core
   const GAL_DISK_RADIUS_LY = 52000;  // visible disk radius
   const GAL_DISK_SCALE_LY = 9000;    // radial density scale length
@@ -732,7 +741,8 @@
       const currentTime = Date.now();
       const elapsedSeconds = (currentTime - this.playerShip.departureTime) / 1000;
 
-      const baseSpeed = 1;
+      // Travelling to other stars (interstellar) has base speed 0.5.
+      const baseSpeed = isIntraSystem ? 1 : 0.5;
       const distanceTraveled = elapsedSeconds * baseSpeed * speedMultiplier;
       const maxProgress = 0.95;
       // Zero-distance travel would make progress NaN; treat it as an instant arrival.
@@ -1050,18 +1060,20 @@
       };
 
       // Inside a procedural galaxy only that galaxy's own systems are reachable
-      // in this frame (names "GX.<seed>.<i>", see generateGalaxySystems).
+      // in this frame (see GalaxySim.Math.galaxySeedOfSystemName for the two
+      // name shapes that mean "out there").
+      const GM = (window.GalaxySim && window.GalaxySim.Math) || {};
+      const seedOf = GM.galaxySeedOfSystemName || (() => null);
       const cur = (ship && ship.currentSystem) || this.currentSystem;
-      if (typeof cur === "string" && cur.startsWith("GX.")) {
-        const seed = parseInt(cur.split(".")[1], 10);
-        if (!Number.isFinite(seed)) return null;
-        this.generateGalaxySystems(seed).forEach(consider);
+      const curSeed = seedOf(cur);
+      if (curSeed != null) {
+        this.generateGalaxySystems(curSeed).forEach(consider);
         return best;
       }
 
       // Milky Way: the static/procedural catalog inside the bubble first...
       this.getAllSystems().forEach((sys) => {
-        if (!String(sys.name).startsWith("GX.")) consider(sys);
+        if (seedOf(sys.name) == null) consider(sys);
       });
       // ...then the lazy field in expanding rings of chunks around the ship, so
       // a ship stranded out in the sparse disk still finds something to burn.
@@ -2350,6 +2362,74 @@
       return list;
     }
 
+    /** The disk radius buildProceduralGalaxy draws for this seed, in world
+     *  units. Both sides derive it the same way so the stars a galaxy holds
+     *  land inside the disk it is drawn with. */
+    galaxyDiskRadius(seed) {
+      return 1500 + (Math.abs(seed) % 700);
+    }
+
+    /**
+     * One chunk of a procedural galaxy's own star field, in that galaxy's local
+     * WORLD-unit frame (x/z across the disk, y its thickness) - the frame
+     * buildProceduralGalaxy places everything else in.
+     *
+     * The Milky Way's equivalent is generateLazyChunk; this mirrors it exactly:
+     * star-only bodies (planets are grown on entry by materializeLazySystem),
+     * an LRU chunk cache, and an RNG stream consumed in a FIXED order so that
+     * culling a star never shifts the ones after it and a chunk regenerates
+     * identically every visit.
+     */
+    generateGalaxyLazyChunk(seed, cx, cz) {
+      if (!this._galaxyLazyChunks) this._galaxyLazyChunks = new Map();
+      const key = seed + "," + cx + "," + cz;
+      const cached = this._galaxyLazyChunks.get(key);
+      if (cached) return cached;
+
+      const R = this.galaxyDiskRadius(seed);
+      const rng = new RandomGenerator("GZ:" + seed + ":" + cx + ":" + cz);
+      const x0 = cx * GALAXY_LAZY_CHUNK;
+      const z0 = cz * GALAXY_LAZY_CHUNK;
+      const ccx = x0 + GALAXY_LAZY_CHUNK / 2;
+      const ccz = z0 + GALAXY_LAZY_CHUNK / 2;
+      // Density falls off exponentially from the core, so the bulge is crowded
+      // and the rim is sparse, and stops dead at the edge of the drawn disk.
+      const rCentre = Math.sqrt(ccx * ccx + ccz * ccz);
+      const density = Math.min(6, Math.exp(-rCentre / (R * 0.35)));
+      const count = rCentre > R
+        ? 0
+        : Math.round(GALAXY_LAZY_PER_CHUNK * density * (0.5 + rng.random()));
+
+      const systems = [];
+      for (let i = 0; i < count; i++) {
+        const x = x0 + rng.random() * GALAXY_LAZY_CHUNK;
+        const z = z0 + rng.random() * GALAXY_LAZY_CHUNK;
+        const h = (rng.random() + rng.random() + rng.random() - 1.5) / 1.5;
+        const y = h * R * 0.012;
+        if (Math.sqrt(x * x + z * z) > R) continue;
+        systems.push(this._makeLazyStar(
+          "GZ." + seed + "." + cx + "." + cz + "." + i, x, y, z, rng));
+      }
+
+      this._galaxyLazyChunks.set(key, systems);
+      if (this._galaxyLazyChunks.size > GALAXY_LAZY_CACHE) {
+        this._galaxyLazyChunks.delete(this._galaxyLazyChunks.keys().next().value);
+      }
+      return systems;
+    }
+
+    /** Rebuild one galaxy lazy star from its "GZ.<seed>.<cx>.<cz>.<i>" name. */
+    _regenerateGalaxyLazySystem(name) {
+      const parts = String(name).split(".");
+      if (parts.length < 5 || parts[0] !== "GZ") return null;
+      const seed = parseInt(parts[1], 10);
+      const cx = parseInt(parts[2], 10);
+      const cz = parseInt(parts[3], 10);
+      if (!Number.isFinite(seed) || !Number.isFinite(cx) || !Number.isFinite(cz)) return null;
+      const chunk = this.generateGalaxyLazyChunk(seed, cx, cz);
+      return chunk.find((s) => s.name === name) || null;
+    }
+
     // Rebuild a whole procedural galaxy's system list from a "GX.<seed>.<i>"
     // name (used by getSystem when a save restores mid-flight out there).
     _regenerateGalaxySystem(name) {
@@ -2458,6 +2538,11 @@
         const lazy = this._regenerateLazySystem(name);
         if (lazy) return this.materializeLazySystem(lazy);
       }
+      // The same, for a star streamed into a procedural galaxy's own field.
+      if (typeof name === "string" && name.startsWith("GZ.")) {
+        const lazy = this._regenerateGalaxyLazySystem(name);
+        if (lazy) return this.materializeLazySystem(lazy);
+      }
       if (typeof name === "string" && name.startsWith("GX.")) {
         const parts = name.split(".");
         if (parts.length === 3 && parts[2] === "BH") {
@@ -2488,7 +2573,8 @@
       if (this.systems.has(name)) {
         this.currentSystem = name;
         console.log(`Current system set to: ${name}`);
-      } else if (typeof name === "string" && (name.startsWith("LZ.") || name.startsWith("GX."))) {
+      } else if (typeof name === "string" &&
+                 (name.startsWith("LZ.") || name.startsWith("GX.") || name.startsWith("GZ."))) {
         // Lazy/galaxy systems aren't generated until entered; still record them
         // as current so var 96 (written by the caller) stays in sync with
         // currentSystem. getSystem() regenerates the body by name on demand.
@@ -2511,6 +2597,7 @@
   // Exposed so the 3D scene's lazy star field maps world coords to chunks with
   // the exact same cell size used here.
   StarMapDataManager.LAZY_CHUNK_LY = LAZY_CHUNK_LY;
+  StarMapDataManager.GALAXY_LAZY_CHUNK = GALAXY_LAZY_CHUNK;
   // Fuel caps, exposed so the HUD can draw gauges against them.
   StarMapDataManager.HYPERFLUX_MAX = HYPERFLUX_MAX;
   StarMapDataManager.SCHRODINGERITE_MAX = SCHRODINGERITE_MAX;

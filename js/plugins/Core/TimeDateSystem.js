@@ -149,18 +149,18 @@
  *
  * @param proteinFactor
  * @text Protein Factor
- * @desc Multiplier for protein in hunger recovery calculation.
+ * @desc Satiety bonus per gram of protein. Small: the calorie count already carries this energy.
  * @type number
  * @decimals 2
- * @default 2.00
+ * @default 0.10
  * @parent --- Realistic Hunger Recovery ---
  *
  * @param fatFactor
  * @text Fat Factor
- * @desc Multiplier for fat in hunger recovery calculation.
+ * @desc Satiety bonus per gram of fat. Small: the calorie count already carries this energy.
  * @type number
  * @decimals 2
- * @default 1.50
+ * @default 0.08
  * @parent --- Realistic Hunger Recovery ---
  *
  *
@@ -455,9 +455,28 @@
   const fatVariableId = Number(parameters.fatVariableId || 89);
   const proteinVariableId = Number(parameters.proteinVariableId || 90);
   const calorieFactor = Number(parameters.calorieFactor || 0.1);
-  const proteinFactor = Number(parameters.proteinFactor || 2.0);
   const caffeineVariableId = Number(parameters.caffeineVariableId || 91);
-  const fatFactor = Number(parameters.fatFactor || 1.5);
+
+  // The protein and fat factors changed UNIT, not just value. They used to
+  // price a gram as food in its own right; they now pay a satiety bonus on top
+  // of energy the calorie count already carries. A project saved under the old
+  // meaning (protein 2.00, fat 1.50) is not a designer's choice under the new
+  // one, it is a reading in the wrong unit, and it is what made a tin stating
+  // 200 calories fill most of a day's meter.
+  //
+  // A gram cannot be worth more to the meter than the energy in that gram:
+  // protein carries about 4 calories, fat about 9. Anything above that ceiling
+  // was written in the old unit, so the default is used instead. A designer
+  // who sets a real satiety bonus is under the ceiling and is honoured.
+  const KCAL_PER_GRAM = { protein: 4, fat: 9 };
+  function macroFactor(name, fallback) {
+    const saved = Number(parameters[name + "Factor"]);
+    if (!Number.isFinite(saved) || saved <= 0) return fallback;
+    const ceiling = KCAL_PER_GRAM[name] * calorieFactor;
+    return saved <= ceiling ? saved : fallback;
+  }
+  const proteinFactor = macroFactor("protein", 0.1);
+  const fatFactor = macroFactor("fat", 0.08);
   const caffeineFactor = Number(parameters.caffeineFactor || 1.5);
 
   // Time Management Parameters
@@ -2821,6 +2840,15 @@
 
     // Hunger points from a nutrition reading: the EatFood formula, and the only
     // copy of it left.
+    //
+    // The calorie count is the whole of the meal, and it is the number the item
+    // card and the shop print, so it is the number the meter has to follow. The
+    // protein and fat grams are ENERGY ALREADY INSIDE that count, not extra
+    // food on top of it: valued at a factor of their own they were paying for
+    // the same mouthful twice, and two thirds of everything a meal restored
+    // came from them. A tin stating 200 calories filled most of a day's meter.
+    // They are a satiety garnish now, worth a fraction of a point a gram, so
+    // what the bar moves by is what the label said.
     recoveryOf(nutrition) {
       const n = nutrition || {};
       return ((Number(n.calories) || 0) * calorieFactor) +

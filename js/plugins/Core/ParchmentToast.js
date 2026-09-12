@@ -131,6 +131,10 @@
   const REWARD_BASE_FRAMES = 240;
   const REWARD_LINE_FRAMES = 55;
   const REWARD_MAX_FRAMES = 660;
+  // Bulk reward items are chunked so a large container or chest find never
+  // trails off the screen: each portion displays up to MAX_REWARD_ENTRIES,
+  // lingers for reading, fades out, and yields to the next portion.
+  const MAX_REWARD_ENTRIES = 6;
 
   // The rarity ladder ItemSystemUtils reads out of js/db/Items/Rarity.json,
   // low to high. A row is coloured by where its tier sits in that ladder, not
@@ -384,6 +388,11 @@
         toast.fadeTimer = setTimeout(() => {
           if (toast.el.parentNode) toast.el.parentNode.removeChild(toast.el);
           _live.delete(key);
+          if (typeof toast.onDismiss === "function") {
+            const cb = toast.onDismiss;
+            toast.onDismiss = null;
+            try { cb(); } catch (e) { console.warn(e); }
+          }
         }, FADE_MS);
       }
     }
@@ -531,6 +540,11 @@
         } else {
           log.addToast(toLogText(text, opts));
         }
+        if (typeof opts.onDismiss === "function") {
+          const cb = opts.onDismiss;
+          opts.onDismiss = null;
+          try { cb(); } catch (e) { console.warn(e); }
+        }
         return;
       }
     }
@@ -553,6 +567,7 @@
       existing.fading = false;
       existing.hideAt = hideAt;
       existing.persist = persist;
+      existing.onDismiss = opts.onDismiss;
       existing.el.className = classNameFor(severity, persist);
       existing.el.style.opacity = "1";
       renderInto(existing.el, text, opts);
@@ -566,6 +581,11 @@
     if (_live.size >= MAX_TOASTS) {
       for (const [k, toast] of _live) {
         if (toast.persist) continue;
+        if (toast.fadeTimer != null) {
+          clearTimeout(toast.fadeTimer);
+          toast.fadeTimer = null;
+        }
+        toast.onDismiss = null;
         if (toast.el.parentNode) toast.el.parentNode.removeChild(toast.el);
         _live.delete(k);
         break;
@@ -584,7 +604,7 @@
       el.style.opacity = "1";
     });
 
-    _live.set(key, { el, hideAt, fading: false, persist });
+    _live.set(key, { el, hideAt, fading: false, persist, onDismiss: opts.onDismiss });
     if (_rafId === null) _rafId = requestAnimationFrame(tick);
   }
 
@@ -607,6 +627,11 @@
     toast.fadeTimer = setTimeout(() => {
       if (toast.el.parentNode) toast.el.parentNode.removeChild(toast.el);
       _live.delete(k);
+      if (typeof toast.onDismiss === "function") {
+        const cb = toast.onDismiss;
+        toast.onDismiss = null;
+        try { cb(); } catch (e) { console.warn(e); }
+      }
     }, FADE_MS);
   }
 
@@ -626,6 +651,11 @@
 
   function clear() {
     for (const [, toast] of _live) {
+      if (toast.fadeTimer != null) {
+        clearTimeout(toast.fadeTimer);
+        toast.fadeTimer = null;
+      }
+      toast.onDismiss = null;
       if (toast.el.parentNode) toast.el.parentNode.removeChild(toast.el);
     }
     _live.clear();
@@ -695,6 +725,16 @@
       `<span class="toast-item-name">${escapeHtml(e.name)}</span>${qty}</div>`;
   }
 
+  function buildRewardHtml(title, head, lines, chunkEntries) {
+    let html = title ? `<div class="toast-title">${escapeHtml(title)}</div>` : "";
+    if (head && head.length) html += `<div class="toast-value">${escapeHtml(head.join(", "))}</div>`;
+    if (lines) {
+      for (const line of lines) html += `<div class="toast-note">${escapeHtml(line)}</div>`;
+    }
+    for (const e of chunkEntries) html += entryRow(e);
+    return html;
+  }
+
   /**
    * The standard "you got something" popup: battle spoils, harvested terrain,
    * dismantled furniture, opened loot. Every caller renders identically.
@@ -709,6 +749,12 @@
     const lines = (opts.lines || []).filter(Boolean);
     if (!entries.length && !gold && !exp && !knowledge && !lines.length) return;
 
+    // Remember what was just drawn, so the event command that hands the same
+    // thing over a moment later does not report it a second time. A popup that
+    // came from an event gain in the first place is not remembered: two chests
+    // holding the same item, opened one after the other, are two finds.
+    if (!opts.fromEventGain) noteRewarded(opts.entries, gold);
+
     const head = [];
     if (exp) head.push(`${exp} EXP`);
     if (gold) head.push(money(gold));
@@ -718,32 +764,50 @@
       ? ""
       : (opts.title || T('ParchmentToast.obtained'));
 
-    let html = title ? `<div class="toast-title">${escapeHtml(title)}</div>` : "";
-    if (head.length) html += `<div class="toast-value">${escapeHtml(head.join(", "))}</div>`;
-    for (const line of lines) html += `<div class="toast-note">${escapeHtml(line)}</div>`;
-    for (const e of entries) html += entryRow(e);
+    const chunks = [];
+    if (entries.length === 0) {
+      chunks.push([]);
+    } else {
+      for (let i = 0; i < entries.length; i += MAX_REWARD_ENTRIES) {
+        chunks.push(entries.slice(i, i + MAX_REWARD_ENTRIES));
+      }
+    }
 
-    // Remember what was just drawn, so the event command that hands the same
-    // thing over a moment later does not report it a second time. A popup that
-    // came from an event gain in the first place is not remembered: two chests
-    // holding the same item, opened one after the other, are two finds.
-    if (!opts.fromEventGain) noteRewarded(opts.entries, gold);
+    const baseKey = opts.key || `reward:${Date.now()}:${Math.random()}`;
 
-    // Everything the popup asks to be read counts: the value line, the notes
-    // and every item row.
-    const lineCount = entries.length + lines.length + (head.length ? 1 : 0);
-    const duration = opts.duration || Math.min(
-      REWARD_BASE_FRAMES + REWARD_LINE_FRAMES * Math.max(0, lineCount - 1),
-      REWARD_MAX_FRAMES
-    );
+    function showChunk(index) {
+      if (index >= chunks.length) return;
+      const isFirst = (index === 0);
+      const chunkEntries = chunks[index];
+      const chunkHead = isFirst ? head : [];
+      const chunkLines = isFirst ? lines : [];
+      const html = buildRewardHtml(title, chunkHead, chunkLines, chunkEntries);
 
-    show(html, {
-      severity: opts.severity || "info",
-      duration,
-      html: true,
-      // Rewards are always a fresh event, never a repeat of a live toast.
-      key: opts.key || `reward:${Date.now()}:${Math.random()}`  // i18n-ignore  dedupe key
-    });
+      // Everything the popup asks to be read counts: the value line, the notes
+      // and every item row.
+      const lineCount = chunkEntries.length + chunkLines.length + (chunkHead.length ? 1 : 0);
+      const duration = opts.duration || Math.min(
+        REWARD_BASE_FRAMES + REWARD_LINE_FRAMES * Math.max(0, lineCount - 1),
+        REWARD_MAX_FRAMES
+      );
+
+      const chunkKey = chunks.length > 1 ? `${baseKey}:${index}` : baseKey;
+
+      show(html, {
+        severity: opts.severity || "info",
+        duration,
+        html: true,
+        // Rewards are always a fresh event, never a repeat of a live toast.
+        key: chunkKey,
+        onDismiss: () => {
+          const fighting = typeof $gameParty !== "undefined" && !!$gameParty && $gameParty.inBattle();
+          if (fighting) return;
+          showChunk(index + 1);
+        }
+      });
+    }
+
+    showChunk(0);
   }
 
   function gold(amount, opts = {}) {

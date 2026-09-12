@@ -46,7 +46,7 @@
     // Map the channel "color" field (RMMZ window text color index) to a CSS swatch.
     const COLOR_SWATCHES = {
         0: '#ffffff', 2: '#3aa0ff', 3: '#5fe07a', 4: '#ff6b6b',
-        6: '#9b8cff', 8: '#c9a227', 14: '#ffd34d', 17: '#bfa9ff', 18: '#ff4fa3',
+        6: '#9b8cff', 8: '#3fbfb0', 14: '#7ad3ff', 17: '#bfa9ff', 18: '#ff4fa3',
         24: '#ff9f43'
     };
     function colorSwatch(color) {
@@ -146,7 +146,7 @@
                     } catch (e) { console.error('TV Guide: buildScript failed', e); }
                 }
                 if (!lines.length) {
-                    dlg.innerHTML = `<div style="color:var(--xp-ink-faint-2)">${T('HypernetTVGuide.noSignal')}</div>`;
+                    dlg.innerHTML = `<div style="color:var(--xp-text-muted)">${T('HypernetTVGuide.noSignal')}</div>`;
                     return;
                 }
 
@@ -190,9 +190,9 @@
                             <div style="flex:1; min-width:0">
                                 <div style="font-weight:bold">${escapeHtml(programTitle(p))}</div>
                                 <div style="font-size:14px; color:var(--xp-ink-soft)">${T('HypernetTVGuide.format')} ${escapeHtml(p.format || '?')} &nbsp;&middot;&nbsp; ${T('HypernetTVGuide.tone')} ${escapeHtml(p.tone || '?')}</div>
-                                <div style="font-size:14px; color:var(--xp-ink-faint-2)">${T('HypernetTVGuide.cast')} ${cast}</div>
+                                <div style="font-size:14px; color:var(--xp-text-muted)">${T('HypernetTVGuide.cast')} ${cast}</div>
                             </div>
-                            ${canPlay ? `<span style="margin-left:auto; font-size:14px; color:#3a6">${T('HypernetTVGuide.watch')}</span>` : ''}
+                            ${canPlay ? `<span style="margin-left:auto; font-size:14px; color:var(--xp-ok-dark)">${T('HypernetTVGuide.watch')}</span>` : ''}
                         </div>`;
                 }).join('');
 
@@ -203,10 +203,10 @@
                     </div>
                     <div style="font-size:14px; color:var(--xp-ink-soft); margin-bottom:10px">${T('HypernetTVGuide.tone')} ${escapeHtml(ch.tone || '?')}</div>
                     <div style="font-weight:bold; margin-bottom:2px; color:var(--xp-ink-4)">${T('HypernetTVGuide.programs')}</div>
-                    ${programs || `<div style="color:var(--xp-ink-faint-2)">${T('HypernetTVGuide.noPrograms')}</div>`}
+                    ${programs || `<div style="color:var(--xp-text-muted)">${T('HypernetTVGuide.noPrograms')}</div>`}
                     <div style="font-weight:bold; margin:12px 0 2px; color:var(--xp-ink-4)">${T('HypernetTVGuide.transmission')}</div>
                     <div id="tvguide-dialogue" style="min-height:60px; max-height:220px; overflow-y:auto; padding:8px; background:#f0efe6; border:1px solid var(--xp-silver-4); border-radius:3px">
-                        <div style="color:var(--xp-ink-faint-2)">${T('HypernetTVGuide.tuneInHint')}</div>
+                        <div style="color:var(--xp-text-muted)">${T('HypernetTVGuide.tuneInHint')}</div>
                     </div>
                 `;
 
@@ -236,7 +236,7 @@
                         <span style="width:12px; height:12px; border-radius:2px; border:1px solid var(--xp-ink-faint-2); background:${colorSwatch(ch.color)}; flex-shrink:0"></span>
                         <div style="flex:1; min-width:0">
                             <div style="font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escapeHtml(channelName(ch))}</div>
-                            <div style="font-size:13px; color:var(--xp-ink-faint-2)">${(ch.programs || []).length} programs</div>
+                            <div style="font-size:13px; color:var(--xp-text-muted)">${(ch.programs || []).length} programs</div>
                         </div>`;
 
                     const setSelected = () => {

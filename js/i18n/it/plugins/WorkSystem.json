@@ -106,7 +106,7 @@
   "shift": {
     "dispatched": "{actor} parte per un turno di {hours}h a {job}.",
     "returned": "{actor} torna da {job} con {amount}€.",
-    "benched": "{actor} ha finito a {job} con {amount}€, e attende tra i membri inattivi.",
+    "benched": "{actor} ha finito a {job} con {amount}€, e attende tra i membri in riserva.",
     "awayTitle": "Via per un turno",
     "awayOn": "Al lavoro: {job}",
     "remaining": "{hours}h {minutes}m rimanenti",

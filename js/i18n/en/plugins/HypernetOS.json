@@ -1443,6 +1443,27 @@
       "empty": "Every program is already on the desktop.",
       "open": "Open",
       "addToDesktop": "Add to Desktop"
+    },
+    "programs": {
+      "appName": "Programs",
+      "hint": "Installed programs that are not on the desktop. Drag one onto the desktop to keep it there; drag a desktop shortcut back here, or onto the Recycle Bin, to put it away.",
+      "empty": "Every program is already on the desktop.",
+      "open": "Open",
+      "addToDesktop": "Add to Desktop"
+    },
+    "games": {
+      "appName": "Games",
+      "hint": "Installed games that are not on the desktop. Drag one onto the desktop to keep it there; drag a desktop shortcut back here, or onto the Recycle Bin, to put it away.",
+      "empty": "Every game is already on the desktop.",
+      "open": "Open",
+      "addToDesktop": "Add to Desktop"
+    },
+    "utilities": {
+      "appName": "Utilities",
+      "hint": "Installed utilities that are not on the desktop. Drag one onto the desktop to keep it there; drag a desktop shortcut back here, or onto the Recycle Bin, to put it away.",
+      "empty": "Every utility is already on the desktop.",
+      "open": "Open",
+      "addToDesktop": "Add to Desktop"
     }
   }
 }

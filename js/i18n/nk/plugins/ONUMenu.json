@@ -25,7 +25,7 @@
     "observer": "OBSERVER",
     "observerNote": "HOLDS A CHAIR, CASTS NO VOTE!",
     "sessionHeadline": "WEEK {week} OF DA STANDIN' SESSION",
-    "lobbyHeadline": "{DA REGISTER IZ OPEN|DA CHAMBER IZ NOT YET SITTIN'|TWENTY ONE SEATS, AN' A LEDGER}",
+    "lobbyHeadline": "{DA REGISTER IZ OPEN|DA CHAMBER IZ NOT YET SITTIN'|TWENTY ONE SEATS, AN' A GRIMORIE}",
     "credentialsHeadline": "ACCREDITATION OF {name}",
     "ledBy": "LED BY {leader}",
     "yourStanding": "YA STANDIN'",

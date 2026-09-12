@@ -2851,6 +2851,9 @@
     // same file through recordEvent, so the Archive is one timeline.
 
     const LIVE_MAX_DAYS = 4400;    // ~12 years, the whole reachable calendar
+    // Days resolved per call before the frame is handed back. Mirrors the
+    // CHUNK_DAYS that NPC/NPCPolitics.js already walks its own backlog in.
+    const LIVE_CHUNK_DAYS = 30;
     const LIVE_EVENT_CAP = 3000;   // live entries kept; the century is never trimmed
 
     // A day is a calendar day, not a 1440-minute block off the clock's epoch:
@@ -2926,7 +2929,8 @@
         const now = Date.now();
         if (!force && this._liveFlushAt && now - this._liveFlushAt < LIVE_FLUSH_INTERVAL) return;
         this._liveFlushAt = now;
-        window.WorldManager.flush();
+        // The live run only ever writes these two.
+        window.WorldManager.flush(["history", "artifacts"]);
     };
 
     // What the day changed about the world, back into the world folder. The
@@ -3032,28 +3036,55 @@
         ) || 0;
         const today = liveDayOf(minute);
         let last = this._liveGet("liveLastDay");
-        if (last == null) { this._liveSet("liveLastDay", today); return 0; }
+        if (last == null) {
+            this._liveSet("liveLastDay", today);
+            this._liveTargetDay = today;
+            return 0;
+        }
         if (today <= last) {
             if (today < last) this._liveSet("liveLastDay", today);  // the clock was rewound
+            this._liveTargetDay = today;
             return 0;
         }
         if (today - last > LIVE_MAX_DAYS) last = today - LIVE_MAX_DAYS;
+        this._liveTargetDay = today;
+
+        // One chunk per call, never the whole backlog. _runLiveDay does seven
+        // heavy world passes on the first of each month, so the twelve years a
+        // cryo sleep or an old savegame can hand this used to be resolved in a
+        // single synchronous burst - about 145 month-starts and up to 22,000
+        // generated events - while the game sat frozen. Whatever is left over
+        // is drained a chunk a frame by the map's own update below, so a long
+        // backlog costs a second of frames rather than a second of nothing.
+        const until = Math.min(today, last + LIVE_CHUNK_DAYS);
 
         this._liveRunning = true;
         let written = 0;
         try {
             this._ensureLiveCast();
-            for (let day = last + 1; day <= today; day++) {
+            for (let day = last + 1; day <= until; day++) {
                 written += this._runLiveDay(day, store);
             }
-            this.reconcileArtifactCustody(liveDateStr(liveDateOf(today)));
-            this._trimLiveEvents(store);
-            this._liveSet("liveLastDay", today);
+            this._liveSet("liveLastDay", until);
+            // The closing passes belong to the end of the whole catch-up, not
+            // to every chunk of it.
+            if (until >= today) {
+                this.reconcileArtifactCustody(liveDateStr(liveDateOf(today)));
+                this._trimLiveEvents(store);
+            }
             this._persistLiveCast();
         } finally {
             this._liveRunning = false;
         }
         return written;
+    };
+
+    // True while there are still days owed. The map's update asks this every
+    // frame, so it stays a pair of reads and no work.
+    HistoryManager.prototype.hasLiveBacklog = function () {
+        if (this._liveTargetDay == null) return false;
+        const last = this._liveGet("liveLastDay");
+        return last != null && last < this._liveTargetDay;
     };
 
     //=========================================================================
@@ -4083,8 +4114,15 @@
             if (!$gameVariables) return;
             const minute = $gameVariables.value(114) || 0;
             const day = liveDayOf(minute);
-            if (this._historyLastDay === day) return;
-            this._historyLastDay = day;
+            if (this._historyLastDay !== day) {
+                this._historyLastDay = day;
+                try { manager.catchUpLiveHistory(minute); } catch (e) { console.warn("[HistorySimulator]", e); }
+                return;
+            }
+            // A catch-up that could not finish inside its chunk is carried on
+            // here, one chunk a frame, until the world has lived every day it
+            // is owed. Costs two reads on the frames where it has nothing left.
+            if (!manager.hasLiveBacklog()) return;
             try { manager.catchUpLiveHistory(minute); } catch (e) { console.warn("[HistorySimulator]", e); }
         };
     })();

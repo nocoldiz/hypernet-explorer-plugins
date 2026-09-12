@@ -917,7 +917,7 @@
  ],
  "lobby": {
   "intro": [
-   "The credentials desk sits outside the chamber: {venue}. {A clerk waits|Two clerks wait, one of them asleep|A clerk waits with a ledger older than the assembly}.",
+   "The credentials desk sits outside the chamber: {venue}. {A clerk waits|Two clerks wait, one of them asleep|A clerk waits with a grimorie older than the assembly}.",
    "Outside the chamber, at {venue}, the register is open and the coffee is {cold|free|neither}.",
    "The assembly's antechamber. {venue}, and a queue of nobody."
   ],
@@ -934,18 +934,18 @@
  },
  "joining": {
   "intro": [
-   "The credentials clerk turns the ledger around. \"Which of them, then?\" {The list is shorter than it looks|Not every power will have you|Some of these names have never taken an outsider}. {name} reads.",
+   "The credentials clerk turns the grimorie around. \"Which of them, then?\" {The list is shorter than it looks|Not every power will have you|Some of these names have never taken an outsider}. {name} reads.",
    "\"Accreditation,\" says the clerk, \"is a matter of who will vouch for you.\" A list is produced. {name}'s name is at the top of a blank page.",
    "There are twenty one seats and a much shorter list of powers that would let {name} sit in one."
   ],
   "refused": [
-   "The clerk turns the ledger around and it is empty. Nobody will vouch for {name}. {Not this week|Not yet|Not while the ledger says what it says}.",
+   "The clerk turns the grimorie around and it is empty. Nobody will vouch for {name}. {Not this week|Not yet|Not while the grimorie says what it says}.",
    "\"Nobody,\" the clerk says, not unkindly. \"You'll want to mend some of it first.\" {name} is not accredited.",
    "There is no power in the register willing to put {name}'s name on a seat."
   ],
   "declined": [
-   "{name} closes the ledger. The clerk {shrugs|makes a note|had expected it}.",
-   "\"Another week, then,\" says the clerk, and turns the ledger back around. {name} takes nothing.",
+   "{name} closes the grimorie. The clerk {shrugs|makes a note|had expected it}.",
+   "\"Another week, then,\" says the clerk, and turns the grimorie back around. {name} takes nothing.",
    "{name} leaves the desk unaccredited, {which is a decision too|which the clerk records as a decision|and the clerk writes exactly that}."
   ],
   "accepted": [

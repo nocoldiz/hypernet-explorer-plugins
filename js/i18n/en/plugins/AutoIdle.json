@@ -127,6 +127,13 @@
     "actionTalk": "Talk",
     "actionEmpathize": "Empathize",
     "actionCancel": "Never mind",
+    "petting": [
+      "You crouch down and scratch {name} behind the ears.",
+      "You rub {name} along the jaw, the way it likes.",
+      "You kneel and let {name} put its whole weight against you.",
+      "You scrub {name} between the shoulders with both hands.",
+      "You sit down in the road and make a proper fuss of {name}."
+    ],
     "petted": [
       "{name} leans into your hand and refuses to be moved.",
       "{name} makes a low, pleased noise.",
@@ -142,6 +149,14 @@
       "Do not leave me behind again.",
       "There was something back there. It is gone now.",
       "I like it better when we walk."
-    ]
+    ],
+    "actionStop": "Stop following",
+    "stopped": "{name} stays where it is and stops following you."
+  },
+  "member": {
+    "actionTalk": "Talk",
+    "actionEmpathize": "Empathize",
+    "actionReserves": "Send to Reserves",
+    "actionCancel": "Never mind"
   }
 }

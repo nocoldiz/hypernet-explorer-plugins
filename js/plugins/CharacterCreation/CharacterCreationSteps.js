@@ -553,7 +553,7 @@
       // window.Specializations has not loaded. The live path names every entry
       // through Specializations.displayName / categoryLabel.
       return [
-        { id: 1, name: "Accounting", category: "Commerce", stat: "INT", description: "Keeping and interpreting financial ledgers and transaction records." },
+        { id: 1, name: "Accounting", category: "Commerce", stat: "INT", description: "Keeping and interpreting financial grimories and transaction records." },
         { id: 2, name: "Acrobatics", category: "Athletics", stat: "DEX", description: "Controlled tumbling, vaulting, and balance in motion." },
         { id: 3, name: "Acting", category: "Social", stat: "PSI", description: "Portraying characters convincingly for an audience." },
         { id: 10, name: "Algorithm Design", category: "Technology", stat: "INT", description: "Formulating computational steps for hypernet routines." },

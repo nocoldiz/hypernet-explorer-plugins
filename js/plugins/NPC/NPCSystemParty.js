@@ -702,7 +702,7 @@
 
     // Sign somebody on with no room left for them: their sheet is built on the
     // scratch slot, snapshotted into a world dossier (the same one benching a
-    // companion writes) and dropped on the Inactive list. They leave the map,
+    // companion writes) and dropped into the reserves. They leave the map,
     // and the world's books, exactly as a travelling recruit does.
     function benchRecruit(eventId, event) {
         const eventName = npcNameOf(event);

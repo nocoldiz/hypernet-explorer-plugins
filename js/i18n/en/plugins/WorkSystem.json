@@ -106,7 +106,7 @@
   "shift": {
     "dispatched": "{actor} leaves for a {hours}h shift at {job}.",
     "returned": "{actor} is back from {job} with {amount}€.",
-    "benched": "{actor} finished at {job} with {amount}€, and waits with the inactive members.",
+    "benched": "{actor} finished at {job} with {amount}€, and waits with the members in reserves.",
     "awayTitle": "Away on a shift",
     "awayOn": "Working {job}",
     "remaining": "{hours}h {minutes}m left",

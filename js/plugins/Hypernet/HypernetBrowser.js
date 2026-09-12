@@ -1069,7 +1069,8 @@
 
     Browser.prototype.renderTabs = function () {
         const strip = this.el('#hnb-tabstrip');
-        strip.innerHTML = this.tabs.map((tab, i) =>
+        if (!strip) return;
+        const newHTML = this.tabs.map((tab, i) =>
             '<div class="hnb-tab' + (i === this.active ? ' active' : '') + ' focusable" ' +
             'data-cmd="selectTab" data-arg="' + i + '" tabindex="0" data-focus-key="hnb-tab-' + tab.id + '" ' +
             'title="' + esc(tab.title || tab.address) + '">' +
@@ -1080,6 +1081,9 @@
         ).join('') +
         '<div class="hnb-tab-new focusable" data-cmd="newTab" tabindex="0" data-focus-key="hnb-newtab" ' +
         'title="' + esc(t('toolbar.newTab')) + '">' + svg('plus', 12) + '</div>';
+        if (strip.innerHTML !== newHTML) {
+            strip.innerHTML = newHTML;
+        }
     };
 
     // --- tabs ---------------------------------------------------------------
@@ -1269,7 +1273,10 @@
     Browser.prototype.onFrameLoad = function () {
         const tab = this.tab();
         const frame = this.el('#hnb-frame');
-        if (!tab) return;
+        if (!tab || tab.internal) {
+            this.endLoading();
+            return;
+        }
         tab.loading = false;
         this.endLoading();
 
@@ -1289,6 +1296,7 @@
             this.interceptLinks(doc);
             this.applyRendering(doc);
         } else {
+            if (!tab.path) return;
             tab.title = Addr.fromPath(tab.path || tab.address);
         }
 
@@ -1372,13 +1380,15 @@
         }
         const sizes = [70, 85, 100, 120, 145];
         const page = this.el('#hnb-page');
-        page.style.fontSize = sizes[o.textSize] + '%';
-        page.style.zoom = (o.zoom / 100);
+        if (page) {
+            page.style.fontSize = o.textSize === 2 ? '' : sizes[o.textSize] + '%';
+            page.style.zoom = o.zoom === 100 ? '' : (o.zoom / 100);
+        }
 
         if (!doc || !doc.documentElement) return;
         try {
-            doc.documentElement.style.fontSize = sizes[o.textSize] + '%';
-            doc.documentElement.style.zoom = (o.zoom / 100);
+            doc.documentElement.style.fontSize = o.textSize === 2 ? '' : sizes[o.textSize] + '%';
+            doc.documentElement.style.zoom = o.zoom === 100 ? '' : (o.zoom / 100);
             let style = doc.getElementById('hnb-injected-style');
             if (!style) {
                 style = doc.createElement('style');
@@ -1401,6 +1411,7 @@
     Browser.prototype.setTitle = function (title) {
         const bar = this.win.querySelector('.hypernet-window-title');
         const text = title ? t('windowTitlePage', { title }) : t('windowTitle');
+        if (this.win.dataset.title === text) return;
         if (bar) {
             const icon = bar.querySelector('.hypernet-window-icon');
             bar.innerHTML = (icon ? icon.outerHTML : '') + ' ' + esc(text);
@@ -1980,6 +1991,7 @@
     // --- pop-ups ------------------------------------------------------------
 
     Browser.prototype.maybePopup = function (address) {
+        if (!address || Addr.isInternal(address)) return;
         const ads = to('popup.ads') || [];
         if (!ads.length) return;
         const roll = hash(address) % 100;

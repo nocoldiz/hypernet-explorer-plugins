@@ -297,8 +297,12 @@ var WeaponSystemProcedural = {
     this._lowDetailCheckedAt = now;
     let low = false;
     try {
-      if (window.$gameSwitches && window.$gameSwitches.value(70)) low = true;
-      if (window.ConfigManager && ConfigManager.battler3D) low = true;
+      // One input, the Options row (Core/GameOptions.js 'lowModelDetail'). It
+      // used to ask two questions instead and neither could ever answer yes:
+      // ConfigManager.battler3D was read here and written nowhere in the whole
+      // of js/, and switch 70 is named MZ3dBattleSYstem and is set by no plugin
+      // and no event in the database. The budget below was unreachable.
+      if (window.ConfigManager && ConfigManager.lowModelDetail) low = true;
     } catch (e) { /* outside a running game */ }
     this._lowDetail = low;
     return low;
@@ -2937,6 +2941,9 @@ var WeaponSystemProcedural = {
     if (sub) return sub;
     const ranged = this.rangedMotionFor(weapon, model);
     if (ranged) return ranged;
+    // A weapon that is thrown is thrown, whatever slot it is filed in.
+    const thrown = this.thrownMotionFor(weapon);
+    if (thrown) return thrown;
     // After the rules that exist for a reason (a weapon that shoots shoots, a
     // weapon that hangs off its grip is slung) and before the type fallbacks,
     // which is where a legendary weapon used to lose its identity.
@@ -2947,6 +2954,54 @@ var WeaponSystemProcedural = {
       if (this.NOTE_MOTIONS[i][0].test(note)) return this.NOTE_MOTIONS[i][1];
     }
     return this.TYPE_MOTIONS[weapon.wtypeId] || 'arc';
+  },
+
+  // ============================================================
+  // The weapons that leave the hand without being filed as projectiles
+  // ============================================================
+  // A shuriken, a throwing knife, a francisca and a javelin are all filed as
+  // the melee weapon they are shaped like, because that is the school that
+  // throws them and the proficiency they are trained on. What they are NOT is
+  // weapons you hit somebody with: every one of them was poking the enemy with
+  // the point from a range of three squares, standing in the hand the whole
+  // time, because the motion is chosen off the weapon type and the type says
+  // dagger, axe or spear.
+  //
+  // Keyed by database id, as UNIQUE_MOTIONS and the 3D model families are: the
+  // list is short, hand-authored and finite, and a <Range:> of three is no
+  // proof of anything on its own (a flail reaches two squares and never leaves
+  // the hand). The style is which THROW each one is: a shuriken is turned flat
+  // in its own plane, a throwing stick and a returning spear are thrown with
+  // the frame left empty until they come back.
+  THROWN_MOTIONS: {
+    2: 'hurl',        // Unbalanced Throwing Knife
+    23: 'discus',     // Splitting Shuriken
+    209: 'hurl',      // Francisca
+    282: 'boomerang', // Throwing Stick
+    627: 'hurl',      // Javelin
+    651: 'boomerang'  // Varlenia Returning Spear
+  },
+
+  // What a weapon from somewhere else (a mod, a new row) says for itself.
+  THROWN_TAGS: [
+    [/<Thrown>/i, 'hurl'],
+    [/<Returning>/i, 'boomerang']
+  ],
+
+  /**
+   * How a weapon that is thrown leaves the hand, or null for one that stays in
+   * it. Answers for the melee slots only: anything filed as a projectile is
+   * already settled by throwStyleFor.
+   */
+  thrownMotionFor(weapon) {
+    if (!weapon || weapon.wtypeId === 7 || weapon.wtypeId === 8 || weapon.wtypeId === 9) return null;
+    const byId = this.THROWN_MOTIONS[weapon.id];
+    if (byId) return byId;
+    const note = weapon.note || '';
+    for (let i = 0; i < this.THROWN_TAGS.length; i++) {
+      if (this.THROWN_TAGS[i][0].test(note)) return this.THROWN_TAGS[i][1];
+    }
+    return null;
   },
 
   /**
@@ -3450,6 +3505,15 @@ var WeaponSystemProcedural = {
     if (ranged && motion.kind !== ranged && !this.RANGED_KEEP[motion.kind]) {
       motion = Object.assign({}, motion, { kind: ranged });
     }
+    // And the same for the weapons that leave the hand from a melee slot: a
+    // shuriken carries a dagger's list of swings in its note tags and was
+    // being stabbed with rather than thrown. The throw is turned onto whatever
+    // is being attacked by the strike transform, the way every blow is
+    // (strikeTransformFor), so it flies at the enemy that was picked.
+    const thrown = !ranged && this.thrownMotionFor(weapon);
+    if (thrown && motion.kind !== thrown && !this.RANGED_KEEP[motion.kind]) {
+      motion = Object.assign({}, motion, { kind: thrown });
+    }
     // Same reasoning one step further along: a character with nothing in
     // their hand punches. The motion that was asked for is kept as `from`,
     // so the punch that replaces it can still be the right SHAPE of punch.
@@ -3465,7 +3529,7 @@ var WeaponSystemProcedural = {
     // win: something that shoots shoots, something slung is slung, and an empty
     // hand punches, whatever is in the map.
     const unique = this.uniqueMotionFor(weapon);
-    if (unique && !sub && !ranged && !fist &&
+    if (unique && !sub && !ranged && !thrown && !fist &&
       motion.kind !== unique && !this.UNIQUE_KEEP[motion.kind]) {
       motion = Object.assign({}, motion, { kind: unique, from: motion.kind });
     }

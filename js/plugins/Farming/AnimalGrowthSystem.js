@@ -1437,21 +1437,61 @@
     return true;
   }
 
-  // Making a fuss of an animal: the company it is worth, and a word about how
-  // it is doing if there is nothing else to say.
-  function petAnimal(rec, def) {
-    updateRecordGrowth(rec);
+  // What the leader does with their hands while they are at it. Making a fuss
+  // of an animal is something a person DOES, not only something the animal
+  // answers, so the beat is written from both ends: this half is spoken by the
+  // party, the half below by the animal.
+  function pettingLine(rec) {
+    const pool = T && T.pool ? T.pool('AnimalGrowth.petting') : [];
+    if (!pool.length) return "";
+    const line = pool[Math.floor(Math.random() * pool.length)];
+    return String(line).split('{animal}').join(rec.animalId);
+  }
+
+  // The animal's own half: the company it is worth, and a word about how it is
+  // doing if there is nothing else to say.
+  function pettingReply(rec, def) {
     const company = keepCompany(rec, def);
-    if (company) { reportCompany(rec.animalId); return; }
-    window.skipLocalization = true;
+    if (company) return T('AnimalGrowth.company', { animal: rec.animalId });
     if (getStage(rec, def) === "baby") {
       const remaining = Math.max(0,
         def.growthDays * MINUTES_PER_DAY - (rec.effectiveGrowthMinutes || 0));
-      $gameMessage.add(T.n('AnimalGrowth.youngAnimal',
-        Math.ceil(remaining / MINUTES_PER_DAY), { animal: rec.animalId }));
-    } else {
-      $gameMessage.add(T('AnimalGrowth.pleased', { animal: rec.animalId }));
+      return T.n('AnimalGrowth.youngAnimal',
+        Math.ceil(remaining / MINUTES_PER_DAY), { animal: rec.animalId });
     }
+    return T('AnimalGrowth.pleased', { animal: rec.animalId });
+  }
+
+  // Both halves on stage at once, the way NPC/DialogueSystem stages every other
+  // conversation on the map: the leader's portrait on the left saying what they
+  // are doing, the animal's on the right answering it.
+  function sayTogether(event, mine, reply) {
+    const NT = window.NPCTalk;
+    if (!event || !NT || typeof NT.exchange !== "function") return false;
+    if (!mine || !reply) return false;
+    const leader = $gameParty && $gameParty.leader ? $gameParty.leader() : null;
+    try {
+      return NT.exchange([
+        NT.playerStep(leader, mine),
+        NT.eventStep(event, eventNpcName(event), reply),
+      ]);
+    } catch (e) {
+      console.error("[AnimalGrowth] petting exchange failed", e);
+      return false;
+    }
+  }
+
+  // Making a fuss of an animal.
+  function petAnimal(rec, def, event) {
+    updateRecordGrowth(rec);
+    const reply = pettingReply(rec, def);
+    const mine  = pettingLine(rec);
+    if (sayTogether(event, mine, reply)) return;
+    // Nowhere to stage it (no bust manager, no event behind the animal): the
+    // bare lines, the way it always read.
+    window.skipLocalization = true;
+    if (mine) $gameMessage.add(mine);
+    $gameMessage.add(reply);
     window.skipLocalization = false;
   }
 
@@ -1489,12 +1529,19 @@
     $gameMessage.setChoiceBackground(0);
     $gameMessage.setChoicePositionType(2);
     $gameMessage.setChoiceCallback((n) => {
-      switch (ids[n]) {
-        case "collect":   collectFromAnimal(rec, def); break;
-        case "pet":       petAnimal(rec, def);         break;
-        case "empathize": openEmpathizeOn(event);      break;
-        default: break;
-      }
+      const id = ids[n];
+      if (id === "empathize") { openEmpathizeOn(event); return; }
+      if (id !== "collect" && id !== "pet") return;
+      // The choice is answered from inside the box that asked it, and that box
+      // clears the message on its way out: anything said here is wiped before a
+      // single frame of it is drawn, which is why Pet used to look like it did
+      // nothing at all. So the answer waits for the frame after the close.
+      setTimeout(() => {
+        try {
+          if (id === "collect") collectFromAnimal(rec, def);
+          else                  petAnimal(rec, def, event);
+        } catch (e) { console.error("[AnimalGrowth] animal menu", e); }
+      }, 0);
     });
     return true;
   }

@@ -254,5 +254,5 @@
     "1328": "Sigilla la voce del bersaglio, impedendogli di lanciare qualsiasi incantesimo finche il silenzio non viene rimosso."
   },
   "dossierJoined": "{name} si unisce al gruppo.",
-  "dossierJoinedInactive": "{name} si arruola e attende tra i membri inattivi."
+  "dossierJoinedInactive": "{name} si arruola e attende tra i membri in riserva."
 }

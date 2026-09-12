@@ -1443,6 +1443,27 @@
       "empty": "Ogni programma e' gia' sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
+    },
+    "programs": {
+      "appName": "Programmi",
+      "hint": "Ogni programma che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
+      "empty": "Ogni programma e' gia' sul desktop.",
+      "open": "Apri",
+      "addToDesktop": "Aggiungi al desktop"
+    },
+    "games": {
+      "appName": "Giochi",
+      "hint": "Ogni gioco che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
+      "empty": "Ogni gioco e' gia' sul desktop.",
+      "open": "Apri",
+      "addToDesktop": "Aggiungi al desktop"
+    },
+    "utilities": {
+      "appName": "Utilità",
+      "hint": "Ogni utilità che non e' sul desktop. Trascinane una sul desktop per tenerla li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporla.",
+      "empty": "Ogni utilità e' gia' sul desktop.",
+      "open": "Apri",
+      "addToDesktop": "Aggiungi al desktop"
     }
   }
 }

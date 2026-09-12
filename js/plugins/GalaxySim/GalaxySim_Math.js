@@ -306,6 +306,23 @@
     "long_period_comet",
   ]);
 
+  /**
+   * The procedural galaxy a system name belongs to, or null for a system of
+   * the Milky Way (its catalogue, its own lazy field, the hand-authored stars).
+   *
+   * Two name shapes live out there and BOTH mean "not home":
+   *   "GX.<seed>.<i>"              a named system of that galaxy's catalogue
+   *   "GZ.<seed>.<cx>.<cz>.<i>"    one streamed into that galaxy's star field
+   * The seed sits in the same place in each. This is the only place that shape
+   * is read: nothing should be testing for the prefix by hand.
+   */
+  function galaxySeedOfSystemName(name) {
+    if (typeof name !== "string") return null;
+    if (!name.startsWith("GX.") && !name.startsWith("GZ.")) return null;
+    const seed = parseInt(name.split(".")[1], 10);
+    return Number.isFinite(seed) ? seed : null;
+  }
+
   // ============================================================================
   // Multi-Scale Universe Constants
   // ============================================================================
@@ -508,9 +525,8 @@
      *  procedural far-galaxy system (the Milky Way's own, the lazy field, the
      *  hand-authored catalogue) is home, and home is tier 0. */
     tierOfSystemName(name) {
-      if (typeof name !== "string" || !name.startsWith("GX.")) return 0;
-      const seed = parseInt(name.split(".")[1], 10);
-      return Number.isFinite(seed) ? this.tierOfSeed(seed) : 0;
+      const seed = galaxySeedOfSystemName(name);
+      return seed == null ? 0 : this.tierOfSeed(seed);
     },
 
     /** The tier of a place in the cosmic web, from how far out it sits.
@@ -537,6 +553,7 @@
   window.GalaxySim.Math = {
     // How strange a place is allowed to be, by how far out it sits
     Strangeness,
+    galaxySeedOfSystemName,
     STRANGE_MAX_TIER,
 
     // Classes

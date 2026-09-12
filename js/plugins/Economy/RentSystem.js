@@ -141,7 +141,7 @@
 
     function flushBookings() {
         if (window.WorldManager && typeof window.WorldManager.flush === 'function') {
-            try { window.WorldManager.flush(); } catch (e) { /* non-fatal */ }
+            try { window.WorldManager.flush('rentals'); } catch (e) { /* non-fatal */ }
         }
     }
 

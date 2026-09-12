@@ -66,34 +66,87 @@
   const ROAD_SIDE_GAP = 1; // Tile gap kept clear between a roadside prefab and the carriageway
   const OCEAN_ISLAND_CHANCE = 0.35; // Chance an ocean tile has any islands at all (1-3 when it does)
 
-  // A village biome lists its own houses as the first prefab group and the
-  // shared landmark pool (js/db/Prefabs/LandmarkPrefabs.json) as the last one.
-  // Flattening both into one pool made landmarks the majority of the draw --
-  // there are more landmarks than houses -- so villages kept coming out as a
-  // scatter of standing stones and ruins with barely a house among them.
-  // Landmarks stay in, as the occasional garnish they were meant to be.
+  // ---------------------------------------------------------------------
+  // Landmarks
+  // ---------------------------------------------------------------------
+  // Every biome that has landmarks at all draws them from the same shared pool
+  // (js/db/Prefabs/LandmarkPrefabs.json): standing stones, shrines, ruins,
+  // monuments. A biome lists that pool as one of its prefab groups in
+  // Biomes.json, usually the last one.
   //
-  // A per-draw chance alone was not enough: a village asks for 14-21 prefabs
-  // and retries every duplicate, so even a one-in-five roll handed out a
-  // fistful of landmarks per map. The chance decides WHERE in the draw a
-  // landmark turns up, a hard quota decides HOW MANY: one or two, never more,
-  // and every other lot in the village belongs to a house.
-  const VILLAGE_LANDMARK_CHANCE = 0.2;
-  const VILLAGE_MAX_LANDMARKS = 2;
+  // Flattened into the draw it swamped everything else. There are more
+  // landmarks (43) than a village has houses, so villages came out as fields of
+  // monuments; and most wilderness biomes (Forest, Meadows, Mountain, Taiga and
+  // the rest) list NOTHING BUT the landmark pool, so every one of their 4-14
+  // prefabs was a landmark and the player walked from one monument map to the
+  // next. A landmark is supposed to be a thing you remember finding.
+  //
+  // So the rule is the same everywhere and it is a quota, not a weight: a map
+  // rolls ONCE for whether it gets a landmark at all, and at most two when it
+  // does. A per-draw chance alone was never enough, because a village asks for
+  // 14-21 prefabs and retries every duplicate, so even a one-in-five roll
+  // handed out a fistful. The draw chance only decides WHERE in the draw order
+  // a landmark turns up; the quota decides HOW MANY.
+  const LANDMARK_MAP_CHANCE = 0.35;    // Chance a mixed-pool map gets any landmark at all
+  const LANDMARK_SECOND_CHANCE = 0.25; // ... and, having one, a second one
+  const LANDMARK_DRAW_CHANCE = 0.2;    // Where in the draw order the landmark falls
+  const LANDMARK_MAX = 2;
+  // Wilderness biomes whose only prefabs ARE landmarks: the quota is the whole
+  // prefab budget of the map, so an empty map is the common case for them.
+  const WILD_LANDMARK_MAP_CHANCE = 0.45;
 
-  // 1 or 2 landmarks per village map, decided once from the map's own rng.
-  function rollVillageLandmarkQuota(rng) {
-    return 1 + Math.floor(rng() * VILLAGE_MAX_LANDMARKS);
+  // 0, 1 or 2 landmarks for this map, decided once from the map's own rng.
+  function rollLandmarkQuota(rng, landmarkOnlyBiome) {
+    const anyChance = landmarkOnlyBiome ? WILD_LANDMARK_MAP_CHANCE : LANDMARK_MAP_CHANCE;
+    if (rng() >= anyChance) return 0;
+    return rng() < LANDMARK_SECOND_CHANCE ? LANDMARK_MAX : 1;
   }
 
-  // One draw of the village prefab pool: a landmark only while the quota holds,
-  // a house every other time.
-  function pickVillagePrefabId(rng, housePool, landmarkPool, landmarksTaken, quota) {
+  // The shared landmark pool, resolved once. js/db is registered on window by
+  // DataService, but the biome data alone is enough to find it: the pool is the
+  // one prefab group several different biomes list verbatim.
+  let landmarkIdCache = null;
+  function deriveLandmarkPoolFromBiomes() {
+    const counts = new Map();
+    for (const biome of getBiomes()) {
+      if (!biome || !Array.isArray(biome.prefabs)) continue;
+      for (const group of biome.prefabs) {
+        if (!Array.isArray(group) || group.length === 0) continue;
+        const key = group.join(",");
+        const seen = counts.get(key);
+        if (seen) seen.count++;
+        else counts.set(key, { count: 1, ids: group });
+      }
+    }
+    let best = null;
+    for (const entry of counts.values()) {
+      if (entry.count < 2) continue;
+      if (!best || entry.count > best.count ||
+        (entry.count === best.count && entry.ids.length > best.ids.length)) best = entry;
+    }
+    return best ? best.ids : [];
+  }
+  function getLandmarkIds() {
+    if (landmarkIdCache) return landmarkIdCache;
+    const fromDb = window.Prefabs && window.Prefabs.LandmarkPrefabs;
+    const ids = (Array.isArray(fromDb) && fromDb.length > 0)
+      ? fromDb : deriveLandmarkPoolFromBiomes();
+    landmarkIdCache = new Set(ids);
+    return landmarkIdCache;
+  }
+
+  // One draw of a biome's prefab pool: a landmark only while the quota holds,
+  // an ordinary prefab of that biome every other time. Returns null when the
+  // quota is spent and the biome has nothing but landmarks to offer, which
+  // stops the draw loop.
+  function pickPrefabFromPools(rng, plainPool, landmarkPool, landmarksTaken, quota) {
     const canTakeLandmark = landmarkPool && landmarkPool.length > 0 && landmarksTaken < quota;
-    if (canTakeLandmark && rng() < VILLAGE_LANDMARK_CHANCE) {
+    const landmarkOnly = !plainPool || plainPool.length === 0;
+    if (canTakeLandmark && (landmarkOnly || rng() < LANDMARK_DRAW_CHANCE)) {
       return randomChoice(landmarkPool, rng);
     }
-    return randomChoice(housePool, rng);
+    if (landmarkOnly) return null;
+    return randomChoice(plainPool, rng);
   }
 
   // What the last generated map actually ended up with, in placement order:
@@ -151,6 +204,26 @@
   // half-buried under a second, uncoordinated building.
   function markPrefabbed(mapData) {
     prefabbedMapData.add(mapData);
+  }
+
+  // A dungeon-family square is CARVED, and the room rectangles it was carved
+  // from are attached to its tile array as a plain property (mapData.rooms, see
+  // the enclosed-structure generator). JSON.stringify drops an array's
+  // non-index properties, so the array that comes back out of a savegame is the
+  // tiles and nothing else.
+  //
+  // That is the one state the prefab pass must never run in. Without the rooms
+  // it places blind, and blind placement on a carved structure means houses
+  // scattered over walls and corridors instead of fitted inside rooms -- the
+  // surface's own prefabs standing in a dungeon the party saved inside. It is
+  // also, necessarily, a square that HAS already been prefabbed: a structure is
+  // prefabbed on the load that builds it, long before any save could be made
+  // in it. So the missing rooms are read for what they are, proof the square
+  // has been through the pass already.
+  function carvedRoomsLost(mapData, biomeName) {
+    const D = window.ProcGenDungeon;
+    if (!D || typeof D.isStructure !== "function" || !D.isStructure(biomeName)) return false;
+    return !(mapData.rooms && mapData.rooms.length);
   }
 
   /**
@@ -558,8 +631,8 @@
             const candidate = byAreaDesc[ci];
             if (pass === 0 && usedMapIds.has(candidate.mapId)) continue;
             // The repeat pass fills leftover lots with prefabs already
-            // standing, which would copy a landmark around the village and
-            // undo the quota. Houses may repeat, landmarks never do.
+            // standing, which would copy a landmark around the map and undo
+            // the quota. Ordinary prefabs may repeat, landmarks never do.
             if (pass === 1 && candidate.isLandmark && usedMapIds.has(candidate.mapId)) continue;
 
             // A village hint now carries the LOT it stands in, not just its
@@ -732,9 +805,16 @@
     const gridHeight = Math.floor(PROC_MAP_HEIGHT / GRID_UNIT);
     const sectorOccupied = new Uint8Array(gridWidth * gridHeight);
 
+    // The scatter cycles the pool to fill its budget, so a short pool gets
+    // repeated. A landmark is a one-off by definition: skip it once it stands.
+    const scatteredLandmarks = new Set();
     for (let i = 0; i < prefabCount; i++) {
       const prefabIndex = i % prefabSizes.length;
       const size = prefabSizes[prefabIndex];
+      if (size.isLandmark) {
+        if (scatteredLandmarks.has(size.mapId)) continue;
+        scatteredLandmarks.add(size.mapId);
+      }
       const gridUnitsWide = Math.ceil(size.width / GRID_UNIT);
       const gridUnitsTall = Math.ceil(size.height / GRID_UNIT);
 
@@ -1042,6 +1122,10 @@
   /**
    * Place a single prefab map into the procedural map
    */
+  // The keep-out region an enclosed structure paints its rock with. Read off
+  // the one authority that owns it rather than restated as a literal.
+  const NO_GO_REGION = (window.RegionRules && window.RegionRules.NO_GO_REGION) || 7;
+
   function placePrefab(mapData, prefabMap, position, nonTerrainTileIds, removedTiles) {
     if (!prefabMap || !prefabMap.data) return;
 
@@ -1117,6 +1201,16 @@
           // shadows their source map was painted with.
           const shadowDstIdx = calculateIndex(mapX, mapY, 4, PROC_MAP_WIDTH, PROC_MAP_HEIGHT);
           mapData[shadowDstIdx] = shadowBits;
+
+          // A structure paints its dead mass with the keep-out region (see
+          // step 8 of the enclosed-structure generator). A prefab laid over
+          // that mass is a set piece the party is meant to walk into, so the
+          // mark is lifted from every square it actually builds on and the
+          // prefab's own authored passability decides again.
+          const regionDstIdx = calculateIndex(mapX, mapY, 5, PROC_MAP_WIDTH, PROC_MAP_HEIGHT);
+          if (regionDstIdx < mapData.length && mapData[regionDstIdx] === NO_GO_REGION) {
+            mapData[regionDstIdx] = 0;
+          }
         }
       }
     }
@@ -1138,6 +1232,14 @@
   // ahead of a walking party without dropping a frame. See RESUMABLE GENERATION
   // in ProceduralMapUtils.js.
   function* applyPrefabsToMapSteps(mapData, biomeName, worldCoords, allOtherData) {
+    // Cleared up front: every early return below (alien surface, no pool, no
+    // landmark rolled) would otherwise leave the PREVIOUS map's placement
+    // standing for the debugger and the test harness to read as this one's.
+    lastPrefabPlacement = {
+      biomeName,
+      worldCoords: { x: worldCoords.x, y: worldCoords.y },
+      mapIds: []
+    };
     // An alien surface takes no prefabs for the moment: the prefab pool is
     // authored terrestrial architecture, and a GalaxySim landing has nothing
     // for it to stand in. Every alien biome is named "Alien<Type>"
@@ -1185,20 +1287,29 @@
     const lowerBiome = biomeName.toLowerCase();
     const isRoadLikeBiome = lowerBiome.includes("road");
 
-    // Villages draw mostly from their own house group (see
-    // VILLAGE_LANDMARK_CHANCE); every other biome keeps the flat pool.
-    const prefabGroups = biome.prefabs
-      .map(group => (Array.isArray(group) ? group : [group]))
-      .filter(group => group.length > 0);
-    const weightVillageHouses = lowerBiome.includes("village") && prefabGroups.length > 1;
-    const housePool = weightVillageHouses ? prefabGroups[0] : null;
-    const landmarkPool = weightVillageHouses ? prefabGroups[prefabGroups.length - 1] : null;
-    const landmarkIds = weightVillageHouses ? new Set(landmarkPool) : null;
-    const landmarkQuota = weightVillageHouses ? rollVillageLandmarkQuota(rng) : 0;
+    // The pool is split in two, whatever biome this is: the biome's own
+    // prefabs, and the shared landmark pool it happens to list (see the
+    // landmark quota above). Villages are no longer a special case -- a forest
+    // that lists nothing BUT landmarks is the one that needed this most.
+    const landmarkIds = getLandmarkIds();
+    const landmarkPool = availablePrefabs.filter(id => landmarkIds.has(id));
+    const plainPool = availablePrefabs.filter(id => !landmarkIds.has(id));
+    // A carved interior (dungeon, crypt, temple) fits its prefabs INSIDE room
+    // rectangles, and down there the pool is what furnishes the rooms, not a
+    // monument standing in open country. The quota is about the world outside,
+    // so carved maps keep filling their rooms as they always did.
+    const furnishesRooms = !!(allOtherData?.roomHints && allOtherData.roomHints.length > 0);
+    const quotaApplies = landmarkPool.length > 0 && !furnishesRooms;
+    const landmarkOnlyBiome = quotaApplies && plainPool.length === 0;
+    const landmarkQuota = quotaApplies ? rollLandmarkQuota(rng, landmarkOnlyBiome) : 0;
+    // A biome with nothing but landmarks spends its whole prefab budget on the
+    // quota: one or two monuments on the maps that have any, an empty map
+    // otherwise, instead of the 4-14 getPrefabCount would otherwise ask for.
+    if (landmarkOnlyBiome && landmarkQuota === 0) return mapData;
     let landmarksSelected = 0;
     const pickPrefabId = () => {
-      if (!weightVillageHouses) return randomChoice(availablePrefabs, rng);
-      return pickVillagePrefabId(rng, housePool, landmarkPool, landmarksSelected, landmarkQuota);
+      if (!quotaApplies) return randomChoice(availablePrefabs, rng);
+      return pickPrefabFromPools(rng, plainPool, landmarkPool, landmarksSelected, landmarkQuota);
     };
 
     // Gas-station prefabs (detected by GasPump tiles, see getGasPumpTileIds)
@@ -1214,12 +1325,14 @@
     const selectedMapIds = new Set();
     let attempts = 0;
     const maxAttempts = (allowReuse ? 3 : prefabCount) * 20;
-    const targetCount = allowReuse ? Math.min(availablePrefabs.length, 6) : prefabCount;
+    const baseTargetCount = allowReuse ? Math.min(availablePrefabs.length, 6) : prefabCount;
+    const targetCount = landmarkOnlyBiome ? Math.min(baseTargetCount, landmarkQuota) : baseTargetCount;
 
     while (prefabsWithSizes.length < targetCount && attempts < maxAttempts) {
       attempts++;
       const prefabMapId = pickPrefabId();
 
+      if (prefabMapId == null) break; // Quota spent and the biome has only landmarks
       if (selectedMapIds.has(prefabMapId)) continue;
 
       const prefabMap = loadPrefabSync(prefabMapId);
@@ -1234,7 +1347,7 @@
           }
           if (isGasStation) gasStationPlaced = true;
 
-          const isLandmark = !!(landmarkIds && landmarkIds.has(prefabMapId));
+          const isLandmark = landmarkIds.has(prefabMapId);
           if (isLandmark) landmarksSelected++;
 
           prefabsWithSizes.push({
@@ -1379,8 +1492,13 @@
       ? tryPlaceRoadsidePair(rng, prefabsWithSizes, satData, waterSatData)
       : [];
 
-    // Generate positions (satData is null if not in City/Road biome, waterSatData is null if in Ocean biome)
-    const positions = generatePrefabPositions(prefabCount, rng, prefabsWithSizes, biomeName, blockHints, satData, waterSatData, placementHints, roomHints, roadsidePair);
+    // Generate positions (satData is null if not in City/Road biome, waterSatData is null if in Ocean biome).
+    // A landmark-only biome asks for as many lots as its quota allows and no
+    // more: the fallback scatter repeats prefabs to fill whatever budget it is
+    // given, which is how a forest ended up with a dozen copies of the same
+    // standing stones.
+    const placementCount = landmarkOnlyBiome ? Math.min(prefabCount, landmarkQuota) : prefabCount;
+    const positions = generatePrefabPositions(placementCount, rng, prefabsWithSizes, biomeName, blockHints, satData, waterSatData, placementHints, roomHints, roadsidePair);
 
     lastPrefabPlacement = {
       biomeName,
@@ -1500,7 +1618,8 @@
             // and this pass must not rerun on top of it (see markPrefabbed).
             const alreadyPrefabbed = prefabbedMapData.has(mapData) ||
               (pg._prefabbedSig != null &&
-                pg._prefabbedSig === mapDataFingerprint(mapData, biomeName, worldCoords));
+                pg._prefabbedSig === mapDataFingerprint(mapData, biomeName, worldCoords)) ||
+              carvedRoomsLost(mapData, biomeName);
             if (!alreadyPrefabbed) {
               let hints = pg.structureHints || undefined;
               // Dungeon-type maps attach their room rectangles so prefabs are
@@ -1514,10 +1633,8 @@
             // a city/burg/village generation pass already placed its own
             // prefabs inline: either way the array is now finished and must
             // never be prefabbed again, including after a save/reload loses
-            // its object identity. Fingerprinted here, after every other pass
-            // this map goes through, so it reflects the truly finished square.
+            // its object identity (which is what the fingerprint below is for).
             prefabbedMapData.add(mapData);
-            pg._prefabbedSig = mapDataFingerprint(mapData, biomeName, worldCoords);
             // Shadows last, over the finished square: the shadow pen keys off
             // the walls, and the prefab pass above is the last thing that can
             // still move one. Authored shadows a prefab brought with it are
@@ -1525,6 +1642,14 @@
             if (Utils2 && Utils2.applyAutoShadows) {
               Utils2.applyAutoShadows(mapData, PROC_MAP_WIDTH, PROC_MAP_HEIGHT);
             }
+            // Fingerprinted AFTER the shadow pen, never before it: the mark has
+            // to describe the array exactly as the savegame will carry it.
+            // applyAutoShadows writes the shadow layer, so a mark taken ahead of
+            // it was the fingerprint of an array that no longer existed by the
+            // time the save was written, and NOTHING that came back out of a
+            // savegame ever matched its own mark. Every load re-ran the whole
+            // prefab pass over a square that already carried its prefabs.
+            pg._prefabbedSig = mapDataFingerprint(mapData, biomeName, worldCoords);
             // A stitched window (WorldMapReturn's ProcStitch) composes this
             // square together with its neighbours and lays THAT on $dataMap, so
             // putting the single square back here would wipe the other eight.
@@ -1558,10 +1683,13 @@
     getGasPumpTileIds,
     prefabHasGasPump,
     tryPlaceRoadsidePair,
-    rollVillageLandmarkQuota,
-    pickVillagePrefabId,
+    rollLandmarkQuota,
+    pickPrefabFromPools,
+    getLandmarkIds,
     getLastPrefabPlacement: () => lastPrefabPlacement,
-    VILLAGE_MAX_LANDMARKS,
+    LANDMARK_MAX,
+    LANDMARK_MAP_CHANCE,
+    WILD_LANDMARK_MAP_CHANCE,
     carveCaveSpaceForPrefab,
     findNearestCaveFloor,
   };

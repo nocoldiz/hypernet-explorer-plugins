@@ -1325,7 +1325,7 @@
   // bio and lore the dossier states, and with nothing the wizard would only
   // hand a party being founded (its purse, its stock, its camper, its landing).
   //
-  // With no seat free they sign on all the same and wait on the Inactive list
+  // With no seat free they sign on all the same and wait in the reserves
   // in Dynamics -> Roster, exactly as a recruit who says yes to a full party
   // does (NPCSystemParty.benchRecruit).
 

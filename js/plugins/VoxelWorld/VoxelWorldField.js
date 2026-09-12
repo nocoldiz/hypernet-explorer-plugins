@@ -903,7 +903,47 @@
     // whole way round. The rise is one number per square, so the ordinary
     // four-corner blend turns it into a dome without a seam anywhere.
     // -------------------------------------------------------------------------
-    const _islandCache = new Map();
+    // A memo that turns over in two generations instead of emptying itself.
+    //
+    // These five all used to read `if (size > 20000) clear()`, which meant that
+    // crossing the threshold threw EVERY cached sample away at once - and the
+    // next few tiles then recomputed all of it from scratch, which is a stall
+    // of several frames at an interval nobody can predict. Keeping the previous
+    // generation readable costs one extra lookup on a miss and turns that cliff
+    // into a slope. Same technique the column cache below already uses.
+    //
+    // None of the five ever stores undefined, so undefined means "not here".
+    class GenCache {
+        constructor(limit) {
+            this._limit = limit;
+            this._now = new Map();
+            this._old = new Map();
+        }
+        get(key) {
+            const hit = this._now.get(key);
+            if (hit !== undefined) return hit;
+            const old = this._old.get(key);
+            // Carried forward on the way past, so anything still being asked
+            // for survives the next turnover.
+            if (old !== undefined) this._now.set(key, old);
+            return old;
+        }
+        set(key, value) {
+            if (this._now.size >= this._limit) {
+                this._old = this._now;
+                this._now = new Map();
+            }
+            this._now.set(key, value);
+            return value;
+        }
+        clear() {
+            this._now.clear();
+            this._old.clear();
+        }
+    }
+    const FIELD_CACHE_LIMIT = 20000;
+
+    const _islandCache = new GenCache(FIELD_CACHE_LIMIT);
     // Numeric key: this is read four times per column and a string built per
     // read costs more than everything else the lookup does.
     const tileKey = (wx, wy) => (wx + 1024) * 65536 + (wy + 1024);
@@ -928,7 +968,6 @@
             const f = Math.max(0, (sea / 8 - 0.4) / 0.6);
             rise = Math.pow(f, 1.4) * 110 * own.island;
         }
-        if (_islandCache.size > 20000) _islandCache.clear();
         _islandCache.set(key, rise);
         return rise;
     }
@@ -966,7 +1005,7 @@
     // its edge. Nothing enforces it but this line and the sizes over it.
     const OCEAN_ISLE_MAX_R = 448;
 
-    const _oceanIsleCache = new Map();
+    const _oceanIsleCache = new GenCache(FIELD_CACHE_LIMIT);
     // The island a sea square carries, or null. { cx, cz, r, rise, size } in
     // world units, `size` being the index into the table above (which is what
     // decides whether anything is built or grown on it).
@@ -1005,7 +1044,6 @@
                 };
             }
         }
-        if (_oceanIsleCache.size > 20000) _oceanIsleCache.clear();
         _oceanIsleCache.set(key, out);
         return out;
     }
@@ -1020,7 +1058,7 @@
     // into the per-square memo cost thirteen per cent of a column ANYWHERE,
     // including in the middle of a continent a thousand squares from the sea.
     // One lookup that answers "nothing here" costs nothing.
-    const _isleNearCache = new Map();
+    const _isleNearCache = new GenCache(FIELD_CACHE_LIMIT);
     function oceanIslandsNear(wx, wy) {
         const key = tileKey(wx, wy);
         let near = _isleNearCache.get(key);
@@ -1032,7 +1070,6 @@
                 if (isl) (near || (near = [])).push(isl);
             }
         }
-        if (_isleNearCache.size > 20000) _isleNearCache.clear();
         _isleNearCache.set(key, near);
         return near;
     }
@@ -1126,7 +1163,7 @@
     const RIVER_DEEP_MIN = 26;
     const RIVER_DEEP_VAR = 16;
     const _riverPathCache = new Map();
-    const _riverNearCache = new Map();
+    const _riverNearCache = new GenCache(FIELD_CACHE_LIMIT);
     const _EDGE = { n: [0, -0.5], s: [0, 0.5], w: [-0.5, 0], e: [0.5, 0] };
 
     function riverPathAt(wx, wy) {
@@ -1197,7 +1234,6 @@
                 (near || (near = [])).push(path);
             }
         }
-        if (_riverNearCache.size > 20000) _riverNearCache.clear();
         _riverNearCache.set(key, near);
         return near;
     }
@@ -1477,7 +1513,7 @@
     // could not be reached by digging in from the field next door, and the
     // outfall of a real sewer is outside the town anyway.
     const SEWER_NAMES = /^(city|metro|burg|village|villa|houses|town|docks|office|factory|spacecenter|omegatower)/;
-    const _sewerCache = new Map();
+    const _sewerCache = new GenCache(FIELD_CACHE_LIMIT);
     function sewerTileAt(wx, wy) {
         const key = tileKey(wx, wy);
         const hit = _sewerCache.get(key);
@@ -1490,7 +1526,6 @@
                 }
             }
         }
-        if (_sewerCache.size > 20000) _sewerCache.clear();
         _sewerCache.set(key, on);
         return on;
     }
@@ -2690,17 +2725,107 @@
             return out;
         }
 
+        // The corner lattice and the per-column corner heights the pass below
+        // works in. One patch is meshed at a time and the pass never re-enters,
+        // so these are grown once and handed back rather than reallocated for
+        // every patch: patches are meshed a few milliseconds a frame for as long
+        // as the world streams, and that was seven fresh arrays each time.
+        // `sloped` is the only one not written in full below, so it is the only
+        // one the caller has to clear.
+        static _bulkScratch(w) {
+            let s = VoxelMesher._scratch;
+            if (!s || s.w < w) {
+                const cw = w + 1;
+                s = VoxelMesher._scratch = {
+                    w,
+                    cornerY: new Float32Array(cw * cw),
+                    cornerN: new Float32Array(cw * cw * 3),
+                    yNW: new Float32Array(w * w), yNE: new Float32Array(w * w),
+                    ySE: new Float32Array(w * w), ySW: new Float32Array(w * w),
+                    cornerSharp: new Uint8Array(cw * cw),
+                    sloped: new Uint8Array(w * w),
+                    smoothCol: new Uint8Array(w * w)
+                };
+            }
+            return s;
+        }
+
         // --- greedy height field pass -------------------------------------
         static _bulk(B, G, field, top, mat, col, detail, w, n, ox, oz, step, bs, bias) {
             const at = (i, j) => (j + 1) * w + (i + 1);
             const skip = (i, j) => detail && detail[at(i, j)];
 
-            // Precompute corner heights and slope state for natural terrain (1-block height gaps)
-            const yNW = new Int32Array(w * w);
-            const yNE = new Int32Array(w * w);
-            const ySE = new Int32Array(w * w);
-            const ySW = new Int32Array(w * w);
-            const sloped = new Uint8Array(w * w);
+            // --- the unmined surface is one smooth skin -----------------------
+            // Ground nobody has dug is not drawn as cubes. Every corner of the
+            // height field is the average of the four columns that meet there,
+            // so two neighbouring columns share that corner EXACTLY. Two things
+            // fall out of it at once: the stepped ramp a one-block drop used to
+            // be drawn as is gone, and so is the wall between two columns,
+            // because the side pass below only raises a wall where the two
+            // sides of an edge disagree and now they cannot.
+            //
+            // Dug columns keep their square corners and are left OUT of the
+            // average, so a pit does not drag the ground around it down; the
+            // pit's own cube faces are what the player sees there, drawn by the
+            // detail pass.
+            //
+            // The corner lattice is (w+1) square: corner (ci, cj) is the NW
+            // corner of column (ci, cj), shared by the four columns from
+            // (ci-1, cj-1) to (ci, cj). Both patches either side of a seam work
+            // the same corner out of the same four world columns, which is what
+            // keeps the skin continuous across a patch boundary. The one-column
+            // apron is what makes those four reachable at the patch edge.
+            const cw = w + 1;
+            const S = VoxelMesher._bulkScratch(w);
+            const cornerY = S.cornerY, cornerN = S.cornerN;
+            const cornerSharp = S.cornerSharp;
+            const yNW = S.yNW, yNE = S.yNE, ySE = S.ySE, ySW = S.ySW;
+            const sloped = S.sloped, smoothCol = S.smoothCol;
+            sloped.fill(0, 0, w * w);
+            smoothCol.fill(0, 0, w * w);
+
+            for (let cj = 0; cj <= w; cj++) {
+                for (let ci = 0; ci <= w; ci++) {
+                    let sum = 0, cnt = 0;
+                    let lo = Infinity, hi = -Infinity;
+                    let hW = 0, nW = 0, hE = 0, nE = 0;
+                    let hN = 0, nN = 0, hS = 0, nS = 0;
+                    for (let dj = -1; dj <= 0; dj++) {
+                        for (let di = -1; di <= 0; di++) {
+                            const ii = ci + di, jj = cj + dj;
+                            if (ii < 0 || ii >= w || jj < 0 || jj >= w) continue;
+                            if (detail && detail[jj * w + ii]) continue;
+                            const hh = top[jj * w + ii];
+                            sum += hh; cnt++;
+                            if (hh < lo) lo = hh;
+                            if (hh > hi) hi = hh;
+                            if (di < 0) { hW += hh; nW++; } else { hE += hh; nE++; }
+                            if (dj < 0) { hN += hh; nN++; } else { hS += hh; nS++; }
+                        }
+                    }
+                    const ck = cj * cw + ci;
+                    // A cliff is not stair-stepping and must not be smoothed
+                    // away: a canyon wall, a mesa and a mountain face are all
+                    // meant to be sheer. Only a corner whose columns sit within
+                    // one block of each other is averaged, which is exactly the
+                    // gap the old ramp was drawn across; anything taller stays
+                    // sharp, every column there keeps its own height, and the
+                    // side pass raises the wall it always did.
+                    cornerSharp[ck] = (cnt && hi - lo > step) ? 1 : 0;
+                    cornerY[ck] = cnt ? sum / cnt : 0;
+                    // The slope at this corner. A height of 1 is one voxel and
+                    // the columns are `step` voxels apart, so the world-unit
+                    // rise over run cancels down to a division by step. Sharing
+                    // the normal between every quad that touches the corner is
+                    // what makes the skin shade smoothly instead of faceting.
+                    const dhdx = (nW && nE) ? (hE / nE - hW / nW) / step : 0;
+                    const dhdz = (nN && nS) ? (hS / nS - hN / nN) / step : 0;
+                    const len = Math.hypot(dhdx, 1, dhdz) || 1;
+                    cornerN[ck * 3]     = -dhdx / len;
+                    cornerN[ck * 3 + 1] = 1 / len;
+                    cornerN[ck * 3 + 2] = -dhdz / len;
+                }
+            }
 
             for (let j = 0; j < w; j++) {
                 for (let i = 0; i < w; i++) {
@@ -2710,25 +2835,23 @@
                         yNW[k] = yNE[k] = ySE[k] = ySW[k] = h;
                         continue;
                     }
-                    const nbW = (i > 0) ? top[k - 1] : h;
-                    const nbE = (i < w - 1) ? top[k + 1] : h;
-                    const nbN = (j > 0) ? top[k - w] : h;
-                    const nbS = (j < w - 1) ? top[k + w] : h;
-
-                    const dropW = (h - nbW === step) ? step : 0;
-                    const dropE = (h - nbE === step) ? step : 0;
-                    const dropN = (h - nbN === step) ? step : 0;
-                    const dropS = (h - nbS === step) ? step : 0;
-
-                    if (dropW || dropE || dropN || dropS) {
-                        sloped[k] = 1;
-                        yNW[k] = h - Math.max(dropW, dropN);
-                        yNE[k] = h - Math.max(dropE, dropN);
-                        ySE[k] = h - Math.max(dropE, dropS);
-                        ySW[k] = h - Math.max(dropW, dropS);
-                    } else {
-                        yNW[k] = yNE[k] = ySE[k] = ySW[k] = h;
-                    }
+                    const kNW = j * cw + i, kNE = j * cw + i + 1;
+                    const kSE = (j + 1) * cw + i + 1, kSW = (j + 1) * cw + i;
+                    const a = cornerSharp[kNW] ? h : cornerY[kNW];
+                    const b = cornerSharp[kNE] ? h : cornerY[kNE];
+                    const c = cornerSharp[kSE] ? h : cornerY[kSE];
+                    const d = cornerSharp[kSW] ? h : cornerY[kSW];
+                    yNW[k] = a; yNE[k] = b; ySE[k] = c; ySW[k] = d;
+                    // Shaded off the shared lattice only where every corner is
+                    // shared; a column with a cliff at one corner keeps the flat
+                    // face normal it always had.
+                    if (!cornerSharp[kNW] && !cornerSharp[kNE] &&
+                        !cornerSharp[kSE] && !cornerSharp[kSW]) smoothCol[k] = 1;
+                    // Flat only where all four corners agree with the column
+                    // itself, which is what open level ground gives: those still
+                    // merge greedily below, so a plain costs no more triangles
+                    // than it ever did.
+                    if (a !== h || b !== h || c !== h || d !== h) sloped[k] = 1;
                 }
             }
 
@@ -2758,8 +2881,28 @@
                             const t = grassTint(r, g, b);
                             cr = t.r; cg = t.g; cb = t.b;
                         }
-                        target.quadSlope(x0, y00, z0, x0, y01, z1, x1, y11, z1, x1, y10, z0,
-                                         cr, cg, cb, step, step);
+                        // The four corner normals, taken off the lattice rather
+                        // than from this quad's own plane, so the quad shades
+                        // continuously into the ones around it instead of
+                        // reading as a facet. The column is padded by one, so
+                        // its NW corner is lattice (i+1, j+1).
+                        const pi = i + 1, pj = j + 1;
+                        const cNW = (pj * cw + pi) * 3;
+                        const cSW = ((pj + 1) * cw + pi) * 3;
+                        const cSE = ((pj + 1) * cw + pi + 1) * 3;
+                        const cNE = (pj * cw + pi + 1) * 3;
+                        if (!smoothCol[k]) {
+                            target.quadSlope(x0, y00, z0, x0, y01, z1, x1, y11, z1,
+                                             x1, y10, z0, cr, cg, cb, step, step);
+                            continue;
+                        }
+                        target.quadSmooth(
+                            x0, y00, z0, x0, y01, z1, x1, y11, z1, x1, y10, z0,
+                            cornerN[cNW], cornerN[cNW + 1], cornerN[cNW + 2],
+                            cornerN[cSW], cornerN[cSW + 1], cornerN[cSW + 2],
+                            cornerN[cSE], cornerN[cSE + 1], cornerN[cSE + 2],
+                            cornerN[cNE], cornerN[cNE + 1], cornerN[cNE + 2],
+                            cr, cg, cb, step, step);
                         continue;
                     }
 
@@ -3243,21 +3386,6 @@
             I[k + 3] = v; I[k + 4] = v + 2; I[k + 5] = v + 3;
             this.nv = v + 4; this.ni = k + 6;
         }
-        tri(ax, ay, az, bx, by, bz, cx, cy, cz, nx, ny, nz, r, g, b, uA, vA, uB, vB, uC, vC) {
-            this._room(3, 3);
-            const v = this.nv, p = v * 3, u = v * 2, k = this.ni;
-            const P = this.pos, N = this.nor, C = this.col, U = this.uv, I = this.idx;
-            P[p] = ax; P[p + 1] = ay; P[p + 2] = az;
-            P[p + 3] = bx; P[p + 4] = by; P[p + 5] = bz;
-            P[p + 6] = cx; P[p + 7] = cy; P[p + 8] = cz;
-            for (let q = 0; q < 9; q += 3) {
-                N[p + q] = nx; N[p + q + 1] = ny; N[p + q + 2] = nz;
-                C[p + q] = r;  C[p + q + 1] = g;  C[p + q + 2] = b;
-            }
-            U[u] = uA; U[u + 1] = vA; U[u + 2] = uB; U[u + 3] = vB; U[u + 4] = uC; U[u + 5] = vC;
-            I[k] = v; I[k + 1] = v + 1; I[k + 2] = v + 2;
-            this.nv = v + 3; this.ni = k + 3;
-        }
         quadSlope(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, r, g, b, uw, uh) {
             const ux = bx - ax, uy = by - ay, uz = bz - az;
             const vx = cx - ax, vy = cy - ay, vz = cz - az;
@@ -3276,6 +3404,34 @@
             for (let q = 0; q < 12; q += 3) {
                 N[p + q] = nx; N[p + q + 1] = ny; N[p + q + 2] = nz;
                 C[p + q] = r;  C[p + q + 1] = g;  C[p + q + 2] = b;
+            }
+            U[u] = 0; U[u + 1] = 0; U[u + 2] = 0; U[u + 3] = uh;
+            U[u + 4] = uw; U[u + 5] = uh; U[u + 6] = uw; U[u + 7] = 0;
+            I[k] = v; I[k + 1] = v + 1; I[k + 2] = v + 2;
+            I[k + 3] = v; I[k + 4] = v + 2; I[k + 5] = v + 3;
+            this.nv = v + 4; this.ni = k + 6;
+        }
+        // A height-field quad carrying a normal per corner rather than one for
+        // the whole face. The unmined ground is meshed with this: the corner
+        // normals come off the shared lattice, so the quad shades continuously
+        // into its neighbours and the surface reads as a smooth skin instead of
+        // a run of facets. Winding and UVs match quadSlope exactly.
+        quadSmooth(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz,
+                   nax, nay, naz, nbx, nby, nbz, ncx, ncy, ncz, ndx, ndy, ndz,
+                   r, g, b, uw, uh) {
+            this._room(4, 6);
+            const v = this.nv, p = v * 3, u = v * 2, k = this.ni;
+            const P = this.pos, N = this.nor, C = this.col, U = this.uv, I = this.idx;
+            P[p] = ax; P[p + 1] = ay; P[p + 2] = az;
+            P[p + 3] = bx; P[p + 4] = by; P[p + 5] = bz;
+            P[p + 6] = cx; P[p + 7] = cy; P[p + 8] = cz;
+            P[p + 9] = dx; P[p + 10] = dy; P[p + 11] = dz;
+            N[p] = nax; N[p + 1] = nay; N[p + 2] = naz;
+            N[p + 3] = nbx; N[p + 4] = nby; N[p + 5] = nbz;
+            N[p + 6] = ncx; N[p + 7] = ncy; N[p + 8] = ncz;
+            N[p + 9] = ndx; N[p + 10] = ndy; N[p + 11] = ndz;
+            for (let q = 0; q < 12; q += 3) {
+                C[p + q] = r; C[p + q + 1] = g; C[p + q + 2] = b;
             }
             U[u] = 0; U[u + 1] = 0; U[u + 2] = 0; U[u + 3] = uh;
             U[u + 4] = uw; U[u + 5] = uh; U[u + 6] = uw; U[u + 7] = 0;

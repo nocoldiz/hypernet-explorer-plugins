@@ -89,6 +89,12 @@
   const WARN_PCT = 30;
   const CRIT_PCT = 15;
 
+  // How many frames apart the critical pulse repaints a monster's gauges. The
+  // pulse is the one thing on the bar that animates by itself, so it is the one
+  // thing on a clock rather than on a change, and the clock is a named number
+  // here so the cost of it is in one place.
+  const CRIT_PULSE_FRAMES = 10;
+
   function miniBarGeometry(width) {
     const x = MINI.padX + MINI.ang;
     return { x, w: Math.max(20, width - x - MINI.padX) };
@@ -1411,7 +1417,7 @@
     }
     if (!this.isHpPulsing()) return;
     this._refreshCounter = (this._refreshCounter || 0) + 1;
-    if (this._refreshCounter % 10 === 0) this.refresh(true);
+    if (this._refreshCounter % CRIT_PULSE_FRAMES === 0) this.refresh(true);
   };
 
   Sprite_BattleBar.prototype.updateDamageOverlay = function () {
@@ -2677,6 +2683,9 @@
 
   function _hotbarSkillsClear() {
     _hotbarSkillCache.clear();
+    // The built row is keyed on the skill list it was built from, so it goes
+    // with it rather than waiting to be noticed as stale.
+    _hotbarEntriesClear();
   }
 
   function _hotbarSkills(actor) {
@@ -2741,7 +2750,35 @@
     return text;
   }
 
+  // The row is rebuilt only when something it draws has moved. It used to build
+  // ten entry objects, run ten full actor.canUse() chains and compose ten
+  // tooltip strings on every frame a player was choosing an action - the DOM
+  // write below it is key-gated (Core/HotbarUI.js render), so all of that was
+  // allocated to discover the row had not changed.
+  //
+  // What an entry says depends on the loadout page, on what the skill costs
+  // against what the actor has, on the states that might seal it, and on the
+  // weapon in hand that a school of blows needs. The skill list itself is
+  // already held per actor (_hotbarSkills, re-read a few times a second), so its
+  // identity stands in for "the loadout has not been edited".
+  let _hotbarEntriesKey = '';
+  let _hotbarEntriesList = null;
+  let _hotbarEntriesSkills = null;
+  let _hotbarEntriesActor = null;
+
+  function _hotbarEntriesStamp(actor, skills) {
+    const weapon = (typeof actor.weapons === 'function' ? (actor.weapons()[0] || null) : null);
+    return _hotbarPage + '|' + actor.mp + '|' + actor.tp + '|' +
+      (weapon ? weapon.id : 0) + '|' + (actor._states ? actor._states.join('.') : '') + '|' +
+      skills.length;
+  }
+
   function _hotbarEntries(actor, skills) {
+    const stamp = _hotbarEntriesStamp(actor, skills);
+    if (_hotbarEntriesList && _hotbarEntriesActor === actor &&
+        _hotbarEntriesSkills === skills && _hotbarEntriesKey === stamp) {
+      return _hotbarEntriesList;
+    }
     const entries = [];
     const shown = _hotbarPageSkills(skills);
     for (let i = 0; i < HOTBAR_SLOTS; i++) {
@@ -2752,7 +2789,18 @@
         tooltip: _hotbarTooltipText(actor, skill)
       } : null);
     }
+    _hotbarEntriesKey = stamp;
+    _hotbarEntriesSkills = skills;
+    _hotbarEntriesActor = actor;
+    _hotbarEntriesList = entries;
     return entries;
+  }
+
+  function _hotbarEntriesClear() {
+    _hotbarEntriesKey = '';
+    _hotbarEntriesList = null;
+    _hotbarEntriesSkills = null;
+    _hotbarEntriesActor = null;
   }
 
   // Casts exactly the way choosing the skill from the ordinary skill list

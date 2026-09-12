@@ -106,7 +106,7 @@
       "Sympathetic": {
         "name": "Sympathetic",
         "desc": "Like calls to like: object bound to object.",
-        "lore": "Like calls to like, and the correspondence tables say precisely how loudly. A hair binds tighter than a coat, a coat tighter than a name; distance halves the pull, and a broken link ends the working outright rather than weakening it. A sympathetic witch keeps ledgers of what belongs to whom, because in this craft the strength of a tie can be measured before the knife falls."
+        "lore": "Like calls to like, and the correspondence tables say precisely how loudly. A hair binds tighter than a coat, a coat tighter than a name; distance halves the pull, and a broken link ends the working outright rather than weakening it. A sympathetic witch keeps grimories of what belongs to whom, because in this craft the strength of a tie can be measured before the knife falls."
       },
       "Dimensional": {
         "name": "Dimensional",
@@ -136,7 +136,7 @@
       "Thermodynamics": {
         "name": "Thermodynamics",
         "desc": "Magic that lives in heat, cold and current.",
-        "lore": "Heat is moved, never made. Warm a room and something nearby goes cold by exactly as much; the practitioner who forgets the ledger balances it with their own body. Currents run where resistance is least, gradients equalise on a schedule that can be calculated in advance, and the whole discipline is really a very hostile branch of physics performed without instruments."
+        "lore": "Heat is moved, never made. Warm a room and something nearby goes cold by exactly as much; the practitioner who forgets the grimorie balances it with their own body. Currents run where resistance is least, gradients equalise on a schedule that can be calculated in advance, and the whole discipline is really a very hostile branch of physics performed without instruments."
       },
       "Ritual": {
         "name": "Ritual",
@@ -159,6 +159,9 @@
     "locked": "LOCKED",
     "lockedBy": "Unlocked by: {skills}",
     "lockedByCount": "Needs {need} more of: {skills}",
+    "lockedBySchool": "Needs {count} more {kind} from the school",
+    "lockedKindSpells": "spells",
+    "lockedKindSkills": "skills",
     "lockedHint": "Nothing you know borders this skill yet.",
     "lockedToast": "{skill} does not border anything this pupil knows.",
     "lockedEsotericLevel": "Esoteric knowledge: level {level} or above.",

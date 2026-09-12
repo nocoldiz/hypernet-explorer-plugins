@@ -272,7 +272,7 @@
         "rocket test": "Un razzo di {actor} torna prima del lancio, bruciacchiato e vuoto."
       },
       "criminal": {
-        "heist": "I ladri rubano un decennio dal tesoro di {actor}, i registri lo saltano.",
+        "heist": "I ladri rubano un decennio dal tesoro di {actor}, i grimori lo saltano.",
         "forgery scandal": "I falsari di {actor} producono una provincia che compare per poco sulle mappe."
       }
     },

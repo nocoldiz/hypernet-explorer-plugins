@@ -250,10 +250,19 @@
     //
     // A custom window that displays the map name with a crisp HTML/CSS parchment overlay.
 
+    // Asked on every frame the map name is fading in or out, and it used to
+    // take its own getBoundingClientRect each time, which forces a synchronous
+    // layout. The shared frame budget (window.FrameBudget, in
+    // Core/ParchmentToast.js) reads the canvas box at most once per drawn frame
+    // however many overlays ask for it, so the banner reads it from there and
+    // only measures the canvas itself when no budget is loaded.
     function _msgGetScale() {
-        const el = document.getElementById('gameCanvas');
-        if (!el) return { sx: 1, sy: 1, ox: 0, oy: 0 };
-        const r = el.getBoundingClientRect();
+        let r = window.FrameBudget && window.FrameBudget.canvasRect();
+        if (!r) {
+            const el = document.getElementById('gameCanvas');
+            if (!el) return { sx: 1, sy: 1, ox: 0, oy: 0 };
+            r = el.getBoundingClientRect();
+        }
         return {
             sx: r.width / Graphics.width,
             sy: r.height / Graphics.height,

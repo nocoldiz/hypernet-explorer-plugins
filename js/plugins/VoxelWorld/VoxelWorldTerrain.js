@@ -84,6 +84,38 @@
     // =========================================================================
     // VoxelTerrain
     // =========================================================================
+    // -------------------------------------------------------------------------
+    // Keys
+    // -------------------------------------------------------------------------
+    // A tile and a patch are both named by a number rather than by a string.
+    // The ring scan alone asks after (2r+1) squared tiles whenever the party
+    // moves a tenth of a square - some two thousand of them at the liminal
+    // radius - and every one of those used to build a string to look the tile
+    // up by. The queue underneath was worse: the drain re-parsed every key it
+    // held, twice, every frame.
+    //
+    // A world square is well inside +/- 32768 and a patch index is below
+    // PATCH_MAX, so the two pack into one number with room to spare: the widest
+    // patch key is about 1.1e12, far inside the 2^53 a double holds exactly, so
+    // no two patches can ever collide on one key. What it buys is not the
+    // packing itself but everything the string cost - building it, hashing it
+    // character by character, and taking it apart again on the other side.
+    const KEY_BIAS  = 32768;
+    const KEY_SPAN  = 65536;
+    const PATCH_MAX = 16;          // VOX.SUB never reaches this
+    const tileKey  = (wx, wy) => (wx + KEY_BIAS) * KEY_SPAN + (wy + KEY_BIAS);
+    const patchKey = (wx, wy, si, sj) =>
+        tileKey(wx, wy) * (PATCH_MAX * PATCH_MAX) + si * PATCH_MAX + sj;
+    const keyTile  = (pk) => Math.floor(pk / (PATCH_MAX * PATCH_MAX));
+    const keySi    = (pk) => Math.floor(pk / PATCH_MAX) % PATCH_MAX;
+    const keySj    = (pk) => pk % PATCH_MAX;
+    const tileWx   = (tk) => Math.floor(tk / KEY_SPAN) - KEY_BIAS;
+    const tileWy   = (tk) => (tk % KEY_SPAN) - KEY_BIAS;
+
+    // Nearest first. Out here so the drain's sort is handed the same function
+    // every time rather than a fresh closure.
+    const ORDER_BY_PRIO = (a, b) => a.p - b.p;
+
     class VoxelTerrain {
         constructor(scene) {
             this._scene   = scene;
@@ -147,7 +179,7 @@
                 if (ch.step !== 1) continue;
                 for (let sj = 0; sj < ch.sub; sj++) {
                     for (let si = 0; si < ch.sub; si++) {
-                        this._dirty.add(ch.wx + ',' + ch.wy + ',' + si + ',' + sj);
+                        this._queueDirty(ch.wx, ch.wy, si, sj);
                     }
                 }
                 // ...and what is standing in its passages, which no tile built
@@ -194,7 +226,7 @@
         // can take apart. The decorator writes them onto the tile's own group,
         // so they are thrown away with the chunk and never outlive it.
         propsAt(wx, wy) {
-            const ch = this._chunks.get(wx + ',' + wy);
+            const ch = this._chunks.get(tileKey(wx, wy));
             if (!ch || !ch.grp.userData.props) return null;
             return ch;
         }
@@ -490,7 +522,7 @@
             for (let dy = -this._radius; dy <= this._radius; dy++) {
                 for (let dx = -this._radius; dx <= this._radius; dx++) {
                     const wx = cwx + dx, wy = cwy + dy;
-                    const key  = wx + ',' + wy;
+                    const key  = tileKey(wx, wy);
                     const have = this._chunks.get(key);
                     const fd = Math.max(
                         Math.abs((wx + 0.5) * ts - camperX),
@@ -610,7 +642,7 @@
             for (let sj = 0; sj < ch.sub; sj++) {
                 for (let si = 0; si < ch.sub; si++) {
                     if (now) this._buildSub(ch, si, sj);
-                    else this._dirty.add(ch.wx + ',' + ch.wy + ',' + si + ',' + sj);
+                    else this._queueDirty(ch.wx, ch.wy, si, sj);
                 }
             }
             if (!now) this._pendingBuilds = true;
@@ -858,12 +890,18 @@
             this._dropDirty(key);
         }
 
-        // Forget every patch queued for one tile.
+        // Forget every patch queued for one tile. A tile has at most
+        // PATCH_MAX squared patches and their keys are consecutive, so they are
+        // deleted by name: this used to walk the whole queue - tens of thousands
+        // of entries while streaming - comparing string prefixes, once per tile
+        // disposed, inside the per-frame ring cull.
         _dropDirty(key) {
             if (!this._dirty.size) return;
-            const prefix = key + ',';
-            for (const k of this._dirty) {
-                if (k.startsWith(prefix)) this._dirty.delete(k);
+            const base = key * (PATCH_MAX * PATCH_MAX);
+            for (let i = 0; i < PATCH_MAX * PATCH_MAX; i++) {
+                if (this._dirty.delete(base + i)) {
+                    this._dirtyVer = (this._dirtyVer || 0) + 1;
+                }
             }
         }
 
@@ -891,16 +929,27 @@
                     const gz = wy * VOX.PER_TILE + lz + dj;
                     const twx = Math.floor(gx / VOX.PER_TILE);
                     const twy = Math.floor(gz / VOX.PER_TILE);
-                    const ch = this._chunks.get(twx + ',' + twy);
+                    const ch = this._chunks.get(tileKey(twx, twy));
                     if (!ch || !ch.span) continue;
                     const si = Math.min(ch.sub - 1,
                         Math.floor((gx - twx * VOX.PER_TILE) / ch.span));
                     const sj = Math.min(ch.sub - 1,
                         Math.floor((gz - twy * VOX.PER_TILE) / ch.span));
-                    this._dirty.add(twx + ',' + twy + ',' + si + ',' + sj);
+                    this._queueDirty(twx, twy, si, sj);
                 }
             }
             this._pendingBuilds = true;
+        }
+
+        // One patch onto the queue. The version stamp is what tells the drain
+        // its cached ordering is out of date: draining does NOT bump it, so a
+        // frame that only takes patches off the front reuses the order it
+        // already worked out instead of building it again.
+        _queueDirty(wx, wy, si, sj) {
+            const k = patchKey(wx, wy, si, sj);
+            if (this._dirty.has(k)) return;
+            this._dirty.add(k);
+            this._dirtyVer = (this._dirtyVer || 0) + 1;
         }
 
         // Nearest first, and what is ahead of the camper before what is behind
@@ -908,23 +957,54 @@
         // it - which while driving is the order the RING was walked, not the
         // order the eye needs them in. Without this the frame's build time went
         // on tiles in the mirror while the ground ahead was still missing.
+        // Worked out from the keys themselves - no parsing, no object per entry
+        // - and WORKED OUT AGAIN only when it could have changed: when a patch
+        // has been queued or dropped since (the version stamp), or when the
+        // camera has crossed into another square, which is what the ordering is
+        // relative to. Draining does not invalidate it, so the common frame
+        // takes its twelve patches off an order that is already standing.
+        //
+        // It used to be rebuilt from scratch every frame: four string slices,
+        // two Number() and an object literal for each of the tens of thousands
+        // of entries a streaming queue holds, then a sort of the lot, to do
+        // twelve patches of work.
         _orderDirty() {
             const ts = this._ts;
+            const ctx = Math.floor((this._camX || 0) / ts);
+            const ctz = Math.floor((this._camZ || 0) / ts);
+            if (this._order &&
+                this._orderVer === (this._dirtyVer || 0) &&
+                this._orderTx === ctx && this._orderTz === ctz) {
+                return this._order;
+            }
             const cx = (this._camX || 0) / ts, cz = (this._camZ || 0) / ts;
             const lead = this._lookAhead();
-            const out = [];
+            const ndx = this._ndx, ndy = this._ndy;
+            // The entries are pooled and refilled in place. The priority rides
+            // ON the entry so the comparator reads a field rather than going
+            // through a side table, and nothing is allocated to sort a queue
+            // that can hold tens of thousands of patches.
+            const out = this._order || (this._order = []);
+            let i = 0;
             for (const key of this._dirty) {
-                const a = key.indexOf(',');
-                const b = key.indexOf(',', a + 1);
-                const dx = Number(key.slice(0, a)) + 0.5 - cx;
-                const dy = Number(key.slice(a + 1, b)) + 0.5 - cz;
-                out.push({
-                    key,
-                    p: Math.max(Math.abs(dx), Math.abs(dy)) -
-                       (dx * this._ndx + dy * this._ndy) * lead
-                });
+                const tk = keyTile(key);
+                const dx = tileWx(tk) + 0.5 - cx;
+                const dy = tileWy(tk) + 0.5 - cz;
+                const p = Math.max(Math.abs(dx), Math.abs(dy)) -
+                          (dx * ndx + dy * ndy) * lead;
+                const e = out[i];
+                if (e) { e.key = key; e.p = p; }
+                else out[i] = { key, p };
+                i++;
             }
-            out.sort((a, b) => a.p - b.p);
+            out.length = i;
+            out.sort(ORDER_BY_PRIO);
+            // Freshly sorted and holding only what is still queued, so the
+            // drain starts at the front of it again.
+            this._orderIdx = 0;
+            this._orderVer = (this._dirtyVer || 0);
+            this._orderTx = ctx;
+            this._orderTz = ctz;
             return out;
         }
 
@@ -947,22 +1027,30 @@
             const take = (key) => {
                 if (!dirty.delete(key)) return true;
                 done++;
-                const a = key.indexOf(',');
-                const b = key.indexOf(',', a + 1);
-                const c = key.indexOf(',', b + 1);
-                const ch = this._chunks.get(key.slice(0, b));
+                const ch = this._chunks.get(keyTile(key));
                 if (!ch) return true;
-                this._buildSub(ch, Number(key.slice(b + 1, c)), Number(key.slice(c + 1)));
+                this._buildSub(ch, keySi(key), keySj(key));
                 return true;
             };
             if (order) {
-                for (const e of order) {
+                // Resumed where the last frame stopped. A standing order still
+                // names the patches already built, and walking over them again
+                // must not cost the frame any of its budget - so they are
+                // stepped past, and the mark moves with them.
+                let oi = this._orderIdx || 0;
+                for (; oi < order.length; oi++) {
+                    const e = order[oi].key;
+                    if (!dirty.has(e)) continue;
                     if (n-- <= 0) break;
                     if (done > 0 && clock() - tStart >= cap) break;
-                    take(e.key);
+                    take(e);
                 }
+                this._orderIdx = oi;
             } else {
-                for (const key of [...dirty]) {
+                // Straight off the set's own iterator. Spreading it into an
+                // array first copied the whole queue - tens of thousands of
+                // entries while streaming - to take twelve off the front.
+                for (const key of dirty) {
                     if (n-- <= 0) break;
                     if (done > 0 && clock() - tStart >= cap) break;
                     take(key);
@@ -975,26 +1063,6 @@
         rebuildAll() {
             this.field.clearCache();
             this._clearChunks();
-        }
-
-        // ---------------------------------------------------------------------
-        // Editing, wrapped so callers do not have to know the grid
-        // ---------------------------------------------------------------------
-        // Break the first cube along a ray. Returns the raycast hit, with the
-        // material that came out on `broke`, or null.
-        digRay(ox, oy, oz, dx, dy, dz, reach) {
-            const hit = this.field.raycast(ox, oy, oz, dx, dy, dz, reach || VOX.REACH);
-            if (!hit) return null;
-            hit.broke = this.field.breakAt(hit.vx, hit.vy, hit.vz);
-            return hit.broke ? hit : null;
-        }
-
-        // Put a cube against the face a ray lands on.
-        placeRay(ox, oy, oz, dx, dy, dz, mat, reach) {
-            const hit = this.field.raycast(ox, oy, oz, dx, dy, dz, reach || VOX.REACH);
-            if (!hit) return null;
-            const p = hit.place;
-            return this.field.placeAt(p.vx, p.vy, p.vz, mat || MAT.DIRT) ? hit : null;
         }
 
         // A ball of ground taken out at once: a bumper at speed, a blast, a

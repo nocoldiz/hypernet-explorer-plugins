@@ -42,6 +42,10 @@
   // edge before stepping, and how long after a step the ladder stays locked.
   // Kept short so a continuous wheel/L2-R2 zoom reads as one fluid motion
   // across a band edge rather than a deliberate, separate action.
+  // How long the outgoing scale takes to dim out under the incoming one.
+  // Long enough to read as a dissolve, short enough that it never feels like
+  // waiting: the camera is still moving the whole time.
+  const CROSSFADE = 0.42;
   const LADDER_DWELL = 0.3;
   const LADDER_COOLDOWN = 0.6;
 
@@ -213,7 +217,11 @@
      * recall which procedural galaxy a system belongs to when nothing richer
      * (a live `_galaxyFocus`) is available - e.g. right after a save load. */
     _galaxyFocusFromSystemName(name) {
-      if (typeof name !== "string" || !name.startsWith("GX.")) return null;
+      // "GX.<seed>.<i>" is a named catalogue system, "GZ.<seed>.<cx>.<cz>.<i>"
+      // one streamed into that same galaxy's field; the seed sits in the same
+      // place in both, and both mean "you are inside galaxy <seed>".
+      if (typeof name !== "string" ||
+          !(name.startsWith("GX.") || name.startsWith("GZ."))) return null;
       const seed = parseInt(name.split(".")[1], 10);
       if (!Number.isFinite(seed)) return null;
       const S = GS.Math && GS.Math.Strangeness;
@@ -273,15 +281,9 @@
       renderer.domElement.addEventListener("webglcontextlost", this._onContextLost, false);
       renderer.domElement.addEventListener("webglcontextrestored", this._onContextRestored, false);
 
-      // Fade plate used to mask the pop when swapping scales (DOM order keeps it
-      // above the canvas but below the UI overlay, which is appended later).
-      const fade = document.createElement("div");
-      fade.style.cssText =
-        "position:absolute;top:0;right:0;bottom:0;left:0;background:#000510;opacity:0;" +
-        "pointer-events:none;transition:none;";
-      this._overlayEl.appendChild(fade);
-      this._fadeEl = fade;
-      this._fadeAlpha = 0;
+      // There was a full-screen plate here, flashed to opacity 1 on every scale
+      // change to hide the cut. The scales cross-fade into each other now (see
+      // _fadeOutView), so there is no cut left for it to hide.
 
       // A faint ambient so future lit meshes are never pure black; the system
       // star adds a directional light at SYSTEM scale (M1).
@@ -346,8 +348,11 @@
           }
         }
       }
-      this._teardownScaleContent();
-      this._flashTransition();
+      // Where the camera stood, so the new scale can be entered at the distance
+      // that keeps what is on screen the same size (see _scaleEntryDistance).
+      this._fromScale = priorScale;
+      this._fromDistance = this._rig.targetDistance;
+      this._teardownScaleContent(true);
       this._scale = scale;
       this._ladderHold = 0;
       this._ladderCooldown = LADDER_COOLDOWN;
@@ -375,20 +380,178 @@
       this._restoreTarget();
     }
 
-    _teardownScaleContent() {
+    /**
+     * Drop the current scale's content.
+     *
+     * `fade` hands the views to the cross-fade instead of freeing them on the
+     * spot: they stay in the scene, dimming, while the next scale draws over
+     * them, and are disposed when they reach zero. Everything that is not a
+     * scale change (leaving the map, a hard rebuild) frees immediately.
+     */
+    _teardownScaleContent(fade) {
       this._followShipCam = false;
+      this._shipCamLocked = false;
       this._planetFocus = null;
       this._webCluster = null;
       this._galaxyFocus = null;
-      if (this._systemView) { this._systemView.dispose(); this._systemView = null; }
-      if (this._galaxyShip) { this._galaxyShip.dispose(); this._galaxyShip = null; }
-      if (this._lazyField) { this._lazyField.dispose(); this._lazyField = null; }
-      if (this._galaxyView) { this._galaxyView.dispose(); this._galaxyView = null; }
-      if (this._cosmicView) { this._cosmicView.dispose(); this._cosmicView = null; }
+      const drop = (view) => {
+        if (!view) return;
+        if (fade) this._fadeOutView(view); else view.dispose();
+      };
+      // The lazy field and the ship marker hang off the galaxy view's group, so
+      // they are taken OUT of it before it goes to the crossfade and freed
+      // through their own dispose(). Both must be: the view's dispose is a
+      // blanket disposeObject3D over everything still under it, and the ship
+      // shares geometry with the offscreen Renderer3D singleton that
+      // ShipBackground draws from - a blanket pass would free that out from
+      // under it (the same reason _dispose does not traverse the whole scene).
+      // Losing a marker and some streamed stars for the length of a dissolve
+      // is not visible; losing the singleton's geometry is permanent.
+      const detach = (sub) => {
+        if (!sub) return;
+        if (sub.group && sub.group.parent) sub.group.parent.remove(sub.group);
+        sub.dispose();
+      };
+      detach(this._lazyField); this._lazyField = null;
+      detach(this._galaxyShip); this._galaxyShip = null;
+      drop(this._systemView); this._systemView = null;
+      drop(this._galaxyView); this._galaxyView = null;
+      drop(this._cosmicView); this._cosmicView = null;
       this._pickTargets = [];
       this._galaxyPoints = null;
       this._galaxyByIndex = null;
       this._webPickCache = null;
+      this._galaxyPickCache = null;
+    }
+
+    // ----------------------------------------------------------------------
+    // Crossfade
+    //
+    // A scale change used to be a cut: tear the old scale down, flash a plate
+    // over the whole screen at full opacity, build the new one, and snap the
+    // camera to its framing. The flash was there to hide two things at once -
+    // the hitch while the new scale built, and the fact that the camera
+    // teleported - and it read as a blink in the middle of a zoom.
+    //
+    // Now the outgoing scale stays in the scene and dims while the incoming
+    // one brightens over it, and the camera arrives at the distance that
+    // keeps what the player was looking at the same size on screen and glides
+    // from there (see _scaleEntryDistance). Nothing cuts.
+    // ----------------------------------------------------------------------
+    /** Every material under a root, with the state to put back afterwards. */
+    _collectFadeMaterials(root) {
+      const out = [];
+      const seen = new Set();
+      root.traverse((obj) => {
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        for (const m of mats) {
+          if (!m || seen.has(m)) continue;
+          seen.add(m);
+          // An opaque material has to be told it may blend before it can fade -
+          // and told to stop again when the fade is done, or a planet that was
+          // solid would go on being depth-sorted as glass for the rest of the
+          // session.
+          const wasTransparent = !!m.transparent;
+          if (!wasTransparent) { m.transparent = true; m.needsUpdate = true; }
+          out.push({ m, wasTransparent, from: m.opacity != null ? m.opacity : 1 });
+        }
+      });
+      return out;
+    }
+
+    /** Put a faded-in view's materials back exactly as they were built. */
+    _restoreFadeMaterials(mats) {
+      for (let j = 0; j < mats.length; j++) {
+        const e = mats[j];
+        e.m.opacity = e.from;
+        if (!e.wasTransparent) { e.m.transparent = false; e.m.needsUpdate = true; }
+      }
+    }
+
+    /** Dim a view out over CROSSFADE seconds, then dispose it. */
+    _fadeOutView(view) {
+      if (!view || !view.group) { if (view) view.dispose(); return; }
+      if (!this._fading) this._fading = [];
+      // Never pick or animate it again; it is a picture now, not the scene.
+      view.group.renderOrder = -1;
+      this._fading.push({
+        view, t: 0, dir: -1,
+        mats: this._collectFadeMaterials(view.group),
+      });
+    }
+
+    /** Bring a freshly built view up from nothing over the same window. */
+    _fadeInView(view) {
+      if (!view || !view.group) return;
+      if (!this._fading) this._fading = [];
+      const mats = this._collectFadeMaterials(view.group);
+      for (const e of mats) e.m.opacity = 0;
+      this._fading.push({ view, t: 0, dir: 1, mats, keep: true });
+    }
+
+    _updateFades(delta) {
+      if (!this._fading || !this._fading.length) return;
+      const rate = delta / CROSSFADE;
+      for (let i = this._fading.length - 1; i >= 0; i--) {
+        const f = this._fading[i];
+        f.t = Math.min(1, f.t + rate);
+        const k = f.dir > 0 ? f.t : 1 - f.t;
+        for (let j = 0; j < f.mats.length; j++) {
+          f.mats[j].m.opacity = f.mats[j].from * k;
+        }
+        if (f.t < 1) continue;
+        this._fading.splice(i, 1);
+        if (f.keep) this._restoreFadeMaterials(f.mats);
+        else f.view.dispose();
+      }
+    }
+
+    /** Drop every fade immediately, freeing whatever was on its way out. */
+    _flushFades() {
+      if (!this._fading) return;
+      for (const f of this._fading) {
+        if (f.keep) this._restoreFadeMaterials(f.mats);
+        else f.view.dispose();
+      }
+      this._fading = [];
+    }
+
+    /**
+     * Where to arrive when stepping from one scale to another, so that what
+     * the player was looking at is the SAME SIZE on screen at the moment the
+     * new scale appears.
+     *
+     * A world unit means a different number of light-years at each scale
+     * (World3D LY_PER_UNIT), so the distance carries across by the ratio
+     * between them. Arriving there and easing to the scale's resting framing
+     * is what makes the ladder read as one continuous zoom instead of seven
+     * separate views: the step itself is invisible, and all the player sees is
+     * the camera still moving the way they were already moving it.
+     *
+     * Clamped to the new scale's own limits, because the two ends are not
+     * always reconcilable - a galaxy seen from 2 Mly away is further out than
+     * the galaxy scale can draw - and in that case the glide simply starts
+     * from as far as the scale goes.
+     */
+    _scaleEntryDistance(fromScale, toScale, fromDistance, fallback) {
+      const w = this._world;
+      if (!w || !(fromDistance > 0)) return fallback;
+      const a = w.unitLy(fromScale), b = w.unitLy(toScale);
+      if (!(a > 0) || !(b > 0)) return fallback;
+      const d = fromDistance * (a / b);
+      if (!Number.isFinite(d) || d <= 0) return fallback;
+      return Math.max(this._rig.minDistance, Math.min(this._rig.maxDistance, d));
+    }
+
+    /**
+     * Land in a freshly built scale: at the angular-matched entry distance,
+     * then gliding out (or in) to where the view is meant to sit.
+     * `fromScale`/`fromDistance` are where the camera just was.
+     */
+    _arriveAtScale(focus, restingDistance, fromScale, toScale, fromDistance) {
+      const entry = this._scaleEntryDistance(fromScale, toScale, fromDistance, restingDistance);
+      this._rig.snapTo(focus, entry);
+      this._rig.setTargetDistance(restingDistance);
     }
 
     _buildCosmicScale(scale, priorScale) {
@@ -403,7 +566,16 @@
       this._refreshBookmarkMarkers();
 
       const r = this._cosmicView.radius || 1500;
-      this._rig.minDistance = r * 0.12;
+      // The near limit used to be a twelfth of the view, which is about one
+      // node spacing out in the cosmic web - and that made the step up from the
+      // supercluster scale a wall. Leaving Laniakea at its outer band is a
+      // 935 Mly view, which in the web's own units is 93 units; the floor sat
+      // at 580, so the camera was shoved six times further out at the moment of
+      // arrival and the "same size on screen" handoff (_scaleEntryDistance)
+      // could not land. It is low enough now to let the arrival happen, and to
+      // let the player fly right down onto a filament, which is where the
+      // streamed superclusters are.
+      this._rig.minDistance = r * 0.02;
       // Every scale but the last has another one above it, so its outer band
       // is a doorway and the camera may run past it. The last one has nothing
       // above it: pulling out there used to leave the whole universe as a
@@ -437,7 +609,8 @@
           dist = Math.max((home.radius || 40) * 3.2, this._inDist * 1.4);
         }
       }
-      this._rig.snapTo(focus, dist);
+      this._arriveAtScale(focus, dist, this._fromScale, scale, this._fromDistance);
+      this._fadeInView(this._cosmicView);
 
       if (this._overlayUI) {
         this._overlayUI.setScale(this._world.name(scale), "");
@@ -457,8 +630,9 @@
       // what makes everything inside this cluster ordinary or impossible.
       const cv = this._cosmicView;
       const tier = (cv && cv.nodeTier) ? cv.nodeTier(index) : 0;
-      this._teardownScaleContent();
-      this._flashTransition();
+      this._fromScale = this._scale;
+      this._fromDistance = this._rig.targetDistance;
+      this._teardownScaleContent(true);
       this._webCluster = { index, seed, tier };
       this._cosmicView = GS.Scene3DCosmos.buildProceduralCluster({ seed, tier });
       this._scene.add(this._cosmicView.group);
@@ -469,7 +643,9 @@
       this._rig.minDistance = r * 0.06;
       this._rig.maxDistance = r * 5;
       this._rig.panLimit = r * 1.5;
-      this._rig.snapTo(new THREE.Vector3(0, 0, 0), r * 1.5);
+      this._arriveAtScale(new THREE.Vector3(0, 0, 0), r * 1.5,
+        this._fromScale, SCALE_FILAMENTS, this._fromDistance);
+      this._fadeInView(this._cosmicView);
       this._inDist = 0;          // nothing deeper than a cluster member
       this._outDist = r * 3.0;   // zoom out -> back to the cosmic web
       this._ladderHold = 0;
@@ -513,8 +689,9 @@
           : (this._webCluster ? (this._webCluster.tier || 0) : 0));
       const seed = forced ? forced.seed
         : GS.Scene3DCosmos.galaxySeedFromName(name, tier);
-      this._teardownScaleContent();
-      this._flashTransition();
+      this._fromScale = this._scale;
+      this._fromDistance = this._rig.targetDistance;
+      this._teardownScaleContent(true);
       this._galaxyFocus = { name, seed, parentScale, parentCluster, tier };
       // Freshly looking at the galaxy's own cosmic view again; the return path
       // is only meaningful once we dive into one of its systems (re-derived by
@@ -523,13 +700,35 @@
       this._cosmicView = GS.Scene3DCosmos.buildProceduralGalaxy({ seed, name, dataManager: this.dataManager });
       this._scene.add(this._cosmicView.group);
       this._pickTargets = this._cosmicView.pickables || [];
+      // The galaxy's named catalogue is a point cloud, exactly like the Milky
+      // Way's, so the same index raycast picks a star here (see _updatePicking).
+      this._galaxyPoints = this._cosmicView.points || null;
+      this._galaxyByIndex = this._cosmicView.systemsByIndex || null;
+      // ...and, like the Milky Way, the disk fills in with streamed stars as
+      // the camera goes in. Without this a galaxy out here was its decorative
+      // shells, 220 catalogue stars and the hole at the middle, which is not a
+      // galaxy to fly around in.
+      if (this._cosmicView.galaxySeed != null) {
+        const R = this._cosmicView.diskRadius || 2000;
+        this._lazyField = GS.Scene3DCosmos.createLazyStarField(this.dataManager, {
+          galaxySeed: this._cosmicView.galaxySeed,
+          // Bands proportional to the disk, so a big galaxy is not streamed at
+          // the same absolute range as a small one.
+          enableDist: R * 0.45,
+          loadRadius: R * 0.22,
+          starSize: 2.2,
+        });
+        this._cosmicView.group.add(this._lazyField.group);
+      }
       this._refreshBookmarkMarkers();
 
       const r = this._cosmicView.radius || 2000;
       this._rig.minDistance = r * 0.05;
       this._rig.maxDistance = r * 4;
       this._rig.panLimit = r * 1.5;
-      this._rig.snapTo(new THREE.Vector3(0, 0, 0), r * 1.4);
+      this._arriveAtScale(new THREE.Vector3(0, 0, 0), r * 1.4,
+        this._fromScale, this._scale, this._fromDistance);
+      this._fadeInView(this._cosmicView);
       this._inDist = 0;
       this._outDist = r * 2.6; // zoom out -> back where we came from
       this._ladderHold = 0;
@@ -563,8 +762,9 @@
     _exitGalaxyFocus() {
       if (!this._galaxyFocus) return;
       const { parentScale, parentCluster } = this._galaxyFocus;
-      this._teardownScaleContent(); // also clears _galaxyFocus
-      this._flashTransition();
+      this._fromScale = this._scale;
+      this._fromDistance = this._rig.targetDistance;
+      this._teardownScaleContent(true); // also clears _galaxyFocus
       this._scale = parentScale;
       if (parentCluster != null) {
         this._enterWebCluster(parentCluster);
@@ -579,8 +779,9 @@
 
     _exitWebCluster() {
       if (!this._webCluster) return;
-      this._teardownScaleContent(); // also clears _webCluster
-      this._flashTransition();
+      this._fromScale = this._scale;
+      this._fromDistance = this._rig.targetDistance;
+      this._teardownScaleContent(true); // also clears _webCluster
       this._buildCosmicScale(SCALE_FILAMENTS);
       this._ladderHold = 0;
       this._ladderCooldown = LADDER_COOLDOWN;
@@ -608,7 +809,17 @@
       this._rig.maxDistance = outer * 5;
       this._rig.minDistance = 0.3;
       this._rig.panLimit = outer * 2.5;
-      this._rig.snapTo(new THREE.Vector3(0, 0, 0), dist);
+      // The system scale is the one rung measured in AU rather than in
+      // light-years, so there is no ratio to carry a distance across on: a star
+      // genuinely BECOMES a system on the way in. Dropping in from any scale
+      // above therefore starts as far out as the view goes and flies in, which
+      // is the same gesture the player was already making, rather than
+      // appearing at the framing distance with a flash over it.
+      const from = this._fromScale;
+      const arriving = from != null && from > SCALE_SYSTEM;
+      this._rig.snapTo(new THREE.Vector3(0, 0, 0), arriving ? this._rig.maxDistance : dist);
+      if (arriving) this._rig.setTargetDistance(dist);
+      this._fadeInView(this._systemView);
       this._inDist = 0;                 // bottom of the ladder
       this._outDist = outer * 3.2;      // zoom out -> galaxy
 
@@ -649,7 +860,9 @@
       // The disk is ~2600 units across from the core, so this keeps a pan
       // inside the Milky Way with room to spare around its edge.
       this._rig.panLimit = 5000;
-      this._rig.snapTo(focus.clone(), 70);
+      this._arriveAtScale(focus.clone(), 70,
+        this._fromScale, SCALE_GALAXY, this._fromDistance);
+      this._fadeInView(this._galaxyView);
       // Zooming in past this band enters the *selected* system (see
       // _systemToEnter); with nothing selected the zoom simply clamps here.
       this._inDist = 9;
@@ -660,11 +873,6 @@
           this._focusSystem ? T('Galaxy.scale.near', { name: this._focusSystem.name || "" }) : "");
       }
       this._refreshBookmarkMarkers();
-    }
-
-    _flashTransition() {
-      this._fadeAlpha = 1;
-      if (this._fadeEl) this._fadeEl.style.opacity = "1";
     }
 
     _updateModeHint() {
@@ -773,12 +981,17 @@
         return;
       }
       let pick = null;
-      if (this._scale !== SCALE_GALAXY) {
+      // Inside a procedural galaxy the stars are a point cloud too, so it picks
+      // the same way the Milky Way does rather than by the far-scale screen
+      // test - which knew nothing about points and so could only ever hit the
+      // hole at the centre.
+      const starCloud = this._scale === SCALE_GALAXY || !!this._galaxyFocus;
+      if (!starCloud) {
         if (this._pickTargets && this._pickTargets.length) pick = this._screenPick();
         // Cosmic web: every node dot is selectable (and enterable), so fall
         // through to a points raycast when no named hero object was hit.
         if (!pick) pick = this._webNodePick();
-      } else if (this._scale === SCALE_GALAXY && this._galaxyPoints) {
+      } else if (starCloud && this._galaxyPoints) {
         // Generous threshold so every system point is easy to click. Pick the
         // static catalog and the lazy field together; the nearest hit wins.
         // Raycasting up to 4000 points is costly, so reuse the last result
@@ -827,6 +1040,12 @@
           // let a star under the cursor win over a much larger nebula behind it.
           if (!pick && this._galaxyView && this._galaxyView.nebulaPickables) {
             pick = this._screenPick(this._galaxyView.nebulaPickables);
+          }
+          // A procedural galaxy's hole at the centre is a sprite-backed
+          // pickable, not a point, and it is the one thing out here that was
+          // ever selectable - so it keeps its screen test, behind the stars.
+          if (!pick && this._galaxyFocus && this._pickTargets && this._pickTargets.length) {
+            pick = this._screenPick();
           }
           c.ndcX = this._ndc.x;
           c.ndcY = this._ndc.y;
@@ -1185,6 +1404,9 @@
       this._selectedPick = null;
       if (this._planetFocus) { this._clearPlanetFocus(); if (ov) ov.deselect(); }
       else if (ov && ov.hasSelection()) ov.deselect();
+      // In orbit, the parked world's panel comes straight back: it is where the
+      // ship IS, not a selection the player made, so it is not theirs to clear.
+      this._ensureOrbitPanel();
     }
 
     // ----------------------------------------------------------------------
@@ -1497,13 +1719,16 @@
         const bodyOpts = {
           kind: pick.kind,
           parentPlanet: pick.planet,
-          // Always offered for any body of the CURRENT system (planet or
-          // moon) - including a moon (which used to have no travel option at
-          // all), while already en route elsewhere (redirects the course:
-          // startTravelToPlanet just re-plots from wherever the ship is
-          // now), and even already parked at the exact body (a same-spot
-          // "trip" resolves as an instant arrival, see updateShipPosition).
-          canTravelTo: (pick.kind === "planet" || pick.kind === "moon") && sameSystem,
+          // Offered for any body of the CURRENT system (planet or moon) -
+          // including a moon (which used to have no travel option at all), and
+          // while already en route elsewhere, which redirects the course
+          // (startTravelToPlanet re-plots from wherever the ship is now).
+          // NOT offered for the body the ship is already parked at: flying to
+          // where you already are resolved as an instant arrival, so the button
+          // sat there in orbit doing nothing (a moon counts as parked when the
+          // ship holds its parent, which is the only orbit a moon has).
+          canTravelTo: (pick.kind === "planet" || pick.kind === "moon") &&
+            sameSystem && !orbitingThis && !orbitingParent,
           // Artificial objects (probes, the teapot, the monolith) have no
           // surface to put a landing party on. A moon has no orbit of its
           // own (see orbitingParent above), so its landing unlocks while the
@@ -1546,7 +1771,41 @@
     _refreshSelection() {
       if (this._selectedPick && this._overlayUI && this._overlayUI.hasSelection()) {
         this._showInfoFor(this._selectedPick, true);
+      } else {
+        this._ensureOrbitPanel();
       }
+    }
+
+    /**
+     * The pick for the body the ship is currently parked at, out of the live
+     * system pickables, or null when the ship is not in orbit (or is somewhere
+     * this view is not drawing).
+     */
+    _orbitPick() {
+      const ship = this.dataManager && this.dataManager.playerShip;
+      if (!ship || ship.isMoving || !ship.currentPlanet) return null;
+      if (!this._system || ship.currentSystem !== this._system.name) return null;
+      for (const p of (this._pickTargets || [])) {
+        if (!p || p.kind !== "planet" || !p.data) continue;
+        if (p.data.name === ship.currentPlanet) return p;
+      }
+      return null;
+    }
+
+    /**
+     * While the ship is parked at a world, that world's panel is the "you are
+     * here" readout and stays on screen: clicking empty space, arriving, or
+     * coming back from a scale change all leave it showing rather than an
+     * empty left column. Anything the player actually picks still takes the
+     * panel over; it only falls back here when the selection is empty.
+     */
+    _ensureOrbitPanel() {
+      if (this._minigameMode || this._tour) return;
+      if (this._scale !== SCALE_SYSTEM || this._planetFocus) return;
+      if (this._selectedPick) return;
+      const pick = this._orbitPick();
+      if (!pick) return;
+      this._showInfoFor(pick, true); // sets _selectedPick, keeps the real target
     }
 
     _wireOverlayCallbacks() {
@@ -1575,7 +1834,6 @@
         onSbBridge: () => this._sbBridge(),
         onReturnEarthToggle: () => this._toggleReturnEarth(),
         onReturnEarthCourse: () => this._setCourseEarth(),
-        onReturnEarthEb: () => this._ebBridge(),
         onCloseMap: () => this.popScene(),
         onCatalogToggle: () => this._toggleCatalog(),
         // Turning the In View filter back on re-reads the sky rather than
@@ -1946,7 +2204,7 @@
         // and the in-view yellow marker both work whenever that galaxy's view
         // happens to be open), it just isn't offered here as a "jump to it from
         // anywhere" catalog entry.
-        if (String(rec.name).startsWith("GX.")) return null;
+        if (M.galaxySeedOfSystemName && M.galaxySeedOfSystemName(rec.name) != null) return null;
         const sys = this.dataManager.getSystem(rec.name);
         return sys ? { scale: SCALE_GALAXY, kind: "star", name: rec.name, data: sys, system: sys } : null;
       }
@@ -2483,12 +2741,16 @@
         });
       });
 
-      const ov = this._overlayUI;
-      if (ov) {
-        ov.setCatalog(this._buildCatalog(), "life", true);
-        const local = this._catalogLocalSystem();
-        this._catalogSystemName = local ? local.name : null;
-        ov.setCatalogOpen(true);
+      if (window.GalaxySim && typeof window.GalaxySim.openShipControls === "function") {
+        window.GalaxySim.openShipControls("life");
+      } else {
+        const ov = this._overlayUI;
+        if (ov) {
+          ov.setCatalog(this._buildCatalog(), "life", true);
+          const local = this._catalogLocalSystem();
+          this._catalogSystemName = local ? local.name : null;
+          ov.setCatalogOpen(true);
+        }
       }
       this._setScanHint(found, fresh, weak);
       // Reading a sky full of spectra, and knowing a biosignature when one turns up.
@@ -2518,7 +2780,16 @@
         T('Galaxy.scan.loggedInCatalog'));
     }
 
-    _toggleCatalog() {
+    _toggleCatalog(targetTab) {
+      if (window.GalaxySim && typeof window.GalaxySim.openShipControls === "function") {
+        if (typeof window.GalaxySim.isShipControlsOpen === "function" && window.GalaxySim.isShipControlsOpen()) {
+          window.GalaxySim.closeShipControls();
+        } else {
+          window.GalaxySim.openShipControls(targetTab);
+        }
+        if (window.SoundManager) SoundManager.playCursor();
+        return;
+      }
       const ov = this._overlayUI;
       if (!ov) return;
       const open = !ov.isCatalogOpen();
@@ -2538,6 +2809,9 @@
      * built for stops being the system the ship is in.
      */
     _refreshCatalogIfStale() {
+      if (window.GalaxySim && typeof window.GalaxySim.isShipControlsOpen === "function" && window.GalaxySim.isShipControlsOpen()) {
+        return;
+      }
       const ov = this._overlayUI;
       if (!ov || !ov.isCatalogOpen()) return;
       const local = this._catalogLocalSystem();
@@ -2816,6 +3090,8 @@
       // follow, so the actual camera move happens on the next frame.
       this._followShipCam = true;
       this._frameShipCam = true;
+      this._shipCamLocked = false;
+      this._shipCamFollowTime = 0;
       this._ladderHold = 0;
       this._ladderCooldown = Math.max(this._ladderCooldown, 0.6);
       if (window.SoundManager) SoundManager.playOk();
@@ -2836,8 +3112,10 @@
 
     // Keep the camera on the ship once the Ship button has been pressed, until
     // the player drags the view away.
-    _updateShipCamFollow() {
-      if (!this._followShipCam) return;
+    _updateShipCamFollow(delta) {
+      // Nine different things drop the follow; clearing the lock here rather
+      // than at each of them keeps the two flags from ever disagreeing.
+      if (!this._followShipCam) { this._shipCamLocked = false; return; }
       // Any manual camera move (drag or keyboard/stick pan) drops the follow, so
       // it never fights the player for the view.
       const panning = typeof Input !== "undefined" && this._orbit &&
@@ -2846,6 +3124,7 @@
          Input.isPressed("up") || Input.isPressed("down"));
       if (this._mode !== "orbit" || panning || (this._orbit && this._orbit.dragging)) {
         this._followShipCam = false;
+        this._shipCamLocked = false;
         this._restoreSystemMinDistance();
         return;
       }
@@ -2853,6 +3132,31 @@
       const p = this._shipWorldPosition(this._shipCamScratch);
       if (!p) return;
       this._rig.setTargetFocus(p);
+      // Following used to be nothing BUT the line above, and the rig damps its
+      // focus toward the target rather than jumping to it - so a ship under way
+      // was never actually centred, it sat a fraction of a second behind itself
+      // and the faster it flew the further back it hung. The glide is only
+      // wanted on the way IN, to carry the camera over from wherever it was.
+      // Once it has caught up, the camera LOCKS: focus and target are the same
+      // point, written straight onto the rig, and the craft holds dead centre
+      // however fast it moves.
+      if (!this._frameShipCam) {
+        if (!this._shipCamLocked) {
+          this._shipCamFollowTime = (this._shipCamFollowTime || 0) + (delta || 0);
+          // Caught up, or given long enough that a ship outrunning the damping
+          // would otherwise trail for ever.
+          if (this._rig.focus.distanceTo(p) <= this._rig.distance * 0.05 ||
+              this._shipCamFollowTime > 1.5) {
+            this._shipCamLocked = true;
+          }
+        }
+        if (this._shipCamLocked) {
+          // The rig has already run for this frame (see _updateFrame), so put
+          // the camera back on the ship here rather than waiting a frame.
+          this._rig.focus.copy(p);
+          this._rig.applyOrbit();
+        }
+      }
       if (this._frameShipCam) {
         this._frameShipCam = false;
         // Close enough to read the hull, but never past the band edges that
@@ -3357,14 +3661,6 @@
       }
     }
 
-    /** Return to Earth (instant route): reuses the Schrödinger-Bohr bridge with
-     * Earth as a fixed target, from anywhere. */
-    _ebBridge() {
-      const home = this._earthPlanet();
-      if (!home) { if (window.SoundManager) SoundManager.playBuzzer(); return; }
-      this._bohrBridge({ kind: "planet", data: home.earth, system: home.sol });
-    }
-
     _changeSpeed(delta) {
       this._setSpeed(($gameVariables.value(94) || 1) + delta, true);
     }
@@ -3697,7 +3993,7 @@
 
       // The ship is now placed for this frame, so the Ship-button follow can
       // read its live position.
-      this._updateShipCamFollow();
+      this._updateShipCamFollow(delta);
 
       if (ship.isMoving) {
         this._overlayUI.showSpeed($gameVariables.value(94) || 1, this._travelEta(ship));
@@ -3740,12 +4036,9 @@
         this._overlayUI.setSbBridge(canBridge, bridgeSys ? bridgeSys.name : null);
       }
       if (this._overlayUI.setReturnEarthOptions) {
-        const infinite = !!(GS.isInfiniteFuel && GS.isInfiniteFuel());
         const atEarth = ship.currentSystem === "Sol" && ship.currentPlanet === "Earth";   // i18n-ignore: system / body id
         const canCourse = !ship.isMoving && this._isInMilkyWay() && !atEarth;
-        const canEb = !this._warping && !atEarth &&
-          (infinite || (dm.getSchrodingerite ? dm.getSchrodingerite() >= 1 : false));
-        this._overlayUI.setReturnEarthOptions(canCourse, canEb);
+        this._overlayUI.setReturnEarthOptions(canCourse);
       }
     }
 
@@ -3756,7 +4049,10 @@
     _travelEta(ship) {
       if (!ship || !ship.isMoving) return null;
       const speed = Math.max(1, $gameVariables.value(94) || 1);
-      const total = ship.travelDistance > 0 ? (ship.travelDistance * 0.95) / speed : 0;
+      const isIntra = !!ship.targetSystem && ship.targetSystem === ship.currentSystem;
+      const baseSpeed = isIntra ? 1 : 0.5;
+      const mult = isIntra ? Math.min(speed, 2) : speed;
+      const total = ship.travelDistance > 0 ? (ship.travelDistance * 0.95) / (mult * baseSpeed) : 0;
       const elapsed = ship.departureTime ? (Date.now() - ship.departureTime) / 1000 : 0;
       return Math.max(0, total - elapsed);
     }
@@ -3939,7 +4235,8 @@
         const rgf = this._returnGalaxyFocus;
         const curName = this._system && this._system.name;
         const stillThere = rgf && typeof curName === "string" &&
-          curName.startsWith("GX.") && parseInt(curName.split(".")[1], 10) === rgf.seed;
+          (curName.startsWith("GX.") || curName.startsWith("GZ.")) &&
+          parseInt(curName.split(".")[1], 10) === rgf.seed;
         if (this._scale === SCALE_SYSTEM && stillThere) {
           this._reenterGalaxyFocus(rgf);
         } else {
@@ -4274,6 +4571,12 @@
         if (this._cosmicView.setZoomDistance) {
           this._cosmicView.setZoomDistance(this._rig.distance);
         }
+        // The cosmic web streams superclusters onto whichever filaments the
+        // camera is near, the same way the galaxy scale streams stars: ten
+        // million of them is not a thing to hold, only a thing to arrive at.
+        if (this._cosmicView.update) {
+          this._cosmicView.update(this._rig.focus, this._rig.distance);
+        }
       }
       this._updatePlanetFocus();
       this._updateShipAndTravel(delta);
@@ -4300,12 +4603,8 @@
         this._overlayUI.update();
       }
 
-      // Decay the scale-transition fade plate. Quick on purpose: a short blink
-      // reads as a continuation of the zoom rather than a deliberate pause.
-      if (this._fadeAlpha > 0) {
-        this._fadeAlpha = Math.max(0, this._fadeAlpha - delta * 4.0);
-        if (this._fadeEl) this._fadeEl.style.opacity = this._fadeAlpha;
-      }
+      // Carry any scale change that is still dissolving.
+      this._updateFades(delta);
     }
 
     // RPG-Maker-driven update: keeps Input/SceneManager ticking and handles
@@ -4516,6 +4815,9 @@
       // a blanket scene.traverse: body groups reuse the shared sphere/cloud
       // geometry owned by the offscreen Renderer3D singleton (ShipBackground
       // depends on it), so they must be released via their own dispose().
+      // Anything still dissolving is freed here too, or leaving the map in the
+      // middle of a scale change would strand the outgoing view on the GPU.
+      this._flushFades();
       this._teardownScaleContent();
       this._disposeLens();
       if (this._background && GS.Scene3DCosmos) {
@@ -4547,7 +4849,6 @@
       this._fly = null;
       this._background = null;
       this._overlayEl = null;
-      this._fadeEl = null;
       this._overlayUI = null;
       this._systemView = null;
       this._galaxyView = null;

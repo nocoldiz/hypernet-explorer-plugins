@@ -4,6 +4,6 @@
   "introduce": "My name is {name} and I'm a {className}",
   "joinsParty": "{name} joins the party!",
   "residence": "Residence",
-  "joinedInactive": "{name} signs on, but there is no room on the road: they wait as an inactive member.",
+  "joinedInactive": "{name} signs on, but there is no room on the road: they wait in the reserves.",
   "benchedLore": "{name} agreed to travel with the party, and has been waiting for a place in it ever since."
 }

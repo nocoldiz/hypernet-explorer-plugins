@@ -1112,8 +1112,8 @@
             const face = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.05, 20), this._mat(0x05101a, 1.0, 0.4, p.accent));
             face.rotation.x = Math.PI / 2; face.position.set(0, 1.05, 0.24); this.maw.add(face);
             for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2; const tick = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.05, 0.02), this._mat(p.accent, 1.0, 0.3, p.accent)); tick.position.set(Math.cos(a) * 0.22, 1.05 + Math.sin(a) * 0.22, 0.27); this.maw.add(tick); }
-            this._clockHandH = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.14, 0.02), this._mat(p.accent, 1.0, 0.3, p.accent)); this._clockHandH.position.set(0, 1.05, 0.28); this._clockHandH.geometry.translate(0, 0.07, 0); this.maw.add(this._clockHandH);
-            this._clockHandM = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.2, 0.02), this._mat(0xffffff, 1.0, 0.3, p.accent)); this._clockHandM.position.set(0, 1.05, 0.28); this._clockHandM.geometry.translate(0, 0.1, 0); this.maw.add(this._clockHandM);
+            this._clockHandH = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.14, 0.02), this._mat(p.accent, 1.0, 0.3, p.accent)); this._clockHandH.position.set(0, 1.05, 0.28); this._clockHandH.geometry = this._clockHandH.geometry.clone().translate(0, 0.07, 0); this.maw.add(this._clockHandH);
+            this._clockHandM = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.2, 0.02), this._mat(0xffffff, 1.0, 0.3, p.accent)); this._clockHandM.position.set(0, 1.05, 0.28); this._clockHandM.geometry = this._clockHandM.geometry.clone().translate(0, 0.1, 0); this.maw.add(this._clockHandM);
             this.bodyGroup.add(this.maw);
 
             // Glowing eye in the hooded head.

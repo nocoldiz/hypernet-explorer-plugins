@@ -1,123 +1,55 @@
 /*:
  * @target MZ
- * @plugindesc v1.5.0 Auto Idle Explorer + Loose Party, the CPU explores for an idle player, and the party lives its own life.
+ * @plugindesc v1.6.0 Auto Idle Explorer, the CPU explores for an idle player, and the party walks behind its leader.
  * @author esoteric-heavy-industries & Assistant
  *
  * @help AutoIdleExplorer.js
  *
  * Two independent features. The autopilot is an option on the Gameplay tab of
- * the Options menu; the loose party below is simply how the party walks.
+ * the Options menu; how the party walks is simply how it walks.
  *
  * ============================================================================
- * 1. THE LOOSE PARTY (always on)
+ * 1. THE PARTY ON THE MAP
  * ============================================================================
  *
- * The marching column every RPG Maker game ships with, each member walking in
- * the leader's exact footsteps one tile back and never stopping, is gone: the
- * party has no other formation than this one and there is nothing to choose.
+ * The party walks the marching column RPG Maker ships with, and nothing else:
+ * every member steps into the tile the one in front of them has just left, one
+ * behind the other, in the leader's exact footsteps. There is no formation to
+ * choose and nothing to configure.
  *
- * Loose cuts that rope. The other members keep the leader company rather than
- * following them:
+ * The loose party that used to live here, where every member walked the map on
+ * their own, took up errands, washed, ate, and held conversations with the town
+ * while the player was looking somewhere else, is gone. So is everything that
+ * hung off it: the leash, the snap margin, the recall on a sprint, the bodies
+ * that had to be pushed out of a doorway.
  *
- *   • They live their own lives around the leader and head back only once they
- *     have been carried OFF THE SCREEN, picking their own way with the engine's
- *     A* pathfinding and respecting the terrain. The screen is the leash: a
- *     member the player can
- *     see has not been left behind, however many tiles of a wide map lie between
- *     them, so walking about near the party never drags anybody back into line.
- *     One left a good way past the edge (`looseSnap` tiles) is simply put back
- *     at the leader's shoulder rather than made to walk the whole way.
- *   • Between walks they take up an activity the way an NPC does: standing and
- *     thinking, going over to look at something, or walking up to a person on
- *     the map and holding a short conversation with them. A conversation is a
- *     real one: it moves what that person thinks of THAT member (their own
- *     standing, not the party's) up or down, and the state of the member doing
- *     the talking is part of it, so somebody who has not washed in three days
- *     is worse company. They stroll within `looseLeash` tiles of the leader.
- *   • They talk to EACH OTHER as readily as to the town, the leader included:
- *     roughly half the time a member looking for company turns to their own
- *     first. That conversation has two sides, so both ledgers move, each of
- *     them comes away thinking a little more (or a little less) of the other,
- *     on the same per-member standing the Empathize panel shows. How much they
- *     have in common and how either of them smells decide which way it goes.
- *     What is actually SAID between two of their own comes from
- *     NPC/PartyBanter.js, which is a bank written for people who already know
- *     each other rather than the greeting the town gets: a discussion of two to
- *     four beats about where they are standing, what the party diary says just
- *     happened to them, what they just spent the money on, or simply what these
- *     two personalities do to each other. A third member standing close enough
- *     when it starts is in the conversation and gets lines of their own. Every
- *     other bubble a member pops on their own, a thought, a look, a sit-down, a
- *     cry after the leader, is drawn from THEIR personality first and falls back
- *     to the plain pool here. None of that applies to a party of one, who has
- *     the plain pools and nothing else.
- *   • They look after themselves, off the very same capability registry the
- *     town's NPCs use (NPC/NPCSimulationCore.js), so a party member and a
- *     townsperson recognise a washroom by one rule and the table that teaches
- *     one teaches the other. A meter under 35% sends that member looking:
- *       hunger  eats the smallest thing in the pack that covers it
- *       hygiene walks to a WC / bathroom / shower / sink / fountain
- *       fun     walks to an arcade cabinet, a piano, a pool table
- *       company walks up to a person and talks to them
- *       sleep   rents a free room with the party's money (the door then opens
- *               for everybody), or sits down on a region 102 rest tile
- *     Everything they do to a meter, every room rented, every meal eaten and
- *     every opinion moved is announced as a toast, because it happens while
- *     the player is looking somewhere else.
- *   • A SPRINT calls them in, and only a sustained one: two seconds of running
- *     before the column forms, so a dash through a doorway is not a recall.
- *     What forms is the engine's own caterpillar: whoever is already within a
- *     tile of the person in FRONT of them is handed straight back to the
- *     vanilla chase, so they trail one behind the other in the leader's exact
- *     footsteps; anybody further back runs to that same shoulder, never to the
- *     leader, so the party strings out into a line instead of piling onto the
- *     one they are all following. They hold it for as long as the sprint lasts
- *     and come apart the moment it ends. Walking never calls them in at all,
- *     which is what makes Loose the party living its own life rather than a
- *     column with a longer rope. One member calls after the leader when it
- *     happens, rarely.
- *   • Sometimes they simply walk WITH the leader for a while of their own
- *     accord, keeping a couple of tiles off their shoulder at the leader's own
- *     pace, and then go back to their own business. They amble a notch under
- *     the leader's speed otherwise, hurry when they are out of sight, and now
- *     and then take a turn of speed for no reason at all.
- *   • On the WORLD MAP the leash is a hard two tiles. One tile there is a
- *     whole region of the continent, so a member who strolls the seven tiles
- *     they would stroll in a village has walked into another country while
- *     still sitting comfortably on the screen. They keep their activities, they
- *     simply keep them at the leader's elbow.
- *   • They swim. A member cut off by water, or following a leader who has swum
- *     off, gets in and swims across it (region 99, or a water tile on the
- *     procedural map) and climbs out on the far bank. They never DIVE: going
- *     under is the player's business.
- *   • They are gathered up automatically when the player returns from a
- *     battle, takes a transfer event, or changes map: each member is placed on
- *     a free tile around the leader rather than left behind on the old map.
- *   • Stand facing one and press OK to talk to them: that opens their
- *     Empathize panel directly, the same sheet the Dynamics roster opens.
+ * What is kept is what does not depend on anybody leaving the column:
  *
- * PETS AND FOLLOWERS WALK THE SAME WAY. The extra trailing slot owned by
- * NPC/PetFollowerSystem.js (a pet, a child, or a creature that came along of its
- * own accord) keeps to itself on every map: it wanders, visits and looks like
- * everyone else, but it says none of the party's chatter, and it comes when the
- * leader runs like everyone else.
+ *   • PETS AND FOLLOWERS walk in the same column. The extra trailing slot owned
+ *     by NPC/PetFollowerSystem.js (a pet, a child, or a creature that came
+ *     along of its own accord) trails the party like everybody else.
+ *   • A DOWNED MEMBER is carried rather than walked, as long as there are three
+ *     bodies in the party to manage it: they are held on the carrier's tile,
+ *     facing the way the carrier faces, until they come round.
+ *   • TURN ROUND AND PRESS OK on the member behind you for a short menu: a word
+ *     traded on the road (one Socialize move, nothing romantic), their
+ *     Empathize panel - the same sheet the Dynamics roster opens - or sending
+ *     them to the reserves. On the pet the same menu offers a word with it if
+ *     there is anybody home, a fuss made of it if there is not, its own page
+ *     either way, and telling it to stop following.
+ *   • THE BUBBLES over their heads stay. They are put there by the travelling
+ *     banter (NPC/PartyBanter.js), and the Party Chatter option still turns
+ *     them off.
+ *   • Arriving anywhere, coming out of a battle or taking a transfer event, the
+ *     party is put down around the leader and the column re-forms from there.
  *
- * The loose behaviour stands down wherever the party has to act as one body:
- * in a vehicle, while an event or a message is running, and whenever anything
- * calls Gather Party (the members close ranks the vanilla way, then scatter
- * again once it is over).
+ * The column stands down for a MAP BATTLE (BattleSystem/MapBattleMode.js),
+ * where every member becomes a tactical battler that MapBattleMode walks
+ * itself, tile by tile, and each one holds the ground it is fighting from.
  *
- * IN SPLIT-SCREEN it keeps going (Multiplayer/SplitScreenMultiplayer.js). The
- * session no longer empties the party down to the two players: Player 1 walks
- * the leader, Player 2 walks whichever member they have taken over, and every
- * other member is left to the CPU here, living their own life around the two of
- * them. The one body the CPU never touches is Player 2's, which is drawn as the
- * P2 avatar and whose follower slot rides along hidden underneath it.
- *
- * It also stands down for a MAP BATTLE (BattleSystem/MapBattleMode.js), where
- * every member becomes a tactical battler that MapBattleMode walks itself, tile
- * by tile. A fight opening on a scattered party calls standDown() below, so
- * nobody comes back from the battlefield to an errand they had forgotten.
+ * IN SPLIT-SCREEN (Multiplayer/SplitScreenMultiplayer.js) Player 2's own slot
+ * is walked by their pad and drawn as the P2 avatar, with the follower slot
+ * riding along hidden underneath it.
  *
  * ============================================================================
  * 1b. TAKING THE LEAD
@@ -142,6 +74,10 @@
  *
  * A fallen member is skipped, and the lead never changes hands in a vehicle, in
  * a map battle, in split-screen, or while an event or a message is running.
+ *
+ * ON THE WORLD MAP (map 315) it does not change hands at all. The party is one
+ * dot there on a grid where a tile is a whole region: there is no second body
+ * to swap with, so Tab, Shift+Tab and the triggers all do nothing.
  *
  * ============================================================================
  * 2. AUTO IDLE EXPLORER, default OFF
@@ -255,25 +191,9 @@
  * @text Em / Bubba Regroup
  * @desc Story mode only. The other of the two walks up to the one being played, and the two turn to face each other. Waits until they do.
  *
- * @param looseLeash
- * @text Loose Wander Radius (tiles)
- * @desc How far from the leader a party member strolls while idling. Coming back is decided by the screen.
- * @type number
- * @min 2
- * @max 40
- * @default 7
- *
- * @param looseSnap
- * @text Loose Snap Margin (tiles)
- * @desc Tiles past the edge of the screen before a member left behind is simply put back beside the leader.
- * @type number
- * @min 4
- * @max 60
- * @default 10
- *
  * @param looseChatter
- * @text Loose Chatter
- * @desc Show the speech bubbles a loose party member trades with the people they walk up to.
+ * @text Party Chatter
+ * @desc Show the speech bubbles the party trades over their own heads while travelling.
  * @type boolean
  * @default true
  *
@@ -338,118 +258,18 @@
     const BOUNTY_VAR = 66; // Crime bounty (euros)
 
     // -------------------------------------------------------------- the party
+    // The members walk the engine's own caterpillar behind the leader. All that
+    // is left of the party's own voice is the bubble over a head, which the
+    // travelling banter (NPC/PartyBanter.js) still puts there.
     const LOOSE_CHATTER = params.looseChatter !== "false";
-    // The party keeps to itself unless the leader is really covering ground.
-    // A SPRINT calls them in, but not the instant it starts: two seconds of it
-    // (RECALL_RUN), so a hop over a puddle or a dash through a doorway is not a
-    // recall. They then hold the column for as long as the sprint lasts and let
-    // go the moment it ends, give or take the frame or two of RECALL_DROP that
-    // separate one dashed step from the next.
-    const RECALL_RUN  = 120;
-    const RECALL_DROP = 20;
-    // How the column is shaped once they have been called in. A member within
-    // this many tiles of the person in FRONT of them is already in the file and
-    // is left entirely to the engine's own caterpillar chase, which walks them
-    // into the tile that person is leaving. Anybody further back closes on that
-    // same shoulder, not on the leader, so the party trails behind in a line
-    // rather than piling onto the one they are all following.
-    const COLUMN_GAP = 1;
-    // How long somebody the leader walked into stands still after stepping out
-    // of the way, so they do not drift back under the player's feet.
-    const NUDGE_HOLD = 45;
-    // Nobody steps aside for the first push. Walking into a member once only
-    // presses against them; they move on the SECOND separate attempt, so the
-    // party reads as bodies that have to be asked twice rather than doors.
-    // Nobody gives way the instant they are touched. Keep walking into them for
-    // this long and they step out of the way; keep at it this much longer and
-    // they stop being a body at all, so a member who has nowhere to step is
-    // never the reason the leader cannot get past.
-    const NUDGE_ASIDE_HOLD   = 24;   // 0.4s of pushing before they move
-    const NUDGE_THROUGH_HOLD = 48;   // 0.8s before the leader walks through them
-    // Frames of not pushing that end a push: a held direction key calls in
-    // every frame, so anything longer than this is a fresh shove.
-    const NUDGE_GAP = 2;
-    // "Wait for me!" is for the moment they are left behind, not for every
-    // sprint: one member says it, rarely, and not again for a good while.
-    const RECALL_CRY_ODDS = 0.3;
-    const RECALL_CRY_COOL = 1800;
-    // Tagging along of their own accord: how often a member chooses it over an
-    // errand, how long they stay at the leader's shoulder, and how close they
-    // keep. Plus the odd turn of speed, whatever they are doing.
-    const FOLLOW_ODDS      = 0.3;
-    const FOLLOW_MIN       = 240;   // 4 seconds
-    const FOLLOW_MAX       = 1200;  // 20 seconds
-    const FOLLOW_NEAR      = 2;
-    const FOLLOW_DASH_ODDS = 0.25;
-    // What tells a member they have been left behind is the SCREEN, not a tile
-    // count: somebody the player can see is not lost, however far across a wide
-    // map they have wandered, and a leader walking about near them should never
-    // drag them back into line. This is the margin, measured from the edge of
-    // the screen outward in tiles, past which they are simply put back.
-    const LOOSE_SNAP_MARGIN = Math.max(4, Number(params.looseSnap) || 10);
-    // Once heading back, keep walking until this far INSIDE the edge again, so a
-    // member does not stop dead on the rim and drift straight back out of it.
-    const LOOSE_BACK_INSET = 2;
-    // Nobody is ever allowed to actually leave the screen: this is the band
-    // just INSIDE the edge that already counts as gone, so a member turns for
-    // the leader while they can still be seen rather than after they cannot.
-    const LOOSE_EDGE_INSET = 1;
-    // How far ahead the camera is read when asking the same question: the
-    // leader walking away carries the screen with them, and a member standing
-    // near the trailing edge is about to be off it even standing still.
-    const LOOSE_CAMERA_LOOKAHEAD = 2;
-    // A stroll stays a stroll: this is how far a member sets out to go, which is
-    // not the same question as when they come back.
-    const LOOSE_ROAM = Math.min(Math.max(2, Number(params.looseLeash) || 7), 12);
-    // The world map is the one place where the screen is the wrong leash: a
-    // tile there is a whole region, so a member wandering to the far side of
-    // the screen has wandered across a country. There, and only there, the
-    // leash is a hard tile count, and nobody may be further than this from the
-    // leader whatever errand they are on.
-    const WORLD_LEASH = 2;
-    // In procedural interiors (dungeons, crypts, sewers, caves), party members
-    // stay close to the leader so they remain within the shared lantern light pool.
-    const DUNGEON_LEASH = 3;
-
-    // ------------------------------------------------------------------ needs
-    // A loose member attends to themselves the way the town's NPCs do, off the
-    // very same capability registry (NPC/NPCSimulationCore.js): a washroom for
-    // hygiene, an arcade cabinet for fun, a bed for the night, a person to talk
-    // to for company. What each thing on the map is good for is answered in one
-    // place, NPCSim.InteractionScanner, so teaching the town teaches the party.
-    const NEED_LOW    = 35;   // a meter at or under this sends a member looking
-    const NEED_SCAN   = 14;   // tiles they will walk to attend to one
-    const NEED_TRIES  = 140;  // steps before an errand is written off
-    const NEED_RETRY  = 300;  // frames before a fruitless search is tried again
-    const REST_REGION = 102;  // the region NPCs sit and rest on
-    // What one visit to the right place is worth. Deliberately partial: a bath
-    // is not a spa day, and the meter has to be worth topping up again later.
-    const NEED_FILL   = { hygiene: 45, leisure: 35, social: 18, sleep: 55, comfort: 25 };
-    // A meal is taken from the pack the moment it is wanted, so hunger is the
-    // one need with no errand attached to it.
-    const HUNGER_EAT  = 45;
-    const LOOSE_SCAN = 9;     // tiles a member looks around for company
-    // How often a member looking for company looks to their OWN first, the
-    // leader or whoever else is walking with them, rather than to the town. A
-    // party that only ever talks to strangers reads as a column of strangers.
-    // Kept under a half: a party discussion is two to four beats and the town's
-    // greeting is one, so equal odds make the party the louder half of the map.
-    const PARTY_TALK_ODDS = 0.36;
-    // A third member standing this close when two of their own start talking is
-    // in the conversation, not next to it: they get a line and they get faced.
-    const PARTY_THIRD_RANGE = 3;
-    const VISIT_COOLDOWN = 1200; // frames before a member calls on the same face again
     const BUBBLE_MS = 3400;   // how long one line of chatter stays up
     // A party that comments on everything talks over itself and over the town,
     // so a line is rationed: a member keeps quiet for a while after saying one,
-    // no two members speak on top of each other, and a proper discussion is
-    // something that happens every so often rather than at every stop. The
-    // beats of a discussion already in progress are exempt, they are one
-    // exchange and are paced by their own waits.
-    const CHATTER_COOL = 1500;  // frames before the same member says another line (~25s)
-    const CHATTER_GAP  = 420;   // frames between any two party lines (~7s)
-    const TALK_COOL    = 1200;  // frames before the party holds another discussion (~20s)
-    const IDLE_TALK_ODDS = 0.16; // odds a member standing about voices the thought at all
+    // and no two of them speak on top of each other.
+    const CHATTER_COOL = 1500;   // frames before the same member says another (~25s)
+    const CHATTER_GAP  = 420;    // frames between any two party lines (~7s)
+    const IDLE_TALK_EVERY = 120; // frames between two rolls for a line at all
+    const IDLE_TALK_ODDS = 0.16; // odds a roll turns into one
 
     // Watchdog / dismissal tuning for arbitrary external plugin menus.
     const BLOCK_LIMIT = 240;  // frames the map may stay un-drivable (no message,
@@ -1951,50 +1771,6 @@
 
     AutoIdle.p2 = P2Auto;
 
-    // ========================================================================
-    // The loose party: the members live their own lives around the leader
-    // ------------------------------------------------------------------------
-    // What the engine ships is a marching column: Game_Followers.updateMove
-    // walks every member through the tile the one in front just left, so the
-    // party is a rope the leader drags. This cuts that rope, and there is no
-    // option to tie it back on. The members are no longer moved by the leader's
-    // steps at all: each one is given the map, a leash around the leader and an
-    // activity, and walks itself with the engine's own A* (the same
-    // findDirectionTo the autopilot above uses).
-    //
-    // The rope is spliced back on for exactly as long as the party has to act as
-    // one body: a dashing leader (they drop everything and come), an event's
-    // Gather Party, a vehicle, split-screen, a battle. Everything else, a
-    // transfer, a change of map, walking out of a fight, is handled by putting
-    // the members back at the leader's shoulder outright rather than making them
-    // walk home across a map they were never on.
-    // ========================================================================
-
-    // Names that are furniture rather than people. A follower will happily walk
-    // over to look at a chest, but a door or a teleport marker is a thing the
-    // party uses, not someone it talks to.
-    const NON_PERSON = /door|teleport|transfer|house|room|plant|animal|chest|sign|delivery|vehicle|player2|enemy/i;
-
-    function isPersonEvent(ev) {
-        if (!ev || ev === $gamePlayer || ev._erased) return false;
-        if (ev.isTransparent && ev.isTransparent()) return false;
-        if (!ev.characterName || !ev.characterName()) return false; // a tile, not a body
-        const name = (ev.event() && ev.event().name) || "";
-        if (NON_PERSON.test(name)) return false;
-        return !isEnemyEvent(ev);
-    }
-
-    // Something worth stopping to look at: an event that is not a person and not
-    // a way out of the map (walking up to a teleport tile would look like the
-    // member was about to leave).
-    function isSceneryEvent(ev) {
-        if (!ev || ev === $gamePlayer || ev._erased) return false;
-        if (ev.isTransparent && ev.isTransparent()) return false;
-        const name = (ev.event() && ev.event().name) || "";
-        if (/teleport|transfer|door|fast\s*travel|player2/i.test(name)) return false;
-        return !isPersonEvent(ev) && !isEnemyEvent(ev);
-    }
-
     // ------------------------------------------------------------------------
     // Speech bubbles for the party. NPCConversation's own bubble manager
     // resolves its target by event name, and a follower is not an event, so this
@@ -2084,8 +1860,16 @@
                 this.clear();
                 return;
             }
-            const canvas = document.getElementById("gameCanvas");
-            const r = canvas ? canvas.getBoundingClientRect() : null;
+            // Reading the canvas box forces a synchronous layout, and a dozen
+            // overlays want it on the same frame, so it comes from the shared
+            // frame budget (window.FrameBudget, Core/ParchmentToast.js) which
+            // takes that hit once for all of them. Reading it here is the
+            // fallback for when the budget has not loaded.
+            let r = window.FrameBudget && window.FrameBudget.canvasRect();
+            if (!r) {
+                const canvas = document.getElementById("gameCanvas");
+                r = canvas ? canvas.getBoundingClientRect() : null;
+            }
             const sx = r ? r.width / Graphics.width : 1;
             const sy = r ? r.height / Graphics.height : 1;
             const ox = r ? r.left : 0;
@@ -2502,180 +2286,62 @@
     };
     window.NPCRomanceSystem = NPCRomanceSystem;
 
+    // ========================================================================
+    // The party on the map
+    // ========================================================================
+    // The party walks the engine's own caterpillar and nothing else: every
+    // member steps into the tile the one in front of them has just left, one
+    // behind the other, in the leader's exact footsteps, and nobody leaves the
+    // column. The loose layer that used to walk them about on their own, with
+    // its errands, its strolls and the conversations it held with the town
+    // while the player was looking somewhere else, is gone, and with it every
+    // reason a member had to stand anywhere but at the leader's back.
+    //
+    // What is left here is the handful of questions about the party ON THE MAP
+    // that the rest of this file still asks: whether a map battle owns the
+    // bodies, whether they are stowed in a hull, where to put them down after a
+    // transfer, and who the leader is standing face to face with.
     const Loose = {
-        _recall: false,
-        _still: 0,      // frames the leader has stood still during a recall
-        // Per-member AI state, kept module-side and keyed by party slot rather
-        // than written onto the Game_Follower: followers are serialised into the
-        // savegame, and a live Game_Event reference in there would be cloned
-        // into the save as a second copy of that event.
-        _states: [],
+        // The map the party was last seen on, so arriving somewhere new can be
+        // told from coming back to the map it never left.
         mapId: 0,
-        // Chatter rationing. Frame stamps only, so nothing here has to be saved:
-        // who spoke last and when, when the party last held a discussion, and a
-        // hold that outlasts both (a map change, closing ranks).
-        _saidAt: new WeakMap(),
-        _lastLineAt: -CHATTER_GAP,
-        _lastTalkAt: -TALK_COOL,
-        _quietUntil: 0,
 
         // A pet, a child or a creature that came along of its own accord
-        // (NPC/PetFollowerSystem.js) walks the map like everybody else, but it
-        // is not one of the party: none of the party's chatter is its to say,
-        // and it has no actor behind it to keep a standing with.
+        // (NPC/PetFollowerSystem.js) walks at heel like everybody else, but it
+        // is not one of the party: there is no actor behind it.
         isPet(f) {
             return !!(window.Game_PetFollower && f instanceof window.Game_PetFollower);
         },
 
-        stateOf(f) {
-            const i = f._memberIndex || 0;
-            let s = this._states[i];
-            if (!s) {
-                s = this._states[i] = {
-                    act: "idle", wait: 0, gx: null, gy: null, partner: null, beat: 0, tries: 0,
-                    need: null, rent: false, until: 0, dash: false,
-                    // The discussion in progress (PartyBanter beats) and the
-                    // characters saying it, speaker-index aligned.
-                    talk: null, talkChars: null,
-                    // Who this member has already been over to see, and when. A
-                    // party standing in a village would otherwise queue up in
-                    // front of the one villager nearest the leader all evening.
-                    seen: new Map(),
-                };
-            }
-            return s;
-        },
-
-        // Has this member just dealt with that character?
-        stale(s, c) {
-            const last = s.seen.get(c);
-            return last !== undefined && Graphics.frameCount - last < VISIT_COOLDOWN;
-        },
-
-        remember(s, c) {
-            s.seen.set(c, Graphics.frameCount);
-            if (s.seen.size > 24) s.seen.delete(s.seen.keys().next().value);
-        },
-
-        resetStates() {
-            this._states = [];
-            // Arriving somewhere is not a cue to start talking: give the party a
-            // beat to look around before anybody says anything.
-            this._quietUntil = Graphics.frameCount + CHATTER_COOL;
-        },
-
-        clearGoal(s) {
-            s.act = "idle";
-            s.gx = s.gy = null;
-            s.partner = null;
-            s.talk = null;
-            s.talkChars = null;
-            s.beat = 0;
-            s.tries = 0;
-            s.need = null;
-            s.rent = false;
-            s.until = 0;
-            s.isRomance = undefined;
-            s.romanceData = null;
-        },
-
         // A map battle (BattleSystem/MapBattleMode.js) turns every member into a
-        // tactical battler that MapBattleMode walks itself. The whole loose
-        // layer stands down for the duration of the fight.
+        // tactical battler that MapBattleMode walks itself, tile by tile.
         inMapBattle() {
             return !!(window.MapBattleMode && window.MapBattleMode.isActive());
         },
 
-        // Called by MapBattleMode when a fight opens on top of a loose party:
-        // drop every errand and every bubble, so nobody walks back to a stale
-        // goal once the fight is over, and nobody stands in the middle of a
-        // battlefield thinking about the flowers.
-        standDown() {
-            this._recall = false;
-            this._still = 0;
-            this._run = 0;
-            this.resetStates();
-            Bubbles.clear();
-        },
-
-        // True while the loose layer owns the followers. Everything that needs
-        // the party to move as one body switches it back off, and the vanilla
-        // chase takes over again for the duration.
-        active() {
-            return this.conditionsMet();
-        },
-
-        // The same question asked of one member. They all answer together now,
-        // the pet slot included, but the per-member form is what the rest of
-        // the codebase calls.
-        activeFor(f) {
-            return !!f && !this.heldByP2(f) && this.conditionsMet();
-        },
-
-        // Riding, the party is normally stowed inside the hull with the leader and
-        // has no business walking anywhere. The Bike is the exception: there is no
-        // hull, every member is on a bicycle of their own out in the open
-        // (Vehicle/VehicleSystem.js swaps their sheets for it), and they can keep
-        // to the same ground the leader is pedalling over. The Broom cannot -
-        // nobody walks after somebody flying across a lake - so
-        // isPartyRidingAlong() is false for that one.
-        stowedInVehicle() {
-            if (!$gamePlayer || !$gamePlayer.isInVehicle()) return false;
-            const vs = window.MergedVehicleSystem;
-            return !(vs && vs.isPartyRidingAlong && vs.isPartyRidingAlong());
-        },
-
-        // The states of the game in which no follower may be walking itself.
-        conditionsMet() {
-            if (this.inMapBattle()) return false;
-            // A <Platform> map is a side view platformer (Map/PlatformerMode.js):
-            // the followers replay the leader's jump arc, and nothing here may
-            // walk one off a ledge on its own.
-            if (window.PlatformerMode && window.PlatformerMode.isActive()) return false;
-            if (!$gamePlayer || !$gameMap || !$gameParty || !$gameMessage) return false;
-            if (!(SceneManager._scene instanceof Scene_Map)) return false;
-            if ($gameParty.inBattle()) return false;
-            if (!$gamePlayer.followers().isVisible()) return false;
-            if (this.stowedInVehicle()) return false;
-            if ($gamePlayer._vehicleGettingOn || $gamePlayer._vehicleGettingOff) return false;
-            return true;
-        },
+        // Kept for the callers that used to ask the loose layer to drop what it
+        // was doing (MapBattleMode, SplitScreenMultiplayer): there is nothing
+        // left to drop but whatever is written over somebody's head.
+        standDown() { Bubbles.clear(); },
+        resetStates() { Bubbles.clear(); },
 
         // The body the second player is holding in a split-screen session
         // (Multiplayer/SplitScreenMultiplayer.js). That member is walked by the
-        // pad, not by the CPU, so the loose layer leaves the slot alone.
+        // pad rather than by the column.
         heldByP2(f) {
             const ss = window.SplitScreenManager;
             if (!ss || !ss.active || typeof ss.isP2Follower !== "function") return false;
             return ss.isP2Follower(f);
         },
 
-        // The party is being called in: by a leader who broke into a run, or by
-        // anything that asked for a Gather Party.
-        recalling() {
-            if ($gamePlayer && $gamePlayer.areFollowersGathering()) return true;
-            return this._recall;
-        },
-
-        // The activity AI only runs on a quiet map. An event, a message or a
-        // transfer freezes every member where they stand.
-        // During waiting fast-forward, members can act freely.
-        canAct(f) {
-            const isWaiting = !!(typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp._isWaitingFastForward);
-            if (isWaiting) {
-                return (f ? this.activeFor(f) : this.active()) && !this.recalling() && !$gamePlayer.isTransferring();
-            }
-            return (
-                (f ? this.activeFor(f) : this.active()) &&
-                !this.recalling() &&
-                !$gameMap.isEventRunning() &&
-                !$gameMessage.isBusy() &&
-                !$gamePlayer.isTransferring()
-            );
-        },
-
-        dist(a, b) {
-            return $gameMap.distance(a.x, a.y, b.x, b.y);
+        // Riding, the party is stowed inside the hull with the leader. The Bike
+        // is the exception: there is no hull, every member is on a bicycle of
+        // their own out in the open (Vehicle/VehicleSystem.js swaps their sheets
+        // for it).
+        stowedInVehicle() {
+            if (!$gamePlayer || !$gamePlayer.isInVehicle()) return false;
+            const vs = window.MergedVehicleSystem;
+            return !(vs && vs.isPartyRidingAlong && vs.isPartyRidingAlong());
         },
 
         // Standing on the world map (Map/WorldMapReturn.js), where one tile is
@@ -2688,181 +2354,99 @@
             return $gameMap.mapId() === id;
         },
 
-        // Standing inside a dark map or procedural interior (dungeon, crypt, sewer, cave, underground layer, negative dungeon floor, <Dark>).
-        inProceduralInterior() {
-            if ($dataMap && $dataMap.note && /<Dark>/i.test($dataMap.note)) {
+        dist(a, b) {
+            return $gameMap.distance(a.x, a.y, b.x, b.y);
+        },
+
+        // One member put down beside the leader, on the first free tile of the
+        // ring around them. `taken` collects the tiles already handed out, so no
+        // two of them are dropped on the same one.
+        placeBeside(f, taken) {
+            const px = $gamePlayer.x;
+            const py = $gamePlayer.y;
+            const ring = [
+                [0, 1], [0, -1], [1, 0], [-1, 0],
+                [1, 1], [-1, 1], [1, -1], [-1, -1],
+                [0, 2], [0, -2], [2, 0], [-2, 0],
+            ];
+            for (const [dx, dy] of ring) {
+                const x = $gameMap.roundX(px + dx);
+                const y = $gameMap.roundY(py + dy);
+                const key = x + "," + y;
+                if (taken && taken.has(key)) continue;
+                if (!tilePassable(x, y)) continue;
+                // Never drop somebody on top of a solid event: standing inside
+                // a chest or a shopkeeper reads as a bug even though a follower
+                // blocks nothing.
+                if ($gameMap.eventsXyNt(x, y).some((e) => e.isNormalPriority())) continue;
+                if (taken) taken.add(key);
+                f.locate(x, y);
+                f.setDirection($gamePlayer.direction());
                 return true;
             }
-            if (typeof window.isProceduralInteriorMap === "function" && window.isProceduralInteriorMap()) {
-                return true;
-            }
-            if (window.DungeonFloors && typeof window.DungeonFloors.currentFloor === "function" && window.DungeonFloors.currentFloor() < 0) {
-                return true;
-            }
-            if ($gameVariables && typeof $gameVariables.value(1) === "number" && $gameVariables.value(1) < 0) {
-                return true;
-            }
-            if ($gameMap && $gameMap.mapId() === 636) {
-                const data = $gameSystem && $gameSystem._procGenData;
-                if (data) {
-                    if (data._dungeonSession && data._dungeonSession.type === "tower") return true;
-                    if (data.biomeLayerStack && data.biomeLayerStack.length > 0) return true;
-                    if (typeof window.isInteriorBiome === "function" && window.isInteriorBiome(data.currentBiome)) return true;
-                    const b = (data.currentBiome || "").toLowerCase();
-                    if (b.includes("cave") || b.includes("dungeon") || b.includes("crypt") || b.includes("sewer") || b.includes("cellar") || b.includes("vault") || b.includes("templeinside") || b.includes("caveden")) {
-                        return true;
-                    }
-                }
-            }
+            // Nowhere free: standing on the leader is still better than being
+            // left on the other side of the map.
+            f.locate(px, py);
+            f.setDirection($gamePlayer.direction());
             return false;
         },
 
-        // The hard limit on how far a member may be from the leader. Off the
-        // world map there is none: what tells them they have been left behind
-        // is the screen, which already carries the scale of the place.
-        // In procedural interiors, they stay close to the leader (DUNGEON_LEASH)
-        // to wander and explore without straying into pitch dark hallways.
-        // During waiting fast-forward, members get a generous leash to satisfy needs.
-        leash() {
-            if (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp._isWaitingFastForward) return 25;
-            if (this.onWorldMap()) return WORLD_LEASH;
-            if (this.inProceduralInterior()) return DUNGEON_LEASH;
-            return Infinity;
-        },
-
-        // Is this tile, or this character, inside the leash? Everywhere the
-        // leash is off, everything is.
-        inLeash(x, y) {
-            const max = this.leash();
-            if (!isFinite(max) || !$gamePlayer || !$gameMap) return true;
-            return $gameMap.distance(x, y, $gamePlayer.x, $gamePlayer.y) <= max;
-        },
-
-        inLeashOf(c) {
-            return !!c && this.inLeash(c.x, c.y);
-        },
-
-        // Past the leash, and so on their way back. `returning` asks the
-        // question of somebody already walking home, who keeps walking until
-        // they are a tile INSIDE the limit rather than exactly on it: the same
-        // idea as LOOSE_BACK_INSET at the screen edge, so nobody bounces off
-        // the leash with every step the leader takes.
-        strayed(f, returning) {
-            const max = this.leash();
-            if (!isFinite(max) || !$gamePlayer) return false;
-            return this.dist(f, $gamePlayer) > (returning ? Math.max(1, max - 1) : max);
-        },
-
-        // Is this member outside what the player can actually see? Screen
-        // coordinates are the honest answer to that: they already carry the
-        // camera, the edges of a map too small to centre on, and the zoom the
-        // spriteset renders at. `margin` is measured in tiles from the edge of
-        // the screen, positive outward (past the edge) and negative inward.
-        offScreen(f, margin) {
-            if (!f || !$gameMap || typeof f.screenX !== "function") return false;
-            return this.offScreenPoint(f.screenX(), f.screenY(), margin);
-        },
-
-        // The same question asked of a bare tile rather than of somebody
-        // standing on one, which is what lets an errand be turned down before
-        // it is ever set out on.
-        offScreenAt(x, y, margin) {
-            if (!$gameMap) return false;
-            const tw = $gameMap.tileWidth();
-            const th = $gameMap.tileHeight();
-            return this.offScreenPoint(
-                $gameMap.adjustX(x) * tw + tw / 2,
-                $gameMap.adjustY(y) * th + th,
-                margin
-            );
-        },
-
-        offScreenPoint(sx, sy, margin) {
-            if (!$gameMap) return false;
-            const z = ($gameScreen && $gameScreen.zoomScale()) || 1;
-            const zx = $gameScreen ? $gameScreen.zoomX() : 0;
-            const zy = $gameScreen ? $gameScreen.zoomY() : 0;
-            // The stage is scaled about the zoom centre, so that is where a
-            // character's screen position really ends up on the canvas.
-            const x = (sx - zx) * z + zx;
-            const y = (sy - zy) * z + zy;
-            const m = Number(margin) || 0;
-            const mx = m * $gameMap.tileWidth() * z;
-            const my = m * $gameMap.tileHeight() * z;
-            return x < -mx || x > Graphics.width + mx || y < -my || y > Graphics.height + my;
-        },
-
-        // Is this tile somewhere a member may stand and still be seen? An
-        // errand is only ever set on a tile that answers yes.
-        inView(x, y) {
-            return !this.offScreenAt(x, y, -LOOSE_EDGE_INSET);
-        },
-
-        inViewOf(c) {
-            return !!c && this.inView(c.x, c.y);
-        },
-
-        // About to be off the screen, which is the moment they turn back rather
-        // than the moment after it. Three ways of being about to: standing in
-        // the band just inside the edge, walking into it, or standing still
-        // while the leader drags the camera off them.
-        leavingView(f) {
-            if (!f || !$gameMap) return false;
-            if (this.offScreenAt(f.x, f.y, -LOOSE_EDGE_INSET)) return true;
-            const d = f.direction();
-            if (d > 0 && f.isMoving()) {
-                const nx = $gameMap.roundXWithDirection(f.x, d);
-                const ny = $gameMap.roundYWithDirection(f.y, d);
-                if (this.offScreenAt(nx, ny, -LOOSE_EDGE_INSET)) return true;
+        // The whole party put back at the leader's side at once: coming out of
+        // a battle, taking a transfer event, or arriving on a new map. The
+        // column re-forms from there on the leader's first step.
+        gatherNear() {
+            if (!$gamePlayer || !$gameMap) return;
+            // Riding, the party is inside the vehicle with the leader; putting
+            // them on the tiles around it would drop them in the water. On a bike
+            // they are already on the tiles around it, each on their own, so they
+            // are gathered like anybody else.
+            if (this.stowedInVehicle()) return;
+            const taken = new Set([$gamePlayer.x + "," + $gamePlayer.y]);
+            for (const f of $gamePlayer.followers().data()) {
+                if (!f.isVisible()) continue;
+                this.placeBeside(f, taken);
             }
-            if ($gamePlayer && $gamePlayer.isMoving()) {
-                // The camera follows the leader, so a step of theirs carries
-                // this member the same step the other way across the screen.
-                const pd = $gamePlayer.direction();
-                const k = LOOSE_CAMERA_LOOKAHEAD;
-                const dx = ($gameMap.roundXWithDirection($gamePlayer.x, pd) - $gamePlayer.x) * k;
-                const dy = ($gameMap.roundYWithDirection($gamePlayer.y, pd) - $gamePlayer.y) * k;
-                if ((dx || dy) && this.offScreenAt(f.x - dx, f.y - dy, -LOOSE_EDGE_INSET)) return true;
-            }
-            return false;
+            Bubbles.clear();
         },
 
-        // Has this member been quiet long enough to say something, and has the
-        // party as a whole? Discussion beats do not ask, they only stamp.
+        // ------------------------------------------------------------ chatter
+        // The party still says things while it walks. Nobody leaves the column
+        // to say them any more: every so often one member standing still puts a
+        // line in a bubble over their own head and that is the whole of it.
+        _saidAt: new WeakMap(),
+        _lastLineAt: -CHATTER_GAP,
+
+        partyActorOf(char) {
+            if (!char || this.isPet(char)) return null;
+            return (char.actor && char.actor()) || null;
+        },
+
+        // A line is rationed twice over: the same member keeps quiet for a good
+        // while after saying one, and no two of them speak on top of each other.
         _mayTalk(char) {
-            const isWaiting = !!(typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp._isWaitingFastForward);
-            if (isWaiting) {
-                const now = Graphics.frameCount;
-                if (now - (this._saidAt.get(char) || -30) < 30) return false;
-                return now - this._lastLineAt >= 20;
-            }
+            if (!LOOSE_CHATTER) return false;
             const now = Graphics.frameCount;
-            if (now - this._quietUntil < 0) return false;
-            if (now - (this._saidAt.get(char) || -CHATTER_COOL) < CHATTER_COOL) return false;
-            return now - this._lastLineAt >= CHATTER_GAP;
+            if (now - this._lastLineAt < CHATTER_GAP) return false;
+            const last = this._saidAt.get(char);
+            return last === undefined || now - last >= CHATTER_COOL;
         },
 
         _stampTalk(char) {
-            this._saidAt.set(char, Graphics.frameCount);
-            this._lastLineAt = Graphics.frameCount;
+            const now = Graphics.frameCount;
+            this._saidAt.set(char, now);
+            this._lastLineAt = now;
         },
 
-        // `answer` marks the second half of an exchange somebody already
-        // started: it is said whatever the rationing says, because a greeting
-        // that goes unanswered reads worse than one line too many. Returns
-        // whether anything was actually said, so the caller can drop the rest
-        // of an exchange that never got started.
         say(char, key, answer) {
             // The chatter is written for the people in the party. A pet or a
-            // child walking with them wanders and stops to look at things like
-            // everyone else, but it says none of it.
+            // child walking with them says none of it.
             if (this.isPet(char)) return false;
             if (!answer && !this._mayTalk(char)) return false;
-            // A party of two or more says it in their OWN voice: PartyBanter
-            // answers out of this member's personality bank (NPC/PartyBanter.js).
-            // A lone traveller has no banter to be part of and falls back to the
-            // plain pool below, which is what they always had.
             const actor = this.partyActorOf(char);
+            // A creature walking with the party has no words of its own:
+            // window.NPCCreature owns that boundary and PartyBanter answers for
+            // it, so nothing here ever puts prose over a feral head.
+            if (window.PartyBanter?.canSpeak && !window.PartyBanter.canSpeak(actor)) return false;
             // Em and Bubba walking together have their own bank for exactly
             // this: a word about the rain, the trees, the town or the hour,
             // written for the two of them and nobody else (the `situations`
@@ -2890,1532 +2474,66 @@
             return true;
         },
 
-        // A line already chosen elsewhere (a scripted party discussion), said
-        // by this character. Same bubble, no bank lookup.
+        // A line already chosen elsewhere (the travelling banter), said by this
+        // character. Same bubble, no bank lookup.
         sayText(char, text) {
             if (!text || this.isPet(char)) return;
+            const actor = this.partyActorOf(char);
+            if (window.PartyBanter?.canSpeak && !window.PartyBanter.canSpeak(actor)) return;
             this._stampTalk(char);
             Bubbles.show(char, text);
         },
 
-        // The leader is running, not walking. Read as "covering ground at dash
-        // speed", which is the engine's own notion of a run: it therefore also
-        // covers click-to-move (the engine dashes for that too) and behaves
-        // sensibly under Always Dash, where the party closes ranks whenever
-        // the leader is on the move and scatters the moment they stand still.
-        isLeaderRunning() {
-            const p = $gamePlayer;
-            return !!p && p.isMoving() && p.isDashing();
+        // Once every so often, on a quiet map, one of them says something.
+        updateChatter() {
+            if (!LOOSE_CHATTER) return;
+            if (!$gamePlayer || !$gameMap || !$gameMessage) return;
+            if (!(SceneManager._scene instanceof Scene_Map)) return;
+            if ($gameParty.inBattle() || this.inMapBattle()) return;
+            if ($gameMap.isEventRunning() || $gameMessage.isBusy()) return;
+            if ($gamePlayer.isTransferring() || $gamePlayer.isInVehicle()) return;
+            if (!$gamePlayer.followers().isVisible()) return;
+            if (Graphics.frameCount % IDLE_TALK_EVERY !== 0) return;
+            if (Math.random() >= IDLE_TALK_ODDS) return;
+            const talkers = $gamePlayer.followers().data()
+                .filter((f) => f && f.isVisible() && !f.isTransparent() && !this.isPet(f)
+                    && !this.heldByP2(f) && this.partyActorOf(f));
+            if (!talkers.length) return;
+            this.say(talkers[Math.floor(Math.random() * talkers.length)], "AutoIdle.loose.thought");
         },
 
-        // In the water (Map/MovementInteractionSystem.js). The leader swimming
-        // is NOT a recall: a loose member gets into the water themselves and
-        // swims after them. What they never do is dive.
-        isLeaderSwimming() {
-            const p = $gamePlayer;
-            return !!p && (!!p._isSwimming || !!p._isDiving);
-        },
-
-        // ------------------------------------------------------------ per frame
-        update() {
-            if ($gamePlayer) {
-                // A sprint is the one thing that puts the rope back on, and it
-                // has to be a real one: the run is timed, and only once it has
-                // lasted RECALL_RUN frames does the party form up. Anything
-                // slower than a sprint, walking included, leaves them to their
-                // own lives, which is the whole point of Loose.
-                const running = this.conditionsMet() && this.isLeaderRunning();
-                this._run = running ? (this._run || 0) + 1 : 0;
-                if (running && this._run >= RECALL_RUN) {
-                    if (!this._recall) {
-                        Bubbles.clear();
-                        this.cryForTheLeader();
-                    }
-                    this._recall = true;
-                    this._still = 0;
-                }
-                // And they let go as soon as the sprint does.
-                if (this._recall && !running) {
-                    this._still = (this._still || 0) + 1;
-                    if (this._still >= RECALL_DROP) {
-                        this._recall = false;
-                        this._still = 0;
-                    }
-                } else if (running) {
-                    this._still = 0;
-                }
-            }
-            Bubbles.update();
-        },
-
-        // One member calls after the leader, and only now and then: a party
-        // that shouted every time somebody broke into a run would never shut up.
-        cryForTheLeader() {
-            const now = Graphics.frameCount;
-            if (this._cried && now - this._cried < RECALL_CRY_COOL) return;
-            if (Math.random() > RECALL_CRY_ODDS) return;
-            const f = $gamePlayer.followers().data().find((m) => m.isVisible() && this.activeFor(m));
-            if (!f) return;
-            this._cried = now;
-            this.say(f, "AutoIdle.loose.recall");
-        },
-
-        // Called from Game_Follower.update, once per member per frame.
-        updateFollower(f) {
-            if (!f || !f.isVisible()) return;
-            // Hands off entirely during a map battle: the through(true) below is
-            // exactly what would let a tactical battler walk through a wall.
-            if (this.inMapBattle()) return;
-            if (!this.activeFor(f)) {
-                // Back in the engine's chain: a state that suspends the loose
-                // behaviour (a vehicle, split-screen, a battle). A chained
-                // follower walks through everything, and a pet left solid would
-                // be stranded the moment the party sails.
-                if (!f.isThrough()) f.setThrough(true);
-                return;
-            }
-
-            if (this.recalling()) {
-                if (!f.isThrough()) f.setThrough(true);
-                const gathering = $gamePlayer.areFollowersGathering();
-                // Already in the file: the engine's own chase (the vanilla
-                // updateMove spliced back in below) steps them into the tile
-                // the person in front is leaving, which IS the marching column
-                // every RPG Maker game ships with. The loose layer takes its
-                // hands off them entirely rather than walking them somewhere
-                // else at the same time, and they keep the leader's pace so the
-                // spacing holds instead of concertinaing.
-                if (!gathering && this.inColumn(f) && !this.strayed(f, false)) {
-                    f.setMoveSpeed($gamePlayer.realMoveSpeed());
-                    return;
-                }
-                this.stepHome(f, gathering);
-                return;
-            }
-            if (!this.canAct(f)) return;
-
-            // Loose members walk the map for themselves, so they obey it.
-            if (f.isThrough()) f.setThrough(false);
-            // Game_Follower.update has just copied the leader's speed onto them,
-            // which would have the whole party sprinting between flowers, so
-            // each one is put back on the pace their own errand deserves.
-            f.setMoveSpeed(this.gaitFor(f));
-            this.updateSwim(f);
-            this.think(f);
-        },
-
-        // How fast this member is moving right now. Mostly an amble a notch
-        // under the leader's; keeping up with them or running outright when
-        // there is a reason to (coming back into view, tagging along, or one of
-        // those moments when somebody simply feels like running).
-        //
-        // A run comes out of their AP, the same meter their skills do (see
-        // Map/MovementInteractionSystem.js), and a member with none left drops
-        // back to a walk. It is a cosmetic thing only: they still catch up, and
-        // a fight that starts a moment later finds them in it either way.
-        gaitFor(f) {
-            const isWaiting = !!(typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp._isWaitingFastForward);
-            if (isWaiting) return 5.5;
-            const s = this.stateOf(f);
-            const base = $gamePlayer.realMoveSpeed();
-            // "return" is somebody left behind hurrying back into view, "dash"
-            // is somebody who simply felt like running; either way it is a run,
-            // and a run has to be paid for.
-            const running = (s.act === "return" || (s.dash && s.act !== "follow")) &&
-                this.takeBreath(f);
-            if (running) return s.act === "return" ? base + 1 : base;
-            if (s.act === "return" || s.act === "follow") return base;
-            return Math.max(3, base - 1);
-        },
-
-        // Has this member the breath left for a run? Asked before setting one
-        // off at one, and it changes nothing on its own.
-        hasBreath(f) {
-            const stamina = window.SprintStamina;
-            if (!stamina) return true;
-            const actor = this.actorOf(f);
-            return !actor || stamina.canSprint(actor);
-        },
-
-        // The same question asked by somebody already running: the answer is
-        // charged to their AP, so a member who keeps running keeps paying.
-        takeBreath(f) {
-            if (!this.hasBreath(f)) return false;
-            const actor = this.actorOf(f);
-            if (actor) window.SprintStamina?.noteRunning?.(actor);
-            return true;
-        },
-
-        // ------------------------------------------------------------- water
-        // A loose member gets into the water on their own (region 99, or a
-        // water tile on the procedural map) and swims across it, which is what
-        // lets them follow a leader who has swum off. They never DIVE: going
-        // under is the player's business.
-        isWater(x, y) {
-            if (!$gameMap) return false;
-            if ($gameMap.regionId(x, y) === 99) return true;
-            const mis = window.MovementSystem;
-            if (mis && typeof mis.isWaterTile === "function") {
-                try { return !!mis.isWaterTile(x, y); } catch (e) { /* fall through */ }
-            }
-            return $gameMap.terrainTag(x, y) === 3;
-        },
-
-        setSwimming(f, on) {
-            if (!f || !!f._isSwimming === !!on) return;
-            const mis = window.MovementSystem;
-            try {
-                if (on && mis && mis.enterSwimMode) mis.enterSwimMode(f);
-                else if (!on && mis && mis.exitSwimMode) mis.exitSwimMode(f);
-                else f._isSwimming = !!on;
-            } catch (e) {
-                f._isSwimming = !!on;
-            }
-        },
-
-        // Out of the water the moment they are standing on dry land again.
-        updateSwim(f) {
-            if (f._isSwimming && !f.isMoving() && !this.isWater(f.x, f.y)) {
-                this.setSwimming(f, false);
-            }
-        },
-
-        // Who this member walks behind: the visible member ahead of them in the
-        // party's own order, and the leader for the first of them. That is what
-        // makes a recall a file rather than a huddle, since everybody closes on
-        // the back of the person in front instead of on the leader's tile.
-        precedingOf(f) {
-            if (!$gamePlayer || !f) return $gamePlayer;
-            const data = $gamePlayer.followers().data();
-            const i = data.indexOf(f);
-            for (let j = i - 1; j >= 0; j--) {
-                if (data[j] && data[j].isVisible()) return data[j];
-            }
-            return $gamePlayer;
-        },
-
-        // In the column already: within a tile of the back of the person in
-        // front, which is exactly the spacing the engine's caterpillar keeps.
-        // Measured on each axis rather than as a distance, so a member sitting
-        // diagonally off their shoulder (which is where a diagonal step leaves
-        // them) still reads as being in the file.
-        inColumn(f) {
-            const head = this.precedingOf(f);
-            if (!head || !f) return false;
-            return Math.abs(f.deltaXFrom(head.x)) <= COLUMN_GAP &&
-                Math.abs(f.deltaYFrom(head.y)) <= COLUMN_GAP;
-        },
-
-        // Walk back into the column. `onto` is the Gather Party case, where the
-        // engine only counts the party gathered once every member shares the
-        // leader's tile; a sprint recall ends with them strung out behind the
-        // leader instead, each one on the shoulder of the one in front.
-        stepHome(f, onto) {
-            if (f.isMoving()) return;
-            if (this.offScreen(f, LOOSE_SNAP_MARGIN)) {
-                this.placeBeside(f);
-                return;
-            }
-            if (onto) {
-                if (this.dist(f, $gamePlayer) === 0) return;
-                this.stepTo(f, $gamePlayer.x, $gamePlayer.y);
-                return;
-            }
-            const strayed = this.strayed(f, false);
-            if (this.inColumn(f) && !strayed) return;
-            // Catching up is a run: the engine only steps the file when the
-            // leader steps, so at the leader's own pace a gap would never close.
-            // A column is as long as the party is, which on the world map is
-            // already further than the leash allows, so out there the tail
-            // closes on the LEADER and the party bunches up instead.
-            const head = strayed ? $gamePlayer : this.precedingOf(f);
-            f.setMoveSpeed($gamePlayer.realMoveSpeed() + 1);
-            this.stepTo(f, head.x, head.y);
-        },
-
-        stepTo(f, x, y) {
-            const dir = f.findDirectionTo(x, y);
-            if (dir > 0) {
-                f.moveStraight(dir);
-                if (f.isMovementSucceeded()) return true;
-            }
-            // Somebody is standing on the goal. Walking up to a person means
-            // walking up to the tile BESIDE them, never onto them: the engine's
-            // search refuses a tile another character occupies, so aiming at
-            // the person themselves returns nothing and the member would stand
-            // where they are for the whole visit.
-            if (this.stepBeside(f, x, y)) return true;
-            // No dry way there. If what is in the way is water, they get in and
-            // swim it: the engine already lets a swimming character onto those
-            // tiles, and a member cut off by a river would otherwise stand on
-            // the bank for ever.
-            if (this.swimToward(f, x, y)) return true;
-            // Boxed in: the party closed around them, or they were put down in
-            // a corner. Rather than grind against the same wall until the goal
-            // times out, they look for any way out at all and take it.
-            return this.stepFree(f, x, y);
-        },
-
-        // The four tiles around the goal, nearest first, as stand-in goals.
-        stepBeside(f, x, y) {
-            if (!$gameMap) return false;
-            if (f.x === x && f.y === y) return false;
-            const around = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]
-                .filter(([nx, ny]) => $gameMap.isValid(nx, ny))
-                .filter(([nx, ny]) => nx !== f.x || ny !== f.y)
-                .sort((a, b) =>
-                    (Math.abs(a[0] - f.x) + Math.abs(a[1] - f.y)) -
-                    (Math.abs(b[0] - f.x) + Math.abs(b[1] - f.y)));
-            for (const [nx, ny] of around) {
-                const d = f.findDirectionTo(nx, ny);
-                if (d <= 0) continue;
-                f.moveStraight(d);
-                if (f.isMovementSucceeded()) return true;
-            }
-            return false;
-        },
-
-        // A way out of wherever they are wedged: any passable neighbour, the
-        // one that leaves them closest to where they were heading first. It is
-        // a step, not a path, but taken every frame it walks them out of the
-        // pocket and back into open ground where the search works again.
-        stepFree(f, x, y) {
-            if (!$gameMap) return false;
-            const dirs = [2, 4, 6, 8]
-                .map((d) => ({
-                    d,
-                    nx: $gameMap.roundXWithDirection(f.x, d),
-                    ny: $gameMap.roundYWithDirection(f.y, d),
-                }))
-                .filter((o) => $gameMap.isValid(o.nx, o.ny) && f.canPass(f.x, f.y, o.d))
-                .sort((a, b) =>
-                    (Math.abs(a.nx - x) + Math.abs(a.ny - y)) -
-                    (Math.abs(b.nx - x) + Math.abs(b.ny - y)));
-            for (const o of dirs) {
-                f.moveStraight(o.d);
-                if (f.isMovementSucceeded()) return true;
-            }
-            return false;
-        },
-
-        swimToward(f, x, y) {
-            if (!$gameMap) return false;
-            const dirs = f.x !== x || f.y !== y
-                ? [dirBetween(f.x, f.y, x, y), Math.abs(y - f.y) > Math.abs(x - f.x)
-                    ? (x > f.x ? 6 : 4) : (y > f.y ? 2 : 8)]
-                : [];
-            for (const d of dirs) {
-                if (!d) continue;
-                const nx = $gameMap.roundXWithDirection(f.x, d);
-                const ny = $gameMap.roundYWithDirection(f.y, d);
-                if (!$gameMap.isValid(nx, ny) || !this.isWater(nx, ny)) continue;
-                this.setSwimming(f, true);
-                f.moveStraight(d);
-                if (f.isMovementSucceeded()) return true;
-            }
-            return false;
-        },
-
-        // -------------------------------------------------------- the activities
-        think(f) {
-            const s = this.stateOf(f);
-            if (f.isMoving()) return;
-
-            // Left so far behind that walking home is pointless: put back.
-            if (this.offScreen(f, LOOSE_SNAP_MARGIN)) {
-                this.placeBeside(f);
-                return;
-            }
-            // About to be out of sight and nothing else matters, whatever they
-            // were doing and however long they meant to stand there doing it: a
-            // member on the point of leaving the screen heads for the leader at
-            // once, which is why this is asked before the pause they are
-            // sitting out. Once heading back they keep going until a little
-            // inside the edge, so nobody stops dead on the rim and drifts
-            // straight out of it again.
-            const gone = this.leavingView(f);
-            const strayed = this.strayed(f, s.act === "return");
-            if (gone || strayed || (s.act === "return" && this.offScreen(f, -LOOSE_BACK_INSET))) {
-                s.wait = 0;
-                if (s.act !== "return") {
-                    this.clearGoal(s);
-                    s.act = "return";
-                }
-                if (!this.stepTo(f, $gamePlayer.x, $gamePlayer.y)) s.wait = 20;
-                return;
-            }
-            if (s.wait > 0) {
-                s.wait--;
-                return;
-            }
-            if (s.act === "return") this.clearGoal(s);
-
-            switch (s.act) {
-                case "walk":
-                    return this.stepWalk(f, s);
-                case "visit":
-                    return this.stepVisit(f, s);
-                case "look":
-                    return this.stepLook(f, s);
-                case "need":
-                    return this.stepNeed(f, s);
-                case "follow":
-                    return this.stepFollow(f, s);
-                default:
-                    return this.pickActivity(f, s);
-            }
-        },
-
-        // What a member does next. A meter that has run down comes first: they
-        // are people with an evening of their own, not scenery, so a filthy one
-        // goes looking for a washroom and a bored one for something to play
-        // before anybody strolls anywhere. Then, sometimes, simply walking with
-        // the leader for a while, because a companion who never once falls in
-        // beside you reads as a stranger. Then company, then something to look
-        // at, then a walk, then standing there with a thought.
-        pickActivity(f, s) {
-            if (this.beginNeed(f, s)) return;
-            // Every errand is taken at its own pace, and now and then somebody
-            // takes it at a run, if they have the breath for one.
-            s.dash = Math.random() < FOLLOW_DASH_ODDS && this.hasBreath(f);
-            if (Math.random() < FOLLOW_ODDS && this.beginFollow(f, s)) return;
-            const roll = Math.random();
-            if (roll < 0.36 && this.beginVisit(f, s)) return;
-            if (roll < 0.58 && this.beginLook(f, s)) return;
-            if (roll < 0.86 && this.beginWalk(f, s)) return;
-            this.clearGoal(s);
-            s.wait = 60 + Math.floor(Math.random() * 150);
-            if (Math.random() < IDLE_TALK_ODDS) this.say(f, "AutoIdle.loose.thought");
-        },
-
-        // Walking with the leader, of their own accord: they keep a couple of
-        // tiles off their shoulder, at the leader's own speed, for a while, and
-        // then go back to their own business. Nothing is chained and nothing is
-        // through a wall, so it reads as a person keeping you company rather
-        // than as the marching column.
-        beginFollow(f, s) {
-            this.clearGoal(s);
-            s.act = "follow";
-            s.until = Graphics.frameCount + FOLLOW_MIN +
-                Math.floor(Math.random() * (FOLLOW_MAX - FOLLOW_MIN));
-            return true;
-        },
-
-        stepFollow(f, s) {
-            if (Graphics.frameCount >= (s.until || 0)) {
-                this.clearGoal(s);
-                s.wait = 30;
-                return;
-            }
-            const d = this.dist(f, $gamePlayer);
-            if (d <= FOLLOW_NEAR) {
-                // Close enough: face the way the leader is looking and wait for
-                // them to move off again.
-                if (!$gamePlayer.isMoving()) f.setDirection($gamePlayer.direction());
-                return;
-            }
-            if (!this.stepTo(f, $gamePlayer.x, $gamePlayer.y)) s.wait = 10;
-        },
-
-        beginWalk(f, s) {
-            const roam = Math.min(LOOSE_ROAM, this.leash());
-            for (let i = 0; i < 20; i++) {
-                const a = Math.random() * Math.PI * 2;
-                const r = 2 + Math.random() * (roam - 1);
-                const x = Math.round($gamePlayer.x + Math.cos(a) * r);
-                const y = Math.round($gamePlayer.y + Math.sin(a) * r);
-                if ((x !== f.x || y !== f.y) && tilePassable(x, y) && this.inLeash(x, y) &&
-                    this.inView(x, y)) {
-                    this.clearGoal(s);
-                    s.act = "walk";
-                    s.gx = x;
-                    s.gy = y;
-                    return true;
-                }
-            }
-            return false;
-        },
-
-        stepWalk(f, s) {
-            if ((f.x === s.gx && f.y === s.gy) || ++s.tries > 40) {
-                this.clearGoal(s);
-                s.wait = 30;
-                return;
-            }
-            if (!this.stepTo(f, s.gx, s.gy)) s.tries += 4;
-        },
-
-        beginVisit(f, s) {
-            const mate = this.findCompany(f);
-            if (!mate) return false;
-            this.clearGoal(s);
-            s.act = "visit";
-            s.partner = mate;
-            this.remember(s, mate);
-            return true;
-        },
-
-        // Walk over, stop at arm's length, turn to face them and trade a line
-        // each. Nothing is triggered: this is two people talking, not the player
-        // starting an event.
-        stepVisit(f, s) {
-            const p = s.partner;
-            if (!p || p._erased || (p.isTransparent && p.isTransparent()) || ++s.tries > 90) {
-                this.clearGoal(s);
-                return;
-            }
-            if (this.dist(f, p) > 1) {
-                if (!this.stepTo(f, p.x, p.y)) s.tries += 6;
-                return;
-            }
-            const facing = dirBetween(f.x, f.y, p.x, p.y);
-            if (facing > 0) f.setDirection(facing);
-            if (!p.isMoving() && !p.isDirectionFixed()) {
-                const back = dirBetween(p.x, p.y, f.x, f.y);
-                if (back > 0) p.setDirection(back);
-            }
-            // Two travellers who have been on the same road all week do not
-            // talk to each other the way they talk to a stranger in a village,
-            // so the party has a bank of its own (NPC/PartyBanter.js): a real
-            // discussion of two to four beats, about where they are standing,
-            // what the diary says just happened to them, what they just spent
-            // the money on, or simply what these two personalities do to each
-            // other. A stranger still gets the old greeting and answer.
-            const own = !!this.partyActorOf(p);
-            if (own) {
-                const actorA = this.actorOf(f);
-                const actorB = this.partyActorOf(p);
-                if (s.isRomance) return this.stepPartyRomance(f, p, s, actorA, actorB);
-                if (s.isRomance === undefined) {
-                    const RS = window.NPCRomanceSystem;
-                    if (RS && actorA && actorB && actorB !== $gameParty.leader() &&
-                        !RS.isOnCooldown(actorA.name(), actorB.name()) &&
-                        RS.isSomewhatCompatible(actorA, actorB) &&
-                        Math.random() < 0.35) {
-                        s.isRomance = true;
-                        s.romanceData = RS.executeRomance(actorA, actorB);
-                        s.beat = 0;
-                        return this.stepPartyRomance(f, p, s, actorA, actorB);
-                    }
-                    s.isRomance = false;
-                }
-                return this.stepPartyTalk(f, p, s);
-            }
-
-            const actorA = this.actorOf(f);
-            const helpers = window.NPCEmpathize && window.NPCEmpathize._helpers;
-            const npcName = (p && typeof p.eventId === 'function' && helpers?._getNPCName) ? helpers._getNPCName(p.eventId()) : null;
-            const npcProfile = (npcName && helpers?._getProfile) ? helpers._getProfile(npcName) : null;
-            if (s.isRomance) return this.stepNpcRomance(f, p, s, actorA, npcName, npcProfile);
-            if (s.isRomance === undefined && npcName && npcProfile) {
-                const RS = window.NPCRomanceSystem;
-                if (RS && actorA && !RS.isOnCooldown(actorA.name(), npcName) &&
-                    RS.isSomewhatCompatible(actorA, { name: npcName, profile: npcProfile }) &&
-                    Math.random() < 0.30) {
-                    s.isRomance = true;
-                    s.romanceData = RS.executeRomance(actorA, { name: npcName, profile: npcProfile });
-                    s.beat = 0;
-                    return this.stepNpcRomance(f, p, s, actorA, npcName, npcProfile);
-                }
-                s.isRomance = false;
-            }
-
-            if (s.beat === 0) {
-                // Nothing to say right now: they came over anyway, and the visit
-                // still counts as company, it simply happens without the words.
-                if (!this.say(f, "AutoIdle.loose.greet")) {
-                    s.beat = 2;
-                    s.wait = 40;
-                    return;
-                }
-                s.beat = 1;
-                s.wait = 100;
-                return;
-            }
-            if (s.beat === 1) {
-                this.say(p, "AutoIdle.loose.reply", true);
-                s.beat = 2;
-                s.wait = 110;
-                return;
-            }
-            // The conversation happened, so it counted: it moves what that
-            // person thinks of THIS member (their own standing, not the
-            // party's) and it is company for the member who had it.
-            this.settleTalk(f, p);
-            this.clearGoal(s);
-            s.wait = 60;
-        },
-
-        stepPartyRomance(f, p, s, actorA, actorB) {
-            const rd = s.romanceData;
-            if (!rd) {
-                this.clearGoal(s);
-                return;
-            }
-            if (s.beat === 0) {
-                this.sayText(f, rd.suitorLine);
-                s.beat = 1;
-                s.wait = 90 + Math.min(80, Math.round(String(rd.suitorLine).length * 1.4));
-                return;
-            }
-            if (s.beat === 1) {
-                this.sayText(p, rd.replyLine);
-                s.beat = 2;
-                s.wait = 90 + Math.min(80, Math.round(String(rd.replyLine).length * 1.4));
-                return;
-            }
-            this.clearGoal(s);
-            s.wait = 60;
-        },
-
-        stepNpcRomance(f, p, s, actorA, npcName, npcProfile) {
-            const rd = s.romanceData;
-            if (!rd) {
-                this.clearGoal(s);
-                return;
-            }
-            if (s.beat === 0) {
-                this.sayText(f, rd.suitorLine);
-                s.beat = 1;
-                s.wait = 90 + Math.min(80, Math.round(String(rd.suitorLine).length * 1.4));
-                return;
-            }
-            if (s.beat === 1) {
-                this.sayText(p, rd.replyLine);
-                s.beat = 2;
-                s.wait = 90 + Math.min(80, Math.round(String(rd.replyLine).length * 1.4));
-                return;
-            }
-            this.clearGoal(s);
-            s.wait = 60;
-        },
-
-        // Two (or three) of their own, holding an actual discussion. The whole
-        // exchange is drawn at once from PartyBanter so it hangs together, and
-        // then played out one beat at a time with everybody turning to whoever
-        // has the floor. A member standing close by when it starts is IN it:
-        // that is what makes a party of three sound like a party rather than
-        // like two people and a spectator.
-        stepPartyTalk(f, p, s) {
-            if (!s.talk) {
-                // They walked over to each other, but a discussion is not what
-                // two people do every time they meet: too soon after the last
-                // one and the visit is just company, without the words.
-                if (Graphics.frameCount - this._lastTalkAt < TALK_COOL) {
-                    this.settleTalk(f, p);
-                    this.clearGoal(s);
-                    s.wait = 60;
-                    return;
-                }
-                const cast = [];
-                const chars = [];
-                const add = (char) => {
-                    const actor = this.partyActorOf(char);
-                    if (!actor || cast.includes(actor)) return;
-                    // A companion on one of the creature classes has no line to
-                    // add to a discussion, so it is never cast in one: it drifts
-                    // along with the rest and says nothing (PartyBanter.canSpeak,
-                    // NPCCreature owns the boundary).
-                    if (window.PartyBanter?.canSpeak && !window.PartyBanter.canSpeak(actor)) return;
-                    cast.push(actor);
-                    chars.push(char);
-                };
-                add(f);
-                add(p);
-                if (cast.length < 2) {
-                    this.clearGoal(s);
-                    return;
-                }
-                const third = this.nearbyPartyChar(f, [f, p]);
-                if (third) add(third);
-
-                const beats = window.PartyBanter ? window.PartyBanter.discussion(cast) : null;
-                // No bank to draw on (the plugin is off, or its i18n file is
-                // missing): they still walked over and it still counts as
-                // company, they simply have nothing scripted to say.
-                if (!beats || !beats.length) {
-                    this.settleTalk(f, p);
-                    this.clearGoal(s);
-                    s.wait = 60;
-                    return;
-                }
-                s.talk = beats;
-                s.talkChars = chars;
-                s.beat = 0;
-                this._lastTalkAt = Graphics.frameCount;
-            }
-
-            if (s.beat < s.talk.length) {
-                const beat = s.talk[s.beat++];
-                const speaker = s.talkChars[beat.who] || f;
-                for (const listener of s.talkChars) {
-                    if (listener === speaker || listener.isMoving() || listener.isDirectionFixed()) continue;
-                    const facing = dirBetween(listener.x, listener.y, speaker.x, speaker.y);
-                    if (facing > 0) listener.setDirection(facing);
-                }
-                this.sayText(speaker, beat.text);
-                // A long line is read for longer, so nobody talks over anybody.
-                s.wait = 95 + Math.min(80, Math.round(String(beat.text).length * 1.4));
-                return;
-            }
-
-            // The discussion happened, so it counted, and it counted for
-            // everybody who stood in it.
-            const chars = s.talkChars || [];
-            this.settleTalk(f, p);
-            if (chars[2]) this.settleTalk(f, chars[2]);
-            this.clearGoal(s);
-            s.wait = 70;
-        },
-
-        // Another of their own close enough to be part of a conversation that
-        // is starting here.
-        nearbyPartyChar(f, exclude) {
-            if (!$gamePlayer || this.stowedInVehicle()) return null;
-            let best = null;
-            let bestD = PARTY_THIRD_RANGE + 1;
-            const consider = (c) => {
-                if (!c || exclude.includes(c)) return;
-                if (c.isTransparent && c.isTransparent()) return;
-                if (!this.partyActorOf(c)) return;
-                const d = this.dist(f, c);
-                if (d <= PARTY_THIRD_RANGE && d < bestD) {
-                    best = c;
-                    bestD = d;
-                }
-            };
-            consider($gamePlayer);
-            for (const other of $gamePlayer.followers().data()) {
-                if (other.isVisible()) consider(other);
-            }
-            return best;
-        },
-
-        // What one exchange did to their opinion. A person is not a vending
-        // machine: an unwashed traveller wearing yesterday's road is worse
-        // company than a clean one, which is the whole of why the hygiene
-        // errand below is worth walking. Handed to NPCEmpathize so a chat in
-        // the street and a chat in the panel move the same number the same way
-        // (and pay the party the same social).
-        settleTalk(f, npcEvent) {
-            const actor = this.actorOf(f);
-            const helpers = window.NPCEmpathize && window.NPCEmpathize._helpers;
-            if (!actor || !helpers) return;
-            // One of their own is a conversation with two sides to it, and it
-            // is settled on both of them rather than on a stranger's ledger.
-            const other = this.partyActorOf(npcEvent);
-            if (other) {
-                this.settlePartyTalk(actor, other);
-                return;
-            }
-            if (!npcEvent || typeof npcEvent.eventId !== "function") return;
-            const name = helpers._getNPCName ? helpers._getNPCName(npcEvent.eventId()) : null;
-            const profile = name && helpers._getProfile ? helpers._getProfile(name) : null;
-            if (!profile) return;
-            let delta = Math.round(-2 + Math.random() * 7); // -2 .. +4
-            try {
-                if (helpers._hygienePenalty) {
-                    delta += helpers._hygienePenalty(profile, actor, 0.12) || 0;
-                }
-            } catch (e) { /* a chat never breaks on a missing reading */ }
-            delta = Math.max(-6, Math.min(6, delta));
-            if (!delta) return;
-            try {
-                helpers._addNpcOpinion(profile, actor.actorId(), delta);
-            } catch (e) {
-                return;
-            }
-            this.toastOpinion(actor, name, delta);
-        },
-
-        // Two members of the same party talking. Unlike a chat with a stranger
-        // this moves BOTH ledgers: each of them comes away thinking a little
-        // more, or a little less, of the other. The numbers are the ones the
-        // Empathize panel keeps (profile.opinions[actorId], the per-member
-        // standing, never the party-wide one) so a road spent walking together
-        // shows up on the same sheet a conversation in the panel writes to.
-        // What the exchange is worth is read off how much the two of them have
-        // in common and how either of them smells right now, which is the whole
-        // of why the hygiene errand is worth walking.
-        settlePartyTalk(speaker, listener) {
-            if (!speaker || !listener || speaker === listener) return;
-            const a = this.partyProfile(speaker);
-            const b = this.partyProfile(listener);
-            if (!a && !b) return;
-            // One roll for the exchange, so a conversation that went well went
-            // well for both of them, and each side then reads it their own way.
-            const mood = -2 + Math.random() * 7; // -2 .. +5, the swing a chat has
-            const toListener = this.partyTalkDelta(b, speaker, mood);
-            const toSpeaker = this.partyTalkDelta(a, listener, mood);
-            const landedB = !!(b && toListener) && this.movePartyOpinion(b, speaker, toListener);
-            // Quiet only once the other direction has already paid the party its
-            // company: one conversation is one helping of it, however many
-            // people were standing in it.
-            const landedA = !!(a && toSpeaker) && this.movePartyOpinion(a, listener, toSpeaker, landedB);
-            if (!landedB && !landedA) return;
-            const dB = landedB ? toListener : 0;
-            const dA = landedA ? toSpeaker : 0;
-            this.toast(T('AutoIdle.loose.toastPartyTalk', {
-                name: speaker.name(),
-                other: listener.name(),
-                delta: (dB > 0 ? "+" : "") + dB,
-                back: (dA > 0 ? "+" : "") + dA,
-            }), dB + dA >= 0 ? "good" : "warning");
-        },
-
-        // A party member's own society profile, the record the Empathize panel
-        // reads. Character creation writes one for every member, so this is
-        // normally a lookup; a member who arrived some other way is given one
-        // rather than left without a ledger to be remembered on.
-        partyProfile(actor) {
-            const reg = window.NPCSocietyRegistry;
-            if (!actor || !reg) return null;
-            try {
-                return reg.getProfile(actor.name())
-                    || (reg.ensureProfile
-                        ? reg.ensureProfile(actor.name(), actor.currentClass() ? actor.currentClass().id : null)
-                        : null);
-            } catch (e) {
-                return null;
-            }
-        },
-
-        // What this exchange did to `profile`'s opinion of `other`: the mood of
-        // the conversation, what the two of them have in common, and how the
-        // other one smells.
-        partyTalkDelta(profile, other, mood) {
-            if (!profile || !other) return 0;
-            const helpers = window.NPCEmpathize && window.NPCEmpathize._helpers;
-            let delta = mood;
-            try {
-                if (helpers && helpers._traitCompatBonus) {
-                    delta += (helpers._traitCompatBonus(profile, other) || 0) * 0.06;
-                }
-                if (helpers && helpers._hygienePenalty) {
-                    delta += helpers._hygienePenalty(profile, other, 0.12) || 0;
-                }
-            } catch (e) { /* a chat never breaks on a missing reading */ }
-            return Math.max(-6, Math.min(6, Math.round(delta)));
-        },
-
-        // Write it down. A direction that is not `quiet` goes through
-        // NPCEmpathize's own adder, so the exchange also pays the party its
-        // company the way every other conversation does; a quiet one only moves
-        // the ledger.
-        movePartyOpinion(profile, subject, delta, quiet) {
-            const helpers = window.NPCEmpathize && window.NPCEmpathize._helpers;
-            if (!helpers || !profile || !subject || !delta) return false;
-            try {
-                if (quiet && helpers._setNpcBaseOpinion && helpers._npcBaseOpinion) {
-                    helpers._setNpcBaseOpinion(
-                        profile, subject.actorId(),
-                        helpers._npcBaseOpinion(profile, subject.actorId()) + delta
-                    );
-                } else {
-                    helpers._addNpcOpinion(profile, subject.actorId(), delta);
-                }
-                return true;
-            } catch (e) {
-                return false;
-            }
-        },
-
-        movePartyAttraction(profile, subject, delta) {
-            const helpers = window.NPCEmpathize && window.NPCEmpathize._helpers;
-            if (!profile || !subject || !delta) return false;
-            try {
-                if (helpers && helpers._addNpcAttraction) {
-                    helpers._addNpcAttraction(profile, subject.actorId(), delta);
-                } else {
-                    profile.attractions = profile.attractions || {};
-                    profile.attractions[subject.actorId()] = (profile.attractions[subject.actorId()] || 0) + delta;
-                }
-                return true;
-            } catch (e) {
-                return false;
-            }
-        },
-
-        // ------------------------------------------------------------- needs
-        // The member's own five meters. A pet or a child walking with the party
-        // has no actor and no meters, so it simply keeps wandering.
-        actorOf(f) {
-            return (f && typeof f.actor === "function" && f.actor()) || null;
-        },
-
-        needsOf(f) {
-            const a = this.actorOf(f);
-            if (!a || !window.PartyNeeds) return null;
-            try {
-                return window.PartyNeeds.getMemberNeeds(a);
-            } catch (e) {
-                return null;
-            }
-        },
-
-        // The lowest meter under the line, or nothing at all. Read in a fixed
-        // order on a tie so a member does not dither between two equal wants.
-        pressingNeed(f) {
-            const needs = this.needsOf(f);
-            if (!needs) return null;
-            let worst = null;
-            let low = NEED_LOW;
-            for (const key of ["hunger", "sleep", "hygiene", "social", "leisure"]) {
-                const v = Number(needs[key]);
-                if (!isFinite(v) || v > low) continue;
-                if (worst === null || v < low) {
-                    worst = key;
-                    low = v;
-                }
-            }
-            return worst;
-        },
-
-        // What the capability registry's weights want to know about whoever is
-        // asking. A party member has no society profile of their own for the
-        // fields that matter here, so the party's purse stands in for theirs.
-        needProfile(f) {
-            const a = this.actorOf(f);
-            const gold = $gameParty ? $gameParty.gold() : 0;
-            const base = (a && window.NPCSocietyRegistry && window.NPCSocietyRegistry.getProfile)
-                ? window.NPCSocietyRegistry.getProfile(a.name())
-                : null;
-            return Object.assign({ moralityScore: 0, itemIds: [] }, base || {}, {
-                money: gold,
-                wealthTierBase: gold >= 5000 ? 3 : gold >= 2000 ? 2 : gold >= 600 ? 1 : 0,
-            });
-        },
-
-        // Start an errand for whatever has run down. Hunger is settled where
-        // they stand (the food is in the pack); everything else is somewhere on
-        // the map they have to walk to.
-        beginNeed(f, s) {
-            if (!this.actorOf(f)) return false;
-            // A map with nothing to answer a want on it would otherwise be
-            // re-scanned on every idle decision for as long as the meter stays
-            // low, so a fruitless search stands the member down for a while.
-            if (s.needTried && Graphics.frameCount - s.needTried < NEED_RETRY) return false;
-            const need = this.pressingNeed(f);
-            if (!need) {
-                s.needTried = Graphics.frameCount;
-                return false;
-            }
-            // Each want is tried at the thing that really answers it first, and
-            // then at whatever the map can offer instead.
-            const gaveUp = () => {
-                s.needTried = Graphics.frameCount;
-                return false;
-            };
-            if (need === "hunger") return this.eat(f, s) || gaveUp();
-            // A bed is paid for, so it never comes through the ordinary target
-            // path (which would hand out free sleep); it is its own errand.
-            if (need === "sleep" && this.beginRent(f, s)) return true;
-            if (need === "social" && this.beginVisit(f, s)) return true;
-
-            const target = this.findForNeed(f, need);
-            if (target) {
-                this.clearGoal(s);
-                s.act = "need";
-                s.need = need;
-                s.partner = target;
-                this.remember(s, target);
-                return true;
-            }
-            // Nothing built for it: sit down, which is worth something for a
-            // tired member and for a bored one.
-            if ((need === "sleep" || need === "leisure") && this.beginRest(f, s, need)) return true;
-            return gaveUp();
-        },
-
-        // The nearest thing on the map that answers this need, asked of the
-        // town's own capability registry so a party member and a townsperson
-        // recognise a washroom by exactly the same rule.
-        findForNeed(f, need) {
-            const scanner = window.NPCSim && window.NPCSim.InteractionScanner;
-            if (!scanner || typeof scanner.findByNeed !== "function") return null;
-            let matches = [];
-            try {
-                matches = scanner.findByNeed(need, this.needProfile(f)) || [];
-            } catch (e) {
-                return null;
-            }
-            let best = null;
-            let bestD = NEED_SCAN + 1;
-            const s = this.stateOf(f);
-            for (const m of matches) {
-                if (!m || !m.event || (m.score ?? 0) <= 0) continue;
-                // A room is rented, never simply used: beginRent owns it.
-                if (m.capability && m.capability.id === "rentable_room") continue;
-                if (m.event._erased || this.stale(s, m.event)) continue;
-                // Nothing worth walking off the leash for: on the world map the
-                // washroom two regions over is not somewhere a party member goes.
-                if (!this.inLeashOf(m.event)) continue;
-                const d = this.dist(f, m.event);
-                if (d <= NEED_SCAN && d < bestD) {
-                    best = m.event;
-                    bestD = d;
-                }
-            }
-            return best;
-        },
-
-        // A free room, taken with the party's own money. Tired members are the
-        // ones who go looking, which is why this is only ever reached from the
-        // sleep branch.
-        beginRent(f, s) {
-            const rent = window.RentSystem;
-            if (!rent || typeof rent.freeRooms !== "function") return false;
-            let rooms = [];
-            try {
-                rooms = rent.freeRooms($gameMap.mapId()) || [];
-            } catch (e) {
-                return false;
-            }
-            const gold = $gameParty ? $gameParty.gold() : 0;
-            let best = null;
-            let bestD = NEED_SCAN + 1;
-            for (const room of rooms) {
-                if (room.price > gold) continue;
-                const ev = $gameMap.event(room.eventId);
-                if (!ev || ev._erased) continue;
-                if (!this.inLeashOf(ev)) continue;
-                const d = this.dist(f, ev);
-                if (d <= NEED_SCAN && d < bestD) {
-                    best = ev;
-                    bestD = d;
-                }
-            }
-            if (!best) return false;
-            this.clearGoal(s);
-            s.act = "need";
-            s.need = "sleep";
-            s.rent = true;
-            s.partner = best;
-            return true;
-        },
-
-        // Somewhere to sit down: the same region 102 rest tiles the town's NPCs
-        // take their weight off on.
-        beginRest(f, s, need) {
-            if (!$gameMap) return false;
-            let best = null;
-            let bestD = NEED_SCAN + 1;
-            for (let dy = -NEED_SCAN; dy <= NEED_SCAN; dy++) {
-                for (let dx = -NEED_SCAN; dx <= NEED_SCAN; dx++) {
-                    const x = $gameMap.roundX(f.x + dx);
-                    const y = $gameMap.roundY(f.y + dy);
-                    if ($gameMap.regionId(x, y) !== REST_REGION) continue;
-                    if (!tilePassable(x, y)) continue;
-                    if (!this.inLeash(x, y)) continue;
-                    const d = Math.abs(dx) + Math.abs(dy);
-                    if (d < bestD) {
-                        best = { x, y };
-                        bestD = d;
-                    }
-                }
-            }
-            if (!best) return false;
-            this.clearGoal(s);
-            s.act = "need";
-            s.need = need;
-            s.gx = best.x;
-            s.gy = best.y;
-            return true;
-        },
-
-        // Walk to it, and settle it on arrival. A tile errand (a seat) is done
-        // by standing on it; an event errand by standing beside it.
-        stepNeed(f, s) {
-            if (++s.tries > NEED_TRIES) {
-                this.clearGoal(s);
-                s.wait = 60;
-                return;
-            }
-            const p = s.partner;
-            if (p) {
-                if (p._erased) {
-                    this.clearGoal(s);
-                    return;
-                }
-                if (this.dist(f, p) > 1) {
-                    if (!this.stepTo(f, p.x, p.y)) s.tries += 6;
-                    return;
-                }
-                const facing = dirBetween(f.x, f.y, p.x, p.y);
-                if (facing > 0) f.setDirection(facing);
-            } else {
-                if (s.gx === null) {
-                    this.clearGoal(s);
-                    return;
-                }
-                if (f.x !== s.gx || f.y !== s.gy) {
-                    if (!this.stepTo(f, s.gx, s.gy)) s.tries += 6;
-                    return;
-                }
-            }
-            this.finishNeed(f, s);
-        },
-
-        finishNeed(f, s) {
-            const need = s.need;
-            const seat = !s.partner;
-            if (s.rent && !this.payRent(f, s)) {
-                this.clearGoal(s);
-                s.wait = 90;
-                return;
-            }
-            if (!s.rent) this.fillNeed(f, need, NEED_FILL[need] || 20);
-            this.say(f, seat ? "AutoIdle.loose.rest" : "AutoIdle.loose.need." + need);
-            this.clearGoal(s);
-            // Whatever they came for takes a while: a bath, a game, a nap.
-            s.wait = seat ? 300 : 180;
-        },
-
-        // Pay for the room and let the party in. A member who rents it rents it
-        // for everybody: the door opens the way it does when the player pays at
-        // the counter themselves.
-        payRent(f, s) {
-            const ev = s.partner;
-            const rent = window.RentSystem;
-            if (!ev || !rent || typeof rent.rentForParty !== "function") return false;
-            let deal = null;
-            try {
-                deal = rent.rentForParty($gameMap.mapId(), ev.eventId());
-            } catch (e) {
-                return false;
-            }
-            if (!deal) return false;
-            SoundManager.playShop();
-            this.fillNeed(f, "sleep", NEED_FILL.sleep);
-            const actor = this.actorOf(f);
-            this.toast(T('AutoIdle.loose.toastRent', {
-                name: actor ? actor.name() : "",
-                price: window.ParchmentToast ? window.ParchmentToast.money(deal.price) : String(deal.price),
-            }), "good");
-            return true;
-        },
-
-        // Put the points on the member's own meter and say so. Hunger and sleep
-        // are shared by the whole party, the other three are personal; the
-        // actor's own need methods already know which is which.
-        fillNeed(f, need, amount) {
-            const actor = this.actorOf(f);
-            if (!actor || !amount) return;
-            const adder = { hunger: "addHunger", sleep: "addSleep", hygiene: "addHygiene", social: "addSocial", leisure: "addLeisure" }[need];
-            if (!adder || typeof actor[adder] !== "function") return;
-            actor[adder](amount);
-            this.toastNeed(actor, need, amount);
-        },
-
-        // A meal out of the pack. The smallest thing that will do the job is
-        // eaten, so a banquet is not spent on a snack's worth of hunger.
-        eat(f, s) {
-            const actor = this.actorOf(f);
-            const utils = window.ItemSystemUtils;
-            if (!actor || !$gameParty) return false;
-            let best = null;
-            let bestValue = Infinity;
-            for (const item of $gameParty.items()) {
-                if (!item || !item.note) continue;
-                const isFood = utils && utils.isFoodItem
-                    ? utils.isFoodItem(item)
-                    : /<category:\s*Food>/i.test(item.note);
-                if (!isFood) continue;
-                const value = this.foodValue(item);
-                if (value <= 0) continue;
-                // Anything that covers the gap, else the largest thing there is.
-                const covers = value >= HUNGER_EAT;
-                const score = covers ? value : 1000000 - value;
-                if (score < bestValue) {
-                    best = item;
-                    bestValue = score;
-                }
-            }
-            if (!best) return false;
-            const gain = this.foodValue(best);
-            $gameParty.loseItem(best, 1);
-            actor.addHunger(gain);
-            if (utils && utils.applyNeedRestores) {
-                try { utils.applyNeedRestores(actor, best); } catch (e) { /* the meal still counted */ }
-            }
-            this.toast(T('AutoIdle.loose.toastEat', { name: actor.name(), item: best.name }), "good");
-            this.toastNeed(actor, "hunger", Math.round(gain));
-            this.say(f, "AutoIdle.loose.need.hunger");
-            if (s) {
-                this.clearGoal(s);
-                s.wait = 150;
-            }
-            return true;
-        },
-
-        // TimeDateSystem's own recovery formula: calories, protein and fat.
-        foodValue(item) {
-            const read = (key) => {
-                const m = (item.note || "").match(new RegExp("<" + key + ":\\s*(\\d+)>", "i"));
-                return m ? Number(m[1]) : 0;
-            };
-            const value = read("calories") * 0.10 + read("protein") * 2.00 + read("fat") * 1.50;
-            return Math.round(value);
-        },
-
-        // ------------------------------------------------------------- toasts
-        // Everything a loose member does to a meter or to somebody's opinion is
-        // reported, because it happens while the player is looking somewhere
-        // else. All of it goes through the one notification service.
         toast(text, severity) {
             if (!text) return;
             try {
                 window.ParchmentToast && window.ParchmentToast.show(text, {
                     severity: severity || "info", duration: 150,
                 });
-            } catch (e) { /* a popup never breaks an errand */ }
+            } catch (e) { /* a popup never breaks anything */ }
         },
 
-        toastNeed(actor, need, delta) {
-            if (!delta) return;
-            const needs = window.PartyNeeds ? window.PartyNeeds.getMemberNeeds(actor) : null;
-            try {
-                window.ParchmentToast && window.ParchmentToast.need(need, delta, {
-                    value: needs ? needs[need] : null,
-                    note: actor ? actor.name() : "",
-                });
-            } catch (e) { /* as above */ }
-        },
-
-        toastOpinion(actor, npcName, delta) {
-            if (!delta) return;
-            this.toast(T('AutoIdle.loose.toastOpinion', {
-                name: actor.name(),
-                npc: npcName,
-                delta: (delta > 0 ? "+" : "") + delta,
-            }), delta > 0 ? "good" : "warning");
-        },
-
-        beginLook(f, s) {
-            const thing = this.findScenery(f);
-            if (!thing) return false;
-            this.clearGoal(s);
-            s.act = "look";
-            s.partner = thing;
-            this.remember(s, thing);
-            return true;
-        },
-
-        stepLook(f, s) {
-            const p = s.partner;
-            if (!p || p._erased || ++s.tries > 70) {
-                this.clearGoal(s);
-                return;
-            }
-            if (this.dist(f, p) > 1) {
-                if (!this.stepTo(f, p.x, p.y)) s.tries += 6;
-                return;
-            }
-            const facing = dirBetween(f.x, f.y, p.x, p.y);
-            if (facing > 0) f.setDirection(facing);
-            this.say(f, "AutoIdle.loose.look");
-            this.clearGoal(s);
-            s.wait = 120;
-        },
-
-        // Someone to talk to. Roughly half the time a member turns to their own
-        // company first, the leader or whoever else is walking with them; the
-        // rest of the time it is the town, but only the living NPCs the NPC
-        // system is actually running (they are the ones with a life to talk
-        // about, tracked as opinions and relationships) - never a bystander
-        // event that merely looks like a person, a shopkeeper or quest giver
-        // included, since those hold no relationship ledger to move. Whichever
-        // was asked first, the other is the fallback, so nobody stands there
-        // with nothing to say while somebody is standing right next to them.
-        findCompany(f) {
-            const own = Math.random() < PARTY_TALK_ODDS;
-            if (own) {
-                const mate = this.findPartyCompany(f);
-                if (mate) return mate;
-            }
-            let best = null;
-            let bestD = LOOSE_SCAN + 1;
-            const s = this.stateOf(f);
-            const consider = (c) => {
-                if (!c || c === f || this.stale(s, c)) return;
-                if (!this.inLeashOf(c) || !this.inViewOf(c)) return;
-                const d = this.dist(f, c);
-                if (d <= LOOSE_SCAN && d < bestD) {
-                    best = c;
-                    bestD = d;
-                }
-            };
-            const ctrls =
-                $gameSystem && typeof $gameSystem.getActiveNPCControllers === "function"
-                    ? $gameSystem.getActiveNPCControllers()
-                    : null;
-            if (ctrls && ctrls.length) {
-                for (const c of ctrls) {
-                    if (c && c.event && !c.event._erased && !c.event.isTransparent()) consider(c.event);
-                }
-            }
-            if (!best && !own) best = this.findPartyCompany(f);
-            return best;
-        },
-
-        // The nearest of their own: the leader, or another member walking with
-        // them. A pet or a child is company to walk up to like anybody else,
-        // but it holds no conversation, so nothing is settled over it.
-        findPartyCompany(f) {
-            if (!$gamePlayer || this.stowedInVehicle()) return null;
-            const s = this.stateOf(f);
-            let best = null;
-            let bestD = LOOSE_SCAN + 1;
-            const consider = (c) => {
-                if (!c || c === f || this.stale(s, c)) return;
-                if (c.isTransparent && c.isTransparent()) return;
-                if (!this.inLeashOf(c) || !this.inViewOf(c)) return;
-                const d = this.dist(f, c);
-                if (d <= LOOSE_SCAN && d < bestD) {
-                    best = c;
-                    bestD = d;
-                }
-            };
-            consider($gamePlayer);
-            for (const other of $gamePlayer.followers().data()) {
-                if (other.isVisible()) consider(other);
-            }
-            return best;
-        },
-
-        // The actor behind a character, when that character is one of the
-        // party: the leader for the player, the member for a follower. Anybody
-        // else on the map (an NPC event, a pet) answers null.
-        partyActorOf(c) {
-            if (!c) return null;
-            if (c === $gamePlayer) return ($gameParty && $gameParty.leader()) || null;
-            if (this.isPet(c)) return null;
-            return this.actorOf(c);
-        },
-
-        findScenery(f) {
-            const s = this.stateOf(f);
-            let best = null;
-            let bestD = LOOSE_SCAN + 1;
-            for (const ev of $gameMap.events()) {
-                if (!isSceneryEvent(ev) || this.stale(s, ev)) continue;
-                if (!this.inLeashOf(ev) || !this.inViewOf(ev)) continue;
-                const d = this.dist(f, ev);
-                if (d <= LOOSE_SCAN && d < bestD) {
-                    best = ev;
-                    bestD = d;
-                }
-            }
-            return best;
-        },
-
-        // ------------------------------------------------------------- regroup
-        // Put one member back on a free tile at the leader's shoulder.
-        placeBeside(f, taken) {
-            const px = $gamePlayer.x;
-            const py = $gamePlayer.y;
-            const ring = [
-                [0, 1], [0, -1], [1, 0], [-1, 0],
-                [1, 1], [-1, 1], [1, -1], [-1, -1],
-                [0, 2], [0, -2], [2, 0], [-2, 0],
-            ];
-            for (const [dx, dy] of ring) {
-                const x = $gameMap.roundX(px + dx);
-                const y = $gameMap.roundY(py + dy);
-                const key = x + "," + y;
-                if (taken && taken.has(key)) continue;
-                if (!tilePassable(x, y)) continue;
-                // Never drop somebody on top of a solid event: standing inside
-                // a chest or a shopkeeper reads as a bug even though a follower
-                // blocks nothing.
-                if ($gameMap.eventsXyNt(x, y).some((e) => e.isNormalPriority())) continue;
-                if (taken) taken.add(key);
-                f.locate(x, y);
-                f.setDirection($gamePlayer.direction());
-                this.clearGoal(this.stateOf(f));
-                return true;
-            }
-            // Nowhere free: standing on the leader is still better than being
-            // left on the other side of the map.
-            f.locate(px, py);
-            f.setDirection($gamePlayer.direction());
-            this.clearGoal(this.stateOf(f));
-            return false;
-        },
-
-        // The whole party back at the leader's side at once: coming out of a
-        // battle, taking a transfer event, or arriving on a new map.
-        gatherNear() {
-            if (!$gamePlayer || !$gameMap) return;
-            // Riding, the party is inside the vehicle with the leader; putting
-            // them on the tiles around it would drop them in the water. On a bike
-            // they are already on the tiles around it, each on their own, so they
-            // are gathered like anybody else.
-            if (this.stowedInVehicle()) return;
-            const taken = new Set([$gamePlayer.x + "," + $gamePlayer.y]);
-            for (const f of $gamePlayer.followers().data()) {
-                if (!f.isVisible()) continue;
-                this.placeBeside(f, taken);
-            }
-            this._recall = false;
-            this._still = 0;
-            this._run = 0;
-            Bubbles.clear();
-        },
-
-        // ------------------------------------------------------- solid bodies
-        // A member walking the map for themselves is a body on it: the leader
-        // cannot walk through them, and they cannot walk through each other.
-        // The engine's own chain has them all pass through everything, which is
-        // right for a column glued to the leader and wrong for people standing
-        // about on their own.
-
-        // The loose member standing on this tile, if any. Somebody the engine
-        // is carrying (a vehicle, a recall, a map battle) is not a body: their
-        // through(true) is what walks them home through the walls.
-        followerAt(x, y, except) {
-            if (!$gamePlayer || !$gamePlayer.followers()) return null;
-            for (const f of $gamePlayer.followers().data()) {
-                if (f === except) continue;
-                // The companion at heel is walked through by everybody. It
-                // still obeys the map itself (it is not through), it simply is
-                // not a wall: a pet standing in a doorway must never be the
-                // reason the party cannot get out of a room.
-                if (this.isPet(f)) continue;
-                if (!f.isVisible() || f.isTransparent()) continue;
-                if (f.isThrough()) continue;
-                if (!this.activeFor(f)) continue;
-                if (f.pos(x, y)) return f;
-            }
-            return null;
-        },
-
-        // Is the leader blocked by one of them? The party may never wall the
-        // player in: with no free tile left around them, everyone is walked
-        // through again rather than leaving the game stuck.
-        blocksLeader(x, y) {
-            if (!this.active()) return false;
-            if ($gamePlayer.isInVehicle()) return false;
-            const at = this.followerAt(x, y);
-            if (!at) return false;
-            // Leant on long enough, they stop being a wall (see pushedThrough).
-            if (this.pushedThrough(at)) return false;
-            for (const d of [2, 4, 6, 8]) {
-                const nx = $gameMap.roundXWithDirection($gamePlayer.x, d);
-                const ny = $gameMap.roundYWithDirection($gamePlayer.y, d);
-                if (this.followerAt(nx, ny)) continue;
-                if (!$gamePlayer.isMapPassable($gamePlayer.x, $gamePlayer.y, d)) continue;
-                if ($gameMap.eventsXyNt(nx, ny).some((e) => e.isNormalPriority())) continue;
-                return true; // there is a way out, so this one may be blocked
-            }
-            return false;
-        },
-
-        // Walking into somebody. A member or the companion standing where the
-        // leader wants to go steps out of the way instead of being a wall:
-        // sideways first, so they clear the lane the leader is walking down,
-        // then on ahead, then back the way the leader came. Whatever they were
-        // doing is dropped, and they hold still for a beat afterwards so they
-        // do not wander straight back onto the tile. They are not a door,
-        // though: it takes a moment of pushing before they budge, unless the
-        // leader is running, and a moment more before they can be walked
-        // through (see holdAgainst).
-        nudgeAside(d) {
-            if (!this.active() || !d) return false;
-            if ($gamePlayer.isInVehicle()) return false;
-            const x = $gameMap.roundXWithDirection($gamePlayer.x, d);
-            const y = $gameMap.roundYWithDirection($gamePlayer.y, d);
-            const f = this.followerAt(x, y) || this.petAt(x, y);
-            if (!f || f.isMoving()) return false;
-            if (!this.holdAgainst(f)) return false;
-            const side = (d === 2 || d === 8) ? [4, 6] : [2, 8];
-            if (Math.random() < 0.5) side.reverse();
-            for (const nd of side.concat([d, 10 - d])) {
-                const nx = $gameMap.roundXWithDirection(f.x, nd);
-                const ny = $gameMap.roundYWithDirection(f.y, nd);
-                if (!$gameMap.isValid(nx, ny)) continue;
-                if (!f.canPass(f.x, f.y, nd)) continue;
-                f.moveStraight(nd);
-                if (!f.isMovementSucceeded()) continue;
-                // The companion keeps no errand of its own to drop.
-                const s = this.isPet(f) ? null : this.stateOf(f);
-                if (s) {
-                    this.clearGoal(s);
-                    s.wait = Math.max(s.wait || 0, NUDGE_HOLD);
-                }
-                return true;
-            }
-            return false;
-        },
-
-        // How long the leader has been leaning on one body. A held direction key
-        // calls in every frame; letting go, turning away or pushing somebody
-        // else starts the count over. Returns true once the push has lasted
-        // long enough for them to give way, which is at once at a run.
-        holdAgainst(f) {
-            const now = Graphics.frameCount;
-            if (this._bumpOn !== f || now - (this._bumpAt || 0) > NUDGE_GAP) {
-                this._bumpOn = f;
-                this._bumpHeld = 0;
-            } else {
-                this._bumpHeld = (this._bumpHeld || 0) + (now - this._bumpAt);
-            }
-            this._bumpAt = now;
-            if ($gamePlayer && $gamePlayer.isDashing && $gamePlayer.isDashing()) return true;
-            return this._bumpHeld >= NUDGE_ASIDE_HOLD;
-        },
-
-        // ...and once it has lasted twice as long, they are no longer a body at
-        // all. A member with nowhere to step aside to (a corridor, a doorway, a
-        // corner) must never pen the leader in, so keeping the key held walks
-        // straight through them.
-        pushedThrough(f) {
-            if (!f || this._bumpOn !== f) return false;
-            if (Graphics.frameCount - (this._bumpAt || 0) > NUDGE_GAP) return false;
-            return (this._bumpHeld || 0) >= NUDGE_THROUGH_HOLD;
-        },
-
-        // The companion at heel, on one tile. It is walked through by everybody,
-        // so it is not a body, but it is still asked to get out of the way.
-        petAt(x, y) {
-            if (!$gamePlayer || !$gamePlayer.followers()) return null;
-            for (const f of $gamePlayer.followers().data()) {
-                if (!this.isPet(f)) continue;
-                if (!f.isVisible() || f.isTransparent()) continue;
-                if (f.pos(x, y)) return f;
-            }
-            return null;
-        },
-
-        // The same question for a member: the leader is a body to them too.
-        blocksFollower(f, x, y) {
-            if (!this.activeFor(f)) return false;
-            // The other half of the same rule: nothing that walks through the
-            // pet may be walked into by it, or it would be left standing on the
-            // wrong side of the leader for ever.
-            if (this.isPet(f)) return false;
-            if (this.followerAt(x, y, f)) return true;
-            return !$gamePlayer.isThrough() && $gamePlayer.pos(x, y);
-        },
-
-        // --------------------------------------------------------- talking to one
-        // The member standing on the tile the leader is facing.
+        // ------------------------------------------------- face to face
+        // Walking in a column the party is at the leader's back rather than in
+        // front of them, so this answers only once the player has turned round
+        // on purpose. That is the whole point of it: turning to the person
+        // behind you is how you talk to them.
         facedFollower() {
-            if (!this.active()) return null;
+            if (!$gamePlayer || !$gamePlayer.followers()) return null;
+            if ($gamePlayer.isInVehicle()) return null;
+            if (!$gamePlayer.followers().isVisible()) return null;
             const d = $gamePlayer.direction();
             const fx = $gameMap.roundXWithDirection($gamePlayer.x, d);
             const fy = $gameMap.roundYWithDirection($gamePlayer.y, d);
             for (const f of $gamePlayer.followers().data()) {
+                if (this.isPet(f)) continue;
                 if (!f.isVisible() || f.isTransparent()) continue;
                 if (f.pos(fx, fy)) return f;
             }
             return null;
         },
 
-        // The companion at heel, when the leader is facing it. Asked whether or
-        // not the loose layer is running: chained into the marching column it
-        // still walks where the leader just was, and it is still the one thing
-        // in that column worth turning round to.
+        // The companion at heel, when the leader is facing it. It walks where
+        // the leader just was, and it is still the one thing in that column
+        // worth turning round to.
         facedPet() {
             if (!$gamePlayer || !$gamePlayer.followers()) return null;
             if ($gamePlayer.isInVehicle()) return null;
@@ -4434,32 +2552,153 @@
             if (this.isPet(f)) return this.petMenu(f);
             const actor = f && f.actor();
             if (!actor) return false;
-            // On a map that carries <Bubba: scene,scene>, Em is offered the
-            // map's questions and his sheet side by side rather than one or the
-            // other (DialogueSystem owns the menu and the gate).
+            return this.memberMenu(f, actor);
+        },
+
+        // ---------------------------------------------------------- the member
+        // Turning round to somebody who walks with you is not one thing: a word
+        // traded on the road, their sheet, or being told to fall back. The same
+        // short menu the companion gets answers all three, with the sheet under
+        // the second choice rather than opened straight away.
+        memberMenu(f, actor) {
+            if ($gameMap.isEventRunning() || $gameMessage.isBusy()) return false;
+
+            f.setDirection(f.reverseDir($gamePlayer.direction()));
+            Bubbles.clear();
+
+            const ids = ["talk", "empathize", "reserves", "cancel"];
+            const labels = [
+                T("AutoIdle.member.actionTalk"),
+                T("AutoIdle.member.actionEmpathize"),
+                T("AutoIdle.member.actionReserves"),
+                T("AutoIdle.member.actionCancel"),
+            ];
+            $gameMessage.setChoices(labels, 0, ids.length - 1);
+            $gameMessage.setChoiceBackground(0);
+            $gameMessage.setChoicePositionType(2);
+            $gameMessage.setChoiceCallback((n) => {
+                switch (ids[n]) {
+                    case "talk": this.memberTalk(f, actor); break;
+                    case "empathize": this.memberEmpathize(f, actor); break;
+                    case "reserves": this.memberToReserves(actor); break;
+                    default: break;
+                }
+            });
+            return true;
+        },
+
+        // A word on the road. One move out of the Socialize catalogue, rolled
+        // by the same maths the panel and the street exchange use
+        // (NPC/DialogueSystem.js), which is a catalogue with nothing romantic
+        // in it: courting somebody lives in the panel's own submenu and is
+        // never what turning round to them does. Staged as a pair of portraits,
+        // the leader on the left and whoever answers on the right.
+        memberTalk(f, actor) {
+            const leader = $gameParty.leader();
+            const NT = window.NPCTalk;
+            const EM = window.NPCEmpathize;
+            const H = EM && EM._helpers;
+            const profile = window.NPCSocietyRegistry?.getProfile?.(actor.name()) || null;
+            const roll = (NT && typeof NT.socialRoll === "function")
+                ? NT.socialRoll(leader, actor.name(), profile) : null;
+            // Nothing to roll with: they still say something of their own
+            // rather than answering an empty menu with silence.
+            if (!roll) return this.say(f, "AutoIdle.loose.thought", true);
+
+            let playerLine = roll.playerLine;
+            let memberLine = roll.npcLine;
+            // A creature on either side of it has no prose: what comes out is
+            // that line's worth of noise, in the voice of the class it is
+            // played as. window.NPCCreature owns that boundary, and
+            // NPCEmpathize.growlFor is where it is read from.
+            if (H?._isNonSentientActor && leader && H._isNonSentientActor(leader)) {
+                playerLine = EM.growlFor?.(playerLine, leader.name()) || playerLine;
+            }
+            if (H?._isNonSentientActor && H._isNonSentientActor(actor)) {
+                memberLine = EM.growlFor?.(memberLine, actor.name()) || memberLine;
+            }
+
+            // What the exchange was worth, filed against the leader the way
+            // every other Socialize move is.
+            if (profile && leader && H?._addNpcOpinion) {
+                H._addNpcOpinion(profile, leader.actorId(), roll.delta);
+                (profile.eventLog ??= []).push({
+                    tag: "social_" + roll.id, desc: `${roll.id} (${roll.delta >= 0 ? "+" : ""}${roll.delta})`, // i18n-ignore: event-log record id
+                    timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
+                });
+            }
+            // Company is company: both of them spent it on each other.
+            if (window.PartyNeeds?.fillNeed) {
+                if (leader) window.PartyNeeds.fillNeed(leader, "social", 20);
+                window.PartyNeeds.fillNeed(actor, "social", 20);
+            }
+
+            if (NT && typeof NT.exchange === "function") {
+                const steps = [
+                    NT.playerStep(leader, playerLine),
+                    NT.spriteStep(f.characterName ? f.characterName() : "",
+                        f.characterIndex ? f.characterIndex() : 0, actor.name(), memberLine),
+                ];
+                try { if (NT.exchange(steps)) return true; }
+                catch (e) { console.error("[AutoIdle] party talk exchange failed", e); }
+            }
+            // Nowhere to stage it: the two lines in bubbles over the two heads
+            // that said them, which is how the party talks while it walks.
+            this.sayText(f, memberLine);
+            return true;
+        },
+
+        // Their sheet, the same page the Dynamics roster opens. On a map that
+        // carries <Bubba: scene,scene>, Em is offered the map's questions and
+        // his sheet side by side rather than one or the other (DialogueSystem
+        // owns that menu and the gate on it).
+        memberEmpathize(f, actor) {
             const SD = window.StoryDialogue;
             if (SD?.canAsk?.(actor.name())) {
-                f.setDirection(f.reverseDir($gamePlayer.direction()));
-                this.clearGoal(this.stateOf(f));
-                Bubbles.clear();
                 if (SD.askMenu?.(actor.actorId())) return true;
                 if (SD.ask()) return true;
             }
             if (!window.NPCEmpathize || typeof window.NPCEmpathize.openForActor !== "function") return false;
-            f.setDirection(f.reverseDir($gamePlayer.direction()));
-            this.clearGoal(this.stateOf(f));
-            Bubbles.clear();
             window.NPCEmpathize.openForActor(actor.actorId());
+            return true;
+        },
+
+        // Told to fall back. They leave the road and wait in the reserves,
+        // where the Dynamics roster calls them up again: exactly what the board
+        // does, refusals and all (the last one standing, the leader, and the
+        // two the story keeps together).
+        memberToReserves(actor) {
+            const actorId = actor.actorId();
+            const name = actor.name();
+            const result = window.CharacterPresets?.retirePartyMember?.(actorId);
+            if (!result || !result.ok) {
+                SoundManager.playBuzzer();
+                const reason = result ? result.reason : "";
+                const message = reason === "lastMember"
+                    ? T("MainMenu.dynamics.partyEmpty")
+                    : reason === "isLeader"
+                        ? T("MainMenu.dynamics.isLeader", { name })
+                        : reason === "storyLocked"
+                            ? T("MainMenu.dynamics.storyLocked", { name })
+                            : T("MainMenu.dynamics.cannotRetire", { name });
+                this.toast(message, "warning");
+                return false;
+            }
+            SoundManager.playOk();
+            this.toast(T("MainMenu.dynamics.nowInactive", { name }), "info");
+            // The column is one shorter: the rest of it closes up at the
+            // leader's shoulder rather than walking on with a gap in it.
+            this.gatherNear();
             return true;
         },
 
         // ------------------------------------------------------- the companion
         // The pet has no actor behind it, so its Empathize sheet is not opened
-        // the way a member's is and none of the party's conversation is its to
-        // hold. What it is offered instead is a short menu: something that
-        // talks is talked to, something feral is petted (window.NPCCreature owns
-        // that boundary, and the record's own answer is what it was recruited
-        // with), and either way its own page is one choice down.
+        // the way a member's is. What it is offered instead is a short menu:
+        // something that talks is talked to, something feral is petted
+        // (window.NPCCreature owns that boundary, and the record's own answer is
+        // what it was recruited with), and either way its own page is one choice
+        // down and being told to stay behind the one under that.
         petMenu(f) {
             const PS = window.PetSystem;
             const pet = PS && PS.getActivePet ? PS.getActivePet() : null;
@@ -4467,14 +2706,14 @@
             if ($gameMap.isEventRunning() || $gameMessage.isBusy()) return false;
 
             f.setDirection(f.reverseDir($gamePlayer.direction()));
-            this.clearGoal(this.stateOf(f));
             Bubbles.clear();
 
             const sentient = this.petIsSentient(pet);
-            const ids = [sentient ? "talk" : "pet", "empathize", "cancel"];
+            const ids = [sentient ? "talk" : "pet", "empathize", "stop", "cancel"];
             const labels = [
                 T(sentient ? "AutoIdle.pet.actionTalk" : "AutoIdle.pet.actionPet"),
                 T("AutoIdle.pet.actionEmpathize"),
+                T("AutoIdle.pet.actionStop"),
                 T("AutoIdle.pet.actionCancel"),
             ];
             $gameMessage.setChoices(labels, 0, ids.length - 1);
@@ -4485,9 +2724,21 @@
                     case "talk": this.petSpeaks(f, pet); break;
                     case "pet": this.petStroked(f, pet); break;
                     case "empathize": this.petEmpathize(pet); break;
+                    case "stop": this.petStopFollowing(pet); break;
                     default: break;
                 }
             });
+            return true;
+        },
+
+        // Told to stay. Nobody is abandoned by it: the record keeps its place
+        // in the registry and only stops being the active one, so the Pets page
+        // puts it back at heel whenever the party wants it walking again.
+        petStopFollowing(pet) {
+            const PS = window.PetSystem;
+            if (!PS || typeof PS.setActivePet !== "function") return false;
+            PS.setActivePet(null);
+            this.toast(T("AutoIdle.pet.stopped", { name: pet.name || "" }), "info");
             return true;
         },
 
@@ -4516,15 +2767,37 @@
         },
 
         // Making a fuss of the one that has none. Written about it rather than
-        // said by it, so a growl is never mistaken for conversation.
+        // said by it, so a growl is never mistaken for conversation - but the
+        // hands doing it are the leader's, so the beat is staged as a pair of
+        // portraits like any other exchange on the map: what the leader does on
+        // the left, what the companion makes of it on the right.
         petStroked(f, pet) {
             const lines = T.pool("AutoIdle.pet.petted");
             if (!lines.length) return;
-            const line = lines[Math.floor(Math.random() * lines.length)]
-                .replace(/\{name\}/g, pet.name || "");
-            window.skipLocalization = true;
-            $gameMessage.add(line);
-            window.skipLocalization = false;
+            const named = (text) => String(text).replace(/\{name\}/g, pet.name || "");
+            const line  = named(lines[Math.floor(Math.random() * lines.length)]);
+
+            const minePool = T.pool("AutoIdle.pet.petting");
+            const mine     = minePool.length
+                ? named(minePool[Math.floor(Math.random() * minePool.length)]) : "";
+            const NT = window.NPCTalk;
+            if (mine && NT && typeof NT.exchange === "function") {
+                const leader = $gameParty && $gameParty.leader ? $gameParty.leader() : null;
+                const steps = [
+                    NT.playerStep(leader, mine),
+                    NT.spriteStep(f.characterName ? f.characterName() : "",
+                        f.characterIndex ? f.characterIndex() : 0, pet.name || "", line),
+                ];
+                try { if (NT.exchange(steps)) return; }
+                catch (e) { console.error("[AutoIdle] petting exchange failed", e); }
+            }
+            // Nowhere to stage it: the bare line, and a frame later, since the
+            // box that asked the question clears the message on its way out.
+            setTimeout(() => {
+                window.skipLocalization = true;
+                $gameMessage.add(line);
+                window.skipLocalization = false;
+            }, 0);
         },
 
         // Its own page, opened by name: with no event and no actor behind it,
@@ -4535,8 +2808,6 @@
             EM.openByName(pet.name);
         },
     };
-
-    AutoIdle.loose = Loose;
 
     // ========================================================================
     // Scripted regrouping
@@ -4566,9 +2837,10 @@
             return !!this._job;
         },
 
-        // Every member walking themselves back to the leader.
+        // Every member closing on the leader, the engine's own Gather Party.
         startParty() {
             if (!this._available()) return;
+            $gamePlayer.gatherFollowers();
             this._job = { mode: "party", frames: 0 };
         },
 
@@ -4589,6 +2861,7 @@
                 return !!a && a.name() === other;
             });
             if (!f) return;
+            $gamePlayer.gatherFollowers();
             this._job = { mode: "pair", frames: 0, follower: f };
         },
 
@@ -4620,41 +2893,26 @@
             }
         },
 
-        // Everybody at the leader's elbow. Arrived is one tile away or closer,
-        // which is where the marching column would have left them.
+        // Everybody at the leader's elbow. Walking in a column they are already
+        // there on any ordinary frame, so this is over as soon as the engine's
+        // own gather is: what it is really waiting out is the one case that is
+        // not ordinary, a member who has just joined and is still closing.
         _stepParty(job) {
-            let waiting = false;
+            if ($gamePlayer.areFollowersGathering()) return false;
             for (const f of $gamePlayer.followers().data()) {
                 if (!f.isVisible() || Loose.heldByP2(f)) continue;
-                if (Loose.dist(f, $gamePlayer) <= 1) {
-                    if (!f.isMoving()) f.setDirection(f.reverseDir($gamePlayer.direction()));
-                    continue;
-                }
-                waiting = true;
-                if (f.isMoving()) continue;
-                if (Loose.offScreen(f, LOOSE_SNAP_MARGIN)) {
-                    Loose.placeBeside(f);
-                    continue;
-                }
-                f.setMoveSpeed($gamePlayer.realMoveSpeed());
-                Loose.stepTo(f, $gamePlayer.x, $gamePlayer.y);
+                if (!f.isMoving()) f.setDirection(f.reverseDir($gamePlayer.direction()));
             }
-            return !waiting;
+            return true;
         },
 
-        // The two of them. Walking is over when they stand next to each other;
-        // the command is over once they are actually looking at each other,
-        // which is a frame or two later.
+        // The two of them. Walking is over once the gather is; the command is
+        // over once they are actually looking at each other, which is a frame
+        // or two later.
         _stepPair(job) {
             const f = job.follower;
             if (!f || !f.isVisible()) return true;
-            if (Loose.dist(f, $gamePlayer) > 1) {
-                if (!f.isMoving()) {
-                    f.setMoveSpeed($gamePlayer.realMoveSpeed());
-                    Loose.stepTo(f, $gamePlayer.x, $gamePlayer.y);
-                }
-                return false;
-            }
+            if ($gamePlayer.areFollowersGathering()) return false;
             if (f.isMoving() || $gamePlayer.isMoving()) return false;
             return this._faceOff(f);
         },
@@ -4780,6 +3038,12 @@
             if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive &&
                 window.VoxelWorldSystem.isActive()) return false;
             if (SceneManager.isSceneChanging()) return false;
+            // On the world map (Map/WorldMapReturn.js) the party is drawn as a
+            // single dot on a grid where one tile is a whole region: the other
+            // members are not on it to be swapped with, and handing the lead
+            // over out there would change who the party is without anything to
+            // show for it. Tab, Shift+Tab and a tap of L2 or R2 all do nothing.
+            if (Loose.onWorldMap()) return false;
             if ($gameParty.inBattle() || Loose.inMapBattle()) return false;
             if ($gameMessage.isBusy() || $gameMap.isEventRunning()) return false;
             if ($gamePlayer.isMoving() || $gamePlayer.isJumping()) return false;
@@ -4853,8 +3117,6 @@
                     $gamePlayer[flag] = f[flag];
                     f[flag] = mine;
                 }
-                // The errand belonged to whoever used to walk that slot.
-                Loose.clearGoal(Loose.stateOf(f));
                 Bubbles.clearFor(f);
                 Bubbles.clearFor($gamePlayer);
             }
@@ -5042,14 +3304,18 @@
         if (!this.busy()) this.startParty();
         return this.busy();
     };
+    // The questions the rest of the game still asks about the party on the map
+    // (who the leader is facing, whether a pet walks at heel) are answered
+    // through here, as the header above says they are.
+    AutoIdle.loose = Loose;
     window.AutoIdleExplorer = AutoIdle;
 
     // ========================================================================
-    // Loose party hooks
+    // Party hooks
     // ========================================================================
-    // 0) Map 315 (the world map) draws the party as a single dot: a scattered
-    //    party would otherwise show human-scale sprites on a screen where one
-    //    tile is a whole region.
+    // 0) Map 315 (the world map) draws the party as a single dot: the column
+    //    would otherwise show human-scale sprites on a screen where one tile is
+    //    a whole region.
     //    Followers are hidden by opacity rather than by blanking their image
     //    (Game_Follower.refresh only reruns on specific triggers, so an
     //    isVisible()-driven approach would not react to a plain map transfer),
@@ -5069,43 +3335,20 @@
         _Game_Followers_update_worldMap.call(this);
     };
 
-    // 1) The chase itself. The rope is cut, except while the party is being
-    //    called in (a running leader, or an event's Gather Party) and while the
-    //    loose layer stands down (a vehicle, split-screen, a battle).
-    const _Game_Followers_updateMove_loose = Game_Followers.prototype.updateMove;
+    // 1) The chase itself, which is the engine's own: every member steps into
+    //    the tile the one in front of them has just left. The single exception
+    //    is a map battle (BattleSystem/MapBattleMode.js), which walks every
+    //    member itself, tile by tile, and where each one holds the ground it is
+    //    fighting from: letting the chase run there would drag the whole train
+    //    along behind every tactical step the leader takes, undoing the
+    //    positioning the fight is being fought over.
+    const _Game_Followers_updateMove_party = Game_Followers.prototype.updateMove;
     Game_Followers.prototype.updateMove = function () {
-        // A map battle (BattleSystem/MapBattleMode.js) walks every member itself,
-        // one tile at a time, and each one holds the tile it is fighting from.
-        // Neither branch below may run: the loose layer is off for the fight
-        // anyway (conditionsMet), which means control would fall through to the
-        // vanilla chase and chaseCharacter would drag the whole train along
-        // behind every tactical step the leader takes, undoing the positioning
-        // the fight is being fought over. Checked before recalling() too, since
-        // a Gather Party queued before the fight would do the same.
         if (Loose.inMapBattle()) return;
-        if (Loose.recalling()) {
-            _Game_Followers_updateMove_loose.call(this);
-            return;
-        }
-        if (Loose.active()) return;
-        // The loose layer has stood down (a vehicle, split-screen, an event
-        // gathering the party): the engine's own chain takes the rope back for
-        // as long as it lasts.
-        _Game_Followers_updateMove_loose.call(this);
+        _Game_Followers_updateMove_party.call(this);
     };
 
-    // 2) Each member's own turn to act, once per frame.
-    const _Game_Follower_update_loose = Game_Follower.prototype.update;
-    Game_Follower.prototype.update = function () {
-        _Game_Follower_update_loose.call(this);
-        try {
-            Loose.updateFollower(this);
-        } catch (e) {
-            console.error("[AutoIdleExplorer] loose follower error:", e);
-        }
-    };
-
-    // 2b) The camera walking from one member to the other owns the display for
+    // 2) The camera walking from one member to the other owns the display for
     //     those few frames: the engine would otherwise drag it back the moment
     //     the new leader took a step.
     const _Game_Player_updateScroll_lead = Game_Player.prototype.updateScroll;
@@ -5114,52 +3357,17 @@
         _Game_Player_updateScroll_lead.call(this, lastScrolledX, lastScrolledY);
     };
 
-    // 2c) Collisions. Loose members are solid: to the leader, to each other and
-    //     to nobody else (an NPC still walks through them, as it always has).
-    const _Game_Player_isCollidedWithCharacters_loose = Game_Player.prototype.isCollidedWithCharacters;
-    Game_Player.prototype.isCollidedWithCharacters = function (x, y) {
-        if (_Game_Player_isCollidedWithCharacters_loose &&
-            _Game_Player_isCollidedWithCharacters_loose.call(this, x, y)) return true;
-        try {
-            return Loose.blocksLeader(x, y);
-        } catch (e) {
-            return false;
-        }
-    };
-
-    const _Game_Follower_isCollidedWithCharacters_loose = Game_Follower.prototype.isCollidedWithCharacters;
-    Game_Follower.prototype.isCollidedWithCharacters = function (x, y) {
-        if (_Game_Follower_isCollidedWithCharacters_loose &&
-            _Game_Follower_isCollidedWithCharacters_loose.call(this, x, y)) return true;
-        try {
-            return Loose.blocksFollower(this, x, y);
-        } catch (e) {
-            return false;
-        }
-    };
-
-    // 2d) ...but a body that can move is not a wall. Before the leader's own
-    //     step is resolved, whoever is standing on the tile they are walking
-    //     into is asked to step aside, so the party parts around the player
-    //     rather than penning them in.
-    const _Game_Player_executeMove_loose = Game_Player.prototype.executeMove;
-    Game_Player.prototype.executeMove = function (direction) {
-        try {
-            Loose.nudgeAside(direction);
-        } catch (e) { /* never block the leader's own step */ }
-        _Game_Player_executeMove_loose.call(this, direction);
-    };
-
-    // 3) OK on a member standing in front of the leader opens their Empathize
-    //    sheet, the same page the Dynamics roster opens. Checked before the
-    //    engine's own action button so the member is not walked through.
-    const _Game_Player_triggerButtonAction_loose = Game_Player.prototype.triggerButtonAction;
+    // 3) OK on a member the leader has turned round to face opens their
+    //    Empathize sheet, the same page the Dynamics roster opens. Checked
+    //    before the engine's own action button, which would otherwise walk
+    //    straight through them.
+    const _Game_Player_triggerButtonAction_party = Game_Player.prototype.triggerButtonAction;
     Game_Player.prototype.triggerButtonAction = function () {
         if (Input.isTriggered("ok") && !this.isInVehicle()) {
             const f = Loose.facedFollower() || Loose.facedPet();
             if (f && Loose.talkTo(f)) return true;
         }
-        return _Game_Player_triggerButtonAction_loose.call(this);
+        return _Game_Player_triggerButtonAction_party.call(this);
     };
 
     // ========================================================================
@@ -5174,9 +3382,10 @@
             console.error("[AutoIdleExplorer] lead update error:", e);
         }
         try {
-            Loose.update();
+            Loose.updateChatter();
+            Bubbles.update();
         } catch (e) {
-            console.error("[AutoIdleExplorer] loose party update error:", e);
+            console.error("[AutoIdleExplorer] party bubble update error:", e);
         }
         try {
             Regroup.update();
@@ -5577,24 +3786,25 @@
         return carryingBodies() >= CARRY_MIN_BODIES;
     }
 
-    const _Loose_updateFollower_downed = Loose.updateFollower;
-    Loose.updateFollower = function (f) {
-        const actor = f && f.actor && f.actor();
-        if (actor && actor.isDead()) {
-            // Too few of them to lift anybody: the body stays on the tile it
-            // went down on, and the loose layer is left to its own devices for
-            // it rather than being short-circuited here.
-            if (!partyCanCarryDowned()) {
-                _Loose_updateFollower_downed.call(this, f);
-                return;
-            }
-            // Find a living party member to carry this downed member
-            const followers = $gamePlayer.followers().data();
+    // Walking in the column a downed member would trail along behind the party
+    // on their own feet, which is not what being down means. Once there are
+    // enough hands for it they are carried instead: the body is held on the
+    // carrier's own tile, facing the way the carrier faces, for as long as they
+    // are out.
+    const _Game_Follower_update_carry = Game_Follower.prototype.update;
+    Game_Follower.prototype.update = function () {
+        _Game_Follower_update_carry.call(this);
+        try {
+            const actor = this.actor && this.actor();
+            if (!actor || !actor.isDead()) return;
+            // Too few of them to lift anybody: the body walks itself, the way
+            // every other member does.
+            if (!partyCanCarryDowned()) return;
             let carrier = null;
             if (!$gamePlayer.isTransparent() && $gameParty.leader() && !$gameParty.leader().isDead()) {
                 carrier = $gamePlayer;
             } else {
-                for (const other of followers) {
+                for (const other of $gamePlayer.followers().data()) {
                     const otherActor = other.actor && other.actor();
                     if (otherActor && !otherActor.isDead()) {
                         carrier = other;
@@ -5602,14 +3812,14 @@
                     }
                 }
             }
-            if (carrier) {
-                f.locate(carrier.x, carrier.y);
-                f.setDirection(carrier.direction());
-                f.setThrough(true);
+            if (carrier && carrier !== this) {
+                this.locate(carrier.x, carrier.y);
+                this.setDirection(carrier.direction());
+                this.setThrough(true);
             }
-            return;
+        } catch (e) {
+            console.error("[AutoIdleExplorer] downed member carry error:", e);
         }
-        _Loose_updateFollower_downed.call(this, f);
     };
 
     // --- 3. Party Member Corpses (Blood & Oil / Hardcore) ---

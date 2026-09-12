@@ -82,14 +82,17 @@
   // rollIdentity). Everywhere else they are the exception that makes a street
   // feel alive, one face in twelve, and the halves are dealt flat.
   const CREATURE_CHANCE_MONSTER = 1.0;
-  // Out in the country a creature is an ordinary sight: a quarter of whoever
-  // is about is one. Inside a town it is not , people live in towns, and a
-  // street where every fourth passer-by is a beast reads as a monster world
-  // rather than as a market square , so a settlement drops it to one in twenty.
+  // Out in the country a creature is a common enough sight, though not the
+  // thing you meet most: roughly one in six of whoever is about is one. A
+  // quarter was too many , walking a forest square met more beasts than
+  // travellers , so the wild share was pulled back. Inside a town it is rarer
+  // still, people live in towns, and a street where every fourth passer-by is
+  // a beast reads as a monster world rather than as a market square, so a
+  // settlement drops it to one in twenty.
   // "A settlement" is both kinds: a procedural city or village square, and any
   // map belonging to a hand-made MapGroup, which is what an authored town is.
   const CREATURE_CHANCE_SETTLEMENT = 0.05;
-  const CREATURE_CHANCE_WILD       = 0.25;
+  const CREATURE_CHANCE_WILD       = 0.17;
   const CREATURE_CHANCE_NORMAL     = CREATURE_CHANCE_WILD;
   // A zombie world has almost nobody left to meet. What still moves is the
   // dead (dealt by NPCSystem's own re-skin pass over the slots) and the

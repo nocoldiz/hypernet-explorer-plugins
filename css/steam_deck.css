@@ -4663,13 +4663,10 @@
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
 
-    /* --- Hypernet OS. The Control Panel's applet shelf and the wallpaper
-           swatches, both of which are picked off a picture
-           (Hypernet/HypernetControlPanel.js). */
-    .cp-applets {
-        grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
-    }
-
+    /* --- Hypernet OS. The wallpaper swatches, picked off a picture
+           (Hypernet/HypernetOS.js). The Control Panel's applet shelf used to be
+           narrowed here too, but the panel was rebuilt and writes no such shelf
+           any more, so the rule was dressing nothing. */
     .xp-desk-walls {
         grid-template-columns: repeat(3, 1fr);
     }

@@ -3029,6 +3029,33 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
         return m + ':' + (s < 10 ? '0' : '') + s;
     }
 
+    // A WebAudio calls itself playing from the instant it is ASKED to play,
+    // which is long before the file has come off the disk and been decoded.
+    // Until then it has no start time and no length, so seek() answers with
+    // the whole uptime of the audio context: a track that has just been
+    // clicked reads as hours long, and that number then gets handed straight
+    // back as a play offset. Nothing is a real position before the buffer is
+    // ready and has been started.
+    function started(buffer) {
+        return !!(buffer && buffer.isPlaying() && buffer.isReady() && buffer._startTime > 0);
+    }
+
+    // The track's length, or 0 while it is still decoding.
+    function durationOf(buffer) {
+        const total = buffer && buffer._totalTime;
+        return Number.isFinite(total) && total > 0 ? total : 0;
+    }
+
+    // Where the needle really is, clamped inside the track. Anything that is
+    // not a live, ready, started buffer has no position at all.
+    function positionOf(buffer) {
+        if (!started(buffer)) return null;
+        const pos = buffer.seek();
+        if (!Number.isFinite(pos) || pos < 0) return 0;
+        const total = durationOf(buffer);
+        return total > 0 ? Math.min(pos, total) : pos;
+    }
+
     window.HyperAmp = {
         _library: null,
         _state: null,
@@ -3036,6 +3063,9 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
         walkLibrary,
         describe,
         fmtTime,
+        started,
+        durationOf,
+        positionOf,
 
         // Every track under audio/bgm, scanned once per session.
         library: function(force) {
@@ -3123,7 +3153,7 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
 
             const q = sel => win.querySelector(sel);
             const state = {
-                queue: [], index: -1, shuffle: false, repeat: 'all', lastPos: 0,
+                queue: [], index: -1, shuffle: false, repeat: 'all', lastPos: 0, lastLive: null,
                 savedBgm: AudioManager.saveBgm(), touched: false, raf: 0, analyser: null, folder: '', search: ''
             };
             this._state = state;
@@ -3160,6 +3190,7 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
                 const t = state.queue[i];
                 state.touched = true;
                 state.lastPos = 0;
+                state.lastLive = null;
                 AudioManager.playBgm({ name: t.key, volume: parseInt(q('#hyperamp-volume').value, 10), pitch: 100, pan: 0 });
                 q('#hyperamp-title').textContent = t.artist + ' - ' + t.title;
                 q('#hyperamp-meta').textContent = [t.genre, t.folder].filter(Boolean).join(' / ');
@@ -3171,6 +3202,8 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
             const stop = () => {
                 if (state.touched) AudioManager.stopBgm();
                 state.index = -1;
+                state.lastPos = 0;
+                state.lastLive = null;
                 q('#hyperamp-title').textContent = T_('idle');
                 q('#hyperamp-meta').textContent = '';
                 renderList();
@@ -3178,16 +3211,29 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
 
             const buffer = () => AudioManager._bgmBuffer;
 
+            // Resuming from a paused position, but never past the end of the
+            // track and never from a position that was never real.
+            const resumePos = (b) => {
+                const total = durationOf(b);
+                let pos = Number.isFinite(state.lastPos) && state.lastPos > 0 ? state.lastPos : 0;
+                if (total > 0 && pos >= total) pos = 0;
+                return pos;
+            };
+
             q('#hyperamp-play').addEventListener('click', (e) => {
                 e.stopPropagation();
                 const b = buffer();
-                if (state.index >= 0 && b && !b.isPlaying()) { b.play(true, state.lastPos); return; }
+                if (state.index >= 0 && b && !b.isPlaying()) { b.play(true, resumePos(b)); return; }
                 if (state.index < 0) playIndex(state.queue.length ? (state.shuffle ? Math.floor(Math.random() * state.queue.length) : 0) : -1);
             });
             q('#hyperamp-pause').addEventListener('click', (e) => {
                 e.stopPropagation();
                 const b = buffer();
-                if (b && b.isPlaying()) { state.lastPos = b.seek(); b.stop(); }
+                if (b && b.isPlaying()) {
+                    const pos = positionOf(b);
+                    state.lastPos = pos == null ? 0 : pos;
+                    b.stop();
+                }
             });
             q('#hyperamp-stop').addEventListener('click', (e) => { e.stopPropagation(); stop(); });
             q('#hyperamp-next').addEventListener('click', (e) => {
@@ -3197,7 +3243,7 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
             q('#hyperamp-prev').addEventListener('click', (e) => {
                 e.stopPropagation();
                 const b = buffer();
-                if (b && b.seek() > 3) { playIndex(state.index); return; }
+                if (positionOf(b) > 3) { playIndex(state.index); return; }
                 playIndex(state.index > 0 ? state.index - 1 : state.queue.length - 1);
             });
             q('#hyperamp-shuffle').addEventListener('click', (e) => {
@@ -3221,8 +3267,9 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
             });
             q('#hyperamp-seek').addEventListener('change', (e) => {
                 const b = buffer();
-                if (!b || !b._totalTime) return;
-                const pos = (parseInt(e.target.value, 10) / 1000) * b._totalTime;
+                const total = durationOf(b);
+                if (!total) { e.target.value = 0; return; }
+                const pos = (parseInt(e.target.value, 10) / 1000) * total;
                 state.lastPos = pos;
                 b.play(true, pos);
             });
@@ -3255,21 +3302,29 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
                 if (!win.isConnected) return;
                 state.raf = requestAnimationFrame(tick);
                 const b = buffer();
-                const total = b && b._totalTime ? b._totalTime : 0;
-                const pos = b && b.isPlaying() ? b.seek() : state.lastPos;
+                const total = durationOf(b);
+                // Null while the track is still loading: the readout holds at
+                // the last real position rather than showing the audio
+                // context's uptime as a running time.
+                const live = positionOf(b);
+                const pos = live == null ? (Number.isFinite(state.lastPos) ? state.lastPos : 0) : live;
                 q('#hyperamp-time').textContent = fmtTime(pos);
-                q('#hyperamp-length').textContent = fmtTime(total);
+                q('#hyperamp-length').textContent = total > 0 ? fmtTime(total) : T_('loading');
                 const seek = q('#hyperamp-seek');
-                if (document.activeElement !== seek && total > 0) seek.value = Math.round((pos / total) * 1000);
-                // A wrap of the loop means the track ended: move on.
-                if (b && b.isPlaying() && state.index >= 0 && total > 0 && pos + 0.5 < state.lastPos && state.lastPos > total * 0.5) {
+                if (document.activeElement !== seek) seek.value = total > 0 ? Math.round((pos / total) * 1000) : 0;
+                // A wrap of the loop means the track ended: move on. Only a
+                // pair of genuine positions can say that, so a track that has
+                // not started yet never counts as one that just finished.
+                if (live != null && state.index >= 0 && total > 0 && state.lastLive != null
+                    && live + 0.5 < state.lastLive && state.lastLive > total * 0.5) {
                     if (state.repeat !== 'one') {
                         const n = this.nextIndex(state.index, state.queue.length, state.shuffle, state.repeat);
                         if (n === -1) stop(); else playIndex(n);
                         return;
                     }
                 }
-                if (b && b.isPlaying()) state.lastPos = pos;
+                state.lastLive = live;
+                if (live != null) state.lastPos = live;
 
                 const ctx2d = vis.getContext('2d');
                 ctx2d.clearRect(0, 0, vis.width, vis.height);

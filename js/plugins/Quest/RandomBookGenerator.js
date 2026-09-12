@@ -744,7 +744,7 @@ function createSeededRNG(eventId = null) {
             store[placeKey] = data;
         }
         if (window.WorldManager && typeof window.WorldManager.flush === 'function') {
-            try { window.WorldManager.flush(); } catch (e) {}
+            try { window.WorldManager.flush('libraries'); } catch (e) {}
         }
     }
 

@@ -1082,6 +1082,13 @@
         if (!this._furnitureData) {
             this.initFurnitureSystem();
         }
+        // Everything below this point is one-time migration of an older save.
+        // It used to be re-checked on EVERY call - four Object.keys() and an
+        // Object.entries() allocated each time - and this function sits at the
+        // bottom of the passability path, which the NPC pathfinder asks
+        // thousands of times inside one frame. Once there is nothing left to
+        // carry over, it is never looked at again.
+        if (this._furnitureMigrated === true) return this._furnitureData;
         // One-time migration: older saves stored crafting materials in this
         // private object. Now they are real party items, so move any leftover
         // stock into the inventory and clear the legacy store.
@@ -1116,6 +1123,15 @@
             this._furnitureBuiltTileId = data.placedTileId;
             delete data.placedTileId;
         }
+        // Only call it done when nothing is left that a later call could still
+        // carry over: the materials hand-off needs $gameParty and $dataItems,
+        // and neither is necessarily up the first time this is asked.
+        this._furnitureMigrated =
+            !(data.materials && Object.keys(data.materials).length > 0) &&
+            !(data.maps && Object.keys(data.maps).length > 0) &&
+            !(data.tiles && Object.keys(data.tiles).length > 0) &&
+            data.placedFurnitureId === undefined &&
+            data.placedTileId === undefined;
         return this._furnitureData;
     };
 
@@ -1280,6 +1296,7 @@
         };
 
         maps[mapId].push(placedFurniture);
+        invalidateFurnitureMemo();
         return placedFurniture;
     };
 
@@ -1292,6 +1309,7 @@
         if (index >= 0) {
             const furniture = maps[mapId][index];
             maps[mapId].splice(index, 1);
+            invalidateFurnitureMemo();
             return furniture;
         }
         return null;
@@ -1868,9 +1886,56 @@
     // Game_Map Furniture Passability & Ladder Hooks
     //=============================================================================
 
+    // The furniture standing on the map right now, resolved at most once a
+    // frame.
+    //
+    // Both passability helpers below used to call furnitureMapKey() and then
+    // getMapFurniture() on EVERY query. On the procedural map that key is a
+    // template string built from the biome, the world coordinate, the layer
+    // depth and the dungeon salt, so each query allocated one - and a query is
+    // not rare: Game_CharacterBase.isMapPassable asks twice per canPass, and
+    // the NPC pathfinder asks canPass up to two thousand times inside a single
+    // findPath. That was thousands of throwaway strings per pathfind.
+    //
+    // Neither answer can change inside one frame - a map transfer and a
+    // generation both happen between frames - so both are resolved once per
+    // frame. The list is the world store's own array, not a copy, so furniture
+    // placed or removed during the frame is seen through it; only a map whose
+    // list did not exist yet needs the explicit invalidation below.
+    let _furnFrame = -1;
+    let _furnList = null;
+    function furnitureOnThisMap() {
+        const frame = (typeof Graphics !== "undefined" && Graphics)
+            ? Graphics.frameCount : -1;
+        if (frame !== _furnFrame || frame < 0) {
+            _furnFrame = frame;
+            _furnList = $gameSystem.getMapFurniture(furnitureMapKey());
+        }
+        return _furnList;
+    }
+
+    // Placing the first piece on a map replaces the empty list the memo is
+    // holding, so the memo is dropped whenever a placement happens.
+    function invalidateFurnitureMemo() {
+        _furnFrame = -1;
+        _furnList = null;
+    }
+
+    // A map being set up is the authoritative "everything the key is built from
+    // has changed" signal: it is what a transfer runs, and what the procedural
+    // generator runs after writing the new square's biome and coordinate. One
+    // frame can hold more than one of these while a stitched window is built,
+    // so the frame counter alone is not enough to keep the memo honest.
+    const _Game_Map_setup_furnitureMemo = Game_Map.prototype.setup;
+    Game_Map.prototype.setup = function (mapId) {
+        invalidateFurnitureMemo();
+        _Game_Map_setup_furnitureMemo.call(this, mapId);
+    };
+
     function isTileBlockedByFurniture(x, y) {
         if (!$gameSystem) return false;
-        const furnitureList = $gameSystem.getMapFurniture(furnitureMapKey());
+        const furnitureList = furnitureOnThisMap();
+        if (furnitureList.length === 0) return false;
         for (const placed of furnitureList) {
             const fData = Furniture[placed.furnitureId];
             if (!fData) continue;
@@ -1889,7 +1954,8 @@
 
     function isTileLadderByFurniture(x, y) {
         if (!$gameSystem) return false;
-        const furnitureList = $gameSystem.getMapFurniture(furnitureMapKey());
+        const furnitureList = furnitureOnThisMap();
+        if (furnitureList.length === 0) return false;
         for (const placed of furnitureList) {
             const fData = Furniture[placed.furnitureId];
             if (!fData) continue;
@@ -3133,7 +3199,11 @@
     // the gallery is rebuilt on every render.
     const _coverCache = new Map();
     function folderCoverId(category, subcategory) {
-        const key = category + ' ' + (subcategory || '');
+        // U+0001 rather than a literal NUL: a NUL byte in the source made grep
+        // and ripgrep treat this whole file as binary and skip it silently in
+        // any repo-wide search. Same job, still a separator no category name
+        // can contain.
+        const key = category + '\u0001' + (subcategory || '');
         if (_coverCache.has(key)) return _coverCache.get(key);
         let best = null, bestName = null;
         for (const [id, f] of Object.entries(Furniture)) {

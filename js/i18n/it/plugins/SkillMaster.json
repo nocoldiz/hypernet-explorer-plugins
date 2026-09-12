@@ -106,7 +106,7 @@
       "Sympathetic": {
         "name": "Simpatica",
         "desc": "Il simile richiama il simile: un oggetto legato a un altro.",
-        "lore": "Il simile chiama il simile, e le tavole delle corrispondenze dicono esattamente quanto forte. Un capello lega piu' stretto di un cappotto, un cappotto piu' di un nome; la distanza dimezza la presa, e un legame spezzato chiude l'opera invece di indebolirla. La strega simpatetica tiene registri di cosa appartenga a chi, perche' in questa arte la forza di un vincolo si misura prima che cada il coltello."
+        "lore": "Il simile chiama il simile, e le tavole delle corrispondenze dicono esattamente quanto forte. Un capello lega piu' stretto di un cappotto, un cappotto piu' di un nome; la distanza dimezza la presa, e un legame spezzato chiude l'opera invece di indebolirla. La strega simpatetica tiene grimori di cosa appartenga a chi, perche' in questa arte la forza di un vincolo si misura prima che cada il coltello."
       },
       "Dimensional": {
         "name": "Dimensionale",
@@ -136,7 +136,7 @@
       "Thermodynamics": {
         "name": "Termodinamica",
         "desc": "Magia che vive nel calore, nel gelo e nella corrente.",
-        "lore": "Il calore si sposta, non si crea. Scalda una stanza e qualcosa li' accanto si raffredda esattamente di altrettanto; chi dimentica il registro lo pareggia col proprio corpo. Le correnti scorrono dove la resistenza e' minore, i gradienti si equalizzano secondo tempi calcolabili in anticipo, e l'intera disciplina e' in fondo un ramo molto ostile della fisica praticato senza strumenti."
+        "lore": "Il calore si sposta, non si crea. Scalda una stanza e qualcosa li' accanto si raffredda esattamente di altrettanto; chi dimentica il grimorio lo pareggia col proprio corpo. Le correnti scorrono dove la resistenza e' minore, i gradienti si equalizzano secondo tempi calcolabili in anticipo, e l'intera disciplina e' in fondo un ramo molto ostile della fisica praticato senza strumenti."
       },
       "Ritual": {
         "name": "Rituale",
@@ -159,6 +159,9 @@
     "locked": "BLOCCATA",
     "lockedBy": "Si sblocca da: {skills}",
     "lockedByCount": "Ne servono ancora {need} fra: {skills}",
+    "lockedBySchool": "Servono altri {count} {kind} della scuola",
+    "lockedKindSpells": "incantesimi",
+    "lockedKindSkills": "abilita",
     "lockedHint": "Nulla di ciò che conosci confina con questa abilità.",
     "lockedToast": "{skill} non confina con nulla che questo allievo conosca.",
     "lockedEsotericLevel": "Sapere esoterico: livello {level} o superiore.",

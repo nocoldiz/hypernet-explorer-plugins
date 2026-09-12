@@ -57,11 +57,12 @@
 
     // --- Palette -------------------------------------------------------------
     // Two categorical slots, validated for colour-vision deficiency against this
-    // panel surface. Orange sits just under 3:1 on it, which is why both lines
-    // carry a visible end label and every figure is repeated in a table.
+    // panel surface. Both are dark enough to be read as text as well as drawn
+    // as a line, since each series names itself in its own colour; every figure
+    // is repeated in the table besides.
     const C = {
-        ill: '#2a78d6',
-        dead: '#eb6834',
+        ill: '#1f66bd',
+        dead: '#c2410c',
         grid: '#dcd9cd',
         axis: '#8c887c',
         ink: '#1b1b1b',
@@ -325,7 +326,7 @@
             if (alert) {
                 const level = stats.active === 0 ? { t: 'NO ACTIVE ALERT', c: '#2e7d32' }
                     : stats.infected > 5000 ? { t: 'CONTINENTAL ALERT', c: '#c0392b' }
-                    : { t: 'MONITORING', c: '#b8860b' };
+                    : { t: 'MONITORING', c: '#b04a00' };
                 alert.style.background = level.c;
                 alert.style.color = '#fff';
                 alert.textContent = level.t;

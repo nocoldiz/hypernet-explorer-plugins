@@ -1407,6 +1407,10 @@
     pierce: ["Weapons/HitFlesh3", "Weapons/HitFlesh5", "Weapons/HitPierce4",    // i18n-ignore
              "Weapons/HitPierce5"],
     magic:  ["Weapons/HitMagic1", "Weapons/HitMagic2", "Weapons/HitMagic3"],    // i18n-ignore
+    // Paper landing, for the one weapon in the game that shoots its own pages
+    // (the Grimoire of Solomon, Weapon/VectorGunSystem.js).
+    paper:  ["Items/paper_01", "Items/paper_02", "Items/paper_03",             // i18n-ignore
+             "Items/paper_04"],
     lash:   ["Weapons/HitLash1", "Weapons/HitLash3", "Weapons/HitFlesh1"],      // i18n-ignore
     bullet: ["Impact/bfh1_hit_07", "Impact/bfh1_hit_02", "Impact/bfh1_hit_06",  // i18n-ignore
              "Impact/bfh1_hit_08", "Impact/bfh1_hit_10"],
@@ -1430,7 +1434,11 @@
     gun:        { hitstop: 60, shape: "tracer", color: 0xfff0b0, size: 240, thickness: 3,   lines: 6, life: 270, sparks: 12, smoke: 5, se: "bullet", swing: false, casing: true, shake: 4 },
     claw:       { trails: 3, hits: 3, hitGap: 65, hitstop: 45, shape: "ribbon", color: 0xffd0e0, size: 72,  sweep: 110, width: 4.5, bow: 0.08, head: 0.20, tail: 0.22, blades: 3, parallel: true, stagger: 0.06, life: 290, sparks: 8, sparkles: 8, se: "slash", swing: true },
     glove:      { trails: 0, hitstop: 85, shape: "starburst", color: 0xfff2cc, size: 78, thickness: 0.26, lines: 11, life: 310, sparks: 12, sparkles: 6, se: "flesh", swing: true, shake: 4 },
-    spear:      { hitstop: 75, shape: "thrust", color: 0xd9f3ff, size: 150, thickness: 7,   lines: 6, life: 280, sparks: 10, sparkles: 6,  se: "pierce", swing: true }
+    spear:      { hitstop: 75, shape: "thrust", color: 0xd9f3ff, size: 150, thickness: 7,   lines: 6, life: 280, sparks: 10, sparkles: 6,  se: "pierce", swing: true },
+    // Not a weapon type: the look a book shooting its own pages lands with.
+    // Named rather than typed, the way any <HitFX:> profile is, because the
+    // only thing that carries it is a shape of the vector gun.
+    pages:      { hitstop: 50, shape: "pages",  color: 0xE8DCBE, size: 130, width: 18, thickness: 3, lines: 7, life: 420, sparks: 4, sparkles: 6, se: "paper", swing: false, trails: 0 }
   };
 
   const HIT_PROFILE_BY_WTYPE = {
@@ -2262,6 +2270,42 @@
       const flash = new THREE.Mesh(
         new THREE.PlaneGeometry(len * 0.22, len * 0.22), fxMaterial(0xffffff, "spark"));
       burst.add(flash, { grow: 0.9, hold: true });
+    },
+
+    // A volley of paper: the pages a book put downrange, strung back along the
+    // line they came in on so they read as one sheaf arriving rather than as a
+    // puff at the target, then let go to tumble and fall. Drawn flat rather
+    // than additively: paper catches light, it does not give any off.
+    pages(burst, p, color, scale) {
+      const len = p.size * scale;
+      const a = burst.opts.angle !== undefined ? burst.opts.angle : fxRand(-0.25, 0.25);
+      const leaf = (p.width || 18) * scale;
+      const count = p.lines || 7;
+      for (let i = 0; i < count; i++) {
+        // How far back down the line this one still is when the first lands.
+        const back = (i / count) * len * fxRand(0.7, 1.15);
+        const off = fxRand(-0.3, 0.3);
+        const m = new THREE.Mesh(
+          new THREE.PlaneGeometry(leaf * fxRand(0.7, 1.2), leaf * fxRand(0.9, 1.5)),
+          fxMaterial(i % 2 ? (p.core || 0xfffdf4) : color, null));
+        m.material.blending = THREE.NormalBlending;
+        m.material.opacity = fxRand(0.75, 1);
+        m.rotation.z = a + fxRand(-0.7, 0.7);
+        m.position.set(
+          -Math.cos(a) * back + Math.cos(a + Math.PI / 2) * off * leaf,
+          -Math.sin(a) * back + Math.sin(a + Math.PI / 2) * off * leaf,
+          i * 0.4);
+        burst.add(m, {
+          vx: Math.cos(a) * fxRand(0.04, 0.13),
+          vy: Math.sin(a) * fxRand(0.04, 0.13) + fxRand(0.01, 0.05),
+          vr: fxRand(-0.004, 0.004),
+          gravity: fxRand(0.00005, 0.00014),
+          grow: -0.2
+        });
+      }
+      // The page that went through: the mark left where the volley landed.
+      burst.addStarLines(3, color, len * 0.3, 2 * scale, a);
+      burst.addSparkles(p.sparkles || 6, p.sparkleColor || color, len * 0.35, scale);
     },
 
     // A whip: one long ribbon whipped into an S rather than an arc.

@@ -960,7 +960,7 @@
       "{hist}",
       "Qui la cronaca si interrompe per undici anni. Quel buco non me lo ha mai spiegato nessuno in modo soddisfacente.",
       "Uno scrivano di {place} lo ha messo per iscritto mentre succedeva, male, {che è l'unico|che resta l'unico|che è ancora l'unico} motivo per cui ce l'abbiamo.",
-      "Le case regnanti dell'epoca lo chiamarono incidente. I loro stessi libri contabili lo chiamano acquisto.",
+      "Le case regnanti dell'epoca lo chiamarono incidente. I loro stessi grimori lo chiamano acquisto.",
       "Sono tenuto a segnalare che la copia dell'Archivio è stata corretta due volte, da due mani diverse.",
       "La gente di questo secolo non sapeva di starci dentro. Nemmeno voi.",
       "Quel che sopravvive è quello che qualcuno ha ritenuto valesse la pena portarsi dietro. È un pregiudizio, non un documento."
@@ -1088,7 +1088,7 @@
       "Pilastro tre: quello che la gente dice sia successo, {che è l'unico|che resta l'unico|che è ancora l'unico} pilastro fatto di persone.",
       "Uno scavo vicino a {place} ha prodotto un oggetto che la documentazione scritta {sostiene|ribadisce|continua a sostenere} non sia mai stato fabbricato.",
       "{hist}",
-      "Se la vanga e il registro non vanno d'accordo, uno dei due è stato scritto da qualcuno che ci aveva un interesse.",
+      "Se la vanga e il grimorio non vanno d'accordo, uno dei due è stato scritto da qualcuno che ci aveva un interesse.",
       "I ritrovamenti di Colm di questa stagione sono fuori moda, il che storicamente vuol dire che sono giusti.",
       "Vane gradirebbe si mettesse a verbale che la stratigrafia non è un argomento, ma soltanto un indizio {molto|davvero|estremamente} pesante."
     ]
@@ -1917,7 +1917,7 @@
       "In fondo c'è una botte che è arrivata da {place} ed è precedente alla licenza.",
       "Il carattere di un oste si capisce tutto da come vengono pulite le linee di spillatura.",
       "Una cantina ricorda. Non per magia. In pratica. L'odore è trent'anni di decisioni.",
-      "Dietro le cassette abbiamo trovato un libro mastro con i debiti saldati nel {year}, quasi tutti in favori.",
+      "Dietro le cassette abbiamo trovato un grimorio con i debiti saldati nel {year}, quasi tutti in favori.",
       "Qualcosa bussa dentro il muro allo scoccare dell'ora. Tolliver ha smesso di indagare e ha cominciato ad annuirgli.",
       "L'ultimo che scende spranga la botola. Quella regola è più vecchia della taverna e non la discute nessuno."
     ]
@@ -2239,7 +2239,7 @@
     "beats": [
       "Fratello Ilm ha percorso il sito quattro volte e lo descrive ogni volta allo stesso modo.",
       "Undici figure, sepolte fino alla vita nella sabbia, rivolte verso una direzione che non vuol più dire niente.",
-      "I nomi non risultano da nessuna parte. Le offerte sì, in un registro tenuto a {place}.",
+      "I nomi non risultano da nessuna parte. Le offerte sì, in un grimorio tenuto a {place}.",
       "Un dio senza fedeli non svanisce. Diventa un punto di riferimento, e poi una diceria.",
       "{hist}",
       "Ilm: lì ho pregato. Non ho intenzione di dire se sia stata una decisione professionale.",
@@ -2468,7 +2468,7 @@
       "Il Tabellone. Prezzi, volumi, e gli unici dieci minuti di questa rete {in cui non si urla|senza urla|in cui non urla nessuno}."
     ],
     "tail": [
-      "{Ed è|Questo è} il tabellone. Ledger Vane, e i numeri, a cui non importa niente di quello che pensavate."
+      "{Ed è|Questo è} il tabellone. Grimorie Vane, e i numeri, a cui non importa niente di quello che pensavate."
     ],
     "beats": [
       "Prima gli indici dei noli, perché su questa rete arriva tutto su un camion.",

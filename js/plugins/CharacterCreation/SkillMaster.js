@@ -553,12 +553,28 @@
         return { Skill: skills, Magic: magic };
     }
 
+    // The name an ability is filed under: the one the reader sees, so the
+    // order holds up in Italian as well as in English.
+    function skillSortName(skill) {
+        const raw = (skill && skill.name) || '';
+        return window.translateText ? window.translateText(raw) : raw;
+    }
+
+    // A category holds hundreds of abilities and the database hands them over
+    // in whatever order they were entered, which is no order at all to read a
+    // list of that size in. Every list is filed A to Z before it is returned.
+    // The skill graph re-sorts its own input by power, so this costs it
+    // nothing.
+    function alphabetical(skills) {
+        return skills.sort((a, b) => skillSortName(a).localeCompare(skillSortName(b)));
+    }
+
     function getSkillsByCategory(category) {
         if (isMagicTree(category)) {
             const MN0 = window.MagicNature;
             const filter0 = !!(MN0 && MN0.isFiltering());
-            return getSkillsForMagicSystem(magicTreeId(category))
-                .filter(s => s && s.name && !s.name.startsWith('<--') && (!filter0 || MN0.allowsData(s)));
+            return alphabetical(getSkillsForMagicSystem(magicTreeId(category))
+                .filter(s => s && s.name && !s.name.startsWith('<--') && (!filter0 || MN0.allowsData(s))));
         }
         if (category === 'All' && usesEmCurriculum()) {
             const out = [];
@@ -568,16 +584,16 @@
                     if (!out.includes(skill)) out.push(skill);
                 }
             }
-            return out;
+            return alphabetical(out);
         }
         if (CUSTOM_CATEGORIES.includes(category)) {
             const actorId = (SceneManager._scene && SceneManager._scene._teachActorId) || 0;
             if (typeof $gameSystem === 'undefined' || !$gameSystem) return [];
-            return $gameSystem.getCustomSpells()
+            return alphabetical($gameSystem.getCustomSpells()
                 .filter(s => s && s.name && s._ownerActorId === actorId &&
                     (s._customCategory || FUSION_CATEGORY) === category)
                 .map(s => $dataSkills[s.id] || s)
-                .filter(Boolean);
+                .filter(Boolean));
         }
         const skills = [];
         const catRegex = category === "All" ? null : new RegExp(`<category:${category}>`, 'i');
@@ -602,7 +618,7 @@
                 skills.push(skill);
             }
         }
-        return skills;
+        return alphabetical(skills);
     }
 
     // Export helpers
@@ -631,6 +647,7 @@
     SkillMaster.getCategoryType = getCategoryType;
     SkillMaster.getSplitSkillCategories = getSplitSkillCategories;
     SkillMaster.getSkillsByCategory = getSkillsByCategory;
+    SkillMaster.skillSortName = skillSortName;
     SkillMaster.FUSION_CATEGORY = FUSION_CATEGORY;
     SkillMaster.CUSTOM_CATEGORIES = CUSTOM_CATEGORIES;
 
@@ -2803,8 +2820,8 @@
                 el.style.setProperty('--ms-x', `${sx.toFixed(1)}px`);
                 el.style.setProperty('--ms-y', `${(sy + 26 * st.zoom).toFixed(1)}px`);
 
-                // Scale label with zoom subtly
-                const labelScale = Math.max(0.75, Math.min(1.15, st.zoom));
+                // Scale label with zoom, allowing smaller text at lower zoom out to prevent overlap
+                const labelScale = Math.max(0.25, Math.min(1.15, st.zoom));
                 el.style.setProperty('--ms-label-scale', labelScale.toFixed(2));
             }
         },

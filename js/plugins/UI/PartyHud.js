@@ -111,6 +111,11 @@
  * member's card is lit and carries a caret, and a card can be clicked to aim an
  * ally-targeted skill at whoever stands on it.
  *
+ * The cards belong to the map and to a fight, and to nothing else: they are
+ * built when a game begins (a new game or a load), come down whenever anything
+ * stands in front of them - a menu, the phone, an OS window - and are taken out
+ * of the document at the title, so no game's party hangs over the next one.
+ *
  * The HUD is ON by default and is switched off from Options -> Video
  * ("Party HUD") or on the first step of character creation. The setting is
  * stored in ConfigManager.partyHud.
@@ -416,6 +421,7 @@
         this._lastHp = new Map();   // actorId | 'vehicle:<key>' -> last HP seen
         this._projectedAp = new Map(); // actorId -> AP left after the armed skill
         this._visible = false;
+        this._refreshKeys = null;   // actorId | 'vehicle' -> what the card last said
         this._create();
     }
 
@@ -429,7 +435,19 @@
         el.style.setProperty('--phud-card-w', PANEL_W + 'px');
         document.body.appendChild(el);
         this._el = el;
+        _injectStyleOnce();
+    };
 
+    // The sheet below is a constant, so it goes into the document once for the
+    // life of the session. It used to be appended by the constructor and torn
+    // out again by destroy(), which meant every walk into a fight and back added
+    // and removed a document-level stylesheet twice - and that invalidates style
+    // for the whole document, cards and canvas and every other overlay with it,
+    // to arrive at exactly the rules that were already there.
+    let _styleInjected = false;
+    function _injectStyleOnce() {
+        if (_styleInjected) return;
+        _styleInjected = true;
         const style = document.createElement('style');
         style.textContent = `
             #party-hud .phud-name {
@@ -499,17 +517,38 @@
             }
         `;
         document.head.appendChild(style);
-        this._styleEl = style;
-    };
+    }
 
+    // No scene calls this: the overlay outlives every scene of the game it
+    // belongs to (see attachHud). It is called when that game ends, at the
+    // title, and for a deliberate teardown - a mod unloading, a test tidying up.
+    // The sheet stays in the document, since the next overlay would only ask for
+    // the same one back.
     PartyHudOverlay.prototype.destroy = function () {
         if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
         this._el = null;
-        if (this._styleEl && this._styleEl.parentNode) this._styleEl.parentNode.removeChild(this._styleEl);
-        this._styleEl = null;
         this._cards.clear();
         this._vehicleCard = null;
         this._vehicleCardKey = '';
+    };
+
+    // Forget everything the overlay remembers about a party, without taking the
+    // cards down. A new game or a load builds a new overlay, so nothing on that
+    // path needs this; it is for a party that changes under an overlay which is
+    // staying put, since _syncCards keys the cards on the joined actor ids and
+    // the same ids would otherwise keep the same cards, stale HP flashes,
+    // projected AP and need readings and all.
+    PartyHudOverlay.prototype.forgetParty = function () {
+        this._layoutKey = '';
+        this._vehicleCardKey = '';
+        this._vehicleCard = null;
+        this._cards.clear();
+        this._lastHp.clear();
+        this._projectedAp.clear();
+        this._needs.clear();
+        this._needTimer = NEED_REFRESH_FRAMES;
+        this._refreshKeys = null;
+        if (this._el) this._el.innerHTML = '';
     };
 
     PartyHudOverlay.prototype.members = function () {
@@ -853,6 +892,40 @@
         for (const actor of members) {
             const card = this._cards.get(actor.actorId());
             if (!card) continue;
+
+            // Everything below this point is already guarded write by write
+            // (_writeBar, _writeOrb and the class toggles all compare a key
+            // first), so on a quiet frame the body wrote nothing - it just built
+            // the strings needed to find that out: a name-and-level label, a
+            // driving tag, two bar keys and an orb key, per member, sixty times a
+            // second. The fields a card is drawn from are all numbers and flags,
+            // so they are kept on the card and compared as numbers, and a quiet
+            // frame now allocates nothing at all. The chip cadence still forces a
+            // pass through, which is what picks up a rename, a level, a change of
+            // driver or a new piece of test gear.
+            const isActing = battle && actor === acting && members.length > 1;
+            const isTargeted = !!(picker && actor.isSelected && actor.isSelected());
+            const tpNow = Math.floor(actor.tp);
+            const apShown = this._projectedAp.has(actor.actorId())
+                ? Math.floor(this._projectedAp.get(actor.actorId()))
+                : tpNow;
+            if (!writeChips &&
+                card.kDead === actor.isDead() && card.kActing === isActing &&
+                card.kTargeted === isTargeted && card.kHp === actor.hp &&
+                card.kMhp === actor.mhp && card.kMp === actor.mp &&
+                card.kMmp === actor.mmp && card.kTp === tpNow && card.kAp === apShown) {
+                continue;
+            }
+            card.kDead = actor.isDead();
+            card.kActing = isActing;
+            card.kTargeted = isTargeted;
+            card.kHp = actor.hp;
+            card.kMhp = actor.mhp;
+            card.kMp = actor.mp;
+            card.kMmp = actor.mmp;
+            card.kTp = tpNow;
+            card.kAp = apShown;
+
             const needs = battle ? null : this._needsFor(actor);
             const dead = actor.isDead();
             if (card.deadKey !== dead) {
@@ -862,13 +935,11 @@
 
             // Whose turn it is, said plainly: the card lights up and grows a
             // caret. A party of one has no turn order worth pointing at.
-            const isActing = battle && actor === acting && members.length > 1;
             if (card.activeKey !== isActing) {
                 card.activeKey = isActing;
                 card.root.classList.toggle('phud-acting', isActing);
                 card.caret.style.visibility = isActing ? 'visible' : 'hidden';
             }
-            const isTargeted = !!(picker && actor.isSelected && actor.isSelected());
             if (card.targetKey !== isTargeted) {
                 card.targetKey = isTargeted;
                 card.root.classList.toggle('phud-targeted', isTargeted);
@@ -931,9 +1002,30 @@
         if (!ConfigManager.partyHud) return false;
         if (!$gameParty || $gameParty.members().length === 0) return false;
         if ($gameMap && $gameMap.mapId() === 557) return false;
-        const scene = SceneManager._scene;
-        return scene instanceof Scene_Battle || scene instanceof Scene_Map;
+        if (!wantsHud(SceneManager._scene)) return false;
+        // A menu is a scene of its own and is answered above, but a good many
+        // of this game's pages - the phone, the grimorie, an OS window - are
+        // DOM laid over the map without ever leaving it. Asked of the page
+        // rather than of a list of plugins (window.FrameBudget, see
+        // Core/ParchmentToast.js), so a page written later counts too. Not in a
+        // fight: the battle commands are a DOM page themselves, and the cards
+        // are what the player is choosing a target off.
+        if (!inBattle() && window.FrameBudget && window.FrameBudget.isCanvasCovered &&
+            window.FrameBudget.isCanvasCovered(COVER_FRACTION)) return false;
+        return true;
     };
+
+    // How much of the window a DOM page has to cover before the cards get out
+    // of its way. A page standing over most of the view is a page the player is
+    // reading, not the map.
+    const COVER_FRACTION = 0.8;
+
+    // The scenes the cards belong to. Asked of the scene standing now to decide
+    // whether to draw, and of the scene coming next to decide whether the
+    // overlay is being handed on, so the two can never disagree.
+    function wantsHud(scene) {
+        return scene instanceof Scene_Battle || scene instanceof Scene_Map;
+    }
 
     // The HUD is HTML laid over the canvas, so it follows the canvas rather
     // than the window: letterboxed, resized or switched to another resolution
@@ -952,6 +1044,15 @@
         this._el.style.left = (view.left + HUD_X * sx) + 'px';
         this._el.style.top = (view.top + HUD_Y * sy) + 'px';
         this._el.style.setProperty('--phud-scale', sy.toFixed(4));
+    };
+
+    // Take the cards down without taking them out of the document. The overlay
+    // lowers itself on its own update, but a scene that is going has no more
+    // updates to run: a menu opening would leave the cards hanging over it.
+    PartyHudOverlay.prototype.hide = function () {
+        if (!this._el || !this._visible) return;
+        this._visible = false;
+        this._el.classList.toggle('phud-visible', false);
     };
 
     PartyHudOverlay.prototype.update = function () {
@@ -1016,9 +1117,9 @@
     //=========================================================================
     // The live overlay, wherever the party happens to be standing
     //=========================================================================
-    // One overlay per scene, built by whichever of the two scenes is up. The
-    // façade is what every other plugin talks to, so nothing else has to know
-    // which scene owns the HUD at any moment.
+    // One overlay per game, handed from scene to scene for as long as that game
+    // is being played. The façade is what every other plugin talks to, so
+    // nothing else has to know which scene owns the HUD at any moment.
     let _overlay = null;
 
     window.PartyHud = {
@@ -1027,15 +1128,50 @@
         setProjectedAp: (actor, value) => { if (_overlay) _overlay.setProjectedAp(actor, value); }
     };
 
-    function attachHud(scene) {
+    // The overlay is built when a game begins and taken down when it ends, so
+    // its lifetime is the game's, not the session's.
+    function createHud() {
+        destroyHud();
         _overlay = new PartyHudOverlay();
+        // A game can begin while a scene that wants the cards is already
+        // standing (a title-less debug start, a load straight into the map), so
+        // the scene up now is handed the new overlay rather than the dead one.
+        const scene = SceneManager._scene;
+        if (scene && wantsHud(scene)) scene._partyHud = _overlay;
+        return _overlay;
+    }
+
+    // Back to the title: the cards come out of the document with the game they
+    // belonged to. Left standing they would hang over the title screen, and the
+    // next game would inherit the previous party's cards. The stylesheet stays
+    // where it is - it is a constant, and the next overlay would only ask for
+    // the same rules back.
+    function destroyHud() {
+        if (_overlay) _overlay.destroy();
+        _overlay = null;
+    }
+
+    // A fight used to destroy the map's cards and build the battle's own from
+    // nothing - the same cards, the same rules, the same static stylesheet
+    // pulled out of the document and put back - and because a fresh overlay
+    // starts invisible and only raises .phud-visible on its first drawn frame,
+    // the HUD blinked out and back on every encounter. Within one game the
+    // overlay is built once and simply keeps standing; the fallback below is
+    // for a scene reached without a game beginning first, a battle test above
+    // all.
+    function attachHud(scene) {
+        if (!_overlay || !_overlay._el) createHud();
         scene._partyHud = _overlay;
     }
 
+    // The scene is going; the overlay is not. It is only unhooked from the scene
+    // that held it, so nothing keeps a reference to a dead scene. Where it is
+    // going matters though: handed on to another scene that wants the cards -
+    // the map into a fight and back - they stay up, and the transition does not
+    // blink. Handed to anything else, a menu above all, they come down, since
+    // nothing would be updating them to lower them there.
     function detachHud(scene) {
-        if (!scene._partyHud) return;
-        scene._partyHud.destroy();
-        if (_overlay === scene._partyHud) _overlay = null;
+        if (_overlay && !wantsHud(SceneManager._nextScene)) _overlay.hide();
         scene._partyHud = null;
     }
 
@@ -1063,8 +1199,8 @@
     //=========================================================================
     // Scene_Battle
     //=========================================================================
-    // The same HUD, built the same way, so a fight opens with the party card
-    // the player was already reading on the map.
+    // The same HUD, the same object, so a fight opens on the very party card the
+    // player was already reading on the map - not a rebuilt copy of it.
     const _Scene_Battle_createAllWindows = Scene_Battle.prototype.createAllWindows;
     Scene_Battle.prototype.createAllWindows = function () {
         _Scene_Battle_createAllWindows.call(this);
@@ -1081,5 +1217,26 @@
     Scene_Battle.prototype.terminate = function () {
         detachHud(this);
         _Scene_Battle_terminate.call(this);
+    };
+
+    //=========================================================================
+    // A game begins, a game ends
+    //=========================================================================
+    // Both a new game and a load come through here, and nothing else does: this
+    // is the moment a game exists to draw a HUD for, so it is where the overlay
+    // is built. Anything the previous game left behind goes with the old one.
+    const _DataManager_createGameObjects = DataManager.createGameObjects;
+    DataManager.createGameObjects = function () {
+        _DataManager_createGameObjects.call(this);
+        createHud();
+    };
+
+    // And the title is where a game stops being played - whether it was quit
+    // from the menu, lost, or never started at all. The overlay does not outlive
+    // it.
+    const _Scene_Title_create = Scene_Title.prototype.create;
+    Scene_Title.prototype.create = function () {
+        destroyHud();
+        _Scene_Title_create.call(this);
     };
 })();

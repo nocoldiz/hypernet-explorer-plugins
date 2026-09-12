@@ -2,6 +2,7 @@
   "hyperamp": {
     "appName": "HyperAmp",
     "idle": "HyperAmp - it really whips the goblin",
+    "loading": "--:--",
     "prev": "Previous",
     "play": "Play",
     "pause": "Pause",

@@ -1787,9 +1787,16 @@ Imported.Hendrix_Localization = true;
             }
         }
 
+        // When the target language IS the default one - which is every run, as
+        // long as LOCKED_LANGUAGE stands - the two reads below asked for the
+        // same file twice and parsed it twice. That was every one of the 41
+        // top-level js/i18n/en files read and JSON.parsed a second time for
+        // nothing, synchronously, out of Scene_Boot.start.
+        const sameLanguage = (lang === defLang);
+
         categories.forEach(cat => {
             const defContent = loadFileData(defLang, `${cat}.json`);
-            const targetContent = loadFileData(lang, `${cat}.json`);
+            const targetContent = sameLanguage ? defContent : loadFileData(lang, `${cat}.json`);
 
             if (cat === 'commands') {
                 try {
@@ -1841,10 +1848,18 @@ Imported.Hendrix_Localization = true;
             window.currentLanguage = currentLanguage;
         }
 
+        // originalTexts is read in exactly one place, and only when partial
+        // matching is on (see the translation fallback below). With it off -
+        // the shipped setting - building and length-sorting all ~20,000 keys at
+        // boot was pure dead work, so it is built only for the mode that reads
+        // it. Longest first: a partial match must prefer the longest phrase it
+        // can find, or a short key would shadow a longer one containing it.
         originalTexts.length = 0;
-        Object.keys(translations)
-            .sort((a, b) => b.length - a.length)
-            .forEach(key => originalTexts.push(key));
+        if (partialMatching) {
+            Object.keys(translations)
+                .sort((a, b) => b.length - a.length)
+                .forEach(key => originalTexts.push(key));
+        }
     }
 
 

@@ -1065,11 +1065,27 @@
     }
 
     // Scene setup
+    //
+    // NPC/DialogueSystem.js loads after this file and installs its own, larger
+    // BustManager on this same property, so the one built here was overwritten
+    // before it ever ran: an orphaned sprite and an orphaned #vn-name-overlay
+    // node left on the page every time the map started, while the update hook
+    // below then drove DialogueSystem's manager a SECOND time every frame - its
+    // slide interpolation among the rest, which is wrong at twice the rate.
+    //
+    // Everything else in this file already works on scene._bustManager, which
+    // means it has always been driving DialogueSystem's. So the manager is left
+    // to its one owner and this file stops making a second.
     const _Scene_Map_start = Scene_Map.prototype.start;
     Scene_Map.prototype.start = function () {
         _Scene_Map_start.call(this);
-        this._bustManager = new BustManager();
-        this._bustManager.initialize();
+        if (!this._bustManager) {
+            // Nothing else claimed it - DialogueSystem is disabled or absent -
+            // so the busts here are better than none.
+            this._bustManager = new BustManager();
+            this._bustManager._vnOwned = true;
+            this._bustManager.initialize();
+        }
     };
 
     // The name label is a DOM element on document.body, so it does not get torn down
@@ -1083,19 +1099,25 @@
         if (nameOverlay) nameOverlay.style.display = 'none';
     };
 
+    // The manager is updated by whoever owns it. DialogueSystem drives the one
+    // it installs; this only drives a manager built above because nothing else
+    // claimed the property. Updating unconditionally here is what ran the live
+    // manager twice a frame.
     const _Scene_Map_update = Scene_Map.prototype.update;
     Scene_Map.prototype.update = function () {
         _Scene_Map_update.call(this);
-        if (this._bustManager) this._bustManager.update();
+        if (this._bustManager && this._bustManager._vnOwned) this._bustManager.update();
     };
 
-    // Hook into resolution changes
+    // Hook into resolution changes. Same ownership rule: DialogueSystem carries
+    // its own Graphics.resize hook, so answering for its manager here would
+    // re-lay the busts twice on every resolution change.
     const _Graphics_resize = Graphics.resize;
     Graphics.resize = function (width, height) {
         _Graphics_resize.call(this, width, height);
 
         const scene = SceneManager._scene;
-        if (scene && scene._bustManager) {
+        if (scene && scene._bustManager && scene._bustManager._vnOwned) {
             scene._bustManager.onResolutionChange();
         }
     };

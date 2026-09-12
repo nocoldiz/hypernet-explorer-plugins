@@ -770,6 +770,25 @@
     // noise canvas per battler, and detail images are decoded once.
     const _SKIN_TEX_CACHE = new Map();
     const _DETAIL_IMG_CACHE = new Map();
+    // Every other cache in this file carries a bound (ENV_PROBE_CACHE_MAX,
+    // PROGRAM_KEEPALIVE_MAX); this one did not, and its key space is a texture
+    // file crossed with a quantised hue, saturation and lightness, so a long
+    // session that meets enough species keeps a 64x64 CanvasTexture and its
+    // backing <canvas> for every combination it has ever seen. Held to a size
+    // that comfortably covers a battle's worth of creatures, oldest out first.
+    const SKIN_TEX_CACHE_MAX = 48;
+
+    // Remember a skin texture, and retire the least recently asked-for one when
+    // there are too many. The texture handed out is shared by every battler using
+    // it, so an evicted one is dropped from the cache but NOT disposed: a model
+    // still on the field may be drawing it, and it will simply be rebuilt the
+    // next time it is asked for.
+    function rememberSkinTexture(key, tex) {
+        _SKIN_TEX_CACHE.set(key, tex);
+        while (_SKIN_TEX_CACHE.size > SKIN_TEX_CACHE_MAX) {
+            _SKIN_TEX_CACHE.delete(_SKIN_TEX_CACHE.keys().next().value);
+        }
+    }
 
     class ProceduralBattler3D {
         constructor(scale, offsetY, battler, profile, weaponType, creatureType) {
@@ -1188,7 +1207,12 @@
             const key = (textureFile || '') + '|' +
                 (hsl.h * 24 | 0) + '|' + (hsl.s * 12 | 0) + '|' + (hsl.l * 12 | 0);
             const cached = _SKIN_TEX_CACHE.get(key);
-            if (cached) return cached;
+            if (cached) {
+                // Map keeps insertion order, so re-inserting is the whole LRU touch.
+                _SKIN_TEX_CACHE.delete(key);
+                _SKIN_TEX_CACHE.set(key, cached);
+                return cached;
+            }
 
             const SZ = 64; // quarter the pixels of the old 128x128
             const canvas = document.createElement('canvas');
@@ -1211,7 +1235,7 @@
             }
             ctx.putImageData(imgData, 0, 0);
             const tex = new THREE.CanvasTexture(canvas);
-            _SKIN_TEX_CACHE.set(key, tex);
+            rememberSkinTexture(key, tex);
 
             if (textureFile) {
                 const apply = (img) => {
@@ -2375,11 +2399,27 @@
     //
     // Every family builds its model out of THREE primitives at whatever
     // resolution read well in isolation, which across the whole roster averages
-    // out to smooth plastic. Rebuilding each primitive at a coarser segment
-    // count and shading it flat gives every battler the same faceted,
-    // hand-cut silhouette without touching a single family file. The caps are
+    // out to smooth plastic. Building each primitive at a coarser segment count
+    // and shading it flat gives every battler the same faceted, hand-cut
+    // silhouette without touching a single family file. The caps are
     // deliberately mild: the shape a builder asked for survives, it just shows
     // its facets.
+    //
+    // The budget is spent AT CONSTRUCTION, by thinning THREE's own geometry
+    // constructors while a battler builds (_patchFacetBudget below). It used to
+    // be spent afterwards instead, rebuilding each finished primitive at a
+    // lower count, and that cost three constructions of every primitive in the
+    // roster: the builder's own, a throwaway reference copy to prove the
+    // geometry was still pristine, and the coarsened result. The reference copy
+    // was there because .parameters survives a builder editing vertices in
+    // place, so a sculpted geometry had to be recognised and left alone. No
+    // family does that - across all 39 of them there is not one write to
+    // .attributes.position and not one setAttribute - so the whole roster paid
+    // for a guard that protected nothing, on every encounter, in one frame.
+    // Constructing coarse costs one build per primitive and no comparisons, and
+    // it also reaches the three geometries that carry a translate() or a
+    // rotateX(): those failed the pristine test and so were never coarsened at
+    // all, though neither operation cares how many segments it is moving.
     const _FACET_CAPS = {
         SphereGeometry: [10, 7],
         SphereBufferGeometry: [10, 7],
@@ -2421,94 +2461,186 @@
         RingGeometry: ['thetaSegments', 'phiSegments'],
         TubeGeometry: ['tubularSegments', 'radialSegments']
     };
-    // A geometry can be shared by several meshes (families cache and clone
-    // parts), so each source is coarsened once and the result handed to every
-    // user. The originals are never disposed: another live model may still be
-    // drawing one.
-    const _facetCache = typeof WeakMap === 'function' ? new WeakMap() : null;
+    // How much of a builder's segment count survives. The caps above are the
+    // floor; this is the slope. It is one constant because it is the only dial
+    // on how faceted the whole roster looks: lower reads blockier, higher reads
+    // smoother, and the caps stop either extreme from collapsing a shape.
+    const FACET_KEEP = 0.72;
 
-    function isPristinePrimitive(geo, Ctor, names) {
-        const mine = geo.getAttribute && geo.getAttribute('position');
-        if (!mine) return false;
-        let ref = null;
-        try {
-            ref = new Ctor(...names.map(n => geo.parameters[n]));
-        } catch (e) {
-            return false;
-        }
-        try {
-            const theirs = ref.getAttribute('position');
-            if (!theirs || theirs.count !== mine.count) return false;
-            const a = mine.array, b = theirs.array;
-            if (a.length !== b.length) return false;
-            for (let i = 0; i < a.length; i++) {
-                if (Math.abs(a[i] - b[i]) > 1e-5) return false;
+    // Thin THREE's own geometry constructors for the duration of one battler
+    // build, so every primitive is created at its budgeted segment count
+    // instead of being created smooth and rebuilt coarse. Returns the undo
+    // function; the caller MUST run it, in a finally, or the whole game keeps
+    // building on the battler budget. Mirrors WeaponSystemProcedural's
+    // _patchGeometryBudget, which does the same for procedural weapons.
+    function _patchFacetBudget() {
+        if (typeof THREE === 'undefined') return function () {};
+        const saved = [];
+        for (const type of Object.keys(_FACET_CAPS)) {
+            const Original = THREE[type];
+            if (typeof Original !== 'function') continue;
+            const names = _FACET_ARGS[type];
+            const slots = _FACET_SLOTS[type];
+            const caps = _FACET_CAPS[type];
+            if (!names || !slots || !caps) continue;
+            // Cap order follows slot order; a slot's position in the argument
+            // list is where the constructor reads it from.
+            const spec = [];
+            for (let i = 0; i < slots.length; i++) {
+                const index = names.indexOf(slots[i]);
+                if (index >= 0 && typeof caps[i] === 'number') spec.push([index, caps[i]]);
             }
-            return true;
-        } finally {
-            ref.dispose();
+            if (!spec.length) continue;
+            saved.push([type, Original]);
+            const Budgeted = function (...args) {
+                for (const [index, floor] of spec) {
+                    const v = args[index];
+                    // A builder that already asked for something blocky keeps
+                    // exactly what it asked for: the budget only ever cuts.
+                    if (typeof v === 'number' && v > floor) {
+                        args[index] = Math.max(floor, Math.round(v * FACET_KEEP));
+                    }
+                }
+                return new Original(...args);
+            };
+            Budgeted.prototype = Original.prototype;
+            THREE[type] = Budgeted;
         }
+        return function () {
+            for (const [type, Original] of saved) THREE[type] = Original;
+        };
     }
 
-    function coarsenGeometry(geo) {
-        if (!geo || !geo.parameters || geo.morphAttributes && Object.keys(geo.morphAttributes).length) return null;
-        const type = geo.type;
-        const caps = _FACET_CAPS[type];
-        const names = _FACET_ARGS[type];
-        const slots = _FACET_SLOTS[type];
-        if (!caps || !names || !slots) return null;
-        const Ctor = THREE[type];
-        if (typeof Ctor !== 'function') return null;
-        if (_facetCache && _facetCache.has(geo)) return _facetCache.get(geo);
+    // Build a registered archetype's model on the battler geometry budget. The
+    // one way in: every caller goes through here so no consumer of the roster
+    // (the battle, the overworld, the bestiary, the model editor) can build a
+    // creature at a resolution the others do not share.
+    //
+    // create() only makes the wrapper; load() is what builds the geometry, so
+    // the budget has to be standing for both. It is spent and handed back around
+    // each call rather than left on, because THREE belongs to the whole game and
+    // a battler's budget is not a map prop's or a weapon's.
+    function buildArchetypeModel(def, scale, offsetY, battler, weaponType, key) {
+        const model = _onFacetBudget(() => def.create(scale, offsetY, battler, weaponType, key));
+        if (!model || typeof model.load !== 'function' || model._facetBudgeted) return model;
+        model._facetBudgeted = true;
+        const inner = model.load;
+        model.load = function (...args) {
+            return _onFacetBudget(() => inner.apply(this, args));
+        };
+        return model;
+    }
 
-        const params = Object.assign({}, geo.parameters);
-        let changed = false;
-        for (let i = 0; i < slots.length; i++) {
-            const name = slots[i];
-            const cap = caps[i];
-            const cur = params[name];
-            if (typeof cur !== 'number') continue;
-            // Most of the way down, never past the cap: a builder that already
-            // asked for something blocky keeps exactly what it asked for.
-            const want = Math.max(cap, Math.round(cur * 0.6));
-            const next = Math.min(cur, want);
-            if (next !== cur) { params[name] = next; changed = true; }
+    // ---- shared geometry -------------------------------------------------
+    //
+    // Every family builds its creature out of primitives, inline, per instance:
+    // a goblin's eye is `new THREE.SphereGeometry(0.07, 8, 8)` written out at
+    // the point it is used. Four goblins in one troop therefore built four
+    // identical sets of buffers and uploaded all of them, re-entering a battle
+    // built them again, and the voxel world's two dozen creatures built two
+    // dozen more. Nothing about a primitive depends on WHICH creature is asking
+    // for it, so one instance is handed to all of them.
+    //
+    // Only types whose whole shape is determined by primitive arguments are
+    // interned. LatheGeometry and TubeGeometry take a points array and a curve,
+    // which cannot be keyed on, and are left alone.
+    const _INTERN_TYPES = [
+        'SphereGeometry', 'SphereBufferGeometry', 'CapsuleGeometry',
+        'CylinderGeometry', 'ConeGeometry', 'TorusGeometry', 'TorusKnotGeometry',
+        'CircleGeometry', 'RingGeometry', 'BoxGeometry', 'PlaneGeometry',
+        'DodecahedronGeometry', 'IcosahedronGeometry', 'OctahedronGeometry',
+        'TetrahedronGeometry'
+    ];
+    const _geometryIntern = new Map();
+
+    // A shared buffer must outlive any one battler that happens to be torn down
+    // first, so its dispose() is neutralised the way the weapon model cache
+    // neutralises its prototypes' (Weapon/WeaponSystemProcedural.js).
+    function _protectSharedGeometry(geo) {
+        if (!geo || geo._battlerShared) return geo;
+        geo._battlerShared = true;
+        if (typeof geo.dispose === 'function') {
+            geo._realDispose = geo.dispose;
+            geo.dispose = function () { /* owned by the battler geometry cache */ };
         }
-        if (!changed) { if (_facetCache) _facetCache.set(geo, null); return null; }
+        return geo;
+    }
 
-        // .parameters survives a builder editing the vertices in place, so it
-        // is not on its own proof that this geometry is still the primitive it
-        // says it is. Rebuild it at its OWN parameters and compare: a pristine
-        // primitive matches vertex for vertex, a sculpted one does not, and a
-        // sculpted one must be left alone or the sculpting is thrown away.
-        if (!isPristinePrimitive(geo, Ctor, names)) {
-            if (_facetCache) _facetCache.set(geo, null);
-            return null;
+    function _patchGeometryIntern() {
+        if (typeof THREE === 'undefined') return function () {};
+        const saved = [];
+        for (const type of _INTERN_TYPES) {
+            const Current = THREE[type];
+            if (typeof Current !== 'function') continue;
+            saved.push([type, Current]);
+            const Interned = function (...args) {
+                // Anything that is not a plain value cannot be keyed on, and a
+                // caller that passes one gets its own geometry as before.
+                for (const a of args) {
+                    const t = typeof a;
+                    if (a !== undefined && t !== 'number' && t !== 'boolean') {
+                        return new Current(...args);
+                    }
+                }
+                const key = type + '|' + args.join(',');
+                let geo = _geometryIntern.get(key);
+                if (!geo) {
+                    geo = _protectSharedGeometry(new Current(...args));
+                    _geometryIntern.set(key, geo);
+                }
+                return geo;
+            };
+            Interned.prototype = Current.prototype;
+            THREE[type] = Interned;
         }
+        return function () {
+            for (const [type, Current] of saved) THREE[type] = Current;
+        };
+    }
 
-        let out = null;
+    // Hand every shared buffer its dispose() back and free it. Only for a hard
+    // reset: the cache is a few dozen small primitives and is meant to live as
+    // long as the game does.
+    function clearBattlerGeometryCache() {
+        for (const geo of _geometryIntern.values()) {
+            if (geo._realDispose) {
+                geo.dispose = geo._realDispose;
+                geo._realDispose = null;
+            }
+            geo._battlerShared = false;
+            if (typeof geo.dispose === 'function') geo.dispose();
+        }
+        _geometryIntern.clear();
+    }
+
+    // Run fn with the battler geometry budget in force. Every family's load() is
+    // declared async but there is not one `await` in the whole roster, so the
+    // geometry is all built before fn returns and the budget never outlives it.
+    // The intern patch is applied over the budget one, so what gets shared is
+    // the geometry as the budget left it.
+    function _onFacetBudget(fn) {
+        const undoBudget = _patchFacetBudget();
+        const undoIntern = _patchGeometryIntern();
         try {
-            out = new Ctor(...names.map(n => params[n]));
-        } catch (e) {
-            out = null;
+            return fn();
+        } finally {
+            undoIntern();
+            undoBudget();
         }
-        if (out && geo.userData) out.userData = Object.assign({}, geo.userData);
-        if (_facetCache) _facetCache.set(geo, out);
-        return out;
     }
 
-    // Walk the model, coarsen every parametric primitive in it and shade the
-    // meshes that carry one flat. Skinned meshes and loaded GLB geometry have
-    // no .parameters and are left exactly as they are, and so is anything a
-    // builder has already edited vertex by vertex.
-    function facetBattlerModel(root) {
+    // Walk the model and shade every mesh carrying a parametric primitive flat:
+    // the segment counts are already budgeted by construction, and flat shading
+    // is what turns a coarse primitive into a visibly faceted one. Skinned
+    // meshes and loaded GLB geometry have no .parameters and are left exactly as
+    // they are, smooth, because nothing chose their resolution.
+    function flatShadeBattlerModel(root) {
         let touched = 0;
         const flattened = new Set();
         root.traverse(obj => {
             if (!obj.isMesh || obj.isSkinnedMesh || !obj.geometry) return;
-            const next = coarsenGeometry(obj.geometry);
-            if (next) { obj.geometry = next; touched++; }
             if (!obj.geometry.parameters) return;
+            touched++;
             const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
             for (const mat of mats) {
                 if (!mat || mat.isShaderMaterial || mat.flatShading || flattened.has(mat)) continue;
@@ -2521,14 +2653,14 @@
         return touched;
     }
 
-    // Run both passes over a battler that has finished load(). Safe to call more
+    // Run the passes over a battler that has finished load(). Safe to call more
     // than once: the second call finds nothing left to do.
     function optimiseBattlerModel(battlerModel) {
         const root = battlerModel && battlerModel.model;
         if (!root || battlerModel._optimised) return null;
         battlerModel._optimised = true;
         try {
-            const facets = facetBattlerModel(root);
+            const facets = flatShadeBattlerModel(root);
             const protectedMeshes = collectProtectedMeshes(battlerModel);
             const materials = shareIdenticalMaterials(root, protectedMeshes);
             const meshes = mergeStaticDecor(root, protectedMeshes);
@@ -2606,7 +2738,11 @@
             m.dispose();
         };
         root.traverse(obj => {
-            if (obj.geometry && typeof obj.geometry.dispose === 'function') {
+            // A shared primitive belongs to the geometry cache, not to whichever
+            // battler is being torn down: its dispose() is already a no-op, and
+            // this says so rather than relying on that.
+            if (obj.geometry && !obj.geometry._battlerShared &&
+                typeof obj.geometry.dispose === 'function') {
                 obj.geometry.dispose();
             }
             const mat = obj.material;
@@ -3375,7 +3511,36 @@
     window.Battler3D.registerNamed = registerNamed;
     // Exposed for the headless draw-call harness (test/test_battle_3d_perf.js).
     window.Battler3D.optimiseModel = optimiseBattlerModel;
-    window.Battler3D.facetModel = facetBattlerModel;
+    window.Battler3D.flatShadeModel = flatShadeBattlerModel;
+    // The floor under each segment count the budget governs, by slot name. A
+    // type absent here is not on the budget at all (a box has no curvature to
+    // spend segments on), so nothing should read a floor into one.
+    window.Battler3D.facetFloors = function (type) {
+        const slots = _FACET_SLOTS[type];
+        const caps = _FACET_CAPS[type];
+        if (!slots || !caps) return null;
+        const out = {};
+        for (let i = 0; i < slots.length; i++) out[slots[i]] = caps[i];
+        return out;
+    };
+
+    // What the geometry budget does to one primitive's segment count, so a test
+    // can check the roster is built on it without reaching inside the closure.
+    window.Battler3D.facetBudget = function (type, segments) {
+        const names = _FACET_ARGS[type];
+        const slots = _FACET_SLOTS[type];
+        const caps = _FACET_CAPS[type];
+        if (!names || !slots || !caps) return null;
+        const out = {};
+        for (let i = 0; i < slots.length; i++) {
+            const v = segments ? segments[slots[i]] : undefined;
+            const floor = caps[i];
+            out[slots[i]] = (typeof v === 'number' && v > floor)
+                ? Math.max(floor, Math.round(v * FACET_KEEP))
+                : v;
+        }
+        return out;
+    };
     window.Battler3D.debugLog = debugLog;
     // Shared with the first person weapon overlay, which runs its own scene in
     // its own context but must be lit by the same sun. See DayNightRig.
@@ -3437,7 +3602,7 @@
         const sc = scale || def.scale || 1.0;
         let wt = weaponType;
         if (wt === undefined) wt = (def.weapon !== undefined ? def.weapon : Math.floor(Math.random() * 12) + 1);
-        return def.create(sc, offsetY || 0, battler || null, wt, k);
+        return buildArchetypeModel(def, sc, offsetY || 0, battler || null, wt, k);
     };
 
     // Human-readable label for an archetype key ("hobgoblin" -> "Hobgoblin").
@@ -4087,7 +4252,7 @@
                         weaponType = Math.floor(Math.random() * 12) + 1;
                     }
 
-                    battlerModel = def.create(scale, offsetY, enemy, weaponType, archetypeKey);
+                    battlerModel = buildArchetypeModel(def, scale, offsetY, enemy, weaponType, archetypeKey);
                     // A forced body is a forced colour too (see battleOverride):
                     // the tint is applied once the model has built itself, in
                     // Battle3DScene.addModel.

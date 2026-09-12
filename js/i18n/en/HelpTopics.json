@@ -409,7 +409,7 @@
     },
     "worldDigging": {
       "title": "Digging and Secret Doors",
-      "description": "Some walls can be broken through at runtime, turning a dead end into a route. Digging is the deliberate version.\n\nSecret doors look like wall until interacted with, then fade, make a noise and stay open.\n\nLocked doors give three options. Peek teleports you for a look without letting you move, and the menu that follows holds the other two: pick, which plays a tetris minigame and needs lockpicks, or break in, which is filed as a crime."
+      "description": "Some walls can be broken through at runtime, turning a dead end into a route. Digging is the deliberate version.\n\nSecret doors look like wall until interacted with, then fade, make a noise and stay open.\n\nLocked doors give three options. Peek teleports you for a look without letting you move, and the menu that follows holds the other two: pick, which plays a falling block minigame and needs lockpicks, or break in, which is filed as a crime."
     },
     "worldMovement": {
       "title": "Water, Climbing and Bridges",
@@ -753,7 +753,7 @@
     },
     "hypernetEurodemics": {
       "title": "App: Eurodemics",
-      "description": "The public terminal of the continental epidemic observatory, reading the live outbreak ledger.\n\n- situation: outbreaks running, people ill, people dead, towns affected, and a readout of where you are standing\n- outbreaks: every outbreak burning, each with its daily curve, redrawn at midnight, over the town by town table\n- archive: outbreaks this world has closed, plus the epidemics and mass hysterias of the last century"
+      "description": "The public terminal of the continental epidemic observatory, reading the live outbreak grimorie.\n\n- situation: outbreaks running, people ill, people dead, towns affected, and a readout of where you are standing\n- outbreaks: every outbreak burning, each with its daily curve, redrawn at midnight, over the town by town table\n- archive: outbreaks this world has closed, plus the epidemics and mass hysterias of the last century"
     },
     "hypernetArtifactAnalyzer": {
       "title": "App: Artifact Analyzer",
@@ -765,7 +765,7 @@
     },
     "hypernetPhone": {
       "title": "The Hexphone",
-      "description": "The party carries a mobile phone: credit, contacts, call history, an inbox and a couple of built in games.\n\nCalling a contact triggers what that person does when called. Incoming calls arrive with an answer or decline prompt.\n\nKeypad digits dial and act as shortcuts, Enter selects, calls and opens, Escape ends and goes back.\n\nPayphones share the same contacts and credit ledger, but only place outgoing calls: no inbox, no games, no incoming calls."
+      "description": "The party carries a mobile phone: credit, contacts, call history, an inbox and a couple of built in games.\n\nCalling a contact triggers what that person does when called. Incoming calls arrive with an answer or decline prompt.\n\nKeypad digits dial and act as shortcuts, Enter selects, calls and opens, Escape ends and goes back.\n\nPayphones share the same contacts and credit grimorie, but only place outgoing calls: no inbox, no games, no incoming calls."
     },
     "hypernetTV": {
       "title": "Television",
@@ -833,7 +833,7 @@
     },
     "gamesLockpick": {
       "title": "Lockpicking",
-      "description": "Picking a lock is a game of tetris: a falling block must fit into a partly completed puzzle, and the lock's difficulty sets how hard the fit is.\n\nFailure consumes a lockpick. A skeleton key skips the game and opens the lock outright.\n\nLockpicking opens locked doors and parked cars. Being caught at it is a crime."
+      "description": "Picking a lock is a falling block puzzle: a key bit must fit into a partly packed keyway, and the lock's difficulty sets how hard the fit is.\n\nFailure consumes a lockpick. A skeleton key skips the game and opens the lock outright.\n\nLockpicking opens locked doors and parked cars. Being caught at it is a crime."
     },
     "gamesHyperTamer": {
       "title": "HyperTamer",

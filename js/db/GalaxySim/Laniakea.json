@@ -1,0 +1,749 @@
+{
+  "_comment": "Laniakea, the supercluster the Milky Way belongs to. Sources: the Wikipedia articles on the Laniakea Supercluster and the Virgo Supercluster. Laniakea runs about 520 Mly across (major axis 404 Mly), masses ~1e17 suns and holds ~100,000 galaxies in 300 to 500 known clusters and groups. It is not one lump: it is several constituent superclusters, and the Virgo Supercluster, the one we are in, is only a part of it. 'l' and 'b' are galactic longitude and latitude in degrees, 'mly' the distance in millions of light years, and 'position' the same thing as cartesian Mly (x toward the galactic centre, y toward l=90, z toward the north galactic pole). 'approx' marks an object placed in the right region at the right distance whose exact direction is NOT quotable; false means the direction is the real one, usually taken from the object's dominant galaxy. 'rich' is roughly how many galaxies it holds.",
+  "diameterMly": 520,
+  "majorAxisMly": 404,
+  "radiusMly": 260,
+  "galaxies": 100000,
+  "clustersAndGroups": [
+    300,
+    500
+  ],
+  "massSuns": 1e+17,
+  "greatAttractor": {
+    "name": "Great Attractor",
+    "type": "gravitational anomaly",
+    "mly": 250,
+    "l": 325.3,
+    "b": -7.2,
+    "approx": false,
+    "rich": 600,
+    "diameter": "~300 Mly of infall",
+    "members": "Norma Cluster core",
+    "distance": "250 Mly",
+    "position": [
+      203.92,
+      -141.2,
+      -31.33
+    ]
+  },
+  "parts": [
+    {
+      "name": "Virgo Supercluster",
+      "type": "supercluster",
+      "mly": 55,
+      "l": 284,
+      "b": 74,
+      "approx": false,
+      "rich": 47000,
+      "diameter": "147 Mly",
+      "members": "~47,000 galaxies in 100+ groups",
+      "distance": "we are in it",
+      "note": "The one the Local Group sits on the outskirts of. Two thirds of its light is in a disc with a 6:1 to 9:1 axis ratio; the rest is a round halo.",
+      "position": [
+        3.67,
+        -14.71,
+        52.87
+      ]
+    },
+    {
+      "name": "Hydra-Centaurus Supercluster",
+      "type": "supercluster",
+      "mly": 160,
+      "l": 290,
+      "b": 25,
+      "approx": true,
+      "rich": 20000,
+      "diameter": "~120 Mly",
+      "members": "~20,000 galaxies",
+      "distance": "160 Mly",
+      "position": [
+        49.6,
+        -136.26,
+        67.62
+      ]
+    },
+    {
+      "name": "Pavo-Indus Supercluster",
+      "type": "supercluster",
+      "mly": 180,
+      "l": 332,
+      "b": -23,
+      "approx": true,
+      "rich": 12000,
+      "diameter": "~100 Mly",
+      "members": "~12,000 galaxies",
+      "distance": "180 Mly",
+      "position": [
+        146.3,
+        -77.79,
+        -70.33
+      ]
+    },
+    {
+      "name": "Southern Supercluster",
+      "type": "supercluster",
+      "mly": 70,
+      "l": 230,
+      "b": -50,
+      "approx": true,
+      "rich": 9000,
+      "diameter": "~80 Mly",
+      "members": "~9,000 galaxies",
+      "distance": "70 Mly",
+      "note": "The Fornax Wall strand.",
+      "position": [
+        -28.92,
+        -34.47,
+        -53.62
+      ]
+    },
+    {
+      "name": "Centaurus Wall",
+      "type": "galaxy filament",
+      "mly": 170,
+      "l": 302,
+      "b": 22,
+      "approx": true,
+      "rich": 8000,
+      "diameter": "~90 Mly",
+      "members": "~8,000 galaxies",
+      "distance": "170 Mly",
+      "position": [
+        83.53,
+        -133.67,
+        63.68
+      ]
+    },
+    {
+      "name": "Ophiuchus Supercluster",
+      "type": "supercluster",
+      "mly": 250,
+      "l": 0,
+      "b": 9,
+      "approx": true,
+      "rich": 6000,
+      "diameter": "~60 Mly",
+      "members": "~6,000 galaxies",
+      "distance": "250 Mly",
+      "position": [
+        246.92,
+        0.0,
+        39.11
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "name": "Virgo Cluster",
+      "parent": "Virgo Supercluster",
+      "type": "rich galaxy cluster",
+      "mly": 54,
+      "l": 283.8,
+      "b": 74.5,
+      "approx": false,
+      "rich": 1300,
+      "diameter": "~15 Mly",
+      "members": "~1,300 galaxies",
+      "distance": "54 Mly",
+      "position": [
+        3.44,
+        -14.01,
+        52.04
+      ]
+    },
+    {
+      "name": "Virgo III Groups",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 55,
+      "l": 290,
+      "b": 68,
+      "approx": true,
+      "rich": 200,
+      "diameter": "~20 Mly",
+      "members": "~200 galaxies",
+      "distance": "55 Mly",
+      "position": [
+        7.05,
+        -19.36,
+        51.0
+      ]
+    },
+    {
+      "name": "Coma I Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 47.5,
+      "l": 200,
+      "b": 86,
+      "approx": true,
+      "rich": 50,
+      "diameter": "~5 Mly",
+      "members": "~50 galaxies",
+      "distance": "47.5 Mly",
+      "position": [
+        -3.11,
+        -1.13,
+        47.38
+      ]
+    },
+    {
+      "name": "Ursa Major Cluster",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy cluster",
+      "mly": 60,
+      "l": 145,
+      "b": 68,
+      "approx": true,
+      "rich": 80,
+      "diameter": "~10 Mly",
+      "members": "~80 galaxies",
+      "distance": "60 Mly",
+      "position": [
+        -18.41,
+        12.89,
+        55.63
+      ]
+    },
+    {
+      "name": "Leo I Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 37,
+      "l": 234.4,
+      "b": 57.0,
+      "approx": false,
+      "rich": 25,
+      "diameter": "~2 Mly",
+      "members": "~25 galaxies",
+      "distance": "37 Mly",
+      "position": [
+        -11.73,
+        -16.39,
+        31.03
+      ]
+    },
+    {
+      "name": "Leo II Groups",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 50,
+      "l": 230,
+      "b": 64,
+      "approx": true,
+      "rich": 60,
+      "diameter": "~10 Mly",
+      "members": "~60 galaxies",
+      "distance": "50 Mly",
+      "position": [
+        -14.09,
+        -16.79,
+        44.94
+      ]
+    },
+    {
+      "name": "M101 Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 24,
+      "l": 102,
+      "b": 60,
+      "approx": true,
+      "rich": 12,
+      "diameter": "~2 Mly",
+      "members": "~12 galaxies",
+      "distance": "24 Mly",
+      "position": [
+        -2.49,
+        11.74,
+        20.78
+      ]
+    },
+    {
+      "name": "M94 Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 17,
+      "l": 123,
+      "b": 76,
+      "approx": true,
+      "rich": 20,
+      "diameter": "~3 Mly",
+      "members": "~20 galaxies",
+      "distance": "17 Mly",
+      "position": [
+        -2.24,
+        3.45,
+        16.5
+      ]
+    },
+    {
+      "name": "Canes II Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 26,
+      "l": 135,
+      "b": 78,
+      "approx": true,
+      "rich": 15,
+      "diameter": "~2 Mly",
+      "members": "~15 galaxies",
+      "distance": "26 Mly",
+      "position": [
+        -3.82,
+        3.82,
+        25.43
+      ]
+    },
+    {
+      "name": "M81 Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 12,
+      "l": 142.1,
+      "b": 40.9,
+      "approx": false,
+      "rich": 35,
+      "diameter": "~3 Mly",
+      "members": "~35 galaxies",
+      "distance": "12 Mly",
+      "position": [
+        -7.16,
+        5.57,
+        7.86
+      ]
+    },
+    {
+      "name": "Centaurus A / M83 Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 12,
+      "l": 309.5,
+      "b": 19.4,
+      "approx": false,
+      "rich": 30,
+      "diameter": "~4 Mly",
+      "members": "~30 galaxies",
+      "distance": "12 Mly",
+      "position": [
+        7.2,
+        -8.73,
+        3.99
+      ]
+    },
+    {
+      "name": "Sculptor Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 12.7,
+      "l": 97.4,
+      "b": -88.0,
+      "approx": false,
+      "rich": 20,
+      "diameter": "~3 Mly",
+      "members": "~20 galaxies",
+      "distance": "12.7 Mly",
+      "position": [
+        -0.06,
+        0.44,
+        -12.69
+      ]
+    },
+    {
+      "name": "IC 342 / Maffei Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 10.7,
+      "l": 137.0,
+      "b": 5.0,
+      "approx": true,
+      "rich": 15,
+      "diameter": "~3 Mly",
+      "members": "~15 galaxies",
+      "distance": "10.7 Mly",
+      "position": [
+        -7.8,
+        7.27,
+        0.93
+      ]
+    },
+    {
+      "name": "NGC 1023 Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 20.6,
+      "l": 157,
+      "b": -33,
+      "approx": true,
+      "rich": 14,
+      "diameter": "~2 Mly",
+      "members": "~14 galaxies",
+      "distance": "20.6 Mly",
+      "position": [
+        -15.9,
+        6.75,
+        -11.22
+      ]
+    },
+    {
+      "name": "NGC 2997 Group",
+      "parent": "Virgo Supercluster",
+      "type": "galaxy group",
+      "mly": 24.8,
+      "l": 262,
+      "b": 20,
+      "approx": true,
+      "rich": 10,
+      "diameter": "~2 Mly",
+      "members": "~10 galaxies",
+      "distance": "24.8 Mly",
+      "position": [
+        -3.24,
+        -23.08,
+        8.48
+      ]
+    },
+    {
+      "name": "Hydra Cluster",
+      "parent": "Hydra-Centaurus Supercluster",
+      "type": "galaxy cluster",
+      "mly": 190,
+      "l": 269.6,
+      "b": 26.5,
+      "approx": false,
+      "rich": 160,
+      "diameter": "~10 Mly",
+      "members": "~160 galaxies",
+      "distance": "190 Mly",
+      "position": [
+        -1.19,
+        -170.03,
+        84.78
+      ]
+    },
+    {
+      "name": "Antlia Cluster",
+      "parent": "Hydra-Centaurus Supercluster",
+      "type": "galaxy cluster",
+      "mly": 133,
+      "l": 273.0,
+      "b": 19.2,
+      "approx": false,
+      "rich": 230,
+      "diameter": "~7 Mly",
+      "members": "~230 galaxies",
+      "distance": "133 Mly",
+      "position": [
+        6.57,
+        -125.43,
+        43.74
+      ]
+    },
+    {
+      "name": "Puppis Cluster",
+      "parent": "Hydra-Centaurus Supercluster",
+      "type": "galaxy cluster",
+      "mly": 95,
+      "l": 245,
+      "b": -2,
+      "approx": true,
+      "rich": 60,
+      "diameter": "~5 Mly",
+      "members": "~60 galaxies",
+      "distance": "95 Mly",
+      "position": [
+        -40.12,
+        -86.05,
+        -3.32
+      ]
+    },
+    {
+      "name": "Centaurus Cluster",
+      "parent": "Centaurus Wall",
+      "type": "rich galaxy cluster",
+      "mly": 170,
+      "l": 302.4,
+      "b": 21.6,
+      "approx": false,
+      "rich": 400,
+      "diameter": "~13 Mly",
+      "members": "~400 galaxies",
+      "distance": "170 Mly",
+      "position": [
+        84.69,
+        -133.46,
+        62.58
+      ]
+    },
+    {
+      "name": "A3565 Group",
+      "parent": "Centaurus Wall",
+      "type": "galaxy group",
+      "mly": 155,
+      "l": 305,
+      "b": 20,
+      "approx": true,
+      "rich": 40,
+      "diameter": "~5 Mly",
+      "members": "~40 galaxies",
+      "distance": "155 Mly",
+      "position": [
+        83.54,
+        -119.31,
+        53.01
+      ]
+    },
+    {
+      "name": "NGC 5419 / 5488 Group",
+      "parent": "Centaurus Wall",
+      "type": "galaxy group",
+      "mly": 190,
+      "l": 308,
+      "b": 22,
+      "approx": true,
+      "rich": 30,
+      "diameter": "~4 Mly",
+      "members": "~30 galaxies",
+      "distance": "190 Mly",
+      "position": [
+        108.46,
+        -138.82,
+        71.18
+      ]
+    },
+    {
+      "name": "Pavo Cluster",
+      "parent": "Pavo-Indus Supercluster",
+      "type": "galaxy cluster",
+      "mly": 180,
+      "l": 332,
+      "b": -23,
+      "approx": true,
+      "rich": 120,
+      "diameter": "~7 Mly",
+      "members": "~120 galaxies",
+      "distance": "180 Mly",
+      "position": [
+        146.3,
+        -77.79,
+        -70.33
+      ]
+    },
+    {
+      "name": "Pegasus Cluster",
+      "parent": "Pavo-Indus Supercluster",
+      "type": "galaxy cluster",
+      "mly": 150,
+      "l": 87,
+      "b": -42,
+      "approx": true,
+      "rich": 100,
+      "diameter": "~6 Mly",
+      "members": "~100 galaxies",
+      "distance": "150 Mly",
+      "position": [
+        5.83,
+        111.32,
+        -100.37
+      ]
+    },
+    {
+      "name": "NGC 6769 Group",
+      "parent": "Pavo-Indus Supercluster",
+      "type": "galaxy group",
+      "mly": 185,
+      "l": 331,
+      "b": -28,
+      "approx": true,
+      "rich": 20,
+      "diameter": "~3 Mly",
+      "members": "~20 galaxies",
+      "distance": "185 Mly",
+      "position": [
+        142.87,
+        -79.19,
+        -86.85
+      ]
+    },
+    {
+      "name": "Telescopium Group",
+      "parent": "Pavo-Indus Supercluster",
+      "type": "galaxy group",
+      "mly": 125,
+      "l": 345,
+      "b": -25,
+      "approx": true,
+      "rich": 25,
+      "diameter": "~3 Mly",
+      "members": "~25 galaxies",
+      "distance": "125 Mly",
+      "position": [
+        109.43,
+        -29.32,
+        -52.83
+      ]
+    },
+    {
+      "name": "NGC 6753 Group",
+      "parent": "Pavo-Indus Supercluster",
+      "type": "galaxy group",
+      "mly": 150,
+      "l": 338,
+      "b": -22,
+      "approx": true,
+      "rich": 18,
+      "diameter": "~3 Mly",
+      "members": "~18 galaxies",
+      "distance": "150 Mly",
+      "position": [
+        128.95,
+        -52.1,
+        -56.19
+      ]
+    },
+    {
+      "name": "NGC 7172 Group",
+      "parent": "Pavo-Indus Supercluster",
+      "type": "galaxy group",
+      "mly": 128,
+      "l": 20,
+      "b": -50,
+      "approx": true,
+      "rich": 16,
+      "diameter": "~2 Mly",
+      "members": "~16 galaxies",
+      "distance": "128 Mly",
+      "position": [
+        77.31,
+        28.14,
+        -98.05
+      ]
+    },
+    {
+      "name": "NGC 7329 Group",
+      "parent": "Pavo-Indus Supercluster",
+      "type": "galaxy group",
+      "mly": 150,
+      "l": 325,
+      "b": -40,
+      "approx": true,
+      "rich": 14,
+      "diameter": "~2 Mly",
+      "members": "~14 galaxies",
+      "distance": "150 Mly",
+      "position": [
+        94.13,
+        -65.91,
+        -96.42
+      ]
+    },
+    {
+      "name": "Fornax Cluster",
+      "parent": "Southern Supercluster",
+      "type": "galaxy cluster",
+      "mly": 62,
+      "l": 236.7,
+      "b": -53.6,
+      "approx": false,
+      "rich": 340,
+      "diameter": "~6 Mly",
+      "members": "~340 galaxies",
+      "distance": "62 Mly",
+      "position": [
+        -20.2,
+        -30.75,
+        -49.9
+      ]
+    },
+    {
+      "name": "Eridanus Cluster",
+      "parent": "Southern Supercluster",
+      "type": "galaxy cluster",
+      "mly": 75,
+      "l": 201,
+      "b": -51,
+      "approx": true,
+      "rich": 200,
+      "diameter": "~7 Mly",
+      "members": "~200 galaxies",
+      "distance": "75 Mly",
+      "position": [
+        -44.06,
+        -16.91,
+        -58.29
+      ]
+    },
+    {
+      "name": "Dorado Group",
+      "parent": "Southern Supercluster",
+      "type": "galaxy group",
+      "mly": 62,
+      "l": 266,
+      "b": -43,
+      "approx": true,
+      "rich": 45,
+      "diameter": "~4 Mly",
+      "members": "~45 galaxies",
+      "distance": "62 Mly",
+      "position": [
+        -3.16,
+        -45.23,
+        -42.28
+      ]
+    },
+    {
+      "name": "NGC 1417 Group",
+      "parent": "Southern Supercluster",
+      "type": "galaxy group",
+      "mly": 189,
+      "l": 200,
+      "b": -48,
+      "approx": true,
+      "rich": 12,
+      "diameter": "~2 Mly",
+      "members": "~12 galaxies",
+      "distance": "189 Mly",
+      "position": [
+        -118.84,
+        -43.25,
+        -140.45
+      ]
+    },
+    {
+      "name": "Cancer Cluster",
+      "parent": null,
+      "type": "galaxy cluster",
+      "mly": 200,
+      "l": 210,
+      "b": 30,
+      "approx": true,
+      "rich": 90,
+      "diameter": "~6 Mly",
+      "members": "~90 galaxies",
+      "distance": "200 Mly",
+      "position": [
+        -150.0,
+        -86.6,
+        100.0
+      ]
+    },
+    {
+      "name": "Norma Cluster",
+      "parent": null,
+      "type": "rich galaxy cluster",
+      "mly": 220,
+      "l": 325.3,
+      "b": -7.2,
+      "approx": false,
+      "rich": 600,
+      "diameter": "~10 Mly",
+      "members": "~600 galaxies",
+      "distance": "220 Mly",
+      "position": [
+        179.45,
+        -124.25,
+        -27.57
+      ]
+    }
+  ]
+}

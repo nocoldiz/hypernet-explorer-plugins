@@ -136,6 +136,10 @@
     // transition stays smooth.
     const VISIBILITY_REFRESH_INTERVAL = 30;
 
+    // How many times a second the lighting canvas is repainted and re-uploaded.
+    // See Spriteset_Lighting.update for why it is not once per drawn frame.
+    const LIGHTING_REPAINT_HZ = 24;
+
     // Per-frame cache of the WeatherSystem sunlight mode. On streetlight-heavy
     // maps dozens of light sprites query this each frame; resolving it once per
     // frame avoids that redundant work.
@@ -1137,6 +1141,9 @@
             this._resizeCanvas();
         }
 
+        // True when the canvas actually changed size. Writing canvas.width wipes
+        // it, so the caller has to repaint that frame rather than wait for the
+        // repaint clock, or a resolution change shows a blank pane for a frame.
         _resizeCanvas() {
             const w = Graphics.width || 816;
             const h = Graphics.height || 624;
@@ -1148,7 +1155,9 @@
                 this._canvas.width = cw;
                 this._canvas.height = ch;
                 this.scale.set(1 / this._renderScale);
+                return true;
             }
+            return false;
         }
 
         getCurrentHourFloat() {
@@ -1345,8 +1354,74 @@
             // drawn one is thrown away at full price. The fade above still
             // steps on every tick, so the light comes up at the same speed.
             if (window.FrameBudget && !window.FrameBudget.isPresented()) return;
-            this._resizeCanvas();
+            const resized = this._resizeCanvas();
+            // The repaint is a full-canvas clear, a vignette gradient and one
+            // fresh radial gradient per light source, and then the whole canvas
+            // goes back up to the GPU. Nothing in it is worth sixty of those a
+            // second: the lights are a soft glow, the camera moves in whole
+            // pixels, and the flicker is a few per cent of a radius. What kept it
+            // at frame rate was the flicker alone - getFlicker() reads
+            // Graphics.frameCount, so every light differed by a fraction of a per
+            // cent every frame and no "has anything moved" test could ever say no.
+            //
+            // So the repaint runs on its own clock instead. At this cadence a
+            // movement shows within a couple of frames, the flicker still reads
+            // as a flicker, and a map battle - where the whole map keeps updating
+            // underneath the fight (BattleSystem/MapBattleMode.js) - stops
+            // spending most of its frame on light that did not change.
+            if (!resized && window.FrameBudget &&
+                !window.FrameBudget.every('dynLighting', LIGHTING_REPAINT_HZ)) return;
             this.renderLighting();
+        }
+
+        // Which events on this map are a lamp, and which are traffic.
+        //
+        // Both answers come from the event's NAME and its NOTE, neither of
+        // which changes while a map is up, yet both lists were rebuilt on every
+        // frame: two walks of every event on the map, and a regex run against
+        // every event's note, sixty times a second, to arrive at the same
+        // handful of lamps. On the world map that is 242 events and 242 regex
+        // tests per frame for a result that had not moved.
+        //
+        // Rebuilt a few times a second instead. That is still often enough to
+        // catch an event spawned or erased under us, and to catch a car on the
+        // frame RoadCarAI first flags it, which a cache held for the life of
+        // the map would not. Whether a light is DRAWN is still decided per
+        // frame below, off the camera and the erase flag: only the question of
+        // which events could ever be one is rationed.
+        _refreshLitEventCache() {
+            // A transfer must never light this map off the last one's lamps, so
+            // the map id is checked before the rate limit rather than after it.
+            const mapId = $gameMap ? $gameMap.mapId() : 0;
+            if (this._litEventsMapId !== mapId) {
+                this._litEventsMapId = mapId;
+                this._litEvents = null;
+                this._trafficEvents = null;
+            }
+            const budget = window.FrameBudget;
+            if (this._litEvents && this._trafficEvents &&
+                budget && !budget.every('dynLightEventScan', 4)) return;
+
+            const lit = [];
+            const traffic = [];
+            if ($gameMap && typeof $gameMap.events === 'function') {
+                const events = $gameMap.events();
+                for (let i = 0; i < events.length; i++) {
+                    const ev = events[i];
+                    if (!ev) continue;
+                    if (ev._isRoadCar) traffic.push(ev);
+                    if (typeof ev.screenX !== 'function') continue;
+                    const evData = ev.event ? ev.event() : null;
+                    const name = evData ? evData.name : '';
+                    if (name === LightTypes.ALWAYS || name === LightTypes.STREET ||
+                        name === LightTypes.DAY ||
+                        (evData && evData.note && /<light/i.test(evData.note))) {
+                        lit.push(ev);
+                    }
+                }
+            }
+            this._litEvents = lit;
+            this._trafficEvents = traffic;
         }
 
         renderLighting() {
@@ -1449,8 +1524,9 @@
                     this.drawHeadlights(ctx, vx, vy, $gamePlayer.direction(), s, lamp === 'beam');
                 }
             }
-            if ($gameMap && typeof $gameMap.events === 'function') {
-                const traffic = $gameMap.events();
+            this._refreshLitEventCache();
+            {
+                const traffic = this._trafficEvents;
                 for (let i = 0; i < traffic.length; i++) {
                     const car = traffic[i];
                     if (!car || !car._isRoadCar || car._erased) continue;
@@ -1463,20 +1539,16 @@
             }
 
             // --- Placed Event Lights ---
-            if ($gameMap && typeof $gameMap.events === 'function') {
-                const events = $gameMap.events();
+            {
+                const events = this._litEvents;
                 for (let i = 0; i < events.length; i++) {
                     const ev = events[i];
-                    if (ev && !ev._erased && typeof ev.screenX === 'function') {
-                        const evData = ev.event ? ev.event() : null;
-                        const name = evData ? evData.name : '';
-                        if (name === LightTypes.ALWAYS || name === LightTypes.STREET || name === LightTypes.DAY || (evData && evData.note && /<light/i.test(evData.note))) {
-                            const ex = ev.screenX() * s;
-                            const ey = (ev.screenY() - th / 2) * s;
-                            if (ex >= -150 && ex <= cw + 150 && ey >= -150 && ey <= ch + 150) {
-                                const flicker = this.getFlicker(ev.eventId() * 1.3);
-                                this.drawLightCircle(ctx, ex, ey, basePartyRadius * 1.25 * flicker, 1.0, 'torch');
-                            }
+                    if (ev && !ev._erased) {
+                        const ex = ev.screenX() * s;
+                        const ey = (ev.screenY() - th / 2) * s;
+                        if (ex >= -150 && ex <= cw + 150 && ey >= -150 && ey <= ch + 150) {
+                            const flicker = this.getFlicker(ev.eventId() * 1.3);
+                            this.drawLightCircle(ctx, ex, ey, basePartyRadius * 1.25 * flicker, 1.0, 'torch');
                         }
                     }
                 }

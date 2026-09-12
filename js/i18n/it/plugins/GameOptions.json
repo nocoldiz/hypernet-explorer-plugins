@@ -37,6 +37,7 @@
     "enemyBattlers": "Combattenti Nemici",
     "runInBackground": "Esegui in Secondo Piano",
     "showFps": "Mostra Contatore FPS",
+    "lowModelDetail": "Dettaglio Modelli Ridotto",
     "activeTheme": "Tema Attivo",
     "mapBattle": "Battaglia sulla Mappa",
     "mapStreaming": "Streaming Mappa",
@@ -75,12 +76,12 @@
   },
   "titleBackground": [
     "Casuale",
-    "Schede",
+    "Schede Dati",
     "Spazio",
-    "Artefatti",
-    "Bestiario",
-    "Armi",
-    "Bestiario",
+    "Schede Dati",
+    "Schede Dati",
+    "Schede Dati",
+    "Schede Dati",
     "Iperverso",
     "Camper"
   ],
@@ -113,7 +114,8 @@
     "mapTooltips": "Messaggi dei tutorial in tempo reale, segnaposto della bussola per le missioni e suggerimenti scritti mentre esplori la mappa.",
     "dialogueVoices": "Ogni lettera di una battuta digitata viene cinguettata con un breve suono di vocale o consonante. Il tono è quello di chi parla; una parola chiave dorata suona più acuta.",
     "dialogueVoicesVolume": "Quanto sono forti i suoni delle lettere sotto una battuta di dialogo, separati dagli altri effetti sonori.",
-    "battleCommandPosition": "Su quale lato dello schermo stanno i comandi di battaglia, la pagina delle abilità e lo zaino."
+    "battleCommandPosition": "Su quale lato dello schermo stanno i comandi di battaglia, la pagina delle abilità e lo zaino.",
+    "lowModelDetail": "Costruisce armi e oggetti procedurali con meno segmenti. Aiuta sulle macchine lente; i modelli appaiono piu spigolosi."
   },
   "descState": {
     "musicArtistDisplay": [
@@ -126,6 +128,10 @@
       "Off: three.js puro. I modelli sono disegnati puliti, senza tremolio, bande o riduzione di risoluzione.",
       "SnapVertex: l'estetica PlayStation-1. I vertici scattano su una griglia grossolana, i colori si dividono in bande e l'immagine e' resa sotto la risoluzione piena.",
       "Pixel Art: l'estetica a sprite. Bande cel piatte, pixel grossi e una tavolozza limitata opzionale."
+    ],
+    "battleCommandPosition": [
+      "Sinistra: comandi, abilita e zaino stanno sulla sinistra dello schermo.",
+      "Destra: stanno sulla destra, liberi dall'arma in mano."
     ]
   },
   "shaderMode": {

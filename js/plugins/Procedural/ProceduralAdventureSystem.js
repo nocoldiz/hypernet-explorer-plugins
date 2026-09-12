@@ -1247,10 +1247,11 @@
     target: "Scene_TargetRange",
     fishing: "Scene_FishingMinigame",
     surfing: "Scene_SurfingGame",
-    // Tetris lives inside the phone now (HexphoneSystem), which is not a scene
-    // that can be handed a contest: the falling-block game that can is the
-    // lockpicking one, and it reports through MinigameFun like the rest.
-    tetris: "Scene_UnlockingBlocks",
+    // The phone's falling-block puzzle lives inside HexphoneSystem now, which
+    // is not a scene that can be handed a contest: the falling-block game that
+    // can is the lockpicking one, and it reports through MinigameFun like the
+    // rest.
+    blocks: "Scene_UnlockingBlocks",
     cards: "Scene_Tarot",
     horses: "Scene_HorseRace",
   };   // i18n-ignore-end

@@ -2482,6 +2482,11 @@
                 // test and only the creatures that live in it are placed there
                 // (canTroopSpawnInRegion, and the wet/dry split below).
                 const isWaterTile = BSE.Helpers.isWaterSpawnTile(x, y);
+                // The keep-out region marks the solid mass a structure was cut
+                // out of, and it is obeyed wet or dry: passability alone reads
+                // the topmost tile with an opinion, which a fixture hung on the
+                // rock is happy to be.
+                if (window.RegionRules && window.RegionRules.blocksSpawn(x, y)) continue;
                 if (!isWaterTile && !$gameMap.isPassable(x, y, 2)) continue;
                 // Terrain tags describe the GROUND, and water has none to
                 // describe: a river cut through a field carries its biome's tag

@@ -4,13 +4,14 @@
 
 /*:
  * @target MZ
- * @plugindesc [v2.0.0] DEPRECATED - Tetris is now built into HexphoneSystem
+ * @plugindesc [v2.0.0] DEPRECATED - the phone's block puzzle is built into HexphoneSystem
  * @author Omni-Lex
  * @help HexphoneTetris.js
  *
- * Tetris (and Snake) are implemented directly inside HexphoneSystem.js
- * since v3.0.0. This plugin is kept only so old plugin lists do not break;
- * it does nothing when the built-in game is present.
+ * The phone's falling block puzzle (Bitstack) and Snake are implemented
+ * directly inside HexphoneSystem.js since v3.0.0. This plugin is kept only so
+ * old plugin lists do not break; it does nothing when the built-in game is
+ * present.
  *
  * To add a new phone game from your own plugin, call:
  *   window.registerHexphoneGame('MyGame', {
@@ -24,5 +25,5 @@
 
 (() => {
     'use strict';
-    // Intentionally empty: superseded by the Tetris built into HexphoneSystem.js
+    // Intentionally empty: superseded by the puzzle built into HexphoneSystem.js
 })();

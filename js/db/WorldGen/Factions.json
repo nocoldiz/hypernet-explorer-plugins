@@ -7493,7 +7493,7 @@
         "luk": 27,
         "hiringCost": 83000,
         "weeklyCost": 16600,
-        "spritename": "Skab/!$EM",
+        "spritename": "Skab/!$EMSkab",
         "spriteindex": 0,
         "role": "roles.closequarters"
       },

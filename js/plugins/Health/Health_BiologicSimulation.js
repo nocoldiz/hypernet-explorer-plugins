@@ -6536,6 +6536,18 @@
     Game_Map.prototype.update = function (sceneActive) {
       _Game_Map_update.call(this, sceneActive);
       if (!sceneActive || !window.$gameVariables) return;
+      // gameHourStamp() parses a date STRING out of variable 113: a split, a
+      // filter and four parseInt calls, and it ran on every frame of every map
+      // purely to discover that the hour had not turned yet.
+      //
+      // The cheap test is the unparsed string itself. It is the same variable
+      // the stamp is derived from, so this adds no second source of truth for
+      // the clock: an hour cannot turn without the date text changing, and the
+      // text cannot change without the parse running on that frame. One string
+      // compare now stands in front of the parse.
+      const dateText = $gameVariables.value(113);
+      if (dateText === this._lastPregnancyDateText) return;
+      this._lastPregnancyDateText = dateText;
       const hourStamp = gameHourStamp();
       if (hourStamp === this._lastPregnancyHour) return;
       this._lastPregnancyHour = hourStamp;

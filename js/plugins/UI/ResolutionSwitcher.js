@@ -1,6 +1,6 @@
 /*:
  * @target MZ
- * @plugindesc Pins the game to 16:9 (1280x720) resolution with fullscreen toggle
+ * @plugindesc Pins the game to 16:9 (1280x720) resolution, owns fullscreen and sizes the Options window
  * @author KYDSGAME
  * @url https://nocoldiz.itch.io/hypernet-explorer
  *
@@ -38,6 +38,18 @@
  * Keyboard Controls:
  * - Fullscreen is toggled from Options or the core F11 key
  *
+ * ----------------------------------------------------------------------------
+ * This file also carries what used to be Core/FullscreenOptions.js: the
+ * first-run fullscreen default and the full-window Options rect. The two were
+ * split, both wrapped Scene_Boot.start, and they fought each other on boot,
+ * one synchronously and one on a timer. One owner now.
+ *
+ * The boot window state belongs to js/main.js, which sets it once from the
+ * saved preference before the first frame is painted. Nothing here resizes or
+ * moves the OS window afterwards, including Scene_Boot's own adjustWindow:
+ * on NW.js any programmatic window change drops fullscreen, which is what made
+ * the boot screen shrink to a black window and jump back. A "windowed" answer
+ * is left strictly alone: fullscreen is never asked for on its behalf.
  * ============================================================================
  */
 
@@ -95,8 +107,14 @@
         return config;
     };
 
+    // Whether the config file already carried a fullscreen preference. Only a
+    // first run (no stored answer) gets the distributed-build default; anything
+    // else keeps whatever the player picked in the options menu.
+    let hasStoredPreference = false;
+
     const _ConfigManager_applyData = ConfigManager.applyData;
     ConfigManager.applyData = function(config) {
+        hasStoredPreference = !!config && "fullscreen" in config;
         _ConfigManager_applyData.call(this, config);
         this.resolution = this.readResolution(config, "resolution");
         this.fullscreen = this.readFlag(config, "fullscreen", defaultFullscreen);
@@ -182,68 +200,99 @@
     };
 
     // ========================================================================
-    // Fullscreen toggle
+    // Fullscreen
     // F10 now belongs to Core/SaveSystem.js's quickload, so no key is bound
     // here: the toggle is reached from Options or the core F11 key.
     // ========================================================================
+
+    // The single way this plugin ever changes the window. It is a no-op when
+    // the window already agrees, which is the normal case on boot because
+    // js/main.js has already read the same preference off disk: a player who
+    // asked for a window is never sent fullscreen, and a player who asked for
+    // fullscreen is never sent through a windowed frame to get there.
+    function applyFullscreen(wanted) {
+        if (!!wanted === !!Graphics._isFullScreen()) {
+            return false;
+        }
+        if (wanted) {
+            Graphics._requestFullScreen();
+        } else {
+            Graphics._cancelFullScreen();
+        }
+        return true;
+    }
+
+    // Options and the map toggle both fade out, switch, and fade back in.
+    function fadeThroughFullscreen(scene, wanted, onSwitched) {
+        if (!scene) {
+            applyFullscreen(wanted);
+            if (onSwitched) onSwitched();
+            return;
+        }
+        const frame = 16.67;
+        scene.startFadeOut(fadeDuration, false);
+        setTimeout(() => {
+            applyFullscreen(wanted);
+            setTimeout(() => {
+                scene.startFadeIn(fadeDuration, false);
+                if (onSwitched) onSwitched();
+            }, fadeDuration * frame);
+        }, fadeDuration * frame);
+    }
 
     Scene_Map.prototype.toggleFullscreenWithFade = function() {
         const newValue = !ConfigManager.fullscreen;
         ConfigManager.fullscreen = newValue;
         ConfigManager.save();
-        
-        this.startFadeOut(fadeDuration, false);
-        setTimeout(() => {
-            if (newValue) {
-                Graphics._requestFullScreen();
-            } else {
-                Graphics._cancelFullScreen();
-            }
-            setTimeout(() => {
-                this.startFadeIn(fadeDuration, false);
-            }, fadeDuration * 16.67);
-        }, fadeDuration * 16.67);
+        fadeThroughFullscreen(this, newValue);
     };
 
     // ========================================================================
     // Scene_Boot - Apply resolution and fullscreen on game start
     // ========================================================================
 
+    // Stock MZ calls window.moveBy() / window.resizeBy() here to fit the OS
+    // window to $dataSystem.advanced.screenWidth. On NW.js that drops the
+    // window out of fullscreen, and it fired on every boot: the fullscreen
+    // boot screen was seen collapsing into a small black window, which another
+    // plugin's timer then put back. js/main.js already sized the window from
+    // the saved preference before the first paint, so there is nothing to fit.
+    Scene_Boot.prototype.adjustWindow = function() {
+    };
+
     const _Scene_Boot_create = Scene_Boot.prototype.create;
     Scene_Boot.prototype.create = function() {
         _Scene_Boot_create.call(this);
-        SceneManager.changeResolution('16:9');
+        SceneManager.changeResolution(defaultResolution);
     };
 
     const _Scene_Boot_start = Scene_Boot.prototype.start;
     Scene_Boot.prototype.start = function() {
         _Scene_Boot_start.call(this);
-        
+
         // Apply saved resolution
         if ($gameSystem) {
-            const currentRes = $gameSystem.getCurrentResolution();
-            SceneManager.changeResolution(currentRes);
-            
-            // Maximize window if 16:9 and not fullscreen
-            if (currentRes === '16:9' && !ConfigManager.fullscreen) {
-                this.maximizeWindow();
-            }
+            SceneManager.changeResolution($gameSystem.getCurrentResolution());
         }
-        
-        // Apply saved fullscreen setting
-        const shouldBeFullscreen = ConfigManager.fullscreen;
-        if (shouldBeFullscreen && !Graphics._isFullScreen()) {
-            Graphics._requestFullScreen();
-        } else if (!shouldBeFullscreen && Graphics._isFullScreen()) {
-            Graphics._cancelFullScreen();
-        }
-    };
 
-    Scene_Boot.prototype.maximizeWindow = function() {
-        if (typeof nw !== 'undefined' && nw.Window) {
-            const win = nw.Window.get();
-            win.maximize();
+        if (Utils.isOptionValid('test')) {
+            return;
         }
+
+        if (!hasStoredPreference) {
+            // First launch of a distributed build: fullscreen is the default.
+            ConfigManager.fullscreen = defaultFullscreen;
+            ConfigManager.save();
+            hasStoredPreference = true;
+        }
+
+        // Normally a no-op: main.js read this same answer before the window was
+        // shown. It stands as the correction for a config that changed under a
+        // running window, and it leaves a windowed preference untouched.
+        if (typeof nw !== 'undefined') {
+            nw.Window.get().focus();
+        }
+        applyFullscreen(ConfigManager.fullscreen);
     };
 
     // ========================================================================
@@ -309,22 +358,14 @@
     };
 
     Window_Options.prototype.fadeOutAndToggleFullscreen = function(value) {
-        const scene = SceneManager._scene;
-        if (scene) {
-            scene.startFadeOut(fadeDuration, false);
-            setTimeout(() => {
-                if (value) {
-                    Graphics._requestFullScreen();
-                } else {
-                    Graphics._cancelFullScreen();
-                }
-                setTimeout(() => {
-                    scene.startFadeIn(fadeDuration, false);
-                    this.refresh();
-                }, fadeDuration * 16.67);
-            }, fadeDuration * 16.67);
-        }
+        fadeThroughFullscreen(SceneManager._scene, value, () => this.refresh());
     };
 
+    // The options window fills the whole game window (was Core/FullscreenOptions.js).
+    const _Window_Options_initialize = Window_Options.prototype.initialize;
+    Window_Options.prototype.initialize = function(rect) {
+        rect = new Rectangle(0, 0, Graphics.boxWidth, Graphics.boxHeight);
+        _Window_Options_initialize.call(this, rect);
+    };
 
 })();

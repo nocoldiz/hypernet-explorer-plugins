@@ -264,7 +264,10 @@
     // frame is visually near-identical while cutting the per-frame canvas work
     // and the baseTexture GPU upload to a third. Always repaint immediately
     // when the depicted state changes so transitions never lag.
+    const speed = Math.max(1, (typeof $gameVariables !== "undefined" && $gameVariables.value(94)) || 1);
+    const isPsychedelic = moving && speed > 10;
     const stateKey = (moving ? "M" : "P") + "|" +
+      (isPsychedelic ? ("PSY" + speed) : "NORM") + "|" +
       (ship.currentPlanet || "") + "|" + (ship.currentSystem || "") + "|" +
       // Parking at a companion star, a hole or a remnant changes which model
       // the window shows, so it belongs in the key that forces a repaint.
@@ -291,6 +294,12 @@
     const time = this._shipBgTime;
 
     bmp.clear();
+
+    const speed = Math.max(1, (typeof $gameVariables !== "undefined" && $gameVariables.value(94)) || 1);
+    if (moving && speed > 10) {
+      this.drawPsychedelicWarp(ctx, w, h, time, speed);
+      return;
+    }
 
     // --- Deep space gradient ---------------------------------------------
     // The gradient only depends on height, so build it once and reuse it
@@ -367,6 +376,181 @@
       this.drawShipBody(cctx, w, h, dm, ship, time);
     }
     ctx.drawImage(cache, 0, 0);
+  };
+
+  // Abstract and psychedelic hyperspace warp background for speeds > 10X.
+  // Complexity and weirdness scale with speed (11 to 100) while animation speed
+  // remains hypnotic and constant.
+  Spriteset_Map.prototype.drawPsychedelicWarp = function (ctx, w, h, time, speed) {
+    const complexity = Math.max(0, Math.min(1, (speed - 10) / 90));
+    const cx = w * 0.5;
+    const cy = h * 0.5;
+    const maxR = Math.sqrt(cx * cx + cy * cy);
+
+    // Animation time advances at a constant rate, independent of speed
+    const baseHue = (time * 25) % 360;
+
+    // 1. Psychedelic gradient background
+    if (ctx.createRadialGradient) {
+      const bgGrad = ctx.createRadialGradient(cx, cy, 10, cx, cy, maxR);
+      bgGrad.addColorStop(0, `hsl(${(baseHue + 180) % 360}, 90%, 15%)`);
+      bgGrad.addColorStop(0.5, `hsl(${baseHue}, 85%, 8%)`);
+      bgGrad.addColorStop(1, `hsl(${(baseHue + 90) % 360}, 80%, 4%)`);
+      ctx.fillStyle = bgGrad;
+    } else {
+      ctx.fillStyle = "#0a0518";
+    }
+    ctx.fillRect(0, 0, w, h);
+
+    // 2. Kaleidoscopic ray vortex (more rays and color shifts as complexity increases)
+    const rayCount = Math.floor(8 + complexity * 28);
+    const rotAngle = time * 0.35;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotAngle);
+    for (let r = 0; r < rayCount; r++) {
+      const theta = (r / rayCount) * Math.PI * 2;
+      const rayHue = (baseHue + (r / rayCount) * 360 * (1 + Math.floor(complexity * 3))) % 360;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      const arcWidth = (Math.PI / rayCount) * (0.7 + 0.3 * Math.sin(time * 1.5 + r));
+      ctx.arc(0, 0, maxR * 1.2, theta - arcWidth * 0.5, theta + arcWidth * 0.5);
+      ctx.closePath();
+      ctx.fillStyle = `hsla(${rayHue}, 90%, 50%, ${0.07 + complexity * 0.12})`;
+      ctx.fill();
+    }
+    ctx.restore();
+
+    // 3. Concentric undulating warp rings (fractal / wave harmonics grow with complexity)
+    const ringCount = Math.floor(5 + complexity * 15);
+    const harmonics = 3 + Math.floor(complexity * 8);
+    const wavePhase = time * 1.6;
+    for (let k = 1; k <= ringCount; k++) {
+      const r0 = (k / (ringCount + 1)) * maxR * 0.95;
+      const kPhase = wavePhase - k * 0.45;
+      const steps = 40 + Math.floor(complexity * 40);
+      ctx.beginPath();
+      for (let s = 0; s <= steps; s++) {
+        const a = (s / steps) * Math.PI * 2;
+        let wave = Math.sin(a * harmonics + kPhase) * (10 + complexity * 25);
+        if (complexity > 0.25) {
+          wave += Math.sin(a * (harmonics * 2 + 1) - kPhase * 1.2) * (complexity * 16);
+        }
+        if (complexity > 0.65) {
+          wave += Math.cos(a * 15 + time * 1.8) * (complexity * 10);
+        }
+        const r = Math.max(5, r0 + wave);
+        const px = cx + Math.cos(a) * r;
+        const py = cy + Math.sin(a) * r;
+        if (s === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      const ringHue = (baseHue + k * (24 + complexity * 32)) % 360;
+      ctx.strokeStyle = `hsla(${ringHue}, 100%, 65%, ${0.25 + complexity * 0.45})`;
+      ctx.lineWidth = 1.2 + complexity * 2.5;
+      ctx.stroke();
+    }
+
+    // 4. Psychedelic warp streaks (rainbow hues, harmonic lateral wobble, chromatic dispersion)
+    const stars = getStars();
+    const pScroll = (time * 0.25) % 1;
+    ctx.save();
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      const px = s.x * w;
+      let sy = (s.y + pScroll * s.depth) % 1;
+      if (sy < 0) sy += 1;
+      const py = sy * h;
+
+      const streak = 18 + s.depth * 45 + complexity * 30;
+      const streakHue = (baseHue + i * (14 + complexity * 22) + s.twinkle * 60) % 360;
+
+      // Lateral wobble distortion: higher complexity adds higher frequency modulation
+      const wobble = Math.sin(py * 0.025 + time * 2.2 + s.twinkle) * (5 + complexity * 22)
+        + (complexity > 0.35 ? Math.sin(py * 0.075 - time * 1.5) * (complexity * 14) : 0)
+        + (complexity > 0.75 ? Math.cos(py * 0.16 + time * 2.0) * (complexity * 8) : 0);
+
+      const lineWidth = s.depth * (1.5 + complexity * 2.5) + 0.5;
+
+      if (complexity > 0.25) {
+        // Chromatic split: Red/Magenta shifted left, Cyan/Green shifted right
+        const cOffset = 1.5 + complexity * 5.5;
+        // Red / Magenta channel
+        ctx.strokeStyle = `hsla(${(streakHue + 320) % 360}, 100%, 60%, ${0.5 + complexity * 0.4})`;
+        ctx.lineWidth = lineWidth * 0.8;
+        ctx.beginPath();
+        ctx.moveTo(px + wobble - cOffset, py);
+        if (ctx.quadraticCurveTo) {
+          ctx.quadraticCurveTo(px + wobble * 1.2 - cOffset, py - streak * 0.5, px + wobble * 0.6 - cOffset, py - streak);
+        } else {
+          ctx.lineTo(px + wobble * 0.6 - cOffset, py - streak);
+        }
+        ctx.stroke();
+
+        // Cyan / Blue channel
+        ctx.strokeStyle = `hsla(${(streakHue + 180) % 360}, 100%, 60%, ${0.5 + complexity * 0.4})`;
+        ctx.lineWidth = lineWidth * 0.8;
+        ctx.beginPath();
+        ctx.moveTo(px + wobble + cOffset, py);
+        if (ctx.quadraticCurveTo) {
+          ctx.quadraticCurveTo(px + wobble * 1.2 + cOffset, py - streak * 0.5, px + wobble * 0.6 + cOffset, py - streak);
+        } else {
+          ctx.lineTo(px + wobble * 0.6 + cOffset, py - streak);
+        }
+        ctx.stroke();
+      }
+
+      // Main vibrant streak
+      ctx.strokeStyle = `hsla(${streakHue}, 100%, 75%, ${0.65 + complexity * 0.35})`;
+      ctx.lineWidth = lineWidth;
+      ctx.beginPath();
+      ctx.moveTo(px + wobble, py);
+      if (ctx.quadraticCurveTo) {
+        ctx.quadraticCurveTo(px + wobble * 1.2, py - streak * 0.5, px + wobble * 0.6, py - streak);
+      } else {
+        ctx.lineTo(px + wobble * 0.6, py - streak);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // 5. Central Singularity / Vortex Eye
+    const eyeR = 12 + complexity * 26 + Math.sin(time * 3) * (4 + complexity * 8);
+    if (ctx.createRadialGradient) {
+      const eyeGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, eyeR * 2.5);
+      eyeGrad.addColorStop(0, "#ffffff");
+      eyeGrad.addColorStop(0.3, `hsla(${(baseHue + 120) % 360}, 100%, 70%, 0.9)`);
+      eyeGrad.addColorStop(0.6, `hsla(${(baseHue + 280) % 360}, 100%, 55%, 0.6)`);
+      eyeGrad.addColorStop(1, `hsla(${baseHue}, 100%, 50%, 0)`);
+      ctx.fillStyle = eyeGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, eyeR * 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(cx, cy, eyeR * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Extra abstract spikes at high complexity
+    if (complexity > 0.5) {
+      const spikeCount = Math.floor(4 + complexity * 8);
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(-time * 0.5);
+      ctx.strokeStyle = `hsla(${(baseHue + 60) % 360}, 100%, 80%, ${complexity * 0.7})`;
+      ctx.lineWidth = 2;
+      for (let sp = 0; sp < spikeCount; sp++) {
+        const sa = (sp / spikeCount) * Math.PI * 2;
+        const sLen = eyeR * (2.2 + complexity * 2.5);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(sa) * sLen, Math.sin(sa) * sLen);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
   };
 
   // How many frames a cached body render stays good for (see above).
@@ -497,8 +681,11 @@
   // up on the next tick.
   function travelEta(ship) {
     const speed = Math.max(1, $gameVariables.value(94) || 1);
+    const isIntra = !!ship.targetSystem && ship.targetSystem === ship.currentSystem;
+    const baseSpeed = isIntra ? 1 : 0.5;
+    const mult = isIntra ? Math.min(speed, 2) : speed;
     // Arrival fires at 95% of the route (maxProgress in updateShipPosition).
-    const total = ship.travelDistance > 0 ? (ship.travelDistance * 0.95) / speed : 0;
+    const total = ship.travelDistance > 0 ? (ship.travelDistance * 0.95) / (mult * baseSpeed) : 0;
     const elapsed = ship.departureTime ? (Date.now() - ship.departureTime) / 1000 : 0;
     return { total, remaining: Math.max(0, Math.ceil(total - elapsed)) };
   }

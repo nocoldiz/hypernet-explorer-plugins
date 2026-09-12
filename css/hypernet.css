@@ -52,7 +52,10 @@
     --xp-ink-6: #4a4a4a;
     --xp-ink-soft: #666666;
     --xp-ink-soft-2: #5a5a5a;
-    --xp-ink-faint: #777777;
+    /* The greyed-out line. Darker than the #777 it used to be, so a muted
+       label clears the readable ratio on the desktop's grey as well as on
+       white paper. */
+    --xp-ink-faint: #666666;
     --xp-ink-faint-2: #888888;
     --xp-ink-faint-3: #8a8a8a;
     --xp-ink-pale: #999999;
@@ -89,9 +92,13 @@
     --xp-green-4: #4a6a4f;
     --xp-green-5: #2f4a35;
     --xp-green-6: #6fe08a;
-    --xp-amber: #ffcc00;
-    --xp-amber-2: #ffe680;
-    --xp-gold: #ffd700;
+    /* No gold. The desktop had three of them (amber, a pale amber and a flat
+       gold) and every program that reached for one was printing the parchment
+       book's ink on Archways' own paper. They are gone rather than merely
+       unused, so the next banner has to pick a colour the shell owns; the
+       violet below is the one that took their place on the pages that wanted
+       a third accent beside the blue and the green. */
+    --xp-violet: #6a2f9e;
     --xp-note: #ffffcc;
     --xp-row-tint: #dfe8f5;
     --xp-row-tint-2: #f4f8fd;
@@ -281,10 +288,10 @@
 .hn-style-0036 { background: var(--xp-near-white); border: 1px solid var(--xp-disabled); border-radius: 3px; padding: 6px; max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
 .hn-style-0037 { font-weight:bold; color:var(--xp-blue); }
 .hn-style-0038 { color:#333; }
-.hn-style-0039 { text-align:center; padding:10px; font-style: normal; color:#777; font-size:13px; }
+.hn-style-0039 { text-align:center; padding:10px; font-style: normal; color: var(--xp-ink-faint); font-size:13px; }
 .hn-style-0040 { display:flex; justify-content:space-between; align-items:center; margin-top:8px; border-top:1px solid var(--xp-disabled); padding-top:6px; }
 .hn-style-0041 { padding: 3px 12px; background: var(--xp-gray-light); border: 1px solid var(--xp-border); border-radius: 3px; font-size: 14px; font-weight: bold; cursor: pointer; font-family: 'Tahoma', sans-serif; }
-.hn-style-0042 { font-size: 12px; color: #777; font-style: normal; }
+.hn-style-0042 { font-size: 12px; color: var(--xp-ink-faint); font-style: normal; }
 .hn-style-0043 { display:flex; flex-direction:column; justify-content:center; align-items:center; flex:1; height:100%; color:#666; font-style: normal; text-align:center; padding:20px; border: none; background:var(--xp-near-white); }
 .hn-style-0044 { font-size:40px; margin-bottom:8px; }
 .hn-style-0045 { width: 100%; height: 100%; background: var(--text-pure-white); display: flex; flex-direction: column; box-sizing: border-box; }
@@ -307,10 +314,13 @@
 .hn-style-0062 { margin: 0 0 10px 0; font-size: 14px; border-bottom: 1px solid var(--xp-gray); padding-bottom: 4px; color: var(--xp-blue-dark); }
 .hn-style-0063 { width: 100%; border-collapse: collapse; line-height: 1.8; }
 .hn-style-0064 { font-weight: bold; width: 80px; color: #555; }
-.hn-style-0065 { color: var(--bg-surface); }
+/* Two spec-sheet rules that reached for a background token to say "black".
+   They were black by accident, and stopped being black the moment the window
+   turned the surfaces round; they name the ink they wanted instead. */
+.hn-style-0065 { color: var(--text-pure-black); }
 .hn-style-0066 { font-weight: bold; color: #555; }
 .hn-style-0067 { font-weight: bold; width: 100px; color: #555; }
-.hn-style-0068 { color: var(--bg-surface); font-family: monospace; font-weight: bold; }
+.hn-style-0068 { color: var(--text-pure-black); font-family: monospace; font-weight: bold; }
 .hn-style-0069 { display: none; flex-direction: column; gap: 15px; }
 .hn-style-0070 { margin: 0 0 5px 0; font-size: 15px; color: var(--xp-blue-dark); }
 .hn-style-0071 { margin: 0; color: #555; }
@@ -1320,6 +1330,147 @@
 }
 .btn-confirm:active {
     transform: translateY(1px);
+}
+
+
+/* ==========================================================================
+   THE DESKTOP'S OWN PALETTE, WORN BY EVERY PROGRAM
+
+   Several programs are one markup opened in two places: the parchment book
+   when the game's menu opens them, an Archways window when the desktop does.
+   The book is a dark page, so the kit those screens are built from is inked
+   for a dark page: gold headings, cream labels, white meta, pale greens and
+   reds. Dropped on the desktop's grey and white paper that palette is either
+   invisible (cream on white) or the game's ink showing through where the
+   shell's should be (gold).
+
+   The kit paints itself out of the design tokens in css/vars.css, so the
+   whole of it is turned round in one place here: inside a window the tokens
+   name the desktop's inks instead of the book's. Nothing is restyled class by
+   class, so a screen that grows a new row or a new label is dressed the same
+   way without anyone remembering to come back here.
+
+   Gold is the one colour with no counterpart: it is the book's ink and the
+   desktop has none, so every token that carried it is rebound to the shell's
+   navy. Programs keep their own accents in their own #<app>-content section
+   below, which outranks this block by carrying an id of its own.
+   ========================================================================== */
+#hypernet-os-desktop .hypernet-window-content {
+    /* Ink: headings and links, body, labels, the greyed-out line. */
+    --text-primary-hover: var(--xp-blue-dark);
+    --text-secondary-active: var(--xp-blue-dark);
+    --text-detail-heading: var(--xp-blue-dark);
+    --text-settings-active: var(--xp-blue-dark);
+    --text-settings-value-active: var(--xp-blue-dark);
+    --text-text-alt-1-active: var(--xp-blue-dark);
+    --text-text-alt-14-hover: var(--xp-blue-dark);
+    --text-text-alt-17: var(--xp-blue-dark);
+    --text-text-alt-23: var(--xp-blue-dark);
+    --text-navy: var(--xp-blue-dark);
+    --text-text-alt-16: var(--xp-blue-dark);
+    --accent-amber-glow: var(--xp-blue-dark);
+    --chip-active-fg: var(--xp-blue-dark);
+    --chip-active-bg: var(--xp-link-hover);
+    --border-focus-hover: var(--xp-blue);
+    --npc-option-fg: var(--xp-blue-dark);
+    --ms-ink: var(--xp-blue-dark);
+
+    --text-success-active: var(--xp-ink-3);
+    --text-text-alt-2: var(--xp-ink-3);
+    --text-text-alt-7: var(--xp-ink-3);
+    --text-text-alt-13: var(--xp-ink-3);
+    --text-card-dark: var(--xp-ink-3);
+    --text-highlight-active: var(--xp-ink-3);
+
+    --text-detail-label: var(--xp-text-muted);
+    --text-text-alt-4: var(--xp-text-muted);
+    --text-text-alt-6-active: var(--xp-text-muted);
+    --text-card-medium: var(--xp-text-muted);
+    --text-muted-hover: var(--xp-text-muted);
+    --text-info: var(--xp-text-muted);
+    --text-warning-hover: var(--xp-text-muted);
+    --text-gold-dark: var(--xp-text-muted);
+    --text-amber-hint: var(--xp-text-muted);
+    --text-text-alt-9: var(--xp-text-muted);
+    --text-text-alt-9-translucent-50: var(--xp-text-muted);
+    --text-settings-label: var(--xp-text-muted);
+    --text-settings-arrow-active: var(--xp-text-muted);
+    --text-text-alt-8: var(--xp-ink-soft);
+    --text-text-alt-12: var(--xp-ink-soft);
+    --text-caption-brown: var(--xp-ink-soft);
+    --text-brown-medium: var(--xp-ink-soft);
+    --text-settings-inactive: var(--xp-ink-faint);
+    --text-disabled: var(--xp-ink-faint-2);
+    --text-inverse: var(--xp-white);
+
+    /* Yes, no, careful: the three answers a screen gives in colour. */
+    --text-cost-ok: var(--xp-ok);
+    --text-forest-complete: var(--xp-ok);
+    --text-forest-green: var(--xp-ok);
+    --text-text-alt-3: var(--xp-ok);
+    --text-text-alt-11: var(--xp-ok);
+    --text-text-alt-18: var(--xp-ok);
+    --text-text-alt-21: var(--xp-ok);
+    --text-text-alt-22: var(--xp-ok);
+    --faction-accord-allied: var(--xp-ok);
+    --faction-rep-exalted: var(--xp-ok);
+    --faction-rep-revered: var(--xp-ok);
+    --faction-rep-honored: var(--xp-ok);
+    --faction-rep-friendly: var(--xp-ok);
+    --text-cost-bad: var(--xp-bad);
+    --text-blood-red: var(--xp-bad);
+    --text-danger-dark: var(--xp-bad);
+    --text-text-alt-5-hover: var(--xp-bad);
+    --text-text-alt-10: var(--xp-bad);
+    --text-text-alt-25: var(--xp-bad);
+    --faction-rep-nemesis: var(--xp-bad);
+    --faction-rep-hated: var(--xp-bad);
+    --text-text-alt-15: var(--xp-warn);
+    --text-text-alt-20: var(--xp-warn);
+    --accent-orange: var(--xp-warn);
+    --accent-amber-light: var(--xp-warn);
+    --rarity-legendary: var(--xp-warn);
+    --faction-rep-unfriendly: var(--xp-warn);
+    --faction-rep-hostile: var(--xp-warn);
+    --faction-rep-neutral: var(--xp-text-muted);
+    --text-text-alt-19: var(--xp-violet);
+    --text-text-alt-24: var(--xp-violet);
+
+    /* The surfaces the ink has to be read off. Only the three the shared kit
+       and the native dropdown paint themselves with are turned round: a
+       program with a dark face of its own (the terminal, the BIOS, HyperAmp,
+       the browser) writes its colours out and is untouched by any of this.
+       The panel and the surface travel together, since the kit pours one into
+       the other for its gradients: turning one alone would leave a white that
+       fades to black halfway down a list. */
+    --bg-panel: var(--xp-input);
+    --bg-surface: var(--xp-gray-light);
+    --bg-tertiary-focus-translucent-45: var(--xp-link-hover);
+}
+
+/* The native dropdown. The game paints every <select> for the Omega Tower:
+   gold frame, gold text, white options, all of it with !important, which on
+   the desktop is a white list on white paper. In a window a dropdown is the
+   shell's own control instead, options included: an open list is drawn by the
+   host and inherits nothing from the page, so the options are named here too
+   rather than left to the frame's colour. */
+#hypernet-os-desktop .hypernet-window-content select {
+    background: var(--xp-input) !important;
+    color: var(--text-pure-black) !important;
+    border: 1px solid var(--xp-border) !important;
+    border-radius: 0;
+    padding: 2px 4px;
+    font: 13px Tahoma, sans-serif;
+    font-weight: normal;
+}
+#hypernet-os-desktop .hypernet-window-content select option {
+    background: var(--xp-input) !important;
+    color: var(--text-pure-black) !important;
+}
+#hypernet-os-desktop .hypernet-window-content select option:checked,
+#hypernet-os-desktop .hypernet-window-content select option:hover {
+    background: var(--xp-blue-tab) !important;
+    color: var(--xp-white) !important;
 }
 
 
@@ -2574,7 +2725,7 @@
     background: var(--xp-tooltip);
     border-bottom: 1px solid var(--xp-parchment);
 }
-.hnb-infobar-icon { display: flex; color: #b8860b; }
+.hnb-infobar-icon { display: flex; color: var(--xp-warn); }
 .hnb-infobar-text { flex: 1 1 auto; }
 .hnb-infobar-x { display: flex; cursor: pointer; opacity: 0.6; }
 .hnb-infobar-x:hover { opacity: 1; }
@@ -2612,6 +2763,7 @@
     min-width: 0;
     position: relative;
     background: var(--text-pure-white);
+    overflow: hidden;
 }
 .hnb-frame {
     width: 100%;
@@ -2781,14 +2933,16 @@
 .hnb-noodle-logo { margin: 44px 0 6px 0; font-size: 68px; letter-spacing: -2px; position: relative; }
 .hnb-noodle-logo .n { color: #4285f4; }
 .hnb-noodle-logo .o1 { color: #ea4335; }
-.hnb-noodle-logo .o2 { color: #fbbc05; }
+/* The wordmark's third letter was the one gold on the desktop; the browser
+   keeps six letters of its own, in six colours the shell can print. */
+.hnb-noodle-logo .o2 { color: var(--xp-violet); }
 .hnb-noodle-logo .d { color: #4285f4; }
 .hnb-noodle-logo .l { color: #34a853; }
 .hnb-noodle-logo .e { color: #ea4335; }
 .hnb-noodle-beta {
     font-size: 15px;
     font-weight: bold;
-    color: #dd4b39;
+    color: #c93a28;
     position: relative;
     top: -30px;
     left: 6px;
@@ -2835,7 +2989,7 @@
 .hnb-dir-items { display: flex; flex-wrap: wrap; gap: 4px 14px; }
 .hnb-dir-item { color: var(--xp-blue); cursor: pointer; text-decoration: none; font-size: 15px; }
 .hnb-dir-item:hover { text-decoration: underline; color: #b02020; }
-.hnb-dir-count { color: #8b897c; font-size: 13px; margin-left: 3px; }
+.hnb-dir-count { color: var(--xp-text-muted); font-size: 13px; margin-left: 3px; }
 
 /* Gateway error page */
 .hnb-error-address { font-family: 'Courier New', monospace; color: #5d5d55; }
@@ -3296,7 +3450,7 @@
 .whether-day-cond { font-size: 11px; }
 .whether-day-temps { margin-top: 2px; }
 .whether-day-extra { font-size: 10px; color: #3560a8; }
-.whether-footer { margin-top: 14px; font-size: 10px; color: #777; }
+.whether-footer { margin-top: 14px; font-size: 10px; color: var(--xp-ink-faint); }
 .whether-glyph { display: inline-block; width: 44px; height: 44px; border-radius: 50%; margin: 4px auto; }
 .whether-glyph--sun { background: radial-gradient(circle, #ffe45c 40%, #ffb400 70%, transparent 72%); }
 .whether-glyph--rain { background: radial-gradient(circle at 50% 40%, #b8c4d6 45%, transparent 47%), repeating-linear-gradient(120deg, transparent 0 6px, #3560a8 6px 8px); }
@@ -3858,7 +4012,9 @@
 .xp-app > div { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; padding: 8px; gap: 6px; }
 .xp-tabs { display: flex; gap: 2px; flex-wrap: wrap; flex: 0 0 auto; }
 .xp-tab { padding: 4px 10px; border: 1px solid var(--xp-border); border-bottom: none; border-radius: 4px 4px 0 0; background: #dcd9c8; cursor: pointer; }
-.xp-tab.active { background: var(--text-pure-white); font-weight: bold; border-top: 2px solid #f0a000; }
+/* The open tab's marker was Luna's orange, which on this desktop reads as the
+   parchment book's gold; the shell marks its own tab in its own blue. */
+.xp-tab.active { background: var(--text-pure-white); font-weight: bold; border-top: 2px solid var(--xp-blue); }
 .xp-pane { display: none; flex-direction: column; gap: 8px; flex: 1 1 auto; min-height: 0; overflow: auto; background: var(--text-pure-white); border: 1px solid var(--xp-border); padding: 10px; }
 .xp-pane.active { display: flex; }
 .xp-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -3872,10 +4028,10 @@
 .xp-group-title { font-weight: bold; color: var(--xp-blue-dark); }
 .xp-note { line-height: 1.4; color: #333; }
 .xp-desc { line-height: 1.4; color: #333; border: 1px solid var(--xp-border); padding: 6px; min-height: 40px; background: #fafaf5; }
-.xp-dim { color: #777; margin-left: auto; }
+.xp-dim { color: var(--xp-ink-faint); margin-left: auto; }
 .xp-indent { padding-left: 24px; }
 .xp-status { border-top: 1px solid var(--xp-border); padding-top: 4px; font-size: 12px; color: #444; flex: 0 0 auto; }
-.xp-empty { padding: 20px; text-align: center; color: #777; }
+.xp-empty { padding: 20px; text-align: center; color: var(--xp-ink-faint); }
 .xp-list { display: flex; flex-direction: column; border: 1px solid var(--xp-border); background: var(--text-pure-white); overflow: auto; flex: 1 1 auto; min-height: 60px; }
 /* The Fonts folder's sample line. The face is the one thing on that page a
    stylesheet cannot know in advance, so the applet hands it over as a custom
@@ -4466,21 +4622,134 @@
 .cp-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; margin-top: auto; }
 #pane-applets { display: none; flex-direction: column; height: 100%; }
 
-/* --- All Programs ---------------------------------------------------------- */
-.xp-allprograms { display: flex; flex-direction: column; height: 100%; }
-.xp-allprograms-hint { padding: 8px 10px; color: #333; font-size: 11px; border-bottom: 1px solid var(--xp-border); }
-.xp-allprograms-list { flex: 1 1 auto; overflow-y: auto; padding: 6px 4px; }
+/* --- All Programs, Games & Utilities --- */
+.xp-allprograms { display: flex; flex-direction: column; height: 100%; background: #fff; }
+.xp-drawer-tabs {
+    display: flex;
+    gap: 2px;
+    background: #ece9d8;
+    border-bottom: 1px solid var(--xp-border);
+    padding: 4px 6px 0 6px;
+}
+.xp-drawer-tab {
+    padding: 4px 12px;
+    font-size: 11px;
+    background: #d8d4c8;
+    border: 1px solid var(--xp-border);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    color: #000;
+    font-family: inherit;
+    outline: none;
+    user-select: none;
+}
+.xp-drawer-tab:hover { background: #e8e4d8; }
+.xp-drawer-tab.active {
+    background: #fff;
+    font-weight: bold;
+    border-bottom: 1px solid #fff;
+    margin-bottom: -1px;
+}
+.xp-allprograms-hint {
+    padding: 6px 10px;
+    color: #444;
+    font-size: 11px;
+    background: #fbfbfa;
+    border-bottom: 1px solid #e0e0e0;
+}
+.xp-allprograms-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 10px;
+    background: #fff;
+}
+.xp-drawer-section {
+    margin-bottom: 18px;
+}
+.xp-drawer-section:last-child {
+    margin-bottom: 8px;
+}
+.xp-drawer-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #0a246a;
+    padding: 4px 8px;
+    background: linear-gradient(to right, #d9e8fb, #f0f6ff 60%, transparent);
+    border-left: 4px solid #316ac5;
+    border-bottom: 1px solid #c5dcf7;
+    margin-bottom: 8px;
+}
+.xp-drawer-section-header span {
+    font-weight: bold;
+}
 .xp-allprograms-category {
-    font-weight: bold; color: #0a246a; padding: 8px 8px 3px 8px;
-    border-bottom: 1px solid var(--xp-border); margin-bottom: 3px;
+    font-weight: bold;
+    font-size: 11px;
+    color: #316ac5;
+    padding: 4px 6px 2px 6px;
+    border-bottom: 1px solid #eef2f8;
+    margin: 8px 4px 4px 4px;
+}
+.xp-allprograms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 6px;
+    padding: 4px;
 }
 .xp-allprograms-item {
-    display: flex; align-items: center; gap: 8px; padding: 4px 8px;
-    cursor: pointer; border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 6px 4px;
+    min-height: 68px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    box-sizing: border-box;
+    user-select: none;
 }
-.xp-allprograms-item:hover, .xp-allprograms-item:focus { background: #d9e8fb; border-color: #7da2ce; outline: none; }
-.xp-allprograms-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.xp-allprograms-empty { padding: 14px; color: #555; }
+.xp-allprograms-item:hover, .xp-allprograms-item:focus {
+    background: #e5f1fb;
+    border-color: #7da2ce;
+    outline: none;
+}
+.xp-allprograms-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    flex-shrink: 0;
+}
+.xp-allprograms-icon img, .xp-allprograms-icon svg {
+    max-width: 32px;
+    max-height: 32px;
+}
+.xp-allprograms-name {
+    font-size: 11px;
+    line-height: 1.2;
+    max-height: 2.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    color: #000;
+}
+.xp-allprograms-empty {
+    padding: 12px 16px;
+    color: #666;
+    font-size: 11px;
+    font-style: italic;
+}
 
 /* ==========================================================================
    OS window furniture: no gold, no Back
@@ -4512,3 +4781,286 @@
     font-size: 17px;
     text-align: left;
 }
+
+
+/* ==========================================================================
+   KanbanQuestLog, the quest log as an Archways program
+
+   On the parchment side the log is a cork board: a wooden frame, notes pinned
+   at an angle on cream paper, a serif hand. Hosted in a window that board was
+   the whole of the program, frame and all, which is the one thing a program
+   must not be: a game screen posted through the window and left there.
+
+   In here it is a task list instead. The board is the client area, each column
+   a framed pane with a heading strip, each note a row on white paper. Nothing
+   is rotated, pinned or shadowed, the hand is Tahoma, and the sheet a note
+   opens is a page rather than a parchment.
+   ========================================================================== */
+#kanban-quest-content {
+    width: 100%;
+    height: 100%;
+    font-family: 'Tahoma', sans-serif;
+    font-size: 13px;
+    color: var(--text-pure-black);
+    background: var(--xp-bg);
+    box-sizing: border-box;
+}
+#kanban-quest-content * { font-family: 'Tahoma', sans-serif; box-sizing: border-box; }
+
+/* The board: the window's own paper, with the frame, the grain and the
+   vignette taken off. */
+#kanban-quest-content #kb-board-overlay {
+    background: var(--xp-bg) !important;
+    background-size: auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    user-select: none;
+}
+#kanban-quest-content #kb-board-overlay::before,
+#kanban-quest-content #kb-board-overlay::after { display: none !important; }
+
+/* The strip over the columns: a toolbar, not a signboard. */
+#kanban-quest-content #kb-board-header {
+    padding: 6px 10px;
+    gap: 10px;
+    min-height: 0;
+    color: var(--text-pure-black);
+    text-shadow: none;
+    background: var(--xp-bg);
+    border-bottom: 1px solid var(--xp-border);
+}
+#kanban-quest-content .kb-board-title {
+    position: static;
+    transform: none;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0;
+    color: var(--xp-blue-dark);
+}
+#kanban-quest-content .kb-board-hint { font-size: 12px; opacity: 1; color: var(--xp-text-muted); }
+
+#kanban-quest-content #kb-columns {
+    padding: 8px;
+    gap: 8px;
+    border-top: none;
+}
+#kanban-quest-content .kb-col-divider { display: none; }
+#kanban-quest-content .kb-column {
+    padding: 0;
+    background: var(--text-pure-white);
+    border: 1px solid var(--xp-border);
+}
+#kanban-quest-content .kb-column.kb-drop {
+    background: var(--xp-link-hover);
+    box-shadow: inset 0 0 0 2px var(--xp-blue);
+    border-radius: 0;
+}
+#kanban-quest-content .kb-col-header {
+    margin: 0;
+    padding: 3px 8px;
+    border: none;
+    border-bottom: 1px solid var(--xp-border);
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--xp-blue-tab);
+    color: var(--xp-white);
+}
+#kanban-quest-content .kb-col-title {
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-shadow: none;
+}
+#kanban-quest-content .kb-col-count {
+    font-size: 11px;
+    color: var(--xp-white);
+    background: rgba(0, 0, 0, 0.25);
+    border: none;
+    border-radius: 2px;
+    padding: 0 6px;
+}
+#kanban-quest-content .kb-cards-wrap {
+    align-items: stretch;
+    gap: 4px;
+    padding: 4px;
+}
+#kanban-quest-content .kb-cards-wrap::-webkit-scrollbar { width: 16px; }
+#kanban-quest-content .kb-cards-wrap::-webkit-scrollbar-track { background: var(--xp-gray-light); }
+#kanban-quest-content .kb-cards-wrap::-webkit-scrollbar-thumb {
+    background: var(--xp-scroll-thumb);
+    border: 1px solid var(--xp-border);
+    border-radius: 0;
+}
+#kanban-quest-content .kb-empty-col {
+    color: var(--xp-text-muted);
+    font-size: 12px;
+    opacity: 1;
+    padding: 14px 8px;
+    text-shadow: none;
+}
+
+/* A note becomes a row: square, flat, and picked out the way a list picks a
+   line out. The pin and the wax seal stay, shrunk to the marks they are. */
+#kanban-quest-content .kb-card {
+    max-width: none;
+    /* Short, but with room kept at the right for the seal and the stamp, which
+       are still pinned to the corner they were pinned to on the board. */
+    min-height: 44px;
+    padding: 6px 34px 8px 8px;
+    color: var(--text-pure-black);
+    background: var(--xp-input);
+    border: 1px solid var(--xp-disabled);
+    box-shadow: none;
+    transform: none;
+    transition: none;
+}
+#kanban-quest-content .kb-card.focused,
+#kanban-quest-content .kb-card:hover {
+    transform: none;
+    background: var(--xp-link-hover);
+    border-color: var(--xp-blue);
+    outline: none;
+    box-shadow: none;
+}
+#kanban-quest-content .kb-card.kb-grabbed {
+    transform: none;
+    background: var(--xp-tooltip);
+    border: 1px dashed var(--xp-blue);
+    outline: none;
+    box-shadow: none;
+}
+#kanban-quest-content .kb-card.kb-dragging { opacity: 0.4; filter: none; }
+#kanban-quest-content .kb-card.kb-done { filter: none; opacity: 0.75; }
+#kanban-quest-content .kb-ghost { transform: none; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); }
+#kanban-quest-content .kb-pin {
+    position: static;
+    float: right;
+    width: 9px;
+    height: 9px;
+    margin: 3px 0 0 6px;
+    background: var(--pin, var(--xp-red));
+    box-shadow: none;
+}
+#kanban-quest-content .kb-quest-icon {
+    position: static;
+    float: left;
+    margin: 0 6px 2px 0;
+    border-radius: 0;
+    background-color: transparent;
+    outline: 1px solid var(--xp-border);
+    box-shadow: none;
+}
+#kanban-quest-content .kb-card-title { font-size: 12px; margin-bottom: 3px; }
+#kanban-quest-content .kb-card-giver { font-size: 11px; opacity: 1; color: var(--xp-text-muted); margin-bottom: 3px; }
+#kanban-quest-content .kb-card-reward { font-size: 11px; color: var(--xp-ok-dark); }
+#kanban-quest-content .kb-card-meta { font-size: 11px; color: var(--xp-ink-5); margin-top: 3px; }
+#kanban-quest-content .kb-progress-track {
+    background: var(--xp-gray-light);
+    border: 1px solid var(--xp-border);
+    border-radius: 0;
+    height: 9px;
+}
+#kanban-quest-content .kb-progress-fill { background: var(--xp-blue-med); }
+#kanban-quest-content .kb-progress-label { font-size: 11px; color: var(--xp-ink-5); }
+#kanban-quest-content .kb-urgent {
+    top: auto;
+    right: 6px;
+    transform: none;
+    box-shadow: none;
+    font-size: 10px;
+    letter-spacing: 0;
+    background: var(--xp-red);
+}
+#kanban-quest-content .kb-seal {
+    width: 20px;
+    height: 20px;
+    right: 8px;
+    bottom: 8px;
+    font-size: 11px;
+    border: 1px solid var(--xp-border);
+    box-shadow: none;
+    color: var(--xp-white);
+}
+#kanban-quest-content .kb-resolved-stamp {
+    position: static;
+    float: right;
+    margin: 2px 0 0 6px;
+    transform: none;
+    opacity: 1;
+    letter-spacing: 0;
+    font-size: 10px;
+    padding: 0 5px;
+    border-width: 1px;
+    border-radius: 0;
+}
+
+/* The sheet a note opens: a page in the same window, not a parchment over it. */
+#kanban-quest-content #kb-detail-backdrop { background: rgba(0, 0, 0, 0.35); }
+#kanban-quest-content #kb-detail-panel {
+    background: var(--text-pure-white);
+    border: 1px solid var(--xp-border);
+    box-shadow: none;
+    color: var(--text-pure-black);
+}
+#kanban-quest-content #kb-detail-panel::-webkit-scrollbar { width: 16px; }
+#kanban-quest-content #kb-detail-panel::-webkit-scrollbar-track { background: var(--xp-gray-light); }
+#kanban-quest-content #kb-detail-panel::-webkit-scrollbar-thumb {
+    background: var(--xp-scroll-thumb);
+    border: 1px solid var(--xp-border);
+    border-radius: 0;
+}
+#kanban-quest-content .kb-detail-page { max-width: none; padding: 12px 16px 20px; }
+#kanban-quest-content .kb-detail-header {
+    font-size: 17px;
+    color: var(--xp-blue-dark);
+    border-bottom: 1px solid var(--xp-border);
+    padding-bottom: 5px;
+    margin-bottom: 6px;
+}
+#kanban-quest-content .kb-detail-giver { font-size: 12px; opacity: 1; color: var(--xp-text-muted); margin: 0 0 12px; }
+#kanban-quest-content .kb-detail-body { font-size: 13px; line-height: 1.5; text-align: left; }
+#kanban-quest-content .kb-detail-body::first-letter {
+    font-size: 13px;
+    font-weight: normal;
+    color: inherit;
+    float: none;
+    padding: 0;
+    line-height: inherit;
+}
+#kanban-quest-content .kb-detail-sec {
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    color: var(--xp-blue-dark);
+    border-bottom: 1px solid var(--xp-border);
+    margin: 14px 0 6px;
+}
+#kanban-quest-content .kb-detail-steps,
+#kanban-quest-content .kb-detail-line,
+#kanban-quest-content .kb-upd-text { font-size: 12px; }
+#kanban-quest-content .kb-detail-line.warn { color: var(--xp-bad); }
+#kanban-quest-content .kb-upd-row { border-bottom: 1px dotted var(--xp-silver-5); padding: 6px 0; }
+#kanban-quest-content .kb-upd-date { font-size: 11px; color: var(--xp-text-muted); }
+#kanban-quest-content .kb-checklist { font-size: 12px; line-height: 1.5; }
+#kanban-quest-content .kb-check-row.done { color: var(--xp-ok-dark); }
+#kanban-quest-content .kb-check-mark { color: var(--xp-blue-dark); }
+#kanban-quest-content .kb-check-count { color: var(--xp-ink-5); }
+#kanban-quest-content .kb-check-order { font-size: 11px; opacity: 1; color: var(--xp-text-muted); }
+#kanban-quest-content .kb-detail-btns { gap: 6px; margin-top: 16px; }
+#kanban-quest-content .kb-detail-close {
+    padding: 4px 14px;
+    font-size: 13px;
+    letter-spacing: 0;
+    text-transform: none;
+    border: 1px solid var(--xp-border);
+    border-radius: 3px;
+    background: var(--xp-border-light);
+    color: var(--text-pure-black);
+}
+#kanban-quest-content .kb-detail-close:hover { background: var(--xp-link-hover); border-color: var(--xp-blue); }
+#kanban-quest-content .kb-detail-close.kb-detail-map,
+#kanban-quest-content .kb-detail-close.kb-detail-move {
+    background: var(--xp-blue);
+    border-color: var(--xp-blue);
+    color: var(--xp-white);
+}
+#kanban-quest-content .kb-detail-close.kb-detail-map:hover,
+#kanban-quest-content .kb-detail-close.kb-detail-move:hover { background: var(--xp-blue-hover); }

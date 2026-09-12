@@ -792,7 +792,7 @@
       refreshModifiers(state);
 
       if (deltaMinutes >= SKIP_FLUSH_MINUTES && window.WorldManager?.flush) {
-        try { window.WorldManager.flush(); } catch (e) {
+        try { window.WorldManager.flush("npcs"); } catch (e) {
           console.error("[NPCWorldWeb] world flush failed:", e);
         }
       }

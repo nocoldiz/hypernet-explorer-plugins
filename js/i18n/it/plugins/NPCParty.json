@@ -4,6 +4,6 @@
   "introduce": "Il mio nome è {name} e sono un {className}",
   "joinsParty": "{name} si unisce al gruppo!",
   "residence": "Residenza",
-  "joinedInactive": "{name} si unisce, ma non c'è posto sulla strada: attende come membro inattivo.",
+  "joinedInactive": "{name} si unisce, ma non c'è posto sulla strada: attende tra le riserve.",
   "benchedLore": "{name} ha accettato di viaggiare con il gruppo, e da allora attende un posto al suo interno."
 }

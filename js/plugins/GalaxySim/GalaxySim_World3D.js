@@ -38,14 +38,22 @@
   //   SYSTEM is special: planet orbits are already in AU and used as units 1:1
   //   (handled in Scene3D_Bodies), so its ly mapping is unused.
   // ==========================================================================
+  // Each entry is what one world unit MEANS at that scale, and the builder for
+  // that scale draws to it: multiply a view's framing radius by its unit and
+  // the answer is the real size of the thing being drawn. That was not true
+  // before. The galaxy said 4 ly per unit while Scene3D_Cosmos drew its disk at
+  // 20 (GAL.U); the supercluster framed 1.6 Gly for a structure 250 Mly across;
+  // and the last two scales framed 3 and 5 TRILLION light years for a universe
+  // whose observable radius is 46.5 Gly - a thousand times too far out, which
+  // is why both were a featureless ball with nothing to see in them.
   const LY_PER_UNIT = {
-    [SCALE_SYSTEM]: 1,            // unused (system uses AU directly)
-    [SCALE_GALAXY]: 4,           // 130 ly travel bubble -> ~32 u radius
-    [SCALE_LOCAL_GROUP]: 1000,   // 1 u = 1 kly
-    [SCALE_SUPERCLUSTER]: 1e6,   // 1 u = 1 Mly
-    [SCALE_FILAMENTS]: 1e7,      // 1 u = 10 Mly
-    [SCALE_OBSERVABLE]: 1e9,     // 1 u = 1 Gly
-    [SCALE_UNIVERSE_SPHERE]: 2e9, // 1 u = 2 Gly
+    [SCALE_SYSTEM]: 1,              // unused (system uses AU directly)
+    [SCALE_GALAXY]: 20,             // = GAL.U: 52 kly disk -> 2600 u
+    [SCALE_LOCAL_GROUP]: 5e3,       // 1 u = 5 kly: 5 Mly radius -> 1000 u
+    [SCALE_SUPERCLUSTER]: 2.5e5,    // 1 u = 0.25 Mly: Laniakea's 250 Mly -> 1000 u
+    [SCALE_FILAMENTS]: 1e7,         // 1 u = 10 Mly: the 46.5 Gly observable -> 4650 u
+    [SCALE_OBSERVABLE]: 2e7,        // 1 u = 20 Mly: the same sphere, seen whole -> 2325 u
+    [SCALE_UNIVERSE_SPHERE]: 1e8,   // 1 u = 100 Mly: the observable sphere is 465 u across
   };
 
   // Suggested near/far clip planes per scale (world units). FAR/NEAR kept well

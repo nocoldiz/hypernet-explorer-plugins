@@ -139,7 +139,7 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.6.16a"
+    "text": "0.6.17a"
   },
   "language": {
     "label": "✦ LANG"
@@ -209,21 +209,24 @@
     }
   },
   "card": {
-    "weapon": "WEAPON",
-    "artifact": "ARTIFACT",
+    "queryType": "QUERY_TYPE",
+    "idAbbr": "ID",
+    "type": {
+      "weapon": "WEAPON",
+      "artifact": "ARTIFACT",
+      "armor": "ARMOR",
+      "item": "ITEM",
+      "skill": "SKILL",
+      "enemy": "ENEMY"
+    },
     "levelAbbr": "LV",
     "price": "PRICE",
     "element": "ELEMENT",
     "inflicts": "INFLICTS",
     "info": "INFO",
-    "stats": {
-      "str": "STR",
-      "con": "CON",
-      "int": "INT",
-      "wis": "WIS",
-      "dex": "DEX",
-      "psi": "PSI"
-    },
+    "desc": "DESC",
+    "exec": "EXEC",
+    "eof": "EOF",
     "donorSuffix": " Donor"
   },
   "bgMode": {
@@ -231,9 +234,6 @@
     "autodrive": "CAMPER DRIVE",
     "cards": "DATA CARDS",
     "space": "SPACE",
-    "bestiary": "BESTIARY",
-    "artifacts": "ARTIFACTS",
-    "weapons": "WEAPONS",
     "random": "RANDOM"
   },
   "artifact": {

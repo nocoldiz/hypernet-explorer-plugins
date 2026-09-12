@@ -139,7 +139,7 @@
     "curvature": "CURVATURA SPAZIALE RILEVATA"
   },
   "version": {
-    "text": "0.6.16a"
+    "text": "0.6.17a"
   },
   "language": {
     "label": "✦ LINGUA"
@@ -209,21 +209,24 @@
     }
   },
   "card": {
-    "weapon": "ARMA",
-    "artifact": "ARTEFATTO",
+    "queryType": "TIPO_QUERY",
+    "idAbbr": "ID",
+    "type": {
+      "weapon": "ARMA",
+      "artifact": "ARTEFATTO",
+      "armor": "ARMATURA",
+      "item": "OGGETTO",
+      "skill": "ABILITÀ",
+      "enemy": "NEMICO"
+    },
     "levelAbbr": "LIV",
     "price": "PREZZO",
     "element": "ELEMENTO",
     "inflicts": "INFLIGGE",
     "info": "INFO",
-    "stats": {
-      "str": "FRZ",
-      "con": "COS",
-      "int": "INT",
-      "wis": "SAG",
-      "dex": "DES",
-      "psi": "PSI"
-    },
+    "desc": "DESCR",
+    "exec": "ESEG",
+    "eof": "EOF",
     "donorSuffix": " Donatrice"
   },
   "bgMode": {
@@ -231,9 +234,6 @@
     "autodrive": "CAMPER",
     "cards": "SCHEDE DATI",
     "space": "SPAZIO",
-    "bestiary": "BESTIARIO",
-    "artifacts": "ARTEFATTI",
-    "weapons": "ARMI",
     "random": "CASUALE"
   },
   "artifact": {

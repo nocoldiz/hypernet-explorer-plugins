@@ -3419,6 +3419,8 @@
       const y = Math.max(2, Math.min(h - 3, Math.round(cy + Math.sin(a) * r)));
       if (!$gameMap.checkPassage(x, y, 0x0f)) continue;
       if ($gameMap.regionId(x, y) === 99) continue;
+      // The keep-out region: solid mass, never a quest marker.
+      if (window.RegionRules && window.RegionRules.blocksSpawn(x, y)) continue;
       if ($gameMap.eventsXy(x, y).length) continue;
       return { x, y };
     }

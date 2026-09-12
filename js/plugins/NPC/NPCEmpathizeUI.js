@@ -1433,7 +1433,7 @@
     // Join gate: only hiding it once this NPC has just joined via this panel
     // (_justJoined). No Switch 67 or name-matching - those caused false
     // negatives that wrongly hid Join. A full party is no longer a gate either:
-    // the fourth person to say yes signs on as an inactive member and waits on
+    // the fourth person to say yes signs on as a member in reserves and waits on
     // the Dynamics board, so the offer is made whatever the party's size (see
     // NPCSystemParty.joinParty).
     const partyFull = this._justJoined === true;
@@ -1446,9 +1446,8 @@
     // template artifact, never meant for this), but the face on display is a
     // rotating persona borrowed cosmetically, not someone actually free to
     // travel: flipping the counter's own self-switch A would strand it on its
-    // blank page instead (see ShopShiftManager.isShopEvent), so Join is never
-    // offered on one.
-    const canVanishOnJoin = !shiftInfo && _hasSelfSwitchAPage(evId);
+    const isShopEvent = !!shiftInfo || !!window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId));
+    const canVanishOnJoin = !isShopEvent && _hasSelfSwitchAPage(evId);
 
     // A fallen companion is left behind when a recruit signs on, so the count
     // is of the travellers still standing (see _travellingPartyCount).
@@ -1492,11 +1491,19 @@
     // would against a stranger, which reads as a bug rather than a joke when
     // the "stranger" is a travelling companion, and Treat Wounds bills gold
     // outright once the target's opinion drops under +20.
+
+    // Talking to yourself. A one-person party has nobody else to put in the
+    // speaker's chair, so the subject of the panel and the one addressing it
+    // are the same character, and "Socialize" is the wrong word for what that
+    // is. The move behind the button does not change: only what it is called.
+    const selfTalk = actorMode && this._focusActor?.()?.actorId?.() === this._actorId;
+    const socializeLabel = selfTalk ? T.introspectLabel : T.socializeLabel;
+
     this._chatActions = remoteMode
       ? []
       : actorMode
       ? [
-          { id: 'socialize',  label: T.socializeLabel },
+          { id: 'socialize',  label: socializeLabel },
           { id: 'romance',    label: T.courtLabel },
           { id: 'directions', label: T.directionsLabel },
           infectAction,

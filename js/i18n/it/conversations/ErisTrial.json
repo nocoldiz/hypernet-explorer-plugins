@@ -90,7 +90,7 @@
     "una ciocca di capelli di nessuno",
     "mezzo biglietto del treno",
     "una piuma di piccione con un numero di serie",
-    "un registro con la tua calligrafia",
+    "un grimorio con la tua calligrafia",
     "un coltello mai usato nemmeno una volta",
     "una clessidra rotta",
     "una lettera che non hai mai scritto",
@@ -640,7 +640,7 @@
     "Spero capiate che non era niente di personale.",
     "Era personale, in realtà. Molto personale.",
     "La giustizia e sfiancante. Come fa qualcuno a farlo ogni giorno?",
-    "Scrivetelo nel registro. Alla voce 'inevitabile'.",
+    "Scrivetelo nel grimorio. Alla voce 'inevitabile'.",
     "Ripensero a questo caso stasera. Brevemente.",
     "Non ringraziatemi. Rovina l'atmosfera."
   ],
@@ -1957,7 +1957,7 @@
       ],
       "innocent": [
         "E anche la mia domanda, Vostro Onore.",
-        "C'è un registro con il mio nome, all'altro capo della città.",
+        "C'è un grimorio con il mio nome, all'altro capo della città.",
         "Niente. Perché non è accaduto niente."
       ]
     },

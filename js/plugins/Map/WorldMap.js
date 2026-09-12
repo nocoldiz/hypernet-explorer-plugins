@@ -478,6 +478,10 @@
         requestFocusAt: requestWorldMapFocus,
         isMinimapVisible: () => isMinimapVisible(),
         setMinimapVisible: (v) => setMinimapVisible(v),
+        // Stand the corner chart aside while a conversation portrait is drawn
+        // over its corner, without touching the state the player chose.
+        setConversationCover: (v) => setConversationCover(v),
+        isConversationCovered: () => conversationCover,
         // The three minimap modes and the one the player picked.
         minimapModes: () => MINIMAP_MODES.slice(),
         minimapMode: () => minimapMode(),
@@ -1282,11 +1286,32 @@
         return currentMapState === 1 || currentMapState === 2;
     }
 
+    // A two-sided conversation stands the party's own portrait down the left of
+    // the screen, over the very corner the chart is drawn in. While one is up
+    // the chart gives way to it; it is put back the moment the busts leave.
+    // Raised and dropped by NPC/DialogueSystem's BustManager.
+    let conversationCover = false;
+
+    function setConversationCover(on) {
+        const want = !!on;
+        if (want === conversationCover) return;
+        conversationCover = want;
+        refreshWorldMapDisplay();
+    }
+
     function refreshWorldMapDisplay() {
         createWorldMapSprite();
         if (!isLiveSprite(worldMapSprite)) return;
 
         if (currentMapState === 0 || (currentMapState !== 3 && !modeAllowsMinimap())) {
+            worldMapSprite.visible = false;
+            if (fsLayer) fsLayer.visible = false;
+            return;
+        }
+
+        // The fullscreen map is opened deliberately and is not the corner chart:
+        // only the corner one steps aside for a portrait.
+        if (conversationCover && currentMapState !== 3) {
             worldMapSprite.visible = false;
             if (fsLayer) fsLayer.visible = false;
             return;
@@ -2542,6 +2567,11 @@
         lastRenderedTileY = -1;
 
         const mapId = $gameMap.mapId();
+
+        // Portraits do not survive a scene change, so neither does the cover
+        // they put over the corner chart: a conversation cut short by a
+        // transfer must never leave the chart hidden for good.
+        conversationCover = false;
 
         // Where the party now is, filed once through the coordinate service.
         // This used to parse <Coords X Y> here and write vars 43/44 itself,

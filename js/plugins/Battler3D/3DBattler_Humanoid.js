@@ -91,6 +91,51 @@
     const _qSh = new THREE.Quaternion(), _qEl = new THREE.Quaternion(), _qLimb = new THREE.Quaternion();
     const _upDir = new THREE.Vector3(), _foreDir = new THREE.Vector3(), _hinge = new THREE.Vector3(), _neg = new THREE.Vector3();
 
+    // The two forward-kinematics helpers below used to be built inside
+    // animatePose, which meant two fresh closures per humanoid per frame for
+    // functions that close over nothing but the module scratch objects above.
+    // They are pure arithmetic on the meshes they are handed, so they live out
+    // here and are built once.
+    // ── FK HELPER ────────────────────────────────────────────────────
+    function fk(mesh, ox, oy, oz, angle, len) {
+        const ca = Math.cos(angle), sa = Math.sin(angle);
+        if (mesh && mesh.visible) {
+            mesh.position.set(ox, oy - len * 0.5 * ca, oz + len * 0.5 * sa);
+            mesh.rotation.set(-angle, 0, 0);
+        }
+        return { x: ox, y: oy - len * ca, z: oz + len * sa };
+    }
+
+    // 2-DOF shoulder (pitch forward, abduct out to the side) + 1-DOF elbow
+    // hinge. `side` is +1 for the right arm, -1 for the left (abduction
+    // swings the elbow AWAY from the torso). Poses both cylinders with
+    // quaternions so the elbow is a genuine hinge and the whole arm can
+    // punch laterally. Writes _foreDir (world forward of the forearm, used
+    // to align a held weapon) and returns the wrist position.
+    function fk2(upper, fore, hand, sx, sy, sz, pitch, abduct, elbow, side, upLen, foreLen) {
+        // Shoulder: abduct about Z, then pitch about X (forward is +Z).
+        _qAb.setFromAxisAngle(_AX_Z, side * abduct);
+        _qPi.setFromAxisAngle(_AX_X, -pitch);
+        _qSh.copy(_qPi).multiply(_qAb);
+        _upDir.copy(_V_DOWN).applyQuaternion(_qSh);           // shoulder -> elbow
+        const ex = sx + _upDir.x * upLen, ey = sy + _upDir.y * upLen, ez = sz + _upDir.z * upLen;
+        if (upper && upper.visible) {
+            upper.position.set(sx + _upDir.x * upLen * 0.5, sy + _upDir.y * upLen * 0.5, sz + _upDir.z * upLen * 0.5);
+            upper.quaternion.setFromUnitVectors(_V_UP, _neg.copy(_upDir).negate());
+        }
+        // Elbow hinge about the upper arm's local lateral axis (fold forward).
+        _hinge.copy(_AX_X).applyQuaternion(_qSh);
+        _qEl.setFromAxisAngle(_hinge, -elbow);
+        _foreDir.copy(_upDir).applyQuaternion(_qEl);          // elbow -> wrist
+        const wx = ex + _foreDir.x * foreLen, wy = ey + _foreDir.y * foreLen, wz = ez + _foreDir.z * foreLen;
+        if (fore && fore.visible) {
+            fore.position.set(ex + _foreDir.x * foreLen * 0.5, ey + _foreDir.y * foreLen * 0.5, ez + _foreDir.z * foreLen * 0.5);
+            fore.quaternion.setFromUnitVectors(_V_UP, _neg.copy(_foreDir).negate());
+        }
+        if (hand && hand.visible) hand.position.set(wx, wy - 0.05, wz + 0.02);
+        return { x: wx, y: wy, z: wz };
+    }
+
     //=========================================================================
     // Humanoid creature profiles (visual only; the rig keeps goblin dimensions)
     //=========================================================================
@@ -1312,55 +1357,28 @@
             this.torso.rotation.set(0, 0, Math.sin(t * 1.2) * 0.03);
             const tx = 0, ty = 1.1 + bob, tz = 0;
 
-            // ── FK HELPER ────────────────────────────────────────────────────
-            const fk = (mesh, ox, oy, oz, angle, len) => {
-                const ca = Math.cos(angle), sa = Math.sin(angle);
-                if (mesh && mesh.visible) {
-                    mesh.position.set(ox, oy - len * 0.5 * ca, oz + len * 0.5 * sa);
-                    mesh.rotation.set(-angle, 0, 0);
-                }
-                return { x: ox, y: oy - len * ca, z: oz + len * sa };
-            };
-
-            // 2-DOF shoulder (pitch forward, abduct out to the side) + 1-DOF elbow
-            // hinge. `side` is +1 for the right arm, -1 for the left (abduction
-            // swings the elbow AWAY from the torso). Poses both cylinders with
-            // quaternions so the elbow is a genuine hinge and the whole arm can
-            // punch laterally. Writes _foreDir (world forward of the forearm, used
-            // to align a held weapon) and returns the wrist position.
-            const fk2 = (upper, fore, hand, sx, sy, sz, pitch, abduct, elbow, side, upLen, foreLen) => {
-                // Shoulder: abduct about Z, then pitch about X (forward is +Z).
-                _qAb.setFromAxisAngle(_AX_Z, side * abduct);
-                _qPi.setFromAxisAngle(_AX_X, -pitch);
-                _qSh.copy(_qPi).multiply(_qAb);
-                _upDir.copy(_V_DOWN).applyQuaternion(_qSh);           // shoulder -> elbow
-                const ex = sx + _upDir.x * upLen, ey = sy + _upDir.y * upLen, ez = sz + _upDir.z * upLen;
-                if (upper && upper.visible) {
-                    upper.position.set(sx + _upDir.x * upLen * 0.5, sy + _upDir.y * upLen * 0.5, sz + _upDir.z * upLen * 0.5);
-                    upper.quaternion.setFromUnitVectors(_V_UP, _neg.copy(_upDir).negate());
-                }
-                // Elbow hinge about the upper arm's local lateral axis (fold forward).
-                _hinge.copy(_AX_X).applyQuaternion(_qSh);
-                _qEl.setFromAxisAngle(_hinge, -elbow);
-                _foreDir.copy(_upDir).applyQuaternion(_qEl);          // elbow -> wrist
-                const wx = ex + _foreDir.x * foreLen, wy = ey + _foreDir.y * foreLen, wz = ez + _foreDir.z * foreLen;
-                if (fore && fore.visible) {
-                    fore.position.set(ex + _foreDir.x * foreLen * 0.5, ey + _foreDir.y * foreLen * 0.5, ez + _foreDir.z * foreLen * 0.5);
-                    fore.quaternion.setFromUnitVectors(_V_UP, _neg.copy(_foreDir).negate());
-                }
-                if (hand && hand.visible) hand.position.set(wx, wy - 0.05, wz + 0.02);
-                return { x: wx, y: wy, z: wz };
-            };
 
             // ── ANIMATION ANGLES ─────────────────────────────────────────────
             const wt = this.weaponType;
-            const lightWeapons  = LIGHT_WEAPONS;
-            const atkSpeedMult  = lightWeapons.includes(wt) ? 1.6 : (wt === 3 ? 0.6 : 1.0);
-            const atkSwingArc   = lightWeapons.includes(wt) ? 0.75 : (wt === 3 ? 1.65 : 1.1);
+            // Whether the weapon in hand is a light one is a scan of a small
+            // array, and it was scanned three or four times a frame for an answer
+            // that cannot change once the creature is built. Asked once, on the
+            // first frame, and kept on the battler after that.
+            if (this._isLightWeapon === undefined) {
+                this._isLightWeapon = LIGHT_WEAPONS.includes(wt);
+                this._lightWeaponFor = wt;
+            } else if (this._lightWeaponFor !== wt) {
+                // A mimic or a transformation can hand it something else.
+                this._isLightWeapon = LIGHT_WEAPONS.includes(wt);
+                this._lightWeaponFor = wt;
+            }
+            const isLight = this._isLightWeapon;
+            const atkSpeedMult  = isLight ? 1.6 : (wt === 3 ? 0.6 : 1.0);
+            const atkSwingArc   = isLight ? 0.75 : (wt === 3 ? 1.65 : 1.1);
             const idleSlouch    = (wt === 3 ? 0.1 : 0) + (this.posture || 0);
 
             let lA = 0, rA = 0, lL = 0, rL = 0;
-            let elbB = wt === 3 ? 0.45 : (lightWeapons.includes(wt) ? 0.2 : 0.28);
+            let elbB = wt === 3 ? 0.45 : (isLight ? 0.2 : 0.28);
             // Per-arm elbow override (undefined -> falls back to shared elbB below).
             let lElb, rElb;
             // When set, the ARMS block solves the attacking arm(s) with the full
@@ -1373,7 +1391,7 @@
                 rA   = -Math.sin(t * 1.8) * 0.18 + idleSlouch;
                 lL   =  Math.sin(t * 1.4) * 0.05;
                 rL   = -Math.sin(t * 1.4) * 0.05;
-                elbB = wt === 3 ? 0.4 : (lightWeapons.includes(wt) ? 0.18 : 0.22);
+                elbB = wt === 3 ? 0.4 : (isLight ? 0.18 : 0.22);
             } else if (this.currentAnimation === 'attack') {
                 // A normal attack is a real SIDE PUNCH / lateral swing: the shoulder
                 // abducts the arm out to the side (real elbow held away from the

@@ -648,7 +648,7 @@
     "erisLooksAtYouWith": "She looks at you with {an expression that should require a liability waiver|the sort of focus usually reserved for structural demolitions|a grin that has already voided three cosmic warranties}.",
     "theEnergyAroundYouExplodes": "The local atmosphere {resigns on the spot|detonates with the enthusiasm of an unlicensed fireworks factory|pops like an overinflated probability bubble}, while she laughs {like an arsonist who just found a dry forest|with zero regard for property values}.",
     "sheLiftsYouAndSpins": "She hauls you into the air and spins you around; {gravity takes the hint and looks the other way|your inner ear files an emergency injunction|the horizon wobbles like a cheap tablecloth}.",
-    "erisStudiesYouWithAn": "She studies you {like an incriminating bank statement|with the cynical curiosity of an auditor finding a third ledger|the way a cat watches a vase near a ledge}.",
+    "erisStudiesYouWithAn": "She studies you {like an incriminating bank statement|with the cynical curiosity of an auditor finding a third grimorie|the way a cat watches a vase near a ledge}.",
     "erisMovesCloserHerEyes": "She leans in, {smelling faintly of burnt ozone and expensive spite|looking suspiciously like a problem you can't afford|radiating the kind of trouble that gets songs written and warrants issued}.",
     "thereSSomethingInThe": "There is a {palpable charge in the air, mostly statutory|current between you two that could jump-start a dead galaxy|tension so thick you could carve bail bonds out of it}.",
     "theAtmosphereIsComfortableLike": "The evening settles into {a strange, domestic truce|a lull that feels less like safety and more like a well-timed commercial break|the quiet comfort of two people who know the fire exits}.",
@@ -678,7 +678,7 @@
     "nothingHasChangedTheOdds": "{Nothing has changed. The house still wins, the deck is still stacked, and you're still sitting at the worst table.|Zero progress. She will happily watch you get banished before breakfast tomorrow.}",
     "theGoddessOfJusticeHas": "★★ {The Goddess of Justice threw out the rulebook. In future sessions, your defense will consist of her yelling at the jury.|Courtroom standards have collapsed into your favor. Enjoy the nepotism.} ★★",
     "theBenchWillLeanYour": "★ {The judge's bench tilts slightly in your direction. It won't save you from a felony, but misdemeanors are now free.|The scales of justice have a thumb on them. Guess whose thumb.} ★",
-    "sheWillRememberThisEvening": "{She'll remember tonight. Not out of tenderness, but because she keeps meticulous records of people who test her patience.|This evening is now permanently logged in her ledger under 'Unresolved Liabilities.'}",
+    "sheWillRememberThisEvening": "{She'll remember tonight. Not out of tenderness, but because she keeps meticulous records of people who test her patience.|This evening is now permanently logged in her grimorie under 'Unresolved Liabilities.'}",
     "theDate": "The Date",
     "opinion": "Opinion",
     "rapport": "Rapport",
@@ -1914,7 +1914,7 @@
         "She smiles the smile of someone {choosing a sentence|counting to divine ten|drafting a memoir chapter about this}.",
         "\"I've presided over executions with better flow,\" she murmurs, {mostly|almost|not quite} to herself.",
         "She pats your hand. It is the single most devastating gesture available to her, and she knows it.",
-        "\"This is going in the ledger,\" she says. You do not ask which ledger. There is clearly a ledger."
+        "\"This is going in the grimorie,\" she says. You do not ask which grimorie. There is clearly a grimorie."
       ]
     },
     "chaotic": {
@@ -2379,7 +2379,7 @@
     "stakeout": {
       "intro": [
         "She yanks you into an alley shadow with {the practiced brutality of an off-duty cop|a grip that suggests you are now an accessory to espionage|zero warning and two cups of scalding diner coffee}, nodding toward a brightly lit window across the street.",
-        "\"We're running surveillance,\" she whispers, {looking far too entertained for someone parked behind a dumpster|adjusting miniature binoculars that have three too many lenses|checking an encrypted ledger on a stolen pager}. \"{No, I won't tell you who we're watching. That's the dessert.|The target has it coming.|Just drink your coffee and look suspicious.}\""
+        "\"We're running surveillance,\" she whispers, {looking far too entertained for someone parked behind a dumpster|adjusting miniature binoculars that have three too many lenses|checking an encrypted grimorie on a stolen pager}. \"{No, I won't tell you who we're watching. That's the dessert.|The target has it coming.|Just drink your coffee and look suspicious.}\""
       ],
       "activity": [
         "\"Eyes on {the third-floor balcony|the guy with the trench coat and the twitch|the bakery backdoor}. {When the drop happens, don't blink.|If they pull out a violin case, duck.|If nothing happens, we celebrate the triumph of paranoia.} Drink up.\"",
@@ -2443,7 +2443,7 @@
       ],
       "activity": [
         "\"First question: {Describe your three most embarrassing character flaws in chronological order.|What is your favorite mistake, and why haven't you apologized for it yet?|Who taught you to make that specific face when you're caught lying?} Take your time. I bill by the second.\"",
-        "She conducts a relentless, satirical interrogation; {writing down none of your actual answers while filling three whole pages with sarcastic doodles and personal footnotes|nodding with mock sympathy whenever you try to sound profound|cross-referencing your answers with an invisible cosmic ledger}."
+        "She conducts a relentless, satirical interrogation; {writing down none of your actual answers while filling three whole pages with sarcastic doodles and personal footnotes|nodding with mock sympathy whenever you try to sound profound|cross-referencing your answers with an invisible cosmic grimorie}."
       ],
       "incidents": [
         "She reads back a 'direct quote' from her notes; {you never said anything remotely like it, but it hits with such devastating accuracy that you both let it stand on the record|it sounds like a quote from a cheap noir novel, but she insists it's legally binding|it's an exact word-for-word transcript of a thought you had five minutes ago}.",

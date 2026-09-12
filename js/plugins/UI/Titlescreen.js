@@ -55,14 +55,15 @@
 * Introduction
 * -----------------------------------------------------------------------------
 * This plugin replaces the default title screen command window with a full-height,
-* terminal-style column menu on the left side and spawns floating cards below
-* that rise up, showing random enemies, skills, items, weapons, or armor from the
-* game's database. Each card is connected to every other with gold lines that
-* smoothly fade in and out, forming a dynamic mesh.
+* terminal-style column menu on the left side and spawns floating data cards
+* below that rise up, showing random enemies, skills, items, weapons, armour or
+* this world's history artifacts from the game's database, each with its own
+* procedural 3D model rendered inside the card. Each card is connected to every
+* other with gold lines that smoothly fade in and out, forming a dynamic mesh.
 *
 * Enhanced features:
 * - HTML-based menu with crisp text rendering
-* - Animated floating data cards with connection mesh
+* - Animated floating data cards with 3D model bays and a connection mesh
 * - Terminal-style interface design with gold theme
 * - Left-aligned command window text
 * - ID-based references instead of icon/sprite numbers
@@ -2055,348 +2056,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         }
         if (this.refreshUIOverlayDOM) this.refreshUIOverlayDOM();
     };
-    // -------------------------------------------------------------------------
-    // Terminal-style floating card with gold theme
-    // -------------------------------------------------------------------------
-    class FloatingCard extends PIXI.Container {
-        constructor(data, cardId, lane, laneCount) {
-            super();
-            // Brisk drift: fast enough to keep the screen moving, slow enough
-            // that the readouts stay legible on the way up.
-            this._speed = 0.55 + Math.random() * 0.6;
-            this._cardId = cardId; // Unique identifier for tracking connections
-            // Lane assignment keeps cards in non-overlapping vertical columns so
-            // they never collide with one another as they drift up.
-            this._lane = (lane === undefined) ? 0 : lane;
-            this._laneCount = (laneCount === undefined) ? 1 : laneCount;
-            this._draw(data);
-        }
-
-        _draw({ type, dbData }) {
-            const padding = 12;
-            const lineHeight = 16;
-            let contentWidth = 400;
-            let contentHeight = padding;
-            // Terminal-style text styles with gold theme (smaller sizes)
-            const headerStyle = new PIXI.TextStyle({
-                fontFamily: 'Square',
-                fill: '#FFD700', // Gold instead of green
-                fontSize: 15,
-                fontWeight: 'bold'
-            });
-
-            const normalStyle = new PIXI.TextStyle({
-                fontFamily: 'Square',
-                fill: '#FFA500', // Orange-gold instead of cyan
-                fontSize: 13,
-                // Pixel-based wrapping so descriptions never overflow the card width
-                wordWrap: true,
-                wordWrapWidth: contentWidth - padding * 2,
-                lineHeight: 16
-            });
-
-            const dimStyle = new PIXI.TextStyle({
-                fontFamily: 'Square',
-                fill: '#808080',
-                fontSize: 11
-            });
-
-            const errorStyle = new PIXI.TextStyle({
-                fontFamily: 'Square',
-                fill: '#FF6B35', // Orange-red instead of pure red
-                fontSize: 13,
-                fontWeight: 'bold'
-            });
-
-            const elements = [];
-
-            // Terminal header with timestamp and type
-            const timestamp = new Date().toISOString().slice(11, 19);
-            const header = new PIXI.Text(`[${timestamp}] QUERY_TYPE:\n${type.toUpperCase()}`, dimStyle);
-            header.x = padding;
-            header.y = contentHeight;
-            elements.push(header);
-            contentHeight += header.height + 8;
-
-            // Terminal prompt line
-            const prompt = new PIXI.Text('> ', headerStyle);
-            prompt.x = padding;
-            prompt.y = contentHeight;
-            elements.push(prompt);
-
-            if (['item', 'weapon', 'armor'].includes(type)) {
-                // Terminal-style item display
-                const nameText = new PIXI.Text(`${window.translateText(dbData.name).toUpperCase()}`, headerStyle);
-                nameText.x = padding + prompt.width;
-                nameText.y = contentHeight;
-                elements.push(nameText);
-                contentHeight += nameText.height + 10;
-
-                // ASCII-style separator
-                const separator = new PIXI.Text('='.repeat(28), dimStyle);
-                separator.x = padding;
-                separator.y = contentHeight;
-                elements.push(separator);
-                contentHeight += separator.height + 6;
-
-                // Icon and ID reference
-                const bmp = ImageManager.loadSystem('IconSet');
-                const icon = new Sprite(bmp);
-                const idx = dbData.iconIndex;
-                icon.setFrame((idx % 16) * 32, Math.floor(idx / 16) * 32, 32, 32);
-                icon.x = padding;
-                icon.y = contentHeight;
-                elements.push(icon);
-
-                // Get the actual database ID instead of icon index
-                const dbId = this._getDbId(type, dbData);
-                const iconText = new PIXI.Text(`[ID:${dbId.toString().padStart(3, '0')}]`, dimStyle);
-                iconText.x = padding + 40;
-                iconText.y = contentHeight + 8;
-                elements.push(iconText);
-
-                // Move price to next line
-                contentHeight += Math.max(32, iconText.height) + 6;
-                const euroPrice = (dbData.price / 100).toFixed(2);
-                const priceText = new PIXI.Text(`${T('Titlescreen.card.price')}: ${euroPrice}â‚¬`, errorStyle);
-                priceText.x = padding;
-                priceText.y = contentHeight;
-                elements.push(priceText);
-                contentHeight += priceText.height + 12;
-
-                // Description with pixel-based word wrap
-                const cleanDescription = window.translateText(dbData.description).replace(/\\n/g, ' ').replace(/\n/g, ' ');
-                const desc = new PIXI.Text('DESC:\n' + cleanDescription, normalStyle);
-                desc.x = padding;
-                desc.y = contentHeight;
-                elements.push(desc);
-                contentHeight += desc.height + 2;
-
-            } else if (type === 'enemy') {
-                const note = dbData.note || '';
-                const lv = (note.match(/LV:\s*(\d+)/i) || [])[1] || '0';
-                const descTxt = (note.match(/\|\s*([^<]+)/) || [])[1] || '';
-
-                // Terminal-style enemy display
-                const nameText = new PIXI.Text(`${window.translateText(dbData.name).toUpperCase()}\n[LV.${lv}]`, headerStyle);
-                nameText.x = padding + prompt.width;
-                nameText.y = contentHeight;
-                elements.push(nameText);
-                contentHeight += nameText.height + 10;
-
-                // ASCII-style separator
-                const separator = new PIXI.Text('-'.repeat(28), dimStyle);
-                separator.x = padding;
-                separator.y = contentHeight;
-                elements.push(separator);
-                contentHeight += separator.height + 6;
-
-                // Character image and ID reference
-                const charMatch = note.match(/<Char:(\$[^>]+)>/i);
-                let hasCharImage = false;
-
-                if (charMatch) {
-                    try {
-                        const charFileName = charMatch[1];
-                        const charBmp = ImageManager.loadBitmap('./img/characters/Monsters/', charFileName);
-                        const charSprite = new Sprite(charBmp);
-                        charSprite.setFrame(0, 0, 32, 32);
-                        charSprite.x = padding;
-                        charSprite.y = contentHeight;
-                        elements.push(charSprite);
-                        hasCharImage = true;
-                    } catch (e) {
-                        console.warn(`Failed to load character image: ${charMatch[1]}`);
-                    }
-                }
-
-                // Get the actual database ID for enemy
-                const dbId = this._getDbId(type, dbData);
-                const charRef = new PIXI.Text(`[ID:${dbId.toString().padStart(3, '0')}]`, dimStyle);
-                charRef.x = hasCharImage ? padding + 40 : padding;
-                charRef.y = contentHeight + (hasCharImage ? 8 : 0);
-                elements.push(charRef);
-                contentHeight += Math.max(hasCharImage ? 32 : 0, charRef.height) + 12;
-                // Stats in terminal format
-                const st = T.obj('Titlescreen.card.stats');
-                const pad3 = i => dbData.params[i].toString().padStart(3, '0');
-                const stats = new PIXI.Text(
-                    `${st.str}=${pad3(2)} ${st.con}=${pad3(3)} ${st.int}=${pad3(4)}\n` +
-                    `${st.wis}=${pad3(5)} ${st.dex}=${pad3(6)} ${st.psi}=${pad3(7)}`,
-                    errorStyle
-                );
-                stats.x = padding;
-                stats.y = contentHeight;
-                elements.push(stats);
-                contentHeight += stats.height + 10;
-
-                // Description with pixel-based word wrap
-                if (descTxt.trim()) {
-                    const desc = new PIXI.Text(T('Titlescreen.card.info') + ':\n' + descTxt.trim(), normalStyle);
-                    desc.x = padding;
-                    desc.y = contentHeight;
-                    elements.push(desc);
-                    contentHeight += desc.height + 2;
-                }
-
-            } else if (type === 'skill') {
-                // Terminal-style skill display
-                const nameText = new PIXI.Text(`${window.translateText(dbData.name).toUpperCase()}`, headerStyle);
-                nameText.x = padding + prompt.width;
-                nameText.y = contentHeight;
-                elements.push(nameText);
-                contentHeight += nameText.height + 10;
-
-                // ASCII-style separator
-                const separator = new PIXI.Text('~'.repeat(28), dimStyle);
-                separator.x = padding;
-                separator.y = contentHeight;
-                elements.push(separator);
-                contentHeight += separator.height + 6;
-
-                // Icon and ID reference
-                const bmp = ImageManager.loadSystem('IconSet');
-                const icon = new Sprite(bmp);
-                const idx = dbData.iconIndex;
-                icon.setFrame((idx % 16) * 32, Math.floor(idx / 16) * 32, 32, 32);
-                icon.x = padding;
-                icon.y = contentHeight;
-                elements.push(icon);
-
-                // Get the actual database ID for skill
-                const dbId = this._getDbId(type, dbData);
-                const iconText = new PIXI.Text(`[ID:${dbId.toString().padStart(3, '0')}]`, dimStyle);
-                iconText.x = padding + 40;
-                iconText.y = contentHeight + 8;
-                elements.push(iconText);
-                contentHeight += Math.max(32, iconText.height) + 12;
-
-                // Description with pixel-based word wrap
-                const cleanDescription = window.translateText(dbData.description).replace(/\\n/g, ' ').replace(/\n/g, ' ');
-                const desc = new PIXI.Text('EXEC:\n' + cleanDescription, normalStyle);
-                desc.x = padding;
-                desc.y = contentHeight;
-                elements.push(desc);
-                contentHeight += desc.height + 3;
-            }
-
-            // Terminal footer
-            contentHeight += 8;
-            const footer = new PIXI.Text('EOF', dimStyle);
-            footer.x = padding;
-            footer.y = contentHeight;
-            elements.push(footer);
-            contentHeight += footer.height + padding;
-
-            // Draw terminal-style background with gold theme
-            const g = new PIXI.Graphics();
-            // Dark terminal background
-            g.beginFill(0x000000, 0.9);
-            // Terminal-style border (double line) in gold
-            g.lineStyle(1, 0xFFD700, 0.8); // Gold border
-            g.drawRect(0, 0, contentWidth, contentHeight);
-            g.lineStyle(1, 0xFFD700, 0.4); // Dimmer gold inner border
-            g.drawRect(2, 2, contentWidth - 4, contentHeight - 4);
-            g.endFill();
-
-            this.addChild(g);
-
-            // Add all elements
-            elements.forEach(element => {
-                if (element instanceof PIXI.Text) {
-                    element.resolution = 2; // Make text sharp and crispy
-                }
-                this.addChild(element);
-            });
-
-            // Set card dimensions and position spread across the full screen
-            this.width = contentWidth;
-            this.height = contentHeight;
-
-            // Center the card inside its assigned lane; lanes are wider than the
-            // card so neighbouring columns can never overlap horizontally.
-            const laneW = Graphics.width / this._laneCount;
-            this.x = Math.round(this._lane * laneW + (laneW - contentWidth) / 2);
-            this.y = Graphics.height + Math.random() * 200;
-        }
-
-        _getDbId(type, dbData) {
-            // Find the actual database ID by searching through the appropriate array
-            const map = {
-                enemy: $dataEnemies,
-                skill: $dataSkills,
-                item: $dataItems,
-                weapon: $dataWeapons,
-                armor: $dataArmors
-            };
-
-            const dataArray = map[type];
-            for (let i = 0; i < dataArray.length; i++) {
-                if (dataArray[i] === dbData) {
-                    return i;
-                }
-            }
-            return 0; // fallback
-        }
-
-        _wrapTerminalText(text, maxChars) {
-            const words = text.split(' ');
-            const lines = [];
-            let currentLine = '';
-
-            words.forEach(word => {
-                if ((currentLine + word).length <= maxChars) {
-                    currentLine += (currentLine ? ' ' : '') + word;
-                } else {
-                    if (currentLine) lines.push(currentLine);
-                    currentLine = word;
-                    // If a single word is too long, force break it
-                    if (word.length > maxChars) {
-                        const chunks = [];
-                        for (let i = 0; i < word.length; i += maxChars) {
-                            chunks.push(word.slice(i, i + maxChars));
-                        }
-                        lines.push(...chunks.slice(0, -1));
-                        currentLine = chunks[chunks.length - 1];
-                    }
-                }
-            });
-            if (currentLine) lines.push(currentLine);
-
-            return lines;
-        }
-
-        update() {
-            this.y -= this._speed;
-
-            // Remove CRT flicker effects - just keep steady alpha
-            this.alpha = 1.0;
-
-            if (this.y + this.height < 0 && this.parent) {
-                this.parent.removeChild(this);
-            }
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Random DB picker
-    // -------------------------------------------------------------------------
-    const TYPES = ['enemy', 'skill', 'item', 'weapon', 'armor'];
-    function getRandomData() {
-        const t = TYPES[Math.floor(Math.random() * TYPES.length)];
-        const map = { enemy: $dataEnemies, skill: $dataSkills, item: $dataItems, weapon: $dataWeapons, armor: $dataArmors };
-        let entry;
-        let attempts = 0;
-        do {
-            entry = map[t][Math.floor(Math.random() * map[t].length)];
-            attempts++;
-        } while (
-            attempts < 100 &&
-            (!entry || !entry.name || entry.name.trim() === '' || entry.name.startsWith('<--'))
-        );
-        if (!entry || !entry.name || entry.name.trim() === '' || entry.name.startsWith('<--')) return null;
-        return { type: t, dbData: entry };
-    }
 
     // -------------------------------------------------------------------------
     // Alternative background: random 3D planets (GalaxySim planet renderer)
@@ -3294,28 +2953,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Alternative background: bestiary. 2D monster sprites with name, level and
-    // English description, drifting up slowly and joined by the same gold mesh.
-    // -------------------------------------------------------------------------
-    function getRandomMonster() {
-        if (!$dataEnemies) return null;
-        let entry;
-        let attempts = 0;
-        do {
-            entry = $dataEnemies[Math.floor(Math.random() * $dataEnemies.length)];
-            attempts++;
-        } while (
-            attempts < 100 &&
-            (!entry || !entry.name || entry.name.trim() === '' || entry.name.startsWith('<--'))
-        );
-        if (!entry || !entry.name || entry.name.trim() === '' || entry.name.startsWith('<--')) return null;
-        return entry;
-    }
-
     // How an enemy is drawn is one setting for the whole game (the enemy battler
     // option): 1 the animated 3D model, 2 the <Char:> sprite sheet, 3 the flat
-    // battler image. The bestiary background obeys it too, so the title screen
+    // battler image. An enemy's data card obeys it too, so the title screen
     // shows monsters exactly the way the player will meet them in battle.
     function enemyBattlerMode() {
         const modes = window.EnemyBattlerModes;
@@ -3324,8 +2964,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             (typeof ConfigManager !== 'undefined') ? ConfigManager.enemyBattlers : modes.MODEL_3D);
     }
 
-    // True when the bestiary should be drawn as live 3D models rather than as
-    // 2D cards (the mode is 3D and the Battler3D stack is actually loaded).
+    // True when an enemy's bay should hold a live 3D model rather than a flat
+    // picture (the mode is 3D and the Battler3D stack is actually loaded).
     function bestiaryWants3D() {
         const modes = window.EnemyBattlerModes;
         const model3d = modes ? modes.MODEL_3D : 1;
@@ -3333,156 +2973,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             !!(window.THREE && window.Battler3D && window.Battler3D.create);
     }
 
-    class FloatingMonster extends PIXI.Container {
-        constructor(cardId, lane, laneCount) {
-            super();
-            this._isMonster = true;
-            this._speed = 0.5 + Math.random() * 0.6; // still a touch slower than cards
-            this._cardId = cardId;
-            // Lane assignment keeps cards in non-overlapping vertical columns so
-            // they never collide with one another as they drift up.
-            this._lane = (typeof lane === 'number') ? lane : 0;
-            this._laneCount = laneCount || 1;
-            this._enemy = getRandomMonster();
-            this._build();
-        }
-
-        _build() {
-            const enemy = this._enemy;
-            const layoutW = 280;          // centering reference width (no box)
-            const centerX = layoutW / 2;
-            const note = enemy ? (enemy.note || '') : '';
-            const p = (enemy && enemy.params) || [0, 0, 0, 0, 0, 0, 0, 0];
-            // Names/descriptions kept in English (the <En:> note tag) per request.
-            const lv = (note.match(/<Level:\s*(\d+)>/i) || [])[1] || '0';
-            const archetype = (note.match(/<Archetype:\s*([^>]+)>/i) || [])[1] || '';
-            // Enemy descriptions use combinatorial {a | b | c} inline text resolved
-            // (seeded from the world seed) by the shared EnemyDescription service.
-            let descTxt = (note.match(/<En:\s*([^>]+)>/i) || [])[1] || '';
-            if (window.EnemyDescription) {
-                descTxt = enemy && enemy.id
-                    ? window.EnemyDescription.describe(enemy.id)
-                    : window.EnemyDescription.resolve(descTxt);
-            }
-
-            // Centered text styles (word-wrapped so long names never clip)
-            const mkStyle = (fill, size, bold) => new PIXI.TextStyle({
-                fontFamily: 'Square', fill, fontSize: size,
-                fontWeight: bold ? 'bold' : 'normal',
-                align: 'center', wordWrap: true, wordWrapWidth: layoutW, lineHeight: size + 3,
-                stroke: '#000000', strokeThickness: 3
-            });
-            const headerStyle = mkStyle('#FFD700', 16, true);
-            const lvlStyle = mkStyle('#FFD27A', 13, true);
-            const statStyle = mkStyle('#9fd9ff', 11, true);
-            const normalStyle = mkStyle('#FFA500', 12, false);
-
-            const centered = (txt, style) => {
-                const t = new PIXI.Text(txt, style);
-                t.resolution = 2;
-                t.x = 0;
-                return t; // align:center spans the full layoutW
-            };
-
-            const elements = [];
-            const spriteBoxH = 96;
-            let yy = 0;
-
-            // Monster sprite: the enemy battler option decides which of the two
-            // flat looks leads (Sprites = the <Char:> sheet, 2D = the battler
-            // image out of img/enemies); the other one still stands in when the
-            // first is missing, so a card is never left empty.
-            const buildCharSprite = () => {
-                const charMatch = note.match(/<Char:\s*(\$[^>]+)>/i);
-                if (!charMatch) return null;
-                try {
-                    const bmp = ImageManager.loadBitmap('./img/characters/Monsters/', charMatch[1].trim());
-                    const spr = new Sprite(bmp);
-                    bmp.addLoadListener(() => {
-                        const fw = Math.floor(bmp.width / 3);
-                        const fh = Math.floor(bmp.height / 4);
-                        spr.setFrame(0, 0, fw, fh);
-                        const s = Math.min(2.5, spriteBoxH / fh);
-                        spr.scale.set(s, s);
-                        spr.x = centerX - (fw * s) / 2;
-                        spr.y = (spriteBoxH - fh * s) / 2;
-                    });
-                    return spr;
-                } catch (e) { return null; }
-            };
-            const buildBattlerSprite = () => {
-                const bn = enemy.battlerName;
-                if (!bn) return null;
-                try {
-                    const bmp = ($dataSystem && $dataSystem.optSideView)
-                        ? ImageManager.loadSvEnemy(bn) : ImageManager.loadEnemy(bn);
-                    const spr = new Sprite(bmp);
-                    bmp.addLoadListener(() => {
-                        const s = Math.min(1, layoutW / bmp.width, spriteBoxH / bmp.height);
-                        spr.scale.set(s, s);
-                        spr.x = centerX - (bmp.width * s) / 2;
-                        spr.y = (spriteBoxH - bmp.height * s) / 2;
-                    });
-                    return spr;
-                } catch (e) { return null; }
-            };
-            const battlersFirst = window.EnemyBattlerModes &&
-                enemyBattlerMode() === window.EnemyBattlerModes.BATTLERS_2D;
-            let sprite = battlersFirst
-                ? (buildBattlerSprite() || buildCharSprite())
-                : (buildCharSprite() || buildBattlerSprite());
-            if (sprite) {
-                sprite.x = centerX - 24;
-                elements.push(sprite);
-            }
-            yy += spriteBoxH + 6;
-
-            const name = centered(enemy.name.toUpperCase(), headerStyle);
-            name.y = yy; elements.push(name); yy += name.height + 2;
-
-            const lvLine = archetype ? `LV ${lv}  Â·  ${archetype.toUpperCase()}` : `LV ${lv}`;
-            const lvl = centered(lvLine, lvlStyle);
-            lvl.y = yy; elements.push(lvl); yy += lvl.height + 4;
-
-            // Base stats (params: HP, MP, ATK, DEF, MAT, MDF, AGI, LUK)
-            const stats = centered(
-                `HP ${p[0]}  MP ${p[1]}\n` +
-                `ATK ${p[2]} DEF ${p[3]} MAT ${p[4]} MDF ${p[5]} AGI ${p[6]} LUK ${p[7]}`,
-                statStyle
-            );
-            stats.y = yy; elements.push(stats); yy += stats.height + 4;
-
-            if (descTxt.trim()) {
-                const desc = centered(descTxt.trim(), normalStyle);
-                desc.y = yy; elements.push(desc); yy += desc.height;
-            }
-
-            // Solid black backing panel (with a subtle gold edge) so each card is
-            // readable and visually separated from the others.
-            const padX = 16, padTop = 10, padBot = 12;
-            const bg = new PIXI.Graphics();
-            bg.beginFill(0x000000, 0.85);
-            bg.lineStyle(2, 0xFFD700, 0.45);
-            bg.drawRoundedRect(-padX, -padTop, layoutW + padX * 2, yy + padTop + padBot, 10);
-            bg.endFill();
-            this.addChild(bg);
-            elements.forEach(el => this.addChild(el));
-
-            // Center the card inside its assigned lane; lanes are wider than the
-            // card so neighbouring columns can never overlap.
-            const laneW = Graphics.width / this._laneCount;
-            const laneCenter = laneW * (this._lane + 0.5);
-            this.x = Math.max(padX, Math.min(Graphics.width - layoutW - padX, laneCenter - layoutW / 2));
-            this.y = Graphics.height + Math.random() * 200;
-        }
-
-        update() {
-            this.y -= this._speed;
-            if (this.y + this.height < 0 && this.parent) {
-                this.parent.removeChild(this);
-            }
-        }
-    }
 
     // -------------------------------------------------------------------------
     // Shared cost control for the two 3D backgrounds
@@ -3540,9 +3030,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     }
 
     // -------------------------------------------------------------------------
-    // Alternative background: this world's history artifacts as 3D models that
-    // slide upward, each tagged with its name, weapon type and world price.
-    // Reuses the shared WeaponThreeScene (THREE overlay) used by the FPS view.
+    // What a data card says about a weapon: its type, its attack element and
+    // the states it inflicts, plus this world's own history artifacts, which
+    // are dealt into the catalogue alongside the ordinary database rows.
     // -------------------------------------------------------------------------
     const WEAPON_TYPE_NAMES = {
         1: 'Light', 2: 'Sword', 3: 'Heavy', 4: 'Axe', 5: 'Whip', 6: 'Staff',
@@ -3640,364 +3130,56 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return weapons.filter(w => w && w.name);
     }
 
-    // Every ordinary weapon from Weapons.json (used by the 'weapons' mode).
-    function getRegularWeapons() {
-        if (!$dataWeapons) return [];
-        return $dataWeapons.filter(w =>
-            w && w.name && w.name.trim() !== '' && !w.name.startsWith('<--') && w.wtypeId
-        );
+    // -------------------------------------------------------------------------
+    // The one catalogue background: data cards.
+    //
+    // A single terminal dossier per database row, whatever the row happens to
+    // be: a weapon, a piece of armour, an item, a skill, an enemy, or one of
+    // this world's history artifacts. Each card carries that row's own
+    // procedural 3D model, rendered live inside the card's bay; a row with no
+    // model of its own falls back to its icon, its monster sprite sheet or its
+    // battler picture, so a bay is never empty. This is the whole catalogue in
+    // one place: it replaces the four separate Cards / Artifacts / Weapons /
+    // Bestiary presets, each of which showed one slice of it.
+    //
+    // The cards are DOM panels on the shared label layer and the models are
+    // drawn by one WebGL canvas layered OVER them. Every model is rendered
+    // scissored to its own card's bay, so the canvas stays transparent
+    // everywhere else and no card's text is ever painted over.
+    // -------------------------------------------------------------------------
+    const DCARD_MAX = 4;         // cards on screen at once
+    const DCARD_LANE_W = 400;    // window pixels a lane needs before it counts
+
+    // One usable row out of a database table, skipping the blank rows and the
+    // commented-out separators the editor leaves behind.
+    function randomDataRow(table) {
+        if (!Array.isArray(table) || table.length < 2) return null;
+        for (let i = 0; i < 40; i++) {
+            const row = table[1 + Math.floor(Math.random() * (table.length - 1))];
+            if (row && row.name && row.name.trim() !== '' && !row.name.startsWith('<--')) return row;
+        }
+        return null;
     }
 
-    class ArtifactBackground {
-        // kind: 'artifacts' (world history artifacts + price) or
-        //       'weapons' (every weapon from Weapons.json + price)
-        constructor(kind) {
-            this._kind = kind || 'artifacts';
-            this._items = [];
-            this._lights = [];
-            this._enabled = false;
-            this._maxItems = 2;
-            this._artifacts = this._kind === 'weapons' ? getRegularWeapons() : getArtifactWeapons();
-            if (window.THREE && window.WeaponSystemProcedural && window.WeaponThreeScene && this._artifacts.length) {
-                try {
-                    window.WeaponThreeScene.ref();
-                    this._addBrightLights();
-                    this._createLabelLayer();
-                    this._enabled = true;
-                } catch (e) {
-                    this._enabled = false;
-                }
-            }
-        }
-
-        get available() {
-            return this._enabled;
-        }
-
-        // World units of the shared weapon overlay: the game's internal
-        // resolution (the overlay canvas is drawn at that size and then
-        // stretched over the game canvas), not the browser window.
-        _viewSize() {
-            return { w: Graphics.width || 816, h: Graphics.height || 624 };
-        }
-
-        // Projection from that world space (y-up, centre origin) to window
-        // pixels, for the DOM label layer and strand canvas which both cover
-        // the whole window.
-        _projection() {
-            // The shared per-frame canvas measurement, so the strand pass and
-            // the label pass do not each force their own layout flush.
-            const r = TitleLayout.rect();
-            const { w, h } = this._viewSize();
-            return {
-                left: r ? r.left : 0,
-                top: r ? r.top : 0,
-                sx: r ? r.width / w : 1,
-                sy: r ? r.height / h : 1,
-                w, h
-            };
-        }
-
-        _project(p, worldX, worldY) {
-            return {
-                x: p.left + (worldX + p.w / 2) * p.sx,
-                y: p.top + (p.h / 2 - worldY) * p.sy
-            };
-        }
-
-        // The shared scene's lights are dim for the FPS gun; brighten the
-        // procedural metals while the title is showing (removed on dispose).
-        _addBrightLights() {
-            const scene = window.WeaponThreeScene.scene;
-            const amb = new THREE.AmbientLight(0xffffff, 2.4);
-            const hemi = new THREE.HemisphereLight(0xfff4e0, 0x505070, 1.7);
-            const key = new THREE.DirectionalLight(0xfff2d0, 2.2); key.position.set(0.5, 1, 2);
-            const fill = new THREE.DirectionalLight(0xbcd4ff, 1.4); fill.position.set(-1.2, 0.3, 1);
-            const back = new THREE.DirectionalLight(0xffffff, 1.0); back.position.set(0, -0.5, -1.5);
-            [amb, hemi, key, fill, back].forEach(l => { scene.add(l); this._lights.push(l); });
-        }
-
-        _createLabelLayer() {
-            let layer = document.getElementById('title-artifact-labels');
-            if (!layer) {
-                layer = document.createElement('div');
-                layer.id = 'title-artifact-labels';
-                layer.className = 'title-label-layer';
-                document.body.appendChild(layer);
-            }
-            layer.innerHTML = '';
-            this._labelLayer = layer;
-
-            // Canvas (behind the labels) for the gold strands linking artifacts
-            const canvas = document.createElement('canvas');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            canvas.className = 'title-strand-canvas';
-            layer.appendChild(canvas);
-            this._strandCanvas = canvas;
-            this._strandCtx = canvas.getContext('2d');
-        }
-
-        _drawStrands(proj) {
-            const ctx = this._strandCtx;
-            if (!ctx) return;
-            // The strand canvas covers the window, so the world points are
-            // projected onto it rather than used raw.
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            fitStrandCanvas(this._strandCanvas, ctx, w, h);
-            ctx.clearRect(0, 0, w, h);
-            // Two points are the fewest that can make a strand: below that the
-            // clear above is the whole job.
-            if (this._items.length < 2) return;
-            const pts = this._items.map(it => this._project(proj, it.worldX, it.worldY));
-            for (let i = 0; i < pts.length; i++) {
-                for (let j = i + 1; j < pts.length; j++) {
-                    const dx = pts[i].x - pts[j].x;
-                    const dy = pts[i].y - pts[j].y;
-                    const dist = Math.hypot(dx, dy);
-                    // Fade strands out with distance so the mesh stays subtle
-                    const alpha = Math.max(0, 0.35 * (1 - dist / (w * 0.7)));
-                    if (alpha <= 0.01) continue;
-                    ctx.strokeStyle = `rgba(255, 215, 0, ${alpha})`;
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(pts[i].x, pts[i].y);
-                    ctx.lineTo(pts[j].x, pts[j].y);
-                    ctx.stroke();
-                }
-            }
-        }
-
-        _makeLabel(weapon) {
-            const euro = (weapon.price / 100).toFixed(2);
-            const wtype = WEAPON_TYPE_NAMES[weapon.wtypeId] || T('Titlescreen.artifact.fallbackType');
-            const div = document.createElement('div');
-            div.className = 'title-artifact-label';
-            // Readable black panel so the full stat readout stays legible over the
-            // 3D models and the gold connection strands.
-            div.classList.add('title-artifact-label--plated');
-
-            const name = window.translateText ? window.translateText(weapon.name) : weapon.name;
-            const kindTag = this._kind === 'weapons'
-                ? T('Titlescreen.card.weapon')
-                : T('Titlescreen.card.artifact');
-
-            // Non-zero base parameters, named the way the rest of the game names
-            // them: $dataSystem.terms.params, which Hendrix_Localization has
-            // already translated in place by the time the title screen draws.
-            const PARAM_LABELS = [0, 1, 2, 3, 4, 5, 6, 7].map(i => TextManager.param(i));
-            const params = weapon.params || [];
-            const statBits = [];
-            for (let i = 0; i < PARAM_LABELS.length; i++) {
-                const v = params[i] || 0;
-                if (v !== 0) statBits.push(`${PARAM_LABELS[i]} ${v > 0 ? '+' : ''}${v}`);
-            }
-
-            // Attack element + inflicted states, pulled from the weapon's traits.
-            const elements = _weaponElements(weapon);
-            const states = _weaponStates(weapon);
-
-            let html =
-                `<div class="title-card-name">${name.toUpperCase()}</div>` +
-                `<div class="title-card-kind">[${kindTag}] [${wtype.toUpperCase()}]</div>`;
-            if (statBits.length) {
-                html += `<div class="title-card-stats">${statBits.join('  ')}</div>`;
-            }
-            if (elements.length) {
-                html += `<div class="title-card-element">${T('Titlescreen.card.element')}: ${elements.join(', ').toUpperCase()}</div>`;
-            }
-            if (states.length) {
-                const stTxt = states.map(s => `${s.name.toUpperCase()}${s.chance ? ' ' + s.chance + '%' : ''}`).join(', ');
-                html += `<div class="title-card-status">${T('Titlescreen.card.inflicts')}: ${stTxt}</div>`;
-            }
-            html += `<div class="title-card-price">${euro}â‚¬</div>`;
-            div.innerHTML = html;
-            this._labelLayer.appendChild(div);
-            return div;
-        }
-
-        spawn() {
-            if (!this._enabled || this._items.length >= this._maxItems) return;
-            const weapon = this._artifacts[Math.floor(Math.random() * this._artifacts.length)];
-            if (!weapon) return;
-            let model;
-            try {
-                model = window.WeaponSystemProcedural.createModel(weapon);
-            } catch (e) {
-                model = null;
-            }
-            if (!model) return;
-
-            // Brighten the procedural materials: dark metals stay dark even under
-            // strong lights, so lower metalness/roughness and add a self-emissive
-            // tint so each artifact reads clearly against the black background.
-            model.traverse(o => {
-                if (!o.isMesh || !o.material) return;
-                const mats = Array.isArray(o.material) ? o.material : [o.material];
-                mats.forEach(m => {
-                    if (m.color && m.emissive) {
-                        m.emissive.copy(m.color).multiplyScalar(0.45);
-                        m.emissiveIntensity = Math.max(m.emissiveIntensity || 0, 0.7);
-                    }
-                    if ('metalness' in m) m.metalness = Math.min(m.metalness, 0.45);
-                    if ('roughness' in m) m.roughness = Math.min(m.roughness, 0.55);
-                });
-            });
-
-            const { w, h } = this._viewSize();
-
-            // Normalize on-screen size from the model's own bounding box so every
-            // artifact type (long whips, stubby guns, etc.) ends up a consistent,
-            // card-sized height instead of varying wildly with a fixed scale.
-            const box = new THREE.Box3().setFromObject(model);
-            const size = new THREE.Vector3(); box.getSize(size);
-            const center = new THREE.Vector3(); box.getCenter(center);
-            const maxDim = Math.max(size.x, size.y, size.z) || 1;
-            // Largest dimension as a share of the view height, so the artifacts
-            // keep their proportions at any game resolution.
-            const targetPx = h * (0.50 + Math.random() * 0.17);
-            const scale = targetPx / maxDim;
-
-            // Center the model on a pivot so it spins about its middle and the
-            // label can be placed predictably under it.
-            model.position.sub(center);
-            const pivot = new THREE.Group();
-            pivot.add(model);
-            pivot.scale.set(scale, scale, scale);
-
-            const halfSpan = 0.5 * (size.y / maxDim) * targetPx + 16;
-
-            // Keep concurrent items on opposite horizontal halves so the larger
-            // models (and their full-stat labels) never overlap each other.
-            let side;
-            if (this._items.length > 0) {
-                side = this._items[this._items.length - 1].worldX >= 0 ? -1 : 1;
-            } else {
-                side = Math.random() < 0.5 ? -1 : 1;
-            }
-            const worldX = side * w * (0.14 + Math.random() * 0.14);
-
-            const item = {
-                model: pivot,
-                weapon,
-                label: this._makeLabel(weapon),
-                worldX,
-                worldY: -h / 2 - targetPx - Math.random() * h * 0.23,
-                speed: (1.7 + Math.random() * 2.0) * (h / 1080),
-                spin: (Math.random() - 0.5) * 0.02 + 0.012,
-                tilt: (Math.random() - 0.5) * 0.5,
-                halfSpan
-            };
-            pivot.position.set(item.worldX, item.worldY, 0);
-            pivot.rotation.x = item.tilt;
-            window.WeaponThreeScene.scene.add(pivot);
-            this._items.push(item);
-        }
-
-        update() {
-            if (!this._enabled) return;
-            const { w, h } = this._viewSize();
-            const proj = this._projection();
-            for (let i = this._items.length - 1; i >= 0; i--) {
-                const it = this._items[i];
-                it.worldY += it.speed;
-                it.model.position.y = it.worldY;
-                it.model.rotation.y += it.spin;
-                // World (y-up, origin centre) -> window pixels for the DOM label,
-                // placed just below the model.
-                if (it.label) {
-                    const p = this._project(proj, it.worldX, it.worldY);
-                    window.UIPanel.placeAt(it.label, p.x, p.y + it.halfSpan * proj.sy);
-                }
-                if (it.worldY > h / 2 + h * 0.26) {
-                    this._removeItem(i);
-                }
-            }
-            this._drawStrands(proj);
-            window.WeaponThreeScene.render();
-        }
-
-        _removeItem(index) {
-            const it = this._items[index];
-            if (it) {
-                if (it.model && window.WeaponThreeScene.scene) {
-                    window.WeaponThreeScene.scene.remove(it.model);
-                }
-                if (it.label && it.label.parentNode) it.label.parentNode.removeChild(it.label);
-            }
-            this._items.splice(index, 1);
-        }
-
-        dispose() {
-            if (!this._enabled) return;
-            for (let i = this._items.length - 1; i >= 0; i--) {
-                this._removeItem(i);
-            }
-            this._items = [];
-            const scene = window.WeaponThreeScene && window.WeaponThreeScene.scene;
-            if (scene) this._lights.forEach(l => scene.remove(l));
-            this._lights = [];
-            if (this._labelLayer && this._labelLayer.parentNode) {
-                this._labelLayer.parentNode.removeChild(this._labelLayer);
-            }
-            this._labelLayer = null;
-            try {
-                window.WeaponThreeScene.render();
-                window.WeaponThreeScene.deref();
-            } catch (e) {
-                // ignore
-            }
-            this._enabled = false;
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // The bestiary background in its 3D shape: real enemies rendered as their
-    // animated 3D model, chosen when the enemy battler option is set to 3D.
-    // Mirrors ArtifactBackground (its own THREE scene, models float upward, DOM
-    // labels, gold connection strands), but instantiates the modular Battler3D
-    // procedural creature that each enemy resolves to, and labels it with the
-    // enemy's actual name, level/archetype and description (the same caption the
-    // flat bestiary cards carry). Each model is built from a fake battler keyed
-    // to the enemy id so it shows that enemy's canonical, textured look (not a
-    // random white preview). Models are built with no physics, so they use the
-    // kinematic idle pose.
-    // -------------------------------------------------------------------------
-    class Enemies3DBackground {
+    class DataCardBackground {
         constructor() {
             this._items = [];
+            this._maxItems = DCARD_MAX;
             this._enabled = false;
-            this._maxItems = 3;
-            // Pool of real enemies that resolve to a registered 3D model. Each
-            // entry carries the source $dataEnemies row (for name / notes / stats)
-            // and the archetype key used to build its procedural model.
-            this._pool = this._buildEnemyPool();
-            if (window.THREE && window.Battler3D && window.Battler3D.create && this._pool.length) {
-                try {
-                    this._initScene();
-                    this._createLabelLayer();
-                    this._enabled = true;
-                } catch (e) {
-                    this._enabled = false;
-                }
+            this._cardSeq = 0;
+            this._artifacts = getArtifactWeapons();
+            // Every kind the catalogue deals, so this one preset covers what the
+            // four old ones covered between them.
+            this._kinds = ['weapon', 'armor', 'item', 'skill', 'enemy'];
+            if (this._artifacts.length) this._kinds.push('artifact');
+            this._createLabelLayer();
+            // The models are a bonus, not a requirement: with no THREE the cards
+            // still deal their icons, which is why this is the one background
+            // every other one can fall back to.
+            if (window.THREE) {
+                try { this._initScene(); } catch (e) { this._scene = null; this._renderer = null; }
             }
-        }
-
-        // Collect every named enemy that maps to a registered Battler3D model.
-        _buildEnemyPool() {
-            const pool = [];
-            if (!window.Battler3D || !window.Battler3D.resolveKey || !Array.isArray($dataEnemies)) {
-                return pool;
-            }
-            for (let i = 1; i < $dataEnemies.length; i++) {
-                const enemy = $dataEnemies[i];
-                if (!enemy || !enemy.name || !enemy.name.trim() || enemy.name.startsWith('<--')) continue;
-                let archKey = null;
-                try { archKey = window.Battler3D.resolveKey(enemy); } catch (e) { archKey = null; }
-                if (archKey) pool.push({ enemy, archKey });
-            }
-            return pool;
+            this._enabled = true;
         }
 
         get available() {
@@ -4008,40 +3190,57 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             return { w: window.innerWidth || Graphics.width, h: window.innerHeight || Graphics.height };
         }
 
-        // Dedicated offscreen WebGL scene with an orthographic camera so world
-        // units map 1:1 to screen pixels (like the artifact float coordinates).
+        // The band the cards drift through is the game picture, not the window:
+        // the canvas may be letterboxed, and a card outside it reads as a stray
+        // panel rather than as part of the screen. Measured through the shared
+        // per-frame rect so this pass never forces a layout flush of its own.
+        _projection() {
+            const r = TitleLayout.rect();
+            return { left: r.left, top: r.top, width: r.width, height: r.height };
+        }
+
+        _laneCount(proj) {
+            return Math.max(1, Math.floor(proj.width / DCARD_LANE_W));
+        }
+
+        // One offscreen scene for every card's model. The camera is reframed per
+        // bay, so a single orthographic camera serves all of them.
         _initScene() {
             const { w, h } = this._viewSize();
             this._scene = new THREE.Scene();
-            this._camera = new THREE.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -3000, 3000);
-            this._camera.position.set(0, 0, 1000);
+            this._camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -4000, 4000);
+            this._camera.position.set(0, 0, 1500);
             this._camera.lookAt(0, 0, 0);
 
             this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !titleRetroActive() });
             this._renderer.setSize(w, h);
             this._renderer.setPixelRatio(titlePixelRatio(w, h));
             this._renderer.setClearColor(0x000000, 0);
+            // The frame is cleared once by hand at the top of the pass: with
+            // autoClear on, each scissored bay would wipe the one before it.
+            this._renderer.autoClear = false;
             const cv = this._renderer.domElement;
-            cv.id = 'title-enemies3d-canvas';
-            cv.className = 'title-scene-canvas';
+            cv.id = 'title-datacard-canvas';
+            cv.className = 'title-scene-canvas title-dcard-canvas';
             document.body.appendChild(cv);
             this._canvasEl = cv;
 
-            // Match the bestiary preview's moderate lighting. The old setup
-            // (ambient 1.5 + hemisphere 1.2 + two directionals) blew the skin
-            // colours/textures out to flat white; keep the total fill modest so
-            // each enemy's tint and surface read correctly.
-            this._scene.add(new THREE.AmbientLight(0xffffff, 1.0));
-            const key = new THREE.DirectionalLight(0xfff2d0, 1.4); key.position.set(0.5, 1, 2); this._scene.add(key);
-            const fill = new THREE.DirectionalLight(0xbcd4ff, 0.7); fill.position.set(-1.2, 0.3, 1); this._scene.add(fill);
+            // Moderate fill, as the bestiary preview uses: a stronger setup blew
+            // the creature tints and the weapon metals out to flat white.
+            this._scene.add(new THREE.AmbientLight(0xffffff, 1.3));
+            this._scene.add(new THREE.HemisphereLight(0xfff4e0, 0x505070, 1.0));
+            const key = new THREE.DirectionalLight(0xfff2d0, 1.5); key.position.set(0.5, 1, 2);
+            const fill = new THREE.DirectionalLight(0xbcd4ff, 0.8); fill.position.set(-1.2, 0.3, 1);
+            this._scene.add(key);
+            this._scene.add(fill);
             this._clock = new THREE.Clock();
         }
 
         _createLabelLayer() {
-            let layer = document.getElementById('title-enemies3d-labels');
+            let layer = document.getElementById('title-datacard-layer');
             if (!layer) {
                 layer = document.createElement('div');
-                layer.id = 'title-enemies3d-labels';
+                layer.id = 'title-datacard-layer';
                 layer.className = 'title-label-layer';
                 document.body.appendChild(layer);
             }
@@ -4057,22 +3256,19 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._strandCtx = canvas.getContext('2d');
         }
 
-        // Gold strands between every pair of battlers (fading with distance), so
-        // the enemies are linked just like the planets and artifacts.
-        _drawStrands(w, h) {
+        // Gold strands between every pair of cards, fading with distance, the
+        // same mesh the planets and the old artifact models were joined by.
+        _drawStrands() {
             const ctx = this._strandCtx;
             if (!ctx) return;
+            const { w, h } = this._viewSize();
             fitStrandCanvas(this._strandCanvas, ctx, w, h);
             ctx.clearRect(0, 0, w, h);
-            const pts = this._items.filter(it => it.spawned).map(it => ({
-                x: it.worldX + w / 2,
-                y: h / 2 - it.worldY
-            }));
+            if (this._items.length < 2) return;
+            const pts = this._items.map(it => ({ x: it.x, y: it.y + it.h / 2 }));
             for (let i = 0; i < pts.length; i++) {
                 for (let j = i + 1; j < pts.length; j++) {
-                    const dx = pts[i].x - pts[j].x;
-                    const dy = pts[i].y - pts[j].y;
-                    const dist = Math.hypot(dx, dy);
+                    const dist = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
                     const alpha = Math.max(0, 0.35 * (1 - dist / (w * 0.7)));
                     if (alpha <= 0.01) continue;
                     ctx.strokeStyle = `rgba(255, 215, 0, ${alpha})`;
@@ -4089,153 +3285,459 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             return String(s == null ? '' : s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
         }
 
-        // Build the floating caption for a real enemy: its name, a level +
-        // archetype subline, a compact stat block and its description (mirrors the
-        // bestiary "Enemies" caption). Descriptions use combinatorial {a | b | c}
-        // inline text resolved (seeded from the world seed) by EnemyDescription.
-        _makeLabel(enemy, archKey) {
-            const note = (enemy && enemy.note) || '';
-            const p = (enemy && enemy.params) || [0, 0, 0, 0, 0, 0, 0, 0];
-            const lv = (note.match(/<Level:\s*(\d+)>/i) || [])[1] || '0';
-            const archName = window.Battler3D.displayName ? window.Battler3D.displayName(archKey) : archKey;
-            const enRaw = (note.match(/<En:\s*([^>]+)>/i) || [])[1] || '';
-            let descTxt;
-            if (window.EnemyDescription) {
-                descTxt = (enemy && enemy.id)
-                    ? window.EnemyDescription.describe(enemy.id)
-                    : window.EnemyDescription.resolve(enRaw);
-            } else {
-                descTxt = enRaw.trim();
-            }
-            const lvLabel = T('Titlescreen.card.levelAbbr');
-
-            const div = document.createElement('div');
-            div.className = 'title-artifact-label title-artifact-label--wide';
-            let html =
-                `<div class="title-body-name">${this._esc(enemy.name).toUpperCase()}</div>` +
-                `<div class="title-body-sub">${lvLabel} ${this._esc(lv)}${archName ? '  &middot;  ' + this._esc(archName).toUpperCase() : ''}</div>` +
-                `<div class="title-body-stats">HP ${p[0]} &middot; ATK ${p[2]} &middot; DEF ${p[3]} &middot; AGI ${p[6]}</div>`;
-            if (descTxt) {
-                html += `<div class="title-body-desc">${this._esc(descTxt)}</div>`;
-            }
-            div.innerHTML = html;
-            this._labelLayer.appendChild(div);
-            return div;
+        _tr(s) {
+            return window.translateText ? window.translateText(s) : String(s == null ? '' : s);
         }
 
-        spawn() {
-            if (!this._enabled || this._items.length >= this._maxItems) return;
-            const pick = this._pool[Math.floor(Math.random() * this._pool.length)];
-            if (!pick) return;
-            const { enemy, archKey } = pick;
-            // Fake battler keyed to the enemy id so the model uses that enemy's
-            // deterministic per-id colour/texture (its canonical battle look).
-            const fakeBattler = { enemyId: () => enemy.id, index: () => 0 };
-            let model;
+        // ---------------------------------------------------------------------
+        // Picking a row
+        // ---------------------------------------------------------------------
+        _pickEntry() {
+            const kind = this._kinds[Math.floor(Math.random() * this._kinds.length)];
+            if (kind === 'artifact') {
+                const w = this._artifacts[Math.floor(Math.random() * this._artifacts.length)];
+                return w ? { kind, data: w } : null;
+            }
+            const tables = {
+                weapon: $dataWeapons, armor: $dataArmors,
+                item: $dataItems, skill: $dataSkills, enemy: $dataEnemies
+            };
+            const row = randomDataRow(tables[kind]);
+            return row ? { kind, data: row } : null;
+        }
+
+        // ---------------------------------------------------------------------
+        // The card itself
+        // ---------------------------------------------------------------------
+        // Non-zero base parameters, named the way the rest of the game names
+        // them: $dataSystem.terms.params, already translated in place by
+        // Hendrix_Localization by the time the title draws.
+        _paramBits(row) {
+            const params = row.params || [];
+            const bits = [];
+            for (let i = 0; i < 8; i++) {
+                const v = params[i] || 0;
+                if (v !== 0) bits.push(`${this._esc(TextManager.param(i))} ${v > 0 ? '+' : ''}${v}`);
+            }
+            return bits.join('  ');
+        }
+
+        // The game's own money wording and its own currency sign, so a card
+        // quotes a price exactly as the shop counter does.
+        _priceRow(row) {
+            const cents = row.price || 0;
+            const money = window.MoneyFormatter
+                ? window.MoneyFormatter.format(cents)
+                : (cents / 100).toFixed(2);
+            const unit = (typeof $dataSystem !== 'undefined' && $dataSystem) ? $dataSystem.currencyUnit : '';
+            return `<div class="title-dcard-price">${T('Titlescreen.card.price')}: ` +
+                `${this._esc(money)}${this._esc(unit)}</div>`;
+        }
+
+        _descRow(row, label) {
+            const txt = this._tr(row.description || '').replace(/\\n/g, ' ').replace(/\n/g, ' ').trim();
+            if (!txt) return '';
+            return `<div class="title-dcard-desc">${label}: ${this._esc(txt)}</div>`;
+        }
+
+        // The body lines under the bay, one shape per kind of row.
+        _rowsFor(entry) {
+            const d = entry.data;
+            const rows = [];
+            if (entry.kind === 'enemy') {
+                const note = d.note || '';
+                const p = d.params || [];
+                const lv = (note.match(/<Level:\s*(\d+)>/i) || [])[1] || '0';
+                const arch = (note.match(/<Archetype:\s*([^>]+)>/i) || [])[1] || '';
+                let desc = (note.match(/<En:\s*([^>]+)>/i) || [])[1] || '';
+                // Enemy descriptions are combinatorial {a | b | c} text, resolved
+                // from the world seed by the shared EnemyDescription service.
+                if (window.EnemyDescription) {
+                    desc = d.id
+                        ? window.EnemyDescription.describe(d.id)
+                        : window.EnemyDescription.resolve(desc);
+                }
+                rows.push(`<div class="title-dcard-kind">${T('Titlescreen.card.levelAbbr')} ${this._esc(lv)}` +
+                    (arch ? '  &middot;  ' + this._esc(arch).toUpperCase() : '') + '</div>');
+                // HP, ATK, DEF and AGI: what the bestiary caption leads with.
+                const stats = [0, 2, 3, 6]
+                    .map(i => `${this._esc(TextManager.param(i))} ${p[i] || 0}`)
+                    .join('  &middot;  ');
+                rows.push(`<div class="title-dcard-stats">${stats}</div>`);
+                if (desc && desc.trim()) {
+                    rows.push(`<div class="title-dcard-desc">${T('Titlescreen.card.info')}: ${this._esc(desc.trim())}</div>`);
+                }
+                return rows;
+            }
+
+            if (entry.kind === 'weapon' || entry.kind === 'artifact') {
+                const wtype = WEAPON_TYPE_NAMES[d.wtypeId] || T('Titlescreen.artifact.fallbackType');
+                rows.push(`<div class="title-dcard-kind">[${this._esc(wtype).toUpperCase()}]</div>`);
+                const stats = this._paramBits(d);
+                if (stats) rows.push(`<div class="title-dcard-stats">${stats}</div>`);
+                const elements = _weaponElements(d);
+                if (elements.length) {
+                    rows.push(`<div class="title-dcard-element">${T('Titlescreen.card.element')}: ` +
+                        `${this._esc(elements.join(', ')).toUpperCase()}</div>`);
+                }
+                const states = _weaponStates(d);
+                if (states.length) {
+                    const txt = states.map(s => `${s.name.toUpperCase()}${s.chance ? ' ' + s.chance + '%' : ''}`).join(', ');
+                    rows.push(`<div class="title-dcard-status">${T('Titlescreen.card.inflicts')}: ${this._esc(txt)}</div>`);
+                }
+                rows.push(this._priceRow(d));
+                return rows;
+            }
+
+            if (entry.kind === 'armor') {
+                const slot = ($dataSystem && $dataSystem.equipTypes && $dataSystem.equipTypes[d.etypeId]) || '';
+                const atype = ($dataSystem && $dataSystem.armorTypes && $dataSystem.armorTypes[d.atypeId]) || '';
+                const tag = [slot, atype].filter(s => s && s.trim()).map(s => this._esc(s).toUpperCase()).join('] [');
+                if (tag) rows.push(`<div class="title-dcard-kind">[${tag}]</div>`);
+                const stats = this._paramBits(d);
+                if (stats) rows.push(`<div class="title-dcard-stats">${stats}</div>`);
+                rows.push(this._priceRow(d));
+                rows.push(this._descRow(d, T('Titlescreen.card.desc')));
+                return rows.filter(Boolean);
+            }
+
+            if (entry.kind === 'skill') {
+                rows.push(this._descRow(d, T('Titlescreen.card.exec')));
+                return rows.filter(Boolean);
+            }
+
+            // Items: the category the object index and the 3D pipeline file them
+            // under is the most telling single word about what they are.
+            const category = window.ItemModelSystem ? window.ItemModelSystem.categoryOf(d) : '';
+            if (category) rows.push(`<div class="title-dcard-kind">[${this._esc(category).toUpperCase()}]</div>`);
+            rows.push(this._priceRow(d));
+            rows.push(this._descRow(d, T('Titlescreen.card.desc')));
+            return rows.filter(Boolean);
+        }
+
+        _makeCard(entry) {
+            const div = document.createElement('div');
+            div.className = 'title-dcard';
+            const stamp = new Date().toISOString().slice(11, 19);
+            const name = this._esc(this._tr(entry.data.name)).toUpperCase();
+            const id = String(entry.data.id || 0).padStart(3, '0');
+            const kind = this._esc(T('Titlescreen.card.type.' + entry.kind));
+            // The bay sits directly under the one-line header, and both the
+            // padding and that header's line box are fixed in the stylesheet:
+            // where the bay starts is therefore the same on every card, whatever
+            // the name under it does and whenever the font finishes loading. A
+            // bay that moved after it was measured would leave its model drawn
+            // beside the card instead of inside it.
+            div.innerHTML =
+                `<div class="title-dcard-head">[${stamp}] ${T('Titlescreen.card.queryType')}: ${kind}` +
+                `<span class="title-dcard-id">${T('Titlescreen.card.idAbbr')}:${id}</span></div>` +
+                `<div class="title-dcard-bay"></div>` +
+                `<div class="title-dcard-name">&gt; ${name}</div>` +
+                this._rowsFor(entry).join('') +
+                `<div class="title-dcard-foot">${T('Titlescreen.card.eof')}</div>`;
+            this._labelLayer.appendChild(div);
+            const bay = div.querySelector('.title-dcard-bay');
+            // One layout read per card, taken at spawn: the card only translates
+            // from here on, so the bay keeps these offsets for its whole life.
+            return {
+                el: div,
+                bay,
+                w: div.offsetWidth,
+                h: div.offsetHeight,
+                bayLeft: bay.offsetLeft,
+                bayTop: bay.offsetTop,
+                bayW: bay.offsetWidth,
+                bayH: bay.offsetHeight
+            };
+        }
+
+        // ---------------------------------------------------------------------
+        // What goes in the bay
+        // ---------------------------------------------------------------------
+        // Dark procedural metals stay dark even under strong lights, so the
+        // materials are lightened and given a self-emissive tint: every model
+        // then reads clearly against the card's black plate.
+        _brighten(model) {
+            model.traverse(o => {
+                if (!o.isMesh || !o.material) return;
+                const mats = Array.isArray(o.material) ? o.material : [o.material];
+                mats.forEach(m => {
+                    if (m.color && m.emissive) {
+                        m.emissive.copy(m.color).multiplyScalar(0.35);
+                        m.emissiveIntensity = Math.max(m.emissiveIntensity || 0, 0.6);
+                    }
+                    if ('metalness' in m) m.metalness = Math.min(m.metalness, 0.45);
+                    if ('roughness' in m) m.roughness = Math.min(m.roughness, 0.55);
+                });
+            });
+        }
+
+        // Centre the model on a pivot and size it to the bay's shorter side, so
+        // a long whip and a stubby pill bottle both sit inside the frame.
+        _mount(item, model) {
+            const box = new THREE.Box3().setFromObject(model);
+            const size = new THREE.Vector3(); box.getSize(size);
+            const center = new THREE.Vector3(); box.getCenter(center);
+            const maxDim = Math.max(size.x, size.y, size.z) || 1;
+            const fit = Math.min(item.bayW, item.bayH) * 0.82;
+            model.position.sub(center);
+            const pivot = new THREE.Group();
+            pivot.add(model);
+            pivot.scale.setScalar(fit / maxDim);
+            pivot.rotation.x = -0.2;
+            // Every bay renders on its own, so all the models can share the
+            // origin: only the one being drawn is visible for its pass.
+            pivot.visible = false;
+            this._scene.add(pivot);
+            item.pivot = pivot;
+        }
+
+        _attachModel(item) {
+            const entry = item.entry;
+            if (!this._scene) { this._flatten(item); return; }
+            if (entry.kind === 'enemy') { this._attachBattler(item); return; }
+            // A skill is an act, not an object: it has no model to show.
+            if (entry.kind === 'skill') { this._flatten(item); return; }
+            let model = null;
             try {
-                model = window.Battler3D.create(archKey, 0, 0, fakeBattler);
+                model = (entry.kind === 'weapon' || entry.kind === 'artifact')
+                    ? (window.WeaponSystemProcedural && window.WeaponSystemProcedural.createModel(entry.data))
+                    : (window.ItemModelSystem && window.ItemModelSystem.createModel(entry.data));
             } catch (e) {
                 model = null;
             }
-            if (!model) return;
+            if (!model) { this._flatten(item); return; }
+            this._brighten(model);
+            this._mount(item, model);
+        }
 
-            const { w, h } = this._viewSize();
-            const targetPx = 380 + Math.random() * 140;
+        // The enemy's own procedural creature, built from a fake battler keyed to
+        // its id so it wears that enemy's canonical colour and texture rather
+        // than a blank preview. Built with no physics, so it stands in the
+        // kinematic idle pose.
+        _attachBattler(item) {
+            const enemy = item.entry.data;
+            let archKey = null;
+            if (bestiaryWants3D() && window.Battler3D.resolveKey) {
+                try { archKey = window.Battler3D.resolveKey(enemy); } catch (e) { archKey = null; }
+            }
+            if (!archKey) { this._flatten(item); return; }
+            let battler = null;
+            try {
+                battler = window.Battler3D.create(archKey, 0, 0, { enemyId: () => enemy.id, index: () => 0 });
+            } catch (e) {
+                battler = null;
+            }
+            if (!battler) { this._flatten(item); return; }
+            item.battler = battler;
+            // The build is asynchronous: the card shows an empty bay for the
+            // frames it takes, then the creature drops into it.
+            Promise.resolve(battler.load(null, 0, 0, 0)).then(() => {
+                if (!this._enabled || item.dead) return;
+                if (!battler.model) { this._flatten(item); return; }
+                // Pose one frame so the bounding box is the standing shape.
+                try { battler.update(1 / 60); } catch (e) { /* ignore */ }
+                if (window.PSXShader) window.PSXShader.applyToObject(battler.model);
+                this._mount(item, battler.model);
+            }).catch(() => {
+                if (!item.dead) this._flatten(item);
+            });
+        }
+
+        // No model: the row's flat picture instead, drawn once into a canvas.
+        _flatten(item) {
+            if (!item.bay || item.flat) return;
+            const cv = document.createElement('canvas');
+            cv.className = 'title-dcard-flat';
+            item.bay.appendChild(cv);
+            item.flat = cv;
+            if (item.entry.kind === 'enemy') this._drawEnemyFlat(item, cv);
+            else this._drawIcon(item, cv);
+        }
+
+        _blit(item, cv, bmp, sx, sy, sw, sh, maxZoom) {
+            if (!cv.parentNode || !sw || !sh) return;
+            const k = Math.min((item.bayW - 12) / sw, (item.bayH - 12) / sh, maxZoom || 4);
+            cv.width = Math.max(1, Math.round(sw * k));
+            cv.height = Math.max(1, Math.round(sh * k));
+            const ctx = cv.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(bmp.canvas, sx, sy, sw, sh, 0, 0, cv.width, cv.height);
+        }
+
+        _drawIcon(item, cv) {
+            const idx = item.entry.data.iconIndex || 0;
+            const bmp = ImageManager.loadSystem('IconSet');
+            bmp.addLoadListener(() => {
+                if (item.dead) return;
+                const cell = 32;
+                this._blit(item, cv, bmp, (idx % 16) * cell, Math.floor(idx / 16) * cell, cell, cell);
+            });
+        }
+
+        // Which flat look leads is the enemy battler option's call (the sprite
+        // sheet or the battler picture); the other stands in when the first is
+        // missing, so a bay is never left blank.
+        _drawEnemyFlat(item, cv) {
+            const enemy = item.entry.data;
+            const sheet = ((enemy.note || '').match(/<Char:\s*(\$[^>]+)>/i) || [])[1];
+            const drawSheet = () => {
+                if (!sheet) return false;
+                try {
+                    const bmp = ImageManager.loadBitmap('./img/characters/Monsters/', sheet.trim());
+                    bmp.addLoadListener(() => {
+                        if (item.dead) return;
+                        this._blit(item, cv, bmp, 0, 0, Math.floor(bmp.width / 3), Math.floor(bmp.height / 4));
+                    });
+                    return true;
+                } catch (e) { return false; }
+            };
+            const drawBattler = () => {
+                if (!enemy.battlerName) return false;
+                try {
+                    const bmp = ($dataSystem && $dataSystem.optSideView)
+                        ? ImageManager.loadSvEnemy(enemy.battlerName)
+                        : ImageManager.loadEnemy(enemy.battlerName);
+                    bmp.addLoadListener(() => {
+                        if (item.dead) return;
+                        this._blit(item, cv, bmp, 0, 0, bmp.width, bmp.height, 1.5);
+                    });
+                    return true;
+                } catch (e) { return false; }
+            };
+            const battlersFirst = window.EnemyBattlerModes &&
+                enemyBattlerMode() === window.EnemyBattlerModes.BATTLERS_2D;
+            if (battlersFirst) { if (!drawBattler()) drawSheet(); }
+            else if (!drawSheet()) drawBattler();
+        }
+
+        // ---------------------------------------------------------------------
+        // Life on screen
+        // ---------------------------------------------------------------------
+        spawn() {
+            if (!this._enabled || this._items.length >= this._maxItems) return;
+            const proj = this._projection();
+            const laneCount = this._laneCount(proj);
+            // A lane is free only once the card in it has fully entered the
+            // picture, so a card rising from the bottom edge can never overlap
+            // the one already above it in the same column.
+            const bottom = proj.top + proj.height;
+            const busy = new Set(this._items.filter(it => it.y + it.h > bottom).map(it => it.lane));
+            const free = [];
+            for (let i = 0; i < laneCount; i++) if (!busy.has(i)) free.push(i);
+            if (!free.length) return;
+            const entry = this._pickEntry();
+            if (!entry) return;
+            const card = this._makeCard(entry);
+            if (!card || !card.bay) return;
+
             const item = {
-                key: archKey,
-                model,
-                pivot: new THREE.Group(),
-                label: this._makeLabel(enemy, archKey),
-                worldX: (Math.random() - 0.5) * w * 0.8,
-                worldY: -h / 2 - targetPx - Math.random() * 250,
-                speed: 1.6 + Math.random() * 1.8,
-                spin: (Math.random() - 0.5) * 0.01 + 0.006,
-                halfSpan: targetPx * 0.5 + 20,
-                spawned: false
+                id: this._cardSeq++,
+                entry,
+                lane: free[Math.floor(Math.random() * free.length)],
+                card: card.el,
+                bay: card.bay,
+                w: card.w, h: card.h,
+                bayLeft: card.bayLeft, bayTop: card.bayTop,
+                bayW: card.bayW, bayH: card.bayH,
+                x: 0,
+                y: bottom + Math.random() * 160,
+                speed: 0.55 + Math.random() * 0.6,
+                spin: 0.008 + Math.random() * 0.008,
+                pivot: null,
+                battler: null,
+                flat: null,
+                dead: false
             };
             this._items.push(item);
+            this._attachModel(item);
+            this._placeCard(item, proj, laneCount);
+        }
 
-            // Build is async; add to the scene once the meshes exist.
-            Promise.resolve(model.load(null, 0, 0, 0)).then(() => {
-                if (!this._enabled || !model.model) return;
-                // Pose one frame so the bounding box reflects the standing shape.
-                try { model.update(1 / 60); } catch (e) { /* ignore */ }
-
-                const box = new THREE.Box3().setFromObject(model.model);
-                const size = new THREE.Vector3(); box.getSize(size);
-                const center = new THREE.Vector3(); box.getCenter(center);
-                const maxDim = Math.max(size.x, size.y, size.z) || 1;
-                const scale = targetPx / maxDim;
-
-                model.model.position.sub(center); // centre on the pivot
-                if (window.PSXShader) window.PSXShader.applyToObject(model.model);
-                item.pivot.add(model.model);
-                item.pivot.scale.set(scale, scale, scale);
-                item.halfSpan = 0.5 * (size.y / maxDim) * targetPx + 20;
-                item.pivot.position.set(item.worldX, item.worldY, 0);
-                this._scene.add(item.pivot);
-                item.spawned = true;
-            }).catch(() => { /* ignore a model that fails to build */ });
+        _placeCard(item, proj, laneCount) {
+            const laneW = proj.width / laneCount;
+            item.x = proj.left + laneW * (Math.min(item.lane, laneCount - 1) + 0.5);
+            window.UIPanel.placeAt(item.card, item.x, item.y);
         }
 
         update() {
             if (!this._enabled) return;
-            const { w, h } = this._viewSize();
+            const proj = this._projection();
+            const laneCount = this._laneCount(proj);
             const dt = this._clock ? this._clock.getDelta() : 1 / 60;
-
-            // The canvas' backing store is the CSS size times the pixel ratio, so
-            // the last size asked for is what the resize is tested against.
-            if (this._renderer && (this._renderer._lastW !== w || this._renderer._lastH !== h)) {
-                this._renderer._lastW = w;
-                this._renderer._lastH = h;
-                this._renderer.setPixelRatio(titlePixelRatio(w, h));
-                this._renderer.setSize(w, h);
-                this._camera.left = -w / 2; this._camera.right = w / 2;
-                this._camera.top = h / 2; this._camera.bottom = -h / 2;
-                this._camera.updateProjectionMatrix();
-            }
-
             for (let i = this._items.length - 1; i >= 0; i--) {
                 const it = this._items[i];
-                it.worldY += it.speed;
-                if (it.spawned && it.pivot) {
-                    it.pivot.position.y = it.worldY;
-                    it.pivot.rotation.y += it.spin;
+                it.y -= it.speed;
+                this._placeCard(it, proj, laneCount);
+                if (it.battler && it.battler.update) {
+                    try { it.battler.update(dt); } catch (e) { /* ignore a bad frame */ }
                 }
-                if (it.model && it.model.update) {
-                    try { it.model.update(dt); } catch (e) { /* ignore a bad frame */ }
-                }
-                if (it.label) {
-                    const px = it.worldX + w / 2;
-                    const py = (h / 2 - it.worldY) + it.halfSpan;
-                    window.UIPanel.placeAt(it.label, px, py);
-                }
-                if (it.worldY > h / 2 + 340) {
-                    this._removeItem(i);
-                }
+                if (it.pivot) it.pivot.rotation.y += it.spin;
+                // Retired at the top of the picture, not of the window: on a
+                // letterboxed canvas a card drifting on into the black bar
+                // above it would read as a stray panel.
+                if (it.y + it.h < proj.top) this._removeItem(i);
             }
-            this._drawStrands(w, h);
-            if (window.PSXShader) {
-                window.PSXShader.render(this._renderer, this._scene, this._camera);
-            } else {
-                this._renderer.render(this._scene, this._camera);
+            this._drawStrands();
+            this._renderBays();
+        }
+
+        // One clear for the whole canvas, then one scissored pass per bay:
+        // outside the bays the canvas stays transparent, so the card text
+        // underneath it is never painted over.
+        _renderBays() {
+            const r = this._renderer;
+            if (!r) return;
+            const { w, h } = this._viewSize();
+            if (r._lastW !== w || r._lastH !== h) {
+                r._lastW = w;
+                r._lastH = h;
+                r.setPixelRatio(titlePixelRatio(w, h));
+                r.setSize(w, h);
             }
+            r.setScissorTest(false);
+            r.setViewport(0, 0, w, h);
+            r.clear();
+            r.setScissorTest(true);
+            for (const it of this._items) {
+                if (!it.pivot) continue;
+                const bx = it.x - it.w / 2 + it.bayLeft;
+                // WebGL counts its rows from the bottom-left corner.
+                const by = h - (it.y + it.bayTop) - it.bayH;
+                const sx = Math.max(0, bx);
+                const sy = Math.max(0, by);
+                const sw = Math.min(bx + it.bayW, w) - sx;
+                const sh = Math.min(by + it.bayH, h) - sy;
+                if (sw <= 0 || sh <= 0) continue;
+                // The viewport keeps the full bay (so the framing never shifts
+                // as a card leaves the screen); the scissor is what clips it.
+                this._camera.left = -it.bayW / 2;
+                this._camera.right = it.bayW / 2;
+                this._camera.top = it.bayH / 2;
+                this._camera.bottom = -it.bayH / 2;
+                this._camera.updateProjectionMatrix();
+                r.setViewport(bx, by, it.bayW, it.bayH);
+                r.setScissor(sx, sy, sw, sh);
+                it.pivot.visible = true;
+                r.render(this._scene, this._camera);
+                it.pivot.visible = false;
+            }
+            r.setScissorTest(false);
         }
 
         _removeItem(index) {
             const it = this._items[index];
             if (it) {
+                it.dead = true;
                 if (it.pivot && this._scene) this._scene.remove(it.pivot);
-                if (it.label && it.label.parentNode) it.label.parentNode.removeChild(it.label);
+                if (it.card && it.card.parentNode) it.card.parentNode.removeChild(it.card);
             }
             this._items.splice(index, 1);
         }
 
         dispose() {
             if (!this._enabled) return;
-            for (let i = this._items.length - 1; i >= 0; i--) {
-                this._removeItem(i);
-            }
+            for (let i = this._items.length - 1; i >= 0; i--) this._removeItem(i);
             this._items = [];
             if (this._labelLayer && this._labelLayer.parentNode) {
                 this._labelLayer.parentNode.removeChild(this._labelLayer);
@@ -4254,6 +3756,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 if (this._renderer && this._renderer.forceContextLoss) this._renderer.forceContextLoss();
             } catch (e) { /* ignore */ }
             this._renderer = null;
+            this._scene = null;
             this._enabled = false;
         }
     }
@@ -6152,13 +5655,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // while _bgMode is the concrete renderer actually on screen.
         this._bgSelection = this._resolveBackgroundSelection();
         this._bgMode = this._resolveBackgroundMode();
-        if (this._bgMode === 'artifacts' || this._bgMode === 'weapons') {
-            this._weaponBg = new ArtifactBackground(this._bgMode);
-            // Fall back to the classic cards if the 3D stack is unavailable
-            if (!this._weaponBg.available) this._bgMode = 'cards';
-        } else if (this._bgMode === 'bestiary') {
-            // 3D or flat is the enemy battler option's call, not a mode of its own.
-            this.startBestiaryBackground();
+        if (this._bgMode === 'cards') {
+            this._dataCardBg = new DataCardBackground();
         } else if (this._bgMode === 'hyperverse') {
             this._hyperverseBg = new HyperverseBackground();
             // Fall back to the classic cards if GalaxySim/THREE is unavailable
@@ -6219,16 +5717,16 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // (ConfigManager.titleBackground). 0 is the "random" pseudo-mode; the rest
     // map one-to-one to a concrete renderer. Keep this in step with the option
     // ordering in GameOptions.js (titleBgNames).
-    // 6 was the retired standalone "Enemies 3D" preset: the bestiary now draws
-    // its monsters in 3D or flat according to the enemy battler option, so an
-    // old config carrying 6 simply lands on the bestiary.
+    // 3 (Artifacts), 4 (Bestiary), 5 (Weapons) and 6 (the older standalone
+    // "Enemies 3D") were four views of one catalogue: the data cards now deal
+    // all of it, models included, so an old config carrying any of them simply
+    // lands on the cards.
     const BG_CONFIG_TO_MODE = {
-        0: 'random', 1: 'cards', 2: 'space', 3: 'artifacts',
-        4: 'bestiary', 5: 'weapons', 6: 'bestiary', 7: 'hyperverse', 8: 'autodrive'
+        0: 'random', 1: 'cards', 2: 'space', 3: 'cards',
+        4: 'cards', 5: 'cards', 6: 'cards', 7: 'hyperverse', 8: 'autodrive'
     };
     const BG_MODE_TO_CONFIG = {
-        random: 0, cards: 1, space: 2, artifacts: 3,
-        bestiary: 4, weapons: 5, hyperverse: 7, autodrive: 8
+        random: 0, cards: 1, space: 2, hyperverse: 7, autodrive: 8
     };
 
     // The option-menu-level selection ('random' or a concrete mode), read from
@@ -6239,18 +5737,15 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return BG_CONFIG_TO_MODE[mode] || 'hyperverse';
     };
 
-    // Map the saved option (0 Random, 1 Cards, 2 Space, 3 Artifacts, 4 Bestiary,
-    // 5 Weapons, 7 Hyperverse, 8 Camper Drive) to a concrete
-    // renderer. Hyperverse is the default. The unified "Space" preset mixes
-    // planets, stars, black holes and galaxies into one starfield.
+    // Map the saved option (0 Random, 1 Data Cards, 2 Space, 7 Hyperverse,
+    // 8 Camper Drive) to a concrete renderer. Hyperverse is the default. The
+    // unified "Space" preset mixes planets, stars, black holes and galaxies
+    // into one starfield, the way the cards mix the whole object catalogue.
     Scene_Title.prototype._resolveBackgroundMode = function () {
         let mode = (typeof ConfigManager !== 'undefined') ? ConfigManager.titleBackground : 7;
         if (mode === undefined || mode === null) mode = 7;
         if (mode === 0) {
-            const choices = ['cards', 'space', 'bestiary'];
-            if (window.THREE && window.WeaponSystemProcedural && window.WeaponThreeScene) {
-                choices.push('artifacts', 'weapons');
-            }
+            const choices = ['cards', 'space'];
             if (window.THREE && window.GalaxySim) {
                 choices.push('hyperverse');
             }
@@ -6276,24 +5771,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         if (window.THREE && window.VoxelWorldSystem && window.VoxelWorldSystem.startTitleDrive) {
             modes.push('autodrive');
         }
-        modes.push('cards', 'space', 'bestiary');
-        if (window.THREE && window.WeaponSystemProcedural && window.WeaponThreeScene) {
-            modes.push('artifacts', 'weapons');
-        }
-        modes.push('random');
+        modes.push('cards', 'space', 'random');
         return modes;
-    };
-
-    // Bring the bestiary background up in the shape the enemy battler option
-    // asks for: the animated 3D models when it is set to 3D (and the Battler3D
-    // stack is there), otherwise the flat monster cards, which pick the <Char:>
-    // sheet or the battler image for themselves. Nothing to build in the flat
-    // case: the cards are ordinary floating PIXI items.
-    Scene_Title.prototype.startBestiaryBackground = function () {
-        if (!bestiaryWants3D()) return;
-        const bg = new Enemies3DBackground();
-        if (bg.available) this._enemies3dBg = bg;
-        else bg.dispose();
     };
 
     // Step to the next (dir = 1) or previous (dir = -1) selection, wrapping.
@@ -6321,8 +5800,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         }
         if (mode === 'random') mode = this._resolveBackgroundMode();
 
-        if (this._weaponBg) { this._weaponBg.dispose(); this._weaponBg = null; }
-        if (this._enemies3dBg) { this._enemies3dBg.dispose(); this._enemies3dBg = null; }
+        if (this._dataCardBg) { this._dataCardBg.dispose(); this._dataCardBg = null; }
         if (this._hyperverseBg) { this._hyperverseBg.dispose(); this._hyperverseBg = null; }
         if (this._autoDriveBg) { this._autoDriveBg.dispose(); this._autoDriveBg = null; }
 
@@ -6343,11 +5821,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // A background that fails to build must never leave the title stuck:
         // fall back to the always-available cards preset instead of throwing.
         try {
-            if (mode === 'artifacts' || mode === 'weapons') {
-                this._weaponBg = new ArtifactBackground(mode);
-                if (!this._weaponBg.available) { this._weaponBg.dispose(); this._weaponBg = null; this._bgMode = 'cards'; }
-            } else if (mode === 'bestiary') {
-                this.startBestiaryBackground();
+            if (mode === 'cards') {
+                this._dataCardBg = new DataCardBackground();
             } else if (mode === 'hyperverse') {
                 this._hyperverseBg = new HyperverseBackground();
                 if (!this._hyperverseBg.available) { this._hyperverseBg.dispose(); this._hyperverseBg = null; this._bgMode = 'cards'; }
@@ -6357,7 +5832,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             }
         } catch (e) {
             console.warn('[Titlescreen] background "' + mode + '" failed to start:', e);
-            this._weaponBg = this._enemies3dBg = this._hyperverseBg = this._autoDriveBg = null;
+            this._dataCardBg = this._hyperverseBg = this._autoDriveBg = null;
             this._bgMode = 'cards';
         }
 
@@ -7725,14 +7200,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
     // Backgrounds that render into their own DOM canvas, which sits ON TOP of
     // the game canvas and would otherwise cover the logo drawn by PIXI.
-    const DOM_CANVAS_MODES = ['hyperverse', 'autodrive', 'artifacts', 'weapons'];
+    const DOM_CANVAS_MODES = ['hyperverse', 'autodrive', 'cards'];
 
     // For those modes the PIXI logo is hidden and an identically placed <img>
     // is layered above the 3D canvas instead, so planets, galaxies and the road
     // always pass BEHIND the Hypernet Explorer logo.
     Scene_Title.prototype.updateLogoLayer = function () {
-        // The bestiary only owns a DOM canvas while it is running in 3D.
-        const needsOverlay = DOM_CANVAS_MODES.includes(this._bgMode) || !!this._enemies3dBg;
+        const needsOverlay = DOM_CANVAS_MODES.includes(this._bgMode);
         if (!needsOverlay) {
             if (this._logoSprite) this._logoSprite.visible = true;
             window.UIPanel.close(this._logoOverlay);
@@ -7841,8 +7315,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         'title-hyperverse-next',
         'title-hyperverse-catalog-btn',
         'title-autodrive-info',
-        'title-artifact-labels',
-        'title-enemies3d-labels'
+        'title-datacard-layer'
     ];
 
     // Fourteen getElementById calls, asked for on every frame of the settle
@@ -7993,46 +7466,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 const d = pool[Math.floor(Math.random() * pool.length)];
                 this._floatingContainer.addChild(new FloatingCelestial(this._cardIdCounter++, d, renderGalaxy, { animated: false }));
             }
-        } else if (this._bgMode === 'bestiary') {
-            // 3D bestiary: the models are spawned by their own scene.
-            if (this._enemies3dBg) { this._enemies3dBg.spawn(); return; }
-            if (!this._floatingContainer) return;
-            const MAX_MONSTERS = 2;
-            const monsters = this._floatingContainer.children.filter(c => c._isMonster);
-            if (monsters.length >= MAX_MONSTERS) return;
-            // Assign each card to a free horizontal lane so cards never collide.
-            const laneW = 340;
-            const laneCount = Math.max(1, Math.floor(Graphics.width / laneW));
-            const occupied = new Set(monsters.map(c => c._lane));
-            const free = [];
-            for (let i = 0; i < laneCount; i++) if (!occupied.has(i)) free.push(i);
-            if (free.length === 0) return;
-            const lane = free[Math.floor(Math.random() * free.length)];
-            const monster = new FloatingMonster(this._cardIdCounter++, lane, laneCount);
-            this._floatingContainer.addChild(monster);
-        } else if (this._bgMode === 'artifacts' || this._bgMode === 'weapons') {
-            if (this._weaponBg) this._weaponBg.spawn();
-        } else {
-            if (!this._floatingContainer) return;
-            const cards = this._floatingContainer.children.filter(c => !c._isPlanet && !c._isMonster && !c._isCelestial);
-            // Cards are 400px wide; give each lane a little breathing room so
-            // adjacent columns can never touch.
-            const laneW = 440;
-            const laneCount = Math.max(1, Math.floor(Graphics.width / laneW));
-            // A lane is only free once its newest card has fully entered the
-            // screen, so a spawning card (which starts at the bottom edge) can
-            // never overlap the card already above it in the same column.
-            const occupied = new Set(
-                cards.filter(c => c.y + c.height > Graphics.height).map(c => c._lane)
-            );
-            const free = [];
-            for (let i = 0; i < laneCount; i++) if (!occupied.has(i)) free.push(i);
-            if (free.length === 0) return;
-            const lane = free[Math.floor(Math.random() * free.length)];
-            const data = getRandomData();
-            if (!data) return;
-            const newCard = new FloatingCard(data, this._cardIdCounter++, lane, laneCount);
-            this._floatingContainer.addChild(newCard);
+        } else if (this._dataCardBg) {
+            // Data cards: the panels and their models are dealt by their own
+            // layer, which keeps its own lanes and its own cap.
+            this._dataCardBg.spawn();
         }
     };
 
@@ -8263,13 +7700,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // Leaving before the title ever settled would otherwise leave a black
         // sheet over the scene that follows.
         TitleVeil.lift(false);
-        if (this._weaponBg) {
-            this._weaponBg.dispose();
-            this._weaponBg = null;
-        }
-        if (this._enemies3dBg) {
-            this._enemies3dBg.dispose();
-            this._enemies3dBg = null;
+        if (this._dataCardBg) {
+            this._dataCardBg.dispose();
+            this._dataCardBg = null;
         }
         if (this._hyperverseBg) {
             this._hyperverseBg.dispose();
@@ -8458,14 +7891,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._floatingContainer.children.forEach(c => c.update && c.update());
         }
 
-        // Update the 3D weapon background, if active
-        if (this._weaponBg) {
-            this._weaponBg.update();
-        }
-
-        // Update the 3D enemies background, if active
-        if (this._enemies3dBg) {
-            this._enemies3dBg.update();
+        // Update the data card background, if active
+        if (this._dataCardBg) {
+            this._dataCardBg.update();
         }
 
         // Spawn new background items on a single uniform cadence across every
@@ -8487,9 +7915,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         if (!this._floatingContainer) return;
 
         const cards = this._floatingContainer.children;
-        // The 3D backgrounds (Hyperverse, Camper Drive, Artifacts, Weapons and
-        // the 3D bestiary) float nothing through this container and draw their
-        // own mesh, so the whole pass below is dead weight for them. Clearing an
+        // Every background but Space (Hyperverse, Camper Drive and the data
+        // cards) floats nothing through this container and draws its own mesh,
+        // so the whole pass below is dead weight for them. Clearing an
         // already-empty Graphics still dirties its geometry and re-uploads it,
         // so the frame stops here instead.
         if (cards.length === 0 && this._connectionCount === 0) return;

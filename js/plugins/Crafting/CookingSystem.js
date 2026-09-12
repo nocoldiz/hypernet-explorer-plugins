@@ -196,6 +196,24 @@
             return { hunger, tp, mp };
         },
 
+        // The hunger a nutrition reading is worth. There is ONE formula for
+        // that and it is window.PartyMeal.recoveryOf: the kitchen used to keep
+        // its own copy, read off the same plugin parameters, in three separate
+        // places, which is how the pot and the backpack came to disagree about
+        // what the same tin was worth. The fallback is only for a load order
+        // where TimeDateSystem is not up yet.
+        hungerWorthOf: function (calories, protein, fat) {
+            const meal = window.PartyMeal;
+            const nutrition = { calories: calories || 0, protein: protein || 0, fat: fat || 0 };
+            if (meal && meal.recoveryOf) return meal.recoveryOf(nutrition);
+            // TimeDateSystem is not up yet: the calorie count alone, which is
+            // the number the item card states. The two macros are its business
+            // (they are read in a unit only it knows how to sanity-check), and
+            // a garnish is not worth guessing at.
+            const params = PluginManager.parameters('TimeDateSystem');
+            return nutrition.calories * Number(params['calorieFactor'] || 0.10);
+        },
+
         createCookedItemName: function (item1, item2) {
             const tr = (name) => (window.translateText ? window.translateText(name || '') : (name || ''));
             if (!item1 || !item2) return tr((item1 || item2 || {}).name);
@@ -374,9 +392,6 @@
             const maxHunger = Number(params['maxHunger'] || 100);
             const overeatMaxHunger = Number(params['overeatMaxHunger'] || 150);
             const overeatStateId = Number(params['overeatStateId'] || 41);
-            const calorieFactor = Number(params['calorieFactor'] || 0.10);
-            const proteinFactor = Number(params['proteinFactor'] || 2.00);
-            const fatFactor = Number(params['fatFactor'] || 1.50);
 
             // Calculate nutritional values (hunger = calories, tp = protein, mp = fat)
             const item1Nutrition = this.getRecoveryValues(item1);
@@ -505,9 +520,7 @@
             const cookSkill = window.SpecializationXP
                 ? window.SpecializationXP.multiplierFor(cook, 'Cooking', 0.10) : 1;
             const totalHungerRecovery =
-                ((totalCalories * calorieFactor) +
-                 (totalProtein * proteinFactor) +
-                 (totalFat * fatFactor)) * cookSkill;
+                this.hungerWorthOf(totalCalories, totalProtein, totalFat) * cookSkill;
 
             const { partySize, hungerGained, report } = this.serveToParty(totalHungerRecovery);
 
@@ -626,16 +639,11 @@
             // Get plugin parameters from TimeDateSystem
             const params = PluginManager.parameters('TimeDateSystem');
             const maxHunger = Number(params['maxHunger'] || 100);
-            const calorieFactor = Number(params['calorieFactor'] || 0.10);
-            const proteinFactor = Number(params['proteinFactor'] || 2.00);
-            const fatFactor = Number(params['fatFactor'] || 1.50);
 
             const nutrition = this.getRecoveryValues(item);
 
             const totalHungerRecovery =
-                (nutrition.hunger * calorieFactor) +
-                (nutrition.tp * proteinFactor) +
-                (nutrition.mp * fatFactor);
+                this.hungerWorthOf(nutrition.hunger, nutrition.tp, nutrition.mp);
 
             const { partySize, hungerGained, report } = this.serveToParty(totalHungerRecovery);
 
@@ -1704,9 +1712,6 @@
                     // Get formula params
                     const params = PluginManager.parameters('TimeDateSystem');
                     const maxHunger = Number(params['maxHunger'] || 100);
-                    const calorieFactor = Number(params['calorieFactor'] || 0.10);
-                    const proteinFactor = Number(params['proteinFactor'] || 2.00);
-                    const fatFactor = Number(params['fatFactor'] || 1.50);
 
                     // The kit in the pack is part of the dish before it is cooked,
                     // so the card shows what it will be worth, not what it would
@@ -1717,9 +1722,7 @@
                     totalFat *= kit.multiplier;
 
                     const totalHungerRecovery =
-                        (totalCalories * calorieFactor) +
-                        (totalProtein * proteinFactor) +
-                        (totalFat * fatFactor);
+                        CookingSystem.hungerWorthOf(totalCalories, totalProtein, totalFat);
 
                     // Hunger is one meter for the whole party, and it can now be
                     // filled past full, so the card shows the whole dish instead of

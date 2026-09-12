@@ -1023,7 +1023,16 @@
     }
 
     function updateTravel() {
+        // Leaving the map still takes effect on the frame it happens, so a
+        // bubble never outlives the scene it was raised in.
         if (!onMap()) { stopTravel(); return; }
+
+        // Everything below is polling, and none of it is frame-sensitive: the
+        // beats are seconds apart, and the watchers are waiting for a country
+        // or a fuel gauge to change. Asking sixty times a second bought
+        // nothing over asking ten times a second, which is a tenth of a second
+        // of slack on a line of dialogue and cannot be felt from the inside.
+        if (window.FrameBudget && !window.FrameBudget.every('partyBanterTravel', 10)) return;
 
         // A map change ends whatever was being said and re-arms the pacing, so the
         // party does not walk out of a train still finishing a sentence.

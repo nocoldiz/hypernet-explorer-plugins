@@ -264,7 +264,7 @@
         "rocket test": "AN {actor} ROCKET RETURNS BEFORE LAUNCH, SCORCHED AN' EMPTY!"
       },
       "criminal": {
-        "heist": "THIEVES STEAL A DECADE FROM DA {actor} TREASURY; DA LEDGERS SKIP IT!",
+        "heist": "THIEVES STEAL A DECADE FROM DA {actor} TREASURY; DA GRIMORIES SKIP IT!",
         "forgery scandal": "{actor} FORGERS PRODUCE A PROVINCE DAT BRIEFLY APPEARS ON MAPS!"
       }
     },

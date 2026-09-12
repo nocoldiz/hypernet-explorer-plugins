@@ -326,6 +326,9 @@ Imported.DialogueSystem = true;
             // darkened rather than faded.
             this.storyMode           = false;
             this.storySlots          = [];
+            // Whether the corner chart has been asked to stand aside for a
+            // portrait standing in its corner (see syncMinimapCover).
+            this._minimapCovered     = false;
         }
 
         initialize() {
@@ -475,25 +478,37 @@ Imported.DialogueSystem = true;
             this.storySlots = [];
         }
 
-        updateStorySlots() {
-            const walk = sprite => {
-                if (sprite._slideDuration > 0) {
-                    sprite.x += (sprite._slideTarget - sprite.x) / sprite._slideDuration;
-                    sprite._slideDuration -= 1;
-                    if (sprite._slideType === 'in') {
-                        sprite.opacity = bustOpacity * (1 - sprite._slideDuration / fadeInDuration);
-                    } else {
-                        sprite.opacity = bustOpacity * (sprite._slideDuration / fadeOutDuration);
-                    }
-                    return true;
+        // Advances one sprite's slide. A method rather than a closure built
+        // inside updateStorySlots: that ran every frame and allocated this
+        // function again each time, for a stage that is empty on almost all of
+        // them.
+        _walkStorySlot(sprite) {
+            if (sprite._slideDuration > 0) {
+                sprite.x += (sprite._slideTarget - sprite.x) / sprite._slideDuration;
+                sprite._slideDuration -= 1;
+                if (sprite._slideType === 'in') {
+                    sprite.opacity = bustOpacity * (1 - sprite._slideDuration / fadeInDuration);
+                } else {
+                    sprite.opacity = bustOpacity * (sprite._slideDuration / fadeOutDuration);
                 }
-                return false;
-            };
-            (this.storySlots || []).forEach(walk);
-            const retiring = this._retiringSlots || [];
-            if (!retiring.length) return;
+                return true;
+            }
+            return false;
+        }
+
+        updateStorySlots() {
+            const slots = this.storySlots;
+            const retiring = this._retiringSlots;
+            // Nobody on stage and nobody walking off it: there is nothing here
+            // to advance, and this is the state on almost every frame.
+            if ((!slots || !slots.length) && (!retiring || !retiring.length)) return;
+
+            if (slots) {
+                for (let i = 0; i < slots.length; i++) this._walkStorySlot(slots[i]);
+            }
+            if (!retiring || !retiring.length) return;
             this._retiringSlots = retiring.filter(sprite => {
-                if (walk(sprite)) return true;
+                if (this._walkStorySlot(sprite)) return true;
                 if (sprite.parent) sprite.parent.removeChild(sprite);
                 sprite.opacity = 0;
                 return false;
@@ -622,16 +637,25 @@ Imported.DialogueSystem = true;
         // The portrait is measured against the screen alone, so the fit is redone
         // when the screen changes (a resolution change, split screen coming and
         // going) or when it changes ends, and never otherwise.
-        layoutSignature() {
-            return Graphics.width + 'x' + Graphics.height + '|' +
-                   this.bustSide + '|' + (this.storyMode ? 's' : '-') + '|' +
-                   (window.$gameSplitScreen && window.$gameSplitScreen.active ? '1' : '0');
-        }
-
+        // Compared field by field rather than as one joined string. This is
+        // asked on every frame the map is up, and the four things it watches
+        // (the screen size, which side the portrait stands on, story mode and
+        // split screen) change a handful of times in a session, so building a
+        // string to throw away was the whole cost of the check.
         refreshLayout(force) {
-            const sig = this.layoutSignature();
-            if (!force && sig === this._layoutSig) return;
-            this._layoutSig = sig;
+            const w = Graphics.width;
+            const h = Graphics.height;
+            const side = this.bustSide;
+            const story = !!this.storyMode;
+            const split = !!(window.$gameSplitScreen && window.$gameSplitScreen.active);
+            if (!force && w === this._layoutW && h === this._layoutH &&
+                side === this._layoutSide && story === this._layoutStory &&
+                split === this._layoutSplit) return;
+            this._layoutW = w;
+            this._layoutH = h;
+            this._layoutSide = side;
+            this._layoutStory = story;
+            this._layoutSplit = split;
             const s = this.characterBust;
             if (!s) return;
             this.updateBustHiddenPosition();
@@ -1016,6 +1040,28 @@ Imported.DialogueSystem = true;
             this.bustIsVisible       = false;
             this.activeEventId       = null;
             this.hideScheduled       = false;
+            this.syncMinimapCover();
+        }
+
+        // Is the party standing at the left end of the stage? In a two-sided
+        // conversation they always are, and that end of the screen is the same
+        // bottom-left corner the chart is drawn in.
+        leftBustShowing() {
+            if (this.storyMode && (this.storySlots || []).length) {
+                return this.storySlots.some(slot => slot && slot.storySide === 'left');
+            }
+            return !!this.bustIsVisible && this.bustSide === 'left';
+        }
+
+        // The corner chart gives way to that portrait rather than being drawn
+        // through it, and comes back the moment the conversation ends. Asked
+        // every frame, but the chart is only told when the answer changes.
+        syncMinimapCover() {
+            const want = this.leftBustShowing();
+            if (want === this._minimapCovered) return;
+            this._minimapCovered = want;
+            try { window.WorldMapView?.setConversationCover?.(want); }
+            catch (err) { /* no chart on this scene */ }
         }
 
         enableBatchDialogue() { this.batchDialogueMode = true; this.showBusts(); }
@@ -1093,6 +1139,7 @@ Imported.DialogueSystem = true;
                 if (closed && ended && !this.hideScheduled) { this.hideScheduled = true; this.hideBusts(); }
                 if (!closed && this.isStillInActiveEvent())   this.hideScheduled = false;
             }
+            this.syncMinimapCover();
         }
     }
 
@@ -1305,6 +1352,19 @@ Imported.DialogueSystem = true;
         } catch (err) { return ''; }
     }
 
+    // Is anybody actually on stage? The chatter is the voice of whoever is
+    // drawn beside the box, so a line with no portrait next to it is read
+    // rather than spoken: a shop counter, a system notice, a chest, a sign, any
+    // box raised outside a conversation stays silent.
+    function _voiceIsStaged() {
+        try {
+            const bm = SceneManager._scene && SceneManager._scene._bustManager;
+            if (!bm) return false;
+            if (bm.storyMode && (bm.storySlots || []).length) return true;
+            return !!bm.bustIsVisible;
+        } catch (err) { return false; }
+    }
+
     // Whose name is on the tag beside the box. In an exchange (a story scene,
     // an NPC talk) nothing is ever written into $gameMessage's speaker: the
     // name travels with the bust, so the tag is read first and the message's
@@ -1403,6 +1463,7 @@ Imported.DialogueSystem = true;
         // Play one letter. `gold` raises it by the keyword third.
         speakLetter(letter, gold, now) {
             if (!_voiceEnabled()) return false;
+            if (!_voiceIsStaged()) return false;
             const tier = _voiceTierFor(this._pitch);
             const se   = _voiceSeFor(letter, tier);
             if (!se) return false;
@@ -1432,6 +1493,7 @@ Imported.DialogueSystem = true;
         // gold marks, so whether a letter is inside one is read straight off it.
         speakRange(text, from, to, now) {
             if (!_voiceEnabled() || !text) return;
+            if (!_voiceIsStaged()) return;
             let gold = text.lastIndexOf(NAME_OPEN, Math.max(0, from - 1)) >
                        text.lastIndexOf(NAME_CLOSE, Math.max(0, from - 1));
             for (let i = Math.max(0, from); i < Math.min(text.length, to); i++) {
@@ -4170,7 +4232,56 @@ Imported.DialogueSystem = true;
     // same staging through here, so Options > Dialogue Mode is obeyed
     // wherever the talk started: empathize plays the written exchange, and
     // markovian only swaps the NPC's own half for a Markov line.
-    window.NPCTalk = { play: interpreter => playNpcTalk.call(interpreter) };
+    window.NPCTalk = {
+        play: interpreter => playNpcTalk.call(interpreter),
+        // A two-bust beat raised from outside the interpreter. The map's own
+        // menus (making a fuss of an animal, of the companion at heel) have no
+        // event command list to speak through, and a line added from inside a
+        // choice callback is wiped by the box closing over it: handing the two
+        // lines here stages them the way a talked-to NPC is staged instead,
+        // the party on the left and whoever answers on the right.
+        exchange: steps => startNPCExchange(steps, true),
+        // One Socialize move, rolled at random for a caller with nobody on an
+        // event to talk to: the party member walking behind the leader
+        // (Core/AutoIdleExplorer.js). It reads the same catalogue the panel's
+        // Socialize row offers and the street exchange above draws from, so
+        // nothing romantic is ever in it - Court and Propose live in a submenu
+        // of their own and were never part of this bank. Returns the rolled
+        // move with both lines already filled with the names, or null when the
+        // banks are not there to roll from.
+        socialRoll(actor, targetName, profile) {
+            const H = window.NPCEmpathize?._helpers;
+            if (!H || !H._socialLines || !H._rand) return null;
+            const cat = socialCatalog(H._socialLines());
+            if (!cat.length) return null;
+            const move = cat[Math.floor(Math.random() * cat.length)];
+            const roll = rollSocialMove(move, profile, actor, targetName);
+            if (!roll || !roll.playerLine || !roll.npcLine) return null;
+            const fill = s => vary(String(s || '')
+                .replace(/\{name\}/g, targetName || '')
+                .replace(/\{subject\}/g, roll.subject || ''));
+            return Object.assign({}, roll, {
+                playerLine: fill(roll.playerLine),
+                npcLine: fill(roll.npcLine),
+            });
+        },
+        playerStep: (actor, text) =>
+            playerStep(actor || ($gameParty && $gameParty.leader ? $gameParty.leader() : null), text),
+        eventStep: (ev, npcName, text) => npcStep(ev, npcName, text),
+        // Somebody with no event behind them at all (the companion at heel is
+        // a follower, not an event): the portrait is resolved off the sprite
+        // sheet they walk in, the same lookup an event's own bust comes from.
+        spriteStep(characterName, characterIndex, displayName, text) {
+            const bm   = SceneManager._scene && SceneManager._scene._bustManager;
+            const path = bm ? bm.getBustImageForCharacter(characterName, characterIndex || 0) : null;
+            return {
+                imageName: path ? String(path).replace(/^busts\//, '') : '7',
+                displayName: displayName || '',
+                text,
+                side: 'right',
+            };
+        },
+    };
 
     // A written scene, played out as a bust conversation.
     PluginManager.registerCommand(PLUGIN_NAME, "playStory", function (args) {

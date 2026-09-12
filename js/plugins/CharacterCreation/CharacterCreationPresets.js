@@ -2437,7 +2437,7 @@
   }
 
   //=============================================================================
-  // Retiring a party member ("set inactive")
+  // Sending a party member to the reserves
   //=============================================================================
   // The Dynamics menu can bench a companion instead of dismissing them for
   // good. A retired member is snapshotted into a dossier stored in the world
@@ -2592,7 +2592,7 @@
   /**
    * Put somebody on the bench without them ever having travelled: a recruit who
    * said yes while the party was already three strong (NPCSystemParty.joinParty)
-   * signs on as inactive, and the Dynamics board is where they are called up.
+   * signs on into the reserves, and the Dynamics board is where they are called up.
    * The actor handed in is a scratch slot holding their sheet, not a party
    * member, so nothing is removed from the party here.
    * @param {Game_Actor} actor - Actor slot carrying the recruit's sheet
@@ -2613,7 +2613,7 @@
   // Calling a retired member back ("set active")
   //=============================================================================
   // The bench belongs to the world, not to the savegame that filled it: every
-  // playthrough of this world sees the same inactive dossiers in Dynamics ->
+  // playthrough of this world sees the same reserve dossiers in Dynamics ->
   // Roster and can call any of them back into an open party slot. Doing so
   // takes them off the world's books for good, so no other savegame can pick
   // them up in character creation or call them back a second time.
@@ -2650,7 +2650,7 @@
   }
 
   /**
-   * Inactive dossiers this world can still call back. One already played in
+   * Reserve dossiers this world can still call back. One already played in
    * character creation is spent, so it stays out of the roster's bench too.
    * @returns {array} Array of preset objects
    */
@@ -2756,7 +2756,7 @@
   }
 
   /**
-   * Call an inactive member back into the party.
+   * Call a member in reserves back into the party.
    * @param {number} presetId - Retired dossier id
    * @returns {object} { ok: boolean, reason?: string, actorId?: number, preset?: object }
    */

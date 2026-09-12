@@ -38,7 +38,7 @@
     {
       "id": 1,
       "name": "Accounting",
-      "description": "Keeping and interpreting financial records: ledgers, statements and reconciliation.",
+      "description": "Keeping and interpreting financial records: grimories, statements and reconciliation.",
       "stat": "INT",
       "category": "Commerce",
       "sentient": true,

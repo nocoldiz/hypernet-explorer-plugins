@@ -403,7 +403,7 @@ const GameOptions = {
             groups: [
                 { key: 'display', symbols: ['fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
                 { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'partyHud', 'worldMinimap', 'titleBackground'] },
-                { key: 'battleView', symbols: ['enemyBattlers'] }
+                { key: 'battleView', symbols: ['enemyBattlers', 'lowModelDetail'] }
             ]
         },
         {
@@ -801,17 +801,23 @@ window.GameOptions = GameOptions;
         // The theme to come back to when the ASCII layer is switched off.
         this.themeBeforeAscii = config.themeBeforeAscii !== undefined ? config.themeBeforeAscii : 0;
         this.showFps = config.showFps !== undefined ? config.showFps : false;
+        // Thins the segment count of every procedurally built weapon and item.
+        // Read by WeaponSystemProcedural.isLowDetail(), which is the gate on
+        // seg(), wantsTrim() and the geometry budget those two stand for.
+        this.lowModelDetail = config.lowModelDetail !== undefined
+            ? !!config.lowModelDetail
+            : false;
         this.runInBackground = config.runInBackground !== undefined
             ? !!config.runInBackground
             : false;
-        // Title screen background style: 0 Random, 1 Cards, 2 Space
-        // (planets + stars + black holes + galaxies), 3 Artifacts, 4 Bestiary,
-        // 5 Weapons, 7 Hyperverse (default), 8 Camper Drive. 6 was the separate
-        // "Enemies 3D" preset, now folded into the bestiary: the bestiary draws
-        // its monsters as 3D models or as flat cards according to enemyBattlers,
-        // so a config still carrying 6 reads as the bestiary.
+        // Title screen background style: 0 Random, 1 Data Cards, 2 Space
+        // (planets + stars + black holes + galaxies), 7 Hyperverse (default),
+        // 8 Camper Drive. 3 (Artifacts), 4 (Bestiary), 5 (Weapons) and 6 (the
+        // older "Enemies 3D") were four views of one catalogue, now dealt by
+        // the data cards with their 3D models included, so a config still
+        // carrying any of them reads as the cards.
         this.titleBackground = config.titleBackground !== undefined ? config.titleBackground : 7;
-        if (this.titleBackground === 6) this.titleBackground = 4;
+        if (this.titleBackground >= 3 && this.titleBackground <= 6) this.titleBackground = 1;
         // CPU party members: when on, every party member except the leader
         // (first member) is auto-controlled in battle. Disabled by default.
         this.cpuPartyMembers = config.cpuPartyMembers !== undefined ? config.cpuPartyMembers : false;
@@ -902,6 +908,7 @@ window.GameOptions = GameOptions;
         config.activeTheme = this.activeTheme;
         config.themeBeforeAscii = this.themeBeforeAscii;
         config.showFps = this.showFps;
+        config.lowModelDetail = this.lowModelDetail;
         config.runInBackground = this.runInBackground;
         config.titleBackground = this.titleBackground;
         config.cpuPartyMembers = this.cpuPartyMembers;
@@ -2015,6 +2022,21 @@ window.GameOptions = GameOptions;
         }
     );
 
+    // Reduced model detail. The budget behind this has existed for a long time
+    // and reaches nearly four thousand call sites across the procedural weapon
+    // and item models (WeaponSystemProcedural seg(), wantsTrim(),
+    // _patchGeometryBudget, and the lo/hi variant of the built-model cache), but
+    // it had no way in: it asked for ConfigManager.battler3D, which was never
+    // registered here and never written anywhere, and for switch 70, which is
+    // named MZ3dBattleSYstem and is not set by any plugin or any event in the
+    // database. So it always answered "full detail" and the player had no say.
+    // Takes effect within a second (isLowDetail holds its answer that long) and
+    // the model caches key on it, so both resolutions can be held at once.
+    GameOptions.registerOption('lowModelDetail', T('GameOptions.label.lowModelDetail'),
+        () => !!ConfigManager.lowModelDetail,
+        (value) => { ConfigManager.lowModelDetail = !!value; },
+        'video', 'boolean');
+
     // Register Show FPS
     GameOptions.registerOption('showFps', T('GameOptions.label.showFps'),
         () => ConfigManager.showFps,
@@ -2250,16 +2272,17 @@ window.GameOptions = GameOptions;
     registerScaleOption('uiScale', T('GameOptions.label.uiScaling'));
     registerScaleOption('fontScale', T('GameOptions.label.fontScaling'));
 
-    // Title Screen Background switcher (select between the floating-card,
-    // 3D planet, or 3D procedural weapon backgrounds; Random reshuffles each launch)
+    // Title Screen Background switcher (select between the data cards, the
+    // starfield and the two cinematic backgrounds; Random reshuffles each launch)
     const titleBgNames = () => T.list('GameOptions.titleBackground');
     // Cycle order as seen by the player: Hyperverse (the default) first, Camper
     // Drive second, then the rest, with Random always last. The stored config
     // ids keep their original numbering so existing configs stay valid; only the
-    // order they are stepped through changes. 6 (the old Enemies 3D preset) is
-    // gone from the cycle: the bestiary covers it. Mirrors
+    // order they are stepped through changes. 3, 4, 5 and 6 (Artifacts,
+    // Bestiary, Weapons and the old Enemies 3D) are gone from the cycle: the
+    // data cards cover all four. Mirrors
     // Scene_Title.getAvailableBackgroundModes in Titlescreen.js.
-    const TITLE_BG_ORDER = [7, 8, 1, 2, 4, 3, 5, 0];
+    const TITLE_BG_ORDER = [7, 8, 1, 2, 0];
     const stepTitleBg = (v, dir) => {
         let i = TITLE_BG_ORDER.indexOf(v);
         if (i < 0) i = 0;
@@ -2269,7 +2292,7 @@ window.GameOptions = GameOptions;
         () => ConfigManager.titleBackground !== undefined ? ConfigManager.titleBackground : 7,
         (value) => ConfigManager.titleBackground = value,
         'video', 'boolean',
-        (value) => titleBgNames()[value === 6 ? 4 : value] || titleBgNames()[0],
+        (value) => titleBgNames()[value] || titleBgNames()[0],
         function () {
             this.setConfigValue('titleBackground', stepTitleBg(this.getConfigValue('titleBackground'), 1));
         },

@@ -2542,6 +2542,37 @@
     }
 
     mapData.regiondata = regiondata;
+
+    // --- 8. The dead mass is painted keep-out -------------------------------
+    // The rock a structure is cut out of is only ever as solid as its tileset
+    // says it is, and a tileset does not have to say much: the ceiling blend
+    // is flagged impassable in the Dungeon sheet and passable in others, and a
+    // wall-mounted fixture stamped on layer 2 hides whatever is under it from
+    // RPG Maker's checkPassage, which stops at the topmost tile that has an
+    // opinion. Between them, most of a Temple's or a Cave's rock reads as open
+    // ground to the engine - which is how a staircase, a lift, a spike trap
+    // and a chest all came to be dealt into the inside of a wall, reachable
+    // only on a broomstick.
+    //
+    // So the plan is stated in the one place nothing can argue with: the
+    // region plane. Every cell that is not carved floor carries the keep-out
+    // region, which RegionRules makes impassable indoors (flight included) and
+    // which every placement pass refuses to spawn on. The generators used to
+    // fill `regiondata` and drop it on the floor - nothing ever copied it into
+    // the array the engine reads - so the layer is emitted here for the first
+    // time, and it carries the keep-out mark alone. Water keeps the terrain
+    // tag it has always been read by, rather than gaining a region 99 that
+    // would suddenly make every shallow pool swim-only.
+    const NO_GO_REGION = (window.RegionRules && window.RegionRules.NO_GO_REGION) || 7;
+    const regionLayerEnd = width * height * 6;
+    for (let i = mapData.length; i < regionLayerEnd; i++) mapData[i] = 0;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (carved[y][x]) continue;
+        mapData[calculateIndex(x, y, 5, width, height)] = NO_GO_REGION;
+      }
+    }
+
     // Room rectangles + entrance metadata for the (room-aware) prefab pass and the
     // caller that positions the player. Prefabs are applied later by the prefab
     // load-hook using mapData.rooms so they are fitted inside rooms.

@@ -1734,7 +1734,6 @@
             if (!(character instanceof Game_Event)) MBM._syncSwimState(character);
         }
 
-        // A loose party (Core/AutoIdleExplorer.js) has no column to close.
         if (!MBM._looseFormation()) $gamePlayer.gatherFollowers();
 
         MBM._enemyEvent = null;
@@ -1937,8 +1936,11 @@
         return spots;
     };
 
+    // The party walks the engine's own column (Core/AutoIdleExplorer.js): there
+    // is no loose formation left to have scattered it, so the column is always
+    // closed the vanilla way once a fight is over.
     MBM._looseFormation = function () {
-        return !!(window.AutoIdleExplorer && window.AutoIdleExplorer.loose);
+        return false;
     };
 
     MBM._holdsPosition = function (character, anchor, taken) {

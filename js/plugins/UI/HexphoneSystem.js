@@ -18,12 +18,18 @@
  * - Full keyboard/controller support (arrows, ok, cancel, digit keys).
  * - Calling a contact now triggers its Common Event on the map.
  * - Incoming calls (receiveCall command) with answer/decline.
- * - Built-in working minigames: Snake and Tetris (LCD style).
+ * - Built-in working minigames: Snake and Bitstack (LCD style).
  * - External minigames can register via window.registerHexphoneGame.
  * - Scene_AnokiPhone is exported globally for extension plugins.
+ * - The LCD can be leaned into: clicking the panel (or the pad's zoom trigger)
+ *   lifts it out of the shell and fills the view with it, keypad left behind.
+ *   The caption under the phone names the control the player actually holds.
  *
  * Controls (phone open):
  *   Mouse/touch ....... all on-screen buttons
+ *   Click the screen .. enlarge the LCD, and again to bring the keypad back
+ *   Pad R2 / L2 ....... the same, on a controller (Core/ControllerSystem.js
+ *                       owns the binding, so a remap prints its own button)
  *   0-9 * # ........... keypad (dialing and quick menu shortcuts)
  *   Arrow Up/Down ..... navigate lists
  *   Enter / Z ......... MENU button (select / call / open)
@@ -71,7 +77,7 @@
  *
  * @param games
  * @text Phone Games
- * @desc Extra mini-games launched through a common event. Snake and Tetris are built in.
+ * @desc Extra mini-games launched through a common event. Snake and Bitstack are built in.
  * @type struct<PhoneGame>[]
  * @default []
  *
@@ -1254,6 +1260,7 @@
         this._selectedHistoryIndex = 0;
         this._selectedServiceIndex = 0;
         this._messageScroll = 0;
+        this._screenZoomed = false;
     };
 
     Scene_AnokiPhone.prototype.create = function() {
@@ -1270,6 +1277,7 @@
         this.createPhoneBody();
         this.createScreen();
         this.createPhoneButtons();
+        this.createZoomHint();
         this.playPowerOnSound();
     };
 
@@ -1488,6 +1496,10 @@
         const screenX = Graphics.width / 2 - 130;
         const screenY = 90;
 
+        // Where the panel sits in the shell, so the zoom has somewhere to put
+        // it back (see "Leaning into the screen" below).
+        this._screenHome = { x: screenX, y: screenY };
+
         this._screenSprite = new Sprite();
         this._screenSprite.bitmap = new Bitmap(260, 180);
         this._screenSprite.x = screenX;
@@ -1608,6 +1620,154 @@
                 this.addChild(button);
             }
         }
+    };
+
+    //-------------------------------------------------------------------------
+    // Leaning into the screen
+    //-------------------------------------------------------------------------
+    // The LCD is the only part of the phone worth looking at closely, and it is
+    // 250x170 in the middle of a shell six hundred pixels tall. Clicking the
+    // panel lifts it out of the shell and fills the view with it, keypad and
+    // all left behind; clicking it again drops it back. On a pad it is the two
+    // triggers, the same pair that zoom the voxel world and every 3D minigame
+    // (Core/ControllerSystem.js owns that binding), and the caption under the
+    // phone says which control it is in the player's own hands.
+    //
+    // Nothing about the phone's own input changes while the panel is up: the
+    // keys are typed on the keyboard as they always were, the d-pad still walks
+    // the lists, and a game on the LCD is still played the same way. Only the
+    // painted keypad goes away.
+
+    // How much bigger the panel can be drawn: as much as the view allows,
+    // snapped down to a quarter step so the LCD's own pixel grid enlarges
+    // evenly rather than into a moire of uneven blocks.
+    Scene_AnokiPhone.prototype.screenZoomScale = function() {
+        const room = Math.min((Graphics.width - 48) / 260, (Graphics.height - 96) / 180);
+        return Math.max(1, Math.floor(room * 4) / 4);
+    };
+
+    // The panel as it stands on screen right now, zoom included, for hit testing.
+    Scene_AnokiPhone.prototype.screenPanelRect = function() {
+        const sprite = this._screenSprite;
+        if (!sprite) return null;
+        const k = sprite.scale ? (sprite.scale.x || 1) : 1;
+        return { x: sprite.x, y: sprite.y, w: 260 * k, h: 180 * k };
+    };
+
+    Scene_AnokiPhone.prototype.isTouchingScreen = function() {
+        const rect = this.screenPanelRect();
+        if (!rect) return false;
+        return TouchInput.x >= rect.x && TouchInput.x < rect.x + rect.w &&
+            TouchInput.y >= rect.y && TouchInput.y < rect.y + rect.h;
+    };
+
+    Scene_AnokiPhone.prototype.toggleScreenZoom = function(zoomed) {
+        const next = zoomed == null ? !this._screenZoomed : !!zoomed;
+        if (next === !!this._screenZoomed) return;
+        this._screenZoomed = next;
+        this.applyScreenZoom();
+        playSeSafe('Cursor2', 55, next ? 150 : 110); // i18n-ignore: SE filename
+    };
+
+    // The panel, the glass over it and the content bitmap move and scale as one
+    // piece. Smoothing is turned off while it is up: a passive matrix panel seen
+    // close is blocky, and a blurred one just looks like a mistake.
+    Scene_AnokiPhone.prototype.applyScreenZoom = function() {
+        const home = this._screenHome;
+        if (!home || !this._screenSprite) return;
+        const zoomed = !!this._screenZoomed;
+        const k = zoomed ? this.screenZoomScale() : 1;
+        const x = zoomed ? Math.round((Graphics.width - 260 * k) / 2) : home.x;
+        const y = zoomed ? Math.round((Graphics.height - 34 - 180 * k) / 2) : home.y;
+
+        const layers = [
+            { sprite: this._screenSprite, dx: 0, dy: 0 },
+            { sprite: this._contentSprite, dx: 5, dy: 5 },
+            { sprite: this._glassSprite, dx: 0, dy: 0 }
+        ];
+        for (const layer of layers) {
+            const sprite = layer.sprite;
+            if (!sprite) continue;
+            sprite.scale.set(k, k);
+            sprite.x = x + layer.dx * k;
+            sprite.y = y + layer.dy * k;
+            if (sprite.bitmap) sprite.bitmap.smooth = !zoomed;
+        }
+
+        if (this._phoneSprite) this._phoneSprite.visible = !zoomed;
+        for (const button of (this._buttons || [])) button.visible = !zoomed;
+        this.drawZoomHint();
+    };
+
+    Scene_AnokiPhone.prototype.updateScreenZoomInput = function() {
+        if (this._closing) return;
+        const pad = window.Controller;
+        if (pad && typeof pad.actionTriggered === 'function') {
+            if (pad.actionTriggered(this._screenZoomed ? 'zoomOut' : 'zoomIn')) {
+                this.toggleScreenZoom();
+                return;
+            }
+        }
+        if (TouchInput.isTriggered() && this.isTouchingScreen()) this.toggleScreenZoom();
+    };
+
+    //-------------------------------------------------------------------------
+    // The caption that names the control
+    //-------------------------------------------------------------------------
+    // One line under the phone, in the words of whatever is in the player's
+    // hands: the click for a mouse, the trigger and its face for a pad. It is
+    // rewritten when the zoom changes and when the player swaps device
+    // mid-call, which Core/ControllerSystem.js is the judge of.
+
+    Scene_AnokiPhone.prototype.createZoomHint = function() {
+        this._hintSprite = new Sprite();
+        this._hintSprite.bitmap = new Bitmap(Graphics.width, 26);
+        this._hintSprite.x = 0;
+        this._hintSprite.y = Graphics.height - 30;
+        this.addChild(this._hintSprite);
+        this.drawZoomHint();
+    };
+
+    // The face the pad zooms with, asked of the controller layer rather than
+    // named here, so a remapped binding still prints the button it is on.
+    Scene_AnokiPhone.prototype.zoomPadFace = function() {
+        const pad = window.Controller;
+        if (!pad || typeof pad.usingPad !== 'function' || !pad.usingPad()) return '';
+        const action = this._screenZoomed ? 'zoomOut' : 'zoomIn';
+        const face = typeof pad.faceOf === 'function' ? pad.faceOf(action, 'menu') : '';
+        if (!face) return '';
+        return (typeof pad.glyph === 'function' ? pad.glyph(face) : face) || face;
+    };
+
+    Scene_AnokiPhone.prototype.zoomHintText = function() {
+        const face = this.zoomPadFace();
+        if (face) {
+            return T(this._screenZoomed ? 'Hexphone.zoom.padOut' : 'Hexphone.zoom.padIn', // i18n-ignore: key
+                { button: face });
+        }
+        return T(this._screenZoomed ? 'Hexphone.zoom.clickOut' : 'Hexphone.zoom.clickIn'); // i18n-ignore: key
+    };
+
+    Scene_AnokiPhone.prototype.drawZoomHint = function() {
+        if (!this._hintSprite || !this._hintSprite.bitmap) return;
+        const bitmap = this._hintSprite.bitmap;
+        this._hintFace = this.zoomPadFace();
+        bitmap.clear();
+        bitmap.fontSize = 15;
+        bitmap.fontBold = false;
+        bitmap.textColor = '#8e9cad';
+        bitmap.outlineColor = 'rgba(0, 0, 0, 0.8)';
+        bitmap.outlineWidth = 3;
+        bitmap.drawText(this.zoomHintText(), 0, 2, bitmap.width, 22, 'center');
+    };
+
+    // A pad plugged in or picked up mid-call changes what the caption should
+    // say, so the device is checked rather than assumed. Nothing is redrawn
+    // while it reads the same.
+    Scene_AnokiPhone.prototype.updateZoomHint = function() {
+        if (!this._hintSprite) return;
+        if (this._screenAnimation % 20 !== 0) return;
+        if (this.zoomPadFace() !== this._hintFace) this.drawZoomHint();
     };
 
     //-------------------------------------------------------------------------
@@ -2037,7 +2197,10 @@
 
             for (let i = start; i < end; i++) {
                 const prefix = (i === this._selectedGameIndex) ? '> ' : '  ';
-                bitmap.drawText(prefix + games[i].name, 5, y, 230, 20, 'left');
+                // The registry id doubles as the i18n key, so a built-in game
+                // is listed in the player's language and a game registered by
+                // another plugin still shows the name it registered under.
+                bitmap.drawText(prefix + getText(games[i].name), 5, y, 230, 20, 'left');
                 y += 22;
             }
         }
@@ -2656,12 +2819,14 @@
         if (this._closing) return;
 
         this._screenAnimation++;
+        this.updateScreenZoomInput();
         this.updateEngineInput();
         this.updateGameSession();
         this.updatePhoneScreen();
         this.handleInput();
         this.updateCursorBlink();
         this.updateAmbient();
+        this.updateZoomHint();
     };
 
     Scene_AnokiPhone.prototype.updateEngineInput = function() {
@@ -2806,7 +2971,7 @@
         playSeSafe('Cancel1', 70, 80);
     };
 
-    // Export for extension plugins (HexphoneTetris-style hooks, and
+    // Export for extension plugins (HexphonePuzzle-style hooks, and
     // PublicPhoneSystem.js's own booth scene, which reuses this button sprite)
     window.Scene_AnokiPhone = Scene_AnokiPhone;
     window.Scene_Hexphone = Scene_AnokiPhone;
@@ -3092,95 +3257,236 @@
     }
 
     //---------------------------------------------------------------------------
-    // Tetris
+    // Bitstack
+    //
+    // The phone's falling-bit puzzle. It shares its board and its bit
+    // catalogue with the lockpicking puzzle (Minigames/UnlockingBlocks.js):
+    // a register nine cells across and sixteen deep with parity iron cut into
+    // its walls, fed bits that are single pins, five cell profiles, pierced
+    // collars and long combs rather than four cell pieces, and a full row
+    // flushes where it lies instead of collapsing the stack on top of it.
     //---------------------------------------------------------------------------
 
-    const TETROMINOES = {
-        I: [[0, 1, 2, 3], [1, 5, 9, 13]],
-        O: [[1, 2, 5, 6]],
-        T: [[1, 4, 5, 6], [1, 5, 6, 9], [4, 5, 6, 9], [1, 4, 5, 9]],
-        S: [[1, 2, 4, 5], [1, 5, 6, 10]],
-        Z: [[0, 1, 5, 6], [2, 5, 6, 9]],
-        J: [[0, 4, 5, 6], [1, 2, 5, 9], [4, 5, 6, 10], [1, 5, 8, 9]],
-        L: [[2, 4, 5, 6], [1, 5, 9, 10], [4, 5, 6, 8], [0, 1, 5, 9]]
-    };
+    const BITSTACK_COLS = 9;
+    const BITSTACK_ROWS = 16;
 
-    class HexphoneTetrisGame {
+    // The bit catalogue. The lockpicking puzzle owns it and loads first, so the
+    // phone reads it off the namespace; the copy below is only there so this
+    // file still plays on its own.
+    const BITSTACK_TIERS = (window.UnlockingBlocks && window.UnlockingBlocks.SHAPE_TIERS) || [
+        [
+            [[1]],
+            [[2], [2]],
+            [[3, 3]],
+            [[4, 0], [4, 4]],
+            [[5, 5], [0, 5]]
+        ],
+        [
+            [[1, 0, 1], [1, 1, 1]],
+            [[0, 2, 0], [2, 2, 2], [0, 2, 0]],
+            [[3, 0, 0], [3, 3, 0], [0, 3, 3]],
+            [[4, 0, 0], [4, 0, 0], [4, 4, 4]],
+            [[5, 5, 5], [0, 5, 0], [0, 5, 0]]
+        ],
+        [
+            [[1, 1, 1], [1, 0, 1], [1, 1, 1]],
+            [[2, 0, 2], [2, 2, 2], [2, 0, 2]],
+            [[3, 3, 3, 3], [0, 0, 3, 0], [0, 0, 3, 0]],
+            [[4, 0, 4], [4, 4, 4], [0, 4, 0]],
+            [[0, 5, 0], [5, 5, 5], [5, 0, 5]]
+        ],
+        [
+            [[1, 0, 1, 0, 1], [1, 1, 1, 1, 1]],
+            [[2, 0, 0, 0], [2, 2, 0, 0], [0, 2, 2, 0], [0, 0, 2, 2]],
+            [[3, 0, 0], [3, 3, 3], [3, 0, 3], [3, 0, 0]],
+            [[4, 4, 0, 4, 4], [0, 4, 4, 4, 0]],
+            [[0, 5, 0], [5, 5, 5], [0, 5, 0], [5, 0, 5]]
+        ]
+    ];
+
+    // Flattened once: the shape list every draw indexes into, plus the tier
+    // each entry belongs to, so a level only deals out of the tiers it earned.
+    const BITSTACK_SHAPES = [];
+    const BITSTACK_TIER_OF = [];
+    BITSTACK_TIERS.forEach((tier, index) => {
+        for (const shape of tier) {
+            BITSTACK_SHAPES.push(shape);
+            BITSTACK_TIER_OF.push(index);
+        }
+    });
+
+    // Parity iron: the cells cut into the walls of the register. They count
+    // towards a full row and survive the flush, so the profile stays readable.
+    const BITSTACK_WALL = -1;
+
+    // One more tier of bits every three levels.
+    function bitstackTierCount(level) {
+        const step = Math.floor((Math.max(1, level) - 1) / 3);
+        return Math.min(1 + step, BITSTACK_TIERS.length);
+    }
+
+    class HexphoneBitstackGame {
         constructor() {
             this.reset();
             if (window.MinigameFun) window.MinigameFun.played('Video Gaming'); // i18n-ignore: leisure activity id
+            // A phone game has no scene of its own, so the diary is told here
+            // rather than by Core/Diary.js watching the scene stack.
+            if (window.Diary && typeof window.Diary.record === 'function') {
+                try {
+                    window.Diary.record('minigame.played', { // i18n-ignore: diary entry kind
+                        game: T('Diary.game.bitstack'), // i18n-ignore: i18n key
+                        outcome: '',
+                        score: ''
+                    }, { dedupe: 'bitstack' }); // i18n-ignore: dedupe key
+                } catch (e) { /* the game still played */ }
+            }
         }
 
         reset() {
-            this.cols = 10;
-            this.rows = 20;
+            this.cols = BITSTACK_COLS;
+            this.rows = BITSTACK_ROWS;
             this.cell = 8;
             this.grid = Array.from({length: this.rows}, () => new Array(this.cols).fill(0));
             this.score = 0;
-            this.lines = 0;
+            this.rowsFlushed = 0;
             this.level = 1;
+            this.tiers = bitstackTierCount(1);
             this.gameOver = false;
             this.dropTimer = 0;
-            this.dropSpeed = 45;
+            this.dropSpeed = 50;
+            this.bag = [];
             this.current = null;
-            this.next = this.randomPiece();
+            this.next = this.drawBit();
+            this.cutWalls();
             this.spawn();
         }
 
-        randomPiece() {
-            const types = Object.keys(TETROMINOES);
-            const type = types[Math.floor(Math.random() * types.length)];
-            return {type: type, x: 3, y: -1, rot: 0};
+        //--- the bits ---------------------------------------------------------
+        // Bag draw: every bit the level deals comes up once before any of them
+        // comes round again, so a level never deals four combs in a row.
+        drawBit() {
+            if (!this.bag.length) {
+                BITSTACK_TIER_OF.forEach((tier, index) => {
+                    if (tier < this.tiers) this.bag.push(index);
+                });
+                for (let i = this.bag.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    const swap = this.bag[i];
+                    this.bag[i] = this.bag[j];
+                    this.bag[j] = swap;
+                }
+            }
+            const index = this.bag.pop();
+            return {index: index, shape: BITSTACK_SHAPES[index].map(row => row.slice()), x: 0, y: 0};
         }
 
+        //--- the walls --------------------------------------------------------
+        // Teeth of parity iron bitten in from the left and the right, stepping
+        // every few rows. Only empty cells are ever written, and the mouth of
+        // the register (the top rows) is left clear so a bit can still be fed
+        // in. Deeper at higher levels, which is what makes a level narrower
+        // rather than merely faster.
+        cutWalls() {
+            const widest = BITSTACK_SHAPES.reduce((w, shape) => Math.max(w, shape[0].length), 1);
+            const room = Math.max(0, Math.floor((this.cols - widest) / 2));
+            const depth = Math.min(1 + Math.floor((this.level - 1) / 4), room);
+            if (depth <= 0) return;
+            const run = this.level <= 5 ? 3 : 2;
+            let y = Math.min(4, this.rows);
+            while (y < this.rows) {
+                const height = Math.min(1 + Math.floor(Math.random() * run), this.rows - y);
+                const left = Math.floor(Math.random() * (depth + 1));
+                const right = Math.floor(Math.random() * (depth + 1 - left));
+                for (let i = 0; i < height; i++) {
+                    for (let x = 0; x < left; x++) {
+                        if (!this.grid[y + i][x]) this.grid[y + i][x] = BITSTACK_WALL;
+                    }
+                    for (let x = 0; x < right; x++) {
+                        const bx = this.cols - 1 - x;
+                        if (!this.grid[y + i][bx]) this.grid[y + i][bx] = BITSTACK_WALL;
+                    }
+                }
+                y += height;
+            }
+        }
+
+        //--- queries ----------------------------------------------------------
+        cells(shape, x, y) {
+            const out = [];
+            for (let cy = 0; cy < shape.length; cy++) {
+                for (let cx = 0; cx < shape[cy].length; cx++) {
+                    if (shape[cy][cx]) out.push([x + cx, y + cy]);
+                }
+            }
+            return out;
+        }
+
+        fits(shape, x, y) {
+            return this.cells(shape, x, y).every(([cx, cy]) => {
+                if (cx < 0 || cx >= this.cols || cy >= this.rows) return false;
+                return cy < 0 || this.grid[cy][cx] === 0;
+            });
+        }
+
+        // Where the bit would come to rest if it were dropped now.
+        ghostY() {
+            if (!this.current) return 0;
+            let y = this.current.y;
+            while (this.fits(this.current.shape, this.current.x, y + 1)) y++;
+            return y;
+        }
+
+        //--- moves ------------------------------------------------------------
         spawn() {
             this.current = this.next;
-            this.next = this.randomPiece();
-            if (!this.fits(this.current.x, this.current.y, this.current.rot)) {
+            this.next = this.drawBit();
+            this.current.x = Math.floor((this.cols - this.current.shape[0].length) / 2);
+            this.current.y = 0;
+            if (!this.fits(this.current.shape, this.current.x, this.current.y)) {
                 this.gameOver = true;
                 playSeSafe('Buzzer1', 60, 100);
                 if (window.MinigameFun) window.MinigameFun.lost('Video Gaming'); // i18n-ignore: leisure activity id
             }
         }
 
-        cells(piece, x, y, rot) {
-            const shapes = TETROMINOES[piece.type];
-            const shape = shapes[rot % shapes.length];
-            return shape.map(i => [x + (i % 4), y + Math.floor(i / 4)]);
-        }
-
-        fits(x, y, rot) {
-            return this.cells(this.current, x, y, rot).every(([cx, cy]) => {
-                if (cx < 0 || cx >= this.cols || cy >= this.rows) return false;
-                return cy < 0 || this.grid[cy][cx] === 0;
-            });
-        }
-
         move(dx) {
-            if (!this.gameOver && this.fits(this.current.x + dx, this.current.y, this.current.rot)) {
+            if (this.gameOver || !this.current) return;
+            if (this.fits(this.current.shape, this.current.x + dx, this.current.y)) {
                 this.current.x += dx;
             }
         }
 
-        rotate() {
-            if (this.gameOver) return;
-            const rot = this.current.rot + 1;
-            if (this.fits(this.current.x, this.current.y, rot)) {
-                this.current.rot = rot;
-            } else if (this.fits(this.current.x - 1, this.current.y, rot)) {
-                this.current.x--; this.current.rot = rot;
-            } else if (this.fits(this.current.x + 1, this.current.y, rot)) {
-                this.current.x++; this.current.rot = rot;
+        rotate(clockwise) {
+            if (this.gameOver || !this.current) return;
+            const shape = this.current.shape;
+            const h = shape.length;
+            const w = shape[0].length;
+            const out = [];
+            for (let i = 0; i < w; i++) out.push(new Array(h).fill(0));
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                    if (clockwise) out[x][h - 1 - y] = shape[y][x];
+                    else out[w - 1 - x][y] = shape[y][x];
+                }
+            }
+            // The bits are up to five cells wide, so a turn against a wall
+            // needs room to step away from it.
+            for (const kick of [0, -1, 1, -2, 2]) {
+                if (this.fits(out, this.current.x + kick, this.current.y)) {
+                    this.current.x += kick;
+                    this.current.shape = out;
+                    return;
+                }
             }
         }
 
         softDrop() {
-            if (this.gameOver) return false;
-            if (this.fits(this.current.x, this.current.y + 1, this.current.rot)) {
+            if (this.gameOver || !this.current) return false;
+            if (this.fits(this.current.shape, this.current.x, this.current.y + 1)) {
                 this.current.y++;
                 return true;
             }
-            this.lock();
+            this.settle();
             return false;
         }
 
@@ -3188,34 +3494,61 @@
             while (this.softDrop()) {}
         }
 
-        lock() {
-            for (const [cx, cy] of this.cells(this.current, this.current.x, this.current.y, this.current.rot)) {
-                if (cy >= 0 && cy < this.rows && cx >= 0 && cx < this.cols) {
-                    this.grid[cy][cx] = 1;
+        settle() {
+            const kinds = this.current.shape;
+            for (let cy = 0; cy < kinds.length; cy++) {
+                for (let cx = 0; cx < kinds[cy].length; cx++) {
+                    const kind = kinds[cy][cx];
+                    if (!kind) continue;
+                    const bx = this.current.x + cx;
+                    const by = this.current.y + cy;
+                    if (by >= 0 && by < this.rows && bx >= 0 && bx < this.cols) {
+                        this.grid[by][bx] = kind;
+                    }
                 }
             }
-            this.clearLines();
+            this.current = null;
+            this.flushRows();
             this.spawn();
         }
 
-        clearLines() {
-            let cleared = 0;
-            for (let y = this.rows - 1; y >= 0; y--) {
-                if (this.grid[y].every(c => c !== 0)) {
-                    this.grid.splice(y, 1);
-                    this.grid.unshift(new Array(this.cols).fill(0));
-                    cleared++;
-                    y++;
+        // A full row voids where it lies: nothing above it falls, and the
+        // parity iron cut into the walls stays behind.
+        voidFullRows() {
+            const flushed = [];
+            for (let y = 0; y < this.rows; y++) {
+                let full = true;
+                for (let x = 0; x < this.cols; x++) {
+                    if (this.grid[y][x] === 0) { full = false; break; }
+                }
+                if (full) flushed.push(y);
+            }
+            for (const y of flushed) {
+                for (let x = 0; x < this.cols; x++) {
+                    if (this.grid[y][x] !== BITSTACK_WALL) this.grid[y][x] = 0;
                 }
             }
-            if (cleared > 0) {
-                const points = [0, 100, 300, 500, 800];
-                this.lines += cleared;
-                this.score += points[Math.min(cleared, 4)] * this.level;
-                this.level = Math.floor(this.lines / 10) + 1;
-                this.dropSpeed = Math.max(8, 45 - this.level * 4);
-                playSeSafe('Decision2', 50, 130);
+            return flushed.length;
+        }
+
+        flushRows() {
+            const flushed = this.voidFullRows();
+            if (!flushed) return;
+            this.rowsFlushed += flushed;
+            this.score += flushed * (80 + 40 * flushed) * this.level;
+            const level = Math.floor(this.rowsFlushed / 6) + 1;
+            if (level > this.level) {
+                this.level = level;
+                this.tiers = bitstackTierCount(level);
+                this.bag = [];
+                this.dropSpeed = Math.max(9, 50 - this.level * 4);
+                // A deeper profile is bitten into the walls with every level. A
+                // fresh tooth can complete a row on its own, so the board is
+                // read again rather than left with a row standing full.
+                this.cutWalls();
+                this.voidFullRows();
             }
+            playSeSafe('Decision2', 50, 130);
         }
 
         onKey(value) {
@@ -3225,13 +3558,14 @@
             }
             if (value === '4') this.move(-1);
             else if (value === '6') this.move(1);
-            else if (value === '2') this.rotate();
+            else if (value === '2' || value === '9') this.rotate(true);
+            else if (value === '7') this.rotate(false);
             else if (value === '8') this.softDrop();
             else if (value === '5' || value === 'menu') this.hardDrop();
         }
 
         // Returns true when the visible state changed (needs an LCD redraw):
-        // any directional input, a rotate/drop, or a gravity step.
+        // any move, a turn, a drop, or a gravity step.
         update(scene) {
             if (this.gameOver) {
                 if (Input.isTriggered('ok')) { this.reset(); return true; }
@@ -3241,7 +3575,8 @@
             let changed = false;
             if (Input.isRepeated('left')) { this.move(-1); changed = true; }
             if (Input.isRepeated('right')) { this.move(1); changed = true; }
-            if (Input.isTriggered('up')) { this.rotate(); changed = true; }
+            if (Input.isTriggered('up')) { this.rotate(true); changed = true; }
+            if (Input.isTriggered('pageup')) { this.rotate(false); changed = true; }
             if (Input.isRepeated('down')) { this.softDrop(); changed = true; }
             if (Input.isTriggered('ok')) { this.hardDrop(); changed = true; }
             if (this.gameOver) return true;
@@ -3256,50 +3591,70 @@
         }
 
         draw(bitmap) {
-            const ox = 8;
+            const ox = 18;
+            const oy = 4;
             const boardW = this.cols * this.cell;
             const boardH = this.rows * this.cell;
 
-            // Board frame
+            // The register walls
             const ctx = bitmap.context;
             ctx.strokeStyle = LCD_DARK;
             ctx.lineWidth = 1;
-            ctx.strokeRect(ox - 1.5, 3.5, boardW + 3, boardH + 3);
+            ctx.strokeRect(ox - 1.5, oy - 0.5, boardW + 3, boardH + 2);
 
-            // Placed blocks
+            // Settled bits, and the parity iron as a lighter tooth
             for (let y = 0; y < this.rows; y++) {
                 for (let x = 0; x < this.cols; x++) {
-                    if (this.grid[y][x]) {
-                        bitmap.fillRect(ox + x * this.cell, 5 + y * this.cell, this.cell - 1, this.cell - 1, LCD_DARK);
+                    const cellValue = this.grid[y][x];
+                    if (!cellValue) continue;
+                    const px = ox + x * this.cell;
+                    const py = oy + 1 + y * this.cell;
+                    if (cellValue === BITSTACK_WALL) {
+                        bitmap.fillRect(px, py, this.cell - 1, this.cell - 1, LCD_MID);
+                        bitmap.fillRect(px + 2, py + 2, this.cell - 5, this.cell - 5, LCD_DARK);
+                    } else {
+                        bitmap.fillRect(px, py, this.cell - 1, this.cell - 1, LCD_DARK);
                     }
                 }
             }
 
-            // Falling piece
+            // Where the falling bit would land, then the bit itself
             if (this.current && !this.gameOver) {
-                for (const [cx, cy] of this.cells(this.current, this.current.x, this.current.y, this.current.rot)) {
-                    if (cy >= 0) {
-                        bitmap.fillRect(ox + cx * this.cell, 5 + cy * this.cell, this.cell - 1, this.cell - 1, LCD_DARK);
+                const gy = this.ghostY();
+                if (gy !== this.current.y) {
+                    for (const [cx, cy] of this.cells(this.current.shape, this.current.x, gy)) {
+                        if (cy < 0) continue;
+                        bitmap.fillRect(ox + cx * this.cell + 3, oy + 1 + cy * this.cell + 3,
+                            2, 2, LCD_MID);
                     }
+                }
+                for (const [cx, cy] of this.cells(this.current.shape, this.current.x, this.current.y)) {
+                    if (cy < 0) continue;
+                    bitmap.fillRect(ox + cx * this.cell, oy + 1 + cy * this.cell,
+                        this.cell - 1, this.cell - 1, LCD_DARK);
                 }
             }
 
-            // Sidebar
-            const sx = ox + boardW + 14;
+            // Readouts
+            const sx = ox + boardW + 16;
             bitmap.fontSize = 10;
             bitmap.textColor = LCD_DARK;
-            bitmap.drawText(getText('Score'), sx, 8, 140, 14, 'left');
-            bitmap.drawText(String(this.score), sx, 20, 140, 14, 'left');
-            bitmap.drawText(getText('Lines') + ': ' + this.lines, sx, 40, 140, 14, 'left');
-            bitmap.drawText(getText('Level') + ': ' + this.level, sx, 54, 140, 14, 'left');
-            bitmap.drawText(getText('Next'), sx, 76, 140, 14, 'left');
+            bitmap.drawText(getText('Score'), sx, 4, 120, 14, 'left');
+            bitmap.drawText(String(this.score), sx, 16, 120, 14, 'left');
+            bitmap.drawText(getText('Rows') + ': ' + this.rowsFlushed, sx, 34, 120, 14, 'left');
+            bitmap.drawText(getText('Level') + ': ' + this.level, sx, 46, 120, 14, 'left');
+            bitmap.drawText(getText('Tier') + ': ' + this.tiers, sx, 58, 120, 14, 'left');
+            bitmap.drawText(getText('Next'), sx, 78, 120, 14, 'left');
 
-            // Next piece preview
-            const shapes = TETROMINOES[this.next.type];
-            for (const i of shapes[0]) {
-                const px = sx + (i % 4) * 7;
-                const py = 92 + Math.floor(i / 4) * 7;
-                bitmap.fillRect(px, py, 6, 6, LCD_MID);
+            // The next bit, at five pixels a cell: the catalogue runs to five
+            // wide and four deep, so the preview is sized for a comb.
+            if (this.next) {
+                for (let y = 0; y < this.next.shape.length; y++) {
+                    for (let x = 0; x < this.next.shape[y].length; x++) {
+                        if (!this.next.shape[y][x]) continue;
+                        bitmap.fillRect(sx + x * 6, 94 + y * 6, 5, 5, LCD_MID);
+                    }
+                }
             }
 
             if (this.gameOver) {
@@ -3315,7 +3670,7 @@
 
     // i18n-ignore-start: registry ids
     window.registerHexphoneGame('Snake', { create: () => new HexphoneSnakeGame() });
-    window.registerHexphoneGame('Tetris', { create: () => new HexphoneTetrisGame() });
+    window.registerHexphoneGame('Bitstack', { create: () => new HexphoneBitstackGame() });
     // i18n-ignore-end
 
     //=============================================================================

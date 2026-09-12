@@ -740,7 +740,28 @@
     // Is this world square a town, and which sort of one? The one answer every
     // part of the 3D world asks: the builder, the crowd, the interiors and the
     // ruins that are only ever put on squares nobody lives on.
+    // Memoised, the way getRenderType and profileFor next door are. This is
+    // asked from _groundUnderfoot - every frame, for the walker and again for
+    // every follower behind them - and nine times a frame by the town crowd,
+    // and each ask lowercased a fresh string and ran eight substring scans over
+    // it for an answer that belongs to the world square and never changes.
+    const _kindCache = new Map();
+    const KIND_CACHE_MAX = 2048;
     function settlementKindAt(wx, wy) {
+        const key = wx * 65536 + wy;
+        const hit = _kindCache.get(key);
+        if (hit !== undefined) return hit;
+        const kind = _settlementKindOf(wx, wy);
+        // Plain eviction rather than a flush: the working set is the ring the
+        // party is standing in, so the oldest key is the one furthest behind
+        // them.
+        if (_kindCache.size >= KIND_CACHE_MAX) {
+            _kindCache.delete(_kindCache.keys().next().value);
+        }
+        _kindCache.set(key, kind);
+        return kind;
+    }
+    function _settlementKindOf(wx, wy) {
         const n = sampleBiomeAt(wx, wy).name.toLowerCase();
         if (n.includes('city') || n.includes('metro') || n.includes('omegatower') ||
             n.includes('spacecenter')) return 'city';
@@ -901,20 +922,38 @@
     // Whatever is built on a world square - a town, a ruin, or nothing - planned
     // once and kept, since everything about it is derived from the square alone.
     const _tilePlanCache = new Map();
+    // Comfortably more than the ring the decorator dresses, so a square is
+    // still there when the party walks back onto it.
+    const TILE_PLAN_CACHE_MAX = 256;
     function planForTile(tx, tz) {
         // Nothing anybody built stands on another world. Towns and steadings
         // would not get planned there anyway (no alien biome reads as a city or
         // a meadow), but a RUIN is rolled on any square at all - so without this
         // a comet would be scattered with abandoned Earth barns.
         if (getAlienTerrain && getAlienTerrain()) return null;
-        const key = tx + ',' + tz;
+        const key = tx * 65536 + tz;
         let plan = _tilePlanCache.get(key);
-        if (plan !== undefined) return plan;
+        if (plan !== undefined) {
+            // Touched: a Map keeps insertion order, so re-inserting a hit is
+            // what makes the eviction below pick the least recently WANTED
+            // square rather than the least recently planned one.
+            _tilePlanCache.delete(key);
+            _tilePlanCache.set(key, plan);
+            return plan;
+        }
         const kind = settlementKindAt(tx, tz);
         plan = kind ? planSettlement(tx, tz, kind === 'city', WORLD_TILE_SIZE)
                     : (planSteading(tx, tz, WORLD_TILE_SIZE) ||
                        planAbandoned(tx, tz, WORLD_TILE_SIZE));
-        if (_tilePlanCache.size > 32) _tilePlanCache.clear();
+        // One square at a time, not the whole cache at once. The decorator
+        // dresses a radius-5 ring - a hundred and twenty one squares - and the
+        // interiors walk nine more every frame, so a working set of 32 was
+        // overrun constantly and the flush threw away squares still in use,
+        // sending planTown and planVillage (nearly two hundred lines apiece)
+        // round again from scratch.
+        if (_tilePlanCache.size >= TILE_PLAN_CACHE_MAX) {
+            _tilePlanCache.delete(_tilePlanCache.keys().next().value);
+        }
         _tilePlanCache.set(key, plan);
         return plan;
     }

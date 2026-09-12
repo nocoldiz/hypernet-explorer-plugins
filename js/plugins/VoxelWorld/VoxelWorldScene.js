@@ -43,7 +43,7 @@
         LIMINAL_FUEL_PER_SEC, LIMINAL_TERRAIN_RADIUS, LIMINAL_TOP_KMH, LOOT_RANGE,
         LiminalFx, MAX_KMH, MAX_STEER_LOCK, NATURAL_TOP, OVERDRIVE_DECAY,
         OVERDRIVE_KMHPS, ProceduralDecorator, REVERSE_ACCEL, REVERSE_MAX_KMH,
-        ROAD_GAP, ROAD_TOTAL_W, RoadAutopilot, SETTLE, SHIFT_TIME, SLOPE_ACCEL,
+        ROAD_GAP, ROAD_TOTAL_W, RoadAutopilot, RoadFollow, SETTLE, SHIFT_TIME, SLOPE_ACCEL,
         SOLID_PROPS, FLY_SKILL_ID, OVERLAY_Z, WORLD_UI_Z, WORLD_UI_IDS, MENU_Z,
         faceBillboards, PERSON_H,
         setBiomeOverride, getBiomeOverride, setAlienTerrain, buildOmegaTower,
@@ -63,6 +63,7 @@
         dayFactorForHour, getRenderType, getRoadDirectionAt, initPerlinWithSeed, VOXEL_WORLD_SEED,
         isSandboxOrTest, pickRandomRoadTile, placeNameAt, planForTile, roadLabelAt,
         sampleBiomeAt, sampleSkyColor, setTextureAnisotropy, settlementKindAt,
+        isAirlessWorld, sampleAlienSkyColor,
         troopForBioEnemy
     } = VW;
 
@@ -105,6 +106,12 @@
     // is nowhere on screen before it takes itself back (about a second).
     const MENU_WATCHDOG = 60;
 
+    // How hard the eye is pulled onto the creature a fight was opened against:
+    // the fraction of the remaining angle closed per second (see
+    // _holdBattleAim). High enough that the turn is done before the first round
+    // is, low enough to read as a turn rather than a cut.
+    const BATTLE_AIM_EASE = 6;
+
     // How close to a chest counts as standing at it (about four metres): a
     // little more generous than the scenery, because a chest is small and its
     // billboard is the only thing telling you where it is.
@@ -112,6 +119,18 @@
     // How close a walker has to stand to a parked vehicle before E gets them
     // into it. A car is 18 units long, so this is arm's reach around it.
     const BOARD_REACH = 34;
+
+    // How far above the ground a vehicle is stood when the world opens on it.
+    // The rig's height is a suspension spring easing onto the surface, and it
+    // used to start the world at y = 0 - the level of the sea - so opening a
+    // drive on any square standing higher than that, which is every road square
+    // in the world, began INSIDE the ground and climbed out through the tarmac.
+    // The height is resolved up front now, and this little clearance means the
+    // vehicle settles DOWN onto the road rather than surfacing through it.
+    // Three units is about three quarters of a metre (UNITS_PER_M is 4), which
+    // is less than one voxel: never enough to stand it inside whatever cube
+    // happens to be over the square.
+    const SPAWN_CLEARANCE = 3;
 
     // Fishing. How far in front of a walker the water is looked for, how far in
     // is too close to count as a bank, and how deep that water has to be before
@@ -912,6 +931,7 @@
             // Whose sky this is. Earth's, unless the walk is somewhere else, in
             // which case that world's own moons go up instead of ours.
             this._skyFx.setWorld(this._sky);
+            if (isAirlessWorld && isAirlessWorld(this._alien)) this._skyFx.setAirless(true);
             this._wheelFx      = new WheelFx(this._scene);
             this._bioEnemies   = this._titleMode ? null : new BiomeEnemyManager(this._scene, this._terrain);
             // The people: a town's own citizens on its pavements, and the party
@@ -1082,6 +1102,34 @@
                 document.addEventListener('mousedown', this._onDigDown);
                 document.addEventListener('mouseup',   this._onDigUp);
             }
+
+            // ---------------------------------------------------------------
+            // Put it down ON the world
+            // ---------------------------------------------------------------
+            // The ride height is resolved ONCE here, before the opening view is
+            // set up, so the world opens with the vehicle standing on the ground
+            // it is parked on. Without this _vanY was 0 for the first frames and
+            // the suspension spring lifted it onto the surface over the best
+            // part of a second: on a road square - the ground of which stands
+            // well above y = 0 - the drive began under the tarmac and rose
+            // through it, and in the chase and first-person views the camera
+            // came up out of the road with it. SPAWN_CLEARANCE stands it a
+            // little proud of the surface so the spring settles it DOWN onto the
+            // carriageway instead. A walk needs none of it: the walker's feet
+            // are placed on the ground by _enterOnFoot (_groundUnderfoot).
+            if (!this._footOnly) {
+                const spawnY = this._resolveEnv();
+                this._vanY = spawnY + (this._env === 'road' ? SPAWN_CLEARANCE : 0);
+                this._suspVel = 0;
+                this._van.group.position.set(this._vanX, this._vanY, this._vanZ);
+            }
+
+            // The lane assist. The road steers itself under a driver who is not
+            // touching the wheel (RoadFollow); the title screen has an autopilot
+            // of its own doing the whole job, so it gets none. It is built for
+            // every other drive, walk included: a walk can board a parked
+            // vehicle without leaving the world (_mountVehicle).
+            this._roadFollow = this._titleMode ? null : new RoadFollow(this);
 
             // What the leader has in their hands, drawn over the drive.
             if (!this._titleMode) CamperWeapon.begin();
@@ -2357,11 +2405,13 @@
             if (window.RetroShader && window.RetroShader.patchSceneAdds) {
                 window.RetroShader.patchSceneAdds(this._scene);
             }
-            this._scene.background = new THREE.Color(0x4387e0);
+            const initAirless = isAirlessWorld && isAirlessWorld(this._alien);
+            const initSkyCol = initAirless ? 0x000000 : 0x4387e0;
+            this._scene.background = new THREE.Color(initSkyCol);
             // Much lighter haze so the world reads clearly into the distance. Fog
             // density is in 1/units, so it is divided by WORLD_SCALE to keep the
             // same view distance (in tiles) on the enlarged world.
-            this._scene.fog = new THREE.FogExp2(0x4387e0, FOG_DAY);
+            this._scene.fog = new THREE.FogExp2(initSkyCol, initAirless ? 0.0001 : FOG_DAY);
 
             // Near/far scale with the world so the (25x larger) terrain isn't
             // clipped; near stays small enough for the cabin interior.
@@ -2374,7 +2424,15 @@
             this._camera = new THREE.PerspectiveCamera(65, w / h, 0.5, VIEW_FAR);
             this._baseFov = 65;
 
-            this._renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+            // MSAA only when it can actually be seen. In Pixel Art mode the
+            // frame is drawn to a low-res target and upscaled with a nearest
+            // filter, which throws every antialiased edge away again - and this
+            // is the largest canvas in the game, so paying full-screen MSAA
+            // bandwidth for a discarded result is the most expensive way to do
+            // nothing. Same test UI/Titlescreen.js already makes for its own
+            // renderer. The other retro mode and the plain one keep their edges.
+            const wantsAA = !(window.PSXShader && window.PSXShader.isPixelArt());
+            this._renderer = new THREE.WebGLRenderer({ antialias: wantsAA, powerPreference: 'high-performance' });
             this._renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
             this._renderer.setSize(w, h);
             const caps = this._renderer.capabilities;
@@ -2388,7 +2446,12 @@
             // bright - and the light below is balanced to land a lit top face
             // at about 1.0 instead, so there is nothing left to roll off.
             this._renderer.shadowMap.enabled = true;
-            this._renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            // PCF, not PCFSoft: the soft variant takes many more taps for a
+            // blur this world cannot show. The palette below is deliberately
+            // flat and high-contrast, and in Pixel Art mode the downsample
+            // discards the gradient anyway. Battler3D/3DBattlerSystem.js makes
+            // the same call, in the same words, for the same reason.
+            this._renderer.shadowMap.type = THREE.PCFShadowMap;
             // Off three's automatic path. Left to itself it re-renders the
             // shadow map every single frame, which walks the whole scene graph
             // - every chunk of ground, every batch of scenery, every building
@@ -3309,11 +3372,16 @@
             if (this._hemiLight) {
                 this._hemiLight.intensity = cave ? 0.06 : underwater ? 0.18 : 0.08 + df * 0.26;
             }
-            if (this._solomon && this._solomon.isActive()) {
-                this._ambientLight.color.lerp(new THREE.Color(0xff2233), Math.min(1, delta * 2));
-            } else {
-                this._ambientLight.color.lerp(new THREE.Color(0xffffff), Math.min(1, delta * 2));
+            // Both targets are fixed, so they are built once. This ran every
+            // frame, in whichever branch, and the function already keeps _tmpSky
+            // and _tmpFog for exactly this reason.
+            if (!this._ritualRed) {
+                this._ritualRed = new THREE.Color(0xff2233);
+                this._plainWhite = new THREE.Color(0xffffff);
             }
+            const want = (this._solomon && this._solomon.isActive())
+                ? this._ritualRed : this._plainWhite;
+            this._ambientLight.color.lerp(want, Math.min(1, delta * 2));
 
             // The free walk's hand light, on the same dusk-to-dawn schedule as
             // the headlights below.
@@ -3331,17 +3399,23 @@
             if (this._headlights) for (const sp of this._headlights) sp.intensity += (hi - sp.intensity) * ek;
             if (this._beams) for (const b of this._beams) b.material.opacity += (bo - b.material.opacity) * ek;
 
+            const airless = isAirlessWorld && isAirlessWorld(this._alien);
             // Sky / fog colour. Underwater forces a deep teal regardless of camera.
+            // On an airless alien world the sky is a black starry sky at all hours;
+            // on an alien world with atmosphere the sky colour depends on its biome.
             const targetSky = cave ? this._tmpSky.setHex(CAVE_SKY)
                 : underwater ? this._tmpSky.setHex(0x0d4a5c)
+                : airless ? this._tmpSky.setHex(0x000000)
+                : (this._alien && sampleAlienSkyColor) ? this._starTintSky(sampleAlienSkyColor(this._alien, hour, this._tmpSky))
                 : this._starTintSky(sampleSkyColor(hour, this._tmpSky));
             // The haze at the horizon is NOT the sky over it: the sky is deep
             // and the distance pales toward white, which is what makes a
             // horizon read as a horizon rather than as the line where the
             // ground stops. Underground and underwater there is no horizon and
-            // the two are the same thing.
+            // the two are the same thing. On an airless world there is no horizon
+            // haze and the black sky meets the ground cleanly.
             if (!this._tmpFog) this._tmpFog = new THREE.Color();
-            const targetFog = (cave || underwater)
+            const targetFog = (cave || underwater || airless)
                 ? this._tmpFog.copy(targetSky)
                 : skyFogColor(targetSky, this._tmpFog);
             if (this._solomon) {
@@ -3354,6 +3428,7 @@
             }
             if (cave) this._scene.fog.density = FOG_CAVE;
             else if (underwater) this._scene.fog.density = FOG_UNDERWATER;
+            else if (airless) this._scene.fog.density = 0.0001;
             else if (this._viewMode !== 'free') this._scene.fog.density = (this._solomon && this._solomon.isActive()) ? 0.0022 : FOG_DAY;
 
             // Stars / moon / drifting clouds follow the camper.
@@ -3361,6 +3436,7 @@
             // Elapsed hours, not the hour of the day: another world's moons run
             // their own months and have to be counted from the start of time.
             if (this._skyFx) {
+                if (this._skyFx.setAirless) this._skyFx.setAirless(airless);
                 this._skyFx.update(this._vanX, this._vanZ, hour, df, delta,
                     underwater || cave, (totalMins + 600) / 60);
             }
@@ -4040,8 +4116,22 @@
             const boost = !auto && readInput && canDrive && this._isAcceleratePressed();
             this._boostActive = boost;
             const airborne = this._airborne;   // set by _updateRideHeight last frame
-            const turnInput = auto ? auto.steer
+            // The wheel: what the driver is doing with it, and then what the
+            // road would do with it if they are not (the lane assist, which
+            // hands back null the moment it has no business steering).
+            const driverSteer = auto ? auto.steer
                 : !readInput ? 0 : this._steerInput();
+            let turnInput = driverSteer;
+            if (!auto && this._roadFollow) {
+                const held = this._roadFollow.steer(delta, driverSteer, !!(readInput && canDrive));
+                if (held != null) {
+                    turnInput = held;
+                    // The assist is not a wrist on a stick: its correction goes
+                    // through the same ease a key does, or it would saw at the
+                    // wheel for anybody holding a pad.
+                    this._steerAnalog = false;
+                }
+            }
             const handbrake = !auto && readInput && this._handbrake;
 
             this._throttle01 += (throttleTarget - this._throttle01) * Math.min(1, delta * 5);
@@ -5387,12 +5477,27 @@
         }
 
         // Where the party actually stands in the 3D world.
+        // One scratch, handed back over and over: this is asked four times in
+        // the frame loop and from a dozen places besides, and every one of them
+        // used to get an object of its own.
+        //
+        // The contract that makes that safe: the point is where the party is
+        // STANDING, which cannot change in the middle of a frame, so two asks
+        // inside one frame write the same three numbers and callers that hold it
+        // across a nested ask (_updateQuietFrame holds it over
+        // _updateOmegaTower, which asks again) read what they already had.
+        // Anything that MOVES the party must therefore ask again afterwards
+        // rather than keep a point from before the step - which is what every
+        // caller does today, since they all take it after the movement pass.
         _contactPoint() {
+            const at = this._atScratch || (this._atScratch = { x: 0, y: 0, z: 0 });
             if (this._viewMode === 'foot') {
                 const p = this._fpc.getRig().position;
-                return { x: p.x, y: p.y, z: p.z };
+                at.x = p.x; at.y = p.y; at.z = p.z;
+            } else {
+                at.x = this._vanX; at.y = this._vanY; at.z = this._vanZ;
             }
-            return { x: this._vanX, y: this._vanY, z: this._vanZ };
+            return at;
         }
 
         // Open a fight against the touched creature's own troop. The world is
@@ -5411,6 +5516,16 @@
             // and keeps looking around through the handover, which reads as the
             // fight starting late and somewhere else.
             this._lockControls();
+            // The strip along the bottom becomes the spell bar for the fight.
+            // It is the same widget the battle puts up (Core/HotbarUI.js) and
+            // the spell view is built from the same carried loadout
+            // (window.BattleLoadout), so when the battle's own bar takes the
+            // slot a moment later it is showing the same nine skills in the
+            // same nine cells and nothing appears to move. The mode the player
+            // had is handed back when the fight ends.
+            if (this._tool && this._tool.setBarMode) {
+                this._preBattleBarMode = this._tool.setBarMode('spells');
+            }
             // Turn to the thing that just walked into you before the first round
             // opens, so the fight is framed on it rather than on whatever the
             // party happened to be looking at.
@@ -5432,6 +5547,7 @@
                 if (!(SceneManager.isSceneChanging() || SceneManager._scene instanceof Scene_Battle)) {
                     this._pendingFought = null;
                     this._unlockControls();
+                    this._restoreBarMode();
                     // The fight was refused (blocked, on cooldown, nothing left
                     // of the troop). Without this the creature is still standing
                     // where it was, still touching the party, and the next frame
@@ -5490,6 +5606,14 @@
             const ent = this._pendingFought;
             if (ent && ent.root) ent.root.visible = false;
             if (ent && ent.plate) ent.plate.visible = false;
+            // The party's walking sprites go with them. The fight draws every
+            // one of these characters again as a battler, and leaving the
+            // billboards standing in the frame the fight is fought over puts
+            // each of them on screen twice. setVisible(false) drops the
+            // breadcrumb trail too, so the line re-forms from where the party
+            // actually stands when the fight ends instead of snapping back
+            // along a stale one.
+            if (this._followers) this._followers.setVisible(false);
         }
 
         // ---------------------------------------------------------------------
@@ -5586,7 +5710,14 @@
             }
             CamperWeapon.resumeFromBattle();
             CamperWeapon.refresh();
-            if (this._followers) this._followers.refresh();
+            this._restoreBarMode();
+            if (this._followers) {
+                this._followers.refresh();
+                // Back in frame, and only where they would be anyway: the
+                // normal frame decides that from the view mode, so this asks
+                // the same question rather than a second one.
+                this._followers.setVisible(this._viewMode === 'foot');
+            }
             if (this._pendingFought) this._settleFoughtEnemy();
 
             // Clear any engine input/player locks left over by the battle scene
@@ -5651,7 +5782,10 @@
                 const camYaw = this._cameraYaw();
                 const df = this._dayFactor == null ? 1 : this._dayFactor;
                 if (this._crowd) this._crowd.update(delta, at.x, at.z, camYaw, df);
-                if (this._followers && this._viewMode === 'foot') {
+                // Not while a fight is on: they are out of frame for it (see
+                // beginBattleView) and walking them would only put the trail
+                // back.
+                if (this._followers && this._viewMode === 'foot' && !this._battleWatch) {
                     const rig = this._fpc.getRig().position;
                     this._followers.update(delta, rig.x, rig.y - FOOT_EYE, rig.z, camYaw, df,
                         (x, z) => this._groundUnderfoot(x, z));
@@ -5688,26 +5822,60 @@
         // Turn the eye onto a creature. Only meaningful on foot, where the rig
         // sits in the world and its yaw IS the direction the party is looking;
         // in the cabin and at the wheel the camera belongs to the camper.
+        // Only meaningful on foot, where the rig sits in the world and its yaw
+        // IS the direction the party is looking; in the cabin and at the wheel
+        // the camera belongs to the camper. That is not a gap: a fight can only
+        // ever open on foot, because _checkBioEnemyCollision shoves a creature
+        // clear instead of fighting it in any of the driving modes.
+        //
+        // Nothing is snapped here. The fight no longer opens behind a fade
+        // (VoxelWorldSystem suppresses the encounter ceremony), so the turn
+        // onto the creature is the thing the player actually watches: it is
+        // handed to _holdBattleAim and eased over the frames the fade used to
+        // eat.
         _faceEntity(ent) {
             if (!ent || this._viewMode !== 'foot' || !this._fpc) return;
-            const p = this._fpc.getRig().position;
-            const dx = ent.x - p.x, dz = ent.z - p.z;
-            if (dx * dx + dz * dz < 1e-4) return;
-            this._fpc.yaw.rotation.y = Math.atan2(-dx, -dz);
-            this._fpc.pitch.rotation.x = 0;
+            this._holdBattleAim(0);
         }
 
-        // Keep it there while the fight runs, easing rather than snapping so a
-        // creature that was knocked sideways does not jerk the view after it.
+        // Hold the eye on the creature for as long as the fight runs, easing
+        // rather than snapping so one that is knocked sideways does not jerk
+        // the view after it. Pitch as well as yaw, so the thing being fought is
+        // CENTRED rather than merely somewhere in front: a tall creature is
+        // framed on its body and a small one is looked down at.
         _holdBattleAim(delta) {
             const ent = this._pendingFought;
             if (!ent || ent.dead || this._viewMode !== 'foot' || !this._fpc) return;
             const p = this._fpc.getRig().position;
-            const want = Math.atan2(-(ent.x - p.x), -(ent.z - p.z));
-            let d = want - this._fpc.yaw.rotation.y;
+            const dx = ent.x - p.x, dz = ent.z - p.z;
+            const flat = Math.hypot(dx, dz);
+            if (flat < 1e-3) return;
+            const k = Math.min(1, delta * BATTLE_AIM_EASE);
+
+            let d = Math.atan2(-dx, -dz) - this._fpc.yaw.rotation.y;
             while (d > Math.PI)  d -= Math.PI * 2;
             while (d < -Math.PI) d += Math.PI * 2;
-            this._fpc.yaw.rotation.y += d * Math.min(1, delta * 3);
+            this._fpc.yaw.rotation.y += d * k;
+
+            // Aim at the middle of it rather than at the ground it stands on.
+            // The model's root sits at the creature's feet once it has loaded;
+            // before that there is nothing to look at yet, so the eye stays
+            // level and only the turn happens.
+            const eyeY = p.y;
+            const baseY = ent.root ? ent.root.position.y
+                        : (ent.y != null ? ent.y : eyeY);
+            const aimY = baseY + (ent.hgt || 0) * 0.5;
+            const wantPitch = Math.atan2(aimY - eyeY, flat);
+            this._fpc.pitch.rotation.x += (wantPitch - this._fpc.pitch.rotation.x) * k;
+        }
+
+        // Give the quick bar back whatever view it was on before a fight
+        // borrowed it for the spells. Safe to call on a path that never
+        // borrowed one.
+        _restoreBarMode() {
+            const was = this._preBattleBarMode;
+            this._preBattleBarMode = null;
+            if (was && this._tool && this._tool.setBarMode) this._tool.setBarMode(was);
         }
 
         // Back from a fight with a roaming creature: the battle system deletes

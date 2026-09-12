@@ -345,8 +345,16 @@
 
   let _roster = null;
 
+  // NPC/FactionDataManager.js declares $gameFactions with a top level `let`,
+  // which lives in the global LEXICAL scope and so never becomes a property of
+  // the window object: asking the window for it comes back undefined forever.
+  // This gate is what every entry point into the assembly passes through, so
+  // asking the wrong way left all three plugin commands silent.
+  const gameFactions = () =>
+    (typeof $gameFactions !== "undefined" && $gameFactions) || null;
+
   function factionsReady() {
-    return !!(window.$gameFactions && window.FactionDataManager &&
+    return !!(gameFactions() && window.FactionDataManager &&
       FactionDataManager.instance && FactionDataManager.instance._factions &&
       FactionDataManager.instance._factions.length);
   }
@@ -1561,7 +1569,7 @@
       }
       state.lastAutoSessionMinute = now;
       state.sessionsHeld = (state.sessionsHeld || 0) + held;
-      if (window.WorldManager) window.WorldManager.flush();
+      if (window.WorldManager) window.WorldManager.flush("npcs");
     } catch (e) {
       console.warn("[ONUAssembly] unattended sitting", e);
     } finally {

@@ -956,16 +956,12 @@
       if (companionsVisible === visible) return;
       companionsVisible = visible;
 
-      // A companion is hidden while the player swims or climbs because in the
-      // marching column they have nowhere to be. A LOOSE party is different:
-      // each member walks the map themselves and gets into the water on their
-      // own (Core/AutoIdleExplorer.js), so hiding them would delete a swimmer
-      // the player can see.
-      const loose = window.AutoIdleExplorer && window.AutoIdleExplorer.loose;
+      // A companion is hidden while the player swims or climbs: walking the
+      // marching column (Core/AutoIdleExplorer.js) they have nowhere to be
+      // while the leader is in the water or up a wall.
       if ($gamePlayer.followers && $gamePlayer.followers()) {
         for (const follower of $gamePlayer.followers()._data) {
           if (!follower) continue;
-          if (!visible && loose && loose.activeFor && loose.activeFor(follower)) continue;
           follower.setTransparent(!visible);
         }
       }
@@ -1655,15 +1651,32 @@
 
   // Cache the (roof-tile, region-102) tile classification per character until it
   // moves, so screenZ does not re-query regionId/terrainTag every frame.
-  const _misRoofOrSeatAt = (character) => {
-    if (character._misZTileX !== character.x || character._misZTileY !== character.y) {
+  //
+  // The seat region is kept apart from the roof as well as combined with it:
+  // Game_CharacterBase.screenZ asks only about region 102, and it asked
+  // $gameMap.regionId directly, once per character per frame, for every
+  // follower and every event on the map. It can read the same cached tile the
+  // player's own path has been reading all along.
+  //
+  // The map id rides in the key because x and y alone do not identify a tile
+  // across a transfer: walking onto (12,7) of a new map from (12,7) of the old
+  // one would otherwise keep the answer the previous map gave.
+  const _misZTileFacts = (character) => {
+    const mapId = $gameMap ? $gameMap.mapId() : 0;
+    if (character._misZTileX !== character.x ||
+        character._misZTileY !== character.y ||
+        character._misZTileMap !== mapId) {
       character._misZTileX = character.x;
       character._misZTileY = character.y;
-      character._misZIsRoofOrSeat = Utils.isRoofTile(character.x, character.y) ||
-        $gameMap.regionId(character.x, character.y) === 102;
+      character._misZTileMap = mapId;
+      character._misZIsSeat = $gameMap.regionId(character.x, character.y) === 102;
+      character._misZIsRoofOrSeat =
+        Utils.isRoofTile(character.x, character.y) || character._misZIsSeat;
     }
-    return character._misZIsRoofOrSeat;
+    return character;
   };
+  const _misRoofOrSeatAt = (character) => _misZTileFacts(character)._misZIsRoofOrSeat;
+  const _misSeatAt = (character) => _misZTileFacts(character)._misZIsSeat;
 
   // A "☆" tile (the star passage of the tileset) is foreground scenery: it
   // is always walkable and the tilemap paints it on the upper layer, over every
@@ -1718,7 +1731,7 @@
 
   const _Game_CharacterBase_screenZ = Game_CharacterBase.prototype.screenZ;
   Game_CharacterBase.prototype.screenZ = function () {
-    if ($gameMap && $gameMap.regionId(this.x, this.y) === 102) return 10;
+    if ($gameMap && _misSeatAt(this)) return 10;
     if ($gameMap && this._priorityType === 1 && _misUnderStarTile(this)) {
       return STAR_OVERHEAD_Z;
     }
@@ -2922,6 +2935,73 @@
     return false;
   };
 
+  // ---------------------------------------------------------------------------
+  // Region 7: the keep-out region
+  // ---------------------------------------------------------------------------
+  // One region id says "this square is not part of the playable space": solid
+  // mass a room was cut out of, the dead border of a treasure room, the inside
+  // of a wall. Nothing may ever be put there - no prop, no chest, no NPC, no
+  // staircase, no event of any kind - and indoors nothing may walk, fly or
+  // phase across it either, a broomstick and an airship included.
+  //
+  // Every system asks window.RegionRules rather than testing the literal 7 for
+  // itself, the same way NPCCreature owns the sentience boundary: the id is
+  // written down once, here, next to the passability rules it belongs to.
+  const NO_GO_REGION = 7;
+
+  // Interiors and the procedural map are where region 7 seals movement. A
+  // roofed structure has a wall with an inside, and walking into it reads as
+  // a hole in the building; out in the open a painted square is scenery, so
+  // outdoor maps keep their passability and only lose their spawns.
+  // Answered once per loaded map rather than per tile: this is asked from
+  // inside canPass, which every character runs on every step.
+  function isSealedRegionMap(map) {
+    const gameMap = map || (typeof $gameMap !== "undefined" ? $gameMap : null);
+    if (!gameMap || !gameMap.mapId || !gameMap.mapId()) return false;
+    if (gameMap._misRegionSealMap === gameMap.mapId()) return gameMap._misRegionSeal;
+    let sealed = gameMap.mapId() === 636;
+    if (!sealed && typeof window.isProceduralInteriorMap === "function") {
+      sealed = !!window.isProceduralInteriorMap();
+    }
+    if (!sealed) {
+      const note = (typeof $dataMap !== "undefined" && $dataMap && $dataMap.note) || "";
+      sealed = /<Interior>/i.test(note) || /<Covered>/i.test(note);  // i18n-ignore  map note-tag
+    }
+    gameMap._misRegionSealMap = gameMap.mapId();
+    gameMap._misRegionSeal = sealed;
+    return sealed;
+  }
+
+  const RegionRules = {
+    NO_GO_REGION,
+
+    // Movement. True only where the region seals: see isSealedRegionMap.
+    blocksMovement(x, y, map) {
+      const gameMap = map || (typeof $gameMap !== "undefined" ? $gameMap : null);
+      if (!gameMap || gameMap.regionId(x, y) !== NO_GO_REGION) return false;
+      return isSealedRegionMap(gameMap);
+    },
+
+    // Placement. True on every map, indoors and out: a square painted
+    // keep-out is never dealt a spawn, whatever else stands on it.
+    blocksSpawn(x, y, map) {
+      const gameMap = map || (typeof $gameMap !== "undefined" ? $gameMap : null);
+      if (!gameMap || typeof gameMap.regionId !== "function") return false;
+      return gameMap.regionId(x, y) === NO_GO_REGION;
+    },
+
+    // The same question asked of a raw $dataMap-shaped object, for the
+    // generators and the world-seeded layout passes that run with no live
+    // $gameMap to read. Layer 5 is the region plane.
+    blocksSpawnInData(mapData, x, y) {
+      if (!mapData || !mapData.data || !mapData.width || !mapData.height) return false;
+      const w = mapData.width, h = mapData.height;
+      if (x < 0 || y < 0 || x >= w || y >= h) return false;
+      return mapData.data[5 * w * h + y * w + x] === NO_GO_REGION;
+    },
+  };
+  window.RegionRules = RegionRules;
+
   const _Game_CharacterBase_canPass = Game_CharacterBase.prototype.canPass;
   Game_CharacterBase.prototype.canPass = function (x, y, d) {
     // Region ID 11 directional passability:
@@ -2932,6 +3012,11 @@
     // Bridge events override this restriction in both directions.
     const x2 = $gameMap.roundXWithDirection(x, d);
     const y2 = $gameMap.roundYWithDirection(y, d);
+    // The keep-out region is checked before anything else, because it has to
+    // beat the checks that skip passability altogether: through, debug-through
+    // and every flying mode, which is how a broomstick used to cross a wall
+    // into the dead space behind it.
+    if (RegionRules.blocksMovement(x2, y2)) return false;
     const currentRegion = $gameMap.regionId(x, y);
     const destRegion = $gameMap.regionId(x2, y2);
 
@@ -3038,6 +3123,7 @@
        (character.isAmphibiousEnemy && character.isAmphibiousEnemy()));
 
     if (regionId === 10) return false;
+    if (regionId === NO_GO_REGION && isSealedRegionMap(this)) return false;
 
     let isDivingWater = false;
     if (character && character._isDiving) {
@@ -3116,6 +3202,11 @@
     if (isDivingWater) {
       return 0;
     }
+
+    // The keep-out region. These branches answer with the BLOCKED bits, the
+    // way the region rules below them do: 0 is "nothing in the way", `bit` is
+    // "all of it is".
+    if (regionId === NO_GO_REGION && isSealedRegionMap(this)) return bit;
 
     // Bridge deck over water, see Game_Map.isPassable above.
     if (regionId === 12 && (charIsSwimming || charIsWaterEnemy)) return 0;
@@ -3208,12 +3299,15 @@
     // The submerged-deck flood belongs to the map that was scanned, never to
     // the next one loaded into the same $gameMap.
     this._misSubmergedDeck = null;
+    // The keep-out region seals interiors and the procedural map only, and
+    // which of the two this is belongs to the map that was just loaded.
+    this._misRegionSealMap = 0;
     this._misScanSpecialPassability();
   };
 
-  // Special-passability tiles are regions 4,5,10,12,13,99, terrain tags 4,7, and
-  // (on map 636) terrain tag 3. If a map has none, the isPassable/checkPassage
-  // overrides can defer straight to the originals.
+  // Special-passability tiles are regions 4,5,7,10,12,13,99, terrain tags 4,7,
+  // and (on map 636) terrain tag 3. If a map has none, the
+  // isPassable/checkPassage overrides can defer straight to the originals.
   Game_Map.prototype._misScanSpecialPassability = function () {
     let special = false;
     if ($dataMap) {
@@ -3223,7 +3317,7 @@
       for (let y = 0; y < h && !special; y++) {
         for (let x = 0; x < w; x++) {
           const r = this.regionId(x, y);
-          if (r === 4 || r === 5 || r === 10 || r === 12 || r === 13 || r === 99) { special = true; break; }
+          if (r === 4 || r === 5 || r === NO_GO_REGION || r === 10 || r === 12 || r === 13 || r === 99) { special = true; break; }
           const t = this.terrainTag(x, y);
           if (t === 4 || t === 7 || (is636 && t === 3)) { special = true; break; }
         }
@@ -3374,11 +3468,9 @@
   // is paid for, and the pause afterwards is a real one.
   //
   // The leader is never stopped from running: the drain is a cost, not a gate,
-  // and a party stranded at walking pace mid-chase would be a worse game. What
-  // the meter does gate is a loose party member's own run (Core/
-  // AutoIdleExplorer.js asks canSprint before setting one off at a run), which
-  // is cosmetic: it changes how they cross the map, never whether they can join
-  // the fight at the end of it.
+  // and a party stranded at walking pace mid-chase would be a worse game. The
+  // rest of the party runs when the leader does, since they walk the column
+  // behind them (Core/AutoIdleExplorer.js), so the meter costs them the same.
   const SPRINT_DRAIN_PER_SEC = 5.0;  // running, per member doing the running
   const SPRINT_WALK_REGEN = 1.5;     // on the move at walking pace
   const SPRINT_IDLE_REGEN = 4.0;     // standing still, which is a rest

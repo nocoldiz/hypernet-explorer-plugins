@@ -158,6 +158,7 @@
     --text-disabled: #5d5044;
     --text-highlight-active: #f4edd4;
     --text-info: #6b5242;
+    --text-on-danger-plate: #f5ebd0;
     /* Deepened for the cream page: at #8c7667 this ink landed at 3.47 wherever
        it is used as a caption (SkillMaster's uppercase section labels and its
        MP/AP cost line, plus ~20 theme.css rules). #5c4128 matches the brown
@@ -435,6 +436,7 @@
     --bg-brown-vignette-10: rgba(78, 38, 12, 0.10);
     --bg-crime-dark-10: rgba(140, 20, 20, 0.10);
     --bg-danger-dark: #8b1a1a;
+    --bg-danger-plate: #7a2430;
     --bg-danger-medium-10: rgba(192, 32, 32, 0.10);
     --bg-danger-medium-7: rgba(198, 40, 40, 0.07);
     --bg-danger-translucent-5: rgba(192, 57, 43, 0.05);

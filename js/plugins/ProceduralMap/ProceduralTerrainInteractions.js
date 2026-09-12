@@ -815,10 +815,10 @@
 
   // `flushNow` is what a deliberate removal does: one felled tree, written out
   // at once. It is false only for removals that arrive in a stream (a vehicle
-  // driven through a hedgerow clears a tile per step), because a flush writes
-  // EVERY world file and doing that six times a second while driving would
-  // stall the map. Those are written on the throttle below instead, and by the
-  // next savegame whatever happens.
+  // driven through a hedgerow clears a tile per step): the write is cheap now
+  // that a flush is told which file it is for, but it is still a write, and
+  // doing one six times a second while driving is pointless. Those are written
+  // on the throttle below instead, and by the next savegame whatever happens.
   function recordDismantled(tiles, name, flushNow = true) {
     const store = terrainStore();
     if (!store) return;
@@ -832,7 +832,7 @@
     // Flush immediately so other savegames in the same world see the removal
     // even before the next in-game save.
     if (flushNow && typeof window.WorldManager.flush === "function") {
-      try { window.WorldManager.flush(); } catch (e) { /* non-fatal */ }
+      try { window.WorldManager.flush("terrain"); } catch (e) { /* non-fatal */ }
     }
   }
 
@@ -845,7 +845,7 @@
     if (now - _lastStreamedFlush < STREAMED_FLUSH_FRAMES) return;
     _lastStreamedFlush = now;
     if (window.WorldManager && typeof window.WorldManager.flush === "function") {
-      try { window.WorldManager.flush(); } catch (e) { /* non-fatal */ }
+      try { window.WorldManager.flush("terrain"); } catch (e) { /* non-fatal */ }
     }
   }
 
@@ -1338,7 +1338,7 @@
     if (on) store.litFeatures[key][`${x},${y}`] = true;
     else delete store.litFeatures[key][`${x},${y}`];
     if (typeof window.WorldManager.flush === "function") {
-      try { window.WorldManager.flush(); } catch (e) { /* non-fatal */ }
+      try { window.WorldManager.flush("terrain"); } catch (e) { /* non-fatal */ }
     }
   }
 
@@ -1407,7 +1407,7 @@
     const isDeadWorld = !!(window.WorldManager && (window.WorldManager.isEmptyWorld?.() || window.WorldManager.isDeathWorld?.()));
     if (isDeadWorld) {
       if (window.WorldManager && typeof window.WorldManager.flush === "function") {
-        try { window.WorldManager.flush(); } catch (e) { /* non-fatal */ }
+        try { window.WorldManager.flush("terrain"); } catch (e) { /* non-fatal */ }
       }
       return;
     }
@@ -1421,7 +1421,7 @@
       }
     }
     if (window.WorldManager && typeof window.WorldManager.flush === "function") {
-      try { window.WorldManager.flush(); } catch (e) { /* non-fatal */ }
+      try { window.WorldManager.flush("terrain"); } catch (e) { /* non-fatal */ }
     }
   }
 

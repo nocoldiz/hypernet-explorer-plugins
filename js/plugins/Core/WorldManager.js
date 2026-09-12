@@ -339,7 +339,7 @@
             // picked only once per world, so the list is world-scoped rather
             // than per-savegame (CharacterCreationPresets.js).
             _usedCharacterPresets: "usedCharacterPresets",
-            // Party members retired ("set inactive") from the Dynamics menu.
+            // Party members sent to the reserves from the Dynamics menu.
             // They become pickable dossiers in character creation, so they have
             // to outlive the savegame that retired them and be visible to every
             // playthrough of this world (CharacterCreationPresets.js).
@@ -742,6 +742,11 @@
         // In-memory cache of world data files. With no active world this acts
         // as a session-only scratch store, so sandbox play still works.
         _cache: {},
+        // The exact text each cached file was last written as. A flush
+        // compares against this and skips a file that would come out byte
+        // for byte the same, so repeated flushes cost no disk I/O. Dropped
+        // whenever _cache is, since a reloaded file has no written form yet.
+        _lastWritten: {},
 
         // Defaults for a freshly created world, read by the creation UI so the
         // form and the auto-created world always agree.
@@ -846,6 +851,7 @@
                 // doesn't get written back to disk after the folder is removed.
                 this.activeWorldName = null;
                 this._cache = {};
+                this._lastWritten = {};
                 Backend.writeActive(null);
             }
             Backend.removeWorld(name);
@@ -861,6 +867,7 @@
             }
             this.activeWorldName = name || null;
             this._cache = {};
+            this._lastWritten = {};
             // Another world's failures say nothing about this one's.
             this._initAttempts = {};
             if (persist) Backend.writeActive(this.activeWorldName);
@@ -896,8 +903,13 @@
             if (!name || !fileKey) return false;
             try {
                 const encoded = JsonEx.stringify(data);
-                Backend.writeFile(name, fileKey, JSON.stringify(JSON.parse(encoded), null, 2));
-                if (name === this.activeWorldName) this._cache[fileKey] = data;
+                Backend.writeFile(name, fileKey, encoded);
+                if (name === this.activeWorldName) {
+                    this._cache[fileKey] = data;
+                    // The file on disk is now exactly this, so a flush that
+                    // follows has nothing left to write for it.
+                    this._lastWritten[fileKey] = encoded;
+                }
                 return true;
             } catch (e) {
                 console.error(`[WorldManager] Failed to write '${fileKey}' for world '${name}'`, e);
@@ -1046,16 +1058,39 @@
             return Math.max(stored, current);
         },
 
-        // Writes every loaded data file to the active world folder. World data
-        // can be mutated in place through the accessors, so all cached files
-        // are flushed rather than tracking dirtiness.
-        flush() {
+        // Writes loaded data files to the active world folder.
+        //
+        // `only` names the file, or files, the caller actually touched; absent
+        // it, every loaded file is written, which is what a savegame or a world
+        // switch wants. Passing it is what stops a campfire from rewriting the
+        // whole world: world data is mutated in place through the accessors, so
+        // there is no dirtiness to track here, but the caller always knows which
+        // file it just changed and can say so.
+        //
+        // Nothing is pretty-printed. These are machine-read files that JsonEx
+        // parses straight back; indenting them more than doubled the bytes
+        // written, and the JSON.parse round-trip that used to sit here existed
+        // only to feed that indenting.
+        //
+        // A file whose encoded form has not changed since it was last written is
+        // not written again, so a flush that finds nothing to say costs no I/O.
+        flush(only) {
             if (!this.activeWorldName) return;
-            for (const fileKey of Object.keys(this._cache)) {
+            let keys;
+            if (only === undefined || only === null) {
+                keys = Object.keys(this._cache);
+            } else {
+                const wanted = Array.isArray(only) ? only : [only];
+                // A file the caller names but has never loaded has nothing
+                // cached to write, and must not be created empty.
+                keys = wanted.filter(k => this._cache[k] !== undefined);
+            }
+            for (const fileKey of keys) {
                 try {
                     const encoded = JsonEx.stringify(this._cache[fileKey]);
-                    const pretty = JSON.stringify(JSON.parse(encoded), null, 2);
-                    Backend.writeFile(this.activeWorldName, fileKey, pretty);
+                    if (this._lastWritten[fileKey] === encoded) continue;
+                    Backend.writeFile(this.activeWorldName, fileKey, encoded);
+                    this._lastWritten[fileKey] = encoded;
                 } catch (e) {
                     console.error(`[WorldManager] Failed to write world file '${fileKey}'`, e);
                 }

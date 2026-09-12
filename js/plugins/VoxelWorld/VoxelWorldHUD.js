@@ -1167,20 +1167,29 @@
         update(vanX, vanZ, delta) {
             if (!this._system) return;
             const pos   = this._system.geometry.attributes.position;
+            // Straight at the buffer rather than through getX / setY: rain is
+            // four thousand particles, and the accessor pair was sixteen
+            // thousand calls a frame to move them. WheelFx next door has always
+            // walked its ring buffer this way.
+            const a     = pos.array;
             const speed = this._type === 'rain' ? 200 : 35;
             const drift = this._type === 'snow' ? 12 : 0;
-            const t     = Date.now() * 0.001;
-            for (let i = 0; i < pos.count; i++) {
-                let py = pos.getY(i) - speed * delta;
-                let px = pos.getX(i);
+            // The caller already knows how long the frame was; asking the clock
+            // again per frame only risks the two disagreeing.
+            this._t = (this._t || 0) + delta;
+            const t = this._t;
+            const n = pos.count;
+            for (let i = 0; i < n; i++) {
+                const o = i * 3;
+                let px = a[o], py = a[o + 1] - speed * delta;
                 if (drift > 0) px += Math.sin(t + i * 0.37) * drift * delta;
                 if (py < -5) {
                     px = (Math.random() - 0.5) * 1200;
                     py = 300;
-                    pos.setZ(i, (Math.random() - 0.5) * 1200);
+                    a[o + 2] = (Math.random() - 0.5) * 1200;
                 }
-                pos.setX(i, px);
-                pos.setY(i, py);
+                a[o] = px;
+                a[o + 1] = py;
             }
             pos.needsUpdate = true;
             // Particle system travels with the van

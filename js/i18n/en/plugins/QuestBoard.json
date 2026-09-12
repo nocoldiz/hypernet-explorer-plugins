@@ -61,5 +61,6 @@
   "composeSearch": "Search",
   "composeHeld": "{n} held",
   "composeNoMatch": "Nothing by that name.",
-  "composeDerivedDiff": "Difficulty, read off what you are asking for:"
+  "composeDerivedDiff": "Difficulty, read off what you are asking for:",
+  "arrowsMoveOkReadTabSwitchEscClose": "Arrows move • OK reads • Tab switches • Esc closes"
 }

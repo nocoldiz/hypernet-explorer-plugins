@@ -386,7 +386,7 @@
     },
     "digging_and_secret_doors": {
       "title": "Digging and Secret Doors",
-      "description": "Some walls can be broken through at runtime, which turns a dead end into a route. Digging is the deliberate version of that. Secret doors look like wall until you interact with them. Then they fade, make a noise, and stay open. Some doors are not secret at all, only locked. There you have three options: peek through first, pick the lock, or break in. Peeking teleports you for a look without letting you move, and the menu that follows is where the other two live. Picking a lock plays a tetris minigame and needs lockpicks. Breaking in is a crime and will be filed as one."
+      "description": "Some walls can be broken through at runtime, which turns a dead end into a route. Digging is the deliberate version of that. Secret doors look like wall until you interact with them. Then they fade, make a noise, and stay open. Some doors are not secret at all, only locked. There you have three options: peek through first, pick the lock, or break in. Peeking teleports you for a look without letting you move, and the menu that follows is where the other two live. Picking a lock plays a falling block minigame and needs lockpicks. Breaking in is a crime and will be filed as one."
     },
     "water,_climbing_and_bridges": {
       "title": "Water, Climbing and Bridges",
@@ -730,7 +730,7 @@
     },
     "app_eurodemics": {
       "title": "App: Eurodemics",
-      "description": "The public terminal of the continental epidemic observatory, reading the live outbreak ledger. Three pages: - SITUATION: outbreaks running, people currently ill, people dead, towns affected, the worst hit towns, and a readout of wherever you are standing right now, including whether anybody in your party has caught something. - OUTBREAKS: every outbreak currently burning, each with its daily curve, one point per day, redrawn when the model advances at midnight, over the town by town table. - ARCHIVE: outbreaks this world has already closed, plus the epidemics and mass hysterias of the last century. The graph deliberately puts people currently ill and people dead so far on one axis, because both are counts of people and they share a scale honestly."
+      "description": "The public terminal of the continental epidemic observatory, reading the live outbreak grimorie. Three pages: - SITUATION: outbreaks running, people currently ill, people dead, towns affected, the worst hit towns, and a readout of wherever you are standing right now, including whether anybody in your party has caught something. - OUTBREAKS: every outbreak currently burning, each with its daily curve, one point per day, redrawn when the model advances at midnight, over the town by town table. - ARCHIVE: outbreaks this world has already closed, plus the epidemics and mass hysterias of the last century. The graph deliberately puts people currently ill and people dead so far on one axis, because both are counts of people and they share a scale honestly."
     },
     "app_artifact_analyzer": {
       "title": "App: Artifact Analyzer",
@@ -742,7 +742,7 @@
     },
     "the_hexphone": {
       "title": "The Hexphone",
-      "description": "The party carries a mobile phone. It holds credit, contacts, a call history, an inbox of messages, and a couple of built in games in the manner of an LCD handset. Calling a contact really calls them: it triggers what that person does when called. Incoming calls arrive with an answer or decline prompt. Controls: the keypad digits dial and act as shortcuts, the arrows navigate lists, Enter is the MENU button (select, call, open), Escape is END (back, and from the home screen it closes the phone), and backspace deletes a digit while dialling. Public PAYPHONES exist too, and share the same contacts and the same credit ledger. A payphone only places outgoing calls: no inbox, no games, no incoming calls and no way to save a new contact."
+      "description": "The party carries a mobile phone. It holds credit, contacts, a call history, an inbox of messages, and a couple of built in games in the manner of an LCD handset. Calling a contact really calls them: it triggers what that person does when called. Incoming calls arrive with an answer or decline prompt. Controls: the keypad digits dial and act as shortcuts, the arrows navigate lists, Enter is the MENU button (select, call, open), Escape is END (back, and from the home screen it closes the phone), and backspace deletes a digit while dialling. Public PAYPHONES exist too, and share the same contacts and the same credit grimorie. A payphone only places outgoing calls: no inbox, no games, no incoming calls and no way to save a new contact."
     },
     "television": {
       "title": "Television",
@@ -810,7 +810,7 @@
     },
     "lockpicking": {
       "title": "Lockpicking",
-      "description": "Picking a lock is a game of tetris: a falling block has to be placed into a partly completed puzzle. The difficulty of the lock decides how hard the fit is. It needs LOCKPICKS, which are consumed on a failure. A skeleton key skips the game entirely and opens the lock outright. Lockpicking is how you get into locked doors and how you steal a parked car. It is also a crime when you are caught at it."
+      "description": "Picking a lock is a falling block puzzle: a key bit has to be placed into a partly packed keyway. The difficulty of the lock decides how hard the fit is. It needs LOCKPICKS, which are consumed on a failure. A skeleton key skips the game entirely and opens the lock outright. Lockpicking is how you get into locked doors and how you steal a parked car. It is also a crime when you are caught at it."
     },
     "hypertamer": {
       "title": "HyperTamer",

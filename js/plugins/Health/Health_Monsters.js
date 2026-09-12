@@ -696,9 +696,14 @@
           isVital: basePart.vital,
         };
 
-        // If vital part is destroyed, schedule delayed death
+        // A vital part is gone, so the creature stops being a combatant at
+        // this instant. Only the collapse waits for the battle log: leaving
+        // the death itself until the log drained let the thing take one more
+        // turn after it had already been gutted.
         if (basePart.vital) {
           $gameTemp.vitalPartDestroyedEnemy = enemy;
+          $gameTemp.vitalPartCollapsePending = !enemy.isDead();
+          killByVitalLoss(enemy);
         }
 
         // Add stat effect info to the battle log
@@ -734,6 +739,16 @@
       console.error("Error in handleDestroyedBodyPart: " + e.message);
       console.error(e.stack);
     }
+  }
+
+  // A creature whose vital part has been taken is dead on the spot: HP to
+  // zero, the death state on, and whatever it had queued for the round thrown
+  // away, so nothing downstream can still hand it a turn.
+  function killByVitalLoss(enemy) {
+    if (!enemy || enemy.isDead()) return;
+    enemy.setHp(0);
+    enemy.addState(enemy.deathStateId());
+    if (typeof enemy.clearActions === "function") enemy.clearActions();
   }
 
   // ==========================================================================
@@ -1068,6 +1083,7 @@
 
     // Initialize temp variables for vital part destruction
     $gameTemp.vitalPartDestroyedEnemy = null;
+    $gameTemp.vitalPartCollapsePending = false;
     $gameTemp.scheduleEnemyDeath = false;
     $gameTemp.checkTargetSelection = false;
     $gameTemp.checkWindowActive = false;
@@ -1732,17 +1748,15 @@
       // Only apply death if battle log is done processing
       if (!this._logWindow || this._logWindow._methods.length === 0) {
         const target = $gameTemp.vitalPartDestroyedEnemy;
-        // If the target was already killed through the normal battle log path
-        // (HP damage brought it to 0 in the same blow that destroyed the vital
-        // organ), the log has already pushed performCollapse and played the
-        // sound. Skip it here to avoid a double collapse sound.
-        const alreadyDead = target.isDead();
-        target.setHp(0);
-        target.addState(target.deathStateId());
-        if (!alreadyDead) {
+        // The kill itself already landed the moment the part came off. What
+        // waited for the log is the collapse, and only where the ordinary
+        // damage path had not already played one in the same blow.
+        killByVitalLoss(target);
+        if ($gameTemp.vitalPartCollapsePending) {
           target.performCollapse();
         }
         $gameTemp.vitalPartDestroyedEnemy = null;
+        $gameTemp.vitalPartCollapsePending = false;
         $gameTemp.scheduleEnemyDeath = false;
       }
     }

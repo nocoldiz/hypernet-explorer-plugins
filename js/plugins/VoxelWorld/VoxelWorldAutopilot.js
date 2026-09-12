@@ -31,6 +31,23 @@
         isRoadTile, pickRandomRoadTile, roadExitsFrom, WEAPON_Z
     } = VW;
 
+    // Which of the four edges a heading points at, and how well. The road graph
+    // is a compass of four sides, a driver's heading is any angle, and the two
+    // meet here: the dot product of the heading with each side's step, largest
+    // wins. _driveAngle is atan2(dx, dz), so the heading vector is (sin, cos).
+    function headingDot(side, angle) {
+        const step = ROAD_STEP[side];
+        return Math.sin(angle) * step[0] + Math.cos(angle) * step[1];
+    }
+    function sideForHeading(angle) {
+        let best = 'e', bestD = -Infinity;
+        for (const side in ROAD_STEP) {
+            const d = headingDot(side, angle);
+            if (d > bestD) { bestD = d; best = side; }
+        }
+        return best;
+    }
+
     // =========================================================================
     // RoadAutopilot
     //
@@ -58,6 +75,11 @@
             this._wps      = [];      // planned waypoints (world x/z + travel dir)
             this._exitTile = null;    // tile the planned route runs into next
             this._lastAngle = null;   // previous heading, for the steering damper
+            // Which side of the road the route is laid down: +1 is the
+            // right-hand carriageway, the side everything drives on out here.
+            // The lane assist flips it when the driver is already over on the
+            // other one, rather than hauling them across the median.
+            this._laneSign = 1;
             this._lostTime = 0;
             this._stallTime = 0;
             this._plan(tileX, tileY);
@@ -91,6 +113,7 @@
             // Right of the carriageway's own broken line, which is where the
             // traffic drives too (see TrafficManager): never on the paint.
             const lane = ROAD_LANE_OFF + ROAD_HALF_LANE;
+            const off  = lane * (this._laneSign || 1);
             const step = ROAD_STEP[side];
             const ax = step[0], az = step[1];
             const cx = tileX * ts + ts * 0.5, cz = tileY * ts + ts * 0.5;
@@ -100,9 +123,9 @@
             if (!turning) {
                 // Right of the direction of travel, matching the traffic's lane rule.
                 const rx = az, rz = -ax;
-                this._wps.push({ x: cx + rx * lane, z: cz + rz * lane, ax, az });
-                this._wps.push({ x: cx + rx * lane + ax * ts * 0.5,
-                                 z: cz + rz * lane + az * ts * 0.5, ax, az });
+                this._wps.push({ x: cx + rx * off, z: cz + rz * off, ax, az });
+                this._wps.push({ x: cx + rx * off + ax * ts * 0.5,
+                                 z: cz + rz * off + az * ts * 0.5, ax, az });
                 return;
             }
 
@@ -114,7 +137,7 @@
             // incoming lane sits relative to the pivot.
             const iax = -inStep[0], iaz = -inStep[1];          // incoming heading
             const onPivotSide = (iaz * (px - cx) + (-iax) * (pz - cz)) > 0;
-            const laneR = ts * 0.5 + (onPivotSide ? -lane : lane);
+            const laneR = ts * 0.5 + (onPivotSide ? -off : off);
             const a0 = Math.atan2(cz + inStep[1] * ts * 0.5 - pz, cx + inStep[0] * ts * 0.5 - px);
             let sweep = Math.atan2(cz + az * ts * 0.5 - pz, cx + ax * ts * 0.5 - px) - a0;
             while (sweep >  Math.PI) sweep -= Math.PI * 2;
@@ -147,7 +170,12 @@
 
         // ---- driving --------------------------------------------------------
 
-        update(delta) {
+        // Keep the route topped up, drop the waypoints already driven past, and
+        // hand back the one being steered at. Null means the route has run out:
+        // what to do about that is the caller's business, because the answer is
+        // not the same for a camper driving itself and for a driver being
+        // helped along by one (see RoadFollow).
+        _advance() {
             const s = this._scene;
             while (this._wps.length < AUTO_LOOKAHEAD) {
                 if (!this._extend()) break;
@@ -160,23 +188,25 @@
                 if (!passed && (dx * dx + dz * dz) > AUTO_REACH_DIST * AUTO_REACH_DIST) break;
                 this._wps.shift();
             }
-            // The route ran out (the road left the map, or the tags stop): rather
-            // than circling the last waypoint, start again somewhere else.
+            // The route ran out (the road left the map, or the tags stop).
             if (this._wps.length === 1) {
                 const last = this._wps[0];
                 const done = (s._vanX - last.x) * last.ax + (s._vanZ - last.z) * last.az > 0;
-                if (done && !this._extend()) { this._recover(); return; }
+                if (done && !this._extend()) return null;
             }
-            const wp = this._wps[0];
-            if (!wp) { this._recover(); return; }
+            return this._wps[0] || null;
+        }
 
-            // Steer toward the waypoint: heading error straight onto the wheel.
+        // The wheel, for one waypoint: the heading error onto the lock, damped
+        // by how fast the vehicle is already turning so it settles onto the lane
+        // instead of weaving across it. The error itself is left on _headingErr,
+        // which is half of how far ahead the road bends.
+        _steerTo(wp, delta) {
+            const s = this._scene;
             const dx = wp.x - s._vanX, dz = wp.z - s._vanZ;
             let err = Math.atan2(dx, dz) - s._driveAngle;
             while (err >  Math.PI) err -= Math.PI * 2;
             while (err < -Math.PI) err += Math.PI * 2;
-            // Damped by how fast the camper is already turning, so the autopilot
-            // settles onto the lane instead of weaving across it.
             let yawRate = 0;
             if (this._lastAngle != null && delta > 0) {
                 let d = s._driveAngle - this._lastAngle;
@@ -185,7 +215,17 @@
                 yawRate = d / delta;
             }
             this._lastAngle = s._driveAngle;
-            const steer = Math.max(-1, Math.min(1, err * 2.6 - yawRate * 0.45));
+            this._headingErr = err;
+            return Math.max(-1, Math.min(1, err * 2.6 - yawRate * 0.45));
+        }
+
+        update(delta) {
+            const s = this._scene;
+            const wp = this._advance();
+            if (!wp) { this._recover(); return; }
+
+            const steer = this._steerTo(wp, delta);
+            const err   = this._headingErr;
 
             // Slow down for whatever the road does next: sum the heading changes
             // waiting over the next few waypoints (a bend's worth of arc adds up
@@ -249,6 +289,188 @@
             s._terrain.update(s._vanX, s._vanZ);
             s._vanY = s._resolveEnv();
             s._van.group.position.set(s._vanX, s._vanY, s._vanZ);
+        }
+    }
+
+    // =========================================================================
+    // RoadFollow, the lane assist
+    //
+    // A road out here is a hundred and fifty units of tarmac across a five
+    // hundred unit square, and holding a vehicle on it with taps of A and D for
+    // kilometres at a time is work rather than driving. So the road steers
+    // itself: on the asphalt, and only while nobody is touching the wheel, the
+    // same waypoint machinery the title screen's autopilot uses holds the
+    // vehicle in its lane, takes the bends, and carries straight on through
+    // junctions.
+    //
+    // The driver is never overruled. The moment the wheel moves the assist lets
+    // go, and it stays let go for a beat after their hands come off, so a swerve
+    // round a boulder is a swerve and not a fight with the steering. It comes
+    // back on its own once they are straight on the road again.
+    //
+    // What it does NOT touch is the throttle, the brake or the boost: how fast
+    // the vehicle goes down the road it is holding is entirely the driver's.
+    // =========================================================================
+
+    // How far the wheel has to move before the assist lets go of it. A pad's
+    // resting drift is well under this; a key press is a full lock.
+    const FOLLOW_HANDS_ON = 0.12;
+    // ...and how long it stays let go after the driver stops steering, so the
+    // end of a deliberate swerve is not snatched back mid-manoeuvre.
+    const FOLLOW_RELEASE  = 1.2;    // seconds
+    // Under this it does not steer at all: parking, turning round and nudging
+    // up to something are the driver's own business.
+    const FOLLOW_MIN_KMH  = 14;
+    // Pointed this far off the lane it is not lane keeping any more, it is
+    // somebody driving off the road on purpose. The assist stands down and
+    // waits to be driven back onto it.
+    const FOLLOW_MAX_ERR  = Math.PI * 0.4;
+
+    class RoadFollow extends RoadAutopilot {
+        constructor(scene) {
+            const ts = WORLD_TILE_SIZE;
+            // The base plans a route in its constructor; _plan below is the one
+            // that runs, and it plans off the driver's own heading.
+            super(scene, Math.floor(scene._vanX / ts), Math.floor(scene._vanZ / ts));
+            this._release = 0;      // seconds left of hands-on
+        }
+
+        // ---- planning -------------------------------------------------------
+
+        // The route is the road the DRIVER is on, taken the way they are already
+        // pointing. Nothing here touches _driveAngle: the autopilot may aim the
+        // camper down its first leg, the assist may not turn the wheel for a
+        // driver who has not asked it to.
+        _plan(tileX, tileY) {
+            this._wps.length = 0;
+            this._exitTile = null;
+            const s = this._scene;
+            if (!s || !isRoadTile(tileX, tileY)) return;
+            const angle = s._driveAngle;
+            const from  = ROAD_OPPOSITE[sideForHeading(angle)];
+            const side  = this._bestExit(tileX, tileY, from, angle);
+            if (!side) return;
+            this._laneSign = this._laneSignAt(tileX, tileY, side);
+            this._pushLeg(tileX, tileY, from, side);
+            while (this._wps.length < AUTO_LOOKAHEAD) {
+                if (!this._extend()) break;
+            }
+        }
+
+        // Whichever way out of the tile carries on closest to the way we are
+        // already going: a junction is driven STRAIGHT through unless the road
+        // itself bends, and the turn is never chosen for the driver.
+        _bestExit(tileX, tileY, from, angle) {
+            const exits = roadExitsFrom(tileX, tileY, from);
+            let best = null, bestD = -Infinity;
+            for (const side of exits) {
+                const d = headingDot(side, angle);
+                if (d > bestD) { bestD = d; best = side; }
+            }
+            return best;
+        }
+
+        // Which carriageway the vehicle is actually on, as seen from the way it
+        // is travelling: +1 to the right of the tile's centreline, -1 to the
+        // left. Keeping the side they are on is the whole difference between an
+        // assist and a hand on the wheel pulling them over the median.
+        _laneSignAt(tileX, tileY, side) {
+            const s = this._scene;
+            const ts = WORLD_TILE_SIZE;
+            const step = ROAD_STEP[side];
+            const cx = tileX * ts + ts * 0.5, cz = tileY * ts + ts * 0.5;
+            // Right of the direction of travel, the same frame _pushLeg lays
+            // its waypoints out in.
+            const right = (s._vanX - cx) * step[1] + (s._vanZ - cz) * (-step[0]);
+            return right < 0 ? -1 : 1;
+        }
+
+        _extend() {
+            const next = this._exitTile;
+            if (!next || !isRoadTile(next.x, next.y)) return false;
+            // The heading we arrive on this tile with, which is the opposite of
+            // the edge we came in by.
+            const inStep = ROAD_STEP[ROAD_OPPOSITE[next.from]];
+            const angle  = Math.atan2(inStep[0], inStep[1]);
+            const side   = this._bestExit(next.x, next.y, next.from, angle);
+            if (!side) return false;
+            this._pushLeg(next.x, next.y, next.from, side);
+            return true;
+        }
+
+        // The assist never picks the vehicle up and puts it somewhere else: that
+        // is the title screen's camper, driving in a world nobody is playing.
+        _watchdog() {}
+        _recover() { this._wps.length = 0; }
+
+        // ---- the wheel -------------------------------------------------------
+
+        // Returns the steering the assist wants, or null when it is standing
+        // down and the driver's own input should be used as it is.
+        //
+        //   driverSteer  what the wheel is being given by hand this frame
+        //   driving      whether the party is at the wheel at all
+        steer(delta, driverSteer, driving) {
+            if (Math.abs(driverSteer) > FOLLOW_HANDS_ON) {
+                this._release = FOLLOW_RELEASE;
+                this._lastAngle = null;
+            } else if (this._release > 0) {
+                this._release = Math.max(0, this._release - delta);
+            }
+            // Standing down. The route is dropped rather than kept warm: coming
+            // back onto the road after a swerve, a stale lane a square behind is
+            // worse than no lane at all, and planning one costs a handful of
+            // tile lookups.
+            if (!driving || this._release > 0 || !this._eligible()) {
+                this._wps.length = 0;
+                // ...and the damper forgets where the vehicle was pointing. A
+                // heading remembered from before a stand-down is a yaw rate of
+                // whole radians per frame, which would slam the wheel to full
+                // lock the moment the assist came back.
+                this._lastAngle = null;
+                return null;
+            }
+
+            const s  = this._scene;
+            const ts = WORLD_TILE_SIZE;
+            const tx = Math.floor(s._vanX / ts), tz = Math.floor(s._vanZ / ts);
+            if (!this._wps.length) this._plan(tx, tz);
+            let wp = this._advance();
+            // The route ran out under the vehicle (the tags stop carrying on
+            // from a junction): plan again from where it actually is. Only
+            // worth doing if there was a route to run out - a plan that came
+            // back empty a line ago will come back empty again.
+            if (!wp && this._wps.length) { this._plan(tx, tz); wp = this._wps[0]; }
+            if (!wp) return null;
+
+            // Pointed somewhere else entirely: they are leaving the road, or
+            // driving back down it the other way. Either way this is not a lane
+            // to be held, so the route is thrown away and the assist waits to be
+            // driven back onto one. Measured against the way the LANE runs, not
+            // against the bearing of the next waypoint: a vehicle sitting level
+            // with one it has yet to reach is ninety degrees off the mark and is
+            // still perfectly straight on the road.
+            let off = Math.atan2(wp.ax, wp.az) - s._driveAngle;
+            while (off >  Math.PI) off -= Math.PI * 2;
+            while (off < -Math.PI) off += Math.PI * 2;
+            if (Math.abs(off) > FOLLOW_MAX_ERR) {
+                this._wps.length = 0;
+                this._lastAngle = null;
+                return null;
+            }
+            return this._steerTo(wp, delta);
+        }
+
+        // Only on the asphalt, only under way, and only with the wheels down.
+        // _fwdSpeed is signed, so reversing is out with everything else.
+        _eligible() {
+            const s = this._scene;
+            if (!s) return false;
+            if (s._env !== 'road' || s._flying || s._dived || s._airborne) return false;
+            if (s._isFastTravelActive && s._isFastTravelActive()) return false;
+            if (!(s._fwdSpeed > FOLLOW_MIN_KMH)) return false;
+            const ts = WORLD_TILE_SIZE;
+            return isRoadTile(Math.floor(s._vanX / ts), Math.floor(s._vanZ / ts));
         }
     }
 
@@ -515,6 +737,7 @@
     Object.assign(VW, {
         AUTO_BEND_KMH, AUTO_CRUISE_KMH, AUTO_LOOKAHEAD, AUTO_LOST_TIME,
         AUTO_REACH_DIST, AUTO_STALL_TIME, AUTO_TURN_KMH, CamperWeapon,
-        RoadAutopilot, weaponScreenX, weaponScreenY
+        FOLLOW_HANDS_ON, FOLLOW_MAX_ERR, FOLLOW_MIN_KMH, FOLLOW_RELEASE,
+        RoadAutopilot, RoadFollow, weaponScreenX, weaponScreenY
     });
 })();

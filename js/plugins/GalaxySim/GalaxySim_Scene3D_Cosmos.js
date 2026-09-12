@@ -37,21 +37,54 @@
     };
   }
 
-  // Soft round point sprite. A FRESH texture per call (not cached): each
-  // Points/Sprite owns its texture so disposeObject3D can free it safely
-  // without affecting other objects.
+  // ==========================================================================
+  // Shared sprite textures.
+  //
+  // These used to be built fresh on every call so that disposeObject3D could
+  // free each one with the object that owned it. That is safe and very
+  // expensive: the palettes behind them hold a handful of distinct looks, but
+  // buildSupercluster alone asked for 333 of them, so opening that scale meant
+  // 333 canvases painted, 333 textures uploaded to the GPU and 333 of both
+  // thrown away again on the way out. They are immutable once painted, so one
+  // copy per distinct look is enough for the whole session.
+  //
+  // Everything handed out here is registered in SHARED_TEX, which disposeObject3D
+  // checks before freeing a material's map: a shared texture outlives every
+  // object that borrows it. NEVER dispose one of these by hand.
+  // ==========================================================================
+  const SHARED_TEX = new Set();
+  const _texCache = new Map();
+
+  /** Memoise an immutable texture under `key`, painting it at most once. */
+  function sharedTexture(key, paint) {
+    let tex = _texCache.get(key);
+    if (!tex) {
+      tex = paint();
+      SHARED_TEX.add(tex);
+      _texCache.set(key, tex);
+    }
+    return tex;
+  }
+
+  /** True for a texture that is shared and must never be disposed. */
+  function isSharedTexture(tex) { return !!tex && SHARED_TEX.has(tex); }
+
+  // Soft round point sprite.
   function starTexture(coreStop) {
-    const s = 64;
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = s;
-    const ctx = cv.getContext("2d");
-    const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-    g.addColorStop(0.0, "rgba(255,255,255,1)");
-    g.addColorStop(coreStop || 0.35, "rgba(255,255,255,0.7)");
-    g.addColorStop(1.0, "rgba(255,255,255,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, s, s);
-    return new THREE.CanvasTexture(cv);
+    const stop = coreStop || 0.35;
+    return sharedTexture("star:" + stop, () => {
+      const s = 64;
+      const cv = document.createElement("canvas");
+      cv.width = cv.height = s;
+      const ctx = cv.getContext("2d");
+      const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+      g.addColorStop(0.0, "rgba(255,255,255,1)");
+      g.addColorStop(stop, "rgba(255,255,255,0.7)");
+      g.addColorStop(1.0, "rgba(255,255,255,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, s, s);
+      return new THREE.CanvasTexture(cv);
+    });
   }
 
   // A hard-edged dot (only the outermost pixels feather, for antialiasing).
@@ -59,18 +92,20 @@
   // paired with sizeAttenuation:false it keeps a constant pixel footprint, so
   // flying into a dense region no longer smears the screen with white blobs.
   function dotTexture() {
-    const s = 32;
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = s;
-    const ctx = cv.getContext("2d");
-    const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-    g.addColorStop(0.0, "rgba(255,255,255,1)");
-    g.addColorStop(0.62, "rgba(255,255,255,1)");
-    g.addColorStop(0.86, "rgba(255,255,255,0.35)");
-    g.addColorStop(1.0, "rgba(255,255,255,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, s, s);
-    return new THREE.CanvasTexture(cv);
+    return sharedTexture("dot", () => {
+      const s = 32;
+      const cv = document.createElement("canvas");
+      cv.width = cv.height = s;
+      const ctx = cv.getContext("2d");
+      const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+      g.addColorStop(0.0, "rgba(255,255,255,1)");
+      g.addColorStop(0.62, "rgba(255,255,255,1)");
+      g.addColorStop(0.86, "rgba(255,255,255,0.35)");
+      g.addColorStop(1.0, "rgba(255,255,255,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, s, s);
+      return new THREE.CanvasTexture(cv);
+    });
   }
 
   /**
@@ -168,20 +203,22 @@
   // transparent rim) used to lay a luminous "milk" glow across the galactic
   // plane so the disk reads as a continuous sheet of light, not just points.
   function galaxyDiskTexture() {
-    const s = 256;
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = s;
-    const ctx = cv.getContext("2d");
-    const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-    g.addColorStop(0.00, "rgba(255,244,214,0.95)");
-    g.addColorStop(0.10, "rgba(255,228,176,0.70)");
-    g.addColorStop(0.28, "rgba(200,200,255,0.34)");
-    g.addColorStop(0.55, "rgba(140,170,255,0.16)");
-    g.addColorStop(0.80, "rgba(110,150,235,0.05)");
-    g.addColorStop(1.00, "rgba(0,0,0,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, s, s);
-    return new THREE.CanvasTexture(cv);
+    return sharedTexture("galaxyDisk", () => {
+      const s = 256;
+      const cv = document.createElement("canvas");
+      cv.width = cv.height = s;
+      const ctx = cv.getContext("2d");
+      const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+      g.addColorStop(0.00, "rgba(255,244,214,0.95)");
+      g.addColorStop(0.10, "rgba(255,228,176,0.70)");
+      g.addColorStop(0.28, "rgba(200,200,255,0.34)");
+      g.addColorStop(0.55, "rgba(140,170,255,0.16)");
+      g.addColorStop(0.80, "rgba(110,150,235,0.05)");
+      g.addColorStop(1.00, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, s, s);
+      return new THREE.CanvasTexture(cv);
+    });
   }
 
   // The decorative galaxy body: a luminous plane-of-the-galaxy glow sheet, a
@@ -547,14 +584,25 @@
     return _lazyStarTex;
   }
 
-  function createLazyStarField(dataManager) {
+  function createLazyStarField(dataManager, opts) {
+    opts = opts || {};
     const group = new THREE.Group();
     group.name = "gx-lazyfield";
     const U = GAL.U, SUN_R = GAL.SUN_R;
     const DM = window.GalaxySim.DataManager;
-    const CHUNK = (DM && DM.LAZY_CHUNK_LY) || 64;
-    const ENABLE_DIST = 250;     // world units: only populate when zoomed in
-    const LOAD_RADIUS_LY = 320;  // disk-plane radius of the loaded region
+    // A procedural galaxy streams its OWN stars through this same machinery
+    // (see buildProceduralGalaxy). It differs only in the frame it works in:
+    // the Milky Way's chunks are light-years around the Sun and have to be
+    // mapped into the galactic frame, a procedural galaxy's are world units
+    // around its own centre and go in as they are. `galaxySeed` selects that.
+    const galaxySeed = opts.galaxySeed != null ? opts.galaxySeed : null;
+    const local = galaxySeed != null;
+    const CHUNK = local
+      ? ((DM && DM.GALAXY_LAZY_CHUNK) || 60)
+      : ((DM && DM.LAZY_CHUNK_LY) || 64);
+    const ENABLE_DIST = opts.enableDist || 250;  // world units: only populate when zoomed in
+    const LOAD_RADIUS_LY = opts.loadRadius || 320; // disk-plane radius of the loaded region
+    const STAR_SIZE = opts.starSize || 2.4;
     const MAX_CHUNKS = 130;
     const MAX_SYSTEMS = 4000;
 
@@ -575,7 +623,7 @@
       geo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
       geo.setAttribute("color", new THREE.BufferAttribute(colArr, 3));
       geo.setDrawRange(0, 0);
-      points = new THREE.Points(geo, makePointsMaterial(2.4, lazyStarTexture(), 1, false));
+      points = new THREE.Points(geo, makePointsMaterial(STAR_SIZE, lazyStarTexture(), 1, false));
       points.frustumCulled = false;
       points.renderOrder = 2;
       points.name = "gx-lazy-stars";
@@ -592,10 +640,17 @@
     function rebuild(chunks) {
       const systems = [];
       for (const c of chunks) {
-        const arr = dataManager.generateLazyChunk(c[0], c[1]);
+        const arr = local
+          ? dataManager.generateGalaxyLazyChunk(galaxySeed, c[0], c[1])
+          : dataManager.generateLazyChunk(c[0], c[1]);
         for (let i = 0; i < arr.length; i++) {
           const s = arr[i];
-          if (dataManager.systems.has(s.name)) continue; // already a static point
+          // The Milky Way draws its static catalogue as a separate cloud, so a
+          // name already in `systems` is on screen twice if it is drawn again.
+          // A galaxy's own field shares no name with its 220 static systems,
+          // and skipping on this test there would delete each streamed star the
+          // moment visiting it materialized the name.
+          if (!local && dataManager.systems.has(s.name)) continue;
           systems.push(s);
         }
         if (systems.length >= MAX_SYSTEMS) break;
@@ -607,9 +662,16 @@
       for (let i = 0; i < n; i++) {
         const s = systems[i];
         const p = s.position;
-        posArr[i * 3] = (SUN_R + (p.x || 0)) / U;
-        posArr[i * 3 + 1] = (p.z || 0) / U;
-        posArr[i * 3 + 2] = (p.y || 0) / U;
+        if (local) {
+          // Already this galaxy's own world units, laid out x/z across the disk.
+          posArr[i * 3] = p.x || 0;
+          posArr[i * 3 + 1] = p.y || 0;
+          posArr[i * 3 + 2] = p.z || 0;
+        } else {
+          posArr[i * 3] = (SUN_R + (p.x || 0)) / U;
+          posArr[i * 3 + 1] = (p.z || 0) / U;
+          posArr[i * 3 + 2] = (p.y || 0) / U;
+        }
         tmpC.set(s.color || "#ffffff");
         colArr[i * 3] = tmpC.r; colArr[i * 3 + 1] = tmpC.g; colArr[i * 3 + 2] = tmpC.b;
         byIndex[i] = s;
@@ -629,11 +691,12 @@
         if (activeKey !== "__none__") { activeKey = "__none__"; clearPoints(); }
         return;
       }
-      // World focus -> Sun-relative disk-plane light-years -> chunk indices.
-      const lyx = focusWorld.x * U - SUN_R;
-      const lyy = focusWorld.z * U;
-      const fcx = Math.floor(lyx / CHUNK);
-      const fcz = Math.floor(lyy / CHUNK);
+      // World focus -> disk-plane coordinates -> chunk indices. The galactic
+      // frame needs the Sun offset undone first; a galaxy's own frame does not.
+      const planeX = local ? focusWorld.x : focusWorld.x * U - SUN_R;
+      const planeZ = local ? focusWorld.z : focusWorld.z * U;
+      const fcx = Math.floor(planeX / CHUNK);
+      const fcz = Math.floor(planeZ / CHUNK);
       const r = Math.ceil(LOAD_RADIUS_LY / CHUNK);
       const key = fcx + ":" + fcz + ":" + r;
       if (key === activeKey) return; // still inside the same loaded region
@@ -675,19 +738,25 @@
   // A filled glow (bright core -> tint -> transparent). makeHighlightSprite is
   // deliberately hollow in the middle, which reads as a *ring* - right for a
   // selection marker, wrong for anything meant to look like light.
+  // The texture is shared per colour (a nebula's protostars all ask for the
+  // same warm glow), but every caller gets its OWN material: the pulse that
+  // makes a protostar breathe writes mat.opacity, and one material shared
+  // across a whole galaxy's worth of them would pulse as a single light.
   function makeGlowSprite(hex) {
-    const s = 128;
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = s;
-    const ctx = cv.getContext("2d");
-    const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-    g.addColorStop(0.0, "rgba(255,255,255,0.95)");
-    g.addColorStop(0.22, hex);
-    g.addColorStop(0.6, hex.replace(/[\d.]+\)$/, "0.18)"));
-    g.addColorStop(1.0, "rgba(0,0,0,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, s, s);
-    const tex = new THREE.CanvasTexture(cv);
+    const tex = sharedTexture("glow:" + hex, () => {
+      const s = 128;
+      const cv = document.createElement("canvas");
+      cv.width = cv.height = s;
+      const ctx = cv.getContext("2d");
+      const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+      g.addColorStop(0.0, "rgba(255,255,255,0.95)");
+      g.addColorStop(0.22, hex);
+      g.addColorStop(0.6, hex.replace(/[\d.]+\)$/, "0.18)"));
+      g.addColorStop(1.0, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, s, s);
+      return new THREE.CanvasTexture(cv);
+    });
     const mat = new THREE.SpriteMaterial({
       map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     });
@@ -697,18 +766,20 @@
   }
 
   function makeHighlightSprite(hex) {
-    const s = 64;
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = s;
-    const ctx = cv.getContext("2d");
-    const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-    g.addColorStop(0, "rgba(255,255,255,0)");
-    g.addColorStop(0.55, hex);
-    g.addColorStop(0.72, hex);
-    g.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, s, s);
-    const tex = new THREE.CanvasTexture(cv);
+    const tex = sharedTexture("highlight:" + hex, () => {
+      const s = 64;
+      const cv = document.createElement("canvas");
+      cv.width = cv.height = s;
+      const ctx = cv.getContext("2d");
+      const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+      g.addColorStop(0, "rgba(255,255,255,0)");
+      g.addColorStop(0.55, hex);
+      g.addColorStop(0.72, hex);
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, s, s);
+      return new THREE.CanvasTexture(cv);
+    });
     const mat = new THREE.SpriteMaterial({
       map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     });
@@ -724,19 +795,25 @@
   // ==========================================================================
 
   // A fuzzy galaxy billboard (soft elliptical glow with a bright core).
+  // The galaxy blob every far-scale billboard wears. GAL_PALETTE holds four
+  // distinct colour pairs, so four textures cover every galaxy in the game.
   function galaxyTexture(coreHex, haloHex) {
-    const s = 96;
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = s;
-    const ctx = cv.getContext("2d");
-    const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-    g.addColorStop(0, "rgba(255,255,255,1)");
-    g.addColorStop(0.18, coreHex || "rgba(255,245,220,0.95)");
-    g.addColorStop(0.55, haloHex || "rgba(150,180,255,0.35)");
-    g.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, s, s);
-    return new THREE.CanvasTexture(cv);
+    const core = coreHex || "rgba(255,245,220,0.95)";
+    const halo = haloHex || "rgba(150,180,255,0.35)";
+    return sharedTexture("galaxy:" + core + "|" + halo, () => {
+      const s = 96;
+      const cv = document.createElement("canvas");
+      cv.width = cv.height = s;
+      const ctx = cv.getContext("2d");
+      const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+      g.addColorStop(0, "rgba(255,255,255,1)");
+      g.addColorStop(0.18, core);
+      g.addColorStop(0.55, halo);
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, s, s);
+      return new THREE.CanvasTexture(cv);
+    });
   }
 
   function galaxyBillboard(coreHex, haloHex, sx, sy) {
@@ -755,6 +832,7 @@
   // own galaxy reads as a barred spiral at a glance instead of the same
   // featureless blob every other billboard in the view is.
   function milkyWayBillboardTexture() {
+    return sharedTexture("milkyWayBillboard", () => {
     const s = 160;
     const cv = document.createElement("canvas");
     cv.width = cv.height = s;
@@ -785,6 +863,7 @@
       [0, "rgba(255,248,224,0.95)"], [0.6, "rgba(255,222,170,0.5)"], [1, "rgba(0,0,0,0)"],
     ]);
     return new THREE.CanvasTexture(cv);
+    });
   }
 
   function milkyWayLocalGroupBillboard(sx, sy) {
@@ -946,12 +1025,20 @@
     ],
     supercluster: [
       { name: "Local Group", type: "galaxy group", kind: "cluster", home: true,
+        rich: 80,
         diameter: "10 Mly", members: "~80 galaxies", distance: "0 (home)" },
       { name: "Virgo Cluster", type: "galaxy cluster", kind: "cluster",
+        rich: 1300,
         diameter: "15 Mly", members: "~1,300 galaxies", distance: "53.8 Mly" },
       { name: "Great Attractor", type: "gravitational anomaly", kind: "cluster",
-        diameter: "~300 Mly of infall", members: "Norma Cluster core", distance: "250 Mly" },
+        rich: 600,
+        diameter: "~300 Mly of infall", members: "Norma Cluster, ~600 galaxies",
+        distance: "250 Mly" },
     ],
+    // Laniakea's own parts, clusters and groups are DATA, not code: they live
+    // in js/db/GalaxySim/Laniakea.json and reach here as window.GalaxySim
+    // .Laniakea (see laniakeaData). They were briefly duplicated in this
+    // object, which is one copy too many for a set of measured numbers.
     observable: [
       { name: "Observable Universe", type: "cosmological horizon", kind: "cluster",
         diameter: "93 Gly", members: "~2 trillion galaxies",
@@ -1004,21 +1091,36 @@
     // rather than the plain radial-gradient blob every other galaxy sprite
     // uses, so it reads as itself - a barred spiral with real arm structure
     // - at a glance instead of blending into the crowd.
+    // This scale is 5 kly to the unit (World3D LY_PER_UNIT), so every distance
+    // here is a real one divided by five: the Local Group used to be laid out
+    // by eye, with Andromeda at 743 units where its own 2,537 kly put it at
+    // 507, and the dwarfs on a different scale again (KLY_SCALE 0.18) from the
+    // giants they orbit.
+    const KLY_PER_UNIT = 5;
+    const at = (distKly, lDeg, bDeg) => {
+      const r = distKly / KLY_PER_UNIT;
+      const l = (lDeg * Math.PI) / 180, b = (bDeg * Math.PI) / 180;
+      return [Math.cos(b) * Math.cos(l) * r, Math.sin(b) * r, Math.cos(b) * Math.sin(l) * r];
+    };
+
     const mw = milkyWayLocalGroupBillboard(220, 130);
     group.add(mw);
     addPickable(pickables, mw, 110, CAT.localGroup[0]);
+    // M31: 2,537 kly away toward galactic (l 121, b -22).
     const andromeda = galaxyBillboard("rgba(255,240,210,0.95)", "rgba(160,190,255,0.4)", 300, 170);
-    andromeda.position.set(720, 60, -180);
+    andromeda.position.set(...at(2537, 121.2, -21.6));
     andromeda.material.rotation = 0.6;
     group.add(andromeda);
     addPickable(pickables, andromeda, 150, CAT.localGroup[1]);
+    // M33: 2,730 kly, (l 134, b -31).
     const triangulum = galaxyBillboard("rgba(220,235,255,0.95)", "rgba(130,170,255,0.35)", 150, 95);
-    triangulum.position.set(600, -120, 240);
+    triangulum.position.set(...at(2730, 133.6, -31.3));
     group.add(triangulum);
     addPickable(pickables, triangulum, 75, CAT.localGroup[2]);
-    [[60, 8, 40], [90, -10, -30]].forEach((p, i) => {
+    // The Magellanic Clouds: 163 and 206 kly, both well south of the plane.
+    [[163, 280.5, -32.9], [206, 302.8, -44.3]].forEach((mc, i) => {
       const lmc = galaxyBillboard("rgba(230,240,255,0.9)", "rgba(150,180,255,0.3)", 50 - i * 14, 38 - i * 10);
-      lmc.position.set(p[0], p[1], p[2]);
+      lmc.position.set(...at(mc[0], mc[1], mc[2]));
       group.add(lmc);
       addPickable(pickables, lmc, 25 - i * 7, CAT.localGroup[3 + i]);
     });
@@ -1030,7 +1132,6 @@
     // members scatter around the origin by their real Sun-distance instead
     // (see the comment on CAT.localGroupDwarfs for why the two are placed
     // differently).
-    const KLY_SCALE = 0.18;
     CAT.localGroupDwarfs.forEach((d) => {
       const sz = 10 + rnd() * 16;
       const pal = GAL_PALETTE[(rnd() * GAL_PALETTE.length) | 0];
@@ -1044,7 +1145,7 @@
           andromeda.position.y + u * r * 0.6,
           andromeda.position.z + Math.sin(th) * s * r);
       } else {
-        const r = Math.max(20, d.distKly * KLY_SCALE);
+        const r = Math.max(12, d.distKly / KLY_PER_UNIT);
         gb.position.set(Math.cos(th) * s * r, u * r * 0.7, Math.sin(th) * s * r);
       }
       group.add(gb);
@@ -1071,6 +1172,221 @@
     return { group, animate, pickables, dispose: () => disposeObject3D(group), radius: 1000 };
   }
 
+  // ==========================================================================
+  // Laniakea, the supercluster the Milky Way belongs to.
+  //
+  // This was a ball: a sphere of 2,600 points with three sprites in it, framed
+  // at 1.6 Gly for a structure 500 Mly across. A supercluster is not a ball and
+  // is not defined by a boundary at all - it is a BASIN, the volume whose
+  // galaxies are all falling the same way, and what makes it one object is that
+  // flow. So it is drawn as its flow: a flattened sheet of galaxies threaded on
+  // streamlines that all bend toward the Great Attractor at the bottom of it.
+  //
+  // The scale is 0.25 Mly to the unit (World3D LY_PER_UNIT), so everything here
+  // is a real distance divided by 250,000 ly.
+  // ==========================================================================
+  // ==========================================================================
+  // What a supercluster IS, and how one is drawn.
+  //
+  // Laniakea is the measured case and every other supercluster in the game is
+  // built to its shape, so the numbers live in one place: js/db/GalaxySim/
+  // Laniakea.json, read through window.GalaxySim.Laniakea.
+  //
+  //   ~520 Mly across, ~1e17 suns, ~100,000 galaxies,
+  //   300 to 500 known clusters and groups,
+  //   and it is not one lump but several constituent superclusters.
+  //
+  // A hundred thousand galaxies is a number no scene can spend a sprite, a
+  // material or a draw call on, so they are ONE THREE.Points: one geometry,
+  // one material, built once and never touched again. At 3 floats of position
+  // and 3 of colour that is 2.4 MB in, 2.4 MB of colour, one draw call.
+  // ==========================================================================
+  const SUPERCLUSTER_GALAXIES = 100000;
+  // The real count of known clusters and groups in one. Only a few dozen of
+  // them have names; the rest are the small groups most galaxies actually live
+  // in, and they are generated along the filaments (see buildSuperclusterField).
+  const SUPERCLUSTER_GROUPS = 400;
+
+  /** The measured Laniakea record, or null when the database is not loaded. */
+  function laniakeaData() {
+    const d = window.GalaxySim && window.GalaxySim.Laniakea;
+    return (d && Array.isArray(d.groups)) ? d : null;
+  }
+
+  /**
+   * Fill a supercluster's volume with galaxies.
+   *
+   * Where they go matters more than how many there are. Only about 4% of a
+   * supercluster's galaxies are in its named rich clusters - the rest are in
+   * hundreds of small unnamed groups strung along the filaments, plus a thin
+   * field between them. Scattering 100,000 points evenly through a ball would
+   * be both wrong and dull; this puts them where galaxies are.
+   *
+   * @param {Array} knots   [{pos, rich, spread}] the named clusters and groups
+   * @param {Array} strands [[Vector3, Vector3]] the filaments to hang the rest on
+   * @returns {{points: THREE.Points, groups: number}}
+   */
+  function buildSuperclusterField(knots, strands, rnd, R, opts) {
+    opts = opts || {};
+    const n = opts.count || SUPERCLUSTER_GALAXIES;
+    const pos = new Float32Array(n * 3);
+    const col = new Float32Array(n * 3);
+    let i = 0;
+
+    const put = (x, y, z, r, g, b) => {
+      pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z;
+      col[i * 3] = r; col[i * 3 + 1] = g; col[i * 3 + 2] = b;
+      i++;
+    };
+    // A knot of galaxies around a centre, concentrated toward the middle.
+    //
+    // A hundred thousand of these are placed per supercluster, so the way a
+    // point inside a ball is picked is worth caring about: the textbook
+    // spherical form costs a sin, a cos and two square roots EACH, which at
+    // this count is most of the build. Rejection sampling out of the enclosing
+    // cube costs three random numbers and a comparison, takes about half its
+    // throws, and needs no trigonometry at all.
+    const clump = (c, count, spread, warm) => {
+      const cx = c.x, cy = c.y, cz = c.z;
+      const r1 = warm ? 1.0 : 0.88, b1 = warm ? 0.84 : 1.0;
+      for (let k = 0; k < count && i < n; k++) {
+        let x = 0, y = 0, z = 0, q = 2;
+        // At most a few throws in practice; the guard is for the pathological.
+        for (let tries = 0; tries < 8; tries++) {
+          x = rnd() * 2 - 1; y = rnd() * 2 - 1; z = rnd() * 2 - 1;
+          q = x * x + y * y + z * z;
+          if (q <= 1) break;
+        }
+        if (q > 1) { const inv = 1 / Math.sqrt(q); x *= inv; y *= inv; z *= inv; q = 1; }
+        // q is the squared radius already, so squaring it again concentrates
+        // the knot toward its middle without a Math.pow.
+        const rr = q * q * spread;
+        const w = 0.4 + rnd() * 0.6;
+        put(cx + x * rr, cy + y * rr * 0.8, cz + z * rr, r1 * w, 0.93 * w, b1 * w);
+      }
+    };
+
+    // 1. The named clusters and groups, each with the count it really has.
+    let named = 0;
+    for (const k of knots) named += k.rich;
+    for (const k of knots) clump(k.pos, k.rich, k.spread, true);
+
+    // 2. The unnamed groups: hundreds of them, sitting ON the filaments, which
+    //    is where most of a supercluster's galaxies live.
+    const unnamed = Math.max(0, (opts.groups || SUPERCLUSTER_GROUPS) - knots.length);
+    const inGroups = Math.floor((n - named) * 0.66);
+    const perGroup = unnamed > 0 ? Math.max(3, Math.round(inGroups / unnamed)) : 0;
+    const scratch = new THREE.Vector3();
+    for (let g = 0; g < unnamed && i < n; g++) {
+      const strand = strands[(rnd() * strands.length) | 0];
+      if (!strand) break;
+      const a = strand[0], b = strand[1];
+      const t = rnd();
+      const off = R * 0.02;
+      scratch.set(
+        a.x + (b.x - a.x) * t + (rnd() + rnd() - 1) * off,
+        a.y + (b.y - a.y) * t + (rnd() + rnd() - 1) * off * 0.6,
+        a.z + (b.z - a.z) * t + (rnd() + rnd() - 1) * off);
+      // Small groups outnumber big ones, steeply.
+      const size = Math.max(3, Math.round(perGroup * Math.pow(rnd(), 1.8) * 2.4));
+      clump(scratch, size, R * (0.004 + rnd() * 0.012), false);
+    }
+
+    // 3. Whatever is left is the field: galaxies on the filaments themselves,
+    //    belonging to no group at all. Zooming in on a strand has to show
+    //    galaxies strung along it even between the knots.
+    const field = Math.floor((n - i) * 0.75);
+    const endField = i + field;
+    for (; i < endField && i < n; ) {
+      const strand = strands[(rnd() * strands.length) | 0];
+      if (!strand) break;
+      const a = strand[0], b = strand[1];
+      const t = rnd();
+      const off = R * 0.012;
+      const w = 0.3 + rnd() * 0.45;
+      put(a.x + (b.x - a.x) * t + (rnd() + rnd() - 1) * off,
+        a.y + (b.y - a.y) * t + (rnd() + rnd() - 1) * off * 0.5,
+        a.z + (b.z - a.z) * t + (rnd() + rnd() - 1) * off,
+        0.86 * w, 0.9 * w, 1.0 * w);
+    }
+    // 4. And a thin haze right through the sheet, so the voids read as empty
+    //    rather than as the edge of the drawing.
+    // The sheet: a flat disc of field galaxies. Sampled the same way, in the
+    // plane, so the whole fill stays free of trigonometry.
+    for (; i < n; ) {
+      let x = 0, z = 0, q = 2;
+      for (let tries = 0; tries < 8; tries++) {
+        x = rnd() * 2 - 1; z = rnd() * 2 - 1;
+        q = x * x + z * z;
+        if (q <= 1 && q > 1e-6) break;
+      }
+      if (q > 1 || q <= 1e-6) { x = 0.7; z = 0.7; q = 0.98; }
+      // A gentle outward bias, standing in for the old radial power curve.
+      const k = (0.35 + 0.65 * q) * R * 1.05 / Math.sqrt(q);
+      const w = 0.12 + rnd() * 0.2;
+      put(x * k, (rnd() + rnd() + rnd() - 1.5) / 1.5 * R * 0.13, z * k,
+        0.8 * w, 0.85 * w, 1.0 * w);
+    }
+
+    // --- Every one of them is a place ---------------------------------------
+    // A hundred thousand points, and each is a galaxy the player can select,
+    // fly to and go inside. Keeping a record for each would be a hundred
+    // thousand objects nobody ever looks at, so a particle's identity is
+    // DERIVED from its index the moment something asks: the name is stable, the
+    // seed behind it is stable, and so the galaxy it opens into is always the
+    // same one (see buildProceduralGalaxy / galaxySeedFromName).
+    const base = opts.name || T('Galaxy.scale.unnamedGalaxy');
+    const fieldSeed = (opts.seed || 1) >>> 0;
+    const tier = opts.tier || 0;
+    const MORPH = [
+      // Roughly the real mix: most galaxies are spirals or dwarfs, the big
+      // ellipticals are the minority that live in cluster cores.
+      "spiral galaxy", "spiral galaxy", "barred spiral galaxy",           // i18n-ignore  body-type ids
+      "dwarf irregular galaxy", "dwarf irregular galaxy", "elliptical galaxy",  // i18n-ignore  body-type ids
+    ];
+    function galaxyAt(index) {
+      const k = index | 0;
+      if (k < 0 || k >= i) return null;
+      const r = lcg((fieldSeed ^ (k * 2654435761)) >>> 0);
+      const x = pos[k * 3], y = pos[k * 3 + 1], z = pos[k * 3 + 2];
+      const morph = MORPH[(r() * MORPH.length) | 0];
+      const dwarf = morph.indexOf("dwarf") === 0;
+      return {
+        name: base + " G-" + k,
+        type: morph,
+        kind: "galaxy",
+        tier,
+        diameter: T('Galaxy.unit.thousandLy', {
+          n: dwarf ? Math.round(3 + r() * 20) : Math.round(30 + r() * 170) }),
+        stars: T('Galaxy.unit.billionStars', {
+          n: dwarf ? Math.max(1, Math.round(r() * 4)) : Math.round(10 + r() * 800) }),
+        // Units here are the supercluster frame; 0.25 Mly to the unit.
+        distance: T('Galaxy.unit.mly', {
+          n: Math.round(Math.sqrt(x * x + y * y + z * z) * 0.25) }),
+      };
+    }
+
+    const points = pointCloud(pos, col, 2.0, 0.9);
+    points.name = "gx-supercluster-galaxies";
+    // Picking reads the live cloud, so it must never be culled out from under
+    // the raycast when the camera is inside the structure.
+    points.frustumCulled = false;
+    return { points, groups: knots.length + unnamed, galaxyAt, count: i };
+  }
+
+  // ==========================================================================
+  // Laniakea itself.
+  //
+  // This was a ball: 2,600 points and three sprites, framed at 1.6 Gly for a
+  // structure 500 Mly across. A supercluster is not a ball and is not defined
+  // by a boundary at all - it is a BASIN, the volume whose galaxies all fall
+  // the same way, and the flow is what makes it one object. So it is drawn as
+  // its flow, and it holds its real members: the Local Group is one of dozens.
+  //
+  // 0.25 Mly to the world unit (World3D LY_PER_UNIT), so every position here is
+  // a real distance in Mly times four. Nothing in this frame exceeds ~1,100
+  // units, which keeps every coordinate far inside float32's exact range.
+  // ==========================================================================
   function buildSupercluster(opts) {
     opts = opts || {};
     const rnd = lcg(opts.seed || 60606);
@@ -1078,39 +1394,113 @@
     group.name = "gx-supercluster";
     const pickables = [];
 
-    // Local Group as a tight clump near the origin.
-    const home = galaxyBillboard("rgba(255,245,220,0.95)", "rgba(150,180,255,0.4)", 70, 45);
-    group.add(home);
-    addPickable(pickables, home, 35, CAT.supercluster[0]);
+    const MLY = 4;            // world units per Mly at this scale
+    const R = 250 * MLY;      // Laniakea's ~250 Mly radius -> 1000 units
+    const DB = laniakeaData();
 
-    // Virgo cluster (dense) offset, and the Great Attractor marker far out.
-    const virgo = new THREE.Group();
-    virgo.position.set(620, 80, -260);
-    scatterGalaxies(virgo, 240, 280, rnd, GAL_PALETTE, [10, 40]);
-    group.add(virgo);
-    addPickable(pickables, virgo, 200, CAT.supercluster[1]);
-
-    const ga = galaxyBillboard("rgba(255,210,180,0.9)", "rgba(255,140,120,0.4)", 180, 180);
-    ga.position.set(-900, -120, 700);
-    group.add(ga);
-    addPickable(pickables, ga, 90, CAT.supercluster[2]);
-
-    // ~2600 galaxies as points threaded along loose filaments + hero sprites.
-    {
-      const n = 2600;
-      const pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
-      for (let i = 0; i < n; i++) {
-        const rr = Math.pow(rnd(), 1.3) * 1500, u = rnd() * 2 - 1, th = rnd() * Math.PI * 2;
-        const s = Math.sqrt(1 - u * u);
-        pos[i * 3] = Math.cos(th) * s * rr; pos[i * 3 + 1] = u * rr * 0.8; pos[i * 3 + 2] = Math.sin(th) * s * rr;
-        const w = 0.3 + rnd() * 0.5; col[i * 3] = 1.0 * w; col[i * 3 + 1] = 0.92 * w; col[i * 3 + 2] = 0.8 * w;
+    // A real direction on the sky at a real distance, in world units. The
+    // database stores both the angles and the cartesian Mly; prefer the latter.
+    const place = (rec, out) => {
+      const v = out || new THREE.Vector3();
+      if (rec && Array.isArray(rec.position)) {
+        return v.set(rec.position[0] * MLY, rec.position[2] * MLY, rec.position[1] * MLY);
       }
-      group.add(pointCloud(pos, col, 6, 0.8));
+      const mly = (rec && rec.mly) || 0;
+      const l = (((rec && rec.l) || 0) * Math.PI) / 180;
+      const b = (((rec && rec.b) || 0) * Math.PI) / 180;
+      return v.set(Math.cos(b) * Math.cos(l) * mly * MLY, Math.sin(b) * mly * MLY,
+        Math.cos(b) * Math.sin(l) * mly * MLY);
+    };
+
+    const GA = place(DB && DB.greatAttractor) ||
+      new THREE.Vector3(-0.6, -0.13, 0.79).multiplyScalar(250 * MLY);
+
+    // --- The home group, at the origin ---------------------------------------
+    const home = galaxyBillboard("rgba(255,245,220,0.95)", "rgba(150,180,255,0.4)", 26, 17);
+    group.add(home);
+    addPickable(pickables, home, 16, CAT.supercluster[0]);
+
+    // --- The constituent superclusters --------------------------------------
+    // Laniakea is Virgo + Hydra-Centaurus + Pavo-Indus + the Southern strand +
+    // the Centaurus Wall + Ophiuchus. Each is a place in its own right, and the
+    // clusters below hang off the one they belong to.
+    const partPos = new Map();
+    ((DB && DB.parts) || []).forEach((part) => {
+      const p = place(part);
+      partPos.set(part.name, p);
+      const sz = 20 + Math.min(52, Math.sqrt(part.rich || 1000) * 0.36);
+      const gb = galaxyBillboard("rgba(226,236,255,0.7)", "rgba(120,160,255,0.22)", sz * 2.2, sz * 1.3);
+      gb.position.copy(p);
+      gb.material.rotation = rnd() * Math.PI;
+      group.add(gb);
+      addPickable(pickables, gb, sz, part);
+    });
+
+    // --- The named clusters and groups --------------------------------------
+    const knots = [{ pos: new THREE.Vector3(0, 0, 0), rich: 80, spread: 5 * MLY }];
+    ((DB && DB.groups) || []).forEach((rec) => {
+      const p = place(rec);
+      const rich = rec.rich || 40;
+      const sz = 7 + Math.min(30, Math.sqrt(rich) * 1.4);
+      const pal = GAL_PALETTE[(rnd() * GAL_PALETTE.length) | 0];
+      const gb = galaxyBillboard(pal[0], pal[1], sz, sz * (0.55 + rnd() * 0.45));
+      gb.position.copy(p);
+      gb.material.rotation = rnd() * Math.PI;
+      group.add(gb);
+      addPickable(pickables, gb, Math.max(sz * 0.55, 9), rec);
+      knots.push({ pos: p, rich, spread: Math.max(2, Math.sqrt(rich) * 0.2) * MLY });
+    });
+
+    // --- The Great Attractor, and the streamlines running into it ------------
+    const ga = galaxyBillboard("rgba(255,210,180,0.9)", "rgba(255,140,120,0.4)", 70, 70);
+    ga.position.copy(GA);
+    group.add(ga);
+    addPickable(pickables, ga, 40, CAT.supercluster[2]);
+
+    // The basin drawn as its own flow: streamlines started out at the rim and
+    // walked inward, curving toward the Attractor the whole way.
+    const STREAMS = 64, STEPS = 26;
+    const segs = [];
+    const strands = [];
+    for (let i = 0; i < STREAMS; i++) {
+      const th = rnd() * Math.PI * 2;
+      const u = (rnd() * 2 - 1) * 0.34;
+      const sxz = Math.sqrt(Math.max(0, 1 - u * u));
+      const r0 = R * (0.55 + rnd() * 0.5);
+      let prev = new THREE.Vector3(
+        Math.cos(th) * sxz * r0, u * r0 * 0.42, Math.sin(th) * sxz * r0);
+      const swirl = (rnd() - 0.5) * 0.5;
+      for (let k = 1; k <= STEPS; k++) {
+        const t = k / STEPS;
+        const pull = Math.pow(t, 1.35);
+        const cur = new THREE.Vector3(
+          prev.x + (GA.x - prev.x) * (0.055 + pull * 0.05) - Math.sin(t * 6 + swirl * 9) * R * 0.012 * (1 - t),
+          prev.y + (GA.y - prev.y) * (0.075 + pull * 0.06),
+          prev.z + (GA.z - prev.z) * (0.055 + pull * 0.05) + Math.cos(t * 6 + swirl * 9) * R * 0.012 * (1 - t));
+        segs.push(prev, cur);
+        strands.push([prev, cur]);
+        prev = cur;
+      }
     }
-    scatterGalaxies(group, 90, 1450, rnd, GAL_PALETTE, [18, 50]);
+    {
+      const lgeo = new THREE.BufferGeometry().setFromPoints(segs);
+      const lmat = new THREE.LineBasicMaterial({
+        color: 0x5f7fbe, transparent: true, opacity: 0.18, depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      });
+      group.add(new THREE.LineSegments(lgeo, lmat));
+    }
+
+    // --- A hundred thousand galaxies ----------------------------------------
+    const field = buildSuperclusterField(knots, strands, rnd, R);
+    group.add(field.points);
 
     function animate() {}
-    return { group, animate, pickables, dispose: () => disposeObject3D(group), radius: 1600 };
+    return {
+      group, animate, pickables, strands, knots,
+      galaxies: SUPERCLUSTER_GALAXIES, groupCount: field.groups,
+      dispose: () => disposeObject3D(group), radius: R * 1.1,
+    };
   }
 
   // ==========================================================================
@@ -1127,6 +1517,146 @@
   //    at the rim. It rides down into the galaxies, systems and worlds the
   //    player finds inside it, and it is what makes the far web weird.
   // ==========================================================================
+  // The observable universe holds roughly ten million superclusters. It is a
+  // real number and the catalogue quotes it; what follows is how a scene draws
+  // something of that size without trying to hold it.
+  const OBSERVABLE_SUPERCLUSTERS = 10000000;
+
+  /**
+   * Detail streamed onto the cosmic web's filaments.
+   *
+   * Zooming at a strand used to arrive at a drawn line with nothing on it: the
+   * web's matter sat in balls around its 4,200 nodes and the space between them
+   * was empty. But superclusters lie ALONG filaments, most of them nowhere near
+   * a node worth naming, and that is what the player should find on the way in.
+   *
+   * Ten million of them cannot be resident - 10M points is 120 MB of position
+   * alone - so they are generated for the strands near the camera and thrown
+   * away again, deterministically, from the strand's own index. Same bargain as
+   * the Milky Way's lazy star field: one persistent buffer, one draw call, and
+   * a draw range that moves.
+   */
+  function createWebDetail(strands, R) {
+    const group = new THREE.Group();
+    group.name = "gx-web-detail";
+    const ENABLE_DIST = R * 0.34;      // only populate once the camera is in
+    const LOAD_RADIUS = R * 0.10;      // how far around the focus to fill
+    const MAX_POINTS = 60000;
+    const PER_STRAND = 260;            // superclusters generated per filament
+    const CACHE = 512;
+
+    const posArr = new Float32Array(MAX_POINTS * 3);
+    const colArr = new Float32Array(MAX_POINTS * 3);
+    let points = null;
+    let count = 0;
+    let activeKey = "__none__";
+    const cache = new Map();
+
+    // One filament's worth of superclusters, deterministic from its index.
+    function strandDetail(index) {
+      const hit = cache.get(index);
+      if (hit) return hit;
+      const st = strands[index];
+      const out = [];
+      if (st) {
+        const a = st[0], b = st[1];
+        const rnd = lcg(0x5EED ^ (index * 2654435761 >>> 0));
+        const off = R * 0.004;
+        for (let i = 0; i < PER_STRAND; i++) {
+          // Piled toward the ends, where filaments meet and clusters gather.
+          let t = rnd();
+          t = t < 0.5 ? Math.pow(t * 2, 1.5) * 0.5 : 1 - Math.pow((1 - t) * 2, 1.5) * 0.5;
+          const spread = off * (0.35 + Math.abs(t - 0.5) * 2.4);
+          out.push(
+            a.x + (b.x - a.x) * t + (rnd() + rnd() - 1) * spread,
+            a.y + (b.y - a.y) * t + (rnd() + rnd() - 1) * spread * 0.7,
+            a.z + (b.z - a.z) * t + (rnd() + rnd() - 1) * spread,
+            0.55 + rnd() * 0.45);
+        }
+      }
+      cache.set(index, out);
+      if (cache.size > CACHE) cache.delete(cache.keys().next().value);
+      return out;
+    }
+
+    function ensurePoints() {
+      if (points) return;
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
+      geo.setAttribute("color", new THREE.BufferAttribute(colArr, 3));
+      geo.setDrawRange(0, 0);
+      points = new THREE.Points(geo, makePointsMaterial(1.8, dotTexture(), 0.85, false));
+      points.frustumCulled = false;
+      points.name = "gx-web-detail-points";
+      group.add(points);
+    }
+
+    function clear() {
+      count = 0;
+      if (points) points.geometry.setDrawRange(0, 0);
+    }
+
+    // Distance from the focus to a strand, so "near" means near the FILAMENT
+    // rather than near one of its endpoints.
+    function distToStrand(f, st) {
+      const a = st[0], b = st[1];
+      const ax = b.x - a.x, ay = b.y - a.y, az = b.z - a.z;
+      const L = ax * ax + ay * ay + az * az;
+      let t = L ? ((f.x - a.x) * ax + (f.y - a.y) * ay + (f.z - a.z) * az) / L : 0;
+      t = t < 0 ? 0 : t > 1 ? 1 : t;
+      const dx = f.x - (a.x + ax * t), dy = f.y - (a.y + ay * t), dz = f.z - (a.z + az * t);
+      return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    function update(focusWorld, distance) {
+      if (!focusWorld || distance > ENABLE_DIST) {
+        if (activeKey !== "__none__") { activeKey = "__none__"; clear(); }
+        return;
+      }
+      // Re-fill only when the focus has actually moved somewhere new, on a grid
+      // a fraction of the load radius: panning within a cell costs nothing.
+      const cell = LOAD_RADIUS * 0.35;
+      const key = Math.floor(focusWorld.x / cell) + ":" +
+        Math.floor(focusWorld.y / cell) + ":" + Math.floor(focusWorld.z / cell);
+      if (key === activeKey) return;
+      activeKey = key;
+
+      ensurePoints();
+      let i = 0;
+      for (let sIdx = 0; sIdx < strands.length && i < MAX_POINTS; sIdx++) {
+        if (distToStrand(focusWorld, strands[sIdx]) > LOAD_RADIUS) continue;
+        const d = strandDetail(sIdx);
+        for (let k = 0; k + 3 < d.length && i < MAX_POINTS; k += 4, i++) {
+          posArr[i * 3] = d[k];
+          posArr[i * 3 + 1] = d[k + 1];
+          posArr[i * 3 + 2] = d[k + 2];
+          const w = d[k + 3];
+          colArr[i * 3] = 0.9 * w; colArr[i * 3 + 1] = 0.92 * w; colArr[i * 3 + 2] = 1.0 * w;
+        }
+      }
+      count = i;
+      const geo = points.geometry;
+      geo.attributes.position.needsUpdate = true;
+      geo.attributes.color.needsUpdate = true;
+      geo.setDrawRange(0, count);
+      geo.computeBoundingSphere();
+    }
+
+    return {
+      group, update,
+      get count() { return count; },
+      dispose() {
+        if (points) {
+          group.remove(points);
+          points.geometry.dispose();
+          points.material.dispose();   // the dot texture is shared; left alive
+          points = null;
+        }
+        cache.clear();
+      },
+    };
+  }
+
   function buildCosmicWeb(opts) {
     opts = opts || {};
     const rnd = lcg(opts.seed || 14142);
@@ -1212,47 +1742,78 @@
       // walks every cell of every ring it opens, so a grid that is too fine
       // spends more on empty cells than it saves on distance tests. R/16 was
       // measured as the floor of that curve (66ms, against 96 at R/26).
+      // A uniform grid with an expanding-ring search. The ring stops only once
+      // the second-best distance is provably smaller than anything left
+      // unsearched, so the neighbours are the same pairs a brute-force scan
+      // finds, at a fraction of the work.
+      //
+      // This loop is the single most expensive thing in the whole star map, so
+      // it is written like it: it used to build a fresh array for every ring of
+      // every node and SORT it (4,200 nodes x several rings, ~20,000 array
+      // allocations and sorts), look cells up by building a "x,y,z" string each
+      // time, and walk the full cube of each ring only to throw the interior
+      // away. Now the cell key is one packed integer, the candidates are
+      // scanned straight out of their buckets with nothing allocated, and only
+      // the SURFACE of each ring is visited.
       const CELL = R / 16;
       const invCell = 1 / CELL;
+      // Coordinates run to about +/-17 cells; 512 of headroom either way packs
+      // into 30 bits, which stays a small integer key rather than a string.
+      const K = (cx, cy, cz) => (((cx + 512) * 1024 + (cy + 512)) * 1024 + (cz + 512));
       const grid = new Map();
-      const nodeCell = new Array(N);
+      const cellX = new Int32Array(N), cellY = new Int32Array(N), cellZ = new Int32Array(N);
+      const px = new Float64Array(N), py = new Float64Array(N), pz = new Float64Array(N);
       for (let i = 0; i < N; i++) {
-        const cx = Math.floor(nodes[i].x * invCell);
-        const cy = Math.floor(nodes[i].y * invCell);
-        const cz = Math.floor(nodes[i].z * invCell);
-        nodeCell[i] = [cx, cy, cz];
-        const key = cx + "," + cy + "," + cz;
+        const nd = nodes[i];
+        px[i] = nd.x; py[i] = nd.y; pz[i] = nd.z;
+        const cx = Math.floor(nd.x * invCell);
+        const cy = Math.floor(nd.y * invCell);
+        const cz = Math.floor(nd.z * invCell);
+        cellX[i] = cx; cellY[i] = cy; cellZ[i] = cz;
+        const key = K(cx, cy, cz);
         let bucket = grid.get(key);
         if (!bucket) grid.set(key, (bucket = []));
         bucket.push(i);
       }
       for (let i = 0; i < N; i++) {
-        const p = nodes[i];
-        const cc = nodeCell[i];
-        const cx = cc[0], cy = cc[1], cz = cc[2];
+        const ix = px[i], iy = py[i], iz = pz[i];
+        const cx = cellX[i], cy = cellY[i], cz = cellZ[i];
         let b1 = -1, b2 = -1, d1 = Infinity, d2 = Infinity;
-        for (let ring = 0; ring <= 64; ring++) {
-          // Search only the outer shell of the current ring (interior already
-          // scanned); iterate candidates in ascending node index to match the
-          // brute-force tie ordering.
-          const shell = [];
-          for (let dx = -ring; dx <= ring; dx++) {
-            for (let dy = -ring; dy <= ring; dy++) {
-              for (let dz = -ring; dz <= ring; dz++) {
-                if (ring > 0 &&
-                    Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz)) !== ring) continue;
-                const bucket = grid.get((cx + dx) + "," + (cy + dy) + "," + (cz + dz));
-                if (bucket) for (let bi = 0; bi < bucket.length; bi++) shell.push(bucket[bi]);
-              }
-            }
-          }
-          shell.sort((a, b) => a - b);
-          for (let si = 0; si < shell.length; si++) {
-            const j = shell[si];
+        // Test every node in one cell against node i.
+        const scan = (key) => {
+          const bucket = grid.get(key);
+          if (!bucket) return;
+          for (let bi = 0; bi < bucket.length; bi++) {
+            const j = bucket[bi];
             if (j === i) continue;
-            const d = p.distanceToSquared(nodes[j]);
+            const dx = ix - px[j], dy = iy - py[j], dz = iz - pz[j];
+            const d = dx * dx + dy * dy + dz * dz;
             if (d < d1) { d2 = d1; b2 = b1; d1 = d; b1 = j; }
             else if (d < d2) { d2 = d; b2 = j; }
+          }
+        };
+        for (let ring = 0; ring <= 64; ring++) {
+          if (ring === 0) {
+            scan(K(cx, cy, cz));
+          } else {
+            // The surface of the ring only: the two dz caps in full, then the
+            // dy edges of the slices between them, then their dx sides.
+            for (let dx = -ring; dx <= ring; dx++) {
+              for (let dy = -ring; dy <= ring; dy++) {
+                scan(K(cx + dx, cy + dy, cz - ring));
+                scan(K(cx + dx, cy + dy, cz + ring));
+              }
+            }
+            for (let dz = -ring + 1; dz <= ring - 1; dz++) {
+              for (let dx = -ring; dx <= ring; dx++) {
+                scan(K(cx + dx, cy - ring, cz + dz));
+                scan(K(cx + dx, cy + ring, cz + dz));
+              }
+              for (let dy = -ring + 1; dy <= ring - 1; dy++) {
+                scan(K(cx - ring, cy + dy, cz + dz));
+                scan(K(cx + ring, cy + dy, cz + dz));
+              }
+            }
           }
           // Any unsearched node lies >= ring*CELL away; stop once b2 beats that.
           const safe = ring * CELL;
@@ -1270,21 +1831,28 @@
     });
     group.add(new THREE.LineSegments(lgeo, lmat));
 
-    // Intergalactic haze along the walls, so the voids read as empty rather
-    // than as the edge of the drawing.
+    // Matter between the nodes, ON the filaments.
+    //
+    // This used to be 9,000 points balled up AROUND nodes, which left every
+    // strand between them a bare drawn line: flying at a filament, there was
+    // nothing on it to arrive at. Superclusters are strung along filaments and
+    // so is everything between them, so that is where these go - a point on a
+    // strand plus a small offset across it.
+    const strandList = [];
+    for (let i = 0; i + 1 < segs.length; i += 2) strandList.push([segs[i], segs[i + 1]]);
     {
-      const n = 9000;
+      const n = 14000;
       const pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
       for (let i = 0; i < n; i++) {
-        const a = nodes[(rnd() * N) | 0];
-        const rr = Math.pow(rnd(), 0.7) * R * 0.05;
-        const u = rnd() * 2 - 1, th = rnd() * Math.PI * 2;
-        const s = Math.sqrt(Math.max(0, 1 - u * u));
-        pos[i * 3] = a.x + Math.cos(th) * s * rr;
-        pos[i * 3 + 1] = a.y + u * rr;
-        pos[i * 3 + 2] = a.z + Math.sin(th) * s * rr;
-        const w = 0.12 + rnd() * 0.22;
-        col[i * 3] = 0.78 * w; col[i * 3 + 1] = 0.84 * w; col[i * 3 + 2] = 1.0 * w;
+        const st = strandList[(rnd() * strandList.length) | 0];
+        const a = st[0], b = st[1];
+        const t = rnd();
+        const off = R * 0.006;
+        pos[i * 3] = a.x + (b.x - a.x) * t + (rnd() + rnd() - 1) * off;
+        pos[i * 3 + 1] = a.y + (b.y - a.y) * t + (rnd() + rnd() - 1) * off;
+        pos[i * 3 + 2] = a.z + (b.z - a.z) * t + (rnd() + rnd() - 1) * off;
+        const w = 0.12 + rnd() * 0.24;
+        col[i * 3] = 0.82 * w; col[i * 3 + 1] = 0.86 * w; col[i * 3 + 2] = 1.0 * w;
       }
       const haze = new THREE.Points(
         new THREE.BufferGeometry()
@@ -1294,6 +1862,15 @@
       haze.frustumCulled = false;
       group.add(haze);
     }
+
+    // And the detail that only exists when you go and look: superclusters and
+    // their galaxies, streamed onto whichever filaments the camera is near.
+    // The observable universe holds about TEN MILLION superclusters, which is
+    // not a number anything can hold in memory at once - so the web keeps its
+    // 4,200 enterable nodes as the structure and generates the rest on demand,
+    // the same bargain the Milky Way's star field makes (createLazyStarField).
+    const detail = createWebDetail(strandList, R);
+    group.add(detail.group);
 
     // Every node is a real destination: selecting one and zooming in builds a
     // procedural cluster of galaxies from its seed (see buildProceduralCluster).
@@ -1305,9 +1882,22 @@
       const tier = tiers[i] || 0;
       const seed = clusterSeed(i);
       const r = lcg(seed);
-      // The far web is not only further away, it is emptier: the rim holds
-      // sparse, ragged groups rather than the rich clusters of home.
-      const members = Math.max(12, Math.round((60 + ((seed >>> 3) % 900)) * (1 - tier * 0.045)));
+      // A node of the cosmic web is a SUPERCLUSTER, not a cluster: the web is
+      // 46 Gly across and one dot in it stands for the whole Laniakea-sized
+      // basin the player has just spent a scale flying around. It used to be
+      // labelled a cluster (or even a galaxy group) holding tens of galaxies,
+      // which made the two scales below it the same size as this one.
+      //
+      // So a node holds CLUSTERS, and the far web is not only further away but
+      // emptier: the rim holds thin, ragged superclusters rather than the rich
+      // ones near home.
+      // Laniakea holds ~100,000 galaxies in 300 to 500 clusters and groups, and
+      // it is an ordinary supercluster; these are drawn from the same range.
+      // The far web is not only further away but emptier, so the rim holds thin,
+      // ragged superclusters rather than the rich ones near home.
+      const members = Math.max(60, Math.round((300 + ((seed >>> 3) % 220)) * (1 - tier * 0.045)));
+      const galaxies = Math.max(8000, Math.round(
+        SUPERCLUSTER_GALAXIES * (members / 400) * (1 - tier * 0.03)));
       // 10 Mly per world unit at this scale, printed in Gly once it stops
       // fitting into four digits of Mly.
       const mly = p.length() * 10;
@@ -1318,12 +1908,15 @@
         position: p,
         data: {
           name: clusterName(seed),
-          type: members > 600 ? "rich galaxy cluster"  // i18n-ignore  body-type ids, resolved by bodyTypeLabel
-            : members > 250 ? "galaxy cluster" : "galaxy group",  // i18n-ignore  body-type ids
+          type: members > 90 ? "rich supercluster"  // i18n-ignore  body-type ids, resolved by bodyTypeLabel
+            : members > 30 ? "supercluster" : "galaxy filament",  // i18n-ignore  body-type ids
           kind: "cluster",
           tier,
-          diameter: T('Galaxy.unit.mly', { n: 6 + Math.round(r() * 24) }),
-          members: T('Galaxy.unit.galaxies', { n: members }),
+          // Laniakea is ~500 Mly across and is an ordinary one.
+          // Laniakea runs ~520 Mly across; an ordinary supercluster is in range.
+          diameter: T('Galaxy.unit.mly', { n: 300 + Math.round(r() * 400) }),
+          members: T('Galaxy.unit.galaxies', { n: galaxies }),
+          clusters: T('Galaxy.unit.clusters', { n: members }),
           distance: mly >= 1000
             ? T('Galaxy.unit.gly', { n: Math.round(mly / 100) / 10 })
             : T('Galaxy.unit.mly', { n: Math.round(mly) }),
@@ -1343,7 +1936,13 @@
     function animate() {}
     return {
       group, animate, pickables: [], nodePoints, nodeAt, nodeTier, nodePos, nodeCount: N,
-      dispose: () => disposeObject3D(group), radius: R * 1.05,
+      strands: strandList,
+      // What the web STANDS FOR, as against what it draws: the observable
+      // universe holds roughly ten million superclusters.
+      superclusters: OBSERVABLE_SUPERCLUSTERS,
+      update: detail.update,
+      dispose() { detail.dispose(); disposeObject3D(group); },
+      radius: R * 1.05,
     };
   }
 
@@ -1549,23 +2148,38 @@
     // shared DataManager (same star-type roster/planet generation as the
     // Milky Way) and expose them as ordinary "star" pickables, so the normal
     // target/travel/SB-Bridge machinery works out here unmodified.
+    // These were 220 separate Sprites, each with a SpriteMaterial of its own:
+    // 220 draw calls and 220 materials for what is one cloud of points. They
+    // are the same THREE.Points the Milky Way's own catalogue is drawn as
+    // (buildGalaxyScale), which makes them one draw call AND lets the scene
+    // pick them with the existing index raycast rather than a screen-space
+    // test over 220 objects.
     const pickables = [];
+    let systemPoints = null;
+    let systemsByIndex = null;
     if (opts.dataManager && opts.dataManager.generateGalaxySystems) {
       const sysList = opts.dataManager.generateGalaxySystems(seed, Rdisk);
-      const sizeRnd = lcg(seed + 8081);
-      const tex = starTexture();
-      sysList.forEach((sys) => {
-        const mat = new THREE.SpriteMaterial({
-          map: tex, color: new THREE.Color(sys.color || "#ffffff"),
-          transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-        });
-        const spr = new THREE.Sprite(mat);
-        const sz = 5 + sizeRnd() * 4;
-        spr.scale.set(sz, sz, 1);
-        spr.position.set(sys.position.x, sys.position.y, sys.position.z);
-        group.add(spr);
-        pickables.push({ object: spr, radius: sz * 0.6, kind: "star", data: sys, system: sys });
-      });
+      const n = sysList.length;
+      const spos = new Float32Array(n * 3), scol = new Float32Array(n * 3);
+      const sc = new THREE.Color();
+      systemsByIndex = new Array(n);
+      for (let i = 0; i < n; i++) {
+        const sys = sysList[i];
+        spos[i * 3] = sys.position.x;
+        spos[i * 3 + 1] = sys.position.y;
+        spos[i * 3 + 2] = sys.position.z;
+        sc.set(sys.color || "#ffffff");
+        scol[i * 3] = sc.r; scol[i * 3 + 1] = sc.g; scol[i * 3 + 2] = sc.b;
+        systemsByIndex[i] = sys;
+      }
+      const sgeo = new THREE.BufferGeometry();
+      sgeo.setAttribute("position", new THREE.BufferAttribute(spos, 3));
+      sgeo.setAttribute("color", new THREE.BufferAttribute(scol, 3));
+      systemPoints = new THREE.Points(sgeo, makePointsMaterial(3.2, dotTexture(), 1, false));
+      systemPoints.frustumCulled = false;
+      systemPoints.renderOrder = 2;
+      systemPoints.name = "gx-procgalaxy-stars";
+      group.add(systemPoints);
     }
 
     // The galaxy's own central black hole - a real system too (see
@@ -1588,6 +2202,12 @@
       group, name,
       animate: (t) => bh.animate(t),
       pickables,
+      // The named catalogue, as the galaxy-scale scene expects to find it, so
+      // picking a star out here goes through exactly the same path as at home.
+      points: systemPoints,
+      systemsByIndex,
+      galaxySeed: seed,
+      diskRadius: Rdisk,
       dispose: () => disposeObject3D(group),
       radius: Rdisk * 1.35,
       arms, barred,
@@ -1602,9 +2222,117 @@
   // neighbours, plus a bridge between clumps), so the web's structure carries
   // down a scale instead of the node just becoming a bigger dot.
   // ==========================================================================
-  // i18n-ignore-start  cluster catalogue prefixes and Greek-letter designations
-  const CLUSTER_PREFIX = ["Abell", "ACO", "Zwicky", "MACS", "RXC", "Coma-", "Hydra-"];
+  // ==========================================================================
+  // Procedural names for everything out past the Local Group.
+  //
+  // A cluster used to be one of seven prefixes and a number, which gave the
+  // player "Coma-1269" for a structure nowhere near Coma and produced the same
+  // seven shapes over and over. Real deep-sky objects are named in a handful of
+  // recognisable ways and this generates all of them:
+  //
+  //   catalogue + number      Abell 3627, ZwCl 1215, MCG+01-02-015
+  //   catalogue + J2000 tag   MACS J0717.5+3745, RXC J1504.1-0248
+  //   constellation + rank    Hydra III, Corona Borealis Supercluster
+  //   galaxy catalogues       NGC 4874, IC 1101, UGC 2885, PGC 54559
+  //
+  // The constellations are the real 87 in js/db/GalaxySim/WesternConstellations
+  // .json, so the sky the player reads out here is named for the sky they can
+  // see from the ground.
+  // ==========================================================================
+  // i18n-ignore-start  catalogue designations and constellation names are ids,
+  // not prose: an object's designation is the same in every language.
+  const CLUSTER_CATALOGUES = ["Abell", "ACO", "ZwCl", "MKW", "AWM", "RXC", "MACS",
+    "SPT-CL", "PLCK", "XMMU", "CIZA", "WHL"];
+  const GALAXY_CATALOGUES = ["NGC", "IC", "UGC", "PGC", "ESO", "MCG", "Arp", "Markarian"];
+  const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+    "XI", "XII", "XIII", "XIV", "XV"];
   const GREEK = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta"];
+  // The words a large-scale structure is described BY, rather than named for.
+  const STRUCTURE_WORDS = ["Supercluster", "Wall", "Complex", "Filament", "Chain", "Sheet"];
+
+  /** The 87 real constellation names, title-cased, read once from the db. */
+  let _constellationNames = null;
+  function constellationNames() {
+    if (_constellationNames) return _constellationNames;
+    const out = [];
+    const src = window.GalaxySim && window.GalaxySim.WesternConstellations;
+    if (src) {
+      for (const key of Object.keys(src)) {
+        const rec = src[key];
+        const n = (rec && rec.name) || key;
+        if (typeof n === "string" && n) out.push(n);
+      }
+    }
+    // A small fallback so a missing database never leaves things unnamed.
+    _constellationNames = out.length ? out
+      : ["Hydra", "Centaurus", "Virgo", "Fornax", "Perseus", "Pegasus", "Sculptor",
+         "Corona Borealis", "Bootes", "Columba", "Horologium", "Capricornus"];
+    return _constellationNames;
+  }
+
+  /** A J2000-style designation, "J1226.9+3332". */
+  function jTag(r) {
+    const hh = (r() * 24) | 0, mm = (r() * 60) | 0, dec = (r() * 10) | 0;
+    const sign = r() < 0.5 ? "-" : "+";
+    const dd = (r() * 80) | 0, dm = (r() * 60) | 0;
+    const p2 = (v) => (v < 10 ? "0" + v : String(v));
+    return "J" + p2(hh) + p2(mm) + "." + dec + sign + p2(dd) + p2(dm);
+  }
+
+  /**
+   * The name of a galaxy cluster or supercluster.
+   * @param {number} seed
+   * @param {boolean} [isSuper] name it as a supercluster-scale structure
+   */
+  function clusterName(seed, isSuper) {
+    const r = lcg((seed >>> 0) || 1);
+    const cons = constellationNames();
+    const roll = r();
+    if (isSuper) {
+      // Superclusters are named for the constellation they lie behind, which is
+      // how every real one got its name.
+      const c = cons[(r() * cons.length) | 0];
+      if (roll < 0.62) return c + " " + STRUCTURE_WORDS[(r() * STRUCTURE_WORDS.length) | 0];
+      if (roll < 0.82) {
+        const c2 = cons[(r() * cons.length) | 0];
+        return c + "-" + c2 + " Complex";
+      }
+      return c + " " + ROMAN[(r() * ROMAN.length) | 0] + " Supercluster";
+    }
+    if (roll < 0.45) {
+      // Abell 3627, ZwCl 1215 ...
+      const cat = CLUSTER_CATALOGUES[(r() * CLUSTER_CATALOGUES.length) | 0];
+      return cat + " " + (100 + ((r() * 4900) | 0));
+    }
+    if (roll < 0.70) {
+      // MACS J0717.5+3745 ...
+      const cat = CLUSTER_CATALOGUES[(r() * CLUSTER_CATALOGUES.length) | 0];
+      return cat + " " + jTag(r);
+    }
+    // Hydra III, Fornax Cluster ...
+    const c = cons[(r() * cons.length) | 0];
+    return r() < 0.5
+      ? c + " " + ROMAN[(r() * ROMAN.length) | 0]
+      : c + " Cluster";
+  }
+
+  /** The name of one galaxy, from an ordinary deep-sky catalogue. */
+  function galaxyName(seed) {
+    const r = lcg((seed >>> 0) || 1);
+    const cat = GALAXY_CATALOGUES[(r() * GALAXY_CATALOGUES.length) | 0];
+    if (cat === "MCG") {
+      const p = (v) => (v < 10 ? "0" + v : String(v));
+      return "MCG" + (r() < 0.5 ? "-" : "+") + p((r() * 15) | 0) + "-" +
+        p((r() * 60) | 0) + "-" + p((r() * 99) | 0);
+    }
+    if (cat === "ESO") return "ESO " + (100 + ((r() * 500) | 0)) + "-" + ((r() * 60) | 0);
+    if (cat === "PGC") return "PGC " + (1000 + ((r() * 900000) | 0));
+    if (cat === "UGC") return "UGC " + (1 + ((r() * 12900) | 0));
+    if (cat === "Arp") return "Arp " + (1 + ((r() * 338) | 0));
+    if (cat === "Markarian") return "Markarian " + (1 + ((r() * 1500) | 0));
+    if (cat === "IC") return "IC " + (1 + ((r() * 5386) | 0));
+    return "NGC " + (1 + ((r() * 7840) | 0));
+  }
   // i18n-ignore-end
 
   function clusterSeed(index) { return (14142 + index * 7919) >>> 0; }
@@ -1614,6 +2342,18 @@
     return p + " " + (1000 + (seed >>> 4) % 8000);
   }
 
+  // ==========================================================================
+  // What a cosmic-web node opens into: a supercluster, built to Laniakea's
+  // shape (see buildSupercluster and js/db/GalaxySim/Laniakea.json).
+  //
+  // It used to be three or four spherical clumps of ~120 galaxies with lines
+  // drawn between whichever of them happened to land near each other. That is
+  // backwards twice over: a supercluster holds a HUNDRED THOUSAND galaxies in
+  // 300 to 500 clusters and groups, and in the real web the filaments come
+  // first with the galaxies strung ON them. Both are fixed here, so the
+  // structure the player saw as one dot resolves into the same kind of thing
+  // they just flew around at home.
+  // ==========================================================================
   function buildProceduralCluster(opts) {
     opts = opts || {};
     const seed = opts.seed || 14142;
@@ -1622,152 +2362,304 @@
     group.name = "gx-cluster";
     const pickables = [];
     const name = opts.name || clusterName(seed);
-    // How strange this whole cluster is allowed to be: handed down from the
-    // web node it hangs off, and handed on again to every galaxy in it.
+    // How strange this whole supercluster is allowed to be: handed down from
+    // the web node it hangs off, and handed on again to every galaxy in it.
     const tier = Math.max(0, Math.min(15, Math.round(opts.tier || 0)));
 
-    const R = 900;                       // cluster framing radius (world units)
-    const clumps = 3 + ((seed >>> 5) % 4);
-    const centres = [];
-    for (let c = 0; c < clumps; c++) {
-      const u = rnd() * 2 - 1, th = rnd() * Math.PI * 2, s = Math.sqrt(1 - u * u);
-      const rr = (c === 0 ? 0 : (0.35 + rnd() * 0.6) * R);
-      centres.push(new THREE.Vector3(
-        Math.cos(th) * s * rr, u * rr * 0.6, Math.sin(th) * s * rr));
+    const R = 900;                       // framing radius (world units)
+
+    // --- The skeleton --------------------------------------------------------
+    // Knots first, joined into one connected web, and everything else hangs off
+    // the strands between them.
+    const KNOTS = 5 + ((seed >>> 5) % 5);
+    const knotPos = [];
+    for (let k = 0; k < KNOTS; k++) {
+      const u = (rnd() * 2 - 1) * 0.55;          // flattened: a wall, not a ball
+      const th = rnd() * Math.PI * 2;
+      const sxz = Math.sqrt(Math.max(0, 1 - u * u));
+      const rr = (k === 0 ? 0 : (0.34 + rnd() * 0.62) * R);
+      knotPos.push(new THREE.Vector3(
+        Math.cos(th) * sxz * rr, u * rr * 0.5, Math.sin(th) * sxz * rr));
     }
 
-    // --- Member galaxies, distributed around the clump centres ---------------
-    const galaxies = []; // { pos, sprite }
-    const total = 70 + ((seed >>> 7) % 70);
-    for (let i = 0; i < total; i++) {
-      const c = centres[(rnd() * centres.length) | 0];
-      const spread = R * (0.10 + rnd() * 0.22);
-      const u = rnd() * 2 - 1, th = rnd() * Math.PI * 2, s = Math.sqrt(1 - u * u);
-      const rr = Math.pow(rnd(), 1.4) * spread;
+    // Nearest-neighbour links, then whatever is left pulled in until the whole
+    // thing is ONE structure, then a couple of chords to close loops. The
+    // spanning step matters: neighbours usually pair off mutually, so without
+    // it a supercluster could come out as two or three strands with most of its
+    // knots unjoined and every galaxy piled onto those.
+    const strands = [];
+    const linked = new Set();
+    const join = (i, j) => {
+      if (i === j) return false;
+      const key = Math.min(i, j) + ":" + Math.max(i, j);
+      if (linked.has(key)) return false;
+      linked.add(key);
+      strands.push([knotPos[i], knotPos[j]]);
+      return true;
+    };
+    for (let i = 0; i < knotPos.length; i++) {
+      let best = -1, bestD = Infinity;
+      for (let j = 0; j < knotPos.length; j++) {
+        if (j === i) continue;
+        const d = knotPos[i].distanceToSquared(knotPos[j]);
+        if (d < bestD) { bestD = d; best = j; }
+      }
+      if (best >= 0) join(i, best);
+    }
+    {
+      const inside = new Set([0]);
+      let grew = true;
+      while (grew) {
+        grew = false;
+        for (const key of linked) {
+          const [a, b] = key.split(":").map(Number);
+          if (inside.has(a) && !inside.has(b)) { inside.add(b); grew = true; }
+          else if (inside.has(b) && !inside.has(a)) { inside.add(a); grew = true; }
+        }
+      }
+      while (inside.size < knotPos.length) {
+        let bi = -1, bj = -1, bd = Infinity;
+        for (const i of inside) {
+          for (let j = 0; j < knotPos.length; j++) {
+            if (inside.has(j)) continue;
+            const d = knotPos[i].distanceToSquared(knotPos[j]);
+            if (d < bd) { bd = d; bi = i; bj = j; }
+          }
+        }
+        if (bj < 0) break;
+        join(bi, bj);
+        inside.add(bj);
+      }
+    }
+    for (let extra = 0; extra < KNOTS; extra++) {
+      join((rnd() * knotPos.length) | 0, (rnd() * knotPos.length) | 0);
+    }
+
+    // --- The named clusters, strung along the strands ------------------------
+    // Laniakea's own named members run from 10 to 1,300 galaxies apiece; these
+    // are drawn from the same range, and like Laniakea's they account for only
+    // a few per cent of the whole - the rest is in the unnamed groups and the
+    // field that buildSuperclusterField lays down along the filaments.
+    const knots = [];
+    const NAMED = 22 + ((seed >>> 7) % 16);
+    const ax = new THREE.Vector3(), t1 = new THREE.Vector3(), t2 = new THREE.Vector3();
+    for (let i = 0; i < NAMED; i++) {
+      const strand = strands[(rnd() * strands.length) | 0];
+      if (!strand) break;
+      const a = strand[0], b = strand[1];
+      // Piled up toward the knots at each end, where filaments meet.
+      let t = rnd();
+      t = t < 0.5 ? Math.pow(t * 2, 1.6) * 0.5 : 1 - Math.pow((1 - t) * 2, 1.6) * 0.5;
+      ax.set(b.x - a.x, b.y - a.y, b.z - a.z);
+      const len = ax.length() || 1;
+      ax.multiplyScalar(1 / len);
+      const up = Math.abs(ax.y) > 0.9 ? { x: 1, y: 0, z: 0 } : { x: 0, y: 1, z: 0 };
+      t1.set(ax.y * up.z - ax.z * up.y, ax.z * up.x - ax.x * up.z, ax.x * up.y - ax.y * up.x).normalize();
+      t2.set(ax.y * t1.z - ax.z * t1.y, ax.z * t1.x - ax.x * t1.z, ax.x * t1.y - ax.y * t1.x).normalize();
+      const thick = R * 0.03 * (0.45 + Math.abs(t - 0.5) * 2.2);
+      const o1 = (rnd() + rnd() - 1) * thick, o2 = (rnd() + rnd() - 1) * thick;
       const pos = new THREE.Vector3(
-        c.x + Math.cos(th) * s * rr,
-        c.y + u * rr * 0.7,
-        c.z + Math.sin(th) * s * rr);
+        a.x + (b.x - a.x) * t + t1.x * o1 + t2.x * o2,
+        a.y + (b.y - a.y) * t + t1.y * o1 + t2.y * o2,
+        a.z + (b.z - a.z) * t + t1.z * o1 + t2.z * o2);
+
+      // A steep size law: a few rich clusters, many small groups.
+      const rich = Math.max(10, Math.round(1300 * Math.pow(rnd(), 3.1)));
+      const sz = 7 + Math.min(30, Math.sqrt(rich) * 1.4);
       const pal = GAL_PALETTE[(rnd() * GAL_PALETTE.length) | 0];
-      const sz = 26 + rnd() * 54;
       const gb = galaxyBillboard(pal[0], pal[1], sz, sz * (0.45 + rnd() * 0.55));
       gb.position.copy(pos);
       gb.material.rotation = rnd() * Math.PI;
       group.add(gb);
-      galaxies.push({ pos, sprite: gb });
-      // Only the larger members carry a name card; the rest are scenery.
-      if (sz > 44) {
-        addPickable(pickables, gb, sz * 0.5, {
-          name: name + " " + GREEK[pickables.length % GREEK.length] +
-            "-" + (pickables.length + 1),
-          type: rnd() < 0.5 ? "spiral galaxy" : "elliptical galaxy",  // i18n-ignore  body-type ids
-          kind: "galaxy",
-          tier,
-          diameter: T('Galaxy.unit.thousandLy', { n: Math.round(40 + rnd() * 160) }),
-          stars: T('Galaxy.unit.billionStars', { n: Math.round(20 + rnd() * 900) }),
-          distance: T('Galaxy.unit.mly',
-            { n: Math.round(pos.length() * 0.02 * 100) / 100 }),
-        });
-      }
+      knots.push({ pos, rich, spread: Math.max(2, Math.sqrt(rich) * 0.2) * (R / 250) });
+      addPickable(pickables, gb, Math.max(sz * 0.5, 9), {
+        name: name + " " + GREEK[pickables.length % GREEK.length] + "-" + (pickables.length + 1),
+        type: rich > 600 ? "rich galaxy cluster" : rich > 120 ? "galaxy cluster" : "galaxy group",  // i18n-ignore  body-type ids
+        kind: "cluster",
+        tier,
+        diameter: T('Galaxy.unit.mly', { n: Math.round(3 + Math.sqrt(rich) * 0.4) }),
+        members: T('Galaxy.unit.galaxies', { n: rich }),
+        distance: T('Galaxy.unit.mly', { n: Math.round(pos.length() * 0.5) }),
+      });
     }
 
-    // --- Filaments: each galaxy to its two nearest neighbours, plus a chain
-    //     linking the clump centres so the sub-groups read as one structure. --
+    // --- The filaments themselves, drawn as the threads they are -------------
     {
       const segs = [];
-      for (let i = 0; i < galaxies.length; i++) {
-        const p = galaxies[i].pos;
-        let b1 = -1, b2 = -1, d1 = Infinity, d2 = Infinity;
-        for (let j = 0; j < galaxies.length; j++) {
-          if (j === i) continue;
-          const d = p.distanceToSquared(galaxies[j].pos);
-          if (d < d1) { d2 = d1; b2 = b1; d1 = d; b1 = j; }
-          else if (d < d2) { d2 = d; b2 = j; }
+      const STEPS = 12;
+      for (const [a, b] of strands) {
+        let prev = a;
+        const bend = (rnd() - 0.5) * R * 0.09;
+        for (let k = 1; k <= STEPS; k++) {
+          const t = k / STEPS;
+          const w = Math.sin(t * Math.PI) * bend;
+          const cur = new THREE.Vector3(
+            a.x + (b.x - a.x) * t,
+            a.y + (b.y - a.y) * t + w,
+            a.z + (b.z - a.z) * t + w * 0.5);
+          segs.push(prev, cur);
+          prev = cur;
         }
-        [b1, b2].forEach((b) => {
-          if (b > i) segs.push(p, galaxies[b].pos);
-        });
       }
-      for (let c = 1; c < centres.length; c++) segs.push(centres[c - 1], centres[c]);
       const lgeo = new THREE.BufferGeometry().setFromPoints(segs);
       const lmat = new THREE.LineBasicMaterial({
-        color: 0x5a7fc0, transparent: true, opacity: 0.22, depthWrite: false,
+        color: 0x5a7fc0, transparent: true, opacity: 0.24, depthWrite: false,
         blending: THREE.AdditiveBlending,
       });
       group.add(new THREE.LineSegments(lgeo, lmat));
     }
 
-    // --- Intracluster haze so the volume is not empty between galaxies -------
-    {
-      const n = 2400;
-      const pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
-      for (let i = 0; i < n; i++) {
-        const c = centres[(rnd() * centres.length) | 0];
-        const rr = Math.pow(rnd(), 0.8) * R * 0.5;
-        const u = rnd() * 2 - 1, th = rnd() * Math.PI * 2, s = Math.sqrt(1 - u * u);
-        pos[i * 3] = c.x + Math.cos(th) * s * rr;
-        pos[i * 3 + 1] = c.y + u * rr * 0.7;
-        pos[i * 3 + 2] = c.z + Math.sin(th) * s * rr;
-        const w = 0.18 + rnd() * 0.3;
-        col[i * 3] = 0.8 * w; col[i * 3 + 1] = 0.86 * w; col[i * 3 + 2] = 1.0 * w;
-      }
-      const haze = new THREE.Points(
-        new THREE.BufferGeometry()
-          .setAttribute("position", new THREE.BufferAttribute(pos, 3))
-          .setAttribute("color", new THREE.BufferAttribute(col, 3)),
-        makePointsMaterial(1.8, dotTexture(), 0.55, false));
-      haze.frustumCulled = false;
-      group.add(haze);
-    }
+    // --- A hundred thousand galaxies, same as Laniakea -----------------------
+    const field = buildSuperclusterField(knots, strands, rnd, R);
+    group.add(field.points);
 
     return {
       group, name, animate: () => {}, pickables,
+      // Exposed so a test can measure that the galaxies really do lie along the
+      // strands rather than merely near them.
+      strands, knots,
+      galaxies: SUPERCLUSTER_GALAXIES, groupCount: field.groups,
       dispose: () => disposeObject3D(group), radius: R * 1.25,
     };
   }
 
+  // ==========================================================================
+  // The observable universe, seen whole.
+  //
+  // This was a ball of 5,000 evenly scattered points inside a faint shell,
+  // framed at THREE TRILLION light years for something 46.5 Gly in radius, so
+  // there was nothing in it at any zoom. It is the same structure the player
+  // just flew through one scale down - so it is drawn as that: the cosmic web
+  // receding, its filaments thinning with distance, bounded by the surface of
+  // last scattering rather than by an arbitrary sphere.
+  //
+  // 20 Mly to the unit (World3D LY_PER_UNIT), so 46.5 Gly is 2,325 units.
+  // ==========================================================================
   function buildObservable(opts) {
     opts = opts || {};
     const rnd = lcg(opts.seed || 27182);
     const group = new THREE.Group();
     group.name = "gx-observable";
-    const R = 3000;
+    const R = 2200;                 // 44 Gly: the web inside the horizon
+    const HORIZON = 2325;           // 46.5 Gly: the surface of last scattering
 
-    // Faint translucent shell (the edge of the observable universe).
-    const shellGeo = new THREE.SphereGeometry(R, 32, 24);
-    const shellMat = new THREE.MeshBasicMaterial({
-      color: 0x223a66, transparent: true, opacity: 0.06, side: THREE.BackSide,
-      depthWrite: false, blending: THREE.AdditiveBlending,
-    });
-    group.add(new THREE.Mesh(shellGeo, shellMat));
-
-    // Distant galaxies filling the volume + a denser CMB-ish skin near the shell.
-    const n = 5000;
-    const pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
-    for (let i = 0; i < n; i++) {
-      const rr = Math.pow(rnd(), 0.5) * R, u = rnd() * 2 - 1, th = rnd() * Math.PI * 2;
-      const s = Math.sqrt(1 - u * u);
-      pos[i * 3] = Math.cos(th) * s * rr; pos[i * 3 + 1] = u * rr; pos[i * 3 + 2] = Math.sin(th) * s * rr;
-      const w = 0.25 + rnd() * 0.5;
-      const warm = rnd() < 0.5;
-      col[i * 3] = (warm ? 1.0 : 0.8) * w; col[i * 3 + 1] = 0.85 * w; col[i * 3 + 2] = (warm ? 0.7 : 1.0) * w;
+    // --- The web, at the largest scale it can still be resolved at -----------
+    // Attractors and strands again, the same construction the cosmic web uses,
+    // so stepping out to here reads as the SAME universe getting smaller rather
+    // than as a different drawing of it.
+    const ATTRACTORS = 150;
+    const attr = [];
+    for (let i = 0; i < ATTRACTORS; i++) {
+      const band = Math.floor(rnd() * 7);
+      const u = Math.max(-1, Math.min(1, (band / 6) * 2 - 1 + (rnd() - 0.5) * 0.22));
+      const th = rnd() * Math.PI * 2;
+      const sxz = Math.sqrt(Math.max(0, 1 - u * u));
+      const rr = Math.pow(0.08 + rnd() * 0.92, 0.72) * R;
+      attr.push(new THREE.Vector3(Math.cos(th) * sxz * rr, u * rr * 0.85, Math.sin(th) * sxz * rr));
     }
-    group.add(pointCloud(pos, col, 7, 0.8));
 
-    // The shell itself is selectable so the scale has something to inspect.
+    const N = 2600;
+    const pos = new Float32Array(N * 3), col = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) {
+      const a = attr[(rnd() * attr.length) | 0];
+      let b = a, bd = Infinity;
+      for (let k = 0; k < 10; k++) {
+        const c = attr[(rnd() * attr.length) | 0];
+        if (c === a) continue;
+        const d = a.distanceToSquared(c);
+        if (d < bd) { bd = d; b = c; }
+      }
+      let t = rnd();
+      t = t < 0.5 ? Math.pow(t * 2, 1.7) * 0.5 : 1 - Math.pow((1 - t) * 2, 1.7) * 0.5;
+      const spread = R * 0.02 + rnd() * R * 0.035;
+      const x = a.x + (b.x - a.x) * t + (rnd() - 0.5) * spread;
+      const y = a.y + (b.y - a.y) * t + (rnd() - 0.5) * spread;
+      const z = a.z + (b.z - a.z) * t + (rnd() - 0.5) * spread;
+      pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z;
+      // Redshift: the further out, the older the light and the redder it is,
+      // until at the horizon everything is the colour of the microwave sky.
+      const f = Math.min(1, Math.sqrt(x * x + y * y + z * z) / R);
+      const w = 0.3 + rnd() * 0.5;
+      col[i * 3] = (0.78 + 0.22 * f) * w;
+      col[i * 3 + 1] = (0.86 - 0.26 * f) * w;
+      col[i * 3 + 2] = (1.0 - 0.55 * f) * w;
+    }
+    group.add(pointCloud(pos, col, 4, 0.85));
+
+    // Filaments between the attractors, faint at this remove.
+    {
+      const segs = [];
+      for (let i = 0; i < attr.length; i++) {
+        let b1 = -1, d1 = Infinity;
+        for (let j = 0; j < attr.length; j++) {
+          if (j === i) continue;
+          const d = attr[i].distanceToSquared(attr[j]);
+          if (d < d1) { d1 = d; b1 = j; }
+        }
+        if (b1 > i) segs.push(attr[i], attr[b1]);
+      }
+      const lgeo = new THREE.BufferGeometry().setFromPoints(segs);
+      const lmat = new THREE.LineBasicMaterial({
+        color: 0x44557f, transparent: true, opacity: 0.16, depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      });
+      group.add(new THREE.LineSegments(lgeo, lmat));
+    }
+
+    // --- The horizon: the cosmic microwave background ------------------------
+    // Not a boundary of the universe, the boundary of what can be SEEN, which
+    // is what makes this scale a different thing from the one above it.
+    {
+      const shell = new THREE.Mesh(
+        new THREE.SphereGeometry(HORIZON, 40, 28),
+        new THREE.MeshBasicMaterial({
+          color: 0x8a4a33, transparent: true, opacity: 0.07, side: THREE.BackSide,
+          depthWrite: false, blending: THREE.AdditiveBlending,
+        }));
+      group.add(shell);
+      // The anisotropy, as a speckle on the inside of that shell: the oldest
+      // thing there is to look at, and the only structure at this radius.
+      const n = 4000;
+      const p2 = new Float32Array(n * 3), c2 = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) {
+        const u = rnd() * 2 - 1, th = rnd() * Math.PI * 2;
+        const sxz = Math.sqrt(Math.max(0, 1 - u * u));
+        const rr = HORIZON * (0.985 + rnd() * 0.02);
+        p2[i * 3] = Math.cos(th) * sxz * rr;
+        p2[i * 3 + 1] = u * rr;
+        p2[i * 3 + 2] = Math.sin(th) * sxz * rr;
+        // Warm and cold spots, a few parts in a hundred thousand made visible.
+        const hot = rnd();
+        const w = 0.25 + rnd() * 0.35;
+        c2[i * 3] = (0.75 + hot * 0.3) * w;
+        c2[i * 3 + 1] = (0.45 + hot * 0.2) * w;
+        c2[i * 3 + 2] = (0.55 - hot * 0.25) * w;
+      }
+      group.add(pointCloud(p2, c2, 6, 0.5));
+    }
+
     const pickables = [];
     addPickable(pickables, group, R * 0.05, CAT.observable[0]);
 
     function animate(t) { group.rotation.y = t * 0.005; }
-    return { group, animate, pickables, dispose: () => disposeObject3D(group), radius: 3200 };
+    return { group, animate, pickables, dispose: () => disposeObject3D(group), radius: HORIZON };
   }
 
+  // ==========================================================================
+  // Past the horizon: the observable universe as a single object.
+  //
+  // The scale above the horizon is the one place the universe can be looked at
+  // from outside, so this is the ONLY view where it is a body rather than a
+  // space. 100 Mly to the unit (World3D LY_PER_UNIT), so the 46.5 Gly
+  // observable sphere is 465 units across and there is room around it - which
+  // is the point, because what lives out here is what is not inside it.
+  // ==========================================================================
   function buildUniverseSphere(opts) {
     opts = opts || {};
     const rnd = lcg(opts.seed || 16180);
     const group = new THREE.Group();
     group.name = "gx-universe";
-    const R = 2600;
+    const R = 465;   // the observable universe, to scale, as one body
 
     // The observable universe rendered as a single luminous sphere.
     const geo = new THREE.SphereGeometry(R, 48, 36);
@@ -1798,11 +2690,15 @@
     const pickables = [];
     const anomalies = [];
     // Render specs, index-aligned with CAT.universe (the descriptive records).
+    // Sized and placed against R rather than in absolute units, and placed
+    // OUTSIDE the sphere: the comment above says these are not structures
+    // inside the universe, and now that the universe is drawn at its own size
+    // they can actually stand where that claim puts them.
     const SPECS = [
-      { seed: 99, type: "hypercube", scale: 330, color: 0xff8cf0, pos: [R * 0.7, R * 0.3, -R * 0.5] },
-      { seed: 700, type: "hypersphere", scale: 260, color: 0xc89cff, pos: [-R * 0.8, -R * 0.25, R * 0.35] },
-      { seed: 753, type: "klein", scale: 240, color: 0x9cd8ff, pos: [R * 0.25, -R * 0.72, R * 0.6] },
-      { seed: 806, type: "mobius", scale: 250, color: 0xffc98c, pos: [-R * 0.35, R * 0.78, R * 0.4] },
+      { seed: 99, type: "hypercube", scale: R * 0.30, color: 0xff8cf0, pos: [R * 1.5, R * 0.6, -R * 1.1] },
+      { seed: 700, type: "hypersphere", scale: R * 0.24, color: 0xc89cff, pos: [-R * 1.7, -R * 0.5, R * 0.8] },
+      { seed: 753, type: "klein", scale: R * 0.22, color: 0x9cd8ff, pos: [R * 0.5, -R * 1.6, R * 1.3] },
+      { seed: 806, type: "mobius", scale: R * 0.23, color: 0xffc98c, pos: [-R * 0.8, R * 1.7, R * 0.9] },
     ];
     SPECS.forEach((spec, i) => {
       const an = buildAnomaly({ seed: spec.seed, type: spec.type, scale: spec.scale, color: spec.color });
@@ -1816,7 +2712,9 @@
       group.rotation.y = t * 0.01;
       anomalies.forEach((a) => a.animate(t));
     }
-    return { group, animate, pickables, dispose: () => disposeObject3D(group), radius: R * 1.3 };
+    // Framed wide enough that the sphere is an object with space around it,
+    // rather than filling the screen the way it did when it WAS the space.
+    return { group, animate, pickables, dispose: () => disposeObject3D(group), radius: R * 2.6 };
   }
 
   // ==========================================================================
@@ -2403,20 +3301,32 @@
   }
 
   // Blobby additive cloud texture for nebula layers.
+  // One puff of nebula gas. The shape is random, so this cannot be keyed on
+  // colour alone - but a nebula stacks a dozen of these and the eye cannot
+  // tell one puff's blob pattern from another's, so each colour gets a small
+  // POOL of variants painted once and drawn from thereafter. buildNebula used
+  // to paint 14 canvases per cloud, and buildGalaxyScale builds seven clouds.
+  const NEBULA_TEX_VARIANTS = 8;
   function nebulaTexture(colorRGBA, rnd) {
-    const s = 128;
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = s;
-    const ctx = cv.getContext("2d");
-    for (let i = 0; i < 6; i++) {
-      const x = s * 0.3 + rnd() * s * 0.4, y = s * 0.3 + rnd() * s * 0.4;
-      const r = s * (0.14 + rnd() * 0.26);
-      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-      g.addColorStop(0, colorRGBA);
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
-    }
-    return new THREE.CanvasTexture(cv);
+    const variant = (rnd() * NEBULA_TEX_VARIANTS) | 0;
+    return sharedTexture("nebula:" + colorRGBA + "|" + variant, () => {
+      // Painted from a variant-derived stream, not the caller's: the pool is
+      // shared, so what it looks like must not depend on who asked first.
+      const prnd = lcg(0x9e37 + variant * 7919 + hashSeed(colorRGBA));
+      const s = 128;
+      const cv = document.createElement("canvas");
+      cv.width = cv.height = s;
+      const ctx = cv.getContext("2d");
+      for (let i = 0; i < 6; i++) {
+        const x = s * 0.3 + prnd() * s * 0.4, y = s * 0.3 + prnd() * s * 0.4;
+        const r = s * (0.14 + prnd() * 0.26);
+        const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+        g.addColorStop(0, colorRGBA);
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
+      }
+      return new THREE.CanvasTexture(cv);
+    });
   }
 
   // Volumetric-ish nebula: stacked camera-facing additive sprites + young stars.
@@ -2589,15 +3499,33 @@
       ctx.fill();
       ctx.filter = "none";
     },
+    // Barnard's Loop: the blast shell around Orion. It was one blurred arc()
+    // stroke - a drawing-program circle segment, even line width and all - and
+    // read as a cartoon hoop. A shock front is ragged, so it is built from
+    // overlapping puffs walked around the arc, each its own size and
+    // brightness, thickest where the shell is edge-on and fraying at the ends.
     loop(ctx, s, rnd, colors) {
       const cx = s * 0.42, cy = s * 0.5, r = s * 0.42;
-      ctx.filter = "blur(3px)";
-      ctx.strokeStyle = hexA(colors[0], 0.35);
-      ctx.lineWidth = s * 0.05;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, Math.PI * 0.15, Math.PI * 1.65);
-      ctx.stroke();
-      ctx.filter = "none";
+      const A0 = Math.PI * 0.15, A1 = Math.PI * 1.65;
+      const N = 52;
+      for (let i = 0; i < N; i++) {
+        const t = i / (N - 1);
+        const a = A0 + (A1 - A0) * t;
+        const fade = 0.35 + Math.sin(t * Math.PI) * 0.9;
+        // The radius wanders, so the rim is not a perfect circle.
+        const rr = r * (1 + (rnd() - 0.5) * 0.12);
+        const px = cx + Math.cos(a) * rr;
+        const py = cy + Math.sin(a) * rr;
+        const blob = s * (0.030 + rnd() * 0.050);
+        radialFill(ctx, px, py, blob, [
+          [0, hexA(colors[0], 0.16 * fade)],
+          [0.5, hexA(colors[0], 0.09 * fade)],
+          [1, "rgba(0,0,0,0)"],
+        ]);
+      }
+      // A thin interior haze so the shell encloses something.
+      softCloud(ctx, s, rnd, 7, cx, cy, s * 0.30, s * 0.06, s * 0.15,
+        () => [[0, hexA(colors[0], 0.05)], [1, "rgba(0,0,0,0)"]]);
     },
     witchhead(ctx, s, rnd, colors) {
       softCloud(ctx, s, rnd, 14, s * 0.5, s * 0.5, s * 0.5, s * 0.05, s * 0.16,
@@ -2612,20 +3540,50 @@
       ctx.stroke();
       ctx.filter = "none";
     },
+    // The Rosette: a hollow H II region blown open by the cluster inside it.
+    // It was a clean radial annulus with a few dots on it, which is a washer
+    // rather than a nebula. Now the rim is a ring of overlapping puffs at a
+    // wandering radius, brighter on one side the way the real one is, with
+    // ragged streamers reaching into the cavity.
     ring(ctx, s, rnd, colors) {
       const cx = s * 0.5, cy = s * 0.5;
-      radialFill(ctx, cx, cy, s * 0.46, [
-        [0, "rgba(0,0,0,0)"], [0.35, "rgba(0,0,0,0)"], [0.42, hexA(colors[0], 0.55)],
-        [0.65, hexA(colors[1], 0.35)], [1, "rgba(0,0,0,0)"],
+      // A faint inner glow, so the hole is evacuated rather than cut out.
+      radialFill(ctx, cx, cy, s * 0.40, [
+        [0, "rgba(0,0,0,0)"], [0.55, hexA(colors[1], 0.05)],
+        [0.85, hexA(colors[0], 0.10)], [1, "rgba(0,0,0,0)"],
       ]);
-      for (let i = 0; i < 10; i++) {
-        const a = rnd() * Math.PI * 2, rr = s * (0.30 + rnd() * 0.13);
-        radialFill(ctx, cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, s * 0.05,
-          [[0, hexA(colors[0], 0.5)], [1, "rgba(0,0,0,0)"]]);
+      const N = 60;
+      const bright = rnd() * Math.PI * 2;   // the limb that faces us
+      for (let i = 0; i < N; i++) {
+        const a = (i / N) * Math.PI * 2 + (rnd() - 0.5) * 0.08;
+        const lean = 0.55 + 0.75 * (0.5 + 0.5 * Math.cos(a - bright));
+        const rr = s * (0.36 + (rnd() - 0.5) * 0.07);
+        const px = cx + Math.cos(a) * rr;
+        const py = cy + Math.sin(a) * rr;
+        const blob = s * (0.045 + rnd() * 0.055);
+        radialFill(ctx, px, py, blob, [
+          [0, hexA(colors[0], 0.16 * lean)],
+          [0.45, hexA(colors[1], 0.10 * lean)],
+          [1, "rgba(0,0,0,0)"],
+        ]);
       }
-      for (let i = 0; i < 8; i++) {
-        const a = rnd() * Math.PI * 2, r = rnd() * s * 0.22;
-        radialFill(ctx, cx + Math.cos(a) * r, cy + Math.sin(a) * r, s * 0.01,
+      // Streamers and elephant trunks pulled in toward the cavity.
+      for (let i = 0; i < 12; i++) {
+        const a = rnd() * Math.PI * 2;
+        const r0 = s * 0.34, r1 = s * (0.16 + rnd() * 0.12);
+        for (let k = 0; k < 5; k++) {
+          const t = k / 4;
+          const rr = r0 + (r1 - r0) * t;
+          const aa = a + (rnd() - 0.5) * 0.10;
+          radialFill(ctx, cx + Math.cos(aa) * rr, cy + Math.sin(aa) * rr,
+            s * (0.030 - t * 0.015),
+            [[0, hexA(colors[0], 0.11 * (1 - t))], [1, "rgba(0,0,0,0)"]]);
+        }
+      }
+      // The young cluster that hollowed it out.
+      for (let i = 0; i < 10; i++) {
+        const a = rnd() * Math.PI * 2, r = rnd() * s * 0.16;
+        radialFill(ctx, cx + Math.cos(a) * r, cy + Math.sin(a) * r, s * 0.012,
           [[0, "rgba(255,255,255,0.9)"], [1, "rgba(255,255,255,0)"]]);
       }
     },
@@ -3004,30 +3962,104 @@
   // texture paints near-black over the alpha channel, which actually darkens
   // whatever starfield sits behind it); every other type is additive, like
   // the rest of the sim's glow sprites.
-  function buildFamousNebulaSprite(spec) {
-    const rnd = lcg(hashSeed(spec.name));
-    // Bumped from 256: these are the one-off hand-shaped silhouettes (the
-    // Horsehead's profile, the Pillars, ...), drawn once and reused for the
-    // life of the view, so the extra resolution costs nothing per frame and
-    // buys back real crispness on the curved/blurred paths.
-    const s = 384;
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = s;
-    const ctx = cv.getContext("2d");
-    const draw = NEBULA_SHAPES[spec.shape] || NEBULA_SHAPES.orion;
-    draw(ctx, s, rnd, spec.colors || ["#ffffff", "#ffffff"]);
-    const tex = new THREE.CanvasTexture(cv);
-    const mat = new THREE.SpriteMaterial({
-      map: tex, transparent: true, depthWrite: false,
-      blending: spec.dark ? THREE.NormalBlending : THREE.AdditiveBlending,
+  // One hand-drawn silhouette, painted once per shape and kept for the session.
+  // It used to be repainted on every entry to the galaxy view - 21 nebulae at
+  // 384 x 384 apiece, every time.
+  function famousNebulaTexture(spec) {
+    const key = "famous:" + spec.shape + ":" + (spec.colors || []).join(",");
+    return sharedTexture(key, () => {
+      const rnd = lcg(hashSeed(spec.name));
+      // These are the one-off hand-shaped silhouettes (the Horsehead's profile,
+      // the Pillars, ...), so the resolution buys real crispness on the
+      // curved/blurred paths and is paid for exactly once.
+      const s = 384;
+      const cv = document.createElement("canvas");
+      cv.width = cv.height = s;
+      const ctx = cv.getContext("2d");
+      const draw = NEBULA_SHAPES[spec.shape] || NEBULA_SHAPES.orion;
+      draw(ctx, s, rnd, spec.colors || ["#ffffff", "#ffffff"]);
+      return new THREE.CanvasTexture(cv);
     });
-    const sprite = new THREE.Sprite(mat);
-    sprite.scale.set(spec.size, spec.size, 1);
-    sprite.userData.nebula = spec.name;
+  }
+
+  /**
+   * A famous nebula as a VOLUME rather than a picture of one.
+   *
+   * Each of these was a single flat card: one sprite, always square-on to the
+   * camera, that slid across the stars as a cut-out and turned with the view
+   * like a decal. Real nebulae are the one thing out here with no surface at
+   * all, so the cut-out was the worst possible way to draw them.
+   *
+   * The silhouette is still the drawing - the Horsehead has to stay a
+   * horsehead - but it is now stacked: a handful of copies at different depths
+   * along the view axis, each a little larger, fainter and turned a little
+   * further than the one in front. Sprites face the camera, so the depth
+   * offsets read as PARALLAX the moment it moves: the near layers slide over
+   * the far ones and the cloud has an inside. The stack breathes, slowly and
+   * out of phase, so the gas drifts instead of sitting still.
+   */
+  function buildFamousNebulaSprite(spec) {
+    const rnd = lcg(hashSeed(spec.name + ":vol"));
+    const tex = famousNebulaTexture(spec);
     const group = new THREE.Group();
     group.name = "gx-nebula-" + spec.shape;
-    group.add(sprite);
-    return { group, sprite, dispose: () => disposeObject3D(group) };
+
+    // A dark nebula is a silhouette painted OVER the stars, so its layers
+    // stack multiplicatively and a deep pile turns it into a black hole in the
+    // sky; it gets a shallower stack at lower opacity. The glowing ones add.
+    const dark = !!spec.dark;
+    const LAYERS = dark ? 4 : 7;
+    const depth = spec.size * 0.42;   // how far the stack reaches front to back
+
+    const layers = [];
+    for (let i = 0; i < LAYERS; i++) {
+      const t = LAYERS === 1 ? 0 : i / (LAYERS - 1);   // 0 = front, 1 = back
+      const mat = new THREE.SpriteMaterial({
+        map: tex, transparent: true, depthWrite: false,
+        blending: dark ? THREE.NormalBlending : THREE.AdditiveBlending,
+      });
+      // The front of the cloud is the brightest and tightest; the back is
+      // wider and fainter, which is what gives the stack a sense of depth
+      // rather than looking like one sprite drawn several times.
+      const base = dark ? 0.5 / LAYERS + 0.16 : 0.34 - t * 0.2;
+      mat.opacity = base;
+      const sp = new THREE.Sprite(mat);
+      const spread = 1 + t * 0.55 + (rnd() - 0.5) * 0.12;
+      sp.scale.set(spec.size * spread, spec.size * spread, 1);
+      // Along the view axis at build time; the parallax comes from the camera
+      // moving relative to these, not from the offsets themselves.
+      sp.position.set(
+        (rnd() - 0.5) * spec.size * 0.16,
+        (rnd() - 0.5) * spec.size * 0.12,
+        (t - 0.5) * depth);
+      // Turned a little further each time, so no two layers line up and the
+      // silhouette reads as turbulent gas rather than as a repeated stamp.
+      mat.rotation = (rnd() - 0.5) * 0.5 * (dark ? 0.3 : 1);
+      group.add(sp);
+      layers.push({
+        sprite: sp, mat, base, baseScale: spec.size * spread,
+        phase: rnd() * Math.PI * 2, rate: 0.11 + rnd() * 0.16,
+        drift: (rnd() - 0.5) * 0.05,
+      });
+    }
+
+    // The front layer is the one the cursor tests against: picking a stack of
+    // seven overlapping sprites should still be picking ONE nebula.
+    const sprite = layers[0].sprite;
+    sprite.userData.nebula = spec.name;
+
+    function animate(t) {
+      for (let i = 0; i < layers.length; i++) {
+        const L = layers[i];
+        const w = Math.sin(t * L.rate + L.phase);
+        L.mat.opacity = L.base * (1 + 0.18 * w);
+        const k = L.baseScale * (1 + 0.03 * w);
+        L.sprite.scale.set(k, k, 1);
+        L.mat.rotation += L.drift * 0.002;
+      }
+    }
+
+    return { group, sprite, animate, dispose: () => disposeObject3D(group) };
   }
 
   // Builds every famous nebula, positioned from its anchor star's real
@@ -3043,6 +4075,7 @@
     const pickables = [];
     const positions = new Map();
     const protos = [];
+    const clouds = [];
     FAMOUS_NEBULAE.forEach((spec) => {
       const anchor = spec.anchorStar && byName.get(spec.anchorStar);
       const localLy = anchor ? anchor.position : galLB(spec.l, spec.b, spec.d);
@@ -3050,6 +4083,7 @@
       const neb = buildFamousNebulaSprite(spec);
       neb.group.position.copy(pos);
       group.add(neb.group);
+      clouds.push(neb);
       pickables.push({ object: neb.sprite, radius: spec.size * 0.5, kind: "nebula", data: spec });
       positions.set(spec.name, pos);
       // Star-forming regions carry visible embedded protostars: warm pulsing
@@ -3075,6 +4109,9 @@
         return (out || new THREE.Vector3()).copy(p);
       },
       animate(t) {
+        // The gas itself drifts (see buildFamousNebulaSprite)...
+        for (let i = 0; i < clouds.length; i++) clouds[i].animate(t);
+        // ...and the infant stars buried in it pulse, much faster.
         for (const p of protos) {
           const w = 1 + 0.2 * Math.sin(t * p.rate + p.phase);
           p.sprite.scale.set(p.base * w, p.base * w, 1);
@@ -4794,7 +5831,10 @@
       mats.forEach((m) => {
         if (!m) return;
         ["map", "bumpMap", "specularMap", "emissiveMap", "alphaMap"].forEach((k) => {
-          if (m[k] && m[k].dispose) m[k].dispose();
+          // A shared texture (see sharedTexture) is borrowed, not owned: it
+          // outlives every object drawn with it, and freeing it here would
+          // leave every OTHER view holding a disposed map.
+          if (m[k] && m[k].dispose && !isSharedTexture(m[k])) m[k].dispose();
         });
         if (m.dispose) m.dispose();
       });

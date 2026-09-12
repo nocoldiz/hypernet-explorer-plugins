@@ -2,6 +2,7 @@
   "hyperamp": {
     "appName": "HyperAmp",
     "idle": "HyperAmp - frusta davvero il goblin",
+    "loading": "--:--",
     "prev": "Precedente",
     "play": "Riproduci",
     "pause": "Pausa",

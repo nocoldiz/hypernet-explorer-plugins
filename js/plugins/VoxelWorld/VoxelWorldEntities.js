@@ -966,6 +966,10 @@
             this._ents.push(ent);
             const baseY = swims ? spawnY : gy;
             const wantH = creatureHeight(data, ent.level, key);
+            // How tall this one stands, kept on the record: the camera reads it
+            // to frame a fight on the creature's body rather than on the ground
+            // at its feet (VoxelWorldScene's _holdBattleAim).
+            ent.hgt = wantH;
             Promise.resolve(model.load(null, x, baseY, z)).then(() => {
                 if (!ent.alive || !model.model) return;
                 const root = model.model;
@@ -1043,7 +1047,17 @@
                     if (o.geometry) o.geometry.dispose();
                     if (o.material) {
                         const mats = Array.isArray(o.material) ? o.material : [o.material];
-                        for (const m of mats) m.dispose();   // textures stay cached
+                        for (const m of mats) {
+                            // The name plate is the one texture here that is
+                            // NOT shared: makeEnemyPlate letters a canvas of its
+                            // own per creature, so the block textures' rule
+                            // below does not apply to it and it has to go with
+                            // the material that carries it. Creatures spawn and
+                            // despawn for as long as a drive lasts, and every
+                            // one of those plates used to be left on the card.
+                            if (o.userData && o.userData._plate && m.map) m.map.dispose();
+                            m.dispose();   // textures otherwise stay cached
+                        }
                     }
                 });
             } else if (ent.model && typeof ent.model.dispose === 'function') {
@@ -1329,7 +1343,11 @@
                 if (!rec.keepers) continue;
                 for (const k of rec.keepers) {
                     k.bb.update(camX, camZ, camYaw);
-                    if (k.bb.setDayFactor) k.bb.setDayFactor(dayFactor);
+                    // setDaylight, not setDayFactor: the latter has never
+                    // existed, and the guard in front of it swallowed the call
+                    // silently, so shop keepers stood at full brightness at
+                    // midnight while everybody else around them dimmed.
+                    k.bb.setDaylight(dayFactor);
                 }
             }
         }

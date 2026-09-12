@@ -254,5 +254,5 @@
     "1328": "Seals the target's voice, blocking every spell it would otherwise cast until the silence is lifted."
   },
   "dossierJoined": "{name} joins the party.",
-  "dossierJoinedInactive": "{name} signs on, and waits with the inactive members."
+  "dossierJoinedInactive": "{name} signs on, and waits with the members in reserves."
 }

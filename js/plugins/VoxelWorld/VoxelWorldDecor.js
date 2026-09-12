@@ -1910,13 +1910,6 @@
             this._cache.set(key, out);
             return out;
         },
-
-        // Which room roles a folder suits, for the interior planner.
-        roomsFor(folder) {
-            const map = this.map();
-            const cat = map && map.categories && map.categories[folder];
-            return (cat && cat.rooms) || null;
-        }
     };
 
     // =========================================================================

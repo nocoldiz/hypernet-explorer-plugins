@@ -61,5 +61,6 @@
   "composeSearch": "Cerca",
   "composeHeld": "{n} nello zaino",
   "composeNoMatch": "Niente con quel nome.",
-  "composeDerivedDiff": "Difficoltà, letta da ciò che stai chiedendo:"
+  "composeDerivedDiff": "Difficoltà, letta da ciò che stai chiedendo:",
+  "arrowsMoveOkReadTabSwitchEscClose": "Frecce per muoverti • OK per leggere • Tab per cambiare • Esc per chiudere"
 }

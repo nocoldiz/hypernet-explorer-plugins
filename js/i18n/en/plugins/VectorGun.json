@@ -281,7 +281,7 @@
     "solomon": {
       "name": "Grimoire of Solomon",
       "desc": "Alternate form: the open book.",
-      "effect": "Fitted, the book is already open when the fight starts: Em begins every battle reading, with a row of spells out of the grimoire instead of her own. It is a pact, not a gift. Graceful Death buys no turn of invulnerability with it, and the book gives back no health: it takes health for every spell read, priced on what the spell costs to cast. Only one alternate form can be fitted."
+      "effect": "Fitted, the book is already open when the fight starts: Em begins every battle reading, with a row of spells out of the grimoire instead of her own. It is a pact, not a gift. Graceful Death buys no turn of invulnerability with it, and the book gives back no health: it takes health for every spell read, priced on what the spell costs to cast. Only one alternate form can be fitted. A plain attack with the book is not a blow: it drives open and fires its own pages at what she is aiming at, four squares out."
     }
   },
   "section": {

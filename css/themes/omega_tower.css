@@ -135,6 +135,7 @@
     --bg-tertiary-focus-translucent-45: rgba(255, 204, 102, 0.18);
     --bg-well: #0a0a0a;
     --bg-danger-dark: #8b1a1a;
+    --bg-danger-plate: #7a2430;
     --bg-dark-night: #120804;
     --bg-deep-night: #1a0904;
     --bg-hp-bar: #8bc34a;
@@ -212,6 +213,7 @@
     --text-disabled: #8a8378;
     --text-highlight-active: #ffffff;
     --text-info: #ffffff;
+    --text-on-danger-plate: #f5ebd0;
     --text-inverse: #cccccc;
     --text-muted-hover: #ffffff;
     --text-primary-hover: #ffcc66;

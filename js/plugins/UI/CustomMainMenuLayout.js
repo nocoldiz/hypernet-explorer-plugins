@@ -942,8 +942,11 @@
     // reads it and hands over the rent.
     Scene_Menu.prototype.showDeedsPage = function () {
         SoundManager.playOk();
-        this._isDeedsPage = true;
-        this.refreshUIMenuDOM(true);
+        if (typeof Scene_AssetsMenu !== "undefined") {
+            SceneManager.push(Scene_AssetsMenu);
+        } else if (typeof window.Scene_AssetsMenu !== "undefined") {
+            SceneManager.push(window.Scene_AssetsMenu);
+        }
     };
 
     Scene_Menu.prototype.hideDeedsPage = function () {
@@ -1423,11 +1426,11 @@
     // =========================================================================
     // Party Dynamics page: one screen, three lists.
     //   active   , who is travelling right now: leader, turn order, Empathize
-    //   inactive , everyone this world has ever benched, waiting to be called
+    //   reserves , everyone this world has ever benched, waiting to be called
     //              back (a character-creation dossier apiece)
     //   past     , every member who no longer travels along, with the date they
     //              left and, when it applies, their date of death
-    // A row is dragged from Active into Inactive and back to change the party
+    // A row is dragged from Active into Reserves and back to change the party
     // on the spot. The road is the only place that allows it: inside a
     // procedural structure (Dungeon, Crypt, LootCellar and the rest of the
     // catalogue) or anywhere in the Omega Tower the party is stuck with the
@@ -1506,7 +1509,7 @@
         this.refreshUIMenuDOM(false);
     });
 
-    // Benching a companion: they leave the party and wait on the Inactive list,
+    // Benching a companion: they leave the party and wait in the reserves,
     // where the same page calls them back. Nothing about it is one-way any
     // more, so it asks no second time.
     Scene_Menu.prototype.retireUIMember = guardedBoardAction(function (actorId) {
@@ -1545,7 +1548,7 @@
         this.refreshUIMenuDOM(false);
     });
 
-    // Calls an inactive member back into a free party slot. The bench is
+    // Calls a member in reserves back into a free party slot. The bench is
     // world-scoped (world.json "retiredCharacters"), so it holds everyone every
     // savegame of this world has ever benched, and taking one clears them from
     // the bench for all of them.
@@ -1577,7 +1580,7 @@
     });
 
     // The board itself: one page, three lists. Active at the top (who is on the
-    // road right now), Inactive under it (everyone this world has ever benched)
+    // road right now), Reserves under it (everyone this world has ever benched)
     // and the former members at the foot, read only. A member is moved between
     // the first two lists by dragging their row into the other one, or with the
     // button on the row for anyone playing with a pad or the keyboard.
@@ -1683,7 +1686,7 @@
                         </div>`
             : '';
 
-        // ---- Inactive -----------------------------------------------------
+        // ---- Reserves -----------------------------------------------------
         let benchRows = '';
         bench.forEach(preset => {
             const className = preset.retiredClassName
@@ -2885,7 +2888,6 @@
                     [
                         this.generateUICommandItemHTML(T('MainMenu.cmd.dynamics'), "dynamics"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.assets'), "assets"),
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.deeds'), "deeds"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.pets'), "pets"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),
                         this.generateUICommandItemHTML(emLabel("menuWorkforce", T('MainMenu.cmd.workforce')), "army"),
@@ -3151,7 +3153,7 @@
             // it, and drawImage throws on a source of width or height zero.
             // This runs from the bitmap's own load listener, outside the game
             // loop, so that throw would take the whole game down with it (see
-            // guardedBoardAction): draw nothing at all instead. An inactive
+            // guardedBoardAction): draw nothing at all instead. A reserve
             // dossier is the likeliest one to hit it, since it carries the
             // name of a sheet from the world folder that this build of the
             // game may no longer ship.
@@ -3400,8 +3402,6 @@
                     }
                     break;
                 case "deeds":
-                    this.showDeedsPage();
-                    break;
                 case "assets":
                     if (typeof Scene_AssetsMenu !== "undefined") {
                         SceneManager.push(Scene_AssetsMenu);
@@ -3601,6 +3601,7 @@
         biologics:  () => pushMapScene(typeof Scene_BiologicSimulation !== "undefined" && Scene_BiologicSimulation),
         augments:   () => pushMapScene(typeof Scene_PartyAugments !== "undefined" && Scene_PartyAugments),
         assets:     () => pushMapScene(typeof Scene_AssetsMenu !== "undefined" && Scene_AssetsMenu),
+        deeds:      () => pushMapScene(typeof Scene_AssetsMenu !== "undefined" && Scene_AssetsMenu),
         options:    () => pushMapScene(typeof Scene_Options !== "undefined" && Scene_Options),
         // The garage as a choice window rather than a menu page: on the field the
         // key lists every owned vehicle and either walks up to the one parked

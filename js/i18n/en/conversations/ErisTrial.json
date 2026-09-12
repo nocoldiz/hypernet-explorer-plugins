@@ -90,7 +90,7 @@
     "a lock of hair belonging to nobody",
     "half a train ticket",
     "a pigeon feather with a serial number",
-    "a ledger with your handwriting in it",
+    "a grimorie with your handwriting in it",
     "a knife that has never once been used",
     "a broken hourglass",
     "a letter you never wrote",
@@ -640,7 +640,7 @@
     "I hope you understand this was nothing personal.",
     "That was personal, actually. Very personal.",
     "Justice is exhausting. How does anyone do this daily?",
-    "Write it in the ledger. Under 'inevitable'.",
+    "Write it in the grimorie. Under 'inevitable'.",
     "I will think about this one tonight. Briefly.",
     "Do not thank me. It ruins the mood."
   ],
@@ -1957,7 +1957,7 @@
       ],
       "innocent": [
         "That is my question too, Your Honor.",
-        "There is a ledger with my name in it, at the far end of town.",
+        "There is a grimorie with my name in it, at the far end of town.",
         "Nothing. Because nothing happened."
       ]
     },

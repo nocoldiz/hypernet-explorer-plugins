@@ -203,11 +203,6 @@
         },
         // True while the walk is on another world rather than on Earth.
         isAlienWalk() { return !!(this._scene && this._scene._alien); },
-        // True while that world is being flown over rather than walked.
-        isAlienFlyby() {
-            const s = this._scene;
-            return !!(s && s._alien && s._vehicleId === 'starship');
-        },
 
         // Which vehicle the party is actually aboard out here ('camper', 'car',
         // ...), or null on foot. The party HUD asks this so the vehicle row over
@@ -279,10 +274,6 @@
         // instead and the window lands on top of it (see the Spriteset_Map
         // hooks at the foot of this file).
         isMirrorView() { return !!(this._scene && this._scene._mirrorWatch); },
-        // Either of the two: the world is on the game's canvas rather than over it.
-        isOnGameCanvas() {
-            return !!(this._scene && (this._scene._battleWatch || this._scene._mirrorWatch));
-        },
         // True while ANYTHING is up over the world: a choice list, a line of
         // dialogue, a fight, a pushed scene, or one of the game's own DOM menus
         // (the augments register, the prosthetics fitter, a growth ledger...).
@@ -336,16 +327,6 @@
         carve(x, y, z, radius) {
             const t = this.terrain;
             return t ? t.carve(x, y, z, radius).count : 0;
-        },
-        // How many cubes this world has had changed, running scene or not.
-        digCount() {
-            const f = this.field;
-            if (f) return f.edits.count;
-            const saved = VW.VoxelWorldState ? VW.VoxelWorldState.dug() : null;
-            if (!saved) return 0;
-            let n = 0;
-            for (const k of Object.keys(saved)) n += (saved[k].length / 2) | 0;
-            return n;
         },
         // Put the ground back the way it was generated, everywhere.
         resetDigging() {
@@ -491,6 +472,54 @@
     // add to the battleback (AnimatedBattleBackgrounds) do not exist yet at
     // build time and would come back up over the world.
     // =========================================================================
+    // -------------------------------------------------------------------------
+    // Opening a fight out here costs nothing
+    //
+    // The engine stages a whole ceremony between walking into something and
+    // fighting it: sixty frames of zoom on the map, two white flashes, a
+    // full-screen snapshot taken for the battle's background, a fade to black
+    // at the halfway mark, and then a fade back in on the other side. About a
+    // second and a half.
+    //
+    // Every frame of it is drawn on the game's own canvas, and out here the
+    // world's overlay is sitting on top of that canvas, so NONE of it is ever
+    // seen. What the player actually gets is the world carrying on with the
+    // controls dead, and then a fight. The ceremony is skipped in this world
+    // and the fight opens on the next frame, in the place the party is
+    // standing, with the turn onto the creature (VoxelWorldScene's
+    // _holdBattleAim) as the only thing that moves.
+    //
+    // The 2D game keeps every bit of it: both hooks stand down unless the
+    // world is up.
+    // -------------------------------------------------------------------------
+    const _Scene_Map_launchBattle_VW = Scene_Map.prototype.launchBattle;
+    Scene_Map.prototype.launchBattle = function() {
+        if (!VoxelWorldSystem.isActive()) {
+            _Scene_Map_launchBattle_VW.call(this);
+            return;
+        }
+        // Everything the ceremony did that is NOT the ceremony: the music is
+        // put away for the fight, the fight's own music starts (the encounter
+        // effect used to do this at its halfway point), and the map's name
+        // plate goes. What is dropped is startEncounterEffect, so
+        // _encounterEffectDuration stays at 0, Scene_Map.isBusy() is false and
+        // the scene changes on the very next frame.
+        BattleManager.saveBgmAndBgs();
+        this.stopAudioOnBattleStart();
+        SoundManager.playBattleStart();
+        BattleManager.playBattleBgm();
+        if (this._mapNameWindow) this._mapNameWindow.hide();
+    };
+
+    // The fade IN has to go with it. startFadeIn opens from a full black
+    // screen whether or not anything ever faded out, so skipping only the
+    // fade-out would leave the fight opening out of black anyway.
+    const _Scene_Battle_start_VW = Scene_Battle.prototype.start;
+    Scene_Battle.prototype.start = function() {
+        _Scene_Battle_start_VW.call(this);
+        if (VoxelWorldSystem.isActive()) this.startFadeIn(1, false);
+    };
+
     const _Scene_Battle_create_VW = Scene_Battle.prototype.create;
     Scene_Battle.prototype.create = function() {
         if (VoxelWorldSystem.isActive() && VoxelWorldSystem._scene.beginBattleView) {

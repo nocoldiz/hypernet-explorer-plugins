@@ -37,6 +37,7 @@
     "enemyBattlers": "Enemy Battlers",
     "runInBackground": "Run In Background",
     "showFps": "Show FPS Counter",
+    "lowModelDetail": "Reduced Model Detail",
     "activeTheme": "Active Theme",
     "mapBattle": "Map Battle",
     "mapStreaming": "Map Streaming",
@@ -75,12 +76,12 @@
   },
   "titleBackground": [
     "Random",
-    "Cards",
+    "Data Cards",
     "Space",
-    "Artifacts",
-    "Bestiary",
-    "Weapons",
-    "Bestiary",
+    "Data Cards",
+    "Data Cards",
+    "Data Cards",
+    "Data Cards",
     "Hyperverse",
     "Camper Drive"
   ],
@@ -113,7 +114,8 @@
     "mapTooltips": "Real-time tutorial messages, compass quest targets and written context tips while you walk the map.",
     "dialogueVoices": "Each letter of a typed dialogue line is chattered with a short vowel or consonant blip. The pitch is the speaker's own; a gold keyword is spoken higher.",
     "dialogueVoicesVolume": "How loud the letter blips under a dialogue line are, apart from the other sound effects.",
-    "battleCommandPosition": "Which side of the screen the battle command list, the skill page and the backpack stand on."
+    "battleCommandPosition": "Which side of the screen the battle command list, the skill page and the backpack stand on.",
+    "lowModelDetail": "Builds procedural weapons and items with fewer segments. Helps on slower machines; the models read blockier."
   },
   "descState": {
     "musicArtistDisplay": [
@@ -126,6 +128,10 @@
       "Off: plain three.js. Models are drawn clean, with no wobble, banding or downsampling.",
       "SnapVertex: the PlayStation-1 look. Vertices snap to a coarse grid, colours band and the picture is rendered below full resolution.",
       "Pixel Art: the sprite look. Flat cel bands, chunky pixels and an optional limited palette."
+    ],
+    "battleCommandPosition": [
+      "Left: the command list, skills and backpack stand on the left of the screen.",
+      "Right: they stand on the right, clear of the weapon in hand."
     ]
   },
   "shaderMode": {

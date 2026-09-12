@@ -426,7 +426,7 @@
   // before the next in-game save.
   function procFlush() {
     if (!window.WorldManager || typeof window.WorldManager.flush !== "function") return;
-    try { window.WorldManager.flush(); } catch (e) { /* non-fatal */ }
+    try { window.WorldManager.flush("plants"); } catch (e) { /* non-fatal */ }
   }
 
   function procTileForEvent(mapId, eventId) {

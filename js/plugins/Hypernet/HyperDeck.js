@@ -2961,66 +2961,91 @@
 
         styleDom() {
             if (document.getElementById(LAB_ID + '-style')) return;
-            const gold = deco('gold', '#e6c273');
-            const goldLo = deco('goldLo', '#8d6f2c');
             const st = document.createElement('style');
             st.id = LAB_ID + '-style';
+            // The bench has two faces. Bolted to the deck it is the deck's own
+            // instrument: warm gold on black, the colour every other panel of
+            // the machine is lit in. Opened as a program on the desktop it is
+            // not allowed that gold, which on Archways belongs to the game's
+            // own menus and nothing else, so the same bench is lit in
+            // instrument cyan instead. One stylesheet, the palette named as
+            // properties and swapped on the hosted class.
             st.textContent = `
+.${LAB_CLASS} {
+  --cl-accent: ${deco('gold', '#e6c273')};
+  --cl-accent-lo: ${deco('goldLo', '#8d6f2c')};
+  --cl-accent-hi: ${deco('goldHi', '#fff2c6')};
+  --cl-ink: ${deco('ink', '#f6e8c4')};
+  --cl-dim: ${deco('dim', '#c0a468')};
+  --cl-faint: ${deco('faint', '#7d6836')};
+  --cl-sel: ${deco('sel', '#2a2010')};
+  --cl-sel-hi: ${deco('selHi', '#43331a')};
+  --cl-black: ${deco('black', '#08070b')};
+  --cl-green: ${deco('green', '#93d86e')};
+  --cl-red: ${deco('red', '#d9533d')};
+}
+.${LAB_CLASS}.hosted {
+  --cl-accent: #7fd4ff;
+  --cl-accent-lo: #2f6b8c;
+  --cl-accent-hi: #dff3ff;
+  --cl-ink: #e6f3fa;
+  --cl-dim: #a8c6d6;
+  --cl-faint: #7f9dad;
+  --cl-sel: #10222c;
+  --cl-sel-hi: #1a3644;
+}
 #${LAB_ID} { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; z-index: 62; }
 .${LAB_CLASS} { font-family: '${hudFont()}', monospace; -webkit-font-smoothing: none;
-  color: ${deco('ink', '#f6e8c4')}; }
+  color: var(--cl-ink); }
 .${LAB_CLASS}.hosted { position: relative; width: 100%; height: 100%; overflow: hidden;
-  background: #14110c; font-size: 12px; line-height: 1.4; }
-.${LAB_CLASS} .cl-dies { position: absolute; background: ${deco('black', '#08070b')};
-  border: 2px solid ${gold}; padding: 6px 10px; display: flex; flex-direction: column; gap: 2px; }
+  background: #0b1116; font-size: 12px; line-height: 1.4; }
+.${LAB_CLASS} .cl-dies { position: absolute; background: var(--cl-black);
+  border: 2px solid var(--cl-accent); padding: 6px 10px; display: flex; flex-direction: column; gap: 2px; }
 .${LAB_CLASS} .cl-die { display: flex; justify-content: space-between; gap: 10px; }
-.${LAB_CLASS} .cl-die span:last-child { color: ${deco('dim', '#c0a468')}; }
-.${LAB_CLASS} .cl-die.fitted span:last-child { color: ${deco('green', '#93d86e')}; }
-.${LAB_CLASS} .cl-panel { position: absolute; background: ${deco('black', '#08070b')};
-  border: 2px solid ${gold}; box-shadow: 0 0 0 2px var(--xp-black), 0 6px 22px rgba(0,0,0,0.75);
+.${LAB_CLASS} .cl-die span:last-child { color: var(--cl-dim); }
+.${LAB_CLASS} .cl-die.fitted span:last-child { color: var(--cl-green); }
+.${LAB_CLASS} .cl-panel { position: absolute; background: var(--cl-black);
+  border: 2px solid var(--cl-accent); box-shadow: 0 0 0 2px var(--xp-black), 0 6px 22px rgba(0,0,0,0.75);
   display: flex; flex-direction: column; }
-.${LAB_CLASS} .cl-head { background: ${gold}; color: var(--xp-black); padding: 4px 10px;
+.${LAB_CLASS} .cl-head { background: var(--cl-accent); color: var(--xp-black); padding: 4px 10px;
   letter-spacing: 2px; flex: 0 0 auto; }
 .${LAB_CLASS} .cl-scroll { overflow-y: auto; overflow-x: hidden; flex: 1 1 auto;
   min-height: 0; padding: 4px; }
 .${LAB_CLASS} .cl-item { display: flex; justify-content: space-between; gap: 8px;
   padding: 5px 7px; cursor: pointer; border: 1px solid transparent; }
-.${LAB_CLASS} .cl-item:hover { background: ${deco('selHi', '#43331a')}; }
-.${LAB_CLASS} .cl-item.on { background: ${deco('sel', '#2a2010')}; border-color: ${gold}; }
-.${LAB_CLASS} .cl-item span:last-child { color: ${deco('dim', '#c0a468')}; }
-.${LAB_CLASS} .cl-group { color: ${gold}; letter-spacing: 2px; padding: 8px 7px 2px;
-  border-bottom: 1px solid ${goldLo}; margin-bottom: 2px; }
-.${LAB_CLASS} .cl-sub { color: ${gold}; letter-spacing: 2px; padding: 7px 10px 2px;
-  border-top: 1px solid ${goldLo}; flex: 0 0 auto; }
+.${LAB_CLASS} .cl-item:hover { background: var(--cl-sel-hi); }
+.${LAB_CLASS} .cl-item.on { background: var(--cl-sel); border-color: var(--cl-accent); }
+.${LAB_CLASS} .cl-item span:last-child { color: var(--cl-dim); }
+.${LAB_CLASS} .cl-group { color: var(--cl-accent); letter-spacing: 2px; padding: 8px 7px 2px;
+  border-bottom: 1px solid var(--cl-accent-lo); margin-bottom: 2px; }
+.${LAB_CLASS} .cl-sub { color: var(--cl-accent); letter-spacing: 2px; padding: 7px 10px 2px;
+  border-top: 1px solid var(--cl-accent-lo); flex: 0 0 auto; }
 .${LAB_CLASS} .cl-presets { display: none; z-index: 2; }
 .${LAB_CLASS} .cl-presets.on { display: flex; }
 .${LAB_CLASS} .cl-canvas { position: absolute; background: #0b0d12; cursor: crosshair;
-  border: 2px solid ${goldLo}; image-rendering: pixelated; }
+  border: 2px solid var(--cl-accent-lo); image-rendering: pixelated; }
 .${LAB_CLASS} .cl-bar { position: absolute; display: flex; flex-wrap: wrap; gap: 4px;
   align-items: stretch; }
-.${LAB_CLASS} .cl-btn { cursor: pointer; padding: 6px 10px; color: ${gold};
-  border: 1px solid ${goldLo}; background: var(--xp-terminal); white-space: nowrap; }
-.${LAB_CLASS} .cl-btn:hover { background: ${deco('selHi', '#43331a')};
-  color: ${deco('goldHi', '#fff2c6')}; }
-.${LAB_CLASS} .cl-btn.on { border-color: ${deco('green', '#93d86e')};
-  background: ${deco('sel', '#2a2010')}; }
-.${LAB_CLASS} .cl-btn.bad { color: ${deco('red', '#d9533d')}; }
-.${LAB_CLASS} .cl-status { position: absolute; background: ${deco('black', '#08070b')};
-  border: 2px solid ${gold}; padding: 6px 10px; }
+.${LAB_CLASS} .cl-btn { cursor: pointer; padding: 6px 10px; color: var(--cl-accent);
+  border: 1px solid var(--cl-accent-lo); background: var(--xp-terminal); white-space: nowrap; }
+.${LAB_CLASS} .cl-btn:hover { background: var(--cl-sel-hi); color: var(--cl-accent-hi); }
+.${LAB_CLASS} .cl-btn.on { border-color: var(--cl-green); background: var(--cl-sel); }
+.${LAB_CLASS} .cl-btn.bad { color: var(--cl-red); }
+.${LAB_CLASS} .cl-status { position: absolute; background: var(--cl-black);
+  border: 2px solid var(--cl-accent); padding: 6px 10px; }
 .${LAB_CLASS} .cl-line { display: flex; justify-content: space-between; gap: 12px; }
-.${LAB_CLASS} .cl-line span:first-child { color: ${deco('dim', '#c0a468')}; }
+.${LAB_CLASS} .cl-line span:first-child { color: var(--cl-dim); }
 .${LAB_CLASS} .cl-pins { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
 .${LAB_CLASS} .cl-pin { width: 26px; text-align: center; cursor: pointer; padding: 3px 0;
-  border: 1px solid ${goldLo}; background: var(--xp-terminal); color: ${deco('dim', '#c0a468')}; }
-.${LAB_CLASS} .cl-pin.on { background: ${deco('green', '#93d86e')}; color: #06120a; }
-.${LAB_CLASS} .cl-pin.lit { border-color: ${deco('green', '#93d86e')};
-  color: ${deco('green', '#93d86e')}; }
-.${LAB_CLASS} .cl-regs { margin-top: 6px; border-top: 1px solid ${goldLo}; padding-top: 4px; }
+  border: 1px solid var(--cl-accent-lo); background: var(--xp-terminal); color: var(--cl-dim); }
+.${LAB_CLASS} .cl-pin.on { background: var(--cl-green); color: #06120a; }
+.${LAB_CLASS} .cl-pin.lit { border-color: var(--cl-green); color: var(--cl-green); }
+.${LAB_CLASS} .cl-regs { margin-top: 6px; border-top: 1px solid var(--cl-accent-lo); padding-top: 4px; }
 .${LAB_CLASS} .cl-regs .cl-line { display: flex; justify-content: space-between; gap: 10px; }
-.${LAB_CLASS} .cl-regs .cl-line span:first-child { color: ${deco('dim', '#c0a468')}; }
-.${LAB_CLASS} .cl-msg { color: ${deco('green', '#93d86e')}; padding-top: 6px; }
-.${LAB_CLASS} .cl-hint { color: ${deco('faint', '#7d6836')}; padding: 6px 10px;
-  border-top: 1px solid ${goldLo}; flex: 0 0 auto; }
+.${LAB_CLASS} .cl-regs .cl-line span:first-child { color: var(--cl-dim); }
+.${LAB_CLASS} .cl-msg { color: var(--cl-green); padding-top: 6px; }
+.${LAB_CLASS} .cl-hint { color: var(--cl-faint); padding: 6px 10px;
+  border-top: 1px solid var(--cl-accent-lo); flex: 0 0 auto; }
 `;
             document.head.appendChild(st);
         }
@@ -3686,7 +3711,7 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
                 T('HyperDeck.unit.mhz', { n: spec.mhz }) + ' / ' + T('HyperDeck.unit.watt', { n: spec.watt });
             const costEl = this.root.querySelector('.cl-cost');
             costEl.textContent = T('HyperDeck.chip.scrap', { n: cost, held: held });
-            costEl.style.color = held >= cost ? '' : deco('red', '#d9533d');
+            costEl.style.color = held >= cost ? '' : 'var(--cl-red)';
 
             const outs = this._sim.outputs();
             let pins = '';

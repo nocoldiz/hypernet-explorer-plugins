@@ -65,7 +65,7 @@
    "Anchor",
    "Mechanism",
    "Key",
-   "Ledger",
+   "Grimorie",
    "Module",
    "Cylinder",
    "Compass",
@@ -6684,7 +6684,7 @@
      }
     },
     "a3": {
-     "text": "He tells you a year, cheerfully, and it is not this one, and then he sees your face.\nHe puts down what he is holding, and he goes and looks out through his own doorway at {street} for a long moment, at the phone shop and the traffic and the clothes, and he says, quietly: \"Ah.\"\nHe asks you to stay while he shuts up properly. It takes an hour. He gives you the till and the stock ledger and the keys and asks you to lock it after him, and then he goes out through the back and does not come back.",
+     "text": "He tells you a year, cheerfully, and it is not this one, and then he sees your face.\nHe puts down what he is holding, and he goes and looks out through his own doorway at {street} for a long moment, at the phone shop and the traffic and the clothes, and he says, quietly: \"Ah.\"\nHe asks you to stay while he shuts up properly. It takes an hour. He gives you the till and the stock grimorie and the keys and asks you to lock it after him, and then he goes out through the back and does not come back.",
      "outcome": {
       "kind": "artifact",
       "mag": "large",
@@ -10604,7 +10604,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "{A glowing translucent figure in a tweed waistcoat is floating two feet off the ground in the ruined courtyard.|There's an actual ghost hovering over the rubble, clutching a glowing ledger and muttering to himself.|A spectral clerk is pacing the cracked marble floor, furiously stamping imaginary papers.}\n{He looks up, adjusts ghostly spectacles, and demands to see your permits.|He spots the party and immediately starts listing municipal infractions from two centuries ago.|He yells that visiting hours ended in 1842 and threatens to fine your ancestors.}",
+     "text": "{A glowing translucent figure in a tweed waistcoat is floating two feet off the ground in the ruined courtyard.|There's an actual ghost hovering over the rubble, clutching a glowing grimorie and muttering to himself.|A spectral clerk is pacing the cracked marble floor, furiously stamping imaginary papers.}\n{He looks up, adjusts ghostly spectacles, and demands to see your permits.|He spots the party and immediately starts listing municipal infractions from two centuries ago.|He yells that visiting hours ended in 1842 and threatens to fine your ancestors.}",
      "emText": "Something's crossing the ruins in a dead straight line, in a court usher's coat, with a paper in its hand, at the pace of a functionary.\nEris's court fetches people like this. She is not going to be fetching you. She has other arrangements for you, and they are worse, and they involve being invited.",
      "bubba": "Bubba goes very still. \"Aoh. That's a summons walkin'. Sugar, listen to me: it ain't for me an' it ain't for you. 'A carta e' pe' n'atu.\"",
      "asides": {
@@ -10624,7 +10624,7 @@
        "to": "b"
       },
       {
-       "text": "{Grab whatever shiny relics he's guarding and bolt|Loot the altar while he rants|Snatch the ledger and run|Ignore him and loot the chest}",
+       "text": "{Grab whatever shiny relics he's guarding and bolt|Loot the altar while he rants|Snatch the grimorie and run|Ignore him and loot the chest}",
        "to": "c"
       },
       {
@@ -10978,7 +10978,7 @@
      ]
     },
     "c": {
-     "text": "{The phone buzzes constantly for forty minutes while you tear the vestry apart looking for loot.|You ignore the persistent ringing and systematically rifle through every drawer and cupboard.}\n{Jackpot in the back closet: an encrypted ledger of phone numbers, a bottle of vintage wine, and a sealed lockbox.|You find four candles, an unopened bottle of communion liquor, and a stack of valuable notes.}\n{At least the annoying racket distracted anyone from noticing you ransack the place.|Free loot and vintage booze. Worth the headache.}",
+     "text": "{The phone buzzes constantly for forty minutes while you tear the vestry apart looking for loot.|You ignore the persistent ringing and systematically rifle through every drawer and cupboard.}\n{Jackpot in the back closet: an encrypted grimorie of phone numbers, a bottle of vintage wine, and a sealed lockbox.|You find four candles, an unopened bottle of communion liquor, and a stack of valuable notes.}\n{At least the annoying racket distracted anyone from noticing you ransack the place.|Free loot and vintage booze. Worth the headache.}",
      "outcome": {
       "kind": "artifact",
       "mag": "medium",
@@ -12521,7 +12521,7 @@
      }
     },
     "a2": {
-     "text": "He waits until the other three are in the car and then talks very fast.\nHe is four months into the job. There is a quota. There is a list and the list is filled from denunciations and the denunciations are paid for, and he has the ledger in his coat and he wants somebody to take it off him because he is not brave enough to lose it himself.",
+     "text": "He waits until the other three are in the car and then talks very fast.\nHe is four months into the job. There is a quota. There is a list and the list is filled from denunciations and the denunciations are paid for, and he has the grimorie in his coat and he wants somebody to take it off him because he is not brave enough to lose it himself.",
      "outcome": {
       "kind": "artifact",
       "mag": "large",
@@ -16229,7 +16229,7 @@
      }
     },
     "x": {
-     "text": "The flywheel had one more turn in it, which {leader} finds out with the smallest bone in one hand.\nThe pump stays dead. The dinner happens anyway, out of guilt, and is very good, which does not entirely settle {the ledger|matters|it}.",
+     "text": "The flywheel had one more turn in it, which {leader} finds out with the smallest bone in one hand.\nThe pump stays dead. The dinner happens anyway, out of guilt, and is very good, which does not entirely settle {the grimorie|matters|it}.",
      "outcome": {
       "kind": "harm",
       "mag": "small",
@@ -16291,7 +16291,7 @@
      ]
     },
     "p2": {
-     "text": "The bailiff arrives to a settled ledger and hates it, quietly, {in a van|from the gate|with the engine running}, for some time.\nNobody inside the house says thank you more than once, because more than once would mean starting to cry, and there is {a kettle on instead|tea instead|a kettle going instead}.",
+     "text": "The bailiff arrives to a settled grimorie and hates it, quietly, {in a van|from the gate|with the engine running}, for some time.\nNobody inside the house says thank you more than once, because more than once would mean starting to cry, and there is {a kettle on instead|tea instead|a kettle going instead}.",
      "outcome": {
       "kind": "none",
       "needs": {

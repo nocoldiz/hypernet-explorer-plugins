@@ -320,6 +320,12 @@
                 extra: { face: 'Y', key: 'menu' },
                 tabPrev: { face: 'L1', key: 'pageup' },
                 tabNext: { face: 'R1', key: 'pagedown' },
+                // A screen a player can lean into: the same two triggers that
+                // zoom the voxel world and every 3D minigame, so the gesture
+                // is one gesture everywhere. Only the screens that have
+                // something to enlarge ask for these.
+                zoomOut: { face: 'L2' },
+                zoomIn: { face: 'R2' },
                 // Scrolling is not a button: the right stick moves whatever
                 // pane the page is reading, pushed the way the page should go
                 // (UIScroll in Core/MouseControls.js). Read it with axis().

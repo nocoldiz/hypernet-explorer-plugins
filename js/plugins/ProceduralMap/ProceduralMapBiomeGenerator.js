@@ -3982,6 +3982,18 @@
    * If the player (actor 1) is named "Test", the cache is always regenerated
    * from scratch to reflect any tile changes made during editing/playtesting.
    */
+  // Whether this session has already taken a Test player's fresh scan. Module
+  // scope, not save state: it is a fact about this run of the game, and a
+  // relaunch is exactly what should earn another scan.
+  let _testBiomeCacheRebuilt = false;
+
+  // Take another scan without relaunching, for when the map was repainted with
+  // the game still up.
+  Game_System.prototype.forceBiomeCoordinateCacheRebuild = function () {
+    _testBiomeCacheRebuilt = false;
+    this.buildBiomeCoordinateCache();
+  };
+
   Game_System.prototype.buildBiomeCoordinateCache = function () {
     // Test player: force fresh biome cache regeneration
     if (isTestPlayer()) {
@@ -3989,6 +4001,7 @@
         this._procGenData.biomeCoordinateCache = {};
       }
       invalidateBiomeIndex();
+      _testBiomeCacheRebuilt = true;
       log(`[buildBiomeCoordinateCache] Test player detected: forcing cache regeneration`);
     }
 
@@ -4324,15 +4337,23 @@
       // Rebuild when the bridge scan is missing too, so saves made before bridge
       // markers existed pick them up instead of silently generating no crossings.
       //
-      // A Test player always rebuilds: the world map is being edited live, so any
-      // cache carried in the save describes the map as it was before the edit.
-      // Without this the rebuild never runs (the existing cache satisfies the
-      // check) and freshly painted roads, rivers and bridges are invisible to the
-      // generator. The scan is one pass over map 315 and only ever runs for Test.
+      // A Test player rebuilds ONCE A SESSION: the world map is being edited
+      // live, so any cache carried in the save describes the map as it was
+      // before the edit, and freshly painted roads, rivers and bridges would
+      // otherwise be invisible to the generator.
+      //
+      // Once a session, not once a generation. The scan is a full pass over map
+      // 315 - 256x256 tiles, six layers read per tile, about 400,000 tile reads -
+      // and it used to run on EVERY procedural generation, which is every map
+      // transfer. An edit made in the editor is only picked up when the map data
+      // is reloaded anyway, which means a relaunch, so the first generation of
+      // the session is exactly when the rebuild is worth anything. Call
+      // $gameSystem.forceBiomeCoordinateCacheRebuild() from the console to take
+      // another one without relaunching.
       if (
         !this._procGenData.biomeCoordinateCache ||
         !this._procGenData.bridgeCoordMap ||
-        isTestPlayer()
+        (isTestPlayer() && !_testBiomeCacheRebuilt)
       ) {
         this.buildBiomeCoordinateCache();
       }
@@ -5411,9 +5432,8 @@
       for (let attempt = 0; attempt < 20; attempt++) {
         const tile = pickRoomOrWallTile(srng, rooms);
         const { x: tx, y: ty } = tile;
-        if ($gameMap.isPassable(tx, ty, 2) &&
-            (tx !== $gamePlayer.x || ty !== $gamePlayer.y) &&
-            !$gameMap.eventsXy(tx, ty).length) {
+        if (canPlaceEventAt(tx, ty) &&
+            (tx !== $gamePlayer.x || ty !== $gamePlayer.y)) {
           return { x: tx, y: ty };
         }
       }
@@ -5441,7 +5461,9 @@
       if (i >= numChests) return;        // parked / hidden, already
       let tile = dealt ? null : remembered[i];
       // A tile written down before the square's layout changed under it.
-      if (tile && (tile.x || tile.y) && !$gameMap.isPassable(tile.x, tile.y, 2)) {
+      if (tile && (tile.x || tile.y) &&
+          (!$gameMap.isPassable(tile.x, tile.y, 2) ||
+           (window.RegionRules && window.RegionRules.blocksSpawn(tile.x, tile.y)))) {
         tile = null;
         dealt = true;
       }
@@ -5599,6 +5621,28 @@
   }
 
   /**
+   * Whether a generated square will take an event on this tile at all.
+   *
+   * Passability is asked of the engine, which answers with the topmost tile
+   * that has an opinion - so a fixture hung on the rock, or a tileset whose
+   * ceiling blend was never flagged solid, used to hand back "yes" for the
+   * dead mass a structure is cut out of. The keep-out region the structure
+   * generator paints that mass with is the answer to both, and it is asked
+   * for first. The tower's own three staircases are placed before any of
+   * these passes run, and their landings are held back too, so a lift never
+   * opens onto a spike trap.
+   */
+  function canPlaceEventAt(x, y) {
+    if (window.RegionRules && window.RegionRules.blocksSpawn(x, y)) return false;
+    if (!$gameMap.isPassable(x, y, 2)) return false;
+    if ($gameMap.eventsXy(x, y).length) return false;
+    const reserved = window.DungeonFloors && window.DungeonFloors.reservedTiles
+      ? window.DungeonFloors.reservedTiles() : null;
+    if (reserved && reserved.some((t) => t.x === x && t.y === y)) return false;
+    return true;
+  }
+
+  /**
    * Place Spike Trap hazards (map 636 template events named "Spike trap").
    * Only active in Dungeon / Crypt / Sewer biomes; parked at (0,0) and hidden
    * everywhere else. Scattered across passable floor tiles away from the
@@ -5640,7 +5684,7 @@
         const tx = Math.floor(srng() * (PROC_MAP_WIDTH - 6)) + 3;
         const ty = Math.floor(srng() * (PROC_MAP_HEIGHT - 6)) + 3;
         if (Math.abs(tx - spawnX) + Math.abs(ty - spawnY) < 6) continue;
-        if ($gameMap.isPassable(tx, ty, 2) && !$gameMap.eventsXy(tx, ty).length) {
+        if (canPlaceEventAt(tx, ty)) {
           return { x: tx, y: ty };
         }
       }
@@ -5742,9 +5786,8 @@
       for (let attempt = 0; attempt < 20; attempt++) {
         const tile = pickRoomOrWallTile(srng, rooms);
         const { x: tx, y: ty } = tile;
-        if ($gameMap.isPassable(tx, ty, 2) &&
-            (tx !== $gamePlayer.x || ty !== $gamePlayer.y) &&
-            !$gameMap.eventsXy(tx, ty).length) {
+        if (canPlaceEventAt(tx, ty) &&
+            (tx !== $gamePlayer.x || ty !== $gamePlayer.y)) {
           return { x: tx, y: ty };
         }
       }
@@ -5836,8 +5879,7 @@
 
     const MIN_PLAYER_DIST = 5;
     const isFreeTile = (x, y) =>
-      $gameMap.isPassable(x, y, 2) &&
-      !$gameMap.eventsXy(x, y).length &&
+      canPlaceEventAt(x, y) &&
       Math.abs(x - $gamePlayer.x) + Math.abs(y - $gamePlayer.y) >= MIN_PLAYER_DIST;
 
     // Collect the street tiles once, then hand out random ones.

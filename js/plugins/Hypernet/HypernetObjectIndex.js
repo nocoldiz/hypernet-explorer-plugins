@@ -232,7 +232,7 @@
                 "background:var(--xp-input); font-family:'Tahoma',sans-serif; font-size:15px;",
         list: 'flex:1; overflow-y:auto; padding:4px 0;',
         groupHead: 'padding:5px 10px 3px; font-size:13px; font-weight:bold; letter-spacing:0.6px; ' +
-                   'color:var(--xp-green-4); text-transform:uppercase;',
+                   'color:var(--xp-ok-dark); text-transform:uppercase;',
         row: 'display:flex; align-items:center; gap:6px; padding:4px 10px; cursor:pointer; ' +
              'border-left:4px solid transparent; user-select:none;',
         panel: 'flex:1; overflow-y:auto; padding:14px 16px; background:var(--xp-face-2); min-width:0;',

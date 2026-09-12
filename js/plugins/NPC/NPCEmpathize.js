@@ -4868,9 +4868,10 @@
       // counter's own self-switch A would strand it, see
       // ShopShiftManager.isShopEvent). No Switch 67 or name-matching.
       // A full party is NOT a gate any more: the fourth person to say yes signs
-      // on inactive and waits on the Dynamics board (NPCSystemParty.joinParty).
+      // on into the reserves and waits on the Dynamics board (NPCSystemParty.joinParty).
       if (!_hasSelfSwitchAPage(evId)
           || window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
+          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))
           || !_joinLevelOk(_presetFromEvent($gameMap?.event(evId))?.level ?? profile?.level)) {
         SoundManager.playBuzzer();
         return;
@@ -5045,7 +5046,8 @@
       const T       = _getT();
 
       if (!_hasSelfSwitchAPage(evId)
-          || window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))) {
+          || window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
+          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))) {
         SoundManager.playBuzzer();
         return;
       }

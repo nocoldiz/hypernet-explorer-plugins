@@ -1054,7 +1054,7 @@
     if (doors) {
       doors[getDoorKey(useFacing)] = now;
       if (typeof window.WorldManager.flush === 'function') {
-        try { window.WorldManager.flush(); } catch (e) { /* non-fatal */ }
+        try { window.WorldManager.flush('terrain'); } catch (e) { /* non-fatal */ }
       }
     }
     refreshAllDoorTriggers();
