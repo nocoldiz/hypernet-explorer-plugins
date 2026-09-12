@@ -86,7 +86,7 @@
     },
     "lockpicking": {
       "title": "Scassinamento",
-      "description": "Quando incontri porte o forzieri chiusi, puoi tentare di scassinare la serratura usando un minigioco in stile Tetris."
+      "description": "Quando incontri porte o forzieri chiusi, puoi tentare di scassinare la serratura usando un minigioco a blocchi che cadono."
     },
     "news_system": {
       "title": "Sistema Notizie",

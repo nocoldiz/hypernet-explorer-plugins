@@ -640,7 +640,7 @@
       ],
       [
         "What else could you do?",
-        "Anything with a roof and a ledger. I would be terrible and I would be warm."
+        "Anything with a roof and a grimorie. I would be terrible and I would be warm."
       ],
       [
         "Say we save enough. What would you buy?",
@@ -3593,7 +3593,7 @@
         ],
         [
           "Do we split what we find, or does it go in the pack?",
-          "In the pack. We are not doing ledgers on a hillside."
+          "In the pack. We are not doing grimories on a hillside."
         ],
         [
           "Whoever owned {ev_item} was not far from here.",
@@ -3971,7 +3971,7 @@
         ],
         [
           "We could pay it off.",
-          "With {ev_bounty} on the ledger? Not this year."
+          "With {ev_bounty} on the grimorie? Not this year."
         ],
         [
           "I would do it again.",
@@ -6543,7 +6543,7 @@
       "I can explain it and you will interrupt me."
     ],
     "artistic": [
-      "You describe everything like a ledger. It was not like that.",
+      "You describe everything like a grimorie. It was not like that.",
       "There was something almost lovely in it, if you were not being hit.",
       "I will remember it differently. That is allowed.",
       "You are giving me the facts. I was there for the light.",
@@ -10179,7 +10179,7 @@
       ],
       "cynical": [
         "And somebody else profits from it. As ever.",
-        "An hour of our lives for somebody's ledger.",
+        "An hour of our lives for somebody's grimorie.",
         "Wonderful. Shall we do something for ourselves next?"
       ],
       "disciplined": [

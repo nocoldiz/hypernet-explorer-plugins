@@ -1446,9 +1446,8 @@
     // template artifact, never meant for this), but the face on display is a
     // rotating persona borrowed cosmetically, not someone actually free to
     // travel: flipping the counter's own self-switch A would strand it on its
-    // blank page instead (see ShopShiftManager.isShopEvent), so Join is never
-    // offered on one.
-    const canVanishOnJoin = !shiftInfo && _hasSelfSwitchAPage(evId);
+    const isShopEvent = !!shiftInfo || !!window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId));
+    const canVanishOnJoin = !isShopEvent && _hasSelfSwitchAPage(evId);
 
     // A fallen companion is left behind when a recruit signs on, so the count
     // is of the travellers still standing (see _travellingPartyCount).

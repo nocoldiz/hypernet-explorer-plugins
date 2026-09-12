@@ -617,7 +617,8 @@
                 }
                 const cell = Number(index);
                 const key = slots[Number.isFinite(cell) ? cell : 0];
-                return { name: key || "", index: 0 };
+                if (!key) return null;
+                return { name: key, index: 0 };
             },
 
             // Is this a sheet the wardrobe knows by that exact name? Every key
@@ -1315,28 +1316,30 @@
     // not known and the sheet's first face has to stand for it.
     (function () {
         function repoint(name, index) {
+            if (typeof name !== "string" || !name) return null;
             const SC = window.SpriteCatalog;
-            return (SC && SC.legacySheet) ? SC.legacySheet(name, index) : null;
+            const res = (SC && SC.legacySheet) ? SC.legacySheet(name, index) : null;
+            return (res && res.name) ? res : null;
         }
 
         const _setImage = Game_CharacterBase.prototype.setImage;
         Game_CharacterBase.prototype.setImage = function (characterName, characterIndex) {
             const now = repoint(characterName, characterIndex);
-            if (now) return _setImage.call(this, now.name, now.index);
+            if (now && now.name) return _setImage.call(this, now.name, now.index);
             return _setImage.call(this, characterName, characterIndex);
         };
 
         const _setCharacterImage = Game_Actor.prototype.setCharacterImage;
         Game_Actor.prototype.setCharacterImage = function (characterName, characterIndex) {
             const now = repoint(characterName, characterIndex);
-            if (now) return _setCharacterImage.call(this, now.name, now.index);
+            if (now && now.name) return _setCharacterImage.call(this, now.name, now.index);
             return _setCharacterImage.call(this, characterName, characterIndex);
         };
 
         const _loadCharacter = ImageManager.loadCharacter;
         ImageManager.loadCharacter = function (filename) {
             const now = repoint(filename, 0);
-            return _loadCharacter.call(this, now ? now.name : filename);
+            return _loadCharacter.call(this, (now && now.name) ? now.name : filename);
         };
     })();
 

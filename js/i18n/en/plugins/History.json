@@ -272,7 +272,7 @@
         "rocket test": "An {actor} rocket returns before launch, scorched and empty."
       },
       "criminal": {
-        "heist": "Thieves steal a decade from the {actor} treasury; the ledgers skip it.",
+        "heist": "Thieves steal a decade from the {actor} treasury; the grimories skip it.",
         "forgery scandal": "{actor} forgers produce a province that briefly appears on maps."
       }
     },

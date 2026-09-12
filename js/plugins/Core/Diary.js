@@ -1967,7 +1967,7 @@
     const MINIGAME_SCENES = {
         Scene_Arcade: 'arcade', Scene_Frogger: 'frogger', Scene_Snake: 'snake',
         Scene_BubblePop: 'bubblePop', Scene_SlotMachine: 'slots', Scene_Bowling: 'bowling',
-        Scene_PoolGame: 'pool', Scene_UnlockingBlocks: 'lockpick', Scene_HexphoneTetris: 'tetris',
+        Scene_PoolGame: 'pool', Scene_UnlockingBlocks: 'lockpick',
         Scene_ScratchCard: 'scratchCard', Scene_HorseRace: 'horseRace', Scene_Tarot: 'tarot',
         Scene_FishingMinigame: 'fishing', Scene_SurfingGame: 'surfing', Scene_VisualPiano: 'piano',
         Scene_PeriodicTable: 'periodicTable', Scene_RamanScan: 'raman', Scene_Chess: 'chess',

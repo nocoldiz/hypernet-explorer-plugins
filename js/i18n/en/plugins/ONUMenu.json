@@ -27,7 +27,7 @@
   "observer": "Observer",
   "observerNote": "Holds a chair, casts no vote.",
   "sessionHeadline": "Week {week} of the standing session",
-  "lobbyHeadline": "{The register is open|The chamber is not yet sitting|Twenty one seats, and a ledger}",
+  "lobbyHeadline": "{The register is open|The chamber is not yet sitting|Twenty one seats, and a grimorie}",
   "credentialsHeadline": "Accreditation of {name}",
   "ledBy": "led by {leader}",
   "yourStanding": "Your standing",

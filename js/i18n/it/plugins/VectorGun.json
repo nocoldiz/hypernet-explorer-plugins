@@ -281,7 +281,7 @@
     "solomon": {
       "name": "Grimorio di Salomone",
       "desc": "Forma alternativa: il libro aperto.",
-      "effect": "Montato, il libro è già aperto quando comincia lo scontro: Em entra in ogni battaglia leggendo, con una fila di incantesimi presi dal grimorio al posto dei suoi. È un patto, non un regalo. Con questa forma Morte Aggraziata non concede alcun turno di invulnerabilità, e il libro non restituisce salute: la prende, per ogni incantesimo letto, in proporzione a quanto costa lanciarlo. Si può montare una sola forma alternativa."
+      "effect": "Montato, il libro è già aperto quando comincia lo scontro: Em entra in ogni battaglia leggendo, con una fila di incantesimi presi dal grimorio al posto dei suoi. È un patto, non un regalo. Con questa forma Morte Aggraziata non concede alcun turno di invulnerabilità, e il libro non restituisce salute: la prende, per ogni incantesimo letto, in proporzione a quanto costa lanciarlo. Si può montare una sola forma alternativa. Un attacco normale con il libro non e un colpo: si spalanca e spara le sue stesse pagine su cio che ha di mira, fino a quattro caselle."
     }
   },
   "section": {

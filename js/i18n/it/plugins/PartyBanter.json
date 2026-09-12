@@ -640,7 +640,7 @@
       ],
       [
         "Cos'altro potresti fare?",
-        "Qualsiasi cosa con un tetto e un registro. Sarei terribile e sarei al caldo."
+        "Qualsiasi cosa con un tetto e un grimorio. Sarei terribile e sarei al caldo."
       ],
       [
         "Mettiamo che mettiamo via abbastanza. Cosa compreresti?",
@@ -3971,7 +3971,7 @@
         ],
         [
           "Potremmo estinguerla.",
-          "Con {ev_bounty} sul registro? Non quest'anno."
+          "Con {ev_bounty} sul grimorio? Non quest'anno."
         ],
         [
           "Lo rifarei.",
@@ -6543,7 +6543,7 @@
       "Posso spiegarlo e tu mi interromperai."
     ],
     "artistic": [
-      "Descrivi tutto come un libro mastro. Non era così.",
+      "Descrivi tutto come un grimorio. Non era così.",
       "C'era qualcosa di quasi bello, se non ti stavano colpendo.",
       "Io me lo ricorderò diversamente. È permesso.",
       "Mi stai dando i fatti. Io c'ero per la luce.",
@@ -10179,7 +10179,7 @@
       ],
       "cynical": [
         "E ci guadagna qualcun altro. Come sempre.",
-        "Un'ora delle nostre vite per il registro di qualcun altro.",
+        "Un'ora delle nostre vite per il grimorio di qualcun altro.",
         "Splendido. La prossima la facciamo per noi?"
       ],
       "disciplined": [

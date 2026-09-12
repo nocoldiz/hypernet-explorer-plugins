@@ -69,7 +69,7 @@
                 <div style="display:flex; flex-direction:column; height:100%; font-family:Tahoma,sans-serif; background:var(--xp-bg); overflow:hidden">
                     <div style="background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%); padding:11px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0">
                         <div>
-                            <div style="color:var(--xp-gold); font-weight:bold; font-size:17px; letter-spacing:2px">${T('TokenExchange.banner')}</div>
+                            <div style="color:var(--xp-white); font-weight:bold; font-size:17px; letter-spacing:2px">${T('TokenExchange.banner')}</div>
                             <div style="color:var(--xp-sky-4); font-size:13px; margin-top:2px">${T('TokenExchange.tagline')}</div>
                         </div>
                         <div style="margin-left:auto; text-align:right; color:var(--xp-sky-4); font-size:13px; line-height:1.5">
@@ -84,7 +84,7 @@
                         </div>
                         <div style="flex:1; background:var(--xp-white); padding:8px 14px">
                             <div style="font-size:13px; color:var(--xp-ink-soft); letter-spacing:1px">${T('TokenExchange.tokensHeld')}</div>
-                            <div id="hte-token-balance" style="font-size:21px; font-weight:bold; color:#8B6914">0</div>
+                            <div id="hte-token-balance" style="font-size:21px; font-weight:bold; color:var(--xp-violet)">0</div>
                         </div>
                     </div>
 
@@ -131,7 +131,7 @@
                         </div>
 
                         <button id="hte-confirm" class="focusable" data-focus-key="hte-confirm" tabindex="0"
-                                style="width:100%; padding:11px; background:linear-gradient(135deg, var(--xp-navy-7), var(--xp-sky)); color:var(--xp-gold); border:1px solid var(--xp-sky-3); font-size:16px; font-weight:bold; font-family:Tahoma,sans-serif; letter-spacing:1.5px; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.3)">
+                                style="width:100%; padding:11px; background:linear-gradient(135deg, var(--xp-navy-7), var(--xp-sky)); color:var(--xp-white); border:1px solid var(--xp-sky-3); font-size:16px; font-weight:bold; font-family:Tahoma,sans-serif; letter-spacing:1.5px; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.3)">
                             ${T('TokenExchange.confirm')}
                         </button>
                     </div>

@@ -2051,6 +2051,11 @@
     const _Scene_Map_start_quickload = Scene_Map.prototype.start;
     Scene_Map.prototype.start = function() {
         _Scene_Map_start_quickload.call(this);
+        if ($gamePlayer && !$gamePlayer.isInVehicle() && (!$dataSystem || !$dataSystem.optTransparent)) {
+            if ($gamePlayer.isTransparent()) $gamePlayer.setTransparent(false);
+            if ($gamePlayer.opacity() < 255) $gamePlayer.setOpacity(255);
+            $gamePlayer.refresh();
+        }
         if ($gameTemp && $gameTemp._showQuickloadPopup) {
             const n = $gameTemp._showQuickloadPopup;
             $gameTemp._showQuickloadPopup = false;
@@ -2059,6 +2064,155 @@
             } else {
                 this.showQuickPopup("Game Loaded");
             }
+        }
+    };
+
+    //=========================================================================
+    // Save/Load sprite restoration & visibility preservation
+    //=========================================================================
+    // When loading a game, extracting save contents, or transferring on foot,
+    // verify that the party actors, player, and followers have valid sprites
+    // loaded matching the saved data, and that transparency or 0 opacity is not
+    // erroneously left enabled on foot.
+    function restoreAndVerifyPartySprites(savefileId) {
+        if (!window.$gameParty || !window.$gamePlayer) return;
+
+        let slot = savefileId;
+        if (slot === undefined || slot === null || slot < 0) {
+            if (window.DataManager && DataManager._lastLoadedSavefileId !== undefined) {
+                slot = DataManager._lastLoadedSavefileId;
+            } else if (window.$gameSystem && typeof $gameSystem.savefileId === "function") {
+                slot = $gameSystem.savefileId();
+            } else {
+                slot = 0;
+            }
+        }
+
+        const info = (slot !== undefined && slot !== null && window.DataManager && typeof DataManager.savefileInfo === "function")
+            ? DataManager.savefileInfo(slot)
+            : null;
+
+        const members = $gameParty.members();
+        members.forEach((actor, i) => {
+            if (!actor) return;
+            let charName = actor.characterName();
+            let charIndex = actor.characterIndex();
+
+            // If actor's character image is empty, missing, or nullified, recover it:
+            if (!charName || charName === "") {
+                let candidateName = "";
+                let candidateIndex = 0;
+
+                // 1) From savefile info header characters
+                if (info && info.characters && info.characters[i] && info.characters[i][0]) {
+                    candidateName = info.characters[i][0];
+                    candidateIndex = info.characters[i][1] || 0;
+                }
+
+                // 2) From database default for this actor ID
+                if (!candidateName && window.$dataActors && $dataActors[actor.actorId()] && $dataActors[actor.actorId()].characterName) {
+                    candidateName = $dataActors[actor.actorId()].characterName;
+                    candidateIndex = $dataActors[actor.actorId()].characterIndex || 0;
+                }
+
+                // 3) Special handling for Em if applicable
+                if (!candidateName && typeof window.emSheet === "function" && actor.actorId() === 1) {
+                    const em = window.emSheet(actor);
+                    if (em && em.name) {
+                        candidateName = em.name;
+                        candidateIndex = em.index || 0;
+                    }
+                }
+
+                // 4) Fallback to SpriteCatalog default or standard
+                if (!candidateName && window.SpriteCatalog && window.SpriteCatalog.defaultSheet) {
+                    candidateName = window.SpriteCatalog.defaultSheet;
+                    candidateIndex = 0;
+                }
+
+                if (!candidateName) {
+                    candidateName = "Em/!$EM";
+                    candidateIndex = 0;
+                }
+
+                actor.setCharacterImage(candidateName, candidateIndex);
+            }
+        });
+
+        // Ensure leader has valid character image assigned to $gamePlayer
+        const leader = $gameParty.leader();
+        if (leader) {
+            const lName = leader.characterName();
+            const lIndex = leader.characterIndex();
+            if (lName && lName !== "") {
+                $gamePlayer.setImage(lName, lIndex);
+            }
+        }
+
+        // Restore player visibility if on foot
+        if (!$gamePlayer.isInVehicle()) {
+            if (!$dataSystem || !$dataSystem.optTransparent) {
+                $gamePlayer.setTransparent(false);
+            }
+            if ($gamePlayer.opacity() < 255) {
+                $gamePlayer.setOpacity(255);
+            }
+        }
+
+        $gamePlayer.refresh();
+
+        // Restore follower visibility if on foot
+        if ($gamePlayer.followers()) {
+            $gamePlayer.followers().data().forEach(f => {
+                if (!f) return;
+                if (!$dataSystem || !$dataSystem.optTransparent) {
+                    f.setTransparent(false);
+                }
+                if (f.opacity() < 255) {
+                    f.setOpacity(255);
+                }
+                f.refresh();
+            });
+        }
+    }
+
+    window.SaveSystem.restoreAndVerifyPartySprites = restoreAndVerifyPartySprites;
+
+    const _DataManager_loadGame_SaveSystem = DataManager.loadGame;
+    DataManager.loadGame = function(savefileId) {
+        DataManager._lastLoadedSavefileId = savefileId;
+        return _DataManager_loadGame_SaveSystem.call(this, savefileId);
+    };
+
+    const _DataManager_extractSaveContents_SaveSystem = DataManager.extractSaveContents;
+    DataManager.extractSaveContents = function(contents) {
+        _DataManager_extractSaveContents_SaveSystem.call(this, contents);
+        restoreAndVerifyPartySprites(DataManager._lastLoadedSavefileId);
+    };
+
+    const _DataManager_correctDataErrors_SaveSystem = DataManager.correctDataErrors;
+    DataManager.correctDataErrors = function() {
+        if (_DataManager_correctDataErrors_SaveSystem) {
+            _DataManager_correctDataErrors_SaveSystem.call(this);
+        }
+        restoreAndVerifyPartySprites(DataManager._lastLoadedSavefileId);
+    };
+
+    const _Game_System_onAfterLoad_SaveSystem = Game_System.prototype.onAfterLoad;
+    Game_System.prototype.onAfterLoad = function() {
+        if (_Game_System_onAfterLoad_SaveSystem) {
+            _Game_System_onAfterLoad_SaveSystem.call(this);
+        }
+        restoreAndVerifyPartySprites(DataManager._lastLoadedSavefileId);
+    };
+
+    const _Game_Player_performTransfer_SaveSystem = Game_Player.prototype.performTransfer;
+    Game_Player.prototype.performTransfer = function() {
+        _Game_Player_performTransfer_SaveSystem.call(this);
+        if (!this.isInVehicle() && (!$dataSystem || !$dataSystem.optTransparent)) {
+            if (this.isTransparent()) this.setTransparent(false);
+            if (this.opacity() < 255) this.setOpacity(255);
+            this.refresh();
         }
     };
 })();

@@ -390,22 +390,14 @@
         return deathOccurred;
     };
 
-    BattleManager.processActor1Death = function() {
-        if ($gameSwitches.value(9)) {
-            // Save death data is handled in BattleSystemEnhancedDeath.js
-            $gameSwitches.setValue(34, true);
-            // The leader is never removed from the party, so the roster-history
-            // hook in NPCSystemParty.js would never see this death: log it here
-            // for the Dynamics menu's History page.
-            window.PartyRoster?.recordDeath?.($gameParty.members()[0]);
-        }
-        BSE.State.needsRespawn = true;
-        if (BSE.State.currentMapId && BSE.State.currentEventId) {
-            $gameSystem.setEventToDelete(BSE.State.currentMapId, BSE.State.currentEventId);
-        }
-        this._escaped = true;
-        this.updateBattleEnd();
-    };
+    // The leader going down used to end the fight on the spot: whoever was still
+    // standing never got their turn, and the party woke up at the respawn point
+    // having lost a battle it was winning. A leader is a battler like the other
+    // two now. The fight is lost when the WHOLE party is down and not a moment
+    // before, which is what BattleManager.checkBattleEnd already asks
+    // ($gameParty.isAllDead -> processDefeat below), and a leader knocked out on
+    // the way to a win simply comes round an hour later like anybody else
+    // (BattleSystemEnhancedDeath.js).
 
     BattleManager.processDefeat = function() {
         const _storyModeMaps = [1414, 1415, 1416, 1417];
@@ -1049,10 +1041,13 @@
                         this.handlePartyMemberDeath(member, member.name());
                     }
                 }
-            } else if ($gameSystem.isActor1Died()) {
-                // Roguelite / Peaceful KO: restore the WHOLE party to full
-                // (HP/MP via recoverAll, which also clears death), not just the
-                // leader (#59), and every need meter with it.
+            } else if ($gameSystem.isFullPartyWipe()) {
+                // Roguelite / Peaceful, and only on a WIPE: the leader going
+                // down while the other two fought on and won is not a defeat,
+                // so nobody is respawned for it and the party keeps the ground
+                // it took. Restore the WHOLE party to full (HP/MP via
+                // recoverAll, which also clears death), not just the leader
+                // (#59), and every need meter with it.
                 for (const member of $gameParty.members()) {
                     member.recoverAll();
                     if (window.HealthCore && window.HealthCore.restoreAllBodyParts) {

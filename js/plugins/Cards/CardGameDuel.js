@@ -1634,7 +1634,7 @@
     const contentHTML = `
       <div style="display:flex; flex-direction:column; height:100%; font-family:Tahoma,sans-serif; background:var(--xp-bg); overflow:hidden">
         <div style="background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%); padding:10px 16px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0">
-          <div style="color:var(--xp-gold); font-weight:bold; font-size:17px; letter-spacing:2px">${escapeHtml(T("CardGame.arena.banner"))}</div>
+          <div style="color:var(--xp-white); font-weight:bold; font-size:17px; letter-spacing:2px">${escapeHtml(T("CardGame.arena.banner"))}</div>
           <div style="color:#cfe6ff; font-size:13px; margin-top:2px">${escapeHtml(T("CardGame.arena.tagline"))}</div>
         </div>
         <div style="flex:1; overflow-y:auto; padding:10px 14px; display:flex; flex-direction:column; gap:10px">
@@ -1663,7 +1663,7 @@
           </div>
           <div id="ca-summary" style="background:var(--xp-white); border:1px solid var(--xp-silver-3); padding:9px 12px; font-size:13px; color:var(--xp-ink-3); line-height:1.6"></div>
           <button id="ca-start" class="focusable" data-focus-key="ca-start" tabindex="0"
-                  style="width:100%; padding:10px; background:linear-gradient(135deg, var(--xp-navy-7), var(--xp-sky)); color:var(--xp-gold); border:1px solid var(--xp-sky-3); font-size:16px; font-weight:bold; font-family:Tahoma,sans-serif; letter-spacing:1.5px; cursor:pointer">${escapeHtml(T("CardGame.arena.start"))}</button>
+                  style="width:100%; padding:10px; background:linear-gradient(135deg, var(--xp-navy-7), var(--xp-sky)); color:var(--xp-white); border:1px solid var(--xp-sky-3); font-size:16px; font-weight:bold; font-family:Tahoma,sans-serif; letter-spacing:1.5px; cursor:pointer">${escapeHtml(T("CardGame.arena.start"))}</button>
         </div>
         <div id="ca-status" style="border-top:1px solid var(--xp-ink-pale-2); padding:3px 10px; background:var(--xp-bg); font-size:13px; color:var(--xp-text-muted); flex-shrink:0">&nbsp;</div>
       </div>`;

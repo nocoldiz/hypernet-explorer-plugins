@@ -477,12 +477,30 @@
   // The list for the ground the party is standing on: the walking rows
   // everywhere, the world map's and the generated ground's on top of them, and
   // the menu keys last because they are the same wherever anybody stands.
+  // Kept between frames. The sheet is redrawn from this list on every frame the
+  // party is walking, and building it meant three fresh arrays plus one fresh
+  // object per menu hotkey, every time, to arrive at the same rows. What the
+  // list actually depends on is the map underfoot and the hotkey table, and
+  // the table is only ever rewritten by patchFoldHotkey below, on Scene_Map
+  // start, which is where the cache is dropped.
+  let _rowsCache = null;
+  let _rowsCacheMapId = null;
+
+  function forgetVisibleRows() {
+    _rowsCache = null;
+    _rowsCacheMapId = null;
+  }
+
   function visibleRows() {
     if (!controlsShown() || !$gameMap) return [];
+    const mapId = $gameMap.mapId();
+    if (_rowsCache && _rowsCacheMapId === mapId) return _rowsCache;
     const rows = WALK_CONTROLS.slice();
-    if ($gameMap.mapId() === WORLD_MAP_LEGEND_MAP_ID) rows.push(...WORLD_MAP_CONTROLS);
-    if ($gameMap.mapId() === proceduralMapId()) rows.push(...PROCEDURAL_CONTROLS);
-    return rows.concat(menuHotkeyControls());
+    if (mapId === WORLD_MAP_LEGEND_MAP_ID) rows.push(...WORLD_MAP_CONTROLS);
+    if (mapId === proceduralMapId()) rows.push(...PROCEDURAL_CONTROLS);
+    _rowsCache = rows.concat(menuHotkeyControls());
+    _rowsCacheMapId = mapId;
+    return _rowsCache;
   }
 
   // What the row says on a keyboard: the key, plus the mouse where one reaches
@@ -1130,6 +1148,10 @@
   Scene_Map.prototype.start = function () {
     rememberStartPlace();
     patchFoldHotkey();
+    // patchFoldHotkey has just rewritten the hotkey table, and a new map may
+    // want different rows, so the kept list is dropped here and rebuilt on the
+    // first frame that asks for it.
+    forgetVisibleRows();
     _Scene_Map_start.call(this);
   };
 

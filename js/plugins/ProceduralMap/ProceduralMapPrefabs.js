@@ -1042,6 +1042,10 @@
   /**
    * Place a single prefab map into the procedural map
    */
+  // The keep-out region an enclosed structure paints its rock with. Read off
+  // the one authority that owns it rather than restated as a literal.
+  const NO_GO_REGION = (window.RegionRules && window.RegionRules.NO_GO_REGION) || 7;
+
   function placePrefab(mapData, prefabMap, position, nonTerrainTileIds, removedTiles) {
     if (!prefabMap || !prefabMap.data) return;
 
@@ -1117,6 +1121,16 @@
           // shadows their source map was painted with.
           const shadowDstIdx = calculateIndex(mapX, mapY, 4, PROC_MAP_WIDTH, PROC_MAP_HEIGHT);
           mapData[shadowDstIdx] = shadowBits;
+
+          // A structure paints its dead mass with the keep-out region (see
+          // step 8 of the enclosed-structure generator). A prefab laid over
+          // that mass is a set piece the party is meant to walk into, so the
+          // mark is lifted from every square it actually builds on and the
+          // prefab's own authored passability decides again.
+          const regionDstIdx = calculateIndex(mapX, mapY, 5, PROC_MAP_WIDTH, PROC_MAP_HEIGHT);
+          if (regionDstIdx < mapData.length && mapData[regionDstIdx] === NO_GO_REGION) {
+            mapData[regionDstIdx] = 0;
+          }
         }
       }
     }

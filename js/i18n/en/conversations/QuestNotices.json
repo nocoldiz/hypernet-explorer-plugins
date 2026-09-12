@@ -35,7 +35,7 @@
     "an envelope addressed only to whoever is desperate",
     "a shipping tag torn off something heavy",
     "a request typed on a machine missing its letter E",
-    "a message left in the ledger where a name should be",
+    "a message left in the grimorie where a name should be",
     "an anonymous notice in three languages, all of them wrong",
     "a leaflet that smells of church and diesel",
     "a torn poster promising the rest of the details in person",
@@ -56,7 +56,7 @@
     "an ordinary handbill, one of a dozen",
     "a note that has clearly been rained on and rewritten",
     "a letter with the seal broken and nobody admitting to it",
-    "a page torn from a ledger, the columns still visible",
+    "a page torn from a grimorie, the columns still visible",
     "a notice written in a very small hand to fit the paper",
     "a chalked note on a slate, wiped and rewritten twice",
     "a card with a thumbprint in the corner",
@@ -278,7 +278,7 @@
     "{If you die the contract voids itself. So do you.|Disclaimer: if you die the contract voids itself. so do you.|Hazard warning: if you die the contract voids itself. so do you.}",
     "{No refunds on courage.|Disclaimer: no refunds on courage.|Hazard warning: no refunds on courage.}",
     "{Insurance ends at the treeline.|Disclaimer: insurance ends at the treeline.|Hazard warning: insurance ends at the treeline.}",
-    "{Do not sign twice, the ledger notices.|Disclaimer: do not sign twice, the ledger notices.|Hazard warning: do not sign twice, the ledger notices.}",
+    "{Do not sign twice, the grimorie notices.|Disclaimer: do not sign twice, the grimorie notices.|Hazard warning: do not sign twice, the grimorie notices.}",
     "{If a checkpoint reads this notice aloud, walk away.|Disclaimer: if a checkpoint reads this notice aloud, walk away.|Hazard warning: if a checkpoint reads this notice aloud, walk away.}",
     "{Nobody will confirm this in writing.|Disclaimer: nobody will confirm this in writing.|Hazard warning: nobody will confirm this in writing.}",
     "{Any Archive clerk asking questions is not with us.|Disclaimer: any archive clerk asking questions is not with us.|Hazard warning: any archive clerk asking questions is not with us.}",
@@ -338,7 +338,7 @@
     "{Signed, filed, and forgotten.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
     "{Pay is collected at any board.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
     "{Bring the receipt, keep the story.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
-    "{Ask for the ledger, not for me.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
+    "{Ask for the grimorie, not for me.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
     "{Terms are terms.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
     "{Good roads.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
     "{Walk carefully.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
@@ -381,7 +381,7 @@
     "{Good luck, and thank you.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
     "{Take the notice down if you accept, so nobody else walks it for nothing.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
     "{I am easy to find and hard to avoid.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
-    "{Settled the same day, no waiting on ledgers.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
+    "{Settled the same day, no waiting on grimories.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
     "{If you finish it well I will ask for you by name next time.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}",
     "{Nothing more to add.|Payment upon inspection.|Direct inquiries to the job board.|No time-wasters.}"
   ],
@@ -571,7 +571,7 @@
         "Do this honestly. We will know, and so will Someone else.",
         "Take nothing that is consecrated, however portable.",
         "Pride is not among the listed expenses.",
-        "Should you be tempted, remember the ledger is read aloud at year's end.",
+        "Should you be tempted, remember the grimorie is read aloud at year's end.",
         "Violence only where charity has demonstrably failed."
       ],
       "signoffs": [
@@ -3270,7 +3270,7 @@
     "market": [
       "MARKET POSITION: hold [N] oil shares",
       "PORTFOLIO ERRAND: [N] shares of crude",
-      "{LEDGER|PAPER} WORK: hold [N] oil shares",
+      "{GRIMORIE|PAPER} WORK: hold [N] oil shares",
       "BUY AND HOLD: [N] shares, briefly"
     ],
     "expedition": [
@@ -3319,10 +3319,10 @@
       "{Carry|Escort|Move} this {parcel|consignment|case} to the quest board of [DEST]. {It is lighter than it looks.|Do not open it.|It ticks, but politely.|The contents are insured against everything except curiosity.}",
       "One {package|bundle|tube} out of [HERE], one signature in [DEST]. {Nothing in between concerns you.|What happens between the two is your business and your risk.}",
       "The {relay|regular runner|usual boy} is {ill|missing|drunk|three days overdue}, so the [DEST] board is waiting on a delivery nobody has made. {Take it there yourself.|Hand it over in person or not at all.}",
-      "{A small crate|A flat wooden box|A bound ledger} must reach [DEST] {intact|unopened|by hand}. {We chose the road over the pigeons deliberately.|The pigeons refused this one.}"
+      "{A small crate|A flat wooden box|A bound grimorie} must reach [DEST] {intact|unopened|by hand}. {We chose the road over the pigeons deliberately.|The pigeons refused this one.}"
     ],
     "smuggle": [
-      "A {crate|satchel|drum} needs to reach [DEST] without appearing on any manifest, ledger or Archive publication. {Take the back roads.|If a checkpoint asks, it is pickled herring.|The seals are Fantablack, do not scratch them.}",
+      "A {crate|satchel|drum} needs to reach [DEST] without appearing on any manifest, grimorie or Archive publication. {Take the back roads.|If a checkpoint asks, it is pickled herring.|The seals are Fantablack, do not scratch them.}",
       "Nothing illegal, {merely unregistered|merely unfiled|merely undocumented}. Get it to [DEST] and forget the weight. {Customs are counting crates this month.|The Archive is publishing manifests again, so keep off the highway.}",
       "There is a {load|parcel|barrel} that must arrive in [DEST] without arriving officially. {Do not open it to find out why.|You are paid for the silence, not the distance.}",
       "The {short road|highway|toll road} is watched. Take the {long way|old way|smugglers' way} into [DEST] with this and nobody has to file anything. {Checkpoints do not read pickled herring labels closely.}"
@@ -3348,7 +3348,7 @@
     "donation": [
       "The [FACTION] relief fund accepts contributions of [COST] toward {blankets, boots and Anoki batteries|resettling refugees from the upper dimensions|keeping the soup cauldrons enchanted}. Donors are remembered.",
       "[COST] to the [FACTION] {hardship box|winter fund|widows' list}. {No sum is too small, though yours could be larger.|Names of donors are read aloud, briefly.}",
-      "Give [COST] and [FACTION] will {feed someone|shelter someone|bury someone properly} this week. {The ledger is public.|The receipt is worth more than the coin, in the right rooms.}"
+      "Give [COST] and [FACTION] will {feed someone|shelter someone|bury someone properly} this week. {The grimorie is public.|The receipt is worth more than the coin, in the right rooms.}"
     ],
     "cache": [
       "A {cache|strongbox|supply drop} {went missing|was abandoned|was buried in a hurry} at coordinates ([X], [Y]). {Recover it and keep what is portable, the finder's fee covers the rest.|Bring back whatever the weather left.}",
@@ -3423,8 +3423,8 @@
       "Piecework: [N] confirmed kills. {We are not asking what they were.|Nobody counts species any more, only heads.}"
     ],
     "market": [
-      "Acquire and hold [N] shares of crude oil. {The Collective files this under enthusiasm.|Sell afterwards if you like, we only need the ledger entry.}",
-      "Hold [N] oil shares long enough for the ledger to notice. {What you do with them afterwards is your affair.|The position matters, the profit is yours.}",
+      "Acquire and hold [N] shares of crude oil. {The Collective files this under enthusiasm.|Sell afterwards if you like, we only need the grimorie entry.}",
+      "Hold [N] oil shares long enough for the grimorie to notice. {What you do with them afterwards is your affair.|The position matters, the profit is yours.}",
       "Somebody needs the register to show [N] shares of crude in {friendly|private|unaffiliated} hands. {Yours will do.}"
     ],
     "expedition": [

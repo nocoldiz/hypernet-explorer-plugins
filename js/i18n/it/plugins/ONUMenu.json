@@ -27,7 +27,7 @@
   "observer": "Osservatore",
   "observerNote": "Occupa un seggio, non vota.",
   "sessionHeadline": "Settimana {week} della sessione permanente",
-  "lobbyHeadline": "{Il registro è aperto|L'aula non è ancora in seduta|Ventuno seggi, e un registro}",
+  "lobbyHeadline": "{Il registro è aperto|L'aula non è ancora in seduta|Ventuno seggi, e un grimorio}",
   "credentialsHeadline": "Accreditamento di {name}",
   "ledBy": "guidata da {leader}",
   "yourStanding": "La tua considerazione",

@@ -62,12 +62,24 @@
 
 
 
+    // The date is a pure function of one variable, the minutes elapsed, and the
+    // battle asks for it every frame: the sky's time mode reads the hour, and the
+    // moon reads the day. Building it cost two Date objects a call and it was
+    // called two or three times a frame, so it is held until the minute actually
+    // turns. Every caller only reads from it (getHours, getMinutes, getDay), so
+    // they can all be handed the same one.
+    const GAME_EPOCH_MS = new Date(2001, 0, 1, 12, 0, 0).getTime();
+    let _gameDateMinutes = null;
+    let _gameDateCache = null;
+
     function getGameDate() {
         // Get game date from TimeDateSystem (Variable 114: total minutes elapsed)
         // Base date: Jan 1, 2001 12:00
         const gameTimeMinutes = $gameVariables ? $gameVariables.value(114) || 0 : 0;
-        const baseDate = new Date(2001, 0, 1, 12, 0, 0);
-        return new Date(baseDate.getTime() + gameTimeMinutes * 60 * 1000);
+        if (_gameDateCache && _gameDateMinutes === gameTimeMinutes) return _gameDateCache;
+        _gameDateMinutes = gameTimeMinutes;
+        _gameDateCache = new Date(GAME_EPOCH_MS + gameTimeMinutes * 60 * 1000);
+        return _gameDateCache;
     }
 
 
@@ -806,9 +818,68 @@
     // Sky Drawing Section
     // =============================================================================
 
+    // A moon is the same picture every time it is asked for: the body, the glow,
+    // the craters and the phase shadow are fixed by the radius, the phase and the
+    // satellite's own style, and only where it stands changes. The animated sky
+    // layer is repainted several times a second and an alien surface can carry
+    // five moons, each costing two or three createRadialGradient plus a clip, a
+    // handful of crater arcs and a destination-out pass, so the picture is drawn
+    // once into an offscreen canvas and blitted after that - the same trick the
+    // star glow (starGlowSprite) and the cloud bank already use.
+    //
+    // Glow reaches out to 2.5 radii, so that is the half-width of the sprite, and
+    // the moon sits at its centre. destination-out inside the sprite erases the
+    // glow it has already drawn, exactly as it did when this drew straight onto
+    // the sky layer, because both are transparent to begin with.
+    const MOON_SPRITE_REACH = 2.5;
+    const _MOON_SPRITE_CACHE = new Map();
+    const MOON_SPRITE_CACHE_MAX = 24;
+
+    function moonSprite(radius, moonData, style) {
+        const r = Math.max(1, Math.round(radius));
+        const illumination = (typeof style.illumination === 'number')
+            ? style.illumination : moonData.illumination;
+        // Phase is quantised: a moon moves through it over days, and a hundredth
+        // of a phase is far finer than the picture can show.
+        const key = r + '|' + (moonData.isWaxing ? 'w' : 'n') + '|' +
+            Math.round(illumination * 100) + '|' + (style.color || '') + '|' +
+            (typeof style.seed === 'number' ? style.seed : '');
+        const hit = _MOON_SPRITE_CACHE.get(key);
+        if (hit) {
+            // Map keeps insertion order, so re-inserting is the whole LRU touch.
+            _MOON_SPRITE_CACHE.delete(key);
+            _MOON_SPRITE_CACHE.set(key, hit);
+            return hit;
+        }
+        const half = Math.ceil(r * MOON_SPRITE_REACH);
+        const size = half * 2;
+        const c = document.createElement('canvas');
+        c.width = c.height = size;
+        const g = c.getContext('2d');
+        paintMoon(g, half, half, r, moonData, style);
+        const sprite = { canvas: c, half };
+        _MOON_SPRITE_CACHE.set(key, sprite);
+        while (_MOON_SPRITE_CACHE.size > MOON_SPRITE_CACHE_MAX) {
+            _MOON_SPRITE_CACHE.delete(_MOON_SPRITE_CACHE.keys().next().value);
+        }
+        return sprite;
+    }
+
     // `style` (optional) themes a moon to a specific satellite:
     //   { color:'#rrggbb' body tint, seed:int crater layout, illumination:0..1 }
     function drawMoon(context, x, y, radius, moonData, style) {
+        style = style || {};
+        const sprite = moonSprite(radius, moonData, style);
+        if (sprite) {
+            context.drawImage(sprite.canvas, Math.round(x) - sprite.half, Math.round(y) - sprite.half);
+            return;
+        }
+        paintMoon(context, x, y, radius, moonData, style);
+    }
+
+    // The drawing itself, onto whatever context it is handed: the sprite cache
+    // above for the sky layer, or a context directly if a caller ever wants it.
+    function paintMoon(context, x, y, radius, moonData, style) {
         style = style || {};
         const { phase, isWaxing } = moonData;
         const illumination = (typeof style.illumination === 'number')
@@ -1546,9 +1617,23 @@
         if (this._battleWeatherSprite) {
             // Weather draws nothing unless it is told what to draw; the battle field does
             // not scroll, so the origin stays at zero.
+            //
+            // At power zero there is no weather, and a Weather sprite asked to
+            // update at power zero still walks its whole sprite pool to retire
+            // what is left of it. Once that pool is empty there is nothing there
+            // to tick, so a clear sky costs the two reads and stops. The sprite is
+            // still told the type and power first, so the frame the rain starts is
+            // the frame it starts.
+            const power = $gameScreen.weatherPower();
             this._battleWeatherSprite.type = $gameScreen.weatherType();
-            this._battleWeatherSprite.power = $gameScreen.weatherPower();
-            this._battleWeatherSprite.update();
+            this._battleWeatherSprite.power = power;
+            if (power > 0 || this._battleWeatherHadPower) {
+                this._battleWeatherSprite.update();
+                // Keep ticking for one dry frame after the rain stops so the last
+                // drops are cleared away rather than frozen on screen.
+                this._battleWeatherHadPower = power > 0 ||
+                    (this._battleWeatherSprite._sprites || []).length > 0;
+            }
         }
     };
 

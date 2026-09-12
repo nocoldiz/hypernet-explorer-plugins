@@ -133,17 +133,32 @@
         // into a different level band against it: the plate is colour-coded on
         // the gap, so a party that levels up past a monster has to see it go
         // back to white without waiting for the troop to change.
-        const enemyLevel = getEnemyLevelFromEvent(event);
-        const band = enemyLevel > 0 ? levelGapTierFor(enemyLevel) : -1;
-        if (this._lastEnemyTroopId !== event._fixedTroopId || this._lastEnemyLevelBand !== band) {
-            this._lastEnemyTroopId = event._fixedTroopId;
-            this._lastEnemyLevelBand = band;
+        //
+        // Both of those are pure functions of two things, the troop and the
+        // party's median level, and the level itself is already cached per
+        // troop. So neither was ever worth deriving until one of the two had
+        // actually moved, yet the band was derived for every enemy sprite on
+        // every frame, and BSE.Helpers.levelGapTier allocates a result object
+        // each time it is asked. The median is the cheap one to test (it is
+        // frame-cached for the whole sweep), so it is what gates the rest.
+        const median = partyMedianLevel();
+        const troopChanged = this._lastEnemyTroopId !== event._fixedTroopId;
+        if (troopChanged || this._lastEnemyMedian !== median) {
+            this._lastEnemyMedian = median;
+            const enemyLevel = getEnemyLevelFromEvent(event);
+            const band = enemyLevel > 0 ? levelGapTierFor(enemyLevel) : -1;
+            // A new troop reprints the plate even at the same colour, because
+            // the number on it is the troop's, not the band's.
+            if (troopChanged || this._lastEnemyLevelBand !== band) {
+                this._lastEnemyTroopId = event._fixedTroopId;
+                this._lastEnemyLevelBand = band;
 
-            // Remove old label if exists
-            this.removeEnemyLevelLabel();
+                // Remove old label if exists
+                this.removeEnemyLevelLabel();
 
-            if (enemyLevel > 0) {
-                this.createEnemyLevelLabel(enemyLevel, band);
+                if (enemyLevel > 0) {
+                    this.createEnemyLevelLabel(enemyLevel, band);
+                }
             }
         }
 

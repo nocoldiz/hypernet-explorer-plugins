@@ -732,7 +732,8 @@
       const currentTime = Date.now();
       const elapsedSeconds = (currentTime - this.playerShip.departureTime) / 1000;
 
-      const baseSpeed = 1;
+      // Travelling to other stars (interstellar) has base speed 0.5.
+      const baseSpeed = isIntraSystem ? 1 : 0.5;
       const distanceTraveled = elapsedSeconds * baseSpeed * speedMultiplier;
       const maxProgress = 0.95;
       // Zero-distance travel would make progress NaN; treat it as an instant arrival.

@@ -37,6 +37,7 @@
     "enemyBattlers": "Enemy Battlers",
     "runInBackground": "Run In Background",
     "showFps": "Show FPS Counter",
+    "lowModelDetail": "Reduced Model Detail",
     "activeTheme": "Active Theme",
     "mapBattle": "Map Battle",
     "mapStreaming": "Map Streaming",
@@ -113,7 +114,8 @@
     "mapTooltips": "Real-time tutorial messages, compass quest targets and written context tips while you walk the map.",
     "dialogueVoices": "Each letter of a typed dialogue line is chattered with a short vowel or consonant blip. The pitch is the speaker's own; a gold keyword is spoken higher.",
     "dialogueVoicesVolume": "How loud the letter blips under a dialogue line are, apart from the other sound effects.",
-    "battleCommandPosition": "Which side of the screen the battle command list, the skill page and the backpack stand on."
+    "battleCommandPosition": "Which side of the screen the battle command list, the skill page and the backpack stand on.",
+    "lowModelDetail": "Builds procedural weapons and items with fewer segments. Helps on slower machines; the models read blockier."
   },
   "descState": {
     "musicArtistDisplay": [

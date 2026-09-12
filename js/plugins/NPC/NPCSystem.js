@@ -323,6 +323,25 @@
       }
       return null;
     },
+    isAnyShopEvent: (ev) => {
+      const data = ev && ev.event ? ev.event() : ev;
+      if (!data) return false;
+      return Utils.hasShopTag(data.note) || /^shop$/i.test(data.name || "");
+    },
+    // Returns the direction to face if an adjacent tile has the counter flag, else null.
+    // Checks Down (2), Left (4), Right (6), Up (8) in order.
+    counterFacingDir: (event) => {
+      if (!event || !$gameMap || typeof $gameMap.isCounter !== "function") return null;
+      const x = typeof event.x === "number" ? event.x : (typeof event._x === "number" ? event._x : null);
+      const y = typeof event.y === "number" ? event.y : (typeof event._y === "number" ? event._y : null);
+      if (x == null || y == null) return null;
+      const isValid = typeof $gameMap.isValid === "function" ? (tx, ty) => $gameMap.isValid(tx, ty) : () => true;
+      if (isValid(x, y + 1) && $gameMap.isCounter(x, y + 1)) return 2;
+      if (isValid(x - 1, y) && $gameMap.isCounter(x - 1, y)) return 4;
+      if (isValid(x + 1, y) && $gameMap.isCounter(x + 1, y)) return 6;
+      if (isValid(x, y - 1) && $gameMap.isCounter(x, y - 1)) return 8;
+      return null;
+    },
     // True when an authored map event may be driven around the map as an NPC.
     // Two things disqualify one whatever its note says:
     //   - it carries no character sheet on any page. A graphic-less event is a
@@ -4905,13 +4924,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // Returns the direction to face if an adjacent tile has the counter flag, else null.
     // Used to lock shop workers toward the customer side of their counter.
     _counterFacingDir() {
-      if (!this.event) return null;
-      const x = this.event.x, y = this.event.y;
-      if ($gameMap.isCounter(x, y + 1)) return 2;
-      if ($gameMap.isCounter(x - 1, y)) return 4;
-      if ($gameMap.isCounter(x + 1, y)) return 6;
-      if ($gameMap.isCounter(x, y - 1)) return 8;
-      return null;
+      return Utils.counterFacingDir(this.event);
     }
 
     // ── NPCSim states injected by NPCSimulationCore ───────────────────────────
@@ -5145,6 +5158,25 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       this._characterName = "";
       this._characterIndex = 0;
     }
+    if (Utils.isAnyShopEvent(this)) {
+      this._priorityType = 1;
+      this._through = false;
+      const cDir = Utils.counterFacingDir(this);
+      if (cDir) {
+        this._direction = cDir;
+        this._originalDirection = cDir;
+        this._prelockDirection = cDir;
+      }
+    }
+  };
+
+  const _Game_Event_unlock = Game_Event.prototype.unlock;
+  Game_Event.prototype.unlock = function () {
+    _Game_Event_unlock.call(this);
+    if (Utils.isAnyShopEvent(this)) {
+      const cDir = Utils.counterFacingDir(this);
+      if (cDir) this.setDirection(cDir);
+    }
   };
 
   // Action-button interaction with NPCs that are mid-step.
@@ -5184,6 +5216,9 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     const dir = this.direction();
     const fx = $gameMap.roundXWithDirection(this.x, dir);
     const fy = $gameMap.roundYWithDirection(this.y, dir);
+    const isCounter = typeof $gameMap.isCounter === "function" && $gameMap.isCounter(fx, fy);
+    const cx = isCounter ? $gameMap.roundXWithDirection(fx, dir) : fx;
+    const cy = isCounter ? $gameMap.roundYWithDirection(fy, dir) : fy;
     // Runnable = has an action/touch-triggerable page with real commands. We do
     // NOT require isNormalPriority(): a transplanted/pre-placed NPC page left at
     // "below/above characters" priority is invisible to the engine's own facing
@@ -5205,10 +5240,11 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       }
       return false;
     };
+    const matchesFacing = (ev) => occupies(ev, fx, fy) || (isCounter && occupies(ev, cx, cy));
     const events = $gameMap.events();
     // 1) Anything the player is facing (roster NPCs first, then any event).
-    for (const ev of events) { if (ev && ev._npcRosterSpawn && runnable(ev) && occupies(ev, fx, fy)) { ev.start(); return; } }
-    for (const ev of events) { if (ev && !ev._npcRosterSpawn && runnable(ev) && occupies(ev, fx, fy)) { ev.start(); return; } }
+    for (const ev of events) { if (ev && ev._npcRosterSpawn && runnable(ev) && matchesFacing(ev)) { ev.start(); return; } }
+    for (const ev of events) { if (ev && !ev._npcRosterSpawn && runnable(ev) && matchesFacing(ev)) { ev.start(); return; } }
     // 2) Last-resort generosity: a roster NPC standing directly next to the
     //    player (its sprite may straddle tiles so the faced tile never matched
     //    exactly). Prefer one in the facing direction. Only roster NPCs, so we
@@ -5219,7 +5255,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       const ex = Math.round(ev._realX), ey = Math.round(ev._realY);
       const man = Math.abs(ex - this.x) + Math.abs(ey - this.y);
       if (man !== 1) continue;
-      const score = (ex === fx && ey === fy) ? 2 : 1; // in facing dir scores higher
+      const score = (ex === fx && ey === fy) ? 2 : ((isCounter && ex === cx && ey === cy) ? 2 : 1); // in facing dir scores higher
       if (score > bestScore) { bestScore = score; best = ev; }
     }
     if (best) best.start();
@@ -5950,7 +5986,70 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     }
   }
 
+  // Sanitizes a shop event so stray page conditions (such as requiring item 1
+  // or specific hour variables) or stray self-switches never drop it into an
+  // un-interactable, through=true ghost state. Ensures normal priority (collision)
+  // and turns its sprite to face any adjacent counter tile.
+  function sanitizeShopEvent(ev) {
+    if (!ev || ev._erased) return;
+    const data = ev.event ? ev.event() : null;
+    if (!data || !Utils.isAnyShopEvent(data)) return;
+
+    for (const page of (data.pages || [])) {
+      if ((page?.list?.length ?? 0) > 1) {
+        if (page.conditions) {
+          page.conditions.itemValid = false;
+          page.conditions.variableValid = false;
+          page.conditions.switch1Valid = false;
+          page.conditions.switch2Valid = false;
+          page.conditions.actorValid = false;
+        }
+        page.priorityType = 1;
+        page.through = false;
+        page.trigger = 0;
+      }
+    }
+
+    if ($gameMap && $gameSelfSwitches) {
+      const mapId = $gameMap.mapId();
+      const evId = ev.eventId();
+      for (const ch of ['A', 'B', 'C', 'D']) {
+        if ($gameSelfSwitches.value([mapId, evId, ch])) {
+          $gameSelfSwitches.setValue([mapId, evId, ch], false);
+        }
+      }
+    }
+
+    if (ev._pageIndex < 0 || (ev.page()?.list?.length ?? 0) <= 1) {
+      ev.refresh();
+      ev.setupPage();
+    }
+
+    ev.setThrough(false);
+    ev.setPriorityType(1);
+
+    const cDir = Utils.counterFacingDir(ev);
+    if (cDir) {
+      ev.setDirection(cDir);
+      ev._originalDirection = cDir;
+      ev._prelockDirection = cDir;
+      for (const page of (data.pages || [])) {
+        if (page?.image) page.image.direction = cDir;
+      }
+    }
+  }
+
+  function sanitizeMapShopEvents() {
+    if (!$gameMap) return;
+    for (const ev of $gameMap.events()) {
+      if (ev && Utils.isAnyShopEvent(ev)) {
+        sanitizeShopEvent(ev);
+      }
+    }
+  }
+
   function stageShopPersonas() {
+    sanitizeMapShopEvents();
     // Nobody is behind any counter in an empty world.
     if (Config.isEmptyWorld()) return;
     const SSM = window.NPCSim?.ShopShiftManager;
@@ -6567,6 +6666,11 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     requestZombieBattle: (ev) => requestZombieBattle(ev),
     generateSeededPersona: SpawnManager.generateSeededPersona,
     hasShopTag: Utils.hasShopTag,
+    isAnyShopEvent: Utils.isAnyShopEvent,
+    counterFacingDir: Utils.counterFacingDir,
+    getCounterFacingDir: Utils.counterFacingDir,
+    sanitizeShopEvent: sanitizeShopEvent,
+    sanitizeMapShopEvents: sanitizeMapShopEvents,
     // Tells a rota counter (no graphic) apart from a Shop event whose
     // shopkeeper the author drew and who is therefore always on duty.
     hasOwnGraphic: Utils.hasOwnGraphic,

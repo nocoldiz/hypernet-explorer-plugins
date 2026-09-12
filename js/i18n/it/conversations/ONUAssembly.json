@@ -917,7 +917,7 @@
   ],
   "lobby": {
     "intro": [
-      "Il banco delle credenziali sta fuori dall'aula: {venue}. {Un impiegato attende|Due impiegati attendono, uno dei quali dorme|Un impiegato attende con un registro più vecchio dell'assemblea}.",
+      "Il banco delle credenziali sta fuori dall'aula: {venue}. {Un impiegato attende|Due impiegati attendono, uno dei quali dorme|Un impiegato attende con un grimorio più vecchio dell'assemblea}.",
       "Fuori dall'aula, a {venue}, il registro è aperto e il caffè è {freddo|gratis|nessuna delle due}.",
       "L'anticamera dell'assemblea. {venue}, e una fila di nessuno."
     ],
@@ -934,18 +934,18 @@
   },
   "joining": {
     "intro": [
-      "L'impiegato delle credenziali gira il registro. \"Quale, allora?\" {La lista è più corta di quel che sembra|Non tutte le potenze ti vogliono|Alcuni di questi nomi non hanno mai preso un esterno}. {name} legge.",
+      "L'impiegato delle credenziali gira il grimorio. \"Quale, allora?\" {La lista è più corta di quel che sembra|Non tutte le potenze ti vogliono|Alcuni di questi nomi non hanno mai preso un esterno}. {name} legge.",
       "\"L'accreditamento\", dice l'impiegato, \"è questione di chi garantisce per te.\" Viene esibita una lista. Il nome di {name} è in cima a una pagina bianca.",
       "Ci sono ventuno seggi e una lista molto più corta di potenze disposte a farci sedere {name}."
     ],
     "refused": [
-      "L'impiegato gira il registro ed è vuoto. Nessuno garantisce per {name}. {Non questa settimana|Non ancora|Non finché il registro dice quel che dice}.",
+      "L'impiegato gira il grimorio ed è vuoto. Nessuno garantisce per {name}. {Non questa settimana|Non ancora|Non finché il grimorio dice quel che dice}.",
       "\"Nessuno\", dice l'impiegato, senza cattiveria. \"Prima devi rammendare qualcosa.\" {name} non è accreditato.",
-      "Non c'è potenza nel registro disposta a mettere il nome di {name} su un seggio."
+      "Non c'è potenza nel grimorio disposta a mettere il nome di {name} su un seggio."
     ],
     "declined": [
-      "{name} chiude il registro. L'impiegato {fa spallucce|prende nota|se lo aspettava}.",
-      "\"Un'altra settimana, allora\", dice l'impiegato, e rigira il registro. {name} non prende nulla.",
+      "{name} chiude il grimorio. L'impiegato {fa spallucce|prende nota|se lo aspettava}.",
+      "\"Un'altra settimana, allora\", dice l'impiegato, e rigira il grimorio. {name} non prende nulla.",
       "{name} lascia il banco senza accreditamento, {che è anch'essa una decisione|cosa che l'impiegato registra come una decisione|e l'impiegato scrive esattamente questo}."
     ],
     "accepted": [

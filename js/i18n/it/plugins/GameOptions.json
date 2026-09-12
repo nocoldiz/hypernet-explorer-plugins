@@ -37,6 +37,7 @@
     "enemyBattlers": "Combattenti Nemici",
     "runInBackground": "Esegui in Secondo Piano",
     "showFps": "Mostra Contatore FPS",
+    "lowModelDetail": "Dettaglio Modelli Ridotto",
     "activeTheme": "Tema Attivo",
     "mapBattle": "Battaglia sulla Mappa",
     "mapStreaming": "Streaming Mappa",
@@ -113,7 +114,8 @@
     "mapTooltips": "Messaggi dei tutorial in tempo reale, segnaposto della bussola per le missioni e suggerimenti scritti mentre esplori la mappa.",
     "dialogueVoices": "Ogni lettera di una battuta digitata viene cinguettata con un breve suono di vocale o consonante. Il tono è quello di chi parla; una parola chiave dorata suona più acuta.",
     "dialogueVoicesVolume": "Quanto sono forti i suoni delle lettere sotto una battuta di dialogo, separati dagli altri effetti sonori.",
-    "battleCommandPosition": "Su quale lato dello schermo stanno i comandi di battaglia, la pagina delle abilità e lo zaino."
+    "battleCommandPosition": "Su quale lato dello schermo stanno i comandi di battaglia, la pagina delle abilità e lo zaino.",
+    "lowModelDetail": "Costruisce armi e oggetti procedurali con meno segmenti. Aiuta sulle macchine lente; i modelli appaiono piu spigolosi."
   },
   "descState": {
     "musicArtistDisplay": [

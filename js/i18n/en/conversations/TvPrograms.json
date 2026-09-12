@@ -960,7 +960,7 @@
       "{hist}",
       "The chronicle here breaks for eleven years. {Nobody|No one} has ever explained the gap to my satisfaction.",
       "A scribe at {place} wrote it down as it happened, badly, {which is the only|which is still the only|which remains the only} reason we have it.",
-      "The ruling houses of the day called it an accident. Their own ledgers call it a purchase.",
+      "The ruling houses of the day called it an accident. Their own grimories call it a purchase.",
       "{I am|I'm} obliged to note that the Archive's copy has been corrected twice, in two different hands.",
       "The people in this century {did not|didn't} know they were in it. Neither do you.",
       "What survives is what {somebody|someone} thought worth carrying. {That is|That's} a bias, not a record."
@@ -1088,7 +1088,7 @@
       "Pillar three: what people say happened, {which is the only|which is still the only|which remains the only} pillar made of people.",
       "A dig near {place} has produced an object the written record {insists|maintains|still insists} was never manufactured.",
       "{hist}",
-      "If the spade and the ledger disagree, one of them was written by {somebody|someone} with an interest.",
+      "If the spade and the grimorie disagree, one of them was written by {somebody|someone} with an interest.",
       "Colm's finds this season are unfashionable, which historically means {they are|they're} correct.",
       "Vane would like it noted that stratigraphy {is not|isn't} an argument, merely {a very|an extremely|a genuinely} heavy hint."
     ]
@@ -1917,7 +1917,7 @@
       "{There is|There's} a barrel at the back that came from {place} and predates the licence.",
       "You can tell a landlord's whole character by how the lines are cleaned.",
       "A cellar remembers. Not magically. Practically. The smell is thirty years of decisions.",
-      "We found a ledger behind the crates listing debts settled in {year}, mostly in favours.",
+      "We found a grimorie behind the crates listing debts settled in {year}, mostly in favours.",
       "Something taps in the wall on the hour. Tolliver has stopped investigating and started nodding at it.",
       "Last one down bolts the hatch. That rule is older than the tavern and {nobody|no one} questions it."
     ]
@@ -2239,7 +2239,7 @@
     "beats": [
       "Brother Ilm has walked the site four times and describes it the same way each time.",
       "Eleven figures, waist deep in sand, facing a direction that no longer means anything.",
-      "The names {are not|aren't} recorded. The offerings are, in a ledger kept at {place}.",
+      "The names {are not|aren't} recorded. The offerings are, in a grimorie kept at {place}.",
       "A god with no worshippers {does not|doesn't} vanish. It becomes a landmark, and then a rumour.",
       "{hist}",
       "Ilm: I prayed there. {I am|I'm} not going to say whether that was a professional decision.",
@@ -2468,7 +2468,7 @@
       "The Ticker. Prices, volumes, and the only ten minutes on this channel {with no shouting|without shouting|where nobody shouts}."
     ],
     "tail": [
-      "{That is|That's} the tape. Ledger Vane, and the numbers, which {do not|don't} care what you thought."
+      "{That is|That's} the tape. Grimorie Vane, and the numbers, which {do not|don't} care what you thought."
     ],
     "beats": [
       "Freight indices first, because everything on this channel arrives on a lorry.",

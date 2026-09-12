@@ -2412,7 +2412,7 @@ Em:
 Same numbers?
 
 Bubba:
-Same ledger, worse smell.
+Same grimorie, worse smell.
 
 
 ------------------------------------------------------------------------------------------------------------

@@ -117,6 +117,7 @@
         CATEGORY_ORDER: ['accessories', 'media', 'reference', 'internet', 'economy', 'office', 'games', 'civic', 'system'],
         // i18n-ignore-start  app ids and category ids, named by categoryLabel()
         DEFAULT_CATEGORIES: {
+            'app-all-programs': 'system', 'app-games': 'games', 'app-utilities': 'system',
             'sys-task-mgr': 'system', 'sys-terminal': 'system', 'control-panel': 'system',
             'my-computer': 'system', 'my-documents': 'system', 'app-bios': 'system',
             'app-hypernet-browser': 'internet', 'app-hypernet-shop': 'internet', 'app-news-history': 'internet',
@@ -141,6 +142,12 @@
 
         defaultCategory: function(id) {
             return this.DEFAULT_CATEGORIES[id] || 'accessories';
+        },
+
+        categorySection: function(category) {
+            if (category === 'games') return 'games';
+            if (category === 'system' || category === 'accessories') return 'utilities';
+            return 'programs';
         },
 
         categoryLabel: function(category) {
@@ -180,14 +187,19 @@
 
         // The machine boots with a short desktop: the shell's own doors and the
         // programs the game is actually played through. Everything else lives
-        // in All Programs until the player drags it out.
+        // in the drawer windows until the player drags it out.
         // i18n-ignore-start  app ids
-        DESKTOP_DEFAULT: ['app-all-programs', 'app-hypernet-browser', 'app-hypernet-shop',
-            'app-stock-market', 'app-neuropolice', 'app-card-arena', 'app-hexcel',
-            'app-hypernet-paint'],
-        // All Programs is the drawer every other shortcut comes out of, so it
-        // is the one icon that cannot be taken off the desktop.
-        DESKTOP_PERMANENT: ['app-all-programs'],
+        DESKTOP_DEFAULT: [
+            'app-all-programs', 'app-games', 'app-utilities',
+            'my-computer', 'my-documents',
+            'app-hypernet-browser', 'app-hypernet-shop', 'app-stock-market',
+            'app-neuropolice', 'app-card-arena', 'app-hexcel', 'app-hypernet-paint',
+            'app-object-index', 'app-job-offers', 'app-colosseum',
+            'app-news-history', 'app-real-estate', 'app-bank-system', 'app-bestiary-encarta'
+        ],
+        // Programs, Games and Utilities are the drawers every other shortcut
+        // comes out of, so they cannot be taken off the desktop.
+        DESKTOP_PERMANENT: ['app-all-programs', 'app-games', 'app-utilities'],
         // i18n-ignore-end
 
         isPermanentDesktopApp: function(id) {
@@ -202,10 +214,13 @@
             return this.DESKTOP_DEFAULT.indexOf(app.id) >= 0;
         },
 
-        // Every installed program that is not on the desktop: what the All
-        // Programs window lists, filed under its category.
-        offDesktopByCategory: function() {
-            return this.appsByCategory().map(group => ({
+        // Every installed program that is not on the desktop: what the
+        // drawer windows list, optionally filtered by target section.
+        offDesktopByCategory: function(targetSection) {
+            return this.appsByCategory().filter(group => {
+                if (!targetSection) return true;
+                return this.categorySection(group.category) === targetSection;
+            }).map(group => ({
                 category: group.category,
                 label: group.label,
                 apps: group.apps.filter(app => !this.isOnDesktop(app))
@@ -738,13 +753,30 @@
                 all.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const box = all.getBoundingClientRect();
-                    // Each category is one entry; opening it lists its programs.
-                    this.ContextMenu.show(box.right, box.bottom, this.appsByCategory().map(group => ({
-                        label: group.label,
-                        action: () => this.ContextMenu.show(box.right, box.bottom, group.apps.map(app => ({
-                            label: app.name, icon: app.icon, action: () => this.launchApp(app.id)
-                        })))
-                    })));
+                    const secName = (sec) => {
+                        const k = 'HypernetOS.xp.' + sec + '.appName';
+                        return T.has(k) ? T(k) : sec;
+                    };
+                    const showSection = (sec) => {
+                        const groups = this.appsByCategory().filter(g => this.categorySection(g.category) === sec);
+                        if (groups.length === 1) {
+                            this.ContextMenu.show(box.right, box.bottom, groups[0].apps.map(app => ({
+                                label: app.name, icon: app.icon, action: () => this.launchApp(app.id)
+                            })));
+                        } else {
+                            this.ContextMenu.show(box.right, box.bottom, groups.map(group => ({
+                                label: group.label,
+                                action: () => this.ContextMenu.show(box.right, box.bottom, group.apps.map(app => ({
+                                    label: app.name, icon: app.icon, action: () => this.launchApp(app.id)
+                                })))
+                            })));
+                        }
+                    };
+                    this.ContextMenu.show(box.right, box.bottom, [
+                        { label: secName('programs'), icon: 230, action: () => showSection('programs') },
+                        { label: secName('games'), icon: 291, action: () => showSection('games') },
+                        { label: secName('utilities'), icon: 234, action: () => showSection('utilities') }
+                    ]);
                 });
                 listContainer.appendChild(all);
                 return;
@@ -839,13 +871,13 @@
         },
 
         // True when a dragged shortcut was let go somewhere that means "take
-        // this off the desktop": the Recycle Bin icon, or an All Programs
-        // window. The permanent icon never answers yes.
+        // this off the desktop": the Recycle Bin icon, or a drawer window
+        // (Programs, Games, Utilities). The permanent icons never answer yes.
         isUnpinDropTarget: function(ev, appId) {
             if (this.isPermanentDesktopApp(appId)) return false;
             const el = document.elementFromPoint(ev.clientX, ev.clientY);
             if (!el) return false;
-            if (el.closest('#win-app-all-programs')) return true;
+            if (el.closest('#win-app-all-programs, #win-app-games, #win-app-utilities, .xp-allprograms')) return true;
             const icon = el.closest('.desktop-icon');
             return !!(icon && icon.dataset.appId === 'app-recycle' && appId !== 'app-recycle');   // i18n-ignore  app id
         },
@@ -1412,7 +1444,10 @@
                 win.style.transition = 'transform 0.15s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.15s ease';
                 win.style.transform = 'scale(1)';
                 win.style.opacity = '1';
-                setTimeout(() => { win.style.transition = ''; }, 150);
+                setTimeout(() => {
+                    win.style.transition = '';
+                    win.style.transform = '';
+                }, 150);
             });
 
             return win;
@@ -1652,6 +1687,9 @@
                 void win.offsetWidth; // Force layout
                 win.style.transform = 'scale(1)';
                 win.style.opacity = '1';
+                setTimeout(() => {
+                    if (!win.classList.contains('minimized')) win.style.transform = '';
+                }, 150);
                 this.bringToFront(win);
             } else {
                 win.style.transform = 'scale(0.8) translateY(150px)';
@@ -3590,7 +3628,7 @@
                     </div>
                     <div style="flex:1"></div>
                     <button id="hc-enter-btn" data-focus-key="hc-enter-btn" onclick="window._hcEnter()"
-                            style="width:100%; padding:11px; background:linear-gradient(135deg, var(--xp-red-5), var(--xp-red-2)); color:var(--xp-gold); border:1px solid #FF6B6B; font-size:16px; font-weight:bold; font-family:Georgia,serif; letter-spacing:1.5px; cursor:pointer; margin-top:10px; box-shadow:0 2px 5px rgba(0,0,0,0.35); text-shadow:0 1px 2px #000">
+                            style="width:100%; padding:11px; background:linear-gradient(135deg, var(--xp-red-5), var(--xp-red-2)); color:var(--xp-white); border:1px solid #FF6B6B; font-size:16px; font-weight:bold; font-family:Georgia,serif; letter-spacing:1.5px; cursor:pointer; margin-top:10px; box-shadow:0 2px 5px rgba(0,0,0,0.35); text-shadow:0 1px 2px #000">
                         &nbsp;&nbsp;${T('HypernetOS.enterColosseum')}
                     </button>
                 `;
@@ -3601,7 +3639,7 @@
                     <div style="background:linear-gradient(135deg, #1a0300 0%, var(--xp-red-4) 55%, #B22222 100%); padding:11px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--xp-red-5); flex-shrink:0">
                         <div style="font-size:2.2rem; line-height:1"></div>
                         <div>
-                            <div style="color:var(--xp-gold); font-weight:bold; font-size:17px; letter-spacing:2px; font-family:Georgia,serif; text-shadow:1px 1px 2px #000">${T('HypernetOS.colosseumBanner')}</div>
+                            <div style="color:var(--xp-white); font-weight:bold; font-size:17px; letter-spacing:2px; font-family:Georgia,serif; text-shadow:1px 1px 2px #000">${T('HypernetOS.colosseumBanner')}</div>
                             <div style="color:#ffccaa; font-size:13px; margin-top:2px">${T('HypernetOS.colosseumTagline')}</div>
                         </div>
                         <div style="margin-left:auto; font-size:13px; color:#ff9966; text-align:right; line-height:1.5">${T('HypernetOS.partyRestoredNote')}</div>
@@ -6880,48 +6918,115 @@
         win.addEventListener('hypernet-recycler-changed', render);
     }, { desktopShortcut: true });
 
-    // --- All Programs -------------------------------------------------------------------------
-    // The drawer the desktop is filled from. It lists every installed program
-    // that has no shortcut on the desktop, filed under its category; dragging
-    // one onto the desktop pins it, and dragging a desktop icon back in here
-    // (or onto the Recycle Bin) puts it back on this list. The icon itself
-    // cannot be taken off the desktop.
-    xpApp('app-all-programs', 'allprograms', 230, [560, 420], (win, root, T_) => {
+    // --- Programs / Games / Utilities Drawers ----------------------------------
+    // Drawer windows listing installed programs, games, or utilities not on
+    // the desktop. Dragging one onto the desktop pins it, and dragging back in
+    // unpins it. The drawer icons themselves cannot be taken off the desktop.
+    const drawerBuilder = (appId, appKey, defaultSection) => (win, root, T_) => {
         const OS = window.HypernetOS;
+        win.classList.add('xp-drawer-window');
+        let currentSection = defaultSection;
+
+        const SECTIONS = [
+            { id: 'programs', icon: 230 },
+            { id: 'games', icon: 291 },
+            { id: 'utilities', icon: 234 }
+        ];
+
         const render = () => {
-            const groups = OS.offDesktopByCategory();
+            const tSec = (sec) => {
+                const k = 'HypernetOS.xp.' + sec + '.appName';
+                return T.has(k) ? T(k) : sec;
+            };
+            const tHint = (sec) => {
+                const k = 'HypernetOS.xp.' + sec + '.hint';
+                return T.has(k) ? T(k) : T('HypernetOS.xp.allprograms.hint');
+            };
+            const tEmpty = (sec) => {
+                const k = 'HypernetOS.xp.' + sec + '.empty';
+                return T.has(k) ? T(k) : T('HypernetOS.xp.allprograms.empty');
+            };
+
+            root.className = 'xp-allprograms xp-drawer-container';
             root.innerHTML = `
-                <div class="xp-allprograms-hint">${esc(T_('hint'))}</div>
-                <div class="xp-allprograms-list">${groups.length ? '' : `<div class="xp-allprograms-empty">${esc(T_('empty'))}</div>`}</div>`;
-            const list = q(root, '.xp-allprograms-list');
-            groups.forEach(group => {
-                const head = document.createElement('div');
-                head.className = 'xp-allprograms-category';
-                head.textContent = group.label;
-                list.appendChild(head);
-                group.apps.forEach(app => {
-                    const item = document.createElement('div');
-                    item.className = 'xp-allprograms-item focusable';
-                    item.tabIndex = 0;
-                    item.dataset.appId = app.id;
-                    item.innerHTML = `<div class="xp-allprograms-icon">${OS.getIconHTML(app.icon, 32)}</div>`
-                        + `<div class="xp-allprograms-name">${esc(app.name)}</div>`;
-                    item.addEventListener('click', e => { e.stopPropagation(); if (!item._hnDragged) OS.launchApp(app.id); });
-                    item.addEventListener('contextmenu', e => {
-                        e.preventDefault(); e.stopPropagation();
-                        OS.ContextMenu.show(e.clientX, e.clientY, [
-                            { label: T_('open'), bold: true, action: () => OS.launchApp(app.id) },
-                            { label: T_('addToDesktop'), action: () => OS.setOnDesktop(app.id, true) }
-                        ]);
-                    });
-                    OS.attachPinDrag(item, app, false);
-                    list.appendChild(item);
+                <div class="xp-drawer-tabs">
+                    <div class="xp-drawer-tab${currentSection === 'all' ? ' active' : ''}" data-sec="all">${esc(tSec('allprograms'))}</div>
+                    <div class="xp-drawer-tab${currentSection === 'programs' ? ' active' : ''}" data-sec="programs">${esc(tSec('programs'))}</div>
+                    <div class="xp-drawer-tab${currentSection === 'games' ? ' active' : ''}" data-sec="games">${esc(tSec('games'))}</div>
+                    <div class="xp-drawer-tab${currentSection === 'utilities' ? ' active' : ''}" data-sec="utilities">${esc(tSec('utilities'))}</div>
+                </div>
+                <div class="xp-allprograms-hint">${esc(tHint(currentSection === 'all' ? 'allprograms' : currentSection))}</div>
+                <div class="xp-allprograms-list"></div>`;
+
+            root.querySelectorAll('.xp-drawer-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    currentSection = tab.dataset.sec;
+                    render();
                 });
+            });
+
+            const list = q(root, '.xp-allprograms-list');
+            const sectionsToRender = currentSection === 'all'
+                ? SECTIONS
+                : SECTIONS.filter(s => s.id === currentSection);
+
+            sectionsToRender.forEach(secInfo => {
+                const secBox = document.createElement('div');
+                secBox.className = 'xp-drawer-section';
+
+                const secHeader = document.createElement('div');
+                secHeader.className = 'xp-drawer-section-header';
+                secHeader.innerHTML = `${OS.getIconHTML(secInfo.icon, 16)} <span>${esc(tSec(secInfo.id))}</span>`;
+                secBox.appendChild(secHeader);
+
+                const groups = OS.offDesktopByCategory(secInfo.id);
+                if (!groups.length) {
+                    const empty = document.createElement('div');
+                    empty.className = 'xp-allprograms-empty';
+                    empty.textContent = tEmpty(secInfo.id);
+                    secBox.appendChild(empty);
+                } else {
+                    groups.forEach(group => {
+                        if (groups.length > 1 || group.category !== secInfo.id) {
+                            const head = document.createElement('div');
+                            head.className = 'xp-allprograms-category';
+                            head.textContent = group.label;
+                            secBox.appendChild(head);
+                        }
+                        const grid = document.createElement('div');
+                        grid.className = 'xp-allprograms-grid';
+                        group.apps.forEach(app => {
+                            const item = document.createElement('div');
+                            item.className = 'xp-allprograms-item focusable';
+                            item.tabIndex = 0;
+                            item.dataset.appId = app.id;
+                            item.innerHTML = `<div class="xp-allprograms-icon">${OS.getIconHTML(app.icon, 32)}</div>`
+                                + `<div class="xp-allprograms-name">${esc(app.name)}</div>`;
+                            item.addEventListener('click', e => { e.stopPropagation(); if (!item._hnDragged) OS.launchApp(app.id); });
+                            item.addEventListener('contextmenu', e => {
+                                e.preventDefault(); e.stopPropagation();
+                                OS.ContextMenu.show(e.clientX, e.clientY, [
+                                    { label: T('HypernetOS.xp.allprograms.open'), bold: true, action: () => OS.launchApp(app.id) },
+                                    { label: T('HypernetOS.xp.allprograms.addToDesktop'), action: () => OS.setOnDesktop(app.id, true) }
+                                ]);
+                            });
+                            OS.attachPinDrag(item, app, false);
+                            grid.appendChild(item);
+                        });
+                        secBox.appendChild(grid);
+                    });
+                }
+                list.appendChild(secBox);
             });
         };
         root._hnRender = render;
         render();
-    }, { desktopShortcut: true, category: 'system' });   // i18n-ignore  category id
+    };
+
+    xpApp('app-all-programs', 'allprograms', 230, [640, 480], drawerBuilder('app-all-programs', 'allprograms', 'all'), { desktopShortcut: true, category: 'system' });   // i18n-ignore  category id
+    xpApp('app-games', 'games', 291, [640, 480], drawerBuilder('app-games', 'games', 'games'), { desktopShortcut: true, category: 'games' });   // i18n-ignore  category id
+    xpApp('app-utilities', 'utilities', 234, [640, 480], drawerBuilder('app-utilities', 'utilities', 'utilities'), { desktopShortcut: true, category: 'system' });   // i18n-ignore  category id
 
     // --- Search Companion ----------------------------------------------------------------------
     xpApp('app-search', 'search', 190, [600, 440], (win, root, T_) => {

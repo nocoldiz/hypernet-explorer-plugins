@@ -151,6 +151,13 @@
     "actionTalk": "Parla",
     "actionEmpathize": "Empatizza",
     "actionCancel": "Lascia stare",
+    "petting": [
+      "Ti accovacci e gratti {name} dietro le orecchie.",
+      "Gratti {name} lungo la mascella, come piace a lui.",
+      "Ti inginocchi e lasci che {name} ti si appoggi addosso con tutto il peso.",
+      "Strofini {name} tra le scapole con tutte e due le mani.",
+      "Ti siedi in mezzo alla strada e fai un mucchio di feste a {name}."
+    ],
     "petted": [
       "{name} si preme contro la tua mano e non si sposta piu'.",
       "{name} emette un verso basso e soddisfatto.",

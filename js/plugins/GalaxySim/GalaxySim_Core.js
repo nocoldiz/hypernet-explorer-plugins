@@ -85,6 +85,14 @@
  * @desc Show the star map after plotting, so the flight to the fuel star actually runs
  * @type boolean
  * @default true
+ *
+ * @command ShipControls
+ * @text Ship Controls
+ * @desc Opens the minimal and fast ship controls HUD
+ *
+ * @command ship controls
+ * @text Ship Controls
+ * @desc Opens the minimal and fast ship controls HUD
  */
 
 (() => {
@@ -196,19 +204,36 @@
 
   // Shows a choice list of the hardcoded landing sites for the planet the ship
   // currently orbits (ship.currentPlanet), then teleports to whichever is picked
-  // via GS.teleportToLandingSite. Meant to be called from an event (e.g. a
-  // landing console inside the Starship), not from the 3D star map scene.
+  // via GS.teleportToLandingSite. If the planet/moon has no spaceports, brings up
+  // the landing-site picker so the player can choose a landing square.
   PluginManager.registerCommand(pluginName, "LandToSpaceport", () => {
     const dm = $gameSystem.starMapData;
     const ship = dm && dm.playerShip;
     let planet = null;
+    let moonOf = null;
     if (ship && ship.currentPlanet) {
       const sys = dm.getSystem(ship.currentSystem);
-      planet = sys && sys.planets && sys.planets.find((p) => p.name === ship.currentPlanet);
+      if (sys && sys.planets) {
+        planet = sys.planets.find((p) => p.name === ship.currentPlanet);
+        if (!planet) {
+          for (const p of sys.planets) {
+            if (p.moons) {
+              const m = p.moons.find((moon) => moon.name === ship.currentPlanet);
+              if (m) { planet = m; moonOf = p; break; }
+            }
+          }
+        }
+      }
     }
     const locs = (planet && planet.landingLocations) || [];
     if (!locs.length) {
-      $gameMessage.add(T('Galaxy.core.noSpaceports'));
+      if (planet) {
+        if (!openLandingGridPicker(planet, moonOf)) {
+          $gameMessage.add(T('Galaxy.core.noSpaceports'));
+        }
+      } else {
+        $gameMessage.add(T('Galaxy.core.noSpaceports'));
+      }
       return;
     }
     $gameMessage.setChoices(locs.map((l) => l.name).concat(T('Galaxy.core.cancel')), 0, locs.length);
@@ -218,6 +243,21 @@
       }
     });
   });
+
+  PluginManager.registerCommand(pluginName, "ship controls", () => {
+    openShipControls();
+  });
+  PluginManager.registerCommand(pluginName, "ShipControls", () => {
+    openShipControls();
+  });
+  if (pluginName !== "GalaxySim/GalaxySim_Core") {
+    PluginManager.registerCommand("GalaxySim/GalaxySim_Core", "ship controls", () => {
+      openShipControls();
+    });
+    PluginManager.registerCommand("GalaxySim/GalaxySim_Core", "ShipControls", () => {
+      openShipControls();
+    });
+  }
 
   // ============================================================================
   // Refuel: engage the pumps where the ship is, or auto-plot the course to the
@@ -872,9 +912,18 @@
     // exactly one and leaves the old palette untouched.
     const skyBlend = rgb.map((c, i) => Math.round(
       Math.max(0, Math.min(255, c * (0.55 + 0.45 * star.skyRel[i])))));
+    const airlessTypes = new Set([
+      'mercurian', 'sub_mercurian', 'rocky', 'c_type_asteroid', 's_type_asteroid',
+      'm_type_asteroid', 'trojan_asteroid', 'planetesimal', 'centaur', 'comet',
+      'short_period_comet', 'long_period_comet', 'dwarf', 'irregular', 'carbonaceous'
+    ]);
+    const atmosphere = (planet.atmosphere !== undefined)
+      ? !!planet.atmosphere
+      : (opts.isMoon ? false : !airlessTypes.has(planet.type));
     return {
       name: planet.name || "",
       type: planet.type || "",
+      atmosphere,
       radius: (typeof planet.radius === "number" && isFinite(planet.radius)) ? planet.radius : 1.0,
       rgb,
       skyBlend,          // sky gradient blends toward this
@@ -1101,18 +1150,19 @@
   window.GalaxySim.getLandedTerrainFamily = getLandedTerrainFamily;
 
   // Lazily-built, session-cached equirectangular texture canvas for the
-  // currently-landed planet (keyed by planet name -- cheap to regenerate, not
-  // persisted to save data). Returns null off an alien surface.
+  // currently-landed planet or a targeted planet (keyed by planet name -- cheap
+  // to regenerate, not persisted to save data). Returns null off an alien surface
+  // unless a target planet is explicitly provided.
   let _alienGridTextureCache = null; // { key, canvas }
-  function getAlienGridTextureCanvas() {
-    const landed = getSurfacePlanet() || getOffEarthPlanet();
+  function getAlienGridTextureCanvas(targetPlanet) {
+    const landed = targetPlanet || getSurfacePlanet() || getOffEarthPlanet();
     const R3D = window.GalaxySim.Renderer3D;
     if (!landed || !R3D || !R3D.getPlanetTextureCanvas) return null;
     const key = landed.name || "";
     if (_alienGridTextureCache && _alienGridTextureCache.key === key) {
       return _alienGridTextureCache.canvas;
     }
-    const seed = R3D._seedFor(landed);
+    const seed = R3D._seedFor ? R3D._seedFor(landed) : 0;
     const canvas = R3D.getPlanetTextureCanvas(landed, seed);
     if (!canvas) return null;
     _alienGridTextureCache = { key, canvas };
@@ -1292,6 +1342,7 @@
     makeCommandList() {
       this.addCommand(T('Galaxy.hud.landHere'), "land");
       this.addCommand(T('Galaxy.hud.liminalWalk'), "walk");
+      this.addCommand(T('Galaxy.hud.flyby'), "flyby");
     }
   }
   window.Window_LandingMode = Window_LandingMode;
@@ -1299,8 +1350,16 @@
   class Scene_AlienLandingGrid extends Scene_MenuBase {
     create() {
       super.create();
-      this._grid = getAlienGridInfo() || { w: 1, h: 1, gx: 0, gy: 0 };
-      this._planet = getSurfacePlanet();
+      this._planet = Scene_AlienLandingGrid._targetPlanet || getSurfacePlanet();
+      this._moonOf = Scene_AlienLandingGrid._targetMoonOf || null;
+      Scene_AlienLandingGrid._targetPlanet = null;
+      Scene_AlienLandingGrid._targetMoonOf = null;
+      if (this._planet && !isAlienSurface()) {
+        const { w, h } = planetGridSize(this._planet);
+        this._grid = { w, h, gx: Math.floor(w / 2), gy: Math.floor(h / 2) };
+      } else {
+        this._grid = getAlienGridInfo() || { w: 1, h: 1, gx: 0, gy: 0 };
+      }
       this._cursor = { gx: this._grid.gx, gy: this._grid.gy };
       this._leaving = false;
       this.createGridSprite();
@@ -1311,7 +1370,7 @@
 
     createModeWindow() {
       const w = 320;
-      const h = this.calcWindowHeight(2, true);
+      const h = this.calcWindowHeight(3, true);
       const rect = new Rectangle(
         Math.floor((Graphics.boxWidth - w) / 2),
         Math.floor((Graphics.boxHeight - h) / 2),
@@ -1320,6 +1379,7 @@
       const win = new Window_LandingMode(rect);
       win.setHandler("land", this.commandLand.bind(this));
       win.setHandler("walk", this.commandLiminalWalk.bind(this));
+      win.setHandler("flyby", this.commandFlyby.bind(this));
       win.setHandler("cancel", this.commandModeCancel.bind(this));
       win.hide();
       win.deactivate();
@@ -1344,7 +1404,7 @@
 
     redrawAll() {
       const R3D = window.GalaxySim.Renderer3D;
-      const texture = getAlienGridTextureCanvas();
+      const texture = getAlienGridTextureCanvas(this._planet);
       const bmp = this._gridSprite.bitmap;
       bmp.clear();
       if (R3D && R3D.drawPlanetGrid && texture) {
@@ -1353,7 +1413,7 @@
           destW: bmp.width, destH: bmp.height,
           gridW: this._grid.w, gridH: this._grid.h,
           highlightCell: this._cursor,
-          playerCell: { gx: this._grid.gx, gy: this._grid.gy },
+          playerCell: isAlienSurface() ? { gx: this._grid.gx, gy: this._grid.gy } : null,
         });
         bmp.baseTexture.update();
       }
@@ -1373,10 +1433,56 @@
         ? `${T('Galaxy.hud.chooseLandingSite')} · ${name}`
         : T('Galaxy.hud.chooseLandingSite');
       bmp.drawText(title, LG_PAD, LG_PAD, width, LG_TITLE_H, "left");
+
+      // Draw action buttons: Land Here, Liminal Walk, Flyby
+      const buttons = [
+        { id: "land", text: T('Galaxy.hud.landHere') },
+        { id: "walk", text: T('Galaxy.hud.liminalWalk') },
+        { id: "flyby", text: T('Galaxy.hud.flyby') },
+      ];
+      this._buttonRects = [];
+      let btnX = LG_PAD;
+      const btnH = 32;
+      const btnW = 140;
+      const btnGap = 12;
+      const helpY = Graphics.boxHeight - LG_PAD - LG_HELP_H;
+      const btnY = helpY + Math.floor((LG_HELP_H - btnH) / 2);
+      const ctx = bmp.context;
+      bmp.fontSize = 15;
+      for (const b of buttons) {
+        ctx.save();
+        ctx.fillStyle = "rgba(16, 26, 46, 0.85)";
+        ctx.strokeStyle = "#4b7ab8";
+        ctx.lineWidth = 1.5;
+        if (ctx.roundRect) {
+          ctx.beginPath();
+          ctx.roundRect(btnX, btnY, btnW, btnH, 4);
+          ctx.fill();
+          ctx.stroke();
+        } else {
+          ctx.fillRect(btnX, btnY, btnW, btnH);
+          ctx.strokeRect(btnX, btnY, btnW, btnH);
+        }
+        ctx.restore();
+        bmp.textColor = "#d8e6f8";
+        bmp.drawText(b.text, btnX, btnY, btnW, btnH, "center");
+        this._buttonRects.push({ id: b.id, x: btnX, y: btnY, w: btnW, h: btnH });
+        btnX += btnW + btnGap;
+      }
+
       bmp.fontSize = 18;
       bmp.textColor = "#cfd8e6";
-      const helpY = Graphics.boxHeight - LG_PAD - LG_HELP_H;
       bmp.drawText(`${this._cursor.gx}, ${this._cursor.gy}`, LG_PAD, helpY, width, LG_HELP_H, "right");
+    }
+
+    buttonAt(px, py) {
+      if (!this._buttonRects) return null;
+      for (const b of this._buttonRects) {
+        if (px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h) {
+          return b.id;
+        }
+      }
+      return null;
     }
 
     moveCursor(dx, dy) {
@@ -1415,7 +1521,17 @@
     // Set the ship down: a fresh surface square at the chosen grid cell.
     commandLand() {
       this._leaving = true;
-      if (relandOnPlanet(this._cursor.gx, this._cursor.gy)) {
+      let ok = false;
+      if (isAlienSurface()) {
+        ok = relandOnPlanet(this._cursor.gx, this._cursor.gy);
+      } else if (this._planet) {
+        ok = enterPlanetSurface(this._planet, {
+          gridCell: { gx: this._cursor.gx, gy: this._cursor.gy },
+          isMoon: !!this._moonOf,
+          parentPlanet: this._moonOf || null,
+        });
+      }
+      if (ok) {
         SceneManager.goto(Scene_Map);
       } else {
         SoundManager.playBuzzer();
@@ -1428,9 +1544,34 @@
     // Walk the whole world instead: the 3D planet, at the chosen longitude.
     commandLiminalWalk() {
       const planet = this._planet;
+      const hasLife = (planet && planetHasLife) ? planetHasLife(planet) : !!($gameSystem && $gameSystem._alienPlanetHasLife);
       const started = planet && startLiminalWalk(planet, this._cursor.gx, this._cursor.gy, {
         grid: { w: this._grid.w, h: this._grid.h },
-        hasLife: !!($gameSystem && $gameSystem._alienPlanetHasLife),
+        hasLife: hasLife,
+        isMoon: !!this._moonOf,
+        parentPlanet: this._moonOf || null,
+      });
+      if (!started) {
+        SoundManager.playBuzzer();
+        this.commandModeCancel();
+        this._modeWindow.activate();
+        return;
+      }
+      this._leaving = true;
+      this.popScene();
+    }
+
+    // A flyby over the 3D world: the party remains aboard and flies over it.
+    commandFlyby() {
+      const planet = this._planet;
+      const hasLife = (planet && planetHasLife) ? planetHasLife(planet) : !!($gameSystem && $gameSystem._alienPlanetHasLife);
+      const started = planet && startLiminalWalk(planet, this._cursor.gx, this._cursor.gy, {
+        grid: { w: this._grid.w, h: this._grid.h },
+        hasLife: hasLife,
+        isMoon: !!this._moonOf,
+        parentPlanet: this._moonOf || null,
+        flyby: true,
+        atHelm: true,
       });
       if (!started) {
         SoundManager.playBuzzer();
@@ -1454,8 +1595,22 @@
       if (Input.isRepeated("up")) dy = -1;
       else if (Input.isRepeated("down")) dy = 1;
       if (dx || dy) this.moveCursor(dx, dy);
-      // A click picks the square outright, exactly as it does in orbit.
+      // A click on buttons or picks the square outright
       if (TouchInput.isTriggered()) {
+        const btn = this.buttonAt(TouchInput.x, TouchInput.y);
+        if (btn === "land") {
+          SoundManager.playOk();
+          this.commandLand();
+          return;
+        } else if (btn === "walk") {
+          SoundManager.playOk();
+          this.commandLiminalWalk();
+          return;
+        } else if (btn === "flyby") {
+          SoundManager.playOk();
+          this.commandFlyby();
+          return;
+        }
         const cell = this.cellAt(TouchInput.x, TouchInput.y);
         if (cell) {
           this._cursor = cell;
@@ -1477,10 +1632,14 @@
   // Open the picker, or answer false when there is nothing to pick from (not on
   // a planet surface, or the renderer that draws the planet is not loaded). Every
   // "return to the world map" route asks this first while the party is planetside.
-  function openLandingGridPicker() {
-    if (!isAlienSurface() || !getAlienGridInfo() || !getSurfacePlanet()) return false;
+  function openLandingGridPicker(planet, moonOf) {
+    const targetPlanet = planet || getSurfacePlanet();
+    if (!targetPlanet) return false;
+    if (!planet && (!isAlienSurface() || !getAlienGridInfo())) return false;
     const R3D = window.GalaxySim.Renderer3D;
-    if (!R3D || !R3D.drawPlanetGrid || !getAlienGridTextureCanvas()) return false;
+    if (!R3D || !R3D.drawPlanetGrid || !getAlienGridTextureCanvas(targetPlanet)) return false;
+    Scene_AlienLandingGrid._targetPlanet = targetPlanet;
+    Scene_AlienLandingGrid._targetMoonOf = moonOf || null;
     SceneManager.push(Scene_AlienLandingGrid);
     return true;
   }
@@ -1602,6 +1761,15 @@
       $gameSystem._awayFromShip = false;
       // First time aboard, the telescope's refit is pinned to the quest log.
       hubbleQuestOpen();
+      // Entering spaceship interior sets the respawn point to the helm (map 721, x 28, y 10)
+      const mapVar = (window.BSE && window.BSE.Params && window.BSE.Params.respawnMapVar) || 25;
+      const xVar = (window.BSE && window.BSE.Params && window.BSE.Params.respawnXVar) || 26;
+      const yVar = (window.BSE && window.BSE.Params && window.BSE.Params.respawnYVar) || 27;
+      $gameVariables.setValue(mapVar, 721);
+      $gameVariables.setValue(xVar, 28);
+      $gameVariables.setValue(yVar, 10);
+      $gameSystem._respawnProcSurface = null;
+      $gameSystem._respawnPointSet = true;
     }
   };
 
@@ -2670,6 +2838,1749 @@
     try { Nibiru.tick(); } catch (e) { console.error(e); }
     try { FridayMoons.tick(); } catch (e) { console.error(e); }
   };
+
+  // ============================================================================
+  // Ship Controls HUD (Empathize UI style, minimal & fast HUD)
+  // ============================================================================
+  let _shipControlsOverlay = null;
+  let _shipControlsTimer = null;
+  let _shipControlsTab = "current";
+  let _shipControlsFilter = "";
+  let _shipControlsKeyHandler = null;
+
+  function isShipControlsOpen() {
+    return !!_shipControlsOverlay;
+  }
+  window.GalaxySim.isShipControlsOpen = isShipControlsOpen;
+
+  // Lock map mouse / touch controls so the character does not move when controls are open
+  if (typeof Scene_Map !== "undefined" && Scene_Map.prototype) {
+    const _GS_Scene_Map_isMapTouchOk = Scene_Map.prototype.isMapTouchOk;
+    Scene_Map.prototype.isMapTouchOk = function () {
+      if (isShipControlsOpen()) return false;
+      return _GS_Scene_Map_isMapTouchOk ? _GS_Scene_Map_isMapTouchOk.call(this) : true;
+    };
+
+    const _GS_Scene_Map_processMapTouch = Scene_Map.prototype.processMapTouch;
+    Scene_Map.prototype.processMapTouch = function () {
+      if (isShipControlsOpen()) {
+        if (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp.clearDestination) {
+          $gameTemp.clearDestination();
+        }
+        return;
+      }
+      if (_GS_Scene_Map_processMapTouch) {
+        _GS_Scene_Map_processMapTouch.call(this);
+      }
+    };
+  }
+
+  function ensureShipControlsStyles() {
+    if (document.getElementById("gx-ship-controls-style")) return;
+    const st = document.createElement("style");
+    st.id = "gx-ship-controls-style";
+    st.textContent = `
+      #gx-ship-controls-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: var(--shadow-black-translucent-50, rgba(0, 0, 0, 0.5));
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        -webkit-user-select: none;
+        font-family: var(--font-ui, sans-serif);
+        box-sizing: border-box;
+        padding: 20px;
+      }
+      #gx-ship-controls-modal {
+        position: relative;
+        width: min(1060px, 96vw);
+        height: min(740px, 92vh);
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-sizing: border-box;
+        animation: paperRustle 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .gx-sc-close-btn {
+        position: absolute;
+        top: 6px; right: 10px;
+        z-index: 50;
+        width: 28px; height: 28px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 18px; line-height: 1; font-weight: bold;
+        color: var(--text-text-alt-4, #9ca3af);
+        background: var(--bg-primary-hover-translucent-35, rgba(255, 255, 255, 0.08));
+        border: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.12));
+        border-radius: 50%;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.12s, color 0.12s, border-color 0.12s;
+      }
+      .gx-sc-close-btn:hover {
+        color: var(--text-primary-hover, #ffffff);
+        background: var(--bg-danger-medium-7, #e11d48);
+        border-color: var(--border-focus-hover, #ffd700);
+      }
+      .gx-sc-tab-bar {
+        display: flex;
+        gap: 4px;
+        padding: 0 16px;
+        background: none;
+        border-bottom: none;
+        flex-shrink: 0;
+      }
+      .gx-sc-tab-hint {
+        align-self: flex-end;
+        margin-right: 6px;
+        padding: 5px 9px 6px;
+        font-size: var(--fs-chip, 10px);
+        font-weight: bold;
+        letter-spacing: 0.06em;
+        color: var(--text-text-alt-4, #9ca3af);
+        border-radius: 4px;
+        background: var(--bg-primary-hover-translucent-35, rgba(255, 255, 255, 0.08));
+        pointer-events: none;
+        user-select: none;
+        white-space: nowrap;
+      }
+      .gx-sc-tab {
+        padding: 7px 18px 8px;
+        font-size: var(--fs-body, 14px);
+        cursor: pointer;
+        user-select: none;
+        border: none;
+        border-radius: 6px 6px 0 0;
+        background: var(--bg-secondary-hover, #232a3b);
+        color: var(--text-text-alt-4, #9ca3af);
+        font-family: var(--font-ui, sans-serif);
+        transition: color 0.12s;
+      }
+      .gx-sc-tab:hover:not(.active) {
+        color: var(--border-focus-hover, #ffd700);
+      }
+      .gx-sc-tab.active {
+        background: var(--bg-secondary-hover, #232a3b);
+        color: var(--text-primary-hover, #f3f4f6);
+        font-weight: bold;
+        box-shadow: inset 0 0 0 2px var(--border-focus-hover, #ffd700);
+      }
+      .gx-sc-cat-count {
+        display: inline-block;
+        font-size: 11px;
+        opacity: 0.75;
+        margin-left: 4px;
+      }
+      .gx-sc-panel-body {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+        min-height: 0;
+        background: var(--bg-secondary-hover, #1f2536);
+        box-shadow: 0 30px 75px var(--shadow-black-translucent-45, rgba(0, 0, 0, 0.45));
+        border-radius: 0 0 6px 6px;
+        border: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.12));
+      }
+      .gx-sc-left-col {
+        width: 330px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-focus-hover, #ffd700) transparent;
+        border-right: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.12));
+        padding: 16px 18px;
+        gap: 14px;
+        box-sizing: border-box;
+      }
+      .gx-sc-right-panel {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+        padding: 16px 20px 24px;
+        min-width: 0;
+        min-height: 0;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-focus-hover, #ffd700) transparent;
+        box-sizing: border-box;
+      }
+      .gx-sc-ident {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.12));
+      }
+      .gx-sc-ship-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 6px;
+        background: var(--bg-primary-hover-translucent-35, rgba(255, 255, 255, 0.08));
+        border: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.15));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+      .gx-sc-ident-text {
+        flex: 1;
+        min-width: 0;
+      }
+      .gx-sc-ident-title {
+        font-size: var(--fs-title, 16px);
+        font-weight: bold;
+        color: var(--text-primary-hover, #f3f4f6);
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .gx-sc-ident-sub {
+        font-size: var(--fs-body, 13px);
+        color: var(--text-text-alt-4, #9ca3af);
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .gx-sc-section {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .gx-sc-sec-hdr {
+        font-size: var(--fs-heading, 11px);
+        font-weight: bold;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--text-text-alt-4, #9ca3af);
+        margin-bottom: 2px;
+      }
+      .gx-sc-vital-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: var(--fs-body, 13px);
+      }
+      .gx-sc-vital-lbl {
+        width: 90px;
+        flex-shrink: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: var(--text-text-alt-4, #9ca3af);
+      }
+      .gx-sc-vital-track {
+        flex: 1;
+        height: 7px;
+        background: var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.15));
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .gx-sc-vital-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.2s ease;
+      }
+      .gx-sc-vital-pct {
+        width: 52px;
+        text-align: right;
+        flex-shrink: 0;
+        font-size: var(--fs-body, 13px);
+        color: var(--text-text-alt-4, #9ca3af);
+      }
+      .gx-sc-slider {
+        width: 100%;
+        accent-color: var(--border-focus-hover, #ffd700);
+        cursor: pointer;
+        margin: 4px 0;
+      }
+      .gx-sc-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-family: var(--font-ui, sans-serif);
+        cursor: pointer;
+        border-radius: 4px;
+        user-select: none;
+        border: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.15));
+        background: var(--bg-primary-hover-translucent-35, rgba(255, 255, 255, 0.06));
+        color: var(--text-primary-hover, #f3f4f6);
+        transition: background 0.12s, border-color 0.12s, color 0.12s;
+      }
+      .gx-sc-btn:hover {
+        border-color: var(--border-focus-hover, #ffd700);
+        color: var(--border-focus-hover, #ffd700);
+        background: rgba(255, 215, 0, 0.08);
+      }
+      .gx-sc-btn.stop {
+        background: var(--bg-danger-medium-7, #e11d48);
+        border-color: var(--border-focus-hover, #ffd700);
+        color: #ffffff;
+        font-weight: bold;
+      }
+      .gx-sc-btn.bridge {
+        border-color: var(--gx-accent-bridge, #a880ff);
+        color: var(--gx-accent-bridge, #a880ff);
+      }
+      .gx-sc-btn.bridge:hover {
+        border-color: var(--border-focus-hover, #ffd700);
+        color: var(--border-focus-hover, #ffd700);
+      }
+      .gx-sc-btn.bookmark-on {
+        color: var(--border-focus-hover, #ffd700);
+        border-color: var(--border-focus-hover, #ffd700);
+      }
+      .gx-sc-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        border: 1px solid transparent;
+        border-bottom: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.08));
+        transition: background 0.12s, border-color 0.12s;
+      }
+      .gx-sc-row:hover {
+        border-color: var(--border-focus-hover, #ffd700);
+        background: var(--bg-primary-hover-translucent-35, rgba(255, 255, 255, 0.05));
+      }
+      .gx-sc-row.depth-1 {
+        padding-left: 24px;
+      }
+      .gx-sc-row.depth-2 {
+        padding-left: 42px;
+      }
+      .gx-sc-item-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        flex: 1;
+        min-width: 0;
+      }
+      .gx-sc-item-name {
+        font-weight: bold;
+        font-size: var(--fs-body, 14px);
+        color: var(--text-primary-hover, #f3f4f6);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .gx-sc-item-sub {
+        font-size: var(--fs-label, 12px);
+        color: var(--text-text-alt-4, #9ca3af);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .gx-sc-item-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .gx-sc-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 11px;
+        background: var(--bg-primary-hover-translucent-35, rgba(255, 255, 255, 0.08));
+        border: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.15));
+        color: var(--text-text-alt-4, #9ca3af);
+      }
+      .gx-sc-badge.here {
+        background: rgba(16, 185, 129, 0.15);
+        border-color: var(--text-cost-ok, #10b981);
+        color: var(--text-cost-ok, #10b981);
+        font-weight: bold;
+      }
+      .gx-sc-search-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.15));
+        border-radius: 4px;
+        background: var(--bg-primary-hover-translucent-35, rgba(255, 255, 255, 0.06));
+        font-family: var(--font-ui, sans-serif);
+        font-size: var(--fs-body, 14px);
+        color: var(--text-primary-hover, #f3f4f6);
+        outline: none;
+        box-sizing: border-box;
+        margin-bottom: 12px;
+      }
+      .gx-sc-search-input:focus {
+        border-color: var(--border-focus-hover, #ffd700);
+        background: rgba(255, 255, 255, 0.09);
+      }
+      .gx-sc-pips {
+        display: flex;
+        gap: 3px;
+        align-items: center;
+      }
+      .gx-sc-pip {
+        width: 8px;
+        height: 12px;
+        border-radius: 2px;
+        background: var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.15));
+      }
+      .gx-sc-pip.on {
+        background: var(--gx-accent-bridge, #a880ff);
+        box-shadow: 0 0 5px var(--gx-accent-bridge, #a880ff);
+      }
+      .gx-sc-empty {
+        padding: 32px 16px;
+        text-align: center;
+        color: var(--text-text-alt-4, #9ca3af);
+        font-size: var(--fs-body, 14px);
+      }
+    `;
+    document.head.appendChild(st);
+  }
+
+  function escHtml(str) {
+    if (str == null) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function calcSysDistance(s1, s2) {
+    if (!s1 || !s2) return 0;
+    const p1 = s1.position || s1;
+    const p2 = s2.position || s2;
+    const dx = (p2.x || 0) - (p1.x || 0);
+    const dy = (p2.y || 0) - (p1.y || 0);
+    const dz = (p2.z || 0) - (p1.z || 0);
+    return Math.sqrt(dx * dx + dy * dy + dz * dz);
+  }
+
+  function getShipPosition(dm) {
+    if (!dm || !dm.playerShip) return { x: 0, y: 0, z: 0 };
+    const ship = dm.playerShip;
+    if (ship.position && typeof ship.position.x === "number") {
+      return ship.position;
+    }
+    const curSys = dm.getSystem(ship.currentSystem);
+    if (curSys && curSys.position) {
+      return curSys.position;
+    }
+    return { x: 0, y: 0, z: 0 };
+  }
+
+  function getCatalogStarsNearby(dm) {
+    if (!dm || !dm.playerShip) return [];
+    if (!dm.proceduralGenerated && typeof dm.generateProceduralSystems === "function") {
+      dm.generateProceduralSystems();
+    }
+    const ship = dm.playerShip;
+    const shipPos = getShipPosition(dm);
+    const radius = 100;
+    const result = [];
+    const seen = new Set();
+
+    const addSys = (sys) => {
+      if (!sys || !sys.name || seen.has(sys.name)) return;
+      if (sys.farHardcoded) return;
+      if (String(sys.name).startsWith("PATRON.") || sys.isPatron) return;
+      const d = calcSysDistance(shipPos, sys);
+      if (d <= radius) {
+        seen.add(sys.name);
+        result.push(sys);
+      }
+    };
+
+    const cur = (ship && ship.currentSystem) || dm.currentSystem;
+    if (typeof cur === "string" && cur.startsWith("GX.")) {
+      const seed = parseInt(cur.split(".")[1], 10);
+      if (Number.isFinite(seed) && typeof dm.generateGalaxySystems === "function") {
+        dm.generateGalaxySystems(seed).forEach(addSys);
+      }
+    } else {
+      const baseSystems = dm.getAllSystems ? dm.getAllSystems() : [];
+      baseSystems.forEach(addSys);
+
+      if (typeof dm.generateLazyChunk === "function") {
+        const LAZY_CHUNK_LY = 64;
+        const cx0 = Math.floor((shipPos.x || 0) / LAZY_CHUNK_LY);
+        const cz0 = Math.floor((shipPos.y || 0) / LAZY_CHUNK_LY);
+        for (let dx = -2; dx <= 2; dx++) {
+          for (let dz = -2; dz <= 2; dz++) {
+            const chunkStars = dm.generateLazyChunk(cx0 + dx, cz0 + dz);
+            if (chunkStars && chunkStars.length) {
+              chunkStars.forEach(addSys);
+            }
+          }
+        }
+      }
+    }
+
+    result.sort((a, b) => calcSysDistance(shipPos, a) - calcSysDistance(shipPos, b));
+    return result;
+  }
+
+  function getPatronStarsList(dm) {
+    if (!dm) return [];
+    let list = [];
+    if (window.PatreonRewards && typeof window.PatreonRewards.catalogEntries === "function") {
+      list = window.PatreonRewards.catalogEntries(dm);
+    } else {
+      const systems = (dm.getAllSystems ? dm.getAllSystems() : [])
+        .filter(s => s && String(s.name).startsWith("PATRON."));
+      list = systems.map(s => ({
+        patron: { name: s.label || s.name, planetName: s.label || s.name },
+        system: s,
+        planet: (s.planets && s.planets[0]) || null,
+        name: s.label || s.name,
+        sub: s.name,
+      }));
+    }
+    const shipPos = getShipPosition(dm);
+    return [...list].sort((a, b) => calcSysDistance(shipPos, a.system) - calcSysDistance(shipPos, b.system));
+  }
+
+  const LOCAL_GROUP_FALLBACK = [
+    { name: "Milky Way", type: "barred_spiral", distance: 0, radius: 50 },
+    { name: "Large Magellanic Cloud", type: "irregular", distance: 160, radius: 7 },
+    { name: "Small Magellanic Cloud", type: "irregular", distance: 200, radius: 3.5 },
+    { name: "Ursa Minor Dwarf", type: "dwarf_spheroidal", distance: 205, radius: 1.5 },
+    { name: "Draco Dwarf", type: "dwarf_spheroidal", distance: 240, radius: 1.8 },
+    { name: "Sculptor Dwarf", type: "dwarf_spheroidal", distance: 280, radius: 2.2 },
+    { name: "Sextans Dwarf", type: "dwarf_spheroidal", distance: 310, radius: 2.0 },
+    { name: "Carina Dwarf", type: "dwarf_spheroidal", distance: 330, radius: 1.6 },
+    { name: "Fornax Dwarf", type: "dwarf_spheroidal", distance: 450, radius: 4.0 },
+    { name: "Leo II", type: "dwarf_spheroidal", distance: 670, radius: 2.0 },
+    { name: "Leo I", type: "dwarf_spheroidal", distance: 820, radius: 2.4 },
+    { name: "NGC 6822", type: "irregular", distance: 1630, radius: 4 },
+    { name: "IC 10", type: "irregular", distance: 2200, radius: 3.0 },
+    { name: "M32", type: "elliptical", distance: 2490, radius: 4 },
+    { name: "Andromeda (M31)", type: "spiral", distance: 2537, radius: 110 },
+    { name: "M110 (NGC 205)", type: "elliptical", distance: 2700, radius: 8.5 },
+    { name: "Triangulum (M33)", type: "spiral", distance: 3000, radius: 30 },
+    { name: "Wolf - Lundmark - Melotte (WLM)", type: "irregular", distance: 3040, radius: 5.5 },
+    { name: "Aquarius Dwarf", type: "irregular", distance: 3200, radius: 2.0 },
+    { name: "Sagittarius DIG", type: "irregular", distance: 3400, radius: 1.8 },
+    { name: "Pegasus Dwarf", type: "irregular", distance: 3600, radius: 3.0 }
+  ];
+
+  function getNearestGalaxiesList() {
+    let src = null;
+    if (window.GalaxySim && Array.isArray(window.GalaxySim.LocalGroupGalaxies) && window.GalaxySim.LocalGroupGalaxies.length > 0) {
+      src = window.GalaxySim.LocalGroupGalaxies;
+    } else if (typeof $dataService !== "undefined" && $dataService && typeof $dataService.get === "function") {
+      src = $dataService.get("GalaxySim/LocalGroupGalaxies");
+    }
+    const list = (Array.isArray(src) && src.length > 0) ? src : LOCAL_GROUP_FALLBACK;
+    return [...list].sort((a, b) => (a.distance || 0) - (b.distance || 0));
+  }
+
+  function getGalaxySeed(name) {
+    if (window.GalaxySim?.Scene3DCosmos?.galaxySeedFromName) {
+      return window.GalaxySim.Scene3DCosmos.galaxySeedFromName(name);
+    }
+    let h = 2166136261 >>> 0;
+    const s = String(name || "galaxy");
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    h = h >>> 0;
+    const S = window.GalaxySim?.Math?.Strangeness;
+    return S ? S.stampTier(h, 0) : h;
+  }
+
+  function getBiosignaturesList(dm) {
+    if (!dm || typeof $gameSystem === "undefined" || !$gameSystem) return { strong: [], weak: [] };
+    const origin = getShipPosition(dm);
+    const lifeLog = $gameSystem._gxLifeLog || [];
+    const weakLog = $gameSystem._gxWeakLifeLog || [];
+    const GS = window.GalaxySim || {};
+
+    const resolveList = (log, isWeak) => {
+      const out = [];
+      log.forEach((key) => {
+        const cut = String(key).indexOf("|");
+        if (cut < 0) return;
+        const sysName = key.slice(0, cut);
+        const planetName = key.slice(cut + 1);
+        const sys = dm.getSystem ? dm.getSystem(sysName) : null;
+        if (!sys) return;
+        const planet = (sys.planets || []).find((p) => p.name === planetName);
+        if (!planet) return;
+        const dist = calcSysDistance(origin, sys);
+        const tier = GS.planetBioTier ? GS.planetBioTier(planet) : null;
+        const tierLabel = tier && GS.bioTierLabel ? GS.bioTierLabel(tier) : null;
+        out.push({ system: sys, planet, dist, tier, tierLabel, isWeak });
+      });
+      out.sort((a, b) => a.dist - b.dist);
+      return out;
+    };
+
+    return {
+      strong: resolveList(lifeLog, false),
+      weak: resolveList(weakLog, true),
+    };
+  }
+
+  function scanBiosignatures(dm) {
+    if (!dm) return { found: 0, weak: 0, fresh: 0 };
+    const origin = getShipPosition(dm);
+    const log = ($gameSystem._gxLifeLog = $gameSystem._gxLifeLog || []);
+    const weakLog = ($gameSystem._gxWeakLifeLog = $gameSystem._gxWeakLifeLog || []);
+    let fresh = 0;
+    let found = 0;
+    let weak = 0;
+    const GS = window.GalaxySim || {};
+    const boosted = !!(GS.Hubble && GS.Hubble.isOperational && GS.Hubble.isOperational());
+    const radius = 500 * (boosted ? 2 : 1);
+    const SIGNS = (GS.LifeSigns || { WEAK: "weak", STRONG: "strong" });
+
+    const allSystems = dm.getAllSystems ? dm.getAllSystems() : [];
+    allSystems.forEach((sys) => {
+      if (!sys || !sys.position) return;
+      if (calcSysDistance(origin, sys) > radius) return;
+      (sys.planets || []).forEach((p) => {
+        const signs = GS.planetLifeSigns ? GS.planetLifeSigns(p)
+          : ((GS.planetHasLife && GS.planetHasLife(p)) ? SIGNS.STRONG : "none");
+        if (signs !== SIGNS.STRONG && signs !== SIGNS.WEAK) return;
+        const key = sys.name + "|" + p.name;
+        if (signs === SIGNS.STRONG) {
+          found++;
+          const stale = weakLog.indexOf(key);
+          if (stale !== -1) weakLog.splice(stale, 1);
+          if (log.indexOf(key) === -1) { log.push(key); fresh++; }
+        } else {
+          weak++;
+          if (log.indexOf(key) === -1 && weakLog.indexOf(key) === -1) {
+            weakLog.push(key);
+            fresh++;
+          }
+        }
+      });
+    });
+
+    if (window.SceneManager && window.SceneManager._scene && typeof window.SceneManager._scene._awardSpec === "function") {
+      window.SceneManager._scene._awardSpec("Radio Astronomy", 1);
+      if (fresh) window.SceneManager._scene._awardSpec("Astrobiology", 1);
+    }
+    if (window.SoundManager) {
+      if (found || weak) SoundManager.playOk(); else SoundManager.playBuzzer();
+    }
+    notify(T('Galaxy.shipControls.bioscanReport', { found, weak, fresh }), "info");
+    return { found, weak, fresh };
+  }
+
+  function getSpaceportsList(dm) {
+    if (!dm) return [];
+    const origin = getShipPosition(dm);
+    const spaceports = [];
+    const systems = (dm.getAllSystems ? dm.getAllSystems() : [])
+      .filter((s) => s && (s.hardcoded || s.farHardcoded));
+
+    systems.forEach((sys) => {
+      (sys.planets || []).forEach((planet) => {
+        (planet.landingLocations || []).forEach((loc) => {
+          spaceports.push({
+            name: loc.name,
+            bodyName: planet.name,
+            parentPlanet: null,
+            isMoon: false,
+            system: sys,
+            dist: calcSysDistance(origin, sys),
+            far: !!sys.farHardcoded,
+          });
+        });
+        (planet.moons || []).forEach((moon) => {
+          (moon.landingLocations || []).forEach((loc) => {
+            spaceports.push({
+              name: loc.name,
+              bodyName: moon.name,
+              parentPlanet: planet.name,
+              isMoon: true,
+              system: sys,
+              dist: calcSysDistance(origin, sys),
+              far: !!sys.farHardcoded,
+            });
+          });
+        });
+      });
+    });
+
+    spaceports.sort((a, b) => a.dist - b.dist);
+    return spaceports;
+  }
+
+  function openShipControls(initialTab) {
+    const dm = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem.starMapData : null;
+    if (!dm || !dm.playerShip) {
+      if (window.SoundManager && window.SoundManager.playBuzzer) SoundManager.playBuzzer();
+      return;
+    }
+
+    const validTabs = ["current", "bookmarks", "catalog", "patrons", "life", "spaceports", "galaxies"];
+    if (initialTab && validTabs.includes(initialTab)) {
+      _shipControlsTab = initialTab;
+      _shipControlsFilter = "";
+    }
+
+    ensureShipControlsStyles();
+    closeShipControls(true);
+
+    if (typeof TouchInput !== "undefined" && TouchInput.clear) TouchInput.clear();
+    if (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp.clearDestination) {
+      $gameTemp.clearDestination();
+    }
+
+    const overlay = document.createElement("div");
+    overlay.id = "gx-ship-controls-overlay";
+    overlay.className = "npc-empathize-overlay npc-shown";
+    overlay.innerHTML = `<div id="gx-ship-controls-modal" class="npc-empathize-inner"></div>`;
+    document.body.appendChild(overlay);
+    _shipControlsOverlay = overlay;
+
+    // Lock all mouse / touch / pointer events from propagating to the map canvas
+    const stopAllPointer = (e) => {
+      e.stopPropagation();
+      if (typeof TouchInput !== "undefined" && TouchInput.clear) TouchInput.clear();
+      if (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp.clearDestination) {
+        $gameTemp.clearDestination();
+      }
+    };
+    overlay.addEventListener("mousedown", stopAllPointer);
+    overlay.addEventListener("mouseup", stopAllPointer);
+    overlay.addEventListener("pointerdown", stopAllPointer);
+    overlay.addEventListener("pointerup", stopAllPointer);
+    overlay.addEventListener("touchstart", stopAllPointer, { passive: true });
+    overlay.addEventListener("touchend", stopAllPointer, { passive: true });
+    overlay.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeShipControls();
+    });
+
+    overlay.addEventListener("click", (e) => {
+      stopAllPointer(e);
+      if (e.target === overlay) {
+        closeShipControls();
+      }
+    });
+
+    _shipControlsKeyHandler = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        closeShipControls();
+      } else if (!document.activeElement || document.activeElement.tagName !== "INPUT") {
+        const tabs = ["current", "bookmarks", "catalog", "patrons", "life", "spaceports", "galaxies"];
+        if (e.key >= "1" && e.key <= "7") {
+          const idx = parseInt(e.key, 10) - 1;
+          if (tabs[idx]) {
+            _shipControlsTab = tabs[idx];
+            _shipControlsFilter = "";
+            if (window.SoundManager && window.SoundManager.playCursor) SoundManager.playCursor();
+            renderShipControls();
+          }
+        } else if (e.key === "Tab") {
+          e.preventDefault();
+          const curIdx = tabs.indexOf(_shipControlsTab);
+          const nextIdx = (curIdx + (e.shiftKey ? -1 : 1) + tabs.length) % tabs.length;
+          _shipControlsTab = tabs[nextIdx];
+          _shipControlsFilter = "";
+          if (window.SoundManager && window.SoundManager.playCursor) SoundManager.playCursor();
+          renderShipControls();
+        }
+      }
+    };
+    window.addEventListener("keydown", _shipControlsKeyHandler, true);
+
+    if (window.SoundManager && window.SoundManager.playOk) SoundManager.playOk();
+    renderShipControls();
+
+    _shipControlsTimer = setInterval(() => {
+      if (!_shipControlsOverlay) return;
+      if (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp.isDestinationValid && $gameTemp.isDestinationValid()) {
+        $gameTemp.clearDestination();
+      }
+      const ship = dm.playerShip;
+      if (ship && ship.isMoving) {
+        if (typeof dm.updateShipPosition === "function") {
+          dm.updateShipPosition();
+        }
+        updateShipControlsLive();
+      }
+    }, 300);
+  }
+
+  function closeShipControls(silent) {
+    if (typeof TouchInput !== "undefined" && TouchInput.clear) TouchInput.clear();
+    if (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp.clearDestination) {
+      $gameTemp.clearDestination();
+    }
+    if (_shipControlsTimer) {
+      clearInterval(_shipControlsTimer);
+      _shipControlsTimer = null;
+    }
+    if (_shipControlsKeyHandler) {
+      window.removeEventListener("keydown", _shipControlsKeyHandler, true);
+      _shipControlsKeyHandler = null;
+    }
+    if (_shipControlsOverlay) {
+      _shipControlsOverlay.remove();
+      _shipControlsOverlay = null;
+      if (!silent && window.SoundManager && window.SoundManager.playCancel) {
+        SoundManager.playCancel();
+      }
+    }
+  }
+
+  function updateShipControlsLive() {
+    if (!_shipControlsOverlay) return;
+    const dm = $gameSystem?.starMapData;
+    if (!dm || !dm.playerShip) return;
+    const ship = dm.playerShip;
+
+    // Hyperflux
+    const hfVal = dm.getHyperflux ? dm.getHyperflux() : 0;
+    const hfEl = _shipControlsOverlay.querySelector("[data-sc-hf-val]");
+    const hfFill = _shipControlsOverlay.querySelector("[data-sc-hf-fill]");
+    if (hfEl) hfEl.textContent = `${Math.floor(hfVal)}/100`;
+    if (hfFill) hfFill.style.width = `${Math.max(0, Math.min(100, hfVal))}%`;
+
+    // Speed / ETA
+    const etaEl = _shipControlsOverlay.querySelector("[data-sc-eta]");
+    if (etaEl && ship.isMoving) {
+      let etaSeconds = 0;
+      if (ship.travelDistance && ship.departureTime) {
+        const sliderSpeed = $gameVariables.value(94) || 1;
+        const isIntra = !!ship.targetSystem && ship.targetSystem === ship.currentSystem;
+        const mult = isIntra ? Math.min(sliderSpeed, 2) : sliderSpeed;
+        const baseSpeed = isIntra ? 1 : 0.5;
+        const elapsed = (Date.now() - ship.departureTime) / 1000;
+        const totalSec = ship.travelDistance > 0 ? (ship.travelDistance * 0.95) / (mult * baseSpeed) : 0;
+        etaSeconds = Math.max(0, Math.round(totalSec - elapsed));
+      }
+      etaEl.textContent = `${T('Galaxy.shipControls.flyingTo', { target: ship.targetPlanet || ship.targetStar || ship.targetSystem || "" })} · ${T('Galaxy.shipControls.eta', { seconds: etaSeconds })}`;
+    } else if (etaEl && !ship.isMoving) {
+      // Arrived: full re-render
+      renderShipControls();
+    }
+  }
+
+  function renderShipControls() {
+    if (!_shipControlsOverlay) return;
+    const modal = _shipControlsOverlay.querySelector("#gx-ship-controls-modal");
+    if (!modal) return;
+
+    const dm = $gameSystem?.starMapData;
+    if (!dm || !dm.playerShip) return;
+    const ship = dm.playerShip;
+    const currentSys = dm.getSystem(ship.currentSystem);
+    const speed = $gameVariables.value(94) || 1;
+
+    // Fuel & Pellets
+    const hf = dm.getHyperflux ? dm.getHyperflux() : 0;
+    const pellets = dm.getSchrodingerite ? dm.getSchrodingerite() : 0;
+
+    // Pips
+    let pipsHtml = "";
+    for (let i = 0; i < 6; i++) {
+      pipsHtml += `<span class="gx-sc-pip ${i < pellets ? "on" : ""}"></span>`;
+    }
+
+    // Location text
+    let locText = T('Galaxy.shipControls.deepSpace');
+    if (ship.isMoving) {
+      const dest = ship.targetPlanet || ship.targetStar || ship.targetSystem || "";
+      locText = T('Galaxy.shipControls.flyingTo', { target: dest });
+    } else if (ship.currentPlanet) {
+      locText = T('Galaxy.shipControls.orbiting', { name: ship.currentPlanet });
+    } else if (ship.parkedBody && ship.parkedBody.name) {
+      locText = T('Galaxy.shipControls.parkedAtStar', { name: ship.parkedBody.name });
+    }
+
+    // ETA calculation
+    let etaSeconds = 0;
+    if (ship.isMoving && ship.travelDistance && ship.departureTime) {
+      const isIntra = !!ship.targetSystem && ship.targetSystem === ship.currentSystem;
+      const mult = isIntra ? Math.min(speed, 2) : speed;
+      const baseSpeed = isIntra ? 1 : 0.5;
+      const elapsed = (Date.now() - ship.departureTime) / 1000;
+      const totalSec = ship.travelDistance > 0 ? (ship.travelDistance * 0.95) / (mult * baseSpeed) : 0;
+      etaSeconds = Math.max(0, Math.round(totalSec - elapsed));
+    }
+    const etaText = T('Galaxy.shipControls.eta', { seconds: etaSeconds });
+
+    // Counts for tabs
+    let currentBodiesCount = 0;
+    if (currentSys) {
+      currentBodiesCount = 1 + (currentSys.companions ? currentSys.companions.length : 0);
+      (currentSys.planets || []).forEach((p) => {
+        currentBodiesCount += 1 + (p.moons ? p.moons.length : 0);
+      });
+    }
+    const bookmarks = $gameSystem._gxBookmarks || [];
+    const catalogStars = getCatalogStarsNearby(dm);
+    const patronStars = getPatronStarsList(dm);
+    const lifeData = getBiosignaturesList(dm);
+    const lifeCount = lifeData.strong.length + lifeData.weak.length;
+    const spaceportsList = getSpaceportsList(dm);
+    const spaceportsCount = spaceportsList.length;
+    const nearestGalaxies = getNearestGalaxiesList();
+
+    modal.innerHTML = `
+      <div class="npc-close-btn gx-sc-close-btn" id="gx-ship-controls-close" data-sc-close title="${T('Galaxy.hud.close')}">&times;</div>
+
+      <div class="npc-tab-bar gx-sc-tab-bar">
+        <div class="npc-tab-hint gx-sc-tab-hint">1-7 / TAB</div>
+        <button class="npc-tab gx-sc-tab ${_shipControlsTab === 'current' ? 'active' : ''}" data-sc-tab="current">
+          ${T('Galaxy.shipControls.tabCurrentSystem')} <span class="gx-sc-cat-count">${currentBodiesCount}</span>
+        </button>
+        <button class="npc-tab gx-sc-tab ${_shipControlsTab === 'bookmarks' ? 'active' : ''}" data-sc-tab="bookmarks">
+          ${T('Galaxy.shipControls.tabBookmarks')} <span class="gx-sc-cat-count">${bookmarks.length}</span>
+        </button>
+        <button class="npc-tab gx-sc-tab ${_shipControlsTab === 'catalog' ? 'active' : ''}" data-sc-tab="catalog">
+          ${T('Galaxy.shipControls.tabCatalogStars')} <span class="gx-sc-cat-count">${catalogStars.length}</span>
+        </button>
+        <button class="npc-tab gx-sc-tab ${_shipControlsTab === 'patrons' ? 'active' : ''}" data-sc-tab="patrons">
+          ${T('Galaxy.shipControls.tabPatronStars')} <span class="gx-sc-cat-count">${patronStars.length}</span>
+        </button>
+        <button class="npc-tab gx-sc-tab ${_shipControlsTab === 'life' ? 'active' : ''}" data-sc-tab="life">
+          ${T('Galaxy.shipControls.tabBiosignatures')} <span class="gx-sc-cat-count">${lifeCount}</span>
+        </button>
+        <button class="npc-tab gx-sc-tab ${_shipControlsTab === 'spaceports' ? 'active' : ''}" data-sc-tab="spaceports">
+          ${T('Galaxy.shipControls.tabSpaceports')} <span class="gx-sc-cat-count">${spaceportsCount}</span>
+        </button>
+        <button class="npc-tab gx-sc-tab ${_shipControlsTab === 'galaxies' ? 'active' : ''}" data-sc-tab="galaxies">
+          ${T('Galaxy.shipControls.tabGalaxies')} <span class="gx-sc-cat-count">${nearestGalaxies.length}</span>
+        </button>
+      </div>
+
+      <div class="npc-panel-body gx-sc-panel-body">
+        <div class="npc-left-col gx-sc-left-col">
+          <div class="gx-sc-ident">
+            <div class="gx-sc-ship-avatar">🛸</div>
+            <div class="gx-sc-ident-text">
+              <div class="gx-sc-ident-title">${T('Galaxy.shipControls.title')}</div>
+              <div class="gx-sc-ident-sub">${escHtml(locText)}</div>
+            </div>
+          </div>
+
+          <div class="gx-sc-section">
+            <div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.currentSystem')}</div>
+            <div style="font-size: 15px; font-weight: bold; color: var(--text-primary-hover, #f3f4f6); line-height: 1.2;">
+              ${escHtml(ship.currentSystem || "Sol")}
+            </div>
+            ${ship.isMoving ? `
+              <div data-sc-eta style="margin-top: 4px; font-size: 12px; color: var(--text-amber-hint, #f59e0b);">
+                ${T('Galaxy.shipControls.flyingTo', { target: ship.targetPlanet || ship.targetStar || ship.targetSystem || "" })} · ${etaText}
+              </div>
+              <button class="gx-sc-btn stop" data-sc-stop style="margin-top: 6px; width: 100%;">${T('Galaxy.shipControls.stop')}</button>
+            ` : `
+              <div style="margin-top: 4px; font-size: 12px; color: var(--text-text-alt-4, #9ca3af);">
+                ${T('Galaxy.shipControls.stopped')}
+              </div>
+            `}
+          </div>
+
+          <div class="gx-sc-section">
+            <div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.resources')}</div>
+            <div class="npc-vital-row gx-sc-vital-row">
+              <span class="npc-vital-lbl gx-sc-vital-lbl">${T('Galaxy.shipControls.hyperfluxFuel')}</span>
+              <div class="npc-vital-track gx-sc-vital-track">
+                <div class="npc-vital-fill gx-sc-vital-fill" data-sc-hf-fill style="width:${Math.max(0, Math.min(100, hf))}%; background: var(--text-cost-ok, #10b981);"></div>
+              </div>
+              <span class="npc-vital-pct gx-sc-vital-pct" data-sc-hf-val>${Math.floor(hf)}/100</span>
+            </div>
+            <div class="npc-vital-row gx-sc-vital-row" style="margin-top: 4px;">
+              <span class="npc-vital-lbl gx-sc-vital-lbl">${T('Galaxy.shipControls.sbPellets')}</span>
+              <div class="gx-sc-pips" style="flex: 1;">${pipsHtml}</div>
+              <span class="npc-vital-pct gx-sc-vital-pct" style="color: var(--gx-accent-bridge, #a880ff); font-weight: bold;">${pellets}/6</span>
+            </div>
+          </div>
+
+          <div class="gx-sc-section">
+            <div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.warpSpeed')}</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+              <span style="font-size: 12px; color: var(--text-text-alt-4, #9ca3af);">${T('Galaxy.shipControls.speed')}</span>
+              <span class="gx-sc-speed-val" style="font-weight: bold; font-size: 15px; color: var(--text-primary-hover, #f3f4f6);">×${speed}</span>
+            </div>
+            <input type="range" class="gx-sc-slider" data-sc-speed-input min="1" max="100" value="${speed}">
+            <div style="display: flex; gap: 4px; margin-top: 4px;">
+              <button class="gx-sc-btn" data-sc-speed-down style="flex: 1;">−</button>
+              <button class="gx-sc-btn" data-sc-speed-up style="flex: 1;">+</button>
+              <button class="gx-sc-btn" data-sc-speed-set="1">×1</button>
+              <button class="gx-sc-btn" data-sc-speed-set="10">×10</button>
+              <button class="gx-sc-btn" data-sc-speed-set="50">×50</button>
+              <button class="gx-sc-btn" data-sc-speed-set="100">×100</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="npc-right-panel gx-sc-right-panel" id="gx-sc-content-area"></div>
+      </div>
+    `;
+
+    renderShipControlsContent();
+    attachShipControlsEvents();
+  }
+
+  function renderShipControlsContent() {
+    const area = _shipControlsOverlay?.querySelector("#gx-sc-content-area");
+    if (!area) return;
+
+    const dm = $gameSystem?.starMapData;
+    if (!dm || !dm.playerShip) return;
+    const ship = dm.playerShip;
+    const currentSys = dm.getSystem(ship.currentSystem);
+
+    if (_shipControlsTab === "current") {
+      if (!currentSys) {
+        area.innerHTML = `<div class="npc-empty gx-sc-empty">${T('Galaxy.tab.currentEmpty')}</div>`;
+        return;
+      }
+
+      let html = `<div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.starsGroup')}</div>`;
+
+      // Primary Star
+      const isParkedPrimary = !ship.isMoving && ship.parkedBody && ship.parkedBody.name === currentSys.name;
+      html += `
+        <div class="gx-sc-row">
+          <div class="gx-sc-item-info">
+            <span class="gx-sc-item-name">${escHtml(currentSys.label || currentSys.name)}</span>
+            <span class="gx-sc-item-sub">${T('Galaxy.shipControls.primaryStar')} · ${escHtml(String(currentSys.type || "?").replace(/_/g, " "))}</span>
+          </div>
+          <div class="gx-sc-item-actions">
+            ${isParkedPrimary ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+              <button class="gx-sc-btn focusable" data-sc-course='{"kind":"star","name":"${escHtml(currentSys.name)}","systemName":"${escHtml(currentSys.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>
+              <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"star","name":"${escHtml(currentSys.name)}","systemName":"${escHtml(currentSys.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
+            `}
+          </div>
+        </div>
+      `;
+
+      // Companions
+      (currentSys.companions || []).forEach((c) => {
+        const isParked = !ship.isMoving && ship.parkedBody && ship.parkedBody.name === c.name;
+        html += `
+          <div class="gx-sc-row">
+            <div class="gx-sc-item-info">
+              <span class="gx-sc-item-name">${escHtml(c.name)}</span>
+              <span class="gx-sc-item-sub">${T('Galaxy.shipControls.companionStar')} · ${escHtml(String(c.type || "?").replace(/_/g, " "))}</span>
+            </div>
+            <div class="gx-sc-item-actions">
+              ${isParked ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+                <button class="gx-sc-btn focusable" data-sc-course='{"kind":"star","name":"${escHtml(c.name)}","systemName":"${escHtml(currentSys.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>
+                <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"star","name":"${escHtml(c.name)}","systemName":"${escHtml(currentSys.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
+              `}
+            </div>
+          </div>
+        `;
+      });
+
+      // Planets & Moons
+      const planets = (currentSys.planets || []).slice().sort((a, b) => (a.orbitRadius || 0) - (b.orbitRadius || 0));
+      if (planets.length > 0) {
+        html += `<div class="npc-sec-hdr gx-sc-sec-hdr" style="margin-top: 14px;">${T('Galaxy.shipControls.planetsGroup')}</div>`;
+        planets.forEach((p) => {
+          const isHere = !ship.isMoving && ship.currentPlanet === p.name;
+          const auStr = p.orbitRadius != null ? ` · ${p.orbitRadius.toFixed(2)} AU` : "";
+          html += `
+            <div class="gx-sc-row depth-1">
+              <div class="gx-sc-item-info">
+                <span class="gx-sc-item-name">${escHtml(p.name)}</span>
+                <span class="gx-sc-item-sub">${T('Galaxy.shipControls.planet')} · ${escHtml(String(p.type || "?").replace(/_/g, " "))}${auStr}</span>
+              </div>
+              <div class="gx-sc-item-actions">
+                ${isHere ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+                  <button class="gx-sc-btn focusable" data-sc-course='{"kind":"planet","name":"${escHtml(p.name)}","systemName":"${escHtml(currentSys.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>
+                  <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"planet","name":"${escHtml(p.name)}","systemName":"${escHtml(currentSys.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
+                `}
+              </div>
+            </div>
+          `;
+
+          // Moons
+          (p.moons || []).forEach((m) => {
+            const isMoonHere = !ship.isMoving && ship.currentPlanet === m.name;
+            html += `
+              <div class="gx-sc-row depth-2">
+                <div class="gx-sc-item-info">
+                  <span class="gx-sc-item-name">${escHtml(m.name)}</span>
+                  <span class="gx-sc-item-sub">${T('Galaxy.shipControls.moon')} (${escHtml(p.name)}) · ${escHtml(String(m.type || "?").replace(/_/g, " "))}</span>
+                </div>
+                <div class="gx-sc-item-actions">
+                  ${isMoonHere ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+                    <button class="gx-sc-btn focusable" data-sc-course='{"kind":"moon","name":"${escHtml(m.name)}","parentPlanet":"${escHtml(p.name)}","systemName":"${escHtml(currentSys.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>
+                    <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"moon","name":"${escHtml(m.name)}","parentPlanet":"${escHtml(p.name)}","systemName":"${escHtml(currentSys.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
+                  `}
+                </div>
+              </div>
+            `;
+          });
+        });
+      }
+
+      area.innerHTML = html;
+    } else if (_shipControlsTab === "bookmarks") {
+      const bookmarks = $gameSystem._gxBookmarks || [];
+      if (!bookmarks.length) {
+        area.innerHTML = `<div class="npc-empty gx-sc-empty">${T('Galaxy.shipControls.noBookmarks')}</div>`;
+        return;
+      }
+
+      let html = `<div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.tabBookmarks')}</div>`;
+      bookmarks.forEach((bm) => {
+        const isStar = bm.kind === "star";
+        const isGalaxy = bm.kind === "galaxy";
+        let isHere = false;
+        if (isGalaxy) {
+          if (bm.name === "Milky Way") {
+            isHere = !ship.isMoving && (!ship.currentSystem || !ship.currentSystem.startsWith("GX."));
+          } else {
+            const seed = getGalaxySeed(bm.name);
+            isHere = !ship.isMoving && ship.currentSystem && (ship.currentSystem.startsWith("GX." + seed + ".") || ship.currentGalaxy === bm.name);
+          }
+        } else if (isStar) {
+          isHere = (!ship.isMoving && ship.currentSystem === bm.name && ship.parkedBody && ship.parkedBody.name === bm.name);
+        } else {
+          isHere = (!ship.isMoving && ship.currentPlanet === bm.name);
+        }
+        const sub = bm.systemName ? `${bm.systemName} · ${bm.kind || ""}` : (bm.kind || "");
+        html += `
+          <div class="gx-sc-row">
+            <div class="gx-sc-item-info">
+              <span class="gx-sc-item-name">${escHtml(bm.name)}</span>
+              <span class="gx-sc-item-sub">${escHtml(sub)}</span>
+            </div>
+            <div class="gx-sc-item-actions">
+              ${isHere ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+                ${!isGalaxy ? `<button class="gx-sc-btn focusable" data-sc-course='{"kind":"${escHtml(bm.kind)}","name":"${escHtml(bm.name)}","systemName":"${escHtml(bm.systemName || bm.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>` : ''}
+                <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"${escHtml(bm.kind)}","name":"${escHtml(bm.name)}","systemName":"${escHtml(bm.systemName || bm.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${isGalaxy ? T('Galaxy.shipControls.jump') : T('Galaxy.shipControls.sbJump')}</button>
+              `}
+              <button class="gx-sc-btn bookmark bookmark-on focusable" data-sc-unbookmark='{"name":"${escHtml(bm.name)}"}' style="margin:0;" title="${T('Galaxy.hud.bookmarkRemove')}">★</button>
+            </div>
+          </div>
+        `;
+      });
+      area.innerHTML = html;
+    } else if (_shipControlsTab === "catalog") {
+      let systems = getCatalogStarsNearby(dm);
+      const shipPos = getShipPosition(dm);
+
+      // Search filter
+      const q = (_shipControlsFilter || "").trim().toLowerCase();
+      if (q) {
+        systems = systems.filter((s) => {
+          const n = (s.name || "").toLowerCase();
+          const l = (s.label || "").toLowerCase();
+          const t = (s.type || "").toLowerCase();
+          return n.includes(q) || l.includes(q) || t.includes(q);
+        });
+      }
+
+      // Sort by distance from ship
+      systems.sort((a, b) => calcSysDistance(shipPos, a) - calcSysDistance(shipPos, b));
+
+      // Cap at 100 for maximum rendering speed
+      const displaySystems = systems.slice(0, 100);
+      const bookmarks = $gameSystem._gxBookmarks || [];
+
+      let html = `
+        <div class="gx-sc-search-wrap">
+          <input type="text" class="gx-sc-search-input" data-sc-search-input placeholder="${T('Galaxy.shipControls.searchPlaceholder')}" value="${escHtml(_shipControlsFilter)}">
+        </div>
+      `;
+
+      if (!displaySystems.length) {
+        html += `<div class="npc-empty gx-sc-empty">${T('Galaxy.shipControls.noStarsFound')}</div>`;
+      } else {
+        html += `<div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.tabCatalogStars')}</div>`;
+        displaySystems.forEach((sys) => {
+          const isCurrentSys = !ship.isMoving && ship.currentSystem === sys.name;
+          const dist = calcSysDistance(shipPos, sys);
+          const pCount = sys.planets ? sys.planets.length : 0;
+          const pStr = pCount === 1 ? T('Galaxy.shipControls.planetsCountOne') : T('Galaxy.shipControls.planetsCount', { count: pCount });
+          const distStr = dist > 0 ? ` · ${dist.toFixed(1)} ly` : "";
+          const isBookmarked = bookmarks.some(b => b.name === sys.name);
+
+          html += `
+            <div class="gx-sc-row">
+              <div class="gx-sc-item-info">
+                <span class="gx-sc-item-name">${escHtml(sys.label || sys.name)}</span>
+                <span class="gx-sc-item-sub">${escHtml(String(sys.type || "?").replace(/_/g, " "))} · ${pStr}${distStr}</span>
+              </div>
+              <div class="gx-sc-item-actions">
+                ${isCurrentSys ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+                  <button class="gx-sc-btn focusable" data-sc-course='{"kind":"star","name":"${escHtml(sys.name)}","systemName":"${escHtml(sys.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>
+                  <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"star","name":"${escHtml(sys.name)}","systemName":"${escHtml(sys.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
+                `}
+                <button class="gx-sc-btn bookmark ${isBookmarked ? 'bookmark-on' : ''} focusable" data-sc-toggle-bm='{"kind":"star","name":"${escHtml(sys.name)}","systemName":"${escHtml(sys.name)}"}' style="margin:0;" title="${isBookmarked ? T('Galaxy.hud.bookmarkRemove') : T('Galaxy.hud.bookmarkAdd')}">${isBookmarked ? "★" : "☆"}</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      area.innerHTML = html;
+
+      // Preserve focus on search input if active
+      const searchInput = area.querySelector("[data-sc-search-input]");
+      if (searchInput && document.activeElement && document.activeElement.hasAttribute("data-sc-search-input")) {
+        searchInput.focus();
+        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+      }
+    } else if (_shipControlsTab === "patrons") {
+      let patronStars = getPatronStarsList(dm);
+      const shipPos = getShipPosition(dm);
+
+      // Search filter
+      const q = (_shipControlsFilter || "").trim().toLowerCase();
+      if (q) {
+        patronStars = patronStars.filter((rec) => {
+          const n = (rec.name || "").toLowerCase();
+          const pn = (rec.patron?.name || "").toLowerCase();
+          const sn = (rec.system?.name || "").toLowerCase();
+          const t = (rec.system?.type || "").toLowerCase();
+          return n.includes(q) || pn.includes(q) || sn.includes(q) || t.includes(q);
+        });
+      }
+
+      patronStars.sort((a, b) => calcSysDistance(shipPos, a.system) - calcSysDistance(shipPos, b.system));
+
+      const bookmarks = $gameSystem._gxBookmarks || [];
+
+      let html = `
+        <div class="gx-sc-search-wrap">
+          <input type="text" class="gx-sc-search-input" data-sc-search-input placeholder="${T('Galaxy.shipControls.searchPatronsPlaceholder')}" value="${escHtml(_shipControlsFilter)}">
+        </div>
+      `;
+
+      if (!patronStars.length) {
+        html += `<div class="npc-empty gx-sc-empty">${T('Galaxy.shipControls.noPatronsFound')}</div>`;
+      } else {
+        html += `<div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.patronsGroup')}</div>`;
+        patronStars.forEach((rec) => {
+          const isCurrentSys = !ship.isMoving && ship.currentSystem === rec.system?.name;
+          const dist = calcSysDistance(shipPos, rec.system);
+          const distStr = dist > 0 ? ` · ${dist.toFixed(1)} ly` : "";
+          const isBookmarked = bookmarks.some(b => b.name === rec.system?.name || b.name === rec.name);
+          const patronName = rec.patron?.name || rec.name;
+          const starType = String(rec.system?.type || "?").replace(/_/g, " ");
+
+          html += `
+            <div class="gx-sc-row">
+              <div class="gx-sc-item-info">
+                <span class="gx-sc-item-name">${escHtml(rec.name)}</span>
+                <span class="gx-sc-item-sub">${escHtml(patronName)} · ${escHtml(starType)}${distStr}</span>
+              </div>
+              <div class="gx-sc-item-actions">
+                ${isCurrentSys ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+                  <button class="gx-sc-btn focusable" data-sc-course='{"kind":"star","name":"${escHtml(rec.system?.name || rec.name)}","systemName":"${escHtml(rec.system?.name || rec.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>
+                  <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"star","name":"${escHtml(rec.system?.name || rec.name)}","systemName":"${escHtml(rec.system?.name || rec.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
+                `}
+                <button class="gx-sc-btn bookmark ${isBookmarked ? 'bookmark-on' : ''} focusable" data-sc-toggle-bm='{"kind":"star","name":"${escHtml(rec.system?.name || rec.name)}","systemName":"${escHtml(rec.system?.name || rec.name)}"}' style="margin:0;" title="${isBookmarked ? T('Galaxy.hud.bookmarkRemove') : T('Galaxy.hud.bookmarkAdd')}">${isBookmarked ? "★" : "☆"}</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      area.innerHTML = html;
+
+      // Preserve focus on search input if active
+      const searchInput = area.querySelector("[data-sc-search-input]");
+      if (searchInput && document.activeElement && document.activeElement.hasAttribute("data-sc-search-input")) {
+        searchInput.focus();
+        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+      }
+    } else if (_shipControlsTab === "life") {
+      const lifeData = getBiosignaturesList(dm);
+      const q = (_shipControlsFilter || "").trim().toLowerCase();
+      const filterFn = (w) => {
+        if (!q) return true;
+        const n = (w.planet.name || "").toLowerCase();
+        const sn = (w.system.label || w.system.name || "").toLowerCase();
+        const t = (w.planet.type || "").toLowerCase();
+        const tl = (w.tierLabel || "").toLowerCase();
+        return n.includes(q) || sn.includes(q) || t.includes(q) || tl.includes(q);
+      };
+      const strongList = lifeData.strong.filter(filterFn);
+      const weakList = lifeData.weak.filter(filterFn);
+      const totalRaw = lifeData.strong.length + lifeData.weak.length;
+      const totalFiltered = strongList.length + weakList.length;
+      const bookmarks = $gameSystem._gxBookmarks || [];
+
+      let html = `
+        <div class="gx-sc-search-wrap" style="display: flex; gap: 8px;">
+          <input type="text" class="gx-sc-search-input" data-sc-search-input placeholder="${T('Galaxy.shipControls.searchBiosignaturesPlaceholder')}" value="${escHtml(_shipControlsFilter)}" style="flex: 1;">
+          <button class="gx-sc-btn focusable" data-sc-bioscan style="white-space: nowrap;">${T('Galaxy.shipControls.scanBiosignatures')}</button>
+        </div>
+      `;
+
+      if (totalRaw === 0) {
+        html += `<div class="npc-empty gx-sc-empty">${T('Galaxy.shipControls.noBiosignatures')}</div>`;
+      } else if (totalFiltered === 0) {
+        html += `<div class="npc-empty gx-sc-empty">${T('Galaxy.shipControls.noBiosignaturesFound')}</div>`;
+      } else {
+        const renderRow = (w) => {
+          const isHere = !ship.isMoving && ship.currentPlanet === w.planet.name;
+          const distStr = w.dist > 0 ? ` · ${w.dist.toFixed(1)} ly` : "";
+          const isBookmarked = bookmarks.some(b => b.name === w.planet.name);
+          const typeStr = String(w.planet.type || "?").replace(/_/g, " ");
+          const tierStr = w.tierLabel ? ` · ${w.tierLabel}` : "";
+
+          return `
+            <div class="gx-sc-row">
+              <div class="gx-sc-item-info">
+                <span class="gx-sc-item-name">${escHtml(w.planet.name)}</span>
+                <span class="gx-sc-item-sub">${escHtml(w.system.label || w.system.name)} · ${escHtml(typeStr)}${escHtml(tierStr)}${distStr}</span>
+              </div>
+              <div class="gx-sc-item-actions">
+                ${isHere ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+                  <button class="gx-sc-btn focusable" data-sc-course='{"kind":"planet","name":"${escHtml(w.planet.name)}","systemName":"${escHtml(w.system.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>
+                  <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"planet","name":"${escHtml(w.planet.name)}","systemName":"${escHtml(w.system.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
+                `}
+                <button class="gx-sc-btn bookmark ${isBookmarked ? 'bookmark-on' : ''} focusable" data-sc-toggle-bm='{"kind":"planet","name":"${escHtml(w.planet.name)}","systemName":"${escHtml(w.system.name)}"}' style="margin:0;" title="${isBookmarked ? T('Galaxy.hud.bookmarkRemove') : T('Galaxy.hud.bookmarkAdd')}">${isBookmarked ? "★" : "☆"}</button>
+              </div>
+            </div>
+          `;
+        };
+
+        if (strongList.length > 0) {
+          html += `<div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.lifeBearingGroup')}</div>`;
+          strongList.forEach(w => { html += renderRow(w); });
+        }
+        if (weakList.length > 0) {
+          html += `<div class="npc-sec-hdr gx-sc-sec-hdr" style="margin-top: 14px;">${T('Galaxy.shipControls.traceLifeGroup')}</div>`;
+          weakList.forEach(w => { html += renderRow(w); });
+        }
+      }
+
+      area.innerHTML = html;
+
+      const searchInput = area.querySelector("[data-sc-search-input]");
+      if (searchInput && document.activeElement && document.activeElement.hasAttribute("data-sc-search-input")) {
+        searchInput.focus();
+        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+      }
+    } else if (_shipControlsTab === "spaceports") {
+      let spaceports = getSpaceportsList(dm);
+      const q = (_shipControlsFilter || "").trim().toLowerCase();
+      if (q) {
+        spaceports = spaceports.filter((sp) => {
+          const n = (sp.name || "").toLowerCase();
+          const bn = (sp.bodyName || "").toLowerCase();
+          const sn = (sp.system.label || sp.system.name || "").toLowerCase();
+          return n.includes(q) || bn.includes(q) || sn.includes(q);
+        });
+      }
+
+      const bookmarks = $gameSystem._gxBookmarks || [];
+
+      let html = `
+        <div class="gx-sc-search-wrap">
+          <input type="text" class="gx-sc-search-input" data-sc-search-input placeholder="${T('Galaxy.shipControls.searchSpaceportsPlaceholder')}" value="${escHtml(_shipControlsFilter)}">
+        </div>
+      `;
+
+      if (!spaceports.length) {
+        html += `<div class="npc-empty gx-sc-empty">${T('Galaxy.shipControls.noSpaceportsFound')}</div>`;
+      } else {
+        html += `<div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.landingSitesGroup')}</div>`;
+        spaceports.forEach((sp) => {
+          const isHere = !ship.isMoving && ship.currentPlanet === sp.bodyName;
+          const distStr = sp.dist > 0 ? ` · ${sp.dist.toFixed(1)} ly` : "";
+          const isBookmarked = bookmarks.some(b => b.name === sp.name || b.name === sp.bodyName);
+          const bodyLabel = sp.isMoon ? `${sp.bodyName} (${sp.parentPlanet})` : sp.bodyName;
+          const sub = `${bodyLabel} · ${sp.system.label || sp.system.name}${distStr}`;
+
+          html += `
+            <div class="gx-sc-row">
+              <div class="gx-sc-item-info">
+                <span class="gx-sc-item-name">${escHtml(sp.name)}</span>
+                <span class="gx-sc-item-sub">${escHtml(sub)}</span>
+              </div>
+              <div class="gx-sc-item-actions">
+                ${isHere ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+                  ${!sp.far ? `<button class="gx-sc-btn focusable" data-sc-course='{"kind":"${sp.isMoon ? "moon" : "planet"}","name":"${escHtml(sp.bodyName)}","parentPlanet":"${escHtml(sp.parentPlanet || "")}","systemName":"${escHtml(sp.system.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>` : ''}
+                  <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"${sp.isMoon ? "moon" : "planet"}","name":"${escHtml(sp.bodyName)}","parentPlanet":"${escHtml(sp.parentPlanet || "")}","systemName":"${escHtml(sp.system.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
+                `}
+                <button class="gx-sc-btn bookmark ${isBookmarked ? 'bookmark-on' : ''} focusable" data-sc-toggle-bm='{"kind":"${sp.isMoon ? "moon" : "planet"}","name":"${escHtml(sp.name)}","systemName":"${escHtml(sp.system.name)}"}' style="margin:0;" title="${isBookmarked ? T('Galaxy.hud.bookmarkRemove') : T('Galaxy.hud.bookmarkAdd')}">${isBookmarked ? "★" : "☆"}</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      area.innerHTML = html;
+
+      const searchInput = area.querySelector("[data-sc-search-input]");
+      if (searchInput && document.activeElement && document.activeElement.hasAttribute("data-sc-search-input")) {
+        searchInput.focus();
+        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+      }
+    } else if (_shipControlsTab === "galaxies") {
+      let galaxies = getNearestGalaxiesList();
+      const q = (_shipControlsFilter || "").trim().toLowerCase();
+      if (q) {
+        galaxies = galaxies.filter((g) => {
+          const n = (g.name || "").toLowerCase();
+          const t = (g.type || "").toLowerCase();
+          return n.includes(q) || t.includes(q);
+        });
+      }
+
+      const bookmarks = $gameSystem._gxBookmarks || [];
+      let html = `
+        <div class="gx-sc-search-wrap">
+          <input type="text" class="gx-sc-search-input" data-sc-search-input placeholder="${T('Galaxy.shipControls.searchGalaxiesPlaceholder')}" value="${escHtml(_shipControlsFilter)}">
+        </div>
+      `;
+
+      if (!galaxies.length) {
+        html += `<div class="npc-empty gx-sc-empty">${T('Galaxy.shipControls.noGalaxiesFound')}</div>`;
+      } else {
+        html += `<div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.galaxiesGroup')}</div>`;
+        galaxies.forEach((g) => {
+          let isHere = false;
+          if (g.name === "Milky Way") {
+            isHere = !ship.isMoving && (!ship.currentSystem || !ship.currentSystem.startsWith("GX."));
+          } else {
+            const seed = getGalaxySeed(g.name);
+            isHere = !ship.isMoving && ship.currentSystem && (ship.currentSystem.startsWith("GX." + seed + ".") || ship.currentGalaxy === g.name);
+          }
+
+          const dist = g.distance != null ? g.distance : 0;
+          const distStr = dist === 0 ? "0 kly" : `${dist} kly`;
+          const typeStr = (g.type || "Galaxy").replace(/_/g, " ");
+          const isBookmarked = bookmarks.some(b => b.name === g.name);
+
+          html += `
+            <div class="gx-sc-row">
+              <div class="gx-sc-item-info">
+                <span class="gx-sc-item-name">${escHtml(g.name)}</span>
+                <span class="gx-sc-item-sub">${escHtml(typeStr)} · ${distStr}</span>
+              </div>
+              <div class="gx-sc-item-actions">
+                ${isHere ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+                  <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"galaxy","name":"${escHtml(g.name)}","distance":${dist}}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.jump')}</button>
+                `}
+                <button class="gx-sc-btn bookmark ${isBookmarked ? 'bookmark-on' : ''} focusable" data-sc-toggle-bm='{"kind":"galaxy","name":"${escHtml(g.name)}"}' style="margin:0;" title="${isBookmarked ? T('Galaxy.hud.bookmarkRemove') : T('Galaxy.hud.bookmarkAdd')}">${isBookmarked ? "★" : "☆"}</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      area.innerHTML = html;
+
+      // Preserve focus on search input if active
+      const searchInput = area.querySelector("[data-sc-search-input]");
+      if (searchInput && document.activeElement && document.activeElement.hasAttribute("data-sc-search-input")) {
+        searchInput.focus();
+        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+      }
+    }
+  }
+
+  function attachShipControlsEvents() {
+    if (!_shipControlsOverlay) return;
+    const modal = _shipControlsOverlay.querySelector("#gx-ship-controls-modal");
+    if (!modal) return;
+    const dm = $gameSystem?.starMapData;
+    if (!dm) return;
+
+    // Close button
+    modal.querySelector("[data-sc-close]")?.addEventListener("click", () => closeShipControls());
+
+    // Tabs
+    modal.querySelectorAll("[data-sc-tab]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        _shipControlsTab = btn.getAttribute("data-sc-tab");
+        _shipControlsFilter = "";
+        if (window.SoundManager && window.SoundManager.playCursor) SoundManager.playCursor();
+        renderShipControls();
+      });
+    });
+
+    // Speed slider & buttons
+    const slider = modal.querySelector(".gx-sc-slider");
+    if (slider) {
+      slider.addEventListener("input", (e) => {
+        setShipControlsSpeed(Number(e.target.value));
+      });
+    }
+    modal.querySelector("[data-sc-speed-down]")?.addEventListener("click", () => {
+      const cur = $gameVariables.value(94) || 1;
+      setShipControlsSpeed(Math.max(1, cur - 1));
+    });
+    modal.querySelector("[data-sc-speed-up]")?.addEventListener("click", () => {
+      const cur = $gameVariables.value(94) || 1;
+      setShipControlsSpeed(Math.min(100, cur + 1));
+    });
+    modal.querySelectorAll("[data-sc-speed-set]").forEach((b) => {
+      b.addEventListener("click", () => {
+        setShipControlsSpeed(Number(b.getAttribute("data-sc-speed-set")));
+      });
+    });
+
+    // Stop
+    modal.querySelector("[data-sc-stop]")?.addEventListener("click", () => {
+      if (dm.stopTravel) dm.stopTravel(true);
+      if (window.SoundManager && window.SoundManager.playCancel) SoundManager.playCancel();
+      renderShipControls();
+    });
+
+    // Event delegation on content area
+    const contentArea = modal.querySelector("#gx-sc-content-area");
+    if (contentArea) {
+      contentArea.addEventListener("input", (e) => {
+        if (e.target && e.target.matches && e.target.matches("[data-sc-search-input]")) {
+          _shipControlsFilter = e.target.value;
+          renderShipControlsContent();
+        }
+      });
+
+      contentArea.addEventListener("click", (e) => {
+        const bioscanBtn = e.target.closest("[data-sc-bioscan]");
+        if (bioscanBtn) {
+          scanBiosignatures(dm);
+          renderShipControls();
+          return;
+        }
+
+        const courseBtn = e.target.closest("[data-sc-course]");
+        if (courseBtn) {
+          try {
+            const data = JSON.parse(courseBtn.getAttribute("data-sc-course"));
+            handleShipControlsSetCourse(data);
+          } catch (err) { console.error(err); }
+          return;
+        }
+
+        const sbBtn = e.target.closest("[data-sc-sb]");
+        if (sbBtn) {
+          try {
+            const data = JSON.parse(sbBtn.getAttribute("data-sc-sb"));
+            handleShipControlsSbJump(data);
+          } catch (err) { console.error(err); }
+          return;
+        }
+
+        const unbmBtn = e.target.closest("[data-sc-unbookmark]");
+        if (unbmBtn) {
+          try {
+            const data = JSON.parse(unbmBtn.getAttribute("data-sc-unbookmark"));
+            handleShipControlsToggleBookmark(data);
+          } catch (err) { console.error(err); }
+          return;
+        }
+
+        const toggleBmBtn = e.target.closest("[data-sc-toggle-bm]");
+        if (toggleBmBtn) {
+          try {
+            const data = JSON.parse(toggleBmBtn.getAttribute("data-sc-toggle-bm"));
+            handleShipControlsToggleBookmark(data);
+          } catch (err) { console.error(err); }
+          return;
+        }
+      });
+    }
+  }
+
+  function setShipControlsSpeed(val) {
+    const v = Math.max(1, Math.min(100, Math.round(val) || 1));
+    $gameVariables.setValue(94, v);
+    const dm = $gameSystem?.starMapData;
+    if (dm && typeof dm.recalculateDepartureOnSpeedChange === "function") {
+      dm.recalculateDepartureOnSpeedChange();
+    }
+    if (window.SoundManager && window.SoundManager.playCursor) SoundManager.playCursor();
+    const speedValEl = _shipControlsOverlay?.querySelector(".gx-sc-speed-val");
+    if (speedValEl) speedValEl.textContent = `×${v}`;
+    const slider = _shipControlsOverlay?.querySelector(".gx-sc-slider");
+    if (slider) slider.value = v;
+    updateShipControlsLive();
+  }
+
+  function handleShipControlsSetCourse(target) {
+    const dm = $gameSystem?.starMapData;
+    if (!dm || !target) return;
+    const ship = dm.playerShip;
+
+    // Check if already there
+    if (!ship.isMoving && ship.currentSystem === target.systemName) {
+      if (target.kind === "star" && ship.parkedBody && ship.parkedBody.name === target.name) {
+        if (window.SoundManager) SoundManager.playBuzzer();
+        notify(T('Galaxy.shipControls.alreadyThere'), "info");
+        return;
+      }
+      if (target.kind !== "star" && ship.currentPlanet === target.name) {
+        if (window.SoundManager) SoundManager.playBuzzer();
+        notify(T('Galaxy.shipControls.alreadyThere'), "info");
+        return;
+      }
+    }
+
+    let ok = false;
+    if (target.kind === "star") {
+      if (target.systemName === target.name) {
+        ok = dm.startTravelToSystem(target.name);
+      } else {
+        ok = dm.startTravelToStar(target.systemName, target.name) || dm.startTravelToSystem(target.systemName);
+      }
+    } else if (target.kind === "planet") {
+      ok = dm.startTravelToPlanet(target.systemName, target.name);
+    } else if (target.kind === "moon") {
+      const pName = target.parentPlanet || target.name;
+      ok = dm.startTravelToPlanet(target.systemName, pName);
+    } else {
+      ok = dm.startTravelToSystem(target.systemName || target.name);
+    }
+
+    if (ok) {
+      if (window.SoundManager) SoundManager.playOk();
+      notify(T('Galaxy.shipControls.courseSetTo', { name: target.name }), "info");
+      renderShipControls();
+    } else {
+      if (window.SoundManager) SoundManager.playBuzzer();
+    }
+  }
+
+  function handleShipControlsSbJump(target) {
+    const dm = $gameSystem?.starMapData;
+    if (!dm || !target) return;
+    const ship = dm.playerShip;
+
+    // Check if already there
+    if (ship && !ship.isMoving) {
+      if (target.kind === "galaxy") {
+        let isHere = false;
+        if (target.name === "Milky Way") {
+          isHere = !ship.currentSystem || !ship.currentSystem.startsWith("GX.");
+        } else {
+          const seed = getGalaxySeed(target.name);
+          isHere = ship.currentSystem && (ship.currentSystem.startsWith("GX." + seed + ".") || ship.currentGalaxy === target.name);
+        }
+        if (isHere) {
+          if (window.SoundManager && window.SoundManager.playBuzzer) SoundManager.playBuzzer();
+          notify(T('Galaxy.shipControls.alreadyThere'), "info");
+          return;
+        }
+      } else if (ship.currentSystem === target.systemName) {
+        if (target.kind === "star" && ship.parkedBody && ship.parkedBody.name === target.name) {
+          if (window.SoundManager && window.SoundManager.playBuzzer) SoundManager.playBuzzer();
+          notify(T('Galaxy.shipControls.alreadyThere'), "info");
+          return;
+        }
+        if (target.kind !== "star" && ship.currentPlanet === target.name) {
+          if (window.SoundManager && window.SoundManager.playBuzzer) SoundManager.playBuzzer();
+          notify(T('Galaxy.shipControls.alreadyThere'), "info");
+          return;
+        }
+      }
+    }
+
+    const infinite = isInfiniteFuel();
+    const pellets = dm.getSchrodingerite ? dm.getSchrodingerite() : 0;
+    if (!infinite && pellets < 1) {
+      if (window.SoundManager && window.SoundManager.playBuzzer) SoundManager.playBuzzer();
+      notify(T('Galaxy.shipControls.noPellets'), "warning");
+      return;
+    }
+
+    if (!infinite && dm.setSchrodingerite) {
+      dm.setSchrodingerite(pellets - 1);
+    }
+
+    let ok = false;
+    if (target.kind === "galaxy") {
+      if (target.name === "Milky Way") {
+        ok = dm.teleportToSystem("Sol");
+        ship.currentGalaxy = "Milky Way";
+        if (window.SceneManager && window.SceneManager._scene && typeof window.SceneManager._scene._exitGalaxyFocus === "function") {
+          window.SceneManager._scene._exitGalaxyFocus();
+        }
+      } else {
+        const seed = getGalaxySeed(target.name);
+        const sysList = dm.generateGalaxySystems ? dm.generateGalaxySystems(seed) : null;
+        const targetSysName = (sysList && sysList.length > 0) ? sysList[0].name : ("GX." + seed + ".0");
+        ok = dm.teleportToSystem(targetSysName);
+        ship.currentGalaxy = target.name;
+        if (window.SceneManager && window.SceneManager._scene && typeof window.SceneManager._scene._enterGalaxyFocus === "function") {
+          window.SceneManager._scene._enterGalaxyFocus(target.name);
+        }
+      }
+    } else if (target.kind === "star") {
+      if (target.systemName === target.name) {
+        ok = dm.teleportToSystem(target.name);
+      } else {
+        ok = dm.parkAtStar(target.systemName, target.name);
+      }
+    } else if (target.kind === "planet") {
+      ok = dm.teleportToPlanetOrbit(target.systemName, target.name);
+    } else if (target.kind === "moon") {
+      const pName = target.parentPlanet || target.name;
+      ok = dm.teleportToPlanetOrbit(target.systemName, pName);
+    } else {
+      ok = dm.teleportToSystem(target.systemName || target.name);
+    }
+
+    if (ok) {
+      if (window.$gameScreen && window.$gameScreen.startFlash) {
+        $gameScreen.startFlash([200, 235, 255, 220], 25);
+      }
+      if (window.AudioManager && window.AudioManager.playSe) {
+        AudioManager.playSe({ name: "Teleport", pan: 0, pitch: 120, volume: 90 });
+      }
+      if (window.SoundManager && window.SoundManager.playOk) SoundManager.playOk();
+      notify(T('Galaxy.shipControls.sbJumpTo', { name: target.name }), "info");
+      renderShipControls();
+    } else {
+      if (!infinite && dm.setSchrodingerite) {
+        dm.setSchrodingerite(pellets);
+      }
+      if (window.SoundManager && window.SoundManager.playBuzzer) SoundManager.playBuzzer();
+    }
+  }
+
+  function handleShipControlsToggleBookmark(target) {
+    if (!$gameSystem._gxBookmarks) $gameSystem._gxBookmarks = [];
+    const list = $gameSystem._gxBookmarks;
+    const idx = list.findIndex(b => b.name === target.name);
+    if (idx >= 0) {
+      list.splice(idx, 1);
+    } else {
+      list.push({
+        kind: target.kind || "star",
+        name: target.name,
+        systemName: target.systemName || null,
+      });
+    }
+    if (window.SoundManager) SoundManager.playCursor();
+    renderShipControls();
+  }
+
+  window.GalaxySim.openShipControls = openShipControls;
+  window.GalaxySim.closeShipControls = closeShipControls;
+  window.GalaxySim.getBiosignaturesList = getBiosignaturesList;
+  window.GalaxySim.scanBiosignatures = scanBiosignatures;
+  window.GalaxySim.getSpaceportsList = getSpaceportsList;
 
   console.log("GalaxySim_Core: Plugin initialized successfully");
 

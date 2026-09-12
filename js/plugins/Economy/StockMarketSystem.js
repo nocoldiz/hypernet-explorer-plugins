@@ -1928,7 +1928,7 @@
         <!-- Top Header Bar -->
         <div class="sm-header-bar">
           <div style="display:flex; align-items:center; gap:12px">
-            <span style="font-size:18px; font-weight:bold; letter-spacing:1px; color:var(--xp-gold)">STOCK MARKET</span>
+            <span style="font-size:18px; font-weight:bold; letter-spacing:1px; color:var(--xp-white)">STOCK MARKET</span>
             <span style="background:var(--xp-green); color:var(--xp-white); font-size:10px; font-weight:bold; padding:2px 8px; border-radius:10px">● LIVE MARKET OPEN</span>
             <span style="font-size:12px; color:var(--xp-sky-4)">Session Ticks: ${sm._updateCounter}</span>
           </div>
@@ -1939,7 +1939,7 @@
             </div>
             <div class="sm-stat-pill">
               <span style="font-size:10px; color:var(--xp-sky-4)">PORTFOLIO STOCKS</span>
-              <span style="font-size:14px; font-weight:bold; color:var(--xp-gold)">${formatMoney(sm.getTotalStockValue())}</span>
+              <span style="font-size:14px; font-weight:bold; color:var(--xp-white)">${formatMoney(sm.getTotalStockValue())}</span>
             </div>
             <div class="sm-stat-pill">
               <span style="font-size:10px; color:var(--xp-sky-4)">NET WORTH</span>

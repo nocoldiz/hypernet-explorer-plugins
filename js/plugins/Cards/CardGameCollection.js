@@ -1056,12 +1056,12 @@
         <div id="ct-root" style="display:flex; flex-direction:column; height:100%; font-family:Tahoma,sans-serif; background:var(--xp-bg); overflow:hidden">
           <div style="background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%); padding:10px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0">
             <div>
-              <div style="color:var(--xp-gold); font-weight:bold; font-size:17px; letter-spacing:2px">${escapeHtml(T("CardGame.trader.banner"))}</div>
+              <div style="color:var(--xp-white); font-weight:bold; font-size:17px; letter-spacing:2px">${escapeHtml(T("CardGame.trader.banner"))}</div>
               <div style="color:var(--xp-sky-4); font-size:13px; margin-top:2px">${escapeHtml(T("CardGame.trader.tagline"))}</div>
             </div>
             <div style="margin-left:auto; text-align:right; color:var(--xp-sky-4); font-size:13px; line-height:1.5">
               <div>${escapeHtml(T("CardGame.trader.wallet"))}</div>
-              <div id="ct-wallet" style="color:var(--xp-gold); font-weight:bold; font-size:16px">&nbsp;</div>
+              <div id="ct-wallet" style="color:var(--xp-white); font-weight:bold; font-size:16px">&nbsp;</div>
             </div>
           </div>
           <div style="display:flex; gap:6px; padding:8px 12px 4px 12px; flex-shrink:0">

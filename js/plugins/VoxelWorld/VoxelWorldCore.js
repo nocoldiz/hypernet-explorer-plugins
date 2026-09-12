@@ -1294,6 +1294,142 @@
         return Math.max(0, 1 - (hour - 17) / 4);      // dusk ramp down to 0 by 21
     }
 
+    // Biomes and planet types with no atmosphere: in voxel mode these wear
+    // a pitch black starry sky, no atmospheric scattering, and no clouds.
+    const AIRLESS_BIOMES = new Set([
+        'AlienMercurian', 'AlienSubMercurian', 'AlienCTypeAsteroid', 'AlienSTypeAsteroid',
+        'AlienMTypeAsteroid', 'AlienTrojanAsteroid', 'AlienPlanetesimal', 'AlienCentaur',
+        'AlienComet', 'AlienShortPeriodComet', 'AlienLongPeriodComet', 'AlienDwarf'
+    ]);
+
+    const AIRLESS_TYPES = new Set([
+        'mercurian', 'sub_mercurian', 'rocky', 'c_type_asteroid', 's_type_asteroid',
+        'm_type_asteroid', 'trojan_asteroid', 'planetesimal', 'centaur', 'comet',
+        'short_period_comet', 'long_period_comet', 'dwarf', 'irregular', 'carbonaceous'
+    ]);
+
+    function isAirlessWorld(alien) {
+        if (!alien) return false;
+        const planet = alien.planet;
+        if (planet) {
+            if (planet.atmosphere === false || planet.hasAtmosphere === false || planet.atmosphere === 0 || planet.atmosphere === 'none') {
+                return true;
+            }
+            if (planet.atmosphere === true || planet.hasAtmosphere === true) {
+                return false;
+            }
+        }
+        const biome = alien.biome;
+        const biomeName = (typeof biome === 'string') ? biome : (biome && biome.name) || '';
+        if (AIRLESS_BIOMES.has(biomeName)) return true;
+
+        const type = (planet && planet.type) || '';
+        if (AIRLESS_TYPES.has(type)) return true;
+
+        return false;
+    }
+
+    // Alien biomes with atmosphere: sky colors that reflect the atmospheric
+    // composition and surface chemistry of each world.
+    const ALIEN_BIOME_SKY_PALETTES = {
+        AlienEarthLike:       { day: [0.40, 0.72, 0.90], sunset: [0.85, 0.45, 0.25], night: [0.02, 0.03, 0.09] },
+        AlienSuperEarth:      { day: [0.55, 0.45, 0.82], sunset: [0.80, 0.35, 0.60], night: [0.04, 0.02, 0.08] },
+        AlienAcidOcean:       { day: [0.62, 0.82, 0.22], sunset: [0.85, 0.70, 0.15], night: [0.05, 0.08, 0.02] },
+        AlienLavaOcean:       { day: [0.85, 0.30, 0.12], sunset: [0.95, 0.20, 0.08], night: [0.12, 0.03, 0.02] },
+        AlienMagmaPlanet:     { day: [0.88, 0.28, 0.12], sunset: [0.98, 0.18, 0.06], night: [0.15, 0.03, 0.02] },
+        AlienDesert:          { day: [0.82, 0.68, 0.38], sunset: [0.90, 0.45, 0.20], night: [0.06, 0.04, 0.05] },
+        AlienRainforest:      { day: [0.25, 0.78, 0.65], sunset: [0.75, 0.60, 0.25], night: [0.02, 0.06, 0.05] },
+        AlienTundra:          { day: [0.60, 0.72, 0.80], sunset: [0.75, 0.50, 0.50], night: [0.03, 0.04, 0.07] },
+        AlienIce:             { day: [0.58, 0.82, 0.98], sunset: [0.80, 0.60, 0.75], night: [0.02, 0.03, 0.08] },
+        AlienOcean:           { day: [0.22, 0.48, 0.85], sunset: [0.80, 0.38, 0.35], night: [0.01, 0.02, 0.07] },
+        AlienPlasma:          { day: [0.75, 0.35, 0.88], sunset: [0.90, 0.30, 0.70], night: [0.10, 0.03, 0.12] },
+        AlienMagnetar:        { day: [0.65, 0.28, 0.92], sunset: [0.80, 0.20, 0.85], night: [0.08, 0.02, 0.12] },
+        AlienQuarkPlanet:     { day: [0.82, 0.35, 0.75], sunset: [0.92, 0.40, 0.55], night: [0.08, 0.02, 0.08] },
+        AlienCarbon:          { day: [0.35, 0.30, 0.28], sunset: [0.55, 0.28, 0.18], night: [0.02, 0.02, 0.02] },
+        AlienDiamond:         { day: [0.70, 0.92, 0.98], sunset: [0.88, 0.75, 0.95], night: [0.04, 0.05, 0.09] },
+        AlienMiniNeptune:     { day: [0.35, 0.75, 0.88], sunset: [0.65, 0.80, 0.60], night: [0.02, 0.05, 0.08] },
+        AlienIceGiant:        { day: [0.45, 0.80, 0.92], sunset: [0.70, 0.85, 0.65], night: [0.02, 0.05, 0.08] },
+        AlienGasGiant:        { day: [0.55, 0.72, 0.85], sunset: [0.85, 0.65, 0.35], night: [0.03, 0.04, 0.08] },
+        AlienRingedGasGiant:  { day: [0.52, 0.74, 0.88], sunset: [0.86, 0.68, 0.38], night: [0.03, 0.04, 0.08] },
+        AlienHotJupiter:      { day: [0.88, 0.42, 0.18], sunset: [0.95, 0.30, 0.12], night: [0.10, 0.04, 0.02] },
+        AlienWarmJupiter:     { day: [0.58, 0.75, 0.80], sunset: [0.80, 0.60, 0.35], night: [0.03, 0.04, 0.07] },
+        AlienColdJupiter:     { day: [0.50, 0.62, 0.85], sunset: [0.70, 0.50, 0.65], night: [0.02, 0.03, 0.08] },
+        AlienPuffy:           { day: [0.72, 0.78, 0.90], sunset: [0.85, 0.65, 0.70], night: [0.04, 0.04, 0.08] },
+        AlienChthonian:       { day: [0.78, 0.32, 0.18], sunset: [0.88, 0.22, 0.10], night: [0.08, 0.02, 0.02] },
+        AlienMegaIron:        { day: [0.68, 0.50, 0.38], sunset: [0.82, 0.42, 0.25], night: [0.04, 0.03, 0.04] },
+        AlienHabitable:       { day: [0.82, 0.48, 0.72], sunset: [0.92, 0.45, 0.40], night: [0.05, 0.02, 0.06] },
+        AlienSubEarth:        { day: [0.72, 0.52, 0.35], sunset: [0.85, 0.40, 0.20], night: [0.04, 0.03, 0.05] },
+        AlienRogue:           { day: [0.15, 0.18, 0.32], sunset: [0.20, 0.15, 0.30], night: [0.02, 0.02, 0.05] },
+    };
+
+    function fallbackAlienBiomePalette(alien) {
+        const biome = alien && alien.biome;
+        let rgb = null;
+        if (biome && biome.color) {
+            if (typeof biome.color === 'string' && biome.color.startsWith('#')) {
+                const num = parseInt(biome.color.slice(1), 16);
+                rgb = [(num >> 16 & 255) / 255, (num >> 8 & 255) / 255, (num & 255) / 255];
+            }
+        }
+        if (!rgb && alien && alien.planet) {
+            const p = alien.planet;
+            if (p.rgb) {
+                rgb = [p.rgb[0] / 255, p.rgb[1] / 255, p.rgb[2] / 255];
+            } else if (p.skyBlend) {
+                rgb = [p.skyBlend[0] / 255, p.skyBlend[1] / 255, p.skyBlend[2] / 255];
+            }
+        }
+        if (!rgb) rgb = [0.53, 0.81, 0.92];
+        return {
+            day: [Math.min(1, rgb[0] * 1.1), Math.min(1, rgb[1] * 1.1), Math.min(1, rgb[2] * 1.1)],
+            sunset: [Math.min(1, rgb[0] * 1.3 + 0.2), Math.min(1, rgb[1] * 0.7), Math.min(1, rgb[2] * 0.4)],
+            night: [Math.max(0.01, rgb[0] * 0.08), Math.max(0.01, rgb[1] * 0.08), Math.max(0.02, rgb[2] * 0.12)],
+        };
+    }
+
+    function sampleAlienSkyColor(alien, hour, out) {
+        if (!out) out = new THREE.Color();
+        if (isAirlessWorld(alien)) {
+            out.setRGB(0, 0, 0);
+            return out;
+        }
+        const biome = alien && alien.biome;
+        const biomeName = (typeof biome === 'string') ? biome : (biome && biome.name) || '';
+        const pal = ALIEN_BIOME_SKY_PALETTES[biomeName] || fallbackAlienBiomePalette(alien);
+        let r, g, b;
+        if (hour < 5 || hour >= 21) {
+            [r, g, b] = pal.night;
+        } else if (hour < 7.5) {
+            const t = (hour - 5) / 2.5;
+            if (t < 0.5) {
+                const t1 = t * 2;
+                r = pal.night[0] + (pal.sunset[0] - pal.night[0]) * t1;
+                g = pal.night[1] + (pal.sunset[1] - pal.night[1]) * t1;
+                b = pal.night[2] + (pal.sunset[2] - pal.night[2]) * t1;
+            } else {
+                const t2 = (t - 0.5) * 2;
+                r = pal.sunset[0] + (pal.day[0] - pal.sunset[0]) * t2;
+                g = pal.sunset[1] + (pal.day[1] - pal.sunset[1]) * t2;
+                b = pal.sunset[2] + (pal.day[2] - pal.sunset[2]) * t2;
+            }
+        } else if (hour <= 16.5) {
+            [r, g, b] = pal.day;
+        } else if (hour < 19.5) {
+            const t = (hour - 16.5) / 3.0;
+            r = pal.day[0] + (pal.sunset[0] - pal.day[0]) * t;
+            g = pal.day[1] + (pal.sunset[1] - pal.day[1]) * t;
+            b = pal.day[2] + (pal.sunset[2] - pal.day[2]) * t;
+        } else {
+            const t = (hour - 19.5) / 1.5;
+            r = pal.sunset[0] + (pal.night[0] - pal.sunset[0]) * t;
+            g = pal.sunset[1] + (pal.night[1] - pal.sunset[1]) * t;
+            b = pal.sunset[2] + (pal.night[2] - pal.sunset[2]) * t;
+        }
+        if (THREE.SRGBColorSpace !== undefined) out.setRGB(r, g, b, THREE.SRGBColorSpace);
+        else out.setRGB(r, g, b);
+        return out;
+    }
+
     // =========================================================================
     // Biome / Terrain Helpers (module-level)
     // =========================================================================
@@ -2111,6 +2247,7 @@
         isFarlandsTile, farlandsBiomeAt,
         isRoadTile, loadTex, noiseHeight, parseRoadDirection, pickRandomRoadTile,
         placeNameAt, roadDataReady, roadExitsFrom, roadLabelAt, roadLinksAt,
-        roadTileTable, sampleBiomeAt, sampleSkyColor, setTextureAnisotropy
+        roadTileTable, sampleBiomeAt, sampleSkyColor, setTextureAnisotropy,
+        isAirlessWorld, sampleAlienSkyColor, ALIEN_BIOME_SKY_PALETTES
     });
 })();

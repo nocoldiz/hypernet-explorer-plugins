@@ -1221,6 +1221,15 @@
     const COMPASS_ICON = 20;     // IconSet crop size on the label plate
     let compassContainer = null;
     let compassKey = null;
+    // The marker list the compass is drawn from, kept between frames. Building
+    // it is the expensive half of the compass and the half that almost never
+    // changes: KanbanQuest.activeMarkers() allocates an array, a Set and one
+    // object per marker, and compassSignature() then maps and joins the whole
+    // lot into a string, all of it per frame, on every map, purely to find out
+    // that the quest log had not moved. Where the markers are drawn still
+    // follows the camera every frame; only the list behind them is rationed.
+    let compassMarkers = null;
+    let compassMarkersAtKey = null;
     const compassArrowBitmaps = new Map(); // colour -> cached triangle bitmap
 
     function compassArrowBitmap(color) {
@@ -1363,13 +1372,25 @@
         // Never over a message/choice window: those run inside Scene_Map itself
         // rather than a pushed scene, so the compass would otherwise draw over them.
         if ($gameMessage && $gameMessage.isBusy()) { hideCompassMarkers(); return; }
-        const markers = activeQuestMarkerList();
+        // Rescanned a few times a second rather than sixty. FrameBudget.every
+        // answers true when it is absent as well as when the budget allows it,
+        // so a missing budget simply rescans as before rather than going blind.
+        if (compassMarkers === null ||
+            !window.FrameBudget || window.FrameBudget.every('questCompassScan', 5)) {
+            compassMarkers = activeQuestMarkerList();
+        }
+        const markers = compassMarkers;
         if (!markers.length) { removeCompassMarkers(); return; }
 
-        const key = compassSignature(markers);
-        if (key !== compassKey) {
-            if (!buildCompassMarkers(markers)) return;
-            compassKey = key;
+        // Only worth re-deriving on a frame that actually rescanned; between
+        // those the list is the very same array and the key cannot have moved.
+        if (compassKey === null || markers !== compassMarkersAtKey) {
+            const key = compassSignature(markers);
+            if (key !== compassKey) {
+                if (!buildCompassMarkers(markers)) return;
+                compassKey = key;
+            }
+            compassMarkersAtKey = markers;
         }
         const container = ensureCompassContainer();
         if (!container) return;
@@ -2681,12 +2702,23 @@
         // expensive full rebuilds (events rescan + Bitmap/canvas draw) only need
         // to run when the player's tile changes. Also rebuild when the fast-travel
         // timer's active state flips, since it gates whether arrows show at all.
+        //
+        // The gate used to read `wasMoving ||`, which is true on EVERY frame of
+        // a step, not once per step: walking rebuilt the whole set every frame,
+        // and since each arrow owns a Bitmap made in its constructor that meant
+        // a destroy and a fresh canvas draw per arrow per frame, plus a rescan
+        // of every event on the map, all to redraw what was already on screen.
+        // The tile is what the arrows are read off, and it is already updated
+        // by the time the step begins, so tileChanged covers the start of the
+        // step. What `wasMoving` was really buying was the frame the step ENDS
+        // on, so that is what is kept: the edge, not all the frames in between.
+        const stoppedMoving = wasMoving && !this.isMoving();
         const tileChanged = this._lastArrowUpdateX !== this.x || this._lastArrowUpdateY !== this.y;
         const ftData = $gameSystem ? $gameSystem.getFastTravelData() : null;
         const ftActive = !!(ftData && ftData.timerActive && ftData.timerRemainingTime > 0);
         const ftChanged = this._lastArrowFtActive !== ftActive;
         const mapChanged = this._lastArrowMapId !== $gameMap.mapId();
-        const needP1Rebuild = wasMoving || tileChanged || ftChanged || mapChanged;
+        const needP1Rebuild = stoppedMoving || tileChanged || ftChanged || mapChanged;
 
         if (sceneActive && !$gameMessage.isBusy()) {
             if (tileChanged || mapChanged) this.checkBorderTeleport();
@@ -3310,9 +3342,21 @@
         return { x: nx, y: ny };
     }
 
+    // Is this square a DOOR onto a hand-authored map? Only a Destinations.json
+    // entry with somewhere to send the party is: a procedural town names its
+    // footprint in the same file and has no door at all, and those squares are
+    // generated exactly like open country, so nothing is gained by keeping them
+    // apart. Held apart they were, though, and a city of four reserved squares
+    // therefore cost a crossing between every one of them. The test is the very
+    // one the crossing itself makes (a destination, not merely an entry), so a
+    // square the window refuses is always a square the border really hands over.
+    function authoredDoorAt(wx, wy) {
+        return !!getNonProceduralDestination(wx, wy, 0).destination;
+    }
+
     // May this square be laid alongside the one the party is on?
     function canStitch(centre, wx, wy, depth) {
-        // A square WorkSystem/Destinations.json names is a door onto a
+        // A square WorkSystem/Destinations.json opens a door on is a way into a
         // hand-authored map. Its border keeps the old crossing, so it is never
         // part of a window, neither as a neighbour nor as a centre.
         //
@@ -3326,7 +3370,7 @@
         // coincidentally match a real Earth coordinate: none of Earth's markers
         // may be consulted for it (the same rule ProcGenSquare.resolve follows).
         const alien = procGen() && procGen().alienGrid;
-        if (!alien && !depth && getNonProceduralDestination(wx, wy, 0).exists) return false;
+        if (!alien && !depth && authoredDoorAt(wx, wy)) return false;
         const api = ProcGenSquareApi();
         if (!api) return false;
         const resolved = api.resolve(wx, wy, { depth });
@@ -3403,7 +3447,7 @@
 
         // A centre the old system owns takes no neighbours at all - and it only
         // owns the SURFACE of it (see canStitch).
-        const centreIsAuthored = !depth && getNonProceduralDestination(cx, cy, 0).exists;
+        const centreIsAuthored = !depth && authoredDoorAt(cx, cy);
 
         const ok = {};
         for (let dy = -1; dy <= 1; dy++) {
@@ -4813,24 +4857,57 @@
         };
     }
 
-    // Fade out and schedule the seamless biome-to-biome edge transition for the
-    // current procedural map. Shared by Player 1 (moveStraight, above) and Player 2
-    // (split-screen, via window.WorldMapReturnP2.handleP2Move) so that EITHER player
-    // walking off the proc-map edge moves the whole party to the adjacent biome.
+    // Does this crossing end somewhere other than another procedural square?
+    // Only a WorkSystem/Destinations.json door does: the square being left, or
+    // the one being entered, is a town's and hands the party to its authored
+    // map. Asked BEFORE the crossing is scheduled, because it decides whether
+    // the transition is panned or faded, and it asks exactly what the callback
+    // below asks when it gets there, so the two can never disagree.
+    function crossingLeavesProcMap(exitDirection) {
+        const pg = procGen();
+        if (!pg) return true;
+        // A planet's landing grid is planet-local and its (gx, gy) can coincide
+        // with a real Earth square, so none of Earth's markers may be consulted
+        // for it. There is nothing hand-authored out there anyway.
+        if (pg.alienGrid) return false;
+        // Underground the named squares are generated like every other one (see
+        // the callback), so no border down there is ever a door.
+        if ((pg.biomeLayerStack || []).length) return false;
+        const wx = $gameVariables.value(VAR_WORLD_X);
+        const wy = $gameVariables.value(VAR_WORLD_Y);
+        if (getNonProceduralDestination(wx, wy, exitDirection).destination) return true;
+        const adj = $gameSystem.getAdjacentWorldCoordinates(exitDirection);
+        return !!getNonProceduralDestination(adj.x, adj.y, exitDirection).destination;
+    }
+
+    // Show the crossing and schedule the seamless biome-to-biome edge transition
+    // for the current procedural map. Shared by Player 1 (moveStraight, above) and
+    // Player 2 (split-screen, via window.WorldMapReturnP2.handleP2Move) so that
+    // EITHER player walking off the proc-map edge moves the whole party to the
+    // adjacent biome.
     function scheduleProcEdgeTransition(exitDirection, playerX, playerY, d) {
         // Pull Player 2 to Player 1 once the new biome map loads so the split-screen
         // companion does not get stranded on the old edge.
         if (window.SplitScreenManager && window.SplitScreenManager.active) {
             window.SplitScreenManager.forceP2Teleport = true;
         }
-        // With streaming on the crossing is hidden behind a fade. With it off it
-        // is shown: the screen pans from the square being left to the one being
-        // entered, Zelda style, so take the picture of the old one now, while it
-        // is still on screen, and hold the brightness where it is.
-        if (mapStreamingEnabled()) {
-            $gameScreen.startFadeOut(10);
-        } else {
+        // A crossing from one procedural square to the next is SHOWN, whether
+        // the squares are streamed or not: the screen pans from the one being
+        // left to the one being entered, Zelda style, so take the picture of the
+        // old one now, while it is still on screen, and hold the brightness
+        // where it is. Streaming only decides which edges reach here at all -
+        // with it on a matching neighbour is stitched on instead and there is no
+        // crossing to show, so what is left is the tileset changing under the
+        // party, which is exactly what the pan is for.
+        //
+        // A border that hands the party to a hand-authored map is not a pan: the
+        // still would be of somewhere else entirely, so a town door keeps the
+        // fade it always had.
+        const panning = !crossingLeavesProcMap(exitDirection);
+        if (panning) {
             beginEdgePan(exitDirection);
+        } else {
+            $gameScreen.startFadeOut(10);
         }
 
         const system         = $gameSystem;
@@ -4891,7 +4968,7 @@
         // The fading crossing waits for the screen to go black (Game_Screen.update
         // below). The panning one never goes black, so nothing would ever wake the
         // callback: run it on the next tick instead.
-        if (!mapStreamingEnabled()) {
+        if (panning) {
             system._procGenData._edgeTransitionDispatching = true;
             const cb = system._procGenData._edgeTransitionCallback;
             setTimeout(() => {
@@ -5134,14 +5211,15 @@
     };
 
     // ============================================================================
-    // THE PANNING BORDER CROSSING (Map Streaming off)
+    // THE PANNING BORDER CROSSING
     // ============================================================================
-    // With streaming on a border is a seam inside one big stitched map and there
-    // is nothing to show. With it off only the party's own square is ever loaded,
-    // so every border really is a crossing, and it is drawn the way the first
-    // Zelda drew it: the picture of the square being left slides off one side
-    // while the square being entered slides in behind it, and control comes back
-    // when it stops.
+    // A border that is reached at all is a real crossing: with streaming on a
+    // matching neighbour is a seam inside one big stitched map and never comes
+    // here, so what is left is the tileset changing under the party, and with
+    // streaming off only the party's own square is ever loaded, so every border
+    // is one. Either way it is drawn the way the first Zelda drew it: the
+    // picture of the square being left slides off one side while the square
+    // being entered slides in behind it, and control comes back when it stops.
     //
     // The old square is a still taken the frame the border is touched
     // (SceneManager.snap). The new one is the live scene: the pan is the whole

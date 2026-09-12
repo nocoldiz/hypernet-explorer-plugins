@@ -782,6 +782,14 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     }
   };
   
+  // The keep-out region, read off the one authority that owns it rather than
+  // from a literal repeated down this file. MovementInteractionSystem defines
+  // it; the fallback keeps an old save's map load from throwing if the plugin
+  // list is ever reordered underneath us.
+  function noGoRegion() {
+    return (window.RegionRules && window.RegionRules.NO_GO_REGION) || 7;
+  }
+
   Game_System.prototype.findRegion13Tiles = function (mapData) {
     const width = mapData.width;
     const height = mapData.height;
@@ -807,6 +815,11 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       for (let x = 0; x < width; x++) {
         if (x > 2 && x < width - 2 && y > 2 && y < height - 2) {
           const regionId = this.getRegionIdFromMapData(mapData, x, y);
+          // Region 7 is the keep-out region: solid mass, never a spawn. It sat
+          // inside the 0-9 band this scan accepts wholesale, which is how a
+          // chest (and, through the fallback branch above, a staircase) came
+          // to be dealt into the inside of a wall.
+          if (regionId === noGoRegion()) continue;
           if (regionId >= 0 && regionId <= 9) {
             passableTiles.push({ x, y });
           }
@@ -870,6 +883,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       for (let x = 0; x < width; x++) {
         // Keep boundary check to avoid edge tiles
         if (x > 2 && x < width - 2 && y > 2 && y < height - 2) {
+          if (this.getRegionIdFromMapData(mapData, x, y) === noGoRegion()) continue;
           if (this.isPassableTileFromTilesets(mapData, x, y)) {
             passableTiles.push({ x, y });
           }
@@ -1316,9 +1330,30 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   const TOWER_MIN_WIDTH_OPENNESS = 5;
   const TOWER_GAPS = [12, 8, 5, 2, 0];
 
+  // A post may only stand on ground the floor was actually carved with. Asking
+  // checkPassage alone was not enough: it answers with the topmost tile that
+  // has an opinion, so a torch or a chain hung on the rock (layer 2) speaks for
+  // the rock underneath it, and in a tileset whose ceiling blend is not flagged
+  // impassable the whole dead mass answers "yes" on its own. That is how a
+  // staircase and a lift ended up inside a wall, reachable only by broomstick.
+  // The ground tile itself is asked first, and it has to be a real, drawn,
+  // walkable floor: the void past the rim is tile 0, which is nothing at all.
+  function towerGroundIsFloor(x, y) {
+    const tileId = $gameMap.tileId(x, y, 0);
+    if (!tileId) return false;
+    const flags = $gameMap.tilesetFlags();
+    const flag = flags ? flags[tileId] : undefined;
+    if (flag === undefined) return false;
+    if ((flag & 0x10) !== 0) return false;   // a star tile is scenery, not ground
+    return (flag & 0x0f) === 0;
+  }
+
   function towerCanStand(x, y) {
     if (x < 0 || y < 0 || x >= $gameMap.width() || y >= $gameMap.height()) return false;
-    if ($gameMap.regionId(x, y) === 99) return true;       // water is swum, not walked
+    const region = $gameMap.regionId(x, y);
+    if (region === noGoRegion()) return false;             // painted keep-out: solid mass
+    if (region === 99) return true;                        // water is swum, not walked
+    if (!towerGroundIsFloor(x, y)) return false;
     return $gameMap.checkPassage(x, y, 0x0f);
   }
 
@@ -1367,8 +1402,26 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   function buildTowerLayout(floor) {
     const w = $gameMap.width(), h = $gameMap.height();
     const gen = ($gameSystem._procGenData && $gameSystem._procGenData.generatedMapData) || null;
-    const startX = (gen && gen.spawnX != null) ? gen.spawnX : Math.floor(w / 2);
-    const startY = (gen && gen.spawnY != null) ? gen.spawnY : Math.floor(h / 2);
+    let startX = (gen && gen.spawnX != null) ? gen.spawnX : Math.floor(w / 2);
+    let startY = (gen && gen.spawnY != null) ? gen.spawnY : Math.floor(h / 2);
+    // The carve's own spawn is a non-index property of the tile array, and
+    // JSON.stringify drops those: a floor walked back onto out of a savegame
+    // has no recorded entrance and falls back to the middle of the map, which
+    // on a plan that does not reach the middle is solid rock. Flooding from
+    // rock reaches nothing, and all three staircases used to be dealt the
+    // fallback tile - inside the mass. Walk out to the nearest real floor
+    // first, so the flood always starts somewhere the party could stand.
+    if (!towerCanStand(startX, startY)) {
+      let best = null, bestD = Infinity;
+      for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+          if (!towerCanStand(x, y)) continue;
+          const d = Math.abs(x - startX) + Math.abs(y - startY);
+          if (d < bestD) { bestD = d; best = { x, y }; }
+        }
+      }
+      if (best) { startX = best.x; startY = best.y; }
+    }
     const dist = towerDistanceMap(startX, startY);
     const rng = createSeededRandom(`towerLayout:${dungeonWorldSeed()}:${floor}`);  // i18n-ignore  seed string
 
@@ -1382,7 +1435,10 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       }
     }
     if (!reachable.length) {
-      const fallback = { x: startX, y: Math.max(1, startY - 1) };
+      // Nothing at all to stand on two tiles in from the border: put all three
+      // posts on the flood's own start, which the scan above guarantees is
+      // floor whenever the floor has any.
+      const fallback = { x: startX, y: startY };
       return towerLayoutFrom(floor, w, fallback, fallback, fallback);
     }
 
@@ -1463,6 +1519,20 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       }
     }
     return { x: post.x, y: post.y, dir: 2 };
+  }
+
+  // The three posts and the tile the party lands on beside each of them.
+  function towerReservedTiles() {
+    const floor = currentTowerFloor();
+    if (!isGeneratedLowerFloor(floor)) return [];
+    const layout = towerLayout(floor);
+    if (!layout) return [];
+    const tiles = [];
+    for (const spot of [layout.prev, layout.next, layout.elevator,
+                        layout.prevSpot, layout.nextSpot, layout.elevatorSpot]) {
+      if (spot) tiles.push({ x: spot.x, y: spot.y });
+    }
+    return tiles;
   }
 
   function towerStaircaseEvents() {
@@ -1782,6 +1852,12 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     // Takes a "leave this place" request and answers it with the elevator.
     // True when it did, false when the tower has no claim on the press.
     returnToElevator,
+    // The squares the three staircases and their landings occupy on the floor
+    // underfoot. Every pass that scatters something onto a generated floor -
+    // spike traps, chests, doors - is dealt after the staircases are placed and
+    // asks for these first, so a lift never opens onto a hazard and a way down
+    // is never buried under a chest.
+    reservedTiles: towerReservedTiles,
   };
 
   function moveToFloor(floor, spawnMode) {

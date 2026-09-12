@@ -403,7 +403,7 @@ const GameOptions = {
             groups: [
                 { key: 'display', symbols: ['fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
                 { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'partyHud', 'worldMinimap', 'titleBackground'] },
-                { key: 'battleView', symbols: ['enemyBattlers'] }
+                { key: 'battleView', symbols: ['enemyBattlers', 'lowModelDetail'] }
             ]
         },
         {
@@ -801,6 +801,12 @@ window.GameOptions = GameOptions;
         // The theme to come back to when the ASCII layer is switched off.
         this.themeBeforeAscii = config.themeBeforeAscii !== undefined ? config.themeBeforeAscii : 0;
         this.showFps = config.showFps !== undefined ? config.showFps : false;
+        // Thins the segment count of every procedurally built weapon and item.
+        // Read by WeaponSystemProcedural.isLowDetail(), which is the gate on
+        // seg(), wantsTrim() and the geometry budget those two stand for.
+        this.lowModelDetail = config.lowModelDetail !== undefined
+            ? !!config.lowModelDetail
+            : false;
         this.runInBackground = config.runInBackground !== undefined
             ? !!config.runInBackground
             : false;
@@ -902,6 +908,7 @@ window.GameOptions = GameOptions;
         config.activeTheme = this.activeTheme;
         config.themeBeforeAscii = this.themeBeforeAscii;
         config.showFps = this.showFps;
+        config.lowModelDetail = this.lowModelDetail;
         config.runInBackground = this.runInBackground;
         config.titleBackground = this.titleBackground;
         config.cpuPartyMembers = this.cpuPartyMembers;
@@ -2014,6 +2021,21 @@ window.GameOptions = GameOptions;
                 window.EnemyBattlerModes.step(this.getConfigValue('enemyBattlers'), -1));
         }
     );
+
+    // Reduced model detail. The budget behind this has existed for a long time
+    // and reaches nearly four thousand call sites across the procedural weapon
+    // and item models (WeaponSystemProcedural seg(), wantsTrim(),
+    // _patchGeometryBudget, and the lo/hi variant of the built-model cache), but
+    // it had no way in: it asked for ConfigManager.battler3D, which was never
+    // registered here and never written anywhere, and for switch 70, which is
+    // named MZ3dBattleSYstem and is not set by any plugin or any event in the
+    // database. So it always answered "full detail" and the player had no say.
+    // Takes effect within a second (isLowDetail holds its answer that long) and
+    // the model caches key on it, so both resolutions can be held at once.
+    GameOptions.registerOption('lowModelDetail', T('GameOptions.label.lowModelDetail'),
+        () => !!ConfigManager.lowModelDetail,
+        (value) => { ConfigManager.lowModelDetail = !!value; },
+        'video', 'boolean');
 
     // Register Show FPS
     GameOptions.registerOption('showFps', T('GameOptions.label.showFps'),

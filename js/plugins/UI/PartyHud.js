@@ -416,6 +416,7 @@
         this._lastHp = new Map();   // actorId | 'vehicle:<key>' -> last HP seen
         this._projectedAp = new Map(); // actorId -> AP left after the armed skill
         this._visible = false;
+        this._refreshKeys = null;   // actorId | 'vehicle' -> what the card last said
         this._create();
     }
 
@@ -429,7 +430,19 @@
         el.style.setProperty('--phud-card-w', PANEL_W + 'px');
         document.body.appendChild(el);
         this._el = el;
+        _injectStyleOnce();
+    };
 
+    // The sheet below is a constant, so it goes into the document once for the
+    // life of the session. It used to be appended by the constructor and torn
+    // out again by destroy(), which meant every walk into a fight and back added
+    // and removed a document-level stylesheet twice - and that invalidates style
+    // for the whole document, cards and canvas and every other overlay with it,
+    // to arrive at exactly the rules that were already there.
+    let _styleInjected = false;
+    function _injectStyleOnce() {
+        if (_styleInjected) return;
+        _styleInjected = true;
         const style = document.createElement('style');
         style.textContent = `
             #party-hud .phud-name {
@@ -499,17 +512,37 @@
             }
         `;
         document.head.appendChild(style);
-        this._styleEl = style;
-    };
+    }
 
+    // Nothing on the scene path calls this: the overlay outlives every scene
+    // (see attachHud). It is here for a deliberate teardown - a mod unloading,
+    // a test tidying up - and the sheet stays in the document, since the next
+    // overlay would only ask for the same one back.
     PartyHudOverlay.prototype.destroy = function () {
         if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
         this._el = null;
-        if (this._styleEl && this._styleEl.parentNode) this._styleEl.parentNode.removeChild(this._styleEl);
-        this._styleEl = null;
         this._cards.clear();
         this._vehicleCard = null;
         this._vehicleCardKey = '';
+    };
+
+    // Forget everything the overlay remembers about a party, without taking the
+    // cards down. Because the overlay is never destroyed it is the same object
+    // across a new game or a load, and _syncCards keys the cards on the joined
+    // actor ids - which a new game usually repeats exactly (1,2,3). Without this
+    // the key would match, the cards would be kept, and the previous game's HP
+    // flashes, projected AP and need readings would carry into the new one.
+    PartyHudOverlay.prototype.forgetParty = function () {
+        this._layoutKey = '';
+        this._vehicleCardKey = '';
+        this._vehicleCard = null;
+        this._cards.clear();
+        this._lastHp.clear();
+        this._projectedAp.clear();
+        this._needs.clear();
+        this._needTimer = NEED_REFRESH_FRAMES;
+        this._refreshKeys = null;
+        if (this._el) this._el.innerHTML = '';
     };
 
     PartyHudOverlay.prototype.members = function () {
@@ -853,6 +886,40 @@
         for (const actor of members) {
             const card = this._cards.get(actor.actorId());
             if (!card) continue;
+
+            // Everything below this point is already guarded write by write
+            // (_writeBar, _writeOrb and the class toggles all compare a key
+            // first), so on a quiet frame the body wrote nothing - it just built
+            // the strings needed to find that out: a name-and-level label, a
+            // driving tag, two bar keys and an orb key, per member, sixty times a
+            // second. The fields a card is drawn from are all numbers and flags,
+            // so they are kept on the card and compared as numbers, and a quiet
+            // frame now allocates nothing at all. The chip cadence still forces a
+            // pass through, which is what picks up a rename, a level, a change of
+            // driver or a new piece of test gear.
+            const isActing = battle && actor === acting && members.length > 1;
+            const isTargeted = !!(picker && actor.isSelected && actor.isSelected());
+            const tpNow = Math.floor(actor.tp);
+            const apShown = this._projectedAp.has(actor.actorId())
+                ? Math.floor(this._projectedAp.get(actor.actorId()))
+                : tpNow;
+            if (!writeChips &&
+                card.kDead === actor.isDead() && card.kActing === isActing &&
+                card.kTargeted === isTargeted && card.kHp === actor.hp &&
+                card.kMhp === actor.mhp && card.kMp === actor.mp &&
+                card.kMmp === actor.mmp && card.kTp === tpNow && card.kAp === apShown) {
+                continue;
+            }
+            card.kDead = actor.isDead();
+            card.kActing = isActing;
+            card.kTargeted = isTargeted;
+            card.kHp = actor.hp;
+            card.kMhp = actor.mhp;
+            card.kMp = actor.mp;
+            card.kMmp = actor.mmp;
+            card.kTp = tpNow;
+            card.kAp = apShown;
+
             const needs = battle ? null : this._needsFor(actor);
             const dead = actor.isDead();
             if (card.deadKey !== dead) {
@@ -862,13 +929,11 @@
 
             // Whose turn it is, said plainly: the card lights up and grows a
             // caret. A party of one has no turn order worth pointing at.
-            const isActing = battle && actor === acting && members.length > 1;
             if (card.activeKey !== isActing) {
                 card.activeKey = isActing;
                 card.root.classList.toggle('phud-acting', isActing);
                 card.caret.style.visibility = isActing ? 'visible' : 'hidden';
             }
-            const isTargeted = !!(picker && actor.isSelected && actor.isSelected());
             if (card.targetKey !== isTargeted) {
                 card.targetKey = isTargeted;
                 card.root.classList.toggle('phud-targeted', isTargeted);
@@ -931,9 +996,15 @@
         if (!ConfigManager.partyHud) return false;
         if (!$gameParty || $gameParty.members().length === 0) return false;
         if ($gameMap && $gameMap.mapId() === 557) return false;
-        const scene = SceneManager._scene;
-        return scene instanceof Scene_Battle || scene instanceof Scene_Map;
+        return wantsHud(SceneManager._scene);
     };
+
+    // The scenes the cards belong to. Asked of the scene standing now to decide
+    // whether to draw, and of the scene coming next to decide whether the
+    // overlay is being handed on, so the two can never disagree.
+    function wantsHud(scene) {
+        return scene instanceof Scene_Battle || scene instanceof Scene_Map;
+    }
 
     // The HUD is HTML laid over the canvas, so it follows the canvas rather
     // than the window: letterboxed, resized or switched to another resolution
@@ -1027,15 +1098,20 @@
         setProjectedAp: (actor, value) => { if (_overlay) _overlay.setProjectedAp(actor, value); }
     };
 
+    // One overlay for the session, handed from scene to scene. A fight used to
+    // destroy the map's cards and build the battle's own from nothing - the same
+    // cards, the same rules, the same static stylesheet pulled out of the
+    // document and put back - and because a fresh overlay starts invisible and
+    // only raises .phud-visible on its first drawn frame, the HUD blinked out and
+    // back on every encounter. Built once, it simply keeps standing.
     function attachHud(scene) {
-        _overlay = new PartyHudOverlay();
+        if (!_overlay || !_overlay._el) _overlay = new PartyHudOverlay();
         scene._partyHud = _overlay;
     }
 
+    // The scene is going; the overlay is not. It is only unhooked from the scene
+    // that held it, so nothing keeps a reference to a dead scene.
     function detachHud(scene) {
-        if (!scene._partyHud) return;
-        scene._partyHud.destroy();
-        if (_overlay === scene._partyHud) _overlay = null;
         scene._partyHud = null;
     }
 
@@ -1063,8 +1139,8 @@
     //=========================================================================
     // Scene_Battle
     //=========================================================================
-    // The same HUD, built the same way, so a fight opens with the party card
-    // the player was already reading on the map.
+    // The same HUD, the same object, so a fight opens on the very party card the
+    // player was already reading on the map - not a rebuilt copy of it.
     const _Scene_Battle_createAllWindows = Scene_Battle.prototype.createAllWindows;
     Scene_Battle.prototype.createAllWindows = function () {
         _Scene_Battle_createAllWindows.call(this);
@@ -1081,5 +1157,17 @@
     Scene_Battle.prototype.terminate = function () {
         detachHud(this);
         _Scene_Battle_terminate.call(this);
+    };
+
+    //=========================================================================
+    // A different game
+    //=========================================================================
+    // Both a new game and a load come through here. The overlay survives them
+    // (it survives everything), so this is where it is told the party it is
+    // holding is not the party any more.
+    const _DataManager_createGameObjects = DataManager.createGameObjects;
+    DataManager.createGameObjects = function () {
+        _DataManager_createGameObjects.call(this);
+        if (_overlay) _overlay.forgetParty();
     };
 })();

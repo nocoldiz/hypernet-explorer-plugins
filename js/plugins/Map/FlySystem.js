@@ -71,6 +71,14 @@
             if (!$gameMap.isValid(x2, y2)) {
                 return false;
             }
+            // The keep-out region is the one thing flight does not clear: a
+            // roof is a roof, and the dead mass behind an interior wall is not
+            // somewhere a broomstick gets to land. MovementInteractionSystem's
+            // own canPass is shadowed by this override, so the rule is asked
+            // for again here rather than inherited.
+            if (window.RegionRules && window.RegionRules.blocksMovement(x2, y2)) {
+                return false;
+            }
             return true;
         } else {
             return _Game_Player_canPass.call(this, x, y, d);

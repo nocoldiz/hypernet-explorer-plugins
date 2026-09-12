@@ -1,7 +1,36 @@
-0.6.16a
+0.6.17a
+
 Added:
+ - landing buttons and alien atmosphere sky colors in voxel mode
+ - patreon vault
+Changed:
+ - reworked vector gun forms to swing like weapons with trails
+ - reworked hexphone tetris into locktris style Bitstack puzzle
+ - mouse hover hides machinery events, names enemies
+ - reworked past changelog sections into added changed fixed
+ - reworked party to follow the leader, no leader changing on worldmap
+ - optimized and cleaned up map scene plugins
+ - adjacent biomes sharing a tileset always stitch into one map
+ - bulk item rewards broken into sequential screen-fitting portions
+ - renamed ledger to grimorie
+ - reworked deeds and assets into a single plugin and menu button
+Fixed:
+ - find a job UI unreadable, no gold in hypernetOS apps
+ - avoid start of battle hitch
+ - nothing spawns or walks on region id 7
+ - Pet command now pets the animal, with both busts
+ - character sprites correctly restored and loaded when loading game
+ - fixed mouse wheel focus, browser flickering and reworked all programs grid
+ - Disabled fast travel and liminal drive when riding vehicles in other planets or in spaceship
+
+
+0.6.16a
+
+Added:
+ - landing buttons and alien atmosphere sky colors in voxel mode
  - Sync button in skills
 Changed:
+ - reworked deeds and assets into a single plugin and menu button
  - Bubba can be set inactive in story mode
  - waiting on map 315 brings camping mode for sleep menu
  - bound K to cooking in custom main menu
@@ -9,12 +38,11 @@ Changed:
  - Restored old kanban UI
  - Battle system perfomance improvements
  - Higher level enemy inflict more damage to low level party
-
 Fixed:
+ - fixed NPC shop event collision and counter facing direction
  - fixed performance bottlenecks across menus and weather system
  - Pickaxe detection when equipped for mining
  - Camper interior collisions
- - Disabled fast travel and liminal drive when riding vehicles in other planets or in spaceship
 
 0.6.15a
 
@@ -83,7 +111,10 @@ Fixed:
  - img/busts/presets no longer appears in the bust selector
 
 0.6.12a
-- fix assets decrypt
+
+Fixed:
+ - fix assets decrypt
+
 
 0.6.11a
 
@@ -210,1078 +241,1234 @@ Fixed:
 
 0.6.7a
 
-- faster UI: windowed object index, debounced search, culled voxel figures
-- reworked vector gun UI
-- skill card: Damage beside Info, lore under Incantation
-- vehicles page: bigger icons, two cards per row
-- cooking ingredient list drawn as the item grid with nutrients
-- title screen music is random again
-- menu search bar replaced by a Find entry in Game
-- map toasts notificaion no longer stay on screen during battle
-- Em starts with two grimoires and the Book of the Law
-- currency labels say Euros instead of Gold
-- workshop and tech tree: unframed rows, larger type, one reward line
-- removed sandbox binding
-- a dodged blow prints miss  instead of rank 
-- reworked canine and rodent models
-- remade controller UI
-- fixed some hypernet apps
+Changed:
+ - faster UI: windowed object index, debounced search, culled voxel figures
+ - reworked vector gun UI
+ - skill card: Damage beside Info, lore under Incantation
+ - vehicles page: bigger icons, two cards per row
+ - cooking ingredient list drawn as the item grid with nutrients
+ - title screen music is random again
+ - menu search bar replaced by a Find entry in Game
+ - Em starts with two grimoires and the Book of the Law
+ - currency labels say Euros instead of Gold
+ - workshop and tech tree: unframed rows, larger type, one reward line
+ - removed sandbox binding
+ - reworked canine and rodent models
+ - remade controller UI
+
+Fixed:
+ - map toasts notificaion no longer stay on screen during battle
+ - a dodged blow prints miss  instead of rank
+ - fixed some hypernet apps
 
 
 0.6.6a
 
-- updater marks the version you are running in gold and locks it, no install or compare on your own build
-- the hyperdeck every new game starts with always posts, no missing memory or other required part
-- vector gun morphs into its other shape when the form page opens and back when it closes, and the bench stands closer
-- the controls sheet lists the four directions as one move row with arrows and wasd, and wait no longer claims a pad button
-- sync script bumps the version after copying the files
+Changed:
+ - updater marks the version you are running in gold and locks it, no install or compare on your own build
+ - vector gun morphs into its other shape when the form page opens and back when it closes, and the bench stands closer
+ - the controls sheet lists the four directions as one move row with arrows and wasd, and wait no longer claims a pad button
+ - sync script bumps the version after copying the files
+
+Fixed:
+ - the hyperdeck every new game starts with always posts, no missing memory or other required part
 
 
 0.6.5a
-- battle log centered at the top by default, options grouped under headings
-- weapon attack times capped at +1
-- builds ship server.js so multiplayer hosting works
-- character creator no longer shows negative hp
-- fix ogg load failures softlocking combat
-- sync scripts open a new changelog version when the top one has entries
+
+Changed:
+ - battle log centered at the top by default, options grouped under headings
+ - weapon attack times capped at +1
+ - sync scripts open a new changelog version when the top one has entries
+
+Fixed:
+ - builds ship server.js so multiplayer hosting works
+ - character creator no longer shows negative hp
+ - fix ogg load failures softlocking combat
+
 
 0.6.4a
-- minimap shows by default on procedural maps, surface and underground
-- controls legend stops redrawing itself on procedural maps, just lists the controls
-- update menu no longer auto-downloads or offers the current build
-- lower title screen music volume
-- map tooltip editor autosaves the json when an area changes
-- enemy level labels no longer detach from their sprites on map drag
+
+Changed:
+ - minimap shows by default on procedural maps, surface and underground
+ - update menu no longer auto-downloads or offers the current build
+ - lower title screen music volume
+ - map tooltip editor autosaves the json when an area changes
+
+Fixed:
+ - controls legend stops redrawing itself on procedural maps, just lists the controls
+ - enemy level labels no longer detach from their sprites on map drag
+
+
 0.6.3a
-- story mode now starts on map 169 at 67,33
-- vector gun option restored in story mode main menu
-- folded controls panel is now a bare key strip
-- fix header in deeds menu being black and not gold
+
+Changed:
+ - story mode now starts on map 169 at 67,33
+ - folded controls panel is now a bare key strip
+
+Fixed:
+ - vector gun option restored in story mode main menu
+ - fix header in deeds menu being black and not gold
+
+
 0.6.2a
-- dialogue voices active by default
+
+Changed:
+ - dialogue voices active by default
+
+
 0.6.1a
-- map 169 lake and river ambience audible from further away
-- controls panel compacted and faded under busts
-- map legend controls moved to their own left window
-- swim sounds quieter, entry splash no longer overlaps
-- story mode starts on the train, lands on map 169 after em's creation
-- ask bubba board fits many topics, first line no longer skipped
-- party members step aside when pushed, walk-through if they cannot
-- title screen always opens on the new world symphony
-- update notice hidden for builds at or below this version
-- talk option in story dialogue, bubba and em voiced apart
+
+Added:
+ - talk option in story dialogue, bubba and em voiced apart
+
+Changed:
+ - map 169 lake and river ambience audible from further away
+ - controls panel compacted and faded under busts
+ - map legend controls moved to their own left window
+ - swim sounds quieter, entry splash no longer overlaps
+ - story mode starts on the train, lands on map 169 after em's creation
+ - party members step aside when pushed, walk-through if they cannot
+ - title screen always opens on the new world symphony
+ - update notice hidden for builds at or below this version
+
+Fixed:
+ - ask bubba board fits many topics, first line no longer skipped
+
 
 0.6.0a MAJOR UPDATE
-- fix diving suit animation
-- camper interior backdrop reframed, parked-vehicle exit offers the biome
-- replaced broken npc sprites with goblin originals
-- romance selector chips update immediately
-- title screen: link buttons, smaller selectors, real ode to joy
-- remove forage skill from all enemies
-- fix missing busts and sprites in encrypted builds
-- enemies join a battle only within three tiles
-- restore standard main menu labels except army of em
-- hypernet os more realistic: xp applets, host specs, own dialogs
-- story mode em learns from magic system trees and firearms
-- nokia-style hexphone with working numbers and 2001 emergency lines
-- reworked vector gun: menu, bespoke form models, forms carry element and damage
-- block based city and village generation
-- lan multiplayer mode with network scanning
-- 3d models for every item and armour
-- real highways in voxel mode instead of voxel roads
-- story mode: straight into character creation as em, gunmancer with a fixed dossier, roguelite only, canon worlds only, own protected save
-- story dialogues authored as md scripts cut into named scenes, played by plugin command
-- dialogue rework: white text, golden keywords and names, topics with [Display | Topic] and a learned-about toast
-- map battle rework and ascii theme, ok engages a nearby enemy, spell hotbar and hit flash
-- building system: doors on walls, free build on passable tiles, purchase by default, click and drag; found a town tab with deeds and rent, all buildrights free
-- reworked the thinker workshop into one board with batch crafting
-- new hypernet os apps, start menu categories and context menus
-- alien voxel terrain varies by planet and follows its heightmap
-- map streaming option; borders pan zelda style when off
-- option to keep the game running while the window is unfocused
-- throw items at npcs and enemies for weight damage
-- vector gun granted and usable in sandbox mode
-- reworked em and bubba empathize interactions
-- rework radio: folder stations, drawn over the map
-- drag skills in and out of the battle skill quickbar
-- rework thinker menu into trades, item grid and a piece window
-- rework skill lore in the voice of each magical system
-- clicking an enemy in map battle mode starts the fight
-- vector gun: twenty more modes, a form selector and animated switching
-- vector gun: desert eagle model, operating modes menu, blade of thelema
-- reworked gunmancer and mechanic learnsets and gimmicks
-- enemy spawn is biome only, option removed
-- swim off a bridge deck and dive under the span
-- go underground hidden inside procedural interiors
-- minimap mode option, exploring only by default
-- artifact viewer shows the 3d model when there is one
-- expanded askbubba with lore topics
-- item effects now match their names and descriptions
-- bubba ask now toggles controls and tips instead of a dialog
-- hardcoded npc sprites are never randomized
-- world leaders now die of old age and mortal disease
-- secondary archetype for humanoids; elf, goblin, dwarf and ogre are humanoids
-- army battles use troop sprites, plus a practice drill in camp
-- titlescreen picks any bgm; 1812 overture is a real recording
-- grimoire faces the player and deals only spells
-- map battle escape needs one tile of gap, disabled otherwise
-- em starts with grimoires, picks her creed, gets romance and read-only spec tabs
-- job shifts send a party member away instead of skipping time
-- library shops now stock every book, grimoire and skill book
-- class limit breaks replace defend when a fight puts you down
-- scrambler events glitch their graphic between other tiles
-- map battle: distance-based escape, weapon and shot animations, group targeting fixes
-- dialogue letter sounds also play for signs and other non-npc boxes
-- vehicles key opens a vehicle choice list on the map
-- diary groups a day's learned skills into one line
-- map battle aim and wrestle throws, corpses walked over and buried
-- star magnetic lines are braided glowing flux ropes
-- music selector on the titlescreen
-- skills under their stat floor are greyed out and cannot sync
-- easier 3d fishing, walkable camera, no more fish dragged through the ground
-- corpses block the tile they lie on
-- minimal dice result, join party/follower offers, follower sheet
-- pets are walk-through and offer pet/talk plus empathize
-- slower exp curve for all classes
-- f9 quicksaves and f10 quickloads
-- titlescreen story entry: new story only without a main story save
-- open world map names destinations and founded towns
-- vector gun levels up with em
-- blood and oil: healing mends broken parts, only slashing severs
-- party members and pets step aside when you walk into them
-- petrodemons now fight with physical attacks
-- camper interior shows a zoomed still of the map outside
-- story dialogue: bubba and em voices, boxes split on words, busts on ask
-- local npcs spawn where their event is placed
-- npc letter voices on by default, with their own volume slider
-- starship is a kilometre wide and no vehicle punches holes in the ground
-- 3d ranged weapons now play a reload animation
-- lockpick tetris reworked into unlocking blocks
-- space now hurries dialogue instead of freezing it
-- idle party members walk around a blocked party member
-- animalese letter voices for dialogue, off by default
-- ask bubba about story scenes on <Bubba:> maps, plugin command for bubba joining the party
-- bubba party talk offers ask, empathize or cancel
-- em voice reference and reworked em dialogue banks
-- first television in a main quest run plays bubba's warning
-- automatic weapons fire a burst per attack, heard once
-- enemy skill rates are all equal now
-- only plant enemies stand still on the map
-- adjacent city biomes now stitch into one map
-- world map opens instantly instead of building one huge image
-- artifact names in the analyzer follow the game language
-- 3d dice land square with the rolled number upright
-- visiting parties only from real save slots, not autosaves or quicksaves
-- map bgm removed except world map, tutorial and dungeons; biome battle music axed
-- creature archetypes list which sentient classes they can take
-- water no longer cuts weapon range, swim distance follows the swimming skill
-- fix skill common event commands that crashed or did nothing
-- fix buying animals from the build menu
-- fix map tooltips editor 404 on loading a map
-- fix map freezing on the old map after character creation
-- radio no longer slows the game, minimal panel
-- hand-placed map monsters no longer stand frozen
-- battle commands are back: multiplayer no longer freezes actor input
-- fix vehicles not crossing world map bridges
-- held spacebar no longer auto-picks the first choice
-- 3d enemies no longer render squished by stacked shape rolls
-- removed biome music except alien biomes and space
-- restored the controls checklist, toggled by bubba or the options
-- removed the old creation mode select screen
-- hide language selection, game locked to english
-- removed the card battle mode
-- removed f1 binding for ascii mode
+
+Added:
+ - nokia-style hexphone with working numbers and 2001 emergency lines
+ - lan multiplayer mode with network scanning
+ - 3d models for every item and armour
+ - building system: doors on walls, free build on passable tiles, purchase by default, click and drag; found a town tab with deeds and rent, all buildrights free
+ - new hypernet os apps, start menu categories and context menus
+ - map streaming option; borders pan zelda style when off
+ - option to keep the game running while the window is unfocused
+ - throw items at npcs and enemies for weight damage
+ - vector gun granted and usable in sandbox mode
+ - drag skills in and out of the battle skill quickbar
+ - clicking an enemy in map battle mode starts the fight
+ - swim off a bridge deck and dive under the span
+ - go underground hidden inside procedural interiors
+ - world leaders now die of old age and mortal disease
+ - secondary archetype for humanoids; elf, goblin, dwarf and ogre are humanoids
+ - class limit breaks replace defend when a fight puts you down
+ - scrambler events glitch their graphic between other tiles
+ - map battle aim and wrestle throws, corpses walked over and buried
+ - music selector on the titlescreen
+ - f9 quicksaves and f10 quickloads
+ - 3d ranged weapons now play a reload animation
+ - animalese letter voices for dialogue, off by default
+ - ask bubba about story scenes on <Bubba:> maps, plugin command for bubba joining the party
+ - first television in a main quest run plays bubba's warning
+
+Changed:
+ - camper interior backdrop reframed, parked-vehicle exit offers the biome
+ - title screen: link buttons, smaller selectors, real ode to joy
+ - remove forage skill from all enemies
+ - enemies join a battle only within three tiles
+ - restore standard main menu labels except army of em
+ - hypernet os more realistic: xp applets, host specs, own dialogs
+ - story mode em learns from magic system trees and firearms
+ - reworked vector gun: menu, bespoke form models, forms carry element and damage
+ - block based city and village generation
+ - real highways in voxel mode instead of voxel roads
+ - story mode: straight into character creation as em, gunmancer with a fixed dossier, roguelite only, canon worlds only, own protected save
+ - story dialogues authored as md scripts cut into named scenes, played by plugin command
+ - dialogue rework: white text, golden keywords and names, topics with [Display | Topic] and a learned-about toast
+ - map battle rework and ascii theme, ok engages a nearby enemy, spell hotbar and hit flash
+ - reworked the thinker workshop into one board with batch crafting
+ - alien voxel terrain varies by planet and follows its heightmap
+ - reworked em and bubba empathize interactions
+ - rework radio: folder stations, drawn over the map
+ - rework thinker menu into trades, item grid and a piece window
+ - rework skill lore in the voice of each magical system
+ - vector gun: twenty more modes, a form selector and animated switching
+ - vector gun: desert eagle model, operating modes menu, blade of thelema
+ - reworked gunmancer and mechanic learnsets and gimmicks
+ - enemy spawn is biome only, option removed
+ - minimap mode option, exploring only by default
+ - artifact viewer shows the 3d model when there is one
+ - expanded askbubba with lore topics
+ - bubba ask now toggles controls and tips instead of a dialog
+ - army battles use troop sprites, plus a practice drill in camp
+ - titlescreen picks any bgm; 1812 overture is a real recording
+ - grimoire faces the player and deals only spells
+ - map battle escape needs one tile of gap, disabled otherwise
+ - em starts with grimoires, picks her creed, gets romance and read-only spec tabs
+ - job shifts send a party member away instead of skipping time
+ - library shops now stock every book, grimoire and skill book
+ - map battle: distance-based escape, weapon and shot animations, group targeting fixes
+ - dialogue letter sounds also play for signs and other non-npc boxes
+ - vehicles key opens a vehicle choice list on the map
+ - diary groups a day's learned skills into one line
+ - star magnetic lines are braided glowing flux ropes
+ - skills under their stat floor are greyed out and cannot sync
+ - easier 3d fishing, walkable camera, no more fish dragged through the ground
+ - corpses block the tile they lie on
+ - minimal dice result, join party/follower offers, follower sheet
+ - pets are walk-through and offer pet/talk plus empathize
+ - slower exp curve for all classes
+ - titlescreen story entry: new story only without a main story save
+ - open world map names destinations and founded towns
+ - vector gun levels up with em
+ - blood and oil: healing mends broken parts, only slashing severs
+ - party members and pets step aside when you walk into them
+ - petrodemons now fight with physical attacks
+ - camper interior shows a zoomed still of the map outside
+ - story dialogue: bubba and em voices, boxes split on words, busts on ask
+ - npc letter voices on by default, with their own volume slider
+ - starship is a kilometre wide and no vehicle punches holes in the ground
+ - lockpick tetris reworked into unlocking blocks
+ - idle party members walk around a blocked party member
+ - bubba party talk offers ask, empathize or cancel
+ - em voice reference and reworked em dialogue banks
+ - automatic weapons fire a burst per attack, heard once
+ - enemy skill rates are all equal now
+ - only plant enemies stand still on the map
+ - adjacent city biomes now stitch into one map
+ - world map opens instantly instead of building one huge image
+ - visiting parties only from real save slots, not autosaves or quicksaves
+ - map bgm removed except world map, tutorial and dungeons; biome battle music axed
+ - creature archetypes list which sentient classes they can take
+ - water no longer cuts weapon range, swim distance follows the swimming skill
+ - removed biome music except alien biomes and space
+ - restored the controls checklist, toggled by bubba or the options
+ - removed the old creation mode select screen
+ - hide language selection, game locked to english
+ - removed the card battle mode
+ - removed f1 binding for ascii mode
+
+Fixed:
+ - fix diving suit animation
+ - replaced broken npc sprites with goblin originals
+ - romance selector chips update immediately
+ - fix missing busts and sprites in encrypted builds
+ - item effects now match their names and descriptions
+ - hardcoded npc sprites are never randomized
+ - local npcs spawn where their event is placed
+ - space now hurries dialogue instead of freezing it
+ - artifact names in the analyzer follow the game language
+ - 3d dice land square with the rolled number upright
+ - fix skill common event commands that crashed or did nothing
+ - fix buying animals from the build menu
+ - fix map tooltips editor 404 on loading a map
+ - fix map freezing on the old map after character creation
+ - radio no longer slows the game, minimal panel
+ - hand-placed map monsters no longer stand frozen
+ - battle commands are back: multiplayer no longer freezes actor input
+ - fix vehicles not crossing world map bridges
+ - held spacebar no longer auto-picks the first choice
+ - 3d enemies no longer render squished by stacked shape rolls
 
 
 0.5.2a
-- reworked eurodemics to keep track of player started epidemics: plateal infection or party member being infected will get registered, convert infection will have to wait the windoow period of the disease before being tracked-
-- player started epidemics now spread on their own when time passes
-- reassigned monster spawn list for omega tower dungeon 
-- increase enemy euro reward by 10
-- buffed enemy exp to have a smooth progress curve
-- added rule of height lore in help section
-- world magic setting now filters shops, npc gear and loot so you don't fine magical item in mundane world
-- equip optimize prioritizes proficient weapons over stronger untrained ones
-- added damage types and help menu voice with details: Explosive, Piercing, Area, Cutting, Abstract, Blunt, None.
-- reworked damage scaling formula
+
+Added:
+ - added rule of height lore in help section
+ - added damage types and help menu voice with details: Explosive, Piercing, Area, Cutting, Abstract, Blunt, None.
+
+Changed:
+ - reworked eurodemics to keep track of player started epidemics: plateal infection or party member being infected will get registered, convert infection will have to wait the windoow period of the disease before being tracked-
+ - player started epidemics now spread on their own when time passes
+ - reassigned monster spawn list for omega tower dungeon
+ - increase enemy euro reward by 10
+ - buffed enemy exp to have a smooth progress curve
+ - world magic setting now filters shops, npc gear and loot so you don't fine magical item in mundane world
+ - equip optimize prioritizes proficient weapons over stronger untrained ones
+ - reworked damage scaling formula
+
 
 0.5.1a 
 
-- enemy levels capped at 100 and every floor's encounters re-themed, removed plus 100 enemies
-- weapon trails, ranged shot sounds and sound volumes reworked
-- damage numbers drawn as  html and stays longer
-- character creation archetype list is now alphabetical
-- pepperbox no longer tumbles when shooting
-- restored original weapon sounds
-- body parts break or get cut off depending on the weapon
-- swing1 to swing8 are now procedural whooshing swings made with brown noise
-- title badge reads the version off the changelog itself
-- real estate is a hypernet app, bigger share lots when trading
-- battle test party matches troop level with randomized skills and gear
-- snappier skill hits: effects land on the struck limb, restyled damage numbers
-- biome spawns spread over the whole ladder, half pitched at the party
-- vehicles have headlights at night
-- npc conversation banks reworked with personality-weighted phrase variations
+Added:
+ - vehicles have headlights at night
+
+Changed:
+ - enemy levels capped at 100 and every floor's encounters re-themed, removed plus 100 enemies
+ - weapon trails, ranged shot sounds and sound volumes reworked
+ - damage numbers drawn as  html and stays longer
+ - character creation archetype list is now alphabetical
+ - restored original weapon sounds
+ - body parts break or get cut off depending on the weapon
+ - swing1 to swing8 are now procedural whooshing swings made with brown noise
+ - title badge reads the version off the changelog itself
+ - real estate is a hypernet app, bigger share lots when trading
+ - battle test party matches troop level with randomized skills and gear
+ - snappier skill hits: effects land on the struck limb, restyled damage numbers
+ - biome spawns spread over the whole ladder, half pitched at the party
+ - npc conversation banks reworked with personality-weighted phrase variations
+
+Fixed:
+ - pepperbox no longer tumbles when shooting
 
 
 0.5.0a MAJOR UPDATE
 
-- ridable animals and creatures can be mounted from the pets menu
-- new weapons sound FX every weapon and gun sound
-- stat chip multiplier no longer touches the stat name
-- default retro shader is vertexsnap, selectable during character creation
-- dice roll window reads as rolled over needed, autocloses in battle
-- party hud stat and state chips aligned to the hp and mp bars
-- every weapon has its own hit effect, trail and sounds
-- softer buzzer and battle start sounds, shop sound levelled
-- raman graph redone in gold, zoomable and hoverable
-- refactor army overview ui
-- minimap hidden by default and toggled off with m
-- talking to npcs opens full conversations, rumors only a 25% of the time (i still need to replace hardcoded rumors)
-- more complex library interactions, multiple books per library, you can find item books and spell books and also put books to be saved in the world and be accessible to all savegames
-- voxel world: party hud, swtichable quick bars with tab, castable spells
-- one shot 1 hp save from 80%+, once per battle per member
-- dark ocean floor and caves, glowing mushrooms and lit torches
-- goblin stats reworked across every level bracket
-- dark dungeon interiors
-- party member walk closer in dungeon
-- hotbar number keys arm on hold, fire on release
-- pixelart shader option, psx shader renamed snapvertex
-- thematic encounters for every tower floor and room
-- tower floors picked now from one unified pool, encounters capped by floor bracket
-- steal window reaches every shop within 20 tiles
-- huts merged into houses, villas are patron vaults only
-- creatures roam the procedural map, rarer in towns, reworked per world mode
-- custom fast travel points for vehicles, and a choice on arrival
-- fog of war now works in procedural interiors
-- npcpools and biomesmap rebuilt at build time, not from a play session
-- patron hatches open a seeded villa, vaults are now a rare dungeon
-- creature sprite picker opens on monsters and keeps the 3d model
-- dialogue name tag no longer shows the npc class
-- shop counters talk under the covering persona name, not "Shop"
-- save menu reworked: quicksaves on top, world date and destiny countdown
-- dungeon walls one height with full-height corners and rpg maker shadows
-- adjacent biomes on one tileset load seamlessly, no chevron crossing
-- parked starship shows the info marker instead of a hull
-- star map fly here and bookmark buttons moved above the stats
-- steam deck css split out, with per-screen handheld overrides
-- voxel mode: 3d caves, sewers with manholes, no more tile-sized frame spikes
+Added:
+ - ridable animals and creatures can be mounted from the pets menu
+ - new weapons sound FX every weapon and gun sound
+ - every weapon has its own hit effect, trail and sounds
+ - more complex library interactions, multiple books per library, you can find item books and spell books and also put books to be saved in the world and be accessible to all savegames
+ - voxel world: party hud, swtichable quick bars with tab, castable spells
+ - one shot 1 hp save from 80%+, once per battle per member
+ - dark ocean floor and caves, glowing mushrooms and lit torches
+ - pixelart shader option, psx shader renamed snapvertex
+ - custom fast travel points for vehicles, and a choice on arrival
+ - voxel mode: 3d caves, sewers with manholes, no more tile-sized frame spikes
+
+Changed:
+ - default retro shader is vertexsnap, selectable during character creation
+ - dice roll window reads as rolled over needed, autocloses in battle
+ - party hud stat and state chips aligned to the hp and mp bars
+ - softer buzzer and battle start sounds, shop sound levelled
+ - raman graph redone in gold, zoomable and hoverable
+ - refactor army overview ui
+ - minimap hidden by default and toggled off with m
+ - talking to npcs opens full conversations, rumors only a 25% of the time (i still need to replace hardcoded rumors)
+ - goblin stats reworked across every level bracket
+ - dark dungeon interiors
+ - party member walk closer in dungeon
+ - hotbar number keys arm on hold, fire on release
+ - thematic encounters for every tower floor and room
+ - tower floors picked now from one unified pool, encounters capped by floor bracket
+ - steal window reaches every shop within 20 tiles
+ - huts merged into houses, villas are patron vaults only
+ - creatures roam the procedural map, rarer in towns, reworked per world mode
+ - npcpools and biomesmap rebuilt at build time, not from a play session
+ - patron hatches open a seeded villa, vaults are now a rare dungeon
+ - creature sprite picker opens on monsters and keeps the 3d model
+ - save menu reworked: quicksaves on top, world date and destiny countdown
+ - dungeon walls one height with full-height corners and rpg maker shadows
+ - adjacent biomes on one tileset load seamlessly, no chevron crossing
+ - parked starship shows the info marker instead of a hull
+ - star map fly here and bookmark buttons moved above the stats
+ - steam deck css split out, with per-screen handheld overrides
+
+Fixed:
+ - stat chip multiplier no longer touches the stat name
+ - fog of war now works in procedural interiors
+ - dialogue name tag no longer shows the npc class
+ - shop counters talk under the covering persona name, not "Shop"
 
 
 0.4.5a
-- webgl crash fix when switching to voxel mode
-- using slopes instead of cubes
-- fixed buying furniture with moneu
-- removed low health slowdown
-- fix assign empty sprite on start
-- voxel mode optimizations
-- swimming mode in voxel mode
-- fixes forflying  broomstick
-- replaced 3d vehicles with 2d directional sprites
+
+Added:
+ - swimming mode in voxel mode
+
+Changed:
+ - using slopes instead of cubes
+ - removed low health slowdown
+ - voxel mode optimizations
+ - replaced 3d vehicles with 2d directional sprites
+
+Fixed:
+ - webgl crash fix when switching to voxel mode
+ - fixed buying furniture with moneu
+ - fix assign empty sprite on start
+ - fixes forflying  broomstick
+
 
 0.4.4a
 
-- steam deck resolution fixes
-- fixes for normal dialogue appearing wrong
+Fixed:
+ - steam deck resolution fixes
+ - fixes for normal dialogue appearing wrong
+
+
 0.4.3a
-- fixed globally missing biome ID and mismatched biomes on worldmap
-- enemies no longer teleport after fleeing a fight on the procedural map
-- battle log fades and restarts after every full turn rotation
-- square left through a town gate matches the one visited off the world map
-- ocean and beaches now drawn when entering from non procedural map to procedual maps
-- fix liminal walk crashing
+
+Changed:
+ - battle log fades and restarts after every full turn rotation
+
+Fixed:
+ - fixed globally missing biome ID and mismatched biomes on worldmap
+ - enemies no longer teleport after fleeing a fight on the procedural map
+ - square left through a town gate matches the one visited off the world map
+ - ocean and beaches now drawn when entering from non procedural map to procedual maps
+ - fix liminal walk crashing
+
 
 0.4.2a
 
-- worldmap tagger can paint biomes on the map itself
-- fly here on the star map boards the starship first
-- npc rumors now cite world lore, and are stranger
-- main menu icons no longer cut off at the cell edge
-- party hud vehicle name aligned, its numbers white
-- biomes with no music now fall silent on procedural maps
-- humanoid, goblin, elven and dwarf bodies no longer grant part skills
-- map legend now ticks the I and J control rows
-- unlimited wall jumps, and hold shift to wall run
-- rent toasts, and rented rooms listed in the assets menu
-- voxel blocks break in one weapon hit, two bare-handed
-- map legend controls only show in tutorial mode
-- settlements rebuilt from textured blocks, with ore seams underground
-- raman probe offers look or analyze on statues, fossils and books
-- talking to an npc now always plays a bust exchange or a rumor
-- item hotbar stays visible during dialogue and choices
-- empathize chat log autoscrolls again
-- enemies spawn again in stitched procedural maps
-- bio screen shows the real backstory, not the blood type prose
-- fix status screen portrait size and stat modifier badges
-- border exits now ask: world map, explore beyond, or cancel
-- npc drivers park beside the road, never in it
-- world map zoom offered on the wheel, farthest zoom level removed
-- star map zoom no longer traps the camera at one level
-- crisp 3d world sprites
-- traffic drawn as vehicle sprites
--  road built ahead while drivin
+Added:
+ - worldmap tagger can paint biomes on the map itself
+ - rent toasts, and rented rooms listed in the assets menu
+
+Changed:
+ - fly here on the star map boards the starship first
+ - npc rumors now cite world lore, and are stranger
+ - biomes with no music now fall silent on procedural maps
+ - unlimited wall jumps, and hold shift to wall run
+ - voxel blocks break in one weapon hit, two bare-handed
+ - map legend controls only show in tutorial mode
+ - settlements rebuilt from textured blocks, with ore seams underground
+ - raman probe offers look or analyze on statues, fossils and books
+ - talking to an npc now always plays a bust exchange or a rumor
+ - item hotbar stays visible during dialogue and choices
+ - border exits now ask: world map, explore beyond, or cancel
+ - world map zoom offered on the wheel, farthest zoom level removed
+ - crisp 3d world sprites
+ - traffic drawn as vehicle sprites
+ - road built ahead while drivin
+
+Fixed:
+ - main menu icons no longer cut off at the cell edge
+ - party hud vehicle name aligned, its numbers white
+ - humanoid, goblin, elven and dwarf bodies no longer grant part skills
+ - map legend now ticks the I and J control rows
+ - empathize chat log autoscrolls again
+ - enemies spawn again in stitched procedural maps
+ - bio screen shows the real backstory, not the blood type prose
+ - fix status screen portrait size and stat modifier badges
+ - npc drivers park beside the road, never in it
+ - star map zoom no longer traps the camera at one level
 
 
 0.4.0a
 
+Added:
+ - all terrain is destructible voxels you can dig, tunnel, break and place
+ - every biome builds its own shape, from ridged mountains to salt flats
+ - rivers are cut as meandering channels that join across squares
+ - a cave system of passages, chambers and shafts runs under the world
+ - towns are built of real buildings, rooms a floor and stairs
+ - a quarter of houses are blue-roofed shops with somebody at the counter
+ - farms, lone houses and abandoned structures are scattered through open country
+ - the omega tower stands three kilometres up on its own six squares
+ - the travel menu offers a free walk into the 3d world
+ - every building's interior builds itself as you come near, walkable and climbable
+ - directional citizens walk the pavements to talk to or empathize with
+ - creatures roam by their own movement personality, with sight arcs and chases
+ - birds fly and swoop, and fauna lives in the sea and rivers
+ - walking into a creature or hitting it opens the fight there
+ - creatures remember their wounds between fights and leave a lootable body
+ - the party can swim, free dive and take off with fly
+ - head bob, footsteps, crouching, wall runs and a recoil launch
+ - you dig with your own weapon, stronger ones taking fewer blows
+ - broken blocks go on a voxel quick bar, remembered in the world
+ - every cube dug and tree felled is written into the world's folder
+ - sandbox gained a 3d planet walk into any alien biome
+ - added a tools picker for which sprites show in each biome
+ - pick a place off the travel map and start beside it
+ - the landing picker offers a liminal walk as well as setting down
+ - all forty alien biomes are written by hand, with their own species
+ - an alien sky takes its colour from that star's spectral type
+ - day and night tints run on the planet's own rotation
+ - each world pulls at its own gravity, with day length and lock
+ - another world has its own moons, sized, coloured and charted
+ - earth gets moon 2 and moon 3 on fridays only
+ - village streets carry a real dashed centre line
+ - region 12 bridges: walk up from region 5, boat under them
+ - biomeFurniture.json says which folders suit each of the 129 biomes
+ - shopFurniture.json dresses all 61 themed shops, village or city
+ - every vehicle has a real 3d body, in the bay and menu
+ - the party rides in the camper's seats and the rear bench
+ - driving into a creature shoulders it clear and dents the bodywork
+ - driving flattens plants, rocks and walls, except broom, bike and starship
+ - the starship casts a shadow of its own hull in flight
+ - the broomstick has its own sprite, parked and with its rider aboard
+ - an aim command before wrestle: pick a monster and a body part
+ - the aimed or wrestled part glows yellow on the 3d model
+ - mimicry skills copy the enemy's look and skills in battle
+ - added a romance tab: orientation, kinsey value, style and ties
+ - creature members show a live 3d preview of their sculpted body
+ - tutorial creation deals ten class dossiers with a technical brief
+ - confirming the party leads to a vehicle pick, parked where you land
+ - per-map notices, non overlapping areas and h to fold the sheet
+ - added a map tooltips tool to draw the zones on the mapshots
+ - the zoomed minimap writes destination names next to their markers
+ - the hypernet os taskbar shows the ingame hour and day
+ - with steel but no pick, the party is offered to bend one
+ - free npc chat is answered by the gguf model when loaded
+ - the quest board has a posted tab for your own contract
+ - a posted quest pays into escrow and is shared between savegames
+ - a band of npcs can take it, and a toast says so
+ - added a form a faction button, one of your own per world
+ - your faction has a management screen and can swear loyalty
+ - new world atlas: a zoomable political map with a year slider
+ - mario draghi ascends as god of commerce on 31 december 2000
+ - the northpoint army declares independence in greenland on 1 december 2001
+ - the wanted level is a chip beside the bounty, amber then red
+ - a farm delivers into the warehouse of a shop you own
+ - the market wire reports the biggest mover, and outbreaks lean on prices
 
-# 3d world
-- the camper driving scene is reworked as voxelworld, fifteen modules
-- all terrain is destructible voxels you can dig, tunnel, break and place
-- every biome builds its own shape, from ridged mountains to salt flats
-- rivers are cut as meandering channels that join across squares
-- a cave system of passages, chambers and shafts runs under the world
-- caves are walkable and diggable, never breaking the surface or flooding
-- towns are built of real buildings, rooms a floor and stairs
-- fixed the room splitter's impossible width, which left one room a floor
-- houses are bigger, with pitched roofs, eaves and ceilings
-- a quarter of houses are blue-roofed shops with somebody at the counter
-- farms, lone houses and abandoned structures are scattered through open country
-- parked cars stopped being left in the middle of crossroads
-- the omega tower stands three kilometres up on its own six squares
-- the travel menu offers a free walk into the 3d world
-- every building's interior builds itself as you come near, walkable and climbable
-- a hand made town is entered by the door you came at
-- directional citizens walk the pavements to talk to or empathize with
-- creatures roam by their own movement personality, with sight arcs and chases
-- birds fly and swoop, and fauna lives in the sea and rivers
-- walking into a creature or hitting it opens the fight there
-- creatures are scaled to their own height and stand eye to eye
-- creatures remember their wounds between fights and leave a lootable body
-- a fight no longer draws a flat shadow ellipse across the hill
-- the party can swim, free dive and take off with fly
-- head bob, footsteps, crouching, wall runs and a recoil launch
-- you dig with your own weapon, stronger ones taking fewer blows
-- broken blocks go on a voxel quick bar, remembered in the world
-- every cube dug and tree felled is written into the world's folder
-- flat scenery is solid: walk round a tree, ride over a rock
-- vehicles drive up two block steps like a ramp
-- every menu opens over the world, held still, mouse handed back
-- dialogue and choices are drawn over the world, not the 2d map
-- split-screen cuts the canvas in two, each player in the other's half
-- equipment and leader changes show at once in hand and at heel
-- back opens the party menu on foot, vehicle options at the wheel
-- the control legend folds away behind h, toasts over the world
-- the minimap cycles zoom, whole world, a draggable full map and off
-- repainted in a blocky 2009 palette, flat light and white clouds
-- midday is a real blue sky with a full sun over it
-- grass is a green seamless turf instead of colour over mud
-- the ground grain stops smearing into streaks at grazing angles
-- steadier and cheaper depth, building rows and shadow map
-- underground draws a tighter ring and spawns cave biome enemies
-- footsteps, digging and building use the game's own cc0 step sounds
-- every voxel surface moved to img/textures/voxels as a 48x48 tile
-- sandbox gained a 3d planet walk into any alien biome
-- scatter sprites are planted a little into the ground
-- leaving from the menu returns to map 315
-- added a tools picker for which sprites show in each biome
-- fixed the walk-in crash: the omega tower reached for a missing constant
-- 3d world sprites keep their pixels instead of blurring up close
-- running from a fight hands the walk back instead of freezing
-- the item favourite bar stands down, leaving only the block bar
-- the wiki entry is now world history
-- the camper drive minigame is the liminal world, any vehicle or foot
-- pick a place off the travel map and start beside it
-- the minigames list is alphabetical
+Changed:
+ - the camper driving scene is reworked as voxelworld, fifteen modules
+ - caves are walkable and diggable, never breaking the surface or flooding
+ - houses are bigger, with pitched roofs, eaves and ceilings
+ - a hand made town is entered by the door you came at
+ - creatures are scaled to their own height and stand eye to eye
+ - flat scenery is solid: walk round a tree, ride over a rock
+ - vehicles drive up two block steps like a ramp
+ - every menu opens over the world, held still, mouse handed back
+ - dialogue and choices are drawn over the world, not the 2d map
+ - split-screen cuts the canvas in two, each player in the other's half
+ - equipment and leader changes show at once in hand and at heel
+ - back opens the party menu on foot, vehicle options at the wheel
+ - the control legend folds away behind h, toasts over the world
+ - the minimap cycles zoom, whole world, a draggable full map and off
+ - repainted in a blocky 2009 palette, flat light and white clouds
+ - midday is a real blue sky with a full sun over it
+ - grass is a green seamless turf instead of colour over mud
+ - steadier and cheaper depth, building rows and shadow map
+ - underground draws a tighter ring and spawns cave biome enemies
+ - footsteps, digging and building use the game's own cc0 step sounds
+ - every voxel surface moved to img/textures/voxels as a 48x48 tile
+ - leaving from the menu returns to map 315
+ - the item favourite bar stands down, leaving only the block bar
+ - the wiki entry is now world history
+ - the camper drive minigame is the liminal world, any vehicle or foot
+ - the minigames list is alphabetical
+ - alien ground is raised out of its own elevation field
+ - an alien walk wraps longitude, folds latitude, lands on the square
+ - the clock still keeps earth time for hunger, sleep and the calendar
+ - walking out of an alien world puts the party back aboard
+ - a ship left at moon 2 or 3 returns to earth orbit
+ - the moon over the 3d world keeps its real phase
+ - a starship flown out of the atmosphere leaves the party inside
+ - counted the galaxies and single planets the galaxy system generates
+ - walking into a biome on the same tileset grows the map
+ - the map is a stitched window of up to 3x3 adjacent squares
+ - a square is built a few milliseconds at a time, without flicker
+ - leaving a hardcoded location leads into that world square's procedural map
+ - other tilesets and destinations.json locations keep the old border transition
+ - cities and villages stand nine tenths goblin on a horde nation's square
+ - no decoration on the edge tiles of a procedural square
+ - entering a dungeon by stairs costs one fade instead of two
+ - a road is built several squares ahead of the drive
+ - a square named by base or coords hands over that map
+ - procedural houses are built by a module of their own
+ - mitred corners, a ridge cut to length and windows by bays
+ - every vehicle but the broom and the starship can cross a bridge
+ - furniture art deduplicated and refiled into 78 categories with subfolders
+ - recolours grouped under one build menu entry, cycled and remembered
+ - full canvas tiles split into terrain and a new water folder
+ - ran visual recognition over 784 tileset-named images and named them all
+ - each folder carries a density, a real size and its rooms
+ - the build menu takes the theme it is under
+ - every vehicle enters the 3d world and drives as itself
+ - a one saddle machine draws two more beside the leader's
+ - a summoned vehicle appears on the tile you are facing
+ - on map 315 the starship wears a sprite from its model
+ - the starship cannot be summoned into or flown over an interior
+ - a magical leader rides the arcane broomstick, everyone else the plain one
+ - vehicles take damage only from crashing into another vehicle
+ - the distortion field shows only while shift is held
+ - reworked damage around the level gap: six levels up is the limit
+ - what the party has outgrown only scratches, with warnings from six up
+ - enemy levels read yellow at 6-8, red above, over the balloons
+ - the biome preset pitches three in ten near the party median
+ - spawn modes reordered to biome, then balanced, realistic and chaos
+ - goblin models stand at one height, each wearing its own mouth
+ - refactored the 3d enemy and weapon rendering, dropping a full-screen pass
+ - hit chance moves with enemy def, part health and how vital
+ - the aim slides to the weakest part, dropped when it dies
+ - one indent an action, no left rule, the killing blow total
+ - the mimic class starts with four working mimicry skills
+ - split into origins, step pages, settings and navigation modules
+ - every control reachable with arrows, wasd and a controller
+ - every class has fixed thematic starting weapons, armor and items
+ - dual-wielding classes start with two weapons equipped
+ - the preset board previews stats as you browse, with euro prices
+ - the scenario window reads in three columns, and its money matches
+ - the job selector updates the gear on sidebar and resume sheet
+ - ideology and hometown sit two per line, with bigger bio text
+ - talents list as full-width rows with a delete button
+ - specialization cards show their trained tier without redrawing the board
+ - the growth plan splits into level 1-50 and 51-99 columns
+ - the sidebar is wider, with traits, skills and gear two per row
+ - names are randomized by the markov generator everywhere
+ - inspect cards print a skill description in the sheet's own language
+ - attributes read in one order everywhere
+ - the tutorial takes one dossier of three plus a companion
+ - a begin adventure button in place of apply to member
+ - fixed class kit, traits and specializations, no rerolling or swapping
+ - the sprite board is limited to that class's looks
+ - the brawler class is now the magical gunmancer
+ - the companion board opens on None
+ - preset class dossiers drop turn maths and mp costs for plain prose
+ - removed nanosexual and nanoromantic from the orientations
+ - polished every html menu against the backpack: one heading, one back stamp
+ - colours moved onto theme tokens, ink contrast-checked in both themes
+ - twenty-one diverging menus lost their inline css to theme classes
+ - the map command window is its own plugin, redrawn as parchment
+ - the procedural adventure screen is fullscreen, with busts and typed text
+ - the adventure card reads in larger prose over a shaded sky
+ - its payout is drawn as backpack rows with icons and counts
+ - an ending eris likes moves her ledger instead of opening a date
+ - every ui screen is reachable without a mouse, tested across 134 screens
+ - l2/r2 scroll a page, l1/r1 pass a spread to the next member
+ - rebound the hotkeys: r waits, o equipment, u spells, b build
+ - the equip commands wear the same chip as the skills screen tags
+ - moved ascii mode and map battle mode to the experimental tab
+ - the control legend draws pad buttons as ink chips
+ - the item bar reads keys 1 2 3 or pad l1 r1
+ - the legend teaches b build, i inventory and j quests
+ - on generated ground it shows only interact and world map
+ - the pamphlet is handed over a hundred steps into the tutorial
+ - the legend shows only on map 1414 outside every zone
+ - r waits and t stops travelling on the world map
+ - map notices draw their name in bold square brackets
+ - with the tooltip variable at 0 the sheet shows the commands alone
+ - the minimap cursor moves gradually between world squares
+ - the cylinder is a low-poly psx lock over the biome battleback
+ - biome music and its setting are gone
+ - only cities, villages, dungeons and alien biomes keep their own bgm
+ - caves and everywhere else keep the map's own music
+ - chat tuned models are read with their own template
+ - the speaking party member stands left, the npc keeps right
+ - your faction is listed in empathize, its relations the party's median
+ - faction standing charges the discounts its perks promised
+ - the atlas draws the real americas before 1992, canadafrica after
+ - leaders.json holds only real people and canon, with busts
+ - a hyperpower answers to one moral guide, its leader may be elected
+ - a parliament is 70% home parties and 30% held nations
+ - starving and exhausted cost real stats that lift with a meal
+ - a criminal record marks up every counter and closes the strict ones
+ - a lost leg slows the walk and ends the run
+ - armour helps in the cold and kills you in the heat
+ - the disease engine alone decides what plague a town is under
+ - the hive runs on the world's real seasons
+ - research raises the trade it belongs to, so the forge opens up
+ - armies patrol what the archive says their power holds today
+ - the game starts faster: js/db, languages and furniture load on demand
+ - four hundred blocking requests in the browser build became two
+ - the voxel field keeps whole columns, re-meshing ground four times faster
+ - a town is built of fewer, wider, taller buildings
+ - the encrypted build zips the folder as Hypernet-explorer v<version>.zip
+ - the encrypted build launches the plugins sync itself
+ - the test suite went from five broken harnesses to 117 green
+ - checked the italian of skills, items, armour, enemies, classes and states
 
-# space and alien worlds
-- the landing picker offers a liminal walk as well as setting down
-- all forty alien biomes are written by hand, with their own species
-- alien ground is raised out of its own elevation field
-- an alien walk wraps longitude, folds latitude, lands on the square
-- an alien sky takes its colour from that star's spectral type
-- day and night tints run on the planet's own rotation
-- the clock still keeps earth time for hunger, sleep and the calendar
-- each world pulls at its own gravity, with day length and lock
-- another world has its own moons, sized, coloured and charted
-- walking out of an alien world puts the party back aboard
-- earth gets moon 2 and moon 3 on fridays only
-- a ship left at moon 2 or 3 returns to earth orbit
-- the moon over the 3d world keeps its real phase
-- a starship flown out of the atmosphere leaves the party inside
-- counted the galaxies and single planets the galaxy system generates
-
-# procedural maps
-- walking into a biome on the same tileset grows the map
-- the map is a stitched window of up to 3x3 adjacent squares
-- a square is built a few milliseconds at a time, without flicker
-- leaving a hardcoded location leads into that world square's procedural map
-- other tilesets and destinations.json locations keep the old border transition
-- cities and villages stand nine tenths goblin on a horde nation's square
-- village streets carry a real dashed centre line
-- no decoration on the edge tiles of a procedural square
-- entering a dungeon by stairs costs one fade instead of two
-- sliding across stitched squares no longer flickers
-- a road is built several squares ahead of the drive
-- a square named by base or coords hands over that map
-- procedural houses are built by a module of their own
-- mitred corners, a ridge cut to length and windows by bays
-- the lone farm out in open country finally gets an outside
-- region 12 bridges: walk up from region 5, boat under them
-- every vehicle but the broom and the starship can cross a bridge
-
-# furniture and art
-- furniture art deduplicated and refiled into 78 categories with subfolders
-- recolours grouped under one build menu entry, cycled and remembered
-- full canvas tiles split into terrain and a new water folder
-- ran visual recognition over 784 tileset-named images and named them all
-- biomeFurniture.json says which folders suit each of the 129 biomes
-- each folder carries a density, a real size and its rooms
-- shopFurniture.json dresses all 61 themed shops, village or city
-- the build menu takes the theme it is under
-- repaired the dream and voxel sprite tables pointing at missing art
-
-# vehicles
-- every vehicle has a real 3d body, in the bay and menu
-- every vehicle enters the 3d world and drives as itself
-- the party rides in the camper's seats and the rear bench
-- a one saddle machine draws two more beside the leader's
-- a summoned vehicle appears on the tile you are facing
-- driving into a creature shoulders it clear and dents the bodywork
-- driving flattens plants, rocks and walls, except broom, bike and starship
-- the starship casts a shadow of its own hull in flight
-- on map 315 the starship wears a sprite from its model
-- the starship cannot be summoned into or flown over an interior
-- the broomstick has its own sprite, parked and with its rider aboard
-- a magical leader rides the arcane broomstick, everyone else the plain one
-- vehicles take damage only from crashing into another vehicle
-- the distortion field shows only while shift is held
-
-# battle
-- reworked damage around the level gap: six levels up is the limit
-- what the party has outgrown only scratches, with warnings from six up
-- enemy levels read yellow at 6-8, red above, over the balloons
-- the biome preset pitches three in ten near the party median
-- spawn modes reordered to biome, then balanced, realistic and chaos
-- goblin models stand at one height, each wearing its own mouth
-- refactored the 3d enemy and weapon rendering, dropping a full-screen pass
-- hit flashes fade back to the body colour instead of through black
-- blood particles can no longer outlive their own removal
-- a battle opens without its old hitch, sky and shaders kept
-- the monster bar column stops re-measuring the party cards every frame
-- the battle hotbar and command list no longer disappear when you attack
-- the old attack/escape selector no longer flashes over the command list
-- an aim command before wrestle: pick a monster and a body part
-- hit chance moves with enemy def, part health and how vital
-- the aim slides to the weakest part, dropped when it dies
-- the aimed or wrestled part glows yellow on the 3d model
-- the battle log no longer prints the raw \c[ on criticals
-- one indent an action, no left rule, the killing blow total
-- mimicry skills copy the enemy's look and skills in battle
-- the mimic class starts with four working mimicry skills
-
-# character creation
-- split into origins, step pages, settings and navigation modules
-- every control reachable with arrows, wasd and a controller
-- every class has fixed thematic starting weapons, armor and items
-- dual-wielding classes start with two weapons equipped
-- added a romance tab: orientation, kinsey value, style and ties
-- creature members show a live 3d preview of their sculpted body
-- the preset board previews stats as you browse, with euro prices
-- the scenario window reads in three columns, and its money matches
-- the job selector updates the gear on sidebar and resume sheet
-- ideology and hometown sit two per line, with bigger bio text
-- talents list as full-width rows with a delete button
-- specialization cards show their trained tier without redrawing the board
-- the growth plan splits into level 1-50 and 51-99 columns
-- the sidebar is wider, with traits, skills and gear two per row
-- names are randomized by the markov generator everywhere
-- inspect cards print a skill description in the sheet's own language
-- attributes read in one order everywhere
-- the tutorial takes one dossier of three plus a companion
-- a begin adventure button in place of apply to member
-- tutorial creation deals ten class dossiers with a technical brief
-- fixed class kit, traits and specializations, no rerolling or swapping
-- the sprite board is limited to that class's looks
-- confirming the party leads to a vehicle pick, parked where you land
-- the brawler class is now the magical gunmancer
-- the companion board opens on None
-- preset class dossiers drop turn maths and mp costs for plain prose
-- removed nanosexual and nanoromantic from the orientations
-
-# menus and interface
-- polished every html menu against the backpack: one heading, one back stamp
-- colours moved onto theme tokens, ink contrast-checked in both themes
-- twenty-one diverging menus lost their inline css to theme classes
-- fixed the broken main menu icons, every tile drawing its own cell
-- the map command window is its own plugin, redrawn as parchment
-- per-map notices, non overlapping areas and h to fold the sheet
-- added a map tooltips tool to draw the zones on the mapshots
-- the zoomed minimap writes destination names next to their markers
-- the procedural adventure screen is fullscreen, with busts and typed text
-- the adventure card reads in larger prose over a shaded sky
-- its payout is drawn as backpack rows with icons and counts
-- an ending eris likes moves her ledger instead of opening a date
-- every ui screen is reachable without a mouse, tested across 134 screens
-- l2/r2 scroll a page, l1/r1 pass a spread to the next member
-- the reachability sweep fixed the vehicle bay, terminal and a dozen more
-- rebound the hotkeys: r waits, o equipment, u spells, b build
-- the equip commands wear the same chip as the skills screen tags
-- moved ascii mode and map battle mode to the experimental tab
-- the hypernet os taskbar shows the ingame hour and day
-- the control legend draws pad buttons as ink chips
-- the item bar reads keys 1 2 3 or pad l1 r1
-- the legend teaches b build, i inventory and j quests
-- on generated ground it shows only interact and world map
-- the pamphlet is handed over a hundred steps into the tutorial
-- the legend shows only on map 1414 outside every zone
-- r waits and t stops travelling on the world map
-- map notices draw their name in bold square brackets
-- with the tooltip variable at 0 the sheet shows the commands alone
-- the minimap cursor moves gradually between world squares
-
-# minigames
-- a lockpick tetris stacked to the top ends the attempt
-- the cylinder is a low-poly psx lock over the biome battleback
-- with steel but no pick, the party is offered to bend one
-
-# audio
-- biome music and its setting are gone
-- only cities, villages, dungeons and alien biomes keep their own bgm
-- caves and everywhere else keep the map's own music
-
-# npcs and dialogue
-- free npc chat is answered by the gguf model when loaded
-- chat tuned models are read with their own template
-- the speaking party member stands left, the npc keeps right
-- npcs on an ordinary sheet are no longer initialized as nonsentient
-
-# quests, factions and politics
-- the quest board has a posted tab for your own contract
-- a posted quest pays into escrow and is shared between savegames
-- a band of npcs can take it, and a toast says so
-- added a form a faction button, one of your own per world
-- your faction has a management screen and can swear loyalty
-- your faction is listed in empathize, its relations the party's median
-- faction standing charges the discounts its perks promised
-- new world atlas: a zoomable political map with a year slider
-- the atlas draws the real americas before 1992, canadafrica after
-- leaders.json holds only real people and canon, with busts
-- mario draghi ascends as god of commerce on 31 december 2000
-- a hyperpower answers to one moral guide, its leader may be elected
-- a parliament is 70% home parties and 30% held nations
-- the northpoint army declares independence in greenland on 1 december 2001
-
-# world simulation
-- starving and exhausted cost real stats that lift with a meal
-- a criminal record marks up every counter and closes the strict ones
-- the wanted level is a chip beside the bounty, amber then red
-- a lost leg slows the walk and ends the run
-- armour helps in the cold and kills you in the heat
-- the disease engine alone decides what plague a town is under
-- the hive runs on the world's real seasons
-- research raises the trade it belongs to, so the forge opens up
-- a farm delivers into the warehouse of a shop you own
-- armies patrol what the archive says their power holds today
-- the market wire reports the biggest mover, and outbreaks lean on prices
-
-# performance
-- the game starts faster: js/db, languages and furniture load on demand
-- four hundred blocking requests in the browser build became two
-- the voxel field keeps whole columns, re-meshing ground four times faster
-- a town is built of fewer, wider, taller buildings
-
-# build
-- the encrypted build zips the folder as Hypernet-explorer v<version>.zip
-- the encrypted build launches the plugins sync itself
-
-# fixes and tests
-- swept every plugin for logical errors, from the onu assembly to cooking
-- fixed globals that never existed behind factions, jobs and shop commands
-- fixed five crashes that threw on sight, from biologic colours to bestiary
-- fixed seven features one plugin offered and another could never reach
-- fixed menu labels printing key names and 181 missing italian lines
-- fixed every crash the cooking menu could reach
-- cookitems no longer cooks two helpings, and culinary rolls against wisdom
-- fixed the surfing sea loop and the shooting range wind playing on
-- fixed a crash on a map event whose page moved
-- the overencumbered notice no longer doubles up
-- resolved the half-merged character creation, galaxy and theme files
-- the test suite went from five broken harnesses to 117 green
-- checked the italian of skills, items, armour, enemies, classes and states
+Fixed:
+ - fixed the room splitter's impossible width, which left one room a floor
+ - parked cars stopped being left in the middle of crossroads
+ - a fight no longer draws a flat shadow ellipse across the hill
+ - the ground grain stops smearing into streaks at grazing angles
+ - scatter sprites are planted a little into the ground
+ - fixed the walk-in crash: the omega tower reached for a missing constant
+ - 3d world sprites keep their pixels instead of blurring up close
+ - running from a fight hands the walk back instead of freezing
+ - sliding across stitched squares no longer flickers
+ - the lone farm out in open country finally gets an outside
+ - repaired the dream and voxel sprite tables pointing at missing art
+ - hit flashes fade back to the body colour instead of through black
+ - blood particles can no longer outlive their own removal
+ - a battle opens without its old hitch, sky and shaders kept
+ - the monster bar column stops re-measuring the party cards every frame
+ - the battle hotbar and command list no longer disappear when you attack
+ - the old attack/escape selector no longer flashes over the command list
+ - the battle log no longer prints the raw \c[ on criticals
+ - fixed the broken main menu icons, every tile drawing its own cell
+ - the reachability sweep fixed the vehicle bay, terminal and a dozen more
+ - a lockpick tetris stacked to the top ends the attempt
+ - npcs on an ordinary sheet are no longer initialized as nonsentient
+ - swept every plugin for logical errors, from the onu assembly to cooking
+ - fixed globals that never existed behind factions, jobs and shop commands
+ - fixed five crashes that threw on sight, from biologic colours to bestiary
+ - fixed seven features one plugin offered and another could never reach
+ - fixed menu labels printing key names and 181 missing italian lines
+ - fixed every crash the cooking menu could reach
+ - cookitems no longer cooks two helpings, and culinary rolls against wisdom
+ - fixed the surfing sea loop and the shooting range wind playing on
+ - fixed a crash on a map event whose page moved
+ - the overencumbered notice no longer doubles up
+ - resolved the half-merged character creation, galaxy and theme files
 
 
 0.3.6a
 
-- the critical hit die is smaller and rolls faster, so it no longer stalls a fight for long
-- switching character creation members now always opens their bio tab, which leads with the humanoid/creature/preset and archetype picks and shows a bigger portrait
-- the scenario dossier now reads in tidy columns with compact stats, no more gold tint behind it, and it lists the party's shared inventory too
-- weapons sound more distinct in a fight, and a gun run dry now bashes with a swing instead of clicking uselessly
-- the scenario screen's start button matches the rest of character creation, and its exclusive kit now reads in columns
-- the political graph's ideology picker now actually applies your pick and returns you to the bio tab, with a cleaner parchment look
-- convincing a monster to join now uses whichever of your charm or insight is stronger
-- picking a trait now updates your stats right away, and its point totals moved next to your build
-- the bust gallery now browses portraits by species tabs across the full screen, matching the sprite picker
-- the party always walks loose, and in split-screen either player can take over a companion the game is walking
-- the specialization board reads bigger with a suggested build and a reset button, and your companion pick can now be sentient, magical or a genetic freak, with bigger sprites and its stats shown in the pets menu
-- class selection shows its element and a weapon grid, character sheets show your job next to your class, and picking a preset character no longer traps you or hides their portrait
-- a critical hit throws a die that can take a monster's head off, and the world can now put the same die in front of you before a risk
-- skills now require a minimum stat, and can slip from your grasp if you fall short
-- casting a skill from the menu describes what it does
-- character creation is now fully localized, down to attribute names, blood chart and life story
-- non-magic classes no longer learn spells, and finish on mundane techniques instead of occult ones
-- character creation shows the specializations you already have on their own tab, with free tiers from class and traits
-- the character sheet portrait opens the bust gallery, the sprite board previews on hover, traits show four per row, and only folk creatures get a profession
-- traits can be freely chosen and reset, are listed on the character sheet, and no longer include random genetic ones
-- the title screen shows the current build and links to your world's wiki
-- the hyperdeck workbench has a wider parts list and a spec sheet that fits its panel
-- a famous character can join the party as themselves, and the journey starts only once the party is confirmed
-- famous party members are now marked as notable people and don't appear in the sprite selector 
+Added:
+ - a critical hit throws a die that can take a monster's head off, and the world can now put the same die in front of you before a risk
+ - skills now require a minimum stat, and can slip from your grasp if you fall short
+ - character creation shows the specializations you already have on their own tab, with free tiers from class and traits
+ - the title screen shows the current build and links to your world's wiki
+ - a famous character can join the party as themselves, and the journey starts only once the party is confirmed
+
+Changed:
+ - the critical hit die is smaller and rolls faster, so it no longer stalls a fight for long
+ - switching character creation members now always opens their bio tab, which leads with the humanoid/creature/preset and archetype picks and shows a bigger portrait
+ - the scenario dossier now reads in tidy columns with compact stats, no more gold tint behind it, and it lists the party's shared inventory too
+ - weapons sound more distinct in a fight, and a gun run dry now bashes with a swing instead of clicking uselessly
+ - the scenario screen's start button matches the rest of character creation, and its exclusive kit now reads in columns
+ - convincing a monster to join now uses whichever of your charm or insight is stronger
+ - the bust gallery now browses portraits by species tabs across the full screen, matching the sprite picker
+ - the party always walks loose, and in split-screen either player can take over a companion the game is walking
+ - the specialization board reads bigger with a suggested build and a reset button, and your companion pick can now be sentient, magical or a genetic freak, with bigger sprites and its stats shown in the pets menu
+ - class selection shows its element and a weapon grid, character sheets show your job next to your class, and picking a preset character no longer traps you or hides their portrait
+ - casting a skill from the menu describes what it does
+ - character creation is now fully localized, down to attribute names, blood chart and life story
+ - non-magic classes no longer learn spells, and finish on mundane techniques instead of occult ones
+ - the character sheet portrait opens the bust gallery, the sprite board previews on hover, traits show four per row, and only folk creatures get a profession
+ - traits can be freely chosen and reset, are listed on the character sheet, and no longer include random genetic ones
+ - the hyperdeck workbench has a wider parts list and a spec sheet that fits its panel
+ - famous party members are now marked as notable people and don't appear in the sprite selector
+
+Fixed:
+ - the political graph's ideology picker now actually applies your pick and returns you to the bio tab, with a cleaner parchment look
+ - picking a trait now updates your stats right away, and its point totals moved next to your build
 
 
 0.3.5a
-- monsters can hit back again, and no single blow can down a party member
-- everyone acts once per round, lone enemies included
-- monsters fight the way they look: claws and breath for beasts, spells for casters, a last move when cornered
-- casters can run out of mana, and the late game features far more kinds of monster
-- walking into a monster starts a fight
-- travelling alone no longer risks being surrounded
-- monsters can use their signature move on any turn, not only the first
-- monsters no longer know your secret arts
-- character creation no longer resets as you choose, and picking a look is a single click
-- the character board opens on your biography, and each party tab shows the right face
-- the class page describes what a class is instead of listing its numbers
-- a class always starts you with the same kit
-- creeds are picked from one shared list, and a creature can be any class
-- creature characters are built from a primary and a secondary archetype
-- hovering over any skill shows what it does
-- you choose your reproductive organs and hormone balance when building a character
-- a new creature editor lets you mix any monster's parts onto any other, and fight as what you build
-- people always wear a bust, monsters always wear a 3d model
-- the character sheet matches the rest of the game, and shoulder buttons switch between characters
-- an empty party seat can be filled from the pad
-- tab or a shoulder trigger switches the party to the next companion, with the camera following
-- skill schools are now shown as a 3d constellation, with stronger skills hanging further out
-- stockbusters is a proper listings site: view a weapon in 3d before buying, order in bulk, fill a cart
-- one or two rare finds are listed each day
-- 46 new procedural jobs offering goods, coin or a hand
-- job choices are settled by a rollable 3d die you can pass to any companion, played out on the local scenery
-- a work shift is settled by a d20 thrown across the screen
-- the hyperdeck builds from cheap refurbished pre-y2k parts, with no wiring diagram
-- the hypertamer handheld is playable again: raise a monster, feed it, train it, keep it alive
-- every world leader has their own page, and real leaders carry their true biography
-- the trading terminal lists the companies the world actually has, limecorp among them
-- a ceo start owns most of limecorp from day one
-- the hypernet explorer origin now starts at the hypernet point, never stranded on the empty train
-- refuelling is now a two minute stop, with the ship shown flying in
-- skimming a black hole for schrodingerite takes a thirty second pass
-- black holes and strange stars finally show their true shape through the windows
-- battles are lit by the time of day, with shadows that follow the sun
-- weapons swing their own way, chains move like chains, and criticals land a heavier blow
-- fighting bare handed shows a real hand: knuckles, tendons, veins and a locked thumb
-- the dead now hunt you by sight, each at its own pace
-- every farm and yard animal now has its own photograph
-- stray animals no longer mind shop counters
-- ambient location music is now a separate audio setting, off by default
-- enemy skills are now heard rather than shown over the party cards
-- the battle log reads over a clear background
-- a missing portrait no longer breaks the screen
-- the screen no longer flickers when your weapon changes in a fight
-- battle tests always start with a random party of three
-- the game ships lighter, with unused files and unreachable screens stripped out
-- rebalanced classes, equipment, enemy skills, natures, post-game scaling and dynamic health
+
+Added:
+ - walking into a monster starts a fight
+ - hovering over any skill shows what it does
+ - you choose your reproductive organs and hormone balance when building a character
+ - a new creature editor lets you mix any monster's parts onto any other, and fight as what you build
+ - tab or a shoulder trigger switches the party to the next companion, with the camera following
+ - stockbusters is a proper listings site: view a weapon in 3d before buying, order in bulk, fill a cart
+ - one or two rare finds are listed each day
+ - 46 new procedural jobs offering goods, coin or a hand
+ - job choices are settled by a rollable 3d die you can pass to any companion, played out on the local scenery
+ - a work shift is settled by a d20 thrown across the screen
+ - every world leader has their own page, and real leaders carry their true biography
+ - battles are lit by the time of day, with shadows that follow the sun
+ - fighting bare handed shows a real hand: knuckles, tendons, veins and a locked thumb
+ - every farm and yard animal now has its own photograph
+
+Changed:
+ - everyone acts once per round, lone enemies included
+ - monsters fight the way they look: claws and breath for beasts, spells for casters, a last move when cornered
+ - casters can run out of mana, and the late game features far more kinds of monster
+ - travelling alone no longer risks being surrounded
+ - monsters can use their signature move on any turn, not only the first
+ - the character board opens on your biography, and each party tab shows the right face
+ - the class page describes what a class is instead of listing its numbers
+ - a class always starts you with the same kit
+ - creeds are picked from one shared list, and a creature can be any class
+ - creature characters are built from a primary and a secondary archetype
+ - people always wear a bust, monsters always wear a 3d model
+ - the character sheet matches the rest of the game, and shoulder buttons switch between characters
+ - an empty party seat can be filled from the pad
+ - skill schools are now shown as a 3d constellation, with stronger skills hanging further out
+ - the hyperdeck builds from cheap refurbished pre-y2k parts, with no wiring diagram
+ - the trading terminal lists the companies the world actually has, limecorp among them
+ - a ceo start owns most of limecorp from day one
+ - refuelling is now a two minute stop, with the ship shown flying in
+ - skimming a black hole for schrodingerite takes a thirty second pass
+ - weapons swing their own way, chains move like chains, and criticals land a heavier blow
+ - the dead now hunt you by sight, each at its own pace
+ - ambient location music is now a separate audio setting, off by default
+ - enemy skills are now heard rather than shown over the party cards
+ - the battle log reads over a clear background
+ - battle tests always start with a random party of three
+ - the game ships lighter, with unused files and unreachable screens stripped out
+ - rebalanced classes, equipment, enemy skills, natures, post-game scaling and dynamic health
+
+Fixed:
+ - monsters can hit back again, and no single blow can down a party member
+ - monsters no longer know your secret arts
+ - character creation no longer resets as you choose, and picking a look is a single click
+ - the hypertamer handheld is playable again: raise a monster, feed it, train it, keep it alive
+ - the hypernet explorer origin now starts at the hypernet point, never stranded on the empty train
+ - black holes and strange stars finally show their true shape through the windows
+ - stray animals no longer mind shop counters
+ - a missing portrait no longer breaks the screen
+ - the screen no longer flickers when your weapon changes in a fight
 
 
 0.3.4a
-- Disabled test mode
-- Rebalanced traits and prostethic types
+
+Changed:
+ - Disabled test mode
+ - Rebalanced traits and prostethic types
+
 
 0.3.3a
-- radical rebalance of stats, it requires a new game start
+
+Changed:
+ - radical rebalance of stats, it requires a new game start
+
 
 0.3.2a
-- enemy toughness now  adapts to your party's danger level gear, and numbers for a fairer fight, and monster health has been recalculated to match
-- party members now show their level on the map
-- fixed psychic skills scaling on magic power instead of luck
-- simplified overcomplicated damage math
-- a single regular enemy now act again after every party member's turn instead of just once per round, but bosses keep the normal pace
-- rebalanced weapon and armor strength, skill power, class strength, and monster stat growth across all levels
-- in the zombie apocalypse, towns and villages no longer have moving traffic but the open road rarely still does, and city traffic drives faster
-- illnesses chosen during character creation are now known from the start instead of showing up as an undiagnosed mystery illness
-- picking a class in character creation now confirms it straight away instead of showing an extra screen, and the detailed creation mode now asks for your hometown right after picking where you start out, from every town in the world
-- fixed item tooltips and equipment screens showing the wrong or missing special properties for weapons and armor with unusual effects
-- removed the global lighting toggle from character creation's starting options
-- doctors now charge to name an illness and to sell you the medicine for it, and healing items can be used even at full health
-- fixed the ideology and other long-list search boxes in character creation not letting you type
-- fixed forged weapons sometimes turning up for sale in shops
-- bosses hit harder and have bigger health pools with attacks that shift as they take damage
-- you can now sleep or wait off a jail sentence 
-- new boss rush arena mode
-- forged weapons now keep their look everywhere
+
+Added:
+ - party members now show their level on the map
+ - you can now sleep or wait off a jail sentence
+ - new boss rush arena mode
+
+Changed:
+ - enemy toughness now  adapts to your party's danger level gear, and numbers for a fairer fight, and monster health has been recalculated to match
+ - simplified overcomplicated damage math
+ - a single regular enemy now act again after every party member's turn instead of just once per round, but bosses keep the normal pace
+ - rebalanced weapon and armor strength, skill power, class strength, and monster stat growth across all levels
+ - in the zombie apocalypse, towns and villages no longer have moving traffic but the open road rarely still does, and city traffic drives faster
+ - illnesses chosen during character creation are now known from the start instead of showing up as an undiagnosed mystery illness
+ - picking a class in character creation now confirms it straight away instead of showing an extra screen, and the detailed creation mode now asks for your hometown right after picking where you start out, from every town in the world
+ - removed the global lighting toggle from character creation's starting options
+ - doctors now charge to name an illness and to sell you the medicine for it, and healing items can be used even at full health
+ - bosses hit harder and have bigger health pools with attacks that shift as they take damage
+
+Fixed:
+ - fixed psychic skills scaling on magic power instead of luck
+ - fixed item tooltips and equipment screens showing the wrong or missing special properties for weapons and armor with unusual effects
+ - fixed the ideology and other long-list search boxes in character creation not letting you type
+ - fixed forged weapons sometimes turning up for sale in shops
+ - forged weapons now keep their look everywhere
 
 
 0.3.1a
-- smoothed monster difficulty across levels and fixed a couple of broken skills that ignored a fighter's own strength, so a lone fighter can take on a same-level monster but a pack of them is a real fight
-- rebalanced weapon and armor strength
-- rebalanced skill power
-- fix wrestling menu not reopening
-- only trained fighters enemies  know how to guard
-- fixed hyperdeck auto-fit sometimes leaving the graphics chip disconnected from the screen, causing a boot failure
+
+Changed:
+ - smoothed monster difficulty across levels and fixed a couple of broken skills that ignored a fighter's own strength, so a lone fighter can take on a same-level monster but a pack of them is a real fight
+ - rebalanced weapon and armor strength
+ - rebalanced skill power
+ - only trained fighters enemies  know how to guard
+
+Fixed:
+ - fix wrestling menu not reopening
+ - fixed hyperdeck auto-fit sometimes leaving the graphics chip disconnected from the screen, causing a boot failure
+
 
 0.3.0a MAJOR UPDATE
-- the hypernet menu entry is now the hyperdeck: a Turing complete clamshell handheld you build yourself with spare parts
-- maps with a battleback set in the editor now always use it in battle, instead of the biome picking a different one
-- renamed the goblin-worshipped norwegian black metal band to "Junehem" and its notorious stabbed frontman to avoid using real names and not get me in legal troubles
-- going back from choosing the second or third party member's type now returns to the previous member's add-member prompt instead of exiting to the main menu
-- sentient enemies may now spare the party
-- some new interiors
-- the screen now fades fully to black before the tileset changes when entering or climbing back out of a dungeon, crypt or cellar
-- renamed the desktop operating system to archways xp  (thanks Mravv!)
-- added an animated magical systems wheel to the skill master, showing every tradition of magic, which classes and spells draw on it, your own class's affinity, and how much of each you've learned
-- fixed the black screen hiding the starting place picker in character creation...maybe!
-- Em gets restless if you leave her unpicked on the character selection screen too long
-- shortened the help menu's category names; the history tab now browses year by year with month headers and multiple news can generate per day
-- added  new lore entries and a searchable world history tab to the help menu with a canon-events-only filter in the historical archive
-- generated containers no longer show the same item twice
-- other savegames' parties no longer appear in the tutorial or the Ghent station interior, this is to avoid crowding the place with new parties.
-- fixed loose party members occasionally freezing when looking around near certain events
-- biome battle themes 
-- removed checkmark stamp from selected traits in character creation
-- fixed shop counters getting stuck unresponsive
-- quest board contracts asking for money upfront now always pay back more than they cost
-- two-handed weapons, including bows, now fully block the off-hand slot
-- seed weapons no longer drop from loot tables, they can only be obtained by Eris
-- the forge now opens with a piece already on the board, and can melt pieces back into materials
-- weightless crafting materials no longer weigh down the backpack
-- checking a monster now opens one card with its stats, states and hit odds per body part
-- bosses can no longer be fled from, and fleeing in the dungeon or accursed market is no longer guaranteed on the first turn
-- running now drains ap much faster
-- limb damage now needs rest, potions or spells; blood and oil mode adds permanent amputation, clinics can graft replacements
-- talking and wrestling are now inline battle commands with holds, throws, chokes and finishing moves; persuaded monsters join instantly
-- psi blast bullet hell now works with any battlers
-- every class now reaches full max hp by level 50
-- summons can now be cast outside battle and followed until mana runs out, pets can be trained into full party members
-- animals and beasts can now be petted or fed
-- feral npcs no longer run normal shops and stray animals only spawn outdoors
-- equipment slots now match anatomy, handless creatures use mouths
-- added a galaxy map minigame from the title screen; the star map's magnetic loops now drift and occasionally snap, right-click backs out of a selection before closing the map, zooming on a moon no longer snaps back to its planet, and the whole map is reachable with a controller
-- fixed a crash on saving after loading an older save with star map data
-- talking to an npc now plays out a random social exchange (compliments, small talk, gossip, insults and more)
-- npc free chat modal can now be optionally powered by a local GGUF model, this setting in in experimental
-- premade dossier characters now start with lore-appropriate outfits and weapons
-- roaming monsters now move slower than a running party, and loose formation party members stay closer to the leader
-- indoor maps now lead straight back to the world map, except the tower
-- you can now investigate a ??? square and enter the place next to it..or a heart symbol if you are feeling brave
-- fixed a vehicle vanishing when you step out of it on the world map
-- all vehicles can now be summoned and driven indoors, and party members board boats one at a time
-- you can fish from the boat menu
-- dungeon, crypt and sewer walls are now properly built with rpgmaker autotiles
-- alien planets now get generated according to their heightmap and supports oceans
-- new characters no longer spawn inside lakes, cliffs or walls
-- fixed procedural map saves loading an empty map
-- fixed prison countdowns; clearing your bounty now returns you to your arrest spot
-- fixed the K key and the cooking tile crashing the menu
-- the fun meter can replenish after winning a battle, depending on personality traits
-- the raman probe scan now offers a check, analyze or cancel choice
-- enemy spawns now default to party level instead of distance from spawn
-- the dive option is hidden unless you have a diving suit
+
+Added:
+ - sentient enemies may now spare the party
+ - some new interiors
+ - added an animated magical systems wheel to the skill master, showing every tradition of magic, which classes and spells draw on it, your own class's affinity, and how much of each you've learned
+ - Em gets restless if you leave her unpicked on the character selection screen too long
+ - added  new lore entries and a searchable world history tab to the help menu with a canon-events-only filter in the historical archive
+ - biome battle themes
+ - summons can now be cast outside battle and followed until mana runs out, pets can be trained into full party members
+ - animals and beasts can now be petted or fed
+ - added a galaxy map minigame from the title screen; the star map's magnetic loops now drift and occasionally snap, right-click backs out of a selection before closing the map, zooming on a moon no longer snaps back to its planet, and the whole map is reachable with a controller
+ - talking to an npc now plays out a random social exchange (compliments, small talk, gossip, insults and more)
+ - npc free chat modal can now be optionally powered by a local GGUF model, this setting in in experimental
+ - you can now investigate a ??? square and enter the place next to it..or a heart symbol if you are feeling brave
+ - you can fish from the boat menu
+
+Changed:
+ - the hypernet menu entry is now the hyperdeck: a Turing complete clamshell handheld you build yourself with spare parts
+ - renamed the goblin-worshipped norwegian black metal band to "Junehem" and its notorious stabbed frontman to avoid using real names and not get me in legal troubles
+ - the screen now fades fully to black before the tileset changes when entering or climbing back out of a dungeon, crypt or cellar
+ - renamed the desktop operating system to archways xp  (thanks Mravv!)
+ - shortened the help menu's category names; the history tab now browses year by year with month headers and multiple news can generate per day
+ - removed checkmark stamp from selected traits in character creation
+ - quest board contracts asking for money upfront now always pay back more than they cost
+ - two-handed weapons, including bows, now fully block the off-hand slot
+ - seed weapons no longer drop from loot tables, they can only be obtained by Eris
+ - the forge now opens with a piece already on the board, and can melt pieces back into materials
+ - checking a monster now opens one card with its stats, states and hit odds per body part
+ - bosses can no longer be fled from, and fleeing in the dungeon or accursed market is no longer guaranteed on the first turn
+ - running now drains ap much faster
+ - limb damage now needs rest, potions or spells; blood and oil mode adds permanent amputation, clinics can graft replacements
+ - talking and wrestling are now inline battle commands with holds, throws, chokes and finishing moves; persuaded monsters join instantly
+ - every class now reaches full max hp by level 50
+ - equipment slots now match anatomy, handless creatures use mouths
+ - premade dossier characters now start with lore-appropriate outfits and weapons
+ - roaming monsters now move slower than a running party, and loose formation party members stay closer to the leader
+ - indoor maps now lead straight back to the world map, except the tower
+ - all vehicles can now be summoned and driven indoors, and party members board boats one at a time
+ - dungeon, crypt and sewer walls are now properly built with rpgmaker autotiles
+ - alien planets now get generated according to their heightmap and supports oceans
+ - the fun meter can replenish after winning a battle, depending on personality traits
+ - the raman probe scan now offers a check, analyze or cancel choice
+ - enemy spawns now default to party level instead of distance from spawn
+ - the dive option is hidden unless you have a diving suit
+
+Fixed:
+ - maps with a battleback set in the editor now always use it in battle, instead of the biome picking a different one
+ - going back from choosing the second or third party member's type now returns to the previous member's add-member prompt instead of exiting to the main menu
+ - fixed the black screen hiding the starting place picker in character creation...maybe!
+ - generated containers no longer show the same item twice
+ - other savegames' parties no longer appear in the tutorial or the Ghent station interior, this is to avoid crowding the place with new parties.
+ - fixed loose party members occasionally freezing when looking around near certain events
+ - fixed shop counters getting stuck unresponsive
+ - weightless crafting materials no longer weigh down the backpack
+ - psi blast bullet hell now works with any battlers
+ - feral npcs no longer run normal shops and stray animals only spawn outdoors
+ - fixed a crash on saving after loading an older save with star map data
+ - fixed a vehicle vanishing when you step out of it on the world map
+ - new characters no longer spawn inside lakes, cliffs or walls
+ - fixed procedural map saves loading an empty map
+ - fixed prison countdowns; clearing your bounty now returns you to your arrest spot
+ - fixed the K key and the cooking tile crashing the menu
 
 
 0.2.18a
 
-- party now rides on top of boat
-- you can now fish while sailing with a boat
-- fixed park signs summoning camper even if not having it in inventory, now they summon last vehicle used
-- dream switching system by colliding into walls
-- item names are now translated in shops
-- virtual scrolling for search results to increase perfomance
-- new procedural adventures
-- best random button to skills
-- now needs replenish when driving starship since it has all the necessary
-- driving turnation system so when a party member is tired another will take it's place, people now can sleep in vehicles when driving
-- fix respawn location on map
-- added personality selector to normal character creation
+Added:
+ - you can now fish while sailing with a boat
+ - dream switching system by colliding into walls
+ - new procedural adventures
+ - best random button to skills
+ - driving turnation system so when a party member is tired another will take it's place, people now can sleep in vehicles when driving
+ - added personality selector to normal character creation
+
+Changed:
+ - party now rides on top of boat
+ - virtual scrolling for search results to increase perfomance
+ - now needs replenish when driving starship since it has all the necessary
+
+Fixed:
+ - fixed park signs summoning camper even if not having it in inventory, now they summon last vehicle used
+ - item names are now translated in shops
+ - fix respawn location on map
 
 
 0.2.17a
 
-- non sentient creatures now can appear as NPCs
-- reworked world degradation system to not spawn trash in empty world and dead world starting setting but just overgrown cities and road
-- controller fixes
-- new party dialogue lines that depends on situation
-- fast travel now leaves you at bus stop
+Added:
+ - non sentient creatures now can appear as NPCs
+ - new party dialogue lines that depends on situation
+
+Changed:
+ - reworked world degradation system to not spawn trash in empty world and dead world starting setting but just overgrown cities and road
+ - fast travel now leaves you at bus stop
+
+Fixed:
+ - controller fixes
 
 
 0.2.16a
 
-- vehicle now appears in party hud
-- moved toast popup to the right
-- moved hotbars below
-- added L1 R1 support for skills hotbar in battle
-- removed screen darkening when using item on map
+Added:
+ - vehicle now appears in party hud
+ - added L1 R1 support for skills hotbar in battle
+
+Changed:
+ - moved toast popup to the right
+ - moved hotbars below
+ - removed screen darkening when using item on map
 
 
 0.2.15a
 
-- added quick mode in character selection
-- fixes to quests system location recognition
-- all items categories can be found in shops
-- scenarios now add items to hotbar
-- added foraged food items and foraging system
-- linked all vehicles to their event
-- plant system now produce farming products
-- animal system now produce animal products
-- new mountains biome algorithm
-- fixed Ghent Pharmacy
-- reworked daily item shop
-- fixed showel behavior
-- fixed starting game inside a terrain feature
-- add specialization selector to detailed char creation
-- removed humanoid archetype in creature creation
-- search panel
-- fixed police heat level
-- fixed collisions
-- fixed starting items of Em and Bubba
-- faster and smoother character creation
-- fixed start origin
+Added:
+ - added quick mode in character selection
+ - added foraged food items and foraging system
+ - plant system now produce farming products
+ - animal system now produce animal products
+ - add specialization selector to detailed char creation
+ - search panel
+
+Changed:
+ - all items categories can be found in shops
+ - scenarios now add items to hotbar
+ - new mountains biome algorithm
+ - reworked daily item shop
+ - removed humanoid archetype in creature creation
+ - faster and smoother character creation
+
+Fixed:
+ - fixes to quests system location recognition
+ - linked all vehicles to their event
+ - fixed Ghent Pharmacy
+ - fixed showel behavior
+ - fixed starting game inside a terrain feature
+ - fixed police heat level
+ - fixed collisions
+ - fixed starting items of Em and Bubba
+ - fixed start origin
 
 
 0.2.12a
 
-- new interactions to increase fun and gambling addictions, arena wins increase fun, dialogue options increase fun
-- diagnose diseases
-- categorized shop menu and inventory
-- fixed gambling recovery
-- added diagnose disease system
-- css edits: bigger menus, moved bars, removed button bgs, rounded borders, removed italics
-- trait point system
-- added search system and search bars
-- planetary levels
-- reworked procedural adventures to also work on earth biomes
-- car near map border hitting player on transfer
-- added remote work, increased hourly pay
+Added:
+ - new interactions to increase fun and gambling addictions, arena wins increase fun, dialogue options increase fun
+ - diagnose diseases
+ - added diagnose disease system
+ - trait point system
+ - added search system and search bars
+ - planetary levels
+ - added remote work, increased hourly pay
+
+Changed:
+ - categorized shop menu and inventory
+ - css edits: bigger menus, moved bars, removed button bgs, rounded borders, removed italics
+ - reworked procedural adventures to also work on earth biomes
+
+Fixed:
+ - fixed gambling recovery
+ - car near map border hitting player on transfer
 
 
 0.2.11a
 
-- fixed missing apps in hypernet explorer
-- remove bg of background in menu
-- T button now switches between worldmap and generated map
+Added:
+ - T button now switches between worldmap and generated map
+
+Changed:
+ - remove bg of background in menu
+
+Fixed:
+ - fixed missing apps in hypernet explorer
 
 
 0.2.10a
 
-- raw meat and plant matter can now be used in cooking
-- fixes for fog of war
-- limited the number of skills that can be synced in battle to 9
-- enemies are more frequent in liminal drive mode
-- fix thinker system result BG
-- fixes to location on map not taking you to hardcoded location but to procedural map
+Added:
+ - raw meat and plant matter can now be used in cooking
+
+Changed:
+ - limited the number of skills that can be synced in battle to 9
+ - enemies are more frequent in liminal drive mode
+
+Fixed:
+ - fixes for fog of war
+ - fix thinker system result BG
+ - fixes to location on map not taking you to hardcoded location but to procedural map
 
 
 0.2.9a
 
-- fixed skill target selection for party member not registering mouse click
-- talk to enemy now support multiple enemies
+Changed:
+ - talk to enemy now support multiple enemies
+
+Fixed:
+ - fixed skill target selection for party member not registering mouse click
 
 
 0.2.8a
 
-- notifications in battle now appear in battlelog
-- added skill hotbar
-- removed statuses from basic attacks
-- updating the game now closes it to avoid problems in loading sprites
+Added:
+ - added skill hotbar
+
+Changed:
+ - notifications in battle now appear in battlelog
+ - removed statuses from basic attacks
+ - updating the game now closes it to avoid problems in loading sprites
 
 
 0.2.6a
 
-- fixed training menu skill selection in skill trees
-- reworked the constellation viewer since it was using the legacy pixi.js code
-- removed armours from thinker menu they are exclusive of blacksmithing
-- repainted the camper
-- moons are now landable
-- replaced skills formula with median damage for the selected character
-- arena battles now after 10 wins start spawning 2 enemies at the time and after 20 wins will start spawning 3 enemies
-- made biome features much more sparse, removed handmade and natural features from alien biomes with no atmosphere
-- fixed unreadable text on augments menu
-- refueling ship from main sequence stars now refill also rocket fuel other than hyperflux
+Added:
+ - moons are now landable
+
+Changed:
+ - reworked the constellation viewer since it was using the legacy pixi.js code
+ - removed armours from thinker menu they are exclusive of blacksmithing
+ - repainted the camper
+ - replaced skills formula with median damage for the selected character
+ - arena battles now after 10 wins start spawning 2 enemies at the time and after 20 wins will start spawning 3 enemies
+ - made biome features much more sparse, removed handmade and natural features from alien biomes with no atmosphere
+ - refueling ship from main sequence stars now refill also rocket fuel other than hyperflux
+
+Fixed:
+ - fixed training menu skill selection in skill trees
+ - fixed unreadable text on augments menu
 
 
 0.2.5a
 
-- fixed sprite selector not resolving sprites
-- reduced fuel usage for liminal drive
-- increased liminal drive speed
-- new social lines when talking to party members
-- fix vehicles driving over rivers
-- fixed pipe collision in starship
-- fixed entrance collision in Greenwitch space center
-- released the test version on itch.io to get even more feedback
+Added:
+ - new social lines when talking to party members
+
+Changed:
+ - reduced fuel usage for liminal drive
+ - increased liminal drive speed
+ - released the test version on itch.io to get even more feedback
+
+Fixed:
+ - fixed sprite selector not resolving sprites
+ - fix vehicles driving over rivers
+ - fixed pipe collision in starship
+ - fixed entrance collision in Greenwitch space center
 
 
 0.2.4a
 
-- fixed opening image and audio files errors
-- removed too powerful skills
-- made ship smaller
-- reduced spawning of terrain features in ruins biome
-- orbits of planets now follows game clock
-- zoom into a system from galaxy view will select ship if no other system is selected
-- fixed wrong collisions
-- fix major update appearing after installed
-- fix blacksmithing requiring a blacksmith
+Changed:
+ - removed too powerful skills
+ - made ship smaller
+ - reduced spawning of terrain features in ruins biome
+ - orbits of planets now follows game clock
+ - zoom into a system from galaxy view will select ship if no other system is selected
+
+Fixed:
+ - fixed opening image and audio files errors
+ - fixed wrong collisions
+ - fix major update appearing after installed
+ - fix blacksmithing requiring a blacksmith
 
 
 0.2.0a MAJOR UPDATE
-- full rebalance: class curves, weapons, armours, enemies, exp and gold all regenerated from one model. a same level creature now takes 6 to 9 rounds to kill
-- world creation: population (normal / goblin mode / monster world / empty world / zombie apocalypse) and magic level (normal / severed / unbound), locked in once at creation
-- heat level: the police only chase you if you have a bounty, they spot you by line of sight, and the heat fades over four hours of sleeping, waiting or travelling
-- letters can be sent between parties, in this world and in every other world on your machine, with money and goods enclosed and a delivery date of your choosing
-- new card game: 3x3 board duels, a collection, booster packs, and enemies that can be captured as cards in the middle of a fight (in heavy WIP, you can try it also from minigames)
-- new creature classes are selectable at creation, and a non sentient character growls and barks
- instead of talking in empathize menu with NPC interactions
-- the ONU assembly: a party member takes a seat for a hyperpower or a faction and debates, votes and vetoes once a game week, for their own standing and their own stipend, it can be accessed via Kofi Annan preset character of with Diplomatic scenario
-- augments moved out of the biologics menu into their own register, listing everything the party wears and the whole catalogue of 232
-- field surgery: fit and remove augments out in the field, with the odds shown before you cut
-- augments can now slow, stop or even reverse how fast a need drains
-- new augmented starting scenario, and a skeleton key at character creation
-- bologna is in the game: a real city rasterised from openstreetmap, 14x9 cells with no seam between them, shops, inns and houses behind every door
-- 92 tower floors below ground
-- dreams are endless now: no fixed dream maps, a world that loops in every direction and a stack of levels that never stops going up
-- 23 procedural structures reachable from 64 biomes instead of five, each with its own layout, palette, ornaments and a generated name in the map banner
-- alien biomes reworked with 40 new tileset
-- petrodemons: procedural bosses that you can encounter on oil rigs in North Africa
-- every enemy has different movements now: they telegraph, hunt, graze, ambush, flee, and lose you if you break line of sight
-- starting a fight next to other monsters drags up to three of them in
-- you pick which monster a single target action hits, marked with a chevron over its head
-- tp renamed to ap everywhere
-- new convoker class, with a lost convoker starting scenario
-- new states for martial arts and new skill effects
-- the party walks loose by default: they live their own lives around you, wash, eat, play and talk to the locals and to each other. sprint for two seconds to form the column
-- if you save a game with a party in a specifc location, the party will idle there an can be encountered when visiting that location with another party.
-- shops, furniture, animals, plants, hives, real estate, rentals, doors and the bestiary are now shared by every savegame of a world
-- item storage and throwing items now remember items between savegames so you can share item between savegames in same world.
-- real estate system synchronized between all savegames in same world
-- the skill encyclopedia is an atlas of alchemistry seals now, one school a page, pannable and zoomable
-- knowledge prices rewritten: esoteric skills cost ten times, forbidden a hundred
-- a class only studies its own six schools
-- sold out items leave the shelf, key items can no longer be sold, and selling is multi select with a counter
-- chess, pool, the horse race and the slot machine are 3d now
-- the hypernet browser draws its own chrome instead of borrowing the page's
-- who wrote the music shows as a procedural cassette the first time you hear a track
-- the 53 joined character sheets were cut into 386 single ones, so famous people no longer turn up as random npcs
-- bashed and picked doors stay open
-- a warning on the title screen when a build is too big for the patch to carry
-- fixed the crash when using world skills, unusable selected skills, the character selector, common event calls, npc pathfinding in corridors, the title screen fade in, and transfers coming out at the omega tower
-- cleaned up tileset tags and passability up to tileset 167, and added new city tilesets
-- a party diary: everything the party does is written down as it happens and kept in the world folder, so a later playthrough of the same world can read what the people before them did
-- alchemistry reworked, with many of new recipes
-- every disease now has a real treatment: a course of drugs that cures it, a window of days before it can even be diagnosed, and a late stage it turns into if you leave it alone
-- 84 new medicines, each curing a named list of illnesses over a set number of daily doses
-- the party doses itself automatically every morning at 8 AM, and tells you what it is missing
-- an illness left to run genuinely gets worse: its stat penalties, its drain on your needs and its daily damage all grow with the days it went untreated
-- every disease has a vial you can buy, carry and use on somebody, on the map or in the middle of a fight
-- diseases can be picked freely at character creation on their own tab, and cost none of your four traits
-- illnesses now show on the party hud, the status screen and in the archive
-- public payphones: outgoing calls only, sharing the hexphone's contacts and credit (WIP)
-- npcs have new things to say once 2012 has happened
-- buses: inteact with a bus stop on any procedural city and ride it
-- grave robbing is now a crime, and the graves are worth robbing
-- farms keep livestock now: a ploughed procedural square is dealt up to three head that graze, grow and produce, the same in every savegame of the world
-- new shop maps, bigger shop inventories, railroad graphics and reworked city pieces and shadows
-- procedural cities are tagged and named as real destinations in fast travel with bus
-- mac and linux build scripts
-- fixed the travel modal, the stranded arena session, city passability and tileset 303 tagging
-- 32 new hand made city prefabs placed in procedural cities
-- fixed the build and the steam upload scripts
-- new plague spreader starting scenario: a case of sealed vials off the disease shelf and the pharmacy to survive owning them
-- infect somebody from the empathize panel by opening a vial on them. the odds of not being seen are your int and dex, and getting caught is bioterrorism, a 10,000 euro charge and the end of that friendship
-- every skill, state, trait, weapon, armour, class and enemy tagged magical or mundane; mundane skills spend ap, not mp
-- 12 real blood types, with donor/recipient compatibility, on the biologics sheet
-- empathize wiki: political party and ideology pages
-- new diplomatic origin starting scenario
-- naguka added as a joke ui language
-- tutorial can open straight into the pre-made dossier picker
-- footsteps rewritten: sound comes from what the tile tag, not the tileset number, for now this works fully on procedural maps but will be added to other maps.
-- terrain interaction also checks the tile underfoot, not just the one faced
-- fixed missing empathize option on npcs across dozens of maps
-- replaced empty enter building sound with door sound fx
-- procedural city streets connect with adiacent city biomes
-- fixed a broken downtown tileset, dungeon generation, mountain biomes, bunker respawn and empty-world spawn points
-- more tileset tag and passability cleanup
+
+Added:
+ - world creation: population (normal / goblin mode / monster world / empty world / zombie apocalypse) and magic level (normal / severed / unbound), locked in once at creation
+ - letters can be sent between parties, in this world and in every other world on your machine, with money and goods enclosed and a delivery date of your choosing
+ - new card game: 3x3 board duels, a collection, booster packs, and enemies that can be captured as cards in the middle of a fight (in heavy WIP, you can try it also from minigames)
+ - new creature classes are selectable at creation, and a non sentient character growls and barks instead of talking in empathize menu with NPC interactions
+ - the ONU assembly: a party member takes a seat for a hyperpower or a faction and debates, votes and vetoes once a game week, for their own standing and their own stipend, it can be accessed via Kofi Annan preset character of with Diplomatic scenario
+ - field surgery: fit and remove augments out in the field, with the odds shown before you cut
+ - new augmented starting scenario, and a skeleton key at character creation
+ - bologna is in the game: a real city rasterised from openstreetmap, 14x9 cells with no seam between them, shops, inns and houses behind every door
+ - 92 tower floors below ground
+ - petrodemons: procedural bosses that you can encounter on oil rigs in North Africa
+ - new convoker class, with a lost convoker starting scenario
+ - new states for martial arts and new skill effects
+ - if you save a game with a party in a specifc location, the party will idle there an can be encountered when visiting that location with another party.
+ - who wrote the music shows as a procedural cassette the first time you hear a track
+ - a warning on the title screen when a build is too big for the patch to carry
+ - a party diary: everything the party does is written down as it happens and kept in the world folder, so a later playthrough of the same world can read what the people before them did
+ - every disease now has a real treatment: a course of drugs that cures it, a window of days before it can even be diagnosed, and a late stage it turns into if you leave it alone
+ - 84 new medicines, each curing a named list of illnesses over a set number of daily doses
+ - the party doses itself automatically every morning at 8 AM, and tells you what it is missing
+ - every disease has a vial you can buy, carry and use on somebody, on the map or in the middle of a fight
+ - diseases can be picked freely at character creation on their own tab, and cost none of your four traits
+ - public payphones: outgoing calls only, sharing the hexphone's contacts and credit (WIP)
+ - npcs have new things to say once 2012 has happened
+ - buses: inteact with a bus stop on any procedural city and ride it
+ - farms keep livestock now: a ploughed procedural square is dealt up to three head that graze, grow and produce, the same in every savegame of the world
+ - new shop maps, bigger shop inventories, railroad graphics and reworked city pieces and shadows
+ - mac and linux build scripts
+ - 32 new hand made city prefabs placed in procedural cities
+ - new plague spreader starting scenario: a case of sealed vials off the disease shelf and the pharmacy to survive owning them
+ - infect somebody from the empathize panel by opening a vial on them. the odds of not being seen are your int and dex, and getting caught is bioterrorism, a 10,000 euro charge and the end of that friendship
+ - 12 real blood types, with donor/recipient compatibility, on the biologics sheet
+ - empathize wiki: political party and ideology pages
+ - new diplomatic origin starting scenario
+ - naguka added as a joke ui language
+
+Changed:
+ - full rebalance: class curves, weapons, armours, enemies, exp and gold all regenerated from one model. a same level creature now takes 6 to 9 rounds to kill
+ - heat level: the police only chase you if you have a bounty, they spot you by line of sight, and the heat fades over four hours of sleeping, waiting or travelling
+ - augments moved out of the biologics menu into their own register, listing everything the party wears and the whole catalogue of 232
+ - augments can now slow, stop or even reverse how fast a need drains
+ - dreams are endless now: no fixed dream maps, a world that loops in every direction and a stack of levels that never stops going up
+ - 23 procedural structures reachable from 64 biomes instead of five, each with its own layout, palette, ornaments and a generated name in the map banner
+ - alien biomes reworked with 40 new tileset
+ - every enemy has different movements now: they telegraph, hunt, graze, ambush, flee, and lose you if you break line of sight
+ - starting a fight next to other monsters drags up to three of them in
+ - you pick which monster a single target action hits, marked with a chevron over its head
+ - tp renamed to ap everywhere
+ - the party walks loose by default: they live their own lives around you, wash, eat, play and talk to the locals and to each other. sprint for two seconds to form the column
+ - shops, furniture, animals, plants, hives, real estate, rentals, doors and the bestiary are now shared by every savegame of a world
+ - item storage and throwing items now remember items between savegames so you can share item between savegames in same world.
+ - real estate system synchronized between all savegames in same world
+ - the skill encyclopedia is an atlas of alchemistry seals now, one school a page, pannable and zoomable
+ - knowledge prices rewritten: esoteric skills cost ten times, forbidden a hundred
+ - a class only studies its own six schools
+ - sold out items leave the shelf, key items can no longer be sold, and selling is multi select with a counter
+ - chess, pool, the horse race and the slot machine are 3d now
+ - the hypernet browser draws its own chrome instead of borrowing the page's
+ - the 53 joined character sheets were cut into 386 single ones, so famous people no longer turn up as random npcs
+ - bashed and picked doors stay open
+ - alchemistry reworked, with many of new recipes
+ - an illness left to run genuinely gets worse: its stat penalties, its drain on your needs and its daily damage all grow with the days it went untreated
+ - illnesses now show on the party hud, the status screen and in the archive
+ - grave robbing is now a crime, and the graves are worth robbing
+ - procedural cities are tagged and named as real destinations in fast travel with bus
+ - every skill, state, trait, weapon, armour, class and enemy tagged magical or mundane; mundane skills spend ap, not mp
+ - tutorial can open straight into the pre-made dossier picker
+ - footsteps rewritten: sound comes from what the tile tag, not the tileset number, for now this works fully on procedural maps but will be added to other maps.
+ - terrain interaction also checks the tile underfoot, not just the one faced
+ - procedural city streets connect with adiacent city biomes
+
+Fixed:
+ - fixed the crash when using world skills, unusable selected skills, the character selector, common event calls, npc pathfinding in corridors, the title screen fade in, and transfers coming out at the omega tower
+ - cleaned up tileset tags and passability up to tileset 167, and added new city tilesets
+ - fixed the travel modal, the stranded arena session, city passability and tileset 303 tagging
+ - fixed the build and the steam upload scripts
+ - fixed missing empathize option on npcs across dozens of maps
+ - replaced empty enter building sound with door sound fx
+ - fixed a broken downtown tileset, dungeon generation, mountain biomes, bunker respawn and empty-world spawn points
+ - more tileset tag and passability cleanup
 
 
 0.1.3a
 
-- new skill assignment system: each character can equip max 14 skills in battle
-- the battlelog now scrolls instead of being redrawed
-- all enemies bodyparts now flash red when hit
-- fixed the bug that blocked spells being used outside battle
-- weapons and armours can be sold in shops
-- buffed damage of Martial arts skills, debuffed single hit damage for multi hit
-- added a random selection of esoteric grade skills to Alesteir Crowley
-- cleaned up wrong tileset tags to fix visiblity issues
+Added:
+ - new skill assignment system: each character can equip max 14 skills in battle
+ - weapons and armours can be sold in shops
+ - added a random selection of esoteric grade skills to Alesteir Crowley
+
+Changed:
+ - the battlelog now scrolls instead of being redrawed
+ - all enemies bodyparts now flash red when hit
+ - buffed damage of Martial arts skills, debuffed single hit damage for multi hit
+
+Fixed:
+ - fixed the bug that blocked spells being used outside battle
+ - cleaned up wrong tileset tags to fix visiblity issues
 
 
 0.1.2a
 
-- Added missing Attack and Guard actions to all enemies
+Fixed:
+ - Added missing Attack and Guard actions to all enemies
 
 
 0.1.1a
 
-- Fixed character selection on game start
-- Fixed battlers overlap
-- Fixed selection chevron for battle skills
+Fixed:
+ - Fixed character selection on game start
+ - Fixed battlers overlap
+ - Fixed selection chevron for battle skills
 
 
 0.1.0a
 
-- Addiction and cravings system
-- Multi enemy battles when starting a battle with enemies close together
-- Added full character creation mode
-- Added different models for each weapon
-- Reworked training menu
-- Added a skills limit of 7 skill and 7 magic to carry in battle
-- Reduces number of skills learnable by level up
-- Rebalanced starting items to use themed ones for classes
-- Higher level enemies absorb damage from lower level party members
+Added:
+ - Addiction and cravings system
+ - Multi enemy battles when starting a battle with enemies close together
+ - Added full character creation mode
+ - Added different models for each weapon
+
+Changed:
+ - Reworked training menu
+ - Added a skills limit of 7 skill and 7 magic to carry in battle
+ - Reduces number of skills learnable by level up
+ - Rebalanced starting items to use themed ones for classes
+ - Higher level enemies absorb damage from lower level party members
 
 
 0.0.10a
 
-- Added blacksmith system
-- Reworked the specialization system so using skills in battle can increase the level.
-- Implemented cooking and thinker skill levels effecta
-- Removed alien biomes spawning on earth
-- Added a "butcher all" button to butcher menu
-- Made pushing rocks slower
-- Added dating system to sandbox menu
-- Made the responses in dating system procedural
-- Renamed generic NPCs
-- Fixed skyscraper collision and transport
-- Some initial collision fixes on all maps
-- Fixed world map crash
-- Fixed infinite wishes from wish granting orb
+Added:
+ - Added blacksmith system
+ - Implemented cooking and thinker skill levels effecta
+ - Added a "butcher all" button to butcher menu
+ - Added dating system to sandbox menu
+
+Changed:
+ - Reworked the specialization system so using skills in battle can increase the level.
+ - Removed alien biomes spawning on earth
+ - Made pushing rocks slower
+ - Made the responses in dating system procedural
+ - Renamed generic NPCs
+
+Fixed:
+ - Fixed skyscraper collision and transport
+ - Some initial collision fixes on all maps
+ - Fixed world map crash
+ - Fixed infinite wishes from wish granting orb
 
 
 0.0.9a
 
-Fixes:
-- Arcade snake gameover
-- Eris trial laywer select and auto skip
-- Biome display names for Forest type biomes
-- Typo fixes
-- Shopkeeper name in empathize menu
-- Streamlined updates
+Changed:
+ - Streamlined updates
+
+Fixed:
+ - Arcade snake gameover
+ - Eris trial laywer select and auto skip
+ - Biome display names for Forest type biomes
+ - Typo fixes
+ - Shopkeeper name in empathize menu
 
 
 0.0.8a
 
-Fixed
-- Stockbuster category change and active map battle
-- Deed house name display
-- Work system category display and typos
-- Autoupdater rework and hypernet browser double bars
-- Enemy models rendering
-- System rename for pets and followers, 3D model of recruited units
-- Bank loan crashes when closing Hypernet OS and Questboard
-- Auto world creation and warp speed teleport functionality
-- Wrong NPC labels
-- Book crash in the wild
-- Cluster NPC issues
-- Stat display
-- Various crashes
+Fixed:
+ - Stockbuster category change and active map battle
+ - Deed house name display
+ - Work system category display and typos
+ - Autoupdater rework and hypernet browser double bars
+ - Enemy models rendering
+ - System rename for pets and followers, 3D model of recruited units
+ - Bank loan crashes when closing Hypernet OS and Questboard
+ - Auto world creation and warp speed teleport functionality
+ - Wrong NPC labels
+ - Book crash in the wild
+ - Cluster NPC issues
+ - Stat display
+ - Various crashes
 
 
 0.0.7a

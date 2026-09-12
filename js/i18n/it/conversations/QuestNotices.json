@@ -35,7 +35,7 @@
     "una busta indirizzata soltanto a chiunque sia disperato",
     "un cartellino di spedizione strappato da qualcosa di pesante",
     "una richiesta battuta a macchina su un apparecchio senza la lettera E",
-    "un messaggio lasciato nel registro dove dovrebbe esserci un nome",
+    "un messaggio lasciato nel grimorio dove dovrebbe esserci un nome",
     "un avviso anonimo in tre lingue, tutte sbagliate",
     "un opuscolo che odora di chiesa e gasolio",
     "un manifesto strappato che promette il resto dei dettagli di persona",
@@ -56,7 +56,7 @@
     "un comune volantino, uno di una dozzina",
     "un biglietto che ha chiaramente preso la pioggia ed è stato riscritto",
     "una lettera col sigillo rotto e nessuno che lo ammetta",
-    "una pagina strappata da un registro, le colonne ancora visibili",
+    "una pagina strappata da un grimorio, le colonne ancora visibili",
     "un avviso scritto in caratteri minutissimi per stare nel foglio",
     "un appunto a gesso su una lavagnetta, cancellato e riscritto due volte",
     "un cartoncino con un'impronta di pollice nell'angolo",
@@ -155,7 +155,7 @@
     "Se morite il contratto si annulla da sé. E anche voi.",
     "Nessun rimborso sul coraggio.",
     "L'assicurazione finisce al limitare del bosco.",
-    "Non firmate due volte, il registro se ne accorge.",
+    "Non firmate due volte, il grimorio se ne accorge.",
     "Se a un posto di blocco leggono questo avviso ad alta voce, andatevene.",
     "Nessuno lo confermerà per iscritto.",
     "Qualsiasi impiegato dell'Archivio che faccia domande non è dei nostri.",
@@ -215,7 +215,7 @@
     "Firmato, protocollato e dimenticato.",
     "La paga si ritira a qualsiasi bacheca.",
     "Portate la ricevuta, tenetevi la storia.",
-    "Chiedete del registro, non di me.",
+    "Chiedete del grimorio, non di me.",
     "Le condizioni sono condizioni.",
     "Buone strade.",
     "Camminate con prudenza.",
@@ -258,7 +258,7 @@
     "Buona fortuna, e grazie.",
     "Togliete l'avviso se accettate, così nessun altro fa la strada per niente.",
     "Sono facile da trovare e difficile da evitare.",
-    "Saldato in giornata, senza aspettare i registri.",
+    "Saldato in giornata, senza aspettare i grimori.",
     "Se lo finite bene, la prossima volta chiederò di voi per nome.",
     "Nulla da aggiungere."
   ],
@@ -571,7 +571,7 @@
         "Fatelo onestamente. Lo sapremo noi, e lo saprà anche Qualcun altro.",
         "Non prendete nulla di consacrato, per quanto trasportabile.",
         "L'orgoglio non figura fra le spese elencate.",
-        "Se foste tentati, ricordate che il registro si legge ad alta voce a fine anno.",
+        "Se foste tentati, ricordate che il grimorio si legge ad alta voce a fine anno.",
         "Violenza solo dove la carità ha dimostrabilmente fallito."
       ],
       "signoffs": [
@@ -1209,7 +1209,7 @@
     "market": [
       "POSIZIONE DI MERCATO: detenere [N] azioni petrolifere",
       "COMMISSIONE DI PORTAFOGLIO: [N] azioni di greggio",
-      "LAVORO {CONTABILE|DI CARTA}: detenere [N] azioni petrolifere",
+      "LAVORO {DI GRIMORIO|DI CARTA}: detenere [N] azioni petrolifere",
       "COMPRARE E TENERE: [N] azioni, per poco"
     ],
     "expedition": [
@@ -1258,10 +1258,10 @@
       "{Portate|Scortate|Trasportate} questo {pacco|carico|contenitore} alla bacheca degli incarichi di [DEST]. {È più leggero di quanto sembri.|Non apritelo.|Ticchetta, ma con garbo.|Il contenuto è assicurato contro tutto tranne la curiosità.}",
       "Un {pacco|fagotto|tubo} in uscita da [HERE], una firma a [DEST]. {Quel che sta in mezzo non vi riguarda.|Ciò che accade fra i due è affar vostro e rischio vostro.}",
       "{La staffetta|Il corriere abituale|Il solito ragazzo} è {malato|scomparso|ubriaco|in ritardo di tre giorni}, quindi la bacheca di [DEST] aspetta una consegna che nessuno ha fatto. {Portatecela voi.|Consegnatela di persona o niente.}",
-      "{Una piccola cassa|Una scatola piatta di legno|Un registro rilegato} deve arrivare a [DEST] {intatto|non aperto|a mano}. {Abbiamo scelto la strada invece dei piccioni di proposito.|I piccioni si sono rifiutati per questo.}"
+      "{Una piccola cassa|Una scatola piatta di legno|Un grimorio rilegato} deve arrivare a [DEST] {intatto|non aperto|a mano}. {Abbiamo scelto la strada invece dei piccioni di proposito.|I piccioni si sono rifiutati per questo.}"
     ],
     "smuggle": [
-      "Una {cassa|sacca|fusto} deve arrivare a [DEST] senza comparire su alcun manifesto, registro o pubblicazione dell'Archivio. {Prendete le strade secondarie.|Se a un posto di blocco chiedono, sono aringhe marinate.|I sigilli sono in Fantablack, non graffiateli.}",
+      "Una {cassa|sacca|fusto} deve arrivare a [DEST] senza comparire su alcun manifesto, grimorio o pubblicazione dell'Archivio. {Prendete le strade secondarie.|Se a un posto di blocco chiedono, sono aringhe marinate.|I sigilli sono in Fantablack, non graffiateli.}",
       "Niente di illegale, {solo non registrato|solo non protocollato|solo non documentato}. Portatelo a [DEST] e dimenticate il peso. {Questo mese la dogana conta le casse.|L'Archivio torna a pubblicare i manifesti, quindi state fuori dall'autostrada.}",
       "C'è un {carico|pacco|barile} che deve arrivare a [DEST] senza arrivarci ufficialmente. {Non apritelo per scoprire perché.|Vi si paga il silenzio, non la distanza.}",
       "{La strada breve|L'autostrada|La strada a pedaggio} è sorvegliata. Prendete {la via lunga|la vecchia via|la via dei contrabbandieri} per [DEST] con questo e nessuno deve protocollare nulla. {Ai posti di blocco non leggono con attenzione le etichette delle aringhe marinate.}"
@@ -1287,7 +1287,7 @@
     "donation": [
       "Il fondo di soccorso di [FACTION] accetta contributi di [COST] per {coperte, stivali e batterie Anoki|reinsediare i profughi dalle dimensioni superiori|tenere incantati i pentoloni della zuppa}. I donatori vengono ricordati.",
       "[COST] alla {cassetta di emergenza|fondo invernale|lista delle vedove} di [FACTION]. {Nessuna somma è troppo piccola, benché la vostra potrebbe essere più grande.|I nomi dei donatori sono letti ad alta voce, brevemente.}",
-      "Date [COST] e [FACTION] potrà {sfamare qualcuno|dare riparo a qualcuno|seppellire qualcuno come si deve} questa settimana. {Il registro è pubblico.|La ricevuta vale più della moneta, nelle stanze giuste.}"
+      "Date [COST] e [FACTION] potrà {sfamare qualcuno|dare riparo a qualcuno|seppellire qualcuno come si deve} questa settimana. {Il grimorio è pubblico.|La ricevuta vale più della moneta, nelle stanze giuste.}"
     ],
     "cache": [
       "Un {deposito|cassaforte|lancio di rifornimenti} {è scomparso|è stato abbandonato|è stato sepolto in fretta} alle coordinate ([X], [Y]). {Recuperatelo e tenete ciò che è trasportabile, la ricompensa copre il resto.|Riportate quel che ha lasciato il tempo.}",
@@ -1363,7 +1363,7 @@
     ],
     "market": [
       "Acquistate e detenete [N] azioni di petrolio greggio. {Il Collettivo lo archivia sotto la voce entusiasmo.|Rivendetele poi se volete, a noi serve solo la scrittura a registro.}",
-      "Detenete [N] azioni petrolifere abbastanza a lungo perché il registro se ne accorga. {Cosa ne farete poi sono affari vostri.|Conta la posizione, il profitto è vostro.}",
+      "Detenete [N] azioni petrolifere abbastanza a lungo perché il grimorio se ne accorga. {Cosa ne farete poi sono affari vostri.|Conta la posizione, il profitto è vostro.}",
       "Qualcuno ha bisogno che il registro mostri [N] azioni di greggio in mani {amiche|private|non affiliate}. {Le vostre andranno bene.}"
     ],
     "expedition": [

@@ -298,11 +298,20 @@
         // galaxy catalogue gives it, each on its own month so they drift past
         // one another over a night rather than moving as a set.
         //
+        setAirless(airless) {
+            this._airless = !!airless;
+        }
+
         // A planet with no moons gets an empty sky, which is the honest answer
         // and is most of them.
         setWorld(desc) {
             this._disposeAlienMoons();
             this._world = desc || null;
+            if (desc && (desc.atmosphere === false || desc.hasAtmosphere === false)) {
+                this._airless = true;
+            } else if (desc && (desc.atmosphere === true || desc.hasAtmosphere === true)) {
+                this._airless = false;
+            }
             if (!desc) return;
             const list = (desc.moons || []).slice(0, ALIEN_MOON_MAX);
             this._alienMoons = list.map((m, i) => {
@@ -370,7 +379,7 @@
                 // holds against the sky.
                 const day = Math.max(0, (m.size / (MOON_SIZE * WORLD_SCALE)) - 0.9) * 0.35;
                 m.sp.visible = true;
-                m.mat.opacity = Math.max(0, 0.9 - dayFactor * (1.8 - day));
+                m.mat.opacity = this._airless ? 0.95 : Math.max(0, 0.9 - dayFactor * (1.8 - day));
             }
         }
 
@@ -394,17 +403,23 @@
             this._group.visible = !underwater;
             if (underwater) return;
 
-            this._starMat.opacity = Math.max(0, 0.95 - dayFactor * 1.6);
+            if (this._airless) {
+                this._starMat.opacity = 0.95;
+                this._clouds.visible = false;
+            } else {
+                this._starMat.opacity = Math.max(0, 0.95 - dayFactor * 1.6);
+                this._clouds.visible = true;
 
-            // Clouds slowly orbit the camera (reads as wind drift) and dim at dusk.
-            this._clouds.rotation.y += delta * 0.0045;
-            this._tmpC.setRGB(
-                0.25 + dayFactor * 0.75,
-                0.27 + dayFactor * 0.73,
-                0.34 + dayFactor * 0.66
-            );
-            this._cloudMat.color.lerp(this._tmpC, Math.min(1, delta * 2));
-            this._cloudMat.opacity = 0.55 + dayFactor * 0.3;
+                // Clouds slowly orbit the camera (reads as wind drift) and dim at dusk.
+                this._clouds.rotation.y += delta * 0.0045;
+                this._tmpC.setRGB(
+                    0.25 + dayFactor * 0.75,
+                    0.27 + dayFactor * 0.73,
+                    0.34 + dayFactor * 0.66
+                );
+                this._cloudMat.color.lerp(this._tmpC, Math.min(1, delta * 2));
+                this._cloudMat.opacity = 0.55 + dayFactor * 0.3;
+            }
 
             // On another world, that world's own moons: as many as it has, each
             // its own size, colour and month. Earth's moon and the three of a

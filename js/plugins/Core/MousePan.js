@@ -909,17 +909,26 @@
         return _msgScaleCache;
     }
 
+    // Event names the hover never speaks. A name is hidden when it STARTS with
+    // one of these, so "Transfer 2", "Upstairs B", "AudioEmitter" and the rest
+    // of the machinery events stay silent along with the bare name.
+    const HIDDEN_NAME_PREFIXES = [
+        "countryname", "transfer", "steal", "exit", "downstairs", "upstairs",
+        "initialize", "audio", "acquire", "door", "puzzlesetup", "debug"
+    ];
+
     function shouldHideEvent(name) {
         if (!name) return true;
         const trimmed = name.trim();
-        if (trimmed.startsWith("EV") || trimmed.startsWith("Transfer") || trimmed.startsWith("Door")) return true;
-        
+        // "EV" is the editor's own default name, and it is matched in its own
+        // case so that an NPC called Eve or Evelyn still answers to the cursor.
+        if (trimmed.startsWith("EV")) return true; // i18n-ignore: event name
+
         const lower = trimmed.toLowerCase();
-        const hideList = ["audio", "puzzlesetup", "debug", "audioemitter"];
-        if (hideList.includes(lower)) return true;
-        
-        if (/^player[1-9]$/i.test(trimmed)) return true;
-        
+        if (HIDDEN_NAME_PREFIXES.some(p => lower.startsWith(p))) return true;
+
+        if (/^player[1-9]$/i.test(lower)) return true;
+
         return false;
     }
 
@@ -943,7 +952,7 @@
     // itself; a procedurally placed one is remembered per event id instead.
     function enemyDisplayName(ev) {
         const data = ev.event ? ev.event() : null;
-        if (!data || data.name !== "Enemy") return null; // i18n-ignore: event name
+        if (!data || !/^enemy(?![a-z])/i.test((data.name || "").trim())) return null; // i18n-ignore: event name
         let troopId = ev._fixedTroopId;
         if (!(troopId > 0) && $gameSystem && $gameSystem._procGenEnemyTroops) {
             troopId = $gameSystem._procGenEnemyTroops[ev.eventId()];
@@ -1110,10 +1119,10 @@
         this.addWindow(this._eventHoverWindow);
     };
 
-    Scene_Map.prototype.updateEventHover = function () {
-        if (!this._eventHoverWindow) return;
-
-        const getTileScreenPosition = (mapX, mapY) => {
+    // Hoisted out of updateEventHover: it was rebuilt as a fresh closure on
+    // every frame, for a function that is called at most once per frame and
+    // reads nothing but map state.
+    const getTileScreenPosition = (mapX, mapY) => {
             const isAscii = window.AsciiMode && window.AsciiMode.active;
             if (isAscii) {
                 const activeFontSize = window.AsciiMode.fontSize;
@@ -1156,7 +1165,10 @@
                 const screenY = Math.round($gameMap.adjustY(mapY) * th * z);
                 return { x: screenX, y: screenY };
             }
-        };
+    };
+
+    Scene_Map.prototype.updateEventHover = function () {
+        if (!this._eventHoverWindow) return;
 
         // Disable in split-screen, and on the world map entirely
         if (($gameMap && $gameMap.mapId() === WORLD_MAP_ID) ||
@@ -1168,16 +1180,35 @@
         // Normal singleâ€‘hover behavior (unchanged logic, but allow events without graphic)
         const mapX = $gameMap.canvasToMapX(TouchInput.x);
         const mapY = $gameMap.canvasToMapY(TouchInput.y);
-        const events = $gameMap.eventsXy(mapX, mapY);
 
-        const hoveredEvent = events.find(ev => {
-            if (ev.isTransparent()) return false;
-            // Allow events with no graphic (characterName empty and tileId 0)
-            const name = ev.event().name;
-            if (shouldHideEvent(name)) return false;
-            if ($gameMap.fogOfWarState && $gameMap.fogOfWarState(mapX, mapY) < 2) return false;
-            return true;
-        });
+        // What is under the cursor is looked up on the frame the cursor lands
+        // on a new tile, and otherwise only a few times a second. The lookup is
+        // an eventsXy scan plus a find with a closure per call, and it was run
+        // sixty times a second to keep arriving at the same event.
+        //
+        // The TILE is what is watched rather than TouchInput, because the tile
+        // under a perfectly still mouse changes every time the map scrolls: a
+        // gate on mouse movement alone would leave the wrong name up while the
+        // party walks. The rationed rescan then covers the other direction, an
+        // event that walks onto or off the tile the cursor is already resting
+        // on, within about a tenth of a second.
+        const tileChanged = mapX !== this._hoverTileX || mapY !== this._hoverTileY;
+        if (tileChanged || !window.FrameBudget ||
+            window.FrameBudget.every('mousePanHoverScan', 10)) {
+            this._hoverTileX = mapX;
+            this._hoverTileY = mapY;
+            this._hoverEvent = $gameMap.eventsXy(mapX, mapY).find(ev => {
+                if (ev.isTransparent()) return false;
+                // Allow events with no graphic (characterName empty and tileId 0)
+                const name = ev.event().name;
+                if (shouldHideEvent(name)) return false;
+                if ($gameMap.fogOfWarState && $gameMap.fogOfWarState(mapX, mapY) < 2) return false;
+                return true;
+            });
+        }
+        // Held between scans, so the label keeps following a walking NPC every
+        // frame rather than freezing where it was first raised.
+        const hoveredEvent = this._hoverEvent;
 
         if (hoveredEvent) {
             const evName  = hoveredEvent.event().name;

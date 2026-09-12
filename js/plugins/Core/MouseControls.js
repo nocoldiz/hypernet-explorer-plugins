@@ -342,6 +342,46 @@
             let depth = 0;
             let pinned = null;
             let overlay = null;
+
+            // In Archways XP (HypernetOS), mouse wheel focus follows the active window
+            // rather than scrolling unfocused windows under the pointer or windows underneath.
+            const osContainer = el && el.closest && el.closest('#hypernet-os-container');
+            if (osContainer) {
+                const popup = el.closest('#hypernet-context-menu, #hypernet-start-menu, .hypernet-dialog, .hypernet-message-box');
+                if (popup) {
+                    while (el && el !== popup.parentElement && depth++ < this.MAX_DEPTH) {
+                        if (this.ownsWheel(el)) return null;
+                        if (this.isScrollable(el)) {
+                            if (this.canScroll(el, delta)) return el;
+                            if (!pinned) pinned = el;
+                        }
+                        el = el.parentElement;
+                    }
+                    if (pinned) return pinned;
+                    return this.onlyPaneOf(popup, delta);
+                }
+
+                const activeWin = window.HypernetOS && typeof window.HypernetOS._getActiveWindow === 'function'
+                    ? window.HypernetOS._getActiveWindow()
+                    : osContainer.querySelector('.hypernet-os-window.active:not(.minimized)');
+
+                if (activeWin) {
+                    if (activeWin.contains(node)) {
+                        while (el && el !== activeWin.parentElement && depth++ < this.MAX_DEPTH) {
+                            if (this.ownsWheel(el)) return null;
+                            if (this.isScrollable(el)) {
+                                if (this.canScroll(el, delta)) return el;
+                                if (!pinned) pinned = el;
+                            }
+                            el = el.parentElement;
+                        }
+                        if (pinned) return pinned;
+                    }
+                    return this.windowPaneOf(activeWin, delta);
+                }
+                return null;
+            }
+
             while (el && el.nodeType === 1 && depth++ < this.MAX_DEPTH) {
                 if (this.ownsWheel(el)) return null;
                 if (this.isScrollable(el)) {
@@ -357,6 +397,23 @@
             // pane of this overlay that can still move, which is what the
             // player means when a menu has a single list on it.
             return overlay ? this.onlyPaneOf(overlay, delta) : null;
+        },
+
+        // Find the scrollable pane of a specific window
+        windowPaneOf(win, delta) {
+            const only = this.onlyPaneOf(win, delta);
+            if (only) return only;
+            const content = win.querySelector('.hypernet-window-content') || win;
+            if (this.isScrollable(content) && this.canScroll(content, delta)) return content;
+            const scrollables = content.querySelectorAll('*');
+            for (const el of scrollables) {
+                if (this.isScrollable(el) && this.canScroll(el, delta)) return el;
+            }
+            if (this.isScrollable(content)) return content;
+            for (const el of scrollables) {
+                if (this.isScrollable(el)) return el;
+            }
+            return null;
         },
 
         // The single scrollable pane of `root` that has room in this
@@ -444,6 +501,12 @@
             }
             const overlay = this.topOverlay();
             if (!overlay) return null;
+            if (overlay.id === 'hypernet-os-container') {
+                const activeWin = window.HypernetOS && typeof window.HypernetOS._getActiveWindow === 'function'
+                    ? window.HypernetOS._getActiveWindow()
+                    : overlay.querySelector('.hypernet-os-window.active:not(.minimized)');
+                return activeWin ? this.windowPaneOf(activeWin, delta) : null;
+            }
             return this.onlyPaneOf(overlay, delta) ||
                 this.rightPageOf(overlay, delta);
         },

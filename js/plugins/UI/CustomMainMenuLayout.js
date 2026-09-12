@@ -942,8 +942,11 @@
     // reads it and hands over the rent.
     Scene_Menu.prototype.showDeedsPage = function () {
         SoundManager.playOk();
-        this._isDeedsPage = true;
-        this.refreshUIMenuDOM(true);
+        if (typeof Scene_AssetsMenu !== "undefined") {
+            SceneManager.push(Scene_AssetsMenu);
+        } else if (typeof window.Scene_AssetsMenu !== "undefined") {
+            SceneManager.push(window.Scene_AssetsMenu);
+        }
     };
 
     Scene_Menu.prototype.hideDeedsPage = function () {
@@ -2885,7 +2888,6 @@
                     [
                         this.generateUICommandItemHTML(T('MainMenu.cmd.dynamics'), "dynamics"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.assets'), "assets"),
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.deeds'), "deeds"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.pets'), "pets"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),
                         this.generateUICommandItemHTML(emLabel("menuWorkforce", T('MainMenu.cmd.workforce')), "army"),
@@ -3400,8 +3402,6 @@
                     }
                     break;
                 case "deeds":
-                    this.showDeedsPage();
-                    break;
                 case "assets":
                     if (typeof Scene_AssetsMenu !== "undefined") {
                         SceneManager.push(Scene_AssetsMenu);
@@ -3601,6 +3601,7 @@
         biologics:  () => pushMapScene(typeof Scene_BiologicSimulation !== "undefined" && Scene_BiologicSimulation),
         augments:   () => pushMapScene(typeof Scene_PartyAugments !== "undefined" && Scene_PartyAugments),
         assets:     () => pushMapScene(typeof Scene_AssetsMenu !== "undefined" && Scene_AssetsMenu),
+        deeds:      () => pushMapScene(typeof Scene_AssetsMenu !== "undefined" && Scene_AssetsMenu),
         options:    () => pushMapScene(typeof Scene_Options !== "undefined" && Scene_Options),
         // The garage as a choice window rather than a menu page: on the field the
         // key lists every owned vehicle and either walks up to the one parked

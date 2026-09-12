@@ -1298,11 +1298,13 @@
     background:var(--xp-white); border-bottom:1px solid var(--xp-gray-mid); flex-shrink:0; }
 #sb-root .sb-logo { font-family:'Times New Roman', Georgia, serif; font-size:26px; font-weight:bold;
     letter-spacing:-1px; line-height:1; }
+/* Four letters, four colours, none of them the gold the desktop keeps for
+   the game's own menus. */
 #sb-root .sb-logo i { font-style:italic; }
 #sb-root .sb-logo .l1 { color:#e53238; }
 #sb-root .sb-logo .l2 { color:#0064d2; }
-#sb-root .sb-logo .l3 { color:#f5af02; }
-#sb-root .sb-logo .l4 { color:#86b817; }
+#sb-root .sb-logo .l3 { color:#7a3fbf; }
+#sb-root .sb-logo .l4 { color:#5f8f0f; }
 #sb-root .sb-tagline { font-size:10px; color:var(--xp-ink-soft); }
 #sb-root .sb-purse { margin-left:auto; text-align:right; font-size:11px; color:var(--xp-ink-4); }
 #sb-root .sb-purse b { color:var(--xp-ok); font-size:14px; }
@@ -1326,15 +1328,15 @@
 #sb-root .sb-btn:active { border-style:inset; }
 #sb-root .sb-btn[disabled] { color:var(--xp-ink-faint-2); cursor:default; border-style:solid; border-color:#bbbbbb; }
 #sb-root .sb-btn.sel { outline:2px dotted var(--xp-red); outline-offset:1px; }
-#sb-root .sb-btn.gold { background:linear-gradient(var(--xp-amber-2), #f5af02); border-color:var(--xp-amber-2) #a07b00 #a07b00 #ffe680; }
-#sb-root .sb-btn.blue { background:linear-gradient(#7aa7ff, #0044aa); border-color:#7aa7ff #002255 #002255 #7aa7ff; color:var(--xp-white); }
+#sb-root .sb-btn.cta { background:linear-gradient(#a8dcb4, #2f8f52); border-color:#a8dcb4 #1b5c33 #1b5c33 #cdeed6; }
+#sb-root .sb-btn.blue { background:linear-gradient(#6a97ef, #003a99); border-color:#6a97ef #002255 #002255 #6a97ef; color:var(--xp-white); }
 #sb-root .sb-btn.big { font-size:13px; padding:5px 16px; }
 
 #sb-root .sb-body { display:flex; flex:1; min-height:0; }
 #sb-root .sb-side { width:172px; min-width:172px; background:#f5f5f0; border-right:1px solid var(--xp-gray-mid);
     overflow-y:auto; padding-bottom:8px; }
 #sb-root .sb-side h3 { margin:0; padding:3px 6px; font-size:11px; color:var(--xp-black);
-    background:var(--xp-amber); border-bottom:1px solid #a07b00; }
+    background:var(--xp-steel-3); border-bottom:1px solid var(--xp-steel); }
 #sb-root .sb-cat { display:flex; align-items:center; gap:5px; padding:3px 6px; cursor:pointer;
     font-size:11px; color:var(--xp-navy-5); text-decoration:underline; }
 #sb-root .sb-cat:hover { background:var(--xp-note); }
@@ -1359,7 +1361,7 @@
 #sb-root .sb-bulk { color:var(--xp-ok); white-space:nowrap; }
 #sb-root .sb-new { color:var(--xp-red); font-weight:bold; font-size:10px; }
 #sb-root .sb-badge { display:inline-block; font-size:9px; font-weight:bold; padding:0 3px;
-    border:1px solid #a07b00; background:var(--xp-amber); color:var(--xp-black); margin-left:4px; vertical-align:middle; }
+    border:1px solid var(--xp-steel); background:var(--xp-steel-3); color:var(--xp-black); margin-left:4px; vertical-align:middle; }
 #sb-root .sb-badge.rare { background:var(--xp-red); border-color:#660000; color:var(--xp-white); }
 #sb-root .sb-badge.transit { background:#dfe8ff; border-color:var(--xp-navy); color:var(--xp-navy); }
 
@@ -1367,7 +1369,7 @@
 #sb-root .sb-panel-hd { background:var(--xp-row-tint-3); border-bottom:1px solid var(--xp-ink-pale); padding:3px 6px;
     font-weight:bold; color:var(--xp-navy); font-size:12px; }
 #sb-root .sb-panel-bd { padding:6px; }
-#sb-root .sb-note { background:var(--xp-note); border:1px solid var(--xp-amber); padding:4px 6px; font-size:11px; }
+#sb-root .sb-note { background:var(--xp-note); border:1px solid var(--xp-steel-2); padding:4px 6px; font-size:11px; }
 
 #sb-root .sb-item-top { display:flex; gap:10px; align-items:flex-start; }
 #sb-root .sb-media { width:210px; min-width:210px; border:1px solid var(--xp-ink-pale); background:var(--xp-white); }
@@ -1411,7 +1413,7 @@
 #sb-root .inspect-frame, #sb-root .inspect-name { display:none; }
 #sb-root .inspect-desc { font-size:12px; color:var(--xp-black); margin-bottom:5px; }
 #sb-root .inspect-flavour { font-style:italic; color:var(--xp-text-muted); margin-bottom:6px;
-    border-left:3px solid var(--xp-amber); padding-left:6px; }
+    border-left:3px solid var(--xp-steel-2); padding-left:6px; }
 #sb-root .inspect-section-title { background:var(--xp-row-tint-3); color:var(--xp-navy); font-weight:bold; font-size:11px;
     padding:2px 5px; margin:6px 0 2px 0; border-top:1px solid var(--xp-steel-2); }
 #sb-root .inspect-spec-row { display:flex; justify-content:space-between; gap:8px; font-size:11px;
@@ -2297,7 +2299,7 @@
         html += `</div>`;
 
         html += `<div class="sb-qtyrow">` +
-            `<button class="sb-btn gold big" data-act="buynow" data-nav id="sb-buy">${this._isLimited
+            `<button class="sb-btn cta big" data-act="buynow" data-nav id="sb-buy">${this._isLimited
                 ? T('Stockbusters.text.acquireItem') : T('Stockbusters.text.buyItNow')}</button>` +
             `<button class="sb-btn big" data-act="addcart" data-nav>${T('Stockbusters.text.addToCart')}</button>` +
             `<button class="sb-btn" data-act="back" data-nav>${T('Stockbusters.text.back')}</button>` +
@@ -2354,7 +2356,7 @@
                 }) : '');
             rows += `<tr class="${ok ? '' : 'sb-off'}">` +
                 `<td class="k">${ok
-                    ? `<button class="sb-btn${actor.actorId() === chosenId ? ' gold' : ''}" data-act="learner:${actor.actorId()}" data-nav>${escapeHtml(actor.name())}</button>`
+                    ? `<button class="sb-btn${actor.actorId() === chosenId ? ' cta' : ''}" data-act="learner:${actor.actorId()}" data-nav>${escapeHtml(actor.name())}</button>`
                     : escapeHtml(actor.name())}</td>` +
                 `<td class="v">${escapeHtml(note)}</td></tr>`;
         }
@@ -2500,7 +2502,7 @@
         html += `<div class="sb-panel" style="margin-top:8px;"><div class="sb-panel-hd">${T('Stockbusters.text.orderSummary')}</div>` +
             `<div class="sb-panel-bd"><table class="sb-kv" id="sb-cart-totals">${this.cartTotalsHTML()}</table>` +
             `<div style="margin-top:8px;display:flex;gap:6px;">` +
-            `<button class="sb-btn gold big" data-act="checkout" data-nav>${T('Stockbusters.text.placeOrder')}</button>` +
+            `<button class="sb-btn cta big" data-act="checkout" data-nav>${T('Stockbusters.text.placeOrder')}</button>` +
             `<button class="sb-btn" data-act="cartclear" data-nav>${T('Stockbusters.text.emptyCart')}</button>` +
             `<button class="sb-btn" data-act="page:home" data-nav>${T('Stockbusters.text.continueShopping')}</button>` +
             `</div></div></div>`;
@@ -2549,7 +2551,7 @@
         }
 
         if (ready > 1) {
-            html += `<div style="margin-bottom:6px;"><button class="sb-btn gold" data-act="collectall" data-nav>` +
+            html += `<div style="margin-bottom:6px;"><button class="sb-btn cta" data-act="collectall" data-nav>` +
                 `${T('Stockbusters.text.collectAll', { count: ready })}</button></div>`;
         }
 
@@ -2570,7 +2572,7 @@
             }
             html += `</table>`;
             if (arrived) {
-                html += `<div style="margin-top:5px;"><button class="sb-btn gold" data-act="collect:${dispatch.lot}" data-nav>` +
+                html += `<div style="margin-top:5px;"><button class="sb-btn cta" data-act="collect:${dispatch.lot}" data-nav>` +
                     `${T('Stockbusters.text.collect')}</button></div>`;
             }
             html += `</div></div>`;

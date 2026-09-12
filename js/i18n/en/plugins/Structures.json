@@ -40,7 +40,7 @@
       "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
       "noun": ["Vault", "Hoard", "Treasury", "Strongroom", "Deposit", "Reserve", "Coffer", "Trove", "Repository", "Hold"],
       "adj": ["Sealed", "Private", "Numbered", "Deep", "Anonymous", "Gilded", "Quiet", "Unlisted", "Bonded", "Iron"],
-      "of": ["a Careful Man", "the Ninth Account", "the Silent Partner", "a Long Absence", "the Undeclared", "the Late Owner", "the Standing Order", "the Grey Ledger", "No One", "the Sleeping Fund"]
+      "of": ["a Careful Man", "the Ninth Account", "the Silent Partner", "a Long Absence", "the Undeclared", "the Late Owner", "the Standing Order", "the Grey Grimorie", "No One", "the Sleeping Fund"]
     },
     "catacombs": {
       "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
@@ -120,7 +120,7 @@
       "pattern": ["The {adj} {noun}", "{noun} of {of}", "{adj} {noun} of {of}", "{of} {noun}"],
       "noun": ["Run", "Tunnel", "Passage", "Cut", "Route", "Bolthole", "Way", "Crawl", "Line", "Drop"],
       "adj": ["Smugglers'", "Quiet", "Unlicensed", "Duty-Free", "Night", "Crooked", "Untaxed", "Hidden", "Backdoor", "Discreet"],
-      "of": ["the Salt Trade", "Untaxed Brandy", "the Night Cargo", "a Quiet Arrangement", "the Customs Man", "the Border Year", "a Favour Owed", "the Blind Watch", "the Second Ledger", "the Sleeping Guard"]
+      "of": ["the Salt Trade", "Untaxed Brandy", "the Night Cargo", "a Quiet Arrangement", "the Customs Man", "the Border Year", "a Favour Owed", "the Blind Watch", "the Second Grimorie", "the Sleeping Guard"]
     },
     "grotto": {
       "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun}"],

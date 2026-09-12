@@ -1185,6 +1185,9 @@
       this._selectedPick = null;
       if (this._planetFocus) { this._clearPlanetFocus(); if (ov) ov.deselect(); }
       else if (ov && ov.hasSelection()) ov.deselect();
+      // In orbit, the parked world's panel comes straight back: it is where the
+      // ship IS, not a selection the player made, so it is not theirs to clear.
+      this._ensureOrbitPanel();
     }
 
     // ----------------------------------------------------------------------
@@ -1497,13 +1500,16 @@
         const bodyOpts = {
           kind: pick.kind,
           parentPlanet: pick.planet,
-          // Always offered for any body of the CURRENT system (planet or
-          // moon) - including a moon (which used to have no travel option at
-          // all), while already en route elsewhere (redirects the course:
-          // startTravelToPlanet just re-plots from wherever the ship is
-          // now), and even already parked at the exact body (a same-spot
-          // "trip" resolves as an instant arrival, see updateShipPosition).
-          canTravelTo: (pick.kind === "planet" || pick.kind === "moon") && sameSystem,
+          // Offered for any body of the CURRENT system (planet or moon) -
+          // including a moon (which used to have no travel option at all), and
+          // while already en route elsewhere, which redirects the course
+          // (startTravelToPlanet re-plots from wherever the ship is now).
+          // NOT offered for the body the ship is already parked at: flying to
+          // where you already are resolved as an instant arrival, so the button
+          // sat there in orbit doing nothing (a moon counts as parked when the
+          // ship holds its parent, which is the only orbit a moon has).
+          canTravelTo: (pick.kind === "planet" || pick.kind === "moon") &&
+            sameSystem && !orbitingThis && !orbitingParent,
           // Artificial objects (probes, the teapot, the monolith) have no
           // surface to put a landing party on. A moon has no orbit of its
           // own (see orbitingParent above), so its landing unlocks while the
@@ -1546,7 +1552,41 @@
     _refreshSelection() {
       if (this._selectedPick && this._overlayUI && this._overlayUI.hasSelection()) {
         this._showInfoFor(this._selectedPick, true);
+      } else {
+        this._ensureOrbitPanel();
       }
+    }
+
+    /**
+     * The pick for the body the ship is currently parked at, out of the live
+     * system pickables, or null when the ship is not in orbit (or is somewhere
+     * this view is not drawing).
+     */
+    _orbitPick() {
+      const ship = this.dataManager && this.dataManager.playerShip;
+      if (!ship || ship.isMoving || !ship.currentPlanet) return null;
+      if (!this._system || ship.currentSystem !== this._system.name) return null;
+      for (const p of (this._pickTargets || [])) {
+        if (!p || p.kind !== "planet" || !p.data) continue;
+        if (p.data.name === ship.currentPlanet) return p;
+      }
+      return null;
+    }
+
+    /**
+     * While the ship is parked at a world, that world's panel is the "you are
+     * here" readout and stays on screen: clicking empty space, arriving, or
+     * coming back from a scale change all leave it showing rather than an
+     * empty left column. Anything the player actually picks still takes the
+     * panel over; it only falls back here when the selection is empty.
+     */
+    _ensureOrbitPanel() {
+      if (this._minigameMode || this._tour) return;
+      if (this._scale !== SCALE_SYSTEM || this._planetFocus) return;
+      if (this._selectedPick) return;
+      const pick = this._orbitPick();
+      if (!pick) return;
+      this._showInfoFor(pick, true); // sets _selectedPick, keeps the real target
     }
 
     _wireOverlayCallbacks() {
@@ -1575,7 +1615,6 @@
         onSbBridge: () => this._sbBridge(),
         onReturnEarthToggle: () => this._toggleReturnEarth(),
         onReturnEarthCourse: () => this._setCourseEarth(),
-        onReturnEarthEb: () => this._ebBridge(),
         onCloseMap: () => this.popScene(),
         onCatalogToggle: () => this._toggleCatalog(),
         // Turning the In View filter back on re-reads the sky rather than
@@ -2483,12 +2522,16 @@
         });
       });
 
-      const ov = this._overlayUI;
-      if (ov) {
-        ov.setCatalog(this._buildCatalog(), "life", true);
-        const local = this._catalogLocalSystem();
-        this._catalogSystemName = local ? local.name : null;
-        ov.setCatalogOpen(true);
+      if (window.GalaxySim && typeof window.GalaxySim.openShipControls === "function") {
+        window.GalaxySim.openShipControls("life");
+      } else {
+        const ov = this._overlayUI;
+        if (ov) {
+          ov.setCatalog(this._buildCatalog(), "life", true);
+          const local = this._catalogLocalSystem();
+          this._catalogSystemName = local ? local.name : null;
+          ov.setCatalogOpen(true);
+        }
       }
       this._setScanHint(found, fresh, weak);
       // Reading a sky full of spectra, and knowing a biosignature when one turns up.
@@ -2518,7 +2561,16 @@
         T('Galaxy.scan.loggedInCatalog'));
     }
 
-    _toggleCatalog() {
+    _toggleCatalog(targetTab) {
+      if (window.GalaxySim && typeof window.GalaxySim.openShipControls === "function") {
+        if (typeof window.GalaxySim.isShipControlsOpen === "function" && window.GalaxySim.isShipControlsOpen()) {
+          window.GalaxySim.closeShipControls();
+        } else {
+          window.GalaxySim.openShipControls(targetTab);
+        }
+        if (window.SoundManager) SoundManager.playCursor();
+        return;
+      }
       const ov = this._overlayUI;
       if (!ov) return;
       const open = !ov.isCatalogOpen();
@@ -2538,6 +2590,9 @@
      * built for stops being the system the ship is in.
      */
     _refreshCatalogIfStale() {
+      if (window.GalaxySim && typeof window.GalaxySim.isShipControlsOpen === "function" && window.GalaxySim.isShipControlsOpen()) {
+        return;
+      }
       const ov = this._overlayUI;
       if (!ov || !ov.isCatalogOpen()) return;
       const local = this._catalogLocalSystem();
@@ -3357,14 +3412,6 @@
       }
     }
 
-    /** Return to Earth (instant route): reuses the Schrödinger-Bohr bridge with
-     * Earth as a fixed target, from anywhere. */
-    _ebBridge() {
-      const home = this._earthPlanet();
-      if (!home) { if (window.SoundManager) SoundManager.playBuzzer(); return; }
-      this._bohrBridge({ kind: "planet", data: home.earth, system: home.sol });
-    }
-
     _changeSpeed(delta) {
       this._setSpeed(($gameVariables.value(94) || 1) + delta, true);
     }
@@ -3740,12 +3787,9 @@
         this._overlayUI.setSbBridge(canBridge, bridgeSys ? bridgeSys.name : null);
       }
       if (this._overlayUI.setReturnEarthOptions) {
-        const infinite = !!(GS.isInfiniteFuel && GS.isInfiniteFuel());
         const atEarth = ship.currentSystem === "Sol" && ship.currentPlanet === "Earth";   // i18n-ignore: system / body id
         const canCourse = !ship.isMoving && this._isInMilkyWay() && !atEarth;
-        const canEb = !this._warping && !atEarth &&
-          (infinite || (dm.getSchrodingerite ? dm.getSchrodingerite() >= 1 : false));
-        this._overlayUI.setReturnEarthOptions(canCourse, canEb);
+        this._overlayUI.setReturnEarthOptions(canCourse);
       }
     }
 
@@ -3756,7 +3800,10 @@
     _travelEta(ship) {
       if (!ship || !ship.isMoving) return null;
       const speed = Math.max(1, $gameVariables.value(94) || 1);
-      const total = ship.travelDistance > 0 ? (ship.travelDistance * 0.95) / speed : 0;
+      const isIntra = !!ship.targetSystem && ship.targetSystem === ship.currentSystem;
+      const baseSpeed = isIntra ? 1 : 0.5;
+      const mult = isIntra ? Math.min(speed, 2) : speed;
+      const total = ship.travelDistance > 0 ? (ship.travelDistance * 0.95) / (mult * baseSpeed) : 0;
       const elapsed = ship.departureTime ? (Date.now() - ship.departureTime) / 1000 : 0;
       return Math.max(0, total - elapsed);
     }

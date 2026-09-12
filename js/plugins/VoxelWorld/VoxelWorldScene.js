@@ -63,6 +63,7 @@
         dayFactorForHour, getRenderType, getRoadDirectionAt, initPerlinWithSeed, VOXEL_WORLD_SEED,
         isSandboxOrTest, pickRandomRoadTile, placeNameAt, planForTile, roadLabelAt,
         sampleBiomeAt, sampleSkyColor, setTextureAnisotropy, settlementKindAt,
+        isAirlessWorld, sampleAlienSkyColor,
         troopForBioEnemy
     } = VW;
 
@@ -912,6 +913,7 @@
             // Whose sky this is. Earth's, unless the walk is somewhere else, in
             // which case that world's own moons go up instead of ours.
             this._skyFx.setWorld(this._sky);
+            if (isAirlessWorld && isAirlessWorld(this._alien)) this._skyFx.setAirless(true);
             this._wheelFx      = new WheelFx(this._scene);
             this._bioEnemies   = this._titleMode ? null : new BiomeEnemyManager(this._scene, this._terrain);
             // The people: a town's own citizens on its pavements, and the party
@@ -2357,11 +2359,13 @@
             if (window.RetroShader && window.RetroShader.patchSceneAdds) {
                 window.RetroShader.patchSceneAdds(this._scene);
             }
-            this._scene.background = new THREE.Color(0x4387e0);
+            const initAirless = isAirlessWorld && isAirlessWorld(this._alien);
+            const initSkyCol = initAirless ? 0x000000 : 0x4387e0;
+            this._scene.background = new THREE.Color(initSkyCol);
             // Much lighter haze so the world reads clearly into the distance. Fog
             // density is in 1/units, so it is divided by WORLD_SCALE to keep the
             // same view distance (in tiles) on the enlarged world.
-            this._scene.fog = new THREE.FogExp2(0x4387e0, FOG_DAY);
+            this._scene.fog = new THREE.FogExp2(initSkyCol, initAirless ? 0.0001 : FOG_DAY);
 
             // Near/far scale with the world so the (25x larger) terrain isn't
             // clipped; near stays small enough for the cabin interior.
@@ -3331,17 +3335,23 @@
             if (this._headlights) for (const sp of this._headlights) sp.intensity += (hi - sp.intensity) * ek;
             if (this._beams) for (const b of this._beams) b.material.opacity += (bo - b.material.opacity) * ek;
 
+            const airless = isAirlessWorld && isAirlessWorld(this._alien);
             // Sky / fog colour. Underwater forces a deep teal regardless of camera.
+            // On an airless alien world the sky is a black starry sky at all hours;
+            // on an alien world with atmosphere the sky colour depends on its biome.
             const targetSky = cave ? this._tmpSky.setHex(CAVE_SKY)
                 : underwater ? this._tmpSky.setHex(0x0d4a5c)
+                : airless ? this._tmpSky.setHex(0x000000)
+                : (this._alien && sampleAlienSkyColor) ? this._starTintSky(sampleAlienSkyColor(this._alien, hour, this._tmpSky))
                 : this._starTintSky(sampleSkyColor(hour, this._tmpSky));
             // The haze at the horizon is NOT the sky over it: the sky is deep
             // and the distance pales toward white, which is what makes a
             // horizon read as a horizon rather than as the line where the
             // ground stops. Underground and underwater there is no horizon and
-            // the two are the same thing.
+            // the two are the same thing. On an airless world there is no horizon
+            // haze and the black sky meets the ground cleanly.
             if (!this._tmpFog) this._tmpFog = new THREE.Color();
-            const targetFog = (cave || underwater)
+            const targetFog = (cave || underwater || airless)
                 ? this._tmpFog.copy(targetSky)
                 : skyFogColor(targetSky, this._tmpFog);
             if (this._solomon) {
@@ -3354,6 +3364,7 @@
             }
             if (cave) this._scene.fog.density = FOG_CAVE;
             else if (underwater) this._scene.fog.density = FOG_UNDERWATER;
+            else if (airless) this._scene.fog.density = 0.0001;
             else if (this._viewMode !== 'free') this._scene.fog.density = (this._solomon && this._solomon.isActive()) ? 0.0022 : FOG_DAY;
 
             // Stars / moon / drifting clouds follow the camper.
@@ -3361,6 +3372,7 @@
             // Elapsed hours, not the hour of the day: another world's moons run
             // their own months and have to be counted from the start of time.
             if (this._skyFx) {
+                if (this._skyFx.setAirless) this._skyFx.setAirless(airless);
                 this._skyFx.update(this._vanX, this._vanZ, hour, df, delta,
                     underwater || cave, (totalMins + 600) / 60);
             }

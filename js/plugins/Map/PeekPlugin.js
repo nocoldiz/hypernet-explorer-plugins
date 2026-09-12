@@ -19,7 +19,7 @@
  *    - Stop peeking: Returns the player to their original position and map,
  *      restoring their transparency and mobility.
  *    - Lockpick: Checks if the player has lockpicks (item 375). If not, warns
- *      them. If they do, calls the Tetris lockpicking minigame on standard
+ *      them. If they do, calls the falling-block lockpicking minigame on standard
  *      difficulty. On success, plays "lock_01.ogg", makes the player visible,
  *      and allows them to move freely on this map (exits peek mode).
  *    - Break in: Commits the "breakingAndEntering" crime, plays "Crash.ogg",

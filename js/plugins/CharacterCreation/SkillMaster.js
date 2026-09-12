@@ -2803,8 +2803,8 @@
                 el.style.setProperty('--ms-x', `${sx.toFixed(1)}px`);
                 el.style.setProperty('--ms-y', `${(sy + 26 * st.zoom).toFixed(1)}px`);
 
-                // Scale label with zoom subtly
-                const labelScale = Math.max(0.75, Math.min(1.15, st.zoom));
+                // Scale label with zoom, allowing smaller text at lower zoom out to prevent overlap
+                const labelScale = Math.max(0.25, Math.min(1.15, st.zoom));
                 el.style.setProperty('--ms-label-scale', labelScale.toFixed(2));
             }
         },

@@ -65,6 +65,20 @@
   // shape older saves already carry.
   //===========================================================================
 
+  // Row cache for ItemHotbar.entries(). The map bar is rendered every frame
+  // the party is walking, and entries() answered it by building nine objects
+  // and nine strings that HotbarUI reduces to a cache key and, almost always,
+  // throws straight back away: at 60fps the whole bar was being priced to
+  // discover that nothing had moved. Only three things change what it returns
+  // - the slot assignments, the party's stock, and which $gameSystem is live -
+  // so those three, and nothing else, retire the rows.
+  let _entriesCache = null;
+  let _entriesOwner = null;
+  function invalidateHotbarEntries() {
+    _entriesCache = null;
+    _entriesOwner = null;
+  }
+
   const ItemHotbar = {
     SLOTS: SLOTS,
 
@@ -120,6 +134,7 @@
       const existing = this.slotOf(item);
       if (existing >= 0) $gameSystem.setFavoriteItem(this.key(existing), null);
       $gameSystem.setFavoriteItem(this.key(index), item.id);
+      invalidateHotbarEntries();
       return true;
     },
 
@@ -127,6 +142,7 @@
       if (index < 0 || index >= SLOTS) return false;
       if (!$gameSystem.getFavoriteItem(this.key(index))) return false;
       $gameSystem.setFavoriteItem(this.key(index), null);
+      invalidateHotbarEntries();
       return true;
     },
 
@@ -140,8 +156,11 @@
       return this.assign(free >= 0 ? free : SLOTS - 1, item);
     },
 
-    /** Entries for HotbarUI.render. */
+    /** Entries for HotbarUI.render. Cached; see invalidateHotbarEntries. */
     entries() {
+      // A loaded save brings a whole new $gameSystem, and with it new slots,
+      // so the owner is checked rather than trusted to have been invalidated.
+      if (_entriesCache && _entriesOwner === $gameSystem) return _entriesCache;
       const list = [];
       for (let i = 0; i < SLOTS; i++) {
         const item = this.itemAt(i);
@@ -157,6 +176,8 @@
           label: item.name
         });
       }
+      _entriesCache = list;
+      _entriesOwner = $gameSystem;
       return list;
     },
 
@@ -217,6 +238,20 @@
       return effect ? effect.dataId : 0;
     }
   };
+
+  // Every row carries a live count, so the party's stock changing is the other
+  // thing that retires them. Spending the last potion has to grey its slot out
+  // on the next frame, not whenever a slot happens to be reassigned.
+  // Guarded: the engine defines Game_Party before any plugin runs, but the
+  // test harness loads this file on its own, and a bar that cannot be rendered
+  // there has nothing to invalidate either.
+  if (typeof Game_Party !== 'undefined') {
+    const _Game_Party_gainItem_hotbar = Game_Party.prototype.gainItem;
+    Game_Party.prototype.gainItem = function (item, amount, includeEquip) {
+      _Game_Party_gainItem_hotbar.call(this, item, amount, includeEquip);
+      invalidateHotbarEntries();
+    };
+  }
 
   window.ItemHotbar = ItemHotbar;
 

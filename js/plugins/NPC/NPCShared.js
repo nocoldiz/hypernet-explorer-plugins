@@ -80,6 +80,10 @@
 
   function isBlockedTerrain(x, y) {
     if (typeof $gameMap === "undefined" || !$gameMap) return false;
+    // The keep-out region is off limits to an NPC wherever it is painted,
+    // indoors or out: it marks the mass a room was cut out of, and a villager
+    // standing inside a wall is the same bug as a chest dealt into one.
+    if (window.RegionRules && window.RegionRules.blocksSpawn(x, y)) return true;
     return BLOCKED_TERRAIN_TAGS.includes($gameMap.terrainTag(x, y));
   }
 

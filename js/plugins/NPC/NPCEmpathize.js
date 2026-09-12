@@ -4871,6 +4871,7 @@
       // on inactive and waits on the Dynamics board (NPCSystemParty.joinParty).
       if (!_hasSelfSwitchAPage(evId)
           || window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
+          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))
           || !_joinLevelOk(_presetFromEvent($gameMap?.event(evId))?.level ?? profile?.level)) {
         SoundManager.playBuzzer();
         return;
@@ -5045,7 +5046,8 @@
       const T       = _getT();
 
       if (!_hasSelfSwitchAPage(evId)
-          || window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))) {
+          || window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
+          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))) {
         SoundManager.playBuzzer();
         return;
       }

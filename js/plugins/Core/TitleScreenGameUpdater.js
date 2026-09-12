@@ -595,8 +595,17 @@
             const group = line.match(/^#+\s+(.*)$/);
             if (group) { current.entries.push({ heading: group[1].trim() }); continue; }
             const entry = line.match(/^[-*]\s+(.*)$/);
-            if (entry) current.entries.push(entry[1].trim());
-            else if (typeof current.entries[current.entries.length - 1] === 'string') {
+            if (entry) { current.entries.push(entry[1].trim()); continue; }
+            // The changelog writes its groups as bare "Added:", "Changed:" and
+            // "Fixed:" lines rather than as markdown headings. Read on its own
+            // that is neither a heading nor an entry, so it used to fall to the
+            // wrap-up branch below and be glued onto the end of the entry above
+            // it: the update list showed "patreon vault Changed:" as one line.
+            // Tested for AFTER the entry match, so an entry that happens to end
+            // in a colon is still an entry.
+            const named = line.match(/^([A-Za-z][A-Za-z ]{0,30}):$/);
+            if (named) { current.entries.push({ heading: named[1].trim() }); continue; }
+            if (typeof current.entries[current.entries.length - 1] === 'string') {
                 const last = current.entries.length - 1;
                 current.entries[last] += ' ' + line;
             }

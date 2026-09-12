@@ -25908,6 +25908,54 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   border-color: var(--text-primary-hover);
 }
 
+#menu-container .assets-action--gain {
+  color: var(--text-cost-ok);
+  border-color: var(--text-cost-ok);
+}
+
+#menu-container .assets-quick-collect {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  margin-bottom: var(--sp-3);
+  border: 1px solid var(--text-primary-hover);
+  border-radius: var(--sp-1);
+  color: var(--text-cost-ok);
+  font-family: var(--font-ui);
+  font-size: var(--fs-label);
+  font-weight: bold;
+  cursor: pointer;
+  background: transparent;
+}
+
+#menu-container .assets-quick-collect:hover,
+#menu-container .assets-quick-collect.selected {
+  border-color: var(--text-cost-ok);
+}
+
+#menu-container .assets-row-badge {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#menu-container .assets-badge--due {
+  color: var(--text-cost-ok);
+}
+
+#menu-container .assets-badge--ready {
+  color: var(--text-cost-ok);
+}
+
+#menu-container .assets-badge--tag {
+  color: var(--text-text-alt-4);
+}
+
 
 /* ==========================================================================
    SHIP APPEARANCE EDITOR (GalaxySim/GalaxySim_ShipModel.js)

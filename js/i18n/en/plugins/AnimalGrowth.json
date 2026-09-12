@@ -55,6 +55,13 @@
   "actionPet": "Pet",
   "actionEmpathize": "Empathize",
   "actionCancel": "Cancel",
+  "petting": [
+    "You crouch down and scratch the {animal} behind the ears.",
+    "You run a hand along the {animal}'s back and let it lean into you.",
+    "You stand a while with the {animal}, saying nothing in particular.",
+    "You rub the {animal} under the chin until it closes its eyes.",
+    "You pat the {animal} and it decides you are allowed to stay."
+  ],
   "fed": "The \\c[14]{animal}\\c[0] eats out of your hand.",
   "notHungry": "The \\c[14]{animal}\\c[0] has had enough.",
   "tooHungryToProduce": "The \\c[14]{animal}\\c[0] is too hungry to give anything.",

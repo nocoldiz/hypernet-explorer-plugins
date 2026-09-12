@@ -2723,7 +2723,7 @@
         // walkable and unresponsive. Cleared the moment the counter is
         // (re)classified, so a save corrupted before this fix self-heals the
         // next time the map is entered.
-        if (ev._npcShopRota && $gameMap) {
+        if (tagged && $gameMap) {
           const key = [$gameMap.mapId(), ev.eventId(), 'A'];
           if ($gameSelfSwitches?.value(key)) {
             $gameSelfSwitches.setValue(key, false);
@@ -2839,6 +2839,8 @@
       }
       ev.refresh();
       ev.setImage("", 0);
+      ev.setThrough(false);
+      ev.setPriorityType(1);
     },
 
     // True while any live <Shop> counter on the map is still without a rota.
@@ -3181,6 +3183,17 @@
       ev._npcShopBlank = false;
       ev.refresh();
       ev.setImage(persona.spriteName, persona.charIdx);
+      ev.setThrough(false);
+      ev.setPriorityType(1);
+      const cDir = window.NPCSystem?.getCounterFacingDir?.(ev);
+      if (cDir) {
+        ev.setDirection(cDir);
+        ev._originalDirection = cDir;
+        ev._prelockDirection = cDir;
+        for (const page of (eventData?.pages || [])) {
+          if (page?.image) page.image.direction = cDir;
+        }
+      }
     },
 
     // Draws a placeholder shopkeeper on a <Shop> counter whose shift rota

@@ -69413,7 +69413,7 @@
     "name_int": "furniture.lectern_with_open_book.name"
   },
   "ledger_and_blinds_icons": {
-    "name": "Ledger And Blinds Icons",
+    "name": "Grimorie And Blinds Icons",
     "category": "Books",
     "subcategory": "Books",
     "width": 2,
@@ -69432,7 +69432,7 @@
     "name_int": "furniture.ledger_and_blinds_icons.name"
   },
   "ledger_and_portrait_icons": {
-    "name": "Ledger And Portrait Icons",
+    "name": "Grimorie And Portrait Icons",
     "category": "Books",
     "subcategory": "Books",
     "width": 2,

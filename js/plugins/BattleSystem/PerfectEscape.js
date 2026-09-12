@@ -43,6 +43,10 @@
 
     // Override the escape success rate calculation
     Game_BattlerBase.prototype.makeEscapeRatio = function() {
+        // Nothing to roll against in a boss fight: see troopHasBoss. The ratio
+        // is zeroed as well as the refusal below, so any other way into the
+        // roll (a talk that ends in a run, a scripted escape) is refused too.
+        if (troopHasBoss()) return 0;
         return 1.0; // 100% success rate
     };
 
@@ -51,6 +55,21 @@
     // no matter what, and resets any active arena streak.
     var _BattleManager_processEscape = BattleManager.processEscape;
     BattleManager.processEscape = function() {
+        // A boss is refused outright rather than rolled against and lost. The
+        // refusal is taken BEFORE the vanilla call on purpose: that one plays
+        // the escape sound and runs $gameParty.performEscape() before it ever
+        // looks at the odds, so delegating would sound and animate a getaway
+        // that is not going to happen. It also means the failure handler never
+        // runs, so the 10% that a failed run adds to the next attempt is never
+        // added: there is no wearing a boss down by asking repeatedly.
+        //
+        // Returning false is what the rest of the game already reads as "still
+        // in the fight": Scene_Battle.commandEscape (IndividualBattleTurns.js)
+        // hands the turn on, and Core/Diary.js writes no flight into the diary.
+        if (troopHasBoss()) {
+            this.displayBossEscapeBlockedMessage();
+            return false;
+        }
         this._escapeRatio = 1.0;
         if (window.ArenaBattleHandler && typeof window.ArenaBattleHandler.setArenaStreak === "function") {
             window.ArenaBattleHandler.setArenaStreak(0);
